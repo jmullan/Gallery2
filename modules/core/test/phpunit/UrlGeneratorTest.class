@@ -162,6 +162,12 @@ class UrlGeneratorTest extends GalleryTestCase {
 				       true),
 	    'core.DownloadItem always direct-g2 url, even when embedded');
 
+	$this->assertEquals('http://example.com/gallery2/main.php?g2_view=' .
+	    urlencode('test.View') . '&amp;g2_param=12345',
+	    $urlGenerator->generateUrl(array('view' => 'test.View', 'param' => 12345,
+					     'forceDirect' => true), false),
+	    'force direct-g2 url, even when embedded');
+
 	/*
 	 * DownloadItem requests in embedded G2 should have the GALLERYSID in the URL if the cookie
 	 * path is not defined, independent of cookieless browsing

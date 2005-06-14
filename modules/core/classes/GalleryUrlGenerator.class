@@ -320,6 +320,7 @@ class GalleryUrlGenerator {
      *
      * @param array key/value pairs to be included in the URL
      *  special 'href' key specifies path to append to G2 base url instead of a query param
+     *  special 'forceDirect' key specifies to generate from G2 site url even if embedded
      * @param boolean (optional) set to true/false to force the session id to be in/not in the url
      *  by default it is included when cookies are not in use (for href urls, default=not included)
      */
@@ -328,9 +329,9 @@ class GalleryUrlGenerator {
 	$currentView = $gallery->getCurrentView();
 
 	/*
-	 * For 'href' urls always use G2 base url
+	 * For non-absolute 'href' urls always use G2 base url
 	 * (direct to G2 codebase location, even if multisite or embedded),
-	 * For 'core.DownloadItem' urls always use G2 site url
+	 * For 'core.DownloadItem' urls or if 'forceDirect' param given, use G2 site url
 	 * (direct to main.php in directory for active config.php, even if embedded)
 	 * Otherwise use application url
 	 * (embed url; same as G2 site url if not embedded)
@@ -363,7 +364,8 @@ class GalleryUrlGenerator {
 		}
 		$url .= $href;
 	    }
-	} else if (isset($params['view']) && $params['view'] == 'core.DownloadItem') {
+	} else if ((isset($params['view']) && $params['view'] == 'core.DownloadItem') ||
+		   isset($params['forceDirect'])) {
 	    $url = $this->getCurrentUrlDir(true) . GALLERY_MAIN_PHP;
 	    /* Check if we are forced to append the session id in embedded G2 */
 	    if ($this->embedForceSessionId($params)) {
@@ -404,7 +406,7 @@ class GalleryUrlGenerator {
 
 	/* Navigation */
 	$targetView = isset($params['view']) ? $params['view'] : '';
-	if (!empty($this->_navId) &&
+	if (!empty($this->_navId) && !isset($params['forceDirect']) &&
 	    (empty($currentView) || $currentView == $targetView || !empty($params['controller']))) {
 	    /*
 	     * We are moving around in the same view or we are redirecting to a controller,
@@ -412,6 +414,7 @@ class GalleryUrlGenerator {
 	     */
 	    $params['navId'] = $this->_navId;
 	}
+	unset($params['forceDirect']);
 
 	/* Replace any known tokens */
 	foreach (array_keys($params) as $key) {

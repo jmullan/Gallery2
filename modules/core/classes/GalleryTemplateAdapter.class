@@ -87,10 +87,9 @@ class GalleryTemplateAdapter {
 	    }
 	}
 
-	if (isset($params['forceSessionId'])) {
-	    $forceSessionId = $params['forceSessionId'];
-	} else {
-	    $forceSessionId = null;
+	$forceSessionId = isset($params['forceSessionId']) ? $params['forceSessionId'] : null;
+	if (isset($params['forceDirect'])) {
+	    $hrefParams['forceDirect'] = $params['forceDirect'];
 	}
 
 	$urlGenerator =& $gallery->getUrlGenerator();
