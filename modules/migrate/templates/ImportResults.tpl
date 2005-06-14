@@ -95,7 +95,7 @@
 {if $ImportResults.status.urlRedirect}
 <div class="gbBlock">
   <h3> {g->text text="URL Redirection"} </h3>
-  {include file="gallery:modules/migrate/templates/Redirect.tpl" uriBase=$ImportResults.uriBase}
+  {include file="gallery:modules/migrate/templates/Redirect.tpl"}
 </div>
 {/if}
 

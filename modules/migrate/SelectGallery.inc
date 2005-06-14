@@ -160,10 +160,6 @@ class SelectGalleryView extends GalleryView {
 	$SelectGallery['hasToolkit'] = $hasToolkit;
 	$SelectGallery['mapCount'] = $mapCount;
 
-	$urlGenerator =& $gallery->getUrlGenerator();
-	$urlComponents = parse_url($urlGenerator->getCurrentUrl());
-	$SelectGallery['uriBase'] = $urlComponents['path'];
-
 	$template->setVariable('controller', 'migrate.SelectGallery');
 	$template->setVariable('SelectGallery', $SelectGallery);
 	return array(GalleryStatus::success(),

@@ -143,10 +143,6 @@ class RedirectView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$urlGenerator =& $gallery->getUrlGenerator();
-	$urlComponents = parse_url($urlGenerator->getCurrentUrl());
-	$template->setVariable('uriBase', $urlComponents['path']);
-
 	header('Content-type: text/plain');
 	return array(GalleryStatus::success(),
 		     array('html' => 'modules/migrate/templates/Htaccess.tpl'));

@@ -26,12 +26,13 @@
   </li>
 </ol>
 
+{capture name="baseUrl"}{g->url arg1="controlle=migrate.Redirect"}{/capture}
 <pre class="giDescription">&lt;IfModule mod_rewrite.c&gt;
   RewriteEngine On
   RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} !-f
   RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} !-d
   RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} !gallery_remote2.php
-  RewriteRule (.*)$ {$uriBase}?g2_controller=migrate.Redirect&amp;g2_file=$1&amp;g2_%{ldelim}QUERY_STRING{rdelim}
+  RewriteRule (.*)$ {$smarty.capture.baseUrl|replace:"controlle=":"controller="|regex_replace:"#^.*?://[^/]*#":""}&amp;g2_file=$1&amp;g2_%{ldelim}QUERY_STRING{rdelim}
 &lt;/IfModule&gt;</pre>
 
 <p>

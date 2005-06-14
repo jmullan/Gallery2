@@ -108,6 +108,6 @@
 	{g->text text="Map entries deleted successfully"}
     </p>
   {/if}
-  {include file="gallery:modules/migrate/templates/Redirect.tpl" uriBase=$SelectGallery.uriBase}
+  {include file="gallery:modules/migrate/templates/Redirect.tpl"}
 </div>
 {/if}
