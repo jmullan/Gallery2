@@ -71,12 +71,19 @@ class ImageFrameTest extends GalleryTestCase {
 	}
 	$this->assert(isset($template->data['ImageFrameData']), 'template data');
 	$data = $template->data['ImageFrameData'];
-	$this->assertEquals(3, count($data), 'Data size');
-	$this->assertEquals(array('type'=>'style','style'=>'border-style: none'), $data['none'], 'None');
-	$this->assertEquals('style', $data['dots']['type'], 'Dots type');
-	$this->assert(preg_match('/border.*dashed.*padding/', $data['dots']['style']), 'Dots style');
-	$this->assert(count($data['wood']) > 20 && isset($data['wood']['name']), 'Wood');
-	$this->assertEquals('http', substr($data['wood']['imageTL'], 0, 4), 'Wood TL image');
+	$this->assertEquals(array('idList', 'data'), array_keys($data), 'Data keys');
+	$this->assertEquals('none|dots|wood', $data['idList'], 'Id list');
+	$this->assertEquals(array('type' => 'style', 'style' => 'border-style: none'),
+			    $data['data']['none'], 'None');
+	$this->assertEquals('style', $data['data']['dots']['type'], 'Dots type');
+	$this->assert(preg_match('/border.*dashed.*padding/', $data['data']['dots']['style']),
+		      'Dots style');
+	$this->assert(count($data['data']['wood']) > 20 && isset($data['data']['wood']['name']),
+		      'Wood');
+	$this->assertEquals('http', substr($data['data']['wood']['imageTL'], 0, 4), 'Wood image');
+	$this->assert(isset($template->data['head']), 'head data');
+	$this->assertEquals(array('modules/imageframe/templates/ImageFrameHead.tpl'),
+			    $template->data['head'], 'head tpl');
     }
 
     function testImageFrameSample() {
@@ -111,6 +118,8 @@ class ImageFrameDummyGalleryTemplate {
     }
     function register_block() { }
     function register_function() { }
-    function head() { }
+    function head($tpl) {
+	$this->data['head'][] = $tpl;
+    }
 }
 ?>

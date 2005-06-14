@@ -4,9 +4,8 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-<style type="text/css">
 img.ImageFrame_image {ldelim} vertical-align:bottom; border:none; {rdelim}
-{foreach from=$ImageFrameData key=id item=data}
+{foreach from=$ImageFrameData.data key=id item=data}
 {if $data.type=='style'}
 img.ImageFrame_{$id} {ldelim} {$data.style} {rdelim}
 {elseif $data.type=='image'}
@@ -50,4 +49,3 @@ table.ImageFrame_{$id} td {ldelim} font-size:1px {rdelim} /* For IE */
 {/foreach}
 td div.H {ldelim} width:1px; height:0; {rdelim}
 td div.V {ldelim} width:0; height:1px; {rdelim}
-</style>

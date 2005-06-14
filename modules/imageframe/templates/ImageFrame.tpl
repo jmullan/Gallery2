@@ -4,8 +4,8 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-{if isset($ImageFrameData[$frame])}
-  {assign var="data" value=$ImageFrameData[$frame]}
+{if isset($ImageFrameData.data[$frame])}
+  {assign var="data" value=$ImageFrameData.data[$frame]}
 {/if}
 {counter name="ImageFrame_counter" assign="IF_count"}
 {assign var="objectId" value="IFid`$IF_count`"}

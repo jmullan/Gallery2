@@ -86,9 +86,9 @@ class ImageFrameImpl extends ImageFrameInterface_1_1 {
 				 'style' => 'border: 1px solid black !important'));
 	    $templateAdapter =& $gallery->getTemplateAdapter();
 	    $templateAdapter->register_block('imageframe', array($this, 'renderImageFrame'));
-	    $template->setVariable('ImageFrameData', array());
-	    $template->head('modules/imageframe/templates/ImageFrameStyle.tpl');
+	    $template->setVariable('ImageFrameData', array('idList' => '', 'data' => array()));
 	}
+	$template->head('modules/imageframe/templates/ImageFrameHead.tpl');
 	$data =& $template->getVariableByReference('ImageFrameData');
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imageframe');
@@ -102,11 +102,11 @@ class ImageFrameImpl extends ImageFrameInterface_1_1 {
 	}
 
 	foreach ($frameIds as $frameId) {
-	    if (isset($data[$frameId])) {
+	    if (isset($data['data'][$frameId])) {
 		continue;
 	    }
 	    if (isset($simpleFrames[$frameId])) {
-		$data[$frameId] = $simpleFrames[$frameId];
+		$data['data'][$frameId] = $simpleFrames[$frameId];
 	    } else {
 		$dir = dirname(__FILE__) . "/../frames/$frameId";
 		$frameinc = "$dir/frame.inc";
@@ -130,10 +130,11 @@ class ImageFrameImpl extends ImageFrameInterface_1_1 {
 			$frame['rowspan'] = 1 + ($frame['hVT']>0?1:0) + ($frame['hVB']>0?1:0);
 			$frame['colspan'] = 1 + ($frame['wHL']>0?1:0) + ($frame['wHR']>0?1:0);
 		    }
-		    $data[$frameId] = $frame;
+		    $data['data'][$frameId] = $frame;
 		}
 	    }
 	}
+	$data['idList'] = implode('|', array_keys($data['data']));
 
 	return GalleryStatus::success();
     }

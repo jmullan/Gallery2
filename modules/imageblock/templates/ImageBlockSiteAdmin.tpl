@@ -176,7 +176,7 @@
     {g->text text="Use a PHP block like the one shown below to include an image block in a PHP page outside of Gallery."}
   </p>
   <p class="giInfo">
-    &lt;?php @readfile('{g->url arg1="view=imageblock.External" arg2="blocks=randomImage" arg3="show=title"}'); ?&gt;
+    &lt;?php @readfile('{g->url arg1="view=imageblock.External" arg2="blocks=randomImage" arg3="show=title" forceDirect=true forceSessionId=false}'); ?&gt;
   </p>
   <table class="gbDataTable"><tr>
     <td> {$ImageBlockSiteAdmin.prefix}blocks&nbsp;*</td>
@@ -210,10 +210,10 @@
     {g->text text="Image frames require CSS to be displayed correctly. Include the following in the %s section to support image frames." arg1="&lt;head&gt;"}
   </p>
   <p class="giInfo">
-    &lt;?php @readfile('{g->url arg1="view=imageblock.ExternalCSS" arg2="frames=wood"}'); ?&gt;
+    &lt;link rel="stylesheet" href="{g->url arg1="controller=imageblock.ExternalCSS" arg2="frames=wood" forceDirect=true forceSessionId=false}"/&gt;
   </p>
   <p class="giDescription">
-    {g->text text="Specify the frame id (or pipe separated list of ids) in the frames parameter. Omit the parameter to support the image frames configured above."}
+    {g->text text="Specify the frame id (or pipe separated list of ids) in the frames parameter. Omit the parameter to support the image frames configured above. Frame ids are the directory names in the %s directory." arg1="<tt>modules/imageframe/frames</tt>"}
   </p>
   {/if}
 </div>

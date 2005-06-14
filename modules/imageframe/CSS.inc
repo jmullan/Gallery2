@@ -21,66 +21,45 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package ImageBlock
+ * @package ImageFrame
  * @author Alan Harder <alan.harder@sun.com>
  */
 
 /**
- * Generate CSS required if image frames are used with external image block.
+ * Display CSS needed to render image frames.
  *
- * @package ImageBlock
+ * @package ImageFrame
  * @subpackage UserInterface
  */
-class ExternalCSSController extends GalleryController {
+class CSSView extends GalleryView {
 
     /**
-     * @see GalleryController::handleRequest
+     * @see GalleryView::loadTemplate
      */
-    function handleRequest($form) {
+    function loadTemplate(&$template, &$form) {
+	$frameList = GalleryUtilities::getRequestVariables('frames');
+	if (empty($frameList)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	}
+	$frameList = explode('|', $frameList);
+
 	list ($ret, $imageframe) = GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	if (isset($imageframe)) {
-	    $frames = GalleryUtilities::getRequestVariables('frames');
-	    if (empty($frames)) {
-		$frames = array();
-		foreach (array('albumFrame', 'itemFrame') as $key) {
-		    list ($ret, $frame) =
-			GalleryCoreApi::getPluginParameter('module', 'imageblock', $key);
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-		    if (!empty($frame)) {
-			$frames[] = $frame;
-		    }
-		}
-		if (!empty($frames)) {
-		    GalleryUtilities::putRequestVariable('frames', implode('|', $frames));
-		}
-	    }
+	if (!isset($imageframe)) {
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
 	}
-	return array(GalleryStatus::success(),
-		     array('delegate' => array('view' =>
-				empty($frames) ? 'imageblock.ExternalCSS' : 'imageframe.CSS'),
-			   'status' => array(), 'error' => array()));
-    }
-}
 
-/**
- * @package ImageBlock
- * @subpackage UserInterface
- */
-class ExternalCSSView extends GalleryView {
+	$ret = $imageframe->init($template, $frameList);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
-    /**
-     * @see GalleryView::loadTemplate()
-     */
-    function loadTemplate(&$template, &$form) {
 	header('Content-type: text/css');
 	header('Expires: ' . GalleryUtilities::getHttpDate(time() + 2592000));
 	return array(GalleryStatus::success(),
-		     array('html' => 'modules/imageblock/templates/NoCSS.tpl'));
+		     array('html' => 'modules/imageframe/templates/ImageFrameStyle.tpl'));
     }
 }
 ?>
