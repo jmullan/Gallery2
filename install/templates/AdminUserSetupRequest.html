@@ -5,7 +5,7 @@
 
     <form method="post" action="">
       <table class="adminForm">
-        <?php if (!empty($templateData['freshInstall'])): ?>
+	<?php if ($templateData['freshInstall']): ?>
 	<tr>
 	  <td>
 	    <?php print _('Admin username') ?>
@@ -24,7 +24,7 @@
 	<?php endif; ?>
 	<tr>
 	  <td>
-	    <?php if (!empty($templateData['freshInstall'])): ?>
+	    <?php if ($templateData['freshInstall']): ?>
 	    <?php print _('Password') ?>
 	    <?php else: ?>
 	    <?php print _('Setup password') ?>
@@ -52,7 +52,7 @@
 	     value="<?php print $templateData['passwordB']?>" />
 	  </td>
 	</tr>
-	<?php if (!empty($templateData['freshInstall'])): ?>
+	<?php if ($templateData['freshInstall']): ?>
 	<tr>
 	  <td>
 	    <?php print _('Admin email address') ?>
@@ -91,14 +91,15 @@
       <?php endif; ?>
     </form>
 
-    <?php if (empty($templateData['freshInstall'])): ?>
-    <p class="warning">
+    <?php if (!$templateData['freshInstall']): ?>
+    <div class="warning">
       <?php print _("As you are reusing existing database tables, this is not a fresh install. This will only change the setup password, but not change the password of the site admin. To change the password of the site admin, choose the forgot password mechanism of Gallery.") ?>
-    </p>
+    </div>
     <?php endif; ?>
 
     <div class="go">
       <span class="goToNext">
-	<a href="javascript:document.forms[0].submit();"><?php print _('Create') ?></a>
+	<a href="javascript:document.forms[0].submit();"><?php print
+	 $templateData['freshInstall'] ? _('Create') : _('Save') ?></a>
       </span>
     </div>
