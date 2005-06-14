@@ -42,7 +42,7 @@ if (!GalleryUtilities::isEmbedded()) {
 	 */
 	if (function_exists('getallheaders')) {
 	    $headers = GetAllHeaders();
-	    if (isset($headers['If-Modified-Since'])) {
+	    if (isset($headers['If-Modified-Since']) || isset($headers['If-modified-since'])) {
 		header('HTTP/1.x 304 Not Modified');
 		return;
 	    }
