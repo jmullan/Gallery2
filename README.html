@@ -1265,15 +1265,6 @@
 	or the location of a new multisite install.
       </li>
       <li>
-	<b> Admin User Setup </b> - You are prompted for an
-	administrator username and password. In this beta release the
-	default Admin username is set to <strong>admin</strong> and
-	cannot be changed during the install process (though you can
-	change it to something else later on). Type in a password and
-	type it again to validate it. Then click &rsquo;Create&rsquo; to create
-	the admin user for this installation of Gallery 2.
-      </li>
-      <li>
 	<b> Storage Setup </b> - Read the instructions on the
 	installer to set up a storage location for Gallery 2.  This is
 	where Gallery 2 will store all of your images, as well as other cache
@@ -1281,13 +1272,27 @@
       </li>
       <li>
 	<b> Database Setup </b> - Select your database type and enter
-	your database authentication information.
+	your database authentication information. If this is not your first Gallery 2 installation
+	and there are still some remains of the old installation, it will check the state of the 
+	installed version and offer a clean install option which will delete all your data in the 
+	storage directory and in the database. If the installed version  seems to be fine, it will 
+	also offer to reuse the existing database tables. Select this option if you did not start 
+	the installer with the intent to start from scratch.
+      </li>
+      <li>
+	<b> Admin User Setup </b> - You are prompted for an
+	administrator username and password. Type in a password and
+	type it again to validate it. The full name and the email address are optional. 
+	But entering an email address is highly recommended. Once you&rsquo;re finished,
+	 click &rsquo;Create&rsquo; to create the admin user for this installation of Gallery 2.
       </li>
       <li>
 	<b> Create Config File </b> - Gallery 2 will create the
 	<b>config.php</b> file in your Gallery 2 directory.  This contains
 	all the answers you&rsquo;ve provided in the installer and is
-	necessary for Gallery 2 to function properly.
+	necessary for Gallery 2 to function properly. At this point, there&rsquo;s also a sanity
+	check to prevent you from damaging your Gallery install by running the installer when you
+	should rather have started the upgrader.
       </li>
       <li>
 	<b> Install the Core module </b> - Here&rsquo;s where we create all
