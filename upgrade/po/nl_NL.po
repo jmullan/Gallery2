@@ -81,18 +81,20 @@ msgid "FILE Directive"
 msgstr ""
 
 msgid "Safe mode disabled"
-msgstr ""
+msgstr "Safe mode uitgeschakeld"
 
 msgid ""
 "Error: Your version of PHP is configured with safe mode enabled.  You must "
 "disable safe mode before Gallery will run."
 msgstr ""
+"Fout: Uw versie van PHP is ingesteld met safe mode ingeschakeld. U dient "
+"safe mode uit te schakelen, voordat Gallery zal draaien."
 
 msgid "Safe Mode"
-msgstr ""
+msgstr "Safe Mode"
 
 msgid "exec() allowed"
-msgstr ""
+msgstr "exec() toegestaan"
 
 msgid ""
 "Warning: The exec() function is disabled in your php by the "
@@ -101,9 +103,14 @@ msgid ""
 "This can only be set server-wide, so you will need to change it in the "
 "global php.ini."
 msgstr ""
+"Waarschuwing: De exec() functie is door de <b>disabled_functions</b> "
+"parameter in uw php.ini uitgezet. U zult niet in staat zijn om modules te "
+"gebruiken die externe programma's (bijv. ImageMagick, NetPBM of Ffmpeg) "
+"vereisen. Dit kan alleen serverbreed worden ingesteld, dus u dient dit te "
+"veranderen in de globale php.ini."
 
 msgid "set_time_limit() allowed"
-msgstr ""
+msgstr "set_time_limit() toegestaan"
 
 #, c-format
 msgid ""
@@ -113,12 +120,17 @@ msgid ""
 "longer than %d seconds will fail (and in some cases just return a blank "
 "page) possibly leading to data corruption."
 msgstr ""
+"Waarschuwing: De set_time_limit() functie is door de <b>disabled_functions</"
+"b> parameter in uw php.ini uitgezet. Gallery kan functioneren zonder deze "
+"instelling, maar zal niet betrouwbaar zijn. Elke actie die dan dan %d "
+"seconden duurt zal mislukken (en in sommige gevallen alleen resulteren in "
+"een blanco pagina) wat mogelijk kan leiden tot data corruptie."
 
 msgid "Memory limit"
-msgstr ""
+msgstr "Geheugen limiet"
 
 msgid "no limit"
-msgstr ""
+msgstr "geen limiet"
 
 #, c-format
 msgid ""
@@ -126,18 +138,24 @@ msgid ""
 "b> parameter in php.ini). You should raise this limit to at least <b>%sMb</"
 "b> for proper Gallery operation."
 msgstr ""
+"Waarschuwing: Uw PHP is ingesteld om het geheugen te beperken tot %sb "
+"(<b>memory_limit</b> parameter in php.ini). U dient deze te verhogen to "
+"minstens <>%sMb</b> om Gallery juist te laten functioneren."
 
 msgid "File uploads allowed"
-msgstr ""
+msgstr "Bestand uploads toegestaan"
 
 msgid ""
 "Warning: Your PHP is configured not to allow file uploads (<b>file_uploads</"
 "b> parameter in php.ini). You will need to enable this option if you want to "
 "upload files to your Gallery with a web browser."
 msgstr ""
+"Waarschuwing: Uw PHP is ingesteld om bestand uploads niet toe te staan "
+"(<b>file_uploads</b> parameter in php.ini). U dient deze aan te zellen als u "
+"bestanden naar uw Gallery wilt uploaden met behulp van een web browser."
 
 msgid "Maximum upload size"
-msgstr ""
+msgstr "Maximale upload grootte"
 
 #, c-format
 msgid ""
@@ -145,9 +163,12 @@ msgid ""
 "(<b>upload_max_filesize</b> parameter in php.ini). You should rise this "
 "limit to allow uploading bigger files."
 msgstr ""
+"Waarschuwing: Uw PHP is ingesteld om de grootte van de bestand uploads te "
+"beperken tot %sb (<b>upload_max_filesize</b> parameter in php.ini). U dient "
+"deze te verhogen om het uploaden van grotere bestanden toe te staan."
 
 msgid "Maximum POST size"
-msgstr ""
+msgstr "Maximale POST grootte"
 
 #, c-format
 msgid ""
@@ -155,9 +176,12 @@ msgid ""
 "(<b>post_max_size</b> parameter in php.ini). You should raise this limit to "
 "allow uploading bigger files."
 msgstr ""
+"Waarschuwing: Uw PHP is ingesteld om de post data te beperken tot een "
+"maximum van %sb (<b>max_post_size</b> parameter in php.ini). U dient deze "
+"limiet te verhogen om het uploaden van grotere bestanden toe te staan."
 
 msgid "Zend compatibility mode"
-msgstr ""
+msgstr "Zend compatibility modus"
 
 #, c-format
 msgid ""
@@ -166,65 +190,70 @@ msgid ""
 "see \"SUCCESS\" then your PHP is ok.  If you get an error then you must turn "
 "off ze1_compatibility_mode before proceeding."
 msgstr ""
+"Waarschuwing: Uw PHP is ingesteld met de Zend ze1_compatibility_mode welke "
+"kan veroorzaken dat PHP crashed. Klik <ahref=\"%s\">hier</a> om uw PHP te "
+"testen. Als u \"SUCCES\" ziet dan is uw PHP ok. Als u een fout of geen "
+"reactie krijgt, dan dient u ze1_compatability_mode uit te zetten voordat u "
+"doorgaat."
 
 msgid "Gallery file integrity"
-msgstr ""
+msgstr "Gallery bestandsintegriteit"
 
 msgid "Test skipped due to other errors."
-msgstr ""
+msgstr "Test ovegeslagen vanwege andere fouten."
 
 msgid "Manifest missing or inaccessible."
-msgstr ""
+msgstr "Manifest mist of ontoegankelijk."
 
 msgid "Upgrade Core"
-msgstr ""
+msgstr "Core Opwaarderen"
 
 msgid "Upgrade Modules"
-msgstr ""
+msgstr "Modules Opwaarderen"
 
 #, c-format
 msgid "Unable to load the %s module"
-msgstr ""
+msgstr "Kan de %s module niet laden"
 
 msgid "Upgrading modules"
-msgstr ""
+msgstr "Modules opwaarderen"
 
 #, c-format
 msgid "%s module needs configuration"
-msgstr ""
+msgstr "%s module behoeft configuratie"
 
 #, c-format
 msgid "Unable to upgrade the %s module"
-msgstr ""
+msgstr "Kan de %s module niet opwaarderen"
 
 #, c-format
 msgid "Unable to load the %s layout"
-msgstr ""
+msgstr "Kan de %s opmaak niet laden"
 
 msgid "Upgrading layouts"
-msgstr ""
+msgstr "Opwaarderen opmaken"
 
 #, c-format
 msgid "Unable to upgrade the %s layout"
-msgstr ""
+msgstr "Kan de %s opmaak niet opwaarderen"
 
 msgid "Unable to commit database transaction"
-msgstr ""
+msgstr "Kan de database transactie niet uitvoeren"
 
 msgid "Unable to get the module list"
-msgstr ""
+msgstr "Kan de module lijst niet verkrijgen"
 
 msgid "Unable to get the layout list"
-msgstr ""
+msgstr "Kan de layout lijst niet verkijgen"
 
 msgid "Other"
 msgstr ""
 
 msgid "Layouts"
-msgstr ""
+msgstr "Opmaken"
 
 msgid "Welcome"
-msgstr ""
+msgstr "Welkom"
 
 msgid ""
 "In order to proceed with the install, we have to verify that you are who you "
@@ -232,18 +261,22 @@ msgid ""
 "into your config.php.  Type that in now.  Refer to your config.php if you've "
 "forgotten what you entered."
 msgstr ""
+"Om met de installatie verder te gaan dienen we eerst te verifiëren dat u "
+"bent wie u claimt dat u bent. Toen u de installatie uitvoerde heeft u een "
+"wachtwoord opgegeven die naar uw config.php is geschreven. Type dat nu in. "
+"Raadpleeg uw config.php als u vergeten bent wat u destijds heeft opgegeven."
 
 msgid "Password:"
-msgstr ""
+msgstr "Wachtwoord:"
 
 msgid "Authenticate Me"
-msgstr ""
+msgstr "Authentiseer Mij"
 
 msgid "Authentication successful!"
-msgstr ""
+msgstr "Authenticatie succesvol!"
 
 msgid "Delete Cache Directories"
-msgstr ""
+msgstr "Verijder Cache Directories"
 
 msgid ""
 "Gallery creates temporary copies of some of your data on your hard drive.  "
@@ -251,27 +284,38 @@ msgid ""
 "might be out of date so it's a good idea to get rid of them now.  Gallery "
 "will create them again as it needs them."
 msgstr ""
+"Gallery maakt van sommige data op uw harde schijf tijdelijke kopiën aan. Dit "
+"helpt om sneller te draaien. Maar wanneer u opwaardeerd, kunnen sommige van "
+"deze bestanden verlopen zijn, daarom is het een goed idee om deze te "
+"verwijderen. Gallery zal deze weer opnieuw aanmaken als het deze nodig heeft."
 
 msgid ""
 "We were unable to clean the following cache directories.  This is probably "
 "ok, but if you notice any weird behaviour, you should try to delete these "
 "directories yourself.  It's perfectly safe to get rid of them at any time."
 msgstr ""
+"We waren niet in staat om de volgende cache directories te legen. Dit is "
+"waarschijnlijk ok, maar als u vreemd gedrag opmerkt zou u moeten proberen "
+"deze directories zelf te verwijderen. Het is helemaal veilig om deze op elk "
+"moment te verwijderen."
 
 msgid ""
 "Even though there were errors, you can still continue.  Or, you can try "
 "deleting these directories yourself and then click the <b>Try Again</b> link "
 "below."
 msgstr ""
+"Alhoewel er fouten zijn opgetreden kunt u toch doorgaan. Of u kunt proberen "
+"deze directories zelf te verwijderen en op de <b>Probeer Opnieuw</b> link "
+"link hieronder klikken."
 
 msgid "Try Again"
-msgstr ""
+msgstr "Probeer Opnieuw"
 
 msgid "We have successfully cleaned out your cache directories."
-msgstr ""
+msgstr "We hebben succesvol uw cache directories geleegd."
 
 msgid "Finished!"
-msgstr ""
+msgstr "Voltooid!"
 
 #, c-format
 msgid ""
@@ -279,12 +323,15 @@ msgid ""
 "any of your other Gallery 2 modules you must use the Site Administrator "
 "interface."
 msgstr ""
+"Gefeliciteerd! U Gallery 2 %sBeta%s opwaardering is voltooid! Om één van uw "
+"andere Gallery 2 modules op te waarden dient u de Site Beheer weergave te "
+"gebruiken."
 
 msgid "Go to my Gallery!"
-msgstr ""
+msgstr "Ga naar mijn Gallery!"
 
 msgid "Warning"
-msgstr ""
+msgstr "Waarschuwing"
 
 #, c-format
 msgid ""
@@ -292,76 +339,90 @@ msgid ""
 "see the %sHelp File%s for instructions to update your configuration before "
 "proceeding."
 msgstr ""
+"Uw config.php blijkt de oude vorm van multisite te ondersteunen. Raadpleeg "
+"het %sHelp Bestand%s voor instructies om uw configuratie bij te werken "
+"voordat u doordaat."
 
 msgid "Welcome to the Gallery Upgrader"
-msgstr ""
+msgstr "Welkom bij de Gallery Opwaardeerder"
 
 msgid "Upgrade Steps"
-msgstr ""
+msgstr "Opwaardeer Stappen"
 
 msgid "Upgrader Help"
-msgstr ""
+msgstr "Opwaardeerder Help"
 
 msgid "Start Over"
-msgstr ""
+msgstr "Start Opnieuw"
 
 msgid "Redo this step"
-msgstr ""
+msgstr "Herhaal deze stap"
 
 #, c-format
 msgid "Continue to Step %d&raquo;"
-msgstr ""
+msgstr "Ga verder naar Stap %d&raquo;"
 
 msgid "Upgrade Status"
-msgstr ""
+msgstr "Opwaardeer Status"
 
 #, c-format
 msgid "Upgrade %d%% complete"
-msgstr ""
+msgstr "Opwaardeering %d%% voltooid"
 
 msgid "Gallery: <strong>your photos</strong> on <strong>your website</strong>"
-msgstr ""
+msgstr "Gallery: <strong>uw foto's</strong> op <strong>uw website</strong>"
 
 #, c-format
 msgid "Missing files (%d)"
-msgstr ""
+msgstr "Missende bestanden (%d)"
 
 msgid ""
 "Note: You're running Gallery from CVS, so recently removed files may appear "
 "here.  It might be safe to ignore these."
 msgstr ""
+"Let op: U voert Gallery uit vanuit CVS, daarom kunnen recent verwijderde "
+"bestanden hier verschijnen. U kunt deze veilig nergeren."
 
 #, c-format
 msgid "Modified files (%d)"
-msgstr ""
+msgstr "Gewijzigde bestanden (%d)"
 
 msgid ""
 "Note: You're running Gallery from CVS, so some modified files are to be "
 "expected.  You can probably safely ignore these."
 msgstr ""
+"Let op: U voert Gallery uit vanuit CVS, daarom kuny sommige gewijzigde "
+"bestanden hier verwachten. U kunt deze waarschijnlijk veilig nergeren."
 
 #, c-format
 msgid "Old files (%d)"
-msgstr ""
+msgstr "Oude bestanden (%d)"
 
 msgid ""
 "These files are no longer part of Gallery. They probably won't cause any "
 "problems but it is a good idea to remove them to keep your install clean."
 msgstr ""
+"Deze bestanden maken niet langer deel uit van Gallery. Waarschijnlijk "
+"veroorzaken ze geen problemen, maar het zou goed zijn om deze te "
+"verwijderen, om uw schoon te houden."
 
 msgid "Success"
-msgstr ""
+msgstr "Succesvol"
 
 msgid "Failed"
-msgstr ""
+msgstr "Mislukt"
 
 msgid ""
 "If you are using Apache, create a file named .htaccess in the main Gallery "
 "directory with the following content:"
 msgstr ""
+"Als u Apache gebruikt, maak een bestand aan genaamd .htaccess in de "
+"hoofddirectory van Gallery met de volgende inhoud:"
 
-msgid "An error ocurred while upgrading Gallery Core Module"
+#, fuzzy
+msgid "An error occurred while upgrading Gallery Core Module"
 msgstr ""
+"Er is een fout opgetreden tijdens het opwaarderen van de Gallery Core Module"
 
 #, c-format
 msgid ""
@@ -369,42 +430,50 @@ msgid ""
 "below you can find some debug information.  Report this in the %sGallery "
 "Forums%s and we'll help you diagnose the problem."
 msgstr ""
+"Er is iets misgegaan tijdens het opwaarderen van  de core module. In de "
+"vaken hieronder vind u wat debug informatie. Rapporteer deze in de %sGallery "
+"Forums%s en dan kunnen wij u helpen om het probleem te diagnotiseren."
 
 msgid "Stack Trace:"
-msgstr ""
+msgstr "Stack Trace:"
 
 msgid "Debug Output:"
-msgstr ""
+msgstr "Debug Uitvoer:"
 
 msgid "Upgrading the Gallery Core Module"
-msgstr ""
+msgstr "Opwaarderen van de Gallery Core Module"
 
 msgid ""
 "The Gallery Core Module is the heart of the Gallery application.  You can "
 "upgrade most other modules using the Site Administration interface, but this "
 "module must be handled separately in order for the upgrade to go smoothly."
 msgstr ""
+"De Gallery Core Module is het hart van de Gallery applicatie. U kunt de "
+"meeste andere modules opwaarderen in de Site Beheer weergave, maar deze "
+"module moet apart behandeld worden, zodat de opwaardering soepel zal "
+"verlopen."
 
 msgid "Currently installed"
-msgstr ""
+msgstr "Op dit moment geïnstalleerd"
 
 msgid "New version"
-msgstr ""
+msgstr "Nieuwe versie"
 
 msgid "Config.php upgrade"
-msgstr ""
+msgstr "Config.php opwaardering"
 
 msgid "Required"
-msgstr ""
+msgstr "Vereist"
 
 #, c-format
 msgid ""
 "Unable to write to config.php in your %s directory.  Please change its "
 "permissions."
 msgstr ""
+"Kan niet schrijven naar config.php in uw %s directory. Verander de rechten."
 
 msgid "You can do <i>chmod 666 config.php</i> to fix this."
-msgstr ""
+msgstr "U kunt <i>chmod 666 config.php</i> uitvoeren om dit te verhelpen."
 
 msgid ""
 "Before you upgrade, we <b>strongly recommend</b> that you make a backup of "
@@ -412,48 +481,56 @@ msgid ""
 "is a strong possibility that we will not be able to help you recover your "
 "data!  Refer to the following examples:"
 msgstr ""
+"Voordat u opwaardeert, <b>raden wij u sterk aan</b> dat u een backup van uw "
+"database maakt! Als u geen backup maakt en er gaat iets mis, dan is er een "
+"grote kans dat we niet in staat zijn om u te helpen om uw data te "
+"herstellen. Raadpleeg de volgende voorbeelden:"
 
 msgid "MySQL"
-msgstr ""
+msgstr "MySQL"
 
 #, c-format
 msgid "mysqldump -u%s -p<i>YourPassword</i> --opt %s > %s.sql"
-msgstr ""
+msgstr "mysqldump -u%s -p<i>UwWachtwoord</i> --opt %s > %s.sql"
 
 msgid "PostgreSQL"
-msgstr ""
+msgstr "PostgreSQL"
 
 #, c-format
 msgid "pg_dump --format=t %s > %s.sql"
-msgstr ""
+msgstr "pg_dump --format=t %s > %s.sql"
 
 msgid ""
 "Once the upgrade has begun, please be patient.  If you cancel or reload the "
 "page, you may interfere with the upgrade process."
 msgstr ""
+"Wees geduldig wanneer de opwaardering is begonnen. Als u annuleert of de "
+"pagina herlaad, kunt u het opwaardeerproces verstoren."
 
 msgid "Begin Upgrade"
-msgstr ""
+msgstr "Begin Opwaardering"
 
 msgid "Recheck config.php"
-msgstr ""
+msgstr "Controleer config.php opnieuw"
 
 msgid "Upgraded Gallery Core Module successfully."
-msgstr ""
+msgstr "Gallery Core Module succesvol opgewaardeerd."
 
 msgid "We've successfully upgraded the Gallery Core Module."
-msgstr ""
+msgstr "We hebben de Gallery Core Module succesol opgewaardeerd."
 
 msgid ""
 "<b>Reminder</b>: Now check the permissions on config.php and make sure it is "
 "not globally writeable."
 msgstr ""
+"<b>Herinering</b>: Controleer nu de rechten van config.php en zorg dat deze "
+"niet globaal beschrijfbaar zijn."
 
 msgid "Your Gallery Core Module is up to date!"
-msgstr ""
+msgstr "Uw Gallery Core Module is bijgewerkt!"
 
 msgid "Upgrade Other Modules"
-msgstr ""
+msgstr "Andere Modules Opwaarderen"
 
 msgid ""
 "The following modules can be automatically upgraded for you.  If you choose "
@@ -461,39 +538,44 @@ msgid ""
 "You can always upgrade or deactivate them on the Site Administration page, "
 "or return to this page later so any decision you make here is not permanent."
 msgstr ""
+"De volgende modules kunnen automatisch voor u worden bijgewerkt. Als u kiest "
+"om deze niet nu op te waarderen, kunt u problemen ervaren met uw Gallery. U "
+"kunt ze altijd opwaarderen of deactiveren in de Site Beheer pagina, of later "
+"naar deze pagina teruggaan. Dus elke beslissing die u hier maakt is niet "
+"definitief."
 
 msgid "Name"
-msgstr ""
+msgstr "Naam"
 
 msgid "Current"
-msgstr ""
+msgstr "Huidig"
 
 msgid "New"
-msgstr ""
+msgstr "Nieuw"
 
 msgid "Description"
-msgstr ""
+msgstr "Omschrijving"
 
 msgid "(un)check all"
-msgstr ""
+msgstr "(de)selecteer alles"
 
 #, c-format
 msgid "Skip Upgrade and Continue to Step %d&raquo;"
-msgstr ""
+msgstr "Sla opwaardering over en ga door naar Stap %d&raquo;"
 
 msgid "Upgrade Selected Modules"
-msgstr ""
+msgstr "Opwaarderen Geselecteerde Modules"
 
 #, c-format
 msgid "Upgraded the %s module successfully"
-msgstr ""
+msgstr "De %s modules is succesvol opgewaardeerd"
 
 #, c-format
 msgid "Upgraded the %s layout successfully"
-msgstr ""
+msgstr "De %s opmaak is succesvol opgewaardeerd"
 
 msgid "Upgrade More Modules"
-msgstr ""
+msgstr "Meer Modules Opwaarderen"
 
 #, c-format
 msgid ""
@@ -503,7 +585,7 @@ msgid ""
 msgstr ""
 
 msgid "Select Language:"
-msgstr ""
+msgstr "Kies Taal:"
 
 msgid "Go"
-msgstr ""
+msgstr "Gaan"

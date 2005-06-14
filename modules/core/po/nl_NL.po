@@ -444,10 +444,10 @@ msgid "Template cache deleted successfully"
 msgstr "Template cache succesvol verwijdert"
 
 msgid "some text to be spit out in different languages"
-msgstr ""
+msgstr "sommige tekst zal worden gesplitst in verschillende talen"
 
 msgid "You did it right!"
-msgstr ""
+msgstr "U heeft het juist gedaan!"
 
 msgid "album"
 msgstr "album"
@@ -806,10 +806,10 @@ msgid "Error sending test email, see below for details"
 msgstr "Fout bij het verzenden van test email, zie hieronder voor details"
 
 msgid "Invalid cookie path"
-msgstr ""
+msgstr "Ongeldig cookie pad"
 
 msgid "Invalid cookie domain"
-msgstr ""
+msgstr "Ongeldig cookie domein"
 
 msgid "Language Settings"
 msgstr "Taal instellingen"
@@ -982,15 +982,17 @@ msgstr "Onjuist e-mail adres"
 msgid "Email Test Error"
 msgstr "Email Test Fout"
 
-#, fuzzy
 msgid "Cookies"
-msgstr "Toolkits"
+msgstr "Cookies"
 
 msgid ""
 "When Gallery is embedded in another application (portal, CMS, forum, etc.), "
 "then you have the choice between two options. Everyone else does not have to "
 "care about the cookie settings. Read on for more details."
 msgstr ""
+"Wanneer Gallery is ingebed in een andere applicatie (portaal, CMS, forum "
+"etc.), dan heeft u de keus tussen twee opties. De rest hoeft zich geen "
+"zorgen te maken om cookie instellingen. Lees verder voor meer details."
 
 msgid ""
 "If your Gallery is embedded and you leave the following fields empty, then "
@@ -1005,6 +1007,18 @@ msgid ""
 "gallery2/ with /application/. The cookie path is the part of the paths that "
 "is equal, in this case it is '/application/'. Most often it is just '/'."
 msgstr ""
+"Als uw Gallery is ingebed en u laat de volgende velden leeg, dan hebben alle "
+"DownloadItem linken (de URLs van de afbeeldingen en andere items) in de "
+"ingebedde Gallery <b>een GALLEYSID tekenreeks aanhangsel</b> in de URL, wat "
+"klein beveiligings risico is als Gallery gebruikers de afbeelding URLs in "
+"forums en gastenboeken etc. kopiëren en plakken. Het alternatief is om het "
+"<b>cookie pad</b> in te stellen. Dan zal Gallery <b>niet het GALLERYSID "
+"achter de ingebedde DownloadItem URL plakken</b>. Bijv. wanneer Gallery "
+"bereikbaar is op http://www.voorbeeld.com/applicatie/gallery2/ en de "
+"inbeddende applicatie op http://www.example.com/applicatie, dan zal u het "
+"pad /applicatie/gallery2/ moeten vergelijken met /appalicatie/. Het cookie "
+"pad is een deel van de paden dat gelijk is, in dit geval is het '/"
+"application/'. Meestal is het alleen '/'."
 
 msgid ""
 "The <b>cookie domain</b> is also only needed for embedded Gallery installs "
@@ -1016,15 +1030,28 @@ msgid ""
 "have to set the cookie domain example.com (the part of the host string that "
 "is common to both, Gallery and the embedding application)."
 msgstr ""
+"Het <b>cookie domein</b> is ook benodigd voor ingebedde Gallery installaties "
+"en alleen als u verlost wilt zijn van de GALLERYSID tekenreeks in de "
+"ingebedde DownloadItem URLs. <b>In de meeste gevallen kan het cookie domein "
+"leeg gelaten worden.</b> Stel het alleen in als Gallery en de inbeddende "
+"applicatie alleen bereikbar zijn met <b>verschillende subdomeinen</b>. Bijv. "
+"wanneer Gallery staat op http://fotos.voorbeeld.com/ en de applicatie op "
+"http://www.voorbeeld.com/, dan dient u het cookie domein te zetten op http://"
+"www.voorbeeld.com/ (het deel van de host tekstenreeks dat voor beiden "
+"gemeenschappelijk is, Gallery en de inbeddende applicatie)."
 
 msgid ""
 "Once you change the cookie settings, <b>all registered users</b> of your "
 "Gallery will <b>have to clear their browser cookie cache</b>. If they do "
 "not, they will experience login / logout / lost session problems."
 msgstr ""
+"Wanneer u de cookie instellingen veranderd, zullen <b>alle geregistreerde "
+"gebruikers</b> van uw Gallery <b>hun browser cookie cache moeten legen</b>. "
+"Als zij dat niet doen kunnen ze inlog / uitlog / verloren sessie problemen "
+"ervaren."
 
 msgid "Domain"
-msgstr ""
+msgstr "Domein"
 
 msgid "Locking System"
 msgstr "Locking Systeem"
@@ -1699,7 +1726,7 @@ msgstr "%s toegevoegd"
 
 #, c-format
 msgid "Failed to add %s"
-msgstr ""
+msgstr "Toevoegen van %s mislukt"
 
 msgid "Add more files"
 msgstr "Meer bestanden toevoegen"
@@ -2517,7 +2544,6 @@ msgstr "De opgegeven gebruikersnaam is ongeldig"
 msgid "Apply changes"
 msgstr "Veranderingen opslaan"
 
-#, fuzzy
 msgid ""
 "This item has sub-items.  The changes you make here can be applied to just "
 "this item, or you can apply them to all sub-items.  Note that applying "
@@ -2527,9 +2553,9 @@ msgid ""
 "users from groups whenever possible. Changes are applied to sub-items by "
 "default."
 msgstr ""
-"Dit item heeft sub-items. De verandering die u hier maakt kunnen worden "
+"Dit item heeft sub-items. De veranderingen die u hier maakt kunnen worden "
 "toegepast op dit item, of op alle sub-items. Let op dat het toepassen van "
-"van verandingen op sub-items uw verandering zal moeten samenvoegen met alle "
+"van verandingen op sub-items uw verandering worden samengevoegd met alle "
 "rechten van de sub-items. Dit kan veel tijd kosten, wanneer er veel sub-"
 "items zijn. Het is efficiënter om waar mogelijk rechten toe te kennen aan "
 "groepen en vervolgens gebruikers toevoegen en verwijderen in de groepen. "
@@ -2764,8 +2790,85 @@ msgstr ""
 "ontvangen en dan dient u voor hulp contact op te nemen met uw "
 "systeembeheerder."
 
+#, fuzzy
+msgid "Administrator Recovery"
+msgstr "Wachtwoord Opnieuw Instellen"
+
+#, c-format
+msgid ""
+"You can use the %sAdministrator Password Recovery%s if you don't receive a "
+"recovery email from Gallery."
+msgstr ""
+
 msgid "Recover"
 msgstr "Opnieuw instellen"
+
+#, c-format
+msgid ""
+"In order to proceed with the password reset, we have to verify that you are "
+"who you claim.  The best way to be sure is to ask you to make a tiny change "
+"in the Gallery directory which will prove that you have the right "
+"permissions.  So, we're going to ask that you create a new text file called %"
+"s in the <tt>%s</tt> directory on your webserver (that's the root Gallery 2 "
+"directory). It must contain the following randomly generated characters:"
+msgstr ""
+
+#, c-format
+msgid "%s"
+msgstr ""
+
+#, c-format
+msgid ""
+"As a convenience to you, we've prepared a %scorrect version of login.txt%s "
+"for you.  Download that and copy it into your install directory and you're "
+"all set."
+msgstr ""
+
+msgid "Once you've uploaded the file, click refresh to continue."
+msgstr ""
+
+msgid "Emergency Administrator Password Reset"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"This page can be used to securely reset the password on your 'admin' account."
+msgstr ""
+"Deze pagina zal u toestaan om het wachtwoord van uw account opnieuw in te "
+"stellen."
+
+#, fuzzy
+msgid "Authorization Confirmed"
+msgstr "Authorisatie ontbreekt"
+
+msgid ""
+"Your authorization has been confirmed.  Please enter your new password "
+"below.  After setting your new password you will be taken to the login page."
+msgstr ""
+
+#, fuzzy
+msgid "Authorization Incorrect"
+msgstr "Authorisatie ontbreekt"
+
+msgid "Recovery Instructions"
+msgstr ""
+
+#, fuzzy
+msgid "AuthFile Missing"
+msgstr "Authorisatie ontbreekt"
+
+msgid "AuthFile Unreadable"
+msgstr ""
+
+#, c-format
+msgid ""
+"Your %s file is not readable. Please give Gallery read permissions on the "
+"file."
+msgstr ""
+
+#, fuzzy
+msgid "Refresh"
+msgstr "voor"
 
 msgid "This page will allow you to reset the password on your account."
 msgstr ""
@@ -2942,6 +3045,3 @@ msgstr[1] "(%d items)"
 #, c-format
 msgid "%d. %s"
 msgstr "%d. %s"
-
-#~ msgid "Gallery 2 - Beta 3: Bingo!"
-#~ msgstr "Gallery 2 - Beta 3: Bingo!"
