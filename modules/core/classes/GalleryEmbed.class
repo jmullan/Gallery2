@@ -83,7 +83,7 @@ class GalleryEmbed {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
-	
+
 	GalleryCapabilities::set('login', false);
 	if (isset($initParams['loginRedirect'])) {
 	    GalleryCapabilities::set('loginRedirect',
@@ -97,8 +97,7 @@ class GalleryEmbed {
 	    }
 	}
 
-	if (empty($initParams)
-	        || (isset($initParams['fullInit']) && $initParams['fullInit'] == true)) {
+	if (empty($initParams) || (isset($initParams['fullInit']) && $initParams['fullInit'])) {
 	    /* Only InitSecondPass if not already done so in a prior call */
 	    if (!GalleryDataCache::containsKey($secondCacheKey)) {
 		$ret = GalleryInitSecondPass();
@@ -222,7 +221,7 @@ class GalleryEmbed {
      * is possible. E.g. if the embedUri for G2 pages is index.php?mod=gallery2, in most cases, a
      * logout is also possible on index.php or index.php?mod=anothermodule. So it's better to set
      * embedUri for the logout call to just index.php. embedPath is the exact same path as in
-     * ::init(). 
+     * ::init().
      *
      * @param array ('embedUri' => string the embedUri (e.g. index.php),
      *               'embedPath' => string the embedPath (e.g. /cms/))
@@ -526,7 +525,7 @@ class GalleryEmbed {
 	if (!isset($membership[$group->getId()])) {
 	    $ret = GalleryCoreApi::addUserToGroup($user->getId(), $group->getId());
 	    if ($ret->isError()) {
-	    	return $ret->wrap(__FILE__, __LINE__);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 	return GalleryStatus::success();
@@ -736,7 +735,8 @@ class GalleryEmbed {
      * Get HTML for an image block
      *
      * @param array ('blocks' => string, 'show' => string, (optional)'heading' => int,
-     *                (optional)'itemId' => int, (optional)'maxSize' => int)
+     *                (optional)'itemId' => int, (optional)'maxSize' => int,
+     *                (optional)'itemFrame' => frameId, (optional)'albumFrame' => frameId)
      * 'blocks' is a pipe (|) separated list, of one or more possible blocks which are:
      * randomImage|recentImage|viewedImage|randomAlbum|recentAlbum|viewedAlbum|specificItem
      * dailyImage|weeklyImage|monthlyImage|dailyAlbum|weeklyAlbum|monthlyAlbum
@@ -745,47 +745,59 @@ class GalleryEmbed {
      * If you choose 'blocks' => 'specificItem', you must specify 'itemId' too.
      * example: GalleryEmbed::getImageBlock(array('blocks' => 'randomImage',
      *                                            'show' => 'title|date'));
+     * itemFrame/albumFrame may require CSS to be displayed.
      * @return array object GalleryStatus
      *               string html content
+     *               string head content or null if none required
      * @static
      */
     function getImageBlock($params) {
 	global $gallery;
 	$moduleId = 'imageblock';
-	$blockHtml = null;
+	$blockHtml = $headHtml = null;
 
 	/* Load the module list */
 	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	if (isset($moduleStatus[$moduleId]) && !empty($moduleStatus[$moduleId]['active'])
-	        && $moduleStatus[$moduleId]['active']) {
+		&& $moduleStatus[$moduleId]['active']) {
 	    /* Load the G2 templating engine */
 	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryTemplate.class');
 	    $template = new GalleryTemplate(dirname(__FILE__) . '/../../..');
 	    $template->setVariable('l10Domain', 'module_' . $moduleId);
 
 	    /* Generate the imageblock */
-	    GalleryCoreApi::requireOnce(
-		dirname(__FILE__) . '/../../imageblock/classes/ImageBlockHelper.class');
+	    GalleryCoreApi::relativeRequireOnce(
+		'modules/imageblock/classes/ImageBlockHelper.class');
 	    list ($ret, $tpl) = ImageBlockHelper::loadImageBlocks($template, $params);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
 	    if (!empty($tpl)) {
 		/* Render and get the imageblock html */
-		list ($ret, $blockHtml) = $template->fetch(dirname(__FILE__) . '/../../../' . $tpl);
+		list ($ret, $blockHtml) = $template->fetch("gallery:$tpl");
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+		/* Check for any css required for imageframes */
+		$head = $template->getVariable('head');
+		if (!empty($head['tpl'])) {
+		    list ($tpl) = each($head['tpl']);
+		    list ($ret, $headHtml) = $template->fetch("gallery:$tpl");
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    }
 		}
 	    }
 	} else {
-	    return array(GalleryStatus::error(ERROR_CONFIGURATION_REQUIRED, __FILE__, __LINE__), null);
+	    return array(GalleryStatus::error(ERROR_CONFIGURATION_REQUIRED, __FILE__, __LINE__),
+			 null, null);
 	}
-	return array(GalleryStatus::success(), $blockHtml);
+	return array(GalleryStatus::success(), $blockHtml, $headHtml);
     }
 
     /**
