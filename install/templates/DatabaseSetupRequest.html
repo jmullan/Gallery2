@@ -4,7 +4,7 @@
 
     <form method="post" action="">
       <table>
-        <tr>
+	<tr>
 	  <td style="text-align: left;">
 	    <?php print _('Database type:') ?>
 	  </td>
@@ -22,11 +22,11 @@
 	  </td>
 	</tr>
 	<?php if (!empty($templateData['error']['phpDbMissing'])): ?>
-        <tr>
-          <td colspan="2" class="error">
-            <?php print $templateData['error']['phpDbMissing'] ?>
-          </td>
-        </tr>
+	<tr>
+	  <td colspan="2" class="error">
+	    <?php print $templateData['error']['phpDbMissing'] ?>
+	  </td>
+	</tr>
 	<?php endif; ?>
 
 	<tr>
@@ -105,8 +105,10 @@
       <span class="goToNext">
 	<a href="javascript:document.forms[0].confirmCleanInstall.value='true'; document.forms[0].submit()"><?php print _('Erase Data For A Clean Install') ?></a>
       </span>
-      <?php endif; ?>
       <span class="goToNextL">
+      <?php else: ?>
+      <span class="goToNext">
+      <?php endif; ?>
 	<a href="javascript:document.forms[0].submit()"><?php print _('Save') ?></a>
       </span>
       <?php if (isset($templateData['showConfirmReuseTables'])): ?>
@@ -115,5 +117,4 @@
       </span>
       <?php endif; ?>
     </div>
-
 
