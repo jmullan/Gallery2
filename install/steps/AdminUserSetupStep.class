@@ -29,15 +29,25 @@ class AdminUserSetupStep extends InstallStep {
 
     function loadTemplateData(&$templateData) {
 	global $galleryStub;
-
+	
 	if (!isset($this->_hasBeenLoadedBefore)) {
 	    $this->_hasBeenLoadedBefore = 1;
 	    $this->_password = $galleryStub->getConfig('setup.password');
+	    $this->_adminName = _('admin');
+	    $this->_email = '';
+	    $this->_fullName = _('Gallery Administrator');
 	}
+	
 	$templateData['passwordA'] = $this->_password;
 	$templateData['passwordB'] = $this->_password;
-
+	$templateData['adminName'] = $this->_adminName;
+	$templateData['email'] = $this->_email;
+	$templateData['fullName'] = $this->_fullName;
+	
+	$templateData['freshInstall'] = $galleryStub->getConfig('freshInstall');
+					      
 	if (isset($_POST['action']) && $_POST['action'] == 'create') {
+	    $passwordOk = false;
 	    if (empty($_POST['passwordA'])) {
 		$templateData['error']['passwordA_missing'] = 1;
 		$templateData['passwordA'] = '';
@@ -50,12 +60,50 @@ class AdminUserSetupStep extends InstallStep {
 		$templateData['passwordB'] = '';
 	    } else {
 		$this->_password = $this->sanitize($_POST['passwordA']);
+		$passwordOk = true;
+	    }
+	    
+	    if ($templateData['freshInstall']) {
+		/* It's a fresh install, show the admin data fields and check their value */
+		$this->_adminName = $templateData['fullName'] =
+		    $this->sanitize($_POST['adminName']);
+		$this->_email = $templateData['email'] = $this->sanitize($_POST['email']);
+		$this->_fullName = $templateData['fullName'] = $this->sanitize($_POST['fullName']);
+		
+		$adminNameOk = false;
+		if (empty($_POST['adminName']) || strlen($_POST['adminName']) < 1
+		        || strlen($_POST['adminName']) > 32) {
+		    $templateData['error']['invalid_adminName'] = 1;
+		} else {
+		    $adminNameOk = true;
+		}
+		$emailOk = false;
+		if (!empty($_POST['email'])
+		        && !GalleryUtilities::isValidEmailString($_POST['email'])) {
+		    $templateData['error']['invalid_email'] = 1;
+		} else {
+		    $emailOk = true;
+		}
+		if ($passwordOk && $adminNameOk && $emailOk) {
+		    $this->setComplete(true);
+		} 
+	    } elseif ($passwordOk) {
+		/*
+		 * If we're reusing db tables, we don't create a new admin user and just
+		 * change the setup password
+		 */
 		$this->setComplete(true);
 	    }
 	}
-
+	
 	if ($this->isComplete()) {
 	    $galleryStub->setConfig('setup.password', $this->_password);
+	    if ($templateData['freshInstall']) {
+		/* Store admin name and data for later use in InstallCoreModule */
+		$galleryStub->setConfig('setup.admin.userName', $this->_adminName);
+		$galleryStub->setConfig('setup.admin.email', $this->_email);
+		$galleryStub->setConfig('setup.admin.fullName', $this->_fullName);
+	    }
 	    $templateData['bodyFile'] = 'AdminUserSetupSuccess.html';
 	} else {
 	    $templateData['bodyFile'] = 'AdminUserSetupRequest.html';

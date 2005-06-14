@@ -26,6 +26,7 @@ class InstallCoreModuleStep extends InstallStep {
     }
 
     function loadTemplateData(&$templateData) {
+	global $galleryStub;
 	define('GALLERY_CONFIG_DIR', $_SESSION['configPath']);
 	require(dirname(__FILE__) . '/../../bootstrap.inc');
 	require(dirname(__FILE__) . '/../../init.inc');
@@ -84,6 +85,17 @@ class InstallCoreModuleStep extends InstallStep {
 	    }
 	}
 
+	$freshInstall = $galleryStub->getConfig('freshInstall');
+	if ($freshInstall) {
+	    /* It's a fresh install. Hand over install config parameters */
+	    $gallery->setConfig('setup.admin.userName',
+				$galleryStub->getConfig('setup.admin.userName'));
+	    $gallery->setConfig('setup.admin.email',
+				$galleryStub->getConfig('setup.admin.email'));
+	    $gallery->setConfig('setup.admin.fullName',
+				$galleryStub->getConfig('setup.admin.fullName'));
+	}
+	
 	if (empty($templateData['errors'])) {
 	    if (!$isInstalled) {
 		$ret = $core->installOrUpgrade(true);

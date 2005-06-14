@@ -58,9 +58,9 @@ $stepOrder[] = 'Welcome';
 $stepOrder[] = 'Authenticate';
 $stepOrder[] = 'SystemChecks';
 $stepOrder[] = 'Multisite';
-$stepOrder[] = 'AdminUserSetup';
 $stepOrder[] = 'StorageSetup';
 $stepOrder[] = 'DatabaseSetup';
+$stepOrder[] = 'AdminUserSetup';
 $stepOrder[] = 'CreateConfigFile';
 $stepOrder[] = 'InstallCoreModule';
 $stepOrder[] = 'InstallOtherModules';
@@ -223,6 +223,69 @@ function processAutoCompleteRequest() {
 
     header("Content-Type: text/plain");
     print implode("\n", $dirList);
+}
+
+
+/**
+ * (Re-) Create the gallery filesystem data structure
+ *
+ * @param string absolute filesystem path of the storage directory
+ * @return boolean success whether the structure was created successfully
+ */
+function populateDataDirectory($dataBase) {
+    /* Use non-restrictive umask to create directories with lax permissions */
+    umask(0);
+    
+    /* Create the sub directories, if necessary */
+    foreach (array('albums',
+		   'cache',
+		   'locks',
+		   'sessions',
+		   'tmp',
+		   'plugins',
+		   'plugins/modules',
+		   'plugins/layouts',
+		   'plugins_data',
+		   'plugins_data/modules',
+		   'plugins_data/layouts',
+		   'smarty',
+		   'smarty/templates_c') as $key) {
+	$dir = "$dataBase/$key";
+	
+	if (file_exists($dir) && !is_dir($dir)) {
+	    return false;
+	}
+	
+	if (!file_exists($dir)) {
+	    if (!mkdir($dir, 0755)) {
+		return false;
+	    }
+	}
+	
+	if (!is_writeable($dir)) {
+	    return false;
+	}
+	
+	if ($key == 'locks') {
+	    for ($i = 0; $i <= 9; $i++) {
+		if (!file_exists("$dir/$i")) {
+		    if (!mkdir("$dir/$i", 0755)) {
+			return false;
+		    }
+		}
+		
+		for ($j = 0; $j <= 9; $j++) {
+		    if (!file_exists("$dir/$i/$j")) {
+			if (!mkdir("$dir/$i/$j", 0755)) {
+			    return false;
+			}
+		    }
+		}
+	    }
+	}
+    }
+    
+    return true;
 }
 
 /*

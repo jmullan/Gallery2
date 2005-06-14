@@ -48,7 +48,6 @@ class DatabaseSetupStep extends InstallStep {
 		$this->_config[$key] = $this->sanitize($_POST[$key]);
 	    }
 	}
-
 	$dbPlatformType = null; 
 	switch ($this->_config['type']) {
 	    case 'mysql':
@@ -88,7 +87,7 @@ class DatabaseSetupStep extends InstallStep {
 	    }
 
 	    if (empty($templateData['errors']) && empty($templateData['error'])) {
-		// Load up ADOdb
+		/* Load up ADOdb */
 		require_once(dirname(__FILE__) . '/../../lib/adodb/adodb.inc.php');
 
 		$this->_captureStart();
@@ -136,34 +135,112 @@ class DatabaseSetupStep extends InstallStep {
 			}
 		    }
 		}
+
+		/* Check the status and get the version of the Gallery database */
+		$dbVersion = $this->_getDbVersion($result);
+		
 		$this->_captureEnd();
-
-		if (empty($_POST['confirmReuseTables'])) {
-		    if (in_array($this->_config['tablePrefix'] . 'Schema', $result) ||
-			in_array($this->_config['tablePrefix'] . 'schema', $result)) {
-			$templateData['warnings'][] = _('Gallery tables already exist in this database!  If you want to use the existing tables, you must confirm that below.  Otherwise, you must specify a new database, or a different table prefix in order to continue.');
-			$templateData['showConfirm'] = 1;
-			$confirmRequired = 1;
-		    }
-		}
+		
+		/* Check the status of the disk storage (g2data directory) */
+		$versions = $this->_getVersions();
+		$datVersion = $versions['installed'];
+		$codebaseVersion = $versions['codebase'];
 	    }
-
+	    
 	    $templateData['databaseErrors'] = $this->_getCaptured();
 
+	    if (empty($_POST['confirmReuseTables'])) {
+		if (empty($dbVersion) && empty($datVersion)) {
+		    /* Fresh, clean install. Good. */
+		    /* Advance to next step */
+		    $confirmRequired = 0;
+		} else if (!empty($dbVersion) && empty($datVersion)) {
+		    /* DB tables exist, but g2data seems to be not ok. */
+		    /* Explain and offer clean install. */
+		    $confirmRequired = 1;
+		    $templateData['showConfirmCleanInstall'] = 1;
+		    $templateData['warnings'][] = _('Gallery tables already exist in this database!  But there is no \'versions.dat\' file in your G2 storage directory which we interpret as a broken state of G2. Either create a versions.dat file with the correct format if you think your G2 should still work or select a clean install, which will erase all data in the database and in the storage directory.');
+		    
+		} else if (empty($dbVersion) && !empty($datVersion)) {
+		    /* DB tables don't exist, but g2data has versions.dat */
+		    /* Explain and offer clean install.  */
+		    $confirmRequired = 1;
+		    $templateData['showConfirmCleanInstall'] = 1;
+		    $templateData['warnings'][] = _('The G2 storage directory has a versions.dat file of an old install. But the Gallery database tables don\'t exist. Select a clean install to erase all data in the Gallery storage directory and advance to the next step.');
+		    
+		} else if ($dbVersion != $datVersion) {
+		    /* Installed version is not ok, mismatch between g2data and the database */
+		    /* Explain and offer Clean Install. */
+		    $confirmRequired = 1;
+		    $templateData['showConfirmCleanInstall'] = 1;
+		    $templateData['warnings'][] = _('Gallery tables already exist in the database and there is a versions.dat file in the Gallery storage directory. But the version of the installed Gallery database tables don\'t match the version of the installed data in the Gallery storage directory. Select a clean install to erase all data in the database and in the storage directory and to advance to the next step.');
+		    
+		} else {
+		    /* Installed version is ok, offer Reuse Tables and Clean Install. */
+		    $confirmRequired = 1;
+		    $templateData['showConfirmCleanInstall'] = 1;
+		    $templateData['showConfirmReuseTables'] = 1;
+		    
+		    $templateData['warnings'][] = _('Gallery tables already exist in the database and the Gallery storage directory seems to be intact. Either choose to reuse the existing database tables and storage directory data or select a clean install to erase all existing data in the database and the storage directory.');
+		}
+	    }
 	    if (empty($templateData['errors']) && empty($templateData['error']) &&
 		(empty($confirmRequired) || !empty($_POST['confirmReuseTables']))) {
 		$this->setComplete(true);
+	    }
+	} elseif (!empty($_GET['action']) && $_GET['action'] == 'clean') {
+	    /* Do a clean install, erase the data, initiate the G2 API on db level */
+	    if ($this->_loadG2Api(3)) {
+		$storageCleaned = $dbCleaned = false;
+		
+		/* Reset the storage directory */	
+		if (!$this->_emptyGalleryStorageDirectory()) {
+		    $templateData['errors'][] =
+			_('Could not execute the required API to erase the storage directory. Please erase the Gallery storage directory manually.');
+		} else {
+		    $storageCleaned = true;
+		}
+
+		/* Drop all Gallery database tables listed in the schema table */
+		$this->_captureStart();	
+		if (!$this->_cleanDatabase()) {
+		    $templateData['errors'][] =
+			_('Could not execute the required API to drop the Gallery database tables. Please clean the Gallery database manually.');
+		} else {
+		    $dbCleaned = true;
+		}
+		$this->_captureEnd();
+		$templateData['databaseErrors'] = $this->_getCaptured();
+
+		if ($storageCleaned && $dbCleaned) {
+		    $this->setComplete(true);
+		}
+		
+	    } else {
+		$templateData['errors'][] =
+			_('Could not load the G2 API. Please erase the Gallery database tables and the storage directory manually.');
 	    }
 	}
 
 	if ($this->isComplete()) {
 	    $galleryStub->setConfig('storage.config', $this->_config);
-	    $templateData['bodyFile'] = 'DatabaseSetupSuccess.html';
-	} else {
-	    foreach (array('type', 'hostname', 'username',
-			   'password', 'database', 'tablePrefix', 'columnPrefix') as $key) {
-		$templateData['config'] = $this->_config;
+	    if (empty($_POST['confirmReuseTables'])) {
+		/* Remember that this is a fresh/clean install for later steps */
+		$galleryStub->setConfig('freshInstall', true);
+	    } else {
+		$galleryStub->setConfig('freshInstall', false);
+		/* Remember the installed version to compare it later to the codebase version */
+		$galleryStub->setConfig('installed.version', $datVersion);
+		$galleryStub->setConfig('codebase.version', $codebaseVersion);
 	    }
+	    $templateData['bodyFile'] = 'DatabaseSetupSuccess.html';
+	} elseif ((empty($templateData['errors']) && empty($templateData['error']) ||
+		   !empty($_POST['action']) && $_POST['action'] == 'clean') &&
+		  !empty($_POST['confirmCleanInstall'])) {
+	    $galleryStub->setConfig('storage.config', $this->_config);
+	    $templateData['bodyFile'] = 'CleanInstallRequest.html';
+	} else {
+	    $templateData['config'] = $this->_config;
 
 	    foreach (array('mysql'  => _('MySQL (all versions)'),
 			   'mysqlt' => _('MySQL with Transactions (v3.23.34a and newer)'),
@@ -214,7 +291,7 @@ class DatabaseSetupStep extends InstallStep {
      *
      * @param: string db type platform name (i.e. not mysqlt, but mysql)
      * @param: array (string tableName)
-     * return array (boolean success, string errors)
+     * @return array (boolean success, string errors)
      */
     function _testPrivileges($platform, $metatables) {
 	if (!is_array($metatables) || empty($platform)) {
@@ -305,6 +382,191 @@ class DatabaseSetupStep extends InstallStep {
 	}
 	
 	return array(true, null);
-    }	
+    }
+
+    /**
+     * Get the installed version from versions.dat in the Storage directory
+     * And the codebase version from modules/core/module.inc
+     *
+     * Avoid using GalleryInitFirstPass (as this is called even for fresh installs)
+     *
+     * @return array ('installed' => string the storage versions.dat version,
+     *                'codebase'  => string the codebase version)
+    */
+    function _getVersions() {
+	global $galleryStub;
+
+	$versions['installed'] = $versions['codebase'] =  '';
+
+	/* Load platform level to use the CoreModule and read data from versions.dat */
+	$this->_loadG2Api(2);
+	require_once(dirname(__FILE__) . '/../../modules/core/module.inc');
+	$coreModule = new CoreModule();
+	$instVersions = $coreModule->getInstalledVersions();
+	if (isset($instVersions) && isset($instVersions['core']) && !empty($instVersions['core'])) {
+	    $versions['installed'] = $instVersions['core'];
+	}
+	
+	/* Get the codebase version for the CreateConfigFileStep */
+	$versions['codebase'] = $coreModule->getVersion();
+
+	return $versions;
+    }
+
+    /**
+     * Get the state and the version of the Gallery database
+     *
+     * @param array the meta tables info array from the database
+     * @return string the db version 
+     */
+    function _getDbVersion($metaTables) {
+
+	$dbVersion = '';
+	if (in_array($this->_config['tablePrefix'] . 'Schema', $metaTables) ||
+	        in_array($this->_config['tablePrefix'] . 'schema', $metaTables)) {
+	    /*
+	     * Get core module version from the database. But first verify that we
+	     * have plugin params db table. Default to dummy version
+	     */
+	    $dbVersion = 'corrupt db install';
+	    if (in_array($this->_config['tablePrefix'] . 'PluginParameterMap', $metaTables) ||
+		    in_array($this->_config['tablePrefix'] . 'pluginparametermap', $metaTables)) {
+
+		/* Initiate the G2 API to use its db abstraction layer */
+		if ($this->_loadG2Api(3)) {
+		    list ($ret, $version) =
+			GalleryCoreApi::getPluginParameter('module', 'core', '_version');
+		    if ($ret->isSuccess() && !empty($version)) {
+			$dbVersion = $version;
+		    }
+		}
+	    } else {
+		/*
+		 * Not all db tables are present, a clean install is definitely
+		 * required
+		 */
+	    }
+	}
+
+	return $dbVersion;
+    }
+    
+    /**
+     * Load minimal G2 API
+     *
+     * Used to check the version in the db and to clean the db / storage dir
+     *
+     * @param [optional integer which level to load]
+     * @return boolean success
+     */
+    function _loadG2Api($level=1) {
+	global $galleryStub;
+	/*
+	 * levels: 0 = off, 1 = basic, 2 = platform, 3 = initfirstpass / db
+	 * firstPass includes platform level
+	 */
+	static $initiated;
+	$platformLevel = 2;
+	$firstPassLevel = 3;
+	
+	if (!isset($initiated)) {
+	    $initiated = 1;
+	    
+	    /* Include basic G2 classes to use G2 API to get the core version etc. */
+	    require_once(dirname(__FILE__) . '/../../modules/core/classes/Gallery.class');
+	    require_once(dirname(__FILE__) .'/../../modules/core/classes/GalleryDataCache.class');
+	    $GLOBALS['gallery'] =& new Gallery();
+	    global $gallery;
+	    $gallery->setConfig('data.gallery.base',
+				$galleryStub->getConfig('data.gallery.base'));
+	    
+	}
+
+	if ($level == $platformLevel && $initiated < $platformLevel) {
+	    /* Platform level requested, platform level not already loaded */
+	    $initiated = $platformLevel;
+
+	    require_once(dirname(__FILE__) . '/../../modules/core/classes/GalleryCoreApi.class');
+	    require_once(dirname(__FILE__) . '/../../modules/core/classes/GalleryPlatform.class');
+	    $gallery->setPlatform(new GalleryPlatform());
+	    /* Configure G2 such that getInstalledVersions() can be called */
+	    $gallery->initTranslator(true);
+	    require_once(dirname(__FILE__) . '/../../modules/core/classes/GalleryModule.class');
+	}
+	
+	if ($level == $firstPassLevel && $initiated < $firstPassLevel) {
+	    $initiated = $firstPassLevel;
+
+	    /* Configure the G2 db abstraction layer */
+	    $this->_config['usePersistentConnections'] = false;
+	    $gallery->setConfig('storage.config', $this->_config);
+	    $gallery->setDebug(false);
+	    $gallery->setProfile(false);
+	    /* Init paths etc., used for the clean DB function */
+	    require_once(dirname(__FILE__) . '/../../init.inc');
+	    $ret = GalleryInitFirstPass();
+	    
+	    GalleryDataCache::setFileCachingEnabled(false);
+	    GalleryDataCache::reset();
+	    
+	    return $ret->isSuccess();
+	}
+
+	return true;
+    }
+
+    /**
+     * Empty the Gallery storage directory and reset it to its original state
+     *
+     * Deletes everything in the storage directory and then rebuilds the initial folder structure
+     * @return boolean success
+     */
+    function _emptyGalleryStorageDirectory() {
+	global $gallery;
+
+	/* Make sure that all the required paths exist. */
+	$baseDir = $gallery->getConfig('data.gallery.base');
+	$platform = $gallery->getPlatform();
+
+	/* Scrub the contents of the gallery data directory */
+	$dir = $platform->opendir($baseDir);
+
+	while (($filename = $platform->readdir($dir)) !== false) {
+	    if (!strcmp($filename, '.') || !strcmp($filename, '..')) {
+		continue;
+	    }
+	    $path = "$baseDir$filename";
+	    
+	    if ($platform->is_dir($path)) {
+		$ret = $platform->recursiveRmdir($path);
+	    } else {
+		$ret = $platform->unlink($path);
+	    }
+	    
+	    if ($ret == false) {
+		return false;
+	    }
+	}
+	$platform->closedir($dir);
+
+	/* Recreate the gallery data directory */
+	return populateDataDirectory($baseDir);
+    }
+
+    /**
+     * Drop all Gallery database tables
+     *
+     * Drop all Gallery database tables that are listed in the Gallery schema table
+     * @return boolean success
+     */
+    function _cleanDatabase() {
+	global $gallery;
+
+	$storage =& $gallery->getStorage();
+	$storage->_db->debug = true;
+	$ret = $storage->cleanStore();
+
+	return $ret->isSuccess();
+    }
 }
 ?>

@@ -43,7 +43,34 @@ class CreateConfigFileStep extends InstallStep {
 	    $templateData['bodyFile'] = 'CreateConfigFileInstructions.html';
 	    $templateData['galleryDir'] = basename($configDir);
 	} else {
-	    if (!$out = @fopen($configFilePath, 'w')) {
+	    /* Don't (overwrite) the config file, if we recommend an upgrade */
+	    $writeConfigFile = false;
+	    $freshInstall = $galleryStub->getConfig('freshInstall');
+	    $versionStatus = $upgradeRecommended = false;
+	    $versions = array('installed' => '', 'codebase' => false);
+	    if (!$freshInstall) {
+		/* We are reusing database tables, it's not a fresh install */
+		list ($versionStatus, $upgradeRecommended, $versions) = $this->_versionCheck();
+		if (!$versionStatus) {
+		    if ($upgradeRecommended) {
+			/*
+			 * Only write config.php, if it's empty. Else, the upgrader would
+			 * assume a wrong state of config.php when it tries to update it.
+			 */
+			$configContents = implode('', file($configFilePath));
+			if (empty($configContents) || strlen($configContents) < 100) {
+			    $writeConfigFile = true;
+			}
+		    }
+		} else {
+		    $writeConfigFile = true;
+		}
+	    } else {
+		$writeConfigFile = true;
+	    }
+
+	    /* Before writing, check if the file is writable and give instructions if it isn't */
+	    if ($writeConfigFile && !$out = @fopen($configFilePath, 'w')) {
 		/* Give the user instructions */
 		$templateData['bodyFile'] = 'CreateConfigFileInstructions.html';
 		$templateData['galleryDir'] = basename($configDir);
@@ -60,10 +87,26 @@ class CreateConfigFileStep extends InstallStep {
 		    }
 		}
 	    } else {
-		$this->_writeConfig($out, $configDir);
-		fclose($out);
-		$this->setComplete(true);
-		$templateData['bodyFile'] = 'CreateConfigFileSuccess.html';
+		if (!$freshInstall && !$versionStatus) {
+		    $this->setComplete(false);
+		    $templateData['recommendUpgrade'] = $upgradeRecommended;
+		    $templateData['versions'] = $versions;
+		    $templateData['isMultisite'] =
+			$_SESSION['configPath'] != dirname(dirname(dirname(__FILE__)));
+		    $templateData['galleryDir'] = basename($_SESSION['configPath']);
+		    $templateData['configFileWritten'] = $writeConfigFile;
+		    $templateData['bodyFile'] = 'VersionCheckFailed.html';
+		} else {
+		    /* It's a fresh install or the installed version matches the codebase version */
+		    $this->setComplete(true);
+		    $templateData['bodyFile'] = 'CreateConfigFileSuccess.html';
+		}
+
+		/* Finally write the config file */
+		if ($writeConfigFile) {
+		    $this->_writeConfig($out, $configDir);
+		    fclose($out);
+		}
 	    }
 	}
 	$this->_firstTime = false;
@@ -108,6 +151,56 @@ class CreateConfigFileStep extends InstallStep {
 	    fwrite($out, $line);
 	}
 	fclose($in);
+    }
+
+    /**
+     * Check installed version vs. codebase version
+     *
+     * If G2 isn't installed at the moment or the installed version is the same as the codebase
+     * version, advance to the next step. Else, give a warning and instruct to run the upgrader if
+     * codebase version > installed version.
+     * Note: database = g2data version, checked in db step
+     *
+     * @return array (boolean versionsOk, boolean upgradeRecommended,
+     *                array ('codebase' => string version, 'installed' => string version))
+     */
+    function _versionCheck() {
+	global $galleryStub;
+	
+	$freshInstall = $galleryStub->getConfig('freshInstall');
+	$versions = array();
+	$versionsOk = false;
+	$recommendUpgrade = false;
+	
+	if ($freshInstall) {
+	    /* It's a fresh install */
+	    $versionsOk = true;
+	} else {
+	    /* Get the installed version from the DatabaseSetup Step */
+	    $versions['installed'] = $galleryStub->getConfig('installed.version');
+	    /* Get the codebase version, also from the DB setup step */
+	    $versions['codebase'] = $galleryStub->getConfig('codebase.version');
+
+	    /* Compare the versions */
+	    if (!$cmp = version_compare($versions['installed'], $versions['codebase'])) {
+		/* Installed version and codebase version are the same. Good. */
+		$versionsOk = true;
+	    } elseif ($cmp == -1) {
+		/*
+		 * G2 is installed, but its version doesn't match the codebase version.
+		 * Recommend an upgrade (redirect to the upgrader)
+		 */
+		$recommendUpgrade = true;
+	    } else {
+		/*
+		 * G2 is installed, but its version doesn't match the codebase version.
+		 * And no upgrade is recommended because the codebase version is not newer than
+		 * the installed version. Something's wrong.
+		 */
+	    }
+	}
+	
+	return array($versionsOk, $recommendUpgrade, $versions);
     }
 }
 ?>

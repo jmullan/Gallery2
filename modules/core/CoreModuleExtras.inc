@@ -1179,14 +1179,21 @@ $gallery->setConfig(\'cookieId\', \'' . $cookieId . '\');
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryUser.class');
 	$user = new GalleryUser();
 
-	$userName = 'admin';
-	$fullName = $module->translate('Gallery Administrator');
+	/*
+	 * Get the admin name and data from the installer and default to 'admin' if it's
+	 * not available for some reason
+	 */
+	$userName = $gallery->getConfig('setup.admin.userName');
+	$userName = !strlen($userName) ? 'admin' : $userName;
+	$email = $gallery->getConfig('setup.admin.email');
+	$fullName = $gallery->getConfig('setup.admin.fullName');
 	$ret = $user->create($userName);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$user->changePassword($gallery->getConfig('setup.password'));
 	$user->setFullName($fullName);
+	$user->setEmail($email);
 
 	$ret = $user->save();
 	if ($ret->isError()) {
