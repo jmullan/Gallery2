@@ -673,7 +673,7 @@ class SessionTest extends GalleryTestCase {
 	     * And now check the headers (that would have been sent if we didn't use our fantastic
 	     * mock VM :)
 	     */
-	    $headers = $phpVm->headers_sent($cFile, $cLine) ? $_REQUEST['phpVmHeaders'] : array();
+	    $headers = $phpVm->headers_sent() ? $_REQUEST['phpVmHeaders'] : array();
 	    ob_start();
 	    var_dump($headers);
 	    $debugHeaders = ob_get_clean();
@@ -773,13 +773,13 @@ class SessionTest extends GalleryTestCase {
 }
 
 class SessionTestPhpVm extends GalleryPhpVm {
-    function header($string, $replace=null, $http_response_code=null) {
+    function header($string, $replace=null) {
 	if ($pos = strpos($string, ':')) {
 	    $_REQUEST['phpVmHeaders'][substr($string, 0, $pos)] = substr($string, $pos+1);
 	}
     }
 
-    function headers_sent(&$file, &$line) {
+    function headers_sent() {
 	return (isset($_REQUEST['phpVmHeaders']) && !empty($_REQUEST['phpVmHeaders']));
     }
 }

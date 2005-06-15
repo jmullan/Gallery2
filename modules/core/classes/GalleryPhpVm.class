@@ -114,26 +114,26 @@ class GalleryPhpVm {
     /**
      * Send a raw HTTP header
      *
+     * PHP 4.1 compatible header() function. The second optional parameter http_response_code
+     * was introduced in PHP 4.3.0 and is therefore not supported in G2
+     *
      * @param string string
-     * @param [optional boolean replace
-     * @param [optional integer http_response_code]]
+     * @param [optional boolean replace]
      */
-    function header($string, $replace=null, $http_response_code=null) {
-	return header($string, $replace, $http_response_code);
+    function header($string, $replace=null) {
+	return header($string, $replace);
     }
 
     /**
      * Checks if or where headers have been sent
      *
-     * The parameters can't be optional if they're references, so even though they're
-     * optional in the php API, they're mandatory in the GalleryPhpVm API
+     * PHP 4.1 compatible headers_sent() function. The optional parameters 
+     * were introduced in PHP 4.3.0 and are therefore not supported in G2
      *
-     * @param string file
-     * @param integer line
      * @return boolean whether headers are already sent
     */
-    function headers_sent(&$file, &$line) {
-	return headers_sent($file, $line);
+    function headers_sent() {
+	return headers_sent();
     }
 
     /**

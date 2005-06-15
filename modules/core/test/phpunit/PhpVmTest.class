@@ -114,7 +114,7 @@ class PhpVmTest extends GalleryTestCase {
 	global $gallery;
 	/* When this unit test is executed, we already sent some data to the user agent */
 	$phpVm = $gallery->getPhpVm();
-	$this->assert($phpVm->headers_sent($cFile, $cLine), 'headers are sent at this point, but the vm function ' .
+	$this->assert($phpVm->headers_sent(), 'headers are sent at this point, but the vm function ' .
 		      'does not think so');
 
 	/* The other case, $phpVm->headers_sent() == false, is covered by testHeader() */

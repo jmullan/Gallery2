@@ -365,7 +365,7 @@ class GallerySession {
 		 * Use our PhpVm for testability here, ignore $cFile, $cLine, they are just there
 		 * to make it work, i.e. pass something to headers_sent()
 		 */
-		if (!$phpVm->headers_sent($cFile, $cLine)) {
+		if (!$phpVm->headers_sent()) {
 		    $phpVm->header($cookie);
 		}
 	    }
