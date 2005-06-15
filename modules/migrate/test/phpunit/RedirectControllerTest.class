@@ -93,7 +93,7 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 	$href = $urlGenerator->generateUrl(array('href' => 'lib/tools/phpunit/index.php'));
 
 	/* Album */
-	GalleryUtilities::putRequestVariable('file', $this->_albumName);
+	GalleryUtilities::putRequestVariable('path', $this->_albumName);
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('href' => $href,
@@ -104,7 +104,7 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 			    $results, 'album');
 
 	/* Album with trailing slash */
-	GalleryUtilities::putRequestVariable('file', $this->_albumName . '/');
+	GalleryUtilities::putRequestVariable('path', $this->_albumName . '/');
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('href' => $href,
@@ -115,8 +115,8 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 			    $results, 'album trailing slash');
 
 	/* Album page 2 */
-	GalleryUtilities::putRequestVariable('file', $this->_albumName);
-	GalleryUtilities::putRequestVariable('page', '2');
+	GalleryUtilities::putRequestVariable('path', $this->_albumName);
+	GalleryUtilities::putRequestVariable('page', '2', false);
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('href' => $href,
@@ -128,8 +128,8 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 			    $results, 'album page 2');
 
 	/* Item */
-	GalleryUtilities::removeRequestVariable('page');
-	GalleryUtilities::putRequestVariable('file', $this->_albumName . '/' . $this->_itemName);
+	GalleryUtilities::removeRequestVariable('page', false);
+	GalleryUtilities::putRequestVariable('path', $this->_albumName . '/' . $this->_itemName);
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('href' => $href,
@@ -140,8 +140,8 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 			    $results, 'item');
 
 	/* Item full size */
-	GalleryUtilities::putRequestVariable('file', $this->_albumName . '/' . $this->_itemName);
-	GalleryUtilities::putRequestVariable('full', '1');
+	GalleryUtilities::putRequestVariable('path', $this->_albumName . '/' . $this->_itemName);
+	GalleryUtilities::putRequestVariable('full', '1', false);
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('href' => $href,
@@ -153,8 +153,8 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 			    $results, 'item full size');
 
 	/* Invalid item */
-	GalleryUtilities::removeRequestVariable('full');
-	GalleryUtilities::putRequestVariable('file', 'invalid-' . rand() . '/aaa');
+	GalleryUtilities::removeRequestVariable('full', false);
+	GalleryUtilities::putRequestVariable('path', 'invalid-' . rand() . '/aaa');
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('href' => $href,
@@ -164,7 +164,7 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 			    $results, 'invalid item');
 
 	/* Direct link to full size image */
-	GalleryUtilities::putRequestVariable('file',
+	GalleryUtilities::putRequestVariable('path',
 	    $this->_albumName . '/' . $this->_itemName . '.jpg');
 
 	$results = $this->handleRequest();
@@ -176,7 +176,7 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 			    $results, 'item image file');
 
 	/* Direct link to resized image */
-	GalleryUtilities::putRequestVariable('file',
+	GalleryUtilities::putRequestVariable('path',
 	    $this->_albumName . '/' . $this->_itemName . '.sized.jpg');
 
 	$results = $this->handleRequest();
@@ -188,7 +188,7 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 			    $results, 'item resized file');
 
 	/* Direct link to thumbnail image */
-	GalleryUtilities::putRequestVariable('file',
+	GalleryUtilities::putRequestVariable('path',
 	    $this->_albumName . '/' . $this->_itemName . '.thumb.jpg');
 
 	$results = $this->handleRequest();

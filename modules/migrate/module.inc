@@ -39,7 +39,7 @@ class MigrateModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('migrate');
 	$this->setName($gallery->i18n('Migration'));
 	$this->setDescription($gallery->i18n('Migrate your Gallery 1 albums to Gallery 2'));
-	$this->setVersion('0.9.5');
+	$this->setVersion('0.9.6');
 	$this->setGroup('import', $this->translate('Import'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
@@ -91,6 +91,26 @@ class MigrateModule extends GalleryModule /* and GalleryEventListener */ {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('Gallery 1'),
 				 'view' => 'migrate.SelectGallery')));
+    }
+
+    /**
+     * @see GalleryModule::getRewriteRules
+     */
+    function getRewriteRules() {
+	global $gallery;
+	$urlGenerator =& $gallery->getUrlGenerator();
+	$url = $urlGenerator->generateUrl(array('view' => 'core.SiteAdmin',
+						'subView' => 'migrate.SelectGallery'));
+	return array(
+	    array('comment' => $this->translate('G1-&gt;G2 Mapping'),
+		  'pattern' => '%path%',
+		  'keywords' => array('path' => array('pattern' => '([^?]+)',
+						      'help' => $this->translate('G1 path'))),
+		  'queryString' => array('controller' => 'migrate.Redirect'),
+		  'locked' => 1,
+		  'help' => $this->translate(array('text' => 'G1 URL redirect. Use only if G2 is installed where G1 used to be and you have run a G1 import with the URL redirect option selected. Otherwise follow instructions in %sMigrate Site Admin%s.', 'arg1' => '<a href="' . $url . '">', 'arg2' => '</a>'))
+	    )
+	);
     }
 }
 ?>

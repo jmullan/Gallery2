@@ -10,5 +10,5 @@
   RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} !-f
   RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} !-d
   Rewritecond %{ldelim}REQUEST_FILENAME{rdelim} !gallery_remote2.php
-  RewriteRule (.*)$ {$smarty.capture.baseUrl|replace:"controlle=":"controller="|regex_replace:"#^.*?://[^/]*#":""}&g2_file=$1&g2_%{ldelim}QUERY_STRING{rdelim}
+  RewriteRule (.*)$ {$smarty.capture.baseUrl|replace:"controlle=":"controller="|regex_replace:"#^.*?://[^/]*#":""}&g2_path=$1 [QSA]
 </IfModule>

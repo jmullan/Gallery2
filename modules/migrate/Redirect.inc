@@ -42,8 +42,8 @@ class RedirectController extends GalleryController {
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/G1MigrateHelper.class');
 	global $gallery;
 
-	list($file, $full, $page) = GalleryUtilities::getRequestVariables('file', 'full', 'page');
-	$path = preg_split('|/|', $file, -1, PREG_SPLIT_NO_EMPTY);
+	$path = GalleryUtilities::getRequestVariables('path');
+	$path = preg_split('|/|', $path, -1, PREG_SPLIT_NO_EMPTY);
 	$view = 'core.ShowItem';
 
 	if (count($path) > 1) {
@@ -116,6 +116,7 @@ class RedirectController extends GalleryController {
 			 'status' => array(), 'error' => array());
 	if (isset($id)) {
 	    $results['redirect']['itemId'] = $id;
+	    list ($full, $page) = GalleryUtilities::getRequestVariablesNoPrefix('full', 'page');
 	    if (!empty($full)) {
 		$results['redirect']['imageViewsIndex'] = 1;
 	    }
