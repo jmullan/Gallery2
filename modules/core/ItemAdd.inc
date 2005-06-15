@@ -112,6 +112,7 @@ class ItemAddController extends GalleryController {
 		}
 
 		/* Check if we should extract individual files out of an archive */
+		$toolkit = null;
 		if (GalleryUtilities::isA($addedItem, 'GalleryDataItem')) {
 		    list ($ret, $toolkit) =
 			GalleryCoreApi::getToolkitByOperation($addedItem->getMimeType(), 'extract');
