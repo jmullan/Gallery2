@@ -135,7 +135,7 @@ class SystemChecksStep extends InstallStep {
 	    $templateData['check'][] =
 		array('title' => $title,
 		      'warning' => true,
-		      'notice' => sprintf(_('Warning: Your PHP is configured to limit the memory to %sb (<b>memory_limit</b> parameter in php.ini). You should raise this limit to at least <b>%sMb</b> for proper Gallery operation.'), $memoryLimit, $minimumMemoryLimit),
+		      'notice' => sprintf(_('Warning: Your PHP is configured to limit the memory to %sb (<b>memory_limit</b> parameter in php.ini). You should raise this limit to at least <b>%sMB</b> for proper Gallery operation.'), $memoryLimit, $minimumMemoryLimit),
 		);
 	    $suggestedHtaccess[] = sprintf('php_value memory_limit %sM', $minimumMemoryLimit);
 	} else {
