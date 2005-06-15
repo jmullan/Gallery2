@@ -22,9 +22,9 @@
     </td>
     <td style="float: right; vertical-align: top;">
       {if $SetupRewrite.apacheCode == REWRITE_STATUS_OK}
-        <h3 class="giSuccess">Success</h3>
+        <h3 class="giSuccess"> {g->text text="Success"} </h3>
       {else}
-        <h3 class="giWarning">Warning</h3>
+        <h3 class="giWarning"> {g->text text="Warning"} </h3>
       {/if}
     </td>
   {if $SetupRewrite.apacheCode != REWRITE_STATUS_OK}
@@ -102,9 +102,9 @@
     </td>
     <td style="float: right; vertical-align: top;">
       {if $SetupRewrite.htaccessCode == REWRITE_STATUS_HTACCESS_READY}
-        <h2 class="giSuccess">Success</h2>
+        <h2 class="giSuccess"> {g->text text="Success"} </h2>
       {else}
-        <h2 class="giError">Error</h2>
+        <h2 class="giError"> {g->text text="Error"} </h2>
       {/if}
     </td>
   {if $SetupRewrite.htaccessCode != REWRITE_STATUS_HTACCESS_READY}
