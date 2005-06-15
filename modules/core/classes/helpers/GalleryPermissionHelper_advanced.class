@@ -531,10 +531,10 @@ class GalleryPermissionHelper_advanced {
     /**
      * Look up an item's access list.
      *
-     * @private
      * @param int the id of the source item
      * @return array object GalleryStatus a status code,
      *               int accessListId the associated item's list
+     * @access private
      * @static
      */
     function _lookupAccessListId($itemId) {
@@ -572,8 +572,8 @@ class GalleryPermissionHelper_advanced {
      * @param int the id of the source access list
      * @return array object GalleryStatus a status code,
      *               int AccessListId the new access list's id
+     * @access private
      * @static
-     * @private
      */
     function _copyAccessList($oldAccessListId) {
 	global $gallery;
@@ -910,8 +910,8 @@ class GalleryPermissionHelper_advanced {
      *
      * @return array object GalleryStatus a status code
      *               int location of a bit (1, 2, 3, etc)
-     * @static
      * @access private
+     * @static
      */
     function _newPermissionBit() {
 	list ($ret, $allPermissions) = GalleryPermissionHelper_simple::_fetchAllPermissions();
@@ -960,8 +960,8 @@ class GalleryPermissionHelper_advanced {
      *
      * @param array the specific permission data
      * @return object GalleryStatus a status code
-     * @static
      * @access private
+     * @static
      */
     function _setPermission($data) {
 	$cacheKey = 'GalleryPermissionHelper::_allPermissions';
@@ -1039,7 +1039,7 @@ class GalleryPermissionHelper_advanced {
      * @param string 'read' or 'write'
      * @return array object GalleryStatus a status code
      *         int lock id
-     * @private
+     * @access private
      * @static
      */
     function _getAccessListCompacterLock($type) {

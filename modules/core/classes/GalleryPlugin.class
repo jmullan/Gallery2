@@ -277,11 +277,12 @@ class GalleryPlugin {
      * Post a deactivation event for this plugin.  Used by deactivate and reactivate.
      *
      * @return object GalleryStatus a status code
-     * @private
+     * @access private
      */
     function _postDeactivationEvent() {
 	$event = GalleryCoreApi::newEvent('Gallery::DeactivatePlugin');
-	$event->setData(array('pluginType' => $this->getPluginType(), 'pluginId' => $this->getId()));
+	$event->setData(array('pluginType' => $this->getPluginType(),
+			      'pluginId' => $this->getId()));
 	list ($ret) = GalleryCoreApi::postEvent($event);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

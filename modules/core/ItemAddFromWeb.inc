@@ -266,7 +266,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
      * @return array object GalleryStatus a status object
      *               string mime type
      *               string filename or null if not requested
-     * @private
+     * @access private
      */
     function _getMimeType($url, $headers=null, $getFileName=false) {
 	$urlComponents = parse_url($url);
@@ -333,7 +333,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
      * @param array (optional) http response headers
      * @return array object GalleryStatus a status object
      *               string type name
-     * @private
+     * @access private
      */
     function _getTypeName($url, $htmlAttribute=null, $headers=null) {
 	if (isset($htmlAttribute) && strtolower($htmlAttribute) == 'src') {

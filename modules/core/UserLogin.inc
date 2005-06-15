@@ -31,15 +31,13 @@
  * require necessary classes
  */
 GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryValidationPlugin.class');
- 
+
 /**
  * This controller will handle an user logging in to Gallery
  *
  * @package GalleryCore
  * @subpackage UserInterface
- *
  */
- 
 class UserLoginController extends GalleryController {
 
     /**
@@ -47,7 +45,7 @@ class UserLoginController extends GalleryController {
      * test code.
      *
      * @var array (pluginId => object ValidationPlugin) $_plugins
-     * @private
+     * @access private
      */
     var $_pluginInstances;
 
@@ -98,7 +96,7 @@ class UserLoginController extends GalleryController {
 			}
 		    }
 		}
-		    
+
 		/* Let each plugin do its verification */
 		foreach ($pluginInstances as $pluginId => $plugin) {
 		    list ($ret, $pluginErrors, $continue) = $plugin->performValidation($form);

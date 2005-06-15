@@ -236,7 +236,7 @@ class AlbumSelectModule extends GalleryModule {
 
     /**
      * Build template data for subalbum tree (manual and title sorting)
-     * @private
+     * @access private
      */
     function _parseTree($tree, &$treeList, &$sorter, &$nodeId, $parentNode=0, $depth=0) {
 	if (isset($sorter)) {
@@ -254,7 +254,7 @@ class AlbumSelectModule extends GalleryModule {
     /**
      * Build template data for subalbum tree (apply sort preference of each album)
      * @return object GalleryStatus a status code
-     * @private
+     * @access private
      */
     function _buildTree($album, &$treeList, &$titles, &$nodeId, $parentNode=0, $depth=0) {
 	list ($ret, $subAlbumIds) = GalleryCoreApi::fetchChildAlbumItemIds($album);

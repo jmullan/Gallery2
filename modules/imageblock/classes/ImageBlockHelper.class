@@ -127,7 +127,10 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	return array(GalleryStatus::success(), $tpl);
     }
 
-    /** @static @private */
+    /**
+     * @static
+     * @access private
+     */
     function _addBlock(&$blocks, $title, $itemType, $order, $parentId=null, $fullSize=false) {
 	$userId = null;
 	switch ($order) {
@@ -384,7 +387,10 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	return array(GalleryStatus::success(), $orderBy);
     }
 
-    /** @static @private */
+    /**
+     * @static
+     * @access private
+     */
     function _runQuery($query, $data) {
 	global $gallery;
 	list ($ret, $searchResults) = $gallery->search($query, $data);
@@ -401,7 +407,10 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	return array(GalleryStatus::success(), $result);
     }
 
-    /** @static @private */
+    /**
+     * @static
+     * @access private
+     */
     function _isCached($userId) {
 	global $gallery;
 	list ($ret, $searchResults) = $gallery->search(

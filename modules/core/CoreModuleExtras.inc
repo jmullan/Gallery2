@@ -811,8 +811,8 @@ class CoreModuleExtras {
      * @param string current core version
      * @return array of array('remove' => array of string regexp removals,
      *                        'add' => array of string additions)
+     * @access private
      * @static
-     * @private
      */
     function _prepareConfigUpgrade($currentVersion) {
 	global $gallery;

@@ -78,7 +78,7 @@ class PermissionTest extends GalleryTestCase {
 	     */
 	    $ret = GalleryCoreApi::addUserPermission(
 		$this->_albums[$i]->getId(), $gallery->getActiveUserId(),
-                'core.changePermissions', false);
+		'core.changePermissions', false);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -226,7 +226,7 @@ class PermissionTest extends GalleryTestCase {
 
     /**
      * Sort permissions by group, user then permission name
-     * @private
+     * @access private
      */
     function _sortPermissions($a, $b) {
 	foreach (array('groupId', 'userId', 'permission') as $key) {

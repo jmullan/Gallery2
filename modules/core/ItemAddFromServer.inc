@@ -464,7 +464,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 
     /**
      * Sort directory listing.. directory, known types, unknowns.
-     * @private
+     * @access private
      */
     function _sortFiles($a, $b) {
 	if (($a['type'] == 'directory' || $b['type'] == 'directory') && $a['type'] != $b['type']) {

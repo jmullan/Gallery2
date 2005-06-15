@@ -45,7 +45,7 @@ class GalleryRemoteController extends GalleryController {
      * test code.
      *
      * @var array (optionId => object ItemAddOption) $_optionInstances
-     * @private
+     * @access private
      */
     var $_optionInstances;
 
@@ -514,7 +514,7 @@ class GalleryRemoteController extends GalleryController {
 		$response->setProperty('image.raw_width.' . $i, $item->getWidth());
 		$response->setProperty('image.raw_height.' . $i, $item->getHeight());
 		$response->setProperty('image.raw_filesize.' . $i, $item->getSize());
-		
+
 		if (isset($derivatives[$item->getId()])) {
 		    foreach ($derivatives[$item->getId()] as $der) {
 			switch ($der->getDerivativeType()) {

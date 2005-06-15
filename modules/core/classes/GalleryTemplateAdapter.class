@@ -403,9 +403,9 @@ class GalleryTemplateAdapter {
      * Purpose:  Removes characters from a string so that it can be used for an
      * html class name or id and be addressed via css
      *
-     * @private
      * @param string the input string
      * @return string
+     * @access private
      */
     function _safeCssName($string) {
 	$string = ereg_replace("[^-A-Za-z0-9_]", "_", $string);

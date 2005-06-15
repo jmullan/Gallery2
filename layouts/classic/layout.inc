@@ -145,7 +145,7 @@ class ClassicLayout extends GalleryLayout {
 
     /**
      * Build template data for subalbum tree
-     * @private
+     * @access private
      */
     function _parseTree($tree, &$treeList, &$treeIds, $depth=0) {
 	foreach ($tree as $id => $list) {

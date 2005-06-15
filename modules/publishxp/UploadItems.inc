@@ -19,13 +19,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
 /**
  * Controller to process the uploading of photos from Windows XP.
- * 
+ *
  * Each photo is uploaded via a seperate HTTP request.  The initial response from
- * this page is to return JavaScript code that instructs Windows how to upload 
+ * this page is to return JavaScript code that instructs Windows how to upload
  * the photos.  Subsequent requests from Windows include the photo data and text.
- * This page processes the data and applies the options to be used while uploading. 
+ * This page processes the data and applies the options to be used while uploading.
  *
  * @version $Id$
  * @package PublishXp
@@ -37,7 +38,7 @@ class UploadItemsController extends GalleryController {
      * test code.
      *
      * @var array (optionId => object ItemAddOption) $_optionInstances
-     * @private
+     * @access private
      */
     var $_optionInstances;
 
@@ -67,10 +68,10 @@ class UploadItemsController extends GalleryController {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
 	    /* Get the file passed in this submission */
 	    $file = GalleryUtilities::getFile('userFile', false);
- 	    list($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock($form['albumId']);
+	    list($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock($form['albumId']);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -79,8 +80,8 @@ class UploadItemsController extends GalleryController {
 		GalleryCoreApi::releaseLocks($lockIds);
 		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	    }
-	    
-	    /* 
+
+	    /*
 	     * Get the mime type from the upload info.
 	     * If we don't get useful data from that or its a type we don't
 	     * recognize, take a swing at it using the file name.
@@ -91,9 +92,9 @@ class UploadItemsController extends GalleryController {
 		GalleryCoreApi::releaseLocks($lockIds);
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
 	    if (empty($mimeType) ||
-		    $mimeType == 'application/octet-stream' || 
+		    $mimeType == 'application/octet-stream' ||
 		    $mimeType == 'application/unknown' ||
 		    empty($exts)) {
 		$extension = GalleryUtilities::getFileExtension($file['name']);
@@ -166,11 +167,11 @@ class UploadItemsController extends GalleryController {
 
 /**
  * View to process the uploading of photos from Windows XP.
- * 
+ *
  * Each photo is uploaded via a seperate HTTP request.  The initial response from
- * this page is to return JavaScript code that instructs Windows how to upload 
+ * this page is to return JavaScript code that instructs Windows how to upload
  * the photos.  Subsequent requests from Windows include the photo data and text.
- * This page processes the data and applies the options to be used while uploading. 
+ * This page processes the data and applies the options to be used while uploading.
  *
  * @version $Id$
  * @package PublishXp
@@ -179,7 +180,7 @@ class UploadItemsController extends GalleryController {
 class UploadItemsView extends GalleryView {
     /**
      * Prepares any additional data before rendering the template.
-     * 
+     *
      * @author Timothy Webb <tiwebb@cisco.com>
      * @param template the template data for rendering.
      * @param form the form data for rendering.
@@ -191,7 +192,7 @@ class UploadItemsView extends GalleryView {
 	if ($form['formName'] != 'UploadItems') {
 	    $form['formName'] = 'UploadItems';
 	}
-	
+
 	list ($UploadItems['albumId'],
 	      $UploadItems['stripExtensions'],
 	      $UploadItems['setCaptions']) = GalleryUtilities::getRequestVariables(
@@ -207,7 +208,7 @@ class UploadItemsView extends GalleryView {
 
 	$template->setVariable('UploadItems', $UploadItems);
 	$template->head('modules/publishxp/templates/Head.tpl');
-	return array(GalleryStatus::success(), 
+	return array(GalleryStatus::success(),
 		     array('body' => 'modules/publishxp/templates/UploadItems.tpl'));
     }
 }

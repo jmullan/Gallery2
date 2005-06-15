@@ -36,31 +36,29 @@ GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/UserRecoverPas
  *
  * @package GalleryCore
  * @subpackage UserInterface
- *
  */
- 
 class UserRecoverPasswordConfirmController extends GalleryController {
 
-    /**         
+    /**
      * ValidationPlugin instances to use when handling this request.  Only used by
      * test code.
-     *              
+     *
      * @var array(pluginId => object ValidationPlugin) $_plugins
-     * @private     
-     */             
+     * @access private
+     */
     var $_pluginInstances;
-                    
-    /**                 
+
+    /**
      * Tests can use this method to hardwire a specific set of plugin instances to use.
      * This avoids situations where some of the option instances will do unpredictable
      * things and derail the tests.
-     *              
+     *
      * @param array (pluginId => ValidationPlugin, ...)
-     */             
+     */
     function setPluginInstances($pluginInstances) {
-        $this->_pluginInstances = $pluginInstances;
-    }                   
-                        
+	$this->_pluginInstances = $pluginInstances;
+    }
+
     /**
      * @see GalleryController::handleRequest
      */
@@ -106,7 +104,7 @@ class UserRecoverPasswordConfirmController extends GalleryController {
 
 		if ($user && !empty($requestExpires)) {
 		    if ($requestExpires < time()) {
-			/* 
+			/*
 			 * This request was made more than 7 days ago
 			 * purge it from the system and redirect to the request page
 			 */
@@ -121,7 +119,7 @@ class UserRecoverPasswordConfirmController extends GalleryController {
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
-			
+
 			$user->changePassword($form['password1']);
 
 			$ret = $user->save();
@@ -148,8 +146,8 @@ class UserRecoverPasswordConfirmController extends GalleryController {
 	    }
 	} else if (isset($form['action']['cancel'])) {
 	    $results['return'] = 1;
-	} 
-	
+	}
+
 	if (empty($error) && !empty($status)) {
 	    $results['redirect']['view'] = 'core.UserAdmin';
 	    $results['redirect']['subView'] = 'core.UserLogin';
@@ -158,7 +156,7 @@ class UserRecoverPasswordConfirmController extends GalleryController {
 	    $results['delegate']['view'] = 'core.UserAdmin';
 	    $results['delegate']['subView'] = 'core.UserRecoverPasswordConfirm';
 	}
-	
+
 	$results['status'] = $status;
 	$results['error'] = $error;
 

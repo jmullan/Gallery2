@@ -38,30 +38,28 @@ GalleryCoreApi::relativeRequireOnce(
  *
  * @package GalleryCore
  * @subpackage UserInterface
- *
  */
- 
 class UserRecoverPasswordController extends GalleryController {
-    /**         
+    /**
      * ValidationPlugin instances to use when handling this request.  Only used by
      * test code.
-     *              
+     *
      * @var array (pluginId => object ValidationPlugin) $_pluginInstances
-     * @private     
-     */             
+     * @access private
+     */
     var $_pluginInstances;
-                    
-    /**                 
+
+    /**
      * Tests can use this method to hardwire a specific set of plugin instances to use.
      * This avoids situations where some of the option instances will do unpredictable
      * things and derail the tests.
-     *              
+     *
      * @param array (pluginId => ValidationPlugin, ...)
-     */             
+     */
     function setPluginInstances($pluginInstances) {
-        $this->_pluginInstances = $pluginInstances;
-    }                   
-                        
+	$this->_pluginInstances = $pluginInstances;
+    }
+
     /**
      * @see GalleryController::handleRequest
      */
@@ -98,7 +96,7 @@ class UserRecoverPasswordController extends GalleryController {
 			}
 		    }
 		}
-		    
+
 		/* Let each plugin do its verification */
 		foreach ($pluginInstances as $pluginId => $plugin) {
 		    list ($ret, $pluginErrors, $continue) = $plugin->performValidation($form);
@@ -115,7 +113,7 @@ class UserRecoverPasswordController extends GalleryController {
 	    }
 
 	    /*
-	     * Still no errors?  Check the DB for a previous request and then 
+	     * Still no errors?  Check the DB for a previous request and then
 	     * update, reject or add based on the results.
 	     */
 	    $shouldSendEmail = false;
@@ -136,9 +134,9 @@ class UserRecoverPasswordController extends GalleryController {
 			$user->getUserName() . time() . GalleryUtilities::getRemoteHostAddress());
 
 		    /* Generate the request expiration: Now + 7 Days */
-		    $requestExpires = mktime(date('G'), date('i'), date('s'), 
+		    $requestExpires = mktime(date('G'), date('i'), date('s'),
 					     date('m'), date('d')+7, date('Y'));
-		    
+
 		    /*
 		     * Check the database to see if a previous request.
 		     * If a request exists, check the timestamp to see if a new
@@ -150,21 +148,21 @@ class UserRecoverPasswordController extends GalleryController {
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
-		    
-		    /* 
+
+		    /*
 		     * This request was made less than 20 minutes ago.  Don't update the auth
 		     * string.  We'll silently succeed to thwart phishing attempts.
 		     */
 		    if (!empty($lastRequest)) {
 			if (($lastRequest + (20 * 60)) < time()) {
 			    $ret = GalleryRecoverPasswordMap::updateMapEntry(
-				array('userName' => $user->getUserName()), 
+				array('userName' => $user->getUserName()),
 				array('authString' => $authString,
 				      'requestExpires' => $requestExpires));
-			    $shouldSendEmail = true;		    
+			    $shouldSendEmail = true;
 			}
 		    } else {
-			/* 
+			/*
 			 * Add the map entry before sending email to the user -
 			 * We don't want to send them mail if the data never gets into the DB
 			 */
@@ -175,7 +173,7 @@ class UserRecoverPasswordController extends GalleryController {
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
-			$shouldSendEmail = true;		    
+			$shouldSendEmail = true;
 		    }
 
 		    if (empty($error) && $shouldSendEmail) {
@@ -189,7 +187,7 @@ class UserRecoverPasswordController extends GalleryController {
 				      'subView' => 'core.UserRecoverPasswordConfirm',
 				      'userName' => $user->getUserName(),
 				      'authString' => $authString)));
-			
+
 			/* email template data */
 			$tplData = array('name' => $user->getfullName(),
 					 'baseUrl' => $baseUrl,
@@ -198,27 +196,27 @@ class UserRecoverPasswordController extends GalleryController {
 					 'userName' => $user->getUserName(),
 					 'recoverUrl' => $recoverUrl,
 					 );
-			
+
 			/* Load core for translation */
 			list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
-			
+
 			/* Send the user email based on our confirmation template */
 			$ret = GalleryCoreApi::sendTemplatedEmail(
 			    'modules/core/templates/UserRecoverPasswordEmail.tpl',
-			    $tplData, '', $user->getEmail(), 
+			    $tplData, '', $user->getEmail(),
 			    $module->translate('Password Recovery'));
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
-			}		    
+			}
 		    }
 
 		    /* Set the recovered info flag */
 		    $status['requestSent'] = 1;
 		} else if (isset($user) && $user->getUserName() == 'admin')  {
-		    /* 
+		    /*
 		     * TODO - We need to be able to support a renamed administrator account
 		     * or, possibly, the recovery of any administrator account.
 		     */
@@ -231,12 +229,12 @@ class UserRecoverPasswordController extends GalleryController {
 	    }
 	} else if (isset($form['action']['cancel'])) {
 	    $results['return'] = 1;
-	} 
+	}
 
 	if (empty($subView)) {
 	    $subView = 'core.UserRecoverPassword';
 	}
-	
+
 	if (empty($error)) {
 	    $results['redirect']['view'] = 'core.UserAdmin';
 	    $results['redirect']['subView'] = $subView;
@@ -244,7 +242,7 @@ class UserRecoverPasswordController extends GalleryController {
 	    $results['delegate']['view'] = 'core.UserAdmin';
 	    $results['delegate']['subView'] = $subView;
 	}
-	
+
 	$results['status'] = $status;
 	$results['error'] = $error;
 

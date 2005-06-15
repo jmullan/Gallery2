@@ -48,7 +48,7 @@ class GalleryUrlGenerator {
      * The base filename for the application.
      *
      * @var string $_baseFile
-     * @private
+     * @access private
      */
     var $_baseFile;
 
@@ -57,7 +57,7 @@ class GalleryUrlGenerator {
      * Only required for non-G2 requests (such as using imageblock on non-G2 pages in embed app).
      *
      * @var string $_embedPath
-     * @private
+     * @access private
      */
     var $_embedPath;
 
@@ -66,7 +66,7 @@ class GalleryUrlGenerator {
      * Should only be nonempty when G2 is embedded.
      *
      * @var string $_relativeG2Path
-     * @private
+     * @access private
      */
     var $_relativeG2Path;
 
@@ -75,7 +75,7 @@ class GalleryUrlGenerator {
      * Should only be nonempty when cookieless browsing is supported by CMS.
      *
      * @var string $_embedSessionString
-     * @private
+     * @access private
      */
     var $_embedSessionString;
 
@@ -83,7 +83,7 @@ class GalleryUrlGenerator {
      * The navigation id of the current URL.
      *
      * @var string $_navId
-     * @private
+     * @access private
      */
     var $_navId = '';
 
@@ -182,7 +182,7 @@ class GalleryUrlGenerator {
      * @param array input key/value pairs; may contain nested arrays
      * @param string prefix; used in recursive calls
      * @static
-     * @private
+     * @access private
      */
     function _appendNestedParams(&$args, $params, $prefix) {
 	foreach ($params as $key => $value) {
@@ -380,7 +380,7 @@ class GalleryUrlGenerator {
 
 	/* Decide whether to include session id in the url */
 	if ($session =& $gallery->getSession() &&
-	        ( (!isset($forceSessionId) && !$session->isUsingCookies()) ||
+		( (!isset($forceSessionId) && !$session->isUsingCookies()) ||
 		 (isset($forceSessionId) && $forceSessionId === true))) {
 	    if (!empty($this->_embedSessionString) && isset($appSession)) {
 		$embedSessionString = $this->_embedSessionString;
@@ -473,10 +473,10 @@ class GalleryUrlGenerator {
 	    }
 	    $this->_cookiePath[$forceG2Base] = $path;
 	}
-	
+
 	return array(GalleryStatus::success(), $this->_cookiePath[$forceG2Base]);
     }
-    
+
     /**
      * Initialize the navigation branch
      *
@@ -592,7 +592,7 @@ class GalleryUrlGenerator {
      *
      * @param integer set this to get links back to a certain depth
      * @return array ( object GalleryStatus a status code,
-                       array of navigational links: array('url' => ...,
+     *                 array of navigational links: array('url' => ...,
      *                                            'name' => 'Back to ...'))
      */
     function getNavigationLinks($depth = null) {
@@ -644,8 +644,8 @@ class GalleryUrlGenerator {
      */
     function embedForceSessionId($params) {
 	if (isset($params['view']) && $params['view'] == 'core.DownloadItem' &&
-	        GalleryUtilities::isEmbedded() &&
-	        (!isset($this->_cookiePathConfigured) || $this->_cookiePathConfigured != true)) {
+		GalleryUtilities::isEmbedded() &&
+		(!isset($this->_cookiePathConfigured) || $this->_cookiePathConfigured != true)) {
 	    /*
 	     * It is assumed that the G2 session is initiated before generateUrl() is called
 	     * for the first time.

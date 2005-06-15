@@ -160,7 +160,7 @@ class GalleryEmbed {
      *
      * @param string external user id of active user (null or empty for anonymous/guest user)
      * @return object GalleryStatus a status object
-     * @private
+     * @access private
      */
     function checkActiveUser($activeUserId) {
 	global $gallery;
@@ -347,7 +347,7 @@ class GalleryEmbed {
      *
      * @param object GalleryUser user
      * @param array additional user data
-     * @private
+     * @access private
      */
     function _setUserData(&$user, $args, $create = false) {
 	if (!empty($args['password'])) {

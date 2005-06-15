@@ -39,7 +39,7 @@ class ItemAddController extends GalleryController {
      * test code.
      *
      * @var array (optionId => object ItemAddOption) $_optionInstances
-     * @private
+     * @access private
      */
     var $_optionInstances;
 
@@ -177,7 +177,7 @@ class ItemAddController extends GalleryController {
      * @param object GalleryToolkit toolkit that supports extract operation
      * @return array object GalleryStatus a status code
      *               array of array('fileName' => '..', 'id' => ##, 'warnings' => array of string)
-     * @private
+     * @access private
      */
     function _extractAndAddFiles($archiveItem, $toolkit) {
 	global $gallery;
@@ -232,7 +232,7 @@ class ItemAddController extends GalleryController {
     /**
      * Recursively add files from extracted archive.
      * @return object GalleryStatus a status code
-     * @private
+     * @access private
      */
     function _recursiveAddDir($dir, $parentId, &$addedFiles, &$archiveItem, $titleMode) {
 	$list = array();
