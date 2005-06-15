@@ -157,8 +157,24 @@ class GalleryPhotoItem_core extends GalleryDataItem {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	$mimeType = $this->getMimeType();
+
+	/* Check for CMYK colorspace and alter mime type if detected */
+	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByProperty($mimeType, 'colorspace');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	if (isset($toolkit)) {
+	    list ($ret, $colorspace) = $toolkit->getProperty($mimeType, 'colorspace', $path);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    if ($colorspace[0] == 'CMYK') {
+		$this->setMimeType($mimeType .= '-cmyk');
+	    }
+	    $toolkit = null;
+	}
+
 	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByProperty($mimeType, 'dimensions');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

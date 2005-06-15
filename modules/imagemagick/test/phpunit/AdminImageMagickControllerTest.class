@@ -46,20 +46,38 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	list ($ret, $this->_cmykSupport) =
+	    GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'cmykSupport');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
-	$gallery->_platform = new AdminImageMagickControllerTestPlatform($gallery->getPlatform());
+	$gallery->setPlatform(
+	    new AdminImageMagickControllerTestPlatform($gallery->getPlatform(), $this));
+	$this->_ranIdentify = false;
     }
 
     function testSaveGoodPath() {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
+	$path = $slash . 'validPath' . $slash;
+
+	/*
+	 * Set the module param to this value before submitting form so we don't
+	 * try to reactivate the module due to path change.
+	 */
+	$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', 'path', $path);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
-
-	GalleryUtilities::putRequestVariable('form[path]', "${slash}validPath${slash}");
+	GalleryUtilities::putRequestVariable('form[path]', $path);
 	GalleryUtilities::putRequestVariable('form[jpegQuality]', '12');
+	GalleryUtilities::putRequestVariable('form[cmykSupport]', $this->_cmykSupport);
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -70,10 +88,11 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 			    $results);
 
 	/* Verify the settings went in properly */
-	$this->assertEquals(array(GalleryStatus::success(), "${slash}validPath${slash}"),
+	$this->assertEquals(array(GalleryStatus::success(), $path),
 			    GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'path'));
 	$this->assertEquals(array(GalleryStatus::success(), '12'),
 	    GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'jpegQuality'));
+	$this->assert($this->_ranIdentify, 'ran identify');
     }
 
     function testReset() {
@@ -107,6 +126,7 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[path]', "${slash}validPathBadBinaries${slash}");
 	GalleryUtilities::putRequestVariable('form[jpegQuality]', '12');
+	GalleryUtilities::putRequestVariable('form[cmykSupport]', $this->_cmykSupport);
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
@@ -126,6 +146,7 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[path]', "${slash}invalidPath${slash}");
 	GalleryUtilities::putRequestVariable('form[jpegQuality]', '12');
+	GalleryUtilities::putRequestVariable('form[cmykSupport]', $this->_cmykSupport);
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
@@ -145,6 +166,7 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[path]', '');
 	GalleryUtilities::putRequestVariable('form[jpegQuality]', '12');
+	GalleryUtilities::putRequestVariable('form[cmykSupport]', $this->_cmykSupport);
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
@@ -164,14 +186,9 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
  */
 class AdminImageMagickControllerTestPlatform {
 
-    var $_emulation;
-
-    function AdminImageMagickControllerTestPlatform($originalPlatform) {
+    function AdminImageMagickControllerTestPlatform($originalPlatform, &$unitTest) {
 	$this->_platform = $originalPlatform;
-    }
-
-    function setEmulation($what) {
-	$this->_emulation = $what;
+	$this->_unitTest =& $unitTest;
     }
 
     function file_exists($path) {
@@ -224,6 +241,7 @@ class AdminImageMagickControllerTestPlatform {
 	$slash = $this->getDirectorySeparator();
 	switch ($args[0][0]) {
 	case "${slash}validPath${slash}identify":
+	    $this->_unitTest->_ranIdentify = true;
 	    return array(1, array("test.gif GIF 50x50+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01"));
 
 	case "${slash}validPath${slash}convert":

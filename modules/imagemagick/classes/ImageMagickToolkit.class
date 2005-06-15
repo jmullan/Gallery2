@@ -69,6 +69,14 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    $results = array($count);
 	    break;
 
+	case 'colorspace':
+	    list ($ret, $colorspace) = $this->_getColorspace($sourceFilename);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $results = array($colorspace);
+	    break;
+
 	default:
 	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
 			 null);
@@ -456,6 +464,31 @@ class ImageMagickToolkit extends GalleryToolkit {
     }
 
     /**
+     * Call 'identify' to determine the image colorspace
+     */
+    function _getColorspace($filename) {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+
+	list ($ret, $cmd) = ImageMagickToolkitHelper::getCommand('identify');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($success, $output) =
+	    $platform->exec(array(array_merge($cmd, array('-format', '%r', $filename))));
+	if (!$success || empty($output)) {
+	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
+	}
+	foreach (array('RGB', 'CMYK') as $colorspace) {
+	    if (strpos($output[0], $colorspace) !== false) {
+		return array(GalleryStatus::success(), $colorspace);
+	    }
+	}
+	return array(GalleryStatus::success(), 'unknown');
+    }
+
+    /**
      * Do the given transform on the source image
      *
      * @param string the command to execute
@@ -534,6 +567,13 @@ class ImageMagickToolkit extends GalleryToolkit {
 		unset($args['page']);
 	    }
 	    $sourceFilename .= '[' . $page . ']';
+	    break;
+
+	case 'image/jpeg-cmyk':
+	    if (substr($outputMimeType, -5) != '-cmyk') {
+		$command[] = '-colorspace';
+		$command[] = 'RGB';
+	    }
 	    break;
 	}
 

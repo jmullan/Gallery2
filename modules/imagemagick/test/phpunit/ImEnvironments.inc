@@ -55,7 +55,7 @@ $_commonOperations = array(
 	'convert' => array('-rotate', '%angle%', '%src%', '%dst%'),
     ),
     'convert-to-image/jpeg' => array(
-	'convert' => array('-rotate', '%angle%', '%src%', 'jpeg:%dst%'),
+	'convert' => array('%src%', 'jpeg:%dst%'),
     ),
     'composite' => array(
 	'composite' => array('-geometry', '+%x%+%y%', '%image%', '%src%', '%dst%'),
@@ -149,6 +149,7 @@ identify: Missing an image file name [No such file or directory].',
 		'test.eps' => 'test.eps[0] 43x18 PseudoClass 2c 3141b PS 1s
 test.eps[1] 43x18 PseudoClass 2c 3141b PS 1s',
 		'testProfile.jpg' => 'testProfile.jpg 40x30 DirectClass 29kb JPEG 1s',
+		'-format' => array('cmyk.jpg' => 'Does4.xWork?'),
 	),
 );
 
@@ -228,6 +229,8 @@ test.pdf[1] PDF 612x792 DirectClass 8-bit 2840kb 0.0u 0:01',
 		'test.psd' => 'test.psd PSD 178x80+0+0 DirectClass 8-bit 127.1kb 0.000u 0:01',
 		'testProfile.jpg' =>
 		    'testProfile.jpg JPEG 40x30 DirectClass 8-bit 30585b 0.0u 0:01',
+		'-format' => array('cmyk.jpg' => "DirectClassCMYK\n",
+				   'rgb_file' => "DirectClassCMYK\n"), /* Fails to convert to RGB */
 	),
 );
 
@@ -254,6 +257,7 @@ $imEnvironment[] = array(
 		'application/pdf',
 		'application/postscript',
 		'application/photoshop',
+		'image/jpeg-cmyk',
 	),
 	'binaries' => array(
 		'animate',
@@ -268,7 +272,9 @@ $imEnvironment[] = array(
 		'montage',
 	),
 	'removeMetaDataSwitch' => array('+profile', '*'),
-	'operations' => $_commonOperations,
+	'operations' => array_merge($_commonOperations, array(
+	    'convert-to-image/jpeg' => array(
+		'convert' => array('-colorspace', 'RGB', '%src%', 'jpeg:%dst%')))),
 	'identify' => array(
 		'' => 'Version: ImageMagick 6.0.7 09/11/04 Q16 http://www.imagemagick.org
 Copyright: Copyright (C) 1999-2004 ImageMagick Studio LLC
@@ -324,6 +330,8 @@ test.pdf[1] PDF 612x792 612x792+0+0 PseudoClass 256c 947kb 0.030u 0:01',
 		'test.eps' => 'test.eps PS 43x18 43x18+0+0 PseudoClass 2c 170 0.000u 0:01',
 		'test.psd' => 'test.psd PSD 178x80+0+0 DirectClass 8-bit 127.1kb 0.000u 0:01',
 		'testProfile.jpg' => 'testProfile.jpg JPEG 40x30 DirectClass 30kb 0.010u 0:01',
+		'-format' => array('cmyk.jpg' => 'DirectClassCMYK',
+				   'rgb_file' => 'DirectClassRGB'),
 	),
 );
 
@@ -350,6 +358,7 @@ $imEnvironment[] = array(
 		'application/pdf',
 		'application/postscript',
 		'application/photoshop',
+		'image/jpeg-cmyk',
 	),
 	'binaries' => array(
 		'animate',
@@ -364,10 +373,12 @@ $imEnvironment[] = array(
 		'montage',
 	),
 	'removeMetaDataSwitch' => array('-strip'),
-	'operations' => array_merge($_commonOperations,
-	    array('thumbnail' =>
+	'operations' => array_merge($_commonOperations, array(
+	    'thumbnail' =>
 		array('convert' => array('-size', '%width%x%height%',
-		      '-geometry', '%width%x%height%', '-strip', '%src%', '%dst%')))),
+		      '-geometry', '%width%x%height%', '-strip', '%src%', '%dst%')),
+	    'convert-to-image/jpeg' => array(
+		'convert' => array('-colorspace', 'RGB', '%src%', 'jpeg:%dst%')))),
 	'identify' => array(
 		'' => 'Version: ImageMagick 6.1.3 11/01/04 Q16 http://www.imagemagick.org
 Copyright: Copyright (C) 1999-2004 ImageMagick Studio LLC
@@ -426,6 +437,8 @@ test.pdf[1] PDF 612x792 612x792+0+0 PseudoClass 256c 947kb 0.030u 0:01',
 		'test.eps' => 'test.eps PS 43x18 43x18+0+0 PseudoClass 2c 170 0.000u 0:01',
 		'test.psd' => 'test.psd PSD 178x80+0+0 DirectClass 8-bit 127.1kb 0.000u 0:01',
 		'testProfile.jpg' => 'testProfile.jpg JPEG 40x30 DirectClass 30kb 0.010u 0:01',
+		'-format' => array('cmyk.jpg' => 'DirectClassCMYK',
+				   'rgb_file' => 'DirectClassRGB'),
 	),
 );
 
@@ -509,6 +522,7 @@ test.pdf[1] PDF 612x792+0+0 PseudoClass 256c 8-bit 946.8k 0.030u 0:01',
 		'test.eps' => 'test.eps PS 43x18+0+0 PseudoClass 2c 8-bit 170.0 0.000u 0:01',
 		'testProfile.jpg' =>
 		    'testProfile.jpg JPEG 40x30+0+0 DirectClass 8-bit 29.9k 0.000u 0:01',
+		'-format' => array('cmyk.jpg' => 'DoesThisWork?'),
 	),
 );
 ?>

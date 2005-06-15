@@ -26,8 +26,8 @@
       <input type="text" id='giFormPath' size="40" autocomplete="off"
        name="{g->formVar var="form[path]"}" value="{$form.path}"/>
       {g->autoComplete element="giFormPath"}
-	{g->url arg1="view=core.SimpleCallback" arg2="command=lookupDirectories" arg3="prefix=__VALUE__"
-	  forJavascript="true"}
+	{g->url arg1="view=core.SimpleCallback" arg2="command=lookupDirectories"
+		arg3="prefix=__VALUE__" forJavascript="true"}
       {/g->autoComplete}
 
       {if isset($form.error.path.missing)}
@@ -56,10 +56,22 @@
       {g->text text="JPEG Quality:"}
     </td><td>
       <select name="{g->formVar var="form[jpegQuality]"}">
-	{html_options values=$AdminImageMagick.jpegQualityList selected=$form.jpegQuality output=$AdminImageMagick.jpegQualityList}
+	{html_options values=$AdminImageMagick.jpegQualityList
+	 selected=$form.jpegQuality output=$AdminImageMagick.jpegQualityList}
       </select>
     </td>
+  {if $form.cmykSupport!="none"}
+  </tr><tr>
+    <td>
+      {g->text text="CMYK JPEG Support:"}
+    </td><td>
+      <input type="checkbox"{if $form.cmykSupport=="on"} checked="checked"{/if}
+       onclick="document.getElementById('cmykSupport').value = this.checked ? 'on' : 'off'"/>
+    </td>
+  {/if}
   </tr></table>
+  <input type="hidden" id="cmykSupport"
+   name="{g->formVar var="form[cmykSupport]"}" value="{$form.cmykSupport}"/>
 </div>
 
 <div class="gbBlock gcBackground1">

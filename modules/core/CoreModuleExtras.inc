@@ -747,6 +747,7 @@ class CoreModuleExtras {
 	    /* Session cookie change, requires new config.php variable */
 	case '0.9.22':
 	    /* GalleryModule::getItemLinks API change (GalleryModule API bumped to 0.13) */
+
 	case '0.9.23':
 	    /* Session cookie change, revert the last change and try something new */
 	    foreach (array('cookie.path', 'cookie.domain') as $parameterName) {
@@ -755,6 +756,17 @@ class CoreModuleExtras {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
+
+	case '0.9.24':
+	    /* Add image/jpeg-cmyk mime type */
+	    list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime('jpgcmyk');
+	    if ($ret->isSuccess() && $mimeType == 'application/unknown') {
+		$ret = GalleryCoreApi::addMimeType('jpgcmyk', 'image/jpeg-cmyk', false);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
@@ -911,6 +923,7 @@ $gallery->setConfig(\'cookieId\', \'' . $cookieId . '\');
 		'remove' => array('{/\*[^/]*\*/\s*\$gallery->setConfig\(\'cookieId\',.*?;\s*}s'),
 		'add' => array());
 
+	case '0.9.24':
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we

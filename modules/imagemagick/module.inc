@@ -41,7 +41,7 @@ class ImageMagickModule extends GalleryModule {
 	$this->setId('imagemagick');
 	$this->setName($gallery->i18n('ImageMagick'));
 	$this->setDescription($gallery->i18n('ImageMagick Graphics Toolkit'));
-	$this->setVersion('0.9.6');
+	$this->setVersion('0.9.7');
 	$this->setGroup('toolkits', $this->translate('Graphics Toolkits'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
@@ -52,11 +52,13 @@ class ImageMagickModule extends GalleryModule {
      * @see GalleryModule::upgrade
      */
     function upgrade($currentVersion) {
-
-	if (!isset($currentVersion)) {
-	    /* Initial install */
-	    foreach (array('path' => '', 'jpegQuality' => '75')
-		     as $key => $value) {
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'imagemagick');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	foreach (array('path' => '', 'jpegQuality' => '75', 'cmykSupport' => 'none')
+		as $key => $value) {
+	    if (!isset($params[$key])) {
 		$ret = $this->setParameter($key, $value);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
@@ -122,7 +124,28 @@ class ImageMagickModule extends GalleryModule {
 	    }
 	}
 
+	/* Check CMYK colorspace support */
+	list ($ret, $cmykSupport) = $this->getParameter('cmykSupport');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (!isset($results['properties']['colorspace']) && $cmykSupport != 'none') {
+	    $ret = $this->setParameter('cmykSupport', $cmykSupport = 'none');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	} else if (isset($results['properties']['colorspace']) && $cmykSupport == 'none') {
+	    $ret = $this->setParameter('cmykSupport', $cmykSupport = 'off');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
 	foreach ($results['properties'] as $property => $info) {
+	    if ($property == 'colorspace' && $cmykSupport != 'on') {
+		/* Skip colorspace if this feature isn't turned on */
+		continue;
+	    }
 	    $ret = GalleryCoreApi::registerToolkitProperty('ImageMagick',
 							   $info['mimeTypes'],
 							   $property,
@@ -174,7 +197,7 @@ class ImageMagickModule extends GalleryModule {
      */
     function needsConfiguration() {
 	/* This module requires all fields to be filled out before it can be activated. */
-	foreach (array('path', 'jpegQuality') as $key) {
+	foreach (array('path', 'jpegQuality', 'cmykSupport') as $key) {
 	    list ($ret, $value) = $this->getParameter($key);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);

@@ -299,6 +299,15 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
+	    if (in_array('image/jpeg-cmyk', $environment['mimeTypes'])) {
+		$ret = $this->_testOperation('image/jpeg-cmyk', 'convert-to-image/jpeg',
+					     'cmyk.jpg', 'rgb.jpg',
+					     array(), array());
+		if ($ret->isError()) {
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+	    }
+
 	    list ($ret, $mimeType) =
 		$this->_toolkit->performOperation('image/png', 'BOGUS',
 						  'BOGUS',
@@ -594,6 +603,15 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	    }
 	    $this->assertEquals(array(2), $results, 'page-count ' . $this->_envName());
 
+	    if (in_array('image/jpeg-cmyk', $environment['mimeTypes'])) {
+		list ($ret, $results) =
+		    $this->_toolkit->getProperty('image/jpeg', 'colorspace', 'cmyk.jpg');
+		if ($ret->isError()) {
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+		$this->assertEquals(array('CMYK'), $results, 'colorspace ' . $this->_envName());
+	    }
+
 	    list ($ret, $results) =
 		$this->_toolkit->getProperty('image/gif', 'BOGUS', 'BOGUS');
 	    $this->assert($ret->getErrorCode() & ERROR_UNIMPLEMENTED,
@@ -826,7 +844,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 		),
 	    )), $results['operations'], $this->_envName());
 
-	    $this->assertEquals(array(
+	    $properties = array(
 		'dimensions' => array(
 		    'type' => 'int,int',
 		    'description' => 'Get the width and height of the image',
@@ -838,7 +856,15 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 		    'description' => 'Get the number of pages',
 		    'mimeTypes' => $canPage
 		),
-	    ), $results['properties'], $this->_envName());
+	    );
+	    if (in_array('image/jpeg-cmyk', $environment['mimeTypes'])) {
+		$properties['colorspace'] = array(
+		    'type' => 'string',
+		    'description' => 'Get the colorspace of the image',
+		    'mimeTypes' => array('image/jpeg')
+		);
+	    }
+	    $this->assertEquals($properties, $results['properties'], $this->_envName());
 	}
     }
 
@@ -909,10 +935,19 @@ class ImageMagickToolkitTestPlatform {
 	$binary = array_shift($firstCmd);
 	$binary = basename($binary);
 	if ($binary == 'identify') {
-	    $file = array_shift($firstCmd);
-	    $file = basename($file);
-	    if (isset($this->_environment['identify'][$file])) {
-		$output = split("\n", $this->_environment['identify'][$file]);
+	    $file = basename(array_shift($firstCmd));
+	    $data = $this->_environment['identify'];
+	    if ($file == '-format' && count($firstCmd) >= 2) {
+		/* Cmd to identify colorspace */
+		$data = $data['-format'];
+		$file = basename($firstCmd[1]);
+		if (isset($this->_files[$file]['operation']['convert'][0]) &&
+			$this->_files[$file]['operation']['convert'][0] == '-colorspace') {
+		    $file = 'rgb_file';
+		}
+	    }
+	    if (isset($data[$file])) {
+		$output = split("\n", $data[$file]);
 	    } else {
 		$output = split("\n", $this->_environment['identify']['UNKNOWN']);
 	    }
@@ -1084,6 +1119,7 @@ class ImageMagickToolkitTestPlatform {
 
     function tempnam($dir, $prefix) {
 	$fileName = $dir . $prefix . md5(rand());
+	$this->_files[basename($fileName)] = 'temp';
 	/*echo $this->_environment['path'] . ": tempnam($dir, $prefix) = $fileName<br>\n"; */
 	return $fileName;
     }

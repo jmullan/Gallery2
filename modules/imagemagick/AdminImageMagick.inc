@@ -87,6 +87,12 @@ class AdminImageMagickController extends GalleryController {
 	    }
 
 	    if (empty($error)) {
+		list ($ret, $params) =
+		    GalleryCoreApi::fetchAllPluginParameters('module', 'imagemagick');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
 		$ret = GalleryCoreApi::setPluginParameter(
 		    'module', 'imagemagick', 'path', $form['path']);
 		if ($ret->isError()) {
@@ -104,6 +110,13 @@ class AdminImageMagickController extends GalleryController {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
+		if ($params['cmykSupport'] != 'none') {
+		    $ret = GalleryCoreApi::setPluginParameter(
+			'module', 'imagemagick', 'cmykSupport', $form['cmykSupport']);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		}
 
 		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imagemagick');
 		if ($ret->isError()) {
@@ -112,6 +125,17 @@ class AdminImageMagickController extends GalleryController {
 		list ($ret, $isActive) = $module->isActive();
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		/*
+		 * If path or cmykSupport has changed and the module is active then
+		 * reactivate to update supported mime types, operations, properties.
+		 */
+		if ($isActive && ($params['path'] != $form['path'] ||
+				  $params['cmykSupport'] != $form['cmykSupport'])) {
+		    list ($ret) = $module->reactivate();
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
 		}
 
 		$redirect['view'] = 'core.SiteAdmin';
@@ -158,7 +182,7 @@ class AdminImageMagickView extends GalleryView {
 
 	/* Load our default values if we didn't just come from this form. */
 	if ($form['formName'] != 'AdminImageMagick') {
-	    foreach (array('path', 'jpegQuality') as $key) {
+	    foreach (array('path', 'jpegQuality', 'cmykSupport') as $key) {
 		list ($ret, $form[$key]) =
 		    GalleryCoreApi::getPluginParameter('module', 'imagemagick', $key);
 		if ($ret->isError()) {
