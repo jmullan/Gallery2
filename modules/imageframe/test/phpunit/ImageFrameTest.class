@@ -115,6 +115,9 @@ class ImageFrameTest extends GalleryTestCase {
  */
 class ImageFrameDummyGalleryTemplate {
     var $data = array();
+    function hasVariable($key) {
+	return isset($this->data[$key]);
+    }
     function setVariable($key, $value) {
 	$this->data[$key] = $value;
     }
