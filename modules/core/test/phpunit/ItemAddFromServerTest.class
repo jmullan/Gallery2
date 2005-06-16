@@ -496,5 +496,10 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
     function isSymlinkSupported() {
 	return $this->_symlinkSupported;
     }
+
+    function exec($cmd) {
+	/* In case add of jpeg tries to get 'colorspace' property */
+	return array(true, array(''), array());
+    }
 }
 ?>
