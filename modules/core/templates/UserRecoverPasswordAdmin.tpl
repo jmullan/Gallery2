@@ -26,7 +26,7 @@
 </div>
 
 <div class="gbBlock">
-  {g->text text="This page can be used to securely reset the password on your 'admin' account."}
+  {g->text text="This page can be used by a system administrator to securely reset the password on any account."}
 </div>
 
   {if isset($UserRecoverPasswordAdmin.status.authString.correct)}
@@ -35,6 +35,28 @@
       {g->text text="Authorization Confirmed"}
     </h2>
     {g->text text="Your authorization has been confirmed.  Please enter your new password below.  After setting your new password you will be taken to the login page."}
+  </div>
+
+  <div class="gbBlock">
+    <h4>{g->text text="Recover Password for Username"}</h4>
+
+    <input type="text" size="20" autocomplete="off" name="{g->formVar var="form[userName]"}"
+     id="giFormUsername" value="{$UserRecoverPasswordAdmin.status.userName}"/>
+
+    <script type="text/javascript">
+      document.forms[0]['{g->formVar var="form[userName]"}'].focus();
+    </script>
+
+    {if isset($form.error.userName.missing)}
+    <div class="giError">
+      {g->text text="You must enter a username to recover the password for."}
+    </div>
+    {/if}
+    {if isset($form.error.userName.incorrect)}
+    <div class="giError">
+      {g->text text="The username you entered does not exist."}
+    </div>
+    {/if}
   </div>
 
   <div class="gbBlock">

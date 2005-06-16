@@ -124,10 +124,6 @@ class UserRecoverPasswordController extends GalleryController {
 		}
 
 		if (isset($user) && $user->getEmail() != '') {
-		    /* Give the admin user an alternate method for recovery */
-		    if ($user->getUserName() == 'admin') {
-			$status['adminReset'] = 1;
-		    }
 
 		    /* Generate a unique auth string based on userName, time of request and IP */
 		    $authString = $phpVm->md5(
@@ -215,13 +211,6 @@ class UserRecoverPasswordController extends GalleryController {
 
 		    /* Set the recovered info flag */
 		    $status['requestSent'] = 1;
-		} else if (isset($user) && $user->getUserName() == 'admin')  {
-		    /*
-		     * TODO - We need to be able to support a renamed administrator account
-		     * or, possibly, the recovery of any administrator account.
-		     */
-		    $subView = 'core.UserRecoverPasswordAdmin';
-		    $results['redirect']['return'] = 1;
 		} else {
 		    /* Silently succeed; we don't reward phishing attempts */
 		    /* Set the recovered info flag */

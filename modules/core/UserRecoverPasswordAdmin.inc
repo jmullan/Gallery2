@@ -58,6 +58,10 @@ class UserRecoverPasswordAdminController extends GalleryController {
 	    }
 
 	    if (empty($error)) {
+		if (empty($form['userName'])) {
+		    $error[] = 'form[error][userName][missing]';
+		}
+
 		if (empty($form['password1']) || empty($form['password2'])) {
 		    $error[] = 'form[error][password][missing]';
 		} else if ($form['password1'] != $form['password2']) {
@@ -70,12 +74,12 @@ class UserRecoverPasswordAdminController extends GalleryController {
 		 * TODO - We need to be able to support a renamed administrator account
 		 * or, possibly, the recovery of any administrator account.
 		 */
-		list ($ret, $user) = GalleryCoreApi::fetchUserByUsername('admin');
-		if ($ret->isError()) {
+		list ($ret, $user) = GalleryCoreApi::fetchUserByUsername($form['userName']);
+		if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 		    return array($ret->wrap(__FILE__, __LINE__, 'Unable to load admin user'), null);
 		}
 
-		if ($user && $user->getUserName() == 'admin') {
+		if (isset($user)) {
 		    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($user->getId());
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
@@ -99,20 +103,31 @@ class UserRecoverPasswordAdminController extends GalleryController {
 		    }
 
 		    $status['passwordRecovered'] = 1;
+
+		    /*
+		     * Return 0 is essential - it prevents core.UserLogin from sending the 
+		     * user back to the recovery page after logging in
+		     */
+		    $results['return'] = 0;
+		    $subView = 'core.UserLogin';
+
 		    $session->remove('core.UserRecoverPasswordAdminAuthKey');
 		} else {
-		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
-				 null);
+		    $error[] = 'form[error][userName][incorrect]';
 		}
 	    }
 	} else if (isset($form['action']['cancel'])) {
 	    $results['return'] = 1;
 	}
 
+	if (empty($subView)) {
+	    $subView = 'core.UserRecoverPasswordAdmin';
+	}
+
 	if (empty($error) && !isset($form['action']['refresh'])) {
 	    $results['redirect']['view'] = 'core.UserAdmin';
-	    $results['redirect']['subView'] =
-		empty($status) ? 'core.UserRecoverPasswordAdmin' : 'core.UserLogin';
+	    $results['redirect']['subView'] = $subView;
+
 	} else  {
 	    $results['delegate']['view'] = 'core.UserAdmin';
 	    $results['delegate']['subView'] = 'core.UserRecoverPasswordAdmin';
@@ -173,6 +188,8 @@ class UserRecoverPasswordAdminView extends GalleryView {
 		$error['authString']['incorrect'] = 1;
 	    }
 	}
+
+	$status['userName'] = GalleryUtilities::getRequestVariables('userName');
 
 	$UserRecoverPasswordAdmin['authString'] = $authString;
 	$UserRecoverPasswordAdmin['error'] = $error;

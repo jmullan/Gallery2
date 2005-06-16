@@ -14,28 +14,18 @@
 
 <div class="gbBlock">
   {if isset($status.requestSent)}
+  {capture name="adminResetUrl"}
+  <a href='{g->url arg1="view=core.UserAdmin" arg2="subView=core.UserRecoverPasswordAdmin"}'>
+  {/capture}
   <div class="gbBlock">
     <h2 class="giSuccess">
       {g->text text="Your recovery request has been sent!"}
     </h2>
-    <h2> 
-      {g->text text="Note that if the account does not have an email address, you may not receive the email and you should contact your system administrator for help."}
-    </h2>
+    {g->text text="Note that if the account does not have an email address, you may not receive the email and you should contact your system administrator for help."}
+    <br/><br/>
+    {g->text text="Administrators can use the %sEmergency Password Recovery%s page to recover the admin account if they fail to receive recovery email due to server problems, or lack of a working email address." arg1=$smarty.capture.adminResetUrl arg2="</a>"}
+    {/if}
   </div>
-  {/if}
-  {if isset($status.adminReset)}
-  <div class="gbBlock">
-    <h2>
-      {g->text text="Administrator Recovery"}
-    </h2>
-    <h2>
-      {capture name="adminResetUrl"}
-      <a href='{g->url arg1="view=core.UserAdmin" arg2="subView=core.UserRecoverPasswordAdmin"}'>
-      {/capture}
-      {g->text text="You can use the %sAdministrator Password Recovery%s if you don't receive a recovery email from Gallery." arg1=$smarty.capture.adminResetUrl arg2="</a>"}
-    </h2>
-  </div>
-  {/if}
 
   <h4>{g->text text="Username"}</h4>
 
