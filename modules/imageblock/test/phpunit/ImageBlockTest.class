@@ -506,6 +506,9 @@ class ImageBlockToolkit extends GalleryToolkit {
  */
 class ImageBlockDummyGalleryTemplate {
     var $data = array();
+    function hasVariable($key) {
+	return isset($this->data[$key]);
+    }
     function setVariable($key, $value) {
 	$this->data[$key] = $value;
     }

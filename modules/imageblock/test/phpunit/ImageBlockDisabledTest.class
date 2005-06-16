@@ -287,6 +287,9 @@ class ImageBlockDisabledTest extends GalleryTestCase {
  */
 class ImageBlockDisabledDummyGalleryTemplate {
     var $data = array();
+    function hasVariable($key) {
+	return isset($this->data[$key]);
+    }
     function setVariable($key, $value) {
 	$this->data[$key] = $value;
     }
