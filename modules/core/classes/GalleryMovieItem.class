@@ -243,97 +243,52 @@ class GalleryMovieItem_core extends GalleryDataItem {
 	    list ($width, $height) = array($this->getWidth(), $this->getHeight());
 	    switch($this->getMimeType()) {
 	    case 'video/quicktime':
-		return sprintf('<script type="text/javascript">
-		    // <![CDATA[
-		    if (window.ActiveXObject) {
-			document.write(\'<object id="movie"\');
-			document.write(\' %s\');
-			document.write(\' width="%s"\');
-			document.write(\' height="%s"\');
-			document.write(\' loop="false"\');
-			document.write(\' autoplay="true"\');
-			document.write(\' pluginspage="http://www.apple.com/quicktime/download/"\');
-			document.write(\' codebase="http://www.apple.com/qtactivex/qtplugin.cab"\');
-			document.write(\' classid="clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B">\');
-			document.write(\'  <param name="src" value="%s" />\');
-			document.write(\'  <param name="autoplay" value="true" />\');
-			document.write(\'  <param name="controller" value="true" />\');
-			document.write(\'  %s\');
-			document.write(\'</object>\');
-		    } else {
-			document.write(\'<object id="movie"\');
-			document.write(\' %s\');
-			document.write(\' type="%s"\');
-			document.write(\' data="%s"\');
-			document.write(\' width="%s"\');
-			document.write(\' height="%s">\');
-			document.write(\'  %s\');
-			document.write(\'</object>\');
-		    }
-		    // ]]>
-		    </script>',
+		return sprintf(
+		'<object classid="clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B"
+			 codebase="http://www.apple.com/qtactivex/qtplugin.cab"
+			 width="%s" height="%s" id="%s"%s>
+			   <param name="src" value="%s"/>
+			   <param name="controller" value="true"/>
+			   <param name="autoplay" value="true"/>
+			   <param name="loop" value="false"/>
+			   <embed src="%s" width="%s" height="%s" type="%s"
+				  pluginspage="http://www.apple.com/quicktime/download/"
+				  controller="true" autoplay="true" loop="false">
+			    %s </embed>
+		 </object>',
 
-		    /* IE object */
-		    !empty($params['class']) ? 'class="' . $params['class'] . '"' : '',
-		    $width,
-		    $height+16,
-		    $src,
-		    $fallback,
-
-		    /* Mozilla object */
-		    !empty($params['class']) ? 'class="' . $params['class'] . '"' : '',
-		    $this->getMimeType(),
-		    $src,
-		    $width,
-		    $height+16,
-		    $fallback);
+		$width, $height + 16,
+		!empty($params['id']) ? $params['id'] : 'movie',
+		!empty($params['class']) ? ' class="' . $params['class'] . '"' : '',
+		$src, $src,
+		$width, $height + 16,
+		$this->getMimeType(),
+		$fallback);
 
 	    case 'video/mpeg':
 	    case 'video/x-msvideo':
 	    case 'video/x-ms-wmv':
-		return sprintf('<script type="text/javascript">
-		    // <![CDATA[
-		    if (window.ActiveXObject) {
-			document.write(\'<object id="movie"\');
-			document.write(\' %s\');
-			document.write(\' width="%s"\');
-			document.write(\' height="%s"\');
-			document.write(\' classid="CLSID:05589FA1-C356-11CE-BF01-00AA0055595A">\');
-			document.write(\'<param name="ShowDisplay" value="0" />\');
-			document.write(\'<param name="ShowControls" value="1" />\');
-			document.write(\'<param name="AutoStart" value="1" />\');
-			document.write(\'<param name="AutoRewind" value="-1" />\');
-			document.write(\'<param name="Volume" value="0" />\');
-			document.write(\'<param name="FileName" value="%s" />\');
-			document.write(\'%s\');
-			document.write(\'</object>\');
-		    } else {
-			document.write(\'<object id="movie"\');
-			document.write(\' %s\');
-			document.write(\' data="%s"\');
-			document.write(\' type="%s"\');
-			document.write(\' width="%s"\');
-			document.write(\' height="%s">\');
-			document.write(\'%s\');
-			document.write(\'</object>\');
-		    }
-		    // ]]>
-		    </script>',
+		return sprintf(
+		'<object classid="CLSID:05589FA1-C356-11CE-BF01-00AA0055595A"
+			 width="%s" height="%s" id="%s"%s>
+			   <param name="ShowDisplay" value="0"/>
+			   <param name="ShowControls" value="1"/>
+			   <param name="AutoStart" value="1"/>
+			   <param name="AutoRewind" value="-1"/>
+			   <param name="Volume" value="0"/>
+			   <param name="FileName" value="%s"/>
+			   <embed src="%s" width="%s" height="%s" type="%s"
+				  controller="true" autoplay="true" loop="false">
+			    %s </embed>
+		 </object>',
 
-		    /* IE object */
-		    !empty($params['class']) ? 'class="' . $params['class'] . '"' : '',
-		    $width,
-		    $height+50,
-		    $src,
-		    $fallback,
-
-		    /* Mozilla object */
-		    !empty($params['class']) ? 'class="' . $params['class'] . '"' : '',
-		    $src,
-		    $this->getMimeType(),
-		    $width,
-		    $height+50,
-		    $fallback);
+		$width, $height + 50,
+		!empty($params['id']) ? $params['id'] : 'movie',
+		!empty($params['class']) ? ' class="' . $params['class'] . '"' : '',
+		$src, $src,
+		$width, $height + 50,
+		$this->getMimeType(),
+		$fallback);
 
 	    default:
 		return $fallback;
