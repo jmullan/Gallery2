@@ -65,7 +65,8 @@ function smtpmail($config, $to, $subject, $body, $headers=null) {
     }
 
     // Connect
-    if (!($socket = fsockopen($config['smtp.host'], 25, $errno, $errstr, 20))) {
+    list ($config['smtp.host'], $port) = array_merge(explode(':', $config['smtp.host']), array(25));
+    if (!($socket = fsockopen($config['smtp.host'], $port, $errno, $errstr, 20))) {
 	return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 				    "Could not connect to smtp host : $errno : $errstr");
     }
