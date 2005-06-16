@@ -13,7 +13,7 @@
     </h2>
     <div class="giDescription">
       {capture name="downloadUrl"}
-      <a href="{g->url arg1="view=core.UserAdmin" arg2="subView=core.UserRecoverPasswordDownload"}">
+      <a href="{g->url arg1="view=core.UserRecoverPasswordDownload" forceDirect=true}">
       {/capture}
       {g->text text="As a convenience to you, we've prepared a %scorrect version of login.txt%s for you.  Download that and copy it into your install directory and you're all set." arg1=$smarty.capture.downloadUrl arg2="</a>"}
      </div>
