@@ -43,28 +43,26 @@ class UserRecoverPasswordAdminController extends GalleryController {
      */
     function handleRequest($form) {
 	global $gallery;
-
-	$status = array();
-	$results = array();
-	$error = array();
-
-	$platform =& $gallery->getPlatform();
+	$platform = $gallery->getPlatform();
 	$session =& $gallery->getSession();
 
-	$authFile = dirname(__FILE__) . '/../../login.txt';
+	$status = $error = $results = array();
 
-	$authFromFile = trim(join('', $platform->file($authFile)));
+	if (isset($form['action']['recover'])) {
+	    $authFile = dirname(dirname(dirname(__FILE__))) . '/login.txt';
+	    $authFromFile = $platform->is_readable($authFile) ?
+		trim(implode('', $platform->file($authFile))) : '';
 
-	if ($session->get('core.UserRecoverPasswordAdminAuthKey') != $authFromFile) {
-	    /* Just set a flag so we don't continue.  The actual error is handled in the view */
-	    $error[] = 'form[error][authString][incorrect]';
-	}
+	    if ($session->get('core.UserRecoverPasswordAdminAuthKey') != $authFromFile) {
+		$error[] = 'form[error][authString][incorrect]';
+	    }
 
-	if (empty($error) && isset($form['action']['recover'])) {
-	    if (empty($form['password1']) || empty($form['password2'])) {
-		$error[] = 'form[error][password][missing]';
-	    } else if ($form['password1'] != $form['password2']) {
-		$error[] = 'form[error][password][mismatch]';
+	    if (empty($error)) {
+		if (empty($form['password1']) || empty($form['password2'])) {
+		    $error[] = 'form[error][password][missing]';
+		} else if ($form['password1'] != $form['password2']) {
+		    $error[] = 'form[error][password][mismatch]';
+		}
 	    }
 
 	    if (empty($error)) {
@@ -108,16 +106,14 @@ class UserRecoverPasswordAdminController extends GalleryController {
 		}
 	    }
 	} else if (isset($form['action']['cancel'])) {
-	    $results['redirect']['view'] = 'core.UserAdmin';
-	    $results['redirect']['subView'] = 'core.UserRecoverPasswordAdmin';
 	    $results['return'] = 1;
 	}
 
-	if (empty($error) && !empty($status)) {
+	if (empty($error) && !isset($form['action']['refresh'])) {
 	    $results['redirect']['view'] = 'core.UserAdmin';
-	    $results['redirect']['subView'] = 'core.UserLogin';
-	    $results['return'] = 0;
-	} else if (empty($results['return'])) {
+	    $results['redirect']['subView'] =
+		empty($status) ? 'core.UserRecoverPasswordAdmin' : 'core.UserLogin';
+	} else  {
 	    $results['delegate']['view'] = 'core.UserAdmin';
 	    $results['delegate']['subView'] = 'core.UserRecoverPasswordAdmin';
 	}
@@ -189,18 +185,18 @@ class UserRecoverPasswordAdminView extends GalleryView {
 
     /**
      * Generate the authorization string used for login.txt
+     * @access private
      */
     function _generateAuthString() {
 	global $gallery;
-
 	$session =& $gallery->getSession();
 
-        for ($len=64, $rand='';
-             strlen($rand) < $len;
-             $rand .= chr(!mt_rand(0, 2) ? mt_rand(48, 57) :
-                          (!mt_rand(0, 1) ? mt_rand(65, 90) :
-                           mt_rand(97, 122))));
-        $session->put('core.UserRecoverPasswordAdminAuthKey', md5($rand));
+	for ($len=64, $rand='';
+	     strlen($rand) < $len;
+	     $rand .= chr(!mt_rand(0, 2) ? mt_rand(48, 57) :
+			  (!mt_rand(0, 1) ? mt_rand(65, 90) :
+			   mt_rand(97, 122))));
+	$session->put('core.UserRecoverPasswordAdminAuthKey', md5($rand));
     }
 }
 ?>

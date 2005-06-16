@@ -53,7 +53,7 @@
 
 <div class="gbBlock">
   {capture name="recoverUrl"}
-  {g->url arg1="view=core.UserAdmin" arg2="subView=core.UserRecoverPassword"}
+  {g->url arg1="view=core.UserAdmin" arg2="subView=core.UserRecoverPassword" arg3="return=1"}
   {/capture}
   {g->text text="Lost or forgotten passwords can be retrieved using the <a href=\"%s\">recover password</a> page" arg1=$smarty.capture.recoverUrl}
 </div>

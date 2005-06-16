@@ -221,6 +221,7 @@ class UserRecoverPasswordController extends GalleryController {
 		     * or, possibly, the recovery of any administrator account.
 		     */
 		    $subView = 'core.UserRecoverPasswordAdmin';
+		    $results['redirect']['return'] = 1;
 		} else {
 		    /* Silently succeed; we don't reward phishing attempts */
 		    /* Set the recovered info flag */
