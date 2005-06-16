@@ -1,34 +1,34 @@
 # de_DE.po,v
-# 
+#
 # Gallery - a web based photo album viewer and editor
 # Copyright (C) 2000-2005 Bharat Mediratta
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or (at
 # your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-# 
+#
 # Previous translators (as far as known, add yourself here, please):
 # - Jens Tkotz <jens@peino.de>
 # - Ernesto Baschny <ernst@baschny.de>
 # - Frederik Kunz <frederik.kunz@web.de>
 # - Georg Rehfeld <rehfeld@georg-rehfeld.de>
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: Gallery: Core 1.0\n"
 "POT-Creation-Date: 2003-02-11 03:09-0800\n"
-"PO-Revision-Date: 2005-06-11 05:08+0200\n"
-"Last-Translator: Georg Rehfeld <rehfeld@georg-rehfeld.de>\n"
+"PO-Revision-Date: 2005-06-15 04:58+0200\n"
+"Last-Translator: Frederik Kunz <frederik.kunz@web.de>\n"
 "Language-Team: German <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -37,6 +37,7 @@ msgstr ""
 "X-Poedit-Language: German\n"
 "X-Poedit-Country: GERMANY\n"
 "X-Poedit-SourceCharset: utf-8\n"
+"X-Generator: KBabel 1.10\n"
 
 msgid "Gallery Email Test"
 msgstr "Gallery E-Mail-Test"
@@ -184,9 +185,6 @@ msgstr "Site-Administratoren"
 
 msgid "Guest"
 msgstr "Gast"
-
-msgid "Gallery Administrator"
-msgstr "Gallery-Administrator"
 
 msgid "Gallery"
 msgstr "Gallery"
@@ -814,10 +812,10 @@ msgid "Error sending test email, see below for details"
 msgstr "Fehler beim Senden der Test-E-Mail, siehe unten für Einzelheiten."
 
 msgid "Invalid cookie path"
-msgstr ""
+msgstr "Ungültiger Cookie-Pfad"
 
 msgid "Invalid cookie domain"
-msgstr ""
+msgstr "Ungültige Cookie-Domäne"
 
 msgid "Language Settings"
 msgstr "Spracheinstellungen"
@@ -990,15 +988,17 @@ msgstr "Ungültige E-Mail-Adresse"
 msgid "Email Test Error"
 msgstr "Fehler beim E-Mail-Test"
 
-#, fuzzy
 msgid "Cookies"
-msgstr "Werkzeuge"
+msgstr "Cookies"
 
 msgid ""
 "When Gallery is embedded in another application (portal, CMS, forum, etc.), "
 "then you have the choice between two options. Everyone else does not have to "
 "care about the cookie settings. Read on for more details."
 msgstr ""
+"Wenn die Gallery in eine andere Anwendung eingebunden ist (Portal, CMS, "
+"Forum, etc.), haben Sie die Wahl zwischen zwei Optionen.  Niemand sonst muss "
+"sich um die Cookie-Einstellungen kümmern. Lesen Sie weiter für mehr Details."
 
 msgid ""
 "If your Gallery is embedded and you leave the following fields empty, then "
@@ -1013,6 +1013,19 @@ msgid ""
 "gallery2/ with /application/. The cookie path is the part of the paths that "
 "is equal, in this case it is '/application/'. Most often it is just '/'."
 msgstr ""
+"Fals Ihre Gallery in eine andere Anwendung eingebettet ist und Sie die "
+"folgenden Felder leer lassen, dann haben alle DownloadItem-Verweise (die URLs "
+"der Bilder und anderer Elemente) in der eingebetteten Gallery <b>einen "
+"angehängten GALLERYSID-String</b> in der URL, welcher ein <b>geringfügiges "
+"Sicherheitsrisiko</b> darstellt, falls Ihre Gallery-Benutzer anfangen, "
+"Bilder-URLs in Foren, Gästebücher, etc. reinzukopieren. Die Alternative ist, "
+"den <b>Cookie-Pfad</b> einzustellen. Gallery wird dann <b>keine GALLERYSID "
+"an die eingebetteten DownloadItem-URLs anfügen</b>. Wenn z.B. die Gallery "
+"unter http://www.beispiel.de/anwendung/gallery2/ liegt und die einbettende "
+"Anwendung unter http://www.beispiel.de/anwendung/, dann müssen Sie den Pfad /"
+"anwendung/gallery2/ mit /anwendung/ vergleichen. Der Cookie-Pfad ist der "
+"Teil der Pfade, welcher identisch ist, in diesem Fall ist es '/anwendung/'. "
+"Meistens ist es einfach '/'."
 
 msgid ""
 "The <b>cookie domain</b> is also only needed for embedded Gallery installs "
@@ -1024,15 +1037,29 @@ msgid ""
 "have to set the cookie domain example.com (the part of the host string that "
 "is common to both, Gallery and the embedding application)."
 msgstr ""
+"Die <b>Cookie-Domäne</b> wird ebenfalls nur bei eingebettenten Gallery-"
+"Installationen gebraucht, und auch nur dann, wenn Sie den GALLERYSID-String "
+"in den eingebetteten DownloadItem-URLs loswerden wollen. <b>In den meisten "
+"Fällen, kann die Cookie-Domäne leer gelassen werden.</b> Stellen Sie sie nur "
+"ein, wenn die Gallery und die einbettende Anwendung ausschließlich über "
+"<b>unterschiedliche Subdomänen</b> erreichbar sind, z.B. wenn die Gallery "
+"unter http://photos.beispiel.de/ liegt und die Anwendung unter http://www."
+"beispiel.de/. In diesem Fall müssen Sie die Cookie-Domäne beispiel.de "
+"einstellen (der Teil der Adressen, welcher in beiden enthalten ist, sowohl "
+"bei der Gallery als auch der einbettenden Anwendung)."
 
 msgid ""
 "Once you change the cookie settings, <b>all registered users</b> of your "
 "Gallery will <b>have to clear their browser cookie cache</b>. If they do "
 "not, they will experience login / logout / lost session problems."
 msgstr ""
+"Sobald Sie die Cookie-Einstellungen geändert haben, müssen <b>alle "
+"registrierten Benutzer</b> Ihrer Gallery ihren <b>Cookie-Cache im Browser "
+"leeren</b>. Wenn sie das nicht tun, werden sie Probleme beim Ein-/Ausloggen "
+"oder während des Nutzungsvorgangs haben."
 
 msgid "Domain"
-msgstr ""
+msgstr "Domäne"
 
 msgid "Locking System"
 msgstr "Sperrungs-Methode"
@@ -2790,15 +2817,16 @@ msgstr ""
 "Mail bekommen. Bitte wenden Sie sich dann für Hilfe an Ihren System-"
 "Administrator."
 
-#, fuzzy
 msgid "Administrator Recovery"
-msgstr "Passwort-Wiederherstellung"
+msgstr "Administrator-Wiederherstellung"
 
 #, c-format
 msgid ""
 "You can use the %sAdministrator Password Recovery%s if you don't receive a "
 "recovery email from Gallery."
 msgstr ""
+"Sie können die %sAdministrator Passwort-Wiederherstellung%s verwenden, wenn "
+"Sie keine Wiederherstellungs-E-Mail von der Gallery erhalten."
 
 msgid "Recover"
 msgstr "Wiederherstellen"
@@ -2809,13 +2837,20 @@ msgid ""
 "who you claim.  The best way to be sure is to ask you to make a tiny change "
 "in the Gallery directory which will prove that you have the right "
 "permissions.  So, we're going to ask that you create a new text file called %"
-"s in the <tt>%s</tt> directory on your webserver (that's the root Gallery 2 "
-"directory). It must contain the following randomly generated characters:"
+"s in your gallery2 directory. It must contain the following randomly "
+"generated characters:"
 msgstr ""
+"Um mit dem Zurücksetzen des Passworts fortfahren zu können, müssen wir "
+"sicherstellen, dass Sie auch derjenige sind, für den Sie sich ausgeben. Der "
+"beste Weg um sicher zu sein ist, Sie zu bitten eine kleine Änderung im "
+"Gallery-Ordner vorzunehmen, die beweist, dass Sie die entsprechenden "
+"Zugriffsrechte besitzen. Wir bitten Sie also, eine Textdatei namens %s im "
+"Gallery-Ordner zu erstellen. Diese Datei muss die folgenden, zufällig "
+"erzeugten Zeichen enthalten:"
 
 #, c-format
 msgid "%s"
-msgstr ""
+msgstr "%s"
 
 #, c-format
 msgid ""
@@ -2823,50 +2858,57 @@ msgid ""
 "for you.  Download that and copy it into your install directory and you're "
 "all set."
 msgstr ""
+"Um Ihnen die Arbeit zu erleichtern, haben wir eine %skorrekte Version von "
+"login.txt%s für Sie vorbereitet. Laden Sie diese herunter und kopieren Sie "
+"sie in Ihren Installations-Ordner. Damit sind Sie fertig."
 
 msgid "Once you've uploaded the file, click refresh to continue."
 msgstr ""
+"Sobald Sie die Datei hochgeladen haben, klicken Sie auf 'Aktualisieren' um "
+"fortzufahren."
 
 msgid "Emergency Administrator Password Reset"
-msgstr ""
+msgstr "Notfall-Zurücksetzen des Administrator-Passworts"
 
-#, fuzzy
 msgid ""
 "This page can be used to securely reset the password on your 'admin' account."
-msgstr "Auf dieser Seite können Sie das Passwort für Ihr Konto zurücksetzen."
+msgstr ""
+"Auf dieser Seite können Sie sicher das Passwort für Ihr 'admin'-Konto "
+"zurücksetzen."
 
-#, fuzzy
 msgid "Authorization Confirmed"
-msgstr "Berechtigung fehlt"
+msgstr "Authorisierung bestätigt"
 
 msgid ""
 "Your authorization has been confirmed.  Please enter your new password "
 "below.  After setting your new password you will be taken to the login page."
 msgstr ""
+"Ihre Authorisierung wurde bestätigt. Bitte geben Sie Ihr neues Passwort "
+"unten ein. Nachdem Sie Ihr neues Passwort gesetzt haben, werden Sie auf die "
+"Anmeldeseite geleitet."
 
-#, fuzzy
 msgid "Authorization Incorrect"
-msgstr "Berechtigung fehlt"
+msgstr "Authorisierung fehlgeschlagen"
 
 msgid "Recovery Instructions"
-msgstr ""
+msgstr "Wiederherstellungs-Anleitung"
 
-#, fuzzy
 msgid "AuthFile Missing"
-msgstr "Berechtigung fehlt"
+msgstr "Authorisierungsdatei fehlt"
 
 msgid "AuthFile Unreadable"
-msgstr ""
+msgstr "Authorisierungsdatei nicht lesbar"
 
 #, c-format
 msgid ""
 "Your %s file is not readable. Please give Gallery read permissions on the "
 "file."
 msgstr ""
+"Ihre %s Datei ist nicht lesbar. Bitte geben Sie Gallery Leseberechtigung für "
+"diese Datei."
 
-#, fuzzy
 msgid "Refresh"
-msgstr "vor"
+msgstr "Aktualisieren"
 
 msgid "This page will allow you to reset the password on your account."
 msgstr "Auf dieser Seite können Sie das Passwort für Ihr Konto zurücksetzen."
@@ -3047,6 +3089,3 @@ msgstr[1] "(%d Elemente)"
 #, c-format
 msgid "%d. %s"
 msgstr "%d. %s"
-
-#~ msgid "Gallery 2 - Beta 3: Bingo!"
-#~ msgstr "Gallery 2 - Beta 3: Bingo!"
