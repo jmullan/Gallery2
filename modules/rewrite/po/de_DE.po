@@ -1,18 +1,18 @@
 # de_DE.po,v
-# 
+#
 # Gallery - a web based photo album viewer and editor
 # Copyright (C) 2000-2005 Bharat Mediratta
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or (at
 # your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -20,18 +20,19 @@
 # Previous translators (as far as known, add yourself here, please):
 # - Georg Rehfeld <rehfeld@georg-rehfeld.de>
 # - Frederik Kunz <frederik.kunz@web.de>
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: Gallery: Rewrite 1.0\n"
 "POT-Creation-Date: 2005-05-10 20:52+0200\n"
-"PO-Revision-Date: 2005-05-14 13:15+0100\n"
+"PO-Revision-Date: 2005-06-15 04:24+0200\n"
 "Last-Translator: Frederik Kunz <frederik.kunz@web.de>\n"
 "Language-Team: German <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: KBabel 1.10\n"
 
 msgid "Check short style URLs for filesystem conflicts"
 msgstr "Teste die kurzen URLs auf Konflikte mit dem Dateisystem"
@@ -262,51 +263,62 @@ msgstr "Datei .htaccess kann nicht gelesen werden."
 msgid "Error: 404 File Not Found"
 msgstr "Fehler: 404 - Datei nicht gefunden"
 
-#, fuzzy
 msgid "URL Rewrite System Checks"
-msgstr "Einstellungen für kurze URLs"
+msgstr "Systemprüfungen für kurze URLs"
 
-#, fuzzy
 msgid "Apache mod_rewrite"
-msgstr "Das Apache-Modul mod_rewrite funktioniert."
+msgstr "Apache-Modul mod_rewrite"
 
 #, c-format
 msgid ""
 "In order for this Gallery module to work you need %s enabeled with your "
 "Apache server."
 msgstr ""
+"Damit dieses Gallery-Modul funktioniert, muss %s in Ihrem Apache-Server "
+"aktiviert sein."
+
+msgid "Success"
+msgstr "Erfolg"
+
+msgid "Warning"
+msgstr "Warnung"
 
 msgid "Custom Gallery directory test setup"
-msgstr ""
+msgstr "Individueller Test des Gallery-Ordners"
 
 msgid "Test mod_rewrite manually"
-msgstr ""
+msgstr "mod_rewrite manuell testen"
 
 msgid ""
 "For whatever reason, Gallery did not detect a working mod_rewrite setup. If "
 "you are confident that mod_rewrite does work you may override the automatic "
 "detection. Please, run these two tests to see for yourself."
 msgstr ""
+"Gallery konnte - warum auch immer - kein funktionierendes mod_rewrite "
+"feststellen. Falls Sie sich sicher sind, dass mod_rewrite trotzdem "
+"funktioniert, können Sie diese automatische Erkennung außer Kraft "
+"setzen. Bitte starten Sei diese beiden Tests, um sich selbst ein Bild zu "
+"machen."
 
 msgid "Works"
-msgstr ""
+msgstr "Funktioniert"
 
-#, fuzzy
 msgid "Test mod_rewrite"
-msgstr "Das Apache-Modul mod_rewrite funktioniert."
+msgstr "mod_rewrite testen"
 
 msgid "Test mod_rewrite with Options directive"
-msgstr ""
+msgstr "mod_rewrite mit Options-Anweisung testen"
 
 msgid ""
 "If one of the two tests gives you a page with the text PASS_REWRITE you are "
 "good to go."
 msgstr ""
+"Wenn einer der beiden Tests Sie zu einer Seite führt, die den Text "
+"PASS_REWRITE enthält, können Sie weitermachen."
 
 msgid "Gallery .htaccess file"
 msgstr ".htaccess-Datei der Gallery"
 
-#, fuzzy
 msgid ""
 "Gallery's URL rewriting works by creating a new file in your gallery "
 "directory called <b>.htaccess</b> which contains rules for how short urls "
@@ -314,23 +326,27 @@ msgid ""
 msgstr ""
 "Das Neuschreiben von URLs in der Gallery erfordert das Schreiben einer neuen "
 "Datei namens <b>.htaccess</b> in Ihrem Gallery-Ordner. Diese enthält die "
-"Regeln dafür, wie kurze URLs interpretiert werden sollen. Die Gallery "
-"benötigt Schreibzugriff auf diese Datei."
+"Regeln dafür, wie kurze URLs interpretiert werden sollen."
+
+msgid "Error"
+msgstr "Fehler"
 
 msgid "Please create a file in you Gallery directory named .htaccess"
 msgstr ""
+"Bitte erstellen Sie in Ihrem Gallery-Ordner eine Datei namens .htaccess"
 
-#, fuzzy
 msgid "Please make sure Gallery can read the existing .htaccess file"
-msgstr "Die Gallery kann die Datei .htaccess schreiben"
+msgstr ""
+"Bitte stellen Sie sicher, dass Gallery die vorhandene .htaccess-Datei lesen "
+"kann"
 
-#, fuzzy
 msgid "Please make sure Gallery can write to the existing .htaccess file"
-msgstr "Die Gallery kann die Datei .htaccess schreiben"
+msgstr ""
+"Bitte stellen Sie sicher, dass Gallery in die vorhandene .htaccess-Datei "
+"schreiben kann"
 
-#, fuzzy
 msgid "Test .htaccess File Again"
-msgstr "Teste .htaccess erneut"
+msgstr ".htaccess-Datei erneut testen"
 
 msgid "Done"
 msgstr "Fertig"
@@ -384,22 +400,3 @@ msgstr ""
 "müssen Sie den Zugriff von der Server-IP erlauben. Wenn Sie übervorsichtig "
 "sind, dann können Sie die Erlaubnis auf den Ordner gallery2/modules/rewrite/"
 "test beschränken."
-
-#~ msgid "Configuring your Webserver"
-#~ msgstr "Konfiguriere Ihren Webserver"
-
-#~ msgid ""
-#~ "Before we configure your Gallery installation to use mod_rewrite, we test "
-#~ "to make sure that it will work properly."
-#~ msgstr ""
-#~ "Bevor die Gallery-Installation für mod_rewrite konfiguriert wird, werden "
-#~ "einige Tests ausgeführt, um sicher zu sein, dass alles ordentlich "
-#~ "funktioniert."
-
-#~ msgid ""
-#~ "If the test still fails chances are slim that this module will work. "
-#~ "However, you may procede if you are confident that it will work."
-#~ msgstr ""
-#~ "Wenn die Tests immer noch fehlschlagen, bestehen nur geringe Chancen, "
-#~ "dass dies Modul funktionieren wird. Sie können aber natürlich "
-#~ "weitermachen, wenn Sie sich sicher sind, dass es funktioniert."
