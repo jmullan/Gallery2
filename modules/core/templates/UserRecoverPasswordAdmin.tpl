@@ -6,9 +6,9 @@
  *}
 {capture name="loginDescriptionDownload"}
     <div class="giDescription">
-      {g->text text="In order to proceed with the password reset, we have to verify that you are who you claim.  The best way to be sure is to ask you to make a tiny change in the Gallery directory which will prove that you have the right permissions.  So, we're going to ask that you create a new text file called %s in the <tt>%s</tt> directory on your webserver (that's the root Gallery 2 directory). It must contain the following randomly generated characters:" arg1="<strong>login.txt</strong>" arg2=$UserRecoverPasswordAdmin.authFilePath}
+      {g->text text="In order to proceed with the password reset, we have to verify that you are who you claim.  The best way to be sure is to ask you to make a tiny change in the Gallery directory which will prove that you have the right permissions.  So, we're going to ask that you create a new text file called %s in your gallery2 directory. It must contain the following randomly generated characters:" arg1="<strong>login.txt</strong>"}
     </div>
-    <h2> 
+    <h2>
       {g->text text="%s" arg1=$UserRecoverPasswordAdmin.authString}
     </h2>
     <div class="giDescription">
@@ -88,7 +88,7 @@
     <h2 class="giError">
       {g->text text="AuthFile Unreadable"}
     </h2>
-    <h2> 
+    <h2>
       {g->text text="Your %s file is not readable. Please give Gallery read permissions on the file." arg1="<strong>login.txt</strong>"}
     </h2>
   </div>
@@ -99,7 +99,7 @@
   <input type="submit" class="inputTypeSubmit"
    name="{g->formVar var="form[action][recover]"}" value="{g->text text="Recover"}"/>
   {else}
-  <input type="submit" class="inputTypeSubmit" 
+  <input type="submit" class="inputTypeSubmit"
    name="{g->formVar var="form[action][refresh]"}" value="{g->text text="Refresh"}"/>
   {/if}
   <input type="submit" class="inputTypeSubmit"

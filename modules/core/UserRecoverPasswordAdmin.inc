@@ -35,7 +35,7 @@
  * @subpackage UserInterface
  *
  */
- 
+
 class UserRecoverPasswordAdminController extends GalleryController {
 
     /**
@@ -68,7 +68,7 @@ class UserRecoverPasswordAdminController extends GalleryController {
 	    }
 
 	    if (empty($error)) {
-		/* 
+		/*
 		 * TODO - We need to be able to support a renamed administrator account
 		 * or, possibly, the recovery of any administrator account.
 		 */
@@ -87,7 +87,7 @@ class UserRecoverPasswordAdminController extends GalleryController {
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
-		    
+
 		    $user->changePassword($form['password1']);
 
 		    $ret = $user->save();
@@ -111,8 +111,8 @@ class UserRecoverPasswordAdminController extends GalleryController {
 	    $results['redirect']['view'] = 'core.UserAdmin';
 	    $results['redirect']['subView'] = 'core.UserRecoverPasswordAdmin';
 	    $results['return'] = 1;
-	} 
-	
+	}
+
 	if (empty($error) && !empty($status)) {
 	    $results['redirect']['view'] = 'core.UserAdmin';
 	    $results['redirect']['subView'] = 'core.UserLogin';
@@ -121,7 +121,7 @@ class UserRecoverPasswordAdminController extends GalleryController {
 	    $results['delegate']['view'] = 'core.UserAdmin';
 	    $results['delegate']['subView'] = 'core.UserRecoverPasswordAdmin';
 	}
-	
+
 	$results['status'] = $status;
 	$results['error'] = $error;
 
@@ -150,7 +150,6 @@ class UserRecoverPasswordAdminView extends GalleryView {
 	$platform =& $gallery->getPlatform();
 
 	$authFile = dirname(__FILE__) . '/../../login.txt';
-	$authFilePath = $platform->realpath(dirname(__FILE__) . '/../../');
 
 	$session =& $gallery->getSession();
 
@@ -179,7 +178,6 @@ class UserRecoverPasswordAdminView extends GalleryView {
 	    }
 	}
 
-	$UserRecoverPasswordAdmin['authFilePath'] = $authFilePath;
 	$UserRecoverPasswordAdmin['authString'] = $authString;
 	$UserRecoverPasswordAdmin['error'] = $error;
 	$UserRecoverPasswordAdmin['status'] = $status;
