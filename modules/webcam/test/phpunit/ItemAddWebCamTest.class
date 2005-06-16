@@ -291,7 +291,7 @@ class ItemAddWebCamTestPlatform {
 	    return 1;
 	}
 
-	// Pass lock requests
+	/* Pass lock requests */
 	if (preg_match("|\blocks\b|", $filename)) {
 	    return unlink($filename);
 	}
@@ -344,7 +344,7 @@ class ItemAddWebCamTestPlatform {
     }
 
     function flock($handle, $operation, &$wouldblock) {
-	// Pass lock requests
+	/* Pass lock requests */
 	return flock($handle, $operation, $wouldblock);
     }
 
@@ -354,7 +354,7 @@ class ItemAddWebCamTestPlatform {
 	    return true;
 	}
 
-	// Pass locks
+	/* Pass locks */
 	if (is_resource($handle)) {
 	    return fclose($handle);
 	}
@@ -371,7 +371,7 @@ class ItemAddWebCamTestPlatform {
 	    return $filename;
 	}
 
-	// Pass lock requests
+	/* Pass lock requests */
 	if (preg_match("|\blocks\b|", $filename)) {
 	    return fopen($filename, $modes);
 	}
@@ -382,6 +382,11 @@ class ItemAddWebCamTestPlatform {
 
     function realpath($path) {
 	return realpath($path);
+    }
+
+    function exec($cmd) {
+	/* In case add of jpeg tries to get 'colorspace' property */
+	return array(true, array(''), array());
     }
 }
 ?>
