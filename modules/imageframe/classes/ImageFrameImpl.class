@@ -78,8 +78,9 @@ class ImageFrameImpl extends ImageFrameInterface_1_1 {
     function init(&$template, $frameIds) {
 	global $gallery;
 	$platform = $gallery->getPlatform();
-	static $simpleFrames;
-	if (!isset($simpleFrames)) {
+	static $simpleFrames, $cacheKey = 'ImageFrame.init';
+	if (!GalleryDataCache::containsKey($cacheKey)) {
+	    GalleryDataCache::put($cacheKey, true);
 	    $simpleFrames = array(
 		'none' => array('type' => 'style', 'style' => 'border-style: none'),
 		'solid' => array('type' => 'style',

@@ -84,6 +84,14 @@ class ImageFrameTest extends GalleryTestCase {
 	$this->assert(isset($template->data['head']), 'head data');
 	$this->assertEquals(array('modules/imageframe/templates/ImageFrameHead.tpl'),
 			    $template->data['head'], 'head tpl');
+
+	/* Another init should add data, not overwrite */
+	$ret = $this->_imageframe->init($template, array('solid'));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$data = $template->data['ImageFrameData'];
+	$this->assertEquals('none|dots|wood|solid', $data['idList'], 'Id list 2');
     }
 
     function testImageFrameSample() {
