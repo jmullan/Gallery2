@@ -311,19 +311,18 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	$ret = GalleryCoreApi::registerToolkitOperation(
 	    'ItemEditWatermarkPluginTestToolkit', array($mimeType),
 	    'composite',
-	    array(array('type' => 'string'),
-		  array('type' => 'string'),
-		  array('type' => 'int'),
-		  array('type' => 'int'),
-		  array('type' => 'string'),
-		  array('type' => 'int'),
-		  array('type' => 'int')),
+	    array(array('type' => 'string', 'description' => 'test'),
+		  array('type' => 'string', 'description' => 'test'),
+		  array('type' => 'int', 'description' => 'test'),
+		  array('type' => 'int', 'description' => 'test'),
+		  array('type' => 'string', 'description' => 'test'),
+		  array('type' => 'int', 'description' => 'test'),
+		  array('type' => 'int', 'description' => 'test')),
 	    'test-description');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
-    
 }
 
 class ItemEditWatermarkPluginTestToolkit { }
