@@ -704,10 +704,9 @@ class GalleryPlatform {
     }
 
     /**
-     * Return true if the path provided is allowed by the current open_basedir
-     * configuration.
+     * Return true if the path provided is not allowed by the current open_basedir configuration.
      *
-     * @return true if the path is ok
+     * @return true if the path is restricted
      */
     function isRestrictedByOpenBaseDir($path) {
 	/*
@@ -717,6 +716,54 @@ class GalleryPlatform {
 	 * all platforms.
 	 */
 	assert(false);
+    }
+
+    /**
+     * Check if path is allowed by open_basedir, given platform path separator & case sensitivity.
+     * @access protected
+     */
+    function _isRestrictedByOpenBaseDir($path, $separator, $caseSensitive) {
+	global $gallery;
+	$slash = $this->getDirectorySeparator();
+	$phpVm = $gallery->getPhpVm();
+	$openBasedir = $phpVm->ini_get('open_basedir');
+	if (empty($openBasedir)) {
+	    return false;
+	}
+
+	if (($realpath = $this->realpath($path)) === false) {
+	    /*
+	     * PHP's open_basedir will actually take an invalid path, resolve relative
+	     * paths, parse out .. and . and then check against the dir list..
+	     * Here we do an ok job of doing the same, though it isn't perfect.
+	     */
+	    if (!preg_match("{^([a-z]+:)?$slash}i", $path)) {
+		$path = $this->getcwd() . $slash . $path;
+	    }
+	    for ($realpath = $path, $lastpath = ''; $realpath != $lastpath;) {
+		$realpath = preg_replace("#$slash\.($slash|\$)#", $slash, $lastpath = $realpath);
+	    }
+	    for ($lastpath = ''; $realpath != $lastpath;) {
+		$realpath = preg_replace("#${slash}[^$slash]+$slash\.\.($slash|\$)#", $slash,
+					 $lastpath = $realpath);
+	    }
+	}
+
+	$function = $caseSensitive ? 'strncmp' : 'strncasecmp';
+	foreach (explode($separator, $openBasedir) as $baseDir) {
+	    if (($baseDirMatch = $this->realpath($baseDir)) === false) {
+		$baseDirMatch = $baseDir;
+	    } else if ($baseDir{strlen($baseDir)-1} == $slash) {
+		/* Realpath will remove a trailing slash.. add it back to avoid prefix match */
+		$baseDirMatch .= $slash;
+	    }
+	    /* Add slash on path so /dir is accepted if /dir/ is a valid basedir */
+	    if (!$function($baseDirMatch, $realpath . $slash, strlen($baseDirMatch))) {
+		return false;
+	    }
+	}
+
+	return true;
     }
 
     /**

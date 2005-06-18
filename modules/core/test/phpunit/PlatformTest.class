@@ -350,7 +350,153 @@ class PlatformTest extends GalleryTestCase {
     }
 
     function testIsRestrictedByOpenBaseDir() {
-	$this->assert(!$this->_platform->isRestrictedByOpenBaseDir(__FILE__));
+	global $gallery;
+	$isWin = GalleryUtilities::isA($this->_platform, 'WinNtPlatform');
+
+	$this->assert(!$this->_platform->isRestrictedByOpenBaseDir(__FILE__), 'this file');
+
+	$gallery->_phpVm = new PlatformTestPhpVm(dirname(__FILE__));
+	$this->assert(!$this->_platform->isRestrictedByOpenBaseDir(__FILE__), 'simple case');
+
+	/* Bad paths are still checked even though no realpath */
+	$this->assert(
+	    !$this->_platform->isRestrictedByOpenBaseDir(dirname(__FILE__) . '/bogus/path'),
+	    'bogus path "inside" valid dir');
+	$this->assert(
+	    $this->_platform->isRestrictedByOpenBaseDir(dirname(__FILE__) . '/../bogus/path'),
+	    'bogus path using .. to get outside valid dir');
+	$gallery->_phpVm = new PlatformTestPhpVm('');
+	$this->assert(!$this->_platform->isRestrictedByOpenBaseDir('/bogus/path'),
+		      'bogus path with no restriction');
+
+	/* Open_basedir with multiple entries */
+	$platform = $isWin ? new PlatformTestOpenBaseDirWinNtPlatform()
+			   : new PlatformTestOpenBaseDirUnixPlatform();
+	$platform->setRealpathData(array('C:\\Test' => 'C:\\Test',
+					 'C:\\Test\\file' => 'C:\\Test\\file',
+					 'D:\\Fun\\' => 'D:\\Fun',
+					 'D:\\Fun\\file' => 'D:\\Fun\\file',
+					 '/test' => '/test', '/fun/' => '/fun',
+					 '/test/file' => '/test/file', '/fun/file' => '/fun/file',
+					 'c:\\TEST\\file' => 'C:\\Test\\file',
+					 '/TEST/file' => '/TEST/file'));
+
+	$gallery->_phpVm = new PlatformTestPhpVm($isWin ? 'C:\\Test;D:\\Fun\\' : '/test:/fun/');
+	$this->assert(
+	    !$platform->isRestrictedByOpenBaseDir($isWin ? 'C:\\Test\\file' : '/test/file'),
+	    'first path');
+	$this->assert(
+	    !$platform->isRestrictedByOpenBaseDir($isWin ? 'D:\\Fun\\file' : '/fun/file'),
+	    'second path');
+	$this->assertEquals(!$isWin,
+	    $platform->isRestrictedByOpenBaseDir($isWin ? 'c:\\TEST\\file' : '/TEST/file'),
+	    'unix case sensitive, windows not');
+
+	/* Symlinks are resolved in both given path and open_basedir list */
+	if (!$isWin) {
+	    $platform->setRealpathData(array('/test/real' => '/test/real',
+					     '/test/real/file' => '/test/real/file',
+					     '/test/link' => '/test/real',
+					     '/test/link/file' => '/test/real/file',
+					     '/test/real/linktoetc/passwd' => '/etc/passwd',
+					     '/test/link/linktoetc/passwd' => '/etc/passwd'));
+
+	    $gallery->_phpVm = new PlatformTestPhpVm('/test/real');
+	    $this->assert(!$platform->isRestrictedByOpenBaseDir('/test/link/file'),
+			  'path with symlink, open_basedir has realpath');
+	    $this->assert($platform->isRestrictedByOpenBaseDir('/test/real/linktoetc/passwd'),
+			  'symlink to outside, open_basedir has realpath');
+	    $this->assert($platform->isRestrictedByOpenBaseDir('/test/link/bogus/path'),
+			  'invalid path with symlink, open_basedir has realpath');
+
+	    $gallery->_phpVm = new PlatformTestPhpVm('/test/link');
+	    $this->assert(!$platform->isRestrictedByOpenBaseDir('/test/real/file'),
+			  'realpath given, open_basedir has symlink');
+	    $this->assert($platform->isRestrictedByOpenBaseDir('/test/link/linktoetc/passwd'),
+			  'symlink to outside, open_basedir has symlink');
+	    $this->assert($platform->isRestrictedByOpenBaseDir('/test/link/bogus/path'),
+			  'invalid path with symlink, open_basedir has symlink');
+	    $this->assert(!$platform->isRestrictedByOpenBaseDir('/test/real/bogus/path'),
+			  'invalid path, open_basedir has symlink');
+	}
+
+	/* Open_basedir entry can be a prefix and not a real dir */
+	$platform->setRealpathData(array('/tes' => false, '/test' => '/test',
+					 '/testfile' => '/testfile',
+					 '/test/file' => '/test/file',
+					 '/toast/file' => '/toast/file',
+					 '/link/file' => '/test/file'));
+
+	$gallery->_phpVm = new PlatformTestPhpVm('/tes');
+	$this->assert(!$platform->isRestrictedByOpenBaseDir('/testfile'), 'file with prefix');
+	$this->assert(!$platform->isRestrictedByOpenBaseDir('/test/file'), 'dir with prefix');
+	$this->assert(!$platform->isRestrictedByOpenBaseDir('/tes/bad/path'),
+		      'given path can be invalid and match a prefix');
+			/* though it would be restricted if /tes was a real dir? odd.. */
+	$this->assert($platform->isRestrictedByOpenBaseDir('/toast/file'), 'not match prefix');
+	if (!$isWin) {
+	    /* Symlink expansion with prefix (realpath of given path must match prefix) */
+	    $this->assert(!$platform->isRestrictedByOpenBaseDir('/link/file'),
+			  'link, realpath has prefix');
+
+	    $platform->setRealpathData(array('/lin' => false, '/link' => '/test',
+					     '/linnen' => '/linnen',
+					     '/linkfile' => '/testfile',
+					     '/link/file' => '/test/file',
+					     '/lonk/file' => '/lonk/file',
+					     '/link/fu' => false, '/link/fun' => '/test/fun',
+					     '/test/fun' => '/test/fun'));
+	    $gallery->_phpVm = new PlatformTestPhpVm('/lin');
+	    $this->assert(!$platform->isRestrictedByOpenBaseDir('/linnen'), 'nonlink with prefix');
+	    $this->assert($platform->isRestrictedByOpenBaseDir('/linkfile'), 'link with prefix');
+	    $this->assert($platform->isRestrictedByOpenBaseDir('/link/file'), 'dir with prefix');
+	    $this->assert($platform->isRestrictedByOpenBaseDir('/lonk/file'), 'not match prefix');
+
+	    $gallery->_phpVm = new PlatformTestPhpVm('/link/fu');
+	    $this->assert($platform->isRestrictedByOpenBaseDir('/test/fun'),
+			  'realpath given, open_basedir has prefix with link parent');
+	    $this->assert($platform->isRestrictedByOpenBaseDir('/link/fun'),
+			  'valid link path given, open_basedir has prefix with link parent');
+	    $this->assert(!$platform->isRestrictedByOpenBaseDir('/link/fubar'),
+			  'invalid link path given, open_basedir has prefix with link parent');
+	}
+
+	/* Open_basedir with . */
+	$gallery->_phpVm = new PlatformTestPhpVm('.');
+	$this->assert(!$this->_platform->isRestrictedByOpenBaseDir($_SERVER['SCRIPT_FILENAME']),
+		      'dot basedir');
+
+	/* Open_basedir with trailing slash */
+	$s = $this->_platform->getDirectorySeparator();
+	$platform->setRealpathData(array("${s}test${s}" => "${s}test",
+					 "${s}testing" => "${s}testing"));
+	$gallery->_phpVm = new PlatformTestPhpVm("${s}test${s}");
+	$this->assert(!$platform->isRestrictedByOpenBaseDir("${s}test"), 'no trailing slash');
+	$this->assert($platform->isRestrictedByOpenBaseDir("${s}testing"),
+		      'should not match basedir with trailing slash');
+
+	/* Invalid paths (realpath returns false, our code does relative path and .. handling) */
+	$platform->setRealpathData(array("${s}test" => "${s}test"));
+	$gallery->_phpVm = new PlatformTestPhpVm("${s}test");
+	$this->assert(!$platform->isRestrictedByOpenBaseDir("${s}test${s}bogus"),
+		      'valid bogus path');
+	$this->assert(!$platform->isRestrictedByOpenBaseDir("${s}test${s}bogus${s}..${s}path"),
+		      'single dotdot');
+	$this->assert($platform->isRestrictedByOpenBaseDir("${s}test${s}bogus${s}..${s}..${s}path"),
+		      'multiple dotdots');
+	$this->assert($platform->isRestrictedByOpenBaseDir("${s}test${s}.."),
+		      'dotdot at end');
+	$this->assert(!$platform->isRestrictedByOpenBaseDir("${s}.${s}test${s}bogus"),
+		      'dot in valid bogus path');
+	$this->assert(!$platform->isRestrictedByOpenBaseDir("${s}.${s}test${s}.${s}bogus"),
+		      'two dots in valid bogus path');
+	$platform->setCwd("${s}test");
+	$this->assert(!$platform->isRestrictedByOpenBaseDir('bogus'),
+		      'valid relative path');
+	$this->assert(!$platform->isRestrictedByOpenBaseDir('..${s}bogus'),
+		      'invalid relative path');
+	$this->assert(!$platform->isRestrictedByOpenBaseDir('bogus${s}path${s}..${s}..${s}test'),
+		      'valid relative path with two dotdots');
     }
 
     /**
@@ -475,6 +621,53 @@ class PlatformTest extends GalleryTestCase {
 
 	/* Go back to original directory */
 	$this->_platform->chdir($oldCwd);
+    }
+}
+
+class PlatformTestPhpVm extends GalleryPhpVm {
+    function PlatformTestPhpVm($iniVal) {
+	$this->_iniVal = $iniVal;
+    }
+
+    function ini_get($varname) {
+	if ($varname == 'open_basedir') {
+	    return $this->_iniVal;
+	}
+	return parent::ini_get($varname);
+    }
+}
+
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPlatform/UnixPlatform.class');
+class PlatformTestOpenBaseDirUnixPlatform extends UnixPlatform {
+    function setRealpathData($realpathData) {
+	$this->_realpathData = $realpathData;
+    }
+    function setCwd($path) {
+	$this->_cwd = $path;
+    }
+
+    function realpath($path) {
+	return isset($this->_realpathData[$path]) ? $this->_realpathData[$path] : false;
+    }
+    function getcwd() {
+	return isset($this->_cwd) ? $this->_cwd : parent::getcwd();
+    }
+}
+
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPlatform/WinNtPlatform.class');
+class PlatformTestOpenBaseDirWinNtPlatform extends WinNtPlatform {
+    function setRealpathData($realpathData) {
+	$this->_realpathData = $realpathData;
+    }
+    function setCwd($path) {
+	$this->_cwd = $path;
+    }
+
+    function realpath($path) {
+	return isset($this->_realpathData[$path]) ? $this->_realpathData[$path] : false;
+    }
+    function getcwd() {
+	return isset($this->_cwd) ? $this->_cwd : parent::getcwd();
     }
 }
 ?>

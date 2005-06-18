@@ -28,7 +28,7 @@
 /**
  * Load required class
  */
-require_once(dirname(__FILE__) . '/../GalleryPlatform.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPlatform.class');
 
 /**
  * An Unix version of the GalleryPlatform class
@@ -125,19 +125,7 @@ class UnixPlatform extends GalleryPlatform {
      * @see GalleryPlatform::isRestrictedByOpenBaseDir
      */
     function isRestrictedByOpenBaseDir($path) {
-	$baseDirArray = split(':', ini_get('open_basedir'));
-
-	if (empty($baseDirArray)) {
-	    return false;
-	}
-
-	foreach ($baseDirArray as $baseDir) {
-	    if (!strncmp($baseDir, $path, strlen($baseDir))) {
-		return false;
-	    }
-	}
-
-	return true;
+	return $this->_isRestrictedByOpenBaseDir($path, ':', true);
     }
 
     /**
