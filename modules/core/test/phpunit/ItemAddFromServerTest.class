@@ -207,7 +207,7 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 
 	$platform = $gallery->getPlatform();
 	$dirSep = $platform->getDirectorySeparator();
-	$baseDir = dirname(__FILE__) . "{$dirSep}..{$dirSep}data{$dirSep}";
+	$baseDir = dirname(dirname(__FILE__)) . $dirSep . 'data';
 	$fileKeys = array();
 	GalleryUtilities::putRequestVariable('form[localServerPath]', $baseDir);
 
@@ -330,7 +330,7 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 	$dirSep = $platform->getDirectorySeparator();
-	$baseDir = dirname(__FILE__) . "{$dirSep}..{$dirSep}data{$dirSep}";
+	$baseDir = dirname(dirname(__FILE__)) . $dirSep . 'data';
 
 	GalleryUtilities::putRequestVariable('form[action][addFromLocalServer]', 1);
 	GalleryUtilities::putRequestVariable('form[localServerPath]', $baseDir);
@@ -440,7 +440,7 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
      * path actually exists (which it won't, in some cases)
      */
     function realpath($path) {
-	return preg_replace('|[^/\\\]+[/\\\]\.\.[/\\\]|', '', $path);
+	return preg_replace('#[^\\/]+[\\/]\.\.([\\/]|$)#', '', $path);
     }
 
     function file_exists($path) {

@@ -80,7 +80,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 			continue;
 		    }
 		    $useSymlink = isset($data['useSymlink']);
-		    $file = $this->_platform->realpath($dir . urldecode($fileKey));
+		    $file = $dir . urldecode($fileKey);
 		    if (!GalleryUtilities::isPathInList(dirname($file), $localServerDirList)) {
 			/* Ensure malformed input like fileKey = ../foo doesn't work */
 			continue;
@@ -165,7 +165,6 @@ class ItemAddFromServer extends ItemAddPlugin {
     function addDirectory($parentId, $path, $useSymlink, $textFields, &$status, &$error) {
 	global $gallery;
 
-	$path = $this->_platform->realpath($path);
 	if (!GalleryUtilities::isPathInList($path, $this->_localServerDirList)
 		|| GalleryUtilities::isPathInList($path,
 				     array($gallery->getConfig('data.gallery.albums')))) {
