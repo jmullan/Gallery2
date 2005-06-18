@@ -118,27 +118,33 @@ class AdminCoreController extends GalleryController {
 		$canSave = true;
 	    }
 	} else if (isset($form['action']['addUploadLocalServerDir'])) {
-	    $platform = $gallery->getPlatform();
 	    $path = GalleryUtilities::htmlEntityDecode($form['uploadLocalServer']['newDir']);
-	    $realpath = $platform->realpath($path);
-
 	    if (empty($path)) {
 		$error[] = 'form[error][uploadLocalServer][newDir][missing]';
-	    } else if ($platform->isRestrictedByOpenBaseDir($realpath)) {
-		$error[] = 'form[error][uploadLocalServer][newDir][restrictedByOpenBaseDir]';
-	    } else if (!$platform->is_readable($realpath)) {
-		$error[] = 'form[error][uploadLocalServer][newDir][notReadable]';
-	    } else if (!$platform->is_dir($realpath)) {
-		$error[] = 'form[error][uploadLocalServer][newDir][notADirectory]';
+	    } else {
+		$platform = $gallery->getPlatform();
+		$splitPath = $platform->splitPath($path);
+		if (!preg_match('{[\\/]}', $splitPath[0]) || in_array('..', $splitPath)) {
+		    /* Use realpath value if path is relative or has .. */
+		    $path = $platform->realpath($path);
+		}
+
+		if ($platform->isRestrictedByOpenBaseDir($path)) {
+		    $error[] = 'form[error][uploadLocalServer][newDir][restrictedByOpenBaseDir]';
+		} else if (!$platform->is_readable($path)) {
+		    $error[] = 'form[error][uploadLocalServer][newDir][notReadable]';
+		} else if (!$platform->is_dir($path)) {
+		    $error[] = 'form[error][uploadLocalServer][newDir][notADirectory]';
+		}
 	    }
 
 	    if (empty($error)) {
 		for ($i = 1; !empty($param['uploadLocalServer.dir.' . $i])
-			  && ($param['uploadLocalServer.dir.' . $i] != $realpath); $i++) { }
+			  && ($param['uploadLocalServer.dir.' . $i] != $path); $i++) { }
 
 		if (empty($param['uploadLocalServer.dir.' . $i])) {
 		    $ret = GalleryCoreApi::setPluginParameter(
-			'module', 'core', 'uploadLocalServer.dir.' . $i, $realpath);
+			'module', 'core', 'uploadLocalServer.dir.' . $i, $path);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }

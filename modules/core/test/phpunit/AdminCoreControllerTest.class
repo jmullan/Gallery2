@@ -244,6 +244,23 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
     }
 
     function testAddUploadLocalServerDir() {
+	/* Add should save other settings on the page too */
+	$valueMap = array('permissions.directory' => 'x1',
+			  'permissions.file' => 'x2',
+			  'exec.expectedStatus' => 'x3',
+			  'default.orderBy' => 'x4',
+			  'default.orderDirection' => 'x5',
+			  'default.layout' => 'x6',
+			  'default.theme' => 'x7',
+			  'default.language' => 'x8',
+			  'session.lifetime' => 'x9',
+			  'session.inactivityTimeout' => 'x10',
+			  'misc.markup' => 'x11');
+	foreach ($valueMap as $key => $value) {
+	    list ($outer, $inner) = explode('.', $key);
+	    GalleryUtilities::putRequestVariable('form[' . $outer . '][' . $inner . ']', $value);
+	}
+
 	GalleryUtilities::putRequestVariable('form[uploadLocalServer][newDir]', dirname(__FILE__));
 	GalleryUtilities::putRequestVariable('form[action][addUploadLocalServerDir]', 1);
 
@@ -278,69 +295,14 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals('a', $param['uploadLocalServer.dir.1']);
-	$this->assertEquals('b', $param['uploadLocalServer.dir.2']);
 	$this->assertEquals(dirname(__FILE__), $param['uploadLocalServer.dir.3'], 'new dir');
 	$this->assert(!isset($param['uploadLocalServer.dir.4']), 'end of list');
-    }
-
-    /*
-     * Bug #992060:
-     * The "Add" directory should also save the other settings on
-     * the Admin -> General page.
-     */
-    function testAddUploadLocalServerDirSavesOtherSettings() {
-	global $gallery;
-	$platform = $gallery->getPlatform();
-
-	$valueMap = array('permissions.directory' => 'x1',
-			  'permissions.file' => 'x2',
-			  'exec.expectedStatus' => 'x3',
-			  'default.orderBy' => 'x4',
-			  'default.orderDirection' => 'x5',
-			  'default.layout' => 'x6',
-			  'default.theme' => 'x7',
-			  'default.language' => 'x8',
-			  'session.lifetime' => 'x9',
-			  'session.inactivityTimeout' => 'x10',
-			  'misc.markup' => 'x11');
-
-	/* Change the defaults to something meaningless */
-	foreach ($valueMap as $key => $value) {
-	    list ($outer, $inner) = explode('.', $key);
-	    GalleryUtilities::putRequestVariable('form[' . $outer . '][' . $inner . ']', $value);
-	}
-	GalleryUtilities::putRequestVariable('form[uploadLocalServer][newDir]', dirname(__FILE__));
-	GalleryUtilities::putRequestVariable('form[action][addUploadLocalServerDir]', 1);
-
-	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dir.1', 'a');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$ret = GalleryCoreApi::removePluginParameter('module', 'core', 'uploadLocalServer.dir.2');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	/* Perform the request and verify that we succeeded */
-	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
-						      'subView' => 'core.AdminCore'),
-				  'status' => array('addedDir' => 1, 'saved' => 1),
-				  'error' => array()),
-			    $results);
-
-	GalleryDataCache::reset();
 
 	$valueMap['uploadLocalServer.dir.1'] = 'a';
-	$valueMap['uploadLocalServer.dir.2'] = dirname(__FILE__);
+	$valueMap['uploadLocalServer.dir.2'] = 'b';
+	$valueMap['uploadLocalServer.dir.3'] = dirname(__FILE__);
 	foreach ($valueMap as $key => $expectedValue) {
-	    list ($ret, $realValue) = GalleryCoreApi::getPluginParameter('module', 'core', $key);
-	    if ($ret->isError()) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-
-	    $this->assertEquals($expectedValue, $realValue, "value mismatch for $key");
+	    $this->assertEquals($expectedValue, $param[$key], "value mismatch for $key");
 	}
     }
 
@@ -358,7 +320,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 			    $results);
     }
 
-    function testAddUploadLocalServerDirBogus() {
+    function testAddUploadLocalServerDirNotDir() {
 	GalleryUtilities::putRequestVariable('form[uploadLocalServer][newDir]', __FILE__);
 	GalleryUtilities::putRequestVariable('form[action][addUploadLocalServerDir]', 1);
 
@@ -372,7 +334,105 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 			    $results);
     }
 
+    function testAddUploadLocalServerDirBogus() {
+	global $gallery;
+	$gallery->_phpVm = new AdminCoreControllerTestPhpVm('');
+
+	GalleryUtilities::putRequestVariable('form[uploadLocalServer][newDir]',
+					     '/this/fake/gallery2/path/wont/exist');
+	GalleryUtilities::putRequestVariable('form[action][addUploadLocalServerDir]', 1);
+
+	/* Perform the request and verify that we failed */
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('delegate' => array('view' => 'core.SiteAdmin',
+				      'subView' => 'core.AdminCore'),
+		  'status' => array(),
+		  'error' => array('form[error][uploadLocalServer][newDir][notReadable]')),
+	    $results);
+
+	/* Test again with an open_basedir restriction */
+	$gallery->_phpVm = new AdminCoreControllerTestPhpVm('/valid/dir');
+
+	/* Perform the request and verify that we failed */
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('delegate' => array('view' => 'core.SiteAdmin',
+				      'subView' => 'core.AdminCore'),
+		  'status' => array(),
+		  'error' => array(
+			'form[error][uploadLocalServer][newDir][restrictedByOpenBaseDir]')),
+	    $results, 'with open_basedir');
+    }
+
+    function testAddUploadLocalServerDirNotReadable() {
+	global $gallery;
+	$platform = new UnitTestPlatform();
+	$platform->setReply('splitPath', array('/test/path'), array('/', 'test', 'path'));
+	$platform->setReply('isRestrictedByOpenBaseDir', array('/test/path'), false);
+	$platform->setReply('is_readable', array('/test/path'), false);
+	$gallery->setPlatform($platform);
+
+	GalleryUtilities::putRequestVariable('form[uploadLocalServer][newDir]', '/test/path');
+	GalleryUtilities::putRequestVariable('form[action][addUploadLocalServerDir]', 1);
+
+	/* Perform the request and verify that we failed */
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('delegate' => array('view' => 'core.SiteAdmin',
+				      'subView' => 'core.AdminCore'),
+		  'status' => array(),
+		  'error' => array('form[error][uploadLocalServer][newDir][notReadable]')),
+	    $results);
+    }
+
+    function testAddUploadLocalServerDirRestricted() {
+	global $gallery;
+	$platform = new UnitTestPlatform();
+	$platform->setReply('splitPath', array('/test/path'), array('/', 'test', 'path'));
+	$platform->setReply('isRestrictedByOpenBaseDir', array('/test/path'), true);
+	$gallery->setPlatform($platform);
+
+	GalleryUtilities::putRequestVariable('form[uploadLocalServer][newDir]', '/test/path');
+	GalleryUtilities::putRequestVariable('form[action][addUploadLocalServerDir]', 1);
+
+	/* Perform the request and verify that we failed */
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('delegate' => array('view' => 'core.SiteAdmin',
+				      'subView' => 'core.AdminCore'),
+		  'status' => array(),
+		  'error' => array(
+			'form[error][uploadLocalServer][newDir][restrictedByOpenBaseDir]')),
+	    $results);
+    }
+
+    function testAddUploadLocalServerDirDotDotPath() {
+	/* Apply realpath to paths with .. */
+	global $gallery;
+	$platform = new UnitTestPlatform();
+	$platform->setReply('splitPath', array('/test/../path'), array('/', 'test', '..', 'path'));
+	$platform->setReply('realpath', array('/test/../path'), '/path');
+	$platform->setReply('isRestrictedByOpenBaseDir', array('/path'), false);
+	$platform->setReply('is_readable', array('/path'), true);
+	$platform->setReply('is_dir', array('/path'), true);
+	$gallery->setPlatform($platform);
+
+	GalleryUtilities::putRequestVariable('form[uploadLocalServer][newDir]', '/test/../path');
+	GalleryUtilities::putRequestVariable('form[action][addUploadLocalServerDir]', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('redirect' => array('view' => 'core.SiteAdmin',
+				      'subView' => 'core.AdminCore'),
+		  'status' => array('addedDir' => 1, 'saved' => 1),
+		  'error' => array()),
+	    $results);
+    }
+
     function testAddUploadLocalServerDirRelativePath() {
+	/* Relative path should be converted to absolute (with realpath) */
 	global $gallery;
 	$platform = $gallery->getPlatform();
 	$saveDir = $platform->getcwd();
@@ -413,7 +473,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
     function testAddUploadLocalServerDirWithEntity() {
 	global $gallery;
 	$platform = new UnitTestPlatform();
-	$platform->setReply('realpath', array('/php&unit'), '/php&unit');
+	$platform->setReply('splitPath', array('/php&unit'), array('/', 'php&unit'));
 	$platform->setReply('isRestrictedByOpenBaseDir', array('/php&unit'), false);
 	$platform->setReply('is_readable', array('/php&unit'), true);
 	$platform->setReply('is_dir', array('/php&unit'), true);
@@ -430,6 +490,47 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 		  'status' => array('addedDir' => 1, 'saved' => 1),
 		  'error' => array()),
 	    $results);
+    }
+
+    function testAddUploadLocalServerDirWithSymlink() {
+	/* If symlink in the path check open_basedir with realpath but store given path */
+	global $gallery;
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dir.1', 'a');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::removePluginParameter('module', 'core', 'uploadLocalServer.dir.2');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* realpath of /link/dir is /other/fun/dir */
+	$platform = new UnitTestPlatform();
+	$platform->setReply('splitPath', array('/link/dir'), array('/', 'link', 'dir'));
+	$platform->setReply('isRestrictedByOpenBaseDir', array('/link/dir'), false);
+	$platform->setReply('is_readable', array('/link/dir'), true);
+	$platform->setReply('is_dir', array('/link/dir'), true);
+	$gallery->setPlatform($platform);
+
+	GalleryUtilities::putRequestVariable('form[uploadLocalServer][newDir]', '/link/dir');
+	GalleryUtilities::putRequestVariable('form[action][addUploadLocalServerDir]', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('redirect' => array('view' => 'core.SiteAdmin',
+				      'subView' => 'core.AdminCore'),
+		  'status' => array('addedDir' => 1, 'saved' => 1),
+		  'error' => array()),
+	    $results);
+
+	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('a', $param['uploadLocalServer.dir.1']);
+	$this->assertEquals('/link/dir', $param['uploadLocalServer.dir.2'], 'new dir');
     }
 
     function testRemoveUploadLocalServerDir() {
@@ -591,6 +692,19 @@ class AdminCoreControllerTestUrlGenrator {
 	} else {
 	    return 'http://www.example.com/sub/application/';
 	}
+    }
+}
+
+class AdminCoreControllerTestPhpVm extends GalleryPhpVm {
+    function AdminCoreControllerTestPhpVm($iniVal) {
+	$this->_iniVal = $iniVal;
+    }
+
+    function ini_get($varname) {
+	if ($varname == 'open_basedir') {
+	    return $this->_iniVal;
+	}
+	return parent::ini_get($varname);
     }
 }
 ?>
