@@ -41,10 +41,11 @@ class MailHelper_simple {
      * @param string from address (null/empty acceptable)
      * @param string to address(es) (comma separated)
      * @param string email subject
+     * @param string (optional) additional headers (\r\n separated)
      * @return object GalleryStatus a status code
      * @static
      */
-    function sendTemplatedEmail($file, $data, $from, $to, $subject) {
+    function sendTemplatedEmail($file, $data, $from, $to, $subject, $headers='') {
 	global $gallery;
 
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTemplate.class');
@@ -63,9 +64,6 @@ class MailHelper_simple {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Extra headers blank by default */
-	$headers = '';
-
 	/* If no from address is given, try and get the SMTP from address */
 	if (empty($from)) {
 	    list ($ret, $smtpFrom) =
@@ -80,7 +78,7 @@ class MailHelper_simple {
 	}
 
 	if (!empty($from)) {
-	    $headers .= "From: $from\r\n";
+	    $headers = "From: $from\r\n" . $headers;
 	}
 
 	$platform = $gallery->getPlatform();

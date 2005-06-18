@@ -54,7 +54,7 @@ class GalleryCoreApi {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(6, 2);
+	return array(6, 3);
     }
 
     /**
@@ -2494,13 +2494,13 @@ class GalleryCoreApi {
      * @param string from address (null allowed)
      * @param string to address(es) (comma separated)
      * @param string email subject
+     * @param string (optional) additional headers (\r\n separated)
      * @return object GalleryStatus a status code
      * @static
      */
-    function sendTemplatedEmail($file, $data, $from, $to, $subject) {
+    function sendTemplatedEmail($file, $data, $from, $to, $subject, $headers='') {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/MailHelper_simple.class');
-	return MailHelper_simple::sendTemplatedEmail($file, $data, $from, $to, $subject);
+	return MailHelper_simple::sendTemplatedEmail($file, $data, $from, $to, $subject, $headers);
     }
-
 }
 ?>
