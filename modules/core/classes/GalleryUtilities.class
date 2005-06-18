@@ -988,6 +988,9 @@ class GalleryUtilities {
 	$compare = GalleryUtilities::isA($platform, 'WinNtPlatform') ? 'strncasecmp' : 'strncmp';
 
 	foreach ($list as $element) {
+	    if (($element = $platform->realpath($element)) === false) {
+		continue;
+	    }
 	    /*
 	     * Make sure the compare directory has a trailing slash so that
 	     * /tmp doesn't accidentally match /tmpfoo

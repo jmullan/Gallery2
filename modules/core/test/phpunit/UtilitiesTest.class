@@ -417,6 +417,12 @@ class UtilitiesTest extends GalleryTestCase {
 						      array('/foo', '/bar')), 'test 5');
 	$this->assert(!GalleryUtilities::isPathInList('/fo',
 						      array('/foo', '/bar')), 'test 6');
+	$this->assert(GalleryUtilities::isPathInList('/link/foo',
+						     array('/foo', '/bar')), 'symlink in');
+	$this->assert(!GalleryUtilities::isPathInList('/foo/link',
+						      array('/foo', '/bar')), 'symlink out');
+	$this->assert(GalleryUtilities::isPathInList('/foo/bar',
+						     array('/link', '/bar')), 'symlink path');
 
 	$gallery->_platform = new UtilitiesTestWinPlatform();
 	$this->assert(GalleryUtilities::isPathInList('c:\foo\bar',
@@ -919,22 +925,23 @@ class UtilitiesTest extends GalleryTestCase {
 	/* Use one time commas as delimiters, the other time semicolons */
 	foreach(array(',', ';') as $sep) {
 	    /*
-	     * Check for quoted-string cookies (don't urlencode cookie values, e.g. by using header()
-	     * instead of setCookie()).
+	     * Check for quoted-string cookies (don't urlencode cookie values, e.g. by using
+	     * header() instead of setCookie()).
 	     * And check for ordinary cookies (netscape standard) where values are assumed to be
-	     * urlencoded 
+	     * urlencoded
 	     */
 	    foreach (array(true, false) as $urlEncoded) {
 		if ($urlEncoded) {
 		    $_SERVER['HTTP_COOKIE'] = $key1 . '=' . urlencode($val1) . $sep . $key2 . '=' .
-			urlencode($val2) . $sep . $key3 .  $sep . $key4 . '=' . urlencode($val4)
-			. $sep . $key5 . '=' . urlencode($val5) . $sep . $key6 . '= ' . urlencode($val6);
+			urlencode($val2) . $sep . $key3 .  $sep . $key4 . '=' . urlencode($val4) .
+			$sep . $key5 . '=' . urlencode($val5) . $sep . $key6 . '= ' .
+			urlencode($val6);
 		} else {
 		    $_SERVER['HTTP_COOKIE'] = $key1 . '=' . $val1 . $sep . $key2 . '=' .
 			$val2 . $sep . $key3 .  $sep . $key4 . '=' . $val4
 			. $sep . $key5 . '=' . $val5 . $sep . $key6 . '= ' . $val6;
 		}
-		    
+
 		$_COOKIE = array();
 		$_COOKIE['foobar'] = array('foo' => 'bar');
 		/* Execute the fix */
@@ -949,7 +956,7 @@ class UtilitiesTest extends GalleryTestCase {
 					'1 incorrect for delimiter "' . $sep . '"');
 		}
 
-		
+
 		$this->assertEquals(true, isset($_COOKIE[$key6]), $kind . 'quoted-string cookie ' .
 				    '6 not set for delimiter "' . $sep . '"');
 		if (isset($_COOKIE[$key6])) {
@@ -967,13 +974,13 @@ class UtilitiesTest extends GalleryTestCase {
 		if (isset($_COOKIE[$key4])) {
 		    $this->assertEquals($val4, $_COOKIE[$key4], $kind . ' token cookie 4 ' .
 					'incorrect for delimiter "' . $sep . '"');
-		}		
-		
+		}
+
 		$this->assertEquals(false, isset($_COOKIE[$key3]), $kind . ' empty cookie value ' .
 				    'was set for delimiter "' . $sep . '"');
 		$this->assertEquals(false, isset($_COOKIE[$key2]), $kind . ' $Version cookie was ' .
 				    'set for delimiter "' . $sep . '"');
-	    
+
 		/* Check if the array-cookie is still there */
 		$this->assertEquals(true, isset($_COOKIE['foobar']), $kind . 'array cookie not ' .
 				    'set for separator "' . $sep . '"');
@@ -1001,7 +1008,7 @@ class UtilitiesTest extends GalleryTestCase {
 	/* 4. add key with another name, successfully */
 	$tests[] = array('add' => array('foo=bar', 'foo2=bar2'),
 			 'er' => array(array('key' => 'foo', 'val' => 'bar'),
-				       array('key' => 'foo2', 'val' => 'bar2')));	
+				       array('key' => 'foo2', 'val' => 'bar2')));
 	/* 5. add attr without value, unsuccessfully */
 	$tests[] = array('add' => array('foo=bar', 'foo2'),
 			 'er' => array(array('key' => 'foo', 'val' => 'bar')));
@@ -1060,7 +1067,7 @@ class UtilitiesTest extends GalleryTestCase {
 		$gallery->_phpVm = $phpVm;
 		$addSlashesInfo = 'do not addslashes, ';
 	    }
-		
+
 	    foreach ($tests as $tC) {
 		$_COOKIE = array();
 		$this->assert(!count($_COOKIE), 'Could not reset superglobal $_COOKIE');
@@ -1073,7 +1080,7 @@ class UtilitiesTest extends GalleryTestCase {
 		ob_start();
 		var_dump($tC);
 		$debugInfo = ob_get_clean();
-		
+
 		$this->assertEquals(count($tC['er']), count($_COOKIE), $addSlashesInfo .
 				    'number of registerd keys ' .
 				    'do not match for test case: ' . $debugInfo);
@@ -1092,7 +1099,7 @@ class UtilitiesTest extends GalleryTestCase {
 	    }
 	}
     }
-    
+
     function testGuaranteeDirExists() {
 	list ($success, $created) = GalleryUtilities::guaranteeDirExists('/test/one/two');
 	$this->assert($success, 'guaranteeDirExists');
@@ -1200,10 +1207,19 @@ class UtilitiesTestPlatform {
 	switch ($file) {
 	case '/foo':
 	case '/foo/':
+	case '/bar':
+	case '/bar/':
 	case '/foo/bar':
 	case '/foobar':
 	case '/fo':
 	    return $file;
+
+	case '/link/foo':
+	    return '/bar/foo';
+	case '/foo/link':
+	    return '/bad/path';
+	case '/link':
+	    return '/foo';
 	}
 
 	$path = realpath($file);
@@ -1277,9 +1293,11 @@ class UtilitiesTestWinPlatform extends WinNtPlatform {
 	/* These are used in testIsPathInList */
 	switch ($file) {
 	case 'c:\foo\bar':
+	case 'C:\Foo':
+	case 'd:\\':
 	    return $file;
 	}
-	return '';
+	return false;
     }
 
     function getDirectorySeparator() {
