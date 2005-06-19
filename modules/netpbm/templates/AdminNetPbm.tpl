@@ -48,15 +48,6 @@
     </td>
   </tr><tr>
     <td>
-      {g->text text="PNM to JPEG converter:"}
-    </td><td>
-      <select name="{g->formVar var="form[pnmtojpeg]"}">
-	{html_options values=$AdminNetPbm.pnmToJpegList selected=$form.pnmtojpeg
-	 output=$AdminNetPbm.pnmToJpegList}
-      </select>
-    </td>
-  </tr><tr>
-    <td>
       {g->text text="JPEG Quality:"}
     </td><td>
       <select name="{g->formVar var="form[jpegQuality]"}">

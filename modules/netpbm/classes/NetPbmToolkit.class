@@ -256,7 +256,7 @@ class NetPbmToolkit extends GalleryToolkit {
 	    default:
 		$this->_deleteTempFiles($context);
 		return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__,
-                    "mimeType not handled: $compositeOverlayMimeType"), null, null);
+		    "mimeType not handled: $compositeOverlayMimeType"), null, null);
 	    }
 
 	    /* Execute commands */
@@ -350,7 +350,7 @@ class NetPbmToolkit extends GalleryToolkit {
 	    default:
 		$this->_deleteTempFiles($context);
 		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-                    "Unknown composite alignment type: $compositeAlignmentType"), null, null);
+		    "Unknown composite alignment type: $compositeAlignmentType"), null, null);
 	    }
 
 	    if ($useAlpha) {
@@ -407,7 +407,7 @@ class NetPbmToolkit extends GalleryToolkit {
 	}
 
 	if (($queueIt || (empty($transform) && $outputMimeType == $mimeType)) &&
-	        $sourceFilename != $destFilename) {
+		$sourceFilename != $destFilename) {
 	    if (!$platform->copy($sourceFilename, $destFilename)) {
 		$this->_deleteTempFiles($context);
 		return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__),
@@ -482,7 +482,7 @@ class NetPbmToolkit extends GalleryToolkit {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
-	    
+
 	    $cmd = array();
 	    if (!empty($convertToPnmCmd)) {
 		$cmd[] = $convertToPnmCmd;
@@ -565,7 +565,7 @@ class NetPbmToolkit extends GalleryToolkit {
 	    if (!$spliced) {
 		$comand[0][] = $sourceFilename;
 	    }
-	}	
+	}
 	list($ret, $output) = $this->_exec($command);
 
 	if ($ret->isError()) {
@@ -640,7 +640,7 @@ class NetPbmToolkit extends GalleryToolkit {
 
 	default:
 	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_FILE_TYPE,
-                __FILE__, __LINE__, 'Unsupported file type: ' . $mimeType), null);
+		__FILE__, __LINE__, 'Unsupported file type: ' . $mimeType), null);
 	}
 
 	if (!empty($cmd)) {
@@ -661,12 +661,6 @@ class NetPbmToolkit extends GalleryToolkit {
     function _convertFromPnmCmd($mimeType, $filename, $jpegQuality=null) {
 	global $gallery;
 
-	list ($ret, $pnmtojpeg) =
-	    GalleryCoreApi::getPluginParameter('module', 'netpbm', 'pnmtojpeg');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
 	if (!isset($jpegQuality)) {
 	    list ($ret, $jpegQuality) =
 		GalleryCoreApi::getPluginParameter('module', 'netpbm', 'jpegQuality');
@@ -684,7 +678,7 @@ class NetPbmToolkit extends GalleryToolkit {
 
 	case 'image/pjpeg':
 	case 'image/jpeg':
-	    $cmd = array($this->_pnmCmd($pnmtojpeg),
+	    $cmd = array($this->_pnmCmd('pnmtojpeg'),
 			 '--quality=' . $jpegQuality,
 			 '>',
 			 $filename);
@@ -754,10 +748,18 @@ class NetPbmToolkit extends GalleryToolkit {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 
-	list ($ret, $netPbmPath) =
-	    GalleryCoreApi::getPluginParameter('module', 'netpbm', 'path');
+	list ($ret, $netPbmPath) = GalleryCoreApi::getPluginParameter('module', 'netpbm', 'path');
 	if ($ret->isError()) {
+	    /* TODO: This method is expected to return string */
 	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (in_array($cmd, array('pnmtojpeg', 'bmptopnm', 'pnmcomp'))) {
+	    list ($ret, $cmd) = GalleryCoreApi::getPluginParameter('module', 'netpbm', $cmd);
+	    if ($ret->isError()) {
+		/* TODO: This method is expected to return string */
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	}
 
 	return $netPbmPath . $cmd;

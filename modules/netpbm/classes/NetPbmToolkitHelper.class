@@ -37,12 +37,13 @@ class NetPbmToolkitHelper {
      * Figure out what operations and properties are supported by the
      * NetPbmToolkit and return them.
      *
+     * @param boolean (optional) true to save module parameters
      * @return object GalleryStatus a status code
      *         array('operations' => ...
      *               'properties' => ...)
      * @static
      */
-    function getOperationsAndProperties() {
+    function getOperationsAndProperties($saveParameters=false) {
 	global $gallery;
 
 	list ($ret, $netPbmPath) =
@@ -55,18 +56,16 @@ class NetPbmToolkitHelper {
 	    return array(GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
 	}
 
-	$paths = array();
-	foreach (array('pnmtojpeg') as $key) {
-	    list ($ret, $paths[$key]) =
-		GalleryCoreApi::getPluginParameter('module', 'netpbm', $key);
+	list ($ret, $tests, $mimeTypes) = NetPbmToolkitHelper::testBinaries($netPbmPath);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if ($saveParameters) {
+	    $ret = NetPbmToolkitHelper::saveParameters($tests);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	}
-
-	list ($ret, $tests, $mimeTypes) = NetPbmToolkitHelper::testBinaries($netPbmPath, $paths);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* -------------------- Operations -------------------- */
@@ -182,12 +181,11 @@ class NetPbmToolkitHelper {
      */
     function testJhead($jheadPath) {
 	global $gallery;
-
-	/*
-	 * If the path is restricted by open_basedir, then verify that it's
-	 * legal.  Else just hope that it's valid and use it.
-	 */
 	$platform = $gallery->getPlatform();
+	/*
+	 * If the path is restricted by open_basedir, then verify that it's legal.
+	 * Else just hope that it's valid and use it.
+	 */
 	if (!$platform->isRestrictedByOpenBaseDir($jheadPath) && !@$platform->is_dir($jheadPath)) {
 	    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null, null);
 	}
@@ -220,75 +218,113 @@ class NetPbmToolkitHelper {
      * @param string path to the NetPbm we are testing
      * @return array object GalleryStatus general status of tests
      *	       array ('name' => string: the name of the binary,
-     *		      'success' => boolean: test successfull?
+     *		      'success' => boolean: test successful?
      *		      'message' => string: the error message
      *		     )
-     *         array hash map of mime types
+     *         array of string mime types
      *
      * @static
      */
-    function testBinaries($netPbmPath, $paths) {
+    function testBinaries($netPbmPath) {
 	global $gallery;
-
 	$platform = $gallery->getPlatform();
+	$isRestrictedPath = $platform->isRestrictedByOpenBaseDir($netPbmPath);
 	/*
-	 * If the path is not restricted by open_basedir, then verify that it's
-	 * legal.  Else just hope that it's valid and use it.
+	 * If the path is not restricted by open_basedir, then verify that it's legal.
+	 * Else just hope that it's valid and use it.
 	 */
-	if (!$platform->isRestrictedByOpenBaseDir($netPbmPath) && !@$platform->is_dir($netPbmPath)) {
+	if (!$isRestrictedPath && !@$platform->is_dir($netPbmPath)) {
 	    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null, null);
 	}
 
-	$binaries['giftopnm'] = array('image/gif');
-	$binaries['ppmtogif'] = array('image/gif');
-	$binaries['jpegtopnm'] = array('image/jpeg', 'image/pjpeg');
-	$binaries[$paths['pnmtojpeg']] = array('image/jpeg', 'image/pjpeg');
-	$binaries['pngtopnm'] = array('image/png');
-	$binaries['pnmtopng'] = array('image/png');
-	$binaries['tifftopnm'] = array('image/tiff');
-	$binaries['pnmtotiff'] = array('image/tiff');
-	$binaries['bmptopnm'] = array('image/bmp');
-	$binaries['ppmtobmp'] = array('image/bmp');
-	$binaries['pnmcomp'] = array();  /* pnmcomp it allows for watermarking */
+	$binaryData = array(
+	    '' => array('pnmscale', 'pnmcut', 'pnmfile', 'pnmcomp|pamcomp',
+			'exist1' => 'pnmflip', 'exist2' => 'pnmquant'), /* No --version for these */
+	    'image/jpeg|image/pjpeg' => array('jpegtopnm', 'pnmtojpeg|ppmtojpeg'),
+	    'image/gif' => array('giftopnm', 'ppmtogif'),
+	    'image/png' => array('pngtopnm', 'pnmtopng'),
+	    'image/tiff' => array('tifftopnm', 'pnmtotiff'),
+	    'image/bmp' => array('bmptopnm|bmptoppm', 'ppmtobmp'),
+	);
 
-	/* Get a list of all possible supported mime types */
-	$mimeTypes = array();
-	foreach (array_values($binaries) as $types) {
-	    $mimeTypes = array_merge($mimeTypes, $types);
-	}
-	$mimeTypes = array_flip($mimeTypes);
-
-	/* Disqualify mime types if the binaries aren't working */
-	foreach (array_keys($binaries) as $binary) {
-	    $fullPath = $netPbmPath . $binary;
-	    if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
-		$fullPath .= '.exe';
-	    }
-	    if (!$platform->isRestrictedByOpenBaseDir($fullPath) &&
-		    !$platform->file_exists($fullPath)) {
-		$success = false;
-		$results = array('File does not exist');
-	    } else {
-		list ($success, $results) = $platform->exec(array(array($fullPath, '--version')));
-	    }
-
-	    if (!$success) {
-		foreach ($binaries[$binary] as $mimeType) {
-		    unset($mimeTypes[$mimeType]);
+	$tests = $mimeTypes = array();
+	foreach ($binaryData as $mimeList => $binaryList) {
+	    $failCount = 0;
+	    foreach ($binaryList as $i => $binaries) {
+		$test = array();
+		$checkExistenceOnly = is_string($i);
+		foreach (explode('|', $binaries) as $binary) {
+		    $fullPath = $netPbmPath . $binary;
+		    if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
+			$fullPath .= '.exe';
+		    }
+		    if (!$isRestrictedPath && !$platform->file_exists($fullPath)) {
+			continue;
+		    }
+		    list ($success, $results) = $checkExistenceOnly ? array(true, array()) :
+			$platform->exec(array(array($fullPath, '--version')));
+		    if ($success) {
+			$tests[] = array('name' => $binary,
+					 'success' => true, 'message' => $results);
+			continue 2;
+		    } else if (empty($test)) {
+			$test = array('name' => $binary, 'success' => false, 'message' => $results);
+		    }
 		}
+		if (!empty($test)) {
+		    $tests[] = $test;
+		} else {
+		    if (!isset($module)) {
+			list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'netpbm');
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null, null);
+			}
+		    }
+		    $tests[] = array(
+			'name' => str_replace('|', $module->translate(' or '), $binaries),
+			'success' => false,
+			'message' => array($module->translate('File does not exist')));
+		}
+		$failCount++;
 	    }
-	    $tests[] = array('name' => $binary,
-			     'success' => $success,
-			     'message' => $results);
+	    if ($failCount && empty($mimeList)) {
+		/* These binaries are required; bail out */
+		break;
+	    } else if (!$failCount && !empty($mimeList)) {
+		$mimeTypes = array_merge($mimeTypes, explode('|', $mimeList));
+	    }
 	}
-
-	$tmp = array();
-	foreach (array_flip($mimeTypes) as $key => $value) {
-	    $tmp[] = $value;
-	}
-	$mimeTypes = $tmp;
 
 	return array(GalleryStatus::success(), $tests, $mimeTypes);
+    }
+
+    /**
+     * Save module parameters based on test results.
+     *
+     * @param array testBinaries test results
+     * @return object GalleryStatus a status code
+     */
+    function saveParameters($tests) {
+	$paramList = array('pnmtojpeg' => 'p.mtojpeg', 'bmptopnm' => 'bmptop.m',
+			   'pnmcomp' => 'p.mcomp');
+	foreach ($tests as $test) {
+	    if (!$test['success']) {
+		continue;
+	    }
+	    foreach ($paramList as $key => $match) {
+		if (preg_match("|$match|", $test['name'])) {
+		    $binary[$key] = $test['name'];
+		}
+	    }
+	}
+	foreach (array_keys($paramList) as $key) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', $key,
+						      isset($binary[$key]) ? $binary[$key] : $key);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+	return GalleryStatus::success();
     }
 }
 ?>

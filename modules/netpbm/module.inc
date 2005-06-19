@@ -40,7 +40,7 @@ class NetPbmModule extends GalleryModule {
 	$this->setId('netpbm');
 	$this->setName($gallery->i18n('NetPBM'));
 	$this->setDescription($gallery->i18n('NetPBM Graphics Toolkit'));
-	$this->setVersion('0.9.5');
+	$this->setVersion('0.9.6');
 	$this->setGroup('toolkits', $this->translate('Graphics Toolkits'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
@@ -51,12 +51,13 @@ class NetPbmModule extends GalleryModule {
      * @see GalleryModule::upgrade()
      */
     function upgrade($currentVersion) {
-	if (!isset($currentVersion)) {
-	    /* Initial install */
-	    foreach (array('path' => '',
-			   'jpegQuality' => '75',
-			   'pnmtojpeg' => 'pnmtojpeg')
-		     as $key => $value) {
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'netpbm');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	foreach (array('path' => '', 'jpegQuality' => '75', 'pnmtojpeg' => 'pnmtojpeg',
+		       'bmptopnm' => 'bmptopnm', 'pnmcomp' => 'pnmcomp') as $key => $value) {
+	    if (!isset($params[$key])) {
 		$ret = $this->setParameter($key, $value);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
@@ -99,7 +100,6 @@ class NetPbmModule extends GalleryModule {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), false);
 	}
-
 	if (!$needsConfiguration) {
 	    return array(GalleryStatus::success(), true);
 	}
@@ -156,84 +156,50 @@ class NetPbmModule extends GalleryModule {
 	}
 
 	/* Load any classes we require */
-	require_once(dirname(__FILE__) . '/classes/NetPbmToolkitHelper.class');
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/NetPbmToolkitHelper.class');
 
 	/* Now try each path in turn to see which ones work */
-	$lowestFailCount = 999;
 	$success = false;
 	foreach ($paths as $path) {
-	    foreach (array('ppmtojpeg', 'pnmtojpeg') as $pnmtojpeg) {
-		if (!$platform->isRestrictedByOpenBaseDir($path) &&
-			!$platform->file_exists($path)) {
-		    continue;
-		}
+	    if (!$platform->isRestrictedByOpenBaseDir($path) && !$platform->file_exists($path)) {
+		continue;
+	    }
 
-		list ($ret, $testResults) =
-		    NetPbmToolkitHelper::testBinaries($path, array('pnmtojpeg' => $pnmtojpeg));
+	    list ($ret, $testResults, $mimeTypes) = NetPbmToolkitHelper::testBinaries($path);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), false);
+	    }
+
+	    /* Take the first path found with at least jpeg support */
+	    if (in_array('image/jpeg', $mimeTypes)) {
+		$ret = $this->setParameter('path', $path);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}
-
-		/*
-		 * In order for us to consider this a success, we need to wind
-		 * up with at least support for JPEGs so track the path with
-		 * the lowest failure count and working jpegtopnm/p?mtojpeg
-		 */
-		$failCount = 0;
-		$jpegWorking = 0;
-		foreach ($testResults as $testResult) {
-		    /* All tests should work, else this path is not a valid one */
-		    if ($testResult['success']) {
-			if (preg_match('/jpegtopnm|p?mtojpeg/', $testResult['name'])) {
-			    $jpegWorking++;
-			}
-		    } else {
-			$failCount++;
-		    }
-
+		$ret = NetPbmToolkitHelper::saveParameters($testResults);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}
-
-		if ($jpegWorking == 2) {
-		    if ($failCount <= $lowestFailCount) {
-			/* We have a winner */
-			$ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', 'path', $path);
-			if ($ret->isError()) {
-			    return array($ret->wrap(__FILE__, __LINE__), false);
-			}
-
-			$ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', 'pnmtojpeg', $pnmtojpeg);
-			if ($ret->isError()) {
-			    return array($ret->wrap(__FILE__, __LINE__), false);
-			}
-
-			$lowestFailCount = $failCount;
-			$success = true;
-		    }
-		}
-
-		if ($lowestFailCount == 0) {
-		    /* We're done */
-		    break 2;
-		}
+		$success = true;
+		break;
 	    }
-
 	}
 	/* Now try each path in turn to see which ones work for jhead */
 	foreach ($paths as $path) {
-	    if ($platform->file_exists($path)) {
-		list ($ret, $testResults) = NetPbmToolkitHelper::testJhead($path);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), false);
-		}
-		foreach ($testResults as $testResult) {
-		    if ($testResult['success'] && ($testResult['name'] == 'jhead')) {
-			$ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', 'jheadPath', $path);
-			if ($ret->isError()) {
-			    return array($ret->wrap(__FILE__, __LINE__), false);
-			}
-
-			break 2;
+	    if (!$platform->isRestrictedByOpenBaseDir($path) && !$platform->file_exists($path)) {
+		continue;
+	    }
+	    list ($ret, $testResults) = NetPbmToolkitHelper::testJhead($path);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), false);
+	    }
+	    foreach ($testResults as $testResult) {
+		if ($testResult['success'] && ($testResult['name'] == 'jhead')) {
+		    $ret = $this->setParameter('jheadPath', $path);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), false);
 		    }
+		    break 2;
 		}
 	    }
 	}
@@ -249,8 +215,7 @@ class NetPbmModule extends GalleryModule {
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/NetPbmToolkitHelper.class');
 
 	/* Find out what operations and properties we have available to us */
-	list ($ret, $results) =
-	    NetPbmToolkitHelper::getOperationsAndProperties();
+	list ($ret, $results) = NetPbmToolkitHelper::getOperationsAndProperties(true);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -327,7 +292,7 @@ class NetPbmModule extends GalleryModule {
      */
     function needsConfiguration() {
 	/* This module requires all fields to be filled out before it can be activated. */
-	foreach (array('path', 'jpegQuality', 'pnmtojpeg') as $key) {
+	foreach (array('path', 'jpegQuality', 'pnmtojpeg', 'bmptopnm', 'pnmcomp') as $key) {
 	    list ($ret, $value) = $this->getParameter($key);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);

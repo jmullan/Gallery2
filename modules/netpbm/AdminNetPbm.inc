@@ -65,26 +65,17 @@ class AdminNetPbmController extends GalleryController {
 		    }
 		}
 
-		list ($ret, $testResults) = NetPbmToolkitHelper::testBinaries(
-		    $form['path'], array('pnmtojpeg' => $form['pnmtojpeg']));
+		list ($ret, $testResults, $mimeTypes) =
+		    NetPbmToolkitHelper::testBinaries($form['path']);
 		if ($ret->isError()) {
 		    if ($ret->getErrorCode() & ERROR_BAD_PATH) {
 			$error[] = 'form[error][path][badPath]';
 		    } else {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
-		} else {
-		    $failCount = 0;
-		    foreach ($testResults as $testResult) {
-			/* At least one test should work, else this path is not a valid one */
-			if (!$testResult['success']) {
-			    $failCount++;
-			}
-		    }
-
-		    if ($failCount == sizeof($testResults)) {
-			$error[] = 'form[error][path][testError]';
-		    }
+		} else if (empty($mimeTypes)) {
+		    /* At least one mime type must be supported, else this path is invalid */
+		    $error[] = 'form[error][path][testError]';
 		}
 	    }
 
@@ -122,18 +113,16 @@ class AdminNetPbmController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		/* Set the pnmtojpeg binary name */
+		/* Set the jhead binary name */
+		$jheadPath = isset($form['jheadPath']) ? $form['jheadPath'] : '';
 		$ret = GalleryCoreApi::setPluginParameter(
-		    'module', 'netpbm', 'pnmtojpeg', $form['pnmtojpeg']);
+		    'module', 'netpbm', 'jheadPath', $jheadPath);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		/* Set the jhead binary name */
-		$jheadPath = isset($form['jheadPath']) ? $form['jheadPath'] : '';
-
-		$ret = GalleryCoreApi::setPluginParameter(
-		    'module', 'netpbm', 'jheadPath', $jheadPath);
+		/* Save binaries to use for this netpbm path */
+		$ret = NetPbmToolkitHelper::saveParameters($testResults);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -188,10 +177,11 @@ class AdminNetPbmView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
+	$platform = $gallery->getPlatform();
 
 	/* Load our default values if we didn't just come from this form. */
 	if ($form['formName'] != 'AdminNetPbm') {
-	    foreach (array('path', 'jpegQuality', 'pnmtojpeg', 'jheadPath') as $key) {
+	    foreach (array('path', 'jpegQuality', 'jheadPath') as $key) {
 		list ($ret, $form[$key]) =
 		    GalleryCoreApi::getPluginParameter('module', 'netpbm', $key);
 		if ($ret->isError()) {
@@ -218,13 +208,7 @@ class AdminNetPbmView extends GalleryView {
 	    $jpegQualityList[] = $i;
 	}
 
-	/* Set up our pnmtojpeg selection list */
-	$pnmToJpegList = array('pnmtojpeg', 'ppmtojpeg');
-
-	$platform = $gallery->getPlatform();
-	$tests = array();
-	$mimeTypes = array();
-
+	$tests = $mimeTypes = array();
 	$failCount = 0;
 	$debugSnippet = '';
 	if (isset($form['action']['test'])) {
@@ -232,8 +216,7 @@ class AdminNetPbmView extends GalleryView {
 		$form['error']['path']['missing'] = 1;
 	    } else {
 		$gallery->startRecordingDebugSnippet();
-		list ($ret, $tests, $mimeTypes) = NetPbmToolkitHelper::testBinaries(
-		    $form['path'], array('pnmtojpeg' => $form['pnmtojpeg']));
+		list ($ret, $tests, $mimeTypes) = NetPbmToolkitHelper::testBinaries($form['path']);
 		$debugSnippet = $gallery->stopRecordingDebugSnippet();
 
 		if ($ret->isError()) {
@@ -244,7 +227,7 @@ class AdminNetPbmView extends GalleryView {
 		    }
 		} else {
 		    foreach ($tests as $test) {
-			$failCount += !$test['success'];
+			$failCount += $test['success'] ? 0 : 1;
 		    }
 		}
 	    }
@@ -265,7 +248,7 @@ class AdminNetPbmView extends GalleryView {
 		} else {
 		    foreach ($jheadTests as $test) {
 			$tests[] = $test;
-			$failCount += !$test['success'];
+			$failCount += $test['success'] ? 0 : 1;
 		    }
 		}
 	    }
@@ -283,7 +266,6 @@ class AdminNetPbmView extends GalleryView {
 	$AdminNetPbm = array();
 	$AdminNetPbm['tests'] = $tests;
 	$AdminNetPbm['mimeTypes'] = $mimeTypes;
-	$AdminNetPbm['pnmToJpegList'] = $pnmToJpegList;
 	$AdminNetPbm['jpegQualityList'] = $jpegQualityList;
 	$AdminNetPbm['failCount'] = $failCount;
 	$AdminNetPbm['debugSnippet'] = $debugSnippet;
