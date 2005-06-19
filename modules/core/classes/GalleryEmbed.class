@@ -231,10 +231,12 @@ class GalleryEmbed {
     function logout($params=array()) {
 	require_once(dirname(__FILE__) . '/GallerySession.class');
 	require_once(dirname(__FILE__) . '/GalleryUtilities.class');
+	require_once(dirname(__FILE__) . '/GalleryCoreApi.class');
 	$hasSession = GalleryUtilities::getCookieVar(SESSION_ID_PARAMETER);
 	if (empty($hasSession)) {
 	    $hasSession = GalleryUtilities::hasRequestVariable(SESSION_ID_PARAMETER);
-	} else {
+	}
+	if (!empty($hasSession)) {
 	    $ret = GalleryInitFirstPass($params);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
