@@ -275,18 +275,14 @@ class GalleryChildEntityHelper_simple {
 	}
 	if (!empty($orderBy)) {
 	    /* Postgres requires the order by column to be in the select list.. */
-	    $orderClause = 'ORDER BY ' . $orderBy;
+	    $orderClause = $orderBy . ', ';
 	    $selectExtra = ', ' . $orderColumn;
 	} else {
-	    $orderClause = '';
-	    $selectExtra = '';
+	    $orderClause = $selectExtra = '';
 	}
 
 	if (!empty($extraJoin)) {
-	    /* $extraJoin isn't an array, so array() it */
-	    $from = array_merge($classes, array($extraJoin));
-	} else {
-	    $from = $classes;
+	    $classes[] = $extraJoin;
 	}
 
 	/* Prepare the query */
@@ -294,7 +290,7 @@ class GalleryChildEntityHelper_simple {
 	SELECT
 	  [GalleryChildEntity::id] ' . $selectExtra . '
 	FROM
-	  ' . join(', ', $from) . '
+	  ' . join(', ', $classes) . '
 	WHERE
 	  [GalleryChildEntity::parentId] = ?
 	  AND
@@ -313,12 +309,13 @@ class GalleryChildEntityHelper_simple {
 	    $query .= '
 	     AND
 	     [GalleryAccessSubscriberMap::itemId] = [GalleryChildEntity::id]
-             AND
-             [GalleryAccessSubscriberMap::accessListId] IN (' . $aclMarkers . ')
+	     AND
+	     [GalleryAccessSubscriberMap::accessListId] IN (' . $aclMarkers . ')
 	    ';
 	}
 
-	$query .= $extraWhere . ' ' . $orderClause;
+	/* Add additional sort by id to ensure a consistent order (if selected sort has ties) */
+	$query .= $extraWhere . ' ORDER BY ' . $orderClause . '[GalleryChildEntity::id]';
 
 	$data[] = $item->getId();
 	if ($requiredPermission) {
@@ -413,74 +410,74 @@ class GalleryChildEntityHelper_simple {
      * @static
      */
     function fetchDescendentItemIds($item, $offset, $count, $requiredPermission) {
-        global $gallery;
-        $storage =& $gallery->getStorage();
+	global $gallery;
+	$storage =& $gallery->getStorage();
 
-        if (!GalleryUtilities::isA($item, 'GalleryItem')) {
-            return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
-        }
+	if (!GalleryUtilities::isA($item, 'GalleryItem')) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	}
 
-        list ($ret, $sequence) = GalleryCoreApi::fetchParentSequence($item->getId());
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
-        $sequence = join('/', $sequence);
-        $sequence .= '/' . $item->getId() . '/%';
+	list ($ret, $sequence) = GalleryCoreApi::fetchParentSequence($item->getId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$sequence = join('/', $sequence);
+	$sequence .= '/' . $item->getId() . '/%';
 
-        if ($requiredPermission) {
-            list ($ret, $aclIds) =
-                GalleryCoreApi::fetchAccessListIds($requiredPermission, $gallery->getActiveUserId());
-            if ($ret->isError()) {
-                return array($ret->wrap(__FILE__, __LINE__), null);
-            }
-            $aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
+	if ($requiredPermission) {
+	    list ($ret, $aclIds) =
+		GalleryCoreApi::fetchAccessListIds($requiredPermission, $gallery->getActiveUserId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
 
-            if (empty($aclIds)) {
-                return array(GalleryStatus::success(), array());
-            }
-        }
+	    if (empty($aclIds)) {
+		return array(GalleryStatus::success(), array());
+	    }
+	}
 
-        $data[] = $sequence;
-        /* Prepare the query */
-        if ($requiredPermission) {
-            $query = '
-            SELECT
-              [GalleryItemAttributesMap::itemId]
-            FROM
-              [GalleryItemAttributesMap], [GalleryAccessSubscriberMap]
-            WHERE
-              [GalleryItemAttributesMap::parentSequence] LIKE ?
-             AND
-             [GalleryAccessSubscriberMap::itemId] = [GalleryItemAttributesMap::itemId]
-             AND
-             [GalleryAccessSubscriberMap::accessListId] IN (' . $aclMarkers . ')
-            ';
-            $data = array_merge($data, $aclIds);
-        } else {
-            $query = '
-            SELECT
-              [GalleryItemAttributesMap::itemId]
-            FROM
-              [GalleryItemAttributesMap]
-            WHERE
-              [GalleryItemAttributesMap::parentSequence] LIKE ?
-            ';
-        }
+	$data[] = $sequence;
+	/* Prepare the query */
+	if ($requiredPermission) {
+	    $query = '
+	    SELECT
+	      [GalleryItemAttributesMap::itemId]
+	    FROM
+	      [GalleryItemAttributesMap], [GalleryAccessSubscriberMap]
+	    WHERE
+	      [GalleryItemAttributesMap::parentSequence] LIKE ?
+	     AND
+	     [GalleryAccessSubscriberMap::itemId] = [GalleryItemAttributesMap::itemId]
+	     AND
+	     [GalleryAccessSubscriberMap::accessListId] IN (' . $aclMarkers . ')
+	    ';
+	    $data = array_merge($data, $aclIds);
+	} else {
+	    $query = '
+	    SELECT
+	      [GalleryItemAttributesMap::itemId]
+	    FROM
+	      [GalleryItemAttributesMap]
+	    WHERE
+	      [GalleryItemAttributesMap::parentSequence] LIKE ?
+	    ';
+	}
 
-        $options = array();
-        $options['limit'] = array('count' => $count, 'offset' => $offset);
+	$options = array();
+	$options['limit'] = array('count' => $count, 'offset' => $offset);
 
-        list ($ret, $searchResults) = $gallery->search($query, $data, $options);
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
+	list ($ret, $searchResults) = $gallery->search($query, $data, $options);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
-        $ids = array();
-        while ($result = $searchResults->nextResult()) {
-            $ids[] = (int)$result[0];
-        }
+	$ids = array();
+	while ($result = $searchResults->nextResult()) {
+	    $ids[] = (int)$result[0];
+	}
 
-        return array(GalleryStatus::success(), $ids);
+	return array(GalleryStatus::success(), $ids);
     }
 
     /**
@@ -489,7 +486,7 @@ class GalleryChildEntityHelper_simple {
      * This will return the ORDER BY clause to sort the items and a
      * condition that we need to add to the fetching query. To join with
      * a new table, the [GalleryChildEntity::id] will contain the current
-     * ID. Eventualy another table mentioned in the condition will have to
+     * ID. Eventually another table mentioned in the condition will have to
      * be included too, the calling function has to decide that (using
      * GalleryStorage::extractClasses())
      *
@@ -534,7 +531,7 @@ class GalleryChildEntityHelper_simple {
 	    $column = null;
 	    switch ($orderType) {
 	    case 'id':
-		$column = '[GalleryItem::id]';
+		/* We always add a sort by id, see _fetchChildItemIds */
 		break;
 
 	    case 'title':
