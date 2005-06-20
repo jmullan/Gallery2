@@ -418,7 +418,7 @@ class GalleryUrlGenerator {
 
 	/* Replace any known tokens */
 	foreach (array_keys($params) as $key) {
-	    if ($params[$key] == '%CURRENT_URL%') {
+	    if ($params[$key] === '%CURRENT_URL%') {
 		$params[$key] = $this->getCurrentUrl();
 	    }
 	}
