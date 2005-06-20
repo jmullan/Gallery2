@@ -41,7 +41,7 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('squarethumb');
 	$this->setName($gallery->i18n('Square Thumbnails'));
 	$this->setDescription($gallery->i18n('Build all thumbnails so they are square'));
-	$this->setVersion('0.9.5');
+	$this->setVersion('0.9.6');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
@@ -103,7 +103,13 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
      * @see GalleryModule::getSiteAdminViews()
      */
     function getSiteAdminViews() {
-	return array(GalleryStatus::success(),
+	/* Omit site admin view if no ppm support; only use crop-to-square in that case */
+	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation('image/x-portable-pixmap',
+								      'convert-to-image/jpeg');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	return array(GalleryStatus::success(), !isset($toolkit) ? array() :
 		     array(array('name' => $this->translate('Square Thumbnails'),
 				 'view' => 'squarethumb.SquareThumbSiteAdmin')));
     }
@@ -114,18 +120,18 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
     function activate() {
 	global $gallery;
 
-	list ($ret, $mimeTypes) = $this->_getSupportedMimeTypes();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
 	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation('image/x-portable-pixmap',
 								      'convert-to-image/jpeg');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	list ($ret, $mimeTypes) = $this->_getSupportedMimeTypes(isset($toolkit));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
 	/* Register toolkit operation using high priority */
-	if (!empty($mimeTypes) && isset($toolkit)) {
+	if (!empty($mimeTypes)) {
 	    $ret = GalleryCoreApi::registerToolkitOperation('SquareThumb', $mimeTypes, 'thumbnail',
 		array(array('type' => 'int', 'description' => $gallery->i18n('target size')),
 		      array('type' => 'int', 'description' => $gallery->i18n('(optional)'))),
@@ -140,6 +146,14 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
 			       'subView' => 'squarethumb.CantActivate'));
 	}
 
+	if (!isset($toolkit)) {
+	    /* Make sure we're in crop mode, if toolkit support for fit mode gets deactivated */
+	    $ret = $this->setParameter('mode', 'crop');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
 	list ($ret, $redirect) = parent::activate();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -150,12 +164,14 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
 
     /**
      * Find out what mime-types currently have toolkit support for:
-     *    scale, dimensions and [crop or composite]
+     *    scale, dimensions and crop [or composite]
      *
+     * @param boolean true to include types with composite support
      * @return array object GalleryStatus a status code
      *               array mime types
+     * @access private
      */
-    function _getSupportedMimeTypes() {
+    function _getSupportedMimeTypes($useComposite) {
 	list ($ret, $scale) = GalleryCoreApi::getToolkitOperationMimeTypes('scale');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -164,9 +180,13 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	list ($ret, $composite) = GalleryCoreApi::getToolkitOperationMimeTypes('composite');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	if ($useComposite) {
+	    list ($ret, $composite) = GalleryCoreApi::getToolkitOperationMimeTypes('composite');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	} else {
+	    $composite = array();
 	}
 
 	$mimeTypes = array();
