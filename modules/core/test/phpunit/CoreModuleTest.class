@@ -34,7 +34,7 @@
 class CoreModuleTest extends GalleryTestCase {
     var $_module;
 
-    function ModuleTest($methodName) {
+    function CoreModuleTest($methodName) {
 	$this->GalleryTestCase($methodName);
     }
 
@@ -134,24 +134,24 @@ class CoreModuleTest extends GalleryTestCase {
     }
 
     function testGetSystemLinks() {
-        list ($ret, $content) = $this->_module->getSystemLinks();
-        if ($ret->isError()) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	list ($ret, $content) = $this->_module->getSystemLinks();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-        $this->assertEquals(array(
-                                  array('text' => $this->_module->translate('Site Admin'),
-                                        'params' => array('view' => 'core.SiteAdmin',
+	$this->assertEquals(array(
+				  array('text' => $this->_module->translate('Site Admin'),
+					'params' => array('view' => 'core.SiteAdmin',
 							  'return' => 1)),
-                                  array('text' => $this->_module->translate('Your Account'),
-                                        'params' => array('view' => 'core.UserAdmin',
+				  array('text' => $this->_module->translate('Your Account'),
+					'params' => array('view' => 'core.UserAdmin',
 							  'subView' => 'core.UserPreferences',
 							  'return' => 1)),
-                                  array('text' => $this->_module->translate('Logout'),
-                                        'params' => array('controller' => 'core.Logout',
+				  array('text' => $this->_module->translate('Logout'),
+					'params' => array('controller' => 'core.Logout',
 							  'return' => 1))
-                                  ),
-                            $content);
+				  ),
+			    $content);
     }
 
     function testLoadSystemContent() {
