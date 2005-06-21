@@ -549,11 +549,7 @@ class CoreModule extends GalleryModule {
 
 	if (!isset($versions)) {
 	    $platform = $gallery->getPlatform();
-	    $baseDir = $gallery->getConfig('data.gallery.base');
-	    $versionFile = sprintf('%s%s%s',
-				   $baseDir,
-				   $platform->getDirectorySeparator(),
-				   'versions.dat');
+	    $versionFile = $gallery->getConfig('data.gallery.base') . 'versions.dat';
 
 	    $moduleVersion = null;
 	    $galleryVersion = null;
