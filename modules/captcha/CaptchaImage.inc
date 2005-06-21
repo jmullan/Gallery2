@@ -25,7 +25,7 @@
  * @package Captcha
  * @subpackage UserInterface
  * @author Stefan Ioachim <stefanioachim@gmail.com>
- * @author Bharat Mediratta <bharat@menalto.com> 
+ * @author Bharat Mediratta <bharat@menalto.com>
  */
 
 /**
@@ -50,6 +50,7 @@ class CaptchaImageView extends GalleryView {
 	global $gallery;
 
 	header('Content-type: image/jpeg');
+	header('Pragma: No-cache');
 
 	$session =& $gallery->getSession();
 	$code = $session->get('captcha.key');
@@ -57,7 +58,7 @@ class CaptchaImageView extends GalleryView {
 	$image = @ImageCreateFromJPEG(dirname(__FILE__) . '/data/code_bg.jpg');
 	$textColor = ImageColorAllocate($image, 80, 80, 80);
 	$width = (imagesx($image) - 10 * strlen($code)) / 2;
-	ImageString ($image, 5, $width, 40, $code, $textColor);
+	ImageString($image, 5, $width, 40, $code, $textColor);
 	ImageJPEG($image, '', 75);
 	ImageDestroy($image);
 
