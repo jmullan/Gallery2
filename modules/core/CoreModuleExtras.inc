@@ -676,35 +676,46 @@ class CoreModuleExtras {
 	    /*
 	     * Changed 'All Users' to 'Registered Users'
 	     * Don't change if the user modified the name already!
+	     * Don't change if there is already a group with the new name
 	     */
-	    list ($ret, $allUserGroupId) = $module->getParameter('id.allUserGroup');
+	    list ($ret, $group) =
+		GalleryCoreApi::fetchGroupByGroupName($module->translate('Registered Users'));
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($allUserGroupId);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    list ($ret, $group) = GalleryCoreApi::loadEntitiesById($allUserGroupId);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    $allUserGroupName = $group->getGroupName();
-	    /* We used to entitize data in db; expect that from orignal group name: */
-	    $originalGroupName = GalleryUtilities::utf8ToUnicodeEntities(
-		$module->translate('All Users'));
-	    if (!strcmp($allUserGroupName, $originalGroupName)) {
-		$group->setGroupName($module->translate('Registered Users'));
-		$ret = $group->save();
-		if ($ret->isError()) {
+		if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+		    /* Ok, we can change the group name */
+	    
+		    list ($ret, $allUserGroupId) = $module->getParameter('id.allUserGroup');
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($allUserGroupId);
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		    list ($ret, $group) = GalleryCoreApi::loadEntitiesById($allUserGroupId);
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		    $allUserGroupName = $group->getGroupName();
+		    /* We used to entitize data in db; expect that from orignal group name: */
+		    $originalGroupName = GalleryUtilities::utf8ToUnicodeEntities(
+			$module->translate('All Users'));
+		    if (!strcmp($allUserGroupName, $originalGroupName)) {
+			$group->setGroupName($module->translate('Registered Users'));
+			$ret = $group->save();
+			if ($ret->isError()) {
+			    return $ret->wrap(__FILE__, __LINE__);
+			}
+			
+			$ret = GalleryCoreApi::releaseLocks($lockId);
+			if ($ret->isError()) {
+			    return $ret->wrap(__FILE__, __LINE__);
+			}
+		    }
+		} else {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
-
-		$ret = GalleryCoreApi::releaseLocks($lockId);
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-	    }
+	    } /* else a group with that name already exists, nothing to do */
 
 	case '0.9.16':
 	    /* Beta 3 release! */
