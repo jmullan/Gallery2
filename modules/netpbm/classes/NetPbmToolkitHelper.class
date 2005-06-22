@@ -239,12 +239,12 @@ class NetPbmToolkitHelper {
 
 	$binaryData = array(
 	    '' => array('pnmscale', 'pnmcut', 'pnmfile', 'pnmcomp|pamcomp',
-			'exist1' => 'pnmflip', 'exist2' => 'pnmquant'), /* No --version for these */
+			'exist' => 'pnmflip'), /* No --version for this */
 	    'image/jpeg|image/pjpeg' => array('jpegtopnm', 'pnmtojpeg|ppmtojpeg'),
-	    'image/gif' => array('giftopnm', 'ppmtogif'),
+	    'image/gif' => array('giftopnm', 'ppmtogif', 'exist' => 'ppmquant'),
 	    'image/png' => array('pngtopnm', 'pnmtopng'),
 	    'image/tiff' => array('tifftopnm', 'pnmtotiff'),
-	    'image/bmp' => array('bmptopnm|bmptoppm', 'ppmtobmp'),
+	    'image/bmp' => array('bmptopnm|bmptoppm', 'ppmtobmp', 'exist' => 'ppmquant'),
 	);
 
 	$tests = $mimeTypes = array();

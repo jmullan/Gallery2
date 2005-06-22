@@ -532,17 +532,18 @@ class NetPbmToolkitTest extends GalleryTestCase {
 			      array('name' => 'pnmfile', 'success' => true, 'message' => array()),
 			      array('name' => 'pnmcomp', 'success' => true, 'message' => array()),
 			      array('name' => 'pnmflip', 'success' => true, 'message' => array()),
-			      array('name' => 'pnmquant', 'success' => true, 'message' => array()),
 			      array('name' => 'jpegtopnm', 'success' => true, 'message' => array()),
 			      array('name' => 'ppmtojpeg', 'success' => true, 'message' => array()),
 			      array('name' => 'giftopnm', 'success' => true, 'message' => array()),
 			      array('name' => 'ppmtogif', 'success' => true, 'message' => array()),
+			      array('name' => 'ppmquant', 'success' => true, 'message' => array()),
 			      array('name' => 'pngtopnm', 'success' => true, 'message' => array()),
 			      array('name' => 'pnmtopng', 'success' => true, 'message' => array()),
 			      array('name' => 'tifftopnm', 'success' => true, 'message' => array()),
 			      array('name' => 'pnmtotiff', 'success' => true, 'message' => array()),
 			      array('name' => 'bmptopnm', 'success' => true, 'message' => array()),
-			      array('name' => 'ppmtobmp', 'success' => true, 'message' => array())),
+			      array('name' => 'ppmtobmp', 'success' => true, 'message' => array()),
+			      array('name' => 'ppmquant', 'success' => true, 'message' => array())),
 			    $results);
 
 	$this->assertEquals(array('image/jpeg',
@@ -848,7 +849,7 @@ class NetPbmToolkitTestPlatform {
 	case '/validPath/pnmfile':
 	case '/validPath/pnmcomp':
 	case '/validPath/pnmflip':
-	case '/validPath/pnmquant':
+	case '/validPath/ppmquant':
 	case '/validPath/':
 	case $this->_netPbmPath . 'bmptoppm':
 	case $this->_netPbmPath . 'giftopnm':
@@ -865,7 +866,7 @@ class NetPbmToolkitTestPlatform {
 	case $this->_netPbmPath . 'pnmfile':
 	case $this->_netPbmPath . 'pnmcomp':
 	case $this->_netPbmPath . 'pnmflip':
-	case $this->_netPbmPath . 'pnmquant':
+	case $this->_netPbmPath . 'ppmquant':
 	case $this->_netPbmPath:
 	    return true;
 	}
