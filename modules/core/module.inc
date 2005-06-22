@@ -38,7 +38,7 @@ class CoreModule extends GalleryModule {
 	$this->setId('core');
 	$this->setName($gallery->i18n('Core'));
 	$this->setGalleryVersion('2.0-beta-3+');
-	$this->setVersion('0.9.25'); /*Update CoreModuleExtras::upgrade,_prepareConfigUpgrade too!*/
+	$this->setVersion('0.9.26'); /*Update CoreModuleExtras::upgrade,_prepareConfigUpgrade too!*/
 	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('registerEventListeners|' .
@@ -166,9 +166,11 @@ class CoreModule extends GalleryModule {
 					    'return' => 1));
 	    }
 
-	    if (isset($permissions[$itemId]['core.changePermissions'])) {
+	    if (isset($permissions[$itemId]['core.edit'])) {
 		$links[$itemId][] =
-		    array('text' => $this->translate('edit permissions'),
+		    array('text' => isset($permissions[$itemId]['core.changePermissions'])
+				? $this->translate('edit permissions')
+				: $this->translate('view permissions'),
 			  'params' => array('view' => 'core.ItemAdmin',
 					    'subView' => 'core.ItemPermissions',
 					    'itemId' => $itemId,
@@ -483,8 +485,10 @@ class CoreModule extends GalleryModule {
 	    }
 	}
 
-	if (isset($permissions['core.changePermissions'])) {
-	    $views[] = array('name' => $this->translate('Edit Permissions'),
+	if (isset($permissions['core.edit'])) {
+	    $views[] = array('name' => isset($permissions['core.changePermissions'])
+				 ? $this->translate('Edit Permissions')
+				 : $this->translate('View Permissions'),
 			     'view' => 'core.ItemPermissions');
 	}
 

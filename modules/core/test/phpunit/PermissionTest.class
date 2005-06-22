@@ -60,6 +60,7 @@ class PermissionTest extends GalleryTestCase {
 	for ($i = 0; $i < 3; $i++) {
 	    list ($ret, $this->_albums[$i]) = $this->_createRandomAlbum($parentId);
 	    if ($ret->isError()) {
+		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    if ($i == 0) {
@@ -69,6 +70,7 @@ class PermissionTest extends GalleryTestCase {
 	    /* Remove all permissions from it */
 	    $ret = GalleryCoreApi::removeItemPermissions($this->_albums[$i]->getId());
 	    if ($ret->isError()) {
+		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
@@ -80,11 +82,19 @@ class PermissionTest extends GalleryTestCase {
 		$this->_albums[$i]->getId(), $gallery->getActiveUserId(),
 		'core.changePermissions', false);
 	    if ($ret->isError()) {
+		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
 	    $parentId = $this->_albums[$i]->getId();
 	}
+
+	list ($ret, $this->_user) = $this->_createRandomUser();
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($this->_user);
     }
 
     /**
@@ -96,7 +106,6 @@ class PermissionTest extends GalleryTestCase {
      */
     function testAddUserAndGroupPermission() {
 	global $gallery;
-
 	$userId = $gallery->getActiveUserId();
 
 	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($userId);
@@ -148,7 +157,8 @@ class PermissionTest extends GalleryTestCase {
 	/* Retrieve permissions and compare */
 	for ($i = 0; $i < sizeof($this->_albums); $i++) {
 	    $id = $this->_albums[$i]->getId();
-	    list ($ret, $uncompressedPerms) = GalleryCoreApi::fetchAllPermissionsForItem($id, false);
+	    list ($ret, $uncompressedPerms) =
+		GalleryCoreApi::fetchAllPermissionsForItem($id, false);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -248,7 +258,6 @@ class PermissionTest extends GalleryTestCase {
      */
     function testCopyPermissions() {
 	global $gallery;
-
 	$userId = $gallery->getActiveUserId();
 
 	/* Add user permission to the 2nd item */
@@ -282,27 +291,20 @@ class PermissionTest extends GalleryTestCase {
     function testFetchPermissionsForItems() {
 	global $gallery;
 
-	/* Create a user that we can delete */
-	list ($ret, $user) = $this->_createRandomUser();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->_markForCleanup($user);
-
 	$ret = GalleryCoreApi::removeItemPermissions($this->_albums[1]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	/* Add user permission to the 2nd item */
 	$ret = GalleryCoreApi::addUserPermission(
-	    $this->_albums[1]->getId(), $user->getId(), 'core.edit', false);
+	    $this->_albums[1]->getId(), $this->_user->getId(), 'core.edit', false);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Fetch and compare */
 	list ($ret, $perms) = GalleryCoreApi::fetchPermissionsForItems(
-	    array($this->_albums[1]->getId()), $user->getId());
+	    array($this->_albums[1]->getId()), $this->_user->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -323,7 +325,6 @@ class PermissionTest extends GalleryTestCase {
      */
     function testHasPermission() {
 	global $gallery;
-
 	$userId = $gallery->getActiveUserId();
 
 	list ($ret, $groupIds) =
@@ -396,7 +397,6 @@ class PermissionTest extends GalleryTestCase {
     /* Create new access lists and make sure that they are in our acl set */
     function testFetchAccessListIds() {
 	global $gallery;
-
 	$storage =& $gallery->getStorage();
 	list ($ret, $newAclId[0]) = $storage->getUniqueId();
 	if ($ret->isError()) {
@@ -533,9 +533,9 @@ class PermissionTest extends GalleryTestCase {
 	}
 
 	$this->assert(in_array($unusedAclId, $aclIds),
-		      "Missing unused acl id (pre compact): $unusedAclId");
+	    "Missing unused acl id (pre compact): $unusedAclId");
 	$this->assert(count(array_intersect($duplicateAclId, $aclIds)) == 2,
-		      "Missing dupe acl id (pre compact): $duplicateAclId[0] or $duplicateAclId[1]");
+	    "Missing dupe acl id (pre compact): $duplicateAclId[0] or $duplicateAclId[1]");
 
 	/* Compact the access lists */
 	$ret = GalleryCoreApi::compactAccessLists();
@@ -559,13 +559,6 @@ class PermissionTest extends GalleryTestCase {
     }
 
     function testHasItemPermission() {
-	/* Create a new user and give him limited view permissions on our tree */
-	list ($ret, $user) = $this->_createRandomUser();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->_markForCleanup($user);
-
 	list ($ret, $hasItemPermission) =
 	    GalleryCoreApi::hasItemPermission($this->_albums[0]->getId(), 'core.changePermissions');
 	if ($ret->isError()) {
@@ -574,7 +567,7 @@ class PermissionTest extends GalleryTestCase {
 	$this->assert($hasItemPermission, 'active user should have core.changePermissions');
 
 	list ($ret, $hasItemPermission) = GalleryCoreApi::hasItemPermission(
-	    $this->_albums[0]->getId(), 'core.changePermissions', $user->getId());
+	    $this->_albums[0]->getId(), 'core.changePermissions', $this->_user->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -582,13 +575,6 @@ class PermissionTest extends GalleryTestCase {
     }
 
     function testGetPermissions() {
-	/* Create a new user and give him limited view permissions on our tree */
-	list ($ret, $user) = $this->_createRandomUser();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->_markForCleanup($user);
-
 	list ($ret, $permissions) = GalleryCoreApi::getPermissions($this->_albums[0]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -597,12 +583,119 @@ class PermissionTest extends GalleryTestCase {
 			    'active user should have core.changePermissions');
 
 	list ($ret, $permissions) =
-	    GalleryCoreApi::getPermissions($this->_albums[0]->getId(), $user->getId());
+	    GalleryCoreApi::getPermissions($this->_albums[0]->getId(), $this->_user->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals(array(), $permissions,
-			    'new user should have no perms');
+	$this->assertEquals(array(), $permissions, 'new user should have no perms');
+    }
+
+    function testRecursiveAdd() {
+	/* Recursive add of permissions only affects items with changePermissions permission */
+	global $gallery;
+
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_albums[0]->getId(), $this->_user->getId(), 'core.changePermissions', false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_albums[2]->getId(), $this->_user->getId(), 'core.changePermissions', false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$gallery->setActiveUser($this->_user);
+
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_albums[0]->getId(), $this->_user->getId(), 'core.delete', true);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $permissions) = GalleryCoreApi::getPermissions($this->_albums[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('core.changePermissions' => 1, 'core.delete' => 1),
+			    $permissions, 'album 1');
+	list ($ret, $permissions) = GalleryCoreApi::getPermissions($this->_albums[1]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(), $permissions, 'album 2');
+	list ($ret, $permissions) = GalleryCoreApi::getPermissions($this->_albums[2]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('core.changePermissions' => 1, 'core.delete' => 1),
+			    $permissions, 'album 3');
+    }
+
+    function testRecursiveRemove() {
+	/* Recursive remove of permissions only affects items with changePermissions permission */
+	global $gallery;
+
+	list ($ret, $everybodyGroupId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::addGroupPermission(
+	    $this->_albums[0]->getId(), $everybodyGroupId, 'core.view', true);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_albums[0]->getId(), $this->_user->getId(), 'core.changePermissions', false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_albums[2]->getId(), $this->_user->getId(), 'core.changePermissions', false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$gallery->setActiveUser($this->_user);
+
+	list ($ret, $permissions) =
+	    GalleryCoreApi::fetchPermissionsForItems(array($this->_albums[0]->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array($this->_albums[0]->getId() =>
+	    array('core.changePermissions' => 1, 'core.view' => 1)), $permissions,
+	    'permissions before remove');
+
+	$ret = GalleryCoreApi::removeGroupPermission(
+	    $this->_albums[0]->getId(), $everybodyGroupId, 'core.view', true);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Ensure old permission has been removed and isn't still cached */
+	list ($ret, $canView) =
+	    GalleryCoreApi::hasItemPermission($this->_albums[0]->getId(), 'core.view');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!$canView, 'should not have view permission');
+	list ($ret, $permissions) = GalleryCoreApi::getPermissions($this->_albums[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('core.changePermissions' => 1), $permissions, 'album 1');
+	list ($ret, $permissions) = GalleryCoreApi::getPermissions($this->_albums[1]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('core.view' => 1), $permissions, 'album 2');
+	list ($ret, $permissions) = GalleryCoreApi::getPermissions($this->_albums[2]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('core.changePermissions' => 1), $permissions, 'album 3');
     }
 }
 ?>

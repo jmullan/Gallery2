@@ -385,6 +385,9 @@ class GalleryPermissionHelper_advanced {
 	}
 
 	GalleryPermissionHelper_simple::_clearCachedAccessListIds();
+	if ($changeType == 'remove') {
+	    GalleryDataCache::clearPermissionCache();
+	}
 	    
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret->isError()) {

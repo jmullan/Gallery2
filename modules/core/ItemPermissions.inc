@@ -67,6 +67,7 @@ class ItemPermissionsController extends GalleryController {
 	    $redirect['view'] = 'core.ItemAdmin';
 	    $redirect['subView'] = 'core.ItemPermissions';
 	    $redirect['itemId'] = $itemId;
+	    $status['deletedGroupPermission'] = 1;
 
 	    /* Stuff the values back into the form for easy re-adding */
 	    $redirect['form[group][permission]'] = $permissionId;
@@ -74,6 +75,7 @@ class ItemPermissionsController extends GalleryController {
 	    if ($ret->isSuccess()) {
 		$redirect['form[group][groupName]'] = $group->getGroupName();
 	    }
+	    $verifySelfPermissions = true;
 	} else if (isset($form['action']['deleteUserPermission'])) {
 	    /* Figure out which one we're working with */
 	    $index = array_pop(array_keys($form['action']['deleteUserPermission']));
@@ -90,12 +92,16 @@ class ItemPermissionsController extends GalleryController {
 	    $redirect['view'] = 'core.ItemAdmin';
 	    $redirect['subView'] = 'core.ItemPermissions';
 	    $redirect['itemId'] = $itemId;
+	    $status['deletedUserPermission'] = 1;
 
 	    /* Stuff the values back into the form for easy re-adding */
 	    $redirect['form[user][permission]'] = $permissionId;
 	    list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
 	    if ($ret->isSuccess()) {
 		$redirect['form[user][userName]'] = $user->getUserName();
+	    }
+	    if ($userId == $gallery->getActiveUserId()) {
+		$verifySelfPermissions = true;
 	    }
 	} else if (isset($form['action']['addUserPermission'])) {
 
@@ -148,6 +154,7 @@ class ItemPermissionsController extends GalleryController {
 		$redirect['subView'] = 'core.ItemPermissions';
 		$redirect['itemId'] = $itemId;
 		$redirect['form[user][userName]'] = $user->getUserName();
+		$status['addedUserPermission'] = 1;
 	    }
 	} else if (isset($form['action']['addGroupPermission'])) {
 
@@ -201,6 +208,7 @@ class ItemPermissionsController extends GalleryController {
 		$redirect['subView'] = 'core.ItemPermissions';
 		$redirect['itemId'] = $itemId;
 		$redirect['form[group][groupName]'] = $group->getGroupName();
+		$status['addedGroupPermission'] = 1;
 	    }
 	} else if (isset($form['action']['changeOwner'])) {
 	    if (empty($form['owner']['ownerName'])) {
@@ -314,6 +322,38 @@ class ItemPermissionsController extends GalleryController {
 	    }
 	}
 
+	if (isset($verifySelfPermissions)) {
+	    /*
+	     * Make sure we don't remove our own ability to change permissions on this item.
+	     * If this was a recursive remove we may lose permissions on subitems.
+	     */
+	    list ($ret, $canEdit) = GalleryCoreApi::hasItemPermission($itemId, 'core.edit');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if (!$canEdit) {
+		$ret = GalleryCoreApi::addUserPermission($itemId, $gallery->getActiveUserId(),
+							 'core.edit', false);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$status['addedBackSelfPermission'] = 1;
+	    }
+	    list ($ret, $canChange) =
+		GalleryCoreApi::hasItemPermission($itemId, 'core.changePermissions');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if (!$canChange) {
+		$ret = GalleryCoreApi::addUserPermission($itemId, $gallery->getActiveUserId(),
+							 'core.changePermissions', false);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$status['addedBackSelfPermission'] = 1;
+	    }
+	}
+
 	if (empty($error)) {
 	    /*
 	     * Try compacting.  Ignore lock timeouts here; if we failed this time we'll try
@@ -354,7 +394,12 @@ class ItemPermissionsView extends GalleryView {
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 
 	/* Make sure we have permission to edit this item */
-	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.changePermissions');
+	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	list ($ret, $canChange) =
+	    GalleryCoreApi::hasItemPermission($itemId, 'core.changePermissions');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -490,6 +535,7 @@ class ItemPermissionsView extends GalleryView {
 	}
 
 	/* Figure out what we can display on the form */
+	$can['changePermissions'] = $canChange;
 	$can['changeOwner'] = $isAdmin;
 	$can['applyToSubItems'] = $item->getCanContainChildren();
 

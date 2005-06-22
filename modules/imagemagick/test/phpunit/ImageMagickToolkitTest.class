@@ -861,7 +861,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 		$properties['colorspace'] = array(
 		    'type' => 'string',
 		    'description' => 'Get the colorspace of the image',
-		    'mimeTypes' => array('image/jpeg')
+		    'mimeTypes' => array('image/jpeg', 'image/tiff')
 		);
 	    }
 	    $this->assertEquals($properties, $results['properties'], $this->_envName());

@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -92,7 +92,7 @@ class GalleryDataCache {
 	if (!GalleryDataCache::isMemoryCachingEnabled()) {
 	    return;
 	}
-	
+
 	$cache =& GalleryDataCache::_getCache();
 	$cache['keys'][$key] = $data;
 	if ($protected) {
@@ -115,7 +115,7 @@ class GalleryDataCache {
 	if (!GalleryDataCache::isMemoryCachingEnabled()) {
 	    return;
 	}
-	
+
 	$cache =& GalleryDataCache::_getCache();
 	unset($cache['timestamps'][$key]);
 	unset($cache['keys'][$key]);
@@ -133,7 +133,7 @@ class GalleryDataCache {
 	if (!GalleryDataCache::isMemoryCachingEnabled()) {
 	    return;
 	}
-	
+
 	$cache =& GalleryDataCache::_getCache();
 	foreach (preg_grep("/$pattern/", array_keys($cache['keys'])) as $key) {
 	    unset($cache['timestamps'][$key]);
@@ -210,7 +210,7 @@ class GalleryDataCache {
 	if (!GalleryDataCache::isMemoryCachingEnabled()) {
 	    return null;
 	}
-	
+
 	$cache =& GalleryDataCache::_getCache();
 	if (!isset($cache['protected'][$key])) {
 	    $cache['timestamps'][$key] = time() + microtime();
@@ -229,7 +229,7 @@ class GalleryDataCache {
 	if (!GalleryDataCache::isMemoryCachingEnabled()) {
 	    return false;
 	}
-	
+
 	$cache =& GalleryDataCache::_getCache();
 	return isset($cache['keys'][$key]);
     }
@@ -244,7 +244,7 @@ class GalleryDataCache {
 	if (!GalleryDataCache::isMemoryCachingEnabled()) {
 	    return array();
 	}
-	
+
 	$cache =& GalleryDataCache::_getCache();
 	return array_keys($cache['keys']);
     }
@@ -259,7 +259,7 @@ class GalleryDataCache {
 	if (!GalleryDataCache::isMemoryCachingEnabled()) {
 	    return;
 	}
-	
+
 	$cache =& GalleryDataCache::_getCache();
 
 	if ($purgeProtected) {
@@ -307,7 +307,7 @@ class GalleryDataCache {
 	if (!GalleryDataCache::isFileCachingEnabled()) {
 	    return $null;
 	}
-	
+
 	global $gallery;
 	$platform = $gallery->getPlatform();
 	$cacheFile = GalleryDataCache::getCachePath($pathInfo);
@@ -356,9 +356,9 @@ class GalleryDataCache {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 	if ($pathInfo['type'] == 'entity' ||
-	        $pathInfo['type'] == 'derivative-meta' ||
-	        $pathInfo['type'] == 'module-data' ||
-	        isset($pathInfo['id'])) {
+		$pathInfo['type'] == 'derivative-meta' ||
+		$pathInfo['type'] == 'module-data' ||
+		isset($pathInfo['id'])) {
 	    $cacheFile = GalleryDataCache::getCachePath($pathInfo);
 	    if ($platform->file_exists($cacheFile)) {
 		if ($platform->is_dir($cacheFile)) {
@@ -373,7 +373,7 @@ class GalleryDataCache {
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
-		
+
 		foreach (array_keys($pluginStatus) as $pluginId) {
 		    GalleryDataCache::removeFromDisk(array('type' => $pathInfo['type'],
 							   'id' => $pluginId,
@@ -456,7 +456,7 @@ class GalleryDataCache {
 	    $cacheFile = sprintf('%sentity/%s/%s/%s.inc',
 				 $base, $first, $second, $pathInfo['itemId']);
 	    break;
-	    
+
 	case 'derivative':
 	    list ($first, $second) = GalleryDataCache::getCacheTuple($pathInfo['itemId']);
 	    $cacheFile = sprintf('%sderivative/%s/%s/%s.dat',
@@ -474,13 +474,13 @@ class GalleryDataCache {
 	    $cacheFile = sprintf('%sderivative/%s/%s/%s-meta.inc',
 				 $base, $first, $second, $pathInfo['itemId']);
 	    break;
-	    
+
 	case 'fast-download':
 	    list ($first, $second) = GalleryDataCache::getCacheTuple($pathInfo['itemId']);
 	    $cacheFile = sprintf('%sderivative/%s/%s/%s-fast.inc',
 				 $base, $first, $second, $pathInfo['itemId']);
 	    break;
-	    
+
 	case 'module':
 	case 'layout':
 	    if (isset($pathInfo['id'])) {
@@ -517,19 +517,18 @@ class GalleryDataCache {
      */
     function cachePermissions($ids, $permission) {
 	global $gallery;
-
-	if (!is_array($ids)) {
-	    $ids = array($ids);
-	}
-
 	$session =& $gallery->getSession();
 	if (!isset($session)) {
 	    /* No session means we've got no cache */
 	    return;
 	}
 
+	if (!is_array($ids)) {
+	    $ids = array($ids);
+	}
+
 	$permissions = $session->get('permissionCache');
-	
+
 	/*
 	 * We want to put all the permissions that we cache in this request into one entry in
 	 * the session.  However we're going to get several separate requests.  So start by
@@ -541,15 +540,15 @@ class GalleryDataCache {
 	    if (!isset($permissions)) {
 		$permissions = array();
 	    }
-		
+
 	    array_unshift($permissions, array());
-	    
-	    // Trim down the cache
-	    $max = 10; 
+
+	    /* Trim down the cache */
+	    $max = 10;
 	    if (sizeof($permissions) > $max) {
 		array_splice($permissions, -1, sizeof($permissions) - $max);
 	    }
-	    
+
 	    $initialized = 1;
 	}
 
@@ -557,7 +556,7 @@ class GalleryDataCache {
 	foreach ($ids as $id) {
 	    $permissions[0][$permission][$id] = 1;
 	}
-	
+
 	$session->put('permissionCache', $permissions);
     }
 
@@ -573,13 +572,11 @@ class GalleryDataCache {
      */
     function hasPermission($id, $permission) {
 	global $gallery;
-
 	$session =& $gallery->getSession();
 	if (!isset($session)) {
 	    return;
 	}
 
-	
 	$permissions = $session->get('permissionCache');
 	/*
 	 * Since we add all new data to the head of the list, the odds are good
@@ -592,6 +589,17 @@ class GalleryDataCache {
 	}
 
 	return false;
+    }
+
+    /**
+     * Clear permission cache for active user.
+     */
+    function clearPermissionCache() {
+	global $gallery;
+	$session =& $gallery->getSession();
+	if (isset($session)) {
+	    $session->remove('permissionCache');
+	}
     }
 }
 ?>

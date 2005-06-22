@@ -777,6 +777,15 @@ class CoreModuleExtras {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
+	case '0.9.25':
+	    /* And image/tiff-cmyk mime type */
+	    list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime('tifcmyk');
+	    if ($ret->isSuccess() && $mimeType == 'application/unknown') {
+		$ret = GalleryCoreApi::addMimeType('tifcmyk', 'image/tiff-cmyk', false);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
 
 	case 'end of upgrade path':
 	    /*
@@ -935,6 +944,7 @@ $gallery->setConfig(\'cookieId\', \'' . $cookieId . '\');
 		'add' => array());
 
 	case '0.9.24':
+	case '0.9.25':
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we

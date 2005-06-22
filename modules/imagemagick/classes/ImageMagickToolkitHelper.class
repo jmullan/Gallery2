@@ -173,11 +173,18 @@ class ImageMagickToolkitHelper {
 		'mimeTypes' => $multiPageMimeTypes);
 	}
 
-	if (in_array('image/jpeg-cmyk', $mimeTypes)) {
+	$cmykTypes = $rgbTypes = array();
+	foreach ($mimeTypes as $mimeType) {
+	    if (substr($mimeType, -5) == '-cmyk') {
+		$cmykTypes[] = $mimeType;
+		$rgbTypes[] = substr($mimeType, 0, -5);
+	    }
+	}
+	if (!empty($cmykTypes)) {
 	    $properties['colorspace'] = array(
 		'type' => 'string',
 		'description' => $gallery->i18n('Get the colorspace of the image'),
-		'mimeTypes' => array('image/jpeg'));
+		'mimeTypes' => $rgbTypes);
 	}
 
 	return array(GalleryStatus::success(), array('operations' => $operations,
@@ -313,7 +320,11 @@ class ImageMagickToolkitHelper {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if ($cmykSupport) {
-	    $mimeTypes['image/jpeg-cmyk'] = 1;
+	    foreach (array('image/jpeg', 'image/tiff') as $mimeType) {
+		if (isset($mimeTypes[$mimeType])) {
+		    $mimeTypes[$mimeType . '-cmyk'] = 1;
+		}
+	    }
 	}
 
 	return array(GalleryStatus::success(), array_keys($mimeTypes));

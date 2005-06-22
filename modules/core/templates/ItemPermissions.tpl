@@ -8,17 +8,33 @@
   <h2> {g->text text="Permissions"} </h2>
 </div>
 
-{if isset($status.changedOwner)}
+{if !empty($status)}
 <div class="gbBlock"><h2 class="giSuccess">
-  {g->text text="Owner changed successfully"}
+  {if isset($status.changedOwner)}
+    {g->text text="Owner changed successfully"}
+  {/if}
+  {if isset($status.addedGroupPermission)}
+    {g->text text="Group permission added successfully"}
+  {/if}
+  {if isset($status.addedUserPermission)}
+    {g->text text="User permission added successfully"}
+  {/if}
+  {if isset($status.deletedGroupPermission)}
+    {g->text text="Group permission removed successfully"}
+  {/if}
+  {if isset($status.deletedUserPermission)}
+    {g->text text="User permission removed successfully"}
+  {/if}
 </h2></div>
 {/if}
 
+{if $ItemPermissions.can.changePermissions}
 <div class="gbBlock">
   <p class="giDescription">
     {g->text text="Each item has its own independent set of permissions.  Changing the parent's permissions has no effect on the permissions of the child.  This allows you to restrict access to the parent of this item, but still grant full access to this item, or vice versa.  The most efficient way to use this permission system is to create groups and assign permissions to them.  Then if you want to grant permissions to a specific user, you can add (or remove) the user from the appropriate group."}
   </p>
 </div>
+{/if}
 
 <div class="gbBlock">
   <h3> {g->text text="Owner"} </h3>
@@ -45,12 +61,15 @@
     <input type="hidden" name="{g->formVar var="form[serialNumber]"}" value="{$form.serialNumber}"/>
     <input type="submit" class="inputTypeSubmit"
      name="{g->formVar var="form[action][changeOwner]"}" value="{g->text text="Change"}"/>
+
+    {if $ItemPermissions.can.applyToSubItems}
     <p class="giDescription">
     <input type="checkbox" checked="checked"
       name="{g->formVar var="form[applyOwnerToSubItems]"}"
       value="{g->text text="Apply new owner to sub-items"}"/>
       {g->text text="Apply new owner to sub-items"}
     </p>
+    {/if}
 
     {if !empty($form.error.owner.missingUser)}
     <div class="giError">
@@ -65,7 +84,7 @@
   {/if}
 </div>
 
-{if $ItemPermissions.can.applyToSubItems}
+{if $ItemPermissions.can.changePermissions && $ItemPermissions.can.applyToSubItems}
 <div class="gbBlock">
   <h3> {g->text text="Apply changes"} </h3>
 
@@ -84,7 +103,9 @@
   <table class="gbDataTable"><tr>
     <th> {g->text text="Group name"} </th>
     <th> {g->text text="Permission"} </th>
+    {if $ItemPermissions.can.changePermissions}
     <th> {g->text text="Action"} </th>
+    {/if}
   </tr>
   {if $ItemPermissions.groupPermissions}
     {section name=group loop=$ItemPermissions.groupPermissions}
@@ -95,17 +116,15 @@
 	{$entry.group.groupName}
       </td><td>
 	{$entry.permission.description}
-      </td><td>
+      </td>
+      {if $ItemPermissions.can.changePermissions}
+      <td>
 	{if !empty($entry.deleteList)}
 	  <select name="{g->formVar var="form[group][delete][$index]"}" size="1">
 	  {foreach from=$entry.deleteList item=deleteEntry}
 	    <option value="{$entry.group.id},{$deleteEntry.id}">{$deleteEntry.description}</option>
 	  {/foreach}
 	  </select>
-	{else}
-	  &nbsp;
-	{/if}
-	{if !empty($entry.deleteList)}
 	  <input type="submit" class="inputTypeSubmit"
 	   name="{g->formVar var="form[action][deleteGroupPermission][$index]"}"
 	   value="{g->text text="Remove"}"/>
@@ -113,12 +132,14 @@
 	  &nbsp;
 	{/if}
       </td>
+      {/if}
     </tr>
     {/section}
   {/if}
   </table>
 </div>
 
+{if $ItemPermissions.can.changePermissions}
 <div class="gbBlock">
   <h3> {g->text text="New Group Permission"} </h3>
 
@@ -158,6 +179,7 @@
   </div>
   {/if}
 </div>
+{/if}
 
 <div class="gbBlock">
   <h3> {g->text text="User Permissions"} </h3>
@@ -165,7 +187,9 @@
   <table class="gbDataTable"><tr>
     <th> {g->text text="User name"} </th>
     <th> {g->text text="Permission"} </th>
+    {if $ItemPermissions.can.changePermissions}
     <th> {g->text text="Action"} </th>
+    {/if}
   </tr>
   {if $ItemPermissions.userPermissions}
     {section name=user loop=$ItemPermissions.userPermissions}
@@ -176,17 +200,15 @@
 	{$entry.user.userName}
       </td><td>
 	{$entry.permission.description}
-      </td><td>
+      </td>
+      {if $ItemPermissions.can.changePermissions}
+      <td>
 	{if !empty($entry.deleteList)}
 	  <select name="{g->formVar var="form[user][delete][$index]"}" size="1">
 	  {foreach from=$entry.deleteList item=deleteEntry}
 	    <option value="{$entry.user.id},{$deleteEntry.id}">{$deleteEntry.description}</option>
 	  {/foreach}
 	  </select>
-	{else}
-	  &nbsp;
-	{/if}
-	{if !empty($entry.deleteList)}
 	  <input type="submit" class="inputTypeSubmit"
 	   name="{g->formVar var="form[action][deleteUserPermission][$index]"}"
 	   value="{g->text text="Remove"}"/>
@@ -194,12 +216,14 @@
 	  &nbsp;
 	{/if}
       </td>
+      {/if}
     </tr>
     {/section}
   {/if}
   </table>
 </div>
 
+{if $ItemPermissions.can.changePermissions}
 <div class="gbBlock">
   <h3> {g->text text="New User Permission"} </h3>
 
@@ -239,3 +263,4 @@
   </div>
   {/if}
 </div>
+{/if}

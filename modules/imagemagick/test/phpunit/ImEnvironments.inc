@@ -258,6 +258,7 @@ $imEnvironment[] = array(
 		'application/postscript',
 		'application/photoshop',
 		'image/jpeg-cmyk',
+		'image/tiff-cmyk',
 	),
 	'binaries' => array(
 		'animate',
@@ -359,6 +360,7 @@ $imEnvironment[] = array(
 		'application/postscript',
 		'application/photoshop',
 		'image/jpeg-cmyk',
+		'image/tiff-cmyk',
 	),
 	'binaries' => array(
 		'animate',

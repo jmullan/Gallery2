@@ -570,6 +570,7 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    break;
 
 	case 'image/jpeg-cmyk':
+	case 'image/tiff-cmyk':
 	    if (substr($outputMimeType, -5) != '-cmyk') {
 		$command[] = '-colorspace';
 		$command[] = 'RGB';

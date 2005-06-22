@@ -41,7 +41,7 @@ class ExifModule extends GalleryModule {
 	$this->setId('exif');
 	$this->setName($gallery->i18n('EXIF/IPTC'));
 	$this->setDescription($gallery->i18n('Extract EXIF/IPTC data from JPEG photos'));
-	$this->setVersion('0.9.5'); /* Update upgrade() function below too */
+	$this->setVersion('0.9.6'); /* Update upgrade() function below too */
 	$this->setGroup('data', $this->translate('Extra Data'));
 	$this->setCallbacks('loadItemDetails|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
@@ -118,6 +118,7 @@ class ExifModule extends GalleryModule {
 	    case '0.9.2':
 	    case '0.9.3':
 	    case '0.9.4':
+	    case '0.9.5':
 
 	    case 'end of upgrade path':
 		/*
@@ -170,7 +171,7 @@ class ExifModule extends GalleryModule {
 	global $gallery;
 	$ret = GalleryCoreApi::registerToolkitProperty(
 		'Exif',
-		array('image/jpeg'),
+		array('image/jpeg', 'image/jpeg-cmyk'),
 		'originationTimestamp',
 		'int',
 		$gallery->i18n('Get the origination timestamp'));
@@ -206,16 +207,11 @@ class ExifModule extends GalleryModule {
      */
     function loadItemDetails(&$template, $item, $permissions) {
 	global $gallery;
-
 	GalleryCoreApi::relativeRequireOnce('modules/exif/classes/ExifHelper.class');
 
-	/* We only work on data items */
-	if (!GalleryUtilities::isA($item, 'GalleryDataItem')) {
-	    return array(GalleryStatus::success(), '');
-	}
-
-	/* And those data items have to be JPEGs */
-	if ($item->getMimeType() != 'image/jpeg' && $item->getMimeType() != 'image/pjpeg') {
+	/* We only work on JPEG data items */
+	if (!GalleryUtilities::isA($item, 'GalleryDataItem') ||
+		!preg_match('{^image/p?jpeg(-cmyk)?$}', $item->getMimeType())) {
 	    return array(GalleryStatus::success(), '');
 	}
 
