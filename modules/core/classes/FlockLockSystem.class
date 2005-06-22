@@ -188,7 +188,8 @@ class FlockLockSystem extends GalleryLockSystem {
 		list ($fd, $lockFile) = $lockInfo;
 		$count = $platform->fwrite($fd, '.');
 		if ($count == 0) {
-		    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+		    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
+						$lockFile);
 		}
 		$platform->fflush($fd);
 	    }
@@ -250,7 +251,8 @@ class FlockLockSystem extends GalleryLockSystem {
 			@$platform->unlink($lockFile);
 		    }
 		}
-		return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__), null);
+		return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+						  $lockFile), null);
 	    }
 	}
 
@@ -286,8 +288,10 @@ class FlockLockSystem extends GalleryLockSystem {
 			    }
 			}
 		    }
-		    return array(GalleryStatus::error(ERROR_LOCK_TIMEOUT, __FILE__, __LINE__),
-				 null);
+		    return array(GalleryStatus::error(ERROR_LOCK_TIMEOUT, __FILE__, __LINE__,
+			array_reduce($notLocked,
+			    create_function('$v,$w', 'return empty($v) ? $w[1] : "$v $w[1]";'))),
+			null);
 		}
 
 		/* Wait a second and try any unacquired locks again */
