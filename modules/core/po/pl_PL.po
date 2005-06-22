@@ -175,21 +175,18 @@ msgstr "uprawnienia"
 msgid "Deleting old permission tables"
 msgstr "uprawnienia"
 
-msgid "All Users"
-msgstr "Wszyscy użytkownicy"
-
 #, fuzzy
 msgid "Registered Users"
 msgstr "edytuj użytkowników"
+
+msgid "All Users"
+msgstr "Wszyscy użytkownicy"
 
 msgid "Site Admins"
 msgstr "Administratorzy strony"
 
 msgid "Guest"
 msgstr "Gość"
-
-msgid "Gallery Administrator"
-msgstr "Admnistrator Galerii"
 
 msgid "Gallery"
 msgstr "Galeria"
@@ -770,6 +767,10 @@ msgid "edit permissions"
 msgstr "uprawnienia"
 
 #, fuzzy
+msgid "view permissions"
+msgstr "uprawnienia"
+
+#, fuzzy
 msgid "Site Admin"
 msgstr "Administratorzy strony"
 
@@ -821,6 +822,10 @@ msgstr "Utwórz reprezentację"
 
 #, fuzzy
 msgid "Edit Permissions"
+msgstr "Uprawnienia"
+
+#, fuzzy
+msgid "View Permissions"
 msgstr "Uprawnienia"
 
 msgid "Add Items"
@@ -1003,7 +1008,8 @@ msgstr ""
 msgid ""
 "By default Gallery uses PHP's built in mail function to send email which "
 "requires no configuration.  To use a smtp/mail server enter the information "
-"below, including authentication information if required."
+"below, including authentication information if required.  Optionally add :"
+"port after the server name to use a non-default port."
 msgstr ""
 
 #, fuzzy
@@ -2552,6 +2558,22 @@ msgstr "Uprawnienia"
 msgid "Owner changed successfully"
 msgstr "Właściciel zmieniony"
 
+#, fuzzy
+msgid "Group permission added successfully"
+msgstr "Ustawienia konta zapamietane"
+
+#, fuzzy
+msgid "User permission added successfully"
+msgstr "Użytkownik '%s' został zmodyfikowany poprawnie."
+
+#, fuzzy
+msgid "Group permission removed successfully"
+msgstr "Ustawienia konta zapamietane"
+
+#, fuzzy
+msgid "User permission removed successfully"
+msgstr "Użytkownik '%s' został zmodyfikowany poprawnie."
+
 msgid ""
 "Each item has its own independent set of permissions.  Changing the parent's "
 "permissions has no effect on the permissions of the child.  This allows you "
@@ -2840,14 +2862,11 @@ msgid ""
 "the email and you should contact your system administrator for help."
 msgstr ""
 
-#, fuzzy
-msgid "Administrator Recovery"
-msgstr "Hasło"
-
 #, c-format
 msgid ""
-"You can use the %sAdministrator Password Recovery%s if you don't receive a "
-"recovery email from Gallery."
+"Administrators can use the %sEmergency Password Recovery%s page to recover "
+"the admin account if they fail to receive recovery email due to server "
+"problems, or lack of a working email address."
 msgstr ""
 
 #, fuzzy
@@ -2860,8 +2879,8 @@ msgid ""
 "who you claim.  The best way to be sure is to ask you to make a tiny change "
 "in the Gallery directory which will prove that you have the right "
 "permissions.  So, we're going to ask that you create a new text file called %"
-"s in the <tt>%s</tt> directory on your webserver (that's the root Gallery 2 "
-"directory). It must contain the following randomly generated characters:"
+"s in your gallery2 directory. It must contain the following randomly "
+"generated characters:"
 msgstr ""
 
 #, c-format
@@ -2882,7 +2901,8 @@ msgid "Emergency Administrator Password Reset"
 msgstr ""
 
 msgid ""
-"This page can be used to securely reset the password on your 'admin' account."
+"This page can be used by a system administrator to securely reset the "
+"password on any account."
 msgstr ""
 
 msgid "Authorization Confirmed"
@@ -2892,6 +2912,17 @@ msgid ""
 "Your authorization has been confirmed.  Please enter your new password "
 "below.  After setting your new password you will be taken to the login page."
 msgstr ""
+
+msgid "Recover Password for Username"
+msgstr ""
+
+#, fuzzy
+msgid "You must enter a username to recover the password for."
+msgstr "Musisz wprowadzić nowe hasło dwukrotnie, aby je zmienić ."
+
+#, fuzzy
+msgid "The username you entered does not exist."
+msgstr "Nazwa użytkownika, którą wprowadziłeś, jest nieprawidłowa"
 
 msgid "Authorization Incorrect"
 msgstr ""
@@ -3074,6 +3105,13 @@ msgstr[2] "%d minut"
 msgid "%d. %s"
 msgstr "Edycja użytkownika"
 
+#~ msgid "Gallery Administrator"
+#~ msgstr "Admnistrator Galerii"
+
+#, fuzzy
+#~ msgid "Administrator Recovery"
+#~ msgstr "Hasło"
+
 #, fuzzy
 #~ msgid "Use As Parent&rsquo;s Thumbnail?"
 #~ msgstr "Użyć jako nadrzędny obrazek poglądowy?"
@@ -3185,9 +3223,6 @@ msgstr "Edycja użytkownika"
 #, fuzzy
 #~ msgid "Layouts"
 #~ msgstr "Układ"
-
-#~ msgid "You must enter a new password twice to change passwords."
-#~ msgstr "Musisz wprowadzić nowe hasło dwukrotnie, aby je zmienić ."
 
 #~ msgid "&laquo; No Sort Order &raquo;"
 #~ msgstr "&laquo; Brak kolejności sortowania &raquo;"
@@ -3568,9 +3603,6 @@ msgstr "Edycja użytkownika"
 #~ msgid ""
 #~ "The way that items will be arranged on the page when viewing this album."
 #~ msgstr "Sposób, w jaki pozycje będą ustawione podczas oglądania albumu."
-
-#~ msgid "User '%s' has been modified successfully."
-#~ msgstr "Użytkownik '%s' został zmodyfikowany poprawnie."
 
 #~ msgid "User name:"
 #~ msgstr "Nazwa użytkownika:"

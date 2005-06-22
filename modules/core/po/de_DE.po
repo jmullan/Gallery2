@@ -174,11 +174,11 @@ msgstr "Berechtigungen erweitern"
 msgid "Deleting old permission tables"
 msgstr "Lösche alte Berechtigungstabellen"
 
-msgid "All Users"
-msgstr "Alle Benutzer"
-
 msgid "Registered Users"
 msgstr "Registrierte Benutzer"
+
+msgid "All Users"
+msgstr "Alle Benutzer"
 
 msgid "Site Admins"
 msgstr "Site-Administratoren"
@@ -720,6 +720,10 @@ msgstr "Album hinzufügen"
 msgid "edit permissions"
 msgstr "Berechtigungen ändern"
 
+#, fuzzy
+msgid "view permissions"
+msgstr "Berechtigungen ändern"
+
 msgid "Site Admin"
 msgstr "Site-Administration"
 
@@ -770,6 +774,10 @@ msgstr "Als Titelbild auswählen"
 
 msgid "Edit Permissions"
 msgstr "Berechtigungen ändern"
+
+#, fuzzy
+msgid "View Permissions"
+msgstr "Berechtigungen"
 
 msgid "Add Items"
 msgstr "Elemente hinzufügen"
@@ -948,10 +956,12 @@ msgstr "Auszeichnung"
 msgid "Email"
 msgstr "E-Mail"
 
+#, fuzzy
 msgid ""
 "By default Gallery uses PHP's built in mail function to send email which "
 "requires no configuration.  To use a smtp/mail server enter the information "
-"below, including authentication information if required."
+"below, including authentication information if required.  Optionally add :"
+"port after the server name to use a non-default port."
 msgstr ""
 "Standardmäßig benutzt Gallery die Mail-Funktion von PHP, um E-Mails zu "
 "verschicken.  Dafür ist keine Konfiguration nötig.  Wenn Sie einen SMTP/Mail-"
@@ -1014,8 +1024,8 @@ msgid ""
 "is equal, in this case it is '/application/'. Most often it is just '/'."
 msgstr ""
 "Fals Ihre Gallery in eine andere Anwendung eingebettet ist und Sie die "
-"folgenden Felder leer lassen, dann haben alle DownloadItem-Verweise (die URLs "
-"der Bilder und anderer Elemente) in der eingebetteten Gallery <b>einen "
+"folgenden Felder leer lassen, dann haben alle DownloadItem-Verweise (die "
+"URLs der Bilder und anderer Elemente) in der eingebetteten Gallery <b>einen "
 "angehängten GALLERYSID-String</b> in der URL, welcher ein <b>geringfügiges "
 "Sicherheitsrisiko</b> darstellt, falls Ihre Gallery-Benutzer anfangen, "
 "Bilder-URLs in Foren, Gästebücher, etc. reinzukopieren. Die Alternative ist, "
@@ -2524,6 +2534,22 @@ msgstr "Berechtigungen"
 msgid "Owner changed successfully"
 msgstr "Besitzer wurde erfolgreich geändert."
 
+#, fuzzy
+msgid "Group permission added successfully"
+msgstr "Kontoeinstellungen wurden erfolgreich gespeichert."
+
+#, fuzzy
+msgid "User permission added successfully"
+msgstr "Einstellungen erfolgreich gespeichert."
+
+#, fuzzy
+msgid "Group permission removed successfully"
+msgstr "Kontoeinstellungen wurden erfolgreich gespeichert."
+
+#, fuzzy
+msgid "User permission removed successfully"
+msgstr "Alle Zähler wurden erfolgreich zurückgesetzt."
+
 msgid ""
 "Each item has its own independent set of permissions.  Changing the parent's "
 "permissions has no effect on the permissions of the child.  This allows you "
@@ -2817,16 +2843,12 @@ msgstr ""
 "Mail bekommen. Bitte wenden Sie sich dann für Hilfe an Ihren System-"
 "Administrator."
 
-msgid "Administrator Recovery"
-msgstr "Administrator-Wiederherstellung"
-
 #, c-format
 msgid ""
-"You can use the %sAdministrator Password Recovery%s if you don't receive a "
-"recovery email from Gallery."
+"Administrators can use the %sEmergency Password Recovery%s page to recover "
+"the admin account if they fail to receive recovery email due to server "
+"problems, or lack of a working email address."
 msgstr ""
-"Sie können die %sAdministrator Passwort-Wiederherstellung%s verwenden, wenn "
-"Sie keine Wiederherstellungs-E-Mail von der Gallery erhalten."
 
 msgid "Recover"
 msgstr "Wiederherstellen"
@@ -2870,8 +2892,10 @@ msgstr ""
 msgid "Emergency Administrator Password Reset"
 msgstr "Notfall-Zurücksetzen des Administrator-Passworts"
 
+#, fuzzy
 msgid ""
-"This page can be used to securely reset the password on your 'admin' account."
+"This page can be used by a system administrator to securely reset the "
+"password on any account."
 msgstr ""
 "Auf dieser Seite können Sie sicher das Passwort für Ihr 'admin'-Konto "
 "zurücksetzen."
@@ -2886,6 +2910,17 @@ msgstr ""
 "Ihre Authorisierung wurde bestätigt. Bitte geben Sie Ihr neues Passwort "
 "unten ein. Nachdem Sie Ihr neues Passwort gesetzt haben, werden Sie auf die "
 "Anmeldeseite geleitet."
+
+msgid "Recover Password for Username"
+msgstr ""
+
+#, fuzzy
+msgid "You must enter a username to recover the password for."
+msgstr "Sie müssen ein neues Passwort eingeben"
+
+#, fuzzy
+msgid "The username you entered does not exist."
+msgstr "Der eingegebene Benutzername ist nicht gültig"
 
 msgid "Authorization Incorrect"
 msgstr "Authorisierung fehlgeschlagen"
@@ -3089,3 +3124,13 @@ msgstr[1] "(%d Elemente)"
 #, c-format
 msgid "%d. %s"
 msgstr "%d. %s"
+
+#~ msgid "Administrator Recovery"
+#~ msgstr "Administrator-Wiederherstellung"
+
+#~ msgid ""
+#~ "You can use the %sAdministrator Password Recovery%s if you don't receive "
+#~ "a recovery email from Gallery."
+#~ msgstr ""
+#~ "Sie können die %sAdministrator Passwort-Wiederherstellung%s verwenden, "
+#~ "wenn Sie keine Wiederherstellungs-E-Mail von der Gallery erhalten."

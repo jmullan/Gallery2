@@ -168,20 +168,17 @@ msgstr "Opgrader tilladelser"
 msgid "Deleting old permission tables"
 msgstr "Sletter gamle tilladelsestabeller"
 
-msgid "All Users"
-msgstr "Alle brugere"
-
 msgid "Registered Users"
 msgstr "Registrerede brugere"
+
+msgid "All Users"
+msgstr "Alle brugere"
 
 msgid "Site Admins"
 msgstr "Sideadministratorer"
 
 msgid "Guest"
 msgstr "Gæst"
-
-msgid "Gallery Administrator"
-msgstr "Gallery administrator"
 
 msgid "Gallery"
 msgstr "Gallery"
@@ -711,6 +708,10 @@ msgstr "tilføj album"
 msgid "edit permissions"
 msgstr "rediger tilladelser"
 
+#, fuzzy
+msgid "view permissions"
+msgstr "rediger tilladelser"
+
 msgid "Site Admin"
 msgstr "Sideadministration"
 
@@ -761,6 +762,10 @@ msgstr "Fremhæv"
 
 msgid "Edit Permissions"
 msgstr "Rediger tilladelser"
+
+#, fuzzy
+msgid "View Permissions"
+msgstr "Tilladelser"
 
 msgid "Add Items"
 msgstr "Tilføj elementer"
@@ -935,10 +940,12 @@ msgstr ""
 msgid "Email"
 msgstr "Email"
 
+#, fuzzy
 msgid ""
 "By default Gallery uses PHP's built in mail function to send email which "
 "requires no configuration.  To use a smtp/mail server enter the information "
-"below, including authentication information if required."
+"below, including authentication information if required.  Optionally add :"
+"port after the server name to use a non-default port."
 msgstr ""
 "Som standard bruger Gallery PHPs indbyggede mailfunktioner til at sende "
 "email med, og det kræver ingen konfiguration. For at bruge en smtp/"
@@ -2444,6 +2451,22 @@ msgstr "Tilladelser"
 msgid "Owner changed successfully"
 msgstr "Ejeren blev ændret"
 
+#, fuzzy
+msgid "Group permission added successfully"
+msgstr "Kontoopsætning blev gemt"
+
+#, fuzzy
+msgid "User permission added successfully"
+msgstr "Opsætningen blev gemt"
+
+#, fuzzy
+msgid "Group permission removed successfully"
+msgstr "Kontoopsætning blev gemt"
+
+#, fuzzy
+msgid "User permission removed successfully"
+msgstr "Visningstællerne er blevet nulstillet"
+
 msgid ""
 "Each item has its own independent set of permissions.  Changing the parent's "
 "permissions has no effect on the permissions of the child.  This allows you "
@@ -2729,14 +2752,11 @@ msgstr ""
 "Bemærk at hvis kontoen ikke har en email-adresse modtager du ikke "
 "nødvendigvis emailen og du bør kontakte din systemadministrator for hjælp."
 
-#, fuzzy
-msgid "Administrator Recovery"
-msgstr "Genskab kodeord"
-
 #, c-format
 msgid ""
-"You can use the %sAdministrator Password Recovery%s if you don't receive a "
-"recovery email from Gallery."
+"Administrators can use the %sEmergency Password Recovery%s page to recover "
+"the admin account if they fail to receive recovery email due to server "
+"problems, or lack of a working email address."
 msgstr ""
 
 msgid "Recover"
@@ -2748,8 +2768,8 @@ msgid ""
 "who you claim.  The best way to be sure is to ask you to make a tiny change "
 "in the Gallery directory which will prove that you have the right "
 "permissions.  So, we're going to ask that you create a new text file called %"
-"s in the <tt>%s</tt> directory on your webserver (that's the root Gallery 2 "
-"directory). It must contain the following randomly generated characters:"
+"s in your gallery2 directory. It must contain the following randomly "
+"generated characters:"
 msgstr ""
 
 #, c-format
@@ -2771,7 +2791,8 @@ msgstr ""
 
 #, fuzzy
 msgid ""
-"This page can be used to securely reset the password on your 'admin' account."
+"This page can be used by a system administrator to securely reset the "
+"password on any account."
 msgstr "Denne siden tillader dig at nulstille kodeordet for din konto."
 
 #, fuzzy
@@ -2782,6 +2803,17 @@ msgid ""
 "Your authorization has been confirmed.  Please enter your new password "
 "below.  After setting your new password you will be taken to the login page."
 msgstr ""
+
+msgid "Recover Password for Username"
+msgstr ""
+
+#, fuzzy
+msgid "You must enter a username to recover the password for."
+msgstr "Du skal indtaste en ny adgangskode"
+
+#, fuzzy
+msgid "The username you entered does not exist."
+msgstr "Det indtastede brugernavn er ugyldigt."
 
 #, fuzzy
 msgid "Authorization Incorrect"
@@ -2974,3 +3006,10 @@ msgstr[1] "(%d elementer)"
 #, c-format
 msgid "%d. %s"
 msgstr "%d. %s"
+
+#~ msgid "Gallery Administrator"
+#~ msgstr "Gallery administrator"
+
+#, fuzzy
+#~ msgid "Administrator Recovery"
+#~ msgstr "Genskab kodeord"

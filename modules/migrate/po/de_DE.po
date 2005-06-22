@@ -66,6 +66,19 @@ msgstr "Import"
 msgid "Gallery 1"
 msgstr "Gallery 1"
 
+msgid "G1-&gt;G2 Mapping"
+msgstr ""
+
+msgid "G1 path"
+msgstr ""
+
+#, c-format
+msgid ""
+"G1 URL redirect. Use only if G2 is installed where G1 used to be and you "
+"have run a G1 import with the URL redirect option selected. Otherwise follow "
+"instructions in %sMigrate Site Admin%s."
+msgstr ""
+
 msgid "Select Albums and Users"
 msgstr "Wählen Sie die Alben und Benutzer"
 
@@ -331,19 +344,26 @@ msgstr "Um die URL-Umleitung des Apache-Webservers zu aktivieren:"
 msgid "Ensure the %s Apache module is enabled."
 msgstr "Stellen Sie sicher, dass das %s-Modul in Ihrem Apache aktiviert ist."
 
+#, fuzzy
 msgid ""
 "Edit or create a file called <tt>.htaccess</tt> in your Gallery1 directory "
-"and add the text shown below to the file. This will also work in your "
-"Gallery2 directory if G2 is installed in the path where G1 used to be."
+"and add the text shown below to the file. Remove G1 rewrite rules from an "
+"existing file. Redirects will also work in your Gallery2 directory if G2 is "
+"installed in the path where G1 used to be. However, if you also use the G2 "
+"URL Rewrite module then activate the G1 redirect rule in that module instead "
+"of using the block shown below."
 msgstr ""
 "Verändern oder erzeugen Sie eine Datei namens <tt>.htaccess</tt> in Ihrem "
 "Gallery1-Ordner und fügen Sie den unten dargestellten Text in die Datei ein. "
 "Dies funktioniert auch in Ihrem Gallery2-Ordner, wenn G2 in dem Ordner "
 "installiert wurde, in dem sich zuvor G1 befand."
 
+#, fuzzy
 msgid ""
 "Add the same <tt>.htaccess</tt> block in the Gallery1 albums directory if "
-"you also wish to redirect links to image files and album directories."
+"you also wish to redirect links to image files and album directories. Note "
+"that these redirects are not active until the G1 images are actually removed "
+"or moved. Omit the !-f line shown below to redirect anyway."
 msgstr ""
 "Fügen Sie den gleichen <tt>.htaccess</tt>-Block in Ihren Gallery 1 \"albums"
 "\"-Ordner ein, wenn Sie auch Verweise zu Bilddateien und Albenordnern "

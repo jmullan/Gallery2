@@ -167,12 +167,12 @@ msgid "Deleting old permission tables"
 msgstr "パーミッション"
 
 #, fuzzy
-msgid "All Users"
-msgstr "ユーザー"
-
-#, fuzzy
 msgid "Registered Users"
 msgstr "ユーザ編集"
+
+#, fuzzy
+msgid "All Users"
+msgstr "ユーザー"
 
 #, fuzzy
 msgid "Site Admins"
@@ -180,9 +180,6 @@ msgstr "サイト管理"
 
 msgid "Guest"
 msgstr "ゲスト"
-
-msgid "Gallery Administrator"
-msgstr "Gallery 管理者"
 
 msgid "Gallery"
 msgstr "Gallery"
@@ -766,6 +763,10 @@ msgid "edit permissions"
 msgstr "パーミッション"
 
 #, fuzzy
+msgid "view permissions"
+msgstr "パーミッション"
+
+#, fuzzy
 msgid "Site Admin"
 msgstr "サイト管理"
 
@@ -819,6 +820,10 @@ msgstr "ハイライト作成"
 
 #, fuzzy
 msgid "Edit Permissions"
+msgstr "パーミッション"
+
+#, fuzzy
+msgid "View Permissions"
 msgstr "パーミッション"
 
 msgid "Add Items"
@@ -1005,7 +1010,8 @@ msgstr ""
 msgid ""
 "By default Gallery uses PHP's built in mail function to send email which "
 "requires no configuration.  To use a smtp/mail server enter the information "
-"below, including authentication information if required."
+"below, including authentication information if required.  Optionally add :"
+"port after the server name to use a non-default port."
 msgstr ""
 
 #, fuzzy
@@ -2520,6 +2526,22 @@ msgstr "パーミッション"
 msgid "Owner changed successfully"
 msgstr "パスワードの変更に成功しました"
 
+#, fuzzy
+msgid "Group permission added successfully"
+msgstr "グループ '%s'の変更に成功しました。"
+
+#, fuzzy
+msgid "User permission added successfully"
+msgstr "ユーザー '%s'の変更に成功しました。"
+
+#, fuzzy
+msgid "Group permission removed successfully"
+msgstr "グループ '%s'の変更に成功しました。"
+
+#, fuzzy
+msgid "User permission removed successfully"
+msgstr "ユーザー '%s'の変更に成功しました。"
+
 msgid ""
 "Each item has its own independent set of permissions.  Changing the parent's "
 "permissions has no effect on the permissions of the child.  This allows you "
@@ -2807,14 +2829,11 @@ msgid ""
 "the email and you should contact your system administrator for help."
 msgstr ""
 
-#, fuzzy
-msgid "Administrator Recovery"
-msgstr "パスワード"
-
 #, c-format
 msgid ""
-"You can use the %sAdministrator Password Recovery%s if you don't receive a "
-"recovery email from Gallery."
+"Administrators can use the %sEmergency Password Recovery%s page to recover "
+"the admin account if they fail to receive recovery email due to server "
+"problems, or lack of a working email address."
 msgstr ""
 
 #, fuzzy
@@ -2827,8 +2846,8 @@ msgid ""
 "who you claim.  The best way to be sure is to ask you to make a tiny change "
 "in the Gallery directory which will prove that you have the right "
 "permissions.  So, we're going to ask that you create a new text file called %"
-"s in the <tt>%s</tt> directory on your webserver (that's the root Gallery 2 "
-"directory). It must contain the following randomly generated characters:"
+"s in your gallery2 directory. It must contain the following randomly "
+"generated characters:"
 msgstr ""
 
 #, c-format
@@ -2849,7 +2868,8 @@ msgid "Emergency Administrator Password Reset"
 msgstr ""
 
 msgid ""
-"This page can be used to securely reset the password on your 'admin' account."
+"This page can be used by a system administrator to securely reset the "
+"password on any account."
 msgstr ""
 
 msgid "Authorization Confirmed"
@@ -2859,6 +2879,17 @@ msgid ""
 "Your authorization has been confirmed.  Please enter your new password "
 "below.  After setting your new password you will be taken to the login page."
 msgstr ""
+
+msgid "Recover Password for Username"
+msgstr ""
+
+#, fuzzy
+msgid "You must enter a username to recover the password for."
+msgstr "パスワードは2回入力しなくてはなりません"
+
+#, fuzzy
+msgid "The username you entered does not exist."
+msgstr "入力したユーザ名は無効です"
 
 msgid "Authorization Incorrect"
 msgstr ""
@@ -3039,6 +3070,13 @@ msgstr[0] "%d分"
 msgid "%d. %s"
 msgstr "ユーザ編集"
 
+#~ msgid "Gallery Administrator"
+#~ msgstr "Gallery 管理者"
+
+#, fuzzy
+#~ msgid "Administrator Recovery"
+#~ msgstr "パスワード"
+
 #, fuzzy
 #~ msgid "Use As Parent&rsquo;s Thumbnail?"
 #~ msgstr "親のサムネイルとして使用しますか?"
@@ -3117,10 +3155,6 @@ msgstr "ユーザ編集"
 #, fuzzy
 #~ msgid "Layouts"
 #~ msgstr "レイアウト"
-
-#, fuzzy
-#~ msgid "You must enter a new password twice to change passwords."
-#~ msgstr "パスワードは2回入力しなくてはなりません"
 
 #~ msgid "&laquo; No Sort Order &raquo;"
 #~ msgstr "&laquo; ソートなし &laquo;"
@@ -3492,9 +3526,6 @@ msgstr "ユーザ編集"
 #~ "The way that items will be arranged on the page when viewing this album."
 #~ msgstr "アルバムを閲覧するとき、アイテムがページに合わせられる方法。"
 
-#~ msgid "User '%s' has been modified successfully."
-#~ msgstr "ユーザー '%s'の変更に成功しました。"
-
 #~ msgid "User name:"
 #~ msgstr "ユーザー名:"
 
@@ -3565,9 +3596,6 @@ msgstr "ユーザ編集"
 
 #~ msgid "[core] Move item"
 #~ msgstr "[core] アイテム移動"
-
-#~ msgid "Group '%s' has been modified successfully."
-#~ msgstr "グループ '%s'の変更に成功しました。"
 
 #~ msgid "Group '%s' has been successfully deleted."
 #~ msgstr "グループ '%s'の削除に成功しました。"

@@ -202,12 +202,12 @@ msgid "Deleting old permission tables"
 msgstr "ceadeanna"
 
 #, fuzzy
-msgid "All Users"
-msgstr "Úsáideora"
-
-#, fuzzy
 msgid "Registered Users"
 msgstr "athraigh úsáideora"
+
+#, fuzzy
+msgid "All Users"
+msgstr "Úsáideora"
 
 #, fuzzy
 msgid "Site Admins"
@@ -215,9 +215,6 @@ msgstr "Riarachán an Ghailearaí"
 
 msgid "Guest"
 msgstr "Cuairteoir"
-
-msgid "Gallery Administrator"
-msgstr "Riarthóir an Ghailearaí"
 
 msgid "Gallery"
 msgstr "Gailearaí"
@@ -804,6 +801,10 @@ msgid "edit permissions"
 msgstr "ceadeanna"
 
 #, fuzzy
+msgid "view permissions"
+msgstr "ceadeanna"
+
+#, fuzzy
 msgid "Site Admin"
 msgstr "Riarachán an Ghailearaí"
 
@@ -855,6 +856,10 @@ msgstr "Cuir Íomhá Ghealáin"
 
 #, fuzzy
 msgid "Edit Permissions"
+msgstr "Ceadanna"
+
+#, fuzzy
+msgid "View Permissions"
 msgstr "Ceadanna"
 
 msgid "Add Items"
@@ -1034,7 +1039,8 @@ msgstr ""
 msgid ""
 "By default Gallery uses PHP's built in mail function to send email which "
 "requires no configuration.  To use a smtp/mail server enter the information "
-"below, including authentication information if required."
+"below, including authentication information if required.  Optionally add :"
+"port after the server name to use a non-default port."
 msgstr ""
 
 #, fuzzy
@@ -2588,6 +2594,22 @@ msgstr "Ceadanna"
 msgid "Owner changed successfully"
 msgstr "Focal faire athrú go rathúil"
 
+#, fuzzy
+msgid "Group permission added successfully"
+msgstr "Roghanna an chuntais sábháilte go rathúil"
+
+#, fuzzy
+msgid "User permission added successfully"
+msgstr "Roghanna sábháilte go rathúil"
+
+#, fuzzy
+msgid "Group permission removed successfully"
+msgstr "Roghanna an chuntais sábháilte go rathúil"
+
+#, fuzzy
+msgid "User permission removed successfully"
+msgstr "Albam curtha go rathúil."
+
 msgid ""
 "Each item has its own independent set of permissions.  Changing the parent's "
 "permissions has no effect on the permissions of the child.  This allows you "
@@ -2878,14 +2900,11 @@ msgid ""
 "the email and you should contact your system administrator for help."
 msgstr ""
 
-#, fuzzy
-msgid "Administrator Recovery"
-msgstr "Focal Faire"
-
 #, c-format
 msgid ""
-"You can use the %sAdministrator Password Recovery%s if you don't receive a "
-"recovery email from Gallery."
+"Administrators can use the %sEmergency Password Recovery%s page to recover "
+"the admin account if they fail to receive recovery email due to server "
+"problems, or lack of a working email address."
 msgstr ""
 
 #, fuzzy
@@ -2898,8 +2917,8 @@ msgid ""
 "who you claim.  The best way to be sure is to ask you to make a tiny change "
 "in the Gallery directory which will prove that you have the right "
 "permissions.  So, we're going to ask that you create a new text file called %"
-"s in the <tt>%s</tt> directory on your webserver (that's the root Gallery 2 "
-"directory). It must contain the following randomly generated characters:"
+"s in your gallery2 directory. It must contain the following randomly "
+"generated characters:"
 msgstr ""
 
 #, c-format
@@ -2920,7 +2939,8 @@ msgid "Emergency Administrator Password Reset"
 msgstr ""
 
 msgid ""
-"This page can be used to securely reset the password on your 'admin' account."
+"This page can be used by a system administrator to securely reset the "
+"password on any account."
 msgstr ""
 
 msgid "Authorization Confirmed"
@@ -2930,6 +2950,17 @@ msgid ""
 "Your authorization has been confirmed.  Please enter your new password "
 "below.  After setting your new password you will be taken to the login page."
 msgstr ""
+
+msgid "Recover Password for Username"
+msgstr ""
+
+#, fuzzy
+msgid "You must enter a username to recover the password for."
+msgstr "Caithfidh tú focal faire nua faoi dhó a iontráil dhó a athrú."
+
+#, fuzzy
+msgid "The username you entered does not exist."
+msgstr "Níl an logainm seo bailí"
 
 msgid "Authorization Incorrect"
 msgstr ""
@@ -3115,6 +3146,13 @@ msgstr[4] "%d nóiméid"
 msgid "%d. %s"
 msgstr "Athraigh Úsáideoir"
 
+#~ msgid "Gallery Administrator"
+#~ msgstr "Riarthóir an Ghailearaí"
+
+#, fuzzy
+#~ msgid "Administrator Recovery"
+#~ msgstr "Focal Faire"
+
 #, fuzzy
 #~ msgid "Use As Parent&rsquo;s Thumbnail?"
 #~ msgstr "An dteastaíonn pictiúrín tuismitheora a chur air seo uait?"
@@ -3227,9 +3265,6 @@ msgstr "Athraigh Úsáideoir"
 #, fuzzy
 #~ msgid "Layouts"
 #~ msgstr "Leagan amach"
-
-#~ msgid "You must enter a new password twice to change passwords."
-#~ msgstr "Caithfidh tú focal faire nua faoi dhó a iontráil dhó a athrú."
 
 #~ msgid "&laquo; No Sort Order &raquo;"
 #~ msgstr "&laquo; Níl ord ag an sórt &raquo;"

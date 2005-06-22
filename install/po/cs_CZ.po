@@ -37,6 +37,13 @@ msgstr "Neznámý"
 msgid "Admin User Setup"
 msgstr "Nastavení uživatelů"
 
+msgid "admin"
+msgstr ""
+
+#, fuzzy
+msgid "Gallery Administrator"
+msgstr "Integrita souborů Galerie"
+
 msgid "Authenticate"
 msgstr "Autentikace"
 
@@ -110,13 +117,48 @@ msgid "The database you specified does not exist.  Please create it."
 msgstr "Databáze, kterou jste zadali, neexistuje. Prosím, vytvořte ji."
 
 msgid ""
-"Gallery tables already exist in this database!  If you want to use the "
-"existing tables, you must confirm that below.  Otherwise, you must specify a "
-"new database, or a different table prefix in order to continue."
+"Gallery tables already exist in this database!  But there is no 'versions."
+"dat' file in your G2 storage directory which we interpret as a broken state "
+"of G2. Either create a versions.dat file with the correct format if you "
+"think your G2 should still work or select a clean install, which will erase "
+"all data in the database and in the storage directory."
 msgstr ""
-"V této databázi už existují tabulky Galerie! Pokud chcete tyto tabulky "
-"použít, musíte to potvrdit níže. Jinak specifikujte novou databázi nebo jiný "
-"prefix."
+
+msgid ""
+"The G2 storage directory has a versions.dat file of an old install. But the "
+"Gallery database tables don't exist. Select a clean install to erase all "
+"data in the Gallery storage directory and advance to the next step."
+msgstr ""
+
+msgid ""
+"Gallery tables already exist in the database and there is a versions.dat "
+"file in the Gallery storage directory. But the version of the installed "
+"Gallery database tables don't match the version of the installed data in the "
+"Gallery storage directory. Select a clean install to erase all data in the "
+"database and in the storage directory and to advance to the next step."
+msgstr ""
+
+msgid ""
+"Gallery tables already exist in the database and the Gallery storage "
+"directory seems to be intact. Either choose to reuse the existing database "
+"tables and storage directory data or select a clean install to erase all "
+"existing data in the database and the storage directory."
+msgstr ""
+
+msgid ""
+"Could not execute the required API to erase the storage directory. Please "
+"erase the Gallery storage directory manually."
+msgstr ""
+
+msgid ""
+"Could not execute the required API to drop the Gallery database tables. "
+"Please clean the Gallery database manually."
+msgstr ""
+
+msgid ""
+"Could not load the G2 API. Please erase the Gallery database tables and the "
+"storage directory manually."
+msgstr ""
 
 msgid "MySQL (all versions)"
 msgstr "MySQL (všechny verze)"
@@ -361,7 +403,15 @@ msgstr ""
 msgid "Admin username"
 msgstr "Uživatelské jméno správce"
 
+#, fuzzy
+msgid "Please enter a valid user name"
+msgstr "Prosím zadejte heslo"
+
 msgid "Password"
+msgstr "Heslo"
+
+#, fuzzy
+msgid "Setup password"
 msgstr "Heslo"
 
 msgid "Please enter a password"
@@ -370,6 +420,16 @@ msgstr "Prosím zadejte heslo"
 msgid "(type again)"
 msgstr "(ještě jednou)"
 
+msgid "Admin email address"
+msgstr ""
+
+#, fuzzy
+msgid "Please enter a valid email address"
+msgstr "Prosím zadejte heslo"
+
+msgid "Admin full name (optional)"
+msgstr ""
+
 msgid "Missing password!  Please enter the same password twice"
 msgstr "Chybějící heslo! Prosím zadejte stejné heslo dvakrát"
 
@@ -377,29 +437,30 @@ msgid "The passwords you entered do not match!  Please try again."
 msgstr "Hesla, která jste zadali, nejsou stejná! Prosím, zkuste to znovu."
 
 msgid ""
-"For the Beta version, the default username ('admin') cannot be modified in "
-"the installer. You can change the name later on via the user administration "
-"page in your Gallery."
+"As you are reusing existing database tables, this is not a fresh install. "
+"This will only change the setup password, but not change the password of the "
+"site admin. To change the password of the site admin, choose the forgot "
+"password mechanism of Gallery."
 msgstr ""
-"V beta verzi není možné změnit výchozí uživatelské jméno ('admin') v "
-"instalátoru. Uživatelské jméno je možné změnit později na stránce správy "
-"uživatelů Vaší Galerie."
 
 msgid "Create"
 msgstr "Vytvořit"
 
+msgid "Save"
+msgstr "Uložit"
+
 msgid "Admin user info entered successfully."
 msgstr "Uživatelské informace pro správce úspěšně zadány."
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "In order to proceed with the install, we have to verify that you are who you "
 "claim.  The best way to be sure is to ask you to make a tiny change in the "
 "Gallery directory which will prove that you have the right permissions.  So, "
 "we're going to ask that you create a new text file called <strong>login.txt</"
 "strong> in the <tt>%s</tt> directory on your webserver (that's the same "
-"directory where this installer is located). It must contain the following "
-"randomly generated characters:"
+"directory where main.php is located). It must contain the following randomly "
+"generated characters:"
 msgstr ""
 "Pro pokračování v instalaci je potřeba ověřit Vaší identitu. Nejlepší cesta "
 "k tomuto zjištění je požádat Vás o provedení malé změny v adresáři Galerie, "
@@ -408,11 +469,11 @@ msgstr ""
 "<tt>%s</tt> (to je stejný adresář, kde je nainstalována Galerie). Soubor "
 "musí obsahovat následující náhodně vygenerované znaky:"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "As a convenience to you, we've prepared a %scorrect version of login.txt%s "
-"for you.  Download that and copy it into your install directory and you're "
-"all set."
+"for you.  Download that and copy it into your <tt>%s</tt> directory and "
+"you're all set."
 msgstr ""
 "Pro Vaše větší pohodlí jsme pro Vás připravili %ssprávnou verzi souboru "
 "login.txt%s. Stačí, když soubor stáhnete a zkopírujete do správného adresáře."
@@ -426,6 +487,26 @@ msgstr "Autentizuj mě"
 
 msgid "Authentication successful!"
 msgstr "Autentizace úspěšná!"
+
+msgid "Erase data for a clean install"
+msgstr ""
+
+msgid ""
+"Are you really sure you want to delete all your data in your Gallery storage "
+"directory and all your data in your Gallery database?"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"There was an error erasing the db and storage directory data. Here's the "
+"error:"
+msgstr "Při instalaci modulu jádra se vyskytla chyba. Zde je výpis trasování:"
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Erase all data"
+msgstr ""
 
 msgid "Please fix this error and try again."
 msgstr "Prosím vyřešte tento problém a zkuste to znovu."
@@ -519,8 +600,8 @@ msgstr "Prefix sloupců:"
 msgid "We received the following database related errors:"
 msgstr "Zjistili jsme následující chyby související s databází:"
 
-msgid "Save"
-msgstr "Uložit"
+msgid "Erase Data For A Clean Install"
+msgstr ""
 
 msgid "Reuse Existing Tables"
 msgstr "Použít existující tabulky"
@@ -991,6 +1072,42 @@ msgstr ""
 "Pokud používáte webový server Apache, vytvořte v hlavním adresáři Vaší "
 "Galerie soubor .htaccess s následujícím obsahem:"
 
+#, fuzzy
+msgid "Version Check"
+msgstr "Verze"
+
+msgid ""
+"This is not a fresh install and the installed version does not match the new "
+"version."
+msgstr ""
+
+msgid "The installed version cannot be upgraded to the new version!"
+msgstr ""
+
+msgid ""
+"The installed version is older than the new version. You should run the "
+"upgrader and not the installer!"
+msgstr ""
+
+msgid "Currently installed"
+msgstr ""
+
+#, fuzzy
+msgid "New version"
+msgstr "Verze"
+
+#, fuzzy
+msgid "Go to the Upgrader!"
+msgstr "Jdi do mé Galerie!"
+
+#, fuzzy, c-format
+msgid ""
+"You should go now to the upgrader.  Enter the URL in your browser for %s/"
+"upgrade/index.php%s in your %s directory."
+msgstr ""
+"Nyní můžete jít do Vaší nové Galerie. Zadejte do browseru URL %smain.php%s v "
+"adresáři %s."
+
 #, c-format
 msgid ""
 "Getting Gallery 2.0 installed on your webserver requires %d steps. This "
@@ -1013,3 +1130,21 @@ msgstr "Go"
 
 msgid "Begin Installation&raquo;"
 msgstr "Začátek instalace&raquo;"
+
+#~ msgid ""
+#~ "Gallery tables already exist in this database!  If you want to use the "
+#~ "existing tables, you must confirm that below.  Otherwise, you must "
+#~ "specify a new database, or a different table prefix in order to continue."
+#~ msgstr ""
+#~ "V této databázi už existují tabulky Galerie! Pokud chcete tyto tabulky "
+#~ "použít, musíte to potvrdit níže. Jinak specifikujte novou databázi nebo "
+#~ "jiný prefix."
+
+#~ msgid ""
+#~ "For the Beta version, the default username ('admin') cannot be modified "
+#~ "in the installer. You can change the name later on via the user "
+#~ "administration page in your Gallery."
+#~ msgstr ""
+#~ "V beta verzi není možné změnit výchozí uživatelské jméno ('admin') v "
+#~ "instalátoru. Uživatelské jméno je možné změnit později na stránce správy "
+#~ "uživatelů Vaší Galerie."

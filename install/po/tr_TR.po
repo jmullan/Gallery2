@@ -1,32 +1,32 @@
 # de_DE.po,v
-#
+# 
 # Gallery - a web based photo album viewer and editor
 # Copyright (C) 2000-2005 Bharat Mediratta
-#
+# 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or (at
 # your option) any later version.
-#
+# 
 # This program is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-#
+# 
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-#
+# 
 # Previous translators (as far as known, add yourself here, please):
 # - Georg Rehfeld <rehfeld@georg-rehfeld.de>
 # - Frederik Kunz <frederik.kunz@web.de>
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: Gallery: Installer 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-05-19 01:26+0100\n"
-"PO-Revision-Date: 2005-06-03 21:54+0200\n"
+"PO-Revision-Date: 2005-06-15 04:42+0200\n"
 "Last-Translator: Goker ISIK <admin@ansolon.com>\n"
 "Language-Team: Turkish <admin@ansolon.com>\n"
 "MIME-Version: 1.0\n"
@@ -41,16 +41,25 @@ msgid "Unknown"
 msgstr "Bilinmeyen"
 
 msgid "Admin User Setup"
+msgstr "Yönetici Kullanıcı Kurulumu"
+
+msgid "admin"
 msgstr ""
 
+#, fuzzy
+msgid "Gallery Administrator"
+msgstr "Galeri dosya bütünlüğü"
+
 msgid "Authenticate"
-msgstr ""
+msgstr "Doğrula"
 
 #, c-format
 msgid ""
 "<b>Error:</b> could not locate <b>login.txt</b>. Please place it in your <tt>"
 "%s/</tt> directory."
 msgstr ""
+"<b>Hata:</b> b>login.txt</b> bulunamadı. Lütfen <tt>%s/</tt> klasörünüze "
+"yükleyin."
 
 msgid ""
 "<b>Error:</b> your <b>login.txt</b> file is not readable. Please give "
@@ -63,6 +72,9 @@ msgid ""
 "<b>Error:</b> your <b>login.txt</b> key does not match correctly. Please "
 "download a new authentication string from below and try again."
 msgstr ""
+"<b>Hata:</b> <b>login.txt</b> anahtarı doğru olarak eşleşmedi. Lütfen "
+"aşağıdan yeni doğrulama dizgisini download edip gerekli yere gönderin ve "
+"tekrar deneyin."
 
 msgid "Create Config File"
 msgstr "Config Dosyası Yarat"
@@ -73,49 +85,93 @@ msgid ""
 "tt> directory.  Please change its permissions.  If you're on Unix you can do "
 "<i>chmod 666 config.php</i> to fix this."
 msgstr ""
+"<tt>%s</tt> klasöründe bulunan <b>config.php</b> yapılandırma dosyasına "
+"yazılamıyor. Lütfen izinlerini değiştirin. Unix sistemlerde <i>chmod 666 "
+"config.php</i> yaparak bu problemi çözebilirsiniz."
 
 #, c-format
 msgid "The config.php file does not exist in your %s directory"
-msgstr ""
+msgstr "%s klasöründe config.php dosyası mevcut değil"
 
 msgid ""
 "The config.php file exists but is not writeable.  If your server is Windows, "
 "you may have to disable file sharing for config.php and set its permissions "
 "manually."
 msgstr ""
+"Config.php dosyası mevcut ancak yazılabilir değil. Eğer serverınız Windows "
+"ise, config.php için dosya paylaşımını kapatabilir ve izinlerini manuel "
+"olarak girebilirsiniz."
 
 msgid "Database Setup"
 msgstr "Veritabanı Kurulumu"
 
 #, c-format
 msgid "You must specify a column prefix (we recommend %s)"
-msgstr ""
+msgstr "Sütün öneki belirtmek zorundasınız (tavsiyemiz %s)"
 
 #, c-format
 msgid "You must specify a table prefix (we recommend %s)"
-msgstr ""
+msgstr "Tablo öneki belirtmek zorundasınız (tavsiyemiz %s)"
 
 #, c-format
 msgid "Unable to create a database connection of type %s"
-msgstr ""
+msgstr " %s türünde veritabanı bağlantısı sağlanamadı"
 
 msgid "Unable to connect to database with the information provided."
-msgstr ""
+msgstr "Vermiş olduğunuz bilgilerle veritabanına bağlantı sağlanamadı."
 
 msgid "The database you specified does not exist.  Please create it."
+msgstr "Vermiş olduğunuz veritabanı mevcut değil. Lütfen veritabanı oluşturun."
+
+msgid ""
+"Gallery tables already exist in this database!  But there is no 'versions."
+"dat' file in your G2 storage directory which we interpret as a broken state "
+"of G2. Either create a versions.dat file with the correct format if you "
+"think your G2 should still work or select a clean install, which will erase "
+"all data in the database and in the storage directory."
 msgstr ""
 
 msgid ""
-"Gallery tables already exist in this database!  If you want to use the "
-"existing tables, you must confirm that below.  Otherwise, you must specify a "
-"new database, or a different table prefix in order to continue."
+"The G2 storage directory has a versions.dat file of an old install. But the "
+"Gallery database tables don't exist. Select a clean install to erase all "
+"data in the Gallery storage directory and advance to the next step."
+msgstr ""
+
+msgid ""
+"Gallery tables already exist in the database and there is a versions.dat "
+"file in the Gallery storage directory. But the version of the installed "
+"Gallery database tables don't match the version of the installed data in the "
+"Gallery storage directory. Select a clean install to erase all data in the "
+"database and in the storage directory and to advance to the next step."
+msgstr ""
+
+msgid ""
+"Gallery tables already exist in the database and the Gallery storage "
+"directory seems to be intact. Either choose to reuse the existing database "
+"tables and storage directory data or select a clean install to erase all "
+"existing data in the database and the storage directory."
+msgstr ""
+
+msgid ""
+"Could not execute the required API to erase the storage directory. Please "
+"erase the Gallery storage directory manually."
+msgstr ""
+
+msgid ""
+"Could not execute the required API to drop the Gallery database tables. "
+"Please clean the Gallery database manually."
+msgstr ""
+
+msgid ""
+"Could not load the G2 API. Please erase the Gallery database tables and the "
+"storage directory manually."
 msgstr ""
 
 msgid "MySQL (all versions)"
 msgstr "MySQL (tüm versiyonlar)"
 
 msgid "MySQL with Transactions (v3.23.34a and newer)"
-msgstr ""
+msgstr "MySQL ile Kayıtlar (v3.23.34a ve üstü)"
 
 msgid "PostgreSQL v7.x"
 msgstr "PostgreSQL v7.x"
@@ -124,7 +180,7 @@ msgid "PostgreSQL v6.x (not well tested)"
 msgstr "PostgreSQL v6.x (iyi test edilmedi)"
 
 msgid "Oracle (9i and newer)"
-msgstr ""
+msgstr "Oracle (9i ve üstü)"
 
 msgid "Finished"
 msgstr "Bitti"
@@ -133,25 +189,25 @@ msgid "Install Gallery Core"
 msgstr "Galeri Çekirdeğini Kur"
 
 msgid "Unable to initialize our Gallery data"
-msgstr ""
+msgstr "Galeri verisi sıfırlanamıyor"
 
 msgid "Unable to communicate with the database"
-msgstr ""
+msgstr "Veritabanı ile bağlantı kurulamıyor"
 
 msgid "Unable to load the core module"
-msgstr ""
+msgstr "Çekirdek modül yüklenemiyor"
 
 msgid "Unable to install the core module"
-msgstr ""
+msgstr "Çekirdek modül kurulamıyor"
 
 msgid "Unable to activate the core module"
-msgstr ""
+msgstr "Çekirdek modül aktif duruma getirilemiyor"
 
 msgid "Unable to commit database transaction"
-msgstr ""
+msgstr "Veritabanı işlemleri gerçekleştirilemiyor"
 
 msgid "Core module is only partially installed."
-msgstr ""
+msgstr "Çekirdek modülün sadece bir kısmı kuruldu."
 
 msgid "Install More Modules"
 msgstr "Daha Fazla Modül Kur"
@@ -161,7 +217,7 @@ msgstr "Modül listesi alınamıyor"
 
 #, c-format
 msgid "Unable to load the %s module"
-msgstr ""
+msgstr "%s modülü yüklenemiyor"
 
 #, c-format
 msgid "Unable to install the %s module"
@@ -169,20 +225,19 @@ msgstr "%s Modülü yüklenemiyor"
 
 #, c-format
 msgid "Unable to activate the %s module"
-msgstr ""
+msgstr "%s modülü aktif duruma getirilemiyor"
 
 msgid "Other"
 msgstr "Diğer"
 
-#, fuzzy
 msgid "Multisite Setup"
-msgstr "ÇokluSite Kurulumu"
+msgstr "Çoklusite Kurulumu"
 
 msgid "Check Security"
 msgstr "Güvenliği Kontrol et"
 
 msgid "Storage Setup"
-msgstr ""
+msgstr "Depolama Kurulumu"
 
 msgid "System Checks"
 msgstr "Sistem Kontrolleri"
@@ -206,18 +261,20 @@ msgid "PHP Version"
 msgstr "PHP Versiyon"
 
 msgid "FILE directive supported"
-msgstr ""
+msgstr "DOSYA direktifleri deskleniyor"
 
 msgid ""
 "Error: your PHP __FILE__ directive is not functioning correctly. Please file "
 "a support request with your webserver administrator or in the Gallery forums."
 msgstr ""
+"Hata: PHP __FILE__ direktifleriniz doğru olarak çalışmıyor. Lütfen webserver "
+"yöneticinizden ya da Galeri forumlarından destek isteyiniz."
 
 msgid "FILE Directive"
-msgstr ""
+msgstr "DOSYA Direktifleri"
 
 msgid "Safe mode disabled"
-msgstr ""
+msgstr "Sade mode kapalı"
 
 msgid ""
 "Error: Your version of PHP is configured with safe mode enabled.  You must "
@@ -239,6 +296,11 @@ msgid ""
 "This can only be set server-wide, so you will need to change it in the "
 "global php.ini."
 msgstr ""
+"Uyarı: exec() function fonksiyonu php.ini de bulunan <b>disabled_functions</"
+"b> parametresi kullanılarak kapalı duruma geitirlmiş. Bu durumda dışarıdan "
+"binary gerektiren modülleri kullanamazsınız (ör. ImageMagick, NetPBM or "
+"Ffmpeg). Bu özellik sadece tüm server için değiştirilebilir, bu nedenle bu "
+"özelliği global php.ini dosyasından değiştirmelisiniz."
 
 msgid "set_time_limit() allowed"
 msgstr "set_time_limit() allowed"
@@ -251,28 +313,40 @@ msgid ""
 "longer than %d seconds will fail (and in some cases just return a blank "
 "page) possibly leading to data corruption."
 msgstr ""
+"Uyarı: set_time_limit() fonksiyonu php.ini de bulunan <b>disabled_functions</"
+"b> parametresi kullanılarak kapalı konuma getirilmiş. Galeri bu durumda "
+"çalışmasını sürdürebilir, ancak operasyonları güvenilir olarak "
+"gerçekleştiremez. %d saniyeden fazla süren her işlem başarısızlıkla "
+"sonuçlanır (bazen boş sayfala sonuçlanır) ve veri bozulmasına yol açabilir."
 
 msgid "Memory limit"
-msgstr ""
+msgstr "Hafıza limiti"
 
 msgid "no limit"
 msgstr "no limit"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Warning: Your PHP is configured to limit the memory to %sb (<b>memory_limit</"
 "b> parameter in php.ini). You should raise this limit to at least <b>%sMB</"
 "b> for proper Gallery operation."
 msgstr ""
+"Uyarı: PHP'nizin hafıza limiti %sb  olarak yapılandırılmış [php.ini de "
+"bulunan <b>memory_limit</b> parametresi] . Galerinizin düzgün olarak "
+"çalışması için bu limiti en az <b>%sMb</b>'a yükseltmelisiniz."
 
 msgid "File uploads allowed"
-msgstr ""
+msgstr "Dosya gönderimi izinli"
 
 msgid ""
 "Warning: Your PHP is configured not to allow file uploads (<b>file_uploads</"
 "b> parameter in php.ini). You will need to enable this option if you want to "
 "upload files to your Gallery with a web browser."
 msgstr ""
+"Uyarı: PHP'niz dosya gönderimine izin vermeyecek şekilde yapılandırılmış "
+"[php.ini de bulunan <b>file_uploads</b> parametresi] . Galerinize web "
+"tarayıcısı kullanarak dosya göndermek istiyorsanız bu seçeneği açık duruma "
+"getirmelisiniz."
 
 msgid "Maximum upload size"
 msgstr "Maksimum gönderim boyutu"
@@ -283,9 +357,12 @@ msgid ""
 "(<b>upload_max_filesize</b> parameter in php.ini). You should rise this "
 "limit to allow uploading bigger files."
 msgstr ""
+"Uyarı: PHP'nizin dosya gönder limiti en fazla %sb olarak yapılandırılmış "
+"[php.ini de bulunan <b>upload_max_filesize</b> parametresi] . Daha büyük "
+"dosyalar gönderebilmek için bu limiti yükseltmelisiniz. "
 
 msgid "Maximum POST size"
-msgstr ""
+msgstr "Maksimum POST büyüklüğü"
 
 #, c-format
 msgid ""
@@ -293,9 +370,12 @@ msgid ""
 "(<b>post_max_size</b> parameter in php.ini). You should raise this limit to "
 "allow uploading bigger files."
 msgstr ""
+"Uyarı: PHP'nizin veri gönder limiti en fazla %sb olarak yapılandırılmış [php."
+"ini de bulunan <b>post_max_size</b> parametresi] . Daha büyük veri "
+"gönderebilmek için bu limiti yükseltmelisiniz. "
 
 msgid "Zend compatibility mode"
-msgstr ""
+msgstr "Zend uyumluluk modu"
 
 #, c-format
 msgid ""
@@ -304,15 +384,20 @@ msgid ""
 "see \"SUCCESS\" then your PHP is ok.  If you get an error or no response "
 "then you must turn off ze1_compatibility_mode before proceeding."
 msgstr ""
+"Uyarı: PHP'niz Zend ze1_compatibility_mode ile yapılandırılmış, bu durum "
+"PHP'nizin bozulmasına yol açabilir. <a href=\"%s\">Buraya tıklayarak</a> "
+"PHP'nizi test edin. Eğer  \"BAŞARILI\" görüyorsanız PHP'nizde sorun yok. "
+"Eğer hatayla karşılaşıyorsanız, işlem yapmadan önce  "
+"ze1_compatibility_mode'u kapatmalısınız."
 
 msgid "Gallery file integrity"
-msgstr ""
+msgstr "Galeri dosya bütünlüğü"
 
 msgid "Test skipped due to other errors."
-msgstr ""
+msgstr "Diğer hatalardan dolayı test geçildi."
 
 msgid "Manifest missing or inaccessible."
-msgstr ""
+msgstr "Manifest kayıp ya da erişilemez."
 
 msgid "Welcome"
 msgstr "Hoşgeldiniz"
@@ -322,36 +407,62 @@ msgid ""
 "to view/modify everything. Please choose a username and password for your "
 "main administrator account. You can add additional users later."
 msgstr ""
+"Her Galerinin tam erişime sahip herşeyi görüntüleyip modifiye edebilecek en "
+"az bir yönetici kullanıcısı olur. Lütfen ana yönetici hesabınız için "
+"kullanıcı adı ve şifre seçiniz.  Ekstra kullanıcılar daha sonra "
+"ekleyebilirsiniz."
 
 msgid "Admin username"
 msgstr "Yönetici kullanıcıadı"
 
+#, fuzzy
+msgid "Please enter a valid user name"
+msgstr "Lütfen şifre giriniz"
+
 msgid "Password"
 msgstr "Şifre"
 
+#, fuzzy
+msgid "Setup password"
+msgstr "Şifre"
+
 msgid "Please enter a password"
-msgstr ""
+msgstr "Lütfen şifre giriniz"
 
 msgid "(type again)"
 msgstr "(tekrar dene)"
 
-msgid "Missing password!  Please enter the same password twice"
+msgid "Admin email address"
 msgstr ""
+
+#, fuzzy
+msgid "Please enter a valid email address"
+msgstr "Lütfen şifre giriniz"
+
+msgid "Admin full name (optional)"
+msgstr ""
+
+msgid "Missing password!  Please enter the same password twice"
+msgstr "Kayı şifre! Lütfen aynı şifreyi iki kez giriniz"
 
 msgid "The passwords you entered do not match!  Please try again."
-msgstr ""
+msgstr "Girdiğiniz şifreler eşleşmedi! Lütfen tekrar deneyiniz."
 
 msgid ""
-"For the Beta version, the default username ('admin') cannot be modified in "
-"the installer. You can change the name later on via the user administration "
-"page in your Gallery."
+"As you are reusing existing database tables, this is not a fresh install. "
+"This will only change the setup password, but not change the password of the "
+"site admin. To change the password of the site admin, choose the forgot "
+"password mechanism of Gallery."
 msgstr ""
 
 msgid "Create"
 msgstr "Yarat"
 
+msgid "Save"
+msgstr "Kaydet"
+
 msgid "Admin user info entered successfully."
-msgstr ""
+msgstr "Yönetici kullanıcı bilgisi başarıyla girildi."
 
 #, c-format
 msgid ""
@@ -360,28 +471,49 @@ msgid ""
 "Gallery directory which will prove that you have the right permissions.  So, "
 "we're going to ask that you create a new text file called <strong>login.txt</"
 "strong> in the <tt>%s</tt> directory on your webserver (that's the same "
-"directory where this installer is located). It must contain the following "
-"randomly generated characters:"
+"directory where main.php is located). It must contain the following randomly "
+"generated characters:"
 msgstr ""
 
 #, c-format
 msgid ""
 "As a convenience to you, we've prepared a %scorrect version of login.txt%s "
-"for you.  Download that and copy it into your install directory and you're "
-"all set."
+"for you.  Download that and copy it into your <tt>%s</tt> directory and "
+"you're all set."
 msgstr ""
 
 msgid "Once you've uploaded the file, click below to continue."
-msgstr ""
+msgstr "Dosyayı gönderdikten sonra, aşağıya tıklayarak devam edin."
 
 msgid "Authenticate Me"
-msgstr ""
+msgstr "Beni Doğrula"
 
 msgid "Authentication successful!"
+msgstr "Doğrulama başarılı!"
+
+msgid "Erase data for a clean install"
+msgstr ""
+
+msgid ""
+"Are you really sure you want to delete all your data in your Gallery storage "
+"directory and all your data in your Gallery database?"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"There was an error erasing the db and storage directory data. Here's the "
+"error:"
+msgstr ""
+"Çekirdek modül kurulurken bir hatayla karşılaşıldı. Stack trace burada:"
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Erase all data"
 msgstr ""
 
 msgid "Please fix this error and try again."
-msgstr ""
+msgstr "Lütfen hatayı çözüp tekrar deneyin."
 
 msgid "Try Again"
 msgstr "Tekrar Dene"
@@ -446,16 +578,16 @@ msgid "DB Name:"
 msgstr "VT Adı:"
 
 msgid "Table Prefix:"
-msgstr ""
+msgstr "Tablo Öneki:"
 
 msgid "Column Prefix:"
-msgstr ""
+msgstr "Sütün Öneki:"
 
 msgid "We received the following database related errors:"
 msgstr "Takip eden veritabanı hatalarını alıyoruz:"
 
-msgid "Save"
-msgstr "Kaydet"
+msgid "Erase Data For A Clean Install"
+msgstr ""
 
 msgid "Reuse Existing Tables"
 msgstr "Varolan Tabloları Kullan"
@@ -495,6 +627,7 @@ msgstr ""
 
 msgid "There was an error installing the core module.  Here's the stack trace:"
 msgstr ""
+"Çekirdek modül kurulurken bir hatayla karşılaşıldı. Stack trace burada:"
 
 msgid "Error installing Gallery Core"
 msgstr "Galeri Çekirdeği kurulumunda Hata"
@@ -508,10 +641,10 @@ msgid ""
 msgstr ""
 
 msgid "Stack Trace:"
-msgstr ""
+msgstr "Stack Trace:"
 
 msgid "Debug Output:"
-msgstr ""
+msgstr "Debug Çıktısı:"
 
 msgid "Installed Gallery Core successfully."
 msgstr "Galeri Çekirdeği başarıyla kuruldu."
@@ -552,14 +685,14 @@ msgid "Description"
 msgstr "Açıklama"
 
 msgid "(Incompatible with this Gallery version)"
-msgstr ""
+msgstr "[Bu Galeri versiyonu ile uyumsuz]"
 
 msgid "(un)check all"
-msgstr ""
+msgstr "tüm çekleri kaldır"
 
 #, c-format
 msgid "Continue to Step %d Without Activating&raquo;"
-msgstr ""
+msgstr "Devam et Adım %d Aktif duruma getirmeden&raquo;"
 
 msgid "Activate Selected Modules"
 msgstr "Seçilmiş Modülleri Etkinleştir"
@@ -572,6 +705,8 @@ msgstr "<i>%s</i> modülü başarıyla etkinleştirildi"
 msgid ""
 "The <i>%s</i> module was installed, but needs configuration to be activated"
 msgstr ""
+"<i>%s</i> modülü kuruldu, ancak aktif duruma getirilmesi için "
+"yapılandırılması gerekiyor"
 
 msgid ""
 "After finishing this installation, login as Admin and browse to Site Admin. "
@@ -583,7 +718,7 @@ msgstr "Daha Fazla Modül Etkinleştir"
 
 #, c-format
 msgid "Continue to Step %d&raquo;"
-msgstr ""
+msgstr "Devam et Adım %d&raquo;"
 
 msgid "Welcome to the Gallery Installer"
 msgstr "Galeri Kurulumuna Hoşgeldiniz"
@@ -606,7 +741,7 @@ msgstr "Kurulum Durumu"
 # param0 = integer percentage
 #, c-format
 msgid "Install %d%% complete"
-msgstr ""
+msgstr "Kurulum %d%% tamamlandı"
 
 msgid "Gallery: <strong>your photos</strong> on <strong>your website</strong>"
 msgstr "Ga"
@@ -619,10 +754,12 @@ msgid ""
 "Note: You're running Gallery from CVS, so recently removed files may appear "
 "here.  It might be safe to ignore these."
 msgstr ""
+"Not: Galeriyi CVS'den çalıştırıyorsunuz, kaldırılmış dosyalar göünebilir. "
+"Bunları güvenilir olarak görmezden gelebilirsiniz."
 
 #, c-format
 msgid "Modified files (%d)"
-msgstr ""
+msgstr "Modifiye edilmiş dosyalar (%d)"
 
 msgid ""
 "Note: You're running Gallery from CVS, so some modified files are to be "
@@ -637,6 +774,9 @@ msgid ""
 "These files are no longer part of Gallery. They probably won't cause any "
 "problems but it is a good idea to remove them to keep your install clean."
 msgstr ""
+"Bu dosyalar artık Galerinin bir parçası değil. Büyük ihtimalle bu dosyalar "
+"bir probleme yol açmaz ancak kurulumunuzu temiz tutmak açısından bunları "
+"kaldırmak iyi fikir."
 
 msgid ""
 "Gallery can support multiple independent sites with a single installation of "
@@ -645,24 +785,23 @@ msgid ""
 msgstr ""
 
 msgid "Standard installation"
-msgstr ""
+msgstr "Standart kurulum"
 
 #, c-format
 msgid "Configuration file located in %s"
-msgstr ""
+msgstr "Yapılandırma dosyasının bulunduğu yer %s"
 
-#, fuzzy
 msgid "Multisite installation"
-msgstr "ÇokluSite Bilgisi"
+msgstr "Çoklusite kurulumu"
 
 msgid "Enter directory for configuration file below:"
-msgstr ""
+msgstr "Yapılandırma dosyanız için klasörü aşağıya giriniz:"
 
 msgid "You must enter a directory"
 msgstr "Klasör girmelisiniz"
 
 msgid "The directory you entered does not exist"
-msgstr ""
+msgstr "Girmiş olduğunuz klasör mevcut değil"
 
 msgid ""
 "The directory you entered is not accessible.  Change the permissions so that "
@@ -673,6 +812,8 @@ msgid ""
 "Unable to create multisite files. Ensure the files listed below are "
 "writeable."
 msgstr ""
+"Çoklusite dosyaları oluşturulamıyor. Aşağıda listelenmiş dosyaların "
+"yazılabilir olduğundan emin olun."
 
 msgid ""
 "The directory must be writeable by your webserver/php user or contain the "
@@ -680,14 +821,13 @@ msgid ""
 msgstr ""
 
 msgid "Select Directory"
-msgstr ""
+msgstr "Klasör Seç"
 
-#, fuzzy
 msgid "Multisite directory setup successfully."
-msgstr "Veritabanı başarıyla kuruldu."
+msgstr "Çoklusite klasörü başarıyla kuruldu."
 
 msgid "Standard installation selected."
-msgstr ""
+msgstr "Standart kurulum seçildi"
 
 #, c-format
 msgid ""
@@ -699,9 +839,9 @@ msgid ""
 "it.  Right now your config.php has modes of %s.  We suggest that you do this:"
 msgstr ""
 
-#, fuzzy, c-format
+#, c-format
 msgid "chmod 644 %s"
-msgstr "chmod 644 "
+msgstr "chmod 644 %s"
 
 msgid ""
 "We want to make sure that your Gallery is secure.  The directory containing "
@@ -711,9 +851,9 @@ msgid ""
 "write to it.  We suggest that you do this:"
 msgstr ""
 
-#, fuzzy, c-format
+#, c-format
 msgid "chmod 755 %s"
-msgstr "chmod 777 %s"
+msgstr "chmod 755 %s"
 
 msgid ""
 "If you really want to continue, you can.  But we recommend that you take an "
@@ -748,10 +888,10 @@ msgid ""
 msgstr ""
 
 msgid "Directory path:"
-msgstr ""
+msgstr "Klasör yolu:"
 
 msgid "The directory you entered is read only"
-msgstr ""
+msgstr "Girmiş olduğunuz klasör sadece okunabilir"
 
 msgid ""
 "There was an error creating the directory structure within the storage "
@@ -781,7 +921,7 @@ msgid ""
 msgstr ""
 
 msgid "<b>Note</b>: Don't forget to delete dir.php when you're done!"
-msgstr ""
+msgstr "<b>Not</b>: İşiniz bittiğinde dir.php'yi silmeyi unutmayınız!"
 
 msgid ""
 "Your webserver needs to be able to write to this directory. Permission "
@@ -796,6 +936,8 @@ msgid ""
 "Note: these are only examples!  You may find that they don't work quite "
 "right on your system."
 msgstr ""
+"Not: bunlar sadece örneklerdir! Sisteminizde her yönüyle doğru çalışmadığını "
+"görebilirsiniz."
 
 msgid "Unix (with shell access)"
 msgstr "Unix (shell erişimi ile)"
@@ -822,10 +964,10 @@ msgid "cd %s"
 msgstr "cd %s"
 
 msgid "This is sometimes known as an <b>image firewall</b>."
-msgstr ""
+msgstr "Bazen <b>image firewall</b> olarakda bilinir."
 
 msgid "Storage directory set successfully."
-msgstr ""
+msgstr "Depolama klasörü başarıyla girildi."
 
 msgid "Success"
 msgstr "Başarılı"
@@ -840,6 +982,42 @@ msgid ""
 "If you are using Apache, create a file named .htaccess in the main Gallery "
 "directory with the following content:"
 msgstr ""
+"Eğer Apache kullanıyor iseniz, .htaccess adında bir dosyayu Galeri ana "
+"klasöründe oluşturarak izleyen içeriği bu dosyanın içine ekleyin: "
+
+#, fuzzy
+msgid "Version Check"
+msgstr "Versiyon"
+
+msgid ""
+"This is not a fresh install and the installed version does not match the new "
+"version."
+msgstr ""
+
+msgid "The installed version cannot be upgraded to the new version!"
+msgstr ""
+
+msgid ""
+"The installed version is older than the new version. You should run the "
+"upgrader and not the installer!"
+msgstr ""
+
+msgid "Currently installed"
+msgstr ""
+
+#, fuzzy
+msgid "New version"
+msgstr "Versiyon"
+
+#, fuzzy
+msgid "Go to the Upgrader!"
+msgstr "Galerime Git!"
+
+#, c-format
+msgid ""
+"You should go now to the upgrader.  Enter the URL in your browser for %s/"
+"upgrade/index.php%s in your %s directory."
+msgstr ""
 
 #, c-format
 msgid ""
@@ -851,13 +1029,29 @@ msgid ""
 msgstr ""
 
 msgid "Select Language:"
-msgstr ""
+msgstr "Dil Seç:"
 
 msgid "Go"
-msgstr ""
+msgstr "Git"
 
 msgid "Begin Installation&raquo;"
 msgstr "Kurulumu Başlat&raquo;"
 
-#~ msgid "Unable to read config.php"
-#~ msgstr "config.php okunamıyor"
+#~ msgid ""
+#~ "Gallery tables already exist in this database!  If you want to use the "
+#~ "existing tables, you must confirm that below.  Otherwise, you must "
+#~ "specify a new database, or a different table prefix in order to continue."
+#~ msgstr ""
+#~ "Galeri tabloları zaten veritabanında mevcut! Eğer mevcut tabloları "
+#~ "kullanmak istiyorsanız, aşağıda bunu onaylamalısınız. Aksi takdirde, yeni "
+#~ "bir veritabanı tanımlamalısınız, ya da farklı tablo önekleri tanımlayarak "
+#~ "devam etmelisiniz."
+
+#~ msgid ""
+#~ "For the Beta version, the default username ('admin') cannot be modified "
+#~ "in the installer. You can change the name later on via the user "
+#~ "administration page in your Gallery."
+#~ msgstr ""
+#~ "Beta versiyonu için, varsayılan kullanıcı adı ('admin') kurulumda "
+#~ "modifiye edilemez. Bu adı daha sonra Galerinizden  kullanıcı yönetim "
+#~ "sayfasından değiştirebilirsiniz."

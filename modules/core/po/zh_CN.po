@@ -165,20 +165,17 @@ msgstr "正在升级权限"
 msgid "Deleting old permission tables"
 msgstr "正在删除旧的权限数据表"
 
-msgid "All Users"
-msgstr "所有用户"
-
 msgid "Registered Users"
 msgstr ""
+
+msgid "All Users"
+msgstr "所有用户"
 
 msgid "Site Admins"
 msgstr "网站管理"
 
 msgid "Guest"
 msgstr "访客"
-
-msgid "Gallery Administrator"
-msgstr "图库管理员"
 
 msgid "Gallery"
 msgstr "图库"
@@ -700,6 +697,10 @@ msgstr "添加子相册"
 msgid "edit permissions"
 msgstr "编辑权限"
 
+#, fuzzy
+msgid "view permissions"
+msgstr "编辑权限"
+
 msgid "Site Admin"
 msgstr "网站管理"
 
@@ -750,6 +751,10 @@ msgstr "标记为精华"
 
 msgid "Edit Permissions"
 msgstr "编辑权限"
+
+#, fuzzy
+msgid "View Permissions"
+msgstr "权限"
 
 msgid "Add Items"
 msgstr "添加项目"
@@ -922,7 +927,8 @@ msgstr "Email"
 msgid ""
 "By default Gallery uses PHP's built in mail function to send email which "
 "requires no configuration.  To use a smtp/mail server enter the information "
-"below, including authentication information if required."
+"below, including authentication information if required.  Optionally add :"
+"port after the server name to use a non-default port."
 msgstr ""
 "默认状态下，图库使用PHP内建的邮件功能发送电子邮件，不需要设置。要使用要求认证"
 "的SMTP邮件服务器请在下方填写相关设定。"
@@ -2354,6 +2360,22 @@ msgstr "权限"
 msgid "Owner changed successfully"
 msgstr "所有者变更成功"
 
+#, fuzzy
+msgid "Group permission added successfully"
+msgstr "帐户设置保存成功"
+
+#, fuzzy
+msgid "User permission added successfully"
+msgstr "设置保存成功"
+
+#, fuzzy
+msgid "Group permission removed successfully"
+msgstr "帐户设置保存成功"
+
+#, fuzzy
+msgid "User permission removed successfully"
+msgstr "缩略图重置成功"
+
 msgid ""
 "Each item has its own independent set of permissions.  Changing the parent's "
 "permissions has no effect on the permissions of the child.  This allows you "
@@ -2622,14 +2644,11 @@ msgid ""
 "the email and you should contact your system administrator for help."
 msgstr ""
 
-#, fuzzy
-msgid "Administrator Recovery"
-msgstr "密码"
-
 #, c-format
 msgid ""
-"You can use the %sAdministrator Password Recovery%s if you don't receive a "
-"recovery email from Gallery."
+"Administrators can use the %sEmergency Password Recovery%s page to recover "
+"the admin account if they fail to receive recovery email due to server "
+"problems, or lack of a working email address."
 msgstr ""
 
 #, fuzzy
@@ -2642,8 +2661,8 @@ msgid ""
 "who you claim.  The best way to be sure is to ask you to make a tiny change "
 "in the Gallery directory which will prove that you have the right "
 "permissions.  So, we're going to ask that you create a new text file called %"
-"s in the <tt>%s</tt> directory on your webserver (that's the root Gallery 2 "
-"directory). It must contain the following randomly generated characters:"
+"s in your gallery2 directory. It must contain the following randomly "
+"generated characters:"
 msgstr ""
 
 #, c-format
@@ -2664,7 +2683,8 @@ msgid "Emergency Administrator Password Reset"
 msgstr ""
 
 msgid ""
-"This page can be used to securely reset the password on your 'admin' account."
+"This page can be used by a system administrator to securely reset the "
+"password on any account."
 msgstr ""
 
 msgid "Authorization Confirmed"
@@ -2674,6 +2694,17 @@ msgid ""
 "Your authorization has been confirmed.  Please enter your new password "
 "below.  After setting your new password you will be taken to the login page."
 msgstr ""
+
+msgid "Recover Password for Username"
+msgstr ""
+
+#, fuzzy
+msgid "You must enter a username to recover the password for."
+msgstr "您必须输入一个新密码"
+
+#, fuzzy
+msgid "The username you entered does not exist."
+msgstr "您输入的用户名无效"
 
 msgid "Authorization Incorrect"
 msgstr ""
@@ -2855,6 +2886,13 @@ msgstr[1] "(%d个项目)"
 #, c-format
 msgid "%d. %s"
 msgstr "%d. %s"
+
+#~ msgid "Gallery Administrator"
+#~ msgstr "图库管理员"
+
+#, fuzzy
+#~ msgid "Administrator Recovery"
+#~ msgstr "密码"
 
 #~ msgid "Use As Parent&rsquo;s Thumbnail?"
 #~ msgstr "用作上层缩略图吗？"

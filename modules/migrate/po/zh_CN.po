@@ -62,6 +62,19 @@ msgstr "导入"
 msgid "Gallery 1"
 msgstr "图库1"
 
+msgid "G1-&gt;G2 Mapping"
+msgstr ""
+
+msgid "G1 path"
+msgstr ""
+
+#, c-format
+msgid ""
+"G1 URL redirect. Use only if G2 is installed where G1 used to be and you "
+"have run a G1 import with the URL redirect option selected. Otherwise follow "
+"instructions in %sMigrate Site Admin%s."
+msgstr ""
+
 msgid "Select Albums and Users"
 msgstr "选择相册和用户"
 
@@ -316,17 +329,24 @@ msgstr "在Apache服务器上开启网址重定向功能:"
 msgid "Ensure the %s Apache module is enabled."
 msgstr "请确认 %s Apache模块已经开启。"
 
+#, fuzzy
 msgid ""
 "Edit or create a file called <tt>.htaccess</tt> in your Gallery1 directory "
-"and add the text shown below to the file. This will also work in your "
-"Gallery2 directory if G2 is installed in the path where G1 used to be."
+"and add the text shown below to the file. Remove G1 rewrite rules from an "
+"existing file. Redirects will also work in your Gallery2 directory if G2 is "
+"installed in the path where G1 used to be. However, if you also use the G2 "
+"URL Rewrite module then activate the G1 redirect rule in that module instead "
+"of using the block shown below."
 msgstr ""
 "请在图库1目录中编辑或新建一个名为<tt>.htaccess</tt>的文件，并将下面显示的文本"
 "添加到该文件中。如果图库2安装在原图库1的路径位置，这将也作用于图库2目录。"
 
+#, fuzzy
 msgid ""
 "Add the same <tt>.htaccess</tt> block in the Gallery1 albums directory if "
-"you also wish to redirect links to image files and album directories."
+"you also wish to redirect links to image files and album directories. Note "
+"that these redirects are not active until the G1 images are actually removed "
+"or moved. Omit the !-f line shown below to redirect anyway."
 msgstr ""
 "如果您希望重定向链接到图片文件或相册目录，请添加与图库1相册目录一致的<tt>."
 "htaccess</tt>区块。"

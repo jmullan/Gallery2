@@ -61,6 +61,19 @@ msgstr ""
 msgid "Gallery 1"
 msgstr ""
 
+msgid "G1-&gt;G2 Mapping"
+msgstr ""
+
+msgid "G1 path"
+msgstr ""
+
+#, c-format
+msgid ""
+"G1 URL redirect. Use only if G2 is installed where G1 used to be and you "
+"have run a G1 import with the URL redirect option selected. Otherwise follow "
+"instructions in %sMigrate Site Admin%s."
+msgstr ""
+
 msgid "Select Albums and Users"
 msgstr ""
 
@@ -307,13 +320,18 @@ msgstr ""
 
 msgid ""
 "Edit or create a file called <tt>.htaccess</tt> in your Gallery1 directory "
-"and add the text shown below to the file. This will also work in your "
-"Gallery2 directory if G2 is installed in the path where G1 used to be."
+"and add the text shown below to the file. Remove G1 rewrite rules from an "
+"existing file. Redirects will also work in your Gallery2 directory if G2 is "
+"installed in the path where G1 used to be. However, if you also use the G2 "
+"URL Rewrite module then activate the G1 redirect rule in that module instead "
+"of using the block shown below."
 msgstr ""
 
 msgid ""
 "Add the same <tt>.htaccess</tt> block in the Gallery1 albums directory if "
-"you also wish to redirect links to image files and album directories."
+"you also wish to redirect links to image files and album directories. Note "
+"that these redirects are not active until the G1 images are actually removed "
+"or moved. Omit the !-f line shown below to redirect anyway."
 msgstr ""
 
 msgid ""

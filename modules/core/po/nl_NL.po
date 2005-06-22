@@ -169,20 +169,17 @@ msgstr "Bijwerken rechten"
 msgid "Deleting old permission tables"
 msgstr "Verwijderen oude rechten tabellen"
 
-msgid "All Users"
-msgstr "Alle Gebruikers"
-
 msgid "Registered Users"
 msgstr "Geregistreerde Gebruikers"
+
+msgid "All Users"
+msgstr "Alle Gebruikers"
 
 msgid "Site Admins"
 msgstr "Site Beheer"
 
 msgid "Guest"
 msgstr "Gast"
-
-msgid "Gallery Administrator"
-msgstr "Gallery beheerder"
 
 msgid "Gallery"
 msgstr "Gallery"
@@ -714,6 +711,10 @@ msgstr "album toevoegen"
 msgid "edit permissions"
 msgstr "bewerk rechten"
 
+#, fuzzy
+msgid "view permissions"
+msgstr "bewerk rechten"
+
 msgid "Site Admin"
 msgstr "Site Beheer"
 
@@ -764,6 +765,10 @@ msgstr "Maak Albumafbeelding"
 
 msgid "Edit Permissions"
 msgstr "Bewerk Rechten"
+
+#, fuzzy
+msgid "View Permissions"
+msgstr "Rechten"
 
 msgid "Add Items"
 msgstr "Items Toevoegen"
@@ -945,12 +950,14 @@ msgstr "E-mail"
 msgid ""
 "By default Gallery uses PHP's built in mail function to send email which "
 "requires no configuration.  To use a smtp/mail server enter the information "
-"below, including authentication information if required."
+"below, including authentication information if required.  Optionally add :"
+"port after the server name to use a non-default port."
 msgstr ""
 "Standaard gebruikt Gallery de in PHP ingebouwde e-mail functionaliteit die "
 "geen configuratie behoeft. Om gebruik te maken van een smtp/mail server, vul "
 "de onderstaande gegevens in, inclusief de authenticatie gegevens indien "
-"vereist."
+"vereist. Voeg optioneel een :poort toe achter de servernaam om een niet-"
+"standaard poort te gebruiken."
 
 msgid "Server"
 msgstr "Server"
@@ -2500,6 +2507,22 @@ msgstr "Rechten"
 msgid "Owner changed successfully"
 msgstr "Eigenar succesvol aangepast"
 
+#, fuzzy
+msgid "Group permission added successfully"
+msgstr "Account instellingen succesvol opgeslagen"
+
+#, fuzzy
+msgid "User permission added successfully"
+msgstr "Instellingen succesvol opgeslagen"
+
+#, fuzzy
+msgid "Group permission removed successfully"
+msgstr "Account instellingen succesvol opgeslagen"
+
+#, fuzzy
+msgid "User permission removed successfully"
+msgstr "Weergave tellers succesvol teruggezet"
+
 msgid ""
 "Each item has its own independent set of permissions.  Changing the parent's "
 "permissions has no effect on the permissions of the child.  This allows you "
@@ -2790,15 +2813,15 @@ msgstr ""
 "ontvangen en dan dient u voor hulp contact op te nemen met uw "
 "systeembeheerder."
 
-#, fuzzy
-msgid "Administrator Recovery"
-msgstr "Wachtwoord Opnieuw Instellen"
-
 #, c-format
 msgid ""
-"You can use the %sAdministrator Password Recovery%s if you don't receive a "
-"recovery email from Gallery."
+"Administrators can use the %sEmergency Password Recovery%s page to recover "
+"the admin account if they fail to receive recovery email due to server "
+"problems, or lack of a working email address."
 msgstr ""
+"Beheerders kunnen de %sNood Wachtwoord Herstel%s pagina gebruiken om het "
+"beheer account te herstellen als zij geen herstel email kunnen ontvangen "
+"vanwege server problemen of geen geldig email adres."
 
 msgid "Recover"
 msgstr "Opnieuw instellen"
@@ -2809,13 +2832,21 @@ msgid ""
 "who you claim.  The best way to be sure is to ask you to make a tiny change "
 "in the Gallery directory which will prove that you have the right "
 "permissions.  So, we're going to ask that you create a new text file called %"
-"s in the <tt>%s</tt> directory on your webserver (that's the root Gallery 2 "
-"directory). It must contain the following randomly generated characters:"
+"s in your gallery2 directory. It must contain the following randomly "
+"generated characters:"
 msgstr ""
+"Om met het resetten van het wachtwoord verder te gaan dienen we eerst te "
+"verifiëren dat u bent wie u claimt dat u bent. De beste manier om hier zeker "
+"van te zijn is door u te vragen een kleine verandering in de Gallery "
+"directory te maken, waarmee u bewijst dat u de juiste rechten heeft. Daarom "
+"gaan we u vragen om een nieuw tekst bestand genaamd <strong>login.txt</"
+"strong> aan te maken in de <tt>%s</tt> directory op uw webserver (dat is "
+"dezelfde directory waar de installatie zich bevindt). Dit bestand dient de "
+"volgende willekeurig gegenereerde karakters te bevatten:"
 
 #, c-format
 msgid "%s"
-msgstr ""
+msgstr "%s"
 
 #, c-format
 msgid ""
@@ -2823,52 +2854,63 @@ msgid ""
 "for you.  Download that and copy it into your install directory and you're "
 "all set."
 msgstr ""
+"Voor uw gemak hebben we een %sjuiste versie van login.txt%s voor u "
+"voorbereid. Download deze en kopiëer het naar uw install directory en dan "
+"bent u klaar."
 
 msgid "Once you've uploaded the file, click refresh to continue."
-msgstr ""
+msgstr "Als u het bestand heeft geupload, klik op vernieuwen om door te gaan."
 
 msgid "Emergency Administrator Password Reset"
-msgstr ""
+msgstr "Nood Wachtwoord Reset Beheerder"
 
-#, fuzzy
 msgid ""
-"This page can be used to securely reset the password on your 'admin' account."
+"This page can be used by a system administrator to securely reset the "
+"password on any account."
 msgstr ""
-"Deze pagina zal u toestaan om het wachtwoord van uw account opnieuw in te "
-"stellen."
+"Deze pagina kan door een systeem beheerder gebruikt worden om veilig de "
+"wachtwoorden van een account te resetten"
 
-#, fuzzy
 msgid "Authorization Confirmed"
-msgstr "Authorisatie ontbreekt"
+msgstr "Authorisatie Bevestigd"
 
 msgid ""
 "Your authorization has been confirmed.  Please enter your new password "
 "below.  After setting your new password you will be taken to the login page."
 msgstr ""
+"Uw authorisatie is bevestigd. Geef hieronder een nieuw wachtwoord op. Nadat "
+"u uw nieuwe wachtwoord heeft ingesteld, zal u naar de login pagina gaan."
 
-#, fuzzy
+msgid "Recover Password for Username"
+msgstr "Herstel Wachtwoord voor Gebruikersnaam"
+
+msgid "You must enter a username to recover the password for."
+msgstr "U moet een gebruikersnaam opgeven om het wachtwoord van de herstellen."
+
+msgid "The username you entered does not exist."
+msgstr "De opgegeven gebruikersnaam is bestaat niet."
+
 msgid "Authorization Incorrect"
-msgstr "Authorisatie ontbreekt"
+msgstr "Authorisatie Onjuist"
 
 msgid "Recovery Instructions"
-msgstr ""
+msgstr "Herstel Instructies"
 
-#, fuzzy
 msgid "AuthFile Missing"
-msgstr "Authorisatie ontbreekt"
+msgstr "AuthBestand Ontbreekt"
 
 msgid "AuthFile Unreadable"
-msgstr ""
+msgstr "AuthBestand Onleesbaar"
 
 #, c-format
 msgid ""
 "Your %s file is not readable. Please give Gallery read permissions on the "
 "file."
 msgstr ""
+"Uw %s bestand is niet leesbaar. Geef Gallery lees rechten op dit bestand."
 
-#, fuzzy
 msgid "Refresh"
-msgstr "voor"
+msgstr "Vernieuwen"
 
 msgid "This page will allow you to reset the password on your account."
 msgstr ""

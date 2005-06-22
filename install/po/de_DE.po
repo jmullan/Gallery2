@@ -43,6 +43,13 @@ msgstr "Unbekannt"
 msgid "Admin User Setup"
 msgstr "Administratorkonto"
 
+msgid "admin"
+msgstr ""
+
+#, fuzzy
+msgid "Gallery Administrator"
+msgstr "Gallery-Dateiintegrität"
+
 msgid "Authenticate"
 msgstr "Authentifizierung"
 
@@ -120,14 +127,48 @@ msgid "The database you specified does not exist.  Please create it."
 msgstr "Die angegebene Datenbank existiert nicht. Bitte erzeugen Sie sie."
 
 msgid ""
-"Gallery tables already exist in this database!  If you want to use the "
-"existing tables, you must confirm that below.  Otherwise, you must specify a "
-"new database, or a different table prefix in order to continue."
+"Gallery tables already exist in this database!  But there is no 'versions."
+"dat' file in your G2 storage directory which we interpret as a broken state "
+"of G2. Either create a versions.dat file with the correct format if you "
+"think your G2 should still work or select a clean install, which will erase "
+"all data in the database and in the storage directory."
 msgstr ""
-"Die Gallery-Tabellen existieren schon in dieser Datenbank! Wenn Sie die "
-"vorhandenen Tabellen verwenden möchten, müssten Sie das unten bestätigen. "
-"Ansonsten müssen Sie eine neue Datenbank oder einen anderen Tabellen-Präfix "
-"angeben um fortsetzen zu können."
+
+msgid ""
+"The G2 storage directory has a versions.dat file of an old install. But the "
+"Gallery database tables don't exist. Select a clean install to erase all "
+"data in the Gallery storage directory and advance to the next step."
+msgstr ""
+
+msgid ""
+"Gallery tables already exist in the database and there is a versions.dat "
+"file in the Gallery storage directory. But the version of the installed "
+"Gallery database tables don't match the version of the installed data in the "
+"Gallery storage directory. Select a clean install to erase all data in the "
+"database and in the storage directory and to advance to the next step."
+msgstr ""
+
+msgid ""
+"Gallery tables already exist in the database and the Gallery storage "
+"directory seems to be intact. Either choose to reuse the existing database "
+"tables and storage directory data or select a clean install to erase all "
+"existing data in the database and the storage directory."
+msgstr ""
+
+msgid ""
+"Could not execute the required API to erase the storage directory. Please "
+"erase the Gallery storage directory manually."
+msgstr ""
+
+msgid ""
+"Could not execute the required API to drop the Gallery database tables. "
+"Please clean the Gallery database manually."
+msgstr ""
+
+msgid ""
+"Could not load the G2 API. Please erase the Gallery database tables and the "
+"storage directory manually."
+msgstr ""
 
 msgid "MySQL (all versions)"
 msgstr "MySQL (alle Versionen)"
@@ -380,7 +421,15 @@ msgstr ""
 msgid "Admin username"
 msgstr "Administrator-Benutzername"
 
+#, fuzzy
+msgid "Please enter a valid user name"
+msgstr "Bitte geben Sie ein Passwort ein"
+
 msgid "Password"
+msgstr "Passwort"
+
+#, fuzzy
+msgid "Setup password"
 msgstr "Passwort"
 
 msgid "Please enter a password"
@@ -388,6 +437,16 @@ msgstr "Bitte geben Sie ein Passwort ein"
 
 msgid "(type again)"
 msgstr "(erneut eingeben)"
+
+msgid "Admin email address"
+msgstr ""
+
+#, fuzzy
+msgid "Please enter a valid email address"
+msgstr "Bitte geben Sie ein Passwort ein"
+
+msgid "Admin full name (optional)"
+msgstr ""
 
 msgid "Missing password!  Please enter the same password twice"
 msgstr "Fehlendes Passwort! Bitte geben Sie das Passwort zweimal ein"
@@ -398,29 +457,30 @@ msgstr ""
 "erneut."
 
 msgid ""
-"For the Beta version, the default username ('admin') cannot be modified in "
-"the installer. You can change the name later on via the user administration "
-"page in your Gallery."
+"As you are reusing existing database tables, this is not a fresh install. "
+"This will only change the setup password, but not change the password of the "
+"site admin. To change the password of the site admin, choose the forgot "
+"password mechanism of Gallery."
 msgstr ""
-"In der Beta-Version kann der Standard-Benutzername ('admin') im Installer "
-"nicht geändert werden. Sie können den Namen später auf der Administrations-"
-"Seite Ihrer Gallery ändern."
 
 msgid "Create"
 msgstr "Erstellen"
 
+msgid "Save"
+msgstr "Speichern"
+
 msgid "Admin user info entered successfully."
 msgstr "Administrator-Benutzerinformationen erfolgreich eingetragen"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "In order to proceed with the install, we have to verify that you are who you "
 "claim.  The best way to be sure is to ask you to make a tiny change in the "
 "Gallery directory which will prove that you have the right permissions.  So, "
 "we're going to ask that you create a new text file called <strong>login.txt</"
 "strong> in the <tt>%s</tt> directory on your webserver (that's the same "
-"directory where this installer is located). It must contain the following "
-"randomly generated characters:"
+"directory where main.php is located). It must contain the following randomly "
+"generated characters:"
 msgstr ""
 "Um die Installation fortzusetzen müssen wir bestätigen, dass Sie auch "
 "wirklich der sind, für den Sie sich ausgeben. Der beste Weg das "
@@ -431,11 +491,11 @@ msgstr ""
 "zu erstellen (das ist der selbe Ordner in dem auch der Installer liegt). Sie "
 "muss die folgende, zufällig generierte Zeichenfolge enthalten:"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "As a convenience to you, we've prepared a %scorrect version of login.txt%s "
-"for you.  Download that and copy it into your install directory and you're "
-"all set."
+"for you.  Download that and copy it into your <tt>%s</tt> directory and "
+"you're all set."
 msgstr ""
 "Um Ihnen dadurch möglichst wenig Aufwand zu machen, haben wir eine %"
 "skorrekte Version von login.txt%s für Sie vorbereitet.  Laden Sie die Datei "
@@ -450,6 +510,28 @@ msgstr "Authentifiziere mich"
 
 msgid "Authentication successful!"
 msgstr "Authentifizierung erfolgreich!"
+
+msgid "Erase data for a clean install"
+msgstr ""
+
+msgid ""
+"Are you really sure you want to delete all your data in your Gallery storage "
+"directory and all your data in your Gallery database?"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"There was an error erasing the db and storage directory data. Here's the "
+"error:"
+msgstr ""
+"Bei der Installation des Kernmoduls ist ein Fehler aufgetreten. Hier finden "
+"Sie den Stack Trace:"
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Erase all data"
+msgstr ""
 
 msgid "Please fix this error and try again."
 msgstr "Bitte beheben Sie diesen Fehler und versuchen Sie es erneut."
@@ -548,8 +630,8 @@ msgstr "Spalten-Präfix:"
 msgid "We received the following database related errors:"
 msgstr "Wir haben die folgenden datenbankbezogenen Fehler erhalten:"
 
-msgid "Save"
-msgstr "Speichern"
+msgid "Erase Data For A Clean Install"
+msgstr ""
 
 msgid "Reuse Existing Tables"
 msgstr "Vorhandene Tabellen verwenden"
@@ -1052,6 +1134,42 @@ msgstr ""
 "Falls Sie Apache verwenden, erzeugen Sie eine Datei namens .htaccess mit dem "
 "folgenden Inhalt im Hauptordner Ihrer Gallery:"
 
+#, fuzzy
+msgid "Version Check"
+msgstr "Version"
+
+msgid ""
+"This is not a fresh install and the installed version does not match the new "
+"version."
+msgstr ""
+
+msgid "The installed version cannot be upgraded to the new version!"
+msgstr ""
+
+msgid ""
+"The installed version is older than the new version. You should run the "
+"upgrader and not the installer!"
+msgstr ""
+
+msgid "Currently installed"
+msgstr ""
+
+#, fuzzy
+msgid "New version"
+msgstr "Version"
+
+#, fuzzy
+msgid "Go to the Upgrader!"
+msgstr "Gehe zu meiner Gallery!"
+
+#, fuzzy, c-format
+msgid ""
+"You should go now to the upgrader.  Enter the URL in your browser for %s/"
+"upgrade/index.php%s in your %s directory."
+msgstr ""
+"Sie können nun Ihre neue Gallery anschauen.  Geben Sie in Ihrem Browser die "
+"URL für %smain.php%s in Ihrem %s-Ordner ein."
+
 #, c-format
 msgid ""
 "Getting Gallery 2.0 installed on your webserver requires %d steps. This "
@@ -1076,3 +1194,22 @@ msgstr "Sprache einstellen"
 
 msgid "Begin Installation&raquo;"
 msgstr "Installation starten&raquo;"
+
+#~ msgid ""
+#~ "Gallery tables already exist in this database!  If you want to use the "
+#~ "existing tables, you must confirm that below.  Otherwise, you must "
+#~ "specify a new database, or a different table prefix in order to continue."
+#~ msgstr ""
+#~ "Die Gallery-Tabellen existieren schon in dieser Datenbank! Wenn Sie die "
+#~ "vorhandenen Tabellen verwenden möchten, müssten Sie das unten bestätigen. "
+#~ "Ansonsten müssen Sie eine neue Datenbank oder einen anderen Tabellen-"
+#~ "Präfix angeben um fortsetzen zu können."
+
+#~ msgid ""
+#~ "For the Beta version, the default username ('admin') cannot be modified "
+#~ "in the installer. You can change the name later on via the user "
+#~ "administration page in your Gallery."
+#~ msgstr ""
+#~ "In der Beta-Version kann der Standard-Benutzername ('admin') im Installer "
+#~ "nicht geändert werden. Sie können den Namen später auf der "
+#~ "Administrations-Seite Ihrer Gallery ändern."

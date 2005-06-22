@@ -168,20 +168,17 @@ msgstr "Aktualizuji oprávnění"
 msgid "Deleting old permission tables"
 msgstr "Mažu staré tabulky oprávnění"
 
-msgid "All Users"
-msgstr "Všichni uživatelé"
-
 msgid "Registered Users"
 msgstr "Registrovaní uživatelé"
+
+msgid "All Users"
+msgstr "Všichni uživatelé"
 
 msgid "Site Admins"
 msgstr "Správci"
 
 msgid "Guest"
 msgstr "Návštěvník"
-
-msgid "Gallery Administrator"
-msgstr "Správce Galerie"
 
 msgid "Gallery"
 msgstr "Galerie"
@@ -708,6 +705,10 @@ msgstr "přidat album"
 msgid "edit permissions"
 msgstr "upravit oprávnění"
 
+#, fuzzy
+msgid "view permissions"
+msgstr "upravit oprávnění"
+
 msgid "Site Admin"
 msgstr "Nastavení"
 
@@ -758,6 +759,10 @@ msgstr "Zvýraznit"
 
 msgid "Edit Permissions"
 msgstr "Upravit oprávnění"
+
+#, fuzzy
+msgid "View Permissions"
+msgstr "Oprávnění"
 
 msgid "Add Items"
 msgstr "Přidat položky"
@@ -933,10 +938,12 @@ msgstr "Značkování"
 msgid "Email"
 msgstr "E-mail"
 
+#, fuzzy
 msgid ""
 "By default Gallery uses PHP's built in mail function to send email which "
 "requires no configuration.  To use a smtp/mail server enter the information "
-"below, including authentication information if required."
+"below, including authentication information if required.  Optionally add :"
+"port after the server name to use a non-default port."
 msgstr ""
 "Ve výchozím nastavení používá Galerie pro odesílání e-mailů funkce PHP, "
 "které nepotřebují žádnou konfiguraci. Pokud chcete použít jiný SMTP server, "
@@ -2445,6 +2452,22 @@ msgstr "Oprávnění"
 msgid "Owner changed successfully"
 msgstr "Vlastník byl úspěšně změněn"
 
+#, fuzzy
+msgid "Group permission added successfully"
+msgstr "Nastavení účtu úspěšně uloženo"
+
+#, fuzzy
+msgid "User permission added successfully"
+msgstr "Nastavení úspěšně uloženo"
+
+#, fuzzy
+msgid "Group permission removed successfully"
+msgstr "Nastavení účtu úspěšně uloženo"
+
+#, fuzzy
+msgid "User permission removed successfully"
+msgstr "Počet zobrazení úspěšně vynulován"
+
 msgid ""
 "Each item has its own independent set of permissions.  Changing the parent's "
 "permissions has no effect on the permissions of the child.  This allows you "
@@ -2732,14 +2755,11 @@ msgstr ""
 "Nezapomeňte, že pokud v profilu nemáte zadanou email adresu, nemůže Galerie "
 "ověřit Vaší identitu a musíte sami kontaktovat správce."
 
-#, fuzzy
-msgid "Administrator Recovery"
-msgstr "Obnova hesla"
-
 #, c-format
 msgid ""
-"You can use the %sAdministrator Password Recovery%s if you don't receive a "
-"recovery email from Gallery."
+"Administrators can use the %sEmergency Password Recovery%s page to recover "
+"the admin account if they fail to receive recovery email due to server "
+"problems, or lack of a working email address."
 msgstr ""
 
 msgid "Recover"
@@ -2751,8 +2771,8 @@ msgid ""
 "who you claim.  The best way to be sure is to ask you to make a tiny change "
 "in the Gallery directory which will prove that you have the right "
 "permissions.  So, we're going to ask that you create a new text file called %"
-"s in the <tt>%s</tt> directory on your webserver (that's the root Gallery 2 "
-"directory). It must contain the following randomly generated characters:"
+"s in your gallery2 directory. It must contain the following randomly "
+"generated characters:"
 msgstr ""
 
 #, c-format
@@ -2774,7 +2794,8 @@ msgstr ""
 
 #, fuzzy
 msgid ""
-"This page can be used to securely reset the password on your 'admin' account."
+"This page can be used by a system administrator to securely reset the "
+"password on any account."
 msgstr "Tato stránka Vám umožní vynulovat heslo k Vašemu účtu."
 
 #, fuzzy
@@ -2785,6 +2806,17 @@ msgid ""
 "Your authorization has been confirmed.  Please enter your new password "
 "below.  After setting your new password you will be taken to the login page."
 msgstr ""
+
+msgid "Recover Password for Username"
+msgstr ""
+
+#, fuzzy
+msgid "You must enter a username to recover the password for."
+msgstr "Musíte zadat nové heslo"
+
+#, fuzzy
+msgid "The username you entered does not exist."
+msgstr "Jméno uživatele, které jste zadali není správné"
 
 #, fuzzy
 msgid "Authorization Incorrect"
@@ -2978,6 +3010,13 @@ msgstr[2] "(%d položek)"
 #, c-format
 msgid "%d. %s"
 msgstr "%d. %s"
+
+#~ msgid "Gallery Administrator"
+#~ msgstr "Správce Galerie"
+
+#, fuzzy
+#~ msgid "Administrator Recovery"
+#~ msgstr "Obnova hesla"
 
 #, fuzzy
 #~ msgid "Gallery 2 - Beta 3: Bingo!"

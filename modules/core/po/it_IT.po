@@ -167,20 +167,17 @@ msgstr "Aggiornamento permessi"
 msgid "Deleting old permission tables"
 msgstr "Eliminazione vecchia tabella permessi"
 
-msgid "All Users"
-msgstr "Tutti gli Utenti"
-
 msgid "Registered Users"
 msgstr "Utenti Registrati"
+
+msgid "All Users"
+msgstr "Tutti gli Utenti"
 
 msgid "Site Admins"
 msgstr "Amministratori Sito"
 
 msgid "Guest"
 msgstr "Visitatore"
-
-msgid "Gallery Administrator"
-msgstr "Amministratore di Gallery"
 
 msgid "Gallery"
 msgstr "Gallery"
@@ -712,6 +709,10 @@ msgstr "aggiungi sotto-album"
 msgid "edit permissions"
 msgstr "modifica permessi"
 
+#, fuzzy
+msgid "view permissions"
+msgstr "modifica permessi"
+
 msgid "Site Admin"
 msgstr "Amministra il Sito"
 
@@ -762,6 +763,10 @@ msgstr "Fanne la Copertina"
 
 msgid "Edit Permissions"
 msgstr "Modifica Autorizzazioni"
+
+#, fuzzy
+msgid "View Permissions"
+msgstr "Permessi"
 
 msgid "Add Items"
 msgstr "Aggiungi Oggetti"
@@ -942,10 +947,12 @@ msgstr "Markup"
 msgid "Email"
 msgstr "Email"
 
+#, fuzzy
 msgid ""
 "By default Gallery uses PHP's built in mail function to send email which "
 "requires no configuration.  To use a smtp/mail server enter the information "
-"below, including authentication information if required."
+"below, including authentication information if required.  Optionally add :"
+"port after the server name to use a non-default port."
 msgstr ""
 "Per mandare email, Gallery di default usa la funzione mail di PHP, che non "
 "richiede configurazione. Per utilizzare un server smtp/mail inserisci le "
@@ -2479,6 +2486,22 @@ msgstr "Permessi"
 msgid "Owner changed successfully"
 msgstr "Proprietario modificato con successo"
 
+#, fuzzy
+msgid "Group permission added successfully"
+msgstr "Configurazione account salvata con successo"
+
+#, fuzzy
+msgid "User permission added successfully"
+msgstr "Configurazione salvata con successo"
+
+#, fuzzy
+msgid "Group permission removed successfully"
+msgstr "Configurazione account salvata con successo"
+
+#, fuzzy
+msgid "User permission removed successfully"
+msgstr "Conteggio visite azzerato con successo"
+
 msgid ""
 "Each item has its own independent set of permissions.  Changing the parent's "
 "permissions has no effect on the permissions of the child.  This allows you "
@@ -2773,14 +2796,11 @@ msgstr ""
 "Nota che se l'account non ha un indirizzo email, potresti non ricevere "
 "l'email e dovrai contattare l'amministratore di sistema per chiedere aiuto."
 
-#, fuzzy
-msgid "Administrator Recovery"
-msgstr "Recupero Password"
-
 #, c-format
 msgid ""
-"You can use the %sAdministrator Password Recovery%s if you don't receive a "
-"recovery email from Gallery."
+"Administrators can use the %sEmergency Password Recovery%s page to recover "
+"the admin account if they fail to receive recovery email due to server "
+"problems, or lack of a working email address."
 msgstr ""
 
 msgid "Recover"
@@ -2792,8 +2812,8 @@ msgid ""
 "who you claim.  The best way to be sure is to ask you to make a tiny change "
 "in the Gallery directory which will prove that you have the right "
 "permissions.  So, we're going to ask that you create a new text file called %"
-"s in the <tt>%s</tt> directory on your webserver (that's the root Gallery 2 "
-"directory). It must contain the following randomly generated characters:"
+"s in your gallery2 directory. It must contain the following randomly "
+"generated characters:"
 msgstr ""
 
 #, c-format
@@ -2815,7 +2835,8 @@ msgstr ""
 
 #, fuzzy
 msgid ""
-"This page can be used to securely reset the password on your 'admin' account."
+"This page can be used by a system administrator to securely reset the "
+"password on any account."
 msgstr "Questa pagina ti permette di resettare la password del tuo account."
 
 #, fuzzy
@@ -2826,6 +2847,17 @@ msgid ""
 "Your authorization has been confirmed.  Please enter your new password "
 "below.  After setting your new password you will be taken to the login page."
 msgstr ""
+
+msgid "Recover Password for Username"
+msgstr ""
+
+#, fuzzy
+msgid "You must enter a username to recover the password for."
+msgstr "Devi inserire una nuova password due volte per cambiarla."
+
+#, fuzzy
+msgid "The username you entered does not exist."
+msgstr "Il nome utente che hai inserito non &egrave; valido"
 
 #, fuzzy
 msgid "Authorization Incorrect"
@@ -3023,6 +3055,13 @@ msgstr[1] "%d oggetti)"
 msgid "%d. %s"
 msgstr "%d. %s"
 
+#~ msgid "Gallery Administrator"
+#~ msgstr "Amministratore di Gallery"
+
+#, fuzzy
+#~ msgid "Administrator Recovery"
+#~ msgstr "Recupero Password"
+
 #~ msgid "Gallery 2 - Beta 3: Bingo!"
 #~ msgstr "Gallery 2 - Beta 3: Bingo!"
 
@@ -3147,9 +3186,6 @@ msgstr "%d. %s"
 
 #~ msgid "Layouts"
 #~ msgstr "Layouts"
-
-#~ msgid "You must enter a new password twice to change passwords."
-#~ msgstr "Devi inserire una nuova password due volte per cambiarla."
 
 #~ msgid "&laquo; No Sort Order &raquo;"
 #~ msgstr "&laquo; Nessun Ordinamento &raquo;"

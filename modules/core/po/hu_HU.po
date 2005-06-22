@@ -166,20 +166,17 @@ msgstr "jogok szerkesztése"
 msgid "Deleting old permission tables"
 msgstr "%s jogainak szerkesztése"
 
-msgid "All Users"
-msgstr "Minden felhasználó"
-
 msgid "Registered Users"
 msgstr ""
+
+msgid "All Users"
+msgstr "Minden felhasználó"
 
 msgid "Site Admins"
 msgstr "Oldal adminisztrátorok"
 
 msgid "Guest"
 msgstr "Vendég"
-
-msgid "Gallery Administrator"
-msgstr "Galéria Adminisztrátor"
 
 msgid "Gallery"
 msgstr "Galéria"
@@ -703,6 +700,10 @@ msgstr "al-album hozzáadása"
 msgid "edit permissions"
 msgstr "jogok szerkesztése"
 
+#, fuzzy
+msgid "view permissions"
+msgstr "jogok szerkesztése"
+
 msgid "Site Admin"
 msgstr "Oldal adminisztrátor"
 
@@ -753,6 +754,10 @@ msgstr "Megjelölés"
 
 msgid "Edit Permissions"
 msgstr "Jogok szerkesztése"
+
+#, fuzzy
+msgid "View Permissions"
+msgstr "Jogok"
 
 msgid "Add Items"
 msgstr "Elemek hozzáadása"
@@ -930,7 +935,8 @@ msgstr "E-mail"
 msgid ""
 "By default Gallery uses PHP's built in mail function to send email which "
 "requires no configuration.  To use a smtp/mail server enter the information "
-"below, including authentication information if required."
+"below, including authentication information if required.  Optionally add :"
+"port after the server name to use a non-default port."
 msgstr ""
 "Alapértelmezettként a Galéria a PHP beépített e-mail küldő függvényeit "
 "használja,ami nem igényel beállítást. Bejelentkezést igénylő SMTP szerver "
@@ -2427,6 +2433,22 @@ msgstr "Jogok"
 msgid "Owner changed successfully"
 msgstr "Tulaj sikeresen megváltoztatva"
 
+#, fuzzy
+msgid "Group permission added successfully"
+msgstr "Felhasználói beállítások sikeresen elmentve"
+
+#, fuzzy
+msgid "User permission added successfully"
+msgstr "Beállítások sikeresen elmentve"
+
+#, fuzzy
+msgid "Group permission removed successfully"
+msgstr "Felhasználói beállítások sikeresen elmentve"
+
+#, fuzzy
+msgid "User permission removed successfully"
+msgstr "Előnézeti kép sikeresen visszaállítva"
+
 msgid ""
 "Each item has its own independent set of permissions.  Changing the parent's "
 "permissions has no effect on the permissions of the child.  This allows you "
@@ -2701,14 +2723,11 @@ msgid ""
 "the email and you should contact your system administrator for help."
 msgstr ""
 
-#, fuzzy
-msgid "Administrator Recovery"
-msgstr "Jelszó"
-
 #, c-format
 msgid ""
-"You can use the %sAdministrator Password Recovery%s if you don't receive a "
-"recovery email from Gallery."
+"Administrators can use the %sEmergency Password Recovery%s page to recover "
+"the admin account if they fail to receive recovery email due to server "
+"problems, or lack of a working email address."
 msgstr ""
 
 #, fuzzy
@@ -2721,8 +2740,8 @@ msgid ""
 "who you claim.  The best way to be sure is to ask you to make a tiny change "
 "in the Gallery directory which will prove that you have the right "
 "permissions.  So, we're going to ask that you create a new text file called %"
-"s in the <tt>%s</tt> directory on your webserver (that's the root Gallery 2 "
-"directory). It must contain the following randomly generated characters:"
+"s in your gallery2 directory. It must contain the following randomly "
+"generated characters:"
 msgstr ""
 
 #, c-format
@@ -2743,7 +2762,8 @@ msgid "Emergency Administrator Password Reset"
 msgstr ""
 
 msgid ""
-"This page can be used to securely reset the password on your 'admin' account."
+"This page can be used by a system administrator to securely reset the "
+"password on any account."
 msgstr ""
 
 msgid "Authorization Confirmed"
@@ -2753,6 +2773,17 @@ msgid ""
 "Your authorization has been confirmed.  Please enter your new password "
 "below.  After setting your new password you will be taken to the login page."
 msgstr ""
+
+msgid "Recover Password for Username"
+msgstr ""
+
+#, fuzzy
+msgid "You must enter a username to recover the password for."
+msgstr "Adjon meg egy új jelszót"
+
+#, fuzzy
+msgid "The username you entered does not exist."
+msgstr "A megadott felhasználónév nem megfelelő"
 
 msgid "Authorization Incorrect"
 msgstr ""
@@ -2933,6 +2964,13 @@ msgstr[0] "(%d elem)"
 #, c-format
 msgid "%d. %s"
 msgstr "%d. %s"
+
+#~ msgid "Gallery Administrator"
+#~ msgstr "Galéria Adminisztrátor"
+
+#, fuzzy
+#~ msgid "Administrator Recovery"
+#~ msgstr "Jelszó"
 
 #, fuzzy
 #~ msgid "Gallery 2 - Beta 3: Bingo!"

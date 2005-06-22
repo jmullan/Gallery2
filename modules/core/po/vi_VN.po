@@ -164,20 +164,17 @@ msgstr "Nâng cấp quyền hạn"
 msgid "Deleting old permission tables"
 msgstr "Đang xóa bảng quyền hạn cũ"
 
-msgid "All Users"
-msgstr "Tất cả người dùng"
-
 msgid "Registered Users"
 msgstr "Thành viên đã đăng ký"
+
+msgid "All Users"
+msgstr "Tất cả người dùng"
 
 msgid "Site Admins"
 msgstr "Quản trị trang"
 
 msgid "Guest"
 msgstr "Khách"
-
-msgid "Gallery Administrator"
-msgstr "Nhà quản trị Gallery"
 
 msgid "Gallery"
 msgstr "Gallery"
@@ -706,6 +703,10 @@ msgstr "thêm album con"
 msgid "edit permissions"
 msgstr "thay đổi quyền hạn"
 
+#, fuzzy
+msgid "view permissions"
+msgstr "thay đổi quyền hạn"
+
 msgid "Site Admin"
 msgstr "Quản trị trang"
 
@@ -756,6 +757,10 @@ msgstr "Chọn làm ảnh đại diện"
 
 msgid "Edit Permissions"
 msgstr "Thay đổi quyền hạn"
+
+#, fuzzy
+msgid "View Permissions"
+msgstr "Quyền hạn"
 
 msgid "Add Items"
 msgstr "Thêm đối tượng"
@@ -931,10 +936,12 @@ msgstr "Ngôn ngữ đánh dấu"
 msgid "Email"
 msgstr "Email"
 
+#, fuzzy
 msgid ""
 "By default Gallery uses PHP's built in mail function to send email which "
 "requires no configuration.  To use a smtp/mail server enter the information "
-"below, including authentication information if required."
+"below, including authentication information if required.  Optionally add :"
+"port after the server name to use a non-default port."
 msgstr ""
 "Theo mặc định Gallery sử dụng chức năng mail có sẵn của PHP mà không cần cài "
 "đặt gì thêm. Để dùng máy chủ mail/smtp khác, hãy điền thông tin và dưới đây, "
@@ -2444,6 +2451,22 @@ msgstr "Quyền hạn"
 msgid "Owner changed successfully"
 msgstr "Đã thay đổi chủ nhân"
 
+#, fuzzy
+msgid "Group permission added successfully"
+msgstr "Các thông số của tài khoản đã được lưu"
+
+#, fuzzy
+msgid "User permission added successfully"
+msgstr "Các thông số đã được lưu lại"
+
+#, fuzzy
+msgid "Group permission removed successfully"
+msgstr "Các thông số của tài khoản đã được lưu"
+
+#, fuzzy
+msgid "User permission removed successfully"
+msgstr "Đã đặt lại số lần xem"
+
 msgid ""
 "Each item has its own independent set of permissions.  Changing the parent's "
 "permissions has no effect on the permissions of the child.  This allows you "
@@ -2731,14 +2754,11 @@ msgstr ""
 "Lưu ý là nếu tài khoản của bạn không khai địa chỉ email, bạn có thể sẽ không "
 "nhận được email này và bạn cần phải liên lạc với quản trị để được giúp đỡ."
 
-#, fuzzy
-msgid "Administrator Recovery"
-msgstr "Khôi phục lại mật khẩu"
-
 #, c-format
 msgid ""
-"You can use the %sAdministrator Password Recovery%s if you don't receive a "
-"recovery email from Gallery."
+"Administrators can use the %sEmergency Password Recovery%s page to recover "
+"the admin account if they fail to receive recovery email due to server "
+"problems, or lack of a working email address."
 msgstr ""
 
 msgid "Recover"
@@ -2750,8 +2770,8 @@ msgid ""
 "who you claim.  The best way to be sure is to ask you to make a tiny change "
 "in the Gallery directory which will prove that you have the right "
 "permissions.  So, we're going to ask that you create a new text file called %"
-"s in the <tt>%s</tt> directory on your webserver (that's the root Gallery 2 "
-"directory). It must contain the following randomly generated characters:"
+"s in your gallery2 directory. It must contain the following randomly "
+"generated characters:"
 msgstr ""
 
 #, c-format
@@ -2773,7 +2793,8 @@ msgstr ""
 
 #, fuzzy
 msgid ""
-"This page can be used to securely reset the password on your 'admin' account."
+"This page can be used by a system administrator to securely reset the "
+"password on any account."
 msgstr "Trang này cho phép bạn đặt lại mật mã của tài khoản của bạn."
 
 #, fuzzy
@@ -2784,6 +2805,17 @@ msgid ""
 "Your authorization has been confirmed.  Please enter your new password "
 "below.  After setting your new password you will be taken to the login page."
 msgstr ""
+
+msgid "Recover Password for Username"
+msgstr ""
+
+#, fuzzy
+msgid "You must enter a username to recover the password for."
+msgstr "Bạn phải điền mật khẩu vào"
+
+#, fuzzy
+msgid "The username you entered does not exist."
+msgstr "Tên thành viên bạn vừa nhập không hợp lệ"
 
 #, fuzzy
 msgid "Authorization Incorrect"
@@ -2976,3 +3008,10 @@ msgstr[1] "(%d đối tượng)"
 #, c-format
 msgid "%d. %s"
 msgstr "%d. %s"
+
+#~ msgid "Gallery Administrator"
+#~ msgstr "Nhà quản trị Gallery"
+
+#, fuzzy
+#~ msgid "Administrator Recovery"
+#~ msgstr "Khôi phục lại mật khẩu"
