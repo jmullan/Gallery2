@@ -157,7 +157,10 @@ class GallerySession {
 		$this->_sessionId =
 		    sprintf('%s-%s', $searchEngineId, GalleryUtilities::getRemoteHostAddress());
 	    } else {
-		$this->_isUsingCookies = false;
+		/* When loggin out (resetting the session), we already know if cookies are used */
+		if (!$this->isUsingCookies()) {
+		    $this->_isUsingCookies = false;
+		}
 		$this->_sessionId = GalleryUtilities::getRequestVariables(SESSION_ID_PARAMETER);
 	    }
 	}

@@ -200,6 +200,32 @@ class SessionTest extends GalleryTestCase {
 	}
     }
 
+    function testIsUsingCookies() {
+	foreach (array('with-cookies', 'without-cookies') as $type) {
+	    if ($type == 'with-cookies') {
+		GalleryUtilities::removeRequestVariable(SESSION_ID_PARAMETER);
+		$_COOKIE[SESSION_ID_PARAMETER] = 'TESTSID';
+		$expected = true;
+	    } else {
+		GalleryUtilities::putRequestVariable(SESSION_ID_PARAMETER, 'TESTSID');
+		unset($_COOKIE[SESSION_ID_PARAMETER]);
+		$expected = false;
+	    }
+	    
+	    $session = new GallerySession();
+	    $session->init();
+	    $this->assertEquals($expected, $session->isUsingCookies(),
+			  'first init, isUsingCookies returns the wrong value for type "' .
+			  $type . '"');
+	    /* reset the session, e.g. when logging out */
+	    $session->reset();
+	    /* Check if we still got the same isUsingCookies value */
+	    $this->assertEquals($expected, $session->isUsingCookies(),
+			  'after reset, isUsingCookies returns the wrong value for type "' .
+			  $type . '"');
+	}
+    }
+    
     function testExpireSessions() {
 	/* Make sure the SQL runs */
 	GallerySession::_expireSessions();
