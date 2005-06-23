@@ -54,7 +54,7 @@ class GalleryCoreApi {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(6, 3);
+	return array(6, 4);
     }
 
     /**
@@ -805,14 +805,16 @@ class GalleryCoreApi {
      * If the cache is expired, it will be automatically rebuilt
      *
      * @access public
+     * @param the id of the derivative
+     * @param [optional boolean whether to try to fix the derivative if is broken]
      * @return array object GalleryStatus a status code,
      *               object GalleryDerivative the up-to-date derivative
      *               boolean true if it had to be rebuilt, false if not
      * @static
      */
-    function rebuildDerivativeCacheIfNotCurrent($derivativeId) {
+    function rebuildDerivativeCacheIfNotCurrent($derivativeId, $fixBroken=false) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryDerivativeHelper_simple.class');
-	return GalleryDerivativeHelper_simple::rebuildCacheIfNotCurrent($derivativeId);
+	return GalleryDerivativeHelper_simple::rebuildCacheIfNotCurrent($derivativeId, $fixBroken);
     }
 
     /**

@@ -41,12 +41,14 @@ class GalleryDerivativeHelper_simple {
      * If the cache is expired, it will be automatically rebuilt
      * 
      * @access public
+     * @param the id of the derivative
+     * @param [optional boolean whether to try to fix the derivative if is broken]
      * @return array object GalleryStatus a status code,
      *               object GalleryDerivative the up-to-date derivative
      *               boolean true if it had to be rebuilt, false if not
      * @static
      */
-    function rebuildCacheIfNotCurrent($derivativeId) {
+    function rebuildCacheIfNotCurrent($derivativeId, $fixBroken=false) {
 	global $gallery;
 
 	list ($ret, $derivative) = GalleryCoreApi::loadEntitiesById($derivativeId);
@@ -58,15 +60,17 @@ class GalleryDerivativeHelper_simple {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
-
-	if (!$current) {
-	    list ($ret, $derivative) = GalleryCoreApi::rebuildDerivativeCache($derivativeId);
+	$isBroken = $derivative->getIsBroken();
+	if (!$current || ($fixBroken && !empty($isBroken))) {
+	    list ($ret, $derivative) =
+		GalleryCoreApi::rebuildDerivativeCache($derivativeId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	}
 	
-	return array(GalleryStatus::success(), $derivative, !$current);
+	return array(GalleryStatus::success(), $derivative,
+		     (!$current || ($fixBroken && !empty($isBroken))));
     }
 }
 ?>

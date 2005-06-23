@@ -41,7 +41,7 @@ GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryChildEntity.class');
  * @g2 <parent-class-name>GalleryChildEntity</parent-class-name>
  * @g2 <schema>
  * @g2   <schema-major>1</schema-major>
- * @g2   <schema-minor>0</schema-minor>
+ * @g2   <schema-minor>1</schema-minor>
  * @g2 </schema>
  * @g2 <requires-id/>
  *
@@ -157,6 +157,22 @@ class GalleryDerivative_core extends GalleryChildEntity {
      * @access private
      */
     var $_postFilterOperations;
+
+    /**
+     * Is the derivative broken?
+     * We set this to true if a toolkit operation failed, or for similar reasons.
+     *
+     * Can be empty, which is interpreted as false
+     *
+     * @g2 <member>
+     * @g2   <member-name>isBroken</member-name>
+     * @g2   <member-type>BOOLEAN</member-type>
+     * @g2 </member>
+     *
+     * @var int $_isBroken
+     * @access private
+     */
+    var $_isBroken;
 
     /*
      * ****************************************
@@ -284,10 +300,85 @@ class GalleryDerivative_core extends GalleryChildEntity {
      * Rebuild the cache.  This should never be called directly; instead you
      * should call GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($derivativeId)
      *
+     * Rebuilds the cache and marks the derivative as broken if we failed to rebuild the
+     * derivative. 
+     *
      * @access public
      * @return object GalleryStatus a status code
      */
     function rebuildCache() {
+	global $gallery;
+	
+	$ret = $this->_rebuildCache();
+	
+	if ($ret->isError()) {
+	    /*
+	     * Something went wrong with the toolkit
+	     * Mark the derivative as broken for later repair attempts
+	     */
+	    $this->setIsBroken(true);
+	    
+	    /*
+	     * Use our "busted" image / derivative instead.
+	     * Figure out our target path
+	     */
+	    list($ret, $destPath) = $this->fetchPath();
+	    if ($ret->isSuccess()) {
+		/* Copy the broken derivative placeholder */
+		$platform = $gallery->getPlatform();
+		if ($platform->copy($this->getBrokenDerivativePath(), $destPath)) {
+		    /* Get the mime type of the placeholder */
+		    list ($ret, $mimeType) =
+			GalleryCoreApi::getMimeType($this->getBrokenDerivativePath());
+		    if ($ret->isSuccess()) {
+			$this->setMimeType($mimeType);
+			if ($platform->file_exists($destPath)) {
+			    $size = $platform->filesize($destPath);
+			    $this->setDerivativeSize($size);
+			    $status = GalleryStatus::success();
+			} else {
+			    $status =
+				GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
+			}
+		    } else {
+			$status = $ret->wrap(__FILE__, __LINE__);
+		    }
+		} else {
+		    $status = GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
+		}
+	    } else {
+		$status = $ret->wrap(__FILE__, __LINE__);
+	    }
+	    
+	    /*
+	     * It's important to remember that the derivative is broken and save wouldn't be
+	     * called if we sent an error as a return value
+	     */
+	    $ret = $this->save(false);
+	    if ($status->isError()) {
+		return $status->wrap(__FILE__, __LINE__);
+	    } elseif ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    
+	    /* Pretend the operation was successful */
+	    $ret = GalleryStatus::success();
+	} elseif ($this->getIsBroken()) {
+	    $this->setIsBroken(false);
+	}
+
+	
+	return $ret;
+    }
+    
+    /**
+     * Rebuild the cache.  This should never be called directly; instead you
+     * should call GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($derivativeId)
+     *
+     * @access private
+     * @return object GalleryStatus a status code
+     */
+    function _rebuildCache() {
 	global $gallery;
 
 	/* Figure out our target path */
@@ -363,7 +454,6 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	    }
 
 	    if (!isset($toolkit)) {
-		/* TODO: What can we do now? */
 		return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
 					    "$operationName $mimeType");
 	    }
@@ -705,6 +795,19 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	$derivativeOperations = $this->getDerivativeOperations();
 	$postfilterOperations = $this->getPostFilterOperations();
 	return (empty($derivativeOperations) && empty($postfilterOperations));
+    }
+
+    /**
+     * Return path for broken derivative placeholder which is shown when we fail to generate a
+     * derivative item
+     * Descendent classes can override this method to use their own broken derivative placeholder,
+     * which can be of any mime type, e.g. a wav file for broken audio derivatives, etc.
+     *
+     * @return string the path of the broken derivative medium
+     */
+    function getBrokenDerivativePath() {
+	/* Default to the broken-image.gif */
+	return dirname(__FILE__) . '/../data/broken-image.gif';
     }
 }
 

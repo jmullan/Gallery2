@@ -174,18 +174,7 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 
 	$ret = parent::rebuildCache();
 	if ($ret->isError()) {
-	    if ($ret->getErrorCode() & (
-		    ERROR_TOOLKIT_FAILURE | ERROR_UNIMPLEMENTED | ERROR_UNSUPPORTED_OPERATION)) {
-		/* Something went wrong with the toolkit -- use our "busted" image instead. */
-		$platform = $gallery->getPlatform();
-		if (!$platform->copy(dirname(__FILE__) . '/../data/broken-image.gif', $destPath)) {
-		    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
-		}
-		$this->setMimeType('image/gif');
-		$this->setDerivativeSize($platform->filesize($destPath));
-	    } else {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Update our dimensions */

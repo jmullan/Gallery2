@@ -57,6 +57,10 @@
 	
       )
     
+      ,
+    DB_COLUMN_PREFIXisBroken
+      int(1)
+    
     ,
   
       PRIMARY KEY (DB_COLUMN_PREFIXid)
@@ -83,7 +87,7 @@
       ) VALUES (
       'Derivative',
       1,
-      0
+      1
       );
 
   

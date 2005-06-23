@@ -51,6 +51,10 @@
        255 
       )
     
+      ,
+    DB_COLUMN_PREFIXisBroken
+      NUMBER(1)
+    
     );
 
   
@@ -78,7 +82,7 @@
       ) VALUES (
       'Derivative',
       1,
-      0
+      1
       );
 
   

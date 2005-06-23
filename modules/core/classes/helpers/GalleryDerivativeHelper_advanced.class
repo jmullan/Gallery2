@@ -666,15 +666,10 @@ class GalleryDerivativeHelper_advanced {
 
 	/* If the source is a derivative, make sure it's current */
 	if (GalleryUtilities::isA($source, 'GalleryDerivative')) {
-	    list ($ret, $isCurrent) = $source->isCacheCurrent();
+	    list ($ret, $source) =
+		GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($source->getId(), true);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    if (!$isCurrent) {
-		list ($ret, $source) = GalleryDerivativeHelper_advanced::rebuildCache($sourceId);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
 	    }
 	}
 
@@ -690,16 +685,19 @@ class GalleryDerivativeHelper_advanced {
 
 	list ($ret, $derivative) = $derivative->refresh();
 	if ($ret->isError()) {
+	    GalleryCoreApi::releaseLocks($lockId);
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$ret = $derivative->rebuildCache();
 	if ($ret->isError()) {
+	    GalleryCoreApi::releaseLocks($lockId);
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$ret = $derivative->save(false);
 	if ($ret->isError()) {
+	    GalleryCoreApi::releaseLocks($lockId);
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 

@@ -248,6 +248,156 @@ class DerivativeTest extends GalleryTestCase {
 			    $ops);
     }
 
+    /*
+     * Make sure isBroken gets set and reset correctly
+     * Adds some test coverage for
+     *   GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent()
+     *   GalleryCoreApi::rebuildDerivativeCache()
+     *   GalleryDerivative::rebuildCache() , ::_rebuildCache()
+     *   GalleryDerivative::getBrokenDerivativePath()
+     *   GalleryDerivative::get/setIsBroken(), ::isCacheCurrent()
+     */
+    function testRebuildBrokenDerivative() {
+	list ($ret, $item) = $this->_createRandomDataItem($this->_root->getId(), 'test/file');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Create derivative with unsupported toolkit operation */
+	list ($ret, $derivative) = $this->_createDerivative(
+	    $item, $item->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE,
+	    'bogus-operation|123', 'image/jpeg', array('width' => 100, 'height' => 200));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* sanity check */
+	$this->assertEquals(100, $derivative->getWidth());
+	$this->assertEquals(200, $derivative->getHeight());
+	$this->assertEquals(null, $derivative->getIsBroken());
+	
+	/*
+	 * Rebuild the cached derivative, it should fail internally and replace the derivative by
+	 * the broken derivative placeholder and set it to isBroken = true. It should then return
+	 * GalleryStatus::success(), i.e. pretend it worked correctly
+	 */
+	list ($ret, $derivative, $rebuilt) =
+	    GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($derivative->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($rebuilt, "cache was not rebuilt");
+
+	/* Verify that it is considered as current (because it is broken */
+	list ($ret, $current) = $derivative->isCacheCurrent();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($current, 'cache is not current');
+
+	/* Check if the derivative is marked as broken */
+	$this->assertEquals(1, $derivative->getIsBroken(), 'Cache is not marked as broken');
+	
+	/* Check if the derivative was replaced correctly */
+	list ($ret, $mimeType) =
+	    GalleryCoreApi::getMimeType($derivative->getBrokenDerivativePath());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($mimeType, $derivative->getMimeType(),
+			    'Incorrect broken derivative mime type');
+	/* Check file size of broken derivative placeholder */
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	if (!$platform->file_exists($derivative->getBrokenDerivativePath())) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$size = $platform->filesize($derivative->getBrokenDerivativePath());
+	$this->assertEquals($size, $derivative->getDerivativeSize(),
+			    'Incorrect broken derivative size');
+	    
+	/* Change the toolkit operation */
+	$derivative->setDerivativeOperations('test-operation');
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($derivative->getId(), 1);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = $derivative->save(false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Performance check, it should not rebuild the item on each request */
+	list ($ret, $derivative, $rebuilt) =
+	    GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($derivative->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!$rebuilt, 'cache was rebuilt but it was not forced to');
+	
+	/* And try to fix the derivative item */
+	list ($ret, $derivative, $rebuilt) =
+	    GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($derivative->getId(), true);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($rebuilt, 'cache was not rebuilt (2)');
+
+	/* Verify that it is  current */
+	list ($ret, $current) = $derivative->isCacheCurrent();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($current, 'cache is not current after fix');
+
+	/* Check if the derivative is not marked as broken */
+	$this->assert(!$derivative->getIsBroken(), 'Derivative is still broken');
+
+	/*
+	 * Check if the derivative is marked as broken even if it failed to set the broken image
+	 * Create derivative with unsupported toolkit operation such that it will fail
+	 */
+	/* Create derivative with unsupported toolkit operation */
+	list ($ret, $derivative) = $this->_createDerivative(
+	    $item, $item->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE,
+	    'bogus-operation|123', 'image/jpeg', array('width' => 100, 'height' => 200));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* sanity check */
+	$this->assertEquals(100, $derivative->getWidth());
+	$this->assertEquals(200, $derivative->getHeight());
+	$this->assertEquals(null, $derivative->getIsBroken());
+
+	/* Use a degenerate platform to make it fail when it tries to copy the broken image */
+	if (strtolower(PHP_OS) == 'winnt') {
+	    $gallery->setPlatform(new DerivativeTestWinNtPlatform());
+	} else {
+	    $gallery->setPlatform(new DerivativeTestUnixPlatform());
+	}
+	/* Do the call */
+	list ($ret, $derivativeRet, $rebuilt) =
+	    GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($derivative->getId(), true);
+	/* Ret should be ERROR_PLATFORM_FAILURE */
+	$gallery->setPlatform($platform);
+	$this->assert(ERROR_PLATFORM_FAILURE & $ret->getErrorCode(),
+		      'we expect a platform failure');
+	$this->assert(!isset($$derivativeRet),
+		      'GalleryDerivativeHelper_advanced::rebuildCache() did not return null');
+	$this->assert(!$rebuilt, 'it should have failed and not rebuilt the derivative cache');
+	/* Refresh the derivative to get the state from the db */
+	list ($ret, $derivative) = $derivative->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($derivative->getIsBroken(), 'derivative is not marked as broken');
+    }
+    
     function testFetchDerivativesByItemIds() {
 	list ($ret, $derivative1) = $this->_createDerivative(
 	    $this->_root, $this->_root->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
@@ -726,4 +876,20 @@ class DerivativeTestToolkit extends GalleryToolkit {
  *
  */
 class DerivativeTestItem extends GalleryDataItem { }
+
+GalleryCoreApi::relativeRequireOnce('/modules/core/classes/GalleryPlatform/WinNtPlatform.class');
+GalleryCoreApi::relativeRequireOnce('/modules/core/classes/GalleryPlatform/UnixPlatform.class');
+/* Used for the rebuildCache test */
+class DerivativeTestWinNtPlatform extends WinNtPlatform {
+    /* Let the copy() call fail */
+    function copy($source, $dest) {
+	return false;
+    }
+}
+class DerivativeTestUnixPlatform extends UnixPlatform {
+    /* Let the copy() call fail */
+    function copy($source, $dest) {
+	return false;
+    }
+}
 ?>
