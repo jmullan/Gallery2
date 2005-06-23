@@ -270,24 +270,28 @@ class UrlGeneratorTest extends GalleryTestCase {
     function testGenerateHref() {
 	global $gallery;
 	$session =& $gallery->getSession();
-	$qs = $session->isUsingCookies() ? '' : '?' .
-	    GalleryUtilities::prefixFormVariable($session->getKey()) . '=' . $session->getId();
-
-	$this->assertEquals('http://example.com/gallery2/test/test.css' . $qs,
+	
+	/* href URLs default to no sessionid */
+	$this->assertEquals('http://example.com/gallery2/test/test.css',
 			    $this->_urlGenerator->generateUrl(array('href' => 'test/test.css')),
 			    'relative');
 
-	/* Absolute URL, defaults to no sessionid */
+	/* Absolute URL */
 	$this->assertEquals('http://sf.net/',
 			    $this->_urlGenerator->generateUrl(array('href' => 'http://sf.net/')),
 			    'absolute');
+
+	/* Absolute URL path */
+	$this->assertEquals('http://example.com/cms/test/test.css',
+			    $this->_urlGenerator->generateUrl(array('href' => '/cms/test/test.css')),
+			    'absolute path');
 
 	/* Simulate embedded */
 	$_SERVER['REQUEST_URI'] = '/cms/phpunit_test.php?module=gallery2&foo=bar';
 	$urlGenerator = new GalleryUrlGenerator();
 	$urlGenerator->init('phpunit_test.php?module=gallery2', null, '../gallery2/');
 
-	$this->assertEquals('http://example.com/gallery2/test/test.css' . $qs,
+	$this->assertEquals('http://example.com/gallery2/test/test.css',
 			    $urlGenerator->generateUrl(array('href' => 'test/test.css')),
 			    'relative embedded');
 
@@ -295,7 +299,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$urlGenerator = new GalleryUrlGenerator();
 	$urlGenerator->init('phpunit_test.php?module=gallery2', null, '../gallery2');
 
-	$this->assertEquals('http://example.com/gallery2/test/test.css' . $qs,
+	$this->assertEquals('http://example.com/gallery2/test/test.css',
 			    $urlGenerator->generateUrl(array('href' => 'test/test.css')),
 			    'relative embedded, no trailing slash');
     }

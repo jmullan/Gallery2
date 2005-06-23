@@ -355,6 +355,9 @@ class GalleryUrlGenerator {
 	    if (preg_match('{^[a-z]+://}', $href)) {
 		/* Absolute URL */
 		$url = $href;
+	    } elseif(strlen($href) && $href{0} == '/') {
+		/* Absolute URL path */
+		$url = GalleryUrlGenerator::makeUrl($href);
 	    } else {
 		/* Check for local override */
 		$override = sprintf('%s/local/%s', dirname($href), basename($href));
