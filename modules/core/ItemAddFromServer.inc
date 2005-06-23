@@ -112,11 +112,19 @@ class ItemAddFromServer extends ItemAddPlugin {
 		    }
 		    $useSymlink = isset($data['useSymlink']);
 
-		    $ret = $this->addDirectory($item->getId(), $dir . urldecode($directory),
-					       $useSymlink, $textFields, $status, $error);
+		    list ($ret, $albumId) = $this->addDirectory($item->getId(),
+			$dir . urldecode($directory), $useSymlink, $textFields, $status, $error);
 		    if ($ret->isError()) {
 			GalleryCoreApi::releaseLocks($lockId);
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    }
+		    if ($albumId) {
+			$ret = $this->processDirectory($albumId, $dir . urlencode($directory),
+			    $useSymlink, $textFields, $status, $error);
+			if ($ret->isError()) {
+			    GalleryCoreApi::releaseLocks($lockId);
+			    return array($ret->wrap(__FILE__, __LINE__), null, null);
+			}
 		    }
 		}
 	    }
@@ -162,6 +170,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 	return GalleryStatus::success();
     }
 
+    /** @return array object GalleryStatus, mixed id of new album or false */
     function addDirectory($parentId, $path, $useSymlink, $textFields, &$status, &$error) {
 	global $gallery;
 
@@ -173,7 +182,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 	     * directory list or we are trying to add from our own g2data albums.
 	     * Also protects against malformed form input like directory = ../foo
 	     */
-	    return GalleryStatus::success();
+	    return array(GalleryStatus::success(), false);
 	}
 
 	/* Create new Album */
@@ -186,21 +195,27 @@ class ItemAddFromServer extends ItemAddPlugin {
 	if ($ret->isError()) {
 	    if ($ret->getErrorCode() & ERROR_COLLISION) {
 		$error[] = 'form[error][pathComponent][collision]';
-		return GalleryStatus::success();
+		return array(GalleryStatus::success(), false);
 	    } else {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 
 	if (!isset($album)) {
-	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
 	}
-	$albumId = $album->getId();
 
-	$ret = GalleryCoreApi::addUserPermission($albumId, $album->getOwnerId(), 'core.all', false);
+	$ret = GalleryCoreApi::addUserPermission($album->getId(), $album->getOwnerId(),
+						 'core.all', false);
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+
+	return array(GalleryStatus::success(), $album->getId());
+    }
+
+    function processDirectory($albumId, $path, $useSymlink, $textFields, &$status, &$error) {
+	global $gallery;
 
 	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($albumId);
 	if ($ret->isError()) {
@@ -208,7 +223,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 	}
 
 	/* Look into the directory, add anything we find */
-	$dirList = array();
+	$dirList = $albumList = array();
 	$handle = $this->_platform->opendir($path);
 	while (($fileName = $this->_platform->readdir($handle)) !== false) {
 	    if ($fileName == '.' || $fileName == '..' || $fileName == 'CVS') {
@@ -224,11 +239,14 @@ class ItemAddFromServer extends ItemAddPlugin {
 	    $filePath = $path . $this->_dirSep . $fileName;
 	    if ($this->_platform->is_readable($filePath)) {
 		if ($this->_platform->is_dir($filePath)) {
-		    $ret = $this->addDirectory($albumId, $filePath, $useSymlink,
-					       $textFields, $status, $error);
+		    list ($ret, $newAlbumId) = $this->addDirectory($albumId, $filePath,
+			$useSymlink, $textFields, $status, $error);
 		    if ($ret->isError()) {
 			GalleryCoreApi::releaseLocks($lockId);
 			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		    if ($newAlbumId) {
+			$albumList[$newAlbumId] = $filePath;
 		    }
 		} else {
 		    $ret = $this->addItem($albumId, $filePath, $useSymlink,
@@ -248,6 +266,18 @@ class ItemAddFromServer extends ItemAddPlugin {
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	foreach ($albumList as $newAlbumId => $filePath) {
+	    $ret = $this->processDirectory($newAlbumId, $filePath,
+					   $useSymlink, $textFields, $status, $error);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    if (!empty($error)) {
+		/* Bail out if an error has occurred */
+		break;
+	    }
 	}
 
 	return GalleryStatus::success();
