@@ -119,7 +119,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 		    if ($albumId) {
-			$ret = $this->processDirectory($albumId, $dir . urlencode($directory),
+			$ret = $this->processDirectory($albumId, $dir . urldecode($directory),
 			    $useSymlink, $textFields, $status, $error);
 			if ($ret->isError()) {
 			    GalleryCoreApi::releaseLocks($lockId);
