@@ -391,9 +391,21 @@ class GalleryTemplateAdapter {
 	    $linkId .= '-' . $params['urlParams']['view'];
 	}
 	if (!empty($params['urlParams']['subView'])) {
-	    $linkId .= '-' . $params['urlParams']['subView'];
+	    $linkId .= '-' . ($subView = $params['urlParams']['subView']);
+	    if (preg_match('{^core\.Item(?:Edit|Move|Delete|CreateLink)(?:Single)?$}', $subView) &&
+		    !empty($params['urlParams']['itemId'])) {
+		/* Append item type for a few subViews, with fallback class without type */
+		list ($ret, $item) =
+		    GalleryCoreApi::loadEntitiesById($params['urlParams']['itemId']);
+		if ($ret->isSuccess()) {
+		    $type = $item->itemTypeName(false);
+		    $fallbackLinkId = $linkId;
+		    $linkId .= '-' . $type[1];
+		}
+	    }
 	}
-	return GalleryTemplateAdapter::_safeCssName($linkId);
+	return GalleryTemplateAdapter::_safeCssName($linkId) . (isset($fallbackLinkId) ?
+	    ' ' . GalleryTemplateAdapter::_safeCssName($fallbackLinkId) : '');
     }
 
     /**
