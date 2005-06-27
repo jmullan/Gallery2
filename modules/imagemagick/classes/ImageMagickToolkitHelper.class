@@ -201,7 +201,6 @@ class ImageMagickToolkitHelper {
      */
     function getCommand($cmd, $imageMagickPath=null) {
 	global $gallery;
-
 	$platform = $gallery->getPlatform();
 
 	if ($imageMagickPath == null) {
@@ -223,7 +222,8 @@ class ImageMagickToolkitHelper {
 	}
 
 	if (empty($binary)) {
-	    return array(GalleryStatus::success(), array($imageMagickPath . $cmd));
+	    return array(GalleryStatus::success(), array($imageMagickPath . $cmd .
+			 (GalleryUtilities::isA($platform, 'WinNtPlatform') ? '.exe' : '')));
 	} else {
 	    return array(GalleryStatus::success(), array($imageMagickPath . $binary, $cmd));
 	}
@@ -385,13 +385,9 @@ class ImageMagickToolkitHelper {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		$fullPath = $command[0];
-		if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
-		    $fullPath .= '.exe';
-		}
 
-		if (!$platform->isRestrictedByOpenBaseDir($fullPath)
-			&& !$platform->file_exists($fullPath)) {
+		if (!$platform->isRestrictedByOpenBaseDir($command[0])
+			&& !$platform->file_exists($command[0])) {
 		    $success = false;
 		    $results = array($module->translate('File does not exist'));
 		} else {
@@ -430,10 +426,6 @@ class ImageMagickToolkitHelper {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		$fullPath = $command[0];
-		if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
-		    $fullPath .= '.exe';
-		}
 		$tmpDir = $gallery->getConfig('data.gallery.tmp');
 		$tmpFilename = $platform->tempnam($tmpDir, 'imgk_');
 		if (empty($tmpFilename)) {
@@ -443,8 +435,8 @@ class ImageMagickToolkitHelper {
 				 null);
 		}
 
-		if (!$platform->isRestrictedByOpenBaseDir($fullPath)
-			&& !$platform->file_exists($fullPath)) {
+		if (!$platform->isRestrictedByOpenBaseDir($command[0])
+			&& !$platform->file_exists($command[0])) {
 		    $success = false;
 		    $results = array($module->translate('File does not exist'));
 		} else {
@@ -565,9 +557,10 @@ class ImageMagickToolkitHelper {
 	    }
 	}
 
-	$gmBinary = $imageMagickPath . 'gm';
+	$suffix = GalleryUtilities::isA($platform, 'WinNtPlatform') ? '.exe' : '';
+	$gmBinary = $imageMagickPath . 'gm' . $suffix;
 	if ($platform->file_exists($gmBinary) && $platform->is_executable($gmBinary)) {
-	    return array(GalleryStatus::success(), 'gm');
+	    return array(GalleryStatus::success(), 'gm' . $suffix);
 	}
 	return array(GalleryStatus::success(), '');
     }
@@ -633,7 +626,8 @@ class ImageMagickToolkitHelper {
 
 	$binaries = array('combine', 'composite');
 	foreach ($binaries as $binary) {
-	    $binaryPath = $imageMagickPath . $binary;
+	    $binaryPath = $imageMagickPath . $binary .
+		(GalleryUtilities::isA($platform, 'WinNtPlatform') ? '.exe' : '');
 	    if ($platform->file_exists($binaryPath) && $platform->is_executable($binaryPath)) {
 		return array(GalleryStatus::success(), $binary);
 	    }
