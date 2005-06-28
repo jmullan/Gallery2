@@ -180,6 +180,12 @@ class CharsetTest extends GalleryTestCase {
 	$phpVm->setReturn('nl_langinfo', array(CODESET), 'ISO8859-1');
 	$gallery->_phpVm = $phpVm;
 	$this->assertEquals('ISO-8859-1', GalleryCharsetHelper_simple::detectSystemCharset());
+
+	/* We can override what the system tells us using GalleryCapabilities */
+	GalleryCapabilities::set('systemCharset', 'xyz123');
+	GalleryDataCache::reset();
+	$this->assertEquals('xyz123', GalleryCharsetHelper_simple::detectSystemCharset());
+	GalleryCapabilities::set('systemCharset', null);
     }
 
     function testDetectSourceEncodingWithoutNlLangInfo() {
@@ -215,6 +221,12 @@ class CharsetTest extends GalleryTestCase {
 	$phpVm->setReturn('nl_langinfo', array(CODESET), false);
 	$gallery->_phpVm = $phpVm;
 	$this->assertEquals('CP1251', GalleryCharsetHelper_simple::detectSystemCharset());
+
+	/* We can override what the system tells us using GalleryCapabilities */
+	GalleryCapabilities::set('systemCharset', 'xyz123');
+	GalleryDataCache::reset();
+	$this->assertEquals('xyz123', GalleryCharsetHelper_simple::detectSystemCharset());
+	GalleryCapabilities::set('systemCharset', null);
     }
 
     function testConvertSystemCharset() {
