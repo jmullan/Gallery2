@@ -94,7 +94,7 @@
     {if !empty($layout.imageViews)}
       {capture name="fallback"}
       <a href="{g->url arg1="view=core.DownloadItem" arg2="itemId=`$layout.item.id`"}">
-	{g->text text="Download this %s" arg1=$layout.sourceImage.itemTypeName.1}
+	{g->text text="Download %s" arg1=$layout.sourceImage.itemTypeName.1}
       </a>
       {/capture}
 
