@@ -229,12 +229,12 @@ class GallerySession {
 	 * create a ton of sessions just for hotlinked G2 items.
 	 */
 	list ($view, $controller) = GalleryUtilities::getRequestVariables('view', 'controller');
-	if ((empty($view) || !in_array($view, array('core.DownloadItem', 'core:DownloadItem'))) &&
-	    (empty($controller) ||
-	     !in_array($controller, array('migrate.Redirect', 'migrate:Redirect')))) {
+	if ((empty($view) || !in_array($view,
+		    array('core.DownloadItem', 'core:DownloadItem', 'imageframe.CSS'))) &&
+	    (empty($controller) || !in_array($controller,
+		    array('migrate.Redirect', 'migrate:Redirect')))) {
 
-	    /* It's not one of the special cases, create session / send cookie if necessary */
-
+	    /* It's not one of the special cases; create session / send cookie if necessary */
 	    if ($forceSessionSave) {
 		$ret = $this->save();
 		if ($ret->isError()) {
