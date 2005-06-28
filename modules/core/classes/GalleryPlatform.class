@@ -737,14 +737,15 @@ class GalleryPlatform {
 	     * paths, parse out .. and . and then check against the dir list..
 	     * Here we do an ok job of doing the same, though it isn't perfect.
 	     */
-	    if (!preg_match("{^([a-z]+:)?$slash}i", $path)) {
+	    $s = preg_quote($slash);
+	    if (!preg_match("{^([a-z]+:)?$s}i", $path)) {
 		$path = $this->getcwd() . $slash . $path;
 	    }
 	    for ($realpath = $path, $lastpath = ''; $realpath != $lastpath;) {
-		$realpath = preg_replace("#$slash\.($slash|\$)#", $slash, $lastpath = $realpath);
+		$realpath = preg_replace("#$s\.($s|\$)#", $slash, $lastpath = $realpath);
 	    }
 	    for ($lastpath = ''; $realpath != $lastpath;) {
-		$realpath = preg_replace("#${slash}[^$slash]+$slash\.\.($slash|\$)#", $slash,
+		$realpath = preg_replace("#${s}[^$s]+$s\.\.($s|\$)#", $slash,
 					 $lastpath = $realpath);
 	    }
 	}
