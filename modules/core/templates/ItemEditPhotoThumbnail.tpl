@@ -127,9 +127,9 @@
   <input type="hidden" id="crop_width" name="{g->formVar var="form[crop][width]"}"/>
   <input type="hidden" id="crop_height" name="{g->formVar var="form[crop][height]"}"/>
 
-  <input type="submit" class="inputTypeSubmit" onclick="setCropFields(); submit()"
+  <input type="submit" class="inputTypeSubmit" onclick="setCropFields(); return true"
    name="{g->formVar var="form[action][crop]"}" value="{g->text text="Crop"}"/>
-  <input type="submit" class="inputTypeSubmit" onclick="setCropFields(); submit()"
+  <input type="submit" class="inputTypeSubmit" onclick="setCropFields(); return true"
    name="{g->formVar var="form[action][reset]"}" value="{g->text text="Reset to default"}"/>
 
   {else}

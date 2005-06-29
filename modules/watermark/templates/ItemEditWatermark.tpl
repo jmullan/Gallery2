@@ -149,7 +149,7 @@
 </div>
 
 <div class="gbBlock gcBackground1">
-  <input type="submit" class="inputTypeSubmit" onclick="calculatePercentages(); submit()"
+  <input type="submit" class="inputTypeSubmit" onclick="calculatePercentages(); return true"
    name="{g->formVar var="form[action][save]"}" value="{g->text text="Apply Watermark"}"/>
   <input type="submit" class="inputTypeSubmit"
    name="{g->formVar var="form[action][remove]"}" value="{g->text text="Remove Watermark"}"/>

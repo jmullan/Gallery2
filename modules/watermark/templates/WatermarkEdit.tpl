@@ -144,7 +144,7 @@
 </div>
 
 <div class="gbBlock gcBackground1">
-  <input type="submit" class="inputTypeSubmit" onclick="calculatePercentages(); submit();"
+  <input type="submit" class="inputTypeSubmit" onclick="calculatePercentages(); return true"
    name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
   <input type="submit" class="inputTypeSubmit"
    name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
