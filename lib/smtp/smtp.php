@@ -74,7 +74,7 @@ function smtpmail($config, $to, $subject, $body, $headers=null) {
     // Wait for reply
     $ret = server_parse($socket, "220");
     if ($ret->isError()) {
-	return $ret->wrap(__FILE__, __LINE__, 'Server failed to respond');
+	return $ret->wrap(__FILE__, __LINE__);
     }
 
     // Do we want to use AUTH?, send RFC2554 EHLO, else send RFC821 HELO
@@ -82,31 +82,31 @@ function smtpmail($config, $to, $subject, $body, $headers=null) {
 	fputs($socket, "EHLO " . $config['smtp.host'] . "\r\n");
 	$ret = server_parse($socket, "250");
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__, 'EHLO Error');
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	fputs($socket, "AUTH LOGIN\r\n");
 	$ret = server_parse($socket, "334");
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__, 'AUTH LOGIN Error');
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	fputs($socket, base64_encode($config['smtp.username']) . "\r\n");
 	$ret = server_parse($socket, "334");
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__, 'SMTP Username Error');
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	fputs($socket, $config['smtp.password'] . "\r\n"); // Already encoded
 	$ret = server_parse($socket, "235");
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__, 'SMTP Password Error');
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
     } else {
 	fputs($socket, "HELO " . $config['smtp.host'] . "\r\n");
 	$ret = server_parse($socket, "250");
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__, 'HELO Error');
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
     }
 
