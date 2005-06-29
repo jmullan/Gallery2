@@ -95,6 +95,13 @@ class MultiLangModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
+     * @see GalleryModule::getOnLoadHandlerIds()
+     */
+    function getOnLoadHandlerIds() {
+	return array('MultiLang');
+    }
+
+    /**
      * @see GalleryModule::isRecommendedDuringInstall()
      */
     function isRecommendedDuringInstall() {
