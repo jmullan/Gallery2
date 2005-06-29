@@ -24,9 +24,9 @@
  * See docs/EMBEDDING for more information on using the GalleryEmbed class.
  * Three interaction modes:
  *  1) GalleryEmbed::init(array(..)) followed by GalleryEmbed::handleRequest()
- *  2) GalleryEmbed::init() followed by other GalleryEmbed/G2 calls,
- *     end with GalleryEmbed::done() <-- REQUIRED
- *  3) Single GalleryEmbed::logout() call
+ *  2) GalleryEmbed::init(array(.., 'fullInit' => true)) followed by other
+ *     GalleryEmbed/G2 calls, end with GalleryEmbed::done() <-- REQUIRED
+ *  3) Single GalleryEmbed::logout(array(..)) call
  *
  * @package GalleryCore
  * @version $Revision$ $Date$
