@@ -37,45 +37,45 @@
 </h2></div>
 {/if}
 
-<ul class="gbTabBar">
+<div class="gbTabBar">
   {if ($AdminLayouts.mode == 'config')}
-    <li class="giSelected"><span>
+    <span class="giSelected"><div>
       {g->text text="All Layouts"}
-    </span></li>
+    </div></span>
   {else}
-    <li><span>
+    <span><div>
       <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminLayouts"
        arg3="mode=config"}">{g->text text="All Layouts"}</a>
-    </span></li>
+    </div></span>
   {/if}
 
   {if ($AdminLayouts.mode == 'defaults')}
-    <li class="giSelected"><span>
+    <span class="giSelected"><div>
       {g->text text="Defaults"}
-    </span></li>
+    </div></span>
   {else}
-    <li><span>
+    <span><div>
       <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminLayouts"
        arg3="mode=defaults"}">{g->text text="Defaults"}</a>
-    </span></li>
+    </div></span>
   {/if}
 
   {foreach from=$AdminLayouts.layouts key=layoutId item=layout}
   {if $layout.active}
     {if ($AdminLayouts.mode == 'editLayout') && ($AdminLayouts.layoutId == $layoutId)}
-      <li class="giSelected"><span>
+      <span class="giSelected"><div>
 	{g->text text=$layout.name l10Domain=$layout.l10Domain}
-      </span></li>
+      </div></span>
     {else}
-      <li><span>
+      <span><div>
 	<a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminLayouts"
 	 arg3="mode=editLayout"
 	 arg4="layoutId=$layoutId"}">{g->text text=$layout.name l10Domain=$layout.l10Domain}</a>
-      </span></li>
+      </div></span>
     {/if}
   {/if}
   {/foreach}
-</ul>
+</div>
 
 {if ($AdminLayouts.mode == 'config')}
 <div class="gbBlock">

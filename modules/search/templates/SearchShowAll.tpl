@@ -5,14 +5,14 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 <div id="gsSystemLinks" class="gcBorder1">
-  <ul class="gbBreadCrumb">
-    <li class="firstChild">
+  <div class="gbBreadCrumb">
+    <span class="firstChild">
       <a href="{g->url}">{$SearchShowAll.rootAlbum.title|markup:stripBbcodeAndHtml}</a>
-    </li>
-    <li>
+    </span>
+    <span>
       {g->text text="Search Results"}
-    </li>
-  </ul>
+    </span>
+  </div>
 </div>
 
 <table width="100%" cellspacing="0" cellpadding="0">

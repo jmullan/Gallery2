@@ -2,7 +2,7 @@
  * Building blocks
  * h2, h3, p, etc        Standard html tags
  * div.gbBlock           Sidebar or content section with style for contained lists
- * ul.gbBreadCrumb       List of links/path elements
+ * div.gbBreadCrumb      List of links/path elements
  * table.gbDataTable     Table for data/form elements with styles for shading rows
  */
 
@@ -50,14 +50,9 @@
 }
 
 
-ul.gbBreadCrumb {
+div.gbBreadCrumb {
     margin: 0;
     padding: 4px 8px;
-    list-style-type: none;
-}
-
-ul.gbBreadCrumb li {
-    display: inline;
 }
 
 table.gbDataTable {
@@ -110,11 +105,11 @@ body.gallery {
     border-bottom-width: 1px;
 }
 
-#gsSystemLinks div {
+#gsSystemLinks div.links {
     float: right;
     padding: 4px 6px;
 }
-#gsSystemLinks div span {
+#gsSystemLinks div.links span {
     padding: 0 4px;
 }
 

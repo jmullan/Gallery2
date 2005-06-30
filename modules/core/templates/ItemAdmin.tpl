@@ -13,7 +13,7 @@
   </div>
 
   <div id="gsSystemLinks" class="gcBorder1">
-    <div>
+    <div class="links">
     {foreach from=$ItemAdmin.moduleSystemLinks item=module}
       {foreach from=$module item=link}
 	<span> <a href="{g->url params=$link.params}">{$link.text}</a> </span>
@@ -21,21 +21,21 @@
     {/foreach}
     </div>
 
-    <ul class="gbBreadCrumb">
+    <div class="gbBreadCrumb">
       {foreach name="parent" from=$ItemAdmin.parents item=parent}
-      <li {if $smarty.foreach.parent.first}class="firstChild"{/if}>
+      <span{if $smarty.foreach.parent.first} class="firstChild"{/if}>
 	<a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$parent.id`"}">
 	  {$parent.title|default:$parent.pathComponent|markup:stripBbcodeAndHtml}
 	</a>
-      </li>
+      </span>
       {/foreach}
 
-      <li {if empty($ItemAdmin.parents)}class="firstChild"{/if}>
+      <span{if empty($ItemAdmin.parents)} class="firstChild"{/if}>
 	<a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$ItemAdmin.item.id`"}">
 	  {$ItemAdmin.item.title|default:$ItemAdmin.item.pathComponent|markup:stripBbcodeAndHtml}
 	</a>
-      </li>
-    </ul>
+      </span>
+    </div>
   </div>
 
   <table width="100%" cellspacing="0" cellpadding="0">

@@ -5,7 +5,7 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 <div id="gsSystemLinks" class="gcBorder1">
-  <div>
+  <div class="links">
   {foreach from=$ViewCart.moduleSystemLinks item=module}
     {foreach from=$module item=link}
       <span> <a href="{g->url params=$link.params}">{$link.text}</a> </span>
@@ -13,14 +13,14 @@
   {/foreach}
   </div>
 
-  <ul class="gbBreadCrumb">
-    <li class="firstChild">
+  <div class="gbBreadCrumb">
+    <span class="firstChild">
       <a href="{g->url}">{$ViewCart.rootAlbum.title|markup:stripBbcodeAndHtml}</a>
-    </li>
-    <li>
+    </span>
+    <span>
       {g->text text="View Cart"}
-    </li>
-  </ul>
+    </span>
+  </div>
 </div>
 
 <table width="100%" cellspacing="0" cellpadding="0">

@@ -35,21 +35,21 @@
 </div>
 {/if}
 
-<ul class="gbTabBar">
+<div class="gbTabBar">
   {foreach from=$ItemEdit.plugins item=plugin}
     {if $plugin.isSelected}
-      <li class="giSelected"><span>
+      <span class="giSelected"><div>
 	{$plugin.title}
-      </span></li>
+      </div></span>
     {else}
-      <li><span>
+      <span><div>
 	<a href="{g->url arg1="view=core.ItemAdmin" arg2="subView=core.ItemEdit"
 	 arg3="itemId=`$ItemAdmin.item.id`" arg4="editPlugin=`$plugin.id`"}">
 	  {$plugin.title}
 	</a>
-      </span></li>
+      </div></span>
     {/if}
   {/foreach}
-</ul>
+</div>
 
 {include file="gallery:`$ItemEdit.pluginFile`" l10Domain=$ItemAdmin.viewL10Domain}

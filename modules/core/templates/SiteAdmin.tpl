@@ -13,7 +13,7 @@
   </div>
 
   <div id="gsSystemLinks" class="gcBorder1">
-    <div>
+    <div class="links">
     {foreach from=$SiteAdmin.moduleSystemLinks item=module}
       {foreach from=$module item=link}
       {if isset($link.params.view) && $link.params.view == "core.SiteAdmin"}
@@ -25,14 +25,14 @@
     {/foreach}
     </div>
 
-    <ul class="gbBreadCrumb">
-      <li class="firstChild">
+    <div class="gbBreadCrumb">
+      <span class="firstChild">
 	<a href="{g->url}">{$SiteAdmin.rootAlbum.title|markup:stripBbcodeAndHtml}</a>
-      </li>
-      <li>
+      </span>
+      <span>
 	{g->text text="Site Administration"}
-      </li>
-    </ul>
+      </span>
+    </div>
   </div>
 
   <table width="100%" cellspacing="0" cellpadding="0">

@@ -6,7 +6,7 @@
  *}
 {if $layout.show.pathbar}
 <div id="gsSystemLinks" class="gcBorder1">
-  <div>
+  <div class="links">
     {if $layout.show.sidebarGreeting}
     <span style="font-weight: normal">
       {g->text text="Welcome, %s" arg1=$user.fullName|default:$user.userName}
@@ -19,9 +19,9 @@
     {/foreach}
   </div>
 
-  <ul class="gbBreadCrumb">
+  <div class="gbBreadCrumb">
     {section name=parent loop=$layout.parents}
-    <li{if $smarty.section.parent.first} class="firstChild"{/if}>
+    <span{if $smarty.section.parent.first} class="firstChild"{/if}>
       {if !$smarty.section.parent.last}
 	<a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$layout.parents[parent].id`"
 	 arg3="highlightId=`$layout.parents[parent.index_next].id`"}">
@@ -33,11 +33,11 @@
 	  {$layout.parents[parent].title|default:$layout.parents[parent].pathComponent|markup:stripBbcodeAndHtml}
 	</a>
       {/if}
-    </li>
+    </span>
     {/section}
-    <li{if empty($layout.parents)} class="firstChild"{/if}>
+    <span{if empty($layout.parents)} class="firstChild"{/if}>
       {$layout.item.title|default:$layout.item.pathComponent|markup:stripBbcodeAndHtml}
-    </li>
-  </ul>
+    </span>
+  </div>
 </div>
 {/if}

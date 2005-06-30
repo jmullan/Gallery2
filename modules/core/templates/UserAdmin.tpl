@@ -13,7 +13,7 @@
   </div>
 
   <div id="gsSystemLinks" class="gcBorder1">
-    <div>
+    <div class="links">
     {foreach from=$UserAdmin.moduleSystemLinks item=module}
       {foreach from=$module item=link}
       {if isset($link.params.view) && $link.params.view == "core.UserAdmin"}
@@ -25,19 +25,19 @@
     {/foreach}
     </div>
 
-    <ul class="gbBreadCrumb">
-      <li class="firstChild">
+    <div class="gbBreadCrumb">
+      <span class="firstChild">
 	<a href="{g->url}">{$UserAdmin.rootAlbum.title|markup:stripBbcodeAndHtml}</a>
-      </li>
-      <li>
+      </span>
+      <span>
 	{g->text text="Your Account"}
-      </li>
+      </span>
       {if !$user.isGuest}
-      <li>
+      <span>
 	{$user.fullName|default:$user.userName}
-      </li>
+      </span>
       {/if}
-    </ul>
+    </div>
   </div>
 
   <table width="100%" cellspacing="0" cellpadding="0">

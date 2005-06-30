@@ -47,40 +47,40 @@
 </div>
 {/if}
 
-<ul class="gbTabBar">
+<div class="gbTabBar">
   {if ($AdminRewrite.mode == 'rules')}
-    <li class="giSelected"><span>
+    <span class="giSelected"><div>
       {g->text text="Rules"}
-    </span></li>
+    </div></span>
   {else}
-    <li><span>
+    <span><div>
       <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=rewrite.AdminRewrite"
        arg3="mode=rules"}">{g->text text="Rules"}</a>
-    </span></li>
+    </div></span>
   {/if}
 
   {if ($AdminRewrite.mode == 'setup')}
-    <li class="giSelected"><span>
+    <span class="giSelected"><div>
       {g->text text="Setup"}
-    </span></li>
+    </div></span>
   {else}
-    <li><span>
+    <span><div>
       <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=rewrite.AdminRewrite"
        arg3="mode=setup"}">{g->text text="Setup"}</a>
-    </span></li>
+    </div></span>
   {/if}
 
   {if ($AdminRewrite.mode == 'test')}
-    <li class="giSelected"><span>
+    <span class="giSelected"><div>
       {g->text text="Test"}
-    </span></li>
+    </div></span>
   {else}
-    <li><span>
+    <span><div>
       <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=rewrite.AdminRewrite"
        arg3="mode=test"}">{g->text text="Test"}</a>
-    </span></li>
+    </div></span>
   {/if}
-</ul>
+</div>
 
 {if $AdminRewrite.mode == 'rules'}
 <div class="gbBlock">

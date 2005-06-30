@@ -5,17 +5,17 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 <div id="gsSystemLinks" class="gcBorder1">
-  <ul class="gbBreadCrumb">
-    <li class="firstChild">
+  <div class="gbBreadCrumb">
+    <span class="firstChild">
       <a href="{g->url}">{$MembersProfile.rootAlbum.title|markup:stripBbcodeAndHtml}</a>
-    </li>
-    <li>
+    </span>
+    <span>
       <a href="{g->url arg1="view=members.MembersList"}">{g->text text="Members List"}</a>
-    </li>
-    <li>
+    </span>
+    <span>
       {g->text text="Members Profile"}
-    </li>
-  </ul>
+    </span>
+  </div>
 </div>
 
 <table width="100%" cellspacing="0" cellpadding="0">
