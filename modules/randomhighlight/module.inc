@@ -201,17 +201,21 @@ class RandomHighlightModule extends GalleryModule {
 	if ($picknew) {
 	    list ($ret, $album) = GalleryCoreApi::loadEntitiesById($thumbnail->getParentId());
 	    if ($ret->isError()) {
+		GalleryCoreApi::releaseLocks($lockId);
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($album);
 	    if ($ret->isError()) {
+		GalleryCoreApi::releaseLocks($lockId);
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds($childIds);
 	    if ($ret->isError()) {
+		GalleryCoreApi::releaseLocks($lockId);
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    if (empty($thumbnails)) {
+		GalleryCoreApi::releaseLocks($lockId);
 		return GalleryStatus::success();
 	    }
 	    $thumbnails = array_values($thumbnails);
@@ -221,10 +225,12 @@ class RandomHighlightModule extends GalleryModule {
 	    GalleryCoreApi::estimateDerivativeDimensions($thumbnail, $highlight);
 	    $thumbnail->save();
 	    if ($ret->isError()) {
+		GalleryCoreApi::releaseLocks($lockId);
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $ret = GalleryCoreApi::expireDerivativeTreeBySourceIds(array($thumbnail->getId()));
 	    if ($ret->isError()) {
+		GalleryCoreApi::releaseLocks($lockId);
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
