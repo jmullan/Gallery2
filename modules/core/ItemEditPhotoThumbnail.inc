@@ -60,7 +60,8 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 
 	if (isset($form['action']['crop']) && isset($thumbnail)) {
 	    /* Get our source */
-	    list ($ret, $source) = GalleryCoreApi::loadEntitiesById($thumbnail->getDerivativeSourceId());
+	    list ($ret, $source) =
+		GalleryCoreApi::loadEntitiesById($thumbnail->getDerivativeSourceId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
@@ -131,9 +132,9 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
-	    $operations =
-		GalleryCoreApi::removeDerivativeOperation('crop', $thumbnail->getDerivativeOperations());
 
+	    $operations = GalleryCoreApi::removeDerivativeOperation(
+					  'crop', $thumbnail->getDerivativeOperations());
 	    $thumbnail->setDerivativeOperations($operations);
 
 	    $ret = $thumbnail->save();
@@ -200,11 +201,12 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 	}
 
 	/*
-	 * The source may be quite large.  However, it's the only input image that we can really display at
-	 * this point because the resized derivatives though they may be smaller, can have different
-	 * derivative commands from the source.
+	 * The source may be quite large.  However, it's the only input image that we can really
+	 * display at this point because the resized derivatives though they may be smaller, can
+	 * have different derivative commands from the source.
 	 */
-	list ($ret, $source) = GalleryCoreApi::loadEntitiesById($thumbnail->getDerivativeSourceId());
+	list ($ret, $source) =
+	    GalleryCoreApi::loadEntitiesById($thumbnail->getDerivativeSourceId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -216,8 +218,9 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 	$crop['height'] = round($crop['heightPercent'] * $source->getHeight() / 100);
 
 	/*
-	 * It's possible that the source was created before we had an appropriate image toolkit, so its
-	 * dimensions can be set to zero, which will cause us problems.  In that case, try rescanning it.
+	 * It's possible that the source was created before we had an appropriate image toolkit,
+	 * so its dimensions can be set to zero, which will cause us problems.  In that case,
+	 * try rescanning it.
 	 */
 	$width = $source->getWidth();
 	if (empty($width)) {
@@ -243,8 +246,15 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 	    }
 	}
 
+	/* Make sure we have toolkit support */
+	list ($ret, $toolkit) =
+	    GalleryCoreApi::getToolkitByOperation($source->getMimeType(), 'crop');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	$width = $source->getWidth();
-	if (empty($width)) {
+	if (empty($width) || empty($toolkit)) {
 	    $ItemEditPhotoThumbnail['editThumbnail']['can']['crop'] = false;
 	} else {
 	    $ItemEditPhotoThumbnail['editThumbnail']['can']['crop'] = true;
@@ -256,13 +266,14 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 	    }
 
 	    /*
-	     * When we make the url for the image, force the session id into it.  Otherwise, the IE JVM will
-	     * send a request without the session cookie, then the server will make a new session and send
-	     * that cookie back to the JVM, which will overwrite the browser's session with it, effectively
-	     * logging out the user.
+	     * When we make the url for the image, force the session id into it.  Otherwise, the
+	     * IE JVM will send a request without the session cookie, then the server will make a
+	     * new session and send that cookie back to the JVM, which will overwrite the browser's
+	     * session with it, effectively logging out the user.
 	     */
 	    $urlGenerator =& $gallery->getUrlGenerator();
-	    $url = $urlGenerator->generateUrl(array('view' => 'core.DownloadItem', 'itemId' => $source->getId()), true);
+	    $url = $urlGenerator->generateUrl(array('view' => 'core.DownloadItem',
+						    'itemId' => $source->getId()), true);
 
 	    $ItemEditPhotoThumbnail['editThumbnail']['appletCodeBase'] =
 		GalleryUtilities::convertPathToUrl(dirname(__FILE__)) . '/plugins';
@@ -326,9 +337,11 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 
 	    /* Set defaults */
 	    $selectedAspect = 0;
-	    $selectedOrientation = "portrait";
-	    $ItemEditPhotoThumbnail['editThumbnail']['cropRatioWidth'] = $aspectRatioList[0]['width'];
-	    $ItemEditPhotoThumbnail['editThumbnail']['cropRatioHeight'] = $aspectRatioList[0]['height'];
+	    $selectedOrientation = 'portrait';
+	    $ItemEditPhotoThumbnail['editThumbnail']['cropRatioWidth'] =
+		$aspectRatioList[0]['width'];
+	    $ItemEditPhotoThumbnail['editThumbnail']['cropRatioHeight'] =
+		$aspectRatioList[0]['height'];
 
 	    foreach ($aspectRatioList as $aspect) {
 		$landscapeCompare = round($aspect['width'] / $aspect['height'], 2);
@@ -346,8 +359,10 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 	    }
 	    $ItemEditPhotoThumbnail['editThumbnail']['selectedAspect'] = $selectedAspect;
 	    $ItemEditPhotoThumbnail['editThumbnail']['selectedOrientation'] = $selectedOrientation;
-	    $ItemEditPhotoThumbnail['editThumbnail']['cropRatioWidth'] = $aspectRatioList[$selectedAspect]['width'];
-	    $ItemEditPhotoThumbnail['editThumbnail']['cropRatioHeight'] = $aspectRatioList[$selectedAspect]['height'];
+	    $ItemEditPhotoThumbnail['editThumbnail']['cropRatioWidth'] =
+		$aspectRatioList[$selectedAspect]['width'];
+	    $ItemEditPhotoThumbnail['editThumbnail']['cropRatioHeight'] =
+		$aspectRatioList[$selectedAspect]['height'];
 	}
 
 	$template->setVariable('ItemEditPhotoThumbnail', $ItemEditPhotoThumbnail);
