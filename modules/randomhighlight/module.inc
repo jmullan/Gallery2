@@ -37,7 +37,7 @@ class RandomHighlightModule extends GalleryModule {
 	$this->setId('randomhighlight');
 	$this->setName($gallery->i18n('Random Highlight'));
 	$this->setDescription($gallery->i18n('Periodically change the album highlight'));
-	$this->setVersion('0.9.6'); /* Update upgrade() function below too */
+	$this->setVersion('0.9.7'); /* Update upgrade() function below too */
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
@@ -105,6 +105,7 @@ class RandomHighlightModule extends GalleryModule {
 	    case '0.9.3':
 	    case '0.9.4':
 	    case '0.9.5':
+	    case '0.9.6':
 
 	    case 'end of upgrade path':
 		break;
@@ -128,6 +129,12 @@ class RandomHighlightModule extends GalleryModule {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryOnLoadHandler', 'RandomHighlightModule', 'RandomHighlightPrivate',
+	    'modules/randomhighlight/module.inc', 'randomhighlight', null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'ItemEditOption', 'RandomHighlightOption', 'RandomHighlightOption',
@@ -144,7 +151,7 @@ class RandomHighlightModule extends GalleryModule {
      * @see GalleryModule::getOnLoadHandlerIds()
      */
     function getOnLoadHandlerIds() {
-	return array('RandomHighlight');
+	return array('RandomHighlight', 'RandomHighlightPrivate');
     }
 
     /**
@@ -182,7 +189,23 @@ class RandomHighlightModule extends GalleryModule {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	if (time() - $thumbnail->getModificationTimestamp() > $duration && !isset($loop[$id])) {
+	$isOld = (time() - $thumbnail->getModificationTimestamp() > $duration);
+	$canSee = true;
+	if (!isset($loop[$id]) && !$isOld &&
+		strpos($thumbnail->getOnLoadHandlers(), '|RandomHighlightPrivate|') !== false) {
+	    /* Highlight is currently a non-public item.. can current user view that item? */
+	    list ($ret, $highlight) =
+		GalleryCoreApi::loadEntitiesById($thumbnail->getDerivativeSourceId());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    list ($ret, $canSee) =
+		GalleryCoreApi::hasItemPermission($highlight->getParentId(), 'core.view');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+	if (!isset($loop[$id]) && ($isOld || !$canSee)) {
 	    /* Lock and refresh to ensure another request didn't just update highlight */
 	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($id);
 	    if ($ret->isError()) {
@@ -218,8 +241,27 @@ class RandomHighlightModule extends GalleryModule {
 		GalleryCoreApi::releaseLocks($lockId);
 		return GalleryStatus::success();
 	    }
-	    $thumbnails = array_values($thumbnails);
-	    $highlight = $thumbnails[rand(0, count($thumbnails)-1)];
+	    $itemId = array_keys($thumbnails);
+	    $itemId = $itemId[rand(0, count($itemId)-1)];
+	    $highlight = $thumbnails[$itemId];
+
+	    /* Check if we have selected a public item for the highlight */
+	    list ($ret, $guestId) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	    if ($ret->isError()) {
+		GalleryCoreApi::releaseLocks($lockId);
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    list ($ret, $isPublic) =
+		GalleryCoreApi::hasItemPermission($itemId, 'core.view', $guestId);
+	    if ($ret->isError()) {
+		GalleryCoreApi::releaseLocks($lockId);
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $onLoadHandlers = $thumbnail->getOnLoadHandlers();
+	    $thumbnail->setOnLoadHandlers(
+		preg_replace('{\|RandomHighlight(Private)?\|}',
+			     '|RandomHighlight' . ($isPublic ? '|' : 'Private|'), $onLoadHandlers));
 
 	    $thumbnail->setDerivativeSourceId($highlight->getId());
 	    GalleryCoreApi::estimateDerivativeDimensions($thumbnail, $highlight);
