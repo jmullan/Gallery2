@@ -254,7 +254,7 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 	}
 
 	$width = $source->getWidth();
-	if (empty($width) || empty($toolkit)) {
+	if (empty($width) || !isset($toolkit)) {
 	    $ItemEditPhotoThumbnail['editThumbnail']['can']['crop'] = false;
 	} else {
 	    $ItemEditPhotoThumbnail['editThumbnail']['can']['crop'] = true;
