@@ -17,7 +17,7 @@
       <a href="http://httpd.apache.org/docs/mod/mod_rewrite.html">mod_rewrite</a>
       {/capture}
       <p class="giDescription">
-        {g->text text="In order for this Gallery module to work you need %s enabeled with your Apache server." arg1=$smarty.capture.mod_rewrite_anchor}
+        {g->text text="In order for this Gallery module to work you need %s enabled with your Apache server." arg1=$smarty.capture.mod_rewrite_anchor}
       </p>
     </td>
     <td style="float: right; vertical-align: top;">
