@@ -355,10 +355,11 @@ function formatData($type,$tag,$intel,$data) {
 			// The formula can be developed : exposure = 1/(exp(ln(2).shutter))
 			$data = exp($data * log(2)); 
 			if ($data > 1) $data = floor($data);  //Do not take care of what is behind the coma.
-			$data = 1/$data; //Final calculation. We now have a floating number. Transform it in a pretty number
+			if ($data > 0) $data = 1/$data; //Final calculation. We now have a floating number. Transform it in a pretty number
 			$n=0;$d=0;
 			ConvertToFraction($data, $n, $d); 
-			if ($n>=1 && $d==1) $data = $n." sec"; //To avoid exposure times style 3/1 sec.
+			if ($data == 0) $data = "N/A";
+			else if ($n>=1 && $d==1) $data = $n." sec"; //To avoid exposure times style 3/1 sec.
 			else $data = $n."/".$d." sec";
 		} else if($tag=="a20e" || $tag=="a20f") { //FocalPlaneXResolution and FocalPlaneYResolution
 			$data= sprintf("%.2f", $data);
