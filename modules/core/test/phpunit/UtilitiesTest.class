@@ -1152,9 +1152,8 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->assertEquals('12.34', GalleryUtilities::roundToString(12.3432, 2), 'decimal');
 
 	$currentLocale = setlocale(LC_ALL, '0');
-	foreach (array('de_DE', 'de_DE.ISO8859-1',
-		       'de_DE.ISO-8859-1', 'german') as $locale) {
-	    if (($newLocale = setlocale(LC_ALL, $locale)) !== false) {
+	foreach (array('de_DE', 'german') as $locale) {
+	    if (($newLocale = GalleryTranslator::_setlocale(LC_ALL, $locale)) !== false) {
 		break;
 	    }
 	}
@@ -1173,9 +1172,8 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->assertEquals(12.34, GalleryUtilities::castToFloat('12.34'), 'string');
 
 	$currentLocale = setlocale(LC_ALL, '0');
-	foreach (array('de_DE', 'de_DE.ISO8859-1',
-		       'de_DE.ISO-8859-1', 'german') as $locale) {
-	    if (($newLocale = setlocale(LC_ALL, $locale)) !== false) {
+	foreach (array('de_DE', 'german') as $locale) {
+	    if (($newLocale = GalleryTranslator::_setlocale(LC_ALL, $locale)) !== false) {
 		break;
 	    }
 	}

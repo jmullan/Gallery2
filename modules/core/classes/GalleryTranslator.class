@@ -298,7 +298,8 @@ class GalleryTranslator {
 	 * Try appending some character set names; some systems (like FreeBSD) need this.
 	 * Some require a format with hyphen (e.g. gentoo) and others without (e.g. FreeBSD).
 	 */
-	foreach (array('ISO8859-1', 'ISO8859-2', 'ISO8859-5', 'ISO8859-7', 'ISO8859-9',
+	foreach (array('UTF-8', 'UTF8', 'utf8',
+		       'ISO8859-1', 'ISO8859-2', 'ISO8859-5', 'ISO8859-7', 'ISO8859-9',
 		       'ISO-8859-1', 'ISO-8859-2', 'ISO-8859-5', 'ISO-8859-7', 'ISO-8859-9',
 		       'EUC', 'Big5') as $charset) {
 	    if (($ret = setlocale($category, $locale . '.' . $charset)) !== false) {
