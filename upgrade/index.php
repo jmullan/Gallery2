@@ -213,7 +213,7 @@ function addSessionIdToUrls($html) {
  * Mini url generator for upgrader
  */
 function generateUrl($uri, $print=true) {
-    if (strncmp($uri, 'index.php', 9) && strncmp($uri, '../main.php', 11)) {
+    if (strncmp($uri, 'index.php', 9) && strncmp($uri, '../' . GALLERY_MAIN_PHP, 11)) {
 	global $gallery;
 	/* Add @ here in case we haven't yet upgraded config.php to include galleryBaseUrl */
 	$baseUrl = @$gallery->getConfig('galleryBaseUrl');

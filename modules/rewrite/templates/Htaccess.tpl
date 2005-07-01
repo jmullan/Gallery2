@@ -31,7 +31,7 @@
     RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} !{$Htaccess.matchBaseFile}
 {/if}
 {if strpos($rule.queryString, 'view=core.DownloadItem') !== false}
-    RewriteRule .   {$Htaccess.galleryDirectory}main.php?{$rule.queryString}   [{$rule.settings.flags}]
+    RewriteRule .   {$Htaccess.galleryDirectory}{$Htaccess.mainPhp}?{$rule.queryString}   [{$rule.settings.flags}]
 {else}
     RewriteRule .   {$Htaccess.directory}{$Htaccess.baseFile}{$rule.queryString}   [{$rule.settings.flags}]
 {/if}

@@ -28,8 +28,9 @@
 /*
  * This script will just redirect to main.php. But the Location header requires
  * an absolute url to conform with HTTP/1.1
+ * (Include bootstrap.inc in case config.php overrides GALLERY_MAIN_PHP)
  */
-
+require(dirname(__FILE__) . '/bootstrap.inc'); 
 require(dirname(__FILE__) . '/modules/core/classes/GalleryUrlGenerator.class'); 
 
 /* The REQUEST_URI can either be /path/index.php or just /path/. Get rid of index.php.* */

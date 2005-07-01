@@ -29,7 +29,9 @@
 /* Don't use GalleryCoreApi::requireOnce here; index.php uses this file without GalleryCoreApi */
 require_once(dirname(__FILE__) . '/GalleryUtilities.class');
 
-define('GALLERY_MAIN_PHP', 'main.php');
+if (!defined('GALLERY_MAIN_PHP')) {
+    define('GALLERY_MAIN_PHP', 'main.php');
+}
 
 /**
  * Url Generator
