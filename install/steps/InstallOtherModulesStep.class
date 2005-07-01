@@ -83,7 +83,8 @@ class InstallOtherModulesStep extends InstallStep {
 		    if ($ret->isError()) {
 			$this->resetL10Domain();
 			$templateData['errors'][] =
-				sprintf(_('Unable to install the %s module'), $module->getName());
+			    sprintf(_('Unable to install the %s module'), $module->getName());
+			$templateData['stackTrace'] = $ret->getAsHtml();
 			continue;
 		    }
 		    $moduleInstalled[$moduleId] = true;
@@ -92,7 +93,8 @@ class InstallOtherModulesStep extends InstallStep {
 		    if ($ret->isError()) {
 			$this->resetL10Domain();
 			$templateData['errors'][] =
-				sprintf(_('Unable to activate the %s module'), $module->getName());
+			    sprintf(_('Unable to activate the %s module'), $module->getName());
+			$templateData['stackTrace'] = $ret->getAsHtml();
 			continue;
 		    }
 
@@ -105,15 +107,15 @@ class InstallOtherModulesStep extends InstallStep {
 
 		    list ($ret, $redirect) = $module->activate();
 		    $this->resetL10Domain();
-		    if ($ret->isSuccess()) {
-			unset($modules[$moduleId]);
-			$templateData['activated'][$moduleId] = $module->getName();
-			continue;
-		    } else {
+		    if ($ret->isError()) {
 			$templateData['errors'][] =
-				sprintf(_('Unable to activate the %s module'), $module->getName());
+			    sprintf(_('Unable to activate the %s module'), $module->getName());
+			$templateData['stackTrace'] = $ret->getAsHtml();
 			continue;
 		    }
+		    unset($modules[$moduleId]);
+		    $templateData['activated'][$moduleId] = $module->getName();
+		    continue;
 		}
 
 		$group = $module->getGroup();
@@ -143,16 +145,14 @@ class InstallOtherModulesStep extends InstallStep {
 	    $templateData['bodyFile'] = 'InstallOtherModulesRequest.html';
 	}
 	$templateData['anyInstallable'] = false;
-	if (empty($templateData['errors'])) {
-	    foreach ($moduleInstalled as $moduleId => $tmp) {
-		if (!$tmp) {
-		    $templateData['anyInstallable'] = true;
-		    break;
-		}
+	foreach ($moduleInstalled as $moduleId => $tmp) {
+	    if (!$tmp) {
+		$templateData['anyInstallable'] = true;
+		break;
 	    }
-	    if (!$templateData['anyInstallable']) {
-		$this->setComplete(true);
-	    }
+	}
+	if (!$templateData['anyInstallable']) {
+	    $this->setComplete(true);
 	}
     }
 

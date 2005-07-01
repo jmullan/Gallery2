@@ -1,3 +1,9 @@
+    <?php if (isset($templateData['stackTrace'])): ?>
+    <div class="stack_trace">
+      <?php print $templateData['stackTrace']; ?>
+    </div><br/>
+    <?php endif; ?>
+
     <h1><?php print _("Install Other Modules") ?></h1>
 
     <?php if (isset($templateData['activated'])): ?>
