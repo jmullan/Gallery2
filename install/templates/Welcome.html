@@ -5,7 +5,7 @@
 	'<a href="../README.html" target="_blank">', '</a>') ?>
     </p>
     <?php if (isset($translator)): ?>
-    <form method="get" action="index.php"><p>
+    <form method="get" action="<?php print INDEX_PHP ?>"><p>
       <input type="hidden" name="step" value="<?php print $stepNumber ?>"/>
       <?php print _("Select Language:") ?>
       <select name="language" onchange="this.form.submit()" style="direction:ltr">
@@ -26,7 +26,7 @@
 
     <div class="go">
       <span class="goToNext">
-	<a href="index.php?step=<?php print ($stepNumber + 1) ?>">
+	<a href="<?php printf('%s?step=%s', INDEX_PHP, $stepNumber + 1) ?>">
 	  <?php print _('Begin Installation&raquo;') ?>
 	</a>
       </span>

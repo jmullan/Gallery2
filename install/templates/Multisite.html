@@ -29,7 +29,7 @@
 	     value="<?php print $templateData['configPath'] ?>" autocomplete="off"/>
       <script type="text/javascript">
 	// <![CDATA[
-	autoCompleteAttach('dir', '<?php print 'index.php?step=' . $currentStep->getStepNumber() . '&doAutoComplete=1&path=__VALUE__'; ?>');
+	autoCompleteAttach('dir', '<?php printf('%s?step=%s', INDEX_PHP, $currentStep->getStepNumber()) ?>&doAutoComplete=1&path=__VALUE__');
 
 	function linkToggle(m) {
 	  document.getElementById('linkContinue').style.display = m ? 'none' : 'inline';

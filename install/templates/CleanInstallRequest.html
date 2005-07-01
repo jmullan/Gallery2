@@ -14,12 +14,12 @@
     <?php endif; ?>
   <div class="go">
     <span class="goToNext">
-      <a href="index.php?step=<?php print $currentStep->getStepNumber()?>">
+      <a href="<?php printf('%s?step=%s', INDEX_PHP, $currentStep->getStepNumber()) ?>">
 	<?php print _('Cancel') ?>
       </a>
     </span>
     <span class="goToNextL">
-      <a href="index.php?step=<?php print $currentStep->getStepNumber()?>&amp;action=clean">
+      <a href="<?php printf('%s?step=%s', INDEX_PHP, $currentStep->getStepNumber()) ?>&amp;action=clean">
 	<?php print _('Erase all data') ?>
       </a>
     </span>

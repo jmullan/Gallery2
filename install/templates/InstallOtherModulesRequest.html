@@ -98,7 +98,7 @@
     <div class="go">
       <?php $nextStep = $stepNumber + 1 ?>
       <span class="goToNext">
-	<a href="index.php?step=<?php print $nextStep?>">
+	<a href="<?php printf('%s?step=%s', INDEX_PHP, $nextStep) ?>">
 	  <?php printf(_('Continue to Step %d Without Activating&raquo;'), $nextStep); ?>
 	</a>
       </span>

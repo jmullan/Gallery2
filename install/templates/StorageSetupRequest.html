@@ -23,7 +23,7 @@
 	    <input type="hidden" name="action" value="save" />
             <script type="text/javascript">
               // <![CDATA[
-              autoCompleteAttach('dir', '<?php print 'index.php?step=' . $currentStep->getStepNumber() . '&doAutoComplete=1&path=__VALUE__'; ?>');
+              autoCompleteAttach('dir', '<?php printf('%s?step=%s', INDEX_PHP, $currentStep->getStepNumber()) ?>&doAutoComplete=1&path=__VALUE__');
               // ]]>
             </script>
 	  </td>

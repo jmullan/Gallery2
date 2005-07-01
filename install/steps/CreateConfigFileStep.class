@@ -116,7 +116,7 @@ class CreateConfigFileStep extends InstallStep {
 	global $galleryStub;
 	$baseDir = dirname(dirname(dirname(__FILE__)));
 	require_once($baseDir . '/modules/core/classes/GalleryUrlGenerator.class');
-	$baseUrl = GalleryUrlGenerator::makeUrl(preg_replace('{install/index.php\?.*}', '',
+	$baseUrl = GalleryUrlGenerator::makeUrl(preg_replace('{install/' . INDEX_PHP . '\?.*}', '',
 						GalleryUrlGenerator::getCurrentRequestUri()));
 
 	$addslashes = array('\\' => '\\\\', "'" => "\\'");
