@@ -143,7 +143,7 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 
 		    $ret = $derivative->save();
 		    if ($ret->isError()) {
-			GalleryCoreApi::releaseLocks($locok);
+			GalleryCoreApi::releaseLocks($lock);
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
 		}
