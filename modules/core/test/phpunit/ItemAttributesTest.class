@@ -50,6 +50,35 @@ class ItemAttributesTest extends GalleryTestCase {
 
 	$this->_markForCleanup($this->_parentItem);
 
+	/*
+	 * The parentItem inherits the permissions from the root album. Thus, normalize the
+	 * permissions for the tests here. Set it to core.view permission for everybody
+	 */
+	$ret = GalleryCoreApi::removeItemPermissions($this->_parentItem->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $everybodyGroupId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::addGroupPermission(
+	    $this->_parentItem->getId(), $everybodyGroupId, 'core.view', true);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Verify the permissions */
+	list ($ret, $compressedPerms) =
+	    GalleryCoreApi::fetchAllPermissionsForItem($this->_parentItem->getId(), true);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(array('userId' => 0, 'groupId' => $everybodyGroupId,
+					'permission' => 'core.view')), $compressedPerms,
+			    'Failed to define initial permissions');
+
+	/* Create additional test items */
 	for ($i = 0; $i < 3; $i++) {
 	    list ($ret, $this->_childItems[$i]) =
 		$this->_createRandomAlbum($this->_parentItem->getId());
