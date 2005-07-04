@@ -91,6 +91,10 @@ class GalleryCharsetHelper_simple {
 	}
 	/* FreeBSD may return charset with missing hyphen from nl_langinfo */
 	$sourceEncoding = str_replace('ISO8859', 'ISO-8859', $sourceEncoding);
+	/* Gentoo may return ANSI_X3.4-1968 */
+	if (preg_match('{^ANSI[_-]}', $sourceEncoding)) {
+	    $sourceEncoding = 'ASCII';
+	}
 
 	GalleryDataCache::put($cacheKey, $sourceEncoding);
 	return $sourceEncoding;

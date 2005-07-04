@@ -181,6 +181,12 @@ class CharsetTest extends GalleryTestCase {
 	$gallery->_phpVm = $phpVm;
 	$this->assertEquals('ISO-8859-1', GalleryCharsetHelper_simple::detectSystemCharset());
 
+	/* Gentoo may return ANSI_X3.4-1968 which is just ASCII */
+	GalleryDataCache::reset();
+	$phpVm->setReturn('nl_langinfo', array(CODESET), 'ANSI_X3.4-1968');
+	$gallery->_phpVm = $phpVm;
+	$this->assertEquals('ASCII', GalleryCharsetHelper_simple::detectSystemCharset());
+
 	/* We can override what the system tells us using GalleryCapabilities */
 	GalleryCapabilities::set('systemCharset', 'xyz123');
 	GalleryDataCache::reset();
