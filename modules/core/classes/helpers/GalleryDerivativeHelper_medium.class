@@ -105,6 +105,10 @@ class GalleryDerivativeHelper_medium {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
 
+	if (empty($ids)) {
+	    return array(GalleryStatus::success(), array());
+	}
+	
 	list ($ret, $results) = GalleryDerivativeHelper_medium::_loadDerivatives(
 	    $ids, null, DERIVATIVE_TYPE_IMAGE_PREFERRED);
 	if ($ret->isError()) {

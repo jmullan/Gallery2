@@ -913,6 +913,41 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	} else if ($event->getEventName() == 'Gallery::RemovePermission') {
+	    /*
+	     * RemovePermission event definition:
+	     * @param 'userId' a user id or 0 for all users or null to specify no user at all
+	     * @param 'groupId' a group id or 0 for all groups or null to specify no group at all
+	     * @param 'itemIdsAndBits' array of itemId => permissionBits pairs
+	     * @param 'format' either removeBits or newBits, defaults to removeBits
+	     *
+	     * With a single RemovePermission event one can handle an unlimited number of items.
+	     * Sample usage:
+	     *     $event = GalleryCoreApi::newEvent('Gallery::RemovePermission');
+	     *     $event->setData(array('userId' => null, 'groupId' => $groupId,
+	     *		                 'itemIdsAndBits' => array($itemId1 => $removeBits1,
+	     *                                                     $itemId2 => $removeBits2)));
+	     *     list ($ret) = GalleryCoreApi::postEvent($event);
+	     *
+	     * If the RemovePermission event affects multiple groupIds or multiple userIds, e.g.
+	     * for GalleryCoreApi::removeItemPermission($itemId), the removedBits would be
+	     * different for each userId / groupId. Thus, the event is simplified in such a case
+	     * and you only specify the newBits of the item, because the newBits are the same for
+	     * all userIds / groupIds. Use the 'format' => 'newBits' in this case.
+	     *     $event = GalleryCoreApi::newEvent('Gallery::RemovePermission');
+	     *     $event->setData(array('userId' => 0, 'groupId' => 0, 'format' => 'newBits',
+	     *		                 'itemIdsAndBits' => array($itemId1 => $newBits1,
+	     *                                                     $itemId2 => $newBits2)));
+	     */
+
+	    /* Here, we just check if the FastDownload files have to be removed */
+	    foreach (array('core.view', 'core.viewResizes', 'core.viewSource') as $permissionId) {
+		list ($ret, $bits[]) = GalleryCoreApi::convertPermissionIdsToBits($permissionId);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+
+	    /* At the moment, we only have FastDownload files for the guest/anonymous user */
 	    list ($ret, $anonymousUserId) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	    if ($ret->isError()) {
@@ -924,54 +959,65 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $groupIds = array_keys($groupIds);
+	    $groupIntersect = array_intersect(array($param['groupId']), $groupIds);
+	    
+	    if (isset($param['userId']) && ($param['userId'] == 0 ||
+					    $param['userId'] == $anonymousUserId) ||
+		isset($param['groupId']) && ($param['groupId'] == 0 || !empty($groupIntersect))) {
 
-	    foreach (array('core.view', 'core.viewResizes', 'core.viewSource') as $permissionId) {
-		list ($ret, $bits[]) = GalleryCoreApi::convertPermissionIdsToBits($permissionId);
+		$thumbnailIds = array();
+		$resizeIds = array();
+		$preferredIds = array();
+		$targetDerivatives = array();
+
+		/* Convert from newBits format to removeBits, if necessary */
+		if (isset($param['format']) && $param['format'] == 'newBits') {
+		    foreach ($param['itemIdsAndBits'] as $itemId => $newBits) {
+			/*
+			 * Potentially, all but $newBits were removed,
+			 * thus removeBits := not newBits
+			 */
+			$param['itemIdsAndBits'][$itemId] = ~$newBits;
+		    }
+		}
+		
+		foreach ($param['itemIdsAndBits'] as $itemId => $removeBits) {
+		    /* If core.view was removed then delete the thumbnail fast download */
+		    if (($removeBits & $bits[0]) == $bits[0]) {
+			$thumbnailIds[] = $itemId;
+		    }
+		    /* If core.viewResizes was removed then delete the resize fast downloads */
+		    if (($removeBits & $bits[1]) == $bits[1]) {
+			$resizeIds[] = $itemId;
+		    }
+		    /* If core.viewSource was removed then delete the preferred fast download */
+		    if (($removeBits & $bits[2]) == $bits[2]) {
+			$preferredIds[] = $itemId;
+		    }
+		}
+
+		/* Load the thumbnails, resizes, and preferreds */
+		list ($ret, $thumbnails) =
+		    GalleryCoreApi::fetchThumbnailsByItemIds($thumbnailIds);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-	    }
-
-	    $groupIntersect = array_intersect(array($param['groupId']), $groupIds);
-	    if ($param['userId'] == $anonymousUserId || !empty($groupIntersect)) {
-		$targetDerivatives = array();
-
-		/* If we've removed core.view then delete the thumbnail fast download */
-		if (($param['removeBits'] & $bits[0]) == $bits[0]) {
-		    list ($ret, $thumbnails) =
-			GalleryCoreApi::fetchThumbnailsByItemIds(array($param['itemId']));
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-		    if (!empty($thumbnails[$param['itemId']])) {
-			$targetDerivatives[] = $thumbnails[$param['itemId']];
-		    }
+		$targetDerivatives = $thumbnails;
+		
+		list ($ret, $resizes) = GalleryCoreApi::fetchResizesByItemIds($resizeIds);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-
-		/* If we've removed core.viewResizes then delete the resize fast downloads */
-		if (($param['removeBits'] & $bits[1]) == $bits[1]) {
-		    list ($ret, $resizes) =
-			GalleryCoreApi::fetchResizesByItemIds(array($param['itemId']));
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-		    if (!empty($resizes[$param['itemId']])) {
-			$targetDerivatives =
-			    array_merge($targetDerivatives, $resizes[$param['itemId']]);
-		    }
+		foreach ($resizes as $resize) {
+		    $targetDerivatives = array_merge($targetDerivatives, $resize);
 		}
-
-		/* If we've removed core.viewSource then delete the preferred fast downloads */
-		if (($param['removeBits'] & $bits[2]) == $bits[2]) {
-		    list ($ret, $preferreds) =
-			GalleryCoreApi::fetchPreferredsByItemIds(array($param['itemId']));
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-		    if (!empty($preferreds[$param['itemId']])) {
-			$targetDerivatives[] = $preferreds[$param['itemId']];
-		    }
+		
+		list ($ret, $preferreds) = GalleryCoreApi::fetchPreferredsByItemIds($preferredIds);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
+		$targetDerivatives = array_merge($targetDerivatives, $preferreds);
+		
 		foreach ($targetDerivatives as $derivative) {
 		    $derivative->deleteFastDownloadFile();
 		}

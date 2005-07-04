@@ -275,6 +275,7 @@ class GalleryPermissionHelper_advanced {
 	 */
 	$oldToNewAclMapping = array();
 	$itemsToBeRemapped = array();
+	$removeEventData = array();
 	
 	while ($result = $searchResults->nextResult()) {
 	    list ($oldAclId, $targetItemId) = array((int)$result[0], (int)$result[1]);
@@ -360,7 +361,7 @@ class GalleryPermissionHelper_advanced {
 
 	    if ($newAclId) {
 		$itemsToBeRemapped[$oldAclId][] = $targetItemId;
-
+		
 		if (count($itemsToBeRemapped[$oldAclId]) >= 200) {
 		    $ret = GalleryAccessSubscriberMap::updateMapEntry(
 			array('itemId' => $itemsToBeRemapped[$oldAclId]),
@@ -370,9 +371,14 @@ class GalleryPermissionHelper_advanced {
 		    }
 		    $itemsToBeRemapped[$oldAclId] = array();
 		}
+
+		if ($changeType == 'remove') {
+		    /* Keep track of all items with removed permissions for the postEvent call */
+		    $removeEventData[$targetItemId] = $currentBits & ~$newBits;
+		}
 	    }
 	}
-
+	
 	foreach (array_keys($itemsToBeRemapped) as $oldAclId) {
 	    if ($oldToNewAclMapping[$oldAclId] && !empty($itemsToBeRemapped[$oldAclId])) {
 		$ret = GalleryAccessSubscriberMap::updateMapEntry(
@@ -392,6 +398,20 @@ class GalleryPermissionHelper_advanced {
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Post a RemovePermission event for all affected items if necessary */
+	if (!empty($removeEventData)) {
+	    /* user/groupId 0 has a special meaning in the RemovePermission event */
+	    $eventUserId = $userId < 1 ? null : $userId;
+	    $eventGroupId = $groupId < 1 ? null : $groupId;
+	    $event = GalleryCoreApi::newEvent('Gallery::RemovePermission');
+	    $event->setData(array('userId' => $eventUserId, 'groupId' => $eventGroupId,
+				  'itemIdsAndBits' => $removeEventData));
+	    list ($ret) = GalleryCoreApi::postEvent($event);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	}
 
 	return GalleryStatus::success();
@@ -419,6 +439,35 @@ class GalleryPermissionHelper_advanced {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
+	$event->setData(array('userId' => null, 'itemId' => $itemId));
+	list ($ret) = GalleryCoreApi::postEvent($event);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/*
+	 * For the RemovePermission event we have the choice between specifying the permission bits
+	 * that were removed and specifying the new permission bits. In this case, we cannot
+	 * specify the removed permission bits, because these bits are different for each user /
+	 * group and the RemovePermission event only allows to specify multiple item => bits pairs
+	 * and not multiple item => (user => bits) pairs. This is by design, more detail is not
+	 * needed and would just make the RemovePermission event slower.
+	 */
+	/* Get the bits for the new permisions. Get it with the API call rather than just using 0 */
+	list ($ret, $zeroBits) = GalleryCoreApi::convertPermissionIdsToBits(array());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$event = GalleryCoreApi::newEvent('Gallery::RemovePermission');
+	$event->setData(array('userId' => 0, 'groupId' => 0,
+			      'itemIdsAndBits' => array($itemId => $zeroBits),
+			      'format' => 'newBits'));
+	list ($ret) = GalleryCoreApi::postEvent($event);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
 	return GalleryStatus::success();
     }
 
@@ -1012,7 +1061,7 @@ class GalleryPermissionHelper_advanced {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
+	
 	$query = '
         UPDATE
           [GalleryAccessMap]
@@ -1029,6 +1078,12 @@ class GalleryPermissionHelper_advanced {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	/*
+	 * TODO: What if view type permissions are removed? Then we need RemovePermission and
+	 * ViewableTreeChange events here.
+	 * In practice, these permissions cannot be removed, therefore this has low priority.
+	 */
 
 	return GalleryStatus::success();
     }
