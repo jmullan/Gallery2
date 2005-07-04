@@ -788,7 +788,164 @@ class CoreModuleExtras {
 	    }
 	case '0.9.26':
 	    /* Added GalleryDerivative::isBroken; default all values to null, so nothing to do */
+	case '0.9.27':
+	    /* Mark old broken derivatives as such with our new isBroken flag */
+	    /*
+	     * This is the filesize and the crc32 checksum of the broken derivative placeholder
+	     * image that we used in beta 3 and earlier versions. We may have replaced this image
+	     * by the time this upgrade code is run. Thus we hardcode filesize(oldImage) and
+	     * crc32(oldImageData) here.
+	     */
+	    $referenceSize = 1589;
+	    /* CRC is a good measure to compare files (not to detect malicous attacks though) */
+	    $referenceCrc = 888290220;
 
+	    /*
+	     * 1. Get a list of all derivatives that are not already marked as isBroken
+	     *    (We can't count on derivativeSize being correct, so check all derivatives)
+	     */
+	    $gallery->guaranteeTimeLimit(30);
+	    list ($ret, $results) =
+	    $query = 'SELECT [GalleryDerivative::id]
+                      FROM [GalleryDerivative]
+                      WHERE [GalleryDerivative::isBroken] IS NULL';
+	    list ($ret, $searchResults) = $gallery->search($query);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    /* Check the derivatives that match the search criteria */
+	    if ($searchResults->resultCount() > 0) {
+
+		/* Show a progress bar */
+		$itemsProcessed = 0;
+		$totalDerivatives = $searchResults->resultCount();
+		$ret = $statusMonitor->renderStatusMessage(
+		    $module->translate('Detecting broken derivatives'), '', 0);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		
+		$derivativeIds = array();
+		while ($result = $searchResults->nextResult()) {
+		    $derivativeIds[] = $result[0];
+		}
+
+		$gallery->guaranteeTimeLimit(30);
+		list ($ret, $derivatives) = GalleryCoreApi::loadEntitiesById($derivativeIds);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		$progressStepSize = min(500, intval($totalDerivatives / 10));
+		$brokenDerivatives = array();
+		foreach ($derivatives as $derivative) {
+		    /*
+		     * Show the progress ..., but not for each derivative, this would slow down
+		     * the process considerably
+		     */
+		    $itemsProcessed++;
+		    if ($itemsProcessed % $progressStepSize == 0) {
+			$ret = $statusMonitor->renderStatusMessage(
+			    $module->translate(array('text' => 'Detecting broken derivatives ' .
+						     '(%d derivatives complete, %d remaining)',
+						     'arg1' => $itemsProcessed,
+						     'arg2' => $totalDerivatives - $itemsProcessed)),
+			    '', $itemsProcessed / $totalDerivatives);
+			if ($ret->isError()) {
+			    return $ret->wrap(__FILE__, __LINE__);
+			}
+			$gallery->guaranteeTimeLimit(30);
+		    }
+
+		    /*
+		     * 2. Filter out derivatives that don't return true for isCacheCurrent
+		     *    (= don't have a cache file yet = would be rebuilt anyway)
+		     */
+		    list ($ret, $current) = $derivative->isCacheCurrent();
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		    if (!$current) {
+			continue;
+		    }
+
+		    /*
+		     * 3. Filter out derivatives that don't have the same file size as the broken
+		     *    image placeholder
+		     */
+		    list($ret, $path) = $derivative->fetchPath();
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		    if (($size = $platform->filesize($path)) === false) {
+			return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
+		    }
+		    if ($size != $referenceSize) {
+			continue;
+		    }
+		    
+		    /* 4. Binary compare the derivative file with the placeholder file */
+		    if (($data = $platform->file($path)) === false) {
+			return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
+		    }
+		    $data = implode('', $data);
+		    if ($referenceCrc == crc32($data)) {
+			/* Add the derivative to the list of broken ones */
+			$brokenDerivatives[$derivative->getId()] = $derivative;
+		    }
+		}
+
+		/* 5. Mark the detected broken derivatives as such and save the result to the DB */
+		if (!empty($brokenDerivatives)) {
+		    $gallery->guaranteeTimeLimit(30);
+		    
+		    list ($ret, $lockId) =
+			GalleryCoreApi::acquireWriteLock(array_keys($brokenDerivatives));
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+
+		    /* Show the next progress bar */
+		    $itemsProcessed = 0;
+		    $totalItems = count($brokenDerivatives);
+		    $ret = $statusMonitor->renderStatusMessage(
+			$module->translate('Marking broken derivatives'), '', 0);
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+
+		    $progressStepSize = min(200, intval($totalItems / 10));
+		    foreach ($brokenDerivatives as $derivative) {
+			$itemsProcessed++;
+			if ($itemsProcessed % $progressStepSize == 0) {
+			    $ret = $statusMonitor->renderStatusMessage(
+				$module->translate(array('text' => 'Marking broken derivatives ' .
+							 '(%d derivatives complete, %d remaining)',
+							 'arg1' => $itemsProcessed,
+							 'arg2' => $totalItems - $itemsProcessed)),
+				'', $itemsProcessed / $totalItems);
+			    if ($ret->isError()) {
+				return $ret->wrap(__FILE__, __LINE__);
+			    }
+			    $gallery->guaranteeTimeLimit(30);
+			}
+			
+			$derivative->setIsBroken(true);
+			$ret = $derivative->save(false);
+			if ($ret->isError()) {
+			    GalleryCoreApi::releaseLocks($lockId);
+			    return $ret->wrap(__FILE__, __LINE__);
+			}
+		    }
+		    
+		    $ret = GalleryCoreApi::releaseLocks($lockId);
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		}
+	    }
+	    
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
@@ -948,6 +1105,7 @@ $gallery->setConfig(\'cookieId\', \'' . $cookieId . '\');
 	case '0.9.24':
 	case '0.9.25':
 	case '0.9.26':
+	case '0.9.27':
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
