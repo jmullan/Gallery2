@@ -182,9 +182,15 @@ class RandomHighlightModule extends GalleryModule {
      * Check age and pick new highlight if needed..
      */
     function onLoad(&$thumbnail) {
+	global $gallery;
 	static $loop = array();
 	$picknew = false;
 	$id = $thumbnail->getId();
+	/* We don't want to refresh the highlight during an upgrade */
+	$session = $gallery->getSession();
+	if (!isset($session)) {
+	    return GalleryStatus::success();
+	}
 	list ($ret, $duration) = $this->getParameter('duration');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
