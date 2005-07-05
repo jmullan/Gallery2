@@ -187,7 +187,7 @@ class RandomHighlightModule extends GalleryModule {
 	$picknew = false;
 	$id = $thumbnail->getId();
 	/* We don't want to refresh the highlight during an upgrade */
-	$session = $gallery->getSession();
+	$session =& $gallery->getSession();
 	if (!isset($session)) {
 	    return GalleryStatus::success();
 	}
