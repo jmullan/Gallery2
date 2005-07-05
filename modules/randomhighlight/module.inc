@@ -37,11 +37,11 @@ class RandomHighlightModule extends GalleryModule {
 	$this->setId('randomhighlight');
 	$this->setName($gallery->i18n('Random Highlight'));
 	$this->setDescription($gallery->i18n('Periodically change the album highlight'));
-	$this->setVersion('0.9.7'); /* Update upgrade() function below too */
+	$this->setVersion('0.9.8'); /* Update upgrade() function below too */
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredModuleApi(array(1, 0));
+	$this->setRequiredModuleApi(array(1, 1));
     }
 
     /**
@@ -106,6 +106,7 @@ class RandomHighlightModule extends GalleryModule {
 	    case '0.9.4':
 	    case '0.9.5':
 	    case '0.9.6':
+	    case '0.9.7':
 
 	    case 'end of upgrade path':
 		break;
@@ -181,14 +182,12 @@ class RandomHighlightModule extends GalleryModule {
     /**
      * Check age and pick new highlight if needed..
      */
-    function onLoad(&$thumbnail) {
-	global $gallery;
+    function onLoad(&$thumbnail, $duringUpgrade) {
 	static $loop = array();
 	$picknew = false;
 	$id = $thumbnail->getId();
 	/* We don't want to refresh the highlight during an upgrade */
-	$session =& $gallery->getSession();
-	if (!isset($session)) {
+	if ($duringUpgrade) {
 	    return GalleryStatus::success();
 	}
 	list ($ret, $duration) = $this->getParameter('duration');

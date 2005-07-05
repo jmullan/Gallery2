@@ -40,6 +40,7 @@ class EntityTest extends GalleryTestCase {
 
     function setUp() {
 	parent::setUp();
+	global $gallery;
 
 	$this->_entity = new EntityTestEntity();
 	$ret = $this->_entity->create();
@@ -62,6 +63,14 @@ class EntityTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markFactoryModuleForCleanup('coreTest');
+	$this->_savedSession = $gallery->_session;
+    }
+
+    function tearDown() {
+	global $gallery;
+	$gallery->_session = $this->_savedSession;
+
+	parent::tearDown();
     }
 
     function testOnLoad() {
@@ -119,6 +128,7 @@ class EntityTest extends GalleryTestCase {
     }
 
     function testOnLoadHandler() {
+	global $gallery;
 	$entity = new EntityTestEntity();
 	$ret = $entity->create();
 	if ($ret->isError()) {
@@ -149,10 +159,29 @@ class EntityTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$session =& $gallery->getSession();
+	$this->assert(isset($session), 'session is not set');
 	$this->assertEquals('entitytestentity', strtolower(get_class($newEntity)), 'Entity class');
 	$this->assert($newEntity->_wasOnLoadCalled(), 'onLoad for database load');
 	$this->assertEquals('onLoadHandler was called', $newEntity->getLinkedEntity(),
 			    'handler not called');
+
+	/* During upgrades, the session is not set */
+	GalleryDataCache::reset();
+	unset($newEntity);
+	/* session=null is the "are we in an upgrade?" criterion */
+	$gallery->_session = null;
+	$session =& $gallery->getSession();
+	$this->assert(!isset($session), 'session is still set');
+	list ($ret, $newEntity) = GalleryCoreApi::loadEntitiesById($entity->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('entitytestentity', strtolower(get_class($newEntity)), 'Entity class');
+	$this->assert($newEntity->_wasOnLoadCalled(), 'onLoad for database load');
+	$this->assertEquals('onLoadHandler was called during upgrade', $newEntity->getLinkedEntity(),
+			    'handler not called during upgrade');
     }
 
     function testSetSameValueDifferentType() {
@@ -271,8 +300,12 @@ class EntityTestEntity extends GalleryEntity {
  * @subpackage PHPUnit
  */
 class EntityTestOnLoadHandler {
-    function onLoad(&$entity) {
-	$entity->setLinkedEntity('onLoadHandler was called');
+    function onLoad(&$entity, $duringUpgrade) {
+	if (!$duringUpgrade) {
+	    $entity->setLinkedEntity('onLoadHandler was called');
+	} else {
+	    $entity->setLinkedEntity('onLoadHandler was called during upgrade');
+	}
 	return GalleryStatus::success();
     }
 }

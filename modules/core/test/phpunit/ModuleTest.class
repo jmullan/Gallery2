@@ -268,7 +268,7 @@ class ModuleTestModule extends GalleryModule {
  * @subpackage PHPUnit
  */
 class ModuleTestOnLoadHandler {
-    function onLoad(&$entity) {
+    function onLoad(&$entity, $duringUpgrade) {
 	return GalleryStatus::success();
     }
 }

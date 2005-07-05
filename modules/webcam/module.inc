@@ -32,11 +32,11 @@ class WebCamModule extends GalleryModule {
 	$this->setId('webcam');
 	$this->setName($gallery->i18n('WebCam'));
 	$this->setDescription($gallery->i18n('Support periodically updated images like a webcam'));
-	$this->setVersion('0.9.6'); /* Update upgrade() function below too */
+	$this->setVersion('0.9.7'); /* Update upgrade() function below too */
 	$this->setGroup('import', $this->translate('Import'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredModuleApi(array(1, 0));
+	$this->setRequiredModuleApi(array(1, 1));
     }
 
     /**
@@ -99,6 +99,7 @@ class WebCamModule extends GalleryModule {
 	    case '0.9.3':
 	    case '0.9.4':
 	    case '0.9.5':
+	    case '0.9.6':
 
 	    case 'end of upgrade path':
 		break;
@@ -167,10 +168,14 @@ class WebCamModule extends GalleryModule {
     /**
      * Check age and refresh from external source if needed..
      */
-    function onLoad(&$item) {
+    function onLoad(&$item, $duringUpgrade) {
 	static $loop = array();
 	$old = false;
 	$id = $item->getId();
+	/* We don't want to refresh the external source during an upgrade */
+	if ($duringUpgrade) {
+	    return GalleryStatus::success();
+	}
 	list ($ret, $duration) = $this->getParameter('duration');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

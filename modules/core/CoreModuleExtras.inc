@@ -945,6 +945,8 @@ class CoreModuleExtras {
 		    }
 		}
 	    }
+	case '0.9.28':
+	    /* Changed Module Api onLoad($entity, $duringUpgrade) definition */
 	    
 	case 'end of upgrade path':
 	    /*
@@ -1106,6 +1108,7 @@ $gallery->setConfig(\'cookieId\', \'' . $cookieId . '\');
 	case '0.9.25':
 	case '0.9.26':
 	case '0.9.27':
+	case '0.9.28':
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we

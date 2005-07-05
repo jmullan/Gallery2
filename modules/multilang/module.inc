@@ -38,11 +38,11 @@ class MultiLangModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('multilang');
 	$this->setName($gallery->i18n('MultiLanguage'));
 	$this->setDescription($gallery->i18n('Support item captions in multiple languages'));
-	$this->setVersion('0.9.4');
+	$this->setVersion('0.9.5');
 	$this->setGroup('data', $this->translate('Extra Data'));
 	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
 	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredModuleApi(array(1, 0));
+	$this->setRequiredModuleApi(array(1, 1));
     }
 
     /**
@@ -145,14 +145,16 @@ class MultiLangModule extends GalleryModule /* and GalleryEventListener */ {
     /**
      * Load multilang data into this item..
      */
-    function onLoad(&$entity) {
+    function onLoad(&$entity, $duringUpgrade) {
 	/*
 	 * Load in captions for active language.
 	 * However, skip this step for core.ItemAdmin or any controller (esp core.ItemEdit)
 	 * to avoid inadvertently saving multilang captions into the actual entity.
+	 * Also, skip this during core module upgrades (when no session/activate language is
+	 * available)
 	 */
 	list ($view, $controller) = GalleryUtilities::getRequestVariables('view', 'controller');
-	if ($view != 'core.ItemAdmin' && empty($controller)) {
+	if ($view != 'core.ItemAdmin' && empty($controller) && !$duringUpgrade) {
 	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/MultiLangHelper.class');
 	    $ret = MultiLangHelper::onLoad($entity);
 	    if ($ret->isError()) {

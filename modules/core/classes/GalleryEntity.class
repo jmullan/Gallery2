@@ -395,6 +395,8 @@ class GalleryEntity_core extends GalleryPersistent {
      * @return object GalleryStatus a status code
      */
     function onLoad() {
+	global $gallery;
+	
 	$linkId = $this->getLinkId();
 	if (!empty($linkId)) {
 	    list ($ret, $this->_linkedEntity) = GalleryCoreApi::loadEntitiesById($linkId);
@@ -403,9 +405,17 @@ class GalleryEntity_core extends GalleryPersistent {
 	    }
 	}
 
-	/* Run any onLoad handlers for this entity */
+	/* 
+	 * Run any onLoad handlers for this entity
+	 * Modules that wish to implement an onLoad handler for an entity must provide
+	 * a class that implements the GalleryOnLoadHandler interface.
+	 */
 	$onLoadHandlers = $this->getOnLoadHandlers();
 	if (!empty($onLoadHandlers)) {
+	    /* Determine whether we're in an upgrade process */
+	    $session =& $gallery->getSession();
+	    $isDuringInstallOrUpgrade = !isset($session);
+	    
 	    foreach (explode('|', $onLoadHandlers) as $handlerId) {
 		if (empty($handlerId)) {
 		    continue;
@@ -416,7 +426,26 @@ class GalleryEntity_core extends GalleryPersistent {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 		if (isset($handler)) {
-		    $ret = $handler->onLoad($this);
+		    /* GalleryOnLoadHandlerInterface_1_0::onLoad(&$entity, $duringUpgrade)
+		     *
+		     * A GalleryOnLoadHandler has to implement this method
+		     * It is called for each entity when it is loaded from the disk cache or the
+		     * persistent store (the database), but not when the entity is already in the
+		     * memory cache.
+		     *
+		     * During the core module install or upgrade, there is no active gallery session
+		     * and $duringUpgrade is set to false. If $duringUpgrade is set to false, be
+		     * aware that everything that is related to the current active user will
+		     * error-out. The recommended usage is to do nothing and just return a success
+		     * status in onLoad if $duringUpgrade is set to false. If this would affect data
+		     * integrity and / or you are sure that your onLoad method does not require an
+		     * activeSession, you can ignore $duringUpgrade.
+		     *
+		     * @param reference to an entity
+		     * @param boolean whether the onLoad handler is being called during an upgrade
+		     * @return object GalleryStatus a status code
+		     */
+		    $ret = $handler->onLoad($this, $isDuringInstallOrUpgrade);
 		    if ($ret->isError()) {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
