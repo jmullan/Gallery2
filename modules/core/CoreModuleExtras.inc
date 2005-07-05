@@ -804,7 +804,7 @@ class CoreModuleExtras {
 	     * 1. Get a list of all derivatives that are not already marked as isBroken
 	     *    (We can't count on derivativeSize being correct, so check all derivatives)
 	     */
-	    $gallery->guaranteeTimeLimit(30);
+	    $gallery->guaranteeTimeLimit(60);
 	    list ($ret, $results) =
 	    $query = 'SELECT [GalleryDerivative::id]
                       FROM [GalleryDerivative]
@@ -831,7 +831,7 @@ class CoreModuleExtras {
 		    $derivativeIds[] = $result[0];
 		}
 
-		$gallery->guaranteeTimeLimit(30);
+		$gallery->guaranteeTimeLimit(90);
 		list ($ret, $derivatives) = GalleryCoreApi::loadEntitiesById($derivativeIds);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
