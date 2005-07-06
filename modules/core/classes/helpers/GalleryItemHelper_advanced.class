@@ -50,7 +50,7 @@ class GalleryItemHelper_advanced {
 	/*
 	 * Remove this relationship from our groups table.
 	 */
-	require_once(dirname(__FILE__) . '/../GalleryItemPropertiesMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryItemPropertiesMap.class');
 	$ret = GalleryItemPropertiesMap::removeMapEntry(
 	    array('itemId' => $itemId, 'key' => $key));
 
@@ -78,7 +78,7 @@ class GalleryItemHelper_advanced {
 	/*
 	 * Remove this item/key from the map, and add the new one.
 	 */
-	require_once(dirname(__FILE__) . '/../GalleryItemPropertiesMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryItemPropertiesMap.class');
 	$ret = GalleryItemPropertiesMap::removeMapEntry(
 	    array('itemId' => $itemId, 'key' => $key));
 	if ($ret->isError()) {
@@ -110,7 +110,7 @@ class GalleryItemHelper_advanced {
 	/*
 	 * Remove this relationship from our groups table.
 	 */
-	require_once(dirname(__FILE__) . '/../GalleryItemPropertiesMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryItemPropertiesMap.class');
 	$ret = GalleryItemPropertiesMap::removeMapEntry(
 	    array('itemId' => $itemId));
 

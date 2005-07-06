@@ -45,7 +45,8 @@ class UserSelfRegistrationController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryPendingUserHelper.class');
+	GalleryCoreApi::relativeRequireOnce(
+	    'modules/register/classes/GalleryPendingUserHelper.class');
 	global $gallery;
 
 	$results = array();

@@ -44,18 +44,20 @@ function GalleryInitFirstPass($params=array()) {
     /* Load all the core Gallery classes */
     $classDir = dirname(__FILE__) . '/modules/core/classes/';
     require_once($classDir . 'GalleryCoreApi.class');
-    GalleryCoreApi::requireOnce($classDir . 'GalleryConstants.class');
-    GalleryCoreApi::requireOnce($classDir . 'GalleryStatus.class');
-    GalleryCoreApi::requireOnce($classDir . 'GalleryUtilities.class');
-    GalleryCoreApi::requireOnce($classDir . 'GalleryCapabilities.class');
-    GalleryCoreApi::requireOnce($classDir . 'GalleryView.class');
-    GalleryCoreApi::requireOnce($classDir . 'GalleryModule.class');
+    GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryConstants.class');
+    GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryStatus.class');
+    GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryUtilities.class');
+    GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryCapabilities.class');
+    GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryView.class');
+    GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryModule.class');
 
     if (strtolower(PHP_OS) == 'winnt') {
-	GalleryCoreApi::requireOnce($classDir . 'GalleryPlatform/WinNtPlatform.class');
+	GalleryCoreApi::relativeRequireOnce(
+	    'modules/core/classes/GalleryPlatform/WinNtPlatform.class');
 	$platform = new WinNtPlatform();
     } else {
-	GalleryCoreApi::requireOnce($classDir . 'GalleryPlatform/UnixPlatform.class');
+	GalleryCoreApi::relativeRequireOnce(
+	    'modules/core/classes/GalleryPlatform/UnixPlatform.class');
 	$platform = new UnixPlatform();
     }
 
@@ -95,7 +97,7 @@ function GalleryInitFirstPass($params=array()) {
 	}
     }
     if (!isset($urlGenerator)) {
-	GalleryCoreApi::requireOnce($classDir . 'GalleryUrlGenerator.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryUrlGenerator.class');
 	$urlGenerator = new GalleryUrlGenerator();
     }
     $urlGenerator->init(
@@ -108,7 +110,7 @@ function GalleryInitFirstPass($params=array()) {
     /* Initialize our session */
     if (!isset($params['noDatabase'])) {
 	if (isset($params['gallerySessionId'])) {
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/modules/core/classes/GallerySession.class');
+	    GalleryCoreApi::relativeRequireOnce('modules/core/classes/GallerySession.class');
 	    GalleryUtilities::putRequestVariable(SESSION_ID_PARAMETER, $params['gallerySessionId']);
 	}
 	$ret = $gallery->initSession();
@@ -119,7 +121,7 @@ function GalleryInitFirstPass($params=array()) {
 
     /* Initialize our translator */
     if (isset($params['activeLanguage'])) {
-	GalleryCoreApi::requireOnce($classDir . 'GalleryTranslator.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTranslator.class');
 	list ($language) = GalleryTranslator::getSupportedLanguageCode($params['activeLanguage']);
 	$gallery->setActiveLanguageCode($language);
     }

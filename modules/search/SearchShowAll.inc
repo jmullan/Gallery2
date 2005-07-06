@@ -29,7 +29,7 @@
 /**
  * Required classes
  */
-GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/SearchUtilities.class');
+GalleryCoreApi::relativeRequireOnce('modules/search/classes/SearchUtilities.class');
 
 /**
  * @package Search
@@ -114,7 +114,8 @@ class SearchShowAllView extends GalleryView {
 		}
 
 		$moduleId = $form['moduleId'];
-		require_once(dirname(__FILE__) . '/classes/GallerySearchInterface_1_0.class');
+		GalleryCoreApi::relativeRequireOnce(
+		    'modules/search/classes/GallerySearchInterface_1_0.class');
 		list ($ret, $searchInstance) =
 		    GalleryCoreApi::newFactoryInstanceById('GallerySearchInterface_1_0',
 							   $form['moduleId']);

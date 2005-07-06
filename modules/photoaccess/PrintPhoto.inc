@@ -43,7 +43,7 @@ class PrintPhotoController extends GalleryController {
 
 	list ($itemId, $returnUrl) = GalleryUtilities::getRequestVariables('itemId', 'returnUrl');
 
-	require_once(dirname(__FILE__) . '/classes/PhotoAccessHelper.class');
+	GalleryCoreApi::relativeRequireOnce('modules/photoaccess/classes/PhotoAccessHelper.class');
 	list ($ret, $cartUrl) = PhotoAccessHelper::printPhotos(array($itemId => 1), $returnUrl);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);

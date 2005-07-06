@@ -303,7 +303,7 @@ class GalleryTemplate {
 	    /*
 	     * Load and configure Smarty.
 	     */
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GallerySmarty.class');
+	    GalleryCoreApi::relativeRequireOnce('modules/core/classes/GallerySmarty.class');
 	    $smarty = new GallerySmarty();
 
 	    /* Compiled templates go here */

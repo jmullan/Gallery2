@@ -165,17 +165,15 @@ class GalleryController {
 
 	$controllerClassName = $class . 'Controller';
 	if (!class_exists($controllerClassName)) {
-	    $fileName = dirname(__FILE__) . '/../../../modules/' . $module . '/' . $class . '.inc';
+	    $moduleBaseDir = dirname(__FILE__) . '/../../../'; 
+	    $fileName = 'modules/' . $module . '/' . $class . '.inc';
 
 	    $platform = $gallery->getPlatform();
-	    if (!$platform->file_exists($fileName)) {
+	    if (!$platform->file_exists($moduleBaseDir . $fileName)) {
 		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	    }
 
-	    $ret = GalleryUtilities::requireOnce($fileName);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
+	    GalleryCoreApi::relativeRequireOnce($fileName);
 
 	    if (!class_exists($controllerClassName)) {
 		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,

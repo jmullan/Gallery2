@@ -264,7 +264,8 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 	if ($event->getEventName() == 'GalleryEntity::delete') {
 	    $entity = $event->getEntity();
 	    if (GalleryUtilities::isA($entity, 'GalleryUser')) {
-		GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/WatermarkHelper.class');
+		GalleryCoreApi::relativeRequireOnce(
+		    'modules/watermark/classes/WatermarkHelper.class');
 		list ($ret, $watermarkIds) =
 		    WatermarkHelper::fetchWatermarkIdsByOwnerId($entity->getId());
 		if ($ret->isError()) {

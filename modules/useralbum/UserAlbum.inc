@@ -79,7 +79,7 @@ class UserAlbumController extends GalleryController {
 	    if ($userId != $activeUserId) {
 		return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
 	    }
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/UserAlbumHelper.class');
+	    GalleryCoreApi::relativeRequireOnce('modules/useralbum/classes/UserAlbumHelper.class');
 
 	    $ret = UserAlbumHelper::createUserAlbum($gallery->getActiveUser());
 	    if ($ret->isError()) {

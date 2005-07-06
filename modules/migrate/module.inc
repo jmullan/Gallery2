@@ -59,7 +59,7 @@ class MigrateModule extends GalleryModule /* and GalleryEventListener */ {
     function handleEvent($event) {
 	$item = $event->getEntity();
 	if (GalleryUtilities::isA($item, 'GalleryItem')) {
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/G1MigrateMap.class');
+	    GalleryCoreApi::relativeRequireOnce('modules/migrate/classes/G1MigrateMap.class');
 	    $ret = G1MigrateMap::removeMapEntry(array('itemId' => $item->_id));
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);

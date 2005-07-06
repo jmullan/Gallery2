@@ -515,7 +515,8 @@ class GalleryPermissionHelper_advanced {
 	$data = array();
 	while ($result = $searchResults->nextResult()) {
 	    $permissions = $storage->convertBitsToInt($result[2]);
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryPermissionHelper_medium.class');
+	    GalleryCoreApi::relativeRequireOnce(
+		'modules/core/classes/helpers/GalleryPermissionHelper_medium.class');
 	    list ($ret, $permissions) =
 		GalleryPermissionHelper_medium::convertBitsToIds($permissions, $compress);
 	    if ($ret->isError()) {
@@ -813,7 +814,8 @@ class GalleryPermissionHelper_advanced {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryPermissionHelper_simple.class');
+	GalleryCoreApi::relativeRequireOnce(
+		'modules/core/classes/helpers/GalleryPermissionHelper_simple.class');
 	list ($ret, $permissionTable) = GalleryPermissionHelper_simple::_fetchAllPermissions();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -876,7 +878,8 @@ class GalleryPermissionHelper_advanced {
      * @static
      */
     function getPermissionIds($flags=0) {
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryPermissionHelper_simple.class');
+	GalleryCoreApi::relativeRequireOnce(
+		'modules/core/classes/helpers/GalleryPermissionHelper_simple.class');
 	list ($ret, $allPermissions) = GalleryPermissionHelper_simple::_fetchAllPermissions();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -908,7 +911,8 @@ class GalleryPermissionHelper_advanced {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryPermissionHelper_medium.class');
+	GalleryCoreApi::relativeRequireOnce(
+		'modules/core/classes/helpers/GalleryPermissionHelper_medium.class');
 	list ($ret, $ids) = GalleryPermissionHelper_medium::convertBitsToIds($bits);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -928,7 +932,8 @@ class GalleryPermissionHelper_advanced {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryPermissionHelper_simple.class');
+	GalleryCoreApi::relativeRequireOnce(
+		'modules/core/classes/helpers/GalleryPermissionHelper_simple.class');
 	list ($ret, $allPermissions) = GalleryPermissionHelper_simple::_fetchAllPermissions();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -1026,7 +1031,7 @@ class GalleryPermissionHelper_advanced {
 	$permissions[$data['permission']] = $data;
 	GalleryDataCache::put($cacheKey, $permissions);
 
-	require_once(dirname(__FILE__) . '/../GalleryPermissionSetMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPermissionSetMap.class');
 	$ret = GalleryPermissionSetMap::addMapEntry($data);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

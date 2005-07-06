@@ -273,14 +273,6 @@ class UtilitiesTest extends GalleryTestCase {
 	    GalleryUtilities::convertPathToUrl($file), 'alias');
     }
 
-    function testRequireOnce() {
-	$ret = GalleryUtilities::requireOnce('bogus path');
-	$this->assert($ret->getErrorCode() & ERROR_BAD_PATH);
-
-	$ret = GalleryUtilities::requireOnce(__FILE__);
-	$this->assert($ret->isSuccess());
-    }
-
     function testShrinkDimensionsToFit() {
 	$results = GalleryUtilities::shrinkDimensionsToFit(1024, 768, 341);
 	$this->assertEquals(array(341, 256), $results);

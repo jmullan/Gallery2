@@ -67,18 +67,19 @@ class GalleryPluginHelper_simple {
 	    }
 
 	    if (!class_exists($pluginClass)) {
-		GalleryCoreApi::requireOnce(
-		    sprintf('%s/../%s.class', dirname(__FILE__), $pluginSuperClass));
-		$pluginFile = sprintf('%s/../../../../%ss/%s/%s.inc',
-				      dirname(__FILE__), $pluginType, $pluginId, $pluginType);
-		$ret = GalleryUtilities::requireOnce($pluginFile);
-
-		if ($ret->isError()) {
+		$pluginBaseDir = dirname(__FILE__) . '/../../../../';
+		$pluginFile = sprintf('%ss/%s/%s.inc', $pluginType, $pluginId, $pluginType);
+				      
+		GalleryCoreApi::relativeRequireOnce(
+		    sprintf('modules/core/classes/%s.class', $pluginSuperClass));
+		
+		$platform = $gallery->getPlatform();
+		if (!$platform->file_exists($pluginBaseDir . $pluginFile)) {
 		    /*
 		     * If we have a bad path, it may be because our cached plugin list is out of
 		     * date -- in which case we should flush the cache and try again.
 		     */
-		    if ($depth == 0 && $ret->getErrorCode() & ERROR_BAD_PATH) {
+		    if ($depth == 0) {
 			GalleryDataCache::remove(
 			    "GalleryPluginHelper::fetchPluginStatus($pluginType)");
 			GalleryDataCache::removeFromDisk(
@@ -92,10 +93,13 @@ class GalleryPluginHelper_simple {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 		    } else {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+						      $pluginBaseDir . $pluginFile), null);
 		    }
 		}
 
+		GalleryCoreApi::relativeRequireOnce($pluginFile);
+		    
 		if (!class_exists($pluginClass)) {
 		    return array(GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
 						      "Class $pluginClass does not exist"), null);

@@ -171,7 +171,7 @@ class GalleryItemAttributesHelper_advanced {
      * @static
      */
     function setViewCount($itemId, $count) {
-	require_once(dirname(__FILE__) . '/../GalleryItemAttributesMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryItemAttributesMap.class');
 	$ret = GalleryItemAttributesMap::updateMapEntry(array('itemId' => $itemId),
 							array('viewCount' => $count));
 	if ($ret->isError()) {
@@ -196,7 +196,7 @@ class GalleryItemAttributesHelper_advanced {
 	    $parentSequence = join('/', $parentSequence) . '/';
 	}
 
-	require_once(dirname(__FILE__) . '/../GalleryItemAttributesMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryItemAttributesMap.class');
 	$ret = GalleryItemAttributesMap::updateMapEntry(array('itemId' => $itemId),
 							array('parentSequence' => $parentSequence));
 	if ($ret->isError()) {
@@ -219,7 +219,7 @@ class GalleryItemAttributesHelper_advanced {
 	} else {
 	    $parentSequence = join('/', $parentSequence) . '/';
 	}
-	require_once(dirname(__FILE__) . '/../GalleryItemAttributesMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryItemAttributesMap.class');
 	$ret = GalleryItemAttributesMap::addMapEntry(array('itemId' => $itemId,
 							   'viewCount' => 0,
 							   'orderWeight' => 0,
@@ -238,7 +238,7 @@ class GalleryItemAttributesHelper_advanced {
      * @static
      */
     function removeItemAttributes($itemId) {
-	require_once(dirname(__FILE__) . '/../GalleryItemAttributesMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryItemAttributesMap.class');
 	$ret = GalleryItemAttributesMap::removeMapEntry(array('itemId' => $itemId));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -255,7 +255,7 @@ class GalleryItemAttributesHelper_advanced {
      * @static
      */
     function setOrderWeight($itemId, $orderWeight) {
-	require_once(dirname(__FILE__) . '/../GalleryItemAttributesMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryItemAttributesMap.class');
 	$ret = GalleryItemAttributesMap::updateMapEntry(array('itemId' => $itemId),
 							array('orderWeight' => $orderWeight));
 	if ($ret->isError()) {
@@ -273,7 +273,8 @@ class GalleryItemAttributesHelper_advanced {
      * @static
      */
     function fetchViewCount($itemId) {
-	require_once(dirname(__FILE__) . '/GalleryItemAttributesHelper_medium.class');
+	GalleryCoreApi::relativeRequireOnce(
+	    'modules/core/classes/helpers/GalleryItemAttributesHelper_medium.class');
 	list ($ret, $viewCounts) =
 	    GalleryItemAttributesHelper_medium::fetchViewCounts(array($itemId));
 	if ($ret->isError()) {
@@ -292,7 +293,8 @@ class GalleryItemAttributesHelper_advanced {
      * @static
      */
     function updateParentSequence($oldParentSequence, $newParentSequence) {
-	require_once(dirname(__FILE__) . '/../GalleryStorage/DatabaseSqlFragment.class');
+	GalleryCoreApi::relativeRequireOnce(
+	    'modules/core/classes/GalleryStorage/DatabaseSqlFragment.class');
 	global $gallery;
 
 	$oldParentSequence = join('/', $oldParentSequence) . '/';
@@ -309,7 +311,7 @@ class GalleryItemAttributesHelper_advanced {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	require_once(dirname(__FILE__) . '/../GalleryItemAttributesMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryItemAttributesMap.class');
 	$ret = GalleryItemAttributesMap::updateMapEntry(
 	     array('parentSequence' =>
 			new DatabaseSqlFragment('LIKE ?', $oldParentSequence . '%')),

@@ -28,7 +28,7 @@
 /**
  * Required class
  */
-GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/FfmpegToolkitHelper.class');
+GalleryCoreApi::relativeRequireOnce('modules/ffmpeg/classes/FfmpegToolkitHelper.class');
 
 /**
  * @package Ffmpeg

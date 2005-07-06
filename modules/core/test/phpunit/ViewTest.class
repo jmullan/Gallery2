@@ -46,7 +46,7 @@ class ViewTest extends GalleryTestCase {
     }
 
     function testLoadViewSuccess() {
-	require_once(dirname(__FILE__) . '/../../classes/GalleryView.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryView.class');
 	list ($ret, $view) = GalleryView::loadView('core.ShowItem');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

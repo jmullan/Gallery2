@@ -516,7 +516,7 @@ class CoreModule extends GalleryModule {
      * make sense to load it every single time.
      */
     function upgrade($currentVersion, $statusMonitor) {
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/CoreModuleExtras.inc');
+	GalleryCoreApi::relativeRequireOnce('modules/core/CoreModuleExtras.inc');
 	$ret = CoreModuleExtras::upgrade($this, $currentVersion, $statusMonitor);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -573,7 +573,7 @@ class CoreModule extends GalleryModule {
      * @see GalleryModule::performFactoryRegistrations()
      */
     function performFactoryRegistrations() {
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/CoreModuleExtras.inc');
+	GalleryCoreApi::relativeRequireOnce('modules/core/CoreModuleExtras.inc');
 	$ret = CoreModuleExtras::performFactoryRegistrations($this);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

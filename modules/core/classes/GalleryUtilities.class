@@ -483,27 +483,6 @@ class GalleryUtilities {
     }
 
     /**
-     * Load a file in a security conscious fashion
-     *
-     * @param string a local filename
-     * @return object GalleryStatus a status code
-     * @static
-     */
-    function requireOnce($filename) {
-	global $gallery;
-	$platform = $gallery->getPlatform();
-
-	if (!$platform->file_exists($filename)) {
-	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__,
-					sprintf("File %s does not exist", $filename));
-	}
-
-	require_once($filename);
-
-	return GalleryStatus::success();
-    }
-
-    /**
      * Scale the given width/height to a new target size, maintaining
      * aspect ratio, but only if the dimensions are already larger than the
      * target (in other words, don't increase the dimensions)

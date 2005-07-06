@@ -30,7 +30,7 @@
 /**
  * Required classes
  */
-GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/CartHelper.class');
+GalleryCoreApi::relativeRequireOnce('modules/cart/classes/CartHelper.class');
 
 /**
  * This controller will handle the addition of a comment to an item

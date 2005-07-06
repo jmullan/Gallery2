@@ -29,8 +29,8 @@
 /**
  * Required classes
  */
-GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/Gallery1DataParser.class');
-GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/G1MigrateHelper.class');
+GalleryCoreApi::relativeRequireOnce('modules/migrate/classes/Gallery1DataParser.class');
+GalleryCoreApi::relativeRequireOnce('modules/migrate/classes/G1MigrateHelper.class');
 
 /**
  * @version $Revision$ $Date$
@@ -89,7 +89,7 @@ class SelectGalleryController extends GalleryController {
 		$redirect['albumsPath'] = $form['albumsPath'];
 	    }
 	} else if (isset($form['action']['deleteMap'])) {
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/G1MigrateMap.class');
+	    GalleryCoreApi::relativeRequireOnce('modules/migrate/classes/G1MigrateMap.class');
 	    $ret = G1MigrateMap::removeAllMapEntries();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);

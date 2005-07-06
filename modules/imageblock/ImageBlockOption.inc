@@ -38,7 +38,7 @@ class ImageBlockOption extends ItemEditOption {
 	$error = array();
 	$warning = array();
 
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ImageBlockHelper.class');
+	GalleryCoreApi::relativeRequireOnce('modules/imageblock/classes/ImageBlockHelper.class');
 
 	if (empty($form['ImageBlockOption']['setDisabled']) ||
 		$form['ImageBlockOption']['setDisabled'] == 'off') {
@@ -76,7 +76,7 @@ class ImageBlockOption extends ItemEditOption {
      * @see ItemEditOption::loadTemplate
      */
     function loadTemplate(&$template, &$form, $item, $thumbnail) {
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ImageBlockHelper.class');
+	GalleryCoreApi::relativeRequireOnce('modules/imageblock/classes/ImageBlockHelper.class');
 	list($ret, $form['ImageBlockOption']['setDisabled']) =
 	    ImageBlockHelper::getDisabledFlag($item->getId());
 	if ($ret->isError()) {

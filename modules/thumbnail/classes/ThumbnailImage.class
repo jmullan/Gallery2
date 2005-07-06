@@ -166,7 +166,7 @@ class ThumbnailImage_core extends GalleryChildEntity {
      * @return object GalleryStatus a status code
      */
     function create($inputFileName, $mimeType, $targetName=null) {
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/ThumbnailHelper.class');
+	GalleryCoreApi::relativeRequireOnce('modules/thumbnail/classes/ThumbnailHelper.class');
 	global $gallery;
 	$platform = $gallery->getPlatform();
 

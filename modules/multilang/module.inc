@@ -155,7 +155,7 @@ class MultiLangModule extends GalleryModule /* and GalleryEventListener */ {
 	 */
 	list ($view, $controller) = GalleryUtilities::getRequestVariables('view', 'controller');
 	if ($view != 'core.ItemAdmin' && empty($controller) && !$duringUpgrade) {
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/MultiLangHelper.class');
+	    GalleryCoreApi::relativeRequireOnce('modules/multilang/classes/MultiLangHelper.class');
 	    $ret = MultiLangHelper::onLoad($entity);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -171,7 +171,7 @@ class MultiLangModule extends GalleryModule /* and GalleryEventListener */ {
     function handleEvent($event) {
 	$entity = $event->getEntity();
 	if (GalleryUtilities::isA($entity, 'GalleryItem')) {
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/MultiLangItemMap.class');
+	    GalleryCoreApi::relativeRequireOnce('modules/multilang/classes/MultiLangItemMap.class');
 	    $ret = MultiLangItemMap::removeMapEntry(array('itemId' => $entity->getId()));
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);

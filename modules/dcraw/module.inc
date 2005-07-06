@@ -220,7 +220,7 @@ class DcrawModule extends GalleryModule {
 	}
 
 	/* Load any classes we require */
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/DcrawToolkitHelper.class');
+	GalleryCoreApi::relativeRequireOnce('modules/dcraw/classes/DcrawToolkitHelper.class');
 
 	/* Now try each path in turn to see which ones work */
 	foreach ($paths as $path) {

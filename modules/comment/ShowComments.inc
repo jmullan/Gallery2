@@ -45,7 +45,7 @@ class ShowCommentsView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryCommentHelper.class');
+	GalleryCoreApi::relativeRequireOnce('modules/comment/classes/GalleryCommentHelper.class');
 	list ($ret, $comments) =
 	    GalleryCommentHelper::fetchComments($item->getId(), null, ORDER_ASCENDING);
 	if ($ret->isError()) {

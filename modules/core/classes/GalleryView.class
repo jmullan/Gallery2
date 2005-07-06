@@ -148,24 +148,22 @@ class GalleryView {
 
 	$viewClassName = $class . 'View';
 	if (!class_exists($viewClassName)) {
-	    $moduleDir = dirname(__FILE__) . '/../../../modules/' . $module . '/';
+	    $moduleBaseDir = dirname(__FILE__) . '/../../../';
+	    $moduleDir = 'modules/' . $module . '/';
 	    $fileName = $moduleDir . $class . '.inc';
 
 	    $platform = $gallery->getPlatform();
-	    if (!$platform->file_exists($fileName)) {
+	    if (!$platform->file_exists($moduleBaseDir . $fileName)) {
 		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-						  $fileName), null);
+						  $moduleBaseDir . $fileName), null);
 	    }
 
 	    /*
 	     * We bundle view and controller classes together, so we need the controller
 	     * superclass to load the view
 	     */
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryController.class');
-	    $ret = GalleryUtilities::requireOnce($fileName);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
+	    GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryController.class');
+	    GalleryCoreApi::relativeRequireOnce($fileName);
 
 	    if (!class_exists($viewClassName)) {
 		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,

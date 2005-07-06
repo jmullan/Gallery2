@@ -31,7 +31,7 @@
 /**
  * Load the parent class
  */
-require_once(dirname(__FILE__) . '/ExifInterface_1_0.class');
+GalleryCoreApi::relativeRequireOnce('modules/exif/classes/ExifInterface_1_0.class');
 
 /**
  * Implementation of the ExifInterface for pulling EXIF data from a set of target items
@@ -73,7 +73,7 @@ class ExifExtractor extends ExifInterface_1_0 {
 	    }
 	    $data[$itemId] = array();
 	    $rawExifData = read_exif_data_raw($path, false);
-	    require_once(dirname(__FILE__) . '/ExifHelper.class');
+	    GalleryCoreApi::relativeRequireOnce('modules/exif/classes/ExifHelper.class');
 	    list ($ret, $iptcObj) = ExifHelper::getIptcObject($path);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);

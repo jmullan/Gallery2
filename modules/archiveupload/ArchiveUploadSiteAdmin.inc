@@ -44,7 +44,8 @@ class ArchiveUploadSiteAdminController extends GalleryController {
 
 	$status = $error = array();
 	if (isset($form['action']['save']) || isset($form['action']['test'])) {
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ArchiveUploadHelper.class');
+	    GalleryCoreApi::relativeRequireOnce(
+		'modules/archiveupload/classes/ArchiveUploadHelper.class');
 
 	    if (empty($form['unzipPath'])) {
 		$error[] = 'form[error][unzipPath][missing]';

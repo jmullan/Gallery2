@@ -76,7 +76,7 @@ class MultiLangHelper {
      * @static
      */
     function setItemData($item, $language, $title=null, $summary=null, $description=null) {
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/MultiLangItemMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/multilang/classes/MultiLangItemMap.class');
 
 	$itemId = $item->getId();
 	list ($ret, $data) = MultiLangHelper::getItemData($itemId);

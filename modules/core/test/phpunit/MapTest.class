@@ -41,7 +41,8 @@ class MapTest extends GalleryTestCase {
     function testAddNull() {
 	// Ensure addMapEntry() method will accept null input values..
 
-	require_once(dirname(__FILE__) . '/../../classes/GalleryToolkitOperationMap.class');
+	GalleryCoreApi::relativeRequireOnce(
+	    'modules/core/classes/GalleryToolkitOperationMap.class');
 	$name = 'test-' . rand();
 
 	$ret = GalleryToolkitOperationMap::addMapEntry(
@@ -68,7 +69,8 @@ class MapTest extends GalleryTestCase {
     function testUpdateNull() {
 	// Ensure updateMapEntry() method will accept null input values..
 
-	require_once(dirname(__FILE__) . '/../../classes/GalleryToolkitOperationMap.class');
+	GalleryCoreApi::relativeRequireOnce(
+	    'modules/core/classes/GalleryToolkitOperationMap.class');
 	$name = 'test-' . rand();
 
 	$ret = GalleryToolkitOperationMap::addMapEntry(

@@ -239,7 +239,7 @@ class ThumbnailModule extends GalleryModule {
      * @see GalleryModule::activate()
      */
     function activate() {
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ThumbnailHelper.class');
+	GalleryCoreApi::relativeRequireOnce('modules/thumbnail/classes/ThumbnailHelper.class');
 	global $gallery;
 
 	/* Register toolkit operation for any mime type settings already in the database */
@@ -262,7 +262,7 @@ class ThumbnailModule extends GalleryModule {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$itemId = array();
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ThumbnailImage.class');
+	GalleryCoreApi::relativeRequireOnce('modules/thumbnail/classes/ThumbnailImage.class');
 	foreach (array(
 	    'G2audio.jpg' => array('audio/mpeg', 'audio/x-wav', 'audio/x-aiff',
 				   'audio/midi', 'audio/basic', 'audio/x-ms-wma'),

@@ -48,7 +48,7 @@ class ImageBlockModule extends GalleryModule {
      * @see GalleryModule::registerEventListeners()
      */
     function registerEventListeners() {
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ImageBlockHelper.class');
+	GalleryCoreApi::relativeRequireOnce('modules/imageblock/classes/ImageBlockHelper.class');
 	$listener = new ImageBlockHelper();
 	GalleryCoreApi::registerEventListener('Gallery::ViewableTreeChange', $listener);
 	GalleryCoreApi::registerEventListener('GalleryEntity::save', $listener, true);
@@ -119,7 +119,7 @@ class ImageBlockModule extends GalleryModule {
      * @see GalleryModule::loadSystemContent
      */
     function loadSystemContent(&$template) {
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ImageBlockHelper.class');
+	GalleryCoreApi::relativeRequireOnce('modules/imageblock/classes/ImageBlockHelper.class');
 	list ($ret, $block) = ImageBlockHelper::loadImageBlocks($template);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);

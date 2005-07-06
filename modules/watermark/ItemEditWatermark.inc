@@ -63,7 +63,8 @@ class ItemEditWatermark extends ItemEditPlugin {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 
-		GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/WatermarkHelper.class');
+		GalleryCoreApi::relativeRequireOnce(
+		    'modules/watermark/classes/WatermarkHelper.class');
 		$ret = WatermarkHelper::watermarkItem(
 		    $watermark, $item, $form['xPercent'], $form['yPercent'],
 		    array(DERIVATIVE_TYPE_IMAGE_PREFERRED => isset(

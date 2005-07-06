@@ -30,7 +30,7 @@
  */
 define('CUSTOM_FIELD_SESSION_KEY', 'customfield.adminMode.itemId');
 
-require_once(dirname(__FILE__) . '/CustomFieldInterface_1_0.class');
+GalleryCoreApi::relativeRequireOnce('modules/customfield/classes/CustomFieldInterface_1_0.class');
 
 /**
  * A helper class for the Custom Field module.
@@ -162,7 +162,7 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
      * @static
      */
     function deleteField($field, $containerId=0, $exceptType='') {
-	require_once(dirname(__FILE__) . '/CustomFieldMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/customfield/classes/CustomFieldMap.class');
 	switch ($exceptType) {
 
 	case 'album':
@@ -259,7 +259,7 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	$isContainer = !empty($param);
-	require_once(dirname(__FILE__) . '/CustomFieldMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/customfield/classes/CustomFieldMap.class');
 	$ret = CustomFieldMap::removeMapEntry(array('itemId' => $item->getId()));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -284,7 +284,7 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
      * @see GalleryEventListener::handleEvent
      */
     function handleEvent($event) {
-	require_once(dirname(__FILE__) . '/CustomFieldMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/customfield/classes/CustomFieldMap.class');
 	if ($event->getEventName() == 'GalleryEntity::delete') {
 	    $item = $event->getEntity();
 	    $ret = CustomFieldMap::removeMapEntry(array('itemId' => $item->getId()));

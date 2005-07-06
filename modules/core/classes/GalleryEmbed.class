@@ -229,9 +229,9 @@ class GalleryEmbed {
      * @static
      */
     function logout($params=array()) {
-	require_once(dirname(__FILE__) . '/GallerySession.class');
-	require_once(dirname(__FILE__) . '/GalleryUtilities.class');
-	require_once(dirname(__FILE__) . '/GalleryCoreApi.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GallerySession.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryUtilities.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryCoreApi.class');
 	$hasSession = GalleryUtilities::getCookieVar(SESSION_ID_PARAMETER);
 	if (empty($hasSession)) {
 	    $hasSession = GalleryUtilities::hasRequestVariable(SESSION_ID_PARAMETER);
@@ -300,7 +300,7 @@ class GalleryEmbed {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/ExternalIdMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/ExternalIdMap.class');
 	$ret = ExternalIdMap::addMapEntry(array('externalId' => $extUserId,
 			      'entityType' => 'GalleryUser', 'entityId' => $user->getId()));
 	if ($ret->isError()) {
@@ -396,7 +396,7 @@ class GalleryEmbed {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/ExternalIdMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/ExternalIdMap.class');
 	$ret = ExternalIdMap::removeMapEntry(
 			      array('externalId' => $extUserId, 'entityType' => 'GalleryUser'));
 	if ($ret->isError()) {
@@ -433,7 +433,7 @@ class GalleryEmbed {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/ExternalIdMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/ExternalIdMap.class');
 	$ret = ExternalIdMap::addMapEntry(array('externalId' => $extGroupId,
 			      'entityType' => 'GalleryGroup', 'entityId' => $group->getId()));
 	if ($ret->isError()) {
@@ -458,7 +458,7 @@ class GalleryEmbed {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/ExternalIdMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/ExternalIdMap.class');
 	$ret = ExternalIdMap::removeMapEntry(
 			      array('externalId' => $extGroupId, 'entityType' => 'GalleryGroup'));
 	if ($ret->isError()) {
@@ -568,8 +568,7 @@ class GalleryEmbed {
      * @static
      */
     function searchScan($searchString, $resultsPerModule=3) {
-	GalleryCoreApi::requireOnce(
-	    dirname(__FILE__) . '/../../search/classes/SearchUtilities.class');
+	GalleryCoreApi::relativeRequireOnce('modules/search/classes/SearchUtilities.class');
 	$searchInstances = $searchResults = array();
 	list ($ret, $ids) =
 	    GalleryCoreApi::getAllFactoryImplementationIds('GallerySearchInterface_1_0');
@@ -620,8 +619,7 @@ class GalleryEmbed {
      * @static
      */
     function search($searchString, $moduleId, $offset, $count) {
-	GalleryCoreApi::requireOnce(
-	    dirname(__FILE__) . '/../../search/classes/SearchUtilities.class');
+	GalleryCoreApi::relativeRequireOnce('modules/search/classes/SearchUtilities.class');
 	list ($ret, $searchInstance) =
 	    GalleryCoreApi::newFactoryInstanceById('GallerySearchInterface_1_0', $moduleId);
 	if ($ret->isError()) {
@@ -676,7 +674,7 @@ class GalleryEmbed {
 	    }
 
 	    /* Load our templating engine */
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryTemplate.class');
+	    GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTemplate.class');
 	    $template = new GalleryTemplate(dirname(__FILE__) . '/../../..');
 	    $template->setVariable('l10Domain', 'module_' . $moduleId);
 
@@ -767,7 +765,7 @@ class GalleryEmbed {
 	if (isset($moduleStatus[$moduleId]) && !empty($moduleStatus[$moduleId]['active'])
 		&& $moduleStatus[$moduleId]['active']) {
 	    /* Load the G2 templating engine */
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryTemplate.class');
+	    GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTemplate.class');
 	    $template = new GalleryTemplate(dirname(__FILE__) . '/../../..');
 	    $template->setVariable('l10Domain', 'module_' . $moduleId);
 
@@ -813,7 +811,7 @@ class GalleryEmbed {
      * @static
      */
     function addExternalIdMapEntry($externalId, $entityId, $entityType) {
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/ExternalIdMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/ExternalIdMap.class');
 	$ret = ExternalIdMap::addMapEntry(array('externalId' => $externalId,
 						'entityType' => $entityType,
 						'entityId' => $entityId));

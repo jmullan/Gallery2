@@ -26,7 +26,7 @@
  * @author Jesse Mullan <jmullan@visi.com>
  */
 
-GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/G1MigrateMap.class');
+GalleryCoreApi::relativeRequireOnce('modules/migrate/classes/G1MigrateMap.class');
 
 /**
  * @package Migrate
@@ -189,7 +189,7 @@ class ConfirmImportController extends GalleryController {
 	    $itemsCreated = array();
 
 	    /* Get list of userids in advance */
-	    require_once(dirname(__FILE__) . '/classes/Gallery1DataParser.class');
+	    GalleryCoreApi::relativeRequireOnce('modules/migrate/classes/Gallery1DataParser.class');
 	    list($ret, $albumList) = Gallery1DataParser::getAlbumList($albumsPath);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);

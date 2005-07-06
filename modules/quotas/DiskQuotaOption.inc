@@ -46,7 +46,7 @@ class DiskQuotaOption extends ItemAddOption {
      * @see ItemAddOption::handleRequestAfterAdd
      */
     function handleRequestAfterAdd($form, $items) {
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryQuotasHelper.class');
+	GalleryCoreApi::relativeRequireOnce('modules/quotas/classes/GalleryQuotasHelper.class');
 
 	global $gallery;
 	$warnings = array();

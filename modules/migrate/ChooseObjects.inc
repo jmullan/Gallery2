@@ -29,7 +29,7 @@
 /**
  * Required classes
  */
-GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/Gallery1DataParser.class');
+GalleryCoreApi::relativeRequireOnce('modules/migrate/classes/Gallery1DataParser.class');
 
 /**
  * @package Migrate

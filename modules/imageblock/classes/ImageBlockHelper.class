@@ -496,7 +496,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	     * Event sends array('userId'=>id or array of ids or null,
 	     *                   'itemId'=>id or array of ids or null)
 	     */
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/ImageBlockCacheMap.class');
+	    GalleryCoreApi::relativeRequireOnce(
+		'modules/imageblock/classes/ImageBlockCacheMap.class');
 	    $param = $event->getEntity();
 	    if (!empty($param['userId'])) {
 		$ret = ImageBlockCacheMap::removeMapEntry(array('userId' => $param['userId']));
@@ -522,7 +523,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 		break;
 	    }
 
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/ImageBlockDisabledMap.class');
+	    GalleryCoreApi::relativeRequireOnce(
+		'modules/imageblock/classes/ImageBlockDisabledMap.class');
 	    if (ImageBlockHelper::getDisabledFlag($entity->getId())) {
 		$ret = ImageBlockDisabledMap::removeMapEntry(array('itemId' => $entity->getId()));
 		if ($ret->isError()) {
@@ -550,7 +552,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 		break;
 	    }
 
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/ImageBlockDisabledMap.class');
+	    GalleryCoreApi::relativeRequireOnce(
+		'modules/imageblock/classes/ImageBlockDisabledMap.class');
 	    $parentId = $entity->getParentId();
 
 	    list ($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($parentId);
@@ -585,7 +588,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
      */
     function setDisabledFlag($parentAlbum, $recursive, $disabled) {
 	global $gallery;
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/ImageBlockDisabledMap.class');
+	GalleryCoreApi::relativeRequireOnce(
+	    'modules/imageblock/classes/ImageBlockDisabledMap.class');
 
 	$parentAlbumId = $parentAlbum->getId();
 	$childIds = array();
@@ -663,7 +667,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
     function getDisabledFlag($itemId) {
 	global $gallery;
 
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/ImageBlockDisabledMap.class');
+	GalleryCoreApi::relativeRequireOnce(
+	    'modules/imageblock/classes/ImageBlockDisabledMap.class');
 	$query = '
 		SELECT
 		    [ImageBlockDisabledMap::itemId]

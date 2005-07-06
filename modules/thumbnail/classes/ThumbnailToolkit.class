@@ -28,7 +28,7 @@
 /**
  * Load required classes
  */
-require_once(dirname(__FILE__) . '/../../core/classes/GalleryToolkit.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryToolkit.class');
 
 /**
  * A version of GalleryToolkit to supply default thumbnail images for
@@ -51,7 +51,7 @@ class ThumbnailToolkit extends GalleryToolkit {
      */
     function performOperation($mimeType, $operationName, $sourceFilename,
 			      $destFilename, $parameters, $context=array()) {
-	require_once(dirname(__FILE__) . '/ThumbnailHelper.class');
+	GalleryCoreApi::relativeRequireOnce('modules/thumbnail/classes/ThumbnailHelper.class');
 	global $gallery;
 	$platform = $gallery->getPlatform();
 

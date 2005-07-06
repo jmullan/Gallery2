@@ -45,7 +45,7 @@ class ControllerTest extends GalleryTestCase {
     }
 
     function testLoadControllerSuccess() {
-	require_once(dirname(__FILE__) . '/../../classes/GalleryController.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryController.class');
 	list ($ret, $controller) = GalleryController::loadController('core.ItemEdit');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

@@ -45,7 +45,7 @@ class MultiLangItemEdit extends ItemEditPlugin {
 	$error = array();
 
 	if (isset($form['action']['save'])) {
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/MultiLangHelper.class');
+	    GalleryCoreApi::relativeRequireOnce('modules/multilang/classes/MultiLangHelper.class');
 
 	    list ($ret, $rootAlbumId) = GalleryCoreApi::getPluginParameter(
 		'module', 'core', 'id.rootAlbum');
@@ -83,7 +83,7 @@ class MultiLangItemEdit extends ItemEditPlugin {
 	global $gallery;
 	$session =& $gallery->getSession();
 	$translator =& $gallery->getTranslator();
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/MultiLangHelper.class');
+	GalleryCoreApi::relativeRequireOnce('modules/multilang/classes/MultiLangHelper.class');
 
 	if ($form['formName'] != 'MultiLangItemEdit') {
 	    $form['formName'] = 'MultiLangItemEdit';

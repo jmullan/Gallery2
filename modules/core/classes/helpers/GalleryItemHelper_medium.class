@@ -851,7 +851,8 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
      * @return object GalleryStatus a status code
      */
     function invalidateDescendentCountCaches($userId, $itemId) {
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/../GalleryDescendentCountsMap.class');
+	GalleryCoreApi::relativeRequireOnce(
+		'modules/core/classes/GalleryDescendentCountsMap.class');
 
 	if (!empty($userId) && empty($itemId)) {
 	    $ret = GalleryDescendentCountsMap::removeMapEntry(array('userId' => $userId));

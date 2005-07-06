@@ -29,7 +29,7 @@
  * Load required classes
  */
 GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryToolkit.class');
-GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GdToolkitHelper.class');
+GalleryCoreApi::relativeRequireOnce('modules/gd/classes/GdToolkitHelper.class');
 
 /**
  * A Gd version of GalleryToolkit
@@ -69,7 +69,7 @@ class GdToolkit extends GalleryToolkit {
      */
     function &_getGdFunctionality() {
 	if (!isset($this->_gdFunctionality)) {
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GdFunctionality.class');
+	    GalleryCoreApi::relativeRequireOnce('modules/gd/classes/GdFunctionality.class');
 	    $gd =& new GdFunctionality();
 	    $this->setGdFunctionality($gd);
 	}

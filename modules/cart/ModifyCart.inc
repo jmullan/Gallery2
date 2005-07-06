@@ -30,7 +30,7 @@
 /**
  * Required classes
  */
-GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/CartHelper.class');
+GalleryCoreApi::relativeRequireOnce('modules/cart/classes/CartHelper.class');
 
 /**
  * This controller will handle the changing of item quantities in a cart
@@ -93,7 +93,8 @@ class ModifyCartController extends GalleryController {
 
 	    default:
 		/* Expect it to be one of our plugins */
-		require_once(dirname(__FILE__) . '/classes/CartPluginInterface_1_0.class');
+		GalleryCoreApi::relativeRequireOnce(
+		    'modules/cart/classes/CartPluginInterface_1_0.class');
 		list ($ret, $cartPlugin) =
 		    GalleryCoreApi::newFactoryInstanceById('CartPluginInterface_1_0',
 							   $form['pluginId']);

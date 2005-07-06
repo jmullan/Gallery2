@@ -28,7 +28,7 @@
 /**
  * Load the parent class
  */
-require_once(dirname(__FILE__) . '/../../core/classes/GalleryDerivativeImage.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryDerivativeImage.class');
 
 /**
  * An extension of GalleryDerivativeImage to render in panorama mode
@@ -85,5 +85,6 @@ class PanoramaDerivativeImage_core extends GalleryDerivativeImage {
     }
 }
 
-GalleryCoreApi::requireOnce(dirname(__FILE__) . '/interfaces/PanoramaDerivativeImage.inc');
+GalleryCoreApi::relativeRequireOnce(
+    'modules/panorama/classes/interfaces/PanoramaDerivativeImage.inc');
 ?>

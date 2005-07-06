@@ -29,7 +29,7 @@
 /**
  * Required classes
  */
-GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/CartHelper.class');
+GalleryCoreApi::relativeRequireOnce('modules/cart/classes/CartHelper.class');
 
 /**
  * This view will allow users to view their individual carts
@@ -82,7 +82,7 @@ class ViewCartView extends GalleryView {
 	}
 
 	/* Find all our cart plugins */
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/CartPluginInterface_1_0.class');
+	GalleryCoreApi::relativeRequireOnce('modules/cart/classes/CartPluginInterface_1_0.class');
 	list ($ret, $ids) =
 	    GalleryCoreApi::getAllFactoryImplementationIds('CartPluginInterface_1_0');
 	if ($ret->isError()) {

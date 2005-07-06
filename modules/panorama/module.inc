@@ -121,7 +121,7 @@ class PanoramaModule extends GalleryModule {
      * @see GalleryModule::deactivate()
      */
     function deactivate() {
-	require_once(dirname(__FILE__) . '/classes/PanoramaHelper.class');
+	GalleryCoreApi::relativeRequireOnce('modules/panorama/classes/PanoramaHelper.class');
 	list ($ret, $count) = PanoramaHelper::fetchItemCount();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);

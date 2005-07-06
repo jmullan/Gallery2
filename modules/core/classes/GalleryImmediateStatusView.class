@@ -71,7 +71,7 @@ class GalleryImmediateStatusView extends GalleryView {
     function doLoadImmediateTemplate() {
 	global $gallery;
 
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryTemplate.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTemplate.class');
 
 	/*
 	 * This normally expects to be called in the gallery root so that it

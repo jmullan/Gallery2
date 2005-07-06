@@ -48,8 +48,8 @@ class AdminToolkitPriorityController extends GalleryController {
 
 	$status = array();
 	if (isset($form['action']['save'])) {
-	    GalleryCoreApi::requireOnce(
-		dirname(__FILE__) . '/classes/GalleryToolkitOperationMimeTypeMap.class');
+	    GalleryCoreApi::relativeRequireOnce(
+		'modules/core/classes/GalleryToolkitOperationMimeTypeMap.class');
 	    list ($ret, $list) = GalleryCoreApi::getRedundantToolkitPriorities();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);

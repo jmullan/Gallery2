@@ -50,7 +50,7 @@ class RewriteModule extends GalleryModule {
      * @see GalleryModule::upgrade
      */
     function upgrade($currentVersion) {
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/RewriteModuleExtras.inc');
+	GalleryCoreApi::relativeRequireOnce('modules/rewrite/RewriteModuleExtras.inc');
 	$ret = RewriteModuleExtras::upgrade($this, $currentVersion);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

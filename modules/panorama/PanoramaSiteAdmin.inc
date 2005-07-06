@@ -63,7 +63,7 @@ class PanoramaSiteAdminController extends GalleryController {
 		$status['saved'] = 1;
 	    }
 	} else if(isset($form['action']['reset'])) {
-	    require_once(dirname(__FILE__) . '/classes/PanoramaHelper.class');
+	    GalleryCoreApi::relativeRequireOnce('modules/panorama/classes/PanoramaHelper.class');
 	    $ret = PanoramaHelper::resetPanoramaItems();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -92,7 +92,7 @@ class PanoramaSiteAdminView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	require_once(dirname(__FILE__) . '/classes/PanoramaHelper.class');
+	GalleryCoreApi::relativeRequireOnce('modules/panorama/classes/PanoramaHelper.class');
 	foreach (array('itemType', 'itemLink') as $key) {
 	    if (!isset($form[$key])) {
 		$form[$key] = false;

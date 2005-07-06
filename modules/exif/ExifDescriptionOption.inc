@@ -54,8 +54,8 @@ class ExifDescriptionOption extends ItemAddOption {
     function handleRequestAfterAdd($form, $items) {
 	$errors = array();
 	$warnings = array();
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ExifExtractor.class');
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ExifHelper.class');
+	GalleryCoreApi::relativeRequireOnce('modules/exif/classes/ExifExtractor.class');
+	GalleryCoreApi::relativeRequireOnce('modules/exif/classes/ExifHelper.class');
 	$itemIds = array();
 	foreach ($items as $item) {
 	    $itemIds[] = $item->getId();

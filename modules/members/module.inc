@@ -105,7 +105,7 @@ class MembersModule extends GalleryModule {
 	}
 
 	/* The "Members List" link */
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryMembersHelper.class');
+	GalleryCoreApi::relativeRequireOnce('modules/members/classes/GalleryMembersHelper.class');
 	list ($ret, $canView) =
 	    GalleryMembersHelper::canViewMembersModule($gallery->getActiveUserId());
 	if ($ret->isError()) {

@@ -82,7 +82,7 @@ class GdModule extends GalleryModule {
      */
     function activate() {
 	/* Load any classes we require */
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GdToolkitHelper.class');
+	GalleryCoreApi::relativeRequireOnce('modules/gd/classes/GdToolkitHelper.class');
 
 	/* Find out what operations and properties we have available to us */
 	list ($ret, $results) =
@@ -175,7 +175,7 @@ class GdModule extends GalleryModule {
 	 * It also will stay requiring configuration if we don't have a
 	 * GD version with which we can work with.
 	 */
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GdToolkitHelper.class');
+	GalleryCoreApi::relativeRequireOnce('modules/gd/classes/GdToolkitHelper.class');
 
 	list($ret, $isSupported) = GdToolkitHelper::isGdVersionSupported();
 	if ($ret->isError()) {

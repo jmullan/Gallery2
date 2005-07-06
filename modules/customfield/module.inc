@@ -52,7 +52,7 @@ class CustomFieldModule extends GalleryModule {
      * @see GalleryModule::registerEventListeners()
      */
     function registerEventListeners() {
-	require_once(dirname(__FILE__) . '/classes/CustomFieldHelper.class');
+	GalleryCoreApi::relativeRequireOnce('modules/customfield/classes/CustomFieldHelper.class');
 	GalleryCoreApi::registerEventListener('GalleryEntity::delete', new CustomFieldHelper());
     }
 

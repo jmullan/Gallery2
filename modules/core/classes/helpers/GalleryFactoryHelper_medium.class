@@ -24,7 +24,8 @@
  * @package GalleryCore
  * @author Bharat Mediratta <bharat@menalto.com>
  */
-GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryFactoryHelper_simple.class');
+GalleryCoreApi::relativeRequireOnce(
+    'modules/core/classes/helpers/GalleryFactoryHelper_simple.class');
 
 /**
  * A factory for creating all different kinds of objects

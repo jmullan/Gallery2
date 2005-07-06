@@ -89,7 +89,8 @@ class ImageMagickModule extends GalleryModule {
      */
     function activate() {
 	/* Load any classes we require */
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ImageMagickToolkitHelper.class');
+	GalleryCoreApi::relativeRequireOnce(
+	    'modules/imagemagick/classes/ImageMagickToolkitHelper.class');
 
 	/* Find out what operations and properties we have available to us */
 	list ($ret, $results) =
@@ -283,7 +284,8 @@ class ImageMagickModule extends GalleryModule {
 	}
 
 	/* Load any classes we require */
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ImageMagickToolkitHelper.class');
+	GalleryCoreApi::relativeRequireOnce(
+	    'modules/imagemagick/classes/ImageMagickToolkitHelper.class');
 
 	/* Now try each path in turn to see which ones work */
 	foreach ($paths as $path) {

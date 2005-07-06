@@ -43,7 +43,7 @@ class ConfirmDeleteController extends GalleryController {
 
 	$status = array();
 	if (isset($form['action']['delete'])) {
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/WatermarkHelper.class');
+	    GalleryCoreApi::relativeRequireOnce('modules/watermark/classes/WatermarkHelper.class');
 
 	    list ($ret) = WatermarkHelper::deleteWatermarkImageById($form['itemId'], true);
 	    if ($ret->isError()) {
@@ -73,7 +73,7 @@ class ConfirmDeleteView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/WatermarkHelper.class');
+	GalleryCoreApi::relativeRequireOnce('modules/watermark/classes/WatermarkHelper.class');
 	if ($form['formName'] != 'ConfirmDelete') {
 	    $form['formName'] = 'ConfirmDelete';
 	    list ($form['itemId'], $form['fromAdmin']) =

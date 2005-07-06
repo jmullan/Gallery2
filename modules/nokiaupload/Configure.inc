@@ -35,7 +35,7 @@ class ConfigureController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ImageUploadHelper.class');
+	GalleryCoreApi::relativeRequireOnce('modules/nokiaupload/classes/ImageUploadHelper.class');
 	global $gallery;
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();

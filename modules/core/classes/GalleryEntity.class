@@ -28,7 +28,7 @@
 /**
  * Load the parent class
  */
-GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryPersistent.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPersistent.class');
 
 /**
  * A GalleryEntity is a stateful representation of an entity in the persistent
@@ -266,7 +266,8 @@ class GalleryEntity_core extends GalleryPersistent {
 	}
 
 	if ($this->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryAccessSubscriberMap.class');
+	    GalleryCoreApi::relativeRequireOnce(
+		'modules/core/classes/GalleryAccessSubscriberMap.class');
 	    $ret = GalleryAccessSubscriberMap::addMapEntry(
 		array('itemId' => $this->getId(), 'accessListId' => 0));
 	    if ($ret->isError()) {
@@ -369,7 +370,8 @@ class GalleryEntity_core extends GalleryPersistent {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryAccessSubscriberMap.class');
+	GalleryCoreApi::relativeRequireOnce(
+	    'modules/core/classes/GalleryAccessSubscriberMap.class');
 	$ret = GalleryAccessSubscriberMap::removeMapEntry(array('itemId' => $this->getId()));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -433,13 +435,13 @@ class GalleryEntity_core extends GalleryPersistent {
 		     * persistent store (the database), but not when the entity is already in the
 		     * memory cache.
 		     *
-		     * During the core module install or upgrade, there is no active gallery session
+		     * During the core module install or upgrade, there's no active gallery session
 		     * and $duringUpgrade is set to false. If $duringUpgrade is set to false, be
 		     * aware that everything that is related to the current active user will
 		     * error-out. The recommended usage is to do nothing and just return a success
-		     * status in onLoad if $duringUpgrade is set to false. If this would affect data
-		     * integrity and / or you are sure that your onLoad method does not require an
-		     * activeSession, you can ignore $duringUpgrade.
+		     * status in onLoad if $duringUpgrade is set to false. If this would affect
+		     * data integrity and / or you are sure that your onLoad method does not
+		     * require an activeSession, you can ignore $duringUpgrade.
 		     *
 		     * @param reference to an entity
 		     * @param boolean whether the onLoad handler is being called during an upgrade

@@ -80,7 +80,7 @@ class PanoramaOption extends ItemEditOption {
      * @see ItemEditOption::handleRequestAfterEdit
      */
     function handleRequestAfterEdit($form, &$item, &$preferred) {
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/PanoramaHelper.class');
+	GalleryCoreApi::relativeRequireOnce('modules/panorama/classes/PanoramaHelper.class');
 
 	$isPanorama = isset($form['PanoramaOption']['isPanorama']) &&
 	    $form['PanoramaOption']['isPanorama'];

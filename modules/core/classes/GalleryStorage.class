@@ -62,22 +62,26 @@ class GalleryStorage {
 	$this->_entityInfoCache = array();
 	$this->_mapInfoCache = array();
 
-	$base = dirname(__FILE__) . '/GalleryStorage/';
-	GalleryCoreApi::requireOnce($base . 'DatabaseStorage.class');
-	GalleryCoreApi::requireOnce($base . 'DatabaseSearchResults.class');
+	$base = '/GalleryStorage/';
+	GalleryCoreApi::relativeRequireOnce(
+	    'modules/core/classes' . $base . 'DatabaseStorage.class');
+	GalleryCoreApi::relativeRequireOnce(
+	    'modules/core/classes' . $base . 'DatabaseSearchResults.class');
 
 	$config = $gallery->getConfig('storage.config');
 	switch ($config['type']) {
 	case 'postgres':
 	case 'postgres7':
-	    GalleryCoreApi::requireOnce($base . 'DatabaseStorage/PostgreSqlDatabaseStorage.class');
+	    GalleryCoreApi::relativeRequireOnce(
+		'modules/core/classes' . $base . 'DatabaseStorage/PostgreSqlDatabaseStorage.class');
 	    $this->_impl = new PostgreSqlDatabaseStorage($config);
 	    break;
 
 	default:
 	case 'mysql':
 	case 'mysqlt':
-	    GalleryCoreApi::requireOnce($base . 'DatabaseStorage/MySqlDatabaseStorage.class');
+	    GalleryCoreApi::relativeRequireOnce(
+		'modules/core/classes' . $base . 'DatabaseStorage/MySqlDatabaseStorage.class');
 	    $this->_impl = new MySqlDatabaseStorage($config);
 	    break;
 
@@ -85,7 +89,8 @@ class GalleryStorage {
 	case 'oci805':
 	case 'oci8po':
 	case 'oracle':
-	    GalleryCoreApi::requireOnce($base . 'DatabaseStorage/OracleDatabaseStorage.class');
+	    GalleryCoreApi::relativeRequireOnce(
+		'modules/core/classes' . $base . 'DatabaseStorage/OracleDatabaseStorage.class');
 	    $this->_impl = new OracleDatabaseStorage($config);
 	    break;
 	}

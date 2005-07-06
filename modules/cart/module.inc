@@ -149,7 +149,7 @@ class CartModule extends GalleryModule {
 	$CartSystemContent['links'] = $links;
 
 	/* The cart content's count */
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/CartHelper.class');
+	GalleryCoreApi::relativeRequireOnce('modules/cart/classes/CartHelper.class');
 	list ($ret, $cartItemIds) = CartHelper::fetchCartItemCounts();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);

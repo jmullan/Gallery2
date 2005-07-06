@@ -28,7 +28,7 @@
 /**
  * Load the parent class
  */
-require_once(dirname(__FILE__) . '/../../core/classes/GalleryEntity.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryEntity.class');
 
 /**
  * Representation of an image used for watermarking
@@ -236,7 +236,7 @@ class WatermarkImage_core extends GalleryEntity {
      * @return object GalleryStatus a status code
      */
     function create($inputFileName, $mimeType, $targetName=null) {
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/WatermarkHelper.class');
+	GalleryCoreApi::relativeRequireOnce('modules/watermark/classes/WatermarkHelper.class');
 	global $gallery;
 	$platform = $gallery->getPlatform();
 	$dir = $this->getWatermarkDir();

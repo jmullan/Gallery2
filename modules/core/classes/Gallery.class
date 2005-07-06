@@ -317,7 +317,7 @@ class Gallery {
      * @return object GalleryStatus a status code
      */
     function initSession() {
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GallerySession.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GallerySession.class');
 	if (empty($this->_session)) {
 	    $this->_session = new GallerySession();
 	    $ret = $this->_session->init();
@@ -433,8 +433,8 @@ class Gallery {
      */
     function &getStorage() {
 	if (!isset($this->_storage)) {
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryStorage.class');
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GallerySearchResults.class');
+	    GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryStorage.class');
+	    GalleryCoreApi::relativeRequireOnce('modules/core/classes/GallerySearchResults.class');
 	    $this->_storage = new GalleryStorage();
 	}
 
@@ -506,7 +506,7 @@ class Gallery {
     function initTranslator($dontUseDatabase=false) {
 	if (empty($this->_translator)) {
 	    /* Load the translator class */
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryTranslator.class');
+	    GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTranslator.class');
 
 	    $language = null;
 	    if (!$dontUseDatabase) {
@@ -769,7 +769,7 @@ class Gallery {
      */
     function &getTemplateAdapter() {
 	if (!isset($this->_templateAdapter)) {
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryTemplateAdapter.class');
+	    GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTemplateAdapter.class');
 	    $this->_templateAdapter = new GalleryTemplateAdapter();
 	}
 

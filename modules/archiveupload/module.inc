@@ -101,7 +101,8 @@ class ArchiveUploadModule extends GalleryModule {
 	    return array(GalleryStatus::success(), true);
 	}
 
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ArchiveUploadHelper.class');
+	GalleryCoreApi::relativeRequireOnce(
+	    'modules/archiveupload/classes/ArchiveUploadHelper.class');
 	$unzipPath = ArchiveUploadHelper::findUnzipBinary();
 	if (empty($unzipPath)) {
 	    return array(GalleryStatus::success(), false);

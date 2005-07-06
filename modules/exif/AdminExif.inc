@@ -31,8 +31,8 @@
 /**
  * Required classes
  */
-GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ExifHelper.class');
-GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ExifPropertiesMap.class');
+GalleryCoreApi::relativeRequireOnce('modules/exif/classes/ExifHelper.class');
+GalleryCoreApi::relativeRequireOnce('modules/exif/classes/ExifPropertiesMap.class');
 
 /**
  * This controller will handle the setting of Exif module options

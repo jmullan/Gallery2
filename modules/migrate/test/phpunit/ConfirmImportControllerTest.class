@@ -808,7 +808,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals($ids[0], $itemId, 'G1->G2 mapping for testItem');
 
 	$ids[] = $testAlbumId;
-	require_once(dirname(__FILE__) . '/../../classes/G1MigrateMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/migrate/classes/G1MigrateMap.class');
 	$ret = G1MigrateMap::removeMapEntry(array('itemId' => $ids));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

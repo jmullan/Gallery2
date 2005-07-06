@@ -95,7 +95,7 @@ class CoreModuleExtras {
 		$platform->fclose($fileToLock);
 	    }
 	    /* Initial install.  Make sure all our module parameters are set. */
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryTranslator.class');
+	    GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTranslator.class');
 	    foreach (array('permissions.directory' => '0755',
 			   'permissions.file' => '0644',
 			   'exec.expectedStatus' => '0',
@@ -186,8 +186,8 @@ class CoreModuleExtras {
 		}
 	    }
 
-	    GalleryCoreApi::requireOnce(
-		dirname(__FILE__) . '/classes/helpers/GalleryMimeTypeHelper_advanced.class');
+	    GalleryCoreApi::relativeRequireOnce(
+		'modules/core/classes/helpers/GalleryMimeTypeHelper_advanced.class');
 	    $ret = GalleryMimeTypeHelper_advanced::initializeMimeTypes();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -352,8 +352,8 @@ class CoreModuleExtras {
 
 	case '0.9.4':
 	    $gallery->guaranteeTimeLimit(30);
-	    GalleryCoreApi::requireOnce(
-		dirname(__FILE__) . '/classes/helpers/GalleryMimeTypeHelper_advanced.class');
+	    GalleryCoreApi::relativeRequireOnce(
+		'modules/core/classes/helpers/GalleryMimeTypeHelper_advanced.class');
 	    $ret = GalleryMimeTypeHelper_advanced::initializeMimeTypes();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -1316,7 +1316,7 @@ $gallery->setConfig(\'cookieId\', \'' . $cookieId . '\');
 	    return GalleryStatus::success();
 	}
 
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryUser.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryUser.class');
 	$user = new GalleryUser();
 
 	$userName = 'guest';
@@ -1374,7 +1374,7 @@ $gallery->setConfig(\'cookieId\', \'' . $cookieId . '\');
 	    return GalleryStatus::success();
 	}
 
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryUser.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryUser.class');
 	$user = new GalleryUser();
 
 	/*
@@ -1429,7 +1429,7 @@ $gallery->setConfig(\'cookieId\', \'' . $cookieId . '\');
 	    return GalleryStatus::success();
 	}
 
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryAlbumItem.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryAlbumItem.class');
 	$album = new GalleryAlbumItem();
 
 	$ret = $album->createRoot();

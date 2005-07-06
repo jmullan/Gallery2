@@ -163,8 +163,9 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	    $cartItemIds[$this->_items[$i]->getId()] = $i+1;
 	}
 
-	require_once(dirname(__FILE__) . '/../../../cart/classes/CartPluginInterface_1_0.class');
-	require_once(dirname(__FILE__) . '/../../classes/PhotoAccessCartPlugin.class');
+	GalleryCoreApi::relativeRequireOnce('modules/cart/classes/CartPluginInterface_1_0.class');
+	GalleryCoreApi::relativeRequireOnce(
+	    'modules/photoaccess/classes/PhotoAccessCartPlugin.class');
 	$cartPlugin = new PhotoAccessCartPlugin();
 	list ($ret, $urlParams) = $cartPlugin->fulfillCart($cartItemIds);
 	if ($ret->isError()) {

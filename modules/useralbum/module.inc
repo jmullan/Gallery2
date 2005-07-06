@@ -164,8 +164,8 @@ class UserAlbumModule extends GalleryModule /* and GalleryEventListener */ {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		if ($createMode == 'immediate') {
-		    GalleryCoreApi::requireOnce(dirname(__FILE__) .
-						'/classes/UserAlbumHelper.class');
+		    GalleryCoreApi::relativeRequireOnce(
+						'modules/useralbum/classes/UserAlbumHelper.class');
 
 		    $ret = UserAlbumHelper::createUserAlbum($user);
 		    if ($ret->isError()) {

@@ -258,7 +258,7 @@ class GalleryPluginHelper_medium {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
-	require_once(dirname(__FILE__) . '/../GalleryPluginParameterMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPluginParameterMap.class');
 	$ret = GalleryPluginParameterMap::removeMapEntry(
 						array('pluginType' => $pluginType,
 						      'pluginId' => $pluginId,

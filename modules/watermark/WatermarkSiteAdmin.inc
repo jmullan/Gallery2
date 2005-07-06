@@ -104,7 +104,7 @@ class WatermarkSiteAdminController extends GalleryController {
 	} else if (isset($form['action']['add'])) {
 	    $status['add_error'] = 1;
 	} else if (isset($form['action']['delete']) && isset($form['delete']['itemId'])) {
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/WatermarkHelper.class');
+	    GalleryCoreApi::relativeRequireOnce('modules/watermark/classes/WatermarkHelper.class');
 
 	    list ($ret, $wasDeleted) =
 		WatermarkHelper::deleteWatermarkImageById($form['delete']['itemId']);
@@ -155,7 +155,7 @@ class WatermarkSiteAdminView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/WatermarkHelper.class');
+	GalleryCoreApi::relativeRequireOnce('modules/watermark/classes/WatermarkHelper.class');
 
 	if ($form['formName'] != 'WatermarkSiteAdmin') {
 	    $form['formName'] = 'WatermarkSiteAdmin';

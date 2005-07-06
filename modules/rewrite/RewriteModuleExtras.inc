@@ -187,7 +187,7 @@ class RewriteModuleExtras {
 
 	case '0.9.5':
 	    /* Update view names in match strings to new . separator; core.ShowItem, etc */
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/RewriteMap.class');
+	    GalleryCoreApi::relativeRequireOnce('modules/rewrite/classes/RewriteMap.class');
 	    list ($ret, $activeRules) = RewriteMap::getActiveRules();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);

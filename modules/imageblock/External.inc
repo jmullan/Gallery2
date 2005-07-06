@@ -37,7 +37,7 @@ class ExternalView extends GalleryView {
      * @see GalleryView::loadTemplate()
      */
     function loadTemplate(&$template, &$form) {
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ImageBlockHelper.class');
+	GalleryCoreApi::relativeRequireOnce('modules/imageblock/classes/ImageBlockHelper.class');
 	global $gallery;
 	$SlideShow = array();
 	$startId = null;

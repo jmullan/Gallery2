@@ -70,8 +70,8 @@ class AdminQuotasController extends GalleryController {
 	    }
 	}
 
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/QuotasMap.class');
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryQuotasHelper.class');
+	GalleryCoreApi::relativeRequireOnce('modules/quotas/classes/QuotasMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/quotas/classes/GalleryQuotasHelper.class');
 
 	if (isset($form['action']['group']['createFromText'])) {
 	    if (empty($form['text']['groupName'])) {
@@ -236,7 +236,7 @@ class AdminQuotasView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryQuotasHelper.class');
+	GalleryCoreApi::relativeRequireOnce('modules/quotas/classes/GalleryQuotasHelper.class');
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {

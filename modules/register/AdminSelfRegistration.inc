@@ -60,7 +60,8 @@ class AdminSelfRegistrationController extends GalleryController {
 
 	    $status['saved'] = 1;
 	} else if (isset($form['action']['activate'])) {
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryPendingUserHelper.class');
+	    GalleryCoreApi::relativeRequireOnce(
+		'modules/register/classes/GalleryPendingUserHelper.class');
 	    list ($ret, $pendingUser) = GalleryCoreApi::loadEntitiesById($form['userId']);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -116,7 +117,8 @@ class AdminSelfRegistrationView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryPendingUserHelper.class');
+	GalleryCoreApi::relativeRequireOnce(
+	    'modules/register/classes/GalleryPendingUserHelper.class');
 	global $gallery;
 
 	list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'register');

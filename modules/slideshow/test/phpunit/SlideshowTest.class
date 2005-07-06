@@ -602,8 +602,8 @@ class SlideshowTest extends GalleryTestCase {
 /**
  * Required classes
  */
-require_once(dirname(__FILE__) . '/../../../core/classes/GalleryToolkit.class');
-require_once(dirname(__FILE__) . '/../../../exif/classes/ExifInterface_1_0.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryToolkit.class');
+GalleryCoreApi::relativeRequireOnce('modules/exif/classes/ExifInterface_1_0.class');
 
 /**
  * Test toolkit

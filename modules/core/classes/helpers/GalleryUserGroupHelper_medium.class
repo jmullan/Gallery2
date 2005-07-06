@@ -57,7 +57,7 @@ class GalleryUserGroupHelper_medium {
 	}
 
 	/* Add a new entry in our groups table to represent this relationship. */
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/../GalleryUserGroupMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryUserGroupMap.class');
 	$ret = GalleryUserGroupMap::addMapEntry(array('userId' => $userId, 'groupId' => $groupId));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -88,7 +88,7 @@ class GalleryUserGroupHelper_medium {
 	}
 
 	/* Remove this relationship from our groups table. */
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/../GalleryUserGroupMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryUserGroupMap.class');
 	$ret = GalleryUserGroupMap::removeMapEntry(array('userId' => $userId, 'groupId' => $groupId));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -119,7 +119,7 @@ class GalleryUserGroupHelper_medium {
 	}
 
 	/* Remove this relationship from our groups table. */
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/../GalleryUserGroupMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryUserGroupMap.class');
 	$ret = GalleryUserGroupMap::removeMapEntry(array('userId' => $userId));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -149,7 +149,7 @@ class GalleryUserGroupHelper_medium {
 	}
 
 	/* Remove this relationship from our groups table. */
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/../GalleryUserGroupMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryUserGroupMap.class');
 	$ret = GalleryUserGroupMap::removeMapEntry(array('groupId' => $groupId));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
