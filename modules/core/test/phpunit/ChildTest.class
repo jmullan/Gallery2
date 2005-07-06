@@ -240,6 +240,41 @@ class ChildTest extends GalleryTestCase {
         $this->assertEquals($itemIds, $childIds, 'descendents');
     }
 
+    function testDescendentRoot() {
+        list ($ret, $items[]) = $this->_createRandomDataItem($this->_root->getId());
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        list ($ret, $items[]) = $this->_createRandomDataItem($this->_child[0]->getId());
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        list ($ret, $items[]) = $this->_createRandomDataItem($this->_child[1]->getId());
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        $itemIds = array($this->_child[0]->getId(), $this->_child[1]->getId());
+        foreach ($items as $item) {
+            $itemIds[] = $item->getId();
+        }
+	list ($ret, $albumRoot) = GalleryCoreApi::loadEntitiesById($this->_getRootID());
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+
+        list ($ret, $childIds) = GalleryCoreApi::fetchDescendentItemIds($albumRoot);
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+	/*
+	 * childIds has all descendents in the Gallery;
+         * we just need to make sure that all *our* items are indeed in the list
+	 */
+	foreach ($itemIds as $itemId) {
+            $this->assert(in_array($itemId, $childIds), 'descendent ' . $itemId);
+	}
+    }
+
     function testDescendentItemIdsNoItem() {
         list ($ret, $childIds) = GalleryCoreApi::fetchDescendentItemIds($this->_child[0]);
         if ($ret->isError()) {
