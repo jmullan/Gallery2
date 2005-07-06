@@ -817,22 +817,66 @@ class CoreModuleExtras {
 	    /* Check the derivatives that match the search criteria */
 	    if ($searchResults->resultCount() > 0) {
 
-		/* Show a progress bar */
-		$itemsProcessed = 0;
-		$totalDerivatives = $searchResults->resultCount();
-		$ret = $statusMonitor->renderStatusMessage(
-		    $module->translate('Detecting broken derivatives'), '', 0);
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-		
 		$derivativeIds = array();
 		while ($result = $searchResults->nextResult()) {
 		    $derivativeIds[] = $result[0];
 		}
+		$totalDerivatives = sizeof($derivativeIds);
+		
+		/*
+		 * 2. Load the derivative entities
+		 * At this point we have to load pretty every derivative of this install 
+		 * We tried to load them all at once, some users reported time outs though
+		 * So let's load them in batches and add another progress bar
+		 */
+		$gallery->guaranteeTimeLimit(60);
+		$batchSize = 1000;
+		if (sizeof($derivativeIds) < $batchSize) {
+		    list ($ret, $derivatives) = GalleryCoreApi::loadEntitiesById($derivativeIds);
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		} else {
+		    /* Show a progress bar */
+		    $ret = $statusMonitor->renderStatusMessage(
+			$module->translate('Loading derivatives for the broken derivatives check'),
+			'', 0);
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
 
-		$gallery->guaranteeTimeLimit(90);
-		list ($ret, $derivatives) = GalleryCoreApi::loadEntitiesById($derivativeIds);
+		    /* Load the entities in batches */
+		    $derivatives = array();
+		    do {
+			$gallery->guaranteeTimeLimit(60);
+			$currentDerivativeIds = array_splice($derivativeIds, 0, $batchSize);
+			list ($ret, $currentDerivatives) =
+			    GalleryCoreApi::loadEntitiesById($currentDerivativeIds);
+			if ($ret->isError()) {
+			    return $ret->wrap(__FILE__, __LINE__);
+			}
+			$derivatives = array_merge($derivatives, $currentDerivatives);
+			
+			$ret = $statusMonitor->renderStatusMessage(
+			    $module->translate(array('text' => 'Loading derivatives for the ' .
+						     'broken derivatives check ' .
+						     '(%d derivatives loaded, %d remaining)',
+						     'arg1' => sizeof($derivatives),
+						     'arg2' => sizeof($derivativeIds))),
+			    '',  sizeof($derivatives)/ $totalDerivatives);
+			if ($ret->isError()) {
+			    return $ret->wrap(__FILE__, __LINE__);
+			}
+		    } while (!empty($derivativeIds));
+		}
+
+		/* Start detection process */
+		$gallery->guaranteeTimeLimit(30);		
+		
+		/* Show a progress bar */
+		$itemsProcessed = 0;
+		$ret = $statusMonitor->renderStatusMessage(
+		    $module->translate('Detecting broken derivatives'), '', 0);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
@@ -859,7 +903,7 @@ class CoreModuleExtras {
 		    }
 
 		    /*
-		     * 2. Filter out derivatives that don't return true for isCacheCurrent
+		     * 3. Filter out derivatives that don't return true for isCacheCurrent
 		     *    (= don't have a cache file yet = would be rebuilt anyway)
 		     */
 		    list ($ret, $current) = $derivative->isCacheCurrent();
@@ -871,7 +915,7 @@ class CoreModuleExtras {
 		    }
 
 		    /*
-		     * 3. Filter out derivatives that don't have the same file size as the broken
+		     * 4. Filter out derivatives that don't have the same file size as the broken
 		     *    image placeholder
 		     */
 		    list($ret, $path) = $derivative->fetchPath();
@@ -885,7 +929,7 @@ class CoreModuleExtras {
 			continue;
 		    }
 		    
-		    /* 4. Binary compare the derivative file with the placeholder file */
+		    /* 5. Binary compare the derivative file with the placeholder file */
 		    if (($data = $platform->file($path)) === false) {
 			return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
 		    }
@@ -896,7 +940,7 @@ class CoreModuleExtras {
 		    }
 		}
 
-		/* 5. Mark the detected broken derivatives as such and save the result to the DB */
+		/* 6. Mark the detected broken derivatives as such and save the result to the DB */
 		if (!empty($brokenDerivatives)) {
 		    $gallery->guaranteeTimeLimit(30);
 		    
@@ -908,7 +952,7 @@ class CoreModuleExtras {
 
 		    /* Show the next progress bar */
 		    $itemsProcessed = 0;
-		    $totalItems = count($brokenDerivatives);
+		    $totalItems = sizeof($brokenDerivatives);
 		    $ret = $statusMonitor->renderStatusMessage(
 			$module->translate('Marking broken derivatives'), '', 0);
 		    if ($ret->isError()) {
