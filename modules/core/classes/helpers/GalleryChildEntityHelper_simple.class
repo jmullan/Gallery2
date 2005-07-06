@@ -422,7 +422,10 @@ class GalleryChildEntityHelper_simple {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$sequence = join('/', $sequence);
-	$sequence .= '/' . $item->getId() . '/%';
+	if (!empty($sequence)) {
+	    $sequence .= '/';
+	}
+	$sequence .= $item->getId() . '/%';
 
 	if ($requiredPermission) {
 	    list ($ret, $aclIds) =
