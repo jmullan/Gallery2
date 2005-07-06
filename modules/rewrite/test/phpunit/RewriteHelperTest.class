@@ -125,6 +125,35 @@ class RewriteHelperTest extends GalleryTestCase {
 	$this->assertEquals(REWRITE_STATUS_HTACCESS_MISSING, $code, 'cant read');
     }
 
+    function testWriteFile() {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
+	$systemEol = array('windows' => "\r\n",
+			   'unix' => "\n",
+		           'mac' => "\r",
+			   'aix' => "\x85");
+	foreach ($systemEol as $os => $eol) {
+	    $existingFile = array('Bogus info before section' . $eol,
+	    			  '# BEGIN Url Rewrite section' . $eol,
+	    			  'Bogus info in section'. $eol,
+	    			  '# END Url Rewrite section' . $eol,
+	    			  'Bogus info after section'. $eol);
+	    $platform->setPreviousContent($existingFile);
+
+	    list ($ret, $code) = RewriteHelper::writeFile(array());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assertEquals(REWRITE_STATUS_OK, $code, "cant write ($os)");
+
+	    $newFile = $platform->getFileContent();
+	    $this->assertEquals(strpos($newFile, '# BEGIN Url Rewrite section'),
+				strrpos($newFile, '# BEGIN Url Rewrite section'),
+				"multiple sections ($os)");
+	}
+    }
+
     function testWriteBadFile() {
 	global $gallery;
 
@@ -227,7 +256,7 @@ class RewriteHelperTestPlatform extends GalleryPlatform{
     var $_isReadable;
     var $_fileExists;
     var $_previousContent;
-    var $_fileContent = null;
+    var $_fileContent;
 
     function init() {
 	$this->_isWriteable = true;
@@ -250,6 +279,10 @@ class RewriteHelperTestPlatform extends GalleryPlatform{
 
     function setPreviousContent($value) {
 	$this->_previousContent = $value;
+    }
+
+    function getFileContent() {
+	return $this->_fileContent;
     }
 
     function file_exists($file) {

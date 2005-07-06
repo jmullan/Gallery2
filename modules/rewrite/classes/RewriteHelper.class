@@ -190,8 +190,8 @@ class RewriteHelper {
 
 	    $oldHtaccess = implode('', $platform->file($file));
 	    $newHtaccess = preg_replace(
-		    '/\# BEGIN Url Rewrite section(.+)\# END Url Rewrite section\n/s',
-		    '{gallerySection}', $oldHtaccess);
+		'/\# BEGIN Url Rewrite section(.+)\# END Url Rewrite section(\n\r|\n|\r|\x85)/s', 
+		'{gallerySection}', $oldHtaccess);
 
 	    if (strpos($newHtaccess, '{gallerySection}') !== false) {
 		$newHtaccess = str_replace('{gallerySection}', $htaccess, $newHtaccess);
