@@ -51,13 +51,19 @@ class AdminCoreController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$error = array();
-	$status = array();
-	$canSave = false;
-	if (isset($form['action']['save'])) {
+	$status = $error = array();
+	$canSave = !empty($form['action']) &&
+	    array_intersect(array_keys($form['action']),
+			    array('save', 'addUploadLocalServerDir', 'emailTest'));
+	if ($canSave) {
+	    /* Validate inputs */
+	    if (!empty($form['smtp']['from']) &&
+		    !GalleryUtilities::isValidEmailString($form['smtp']['from'])) {
+		$error[] = 'form[error][smtp][invalidFrom]';
+	    }
+
 	    /* Verify cookie domain / path */
 	    $urlGenerator =& $gallery->getUrlGenerator();
-	    $cookiePathValid = false;
 	    if (isset($form['cookie']['path'])) {
 		/* It should either be empty or a substring of the request-URI */
 		if (!empty($form['cookie']['path'])) {
@@ -76,18 +82,15 @@ class AdminCoreController extends GalleryController {
 			$paths[$key] = $value;
 		    }
 		    if (strpos($paths['standalone'], $paths['cookie']) === 0 &&
-			strpos($paths['embedded'], $paths['cookie']) === 0) {
-			$cookiePathValid = true;
+			    strpos($paths['embedded'], $paths['cookie']) === 0) {
 			$form['cookie']['path'] = $paths['cookie'];
 		    } else {
 			$error[] = 'form[error][cookie][invalidPath]';
 		    }
 		} else {
 		    $form['cookie']['path']= '';
-		    $cookiePathValid = true;
 		}
 	    }
-	    $cookieDomainValid = false;
 	    if (isset($form['cookie']['domain'])) {
 		/* It should either be empty or a substring of the request-host */
 		if (!empty($form['cookie']['domain'])) {
@@ -103,21 +106,17 @@ class AdminCoreController extends GalleryController {
 		     */
 		    if (strpos($currentHost, $cookieDomain) !== false
 			    && strpos($cookieDomain, '.', 1)) {
-			$cookieDomainValid = true;
 			$form['cookie']['domain'] = $cookieDomain;
 		    } else {
 			$error[] = 'form[error][cookie][invalidDomain]';
 		    }
 		} else {
 		    $form['cookie']['domain'] = '';
-		    $cookieDomainValid = true;
 		}
 	    }
+	}
 
-	    if ($cookieDomainValid && $cookiePathValid) {
-		$canSave = true;
-	    }
-	} else if (isset($form['action']['addUploadLocalServerDir'])) {
+	if (isset($form['action']['addUploadLocalServerDir'])) {
 	    $path = GalleryUtilities::htmlEntityDecode($form['uploadLocalServer']['newDir']);
 	    if (empty($path)) {
 		$error[] = 'form[error][uploadLocalServer][newDir][missing]';
@@ -150,9 +149,6 @@ class AdminCoreController extends GalleryController {
 		    }
 		    $status['addedDir'] = 1;
 		}
-		$canSave = true;
-		$redirect['view'] = 'core.SiteAdmin';
-		$redirect['subView'] = 'core.AdminCore';
 	    }
 	} else if (isset($form['action']['removeUploadLocalServerDir'])) {
 	    if (!empty($form['uploadLocalServer']['selectedDir'])) {
@@ -178,20 +174,16 @@ class AdminCoreController extends GalleryController {
 	} else if (isset($form['action']['emailTest'])) {
 	    if (empty($form['emailTest']['to']) ||
 		    !GalleryUtilities::isValidEmailString($form['emailTest']['to'])) {
-		$error[] = 'form[error][emailTest][invalidTo]';
+		$error[] = 'form[emailTestError][invalidTo]';
 	    } else {
 		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-
-		$canSave = true;
-		$redirect['view'] = 'core.SiteAdmin';
-		$redirect['subView'] = 'core.AdminCore';
 	    }
 	}
 
-	if ($canSave) {
+	if ($canSave && empty($error)) {
 	    foreach (array('permissions.directory',
 			   'permissions.file',
 			   'exec.expectedStatus',

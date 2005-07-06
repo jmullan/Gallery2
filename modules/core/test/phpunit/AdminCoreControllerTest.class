@@ -47,10 +47,6 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	}
     }
 
-    function tearDown() {
-	parent::tearDown();
-    }
-
     function testChangeValues() {
 	global $gallery;
 	/* The AdminCore controller uses the url generator to check the cookie path */
@@ -69,7 +65,11 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 			  'misc.markup' => 'x11',
 			  'cookie.path' => '/sub/',
 			  'cookie.domain' => '.example.com',
-			  'lock.system' => 'x13');
+			  'lock.system' => 'x13',
+			  'smtp.host' => 'smtp.example.com',
+			  'smtp.username' => 'x14',
+			  'smtp.password' => 'x15',
+			  'smtp.from' => 'gallery@example.com');
 
 	/* Change the defaults to something meaningless */
 	foreach ($valueMap as $key => $value) {
@@ -88,6 +88,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 
 	GalleryDataCache::reset();
 
+	$valueMap['smtp.password'] = base64_encode($valueMap['smtp.password']);
 	foreach ($valueMap as $key => $expectedValue) {
 	    list ($ret, $realValue) = GalleryCoreApi::getPluginParameter('module', 'core', $key);
 	    if ($ret->isError()) {
@@ -241,6 +242,19 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	    $this->assertEquals($expPath, $realValue,
 				'stored domain mismatch for "' . $testCase['domain'] . '"');
 	}
+    }
+
+    function testInvalidSmtpFrom() {
+	GalleryUtilities::putRequestVariable('form[smtp][server]', 'smtp.example.com');
+	GalleryUtilities::putRequestVariable('form[smtp][from]', 'bad address@fun.com');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminCore'),
+				  'status' => array(),
+				  'error' => array('form[error][smtp][invalidFrom]')),
+			    $results);
     }
 
     function testAddUploadLocalServerDir() {
@@ -600,7 +614,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
 						      'subView' => 'core.AdminCore'),
 				  'status' => array(),
-				  'error' => array('form[error][emailTest][invalidTo]')),
+				  'error' => array('form[emailTestError][invalidTo]')),
 			    $results);
     }
 
@@ -612,7 +626,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
 						      'subView' => 'core.AdminCore'),
 				  'status' => array(),
-				  'error' => array('form[error][emailTest][invalidTo]')),
+				  'error' => array('form[emailTestError][invalidTo]')),
 			    $results);
     }
 

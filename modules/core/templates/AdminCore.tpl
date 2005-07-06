@@ -24,20 +24,14 @@
   {/if}
 </h2></div>
 {/if}
-{if isset($status.emailTestError) or isset($form.error.emailTest)}
+{if !empty($form.error)}
 <div class="gbBlock"><h2 class="giError">
-  {g->text text="Error sending test email, see below for details"}
+  {g->text text="There was a problem processing your request, see below for details."}
 </h2></div>
 {/if}
-{if isset($form.error.cookie.invalidPath) or isset($form.error.cookie.invalidDomain)}
-<div class="gbBlock">
-<h2 class="giError">
-  {if isset($form.error.cookie.invalidPath)}
-    {g->text text="Invalid cookie path"} <br/>
-  {/if}
-  {if isset($form.error.cookie.invalidDomain)}
-    {g->text text="Invalid cookie domain"} <br/>
-  {/if}
+{if isset($status.emailTestError) or isset($form.emailTestError)}
+<div class="gbBlock"><h2 class="giError">
+  {g->text text="Error sending test email, see below for details."}
 </h2></div>
 {/if}
 
@@ -258,6 +252,11 @@
     </td><td>
       <input type="text" size="20"
        name="{g->formVar var="form[smtp][from]"}" value="{$form.smtp.from}"/>
+      {if isset($form.error.smtp.invalidFrom)}
+      <div class="giError">
+	{g->text text="Invalid email address"}
+      </div>
+      {/if}
     </td>
   </tr></table>
 
@@ -271,7 +270,7 @@
     <input type="submit" class="inputTypeSubmit"
      name="{g->formVar var="form[action][emailTest]"}" value="{g->text text="Send Email"}"/>
   </p>
-  {if isset($form.error.emailTest.invalidTo)}
+  {if isset($form.emailTestError.invalidTo)}
   <div class="giError">
     {g->text text="Invalid email address"}
   </div>
@@ -309,6 +308,11 @@
     </td><td>
       <input type="text" size="20"
        name="{g->formVar var="form[cookie][path]"}" value="{$form.cookie.path}"/>
+      {if isset($form.error.cookie.invalidPath)}
+      <div class="giError">
+	{g->text text="Invalid cookie path"} <br/>
+      </div>
+      {/if}
     </td>
   </tr><tr>
     <td>
@@ -316,6 +320,11 @@
     </td><td>
       <input type="text" size="20"
        name="{g->formVar var="form[cookie][domain]"}" value="{$form.cookie.domain}"/>
+      {if isset($form.error.cookie.invalidDomain)}
+      <div class="giError">
+	{g->text text="Invalid cookie domain"} <br/>
+      </div>
+      {/if}
     </td>
   </tr></table>
 </div>
