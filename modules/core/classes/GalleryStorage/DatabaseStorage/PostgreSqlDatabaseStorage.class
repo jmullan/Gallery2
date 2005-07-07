@@ -103,46 +103,6 @@ class PostgreSqlDatabaseStorage extends DatabaseStorage {
     }
 
     /**
-     * @see DatabaseStorage::configureStore
-     */
-    function configureStore($moduleId) {
-	if ($moduleId == 'core') {
-	    $query = '
-            CREATE AGGREGATE BIT_OR
-            (
-              basetype = bit,
-              sfunc = bitor,
-              stype = bit
-            )';
-
-	    /*
-	     * Create a temporary database connection and install our custom
-	     * aggregate function.
-	     */
-	    list ($ret, $tmpDb) = $this->_getConnection(true);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    $this->_traceStart();
-	    $recordSet = $tmpDb->Execute($query);
-	    $tmpDb->Close();
-	    $this->_traceStop();
-
-	    if (empty($recordSet)) {
-		return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
-	    }
-	}
-
-	$ret = parent::configureStore($moduleId);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	return GalleryStatus::success();
-    }
-
-    /**
      * @see GalleryStorage::convertIntToBits
      */
     function convertIntToBits($intVal) {
