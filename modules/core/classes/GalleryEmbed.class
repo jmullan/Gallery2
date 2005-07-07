@@ -171,6 +171,7 @@ class GalleryEmbed {
 	    return GalleryStatus::success();
 	}
 
+	$language = $session->get('core.language');
 	if (empty($activeUserId)) {
 	    /* Logout */
 	    $ret = $session->reset();
@@ -185,8 +186,13 @@ class GalleryEmbed {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    $session->put('core.id.activeUser', $user->getId());
+	    $gallery->setActiveUser($user);
 	    $session->put('embed.id.externalUser', $activeUserId);
+	}
+
+	/* The session language has precedence over the user default language */
+	if (!empty($language)) {
+	    $session->put('core.language', $language);
 	}
 
 	return GalleryStatus::success();
@@ -229,9 +235,9 @@ class GalleryEmbed {
      * @static
      */
     function logout($params=array()) {
+	require_once(dirname(__FILE__) . '/GalleryCoreApi.class');
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GallerySession.class');
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryUtilities.class');
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryCoreApi.class');
 	$hasSession = GalleryUtilities::getCookieVar(SESSION_ID_PARAMETER);
 	if (empty($hasSession)) {
 	    $hasSession = GalleryUtilities::hasRequestVariable(SESSION_ID_PARAMETER);
