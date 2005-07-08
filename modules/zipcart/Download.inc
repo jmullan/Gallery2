@@ -54,8 +54,8 @@ class DownloadView extends GalleryView {
 
 	if ($platform->is_readable($file)) {
 	    $size = $platform->filesize($file);
-	    $sendMultipart =
-		(strpos(GalleryUtilities::getServerVar('HTTP_USER_AGENT'), 'MSIE ') === false);
+	    $sendMultipart = !preg_match('{msie |safari}i',
+					 GalleryUtilities::getServerVar('HTTP_USER_AGENT'));
 	    if ($sendMultipart) {
 		/* Send multipart reply: zip + html-to-reload */
 		header('Content-Type: multipart/mixed; boundary=G2ZipCart');
@@ -68,6 +68,8 @@ class DownloadView extends GalleryView {
 		print "\n";
 	    } else {
 		/* Poor IE6 doesn't know multipart.. just send zip */
+		/* Safari doesn't get filename in multipart and may even crash */
+		header('Content-Type: application/zip');
 		header('Content-Disposition: inline; filename="G2cart.zip"');
 		if ($size > 0) {
 		    header("Content-Length: $size");
@@ -90,7 +92,7 @@ class DownloadView extends GalleryView {
 	    @$platform->unlink(substr($file, 0, -4));   /* Remove file created by tempnam() too */
 
 	    if ($sendMultipart) {
-		print "\n--G2ZipCart\nContent-type: text/html\nPragma: No-cache\n\n";
+		print "\n--G2ZipCart\nContent-Type: text/html\nPragma: No-cache\n\n";
 		print "<html><body onload=\"location.reload()\"></body></html>\n\n";
 		print "--G2ZipCart--\n";
 	    }
