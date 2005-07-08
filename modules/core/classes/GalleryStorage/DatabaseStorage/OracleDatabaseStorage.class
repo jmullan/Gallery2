@@ -167,24 +167,13 @@ class OracleDatabaseStorage extends DatabaseStorage {
     }
 
     /**
-     * @see DatabaseStorage::configureStore 	 
-     */ 	 
-    function configureStore($moduleId) { 	 
-	if ($moduleId == 'core') { 	 
-	    /*
-	     * Create a temporary database connection and install our custom
-	     * aggregate function.
-	     */
-	    list ($ret, $tmpDb) = $this->_getConnection(true);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    $this->_traceStart();
-	    $recordSet = $this->_executeSqlFile(
+     * @see DatabaseStorage::configureStore
+     */
+    function configureStore($moduleId) {
+	if ($moduleId == 'core') {
+	    /* Install our custom aggregate function */
+	    $ret = $this->_executeSqlFile(
 		dirname(__FILE__) . '/schema/platform/oracle/CreateBitOr_sql');
-	    $tmpDb->Close();
-	    $this->_traceStop();
 
 	    /*
 	     * Ignore errors here, since we'll get them every time we try to
@@ -196,13 +185,13 @@ class OracleDatabaseStorage extends DatabaseStorage {
 	     */
 	}
 
-	$ret = parent::configureStore($moduleId); 	 
-	if ($ret->isError()) { 	 
-	    return $ret->wrap(__FILE__, __LINE__); 	 
-	} 	 
+	$ret = parent::configureStore($moduleId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
-	return GalleryStatus::success(); 	 
-     } 	 
+	return GalleryStatus::success();
+     }
 
     /**
      * Get database version.
