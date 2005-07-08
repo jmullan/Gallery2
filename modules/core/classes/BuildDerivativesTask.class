@@ -82,12 +82,25 @@ class BuildDerivativesTask extends MaintenanceTask {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
-	$i = 0;
+	$i = $broken = $built = 0;
 	$total = $results->resultCount();
 	while ($result = $results->nextResult()) {
-	    list ($ret) = GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($result[0], true);
+	    $gallery->startRecordingDebugSnippet();
+	    list ($ret, $derivative, $wasBuilt) =
+		GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($result[0], true);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	    $debug = $gallery->stopRecordingDebugSnippet();
+	    if ($wasBuilt) {
+		$built++;
+	    }
+	    if ($derivative->getIsBroken()) {
+		if (!$broken++) {
+		    print '<br/><h3>' . $module->translate('Debug output for failed items:') .
+			  '</h3>';
+		}
+		print '<pre class="gcBackground1 gcBorder2">' . $debug . '</pre>';
 	    }
 
 	    if (++$i % 5 == 0 || $i == $total) {
@@ -100,9 +113,14 @@ class BuildDerivativesTask extends MaintenanceTask {
 	    }
 	}
 
-	return array(GalleryStatus::success(), true,
-		     array($module->translate(array('text' => 'Checked %d items',
-						    'arg1' => $total))));
+	$result = array($module->translate(array('text' => 'Checked %d items', 'arg1' => $total)));
+	if ($built) {
+	    $result[] = $module->translate(array('text' => '%d items built', 'arg1' => $built));
+	}
+	if ($broken) {
+	    $result[] = $module->translate(array('text' => '%d items failed', 'arg1' => $broken));
+	}
+	return array(GalleryStatus::success(), true, $result);
     }
 }
 ?>
