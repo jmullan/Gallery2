@@ -167,6 +167,7 @@ class GalleryPhotoItem_core extends GalleryDataItem {
 	if (isset($toolkit)) {
 	    list ($ret, $colorspace) = $toolkit->getProperty($mimeType, 'colorspace', $path);
 	    if ($ret->isError()) {
+		$ret->addErrorCode(ERROR_BAD_DATA_TYPE); /* See BAD_DATA_TYPE comment below */
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    if ($colorspace[0] == 'CMYK') {
