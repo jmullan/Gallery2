@@ -301,23 +301,26 @@ class GalleryDerivative_core extends GalleryChildEntity {
      * should call GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($derivativeId)
      *
      * Rebuilds the cache and marks the derivative as broken if we failed to rebuild the
-     * derivative. 
+     * derivative.
      *
      * @access public
      * @return object GalleryStatus a status code
      */
     function rebuildCache() {
 	global $gallery;
-	
+
 	$ret = $this->_rebuildCache();
-	
+
 	if ($ret->isError()) {
 	    /*
 	     * Something went wrong with the toolkit
 	     * Mark the derivative as broken for later repair attempts
 	     */
 	    $this->setIsBroken(true);
-	    
+	    if ($gallery->getDebug()) {
+		$gallery->debug("\n" . $ret->getAsText() . "\n");
+	    }
+
 	    /*
 	     * Use our "busted" image / derivative instead.
 	     * Figure out our target path
@@ -349,7 +352,7 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	    } else {
 		$status = $ret->wrap(__FILE__, __LINE__);
 	    }
-	    
+
 	    /*
 	     * It's important to remember that the derivative is broken and save wouldn't be
 	     * called if we sent an error as a return value
@@ -360,17 +363,16 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	    } elseif ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    
+
 	    /* Pretend the operation was successful */
 	    $ret = GalleryStatus::success();
 	} elseif ($this->getIsBroken()) {
 	    $this->setIsBroken(false);
 	}
 
-	
 	return $ret;
     }
-    
+
     /**
      * Rebuild the cache.  This should never be called directly; instead you
      * should call GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($derivativeId)
@@ -674,7 +676,7 @@ class GalleryDerivative_core extends GalleryChildEntity {
 		    strlen($sources[0]->getPostFilterOperations()) == 0) {
 		$source = array_shift($sources);  /* the preferred is now our source */
 	    }
-	    
+
 	    /*
 	     * Now gather up all the remaining operations, and reduce them to the smallest
 	     * possible sequence.
