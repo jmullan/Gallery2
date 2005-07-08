@@ -167,6 +167,44 @@ class OracleDatabaseStorage extends DatabaseStorage {
     }
 
     /**
+     * @see DatabaseStorage::configureStore 	 
+     */ 	 
+    function configureStore($moduleId) { 	 
+	if ($moduleId == 'core') { 	 
+	    /*
+	     * Create a temporary database connection and install our custom
+	     * aggregate function.
+	     */
+	    list ($ret, $tmpDb) = $this->_getConnection(true);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $this->_traceStart();
+	    $recordSet = $this->_executeSqlFile(
+		dirname(__FILE__) . '/schema/platform/oracle/CreateBitOr_sql');
+	    $tmpDb->Close();
+	    $this->_traceStop();
+
+	    /*
+	     * Ignore errors here, since we'll get them every time we try to
+	     * install the aggregate, which will happen every time we upgrade core
+	     * or install in a database with another Gallery already present.
+	     *
+	     * XXX: At some point figure out a way to detect if the aggregate is
+	     * already there before trying to install it again.
+	     */
+	}
+
+	$ret = parent::configureStore($moduleId); 	 
+	if ($ret->isError()) { 	 
+	    return $ret->wrap(__FILE__, __LINE__); 	 
+	} 	 
+
+	return GalleryStatus::success(); 	 
+     } 	 
+
+    /**
      * Get database version.
      * @return string version
      */
