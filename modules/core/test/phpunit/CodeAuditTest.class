@@ -114,7 +114,7 @@ class CodeAuditTest extends CodeAuditTestCase {
 	$pattern = str_replace('/', '\/', $pattern);
 	$this->_preamblePattern = str_replace(
 	    'RCSFILE PLACEHOLDER',
-	    '.*',
+	    '.*RCSfile.*',
 	    $pattern);
     }
 
@@ -342,7 +342,7 @@ class CodeAuditTest extends CodeAuditTestCase {
 	    for ($i = 0; $i < count($this->_preamble); $i++) {
 		if ($i == 2) {
 		    /* Break up the RCSfile keyword so that CVS doesn't expand it */
-		    $expected = ' * $' . 'RCSfile: ' . $fileName . ',v $';
+		    $expected = ' * $' . 'RCSfile: ' . basename($fileName) . ',v $';
 		} else {
 		    $expected = $this->_preamble[$i];
 
@@ -362,7 +362,7 @@ class CodeAuditTest extends CodeAuditTestCase {
     function getPreamble($lines) {
 	$copy = array();
 	for ($i = 0; $i < count($lines); $i++) {
-	    if (preg_match('/ \* \$RCSfile$$/', $lines[$i])) {
+	    if (preg_match('/.*RCSfile.*/', $lines[$i])) {
 		$new = " * RCSFILE PLACEHOLDER";
 	    } else {
 		$new = rtrim($lines[$i]);
