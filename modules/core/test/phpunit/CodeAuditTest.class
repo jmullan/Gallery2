@@ -341,7 +341,8 @@ class CodeAuditTest extends CodeAuditTestCase {
 	    $this->_errorCount++;
 	    for ($i = 0; $i < count($this->_preamble); $i++) {
 		if ($i == 2) {
-		    $expected = ' * $RCSfile$fileName) . ',v $';
+		    /* Break up the RCSfile keyword so that CVS doesn't expand it */
+		    $expected = ' * $' . 'RCSfile: ' . $fileName . ',v $';
 		} else {
 		    $expected = $this->_preamble[$i];
 
