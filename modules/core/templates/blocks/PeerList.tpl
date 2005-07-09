@@ -21,11 +21,11 @@
 
   {if ($peer.id == $item.id)}
   <span class="current">
-    {g->text text="%d. %s" arg1=$peer.peerIndex arg2=$title|entitytruncate:14}
+    {g->text text="%d. %s" arg1=$peer.peerIndex arg2=$title|markup:strip|entitytruncate:14}
   </span>
   {else}
   <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$peer.id`"}">
-    {g->text text="%d. %s" arg1=$peer.peerIndex arg2=$title|entitytruncate:14}
+    {g->text text="%d. %s" arg1=$peer.peerIndex arg2=$title|markup:strip|entitytruncate:14}
   </a>
   {/if}
   {assign var="lastIndex" value=$peer.peerIndex}

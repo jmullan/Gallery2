@@ -15,7 +15,7 @@
     {foreach from=$block.albumselect.LoadAlbumData.tree item=node}
       {assign var="title" value=$block.albumselect.LoadAlbumData.titles[$node.id]}
       <option value="{g->url arg1="view=core.ShowItem" arg2="itemId=`$node.id`"}">
-	{$title|entitytruncate:20|indent:$node.depth:"-- "|markup}
+	{$title|markup|entitytruncate:20|indent:$node.depth:"-- "}
       </option>
     {/foreach}
   </select>

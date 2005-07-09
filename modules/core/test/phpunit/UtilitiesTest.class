@@ -762,6 +762,11 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->assertEquals('apo\'strophe.jpg "quotes"',
 			    GalleryUtilities::_phpUtf8Substring($utf8, 0, 24),
 			    'php version');
+
+	/* Other html entities count as single chars in phpUtf8Substring but not in mb_substr */
+	$this->assertEquals('&aacute;bc',
+			    GalleryUtilities::_phpUtf8Substring('&aacute;bcde', 0, 3),
+			    'php version');
     }
 
     function testIsEmbedded() {

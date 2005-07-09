@@ -24,6 +24,7 @@
  * @package GalleryCore
  * @subpackage PHPUnit
  * @author Bharat Mediratta <bharat@menalto.com>
+ * @author Alan Harder <alan.harder@sun.com>
  */
 
 /**
@@ -49,7 +50,22 @@ class MarkupTest extends GalleryTestCase {
 	$this->_bbcode = new GalleryBbcodeMarkupParser();
 	$this->_html = new GalleryHtmlMarkupParser();
 	$this->_none = new GalleryNoMarkupParser();
-	$this->_strip = new GalleryStripBbcodeAndHtmlParser();
+
+	list ($ret, $this->_markup) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function tearDown() {
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'misc.markup', $this->_markup);
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	parent::tearDown();
     }
 
     function testBold() {
@@ -151,12 +167,6 @@ class MarkupTest extends GalleryTestCase {
 	$this->assertEquals('[url=javascript:alert(\'hi\')]content[/url]', $results);
     }
 
-    function testStrip() {
-	$results = $this->_strip->parse('[url=http://no]yes[/url] yes [b]yes[/b] ' .
-					'<b>yes</b> &lt;foo&gt; hinzufügen');
-	$this->assertEquals('yes yes yes yes &lt;foo&gt; hinzufügen', $results);
-    }
-
     function testUnicodeCharacters() {
 	$results = $this->_bbcode->parse('[url=https://example.com/secure.html]' .
 					 'Elemente hinzufügen[/url] Seitenverhältnis');
@@ -167,6 +177,52 @@ class MarkupTest extends GalleryTestCase {
     function testNonBbcodeMarkers() {
 	$results = $this->_bbcode->parse('[url=http://foo] [go] [/url]');
 	$this->assertEquals('<a href="http://foo"> [go] </a>', $results);
+    }
+
+    function testMarkupNone() {
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'misc.markup', 'none');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('&lt;b&gt; [i] &amp;oacute;',
+			    smarty_modifier_markup('&lt;b&gt; [i] &amp;oacute;'));
+	$this->assertEquals('&lt;b&gt; [i] &amp;oacute;',
+			    smarty_modifier_markup('&lt;b&gt; [i] &amp;oacute;', 'strip'), 'strip');
+    }
+
+    function testMarkupBbcode() {
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'misc.markup', 'bbcode');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Bbcode processor adds closing </i> tag too */
+	$this->assertEquals('&lt;b&gt; <i> &amp;oacute;</i>',
+			    smarty_modifier_markup('&lt;b&gt; [i] &amp;oacute;'));
+	$this->assertEquals('&lt;b&gt;  &amp;oacute;',
+			    smarty_modifier_markup('&lt;b&gt; [i] &amp;oacute;', 'strip'), 'strip');
+    }
+
+    function testMarkupHtml() {
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'misc.markup', 'html');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('<b> [i] &oacute;',
+			    smarty_modifier_markup('&lt;b&gt; [i] &amp;oacute;'));
+	$this->assertEquals(' [i] &oacute;',
+			    smarty_modifier_markup('&lt;b&gt; [i] &amp;oacute;', 'strip'), 'strip');
+	$this->assertEquals('&lt;b&gt; [i] &amp;oacute;',
+			    smarty_modifier_markup('&lt;b&gt; [i] &amp;oacute;', 'none'),
+			    'override');
+	$this->assertEquals('&lt;b&gt;  &amp;oacute;',
+			    smarty_modifier_markup('&lt;b&gt; [i] &amp;oacute;', 'bbcode', 'strip'),
+			    'override+strip');
+	$this->assertEquals('&lt;b&gt;  &amp;oacute;',
+			    smarty_modifier_markup('&lt;b&gt; [i] &amp;oacute;', 'strip', 'bbcode'),
+			    'strip+override');
     }
 }
 ?>

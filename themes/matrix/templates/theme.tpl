@@ -12,7 +12,7 @@
 
     {* If Gallery doesn't provide a header, we use the album/photo title (or filename) *}
     {if empty($head.title)}
-      <title>{$theme.item.title|default:$theme.item.pathComponent|markup:stripBbcodeAndHtml}</title>
+      <title>{$theme.item.title|default:$theme.item.pathComponent|markup:strip}</title>
     {/if}
 
     {* Include this theme's style sheet *}

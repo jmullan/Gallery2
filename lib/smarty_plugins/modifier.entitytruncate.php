@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -37,28 +37,28 @@
  * @param integer what to truncate it to (max length upon return)
  * @param string what to use to indicate that there was more (default: "...")
  * @param boolean break words or not?
- * @return string 
+ * @return string
  */
 function smarty_modifier_entitytruncate($string, $length, $etc='...', $breakWords=false) {
     if (empty($string)) {
 	return '';
     }
-    
-    /* Decode entities so that they're treated properly by GalleryUtilities::utf8Substring() */
-    GalleryUtilities::unsanitizeInputValues($string, false);
 
-    /* Split the string exactly on the boundary.   If there's no change, then we're done */
-    $piece = GalleryUtilities::utf8Substring($string, 0, $length);
+    /*
+     * Convert multibyte characters to html entities and then get an entity-safe substring.
+     * Split the string exactly on the boundary.  If there's no change, then we're done.
+     */
+    $string = GalleryUtilities::utf8ToUnicodeEntities($string);
+    list ($tmp, $piece) = GalleryUtilities::entitySubstr($string, 0, $length);
     if ($piece == $string) {
-	return $piece;
+	return GalleryUtilities::unicodeEntitiesToUtf8($piece);
     }
 
     $etcLength = strlen($etc);
-
     if ($etcLength < $length) {
 	/* Make room for the $etc string */
-	$piece = GalleryUtilities::utf8Substring($piece, 0, $length - $etcLength);
-	
+	list ($tmp, $piece) = GalleryUtilities::entitySubstr($piece, 0, $length - $etcLength);
+
 	$pieceLength = strlen($piece);
 	if (!$breakWords && $string{$pieceLength-1} != ' ' && $string{$pieceLength} != ' ') {
 	    /* We split a word, and we're not allowed to.  Try to back up to the last space */
@@ -70,9 +70,8 @@ function smarty_modifier_entitytruncate($string, $length, $etc='...', $breakWord
 	}
 	$piece .= $etc;
     }
-    
-    /* Reencode any dangerous entities for display */
-    GalleryUtilities::sanitizeInputValues($piece, false);
-    return $piece;
+
+    /* Unicode entities back to UTF-8; may convert entities in original string, but that's ok */
+    return GalleryUtilities::unicodeEntitiesToUtf8($piece);
 }
 ?>

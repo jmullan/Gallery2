@@ -16,25 +16,24 @@
   <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$theme.parents[parent].id`"
 		   arg3="highlightId=`$theme.parents[parent.index_next].id`"}"
      class="BreadCrumb-{counter name="BreadCrumb"}">
-    {$theme.parents[parent].title|default:$theme.parents[parent].pathComponent|markup:stripBbcodeAndHtml}
+    {$theme.parents[parent].title|default:$theme.parents[parent].pathComponent|markup:strip}
   </a>
   {else}
   <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$theme.parents[parent].id`"
 		   arg3="highlightId=`$theme.item.id`"}"
      class="BreadCrumb-{counter name="BreadCrumb"}">
-    {$theme.parents[parent].title|default:$theme.parents[parent].pathComponent|markup:stripBbcodeAndHtml}
+    {$theme.parents[parent].title|default:$theme.parents[parent].pathComponent|markup:strip}
   </a>
   {/if}
   {/section}
 
   {if ($theme.pageType == 'admin' || $theme.pageType == 'module')}
   <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$theme.item.id`"}" class="BreadCrumb-{counter name="BreadCrumb"}">
-     {$theme.item.title|default:$theme.item.pathComponent|markup:stripBbcodeAndHtml}
+     {$theme.item.title|default:$theme.item.pathComponent|markup:strip}
   </a>
   {else}
   <span class="BreadCrumb-{counter name="BreadCrumb"}">
-     {$theme.item.title|default:$theme.item.pathComponent|markup:stripBbcodeAndHtml}
+     {$theme.item.title|default:$theme.item.pathComponent|markup:strip}
   </span>
   {/if}
 </div>
-

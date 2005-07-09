@@ -27,7 +27,7 @@
 {/if}
 
 {if isset($truncate)}
-{assign var="truncated" value=$comment.comment|entitytruncate:$truncate|markup}
+{assign var="truncated" value=$comment.comment|markup|entitytruncate:$truncate}
 {/if}
 
 {if isset($truncate) && ($truncated != $comment.comment)}
@@ -45,7 +45,7 @@
       style="display: none">{g->text text="show summary"}</a>
 
 <p id="comment-truncated-{$comment.id}" class="comment">
-  {$comment.comment|entitytruncate:$truncate|markup}
+  {$comment.comment|markup|entitytruncate:$truncate}
 </p>
 
 <p id="comment-full-{$comment.id}" class="comment" style="display: none">

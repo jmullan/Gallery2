@@ -104,7 +104,7 @@
 
                 {if !empty($child.summary)}
                 <p class="giDescription">
-                  {$child.summary|entitytruncate:256|markup}
+                  {$child.summary|markup|entitytruncate:256}
                 </p>
                 {/if}
 

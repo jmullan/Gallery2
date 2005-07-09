@@ -845,6 +845,8 @@ class GalleryUtilities {
      *
      * This is going to be a whole lot slower than mb_substr, so we should use
      * that instead, whenever we can.
+     * Note: this function treats all html entities like &amp; as single characters,
+     *       but mb_substr would treat this as 5 characters.
      *
      * @param string the input string containing raw UTF-8
      * @return string a multibyte safe substring of input value
