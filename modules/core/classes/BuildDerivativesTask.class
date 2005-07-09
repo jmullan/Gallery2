@@ -64,8 +64,6 @@ class BuildDerivativesTask extends MaintenanceTask {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
-	return array(GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__), null, null);
-
 	$ret = $templateAdapter->updateProgressBar(
 	    $module->translate('Build All Thumbnails/Resizes'),
 	    '',
@@ -75,12 +73,12 @@ class BuildDerivativesTask extends MaintenanceTask {
 	}
 
 	$query = '
-        SELECT
-          [DerivativeImage::id]
-        FROM
-          [DerivativeImage]
-        ORDER BY [DerivativeImage::id]
-        ';
+	SELECT
+	  [DerivativeImage::id]
+	FROM
+	  [DerivativeImage]
+	ORDER BY [DerivativeImage::id]
+	';
 	list ($ret, $results) = $gallery->search($query);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
