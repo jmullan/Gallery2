@@ -30,7 +30,8 @@ class CleanCacheStep extends UpgradeStep {
 	$platform = $gallery->getPlatform();
 	$cacheBaseDir = $gallery->getConfig('data.gallery.cache');
 
-	$cacheDirs = array('entity', 'layout', 'module');
+	/* Keep the obsolete layout dir in the list for a while */
+	$cacheDirs = array('entity', 'layout', 'module', 'theme');
 	$error = false;
 	$templateData['unclean'] = array();
 	foreach ($cacheDirs as $dir) {
