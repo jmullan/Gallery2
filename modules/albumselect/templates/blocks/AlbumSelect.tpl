@@ -6,7 +6,7 @@
  *}
 {g->callback type="albumselect.LoadAlbumData"}
 
-{if isset($blocks.albumselect)}
+{if isset($block.albumselect)}
 <div class="{$class}">
   <select onchange="{literal}if (this.value) { var newLocation = this.value; this.options[0].selected = true; location.href = newLocation; }{/literal}">
     <option value="">

@@ -6,7 +6,7 @@
  *}
 {g->callback type="albumselect.LoadAlbumData"}
 
-{if isset($blocks.albumselect)}
+{if isset($block.albumselect)}
 <div class="{$class}">
   <div class="dtree">
     {assign var="params" value=$block.albumselect.LoadAlbumData.params}
