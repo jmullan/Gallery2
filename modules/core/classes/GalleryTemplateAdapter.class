@@ -58,6 +58,14 @@ class GalleryTemplateAdapter {
     var $_trailer;
 
     /**
+     * Registered callbacks that will get executed during the trailer.
+     *
+     * @var array $_trailerCallbacks
+     * @access private
+     */
+    var $_trailerCallbacks = array();
+
+    /**
      * Current state of the progress bar.
      *
      * @var array $_progressBarStats
