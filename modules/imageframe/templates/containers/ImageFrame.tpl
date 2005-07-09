@@ -7,7 +7,7 @@
 {if isset($ImageFrameData.data[$frame])}
   {assign var="data" value=$ImageFrameData.data[$frame]}
 {/if}
-{assign var="objectId" value="IFid`$uniqueId`"}
+{assign var="objectId" value="IFid`$frame`"}
 {if !isset($data) || $data.type=='style'}
   {$content|replace:"%ID%":$objectId|replace:"%CLASS%":"ImageFrame_`$frame`"}
 {elseif $data.type=='image'}
