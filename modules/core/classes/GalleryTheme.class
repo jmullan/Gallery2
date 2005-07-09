@@ -370,9 +370,11 @@ class GalleryTheme extends GalleryPlugin {
 			break;
 		    }
 		    $result .= ($i ? ' ' : '') . '[' . $record[0];
-		    foreach ($record[1] as $k => $v) {
-			$v = ($v === false) ? 'false' : ($v === true ? 'true' : $v);
-			$result .= ' ' . $k . '=' . $v;
+		    if (!empty($record[1])) {
+			foreach ($record[1] as $k => $v) {
+			    $v = ($v === false) ? 'false' : ($v === true ? 'true' : $v);
+			    $result .= ' ' . $k . '=' . $v;
+			}
 		    }
 		    $result .= ']';
 		    $i++;
