@@ -94,13 +94,13 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
 	$expectedId = $counter->getRecentEntityId('WatermarkImage');
 	$this->assertEquals(array('redirect' => array('view' => 'core.UserAdmin',
 						      'subView' => 'watermark.UserWatermarkEdit',
-						      'itemId' => $expectedId),
+						      'watermarkId' => $expectedId),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
 
 
-	// Verify the watermark exists
+	/* Verify the watermark exists */
 	list ($ret, $map) = $this->_fetchWatermarkMapByFilename();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -126,16 +126,16 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
 	$watermark = new WatermarkImage();
 	$ret = $watermark->create(__FILE__, 'test/file', 'phpunit_' . rand() . '.gif');
 	if ($ret->isError()) {
-	    return $this->failWithStatus(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = $watermark->save();
 	if ($ret->isError()) {
-	    return $this->failWithStatus(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	GalleryUtilities::putRequestVariable('form[action][delete]', 1);
-	GalleryUtilities::putRequestVariable('form[delete][itemId]', $watermark->getId());
+	GalleryUtilities::putRequestVariable('form[delete][watermarkId]', $watermark->getId());
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.UserAdmin',
@@ -146,7 +146,7 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
 
 	$ret = $this->_verifyMissing($watermark->getId());
 	if ($ret->isError()) {
-	    return $this->failWithStatus(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
 
@@ -155,18 +155,18 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
 	$watermark = new WatermarkImage();
 	$ret = $watermark->create(__FILE__, 'test/file', 'phpunit_' . rand() . '.gif');
 	if ($ret->isError()) {
-	    return $this->failWithStatus(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = $watermark->save();
 	if ($ret->isError()) {
-	    return $this->failWithStatus(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	// Use this watermark
+	/* Use this watermark */
 	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId());
 	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret->wrap($ret->wrap(__FILE__, __LINE__)));
 	}
 	$this->_markForCleanup($item);
 	list ($ret, $derivative) = $this->_createDerivative(
@@ -177,33 +177,35 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	// Try to delete it
+	/* Try to delete it */
 	GalleryUtilities::putRequestVariable('form[action][delete]', 1);
-	GalleryUtilities::putRequestVariable('form[delete][itemId]', $watermark->getId());
+	GalleryUtilities::putRequestVariable('form[delete][watermarkId]', $watermark->getId());
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.UserAdmin',
 						      'subView' => 'watermark.ConfirmDelete',
-						      'itemId' => $watermark->getId()),
+						      'watermarkId' => $watermark->getId()),
 				  'status' => array(),
 				  'error' => array()),
 			    $results, 'Confirm Delete');
 
-	// Verify that it's NOT gone
+	/* Verify that it's NOT gone */
 	$ret = $this->_verifyEntity($watermark);
 	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret->wrap($ret->wrap(__FILE__, __LINE__)));
 	}
     }
 
     function testIllegalDeleteWatermark() {
+	/* valid, but illegal */
 	GalleryUtilities::putRequestVariable('form[action][delete]', 1);
-	GalleryUtilities::putRequestVariable('form[delete][itemId]', 1); // valid, but illegal
+	GalleryUtilities::putRequestVariable('form[delete][watermarkId]', 1);
 
 	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
 
+	/* invalid and illegal */
 	GalleryUtilities::putRequestVariable('form[action][delete]', 1);
-	GalleryUtilities::putRequestVariable('form[delete][itemId]', 123456789); // invvalid and illegal
+	GalleryUtilities::putRequestVariable('form[delete][watermarkId]', 123456789);
 
 	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
     }
@@ -228,13 +230,13 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
 	$expectedId = $counter->getRecentEntityId('WatermarkImage');
 	$this->assertEquals(array('redirect' => array('view' => 'core.UserAdmin',
 						      'subView' => 'watermark.UserWatermarkEdit',
-						      'itemId' => $expectedId),
+						      'watermarkId' => $expectedId),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
 
 
-	// Verify the watermark exists
+	/* Verify the watermark exists */
 	list ($ret, $map) = $this->_fetchWatermarkMapByFilename();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -249,7 +251,7 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	// We're expecting the same name, but the . changed to _ in the file extension
+	/* We're expecting the same name, but the . changed to _ in the file extension */
 	$this->assertEquals($expectedName, basename($path));
     }
 
@@ -257,7 +259,7 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 
-	// Start with admin user..
+	/* Start with admin user.. */
 	$gallery->setActiveUser($this->_saveUser);
 
 	$dataFile = dirname(__FILE__) . '/../../../core/test/data/test1.gif';
@@ -276,19 +278,19 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
 	$this->_idToDelete = $expectedId = $counter->getRecentEntityId('WatermarkImage');
 	$this->assertEquals(array('redirect' => array('view' => 'core.UserAdmin',
 						      'subView' => 'watermark.UserWatermarkEdit',
-						      'itemId' => $expectedId),
+						      'watermarkId' => $expectedId),
 				  'status' => array(),
 				  'error' => array()),
 			    $results, 'Add first watermark');
 
-	// Verify the watermark exists
+	/* Verify the watermark exists */
 	list ($ret, $map) = $this->_fetchWatermarkMapByFilename();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(isset($map[$expectedName]), 'First watermark not added');
 
-	// Now change active user and add watermark with same filename..
+	/* Now change active user and add watermark with same filename.. */
 	$gallery->setActiveUser($this->_user);
 	$expectedName = '_' . $expectedName;
 
@@ -296,12 +298,12 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
 	$expectedId = $counter->getRecentEntityId('WatermarkImage');
 	$this->assertEquals(array('redirect' => array('view' => 'core.UserAdmin',
 						      'subView' => 'watermark.UserWatermarkEdit',
-						      'itemId' => $expectedId),
+						      'watermarkId' => $expectedId),
 				  'status' => array(),
 				  'error' => array()),
 			    $results, 'Add second watermark');
 
-	// Verify the watermark exists
+	/* Verify the watermark exists */
 	list ($ret, $map) = $this->_fetchWatermarkMapByFilename();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

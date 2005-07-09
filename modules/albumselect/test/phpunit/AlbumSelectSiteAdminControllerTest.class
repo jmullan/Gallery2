@@ -52,8 +52,9 @@ class AlbumSelectSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][reset]', '1');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
-						  'subView' => 'albumselect.AlbumSelectSiteAdmin'),
+	$this->assertEquals(array('redirect' => array(
+				      'view' => 'core.SiteAdmin',
+				      'subView' => 'albumselect.AlbumSelectSiteAdmin'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -73,7 +74,7 @@ class AlbumSelectSiteAdminControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
 
-	foreach (array('show' => '0', 'type' => 'tree', 'sort' => 'manual', 'treeLines' => '0',
+	foreach (array('type' => 'tree', 'sort' => 'manual', 'treeLines' => '0',
 		       'treeIcons' => '1', 'treeCookies' => '0', 'treeExpandCollapse' => '0',
 		       'treeCloseSameLevel' => '1') as $key => $expectedValue) {
 	    list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'albumselect', $key);

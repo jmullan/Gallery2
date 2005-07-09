@@ -40,26 +40,8 @@ msgstr "Gallery Email Test"
 msgid "&laquo; None &raquo;"
 msgstr "&laquo; Geen &raquo;"
 
-msgid "None"
-msgstr "Geen"
-
-msgid "Guest User Only"
-msgstr "Alleen Gastgebruiker"
-
-msgid "Everybody"
-msgstr "Iedereen"
-
 msgid "forever"
 msgstr "altijd"
-
-msgid "Link to Login Page"
-msgstr "Link naar de Inlog Pagina"
-
-msgid "Form on Sidebar"
-msgstr "Formulier in het zijpaneel"
-
-msgid "Both"
-msgstr "Beiden"
 
 msgid "No Markup"
 msgstr "Geen Inhoudsbeschrijving"
@@ -109,6 +91,9 @@ msgstr "installeren"
 msgid "upgrade"
 msgstr "opwaarderen"
 
+msgid "configure"
+msgstr "configureren"
+
 msgid "activate"
 msgstr "activeren"
 
@@ -118,17 +103,14 @@ msgstr "deïnstalleren"
 msgid "deactivate"
 msgstr "deactiveren"
 
+msgid "Other"
+msgstr "Ander"
+
 msgid "Inherit settings from parent album"
 msgstr "Instellingen Overnemen van bovenliggend album"
 
 msgid "Use these settings"
 msgstr "Gebruik deze instellingen"
-
-msgid "configure"
-msgstr "configureren"
-
-msgid "Other"
-msgstr "Ander"
 
 msgid "key"
 msgstr "toets"
@@ -175,8 +157,20 @@ msgstr "Geregistreerde Gebruikers"
 msgid "All Users"
 msgstr "Alle Gebruikers"
 
+msgid "Loading derivatives for the broken derivatives check"
+msgstr ""
+
+msgid "Detecting broken derivatives"
+msgstr ""
+
+msgid "Marking broken derivatives"
+msgstr ""
+
 msgid "Site Admins"
 msgstr "Site Beheer"
+
+msgid "Everybody"
+msgstr "Iedereen"
 
 msgid "Guest"
 msgstr "Gast"
@@ -186,6 +180,15 @@ msgstr "Gallery"
 
 msgid "This is the main page of your Gallery"
 msgstr "Dit is de startpagina van uw Gallery"
+
+msgid "Loading derivatives for the "
+msgstr ""
+
+msgid "Detecting broken derivatives "
+msgstr ""
+
+msgid "Marking broken derivatives "
+msgstr ""
 
 msgid "add items"
 msgstr "items toevoegen"
@@ -258,9 +261,6 @@ msgstr "bewerk %s"
 msgid "Settings saved successfully."
 msgstr "Instellingen succesvol opgeslagen."
 
-msgid "&laquo; default layout &raquo;"
-msgstr "&laquo; standaard opmaak &raquo;"
-
 msgid "&laquo; default theme &raquo;"
 msgstr "&laquo; standaard thema &raquo;"
 
@@ -278,12 +278,6 @@ msgstr "bewerk bijschriften"
 
 msgid "General"
 msgstr "Algemeen"
-
-msgid "Successfully saved layout settings"
-msgstr "Succesvol opmaak instellingen opgeslagen"
-
-msgid "Layout"
-msgstr "Opmaak"
 
 msgid "Movie Size"
 msgstr "Film Grootte"
@@ -342,6 +336,13 @@ msgstr "Foto succesvol geschaald"
 msgid "Modify Photo"
 msgstr "Bewerk Foto"
 
+#, fuzzy
+msgid "Successfully saved theme settings"
+msgstr "Succesvol opmaak instellingen opgeslagen"
+
+msgid "Theme"
+msgstr "Thema"
+
 msgid "make highlight"
 msgstr "maak albumafbeelding"
 
@@ -380,17 +381,19 @@ msgstr "Wachtwoord Opnieuw Instellen"
 msgid "Build all thumbnails/resizes"
 msgstr "Alle miniaturen/schalen opbouwen"
 
+#, fuzzy
 msgid ""
-"Ensure data files for all derivatives (thumbnails, etc) have been built."
+"Ensure data files for all derivatives (thumbnails, etc) have been built and "
+"rebuild broken ones."
 msgstr ""
 "Zorg ervoor dat data bestanden voor alle afgeleiden (miniaturen etc.) zijn "
 "opgebouwd."
 
-msgid "Processing..."
-msgstr "Verwerken..."
-
 msgid "Build All Thumbnails/Resizes"
 msgstr "Opbouwen Alle Miniaturen/Schalen"
+
+msgid "Debug output for failed items:"
+msgstr ""
 
 #, c-format
 msgid "Processing image %d of %d"
@@ -399,6 +402,14 @@ msgstr "Verwerken afbeelding %d van %d"
 #, c-format
 msgid "Checked %d items"
 msgstr "%d items gecontroleerd"
+
+#, fuzzy, c-format
+msgid "%d items built"
+msgstr "items toevoegen"
+
+#, c-format
+msgid "%d items failed"
+msgstr ""
 
 msgid "Delete database cache"
 msgstr "Verwijder database cache"
@@ -494,43 +505,6 @@ msgstr "Groep"
 msgid "group"
 msgstr "groep"
 
-#, c-format
-msgid "Estimated time remaining: %d:%02d"
-msgstr "Geschatte resterende tijd: %d:%02d"
-
-msgid "Rows per album page"
-msgstr "Rijen per album pagina"
-
-msgid "Columns per album page"
-msgstr "Kolommen per album pagina"
-
-msgid "Show image owners"
-msgstr "Afbeelding eigenaren weergeven"
-
-msgid "Show album owners"
-msgstr "Album eigenaren weergeven"
-
-msgid "Show micro navigation thumbnails"
-msgstr "Micro navigatie miniaturen weergeven"
-
-msgid "Number of items to show per page"
-msgstr "Aantal weer te geven items per pagina"
-
-msgid "View Samples"
-msgstr "Voorbeelden Weergeven"
-
-msgid "Album Frame"
-msgstr "Album Kader"
-
-msgid "Item Frame"
-msgstr "Item Kader"
-
-msgid "Photo Frame"
-msgstr "Foto Kader"
-
-msgid "You must enter a number greater than 0"
-msgstr "U moet een nummer ingeven (groter dan nul)"
-
 msgid "Movie"
 msgstr "Film"
 
@@ -575,6 +549,69 @@ msgstr "Aflopend"
 
 msgid "Descending"
 msgstr "Aflopend"
+
+msgid "Validation disabled until you set allowSessionAccess in config.php"
+msgstr ""
+
+msgid "This page is valid XHTML 1.0"
+msgstr "Deze pagina is XHTML 1.0 valide"
+
+#, c-format
+msgid "Estimated time remaining: %d:%02d"
+msgstr "Geschatte resterende tijd: %d:%02d"
+
+#, c-format
+msgid "Memory used: %s, total: %s"
+msgstr ""
+
+msgid "Rows per album page"
+msgstr "Rijen per album pagina"
+
+msgid "Columns per album page"
+msgstr "Kolommen per album pagina"
+
+msgid "Show image owners"
+msgstr "Afbeelding eigenaren weergeven"
+
+msgid "Show album owners"
+msgstr "Album eigenaren weergeven"
+
+msgid "Show micro navigation thumbnails"
+msgstr "Micro navigatie miniaturen weergeven"
+
+msgid "Number of items to show per page"
+msgstr "Aantal weer te geven items per pagina"
+
+msgid "Blocks to show in the sidebar"
+msgstr ""
+
+msgid "Blocks to show on album pages"
+msgstr ""
+
+msgid "Blocks to show on photo pages"
+msgstr ""
+
+msgid "View Samples"
+msgstr "Voorbeelden Weergeven"
+
+msgid "Album Frame"
+msgstr "Album Kader"
+
+msgid "Item Frame"
+msgstr "Item Kader"
+
+msgid "Photo Frame"
+msgstr "Foto Kader"
+
+msgid "You must enter a number greater than 0"
+msgstr "U moet een nummer ingeven (groter dan nul)"
+
+msgid "Format: [module.BlockName param=value] ..."
+msgstr ""
+
+#, c-format
+msgid "%dx%d"
+msgstr ""
 
 msgid "Audio"
 msgstr "Audio"
@@ -659,6 +696,9 @@ msgstr ""
 "met een beschikbare datum in het originele data bestand (gebruikelijk vanuit "
 "de EXIF data)."
 
+msgid "Processing..."
+msgstr "Verwerken..."
+
 msgid "Refresh Capture Dates"
 msgstr "Ververs Opname Data"
 
@@ -730,8 +770,9 @@ msgstr "Uitloggen"
 msgid "Modules"
 msgstr "Modules"
 
-msgid "Layouts and Themes"
-msgstr "Opmaak en Thema's"
+#, fuzzy
+msgid "Themes"
+msgstr "Thema"
 
 msgid "Display"
 msgstr "Weergave"
@@ -807,14 +848,13 @@ msgstr "Lokale upload directory succesvol verwijdert"
 msgid "Test email sent successfully"
 msgstr "Test email succesvol verzonden."
 
-msgid "Error sending test email, see below for details"
+#, fuzzy
+msgid "There was a problem processing your request, see below for details."
+msgstr "Er is een fout opgetreden bij het verwerken van uw aanvraag."
+
+#, fuzzy
+msgid "Error sending test email, see below for details."
 msgstr "Fout bij het verzenden van test email, zie hieronder voor details"
-
-msgid "Invalid cookie path"
-msgstr "Ongeldig cookie pad"
-
-msgid "Invalid cookie domain"
-msgstr "Ongeldig cookie domein"
 
 msgid "Language Settings"
 msgstr "Taal instellingen"
@@ -830,9 +870,6 @@ msgstr ""
 
 msgid "Default language"
 msgstr "Standaard taal"
-
-msgid "Language selector in sidebar"
-msgstr "Taalkiezer in het zijpaneel"
 
 msgid "gettext"
 msgstr "gettext"
@@ -917,9 +954,6 @@ msgstr "Het opgegeven pad is geen geldige directory"
 msgid "Session Settings"
 msgstr "Sessie Instellingen"
 
-msgid "Login Method"
-msgstr "Inlog Methode"
-
 msgid "Session Lifetime"
 msgstr "Sessie levensduur"
 
@@ -971,6 +1005,9 @@ msgstr "Wachtwoord"
 msgid "SMTP From Address"
 msgstr "SMTP Van Adres"
 
+msgid "Invalid email address"
+msgstr "Onjuist e-mail adres"
+
 msgid ""
 "Send a test email to verify your settings are correct (whether using PHP "
 "mail or SMTP settings above).  Below enter a recipient email address for a "
@@ -982,9 +1019,6 @@ msgstr ""
 
 msgid "Send Email"
 msgstr "Verzend Email"
-
-msgid "Invalid email address"
-msgstr "Onjuist e-mail adres"
 
 msgid "Email Test Error"
 msgstr "Email Test Fout"
@@ -1057,8 +1091,14 @@ msgstr ""
 "Als zij dat niet doen kunnen ze inlog / uitlog / verloren sessie problemen "
 "ervaren."
 
+msgid "Invalid cookie path"
+msgstr "Ongeldig cookie pad"
+
 msgid "Domain"
 msgstr "Domein"
+
+msgid "Invalid cookie domain"
+msgstr "Ongeldig cookie domein"
 
 msgid "Locking System"
 msgstr "Locking Systeem"
@@ -1366,118 +1406,6 @@ msgid_plural "%d groups match your filter"
 msgstr[0] "%d groep komt overeen met uw filter"
 msgstr[1] "%d groepen komen overeen met uw filter"
 
-msgid "Gallery Layouts"
-msgstr "Gallery Opmaken"
-
-#, c-format
-msgid "Successfully activated layout %s"
-msgstr "Succesvol opmaak %s geactiveerd"
-
-#, c-format
-msgid "Successfully deactivated layout %s"
-msgstr "Succesvol opmaak %s gedeactiveerd"
-
-#, c-format
-msgid "Successfully installed layout %s"
-msgstr "Opmaak %s succesvol geïnstalleerd"
-
-#, c-format
-msgid "Successfully uninstalled layout %s"
-msgstr "Opmaak %s succesvol gedeïnstalleerd"
-
-#, c-format
-msgid "Successfully upgraded layout %s"
-msgstr "Succesvol layout %s opgewaardeerd"
-
-msgid "Successfully saved default album settings"
-msgstr "Succesvol standaard album instellingen opgeslagen"
-
-msgid "Restored layout settings"
-msgstr "Opmaak instelling hersteld"
-
-msgid "All Layouts"
-msgstr "Alle Opmaken"
-
-msgid "Defaults"
-msgstr "Standaard instellingen"
-
-msgid "Layout Name"
-msgstr "Opmaak Naam"
-
-msgid "Version"
-msgstr "Versie"
-
-msgid "Installed"
-msgstr "Geïnstalleerd"
-
-msgid "Actions"
-msgstr "Acties"
-
-msgid "Status: Not Installed"
-msgstr "Status: Niet Geïnstalleerd"
-
-msgid "Status: Active"
-msgstr "Status: Actief"
-
-msgid "Status: Inactive"
-msgstr "Status: Niet Actief"
-
-msgid "Status: Upgrade Required (Inactive)"
-msgstr "Status: Opwaardering Noodzakelijk (Inactief)"
-
-msgid "Status: Incompatible Layout (Inactive)"
-msgstr "Status: Niet Compatibele Opmaak (Inactief)"
-
-msgid "Incompatible layout!"
-msgstr "Niet compatibele opmaak!"
-
-#, c-format
-msgid "Core API Required: %s (available: %s)"
-msgstr "Core API Vereist: %s (beschikbaar: %s)"
-
-#, c-format
-msgid "Layout API Required: %s (available: %s)"
-msgstr "Opmaak API Vereist: %s (beschikbaar: %s)"
-
-msgid "(default)"
-msgstr "(standaard)"
-
-msgid ""
-"These are default display settings for albums in your gallery.  They can be "
-"overridden in each album."
-msgstr ""
-"Er zijn standaard weergaven voor albums in uw gallery. Ze kunnen in elk "
-"album apart gewijzigt worden."
-
-msgid "Default sort order"
-msgstr "Standaard sorteer volgorde"
-
-msgid "with"
-msgstr "met"
-
-msgid "Default layout"
-msgstr "Standaard opmaak"
-
-msgid "Default theme"
-msgstr "Standaard thema"
-
-msgid "New albums"
-msgstr "Nieuwe albums"
-
-#, c-format
-msgid "%s Layout Settings"
-msgstr "%s Opmaak instellingen"
-
-msgid ""
-"These are the global settings for the layout.  They can be overridden at the "
-"album level."
-msgstr ""
-"Dit zijn standaard opmaak instellingen. Ze kunnen in elk album apart "
-"gewijzigt worden."
-
-msgid "There are no settings for this layout"
-msgstr "Er zijn geen instellingen voor deze opmaak"
-
 msgid "System Maintenance"
 msgstr "Systeem Onderhoud"
 
@@ -1561,11 +1489,36 @@ msgstr ""
 msgid "Module Name"
 msgstr "Module naam"
 
+msgid "Version"
+msgstr "Versie"
+
+msgid "Installed"
+msgstr "Geïnstalleerd"
+
+msgid "Actions"
+msgstr "Acties"
+
+msgid "Status: Not Installed"
+msgstr "Status: Niet Geïnstalleerd"
+
+msgid "Status: Active"
+msgstr "Status: Actief"
+
+msgid "Status: Inactive"
+msgstr "Status: Niet Actief"
+
+msgid "Status: Upgrade Required (Inactive)"
+msgstr "Status: Opwaardering Noodzakelijk (Inactief)"
+
 msgid "Status: Incompatible Module (Inactive)"
 msgstr "Statis: Niet compaitbele Module (Inactief)"
 
 msgid "Incompatible module!"
 msgstr "Niet compatibele module!"
+
+#, c-format
+msgid "Core API Required: %s (available: %s)"
+msgstr "Core API Vereist: %s (beschikbaar: %s)"
 
 #, c-format
 msgid "Module API Required: %s (available: %s)"
@@ -1587,6 +1540,125 @@ msgstr ""
 
 msgid "Uninstall"
 msgstr "Deïnstalleren"
+
+#, fuzzy
+msgid "Gallery Themes"
+msgstr "Gallery %s"
+
+#, fuzzy, c-format
+msgid "Successfully activated theme %s"
+msgstr "Succesvol module %s geactiveerd"
+
+#, fuzzy, c-format
+msgid "Successfully deactivated theme %s"
+msgstr "Succesvol module %s gedeactiveerd"
+
+#, fuzzy, c-format
+msgid "Successfully installed theme %s"
+msgstr "Succesvol module %s geïnstalleerd"
+
+#, fuzzy, c-format
+msgid "Successfully uninstalled theme %s"
+msgstr "Succesvol module %s gedeïnstalleerd"
+
+#, fuzzy, c-format
+msgid "Successfully upgraded theme %s"
+msgstr "Succesvol module %s opgewaardeerd"
+
+msgid "Successfully saved default album settings"
+msgstr "Succesvol standaard album instellingen opgeslagen"
+
+#, fuzzy
+msgid "Restored theme settings"
+msgstr "Opmaak instelling hersteld"
+
+#, fuzzy
+msgid "All Themes"
+msgstr "Thema"
+
+msgid "Defaults"
+msgstr "Standaard instellingen"
+
+#, fuzzy
+msgid "Theme Name"
+msgstr "Thema"
+
+#, fuzzy
+msgid "Status: Incompatible Theme (Inactive)"
+msgstr "Statis: Niet compaitbele Module (Inactief)"
+
+#, fuzzy
+msgid "Incompatible theme!"
+msgstr "Niet compatibele module!"
+
+#, fuzzy, c-format
+msgid "Theme API Required: %s (available: %s)"
+msgstr "Core API Vereist: %s (beschikbaar: %s)"
+
+msgid "(default)"
+msgstr "(standaard)"
+
+msgid ""
+"These are default display settings for albums in your gallery.  They can be "
+"overridden in each album."
+msgstr ""
+"Er zijn standaard weergaven voor albums in uw gallery. Ze kunnen in elk "
+"album apart gewijzigt worden."
+
+msgid "Default sort order"
+msgstr "Standaard sorteer volgorde"
+
+msgid "with"
+msgstr "met"
+
+msgid "Default theme"
+msgstr "Standaard thema"
+
+msgid "New albums"
+msgstr "Nieuwe albums"
+
+#, fuzzy, c-format
+msgid "%s Theme Settings"
+msgstr "Gebruik deze instellingen"
+
+#, fuzzy
+msgid ""
+"These are the global settings for the theme.  They can be overridden at the "
+"album level."
+msgstr ""
+"Dit zijn standaard opmaak instellingen. Ze kunnen in elk album apart "
+"gewijzigt worden."
+
+msgid "Available"
+msgstr ""
+
+msgid "Choose a block"
+msgstr ""
+
+#, fuzzy
+msgid "Selected"
+msgstr "Verwijder"
+
+msgid "Remove"
+msgstr "Verwijderen"
+
+#, fuzzy
+msgid "Move Up"
+msgstr "Verplaatsen"
+
+#, fuzzy
+msgid "Move Down"
+msgstr "Verplaats %s"
+
+msgid "Parameter"
+msgstr ""
+
+msgid "Value"
+msgstr "Waarde"
+
+#, fuzzy
+msgid "There are no settings for this theme"
+msgstr "Er zijn geen instellingen voor deze opmaak"
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime "
@@ -1663,6 +1735,67 @@ msgstr "Maak nu miniaturen"
 
 msgid "This is a test email from Gallery2"
 msgstr "Dit is een test email van Gallery2"
+
+msgid "Edit Conflict!"
+msgstr "Bewerkingsconflict!"
+
+msgid "Security Violation"
+msgstr "Beveiligingsovertreding"
+
+msgid "Database Error"
+msgstr "Database Fout"
+
+msgid "Error"
+msgstr "Fout"
+
+msgid ""
+"Your change cannot be completed because somebody else has made a conflicting "
+"change to the same item.  Use the back button in your browser to go back to "
+"the page you were on, then <b>reload that page</b> and try your change again."
+msgstr ""
+"Uw verandering kan niet worden uitgevoerd, aangezien iemand anders een "
+"onverenigbare wijziging op hetzelfde item heeft uitgevoerd. Gebruik te terug "
+"knop in uw browser om naar de vorige pagina terug te gaan, daarna dient de "
+"die <b>pagina te vernieuwen</b> en uw veranderingen opnieuw uit te voeren."
+
+msgid "Go back and try again"
+msgstr "Ga terug en probeer opnieuw"
+
+msgid ""
+"Alternatively, you can return to the main Gallery page and resume browsing."
+msgstr ""
+"Als alternatief kun u ook terugkeren naar de Gallery hoofdpagina en doorgaan "
+"met browsen."
+
+msgid "The action you attempted is not permitted."
+msgstr "De uitgevoerde actie is niet toegestaan."
+
+msgid "An error has occurred while interacting with the database."
+msgstr "Er is een fout opgetreden bij de interactie met de database."
+
+msgid ""
+"The exact nature of database errors is not captured unless Gallery debug "
+"mode is enabled in config.php.  Before seeking support for this error please "
+"enable buffered debug output and retry the operation.  Look near the bottom "
+"of the lengthy debug output to find error details."
+msgstr ""
+"De exacte aard van de database fout wordt niet opgevangen, behalve wanneer "
+"de Gallery debug mode in config.php aanstaan. Voordat u hulp zoekt voor de "
+"fout, zet u alstublieft de gebufferde debug uitvoer aan en herhaal de "
+"handeling. Bekijk vervolgens het onderste gedeelte van de lange debug "
+"uitvoer voor de fouten details."
+
+msgid "An error has occurred."
+msgstr "Er is een fout opgetreden."
+
+msgid "Back to the Gallery"
+msgstr "Terug naar de gallery"
+
+msgid "Error Detail"
+msgstr "Fout Detail"
+
+msgid "System Information"
+msgstr "Systeem Informatie"
 
 msgid ""
 "You don't have any Graphics Toolkit activated that can handle JPEG images.  "
@@ -2070,17 +2203,12 @@ msgstr ""
 "Hiermee kunt u de standaard volgorde voor het album instellen. Dit is van "
 "toepassing op alle huidige items en alle items die later worden toegevoegd."
 
+#, fuzzy
 msgid ""
-"Choose a layout for this album. (The way the album is arranged on the page)"
+"Choose a theme for this album. (The way the album is arranged on the page)"
 msgstr ""
 "Kies een opmaak voor dit album. (De manier waarop dit album is opgesteld op "
 "de pagina)"
-
-msgid "Theme"
-msgstr "Thema"
-
-msgid "Choose a theme for this album.  (The look and feel of this album)"
-msgstr "Kies een thema voor dit album.  (De look-and-feel voor dit album)"
 
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr ""
@@ -2267,23 +2395,6 @@ msgstr ""
 "Er zijn geen grafische toolkits beschikbaar die dit type foto of item "
 "ondersteund, dus kan er geen miniatuur aangemaakt of aangepast worden."
 
-#, c-format
-msgid ""
-"This album is configured to use the <b>%s</b> layout. These settings only "
-"apply to the layout for this album."
-msgstr ""
-"Dit album is ingesteld om gebruik te maken van de <b>%s</b> opmaak. Deze "
-"instellingen zijn alleen van toepassing op de opmaak van dit album."
-
-msgid "Setting"
-msgstr "Instelling"
-
-msgid "Value"
-msgstr "Waarde"
-
-msgid "Use Global"
-msgstr "Gebruik algemene instelling"
-
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the "
 "movie's width and height.  If you have installed a graphics toolkit that can "
@@ -2430,6 +2541,20 @@ msgstr ""
 
 msgid "Restore original"
 msgstr "Originieel herstellen"
+
+#, fuzzy, c-format
+msgid ""
+"This album is configured to use the <b>%s</b> theme. These settings only "
+"apply to the theme for this album."
+msgstr ""
+"Dit album is ingesteld om gebruik te maken van de <b>%s</b> opmaak. Deze "
+"instellingen zijn alleen van toepassing op de opmaak van dit album."
+
+msgid "Setting"
+msgstr "Instelling"
+
+msgid "Use Global"
+msgstr "Gebruik algemene instelling"
 
 msgid "Album Highlight"
 msgstr "Albumafbeelding"
@@ -2596,9 +2721,6 @@ msgstr "Groepsnaam"
 msgid "Permission"
 msgstr "Recht"
 
-msgid "Remove"
-msgstr "Verwijderen"
-
 msgid "New Group Permission"
 msgstr "Nieuwe Groepsrechten"
 
@@ -2652,9 +2774,6 @@ msgstr "na"
 
 msgid "Reorder"
 msgstr "Verplaatsen"
-
-msgid "Go"
-msgstr "Gaan"
 
 msgid "Continue..."
 msgstr "Doorgaan..."
@@ -2718,9 +2837,6 @@ msgstr "installeer of activeer deze opmaak"
 #, c-format
 msgid "To fix this problem you can either %s or %s."
 msgstr "Om dit probleem te verhelpen kunt u %s of %s."
-
-msgid "Site Administration"
-msgstr "Site beheer"
 
 msgid "Admin Options"
 msgstr "Beheer Opties"
@@ -2975,16 +3091,105 @@ msgstr ""
 msgid "Thank you!"
 msgstr "Dank u wel!"
 
+#, fuzzy
+msgid "guest"
+msgstr "Gast"
+
+#, c-format
+msgid "display mode: %s"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Date: %s"
+msgstr "Datum:"
+
+#, fuzzy, c-format
+msgid "Owner: %s"
+msgstr "Eigenaar"
+
+#, fuzzy, c-format
+msgid "Size: %d item"
+msgid_plural "Size: %d items"
+msgstr[0] "(%d item)"
+msgstr[1] "(%d items)"
+
+#, fuzzy, c-format
+msgid "(%d item total)"
+msgid_plural "(%d items total)"
+msgstr[0] "(%d item)"
+msgstr[1] "(%d items)"
+
+#, c-format
+msgid "Views: %d"
+msgstr ""
+
+#, fuzzy
+msgid "&laquo; album actions &raquo;"
+msgstr "&laquo; Geen &raquo;"
+
+#, fuzzy
+msgid "&laquo; item actions &raquo;"
+msgstr "&laquo; Geen &raquo;"
+
+msgid "Go"
+msgstr "Gaan"
+
+msgid "next"
+msgstr ""
+
+#, fuzzy
+msgid "last"
+msgstr "lijst"
+
+#, fuzzy
+msgid "first"
+msgstr "lijst"
+
+#, fuzzy
+msgid "previous"
+msgstr "Vorige Pagina"
+
+msgid "Page:"
+msgstr ""
+
+#, c-format
+msgid "%d. %s"
+msgstr "%d. %s"
+
+#, fuzzy
+msgid "Size: "
+msgstr "Grootte"
+
+msgid "Full size: "
+msgstr ""
+
+#, fuzzy
+msgid "Language selector"
+msgstr "Taalkiezer in het zijpaneel"
+
+#, fuzzy
+msgid "Item actions"
+msgstr "bewerk bijschriften"
+
+#, fuzzy
+msgid "Login block"
+msgstr "Inloggen"
+
+msgid "Links to album/photo peers"
+msgstr ""
+
 msgid "Successfully deleted directory: /cache/entity"
 msgstr "Succesvol verwijdert directory: /cache/entity"
 
-msgid "Successfully deleted directory: /cache/layout"
-msgstr "Succesvol verwijdert directory: /cache/layout"
+#, fuzzy
+msgid "Successfully deleted directory: /cache/theme"
+msgstr "Succesvol verwijdert directory: /cache/module"
 
 msgid "Successfully deleted directory: /cache/module"
 msgstr "Succesvol verwijdert directory: /cache/module"
 
-msgid "Unable to delete directory: /cache/layout"
+#, fuzzy
+msgid "Unable to delete directory: /cache/theme"
 msgstr "Kan directory niet verwijderen: /cache/layout"
 
 msgid "Unable to delete directory: /templates_c"
@@ -2996,94 +3201,6 @@ msgstr "Eenheids test module"
 msgid "[test] A permission"
 msgstr "[test Een recht"
 
-msgid "Gallery Debug Output"
-msgstr "Gallery debug uitvoer"
-
-msgid "This page is valid XHTML 1.0"
-msgstr "Deze pagina is XHTML 1.0 valide"
-
-#, c-format
-msgid "Gallery %s"
-msgstr "Gallery %s"
-
-msgid "Edit Conflict!"
-msgstr "Bewerkingsconflict!"
-
-msgid "Security Violation"
-msgstr "Beveiligingsovertreding"
-
-msgid "Database Error"
-msgstr "Database Fout"
-
-msgid "Error"
-msgstr "Fout"
-
-msgid ""
-"Your change cannot be completed because somebody else has made a conflicting "
-"change to the same item.  Use the back button in your browser to go back to "
-"the page you were on, then <b>reload that page</b> and try your change again."
-msgstr ""
-"Uw verandering kan niet worden uitgevoerd, aangezien iemand anders een "
-"onverenigbare wijziging op hetzelfde item heeft uitgevoerd. Gebruik te terug "
-"knop in uw browser om naar de vorige pagina terug te gaan, daarna dient de "
-"die <b>pagina te vernieuwen</b> en uw veranderingen opnieuw uit te voeren."
-
-msgid "Go back and try again"
-msgstr "Ga terug en probeer opnieuw"
-
-msgid ""
-"Alternatively, you can return to the main Gallery page and resume browsing."
-msgstr ""
-"Als alternatief kun u ook terugkeren naar de Gallery hoofdpagina en doorgaan "
-"met browsen."
-
-msgid "The action you attempted is not permitted."
-msgstr "De uitgevoerde actie is niet toegestaan."
-
-msgid "An error has occurred while interacting with the database."
-msgstr "Er is een fout opgetreden bij de interactie met de database."
-
-msgid ""
-"The exact nature of database errors is not captured unless Gallery debug "
-"mode is enabled in config.php.  Before seeking support for this error please "
-"enable buffered debug output and retry the operation.  Look near the bottom "
-"of the lengthy debug output to find error details."
-msgstr ""
-"De exacte aard van de database fout wordt niet opgevangen, behalve wanneer "
-"de Gallery debug mode in config.php aanstaan. Voordat u hulp zoekt voor de "
-"fout, zet u alstublieft de gebufferde debug uitvoer aan en herhaal de "
-"handeling. Bekijk vervolgens het onderste gedeelte van de lange debug "
-"uitvoer voor de fouten details."
-
-msgid "An error has occurred."
-msgstr "Er is een fout opgetreden."
-
-msgid "Back to the Gallery"
-msgstr "Terug naar de gallery"
-
-msgid "Error Detail"
-msgstr "Fout Detail"
-
-msgid "System Information"
-msgstr "Systeem Informatie"
-
-msgid "Redirect"
-msgstr "Verwijzen"
-
-msgid "You are in debug mode so we are not automatically redirecting."
-msgstr ""
-"U bevind zich in de debug modus, dus u wordt niet automatisch doorverwezen."
-
-#, c-format
-msgid "Welcome, %s"
-msgstr "Welkom, %s"
-
-#, c-format
-msgid "(%d item)"
-msgid_plural "(%d items)"
-msgstr[0] "(%d item)"
-msgstr[1] "(%d items)"
-
-#, c-format
-msgid "%d. %s"
-msgstr "%d. %s"
+#, fuzzy
+msgid "[test] A second permission"
+msgstr "[test Een recht"

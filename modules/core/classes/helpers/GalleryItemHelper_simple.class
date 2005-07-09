@@ -35,44 +35,44 @@
 class GalleryItemHelper_simple {
 
     /**
-     * Return the correct layoutId for this item.  Data items don't have layouts, so
+     * Return the correct themeId for this item.  Data items don't have themes, so
      * we try to get it from the parent album.  Failing that, we get it from the
      * site wide defaults.
      *
      * @param object GalleryItem instance
      * @return array object GalleryStatus a status code
-     *               string a layout id
+     *               string a theme id
      * @static
      */
-    function fetchLayoutId($item) {
+    function fetchThemeId($item) {
 	global $gallery;
 
-	/* Find the right layout for this item */
+	/* Find the right theme for this item */
 	if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
-	    $layoutId = $item->getLayout();
+	    $themeId = $item->getTheme();
 	} else {
 	    list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($item->getParentId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    $layoutId = $parent->getLayout();
+	    $themeId = $parent->getTheme();
 	}
 
-	if (empty($layoutId)) {
-	    list ($ret, $layoutId) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'default.layout');
+	if (empty($themeId)) {
+	    list ($ret, $themeId) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 
 	/* No default?  We're screwed */
-	if (empty($layoutId)) {
+	if (empty($themeId)) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $layoutId);
+	return array(GalleryStatus::success(), $themeId);
     }
 
     /**

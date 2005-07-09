@@ -51,13 +51,12 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	/* The AdminCore controller uses the url generator to check the cookie path */
 	$gallery->setUrlGenerator(new AdminCoreControllerTestUrlGenrator());
-	
+
 	$valueMap = array('permissions.directory' => 'x1',
 			  'permissions.file' => 'x2',
 			  'exec.expectedStatus' => 'x3',
 			  'default.orderBy' => 'x4',
 			  'default.orderDirection' => 'x5',
-			  'default.layout' => 'x6',
 			  'default.theme' => 'x7',
 			  'default.language' => 'x8',
 			  'session.lifetime' => 'x9',
@@ -77,7 +76,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	    GalleryUtilities::putRequestVariable('form[' . $outer . '][' . $inner . ']', $value);
 	}
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
-	
+
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
@@ -110,7 +109,6 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 			  'exec.expectedStatus' => 'IGNORED',
 			  'default.orderBy' => 'IGNORED',
 			  'default.orderDirection' => 'IGNORED',
-			  'default.layout' => 'IGNORED',
 			  'default.theme' => 'IGNORED',
 			  'default.language' => 'IGNORED',
 			  'session.lifetime' => 'IGNORED',
@@ -119,7 +117,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 			  /* Set the cookie path in this test, the domain has to be a valid value */
 			  'cookie.domain' => '.example.com',
 			  'lock.system' => 'IGNORED');
-	
+
 	/* Some test cases */
 	$tests = array();
 	$tests[] = array('path' => '', 'saved' => 1, 'ep' => '');
@@ -135,7 +133,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    
+
 	    /* Try to change the parameter */
 	    GalleryUtilities::putRequestVariable('form[cookie][path]', $testCase['path']);
 	    GalleryUtilities::putRequestVariable('form[action][save]', 1);
@@ -144,7 +142,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 		list ($outer, $inner) = explode('.', $key);
 		GalleryUtilities::putRequestVariable('form[' . $outer . '][' . $inner . ']', $value);
 	    }
-	
+
 	    /* Perform the request and verify that we succeeded */
 	    $results = $this->handleRequest();
 	    $error = $testCase['saved'] ? array() : array('form[error][cookie][invalidPath]');
@@ -182,7 +180,6 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 			  'exec.expectedStatus' => 'IGNORED',
 			  'default.orderBy' => 'IGNORED',
 			  'default.orderDirection' => 'IGNORED',
-			  'default.layout' => 'IGNORED',
 			  'default.theme' => 'IGNORED',
 			  'default.language' => 'IGNORED',
 			  'session.lifetime' => 'IGNORED',
@@ -191,7 +188,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 			  /* Set the cookie domain in this test, set the path to a valid value */
 			  'cookie.path' => '/sub/',
 			  'lock.system' => 'IGNORED');
-	
+
 	/* Some test cases */
 	$tests = array();
 	$tests[] = array('domain' => '', 'saved' => 1, 'ep' => '');
@@ -207,7 +204,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    
+
 	    /* Try to change the parameter */
 	    GalleryUtilities::putRequestVariable('form[cookie][domain]', $testCase['domain']);
 	    GalleryUtilities::putRequestVariable('form[action][save]', 1);
@@ -217,7 +214,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 		list ($outer, $inner) = explode('.', $key);
 		GalleryUtilities::putRequestVariable('form[' . $outer . '][' . $inner . ']', $value);
 	    }
-	
+
 	    /* Perform the request and verify that we succeeded */
 	    $results = $this->handleRequest();
 	    $error = $testCase['saved'] ? array() : array('form[error][cookie][invalidDomain]');
@@ -264,7 +261,6 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 			  'exec.expectedStatus' => 'x3',
 			  'default.orderBy' => 'x4',
 			  'default.orderDirection' => 'x5',
-			  'default.layout' => 'x6',
 			  'default.theme' => 'x7',
 			  'default.language' => 'x8',
 			  'session.lifetime' => 'x9',

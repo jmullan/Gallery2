@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -46,7 +46,7 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
-		
+
 	$status = null;
 	$error = array();
 
@@ -105,12 +105,12 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 		} else {
 		    $preferred->setDerivativeOperations(null);
 		}
-		
+
 		$ret = $preferred->save();
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
-		    
+
 		$ret = GalleryCoreApi::releaseLocks($lockId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
@@ -122,13 +122,13 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
-		    
+
 		    $ret = GalleryCoreApi::deleteEntityById($preferred->getId());
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 		}
-		
+
 		/* Prepare our status message */
 		$status = $module->translate('Reverted rotate and scale changes successfully');
 	    }
@@ -146,7 +146,7 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
-		    
+
 		$isLinked = false;
 		$isLinkedTo = !empty($linkedIds);
 	    }
@@ -169,7 +169,7 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 		 * Note that we are explicitly not allowing linked items to execute
 		 * this code!
 		 */
-		
+
 		/* Get the path of the source */
 		list($ret, $sourcePath) = $item->fetchPath();
 		if ($ret->isError()) {
@@ -196,7 +196,7 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 		$item->setMimeType($outputMimeType);
-		
+
 		/* Get the item to rescan its data object */
 		$ret = $item->rescan();
 		if ($ret->isError()) {
@@ -209,7 +209,7 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
-		
+
 		$gallery->debug('checking is modified');
 		/* Save the item, if it's modified */
 		if ($item->isModified()) {
@@ -219,7 +219,7 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 		    }
 
 		    $item->setSerialNumber($form['serialNumber']);
-			
+
 		    $ret = $item->save();
 		    if ($ret->isError()) {
 			GalleryCoreApi::releaseLocks($lockId);
@@ -244,12 +244,12 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
-		    
+
 		    if (!isset($preferred)) {
 			return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
 				     null, null);
 		    }
-		
+
 		    $ret = $preferred->create($item->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
@@ -291,7 +291,7 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
-		
+
 		/*
 		 * Perform a final check -- if the new derivative is exactly
 		 * the same as the original then delete it.
@@ -358,7 +358,7 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 	    $form['preserveOriginal'] = 1;
 	    $form['formName'] = 'ItemEditRotateAndScalePhoto';
 	}
-	
+
 	if ($item->isLinked()) {
 	    $ItemEditRotateAndScalePhoto['editPhoto']['isLinked'] = true;
 	    $ItemEditRotateAndScalePhoto['editPhoto']['isLinkedTo'] = false;
@@ -371,7 +371,7 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 	    $ItemEditRotateAndScalePhoto['editPhoto']['isLinkedTo'] = !empty($linkedIds);
 	    $ItemEditRotateAndScalePhoto['editPhoto']['isLinked'] = false;
 	}
-	    
+
 	/* Check to see if we have a preferred source */
 	list ($ret, $results) =
 	    GalleryCoreApi::fetchPreferredsByItemIds(array($item->getId()));

@@ -1190,14 +1190,14 @@ class GalleryUtilities {
     function readManifest() {
 	/*
 	 * Be careful not to reference $gallery here; this method is called from the installer
-	 * Look in (modules|layouts|themes)/.../MANIFEST and top level MANIFEST
+	 * Look in (modules|themes)/.../MANIFEST and top level MANIFEST
 	 */
 	$base = realpath(dirname(__FILE__) . '/../../..') . '/';
 	$list = array();
 	if (file_exists($base . 'MANIFEST')) {
 	    $list[] = 'MANIFEST';
 	}
-	foreach (array('modules', 'layouts', 'themes') as $dir) {
+	foreach (array('modules', 'themes') as $dir) {
 	    $dh = opendir($base . $dir);
 	    while (($file = readdir($dh)) !== false) {
 		if (file_exists($base . $dir . '/' . $file . '/MANIFEST')) {
@@ -1362,7 +1362,7 @@ class GalleryUtilities {
 	if (!isset($_COOKIE[$key])) {
 	    return null;
 	}
-	
+
 	/* Fix php HTTP_COOKIE header bug http://bugs.php.net/bug.php?id=32802 */
 	GalleryUtilities::fixCookieVars();
 
@@ -1503,7 +1503,7 @@ class GalleryUtilities {
      * Creates an entry in $_COOKIE for $attr, which is a name=value pair.
      * We try to mimic the PHP source code here: make the entry binary safe, don't register
      * non-NAME attributes (e.g. cookie version,...). The one thing we don't do here is treat
-     * array cookies correctly because it would but too involving. But we gracefully just don't 
+     * array cookies correctly because it would but too involving. But we gracefully just don't
      * replace these array cookies in $_COOKIE, so if they are used somewhere, they will be
      * left intact by fixCookieVars().
      *

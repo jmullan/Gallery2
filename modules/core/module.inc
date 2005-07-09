@@ -38,11 +38,15 @@ class CoreModule extends GalleryModule {
 	$this->setId('core');
 	$this->setName($gallery->i18n('Core'));
 	$this->setGalleryVersion('2.0-beta-3+');
-	$this->setVersion('0.9.29'); /*Update CoreModuleExtras::upgrade,_prepareConfigUpgrade too!*/
+
+	/* Don't forget to update CoreModuleExtras::upgrade and _prepareConfigUpgrade too! */
+	/* TODO: remove GalleryAlbumItem::layout on the next version bump */
+	$this->setVersion('0.9.30');
+
 	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('registerEventListeners|' .
-			    'getItemLinks|getSystemLinks|loadSystemContent|' .
+			    'getItemLinks|getSystemLinks|' .
 			    'getSiteAdminViews|getUserAdminViews|getItemAdminViews');
 	$this->setRequiredCoreApi(array(6, 4));
 	$this->setRequiredModuleApi(array(1, 1));
@@ -255,78 +259,29 @@ class CoreModule extends GalleryModule {
 	}
 
 	if ($isAdmin) {
-	    $links[] = array('text' => $this->translate('Site Admin'),
-			     'params' => array('view' => 'core.SiteAdmin',
-					       'return' => 1));
+	    $links['SiteAdmin'] = array('text' => $this->translate('Site Admin'),
+					'params' => array('view' => 'core.SiteAdmin',
+							  'return' => 1));
 	}
 
 	if (GalleryCapabilities::can('login')) {
 	    if ($gallery->getActiveUserId() == $param['id.anonymousUser']) {
-		if ($param['misc.login'] != 'form') {
-		    $links[] = array('text' => $this->translate('Login'),
-				     'params' => array('view' => 'core.UserAdmin',
-						       'subView' => 'core.UserLogin',
-						       'return' => 1));
-		}
+		$links['Login'] = array('text' => $this->translate('Login'),
+					'params' => array('view' => 'core.UserAdmin',
+							  'subView' => 'core.UserLogin',
+							  'return' => 1));
 	    } else {
-		$links[] = array('text' => $this->translate('Your Account'),
-				 'params' => array('view' => 'core.UserAdmin',
-						   'subView' => 'core.UserPreferences',
-						   'return' => 1));
-		$links[] = array('text' => $this->translate('Logout'),
-				 'params' => array('controller' => 'core.Logout',
-						   'return' => 1));
+		$links['YourAccount'] = array('text' => $this->translate('Your Account'),
+					      'params' => array('view' => 'core.UserAdmin',
+								'subView' => 'core.UserPreferences',
+								'return' => 1));
+		$links['Logout'] = array('text' => $this->translate('Logout'),
+					 'params' => array('controller' => 'core.Logout',
+							   'return' => 1));
 	    }
 	}
 
 	return array(GalleryStatus::success(), $links);
-    }
-
-    /**
-     * @see GalleryModule::loadSystemContent
-     */
-    function loadSystemContent(&$template) {
-	global $gallery;
-	$content = array();
-
-	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Need a login form? */
-	$anonymousUserId = $param['id.anonymousUser'];
-	if ($gallery->getActiveUserId() == $anonymousUserId
-		&& GalleryCapabilities::can('login') && $param['misc.login'] != 'link') {
-	    $content['login'] = 'modules/core/templates/LoginSystemContent.tpl';
-	}
-
-	/* Get the language selector */
-	$languageSelector = $param['language.selector'];
-	if ($languageSelector == 'all' || ($languageSelector == 'guest'
-		&& $gallery->getActiveUserId() == $anonymousUserId)) {
-	    /* Set up our language selection list */
-	    $languageList = array();
-	    $translator =& $gallery->getTranslator();
-	    $supportedLanguages = $translator->getSupportedLanguages();
-	    foreach ($supportedLanguages as $language => $countryList) {
-		foreach ($countryList as $country => $languageData) {
-		    $languageList[$language . '_' . $country] = $languageData['description'];
-		}
-	    }
-
-	    list ($ret, $language) = $gallery->getActiveLanguageCode();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    $LanguageSelector = array('list' => $languageList, 'language' => $language);
-
-	    $template->setVariable('LanguageSelector', $LanguageSelector);
-	    $content['languageSelector'] = 'modules/core/templates/LanguageSelector.tpl';
-	}
-
-	return array(GalleryStatus::success(), $content);
     }
 
     /**
@@ -337,8 +292,8 @@ class CoreModule extends GalleryModule {
 			    'view' => 'core.AdminCore'),
 		      array('name' => $this->translate('Modules'),
 			    'view' => 'core.AdminModules'),
-		      array('name' => $this->translate('Layouts and Themes'),
-			    'view' => 'core.AdminLayouts',
+		      array('name' => $this->translate('Themes'),
+			    'view' => 'core.AdminThemes',
 			    'group' => 'display',
 			    'groupLabel' => $this->translate('Display')),
 		      array('name' => $this->translate('Users'),

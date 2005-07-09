@@ -38,15 +38,14 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
      *
      * @param object GalleryTemplate template
      * @param array (optional) image block parameters (to override module settings)
-     * @return array GalleryStatus a status code
-     *               string template file or null
+     * @return GalleryStatus a status code
      */
     function loadImageBlocks(&$template, $params = array('heading' => 1)) {
 	global $gallery;
 	list ($ret, $moduleParams) =
 	    GalleryCoreApi::fetchAllPluginParameters('module', 'imageblock');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$params = array_merge($moduleParams, $params);
 	$parentId = isset($params['itemId']) ? $params['itemId'] : null;
@@ -59,7 +58,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imageblock');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$headings = array('randomImage' => $gallery->i18n('Random Image'),
 			  'recentImage' => $gallery->i18n('Newest Image'),
@@ -85,7 +84,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 							  : '',
 		   $itemType, $order, $parentId, $fullSize);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
@@ -97,13 +96,12 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    $ImageBlockSystemContent['linkTarget'] = $params['linkTarget'];
 	}
 
-	$tpl = null;
 	if (!empty($blocks)) {
-	    /* Prepare image frames, if available */
+            /* Prepare image frames, if available */
 	    list ($ret, $imageframe) =
 		GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    if (isset($imageframe)) {
 		$frameIds = array();
@@ -116,15 +114,15 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    if (!empty($frameIds)) {
 		$ret = $imageframe->init($template, $frameIds);
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
 
 	    $ImageBlockSystemContent['blocks'] = $blocks;
 	    $template->setVariable('ImageBlockSystemContent', $ImageBlockSystemContent);
-	    $tpl = 'modules/imageblock/templates/ImageBlock.tpl';
 	}
-	return array(GalleryStatus::success(), $tpl);
+
+	return GalleryStatus::success();
     }
 
     /**

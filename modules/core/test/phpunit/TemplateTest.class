@@ -76,11 +76,12 @@ class TemplateTest extends GalleryTestCase {
 	$mockPlatform = new TemplatetestMockPlatform();
 	$gallery->setPlatform($mockPlatform);
 	$mockPlatform->set('file_exists', '/legal/path/local/templateThatHasNoLocal.tpl', false);
+	$mockPlatform->set('file_exists', '/legal/path/templateThatHasNoLocal.tpl', true);
 	$mockPlatform->set('stat', '/legal/path/templateThatHasNoLocal.tpl',
 			   array(0, 0, 0, 0, 0, 0, 0, 0, 0, 98765));
 	$success = $template->resourceGetTimestamp(
-			      'templateThatHasNoLocal.tpl', $templateTimestamp, $mockSmarty);
-	$this->assert($success, "Didn't return success");
+	    'templateThatHasNoLocal.tpl', $templateTimestamp, $mockSmarty);
+	$this->assert($success, "1: Didn't return success");
 	$this->assertEquals(98765, $templateTimestamp, 'no override');
 
 	/* Test retrieving an overridden template */
@@ -91,13 +92,13 @@ class TemplateTest extends GalleryTestCase {
 	$mockPlatform->set('stat', '/legal/path/local/template.tpl',
 			   array(0, 0, 0, 0, 0, 0, 0, 0, 0, 12345));
 	$success = $template->resourceGetTimestamp('template.tpl', $templateTimestamp, $mockSmarty);
-	$this->assert($success, "Didn't return success");
+	$this->assert($success, "2: Didn't return success");
 	$this->assertEquals(12345, $templateTimestamp, 'override');
 
 	/* Ensure static call is ok */
 	$success = GalleryTemplate::resourceGetTimestamp(
-				    'template.tpl', $templateTimestamp, $mockSmarty);
-	$this->assert($success, "Didn't return success");
+	    'template.tpl', $templateTimestamp, $mockSmarty);
+	$this->assert($success, "3: Didn't return success");
 	$this->assertEquals(12345, $templateTimestamp, 'static');
     }
 }

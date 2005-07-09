@@ -15,16 +15,18 @@ my %OPTS;
 $OPTS{'MAKE_BINARY'} = 0;
 $OPTS{'PATTERN'} = '';
 $OPTS{'DRY_RUN'} = 0;
+$OPTS{'REMOVE_OBSOLETE'} = 0;
 chomp(my $MAKE = `(which gmake || which make) 2>/dev/null`);
 die "Missing make" unless $MAKE;
 
 GetOptions('make-binary!' => \$OPTS{'MAKE_BINARY'},
 	   'pattern=s' => \$OPTS{'PATTERN'},
-	   'dry-run' => \$OPTS{'DRY_RUN'});
+	   'dry-run!' => \$OPTS{'DRY_RUN'},
+	   'remove-obsolete!' => \$OPTS{'REMOVE_OBSOLETE'});
 
 my %PO_DIRS = ();
 my %MO_FILES = ();
-my $failcount = 0;
+my @failures = ();
 
 my $curdir = cwd();
 my $basedir = cwd();
@@ -32,13 +34,20 @@ $basedir =~ s{(/.*)/(lib|docs|layouts|modules|setup|templates)/.*?$}{$1};
 
 find(\&locatePoDir, $basedir);
 
+my $TARGET = $OPTS{'REMOVE_OBSOLETE'} ? 'all-remove-obsolete' : 'all';
 foreach my $poDir (keys(%PO_DIRS)) {
-  print STDERR "BUILDING IN >> $poDir <<\n";
+  (my $printableDir = $poDir) =~ s|$basedir.||;
+  print STDERR "$printableDir: ";
   unless ($OPTS{'DRY_RUN'}) {
-    chdir $poDir;
-    system("$MAKE install clean 2>&1")
-      and print "FAIL: $poDir"
-	and $failcount++;
+    if (-f "$poDir/GNUmakefile") {
+      chdir $poDir;
+      system("$MAKE $TARGET clean QUIET=1 2>&1")
+	and print "FAIL!\n"
+	  and push(@failures, $poDir);
+    } else {
+      print "Missing GNUmakefile!\n";
+      push(@failures, $poDir);
+    }
   }
 }
 
@@ -51,8 +60,12 @@ if ($OPTS{'MAKE_BINARY'}) {
   system("cvs admin -kb " . join(" ", keys(%MO_FILES)));
 }
 
-print "$failcount failures\n";
-if ($failcount > 0) {
+if (@failures) {
+  print "\n\n";
+  print scalar(@failures) . " failures\n";
+  foreach (@failures) {
+    print "\t$_\n";
+  }
   exit 1;
 }
 

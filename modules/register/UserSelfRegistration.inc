@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -31,7 +31,7 @@
  * require necessary classes
  */
 GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryValidationPlugin.class');
- 
+
 /**
  * This controller will handle the selfcreation of an user
  *
@@ -56,7 +56,7 @@ class UserSelfRegistrationController extends GalleryController {
 
 	    /* Go back to the AdminUsers view */
 	    $redirect['view'] = 'core.UserAdmin';
-	    
+
 	} else if (isset($form['action']['create'])) {
 
 	    /* Validate inputs */
@@ -91,7 +91,7 @@ class UserSelfRegistrationController extends GalleryController {
 		    }
 		}
 	    }
-		
+
 	    /* Let each plugin do its verification */
 	    foreach ($pluginInstances as $pluginId => $plugin) {
 		list ($ret, $pluginErrors, $continue) = $plugin->performValidation($form);
@@ -109,9 +109,9 @@ class UserSelfRegistrationController extends GalleryController {
 	    /*
 	     * If all the right fields are in place then go ahead and
 	     * create the user.
-	     */	    
+	     */
 	    if (empty($error)) {
-		list ($ret, $user) = 
+		list ($ret, $user) =
 		    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryPendingUser');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -192,7 +192,7 @@ class UserSelfRegistrationController extends GalleryController {
 
 	return array(GalleryStatus::success(), $results);
     }
-    
+
     /**
      * Tests can use this method to hardwire a specific set of plugin instances to use.
      * This avoids situations where some of the option instances will do unpredictable

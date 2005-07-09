@@ -12,74 +12,45 @@
     <input type="hidden" name="{g->formVar var="form[formName]"}" value="{$form.formName}"/>
   </div>
 
-  <div id="gsSystemLinks" class="gcBorder1">
-    <div class="links">
-    {foreach from=$UserAdmin.moduleSystemLinks item=module}
-      {foreach from=$module item=link}
-      {if isset($link.params.view) && $link.params.view == "core.UserAdmin"}
-	<span> {$link.text} </span>
-      {else}
-	<span> <a href="{g->url params=$link.params}">{$link.text}</a> </span>
-      {/if}
-      {/foreach}
-    {/foreach}
-    </div>
-
-    <div class="gbBreadCrumb">
-      <span class="firstChild">
-	<a href="{g->url}">{$UserAdmin.rootAlbum.title|markup:stripBbcodeAndHtml}</a>
-      </span>
-      <span>
-	{g->text text="Your Account"}
-      </span>
-      {if !$user.isGuest}
-      <span>
-	{$user.fullName|default:$user.userName}
-      </span>
-      {/if}
-    </div>
-  </div>
-
   <table width="100%" cellspacing="0" cellpadding="0">
     <tr valign="top">
-    <td id="gsSidebarCol"><div id="gsSidebar" class="gcBorder1">
-      <div class="gbBlock">
-	<h2> {g->text text="User Options"} </h2>
-	<ul>
-	  {foreach from=$UserAdmin.subViewChoices item=choice}
-	    <li class="gbAdminLink {g->linkId urlParams=$choice}">
-	    {if ($UserAdmin.subViewName == $choice.view)}
-	      {$choice.name}
-	    {else}
-	      <a href="{g->url arg1="view=core.UserAdmin" arg2="subView=`$choice.view`"}">
+      <td id="gsSidebarCol"><div id="gsSidebar" class="gcBorder1">
+	<div class="gbBlock">
+	  <h2> {g->text text="User Options"} </h2>
+	  <ul>
+	    {foreach from=$UserAdmin.subViewChoices item=choice}
+	      <li class="gbAdminLink {g->linkId urlParams=$choice}">
+	      {if ($UserAdmin.subViewName == $choice.view)}
 		{$choice.name}
-	      </a>
-	    {/if}
-	    </li>
-	  {/foreach}
-	</ul>
-      </div>
+	      {else}
+		<a href="{g->url arg1="view=core.UserAdmin" arg2="subView=`$choice.view`"}">
+		  {$choice.name}
+		</a>
+	      {/if}
+	      </li>
+	    {/foreach}
+	  </ul>
+	</div>
 
-      <div class="gbBlock">
-	<h2> {g->text text="Navigation"} </h2>
-	<ul>
-	  {foreach from=$UserAdmin.navigationLinks item=link}
-	    <li>
-	      <a href="{$link.url}">
-		{$link.name}
-	      </a>
-	    </li>
-	  {/foreach}
-	</ul>
-      </div>
-    </div></td>
+	<div class="gbBlock">
+	  <h2> {g->text text="Navigation"} </h2>
+	  <ul>
+	    {foreach from=$UserAdmin.navigationLinks item=link}
+	      <li>
+		<a href="{$link.url}">
+		  {$link.name}
+		</a>
+	      </li>
+	    {/foreach}
+	  </ul>
+	</div>
+      </div></td>
 
-    <td>
-      <div id="gsContent" class="gcBorder1">
-	{include file="gallery:`$UserAdmin.viewBodyFile`" l10Domain=$UserAdmin.viewL10Domain}
-      </div>
-    </td>
-  </tr></table>
+      <td>
+	<div id="gsContent" class="gcBorder1">
+	  {include file="gallery:`$UserAdmin.viewBodyFile`" l10Domain=$UserAdmin.viewL10Domain}
+	</div>
+      </td>
+    </tr>
+  </table>
 </form>
-{* Content subView wants to display outside main form/table: *}
-{if isset($smarty.capture.UserAdmin_footer)} {$smarty.capture.UserAdmin_footer} {/if}

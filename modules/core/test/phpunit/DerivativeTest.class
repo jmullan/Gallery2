@@ -2,7 +2,7 @@
 /*
  * $RCSfile$
  *
- * Gallery - a web based derivative album viewer and editor
+ * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
@@ -275,7 +275,7 @@ class DerivativeTest extends GalleryTestCase {
 	$this->assertEquals(100, $derivative->getWidth());
 	$this->assertEquals(200, $derivative->getHeight());
 	$this->assertEquals(null, $derivative->getIsBroken());
-	
+
 	/*
 	 * Rebuild the cached derivative, it should fail internally and replace the derivative by
 	 * the broken derivative placeholder and set it to isBroken = true. It should then return
@@ -297,7 +297,7 @@ class DerivativeTest extends GalleryTestCase {
 
 	/* Check if the derivative is marked as broken */
 	$this->assertEquals(1, $derivative->getIsBroken(), 'Cache is not marked as broken');
-	
+
 	/* Check if the derivative was replaced correctly */
 	list ($ret, $mimeType) =
 	    GalleryCoreApi::getMimeType($derivative->getBrokenDerivativePath());
@@ -315,7 +315,7 @@ class DerivativeTest extends GalleryTestCase {
 	$size = $platform->filesize($derivative->getBrokenDerivativePath());
 	$this->assertEquals($size, $derivative->getDerivativeSize(),
 			    'Incorrect broken derivative size');
-	    
+
 	/* Change the toolkit operation */
 	$derivative->setDerivativeOperations('test-operation');
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($derivative->getId(), 1);
@@ -338,7 +338,7 @@ class DerivativeTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(!$rebuilt, 'cache was rebuilt but it was not forced to');
-	
+
 	/* And try to fix the derivative item */
 	list ($ret, $derivative, $rebuilt) =
 	    GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($derivative->getId(), true);
@@ -397,7 +397,7 @@ class DerivativeTest extends GalleryTestCase {
 	}
 	$this->assert($derivative->getIsBroken(), 'derivative is not marked as broken');
     }
-    
+
     function testFetchDerivativesByItemIds() {
 	list ($ret, $derivative1) = $this->_createDerivative(
 	    $this->_root, $this->_root->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);

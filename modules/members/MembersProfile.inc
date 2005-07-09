@@ -82,8 +82,8 @@ class MembersProfileView extends GalleryView {
 	}
 	$MembersProfile['user'] = $user->getMemberData();
 
-	list ($ret, $lastItems) = GalleryMembersHelper::fetchLastUserItems($user->getId(),
-									   0, 5, ORDER_DESCENDING);
+	list ($ret, $lastItems) =
+	   GalleryMembersHelper::fetchLastUserItems($user->getId(), 0, 5, ORDER_DESCENDING);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -107,16 +107,6 @@ class MembersProfileView extends GalleryView {
 	$MembersProfile['canViewProfileEmail'] = $canViewProfileEmail;
 
 	$template->setVariable('MembersProfile', $MembersProfile);
-
-	list ($ret, $navigationView) = GalleryView::loadView('core.Navigation');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	list ($ret, $ignored) = $navigationView->loadTemplate($template, $form);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'members');
 	if ($ret->isError()) {

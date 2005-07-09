@@ -47,9 +47,6 @@ class GalleryControllerTestCase extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
-	$this->_controller->setImmediateStatusView(
-	    new GalleryControllerTestCaseMockImmediateStatusView());
     }
 
     function setUp() {
@@ -85,47 +82,6 @@ class GalleryControllerTestCase extends GalleryTestCase {
 	}
 
 	return $results;
-    }
-}
-
-/**
- * Mock immediate status view for controllers that use one.  Right now it does nothing, but it can
- * be extended to buffer up data and regurgitate it so that we can verify that options are doing
- * the right thing during our tests.
- */
-class GalleryControllerTestCaseMockImmediateStatusView {
-    function resetTimingStats() {
-    }
-
-    function doLoadImmediateTemplate() {
-	return GalleryStatus::success();
-    }
-
-    function renderHeader($pageTitle, $sectionTitle, $sectionDescription) {
-	return GalleryStatus::success();
-    }
-
-    function renderStatusMessage($title, $description, $percentComplete) {
-	return GalleryStatus::success();
-    }
-
-    function renderRedirect($redirectUrl) {
-	return GalleryStatus::success();
-    }
-
-    function renderFooter() {
-	return GalleryStatus::success();
-    }
-
-    function setMain($main) {
-	return GalleryStatus::success();
-    }
-
-    function setFlushed($val) {
-    }
-
-    function getFlushed() {
-	return false;
     }
 }
 ?>

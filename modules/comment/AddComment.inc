@@ -93,8 +93,7 @@ class AddCommentController extends GalleryController {
 		}
 
 		/* Send the user to a confirmation page, for now */
-		$redirect['view'] = 'core.ItemAdmin';
-		$redirect['subView'] = 'comment.CommentChangeConfirmation';
+		$redirect['view'] = 'comment.CommentChangeConfirmation';
 		$redirect['itemId'] = (int)$itemId;
 		$status['added'] = 1;
 	    }
@@ -109,8 +108,8 @@ class AddCommentController extends GalleryController {
 
 	    /* Fall through back to the current view */
 	} else if (isset($form['action']['cancel'])) {
-	    /* Where to go on a cancel?  Go to item admin.*/
-	    $redirect['view'] = 'core.ItemAdmin';
+	    /* Where to go on a cancel?  Back to viewing the item. */
+	    $redirect['view'] = 'core.ShowItem';
 	    $redirect['itemId'] = (int)$itemId;
 	}
 
@@ -119,8 +118,7 @@ class AddCommentController extends GalleryController {
 	    $results['return'] = 1;
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core.ItemAdmin';
-	    $results['delegate']['subView'] = 'comment.AddComment';
+	    $results['delegate']['view'] = 'comment.AddComment';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -168,9 +166,17 @@ class AddCommentView extends GalleryView {
 
 	$AddComment = array();
 	$AddComment['host'] = GalleryUtilities::getRemoteHostAddress();
+	$AddComment['itemId'] = $item->getId();
 
 	$template->setVariable('AddComment', $AddComment);
 	$template->setVariable('controller', 'comment.AddComment');
+
+	list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'comment');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$template->title($module->translate('Add Comment'));
 
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/comment/templates/AddComment.tpl'));

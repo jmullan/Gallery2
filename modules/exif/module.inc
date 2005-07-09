@@ -41,9 +41,9 @@ class ExifModule extends GalleryModule {
 	$this->setId('exif');
 	$this->setName($gallery->i18n('EXIF/IPTC'));
 	$this->setDescription($gallery->i18n('Extract EXIF/IPTC data from JPEG photos'));
-	$this->setVersion('0.9.6'); /* Update upgrade() function below too */
+	$this->setVersion('0.9.7'); /* Update upgrade() function below too */
 	$this->setGroup('data', $this->translate('Extra Data'));
-	$this->setCallbacks('loadItemDetails|getSiteAdminViews');
+	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
 	$this->setRequiredModuleApi(array(1, 0));
     }
@@ -119,6 +119,7 @@ class ExifModule extends GalleryModule {
 	    case '0.9.3':
 	    case '0.9.4':
 	    case '0.9.5':
+	    case '0.9.6':
 
 	    case 'end of upgrade path':
 		/*
@@ -200,67 +201,6 @@ class ExifModule extends GalleryModule {
     function autoConfigure() {
 	/* We don't require any special configuration */
 	return array(GalleryStatus::success(), true);
-    }
-
-    /**
-     * @see GalleryModule::loadItemDetails()
-     */
-    function loadItemDetails(&$template, $item, $permissions) {
-	global $gallery;
-	GalleryCoreApi::relativeRequireOnce('modules/exif/classes/ExifHelper.class');
-
-	/* We only work on JPEG data items */
-	if (!GalleryUtilities::isA($item, 'GalleryDataItem') ||
-		!preg_match('{^image/p?jpeg(-cmyk)?$}', $item->getMimeType())) {
-	    return array(GalleryStatus::success(), '');
-	}
-
-	/* Feed the file to exifer */
-	list($ret, $path) = $item->fetchPath();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Figure out which version we're looking at */
-	$session =& $gallery->getSession();
-	if (empty($mode)) {
-	    $mode = $session->get('exif.module.loadItemDetails.mode');
-	    if (empty($mode)) {
-		$mode = 'summary';
-	    }
-	}
-
-	if ($mode == 'detailed') {
-	    $filter = EXIF_DETAILED;
-	} else {
-	    $filter = EXIF_SUMMARY;
-	}
-
-	list ($ret, $exifData) = ExifHelper::getExifData($path, $filter);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	if (empty($exifData)) {
-	    if ($filter == EXIF_SUMMARY) {
-		list ($ret, $exifData) = ExifHelper::getExifData($path, EXIF_DETAILED);
-	    } else {
-		list ($ret, $exifData) = ExifHelper::getExifData($path, EXIF_SUMMARY);
-	    }
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    $mode = null;
-	}
-	if (empty($exifData)) {
-	    return array(GalleryStatus::success(), null);
-	}
-
-	$ExifItemDetails = array();
-	$ExifItemDetails['exifData'] = $exifData;
-	$ExifItemDetails['mode'] = $mode;
-	$template->setVariable('ExifItemDetails', $ExifItemDetails);
-
-	return array(GalleryStatus::success(), 'modules/exif/templates/ExifItemDetails.tpl');
     }
 
     /**

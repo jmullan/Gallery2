@@ -1,0 +1,315 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * ItemEditTheme controller tests
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ItemEditThemePluginTest extends ItemEditPluginTestCase {
+
+    function ItemEditThemePluginTest($methodName) {
+	$this->ItemEditPluginTestCase($methodName, 'core', 'ItemEditTheme');
+    }
+
+    function setUp() {
+	global $gallery;
+
+	parent::setUp();
+
+	/* Create a random album */
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->_markForCleanup($this->_album);
+
+	/* Assign our test theme */
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->_album->setTheme('ItemEditThemeControllerTest');
+	$ret = $this->_album->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$gallery->setPlatform(new ItemEditThemeTestPlatform());
+
+	$this->_preferred = null;
+
+	/* Reset test theme */
+	ItemEditThemeControllerTestTheme::reset();
+    }
+
+    function testUndo() {
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][undo]', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_album, $this->_preferred);
+	$this->assertEquals(array(array(), null), $results);
+    }
+
+    function testSave() {
+	GalleryUtilities::putRequestVariable('form[key][rows]', 3);
+	GalleryUtilities::putRequestVariable('form[key][columns]', 4);
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_album, $this->_preferred);
+	$this->assertEquals(array(array(), $this->_translate('Successfully saved theme settings')),
+			    $results);
+
+	/* Verify */
+	$this->assertEquals(array('setParameter(rows, 3)',
+				  'setParameter(columns, 4)'),
+			    ItemEditThemeControllerTestTheme::getMap());
+    }
+
+    function testInvalidSave() {
+	GalleryUtilities::putRequestVariable('form[key][rows]', '3x');
+	GalleryUtilities::putRequestVariable('form[key][columns]', 4);
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_album, $this->_preferred);
+	$this->assertEquals(array(array('form[error][key][rows][invalid]'), null),
+			    $results);
+
+	/* Verify that we have a detailed error message */
+	$this->assert(GalleryUtilities::hasRequestVariable('form[errorMessage]'));
+
+	$errorMessage = GalleryUtilities::getRequestVariables('form[errorMessage]');
+	$this->assertEquals('You must enter a number greater than 0', $errorMessage['rows']);
+    }
+
+    function testSaveWithGlobal() {
+	GalleryUtilities::putRequestVariable('form[key][rows]', 3);
+	GalleryUtilities::putRequestVariable('form[key][columns]', 4);
+	GalleryUtilities::putRequestVariable('form[useGlobal][columns]', 'on');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_album, $this->_preferred);
+	$this->assertEquals(array(array(), $this->_translate('Successfully saved theme settings')),
+			    $results);
+
+	/* Verify */
+	$this->assertEquals(array('setParameter(rows, 3)',
+				  sprintf('removeItemParameter(columns, %d)', $this->_album->getId())),
+			    ItemEditThemeControllerTestTheme::getMap());
+    }
+}
+
+/**
+ * Test theme
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ItemEditThemeControllerTestTheme {
+
+    /**
+     * @see GalleryTheme::getSettings()
+     */
+    function getSettings($itemId=0) {
+	$settings = array();
+	$settings[] = array('key' => 'rows',
+			    'name' => 'Rows per album page',
+			    'type' => 'text-field',
+			    'typeParams' => array('size' => 2),
+			    'value' => 4);
+	$settings[] = array('key' => 'columns',
+			    'name' => 'Columns per album page',
+			    'type' => 'text-field',
+			    'typeParams' => array('size' => 2),
+			    'value' => 3);
+	return array(GalleryStatus::success(), $settings);
+    }
+
+    /**
+     * @see GalleryTheme::validateSettings
+     */
+    function validateSettings($settings) {
+	$error = array();
+	if (empty($settings['rows']) || !is_numeric($settings['rows'])) {
+	    $error['rows'] = $this->translate('You must enter a number greater than 0');
+	}
+
+	if (empty($settings['columns']) || !is_numeric($settings['columns'])) {
+	    $error['columns'] = $this->translate('You must enter a number greater than 0');
+	}
+
+	return $error;
+    }
+
+    /**
+     * @see GalleryTheme::isAdvancedSettings
+     */
+    function isAdvancedSettings() {
+	return false;
+    }
+
+    function isActive() {
+	return array(GalleryStatus::success(), true);
+    }
+
+    function translate($text) {
+	return $text;
+    }
+
+    function removeItemParameter($key, $itemId) {
+	$map =& $this->getMap();
+	$map[] = "removeItemParameter($key, $itemId)";
+	return GalleryStatus::success();
+    }
+
+    function setParameter($key, $value) {
+	$map =& $this->getMap();
+	$map[] = "setParameter($key, $value)";
+	return GalleryStatus::success();
+    }
+
+    function &getMap() {
+	static $map;
+	if (!isset($map)) {
+	    $map = array();
+	}
+	return $map;
+    }
+
+    function init() {
+	return GalleryStatus::success();
+    }
+
+    function reset() {
+	$map =& ItemEditThemeControllerTestTheme::getMap();
+	$map = array();
+    }
+
+    function getName() {
+	return 'ItemEditThemeControllerTest';
+    }
+}
+
+/**
+ * Test platform
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ItemEditThemeTestPlatform {
+
+    function opendir($path) {
+	if ($path == dirname(__FILE__) . '/../../../../themes/') {
+	    return 'TEST_VALID_RESOURCE';
+	} else {
+	    return null;
+	}
+    }
+
+    function readdir($path) {
+	static $paths;
+	if (!isset($paths)) {
+	    $paths = array('.',
+			   '..',
+			   'ItemEditThemeControllerTest');
+	}
+
+	if ($path == 'TEST_VALID_RESOURCE') {
+	    if (empty($paths)) {
+		$paths = null;
+		return null;
+	    } else {
+		return array_shift($paths);
+	    }
+	}
+    }
+
+    function fopen($filename, $modes) {
+	/* Pass lock requests */
+	if (preg_match("|\blocks\b|", $filename)) {
+	    return fopen($filename, $modes);
+	}
+
+	print "Unexpected fopen($filename, $modes)";
+	return null;
+    }
+
+    function fclose($handle) {
+	return fclose($handle); /* needed to release locks */
+    }
+
+    function getDirectorySeparator() {
+	return DIRECTORY_SEPARATOR;
+    }
+
+    function unlink($path) {
+	return unlink($path); /* needed to release locks */
+    }
+
+    function closedir($path) {
+    }
+
+    function realpath($path) {
+	return realpath($path);
+    }
+
+    function file_exists($path) {
+	$base = dirname(__FILE__) . '/../../../../themes/';
+	switch($path) {
+	case $base . 'ItemEditThemeController/theme.inc':
+	    return 1;
+
+	default:
+	    return 0;
+	}
+    }
+
+    function is_dir($path) {
+	$base = dirname(__FILE__) . '/../../../../themes/';
+	switch($path) {
+	case $base . 'ItemEditThemeControllerTest':
+	    return 1;
+
+	default:
+	    return 0;
+	}
+    }
+}
+
+?>

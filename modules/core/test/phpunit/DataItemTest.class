@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -41,7 +41,7 @@ class DataItemTest extends GalleryTestCase {
 
     function setUp() {
 	parent::setUp();
-	
+
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -52,7 +52,7 @@ class DataItemTest extends GalleryTestCase {
     }
 
     /**
-     * Verify that creating a second dataitem entity with the same path as 
+     * Verify that creating a second dataitem entity with the same path as
      * an existing one throws a collision error.
      */
     function testCreateCollision() {
@@ -111,12 +111,12 @@ class DataItemTest extends GalleryTestCase {
 
     function testMoveCollision() {
 	global $gallery;
-	
+
 	list ($ret, $subAlbum) = $this->_createRandomAlbum($this->_album->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	list ($ret, $lockIds[]) =
 	    GalleryCoreApi::acquireReadLock(array($this->_album->getId(), $subAlbum->getId()));
 	if ($ret->isError()) {
@@ -128,7 +128,7 @@ class DataItemTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$ret = $orig->save();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -154,17 +154,17 @@ class DataItemTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	list ($ret, $basePath) = $this->_album->fetchPath();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	list ($ret, $newPath) = $new->fetchPath();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$this->assertEquals($basePath . 'valid_path_001.txt', $newPath, 'full path mismatch');
 
 	$platform = $gallery->getPlatform();

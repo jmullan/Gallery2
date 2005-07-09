@@ -448,7 +448,7 @@ class GalleryTranslator {
 	     * bind_textdomain_charset do return the output in UTF-8.
 	     */
 	    if (!function_exists('bind_textdomain_codeset') &&
-		    version_compare(phpversion(), '4.2.0') < 0) {
+		    version_compare(phpversion(), '4.2.0', '<')) {
 		$localized = GalleryCoreApi::convertToUtf8($localized);
 	    }
 	} else {
@@ -490,7 +490,7 @@ class GalleryTranslator {
 	 * This is a useful debug routine.  Uncomment it to have every
 	 * string prefixed with the domain it was localized in.
 	 */
-	//$localized = "[$domain: $localized]";
+	//$localized = "<font size=1 color=#C33>$domain:</font>$localized";
 
 	return array(GalleryStatus::success(), $localized);
     }

@@ -36,27 +36,8 @@ msgstr "Galeri Email Testi"
 msgid "&laquo; None &raquo;"
 msgstr ""
 
-#, fuzzy
-msgid "None"
-msgstr "Done"
-
-msgid "Guest User Only"
-msgstr "Sadece Misafir Kullanıcılar"
-
-msgid "Everybody"
-msgstr "Herkes"
-
 msgid "forever"
 msgstr "daima"
-
-msgid "Link to Login Page"
-msgstr ""
-
-msgid "Form on Sidebar"
-msgstr ""
-
-msgid "Both"
-msgstr ""
 
 msgid "No Markup"
 msgstr ""
@@ -106,6 +87,9 @@ msgstr "kur"
 msgid "upgrade"
 msgstr "güncelle"
 
+msgid "configure"
+msgstr "konfigüre et"
+
 msgid "activate"
 msgstr "Aktive et"
 
@@ -115,17 +99,14 @@ msgstr "kaldır"
 msgid "deactivate"
 msgstr ""
 
+msgid "Other"
+msgstr "Diğer"
+
 msgid "Inherit settings from parent album"
 msgstr ""
 
 msgid "Use these settings"
 msgstr "Bu atarları kullan"
-
-msgid "configure"
-msgstr "konfigüre et"
-
-msgid "Other"
-msgstr "Diğer"
 
 msgid "key"
 msgstr "anahtar"
@@ -173,8 +154,20 @@ msgstr "Kayıtlı Kullanıcılar"
 msgid "All Users"
 msgstr "Tüm Kullanıcılar"
 
+msgid "Loading derivatives for the broken derivatives check"
+msgstr ""
+
+msgid "Detecting broken derivatives"
+msgstr ""
+
+msgid "Marking broken derivatives"
+msgstr ""
+
 msgid "Site Admins"
 msgstr "Site Yöneticileri"
+
+msgid "Everybody"
+msgstr "Herkes"
 
 msgid "Guest"
 msgstr "Misafir"
@@ -184,6 +177,15 @@ msgstr "Galeri"
 
 msgid "This is the main page of your Gallery"
 msgstr "Burası Galeri'nin ana sayfasıdır."
+
+msgid "Loading derivatives for the "
+msgstr ""
+
+msgid "Detecting broken derivatives "
+msgstr ""
+
+msgid "Marking broken derivatives "
+msgstr ""
 
 msgid "add items"
 msgstr "öge ekle"
@@ -261,9 +263,6 @@ msgstr "%s düzenle"
 msgid "Settings saved successfully."
 msgstr "Ayarlar başarıyla kaydedildi."
 
-msgid "&laquo; default layout &raquo;"
-msgstr "&laquo; varsayılan layout &raquo;"
-
 msgid "&laquo; default theme &raquo;"
 msgstr "&laquo; varsayılan tema &raquo;"
 
@@ -282,12 +281,6 @@ msgstr "Actions"
 
 msgid "General"
 msgstr "Genel"
-
-msgid "Successfully saved layout settings"
-msgstr "Layout ayarları başarıyla kaydedildi"
-
-msgid "Layout"
-msgstr "Layout"
 
 msgid "Movie Size"
 msgstr "Film Boyutu"
@@ -353,6 +346,13 @@ msgstr "User '%s' has been modified successfully."
 msgid "Modify Photo"
 msgstr "Modified Image"
 
+#, fuzzy
+msgid "Successfully saved theme settings"
+msgstr "Layout ayarları başarıyla kaydedildi"
+
+msgid "Theme"
+msgstr "Tema"
+
 msgid "make highlight"
 msgstr ""
 
@@ -393,15 +393,16 @@ msgid "Build all thumbnails/resizes"
 msgstr "Thumbnails"
 
 msgid ""
-"Ensure data files for all derivatives (thumbnails, etc) have been built."
+"Ensure data files for all derivatives (thumbnails, etc) have been built and "
+"rebuild broken ones."
 msgstr ""
-
-msgid "Processing..."
-msgstr "işleniyor..."
 
 #, fuzzy
 msgid "Build All Thumbnails/Resizes"
 msgstr "Thumbnails"
+
+msgid "Debug output for failed items:"
+msgstr ""
 
 #, fuzzy, c-format
 msgid "Processing image %d of %d"
@@ -410,6 +411,14 @@ msgstr "Viewing page %d of %d"
 #, fuzzy, c-format
 msgid "Checked %d items"
 msgstr "add item"
+
+#, fuzzy, c-format
+msgid "%d items built"
+msgstr "öge ekle"
+
+#, c-format
+msgid "%d items failed"
+msgstr ""
 
 msgid "Delete database cache"
 msgstr "Veritabanı önbelleğini sil"
@@ -498,45 +507,6 @@ msgstr "Grup"
 msgid "group"
 msgstr "grup"
 
-#, c-format
-msgid "Estimated time remaining: %d:%02d"
-msgstr ""
-
-msgid "Rows per album page"
-msgstr ""
-
-msgid "Columns per album page"
-msgstr ""
-
-msgid "Show image owners"
-msgstr "Resim sahiplerini göster"
-
-msgid "Show album owners"
-msgstr "Albüm sahiplerini göster"
-
-msgid "Show micro navigation thumbnails"
-msgstr ""
-
-msgid "Number of items to show per page"
-msgstr ""
-
-msgid "View Samples"
-msgstr "Örnekleri Görüntüle"
-
-#, fuzzy
-msgid "Album Frame"
-msgstr "Album Settings"
-
-#, fuzzy
-msgid "Item Frame"
-msgstr "Items to move"
-
-msgid "Photo Frame"
-msgstr ""
-
-msgid "You must enter a number greater than 0"
-msgstr "0'dan büyük bir numara girmelisiniz"
-
 msgid "Movie"
 msgstr "Film"
 
@@ -586,6 +556,71 @@ msgstr "Artan"
 
 msgid "Descending"
 msgstr "Azalan"
+
+msgid "Validation disabled until you set allowSessionAccess in config.php"
+msgstr ""
+
+msgid "This page is valid XHTML 1.0"
+msgstr ""
+
+#, c-format
+msgid "Estimated time remaining: %d:%02d"
+msgstr ""
+
+#, c-format
+msgid "Memory used: %s, total: %s"
+msgstr ""
+
+msgid "Rows per album page"
+msgstr ""
+
+msgid "Columns per album page"
+msgstr ""
+
+msgid "Show image owners"
+msgstr "Resim sahiplerini göster"
+
+msgid "Show album owners"
+msgstr "Albüm sahiplerini göster"
+
+msgid "Show micro navigation thumbnails"
+msgstr ""
+
+msgid "Number of items to show per page"
+msgstr ""
+
+msgid "Blocks to show in the sidebar"
+msgstr ""
+
+msgid "Blocks to show on album pages"
+msgstr ""
+
+msgid "Blocks to show on photo pages"
+msgstr ""
+
+msgid "View Samples"
+msgstr "Örnekleri Görüntüle"
+
+#, fuzzy
+msgid "Album Frame"
+msgstr "Album Settings"
+
+#, fuzzy
+msgid "Item Frame"
+msgstr "Items to move"
+
+msgid "Photo Frame"
+msgstr ""
+
+msgid "You must enter a number greater than 0"
+msgstr "0'dan büyük bir numara girmelisiniz"
+
+msgid "Format: [module.BlockName param=value] ..."
+msgstr ""
+
+#, c-format
+msgid "%dx%d"
+msgstr ""
 
 msgid "Audio"
 msgstr "Ses"
@@ -663,6 +698,9 @@ msgid ""
 "in the original data file (usually from EXIF data)."
 msgstr ""
 
+msgid "Processing..."
+msgstr "işleniyor..."
+
 msgid "Refresh Capture Dates"
 msgstr ""
 
@@ -735,8 +773,9 @@ msgstr "Çıkış"
 msgid "Modules"
 msgstr "Modüller"
 
-msgid "Layouts and Themes"
-msgstr "Layout ve Temalar"
+#, fuzzy
+msgid "Themes"
+msgstr "Tema"
 
 msgid "Display"
 msgstr "Görüntüle"
@@ -815,16 +854,17 @@ msgstr "Revert to original"
 msgid "Test email sent successfully"
 msgstr "Test emailı başarıyla gönderildi."
 
-msgid "Error sending test email, see below for details"
+#, fuzzy
+msgid "There was a problem processing your request, see below for details."
 msgstr ""
 "Test emailı'ı gönderilirken bir hata oluştu, detayları görmek için aşağıya "
 "bakınız"
 
-msgid "Invalid cookie path"
+#, fuzzy
+msgid "Error sending test email, see below for details."
 msgstr ""
-
-msgid "Invalid cookie domain"
-msgstr ""
+"Test emailı'ı gönderilirken bir hata oluştu, detayları görmek için aşağıya "
+"bakınız"
 
 msgid "Language Settings"
 msgstr "Dil Ayarları"
@@ -840,9 +880,6 @@ msgstr ""
 
 msgid "Default language"
 msgstr "Varsayılan Dil"
-
-msgid "Language selector in sidebar"
-msgstr "Kenar çubuğunda dil seçeneği"
 
 msgid "gettext"
 msgstr "gettext"
@@ -918,9 +955,6 @@ msgstr ""
 msgid "Session Settings"
 msgstr "Oturum Ayarları"
 
-msgid "Login Method"
-msgstr "Giriş Methodu"
-
 msgid "Session Lifetime"
 msgstr "Oturum Süresi"
 
@@ -962,6 +996,9 @@ msgstr "Şifre"
 msgid "SMTP From Address"
 msgstr "SMTP Gönderen Adresi"
 
+msgid "Invalid email address"
+msgstr "Geçersiz email adresi"
+
 msgid ""
 "Send a test email to verify your settings are correct (whether using PHP "
 "mail or SMTP settings above).  Below enter a recipient email address for a "
@@ -970,9 +1007,6 @@ msgstr ""
 
 msgid "Send Email"
 msgstr "Email Gönder"
-
-msgid "Invalid email address"
-msgstr "Geçersiz email adresi"
 
 msgid "Email Test Error"
 msgstr "Email Test Hatası"
@@ -1018,7 +1052,13 @@ msgid ""
 "not, they will experience login / logout / lost session problems."
 msgstr ""
 
+msgid "Invalid cookie path"
+msgstr ""
+
 msgid "Domain"
+msgstr ""
+
+msgid "Invalid cookie domain"
 msgstr ""
 
 msgid "Locking System"
@@ -1311,118 +1351,6 @@ msgid_plural "%d groups match your filter"
 msgstr[0] ""
 msgstr[1] ""
 
-msgid "Gallery Layouts"
-msgstr "Galeri Layoutları"
-
-#, c-format
-msgid "Successfully activated layout %s"
-msgstr "Layout %s başarıyla etkinleştirildi"
-
-#, c-format
-msgid "Successfully deactivated layout %s"
-msgstr "Layout %s başarıyla çalışamaz duruma getirildi."
-
-#, c-format
-msgid "Successfully installed layout %s"
-msgstr "Layout %s başarıyla kuruldu"
-
-#, c-format
-msgid "Successfully uninstalled layout %s"
-msgstr "Layout %s başarıyla kaldırıldı"
-
-#, c-format
-msgid "Successfully upgraded layout %s"
-msgstr "Layout %s başarıyla güncellendi"
-
-msgid "Successfully saved default album settings"
-msgstr "Varsayılan albüm ayarları başarıyla kaydedildi"
-
-#, fuzzy
-msgid "Restored layout settings"
-msgstr "Album Settings"
-
-msgid "All Layouts"
-msgstr "Tüm Layoutlar"
-
-msgid "Defaults"
-msgstr "Varsayılanlar"
-
-msgid "Layout Name"
-msgstr "Layout Adı"
-
-msgid "Version"
-msgstr "Versiyon"
-
-msgid "Installed"
-msgstr "Kuruldu"
-
-msgid "Actions"
-msgstr ""
-
-msgid "Status: Not Installed"
-msgstr "Durum: Kurulmadı"
-
-msgid "Status: Active"
-msgstr "Durum: Aktif"
-
-msgid "Status: Inactive"
-msgstr "Durum : Aktif Değil"
-
-msgid "Status: Upgrade Required (Inactive)"
-msgstr "Durum: Güncelleme gerekli (Aktif Değik)"
-
-msgid "Status: Incompatible Layout (Inactive)"
-msgstr "Durum: Uyumsuz Layout (Aktif Değil)"
-
-msgid "Incompatible layout!"
-msgstr "Uyumsuz layout!"
-
-#, c-format
-msgid "Core API Required: %s (available: %s)"
-msgstr ""
-
-#, c-format
-msgid "Layout API Required: %s (available: %s)"
-msgstr ""
-
-msgid "(default)"
-msgstr "(varsayılan)"
-
-#, fuzzy
-msgid ""
-"These are default display settings for albums in your gallery.  They can be "
-"overridden in each album."
-msgstr "These are default values.  They can be overridden in each album."
-
-#, fuzzy
-msgid "Default sort order"
-msgstr "Album sort order:"
-
-msgid "with"
-msgstr "genişlik"
-
-msgid "Default layout"
-msgstr "Varsayılan layout"
-
-msgid "Default theme"
-msgstr "Default theme"
-
-msgid "New albums"
-msgstr "Yeni albümler"
-
-#, c-format
-msgid "%s Layout Settings"
-msgstr "%s Layout Ayarları"
-
-#, fuzzy
-msgid ""
-"These are the global settings for the layout.  They can be overridden at the "
-"album level."
-msgstr "These are default values.  They can be overridden in each album."
-
-msgid "There are no settings for this layout"
-msgstr "Bu layout için ayarlar yok"
-
 msgid "System Maintenance"
 msgstr "Sistem Bakımı"
 
@@ -1501,11 +1429,36 @@ msgstr ""
 msgid "Module Name"
 msgstr "Modül Adı"
 
+msgid "Version"
+msgstr "Versiyon"
+
+msgid "Installed"
+msgstr "Kuruldu"
+
+msgid "Actions"
+msgstr ""
+
+msgid "Status: Not Installed"
+msgstr "Durum: Kurulmadı"
+
+msgid "Status: Active"
+msgstr "Durum: Aktif"
+
+msgid "Status: Inactive"
+msgstr "Durum : Aktif Değil"
+
+msgid "Status: Upgrade Required (Inactive)"
+msgstr "Durum: Güncelleme gerekli (Aktif Değik)"
+
 msgid "Status: Incompatible Module (Inactive)"
 msgstr "Durum: Uyumsuz Modül (Aktif Değil)"
 
 msgid "Incompatible module!"
 msgstr "Uyumsuz modül!"
+
+#, c-format
+msgid "Core API Required: %s (available: %s)"
+msgstr ""
 
 #, c-format
 msgid "Module API Required: %s (available: %s)"
@@ -1525,6 +1478,123 @@ msgstr ""
 
 msgid "Uninstall"
 msgstr "Kaldır"
+
+#, fuzzy
+msgid "Gallery Themes"
+msgstr "Galeri %s"
+
+#, fuzzy, c-format
+msgid "Successfully activated theme %s"
+msgstr "Modül  %s başarıyla etkinleştirildi"
+
+#, fuzzy, c-format
+msgid "Successfully deactivated theme %s"
+msgstr "Modül %s başarıyla çalışamaz duruma getirildi."
+
+#, fuzzy, c-format
+msgid "Successfully installed theme %s"
+msgstr "Modül %s başarıyla kuruldu"
+
+#, fuzzy, c-format
+msgid "Successfully uninstalled theme %s"
+msgstr "Modül %s başarıyla kaldırıldı"
+
+#, fuzzy, c-format
+msgid "Successfully upgraded theme %s"
+msgstr "Modül %s başarıyla güncellendi"
+
+msgid "Successfully saved default album settings"
+msgstr "Varsayılan albüm ayarları başarıyla kaydedildi"
+
+#, fuzzy
+msgid "Restored theme settings"
+msgstr "Album Settings"
+
+#, fuzzy
+msgid "All Themes"
+msgstr "Tema"
+
+msgid "Defaults"
+msgstr "Varsayılanlar"
+
+#, fuzzy
+msgid "Theme Name"
+msgstr "Tema"
+
+#, fuzzy
+msgid "Status: Incompatible Theme (Inactive)"
+msgstr "Durum: Uyumsuz Modül (Aktif Değil)"
+
+#, fuzzy
+msgid "Incompatible theme!"
+msgstr "Uyumsuz modül!"
+
+#, c-format
+msgid "Theme API Required: %s (available: %s)"
+msgstr ""
+
+msgid "(default)"
+msgstr "(varsayılan)"
+
+#, fuzzy
+msgid ""
+"These are default display settings for albums in your gallery.  They can be "
+"overridden in each album."
+msgstr "These are default values.  They can be overridden in each album."
+
+#, fuzzy
+msgid "Default sort order"
+msgstr "Album sort order:"
+
+msgid "with"
+msgstr "genişlik"
+
+msgid "Default theme"
+msgstr "Default theme"
+
+msgid "New albums"
+msgstr "Yeni albümler"
+
+#, fuzzy, c-format
+msgid "%s Theme Settings"
+msgstr "Bu atarları kullan"
+
+#, fuzzy
+msgid ""
+"These are the global settings for the theme.  They can be overridden at the "
+"album level."
+msgstr "These are default values.  They can be overridden in each album."
+
+msgid "Available"
+msgstr ""
+
+msgid "Choose a block"
+msgstr ""
+
+#, fuzzy
+msgid "Selected"
+msgstr "Sil"
+
+msgid "Remove"
+msgstr "Kaldır"
+
+#, fuzzy
+msgid "Move Up"
+msgstr "Taşı"
+
+#, fuzzy
+msgid "Move Down"
+msgstr "%s Taşı"
+
+msgid "Parameter"
+msgstr ""
+
+msgid "Value"
+msgstr "Değer"
+
+#, fuzzy
+msgid "There are no settings for this theme"
+msgstr "Bu layout için ayarlar yok"
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime "
@@ -1601,6 +1671,59 @@ msgstr "Recreate thumbnails"
 
 msgid "This is a test email from Gallery2"
 msgstr "Bu Galeri 2 test emailıdır"
+
+msgid "Edit Conflict!"
+msgstr "Çalışmayı Düzenle!"
+
+#, fuzzy
+msgid "Security Violation"
+msgstr "Security Violation!"
+
+msgid "Database Error"
+msgstr "Veritabanı Hatası"
+
+msgid "Error"
+msgstr "Hata"
+
+msgid ""
+"Your change cannot be completed because somebody else has made a conflicting "
+"change to the same item.  Use the back button in your browser to go back to "
+"the page you were on, then <b>reload that page</b> and try your change again."
+msgstr ""
+
+msgid "Go back and try again"
+msgstr "Geri dönüp tekrar deneyin"
+
+msgid ""
+"Alternatively, you can return to the main Gallery page and resume browsing."
+msgstr ""
+"Alternatif olarak, Galeri ana sayfasına dönebilir ve taramayı yeniden "
+"başlatabilirsiniz."
+
+msgid "The action you attempted is not permitted."
+msgstr ""
+
+msgid "An error has occurred while interacting with the database."
+msgstr ""
+
+msgid ""
+"The exact nature of database errors is not captured unless Gallery debug "
+"mode is enabled in config.php.  Before seeking support for this error please "
+"enable buffered debug output and retry the operation.  Look near the bottom "
+"of the lengthy debug output to find error details."
+msgstr ""
+
+msgid "An error has occurred."
+msgstr "Hatayla karşılaşıldı."
+
+msgid "Back to the Gallery"
+msgstr "Galeriye Dön"
+
+msgid "Error Detail"
+msgstr "Hata Detayı"
+
+msgid "System Information"
+msgstr "Sistem Bilgisi"
 
 msgid ""
 "You don't have any Graphics Toolkit activated that can handle JPEG images.  "
@@ -1984,13 +2107,7 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Choose a layout for this album. (The way the album is arranged on the page)"
-msgstr ""
-
-msgid "Theme"
-msgstr "Tema"
-
-msgid "Choose a theme for this album.  (The look and feel of this album)"
+"Choose a theme for this album. (The way the album is arranged on the page)"
 msgstr ""
 
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
@@ -2163,21 +2280,6 @@ msgid ""
 "cannot create or modify a thumbnail."
 msgstr ""
 
-#, c-format
-msgid ""
-"This album is configured to use the <b>%s</b> layout. These settings only "
-"apply to the layout for this album."
-msgstr ""
-
-msgid "Setting"
-msgstr "Ayarlar"
-
-msgid "Value"
-msgstr "Değer"
-
-msgid "Use Global"
-msgstr ""
-
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the "
 "movie's width and height.  If you have installed a graphics toolkit that can "
@@ -2306,6 +2408,18 @@ msgstr ""
 #, fuzzy
 msgid "Restore original"
 msgstr "Revert to original"
+
+#, c-format
+msgid ""
+"This album is configured to use the <b>%s</b> theme. These settings only "
+"apply to the theme for this album."
+msgstr ""
+
+msgid "Setting"
+msgstr "Ayarlar"
+
+msgid "Use Global"
+msgstr ""
 
 #, fuzzy
 msgid "Album Highlight"
@@ -2461,9 +2575,6 @@ msgstr "Grup adı"
 msgid "Permission"
 msgstr "İzin"
 
-msgid "Remove"
-msgstr "Kaldır"
-
 msgid "New Group Permission"
 msgstr "Yeni Grup İzinleri"
 
@@ -2518,9 +2629,6 @@ msgstr "sonra"
 
 msgid "Reorder"
 msgstr "Yeniden Sırala"
-
-msgid "Go"
-msgstr "Git"
 
 msgid "Continue..."
 msgstr "Devam..."
@@ -2583,9 +2691,6 @@ msgstr "bu layout'u kur ya da etkinleştir"
 #, c-format
 msgid "To fix this problem you can either %s or %s."
 msgstr "Bu problemi çözmek için, %s ya da %s  yollarını deneyebilirsiniz."
-
-msgid "Site Administration"
-msgstr "Site Yönetimi"
 
 msgid "Admin Options"
 msgstr "Yönetici Seçenekleri"
@@ -2794,17 +2899,106 @@ msgstr ""
 msgid "Thank you!"
 msgstr "Teşekkürler!"
 
+#, fuzzy
+msgid "guest"
+msgstr "Misafir"
+
+#, c-format
+msgid "display mode: %s"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Date: %s"
+msgstr "Tarih:"
+
+#, fuzzy, c-format
+msgid "Owner: %s"
+msgstr "Sahip"
+
+#, fuzzy, c-format
+msgid "Size: %d item"
+msgid_plural "Size: %d items"
+msgstr[0] "(%d öge)"
+msgstr[1] "(%d öge)"
+
+#, fuzzy, c-format
+msgid "(%d item total)"
+msgid_plural "(%d items total)"
+msgstr[0] "(%d öge)"
+msgstr[1] "(%d öge)"
+
+#, c-format
+msgid "Views: %d"
+msgstr ""
+
+#, fuzzy
+msgid "&laquo; album actions &raquo;"
+msgstr "&laquo; varsayılan layout &raquo;"
+
+#, fuzzy
+msgid "&laquo; item actions &raquo;"
+msgstr "&laquo; varsayılan layout &raquo;"
+
+msgid "Go"
+msgstr "Git"
+
+msgid "next"
+msgstr ""
+
+#, fuzzy
+msgid "last"
+msgstr "liste"
+
+#, fuzzy
+msgid "first"
+msgstr "liste"
+
+#, fuzzy
+msgid "previous"
+msgstr "Önceki Sayfa"
+
+msgid "Page:"
+msgstr ""
+
+#, c-format
+msgid "%d. %s"
+msgstr "%d. %s"
+
+#, fuzzy
+msgid "Size: "
+msgstr "Boyut"
+
+msgid "Full size: "
+msgstr ""
+
+#, fuzzy
+msgid "Language selector"
+msgstr "Kenar çubuğunda dil seçeneği"
+
+#, fuzzy
+msgid "Item actions"
+msgstr "Actions"
+
+#, fuzzy
+msgid "Login block"
+msgstr "Giriş"
+
+msgid "Links to album/photo peers"
+msgstr ""
+
 msgid "Successfully deleted directory: /cache/entity"
 msgstr "Klasör başarıyla silindi: /cache/entity"
 
-msgid "Successfully deleted directory: /cache/layout"
-msgstr "Klasör başarıyla silindi: /cache/layout"
+#, fuzzy
+msgid "Successfully deleted directory: /cache/theme"
+msgstr "Klasör başarıyla silindi: /cache/module"
 
 msgid "Successfully deleted directory: /cache/module"
 msgstr "Klasör başarıyla silindi: /cache/module"
 
-msgid "Unable to delete directory: /cache/layout"
-msgstr ""
+#, fuzzy
+msgid "Unable to delete directory: /cache/theme"
+msgstr "Klasör silinmiyor: %s"
 
 msgid "Unable to delete directory: /templates_c"
 msgstr ""
@@ -2815,96 +3009,6 @@ msgstr ""
 msgid "[test] A permission"
 msgstr "[test] İzin"
 
-msgid "Gallery Debug Output"
-msgstr "Galeri Düzeltme Çıktısı"
-
-msgid "This page is valid XHTML 1.0"
-msgstr ""
-
-#, c-format
-msgid "Gallery %s"
-msgstr "Galeri %s"
-
-msgid "Edit Conflict!"
-msgstr "Çalışmayı Düzenle!"
-
 #, fuzzy
-msgid "Security Violation"
-msgstr "Security Violation!"
-
-msgid "Database Error"
-msgstr "Veritabanı Hatası"
-
-msgid "Error"
-msgstr "Hata"
-
-msgid ""
-"Your change cannot be completed because somebody else has made a conflicting "
-"change to the same item.  Use the back button in your browser to go back to "
-"the page you were on, then <b>reload that page</b> and try your change again."
-msgstr ""
-
-msgid "Go back and try again"
-msgstr "Geri dönüp tekrar deneyin"
-
-msgid ""
-"Alternatively, you can return to the main Gallery page and resume browsing."
-msgstr ""
-"Alternatif olarak, Galeri ana sayfasına dönebilir ve taramayı yeniden "
-"başlatabilirsiniz."
-
-msgid "The action you attempted is not permitted."
-msgstr ""
-
-msgid "An error has occurred while interacting with the database."
-msgstr ""
-
-msgid ""
-"The exact nature of database errors is not captured unless Gallery debug "
-"mode is enabled in config.php.  Before seeking support for this error please "
-"enable buffered debug output and retry the operation.  Look near the bottom "
-"of the lengthy debug output to find error details."
-msgstr ""
-
-msgid "An error has occurred."
-msgstr "Hatayla karşılaşıldı."
-
-msgid "Back to the Gallery"
-msgstr "Galeriye Dön"
-
-msgid "Error Detail"
-msgstr "Hata Detayı"
-
-msgid "System Information"
-msgstr "Sistem Bilgisi"
-
-#, fuzzy
-msgid "Redirect"
-msgstr "Reset"
-
-msgid "You are in debug mode so we are not automatically redirecting."
-msgstr ""
-
-#, c-format
-msgid "Welcome, %s"
-msgstr "Hoşgeldin, %s"
-
-#, c-format
-msgid "(%d item)"
-msgid_plural "(%d items)"
-msgstr[0] "(%d öge)"
-msgstr[1] "(%d öge)"
-
-#, c-format
-msgid "%d. %s"
-msgstr "%d. %s"
-
-#~ msgid "Gallery Administrator"
-#~ msgstr "Galeri Yönetimi"
-
-#, fuzzy
-#~ msgid "Administrator Recovery"
-#~ msgstr "Şifre Kurtarma"
-
-#~ msgid "Gallery 2 - Beta 3: Bingo!"
-#~ msgstr "Galeri 2 - Beta 3: Bingo!"
+msgid "[test] A second permission"
+msgstr "[test] İzin"

@@ -62,12 +62,12 @@ class FlushDatabaseCacheTaskTest extends GalleryTestCase {
 	$this->assertEquals(
 	    $details,
 	    array($module->translate('Successfully deleted directory: /cache/entity'),
-		  $module->translate('Successfully deleted directory: /cache/layout'),
+		  $module->translate('Successfully deleted directory: /cache/theme'),
 		  $module->translate('Successfully deleted directory: /cache/module')));
 	$this->assertEquals(array('file_exists(/cache/entity)',
 				  'recursiveRmdir(/cache/entity)',
-				  'file_exists(/cache/layout)',
-				  'recursiveRmdir(/cache/layout)',
+				  'file_exists(/cache/theme)',
+				  'recursiveRmdir(/cache/theme)',
 				  'file_exists(/cache/module)',
 				  'recursiveRmdir(/cache/module)',
 				  ),
@@ -80,7 +80,7 @@ class FlushDatabaseCacheTaskTest extends GalleryTestCase {
 	$gallery->setConfig('data.gallery.cache', '/cache/');
 	$mockPlatform = new FlushDatabaseCacheTaskTestPlatform(
 	    array('file_exists(/cache/entity)',
-		  'recursiveRmdir(/cache/layout)'));
+		  'recursiveRmdir(/cache/theme)'));
 	$gallery->setPlatform($mockPlatform);
 	$task = new FlushDatabaseCacheTask();
 
@@ -96,12 +96,12 @@ class FlushDatabaseCacheTaskTest extends GalleryTestCase {
 
 	$this->assert(!$success, 'should have failed');
 	$this->assertEquals(
-	    array($module->translate('Unable to delete directory: /cache/layout'),
+	    array($module->translate('Unable to delete directory: /cache/theme'),
 		  $module->translate('Successfully deleted directory: /cache/module')),
 	    $details);
 	$this->assertEquals(array('file_exists(/cache/entity)',
-				  'file_exists(/cache/layout)',
-				  'recursiveRmdir(/cache/layout)',
+				  'file_exists(/cache/theme)',
+				  'recursiveRmdir(/cache/theme)',
 				  'file_exists(/cache/module)',
 				  'recursiveRmdir(/cache/module)',
 				  ),
@@ -126,7 +126,7 @@ class FlushDatabaseCacheTaskTestPlatform {
     function getCalls() {
 	return GalleryUtilities::getRequestVariables('calls');
     }
-    
+
     function file_exists($dir) {
 	return $this->_addCall("file_exists($dir)");
     }

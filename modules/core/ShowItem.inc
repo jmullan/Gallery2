@@ -43,7 +43,7 @@ class ShowItemController extends GalleryController {
 	$guestPreviewMode = GalleryUtilities::getRequestVariables('guestPreviewMode');
 	if ($guestPreviewMode != null) {
 	    $session =& $gallery->getSession();
-	    $session->put('layout.guestPreviewMode', $guestPreviewMode ? 1 : 0);
+	    $session->put('theme.guestPreviewMode', $guestPreviewMode ? 1 : 0);
 	}
 
 	return array(GalleryStatus::success(),
@@ -60,44 +60,6 @@ class ShowItemController extends GalleryController {
  * @subpackage UserInterface
  */
 class ShowItemView extends GalleryView {
-
-    /**
-     * @see GalleryView::getThemeName
-     */
-    function getThemeName() {
-	global $gallery;
-
-	list ($ret, $item) = $this->_getItem();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/*
-	 * In the near term, we don't allow data items to have their own theme, even though
-	 * there's room for it.  Instead, draw them theme from the parent album.
-	 */
-	$theme = null;
-	if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
-	    $theme = $item->getTheme();
-	} else {
-	    $parentId = $item->getParentId();
-	    list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($parentId);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    $theme = $parent->gettheme();
-	}
-
-	return array(GalleryStatus::success(), $theme);
-    }
-
-    /**
-     * @see GalleryView::useDefaultStyle
-     */
-    function useDefaultStyle() {
-	return false;
-    }
 
     /**
      * @see GalleryView::loadTemplate
@@ -141,113 +103,13 @@ class ShowItemView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $layoutId) = GalleryCoreApi::fetchLayoutId($item);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$validLayout = false;
-	list ($ret, $layout) = GalleryCoreApi::loadPlugin('layout', $layoutId);
-	if ($ret->isError() && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	if (isset($layout)) {
-	    list ($ret, $validLayout) = $layout->isActive();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	}
-
-	if (!$validLayout) {
-	    return array(GalleryStatus::success(),
-			 array('redirect' => array('view' => 'core.ShowItemError',
-						   'problem' => 'missingLayout',
-						   'itemId' => $item->getId())));
-	}
-
-	/* Albums have their own settings.  Items use their parent album's settings */
-	if ($item->getCanContainChildren()) {
-	    $targetId = $item->getId();
-	} else {
-	    $targetId = $item->getParentId();
-	}
-	list ($ret, $params) = $layout->fetchParameters($targetId);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$perPage = $layout->getPageSize($params);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	if ($item->getCanContainChildren() && !empty($perPage)) {
-	    /* If the layout uses pages, figure out what page we're on */
-	    $page = GalleryUtilities::getRequestVariables('page');
-	    if (empty($page)) {
-		/*
-		 * We don't have a page number.  If we have a highlight id, then figure out what
-		 * page that id is on and redirect to that page.
-		 */
-		$highlightId = GalleryUtilities::getRequestVariables('highlightId');
-		if (!empty($highlightId)) {
-		    list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item);
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-
-		    $page = 1;
-		    for ($i = 0; $i < sizeof($childIds); $i++) {
-			if ($childIds[$i] == $highlightId) {
-			    /* Found it */
-			    $page = ceil(($i+1) / $perPage);
-			    break;
-			}
-		    }
-
-		    /* Redirect to the new page */
-		    $results['redirect'] = array(
-			'view' => 'core.ShowItem', 'itemId' => $item->getId(), 'page' => $page);
-		    return array(GalleryStatus::success(), $results);
-		} else {
-		    $page = 1;
-		}
-	    }
-	}
-
-	/* Let the layout load the template and get its body file */
-	list ($ret, $results) = $layout->loadTemplate($template, $item, $params);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	if (isset($results['redirect']) ||
-	        isset($results['redirectUrl']) ||
-	        isset($results['html'])) {
-	    return array(GalleryStatus::success(), $results);
-	}
-
-	$ShowItem = array('item' => $item->getMemberData(),
-			  'layoutL10Domain' => $layout->getL10Domain());
-	if (isset($results['body'])) {
-	    $ShowItem['layoutBodyFile'] = $results['body'];
-	}
-	$template->setVariable('ShowItem', $ShowItem);
-
-	/* Provide a title if the layout doesn't */
-	$head = $template->getVariable('head');
-	if (empty($head['tpl']) && empty($head['title'])) {
-	    $template->head('modules/core/templates/ShowItemHead.tpl');
-	}
-
 	/* Increment the view count */
 	$ret = GalleryCoreApi::incrementItemViewCount($item->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(),
-		     array('body' => 'modules/core/templates/ShowItem.tpl'));
+	return array(GalleryStatus::success(), array());
     }
 
     /**

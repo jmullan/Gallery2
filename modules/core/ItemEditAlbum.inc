@@ -311,7 +311,6 @@ class ItemEditAlbum extends ItemEditPlugin {
 		}
 
 		/* Save basic settings */
-		$item->setLayout($form['layout']);
 		$item->setTheme($form['theme']);
 		if (!empty($form['presort'])) {
 		    $item->setOrderBy($form['presort'] . '|' . $form['orderBy']);
@@ -368,7 +367,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 		$form['presort'] = $tmp[0];
 	    }
 	    $form['orderDirection'] = $item->getOrderDirection();
-	    $form['layout'] = $item->getLayout();
+	    $form['theme'] = $item->getTheme();
 	    $form['theme'] = $item->getTheme();
 	    $form['formName'] = 'ItemEditAlbum';
 
@@ -437,29 +436,24 @@ class ItemEditAlbum extends ItemEditPlugin {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Set up our layout selection list */
-	list ($ret, $layoutStatusList) = GalleryCoreApi::fetchPluginStatus('layout');
+	/* Set up our theme selection list */
+	list ($ret, $themeStatusList) = GalleryCoreApi::fetchPluginStatus('theme');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$layoutList = array('' => $module->translate('&laquo; default layout &raquo;'));
-	foreach ($layoutStatusList as $layoutId => $layoutStatus) {
-	    if (empty($layoutStatus['active'])) {
+	$themeList = array('' => $module->translate('&laquo; default theme &raquo;'));
+	foreach ($themeStatusList as $themeId => $themeStatus) {
+	    if (empty($themeStatus['active'])) {
 		continue;
 	    }
 
-	    list ($ret, $layout) = GalleryCoreApi::loadPlugin('layout', $layoutId);
+	    list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    $layoutList[$layoutId] = $layout->getName();
+	    $themeList[$themeId] = $theme->getName();
 	}
 
-	$themeList = GalleryCoreApi::getThemeList();
-	$themeList = array_merge(array('' => $module->translate('&laquo; default theme &raquo;')),
-				 $themeList);
-
-	$ItemEditAlbum['layoutList'] = $layoutList;
 	$ItemEditAlbum['themeList'] = $themeList;
 	$ItemEditAlbum['orderByList'] = $orderByList;
 	$ItemEditAlbum['presortList'] = $presortList;

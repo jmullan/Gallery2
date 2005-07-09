@@ -54,7 +54,6 @@ class GalleryModule extends GalleryPlugin {
      *   getItemAdminViews
      *   getUserAdminViews
      *   getSystemLinks
-     *   loadSystemContent
      *   getItemLinks
      *   getItemSummaries
      *   loadItemDetails
@@ -83,6 +82,7 @@ class GalleryModule extends GalleryPlugin {
      * @return array major number, minor number
      */
     function getApiVersion() {
+	/* On the next major bump, we should remove GalleryPlugin::removeItemParameter */
 	return array(1, 1);
     }
 
@@ -385,23 +385,6 @@ class GalleryModule extends GalleryPlugin {
      */
     function getSystemLinks() {
 	return array(GalleryStatus::success(), array());
-    }
-
-    /**
-     * Return system level content.  This is similar to system links, but it's
-     * actually HTML content and not a link to a view.  It must be localized
-     * since it will be displayed directly to the user.  This is useful for
-     * things like the search module that want to embed a search box on every
-     * page.
-     *
-     * Each module can provide one or more System Content blocks.
-     *
-     * @param object GalleryTemplate a template
-     * @return array object GalleryStatus a status code
-     *               array (blockName => the template file path, ...)
-     */
-    function loadSystemContent(&$template) {
-	return array(GalleryStatus::success(), null);
     }
 
     /**

@@ -41,11 +41,7 @@
   
       ,
     DB_COLUMN_PREFIXparameterValue
-      varchar(
-      
-	  255
-	
-      )
+      text
     
     NOT NULL
   
@@ -81,7 +77,7 @@
       ) VALUES (
       'PluginParameterMap',
       1,
-      1
+      2
       );
 
   

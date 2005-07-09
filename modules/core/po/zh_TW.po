@@ -36,27 +36,8 @@ msgstr "Gallery"
 msgid "&laquo; None &raquo;"
 msgstr ""
 
-#, fuzzy
-msgid "None"
-msgstr "完成"
-
-msgid "Guest User Only"
-msgstr ""
-
-msgid "Everybody"
-msgstr ""
-
 msgid "forever"
 msgstr "永久的"
-
-msgid "Link to Login Page"
-msgstr ""
-
-msgid "Form on Sidebar"
-msgstr ""
-
-msgid "Both"
-msgstr ""
 
 msgid "No Markup"
 msgstr ""
@@ -107,6 +88,9 @@ msgstr "安裝"
 msgid "upgrade"
 msgstr ""
 
+msgid "configure"
+msgstr "設定"
+
 msgid "activate"
 msgstr "啟動"
 
@@ -117,18 +101,15 @@ msgstr "安裝"
 msgid "deactivate"
 msgstr "不啟動"
 
+msgid "Other"
+msgstr ""
+
 msgid "Inherit settings from parent album"
 msgstr ""
 
 #, fuzzy
 msgid "Use these settings"
 msgstr "相簿設定"
-
-msgid "configure"
-msgstr "設定"
-
-msgid "Other"
-msgstr ""
 
 msgid "key"
 msgstr "key"
@@ -180,9 +161,21 @@ msgstr "編輯使用者"
 msgid "All Users"
 msgstr "使用者"
 
+msgid "Loading derivatives for the broken derivatives check"
+msgstr ""
+
+msgid "Detecting broken derivatives"
+msgstr ""
+
+msgid "Marking broken derivatives"
+msgstr ""
+
 #, fuzzy
 msgid "Site Admins"
 msgstr "網站管理者"
+
+msgid "Everybody"
+msgstr ""
 
 msgid "Guest"
 msgstr ""
@@ -193,6 +186,15 @@ msgstr "Gallery"
 #, fuzzy
 msgid "This is the main page of your Gallery"
 msgstr "這裡是您的 Gallery 最上層"
+
+msgid "Loading derivatives for the "
+msgstr ""
+
+msgid "Detecting broken derivatives "
+msgstr ""
+
+msgid "Marking broken derivatives "
+msgstr ""
 
 #, fuzzy
 msgid "add items"
@@ -278,10 +280,6 @@ msgid "Settings saved successfully."
 msgstr "使用者 '%s' 已經建立成功。"
 
 #, fuzzy
-msgid "&laquo; default layout &raquo;"
-msgstr "* 不排序 *"
-
-#, fuzzy
 msgid "&laquo; default theme &raquo;"
 msgstr "* 不排序 *"
 
@@ -303,12 +301,6 @@ msgstr "動作"
 
 msgid "General"
 msgstr "General"
-
-msgid "Successfully saved layout settings"
-msgstr ""
-
-msgid "Layout"
-msgstr "版面配置"
 
 #, fuzzy
 msgid "Movie Size"
@@ -376,6 +368,13 @@ msgstr "使用者 '%s' 已經建立成功。"
 msgid "Modify Photo"
 msgstr "修改影像"
 
+#, fuzzy
+msgid "Successfully saved theme settings"
+msgstr "使用者 '%s' 已經刪除成功。"
+
+msgid "Theme"
+msgstr "主題"
+
 msgid "make highlight"
 msgstr "作為精彩畫面"
 
@@ -420,15 +419,16 @@ msgid "Build all thumbnails/resizes"
 msgstr "縮圖"
 
 msgid ""
-"Ensure data files for all derivatives (thumbnails, etc) have been built."
-msgstr ""
-
-msgid "Processing..."
+"Ensure data files for all derivatives (thumbnails, etc) have been built and "
+"rebuild broken ones."
 msgstr ""
 
 #, fuzzy
 msgid "Build All Thumbnails/Resizes"
 msgstr "縮圖"
+
+msgid "Debug output for failed items:"
+msgstr ""
 
 #, fuzzy, c-format
 msgid "Processing image %d of %d"
@@ -437,6 +437,14 @@ msgstr "瀏覽第 %d 頁，共 %d 頁"
 #, fuzzy, c-format
 msgid "Checked %d items"
 msgstr "增加物件"
+
+#, fuzzy, c-format
+msgid "%d items built"
+msgstr "增加物件"
+
+#, c-format
+msgid "%d items failed"
+msgstr ""
 
 msgid "Delete database cache"
 msgstr ""
@@ -535,46 +543,6 @@ msgstr "群組"
 msgid "group"
 msgstr "群組"
 
-#, c-format
-msgid "Estimated time remaining: %d:%02d"
-msgstr ""
-
-msgid "Rows per album page"
-msgstr ""
-
-msgid "Columns per album page"
-msgstr ""
-
-msgid "Show image owners"
-msgstr ""
-
-msgid "Show album owners"
-msgstr ""
-
-msgid "Show micro navigation thumbnails"
-msgstr ""
-
-msgid "Number of items to show per page"
-msgstr ""
-
-msgid "View Samples"
-msgstr ""
-
-#, fuzzy
-msgid "Album Frame"
-msgstr "相簿設定"
-
-#, fuzzy
-msgid "Item Frame"
-msgstr "欲移動的物件"
-
-msgid "Photo Frame"
-msgstr ""
-
-#, fuzzy
-msgid "You must enter a number greater than 0"
-msgstr "您必須輸入一個數字 (大於零)"
-
 #, fuzzy
 msgid "Movie"
 msgstr "移動"
@@ -626,6 +594,72 @@ msgstr "由小到大"
 
 msgid "Descending"
 msgstr "由大到小"
+
+msgid "Validation disabled until you set allowSessionAccess in config.php"
+msgstr ""
+
+msgid "This page is valid XHTML 1.0"
+msgstr ""
+
+#, c-format
+msgid "Estimated time remaining: %d:%02d"
+msgstr ""
+
+#, c-format
+msgid "Memory used: %s, total: %s"
+msgstr ""
+
+msgid "Rows per album page"
+msgstr ""
+
+msgid "Columns per album page"
+msgstr ""
+
+msgid "Show image owners"
+msgstr ""
+
+msgid "Show album owners"
+msgstr ""
+
+msgid "Show micro navigation thumbnails"
+msgstr ""
+
+msgid "Number of items to show per page"
+msgstr ""
+
+msgid "Blocks to show in the sidebar"
+msgstr ""
+
+msgid "Blocks to show on album pages"
+msgstr ""
+
+msgid "Blocks to show on photo pages"
+msgstr ""
+
+msgid "View Samples"
+msgstr ""
+
+#, fuzzy
+msgid "Album Frame"
+msgstr "相簿設定"
+
+#, fuzzy
+msgid "Item Frame"
+msgstr "欲移動的物件"
+
+msgid "Photo Frame"
+msgstr ""
+
+#, fuzzy
+msgid "You must enter a number greater than 0"
+msgstr "您必須輸入一個數字 (大於零)"
+
+msgid "Format: [module.BlockName param=value] ..."
+msgstr ""
+
+#, c-format
+msgid "%dx%d"
+msgstr ""
 
 #, fuzzy
 msgid "Audio"
@@ -712,6 +746,9 @@ msgid ""
 "in the original data file (usually from EXIF data)."
 msgstr ""
 
+msgid "Processing..."
+msgstr ""
+
 msgid "Refresh Capture Dates"
 msgstr ""
 
@@ -795,8 +832,8 @@ msgid "Modules"
 msgstr "模組"
 
 #, fuzzy
-msgid "Layouts and Themes"
-msgstr "版面配置"
+msgid "Themes"
+msgstr "主題"
 
 msgid "Display"
 msgstr ""
@@ -883,13 +920,10 @@ msgstr "使用者 '%s' 已經建立成功。"
 msgid "Test email sent successfully"
 msgstr "使用者 '%s' 已經建立成功。"
 
-msgid "Error sending test email, see below for details"
+msgid "There was a problem processing your request, see below for details."
 msgstr ""
 
-msgid "Invalid cookie path"
-msgstr ""
-
-msgid "Invalid cookie domain"
+msgid "Error sending test email, see below for details."
 msgstr ""
 
 #, fuzzy
@@ -906,10 +940,6 @@ msgstr ""
 
 msgid "Default language"
 msgstr "預設語言選項"
-
-#, fuzzy
-msgid "Language selector in sidebar"
-msgstr "語言設定"
 
 msgid "gettext"
 msgstr ""
@@ -985,9 +1015,6 @@ msgstr ""
 msgid "Session Settings"
 msgstr "Session 設定"
 
-msgid "Login Method"
-msgstr ""
-
 #, fuzzy
 msgid "Session Lifetime"
 msgstr "Session 設定"
@@ -1032,6 +1059,10 @@ msgstr "密碼"
 msgid "SMTP From Address"
 msgstr "Email 位址"
 
+#, fuzzy
+msgid "Invalid email address"
+msgstr "Email 位址"
+
 msgid ""
 "Send a test email to verify your settings are correct (whether using PHP "
 "mail or SMTP settings above).  Below enter a recipient email address for a "
@@ -1040,10 +1071,6 @@ msgstr ""
 
 msgid "Send Email"
 msgstr ""
-
-#, fuzzy
-msgid "Invalid email address"
-msgstr "Email 位址"
 
 msgid "Email Test Error"
 msgstr ""
@@ -1089,7 +1116,13 @@ msgid ""
 "not, they will experience login / logout / lost session problems."
 msgstr ""
 
+msgid "Invalid cookie path"
+msgstr ""
+
 msgid "Domain"
+msgstr ""
+
+msgid "Invalid cookie domain"
 msgstr ""
 
 msgid "Locking System"
@@ -1404,126 +1437,6 @@ msgid_plural "%d groups match your filter"
 msgstr[0] "%d 個群組符合你的過濾設定"
 msgstr[1] "%d 個群組符合你的過濾設定"
 
-#, fuzzy
-msgid "Gallery Layouts"
-msgstr "Gallery"
-
-#, c-format
-msgid "Successfully activated layout %s"
-msgstr ""
-
-#, c-format
-msgid "Successfully deactivated layout %s"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Successfully installed layout %s"
-msgstr "使用者 '%s' 已經刪除成功。"
-
-#, fuzzy, c-format
-msgid "Successfully uninstalled layout %s"
-msgstr "使用者 '%s' 已經刪除成功。"
-
-#, fuzzy, c-format
-msgid "Successfully upgraded layout %s"
-msgstr "使用者 '%s' 已經刪除成功。"
-
-msgid "Successfully saved default album settings"
-msgstr ""
-
-#, fuzzy
-msgid "Restored layout settings"
-msgstr "相簿設定"
-
-#, fuzzy
-msgid "All Layouts"
-msgstr "版面配置"
-
-msgid "Defaults"
-msgstr "內定值"
-
-#, fuzzy
-msgid "Layout Name"
-msgstr "版面配置"
-
-msgid "Version"
-msgstr "版本"
-
-#, fuzzy
-msgid "Installed"
-msgstr "安裝"
-
-msgid "Actions"
-msgstr "動作"
-
-#, fuzzy
-msgid "Status: Not Installed"
-msgstr "安裝"
-
-#, fuzzy
-msgid "Status: Active"
-msgstr "啟動"
-
-msgid "Status: Inactive"
-msgstr ""
-
-msgid "Status: Upgrade Required (Inactive)"
-msgstr ""
-
-msgid "Status: Incompatible Layout (Inactive)"
-msgstr ""
-
-msgid "Incompatible layout!"
-msgstr ""
-
-#, c-format
-msgid "Core API Required: %s (available: %s)"
-msgstr ""
-
-#, c-format
-msgid "Layout API Required: %s (available: %s)"
-msgstr ""
-
-#, fuzzy
-msgid "(default)"
-msgstr "內定值"
-
-#, fuzzy
-msgid ""
-"These are default display settings for albums in your gallery.  They can be "
-"overridden in each album."
-msgstr "這些是預設值。可由每個相簿中優先設定"
-
-#, fuzzy
-msgid "Default sort order"
-msgstr "相簿排序方式:"
-
-msgid "with"
-msgstr ""
-
-msgid "Default layout"
-msgstr "預設版面配置"
-
-msgid "Default theme"
-msgstr "預設主題"
-
-#, fuzzy
-msgid "New albums"
-msgstr "編輯相簿"
-
-#, fuzzy, c-format
-msgid "%s Layout Settings"
-msgstr "相簿設定"
-
-#, fuzzy
-msgid ""
-"These are the global settings for the layout.  They can be overridden at the "
-"album level."
-msgstr "這些是預設值。可由每個相簿中優先設定"
-
-msgid "There are no settings for this layout"
-msgstr ""
-
 msgid "System Maintenance"
 msgstr ""
 
@@ -1605,10 +1518,38 @@ msgstr ""
 msgid "Module Name"
 msgstr "模組名稱"
 
+msgid "Version"
+msgstr "版本"
+
+#, fuzzy
+msgid "Installed"
+msgstr "安裝"
+
+msgid "Actions"
+msgstr "動作"
+
+#, fuzzy
+msgid "Status: Not Installed"
+msgstr "安裝"
+
+#, fuzzy
+msgid "Status: Active"
+msgstr "啟動"
+
+msgid "Status: Inactive"
+msgstr ""
+
+msgid "Status: Upgrade Required (Inactive)"
+msgstr ""
+
 msgid "Status: Incompatible Module (Inactive)"
 msgstr ""
 
 msgid "Incompatible module!"
+msgstr ""
+
+#, c-format
+msgid "Core API Required: %s (available: %s)"
 msgstr ""
 
 #, c-format
@@ -1630,6 +1571,123 @@ msgstr ""
 #, fuzzy
 msgid "Uninstall"
 msgstr "安裝"
+
+#, fuzzy
+msgid "Gallery Themes"
+msgstr "Gallery"
+
+#, fuzzy, c-format
+msgid "Successfully activated theme %s"
+msgstr "使用者 '%s' 已經刪除成功。"
+
+#, fuzzy, c-format
+msgid "Successfully deactivated theme %s"
+msgstr "使用者 '%s' 已經刪除成功。"
+
+#, fuzzy, c-format
+msgid "Successfully installed theme %s"
+msgstr "使用者 '%s' 已經刪除成功。"
+
+#, fuzzy, c-format
+msgid "Successfully uninstalled theme %s"
+msgstr "使用者 '%s' 已經刪除成功。"
+
+#, fuzzy, c-format
+msgid "Successfully upgraded theme %s"
+msgstr "使用者 '%s' 已經刪除成功。"
+
+msgid "Successfully saved default album settings"
+msgstr ""
+
+#, fuzzy
+msgid "Restored theme settings"
+msgstr "相簿設定"
+
+#, fuzzy
+msgid "All Themes"
+msgstr "主題"
+
+msgid "Defaults"
+msgstr "內定值"
+
+#, fuzzy
+msgid "Theme Name"
+msgstr "主題"
+
+msgid "Status: Incompatible Theme (Inactive)"
+msgstr ""
+
+msgid "Incompatible theme!"
+msgstr ""
+
+#, c-format
+msgid "Theme API Required: %s (available: %s)"
+msgstr ""
+
+#, fuzzy
+msgid "(default)"
+msgstr "內定值"
+
+#, fuzzy
+msgid ""
+"These are default display settings for albums in your gallery.  They can be "
+"overridden in each album."
+msgstr "這些是預設值。可由每個相簿中優先設定"
+
+#, fuzzy
+msgid "Default sort order"
+msgstr "相簿排序方式:"
+
+msgid "with"
+msgstr ""
+
+msgid "Default theme"
+msgstr "預設主題"
+
+#, fuzzy
+msgid "New albums"
+msgstr "編輯相簿"
+
+#, fuzzy, c-format
+msgid "%s Theme Settings"
+msgstr "相簿設定"
+
+#, fuzzy
+msgid ""
+"These are the global settings for the theme.  They can be overridden at the "
+"album level."
+msgstr "這些是預設值。可由每個相簿中優先設定"
+
+msgid "Available"
+msgstr ""
+
+msgid "Choose a block"
+msgstr ""
+
+#, fuzzy
+msgid "Selected"
+msgstr "刪除"
+
+msgid "Remove"
+msgstr "移除"
+
+#, fuzzy
+msgid "Move Up"
+msgstr "移動"
+
+#, fuzzy
+msgid "Move Down"
+msgstr "移動"
+
+msgid "Parameter"
+msgstr ""
+
+#, fuzzy
+msgid "Value"
+msgstr "比例"
+
+msgid "There are no settings for this theme"
+msgstr ""
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime "
@@ -1703,6 +1761,59 @@ msgstr "重建縮圖"
 #, fuzzy
 msgid "This is a test email from Gallery2"
 msgstr "這裡是您的 Gallery 最上層"
+
+msgid "Edit Conflict!"
+msgstr ""
+
+#, fuzzy
+msgid "Security Violation"
+msgstr "違反安全性！"
+
+msgid "Database Error"
+msgstr ""
+
+msgid "Error"
+msgstr "錯誤"
+
+msgid ""
+"Your change cannot be completed because somebody else has made a conflicting "
+"change to the same item.  Use the back button in your browser to go back to "
+"the page you were on, then <b>reload that page</b> and try your change again."
+msgstr ""
+
+msgid "Go back and try again"
+msgstr ""
+
+msgid ""
+"Alternatively, you can return to the main Gallery page and resume browsing."
+msgstr ""
+
+msgid "The action you attempted is not permitted."
+msgstr ""
+
+msgid "An error has occurred while interacting with the database."
+msgstr ""
+
+msgid ""
+"The exact nature of database errors is not captured unless Gallery debug "
+"mode is enabled in config.php.  Before seeking support for this error please "
+"enable buffered debug output and retry the operation.  Look near the bottom "
+"of the lengthy debug output to find error details."
+msgstr ""
+
+msgid "An error has occurred."
+msgstr ""
+
+#, fuzzy
+msgid "Back to the Gallery"
+msgstr "瀏覽 Gallery"
+
+msgid "Error Detail"
+msgstr ""
+
+#, fuzzy
+msgid "System Information"
+msgstr "目的地"
 
 msgid ""
 "You don't have any Graphics Toolkit activated that can handle JPEG images.  "
@@ -2108,13 +2219,7 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Choose a layout for this album. (The way the album is arranged on the page)"
-msgstr ""
-
-msgid "Theme"
-msgstr "主題"
-
-msgid "Choose a theme for this album.  (The look and feel of this album)"
+"Choose a theme for this album. (The way the album is arranged on the page)"
 msgstr ""
 
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
@@ -2297,23 +2402,6 @@ msgid ""
 "cannot create or modify a thumbnail."
 msgstr ""
 
-#, c-format
-msgid ""
-"This album is configured to use the <b>%s</b> layout. These settings only "
-"apply to the layout for this album."
-msgstr ""
-
-#, fuzzy
-msgid "Setting"
-msgstr "Gallery 設定"
-
-#, fuzzy
-msgid "Value"
-msgstr "比例"
-
-msgid "Use Global"
-msgstr ""
-
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the "
 "movie's width and height.  If you have installed a graphics toolkit that can "
@@ -2440,6 +2528,19 @@ msgstr ""
 #, fuzzy
 msgid "Restore original"
 msgstr "回復到原始狀態"
+
+#, c-format
+msgid ""
+"This album is configured to use the <b>%s</b> theme. These settings only "
+"apply to the theme for this album."
+msgstr ""
+
+#, fuzzy
+msgid "Setting"
+msgstr "Gallery 設定"
+
+msgid "Use Global"
+msgstr ""
 
 #, fuzzy
 msgid "Album Highlight"
@@ -2599,9 +2700,6 @@ msgstr "群組名稱："
 msgid "Permission"
 msgstr "權限"
 
-msgid "Remove"
-msgstr "移除"
-
 #, fuzzy
 msgid "New Group Permission"
 msgstr "群組權限"
@@ -2661,9 +2759,6 @@ msgstr ""
 #, fuzzy
 msgid "Reorder"
 msgstr "移除"
-
-msgid "Go"
-msgstr ""
 
 msgid "Continue..."
 msgstr ""
@@ -2729,10 +2824,6 @@ msgstr ""
 #, c-format
 msgid "To fix this problem you can either %s or %s."
 msgstr ""
-
-#, fuzzy
-msgid "Site Administration"
-msgstr "Gallery 網站管理"
 
 #, fuzzy
 msgid "Admin Options"
@@ -2954,18 +3045,103 @@ msgstr ""
 msgid "Thank you!"
 msgstr ""
 
+msgid "guest"
+msgstr ""
+
+#, c-format
+msgid "display mode: %s"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Date: %s"
+msgstr "刪除使用者"
+
+#, fuzzy, c-format
+msgid "Owner: %s"
+msgstr "擁有者"
+
+#, fuzzy, c-format
+msgid "Size: %d item"
+msgid_plural "Size: %d items"
+msgstr[0] "%d 分"
+msgstr[1] "%d 分"
+
+#, fuzzy, c-format
+msgid "(%d item total)"
+msgid_plural "(%d items total)"
+msgstr[0] "%d 分"
+msgstr[1] "%d 分"
+
+#, c-format
+msgid "Views: %d"
+msgstr ""
+
+#, fuzzy
+msgid "&laquo; album actions &raquo;"
+msgstr "* 不排序 *"
+
+#, fuzzy
+msgid "&laquo; item actions &raquo;"
+msgstr "* 不排序 *"
+
+msgid "Go"
+msgstr ""
+
+msgid "next"
+msgstr ""
+
+msgid "last"
+msgstr ""
+
+#, fuzzy
+msgid "first"
+msgstr "|< 第一頁"
+
+msgid "previous"
+msgstr ""
+
+msgid "Page:"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "%d. %s"
+msgstr "編輯使用者"
+
+#, fuzzy
+msgid "Size: "
+msgstr "編輯尺寸"
+
+msgid "Full size: "
+msgstr ""
+
+#, fuzzy
+msgid "Language selector"
+msgstr "語言設定"
+
+#, fuzzy
+msgid "Item actions"
+msgstr "物件權限"
+
+#, fuzzy
+msgid "Login block"
+msgstr "登入"
+
+msgid "Links to album/photo peers"
+msgstr ""
+
 msgid "Successfully deleted directory: /cache/entity"
 msgstr ""
 
 #, fuzzy
-msgid "Successfully deleted directory: /cache/layout"
+msgid "Successfully deleted directory: /cache/theme"
 msgstr "使用者 '%s' 已經刪除成功。"
 
 msgid "Successfully deleted directory: /cache/module"
 msgstr ""
 
-msgid "Unable to delete directory: /cache/layout"
-msgstr ""
+#, fuzzy
+msgid "Unable to delete directory: /cache/theme"
+msgstr "使用者 '%s' 已經刪除成功。"
 
 msgid "Unable to delete directory: /templates_c"
 msgstr ""
@@ -2977,629 +3153,6 @@ msgstr ""
 msgid "[test] A permission"
 msgstr "權限"
 
-msgid "Gallery Debug Output"
-msgstr "Gallery 除錯(Debug))輸出"
-
-msgid "This page is valid XHTML 1.0"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Gallery %s"
-msgstr "Gallery"
-
-msgid "Edit Conflict!"
-msgstr ""
-
 #, fuzzy
-msgid "Security Violation"
-msgstr "違反安全性！"
-
-msgid "Database Error"
-msgstr ""
-
-msgid "Error"
-msgstr "錯誤"
-
-msgid ""
-"Your change cannot be completed because somebody else has made a conflicting "
-"change to the same item.  Use the back button in your browser to go back to "
-"the page you were on, then <b>reload that page</b> and try your change again."
-msgstr ""
-
-msgid "Go back and try again"
-msgstr ""
-
-msgid ""
-"Alternatively, you can return to the main Gallery page and resume browsing."
-msgstr ""
-
-msgid "The action you attempted is not permitted."
-msgstr ""
-
-msgid "An error has occurred while interacting with the database."
-msgstr ""
-
-msgid ""
-"The exact nature of database errors is not captured unless Gallery debug "
-"mode is enabled in config.php.  Before seeking support for this error please "
-"enable buffered debug output and retry the operation.  Look near the bottom "
-"of the lengthy debug output to find error details."
-msgstr ""
-
-msgid "An error has occurred."
-msgstr ""
-
-#, fuzzy
-msgid "Back to the Gallery"
-msgstr "瀏覽 Gallery"
-
-msgid "Error Detail"
-msgstr ""
-
-#, fuzzy
-msgid "System Information"
-msgstr "目的地"
-
-#, fuzzy
-msgid "Redirect"
-msgstr "重置"
-
-msgid "You are in debug mode so we are not automatically redirecting."
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Welcome, %s"
-msgstr "刪除使用者"
-
-#, fuzzy, c-format
-msgid "(%d item)"
-msgid_plural "(%d items)"
-msgstr[0] "%d 分"
-msgstr[1] "%d 分"
-
-#, fuzzy, c-format
-msgid "%d. %s"
-msgstr "編輯使用者"
-
-#~ msgid "Gallery Administrator"
-#~ msgstr "Gallery 管理者"
-
-#, fuzzy
-#~ msgid "Administrator Recovery"
-#~ msgstr "密碼"
-
-#, fuzzy
-#~ msgid "Use As Parent&rsquo;s Thumbnail?"
-#~ msgstr "重建縮圖"
-
-#, fuzzy
-#~ msgid "Yes, highlight this item!"
-#~ msgstr "編輯這個物件"
-
-#~ msgid "You must enter a thumbnail size"
-#~ msgstr "您必須輸入縮圖尺寸"
-
-#~ msgid "Undo"
-#~ msgstr "取消動作"
-
-#, fuzzy
-#~ msgid "[change]"
-#~ msgstr "變更"
-
-#, fuzzy
-#~ msgid "required"
-#~ msgstr "[必須的]"
-
-#, fuzzy
-#~ msgid "Status: Not"
-#~ msgstr "啟動"
-
-#, fuzzy
-#~ msgid "add"
-#~ msgstr "增加"
-
-#, fuzzy
-#~ msgid "cancel"
-#~ msgstr "取消"
-
-#, fuzzy
-#~ msgid "edit user"
-#~ msgstr "編輯使用者"
-
-#, fuzzy
-#~ msgid "no"
-#~ msgstr "取消動作"
-
-#, fuzzy
-#~ msgid "reset"
-#~ msgstr "重置"
-
-#, fuzzy
-#~ msgid "save"
-#~ msgstr "儲存"
-
-#, fuzzy
-#~ msgid "undo"
-#~ msgstr "取消動作"
-
-#, fuzzy
-#~ msgid "Manual Sort Order"
-#~ msgstr "相簿排序方式:"
-
-#, fuzzy
-#~ msgid "&laquo; Parent Directory &raquo;"
-#~ msgstr "* 不排序 *"
-
-#, fuzzy
-#~ msgid "Rotate/Scale"
-#~ msgstr "旋轉"
-
-#, fuzzy
-#~ msgid "Sizes"
-#~ msgstr "編輯尺寸"
-
-#~ msgid "Lifetime"
-#~ msgstr "壽命"
-
-#~ msgid "Specify the lifetime of the session here."
-#~ msgstr "指定這個 session 的壽命"
-
-#, fuzzy
-#~ msgid "Edit Group Members"
-#~ msgstr "編輯群組 '%s'"
-
-#, fuzzy
-#~ msgid "Layouts"
-#~ msgstr "版面配置"
-
-#, fuzzy
-#~ msgid "Restored original photo successfully"
-#~ msgstr "使用者 '%s' 已經建立成功。"
-
-#, fuzzy
-#~ msgid "Log in"
-#~ msgstr "登入"
-
-#~ msgid "admin"
-#~ msgstr "管理者(admin)"
-
-#, fuzzy
-#~ msgid "Powered by Gallery 2"
-#~ msgstr "Powered by Gallery %s"
-
-#, fuzzy
-#~ msgid "Delete Album"
-#~ msgstr "編輯相簿"
-
-#, fuzzy
-#~ msgid "Edit Album"
-#~ msgstr "編輯相簿"
-
-#~ msgid "Full name"
-#~ msgstr "全名"
-
-#, fuzzy
-#~ msgid "Move Album"
-#~ msgstr "編輯相簿"
-
-#, fuzzy
-#~ msgid "Site admin"
-#~ msgstr "網站管理者"
-
-#, fuzzy
-#~ msgid "delete album"
-#~ msgstr "編輯相簿"
-
-#, fuzzy
-#~ msgid "edit album"
-#~ msgstr "編輯相簿"
-
-#~ msgid "Album Settings"
-#~ msgstr "相簿設定"
-
-#, fuzzy
-#~ msgid "Changes saved successfully."
-#~ msgstr "使用者 '%s' 已經建立成功。"
-
-#~ msgid "Item Thumbnail Size and Resizes"
-#~ msgstr "物件縮圖尺寸及變更尺寸"
-
-#, fuzzy
-#~ msgid "Specify the thumbnail size of this item here:"
-#~ msgstr "指定這個 session 的壽命"
-
-#~ msgid "Add Items to this Album"
-#~ msgstr "新增物件到此相簿"
-
-#~ msgid ""
-#~ "Gallery can handle files of any format.  However, it can only create "
-#~ "automatic resizes and thumbnails for certain types of files."
-#~ msgstr ""
-#~ "Gallery 可以處理任何格式的檔案，然而，它只能針對特殊類型的檔案自動建立變更"
-#~ "尺寸及縮小圖檔"
-
-#, fuzzy
-#~ msgid "Layout Settings"
-#~ msgstr "相簿設定"
-
-#, fuzzy
-#~ msgid "edit general"
-#~ msgstr "編輯使用者"
-
-#, fuzzy
-#~ msgid "edit layout"
-#~ msgstr "預設版面配置"
-
-#, fuzzy
-#~ msgid "Animation Settings"
-#~ msgstr "相簿設定"
-
-#, fuzzy
-#~ msgid "Edit Layout Settings"
-#~ msgstr "相簿設定"
-
-#, fuzzy
-#~ msgid "Edit Movie"
-#~ msgstr "編輯尺寸"
-
-#, fuzzy
-#~ msgid "Move Item"
-#~ msgstr "移動一個物件"
-
-#, fuzzy
-#~ msgid "Photo Settings"
-#~ msgstr "相簿設定"
-
-#, fuzzy
-#~ msgid "edit movie"
-#~ msgstr "編輯物件"
-
-#, fuzzy
-#~ msgid "delete image"
-#~ msgstr "刪除物件"
-
-#, fuzzy
-#~ msgid "delete movie"
-#~ msgstr "刪除物件"
-
-#, fuzzy
-#~ msgid "move animation"
-#~ msgstr "移動物件"
-
-#, fuzzy
-#~ msgid "move movie"
-#~ msgstr "移動物件"
-
-#~ msgid "Average"
-#~ msgstr "平均"
-
-#~ msgid "Calls"
-#~ msgstr "Calls"
-
-#~ msgid "Combined"
-#~ msgstr "合併"
-
-#, fuzzy
-#~ msgid "Error: %s"
-#~ msgstr "錯誤："
-
-#~ msgid "External"
-#~ msgstr "外部的"
-
-#~ msgid "Function"
-#~ msgstr "功能"
-
-#~ msgid "Internal"
-#~ msgstr "Internal"
-
-#~ msgid "Max"
-#~ msgstr "最大"
-
-#~ msgid "Profiling"
-#~ msgstr "Profiling"
-
-#~ msgid "Total"
-#~ msgstr "總計"
-
-#~ msgid "* No Sort Order *"
-#~ msgstr "* 不排序 *"
-
-#, fuzzy
-#~ msgid "This album has %d child."
-#~ msgid_plural "This album has %d children."
-#~ msgstr[0] "本物件有 %d 個子體"
-#~ msgstr[1] "本物件有 %d 個子體"
-
-#~ msgid "General Item Properties"
-#~ msgstr "一般物件屬性"
-
-#~ msgid "Preserve Original Image"
-#~ msgstr "保留原始影像"
-
-#, fuzzy
-#~ msgid "edit image"
-#~ msgstr "編輯影像檔"
-
-#~ msgid "Anonymous"
-#~ msgstr "匿名"
-
-#~ msgid "anonymous"
-#~ msgstr "匿名者"
-
-#, fuzzy
-#~ msgid "Group Edit"
-#~ msgstr "群組"
-
-#~ msgid "Next >>"
-#~ msgstr "下一個 >>"
-
-#, fuzzy
-#~ msgid "User Edit"
-#~ msgstr "編輯"
-
-#, fuzzy
-#~ msgid "You cannot delete the All Users group!"
-#~ msgstr "不可刪除 'all users' 群組！"
-
-#, fuzzy
-#~ msgid "You must select a directory to remove"
-#~ msgstr "您必須選擇欲移除的使用者"
-
-#~ msgid "You must select a group"
-#~ msgstr "您必須選擇群組"
-
-#, fuzzy
-#~ msgid "You must select a user"
-#~ msgstr "您必須選擇群組"
-
-#, fuzzy
-#~ msgid "Add New"
-#~ msgstr "新增物件"
-
-#~ msgid "Add/Remove Group's Users"
-#~ msgstr "新增/刪除群組使用者"
-
-#~ msgid ""
-#~ "Certain image manipulation operations (such as rotating and scaling) can "
-#~ "cause a permanent change to the original image.  In these cases, Gallery "
-#~ "avoids modifying the original image by creating a duplicate that is "
-#~ "rotated or scaled to the dimensions that you prefer.  Future operations "
-#~ "(viewing, modifying) apply to the duplicate leaving your original image "
-#~ "intact.  This preserves your original image, but will consume more disk "
-#~ "space."
-#~ msgstr ""
-#~ "某些影像操作動作(例如轉動與尺寸縮放)會導致對原始檔的永久性變更。因此，"
-#~ "Gallery 為了避免修正到原始檔，另外建立一份拷貝讓您做轉動或修改尺寸的操作。"
-#~ "進一步的操作(瀏覽、修改) 只實施於複製檔而原始檔案將保留不動。 如此可保護您"
-#~ "的原始影像檔，但會耗用較多磁碟空間。"
-
-#, fuzzy
-#~ msgid "Change item owner to:"
-#~ msgstr "變更此相簿的所有者為:"
-
-#~ msgid "Counter-Clockwise 90&deg;"
-#~ msgstr "逆時針 90deg;"
-
-#~ msgid ""
-#~ "Disabling this option will cause any actions to happen to the original "
-#~ "image.  This will permanently change your original image!"
-#~ msgstr ""
-#~ "取消這個選項將導致之前任何的動作確實發生在原始影像檔，這會對您的原始影像檔"
-#~ "產生永久性變更！"
-
-#~ msgid "Do you really want to delete group '%s'?"
-#~ msgstr "請問是否確定刪除群組 '%s'？"
-
-#~ msgid ""
-#~ "Each album can have a thumbnail image that is representative of its "
-#~ "contents.  This is called the <i>highlight image</i>.  You can select "
-#~ "this item's thumbnail to be the album's highlight image."
-#~ msgstr ""
-#~ "每一個相簿可擁有一個縮圖影像作為內容的代表標誌。稱之為 <i>精彩畫面</i>，您"
-#~ "可以選擇這個物件的縮圖讓它成為相簿的精彩畫面影像。"
-
-#~ msgid "Editing this album"
-#~ msgstr "編輯這個相簿"
-
-#~ msgid ""
-#~ "Enter a new password twice to change passwords, or leave it blank to "
-#~ "leave password unchanged."
-#~ msgstr "輸入一組新密碼兩次以更改密碼，或是不輸入密碼維持密碼不變"
-
-#~ msgid ""
-#~ "Every item will have a thumbnail.  The default thumbnail size you specify "
-#~ "here will create a uniform look for your album.  Gallery will create a "
-#~ "thumbnail that is no larger than the size you specify."
-#~ msgstr ""
-#~ "每個物件都會有縮圖，您所指定的預定縮圖尺寸將會為您的相簿建立一個整齊的外觀"
-#~ "Gallery 將照您指定的尺寸建立縮圖檔。"
-
-#~ msgid "Gallery Login"
-#~ msgstr "Gallery 登入"
-
-#~ msgid ""
-#~ "Gallery can automatically create intermediate resized versions of images "
-#~ "added to this album.  This is useful when you want to present larger "
-#~ "versions of an image without showing the full size image."
-#~ msgstr ""
-#~ "Gallery 會針對加入此相簿的影像檔自動產生一份可變更尺寸的中介版本，當你想展"
-#~ "示一個影像檔的放大版，卻不想顯示完整尺寸的時候特別有用。"
-
-#~ msgid ""
-#~ "Gallery will create a thumbnail that is no larger than the size you "
-#~ "specify here."
-#~ msgstr "Gallery 將照您指定的尺寸建立縮圖。"
-
-#~ msgid ""
-#~ "How the items in this album are sorted.  New items that are added will be "
-#~ "placed in the album according to the order you specify here."
-#~ msgstr ""
-#~ "本相簿中物件排序的方式，此後新加入相簿的物件將依照您指定的方式做排序整理"
-
-#~ msgid ""
-#~ "If you delete it, all of its children and any related data will be "
-#~ "deleted also!"
-#~ msgstr "若刪除此物件，所有子集與相關資料都將一併刪除！"
-
-#~ msgid ""
-#~ "If you don't know the group name you'd like to work with, you can browse "
-#~ "or search for it here."
-#~ msgstr "若您不知道你所屬的群組名稱，可由此瀏覽或搜尋"
-
-#~ msgid ""
-#~ "If you don't know the username you'd like to work with, you can browse or "
-#~ "search for it here."
-#~ msgstr "若您不知道你所用的使用者名稱，可由此瀏覽或搜尋"
-
-#~ msgid ""
-#~ "If you know the group name you'd like to work with, you can enter it here."
-#~ msgstr "若您知道所屬的群組名稱，可在此輸入"
-
-#~ msgid ""
-#~ "If you know the username you'd like to work with, you can enter it here."
-#~ msgstr "若您知道所用的使用者名稱，可在此輸入"
-
-#~ msgid "Item Permissions"
-#~ msgstr "物件權限"
-
-#~ msgid ""
-#~ "Keywords will not be visible to the end user, but are searchable. This "
-#~ "can be any character string.  It should not contain HTML."
-#~ msgstr ""
-#~ "關鍵字並不會被使用者看到，但可以被搜尋。它可以是任何字串，且不應包含 HTML"
-#~ "字串"
-
-#~ msgid "Or you can create a new group here."
-#~ msgstr "或由此建立一個新群組"
-
-#~ msgid "Or you can create a new user here."
-#~ msgstr "或由此建立一個新使用者"
-
-#~ msgid "Other intermediate resized versions of this image."
-#~ msgstr "本影像檔的其他變更尺寸中介版本"
-
-#~ msgid "Return to User Administration"
-#~ msgstr "回到使用者管理"
-
-#~ msgid "Size (in pixels): "
-#~ msgstr "尺寸(以像素 pixel 為單位)："
-
-#~ msgid "Target size (in pixels):"
-#~ msgstr "目標物尺寸(以像素為單位)："
-
-#~ msgid "The colors and images that will be used when viewing this album."
-#~ msgstr "觀看此相簿時使用的顏色與影像檔"
-
-#~ msgid ""
-#~ "The summary can be any character string, and should not contain any HTML"
-#~ msgstr "摘要可以是任何字串，並且不應包含 HTML"
-
-#~ msgid ""
-#~ "The title can be any character string, and should not contain any HTML"
-#~ msgstr "標題可以是任何字串，並且不應包含 HTML"
-
-#~ msgid ""
-#~ "The way that items will be arranged on the page when viewing this album."
-#~ msgstr "觀看此相簿時物件在頁面上的排置方式"
-
-#~ msgid "User name:"
-#~ msgstr "使用者名稱："
-
-#~ msgid ""
-#~ "When you make changes to the values of the thumbnail size and/or the size "
-#~ "of the resized images, this will only apply to newly uploaded images. "
-#~ "Other images remain with their currently (possibly customized) thumbnails "
-#~ "and resizes. Click here to recreate the thumbnails and/or resizes based "
-#~ "on the new information."
-#~ msgstr ""
-#~ "當您對縮圖和/或變更尺寸的影像檔大小做變更，這只影響到變更後上傳的影像檔。"
-#~ "其他影像檔保留他們目前(先前自訂的)縮圖跟影像檔尺寸。由此點選並以新設定重建"
-#~ "縮圖跟變更尺寸的影像檔。"
-
-#~ msgid "Yes, delete it!"
-#~ msgstr "沒錯，刪掉它！"
-
-#~ msgid "Yes, make this item the highlight!"
-#~ msgstr "沒錯，把它做成精彩畫面"
-
-#~ msgid "You can create a new album inside this one."
-#~ msgstr "您可以在這個相簿內建立一個新相簿"
-
-#~ msgid "You must enter a name"
-#~ msgstr "您必須輸入一個名稱"
-
-#, fuzzy
-#~ msgid "before this item:"
-#~ msgstr "[core] 觀看物件"
-
-#~ msgid "|< First"
-#~ msgstr "|< 第一頁"
-
-#~ msgid "%d days"
-#~ msgstr "%d 天"
-
-#~ msgid "%d hours"
-#~ msgstr "%d 小時"
-
-#~ msgid "%d minutes"
-#~ msgstr "%d 分鐘"
-
-#~ msgid "%d weeks"
-#~ msgstr "%d 週"
-
-#~ msgid "Add Files From Your Computer"
-#~ msgstr "由您的電腦新增檔案"
-
-#~ msgid "Add From a Website"
-#~ msgstr "由另一網站新增檔案"
-
-#~ msgid "Validate this Page"
-#~ msgstr "驗證本頁"
-
-#~ msgid "[core] Change item properties"
-#~ msgstr "[core] 變更物件屬性"
-
-#~ msgid "[core] Change item text"
-#~ msgstr "[core] 更改物件文字"
-
-#~ msgid "[core] Move item"
-#~ msgstr "[core] 移動物件"
-
-#~ msgid "Group '%s' has been successfully deleted."
-#~ msgstr "群組 '%s' 已經刪除成功"
-
-#~ msgid ""
-#~ "Note: This is the site administrator group.  Any users you add to this "
-#~ "group will have site-wide administrative privileges"
-#~ msgstr ""
-#~ "注意：此為網站管理群組。任何您加入到此一群組的使用者將擁有通行全站的管理特"
-#~ "權"
-
-#~ msgid "Return to Group Administration"
-#~ msgstr "回到群組管理"
-
-#~ msgid ""
-#~ "This group contains all Gallery site administrators.  Any users you add "
-#~ "to this group will have Gallery administrative privileges."
-#~ msgstr ""
-#~ "此群組包括所有 Gallery 網站管理者。任何您加入到此群組的使用者將擁有 "
-#~ "Gallery管理特權"
-
-#~ msgid ""
-#~ "This group contains all Gallery users.  You cannot add or remove users "
-#~ "from it."
-#~ msgstr "此群組包括所有 Gallery 使用者，您不能從這裡移除或新增使用者。"
-
-#~ msgid "Item"
-#~ msgstr "物件"
-
-#~ msgid "Activate a toolkit here"
-#~ msgstr "啟動一個工具集"
-
-#~ msgid ""
-#~ "Choose a graphics toolkit to use.  You can only choose from the list of "
-#~ "currently active toolkits."
-#~ msgstr "選擇一個圖形工具集來使用。請由目前可用的工具集清單中挑選一個"
-
-#~ msgid "No Graphics toolkits detected!"
-#~ msgstr "偵測不到圖形工具集！"
+msgid "[test] A second permission"
+msgstr "權限"

@@ -36,7 +36,7 @@ class GalleryPluginHelper_simple {
     /**
      * Load and initialize the given plugin
      *
-     * @param string the plugin type (eg, module, layout, etc)
+     * @param string the plugin type (eg, module, theme, etc)
      * @param string the plugin id
      * @param bool should we ignore version mismatches (default: no)
      * @param int the depth of recursion (don't set this- it's used internally)
@@ -56,9 +56,9 @@ class GalleryPluginHelper_simple {
 		$pluginClass = $pluginId . 'Module';
 		break;
 
-	    case 'layout':
-		$pluginSuperClass = 'GalleryLayout';
-		$pluginClass = $pluginId . 'Layout';
+	    case 'theme':
+		$pluginSuperClass = 'GalleryTheme';
+		$pluginClass = $pluginId . 'Theme';
 		break;
 
 	    default:
@@ -160,14 +160,14 @@ class GalleryPluginHelper_simple {
 					     $pluginType,
 					     join('/', $s[$pluginType == 'module' ?
 							  'requiredModuleApi' :
-							  'requiredLayoutApi']),
+							  'requiredThemeApi']),
 					     $plugin->getVersion(),
 					     join('/', GalleryCoreApi::getApiVersion()),
 					     $pluginType,
 					     join('/',
 						  $pluginType == 'module' ?
 						  GalleryModule::getApiVersion() :
-						  GalleryLayout::getApiVersion()))),
+						  GalleryTheme::getApiVersion()))),
 				 $plugin);
 		}
 	    }
@@ -190,9 +190,9 @@ class GalleryPluginHelper_simple {
 	    (($pluginType == 'module' &&
 	      GalleryUtilities::isCompatibleWithApi(
 		  $plugin->getRequiredModuleApi(), GalleryModule::getApiVersion())) ||
-	     ($pluginType == 'layout' &&
+	     ($pluginType == 'theme' &&
 	      GalleryUtilities::isCompatibleWithApi(
-		  $plugin->getRequiredLayoutApi(), GalleryLayout::getApiVersion())));
+		  $plugin->getRequiredThemeApi(), GalleryTheme::getApiVersion())));
     }
 
     /**
@@ -299,7 +299,7 @@ class GalleryPluginHelper_simple {
     /**
      * Get the status of all plugins of a given type
      *
-     * @param string the plugin type (eg 'module', 'layout')
+     * @param string the plugin type (eg 'module', 'theme')
      * @param bool true if we want to ignore the cache?
      * @return array object GalleryStatus as status code
      *                      array (moduleId => array('active' => true/false,
@@ -332,9 +332,9 @@ class GalleryPluginHelper_simple {
 		    $pluginFile = 'module.inc';
 		    break;
 
-		case 'layout':
-		    $pluginsDir = dirname(__FILE__) . '/../../../../layouts/';
-		    $pluginFile = 'layout.inc';
+		case 'theme':
+		    $pluginsDir = dirname(__FILE__) . '/../../../../themes/';
+		    $pluginFile = 'theme.inc';
 		    break;
 		}
 
@@ -355,7 +355,7 @@ class GalleryPluginHelper_simple {
 			    if ($pluginType == 'module') {
 				$frameworkParams[] = 'requiredModuleApi';
 			    } else {
-				$frameworkParams[] = 'requiredLayoutApi';
+				$frameworkParams[] = 'requiredThemeApi';
 			    }
 
 			    foreach ($frameworkParams as $paramName) {

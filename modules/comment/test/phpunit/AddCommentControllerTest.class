@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -68,14 +68,15 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core.ItemAdmin',
-						      'subView' => 'comment.CommentChangeConfirmation',
-						      'itemId' => $this->_item->getId()),
-				  'status' => array('added' => 1),
-				  'error' => array()),
-			    $results);
-	
+	$this->assertEquals(
+	    array('return' => 1,
+		  'redirect' => array(
+		      'view' => 'comment.CommentChangeConfirmation',
+		      'itemId' => $this->_item->getId()),
+		  'status' => array('added' => 1),
+		  'error' => array()),
+	    $results);
+
 	/* Grab the comment and take a look at it */
 	list ($ret, $comments) = GalleryCommentHelper::fetchComments($this->_item->getId());
 	if ($ret->isError()) {
@@ -104,11 +105,11 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
-						      'subView' => 'comment.AddComment'),
-				  'status' => array(),
-				  'error' => array()),
-			    $results);
+	$this->assertEquals(
+	    array('delegate' => array('view' => 'comment.AddComment'),
+		  'status' => array(),
+		  'error' => array()),
+	    $results);
     }
 
     function testAddEmptyComment() {
@@ -122,15 +123,15 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
-						      'subView' => 'comment.AddComment'),
+	$this->assertEquals(array('delegate' => array('view' => 'comment.AddComment'),
 				  'status' => array(),
 				  'error' => array('form[error][subject][missing]',
 						   'form[error][comment][missing]')),
 			    $results);
-	
+
 	/* Verify that there are no comments */
-	list ($ret, $counts) = GalleryCommentHelper::fetchCommentCounts(array($this->_item->getId()));
+	list ($ret, $counts) =
+	    GalleryCommentHelper::fetchCommentCounts(array($this->_item->getId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -148,15 +149,15 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
-						      'subView' => 'comment.AddComment'),
+	$this->assertEquals(array('delegate' => array('view' => 'comment.AddComment'),
 				  'status' => array(),
 				  'error' => array('form[error][subject][missing]',
 						   'form[error][comment][missing]')),
 			    $results);
-	
+
 	/* Verify that there are no comments */
-	list ($ret, $counts) = GalleryCommentHelper::fetchCommentCounts(array($this->_item->getId()));
+	list ($ret, $counts) =
+	    GalleryCommentHelper::fetchCommentCounts(array($this->_item->getId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -176,14 +177,14 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core.ItemAdmin',
-						      'subView' => 'comment.CommentChangeConfirmation',
-						      'itemId' => $this->_item->getId()),
-				  'status' => array('added' => 1),
-				  'error' => array()),
-			    $results);
-	
+	$this->assertEquals(
+	    array('return' => 1,
+		  'redirect' => array('view' => 'comment.CommentChangeConfirmation',
+				      'itemId' => $this->_item->getId()),
+		  'status' => array('added' => 1),
+		  'error' => array()),
+	    $results);
+
 	/* Grab the comment and take a look at it */
 	list ($ret, $comments) = GalleryCommentHelper::fetchComments($this->_item->getId());
 	if ($ret->isError()) {
@@ -195,13 +196,16 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	    return $this->fail('result is not a GalleryComment!');
 	}
 
-	$this->assertEquals('this is a comment with &lt;javascript&gt;evilness&lt;/javascript&gt; in it.',
-			    $comments[0]->getComment());
-	$this->assertEquals('this is a subject with &lt;javascript&gt;evilness&lt;/javascript&gt; in it.',
-			    $comments[0]->getSubject());
+	$this->assertEquals(
+	    'this is a comment with &lt;javascript&gt;evilness&lt;/javascript&gt; in it.',
+	    $comments[0]->getComment());
+	$this->assertEquals(
+	    'this is a subject with &lt;javascript&gt;evilness&lt;/javascript&gt; in it.',
+	    $comments[0]->getSubject());
 	$this->assertEquals($gallery->getActiveUserId(), $comments[0]->getCommenterId());
 	$this->assertEquals($_SERVER['REMOTE_ADDR'], $comments[0]->getHost());
-	$this->assert($comments[0]->getDate() >= $this->_startTime && $comments[0]->getDate() <= time());
+	$this->assert($comments[0]->getDate() >= $this->_startTime &&
+		      $comments[0]->getDate() <= time());
     }
 
     function testCancelComment() {
@@ -213,12 +217,12 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core.ItemAdmin',
+				  'redirect' => array('view' => 'core.ShowItem',
 						      'itemId' => $this->_item->getId()),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
     }
-    
+
 }
 ?>

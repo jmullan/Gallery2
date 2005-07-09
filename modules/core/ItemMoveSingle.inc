@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -52,7 +52,7 @@ class ItemMoveSingleController extends GalleryController {
 
 	$status = array();
 	$error = array();
-	
+
 	if (isset($form['action']['move'])) {
 	    if (empty($form['destination'])) {
 		$error[] = 'form[error][destination][empty]';
@@ -65,7 +65,7 @@ class ItemMoveSingleController extends GalleryController {
 
 	    if (empty($error)) {
 		$newParentId = $form['destination'];
-		
+
 		/*
 		 * Assert that our permissions are correct.  The view should never try to make a move that
 		 * isn't legal so we can just bail if there's an inconsistency
@@ -131,7 +131,7 @@ class ItemMoveSingleController extends GalleryController {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
+
 		/* Write lock the item we're moving */
 		list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($itemId);
 		if ($ret->isError()) {
@@ -232,19 +232,19 @@ class ItemMoveSingleView extends GalleryView {
 	} else {
 	    return array(GalleryStatus::error(ERROR_BAD_DATA_TYPE, __FILE__, __LINE__), null);
 	}
-	
+
 	/* Get ids of all all albums where we can add this items */
 	list ($ret, $albumIds) = GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', $permission);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	/* Load all the album entities */
 	list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($albumIds);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	$albumTree = GalleryUtilities::createAlbumTree($albums);
 
 	$ItemMoveSingle = array();

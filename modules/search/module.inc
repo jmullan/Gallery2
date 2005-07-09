@@ -40,9 +40,8 @@ class SearchModule extends GalleryModule {
 	$this->setId('search');
 	$this->setName($gallery->i18n('Search'));
 	$this->setDescription($gallery->i18n('Search your Gallery'));
-	$this->setVersion('0.9.4');
+	$this->setVersion('0.9.5');
 	$this->setGroup('gallery', $this->translate('Gallery'));
-	$this->setCallbacks('loadSystemContent');
 	$this->setRequiredCoreApi(array(6, 0));
 	$this->setRequiredModuleApi(array(1, 0));
     }
@@ -60,24 +59,6 @@ class SearchModule extends GalleryModule {
     function autoConfigure() {
 	/* We don't require any special configuration */
 	return array(GalleryStatus::success(), true);
-    }
-
-    /**
-     * @see GalleryModule::loadSystemContent
-     */
-    function loadSystemContent(&$template) {
-	global $gallery;
-
-	$view = GalleryUtilities::getRequestVariables('view');
-	if ($view == 'search.SearchScan' || $view == 'search.SearchShowAll') {
-	    $content = null;
-	} else {
-	    $SearchSystemContent['subView'] = 'search.SearchScan';
-	    $template->setVariable('SearchSystemContent', $SearchSystemContent);
-	    $content = 'modules/search/templates/SearchSystemContent.tpl';
-	}
-
-	return array(GalleryStatus::success(), array('searchBox' => $content));
     }
 }
 ?>

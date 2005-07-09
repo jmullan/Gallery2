@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -41,7 +41,7 @@ class AdminQuotasControllerTest extends GalleryControllerTestCase {
     function AdminQuotasControllerTest($methodName) {
 	$this->GalleryControllerTestCase($methodName, 'quotas.AdminQuotas');
     }
-    
+
     function testGroupQuotaCreate() {
     	list ($ret, $group) = $this->_createRandomGroup();
     	if ($ret->isError()) {
@@ -50,7 +50,7 @@ class AdminQuotasControllerTest extends GalleryControllerTestCase {
 
 	GalleryUtilities::putRequestVariable('form[action][group][createFromText]', 1);
 	GalleryUtilities::putRequestVariable('form[text][groupName]', $group->getGroupName());
-	
+
 	$results = $this->handleRequest();
 
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
@@ -59,7 +59,7 @@ class AdminQuotasControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
-			    
+
 	$this->_deleteEntity($group);
     }
 
@@ -71,7 +71,7 @@ class AdminQuotasControllerTest extends GalleryControllerTestCase {
 
 	GalleryUtilities::putRequestVariable('form[action][user][createFromText]', 1);
 	GalleryUtilities::putRequestVariable('form[text][userName]', $user->getUserName());
-	
+
 	$results = $this->handleRequest();
 
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
@@ -80,7 +80,7 @@ class AdminQuotasControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
-			    
+
 	$this->_deleteEntity($user);
     }
 
@@ -104,7 +104,7 @@ class AdminQuotasControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
-	$this->_deleteUserOrGroupQuota($group->getId());		    
+	$this->_deleteUserOrGroupQuota($group->getId());
 	$this->_deleteEntity($group);
 
 	/* Missing group name */
@@ -120,7 +120,7 @@ class AdminQuotasControllerTest extends GalleryControllerTestCase {
 
 	/* Invalid group name */
 	GalleryUtilities::putRequestVariable('form[action][group][editFromText]', 1);
-	GalleryUtilities::putRequestVariable('form[text][groupName]', 
+	GalleryUtilities::putRequestVariable('form[text][groupName]',
 					     'some-invalid-group-name-'.rand());
 
 	$results = $this->handleRequest();
@@ -138,10 +138,10 @@ class AdminQuotasControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$this->_createUserOrGroupQuota($user->getId(), 1024);
 
-	
+
 	GalleryUtilities::putRequestVariable('form[action][user][editFromText]', 1);
 	GalleryUtilities::putRequestVariable('form[text][userName]', $user->getUserName());
 
@@ -152,7 +152,7 @@ class AdminQuotasControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
-	$this->_deleteUserOrGroupQuota($user->getId());		    
+	$this->_deleteUserOrGroupQuota($user->getId());
 	$this->_deleteEntity($user);
 
 	/* Missing user name */
@@ -168,7 +168,7 @@ class AdminQuotasControllerTest extends GalleryControllerTestCase {
 
 	/* Invalid user name */
 	GalleryUtilities::putRequestVariable('form[action][user][editFromText]', 1);
-	GalleryUtilities::putRequestVariable('form[text][userName]', 
+	GalleryUtilities::putRequestVariable('form[text][userName]',
 					     'some-invalid-user-name-'.rand());
 
 	$results = $this->handleRequest();
@@ -185,7 +185,7 @@ class AdminQuotasControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$this->_createUserOrGroupQuota($group->getId(), 2048);
 
 	GalleryUtilities::putRequestVariable('form[action][group][deleteFromText]', 1);
@@ -198,7 +198,7 @@ class AdminQuotasControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
-	$this->_deleteUserOrGroupQuota($group->getId());	    
+	$this->_deleteUserOrGroupQuota($group->getId());
 	$this->_deleteEntity($group);
 
 	/* Missing group name */
@@ -214,7 +214,7 @@ class AdminQuotasControllerTest extends GalleryControllerTestCase {
 
 	/* Invalid group name */
 	GalleryUtilities::putRequestVariable('form[action][group][deleteFromText]', 1);
-	GalleryUtilities::putRequestVariable('form[text][groupName]', 
+	GalleryUtilities::putRequestVariable('form[text][groupName]',
 					     'some-invalid-group-name-'.rand());
 
 	$results = $this->handleRequest();
@@ -244,7 +244,7 @@ class AdminQuotasControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
-	$this->_deleteUserOrGroupQuota($user->getId());	    
+	$this->_deleteUserOrGroupQuota($user->getId());
 	$this->_deleteEntity($user);
 
 	/* Missing user name */
@@ -260,7 +260,7 @@ class AdminQuotasControllerTest extends GalleryControllerTestCase {
 
 	/* Invalid user name */
 	GalleryUtilities::putRequestVariable('form[action][user][deleteFromText]', 1);
-	GalleryUtilities::putRequestVariable('form[text][userName]', 
+	GalleryUtilities::putRequestVariable('form[text][userName]',
 					     'some-invalid-user-name-'.rand());
 
 	$results = $this->handleRequest();

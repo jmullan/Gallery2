@@ -20,7 +20,7 @@
     {g->text text="The watermark will be removed from all items if the watermark image is deleted."}
   </p>
 
-  <input type="hidden" name="{g->formVar var="form[itemId]"}" value="{$form.itemId}"/>
+  <input type="hidden" name="{g->formVar var="form[watermarkId]"}" value="{$form.watermarkId}"/>
   {if !empty($form.fromAdmin)}
     <input type="hidden" name="{g->formVar var="form[fromAdmin]"}" value="{$form.fromAdmin}"/>
   {/if}

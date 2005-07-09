@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -40,15 +40,15 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
     function testFilterClear() {
 	GalleryUtilities::putRequestVariable('form[action][filterClear]', 1);
 	GalleryUtilities::putRequestVariable('form[list][filter]', 'foo');
-	
+
 	$results = $this->handleRequest();
 
 	$this->assertEquals('', GalleryUtilities::getRequestVariables('form[list][filter]'));
     }
-    
+
     function testCreate() {
 	GalleryUtilities::putRequestVariable('form[action][create]', 1);
-	
+
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
 						      'subView' => 'core.AdminCreateUser'),
@@ -63,7 +63,7 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	GalleryUtilities::putRequestVariable('form[action][editFromText]', 1);
 	GalleryUtilities::putRequestVariable('form[text][userName]', $user->getUserName());
 
@@ -76,7 +76,7 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 			    $results);
 	$this->_deleteUser($user);
 
-	
+
 	/* Missing user name */
 	GalleryUtilities::putRequestVariable('form[action][editFromText]', 1);
 	GalleryUtilities::removeRequestVariable('form[text][userName]');
@@ -106,7 +106,7 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	GalleryUtilities::putRequestVariable('form[action][deleteFromText]', 1);
 	GalleryUtilities::putRequestVariable('form[text][userName]', $user->getUserName());
 
@@ -119,7 +119,7 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 			    $results);
 	$this->_deleteUser($user);
 
-	
+
 	/* Missing user name */
 	GalleryUtilities::putRequestVariable('form[action][deleteFromText]', 1);
 	GalleryUtilities::removeRequestVariable('form[text][userName]');
@@ -145,7 +145,7 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 
     function testDeleteAnonymous() {
 	global $gallery;
-	
+
 	list ($ret, $anonymousUserId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -155,7 +155,7 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	GalleryUtilities::putRequestVariable('form[action][deleteFromText]', 1);
 	GalleryUtilities::putRequestVariable('form[text][userName]', $anonymousUser->getUserName());
 
@@ -166,12 +166,12 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 				  'error' => array('form[error][text][cantDeleteAnonymous]')),
 			    $results);
     }
-    
+
     function testDeleteSelf() {
 	global $gallery;
-	
+
 	$self = $gallery->getActiveUser();
-	
+
 	GalleryUtilities::putRequestVariable('form[action][deleteFromText]', 1);
 	GalleryUtilities::putRequestVariable('form[text][userName]', $self->getUserName());
 
@@ -185,17 +185,17 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 
     function _createUser() {
 	global $gallery;
-	
+
 	list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	if (!isset($user)) {
 	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
 			 null);
 	}
-	
+
 	$ret = $user->create('testuser-'.rand());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);

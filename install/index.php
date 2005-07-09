@@ -202,7 +202,7 @@ function processAutoCompleteRequest() {
     if (get_magic_quotes_gpc()) {
 	$path = stripslashes($path);
     }
-                    
+
     /* Find all matching paths */
     $dirList = array();
     if (file_exists($path) && is_dir($path) && ($dir = opendir($path))) {
@@ -236,7 +236,7 @@ function processAutoCompleteRequest() {
 function populateDataDirectory($dataBase) {
     /* Use non-restrictive umask to create directories with lax permissions */
     umask(0);
-    
+
     /* Create the sub directories, if necessary */
     foreach (array('albums',
 		   'cache',
@@ -245,28 +245,28 @@ function populateDataDirectory($dataBase) {
 		   'tmp',
 		   'plugins',
 		   'plugins/modules',
-		   'plugins/layouts',
+		   'plugins/themes',
 		   'plugins_data',
 		   'plugins_data/modules',
-		   'plugins_data/layouts',
+		   'plugins_data/themes',
 		   'smarty',
 		   'smarty/templates_c') as $key) {
 	$dir = "$dataBase/$key";
-	
+
 	if (file_exists($dir) && !is_dir($dir)) {
 	    return false;
 	}
-	
+
 	if (!file_exists($dir)) {
 	    if (!mkdir($dir, 0755)) {
 		return false;
 	    }
 	}
-	
+
 	if (!is_writeable($dir)) {
 	    return false;
 	}
-	
+
 	if ($key == 'locks') {
 	    for ($i = 0; $i <= 9; $i++) {
 		if (!file_exists("$dir/$i")) {
@@ -274,7 +274,7 @@ function populateDataDirectory($dataBase) {
 			return false;
 		    }
 		}
-		
+
 		for ($j = 0; $j <= 9; $j++) {
 		    if (!file_exists("$dir/$i/$j")) {
 			if (!mkdir("$dir/$i/$j", 0755)) {
@@ -285,7 +285,7 @@ function populateDataDirectory($dataBase) {
 	    }
 	}
     }
-    
+
     return true;
 }
 

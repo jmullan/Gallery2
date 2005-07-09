@@ -166,12 +166,12 @@ class CreateConfigFileStep extends InstallStep {
      */
     function _versionCheck() {
 	global $galleryStub;
-	
+
 	$freshInstall = $galleryStub->getConfig('freshInstall');
 	$versions = array();
 	$versionsOk = false;
 	$recommendUpgrade = false;
-	
+
 	if ($freshInstall) {
 	    /* It's a fresh install */
 	    $versionsOk = true;
@@ -182,7 +182,7 @@ class CreateConfigFileStep extends InstallStep {
 	    $versions['codebase'] = $galleryStub->getConfig('codebase.version');
 
 	    /* Compare the versions */
-	    if (!$cmp = version_compare($versions['installed'], $versions['codebase'])) {
+	    if (version_compare($versions['installed'], $versions['codebase'], '==')) {
 		/* Installed version and codebase version are the same. Good. */
 		$versionsOk = true;
 	    } elseif ($cmp == -1) {
@@ -199,7 +199,7 @@ class CreateConfigFileStep extends InstallStep {
 		 */
 	    }
 	}
-	
+
 	return array($versionsOk, $recommendUpgrade, $versions);
     }
 }

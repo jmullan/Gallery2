@@ -37,20 +37,9 @@
 </div>
 
 <div class="gbBlock">
-  <h3> {g->text text="Layout"} </h3>
-  <p class="giDescription">
-    {g->text text="Choose a layout for this album. (The way the album is arranged on the page)"}
-  </p>
-
-  <select name="{g->formVar var="form[layout]"}">
-    {html_options options=$ItemEditAlbum.layoutList selected=$form.layout}
-  </select>
-</div>
-
-<div class="gbBlock">
   <h3> {g->text text="Theme"} </h3>
   <p class="giDescription">
-    {g->text text="Choose a theme for this album.  (The look and feel of this album)"}
+    {g->text text="Choose a theme for this album. (The way the album is arranged on the page)"}
   </p>
 
   <select name="{g->formVar var="form[theme]"}">

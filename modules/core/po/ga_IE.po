@@ -55,27 +55,8 @@ msgstr "Modúil an Ghailearaí"
 msgid "&laquo; None &raquo;"
 msgstr "&laquo; Aon cheann &raquo;"
 
-#, fuzzy
-msgid "None"
-msgstr "Críochnaithe"
-
-msgid "Guest User Only"
-msgstr ""
-
-msgid "Everybody"
-msgstr ""
-
 msgid "forever"
 msgstr "go deo"
-
-msgid "Link to Login Page"
-msgstr ""
-
-msgid "Form on Sidebar"
-msgstr ""
-
-msgid "Both"
-msgstr ""
 
 msgid "No Markup"
 msgstr ""
@@ -137,6 +118,9 @@ msgstr "suiteáil"
 msgid "upgrade"
 msgstr ""
 
+msgid "configure"
+msgstr "roghnaigh"
+
 msgid "activate"
 msgstr "tosaigh"
 
@@ -147,18 +131,15 @@ msgstr "suiteáil"
 msgid "deactivate"
 msgstr "stop"
 
+msgid "Other"
+msgstr ""
+
 msgid "Inherit settings from parent album"
 msgstr ""
 
 #, fuzzy
 msgid "Use these settings"
 msgstr "Roghanna an Chuntais"
-
-msgid "configure"
-msgstr "roghnaigh"
-
-msgid "Other"
-msgstr ""
 
 msgid "key"
 msgstr "eochair"
@@ -209,9 +190,21 @@ msgstr "athraigh úsáideora"
 msgid "All Users"
 msgstr "Úsáideora"
 
+msgid "Loading derivatives for the broken derivatives check"
+msgstr ""
+
+msgid "Detecting broken derivatives"
+msgstr ""
+
+msgid "Marking broken derivatives"
+msgstr ""
+
 #, fuzzy
 msgid "Site Admins"
 msgstr "Riarachán an Ghailearaí"
+
+msgid "Everybody"
+msgstr ""
 
 msgid "Guest"
 msgstr "Cuairteoir"
@@ -222,6 +215,15 @@ msgstr "Gailearaí"
 #, fuzzy
 msgid "This is the main page of your Gallery"
 msgstr "Seo é barr do Ghailearaí"
+
+msgid "Loading derivatives for the "
+msgstr ""
+
+msgid "Detecting broken derivatives "
+msgstr ""
+
+msgid "Marking broken derivatives "
+msgstr ""
 
 #, fuzzy
 msgid "add items"
@@ -308,10 +310,6 @@ msgid "Settings saved successfully."
 msgstr "Roghanna sábháilte go rathúil."
 
 #, fuzzy
-msgid "&laquo; default layout &raquo;"
-msgstr "&laquo; Aon cheann &raquo;"
-
-#, fuzzy
 msgid "&laquo; default theme &raquo;"
 msgstr "&laquo; Aon cheann &raquo;"
 
@@ -332,13 +330,6 @@ msgstr "Roghanna Riaracháin"
 
 msgid "General"
 msgstr "Ginearálta"
-
-#, fuzzy
-msgid "Successfully saved layout settings"
-msgstr "Ní raibh aon chomhad curtha."
-
-msgid "Layout"
-msgstr "Leagan amach"
 
 #, fuzzy
 msgid "Movie Size"
@@ -410,6 +401,13 @@ msgstr "Íomhá laghdaithe go rathúil"
 msgid "Modify Photo"
 msgstr "Íomhá Mhodhnaithe"
 
+#, fuzzy
+msgid "Successfully saved theme settings"
+msgstr "Ní raibh aon chomhad curtha."
+
+msgid "Theme"
+msgstr "Téama"
+
 msgid "make highlight"
 msgstr "déan an mhír seo an gealán"
 
@@ -453,15 +451,16 @@ msgid "Build all thumbnails/resizes"
 msgstr "Pictiúrín"
 
 msgid ""
-"Ensure data files for all derivatives (thumbnails, etc) have been built."
-msgstr ""
-
-msgid "Processing..."
+"Ensure data files for all derivatives (thumbnails, etc) have been built and "
+"rebuild broken ones."
 msgstr ""
 
 #, fuzzy
 msgid "Build All Thumbnails/Resizes"
 msgstr "Pictiúrín"
+
+msgid "Debug output for failed items:"
+msgstr ""
 
 #, fuzzy, c-format
 msgid "Processing image %d of %d"
@@ -470,6 +469,14 @@ msgstr "Ag féachaint leathanach %d as a %d"
 #, fuzzy, c-format
 msgid "Checked %d items"
 msgstr "cuir míreanna ann"
+
+#, fuzzy, c-format
+msgid "%d items built"
+msgstr "cuir míreanna ann"
+
+#, c-format
+msgid "%d items failed"
+msgstr ""
 
 msgid "Delete database cache"
 msgstr ""
@@ -563,46 +570,6 @@ msgstr "Grúpaí"
 msgid "group"
 msgstr "Grúpaí"
 
-#, c-format
-msgid "Estimated time remaining: %d:%02d"
-msgstr ""
-
-msgid "Rows per album page"
-msgstr ""
-
-msgid "Columns per album page"
-msgstr ""
-
-msgid "Show image owners"
-msgstr ""
-
-msgid "Show album owners"
-msgstr ""
-
-msgid "Show micro navigation thumbnails"
-msgstr ""
-
-msgid "Number of items to show per page"
-msgstr ""
-
-msgid "View Samples"
-msgstr ""
-
-#, fuzzy
-msgid "Album Frame"
-msgstr "Roghanna an Albaim"
-
-msgid "Item Frame"
-msgstr ""
-
-#, fuzzy
-msgid "Photo Frame"
-msgstr "Grianghraf"
-
-#, fuzzy
-msgid "You must enter a number greater than 0"
-msgstr "Caithfidh tú uimhir a iontráil (níos mó ná a náid)"
-
 msgid "Movie"
 msgstr "Scannán"
 
@@ -654,6 +621,73 @@ msgstr "Ardaithe"
 
 msgid "Descending"
 msgstr "Íoslaithe"
+
+msgid "Validation disabled until you set allowSessionAccess in config.php"
+msgstr ""
+
+#, fuzzy
+msgid "This page is valid XHTML 1.0"
+msgstr "Tá an leathanach seo bailí mar HTML 4.01"
+
+#, c-format
+msgid "Estimated time remaining: %d:%02d"
+msgstr ""
+
+#, c-format
+msgid "Memory used: %s, total: %s"
+msgstr ""
+
+msgid "Rows per album page"
+msgstr ""
+
+msgid "Columns per album page"
+msgstr ""
+
+msgid "Show image owners"
+msgstr ""
+
+msgid "Show album owners"
+msgstr ""
+
+msgid "Show micro navigation thumbnails"
+msgstr ""
+
+msgid "Number of items to show per page"
+msgstr ""
+
+msgid "Blocks to show in the sidebar"
+msgstr ""
+
+msgid "Blocks to show on album pages"
+msgstr ""
+
+msgid "Blocks to show on photo pages"
+msgstr ""
+
+msgid "View Samples"
+msgstr ""
+
+#, fuzzy
+msgid "Album Frame"
+msgstr "Roghanna an Albaim"
+
+msgid "Item Frame"
+msgstr ""
+
+#, fuzzy
+msgid "Photo Frame"
+msgstr "Grianghraf"
+
+#, fuzzy
+msgid "You must enter a number greater than 0"
+msgstr "Caithfidh tú uimhir a iontráil (níos mó ná a náid)"
+
+msgid "Format: [module.BlockName param=value] ..."
+msgstr ""
+
+#, c-format
+msgid "%dx%d"
+msgstr ""
 
 #, fuzzy
 msgid "Audio"
@@ -740,6 +774,9 @@ msgid ""
 "in the original data file (usually from EXIF data)."
 msgstr ""
 
+msgid "Processing..."
+msgstr ""
+
 msgid "Refresh Capture Dates"
 msgstr ""
 
@@ -821,8 +858,8 @@ msgid "Modules"
 msgstr "Modúil"
 
 #, fuzzy
-msgid "Layouts and Themes"
-msgstr "Leagan amach"
+msgid "Themes"
+msgstr "Téama"
 
 msgid "Display"
 msgstr ""
@@ -903,13 +940,10 @@ msgstr "Comhadlann áitiúil d'uaslodáil scriosta go rathúil"
 msgid "Test email sent successfully"
 msgstr "Albam curtha go rathúil."
 
-msgid "Error sending test email, see below for details"
+msgid "There was a problem processing your request, see below for details."
 msgstr ""
 
-msgid "Invalid cookie path"
-msgstr ""
-
-msgid "Invalid cookie domain"
+msgid "Error sending test email, see below for details."
 msgstr ""
 
 #, fuzzy
@@ -927,10 +961,6 @@ msgstr ""
 
 msgid "Default language"
 msgstr "Teanga loicthe"
-
-#, fuzzy
-msgid "Language selector in sidebar"
-msgstr "Roghanna na teanga"
 
 msgid "gettext"
 msgstr ""
@@ -1010,9 +1040,6 @@ msgstr ""
 msgid "Session Settings"
 msgstr "Roghanna an Seisiún"
 
-msgid "Login Method"
-msgstr ""
-
 #, fuzzy
 msgid "Session Lifetime"
 msgstr "Roghanna an Seisiún"
@@ -1057,6 +1084,10 @@ msgstr "Focal Faire"
 msgid "SMTP From Address"
 msgstr "Ríomhsheoladh"
 
+#, fuzzy
+msgid "Invalid email address"
+msgstr "Ríomhsheoladh"
+
 msgid ""
 "Send a test email to verify your settings are correct (whether using PHP "
 "mail or SMTP settings above).  Below enter a recipient email address for a "
@@ -1065,10 +1096,6 @@ msgstr ""
 
 msgid "Send Email"
 msgstr ""
-
-#, fuzzy
-msgid "Invalid email address"
-msgstr "Ríomhsheoladh"
 
 msgid "Email Test Error"
 msgstr ""
@@ -1113,7 +1140,13 @@ msgid ""
 "not, they will experience login / logout / lost session problems."
 msgstr ""
 
+msgid "Invalid cookie path"
+msgstr ""
+
 msgid "Domain"
+msgstr ""
+
+msgid "Invalid cookie domain"
 msgstr ""
 
 msgid "Locking System"
@@ -1434,130 +1467,6 @@ msgstr[2] "Tá %d grúpa inchurtha leis do scagaire."
 msgstr[3] "Tá %d ngrúpa inchurtha leis do scagaire."
 msgstr[4] "Tá %d ghrúpa inchurtha leis do scagaire."
 
-#, fuzzy
-msgid "Gallery Layouts"
-msgstr "Modúil an Ghailearaí"
-
-#, fuzzy, c-format
-msgid "Successfully activated layout %s"
-msgstr "Ní raibh aon chomhad curtha."
-
-#, c-format
-msgid "Successfully deactivated layout %s"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Successfully installed layout %s"
-msgstr "Ní raibh aon chomhad curtha."
-
-#, fuzzy, c-format
-msgid "Successfully uninstalled layout %s"
-msgstr "Ní raibh aon chomhad curtha."
-
-#, fuzzy, c-format
-msgid "Successfully upgraded layout %s"
-msgstr "Ní raibh aon chomhad curtha."
-
-#, fuzzy
-msgid "Successfully saved default album settings"
-msgstr "Ní raibh aon chomhad curtha."
-
-#, fuzzy
-msgid "Restored layout settings"
-msgstr "Roghanna an Chuntais"
-
-#, fuzzy
-msgid "All Layouts"
-msgstr "Leagan amach"
-
-msgid "Defaults"
-msgstr "Luachanna"
-
-#, fuzzy
-msgid "Layout Name"
-msgstr "Leagan amach"
-
-msgid "Version"
-msgstr "Leagan"
-
-#, fuzzy
-msgid "Installed"
-msgstr "suiteáil"
-
-msgid "Actions"
-msgstr "Aicsin"
-
-#, fuzzy
-msgid "Status: Not Installed"
-msgstr "suiteáil"
-
-#, fuzzy
-msgid "Status: Active"
-msgstr "Gníomhach"
-
-msgid "Status: Inactive"
-msgstr ""
-
-msgid "Status: Upgrade Required (Inactive)"
-msgstr ""
-
-msgid "Status: Incompatible Layout (Inactive)"
-msgstr ""
-
-msgid "Incompatible layout!"
-msgstr ""
-
-#, c-format
-msgid "Core API Required: %s (available: %s)"
-msgstr ""
-
-#, c-format
-msgid "Layout API Required: %s (available: %s)"
-msgstr ""
-
-#, fuzzy
-msgid "(default)"
-msgstr "Luachanna"
-
-#, fuzzy
-msgid ""
-"These are default display settings for albums in your gallery.  They can be "
-"overridden in each album."
-msgstr ""
-"Seo iad na luachanna loicthe. Féadann siad athraithe i gach uile albam ina "
-"dhiaidh sin."
-
-msgid "Default sort order"
-msgstr "Ord shóirt loicthe"
-
-msgid "with"
-msgstr ""
-
-msgid "Default layout"
-msgstr "Leagan amach loicthe"
-
-msgid "Default theme"
-msgstr "Téama loicthe"
-
-#, fuzzy
-msgid "New albums"
-msgstr "athraigh an t-albam seo"
-
-#, fuzzy, c-format
-msgid "%s Layout Settings"
-msgstr "Roghanna an Chuntais"
-
-#, fuzzy
-msgid ""
-"These are the global settings for the layout.  They can be overridden at the "
-"album level."
-msgstr ""
-"Seo iad na luachanna loicthe. Féadann siad athraithe i gach uile albam ina "
-"dhiaidh sin."
-
-msgid "There are no settings for this layout"
-msgstr ""
-
 msgid "System Maintenance"
 msgstr ""
 
@@ -1645,10 +1554,38 @@ msgstr ""
 msgid "Module Name"
 msgstr "Ainm an Mhodúl"
 
+msgid "Version"
+msgstr "Leagan"
+
+#, fuzzy
+msgid "Installed"
+msgstr "suiteáil"
+
+msgid "Actions"
+msgstr "Aicsin"
+
+#, fuzzy
+msgid "Status: Not Installed"
+msgstr "suiteáil"
+
+#, fuzzy
+msgid "Status: Active"
+msgstr "Gníomhach"
+
+msgid "Status: Inactive"
+msgstr ""
+
+msgid "Status: Upgrade Required (Inactive)"
+msgstr ""
+
 msgid "Status: Incompatible Module (Inactive)"
 msgstr ""
 
 msgid "Incompatible module!"
+msgstr ""
+
+#, c-format
+msgid "Core API Required: %s (available: %s)"
 msgstr ""
 
 #, c-format
@@ -1670,6 +1607,127 @@ msgstr ""
 #, fuzzy
 msgid "Uninstall"
 msgstr "suiteáil"
+
+#, fuzzy
+msgid "Gallery Themes"
+msgstr "Gailearaí"
+
+#, fuzzy, c-format
+msgid "Successfully activated theme %s"
+msgstr "Ní raibh aon chomhad curtha."
+
+#, fuzzy, c-format
+msgid "Successfully deactivated theme %s"
+msgstr "Ní raibh aon chomhad curtha."
+
+#, fuzzy, c-format
+msgid "Successfully installed theme %s"
+msgstr "Ní raibh aon chomhad curtha."
+
+#, fuzzy, c-format
+msgid "Successfully uninstalled theme %s"
+msgstr "Ní raibh aon chomhad curtha."
+
+#, fuzzy, c-format
+msgid "Successfully upgraded theme %s"
+msgstr "Ní raibh aon chomhad curtha."
+
+#, fuzzy
+msgid "Successfully saved default album settings"
+msgstr "Ní raibh aon chomhad curtha."
+
+#, fuzzy
+msgid "Restored theme settings"
+msgstr "Roghanna an Chuntais"
+
+#, fuzzy
+msgid "All Themes"
+msgstr "Téama"
+
+msgid "Defaults"
+msgstr "Luachanna"
+
+#, fuzzy
+msgid "Theme Name"
+msgstr "Téama"
+
+msgid "Status: Incompatible Theme (Inactive)"
+msgstr ""
+
+msgid "Incompatible theme!"
+msgstr ""
+
+#, c-format
+msgid "Theme API Required: %s (available: %s)"
+msgstr ""
+
+#, fuzzy
+msgid "(default)"
+msgstr "Luachanna"
+
+#, fuzzy
+msgid ""
+"These are default display settings for albums in your gallery.  They can be "
+"overridden in each album."
+msgstr ""
+"Seo iad na luachanna loicthe. Féadann siad athraithe i gach uile albam ina "
+"dhiaidh sin."
+
+msgid "Default sort order"
+msgstr "Ord shóirt loicthe"
+
+msgid "with"
+msgstr ""
+
+msgid "Default theme"
+msgstr "Téama loicthe"
+
+#, fuzzy
+msgid "New albums"
+msgstr "athraigh an t-albam seo"
+
+#, fuzzy, c-format
+msgid "%s Theme Settings"
+msgstr "Roghanna an Chuntais"
+
+#, fuzzy
+msgid ""
+"These are the global settings for the theme.  They can be overridden at the "
+"album level."
+msgstr ""
+"Seo iad na luachanna loicthe. Féadann siad athraithe i gach uile albam ina "
+"dhiaidh sin."
+
+msgid "Available"
+msgstr ""
+
+msgid "Choose a block"
+msgstr ""
+
+#, fuzzy
+msgid "Selected"
+msgstr "Scrios"
+
+msgid "Remove"
+msgstr "Scrios"
+
+#, fuzzy
+msgid "Move Up"
+msgstr "Bogadh"
+
+#, fuzzy
+msgid "Move Down"
+msgstr "Bogadh"
+
+msgid "Parameter"
+msgstr ""
+
+#, fuzzy
+msgid "Value"
+msgstr "Laghdaigh"
+
+msgid "There are no settings for this theme"
+msgstr ""
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime "
@@ -1744,6 +1802,58 @@ msgstr "Athghin pictiúrín"
 #, fuzzy
 msgid "This is a test email from Gallery2"
 msgstr "Seo é barr do Ghailearaí"
+
+msgid "Edit Conflict!"
+msgstr ""
+
+msgid "Security Violation"
+msgstr "Sárú Slándála"
+
+msgid "Database Error"
+msgstr ""
+
+msgid "Error"
+msgstr "Earráid"
+
+msgid ""
+"Your change cannot be completed because somebody else has made a conflicting "
+"change to the same item.  Use the back button in your browser to go back to "
+"the page you were on, then <b>reload that page</b> and try your change again."
+msgstr ""
+
+msgid "Go back and try again"
+msgstr ""
+
+msgid ""
+"Alternatively, you can return to the main Gallery page and resume browsing."
+msgstr ""
+
+msgid "The action you attempted is not permitted."
+msgstr "Níl an aicsean sin údarach."
+
+msgid "An error has occurred while interacting with the database."
+msgstr ""
+
+msgid ""
+"The exact nature of database errors is not captured unless Gallery debug "
+"mode is enabled in config.php.  Before seeking support for this error please "
+"enable buffered debug output and retry the operation.  Look near the bottom "
+"of the lengthy debug output to find error details."
+msgstr ""
+
+msgid "An error has occurred."
+msgstr ""
+
+#, fuzzy
+msgid "Back to the Gallery"
+msgstr "Téigh ar ais go dtí an Mhír"
+
+msgid "Error Detail"
+msgstr ""
+
+#, fuzzy
+msgid "System Information"
+msgstr "Ceann cúrsa"
 
 msgid ""
 "You don't have any Graphics Toolkit activated that can handle JPEG images.  "
@@ -2175,15 +2285,9 @@ msgstr ""
 
 #, fuzzy
 msgid ""
-"Choose a layout for this album. (The way the album is arranged on the page)"
+"Choose a theme for this album. (The way the album is arranged on the page)"
 msgstr ""
 "Togh leagan amach (socrú agus suímh na rudaí an leathanaigh) don albam seo."
-
-msgid "Theme"
-msgstr "Téama"
-
-msgid "Choose a theme for this album.  (The look and feel of this album)"
-msgstr "Togh téama (cuma agus mothú an albaim) don albam seo."
 
 #, fuzzy
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
@@ -2365,23 +2469,6 @@ msgid ""
 "cannot create or modify a thumbnail."
 msgstr ""
 
-#, c-format
-msgid ""
-"This album is configured to use the <b>%s</b> layout. These settings only "
-"apply to the layout for this album."
-msgstr ""
-
-#, fuzzy
-msgid "Setting"
-msgstr "Roghanna an Albaim"
-
-#, fuzzy
-msgid "Value"
-msgstr "Laghdaigh"
-
-msgid "Use Global"
-msgstr ""
-
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the "
 "movie's width and height.  If you have installed a graphics toolkit that can "
@@ -2512,6 +2599,19 @@ msgstr ""
 
 msgid "Restore original"
 msgstr "Athbhunaigh an bhunchóip"
+
+#, c-format
+msgid ""
+"This album is configured to use the <b>%s</b> theme. These settings only "
+"apply to the theme for this album."
+msgstr ""
+
+#, fuzzy
+msgid "Setting"
+msgstr "Roghanna an Albaim"
+
+msgid "Use Global"
+msgstr ""
 
 #, fuzzy
 msgid "Album Highlight"
@@ -2686,9 +2786,6 @@ msgstr "Ainm an ghrúpa"
 msgid "Permission"
 msgstr "Cead"
 
-msgid "Remove"
-msgstr "Scrios"
-
 msgid "New Group Permission"
 msgstr "Cead nua an ghrúpa"
 
@@ -2743,9 +2840,6 @@ msgstr "i ndiaidh"
 
 msgid "Reorder"
 msgstr "Athshórtáil"
-
-msgid "Go"
-msgstr ""
 
 msgid "Continue..."
 msgstr ""
@@ -2813,9 +2907,6 @@ msgstr "Ní raibh aon chomhad curtha."
 #, c-format
 msgid "To fix this problem you can either %s or %s."
 msgstr ""
-
-msgid "Site Administration"
-msgstr "Riarachán an Ghailearaí"
 
 msgid "Admin Options"
 msgstr "Roghanna Riaracháin"
@@ -3034,20 +3125,110 @@ msgstr ""
 msgid "Thank you!"
 msgstr ""
 
+msgid "guest"
+msgstr "cuairteoir"
+
+#, c-format
+msgid "display mode: %s"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Date: %s"
+msgstr "i ndiaidh"
+
+#, fuzzy, c-format
+msgid "Owner: %s"
+msgstr "Úinéir"
+
+#, fuzzy, c-format
+msgid "Size: %d item"
+msgid_plural "Size: %d items"
+msgstr[0] "náid nóiméad"
+msgstr[1] "nóiméad amháin"
+msgstr[2] "%d nóiméid"
+msgstr[3] "%d nóiméid"
+msgstr[4] "%d nóiméid"
+
+#, fuzzy, c-format
+msgid "(%d item total)"
+msgid_plural "(%d items total)"
+msgstr[0] "náid nóiméad"
+msgstr[1] "nóiméad amháin"
+msgstr[2] "%d nóiméid"
+msgstr[3] "%d nóiméid"
+msgstr[4] "%d nóiméid"
+
+#, c-format
+msgid "Views: %d"
+msgstr ""
+
+#, fuzzy
+msgid "&laquo; album actions &raquo;"
+msgstr "&laquo; Aon cheann &raquo;"
+
+#, fuzzy
+msgid "&laquo; item actions &raquo;"
+msgstr "&laquo; Aon cheann &raquo;"
+
+msgid "Go"
+msgstr ""
+
+msgid "next"
+msgstr ""
+
+msgid "last"
+msgstr ""
+
+msgid "first"
+msgstr ""
+
+msgid "previous"
+msgstr ""
+
+msgid "Page:"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "%d. %s"
+msgstr "Athraigh Úsáideoir"
+
+#, fuzzy
+msgid "Size: "
+msgstr "Méid"
+
+msgid "Full size: "
+msgstr ""
+
+#, fuzzy
+msgid "Language selector"
+msgstr "Roghanna na teanga"
+
+#, fuzzy
+msgid "Item actions"
+msgstr "Roghanna Riaracháin"
+
+#, fuzzy
+msgid "Login block"
+msgstr "Log Ann"
+
+msgid "Links to album/photo peers"
+msgstr ""
+
 #, fuzzy
 msgid "Successfully deleted directory: /cache/entity"
 msgstr "Ní raibh aon chomhad curtha."
 
 #, fuzzy
-msgid "Successfully deleted directory: /cache/layout"
+msgid "Successfully deleted directory: /cache/theme"
 msgstr "Ní raibh aon chomhad curtha."
 
 #, fuzzy
 msgid "Successfully deleted directory: /cache/module"
 msgstr "Ní raibh aon chomhad curtha."
 
-msgid "Unable to delete directory: /cache/layout"
-msgstr ""
+#, fuzzy
+msgid "Unable to delete directory: /cache/theme"
+msgstr "Ní raibh aon chomhad curtha."
 
 msgid "Unable to delete directory: /templates_c"
 msgstr ""
@@ -3059,398 +3240,6 @@ msgstr ""
 msgid "[test] A permission"
 msgstr "ceadeanna"
 
-msgid "Gallery Debug Output"
-msgstr "Aschur Dífhabht an Ghailearaí"
-
 #, fuzzy
-msgid "This page is valid XHTML 1.0"
-msgstr "Tá an leathanach seo bailí mar HTML 4.01"
-
-#, fuzzy, c-format
-msgid "Gallery %s"
-msgstr "Gailearaí"
-
-msgid "Edit Conflict!"
-msgstr ""
-
-msgid "Security Violation"
-msgstr "Sárú Slándála"
-
-msgid "Database Error"
-msgstr ""
-
-msgid "Error"
-msgstr "Earráid"
-
-msgid ""
-"Your change cannot be completed because somebody else has made a conflicting "
-"change to the same item.  Use the back button in your browser to go back to "
-"the page you were on, then <b>reload that page</b> and try your change again."
-msgstr ""
-
-msgid "Go back and try again"
-msgstr ""
-
-msgid ""
-"Alternatively, you can return to the main Gallery page and resume browsing."
-msgstr ""
-
-msgid "The action you attempted is not permitted."
-msgstr "Níl an aicsean sin údarach."
-
-msgid "An error has occurred while interacting with the database."
-msgstr ""
-
-msgid ""
-"The exact nature of database errors is not captured unless Gallery debug "
-"mode is enabled in config.php.  Before seeking support for this error please "
-"enable buffered debug output and retry the operation.  Look near the bottom "
-"of the lengthy debug output to find error details."
-msgstr ""
-
-msgid "An error has occurred."
-msgstr ""
-
-#, fuzzy
-msgid "Back to the Gallery"
-msgstr "Téigh ar ais go dtí an Mhír"
-
-msgid "Error Detail"
-msgstr ""
-
-#, fuzzy
-msgid "System Information"
-msgstr "Ceann cúrsa"
-
-msgid "Redirect"
-msgstr "Athsheol"
-
-msgid "You are in debug mode so we are not automatically redirecting."
-msgstr ""
-"Tá tú sa modh dífhabht, agus mar sin ní athsheolaimid go huathoibríoch."
-
-#, fuzzy, c-format
-msgid "Welcome, %s"
-msgstr "Scrios úsáideoir"
-
-#, fuzzy, c-format
-msgid "(%d item)"
-msgid_plural "(%d items)"
-msgstr[0] "náid nóiméad"
-msgstr[1] "nóiméad amháin"
-msgstr[2] "%d nóiméid"
-msgstr[3] "%d nóiméid"
-msgstr[4] "%d nóiméid"
-
-#, fuzzy, c-format
-msgid "%d. %s"
-msgstr "Athraigh Úsáideoir"
-
-#~ msgid "Gallery Administrator"
-#~ msgstr "Riarthóir an Ghailearaí"
-
-#, fuzzy
-#~ msgid "Administrator Recovery"
-#~ msgstr "Focal Faire"
-
-#, fuzzy
-#~ msgid "Use As Parent&rsquo;s Thumbnail?"
-#~ msgstr "An dteastaíonn pictiúrín tuismitheora a chur air seo uait?"
-
-#~ msgid "Yes, highlight this item!"
-#~ msgstr "Teastaíonn! Déan an mhír seo an gealán."
-
-#~ msgid "You must enter a thumbnail size"
-#~ msgstr "Caithfidh tú méid phictiúirín a iontráil"
-
-#~ msgid "Undo"
-#~ msgstr "Ceallaigh"
-
-#~ msgid "[change]"
-#~ msgstr "[athraigh]"
-
-#~ msgid "required"
-#~ msgstr "teastáilte"
-
-#, fuzzy
-#~ msgid "AcceptPathInfo directive"
-#~ msgstr "stiúir AcceptPathInfo."
-
-#, fuzzy
-#~ msgid ""
-#~ "Gallery has the option to use a compact URL format, however this format "
-#~ "is not supported by default on all web servers.  It is enabled by default "
-#~ "on Apache 1, but not on Apache 2.  If you're using Apache 2 you must use "
-#~ "the %s.  Use this %s to find out if short URLs work for you.  If the link "
-#~ "returns a webserver error then they don't work for you."
-#~ msgstr ""
-#~ "Tá rogha ag Gailearaí formáid URL dlúth a úsáid, ach níl an fhormáid "
-#~ "tacaithe le gach uile freastalaí WWW. Tá sí cumasaithe leis Apache 1, ach "
-#~ "níl sí cumasaithe leis Apache 2. Má bhíonn tú ag úsáid Apache 2 agus má "
-#~ "theastaíonn tú an gné seo, caithfidh tú an %s a úsáid. Cniog ar an %s "
-#~ "seo. Má thugann an leathanach earráid, ní héireoidh sí seo leis do "
-#~ "freastalaí."
-
-#, fuzzy
-#~ msgid "Status: Not"
-#~ msgstr "Gníomhach"
-
-#~ msgid "URL Style"
-#~ msgstr "Cineál URL"
-
-#~ msgid "Use short URLs?"
-#~ msgstr "URLaí dlútha a úsáid?"
-
-#~ msgid "add"
-#~ msgstr "cuir"
-
-#~ msgid "cancel"
-#~ msgstr "cealaigh"
-
-#~ msgid "edit user"
-#~ msgstr "athraigh úsáideoir"
-
-#~ msgid "no"
-#~ msgstr "ní theastaíonn"
-
-#~ msgid "reset"
-#~ msgstr "athshocraigh"
-
-#~ msgid "save"
-#~ msgstr "sábháil"
-
-#~ msgid "test url"
-#~ msgstr "triail"
-
-#~ msgid "undo"
-#~ msgstr "ceallaigh"
-
-#~ msgid "yes"
-#~ msgstr "teastaíonn"
-
-#~ msgid "Edit User Preferences"
-#~ msgstr "Athraigh Roghanna Úsáideoire"
-
-#, fuzzy
-#~ msgid "Manual Sort Order"
-#~ msgstr "Ord shóirt loicthe"
-
-#, fuzzy
-#~ msgid "&laquo; Parent Directory &raquo;"
-#~ msgstr "&laquo; Níl ord ag an sórt &raquo;"
-
-#, fuzzy
-#~ msgid "Rotate/Scale"
-#~ msgstr "Rothlaigh"
-
-#, fuzzy
-#~ msgid "Sizes"
-#~ msgstr "Méid"
-
-#~ msgid "Back to Album View"
-#~ msgstr "Téigh ar ais go dtí na hAlbaim"
-
-#~ msgid "Back to Item View"
-#~ msgstr "Téigh ar ais go dtí an Mhír"
-
-#~ msgid "Lifetime"
-#~ msgstr "Feadh"
-
-#~ msgid "Specify the lifetime of the session here."
-#~ msgstr "Roghnaigh feadh an seisiún anseo."
-
-#~ msgid "Edit Group Members"
-#~ msgstr "Athraigh Baill an Ghrúpa"
-
-#, fuzzy
-#~ msgid "Layouts"
-#~ msgstr "Leagan amach"
-
-#~ msgid "&laquo; No Sort Order &raquo;"
-#~ msgstr "&laquo; Níl ord ag an sórt &raquo;"
-
-#, fuzzy
-#~ msgid "Restored original photo successfully"
-#~ msgstr "Íomhá bhunúsach athbhunaithe go rathúil"
-
-#~ msgid "guest"
-#~ msgstr "cuairteoir"
-
-#~ msgid "Log in"
-#~ msgstr "Log Ann"
-
-#~ msgid "admin"
-#~ msgstr "riarachán"
-
-#, fuzzy
-#~ msgid "Powered by Gallery 2"
-#~ msgstr "Tiomáinte le Gallery %s"
-
-#, fuzzy
-#~ msgid "Delete Album"
-#~ msgstr "scrios an t-albam seo"
-
-#, fuzzy
-#~ msgid "Edit Album"
-#~ msgstr "scrios an t-albam seo"
-
-#~ msgid "Full name"
-#~ msgstr "Lánainm"
-
-#, fuzzy
-#~ msgid "Move Album"
-#~ msgstr "athraigh an t-albam seo"
-
-#~ msgid "Site admin"
-#~ msgstr "Riarachán an Ghailearaí"
-
-#~ msgid "delete album"
-#~ msgstr "scrios an t-albam seo"
-
-#, fuzzy
-#~ msgid "edit album"
-#~ msgstr "scrios an t-albam seo"
-
-#~ msgid "Album Settings"
-#~ msgstr "Roghanna an Albaim"
-
-#~ msgid "%d file found"
-#~ msgid_plural "%d files found"
-#~ msgstr[0] "aon chomhad aimsithe"
-#~ msgstr[1] "comhad amháin aimsithe"
-#~ msgstr[2] "%d comhad aimsithe"
-#~ msgstr[3] "%d gcomhad aimsithe"
-#~ msgstr[4] "%d chomhad aimsithe"
-
-#~ msgid "Changes saved successfully."
-#~ msgstr "Athruithe sábháilte go rathúil."
-
-#~ msgid "Item Thumbnail Size and Resizes"
-#~ msgstr "Méid Phictiúrín an Míre agus Méideannna Laghdaithe"
-
-#~ msgid "Specify the thumbnail size of this item here:"
-#~ msgstr "Iontráil méid phictiúrín an míre seo anseo:"
-
-#~ msgid "Add Items to this Album"
-#~ msgstr "Cuir Míreanna go dtí an tAlbam seo"
-
-#~ msgid ""
-#~ "Gallery can handle files of any format.  However, it can only create "
-#~ "automatic resizes and thumbnails for certain types of files."
-#~ msgstr ""
-#~ "Is féidir leis an nGailearaí a dhéileáil le comhad pé formáid atá ann. "
-#~ "Ach ní féidir leis pictiúrín agus leaganacha laghdaithe a chur ach do "
-#~ "formáideanna cumasaithe."
-
-#, fuzzy
-#~ msgid "Layout Settings"
-#~ msgstr "Roghanna an Chuntais"
-
-#, fuzzy
-#~ msgid "edit general"
-#~ msgstr "athraigh úsáideoir"
-
-#, fuzzy
-#~ msgid "edit layout"
-#~ msgstr "Leagan amach loicthe"
-
-#, fuzzy
-#~ msgid "Animation Settings"
-#~ msgstr "Roghanna an Chuntais"
-
-#, fuzzy
-#~ msgid "Edit Layout Settings"
-#~ msgstr "Roghanna an Chuntais"
-
-#, fuzzy
-#~ msgid "Edit Movie"
-#~ msgstr "Athraigh Méideanna"
-
-#, fuzzy
-#~ msgid "Move Item"
-#~ msgstr "Bogadh Mír"
-
-#, fuzzy
-#~ msgid "Photo Settings"
-#~ msgstr "Roghanna an Chuntais"
-
-#, fuzzy
-#~ msgid "edit movie"
-#~ msgstr "athraigh an mhír seo"
-
-#, fuzzy
-#~ msgid "delete image"
-#~ msgstr "scrios an mhír seo"
-
-#, fuzzy
-#~ msgid "delete movie"
-#~ msgstr "scrios an mhír seo"
-
-#, fuzzy
-#~ msgid "move animation"
-#~ msgstr "bogadh míreanna"
-
-#, fuzzy
-#~ msgid "move movie"
-#~ msgstr "bogadh míreanna"
-
-#~ msgid "Average"
-#~ msgstr "Meán"
-
-#~ msgid "Calls"
-#~ msgstr "Glaoigh"
-
-#~ msgid "Combined"
-#~ msgstr "Ceangailte le chéile"
-
-#~ msgid "Error: %s"
-#~ msgstr "Earráid: %s"
-
-#~ msgid "External"
-#~ msgstr "Seachtrach"
-
-#~ msgid "Function"
-#~ msgstr "Aicsean"
-
-#~ msgid "Internal"
-#~ msgstr "Inmheánach"
-
-#~ msgid "Max"
-#~ msgstr "Uasmhéid"
-
-#~ msgid "Profiling"
-#~ msgstr "Monatóir Ríomhfheidhmeanna"
-
-#~ msgid "Total"
-#~ msgstr "Iomlán"
-
-#~ msgid "* No Sort Order *"
-#~ msgstr "* Níl ord ag an sórt *"
-
-#~ msgid ""
-#~ "Removing this album will remove all of its children also.  There is no "
-#~ "undo!"
-#~ msgstr ""
-#~ "Beidh an t-albam seo agus gach uile fo-albam aige scriosta. Níl "
-#~ "\"ceallaigh\" ann!"
-
-#~ msgid ""
-#~ "This album is empty.  This will completely remove this album from "
-#~ "Gallery.  There is no undo!"
-#~ msgstr ""
-#~ "Tá an t-albam seo folamh. Beidh an t-albam dhá scriosadh go buan as an "
-#~ "ngailearaí. Níl \"ceallaigh\" ann!"
-
-#~ msgid "This album has %d child."
-#~ msgid_plural "This album has %d children."
-#~ msgstr[0] "Níl aon fo-mhír ag an mhír seo."
-#~ msgstr[1] "Tá fo-mhír amháin ag an mhír seo."
-#~ msgstr[2] "Tá %d fo-mhír ag an mhír seo."
-#~ msgstr[3] "Tá %d fo-mhír ag an mhír seo."
-#~ msgstr[4] "Tá %d fo-mhír ag an mhír seo."
-
-#~ msgid "General Item Properties"
-#~ msgstr "Roghanna Ginearálta na Míreanna"
-
-#~ msgid "Preserve Original Image"
-#~ msgstr "Caomhnaigh Íomhá Bhunúsach"
+msgid "[test] A second permission"
+msgstr "ceadeanna"

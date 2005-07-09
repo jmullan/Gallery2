@@ -100,14 +100,14 @@ class WatermarkSiteAdminController extends GalleryController {
 	    $status['add'] = 1;
 	    $results['redirect'] = array('view' => 'core.SiteAdmin',
 					 'subView' => 'watermark.WatermarkSiteAdminEdit',
-					 'itemId' => $item->getId());
+					 'watermarkId' => $item->getId());
 	} else if (isset($form['action']['add'])) {
 	    $status['add_error'] = 1;
-	} else if (isset($form['action']['delete']) && isset($form['delete']['itemId'])) {
+	} else if (isset($form['action']['delete']) && isset($form['delete']['watermarkId'])) {
 	    GalleryCoreApi::relativeRequireOnce('modules/watermark/classes/WatermarkHelper.class');
 
 	    list ($ret, $wasDeleted) =
-		WatermarkHelper::deleteWatermarkImageById($form['delete']['itemId']);
+		WatermarkHelper::deleteWatermarkImageById($form['delete']['watermarkId']);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -118,7 +118,7 @@ class WatermarkSiteAdminController extends GalleryController {
 		/* Watermark is in use.. redirect to confirm page */
 		$results['redirect'] = array('view' => 'core.SiteAdmin',
 					     'subView' => 'watermark.ConfirmDelete',
-					     'itemId' => $form['delete']['itemId'],
+					     'watermarkId' => $form['delete']['watermarkId'],
 					     'fromAdmin' => 1);
 	    }
 	} else if (isset($form['action']['save'])) {

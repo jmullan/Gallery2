@@ -25,6 +25,9 @@
  * @subpackage PHPUnit
  * @author Jay Rossiter <cryptographite@users.sf.net>
  */
+
+GalleryCoreApi::relativeRequireOnce('modules/imageblock/Callbacks.inc');
+
 /**
  * ImageBlockOption tests
  * @package ImageBlock
@@ -42,7 +45,8 @@ class ImageBlockDisabledTest extends GalleryTestCase {
     function setUp() {
 	global $gallery;
 	parent::setUp();
-	GalleryCoreApi::relativeRequireOnce('modules/imageblock/classes/ImageBlockDisabledMap.class');
+	GalleryCoreApi::relativeRequireOnce(
+	    'modules/imageblock/classes/ImageBlockDisabledMap.class');
 
 	/* Register a dummy toolkit and operation */
 	$ret = GalleryCoreApi::registerFactoryImplementation(
@@ -254,13 +258,14 @@ class ImageBlockDisabledTest extends GalleryTestCase {
     }
 
     function testImageBlockDisabledNoItemsReturned() {
-	$template = new ImageBlockDisabledDummyGalleryTemplate();
-	list ($ret, $tpl) = $this->_module->loadSystemContent($template);
+	$smarty = new GallerySmarty();
+	$callbacks = new ImageBlockCallbacks();
+	$ret = $callbacks->callback(array(), $smarty, 'LoadImageBlock');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assert(count($tpl) == 0, 'A template should not have been returned');
-	$this->assert(!isset($template->data['ImageBlockSystemContent']['blocks']), 'Block should not exist');
+	$data = $smarty->_tpl_vars;
+	$this->assert(!isset($data['ImageBlockSystemContent']['blocks']), 'Block should not exist');
     }
 
     function testImageBlockDisabledOneItemReturned() {
@@ -270,37 +275,16 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$template = new ImageBlockDisabledDummyGalleryTemplate();
-	list ($ret, $tpl) = $this->_module->loadSystemContent($template);
+	$smarty = new GallerySmarty();
+	$callbacks = new ImageBlockCallbacks();
+	$ret = $callbacks->callback(array(), $smarty, 'LoadImageBlock');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assert(count($tpl) > 0, 'A template should have been returned');
-	$this->assert(1 == count($template->data['ImageBlockSystemContent']['blocks']), 'One block');
-	$this->assertBlock($template->data['ImageBlockSystemContent']['blocks'][0]);
-    }
-}
+	$data = $smarty->_tpl_vars;
 
-/**
- * @package ImageBlock
- * @subpackage PHPUnit
- */
-class ImageBlockDisabledDummyGalleryTemplate {
-    var $data = array();
-    function hasVariable($key) {
-	return isset($this->data[$key]);
+	$this->assert(1 == count($data['ImageBlockSystemContent']['blocks']), 'One block');
+	$this->assertBlock($data['ImageBlockSystemContent']['blocks'][0]);
     }
-    function setVariable($key, $value) {
-	$this->data[$key] = $value;
-    }
-    function &getVariableByReference($key) {
-	return $this->data[$key];
-    }
-    function &_getSmarty() {
-	return $this;
-    }
-    function register_block() { }
-    function register_function() { }
-    function head() { }
 }
 ?>

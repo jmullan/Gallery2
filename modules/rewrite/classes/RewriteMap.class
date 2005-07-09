@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -74,7 +74,7 @@ class RewriteMap_core{
      */
     function setActiveRules($activeRules) {
     	RewriteMap::removeAllMapEntries();
-    	
+
     	foreach (array_keys($activeRules) as $moduleId) {
 	    foreach (array_keys($activeRules[$moduleId]) as $ruleId) {
 		$ret = RewriteMap::addMapEntry(array('module' => $moduleId,
@@ -87,10 +87,10 @@ class RewriteMap_core{
 		}
 	    }
     	}
-    	
+
 	return GalleryStatus::success();
     }
-    
+
     /**
      * Returns active short URL rules.
      *
@@ -99,7 +99,7 @@ class RewriteMap_core{
      */
     function getActiveRules() {
     	global $gallery;
-    	
+
     	$query = '
     	SELECT
     	  [RewriteMap::module], [RewriteMap::ruleId], [RewriteMap::pattern], [RewriteMap::match]
@@ -108,24 +108,24 @@ class RewriteMap_core{
     	ORDER BY
     	  [RewriteMap::module] ASC, [RewriteMap::ruleId] ASC
     	';
-    	
+
 	list ($ret, $searchResults) = $gallery->search($query);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
     	$activeRules = array();
     	while ($result = $searchResults->nextResult()) {
     	    $activeRules[$result[0]][$result[1]]['pattern'] = $result[2];
-    	    
+
     	    if (!empty($result[3])) {
 		$activeRules[$result[0]][$result[1]]['match'] = $result[3];
     	    }
     	}
-    	
+
 	return array(GalleryStatus::success(), $activeRules);
     }
-    
+
     /**
      * Returns array of short URL patterns for the UrlGenerator to use.
      *
@@ -134,7 +134,7 @@ class RewriteMap_core{
      */
     function getShortUrls() {
     	global $gallery;
-    	
+
     	$query = "
     	SELECT
     	  [RewriteMap::match], [RewriteMap::pattern]
@@ -143,17 +143,17 @@ class RewriteMap_core{
     	WHERE
     	  [RewriteMap::match] != ''
     	";
-    	
+
 	list ($ret, $searchResults) = $gallery->search($query);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
     	$shortUrls = array();
     	while ($result = $searchResults->nextResult()) {
     	    $shortUrls[$result[0]] = $result[1];
     	}
-	
+
     	return array(GalleryStatus::success(), $shortUrls);
     }
 }

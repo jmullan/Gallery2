@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -74,32 +74,32 @@ class TruncateTest extends GalleryTestCase {
 	$result = smarty_modifier_entitytruncate($string, 5, '', true);
 	$this->assertEquals('&amp; res', $result);
     }
-    
+
     function testTruncate6() {
 	$string = 'respect &amp; &amp;';
 	$result = smarty_modifier_entitytruncate($string, 9, '', true);
 	$this->assertEquals('respect &amp;', $result);
     }
-    
+
     function testTruncate7() {
 	$string = 'monkey&amp;foo&#1234;bar';
 	$result = smarty_modifier_entitytruncate($string, 10, '', true);
 	$this->assertEquals('monkey&amp;foo', $result);
     }
-    
+
     function testTruncate8() {
 	$string = '';
 	$result = smarty_modifier_entitytruncate($string, 9, '', true);
 	$this->assertEquals('', $result);
     }
-    
+
     function testTruncate9() {
 	/* Demonstrate that both &amp; and \xd0\xba are counted as single characters */
 	$string = "monkey&amp;foo\xd0\xbabar";
 	$result = smarty_modifier_entitytruncate($string, 11, '', true);
 	$this->assertEquals("monkey&amp;foo\xd0\xba", $result);
     }
-    
+
     function testTruncate10() {
 	$string = "\xd0\xa6\xd0\xb2\xd0\xb5\xd1\x82\xd0\xbe\xd1\x87\xd0\xba\xd0\xb8\xd0\xa6\xd0" .
 	    "\xa6\xd0\xa6\xd0\xa6\xd0\xa6 09.03.2004";
@@ -108,7 +108,7 @@ class TruncateTest extends GalleryTestCase {
 	    "\xd0\xa6\xd0\xb2\xd0\xb5\xd1\x82\xd0\xbe\xd1\x87\xd0\xba\xd0\xb8\xd0\xa6\xd0\xa6\xd0\xa6",
 	    $result);
     }
-    
+
     function testTruncate11() {
 	$string = "\xd0\xa6\xd0\xb2\xd0\xb5\xd1\x82\xd0\xbe\xd1\x87\xd0\xba\xd0\xb8\xd0\xa6\xd0" .
 	    "\xa6\xd0\xa6\xd0\xa6\xd0\xa6 09.03.2004";
@@ -117,14 +117,14 @@ class TruncateTest extends GalleryTestCase {
 	    "\xd0\xa6\xd0\xb2\xd0\xb5\xd1\x82\xd0\xbe\xd1\x87\xd0\xba\xd0\xb8...",
 	    $result);
     }
-    
+
     function testTruncate12() {
 	$string = "\xd0\xa6\xd0\xb2\xd0\xb5\xd1\x82\xd0\xbe\xd1\x87\xd0\xba\xd0\xb8\xd0\xa6\xd0" .
 	    "\xa6\xd0\xa6\xd0\xa6\xd0\xa6 09.03.2004";
 	$result = smarty_modifier_entitytruncate($string, 6, '...', false);
 	$this->assertEquals("\xd0\xa6\xd0\xb2\xd0\xb5...", $result);
     }
-    
+
     function testTruncate13() {
 	/*
 	 * Same as #12, but we don't pass values for etc and breakWords (so it uses the defaults
@@ -135,7 +135,7 @@ class TruncateTest extends GalleryTestCase {
 	$result = smarty_modifier_entitytruncate($string, 6);
 	$this->assertEquals("\xd0\xa6\xd0\xb2\xd0\xb5...", $result);
     }
-    
+
     function testTruncate14() {
 	$string = "\xd0\xa6\xd0\xb2\xd0\xb5\xd1\x82\xd0\xbe\xd1\x87\xd0\xba\xd0\xb8\x20\xd0" .
 	    "\xb8\x20\xd0\xbb\xd0\xb5\xd0\xbf\xd0\xb5\xd1\x81\xd1\x82\xd0\xbe\xd1\x87\xd0\xba\xd0" .

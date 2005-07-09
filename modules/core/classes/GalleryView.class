@@ -190,10 +190,12 @@ class GalleryView {
      *
      * @return array object GalleryStatus a status code
      *               array ('body'/'html' => string template or 'redirect' => array)
+     *               object GalleryTheme the current theme
      */
     function doLoadTemplate(&$template) {
 	global $gallery;
 
+	/* -------------------------------------------------- */
 	/* Get our form variables */
 	$form = GalleryUtilities::getFormVariables('form');
 	if (!isset($form['formName'])) {
@@ -201,6 +203,7 @@ class GalleryView {
 	}
 	$template->setVariableByReference('form', $form);
 
+	/* -------------------------------------------------- */
 	/* Get our status */
 	$statusId = GalleryUtilities::getRequestVariables('statusId');
 	if (!empty($statusId)) {
@@ -211,44 +214,78 @@ class GalleryView {
 	}
 	$template->setVariable('status', $status);
 
-	list ($ret, $results) = $this->loadTemplate($template, $form);
+	/* -------------------------------------------------- */
+	/* Load up the theme. */
+	list ($ret, $item) = $this->_getItem();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
-	/* Get the theme name from the view */
-	list ($ret, $themeName) = $this->getThemeName();
+	list ($ret, $theme) = GalleryView::loadThemeForItem($item);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	/* Fallback to default theme if none specified */
-	if (empty($themeName)) {
-	    list ($ret, $themeName) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
-	/* Use default layout style if applicable */
-	if ($this->useDefaultStyle()) {
-	    $template->style('templates/layout.css');
+	if (!isset($theme)) {
+	    return array(GalleryStatus::success(),
+			 array('redirect' => array('view' => 'core.ShowItemError',
+						   'problem' => 'missingTheme',
+						   'itemId' => $item->getId())),
+			 null);
 	}
 
-	/* Theme style */
-	$template->style("themes/$themeName/theme.css");
+	/* Albums have their own settings.  Items use their parent album's settings */
+	if (GalleryUtilities::isA($item, 'GalleryItem') && !$item->getCanContainChildren()) {
+	    $targetId = $item->getParentId();
+	} else {
+	    $targetId = $item->getId();
+	}
+	list ($ret, $params) = $theme->fetchParameters($targetId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	$templateAdapter =& $gallery->getTemplateAdapter();
+	$templateAdapter->setTheme($theme);
+
+	/* -------------------------------------------------- */
+	/* Standard user info available for every view */
+	$user = $gallery->getActiveUser();
+	$user = $user->getMemberData();
+	list ($ret, $guestId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	$user['isGuest'] = ($user['id'] == $guestId);
+	$user['isRegisteredUser'] = !$user['isGuest'];
+	list ($ret, $user['isAdmin']) = GalleryCoreApi::isUserInSiteAdminGroup();
+	if ($ret->isError()) {
+	    $user['isAdmin'] = false;
+	}
+	$template->setVariable('user', $user);
+
+	/* -------------------------------------------------- */
+	/* Delegate to the theme to draw this view */
+	list ($ret, $results) = $theme->loadTemplate($this, $template, $item, $params);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	/* -------------------------------------------------- */
 	/* Check for icon pack */
-	list ($ret, $iconpack) = GalleryCoreApi::newFactoryInstance('IconsInterface_1_0');
+	list ($ret, $iconPack) = GalleryCoreApi::newFactoryInstance('IconsInterface_1_0');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
-	if (isset($iconpack)) {
-	    $ret = $iconpack->init($template);
+	if (isset($iconPack)) {
+	    $ret = $iconPack->init($template);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	}
-	return array(GalleryStatus::success(), $results);
+	return array(GalleryStatus::success(), $results, $theme);
     }
 
     /**
@@ -262,25 +299,6 @@ class GalleryView {
      */
     function getViewDescription() {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
-    }
-
-    /**
-     * Views should override this to return the theme that they wish to use.
-     *
-     * @param string a theme name.
-     * @return array object GalleryStatus a status code
-     *               string a theme name
-     */
-    function getThemeName() {
-	return array(GalleryStatus::success(), null);
-    }
-
-    /**
-     * View may override this to omit default layout css and use its own.
-     * @return boolean
-     */
-    function useDefaultStyle() {
-	return true;
     }
 
     /**
@@ -378,6 +396,62 @@ class GalleryView {
 	}
 
 	return array(GalleryStatus::success(), $links);
+    }
+
+    /**
+     * Get the theme for this item by finding the theme id for the nearest album.
+     *
+     * @return array object GalleryStatus a status code
+     *               object GalleryTheme a theme instance
+     */
+    function loadThemeForItem($item=null) {
+	if (!isset($item)) {
+	    list ($ret, $item) = GalleryView::_getItem();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
+	    $nearestAlbum = $item;
+	} else {
+	    list ($ret, $nearestAlbum) = GalleryCoreApi::loadEntitiesById($item->getParentId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	/* Load the theme, fallback to the default theme if none is specified. */
+	if (isset($nearestAlbum)) {
+	    list ($ret, $themeId) = GalleryCoreApi::fetchThemeId($nearestAlbum);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	} else {
+	    list ($ret, $themeId) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	$validTheme = false;
+	list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId);
+	if ($ret->isError() && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (isset($theme)) {
+	    list ($ret, $validTheme) = $theme->isActive();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	if (!$validTheme) {
+	    $theme = null;
+	}
+
+	return array(GalleryStatus::success(), $theme);
     }
 }
 ?>

@@ -32,30 +32,6 @@
 class SlideshowView extends GalleryView {
 
     /**
-     * @see GalleryView::getThemeName
-     */
-    function getThemeName() {
-	$itemListString = GalleryUtilities::getRequestVariables('itemList');
-	if (!empty($itemListString)) {
-	    return array(GalleryStatus::success(), null);
-	}
-
-	list ($ret, $item) = $this->_getItem();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	if (!GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
-	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($item->getParentId());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	}
-
-	return array(GalleryStatus::success(), $item->getTheme());
-    }
-
-    /**
      * @see GalleryView::loadTemplate()
      */
     function loadTemplate(&$template, &$form) {
@@ -89,6 +65,10 @@ class SlideshowView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+
+	/* Tell the theme that we want the full screen */
+	$theme =& $template->getVariableByReference('theme');
+	$theme['useFullScreen'] = true;
 
 	$SlideShow['itemList'] = $itemList;
 	$SlideShow['count'] = count($itemList);

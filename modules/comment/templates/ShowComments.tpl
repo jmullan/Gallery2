@@ -9,22 +9,23 @@
 </div>
 
 {if !empty($status)}
-<div class="gbBlock"><h2 class="giSuccess">
-  {if isset($status.changed)}
+<div class="gbBlock">
+  <h2 class="giSuccess">
+    {if isset($status.changed)}
     {g->text text="Comment changed successfully"}
-  {/if}
-</h2></div>
+    {/if}
+  </h2>
+</div>
 {/if}
 
 {if empty($ShowComments.comments)}
-  <div class="gbBlock">
-    <h3> {g->text text="There are no comments for this item"} </h3>
-  </div>
+<div class="gbBlock">
+  <h3> {g->text text="There are no comments for this item"} </h3>
+</div>
 {else}
-  {foreach from=$ShowComments.comments item=comment}
-    {assign var="userId" value=$comment.commenterId}
-    {assign var="user" value=$ShowComments.commenters.$userId}
-    {include file="gallery:modules/comment/templates/Comment.tpl"
-	     user=$user comment=$comment item=$ItemAdmin.item can=$ShowComments.can}
-  {/foreach}
+{foreach from=$ShowComments.comments item=comment}
+  {include file="gallery:modules/comment/templates/Comment.tpl"
+           user=$ShowComments.commenters[$comment.commenterId]
+           comment=$comment item=$ShowComments.item can=$ShowComments.can}
+{/foreach}
 {/if}

@@ -38,26 +38,8 @@ msgstr "Модули Галереи"
 msgid "&laquo; None &raquo;"
 msgstr "&laquo; Ни один  &laquo; "
 
-msgid "None"
-msgstr "Ни один"
-
-msgid "Guest User Only"
-msgstr "Только для Гостей и Пользователей"
-
-msgid "Everybody"
-msgstr "Для каждого"
-
 msgid "forever"
 msgstr "навсегда"
-
-msgid "Link to Login Page"
-msgstr "Ссылка, чтобы Войти на Страницу"
-
-msgid "Form on Sidebar"
-msgstr "Форма боковой полосы"
-
-msgid "Both"
-msgstr "Оба"
 
 msgid "No Markup"
 msgstr "Никакого Повышения"
@@ -107,6 +89,9 @@ msgstr "Установка"
 msgid "upgrade"
 msgstr "обновить"
 
+msgid "configure"
+msgstr "конфигурирование"
+
 msgid "activate"
 msgstr "активизировать"
 
@@ -116,18 +101,15 @@ msgstr "деинсталлировать"
 msgid "deactivate"
 msgstr "дезактивировать"
 
+msgid "Other"
+msgstr "Другой"
+
 msgid "Inherit settings from parent album"
 msgstr ""
 
 #, fuzzy
 msgid "Use these settings"
 msgstr "Восстановленные настройки размещения"
-
-msgid "configure"
-msgstr "конфигурирование"
-
-msgid "Other"
-msgstr "Другой"
 
 msgid "key"
 msgstr "ключ"
@@ -176,8 +158,20 @@ msgstr ""
 msgid "All Users"
 msgstr "Все Пользователи"
 
+msgid "Loading derivatives for the broken derivatives check"
+msgstr ""
+
+msgid "Detecting broken derivatives"
+msgstr ""
+
+msgid "Marking broken derivatives"
+msgstr ""
+
 msgid "Site Admins"
 msgstr "Админы Сайта"
+
+msgid "Everybody"
+msgstr "Для каждого"
 
 msgid "Guest"
 msgstr "Гость"
@@ -188,6 +182,15 @@ msgstr "Галерея"
 #, fuzzy
 msgid "This is the main page of your Gallery"
 msgstr "Это - вершина вашей Галереи"
+
+msgid "Loading derivatives for the "
+msgstr ""
+
+msgid "Detecting broken derivatives "
+msgstr ""
+
+msgid "Marking broken derivatives "
+msgstr ""
 
 msgid "add items"
 msgstr "добавить элементы"
@@ -262,9 +265,6 @@ msgstr "редактировать %s"
 msgid "Settings saved successfully."
 msgstr "Параметры настройки, сохраненные успешно."
 
-msgid "&laquo; default layout &raquo;"
-msgstr "&laquo; заданное по умолчанию размещение &laquo;"
-
 msgid "&laquo; default theme &raquo;"
 msgstr "&laquo; заданная по умолчанию тема &laquo;"
 
@@ -283,12 +283,6 @@ msgstr "Администраторские опции"
 
 msgid "General"
 msgstr "Генеральные"
-
-msgid "Successfully saved layout settings"
-msgstr "Успешно сохраненные параметры настройки размещения."
-
-msgid "Layout"
-msgstr "Размещение"
 
 msgid "Movie Size"
 msgstr "Размер Кино"
@@ -349,6 +343,13 @@ msgstr "Фотография масштабирована успешно"
 msgid "Modify Photo"
 msgstr "Измененная Фотография"
 
+#, fuzzy
+msgid "Successfully saved theme settings"
+msgstr "Успешно сохраненные параметры настройки размещения."
+
+msgid "Theme"
+msgstr "Тема"
+
 msgid "make highlight"
 msgstr "сделать подсветку"
 
@@ -390,13 +391,14 @@ msgid "Build all thumbnails/resizes"
 msgstr "Обновить эскизы и изменить размеры"
 
 msgid ""
-"Ensure data files for all derivatives (thumbnails, etc) have been built."
-msgstr ""
-
-msgid "Processing..."
+"Ensure data files for all derivatives (thumbnails, etc) have been built and "
+"rebuild broken ones."
 msgstr ""
 
 msgid "Build All Thumbnails/Resizes"
+msgstr ""
+
+msgid "Debug output for failed items:"
 msgstr ""
 
 #, fuzzy, c-format
@@ -406,6 +408,14 @@ msgstr "Просмотр страниц от %d до %d"
 #, fuzzy, c-format
 msgid "Checked %d items"
 msgstr "добавить элементы"
+
+#, fuzzy, c-format
+msgid "%d items built"
+msgstr "добавить элементы"
+
+#, c-format
+msgid "%d items failed"
+msgstr ""
 
 msgid "Delete database cache"
 msgstr ""
@@ -494,45 +504,6 @@ msgstr "Группа"
 msgid "group"
 msgstr "группа"
 
-#, c-format
-msgid "Estimated time remaining: %d:%02d"
-msgstr ""
-
-msgid "Rows per album page"
-msgstr ""
-
-msgid "Columns per album page"
-msgstr ""
-
-msgid "Show image owners"
-msgstr ""
-
-msgid "Show album owners"
-msgstr ""
-
-msgid "Show micro navigation thumbnails"
-msgstr ""
-
-msgid "Number of items to show per page"
-msgstr ""
-
-msgid "View Samples"
-msgstr ""
-
-#, fuzzy
-msgid "Album Frame"
-msgstr "Альбом"
-
-msgid "Item Frame"
-msgstr ""
-
-#, fuzzy
-msgid "Photo Frame"
-msgstr "Фото"
-
-msgid "You must enter a number greater than 0"
-msgstr "Вы должны ввести число больше чем 0"
-
 msgid "Movie"
 msgstr "Кино"
 
@@ -580,6 +551,71 @@ msgstr "по Возрастанию"
 
 msgid "Descending"
 msgstr "По убыванию"
+
+msgid "Validation disabled until you set allowSessionAccess in config.php"
+msgstr ""
+
+msgid "This page is valid XHTML 1.0"
+msgstr "Эта страница правильна в XHTML 1.0"
+
+#, c-format
+msgid "Estimated time remaining: %d:%02d"
+msgstr ""
+
+#, c-format
+msgid "Memory used: %s, total: %s"
+msgstr ""
+
+msgid "Rows per album page"
+msgstr ""
+
+msgid "Columns per album page"
+msgstr ""
+
+msgid "Show image owners"
+msgstr ""
+
+msgid "Show album owners"
+msgstr ""
+
+msgid "Show micro navigation thumbnails"
+msgstr ""
+
+msgid "Number of items to show per page"
+msgstr ""
+
+msgid "Blocks to show in the sidebar"
+msgstr ""
+
+msgid "Blocks to show on album pages"
+msgstr ""
+
+msgid "Blocks to show on photo pages"
+msgstr ""
+
+msgid "View Samples"
+msgstr ""
+
+#, fuzzy
+msgid "Album Frame"
+msgstr "Альбом"
+
+msgid "Item Frame"
+msgstr ""
+
+#, fuzzy
+msgid "Photo Frame"
+msgstr "Фото"
+
+msgid "You must enter a number greater than 0"
+msgstr "Вы должны ввести число больше чем 0"
+
+msgid "Format: [module.BlockName param=value] ..."
+msgstr ""
+
+#, c-format
+msgid "%dx%d"
+msgstr ""
 
 msgid "Audio"
 msgstr "Аудио"
@@ -655,6 +691,9 @@ msgstr ""
 msgid ""
 "Update capture date stored in Gallery for all items with an available date "
 "in the original data file (usually from EXIF data)."
+msgstr ""
+
+msgid "Processing..."
 msgstr ""
 
 msgid "Refresh Capture Dates"
@@ -734,8 +773,9 @@ msgstr "Выход"
 msgid "Modules"
 msgstr "Модули"
 
-msgid "Layouts and Themes"
-msgstr "Размещения и Темы"
+#, fuzzy
+msgid "Themes"
+msgstr "Тема"
 
 msgid "Display"
 msgstr "Дисплей"
@@ -813,13 +853,11 @@ msgstr "Каталог локальной загрузки стерт успеш
 msgid "Test email sent successfully"
 msgstr "Параметры настройки, сохраненные успешно"
 
-msgid "Error sending test email, see below for details"
-msgstr ""
+#, fuzzy
+msgid "There was a problem processing your request, see below for details."
+msgstr "Была проблема, при обработке вашего запроса."
 
-msgid "Invalid cookie path"
-msgstr ""
-
-msgid "Invalid cookie domain"
+msgid "Error sending test email, see below for details."
 msgstr ""
 
 msgid "Language Settings"
@@ -836,9 +874,6 @@ msgstr ""
 
 msgid "Default language"
 msgstr "Заданный по умолчанию язык"
-
-msgid "Language selector in sidebar"
-msgstr "Выберите язык из списка"
 
 msgid "gettext"
 msgstr ""
@@ -925,9 +960,6 @@ msgstr "Путь, который Вы определили - не допусти
 msgid "Session Settings"
 msgstr "Настройки сессии"
 
-msgid "Login Method"
-msgstr "Метод Входа"
-
 msgid "Session Lifetime"
 msgstr "Живая сессия"
 
@@ -979,6 +1011,9 @@ msgstr "Пароль"
 msgid "SMTP From Address"
 msgstr "SMTP От Адреса"
 
+msgid "Invalid email address"
+msgstr "Недействительный E-mail адрес"
+
 msgid ""
 "Send a test email to verify your settings are correct (whether using PHP "
 "mail or SMTP settings above).  Below enter a recipient email address for a "
@@ -988,9 +1023,6 @@ msgstr ""
 #, fuzzy
 msgid "Send Email"
 msgstr "E-mail"
-
-msgid "Invalid email address"
-msgstr "Недействительный E-mail адрес"
 
 msgid "Email Test Error"
 msgstr ""
@@ -1036,7 +1068,13 @@ msgid ""
 "not, they will experience login / logout / lost session problems."
 msgstr ""
 
+msgid "Invalid cookie path"
+msgstr ""
+
 msgid "Domain"
+msgstr ""
+
+msgid "Invalid cookie domain"
 msgstr ""
 
 msgid "Locking System"
@@ -1334,124 +1372,6 @@ msgid_plural "%d groups match your filter"
 msgstr[0] "%d группа соответствует вашему фильтру."
 msgstr[1] "%d группы соответствуют вашему фильтру."
 
-msgid "Gallery Layouts"
-msgstr "Размещения Галереи"
-
-#, c-format
-msgid "Successfully activated layout %s"
-msgstr "Успешно активизированное размещение %s"
-
-#, c-format
-msgid "Successfully deactivated layout %s"
-msgstr "Успешно дезактивированное размещение %s"
-
-#, fuzzy, c-format
-msgid "Successfully installed layout %s"
-msgstr "Успешно установленный модуль %s"
-
-#, fuzzy, c-format
-msgid "Successfully uninstalled layout %s"
-msgstr "Успешно деинсталлируемый модуль %s"
-
-#, fuzzy, c-format
-msgid "Successfully upgraded layout %s"
-msgstr "Успешно обновленный модуль %s"
-
-msgid "Successfully saved default album settings"
-msgstr "Успешно сохраненные заданные по умолчанию параметры настройки альбома."
-
-msgid "Restored layout settings"
-msgstr "Восстановленные настройки размещения"
-
-msgid "All Layouts"
-msgstr "Все Размещения."
-
-msgid "Defaults"
-msgstr "Значения по умолчанию"
-
-msgid "Layout Name"
-msgstr "Название Размещения"
-
-msgid "Version"
-msgstr "Версия"
-
-msgid "Installed"
-msgstr "Установленный"
-
-msgid "Actions"
-msgstr "Действия"
-
-#, fuzzy
-msgid "Status: Not Installed"
-msgstr "Состояние: Бездействующий"
-
-msgid "Status: Active"
-msgstr "Состояние: Активный"
-
-msgid "Status: Inactive"
-msgstr "Состояние: Бездействующий"
-
-msgid "Status: Upgrade Required (Inactive)"
-msgstr "Состояние: Требуемое Обновление (Бездействующий)"
-
-#, fuzzy
-msgid "Status: Incompatible Layout (Inactive)"
-msgstr "Состояние: Несовместимый Модуль (Бездействующий)"
-
-#, fuzzy
-msgid "Incompatible layout!"
-msgstr "Несовместимый модуль!"
-
-#, c-format
-msgid "Core API Required: %s (available: %s)"
-msgstr "Ядро Требуемого программного интерфейса приложения: %s (available: %s)"
-
-#, fuzzy, c-format
-msgid "Layout API Required: %s (available: %s)"
-msgstr "Требуемый программный интерфейс приложения модуля: %s (доступный: %s)"
-
-#, fuzzy
-msgid "(default)"
-msgstr "Значения по умолчанию"
-
-msgid ""
-"These are default display settings for albums in your gallery.  They can be "
-"overridden in each album."
-msgstr ""
-"Эти заданные по умолчанию параметры настройки дисплея для альбомов в вашей "
-"галерее. Они могут быть отменены для каждого альбома."
-
-msgid "Default sort order"
-msgstr "Заданный по умолчанию порядок сортировки"
-
-#, fuzzy
-msgid "with"
-msgstr "Ширина"
-
-msgid "Default layout"
-msgstr "Заданное по умолчанию размещение"
-
-msgid "Default theme"
-msgstr "Заданная по умолчанию тема"
-
-#, fuzzy
-msgid "New albums"
-msgstr "Альбом"
-
-#, c-format
-msgid "%s Layout Settings"
-msgstr "%s Параметры Размещения"
-
-msgid ""
-"These are the global settings for the layout.  They can be overridden at the "
-"album level."
-msgstr ""
-"Это - глобальные параметры настройки для размещений. Они могут быть отменены "
-"на уровне альбома."
-
-msgid "There are no settings for this layout"
-msgstr "Нет никаких параметров настройки для этого размещения."
-
 msgid "System Maintenance"
 msgstr ""
 
@@ -1539,11 +1459,37 @@ msgstr ""
 msgid "Module Name"
 msgstr "Название Модуля"
 
+msgid "Version"
+msgstr "Версия"
+
+msgid "Installed"
+msgstr "Установленный"
+
+msgid "Actions"
+msgstr "Действия"
+
+#, fuzzy
+msgid "Status: Not Installed"
+msgstr "Состояние: Бездействующий"
+
+msgid "Status: Active"
+msgstr "Состояние: Активный"
+
+msgid "Status: Inactive"
+msgstr "Состояние: Бездействующий"
+
+msgid "Status: Upgrade Required (Inactive)"
+msgstr "Состояние: Требуемое Обновление (Бездействующий)"
+
 msgid "Status: Incompatible Module (Inactive)"
 msgstr "Состояние: Несовместимый Модуль (Бездействующий)"
 
 msgid "Incompatible module!"
 msgstr "Несовместимый модуль!"
+
+#, c-format
+msgid "Core API Required: %s (available: %s)"
+msgstr "Ядро Требуемого программного интерфейса приложения: %s (available: %s)"
 
 #, c-format
 msgid "Module API Required: %s (available: %s)"
@@ -1565,6 +1511,128 @@ msgstr ""
 
 msgid "Uninstall"
 msgstr "Деинсталляция"
+
+#, fuzzy
+msgid "Gallery Themes"
+msgstr "Галерея %s"
+
+#, fuzzy, c-format
+msgid "Successfully activated theme %s"
+msgstr "Успешно активизированный модуль %s"
+
+#, fuzzy, c-format
+msgid "Successfully deactivated theme %s"
+msgstr "Успешно дезактивированный модуль %s"
+
+#, fuzzy, c-format
+msgid "Successfully installed theme %s"
+msgstr "Успешно установленный модуль %s"
+
+#, fuzzy, c-format
+msgid "Successfully uninstalled theme %s"
+msgstr "Успешно деинсталлируемый модуль %s"
+
+#, fuzzy, c-format
+msgid "Successfully upgraded theme %s"
+msgstr "Успешно обновленный модуль %s"
+
+msgid "Successfully saved default album settings"
+msgstr "Успешно сохраненные заданные по умолчанию параметры настройки альбома."
+
+#, fuzzy
+msgid "Restored theme settings"
+msgstr "Восстановленные настройки размещения"
+
+#, fuzzy
+msgid "All Themes"
+msgstr "Тема"
+
+msgid "Defaults"
+msgstr "Значения по умолчанию"
+
+#, fuzzy
+msgid "Theme Name"
+msgstr "Тема"
+
+#, fuzzy
+msgid "Status: Incompatible Theme (Inactive)"
+msgstr "Состояние: Несовместимый Модуль (Бездействующий)"
+
+#, fuzzy
+msgid "Incompatible theme!"
+msgstr "Несовместимый модуль!"
+
+#, fuzzy, c-format
+msgid "Theme API Required: %s (available: %s)"
+msgstr "Ядро Требуемого программного интерфейса приложения: %s (available: %s)"
+
+#, fuzzy
+msgid "(default)"
+msgstr "Значения по умолчанию"
+
+msgid ""
+"These are default display settings for albums in your gallery.  They can be "
+"overridden in each album."
+msgstr ""
+"Эти заданные по умолчанию параметры настройки дисплея для альбомов в вашей "
+"галерее. Они могут быть отменены для каждого альбома."
+
+msgid "Default sort order"
+msgstr "Заданный по умолчанию порядок сортировки"
+
+#, fuzzy
+msgid "with"
+msgstr "Ширина"
+
+msgid "Default theme"
+msgstr "Заданная по умолчанию тема"
+
+#, fuzzy
+msgid "New albums"
+msgstr "Альбом"
+
+#, fuzzy, c-format
+msgid "%s Theme Settings"
+msgstr "Восстановленные настройки размещения"
+
+#, fuzzy
+msgid ""
+"These are the global settings for the theme.  They can be overridden at the "
+"album level."
+msgstr ""
+"Это - глобальные параметры настройки для размещений. Они могут быть отменены "
+"на уровне альбома."
+
+msgid "Available"
+msgstr ""
+
+msgid "Choose a block"
+msgstr ""
+
+#, fuzzy
+msgid "Selected"
+msgstr "Удалить"
+
+msgid "Remove"
+msgstr "Стереть"
+
+#, fuzzy
+msgid "Move Up"
+msgstr "Перемещение"
+
+#, fuzzy
+msgid "Move Down"
+msgstr "Переместить %s"
+
+msgid "Parameter"
+msgstr ""
+
+msgid "Value"
+msgstr "Значение"
+
+#, fuzzy
+msgid "There are no settings for this theme"
+msgstr "Нет никаких параметров настройки для этого размещения."
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime "
@@ -1642,6 +1710,63 @@ msgstr "Создать эскизы теперь"
 #, fuzzy
 msgid "This is a test email from Gallery2"
 msgstr "Это - вершина вашей Галереи"
+
+msgid "Edit Conflict!"
+msgstr "Конфликт Редактирования!"
+
+msgid "Security Violation"
+msgstr "Нарушение Защиты"
+
+msgid "Database Error"
+msgstr ""
+
+msgid "Error"
+msgstr "Ошибка"
+
+msgid ""
+"Your change cannot be completed because somebody else has made a conflicting "
+"change to the same item.  Use the back button in your browser to go back to "
+"the page you were on, then <b>reload that page</b> and try your change again."
+msgstr ""
+"Ваше изменение не может быть закончено, потому что кто - то еще сделал "
+"противоречивое изменение к тому же самому элементу. Используйте обратную "
+"кнопку в вашем браузере, чтобы возвратиться к странице, идите на <b> "
+"перезагрузку страницы </b> и пробуйте ваше изменение снова."
+
+msgid "Go back and try again"
+msgstr "Возвратитесь и попытайтесь снова"
+
+msgid ""
+"Alternatively, you can return to the main Gallery page and resume browsing."
+msgstr ""
+"Альтернативно, Вы можете возвратиться к главной странице Галереи и "
+"продолжить просмотр."
+
+msgid "The action you attempted is not permitted."
+msgstr "Действие, которое Вы пытались выполнить, не разрешается."
+
+msgid "An error has occurred while interacting with the database."
+msgstr ""
+
+msgid ""
+"The exact nature of database errors is not captured unless Gallery debug "
+"mode is enabled in config.php.  Before seeking support for this error please "
+"enable buffered debug output and retry the operation.  Look near the bottom "
+"of the lengthy debug output to find error details."
+msgstr ""
+
+msgid "An error has occurred."
+msgstr ""
+
+msgid "Back to the Gallery"
+msgstr "Назад к Галерее"
+
+msgid "Error Detail"
+msgstr ""
+
+#, fuzzy
+msgid "System Information"
+msgstr "добавить подтверждение элементов"
 
 msgid ""
 "You don't have any Graphics Toolkit activated that can handle JPEG images.  "
@@ -2055,16 +2180,11 @@ msgstr ""
 "Это устанавливает порядок сортировки в альбоме. Обращается ко всем текущим "
 "элементам и любому недавно добавленному элементу."
 
+#, fuzzy
 msgid ""
-"Choose a layout for this album. (The way the album is arranged on the page)"
+"Choose a theme for this album. (The way the album is arranged on the page)"
 msgstr ""
 "Выберите размещение для этого альбома. (Путь альбома размещения на странице)"
-
-msgid "Theme"
-msgstr "Тема"
-
-msgid "Choose a theme for this album.  (The look and feel of this album)"
-msgstr "Выберите тему для этого альбома. (Для просмотра этого альбома)"
 
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr ""
@@ -2258,23 +2378,6 @@ msgstr ""
 "Нет никаких графических инструментов в комплекте, допускающих поддержку "
 "этого типа фотографии, так что мы не можем создать или изменить эскиз."
 
-#, c-format
-msgid ""
-"This album is configured to use the <b>%s</b> layout. These settings only "
-"apply to the layout for this album."
-msgstr ""
-"Этот альбом сконфигурирован, чтобы использовать <b> %s </b> размещение. Эти "
-"параметры настройки обращаются к размещению только для этого альбома."
-
-msgid "Setting"
-msgstr "Установки"
-
-msgid "Value"
-msgstr "Значение"
-
-msgid "Use Global"
-msgstr "Глобальное Использование"
-
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the "
 "movie's width and height.  If you have installed a graphics toolkit that can "
@@ -2424,6 +2527,20 @@ msgstr ""
 
 msgid "Restore original"
 msgstr "Восстановить оригинал"
+
+#, fuzzy, c-format
+msgid ""
+"This album is configured to use the <b>%s</b> theme. These settings only "
+"apply to the theme for this album."
+msgstr ""
+"Этот альбом сконфигурирован, чтобы использовать <b> %s </b> размещение. Эти "
+"параметры настройки обращаются к размещению только для этого альбома."
+
+msgid "Setting"
+msgstr "Установки"
+
+msgid "Use Global"
+msgstr "Глобальное Использование"
 
 #, fuzzy
 msgid "Album Highlight"
@@ -2591,9 +2708,6 @@ msgstr "Название группы"
 msgid "Permission"
 msgstr "Разрешение"
 
-msgid "Remove"
-msgstr "Стереть"
-
 msgid "New Group Permission"
 msgstr "Новое Разрешение Группы"
 
@@ -2647,9 +2761,6 @@ msgstr "после"
 
 msgid "Reorder"
 msgstr "Привести в порядок"
-
-msgid "Go"
-msgstr "Выполнить"
 
 msgid "Continue..."
 msgstr ""
@@ -2717,9 +2828,6 @@ msgstr "Успешно активизированное размещение %s"
 #, c-format
 msgid "To fix this problem you can either %s or %s."
 msgstr ""
-
-msgid "Site Administration"
-msgstr "Администрация Сайта"
 
 msgid "Admin Options"
 msgstr "Администраторские опции"
@@ -2935,19 +3043,107 @@ msgid "Thank you!"
 msgstr ""
 
 #, fuzzy
+msgid "guest"
+msgstr "Гость"
+
+#, c-format
+msgid "display mode: %s"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Date: %s"
+msgstr "Удалить %s"
+
+#, fuzzy, c-format
+msgid "Owner: %s"
+msgstr "Владелец"
+
+#, fuzzy, c-format
+msgid "Size: %d item"
+msgid_plural "Size: %d items"
+msgstr[0] "(%d элемент)"
+msgstr[1] "(%d элементов)"
+
+#, fuzzy, c-format
+msgid "(%d item total)"
+msgid_plural "(%d items total)"
+msgstr[0] "(%d элемент)"
+msgstr[1] "(%d элементов)"
+
+#, c-format
+msgid "Views: %d"
+msgstr ""
+
+#, fuzzy
+msgid "&laquo; album actions &raquo;"
+msgstr "&laquo; Ни один  &laquo; "
+
+#, fuzzy
+msgid "&laquo; item actions &raquo;"
+msgstr "&laquo; Ни один  &laquo; "
+
+msgid "Go"
+msgstr "Выполнить"
+
+msgid "next"
+msgstr ""
+
+#, fuzzy
+msgid "last"
+msgstr "Лист"
+
+#, fuzzy
+msgid "first"
+msgstr "Лист"
+
+#, fuzzy
+msgid "previous"
+msgstr "Предыдущая Страница"
+
+msgid "Page:"
+msgstr ""
+
+#, c-format
+msgid "%d. %s"
+msgstr "%d. %s"
+
+#, fuzzy
+msgid "Size: "
+msgstr "Размер"
+
+msgid "Full size: "
+msgstr ""
+
+#, fuzzy
+msgid "Language selector"
+msgstr "Выберите язык из списка"
+
+#, fuzzy
+msgid "Item actions"
+msgstr "Администраторские опции"
+
+#, fuzzy
+msgid "Login block"
+msgstr "Вход"
+
+msgid "Links to album/photo peers"
+msgstr ""
+
+#, fuzzy
 msgid "Successfully deleted directory: /cache/entity"
 msgstr "Успешно удален %d элемент."
 
 #, fuzzy
-msgid "Successfully deleted directory: /cache/layout"
+msgid "Successfully deleted directory: /cache/theme"
 msgstr "Успешно удален %d элемент."
 
 #, fuzzy
 msgid "Successfully deleted directory: /cache/module"
 msgstr "Успешно удален %d элемент."
 
-msgid "Unable to delete directory: /cache/layout"
-msgstr ""
+#, fuzzy
+msgid "Unable to delete directory: /cache/theme"
+msgstr "Успешно удален %d элемент."
 
 msgid "Unable to delete directory: /templates_c"
 msgstr ""
@@ -2958,186 +3154,6 @@ msgstr "Испытание модулей"
 msgid "[test] A permission"
 msgstr "[тест] разрешить"
 
-msgid "Gallery Debug Output"
-msgstr "Вывод Отладки Галереи"
-
-msgid "This page is valid XHTML 1.0"
-msgstr "Эта страница правильна в XHTML 1.0"
-
-#, c-format
-msgid "Gallery %s"
-msgstr "Галерея %s"
-
-msgid "Edit Conflict!"
-msgstr "Конфликт Редактирования!"
-
-msgid "Security Violation"
-msgstr "Нарушение Защиты"
-
-msgid "Database Error"
-msgstr ""
-
-msgid "Error"
-msgstr "Ошибка"
-
-msgid ""
-"Your change cannot be completed because somebody else has made a conflicting "
-"change to the same item.  Use the back button in your browser to go back to "
-"the page you were on, then <b>reload that page</b> and try your change again."
-msgstr ""
-"Ваше изменение не может быть закончено, потому что кто - то еще сделал "
-"противоречивое изменение к тому же самому элементу. Используйте обратную "
-"кнопку в вашем браузере, чтобы возвратиться к странице, идите на <b> "
-"перезагрузку страницы </b> и пробуйте ваше изменение снова."
-
-msgid "Go back and try again"
-msgstr "Возвратитесь и попытайтесь снова"
-
-msgid ""
-"Alternatively, you can return to the main Gallery page and resume browsing."
-msgstr ""
-"Альтернативно, Вы можете возвратиться к главной странице Галереи и "
-"продолжить просмотр."
-
-msgid "The action you attempted is not permitted."
-msgstr "Действие, которое Вы пытались выполнить, не разрешается."
-
-msgid "An error has occurred while interacting with the database."
-msgstr ""
-
-msgid ""
-"The exact nature of database errors is not captured unless Gallery debug "
-"mode is enabled in config.php.  Before seeking support for this error please "
-"enable buffered debug output and retry the operation.  Look near the bottom "
-"of the lengthy debug output to find error details."
-msgstr ""
-
-msgid "An error has occurred."
-msgstr ""
-
-msgid "Back to the Gallery"
-msgstr "Назад к Галерее"
-
-msgid "Error Detail"
-msgstr ""
-
 #, fuzzy
-msgid "System Information"
-msgstr "добавить подтверждение элементов"
-
-msgid "Redirect"
-msgstr "Переадресовать"
-
-msgid "You are in debug mode so we are not automatically redirecting."
-msgstr ""
-"Вы находитесь в режиме отладки, так что мы автоматически не переадресовываем."
-
-#, c-format
-msgid "Welcome, %s"
-msgstr "Добро пожаловать, %s"
-
-#, c-format
-msgid "(%d item)"
-msgid_plural "(%d items)"
-msgstr[0] "(%d элемент)"
-msgstr[1] "(%d элементов)"
-
-#, c-format
-msgid "%d. %s"
-msgstr "%d. %s"
-
-#~ msgid "Gallery Administrator"
-#~ msgstr "Администратор Галереи"
-
-#, fuzzy
-#~ msgid "Administrator Recovery"
-#~ msgstr "Пароль"
-
-#~ msgid "&laquo; Parent Directory &raquo;"
-#~ msgstr "&laquo; Родительский Каталог  &laquo;"
-
-#~ msgid "AcceptPathInfo directive"
-#~ msgstr "ПринятьПутьИнфо директива"
-
-#~ msgid "Conflict Detected"
-#~ msgstr "Обнаружен Конфликт"
-
-#~ msgid "Edit User Preferences"
-#~ msgstr "Предпочтение Редактирования Пользователями"
-
-#~ msgid "Gallery 2 - Alpha 4: Hey Baby, Nice Commits"
-#~ msgstr "Галерея 2 - Альфа 4: Эй Ребенок, Хорошо Передает"
-
-#~ msgid ""
-#~ "Gallery has the option to use a compact URL format, however this format "
-#~ "is not supported by default on all web servers.  It is enabled by default "
-#~ "on Apache 1, but not on Apache 2.  If you're using Apache 2 you must use "
-#~ "the %s.  Use this %s to find out if short URLs work for you.  If the link "
-#~ "returns a webserver error then they don't work for you."
-#~ msgstr ""
-#~ "Галерея имеет опцию, чтобы использовать компактный формат URL, однако "
-#~ "этот формат не поддерживается по умолчанию на всех сетевых серверах. Это "
-#~ "допускается по умолчанию на апаче 1, но не на апаче 2. Если Вы "
-#~ "используете Apache 2, Вы должны использовать %s. Используйте этот %s, "
-#~ "чтобы узнать, работают ли короткие URL для Вас. Если ссылка возвращает "
-#~ "ошибку сетевого сервера, тогда они не работают для Вас."
-
-#~ msgid "Manual Sort Order"
-#~ msgstr "Ручной Порядок Сортировки"
-
-#~ msgid "Rotate/Scale"
-#~ msgstr "Вращение/Масштабирование"
-
-#~ msgid "Sizes"
-#~ msgstr "Размеры"
-
-#~ msgid "URL Style"
-#~ msgstr "URL Stil"
-
-#~ msgid "Undo"
-#~ msgstr "Отмена шага"
-
-#~ msgid "Use As Parent&rsquo;s Thumbnail?"
-#~ msgstr "Использование Как Родитель&rsquo;s Эскиз?"
-
-#~ msgid "Use short URLs?"
-#~ msgstr "Использовать короткие URL?"
-
-#~ msgid "Yes, highlight this item!"
-#~ msgstr "Да, подсветите этот элемент!"
-
-#~ msgid "You must enter a thumbnail size"
-#~ msgstr "Вы должны ввести размер эскиза"
-
-#~ msgid "[change]"
-#~ msgstr "[изменить]"
-
-#~ msgid "add"
-#~ msgstr "добавить"
-
-#~ msgid "cancel"
-#~ msgstr "отменить"
-
-#~ msgid "edit user"
-#~ msgstr "редактирование пользователя"
-
-#~ msgid "no"
-#~ msgstr "нет"
-
-#~ msgid "required"
-#~ msgstr "обязательное поле"
-
-#~ msgid "reset"
-#~ msgstr "сбросить"
-
-#~ msgid "save"
-#~ msgstr "сохранить"
-
-#~ msgid "test url"
-#~ msgstr "испытать URL"
-
-#~ msgid "undo"
-#~ msgstr "отмена шага"
-
-#~ msgid "yes"
-#~ msgstr "да"
+msgid "[test] A second permission"
+msgstr "[тест] разрешить"

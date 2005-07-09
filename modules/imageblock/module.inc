@@ -37,9 +37,9 @@ class ImageBlockModule extends GalleryModule {
 	$this->setId('imageblock');
 	$this->setName($gallery->i18n('Image Block'));
 	$this->setDescription($gallery->i18n('Random, Most Recent or Most Viewed Photo or Album'));
-	$this->setVersion('0.9.4');
+	$this->setVersion('0.9.5');
 	$this->setGroup('blocks', $this->translate('Blocks'));
-	$this->setCallbacks('registerEventListeners|getSiteAdminViews|loadSystemContent');
+	$this->setCallbacks('registerEventListeners|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
 	$this->setRequiredModuleApi(array(1, 0));
     }
@@ -113,19 +113,6 @@ class ImageBlockModule extends GalleryModule {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('Random/Popular'),
 				 'view' => 'imageblock.ImageBlockSiteAdmin')));
-    }
-
-    /**
-     * @see GalleryModule::loadSystemContent
-     */
-    function loadSystemContent(&$template) {
-	GalleryCoreApi::relativeRequireOnce('modules/imageblock/classes/ImageBlockHelper.class');
-	list ($ret, $block) = ImageBlockHelper::loadImageBlocks($template);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$tpl = empty($block) ? array() : array('imageblock' => $block);
-	return array(GalleryStatus::success(), $tpl);
     }
 }
 ?>

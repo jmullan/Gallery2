@@ -63,28 +63,28 @@ class ConfirmDeleteControllerTest extends GalleryControllerTestCase {
 	$ret = $watermark->create(__FILE__, 'test/file', 'phpunit_' . rand() . '.gif');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = $watermark->save();
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	list ($ret, $id) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::addGroupPermission($watermark->getId(), $id, 'core.all');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::addUserPermission(
 	    $watermark->getId(), $this->_user->getId(), 'core.all');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_watermark = $watermark;
 
@@ -92,7 +92,7 @@ class ConfirmDeleteControllerTest extends GalleryControllerTestCase {
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_getRootId());
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($this->_item);
 	list ($ret, $this->_derivative) = $this->_createDerivative(
@@ -102,13 +102,13 @@ class ConfirmDeleteControllerTest extends GalleryControllerTestCase {
 		      $watermark->getFileName() . ',...'));
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
 
     function testUserCancel() {
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
-	GalleryUtilities::putRequestVariable('form[itemId]', $this->_watermark->getId());
+	GalleryUtilities::putRequestVariable('form[watermarkId]', $this->_watermark->getId());
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.UserAdmin',
@@ -123,7 +123,7 @@ class ConfirmDeleteControllerTest extends GalleryControllerTestCase {
 	$gallery->setActiveUser($this->_saveUser);
 
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
-	GalleryUtilities::putRequestVariable('form[itemId]', $this->_watermark->getId());
+	GalleryUtilities::putRequestVariable('form[watermarkId]', $this->_watermark->getId());
 	GalleryUtilities::putRequestVariable('form[fromAdmin]', 1);
 
 	$results = $this->handleRequest();
@@ -136,7 +136,7 @@ class ConfirmDeleteControllerTest extends GalleryControllerTestCase {
 
     function testUserDelete() {
 	GalleryUtilities::putRequestVariable('form[action][delete]', 1);
-	GalleryUtilities::putRequestVariable('form[itemId]', $this->_watermark->getId());
+	GalleryUtilities::putRequestVariable('form[watermarkId]', $this->_watermark->getId());
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.UserAdmin',
@@ -147,12 +147,12 @@ class ConfirmDeleteControllerTest extends GalleryControllerTestCase {
 
 	$ret = $this->_verifyMissing($this->_watermark->getId());
 	if ($ret->isError()) {
-	    return $this->failWithStatus(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $derivative) = $this->_derivative->refresh();
 	if ($ret->isError()) {
-	    return $this->failWithStatus(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(null, $derivative->getPostfilterOperations(), 'not watermarked');
     }
@@ -162,7 +162,7 @@ class ConfirmDeleteControllerTest extends GalleryControllerTestCase {
 	$gallery->setActiveUser($this->_saveUser);
 
 	GalleryUtilities::putRequestVariable('form[action][delete]', 1);
-	GalleryUtilities::putRequestVariable('form[itemId]', $this->_watermark->getId());
+	GalleryUtilities::putRequestVariable('form[watermarkId]', $this->_watermark->getId());
 	GalleryUtilities::putRequestVariable('form[fromAdmin]', 1);
 
 	$results = $this->handleRequest();
@@ -174,12 +174,12 @@ class ConfirmDeleteControllerTest extends GalleryControllerTestCase {
 
 	$ret = $this->_verifyMissing($this->_watermark->getId());
 	if ($ret->isError()) {
-	    return $this->failWithStatus(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $derivative) = $this->_derivative->refresh();
 	if ($ret->isError()) {
-	    return $this->failWithStatus(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(null, $derivative->getPostfilterOperations(), 'not watermarked');
     }

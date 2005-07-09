@@ -4,23 +4,7 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-<div id="gsSystemLinks" class="gcBorder1">
-  <div class="gbBreadCrumb">
-    <span class="firstChild">
-      <a href="{g->url}">{$SearchScan.rootAlbum.title|markup:stripBbcodeAndHtml}</a>
-    </span>
-    <span>
-      {g->text text="Search Results Summary"}
-    </span>
-  </div>
-</div>
-
-<table width="100%" cellspacing="0" cellpadding="0">
-  <tr valign="top"><td id="gsSidebarCol">
-    {include file="gallery:`$Navigation.sidebar`" l10Domain=$Navigation.l10Domain}
-  </td><td>
-
-  <form action="{g->url}" method="post">
+<form action="{g->url}" method="post">
   <div id="gsContent" class="gcBorder1">
     <div class="gbBlock gcBackground1">
       <h2> {g->text text="Search the Gallery"} </h2>
@@ -151,6 +135,4 @@
     </div>
     {/if}
   </div>
-  </form>
-  </td></tr>
-</table>
+</form>

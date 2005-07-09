@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -96,14 +96,14 @@ class DataCacheTest extends GalleryTestCase {
     function testGetCachePath() {
 	global $gallery;
 	$gallery->setConfig('data.gallery.cache', '/data/cache/');
-	
+
 	$this->assertEquals('/data/cache/module/core/0/0/1.inc',
             GalleryDataCache::getCachePath(array('type' => 'module',
 						 'id' => 'core',
 						 'itemId' => 1)));
-	$this->assertEquals('/data/cache/layout/matrix',
-            GalleryDataCache::getCachePath(array('type' => 'layout', 'id' => 'matrix')));
-	
+	$this->assertEquals('/data/cache/theme/matrix',
+            GalleryDataCache::getCachePath(array('type' => 'theme', 'id' => 'matrix')));
+
 	$this->assertEquals('/data/cache/entity/7/2/725.inc',
             GalleryDataCache::getCachePath(array('type' => 'entity', 'itemId' => 725)));
 
@@ -135,7 +135,7 @@ class DataCacheTest extends GalleryTestCase {
 
 	$gallery->setConfig('data.gallery.cache', '/data/cache/');
 	$gallery->setPlatform(new DataCacheTestPlatform());
-	
+
 	$testdata = "testdata c:\foo\bar";
 	GalleryDataCache::putToDisk(array('type' => 'entity', 'itemId' => 1), $testdata);
 	$this->assertEquals('|' . serialize($testdata),
@@ -147,13 +147,13 @@ class DataCacheTest extends GalleryTestCase {
 	$this->assertEquals('required-class|' . serialize($testdata),
             DataCacheTestPlatform::getFileContents('/data/cache/entity/0/0/1.inc'));
 	DataCacheTestPlatform::reset();
-	
+
 	GalleryDataCache::putToDisk(array('type' => 'entity', 'itemId' => 1),
 				    $testdata, array('required-class1', 'required-class2'));
 	$this->assertEquals('required-class1,required-class2|' . serialize($testdata),
             DataCacheTestPlatform::getFileContents('/data/cache/entity/0/0/1.inc'));
 	DataCacheTestPlatform::reset();
-	
+
 	GalleryDataCache::putToDisk(array('type' => 'entity', 'itemId' => 21), $testdata);
 	$this->assertEquals('|' . serialize($testdata),
             DataCacheTestPlatform::getFileContents('/data/cache/entity/0/2/21.inc'));
@@ -165,7 +165,7 @@ class DataCacheTest extends GalleryTestCase {
             DataCacheTestPlatform::getFileContents('/data/cache/entity/7/2/721.inc'));
 	DataCacheTestPlatform::reset();
     }
-    
+
     function testRemoveFromDisk() {
 	global $gallery;
 
@@ -176,14 +176,14 @@ class DataCacheTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $layoutPluginStatus) = GalleryCoreApi::fetchPluginStatus('layout');
+	list ($ret, $themePluginStatus) = GalleryCoreApi::fetchPluginStatus('theme');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$gallery->setConfig('data.gallery.cache', '/data/cache/');
 	$gallery->setPlatform(new DataCacheTestPlatform());
-	
+
 	GalleryDataCache::removeFromDisk(array('type' => 'entity', 'itemId' => 1));
 	$this->assert(DataCacheTestPlatform::wasFileDeleted('/data/cache/entity/0/0/1.inc'),
 		      'file was not deleted');
@@ -206,19 +206,19 @@ class DataCacheTest extends GalleryTestCase {
 			  "$targetFile was not deleted");
 	}
 	DataCacheTestPlatform::reset();
-	
-	GalleryDataCache::removeFromDisk(array('type' => 'layout', 'itemId' => 1));
-	foreach (array_keys($layoutPluginStatus) as $layoutId) {
-	    $targetFile = '/data/cache/layout/' . $layoutId . '/0/0/1.inc';
+
+	GalleryDataCache::removeFromDisk(array('type' => 'theme', 'itemId' => 1));
+	foreach (array_keys($themePluginStatus) as $themeId) {
+	    $targetFile = '/data/cache/theme/' . $themeId . '/0/0/1.inc';
 	    $this->assert(DataCacheTestPlatform::wasFileDeleted($targetFile),
 			  "$targetFile was not deleted");
 	}
 	DataCacheTestPlatform::reset();
     }
-    
+
     function testGetFromDisk() {
 	global $gallery;
-	
+
 	GalleryDataCache::setFileCachingEnabled(true);
 
 	$gallery->setConfig('data.gallery.cache', '/data/cache/');
@@ -238,7 +238,7 @@ class DataCacheTest extends GalleryTestCase {
 
     function testCachePermission() {
 	global $gallery;
-	
+
 	GalleryDataCache::cachePermissions(array('1', '2'), 'test.TestPermission');
 	$this->assert(GalleryDataCache::hasPermission('1', 'test.TestPermission'),
 			'1 should have permission test.TestPermission');
@@ -248,7 +248,7 @@ class DataCacheTest extends GalleryTestCase {
 			'3 shouldn\'t have permission test.TestPermission');
 	$this->assert(! GalleryDataCache::hasPermission('1', 'test.OtherPermission'),
 			'1 shouldn\'t have permission test.OtherPermission');
-	
+
 	GalleryDataCache::cachePermissions(array('3'), 'test.OtherPermission');
 	$this->assert(GalleryDataCache::hasPermission('1', 'test.TestPermission'),
 			'1 should still have permission test.TestPermission');
@@ -304,7 +304,7 @@ class DataCacheTestPlatform {
 	if (isset($record['contents'][$path])) {
 	    return $record['contents'][$path];
 	}
-	
+
 	return null;
     }
 
@@ -312,7 +312,7 @@ class DataCacheTestPlatform {
 	$record =& DataCacheTestPlatform::getRecord();
 	return isset($record['deleted-file'][$path]);
     }
-    
+
     function wasDirDeleted($path) {
 	$record =& DataCacheTestPlatform::getRecord();
 	return isset($record['deleted-dir'][$path]);
@@ -343,7 +343,7 @@ class DataCacheTestPlatform {
     }
 
     function is_dir($path) {
-	return preg_match('{/(module|layout)/\w+$}', $path);
+	return preg_match('{/(module|theme)/\w+$}', $path);
     }
 }
 

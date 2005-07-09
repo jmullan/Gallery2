@@ -35,26 +35,8 @@ msgstr "Galéria modulok"
 msgid "&laquo; None &raquo;"
 msgstr "&laquo;·Nincs·&raquo;"
 
-msgid "None"
-msgstr "Nincs"
-
-msgid "Guest User Only"
-msgstr "Csak vendégfelhasználók"
-
-msgid "Everybody"
-msgstr "Mindenki"
-
 msgid "forever"
 msgstr "örökké"
-
-msgid "Link to Login Page"
-msgstr "Linkelés a belépőoldalra"
-
-msgid "Form on Sidebar"
-msgstr "Form az oldalpanelre"
-
-msgid "Both"
-msgstr "Mindkettő"
 
 msgid "No Markup"
 msgstr ""
@@ -104,6 +86,9 @@ msgstr "telepítés"
 msgid "upgrade"
 msgstr "frissítés"
 
+msgid "configure"
+msgstr "beállítás"
+
 msgid "activate"
 msgstr "aktiválás"
 
@@ -113,17 +98,14 @@ msgstr "eltávolít"
 msgid "deactivate"
 msgstr "deaktiválás"
 
+msgid "Other"
+msgstr "Más"
+
 msgid "Inherit settings from parent album"
 msgstr "Beállítások öröklése a szülőalbumtól"
 
 msgid "Use these settings"
 msgstr "Ezen beállítások használata"
-
-msgid "configure"
-msgstr "beállítás"
-
-msgid "Other"
-msgstr "Más"
 
 msgid "key"
 msgstr "kulcs"
@@ -172,8 +154,20 @@ msgstr ""
 msgid "All Users"
 msgstr "Minden felhasználó"
 
+msgid "Loading derivatives for the broken derivatives check"
+msgstr ""
+
+msgid "Detecting broken derivatives"
+msgstr ""
+
+msgid "Marking broken derivatives"
+msgstr ""
+
 msgid "Site Admins"
 msgstr "Oldal adminisztrátorok"
+
+msgid "Everybody"
+msgstr "Mindenki"
 
 msgid "Guest"
 msgstr "Vendég"
@@ -184,6 +178,15 @@ msgstr "Galéria"
 #, fuzzy
 msgid "This is the main page of your Gallery"
 msgstr "Ez a Galéria gyökere"
+
+msgid "Loading derivatives for the "
+msgstr ""
+
+msgid "Detecting broken derivatives "
+msgstr ""
+
+msgid "Marking broken derivatives "
+msgstr ""
 
 msgid "add items"
 msgstr "elemek hozzáadása"
@@ -256,9 +259,6 @@ msgstr "%s szerkesztése"
 msgid "Settings saved successfully."
 msgstr "Beállítások sikeresen elmentve"
 
-msgid "&laquo; default layout &raquo;"
-msgstr "&laquo;·alapértelmezett elrendezés·&raquo;"
-
 msgid "&laquo; default theme &raquo;"
 msgstr "&laquo;·alapértelmezett téma·&raquo;"
 
@@ -276,12 +276,6 @@ msgstr "feliratok szerkesztése"
 
 msgid "General"
 msgstr "Általános"
-
-msgid "Successfully saved layout settings"
-msgstr "Elrendezésbeállítások sikeresen elmentve"
-
-msgid "Layout"
-msgstr "Elrendezés"
 
 msgid "Movie Size"
 msgstr "Film mérete"
@@ -340,6 +334,13 @@ msgstr "Nagyítás sikeres"
 msgid "Modify Photo"
 msgstr "Fénykép módosítása"
 
+#, fuzzy
+msgid "Successfully saved theme settings"
+msgstr "Elrendezésbeállítások sikeresen elmentve"
+
+msgid "Theme"
+msgstr "Téma"
+
 msgid "make highlight"
 msgstr "kijelölés"
 
@@ -381,13 +382,14 @@ msgid "Build all thumbnails/resizes"
 msgstr "Előnézeti·és·átméretezett·képek·újragyártása"
 
 msgid ""
-"Ensure data files for all derivatives (thumbnails, etc) have been built."
-msgstr ""
-
-msgid "Processing..."
+"Ensure data files for all derivatives (thumbnails, etc) have been built and "
+"rebuild broken ones."
 msgstr ""
 
 msgid "Build All Thumbnails/Resizes"
+msgstr ""
+
+msgid "Debug output for failed items:"
 msgstr ""
 
 #, fuzzy, c-format
@@ -397,6 +399,14 @@ msgstr "Oldal: %d / %d"
 #, fuzzy, c-format
 msgid "Checked %d items"
 msgstr "elemek hozzáadása"
+
+#, fuzzy, c-format
+msgid "%d items built"
+msgstr "elemek hozzáadása"
+
+#, c-format
+msgid "%d items failed"
+msgstr ""
 
 msgid "Delete database cache"
 msgstr ""
@@ -486,45 +496,6 @@ msgstr "Csoport"
 msgid "group"
 msgstr "csoport"
 
-#, c-format
-msgid "Estimated time remaining: %d:%02d"
-msgstr ""
-
-msgid "Rows per album page"
-msgstr ""
-
-msgid "Columns per album page"
-msgstr ""
-
-msgid "Show image owners"
-msgstr ""
-
-msgid "Show album owners"
-msgstr ""
-
-msgid "Show micro navigation thumbnails"
-msgstr ""
-
-msgid "Number of items to show per page"
-msgstr ""
-
-msgid "View Samples"
-msgstr ""
-
-#, fuzzy
-msgid "Album Frame"
-msgstr "Előbb az albumok"
-
-msgid "Item Frame"
-msgstr ""
-
-#, fuzzy
-msgid "Photo Frame"
-msgstr "Fénykép"
-
-msgid "You must enter a number greater than 0"
-msgstr "Adjon meg egy 0-nál nagyobb számot"
-
 msgid "Movie"
 msgstr "Film"
 
@@ -569,6 +540,71 @@ msgstr "Növekvő"
 
 msgid "Descending"
 msgstr "Csökkenő"
+
+msgid "Validation disabled until you set allowSessionAccess in config.php"
+msgstr ""
+
+msgid "This page is valid XHTML 1.0"
+msgstr "Az oldal helyes XHTML 1.0"
+
+#, c-format
+msgid "Estimated time remaining: %d:%02d"
+msgstr ""
+
+#, c-format
+msgid "Memory used: %s, total: %s"
+msgstr ""
+
+msgid "Rows per album page"
+msgstr ""
+
+msgid "Columns per album page"
+msgstr ""
+
+msgid "Show image owners"
+msgstr ""
+
+msgid "Show album owners"
+msgstr ""
+
+msgid "Show micro navigation thumbnails"
+msgstr ""
+
+msgid "Number of items to show per page"
+msgstr ""
+
+msgid "Blocks to show in the sidebar"
+msgstr ""
+
+msgid "Blocks to show on album pages"
+msgstr ""
+
+msgid "Blocks to show on photo pages"
+msgstr ""
+
+msgid "View Samples"
+msgstr ""
+
+#, fuzzy
+msgid "Album Frame"
+msgstr "Előbb az albumok"
+
+msgid "Item Frame"
+msgstr ""
+
+#, fuzzy
+msgid "Photo Frame"
+msgstr "Fénykép"
+
+msgid "You must enter a number greater than 0"
+msgstr "Adjon meg egy 0-nál nagyobb számot"
+
+msgid "Format: [module.BlockName param=value] ..."
+msgstr ""
+
+#, c-format
+msgid "%dx%d"
+msgstr ""
 
 msgid "Audio"
 msgstr "Hang"
@@ -646,6 +682,9 @@ msgid ""
 "in the original data file (usually from EXIF data)."
 msgstr ""
 
+msgid "Processing..."
+msgstr ""
+
 msgid "Refresh Capture Dates"
 msgstr ""
 
@@ -719,8 +758,9 @@ msgstr "Kilépés"
 msgid "Modules"
 msgstr "Modulok"
 
-msgid "Layouts and Themes"
-msgstr "Elrendezések és témák"
+#, fuzzy
+msgid "Themes"
+msgstr "Téma"
 
 msgid "Display"
 msgstr "Megjelenítés"
@@ -798,13 +838,11 @@ msgstr "Helyi feltöltőkönyvtár sikeresen törölve"
 msgid "Test email sent successfully"
 msgstr "Előnézeti kép sikeresen visszaállítva"
 
-msgid "Error sending test email, see below for details"
-msgstr ""
+#, fuzzy
+msgid "There was a problem processing your request, see below for details."
+msgstr "Hiba történt a kérés feldolgozása közben."
 
-msgid "Invalid cookie path"
-msgstr ""
-
-msgid "Invalid cookie domain"
+msgid "Error sending test email, see below for details."
 msgstr ""
 
 msgid "Language Settings"
@@ -821,9 +859,6 @@ msgstr ""
 
 msgid "Default language"
 msgstr "Alapértelmezett nyelv"
-
-msgid "Language selector in sidebar"
-msgstr "Nyelvválasztó az oldalpanelen"
 
 msgid "gettext"
 msgstr ""
@@ -906,9 +941,6 @@ msgstr "A beírt útvonal nem egy könyvtár"
 msgid "Session Settings"
 msgstr "Kapcsolat beállítások"
 
-msgid "Login Method"
-msgstr "Belépési mód"
-
 msgid "Session Lifetime"
 msgstr "Kapcsolat élettartama"
 
@@ -954,6 +986,9 @@ msgstr "Jelszó"
 msgid "SMTP From Address"
 msgstr "SMTP küldő cím"
 
+msgid "Invalid email address"
+msgstr "Hibás emailcím"
+
 msgid ""
 "Send a test email to verify your settings are correct (whether using PHP "
 "mail or SMTP settings above).  Below enter a recipient email address for a "
@@ -963,9 +998,6 @@ msgstr ""
 #, fuzzy
 msgid "Send Email"
 msgstr "E-mail"
-
-msgid "Invalid email address"
-msgstr "Hibás emailcím"
 
 msgid "Email Test Error"
 msgstr ""
@@ -1011,7 +1043,13 @@ msgid ""
 "not, they will experience login / logout / lost session problems."
 msgstr ""
 
+msgid "Invalid cookie path"
+msgstr ""
+
 msgid "Domain"
+msgstr ""
+
+msgid "Invalid cookie domain"
 msgstr ""
 
 msgid "Locking System"
@@ -1312,118 +1350,6 @@ msgid "%d group matches your filter"
 msgid_plural "%d groups match your filter"
 msgstr[0] "%d csoport illik a szűrőre"
 
-msgid "Gallery Layouts"
-msgstr "Galéria elrendezések"
-
-#, c-format
-msgid "Successfully activated layout %s"
-msgstr "%s elrendezés sikeresen aktiválva"
-
-#, c-format
-msgid "Successfully deactivated layout %s"
-msgstr "%s elrendezés sikeresen kikapcsolva"
-
-#, c-format
-msgid "Successfully installed layout %s"
-msgstr "%s elrendezés sikeresen telepítve"
-
-#, c-format
-msgid "Successfully uninstalled layout %s"
-msgstr "%s elrendezés sikeresen leszedve"
-
-#, fuzzy, c-format
-msgid "Successfully upgraded layout %s"
-msgstr "%s modul sikeresen frissítve"
-
-msgid "Successfully saved default album settings"
-msgstr "Alapértelmezett albumbeállítások sikeresen elmentve"
-
-msgid "Restored layout settings"
-msgstr "Elrendezésbeállítások visszaállítva"
-
-msgid "All Layouts"
-msgstr "Minden elrendezés"
-
-msgid "Defaults"
-msgstr "Alapértelmezettek"
-
-msgid "Layout Name"
-msgstr "Elrendezés neve"
-
-msgid "Version"
-msgstr "Verzió"
-
-msgid "Installed"
-msgstr "Telepítve"
-
-msgid "Actions"
-msgstr "Műveletek"
-
-msgid "Status: Not Installed"
-msgstr "Állapot: nem telepített"
-
-msgid "Status: Active"
-msgstr "Állapot: aktív"
-
-msgid "Status: Inactive"
-msgstr "Állapot: inaktív"
-
-msgid "Status: Upgrade Required (Inactive)"
-msgstr "Állapot: frissíteni kell (inaktív)"
-
-msgid "Status: Incompatible Layout (Inactive)"
-msgstr "Állapot: nem kompatibilis elrendezés (inaktív)"
-
-msgid "Incompatible layout!"
-msgstr "Inkompatibilis elrendezés!"
-
-#, c-format
-msgid "Core API Required: %s (available: %s)"
-msgstr "Szükséges Core API: %s (jelenleg %s)"
-
-#, c-format
-msgid "Layout API Required: %s (available: %s)"
-msgstr "Szükséges elrendezés API: %s (jelenleg: %s)"
-
-msgid "(default)"
-msgstr "(alapértelmezett)"
-
-msgid ""
-"These are default display settings for albums in your gallery.  They can be "
-"overridden in each album."
-msgstr ""
-"Ez az albumokhoz tartozó alapértelmezett beállítás. A beállítások "
-"albumonként felülbírálhatóak."
-
-msgid "Default sort order"
-msgstr "Alapértelmezett rendezés"
-
-msgid "with"
-msgstr "szélesség"
-
-msgid "Default layout"
-msgstr "Alapértelmezett elrendezés"
-
-msgid "Default theme"
-msgstr "Alapértelmezett téma"
-
-msgid "New albums"
-msgstr "Új albumok"
-
-#, c-format
-msgid "%s Layout Settings"
-msgstr "%s elrendezés beállítások"
-
-msgid ""
-"These are the global settings for the layout.  They can be overridden at the "
-"album level."
-msgstr ""
-"Ez a galéria felületének alaprtelmezett beállítása. A beállítások "
-"albumonként felülbírálhatóak."
-
-msgid "There are no settings for this layout"
-msgstr "Ennek az elrendezésnek nincsenek beállításai"
-
 msgid "System Maintenance"
 msgstr ""
 
@@ -1510,11 +1436,36 @@ msgstr ""
 msgid "Module Name"
 msgstr "Modulnév"
 
+msgid "Version"
+msgstr "Verzió"
+
+msgid "Installed"
+msgstr "Telepítve"
+
+msgid "Actions"
+msgstr "Műveletek"
+
+msgid "Status: Not Installed"
+msgstr "Állapot: nem telepített"
+
+msgid "Status: Active"
+msgstr "Állapot: aktív"
+
+msgid "Status: Inactive"
+msgstr "Állapot: inaktív"
+
+msgid "Status: Upgrade Required (Inactive)"
+msgstr "Állapot: frissíteni kell (inaktív)"
+
 msgid "Status: Incompatible Module (Inactive)"
 msgstr "Állapot: nem kompatibilis modul (inaktív)"
 
 msgid "Incompatible module!"
 msgstr "Inkompatibilis modul!"
+
+#, c-format
+msgid "Core API Required: %s (available: %s)"
+msgstr "Szükséges Core API: %s (jelenleg %s)"
 
 #, c-format
 msgid "Module API Required: %s (available: %s)"
@@ -1536,6 +1487,125 @@ msgstr ""
 
 msgid "Uninstall"
 msgstr "Eltávolítás"
+
+#, fuzzy
+msgid "Gallery Themes"
+msgstr "Galéria %s"
+
+#, fuzzy, c-format
+msgid "Successfully activated theme %s"
+msgstr "%s modul sikeresen aktiválva"
+
+#, fuzzy, c-format
+msgid "Successfully deactivated theme %s"
+msgstr "%s modul sikeresen kikapcsolva"
+
+#, fuzzy, c-format
+msgid "Successfully installed theme %s"
+msgstr "%s modul sikeresen telepítve"
+
+#, fuzzy, c-format
+msgid "Successfully uninstalled theme %s"
+msgstr "%s modul sikeresen eltávolítva"
+
+#, fuzzy, c-format
+msgid "Successfully upgraded theme %s"
+msgstr "%s modul sikeresen frissítve"
+
+msgid "Successfully saved default album settings"
+msgstr "Alapértelmezett albumbeállítások sikeresen elmentve"
+
+#, fuzzy
+msgid "Restored theme settings"
+msgstr "Elrendezésbeállítások visszaállítva"
+
+#, fuzzy
+msgid "All Themes"
+msgstr "Téma"
+
+msgid "Defaults"
+msgstr "Alapértelmezettek"
+
+#, fuzzy
+msgid "Theme Name"
+msgstr "Téma"
+
+#, fuzzy
+msgid "Status: Incompatible Theme (Inactive)"
+msgstr "Állapot: nem kompatibilis modul (inaktív)"
+
+#, fuzzy
+msgid "Incompatible theme!"
+msgstr "Inkompatibilis modul!"
+
+#, fuzzy, c-format
+msgid "Theme API Required: %s (available: %s)"
+msgstr "Szükséges Core API: %s (jelenleg %s)"
+
+msgid "(default)"
+msgstr "(alapértelmezett)"
+
+msgid ""
+"These are default display settings for albums in your gallery.  They can be "
+"overridden in each album."
+msgstr ""
+"Ez az albumokhoz tartozó alapértelmezett beállítás. A beállítások "
+"albumonként felülbírálhatóak."
+
+msgid "Default sort order"
+msgstr "Alapértelmezett rendezés"
+
+msgid "with"
+msgstr "szélesség"
+
+msgid "Default theme"
+msgstr "Alapértelmezett téma"
+
+msgid "New albums"
+msgstr "Új albumok"
+
+#, fuzzy, c-format
+msgid "%s Theme Settings"
+msgstr "Ezen beállítások használata"
+
+#, fuzzy
+msgid ""
+"These are the global settings for the theme.  They can be overridden at the "
+"album level."
+msgstr ""
+"Ez a galéria felületének alaprtelmezett beállítása. A beállítások "
+"albumonként felülbírálhatóak."
+
+msgid "Available"
+msgstr ""
+
+msgid "Choose a block"
+msgstr ""
+
+#, fuzzy
+msgid "Selected"
+msgstr "Törlés"
+
+msgid "Remove"
+msgstr "Törlés"
+
+#, fuzzy
+msgid "Move Up"
+msgstr "Mozgatás"
+
+#, fuzzy
+msgid "Move Down"
+msgstr "%s mozgatása"
+
+msgid "Parameter"
+msgstr ""
+
+msgid "Value"
+msgstr "Érték"
+
+#, fuzzy
+msgid "There are no settings for this theme"
+msgstr "Ennek az elrendezésnek nincsenek beállításai"
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime "
@@ -1609,6 +1679,57 @@ msgstr "Előnézeti képek létrehozása most"
 #, fuzzy
 msgid "This is a test email from Gallery2"
 msgstr "Ez a Galéria gyökere"
+
+msgid "Edit Conflict!"
+msgstr ""
+
+msgid "Security Violation"
+msgstr "Biztonsági hiba"
+
+msgid "Database Error"
+msgstr "Adatbázis hiba"
+
+msgid "Error"
+msgstr "Hiba"
+
+msgid ""
+"Your change cannot be completed because somebody else has made a conflicting "
+"change to the same item.  Use the back button in your browser to go back to "
+"the page you were on, then <b>reload that page</b> and try your change again."
+msgstr ""
+
+msgid "Go back and try again"
+msgstr "Vissza, és újra"
+
+msgid ""
+"Alternatively, you can return to the main Gallery page and resume browsing."
+msgstr ""
+"Egyébiránt, visszatérhet a Galéria főoldalára és folytathatja a böngészést."
+
+msgid "The action you attempted is not permitted."
+msgstr "A kért művelethez nincs jogosultsága"
+
+msgid "An error has occurred while interacting with the database."
+msgstr "Hiba történt az adatbázishoz való kapcsolódás közben."
+
+msgid ""
+"The exact nature of database errors is not captured unless Gallery debug "
+"mode is enabled in config.php.  Before seeking support for this error please "
+"enable buffered debug output and retry the operation.  Look near the bottom "
+"of the lengthy debug output to find error details."
+msgstr ""
+
+msgid "An error has occurred."
+msgstr "Hiba történt."
+
+msgid "Back to the Gallery"
+msgstr "Vissza a Galériába"
+
+msgid "Error Detail"
+msgstr "Hiba részletei"
+
+msgid "System Information"
+msgstr "Rendszerinformáció"
 
 msgid ""
 "You don't have any Graphics Toolkit activated that can handle JPEG images.  "
@@ -2011,17 +2132,12 @@ msgstr ""
 "Ezzel állítható az album rendezése. Alkalmazódik minden jelenlegi elemre, és "
 "a jövőben hozzáadottakra is."
 
+#, fuzzy
 msgid ""
-"Choose a layout for this album. (The way the album is arranged on the page)"
+"Choose a theme for this album. (The way the album is arranged on the page)"
 msgstr ""
 "Válasszon elrendezést az albumnak. (ahogy az album az oldalon legyen "
 "rendezve)"
-
-msgid "Theme"
-msgstr "Téma"
-
-msgid "Choose a theme for this album.  (The look and feel of this album)"
-msgstr "Válasszon új témát ennek az albumnak. (az album kinézete)"
 
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr ""
@@ -2206,23 +2322,6 @@ msgstr ""
 "Ehhez a formátumhoz nincs grafikus kezelőkészlet telepítve, így nem "
 "készíthet, vagy modosíthat előnézeti képeket."
 
-#, c-format
-msgid ""
-"This album is configured to use the <b>%s</b> layout. These settings only "
-"apply to the layout for this album."
-msgstr ""
-"Ez az album a <b>%s</b> felületet használja. Itt csak az ehhez az albumhoz "
-"tartozó beállításokat tudja módosítani."
-
-msgid "Setting"
-msgstr "Beállítás"
-
-msgid "Value"
-msgstr "Érték"
-
-msgid "Use Global"
-msgstr "Globális használata"
-
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the "
 "movie's width and height.  If you have installed a graphics toolkit that can "
@@ -2356,6 +2455,20 @@ msgstr ""
 
 msgid "Restore original"
 msgstr "Eredeti visszaállítása"
+
+#, fuzzy, c-format
+msgid ""
+"This album is configured to use the <b>%s</b> theme. These settings only "
+"apply to the theme for this album."
+msgstr ""
+"Ez az album a <b>%s</b> felületet használja. Itt csak az ehhez az albumhoz "
+"tartozó beállításokat tudja módosítani."
+
+msgid "Setting"
+msgstr "Beállítás"
+
+msgid "Use Global"
+msgstr "Globális használata"
 
 #, fuzzy
 msgid "Album Highlight"
@@ -2521,9 +2634,6 @@ msgstr "Csoportnév"
 msgid "Permission"
 msgstr "Jog"
 
-msgid "Remove"
-msgstr "Törlés"
-
 msgid "New Group Permission"
 msgstr "Új csoport jog"
 
@@ -2576,9 +2686,6 @@ msgstr "utána"
 
 msgid "Reorder"
 msgstr "Újrarendezés"
-
-msgid "Go"
-msgstr "Mehet"
 
 msgid "Continue..."
 msgstr "Folytat..."
@@ -2642,9 +2749,6 @@ msgstr "az elrendezés telepítése vagy aktiválása"
 #, c-format
 msgid "To fix this problem you can either %s or %s."
 msgstr ""
-
-msgid "Site Administration"
-msgstr "Oldal adminisztrálása"
 
 msgid "Admin Options"
 msgstr "Adminisztrátori opciók"
@@ -2857,6 +2961,93 @@ msgstr ""
 msgid "Thank you!"
 msgstr ""
 
+#, fuzzy
+msgid "guest"
+msgstr "Vendég"
+
+#, c-format
+msgid "display mode: %s"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Date: %s"
+msgstr "Dátum:"
+
+#, fuzzy, c-format
+msgid "Owner: %s"
+msgstr "Tulaj"
+
+# c-format
+#, fuzzy, c-format
+msgid "Size: %d item"
+msgid_plural "Size: %d items"
+msgstr[0] "(%d elem)"
+
+# c-format
+#, fuzzy, c-format
+msgid "(%d item total)"
+msgid_plural "(%d items total)"
+msgstr[0] "(%d elem)"
+
+#, c-format
+msgid "Views: %d"
+msgstr ""
+
+#, fuzzy
+msgid "&laquo; album actions &raquo;"
+msgstr "&laquo;·Nincs·&raquo;"
+
+#, fuzzy
+msgid "&laquo; item actions &raquo;"
+msgstr "&laquo;·Nincs·&raquo;"
+
+msgid "Go"
+msgstr "Mehet"
+
+msgid "next"
+msgstr ""
+
+#, fuzzy
+msgid "last"
+msgstr "lista"
+
+#, fuzzy
+msgid "first"
+msgstr "lista"
+
+#, fuzzy
+msgid "previous"
+msgstr "Előző oldal"
+
+msgid "Page:"
+msgstr ""
+
+#, c-format
+msgid "%d. %s"
+msgstr "%d. %s"
+
+#, fuzzy
+msgid "Size: "
+msgstr "Méret"
+
+msgid "Full size: "
+msgstr ""
+
+#, fuzzy
+msgid "Language selector"
+msgstr "Nyelvválasztó az oldalpanelen"
+
+#, fuzzy
+msgid "Item actions"
+msgstr "feliratok szerkesztése"
+
+#, fuzzy
+msgid "Login block"
+msgstr "Belépés"
+
+msgid "Links to album/photo peers"
+msgstr ""
+
 # c-format
 #, fuzzy
 msgid "Successfully deleted directory: /cache/entity"
@@ -2864,7 +3055,7 @@ msgstr "%d elem sikeresen törölve"
 
 # c-format
 #, fuzzy
-msgid "Successfully deleted directory: /cache/layout"
+msgid "Successfully deleted directory: /cache/theme"
 msgstr "%d elem sikeresen törölve"
 
 # c-format
@@ -2872,8 +3063,10 @@ msgstr "%d elem sikeresen törölve"
 msgid "Successfully deleted directory: /cache/module"
 msgstr "%d elem sikeresen törölve"
 
-msgid "Unable to delete directory: /cache/layout"
-msgstr ""
+# c-format
+#, fuzzy
+msgid "Unable to delete directory: /cache/theme"
+msgstr "%d elem sikeresen törölve"
 
 msgid "Unable to delete directory: /templates_c"
 msgstr ""
@@ -2884,162 +3077,6 @@ msgstr ""
 msgid "[test] A permission"
 msgstr "[test] Jogok"
 
-msgid "Gallery Debug Output"
-msgstr "Gallery hibakereső kimenet"
-
-msgid "This page is valid XHTML 1.0"
-msgstr "Az oldal helyes XHTML 1.0"
-
-#, c-format
-msgid "Gallery %s"
-msgstr "Galéria %s"
-
-msgid "Edit Conflict!"
-msgstr ""
-
-msgid "Security Violation"
-msgstr "Biztonsági hiba"
-
-msgid "Database Error"
-msgstr "Adatbázis hiba"
-
-msgid "Error"
-msgstr "Hiba"
-
-msgid ""
-"Your change cannot be completed because somebody else has made a conflicting "
-"change to the same item.  Use the back button in your browser to go back to "
-"the page you were on, then <b>reload that page</b> and try your change again."
-msgstr ""
-
-msgid "Go back and try again"
-msgstr "Vissza, és újra"
-
-msgid ""
-"Alternatively, you can return to the main Gallery page and resume browsing."
-msgstr ""
-"Egyébiránt, visszatérhet a Galéria főoldalára és folytathatja a böngészést."
-
-msgid "The action you attempted is not permitted."
-msgstr "A kért művelethez nincs jogosultsága"
-
-msgid "An error has occurred while interacting with the database."
-msgstr "Hiba történt az adatbázishoz való kapcsolódás közben."
-
-msgid ""
-"The exact nature of database errors is not captured unless Gallery debug "
-"mode is enabled in config.php.  Before seeking support for this error please "
-"enable buffered debug output and retry the operation.  Look near the bottom "
-"of the lengthy debug output to find error details."
-msgstr ""
-
-msgid "An error has occurred."
-msgstr "Hiba történt."
-
-msgid "Back to the Gallery"
-msgstr "Vissza a Galériába"
-
-msgid "Error Detail"
-msgstr "Hiba részletei"
-
-msgid "System Information"
-msgstr "Rendszerinformáció"
-
-msgid "Redirect"
-msgstr "Átirányítás"
-
-msgid "You are in debug mode so we are not automatically redirecting."
-msgstr "Ön hibakereső módban van, így nincs automatikus átirányítás."
-
-#, c-format
-msgid "Welcome, %s"
-msgstr "Üdvözöljük, %s"
-
-# c-format
-#, c-format
-msgid "(%d item)"
-msgid_plural "(%d items)"
-msgstr[0] "(%d elem)"
-
-#, c-format
-msgid "%d. %s"
-msgstr "%d. %s"
-
-#~ msgid "Gallery Administrator"
-#~ msgstr "Galéria Adminisztrátor"
-
 #, fuzzy
-#~ msgid "Administrator Recovery"
-#~ msgstr "Jelszó"
-
-#, fuzzy
-#~ msgid "Gallery 2 - Beta 3: Bingo!"
-#~ msgstr "Gallery 2 - Beta 1 Dark Fibre"
-
-#~ msgid ""
-#~ "Gallery has the option to use a compact URL format, however this format "
-#~ "is not supported by default on all web servers.  It is enabled by default "
-#~ "on Apache 1, but not on Apache 2.  If you're using Apache 2 you must use "
-#~ "the %s.  Use this %s to find out if short URLs work for you.  If the link "
-#~ "returns a webserver error then they don't work for you."
-#~ msgstr ""
-#~ "A Galériában megvan a lehetőség a \"kompakt\" URL formátum használatára, "
-#~ "habár ez a formaalapértelmezettként nincs aktiválva a webszervereken. "
-#~ "Apache 1-ben alapértelmezettként igen,Apache 2-ben viszont nem. "
-#~ "Amennyiben Apache 2-t használ, használnia kell %s-t. Használja ezta %s-t "
-#~ "hogy ellenőrizze, hogy működnek e a rövid URLek. Ha a link webszerver "
-#~ "hibát jelez, akkorsajnos nem működnek."
-
-#~ msgid "Status: Not"
-#~ msgstr "Állapot: nincs"
-
-#~ msgid ")"
-#~ msgstr ")"
-
-#~ msgid "URL Style"
-#~ msgstr "URL stílus"
-
-#~ msgid "Undo"
-#~ msgstr "Vissza"
-
-#~ msgid "Use short URLs?"
-#~ msgstr "Rövid URLek használata?"
-
-#~ msgid "Yes, highlight this item!"
-#~ msgstr "Igen, az elem megjelölése!"
-
-#~ msgid "You must enter a thumbnail size"
-#~ msgstr "Adjon meg egy előnézeti kép méretet"
-
-#~ msgid "[change]"
-#~ msgstr "[változtat]"
-
-#~ msgid "add"
-#~ msgstr "hozzáadás"
-
-#~ msgid "cancel"
-#~ msgstr "mégsem"
-
-#~ msgid "edit user"
-#~ msgstr "felhasználó szerkesztése"
-
-#~ msgid "no"
-#~ msgstr "nem"
-
-#~ msgid "required"
-#~ msgstr "szükséges"
-
-#~ msgid "reset"
-#~ msgstr "visszaállítás"
-
-#~ msgid "save"
-#~ msgstr "mentés"
-
-#~ msgid "test url"
-#~ msgstr "teszt url"
-
-#~ msgid "undo"
-#~ msgstr "visszalép"
-
-#~ msgid "yes"
-#~ msgstr "igen"
+msgid "[test] A second permission"
+msgstr "[test] Jogok"

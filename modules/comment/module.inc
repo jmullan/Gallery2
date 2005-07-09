@@ -40,10 +40,9 @@ class CommentModule extends GalleryModule {
 	$this->setId('comment');
 	$this->setName($gallery->i18n('Comments'));
 	$this->setDescription($gallery->i18n('User commenting system'));
-	$this->setVersion('0.9.4');
+	$this->setVersion('0.9.5');
 	$this->setGroup('data', $this->translate('Extra Data'));
-	$this->setCallbacks('getItemLinks|getItemSummaries|' .
-			    'loadItemDetails|getItemAdminViews');
+	$this->setCallbacks('getItemLinks|getItemSummaries|getItemAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
 	$this->setRequiredModuleApi(array(1, 0));
     }
@@ -124,8 +123,7 @@ class CommentModule extends GalleryModule {
 	foreach ($items as $item) {
 	    if (isset($wantsDetailedLinks[$item->getId()])) {
 		if (isset($permissions[$item->getId()]['comment.add'])) {
-		    $params['view'] = 'core.ItemAdmin';
-		    $params['subView'] = 'comment.AddComment';
+		    $params['view'] = 'comment.AddComment';
 		    $params['itemId'] = $item->getId();
 		    $params['return'] = 1;
 		    $links[$item->getId()][] =
@@ -170,81 +168,6 @@ class CommentModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::loadItemDetails()
-     */
-    function loadItemDetails(&$template, $item, $permissions) {
-	if (!isset($permissions['comment.view'])) {
-	    return array(GalleryStatus::success(), null);
-	}
-
-	/* XXX: parameterize this */
-	$viewMax = 3;
-
-	GalleryCoreApi::relativeRequireOnce('modules/comment/classes/GalleryCommentHelper.class');
-	list ($ret, $comments) =
-	    GalleryCommentHelper::fetchComments($item->getId(), $viewMax, ORDER_DESCENDING);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	list ($ret, $counts) =
-	    GalleryCommentHelper::fetchCommentCounts(array($item->getId()));
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$commenters = array();
-	if (isset($counts[$item->getId()])) {
-	    $totalComments = $counts[$item->getId()];
-
-	    for ($i = 0; $i < sizeof($comments); $i++) {
-		/* Get the commenter ids */
-		$commenters[$comments[$i]->getCommenterId()] = 1;
-
-		/* Extract the member data */
-		$comments[$i] = $comments[$i]->getMemberData();
-	    }
-
-	    /* Load all the commenters */
-	    if (sizeof($commenters) > 0) {
-		list ($ret, $commentersList) =
-		    GalleryCoreApi::loadEntitiesById(array_keys($commenters));
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-	    }
-
-	    foreach ($commentersList as $commenter) {
-		$commenters[$commenter->getId()] = $commenter->getMemberData();
-	    }
-	} else {
-	    $totalComments = 0;
-	}
-
-	list ($ret, $permissions) = GalleryCoreApi::getPermissions($item->getId());
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	foreach (array('delete' => 'comment.delete',
-		       'edit' => 'comment.edit',
-		       'view' => 'comment.view')
-		 as $canFlag => $permission) {
-	    $can[$canFlag] = isset($permissions[$permission]);
-	}
-
-	$CommentItemDetails = array();
-	$CommentItemDetails['comments'] = $comments;
-	$CommentItemDetails['commenters'] = $commenters;
-	$CommentItemDetails['can'] = $can;
-	$CommentItemDetails['item'] = $item->getMemberData();
-	$CommentItemDetails['totalComments'] = $totalComments;
-	$template->setVariable('CommentItemDetails', $CommentItemDetails);
-
-	return array(GalleryStatus::success(), 'modules/comment/templates/CommentItemDetails.tpl');
-    }
-
-    /**
      * @see GalleryModule::getItemAdminViews();
      */
     function getItemAdminViews($item) {
@@ -252,11 +175,6 @@ class CommentModule extends GalleryModule {
 	list ($ret, $permissions) = GalleryCoreApi::getPermissions($item->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	if (isset($permissions['comment.add'])) {
-		$views[] = array('name' => $this->translate('Add Comment'),
-				 'view' => 'comment.AddComment');
 	}
 
 	if (isset($permissions['comment.edit']) ||

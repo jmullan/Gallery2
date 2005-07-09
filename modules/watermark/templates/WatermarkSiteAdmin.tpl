@@ -49,12 +49,12 @@
       </a>
     </td><td>
       <a href="{g->url arg1="view=core.SiteAdmin"
-       arg2="subView=watermark.WatermarkSiteAdminEdit" arg3="itemId=`$item.id`"}">
+       arg2="subView=watermark.WatermarkSiteAdminEdit" arg3="watermarkId=`$item.id`"}">
 	{g->text text="edit"}
       </a>
       &nbsp;
       <a href="{g->url arg1="controller=watermark.WatermarkSiteAdmin"
-       arg2="form[action][delete]=1" arg3="form[delete][itemId]=`$item.id`"}">
+       arg2="form[action][delete]=1" arg3="form[delete][watermarkId]=`$item.id`"}">
 	{g->text text="delete"}
       </a>
     </td><td>

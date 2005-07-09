@@ -4,5 +4,4 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-{include file="gallery:modules/watermark/templates/WatermarkEdit.tpl"
-	 watermark=$WatermarkSiteAdminEdit.watermark footer="SiteAdmin_footer"}
+{include file="gallery:modules/watermark/templates/WatermarkEdit.tpl" watermark=$WatermarkSiteAdminEdit.watermark}

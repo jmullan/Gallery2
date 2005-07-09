@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * Derived from adodb-errorhandler.inc.php which is 
+ * Derived from adodb-errorhandler.inc.php which is
  * (c) 2000, 2001 John Lim (jlim@natsoft.com.my).  All rights reserved.
- * 
+ *
  * @version $Revision$ $Date$
  * @package GalleryCore
  * @subpackage Storage
@@ -43,12 +43,12 @@ function ErrorHandler($dbms, $fn, $errno, $errmsg, $p1=false, $p2=false)
 
         $s = "$dbms error: [$errno: $errmsg] in $fn($host, ?, ?, $database)\n";
         break;
-	
+
     default:
 	$s = "$dbms error: [$errno: $errmsg] in $fn($p1, $p2)\n";
         break;
     }
-    
+
     /*
      * Log connection error somewhere
      *	0 message is sent to PHP's system logger, using the Operating System's system
@@ -75,7 +75,7 @@ function ErrorHandler($dbms, $fn, $errno, $errmsg, $p1=false, $p2=false)
     if ($gallery->getDebug()) {
 	$gallery->debug($s);
     }
-    
+
     //print "<p>$s</p>";
     //trigger_error($s,E_USER_ERROR);
 }

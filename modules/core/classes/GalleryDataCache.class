@@ -368,7 +368,7 @@ class GalleryDataCache {
 		}
 	    }
 	} else {
-	    if ($pathInfo['type'] == 'module' || $pathInfo['type'] == 'layout') {
+	    if ($pathInfo['type'] == 'module' || $pathInfo['type'] == 'theme') {
 		list ($ret, $pluginStatus) = GalleryCoreApi::fetchPluginStatus($pathInfo['type']);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
@@ -439,9 +439,9 @@ class GalleryDataCache {
      * Given a path info descriptor, return the path to the appropriate cache file
      *
      * Path info contains the following variables:
-     *  type:    entity, derivative, derivative-meta, module, layout
+     *  type:    entity, derivative, derivative-meta, module, theme
      *  itemId:  the item id
-     *  id:      (module, layout only) a refinement of the type
+     *  id:      (module, theme only) a refinement of the type
      *
      * @return string the path
      */
@@ -482,7 +482,7 @@ class GalleryDataCache {
 	    break;
 
 	case 'module':
-	case 'layout':
+	case 'theme':
 	    if (isset($pathInfo['id'])) {
 		if (isset($pathInfo['itemId'])) {
 		    list ($first, $second) = GalleryDataCache::getCacheTuple($pathInfo['itemId']);
@@ -542,7 +542,6 @@ class GalleryDataCache {
 	    }
 
 	    array_unshift($permissions, array());
-
 	    /* Trim down the cache */
 	    $max = 10;
 	    if (sizeof($permissions) > $max) {

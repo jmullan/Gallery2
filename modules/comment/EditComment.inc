@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -80,7 +80,7 @@ class EditCommentController extends GalleryController {
 	    	/*
 		 * Verify that the date is at least 2 characters long.
 		 * This is to get around an apparent bug in strtotime
-		 * which seems to read single characters as valid dates 
+		 * which seems to read single characters as valid dates
 		 * (with the exception of 'j')
 		 */
 	    	if (strlen($form['date']) < 2) {
@@ -128,8 +128,7 @@ class EditCommentController extends GalleryController {
 		}
 
 		$status['changed'] = 1;
-		$redirect['view'] = 'core.ItemAdmin';
-		$redirect['subView'] = 'comment.CommentChangeConfirmation';
+		$redirect['view'] = 'comment.CommentChangeConfirmation';
 		$redirect['itemId'] = (int)$itemId;
 	    }
 	} else if (isset($form['action']['preview'])) {
@@ -150,7 +149,7 @@ class EditCommentController extends GalleryController {
 	    	/*
 		 * Verify that the date is at least 2 characters long.
 		 * This is to get around an apparent bug in strtotime
-		 * which seems to read single characters as valid dates 
+		 * which seems to read single characters as valid dates
 		 * (with the exception of 'j')
 		 */
 	    	if (strlen($form['date']) < 2) {
@@ -173,8 +172,8 @@ class EditCommentController extends GalleryController {
 
 	    /* Fall through back to the current view */
 	} else if (isset($form['action']['cancel'])) {
-	    /* Where to go on a cancel?  Go to item admin.*/
-	    $redirect['view'] = 'core.ItemAdmin';
+	    /* Where to go on a cancel?  View the item.*/
+	    $redirect['view'] = 'core.ShowItem';
 	    $redirect['itemId'] = (int)$itemId;
 	}
 
@@ -184,8 +183,7 @@ class EditCommentController extends GalleryController {
 	    $results['redirect'] = $redirect;
 	} else {
 	    /* Stay on the same page */
-	    $results['delegate']['view'] = 'core.ItemAdmin';
-	    $results['delegate']['subView'] = 'comment.EditComment';
+	    $results['delegate']['view'] = 'comment.EditComment';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -248,15 +246,16 @@ class EditCommentView extends GalleryView {
 	    $form['subject'] = $comment->getSubject();
 	    $form['formName'] = 'EditComment';
 
-	    // XXX: this needs internationalization
+	    /* XXX: this needs internationalization */
 	    $form['date'] = strftime('%D %T', $comment->getDate());
 	}
 
 	$EditComment['comment'] = $comment->getMemberData();
+	$EditComment['itemId'] = $item->getId();
 
 	$template->setVariable('EditComment', $EditComment);
 	$template->setVariable('controller', 'comment.EditComment');
-	
+
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/comment/templates/EditComment.tpl'));
     }

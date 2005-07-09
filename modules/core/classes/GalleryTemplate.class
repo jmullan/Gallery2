@@ -287,54 +287,48 @@ class GalleryTemplate {
     }
 
     /**
-     * Return a properly configured instance of Smarty
-     *
-     * Create and configure one, if it does not exist.
+     * Return a properly configured instance of Smarty.  This used to be a single shared static
+     * instance of Smarty, but now we build it every time we need it.  Theoretically we shouldn't
+     * be creating more than one GalleryTemplate and hence, more than one Smarty instance per
+     * request.  However, having it as a static object makes it less testable.
      *
      * @return object Smarty
-     * @staticvar object Smarty $smarty The only Smarty-object that we will need
      * @static
      */
-    function &_getSmarty() {
+    function _getSmarty() {
 	global $gallery;
-	static $smarty;
 
-	if (!isset($smarty)) {
-	    /*
-	     * Load and configure Smarty.
-	     */
-	    GalleryCoreApi::relativeRequireOnce('modules/core/classes/GallerySmarty.class');
-	    $smarty = new GallerySmarty();
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GallerySmarty.class');
+	$smarty = new GallerySmarty();
 
-	    /* Compiled templates go here */
-	    $smarty->compile_dir = $gallery->getConfig('data.smarty.templates_c');
+	/* Compiled templates go here */
+	$smarty->compile_dir = $gallery->getConfig('data.smarty.templates_c');
 
-	    /* Don't let Smarty change the error reporting level */
-	    $smarty->error_reporting = error_reporting();
+	/* Don't let Smarty change the error reporting level */
+	$smarty->error_reporting = error_reporting();
 
-	    /* We have our own plugins */
-	    $platform = $gallery->getPlatform();
-	    $slash = $platform->getDirectorySeparator();
-	    $smarty->plugins_dir[] = dirname(__FILE__) . '/../../../lib/smarty_plugins';
+	/* We have our own plugins */
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+	$smarty->plugins_dir[] = dirname(__FILE__) . '/../../../lib/smarty_plugins';
 
-	    if ($gallery->getDebug()) {
-		$smarty->debugging = true;
-	    }
-	    $smarty->use_sub_dirs = false;
-
-	    $templateAdapter =& $gallery->getTemplateAdapter();
-	    $smarty->register_object('g', $templateAdapter, array(), true,
-				     array('block', 'autoComplete'));
-
-	    $smarty->register_resource('gallery',
-				       array('GalleryTemplate',
-					     'resourceGetTemplate',
-					     'resourceGetTimestamp',
-					     'resourceGetSecure',
-					     'resourceGetTrusted'));
-
-	    $smarty->assign('head', array('tpl' => array(), 'style' => array()));
+	if ($gallery->getDebug()) {
+	    $smarty->debugging = true;
 	}
+	$smarty->use_sub_dirs = false;
+
+	$templateAdapter =& $gallery->getTemplateAdapter();
+	$smarty->register_object('g', $templateAdapter, array(), true,
+				 array('addToTrailer', 'autoComplete', 'container'));
+
+	$smarty->register_resource('gallery',
+				   array('GalleryTemplate',
+					 'resourceGetTemplate',
+					 'resourceGetTimestamp',
+					 'resourceGetSecure',
+					 'resourceGetTrusted'));
+
+	$smarty->assign('head', array('tpl' => array(), 'style' => array()));
 
 	return $smarty;
     }
@@ -368,10 +362,14 @@ class GalleryTemplate {
 	$templateName =
 	    GalleryTemplate::_getActualTemplateName($smarty->template_dir . '/' . $templateName);
 
-	$stat = $platform->stat($templateName);
-	$templateTimestamp = $stat[9];
+	if ($platform->file_exists($templateName)) {
+	    $stat = $platform->stat($templateName);
+	    $templateTimestamp = $stat[9];
 
-	return true;
+	    return true;
+	} else {
+	    return false;
+	}
     }
 
     /**

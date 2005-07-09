@@ -109,7 +109,6 @@ class CoreModuleExtras {
 			   'session.lifetime' => 25 * 365 * 86400, /* 25 years */
 			   'session.inactivityTimeout' => 14 * 86400, /* two weeks */
 			   'misc.markup' => 'bbcode',
-			   'misc.login' => 'both',
 			   'lock.system' => $flockType
 			   ) as $key => $value) {
 		if (!isset($param[$key])) {
@@ -120,18 +119,18 @@ class CoreModuleExtras {
 		}
 	    }
 
-	    /* Activate the Matrix layout */
-	    list ($ret, $layout) = GalleryCoreApi::loadPlugin('layout', 'matrix');
+	    /* Activate the Matrix theme */
+	    list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', 'matrix');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    $ret = $layout->installOrUpgrade();
+	    $ret = $theme->installOrUpgrade();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    list ($ret, $ignored) = $layout->activate();
+	    list ($ret, $ignored) = $theme->activate();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -683,7 +682,7 @@ class CoreModuleExtras {
 	    if ($ret->isError()) {
 		if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
 		    /* Ok, we can change the group name */
-	    
+
 		    list ($ret, $allUserGroupId) = $module->getParameter('id.allUserGroup');
 		    if ($ret->isError()) {
 			return $ret->wrap(__FILE__, __LINE__);
@@ -706,7 +705,7 @@ class CoreModuleExtras {
 			if ($ret->isError()) {
 			    return $ret->wrap(__FILE__, __LINE__);
 			}
-			
+
 			$ret = GalleryCoreApi::releaseLocks($lockId);
 			if ($ret->isError()) {
 			    return $ret->wrap(__FILE__, __LINE__);
@@ -816,16 +815,15 @@ class CoreModuleExtras {
 
 	    /* Check the derivatives that match the search criteria */
 	    if ($searchResults->resultCount() > 0) {
-
 		$derivativeIds = array();
 		while ($result = $searchResults->nextResult()) {
 		    $derivativeIds[] = $result[0];
 		}
 		$totalDerivatives = sizeof($derivativeIds);
-		
+
 		/*
 		 * 2. Load the derivative entities
-		 * At this point we have to load pretty every derivative of this install 
+		 * At this point we have to load pretty every derivative of this install
 		 * We tried to load them all at once, some users reported time outs though
 		 * So let's load them in batches and add another progress bar
 		 */
@@ -856,7 +854,7 @@ class CoreModuleExtras {
 			    return $ret->wrap(__FILE__, __LINE__);
 			}
 			$derivatives = array_merge($derivatives, $currentDerivatives);
-			
+
 			$ret = $statusMonitor->renderStatusMessage(
 			    $module->translate(array('text' => 'Loading derivatives for the ' .
 						     'broken derivatives check ' .
@@ -871,8 +869,8 @@ class CoreModuleExtras {
 		}
 
 		/* Start detection process */
-		$gallery->guaranteeTimeLimit(30);		
-		
+		$gallery->guaranteeTimeLimit(30);
+
 		/* Show a progress bar */
 		$itemsProcessed = 0;
 		$ret = $statusMonitor->renderStatusMessage(
@@ -928,7 +926,7 @@ class CoreModuleExtras {
 		    if ($size != $referenceSize) {
 			continue;
 		    }
-		    
+
 		    /* 5. Binary compare the derivative file with the placeholder file */
 		    if (($data = $platform->file($path)) === false) {
 			return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
@@ -943,7 +941,7 @@ class CoreModuleExtras {
 		/* 6. Mark the detected broken derivatives as such and save the result to the DB */
 		if (!empty($brokenDerivatives)) {
 		    $gallery->guaranteeTimeLimit(30);
-		    
+
 		    list ($ret, $lockId) =
 			GalleryCoreApi::acquireWriteLock(array_keys($brokenDerivatives));
 		    if ($ret->isError()) {
@@ -974,7 +972,7 @@ class CoreModuleExtras {
 			    }
 			    $gallery->guaranteeTimeLimit(30);
 			}
-			
+
 			$derivative->setIsBroken(true);
 			$ret = $derivative->save(false);
 			if ($ret->isError()) {
@@ -982,7 +980,7 @@ class CoreModuleExtras {
 			    return $ret->wrap(__FILE__, __LINE__);
 			}
 		    }
-		    
+
 		    $ret = GalleryCoreApi::releaseLocks($lockId);
 		    if ($ret->isError()) {
 			return $ret->wrap(__FILE__, __LINE__);
@@ -991,7 +989,86 @@ class CoreModuleExtras {
 	    }
 	case '0.9.28':
 	    /* Changed Module Api onLoad($entity, $duringUpgrade) definition */
-	    
+
+	case '0.9.29':
+	    /* Ginormous layout and theme consolidation refactor */
+
+	    $query = '
+            UPDATE
+              [GalleryPluginParameterMap]
+            SET
+              [::pluginType] = \'theme\'
+            WHERE
+              [GalleryPluginParameterMap::pluginType] = \'layout\'
+            ';
+	    $ret = $storage->execute($query);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $query = '
+	    UPDATE
+              [GalleryAlbumItem]
+            SET
+              [::theme] = [GalleryAlbumItem::layout]
+            ';
+	    $ret = $storage->execute($query);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    /* After this refactor we only support the matrix theme */
+	    $query = '
+	    UPDATE
+              [GalleryAlbumItem]
+            SET
+              [::theme] = \'matrix\'
+            ';
+	    $ret = $storage->execute($query);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $query = '
+            UPDATE
+              [GalleryPluginMap]
+            SET
+              [::pluginType] = \'theme\'
+            WHERE
+              [GalleryPluginMap::pluginType] = \'layout\'
+            ';
+	    $ret = $storage->execute($query);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    /*
+	     * Rename g2data 'layouts' directories to be 'themes', or create them
+	     * if they don't already exist (they should exist, though).
+	     */
+	    foreach (array($gallery->getConfig('data.gallery.plugins'),
+			   $gallery->getConfig('data.gallery.plugins_data')) as $base) {
+		if ($platform->file_exists("$base/themes")) {
+		    if ($platform->file_exists("$base/layouts")) {
+			$platform->recursiveRmDir("$base/layouts");
+		    }
+		} else {
+		    if ($platform->file_exists("$base/layouts")) {
+			$platform->rename("$base/layouts", "$base/themes");
+		    } else {
+			$platform->mkdir("$base/themes");
+		    }
+		}
+	    }
+
+	    /* Removed parameters */
+	    foreach (array('language.selector', 'misc.login') as $paramName) {
+		$ret = $module->removeParameter($paramName);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
@@ -1581,7 +1658,7 @@ $gallery->setConfig(\'cookieId\', \'' . $cookieId . '\');
 	$regs[] = array('ItemEditPlugin', 'ItemEditAnimation', 'inc', null);
 	$regs[] = array('ItemEditPlugin', 'ItemEditMovie', 'inc', null);
 	$regs[] = array('ItemEditPlugin', 'ItemEditAlbum', 'inc', null);
-	$regs[] = array('ItemEditPlugin', 'ItemEditLayout', 'inc', null);
+	$regs[] = array('ItemEditPlugin', 'ItemEditTheme', 'inc', null);
 	$regs[] = array('ItemEditPlugin', 'ItemEditPhoto', 'inc', null);
 	$regs[] = array('ItemEditPlugin', 'ItemEditRotateAndScalePhoto', 'inc', null);
 	$regs[] = array('ItemEditPlugin', 'ItemEditPhotoThumbnail', 'inc', null);

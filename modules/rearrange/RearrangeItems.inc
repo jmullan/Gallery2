@@ -178,16 +178,16 @@ class RearrangeItemsView extends GalleryView {
 	    $RearrangeItems['maxWidth'] = $maxWidth + 5;
 	    $RearrangeItems['maxHeight'] = $maxHeight + 5;
 
-	    /* See if the album's layout has "rows" and/or "columns" */
-	    list ($ret, $layoutId) = GalleryCoreApi::fetchLayoutId($item);
+	    /* See if the album's theme has "rows" and/or "columns" */
+	    list ($ret, $themeId) = GalleryCoreApi::fetchThemeId($item);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    list ($ret, $layout) = GalleryCoreApi::loadPlugin('layout', $layoutId);
+	    list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    list ($ret, $params) = $layout->fetchParameters($item->getId());
+	    list ($ret, $params) = $theme->fetchParameters($item->getId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

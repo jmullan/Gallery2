@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -25,7 +25,7 @@
  * @author Jesse Mullan <jmullan@visi.com>
  */
 /**
- * This class provides an API for parsing Gallery 1 data files 
+ * This class provides an API for parsing Gallery 1 data files
  *
  * @package Migrate
  * @subpackage Gallery1DataParser
@@ -41,7 +41,7 @@ class Gallery1DataParser {
     function isValidAlbumsPath($path) {
 	global $gallery;
 	$platform = $gallery->getPlatform();
-	
+
 	if ($platform->file_exists($path . 'albumdb.dat')
 	    && $platform->is_readable($path . 'albumdb.dat')) {
 	    return true;
@@ -49,10 +49,10 @@ class Gallery1DataParser {
 	    return false;
 	}
     }
-    
+
     /**
      * Load and return user metadata from given file
-     * 
+     *
      * @param string Path to user file to unserialize
      * @return array object GalleryStatus a status code,
      *               object Unserialized user metadata
@@ -60,7 +60,7 @@ class Gallery1DataParser {
     function loadFile($fileName) {
         global $gallery;
         $platform = $gallery->getPlatform();
-	
+
 	if (!$platform->file_exists($fileName) || !$platform->is_readable($fileName)) {
 	    if ($platform->file_exists($fileName . '.bak') &&
 		    $platform->is_readable($fileName . '.bak')) {
@@ -71,13 +71,13 @@ class Gallery1DataParser {
 	    }
 	}
         $tmp = $platform->file($fileName);
-	
+
 	if (empty($tmp)) {
 	    return array(GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
 	}
-	
+
 	$tmp = join('', $tmp);
-	
+
 	/*
 	 * We renamed User.php to Gallery_User.php in v1.2, so port forward
 	 * any saved user objects.
@@ -85,11 +85,11 @@ class Gallery1DataParser {
 	if (!strcmp(substr($tmp, 0, 10), 'O:4:"user"')) {
 	    $tmp = ereg_replace('O:4:"user"', 'O:12:"gallery_user"', $tmp);
 	}
-	
+
 	$object = unserialize($tmp);
 	return array(GalleryStatus::success(), $object);
     }
-    
+
     /**
      * Fetch an array of albums from a given path
      *
@@ -101,7 +101,7 @@ class Gallery1DataParser {
         global $gallery;
         $platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
-	
+
 	list ($ret, $albumOrder) = Gallery1DataParser::loadFile($path . 'albumdb.dat');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -116,10 +116,10 @@ class Gallery1DataParser {
 	    }
 	    $albumList[$albumName] = $albumFields;
 	}
-	
+
 	return array(GalleryStatus::success(), $albumList);
     }
-    
+
     /**
      * Fetch an associative array of parentalbum names from a given path to
      * gallery1 albums
@@ -132,7 +132,7 @@ class Gallery1DataParser {
 	global $gallery;
         $platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
-	
+
 	list ($ret, $albumOrder) = Gallery1DataParser::loadFile($path . 'albumdb.dat');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -148,7 +148,7 @@ class Gallery1DataParser {
 	}
 	return array(GalleryStatus::success(), $parentAlbumList);
     }
-    
+
     /**
      * Build a data tree of albums
      *
@@ -272,7 +272,7 @@ class Gallery1DataParser {
 	}
 	return array(GalleryStatus::success(), $photos);
     }
-    
+
     /**
      * Load user uids from path
      *
@@ -289,12 +289,12 @@ class Gallery1DataParser {
 	    }
 	    $platform = $gallery->getPlatform();
 	    $slash = $platform->getDirectorySeparator();
-	    
+
 	    list ($ret, $userDB) =
 		Gallery1DataParser::loadFile($path . '.users' . $slash . 'userdb.dat');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }	    
+	    }
 	    $uids[$path] = array();
 	    foreach ($userDB->userMap as $username => $uid) {
 		if (Gallery1DataParser::isValidUid($path, $uid)
@@ -306,7 +306,7 @@ class Gallery1DataParser {
 	}
 	return array(GalleryStatus::success(), $uids[$path]);
     }
-    
+
     /**
      * Validate user id string from gallery v1.x.x
      *
@@ -352,7 +352,7 @@ class Gallery1DataParser {
 	}
 	return $valid[$path][$uid];
     }
-    
+
     /**
      * Load user metadata given a path and uid
      *
@@ -364,7 +364,7 @@ class Gallery1DataParser {
     function getUserFieldsByUid($path, $uid) {
         global $gallery;
 	static $fields;
-	
+
 	if (!isset($fields[$path][$uid])) {
 	    if (!isset($fields)) {
 		$fields = array();
@@ -412,7 +412,7 @@ class Gallery1DataParser {
     }
 }
 
-    
+
 /* Define these classes so that unserialize can use them */
 /**
  * A stub class into which various G1 objects can be unserialized.

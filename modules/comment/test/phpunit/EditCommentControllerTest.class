@@ -100,9 +100,8 @@ class EditCommentControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core.ItemAdmin',
-						'subView' => 'comment.CommentChangeConfirmation',
-						'itemId' => $this->_item[0]->getId()),
+				  'redirect' => array('view' => 'comment.CommentChangeConfirmation',
+						      'itemId' => $this->_item[0]->getId()),
 				  'status' => array('changed' => 1),
 				  'error' => array()),
 			    $results);
@@ -137,8 +136,7 @@ class EditCommentControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
-						      'subView' => 'comment.EditComment'),
+	$this->assertEquals(array('delegate' => array('view' => 'comment.EditComment'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -155,8 +153,7 @@ class EditCommentControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[date]', '');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
-						      'subView' => 'comment.EditComment'),
+	$this->assertEquals(array('delegate' => array('view' => 'comment.EditComment'),
 				  'status' => array(),
 				  'error' => array('form[error][commenterName][missing]',
 						   'form[error][date][missing]',
@@ -176,8 +173,7 @@ class EditCommentControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[date]', '6-Jun-2003 12:01:02');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
-						      'subView' => 'comment.EditComment'),
+	$this->assertEquals(array('delegate' => array('view' => 'comment.EditComment'),
 				  'status' => array(),
 				  'error' => array('form[error][commenterName][invalid]')),
 			    $results);
@@ -194,8 +190,7 @@ class EditCommentControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[date]', '6-Jun-2003 12:01:02');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
-						      'subView' => 'comment.EditComment'),
+	$this->assertEquals(array('delegate' => array('view' => 'comment.EditComment'),
 				  'status' => array(),
 				  'error' => array('form[error][commenterName][invalid]')),
 			    $results);
@@ -213,8 +208,7 @@ class EditCommentControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[date]', 'x');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
-						      'subView' => 'comment.EditComment'),
+	$this->assertEquals(array('delegate' => array('view' => 'comment.EditComment'),
 				  'status' => array(),
 				  'error' => array('form[error][date][invalid]')),
 			    $results);
@@ -232,8 +226,7 @@ class EditCommentControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[date]', 'bogo-date');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
-						      'subView' => 'comment.EditComment'),
+	$this->assertEquals(array('delegate' => array('view' => 'comment.EditComment'),
 				  'status' => array(),
 				  'error' => array('form[error][date][invalid]')),
 			    $results);
@@ -251,8 +244,7 @@ class EditCommentControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[date]', 'x');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
-						      'subView' => 'comment.EditComment'),
+	$this->assertEquals(array('delegate' => array('view' => 'comment.EditComment'),
 				  'status' => array(),
 				  'error' => array('form[error][date][invalid]')),
 			    $results);
@@ -270,8 +262,7 @@ class EditCommentControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[date]', 'bogo-date');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
-						      'subView' => 'comment.EditComment'),
+	$this->assertEquals(array('delegate' => array('view' => 'comment.EditComment'),
 				  'status' => array(),
 				  'error' => array('form[error][date][invalid]')),
 			    $results);
@@ -291,8 +282,7 @@ class EditCommentControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
-						      'subView' => 'comment.EditComment'),
+	$this->assertEquals(array('delegate' => array('view' => 'comment.EditComment'),
 				  'status' => array(),
 				  'error' => array('form[error][commenterName][missing]',
 						   'form[error][date][missing]',
@@ -336,7 +326,7 @@ class EditCommentControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core.ItemAdmin',
+				  'redirect' => array('view' => 'core.ShowItem',
 						      'itemId' => $this->_item[0]->getId()),
 				  'status' => array(),
 				  'error' => array()),

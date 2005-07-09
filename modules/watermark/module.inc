@@ -50,7 +50,7 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
     /**
      * @see GalleryModule::upgrade
      */
-    function upgrade($currentVersion, $statusMonitor) {
+    function upgrade($currentVersion) {
 	global $gallery;
 
 	$platform = $gallery->getPlatform();

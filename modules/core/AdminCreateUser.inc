@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -55,7 +55,7 @@ class AdminCreateUserController extends GalleryController {
 	    /* Go back to the AdminUsers view */
 	    $redirect['view'] = 'core.SiteAdmin';
 	    $redirect['subView'] = 'core.AdminUsers';
-	    
+
 	} else if (isset($form['action']['create'])) {
 	    /*
 	     * If all the right fields are in place then go ahead and
@@ -65,7 +65,7 @@ class AdminCreateUserController extends GalleryController {
 	        !empty($form['email']) &&
 	        !empty($form['password1']) &&
 	        $form['password1'] == $form['password2']) {
-	    
+
 		list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -75,7 +75,7 @@ class AdminCreateUserController extends GalleryController {
 		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
 				 null);
 		}
-		
+
 		$ret = $user->create($form['userName']);
 		if ($ret->isError()) {
 		    if (!($ret->getErrorCode() & ERROR_COLLISION)) {
@@ -89,7 +89,7 @@ class AdminCreateUserController extends GalleryController {
 		    $user->setFullName($form['fullName']);
 		    $user->setLanguage($form['language']);
 		    $user->changePassword($form['password1']);
-		
+
 		    $ret = $user->save();
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
@@ -141,12 +141,12 @@ class AdminCreateUserView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
-	
+
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	    
+
 	if ($form['formName'] != 'AdminCreateUser') {
 	    /* First time around, set our defaults here. */
 	    $form['userName'] = '';
@@ -163,7 +163,7 @@ class AdminCreateUserView extends GalleryView {
 	}
 	$languageList = array();
 	$languageList[''] = $module->translate('<none>');
-	
+
 	$translator =& $gallery->getTranslator();
 	$supportedLanguages = $translator->getSupportedLanguages();
 	foreach ($supportedLanguages as $language => $countryList) {

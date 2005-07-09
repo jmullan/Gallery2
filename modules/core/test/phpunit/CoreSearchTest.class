@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -40,11 +40,11 @@ class CoreSearchTest extends GalleryTestCase {
     }
 
     /**
-     * 
+     *
      */
     function setUp() {
 	global $gallery;
-	
+
 	parent::setUp();
 
 	list ($ret, $moduleStatusList) = GalleryCoreApi::fetchPluginStatus('module');
@@ -90,7 +90,7 @@ class CoreSearchTest extends GalleryTestCase {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    
+
 	    switch($i) {
 	    case 1:
 	    case 2:
@@ -131,7 +131,7 @@ class CoreSearchTest extends GalleryTestCase {
 	if (!isset($this->_coreSearch)) {
 	    return;
 	}
-	
+
 	list ($ret, $info) = $this->_coreSearch->getSearchModuleInfo();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -177,7 +177,7 @@ class CoreSearchTest extends GalleryTestCase {
 	if (empty($userName)) {
 	    $userName = $this->_user->getUserName();
 	}
-	
+
 	$this->assertEquals(
 	    array('start' => 1,
 		  'end' => 3,
@@ -208,7 +208,7 @@ class CoreSearchTest extends GalleryTestCase {
 				    array('key' => $owner,
 					  'value' => $userName))),
 			array('itemId' => $this->_item[1]->getId(),
-			      'fields' => 
+			      'fields' =>
 			      array(array('key' => $title,
 					  'value' => $this->_item[1]->getTitle()),
 				    array('key' => $summary,
@@ -247,7 +247,7 @@ class CoreSearchTest extends GalleryTestCase {
 	if (empty($userName)) {
 	    $userName = $this->_user->getUserName();
 	}
-	
+
 	$this->assertEquals(
 	    array('start' => 1,
 		  'end' => 3,
@@ -282,7 +282,7 @@ class CoreSearchTest extends GalleryTestCase {
 						      'value' => $userName))))),
 	    $results);
     }
-    
+
     /**
      * Search for all available fields, but only request a subset of the total results
      */
@@ -313,7 +313,7 @@ class CoreSearchTest extends GalleryTestCase {
 	if (empty($userName)) {
 	    $userName = $this->_user->getUserName();
 	}
-	
+
 	$this->assertEquals(
 	    array('start' => 2,
 		  'end' => 3,
@@ -426,7 +426,7 @@ class CoreSearchTest extends GalleryTestCase {
 				    array('key' => $description,
 					  'value' => $this->_item[3]->getDescription()),
 				    array('key' => $owner,
-					  'value' => $userName))), 
+					  'value' => $userName))),
 			array('itemId' => $this->_item[2]->getId(),
 			      'fields' =>
 			      array(array('key' => $title,

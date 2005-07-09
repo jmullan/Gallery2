@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -56,7 +56,7 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
         if ($ret->isError()) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
-	
+
         $expected = array('title' => 'Who likes bananas?',
 			  'description' => 'No description',
 			  'summary' => '',
@@ -228,7 +228,7 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
 				  ),
 			    $uids);
     }
-    
+
     function testGetUserFieldsByUsername() {
         /* monkey is the target username */
         list ($ret, $fields) =
@@ -236,7 +236,7 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
         if ($ret->isError()) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
-	
+
         $this->assertEquals(array('username' => 'monkey',
                                   'fullname' => 'This is a Full Name',
                                   'password' => '1c40c25608fd7435cdaa4a8efab49bbd',
@@ -260,7 +260,7 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
         if ($ret->isError()) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
-	
+
         $this->assertEquals(array('username' => 'monkey',
                                   'fullname' => 'This is a Full Name',
                                   'password' => '1c40c25608fd7435cdaa4a8efab49bbd',
@@ -283,7 +283,7 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
         if ($ret->isError()) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
-	
+
         $this->assertEquals(array('username' => 'phpunit_foobar',
 				  'fullname' => 'Foo Bar',
 				  'password' => 'd53ebf1ed8bfa13e116a08e48f9ea26e',
@@ -298,8 +298,8 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
 				  'lastActionDate' => null,
 				  'origEmail' => null
 				  ),
-			    $fields);	
-	
+			    $fields);
+
     }
     function testGetUserFieldsByReallyMissingUid() {
         list ($ret, $fields) =
@@ -309,7 +309,7 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
 
     function testIsValidUid() {
 	$valid = Gallery1DataParser::isValidUid($this->_albumsDir, '1057837115_2072132305');
-	$this->assertEquals($valid, true);	
+	$this->assertEquals($valid, true);
     }
 
     function testIsInvalidMissingUid() {

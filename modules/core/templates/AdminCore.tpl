@@ -51,14 +51,6 @@
 	{html_options options=$AdminCore.languageList selected=$form.default.language}
       </select>
     </td>
-  </tr><tr>
-    <td>
-      {g->text text="Language selector in sidebar"}
-    </td><td>
-      <select name="{g->formVar var="form[language][selector]"}">
-	{html_options options=$AdminCore.languageSelectorList selected=$form.language.selector}
-      </select>
-    </td>
   </tr></table>
   {else}
     <div class="giWarning">
@@ -175,14 +167,6 @@
 
   <table class="gbDataTable"><tr>
     <td>
-      {g->text text="Login Method"}
-    </td><td>
-      <select name="{g->formVar var="form[misc][login]"}">
-	{html_options options=$AdminCore.loginMethod selected=$form.misc.login}
-      </select>
-    </td>
-  </tr><tr>
-    <td>
       {g->text text="Session Lifetime"}
     </td><td>
       <select name="{g->formVar var="form[session][lifetime]"}">
@@ -286,7 +270,7 @@
 </div>
 
 <div class="gbBlock">
-  <h3> 
+  <h3>
     {g->text text="Cookies"}
     <span id="AdminCore_cookie-toggle"
      class="giBlockToggle gcBackground1 gcBorder2" style="border-width: 1px"
@@ -299,7 +283,7 @@
    style="display: none; border-width: 1px; border-style: dotted; padding: 4px">
     {g->text text="If your Gallery is embedded and you leave the following fields empty, then all DownloadItem links (the URLs of the images and other items) in the embedded Gallery have <b>an appended GALLERYSID string</b> in the URL which is <b>a minor security risk</b> when your Gallery users start copy'n'pasting image URLs in forums, guestbooks, etc. The alternative is to set the <b>cookie path</b>. Gallery will then <b>not append the GALLERYSID to the embedded DownloadItem URLs</b>. E.g. when Gallery is reachable at http://www.example.com/application/gallery2/ and the embedding application is at http://www.example.com/application/, then you have to compare the path /application/gallery2/ with /application/. The cookie path is the part of the paths that is equal, in this case it is '/application/'. Most often it is just '/'."}  <br/>
     {g->text text="The <b>cookie domain</b> is also only needed for embedded Gallery installs and only if you want to get rid of the GALLERYSID string in the embedded DownloadItem URLs. <b>In most cases, the cookie domain can be left blank.</b> Set it only, if Gallery and the embedding application are only reachable with <b>different subdomains</b>. E.g. when Gallery is at http://photos.example.com/ and the application is at http://www.example.com/, then you have to set the cookie domain example.com (the part of the host string that is common to both, Gallery and the embedding application)."} <br/>
-    {g->text text="Once you change the cookie settings, <b>all registered users</b> of your Gallery will <b>have to clear their browser cookie cache</b>. If they do not, they will experience login / logout / lost session problems."} 
+    {g->text text="Once you change the cookie settings, <b>all registered users</b> of your Gallery will <b>have to clear their browser cookie cache</b>. If they do not, they will experience login / logout / lost session problems."}
   </p>
 
   <table class="gbDataTable"><tr>

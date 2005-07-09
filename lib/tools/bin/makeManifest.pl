@@ -51,40 +51,67 @@ foreach my $manifest (keys %sections) {
   open(my $out, ">$manifest.new") or die;
   print $out "# File crc32 crc32(crlf) size size(crlf)  or  R File\n";
   my @entries = @{$sections{$manifest}};
+  my %deleted;
+  my %seen = {};
   foreach my $entry (@entries) {
     my ($file, $isBinary) = split(/\@\@/, $entry);
     next if ($file =~ /MANIFEST$/);
 
-    open(my $fd, "<$file");
-    binmode($fd);
-    my $data = join('', <$fd>);
-    close($fd);
-
-    my ($data_crlf, $size, $size_crlf);
-    if ($isBinary) {
-      $data_crlf = $data;
-      $size = $size_crlf = (stat($file))[7];
+    if ($file =~ /deleted:(.*)/) {
+      $deleted{$1}++;
     } else {
-      if ($data =~ /\r/) {
-	($data_crlf = $data) =~ s/\r//g;
-      } else {
-	($data_crlf = $data) =~ s/\n/\r\n/g;
-      }
-      $size = length($data);
-      $size_crlf = length($data_crlf);
-    }
+      $seen{$file}++;
+      open(my $fd, "<$file");
+      binmode($fd);
+      my $data = join('', <$fd>);
+      close($fd);
 
-    my $cksum = crc32($data);
-    my $cksum_crlf = crc32($data_crlf);
-    print $out "$file\t$cksum\t$cksum_crlf\t$size\t$size_crlf\n";
+      my ($data_crlf, $size, $size_crlf);
+      if ($isBinary) {
+	$data_crlf = $data;
+	$size = $size_crlf = (stat($file))[7];
+      } else {
+	if ($data =~ /\r/) {
+	  ($data_crlf = $data) =~ s/\r//g;
+	} else {
+	  ($data_crlf = $data) =~ s/\n/\r\n/g;
+	}
+	$size = length($data);
+	$size_crlf = length($data_crlf);
+      }
+
+      my $cksum = crc32($data);
+      my $cksum_crlf = crc32($data_crlf);
+      print $out "$file\t$cksum\t$cksum_crlf\t$size\t$size_crlf\n";
+    }
   }
   my $oldContent = '';
   if (open(FD, "<$manifest")) {
-    @_ = <FD>;
-    $oldContent = join('', @_);
-    print $out join('', grep(/^R\t/, @_));
+    my @old_lines = <FD>;
+
+    $oldContent = join('', @old_lines);
+    close(FD);
+
+    foreach (@old_lines) {
+      next if /^\#/;
+      if (/^R\t(.*)$/) {
+	if ($seen{$1}) {
+	  # Marked as deleted in the old manifest but back again!
+	} else {
+	  $deleted{$1}++;
+	}
+      } else {
+	/^(\S+)\t/;
+	unless ($seen{$1}) {
+	  # We used to have it but we don't anymore
+	  $deleted{$1}++;
+	}
+      }
+    }
+
+    print $out map("R\t$_\n", sort keys %deleted);
   }
-  close $out;
+  close($out);
 
   $changed += replaceIfNecessary($oldContent, $manifest, "$manifest.new");
   $total++;
@@ -130,13 +157,19 @@ sub parseCvs {
       } if (-f $target) {
 	die "$target not a dir" if (! -d $target);
       } else {
-	# CVS doesn't always get rid of D/ entries when the dir is 
+	# CVS doesn't always get rid of D/ entries when the dir is
 	# pruned.  Ignore.
       }
-    } elsif (m|/([^/]*)/|) {
+    } elsif (m|/([^/]*)/([^/]*)/|) {
       next if m{/MANIFEST$};
-      my $target = "$activeDir/$1";
-      die "$target not a file" if (! -f $target);
+      my $target;
+      if ($2 =~ '^-') {
+	# Deleted file
+	$target = "deleted:$activeDir/$1";
+      } else {
+	$target = "$activeDir/$1";
+	die "$target not a file" if (! -f $target);
+      }
       push(@$entries, sprintf("%s@@%d", $target, m/-kb/));
     } else {
       die "Can't parse: $_";

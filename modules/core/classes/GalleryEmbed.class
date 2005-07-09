@@ -145,7 +145,7 @@ class GalleryEmbed {
      *
      * @return array ('isDone' => boolean,
      *                [optional: 'headHtml' => string, 'bodyHtml' => string,
-     *                           'sidebarHtml' => string, 'layoutData' => array])
+     *                           'sidebarHtml' => string])
      * @static
      */
     function handleRequest() {
@@ -656,50 +656,6 @@ class GalleryEmbed {
     }
 
     /**
-     * Return the SystemContent block for a specific module
-     *
-     * @param string module id
-     * @param string the name of the content (see the module for a description of
-     *                                        available systemContents)
-     * @return array object GalleryStatus
-     *               string html content
-     */
-    function getSystemContent($moduleId, $contentId) {
-	global $gallery;
-
-	/* Load the module list */
-	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	if (isset($moduleStatus[$moduleId]) && !empty($moduleStatus[$moduleId]['active'])) {
-	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    /* Load our templating engine */
-	    GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTemplate.class');
-	    $template = new GalleryTemplate(dirname(__FILE__) . '/../../..');
-	    $template->setVariable('l10Domain', 'module_' . $moduleId);
-
-	    /* Load all module-related content for these items */
-	    list ($ret, $systemContent) = $module->loadSystemContent($template);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    if (! empty($systemContent[$contentId])) {
-		return $template->fetch($systemContent[$contentId]);
-	    } else {
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), '');
-	    }
-	}
-
-	return array(GalleryStatus::success(), '');
-    }
-
-    /**
      * Parse html (headHtml) for css links, javascript and page title
      *
      * @param string headHtml
@@ -778,12 +734,13 @@ class GalleryEmbed {
 	    /* Generate the imageblock */
 	    GalleryCoreApi::relativeRequireOnce(
 		'modules/imageblock/classes/ImageBlockHelper.class');
-	    list ($ret, $tpl) = ImageBlockHelper::loadImageBlocks($template, $params);
+	    $ret = ImageBlockHelper::loadImageBlocks($template, $params);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
-	    if (!empty($tpl)) {
+	    if ($template->hasVariable('ImageBlockSystemContent')) {
+		$tpl = 'modules/imageblock/templates/ImageBlock.tpl';
 		/* Render and get the imageblock html */
 		list ($ret, $blockHtml) = $template->fetch("gallery:$tpl");
 		if ($ret->isError()) {

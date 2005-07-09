@@ -408,7 +408,7 @@ class WatermarkHelper {
     function handleEditRequest($form, $view, $subViewSuccess, $subViewError) {
 	$status = array();
 	$error = array();
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
+	$itemId = GalleryUtilities::getRequestVariables('watermarkId');
 	if (empty($itemId)) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
@@ -500,7 +500,7 @@ class WatermarkHelper {
      * @static
      */
     function loadEditTemplate(&$template, &$form, $formName) {
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
+	$itemId = GalleryUtilities::getRequestVariables('watermarkId');
 
 	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
 	if ($ret->isError()) {

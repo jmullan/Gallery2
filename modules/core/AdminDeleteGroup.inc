@@ -2,19 +2,19 @@
 /*
  * $RCSfile$
  *
- * Gallery - a web based photo album viewer and deleteor
+ * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -51,13 +51,13 @@ class AdminDeleteGroupController extends GalleryController {
 	$status = array();
 	$error = array();
 	$groupId = GalleryUtilities::getRequestVariables('groupId');
-	
+
 	if (isset($form['action']['cancel'])) {
 
 	    /* Go back to the AdminGroups view */
 	    $redirect['view'] = 'core.SiteAdmin';
 	    $redirect['subView'] = 'core.AdminGroups';
-	    
+
 	} else if (isset($form['action']['delete'])) {
 
 	    /* Only allow users to delete GROUP_NORMAL groups. */
@@ -76,7 +76,7 @@ class AdminDeleteGroupController extends GalleryController {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
+
 		/* Request a redirect to the confirmation screen */
 		$redirect['view'] = 'core.SiteAdmin';
 		$redirect['subView'] = 'core.AdminGroups';
@@ -110,7 +110,7 @@ class AdminDeleteGroupView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
-	
+
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);

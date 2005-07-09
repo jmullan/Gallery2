@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -41,7 +41,7 @@ class CommentSearchTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
-	
+
 	parent::setUp();
 
 	list ($ret, $moduleStatusList) = GalleryCoreApi::fetchPluginStatus('module');
@@ -78,7 +78,7 @@ class CommentSearchTest extends GalleryTestCase {
 		    print $ret->getAsHtml();
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
-		
+
 		$this->assert(isset($this->_comment[$j][$i]), 'Missing comment instance');
 		$this->_comment[$j][$i]->create($this->_item[$j]->getId());
 		$this->_comment[$j][$i]->setCommenterId($gallery->getActiveUserId());
@@ -98,7 +98,7 @@ class CommentSearchTest extends GalleryTestCase {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-		
+
 	    switch($j) {
 	    case 0:
 		$ret = GalleryCoreApi::addUserPermission($this->_item[$j]->getId(),
@@ -109,7 +109,7 @@ class CommentSearchTest extends GalleryTestCase {
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
 		break;
-		
+
 	    case 1:
 		$ret = GalleryCoreApi::addGroupPermission($this->_item[$j]->getId(),
 								$groupId,
@@ -119,7 +119,7 @@ class CommentSearchTest extends GalleryTestCase {
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
 		break;
-		
+
 	    case 2:
 		$ret = GalleryCoreApi::addUserPermission($this->_item[$j]->getId(),
 							       $gallery->getActiveUserId(),
@@ -129,7 +129,7 @@ class CommentSearchTest extends GalleryTestCase {
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
 		break;
-		
+
 	    case 3:
 		$ret = GalleryCoreApi::addGroupPermission($this->_item[$j]->getId(),
 								$groupId,
@@ -192,7 +192,7 @@ class CommentSearchTest extends GalleryTestCase {
 	if (empty($userName)) {
 	    $userName = $this->_user->getUserName();
 	}
-	
+
 	$this->assertEquals(
 	    array('start' => 1,
 		  'end' => 4,
@@ -251,7 +251,7 @@ class CommentSearchTest extends GalleryTestCase {
 	if (empty($userName)) {
 	    $userName = $this->_user->getUserName();
 	}
-	
+
 	$this->assertEquals(
 	    array('start' => 2,
 		  'end' => 3,

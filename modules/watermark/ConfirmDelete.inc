@@ -36,7 +36,7 @@ class ConfirmDeleteController extends GalleryController {
      */
     function handleRequest($form) {
 	/* Make sure we have permission to edit this item */
-	$ret = GalleryCoreApi::assertHasItemPermission($form['itemId'], 'core.edit');
+	$ret = GalleryCoreApi::assertHasItemPermission($form['watermarkId'], 'core.edit');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -45,7 +45,7 @@ class ConfirmDeleteController extends GalleryController {
 	if (isset($form['action']['delete'])) {
 	    GalleryCoreApi::relativeRequireOnce('modules/watermark/classes/WatermarkHelper.class');
 
-	    list ($ret) = WatermarkHelper::deleteWatermarkImageById($form['itemId'], true);
+	    list ($ret) = WatermarkHelper::deleteWatermarkImageById($form['watermarkId'], true);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -76,8 +76,8 @@ class ConfirmDeleteView extends GalleryView {
 	GalleryCoreApi::relativeRequireOnce('modules/watermark/classes/WatermarkHelper.class');
 	if ($form['formName'] != 'ConfirmDelete') {
 	    $form['formName'] = 'ConfirmDelete';
-	    list ($form['itemId'], $form['fromAdmin']) =
-		GalleryUtilities::getRequestVariables('itemId', 'fromAdmin');
+	    list ($form['watermarkId'], $form['fromAdmin']) =
+		GalleryUtilities::getRequestVariables('watermarkId', 'fromAdmin');
 	}
 
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($form['itemId']);

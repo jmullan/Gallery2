@@ -48,17 +48,18 @@ class UserWatermarksController extends GalleryController {
 	     * If we don't get useful data from that or its a type we don't
 	     * recognize, take a swing at it using the file name.
 	     */
-        list ($ret, $mimeExtensions) = GalleryCoreApi::convertMimeToExtensions($mimeType);
+	    list ($ret, $mimeExtensions) = GalleryCoreApi::convertMimeToExtensions($mimeType);
 	    if ($mimeType == 'application/octet-stream' ||
-		    $mimeType == 'application/unknown' || empty($mimeExtensions)) {
+		$mimeType == 'application/unknown' || empty($mimeExtensions)) {
 		$extension = GalleryUtilities::getFileExtension($form['name'][1]);
-        list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
-        if ($ret->isError()) {
-            $mimeType = 'application/unknown';
-        }
+		list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
+		if ($ret->isError()) {
+		    $mimeType = 'application/unknown';
+		}
 	    }
 
-	    list ($ret, $item) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'WatermarkImage');
+	    list ($ret, $item) =
+		GalleryCoreApi::newFactoryInstance('GalleryEntity', 'WatermarkImage');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -95,16 +96,16 @@ class UserWatermarksController extends GalleryController {
 
 	    $results['redirect']['view'] = 'core.UserAdmin';
 	    $results['redirect']['subView'] = 'watermark.UserWatermarkEdit';
-	    $results['redirect']['itemId'] = $item->getId();
+	    $results['redirect']['watermarkId'] = $item->getId();
 	} else if (isset($form['action']['add'])) {
 	    $error[] = 'form[error][missingFile]';
 	    $results['delegate']['view'] = 'core.UserAdmin';
 	    $results['delegate']['subView'] = 'watermark.UserWatermarks';
-	} else if (isset($form['action']['delete']) && isset($form['delete']['itemId'])) {
+	} else if (isset($form['action']['delete']) && isset($form['delete']['watermarkId'])) {
 	    GalleryCoreApi::relativeRequireOnce('modules/watermark/classes/WatermarkHelper.class');
 
 	    list ($ret, $wasDeleted) =
-		WatermarkHelper::deleteWatermarkImageById($form['delete']['itemId']);
+		WatermarkHelper::deleteWatermarkImageById($form['delete']['watermarkId']);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -114,10 +115,10 @@ class UserWatermarksController extends GalleryController {
 		$results['redirect']['view'] = 'core.UserAdmin';
 		$results['redirect']['subView'] = 'watermark.UserWatermarks';
 	    } else {
-		// Watermark is in use.. redirect to confirm page:
+		/* Watermark is in use.. redirect to confirm page: */
 		$results['redirect']['view'] = 'core.UserAdmin';
 		$results['redirect']['subView'] = 'watermark.ConfirmDelete';
-		$results['redirect']['itemId'] = $form['delete']['itemId'];
+		$results['redirect']['watermarkId'] = $form['delete']['watermarkId'];
 	    }
 	}
 
@@ -141,7 +142,8 @@ class UserWatermarksView extends GalleryView {
 	global $gallery;
 	GalleryCoreApi::relativeRequireOnce('modules/watermark/classes/WatermarkHelper.class');
 
-	list ($ret, $anonymousUserId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	list ($ret, $anonymousUserId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

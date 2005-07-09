@@ -13,6 +13,7 @@ require_once('ItemAddPluginTestCase.class');
 require_once('ItemEditPluginTestCase.class');
 require_once('CodeAuditTestCase.class');
 require_once('UnitTestPlatform.class');
+require_once('MockTemplateAdapter.class');
 
 function PhpUnitGalleryMain(&$testSuite, $filter) {
     $ret = GalleryInitFirstPass();

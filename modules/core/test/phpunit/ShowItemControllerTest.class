@@ -57,7 +57,7 @@ class ShowItemControllerTest extends GalleryControllerTestCase {
     function testTurnOnGuestPreviewMode() {
 	global $gallery;
 	$session =& $gallery->getSession();
-	$session->put('layout.guestPreviewMode', 0);
+	$session->put('theme.guestPreviewMode', 0);
 
 	GalleryUtilities::putRequestVariable('guestPreviewMode', '1');
 	$results = $this->handleRequest();
@@ -65,13 +65,13 @@ class ShowItemControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
-	$this->assertEquals(1, $session->get('layout.guestPreviewMode'));
+	$this->assertEquals(1, $session->get('theme.guestPreviewMode'));
     }
 
     function testTurnOffGuestPreviewMode() {
 	global $gallery;
 	$session =& $gallery->getSession();
-	$session->put('layout.guestPreviewMode', 1);
+	$session->put('theme.guestPreviewMode', 1);
 
 	GalleryUtilities::putRequestVariable('guestPreviewMode', '0');
 	$results = $this->handleRequest();
@@ -79,20 +79,20 @@ class ShowItemControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
-	$this->assertEquals(0, $session->get('layout.guestPreviewMode'));
+	$this->assertEquals(0, $session->get('theme.guestPreviewMode'));
     }
 
     function testIgnoreGuestPreviewMode() {
 	global $gallery;
 	$session =& $gallery->getSession();
-	$session->put('layout.guestPreviewMode', 1);
+	$session->put('theme.guestPreviewMode', 1);
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 1,
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
-	$this->assertEquals(1, $session->get('layout.guestPreviewMode'));
+	$this->assertEquals(1, $session->get('theme.guestPreviewMode'));
     }
 }
 ?>

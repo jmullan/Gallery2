@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -49,7 +49,7 @@ class AdminModulesController extends GalleryController {
 
 	$status = array();
 	$error = array();
-	
+
 	list($moduleId, $action) = GalleryUtilities::getRequestVariables('moduleId', 'action');
 	if (!empty($moduleId) && !empty($action)) {
 	    list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId, true);
@@ -61,9 +61,9 @@ class AdminModulesController extends GalleryController {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
 	    switch($action) {
-		
+
 	    case 'install':
 		$ret = $module->installOrUpgrade();
 		if ($ret->isError()) {
@@ -80,7 +80,7 @@ class AdminModulesController extends GalleryController {
 		$status['installed'] = $module->translate($module->getName());
 		$status['autoConfigured'] = $autoConfigured;
 		break;
-		
+
 	    case 'upgrade':
 		$ret = $module->installOrUpgrade();
 		if ($ret->isError()) {
@@ -91,7 +91,7 @@ class AdminModulesController extends GalleryController {
 		$redirect['subView'] = 'core.AdminModules';
 		$status['upgraded'] = $module->translate($module->getName());
 		break;
-		
+
 	    case 'activate':
 		/* Can't activate if we're already active! */
 		if (!$isActive) {
@@ -99,13 +99,13 @@ class AdminModulesController extends GalleryController {
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
-		
+
 		    /* Can't activate if we need to be configured! */
 		    if ($needsConfiguration) {
 			return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
 				     null);
 		    }
-		
+
 		    list ($ret, $redirect) = $module->activate();
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
@@ -118,7 +118,7 @@ class AdminModulesController extends GalleryController {
 		    $status['activated'] = $module->translate($module->getName());
 		}
 		break;
-		
+
 	    case 'deactivate':
 		/* Can't deactivate if we're not active! */
 		if ($isActive) {
@@ -141,7 +141,7 @@ class AdminModulesController extends GalleryController {
 		$redirect['moduleId'] = $module->getId();
 		$status['uninstalled'] = $module->translate($module->getName());
 		break;
-		
+
 	    default:
 		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
 			     null);
@@ -178,7 +178,7 @@ class AdminModulesView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
-	
+
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -188,7 +188,7 @@ class AdminModulesView extends GalleryView {
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	/* Load the module list */
 	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module', true);
 	if ($ret->isError()) {
@@ -316,7 +316,7 @@ class AdminModulesView extends GalleryView {
 	/* Render the HTML body */
 	$template->setVariable('AdminModules', $AdminModules);
 	$template->setVariable('controller', 'core.AdminModules');
-	
+
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/AdminModules.tpl'));
     }

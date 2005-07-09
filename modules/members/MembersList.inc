@@ -41,7 +41,8 @@ class MembersListView extends GalleryView {
     function loadTemplate(&$template, &$form) {
     	global $gallery;
 	GalleryCoreApi::relativeRequireOnce('modules/members/classes/GalleryMembersHelper.class');
-	list ($ret, $result) = GalleryMembersHelper::canViewMembersModule($gallery->getActiveUserId());
+	list ($ret, $result) =
+	    GalleryMembersHelper::canViewMembersModule($gallery->getActiveUserId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -121,16 +122,6 @@ class MembersListView extends GalleryView {
 
 	/* Render the HTML body */
 	$template->setVariable('MembersList', $MembersList);
-
-	list ($ret, $navigationView) = GalleryView::loadView('core.Navigation');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	list ($ret, $ignored) = $navigationView->loadTemplate($template, $form);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'members');
 	if ($ret->isError()) {

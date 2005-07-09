@@ -35,26 +35,8 @@ msgstr "Zkouška emailu"
 msgid "&laquo; None &raquo;"
 msgstr "&laquo; Žádná &raquo;"
 
-msgid "None"
-msgstr "Nikdo"
-
-msgid "Guest User Only"
-msgstr "Pouze návštěvník"
-
-msgid "Everybody"
-msgstr "Všichni"
-
 msgid "forever"
 msgstr "navždy"
-
-msgid "Link to Login Page"
-msgstr "Odkaz na přihlašovací stránku"
-
-msgid "Form on Sidebar"
-msgstr "Formulář v postranní liště"
-
-msgid "Both"
-msgstr "Obě"
 
 msgid "No Markup"
 msgstr "Neznačkovat"
@@ -108,6 +90,9 @@ msgstr "instalovat"
 msgid "upgrade"
 msgstr "aktualizovat"
 
+msgid "configure"
+msgstr "konfigurovat"
+
 msgid "activate"
 msgstr "aktivovat"
 
@@ -117,17 +102,14 @@ msgstr "odinstalovat"
 msgid "deactivate"
 msgstr "deaktivovat"
 
+msgid "Other"
+msgstr "Jiné"
+
 msgid "Inherit settings from parent album"
 msgstr "Zdědit nastavení z nadřazeného alba"
 
 msgid "Use these settings"
 msgstr "Použít tato nastavení"
-
-msgid "configure"
-msgstr "konfigurovat"
-
-msgid "Other"
-msgstr "Jiné"
 
 msgid "key"
 msgstr "klíč"
@@ -174,8 +156,20 @@ msgstr "Registrovaní uživatelé"
 msgid "All Users"
 msgstr "Všichni uživatelé"
 
+msgid "Loading derivatives for the broken derivatives check"
+msgstr ""
+
+msgid "Detecting broken derivatives"
+msgstr ""
+
+msgid "Marking broken derivatives"
+msgstr ""
+
 msgid "Site Admins"
 msgstr "Správci"
+
+msgid "Everybody"
+msgstr "Všichni"
 
 msgid "Guest"
 msgstr "Návštěvník"
@@ -185,6 +179,15 @@ msgstr "Galerie"
 
 msgid "This is the main page of your Gallery"
 msgstr "Toto je hlavní stránka Vaší Galerie"
+
+msgid "Loading derivatives for the "
+msgstr ""
+
+msgid "Detecting broken derivatives "
+msgstr ""
+
+msgid "Marking broken derivatives "
+msgstr ""
 
 msgid "add items"
 msgstr "přidat položky"
@@ -259,9 +262,6 @@ msgstr "upravit %s"
 msgid "Settings saved successfully."
 msgstr "Nastavení úspěšně uloženo."
 
-msgid "&laquo; default layout &raquo;"
-msgstr "&laquo; výchozí rozložení &raquo;"
-
 msgid "&laquo; default theme &raquo;"
 msgstr "&laquo; výchozí téma &raquo;"
 
@@ -279,12 +279,6 @@ msgstr "editovat podtitulky"
 
 msgid "General"
 msgstr "Obecné"
-
-msgid "Successfully saved layout settings"
-msgstr "Nastavení rozvržení úspěšně uloženo"
-
-msgid "Layout"
-msgstr "Rozvržení"
 
 msgid "Movie Size"
 msgstr "Velikost videa"
@@ -343,6 +337,13 @@ msgstr "Měřítko úspěšně změněno"
 msgid "Modify Photo"
 msgstr "Upravit fotografii"
 
+#, fuzzy
+msgid "Successfully saved theme settings"
+msgstr "Nastavení rozvržení úspěšně uloženo"
+
+msgid "Theme"
+msgstr "Téma"
+
 msgid "make highlight"
 msgstr "zvýraznit"
 
@@ -381,15 +382,17 @@ msgstr "Obnova hesla"
 msgid "Build all thumbnails/resizes"
 msgstr "Vytvořit všechny náhledy a zmenšeniny"
 
+#, fuzzy
 msgid ""
-"Ensure data files for all derivatives (thumbnails, etc) have been built."
+"Ensure data files for all derivatives (thumbnails, etc) have been built and "
+"rebuild broken ones."
 msgstr "Všechny vedlejší datové soubory (náhledy apod.) byly vytvořeny."
-
-msgid "Processing..."
-msgstr "Zpracovávám..."
 
 msgid "Build All Thumbnails/Resizes"
 msgstr "Vytvořit všechny náhledy a další zmenšené obrázky"
+
+msgid "Debug output for failed items:"
+msgstr ""
 
 #, c-format
 msgid "Processing image %d of %d"
@@ -398,6 +401,14 @@ msgstr "Zpracovávám obrázek %d z %d"
 #, c-format
 msgid "Checked %d items"
 msgstr "Zkontrolováno %d položek"
+
+#, fuzzy, c-format
+msgid "%d items built"
+msgstr "přidat položky"
+
+#, c-format
+msgid "%d items failed"
+msgstr ""
 
 msgid "Delete database cache"
 msgstr "Smazat cache databáze"
@@ -491,43 +502,6 @@ msgstr "Skupina"
 msgid "group"
 msgstr "skupina"
 
-#, c-format
-msgid "Estimated time remaining: %d:%02d"
-msgstr "Odhad zbývajícího času: %d:%02d"
-
-msgid "Rows per album page"
-msgstr "Počet řádků na stránku"
-
-msgid "Columns per album page"
-msgstr "Počet sloupců na stránku"
-
-msgid "Show image owners"
-msgstr "Zobrazit vlastníky obrázku"
-
-msgid "Show album owners"
-msgstr "Zobrazit vlastníky alb"
-
-msgid "Show micro navigation thumbnails"
-msgstr "Zobrazit mikronavigaci"
-
-msgid "Number of items to show per page"
-msgstr "Počet položek na stránku"
-
-msgid "View Samples"
-msgstr "Zobrazit vzorky"
-
-msgid "Album Frame"
-msgstr "Rámeček alba"
-
-msgid "Item Frame"
-msgstr "Rámeček položky"
-
-msgid "Photo Frame"
-msgstr "Rámeček fotky"
-
-msgid "You must enter a number greater than 0"
-msgstr "Musíte zadat číslo větší než nula"
-
 msgid "Movie"
 msgstr "Video"
 
@@ -572,6 +546,69 @@ msgstr "Vzestupně"
 
 msgid "Descending"
 msgstr "Sestupně"
+
+msgid "Validation disabled until you set allowSessionAccess in config.php"
+msgstr ""
+
+msgid "This page is valid XHTML 1.0"
+msgstr "Tato stránka je validní XHTML 1.0"
+
+#, c-format
+msgid "Estimated time remaining: %d:%02d"
+msgstr "Odhad zbývajícího času: %d:%02d"
+
+#, c-format
+msgid "Memory used: %s, total: %s"
+msgstr ""
+
+msgid "Rows per album page"
+msgstr "Počet řádků na stránku"
+
+msgid "Columns per album page"
+msgstr "Počet sloupců na stránku"
+
+msgid "Show image owners"
+msgstr "Zobrazit vlastníky obrázku"
+
+msgid "Show album owners"
+msgstr "Zobrazit vlastníky alb"
+
+msgid "Show micro navigation thumbnails"
+msgstr "Zobrazit mikronavigaci"
+
+msgid "Number of items to show per page"
+msgstr "Počet položek na stránku"
+
+msgid "Blocks to show in the sidebar"
+msgstr ""
+
+msgid "Blocks to show on album pages"
+msgstr ""
+
+msgid "Blocks to show on photo pages"
+msgstr ""
+
+msgid "View Samples"
+msgstr "Zobrazit vzorky"
+
+msgid "Album Frame"
+msgstr "Rámeček alba"
+
+msgid "Item Frame"
+msgstr "Rámeček položky"
+
+msgid "Photo Frame"
+msgstr "Rámeček fotky"
+
+msgid "You must enter a number greater than 0"
+msgstr "Musíte zadat číslo větší než nula"
+
+msgid "Format: [module.BlockName param=value] ..."
+msgstr ""
+
+#, c-format
+msgid "%dx%d"
+msgstr ""
 
 msgid "Audio"
 msgstr "Audio"
@@ -654,6 +691,9 @@ msgstr ""
 "Aktualizovat datumy vytvoření všech položek uložených v Galerii pomocí "
 "původních datových souborů (nejčastěji EXIF data)."
 
+msgid "Processing..."
+msgstr "Zpracovávám..."
+
 msgid "Refresh Capture Dates"
 msgstr "Obnovit datumy vytvoření"
 
@@ -724,8 +764,9 @@ msgstr "Odhlásit"
 msgid "Modules"
 msgstr "Moduly"
 
-msgid "Layouts and Themes"
-msgstr "Rozvržení a témata"
+#, fuzzy
+msgid "Themes"
+msgstr "Téma"
 
 msgid "Display"
 msgstr "Zobrazit"
@@ -801,14 +842,13 @@ msgstr "Úspěšně odstraněn místní adresář pro nové soubory"
 msgid "Test email sent successfully"
 msgstr "Zkušební email úspěšně odeslán"
 
-msgid "Error sending test email, see below for details"
+#, fuzzy
+msgid "There was a problem processing your request, see below for details."
+msgstr "Při zpracování Vaší žádosti se vyskytl problém."
+
+#, fuzzy
+msgid "Error sending test email, see below for details."
 msgstr "Chyba při odesílání testovacího emailu, další informace níže"
-
-msgid "Invalid cookie path"
-msgstr ""
-
-msgid "Invalid cookie domain"
-msgstr ""
 
 msgid "Language Settings"
 msgstr "Nastavení jazyka"
@@ -824,9 +864,6 @@ msgstr ""
 
 msgid "Default language"
 msgstr "Výchozí jazyk"
-
-msgid "Language selector in sidebar"
-msgstr "Výběr jazyka v postranní liště uvidí"
 
 msgid "gettext"
 msgstr "gettext"
@@ -909,9 +946,6 @@ msgstr "Cesta, kterou jste zadal, není platný adresář."
 msgid "Session Settings"
 msgstr "Nastavení sezení (session)"
 
-msgid "Login Method"
-msgstr "Přihlašovací metoda"
-
 msgid "Session Lifetime"
 msgstr "Životnost sezení (session)"
 
@@ -961,6 +995,9 @@ msgstr "Heslo"
 msgid "SMTP From Address"
 msgstr "SMTP odesílatel (From)"
 
+msgid "Invalid email address"
+msgstr "Špatná e-mail adresa"
+
 msgid ""
 "Send a test email to verify your settings are correct (whether using PHP "
 "mail or SMTP settings above).  Below enter a recipient email address for a "
@@ -972,9 +1009,6 @@ msgstr ""
 
 msgid "Send Email"
 msgstr "Poslat email"
-
-msgid "Invalid email address"
-msgstr "Špatná e-mail adresa"
 
 msgid "Email Test Error"
 msgstr "Chyba při testování mailu"
@@ -1020,7 +1054,13 @@ msgid ""
 "not, they will experience login / logout / lost session problems."
 msgstr ""
 
+msgid "Invalid cookie path"
+msgstr ""
+
 msgid "Domain"
+msgstr ""
+
+msgid "Invalid cookie domain"
 msgstr ""
 
 msgid "Locking System"
@@ -1329,118 +1369,6 @@ msgstr[0] "%d skupina odpovídá zvolenému filtru"
 msgstr[1] "%d skupiny odpovídají zvolenému filtru"
 msgstr[2] "%d skupin odpovídají zvolenému filtru"
 
-msgid "Gallery Layouts"
-msgstr "Rozvržení Galerie"
-
-#, c-format
-msgid "Successfully activated layout %s"
-msgstr "Rozvržení %s úspěšně aktivováno"
-
-#, c-format
-msgid "Successfully deactivated layout %s"
-msgstr "Rozvržení %s úspěšně aktivováno"
-
-#, c-format
-msgid "Successfully installed layout %s"
-msgstr "Úspěšně nainstalováno rozvržení %s"
-
-#, c-format
-msgid "Successfully uninstalled layout %s"
-msgstr "Úspěšně odinstalováno rozvržení %s"
-
-#, c-format
-msgid "Successfully upgraded layout %s"
-msgstr "Rozvržení %s úspěšně aktualizováno"
-
-msgid "Successfully saved default album settings"
-msgstr "Výchozí nastavení alba úspěšně uloženo"
-
-msgid "Restored layout settings"
-msgstr "Obnoveno nastavení rozvržení"
-
-msgid "All Layouts"
-msgstr "Všechna rozvržení"
-
-msgid "Defaults"
-msgstr "Výchozí hodnoty"
-
-msgid "Layout Name"
-msgstr "Jméno rozvržení"
-
-msgid "Version"
-msgstr "Verze"
-
-msgid "Installed"
-msgstr "Nainstalovaná"
-
-msgid "Actions"
-msgstr "Akce"
-
-msgid "Status: Not Installed"
-msgstr "Stav: Nenainstalovaný"
-
-msgid "Status: Active"
-msgstr "Stav: Aktivní"
-
-msgid "Status: Inactive"
-msgstr "Stav: Neaktivní"
-
-msgid "Status: Upgrade Required (Inactive)"
-msgstr "Stav: Nutná aktualizace (neaktivní)"
-
-msgid "Status: Incompatible Layout (Inactive)"
-msgstr "Stav: Nekompatibilní rozvržení (neaktivní)"
-
-msgid "Incompatible layout!"
-msgstr "Nekompatibilní rozvržení!"
-
-#, c-format
-msgid "Core API Required: %s (available: %s)"
-msgstr "Vyžadované API jádra: %s (dostupné: %s)"
-
-#, c-format
-msgid "Layout API Required: %s (available: %s)"
-msgstr "Vyžadované API rozvržení: %s (dostupné: %s)"
-
-msgid "(default)"
-msgstr "(výchozí)"
-
-msgid ""
-"These are default display settings for albums in your gallery.  They can be "
-"overridden in each album."
-msgstr ""
-"Toto jsou výchozí nastavení zobrazení pro alba ve Vaší galerii.  Ty mohou "
-"být potlačena nastavením každého alba."
-
-msgid "Default sort order"
-msgstr "Výchozí třídění"
-
-msgid "with"
-msgstr "s"
-
-msgid "Default layout"
-msgstr "Výchozí rozvržení"
-
-msgid "Default theme"
-msgstr "Výchozí téma"
-
-msgid "New albums"
-msgstr "Nová alba"
-
-#, c-format
-msgid "%s Layout Settings"
-msgstr "%s Nastavení rozvržení"
-
-msgid ""
-"These are the global settings for the layout.  They can be overridden at the "
-"album level."
-msgstr ""
-"Toto jsou globální nastavení rozvržení.  Ty mohou být potlačena nastavením "
-"každého alba."
-
-msgid "There are no settings for this layout"
-msgstr "Pro toto rozvržení není žádné nastavení"
-
 msgid "System Maintenance"
 msgstr "Údržba systému"
 
@@ -1523,11 +1451,36 @@ msgstr ""
 msgid "Module Name"
 msgstr "Jméno modulu"
 
+msgid "Version"
+msgstr "Verze"
+
+msgid "Installed"
+msgstr "Nainstalovaná"
+
+msgid "Actions"
+msgstr "Akce"
+
+msgid "Status: Not Installed"
+msgstr "Stav: Nenainstalovaný"
+
+msgid "Status: Active"
+msgstr "Stav: Aktivní"
+
+msgid "Status: Inactive"
+msgstr "Stav: Neaktivní"
+
+msgid "Status: Upgrade Required (Inactive)"
+msgstr "Stav: Nutná aktualizace (neaktivní)"
+
 msgid "Status: Incompatible Module (Inactive)"
 msgstr "Stav: Nekompatibilní modul (neaktivní)"
 
 msgid "Incompatible module!"
 msgstr "Nekompatibilní modul!"
+
+#, c-format
+msgid "Core API Required: %s (available: %s)"
+msgstr "Vyžadované API jádra: %s (dostupné: %s)"
 
 #, c-format
 msgid "Module API Required: %s (available: %s)"
@@ -1549,6 +1502,125 @@ msgstr ""
 
 msgid "Uninstall"
 msgstr "Odinstalovat"
+
+#, fuzzy
+msgid "Gallery Themes"
+msgstr "Galerie %s"
+
+#, fuzzy, c-format
+msgid "Successfully activated theme %s"
+msgstr "Modul %s úspěšně aktivován"
+
+#, fuzzy, c-format
+msgid "Successfully deactivated theme %s"
+msgstr "Modul %s úspěšně deaktivován"
+
+#, fuzzy, c-format
+msgid "Successfully installed theme %s"
+msgstr "Modul %s úspěšně aktivován"
+
+#, fuzzy, c-format
+msgid "Successfully uninstalled theme %s"
+msgstr "Modul %s úspěšně odinstalován"
+
+#, fuzzy, c-format
+msgid "Successfully upgraded theme %s"
+msgstr "Modul %s úspěšně aktualizován"
+
+msgid "Successfully saved default album settings"
+msgstr "Výchozí nastavení alba úspěšně uloženo"
+
+#, fuzzy
+msgid "Restored theme settings"
+msgstr "Obnoveno nastavení rozvržení"
+
+#, fuzzy
+msgid "All Themes"
+msgstr "Téma"
+
+msgid "Defaults"
+msgstr "Výchozí hodnoty"
+
+#, fuzzy
+msgid "Theme Name"
+msgstr "Téma"
+
+#, fuzzy
+msgid "Status: Incompatible Theme (Inactive)"
+msgstr "Stav: Nekompatibilní modul (neaktivní)"
+
+#, fuzzy
+msgid "Incompatible theme!"
+msgstr "Nekompatibilní modul!"
+
+#, fuzzy, c-format
+msgid "Theme API Required: %s (available: %s)"
+msgstr "Vyžadované API jádra: %s (dostupné: %s)"
+
+msgid "(default)"
+msgstr "(výchozí)"
+
+msgid ""
+"These are default display settings for albums in your gallery.  They can be "
+"overridden in each album."
+msgstr ""
+"Toto jsou výchozí nastavení zobrazení pro alba ve Vaší galerii.  Ty mohou "
+"být potlačena nastavením každého alba."
+
+msgid "Default sort order"
+msgstr "Výchozí třídění"
+
+msgid "with"
+msgstr "s"
+
+msgid "Default theme"
+msgstr "Výchozí téma"
+
+msgid "New albums"
+msgstr "Nová alba"
+
+#, fuzzy, c-format
+msgid "%s Theme Settings"
+msgstr "Použít tato nastavení"
+
+#, fuzzy
+msgid ""
+"These are the global settings for the theme.  They can be overridden at the "
+"album level."
+msgstr ""
+"Toto jsou globální nastavení rozvržení.  Ty mohou být potlačena nastavením "
+"každého alba."
+
+msgid "Available"
+msgstr ""
+
+msgid "Choose a block"
+msgstr ""
+
+#, fuzzy
+msgid "Selected"
+msgstr "Smazat"
+
+msgid "Remove"
+msgstr "Odstranit"
+
+#, fuzzy
+msgid "Move Up"
+msgstr "Přesunout"
+
+#, fuzzy
+msgid "Move Down"
+msgstr "Přesunout %s"
+
+msgid "Parameter"
+msgstr ""
+
+msgid "Value"
+msgstr "Hodnota"
+
+#, fuzzy
+msgid "There are no settings for this theme"
+msgstr "Pro toto rozvržení není žádné nastavení"
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime "
@@ -1625,6 +1697,65 @@ msgstr "Vytvořit náhledy nyní"
 
 msgid "This is a test email from Gallery2"
 msgstr "Toto je testovací email z Galerie 2"
+
+msgid "Edit Conflict!"
+msgstr "Editovat konflikt!"
+
+msgid "Security Violation"
+msgstr "Nepovolená operace"
+
+msgid "Database Error"
+msgstr "Chyba databáze"
+
+msgid "Error"
+msgstr "Chyba"
+
+msgid ""
+"Your change cannot be completed because somebody else has made a conflicting "
+"change to the same item.  Use the back button in your browser to go back to "
+"the page you were on, then <b>reload that page</b> and try your change again."
+msgstr ""
+"Vaše změna nemůže být dokončena, protože jiný uživatel provedl konfliktní "
+"změnu pro stejnou položku.  Použijte tlačitko zpět ve Vašem prohlížeči, na "
+"předchozí stránce dejte <b>Obnovit tuto stránku</b> a zkuste provést změnu "
+"ještě jednou."
+
+msgid "Go back and try again"
+msgstr "Vrátit zpět a zkusit znovu"
+
+msgid ""
+"Alternatively, you can return to the main Gallery page and resume browsing."
+msgstr ""
+"Případně se můžete vrátit do hlavního menu Galerie a pokračovat v prohlížení."
+
+msgid "The action you attempted is not permitted."
+msgstr "Akce, o kterou jste se pokusil, není povolená."
+
+msgid "An error has occurred while interacting with the database."
+msgstr "Nastala chyba při operaci s databází."
+
+msgid ""
+"The exact nature of database errors is not captured unless Gallery debug "
+"mode is enabled in config.php.  Before seeking support for this error please "
+"enable buffered debug output and retry the operation.  Look near the bottom "
+"of the lengthy debug output to find error details."
+msgstr ""
+"Přesná podstata chyby databáze není dostupná, pokud není povolen ladící mód "
+"v config.php.  Než začnete hledat pomoc kvůli této chybě, zapněte prosím "
+"\"buffered debug output\" a zkuste tuto operaci znovu.  Detaily chyb "
+"hledejte na konci dlouhého výstupu."
+
+msgid "An error has occurred."
+msgstr "Nastala chyba."
+
+msgid "Back to the Gallery"
+msgstr "Zpět na Galerii"
+
+msgid "Error Detail"
+msgstr "Detail chyby"
+
+msgid "System Information"
+msgstr "Systémové informace"
 
 msgid ""
 "You don't have any Graphics Toolkit activated that can handle JPEG images.  "
@@ -2031,17 +2162,12 @@ msgstr ""
 "Toto je nastavení třídění pro album.  To bude aplikováno pro všechny "
 "současné položky a také pro všechny nové."
 
+#, fuzzy
 msgid ""
-"Choose a layout for this album. (The way the album is arranged on the page)"
+"Choose a theme for this album. (The way the album is arranged on the page)"
 msgstr ""
 "Vybrat rozvržení pro toto album. (Způsob jak je toto album uspořádáno na "
 "stránce)"
-
-msgid "Theme"
-msgstr "Téma"
-
-msgid "Choose a theme for this album.  (The look and feel of this album)"
-msgstr "Vyberte téma pro toto album. (Vzhled tohoto alba)"
 
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr "Každá položka potřebuje náhled. Vyberte výchozí velikost v pixelech."
@@ -2222,23 +2348,6 @@ msgstr ""
 "Nejsou dostupné žádné nástroje, které podporují tento typ položky, takže "
 "není možné vytvořit nebo změnit náhled."
 
-#, c-format
-msgid ""
-"This album is configured to use the <b>%s</b> layout. These settings only "
-"apply to the layout for this album."
-msgstr ""
-"Toto album je nastavené, aby používalo <b>%s</b> rozvržení. Toto nastavení "
-"bude použito pouze pro rozvržení tohoto alba."
-
-msgid "Setting"
-msgstr "Nastavení"
-
-msgid "Value"
-msgstr "Hodnota"
-
-msgid "Use Global"
-msgstr "Použít globální"
-
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the "
 "movie's width and height.  If you have installed a graphics toolkit that can "
@@ -2378,6 +2487,20 @@ msgstr ""
 
 msgid "Restore original"
 msgstr "Obnovit původní"
+
+#, fuzzy, c-format
+msgid ""
+"This album is configured to use the <b>%s</b> theme. These settings only "
+"apply to the theme for this album."
+msgstr ""
+"Toto album je nastavené, aby používalo <b>%s</b> rozvržení. Toto nastavení "
+"bude použito pouze pro rozvržení tohoto alba."
+
+msgid "Setting"
+msgstr "Nastavení"
+
+msgid "Use Global"
+msgstr "Použít globální"
 
 msgid "Album Highlight"
 msgstr "Zvýraznit"
@@ -2541,9 +2664,6 @@ msgstr "Jméno skupiny"
 msgid "Permission"
 msgstr "Oprávnění"
 
-msgid "Remove"
-msgstr "Odstranit"
-
 msgid "New Group Permission"
 msgstr "Oprávnění nové skupiny"
 
@@ -2597,9 +2717,6 @@ msgstr "za"
 
 msgid "Reorder"
 msgstr "Změnit pořadí"
-
-msgid "Go"
-msgstr "Jít"
 
 msgid "Continue..."
 msgstr "Pokračovat..."
@@ -2663,9 +2780,6 @@ msgstr "nainstalovat nebo aktivovat toto rozvržení"
 #, c-format
 msgid "To fix this problem you can either %s or %s."
 msgstr "K odstranění tohoto problému můžete buď %s nebo %s."
-
-msgid "Site Administration"
-msgstr "Nastavení"
 
 msgid "Admin Options"
 msgstr "Nastavení správce"
@@ -2900,16 +3014,107 @@ msgstr "Pokud jste si nevyžádali tento mail, můžete ho klidně ignorovat."
 msgid "Thank you!"
 msgstr "Děkujeme!"
 
+#, fuzzy
+msgid "guest"
+msgstr "Návštěvník"
+
+#, c-format
+msgid "display mode: %s"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Date: %s"
+msgstr "Datum:"
+
+#, fuzzy, c-format
+msgid "Owner: %s"
+msgstr "Vlastník"
+
+#, fuzzy, c-format
+msgid "Size: %d item"
+msgid_plural "Size: %d items"
+msgstr[0] "(%d položka)"
+msgstr[1] "(%d položky)"
+msgstr[2] "(%d položek)"
+
+#, fuzzy, c-format
+msgid "(%d item total)"
+msgid_plural "(%d items total)"
+msgstr[0] "(%d položka)"
+msgstr[1] "(%d položky)"
+msgstr[2] "(%d položek)"
+
+#, c-format
+msgid "Views: %d"
+msgstr ""
+
+#, fuzzy
+msgid "&laquo; album actions &raquo;"
+msgstr "&laquo; Žádná &raquo;"
+
+#, fuzzy
+msgid "&laquo; item actions &raquo;"
+msgstr "&laquo; Žádná &raquo;"
+
+msgid "Go"
+msgstr "Jít"
+
+msgid "next"
+msgstr ""
+
+#, fuzzy
+msgid "last"
+msgstr "seznam"
+
+#, fuzzy
+msgid "first"
+msgstr "seznam"
+
+#, fuzzy
+msgid "previous"
+msgstr "Předchozí stránka"
+
+msgid "Page:"
+msgstr ""
+
+#, c-format
+msgid "%d. %s"
+msgstr "%d. %s"
+
+#, fuzzy
+msgid "Size: "
+msgstr "Velikost"
+
+msgid "Full size: "
+msgstr ""
+
+#, fuzzy
+msgid "Language selector"
+msgstr "Výběr jazyka v postranní liště uvidí"
+
+#, fuzzy
+msgid "Item actions"
+msgstr "editovat podtitulky"
+
+#, fuzzy
+msgid "Login block"
+msgstr "Přihlásit"
+
+msgid "Links to album/photo peers"
+msgstr ""
+
 msgid "Successfully deleted directory: /cache/entity"
 msgstr "Úspěšně smazán adresář: /cache/entity"
 
-msgid "Successfully deleted directory: /cache/layout"
-msgstr "Úspěšně smazán adresář: /cache/layout"
+#, fuzzy
+msgid "Successfully deleted directory: /cache/theme"
+msgstr "Úspěšně smazán adresář: /cache/module"
 
 msgid "Successfully deleted directory: /cache/module"
 msgstr "Úspěšně smazán adresář: /cache/module"
 
-msgid "Unable to delete directory: /cache/layout"
+#, fuzzy
+msgid "Unable to delete directory: /cache/theme"
 msgstr "Nelze smazat adresář: /cache/layout"
 
 msgid "Unable to delete directory: /templates_c"
@@ -2921,180 +3126,6 @@ msgstr "Testovací modul"
 msgid "[test] A permission"
 msgstr "[test] Oprávnění"
 
-msgid "Gallery Debug Output"
-msgstr "Ladící informace Galerie"
-
-msgid "This page is valid XHTML 1.0"
-msgstr "Tato stránka je validní XHTML 1.0"
-
-#, c-format
-msgid "Gallery %s"
-msgstr "Galerie %s"
-
-msgid "Edit Conflict!"
-msgstr "Editovat konflikt!"
-
-msgid "Security Violation"
-msgstr "Nepovolená operace"
-
-msgid "Database Error"
-msgstr "Chyba databáze"
-
-msgid "Error"
-msgstr "Chyba"
-
-msgid ""
-"Your change cannot be completed because somebody else has made a conflicting "
-"change to the same item.  Use the back button in your browser to go back to "
-"the page you were on, then <b>reload that page</b> and try your change again."
-msgstr ""
-"Vaše změna nemůže být dokončena, protože jiný uživatel provedl konfliktní "
-"změnu pro stejnou položku.  Použijte tlačitko zpět ve Vašem prohlížeči, na "
-"předchozí stránce dejte <b>Obnovit tuto stránku</b> a zkuste provést změnu "
-"ještě jednou."
-
-msgid "Go back and try again"
-msgstr "Vrátit zpět a zkusit znovu"
-
-msgid ""
-"Alternatively, you can return to the main Gallery page and resume browsing."
-msgstr ""
-"Případně se můžete vrátit do hlavního menu Galerie a pokračovat v prohlížení."
-
-msgid "The action you attempted is not permitted."
-msgstr "Akce, o kterou jste se pokusil, není povolená."
-
-msgid "An error has occurred while interacting with the database."
-msgstr "Nastala chyba při operaci s databází."
-
-msgid ""
-"The exact nature of database errors is not captured unless Gallery debug "
-"mode is enabled in config.php.  Before seeking support for this error please "
-"enable buffered debug output and retry the operation.  Look near the bottom "
-"of the lengthy debug output to find error details."
-msgstr ""
-"Přesná podstata chyby databáze není dostupná, pokud není povolen ladící mód "
-"v config.php.  Než začnete hledat pomoc kvůli této chybě, zapněte prosím "
-"\"buffered debug output\" a zkuste tuto operaci znovu.  Detaily chyb "
-"hledejte na konci dlouhého výstupu."
-
-msgid "An error has occurred."
-msgstr "Nastala chyba."
-
-msgid "Back to the Gallery"
-msgstr "Zpět na Galerii"
-
-msgid "Error Detail"
-msgstr "Detail chyby"
-
-msgid "System Information"
-msgstr "Systémové informace"
-
-msgid "Redirect"
-msgstr "Přesměrovat"
-
-msgid "You are in debug mode so we are not automatically redirecting."
-msgstr "Nyní jste v ladícím režimu, takže je vypnuté automatické přesměrování."
-
-#, c-format
-msgid "Welcome, %s"
-msgstr "Vítejte, %s"
-
-#, c-format
-msgid "(%d item)"
-msgid_plural "(%d items)"
-msgstr[0] "(%d položka)"
-msgstr[1] "(%d položky)"
-msgstr[2] "(%d položek)"
-
-#, c-format
-msgid "%d. %s"
-msgstr "%d. %s"
-
-#~ msgid "Gallery Administrator"
-#~ msgstr "Správce Galerie"
-
 #, fuzzy
-#~ msgid "Administrator Recovery"
-#~ msgstr "Obnova hesla"
-
-#, fuzzy
-#~ msgid "Gallery 2 - Beta 3: Bingo!"
-#~ msgstr "Galerie 2 - Beta 1: Temné jádro"
-
-#~ msgid "Use As Parent&rsquo;s Thumbnail?"
-#~ msgstr "Použít jako náhled pro nadřazenou položku?"
-
-#~ msgid "Yes, highlight this item!"
-#~ msgstr "Ano, zvýraznit tuto položku!"
-
-#~ msgid "You must enter a thumbnail size"
-#~ msgstr "Musíte zadat velikost náhledu"
-
-#~ msgid "Undo"
-#~ msgstr "Vrátit změny"
-
-#~ msgid "[change]"
-#~ msgstr "[změna]"
-
-#~ msgid "required"
-#~ msgstr "vyžadováno"
-
-#~ msgid "add"
-#~ msgstr "přidat"
-
-#~ msgid "cancel"
-#~ msgstr "zrušit"
-
-#~ msgid "edit user"
-#~ msgstr "upravit uživatele"
-
-#~ msgid "reset"
-#~ msgstr "vrátit změny"
-
-#~ msgid "save"
-#~ msgstr "uložit"
-
-#~ msgid "undo"
-#~ msgstr "vrátit změny"
-
-#~ msgid "AcceptPathInfo directive"
-#~ msgstr "direktivu AcceptPathInfo"
-
-#~ msgid ""
-#~ "Gallery has the option to use a compact URL format, however this format "
-#~ "is not supported by default on all web servers.  It is enabled by default "
-#~ "on Apache 1, but not on Apache 2.  If you're using Apache 2 you must use "
-#~ "the %s.  Use this %s to find out if short URLs work for you.  If the link "
-#~ "returns a webserver error then they don't work for you."
-#~ msgstr ""
-#~ "Jedna z možností Galerie je použití krátkých URL adres. Bohužel, tato "
-#~ "vlastnost nefunguje při některých konfiguracích webových serverů.  Ve "
-#~ "výchozím nastavení je tato vlastnost zapnuta pro Apache 1 a vypnuta pro "
-#~ "Apache 2.  Pokud používáte Apache 2, musíte použít %s.  Použijte %s, "
-#~ "pokud chcete vyzkoušet zda krátké adresy fungují na Vaší konfiguraci.  "
-#~ "Pokud odkaz vrací stránku s chybou, pak nejspíše nefungují."
-
-#~ msgid "Status: Not"
-#~ msgstr "Stav: Ne"
-
-#~ msgid ")"
-#~ msgstr ")"
-
-#~ msgid "URL Style"
-#~ msgstr "Styl URL"
-
-#~ msgid "Use short URLs?"
-#~ msgstr "Použít krátké URL?"
-
-#~ msgid "no"
-#~ msgstr "ne"
-
-#~ msgid "test url"
-#~ msgstr "testovací URL"
-
-#~ msgid "yes"
-#~ msgstr "ano"
-
-#~ msgid "Edit User Preferences"
-#~ msgstr "Upravit uživatelská nastavení"
+msgid "[test] A second permission"
+msgstr "[test] Oprávnění"

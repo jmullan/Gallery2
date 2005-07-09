@@ -85,7 +85,6 @@ class ImageFrameImpl extends ImageFrameInterface_1_1 {
 		'solid' => array('type' => 'style',
 				 'style' => 'border: 1px solid black !important'));
 	    $templateAdapter =& $gallery->getTemplateAdapter();
-	    $templateAdapter->register_block('imageframe', array($this, 'renderImageFrame'));
 	    $template->setVariable('ImageFrameData', array('idList' => '', 'data' => array()));
 	}
 	$template->head('modules/imageframe/templates/ImageFrameHead.tpl');
@@ -110,29 +109,28 @@ class ImageFrameImpl extends ImageFrameInterface_1_1 {
 	    } else {
 		$dir = dirname(__FILE__) . "/../frames/$frameId";
 		$frameinc = "$dir/frame.inc";
-		if (!$platform->is_dir($dir) || !$platform->is_readable($frameinc)) {
-		    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__, $frameId);
-		}
-		require($frameinc);
-		$frame = array('type' => isset($frameData['style']) ? 'style' : 'image');
-		foreach ($frameData as $key => $value) {
-		    if ($key == 'name' || $key == 'description') {
-			$frame[$key] = $module->translate($value);
-		    } else if (!strncmp($key, 'image', 5) && $value) {
-			$frame[$key] = "$baseUrl/$frameId/" . $value;
-		    } else {
-			$frame[$key] = $value;
+		if ($platform->is_dir($dir) && $platform->file_exists($frameinc)) {
+		    require($frameinc);
+		    $frame = array('type' => isset($frameData['style']) ? 'style' : 'image');
+		    foreach ($frameData as $key => $value) {
+			if ($key == 'name' || $key == 'description') {
+			    $frame[$key] = $module->translate($value);
+			} else if (!strncmp($key, 'image', 5) && $value) {
+			    $frame[$key] = "$baseUrl/$frameId/" . $value;
+			} else {
+			    $frame[$key] = $value;
+			}
 		    }
+		    if ($frame['type'] == 'image') {
+			$frame['wHL'] = max($frameData['widthTTL'], $frameData['widthBBL']);
+			$frame['wHR'] = max($frameData['widthTTR'], $frameData['widthBBR']);
+			$frame['hVT'] = max($frameData['heightLLT'], $frameData['heightRRT']);
+			$frame['hVB'] = max($frameData['heightLLB'], $frameData['heightRRB']);
+			$frame['rowspan'] = 1 + ($frame['hVT']>0?1:0) + ($frame['hVB']>0?1:0);
+			$frame['colspan'] = 1 + ($frame['wHL']>0?1:0) + ($frame['wHR']>0?1:0);
+		    }
+		    $data['data'][$frameId] = $frame;
 		}
-		if ($frame['type'] == 'image') {
-		    $frame['wHL'] = max($frameData['widthTTL'], $frameData['widthBBL']);
-		    $frame['wHR'] = max($frameData['widthTTR'], $frameData['widthBBR']);
-		    $frame['hVT'] = max($frameData['heightLLT'], $frameData['heightRRT']);
-		    $frame['hVB'] = max($frameData['heightLLB'], $frameData['heightRRB']);
-		    $frame['rowspan'] = 1 + ($frame['hVT']>0?1:0) + ($frame['hVB']>0?1:0);
-		    $frame['colspan'] = 1 + ($frame['wHL']>0?1:0) + ($frame['wHR']>0?1:0);
-		}
-		$data['data'][$frameId] = $frame;
 	    }
 	}
 	$data['idList'] = implode('|', array_keys($data['data']));

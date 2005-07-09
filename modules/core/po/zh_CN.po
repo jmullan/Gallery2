@@ -36,26 +36,8 @@ msgstr "图库模块"
 msgid "&laquo; None &raquo;"
 msgstr "&laquo; 无 &raquo;"
 
-msgid "None"
-msgstr "无"
-
-msgid "Guest User Only"
-msgstr "只含访客"
-
-msgid "Everybody"
-msgstr "所有人"
-
 msgid "forever"
 msgstr "永久"
-
-msgid "Link to Login Page"
-msgstr "链接到登录页面"
-
-msgid "Form on Sidebar"
-msgstr "边栏中的表单"
-
-msgid "Both"
-msgstr "全部"
 
 msgid "No Markup"
 msgstr "无标签"
@@ -105,6 +87,9 @@ msgstr "安装"
 msgid "upgrade"
 msgstr "升级"
 
+msgid "configure"
+msgstr "设置"
+
 msgid "activate"
 msgstr "开启"
 
@@ -114,17 +99,14 @@ msgstr "卸载"
 msgid "deactivate"
 msgstr "关闭"
 
+msgid "Other"
+msgstr "其他"
+
 msgid "Inherit settings from parent album"
 msgstr "从上层相册中继承设置值"
 
 msgid "Use these settings"
 msgstr "使用这些设置"
-
-msgid "configure"
-msgstr "设置"
-
-msgid "Other"
-msgstr "其他"
 
 msgid "key"
 msgstr "主键"
@@ -171,8 +153,20 @@ msgstr ""
 msgid "All Users"
 msgstr "所有用户"
 
+msgid "Loading derivatives for the broken derivatives check"
+msgstr ""
+
+msgid "Detecting broken derivatives"
+msgstr ""
+
+msgid "Marking broken derivatives"
+msgstr ""
+
 msgid "Site Admins"
 msgstr "网站管理"
+
+msgid "Everybody"
+msgstr "所有人"
 
 msgid "Guest"
 msgstr "访客"
@@ -182,6 +176,15 @@ msgstr "图库"
 
 msgid "This is the main page of your Gallery"
 msgstr "这是图库的首页"
+
+msgid "Loading derivatives for the "
+msgstr ""
+
+msgid "Detecting broken derivatives "
+msgstr ""
+
+msgid "Marking broken derivatives "
+msgstr ""
 
 msgid "add items"
 msgstr "添加项目"
@@ -254,9 +257,6 @@ msgstr "编辑 %s"
 msgid "Settings saved successfully."
 msgstr "设置保存成功。"
 
-msgid "&laquo; default layout &raquo;"
-msgstr "&laquo; 默认界面 &raquo;"
-
 msgid "&laquo; default theme &raquo;"
 msgstr "&laquo; 默认风格主题 &raquo;"
 
@@ -274,12 +274,6 @@ msgstr "编辑标注"
 
 msgid "General"
 msgstr "通用"
-
-msgid "Successfully saved layout settings"
-msgstr "界面设置保存成功"
-
-msgid "Layout"
-msgstr "界面"
 
 msgid "Movie Size"
 msgstr "电影尺寸"
@@ -338,6 +332,13 @@ msgstr "照片缩放成功"
 msgid "Modify Photo"
 msgstr "修改照片"
 
+#, fuzzy
+msgid "Successfully saved theme settings"
+msgstr "界面设置保存成功"
+
+msgid "Theme"
+msgstr "主题"
+
 msgid "make highlight"
 msgstr "标记为精华"
 
@@ -379,13 +380,14 @@ msgid "Build all thumbnails/resizes"
 msgstr "重建缩略图和变更尺寸的图片"
 
 msgid ""
-"Ensure data files for all derivatives (thumbnails, etc) have been built."
-msgstr ""
-
-msgid "Processing..."
+"Ensure data files for all derivatives (thumbnails, etc) have been built and "
+"rebuild broken ones."
 msgstr ""
 
 msgid "Build All Thumbnails/Resizes"
+msgstr ""
+
+msgid "Debug output for failed items:"
 msgstr ""
 
 #, fuzzy, c-format
@@ -395,6 +397,14 @@ msgstr "浏览第 %d 页，共 %d 页"
 #, fuzzy, c-format
 msgid "Checked %d items"
 msgstr "添加项目"
+
+#, fuzzy, c-format
+msgid "%d items built"
+msgstr "添加项目"
+
+#, c-format
+msgid "%d items failed"
+msgstr ""
 
 msgid "Delete database cache"
 msgstr ""
@@ -483,45 +493,6 @@ msgstr "成员组"
 msgid "group"
 msgstr "成员组"
 
-#, c-format
-msgid "Estimated time remaining: %d:%02d"
-msgstr ""
-
-msgid "Rows per album page"
-msgstr ""
-
-msgid "Columns per album page"
-msgstr ""
-
-msgid "Show image owners"
-msgstr ""
-
-msgid "Show album owners"
-msgstr ""
-
-msgid "Show micro navigation thumbnails"
-msgstr ""
-
-msgid "Number of items to show per page"
-msgstr ""
-
-msgid "View Samples"
-msgstr ""
-
-#, fuzzy
-msgid "Album Frame"
-msgstr "相册优先"
-
-msgid "Item Frame"
-msgstr ""
-
-#, fuzzy
-msgid "Photo Frame"
-msgstr "照片"
-
-msgid "You must enter a number greater than 0"
-msgstr "你必须输入一个大于零的数字"
-
 msgid "Movie"
 msgstr "电影"
 
@@ -566,6 +537,71 @@ msgstr "升序"
 
 msgid "Descending"
 msgstr "降序"
+
+msgid "Validation disabled until you set allowSessionAccess in config.php"
+msgstr ""
+
+msgid "This page is valid XHTML 1.0"
+msgstr "此页面符合XHTML 1.0标准"
+
+#, c-format
+msgid "Estimated time remaining: %d:%02d"
+msgstr ""
+
+#, c-format
+msgid "Memory used: %s, total: %s"
+msgstr ""
+
+msgid "Rows per album page"
+msgstr ""
+
+msgid "Columns per album page"
+msgstr ""
+
+msgid "Show image owners"
+msgstr ""
+
+msgid "Show album owners"
+msgstr ""
+
+msgid "Show micro navigation thumbnails"
+msgstr ""
+
+msgid "Number of items to show per page"
+msgstr ""
+
+msgid "Blocks to show in the sidebar"
+msgstr ""
+
+msgid "Blocks to show on album pages"
+msgstr ""
+
+msgid "Blocks to show on photo pages"
+msgstr ""
+
+msgid "View Samples"
+msgstr ""
+
+#, fuzzy
+msgid "Album Frame"
+msgstr "相册优先"
+
+msgid "Item Frame"
+msgstr ""
+
+#, fuzzy
+msgid "Photo Frame"
+msgstr "照片"
+
+msgid "You must enter a number greater than 0"
+msgstr "你必须输入一个大于零的数字"
+
+msgid "Format: [module.BlockName param=value] ..."
+msgstr ""
+
+#, c-format
+msgid "%dx%d"
+msgstr ""
 
 msgid "Audio"
 msgstr "音频"
@@ -643,6 +679,9 @@ msgid ""
 "in the original data file (usually from EXIF data)."
 msgstr ""
 
+msgid "Processing..."
+msgstr ""
+
 msgid "Refresh Capture Dates"
 msgstr ""
 
@@ -716,8 +755,9 @@ msgstr "退出"
 msgid "Modules"
 msgstr "模块"
 
-msgid "Layouts and Themes"
-msgstr "界面和主题"
+#, fuzzy
+msgid "Themes"
+msgstr "主题"
 
 msgid "Display"
 msgstr "显示"
@@ -795,13 +835,11 @@ msgstr "本地上传目录已删除成功"
 msgid "Test email sent successfully"
 msgstr "缩略图重置成功"
 
-msgid "Error sending test email, see below for details"
-msgstr ""
+#, fuzzy
+msgid "There was a problem processing your request, see below for details."
+msgstr "处理您的请求时出现问题。"
 
-msgid "Invalid cookie path"
-msgstr ""
-
-msgid "Invalid cookie domain"
+msgid "Error sending test email, see below for details."
 msgstr ""
 
 msgid "Language Settings"
@@ -817,9 +855,6 @@ msgstr ""
 
 msgid "Default language"
 msgstr "默认语言"
-
-msgid "Language selector in sidebar"
-msgstr "边栏语言选择框"
 
 msgid "gettext"
 msgstr "取得文本"
@@ -895,9 +930,6 @@ msgstr "您指定的路径不是一个有效的目录。"
 msgid "Session Settings"
 msgstr "Session设置"
 
-msgid "Login Method"
-msgstr "登录方式"
-
 msgid "Session Lifetime"
 msgstr "Session存活时间"
 
@@ -945,6 +977,9 @@ msgstr "密码"
 msgid "SMTP From Address"
 msgstr "SMTP发件人地址"
 
+msgid "Invalid email address"
+msgstr "Email 地址不正确"
+
 msgid ""
 "Send a test email to verify your settings are correct (whether using PHP "
 "mail or SMTP settings above).  Below enter a recipient email address for a "
@@ -954,9 +989,6 @@ msgstr ""
 #, fuzzy
 msgid "Send Email"
 msgstr "Email"
-
-msgid "Invalid email address"
-msgstr "Email 地址不正确"
 
 msgid "Email Test Error"
 msgstr ""
@@ -1002,7 +1034,13 @@ msgid ""
 "not, they will experience login / logout / lost session problems."
 msgstr ""
 
+msgid "Invalid cookie path"
+msgstr ""
+
 msgid "Domain"
+msgstr ""
+
+msgid "Invalid cookie domain"
 msgstr ""
 
 msgid "Locking System"
@@ -1297,114 +1335,6 @@ msgid_plural "%d groups match your filter"
 msgstr[0] "%d 个成员组符合您的过滤设定"
 msgstr[1] "%d 个成员组符合您的过滤设定"
 
-msgid "Gallery Layouts"
-msgstr "图库界面"
-
-#, c-format
-msgid "Successfully activated layout %s"
-msgstr "界面 %s 开启成功"
-
-#, c-format
-msgid "Successfully deactivated layout %s"
-msgstr "界面 %s 关闭成功"
-
-#, c-format
-msgid "Successfully installed layout %s"
-msgstr "界面 %s 安装成功"
-
-#, c-format
-msgid "Successfully uninstalled layout %s"
-msgstr "界面 %s 卸载成功"
-
-#, c-format
-msgid "Successfully upgraded layout %s"
-msgstr "界面 %s 升级成功"
-
-msgid "Successfully saved default album settings"
-msgstr "默认相册设置保存成功"
-
-msgid "Restored layout settings"
-msgstr "重新载入界面设置"
-
-msgid "All Layouts"
-msgstr "所有界面"
-
-msgid "Defaults"
-msgstr "默认值"
-
-msgid "Layout Name"
-msgstr "界面名称"
-
-msgid "Version"
-msgstr "版本"
-
-msgid "Installed"
-msgstr "已安装"
-
-msgid "Actions"
-msgstr "操作"
-
-msgid "Status: Not Installed"
-msgstr "状态: 未安装"
-
-msgid "Status: Active"
-msgstr "状态: 开启"
-
-msgid "Status: Inactive"
-msgstr "状态: 关闭"
-
-msgid "Status: Upgrade Required (Inactive)"
-msgstr "状态: 需要升级 (关闭)"
-
-msgid "Status: Incompatible Layout (Inactive)"
-msgstr "状态: 界面不兼容 (关闭)"
-
-msgid "Incompatible layout!"
-msgstr "界面不兼容！"
-
-#, c-format
-msgid "Core API Required: %s (available: %s)"
-msgstr "核心API需要: %s (%s 可用)"
-
-#, c-format
-msgid "Layout API Required: %s (available: %s)"
-msgstr "界面API需要: %s (%s 可用)"
-
-msgid "(default)"
-msgstr "(默认值)"
-
-msgid ""
-"These are default display settings for albums in your gallery.  They can be "
-"overridden in each album."
-msgstr "这是您的图库中相册的默认显示设置。此设置将被各个相册的个别设置取代。"
-
-msgid "Default sort order"
-msgstr "默认排序方式"
-
-msgid "with"
-msgstr "和"
-
-msgid "Default layout"
-msgstr "默认界面"
-
-msgid "Default theme"
-msgstr "默认风格主题"
-
-msgid "New albums"
-msgstr "新相册"
-
-#, c-format
-msgid "%s Layout Settings"
-msgstr "%s 界面设置"
-
-msgid ""
-"These are the global settings for the layout.  They can be overridden at the "
-"album level."
-msgstr "这是此界面的全局设置。此设置将被相册级别的设置取代。"
-
-msgid "There are no settings for this layout"
-msgstr "没有此界面的设置"
-
 msgid "System Maintenance"
 msgstr ""
 
@@ -1490,11 +1420,36 @@ msgstr ""
 msgid "Module Name"
 msgstr "模块名称"
 
+msgid "Version"
+msgstr "版本"
+
+msgid "Installed"
+msgstr "已安装"
+
+msgid "Actions"
+msgstr "操作"
+
+msgid "Status: Not Installed"
+msgstr "状态: 未安装"
+
+msgid "Status: Active"
+msgstr "状态: 开启"
+
+msgid "Status: Inactive"
+msgstr "状态: 关闭"
+
+msgid "Status: Upgrade Required (Inactive)"
+msgstr "状态: 需要升级 (关闭)"
+
 msgid "Status: Incompatible Module (Inactive)"
 msgstr "状态: 模块不兼容 (关闭)"
 
 msgid "Incompatible module!"
 msgstr "模块不兼容！"
+
+#, c-format
+msgid "Core API Required: %s (available: %s)"
+msgstr "核心API需要: %s (%s 可用)"
 
 #, c-format
 msgid "Module API Required: %s (available: %s)"
@@ -1514,6 +1469,121 @@ msgstr "这也将删除所有权限并清除由此模块建立的所有临时数
 
 msgid "Uninstall"
 msgstr "卸载"
+
+#, fuzzy
+msgid "Gallery Themes"
+msgstr "图库 %s"
+
+#, fuzzy, c-format
+msgid "Successfully activated theme %s"
+msgstr "模块 %s 开启成功"
+
+#, fuzzy, c-format
+msgid "Successfully deactivated theme %s"
+msgstr "模块 %s 关闭成功"
+
+#, fuzzy, c-format
+msgid "Successfully installed theme %s"
+msgstr "模块 %s 安装成功"
+
+#, fuzzy, c-format
+msgid "Successfully uninstalled theme %s"
+msgstr "模块 %s 卸载成功"
+
+#, fuzzy, c-format
+msgid "Successfully upgraded theme %s"
+msgstr "模块 %s 升级成功"
+
+msgid "Successfully saved default album settings"
+msgstr "默认相册设置保存成功"
+
+#, fuzzy
+msgid "Restored theme settings"
+msgstr "重新载入界面设置"
+
+#, fuzzy
+msgid "All Themes"
+msgstr "主题"
+
+msgid "Defaults"
+msgstr "默认值"
+
+#, fuzzy
+msgid "Theme Name"
+msgstr "主题"
+
+#, fuzzy
+msgid "Status: Incompatible Theme (Inactive)"
+msgstr "状态: 模块不兼容 (关闭)"
+
+#, fuzzy
+msgid "Incompatible theme!"
+msgstr "模块不兼容！"
+
+#, fuzzy, c-format
+msgid "Theme API Required: %s (available: %s)"
+msgstr "核心API需要: %s (%s 可用)"
+
+msgid "(default)"
+msgstr "(默认值)"
+
+msgid ""
+"These are default display settings for albums in your gallery.  They can be "
+"overridden in each album."
+msgstr "这是您的图库中相册的默认显示设置。此设置将被各个相册的个别设置取代。"
+
+msgid "Default sort order"
+msgstr "默认排序方式"
+
+msgid "with"
+msgstr "和"
+
+msgid "Default theme"
+msgstr "默认风格主题"
+
+msgid "New albums"
+msgstr "新相册"
+
+#, fuzzy, c-format
+msgid "%s Theme Settings"
+msgstr "使用这些设置"
+
+#, fuzzy
+msgid ""
+"These are the global settings for the theme.  They can be overridden at the "
+"album level."
+msgstr "这是此界面的全局设置。此设置将被相册级别的设置取代。"
+
+msgid "Available"
+msgstr ""
+
+msgid "Choose a block"
+msgstr ""
+
+#, fuzzy
+msgid "Selected"
+msgstr "删除"
+
+msgid "Remove"
+msgstr "删除"
+
+#, fuzzy
+msgid "Move Up"
+msgstr "移动"
+
+#, fuzzy
+msgid "Move Down"
+msgstr "移动 %s"
+
+msgid "Parameter"
+msgstr ""
+
+msgid "Value"
+msgstr "值"
+
+#, fuzzy
+msgid "There are no settings for this theme"
+msgstr "没有此界面的设置"
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime "
@@ -1588,6 +1658,61 @@ msgstr "马上新建缩略图"
 #, fuzzy
 msgid "This is a test email from Gallery2"
 msgstr "这是图库的首页"
+
+msgid "Edit Conflict!"
+msgstr "编辑出现冲突！"
+
+msgid "Security Violation"
+msgstr "违反安全规定"
+
+msgid "Database Error"
+msgstr "数据库错误"
+
+msgid "Error"
+msgstr "错误"
+
+msgid ""
+"Your change cannot be completed because somebody else has made a conflicting "
+"change to the same item.  Use the back button in your browser to go back to "
+"the page you were on, then <b>reload that page</b> and try your change again."
+msgstr ""
+"您的变更无法完成，因为其他人正在对相同的项目进行与您冲突的变更。使用浏览器后"
+"退按钮返回您所在的页面，然后<b>刷新该页</b>并再试。"
+
+msgid "Go back and try again"
+msgstr "返回并重试"
+
+msgid ""
+"Alternatively, you can return to the main Gallery page and resume browsing."
+msgstr "您可以选择返回主图库页面，或继续浏览。"
+
+msgid "The action you attempted is not permitted."
+msgstr "您尝试的操作无效。"
+
+msgid "An error has occurred while interacting with the database."
+msgstr "与数据库交换时发生一个错误。"
+
+msgid ""
+"The exact nature of database errors is not captured unless Gallery debug "
+"mode is enabled in config.php.  Before seeking support for this error please "
+"enable buffered debug output and retry the operation.  Look near the bottom "
+"of the lengthy debug output to find error details."
+msgstr ""
+"数据库错误的详细内容没有被获取，除非图库除错模式在 config.php 中被开启。在寻"
+"找此错误的帮助前，请打开出错输出缓存并再次尝试此操作。在很长的出错输出底部查"
+"找错误细节。"
+
+msgid "An error has occurred."
+msgstr "发生一个错误。"
+
+msgid "Back to the Gallery"
+msgstr "返回图库"
+
+msgid "Error Detail"
+msgstr "错误细节"
+
+msgid "System Information"
+msgstr "系统信息"
 
 msgid ""
 "You don't have any Graphics Toolkit activated that can handle JPEG images.  "
@@ -1970,15 +2095,10 @@ msgid ""
 "and any newly added items."
 msgstr "设定相册排序方式。将应用到所有当前项目和新添项目中。"
 
+#, fuzzy
 msgid ""
-"Choose a layout for this album. (The way the album is arranged on the page)"
+"Choose a theme for this album. (The way the album is arranged on the page)"
 msgstr "为此相册选择一个界面。（相册在页面显示的排列方式）"
-
-msgid "Theme"
-msgstr "主题"
-
-msgid "Choose a theme for this album.  (The look and feel of this album)"
-msgstr "为此相册选择一个风格主题。（此相册的风格）"
 
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr "每个项目都需要一个缩略图，请在此设定默认象素尺寸。"
@@ -2149,21 +2269,6 @@ msgid ""
 "cannot create or modify a thumbnail."
 msgstr "没有开启的图形工具支持此照片格式，因此无法建立或更改缩略图。"
 
-#, c-format
-msgid ""
-"This album is configured to use the <b>%s</b> layout. These settings only "
-"apply to the layout for this album."
-msgstr "此相册已设定使用 <b>%s</b> 界面。这些设置仅应用在此相册的界面中。"
-
-msgid "Setting"
-msgstr "设置"
-
-msgid "Value"
-msgstr "值"
-
-msgid "Use Global"
-msgstr "使用全局设置"
-
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the "
 "movie's width and height.  If you have installed a graphics toolkit that can "
@@ -2287,6 +2392,18 @@ msgstr ""
 
 msgid "Restore original"
 msgstr "重新载入原始图片"
+
+#, fuzzy, c-format
+msgid ""
+"This album is configured to use the <b>%s</b> theme. These settings only "
+"apply to the theme for this album."
+msgstr "此相册已设定使用 <b>%s</b> 界面。这些设置仅应用在此相册的界面中。"
+
+msgid "Setting"
+msgstr "设置"
+
+msgid "Use Global"
+msgstr "使用全局设置"
 
 #, fuzzy
 msgid "Album Highlight"
@@ -2444,9 +2561,6 @@ msgstr "成员组名称"
 msgid "Permission"
 msgstr "权限"
 
-msgid "Remove"
-msgstr "删除"
-
 msgid "New Group Permission"
 msgstr "新成员组权限"
 
@@ -2499,9 +2613,6 @@ msgstr "之后"
 
 msgid "Reorder"
 msgstr "重新排序"
-
-msgid "Go"
-msgstr "开始"
 
 msgid "Continue..."
 msgstr "继续……"
@@ -2563,9 +2674,6 @@ msgstr "安装并开启此界面"
 #, c-format
 msgid "To fix this problem you can either %s or %s."
 msgstr "修正此问题请 %s 或 %s。"
-
-msgid "Site Administration"
-msgstr "网站管理"
 
 msgid "Admin Options"
 msgstr "管理选项"
@@ -2779,19 +2887,107 @@ msgid "Thank you!"
 msgstr ""
 
 #, fuzzy
+msgid "guest"
+msgstr "访客"
+
+#, c-format
+msgid "display mode: %s"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Date: %s"
+msgstr "日期:"
+
+#, fuzzy, c-format
+msgid "Owner: %s"
+msgstr "所有者"
+
+#, fuzzy, c-format
+msgid "Size: %d item"
+msgid_plural "Size: %d items"
+msgstr[0] "(%d个项目)"
+msgstr[1] "(%d个项目)"
+
+#, fuzzy, c-format
+msgid "(%d item total)"
+msgid_plural "(%d items total)"
+msgstr[0] "(%d个项目)"
+msgstr[1] "(%d个项目)"
+
+#, c-format
+msgid "Views: %d"
+msgstr ""
+
+#, fuzzy
+msgid "&laquo; album actions &raquo;"
+msgstr "&laquo; 无 &raquo;"
+
+#, fuzzy
+msgid "&laquo; item actions &raquo;"
+msgstr "&laquo; 无 &raquo;"
+
+msgid "Go"
+msgstr "开始"
+
+msgid "next"
+msgstr ""
+
+#, fuzzy
+msgid "last"
+msgstr "列表"
+
+#, fuzzy
+msgid "first"
+msgstr "列表"
+
+#, fuzzy
+msgid "previous"
+msgstr "上一页"
+
+msgid "Page:"
+msgstr ""
+
+#, c-format
+msgid "%d. %s"
+msgstr "%d. %s"
+
+#, fuzzy
+msgid "Size: "
+msgstr "尺寸"
+
+msgid "Full size: "
+msgstr ""
+
+#, fuzzy
+msgid "Language selector"
+msgstr "边栏语言选择框"
+
+#, fuzzy
+msgid "Item actions"
+msgstr "编辑标注"
+
+#, fuzzy
+msgid "Login block"
+msgstr "登录"
+
+msgid "Links to album/photo peers"
+msgstr ""
+
+#, fuzzy
 msgid "Successfully deleted directory: /cache/entity"
 msgstr "成功删除 %d 个项目。"
 
 #, fuzzy
-msgid "Successfully deleted directory: /cache/layout"
+msgid "Successfully deleted directory: /cache/theme"
 msgstr "成功删除 %d 个项目。"
 
 #, fuzzy
 msgid "Successfully deleted directory: /cache/module"
 msgstr "成功删除 %d 个项目。"
 
-msgid "Unable to delete directory: /cache/layout"
-msgstr ""
+#, fuzzy
+msgid "Unable to delete directory: /cache/theme"
+msgstr "成功删除 %d 个项目。"
 
 msgid "Unable to delete directory: /templates_c"
 msgstr ""
@@ -2802,112 +2998,6 @@ msgstr "单元测试模块"
 msgid "[test] A permission"
 msgstr "[测试] 权限"
 
-msgid "Gallery Debug Output"
-msgstr "图库除错输出"
-
-msgid "This page is valid XHTML 1.0"
-msgstr "此页面符合XHTML 1.0标准"
-
-#, c-format
-msgid "Gallery %s"
-msgstr "图库 %s"
-
-msgid "Edit Conflict!"
-msgstr "编辑出现冲突！"
-
-msgid "Security Violation"
-msgstr "违反安全规定"
-
-msgid "Database Error"
-msgstr "数据库错误"
-
-msgid "Error"
-msgstr "错误"
-
-msgid ""
-"Your change cannot be completed because somebody else has made a conflicting "
-"change to the same item.  Use the back button in your browser to go back to "
-"the page you were on, then <b>reload that page</b> and try your change again."
-msgstr ""
-"您的变更无法完成，因为其他人正在对相同的项目进行与您冲突的变更。使用浏览器后"
-"退按钮返回您所在的页面，然后<b>刷新该页</b>并再试。"
-
-msgid "Go back and try again"
-msgstr "返回并重试"
-
-msgid ""
-"Alternatively, you can return to the main Gallery page and resume browsing."
-msgstr "您可以选择返回主图库页面，或继续浏览。"
-
-msgid "The action you attempted is not permitted."
-msgstr "您尝试的操作无效。"
-
-msgid "An error has occurred while interacting with the database."
-msgstr "与数据库交换时发生一个错误。"
-
-msgid ""
-"The exact nature of database errors is not captured unless Gallery debug "
-"mode is enabled in config.php.  Before seeking support for this error please "
-"enable buffered debug output and retry the operation.  Look near the bottom "
-"of the lengthy debug output to find error details."
-msgstr ""
-"数据库错误的详细内容没有被获取，除非图库除错模式在 config.php 中被开启。在寻"
-"找此错误的帮助前，请打开出错输出缓存并再次尝试此操作。在很长的出错输出底部查"
-"找错误细节。"
-
-msgid "An error has occurred."
-msgstr "发生一个错误。"
-
-msgid "Back to the Gallery"
-msgstr "返回图库"
-
-msgid "Error Detail"
-msgstr "错误细节"
-
-msgid "System Information"
-msgstr "系统信息"
-
-msgid "Redirect"
-msgstr "重定向"
-
-msgid "You are in debug mode so we are not automatically redirecting."
-msgstr "您正在使用除错模式，因此不能自动重定向。"
-
-#, c-format
-msgid "Welcome, %s"
-msgstr "欢迎 %s"
-
-#, c-format
-msgid "(%d item)"
-msgid_plural "(%d items)"
-msgstr[0] "(%d个项目)"
-msgstr[1] "(%d个项目)"
-
-#, c-format
-msgid "%d. %s"
-msgstr "%d. %s"
-
-#~ msgid "Gallery Administrator"
-#~ msgstr "图库管理员"
-
 #, fuzzy
-#~ msgid "Administrator Recovery"
-#~ msgstr "密码"
-
-#~ msgid "Use As Parent&rsquo;s Thumbnail?"
-#~ msgstr "用作上层缩略图吗？"
-
-#~ msgid "Yes, highlight this item!"
-#~ msgstr "是的，标记此项目为精华！"
-
-#~ msgid "You must enter a thumbnail size"
-#~ msgstr "您必须输入一个缩略图尺寸"
-
-#~ msgid "Undo"
-#~ msgstr "取消上次操作"
-
-#~ msgid "[change]"
-#~ msgstr "[变更]"
-
-#~ msgid "required"
-#~ msgstr "必填项"
+msgid "[test] A second permission"
+msgstr "[测试] 权限"

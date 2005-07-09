@@ -46,6 +46,11 @@ class CodeAuditTest extends CodeAuditTestCase {
 	    'layout.css.php' => 1
 	    );
 
+	$this->_exceptions['preamble'] =
+	    '{(:?/TestCase/|blocks/blocks.inc|(:?install|upgrade)/index.php|' .
+	    'DatabaseStorage/ErrorHandler.inc|Php41IllegalFunctions.inc|GdFunctionMatrix.inc|' .
+	    'frame.inc|iconpack.inc)}';
+
 	$this->_exception['superglobals'] = array(
 	    'FILES' => array(
 		'modules/core/classes/GalleryUtilities.class' => 1,
@@ -94,10 +99,23 @@ class CodeAuditTest extends CodeAuditTestCase {
 
 	$this->_lineEnding = $platform->getLineEnding();
 
-	/*
-	 * Windows CVS appends a CRLF after ?>, so allow for it
-	 */
+	/* Windows CVS appends a CRLF after ?>, so allow for it */
 	$this->_phpEndFile = '/\?>(' . $this->_lineEnding . ')?$/';
+
+	/* Use the first 21 lines of this file itself as our canonical preamble */
+	$this->_preamble = $this->getPreamble(file(__FILE__));
+
+	/* Turn the preamble into a pattern that we can use to match */
+	$pattern = join("\n", $this->_preamble);
+	$pattern = str_replace('?', '\?', $pattern);
+	$pattern = str_replace('*', '\*', $pattern);
+	$pattern = str_replace('(', '\(', $pattern);
+	$pattern = str_replace(')', '\)', $pattern);
+	$pattern = str_replace('/', '\/', $pattern);
+	$this->_preamblePattern = str_replace(
+	    'RCSFILE PLACEHOLDER',
+	    '.*',
+	    $pattern);
     }
 
     /**
@@ -156,6 +174,8 @@ class CodeAuditTest extends CodeAuditTestCase {
 	    /* Only perform newlines check on tpl and po files */
 	    return;
 	}
+
+	$this->checkPreamble($fileName, $buffer, $lines);
 
 	for ($i = 0; $i < count($lines); $i++) {
 	    if (preg_match('/^\s*class (\S+)/', $lines[$i], $matches)) {
@@ -241,6 +261,12 @@ class CodeAuditTest extends CodeAuditTestCase {
 		     * 1. Strip off the enclosing array()
 		     * 2. Collapse anything inside any remaining parens and quotes
 		     * 3. Count the commas
+		     * 4. Count the => tokens and subtract N-1 commas
+		     *
+		     * Step 4 covers the case where we return a bare associative array, eg:
+		     *    return array('a' => 1, 'b' => 2, 'c' => 3);
+		     *    return array('d' => 1, 'e' => 2);
+		     * these match, even though they have a different number of commas
 		     */
 		    $tmp = $returnTable[$function][$i];
 		    $tmp = preg_replace('/array\((.*)\)/', '$1', $tmp);
@@ -254,9 +280,14 @@ class CodeAuditTest extends CodeAuditTestCase {
 			}
 		    }
 
-		    $count = substr_count($tmp, ",");
-		    $returnCount[$function][$i] = array($count, $tmp);
-		    if ($i > 0 && $count != $returnCount[$function][0][0]) {
+		    $commaCount = substr_count($tmp, ",");
+		    $assignCount = substr_count($tmp, "=>");
+		    if ($assignCount > 0) {
+			$commaCount -= ($assignCount - 1);
+		    }
+
+		    $returnCount[$function][$i] = array($commaCount, $tmp);
+		    if ($i > 0 && $commaCount != $returnCount[$function][0][0]) {
 			$returnMismatch[$function] = 1;
 		    }
 		} else {
@@ -297,6 +328,53 @@ class CodeAuditTest extends CodeAuditTestCase {
 	if ($this->_errorCount > 10) {
 	    $this->halt();
 	}
+    }
+
+    function checkPreamble($fileName, $buffer, $lines) {
+	if (preg_match($this->_exceptions['preamble'], $fileName)) {
+	    return;
+	}
+
+	if (preg_match('/^' . $this->_preamblePattern . '/', $buffer)) {
+	    return;
+	} else {
+	    $this->_errorCount++;
+	    for ($i = 0; $i < count($this->_preamble); $i++) {
+		if ($i == 2) {
+		    $expected = ' * $RCSfile$fileName) . ',v $';
+		} else {
+		    $expected = $this->_preamble[$i];
+
+		}
+
+		if (strcmp($expected, $lines[$i])) {
+		    $this->assert(false,
+				  "Preamble mismatch in $fileName on line " . ($i + 1) . ":<br/>" .
+				  "Expected: [$expected]<br/>" .
+				  "Received: [$lines[$i]]<br/>");
+		    break;
+		}
+	    }
+	}
+    }
+
+    function getPreamble($lines) {
+	$copy = array();
+	for ($i = 0; $i < count($lines); $i++) {
+	    if (preg_match('/ \* \$RCSfile$$/', $lines[$i])) {
+		$new = " * RCSFILE PLACEHOLDER";
+	    } else {
+		$new = rtrim($lines[$i]);
+	    }
+
+	    if (!strncmp($lines[$i], ' */', 3)) {
+		return $copy;
+	    }
+
+	    $copy[] = $new;
+	}
+
+	return $copy;
     }
 
     /**

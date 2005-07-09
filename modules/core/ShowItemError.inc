@@ -49,8 +49,8 @@ class ShowItemErrorView extends GalleryView {
 	$problem = GalleryUtilities::getRequestVariables('problem');
 
 	switch ($problem) {
-	case 'missingLayout':
-	    list ($ret, $layoutId) = GalleryCoreApi::fetchLayoutId($item);
+	case 'missingTheme':
+	    list ($ret, $themeId) = GalleryCoreApi::fetchThemeId($item);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -73,7 +73,7 @@ class ShowItemErrorView extends GalleryView {
 
 	    $template->setVariable('ShowItemError',
 				   array('itemId' => $targetId,
-					 'layoutId' => $layoutId,
+					 'themeId' => $themeId,
 					 'canEdit' => $canEdit,
 					 'isAdmin' => $isAdmin));
 	    return array(GalleryStatus::success(),

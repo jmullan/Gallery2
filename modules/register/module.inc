@@ -104,13 +104,13 @@ class RegisterModule extends GalleryModule {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	// Only anonymous users will see the register link
+	/* Only anonymous users will see the register link */
 	if ($gallery->getActiveUserId() == $anonymousUserId) {
-	    $links[] = array('text' => $this->translate('Register'),
-			     'params' => array('view' => 'core.UserAdmin',
-					       'subView' => 'register.UserSelfRegistration',
-					       'return' => 1, )
-			    );
+	    $links['Register'] = array(
+		'text' => $this->translate('Register'),
+		'params' => array('view' => 'core.UserAdmin',
+				  'subView' => 'register.UserSelfRegistration',
+				  'return' => 1));
 	}
 
 	return array(GalleryStatus::success(), $links);

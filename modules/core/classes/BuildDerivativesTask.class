@@ -55,29 +55,33 @@ class BuildDerivativesTask extends MaintenanceTask {
     /**
      * @see MaintenanceTask::run()
      */
-    function run(&$immediateView) {
+    function run() {
 	global $gallery;
+	$templateAdapter =& $gallery->getTemplateAdapter();
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
-	$message = $module->translate('Processing...');
 
-	$ret = $immediateView->doLoadImmediateTemplate();
+	return array(GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__), null, null);
+
+	$ret = $templateAdapter->updateProgressBar(
+	    $module->translate('Build All Thumbnails/Resizes'),
+	    '',
+	    0);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
-	$ret = $immediateView->renderHeader(
-	    $module->translate('Build All Thumbnails/Resizes'), $message, '');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
-	}
-
-	list ($ret, $results) =
-	    $gallery->search('SELECT [DerivativeImage::id] FROM [DerivativeImage] ' .
-			     'ORDER BY [DerivativeImage::id]');
+	$query = '
+        SELECT
+          [DerivativeImage::id]
+        FROM
+          [DerivativeImage]
+        ORDER BY [DerivativeImage::id]
+        ';
+	list ($ret, $results) = $gallery->search($query);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
@@ -106,7 +110,7 @@ class BuildDerivativesTask extends MaintenanceTask {
 	    if (++$i % 5 == 0 || $i == $total) {
 		$message = $module->translate(
 		    array('text' => 'Processing image %d of %d', 'arg1' => $i, 'arg2' => $total));
-		$ret = $immediateView->renderStatusMessage($message, '', $i / $total);
+		$ret = $templateAdapter->updateProgressBar($message, '', $i / $total);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
@@ -121,6 +125,13 @@ class BuildDerivativesTask extends MaintenanceTask {
 	    $result[] = $module->translate(array('text' => '%d items failed', 'arg1' => $broken));
 	}
 	return array(GalleryStatus::success(), true, $result);
+    }
+
+    /**
+     * @see MaintenanceTask::requiresProgressBar()
+     */
+    function requiresProgressBar() {
+	return true;
     }
 }
 ?>

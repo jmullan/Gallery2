@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -102,7 +102,7 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
     }
 
     function testEditWatermarkEverything() {
-	GalleryUtilities::putRequestVariable('itemId', $this->_watermark->getId());
+	GalleryUtilities::putRequestVariable('watermarkId', $this->_watermark->getId());
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[name]', 'foo bar');
 	GalleryUtilities::putRequestVariable('form[xPercentage]', '25.51');
@@ -133,7 +133,7 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
     }
 
     function testEditWatermarkThumbnailOnly() {
-	GalleryUtilities::putRequestVariable('itemId', $this->_watermark->getId());
+	GalleryUtilities::putRequestVariable('watermarkId', $this->_watermark->getId());
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[name]', 'foo bar');
 	GalleryUtilities::putRequestVariable('form[xPercentage]', '25.51');
@@ -162,7 +162,7 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
     }
 
     function testEditMissingEverything() {
-	GalleryUtilities::putRequestVariable('itemId', $this->_watermark->getId());
+	GalleryUtilities::putRequestVariable('watermarkId', $this->_watermark->getId());
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 
 	$results = $this->handleRequest();
@@ -188,7 +188,7 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	GalleryUtilities::putRequestVariable('itemId', $this->_watermark->getId());
+	GalleryUtilities::putRequestVariable('watermarkId', $this->_watermark->getId());
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[name]', $watermark->getName());
 	GalleryUtilities::putRequestVariable('form[xPercentage]', '25.51');
@@ -213,7 +213,7 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 	$this->_idToDelete = $watermark->getId();
 	$gallery->setActiveUser($this->_user);
 
-	GalleryUtilities::putRequestVariable('itemId', $this->_watermark->getId());
+	GalleryUtilities::putRequestVariable('watermarkId', $this->_watermark->getId());
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[name]', $watermark->getName());
 	GalleryUtilities::putRequestVariable('form[xPercentage]', '25.51');
@@ -242,7 +242,7 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
     }
 
     function testCancel() {
-	GalleryUtilities::putRequestVariable('itemId', $this->_watermark->getId());
+	GalleryUtilities::putRequestVariable('watermarkId', $this->_watermark->getId());
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 
 	$results = $this->handleRequest();
@@ -262,7 +262,7 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
     }
 
     function testBadCoordinates() {
-	GalleryUtilities::putRequestVariable('itemId', $this->_watermark->getId());
+	GalleryUtilities::putRequestVariable('watermarkId', $this->_watermark->getId());
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[name]', 'foo bar');
 	GalleryUtilities::putRequestVariable('form[xPercentage]', '101.51');
@@ -284,6 +284,6 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 
 	$this->assertEquals('100', $this->_watermark->getXPercentage());
 	$this->assertEquals('0', $this->_watermark->getYPercentage());
-    }	
+    }
 }
 ?>

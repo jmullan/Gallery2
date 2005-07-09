@@ -152,16 +152,6 @@ class ViewCartView extends GalleryView {
 	$ViewCart['controller'] = 'cart.ModifyCart';
 	$template->setVariable('ViewCart', $ViewCart);
 
-	list ($ret, $navigationView) = GalleryView::loadView('core.Navigation');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	list ($ret, $ignored) = $navigationView->loadTemplate($template, $form);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'cart');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);

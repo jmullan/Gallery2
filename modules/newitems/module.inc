@@ -148,11 +148,11 @@ class NewItemsModule extends GalleryModule {
 	$summaries = array();
 	foreach ($items as $item) {
 	    if ($param['days.new'] > 0 && $item->getCreationTimestamp() > $newTime) {
-		$summaries[$item->getId()] = '<span class="gcBackground2 gcBorder2 giNew">'
+		$summaries[$item->getId()] = '<span class="giNew">'
 		    . $newString . '</span>';
 	    } else if ($param['days.updated'] > 0
 			&& $item->getModificationTimestamp() > $updatedTime) {
-		$summaries[$item->getId()] = '<span class="gcBackground2 gcBorder2 giUpdated">'
+		$summaries[$item->getId()] = '<span class="giUpdated">'
 		    . $updatedString . '</span>';
 	    }
 	}

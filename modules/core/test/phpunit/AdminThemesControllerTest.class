@@ -1,0 +1,505 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * AdminThemes controller tests
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class AdminThemesControllerTest extends GalleryControllerTestCase {
+
+    function AdminThemesControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'core.AdminThemes');
+    }
+
+    function setUp() {
+	parent::setUp();
+
+	$this->_testTheme =& AdminThemesControllerTestTheme::getSingleton();
+	$this->_testTheme->resetCalls();
+
+	$ret = $this->_markPluginParametersForCleanup('module', 'core');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+    }
+
+    function testInstall() {
+	GalleryUtilities::putRequestVariable('themeId', 'AdminThemesControllerTest');
+	GalleryUtilities::putRequestVariable('form[action][install]', 1);
+	$this->_testTheme->_set('_isActive', false);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminThemes',
+						      'mode' => 'config'),
+				  'status' => array('installed' => 'AdminThemes Controller Test'),
+				  'error' => array()),
+			    $results);
+
+	$this->assert($this->_testTheme->wasCalled('installOrUpgrade'),
+		      'installOrUpgrade not called');
+    }
+
+    function testUninstall() {
+	GalleryUtilities::putRequestVariable('themeId', 'AdminThemesControllerTest');
+	GalleryUtilities::putRequestVariable('form[action][uninstall]', 1);
+	$this->_testTheme->_set('_isActive', false);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('redirect' => array('view' => 'core.SiteAdmin',
+				      'subView' => 'core.AdminThemes',
+				      'mode' => 'config'),
+		  'status' => array('uninstalled' => 'AdminThemes Controller Test'),
+		  'error' => array()),
+			    $results);
+
+	$this->assert($this->_testTheme->wasCalled('uninstall'),
+		      'uninstall not called');
+    }
+
+    function testUninstallActiveTheme() {
+	GalleryUtilities::putRequestVariable('themeId', 'AdminThemesControllerTest');
+	GalleryUtilities::putRequestVariable('form[action][uninstall]', 1);
+	$this->_testTheme->_set('_isActive', true);
+
+	/* The ui doesn't permit this, so expect a silent failure */
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminThemes',
+						      'mode' => 'config'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+
+	$this->assert(!$this->_testTheme->wasCalled('uninstall'),
+		      'uninstall unexpectedly called');
+    }
+
+    function testUpgrade() {
+	GalleryUtilities::putRequestVariable('themeId', 'AdminThemesControllerTest');
+	GalleryUtilities::putRequestVariable('form[action][upgrade]', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminThemes',
+						      'mode' => 'config'),
+				  'status' => array('upgraded' => 'AdminThemes Controller Test'),
+				  'error' => array()),
+			    $results);
+
+	$this->assert($this->_testTheme->wasCalled('installOrUpgrade'),
+		      'installOrUpgrade not called');
+    }
+
+    function testActivate() {
+	GalleryUtilities::putRequestVariable('themeId', 'AdminThemesControllerTest');
+	GalleryUtilities::putRequestVariable('form[action][activate]', 1);
+	$this->_testTheme->_set('_isActive', false);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminThemes',
+						      'mode' => 'config'),
+				  'status' => array('activated' => 'AdminThemes Controller Test'),
+				  'error' => array()),
+			    $results);
+
+	$this->assert($this->_testTheme->wasCalled('activate'),
+		      'activate not called');
+    }
+
+    function testActivateAlreadyActiveTheme() {
+	GalleryUtilities::putRequestVariable('themeId', 'AdminThemesControllerTest');
+	GalleryUtilities::putRequestVariable('form[action][activate]', 1);
+	$this->_testTheme->_set('_isActive', true);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminThemes',
+						      'mode' => 'config'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+
+	$this->assert(!$this->_testTheme->wasCalled('activate'),
+		      'activate unexpectedly called');
+    }
+
+    function testDeactivate() {
+	GalleryUtilities::putRequestVariable('themeId', 'AdminThemesControllerTest');
+	GalleryUtilities::putRequestVariable('form[action][deactivate]', 1);
+	$this->_testTheme->_set('_isActive', true);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('redirect' => array('view' => 'core.SiteAdmin',
+				      'subView' => 'core.AdminThemes',
+				      'mode' => 'config'),
+		  'status' => array('deactivated' => 'AdminThemes Controller Test'),
+		  'error' => array()),
+	    $results);
+
+	$this->assert($this->_testTheme->wasCalled('deactivate'),
+		      'deactivate not called');
+    }
+
+    function testDeactivateDefaultTheme() {
+	GalleryUtilities::putRequestVariable('themeId', 'AdminThemesControllerTest');
+	GalleryUtilities::putRequestVariable('form[action][deactivate]', 1);
+	$this->_testTheme->_set('_isActive', true);
+
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'core', 'default.theme', 'AdminThemesControllerTest');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* The ui doesn't permit this, so expect a silent failure */
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('redirect' => array('view' => 'core.SiteAdmin',
+				      'subView' => 'core.AdminThemes',
+				      'mode' => 'config'),
+		  'status' => array(),
+		  'error' => array()),
+	    $results);
+
+	$this->assert(!$this->_testTheme->wasCalled('deactivate'),
+		      'deactivate unexpectedly called');
+    }
+
+    function testDeactivateAlreadyInactive() {
+	GalleryUtilities::putRequestVariable('themeId', 'AdminThemesControllerTest');
+	GalleryUtilities::putRequestVariable('form[action][deactivate]', 1);
+	$this->_testTheme->_set('_isActive', false);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('redirect' => array('view' => 'core.SiteAdmin',
+				      'subView' => 'core.AdminThemes',
+				      'mode' => 'config'),
+		  'status' => array(),
+		  'error' => array()),
+	    $results);
+
+	$this->assert(!$this->_testTheme->wasCalled('deactivate'),
+		      'deactivate unexpectedly called');
+    }
+
+    function testSaveTheme() {
+	GalleryUtilities::putRequestVariable('themeId', 'testThemeId2');
+	GalleryUtilities::putRequestVariable('form[key][rows]', '2');
+	GalleryUtilities::putRequestVariable('form[key][columns]', '4');
+	GalleryUtilities::putRequestVariable('form[action][saveTheme]', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('redirect' => array('view' => 'core.SiteAdmin',
+				      'subView' => 'core.AdminThemes',
+				      'mode' => 'editTheme',
+				      'themeId' => 'testThemeId2'),
+		  'status' => array('savedTheme' => 'Test Theme 2'),
+		  'error' => array()),
+	    $results);
+
+	$map =& TestThemeId2Theme::getMap();
+	$this->assertEquals(2, (int)$map['rows']);
+	$this->assertEquals(4, (int)$map['columns']);
+    }
+
+    function testUndoTheme() {
+	GalleryUtilities::putRequestVariable('themeId', 'testThemeId2');
+	GalleryUtilities::putRequestVariable('form[key][rows]', '2');
+	GalleryUtilities::putRequestVariable('form[key][columns]', '4');
+	GalleryUtilities::putRequestVariable('form[action][undoTheme]', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('redirect' => array('view' => 'core.SiteAdmin',
+				      'subView' => 'core.AdminThemes',
+				      'mode' => 'editTheme',
+				      'themeId' => 'testThemeId2'),
+		  'status' => array('restoredTheme' => 'Test Theme 2'),
+		  'error' => array()),
+	    $results);
+    }
+
+    function testSaveThemeWithValidationErrors() {
+	GalleryUtilities::putRequestVariable('themeId', 'testThemeId1');
+	GalleryUtilities::putRequestVariable('form[key][rows]', '2');
+	GalleryUtilities::putRequestVariable('form[key][columns]', '4');
+	GalleryUtilities::putRequestVariable('form[action][saveTheme]', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('delegate' => array('view' => 'core.SiteAdmin',
+				      'subView' => 'core.AdminThemes'),
+		  'status' => array(),
+		  'error' => array('form[error][key][rows][invalid]',
+				   'form[error][key][columns][invalid]')),
+	    $results);
+    }
+
+    function testSaveDefaults() {
+	GalleryUtilities::putRequestVariable('form[default][orderBy]', 'viewCount');
+	GalleryUtilities::putRequestVariable('form[default][orderDirection]', 'desc');
+	GalleryUtilities::putRequestVariable('form[default][presort]', 'albumsFirst');
+	GalleryUtilities::putRequestVariable('form[default][theme]', 'matrix');
+	GalleryUtilities::putRequestVariable('form[default][theme]', 'matrix');
+	GalleryUtilities::putRequestVariable('form[default][newAlbumsUseDefaults]', 'true');
+	GalleryUtilities::putRequestVariable('form[action][saveDefaults]', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminThemes',
+						      'mode' => 'defaults'),
+				  'status' => array('savedDefaults' => 1),
+				  'error' => array()),
+			    $results);
+
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('albumsFirst|viewCount', $params['default.orderBy'], 'orderBy');
+	$this->assertEquals('desc', $params['default.orderDirection'], 'orderDirection');
+	$this->assertEquals('matrix', $params['default.theme'], 'theme');
+	$this->assertEquals('matrix', $params['default.theme'], 'theme');
+	$this->assertEquals('true', $params['default.newAlbumsUseDefaults'],
+			    'newAlbumsUseDefaults');
+    }
+}
+
+/**
+ * Required classes
+ */
+/**
+ * Test Theme that fails to validate settings
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class TestThemeId1Theme extends GalleryTheme {
+
+    /**
+     * @see GalleryTheme::getSettings()
+     */
+    function getSettings($itemId=0) {
+	$settings = array();
+	$settings[] = array('key' => 'rows',
+			    'name' => 'Rows per album page',
+			    'type' => 'text-field',
+			    'typeParams' => array('size' => 2),
+			    'value' => 4);
+	$settings[] = array('key' => 'columns',
+			    'name' => 'Columns per album page',
+			    'type' => 'text-field',
+			    'typeParams' => array('size' => 2),
+			    'value' => 99);
+	return array(GalleryStatus::success(), $settings);
+    }
+
+    /**
+     * @see GalleryTheme::validateSettings
+     */
+    function validateSettings($settings) {
+	$error = array();
+	$error['rows'] = 'rows error';
+	$error['columns'] = 'columns error';
+	return $error;
+    }
+
+    function TestThemeId1Theme() {
+	$this->setId('testThemeId1');
+	$this->setName('Test Theme 1');
+    }
+
+    function isActive() {
+	return array(GalleryStatus::success(), true);
+    }
+}
+
+/**
+ * Test Theme that successfully validates settings
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class TestThemeId2Theme extends GalleryTheme {
+
+    function &getMap() {
+	static $map;
+	if (!isset($map)) {
+	    $map = array();
+	}
+	return $map;
+    }
+
+    function setParameter($key, $value) {
+	$map =& $this->getMap();
+	$map[$key] = $value;
+	return GalleryStatus::success();
+    }
+
+    function TestThemeId2Theme() {
+	$this->setId('testThemeId2');
+	$this->setName('Test Theme 2');
+    }
+
+    /**
+     * @see GalleryTheme::getSettings()
+     */
+    function getSettings($itemId=0) {
+	$settings = array();
+	$settings[] = array('key' => 'rows',
+			    'name' => 'Rows per album page',
+			    'type' => 'text-field',
+			    'typeParams' => array('size' => 2),
+			    'value' => 4);
+	$settings[] = array('key' => 'columns',
+			    'name' => 'Columns per album page',
+			    'type' => 'text-field',
+			    'typeParams' => array('size' => 2),
+			    'value' => 3);
+	return array(GalleryStatus::success(), $settings);
+    }
+
+    /**
+     * @see GalleryTheme::validateSettings
+     */
+    function validateSettings($settings) {
+	return array();
+    }
+
+    function isActive() {
+	return array(GalleryStatus::success(), true);
+    }
+}
+
+
+/**
+ * Test theme
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class AdminThemesControllerTestTheme {
+
+    function &getSingleton() {
+	static $singleton;
+	if (!isset($singleton)) {
+	    $singleton = new AdminThemesControllerTestTheme();
+	}
+
+	return $singleton;
+    }
+
+    function getId() {
+	return 'AdminThemesControllerTest';
+    }
+
+    function getName() {
+	return 'AdminThemes Controller Test';
+    }
+
+    function init() {
+	$this->_setCalled('init');
+	return GalleryStatus::success();
+    }
+
+    function installOrUpgrade() {
+	$this->_setCalled('installOrUpgrade');
+	return GalleryStatus::success();
+    }
+
+    function activate() {
+	$this->_setCalled('activate');
+	return array(GalleryStatus::success(), array());
+    }
+
+    function uninstall() {
+	$this->_setCalled('uninstall');
+	return GalleryStatus::success();
+    }
+
+    function deactivate() {
+	$this->_setCalled('deactivate');
+	return array(GalleryStatus::success(), array());
+    }
+
+    function _setCalled($function) {
+	$singleton = &$this->getSingleton();
+	$singleton->_callMap[$function] = 1;
+    }
+
+    function wasCalled($function) {
+	$singleton = &$this->getSingleton();
+	return isset($singleton->_callMap[$function]);
+    }
+
+    function resetCalls() {
+	$singleton = &$this->getSingleton();
+	$singleton->_callMap = array();
+    }
+
+    function _set($key, $val) {
+	$singleton = &$this->getSingleton();
+	$singleton->$key = $val;
+    }
+
+    function isActive() {
+	$singleton = &$this->getSingleton();
+	return array(GalleryStatus::success(), $singleton->_isActive);
+    }
+
+    function isAdvancedSettings() {
+	$singleton = &$this->getSingleton();
+	return $singleton->_isAdvancedSettings;
+    }
+}
+?>

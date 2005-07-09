@@ -194,7 +194,7 @@ class ItemEditControllerTestOption extends ItemEditOption {
 	return array(GalleryStatus::success(), true);
     }
 
-    function handleRequestAfterEdit($form, &$item, &$preferred, $statusMonitor) {
+    function handleRequestAfterEdit($form, &$item, &$preferred) {
 	return array(GalleryStatus::success(),
 		     array('an error'),
 		     array('a warning'));

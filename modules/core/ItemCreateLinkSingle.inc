@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -61,7 +61,7 @@ class ItemCreateLinkSingleController extends GalleryController {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
+
 		if (!isset($permissions[$destinationId]['core.addDataItem'])) {
 		    return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__),
 				 null);
@@ -77,13 +77,13 @@ class ItemCreateLinkSingleController extends GalleryController {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
+
 		/* Look out for monkey business */
 		if (!$item->getIsLinkable()) {
 		    return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__),
 				 null);
 		}
-		
+
 		/*
 		 * Ok we've got a linkable item and a legal destination album.
 		 * Lock everything up and start linkin'.  We need to read lock
@@ -93,7 +93,7 @@ class ItemCreateLinkSingleController extends GalleryController {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
+
 		list ($ret, $locks[]) = GalleryCoreApi::acquireReadLockParents($itemId);
 		if ($ret->isError()) {
 		    GalleryCoreApi::releaseLocks($locks);
@@ -105,7 +105,7 @@ class ItemCreateLinkSingleController extends GalleryController {
 		    GalleryCoreApi::releaseLocks($locks);
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-	    
+
 		/* Create all our links */
 		$classType = get_class($item);
 		$linkedItem = new $classType;
@@ -133,7 +133,7 @@ class ItemCreateLinkSingleController extends GalleryController {
 		    GalleryCoreApi::releaseLocks($locks);
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		    
+
 		$status['linked'] = 1;
 
 		/* Release the locks */
@@ -188,7 +188,7 @@ class ItemCreateLinkSingleView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	/* Find all the possible locations where this item can be linked. */
 	list ($ret, $albumIds) = GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.addDataItem');
 	if ($ret->isError()) {

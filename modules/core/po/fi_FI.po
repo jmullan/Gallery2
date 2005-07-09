@@ -39,27 +39,8 @@ msgstr "Gallerian moduulit"
 msgid "&laquo; None &raquo;"
 msgstr "&laquo; Ei mitään &raquo;"
 
-#, fuzzy
-msgid "None"
-msgstr "Valmis"
-
-msgid "Guest User Only"
-msgstr ""
-
-msgid "Everybody"
-msgstr ""
-
 msgid "forever"
 msgstr "ikuisesti"
-
-msgid "Link to Login Page"
-msgstr ""
-
-msgid "Form on Sidebar"
-msgstr ""
-
-msgid "Both"
-msgstr ""
 
 msgid "No Markup"
 msgstr ""
@@ -109,6 +90,9 @@ msgstr "asenna"
 msgid "upgrade"
 msgstr ""
 
+msgid "configure"
+msgstr "konfiguroi"
+
 msgid "activate"
 msgstr "aktivoi"
 
@@ -119,18 +103,15 @@ msgstr "asenna"
 msgid "deactivate"
 msgstr "deaktivoi"
 
+msgid "Other"
+msgstr ""
+
 msgid "Inherit settings from parent album"
 msgstr ""
 
 #, fuzzy
 msgid "Use these settings"
 msgstr "Omat asetukset"
-
-msgid "configure"
-msgstr "konfiguroi"
-
-msgid "Other"
-msgstr ""
 
 msgid "key"
 msgstr "avain"
@@ -181,9 +162,21 @@ msgstr "muokkaa käyttäjiä"
 msgid "All Users"
 msgstr "Käyttäjät"
 
+msgid "Loading derivatives for the broken derivatives check"
+msgstr ""
+
+msgid "Detecting broken derivatives"
+msgstr ""
+
+msgid "Marking broken derivatives"
+msgstr ""
+
 #, fuzzy
 msgid "Site Admins"
 msgstr "Gallerian ylläpito"
+
+msgid "Everybody"
+msgstr ""
 
 msgid "Guest"
 msgstr "Vieras"
@@ -194,6 +187,15 @@ msgstr "Galleria"
 #, fuzzy
 msgid "This is the main page of your Gallery"
 msgstr "Tämä on Gallerian etusivu"
+
+msgid "Loading derivatives for the "
+msgstr ""
+
+msgid "Detecting broken derivatives "
+msgstr ""
+
+msgid "Marking broken derivatives "
+msgstr ""
 
 #, fuzzy
 msgid "add items"
@@ -275,10 +277,6 @@ msgid "Settings saved successfully."
 msgstr "Asetukset tallennettu onnistuneesti."
 
 #, fuzzy
-msgid "&laquo; default layout &raquo;"
-msgstr "&laquo; Ei mitään &raquo;"
-
-#, fuzzy
 msgid "&laquo; default theme &raquo;"
 msgstr "&laquo; Ei mitään &raquo;"
 
@@ -299,13 +297,6 @@ msgstr "Ylläpitäjän toiminnot"
 
 msgid "General"
 msgstr "Yleinen"
-
-#, fuzzy
-msgid "Successfully saved layout settings"
-msgstr "Onnistuneesti lisätty yksi tiedosto."
-
-msgid "Layout"
-msgstr "Ulkoasu"
 
 #, fuzzy
 msgid "Movie Size"
@@ -377,6 +368,13 @@ msgstr "Skaalaus onnistui"
 msgid "Modify Photo"
 msgstr "Muokattu kuva"
 
+#, fuzzy
+msgid "Successfully saved theme settings"
+msgstr "Onnistuneesti lisätty yksi tiedosto."
+
+msgid "Theme"
+msgstr "Teema"
+
 msgid "make highlight"
 msgstr "laita esimerkkikuvaksi"
 
@@ -420,15 +418,16 @@ msgid "Build all thumbnails/resizes"
 msgstr "Esikatselukuvat"
 
 msgid ""
-"Ensure data files for all derivatives (thumbnails, etc) have been built."
-msgstr ""
-
-msgid "Processing..."
+"Ensure data files for all derivatives (thumbnails, etc) have been built and "
+"rebuild broken ones."
 msgstr ""
 
 #, fuzzy
 msgid "Build All Thumbnails/Resizes"
 msgstr "Esikatselukuvat"
+
+msgid "Debug output for failed items:"
+msgstr ""
 
 #, fuzzy, c-format
 msgid "Processing image %d of %d"
@@ -437,6 +436,14 @@ msgstr "Näytetään sivu %d/%d"
 #, fuzzy, c-format
 msgid "Checked %d items"
 msgstr "lisää kuva"
+
+#, fuzzy, c-format
+msgid "%d items built"
+msgstr "lisää kuva"
+
+#, c-format
+msgid "%d items failed"
+msgstr ""
 
 msgid "Delete database cache"
 msgstr ""
@@ -530,47 +537,6 @@ msgstr "Ryhmät"
 msgid "group"
 msgstr "Ryhmät"
 
-#, c-format
-msgid "Estimated time remaining: %d:%02d"
-msgstr ""
-
-msgid "Rows per album page"
-msgstr ""
-
-msgid "Columns per album page"
-msgstr ""
-
-msgid "Show image owners"
-msgstr ""
-
-msgid "Show album owners"
-msgstr ""
-
-msgid "Show micro navigation thumbnails"
-msgstr ""
-
-msgid "Number of items to show per page"
-msgstr ""
-
-msgid "View Samples"
-msgstr ""
-
-#, fuzzy
-msgid "Album Frame"
-msgstr "Albumin asetukset"
-
-#, fuzzy
-msgid "Item Frame"
-msgstr "Siirrettävät kohteet"
-
-#, fuzzy
-msgid "Photo Frame"
-msgstr "Kuva"
-
-#, fuzzy
-msgid "You must enter a number greater than 0"
-msgstr "Sinun on syötettävä numero, joka on suurempi kuin nolla"
-
 msgid "Movie"
 msgstr "Video"
 
@@ -622,6 +588,74 @@ msgstr "Nouseva"
 
 msgid "Descending"
 msgstr "Laskeva"
+
+msgid "Validation disabled until you set allowSessionAccess in config.php"
+msgstr ""
+
+#, fuzzy
+msgid "This page is valid XHTML 1.0"
+msgstr "Tämä sivu on käypää HTML 4.01 -koodia."
+
+#, c-format
+msgid "Estimated time remaining: %d:%02d"
+msgstr ""
+
+#, c-format
+msgid "Memory used: %s, total: %s"
+msgstr ""
+
+msgid "Rows per album page"
+msgstr ""
+
+msgid "Columns per album page"
+msgstr ""
+
+msgid "Show image owners"
+msgstr ""
+
+msgid "Show album owners"
+msgstr ""
+
+msgid "Show micro navigation thumbnails"
+msgstr ""
+
+msgid "Number of items to show per page"
+msgstr ""
+
+msgid "Blocks to show in the sidebar"
+msgstr ""
+
+msgid "Blocks to show on album pages"
+msgstr ""
+
+msgid "Blocks to show on photo pages"
+msgstr ""
+
+msgid "View Samples"
+msgstr ""
+
+#, fuzzy
+msgid "Album Frame"
+msgstr "Albumin asetukset"
+
+#, fuzzy
+msgid "Item Frame"
+msgstr "Siirrettävät kohteet"
+
+#, fuzzy
+msgid "Photo Frame"
+msgstr "Kuva"
+
+#, fuzzy
+msgid "You must enter a number greater than 0"
+msgstr "Sinun on syötettävä numero, joka on suurempi kuin nolla"
+
+msgid "Format: [module.BlockName param=value] ..."
+msgstr ""
+
+#, c-format
+msgid "%dx%d"
+msgstr ""
 
 #, fuzzy
 msgid "Audio"
@@ -709,6 +743,9 @@ msgid ""
 "in the original data file (usually from EXIF data)."
 msgstr ""
 
+msgid "Processing..."
+msgstr ""
+
 msgid "Refresh Capture Dates"
 msgstr ""
 
@@ -790,8 +827,8 @@ msgid "Modules"
 msgstr "Moduulit"
 
 #, fuzzy
-msgid "Layouts and Themes"
-msgstr "Ulkoasu"
+msgid "Themes"
+msgstr "Teema"
 
 msgid "Display"
 msgstr ""
@@ -872,13 +909,10 @@ msgstr "Paikallinen kopiointihakemisto poistettu"
 msgid "Test email sent successfully"
 msgstr "Albumi luotu onnistuneesti"
 
-msgid "Error sending test email, see below for details"
+msgid "There was a problem processing your request, see below for details."
 msgstr ""
 
-msgid "Invalid cookie path"
-msgstr ""
-
-msgid "Invalid cookie domain"
+msgid "Error sending test email, see below for details."
 msgstr ""
 
 #, fuzzy
@@ -896,10 +930,6 @@ msgstr ""
 
 msgid "Default language"
 msgstr "Oletuskieli"
-
-#, fuzzy
-msgid "Language selector in sidebar"
-msgstr "Kielen asetukset"
 
 msgid "gettext"
 msgstr ""
@@ -979,9 +1009,6 @@ msgstr ""
 msgid "Session Settings"
 msgstr "Istunnon asetukset"
 
-msgid "Login Method"
-msgstr ""
-
 #, fuzzy
 msgid "Session Lifetime"
 msgstr "Istunnon asetukset"
@@ -1026,6 +1053,10 @@ msgstr "Salasana"
 msgid "SMTP From Address"
 msgstr "Sähköpostiosoite"
 
+#, fuzzy
+msgid "Invalid email address"
+msgstr "Sähköpostiosoite"
+
 msgid ""
 "Send a test email to verify your settings are correct (whether using PHP "
 "mail or SMTP settings above).  Below enter a recipient email address for a "
@@ -1034,10 +1065,6 @@ msgstr ""
 
 msgid "Send Email"
 msgstr ""
-
-#, fuzzy
-msgid "Invalid email address"
-msgstr "Sähköpostiosoite"
 
 msgid "Email Test Error"
 msgstr ""
@@ -1082,7 +1109,13 @@ msgid ""
 "not, they will experience login / logout / lost session problems."
 msgstr ""
 
+msgid "Invalid cookie path"
+msgstr ""
+
 msgid "Domain"
+msgstr ""
+
+msgid "Invalid cookie domain"
 msgstr ""
 
 msgid "Locking System"
@@ -1387,126 +1420,6 @@ msgid_plural "%d groups match your filter"
 msgstr[0] "yksi ryhmä vastaa suodinta"
 msgstr[1] "%d ryhmää vastaa suotimeen"
 
-#, fuzzy
-msgid "Gallery Layouts"
-msgstr "Gallerian moduulit"
-
-#, fuzzy, c-format
-msgid "Successfully activated layout %s"
-msgstr "Onnistuneesti lisätty yksi tiedosto."
-
-#, c-format
-msgid "Successfully deactivated layout %s"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Successfully installed layout %s"
-msgstr "Onnistuneesti lisätty yksi tiedosto."
-
-#, fuzzy, c-format
-msgid "Successfully uninstalled layout %s"
-msgstr "Onnistuneesti lisätty yksi tiedosto."
-
-#, fuzzy, c-format
-msgid "Successfully upgraded layout %s"
-msgstr "Onnistuneesti lisätty yksi tiedosto."
-
-#, fuzzy
-msgid "Successfully saved default album settings"
-msgstr "Onnistuneesti lisätty yksi tiedosto."
-
-#, fuzzy
-msgid "Restored layout settings"
-msgstr "Omat asetukset"
-
-#, fuzzy
-msgid "All Layouts"
-msgstr "Ulkoasu"
-
-msgid "Defaults"
-msgstr "Oletukset"
-
-#, fuzzy
-msgid "Layout Name"
-msgstr "Ulkoasu"
-
-msgid "Version"
-msgstr "Versio"
-
-#, fuzzy
-msgid "Installed"
-msgstr "asenna"
-
-msgid "Actions"
-msgstr "Toiminnot"
-
-#, fuzzy
-msgid "Status: Not Installed"
-msgstr "asenna"
-
-#, fuzzy
-msgid "Status: Active"
-msgstr "Aktiivinen"
-
-msgid "Status: Inactive"
-msgstr ""
-
-msgid "Status: Upgrade Required (Inactive)"
-msgstr ""
-
-msgid "Status: Incompatible Layout (Inactive)"
-msgstr ""
-
-msgid "Incompatible layout!"
-msgstr ""
-
-#, c-format
-msgid "Core API Required: %s (available: %s)"
-msgstr ""
-
-#, c-format
-msgid "Layout API Required: %s (available: %s)"
-msgstr ""
-
-#, fuzzy
-msgid "(default)"
-msgstr "Oletukset"
-
-#, fuzzy
-msgid ""
-"These are default display settings for albums in your gallery.  They can be "
-"overridden in each album."
-msgstr "Nämä ovat oletusarvoja. Jokainen albumi voi ohittaa oletukset."
-
-msgid "Default sort order"
-msgstr "Lajittelujärjestys"
-
-msgid "with"
-msgstr ""
-
-msgid "Default layout"
-msgstr "Oletusulkoasu"
-
-msgid "Default theme"
-msgstr "Oletusteema"
-
-#, fuzzy
-msgid "New albums"
-msgstr "muokkaa albumia"
-
-#, fuzzy, c-format
-msgid "%s Layout Settings"
-msgstr "Omat asetukset"
-
-#, fuzzy
-msgid ""
-"These are the global settings for the layout.  They can be overridden at the "
-"album level."
-msgstr "Nämä ovat oletusarvoja. Jokainen albumi voi ohittaa oletukset."
-
-msgid "There are no settings for this layout"
-msgstr ""
-
 msgid "System Maintenance"
 msgstr ""
 
@@ -1594,10 +1507,38 @@ msgstr ""
 msgid "Module Name"
 msgstr "Moduulin nimi"
 
+msgid "Version"
+msgstr "Versio"
+
+#, fuzzy
+msgid "Installed"
+msgstr "asenna"
+
+msgid "Actions"
+msgstr "Toiminnot"
+
+#, fuzzy
+msgid "Status: Not Installed"
+msgstr "asenna"
+
+#, fuzzy
+msgid "Status: Active"
+msgstr "Aktiivinen"
+
+msgid "Status: Inactive"
+msgstr ""
+
+msgid "Status: Upgrade Required (Inactive)"
+msgstr ""
+
 msgid "Status: Incompatible Module (Inactive)"
 msgstr ""
 
 msgid "Incompatible module!"
+msgstr ""
+
+#, c-format
+msgid "Core API Required: %s (available: %s)"
 msgstr ""
 
 #, c-format
@@ -1619,6 +1560,123 @@ msgstr ""
 #, fuzzy
 msgid "Uninstall"
 msgstr "asenna"
+
+#, fuzzy
+msgid "Gallery Themes"
+msgstr "Galleria"
+
+#, fuzzy, c-format
+msgid "Successfully activated theme %s"
+msgstr "Onnistuneesti lisätty yksi tiedosto."
+
+#, fuzzy, c-format
+msgid "Successfully deactivated theme %s"
+msgstr "Onnistuneesti lisätty yksi tiedosto."
+
+#, fuzzy, c-format
+msgid "Successfully installed theme %s"
+msgstr "Onnistuneesti lisätty yksi tiedosto."
+
+#, fuzzy, c-format
+msgid "Successfully uninstalled theme %s"
+msgstr "Onnistuneesti lisätty yksi tiedosto."
+
+#, fuzzy, c-format
+msgid "Successfully upgraded theme %s"
+msgstr "Onnistuneesti lisätty yksi tiedosto."
+
+#, fuzzy
+msgid "Successfully saved default album settings"
+msgstr "Onnistuneesti lisätty yksi tiedosto."
+
+#, fuzzy
+msgid "Restored theme settings"
+msgstr "Omat asetukset"
+
+#, fuzzy
+msgid "All Themes"
+msgstr "Teema"
+
+msgid "Defaults"
+msgstr "Oletukset"
+
+#, fuzzy
+msgid "Theme Name"
+msgstr "Teema"
+
+msgid "Status: Incompatible Theme (Inactive)"
+msgstr ""
+
+msgid "Incompatible theme!"
+msgstr ""
+
+#, c-format
+msgid "Theme API Required: %s (available: %s)"
+msgstr ""
+
+#, fuzzy
+msgid "(default)"
+msgstr "Oletukset"
+
+#, fuzzy
+msgid ""
+"These are default display settings for albums in your gallery.  They can be "
+"overridden in each album."
+msgstr "Nämä ovat oletusarvoja. Jokainen albumi voi ohittaa oletukset."
+
+msgid "Default sort order"
+msgstr "Lajittelujärjestys"
+
+msgid "with"
+msgstr ""
+
+msgid "Default theme"
+msgstr "Oletusteema"
+
+#, fuzzy
+msgid "New albums"
+msgstr "muokkaa albumia"
+
+#, fuzzy, c-format
+msgid "%s Theme Settings"
+msgstr "Omat asetukset"
+
+#, fuzzy
+msgid ""
+"These are the global settings for the theme.  They can be overridden at the "
+"album level."
+msgstr "Nämä ovat oletusarvoja. Jokainen albumi voi ohittaa oletukset."
+
+msgid "Available"
+msgstr ""
+
+msgid "Choose a block"
+msgstr ""
+
+#, fuzzy
+msgid "Selected"
+msgstr "Poista"
+
+msgid "Remove"
+msgstr "Poista"
+
+#, fuzzy
+msgid "Move Up"
+msgstr "Siirrä"
+
+#, fuzzy
+msgid "Move Down"
+msgstr "Siirrä"
+
+msgid "Parameter"
+msgstr ""
+
+#, fuzzy
+msgid "Value"
+msgstr "Skaalaa"
+
+msgid "There are no settings for this theme"
+msgstr ""
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime "
@@ -1691,6 +1749,58 @@ msgstr "Luo esikatselukuvat uudelleen"
 #, fuzzy
 msgid "This is a test email from Gallery2"
 msgstr "Tämä on Gallerian etusivu"
+
+msgid "Edit Conflict!"
+msgstr ""
+
+msgid "Security Violation"
+msgstr "Turvallisuusrike!"
+
+msgid "Database Error"
+msgstr ""
+
+msgid "Error"
+msgstr "Virhe"
+
+msgid ""
+"Your change cannot be completed because somebody else has made a conflicting "
+"change to the same item.  Use the back button in your browser to go back to "
+"the page you were on, then <b>reload that page</b> and try your change again."
+msgstr ""
+
+msgid "Go back and try again"
+msgstr ""
+
+msgid ""
+"Alternatively, you can return to the main Gallery page and resume browsing."
+msgstr ""
+
+msgid "The action you attempted is not permitted."
+msgstr "Yrittämääsi toimenpidettä ei sallittu."
+
+msgid "An error has occurred while interacting with the database."
+msgstr ""
+
+msgid ""
+"The exact nature of database errors is not captured unless Gallery debug "
+"mode is enabled in config.php.  Before seeking support for this error please "
+"enable buffered debug output and retry the operation.  Look near the bottom "
+"of the lengthy debug output to find error details."
+msgstr ""
+
+msgid "An error has occurred."
+msgstr ""
+
+#, fuzzy
+msgid "Back to the Gallery"
+msgstr "Takaisin kohteeseen"
+
+msgid "Error Detail"
+msgstr ""
+
+#, fuzzy
+msgid "System Information"
+msgstr "Kohde"
 
 msgid ""
 "You don't have any Graphics Toolkit activated that can handle JPEG images.  "
@@ -2106,14 +2216,8 @@ msgstr ""
 
 #, fuzzy
 msgid ""
-"Choose a layout for this album. (The way the album is arranged on the page)"
+"Choose a theme for this album. (The way the album is arranged on the page)"
 msgstr "Valitse sommittelu tälle albumille."
-
-msgid "Theme"
-msgstr "Teema"
-
-msgid "Choose a theme for this album.  (The look and feel of this album)"
-msgstr "Valitse uusi teema"
 
 #, fuzzy
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
@@ -2294,23 +2398,6 @@ msgid ""
 "cannot create or modify a thumbnail."
 msgstr ""
 
-#, c-format
-msgid ""
-"This album is configured to use the <b>%s</b> layout. These settings only "
-"apply to the layout for this album."
-msgstr ""
-
-#, fuzzy
-msgid "Setting"
-msgstr "Gallerian asetukset"
-
-#, fuzzy
-msgid "Value"
-msgstr "Skaalaa"
-
-msgid "Use Global"
-msgstr ""
-
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the "
 "movie's width and height.  If you have installed a graphics toolkit that can "
@@ -2443,6 +2530,19 @@ msgstr ""
 
 msgid "Restore original"
 msgstr "Palauta alkuperäinen"
+
+#, c-format
+msgid ""
+"This album is configured to use the <b>%s</b> theme. These settings only "
+"apply to the theme for this album."
+msgstr ""
+
+#, fuzzy
+msgid "Setting"
+msgstr "Gallerian asetukset"
+
+msgid "Use Global"
+msgstr ""
 
 #, fuzzy
 msgid "Album Highlight"
@@ -2611,9 +2711,6 @@ msgstr "Ryhmän nimi"
 msgid "Permission"
 msgstr "Oikeus"
 
-msgid "Remove"
-msgstr "Poista"
-
 msgid "New Group Permission"
 msgstr "Uuden ryhmän oikeudet"
 
@@ -2669,9 +2766,6 @@ msgstr "jälkeen"
 
 msgid "Reorder"
 msgstr "Järjestä"
-
-msgid "Go"
-msgstr ""
 
 msgid "Continue..."
 msgstr ""
@@ -2738,9 +2832,6 @@ msgstr "Onnistuneesti lisätty yksi tiedosto."
 #, c-format
 msgid "To fix this problem you can either %s or %s."
 msgstr ""
-
-msgid "Site Administration"
-msgstr "Gallerian ylläpito"
 
 msgid "Admin Options"
 msgstr "Ylläpitäjän toiminnot"
@@ -2959,20 +3050,105 @@ msgstr ""
 msgid "Thank you!"
 msgstr ""
 
+msgid "guest"
+msgstr "vieras"
+
+#, c-format
+msgid "display mode: %s"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Date: %s"
+msgstr "jälkeen"
+
+#, fuzzy, c-format
+msgid "Owner: %s"
+msgstr "Omistaja"
+
+#, fuzzy, c-format
+msgid "Size: %d item"
+msgid_plural "Size: %d items"
+msgstr[0] "yksi minuutti"
+msgstr[1] "%d minuuttia"
+
+#, fuzzy, c-format
+msgid "(%d item total)"
+msgid_plural "(%d items total)"
+msgstr[0] "yksi minuutti"
+msgstr[1] "%d minuuttia"
+
+#, c-format
+msgid "Views: %d"
+msgstr ""
+
+#, fuzzy
+msgid "&laquo; album actions &raquo;"
+msgstr "&laquo; Ei mitään &raquo;"
+
+#, fuzzy
+msgid "&laquo; item actions &raquo;"
+msgstr "&laquo; Ei mitään &raquo;"
+
+msgid "Go"
+msgstr ""
+
+msgid "next"
+msgstr ""
+
+msgid "last"
+msgstr ""
+
+#, fuzzy
+msgid "first"
+msgstr "|< Ensimmäinen"
+
+msgid "previous"
+msgstr ""
+
+msgid "Page:"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "%d. %s"
+msgstr "Muokkaa käyttäjää"
+
+#, fuzzy
+msgid "Size: "
+msgstr "Koko"
+
+msgid "Full size: "
+msgstr ""
+
+#, fuzzy
+msgid "Language selector"
+msgstr "Kielen asetukset"
+
+#, fuzzy
+msgid "Item actions"
+msgstr "Kohteen oikeudet"
+
+#, fuzzy
+msgid "Login block"
+msgstr "Kirjaudu sisään"
+
+msgid "Links to album/photo peers"
+msgstr ""
+
 #, fuzzy
 msgid "Successfully deleted directory: /cache/entity"
 msgstr "Onnistuneesti lisätty yksi tiedosto."
 
 #, fuzzy
-msgid "Successfully deleted directory: /cache/layout"
+msgid "Successfully deleted directory: /cache/theme"
 msgstr "Onnistuneesti lisätty yksi tiedosto."
 
 #, fuzzy
 msgid "Successfully deleted directory: /cache/module"
 msgstr "Onnistuneesti lisätty yksi tiedosto."
 
-msgid "Unable to delete directory: /cache/layout"
-msgstr ""
+#, fuzzy
+msgid "Unable to delete directory: /cache/theme"
+msgstr "Onnistuneesti lisätty yksi tiedosto."
 
 msgid "Unable to delete directory: /templates_c"
 msgstr ""
@@ -2984,623 +3160,6 @@ msgstr ""
 msgid "[test] A permission"
 msgstr "oikeudet"
 
-msgid "Gallery Debug Output"
-msgstr "Gallerian virhekäsittelijän tuloste"
-
 #, fuzzy
-msgid "This page is valid XHTML 1.0"
-msgstr "Tämä sivu on käypää HTML 4.01 -koodia."
-
-#, fuzzy, c-format
-msgid "Gallery %s"
-msgstr "Galleria"
-
-msgid "Edit Conflict!"
-msgstr ""
-
-msgid "Security Violation"
-msgstr "Turvallisuusrike!"
-
-msgid "Database Error"
-msgstr ""
-
-msgid "Error"
-msgstr "Virhe"
-
-msgid ""
-"Your change cannot be completed because somebody else has made a conflicting "
-"change to the same item.  Use the back button in your browser to go back to "
-"the page you were on, then <b>reload that page</b> and try your change again."
-msgstr ""
-
-msgid "Go back and try again"
-msgstr ""
-
-msgid ""
-"Alternatively, you can return to the main Gallery page and resume browsing."
-msgstr ""
-
-msgid "The action you attempted is not permitted."
-msgstr "Yrittämääsi toimenpidettä ei sallittu."
-
-msgid "An error has occurred while interacting with the database."
-msgstr ""
-
-msgid ""
-"The exact nature of database errors is not captured unless Gallery debug "
-"mode is enabled in config.php.  Before seeking support for this error please "
-"enable buffered debug output and retry the operation.  Look near the bottom "
-"of the lengthy debug output to find error details."
-msgstr ""
-
-msgid "An error has occurred."
-msgstr ""
-
-#, fuzzy
-msgid "Back to the Gallery"
-msgstr "Takaisin kohteeseen"
-
-msgid "Error Detail"
-msgstr ""
-
-#, fuzzy
-msgid "System Information"
-msgstr "Kohde"
-
-msgid "Redirect"
-msgstr "Uudelleenohjaa"
-
-msgid "You are in debug mode so we are not automatically redirecting."
-msgstr ""
-"Olet virheraporttitilassa, joten automaattista uudelleenohjausta ei tapahdu."
-
-#, fuzzy, c-format
-msgid "Welcome, %s"
-msgstr "Poista käyttäjä"
-
-#, fuzzy, c-format
-msgid "(%d item)"
-msgid_plural "(%d items)"
-msgstr[0] "yksi minuutti"
-msgstr[1] "%d minuuttia"
-
-#, fuzzy, c-format
-msgid "%d. %s"
-msgstr "Muokkaa käyttäjää"
-
-#~ msgid "Gallery Administrator"
-#~ msgstr "Gallerian ylläpito"
-
-#, fuzzy
-#~ msgid "Administrator Recovery"
-#~ msgstr "Salasana"
-
-#, fuzzy
-#~ msgid "Use As Parent&rsquo;s Thumbnail?"
-#~ msgstr "Käytä isännän esikatselukuvana?"
-
-#~ msgid "Yes, highlight this item!"
-#~ msgstr "Kyllä, tee tästä kuvasta kansikuva!"
-
-#~ msgid "You must enter a thumbnail size"
-#~ msgstr "Sinun on syötettävä esikatselukuvan koko"
-
-#~ msgid "Undo"
-#~ msgstr "Kumoa"
-
-#~ msgid "[change]"
-#~ msgstr "[muuta]"
-
-#~ msgid "required"
-#~ msgstr "vaadittu"
-
-#, fuzzy
-#~ msgid "Status: Not"
-#~ msgstr "Aktiivinen"
-
-#~ msgid "add"
-#~ msgstr "lisää"
-
-#~ msgid "cancel"
-#~ msgstr "peruuta"
-
-#~ msgid "edit user"
-#~ msgstr "muokkaa käyttäjää"
-
-#, fuzzy
-#~ msgid "no"
-#~ msgstr "Kumoa"
-
-#~ msgid "reset"
-#~ msgstr "Tyhjennä"
-
-#~ msgid "save"
-#~ msgstr "Tallenna"
-
-#~ msgid "undo"
-#~ msgstr "kumoa"
-
-#~ msgid "Edit User Preferences"
-#~ msgstr "Muokkaa käyttäjän ominaisuuksia"
-
-#, fuzzy
-#~ msgid "Manual Sort Order"
-#~ msgstr "Lajittelujärjestys"
-
-#, fuzzy
-#~ msgid "&laquo; Parent Directory &raquo;"
-#~ msgstr "&laquo; Ei lajittelujärjestystä &raquo;"
-
-#, fuzzy
-#~ msgid "Rotate/Scale"
-#~ msgstr "Pyöritä"
-
-#, fuzzy
-#~ msgid "Sizes"
-#~ msgstr "Koko"
-
-#~ msgid "Back to Album View"
-#~ msgstr "Takaisin albumiin"
-
-#~ msgid "Back to Item View"
-#~ msgstr "Takaisin kohteeseen"
-
-#~ msgid "Lifetime"
-#~ msgstr "Elinikä"
-
-#~ msgid "Specify the lifetime of the session here."
-#~ msgstr "Määritä istunnon elinikä"
-
-#~ msgid "Edit Group Members"
-#~ msgstr "Muokkaa ryhmän jäseniä"
-
-#, fuzzy
-#~ msgid "Layouts"
-#~ msgstr "Ulkoasu"
-
-#~ msgid "&laquo; No Sort Order &raquo;"
-#~ msgstr "&laquo; Ei lajittelujärjestystä &raquo;"
-
-#, fuzzy
-#~ msgid "Restored original photo successfully"
-#~ msgstr "Palautus alkuperäiseen kuvaan onnistui"
-
-#~ msgid "guest"
-#~ msgstr "vieras"
-
-#~ msgid "Log in"
-#~ msgstr "Sisäänkirjautuminen"
-
-#~ msgid "admin"
-#~ msgstr "ylläpito"
-
-#, fuzzy
-#~ msgid "Powered by Gallery 2"
-#~ msgstr "Käytössä Gallery %s"
-
-#, fuzzy
-#~ msgid "Delete Album"
-#~ msgstr "poista albumi"
-
-#, fuzzy
-#~ msgid "Edit Album"
-#~ msgstr "poista albumi"
-
-#~ msgid "Full name"
-#~ msgstr "Oikea nimi"
-
-#, fuzzy
-#~ msgid "Move Album"
-#~ msgstr "muokkaa albumia"
-
-#~ msgid "Site admin"
-#~ msgstr "Gallerian ylläpito"
-
-#~ msgid "delete album"
-#~ msgstr "poista albumi"
-
-#, fuzzy
-#~ msgid "edit album"
-#~ msgstr "poista albumi"
-
-#~ msgid "Album Settings"
-#~ msgstr "Albumin asetukset"
-
-#~ msgid "%d file found"
-#~ msgid_plural "%d files found"
-#~ msgstr[0] "yksi tiedosto löytyi"
-#~ msgstr[1] "%d tiedostoa löytyi"
-
-#~ msgid "Changes saved successfully."
-#~ msgstr "Muutokset tallennettu onnistuneesti."
-
-#~ msgid "Item Thumbnail Size and Resizes"
-#~ msgstr "Kohteen esikatselukuvan koot ja skaalaukset"
-
-#~ msgid "Specify the thumbnail size of this item here:"
-#~ msgstr "Määritä esikatselukuvan koko tähän:"
-
-#~ msgid "Add Items to this Album"
-#~ msgstr "Lisää kohteita albumiin"
-
-#~ msgid ""
-#~ "Gallery can handle files of any format.  However, it can only create "
-#~ "automatic resizes and thumbnails for certain types of files."
-#~ msgstr ""
-#~ "Galleria voi käsitellä tiedostoja, jotka ovat missä tahansa "
-#~ "kuvaformaatissa, vaikkakin automaattiset skaalaukset ja esikatselukuvat "
-#~ "voidaan luoda vain tietyn tyyppisistä tiedostoista."
-
-#, fuzzy
-#~ msgid "Layout Settings"
-#~ msgstr "Omat asetukset"
-
-#, fuzzy
-#~ msgid "edit general"
-#~ msgstr "muokkaa käyttäjää"
-
-#, fuzzy
-#~ msgid "edit layout"
-#~ msgstr "Oletusulkoasu"
-
-#, fuzzy
-#~ msgid "Animation Settings"
-#~ msgstr "Omat asetukset"
-
-#, fuzzy
-#~ msgid "Edit Layout Settings"
-#~ msgstr "Omat asetukset"
-
-#, fuzzy
-#~ msgid "Edit Movie"
-#~ msgstr "Muokkaa kokoja"
-
-#, fuzzy
-#~ msgid "Move Item"
-#~ msgstr "Siirrä kohdetta"
-
-#, fuzzy
-#~ msgid "Photo Settings"
-#~ msgstr "Omat asetukset"
-
-#, fuzzy
-#~ msgid "edit movie"
-#~ msgstr "muokkaa kohdetta"
-
-#, fuzzy
-#~ msgid "delete image"
-#~ msgstr "poista kuva"
-
-#, fuzzy
-#~ msgid "delete movie"
-#~ msgstr "poista kuva"
-
-#, fuzzy
-#~ msgid "move animation"
-#~ msgstr "siirrä kohde"
-
-#, fuzzy
-#~ msgid "move movie"
-#~ msgstr "siirrä kohde"
-
-#~ msgid "Average"
-#~ msgstr "Keskimäärin"
-
-#~ msgid "Calls"
-#~ msgstr "Kutsut"
-
-#~ msgid "Combined"
-#~ msgstr "Yhdistetty"
-
-#~ msgid "Error: %s"
-#~ msgstr "Virhe: %s"
-
-#~ msgid "External"
-#~ msgstr "Ulkoinen"
-
-#~ msgid "Function"
-#~ msgstr "Toiminto"
-
-#~ msgid "Internal"
-#~ msgstr "Sisäinen"
-
-#~ msgid "Max"
-#~ msgstr "Maks."
-
-#~ msgid "Profiling"
-#~ msgstr "Profiloin"
-
-#~ msgid "Total"
-#~ msgstr "Yhteensä"
-
-#~ msgid "* No Sort Order *"
-#~ msgstr "* Ei lajittelujärjestystä *"
-
-#~ msgid ""
-#~ "Removing this album will remove all of its children also.  There is no "
-#~ "undo!"
-#~ msgstr ""
-#~ "Tämän albumin poistaminen poistaa myös alialbumit. Et voi perua tätä!"
-
-#~ msgid ""
-#~ "This album is empty.  This will completely remove this album from "
-#~ "Gallery.  There is no undo!"
-#~ msgstr ""
-#~ "Haluatko varmasti poistaa tämän tyhjän albumin peruuttamattomasti "
-#~ "Galleriasta?"
-
-#~ msgid "This album has %d child."
-#~ msgid_plural "This album has %d children."
-#~ msgstr[0] "Kohteella on yksi alainen."
-#~ msgstr[1] "Kohteella on %d alaista."
-
-#~ msgid "General Item Properties"
-#~ msgstr "Kohteen yleiset asetukset"
-
-#~ msgid "Preserve Original Image"
-#~ msgstr "Säilytä alkuperäinen kuva"
-
-#, fuzzy
-#~ msgid "edit image"
-#~ msgstr "Muokkaa kuvaa"
-
-#~ msgid "Anonymous"
-#~ msgstr "Anonyymi"
-
-#~ msgid "anonymous"
-#~ msgstr "anonyymi"
-
-#, fuzzy
-#~ msgid "Group Edit"
-#~ msgstr "Ryhmät"
-
-#~ msgid "Next >>"
-#~ msgstr "Seuraava >>"
-
-#, fuzzy
-#~ msgid "User Edit"
-#~ msgstr "Muokkaa"
-
-#, fuzzy
-#~ msgid "You cannot delete the All Users group!"
-#~ msgstr "Et voi poistaa Kaikki käyttäjät -ryhmää"
-
-#, fuzzy
-#~ msgid "You must select a directory to remove"
-#~ msgstr "Sinun tulee valita poistettava käyttäjä"
-
-#~ msgid "You must select a group"
-#~ msgstr "Sinun tulee syöttää ryhmä"
-
-#~ msgid "You must select a user"
-#~ msgstr "Sinun tulee valita käyttäjä"
-
-#, fuzzy
-#~ msgid "Add New"
-#~ msgstr "Lisää kuvia"
-
-#~ msgid "Add/Remove Group's Users"
-#~ msgstr "Lisää/poista käyttäjiä ryhmästä"
-
-#~ msgid ""
-#~ "Certain image manipulation operations (such as rotating and scaling) can "
-#~ "cause a permanent change to the original image.  In these cases, Gallery "
-#~ "avoids modifying the original image by creating a duplicate that is "
-#~ "rotated or scaled to the dimensions that you prefer.  Future operations "
-#~ "(viewing, modifying) apply to the duplicate leaving your original image "
-#~ "intact.  This preserves your original image, but will consume more disk "
-#~ "space."
-#~ msgstr ""
-#~ "Jotkut kuvaa käsittelevät toimet, kuten pyöritys tai skaalaus, voivat "
-#~ "aiheuttaa pysyviä muutoksia alkuperäiseen kuvaan. Tälläisessä tapauksessa "
-#~ "Gallery välttää alkuperäisen muokkaamisen tekemällä siitä kopion jota "
-#~ "muokataan jolloin alkuperäinen jää koskemattomaksi. Näin alkuperäinen "
-#~ "kuva säästyy mutta tämä vaatii enemmän tilaa levyltä."
-
-#, fuzzy
-#~ msgid "Change item owner to:"
-#~ msgstr "Vaihdan albumin omistajaksi:"
-
-#~ msgid "Counter-Clockwise 90&deg;"
-#~ msgstr "90&deg; vastapäivään"
-
-#~ msgid ""
-#~ "Disabling this option will cause any actions to happen to the original "
-#~ "image.  This will permanently change your original image!"
-#~ msgstr ""
-#~ "Tämän valinnan hylkääminen aiheuttaa muutosten vaikuttamisen "
-#~ "alkuperäisiin kuviisi. Tämä aiheuttaa pysyviä muutoksia alkuperäisiin "
-#~ "kuviisi!"
-
-#~ msgid "Do you really want to delete group '%s'?"
-#~ msgstr "Haluatko varmasti poistaa ryhmän '%s'?"
-
-#~ msgid ""
-#~ "Each album can have a thumbnail image that is representative of its "
-#~ "contents.  This is called the <i>highlight image</i>.  You can select "
-#~ "this item's thumbnail to be the album's highlight image."
-#~ msgstr ""
-#~ "Jokaisella albumilla voi olla esikatselukuva joka edustaa kansion "
-#~ "sisältöä. Tätä kutsutaan <i>esimerkkikuvaksi</i>. Voit valita tämän kuvan "
-#~ "pienoiskuvan albumin esimerkkikuvaksi."
-
-#~ msgid "Editing this album"
-#~ msgstr "Muokataan albumia"
-
-#~ msgid ""
-#~ "Enter a new password twice to change passwords, or leave it blank to "
-#~ "leave password unchanged."
-#~ msgstr ""
-#~ "Syötä uusi salasana kahdesti muuttaaksesi salasanaa tai jätä kenttä "
-#~ "tyhjäksi jättääksesi salasanan vaihtamatta."
-
-#~ msgid ""
-#~ "Every item will have a thumbnail.  The default thumbnail size you specify "
-#~ "here will create a uniform look for your album.  Gallery will create a "
-#~ "thumbnail that is no larger than the size you specify."
-#~ msgstr ""
-#~ "Jokainen kohde saa pienoiskuvan. Määritellessäsi pikkukuvien oletuskoon "
-#~ "tähän saat albumisi yhtenäisen näköiseksi. Gallery-ohjelma luo kuvan joka "
-#~ "ei ole suurempi kuin koko jonka olet määrittänyt."
-
-#~ msgid "Gallery Login"
-#~ msgstr "Gallerian sisäänkirjautuminen"
-
-#~ msgid ""
-#~ "Gallery can automatically create intermediate resized versions of images "
-#~ "added to this album.  This is useful when you want to present larger "
-#~ "versions of an image without showing the full size image."
-#~ msgstr ""
-#~ "Galleria voi automaattisesti tuottaa keskikokoiset versiot kuvista joita "
-#~ "tähän albumiin lisätään. Tästä on hyötyä jos haluat näyttää suuremmat "
-#~ "versiot kuvista näyttämättä kuitenkaan täysikokoista kuvaa."
-
-#~ msgid ""
-#~ "Gallery will create a thumbnail that is no larger than the size you "
-#~ "specify here."
-#~ msgstr "Galleria luo korkeintaan määrittelemäsi kokoiset esimerkkikuvat."
-
-#~ msgid ""
-#~ "How the items in this album are sorted.  New items that are added will be "
-#~ "placed in the album according to the order you specify here."
-#~ msgstr ""
-#~ "Lajittelujärjestys tälle albumille. Uudet kohteet tulevat haluamassasi "
-#~ "järjestyksessä albumiin."
-
-#~ msgid ""
-#~ "If you delete it, all of its children and any related data will be "
-#~ "deleted also!"
-#~ msgstr ""
-#~ "Jos poistat sen, kaikki ala-albumit ja siihen liittyvä tieto poistetaan "
-#~ "myös!"
-
-#~ msgid ""
-#~ "If you don't know the group name you'd like to work with, you can browse "
-#~ "or search for it here."
-#~ msgstr ""
-#~ "Jos et tiedä haluamasi ryhmän nimeä, voit selata tai etsiä sitä tässä."
-
-#~ msgid ""
-#~ "If you don't know the username you'd like to work with, you can browse or "
-#~ "search for it here."
-#~ msgstr ""
-#~ "Jos et tiedä etsimääsi käyttäjänimeä, voit selata tai etsiä sitä tässä."
-
-#~ msgid ""
-#~ "If you know the group name you'd like to work with, you can enter it here."
-#~ msgstr "Jos tiedät ryhmän nimen, syötä se tähän."
-
-#~ msgid ""
-#~ "If you know the username you'd like to work with, you can enter it here."
-#~ msgstr "Jos tiedät käyttäjänimen, syötä se tähän."
-
-#~ msgid "Item Permissions"
-#~ msgstr "Kohteen oikeudet"
-
-#~ msgid ""
-#~ "Keywords will not be visible to the end user, but are searchable. This "
-#~ "can be any character string.  It should not contain HTML."
-#~ msgstr ""
-#~ "Hakusanat eivät näy käyttäjille mutta ovat etsittävissä. Hakusana voi "
-#~ "olla mikä tahansa merkkijono. Sen ei tulisi sisältää HTML merkkejä."
-
-#~ msgid "Or you can create a new group here."
-#~ msgstr "Tai voit luoda uuden ryhmän tähän."
-
-#~ msgid "Or you can create a new user here."
-#~ msgstr "Tai voit luoda uuden käyttäjän tähän."
-
-#~ msgid "Other intermediate resized versions of this image."
-#~ msgstr "Muut välikokoisiksi venytetyt versiot kuvasta."
-
-#~ msgid "Return to User Administration"
-#~ msgstr "Palaa käyttäjien hallintaan"
-
-#~ msgid "Size (in pixels): "
-#~ msgstr "Koko (pikseleinä)"
-
-#~ msgid "Target size (in pixels):"
-#~ msgstr "Kohdekoko (pikseleinä)"
-
-#~ msgid "The colors and images that will be used when viewing this album."
-#~ msgstr "Värit ja kuvat joita käytetään albumia katseltaessa."
-
-#~ msgid ""
-#~ "The summary can be any character string, and should not contain any HTML"
-#~ msgstr ""
-#~ "Yhteenveto voi olla mikä merkkijono hyvänsä ja siinä ei tule olla HTML "
-#~ "merkkejä"
-
-#~ msgid ""
-#~ "The title can be any character string, and should not contain any HTML"
-#~ msgstr ""
-#~ "Otsikko voi olla mikä merkkijono hyvänsä ja siinä ei tule olla HTML "
-#~ "merkkejä"
-
-#~ msgid ""
-#~ "The way that items will be arranged on the page when viewing this album."
-#~ msgstr "Tapa jolla kohteen järjestetään sivulle albumia katseltaessa."
-
-#~ msgid "User name:"
-#~ msgstr "Käyttäjätunnus:"
-
-#~ msgid ""
-#~ "When you make changes to the values of the thumbnail size and/or the size "
-#~ "of the resized images, this will only apply to newly uploaded images. "
-#~ "Other images remain with their currently (possibly customized) thumbnails "
-#~ "and resizes. Click here to recreate the thumbnails and/or resizes based "
-#~ "on the new information."
-#~ msgstr ""
-#~ "Tehdessäsi muutoksia pienoiskuvien kokoon tai venytettyjen kuvien kokoon "
-#~ "muutokset koskevat vain uusia kuvia. Muut kuvat säilyttävät nykyiset "
-#~ "arvonsa ja pienoiskuvansa. Klikkaa tänne luodaksesi uudet pienoiskuvat "
-#~ "tai kuvien venytykset perustuen uusiin tietoihin."
-
-#~ msgid "Yes, delete it!"
-#~ msgstr "Kyllä, poista se!"
-
-#~ msgid "Yes, make this item the highlight!"
-#~ msgstr "Kyllä, tee kuvasta esimerkkikuva!"
-
-#~ msgid "You can create a new album inside this one."
-#~ msgstr "Voit luoda uuden albumin tämän sisälle."
-
-#~ msgid "You must enter a name"
-#~ msgstr "Nimi on syötettävä"
-
-#, fuzzy
-#~ msgid "before this item:"
-#~ msgstr "[core] Näytä kohde"
-
-#~ msgid "|< First"
-#~ msgstr "|< Ensimmäinen"
-
-#~ msgid "%d days"
-#~ msgstr "%d päivää"
-
-#~ msgid "%d hours"
-#~ msgstr "%d tuntia"
-
-#~ msgid "%d minutes"
-#~ msgstr "%d minuuttia"
-
-#~ msgid "%d weeks"
-#~ msgstr "%d viikkoa"
-
-#~ msgid "Add Files From Your Computer"
-#~ msgstr "Lisää tiedostoja omalta koneeltasi"
-
-#~ msgid "Add From a Website"
-#~ msgstr "Lisää verkkosivustolta"
-
-#~ msgid "Validate this Page"
-#~ msgstr "Tarkista tämä sivu"
-
-#~ msgid "[core] Change item properties"
-#~ msgstr "[core] Muuta kohteen ominaisuuksia"
-
-#~ msgid "[core] Change item text"
-#~ msgstr "[core] Muuta kohteen tekstiä"
-
-#~ msgid "[core] Move item"
-#~ msgstr "[core] Siirrä kohdetta"
+msgid "[test] A second permission"
+msgstr "oikeudet"

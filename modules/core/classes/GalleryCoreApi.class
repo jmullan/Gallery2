@@ -174,7 +174,7 @@ class GalleryCoreApi {
     /**
      * Load and initialize the given plugin
      *
-     * @param string the plugin type (eg, module, layout, etc)
+     * @param string the plugin type (eg, module, theme, etc)
      * @param string the plugin id
      * @param bool should we ignore version mismatches (default: no)
      * @return array object GalleryStatus a status code
@@ -263,7 +263,7 @@ class GalleryCoreApi {
     /**
      * Get the status of all plugins of a given type
      *
-     * @param string the plugin type (eg 'module', 'layout')
+     * @param string the plugin type (eg 'module', 'theme')
      * @param bool true if we want to ignore the cache?
      * @return array object GalleryStatus as status code
      *                      array (moduleId => array('active' => true/false,
@@ -1284,17 +1284,17 @@ class GalleryCoreApi {
     }
 
     /**
-     * Return the correct layout for this item.  If the appropriate layout cannot be loaded,
+     * Return the correct theme for this item.  If the appropriate theme cannot be loaded,
      * we fall back on the default.  And if that can't be loaded, then we return null.
      *
      * @param object GalleryItem
      * @return array object GalleryStatus a status code
-     *               string a layout plugi
+     *               string a theme plugi
      * @static
      */
-    function fetchLayoutId($item) {
+    function fetchThemeId($item) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemHelper_simple.class');
-	return GalleryItemHelper_simple::fetchLayoutId($item);
+	return GalleryItemHelper_simple::fetchThemeId($item);
     }
 
     /**

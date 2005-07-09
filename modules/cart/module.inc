@@ -38,9 +38,9 @@ class CartModule extends GalleryModule {
 	$this->setId('cart');
 	$this->setName($gallery->i18n('Cart'));
 	$this->setDescription($gallery->i18n('Shopping Cart Module'));
-	$this->setVersion('0.9.4'); /* Update upgrade() function below too */
+	$this->setVersion('0.9.5'); /* Update upgrade() function below too */
 	$this->setGroup('commerce', $this->translate('Commerce'));
-	$this->setCallbacks('getItemLinks|loadSystemContent');
+	$this->setCallbacks('getItemLinks');
 	$this->setRequiredCoreApi(array(6, 0));
 	$this->setRequiredModuleApi(array(1, 0));
     }
@@ -64,15 +64,15 @@ class CartModule extends GalleryModule {
 	    case '0.8.8':
 		$storage =& $gallery->getStorage();
 		$query = '
-		DROP TABLE [CartMap]
+		  DROP TABLE [CartMap]
 		';
 		$ret = $storage->execute($query);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 		$query = '
-		DELETE FROM [Schema]
-		WHERE [Schema::name] = \'CartMap\'
+		  DELETE FROM [Schema]
+		  WHERE [Schema::name] = \'CartMap\'
 		';
 		$ret = $storage->execute($query);
 		if ($ret->isError()) {
@@ -84,6 +84,7 @@ class CartModule extends GalleryModule {
 	    case '0.9.1':
 	    case '0.9.2':
 	    case '0.9.3':
+	    case '0.9.4':
 
 	    case 'end of upgrade path':
 		break;
@@ -128,40 +129,6 @@ class CartModule extends GalleryModule {
 	}
 
 	return array(GalleryStatus::success(), $links);
-    }
-
-    /**
-     * @see GalleryModule::loadSystemContent
-     */
-    function loadSystemContent(&$template) {
-	$content = array();
-
-	$view = GalleryUtilities::getRequestVariables('view');
-	if ($view == 'cart.ViewCart') {
-	    return array(GalleryStatus::success(), array());
-	}
-
-	/* The "View Cart" link */
-	$links = array();
-	$links[] = array('text' => $this->translate('View Cart'),
-			 'params' => array('view' => 'cart.ViewCart',
-					   'return' => true));
-	$CartSystemContent['links'] = $links;
-
-	/* The cart content's count */
-	GalleryCoreApi::relativeRequireOnce('modules/cart/classes/CartHelper.class');
-	list ($ret, $cartItemIds) = CartHelper::fetchCartItemCounts();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$CartSystemContent['count'] = 0;
-	foreach ($cartItemIds as $itemId => $count) {
-	    $CartSystemContent['count'] += $count;
-	}
-
-	$template->setVariable('CartSystemContent', $CartSystemContent);
-	$content = array('cart' => 'modules/cart/templates/CartSystemContent.tpl');
-	return array(GalleryStatus::success(), $content);
     }
 }
 ?>

@@ -228,24 +228,5 @@ class ItemAdminView extends GalleryView {
 
 	return $subView->getViewDescription();
     }
-
-    /**
-     * @see GalleryView::getThemeName
-     */
-    function getThemeName() {
-	list ($ret, $item) = $this->_getItem();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	if (!GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
-	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($item->getParentId());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	}
-
-	return array(GalleryStatus::success(), $item->getTheme());
-    }
 }
 ?>

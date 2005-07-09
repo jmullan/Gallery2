@@ -34,9 +34,24 @@
 class ExternalView extends GalleryView {
 
     /**
+     * @see GalleryView::isImmediate
+     */
+    function isImmediate() {
+	return true;
+    }
+
+    /**
+     * Specify the template instance to use for our immediate view.  Used by our test code.
+     * @param object GalleryTemplate
+     */
+    function setTemplate(&$template) {
+	$this->_template =& $template;
+    }
+
+    /**
      * @see GalleryView::loadTemplate()
      */
-    function loadTemplate(&$template, &$form) {
+    function renderImmediate($status, $error) {
 	GalleryCoreApi::relativeRequireOnce('modules/imageblock/classes/ImageBlockHelper.class');
 	global $gallery;
 	$SlideShow = array();
@@ -46,21 +61,52 @@ class ExternalView extends GalleryView {
 	$session =& $gallery->getSession();
 	$session->_isUsingCookies = true;
 
+	$frameIds = array();
 	$params = array('maxSize' => null);
 	foreach (array('blocks', 'show', 'itemId', 'maxSize',
 		       'linkTarget', 'itemFrame', 'albumFrame') as $key) {
 	    $tmp = GalleryUtilities::getRequestVariables($key);
 	    if (!empty($tmp)) {
 		$params[$key] = $tmp;
+		if ($key == 'itemFrame' || $key == 'albumFrame') {
+		    $frameIds[$tmp] = 1;
+		}
 	    }
 	}
 
-	list ($ret, $tpl) = ImageBlockHelper::loadImageBlocks($template, $params);
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTemplate.class');
+	if (isset($this->_template)) {
+	    $template =& $this->_template;
+	} else {
+	    $template = new GalleryTemplate(dirname(dirname(dirname(__FILE__))));
+	}
+
+	$ret = ImageBlockHelper::loadImageBlocks($template, $params);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), array('html' => $tpl));
+	if (!empty($frameIds)) {
+	    $frameIds = array_keys($frameIds);
+
+	    list ($ret, $imageframe) = GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    if (isset($imageframe)) {
+		$ret = $imageframe->init($template, $frameIds);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	}
+
+	if ($template->hasVariable('ImageBlockSystemContent')) {
+	    $template->setVariable('l10Domain', 'modules_imageblock');
+	    $template->display('gallery:modules/imageblock/templates/ImageBlock.tpl');
+	}
+	return GalleryStatus::success();
     }
 }
 ?>

@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -60,19 +60,19 @@ class AdminGroupsController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
-	} 
-	
+	}
+
 	if (isset($form['action']['filterClear'])) {
 
 	    /* Clear the filter */
 	    GalleryUtilities::putRequestVariable('form[list][filter]', null);
-	    
+
 	} else if (isset($form['action']['create'])) {
 
 	    /* Show the "create group" view */
 	    $redirect['view'] = 'core.SiteAdmin';
 	    $redirect['subView'] = 'core.AdminCreateGroup';
-	    
+
 	} else if (isset($form['action']['editFromText'])) {
 
 	    if (empty($form['text']['groupName'])) {
@@ -85,7 +85,7 @@ class AdminGroupsController extends GalleryController {
 		$redirect['subView'] = 'core.AdminEditGroup';
 		$redirect['groupId'] = $group->getId();
 	    }
-	    
+
 	} else if (isset($form['action']['deleteFromText'])) {
 
 	    if (empty($form['text']['groupName'])) {
@@ -110,7 +110,7 @@ class AdminGroupsController extends GalleryController {
 		$redirect['subView'] = 'core.AdminDeleteGroup';
 		$redirect['groupId'] = $group->getId();
 	    }
-		
+
 	} else if (isset($form['action']['addRemoveUsersFromText'])) {
 
 	    if (empty($form['text']['groupName'])) {
@@ -135,7 +135,7 @@ class AdminGroupsController extends GalleryController {
 		$redirect['subView'] = 'core.AdminEditGroupUsers';
 		$redirect['groupId'] = $group->getId();
 	    }
-		
+
 	}
 
 	if (!empty($redirect)) {
@@ -165,12 +165,12 @@ class AdminGroupsView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
-	
+
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	    
+
 	/* Load some standard form parameters */
 	if ($form['formName'] != 'AdminGroups') {
 	    $form['text']['groupName'] = '';
@@ -181,7 +181,7 @@ class AdminGroupsView extends GalleryView {
 	if (!isset($form['list']['filter'])) {
 	    $form['list']['filter'] = '';
 	}
-	
+
 	if (empty($form['list']['page'])) {
 	    $form['list']['page'] = 1;
 	}
@@ -212,7 +212,7 @@ class AdminGroupsView extends GalleryView {
 	$form['list']['nextPage'] = min($form['list']['page']+1, $form['list']['maxPages']);
 	$form['list']['backPage'] = max(1, $form['list']['page']-1);
 
-	list ($ret, $groupNames) = 
+	list ($ret, $groupNames) =
 	    GalleryCoreApi::fetchGroupNames($form['list']['pageSize'],
 						(($form['list']['page'] - 1) *
 						 $form['list']['pageSize']),
@@ -225,12 +225,12 @@ class AdminGroupsView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	list ($ret, $everybodyGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	list ($ret, $adminGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -256,7 +256,7 @@ class AdminGroupsView extends GalleryView {
 
 	$AdminGroups = array();
 	$AdminGroups['totalGroupCount'] = $totalGroupCount;
-	
+
 	$template->setVariable('AdminGroups', $AdminGroups);
 	$template->setVariable('controller', 'core.AdminGroups');
 

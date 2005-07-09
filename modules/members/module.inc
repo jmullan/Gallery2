@@ -40,7 +40,7 @@ class MembersModule extends GalleryModule {
 	$this->setDescription($gallery->i18n('Members List and Profiles'));
 	$this->setVersion('0.9.4');
 	$this->setGroup('gallery', $this->translate('Gallery'));
-	$this->setCallbacks('loadSystemContent|getSiteAdminViews');
+	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
 	$this->setRequiredModuleApi(array(1, 0));
     }
@@ -90,48 +90,6 @@ class MembersModule extends GalleryModule {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('Members'),
 				 'view' => 'members.AdminMembers')));
-    }
-
-    /**
-     * @see GalleryModule::loadSystemContent
-     */
-    function loadSystemContent(&$template) {
-	global $gallery;
-	$content = array();
-
-	$view = GalleryUtilities::getRequestVariables('view');
-	if ($view == 'members.MembersList' || $view == 'members.MembersProfile') {
-	    return array(GalleryStatus::success(), array());
-	}
-
-	/* The "Members List" link */
-	GalleryCoreApi::relativeRequireOnce('modules/members/classes/GalleryMembersHelper.class');
-	list ($ret, $canView) =
-	    GalleryMembersHelper::canViewMembersModule($gallery->getActiveUserId());
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$links = array();
-	if ($canView) {
-	    $links[] = array('text' => $this->translate('Members List'),
-			     'params' => array('view' => 'members.MembersList',
-					       'return' => true));
-	}
-	$MembersSystemContent['links'] = $links;
-
-	/* The members count */
-	list ($ret, $membersCount) = GalleryMembersHelper::getMembersCount();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$MembersSystemContent['membersCount'] = $membersCount;
-
-	$template->setVariable('MembersSystemContent', $MembersSystemContent);
-
-	$content = array();
-	$content['members'] = 'modules/members/templates/MembersSystemContent.tpl';
-
-	return array(GalleryStatus::success(), $content);
     }
 }
 ?>

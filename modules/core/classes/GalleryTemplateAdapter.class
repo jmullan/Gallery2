@@ -41,18 +41,47 @@ class GalleryTemplateAdapter {
     var $_callCount;
 
     /**
-     * Custom smarty blocks registered by other modules
+     * The active theme
      *
-     * @var array _blocks
+     * @var object GalleryTheme
      * @access private
      */
-    var $_blocks;
+    var $_theme;
+
+    /**
+     * Aggregation of text that we want to output at the bottom of the page,
+     * useful for when we need to put javascript at the bottom.
+     *
+     * @var string $_trailer
+     * @access private
+     */
+    var $_trailer;
+
+    /**
+     * Current state of the progress bar.
+     *
+     * @var array $_progressBarStats
+     * @access private
+     */
+    var $_progressBarStats;
 
     /**
      * Constructor
      */
     function GalleryTemplateAdapter() {
-	$this->_callCount = $this->_blocks = array();
+	$this->_callCount = array();
+	$this->_theme = null;
+	$this->_trailer = null;
+	$this->_progressBarStats = null;
+    }
+
+    /**
+     * Set the theme
+     *
+     * @param object GalleryTheme
+     */
+    function setTheme($theme) {
+	$this->_theme = $theme;
     }
 
     /*************************************************************
@@ -287,6 +316,9 @@ class GalleryTemplateAdapter {
 		      'smarty_include_vars' => array('l10Domain' => $l10Domain)));
 	}
 
+	/* This should help out users whose browsers are confused about the character set */
+	$output[] = '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>';
+
 	return implode('', $output);
     }
 
@@ -297,22 +329,25 @@ class GalleryTemplateAdapter {
      * @param string content
      * @param object Smarty the smarty instance
      * @return string HTML content
+     *
+     * Note: don't accept smarty as a reference here otherwise changes inside the
+     * smarty include can propagate back upwards!
+     *
      */
-    function autoComplete($params, $content, &$smarty) {
+    function autoComplete($params, $content, $smarty) {
 	if (!isset($content)) {
 	    if (!isset($this->_callCount['autoComplete'])) {
 		$this->_callCount['autoComplete'] = 0;
 	    }
 	    return;
 	}
-	$this->_callCount['autoComplete']++;
 	$url = trim($content);
 	$smarty->_smarty_include(
 	    array('smarty_include_tpl_file' => 'gallery:modules/core/templates/AutoComplete.tpl',
 		  'smarty_include_vars' =>
 			array('element' => $params['element'],
 			      'url' => $url,
-			      'callCount' => $this->_callCount['autoComplete'])));
+			      'callCount' => ++$this->_callCount['autoComplete'])));
     }
 
     /**
@@ -321,56 +356,22 @@ class GalleryTemplateAdapter {
      * @param array params
      * @param object Smarty the smarty instance
      * @return string HTML content
+     *
+     * Note: don't accept smarty as a reference here otherwise changes inside the
+     * smarty include can propagate back upwards!
      */
-    function dimensions($params, &$smarty) {
+    function dimensions($params, $smarty) {
 	if (!isset($this->_callCount['dimensions'])) {
 	    $this->_callCount['dimensions'] = 0;
 	}
 	$smarty->_smarty_include(
 	    array('smarty_include_tpl_file' => 'gallery:modules/core/templates/Dimensions.tpl',
 		  'smarty_include_vars' => array(
-				 'formVar' => $params['formVar'],
-				 'formVarId' => strtr($params['formVar'], '[]', '__'),
-				 'width' => isset($params['width']) ? $params['width'] : null,
-				 'height' => isset($params['height']) ? $params['height'] : null,
-				 'callCount' => ++$this->_callCount['dimensions'])));
-    }
-
-    /**
-     * Register a new block callback.
-     * Use {g->block type="blocktype"}..{/g->block} in a template to call the block.
-     *
-     * @param string block type
-     * @param callback function to call
-     */
-    function register_block($blockType, $callback) {
-	$this->_blocks[$blockType] = $callback;
-    }
-
-    /**
-     * A smarty block callback to support block functions registered by modules.
-     *
-     * @param array data in key/value pairs
-     * @param string content inside the block
-     * @param object Smarty
-     */
-    function block($params, $content, &$smarty) {
-	if (!isset($content)) {
-	    return;
-	}
-	if (empty($params['type']) || empty($this->_blocks[$params['type']])) {
-	    return $content;
-	}
-	$callback = $this->_blocks[$params['type']];
-	if (is_array($callback)) {
-	    list ($object, $function) = $callback;
-	    if (!is_object($object)) {
-		$object = new $object();
-	    }
-	    return $object->$function($params, $content, $smarty);
-	} else {
-	    return $function($params, $content, $smarty);
-	}
+		      'formVar' => $params['formVar'],
+		      'formVarId' => strtr($params['formVar'], '[]', '__'),
+		      'width' => isset($params['width']) ? $params['width'] : null,
+		      'height' => isset($params['height']) ? $params['height'] : null,
+		      'callCount' => ++$this->_callCount['dimensions'])));
     }
 
     /**
@@ -404,8 +405,9 @@ class GalleryTemplateAdapter {
 		}
 	    }
 	}
-	return GalleryTemplateAdapter::_safeCssName($linkId) . (isset($fallbackLinkId) ?
-	    ' ' . GalleryTemplateAdapter::_safeCssName($fallbackLinkId) : '');
+	return 'gbAdminLink ' . GalleryTemplateAdapter::_safeCssName($linkId) .
+	    (isset($fallbackLinkId) ?
+	     ' ' . GalleryTemplateAdapter::_safeCssName($fallbackLinkId) : '');
     }
 
     /**
@@ -424,6 +426,287 @@ class GalleryTemplateAdapter {
 	$string = ereg_replace('__+', '_', $string);
 	$string = ereg_replace('[-_][-_]+', '-', $string);
 	return $string;
+    }
+
+    function mainDivAttributes($params, &$smarty) {
+	global $gallery;
+
+	$buf = '';
+	$translator =& $gallery->getTranslator();
+	if ($translator->isRightToLeft()) {
+	    $buf .= 'style="direction:rtl" ';
+	}
+
+	$userAgent = strtolower(GalleryUtilities::getServerVar('HTTP_USER_AGENT'));
+	if (strpos($userAgent, 'safari') !== false) {
+	    $buf .= 'class="safari" ';
+	} else if (strpos($userAgent, 'opera') !== false) {
+	    $buf .= 'class="opera" ';
+	} else if (strpos($userAgent, 'msie') !== false) {
+	    $buf .= 'class="IE" ';
+	}
+
+	return $buf;
+    }
+
+    function logoButton($params, &$smarty) {
+	global $gallery;
+	$urlGenerator =& $gallery->getUrlGenerator();
+	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core', true);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	switch($params['type']) {
+	case 'validation':
+
+	    if ($gallery->getConfig('allowSessionAccess')) {
+		/* Calculate a URI that we can use for the validation link */
+		$validationUri = $urlGenerator->getCurrentUrl();
+		$session =& $gallery->getSession();
+		if ($session->isUsingCookies()) {
+		    $validationUri = $urlGenerator->appendParamsToUrl(
+			$validationUri, array($session->getKey() => $session->getId()));
+		}
+		$validationUri = sprintf(
+		    'http://validator.w3.org/check?uri=%s&amp;ss=1',
+		    urlencode(str_replace('&amp;', '&', $validationUri)));
+	    } else {
+		$validationUri = sprintf(
+		    'javascript:alert(\'%s\');',
+		    $core->translate(
+			'Validation disabled until you set allowSessionAccess in config.php'));
+	    }
+	    return '<a href="' . $validationUri . '"><img ' .
+		'src="' . $urlGenerator->generateUrl(array('href' => 'images/xhtml10.png')) . '" ' .
+		'alt="' . $core->translate('This page is valid XHTML 1.0') . '" ' .
+		'style="border-style: none" width="80" height="15"/></a>';
+
+	case 'gallery2':
+	    GalleryCoreApi::relativeRequireOnce('modules/core/module.inc');
+	    $installedVersions = CoreModule::getInstalledVersions();
+	    $version = $core->translate(
+		array('text' => "Gallery %s", 'arg1' => $installedVersions['gallery']));
+	    return '<a href="http://gallery.sourceforge.net">' .
+		'<img src="' . $urlGenerator->generateUrl(array('href' => 'images/gallery.gif')) .
+		'" ' .
+		'alt="' . $version . '" '.
+		'title="' . $version . '" ' .
+		'style="border-style: none" width="80" height="15"/></a>';
+	}
+    }
+
+    function debug($params, &$smarty) {
+	global $gallery;
+	$debug = $gallery->getDebug();
+	$profiling = $gallery->isProfiling('sql');
+
+	$buf = '';
+	if ($debug == 'buffered' || $profiling) {
+	    $translator = $gallery->getTranslator();
+
+	    /* don't worry about localizing this -- it's only debug output */
+	    $buf .= '<div id="gpDebug"> <h3> Debug Output </h3>';
+	    if ($debug == 'buffered') {
+		$buf .= $gallery->getDebugBuffer();
+	    }
+
+	    if ($profiling) {
+		$storage =& $gallery->getStorage();
+		$buf .= '<span>' . $storage->getProfilingHtml() . '</span>';
+	    }
+	    $buf .= '</div>';
+	}
+	return $buf;
+    }
+
+    /*
+     * Note: don't accept smarty as a reference here otherwise changes inside the
+     * smarty include can propagate back upwards!
+     */
+    function theme($params, $smarty) {
+	global $gallery;
+
+	if (isset($params['include'])) {
+	    $smarty->_smarty_include(array(
+	        'smarty_include_tpl_file' =>
+ 	            'gallery:themes/' . $this->_theme->getId(). '/templates/' . $params['include'],
+		'smarty_include_vars' => array()));
+	} else if (isset($params['url'])) {
+	    $urlGenerator =& $gallery->getUrlGenerator();
+	    return $urlGenerator->generateUrl(
+		array('href' => 'themes/' . $this->_theme->getId() . '/' . $params['url']));
+	}
+    }
+
+    /*
+     * Note: don't accept smarty as a reference here otherwise changes inside the
+     * smarty include can propagate back upwards!
+     */
+    function block($params, $smarty) {
+	list ($module, $file) = explode('.', $params['type']);
+	$class = empty($params['class']) ? '' : $params['class'];
+
+	list ($ret, $pluginStatus) = GalleryCoreApi::fetchPluginStatus('module');
+	if ($ret->isError()) {
+	    /* What can we do here? */
+	    return '[error fetching blocks]';
+	}
+
+	if (empty($pluginStatus[$module]['active'])) {
+	    return;
+	}
+
+	if (isset($params['params'])) {
+	    $params = $params['params'];
+	}
+
+	$params['class'] = "block-$module-$file $class";
+	$params['l10Domain'] = "modules_$module";
+
+	$smarty->_smarty_include(
+	    array('smarty_include_tpl_file' => "gallery:modules/$module/templates/blocks/$file.tpl",
+		  'smarty_include_vars' => $params));
+    }
+
+    /*
+     * Note: don't accept smarty as a reference here otherwise changes made inside the
+     * smarty include can propagate back upwards!
+     */
+    function container($params, $content, $smarty) {
+	if (!isset($content)) {
+	    return;
+	}
+
+	list ($module, $file) = explode('.', $params['type']);
+	$smarty->_smarty_include(
+	    array('smarty_include_tpl_file' =>
+		      "gallery:modules/$module/templates/containers/$file.tpl",
+		  'smarty_include_vars' => array_merge(array('content' => $content),
+						       $params)));
+    }
+
+    function callback($params, &$smarty) {
+	list ($module, $file) = explode('.', $params['type']);
+	GalleryCoreApi::relativeRequireOnce("modules/$module/Callbacks.inc");
+
+	$userId = $smarty->_tpl_vars['theme']['actingUserId'];
+	$className = "${module}Callbacks";
+	$class = new $className;
+	$ret = $class->callback($params, $smarty, $file, $userId);
+	if ($ret->isError()) {
+	    /* What can we do with this error? */
+	    global $gallery;
+	    $gallery->debug("Error performing $params[id] callback");
+	    $gallery->debug($ret->getAsHtml());
+	}
+    }
+
+    /**
+     * Add the content to our trailer block
+     *
+     * @param array
+     * @param string content
+     * @param object Smarty the smarty instance
+     * @return string HTML content
+     */
+    function addToTrailer($params, $content, &$smarty) {
+	if (!isset($content)) {
+	    return;
+	}
+	$this->_trailer .= $content;
+    }
+
+    /**
+     * Register a callback function to be executed when we run the trailer.
+     *
+     * @param array of arguments suitable to be used as an input for call_user_func()
+     */
+    function registerTrailerCallback($callback, $args) {
+	$this->_trailerCallbacks[] = array('function' => $callback, 'args' => $args);
+    }
+
+    function trailer($params, &$smarty) {
+	print $this->_trailer;
+	flush();
+
+	foreach ($this->_trailerCallbacks as $callback) {
+	    $ret = call_user_func_array($callback['function'], $callback['args']);
+	    if (is_array($ret)) {
+		$ret = $ret[0];
+	    }
+	    flush();
+	}
+    }
+
+    function updateProgressBar($title, $description, $percentComplete) {
+	static $coreModule;
+	if (!isset($coreModule)) {
+	    list ($ret, $coreModule) = GalleryCoreApi::loadPlugin('module', 'core');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	if (empty($this->_progressBarStats)) {
+	    $this->_progressBarStats['startTime'] = time();
+	}
+
+	/*
+	 * Calculate the time remaining
+	 *
+	 * TODO: Use a weighted measurement to provide a balanced estimate.  Consider the case
+	 * where the first 50% goes really quickly and the second 50% goes really slowly; the
+	 * estimate will be wildly inaccurate at the transition.
+	 */
+	if ($percentComplete > 0 &&
+	        $percentComplete < 1 && time() > $this->_progressBarStats['startTime']) {
+	    $elapsed = (int)(time() - $this->_progressBarStats['startTime']);
+	    $timeRemaining = ($elapsed / $percentComplete) - $elapsed;
+	    $timeRemaining = $coreModule->translate(
+		array('text' => 'Estimated time remaining: %d:%02d',
+		      'arg1' => (int)($timeRemaining / 60),
+		      'arg2' => $timeRemaining % 60));
+	} else {
+	    $timeRemaining = '';
+	}
+
+	/* it is possible to not have this function compiled into php */
+	$memoryUsed = (function_exists('memory_get_usage')) ? memory_get_usage() : 0;
+
+	/* A disabled memory_limit is -1, 0 crashes php */
+	$memoryTotal = (0 < ini_get('memory_limit')) ? ini_get('memory_limit') : 0;
+
+	/*
+	 * Ensure that percentComplete is in a dotted-decimal format.  Since
+	 * the immediateView is dealing in percentages, anything beyond two decimal
+	 * places is unnecessary.
+	 */
+	$percentComplete = GalleryUtilities::roundToString($percentComplete, 2);
+
+	$memoryInfo = $coreModule->translate(
+	    array('text' => 'Memory used: %s, total: %s',
+		  'arg1' => $memoryUsed,
+		  'arg2' => $memoryTotal));
+	printf('<script type="text/javascript">' .
+	       'updateProgressBar("%s", "%s", "%s", "%s", "%s");</script>',
+	       $title, $description, $percentComplete, $timeRemaining, $memoryInfo);
+	flush();
+	return GalleryStatus::success();
+    }
+
+    function resetProgressBarStats() {
+	$this->_progressBarStats = array();
+    }
+
+    function errorProgressBar($status) {
+	printf('<script type="text/javascript">errorProgressBar("%s");</script>',
+	       $status->getAsHtml());
+    }
+
+    function completeProgressBar($continueUrl) {
+	$continueUrl = str_replace('&amp;', '&', $continueUrl);
+	printf('<script type="text/javascript">completeProgressBar("%s");</script>', $continueUrl);
     }
 }
 ?>

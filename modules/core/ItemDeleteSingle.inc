@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -40,7 +40,7 @@ class ItemDeleteSingleController extends GalleryController {
      */
     function handleRequest($form) {
 	global $gallery;
-	
+
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 
 	$status = array();
@@ -62,13 +62,13 @@ class ItemDeleteSingleController extends GalleryController {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-		    
+
 	    /* The view shouldn't let us try to delete the root album, either */
 	    if ($itemId == $rootId) {
 		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 						  "Can't delete the root album"), null);
 	    }
-		
+
 	    $ret = GalleryCoreApi::deleteEntityById($itemId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -87,7 +87,7 @@ class ItemDeleteSingleController extends GalleryController {
 	    $redirect['subView'] = 'core.ItemDeleteConfirmation';
 	    $redirect['itemId'] = $item->getParentId();
 	}
-		
+
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
@@ -96,7 +96,7 @@ class ItemDeleteSingleController extends GalleryController {
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
-	
+
 	return array(GalleryStatus::success(), $results);
     }
 }
@@ -108,7 +108,7 @@ class ItemDeleteSingleController extends GalleryController {
  * @subpackage UserInterface
  */
 class ItemDeleteSingleView extends GalleryView {
-	
+
     /**
      * @see GalleryView::loadTemplate
      */
@@ -116,34 +116,34 @@ class ItemDeleteSingleView extends GalleryView {
 	global $gallery;
 
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
-	
+
 	if ($form['formName'] != 'ItemDeleteSingle') {
 	    $form['destination'] = '';
 	    $form['formName'] = 'ItemDeleteSingle';
 	}
-	
+
 	list($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	/* Get child counts */
 	list ($ret, $childCountTable) = GalleryCoreApi::fetchDescendentCounts(array($itemId));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$childCount = isset($childCountTable[$itemId]) ? $childCountTable[$itemId] : 0;
-	
+
 	$ItemDeleteSingle = array();
 	$ItemDeleteSingle['itemTypeNames'] = $item->itemTypeName();
 	$ItemDeleteSingle['childCount'] = $childCount;
 
 	$template->setVariable('controller', 'core.ItemDeleteSingle');
 	$template->setVariable('ItemDeleteSingle', $ItemDeleteSingle);
-	
+
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/ItemDeleteSingle.tpl'));
-	
+
     }
 
     /**

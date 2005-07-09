@@ -88,7 +88,9 @@ class SizeLimitOption extends ItemEditOption {
     /**
      * @see ItemEditOption::handleRequestAfterEdit
      */
-    function handleRequestAfterEdit($form, &$item, &$preferred, &$statusMonitor) {
+    function handleRequestAfterEdit($form, &$item, &$preferred) {
+	global $gallery;
+
 	$error = $warning = array();
 	$setOriginal = false;
 	switch ($form['SizeLimitOption']['dimensionChoice']) {
@@ -181,8 +183,18 @@ class SizeLimitOption extends ItemEditOption {
 	    }
 	}
 	if (empty($error) && isset($form['SizeLimitOption']['applyToDescendents'])) {
-	    list ($ret, $error, $warning) =
-		$this->_applyToDescendents($form, $item, $statusMonitor);
+	    list ($ret, $error, $warning) = $this->_applyToDescendents($form, $item);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+
+	    list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'sizelimit');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+
+	    $templateAdapter =& $gallery->getTemplateAdapter();
+	    $ret = $templateAdapter->updateProgressBar($module->translate('Resize complete'), '', 1);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
@@ -195,13 +207,13 @@ class SizeLimitOption extends ItemEditOption {
      *
      * @param array of form variables
      * @param object album to apply settings
-     * @param reference to statusMonitor window (Immediate view or status template)
      * @return array object GalleryStatus a status code
      *               array errors, array warnings
      * @access private
      */
-    function _applyToDescendents($form, $album, &$statusMonitor) {
+    function _applyToDescendents($form, $album) {
 	global $gallery;
+	$templateAdapter =& $gallery->getTemplateAdapter();
 	$errors = $warnings = array();
 	if ($setDimensions = ($form['SizeLimitOption']['dimensionChoice'] == 'explicit')) {
 	    $dimensions = array($form['SizeLimitOption']['dimensions']['width'],
@@ -229,16 +241,11 @@ class SizeLimitOption extends ItemEditOption {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
-	$ret = $statusMonitor->doLoadImmediateTemplate();
+	$ret = $templateAdapter->updateProgressBar($module->translate('Resize Status'), '', 0);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
-	/* This flushes all buffers and outputs the header directly to the browser */
-	$ret = $statusMonitor->renderHeader($module->translate('Resize Status'), '', '');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
-	}
 	$totalItems = count($descendentIds);
 
 	/*
@@ -257,7 +264,7 @@ class SizeLimitOption extends ItemEditOption {
 	    }
 	    foreach ($descendents as $item) {
 		$numberOfItemsResized++;
-		$ret = $statusMonitor->renderStatusMessage(
+		$ret = $templateAdapter->updateProgressBar(
 		    $module->translate('Resizing photo'), $item->getTitle(),
 		    $numberOfItemsResized / $totalItems);
 		if ($ret->isError()) {
@@ -306,6 +313,14 @@ class SizeLimitOption extends ItemEditOption {
 	    }
 	}
 	return array(GalleryStatus::success(), $errors, $warnings);
+    }
+
+
+    /**
+     * @see ItemEditOption::requiresProgressBar()
+     */
+    function requiresProgressBar($form) {
+	return isset($form['SizeLimitOption']['applyToDescendents']);
     }
 }
 ?>

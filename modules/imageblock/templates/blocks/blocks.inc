@@ -1,0 +1,22 @@
+<?php
+$blocks['ImageBlock'] = array(
+    'description' => $gallery->i18n('Random image'),
+    'vars' => array(
+	'blocks' => array(
+	    'description' => $gallery->i18n('Image type'),
+	    'type' => 'choice',
+	    'default' => 'randomImage',
+	    'choices' => array(
+		'randomImage' => $gallery->i18n('Random image'),
+		'recentImage' => $gallery->i18n('Recent image'),
+		'viewedImage' => $gallery->i18n('Viewed image'),
+		'randomAlbum' => $gallery->i18n('Random album'),
+		'recentAlbum' => $gallery->i18n('Recent album'),
+		'viewedAlbum' => $gallery->i18n('Viewed album'),
+		'dailyImage' => $gallery->i18n('Daily image'),
+		'weeklyImage' => $gallery->i18n('Weekly image'),
+		'monthlyImage' => $gallery->i18n('Monthly image'),
+		'dailyAlbum' => $gallery->i18n('Daily album'),
+		'weeklyAlbum' => $gallery->i18n('Weekly album'),
+		'monthlyAlbum' => $gallery->i18n('Monthly album')))));
+?>

@@ -67,7 +67,7 @@ class SearchShowAllView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	// TODO: Parameterize this
+	/* TODO: Parameterize this */
 	$pageSize = 20;
 
 	$items = array();
@@ -201,16 +201,6 @@ class SearchShowAllView extends GalleryView {
 	    'thumbnails' => $thumbnails,
 	    'items' => $items,
 	    'rootAlbum' => $rootAlbum->getMemberData()));
-
-	list ($ret, $navigationView) = GalleryView::loadView('core.Navigation');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	list ($ret, $ignored) = $navigationView->loadTemplate($template, $form);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'search');
 	if ($ret->isError()) {

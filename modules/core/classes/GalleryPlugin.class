@@ -382,6 +382,16 @@ class GalleryPlugin {
 	return GalleryStatus::success();
     }
 
+    function removeParameter($parameterName, $itemId=0) {
+	$ret = GalleryCoreApi::removePluginParameter(
+	    $this->getPluginType(), $this->getId(), $parameterName, $itemId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
     /**
      * Remove a plugin parameter for a specific item
      *
@@ -390,8 +400,7 @@ class GalleryPlugin {
      * @return object GalleryStatus a status code
      */
     function removeItemParameter($parameterName, $itemId) {
-	$ret = GalleryCoreApi::removePluginParameter($this->getPluginType(), $this->getId(),
-						     $parameterName, $itemId);
+	$ret = $this->removeParameter($parameterName, $itemId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

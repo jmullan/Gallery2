@@ -79,10 +79,6 @@ class ItemEditController extends GalleryController {
 
 	$status = array();
 	$error = array();
-        list ($ret, $statusMonitor) = $this->getImmediateStatusView();
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
 
 	/* Load the correct edit plugin */
 	list ($ret, $plugin) =
@@ -106,44 +102,79 @@ class ItemEditController extends GalleryController {
 	    $status['warning'] = array();
 	}
 	if (isset($form['action']['save'])) {
+	    $progressBarOptions = array();
 	    foreach ($optionInstances as $option) {
-		list ($ret, $optionErrors, $optionWarnings) =
-		    $option->handleRequestAfterEdit($form, $item, $preferred, $statusMonitor);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
+		if ($option->requiresProgressBar($form)) {
+		    $progressBarOptions[] = $option;
+		} else {
+		    list ($ret, $optionErrors, $optionWarnings) =
+			$option->handleRequestAfterEdit($form, $item, $preferred);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
 
-		$error = array_merge($error, $optionErrors);
-		$status['warning'] = array_merge($status['warning'], $optionWarnings);
+		    $error = array_merge($error, $optionErrors);
+		    $status['warning'] = array_merge($status['warning'], $optionWarnings);
+		}
+	    }
+
+	    if (empty($error) && $progressBarOptions) {
+		$templateAdapter =& $gallery->getTemplateAdapter();
+		$templateAdapter->registerTrailerCallback(
+		    array($this, 'runProgressBarOptions'),
+		    array($progressBarOptions, $form, $item, $preferred, $status, $editPlugin));
+		$results['delegate']['view'] = 'core.ProgressBar';
 	    }
 	}
 
-	if (empty($error)) {
-	    $results['redirect'] = array('view' => 'core.ItemAdmin',
-					 'subView' => 'core.ItemEdit',
-					 'editPlugin' => $editPlugin,
-					 'itemId' => $item->getId());
-	} else {
-	    $results['delegate']['view'] = 'core.ItemAdmin';
-	    $results['delegate']['subView'] = 'core.ItemEdit';
-	    $results['delegate']['editPlugin'] = $editPlugin;
+	if (empty($results['delegate'])) {
+	    /* It's not a progress bar view */
+	    if (empty($error)) {
+		$results['redirect'] = array('view' => 'core.ItemAdmin',
+					     'subView' => 'core.ItemEdit',
+					     'editPlugin' => $editPlugin,
+					     'itemId' => $item->getId());
+	    } else {
+		$results['delegate']['view'] = 'core.ItemAdmin';
+		$results['delegate']['subView'] = 'core.ItemEdit';
+		$results['delegate']['editPlugin'] = $editPlugin;
+	    }
 	}
-        if ($statusMonitor->getFlushed()) {
-            $results['sendLateRedirect'] = $statusMonitor;
-            $statusMonitor->setFlushed(false);
-        }
 
 	$results['status'] = $status;
 	$results['error'] = $error;
 
 	return array(GalleryStatus::success(), $results);
     }
-    
-    /**
-     * @see GalleryController::canUseImmediateView
-     */
-    function canUseImmediateView() {
-	return true;
+
+    function runProgressBarOptions($options, $form, $item, $preferred, $status, $editPlugin) {
+	global $gallery;
+	$templateAdapter =& $gallery->getTemplateAdapter();
+
+	$error = array();
+	foreach ($options as $option) {
+	    list ($ret, $optionErrors, $optionWarnings) =
+		$option->handleRequestAfterEdit($form, $item, $preferred);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $error = array_merge($error, $optionErrors);
+	    $status['warning'] = array_merge($status['warning'], $optionWarnings);
+	}
+	$session =& $gallery->getSession();
+
+	$redirect = array();
+	$redirect['view'] = 'core.ItemAdmin';
+	$redirect['subView'] = 'core.ItemEdit';
+	$redirect['itemId'] = $item->getId();
+	$redirect['editPlugin'] = $editPlugin;
+	$redirect['statusId'] = $session->putStatus($status);
+
+	$urlGenerator =& $gallery->getUrlGenerator();
+	$templateAdapter->completeProgressBar($urlGenerator->generateUrl($redirect));
+
+	return GalleryStatus::success();
     }
 }
 
@@ -437,12 +468,11 @@ class ItemEditOption {
      * @param array the form values
      * @param reference to the item
      * @param reference to preferred derivative
-     * @param reference to status monitor (immediate status view or status template)
      * @return array object GalleryStatus a status code
      *               array error messages
      *               array localized warning messages
      */
-    function handleRequestAfterEdit($form, &$item, &$preferred, &$statusMonitor) {
+    function handleRequestAfterEdit($form, &$item, &$preferred) {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
     }
 
@@ -456,6 +486,16 @@ class ItemEditOption {
      */
     function isAppropriate($item, $thumbnail) {
 	return array(GalleryStatus::success(), false);
-    }    
+    }
+
+    /**
+     * Will this task run so long that it requires a progress bar?
+     *
+     * @param the state of the current form
+     * @return true or false
+     */
+    function requiresProgressBar($form) {
+	return false;
+    }
 }
 ?>

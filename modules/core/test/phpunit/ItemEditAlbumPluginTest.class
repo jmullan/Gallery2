@@ -115,7 +115,6 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
-	GalleryUtilities::putRequestVariable('form[layout]', 'foo');
 	GalleryUtilities::putRequestVariable('form[theme]', 'bar');
 	GalleryUtilities::putRequestVariable('form[orderBy]', 'baz');
 	GalleryUtilities::putRequestVariable('form[orderDirection]', 'bletch');
@@ -145,7 +144,6 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	}
 
 	/* Verify basic settings */
-	$this->assertEquals('foo', $this->_album->getLayout());
 	$this->assertEquals('bar', $this->_album->getTheme());
 	$this->assertEquals('foa|baz', $this->_album->getOrderBy());
 	$this->assertEquals('bletch', $this->_album->getOrderDirection());

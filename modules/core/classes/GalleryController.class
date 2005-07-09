@@ -2,7 +2,7 @@
 /*
  * $RCSfile$
  *
- * Gallery - a web based photo album controllerer and editor
+ * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,14 +35,6 @@
  * @subpackage Classes
  */
 class GalleryController {
-
-    /**
-     * If the controller can use an immediate status view
-     * it will expect it to be placed here
-     *
-     * @access private
-     */
-    var $_immediateStatusView;
 
     /**
      * Take the appropriate action based on the user input provided.
@@ -193,32 +185,6 @@ class GalleryController {
      */
     function canUseImmediateView() {
 	return false;
-    }
-
-    /**
-     * Set this controller's immediate status view
-     *
-     * @param object a GalleryImmediateStatusView
-     * @return array object GalleryStatus a status code
-     *
-     */
-    function setImmediateStatusView($immediateStatusView) {
-	$this->_immediateStatusView = $immediateStatusView;
-    }
-
-    /**
-     * Get this controller's immediate status view
-     *
-     * @return array object GalleryStatus a status code
-     *               object a GalleryImmediateStatusView
-     */
-    function getImmediateStatusView() {
-	if (isset($this->_immediateStatusView)) {
-	    return array(GalleryStatus::success(), $this->_immediateStatusView);
-	} else {
-	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
-			 null);
-	}
     }
 }
 ?>

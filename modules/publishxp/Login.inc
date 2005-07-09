@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2004 Bharat Mediratta
+ * Copyright (C) 2000-2005 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ class LoginController extends GalleryController {
 	    if (empty($form['userName'])) {
 		$error[] = 'form[error][userName][missing]';
 	    }
-	    
+
 	    if (empty($form['password'])) {
 		$error[] = 'form[error][password][missing]';
 	    }
@@ -63,7 +63,7 @@ class LoginController extends GalleryController {
 
 		    $session =& $gallery->getSession();
 		    $session->regenerate();
-		    
+
 		    $results['redirect']['view'] = 'publishxp.SelectAlbum';
 		} else {
 		    $error[] = 'form[error][password][invalid]';
@@ -115,7 +115,7 @@ class LoginView extends GalleryView {
 
 	$template->setVariable('controller', 'publishxp.Login');
 	$template->head('modules/publishxp/templates/Head.tpl');
-	return array(GalleryStatus::success(), 
+	return array(GalleryStatus::success(),
 		     array('body' => 'modules/publishxp/templates/Login.tpl'));
     }
 }

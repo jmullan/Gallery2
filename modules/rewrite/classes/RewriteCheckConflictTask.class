@@ -53,8 +53,9 @@ class RewriteCheckConflictTask extends MaintenanceTask {
     /**
      * @see MaintenanceTask::run()
      */
-    function run(&$immediateView) {
+    function run() {
 	global $gallery;
+	$templateAdapter =& $gallery->getTemplateAdapter();
 	$urlGenerator =& $gallery->getUrlGenerator();
 	$platform =& $gallery->getPlatform();
 	$baseDir = dirname(dirname(dirname(dirname(__FILE__))));
@@ -65,12 +66,7 @@ class RewriteCheckConflictTask extends MaintenanceTask {
 	}
 	$message = $module->translate('Processing...');
 
-	$ret = $immediateView->doLoadImmediateTemplate();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
-	}
-
-	$ret = $immediateView->renderHeader('', $message, '');
+	$ret = $templateAdapter->updateProgressBar('', $message, '');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
@@ -115,7 +111,7 @@ class RewriteCheckConflictTask extends MaintenanceTask {
 	    if (++$i % 5 == 0 || $i == $total) {
 		$message = $module->translate(
 		    array('text' => 'Checking item %d of %d', 'arg1' => $i, 'arg2' => $total));
-		$ret = $immediateView->renderStatusMessage($message, '', $i / $total);
+		$ret = $templateAdapter->updateProgressBar($message, '', $i / $total);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
@@ -125,6 +121,14 @@ class RewriteCheckConflictTask extends MaintenanceTask {
 	$status[0] = $module->translate(array('text' => 'Checked %d items and found %d conflicts',
 					   'arg1' => $total, 'arg2' => $badPath));
 	return array(GalleryStatus::success(), true, $status);
+    }
+
+
+    /**
+     * @see MaintenanceTask::requiresProgressBar()
+     */
+    function requiresProgressBar() {
+	return true;
     }
 }
 ?>

@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -34,7 +34,7 @@
  * @subpackage Helpers
  */
 class GalleryUserHelper_medium {
-	
+
     /*
      * ****************************************
      *                 Methods
@@ -49,7 +49,7 @@ class GalleryUserHelper_medium {
      *
      * @param int [optional] the number of usernames desired
      * @param int [optional] the start of the range
-     * @param string [optional] a substring to match 
+     * @param string [optional] a substring to match
      * @return array object GalleryStatus a status code
      *               array (username, username, ...)
      * @static
@@ -78,7 +78,7 @@ class GalleryUserHelper_medium {
         ORDER BY
           [GalleryUser::userName] ASC
         ';
-	
+
 	list ($ret, $searchResults) =
 	    $gallery->search($query,
 			     $data,
@@ -141,12 +141,12 @@ class GalleryUserHelper_medium {
             ';
         }
         $data[] = $groupId;
-    
+
         list ($ret, $searchResults) = $gallery->search($query, $data);
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
-    
+
         $result = $searchResults->nextResult();
         return array(GalleryStatus::success(), (int)$result[0]);
     }
@@ -211,9 +211,9 @@ class GalleryUserHelper_medium {
 
 	return GalleryStatus::success();
     }
-	
+
     /**
-     * Delete all non-album items of a user. Then delete all remaining 
+     * Delete all non-album items of a user. Then delete all remaining
      * albums that are empty.
      * This function can only be called with activeUser = Site Admin
      *
@@ -227,30 +227,30 @@ class GalleryUserHelper_medium {
 	if (empty($userId)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
-	
+
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	/* First check if the User is a valid gallery user! */
 	list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
-	/* Get all items by the user */	
+
+	/* Get all items by the user */
 	list ($ret, $itemIds) = GalleryCoreApi::fetchAllItemIdsByOwnerId($user->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	if (empty($itemIds)) {
 	    return GalleryStatus::success();
 	}
-	
+
 	/*
-	 * Get all the permissions the user has on the items, 
+	 * Get all the permissions the user has on the items,
 	 * need delete permission to delete an item
 	 */
 	list ($ret, $userItemPermissions) =
@@ -272,7 +272,7 @@ class GalleryUserHelper_medium {
 	if (empty($itemIds)) {
 	    return GalleryStatus::success();
 	}
-	
+
 	/* Load all items */
 	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($itemIds);
 	if ($ret->isError()) {
@@ -290,14 +290,14 @@ class GalleryUserHelper_medium {
 		continue;
 	    }
 	    /* delete the item */
-	    $ret = GalleryCoreApi::deleteEntityById($item->getId()); 
+	    $ret = GalleryCoreApi::deleteEntityById($item->getId());
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
-	
+
 	/*
-	 * Delete all empty albums 
+	 * Delete all empty albums
 	 * One of the albums may be the subalbum of another
 	 * To make sure the "descendentCount" is right, we have to delete the albums
 	 * in the right order and recompute the descendent count
@@ -306,7 +306,7 @@ class GalleryUserHelper_medium {
 	$modifiedAlbumIds = $albumIds;
 	while(!empty($modifiedAlbumIds)) {
 	    /*
-	     * TODO: fetchDescendentCounts works only if the activeUser is a SiteAdmin 
+	     * TODO: fetchDescendentCounts works only if the activeUser is a SiteAdmin
 	     * If we want to use it from user space (i.e. let users remove delete their
 	     * accounts) we need to fix this.
 	     */
@@ -321,7 +321,7 @@ class GalleryUserHelper_medium {
 		if (!isset($descendentCounts[$albumId]) || $descendentCounts[$albumId] == 0) {
 		    if (in_array($albums[$albumId]->getParentId(), $albumIds)) {
 			/*
-			 * This album was the subalbum of another album of this user 
+			 * This album was the subalbum of another album of this user
 			 * -> update descendentCount for this parent album
 			 */
 			$newModifiedAlbumIds[$albums[$albumId]->getParentId()] = 1;
@@ -337,8 +337,8 @@ class GalleryUserHelper_medium {
 		}
 	    }
 	    $modifiedAlbumIds = array_keys($newModifiedAlbumIds);
-	} 
-	
+	}
+
 	/* Make a new thumbnail if possible, if it doesn't succeed, we can't change it */
 	foreach ($remainingAlbums as $albumId => $remaining) {
 	    if ($remaining) {
@@ -348,7 +348,7 @@ class GalleryUserHelper_medium {
 		}
 	    }
 	}
-	
+
 	return GalleryStatus::success();
     }
 }

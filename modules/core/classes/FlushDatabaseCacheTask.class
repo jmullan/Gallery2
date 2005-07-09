@@ -63,7 +63,7 @@ class FlushDatabaseCacheTask extends MaintenanceTask {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
-	$cacheDirs = array('entity', 'layout', 'module');
+	$cacheDirs = array('entity', 'theme', 'module');
 	$success = true;
 	foreach ($cacheDirs as $dir) {
 	    $dir = sprintf('%s%s', $cacheBaseDir, $dir);

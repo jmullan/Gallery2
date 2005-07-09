@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -100,7 +100,7 @@ class AdminQuotasController extends GalleryController {
 	    } else if (is_null($user)) {
 		$error[] = 'form[error][text][noSuchUser]';
 	    } else {
-		list ($ret, $quotaExists, $userQuota) = 
+		list ($ret, $quotaExists, $userQuota) =
 		    GalleryQuotasHelper::fetchUserQuota($user->getId());
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -122,7 +122,7 @@ class AdminQuotasController extends GalleryController {
 	    } else if ($group == null) {
 		$error[] = 'form[error][text][noSuchGroup]';
 	    } else {
-		list ($ret, $quotaExists, $groupQuota) = 
+		list ($ret, $quotaExists, $groupQuota) =
 		    GalleryQuotasHelper::fetchGroupQuota($group->getId());
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -137,7 +137,7 @@ class AdminQuotasController extends GalleryController {
 		$redirect['subView'] = 'quotas.AdminEditGroupQuota';
 		$redirect['groupId'] = $group->getId();
 	    }
-	    
+
 	} else if (isset($form['action']['user']['editFromText'])) {
 
 	    if (empty($form['text']['userName'])) {
@@ -145,7 +145,7 @@ class AdminQuotasController extends GalleryController {
 	    } else if ($user == null) {
 		$error[] = 'form[error][text][noSuchUser]';
 	    } else {
-		list ($ret, $quotaExists, $userQuota) = 
+		list ($ret, $quotaExists, $userQuota) =
 		    GalleryQuotasHelper::fetchUserQuota($user->getId());
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -160,7 +160,7 @@ class AdminQuotasController extends GalleryController {
 		$redirect['subView'] = 'quotas.AdminEditUserQuota';
 		$redirect['userId'] = $user->getId();
 	    }
-	    
+
 	} else if (isset($form['action']['group']['deleteFromText'])) {
 
 	    if (empty($form['text']['groupName'])) {
@@ -168,7 +168,7 @@ class AdminQuotasController extends GalleryController {
 	    } else if ($group == null) {
 		$error[] = 'form[error][text][noSuchGroup]';
 	    } else {
-		list ($ret, $quotaExists, $groupQuota) = 
+		list ($ret, $quotaExists, $groupQuota) =
 		    GalleryQuotasHelper::fetchGroupQuota($group->getId());
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -183,7 +183,7 @@ class AdminQuotasController extends GalleryController {
 		$redirect['subView'] = 'quotas.AdminDeleteGroupQuota';
 		$redirect['groupId'] = $group->getId();
 	    }
-	  	
+
 	} else if (isset($form['action']['user']['deleteFromText'])) {
 
 	    if (empty($form['text']['userName'])) {
@@ -191,7 +191,7 @@ class AdminQuotasController extends GalleryController {
 	    } else if ($user == null) {
 		$error[] = 'form[error][text][noSuchUser]';
 	    } else {
-		list ($ret, $quotaExists, $userQuota) = 
+		list ($ret, $quotaExists, $userQuota) =
 		    GalleryQuotasHelper::fetchUserQuota($user->getId());
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -206,8 +206,8 @@ class AdminQuotasController extends GalleryController {
 		$redirect['subView'] = 'quotas.AdminDeleteUserQuota';
 		$redirect['userId'] = $user->getId();
 	    }
-		
-	} 
+
+	}
 
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
@@ -282,7 +282,7 @@ class AdminQuotasView extends GalleryView {
         min($form['list']['group']['page']+1, $form['list']['group']['maxPages']);
 	$form['list']['group']['backPage'] = max(1, $form['list']['group']['page']-1);
 
-	list ($ret, $groupNames) = 
+	list ($ret, $groupNames) =
 	    GalleryQuotasHelper::fetchQuotaGroupIdList($form['list']['group']['pageSize'],
 						     (($form['list']['group']['page'] - 1) *
 						       $form['list']['group']['pageSize']));
@@ -295,11 +295,11 @@ class AdminQuotasView extends GalleryView {
 	    $form['list']['groupNames'][$groupId]['groupName'] = $values['name'];
 	    list ($ret,
 	          $form['list']['groupNames'][$groupId]['quotaSize'],
-	    	  $form['list']['groupNames'][$groupId]['quotaUnit']) = 
+	    	  $form['list']['groupNames'][$groupId]['quotaUnit']) =
 	        GalleryQuotasHelper::humanReadableFromKilobytes($values['quota']);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }    
+	    }
 	}
 
 	$form['list']['user']['count'] = $totalUserCount;
@@ -330,11 +330,11 @@ class AdminQuotasView extends GalleryView {
 	    $form['list']['userNames'][$userId]['userName'] = $values['name'];
 	    list ($ret,
 	          $form['list']['userNames'][$userId]['quotaSize'],
-	    	  $form['list']['userNames'][$userId]['quotaUnit']) = 
+	    	  $form['list']['userNames'][$userId]['quotaUnit']) =
 	        GalleryQuotasHelper::humanReadableFromKilobytes($values['quota']);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
-	    } 
+	    }
 	}
 
 	$AdminQuotas = array();

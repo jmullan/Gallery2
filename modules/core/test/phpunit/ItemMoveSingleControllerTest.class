@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -89,7 +89,7 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 
 	$this->_markForCleanup($this->_rootAlbum);
 	$this->_setDerivativePreferences($this->_rootAlbum->getId(), 150, 300, 400);
-	
+
 	list ($ret, $this->_destinationAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -98,7 +98,7 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 
 	$this->_markForCleanup($this->_destinationAlbum);
 	$this->_setDerivativePreferences($this->_destinationAlbum->getId(), 200, 400, 600, 800);
-	
+
 	/* Create a data item */
 	list ($ret, $this->_item) = $this->_createRandomDataItem(
 		$this->_rootAlbum->getId(), 'image/test', array('width' => 1000));
@@ -280,7 +280,7 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	GalleryUtilities::putRequestVariable('itemId', $this->_rootAlbum->getId());
 	GalleryUtilities::putRequestVariable('form[action][move]', 1);
 	GalleryUtilities::putRequestVariable('form[destination]', $this->_childAlbum->getId());
@@ -322,7 +322,7 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	// The UI shouldn't allow us to try to move an item that we can't delete
 	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
     }

@@ -42,6 +42,8 @@ class AdminMaintenanceController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
+	global $gallery;
+
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -59,34 +61,30 @@ class AdminMaintenanceController extends GalleryController {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    list ($ret, $immediateView) = $this->getImmediateStatusView();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
 	    if (isset($tasks[$taskId])) {
-		list ($ret, $success, $details) = $tasks[$taskId]->run($immediateView);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
+		$task =& $tasks[$taskId];
 
-		$ret = MaintenanceHelper_simple::addRun($taskId, time(), $success, $details);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
+		if ($task->requiresProgressBar()) {
+		    $templateAdapter =& $gallery->getTemplateAdapter();
+		    $templateAdapter->registerTrailerCallback(
+			array($this, 'runTask'), array($taskId, $task, true));
+		    $results['delegate']['view'] = 'core.ProgressBar';
+		} else {
+		    list ($ret, $success)  = $this->runTask($taskId, $task, false);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
 
-		$redirect['view'] = 'core.SiteAdmin';
-		$redirect['subView'] = 'core.AdminMaintenance';
-		$status['run'] = array('taskId' => $taskId, 'success' => $success);
+		    $status['run'] = array('taskId' => $taskId, 'success' => $success);
+		    $redirect['view'] = 'core.SiteAdmin';
+		    $redirect['subView'] = 'core.AdminMaintenance';
+		}
 	    }
 	}
 
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
-	    if (isset($immediateView->_template)) {  /* check if $immediateView was used */
-		$results['sendLateRedirect'] = $immediateView;
-	    }
-	} else {
+	} else if (empty($results['delegate'])) {
 	    $results['delegate']['view'] = 'core.SiteAdmin';
 	    $results['delegate']['subView'] = 'core.AdminMaintenance';
 	}
@@ -97,11 +95,40 @@ class AdminMaintenanceController extends GalleryController {
 	return array(GalleryStatus::success(), $results);
     }
 
-    /**
-     * @see GalleryController::canUseImmediateView
-     */
-    function canUseImmediateView() {
-	return true;
+    function runTask($taskId, $task, $useProgressBar) {
+	global $gallery;
+
+	$urlGenerator =& $gallery->getUrlGenerator();
+	$templateAdapter =& $gallery->getTemplateAdapter();
+
+	list ($ret1, $success, $details) = $task->run();
+	if ($ret1->isError()) {
+	    $details = $ret1->getAsHtml();
+	}
+	$ret2 = MaintenanceHelper_simple::addRun($taskId, time(), $success, $details);
+
+	if ($ret1->isError() || $ret2->isError()) {
+	    $ret = $ret1->isError() ? $ret1 : $ret2;
+
+	    if ($useProgressBar) {
+		$templateAdapter->errorProgressBar($ret);
+	    }
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$status['run']['success'] = $success;
+	$status['run']['taskId'] = $taskId;
+	$session =& $gallery->getSession();
+
+	$redirect['view'] = 'core.SiteAdmin';
+	$redirect['subView'] = 'core.AdminMaintenance';
+	$redirect['statusId'] = $session->putStatus($status);
+
+	if ($useProgressBar) {
+	    $templateAdapter->completeProgressBar($urlGenerator->generateUrl($redirect));
+	}
+
+	return array(GalleryStatus::success(), $success);
     }
 }
 
@@ -174,13 +201,21 @@ class MaintenanceTask {
 
     /**
      * Execute the task
-     * @param object GalleryImmediateStatusView to show task progress
      * @return array object GalleryStatus a status code
      *               boolean success or failure
      *               array string output text
      */
-    function run(&$immediateView) {
+    function run() {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
+    }
+
+    /**
+     * Will this task run so long that it requires a progress bar?
+     *
+     * @return true or false
+     */
+    function requiresProgressBar() {
+	return false;
     }
 }
 ?>

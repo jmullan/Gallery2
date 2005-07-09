@@ -73,11 +73,14 @@ class ShowItemTest extends GalleryTestCase {
 	$this->assertEquals(0, $count, 'count before');
 
 	GalleryUtilities::putRequestVariable('itemId', $itemId);
-	list ($ret, $result) = $this->_view->doLoadTemplate($this->_template);
+	list ($ret, $result, $theme) = $this->_view->doLoadTemplate($this->_template);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals(array('body' => 'modules/core/templates/ShowItem.tpl'), $result);
+
+	$match = 'themes/' . $theme->getId() . '/templates';
+	$this->assertEquals(substr($result['body'], 0, strlen($match)), $match,
+			    'template should be inside a theme');
 
 	list ($ret, $count) = GalleryCoreApi::fetchItemViewCount($itemId);
 	if ($ret->isError()) {

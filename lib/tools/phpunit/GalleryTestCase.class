@@ -220,7 +220,7 @@ class GalleryTestCase extends TestCase {
 
 	/* Preload a few things to lighten the load on our dummy platforms */
 	GalleryCoreApi::fetchPluginStatus('module');
-	GalleryCoreApi::fetchPluginStatus('layout');
+	GalleryCoreApi::fetchPluginStatus('theme');
 
 	$storage =& $gallery->getStorage();
 	$ret = $storage->beginTransaction();
@@ -263,6 +263,7 @@ class GalleryTestCase extends TestCase {
 	$gallery->_lockSystem = array_shift($this->_saveVars);
 	$gallery->_storage = array_shift($this->_saveVars);
 	$gallery->_shutdownActions = null;
+	$gallery->_templateAdapter = null;
 
 	/* Do our cleanup */
 	foreach ($this->_cleanup['pluginParameters'] as $cleanupPlugin) {

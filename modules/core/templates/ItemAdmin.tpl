@@ -12,32 +12,6 @@
     <input type="hidden" name="{g->formVar var="itemId"}" value="{$ItemAdmin.item.id}"/>
   </div>
 
-  <div id="gsSystemLinks" class="gcBorder1">
-    <div class="links">
-    {foreach from=$ItemAdmin.moduleSystemLinks item=module}
-      {foreach from=$module item=link}
-	<span> <a href="{g->url params=$link.params}">{$link.text}</a> </span>
-      {/foreach}
-    {/foreach}
-    </div>
-
-    <div class="gbBreadCrumb">
-      {foreach name="parent" from=$ItemAdmin.parents item=parent}
-      <span{if $smarty.foreach.parent.first} class="firstChild"{/if}>
-	<a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$parent.id`"}">
-	  {$parent.title|default:$parent.pathComponent|markup:stripBbcodeAndHtml}
-	</a>
-      </span>
-      {/foreach}
-
-      <span{if empty($ItemAdmin.parents)} class="firstChild"{/if}>
-	<a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$ItemAdmin.item.id`"}">
-	  {$ItemAdmin.item.title|default:$ItemAdmin.item.pathComponent|markup:stripBbcodeAndHtml}
-	</a>
-      </span>
-    </div>
-  </div>
-
   <table width="100%" cellspacing="0" cellpadding="0">
     <tr valign="top">
     <td id="gsSidebarCol"><div id="gsSidebar" class="gcBorder1">
@@ -88,5 +62,3 @@
     </td>
   </tr></table>
 </form>
-{* Content subView wants to display outside main form/table: *}
-{if isset($smarty.capture.ItemAdmin_footer)} {$smarty.capture.ItemAdmin_footer} {/if}

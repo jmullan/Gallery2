@@ -36,9 +36,16 @@
 class PrintPhotosView extends GalleryView {
 
     /**
+     * @see GalleryView::isImmediate
+     */
+    function isImmediate() {
+	return true;
+    }
+
+    /**
      * @see GalleryView::loadTemplate()
      */
-    function loadTemplate(&$template, &$form) {
+    function renderImmediate($status, $error) {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
 
@@ -140,11 +147,15 @@ class PrintPhotosView extends GalleryView {
 	 */
 	setcookie('G2_shutterfly', '1');
 
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTemplate.class');
+	$template = new GalleryTemplate(dirname(dirname(dirname(__FILE__))));
+	$template->setVariable('l10Domain', 'modules_shutterfly');
 	$template->setVariable('PrintPhotos', array('returnUrl' => $returnUrl,
 						    'count' => count($entries),
 						    'entries' => $entries));
-	return array(GalleryStatus::success(),
-		     array('html' => 'modules/shutterfly/templates/PrintPhotos.tpl'));
+	$template->display('gallery:modules/shutterfly/templates/PrintPhotos.tpl');
+
+	return GalleryStatus::success();
     }
 }
 ?>

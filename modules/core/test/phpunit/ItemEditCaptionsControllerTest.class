@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -39,7 +39,7 @@ class ItemEditCaptionsControllerTest extends GalleryControllerTestCase {
 
     function setUp() {
 	parent::setUp();
-	
+
 	/* create an album to hold all of the test items */
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
@@ -71,7 +71,7 @@ class ItemEditCaptionsControllerTest extends GalleryControllerTestCase {
 						 $item->getSerialNumber());
 	}
 	GalleryUtilities::putRequestVariable('form[action][save][done]', 1);
-	
+
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(
@@ -115,7 +115,7 @@ class ItemEditCaptionsControllerTest extends GalleryControllerTestCase {
 	    GalleryUtilities::putRequestVariable("form[items][$id][serialNumber]", $item->getSerialNumber());
 	}
 	GalleryUtilities::putRequestVariable('form[action][save][next]', 1);
-	
+
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.ItemAdmin',
@@ -157,7 +157,7 @@ class ItemEditCaptionsControllerTest extends GalleryControllerTestCase {
 	    GalleryUtilities::putRequestVariable("form[items][$id][serialNumber]", $item->getSerialNumber());
 	}
 	GalleryUtilities::putRequestVariable('form[action][save][previous]', 1);
-	
+
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.ItemAdmin',
@@ -191,7 +191,7 @@ class ItemEditCaptionsControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
 	GalleryUtilities::putRequestVariable('page', 2);
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
-	
+
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
@@ -236,7 +236,7 @@ class ItemEditCaptionsControllerTest extends GalleryControllerTestCase {
 
 	/* Screw up one serial number */
 	GalleryUtilities::putRequestVariable("form[items][" . $this->_items[2]->getId() . "][serialNumber]", 99);
-	
+
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.ItemAdmin',

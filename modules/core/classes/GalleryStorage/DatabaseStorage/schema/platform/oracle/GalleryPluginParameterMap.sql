@@ -35,9 +35,7 @@
   
       ,
     DB_COLUMN_PREFIXparameterValue
-      VARCHAR2(
-       255 
-      )
+      VARCHAR2(4000)
     
     );
 
@@ -72,7 +70,7 @@
       ) VALUES (
       'PluginParameterMap',
       1,
-      1
+      2
       );
 
   

@@ -39,26 +39,8 @@ msgstr "Gallery Email Test"
 msgid "&laquo; None &raquo;"
 msgstr "&laquo; Ingen &raquo;"
 
-msgid "None"
-msgstr "Ingen"
-
-msgid "Guest User Only"
-msgstr "Kun gæstebruger"
-
-msgid "Everybody"
-msgstr "Alle"
-
 msgid "forever"
 msgstr "for altid"
-
-msgid "Link to Login Page"
-msgstr "Link til loginsiden"
-
-msgid "Form on Sidebar"
-msgstr "Formular i sidebjælke"
-
-msgid "Both"
-msgstr "Begge"
 
 msgid "No Markup"
 msgstr "Ingen opmærkning"
@@ -108,6 +90,9 @@ msgstr "installér"
 msgid "upgrade"
 msgstr "opgrader"
 
+msgid "configure"
+msgstr "konfigurer"
+
 msgid "activate"
 msgstr "aktiver"
 
@@ -117,17 +102,14 @@ msgstr "afinstallér"
 msgid "deactivate"
 msgstr "deaktiver"
 
+msgid "Other"
+msgstr "Andet"
+
 msgid "Inherit settings from parent album"
 msgstr "Tag indtillinger fra over-albummet"
 
 msgid "Use these settings"
 msgstr "Brug disse indstillinger"
-
-msgid "configure"
-msgstr "konfigurer"
-
-msgid "Other"
-msgstr "Andet"
 
 msgid "key"
 msgstr "nøgle"
@@ -174,8 +156,20 @@ msgstr "Registrerede brugere"
 msgid "All Users"
 msgstr "Alle brugere"
 
+msgid "Loading derivatives for the broken derivatives check"
+msgstr ""
+
+msgid "Detecting broken derivatives"
+msgstr ""
+
+msgid "Marking broken derivatives"
+msgstr ""
+
 msgid "Site Admins"
 msgstr "Sideadministratorer"
+
+msgid "Everybody"
+msgstr "Alle"
 
 msgid "Guest"
 msgstr "Gæst"
@@ -185,6 +179,15 @@ msgstr "Gallery"
 
 msgid "This is the main page of your Gallery"
 msgstr "Dette er hovedsiden af dit galleri"
+
+msgid "Loading derivatives for the "
+msgstr ""
+
+msgid "Detecting broken derivatives "
+msgstr ""
+
+msgid "Marking broken derivatives "
+msgstr ""
 
 msgid "add items"
 msgstr "tilføj elementer"
@@ -257,9 +260,6 @@ msgstr "rediger %s"
 msgid "Settings saved successfully."
 msgstr "Opsætningen blev gemt."
 
-msgid "&laquo; default layout &raquo;"
-msgstr "&laquo; standard layout &raquo;"
-
 msgid "&laquo; default theme &raquo;"
 msgstr "&laquo; standard tema &raquo;"
 
@@ -277,12 +277,6 @@ msgstr "ret billedtekster"
 
 msgid "General"
 msgstr "Generel"
-
-msgid "Successfully saved layout settings"
-msgstr "Layoutopsætningen blev gemt"
-
-msgid "Layout"
-msgstr "Layout"
 
 msgid "Movie Size"
 msgstr "Filmstørrelse"
@@ -341,6 +335,13 @@ msgstr "Fotoet blev skaleret"
 msgid "Modify Photo"
 msgstr "Rediger billede"
 
+#, fuzzy
+msgid "Successfully saved theme settings"
+msgstr "Layoutopsætningen blev gemt"
+
+msgid "Theme"
+msgstr "Tema"
+
 msgid "make highlight"
 msgstr "fremhæv"
 
@@ -379,17 +380,19 @@ msgstr "Genskab kodeord"
 msgid "Build all thumbnails/resizes"
 msgstr "Opret alle miniaturer og størrelsesændringer"
 
+#, fuzzy
 msgid ""
-"Ensure data files for all derivatives (thumbnails, etc) have been built."
+"Ensure data files for all derivatives (thumbnails, etc) have been built and "
+"rebuild broken ones."
 msgstr ""
 "Kontroller at datafiler for alle afledte filer (miniaturer, etc.) er blevet "
 "bygget."
 
-msgid "Processing..."
-msgstr "Behandler..."
-
 msgid "Build All Thumbnails/Resizes"
 msgstr "Opret alle miniaturer og størrelsesændringer"
+
+msgid "Debug output for failed items:"
+msgstr ""
 
 #, c-format
 msgid "Processing image %d of %d"
@@ -398,6 +401,14 @@ msgstr "Behandler billede %d af %d"
 #, c-format
 msgid "Checked %d items"
 msgstr "Kontrollerede %d elementer"
+
+#, fuzzy, c-format
+msgid "%d items built"
+msgstr "tilføj elementer"
+
+#, c-format
+msgid "%d items failed"
+msgstr ""
 
 msgid "Delete database cache"
 msgstr "Slet databasecachen"
@@ -492,43 +503,6 @@ msgstr "Gruppe"
 msgid "group"
 msgstr "gruppe"
 
-#, c-format
-msgid "Estimated time remaining: %d:%02d"
-msgstr "Anslået tilbageværende tid: %d:%02d"
-
-msgid "Rows per album page"
-msgstr "Rækker pr. albumside"
-
-msgid "Columns per album page"
-msgstr "Kolonner pr. albumside"
-
-msgid "Show image owners"
-msgstr "Vis billedejere"
-
-msgid "Show album owners"
-msgstr "Vis albumejere"
-
-msgid "Show micro navigation thumbnails"
-msgstr "Vis små navigeringsminuaturer"
-
-msgid "Number of items to show per page"
-msgstr "Antal elementer der skal vises pr. side"
-
-msgid "View Samples"
-msgstr "Vis prøver"
-
-msgid "Album Frame"
-msgstr "Albumramme"
-
-msgid "Item Frame"
-msgstr "Elementramme"
-
-msgid "Photo Frame"
-msgstr "Fotoramme"
-
-msgid "You must enter a number greater than 0"
-msgstr "Du skal indtaste et tal større end 0"
-
 msgid "Movie"
 msgstr "Film"
 
@@ -573,6 +547,69 @@ msgstr "Stigende"
 
 msgid "Descending"
 msgstr "Faldende"
+
+msgid "Validation disabled until you set allowSessionAccess in config.php"
+msgstr ""
+
+msgid "This page is valid XHTML 1.0"
+msgstr "Denne side er gyldig XHTML 1.0"
+
+#, c-format
+msgid "Estimated time remaining: %d:%02d"
+msgstr "Anslået tilbageværende tid: %d:%02d"
+
+#, c-format
+msgid "Memory used: %s, total: %s"
+msgstr ""
+
+msgid "Rows per album page"
+msgstr "Rækker pr. albumside"
+
+msgid "Columns per album page"
+msgstr "Kolonner pr. albumside"
+
+msgid "Show image owners"
+msgstr "Vis billedejere"
+
+msgid "Show album owners"
+msgstr "Vis albumejere"
+
+msgid "Show micro navigation thumbnails"
+msgstr "Vis små navigeringsminuaturer"
+
+msgid "Number of items to show per page"
+msgstr "Antal elementer der skal vises pr. side"
+
+msgid "Blocks to show in the sidebar"
+msgstr ""
+
+msgid "Blocks to show on album pages"
+msgstr ""
+
+msgid "Blocks to show on photo pages"
+msgstr ""
+
+msgid "View Samples"
+msgstr "Vis prøver"
+
+msgid "Album Frame"
+msgstr "Albumramme"
+
+msgid "Item Frame"
+msgstr "Elementramme"
+
+msgid "Photo Frame"
+msgstr "Fotoramme"
+
+msgid "You must enter a number greater than 0"
+msgstr "Du skal indtaste et tal større end 0"
+
+msgid "Format: [module.BlockName param=value] ..."
+msgstr ""
+
+#, c-format
+msgid "%dx%d"
+msgstr ""
 
 msgid "Audio"
 msgstr "Lyd"
@@ -656,6 +693,9 @@ msgstr ""
 "Opdater billed-taget-datoen der er gemt i Gallery for alle elementer der har "
 "en dato gemt i den originale datafil (normalt i EXIF-dataen)."
 
+msgid "Processing..."
+msgstr "Behandler..."
+
 msgid "Refresh Capture Dates"
 msgstr "Genopfrisk billed-taget-datoer<"
 
@@ -727,8 +767,9 @@ msgstr "Log af"
 msgid "Modules"
 msgstr "Moduler"
 
-msgid "Layouts and Themes"
-msgstr "Layouts og temaer"
+#, fuzzy
+msgid "Themes"
+msgstr "Tema"
 
 msgid "Display"
 msgstr "Vis"
@@ -804,14 +845,13 @@ msgstr "Lokal overførselsmappe blev fjernet"
 msgid "Test email sent successfully"
 msgstr "Testemailen blev afsendt"
 
-msgid "Error sending test email, see below for details"
+#, fuzzy
+msgid "There was a problem processing your request, see below for details."
+msgstr "Der opstod en fejl ved behandlingen af din forespørgsel."
+
+#, fuzzy
+msgid "Error sending test email, see below for details."
 msgstr "Kunne ikke sende test-email, se nedenstående for detaljer"
-
-msgid "Invalid cookie path"
-msgstr ""
-
-msgid "Invalid cookie domain"
-msgstr ""
 
 msgid "Language Settings"
 msgstr "Sprog opsætning"
@@ -827,9 +867,6 @@ msgstr ""
 
 msgid "Default language"
 msgstr "Standard sprog"
-
-msgid "Language selector in sidebar"
-msgstr "Sprogvælger i sidebjælke"
 
 msgid "gettext"
 msgstr "gettext"
@@ -912,9 +949,6 @@ msgstr "Den angivne sti er ikke en gyldig mappe."
 msgid "Session Settings"
 msgstr "Sessionsopsætning"
 
-msgid "Login Method"
-msgstr "Loginmetode"
-
 msgid "Session Lifetime"
 msgstr "Sessionslevetid"
 
@@ -963,6 +997,9 @@ msgstr "Adgangskode"
 msgid "SMTP From Address"
 msgstr "SMTP afsenderadresse"
 
+msgid "Invalid email address"
+msgstr "Ugyldig e-mail adresse"
+
 msgid ""
 "Send a test email to verify your settings are correct (whether using PHP "
 "mail or SMTP settings above).  Below enter a recipient email address for a "
@@ -974,9 +1011,6 @@ msgstr ""
 
 msgid "Send Email"
 msgstr "Send email"
-
-msgid "Invalid email address"
-msgstr "Ugyldig e-mail adresse"
 
 msgid "Email Test Error"
 msgstr "Test-email fejl"
@@ -1022,7 +1056,13 @@ msgid ""
 "not, they will experience login / logout / lost session problems."
 msgstr ""
 
+msgid "Invalid cookie path"
+msgstr ""
+
 msgid "Domain"
+msgstr ""
+
+msgid "Invalid cookie domain"
 msgstr ""
 
 msgid "Locking System"
@@ -1328,118 +1368,6 @@ msgid_plural "%d groups match your filter"
 msgstr[0] "%d gruppe matcher dit filter"
 msgstr[1] "%d grupper matcher dit filter"
 
-msgid "Gallery Layouts"
-msgstr "Gallery layouts"
-
-#, c-format
-msgid "Successfully activated layout %s"
-msgstr "Layoutet %s blev aktiveret"
-
-#, c-format
-msgid "Successfully deactivated layout %s"
-msgstr "Layoutet %s blev deaktiveret"
-
-#, c-format
-msgid "Successfully installed layout %s"
-msgstr "Installerede %s layoutet"
-
-#, c-format
-msgid "Successfully uninstalled layout %s"
-msgstr "Afinstallerede %s layoutet"
-
-#, c-format
-msgid "Successfully upgraded layout %s"
-msgstr "Opgraderede %s layoutet"
-
-msgid "Successfully saved default album settings"
-msgstr "Standard albumopsætning blev gemt"
-
-msgid "Restored layout settings"
-msgstr "Layoutopsætning blev genskabt"
-
-msgid "All Layouts"
-msgstr "Alle layouts"
-
-msgid "Defaults"
-msgstr "Standarder"
-
-msgid "Layout Name"
-msgstr "Layoutnavn"
-
-msgid "Version"
-msgstr "Version"
-
-msgid "Installed"
-msgstr "Installeret"
-
-msgid "Actions"
-msgstr "Handlinger"
-
-msgid "Status: Not Installed"
-msgstr "Status: Ikke installeret"
-
-msgid "Status: Active"
-msgstr "Status: Aktiv"
-
-msgid "Status: Inactive"
-msgstr "Status: Inaktiv"
-
-msgid "Status: Upgrade Required (Inactive)"
-msgstr "Status: Opgradering nødvendig (Inaktiv)"
-
-msgid "Status: Incompatible Layout (Inactive)"
-msgstr "Status: Inkompatibelt layout (Inaktiv)"
-
-msgid "Incompatible layout!"
-msgstr "Inkompatibelt layout!"
-
-#, c-format
-msgid "Core API Required: %s (available: %s)"
-msgstr "Krævet Core API: %s (tilgængeligt: %s)"
-
-#, c-format
-msgid "Layout API Required: %s (available: %s)"
-msgstr "Krævet layout API: %s (tilgængeligt: %s)"
-
-msgid "(default)"
-msgstr "(standard)"
-
-msgid ""
-"These are default display settings for albums in your gallery.  They can be "
-"overridden in each album."
-msgstr ""
-"Dette er standard visningsopsætning for album i dit galleri. De kan "
-"overskrives i hvert album."
-
-msgid "Default sort order"
-msgstr "Standard sortering"
-
-msgid "with"
-msgstr "med"
-
-msgid "Default layout"
-msgstr "Standard layout"
-
-msgid "Default theme"
-msgstr "Standard tema"
-
-msgid "New albums"
-msgstr "Nye albummer"
-
-#, c-format
-msgid "%s Layout Settings"
-msgstr "%s layoutopsætning"
-
-msgid ""
-"These are the global settings for the layout.  They can be overridden at the "
-"album level."
-msgstr ""
-"Disse er globale indstillinger for layoutet. De kan overskrives på "
-"albumniveau."
-
-msgid "There are no settings for this layout"
-msgstr "Der er ingen opsætning for dette layout."
-
 msgid "System Maintenance"
 msgstr "Systemvedligeholdese"
 
@@ -1522,11 +1450,36 @@ msgstr ""
 msgid "Module Name"
 msgstr "Modulnavn"
 
+msgid "Version"
+msgstr "Version"
+
+msgid "Installed"
+msgstr "Installeret"
+
+msgid "Actions"
+msgstr "Handlinger"
+
+msgid "Status: Not Installed"
+msgstr "Status: Ikke installeret"
+
+msgid "Status: Active"
+msgstr "Status: Aktiv"
+
+msgid "Status: Inactive"
+msgstr "Status: Inaktiv"
+
+msgid "Status: Upgrade Required (Inactive)"
+msgstr "Status: Opgradering nødvendig (Inaktiv)"
+
 msgid "Status: Incompatible Module (Inactive)"
 msgstr "Status: Inkompatibelt modul (Inaktiv)"
 
 msgid "Incompatible module!"
 msgstr "Inkompatibelt modul!"
+
+#, c-format
+msgid "Core API Required: %s (available: %s)"
+msgstr "Krævet Core API: %s (tilgængeligt: %s)"
 
 #, c-format
 msgid "Module API Required: %s (available: %s)"
@@ -1548,6 +1501,125 @@ msgstr ""
 
 msgid "Uninstall"
 msgstr "Afinstallér"
+
+#, fuzzy
+msgid "Gallery Themes"
+msgstr "Gallery %s"
+
+#, fuzzy, c-format
+msgid "Successfully activated theme %s"
+msgstr "Modulet %s blev aktiveret"
+
+#, fuzzy, c-format
+msgid "Successfully deactivated theme %s"
+msgstr "Modulet %s blev deaktiveret"
+
+#, fuzzy, c-format
+msgid "Successfully installed theme %s"
+msgstr "Installerede %s modulet"
+
+#, fuzzy, c-format
+msgid "Successfully uninstalled theme %s"
+msgstr "Afinstallerede %s modulet"
+
+#, fuzzy, c-format
+msgid "Successfully upgraded theme %s"
+msgstr "Opgraderede %s modulet"
+
+msgid "Successfully saved default album settings"
+msgstr "Standard albumopsætning blev gemt"
+
+#, fuzzy
+msgid "Restored theme settings"
+msgstr "Layoutopsætning blev genskabt"
+
+#, fuzzy
+msgid "All Themes"
+msgstr "Tema"
+
+msgid "Defaults"
+msgstr "Standarder"
+
+#, fuzzy
+msgid "Theme Name"
+msgstr "Tema"
+
+#, fuzzy
+msgid "Status: Incompatible Theme (Inactive)"
+msgstr "Status: Inkompatibelt modul (Inaktiv)"
+
+#, fuzzy
+msgid "Incompatible theme!"
+msgstr "Inkompatibelt modul!"
+
+#, fuzzy, c-format
+msgid "Theme API Required: %s (available: %s)"
+msgstr "Krævet Core API: %s (tilgængeligt: %s)"
+
+msgid "(default)"
+msgstr "(standard)"
+
+msgid ""
+"These are default display settings for albums in your gallery.  They can be "
+"overridden in each album."
+msgstr ""
+"Dette er standard visningsopsætning for album i dit galleri. De kan "
+"overskrives i hvert album."
+
+msgid "Default sort order"
+msgstr "Standard sortering"
+
+msgid "with"
+msgstr "med"
+
+msgid "Default theme"
+msgstr "Standard tema"
+
+msgid "New albums"
+msgstr "Nye albummer"
+
+#, fuzzy, c-format
+msgid "%s Theme Settings"
+msgstr "Brug disse indstillinger"
+
+#, fuzzy
+msgid ""
+"These are the global settings for the theme.  They can be overridden at the "
+"album level."
+msgstr ""
+"Disse er globale indstillinger for layoutet. De kan overskrives på "
+"albumniveau."
+
+msgid "Available"
+msgstr ""
+
+msgid "Choose a block"
+msgstr ""
+
+#, fuzzy
+msgid "Selected"
+msgstr "Slet"
+
+msgid "Remove"
+msgstr "Fjern"
+
+#, fuzzy
+msgid "Move Up"
+msgstr "Flyt"
+
+#, fuzzy
+msgid "Move Down"
+msgstr "Flyt %s"
+
+msgid "Parameter"
+msgstr ""
+
+msgid "Value"
+msgstr "Værdi"
+
+#, fuzzy
+msgid "There are no settings for this theme"
+msgstr "Der er ingen opsætning for dette layout."
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime "
@@ -1623,6 +1695,64 @@ msgstr "Opret ikoner nu"
 
 msgid "This is a test email from Gallery2"
 msgstr "Dette er en test email fra Gallery2"
+
+msgid "Edit Conflict!"
+msgstr "Editeringskonflikt!"
+
+msgid "Security Violation"
+msgstr "Sikkerhedsbrud"
+
+msgid "Database Error"
+msgstr "Databasefejl"
+
+msgid "Error"
+msgstr "Fejl"
+
+msgid ""
+"Your change cannot be completed because somebody else has made a conflicting "
+"change to the same item.  Use the back button in your browser to go back to "
+"the page you were on, then <b>reload that page</b> and try your change again."
+msgstr ""
+"Din rettelse kan ikke blive gemt fordi en anden har lavet en rettelse der "
+"påvirker samme element. Brug tilbageknappen i din brower for at få tilbage "
+"til den side du var på før, <b>genindlæs</b> derefter siden og prøv at lave "
+"rettelsen igen."
+
+msgid "Go back and try again"
+msgstr "Gå tilbage og forsøg igen"
+
+msgid ""
+"Alternatively, you can return to the main Gallery page and resume browsing."
+msgstr "Alternativt kan du vende tilbage til galleriet og kigge videre."
+
+msgid "The action you attempted is not permitted."
+msgstr "Handlingen du forsøgte at udføre er ikke tilladt."
+
+msgid "An error has occurred while interacting with the database."
+msgstr "Der er opstået en fejl i kommunikationen med databasen."
+
+msgid ""
+"The exact nature of database errors is not captured unless Gallery debug "
+"mode is enabled in config.php.  Before seeking support for this error please "
+"enable buffered debug output and retry the operation.  Look near the bottom "
+"of the lengthy debug output to find error details."
+msgstr ""
+"De præcise database fejlmeddelelser bliver kun gemt hvis gallery har debug "
+"tilstand slået til i config.php.  Før du søger support om dette problem så "
+"slå venligst buffer-baseret debug til og prøv funktionen igen.  Kig til "
+"sidste i det lange debug uddata for at finde detaljer om fejlen."
+
+msgid "An error has occurred."
+msgstr "Der er opstået en fejl."
+
+msgid "Back to the Gallery"
+msgstr "Tilbage til galleri"
+
+msgid "Error Detail"
+msgstr "Detaljeret fejlbeskrivelse"
+
+msgid "System Information"
+msgstr "Systeminformationer"
 
 msgid ""
 "You don't have any Graphics Toolkit activated that can handle JPEG images.  "
@@ -2022,15 +2152,10 @@ msgstr ""
 "Dette angiver sorteringen i albummet. Dette anvendes på alle nuværende "
 "elementer og nyligt tilføjede elementer."
 
+#, fuzzy
 msgid ""
-"Choose a layout for this album. (The way the album is arranged on the page)"
+"Choose a theme for this album. (The way the album is arranged on the page)"
 msgstr "Vælg et layout til dette album (albummets opstilling)."
-
-msgid "Theme"
-msgstr "Tema"
-
-msgid "Choose a theme for this album.  (The look and feel of this album)"
-msgstr "Vælg et tema til dette album (albummets udseende)."
 
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr ""
@@ -2214,23 +2339,6 @@ msgstr ""
 "Der er ingen grafiske værktøjer som understøtter denne type element, der kan "
 "derfor ikke oprettes eller ændres en miniature."
 
-#, c-format
-msgid ""
-"This album is configured to use the <b>%s</b> layout. These settings only "
-"apply to the layout for this album."
-msgstr ""
-"Dette album er konfigureret til at bruge layoutet <b>%s</b>. Ændringerne "
-"gælder kun for layoutet på dette album."
-
-msgid "Setting"
-msgstr "Indstilling"
-
-msgid "Value"
-msgstr "Værdi"
-
-msgid "Use Global"
-msgstr "Brug globalt"
-
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the "
 "movie's width and height.  If you have installed a graphics toolkit that can "
@@ -2374,6 +2482,20 @@ msgstr ""
 
 msgid "Restore original"
 msgstr "Genskab original"
+
+#, fuzzy, c-format
+msgid ""
+"This album is configured to use the <b>%s</b> theme. These settings only "
+"apply to the theme for this album."
+msgstr ""
+"Dette album er konfigureret til at bruge layoutet <b>%s</b>. Ændringerne "
+"gælder kun for layoutet på dette album."
+
+msgid "Setting"
+msgstr "Indstilling"
+
+msgid "Use Global"
+msgstr "Brug globalt"
 
 msgid "Album Highlight"
 msgstr "Fremhæv"
@@ -2538,9 +2660,6 @@ msgstr "Gruppenavn"
 msgid "Permission"
 msgstr "Tilladelse"
 
-msgid "Remove"
-msgstr "Fjern"
-
 msgid "New Group Permission"
 msgstr "Ny gruppetilladelse"
 
@@ -2594,9 +2713,6 @@ msgstr "efter"
 
 msgid "Reorder"
 msgstr "Gensorter"
-
-msgid "Go"
-msgstr "Gå til"
 
 msgid "Continue..."
 msgstr "Fortsæt..."
@@ -2660,9 +2776,6 @@ msgstr "installer og aktiver dette layout"
 #, c-format
 msgid "To fix this problem you can either %s or %s."
 msgstr "For at rette dette problem kan du enten %s eller %s."
-
-msgid "Site Administration"
-msgstr "Sideadministration"
 
 msgid "Admin Options"
 msgstr "Administrative indstillinger"
@@ -2897,16 +3010,105 @@ msgstr "Hvis du ikke har bedt om denne email kan du blot ignorere den."
 msgid "Thank you!"
 msgstr "Mange tak!"
 
+#, fuzzy
+msgid "guest"
+msgstr "Gæst"
+
+#, c-format
+msgid "display mode: %s"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Date: %s"
+msgstr "Dato:"
+
+#, fuzzy, c-format
+msgid "Owner: %s"
+msgstr "Ejer"
+
+#, fuzzy, c-format
+msgid "Size: %d item"
+msgid_plural "Size: %d items"
+msgstr[0] "(%d element)"
+msgstr[1] "(%d elementer)"
+
+#, fuzzy, c-format
+msgid "(%d item total)"
+msgid_plural "(%d items total)"
+msgstr[0] "(%d element)"
+msgstr[1] "(%d elementer)"
+
+#, c-format
+msgid "Views: %d"
+msgstr ""
+
+#, fuzzy
+msgid "&laquo; album actions &raquo;"
+msgstr "&laquo; Ingen &raquo;"
+
+#, fuzzy
+msgid "&laquo; item actions &raquo;"
+msgstr "&laquo; Ingen &raquo;"
+
+msgid "Go"
+msgstr "Gå til"
+
+msgid "next"
+msgstr ""
+
+#, fuzzy
+msgid "last"
+msgstr "liste"
+
+#, fuzzy
+msgid "first"
+msgstr "liste"
+
+#, fuzzy
+msgid "previous"
+msgstr "Forrige side"
+
+msgid "Page:"
+msgstr ""
+
+#, c-format
+msgid "%d. %s"
+msgstr "%d. %s"
+
+#, fuzzy
+msgid "Size: "
+msgstr "Størrelse"
+
+msgid "Full size: "
+msgstr ""
+
+#, fuzzy
+msgid "Language selector"
+msgstr "Sprogvælger i sidebjælke"
+
+#, fuzzy
+msgid "Item actions"
+msgstr "ret billedtekster"
+
+#, fuzzy
+msgid "Login block"
+msgstr "Log på"
+
+msgid "Links to album/photo peers"
+msgstr ""
+
 msgid "Successfully deleted directory: /cache/entity"
 msgstr "Slettede biblioteket: /cache/entity"
 
-msgid "Successfully deleted directory: /cache/layout"
-msgstr "Slettede biblioteket: /cache/layout"
+#, fuzzy
+msgid "Successfully deleted directory: /cache/theme"
+msgstr "Slettede biblioteket: /cache/module"
 
 msgid "Successfully deleted directory: /cache/module"
 msgstr "Slettede biblioteket: /cache/module"
 
-msgid "Unable to delete directory: /cache/layout"
+#, fuzzy
+msgid "Unable to delete directory: /cache/theme"
 msgstr "Kunne ikke slette biblioteket: /cache/layout"
 
 msgid "Unable to delete directory: /templates_c"
@@ -2918,98 +3120,6 @@ msgstr "Enhedstest modul"
 msgid "[test] A permission"
 msgstr "[test] En tilladelse"
 
-msgid "Gallery Debug Output"
-msgstr "Gallery fejludskrift"
-
-msgid "This page is valid XHTML 1.0"
-msgstr "Denne side er gyldig XHTML 1.0"
-
-#, c-format
-msgid "Gallery %s"
-msgstr "Gallery %s"
-
-msgid "Edit Conflict!"
-msgstr "Editeringskonflikt!"
-
-msgid "Security Violation"
-msgstr "Sikkerhedsbrud"
-
-msgid "Database Error"
-msgstr "Databasefejl"
-
-msgid "Error"
-msgstr "Fejl"
-
-msgid ""
-"Your change cannot be completed because somebody else has made a conflicting "
-"change to the same item.  Use the back button in your browser to go back to "
-"the page you were on, then <b>reload that page</b> and try your change again."
-msgstr ""
-"Din rettelse kan ikke blive gemt fordi en anden har lavet en rettelse der "
-"påvirker samme element. Brug tilbageknappen i din brower for at få tilbage "
-"til den side du var på før, <b>genindlæs</b> derefter siden og prøv at lave "
-"rettelsen igen."
-
-msgid "Go back and try again"
-msgstr "Gå tilbage og forsøg igen"
-
-msgid ""
-"Alternatively, you can return to the main Gallery page and resume browsing."
-msgstr "Alternativt kan du vende tilbage til galleriet og kigge videre."
-
-msgid "The action you attempted is not permitted."
-msgstr "Handlingen du forsøgte at udføre er ikke tilladt."
-
-msgid "An error has occurred while interacting with the database."
-msgstr "Der er opstået en fejl i kommunikationen med databasen."
-
-msgid ""
-"The exact nature of database errors is not captured unless Gallery debug "
-"mode is enabled in config.php.  Before seeking support for this error please "
-"enable buffered debug output and retry the operation.  Look near the bottom "
-"of the lengthy debug output to find error details."
-msgstr ""
-"De præcise database fejlmeddelelser bliver kun gemt hvis gallery har debug "
-"tilstand slået til i config.php.  Før du søger support om dette problem så "
-"slå venligst buffer-baseret debug til og prøv funktionen igen.  Kig til "
-"sidste i det lange debug uddata for at finde detaljer om fejlen."
-
-msgid "An error has occurred."
-msgstr "Der er opstået en fejl."
-
-msgid "Back to the Gallery"
-msgstr "Tilbage til galleri"
-
-msgid "Error Detail"
-msgstr "Detaljeret fejlbeskrivelse"
-
-msgid "System Information"
-msgstr "Systeminformationer"
-
-msgid "Redirect"
-msgstr "Videresend"
-
-msgid "You are in debug mode so we are not automatically redirecting."
-msgstr ""
-"Du er i fejlsøgningstilstand og bliver derfor ikke viderestillet automatisk."
-
-#, c-format
-msgid "Welcome, %s"
-msgstr "Velkommen, %s"
-
-#, c-format
-msgid "(%d item)"
-msgid_plural "(%d items)"
-msgstr[0] "(%d element)"
-msgstr[1] "(%d elementer)"
-
-#, c-format
-msgid "%d. %s"
-msgstr "%d. %s"
-
-#~ msgid "Gallery Administrator"
-#~ msgstr "Gallery administrator"
-
 #, fuzzy
-#~ msgid "Administrator Recovery"
-#~ msgstr "Genskab kodeord"
+msgid "[test] A second permission"
+msgstr "[test] En tilladelse"

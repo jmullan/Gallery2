@@ -12,29 +12,6 @@
     <input type="hidden" name="{g->formVar var="form[formName]"}" value="{$form.formName}" />
   </div>
 
-  <div id="gsSystemLinks" class="gcBorder1">
-    <div class="links">
-    {foreach from=$SiteAdmin.moduleSystemLinks item=module}
-      {foreach from=$module item=link}
-      {if isset($link.params.view) && $link.params.view == "core.SiteAdmin"}
-	<span> {$link.text} </span>
-      {else}
-	<span> <a href="{g->url params=$link.params}">{$link.text}</a> </span>
-      {/if}
-      {/foreach}
-    {/foreach}
-    </div>
-
-    <div class="gbBreadCrumb">
-      <span class="firstChild">
-	<a href="{g->url}">{$SiteAdmin.rootAlbum.title|markup:stripBbcodeAndHtml}</a>
-      </span>
-      <span>
-	{g->text text="Site Administration"}
-      </span>
-    </div>
-  </div>
-
   <table width="100%" cellspacing="0" cellpadding="0">
     <tr valign="top">
     <td id="gsSidebarCol"><div id="gsSidebar" class="gcBorder1">
@@ -82,5 +59,3 @@
     </td>
   </tr></table>
 </form>
-{* Content subView wants to display outside main form/table: *}
-{if isset($smarty.capture.SiteAdmin_footer)} {$smarty.capture.SiteAdmin_footer} {/if}

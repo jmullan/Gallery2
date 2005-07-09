@@ -74,8 +74,8 @@ class CoreModuleTest extends GalleryTestCase {
 				'view' => 'core.AdminCore'),
 			  array('name' => $this->_module->translate('Modules'),
 				'view' => 'core.AdminModules'),
-			  array('name' => $this->_module->translate('Layouts and Themes'),
-				'view' => 'core.AdminLayouts',
+			  array('name' => $this->_module->translate('Themes'),
+				'view' => 'core.AdminThemes',
 				'group' => 'display',
 				'groupLabel' => $this->_module->translate('Display')),
 			  array('name' => $this->_module->translate('Users'),
@@ -139,55 +139,22 @@ class CoreModuleTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals(array(
-				  array('text' => $this->_module->translate('Site Admin'),
-					'params' => array('view' => 'core.SiteAdmin',
-							  'return' => 1)),
-				  array('text' => $this->_module->translate('Your Account'),
-					'params' => array('view' => 'core.UserAdmin',
-							  'subView' => 'core.UserPreferences',
-							  'return' => 1)),
-				  array('text' => $this->_module->translate('Logout'),
-					'params' => array('controller' => 'core.Logout',
-							  'return' => 1))
-				  ),
-			    $content);
-    }
-
-    function testLoadSystemContent() {
-	list ($ret, $save) = $this->_module->getParameter('language.selector');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	/* Without a language selector */
-	$template = new CoreModuleMockTemplate();
-	$ret = $this->_module->setParameter('language.selector', 'none');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	list ($ret, $content) = $this->_module->loadSystemContent($template);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->assert(empty($content['languageSelector']));
-
-	/* With a language selector */
-	$template = new CoreModuleMockTemplate();
-	$ret = $this->_module->setParameter('language.selector', 'all');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	list ($ret, $content) = $this->_module->loadSystemContent($template);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->assert(!empty($content['languageSelector']));
-
-	$ret = $this->_module->setParameter('language.selector', $save);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$this->assertEquals(
+	    array('SiteAdmin' => array(
+		      'text' => $this->_module->translate('Site Admin'),
+		      'params' => array('view' => 'core.SiteAdmin',
+					'return' => 1)),
+		  'YourAccount' => array(
+		      'text' => $this->_module->translate('Your Account'),
+		      'params' => array('view' => 'core.UserAdmin',
+					'subView' => 'core.UserPreferences',
+					'return' => 1)),
+		  'Logout' => array(
+		      'text' => $this->_module->translate('Logout'),
+		      'params' => array('controller' => 'core.Logout',
+					'return' => 1))
+		  ),
+	    $content);
     }
 
     function testSetModuleParameter() {

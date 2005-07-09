@@ -80,11 +80,11 @@ if (!GalleryUtilities::isEmbedded()) {
     require_once(dirname(__FILE__) . '/init.inc');
 }
 
-function GalleryMain($returnHtml=false) {
+function GalleryMain($embedded=false) {
     global $gallery;
 
     /* Process the request */
-    list($ret, $g2Data) = _GalleryMain($returnHtml);
+    list($ret, $g2Data) = _GalleryMain($embedded);
     if ($ret->isSuccess()) {
 	$gallery->performShutdownActions();
 
@@ -100,7 +100,7 @@ function GalleryMain($returnHtml=false) {
     }
 
     /* Error handling (or redirect info in debug mode) */
-    if ($ret->isError() || isset($g2Data['redirectUrl'])) {
+    if ($ret->isError()) {
 	_GalleryMain_errorHandler($ret->wrap(__FILE__, __LINE__), $g2Data);
 	$g2Data['isDone'] = true;
 
@@ -109,6 +109,13 @@ function GalleryMain($returnHtml=false) {
 	    $storage =& $gallery->getStorage();
 	    $storage->rollbackTransaction();
 	}
+    } else if (isset($g2Data['redirectUrl'])) {
+	/* If we're in debug mode, show a redirect page */
+	print '<H1> Debug Redirect </H1>';
+	print 'Not automatically redirecting you to the next page because we\'re in debug mode<br/>';
+	printf('<a href="%s">Continue to the next page</a>', $g2Data['redirectUrl']);
+	print '<hr/>';
+	print $gallery->getDebugBuffer();
     }
 
     return $g2Data;
@@ -119,7 +126,7 @@ function GalleryMain($returnHtml=false) {
  * @return array object GalleryStatus a status code
  *               array[]
  */
-function _GalleryMain($returnHtml=false) {
+function _GalleryMain($embedded=false) {
     global $gallery;
 
     $main = array();
@@ -129,8 +136,7 @@ function _GalleryMain($returnHtml=false) {
     /* Figure out the target view/controller */
     list($viewName, $controllerName) = GalleryUtilities::getRequestVariables('view', 'controller');
 
-    if (!$returnHtml && $gallery->getConfig('mode.embed.only')
-		     && $viewName != 'core.DownloadItem') {
+    if (!$embedded && $gallery->getConfig('mode.embed.only') && $viewName != 'core.DownloadItem') {
 	/* Lock out direct access when embed-only is set */
 	return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
     }
@@ -163,22 +169,6 @@ function _GalleryMain($returnHtml=false) {
 	/* Get our form and return variables */
 	$form = GalleryUtilities::getFormVariables('form');
 
-	if ($controller->canUseImmediateView()) {
-	    /* make a copy of $main for the immediate status view */
-	    $mainForImmediate = $main;
-	    $ret = _GalleryMain_setupMain(
-		$mainForImmediate, $urlGenerator, $installedVersions['gallery']);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    GalleryCoreApi::relativeRequireOnce(
-		'modules/core/classes/GalleryImmediateStatusView.class');
-	    $galleryImmediateStatusView = new GalleryImmediateStatusView();
-	    $galleryImmediateStatusView->setMain($mainForImmediate);
-	    $controller->setImmediateStatusView($galleryImmediateStatusView);
-	}
-
 	/* Let the controller handle the input */
 	list ($ret, $results) = $controller->handleRequest($form);
 	if ($ret->isError()) {
@@ -187,11 +177,12 @@ function _GalleryMain($returnHtml=false) {
 	/* Check to make sure we got back everything we want */
 	if (!isset($results['status']) ||
 	    !isset($results['error']) ||
-	    (!isset($results['redirect']) && !isset($results['delegate'])
-					  && !isset($results['return']))) {
+	    (!isset($results['redirect']) &&
+	     !isset($results['delegate']) &&
+	     !isset($results['return']))) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 					      'Controller results are missing status, ' .
-					      'error or (redirect,delegate,return)'),
+					      'error, (redirect, delegate, return)'),
 			 null);
 	}
 
@@ -234,19 +225,7 @@ function _GalleryMain($returnHtml=false) {
 
 	/* If we have a redirect url.. use it */
 	if (!empty($redirectUrl)) {
-	    if (isset($results['sendLateRedirect'])) {
-		$ret = _GalleryMain_setupMain($main, $urlGenerator, $installedVersions['gallery']);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		$results['sendLateRedirect']->setMain($main);
-		return array(GalleryStatus::success(),
-			     _GalleryMain_doLateRedirect($redirectUrl,
-							 $results['sendLateRedirect']));
-	    } else {
-		return array(GalleryStatus::success(), _GalleryMain_doRedirect($redirectUrl));
-	    }
+	    return array(GalleryStatus::success(), _GalleryMain_doRedirect($redirectUrl));
 	}
 
 	/* Let the controller specify the next view */
@@ -278,11 +257,9 @@ function _GalleryMain($returnHtml=false) {
 	$viewName = 'core.ShowItem';
     }
 
-    if (!isset($view)) {
-	list ($ret, $view) = GalleryView::loadView($viewName);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+    list ($ret, $view) = GalleryView::loadView($viewName);
+    if ($ret->isError()) {
+	return array($ret->wrap(__FILE__, __LINE__), null);
     }
 
     /* Initialize our container for template data */
@@ -290,8 +267,10 @@ function _GalleryMain($returnHtml=false) {
 
     /*
      * If this is an immediate view, it will send its own output directly.  This is
-     * used in the situation where we want to send a binary file to the browser.
+     * used in the situation where we want to send back data that's not controlled by the
+     * layout.  That's usually something that's not user-visible like a binary file.
      */
+    $data = array();
     if ($view->isImmediate()) {
 	$status = isset($results['status']) ? $results['status'] : array();
 	$error = isset($results['error']) ? $results['error'] : array();
@@ -299,11 +278,11 @@ function _GalleryMain($returnHtml=false) {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	return array(GalleryStatus::success(), array('isDone' => true));
+	$data['isDone'] = true;
     } else {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTemplate.class');
 	$template = new GalleryTemplate(dirname(__FILE__));
-	list ($ret, $results) = $view->doLoadTemplate($template);
+	list ($ret, $results, $theme) = $view->doLoadTemplate($template, $embedded);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -311,153 +290,33 @@ function _GalleryMain($returnHtml=false) {
 	    $redirectUrl = $urlGenerator->generateUrl($results['redirect']);
 	    return array(GalleryStatus::success(),
 			 _GalleryMain_doRedirect($redirectUrl, $template));
+	}
+
+	if (empty($results['body'])) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					      'View results are missing body file'), null);
+	}
+
+	$templatePath = $results['body'];
+	$template->setVariable('l10Domain', $view->getL10Domain());
+
+	if ($embedded) {
+	    list ($ret, $html) = $template->fetch($templatePath);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $data = $theme->splitHtml($html);
+	    $data['isDone'] = false;
 	} else {
-	    if (isset($results['html'])) {
-		$main['html'] = $results['html'];
-	    } else if (empty($results['body'])) {
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-						  'View results are missing body file'), null);
-	    } else {
-		$main['viewBodyFile'] = $results['body'];
+	    $ret = $template->display($templatePath);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    $main['viewL10Domain'] = $view->getL10Domain();
+	    $data['isDone'] = true;
 	}
     }
 
-    $ret = _GalleryMain_setupMain($main, $urlGenerator, $installedVersions['gallery']);
-    if ($ret->isError()) {
-	return array($ret->wrap(__FILE__, __LINE__), null);
-    }
-    $template->setVariable('main', $main);
-    $template->setVariable('l10Domain', 'modules_core');
-    $template->setVariable('user', _GalleryMain_UserInfo());
-
-    if (isset($main['html']) || !$returnHtml) {
-	$templatePath = isset($main['html']) ? 'gallery:templates/standalone.tpl'
-					     : 'gallery:templates/global.tpl';
-	/* Write directly for speed */
-	$ret = $template->display($templatePath);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	return array(GalleryStatus::success(), array('isDone' => true));
-    } else {
-	/* Gather content to return to embedding application */
-	list ($ret, $headHtml) = $template->fetch('gallery:templates/embedHead.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	list ($ret, $bodyHtml) = $template->fetch('gallery:templates/embedBody.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$data = array('isDone' => false, 'headHtml' => $headHtml, 'bodyHtml' => $bodyHtml);
-
-	if ($template->hasVariable('layout')) {
-	    $layout =& $template->getVariableByReference('layout');
-	    $data['layoutData'] = $layout;
-	    if (isset($layout['show']['sidebar']) && $layout['show']['sidebar'] === false) {
-		/*
-		 * Render sidebar and return as separate block of content if
-		 * embedding app requested no sidebar in G2 content..
-		 */
-		$layout['show']['sidebar'] = true;
-		list ($ret, $data['sidebarHtml']) =
-		    $template->fetch('gallery:templates/sidebar.tpl');
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-	    }
-	}
-	return array(GalleryStatus::success(), $data);
-    }
-
-    return array(GalleryStatus::success(), array('isDone' => true));
-}
-
-function _GalleryMain_setupMain(&$main, $urlGenerator=null, $version=null) {
-    global $gallery;
-    if (!isset($urlGenerator)) {
-	$urlGenerator =& $gallery->getUrlGenerator();
-    }
-
-    if ($gallery->getDebug() == 'buffered') {
-	$main['debug'] = $gallery->getDebugBuffer();
-    }
-    if ($gallery->isProfiling('sql')) {
-	$storage =& $gallery->getStorage();
-	$main['profile'] = $storage->getProfilingHtml();
-    }
-
-    list ($ret, $markup) = GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
-    if ($ret->isError()) {
-	$error = $ret->wrap(__FILE__, __LINE__);
-	$markup = 'none';
-    }
-    $main['markupType'] = $markup;
-
-    $translator =& $gallery->getTranslator();
-    $main['isRightToLeft'] = $translator->isRightToLeft();
-
-    $userAgent = strtolower(GalleryUtilities::getServerVar('HTTP_USER_AGENT'));
-    if (strpos($userAgent, 'safari') !== false) {
-	$main['userAgent'] = 'safari';
-    } else if (strpos($userAgent, 'opera') !== false) {
-	$main['userAgent'] = 'opera';
-    } else if (strpos($userAgent, 'msie') !== false) {
-	$main['userAgent'] = 'IE';
-    }
-
-    if ($gallery->getConfig('allowSessionAccess')) {
-	/* Calculate a URI that we can use for the validation link */
-	$main['validationUri'] = $urlGenerator->getCurrentUrl();
-	$session =& $gallery->getSession();
-	if ($session->isUsingCookies()) {
-	    $main['validationUri'] = $urlGenerator->appendParamsToUrl(
-		$main['validationUri'], array($session->getKey() => $session->getId()));
-	}
-	$main['validationUri'] = sprintf('http://validator.w3.org/check?uri=%s&amp;ss=1',
-	    urlencode(str_replace('&amp;', '&', $main['validationUri'])));
-    } else {
-	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core', true);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	$main['validationUri'] = sprintf(
-	    'javascript:alert(\'%s\');',
-	    $core->translate('Validation disabled until you set allowSessionAccess in config.php'));
-    }
-
-    if (!isset($version)) {
-	GalleryCoreApi::relativeRequireOnce('modules/core/module.inc');
-	$installedVersions = CoreModule::getInstalledVersions();
-	$version = $installedVersions['gallery'];
-    }
-    $main['gallery']['version'] = $version;
-
-    return isset($error) ? $error : GalleryStatus::success();
-}
-
-function _GalleryMain_UserInfo() {
-    /* Standard user info available for every view */
-    global $gallery;
-    $user = $gallery->getActiveUser();
-    $info = $user->getMemberData();
-    list ($ret, $guestId) =
-	GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
-    if ($ret->isError()) {
-	$info['isGuest'] = true;
-	$info['isRegisteredUser'] = false;
-    } else {
-	$info['isGuest'] = ($user->getId() == $guestId);
-	$info['isRegisteredUser'] = !$info['isGuest'];
-    }
-    list ($ret, $info['isAdmin']) = GalleryCoreApi::isUserInSiteAdminGroup();
-    if ($ret->isError()) {
-	$info['isAdmin'] = false;
-    }
-    return $info;
+    return array(GalleryStatus::success(), $data);
 }
 
 function _GalleryMain_doRedirect($redirectUrl, $template=null) {
@@ -476,102 +335,75 @@ function _GalleryMain_doRedirect($redirectUrl, $template=null) {
     }
 }
 
-function _GalleryMain_doLateRedirect($redirectUrl, $immediateStatusView) {
-    global $gallery;
-    $immediateStatusView->renderRedirect($redirectUrl);
-    $immediateStatusView->renderFooter();
-    return array('isDone' => true);
-}
-
+/* TODO: move this out of main.php so that we don't have load it on every page view */
 function _GalleryMain_errorHandler($error, $g2Data=null, $initOk=true) {
     global $gallery;
+    $failsafe = false;
     if (!$initOk) {
-	/* May not have session or translator.. just dump error to browser. */
+	$failsafe = true;
+    }
+
+    if (!$failsafe) {
+	list ($ret, $themeId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
+	if ($ret->isError()) {
+	    $failsafe = true;
+	}
+    }
+
+    if (!$failsafe) {
+	list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId);
+	if ($ret->isError()) {
+	    $failsafe = true;
+	}
+	$templateAdapter =& $gallery->getTemplateAdapter();
+	$templateAdapter->setTheme($theme);
+    }
+
+    if (!$failsafe) {
+	list ($ret, $view) = GalleryView::loadView('core.ErrorPage');
+	if ($ret->isError()) {
+	    $failsafe = true;
+	}
+    }
+
+    if (!$failsafe) {
+	$dummyForm = array();
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTemplate.class');
+	$template = new GalleryTemplate(dirname(__FILE__));
+	$view->setError($error);
+	list ($ret, $results) = $view->loadTemplate($template, $dummyForm);
+	if ($ret->isError()) {
+	    $failsafe = true;
+	}
+
+	$t =& $template->getVariableByReference('theme');
+	$t['errorTemplate'] = $results['body'];
+    }
+
+    if (!$failsafe) {
+	$template->setVariable('l10Domain', 'modules_core');
+	list ($ret, $templatePath) = $theme->showErrorPage($template);
+	if ($ret->isError()) {
+	    $failsafe = true;
+	}
+    }
+
+    if (!$failsafe) {
+	$template->setVariable('l10Domain', 'themes_' . $themeId);
+	$ret = $template->display("themes/$themeId/templates/$templatePath");
+	if ($ret->isError()) {
+	    $failsafe = true;
+	}
+    }
+
+    if ($failsafe) {
+	/* Some kind of catastrophic failure.  Just dump the error out to the browser. */
 	print '<h2>Error</h2>' . $error->getAsHtml(false);
 	if ($gallery->getDebug() == 'buffered') {
 	    print '<h3>Debug Output</h3><pre>' . $gallery->getDebugBuffer() . '</pre>';
 	}
 	return;
-    }
-
-    if (isset($g2Data['template'])) {
-	/* Main processing created a template before error occurred.. */
-	$template = $g2Data['template'];
-    } else {
-	/* Create a template with default theme.. */
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTemplate.class');
-	$template = new GalleryTemplate(dirname(__FILE__));
-	$template->style("templates/layout.css");
-
-	list ($ret, $theme) = GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
-	if ($ret->isSuccess()) {
-	    $template->style("themes/$theme/theme.css");
-	}
-    }
-
-    list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
-    $isAdmin = $ret->isSuccess() && $isAdmin;
-    $template->head('templates/errorHead.tpl', 'modules_core');
-    $main = array('isAdmin' => $isAdmin,
-		  'error' => array('stackTrace' => $error->getAsHtml($isAdmin)),
-		  'viewBodyFile' => 'templates/errorBody.tpl',
-		  'viewL10Domain' => 'modules_core');
-    _GalleryMain_setupMain($main);
-
-    if (isset($g2Data['redirectUrl'])) {
-	/* Redirect in debug mode.. */
-	$templatePath = 'gallery:templates/redirect.tpl';
-	$main['redirectUrl'] = $g2Data['redirectUrl'];
-    } else {
-	/* Landing page for errors.. */
-	$templatePath = 'gallery:templates/global.tpl';
-	$errorCode = $error->getErrorCode();
-
-	if ($errorCode & ERROR_OBSOLETE_DATA) {
-	    $main['error']['obsoleteData'] = true;
-	}
-	if ($errorCode & (ERROR_PERMISSION_DENIED | ERROR_BAD_PARAMETER)) {
-	    $main['error']['securityViolation'] = true;
-	}
-	if ($errorCode & ERROR_STORAGE_FAILURE) {
-	    $main['error']['storageFailure'] = true;
-	}
-
-	if ($isAdmin) {
-	    $main['error']['phpversion'] = phpversion();
-	    $main['error']['php_uname'] = php_uname();
-	    $main['error']['php_sapi_name'] = php_sapi_name();
-	    $main['error']['webserver'] = GalleryUtilities::getServerVar('SERVER_SOFTWARE');
-	    $main['error']['browser'] = GalleryUtilities::getServerVar('HTTP_USER_AGENT');
-	    if ($gallery->isStorageInitialized()) {
-		$storage =& $gallery->getStorage();
-		$main['error']['dbType'] = $storage->_impl->getAdoDbType();
-		$main['error']['dbVersion'] = @$storage->_impl->getVersion();
-
-		list ($ret, $list) = GalleryCoreApi::getToolkitOperationMimeTypes('thumbnail');
-		if ($ret->isSuccess()) {
-		    $toolkitList = array();
-		    foreach ($list as $tmp) {
-			$toolkitList = array_merge($toolkitList, $tmp);
-		    }
-		    $main['error']['toolkits'] = implode(', ', array_unique($toolkitList));
-		}
-	    }
-	}
-    }
-
-    $template->setVariable('main', $main);
-    $template->setVariable('l10Domain', 'modules_core');
-    GalleryUtilities::putRequestVariable('view', 'error');
-
-    $ret = $template->display($templatePath);
-    if ($ret->isError()) {
-	/* Smarty failure.. all we can do now is dump the error out to the browser. */
-	print '<h2>Error</h2>' . $error->getAsHtml($isAdmin)
-	    . '<h3>Smarty Error</h3>' . $ret->getAsHtml($isAdmin);
-	if (isset($main['debug'])) {
-	    print '<h3>Debug Output</h3><pre>' . $main['debug'] . '</pre>';
-	}
     }
 }
 ?>

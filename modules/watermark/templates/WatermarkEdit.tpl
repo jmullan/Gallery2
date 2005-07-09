@@ -60,7 +60,7 @@
   // ]]>
 </script>
 
-<input type="hidden" name="{g->formVar var="itemId"}" value="{$watermark.id}"/>
+<input type="hidden" name="{g->formVar var="watermarkId"}" value="{$watermark.id}"/>
 <div class="gbBlock gcBackground1">
   <h2> {g->text text="Edit A Watermark"} </h2>
 </div>
@@ -150,7 +150,7 @@
    name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
 </div>
 
-{capture name=$footer}
+{g->addToTrailer}
 <script type="text/javascript">{literal}
 // <![CDATA[
 SET_DHTML("background"+NO_DRAG, "floater"+CURSOR_MOVE);
@@ -158,4 +158,4 @@ moveToOriginalLocation();
 verifyBounds();
 // ]]>
 {/literal}</script>
-{/capture}
+{/g->addToTrailer}

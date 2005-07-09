@@ -45,12 +45,12 @@
       {g->image item=$item image=$item maxSize=150}
     </td><td>
       <a href="{g->url arg1="view=core.UserAdmin" arg2="subView=watermark.UserWatermarkEdit"
-       arg3="itemId=`$item.id`"}">
+       arg3="watermarkId=`$item.id`"}">
 	{g->text text="edit"}
       </a>
       &nbsp;
       <a href="{g->url arg1="controller=watermark.UserWatermarks"
-       arg2="form[action][delete]=1" arg3="form[delete][itemId]=`$item.id`"}">
+       arg2="form[action][delete]=1" arg3="form[delete][watermarkId]=`$item.id`"}">
 	{g->text text="delete"}
       </a>
     </td>

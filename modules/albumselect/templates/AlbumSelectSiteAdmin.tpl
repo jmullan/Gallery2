@@ -16,7 +16,7 @@
 
 <div class="gbBlock">
   <p class="giDescription">
-    {g->text text="Albums can be displayed in a simple list box or a dynamic tree.  Turn off display in sidebar if you place the selector elsewhere using a local template (see details below)."}
+    {g->text text="Albums can be displayed in a simple list box or a dynamic tree."}
   </p>
 
   <h4> {g->text text="Selector type"} </h4>
@@ -33,12 +33,6 @@
     {g->text text="Tree"}
   </label>
   <br/>
-
-  <input type="checkbox" id="cbShow"{if $form.show} checked="checked"{/if}
-   name="{g->formVar var="form[show]"}"/>
-  <label for="cbShow">
-    {g->text text="Show in sidebar"}
-  </label>
 
   <h4> {g->text text="Sort order"} </h4>
 
@@ -104,27 +98,4 @@
    name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
   <input type="submit" class="inputTypeSubmit"
    name="{g->formVar var="form[action][reset]"}" value="{g->text text="Reset"}"/>
-</div>
-
-<div class="gbBlock">
-  <p class="giDescription">
-    {g->text text="The album select can be too wide for the sidebar so you may wish to place it elsewhere.  Create a local template (see instructions at the top of layouts/matrix/templates/albumBody.tpl or any *.tpl file) and add a block like this:"}
-  </p>
-  <pre style="font-size:125%">
-    {literal}{* Show AlbumSelect if available *}
-    {if isset($AlbumSelectSystemContent)}
-      {include file="gallery:`$AlbumSelectSystemContent.template`"}
-    {/if}{/literal}
-  </pre>
-  <p class="giDescription">
-    {g->text text="You may also include any HTML required for placing the block, like this:"}
-  </p>
-  <pre style="font-size:125%">
-    {literal}{* Show AlbumSelect if available *}
-    {if isset($AlbumSelectSystemContent)}
-      &lt;tr&gt;&lt;td colspan=2&gt;
-        {include file="gallery:`$AlbumSelectSystemContent.template`"}
-      &lt;/td&gt;&lt;/tr&gt;
-    {/if}{/literal}
-  </pre>
 </div>

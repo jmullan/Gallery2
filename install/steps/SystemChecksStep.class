@@ -67,7 +67,7 @@ class SystemChecksStep extends InstallStep {
 	$suggestedHtaccess = array();
 
 	/* assert compatible version of PHP */
-	if (!function_exists('version_compare') || version_compare(phpversion(), '4.1.0') < 0) {
+	if (!function_exists('version_compare') || version_compare(phpversion(), '4.1.0', '<')) {
 	    $templateData['check'][] =
 		array('title' => _('PHP version >= 4.1.0'),
 		      'error' => true,

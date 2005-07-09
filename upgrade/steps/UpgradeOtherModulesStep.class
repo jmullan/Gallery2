@@ -83,42 +83,42 @@ class UpgradeOtherModulesStep extends UpgradeStep {
             }
         }
 
-        if (isset($_REQUEST['layout'])) {
-            $totalPlugins = count($_REQUEST['layout']);
+        if (isset($_REQUEST['theme'])) {
+            $totalPlugins = count($_REQUEST['theme']);
             $currentPlugin = 0;
-            foreach (array_keys($_REQUEST['layout']) as $layoutId) {
+            foreach (array_keys($_REQUEST['theme']) as $themeId) {
                 $currentPlugin++;
-                list ($ret, $layoutPlugin) = GalleryCoreApi::loadPlugin('layout', $layoutId, true);
+                list ($ret, $themePlugin) = GalleryCoreApi::loadPlugin('theme', $themeId, true);
                 if ($ret->isError()) {
                     $this->resetL10Domain();
                     $templateData['errors'][] =
-                        sprintf(_('Unable to load the %s layout'), $layoutId);
+                        sprintf(_('Unable to load the %s theme'), $themeId);
                     $templateData['stackTrace'] .= $ret->getAsHtml();
                 } else {
-                    $layoutPlugin->setName($layoutPlugin->translate($layoutPlugin->getName()));
-                    $layoutPlugin->setDescription(
-                        $layoutPlugin->translate($layoutPlugin->getDescription()));
-                    $layouts[$layoutId] = $layoutPlugin;
+                    $themePlugin->setName($themePlugin->translate($themePlugin->getName()));
+                    $themePlugin->setDescription(
+                        $themePlugin->translate($themePlugin->getDescription()));
+                    $themes[$themeId] = $themePlugin;
                     $this->resetL10Domain();
                 }
-                $layout =& $layouts[$layoutId];
+                $theme =& $themes[$themeId];
 
-                $ret = $template->renderStatusMessage(_('Upgrading layouts'),
-                    $layoutPlugin->getName(), $currentPlugin / $totalPlugins);
+                $ret = $template->renderStatusMessage(_('Upgrading themes'),
+                    $themePlugin->getName(), $currentPlugin / $totalPlugins);
                 if ($ret->isError()) {
                     return $ret->wrap(__FILE__, __LINE__);
                 }
 
-                $ret = $layout->installOrUpgrade();
+                $ret = $theme->installOrUpgrade();
                 $this->resetL10Domain();
                 if ($ret->isError()) {
                     $templateData['errors'][] =
-                        sprintf(_('Unable to upgrade the %s layout'), $layout->getName());
+                        sprintf(_('Unable to upgrade the %s theme'), $theme->getName());
                     $templateData['stackTrace'] .= $ret->getAsHtml();
                     continue;
                 }
-                $moduleIsUpgradeable[$layoutId] = false;
-                $templateData['upgradedLayout'][$layoutId] = $layout->getName();
+                $moduleIsUpgradeable[$themeId] = false;
+                $templateData['upgradedTheme'][$themeId] = $theme->getName();
 
             }
         }
@@ -177,9 +177,9 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 	    }
 	}
 	if (empty($templateData['errors'])) {
-	    list ($ret, $layoutList) = GalleryCoreApi::fetchPluginStatus('layout', true);
+	    list ($ret, $themeList) = GalleryCoreApi::fetchPluginStatus('theme', true);
 	    if ($ret->isError()) {
-		$templateData['errors'][] = _('Unable to get the layout list');
+		$templateData['errors'][] = _('Unable to get the theme list');
 		$templateData['stackTrace'] .= $ret->getAsHtml();
 	    }
 	}
@@ -220,33 +220,33 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 		$groupType[$group['group']] = 'module';
 	    }
 
-	    foreach (array_keys($layoutList) as $layoutId) {
-		list ($ret, $layoutPlugin) = GalleryCoreApi::loadPlugin('layout', $layoutId, true);
+	    foreach (array_keys($themeList) as $themeId) {
+		list ($ret, $themePlugin) = GalleryCoreApi::loadPlugin('theme', $themeId, true);
 		if ($ret->isError()) {
 		    $this->resetL10Domain();
 		    $templateData['errors'][] =
-			sprintf(_('Unable to load the %s layout'), $layoutId);
+			sprintf(_('Unable to load the %s theme'), $themeId);
 		    $templateData['stackTrace'] .= $ret->getAsHtml();
 		} else {
-		    $layoutPlugin->setName($layoutPlugin->translate($layoutPlugin->getName()));
-		    $layoutPlugin->setDescription(
-			$layoutPlugin->translate($layoutPlugin->getDescription()));
-		    $layouts[$layoutId] = $layoutPlugin;
+		    $themePlugin->setName($themePlugin->translate($themePlugin->getName()));
+		    $themePlugin->setDescription(
+			$themePlugin->translate($themePlugin->getDescription()));
+		    $themes[$themeId] = $themePlugin;
 		    $this->resetL10Domain();
 		}
 	    }
 
-	    ksort($layouts);
-	    $groupLabel['layouts'] = _('Layouts');
-            $groupType['layouts'] = 'layout';
-	    foreach (array_keys($layouts) as $layoutId) {
-		$layout =& $layouts[$layoutId];
-		$moduleIsUpgradeable[$layoutId] =
-		   !empty($layoutList[$layoutId]['version']) &&
-		    $layoutList[$layoutId]['version'] != $layout->getVersion();
-		$currentVersion[$layoutId] = $layoutList[$layoutId]['version'];
+	    ksort($themes);
+	    $groupLabel['themes'] = _('Themes');
+            $groupType['themes'] = 'theme';
+	    foreach (array_keys($themes) as $themeId) {
+		$theme =& $themes[$themeId];
+		$moduleIsUpgradeable[$themeId] =
+		   !empty($themeList[$themeId]['version']) &&
+		    $themeList[$themeId]['version'] != $theme->getVersion();
+		$currentVersion[$themeId] = $themeList[$themeId]['version'];
 
-		$groupedModules['layouts'][$layoutId] =& $layout;
+		$groupedModules['themes'][$themeId] =& $theme;
 	    }
 	    ksort($groupedModules);
 	    $templateData['bodyFile'] = 'UpgradeOtherModulesRequest.html';

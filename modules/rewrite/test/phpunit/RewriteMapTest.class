@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2004 Bharat Mediratta
+ * Copyright (C) 2000-2005 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ class RewriteMapTest extends GalleryTestCase {
     function setUp() {
     	global $gallery;
     	parent::setUp();
-	
+
 	/* Save original activeRules */
 	list ($ret, $this->_saveActiveRules) = RewriteMap::getActiveRules();
 	if ($ret->isError()) {
@@ -50,10 +50,10 @@ class RewriteMapTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
-    
+
     function tearDown() {
     	global $gallery;
-	
+
 	$ret = RewriteMap::setActiveRules($this->_saveActiveRules);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -61,7 +61,7 @@ class RewriteMapTest extends GalleryTestCase {
 	}
     	parent::tearDown();
     }
-    
+
     function testActiveRules() {
 	$activeRules = array('rewrite' => array(
 		array('pattern' => 'v/%path%',
@@ -69,7 +69,7 @@ class RewriteMapTest extends GalleryTestCase {
 		array('pattern' => 'd/%itemId%-%serialNumber%/%fileName%',
 		      'match' => 'core.DownloadItem'),
 		array('pattern' => '%path%')));
-	
+
 	$ret = RewriteMap::setActiveRules($activeRules);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -78,10 +78,10 @@ class RewriteMapTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	$this->assertEquals($activeRules, $savedRules);
     }
-    
+
     function testShortUrls() {
 	$activeRules = array('rewrite' => array(
 		array('pattern' => 'v/%path%',
@@ -92,7 +92,7 @@ class RewriteMapTest extends GalleryTestCase {
 	$expected = array(
 		'core.ShowItem' => 'v/%path%',
 		'core.DownloadItem' => 'd/%itemId%-%serialNumber%/%fileName%');
-	
+
 	$ret = RewriteMap::setActiveRules($activeRules);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -101,7 +101,7 @@ class RewriteMapTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	$this->assertEquals($expected, $shortUrls);
     }
 }

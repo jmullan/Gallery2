@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2004 Bharat Mediratta
+ * Copyright (C) 2000-2005 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,17 +30,17 @@
  * @package PublishXp
  * @author Timothy Webb <tiwebb@cisco.com>
  */
-class DownloadRegistryFileView extends GalleryView {   
+class DownloadRegistryFileView extends GalleryView {
     /**
      * @see GalleryView::isImmediate()
      */
     function isImmediate() {
 	return true;
     }
-    
+
     /**
      * Renders the Windows registry file.
-     * 
+     *
      * Generates the registry file to be downloaded and installed on Windows
      * systems.  The gallery name and hostname are used as part of the web service
      * for publishing.
@@ -49,11 +49,11 @@ class DownloadRegistryFileView extends GalleryView {
      */
     function renderImmediate($status, $error) {
 	global $gallery;
-        
+
 	/* Get the domain name */
 	$urlGenerator =& $gallery->getUrlGenerator();
 	$domain = $urlGenerator->getCurrentDomain();
-        
+
 	/* Get the name of the gallery */
 	list($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret->isError()) {
@@ -64,7 +64,7 @@ class DownloadRegistryFileView extends GalleryView {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$title = $root->getTitle();
-        
+
 	/* Setup the headers for the Registry file */
 	header("Cache-control: private");
 	header("Content-Type: application/octet-stream");

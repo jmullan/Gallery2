@@ -38,27 +38,8 @@ msgstr "M&oacute;dulos de Gallery"
 msgid "&laquo; None &raquo;"
 msgstr "&laquo; Ninguna &raquo;"
 
-#, fuzzy
-msgid "None"
-msgstr "Ninguno"
-
-msgid "Guest User Only"
-msgstr "Usuario invitado solamente"
-
-msgid "Everybody"
-msgstr "Todos"
-
 msgid "forever"
 msgstr "para siempre"
-
-msgid "Link to Login Page"
-msgstr "Liga a la p&aacute;gina de acceso"
-
-msgid "Form on Sidebar"
-msgstr "Forma en la barra"
-
-msgid "Both"
-msgstr "Ambos"
 
 msgid "No Markup"
 msgstr "Sin markup"
@@ -109,6 +90,9 @@ msgstr "instalar"
 msgid "upgrade"
 msgstr "actualizar"
 
+msgid "configure"
+msgstr "configurar"
+
 msgid "activate"
 msgstr "activar"
 
@@ -119,18 +103,15 @@ msgstr "desinstalar"
 msgid "deactivate"
 msgstr "desactivar"
 
+msgid "Other"
+msgstr "Otro(s)"
+
 msgid "Inherit settings from parent album"
 msgstr ""
 
 #, fuzzy
 msgid "Use these settings"
 msgstr "Opciones de vista restauradas"
-
-msgid "configure"
-msgstr "configurar"
-
-msgid "Other"
-msgstr "Otro(s)"
 
 msgid "key"
 msgstr "llave"
@@ -181,9 +162,21 @@ msgstr ""
 msgid "All Users"
 msgstr "Todos los usuarios"
 
+msgid "Loading derivatives for the broken derivatives check"
+msgstr ""
+
+msgid "Detecting broken derivatives"
+msgstr ""
+
+msgid "Marking broken derivatives"
+msgstr ""
+
 #, fuzzy
 msgid "Site Admins"
 msgstr "Admins del sitio"
+
+msgid "Everybody"
+msgstr "Todos"
 
 msgid "Guest"
 msgstr "Invitado"
@@ -194,6 +187,15 @@ msgstr "Gallery"
 #, fuzzy
 msgid "This is the main page of your Gallery"
 msgstr "Esto es la parte superior de su Gallery"
+
+msgid "Loading derivatives for the "
+msgstr ""
+
+msgid "Detecting broken derivatives "
+msgstr ""
+
+msgid "Marking broken derivatives "
+msgstr ""
 
 #, fuzzy
 msgid "add items"
@@ -278,10 +280,6 @@ msgid "Settings saved successfully."
 msgstr "Propiedades guardadas con &eacute;xito"
 
 #, fuzzy
-msgid "&laquo; default layout &raquo;"
-msgstr "&laquo; Apariencia por defecto &raquo;"
-
-#, fuzzy
 msgid "&laquo; default theme &raquo;"
 msgstr "&laquo; Tema por defecto &raquo;"
 
@@ -303,12 +301,6 @@ msgstr "Opciones administrativas"
 
 msgid "General"
 msgstr "General"
-
-msgid "Successfully saved layout settings"
-msgstr "Satisfactoriamente se salvaron los ajustes de la disposici&oacute;n"
-
-msgid "Layout"
-msgstr "Dispocisi&oacute;n"
 
 #, fuzzy
 msgid "Movie Size"
@@ -376,6 +368,13 @@ msgstr "Foto escalada con &eacute;xito."
 msgid "Modify Photo"
 msgstr "Imagen modificada"
 
+#, fuzzy
+msgid "Successfully saved theme settings"
+msgstr "Satisfactoriamente se salvaron los ajustes de la disposici&oacute;n"
+
+msgid "Theme"
+msgstr "Tema/Skin"
+
 msgid "make highlight"
 msgstr "destacar"
 
@@ -420,13 +419,14 @@ msgid "Build all thumbnails/resizes"
 msgstr "Recrear miniaturas y escalas"
 
 msgid ""
-"Ensure data files for all derivatives (thumbnails, etc) have been built."
-msgstr ""
-
-msgid "Processing..."
+"Ensure data files for all derivatives (thumbnails, etc) have been built and "
+"rebuild broken ones."
 msgstr ""
 
 msgid "Build All Thumbnails/Resizes"
+msgstr ""
+
+msgid "Debug output for failed items:"
 msgstr ""
 
 #, fuzzy, c-format
@@ -436,6 +436,14 @@ msgstr "Visualizando p&aacute;gina %d de %d"
 #, fuzzy, c-format
 msgid "Checked %d items"
 msgstr "agregar elementos"
+
+#, fuzzy, c-format
+msgid "%d items built"
+msgstr "agregar elementos"
+
+#, c-format
+msgid "%d items failed"
+msgstr ""
 
 msgid "Delete database cache"
 msgstr ""
@@ -534,46 +542,6 @@ msgstr "Grupo"
 msgid "group"
 msgstr "Grupos"
 
-#, c-format
-msgid "Estimated time remaining: %d:%02d"
-msgstr ""
-
-msgid "Rows per album page"
-msgstr ""
-
-msgid "Columns per album page"
-msgstr ""
-
-msgid "Show image owners"
-msgstr ""
-
-msgid "Show album owners"
-msgstr ""
-
-msgid "Show micro navigation thumbnails"
-msgstr ""
-
-msgid "Number of items to show per page"
-msgstr ""
-
-msgid "View Samples"
-msgstr ""
-
-#, fuzzy
-msgid "Album Frame"
-msgstr "Opciones b&aacute;sicas del Album"
-
-msgid "Item Frame"
-msgstr ""
-
-#, fuzzy
-msgid "Photo Frame"
-msgstr "Fotograf&iacute;a"
-
-#, fuzzy
-msgid "You must enter a number greater than 0"
-msgstr "Tiene que ingresar un n&uacute;mero (mayor que cero)"
-
 #, fuzzy
 msgid "Movie"
 msgstr "Pel&iacute;cula"
@@ -625,6 +593,72 @@ msgstr "Ascendente"
 
 msgid "Descending"
 msgstr "Descendente"
+
+msgid "Validation disabled until you set allowSessionAccess in config.php"
+msgstr ""
+
+msgid "This page is valid XHTML 1.0"
+msgstr "Esta p&aacute;gina es v&aacute;lida XHTML 1.0"
+
+#, c-format
+msgid "Estimated time remaining: %d:%02d"
+msgstr ""
+
+#, c-format
+msgid "Memory used: %s, total: %s"
+msgstr ""
+
+msgid "Rows per album page"
+msgstr ""
+
+msgid "Columns per album page"
+msgstr ""
+
+msgid "Show image owners"
+msgstr ""
+
+msgid "Show album owners"
+msgstr ""
+
+msgid "Show micro navigation thumbnails"
+msgstr ""
+
+msgid "Number of items to show per page"
+msgstr ""
+
+msgid "Blocks to show in the sidebar"
+msgstr ""
+
+msgid "Blocks to show on album pages"
+msgstr ""
+
+msgid "Blocks to show on photo pages"
+msgstr ""
+
+msgid "View Samples"
+msgstr ""
+
+#, fuzzy
+msgid "Album Frame"
+msgstr "Opciones b&aacute;sicas del Album"
+
+msgid "Item Frame"
+msgstr ""
+
+#, fuzzy
+msgid "Photo Frame"
+msgstr "Fotograf&iacute;a"
+
+#, fuzzy
+msgid "You must enter a number greater than 0"
+msgstr "Tiene que ingresar un n&uacute;mero (mayor que cero)"
+
+msgid "Format: [module.BlockName param=value] ..."
+msgstr ""
+
+#, c-format
+msgid "%dx%d"
+msgstr ""
 
 #, fuzzy
 msgid "Audio"
@@ -711,6 +745,9 @@ msgid ""
 "in the original data file (usually from EXIF data)."
 msgstr ""
 
+msgid "Processing..."
+msgstr ""
+
 msgid "Refresh Capture Dates"
 msgstr ""
 
@@ -794,8 +831,8 @@ msgid "Modules"
 msgstr "M&oacute;dulos"
 
 #, fuzzy
-msgid "Layouts and Themes"
-msgstr "Dispocisiones y Temas (skins)"
+msgid "Themes"
+msgstr "Tema/Skin"
 
 msgid "Display"
 msgstr "Vista"
@@ -879,13 +916,11 @@ msgstr "Se ha borrado directorio local con &eacute;xito"
 msgid "Test email sent successfully"
 msgstr "Miniatura a sido modificada."
 
-msgid "Error sending test email, see below for details"
-msgstr ""
+#, fuzzy
+msgid "There was a problem processing your request, see below for details."
+msgstr "Hubo un problema procesando tu acci&oacute;n."
 
-msgid "Invalid cookie path"
-msgstr ""
-
-msgid "Invalid cookie domain"
+msgid "Error sending test email, see below for details."
 msgstr ""
 
 #, fuzzy
@@ -903,10 +938,6 @@ msgstr ""
 
 msgid "Default language"
 msgstr "Lenguaje por defecto"
-
-#, fuzzy
-msgid "Language selector in sidebar"
-msgstr "Preferencias del idioma en la barra izquierda"
 
 msgid "gettext"
 msgstr ""
@@ -995,9 +1026,6 @@ msgstr "El path especificado no es un directorio v&aacute;lido."
 msgid "Session Settings"
 msgstr "Caracter&iacute;sticas de la sesi&oacute;n"
 
-msgid "Login Method"
-msgstr "M&eacute;todo de acceso"
-
 #, fuzzy
 msgid "Session Lifetime"
 msgstr "Duraci&oacute;n de la sesi&oacute;n"
@@ -1050,6 +1078,10 @@ msgstr "Contrase&ntilde;a"
 msgid "SMTP From Address"
 msgstr "SMTP de la direci&oacute;n"
 
+#, fuzzy
+msgid "Invalid email address"
+msgstr "Direcci&oacute;n de correo-e inv&acute;lida"
+
 msgid ""
 "Send a test email to verify your settings are correct (whether using PHP "
 "mail or SMTP settings above).  Below enter a recipient email address for a "
@@ -1059,10 +1091,6 @@ msgstr ""
 #, fuzzy
 msgid "Send Email"
 msgstr "Correo-e"
-
-#, fuzzy
-msgid "Invalid email address"
-msgstr "Direcci&oacute;n de correo-e inv&acute;lida"
 
 msgid "Email Test Error"
 msgstr ""
@@ -1108,7 +1136,13 @@ msgid ""
 "not, they will experience login / logout / lost session problems."
 msgstr ""
 
+msgid "Invalid cookie path"
+msgstr ""
+
 msgid "Domain"
+msgstr ""
+
+msgid "Invalid cookie domain"
 msgstr ""
 
 msgid "Locking System"
@@ -1432,131 +1466,6 @@ msgid_plural "%d groups match your filter"
 msgstr[0] "%d grupo coincide con su filtro"
 msgstr[1] "%d grupos coinciden con su grupo"
 
-#, fuzzy
-msgid "Gallery Layouts"
-msgstr "Disposiciones de Gallery"
-
-#, c-format
-msgid "Successfully activated layout %s"
-msgstr "Disposici&oacute;n %s activada"
-
-#, c-format
-msgid "Successfully deactivated layout %s"
-msgstr "Disposici&oacute;n %s desactivada"
-
-#, fuzzy, c-format
-msgid "Successfully installed layout %s"
-msgstr "M&oacute;dulo %s instalado satisfactoriamente"
-
-#, fuzzy, c-format
-msgid "Successfully uninstalled layout %s"
-msgstr "Satisfactoriamente se desinstal&oacute; el m&oacute;dulo %s"
-
-#, fuzzy, c-format
-msgid "Successfully upgraded layout %s"
-msgstr "Satisfactoriamente de actualiz&oacute; el m&oacute;dulo %s"
-
-msgid "Successfully saved default album settings"
-msgstr "Satisfactoriamente se salvaron los ajustes del album"
-
-#, fuzzy
-msgid "Restored layout settings"
-msgstr "Opciones de vista restauradas"
-
-#, fuzzy
-msgid "All Layouts"
-msgstr "Todas las dispocisiones"
-
-msgid "Defaults"
-msgstr "Por defecto"
-
-#, fuzzy
-msgid "Layout Name"
-msgstr "Nombre de la dispocisi&oacute;n"
-
-msgid "Version"
-msgstr "Versi&oacute;n"
-
-#, fuzzy
-msgid "Installed"
-msgstr "instalado"
-
-msgid "Actions"
-msgstr "Acciones"
-
-#, fuzzy
-msgid "Status: Not Installed"
-msgstr "Estado: Inactivo"
-
-#, fuzzy
-msgid "Status: Active"
-msgstr "Estado: Activo"
-
-msgid "Status: Inactive"
-msgstr "Estado: Inactivo"
-
-msgid "Status: Upgrade Required (Inactive)"
-msgstr "Estado: Actualizaci&oacute;n requerida (Inactivo)"
-
-#, fuzzy
-msgid "Status: Incompatible Layout (Inactive)"
-msgstr "Estado: M&oacute;dulo incompatible (Inactivo)"
-
-#, fuzzy
-msgid "Incompatible layout!"
-msgstr "M&oacute;dulo incompatible!"
-
-#, c-format
-msgid "Core API Required: %s (available: %s)"
-msgstr "Core API requerida: %s (encontradas: %s)"
-
-#, fuzzy, c-format
-msgid "Layout API Required: %s (available: %s)"
-msgstr "API del m&oacute;dulo requerida: %s (encontradas: %s)"
-
-#, fuzzy
-msgid "(default)"
-msgstr "Por defecto"
-
-#, fuzzy
-msgid ""
-"These are default display settings for albums in your gallery.  They can be "
-"overridden in each album."
-msgstr ""
-"Estos son los valores por defecto. Pueden ser cambiados para cada album."
-
-#, fuzzy
-msgid "Default sort order"
-msgstr "Orden del album por defecto"
-
-#, fuzzy
-msgid "with"
-msgstr "Ancho"
-
-msgid "Default layout"
-msgstr "Disposici&oacute;n por defecto"
-
-msgid "Default theme"
-msgstr "Tema (skin) por defecto"
-
-#, fuzzy
-msgid "New albums"
-msgstr "&aacute;lbum"
-
-#, fuzzy, c-format
-msgid "%s Layout Settings"
-msgstr "Opciones del Album"
-
-#, fuzzy
-msgid ""
-"These are the global settings for the layout.  They can be overridden at the "
-"album level."
-msgstr ""
-"Estos son los valores por defecto. Pueden ser cambiados para cada album."
-
-msgid "There are no settings for this layout"
-msgstr "No se encontraron ajustes para este tipo de disposici&oacute;n"
-
 msgid "System Maintenance"
 msgstr ""
 
@@ -1647,11 +1556,39 @@ msgstr ""
 msgid "Module Name"
 msgstr "Nombre del M&oacute;dulo"
 
+msgid "Version"
+msgstr "Versi&oacute;n"
+
+#, fuzzy
+msgid "Installed"
+msgstr "instalado"
+
+msgid "Actions"
+msgstr "Acciones"
+
+#, fuzzy
+msgid "Status: Not Installed"
+msgstr "Estado: Inactivo"
+
+#, fuzzy
+msgid "Status: Active"
+msgstr "Estado: Activo"
+
+msgid "Status: Inactive"
+msgstr "Estado: Inactivo"
+
+msgid "Status: Upgrade Required (Inactive)"
+msgstr "Estado: Actualizaci&oacute;n requerida (Inactivo)"
+
 msgid "Status: Incompatible Module (Inactive)"
 msgstr "Estado: M&oacute;dulo incompatible (Inactivo)"
 
 msgid "Incompatible module!"
 msgstr "M&oacute;dulo incompatible!"
+
+#, c-format
+msgid "Core API Required: %s (available: %s)"
+msgstr "Core API requerida: %s (encontradas: %s)"
 
 #, c-format
 msgid "Module API Required: %s (available: %s)"
@@ -1674,6 +1611,129 @@ msgstr ""
 #, fuzzy
 msgid "Uninstall"
 msgstr "Desinstalar"
+
+#, fuzzy
+msgid "Gallery Themes"
+msgstr "Gallery %s"
+
+#, fuzzy, c-format
+msgid "Successfully activated theme %s"
+msgstr "M&oacute;dulo %s activado"
+
+#, fuzzy, c-format
+msgid "Successfully deactivated theme %s"
+msgstr "M&oacute;dulo %s desactivado"
+
+#, fuzzy, c-format
+msgid "Successfully installed theme %s"
+msgstr "M&oacute;dulo %s instalado satisfactoriamente"
+
+#, fuzzy, c-format
+msgid "Successfully uninstalled theme %s"
+msgstr "Satisfactoriamente se desinstal&oacute; el m&oacute;dulo %s"
+
+#, fuzzy, c-format
+msgid "Successfully upgraded theme %s"
+msgstr "Satisfactoriamente de actualiz&oacute; el m&oacute;dulo %s"
+
+msgid "Successfully saved default album settings"
+msgstr "Satisfactoriamente se salvaron los ajustes del album"
+
+#, fuzzy
+msgid "Restored theme settings"
+msgstr "Opciones de vista restauradas"
+
+#, fuzzy
+msgid "All Themes"
+msgstr "Tema/Skin"
+
+msgid "Defaults"
+msgstr "Por defecto"
+
+#, fuzzy
+msgid "Theme Name"
+msgstr "Tema/Skin"
+
+#, fuzzy
+msgid "Status: Incompatible Theme (Inactive)"
+msgstr "Estado: M&oacute;dulo incompatible (Inactivo)"
+
+#, fuzzy
+msgid "Incompatible theme!"
+msgstr "M&oacute;dulo incompatible!"
+
+#, fuzzy, c-format
+msgid "Theme API Required: %s (available: %s)"
+msgstr "Core API requerida: %s (encontradas: %s)"
+
+#, fuzzy
+msgid "(default)"
+msgstr "Por defecto"
+
+#, fuzzy
+msgid ""
+"These are default display settings for albums in your gallery.  They can be "
+"overridden in each album."
+msgstr ""
+"Estos son los valores por defecto. Pueden ser cambiados para cada album."
+
+#, fuzzy
+msgid "Default sort order"
+msgstr "Orden del album por defecto"
+
+#, fuzzy
+msgid "with"
+msgstr "Ancho"
+
+msgid "Default theme"
+msgstr "Tema (skin) por defecto"
+
+#, fuzzy
+msgid "New albums"
+msgstr "&aacute;lbum"
+
+#, fuzzy, c-format
+msgid "%s Theme Settings"
+msgstr "Opciones de vista restauradas"
+
+#, fuzzy
+msgid ""
+"These are the global settings for the theme.  They can be overridden at the "
+"album level."
+msgstr ""
+"Estos son los valores por defecto. Pueden ser cambiados para cada album."
+
+msgid "Available"
+msgstr ""
+
+msgid "Choose a block"
+msgstr ""
+
+#, fuzzy
+msgid "Selected"
+msgstr "Borrar"
+
+msgid "Remove"
+msgstr "Borrar"
+
+#, fuzzy
+msgid "Move Up"
+msgstr "Mover"
+
+#, fuzzy
+msgid "Move Down"
+msgstr "Mover %s"
+
+msgid "Parameter"
+msgstr ""
+
+#, fuzzy
+msgid "Value"
+msgstr "Valor"
+
+#, fuzzy
+msgid "There are no settings for this theme"
+msgstr "No se encontraron ajustes para este tipo de disposici&oacute;n"
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime "
@@ -1755,6 +1815,64 @@ msgstr "Recrear miniaturas ahora"
 #, fuzzy
 msgid "This is a test email from Gallery2"
 msgstr "Esto es la parte superior de su Gallery"
+
+msgid "Edit Conflict!"
+msgstr "Editar conflicto!"
+
+#, fuzzy
+msgid "Security Violation"
+msgstr "Violaci&oacute;n de Seguridad!"
+
+msgid "Database Error"
+msgstr ""
+
+msgid "Error"
+msgstr "Error"
+
+msgid ""
+"Your change cannot be completed because somebody else has made a conflicting "
+"change to the same item.  Use the back button in your browser to go back to "
+"the page you were on, then <b>reload that page</b> and try your change again."
+msgstr ""
+"Sus cambios no pudieron ser completados porque alguien ha estado moviendo el "
+"mismo elemento a la vez. Use el bot&oacute;n para atr&aacute;s, despu&eacute;"
+"s, <b>Actualice la p&aacute;gina</b>-reload- y trate de nuevo."
+
+msgid "Go back and try again"
+msgstr "Vuelva a atr&aacute;s e intente de nuevo"
+
+msgid ""
+"Alternatively, you can return to the main Gallery page and resume browsing."
+msgstr ""
+"Alternativamente, usted puede regresar a la Galer&iacute;a principal y "
+"resumir la navegaci&oacute;n."
+
+msgid "The action you attempted is not permitted."
+msgstr "La acci&oacute;n no es permitida"
+
+msgid "An error has occurred while interacting with the database."
+msgstr ""
+
+msgid ""
+"The exact nature of database errors is not captured unless Gallery debug "
+"mode is enabled in config.php.  Before seeking support for this error please "
+"enable buffered debug output and retry the operation.  Look near the bottom "
+"of the lengthy debug output to find error details."
+msgstr ""
+
+msgid "An error has occurred."
+msgstr ""
+
+#, fuzzy
+msgid "Back to the Gallery"
+msgstr "Volver a la Galer&iacute;a"
+
+msgid "Error Detail"
+msgstr ""
+
+#, fuzzy
+msgid "System Information"
+msgstr "Agregar confirmaci&oacute;n de elementos"
 
 msgid ""
 "You don't have any Graphics Toolkit activated that can handle JPEG images.  "
@@ -2195,17 +2313,12 @@ msgstr ""
 "Aqui se aplican el ordenamiento del album. Esto aplica a todos los elementos "
 "actuales y todos los que ser&aacute;n agregados."
 
+#, fuzzy
 msgid ""
-"Choose a layout for this album. (The way the album is arranged on the page)"
+"Choose a theme for this album. (The way the album is arranged on the page)"
 msgstr ""
 "Escoja una disposici&oacute;n para este album. (Como se ver&aacute; en la "
 "p&aacute;gina)"
-
-msgid "Theme"
-msgstr "Tema/Skin"
-
-msgid "Choose a theme for this album.  (The look and feel of this album)"
-msgstr "Escoja un tema(skin) para este album. (El look&feel del album)"
 
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr ""
@@ -2407,25 +2520,6 @@ msgstr ""
 "No se encontraron herramientas gr&aacute;ficas activadas que soporten este "
 "tipo de foto, asi que no podemos crear / modificar la miniatura."
 
-#, c-format
-msgid ""
-"This album is configured to use the <b>%s</b> layout. These settings only "
-"apply to the layout for this album."
-msgstr ""
-"Este album est&aacute; configurado para usar la disposici&oacute;n <b>%s</"
-"b>. Estos ajustes solo aplican para la disposici&oacute;n de este album."
-
-#, fuzzy
-msgid "Setting"
-msgstr "Ajustes de Gallery"
-
-#, fuzzy
-msgid "Value"
-msgstr "Valor"
-
-msgid "Use Global"
-msgstr "Usar global"
-
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the "
 "movie's width and height.  If you have installed a graphics toolkit that can "
@@ -2584,6 +2678,21 @@ msgstr ""
 #, fuzzy
 msgid "Restore original"
 msgstr "Restaurar original"
+
+#, fuzzy, c-format
+msgid ""
+"This album is configured to use the <b>%s</b> theme. These settings only "
+"apply to the theme for this album."
+msgstr ""
+"Este album est&aacute; configurado para usar la disposici&oacute;n <b>%s</"
+"b>. Estos ajustes solo aplican para la disposici&oacute;n de este album."
+
+#, fuzzy
+msgid "Setting"
+msgstr "Ajustes de Gallery"
+
+msgid "Use Global"
+msgstr "Usar global"
 
 #, fuzzy
 msgid "Album Highlight"
@@ -2753,9 +2862,6 @@ msgstr "Nombre del Grupo:"
 msgid "Permission"
 msgstr "Permiso"
 
-msgid "Remove"
-msgstr "Borrar"
-
 #, fuzzy
 msgid "New Group Permission"
 msgstr "Nuevos Permisos del grupo"
@@ -2822,9 +2928,6 @@ msgstr "despu&eacute;s"
 #, fuzzy
 msgid "Reorder"
 msgstr "Reordenar"
-
-msgid "Go"
-msgstr "Ir"
 
 msgid "Continue..."
 msgstr ""
@@ -2894,10 +2997,6 @@ msgstr "Disposici&oacute;n %s activada"
 #, c-format
 msgid "To fix this problem you can either %s or %s."
 msgstr ""
-
-#, fuzzy
-msgid "Site Administration"
-msgstr "Administrador del Sitio"
 
 #, fuzzy
 msgid "Admin Options"
@@ -3121,19 +3220,107 @@ msgid "Thank you!"
 msgstr ""
 
 #, fuzzy
+msgid "guest"
+msgstr "Invitado"
+
+#, c-format
+msgid "display mode: %s"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Date: %s"
+msgstr "despu&eacute;s"
+
+#, fuzzy, c-format
+msgid "Owner: %s"
+msgstr "Due&ntilde;o"
+
+#, fuzzy, c-format
+msgid "Size: %d item"
+msgid_plural "Size: %d items"
+msgstr[0] "(%d elemento)"
+msgstr[1] "(%d elementos)"
+
+#, fuzzy, c-format
+msgid "(%d item total)"
+msgid_plural "(%d items total)"
+msgstr[0] "(%d elemento)"
+msgstr[1] "(%d elementos)"
+
+#, c-format
+msgid "Views: %d"
+msgstr ""
+
+#, fuzzy
+msgid "&laquo; album actions &raquo;"
+msgstr "&laquo; Ninguna &raquo;"
+
+#, fuzzy
+msgid "&laquo; item actions &raquo;"
+msgstr "&laquo; Ninguna &raquo;"
+
+msgid "Go"
+msgstr "Ir"
+
+msgid "next"
+msgstr ""
+
+#, fuzzy
+msgid "last"
+msgstr "lista"
+
+#, fuzzy
+msgid "first"
+msgstr "lista"
+
+#, fuzzy
+msgid "previous"
+msgstr "P&aacute;gina anterior "
+
+msgid "Page:"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "%d. %s"
+msgstr "Editar un usuario"
+
+#, fuzzy
+msgid "Size: "
+msgstr "Tama&ntilde;o"
+
+msgid "Full size: "
+msgstr ""
+
+#, fuzzy
+msgid "Language selector"
+msgstr "Preferencias del idioma en la barra izquierda"
+
+#, fuzzy
+msgid "Item actions"
+msgstr "Opciones administrativas"
+
+#, fuzzy
+msgid "Login block"
+msgstr "Login"
+
+msgid "Links to album/photo peers"
+msgstr ""
+
+#, fuzzy
 msgid "Successfully deleted directory: /cache/entity"
 msgstr "Se borr&oacute; %d elemento."
 
 #, fuzzy
-msgid "Successfully deleted directory: /cache/layout"
+msgid "Successfully deleted directory: /cache/theme"
 msgstr "Se borr&oacute; %d elemento."
 
 #, fuzzy
 msgid "Successfully deleted directory: /cache/module"
 msgstr "Se borr&oacute; %d elemento."
 
-msgid "Unable to delete directory: /cache/layout"
-msgstr ""
+#, fuzzy
+msgid "Unable to delete directory: /cache/theme"
+msgstr "Se borr&oacute; %d elemento."
 
 msgid "Unable to delete directory: /templates_c"
 msgstr ""
@@ -3145,204 +3332,6 @@ msgstr "Unidad para el test de un m&oacute;dulo"
 msgid "[test] A permission"
 msgstr "[test] permisos"
 
-msgid "Gallery Debug Output"
-msgstr "Salida de depuraci&oacute;n"
-
-msgid "This page is valid XHTML 1.0"
-msgstr "Esta p&aacute;gina es v&aacute;lida XHTML 1.0"
-
-#, fuzzy, c-format
-msgid "Gallery %s"
-msgstr "Gallery %s"
-
-msgid "Edit Conflict!"
-msgstr "Editar conflicto!"
-
 #, fuzzy
-msgid "Security Violation"
-msgstr "Violaci&oacute;n de Seguridad!"
-
-msgid "Database Error"
-msgstr ""
-
-msgid "Error"
-msgstr "Error"
-
-msgid ""
-"Your change cannot be completed because somebody else has made a conflicting "
-"change to the same item.  Use the back button in your browser to go back to "
-"the page you were on, then <b>reload that page</b> and try your change again."
-msgstr ""
-"Sus cambios no pudieron ser completados porque alguien ha estado moviendo el "
-"mismo elemento a la vez. Use el bot&oacute;n para atr&aacute;s, despu&eacute;"
-"s, <b>Actualice la p&aacute;gina</b>-reload- y trate de nuevo."
-
-msgid "Go back and try again"
-msgstr "Vuelva a atr&aacute;s e intente de nuevo"
-
-msgid ""
-"Alternatively, you can return to the main Gallery page and resume browsing."
-msgstr ""
-"Alternativamente, usted puede regresar a la Galer&iacute;a principal y "
-"resumir la navegaci&oacute;n."
-
-msgid "The action you attempted is not permitted."
-msgstr "La acci&oacute;n no es permitida"
-
-msgid "An error has occurred while interacting with the database."
-msgstr ""
-
-msgid ""
-"The exact nature of database errors is not captured unless Gallery debug "
-"mode is enabled in config.php.  Before seeking support for this error please "
-"enable buffered debug output and retry the operation.  Look near the bottom "
-"of the lengthy debug output to find error details."
-msgstr ""
-
-msgid "An error has occurred."
-msgstr ""
-
-#, fuzzy
-msgid "Back to the Gallery"
-msgstr "Volver a la Galer&iacute;a"
-
-msgid "Error Detail"
-msgstr ""
-
-#, fuzzy
-msgid "System Information"
-msgstr "Agregar confirmaci&oacute;n de elementos"
-
-#, fuzzy
-msgid "Redirect"
-msgstr "Redireccionar"
-
-msgid "You are in debug mode so we are not automatically redirecting."
-msgstr "Est&aacute;s en modo debug, asi que no estas siendo re-dirigido."
-
-#, fuzzy, c-format
-msgid "Welcome, %s"
-msgstr "Bienvenido, %s"
-
-#, fuzzy, c-format
-msgid "(%d item)"
-msgid_plural "(%d items)"
-msgstr[0] "(%d elemento)"
-msgstr[1] "(%d elementos)"
-
-#, fuzzy, c-format
-msgid "%d. %s"
-msgstr "Editar un usuario"
-
-#~ msgid "Gallery Administrator"
-#~ msgstr "Administrador de Gallery"
-
-#, fuzzy
-#~ msgid "Administrator Recovery"
-#~ msgstr "Contrase&ntilde;a"
-
-#, fuzzy
-#~ msgid "Use As Parent&rsquo;s Thumbnail?"
-#~ msgstr "Usar como miniaturas padre"
-
-#, fuzzy
-#~ msgid "Yes, highlight this item!"
-#~ msgstr "Si, destacar este elemento!"
-
-#~ msgid "You must enter a thumbnail size"
-#~ msgstr "Tiene que ingresar un tama&ntilde;o de miniatura"
-
-#~ msgid "Undo"
-#~ msgstr "Des-hacer"
-
-#, fuzzy
-#~ msgid "[change]"
-#~ msgstr "[cambiar]"
-
-#, fuzzy
-#~ msgid "required"
-#~ msgstr "requerido"
-
-#~ msgid ""
-#~ "Gallery has the option to use a compact URL format, however this format "
-#~ "is not supported by default on all web servers.  It is enabled by default "
-#~ "on Apache 1, but not on Apache 2.  If you're using Apache 2 you must use "
-#~ "the %s.  Use this %s to find out if short URLs work for you.  If the link "
-#~ "returns a webserver error then they don't work for you."
-#~ msgstr ""
-#~ "Gallery tiene la opci&oacute;n de usar direcciones URL compactas, sin "
-#~ "embargo este formato no es soportado por defecto en muchos servidores "
-#~ "web. Est&aacute; activado por defecto en Apache v1, pero no en la v2. Si "
-#~ "usted usa Apache 2 usted debe de usar la %s.  Use esta %s para saber si "
-#~ "las URL compactas servir&aacute;n en su Gallery. Si la direcci&oacute;n "
-#~ "le retorna un error entonces esta opci&oacute;n de URls compactas no "
-#~ "servir&aacute;n para usted."
-
-#, fuzzy
-#~ msgid "Status: Not"
-#~ msgstr "Estado: Activo"
-
-#~ msgid "URL Style"
-#~ msgstr "Estilo de URL"
-
-#~ msgid "Use short URLs?"
-#~ msgstr "Usar URl's cortas?"
-
-#, fuzzy
-#~ msgid "add"
-#~ msgstr "agregar"
-
-#, fuzzy
-#~ msgid "cancel"
-#~ msgstr "cancelar"
-
-#, fuzzy
-#~ msgid "edit user"
-#~ msgstr "Editar un usuario"
-
-#, fuzzy
-#~ msgid "no"
-#~ msgstr "no"
-
-#, fuzzy
-#~ msgid "reset"
-#~ msgstr "Resetear"
-
-#, fuzzy
-#~ msgid "save"
-#~ msgstr "Guardar"
-
-#~ msgid "test url"
-#~ msgstr "probar Url"
-
-#, fuzzy
-#~ msgid "undo"
-#~ msgstr "des-hacer"
-
-#~ msgid "yes"
-#~ msgstr "si"
-
-#~ msgid "Edit User Preferences"
-#~ msgstr "Editar preferencias de usuario"
-
-#, fuzzy
-#~ msgid "Manual Sort Order"
-#~ msgstr "Ordenar el Album"
-
-#, fuzzy
-#~ msgid "&laquo; Parent Directory &raquo;"
-#~ msgstr "&laquo; Directorio ra&iacute;z &raquo;"
-
-#~ msgid "Conflict Detected"
-#~ msgstr "Conflicto detectado"
-
-#~ msgid "Gallery 2 - Alpha 4: Hey Baby, Nice Commits"
-#~ msgstr "Gallery 2 - Alpha 4: Hey Baby, Nice Commits"
-
-#, fuzzy
-#~ msgid "Rotate/Scale"
-#~ msgstr "Rotar/Escalar"
-
-#, fuzzy
-#~ msgid "Sizes"
-#~ msgstr "Tama&ntilde;os"
+msgid "[test] A second permission"
+msgstr "[test] permisos"

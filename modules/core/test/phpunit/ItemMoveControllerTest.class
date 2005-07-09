@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -39,7 +39,7 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 
     function setUp() {
 	global $gallery;
-	
+
 	parent::setUp();
 
 	/* Register a dummy toolkit */
@@ -92,20 +92,20 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 		    print $ret->getAsHtml();
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
-		
+
 		$ret = GalleryCoreApi::addUserPermission($itemId, $userId, 'core.delete');
 		if ($ret->isError()) {
 		    print $ret->getAsHtml();
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
-		
+
 		$ret = GalleryCoreApi::addUserPermission($itemId, $userId, 'core.addAlbumItem');
 		if ($ret->isError()) {
 		    print $ret->getAsHtml();
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
 		break;
-		
+
 	    case 1:
 		/* Can delete, can add data items */
 		$ret = GalleryCoreApi::removeItemPermissions($itemId);
@@ -113,13 +113,13 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 		    print $ret->getAsHtml();
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
-		
+
 		$ret = GalleryCoreApi::addUserPermission($itemId, $userId, 'core.delete');
 		if ($ret->isError()) {
 		    print $ret->getAsHtml();
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
-		
+
 		$ret = GalleryCoreApi::addUserPermission($itemId, $userId, 'core.addDataItem');
 		if ($ret->isError()) {
 		    print $ret->getAsHtml();
@@ -134,7 +134,7 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 		    print $ret->getAsHtml();
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
-		
+
 		$ret = GalleryCoreApi::addUserPermission($itemId, $userId, 'core.delete');
 		if ($ret->isError()) {
 		    print $ret->getAsHtml();
@@ -149,7 +149,7 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 		    print $ret->getAsHtml();
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
-		
+
 		break;
 
 	    case 4:
@@ -266,7 +266,7 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	GalleryUtilities::putRequestVariable('itemId', $this->_album[0]->getId());
 	GalleryUtilities::putRequestVariable('form[selectedIds]', array($this->_album[1]->getId() => 1));
 	GalleryUtilities::putRequestVariable('form[action][move]', 1);
@@ -328,13 +328,13 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	foreach ($items as $item) {
 	    $selectedIds[$item->getId()] = 1;
 	}
-	
+
 	GalleryUtilities::putRequestVariable('itemId', $this->_album[1]->getId());
 	GalleryUtilities::putRequestVariable('form[selectedIds]', $selectedIds);
 	GalleryUtilities::putRequestVariable('form[numPerPage]', 3);
-	GalleryUtilities::putRequestVariable('page', 3);	
+	GalleryUtilities::putRequestVariable('page', 3);
 	GalleryUtilities::putRequestVariable('form[action][next]', 1);
-	
+
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
@@ -366,12 +366,12 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	foreach ($items as $item) {
 	    $selectedIds[$item->getId()] = 1;
 	}
-	
+
 	GalleryUtilities::putRequestVariable('itemId', $this->_album[1]->getId());
 	GalleryUtilities::putRequestVariable('form[selectedIds]', $selectedIds);
-	GalleryUtilities::putRequestVariable('page', -1);	
+	GalleryUtilities::putRequestVariable('page', -1);
 	GalleryUtilities::putRequestVariable('form[action][previous]', 1);
-	
+
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
@@ -383,7 +383,7 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 			    $results);
     }
 
-    
+
     /**
      * Test moving an item to a bogus destination
      */
@@ -474,7 +474,7 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 						      'subView' => 'core.ItemMove'),
 				  'status' => array(),
 				  'error' => array('form[error][source][' .
-						   $this->_album[4]->getId() . 
+						   $this->_album[4]->getId() .
 						   '][permission][delete]')),
 			    $results);
     }

@@ -35,27 +35,8 @@ msgstr "Gallery モジュール"
 msgid "&laquo; None &raquo;"
 msgstr "&laquo; なし &raquo;"
 
-#, fuzzy
-msgid "None"
-msgstr "完了"
-
-msgid "Guest User Only"
-msgstr ""
-
-msgid "Everybody"
-msgstr ""
-
 msgid "forever"
 msgstr "永久"
-
-msgid "Link to Login Page"
-msgstr ""
-
-msgid "Form on Sidebar"
-msgstr ""
-
-msgid "Both"
-msgstr ""
 
 msgid "No Markup"
 msgstr ""
@@ -101,6 +82,9 @@ msgstr "インストール"
 msgid "upgrade"
 msgstr ""
 
+msgid "configure"
+msgstr "コンフィグ"
+
 msgid "activate"
 msgstr "有効化"
 
@@ -111,18 +95,15 @@ msgstr "インストール"
 msgid "deactivate"
 msgstr "無効化"
 
+msgid "Other"
+msgstr ""
+
 msgid "Inherit settings from parent album"
 msgstr ""
 
 #, fuzzy
 msgid "Use these settings"
 msgstr "アカウント設定"
-
-msgid "configure"
-msgstr "コンフィグ"
-
-msgid "Other"
-msgstr ""
 
 msgid "key"
 msgstr "キー"
@@ -174,9 +155,21 @@ msgstr "ユーザ編集"
 msgid "All Users"
 msgstr "ユーザー"
 
+msgid "Loading derivatives for the broken derivatives check"
+msgstr ""
+
+msgid "Detecting broken derivatives"
+msgstr ""
+
+msgid "Marking broken derivatives"
+msgstr ""
+
 #, fuzzy
 msgid "Site Admins"
 msgstr "サイト管理"
+
+msgid "Everybody"
+msgstr ""
 
 msgid "Guest"
 msgstr "ゲスト"
@@ -187,6 +180,15 @@ msgstr "Gallery"
 #, fuzzy
 msgid "This is the main page of your Gallery"
 msgstr "これはあなたのGalleryのトップです"
+
+msgid "Loading derivatives for the "
+msgstr ""
+
+msgid "Detecting broken derivatives "
+msgstr ""
+
+msgid "Marking broken derivatives "
+msgstr ""
 
 #, fuzzy
 msgid "add items"
@@ -266,10 +268,6 @@ msgid "Settings saved successfully."
 msgstr "設定の保存に成功しました。"
 
 #, fuzzy
-msgid "&laquo; default layout &raquo;"
-msgstr "&laquo; なし &raquo;"
-
-#, fuzzy
 msgid "&laquo; default theme &raquo;"
 msgstr "&laquo; なし &raquo;"
 
@@ -290,13 +288,6 @@ msgstr "管理オプション"
 
 msgid "General"
 msgstr "全般"
-
-#, fuzzy
-msgid "Successfully saved layout settings"
-msgstr "%d個のファイルの追加に成功しました。"
-
-msgid "Layout"
-msgstr "レイアウト"
 
 #, fuzzy
 msgid "Movie Size"
@@ -368,6 +359,13 @@ msgstr "パスワードの変更に成功しました"
 msgid "Modify Photo"
 msgstr "画像を変更しました"
 
+#, fuzzy
+msgid "Successfully saved theme settings"
+msgstr "%d個のファイルの追加に成功しました。"
+
+msgid "Theme"
+msgstr "テーマ"
+
 msgid "make highlight"
 msgstr "ハイライト作成"
 
@@ -411,15 +409,16 @@ msgid "Build all thumbnails/resizes"
 msgstr "サムネイル"
 
 msgid ""
-"Ensure data files for all derivatives (thumbnails, etc) have been built."
-msgstr ""
-
-msgid "Processing..."
+"Ensure data files for all derivatives (thumbnails, etc) have been built and "
+"rebuild broken ones."
 msgstr ""
 
 #, fuzzy
 msgid "Build All Thumbnails/Resizes"
 msgstr "サムネイル"
+
+msgid "Debug output for failed items:"
+msgstr ""
 
 #, fuzzy, c-format
 msgid "Processing image %d of %d"
@@ -428,6 +427,14 @@ msgstr "ページ閲覧 %d/%d"
 #, fuzzy, c-format
 msgid "Checked %d items"
 msgstr "アイテム追加"
+
+#, fuzzy, c-format
+msgid "%d items built"
+msgstr "アイテム追加"
+
+#, c-format
+msgid "%d items failed"
+msgstr ""
 
 msgid "Delete database cache"
 msgstr ""
@@ -522,47 +529,6 @@ msgstr "グループ:"
 msgid "group"
 msgstr "グループ"
 
-#, c-format
-msgid "Estimated time remaining: %d:%02d"
-msgstr ""
-
-msgid "Rows per album page"
-msgstr ""
-
-msgid "Columns per album page"
-msgstr ""
-
-msgid "Show image owners"
-msgstr ""
-
-msgid "Show album owners"
-msgstr ""
-
-msgid "Show micro navigation thumbnails"
-msgstr ""
-
-msgid "Number of items to show per page"
-msgstr ""
-
-msgid "View Samples"
-msgstr ""
-
-#, fuzzy
-msgid "Album Frame"
-msgstr "アルバム設定"
-
-#, fuzzy
-msgid "Item Frame"
-msgstr "移動するアイテム"
-
-#, fuzzy
-msgid "Photo Frame"
-msgstr "画像"
-
-#, fuzzy
-msgid "You must enter a number greater than 0"
-msgstr "0より大きい数字を入力しなくてはなりません"
-
 msgid "Movie"
 msgstr "動画"
 
@@ -615,6 +581,74 @@ msgstr "昇順"
 
 msgid "Descending"
 msgstr "降順"
+
+msgid "Validation disabled until you set allowSessionAccess in config.php"
+msgstr ""
+
+#, fuzzy
+msgid "This page is valid XHTML 1.0"
+msgstr "このページはHTML 4.01に準拠しています。"
+
+#, c-format
+msgid "Estimated time remaining: %d:%02d"
+msgstr ""
+
+#, c-format
+msgid "Memory used: %s, total: %s"
+msgstr ""
+
+msgid "Rows per album page"
+msgstr ""
+
+msgid "Columns per album page"
+msgstr ""
+
+msgid "Show image owners"
+msgstr ""
+
+msgid "Show album owners"
+msgstr ""
+
+msgid "Show micro navigation thumbnails"
+msgstr ""
+
+msgid "Number of items to show per page"
+msgstr ""
+
+msgid "Blocks to show in the sidebar"
+msgstr ""
+
+msgid "Blocks to show on album pages"
+msgstr ""
+
+msgid "Blocks to show on photo pages"
+msgstr ""
+
+msgid "View Samples"
+msgstr ""
+
+#, fuzzy
+msgid "Album Frame"
+msgstr "アルバム設定"
+
+#, fuzzy
+msgid "Item Frame"
+msgstr "移動するアイテム"
+
+#, fuzzy
+msgid "Photo Frame"
+msgstr "画像"
+
+#, fuzzy
+msgid "You must enter a number greater than 0"
+msgstr "0より大きい数字を入力しなくてはなりません"
+
+msgid "Format: [module.BlockName param=value] ..."
+msgstr ""
+
+#, c-format
+msgid "%dx%d"
+msgstr ""
 
 #, fuzzy
 msgid "Audio"
@@ -701,6 +735,9 @@ msgid ""
 "in the original data file (usually from EXIF data)."
 msgstr ""
 
+msgid "Processing..."
+msgstr ""
+
 msgid "Refresh Capture Dates"
 msgstr ""
 
@@ -783,8 +820,8 @@ msgid "Modules"
 msgstr "モジュール"
 
 #, fuzzy
-msgid "Layouts and Themes"
-msgstr "レイアウト"
+msgid "Themes"
+msgstr "テーマ"
 
 msgid "Display"
 msgstr ""
@@ -867,13 +904,10 @@ msgstr "ローカルのアップロードディレクトリを削除しました
 msgid "Test email sent successfully"
 msgstr "アルバム作成に成功しました。"
 
-msgid "Error sending test email, see below for details"
+msgid "There was a problem processing your request, see below for details."
 msgstr ""
 
-msgid "Invalid cookie path"
-msgstr ""
-
-msgid "Invalid cookie domain"
+msgid "Error sending test email, see below for details."
 msgstr ""
 
 #, fuzzy
@@ -891,10 +925,6 @@ msgstr ""
 
 msgid "Default language"
 msgstr "デフォルト言語"
-
-#, fuzzy
-msgid "Language selector in sidebar"
-msgstr "言語設定"
 
 msgid "gettext"
 msgstr ""
@@ -981,9 +1011,6 @@ msgstr ""
 msgid "Session Settings"
 msgstr "セッション設定"
 
-msgid "Login Method"
-msgstr ""
-
 #, fuzzy
 msgid "Session Lifetime"
 msgstr "セッション設定"
@@ -1028,6 +1055,10 @@ msgstr "パスワード"
 msgid "SMTP From Address"
 msgstr "メールアドレス"
 
+#, fuzzy
+msgid "Invalid email address"
+msgstr "メールアドレス"
+
 msgid ""
 "Send a test email to verify your settings are correct (whether using PHP "
 "mail or SMTP settings above).  Below enter a recipient email address for a "
@@ -1036,10 +1067,6 @@ msgstr ""
 
 msgid "Send Email"
 msgstr ""
-
-#, fuzzy
-msgid "Invalid email address"
-msgstr "メールアドレス"
 
 msgid "Email Test Error"
 msgstr ""
@@ -1085,7 +1112,13 @@ msgid ""
 "not, they will experience login / logout / lost session problems."
 msgstr ""
 
+msgid "Invalid cookie path"
+msgstr ""
+
 msgid "Domain"
+msgstr ""
+
+msgid "Invalid cookie domain"
 msgstr ""
 
 msgid "Locking System"
@@ -1389,126 +1422,6 @@ msgid_plural "%d groups match your filter"
 msgstr[0] "%dグループがフィルタにマッチしました"
 msgstr[1] ""
 
-#, fuzzy
-msgid "Gallery Layouts"
-msgstr "Gallery モジュール"
-
-#, fuzzy, c-format
-msgid "Successfully activated layout %s"
-msgstr "%d個のファイルの追加に成功しました。"
-
-#, c-format
-msgid "Successfully deactivated layout %s"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Successfully installed layout %s"
-msgstr "%d個のファイルの追加に成功しました。"
-
-#, fuzzy, c-format
-msgid "Successfully uninstalled layout %s"
-msgstr "%d個のファイルの追加に成功しました。"
-
-#, fuzzy, c-format
-msgid "Successfully upgraded layout %s"
-msgstr "%d個のファイルの追加に成功しました。"
-
-#, fuzzy
-msgid "Successfully saved default album settings"
-msgstr "%d個のファイルの追加に成功しました。"
-
-#, fuzzy
-msgid "Restored layout settings"
-msgstr "アカウント設定"
-
-#, fuzzy
-msgid "All Layouts"
-msgstr "レイアウト"
-
-msgid "Defaults"
-msgstr "デフォルト"
-
-#, fuzzy
-msgid "Layout Name"
-msgstr "レイアウト"
-
-msgid "Version"
-msgstr "バージョン"
-
-#, fuzzy
-msgid "Installed"
-msgstr "インストール"
-
-msgid "Actions"
-msgstr "アクション"
-
-#, fuzzy
-msgid "Status: Not Installed"
-msgstr "インストール"
-
-#, fuzzy
-msgid "Status: Active"
-msgstr "アクティブ"
-
-msgid "Status: Inactive"
-msgstr ""
-
-msgid "Status: Upgrade Required (Inactive)"
-msgstr ""
-
-msgid "Status: Incompatible Layout (Inactive)"
-msgstr ""
-
-msgid "Incompatible layout!"
-msgstr ""
-
-#, c-format
-msgid "Core API Required: %s (available: %s)"
-msgstr ""
-
-#, c-format
-msgid "Layout API Required: %s (available: %s)"
-msgstr ""
-
-#, fuzzy
-msgid "(default)"
-msgstr "デフォルト"
-
-#, fuzzy
-msgid ""
-"These are default display settings for albums in your gallery.  They can be "
-"overridden in each album."
-msgstr "これはデフォルト値です。それぞれのアルバムで別の値に設定できます。"
-
-msgid "Default sort order"
-msgstr "既定のソート順:"
-
-msgid "with"
-msgstr ""
-
-msgid "Default layout"
-msgstr "デフォルトレイアウト"
-
-msgid "Default theme"
-msgstr "デフォルトテーマ"
-
-#, fuzzy
-msgid "New albums"
-msgstr "アルバム編集"
-
-#, fuzzy, c-format
-msgid "%s Layout Settings"
-msgstr "アカウント設定"
-
-#, fuzzy
-msgid ""
-"These are the global settings for the layout.  They can be overridden at the "
-"album level."
-msgstr "これはデフォルト値です。それぞれのアルバムで別の値に設定できます。"
-
-msgid "There are no settings for this layout"
-msgstr ""
-
 msgid "System Maintenance"
 msgstr ""
 
@@ -1595,10 +1508,38 @@ msgstr ""
 msgid "Module Name"
 msgstr "モジュール名"
 
+msgid "Version"
+msgstr "バージョン"
+
+#, fuzzy
+msgid "Installed"
+msgstr "インストール"
+
+msgid "Actions"
+msgstr "アクション"
+
+#, fuzzy
+msgid "Status: Not Installed"
+msgstr "インストール"
+
+#, fuzzy
+msgid "Status: Active"
+msgstr "アクティブ"
+
+msgid "Status: Inactive"
+msgstr ""
+
+msgid "Status: Upgrade Required (Inactive)"
+msgstr ""
+
 msgid "Status: Incompatible Module (Inactive)"
 msgstr ""
 
 msgid "Incompatible module!"
+msgstr ""
+
+#, c-format
+msgid "Core API Required: %s (available: %s)"
 msgstr ""
 
 #, c-format
@@ -1620,6 +1561,123 @@ msgstr ""
 #, fuzzy
 msgid "Uninstall"
 msgstr "インストール"
+
+#, fuzzy
+msgid "Gallery Themes"
+msgstr "Gallery"
+
+#, fuzzy, c-format
+msgid "Successfully activated theme %s"
+msgstr "%d個のファイルの追加に成功しました。"
+
+#, fuzzy, c-format
+msgid "Successfully deactivated theme %s"
+msgstr "%d個のファイルの追加に成功しました。"
+
+#, fuzzy, c-format
+msgid "Successfully installed theme %s"
+msgstr "%d個のファイルの追加に成功しました。"
+
+#, fuzzy, c-format
+msgid "Successfully uninstalled theme %s"
+msgstr "%d個のファイルの追加に成功しました。"
+
+#, fuzzy, c-format
+msgid "Successfully upgraded theme %s"
+msgstr "%d個のファイルの追加に成功しました。"
+
+#, fuzzy
+msgid "Successfully saved default album settings"
+msgstr "%d個のファイルの追加に成功しました。"
+
+#, fuzzy
+msgid "Restored theme settings"
+msgstr "アカウント設定"
+
+#, fuzzy
+msgid "All Themes"
+msgstr "テーマ"
+
+msgid "Defaults"
+msgstr "デフォルト"
+
+#, fuzzy
+msgid "Theme Name"
+msgstr "テーマ"
+
+msgid "Status: Incompatible Theme (Inactive)"
+msgstr ""
+
+msgid "Incompatible theme!"
+msgstr ""
+
+#, c-format
+msgid "Theme API Required: %s (available: %s)"
+msgstr ""
+
+#, fuzzy
+msgid "(default)"
+msgstr "デフォルト"
+
+#, fuzzy
+msgid ""
+"These are default display settings for albums in your gallery.  They can be "
+"overridden in each album."
+msgstr "これはデフォルト値です。それぞれのアルバムで別の値に設定できます。"
+
+msgid "Default sort order"
+msgstr "既定のソート順:"
+
+msgid "with"
+msgstr ""
+
+msgid "Default theme"
+msgstr "デフォルトテーマ"
+
+#, fuzzy
+msgid "New albums"
+msgstr "アルバム編集"
+
+#, fuzzy, c-format
+msgid "%s Theme Settings"
+msgstr "アカウント設定"
+
+#, fuzzy
+msgid ""
+"These are the global settings for the theme.  They can be overridden at the "
+"album level."
+msgstr "これはデフォルト値です。それぞれのアルバムで別の値に設定できます。"
+
+msgid "Available"
+msgstr ""
+
+msgid "Choose a block"
+msgstr ""
+
+#, fuzzy
+msgid "Selected"
+msgstr "削除"
+
+msgid "Remove"
+msgstr "削除"
+
+#, fuzzy
+msgid "Move Up"
+msgstr "移動"
+
+#, fuzzy
+msgid "Move Down"
+msgstr "移動"
+
+msgid "Parameter"
+msgstr ""
+
+#, fuzzy
+msgid "Value"
+msgstr "拡大/縮小"
+
+msgid "There are no settings for this theme"
+msgstr ""
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime "
@@ -1692,6 +1750,58 @@ msgstr "サムネイルを再生成"
 #, fuzzy
 msgid "This is a test email from Gallery2"
 msgstr "これはあなたのGalleryのトップです"
+
+msgid "Edit Conflict!"
+msgstr ""
+
+msgid "Security Violation"
+msgstr "セキュリティ侵害"
+
+msgid "Database Error"
+msgstr ""
+
+msgid "Error"
+msgstr "エラー"
+
+msgid ""
+"Your change cannot be completed because somebody else has made a conflicting "
+"change to the same item.  Use the back button in your browser to go back to "
+"the page you were on, then <b>reload that page</b> and try your change again."
+msgstr ""
+
+msgid "Go back and try again"
+msgstr ""
+
+msgid ""
+"Alternatively, you can return to the main Gallery page and resume browsing."
+msgstr ""
+
+msgid "The action you attempted is not permitted."
+msgstr "あなたが試行したアクションは許可されていません。"
+
+msgid "An error has occurred while interacting with the database."
+msgstr ""
+
+msgid ""
+"The exact nature of database errors is not captured unless Gallery debug "
+"mode is enabled in config.php.  Before seeking support for this error please "
+"enable buffered debug output and retry the operation.  Look near the bottom "
+"of the lengthy debug output to find error details."
+msgstr ""
+
+msgid "An error has occurred."
+msgstr ""
+
+#, fuzzy
+msgid "Back to the Gallery"
+msgstr "Galleryをブラウズ"
+
+msgid "Error Detail"
+msgstr ""
+
+#, fuzzy
+msgid "System Information"
+msgstr "宛先"
 
 msgid ""
 "You don't have any Graphics Toolkit activated that can handle JPEG images.  "
@@ -2109,16 +2219,10 @@ msgstr ""
 
 #, fuzzy
 msgid ""
-"Choose a layout for this album. (The way the album is arranged on the page)"
+"Choose a theme for this album. (The way the album is arranged on the page)"
 msgstr ""
 "このアルバムの配置方法を選択してください。 (ギャラリーがページ上で配置される"
 "方法)"
-
-msgid "Theme"
-msgstr "テーマ"
-
-msgid "Choose a theme for this album.  (The look and feel of this album)"
-msgstr "このアルバムのテーマを選んでください。(このアルバムのルック&フィール)"
 
 #, fuzzy
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
@@ -2301,23 +2405,6 @@ msgid ""
 "cannot create or modify a thumbnail."
 msgstr ""
 
-#, c-format
-msgid ""
-"This album is configured to use the <b>%s</b> layout. These settings only "
-"apply to the layout for this album."
-msgstr ""
-
-#, fuzzy
-msgid "Setting"
-msgstr "Gallery 設定"
-
-#, fuzzy
-msgid "Value"
-msgstr "拡大/縮小"
-
-msgid "Use Global"
-msgstr ""
-
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the "
 "movie's width and height.  If you have installed a graphics toolkit that can "
@@ -2447,6 +2534,19 @@ msgstr ""
 
 msgid "Restore original"
 msgstr "オリジナルへ戻す"
+
+#, c-format
+msgid ""
+"This album is configured to use the <b>%s</b> theme. These settings only "
+"apply to the theme for this album."
+msgstr ""
+
+#, fuzzy
+msgid "Setting"
+msgstr "Gallery 設定"
+
+msgid "Use Global"
+msgstr ""
 
 #, fuzzy
 msgid "Album Highlight"
@@ -2615,9 +2715,6 @@ msgstr "グループ名"
 msgid "Permission"
 msgstr "パーミッション"
 
-msgid "Remove"
-msgstr "削除"
-
 msgid "New Group Permission"
 msgstr "新しいグループ パーミッション"
 
@@ -2673,9 +2770,6 @@ msgstr ""
 
 msgid "Reorder"
 msgstr "並べ替え"
-
-msgid "Go"
-msgstr ""
 
 msgid "Continue..."
 msgstr ""
@@ -2742,9 +2836,6 @@ msgstr "%d個のファイルの追加に成功しました。"
 #, c-format
 msgid "To fix this problem you can either %s or %s."
 msgstr ""
-
-msgid "Site Administration"
-msgstr "サイト管理"
 
 msgid "Admin Options"
 msgstr "管理オプション"
@@ -2963,20 +3054,104 @@ msgstr ""
 msgid "Thank you!"
 msgstr ""
 
+msgid "guest"
+msgstr "ゲスト"
+
+#, c-format
+msgid "display mode: %s"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Date: %s"
+msgstr "ユーザー削除"
+
+#, fuzzy, c-format
+msgid "Owner: %s"
+msgstr "所有者"
+
+#, fuzzy, c-format
+msgid "Size: %d item"
+msgid_plural "Size: %d items"
+msgstr[0] "%d分"
+
+#, fuzzy, c-format
+msgid "(%d item total)"
+msgid_plural "(%d items total)"
+msgstr[0] "%d分"
+
+#, c-format
+msgid "Views: %d"
+msgstr ""
+
+#, fuzzy
+msgid "&laquo; album actions &raquo;"
+msgstr "&laquo; なし &raquo;"
+
+#, fuzzy
+msgid "&laquo; item actions &raquo;"
+msgstr "&laquo; なし &raquo;"
+
+msgid "Go"
+msgstr ""
+
+msgid "next"
+msgstr ""
+
+msgid "last"
+msgstr ""
+
+#, fuzzy
+msgid "first"
+msgstr "|< 最初"
+
+#, fuzzy
+msgid "previous"
+msgstr "先頭ページ"
+
+msgid "Page:"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "%d. %s"
+msgstr "ユーザ編集"
+
+#, fuzzy
+msgid "Size: "
+msgstr "サイズ"
+
+msgid "Full size: "
+msgstr ""
+
+#, fuzzy
+msgid "Language selector"
+msgstr "言語設定"
+
+#, fuzzy
+msgid "Item actions"
+msgstr "アイテム パーミッション"
+
+#, fuzzy
+msgid "Login block"
+msgstr "ログイン"
+
+msgid "Links to album/photo peers"
+msgstr ""
+
 #, fuzzy
 msgid "Successfully deleted directory: /cache/entity"
 msgstr "%d個のファイルの追加に成功しました。"
 
 #, fuzzy
-msgid "Successfully deleted directory: /cache/layout"
+msgid "Successfully deleted directory: /cache/theme"
 msgstr "%d個のファイルの追加に成功しました。"
 
 #, fuzzy
 msgid "Successfully deleted directory: /cache/module"
 msgstr "%d個のファイルの追加に成功しました。"
 
-msgid "Unable to delete directory: /cache/layout"
-msgstr ""
+#, fuzzy
+msgid "Unable to delete directory: /cache/theme"
+msgstr "%d個のファイルの追加に成功しました。"
 
 msgid "Unable to delete directory: /templates_c"
 msgstr ""
@@ -2988,661 +3163,6 @@ msgstr ""
 msgid "[test] A permission"
 msgstr "パーミッション"
 
-msgid "Gallery Debug Output"
-msgstr "Gallery デバッグ出力"
-
 #, fuzzy
-msgid "This page is valid XHTML 1.0"
-msgstr "このページはHTML 4.01に準拠しています。"
-
-#, fuzzy, c-format
-msgid "Gallery %s"
-msgstr "Gallery"
-
-msgid "Edit Conflict!"
-msgstr ""
-
-msgid "Security Violation"
-msgstr "セキュリティ侵害"
-
-msgid "Database Error"
-msgstr ""
-
-msgid "Error"
-msgstr "エラー"
-
-msgid ""
-"Your change cannot be completed because somebody else has made a conflicting "
-"change to the same item.  Use the back button in your browser to go back to "
-"the page you were on, then <b>reload that page</b> and try your change again."
-msgstr ""
-
-msgid "Go back and try again"
-msgstr ""
-
-msgid ""
-"Alternatively, you can return to the main Gallery page and resume browsing."
-msgstr ""
-
-msgid "The action you attempted is not permitted."
-msgstr "あなたが試行したアクションは許可されていません。"
-
-msgid "An error has occurred while interacting with the database."
-msgstr ""
-
-msgid ""
-"The exact nature of database errors is not captured unless Gallery debug "
-"mode is enabled in config.php.  Before seeking support for this error please "
-"enable buffered debug output and retry the operation.  Look near the bottom "
-"of the lengthy debug output to find error details."
-msgstr ""
-
-msgid "An error has occurred."
-msgstr ""
-
-#, fuzzy
-msgid "Back to the Gallery"
-msgstr "Galleryをブラウズ"
-
-msgid "Error Detail"
-msgstr ""
-
-#, fuzzy
-msgid "System Information"
-msgstr "宛先"
-
-msgid "Redirect"
-msgstr "リダイレクト"
-
-msgid "You are in debug mode so we are not automatically redirecting."
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Welcome, %s"
-msgstr "ユーザー削除"
-
-#, fuzzy, c-format
-msgid "(%d item)"
-msgid_plural "(%d items)"
-msgstr[0] "%d分"
-
-#, fuzzy, c-format
-msgid "%d. %s"
-msgstr "ユーザ編集"
-
-#~ msgid "Gallery Administrator"
-#~ msgstr "Gallery 管理者"
-
-#, fuzzy
-#~ msgid "Administrator Recovery"
-#~ msgstr "パスワード"
-
-#, fuzzy
-#~ msgid "Use As Parent&rsquo;s Thumbnail?"
-#~ msgstr "親のサムネイルとして使用しますか?"
-
-#~ msgid "Yes, highlight this item!"
-#~ msgstr "はい、これをハイライト画像にします。"
-
-#~ msgid "You must enter a thumbnail size"
-#~ msgstr "サムネイルのサイズを入力しなくてはなりません"
-
-#~ msgid "Undo"
-#~ msgstr "やり直し"
-
-#~ msgid "[change]"
-#~ msgstr "[変更]"
-
-#~ msgid "required"
-#~ msgstr "必須"
-
-#, fuzzy
-#~ msgid "Status: Not"
-#~ msgstr "アクティブ"
-
-#, fuzzy
-#~ msgid "add"
-#~ msgstr "追加"
-
-#, fuzzy
-#~ msgid "cancel"
-#~ msgstr "キャンセル"
-
-#~ msgid "edit user"
-#~ msgstr "ユーザ編集"
-
-#, fuzzy
-#~ msgid "no"
-#~ msgstr "やり直し"
-
-#~ msgid "reset"
-#~ msgstr "リセット"
-
-#~ msgid "save"
-#~ msgstr "保存"
-
-#~ msgid "undo"
-#~ msgstr "やり直し"
-
-#~ msgid "Edit User Preferences"
-#~ msgstr "ユーザ設定を変更する"
-
-#, fuzzy
-#~ msgid "Manual Sort Order"
-#~ msgstr "既定のソート順:"
-
-#, fuzzy
-#~ msgid "&laquo; Parent Directory &raquo;"
-#~ msgstr "&laquo; ソートなし &laquo;"
-
-#, fuzzy
-#~ msgid "Rotate/Scale"
-#~ msgstr "回転"
-
-#, fuzzy
-#~ msgid "Sizes"
-#~ msgstr "サイズ"
-
-#~ msgid "Lifetime"
-#~ msgstr "寿命"
-
-#~ msgid "Specify the lifetime of the session here."
-#~ msgstr "セッションの持続時間を指定してください。"
-
-#~ msgid "Edit Group Members"
-#~ msgstr "グループメンバーを編集中"
-
-#, fuzzy
-#~ msgid "Layouts"
-#~ msgstr "レイアウト"
-
-#~ msgid "&laquo; No Sort Order &raquo;"
-#~ msgstr "&laquo; ソートなし &laquo;"
-
-#, fuzzy
-#~ msgid "Restored original photo successfully"
-#~ msgstr "オリジナル画像へ戻すことに成功しました"
-
-#~ msgid "guest"
-#~ msgstr "ゲスト"
-
-#~ msgid "Log in"
-#~ msgstr "ログイン"
-
-#~ msgid "admin"
-#~ msgstr "管理者"
-
-#, fuzzy
-#~ msgid "Powered by Gallery 2"
-#~ msgstr "Powered by Gallery %s"
-
-#, fuzzy
-#~ msgid "Delete Album"
-#~ msgstr "アルバム編集"
-
-#, fuzzy
-#~ msgid "Edit Album"
-#~ msgstr "アルバム編集"
-
-#~ msgid "Full name"
-#~ msgstr "フルネーム"
-
-#, fuzzy
-#~ msgid "Move Album"
-#~ msgstr "アルバム編集"
-
-#~ msgid "Site admin"
-#~ msgstr "サイト管理"
-
-#, fuzzy
-#~ msgid "delete album"
-#~ msgstr "アルバム編集"
-
-#, fuzzy
-#~ msgid "edit album"
-#~ msgstr "アルバム編集"
-
-#~ msgid "Album Settings"
-#~ msgstr "アルバム設定"
-
-#~ msgid "%d file found"
-#~ msgid_plural "%d files found"
-#~ msgstr[0] "%d個のファイルを発見"
-#~ msgstr[1] ""
-
-#~ msgid "Changes saved successfully."
-#~ msgstr "変更の保存に成功しました。"
-
-#~ msgid "Item Thumbnail Size and Resizes"
-#~ msgstr "アイテム サムネイル サイズ リサイズ"
-
-#~ msgid "Specify the thumbnail size of this item here:"
-#~ msgstr "このアイテムのサムネイルのサイズをここで指定してください:"
-
-#~ msgid "Add Items to this Album"
-#~ msgstr "このアルバムにアイテム追加"
-
-#~ msgid ""
-#~ "Gallery can handle files of any format.  However, it can only create "
-#~ "automatic resizes and thumbnails for certain types of files."
-#~ msgstr ""
-#~ "Galleryは任意のファイル形式を扱うことができます。しかし、特定のファイル形"
-#~ "式のみ自動リサイズやサムネイル作成が可能です。"
-
-#, fuzzy
-#~ msgid "Layout Settings"
-#~ msgstr "アカウント設定"
-
-#, fuzzy
-#~ msgid "edit general"
-#~ msgstr "ユーザ編集"
-
-#, fuzzy
-#~ msgid "edit layout"
-#~ msgstr "デフォルトレイアウト"
-
-#, fuzzy
-#~ msgid "Animation Settings"
-#~ msgstr "アカウント設定"
-
-#, fuzzy
-#~ msgid "Edit Layout Settings"
-#~ msgstr "アカウント設定"
-
-#, fuzzy
-#~ msgid "Edit Movie"
-#~ msgstr "サイズ編集"
-
-#, fuzzy
-#~ msgid "Move Item"
-#~ msgstr "アイテム移動"
-
-#, fuzzy
-#~ msgid "Photo Settings"
-#~ msgstr "アカウント設定"
-
-#, fuzzy
-#~ msgid "edit movie"
-#~ msgstr "アイテム編集"
-
-#, fuzzy
-#~ msgid "delete image"
-#~ msgstr "アイテム削除"
-
-#, fuzzy
-#~ msgid "delete movie"
-#~ msgstr "アイテム削除"
-
-#, fuzzy
-#~ msgid "move animation"
-#~ msgstr "アイテム移動"
-
-#, fuzzy
-#~ msgid "move movie"
-#~ msgstr "アイテム移動"
-
-#~ msgid "Average"
-#~ msgstr "平均"
-
-#~ msgid "Calls"
-#~ msgstr "呼び出し"
-
-#~ msgid "Combined"
-#~ msgstr "結合"
-
-#~ msgid "Error: %s"
-#~ msgstr "エラー: %s"
-
-#~ msgid "External"
-#~ msgstr "外部"
-
-#~ msgid "Function"
-#~ msgstr "機能"
-
-#~ msgid "Internal"
-#~ msgstr "内部"
-
-#~ msgid "Max"
-#~ msgstr "最大"
-
-#~ msgid "Profiling"
-#~ msgstr "プロフィール"
-
-#~ msgid "Total"
-#~ msgstr "総計"
-
-#~ msgid "* No Sort Order *"
-#~ msgstr "* ソートなし *"
-
-#~ msgid "This album has %d child."
-#~ msgid_plural "This album has %d children."
-#~ msgstr[0] "このアルバムは %d個の子アイテムを持ちます。"
-#~ msgstr[1] ""
-
-#~ msgid "General Item Properties"
-#~ msgstr "アイテム全般のプロパティ"
-
-#~ msgid "Preserve Original Image"
-#~ msgstr "オリジナルの画像を保護"
-
-#, fuzzy
-#~ msgid "edit image"
-#~ msgstr "画像編集"
-
-#~ msgid "Anonymous"
-#~ msgstr "Anonymous(匿名)"
-
-#~ msgid "Group Edit"
-#~ msgstr "グループ編集"
-
-#~ msgid "Legal Paths"
-#~ msgstr "適切なパス"
-
-#~ msgid "Next >>"
-#~ msgstr "次 >>"
-
-#, fuzzy
-#~ msgid "User Edit"
-#~ msgstr "編集"
-
-#, fuzzy
-#~ msgid "You cannot delete the All Users group!"
-#~ msgstr "'all users'グループを削除することはできません。"
-
-#, fuzzy
-#~ msgid "You must select a directory to remove"
-#~ msgstr "削除するユーザーを選択しなくてはなりません。"
-
-#~ msgid "You must select a group"
-#~ msgstr "グループを選択しなくてはなりません"
-
-#, fuzzy
-#~ msgid "You must select a user"
-#~ msgstr "グループを選択しなくてはなりません"
-
-#~ msgid "anonymous"
-#~ msgstr "anonymous(匿名)"
-
-#~ msgid "Add New"
-#~ msgstr "新規追加"
-
-#~ msgid "Add/Remove Group's Users"
-#~ msgstr "グループに属するユーザの追加/削除"
-
-#~ msgid "Allowed Local Server Directories"
-#~ msgstr "許可済のローカルサーバディレクトリ"
-
-#~ msgid ""
-#~ "Certain image manipulation operations (such as rotating and scaling) can "
-#~ "cause a permanent change to the original image.  In these cases, Gallery "
-#~ "avoids modifying the original image by creating a duplicate that is "
-#~ "rotated or scaled to the dimensions that you prefer.  Future operations "
-#~ "(viewing, modifying) apply to the duplicate leaving your original image "
-#~ "intact.  This preserves your original image, but will consume more disk "
-#~ "space."
-#~ msgstr ""
-#~ "回転や拡大/縮小などの画像処理操作は、オリジナル画像に変更を加えることがあ"
-#~ "ります。この場合、Galleryはオリジナル画像を変更することを避け、複製をつ"
-#~ "くって処理を実行します。以後の操作(確認してから変更)はオリジナル画像をその"
-#~ "まま残して、複製したものに適用されます。これはあなたのオリジナル画像を保存"
-#~ "しますが、より多くのディスクスペースを必要とします。"
-
-#~ msgid "Counter-Clockwise 90&deg;"
-#~ msgstr "90度反時計回り"
-
-#~ msgid ""
-#~ "Disabling this option will cause any actions to happen to the original "
-#~ "image.  This will permanently change your original image!"
-#~ msgstr ""
-#~ "このオプションをつけない場合、オリジナルの画像を加工することになります。オ"
-#~ "リジナルの画像は元に戻すことができなくなります。"
-
-#~ msgid "Do you really want to delete group '%s'?"
-#~ msgstr "グループ '%s' を本当に削除しますか?"
-
-#~ msgid ""
-#~ "Each album can have a thumbnail image that is representative of its "
-#~ "contents.  This is called the <i>highlight image</i>.  You can select "
-#~ "this item's thumbnail to be the album's highlight image."
-#~ msgstr ""
-#~ "個々のアルバムはその内容の代表となるサムネイルを設定できます。これは、<i>"
-#~ "ハイライト画像</i>と呼ばれるものです。このアイテムのサムネイルをアルバムの"
-#~ "ハイライト画像に選ぶことができます。"
-
-#~ msgid "Edit your preferences"
-#~ msgstr "ユーザ設定の変更"
-
-#~ msgid "Editing this album"
-#~ msgstr "このアルバムを編集中"
-
-#~ msgid ""
-#~ "Enter a new password twice to change passwords, or leave it blank to "
-#~ "leave password unchanged."
-#~ msgstr ""
-#~ "パスワードを変更するには、新しいパスワードを2回入力してください。空白のま"
-#~ "まだと、パスワードは変更されません。"
-
-#~ msgid ""
-#~ "Every item will have a thumbnail.  The default thumbnail size you specify "
-#~ "here will create a uniform look for your album.  Gallery will create a "
-#~ "thumbnail that is no larger than the size you specify."
-#~ msgstr ""
-#~ "それぞれの画像はサムネイルが作成されます。ここで指定したデフォルトのサムネ"
-#~ "イルのサイズはあなたのアルバムにおいて、同じように作成されます。あなたが指"
-#~ "定した以上のサイズで、サムネイルが作成されることはありません。"
-
-#~ msgid "Gallery Login"
-#~ msgstr "Gallery ログイン"
-
-#~ msgid ""
-#~ "Gallery can automatically create intermediate resized versions of images "
-#~ "added to this album.  This is useful when you want to present larger "
-#~ "versions of an image without showing the full size image."
-#~ msgstr ""
-#~ "Galleryはこのアルバムに追加された画像をリサイズし、中間ファイルを自動的に"
-#~ "作成することができます。これは、大きな画像を縮小して公開したいときに便利で"
-#~ "す。"
-
-#~ msgid ""
-#~ "Gallery will create a thumbnail that is no larger than the size you "
-#~ "specify here."
-#~ msgstr "Galleryはここで指定した以上のサイズのサムネイルは作成しません。"
-
-#~ msgid ""
-#~ "How the items in this album are sorted.  New items that are added will be "
-#~ "placed in the album according to the order you specify here."
-#~ msgstr ""
-#~ "このアルバムでのアイテムのソート方法です。新しくこのアルバムに追加されたア"
-#~ "イテムは、ここで指定した方法にしたがって並べられます。"
-
-#~ msgid ""
-#~ "If you delete it, all of its children and any related data will be "
-#~ "deleted also!"
-#~ msgstr "それを削除すると、その子データや関連するデータも全て削除されます。"
-
-#~ msgid ""
-#~ "If you don't know the group name you'd like to work with, you can browse "
-#~ "or search for it here."
-#~ msgstr ""
-#~ "目的のグループ名がわからないのなら、ここでブラウズ or 検索することができま"
-#~ "す。"
-
-#~ msgid ""
-#~ "If you don't know the username you'd like to work with, you can browse or "
-#~ "search for it here."
-#~ msgstr ""
-#~ "目的のユーザー名がわからないのなら、ここでブラウズ or 検索することができま"
-#~ "す。"
-
-#~ msgid ""
-#~ "If you know the group name you'd like to work with, you can enter it here."
-#~ msgstr "目的のグループ名がわかっているなら、ここへ入力してください。"
-
-#~ msgid ""
-#~ "If you know the username you'd like to work with, you can enter it here."
-#~ msgstr "目的のユーザー名がわかっているなら、ここへ入力してください。"
-
-#~ msgid "Item Permissions"
-#~ msgstr "アイテム パーミッション"
-
-#~ msgid ""
-#~ "Keywords will not be visible to the end user, but are searchable. This "
-#~ "can be any character string.  It should not contain HTML."
-#~ msgstr ""
-#~ "キーワードはエンドユーザには見えませんが、検索はできます。これは任意の文字"
-#~ "が入力可能です。HTMLタグは使用しないでください。"
-
-#~ msgid "Or you can create a new group here."
-#~ msgstr "あるいは、ここから新しいグループを作成できます。"
-
-#~ msgid "Or you can create a new user here."
-#~ msgstr "あるいは、ここから新しいユーザを作成できます。"
-
-#~ msgid "Other intermediate resized versions of this image."
-#~ msgstr "この画像のサイズ変更された他のバージョン"
-
-#~ msgid "Return to User Administration"
-#~ msgstr "ユーザ管理に戻る"
-
-#~ msgid "Size (in pixels): "
-#~ msgstr "サイズ (ピクセル指定): "
-
-#~ msgid "Target size (in pixels):"
-#~ msgstr "目標のサイズ (ピクセル指定):"
-
-#~ msgid "The colors and images that will be used when viewing this album."
-#~ msgstr "このアルバムを見る時使用される色および画像。"
-
-#~ msgid ""
-#~ "The summary can be any character string, and should not contain any HTML"
-#~ msgstr "概要には任意の文字が使用できますが、HTMLタグは使用しないでください"
-
-#~ msgid ""
-#~ "The title can be any character string, and should not contain any HTML"
-#~ msgstr ""
-#~ "タイトルには任意の文字が使用できますが、HTMLタグは使用しないでください"
-
-#~ msgid ""
-#~ "The way that items will be arranged on the page when viewing this album."
-#~ msgstr "アルバムを閲覧するとき、アイテムがページに合わせられる方法。"
-
-#~ msgid "User name:"
-#~ msgstr "ユーザー名:"
-
-#~ msgid ""
-#~ "When you make changes to the values of the thumbnail size and/or the size "
-#~ "of the resized images, this will only apply to newly uploaded images. "
-#~ "Other images remain with their currently (possibly customized) thumbnails "
-#~ "and resizes. Click here to recreate the thumbnails and/or resizes based "
-#~ "on the new information."
-#~ msgstr ""
-#~ "サムネイルのサイズおよびサイズ変更済画像のサイズの値を変更したとき、これは"
-#~ "新しくアップロードされる画像のみに適用されます。他の画像は、現在の(カスタ"
-#~ "マイズ可能)サムネイルおよびリサイズが保持されます。ここをクリックし、新し"
-#~ "い情報にしたがってサムネイルおよびリサイズを作成しなおしてください。"
-
-#~ msgid "Yes, delete it!"
-#~ msgstr "はい、削除します。"
-
-#~ msgid "Yes, make this item the highlight!"
-#~ msgstr "はい、このアイテムをハイライトします。"
-
-#~ msgid "You can create a new album inside this one."
-#~ msgstr "このアルバムのなかに新しいアルバムを作成できます。"
-
-#~ msgid "You must enter a name"
-#~ msgstr "名前を入力しなくてはなりません"
-
-#, fuzzy
-#~ msgid "after this item:"
-#~ msgstr "このアイテムを編集中"
-
-#, fuzzy
-#~ msgid "before this item:"
-#~ msgstr "[core] アイテムの閲覧"
-
-#~ msgid "preferences"
-#~ msgstr "設定"
-
-#~ msgid "|< First"
-#~ msgstr "|< 最初"
-
-#~ msgid "%d days"
-#~ msgstr "%d日"
-
-#~ msgid "%d hours"
-#~ msgstr "%d時間"
-
-#~ msgid "%d minutes"
-#~ msgstr "%d分"
-
-#~ msgid "%d weeks"
-#~ msgstr "%d週間"
-
-#~ msgid "Add Files From Your Computer"
-#~ msgstr "ファイルのアップロード"
-
-#~ msgid "Add From a Website"
-#~ msgstr "ウェブサイトからファイルを転送"
-
-#~ msgid "Validate this Page"
-#~ msgstr "このページを検証する"
-
-#~ msgid "[core] Change item properties"
-#~ msgstr "[core] アイテムプロパティ変更"
-
-#~ msgid "[core] Change item text"
-#~ msgstr "[core] アイテムテキスト変更"
-
-#~ msgid "[core] Move item"
-#~ msgstr "[core] アイテム移動"
-
-#~ msgid "Group '%s' has been successfully deleted."
-#~ msgstr "グループ '%s'の削除に成功しました。"
-
-#~ msgid ""
-#~ "Note: This is the site administrator group.  Any users you add to this "
-#~ "group will have site-wide administrative privileges"
-#~ msgstr ""
-#~ "注意: これはサイト管理者グループです。このグループに追加されたグループはす"
-#~ "べて、サイト全体にわたる管理者特権を有します。"
-
-#~ msgid "Return to Group Administration"
-#~ msgstr "グループ管理に戻る"
-
-#~ msgid ""
-#~ "This group contains all Gallery site administrators.  Any users you add "
-#~ "to this group will have Gallery administrative privileges."
-#~ msgstr ""
-#~ "このグループはすべてのGalleryサイト管理者を含みます。このグループに追加し"
-#~ "たどんなユーザーもGallery管理特権を持ちます。"
-
-#~ msgid ""
-#~ "This group contains all Gallery users.  You cannot add or remove users "
-#~ "from it."
-#~ msgstr ""
-#~ "このグループはすべてのGalleryユーザを含みます。このグループに対し、ユーザ"
-#~ "を追加したり、削除することはできません。"
-
-#~ msgid "User '%s' has been successfully deleted."
-#~ msgstr "ユーザー '%s'の削除に成功しました。"
-
-#~ msgid "Item"
-#~ msgstr "アイテム"
-
-#, fuzzy
-#~ msgid "Activate a toolkit here"
-#~ msgstr "ここでツールキットを有効化"
-
-#~ msgid ""
-#~ "Choose a graphics toolkit to use.  You can only choose from the list of "
-#~ "currently active toolkits."
-#~ msgstr ""
-#~ "使用するグラフィックツールキットを選択してください。現在利用できるリストの"
-#~ "中から選んでください。"
-
-#~ msgid "No Graphics toolkits detected!"
-#~ msgstr "グラフィック ツールキットが検出されませんでした。"
-
-#~ msgid "Min"
-#~ msgstr "最小"
+msgid "[test] A second permission"
+msgstr "パーミッション"

@@ -54,8 +54,10 @@ class SetOriginationTimestampTask extends MaintenanceTask {
     /**
      * @see MaintenanceTask::run()
      */
-    function run(&$immediateView) {
+    function run() {
 	global $gallery;
+	$templateAdapter =& $gallery->getTemplateAdapter();
+
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret->isError()) {
@@ -63,12 +65,7 @@ class SetOriginationTimestampTask extends MaintenanceTask {
 	}
 	$message = $module->translate('Processing...');
 
-	$ret = $immediateView->doLoadImmediateTemplate();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
-	}
-
-	$ret = $immediateView->renderHeader(
+	$ret = $templateAdapter->updateProgressBar(
 	    $module->translate('Refresh Capture Dates'), $message, '');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
@@ -146,7 +143,7 @@ class SetOriginationTimestampTask extends MaintenanceTask {
 
 	    $message = $module->translate(
 		array('text' => 'Processing item %d of %d', 'arg1' => $i, 'arg2' => $total));
-	    $ret = $immediateView->renderStatusMessage($message, '', $i / $total);
+	    $ret = $templateAdapter->updateProgressBar($message, '', $i / $total);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
@@ -155,6 +152,14 @@ class SetOriginationTimestampTask extends MaintenanceTask {
 	return array(GalleryStatus::success(), true,
 		     array($module->translate(array('text' => 'Updated %d of %d items',
 						    'arg1' => $updated, 'arg2' => $total))));
+    }
+
+
+    /**
+     * @see MaintenanceTask::requiresProgressBar()
+     */
+    function requiresProgressBar() {
+	return true;
     }
 }
 ?>

@@ -102,7 +102,7 @@ class AdminCoreController extends GalleryController {
 		    $currentHost = '.' . $urlComponents['host'];
 		    /*
 		     * The cookie domain should be a substring of the host and contain an embedded
-		     * dot 
+		     * dot
 		     */
 		    if (strpos($currentHost, $cookieDomain) !== false
 			    && strpos($cookieDomain, '.', 1)) {
@@ -189,14 +189,11 @@ class AdminCoreController extends GalleryController {
 			   'exec.expectedStatus',
 			   'default.orderBy',
 			   'default.orderDirection',
-			   'default.layout',
 			   'default.theme',
 			   'default.language',
-			   'language.selector',
 			   'session.lifetime',
 			   'session.inactivityTimeout',
 			   'misc.markup',
-			   'misc.login',
 			   'smtp.host',
 			   'smtp.from',
 			   'smtp.username',
@@ -219,7 +216,7 @@ class AdminCoreController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
-	    
+
 	    $status['saved'] = 1;
 	    $redirect['view'] = 'core.SiteAdmin';
 	    $redirect['subView'] = 'core.AdminCore';
@@ -281,11 +278,9 @@ class AdminCoreView extends GalleryView {
 			   'permissions.file',
 			   'exec.expectedStatus',
 			   'default.language',
-			   'language.selector',
 			   'session.lifetime',
 			   'session.inactivityTimeout',
 			   'misc.markup',
-			   'misc.login',
 			   'smtp.host',
 			   'smtp.from',
 			   'smtp.username',
@@ -340,12 +335,6 @@ class AdminCoreView extends GalleryView {
 			$languageData['description'];
 		}
 	    }
-
-	    $AdminCore['languageSelectorList'] = array(
-		'none' => $module->translate('None'),
-		'guest' => $module->translate('Guest User Only'),
-		'all' => $module->translate('Everybody')
-	    );
 	}
 
 	/* Set up our session time lists */
@@ -390,10 +379,6 @@ class AdminCoreView extends GalleryView {
 	}
 
 	/* Miscellaneous lists */
-	$loginMethod = array('link' => $module->translate('Link to Login Page'),
-			     'form' => $module->translate('Form on Sidebar'),
-			     'both' => $module->translate('Both'));
-
 	$embeddedMarkupList = array('none' => $module->translate('No Markup'),
 				    'bbcode' => $module->translate('BBCode'),
 				    'html' => $module->translate('Raw HTML'));
@@ -409,7 +394,6 @@ class AdminCoreView extends GalleryView {
 	$AdminCore['can'] = $can;
 	$AdminCore['localServerDirList'] = $localServerDirList;
 	$AdminCore['sessionTimeList'] = $sessionTimeList;
-	$AdminCore['loginMethod'] = $loginMethod;
 	$AdminCore['embeddedMarkupList'] = $embeddedMarkupList;
 	$AdminCore['lockSystemList'] = $lockSystemList;
 

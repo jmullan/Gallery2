@@ -151,7 +151,7 @@ class SearchScanView extends GalleryView {
 	$searchResultThumbnails = array();
 	if ($form['formName'] == 'SearchScan' ||
 	    $form['formName'] == 'SearchShowAll' ||
-	    $form['formName'] == 'SearchSystemContent') {
+	    $form['formName'] == 'search_SearchBlock') {
 
 	    if (isset($form['searchCriteria'])) {
 		$form['searchCriteria'] = trim($form['searchCriteria']);
@@ -247,16 +247,6 @@ class SearchScanView extends GalleryView {
 	    'items' => $items,
 	    'slideshowAvailable' => $slideshowAvailable,
 	    'rootAlbum' => $rootAlbum->getMemberData()));
-
-	list ($ret, $navigationView) = GalleryView::loadView('core.Navigation');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	list ($ret, $ignored) = $navigationView->loadTemplate($template, $form);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'search');
 	if ($ret->isError()) {

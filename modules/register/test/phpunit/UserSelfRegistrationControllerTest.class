@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -42,7 +42,7 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
     function UserSelfRegistrationControllerTest($methodName) {
 	$this->GalleryControllerTestCase($methodName, 'register.UserSelfRegistration');
     }
-    
+
     function setUp() {
 	global $gallery;
 	parent::setUp();
@@ -104,7 +104,7 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
-    
+
     function testRegisterWithEMailActivation() {
 	global $gallery;
 	$ret = GalleryCoreApi::setPluginParameter('module', 'register', 'confirmation', 'email');
@@ -286,7 +286,7 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
     }
 
     /**
-     * Two plugins both returning errors.  The first plugin returns a false 'continue', 
+     * Two plugins both returning errors.  The first plugin returns a false 'continue',
      * so we should only see the first error in the form return
      */
     function testPlugins1() {
@@ -307,7 +307,7 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	$plugin2->setErrors(array('form[error][UserSelfRegistrationControllerTestPlugin2][anError]'));
 	$plugin2->setContinue(true);
 	$this->_controller->setPluginInstances(array($plugin1, $plugin2));
-	
+
 	$results = $this->handleRequest();
 	$this->assertEquals(
 	    array('delegate' => array('view' => 'core.UserAdmin', 'subView' => 'register.UserSelfRegistration'),
@@ -337,7 +337,7 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	$plugin2->setErrors(array('form[error][UserSelfRegistrationControllerTestPlugin2][anError]'));
 	$plugin2->setContinue(false);
 	$this->_controller->setPluginInstances(array($plugin1, $plugin2));
-	
+
 	$results = $this->handleRequest();
 	$this->assertEquals(
 	    array('delegate' => array('view' => 'core.UserAdmin', 'subView' => 'register.UserSelfRegistration'),
@@ -377,7 +377,7 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 		  'status' => array('activatedUser' => $userName),
 		  'error' => array()),
 	    $results);
-	    
+
 	/* find userid */
 	list($ret, $user) = GalleryCoreApi::fetchUserByUserName($userName);
 	if ($ret->isError()) {
@@ -457,7 +457,7 @@ class RegisterDummyPlatform {
 
     function fclose($handle) {
 	return $this->_platform->fclose($handle);
-    }    
+    }
 }
 
 
@@ -468,7 +468,7 @@ class UserSelfRegistrationControllerTestPlugin extends ValidationPlugin {
     function setContinue($continue) {
 	$this->_continue = $continue;
     }
-    
+
     function setErrors($errors) {
 	$this->_errors = $errors;
     }

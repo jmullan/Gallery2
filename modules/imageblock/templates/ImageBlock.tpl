@@ -5,7 +5,7 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 {foreach from=$ImageBlockSystemContent.blocks item=block}
-<div class="gbBlock">
+<div class="one-image">
   {if !empty($block.title)}
     <h3> {g->text text=$block.title} </h3>
   {/if}
@@ -30,11 +30,13 @@
     {assign var=maxSize value=150}
   {/if}
   {if isset($ImageBlockSystemContent.$frameType)}
-    {g->block type="imageframe" frame=$ImageBlockSystemContent.$frameType}
+    {g->container type="imageframe.ImageFrame"
+                  frame=$ImageBlockSystemContent.$frameType
+                  uniqueId=$block.id}
       {$smarty.capture.link}
       {g->image item=$block.item image=$block.thumb id="%ID%" class="%CLASS%" maxSize=$maxSize}
       </a>
-    {/g->block}
+    {/g->container}
   {else}
     {$smarty.capture.link}
       {g->image item=$block.item image=$block.thumb class="giThumbnail" maxSize=$maxSize}
@@ -69,3 +71,4 @@
   {/if}
  </div>
 {/foreach}
+
