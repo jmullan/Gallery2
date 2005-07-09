@@ -480,7 +480,7 @@ class DatabaseSetupStep extends InstallStep {
 
 	    /* Include basic G2 classes to use G2 API to get the core version etc. */
 	    require_once(dirname(__FILE__) . '/../../modules/core/classes/Gallery.class');
-	    require_once(dirname(__FILE__) .'/../../modules/core/classes/GalleryDataCache.class');
+	    require_once(dirname(__FILE__) .'/../../modules/core/classes/GalleryDataCache.class');	    
 	    $GLOBALS['gallery'] =& new Gallery();
 	    global $gallery;
 	    $gallery->setConfig('data.gallery.base',
@@ -491,8 +491,8 @@ class DatabaseSetupStep extends InstallStep {
 	if ($level == $platformLevel && $initiated < $platformLevel) {
 	    /* Platform level requested, platform level not already loaded */
 	    $initiated = $platformLevel;
-
 	    require_once(dirname(__FILE__) . '/../../modules/core/classes/GalleryCoreApi.class');
+	    require_once(dirname(__FILE__) . '/../../modules/core/classes/GalleryCapabilities.class');
 	    require_once(dirname(__FILE__) . '/../../modules/core/classes/GalleryPlatform.class');
 	    $gallery->setPlatform(new GalleryPlatform());
 	    /* Configure G2 such that getInstalledVersions() can be called */
