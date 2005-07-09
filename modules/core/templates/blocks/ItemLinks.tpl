@@ -8,7 +8,7 @@
 {* one link, just show it as a link *}
 {if (isset($links) || isset($theme.itemLinks))}
   {if empty($item)}{assign var="item" value=$theme.item}{/if}
-  {if empty($links)}{assign var="links" value=$theme.itemLinks}{/if}
+  {if !isset($links)}{assign var="links" value=$theme.itemLinks}{/if}
   {if !isset($useDropdown)}{assign var="useDropdown" value=true}{/if}
 
   {if $useDropdown && count($links) > 1}
