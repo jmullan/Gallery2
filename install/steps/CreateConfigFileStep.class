@@ -182,7 +182,7 @@ class CreateConfigFileStep extends InstallStep {
 	    $versions['codebase'] = $galleryStub->getConfig('codebase.version');
 
 	    /* Compare the versions */
-	    if (version_compare($versions['installed'], $versions['codebase'], '==')) {
+	    if (($cmp = version_compare($versions['installed'], $versions['codebase'])) == 0) {
 		/* Installed version and codebase version are the same. Good. */
 		$versionsOk = true;
 	    } elseif ($cmp == -1) {
