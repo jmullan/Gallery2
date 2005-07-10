@@ -130,7 +130,7 @@ class ItemEditThemePluginTest extends ItemEditPluginTestCase {
 
 	/* Verify */
 	$this->assertEquals(array('setParameter(rows, 3)',
-				  sprintf('removeItemParameter(columns, %d)', $this->_album->getId())),
+				  sprintf('removeParameter(columns, %d)', $this->_album->getId())),
 			    ItemEditThemeControllerTestTheme::getMap());
     }
 }
@@ -192,9 +192,9 @@ class ItemEditThemeControllerTestTheme {
 	return $text;
     }
 
-    function removeItemParameter($key, $itemId) {
+    function removeParameter($key, $itemId) {
 	$map =& $this->getMap();
-	$map[] = "removeItemParameter($key, $itemId)";
+	$map[] = "removeParameter($key, $itemId)";
 	return GalleryStatus::success();
     }
 

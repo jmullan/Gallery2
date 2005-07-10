@@ -227,11 +227,25 @@ class GalleryView {
 	}
 
 	if (!isset($theme)) {
-	    return array(GalleryStatus::success(),
-			 array('redirect' => array('view' => 'core.ShowItemError',
-						   'problem' => 'missingTheme',
-						   'itemId' => $item->getId())),
-			 null);
+	    /*
+	     * Need to be able to show error page, login and site admin even if we have
+	     * no theme!  (In case our default theme is incompatible with current APIs)
+	     */
+	    switch (strtolower(get_class($this))) {
+	    case 'showitemerrorview':
+	    case 'useradminview':
+	    case 'siteadminview':
+		$theme = new GalleryTheme();
+		$theme->setId('fallbackTheme');
+		break;
+
+	    default:
+		return array(GalleryStatus::success(),
+			     array('redirect' => array('view' => 'core.ShowItemError',
+						       'problem' => 'missingTheme',
+						       'itemId' => $item->getId())),
+			     null);
+	    }
 	}
 
 	/* Albums have their own settings.  Items use their parent album's settings */

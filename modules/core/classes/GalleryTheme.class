@@ -61,7 +61,7 @@ class GalleryTheme extends GalleryPlugin {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(1, 1);
+	return array(2, 0);
     }
 
     /**
@@ -227,6 +227,24 @@ class GalleryTheme extends GalleryPlugin {
 				    'choices' => $list,
 				    'value' => $params['photoFrame']);
 	    }
+	}
+
+	/* ColorPack setting, if available */
+	list ($ret, $colorpack) = GalleryCoreApi::newFactoryInstance('ColorPackInterface_1_0');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (isset($colorpack) && isset($params['colorpack'])) {
+	    list ($ret, $list) = $colorpack->getColorPacks();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $settings[] = array('key' => 'colorpack',
+				'name' => $core->translate('Color Pack'),
+				'type' => 'single-select',
+				'choices' => $list,
+				'value' => $params['colorpack']);
 	}
 
 	return array(GalleryStatus::success(), $settings);
@@ -664,6 +682,26 @@ class GalleryTheme extends GalleryPlugin {
 		    }
 		}
 	    }
+	}
+
+	/* Load color pack if the theme supports them (and they're available) */
+	if (!empty($params['colorpack'])) {
+	    list ($ret, $colorpack) = GalleryCoreApi::newFactoryInstance('ColorPackInterface_1_0');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if (isset($colorpack)) {
+		$ret = $colorpack->selectColorPack($template, $params['colorpack']);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+	}
+
+	if ($this->getId() == 'fallbackTheme') {
+	    /* If theme failed to load then we're done */
+	    $theme['isFallback'] = true;
+	    return array(GalleryStatus::success(), $viewResults);
 	}
 
 	/*

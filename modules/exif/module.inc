@@ -41,11 +41,11 @@ class ExifModule extends GalleryModule {
 	$this->setId('exif');
 	$this->setName($gallery->i18n('EXIF/IPTC'));
 	$this->setDescription($gallery->i18n('Extract EXIF/IPTC data from JPEG photos'));
-	$this->setVersion('0.9.7'); /* Update upgrade() function below too */
+	$this->setVersion('0.9.8'); /* Update upgrade() function below too */
 	$this->setGroup('data', $this->translate('Extra Data'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredModuleApi(array(1, 0));
+	$this->setRequiredModuleApi(array(2, 0));
     }
 
     /**
@@ -120,6 +120,7 @@ class ExifModule extends GalleryModule {
 	    case '0.9.4':
 	    case '0.9.5':
 	    case '0.9.6':
+	    case '0.9.7':
 
 	    case 'end of upgrade path':
 		/*

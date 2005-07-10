@@ -88,11 +88,11 @@ class RewriteModuleExtras {
 		}
 	    }
 
-	    $ret = $module->removeItemParameter('views', 0);
+	    $ret = $module->removeParameter('views');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    $ret = $module->removeItemParameter('prefixes', 0);
+	    $ret = $module->removeParameter('prefixes');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -129,7 +129,7 @@ class RewriteModuleExtras {
 	case '0.1.7':
 	case '0.1.8':
 	    foreach (array('rewriteLocation', 'rewriteBase') as $key) {
-		$ret = $module->removeItemParameter($key, 0);
+		$ret = $module->removeParameter($key);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
@@ -140,7 +140,7 @@ class RewriteModuleExtras {
 	case '0.8.0':
 	case '0.8.1':
 	    foreach (array('prefixMap', 'usePrefixes') as $key) {
-		$ret = $module->removeItemParameter($key, 0);
+		$ret = $module->removeParameter($key);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
@@ -211,7 +211,7 @@ class RewriteModuleExtras {
 	case '0.9.9':
 	case '0.9.10':
 	    foreach (array('needOptions') as $key) {
-		$ret = $module->removeItemParameter($key, 0);
+		$ret = $module->removeParameter($key);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
@@ -226,6 +226,7 @@ class RewriteModuleExtras {
 	    }
 
 	case '0.9.11':
+	case '0.9.12':
 
 	case 'end of upgrade path':
 	    break;

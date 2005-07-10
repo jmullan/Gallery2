@@ -10,12 +10,6 @@
     NOT NULL
   
       ,
-    DB_COLUMN_PREFIXlayout
-      VARCHAR2(
-       32 
-      )
-    
-      ,
     DB_COLUMN_PREFIXtheme
       VARCHAR2(
        32 
@@ -48,7 +42,7 @@
       ) VALUES (
       'AlbumItem',
       1,
-      0
+      1
       );
 
   

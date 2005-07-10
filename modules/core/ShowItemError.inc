@@ -81,7 +81,7 @@ class ShowItemErrorView extends GalleryView {
 
 	default:
 	    /*
-	     * We know of no other problems!   Returning an results will
+	     * We know of no other problems!   Returning an empty result will
 	     * throw up a security violation page.
 	     */
 	    return array(GalleryStatus::success(), array());

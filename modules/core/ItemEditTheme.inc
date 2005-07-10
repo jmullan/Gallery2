@@ -87,7 +87,7 @@ class ItemEditTheme extends ItemEditPlugin {
 		foreach ($settings as $setting) {
 		    $key = $setting['key'];
 		    if (!empty($form['useGlobal'][$key])) {
-			$ret = $theme->removeItemParameter($key, $item->getId());
+			$ret = $theme->removeParameter($key, $item->getId());
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null, null);
 			}

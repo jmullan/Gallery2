@@ -42,14 +42,15 @@ class MatrixTheme extends GalleryTheme {
 	$this->setId('matrix');
 	$this->setName($gallery->i18n('Matrix'));
 	$this->setDescription($gallery->i18n('Standard Gallery2 look and feel'));
-	$this->setVersion('0.9.7');  /* Update MatrixTheme::upgrade also */
+	$this->setVersion('0.9.8');  /* Update MatrixTheme::upgrade also */
 	$this->setL10Domain('themes_matrix');
-	$this->setRequiredThemeApi(array(1, 1));
 	$this->setRequiredCoreApi(array(6, 0));
+	$this->setRequiredThemeApi(array(2, 0));
 	$this->setStandardSettings(
 	    array('rows' => 3, 'columns' => 3,
 		  'showImageOwner' => 0, 'showAlbumOwner' => 1,
 		  'albumFrame' => '', 'itemFrame' => '', 'photoFrame' => '',
+		  'colorpack' => '',
 		  'showMicroThumbs' => 0,
 		  'sidebarBlocks' => '',
 		  'albumBlocks' => '',
@@ -179,6 +180,22 @@ class MatrixTheme extends GalleryTheme {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
+	    $installedVersion = '0.9.7';
+	}
+
+	switch ($installedVersion) {
+	case '0.9.7':
+	    $ret = $this->setParameter('colorpack', '');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	case 'end of upgrade path':
+	    break;
+
+	default:
+	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
+					sprintf('Unknown theme version %s', $installedVersion));
 	}
 
 	return GalleryStatus::success();

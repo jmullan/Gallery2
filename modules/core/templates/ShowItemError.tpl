@@ -40,7 +40,12 @@
 	{g->text text="install or activate this theme"}
       </a>
     {/capture}
-    {g->text text="To fix this problem you can either %s or %s." arg1=$smarty.capture.optionOne
-     arg2=$smarty.capture.optionTwo}
+    {if isset($theme.isFallback)}
+      {g->text text="To fix this problem you can %s or select another default theme."
+       arg1=$smarty.capture.optionTwo}
+    {else}
+      {g->text text="To fix this problem you can either %s or %s." arg1=$smarty.capture.optionOne
+       arg2=$smarty.capture.optionTwo}
+    {/if}
   </p>
 </div>

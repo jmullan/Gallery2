@@ -382,25 +382,16 @@ class GalleryPlugin {
 	return GalleryStatus::success();
     }
 
+    /**
+     * Convenience method to remove a plugin parameter
+     *
+     * @param string the parameter name
+     * @param int the (optional) item id
+     * @return object GalleryStatus a status code
+     */
     function removeParameter($parameterName, $itemId=0) {
 	$ret = GalleryCoreApi::removePluginParameter(
 	    $this->getPluginType(), $this->getId(), $parameterName, $itemId);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	return GalleryStatus::success();
-    }
-
-    /**
-     * Remove a plugin parameter for a specific item
-     *
-     * @param string the parameter name
-     * @param int the item id
-     * @return object GalleryStatus a status code
-     */
-    function removeItemParameter($parameterName, $itemId) {
-	$ret = $this->removeParameter($parameterName, $itemId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

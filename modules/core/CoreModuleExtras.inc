@@ -733,7 +733,7 @@ class CoreModuleExtras {
 		    }
 		}
 	    }
-	    $ret = $module->removeItemParameter('uploadLocalServer.dirs', 0);
+	    $ret = $module->removeParameter('uploadLocalServer.dirs');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -1005,17 +1005,6 @@ class CoreModuleExtras {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    $query = '
-	    UPDATE
-	      [GalleryAlbumItem]
-	    SET
-	      [::theme] = [GalleryAlbumItem::layout]
-	    ';
-	    $ret = $storage->execute($query);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
 	    /* After this refactor we only support the matrix theme */
 	    $query = '
 	    UPDATE
@@ -1066,6 +1055,27 @@ class CoreModuleExtras {
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
+	    }
+
+	case '0.9.30':
+	    /* Removed layout column from AlbumItem; matrix is only theme for now: set default */
+	    $ret = $module->setParameter('default.theme', 'matrix');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $ret = $module->removeParameter('default.layout');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $query = '
+	    UPDATE
+	      [GalleryAlbumItem]
+	    SET
+	      [::theme] = NULL
+	    ';
+	    $ret = $storage->execute($query);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	case 'end of upgrade path':
@@ -1229,6 +1239,9 @@ $gallery->setConfig(\'cookieId\', \'' . $cookieId . '\');
 	case '0.9.26':
 	case '0.9.27':
 	case '0.9.28':
+	case '0.9.29':
+	case '0.9.30':
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we

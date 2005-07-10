@@ -39,11 +39,11 @@ class CaptchaModule extends GalleryModule {
 	$this->setId('captcha');
 	$this->setName($gallery->i18n('Captcha'));
 	$this->setDescription($gallery->i18n('Captcha'));
-	$this->setVersion('0.9.5'); /* Update upgrade() function below too */
+	$this->setVersion('0.9.6'); /* Update upgrade() function below too */
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredModuleApi(array(1, 0));
+	$this->setRequiredModuleApi(array(2, 0));
     }
 
     /**
@@ -73,7 +73,6 @@ class CaptchaModule extends GalleryModule {
     function upgrade($currentVersion) {
 
 	switch ($currentVersion) {
-
 	case '':
 	    break;
 
@@ -89,6 +88,8 @@ class CaptchaModule extends GalleryModule {
 	case '0.9.3':
 	case '0.9.4':
 	    /* Upgraded GalleryModule requirement to 1.0 */
+	case '0.9.5':
+	    /* Upgraded GalleryModule requirement to 2.0 */
 
 	case 'end of upgrade path':
 	    break;
