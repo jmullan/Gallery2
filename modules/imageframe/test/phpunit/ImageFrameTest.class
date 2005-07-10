@@ -107,6 +107,32 @@ class ImageFrameTest extends GalleryTestCase {
 	$this->assertEquals('http', substr($url, 0, 4), 'Url2 protocol');
 	$this->assert(preg_match('/12345/', $url), 'Url2 id');
     }
+
+    function testSmartyCounter() {
+	/*
+	 * Each imageframe is rendered in a separate {g->container} call which does
+	 * not pass $smarty by reference.  Hence we cannot store a counter in $smarty
+	 * and have the value retained between calls to generate a unique id for each
+	 * imageframe.  Luckily, {counter} stores its data in a static variable and
+	 * not in $smarty so we can use it.  This unit test verifies this behavior
+	 * (in case it changes in a future version of smarty).
+	 */
+	$smarty1 = GalleryTemplate::_getSmarty();
+	$smarty2 = GalleryTemplate::_getSmarty();
+	$smarty1->template_dir = dirname(dirname(__FILE__));
+	$smarty2->template_dir = dirname(dirname(__FILE__));
+
+	/* Verify these are separate instances */
+	$smarty1->assign('foo', 'bar');
+	$smarty2->assign('foo', 'hoho');
+	$this->assertEquals('bar', $smarty1->get_template_vars('foo'));
+
+	/* Verify {counter} works across smarty instances */
+	$this->assertEquals(array(GalleryStatus::success(), '1'),
+			    $smarty1->fetch('gallery:data/counter.tpl'));
+	$this->assertEquals(array(GalleryStatus::success(), '2'),
+			    $smarty2->fetch('gallery:data/counter.tpl'));
+    }
 }
 
 /**

@@ -31,8 +31,7 @@
   {/if}
   {if isset($ImageBlockSystemContent.$frameType)}
     {g->container type="imageframe.ImageFrame"
-                  frame=$ImageBlockSystemContent.$frameType
-                  uniqueId=$block.id}
+		  frame=$ImageBlockSystemContent.$frameType}
       {$smarty.capture.link}
       {g->image item=$block.item image=$block.thumb id="%ID%" class="%CLASS%" maxSize=$maxSize}
       </a>

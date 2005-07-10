@@ -71,11 +71,10 @@
                 {/if}
                 <div>
                   {if isset($theme.params.$frameType) && isset($child.thumbnail)}
-		    {g->container type="imageframe.ImageFrame"
-			          frame=$theme.params.$frameType
-			          uniqueId=$child.id}
+		    {g->container type="imageframe.ImageFrame" frame=$theme.params.$frameType}
 		      <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$child.id`"}">
-			{g->image id="%ID%" item=$child image=$child.thumbnail class="%CLASS% giThumbnail"}
+			{g->image id="%ID%" item=$child image=$child.thumbnail
+			 class="%CLASS% giThumbnail"}
 		      </a>
 		    {/g->container}
                   {elseif isset($child.thumbnail)}

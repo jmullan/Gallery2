@@ -6,7 +6,7 @@
  *}
 <div id="gsContent" class="gcBorder1">
   <div class="gbBlock gcBackground1">
-    {g->text text="Image Frame Samples"}
+    <h2> {g->text text="Image Frame Samples"} </h2>
   </div>
 
   <div>
