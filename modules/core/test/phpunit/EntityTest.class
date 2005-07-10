@@ -64,6 +64,12 @@ class EntityTest extends GalleryTestCase {
 	}
 	$this->_markFactoryModuleForCleanup('coreTest');
 	$this->_savedSession = $gallery->_session;
+	$gallery->_session = new GallerySession();
+	$ret = $gallery->_session->init();
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
     }
 
     function tearDown() {

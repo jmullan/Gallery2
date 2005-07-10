@@ -43,6 +43,12 @@ class SessionTest extends GalleryTestCase {
 
 	global $gallery;
 	$this->_savedSession = $gallery->_session;
+	$gallery->_session = new GallerySession();
+	$ret = $gallery->_session->init();
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 	
 	/*
 	 * Backup things that we will overwrite during the test (original values also needed in the

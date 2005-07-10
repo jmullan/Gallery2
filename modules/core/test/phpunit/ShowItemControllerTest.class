@@ -43,6 +43,12 @@ class ShowItemControllerTest extends GalleryControllerTestCase {
 
 	/* Bend the rules */
 	$this->_saveSession = $gallery->_session;
+	$gallery->_session = new GallerySession();
+	$ret = $gallery->_session->init();
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
     }
 
     function tearDown() {

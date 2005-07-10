@@ -56,6 +56,12 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	$this->_markForCleanup($this->_user);
 
 	$this->_saveSession = $gallery->_session;
+	$gallery->_session = new GallerySession();
+	$ret = $gallery->_session->init();
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
 	/* Disable all plugins by default. */
 	$this->_controller->setPluginInstances(array());

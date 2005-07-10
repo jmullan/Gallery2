@@ -89,6 +89,13 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
 	}
 
 	$this->_savedSession = $gallery->_session;
+	$gallery->_session = new GallerySession();
+	$ret = $gallery->_session->init();
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
 	$this->_savedUrlGenerator = $gallery->_urlGenerator;
 
 	$this->_urlGenerator = new RewriteUrlGenerator();
