@@ -25,11 +25,18 @@ class ImageBlockPreloads {
 
 	switch($preload) {
 	case 'ImageBlock':
+	    list ($ret, $moduleParams) =
+		GalleryCoreApi::fetchAllPluginParameters('module', 'imageblock');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	    $frameIds = array();
 	    foreach ($paramSet as $params) {
 		foreach (array('itemFrame', 'albumFrame', 'photoFrame') as $key) {
 		    if (isset($params[$key])) {
 			$frameIds[$params[$key]] = 1;
+		    } else if (isset($moduleParams[$key])) {
+			$frameIds[$moduleParams[$key]] = 1;
 		    }
 		}
 	    }
