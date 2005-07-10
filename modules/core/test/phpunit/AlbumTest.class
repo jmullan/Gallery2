@@ -640,16 +640,15 @@ class AlbumTest extends GalleryTestCase {
 	/* Create an album with one group of settings */
 	list ($ret, $album) = $this->_createRandomAlbum(
 	    $this->_parentAlbum->getId(),
-	    array('layout' => 'a', 'orderby' => 'b', 'orderdirection' => 'c', 'theme' => 'd'));
+	    array('theme' => 'a', 'orderby' => 'b', 'orderdirection' => 'c'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Set our defaults to something else */
-	foreach (array('default.orderBy' => 'w',
-		       'default.orderDirection' => 'x',
-		       'default.layout' => 'y',
-		       'default.theme' => 'z',
+	foreach (array('default.theme' => 'x',
+		       'default.orderBy' => 'y',
+		       'default.orderDirection' => 'z',
 		       'default.newAlbumsUseDefaults' => 'false')
 		 as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', $key, $value);
@@ -664,10 +663,9 @@ class AlbumTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals('a', $child1->getLayout());
+	$this->assertEquals('a', $child1->getTheme());
 	$this->assertEquals('b', $child1->getOrderBy());
 	$this->assertEquals('c', $child1->getOrderDirection());
-	$this->assertEquals('d', $child1->getTheme());
 
 	/* Now switch to using the defaults */
 	$ret = GalleryCoreApi::setPluginParameter(
@@ -682,10 +680,9 @@ class AlbumTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals(null, $child2->getLayout());
+	$this->assertEquals(null, $child2->getTheme());
 	$this->assertEquals(null, $child2->getOrderBy());
 	$this->assertEquals(null, $child2->getOrderDirection());
-	$this->assertEquals(null, $child2->getTheme());
     }
 
     /**

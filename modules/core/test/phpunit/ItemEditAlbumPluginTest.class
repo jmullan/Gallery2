@@ -212,7 +212,6 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
     function testInvalidSerialNumber() {
 	/* valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
-	GalleryUtilities::putRequestVariable('form[layout]', 'foo');
 	GalleryUtilities::putRequestVariable('form[theme]', 'bar');
 	GalleryUtilities::putRequestVariable('form[orderBy]', 'baz');
 	GalleryUtilities::putRequestVariable('form[orderDirection]', 'bletch');
@@ -282,7 +281,6 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
-	GalleryUtilities::putRequestVariable('form[layout]', 'foo');
 	GalleryUtilities::putRequestVariable('form[theme]', 'bar');
 	GalleryUtilities::putRequestVariable('form[orderBy]', '');
 	/* for empty orderBy, orderDirection can be omitted */
@@ -389,7 +387,6 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
-	GalleryUtilities::putRequestVariable('form[layout]', 'foo');
 	GalleryUtilities::putRequestVariable('form[theme]', 'bar');
 	GalleryUtilities::putRequestVariable('form[orderBy]', 'baz');
 	GalleryUtilities::putRequestVariable('form[orderDirection]', 'bletch');

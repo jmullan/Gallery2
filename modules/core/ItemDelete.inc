@@ -103,7 +103,7 @@ class ItemDeleteController extends GalleryController {
 	    /*
 	     * Figure out where to redirect upon success.
 	     * Can't use return url because it may be for an item we just deleted, but
-	     * check for g2_page param and include that if found (matrix layout specific..)
+	     * check for g2_page param and include that if found (matrix theme specific..)
 	     */
 	    $results['redirect'] = array('view' => 'core.ShowItem',
 					 'itemId' => $itemId);

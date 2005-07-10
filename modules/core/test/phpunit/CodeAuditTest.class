@@ -42,9 +42,7 @@ class CodeAuditTest extends CodeAuditTestCase {
 
 	$platform = $gallery->getPlatform();
 
-	$this->_exception['endphp'] = array(
-	    'layout.css.php' => 1
-	    );
+	$this->_exception['endphp'] = array();
 
 	$this->_exceptions['preamble'] =
 	    '{(:?/TestCase/|blocks/blocks.inc|(:?install|upgrade)/index.php|' .

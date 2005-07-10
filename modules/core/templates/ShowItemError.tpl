@@ -5,17 +5,17 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 <div class="gbBlock gcBackground1">
-  <h2> {g->text text="Configuration Error: Missing Layout"} </h2>
+  <h2> {g->text text="Configuration Error: Missing Theme"} </h2>
 </div>
 
 <div class="gbBlock">
-  <h3> {g->text text="Missing Layout"} </h3>
+  <h3> {g->text text="Missing Theme"} </h3>
 
   <p class="giDescription">
-    {capture name="layoutId"}
-      <b>{$ShowItemError.layoutId}</b>
+    {capture name="themeId"}
+      <b>{$ShowItemError.themeId}</b>
     {/capture}
-    {g->text text="This album is configured to use the %s layout, but it is either inactive or not installed." arg1=$smarty.capture.layoutId}
+    {g->text text="This album is configured to use the %s theme, but it is either inactive or not installed." arg1=$smarty.capture.themeId}
     {capture name="optionOne"}
       {if !$ShowItemError.canEdit}
 	<a href="{g->url arg1="view=core.UserAdmin" arg2="subView=core.UserLogin" arg3="return=1"}">
@@ -25,7 +25,7 @@
       {/if}
       <a href="{g->url arg1="view=core.ItemAdmin" arg2="subView=core.ItemEdit"
        arg3="editPlugin=ItemEditAlbum" arg4="itemId=`$ShowItemError.itemId`"}">
-	{g->text text="choose a new layout for this album"}
+	{g->text text="choose a new theme for this album"}
       </a>
     {/capture}
     {capture name="optionTwo"}
@@ -35,9 +35,9 @@
 	</a>
 	{g->text text="and then"}
       {/if}
-      <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminLayouts"
+      <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminThemes"
        arg3="mode=config"}">
-	{g->text text="install or activate this layout"}
+	{g->text text="install or activate this theme"}
       </a>
     {/capture}
     {g->text text="To fix this problem you can either %s or %s." arg1=$smarty.capture.optionOne

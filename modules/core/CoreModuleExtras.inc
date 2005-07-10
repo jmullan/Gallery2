@@ -101,7 +101,6 @@ class CoreModuleExtras {
 			   'exec.expectedStatus' => '0',
 			   'default.orderBy' => 'orderWeight',
 			   'default.orderDirection' => '1',
-			   'default.layout' => 'matrix',
 			   'default.theme' => 'matrix',
 			   'default.language' => GalleryTranslator::getLanguageCodeFromRequest(),
 			   'default.newAlbumsUseDefaults' => 'false',
@@ -806,8 +805,8 @@ class CoreModuleExtras {
 	    $gallery->guaranteeTimeLimit(60);
 	    list ($ret, $results) =
 	    $query = 'SELECT [GalleryDerivative::id]
-                      FROM [GalleryDerivative]
-                      WHERE [GalleryDerivative::isBroken] IS NULL';
+		      FROM [GalleryDerivative]
+		      WHERE [GalleryDerivative::isBroken] IS NULL';
 	    list ($ret, $searchResults) = $gallery->search($query);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -994,13 +993,13 @@ class CoreModuleExtras {
 	    /* Ginormous layout and theme consolidation refactor */
 
 	    $query = '
-            UPDATE
-              [GalleryPluginParameterMap]
-            SET
-              [::pluginType] = \'theme\'
-            WHERE
-              [GalleryPluginParameterMap::pluginType] = \'layout\'
-            ';
+	    UPDATE
+	      [GalleryPluginParameterMap]
+	    SET
+	      [::pluginType] = \'theme\'
+	    WHERE
+	      [GalleryPluginParameterMap::pluginType] = \'layout\'
+	    ';
 	    $ret = $storage->execute($query);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -1008,10 +1007,10 @@ class CoreModuleExtras {
 
 	    $query = '
 	    UPDATE
-              [GalleryAlbumItem]
-            SET
-              [::theme] = [GalleryAlbumItem::layout]
-            ';
+	      [GalleryAlbumItem]
+	    SET
+	      [::theme] = [GalleryAlbumItem::layout]
+	    ';
 	    $ret = $storage->execute($query);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -1020,23 +1019,23 @@ class CoreModuleExtras {
 	    /* After this refactor we only support the matrix theme */
 	    $query = '
 	    UPDATE
-              [GalleryAlbumItem]
-            SET
-              [::theme] = \'matrix\'
-            ';
+	      [GalleryAlbumItem]
+	    SET
+	      [::theme] = \'matrix\'
+	    ';
 	    $ret = $storage->execute($query);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    $query = '
-            UPDATE
-              [GalleryPluginMap]
-            SET
-              [::pluginType] = \'theme\'
-            WHERE
-              [GalleryPluginMap::pluginType] = \'layout\'
-            ';
+	    UPDATE
+	      [GalleryPluginMap]
+	    SET
+	      [::pluginType] = \'theme\'
+	    WHERE
+	      [GalleryPluginMap::pluginType] = \'layout\'
+	    ';
 	    $ret = $storage->execute($query);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);

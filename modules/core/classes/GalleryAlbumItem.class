@@ -66,6 +66,7 @@ class GalleryAlbumItem_core extends GalleryItem {
      *
      * @var string $_layout
      * @access private
+     * @deprecated
      */
     var $_layout;
 
@@ -167,10 +168,9 @@ class GalleryAlbumItem_core extends GalleryItem {
 
 	if ($useDefaults != 'true') {
 	    /* Use parent's settings */
-	    $this->setLayout($parent->getLayout());
+	    $this->setTheme($parent->getTheme());
 	    $this->setOrderBy($parent->getOrderBy());
 	    $this->setOrderDirection($parent->getOrderDirection());
-	    $this->setTheme($parent->getTheme());
 	}
 
 	$ret = $this->_createDir($parentPath . $albumName);
@@ -222,8 +222,7 @@ class GalleryAlbumItem_core extends GalleryItem {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Use site default layout, theme, sort order */
-	$this->setLayout('');
+	/* Use site default theme and sort order */
 	$this->setTheme('');
 	$this->setOrderBy('');
 	$this->setOrderDirection(ORDER_ASCENDING);
@@ -330,7 +329,7 @@ class GalleryAlbumItem_core extends GalleryItem {
 	 * Read lock the parent so that we don't have a race condition below.
 	 */
 	if (GalleryCoreApi::isReadLocked($this->getParentId()) ||
-	        GalleryCoreApi::isWriteLocked($this->getParentId())) {
+		GalleryCoreApi::isWriteLocked($this->getParentId())) {
 	    $lockId = null;
 	} else {
 	    list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->getParentId());

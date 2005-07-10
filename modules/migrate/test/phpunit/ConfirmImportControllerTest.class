@@ -64,13 +64,13 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	/* Assign our test layout */
+	/* Assign our test theme */
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_temporaryAlbum->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->_temporaryAlbum->setLayout('matrix');
+	$this->_temporaryAlbum->setTheme('matrix');
 	$ret = $this->_temporaryAlbum->save();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
