@@ -1444,8 +1444,12 @@ class DatabaseStorage /* implements GalleryStorage */ {
 		 * such that once we figure out what version of the Foo table
 		 * we have in the database we can figure out which file to
 		 * apply to install/update it.
+		 * In earlier versions (beta 3) we used the format R_Foo_1_0.sql), an underscore
+		 * instead of a dot as the version separator. If a user has still these old files
+		 * in his gallery2 dirs, they would be executed on each upgrade unless we accept
+		 * here the old 1_0 and the new 1.0 format.
 		 */
-		if (preg_match('/^([AR])_(.*)_(\d+)\.(\d+)\.sql$/', $file, $matches)) {
+		if (preg_match('/^([AR])_(.*)_(\d+)[\._](\d+)\.sql$/', $file, $matches)) {
 		    if ($matches[1] == 'R') {
 			$tableDelete[$matches[2]][$matches[3]][$matches[4]] = $sqlDir . '/' . $file;
 		    } else {
