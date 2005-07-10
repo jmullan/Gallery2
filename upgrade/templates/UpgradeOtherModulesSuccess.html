@@ -8,10 +8,10 @@
     <?php endforeach; ?>
     <?php endif; ?>
 
-    <?php if (isset($templateData['upgradedLayout'])): ?>
-    <?php foreach ($templateData['upgradedLayout'] as $layoutId => $layoutName): ?>
+    <?php if (isset($templateData['upgradedTheme'])): ?>
+    <?php foreach ($templateData['upgradedTheme'] as $themeId => $themeName): ?>
     <h2 class="success">
-      <?php printf(_("Upgraded the %s layout successfully"), "<i>$layoutName</i>") ?>
+      <?php printf(_("Upgraded the %s theme successfully"), "<i>$themeName</i>") ?>
     </h2>
     <?php endforeach; ?>
     <?php endif; ?>
