@@ -22,7 +22,7 @@
 class MembersCallbacks {
     /**
      */
-    function callback($params, &$smarty, $callback) {
+    function callback($params, &$smarty, $callback, $userId=null) {
 	global $gallery;
 
 	$block =& $smarty->_tpl_vars['block'];

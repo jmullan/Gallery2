@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 class CoreCallbacks {
-    function callback($params, &$smarty, $callback) {
+    function callback($params, &$smarty, $callback, $userId=null) {
 	global $gallery;
 
 	$block =& $smarty->_tpl_vars['block'];

@@ -22,7 +22,7 @@
 class ImageFrameCallbacks {
     /**
      */
-    function callback($params, &$smarty, $callback) {
+    function callback($params, &$smarty, $callback, $userId=null) {
 
 	switch($callback) {
 	case 'LoadFrameData':
