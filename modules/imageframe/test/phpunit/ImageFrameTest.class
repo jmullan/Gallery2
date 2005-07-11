@@ -128,10 +128,12 @@ class ImageFrameTest extends GalleryTestCase {
 	$this->assertEquals('bar', $smarty1->get_template_vars('foo'));
 
 	/* Verify {counter} works across smarty instances */
-	$this->assertEquals(array(GalleryStatus::success(), '1'),
-			    $smarty1->fetch('gallery:data/counter.tpl'));
-	$this->assertEquals(array(GalleryStatus::success(), '2'),
-			    $smarty2->fetch('gallery:data/counter.tpl'));
+	$result = $smarty1->fetch('gallery:data/counter.tpl');
+	$result[1] = trim($result[1]);
+	$this->assertEquals(array(GalleryStatus::success(), '1'), $result);
+	$result = $smarty2->fetch('gallery:data/counter.tpl');
+	$result[1] = trim($result[1]);
+	$this->assertEquals(array(GalleryStatus::success(), '2'), $result);
     }
 }
 
