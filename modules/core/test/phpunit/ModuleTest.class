@@ -256,14 +256,19 @@ class ModuleTestModule extends GalleryModule {
     function ModuleTestModule() {
 	global $gallery;
 
+	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	}
+
 	$this->setId('moduletest');
 	$this->setName('ModuleTest Module');
 	$this->setDescription($gallery->i18n('Unit test module'));
 	$this->setVersion('0.9.0');
 	$this->setGroup('data', $gallery->i18n('Gallery'));
 	$this->setCallbacks('');
-	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredModuleApi(array(1, 0));
+	$this->setRequiredCoreApi($core->getRequiredCoreApi());
+	$this->setRequiredModuleApi($core->getRequiredModuleApi());
     }
 
     function upgrade($currentVersion) {
