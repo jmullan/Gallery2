@@ -22,7 +22,7 @@
 class ExifCallbacks {
     /**
      */
-    function callback($params, &$smarty, $callback) {
+    function callback($params, &$smarty, $callback, $userId=null) {
 	global $gallery;
 
 	switch ($callback) {

@@ -49,7 +49,7 @@ class SwitchDetailModeController extends GalleryController {
 
 	/* Store the new mode in the session */
 	$session =& $gallery->getSession();
-	$session->put('exif.module.loadItemDetails.mode', $mode);
+	$session->put('exif.module.LoadExifInfo.mode', $mode);
 
 	$results['return'] = 1;
 	$results['redirect']['view'] = 'core.ShowItem';
