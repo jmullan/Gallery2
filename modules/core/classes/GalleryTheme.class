@@ -442,6 +442,11 @@ class GalleryTheme extends GalleryPlugin {
      *               array redirect info for error page (empty for success)
      */
     function activate() {
+    	if (!GalleryCoreApi::isPluginCompatibleWithApis($this)) {
+	    return array(GalleryStatus::error(ERROR_PLUGIN_VERSION_MISMATCH, __FILE__, __LINE__,
+		sprintf('incompatible %s %s', $this->getPluginType(), $this->getId())), null);
+	}
+
 	list ($ret, $redirect) = parent::activate();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -494,6 +499,11 @@ class GalleryTheme extends GalleryPlugin {
      * @return object GalleryStatus a status code
      */
     function installOrUpgrade() {
+	if (!GalleryCoreApi::isPluginCompatibleWithApis($this)) {
+	    return GalleryStatus::error(ERROR_PLUGIN_VERSION_MISMATCH, __FILE__, __LINE__,
+		sprintf('incompatible %s %s', $this->getPluginType(), $this->getId()));
+	}
+
 	list ($ret, $installedVersion) = $this->getParameter('_version');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

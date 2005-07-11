@@ -111,6 +111,11 @@ class GalleryModule extends GalleryPlugin {
     function installOrUpgrade($bootstrap=false, $statusMonitor=null) {
 	global $gallery;
 
+	if (!GalleryCoreApi::isPluginCompatibleWithApis($this)) {
+	    return GalleryStatus::error(ERROR_PLUGIN_VERSION_MISMATCH, __FILE__, __LINE__,
+		sprintf('incompatible %s %s', $this->getPluginType(), $this->getId()));
+	}
+
 	if ($bootstrap) {
 	    /*
 	     * If we're in bootstrap mode, then we may not even have a version
@@ -247,6 +252,11 @@ class GalleryModule extends GalleryPlugin {
      * to installOrUpgrade (see the TODO there).
      */
     function activate() {
+	if (!GalleryCoreApi::isPluginCompatibleWithApis($this)) {
+	    return array(GalleryStatus::error(ERROR_PLUGIN_VERSION_MISMATCH, __FILE__, __LINE__,
+		sprintf('incompatible %s %s', $this->getPluginType(), $this->getId())), null);
+	}
+
 	/*
 	 * Make sure that we don't need configuration before we allow
 	 * activation.

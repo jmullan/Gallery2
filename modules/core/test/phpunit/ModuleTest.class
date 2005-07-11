@@ -49,13 +49,8 @@ class ModuleTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
-	/* Install it */
-	$ret = $module->installOrUpgrade();
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$module->setRequiredCoreApi(GalleryCoreApi::getApiVersion());
+	$module->setRequiredModuleApi(GalleryModule::getApiVersion());
 
 	list ($ret, $this->_rootAlbum) = $this->_createRandomAlbum($this->_getRootId(),
 	    array('onLoadHandlers' => '|ModuleTestOnLoadHandler|'));
@@ -74,6 +69,28 @@ class ModuleTest extends GalleryTestCase {
     }
 
     function tearDown() {
+	/* If a unitest fails it might not deactivate/uninstall the mock module properly */
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	list ($ret, $isActive) = $module->isActive();
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	if ($isActive) {
+	    list ($ret, $redirect) = $module->deactivate();
+	    if ($ret->isError()) {
+		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	$ret = $module->uninstall();
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    	
 	$ret = GalleryCoreApi::removePlugin('module', 'ModuleTest');
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -84,6 +101,16 @@ class ModuleTest extends GalleryTestCase {
 
     function testModuleCycle() {
 	global $gallery;
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Install the module */
+	$ret = $module->installOrUpgrade();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
 	/* Verify that the first permission was added*/
 	list ($ret, $ids) = GalleryCoreApi::getPermissionIds();
@@ -118,11 +145,6 @@ class ModuleTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::addUserPermission($this->_rootAlbum->getId(),
 						 $gallery->getActiveUserId(),
 						 'moduletest.one');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -204,6 +226,100 @@ class ModuleTest extends GalleryTestCase {
 	/* TODO: How do we verify that the tables are removed successfully? */
     }
 
+    function testInstallBadModuleApi() {
+	global $gallery;
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($major, $minor) = $module->getRequiredModuleApi();
+	$module->setRequiredModuleApi(array($major - 1, $minor));
+
+	$ret = $module->installOrUpgrade();
+	if ($ret->isError() && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($ret->isError() && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
+	    'success?');
+    }
+
+    function testActivateBadModuleApiActivate() {
+	global $gallery;
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $module->installOrUpgrade();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($major, $minor) = $module->getRequiredModuleApi();
+	$module->setRequiredModuleApi(array($major - 1, $minor));
+
+	list ($ret, $redirect) = $module->activate();
+	if ($ret->isError() && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($ret->isError() && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
+	    'success?');
+
+	list ($ret, $isActive) = $module->isActive();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!$isActive, 'is active');
+    }
+
+    function testInstallBadCoreApi() {
+	global $gallery;
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($major, $minor) = $module->getRequiredCoreApi();
+	$module->setRequiredCoreApi(array($major - 1, $minor));
+
+	$ret = $module->installOrUpgrade();
+	if ($ret->isError() && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($ret->isError() && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
+	    'success?');
+    }
+
+    function testActivateBadCoreApiActivate() {
+	global $gallery;
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $module->installOrUpgrade();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($major, $minor) = $module->getRequiredCoreApi();
+	$module->setRequiredCoreApi(array($major - 1, $minor));
+
+	list ($ret, $redirect) = $module->activate();
+	if ($ret->isError() && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($ret->isError() && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
+	    'success?');
+
+	list ($ret, $isActive) = $module->isActive();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!$isActive, 'is active');
+    }
+
     function _fetchPermissionBitsForItem($itemId) {
 	global $gallery;
 
@@ -256,19 +372,14 @@ class ModuleTestModule extends GalleryModule {
     function ModuleTestModule() {
 	global $gallery;
 
-	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	}
-
 	$this->setId('moduletest');
 	$this->setName('ModuleTest Module');
 	$this->setDescription($gallery->i18n('Unit test module'));
 	$this->setVersion('0.9.0');
 	$this->setGroup('data', $gallery->i18n('Gallery'));
 	$this->setCallbacks('');
-	$this->setRequiredCoreApi($core->getRequiredCoreApi());
-	$this->setRequiredModuleApi($core->getRequiredModuleApi());
+	$this->setRequiredCoreApi(GalleryCoreApi::getApiVersion());
+	$this->setRequiredModuleApi(GalleryModule::getApiVersion());
     }
 
     function upgrade($currentVersion) {

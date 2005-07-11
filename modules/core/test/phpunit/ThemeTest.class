@@ -41,8 +41,46 @@ class ThemeTest extends GalleryTestCase {
     }
 
     function setUp() {
+	global $gallery;
 	parent::setUp();
-	$this->_theme = new GalleryTheme();
+
+	$this->_platform = new ThemeTestPlatform();
+	$gallery->setPlatform($this->_platform);
+
+	GalleryDataCache::reset();
+	list ($ret, $this->_theme) = GalleryCoreApi::loadPlugin('theme', 'ThemeTest');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_theme->setRequiredCoreApi(GalleryCoreApi::getApiVersion());
+	$this->_theme->setRequiredThemeApi(GalleryTheme::getApiVersion());
+    }
+
+    function tearDown() {
+	/* If a unitest fails it might not deactivate/uninstall the mock theme properly */
+	list ($ret, $isActive) = $this->_theme->isActive();
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	if ($isActive) {
+	    list ($ret, $redirect) = $this->_theme->deactivate();
+	    if ($ret->isError()) {
+		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	$ret = $this->_theme->uninstall();
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    	
+	$ret = GalleryCoreApi::removePlugin('theme', 'ThemeTest');
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	parent::tearDown();
     }
 
     function testPackSettingBlockList1() {
@@ -172,6 +210,150 @@ class ThemeTest extends GalleryTestCase {
 	$this->assertEquals(
 	    array(false, ''),
 	    $this->_theme->unpackSetting('block-list', serialize(array('x' => 'y'))));
+    }
+
+    function testInstallBadThemeApi() {
+
+	list ($major, $minor) = $this->_theme->getRequiredThemeApi();
+	$this->_theme->setRequiredThemeApi(array($major - 1, $minor));
+
+	$ret = $this->_theme->installOrUpgrade();
+	if ($ret->isError() && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($ret->isError() && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
+	    'success?');
+    }
+
+    function testActivateBadThemeApiActivate() {
+	$ret = $this->_theme->installOrUpgrade();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($major, $minor) = $this->_theme->getRequiredThemeApi();
+	$this->_theme->setRequiredThemeApi(array($major - 1, $minor));
+
+	list ($ret, $redirect) = $this->_theme->activate();
+	if ($ret->isError() && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($ret->isError() && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
+	    'success?');
+
+	list ($ret, $isActive) = $this->_theme->isActive();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!$isActive, 'is active');
+    }
+
+    function testInstallBadCoreApi() {
+	list ($major, $minor) = $this->_theme->getRequiredCoreApi();
+	$this->_theme->setRequiredCoreApi(array($major - 1, $minor));
+
+	$ret = $this->_theme->installOrUpgrade();
+	if ($ret->isError() && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($ret->isError() && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
+	    'success?');
+    }
+
+    function testActivateBadCoreApiActivate() {
+	$ret = $this->_theme->installOrUpgrade();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($major, $minor) = $this->_theme->getRequiredCoreApi();
+	$this->_theme->setRequiredCoreApi(array($major - 1, $minor));
+
+	list ($ret, $redirect) = $this->_theme->activate();
+	if ($ret->isError() && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($ret->isError() && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
+	    'success?');
+
+	list ($ret, $isActive) = $this->_theme->isActive();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!$isActive, 'is active');
+    }
+}
+
+/**
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ThemeTestTheme extends GalleryTheme {
+    function ThemeTestTheme() {
+	global $gallery;
+
+	$this->setId('themetest');
+	$this->setName('ThemeTest Theme');
+	$this->setDescription($gallery->i18n('Unit test theme'));
+	$this->setVersion('0.9.0');
+	$this->setRequiredCoreApi(GalleryCoreApi::getApiVersion());
+	$this->setRequiredThemeApi(GalleryTheme::getApiVersion());
+    }
+}
+
+/**
+ * Test platform for this test
+ *
+ * @package Core
+ * @subpackage PHPUnit
+ */
+class ThemeTestPlatform extends GalleryPlatform {
+    function opendir($path) {
+	if (strpos($path, '/themes/') !== false) {
+	    $this->_list = array();
+	    if ($dir = parent::opendir($path)) {
+		while(false !== ($file = parent::readdir($dir))) {
+		    array_push($this->_list, $file);
+		}
+	    }
+	    array_push($this->_list, 'themetest');
+	    return 'themetest';
+	}
+
+	return parent::opendir($path);
+    }
+
+    function is_dir($path) {
+	if (strpos($path, '/themes/themetest') !== false) {
+	    return true;
+	}
+
+	return parent::is_dir($path);
+    }
+
+    function readdir($handle) {
+	if ($handle == 'themetest') {
+	    return array_shift($this->_list);
+	}
+
+	return parent::readdir($handle);
+    }
+
+    function closedir($handle) {
+	if ($handle == 'themetest') {
+	    unset($this->_list);
+	    return true;
+	}
+
+	return parent::closedir($handle);
+    }
+
+    function file_exists($file) {
+	if (strpos($file, 'themes/themetest/theme.inc') !== false) {
+	    return true;
+	}
+
+	return parent::file_exists($file);
     }
 }
 ?>
