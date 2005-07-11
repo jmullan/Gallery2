@@ -30,6 +30,8 @@ class ImageBlockCallbacks {
 	    /*
 	     * ImageBlockHelper expects a GalleryTemplate, but Smarty callbacks don't provide
 	     * one, so create a temporary wrapper.
+	     * TODO: rework this so we don't create a new smarty instance (in GalleryTemplate
+	     *       constructor) only to replace it with our current instance
 	     */
 	    $template = new GalleryTemplate(dirname(__FILE__));
 	    $template->_smarty = &$smarty;
@@ -38,6 +40,7 @@ class ImageBlockCallbacks {
 	     * Just use our current set of template vars as the params.  We may wind up passing some
 	     * extra data into loadImageBlocks but it will just ignore what it doesn't understand.
 	     */
+	    $template->setVariable('heading', 1);
 	    $ret = ImageBlockHelper::loadImageBlocks($template, $smarty->_tpl_vars);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
