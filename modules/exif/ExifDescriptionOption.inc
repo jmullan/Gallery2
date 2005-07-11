@@ -68,6 +68,7 @@ class ExifDescriptionOption extends ItemAddOption {
 	}
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($itemIds);
 	if ($ret->isError()) {
+	    GalleryCoreApi::releaseLocks($lockId);
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	
@@ -85,6 +86,7 @@ class ExifDescriptionOption extends ItemAddOption {
 			 )
 		);
 	    if ($ret->isError()) {
+		GalleryCoreApi::releaseLocks($lockId);
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
