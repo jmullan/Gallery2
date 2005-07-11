@@ -145,17 +145,4 @@ class AlbumSelectModule extends GalleryModule {
 	return array(GalleryStatus::success(), null);
     }
 }
-
-/**
- * Sort albums on a specific field
- */
-class AlbumSelectTreeSorter {
-    var $_titles;
-    function AlbumSelectTreeSorter(&$titles) {
-	$this->_titles =& $titles;
-    }
-    function sort($a, $b) {
-	return strcmp($this->_titles[$a], $this->_titles[$b]);
-    }
-}
 ?>

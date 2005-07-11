@@ -25,7 +25,8 @@ class AlbumSelectCallbacks {
     function callback($params, &$smarty, $callback, $userId) {
 	switch($callback) {
 	case 'LoadAlbumData':
-	    list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'albumselect');
+	    list ($ret, $params) =
+		GalleryCoreApi::fetchAllPluginParameters('module', 'albumselect');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -155,6 +156,19 @@ class AlbumSelectCallbacks {
 	    }
 	}
 	return GalleryStatus::success();
+    }
+}
+
+/**
+ * Sort albums on a specific field
+ */
+class AlbumSelectTreeSorter {
+    var $_titles;
+    function AlbumSelectTreeSorter(&$titles) {
+	$this->_titles =& $titles;
+    }
+    function sort($a, $b) {
+	return strcmp($this->_titles[$a], $this->_titles[$b]);
     }
 }
 ?>

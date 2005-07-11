@@ -42,10 +42,10 @@
       albumTree.config.useIcons = {if $params.treeIcons}true{else}false{/if};
       albumTree.config.useCookies = {if $params.treeCookies}true{else}false{/if};
       albumTree.config.closeSameLevel = {if $params.treeCloseSameLevel}true{else}false{/if};
-      albumTree.add(0, -1, " {$block.albumselect.LoadAlbumData.titles.root}",
+      albumTree.add(0, -1, " {$block.albumselect.LoadAlbumData.titles.root|markup:strip}",
 		    '{g->url}');
       {foreach from=$block.albumselect.LoadAlbumData.tree item=node}
-	{assign var="title" value=$block.albumselect.LoadAlbumData.titles[$node.id]}
+	{assign var="title" value=$block.albumselect.LoadAlbumData.titles[$node.id]|markup:strip}
 	albumTree.add({$node.nodeId}, {$node.parentNode}, "{$title}",
 		      '{g->url arg1="view=core.ShowItem" arg2="itemId=`$node.id`"}');
       {/foreach}
