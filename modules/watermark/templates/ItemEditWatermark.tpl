@@ -160,7 +160,7 @@
 <input type="hidden" id="yPercent"
  name="{g->formVar var="form[yPercent]"}" value="{$form.yPercent}"/>
 
-{capture name="ItemAdmin_footer"}
+{g->addToTrailer}
 <script type="text/javascript">{literal}
 // <![CDATA[
 SET_DHTML("watermark_original"+NO_DRAG, "watermark_floater"+CURSOR_MOVE);
@@ -170,5 +170,5 @@ dd.elements.watermark_floater.setZ(dd.elements.watermark_original.z+1);
 chooseWatermark(document.getElementById("watermarkList").value);
 // ]]>
 {/literal}</script>
-{/capture}
+{/g->addToTrailer}
 {/if}
