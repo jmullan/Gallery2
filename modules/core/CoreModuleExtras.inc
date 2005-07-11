@@ -253,6 +253,16 @@ class CoreModuleExtras {
 	    }
 
 	case '0.8.8':
+	    /*
+	     * This was not originally part of the 0.8.9 upgrade, but added much later.
+	     * Upgrade code after this will need valid factory registrations so we can't
+	     * wait until upgrade() completes to register during reactivate()..
+	     */
+	    $ret = CoreModuleExtras::performFactoryRegistrations($module);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
 	case '0.8.9':
 	    /*
 	     * Set all factory implementation weights to 5.  We'll re-register
@@ -316,16 +326,18 @@ class CoreModuleExtras {
 	case '0.8.15':
 	    $gallery->guaranteeTimeLimit(30);
 	    /* Removed GalleryItemPropertiesMap.. drop the table */
-	    $query = 'DROP TABLE [GalleryItemPropertiesMap]';
-	    $ret = $storage->execute($query);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    $query = "DELETE FROM [Schema] WHERE [Schema::name] = 'ItemPropertiesMap'";
-	    $ret = $storage->execute($query);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
+	    /* R_GalleryItemPropertiesMap_1.0 now takes care of this:
+	    * $query = 'DROP TABLE [GalleryItemPropertiesMap]';
+	    * $ret = $storage->execute($query);
+	    * if ($ret->isError()) {
+	    *     return $ret->wrap(__FILE__, __LINE__);
+	    * }
+	    * $query = "DELETE FROM [Schema] WHERE [Schema::name] = 'ItemPropertiesMap'";
+	    * $ret = $storage->execute($query);
+	    * if ($ret->isError()) {
+	    *     return $ret->wrap(__FILE__, __LINE__);
+	    * }
+	    */
 
 	case '0.8.16':
 	    /* Schema updates: GalleryPluginMap, GalleryPluginParameterMap, GalleryGroup */
@@ -596,17 +608,18 @@ class CoreModuleExtras {
 	    }
 
 	    /* Removed GalleryPermissionsMap.  Drop the table */
-	    $query = 'DROP TABLE [GalleryPermissionMap]';
-	    $ret = $storage->execute($query);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    $query = "DELETE FROM [Schema] WHERE [Schema::name] = 'PermissionMap'";
-	    $ret = $storage->execute($query);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
+	    /* R_GalleryPermissionMap_1.0 now takes care of this:
+	    * $query = 'DROP TABLE [GalleryPermissionMap]';
+	    * $ret = $storage->execute($query);
+	    * if ($ret->isError()) {
+	    *     return $ret->wrap(__FILE__, __LINE__);
+	    * }
+	    * $query = "DELETE FROM [Schema] WHERE [Schema::name] = 'PermissionMap'";
+	    * $ret = $storage->execute($query);
+	    * if ($ret->isError()) {
+	    *     return $ret->wrap(__FILE__, __LINE__);
+	    * }
+	    */
 
 	case '0.9.6':
 	    /* Added GalleryMaintenance table */
