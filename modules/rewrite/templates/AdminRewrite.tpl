@@ -250,133 +250,160 @@
 
 {if $AdminRewrite.mode == 'test'}
 <div class="gbBlock">
-  <h3> {g->text text="Testing your Webserver"} </h3>
+  <table><tr>
+    <td>
+      <h3> {g->text text="Apache mod_rewrite"} </h3>
 
-  {assign var="showTestButton" value=false}
-  {if $AdminRewrite.apacheCode == REWRITE_STATUS_OK}
-    <div class="giSuccess">
-      {g->text text="Apache mod_rewrite is working properly."}
-    </div>
+      {capture name=mod_rewrite_anchor}
+      <a href="http://httpd.apache.org/docs/mod/mod_rewrite.html">mod_rewrite</a>
+      {/capture}
+      <p class="giDescription">
+        {g->text text="In order for this Gallery module to work you need %s enabled with your Apache server." arg1=$smarty.capture.mod_rewrite_anchor}
+      </p>
+    </td>
+    <td style="float: right; vertical-align: top;">
+      {if $AdminRewrite.apacheCode == REWRITE_STATUS_OK}
+        <h3 class="giSuccess"> {g->text text="Success"} </h3>
+      {else}
+        <h3 class="giWarning"> {g->text text="Warning"} </h3>
+      {/if}
+    </td>
+  {if $AdminRewrite.apacheCode != REWRITE_STATUS_OK}
+  </tr><tr>
+    <td colspan="2">
+      <div class="gbBlock">
+        <h3> {g->text text="Test mod_rewrite manually"} </h3>
+
+        {capture name="setup_link"}"{g->url arg1="view=core.SiteAdmin" arg2="subView=rewrite.SetupRewrite"}"{/capture}
+        <p class="giDescription">
+        {g->text text="Go to the <a href=%s>Setup</a> page where you will be able to further probe mod_rewrite." arg1=$smarty.capture.setup_link arg2="</a>"}
+        </p>
+      </div>
+      
+      <div class="gbBlock">
+        <input type="submit" class="inputTypeSubmit"
+          name="{g->formVar var="form[action][test]"}" value="{g->text text="Test Webserver Again"}"/>
+      </div>
+    </td>
   {/if}
-
-  {if ($AdminRewrite.apacheCode == REWRITE_STATUS_APACHE_NO_MOD_REWRITE)}
-    {assign var="showTestButton" value=true}
-    <div class="giError">
-      {g->text text="Apache mod_rewrite is not installed or not enabled."}
-    </div>
+  </tr><tr>
+    <td>
+      <h3> {g->text text="Gallery .htaccess file"} </h3>
+      
+      <p class="giDescription">
+        {g->text text="Gallery's URL rewriting works by creating a new file in your gallery directory called <b>.htaccess</b> which contains rules for how short urls should be interpreted."}
+      </p>
+    </td>
+    <td style="float: right; vertical-align: top;">
+      {if $AdminRewrite.htaccessCode == REWRITE_STATUS_HTACCESS_READY}
+        <h2 class="giSuccess"> {g->text text="Success"} </h2>
+      {else}
+        <h2 class="giError"> {g->text text="Error"} </h2>
+      {/if}
+    </td>
+  {if $AdminRewrite.htaccessCode != REWRITE_STATUS_HTACCESS_READY}
+  </tr><tr>
+    <td colspan="2">
+      <div class="gbBlock">
+        {if $AdminRewrite.htaccessCode == REWRITE_STATUS_HTACCESS_MISSING}
+        <h3> {g->text text="Please create a file in you Gallery directory named .htaccess"} </h3>
+        
+        <pre class="giDescription">touch {$AdminRewrite.htaccessPath}<br/>chmod 666 {$AdminRewrite.htaccessPath}</pre>
+        {/if}
+        
+        {if $AdminRewrite.htaccessCode == REWRITE_STATUS_HTACCESS_CANT_READ}
+        <h3> {g->text text="Please make sure Gallery can read the existing .htaccess file"} </h3>
+        
+        <pre class="giDescription">chmod 666 {$AdminRewrite.htaccessPath}</pre>
+        {/if}
+        
+        {if $AdminRewrite.htaccessCode == REWRITE_STATUS_HTACCESS_CANT_WRITE}
+        <h3> {g->text text="Please make sure Gallery can write to the existing .htaccess file"} </h3>
+        
+        <pre class="giDescription">chmod 666 {$AdminRewrite.htaccessPath}</pre>
+        {/if}
+      </div>
+      
+      <div class="gbBlock">
+        <input type="submit" class="inputTypeSubmit"
+          name="{g->formVar var="form[action][test]"}" value="{g->text text="Test .htaccess File Again"}"/>
+      </div>
+    </td>
   {/if}
-
-  {if ($AdminRewrite.apacheCode == REWRITE_STATUS_APACHE_UNABLE_TO_TEST)}
-    {assign var="showTestButton" value=true}
-    {assign var="showConfig" value=true}
-    <div class="giError">
-      {g->text text="We are unable to properly test whether mod_rewrite is properly installed."}
-    </div>
+  {if $AdminRewrite.isEmbedded}
+  </tr><tr>
+    <td>
+      <h3> {g->text text="Embedded .htaccess file"} </h3>
+      
+      <p class="giDescription">
+        {g->text text="You need a <b>.htaccess</b> file in the embedded access point directory."}
+      </p>
+    </td>
+    <td style="float: right; vertical-align: top;">
+      {if $AdminRewrite.embeddedCode == REWRITE_STATUS_HTACCESS_READY}
+        <h2 class="giSuccess"> {g->text text="Success"} </h2>
+      {else}
+        <h2 class="giError"> {g->text text="Error"} </h2>
+      {/if}
+    </td>
+  {if $AdminRewrite.embeddedCode != REWRITE_STATUS_HTACCESS_READY}
+  </tr><tr>
+    <td colspan="2">
+      <div class="gbBlock">
+        {if $AdminRewrite.embeddedCode == REWRITE_STATUS_HTACCESS_MISSING}
+        <h3> {g->text text="Please create a file in you Gallery directory named .htaccess"} </h3>
+        
+        <pre class="giDescription">touch {$AdminRewrite.embeddedPath}<br/>chmod 666 {$AdminRewrite.embeddedPath}</pre>
+        {/if}
+        
+        {if $AdminRewrite.embeddedCode == REWRITE_STATUS_HTACCESS_CANT_READ}
+        <h3> {g->text text="Please make sure Gallery can read the existing .htaccess file"} </h3>
+        
+        <pre class="giDescription">chmod 666 {$AdminRewrite.embeddedPath}</pre>
+        {/if}
+        
+        {if $AdminRewrite.embeddedCode == REWRITE_STATUS_HTACCESS_CANT_WRITE}
+        <h3> {g->text text="Please make sure Gallery can write to the existing .htaccess file"} </h3>
+        
+        <pre class="giDescription">chmod 666 {$AdminRewrite.embeddedPath}</pre>
+        {/if}
+      </div>
+      
+      <div class="gbBlock">
+        <input type="submit" class="inputTypeSubmit"
+          name="{g->formVar var="form[action][test]"}" value="{g->text text="Test .htaccess File Again"}"/>
+      </div>
+    </td>
   {/if}
-
-  {if !empty($showTestButton)}
-    <br/>
-    <input type="submit" class="inputTypeSubmit"
-      name="{g->formVar var="form[action][test]"}" value="{g->text text="Test Webserver Again"}"/>
-    <br/><br/>
+  </tr><tr>
+    <td>
+      <h3> {g->text text="Embedded .htaccess file is up to date"} </h3>
+      
+      <p class="giDescription">
+        {g->text text="This checks if the content in your embedded .htaccess file is equal to the standalone version."}
+      </p>
+    </td>
+    <td style="float: right; vertical-align: top;">
+      {if $AdminRewrite.embeddedSync == REWRITE_STATUS_OK}
+        <h2 class="giSuccess"> {g->text text="Success"} </h2>
+      {else}
+        <h2 class="giError"> {g->text text="Error"} </h2>
+      {/if}
+    </td>
+  {if $AdminRewrite.embeddedSync != REWRITE_STATUS_OK}
+  </tr><tr>
+    <td colspan="2">
+      <div class="gbBlock">
+        <h3> {g->text text="Please update your rules while in embedded mode. Hit the Save button should be sufficient."} </h3>
+      </div>
+      
+      <div class="gbBlock">
+        <input type="submit" class="inputTypeSubmit"
+          name="{g->formVar var="form[action][test]"}" value="{g->text text="Test .htaccess Files Again"}"/>
+      </div>
+    </td>
   {/if}
-
-  {if !empty($showConfig)}
-    <h3>Manual Configuration</h3>
-
-    <p class="giDescription">
-      {g->text text="Gallery tries to test mod_rewrite in action. For this to work you need to edit each of these two files accordingly:"}<br/>
-    </p>
-
-    <p class="giDescription">
-      <b>{$AdminRewrite.customFile}</b><br/>
-      {g->text text="Line 6:"} {$AdminRewrite.customLine}
-    </p>
-
-    <p class="giDescription">
-      <b>{$AdminRewrite.customFileNoOptions}</b><br/>
-      {g->text text="Line 6:"} {$AdminRewrite.customLineNoOptions}
-    </p>
   {/if}
+  </tr></table>
 </div>
-
-{if !empty($showTestButton)}
-  {include file="gallery:modules/rewrite/templates/Troubleshooting.tpl"}
-{/if}
-
-<div class="gbBlock">
-  <h3> {g->text text="Testing Gallery .htaccess file"} </h3>
-
-  {assign var="showTestButton" value=false}
-  {if ($AdminRewrite.htaccessCode == REWRITE_STATUS_HTACCESS_READY)}
-    <div class="giSuccess">
-      {g->text text="Gallery can write to the .htaccess file"}
-    </div>
-  {/if}
-
-  {if ($AdminRewrite.htaccessCode == REWRITE_STATUS_HTACCESS_CANT_WRITE)}
-    {assign var="showTestButton" value=true}
-    <div class="giError">
-      {g->text text="Cannot write to the .htaccess file."}
-    </div>
-  {/if}
-
-  {if ($AdminRewrite.htaccessCode == REWRITE_STATUS_HTACCESS_MISSING)}
-    {assign var="showTestButton" value=true}
-    <div class="giError">
-      {g->text text="The .htaccess file does not exist."}
-    </div>
-  {/if}
-
-  {if ($AdminRewrite.htaccessCode == REWRITE_STATUS_HTACCESS_CANT_READ)}
-    {assign var="showTestButton" value=true}
-    <div class="giError">
-      {g->text text="Cannot read the .htaccess file."}
-    </div>
-  {/if}
-
-  {if !empty($showTestButton)}
-    <br/>
-    <input type="submit" class="inputTypeSubmit" name="{g->formVar var="form[action][test]"}" value="{g->text text="Test .htaccess Again"}"/>
-  {/if}
-</div>
-
-{if isset($AdminRewrite.embeddedCode)}
-<div class="gbBlock">
-  <h3> {g->text text="Testing Embedded Gallery .htaccess file"} </h3>
-
-  {assign var="showTestButton" value=false}
-  {if ($AdminRewrite.embeddedCode == REWRITE_STATUS_HTACCESS_READY)}
-    <div class="giSuccess">
-      {g->text text="Gallery can write to the embedded .htaccess version."}
-    </div>
-  {/if}
-
-  {if ($AdminRewrite.embeddedCode == REWRITE_STATUS_HTACCESS_CANT_WRITE)}
-    {assign var="showTestButton" value=true}
-    <div class="giError">
-      {g->text text="Cannot write to the .htaccess file."}
-    </div>
-  {/if}
-
-  {if ($AdminRewrite.embeddedCode == REWRITE_STATUS_HTACCESS_MISSING)}
-    {assign var="showTestButton" value=true}
-    <div class="giError">
-      {g->text text="The .htaccess file does not exist."}
-    </div>
-  {/if}
-
-  {if ($AdminRewrite.embeddedCode == REWRITE_STATUS_HTACCESS_CANT_READ)}
-    {assign var="showTestButton" value=true}
-    <div class="giError">
-      {g->text text="Can not read the .htaccess file."}
-    </div>
-  {/if}
-
-  {if !empty($showTestButton)}
-    <br/>
-    <input type="submit" class="inputTypeSubmit" name="{g->formVar var="form[action][test]"}" value="{g->text text="Test .htaccess Again"}"/>
-  {/if}
-</div>
-{/if}
 {/if}

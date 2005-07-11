@@ -271,7 +271,7 @@ class AdminRewriteView extends GalleryView {
 	    }
 
 	    foreach ($modules as $moduleId => $status) {
-		if (isset($status['active'])) {
+		if (isset($status['active']) && $status['active']) {
 		    list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 		    if ($ret->isError()) {
 			if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
@@ -364,6 +364,16 @@ class AdminRewriteView extends GalleryView {
 
 	    if ($AdminRewrite['isEmbedded']) {
 		list ($ret, $AdminRewrite['embeddedCode']) = RewriteHelper::checkFile(true);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		list ($ret, $AdminRewrite['embeddedPath']) = RewriteHelper::getHtaccessPath(true);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		list ($ret, $AdminRewrite['embeddedSync']) = RewriteHelper::checkSync();
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}

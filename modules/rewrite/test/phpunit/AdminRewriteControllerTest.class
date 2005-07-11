@@ -84,8 +84,7 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
     function tearDown() {
 	$ret = RewriteMap::setActiveRules($this->_saveActiveRules);
 	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
     	parent::tearDown();

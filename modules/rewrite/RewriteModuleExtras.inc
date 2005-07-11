@@ -227,6 +227,7 @@ class RewriteModuleExtras {
 
 	case '0.9.11':
 	case '0.9.12':
+	case '0.9.13':
 
 	case 'end of upgrade path':
 	    break;
@@ -234,6 +235,168 @@ class RewriteModuleExtras {
 	default:
 	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
 					sprintf('Unknown module version %s', $currentVersion));
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * @see GalleryModule::handleEvent
+     */
+    function handleDeactivatePlugin($module, $pluginId) {
+	list ($ret, $activeRules) = RewriteMap::getActiveRules();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Don't update the rules if not necissary */
+	if (isset($activeRules[$pluginId])) {
+	    /* Save the old patterns for later use if module gets reactivated */
+	    $i = 0;
+	    foreach (array_keys($activeRules[$pluginId]) as $ruleId) {
+		$ret = $module->setParameter('history.' . $pluginId . '.' . $i++,
+		    serialize(array(
+			'pattern' => $activeRules[$pluginId][$ruleId]['pattern'],
+			'ruleId' => $ruleId)));
+	        if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+	        }
+	    }
+	    unset($activeRules[$pluginId]);
+
+	    list($ret, $code, $rewriteRules) =
+		RewriteHelper::parseActiveRules($activeRules);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    /* We're just removing so anything but status OK would be an unknown error */
+	    if ($code != REWRITE_STATUS_OK) {
+		return GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__);
+	    }
+
+	    /*
+	     * Ignore the return code. No big deal if we fail to write the new file,
+	     * atleast we won't generate the short URLs as long as the DB is updated.
+	     */
+	    list($ret, $code) = RewriteHelper::writeFile($rewriteRules);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    if (GalleryUtilities::isEmbedded()) {
+		list($ret, $code) = RewriteHelper::writeFile($rewriteRules, true);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+
+	    $ret = RewriteMap::setActiveRules($activeRules);
+    	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * @see GalleryModule::handleEvent
+     */
+    function handleActivatePlugin($module, $pluginId) {
+	/* Get saved patterns */
+	list ($ret, $plugin) = GalleryCoreApi::loadPlugin('module', $pluginId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}		
+	$rules = $plugin->getRewriteRules();
+
+	list ($ret, $params) = $module->fetchParameters();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Build the dupe-list and get current rules active */
+	if (isset($params['history.' . $pluginId . '.0'])) {
+	    list ($ret, $activeRules) = RewriteMap::getActiveRules();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $dupe = array();
+	    foreach (array_keys($activeRules) as $moduleId) {
+		foreach (array_keys($activeRules[$moduleId]) as $ruleId) {
+		    $dupe[$activeRules[$moduleId][$ruleId]['pattern']] = 1;
+		}
+	    }
+	}
+
+	for ($i = 0; isset($params['history.' . $pluginId . '.' . $i]); $i++) {
+	    $ret = $module->removeParameter('history.' . $pluginId . '.' . $i);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $history = unserialize($params['history.' . $pluginId . '.' . $i]);
+	    if (isset($rules[$history['ruleId']]) && !isset($dupe[$history['pattern']])) {
+		$activeRules[$pluginId][$history['ruleId']]['pattern'] =
+		    $history['pattern'];
+
+		if (isset($rules[$history['ruleId']]['match'])) {
+		    $activeRules[$pluginId][$history['ruleId']]['match'] =
+			join('|', $rules[$history['ruleId']]['match']);
+		}
+	    }
+	}
+
+	/* If we added new rules - update active rules and the .htaccess file. */
+	if (isset($activeRules[$pluginId])) {
+	    list($ret, $code, $rewriteRules) = RewriteHelper::parseActiveRules($activeRules);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    if ($code != REWRITE_STATUS_OK) {
+		return GalleryStatus::success();
+	    }
+
+	    list($ret, $code) = RewriteHelper::writeFile($rewriteRules);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    if ($code != REWRITE_STATUS_OK) {
+		return GalleryStatus::success();
+	    }
+	    if (GalleryUtilities::isEmbedded()) {
+		list($ret, $code) = RewriteHelper::writeFile($rewriteRules, true);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		if ($code != REWRITE_STATUS_OK) {
+		    return GalleryStatus::success();
+		}
+	    }
+
+	    $ret = RewriteMap::setActiveRules($activeRules);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * @see GalleryModule::handleEvent
+     */
+    function handleUninstallPlugin($module, $pluginId) {
+	list ($ret, $params) = $module->fetchParameters();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	for ($i = 0; isset($params['history.' . $pluginId . '.' . $i]); $i++) {
+	    $ret = $module->removeParameter('history.' . $pluginId . '.' . $i);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	}
 
 	return GalleryStatus::success();

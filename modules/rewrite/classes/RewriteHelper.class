@@ -41,6 +41,7 @@ define('REWRITE_STATUS_HTACCESS_CANT_READ', 4);
 define('REWRITE_STATUS_HTACCESS_CANT_WRITE', 5);
 define('REWRITE_STATUS_HTACCESS_READY', 6);
 define('REWRITE_STATUS_BAD_KEYWORD', 7);
+define('REWRITE_STATUS_HTACCESS_MISMATCH', 8);
 
 /**
  * A helper class for the RewriteUrlGenerator class
@@ -164,6 +165,56 @@ class RewriteHelper {
     }
 
     /**
+     * Checks if the embedded htaccess file is up to date with the standalone. Out of synced
+     * files may occure if one install/uninstall modules in standalone mode and has Gallery
+     * setup with an embedded entry point.
+     *
+     * @return array object GalleryStatus a status code
+     *               int rewrite status code
+     */
+    function checkSync() {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
+	list ($ret, $galleryPath) = RewriteHelper::getHtaccessPath();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (!$platform->is_readable($galleryPath)) {
+	    return array(GalleryStatus::success(), REWRITE_STATUS_HTACCESS_CANT_READ);
+	}
+
+	list ($ret, $embeddedPath) = RewriteHelper::getHtaccessPath(true);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (!$platform->is_readable($embeddedPath)) {
+	    return array(GalleryStatus::success(), REWRITE_STATUS_HTACCESS_CANT_READ);
+	}
+
+	$galleryHtaccess = implode('', $platform->file($galleryPath));
+	$embeddedHtaccess = implode('', $platform->file($embeddedPath));
+
+	if (!preg_match(
+		'/\# BEGIN Url Rewrite section(.+)\# END Url Rewrite section(\n\r|\n|\r|\x85)/s',
+		$embeddedHtaccess, $embeddedSection)) {
+	    return array(GalleryStatus::success(), REWRITE_STATUS_HTACCESS_MISMATCH);
+	}
+
+	if (!preg_match(
+		'/\# BEGIN Url Rewrite section(.+)\# END Url Rewrite section(\n\r|\n|\r|\x85)/s',
+		$galleryHtaccess, $gallerySection)) {
+	    return array(GalleryStatus::success(), REWRITE_STATUS_HTACCESS_MISMATCH);
+	}
+
+	if ($embeddedSection[1] != $gallerySection[1]) {
+	    return array(GalleryStatus::success(), REWRITE_STATUS_HTACCESS_MISMATCH);
+	}
+
+	return array(GalleryStatus::success(), REWRITE_STATUS_OK);
+    }
+
+    /**
      * Writes Gallery2 data to the .htaccess file.
      *
      * @return array object GalleryStatus a status code
@@ -178,9 +229,12 @@ class RewriteHelper {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $htaccess) = RewriteHelper::getTemplate($rewriteRules, $embedded);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	$htaccess = '';
+	if (is_array($rewriteRules)) {
+	    list ($ret, $htaccess) = RewriteHelper::getTemplate($rewriteRules, $embedded);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	}
 
 	if ($platform->file_exists($file)) {
@@ -225,6 +279,7 @@ class RewriteHelper {
     function checkModRewrite() {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
+	return array(GalleryStatus::success(), REWRITE_STATUS_APACHE_UNABLE_TO_TEST);
 
 	list ($ret, $status) = GalleryCoreApi::getPluginParameter('module', 'rewrite', 'status');
 	if ($ret->isError()) {

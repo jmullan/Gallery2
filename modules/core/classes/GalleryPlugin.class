@@ -159,7 +159,7 @@ class GalleryPlugin {
      * @return array object GalleryStatus a status code
      *               array redirect info for error page (empty for success)
      */
-    function activate() {
+    function activate($postActivationEvent=true) {
 	$pluginType = $this->getPluginType();
 	$pluginId = $this->getId();
 
@@ -189,6 +189,16 @@ class GalleryPlugin {
 					       'id' => '_all'));
 
 	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginList($pluginType)");
+
+	if ($postActivationEvent) {
+	    $event = GalleryCoreApi::newEvent('Gallery::ActivatePlugin');
+	    $event->setData(array('pluginType' => $this->getPluginType(),
+				  'pluginId' => $this->getId()));
+	    list ($ret) = GalleryCoreApi::postEvent($event);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
 
 	return array(GalleryStatus::success(), array());
     }
@@ -257,7 +267,7 @@ class GalleryPlugin {
 	    return array(GalleryStatus::success(), $redirect);
 	}
 
-	list ($ret, $redirect) = $this->activate();
+	list ($ret, $redirect) = $this->activate(false);
 	if ($ret->isError()) {
 	    /* Try to send the deactivation event before failing completely. */
 	    $this->_postDeactivationEvent();
@@ -291,7 +301,6 @@ class GalleryPlugin {
 	return GalleryStatus::success();
     }
 
-
     /**
      * Remove this plugin's parameters
      *
@@ -302,6 +311,13 @@ class GalleryPlugin {
 
 	/* Remove this plugin */
 	$ret = GalleryCoreApi::removePlugin($this->getPluginType(), $this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$event = GalleryCoreApi::newEvent('Gallery::UninstallPlugin');
+	$event->setData(array('pluginType' => $this->getPluginType(), 'pluginId' => $this->getId()));
+	list ($ret) = GalleryCoreApi::postEvent($event);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

@@ -43,6 +43,12 @@ class RewriteHelperTest extends GalleryTestCase {
 	global $gallery;
 	parent::setUp();
 
+	$ret = $this->_markPluginParametersForCleanup('module', 'rewrite');
+	if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	$urlGenerator = new RewriteUrlGenerator();
 	$urlGenerator->init('phpunit_test.php');
 	$this->_platform = new RewriteHelperTestPlatform();
@@ -125,6 +131,61 @@ class RewriteHelperTest extends GalleryTestCase {
 	$this->assertEquals(REWRITE_STATUS_HTACCESS_MISSING, $code, 'cant read');
     }
 
+    function testCheckSync() {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'embeddedHtaccess',
+	    'phpunit/embedded');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$existingFile = array("Bogus info before section\n",
+	    		      "# BEGIN Url Rewrite section\n",
+	    		      "Bogus info in section\n",
+	    		      "# END Url Rewrite section\n",
+	    		      "Bogus info after section\n");
+	$platform->setPreviousContent($existingFile);
+	$platform->setEmbeddedPreviousContent($existingFile);
+
+	list ($ret, $code) = RewriteHelper::checkSync();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(REWRITE_STATUS_OK, $code);
+    }
+
+    function testCheckOutOfSync() {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'embeddedHtaccess',
+	    'phpunit/embedded');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$existingFile = array("Bogus info before section\n",
+	    		      "# BEGIN Url Rewrite section\n",
+	    		      "Bogus info in section\n",
+	    		      "# END Url Rewrite section\n",
+	    		      "Bogus info after section\n");
+	$platform->setPreviousContent($existingFile);
+	$existingFile = array("Bogus info before section\n",
+	    		      "# BEGIN Url Rewrite section\n",
+	    		      "!!OOPS - OUT OF SYNC !!!\n",
+	    		      "# END Url Rewrite section\n",
+	    		      "Bogus info after section\n");
+	$platform->setEmbeddedPreviousContent($existingFile);
+
+	list ($ret, $code) = RewriteHelper::checkSync();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(REWRITE_STATUS_HTACCESS_MISMATCH, $code);
+    }
+
     function testWriteFile() {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
@@ -152,6 +213,26 @@ class RewriteHelperTest extends GalleryTestCase {
 				strrpos($newFile, '# BEGIN Url Rewrite section'),
 				"multiple sections ($os)");
 	}
+    }
+
+
+    function testClearFile() {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
+	$existingFile = array("Bogus info before section\n",
+	    		      "# BEGIN Url Rewrite section\n",
+	    		      "Bogus info in section\n",
+	    		      "# END Url Rewrite section\n",
+	    		      "Bogus info after section\n");
+	$expected = "Bogus info before section\nBogus info after section\n";
+	$platform->setPreviousContent($existingFile);
+	list ($ret, $code) = RewriteHelper::writeFile(null);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(REWRITE_STATUS_OK, $code, 'cant write');
+	$this->assertEquals($expected, $platform->getFileContent());
     }
 
     function testWriteBadFile() {
@@ -257,6 +338,8 @@ class RewriteHelperTestPlatform extends GalleryPlatform{
     var $_fileExists;
     var $_previousContent;
     var $_fileContent;
+    var $_embeddedFileContent;
+    var $_embeddedPreviousContent;
 
     function init() {
 	$this->_isWriteable = true;
@@ -281,12 +364,16 @@ class RewriteHelperTestPlatform extends GalleryPlatform{
 	$this->_previousContent = $value;
     }
 
+    function setEmbeddedPreviousContent($value) {
+	$this->_embeddedPreviousContent = $value;
+    }
+
     function getFileContent() {
 	return $this->_fileContent;
     }
 
     function file_exists($file) {
-	if ($file == dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/.htaccess') {
+	if (strpos($file, '/.htaccess') !== false) {
 	    return $this->_fileExists;
 	}
 
@@ -294,7 +381,7 @@ class RewriteHelperTestPlatform extends GalleryPlatform{
     }
 
     function is_readable($file) {
-	if ($file == dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/.htaccess') {
+	if (strpos($file, '/.htaccess') !== false) {
 	    return $this->_isReadable;
 	}
 
@@ -302,7 +389,7 @@ class RewriteHelperTestPlatform extends GalleryPlatform{
     }
 
     function is_writeable($file) {
-	if ($file == dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/.htaccess' ||
+	if (strpos($file, '/.htaccess') !== false ||
 		$file == dirname(dirname(dirname(dirname(dirname(__FILE__)))))) {
 	    return $this->_isWriteable;
 	}
@@ -311,7 +398,9 @@ class RewriteHelperTestPlatform extends GalleryPlatform{
     }
 
     function file($file) {
-	if ($file == dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/.htaccess') {
+	if (strpos($file, 'embedded/.htaccess') !== false) {
+	    return $this->_embeddedPreviousContent;
+	} else if (strpos($file, '/.htaccess') !== false) {
 	    return $this->_previousContent;
 	}
 
@@ -319,7 +408,14 @@ class RewriteHelperTestPlatform extends GalleryPlatform{
     }
 
     function fopen($file, $mode, $useIncludePath=null, $zcontext=null) {
-	if ($file == dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/.htaccess') {
+	if (strpos($file, 'embedded/.htaccess') !== false) {
+	    if ($this->_isWriteable) {
+		$this->_fileContent = '';
+		return '.embedded';
+	    } else {
+		return null;
+	    }
+	} else if (strpos($file, '/.htaccess') !== false) {
 	    if ($this->_isWriteable) {
 		$this->_fileContent = '';
 		return '.htaccess';
@@ -335,6 +431,9 @@ class RewriteHelperTestPlatform extends GalleryPlatform{
 	if ($handle == '.htaccess') {
 	    $this->_fileContent .= $string;
 	    return strlen($string);
+	} else if ($handle == '.embedded') {
+	    $this->_embeddedFileContent .= $string;
+	    return strlen($string);
 	}
 
 	return fwrite($handle, $string, $length);
@@ -342,6 +441,8 @@ class RewriteHelperTestPlatform extends GalleryPlatform{
 
     function fclose($handle) {
 	if ($handle == '.htaccess') {
+	    return true;
+	} else if ($handle == '.embedded') {
 	    return true;
 	}
 

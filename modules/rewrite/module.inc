@@ -39,9 +39,9 @@ class RewriteModule extends GalleryModule {
 	$this->setId('rewrite');
 	$this->setName($gallery->i18n('URL Rewrite'));
 	$this->setDescription($gallery->i18n('Enables short URLs using mod_rewrite.'));
-	$this->setVersion('0.9.13'); /* Update RewriteModuleExtras::upgrade also! */
+	$this->setVersion('0.9.14'); /* Update RewriteModuleExtras::upgrade also! */
 	$this->setGroup('gallery', $this->translate('Gallery'));
-	$this->setCallbacks('getSiteAdminViews');
+	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
 	$this->setRequiredCoreApi(array(6, 0));
 	$this->setRequiredModuleApi(array(2, 0));
     }
@@ -57,6 +57,27 @@ class RewriteModule extends GalleryModule {
 	}
 
 	return GalleryStatus::success();
+    }
+
+    /**
+     * @see GalleryModule::uninstall
+     */
+    function uninstall() {
+	GalleryCoreApi::relativeRequireOnce('modules/rewrite/classes/RewriteHelper.class');
+	list($ret, $code) = RewriteHelper::writeFile(null);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (GalleryUtilities::isEmbedded()) {
+	    list($ret, $code) = RewriteHelper::writeFile(null, true);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	/* Dont check $code, atleast we tried to remove the G2 content from the .htaccess file */
+	return parent::uninstall();
     }
 
     /**
@@ -78,6 +99,16 @@ class RewriteModule extends GalleryModule {
 	}
 
 	return GalleryStatus::success();
+    }
+
+    /**
+     * @see GalleryModule::registerEventListeners();
+     */
+    function registerEventListeners() {
+    	$listener = new RewriteModule();
+	GalleryCoreApi::registerEventListener('Gallery::DeactivatePlugin', $listener, true);
+	GalleryCoreApi::registerEventListener('Gallery::ActivatePlugin', $listener, true);
+	GalleryCoreApi::registerEventListener('Gallery::UninstallPlugin', $listener, true);
     }
 
     /**
@@ -248,5 +279,34 @@ class RewriteModule extends GalleryModule {
 
 	return $rules;
     }
+
+    /**
+     * @see GalleryModule::handleEvent
+     */
+    function handleEvent($event) {
+	$data = $event->getData();
+	if ($data['pluginType'] == 'module' && $data['pluginId'] != 'rewrite') {
+	    GalleryCoreApi::relativeRequireOnce('modules/rewrite/classes/RewriteHelper.class');
+	    GalleryCoreApi::relativeRequireOnce('modules/rewrite/classes/RewriteMap.class');
+	    GalleryCoreApi::relativeRequireOnce('modules/rewrite/RewriteModuleExtras.inc');
+
+	    switch ($event->getEventName()) {
+	    case 'Gallery::ActivatePlugin':
+		return array(RewriteModuleExtras::handleActivatePlugin($this, $data['pluginId']),
+		    null);
+
+	    case 'Gallery::DeactivatePlugin':
+		return array(RewriteModuleExtras::handleDeactivatePlugin($this, $data['pluginId']),
+		    null);
+
+	    case 'Gallery::UninstallPlugin':
+		return array(RewriteModuleExtras::handleUninstallPlugin($this, $data['pluginId']),
+		    null);
+	    }
+	}
+
+	return array(GalleryStatus::success(), null);
+    }
 }
+
 ?>
