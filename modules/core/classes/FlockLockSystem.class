@@ -183,6 +183,7 @@ class FlockLockSystem extends GalleryLockSystem {
 
 	/* Flush one byte to each lock file to update its timestamp */
 	$platform = $gallery->getPlatform();
+
 	foreach ($this->_locks as $lockId => $lock) {
 	    foreach ($lock['lockInfo'] as $lockInfo) {
 		list ($fd, $lockFile) = $lockInfo;
@@ -236,7 +237,7 @@ class FlockLockSystem extends GalleryLockSystem {
 	$cutoffTime = time() + $timeout;
 	$platform = $gallery->getPlatform();
 
-	/* Get a file handle for all the files first */
+	/* Get a file handle (which is actually a lock handle) for all the files first */
 	$notLocked = array();
 	foreach ($ids as $id) {
 	    $lockFile = $this->_getLockFile($id);
@@ -244,9 +245,14 @@ class FlockLockSystem extends GalleryLockSystem {
 	    if ($fd) {
 		$notLocked[] = array($fd, $lockFile);
 	    } else {
-		foreach ($open as $lockInfo) {
+		/* Close the files that we already opened successfully and return an error */
+		foreach ($notLocked as $lockInfo) {
 		    list ($fd, $lockFile) = $lockInfo;
 		    $platform->fclose($fd);
+		    /*
+		     * Delete the lock files even if others are locking it too (releaseLock calls
+		     * are too often forgotten in error handling
+		     */
 		    if ($platform->file_exists($lockFile)) {
 			@$platform->unlink($lockFile);
 		    }
@@ -264,12 +270,21 @@ class FlockLockSystem extends GalleryLockSystem {
 	    $notLocked = array();
 	    foreach ($tmp as $lockInfo) {
 		list ($fd, $lockFile) = $lockInfo;
-		$flockType = ($lockType == LOCK_READ) ? LOCK_SH : LOCK_EX;
+		if ($lockType == LOCK_READ) {
+		    $flockType = LOCK_SH;
+		} else {
+		    $flockType = LOCK_EX;
+		}
+		/* Check if we can lock */
 		$flockReturned = $platform->flock($fd, $flockType | LOCK_NB, $wouldBlock);
 		if ($flockReturned && !$wouldBlock) {
 		    $locked[] = $lockInfo;
-		    $this->_references[$lockFile] = isset($this->_references[$lockFile]) ?
-			$this->_references[$lockFile] + 1 : 1;
+		    /* Keep track of the number of locks there are for this entity */
+		    if (isset($this->_references[$lockFile])) {
+			$this->_references[$lockFile]++;
+		    } else {
+			$this->_references[$lockFile] = 1;
+		    }
 		} else {
 		    /* Remember that it's not locked and keep going */
 		    $notLocked[] = $lockInfo;
@@ -278,6 +293,7 @@ class FlockLockSystem extends GalleryLockSystem {
 
 	    if (!empty($notLocked)) {
 		if (time() > $cutoffTime) {
+		    /* Couldn't get the locks in time, release the ones that we have and return */
 		    foreach (array_merge($locked, $notLocked) as $lockInfo) {
 			list ($fd, $lockFile) = $lockInfo;
 			$platform->fclose($fd);
