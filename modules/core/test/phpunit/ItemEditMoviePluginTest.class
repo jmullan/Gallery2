@@ -179,6 +179,10 @@ class ItemEditMoviePluginTestPlatform {
 	return $this->_platform->filesize($path);
     }
 
+    function fflush($handle) {
+	return fflush($handle);
+    }
+    
     function exec($args) {
 	/*
 	 * Check for: (this is a Windows example, but we have to account for Unix also)
@@ -232,6 +236,10 @@ class ItemEditMoviePluginTestPlatform {
 
     function rmdir($path) {
 	return rmdir($path);
+    }
+
+    function fwrite($handle, $string) {
+	return fwrite($handle, $string);
     }
 
     function recursiveRmdir($dirname) {
