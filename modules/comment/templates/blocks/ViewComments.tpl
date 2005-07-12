@@ -20,7 +20,7 @@
   {/if}
 
   {foreach from=$block.comment.LoadComments.comments item=comment}
-    <div class="one-comment">
+    <div class="one-comment gcBorder2">
       {include file="gallery:modules/comment/templates/Comment.tpl"
 	       user=$block.comment.LoadComments.commenters[$comment.commenterId]
 	       comment=$comment
