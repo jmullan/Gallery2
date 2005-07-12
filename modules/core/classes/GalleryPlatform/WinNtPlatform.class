@@ -189,10 +189,18 @@ class WinNtPlatform extends GalleryPlatform {
     }
 
     /**
-     * @see GalleryPlatform::getLineEnding()
+     * @see GalleryPlatform::getLineEnding
      */
     function getLineEnding() {
 	return "\r\n";
+    }
+
+    /**
+     * @see GalleryPlatform::strftime
+     */
+    function strftime($format, $timestamp=null) {
+	/* Windows doesn't have %e but has %#d, same thing but without leading space for 1-9 */
+	return parent::strftime(str_replace('%e', '%#d', $format), $timestamp);
     }
 }
 ?>

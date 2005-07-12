@@ -273,6 +273,7 @@ class ItemEditItem extends ItemEditPlugin {
      */
     function loadTemplate(&$template, &$form, $item, $thumbnail) {
 	global $gallery;
+	$platform = $gallery->getPlatform();
 
 	if ($form['formName'] != 'ItemEditItem') {
 	    /* First time around, load the form with item data */
@@ -333,12 +334,12 @@ class ItemEditItem extends ItemEditPlugin {
 	if (!empty($originationTimestamp)) {
 	    $ItemEditItem['originationTimestamp'] = array(
 		'timestamp' => $originationTimestamp,
-		'Time_Hour' => strftime('%H', $originationTimestamp),
-		'Time_Minute' => strftime('%M', $originationTimestamp),
-		'Time_Second' => strftime('%S', $originationTimestamp),
-		'Date_Day' => ltrim(strftime('%d', $originationTimestamp), '0'),
-		'Date_Month' => strftime('%m', $originationTimestamp),
-		'Date_Year' => strftime('%Y', $originationTimestamp),
+		'Time_Hour' => $platform->strftime('%H', $originationTimestamp),
+		'Time_Minute' => $platform->strftime('%M', $originationTimestamp),
+		'Time_Second' => $platform->strftime('%S', $originationTimestamp),
+		'Date_Day' => ltrim($platform->strftime('%d', $originationTimestamp), '0'),
+		'Date_Month' => $platform->strftime('%m', $originationTimestamp),
+		'Date_Year' => $platform->strftime('%Y', $originationTimestamp),
 	    );
 	}
 

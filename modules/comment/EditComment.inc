@@ -206,6 +206,7 @@ class EditCommentView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
+	$platform = $gallery->getPlatform();
 
 	/* Load our item */
 	list ($ret, $item) = $this->_getItem();
@@ -247,7 +248,7 @@ class EditCommentView extends GalleryView {
 	    $form['formName'] = 'EditComment';
 
 	    /* XXX: this needs internationalization */
-	    $form['date'] = GalleryCoreApi::convertToUtf8(strftime('%D %T', $comment->getDate()));
+	    $form['date'] = $platform->strftime('%D %T', $comment->getDate());
 	}
 
 	$EditComment['comment'] = $comment->getMemberData();

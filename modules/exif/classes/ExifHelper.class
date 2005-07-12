@@ -296,6 +296,8 @@ class ExifHelper {
      * @return string the result (eg "1/400 sec")
      */
     function postProcessValue($property, $value) {
+	global $gallery;
+
 	switch($property) {
 	case 'ShutterSpeedValue':
 	    /* Convert "25/10000 sec" to "1/400 sec" */
@@ -337,7 +339,8 @@ class ExifHelper {
 			$time -= $offset;
 		    }
 		}
-		$value = GalleryCoreApi::convertToUtf8(strftime('%x %X', $time));
+		$platform = $gallery->getPlatform();
+		$value = $platform->strftime('%x %X', $time);
 	    }
 	    break;
 	}
