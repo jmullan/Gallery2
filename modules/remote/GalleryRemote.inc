@@ -92,7 +92,7 @@ class GalleryRemoteController extends GalleryController {
 		if ($ret->isError()) {
 		    $response->setProperty('status', $grStatusCodes['UPLOAD_PHOTO_FAIL']);
 		    $response->setProperty('status_text',
-					   sprintf("Upload failed: '%s'.", $ret->getErrorMessage()));
+			sprintf("Upload failed: '%s'.", $ret->getErrorMessage()));
 		}
 		break;
 
@@ -507,29 +507,70 @@ class GalleryRemoteController extends GalleryController {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	/* Precache item permissions */
+	$ret = GalleryCoreApi::studyPermissions($ids);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
 	$i = 1;
 	foreach ($items as $item) {
 	    if (GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
-		$response->setProperty('image.name.' . $i, $item->getId());
-		$response->setProperty('image.raw_width.' . $i, $item->getWidth());
-		$response->setProperty('image.raw_height.' . $i, $item->getHeight());
-		$response->setProperty('image.raw_filesize.' . $i, $item->getSize());
+		list ($ret, $permissions) = GalleryCoreApi::getPermissions($item->getId());
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		if (isset($permissions['core.viewSource'])) {
+		    $response->setProperty('image.name.' . $i, $item->getId());
+		    $response->setProperty('image.raw_width.' . $i, $item->getWidth());
+		    $response->setProperty('image.raw_height.' . $i, $item->getHeight());
+		    $response->setProperty('image.raw_filesize.' . $i, $item->getSize());
+		} else if (!isset($permissions['core.viewResizes'])) {
+		    continue;
+		}
 
+		$thumb = null;
+		$resizes = array();
 		if (isset($derivatives[$item->getId()])) {
-		    foreach ($derivatives[$item->getId()] as $der) {
-			switch ($der->getDerivativeType()) {
-			case DERIVATIVE_TYPE_IMAGE_THUMBNAIL:
-			    $response->setProperty('image.thumbName.' . $i, $der->getId());
-			    $response->setProperty('image.thumb_width.' . $i, $der->getWidth());
-			    $response->setProperty('image.thumb_height.' . $i, $der->getHeight());
-			    break;
-			case DERIVATIVE_TYPE_IMAGE_RESIZE:
-			    $response->setProperty('image.resizedName.' . $i, $der->getId());
-			    $response->setProperty('image.resized_width.' . $i, $der->getWidth());
-			    $response->setProperty('image.resized_height.' . $i, $der->getHeight());
-			    break;
+		    foreach ($derivatives[$item->getId()] as $index => $der) {
+			if ($der->getDerivativeType() == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
+			    $thumb = $der;
+			} else if ($der->getDerivativeType() == DERIVATIVE_TYPE_IMAGE_PREFERRED &&
+				   isset($permissions['core.viewSource'])) {
+			    $response->setProperty('image.name.' . $i, $der->getId());
+			    $response->setProperty('image.raw_width.' . $i, $der->getWidth());
+			    $response->setProperty('image.raw_height.' . $i, $der->getHeight());
+			    $response->setProperty('image.raw_filesize.' . $i,
+						   $der->getDerivativeSize());
+			} else if ($der->getDerivativeType() == DERIVATIVE_TYPE_IMAGE_RESIZE &&
+				   isset($permissions['core.viewResizes'])) {
+			    $resizes[$index] = $der->getWidth() * $der->getHeight();
 			}
 		    }
+		    arsort($resizes);
+		    $resizes = array_keys($resizes);
+		}
+		if (!$response->hasProperty('image.name.' . $i)) {
+		    if (empty($resizes)) {
+			/* No permission on full size and no resizes found */
+			continue;
+		    }
+		    $der = $derivatives[$item->getId()][array_shift($resizes)];
+		    $response->setProperty('image.name.' . $i, $der->getId());
+		    $response->setProperty('image.raw_width.' . $i, $der->getWidth());
+		    $response->setProperty('image.raw_height.' . $i, $der->getHeight());
+		    $response->setProperty('image.raw_filesize.' . $i, $der->getDerivativeSize());
+		}
+		if (!empty($resizes)) {
+		    $der = $derivatives[$item->getId()][array_shift($resizes)];
+		    $response->setProperty('image.resizedName.' . $i, $der->getId());
+		    $response->setProperty('image.resized_width.' . $i, $der->getWidth());
+		    $response->setProperty('image.resized_height.' . $i, $der->getHeight());
+		}
+		if (isset($thumb)) {
+		    $response->setProperty('image.thumbName.' . $i, $thumb->getId());
+		    $response->setProperty('image.thumb_width.' . $i, $thumb->getWidth());
+		    $response->setProperty('image.thumb_height.' . $i, $thumb->getHeight());
 		}
 
 		list ($ret, $extensions) =
