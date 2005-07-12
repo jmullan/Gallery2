@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2004 Bharat Mediratta
+ * Copyright (C) 2000-2005 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +80,7 @@ class RewriteModuleTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	/* Use empty table by default */
 	$ret = RewriteMap::setActiveRules(array());
 	if ($ret->isError()) {
@@ -105,7 +105,7 @@ class RewriteModuleTest extends GalleryTestCase {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-    	parent::tearDown();
+	parent::tearDown();
     }
 
     function testHandleEvent1() {
@@ -116,7 +116,7 @@ class RewriteModuleTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-    	
+
 	/* Activate the module */
 	list ($ret, $redirect) = $this->_module->activate();
 	if ($ret->isError()) {
@@ -295,7 +295,7 @@ class RewriteModuleTest extends GalleryTestCase {
 	/* Tell our mock platform to deny write access to the .htaccess file */
 	$platform =& $gallery->getPlatform();
 	$platform->setIsWriteable(false);
-    	
+
 	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
 	    'history.rewritemoduletest.0',
 	    serialize(array('pattern' => 'phpunit/dummy/%itemId%.html',
@@ -303,7 +303,7 @@ class RewriteModuleTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-    	
+
 	/* Activate the module */
 	list ($ret, $redirect) = $this->_module->activate();
 	if ($ret->isError()) {
@@ -329,7 +329,7 @@ class RewriteModuleTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	/* Deactivate the module */
 	list ($ret, $redirect) = $this->_module->deactivate();
 	if ($ret->isError()) {
@@ -398,7 +398,7 @@ class RewriteModuleTestModule extends GalleryModule {
  *
  * @package Rewrite
  * @subpackage PHPUnit
- */ 
+ */
 class RewriteModuleTestPlatform extends GalleryPlatform {
     var $_isWriteable = true;
 
@@ -412,31 +412,31 @@ class RewriteModuleTestPlatform extends GalleryPlatform {
 	} else if (strpos($file, 'modules/rewritemoduletest/module.inc') !== false) {
 	    return true;
 	}
-	
+
 	return parent::file_exists($file);
     }
-    
+
     function is_readable($file) {
 	if ($file == dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/.htaccess') {
 	    return true;
 	}
-	
+
 	return parent::is_readable($file);
     }
-    
+
     function is_writeable($file) {
 	if ($file == dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/.htaccess') {
 	    return $this->_isWriteable;
 	}
-	
+
 	return parent::is_writeable($file);
     }
-    
+
     function file($file) {
 	if ($file == dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/.htaccess') {
 	    return array();
 	}
-	
+
 	return parent::file($file);
     }
 
@@ -449,23 +449,23 @@ class RewriteModuleTestPlatform extends GalleryPlatform {
 		return null;
 	    }
 	}
-	
+
 	return parent::fopen($file, $mode, $useIncludePath, $zcontext);
     }
-    
+
     function fwrite($handle, $string, $length=null) {
 	if ($handle == '.htaccess') {
 	    return strlen($string);
 	}
-	
+
 	return fwrite($handle, $string, $length);
     }
-    
+
     function fclose($handle) {
 	if ($handle == '.htaccess') {
 	    return true;
 	}
-	
+
 	return parent::fclose($handle);
     }
 
