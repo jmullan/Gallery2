@@ -337,7 +337,7 @@ class ExifHelper {
 			$time -= $offset;
 		    }
 		}
-		$value = strftime('%x %X', $time);
+		$value = GalleryCoreApi::convertToUtf8(strftime('%x %X', $time));
 	    }
 	    break;
 	}

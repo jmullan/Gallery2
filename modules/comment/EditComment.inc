@@ -77,14 +77,14 @@ class EditCommentController extends GalleryController {
 	    if (empty($form['date'])) {
 		$error[] = 'form[error][date][missing]';
 	    } else {
-	    	/*
+		/*
 		 * Verify that the date is at least 2 characters long.
 		 * This is to get around an apparent bug in strtotime
 		 * which seems to read single characters as valid dates
 		 * (with the exception of 'j')
 		 */
-	    	if (strlen($form['date']) < 2) {
-	    	    $longDate = -1;
+		if (strlen($form['date']) < 2) {
+		    $longDate = -1;
 		} else {
 		    $longDate = strtotime($form['date']);
 		}
@@ -146,14 +146,14 @@ class EditCommentController extends GalleryController {
 	    if (empty($form['date'])) {
 		$error[] = 'form[error][date][missing]';
 	    } else {
-	    	/*
+		/*
 		 * Verify that the date is at least 2 characters long.
 		 * This is to get around an apparent bug in strtotime
 		 * which seems to read single characters as valid dates
 		 * (with the exception of 'j')
 		 */
-	    	if (strlen($form['date']) < 2) {
-	    	    $longDate = -1;
+		if (strlen($form['date']) < 2) {
+		    $longDate = -1;
 		} else {
 		    $longDate = strtotime($form['date']);
 		}
@@ -247,7 +247,7 @@ class EditCommentView extends GalleryView {
 	    $form['formName'] = 'EditComment';
 
 	    /* XXX: this needs internationalization */
-	    $form['date'] = strftime('%D %T', $comment->getDate());
+	    $form['date'] = GalleryCoreApi::convertToUtf8(strftime('%D %T', $comment->getDate()));
 	}
 
 	$EditComment['comment'] = $comment->getMemberData();
