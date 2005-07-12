@@ -32,25 +32,11 @@ class SlideshowAppletModule extends GalleryModule {
 	$this->setId('slideshowapplet');
 	$this->setName($gallery->i18n('Slideshow Applet'));
 	$this->setDescription($gallery->i18n('Fullscreen slideshow using a Java applet'));
-	$this->setVersion('0.9.7');
+	$this->setVersion('0.9.8');
 	$this->setGroup('display', $this->translate('Display'));
-	$this->setCallbacks('getItemLinks|getItemAdminViews');
+	$this->setCallbacks('getItemLinks');
 	$this->setRequiredCoreApi(array(6, 0));
 	$this->setRequiredModuleApi(array(2, 0));
-    }
-
-    /**
-     * @see GalleryModule::performFactoryRegistrations()
-     */
-    function performFactoryRegistrations() {
-	$ret = GalleryCoreApi::registerFactoryImplementation(
-	    'SlideshowInterface_1_0', 'SlideshowApplet', 'SlideshowApplet',
-	    'modules/slideshowapplet/SlideshowApplet.inc', 'slideshowapplet', null);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	return GalleryStatus::success();
     }
 
     /**
@@ -64,7 +50,6 @@ class SlideshowAppletModule extends GalleryModule {
      * @see GalleryModule::autoConfigure()
      */
     function autoConfigure() {
-	/* We don't require any special configuration */
 	return array(GalleryStatus::success(), true);
     }
 
@@ -79,22 +64,11 @@ class SlideshowAppletModule extends GalleryModule {
 		$links[$itemId][] =
 		    array('text' => $this->translate('view slideshow (fullscreen)'),
 			  'params' => array(
-			      'view' => 'core.ItemAdmin',
-			      'subView' => 'slideshowapplet.SlideshowApplet',
+			      'view' => 'slideshowapplet.SlideshowApplet',
 			      'itemId' => $itemId));
 	    }
 	}
 	return array(GalleryStatus::success(), $links);
-    }
-
-    /**
-     * @see GalleryModule::getItemAdminViews()
-     */
-    function getItemAdminViews($item) {
-	$view = array('name' => $this->translate('View Slideshow (fullscreen)'),
-		      'view' => 'slideshowapplet.SlideshowApplet');
-
-	return array(GalleryStatus::success(), array($view));
     }
 }
 ?>
