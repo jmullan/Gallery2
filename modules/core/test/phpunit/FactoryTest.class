@@ -62,7 +62,7 @@ class FactoryTest extends GalleryTestCase {
 
 	foreach (array('factoryTest', 'factoryTest2') as $moduleId) {
 	    GalleryPluginHelper_medium::setPluginInstance(
-                'module', $moduleId, new FactoryTestModule($moduleId));
+		'module', $moduleId, new FactoryTestModule($moduleId));
 	    list ($ret, $ignored) = GalleryCoreApi::activatePlugin('module', $moduleId);
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
@@ -78,7 +78,7 @@ class FactoryTest extends GalleryTestCase {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    
+
 	    $ret = GalleryCoreApi::removePlugin('module', $moduleId);
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
@@ -221,7 +221,7 @@ class FactoryTest extends GalleryTestCase {
 
     function testInactiveModule() {
 	global $gallery;
-	
+
 	/* Deactivate FactoryTestModule */
 	list ($ret, $ignored) = GalleryCoreApi::deactivatePlugin('module', 'factoryTest');
 	if ($ret->isError()) {
@@ -295,6 +295,8 @@ class FactoryTestDummy { }
 class FactoryTestModule extends GalleryModule {
     function FactoryTestModule($id) {
 	$this->setId($id);
+	$this->setRequiredCoreApi(GalleryCoreApi::getApiVersion());
+	$this->setRequiredModuleApi(GalleryModule::getApiVersion());
     }
 }
 ?>
