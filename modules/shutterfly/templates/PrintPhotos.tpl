@@ -17,7 +17,7 @@
 	var d = new Date();
 	d.setTime(d.getTime() - 10000);
 	document.cookie = 'G2_shutterfly=0;expires=' + d.toUTCString();
-	document.forms[0].submit();
+	document.getElementById('shutterflyForm').submit();
       } else {
 	history.back();
       }
@@ -26,7 +26,7 @@
   {/literal}</script>
 </head>
 <body onload="go()">
-<form action="http://www.shutterfly.com/c4p/UpdateCart.jsp" method="POST">
+<form action="http://www.shutterfly.com/c4p/UpdateCart.jsp" method="POST" id="shutterflyForm">
   <input type="hidden" name="protocol" value="SFP,100"/>
   <input type="hidden" name="pid" value="C4PP"/>
   <input type="hidden" name="psid" value="GALL"/>

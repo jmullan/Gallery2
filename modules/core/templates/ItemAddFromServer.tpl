@@ -60,7 +60,8 @@
 {/if}
 
   function selectPath(path) {ldelim}
-  document.forms[0].elements['{g->formVar var="form[localServerPath]"}'].value = path;
+  document.getElementById('itemAdminForm').elements['{g->formVar
+    var="form[localServerPath]"}'].value = path;
   {rdelim}
   // ]]>
 </script>

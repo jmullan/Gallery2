@@ -41,13 +41,13 @@
   <script type="text/javascript">
     // <![CDATA[
     function setCheck(val) {ldelim}
-      var frm = document.forms[0];
+      var frm = document.getElementById('itemAdminForm');
       {foreach from=$ItemCreateLink.peers item=peer}
 	frm.elements['g2_form[selectedIds][{$peer.id}]'].checked = val;
       {/foreach}
     {rdelim}
     function invertCheck(val) {ldelim}
-      var frm = document.forms[0];
+      var frm = document.getElementById('itemAdminForm');
       {foreach from=$ItemCreateLink.peers item=peer}
 	frm.elements['g2_form[selectedIds][{$peer.id}]'].checked =
 	    !frm.elements['g2_form[selectedIds][{$peer.id}]'].checked;

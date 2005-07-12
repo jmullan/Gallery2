@@ -7,18 +7,16 @@
 <script type="text/javascript">
   // <![CDATA[
   function SetSizeLimitOption_toggleXY() {ldelim}
-    document.forms[0].elements["{g->formVar
-		  var="form[SizeLimitOption][dimensions][width]"}"].disabled =
-      !document.forms[0].elements["{g->formVar
-		  var="form[SizeLimitOption][dimensionChoice]"}"][1].checked;
-    document.forms[0].elements["{g->formVar
-		  var="form[SizeLimitOption][dimensions][height]"}"].disabled =
-      !document.forms[0].elements["{g->formVar
-		  var="form[SizeLimitOption][dimensionChoice]"}"][1].checked;
+    var frm = document.getElementById('itemAdminForm');
+    frm.elements["{g->formVar var="form[SizeLimitOption][dimensions][width]"}"].disabled =
+      !frm.elements["{g->formVar var="form[SizeLimitOption][dimensionChoice]"}"][1].checked;
+    frm.elements["{g->formVar var="form[SizeLimitOption][dimensions][height]"}"].disabled =
+      !frm.elements["{g->formVar var="form[SizeLimitOption][dimensionChoice]"}"][1].checked;
   {rdelim}
   function SetSizeLimitOption_toggleSize() {ldelim}
-    document.forms[0].elements["{g->formVar var="form[SizeLimitOption][filesize]"}"].disabled =
-     !document.forms[0].elements["{g->formVar var="form[SizeLimitOption][sizeChoice]"}"][1].checked;
+    var frm = document.getElementById('itemAdminForm');
+    frm.elements["{g->formVar var="form[SizeLimitOption][filesize]"}"].disabled =
+     !frm.elements["{g->formVar var="form[SizeLimitOption][sizeChoice]"}"][1].checked;
   {rdelim}
   // ]]>
 </script>
@@ -45,10 +43,9 @@
 
     {if $SizeLimitOption.dimensionChoice == "unlimited"}
     <script type="text/javascript">
-      document.forms[0].elements["{g->formVar
-			var="form[SizeLimitOption][dimensions][width]"}"].disabled = true;
-      document.forms[0].elements["{g->formVar
-			var="form[SizeLimitOption][dimensions][height]"}"].disabled = true;
+      var frm = document.getElementById('itemAdminForm');
+      frm.elements["{g->formVar var="form[SizeLimitOption][dimensions][width]"}"].disabled = true;
+      frm.elements["{g->formVar var="form[SizeLimitOption][dimensions][height]"}"].disabled = true;
     </script>
     {/if}
 

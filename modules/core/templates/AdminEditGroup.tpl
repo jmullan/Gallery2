@@ -18,7 +18,7 @@
    name="{g->formVar var="form[groupName]"}" value="{$form.groupName}"/>
   <input type="hidden" name="{g->formVar var="groupId"}" value="{$AdminEditGroup.group.id}"/>
   <script type="text/javascript">
-    document.forms[0]['{g->formVar var="form[groupName]"}'].focus();
+    document.getElementById('siteAdminForm')['{g->formVar var="form[groupName]"}'].focus();
   </script>
 
   {if isset($form.error.groupName.missing)}

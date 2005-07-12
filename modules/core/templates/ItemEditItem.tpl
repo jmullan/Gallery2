@@ -140,7 +140,7 @@
   <script type="text/javascript" language="javascript">
   // <![CDATA[
   function setOriginationTimestamp() {ldelim}
-    var frm = document.forms[0];
+    var frm = document.getElementById('itemAdminForm');
     frm.elements['{$smarty.capture.originationTimestampField}[Date_Month]'].value = '{$ItemEditItem.originationTimestamp.Date_Month}';
     frm.elements['{$smarty.capture.originationTimestampField}[Date_Day]'].value = '{$ItemEditItem.originationTimestamp.Date_Day}';
     frm.elements['{$smarty.capture.originationTimestampField}[Date_Year]'].value = '{$ItemEditItem.originationTimestamp.Date_Year}';

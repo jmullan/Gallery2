@@ -44,7 +44,7 @@
      id="giFormUsername" value="{$UserRecoverPasswordAdmin.status.userName}"/>
 
     <script type="text/javascript">
-      document.forms[0]['{g->formVar var="form[userName]"}'].focus();
+      document.getElementById('userAdminForm')['{g->formVar var="form[userName]"}'].focus();
     </script>
 
     {if isset($form.error.userName.missing)}
@@ -82,9 +82,6 @@
   </div>
   {/if}
 
-  <script type="text/javascript">
-    document.forms[0]['{g->formVar var="form[password1]"}'].focus();
-  </script>
   {elseif isset($UserRecoverPasswordAdmin.error.authString.incorrect) || isset($error.authString.incorrect)}
   <div class="gbBlock">
     {if !isset($UserRecoverPasswordAdmin.status.firstLoad)}

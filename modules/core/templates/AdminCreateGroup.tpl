@@ -16,7 +16,7 @@
 
   <input type="text" name="{g->formVar var="form[groupName]"}" value="{$form.groupName}"/>
   <script type="text/javascript">
-    document.forms[0]['{g->formVar var="form[groupName]"}'].focus();
+    document.getElementById('siteAdminForm')['{g->formVar var="form[groupName]"}'].focus();
   </script>
 
   {if isset($form.error.groupName.missing)}

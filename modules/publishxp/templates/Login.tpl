@@ -4,7 +4,8 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-<form action="{g->url}" enctype="application/x-www-form-urlencoded" method="post">
+<form action="{g->url}" enctype="application/x-www-form-urlencoded" method="post"
+ id="publishXpForm">
   <div>      
     <script type="text/javascript">
        setSubtitle("{g->text text="Specify your authentication credentials."}");
@@ -31,7 +32,8 @@
 
     <input id="giFormUsername" type="text" name="{g->formVar var="form[userName]"}"
            size="16" value="{$form.userName}"/>
-    <script type="text/javascript">document.forms[0]['{g->formVar var="form[userName]"}'].focus();</script>
+    <script type="text/javascript">document.getElementById('publishXpForm')['{g->formVar
+     var="form[userName]"}'].focus();</script>
 
     {if isset($form.error.userName.missing)}
     <div class="giError">

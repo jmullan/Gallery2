@@ -41,14 +41,14 @@
   {if ($AdminThemes.mode == 'config')}
     <span class="giSelected">
       <div>
-        {g->text text="All Themes"}
+	{g->text text="All Themes"}
       </div>
     </span>
   {else}
     <span>
       <div>
-        <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminThemes"
-                         arg3="mode=config"}">{g->text text="All Themes"}</a>
+	<a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminThemes"
+			 arg3="mode=config"}">{g->text text="All Themes"}</a>
       </div>
     </span>
   {/if}
@@ -56,14 +56,14 @@
   {if ($AdminThemes.mode == 'defaults')}
     <span class="giSelected">
       <div>
-        {g->text text="Defaults"}
+	{g->text text="Defaults"}
       </div>
     </span>
   {else}
     <span>
       <div>
-        <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminThemes"
-                         arg3="mode=defaults"}">{g->text text="Defaults"}</a>
+	<a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminThemes"
+			 arg3="mode=defaults"}">{g->text text="Defaults"}</a>
       </div>
     </span>
   {/if}
@@ -72,16 +72,16 @@
   {if $theme.active}
     {if ($AdminThemes.mode == 'editTheme') && ($AdminThemes.themeId == $themeId)}
       <span class="giSelected">
-        <div>
+	<div>
 	  {g->text text=$theme.name l10Domain=$theme.l10Domain}
-        </div>
+	</div>
       </span>
     {else}
       <span>
-        <div>
+	<div>
 	  <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminThemes"
-	                   arg3="mode=editTheme" arg4="themeId=$themeId"}">{g->text text=$theme.name l10Domain=$theme.l10Domain}</a>
-        </div>
+			   arg3="mode=editTheme" arg4="themeId=$themeId"}">{g->text text=$theme.name l10Domain=$theme.l10Domain}</a>
+	</div>
       </span>
     {/if}
   {/if}
@@ -208,11 +208,12 @@
 	// <![CDATA[
 	function pickOrder() {ldelim}
 	  var list = '{g->formVar var="form[default][orderBy]"}';
-	  var index = document.forms[0].elements[list].selectedIndex;
+	  var frm = document.getElementById('siteAdminForm');
+	  var index = frm.elements[list].selectedIndex;
 	  list = '{g->formVar var="form[default][orderDirection]"}';
-	  document.forms[0].elements[list].disabled = (index == 0) ?1:0;
+	  frm.elements[list].disabled = (index == 0) ?1:0;
 	  list = '{g->formVar var="form[default][presort]"}';
-	  document.forms[0].elements[list].disabled = (index == 0) ?1:0;
+	  frm.elements[list].disabled = (index == 0) ?1:0;
 	{rdelim}
 	pickOrder();
 	// ]]>
@@ -268,7 +269,7 @@
 	  <td>
 	    {$setting.name}
 	  </td>
-          <td>
+	  <td>
 	    {if ($setting.type == 'text-field')}
 	      <input type="text" size="{$setting.typeParams.size|default:6}"
 	       name="{g->formVar var="form[key][`$setting.key`]"}" value="{$form.key[$setting.key]}"/>
@@ -279,7 +280,7 @@
 	    {elseif ($setting.type == 'checkbox')}
 	      <input type="checkbox"{if !empty($setting.value)} checked="checked"{/if}
 	       name="{g->formVar var="form[key][`$setting.key`]"}" />
-            {elseif ($setting.type == 'block-list')}
+	    {elseif ($setting.type == 'block-list')}
 	      <table>
 		<tr>
 		  <td style="text-align: right;">
@@ -287,13 +288,13 @@
 		  </td>
 		  <td>
 		    <select id="blocksAvailableList_{$setting.key}"
-		            onchange="bsw_selectToUse('{$setting.key}');">
+			    onchange="bsw_selectToUse('{$setting.key}');">
 		      <option value="">{g->text text="Choose a block"}</option>
 		    </select>
 		  </td>
 		  <td class="bsw_BlockCommands">
 		    <span id="bsw_AddButton_{$setting.key}" onclick="bsw_addBlock('{$setting.key}');"
-                          class="bsw_ButtonDisabled">
+			  class="bsw_ButtonDisabled">
 		      {g->text text="Add"}
 		    </span>
 		  </td>
@@ -305,27 +306,27 @@
 		  </td>
 		  <td id="bsw_UsedBlockList_{$setting.key}">
 		    <select id="blocksUsedList_{$setting.key}" size="10"
-                            onchange="bsw_selectToChange('{$setting.key}');"></select>
+			    onchange="bsw_selectToChange('{$setting.key}');"></select>
 		  </td>
 		  <td class="bsw_BlockCommands">
 		    <span style="display: block"
-		          id="bsw_RemoveButton_{$setting.key}"
-		          onclick="bsw_removeBlock('{$setting.key}');"
-		          class="bsw_ButtonDisabled">
+			  id="bsw_RemoveButton_{$setting.key}"
+			  onclick="bsw_removeBlock('{$setting.key}');"
+			  class="bsw_ButtonDisabled">
 		      {g->text text="Remove"}
 		    </span>
 
 		    <span style="display: block"
-		          id="bsw_MoveUpButton_{$setting.key}"
-                          onclick="bsw_moveUp('{$setting.key}');"
-                          class="bsw_ButtonDisabled">
+			  id="bsw_MoveUpButton_{$setting.key}"
+			  onclick="bsw_moveUp('{$setting.key}');"
+			  class="bsw_ButtonDisabled">
 		      {g->text text="Move Up"}
 		    </span>
 
 		    <span style="display: block"
-		          id="bsw_MoveDownButton_{$setting.key}"
-		          onclick="bsw_moveDown('{$setting.key}');"
-                          class="bsw_ButtonDisabled">
+			  id="bsw_MoveDownButton_{$setting.key}"
+			  onclick="bsw_moveDown('{$setting.key}');"
+			  class="bsw_ButtonDisabled">
 		      {g->text text="Move Down"}
 		    </span>
 		  </td>
@@ -335,10 +336,10 @@
 		  </td>
 		</tr>
 	      </table>
-              <input type="hidden"
-	             id="albumBlockValue_{$setting.key}" size="60"
-                     name="{g->formVar var="form[key][`$setting.key`]"}"
-	             value="{$form.key[$setting.key]}"/>
+	      <input type="hidden"
+		     id="albumBlockValue_{$setting.key}" size="60"
+		     name="{g->formVar var="form[key][`$setting.key`]"}"
+		     value="{$form.key[$setting.key]}"/>
 
 	      <script type="text/javascript">
 		// <![CDATA[
@@ -349,18 +350,18 @@
 		    block = bsw_addAvailableBlock("{$setting.key}", "{$moduleId}.{$blockName}", "{g->text text=$block.description l10Domain="modules_$moduleId"}");
 		    {if !empty($block.vars)}
 		      {foreach from=$block.vars key=varKey item=varInfo}
-		        tmp = new Array();
-		        {if ($varInfo.type == 'choice')}
-		          {foreach from=$varInfo.choices key=choiceKey item=choiceValue}
-	                    tmp["{$choiceKey}"] = "{g->text text=$choiceValue l10Domain="modules_$moduleId"}";
-		          {/foreach}
-		        {/if}
-		        block.addVariable("{$varKey}", "{$varInfo.default}", "{g->text text=$varInfo.description l10Domain="modules_$moduleId"}", "{$varInfo.type}", tmp);
+			tmp = new Array();
+			{if ($varInfo.type == 'choice')}
+			  {foreach from=$varInfo.choices key=choiceKey item=choiceValue}
+			    tmp["{$choiceKey}"] = "{g->text text=$choiceValue l10Domain="modules_$moduleId"}";
+			  {/foreach}
+			{/if}
+			block.addVariable("{$varKey}", "{$varInfo.default}", "{g->text text=$varInfo.description l10Domain="modules_$moduleId"}", "{$varInfo.type}", tmp);
 		      {/foreach}
-                    {/if}
+		    {/if}
 		  {/foreach}
 		{/foreach}
-		// Now initialize the form with the album block values
+		{* Now initialize the form with the album block values *}
 		bsw_initAdminForm("{$setting.key}", "{g->text text="Parameter"}", "{g->text text="Value"}");
 		// ]]>
 	      </script>

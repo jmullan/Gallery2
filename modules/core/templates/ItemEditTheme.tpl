@@ -31,8 +31,8 @@
       </td><td>
 	{if ($setting.type == 'text-field')}
 	  <input type="text" size="{$setting.typeParams.size|default:6}"
-	         onchange="changeSetting('{$settingKey}')"
-	         name="{g->formVar var="form[key][$settingKey]"}" value="{$form.key.$settingKey}"/>
+		 onchange="changeSetting('{$settingKey}')"
+		 name="{g->formVar var="form[key][$settingKey]"}" value="{$form.key.$settingKey}"/>
 	{elseif ($setting.type == 'single-select')}
 	  <select name="{g->formVar var="form[key][$settingKey]"}"
 		  onchange="changeSetting('{$settingKey}')">
@@ -40,9 +40,9 @@
 	  </select>
 	{elseif ($setting.type == 'checkbox')}
 	  <input type="checkbox" onchange="changeSetting('{$settingKey}')"
-	         name="{g->formVar var="form[key][$settingKey]"}"
+		 name="{g->formVar var="form[key][$settingKey]"}"
 	   {if !empty($setting.value)}checked="checked"{/if}/>
-        {elseif ($setting.type == 'block-list')}
+	{elseif ($setting.type == 'block-list')}
 	    <table>
 	      <tr>
 		<td style="text-align: right;">
@@ -100,10 +100,10 @@
 	    </table>
 
 	    <input type="hidden"
-	           onchange="changeSetting('{$settingKey}'); bsw_reInitAdminForm('{$settingKey}');"
-	           id="albumBlockValue_{$setting.key}" size="60"
-                   name="{g->formVar var="form[key][`$setting.key`]"}"
-	           value="{$form.key[$setting.key]}"/>
+		   onchange="changeSetting('{$settingKey}'); bsw_reInitAdminForm('{$settingKey}');"
+		   id="albumBlockValue_{$setting.key}" size="60"
+		   name="{g->formVar var="form[key][`$setting.key`]"}"
+		   value="{$form.key[$setting.key]}"/>
 
 	    <script type="text/javascript">
 	      // <![CDATA[
@@ -125,7 +125,7 @@
 		  {/if}
 		{/foreach}
 	      {/foreach}
-	      // Now initialize the form with the album block values
+	      {* Now initialize the form with the album block values *}
 	      bsw_initAdminForm("{$setting.key}", "{g->text text="Parameter"}", "{g->text text="Value"}");
 	      // ]]>
 	    </script>
@@ -134,7 +134,7 @@
 
       <td align="center">
 	<input type="checkbox" onclick="toggleGlobal('{$settingKey}');"
- 	       name="{g->formVar var="form[useGlobal][$settingKey]"}"
+	       name="{g->formVar var="form[useGlobal][$settingKey]"}"
 	 {if (!isset($ItemEditTheme.globalParams.$settingKey))}
 	   disabled="disabled"
 	 {elseif ($setting.value == $ItemEditTheme.globalParams.$settingKey)}
@@ -167,8 +167,9 @@
   {/foreach}
 
   function toggleGlobal(key) {ldelim}
-    inputWidget = document.forms[0].elements['{g->formVar var="form[key]["}' + key + ']'];
-    toggleWidget = document.forms[0].elements['{g->formVar var="form[useGlobal]["}' + key + ']'];
+    var frm = document.getElementById('itemAdminForm');
+    inputWidget = frm.elements['{g->formVar var="form[key]["}' + key + ']'];
+    toggleWidget = frm.elements['{g->formVar var="form[useGlobal]["}' + key + ']'];
     {literal}
     if (toggleWidget.checked) {
       savedValues[key] = inputWidget.value;
@@ -198,12 +199,13 @@
 
   function changeSetting(key) {
     {/literal}
-    inputWidget = document.forms[0].elements['{g->formVar var="form[key]["}' + key + ']'];
-    toggleWidget = document.forms[0].elements['{g->formVar var="form[useGlobal]["}' + key + ']'];
+    var frm = document.getElementById('itemAdminForm');
+    inputWidget = frm.elements['{g->formVar var="form[key]["}' + key + ']'];
+    toggleWidget = frm.elements['{g->formVar var="form[useGlobal]["}' + key + ']'];
     {literal}
     if (inputWidget.type == 'checkbox') {
       toggleWidget.checked = ((globalValues[key] == 0 && !inputWidget.checked) ||
-                              (globalValues[key] == 1 && inputWidget.checked));
+			      (globalValues[key] == 1 && inputWidget.checked));
     } else {
       toggleWidget.checked = (inputWidget.value == globalValues[key]);
     }

@@ -21,7 +21,7 @@
    name="{g->formVar var="form[username]"}" value="{$form.username}"/>
 
   <script type="text/javascript">
-    document.forms[0]['{g->formVar var="form[username]"}'].focus();
+    document.getElementById('userAdminForm')['{g->formVar var="form[username]"}'].focus();
   </script>
 
   {if isset($form.error.username.missing)}

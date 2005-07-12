@@ -18,7 +18,8 @@
 </div>
 {/if}
 
-<form action="{g->url}" method="post" enctype="application/x-www-form-urlencoded">
+<form action="{g->url}" method="post" enctype="application/x-www-form-urlencoded"
+ id="editCommentForm">
   <div>
     {g->hiddenFormVars}
     <input type="hidden" name="{g->formVar var="controller"}" value="comment.EditComment"/>
@@ -72,16 +73,15 @@
       <span class="giSubtitle"> {g->text text="(required)"} </span>
     </h4>
 
-    {include file="gallery:modules/core/templates/MarkupBar.tpl"
-	     viewL10domain="modules_core"
+    {include file="gallery:modules/core/templates/MarkupBar.tpl" viewL10domain="modules_core"
   	     element="subject" firstMarkupBar=true}
 
     <input type="text" id="subject" size="60" class="gcBackground1"
-           name="{g->formVar var="form[subject]"}" value="{$form.subject}"
-           onfocus="this.className=''" onblur="this.className='gcBackground1'"/>
+	   name="{g->formVar var="form[subject]"}" value="{$form.subject}"
+	   onfocus="this.className=''" onblur="this.className='gcBackground1'"/>
 
     <script type="text/javascript">
-      document.forms[0]['{g->formVar var="form[subject]"}'].focus();
+      document.getElementById('editCommentForm')['{g->formVar var="form[subject]"}'].focus();
     </script>
 
     {if isset($form.error.subject.missing)}
@@ -95,13 +95,13 @@
       <span class="giSubtitle"> {g->text text="(required)"} </span>
     </h4>
 
-    {include file="gallery:modules/core/templates/MarkupBar.tpl"
-  	     viewL10domain="modules_core"
+    {include file="gallery:modules/core/templates/MarkupBar.tpl" viewL10domain="modules_core"
   	     element="comment"}
 
     <textarea rows="15" cols="60" id="comment" class="gcBackground1"
-              name="{g->formVar var="form[comment]"}"
-              onfocus="this.className=''" onblur="this.className='gcBackground1'">{$form.comment}</textarea>
+	      name="{g->formVar var="form[comment]"}"
+	      onfocus="this.className=''"
+	      onblur="this.className='gcBackground1'">{$form.comment}</textarea>
 
     {if isset($form.error.comment.missing)}
     <div class="giError">
@@ -112,10 +112,10 @@
 
   <div class="gbBlock gcBackground1">
     <input type="submit" class="inputTypeSubmit"
-           name="{g->formVar var="form[action][preview]"}" value="{g->text text="Preview"}"/>
+	   name="{g->formVar var="form[action][preview]"}" value="{g->text text="Preview"}"/>
     <input type="submit" class="inputTypeSubmit"
-           name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
+	   name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
     <input type="submit" class="inputTypeSubmit"
-           name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+	   name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
   </div>
 </form>

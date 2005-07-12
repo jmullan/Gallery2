@@ -29,7 +29,7 @@
   <script type="text/javascript">{literal}
     // <![CDATA[
     function setCheck(val) {
-	var ufne = document.forms[0], len = ufne.elements.length;
+	var ufne = document.getElementById('siteAdminForm'), len = ufne.elements.length;
 	for (var i = 0 ; i < len ; i++) {
 	    if (ufne.elements[i].name.substring(0,20) == 'g2_form[migrateUser]') {
 		ufne.elements[i].checked = val;
@@ -38,7 +38,7 @@
     }
 
     function invertCheck() {
-	var ufne = document.forms[0], len = ufne.elements.length;
+	var ufne = document.getElementById('siteAdminForm'), len = ufne.elements.length;
 	for (var i = 0 ; i < len ; i++) {
 	    if (ufne.elements[i].name.substring(0,20)=='g2_form[migrateUser]') {
 		ufne.elements[i].checked = !(ufne.elements[i].checked);

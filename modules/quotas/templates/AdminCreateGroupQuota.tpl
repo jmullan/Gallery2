@@ -40,7 +40,7 @@
 
   <input type="text" name="{g->formVar var="form[quotaSize]"}" value="{$form.quotaSize}" />
   <script type="text/javascript">
-    document.forms[0]['{g->formVar var="form[quotaSize]"}'].focus();
+    document.getElementById('siteAdminForm')['{g->formVar var="form[quotaSize]"}'].focus();
   </script>
   <select name="{g->formVar var="form[quotaUnit]"}">
     {html_options options=$AdminCreateGroupQuota.quotaUnitChoices selected=$form.quotaUnit}

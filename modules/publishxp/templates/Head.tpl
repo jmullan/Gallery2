@@ -66,7 +66,7 @@
 
   function OnNext() {
     if (submitOnNext) {
-      document.forms[0].submit();
+      document.getElementById('publishXpForm').submit();
     }
   }
   {/literal}

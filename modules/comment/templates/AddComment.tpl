@@ -18,7 +18,8 @@
 </div>
 {/if}
 
-<form action="{g->url}" method="post" enctype="application/x-www-form-urlencoded">
+<form action="{g->url}" method="post" enctype="application/x-www-form-urlencoded"
+ id="addCommentForm">
   <div>
     {g->hiddenFormVars}
     <input type="hidden" name="{g->formVar var="controller"}" value="comment.AddComment"/>
@@ -35,16 +36,14 @@
       <span class="giSubtitle"> {g->text text="(required)"} </span>
     </h4>
 
-    {include file="gallery:modules/core/templates/MarkupBar.tpl"
-             viewL10domain="modules_core"
-             element="subject" firstMarkupBar=true}
+    {include file="gallery:modules/core/templates/MarkupBar.tpl" viewL10domain="modules_core"
+	     element="subject" firstMarkupBar=true}
 
     <input type="text" id="subject" size="60" class="gcBackground1"
-           name="{g->formVar var="form[subject]"}" value="{$form.subject}"
-           onfocus="this.className=''" onblur="this.className='gcBackground1'"/>
-
+	   name="{g->formVar var="form[subject]"}" value="{$form.subject}"
+	   onfocus="this.className=''" onblur="this.className='gcBackground1'"/>
     <script type="text/javascript">
-      document.forms[0]['{g->formVar var="form[subject]"}'].focus();
+      document.getElementById('addCommentForm')['{g->formVar var="form[subject]"}'].focus();
     </script>
 
     {if isset($form.error.subject.missing)}
@@ -58,9 +57,8 @@
       <span class="giSubtitle"> {g->text text="(required)"} </span>
     </h4>
 
-    {include file="gallery:modules/core/templates/MarkupBar.tpl"
-             viewL10domain="modules_core"
-             element="comment"}
+    {include file="gallery:modules/core/templates/MarkupBar.tpl" viewL10domain="modules_core"
+	     element="comment"}
 
     <textarea rows="15" cols="60" id="comment" class="gcBackground1"
       name="{g->formVar var="form[comment]"}"

@@ -29,7 +29,7 @@
    name="{g->formVar var="form[pathComponent]"}" value="{$form.pathComponent}"/>
 
   <script type="text/javascript">
-    document.forms[0]['{g->formVar var="form[pathComponent]"}'].focus();
+    document.getElementById('itemAdminForm')['{g->formVar var="form[pathComponent]"}'].focus();
   </script>
 
   {if !empty($form.error.pathComponent.invalid)}

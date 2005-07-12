@@ -4,7 +4,8 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-<form action="{g->url}" enctype="application/x-www-form-urlencoded" method="post">
+<form action="{g->url}" enctype="application/x-www-form-urlencoded" method="post"
+ id="publishXpForm">
   <div>      
     <script type="text/javascript">
       // <![CDATA[
@@ -43,8 +44,10 @@
     {/foreach}
     {/strip}
 
-    <input type="text" size="10" name="{g->formVar var="form[pathComponent]"}" value="{$form.pathComponent}"/>
-    <script type="text/javascript">document.forms[0]['{g->formVar var="form[pathComponent]"}'].focus();</script>
+    <input type="text" size="10"
+     name="{g->formVar var="form[pathComponent]"}" value="{$form.pathComponent}"/>
+    <script type="text/javascript">document.getElementById('publishXpForm')['{g->formVar
+     var="form[pathComponent]"}'].focus();</script>
 
     {if !empty($form.error.pathComponent.invalid)}
     <div class="giError">

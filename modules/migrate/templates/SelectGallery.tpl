@@ -59,7 +59,8 @@
   <script type="text/javascript">
     // <![CDATA[
     function selectPath(path) {ldelim}
-      document.forms[0].elements['{g->formVar var="form[albumsPath]"}'].value = path;
+      document.getElementById('siteAdminForm').elements['{g->formVar
+	var="form[albumsPath]"}'].value = path;
     {rdelim}
     // ]]>
   </script>

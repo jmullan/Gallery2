@@ -4,7 +4,7 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-<form action="{g->url}" method="post"
+<form action="{g->url}" method="post" id="userAdminForm"
       enctype="{$UserAdmin.enctype|default:"application/x-www-form-urlencoded"}">
   <div>
     {g->hiddenFormVars}

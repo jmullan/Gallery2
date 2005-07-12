@@ -25,11 +25,12 @@
     // <![CDATA[
     function pickOrder() {ldelim}
       var list = '{g->formVar var="form[orderBy]"}';
-      var index = document.forms[0].elements[list].selectedIndex;
+      var frm = document.getElementById('itemAdminForm');
+      var index = frm.elements[list].selectedIndex;
       list = '{g->formVar var="form[orderDirection]"}';
-      document.forms[0].elements[list].disabled = (index <= 1) ?1:0;
+      frm.elements[list].disabled = (index <= 1) ?1:0;
       list = '{g->formVar var="form[presort]"}';
-      document.forms[0].elements[list].disabled = (index <= 1) ?1:0;
+      frm.elements[list].disabled = (index <= 1) ?1:0;
     {rdelim}
     pickOrder();
     // ]]>

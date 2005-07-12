@@ -102,13 +102,13 @@
     {rdelim}
 
     function setCheck(val) {ldelim}
-      var frm = document.forms[0];
+      var frm = document.getElementById('itemAdminForm');
       {foreach from=$ItemMove.peers item=peer}
 	frm.elements['g2_form[selectedIds][{$peer.id}]'].checked = val;
       {/foreach}
     {rdelim}
     function invertCheck(val) {ldelim}
-      var frm = document.forms[0];
+      var frm = document.getElementById('itemAdminForm');
       {foreach from=$ItemMove.peers item=peer}
 	frm.elements['g2_form[selectedIds][{$peer.id}]'].checked = !frm.elements['g2_form[selectedIds][{$peer.id}]'].checked;
       {/foreach}

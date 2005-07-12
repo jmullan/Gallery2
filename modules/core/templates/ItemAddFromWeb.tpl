@@ -8,7 +8,7 @@
   // <![CDATA[
 {if !empty($form.webPageUrls)}
   function toggleSelections() {ldelim}
-    form = document.forms[0];
+    form = document.getElementById('itemAdminForm');
     state = form.elements['selectionToggle'].checked;
     for (i = 1; i <= {$ItemAddFromWeb.webPageUrlCount}; i++) {ldelim}
         cb = document.getElementById('cb_' + i);
@@ -18,7 +18,8 @@
 {/if}
 
   function selectUrl(url) {ldelim}
-    document.forms[0].elements['{g->formVar var="form[webPage]"}'].value = url;
+    document.getElementById('itemAdminForm').elements['{g->formVar
+      var="form[webPage]"}'].value = url;
   {rdelim}
   // ]]>
 </script>
@@ -100,10 +101,13 @@
     {foreach from=$form.webPageUrls item=url}
     <tr class="{cycle values="gbEven,gbOdd"}">
       <td>
-	<input type="checkbox" id="cb_{counter}"
+	{counter assign="idCount"}
+	<input type="checkbox" id="cb_{$idCount}"
 	 name="{g->formVar var="form[webPageUrls][`$url.url`]"}"/>
       </td><td>
-	{$url.url}
+	<label for="cb_{$idCount}">
+	  {$url.url}
+	</label>
       </td><td>
 	{$url.itemType}
       </td>
@@ -111,10 +115,12 @@
     {/foreach}
     <tr>
       <th>
-	<input type="checkbox" name="selectionToggle" onclick="toggleSelections()"/>
+	<input type="checkbox" id="checkAll" name="selectionToggle" onclick="toggleSelections()"/>
       </th>
       <th colspan="2">
-	{g->text text="(Un)check all"}
+	<label for="checkAll">
+	  {g->text text="(Un)check all"}
+	</label>
       </th>
     </tr></table>
   </div>

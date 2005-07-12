@@ -70,7 +70,7 @@
   {/if}
 
   <script type="text/javascript">
-    document.forms[0]['{g->formVar var="form[password1]"}'].focus();
+    document.getElementById('userAdminForm')['{g->formVar var="form[password1]"}'].focus();
   </script>
 </div>
 

@@ -4,7 +4,8 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-<form action="{g->url}" enctype="{$UserAdmin.enctype|default:"application/x-www-form-urlencoded"}" method="post">
+<form action="{g->url}" method="post" id="publishXpForm"
+ enctype="{$UserAdmin.enctype|default:"application/x-www-form-urlencoded"}">
   <div>      
     <script type="text/javascript">
       setSubtitle("{g->text text="Set options for the photos to be added."}");

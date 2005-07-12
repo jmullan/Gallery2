@@ -93,10 +93,11 @@
     }
 
     function setCropFields() {
-      document.forms[0].crop_x.value=document.ImageCrop.getCropX();
-      document.forms[0].crop_y.value=document.ImageCrop.getCropY();
-      document.forms[0].crop_width.value=document.ImageCrop.getCropWidth();
-      document.forms[0].crop_height.value=document.ImageCrop.getCropHeight();
+      var frm = document.getElementById('itemAdminForm');
+      frm.crop_x.value = document.ImageCrop.getCropX();
+      frm.crop_y.value = document.ImageCrop.getCropY();
+      frm.crop_width.value = document.ImageCrop.getCropWidth();
+      frm.crop_height.value = document.ImageCrop.getCropHeight();
     }
 
     function setOrientation(orientation) {
