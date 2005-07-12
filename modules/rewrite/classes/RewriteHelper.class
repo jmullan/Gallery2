@@ -279,7 +279,6 @@ class RewriteHelper {
     function checkModRewrite() {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
-	return array(GalleryStatus::success(), REWRITE_STATUS_APACHE_UNABLE_TO_TEST);
 
 	list ($ret, $status) = GalleryCoreApi::getPluginParameter('module', 'rewrite', 'status');
 	if ($ret->isError()) {
