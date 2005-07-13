@@ -102,17 +102,15 @@ class UserAlbumModule extends GalleryModule /* and GalleryEventListener */ {
      */
     function getSystemLinks() {
 	global $gallery;
-
 	$links = array();
 
-	/* Check if link is enabled.. */
-	list ($ret, $homeLink) =
-	    GalleryCoreApi::getPluginParameter('module', 'useralbum', 'homeLink');
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'useralbum');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if (!empty($homeLink)) {
+	/* Check if link is enabled */
+	if (!empty($params['homeLink'])) {
 	    $userId = $gallery->getActiveUserId();
 
 	    list ($ret, $anonymousUserId) =
@@ -128,15 +126,11 @@ class UserAlbumModule extends GalleryModule /* and GalleryEventListener */ {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		list ($ret, $createMode) =
-		    GalleryCoreApi::getPluginParameter('module', 'useralbum', 'create');
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		if (!empty($albumId) || (empty($albumId) && $createMode == 'access')) {
-		    $links[] = array('text' => $this->translate('Your Album'),
-				     'params' => array('controller' => 'useralbum.UserAlbum'));
+		if (!empty($albumId) || $params['create'] == 'access') {
+		    $links['YourAlbum'] = array('text' => $this->translate('Your Album'),
+			'params' => empty($albumId) ? array('controller' => 'useralbum.UserAlbum')
+						    : array('view' => 'core.ShowItem',
+							    'itemId' => $albumId));
 		}
 	    }
 	}

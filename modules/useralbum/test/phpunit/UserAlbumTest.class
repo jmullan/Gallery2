@@ -47,7 +47,7 @@ class UserAlbumTest extends GalleryTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'useralbum');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'create', 'immediate');
@@ -71,7 +71,6 @@ class UserAlbumTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
 	$this->_markForCleanup($this->_parentAlbum);
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum',
@@ -193,8 +192,8 @@ class UserAlbumTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals(array(array('text' => $module->translate('Your Album'),
-					'params' => array('controller' => 'useralbum.UserAlbum'))),
+	$this->assertEquals(array('YourAlbum' => array('text' => $module->translate('Your Album'),
+			      'params' => array('view' => 'core.ShowItem', 'itemId' => $albumId))),
 			    $links, 'system link');
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'homeLink', '0');
@@ -314,31 +313,6 @@ class UserAlbumTest extends GalleryTestCase {
 	}
 	$this->assert(GalleryUtilities::isA($album, 'GalleryAlbumItem'), 'album');
 	$this->assertEquals($user->getId(), $album->getOwnerId(), 'owner');
-    }
-
-    function testUserAlbumGuestLink() {
-	/* make sure anonymous user doesn't see Your Album link */
-	global $gallery;
-	list ($ret, $anonymousUserId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	list ($ret, $anonymousUser) = GalleryCoreApi::loadEntitiesById($anonymousUserId);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$gallery->setActiveUser($anonymousUser);
-
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'useralbum');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	list ($ret, $links) = $module->getSystemLinks();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->assertEquals(array(), $links, 'no system link');
     }
 }
 ?>

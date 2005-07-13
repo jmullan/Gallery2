@@ -44,7 +44,7 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'useralbum');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $targetAlbum) = $this->_createRandomAlbum($this->_getRootId());
@@ -87,12 +87,6 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($this->_userWithoutAlbum);
-
-	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'homeLink', 1);
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
     }
 
     function testExistingAlbum() {
@@ -186,68 +180,75 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'useralbum');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $userAlbum) = GalleryCoreApi::loadPlugin('module', 'useralbum');
+	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'homeLink', 1);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	/* Create-on-access mode.. should get link whether or not album already exists */
 	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'create', 'access');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$gallery->setActiveUser($this->_userWithoutAlbum);
-
-	$expectedLink[] = array('text' => $module->translate('Your Album'),
-				'params' => array('controller' => 'useralbum.UserAlbum'));
-
-	list($ret, $links) = $userAlbum->getSystemLinks();
+	/* Anonymous should never see link */
+	$this->_becomeGuestUser();
+	list($ret, $links) = $module->getSystemLinks();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals($expectedLink, $links, 'Link not displayed "on access" without album');
+	$this->assertEquals(array(), $links, 'anonymous should not get link');
 
 	$gallery->setActiveUser($this->_userWithAlbum);
+	$albumLink['YourAlbum'] = array('text' => $module->translate('Your Album'),
+	    'params' => array('view' => 'core.ShowItem', 'itemId' => $this->_userAlbumId));
 
-	list($ret, $links) = $userAlbum->getSystemLinks();
+	list($ret, $links) = $module->getSystemLinks();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals($expectedLink, $links, 'Link not displayed "on access" with album');
+	$this->assertEquals($albumLink, $links, 'Link not displayed "on access" with album');
 
+	$gallery->setActiveUser($this->_userWithoutAlbum);
+	$createLink['YourAlbum'] = array('text' => $module->translate('Your Album'),
+	    'params' => array('controller' => 'useralbum.UserAlbum'));
+
+	list($ret, $links) = $module->getSystemLinks();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($createLink, $links, 'Link not displayed "on access" without album');
+
+	/* Create-when-user-created mode.. should only get link if album already exists */
 	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'create', 'immediate');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	/* User with album should get a link */
-	list($ret, $links) = $userAlbum->getSystemLinks();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->assertEquals($expectedLink, $links, 'Link not displayed "immediate" with album');
-
-	$gallery->setActiveUser($this->_userWithoutAlbum);
-
-	/* User without album should not get a link */
-	list($ret, $links) = $userAlbum->getSystemLinks();
+	list($ret, $links) = $module->getSystemLinks();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array(), $links, 'Link displayed "immediate" without album');
 
+	$gallery->setActiveUser($this->_userWithAlbum);
+
+	list($ret, $links) = $module->getSystemLinks();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($albumLink, $links, 'Link not displayed "immediate" with album');
+
 	/* User with album should not get a link with homeLink off */
 	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'homeLink', 0);
 	if ($ret->isError()) {
-	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$gallery->setActiveUser($this->_userWithAlbum);
-	list($ret, $links) = $userAlbum->getSystemLinks();
+	list($ret, $links) = $module->getSystemLinks();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -294,6 +295,5 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals($this->_userWithoutAlbum->getUserName(),
 			    $album->getTitle(), 'username');
     }
-
 }
 ?>
