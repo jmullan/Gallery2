@@ -12,7 +12,7 @@
  *}
 {g->callback type="imageblock.LoadImageBlock"}
 
-{if !empty($ImageBlockSystemContent)}
+{if !empty($ImageBlockData)}
 <div class="{$class}">
   {include file="gallery:modules/imageblock/templates/ImageBlock.tpl"}
 </div>

@@ -221,7 +221,7 @@ class ImageBlockTest extends GalleryTestCase {
 	}
 
 	$data = $this->_doImageBlockCallback();
-	$this->assert(!isset($data['ImageBlockSystemContent']), 'No blocks');
+	$this->assert(!isset($data['ImageBlockData']), 'No blocks');
 
 	$ret = $this->_module->setParameter('blocks', 'randomImage');
 	if ($ret->isError()) {
@@ -230,8 +230,8 @@ class ImageBlockTest extends GalleryTestCase {
 	}
 
 	$data = $this->_doImageBlockCallback();
-	$this->assertEquals(1, count($data['ImageBlockSystemContent']['blocks']), 'One block');
-	$this->assertBlock($data['ImageBlockSystemContent']['blocks'][0]);
+	$this->assertEquals(1, count($data['ImageBlockData']['blocks']), 'One block');
+	$this->assertBlock($data['ImageBlockData']['blocks'][0]);
 
 	$ret = $this->_module->setParameter('blocks', 'randomImage|recentImage|viewedImage|' .
 					    'viewedAlbum|recentAlbum|randomAlbum');
@@ -241,9 +241,9 @@ class ImageBlockTest extends GalleryTestCase {
 	}
 
 	$data = $this->_doImageBlockCallback();
-	$this->assertEquals(6, count($data['ImageBlockSystemContent']['blocks']), 'All blocks');
+	$this->assertEquals(6, count($data['ImageBlockData']['blocks']), 'All blocks');
 	$gotAlbum = $gotPhoto = 0;
-	foreach ($data['ImageBlockSystemContent']['blocks'] as $block) {
+	foreach ($data['ImageBlockData']['blocks'] as $block) {
 	    $this->assertBlock($block);
 	    if ($block['id'] == $this->_album->getId()) {
 		$gotAlbum = 1;
@@ -265,20 +265,36 @@ class ImageBlockTest extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('blocks', 'randomImage');
 	GalleryUtilities::putRequestVariable('show', 'none');
 
-	$data = $this->_doImageBlockCallback();
-	$this->assertEquals(1, count($data['ImageBlockSystemContent']['blocks']), 'One block');
-	$this->assertBlock($data['ImageBlockSystemContent']['blocks'][0]);
+	$template = new ImageBlockDummyGalleryTemplate();
+	$external->setTemplate($template);
+	$ret = $external->renderImmediate(array(), array());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('gallery:modules/imageblock/templates/ImageBlock.tpl',
+			    $template->getPath());
+	$data = $template->_data;
+	$this->assertEquals(1, count($data['ImageBlockData']['blocks']), 'One block');
+	$this->assertBlock($data['ImageBlockData']['blocks'][0]);
 
 	/* Select only from subtree.. */
 	GalleryUtilities::putRequestVariable('blocks', 'recentImage|viewedAlbum');
 	GalleryUtilities::putRequestVariable('show', 'title');
 	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
 
-	$data = $this->_doImageBlockCallback();
-	$this->assertEquals(1, count($data['ImageBlockSystemContent']['blocks']), 'One block');
-	$this->assertBlock($data['ImageBlockSystemContent']['blocks'][0]);
+	$template = new ImageBlockDummyGalleryTemplate();
+	$external->setTemplate($template);
+	$ret = $external->renderImmediate(array(), array());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('gallery:modules/imageblock/templates/ImageBlock.tpl',
+			    $template->getPath());
+	$data = $template->_data;
+	$this->assertEquals(1, count($data['ImageBlockData']['blocks']), 'One block');
+	$this->assertBlock($data['ImageBlockData']['blocks'][0]);
 	$this->assertEquals($this->_photo->getId(),
-	    $data['ImageBlockSystemContent']['blocks'][0]['id'], 'Photo id');
+			    $data['ImageBlockData']['blocks'][0]['id'], 'Photo id');
 
 	/* Select specific item, scaled full size with link target.. */
 	GalleryUtilities::putRequestVariable('blocks', 'specificItem');
@@ -287,11 +303,19 @@ class ImageBlockTest extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('linkTarget', '_blank');
 	GalleryUtilities::putRequestVariable('maxSize', '500');
 
-	$data = $this->_doImageBlockCallback();
-	$this->assertEquals(1, count($data['ImageBlockSystemContent']['blocks']), 'One block');
-	$this->assertBlock($data['ImageBlockSystemContent']['blocks'][0]);
+	$template = new ImageBlockDummyGalleryTemplate();
+	$external->setTemplate($template);
+	$ret = $external->renderImmediate(array(), array());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('gallery:modules/imageblock/templates/ImageBlock.tpl',
+			    $template->getPath());
+	$data = $template->_data;
+	$this->assertEquals(1, count($data['ImageBlockData']['blocks']), 'One block');
+	$this->assertBlock($data['ImageBlockData']['blocks'][0]);
 	$this->assertEquals($this->_photo->getId(),
-	    $data['ImageBlockSystemContent']['blocks'][0]['id'], 'Photo id');
+			    $data['ImageBlockData']['blocks'][0]['id'], 'Photo id');
     }
 
     function testPeriodicBlocks() {
@@ -301,13 +325,13 @@ class ImageBlockTest extends GalleryTestCase {
 	}
 
 	$data = $this->_doImageBlockCallback();
-	$this->assertEquals(1, count($data['ImageBlockSystemContent']['blocks']), 'One block');
-	$itemId = $this->assertBlock($data['ImageBlockSystemContent']['blocks'][0]);
+	$this->assertEquals(1, count($data['ImageBlockData']['blocks']), 'One block');
+	$itemId = $this->assertBlock($data['ImageBlockData']['blocks'][0]);
 
 	/* Next call should return same id */
 	$data = $this->_doImageBlockCallback();
-	$this->assertEquals(1, count($data['ImageBlockSystemContent']['blocks']), 'One block');
-	$nextItemId = $this->assertBlock($data['ImageBlockSystemContent']['blocks'][0]);
+	$this->assertEquals(1, count($data['ImageBlockData']['blocks']), 'One block');
+	$nextItemId = $this->assertBlock($data['ImageBlockData']['blocks'][0]);
 	$this->assertEquals($itemId, $nextItemId, 'keep same id');
 
 	/* Set invalid id in property to force picking new id */
@@ -322,14 +346,14 @@ class ImageBlockTest extends GalleryTestCase {
 	}
 
 	$data = $this->_doImageBlockCallback();
-	$this->assertEquals(1, count($data['ImageBlockSystemContent']['blocks']), 'One block');
-	$itemId = $this->assertBlock($data['ImageBlockSystemContent']['blocks'][0]);
+	$this->assertEquals(1, count($data['ImageBlockData']['blocks']), 'One block');
+	$itemId = $this->assertBlock($data['ImageBlockData']['blocks'][0]);
 	$this->assert($itemId > 0, 'valid id');
 
 	/* Next call should return same id */
 	$data = $this->_doImageBlockCallback();
-	$this->assertEquals(1, count($data['ImageBlockSystemContent']['blocks']), 'One block');
-	$nextItemId = $this->assertBlock($data['ImageBlockSystemContent']['blocks'][0]);
+	$this->assertEquals(1, count($data['ImageBlockData']['blocks']), 'One block');
+	$nextItemId = $this->assertBlock($data['ImageBlockData']['blocks'][0]);
 	$this->assertEquals($itemId, $nextItemId, 'keep same album id');
     }
 
@@ -382,11 +406,11 @@ class ImageBlockTest extends GalleryTestCase {
 	$this->assertEquals('gallery:modules/imageblock/templates/ImageBlock.tpl',
 			    $template->getPath());
 	$data = $template->_data;
-	$this->assertEquals(1, count($data['ImageBlockSystemContent']['blocks']),
+	$this->assertEquals(1, count($data['ImageBlockData']['blocks']),
 			    'One block');
-	$this->assertBlock($data['ImageBlockSystemContent']['blocks'][0]);
+	$this->assertBlock($data['ImageBlockData']['blocks'][0]);
 	$this->assertEquals($goodAlbum->getId(),
-	    $data['ImageBlockSystemContent']['blocks'][0]['id'], 'Album id');
+	    $data['ImageBlockData']['blocks'][0]['id'], 'Album id');
 	$this->assertEquals('modules_imageblock', $data['l10Domain']);
 
 	/* Ensure periodic blocks only pick from publically visible items */

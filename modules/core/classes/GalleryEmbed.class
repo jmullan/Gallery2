@@ -739,7 +739,7 @@ class GalleryEmbed {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
-	    if ($template->hasVariable('ImageBlockSystemContent')) {
+	    if ($template->hasVariable('ImageBlockData')) {
 		$tpl = 'modules/imageblock/templates/ImageBlock.tpl';
 		/* Render and get the imageblock html */
 		list ($ret, $blockHtml) = $template->fetch("gallery:$tpl");

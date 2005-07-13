@@ -265,7 +265,7 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$data = $smarty->_tpl_vars;
-	$this->assert(!isset($data['ImageBlockSystemContent']['blocks']), 'Block should not exist');
+	$this->assert(!isset($data['ImageBlockData']['blocks']), 'Block should not exist');
     }
 
     function testImageBlockDisabledOneItemReturned() {
@@ -283,8 +283,8 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 	}
 	$data = $smarty->_tpl_vars;
 
-	$this->assert(1 == count($data['ImageBlockSystemContent']['blocks']), 'One block');
-	$this->assertBlock($data['ImageBlockSystemContent']['blocks'][0]);
+	$this->assert(1 == count($data['ImageBlockData']['blocks']), 'One block');
+	$this->assertBlock($data['ImageBlockData']['blocks'][0]);
     }
 }
 ?>

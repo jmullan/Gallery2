@@ -89,7 +89,8 @@ class ExternalView extends GalleryView {
 	if (!empty($frameIds)) {
 	    $frameIds = array_keys($frameIds);
 
-	    list ($ret, $imageframe) = GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
+	    list ($ret, $imageframe) =
+		GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -102,7 +103,7 @@ class ExternalView extends GalleryView {
 	    }
 	}
 
-	if ($template->hasVariable('ImageBlockSystemContent')) {
+	if ($template->hasVariable('ImageBlockData')) {
 	    $template->setVariable('l10Domain', 'modules_imageblock');
 	    $template->display('gallery:modules/imageblock/templates/ImageBlock.tpl');
 	}

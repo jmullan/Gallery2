@@ -88,12 +88,12 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    }
 	}
 
-	$ImageBlockSystemContent['show'] = $show;
+	$ImageBlockData['show'] = $show;
 	if (array_key_exists('maxSize', $params)) {
-	    $ImageBlockSystemContent['maxSize'] = $params['maxSize'];
+	    $ImageBlockData['maxSize'] = $params['maxSize'];
 	}
 	if (isset($params['linkTarget'])) {
-	    $ImageBlockSystemContent['linkTarget'] = $params['linkTarget'];
+	    $ImageBlockData['linkTarget'] = $params['linkTarget'];
 	}
 
 	if (!empty($blocks)) {
@@ -107,7 +107,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 		$frameIds = array();
 		foreach (array('albumFrame', 'itemFrame') as $key) {
 		    if (!empty($params[$key])) {
-			$frameIds[] = $ImageBlockSystemContent[$key] = $params[$key];
+			$frameIds[] = $ImageBlockData[$key] = $params[$key];
 		    }
 		}
 	    }
@@ -118,8 +118,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 		}
 	    }
 
-	    $ImageBlockSystemContent['blocks'] = $blocks;
-	    $template->setVariable('ImageBlockSystemContent', $ImageBlockSystemContent);
+	    $ImageBlockData['blocks'] = $blocks;
+	    $template->setVariable('ImageBlockData', $ImageBlockData);
 	}
 
 	return GalleryStatus::success();
