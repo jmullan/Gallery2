@@ -834,174 +834,193 @@ class CoreModuleExtras {
 		$totalDerivatives = sizeof($derivativeIds);
 
 		/*
-		 * 2. Load the derivative entities
-		 * At this point we have to load pretty every derivative of this install
-		 * We tried to load them all at once, some users reported time outs though
-		 * So let's load them in batches and add another progress bar
+		 * The following process is very expensive.
+		 * We have to deal with a potentially huge (10^6) amount of derivatives.
+		 * To not exceed the memory limit we do everything in batches.
+		 * To not exceed the PHP execution time limit and to not exceed the apache timeout
+		 * we add a progress bar and manipulate the PHP execution time limit periodically.
 		 */
 		$gallery->guaranteeTimeLimit(60);
-		$batchSize = 1000;
-		if (sizeof($derivativeIds) < $batchSize) {
-		    list ($ret, $derivatives) = GalleryCoreApi::loadEntitiesById($derivativeIds);
-		    if ($ret->isError()) {
-			return $ret->wrap(__FILE__, __LINE__);
-		    }
-		} else {
-		    /* Show a progress bar */
-		    $ret = $statusMonitor->renderStatusMessage(
-			$module->translate('Loading derivatives for the broken derivatives check'),
-			'', 0);
-		    if ($ret->isError()) {
-			return $ret->wrap(__FILE__, __LINE__);
-		    }
-
-		    /* Load the entities in batches */
-		    $derivatives = array();
-		    do {
-			$gallery->guaranteeTimeLimit(60);
-			$currentDerivativeIds = array_splice($derivativeIds, 0, $batchSize);
-			list ($ret, $currentDerivatives) =
-			    GalleryCoreApi::loadEntitiesById($currentDerivativeIds);
-			if ($ret->isError()) {
-			    return $ret->wrap(__FILE__, __LINE__);
-			}
-			$derivatives = array_merge($derivatives, $currentDerivatives);
-
-			$ret = $statusMonitor->renderStatusMessage(
-			    $module->translate(array('text' => 'Loading derivatives for the ' .
-						     'broken derivatives check ' .
-						     '(%d derivatives loaded, %d remaining)',
-						     'arg1' => sizeof($derivatives),
-						     'arg2' => sizeof($derivativeIds))),
-			    '',  sizeof($derivatives)/ $totalDerivatives);
-			if ($ret->isError()) {
-			    return $ret->wrap(__FILE__, __LINE__);
-			}
-		    } while (!empty($derivativeIds));
-		}
-
-		/* Start detection process */
-		$gallery->guaranteeTimeLimit(30);
-
+		
 		/* Show a progress bar */
-		$itemsProcessed = 0;
 		$ret = $statusMonitor->renderStatusMessage(
 		    $module->translate('Detecting broken derivatives'), '', 0);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
-		}
 
+		}
+		/*
+		 * The outer loop is for each derivativeId and we upgrade a progress bar every
+		 * $progressStepSize ids. We don't load entity by entity, but in batches of
+		 * $loadBatchSize. And we don't save the items that were detected as broken
+		 * derivatives one by one, but also in batches of $saveBatchSize, i.e. we acquire
+		 * and release the locks in this batch size, but still have to save entity by
+		 * entity because G2 has no mass entity save like loadEntitiesById().
+		 */
+		$derivatives = array();
 		$progressStepSize = min(500, intval($totalDerivatives / 10));
+		$loadBatchSize = 1000;
+		$saveBatchSize = 1000;
+		$itemsProcessed = 0;
 		$brokenDerivatives = array();
-		foreach ($derivatives as $derivative) {
-		    /*
-		     * Show the progress ..., but not for each derivative, this would slow down
-		     * the process considerably
-		     */
-		    $itemsProcessed++;
-		    if ($itemsProcessed % $progressStepSize == 0) {
+		do {
+		    /* 2. Load the entities in batches */
+		    if (empty($derivatives) && !empty($derivativeIds)) {
+			/* Prevent PHP timeout */
+			$gallery->guaranteeTimeLimit(60);
+			/* Prevent apache timeout */
 			$ret = $statusMonitor->renderStatusMessage(
-			    $module->translate(array('text' => 'Detecting broken derivatives ' .
-						     '(%d derivatives complete, %d remaining)',
-						     'arg1' => $itemsProcessed,
-						     'arg2' => $totalDerivatives - $itemsProcessed)),
-			    '', $itemsProcessed / $totalDerivatives);
+			    $module->translate(
+				array('text' => 'Detecting broken derivatives, loading ' .
+				      '(%d derivatives checked, %d remaining)',
+				      'arg1' => $itemsProcessed,
+				      'arg2' => sizeof($derivativeIds))),
+			    '',  $itemsProcessed / $totalDerivatives);
 			if ($ret->isError()) {
 			    return $ret->wrap(__FILE__, __LINE__);
 			}
-			$gallery->guaranteeTimeLimit(30);
+			
+			$currentDerivativeIds = array_splice($derivativeIds, 0, $loadBatchSize);
+			list ($ret, $derivatives) =
+			    GalleryCoreApi::loadEntitiesById($currentDerivativeIds);
+			if ($ret->isError()) {
+			    return $ret->wrap(__FILE__, __LINE__);
+			}
 		    }
-
-		    /*
-		     * 3. Filter out derivatives that don't return true for isCacheCurrent
-		     *    (= don't have a cache file yet = would be rebuilt anyway)
-		     */
-		    list ($ret, $current) = $derivative->isCacheCurrent();
-		    if ($ret->isError()) {
-			return $ret->wrap(__FILE__, __LINE__);
-		    }
-		    if (!$current) {
-			continue;
-		    }
-
-		    /*
-		     * 4. Filter out derivatives that don't have the same file size as the broken
-		     *    image placeholder
-		     */
-		    list($ret, $path) = $derivative->fetchPath();
-		    if ($ret->isError()) {
-			return $ret->wrap(__FILE__, __LINE__);
-		    }
-		    if (($size = $platform->filesize($path)) === false) {
-			return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
-		    }
-		    if ($size != $referenceSize) {
-			continue;
-		    }
-
-		    /* 5. Binary compare the derivative file with the placeholder file */
-		    if (($data = $platform->file($path)) === false) {
-			return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
-		    }
-		    $data = implode('', $data);
-		    if ($referenceCrc == crc32($data)) {
-			/* Add the derivative to the list of broken ones */
-			$brokenDerivatives[$derivative->getId()] = $derivative;
-		    }
-		}
-
-		/* 6. Mark the detected broken derivatives as such and save the result to the DB */
-		if (!empty($brokenDerivatives)) {
-		    $gallery->guaranteeTimeLimit(30);
-
-		    list ($ret, $lockId) =
-			GalleryCoreApi::acquireWriteLock(array_keys($brokenDerivatives));
-		    if ($ret->isError()) {
-			return $ret->wrap(__FILE__, __LINE__);
-		    }
-
-		    /* Show the next progress bar */
-		    $itemsProcessed = 0;
-		    $totalItems = sizeof($brokenDerivatives);
-		    $ret = $statusMonitor->renderStatusMessage(
-			$module->translate('Marking broken derivatives'), '', 0);
-		    if ($ret->isError()) {
-			return $ret->wrap(__FILE__, __LINE__);
-		    }
-
-		    $progressStepSize = min(200, intval($totalItems / 10));
-		    foreach ($brokenDerivatives as $derivative) {
+		    
+		    /* Detect if the derivative is broken */
+		    if (!empty($derivatives)) {
 			$itemsProcessed++;
-			if ($itemsProcessed % $progressStepSize == 0) {
+			$gallery->guaranteeTimeLimit(30);
+			$derivative = array_pop($derivatives);
+			
+			/*
+			 * Show the progress ..., but not for each derivative, this would slow down
+			 * the process considerably
+			 */
+			if ($itemsProcessed % $progressStepSize == 0 ||
+			        $itemsProcessed == $totalDerivatives) {
 			    $ret = $statusMonitor->renderStatusMessage(
-				$module->translate(array('text' => 'Marking broken derivatives ' .
-							 '(%d derivatives complete, %d remaining)',
-							 'arg1' => $itemsProcessed,
-							 'arg2' => $totalItems - $itemsProcessed)),
-				'', $itemsProcessed / $totalItems);
+				$module->translate(
+				    array('text' => 'Detecting broken derivatives ' .
+					  '(%d derivatives checked, %d remaining)',
+					  'arg1' => $itemsProcessed,
+					  'arg2' => $totalDerivatives - $itemsProcessed)),
+				'', $itemsProcessed / $totalDerivatives);
 			    if ($ret->isError()) {
 				return $ret->wrap(__FILE__, __LINE__);
 			    }
 			    $gallery->guaranteeTimeLimit(30);
 			}
-
-			$derivative->setIsBroken(true);
-			$ret = $derivative->save(false);
+			
+			/*
+			 * 3. Filter out derivatives that don't return true for isCacheCurrent
+			 *    (= don't have a cache file yet = would be rebuilt anyway)
+			 */
+			list ($ret, $current) = $derivative->isCacheCurrent();
 			if ($ret->isError()) {
-			    GalleryCoreApi::releaseLocks($lockId);
+			    return $ret->wrap(__FILE__, __LINE__);
+			}
+			if (!$current) {
+			    continue;
+			}
+			
+			/*
+			 * 4. Filter out derivatives that don't have the same file size as the 
+			 *    broken image placeholder
+			 */
+			list($ret, $path) = $derivative->fetchPath();
+			if ($ret->isError()) {
+			    return $ret->wrap(__FILE__, __LINE__);
+			}
+			if (($size = $platform->filesize($path)) === false) {
+			    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__,
+							__LINE__);
+			}
+			if ($size != $referenceSize) {
+			    continue;
+			}
+			
+			/* 5. Binary compare the derivative file with the placeholder file */
+			if (($data = $platform->file($path)) === false) {
+			    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__,
+							__LINE__);
+			}
+			$data = implode('', $data);
+			if ($referenceCrc == crc32($data)) {
+			    /* Add the derivative to the list of broken ones */
+			    $brokenDerivatives[$derivative->getId()] = $derivative;
+			}
+		    }
+		
+		    /* 6. Mark the detected broken derivative as such and save it in the DB */
+		    if (sizeof($brokenDerivatives) == $saveBatchSize ||
+			    (!empty($brokenDerivatives) && empty($derivativeIds))) {
+			$gallery->guaranteeTimeLimit(30);
+			$saveProgressStepSize = min(200, intval(sizeof($brokenDerivatives) / 10));
+
+			$ret = $statusMonitor->renderStatusMessage(
+			    $module->translate(
+				array('text' => 'Detecting broken derivatives, ' .
+				      'saving ' .
+				      '(%d derivatives checked, %d remaining)',
+				      'arg1' => $itemsProcessed,
+				      'arg2' => $totalDerivatives - $itemsProcessed)),
+			    '', $itemsProcessed / $totalDerivatives);
+			if ($ret->isError()) {
+			    return $ret->wrap(__FILE__, __LINE__);
+			}
+			
+			list ($ret, $lockId) =
+			    GalleryCoreApi::acquireWriteLock(array_keys($brokenDerivatives));
+			if ($ret->isError()) {
+			    return $ret->wrap(__FILE__, __LINE__);
+			}
+
+			$itemsSaved = 0;
+			foreach ($brokenDerivatives as $brokenDerivative) {
+			    $itemsSaved++;
+			    if ($itemsSaved % $saveProgressStepSize == 0) {
+				$ret = $statusMonitor->renderStatusMessage(
+				    $module->translate(
+					array('text' => 'Detecting broken derivatives, saving ' .
+					      'item %d of %d ' .
+					      '(%d derivatives complete, %d remaining)',
+					      'arg1' => $itemsSaved,
+					      'arg2' => sizeof($brokenDerivatives),
+					      'arg3' => $itemsProcessed,
+					      'arg4' => $totalDerivatives - $itemsProcessed)),
+				    '', $itemsProcessed / $totalDerivatives);
+				if ($ret->isError()) {
+				    GalleryCoreApi::releaseLocks($lockId);
+				    return $ret->wrap(__FILE__, __LINE__);
+				}
+				$gallery->guaranteeTimeLimit(30);
+			    }
+			    
+			    $brokenDerivative->setIsBroken(true);
+			    $ret = $brokenDerivative->save(false);
+			    if ($ret->isError()) {
+				GalleryCoreApi::releaseLocks($lockId);
+				return $ret->wrap(__FILE__, __LINE__);
+			    }
+			}
+			$brokenDerivatives = array();
+
+			$ret = GalleryCoreApi::releaseLocks($lockId);
+			if ($ret->isError()) {
 			    return $ret->wrap(__FILE__, __LINE__);
 			}
 		    }
-
-		    $ret = GalleryCoreApi::releaseLocks($lockId);
-		    if ($ret->isError()) {
-			return $ret->wrap(__FILE__, __LINE__);
-		    }
-		}
+		    /*
+		     * Continue if there are either unloaded ids, unchecked derivatives or
+		     * unsaved derivatives
+		     */
+		} while (!empty($derivativeIds) || !empty($brokenDerivatives) ||
+			 !empty($derivatives));
 	    }
 	case '0.9.28':
 	    /* Changed Module Api onLoad($entity, $duringUpgrade) definition */
-
 	case '0.9.29':
 	    /* Ginormous layout and theme consolidation refactor */
 
