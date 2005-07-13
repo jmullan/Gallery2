@@ -297,7 +297,7 @@ function _GalleryMain($embedded=false) {
 					      'View results are missing body file'), null);
 	}
 
-	$templatePath = $results['body'];
+	$templatePath = 'gallery:' . $results['body'];
 	$template->setVariable('l10Domain', $view->getL10Domain());
 
 	if ($embedded) {
