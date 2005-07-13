@@ -8,14 +8,8 @@
   <h2> {g->text text="Import from Gallery 1"} </h2>
 
   <p class="giDescription">
-    {g->text text="This operation takes data (images, albums, users, etc.) from <strong>Gallery 1</strong> and brings it into <strong>Gallery 2</strong>."}
+    {g->text text="Copy all or part of an existing Gallery 1 installation into your Gallery 2.  It won't modify your Gallery 1 data in any way."}
   </p>
-  <p><strong>
-    {g->text text="Before you migrate any data you must try adding an album and image through the main gallery interface first.  This will show you if your gallery is correctly set up."}
-  </strong></p>
-  <p><em>
-    {g->text text="This module is unfinished.  It should not harm your Gallery 1 data, but use it at your own risk."}
-  </em></p>
 </div>
 
 {if (!$SelectGallery.hasToolkit)}
@@ -28,13 +22,12 @@
 {/if}
 
 <div class="gbBlock">
+  <h1 class="giTitle"> {g->text text="Path to Gallery 1 albums directory"} </h1>
   <p class="giDescription">
-    {g->text text="This process will copy data from an existing Gallery 1 installation.  It won't modify your Gallery 1 data in any way.  You must enter the path to your Gallery 1 <i>albums</i> directory.  If you enter the wrong path, we'll let you know so it's safe to experiment.  Example: <i>/path/to/albums</i>"}
+    <i>{g->text text="Example: /var/www/albums"}</i>
   </p>
 
   <div>
-    <h4> {g->text text="Path"} </h4>
-
     <input type="text" size="60"
      name="{g->formVar var="form[albumsPath]"}" value="{$form.albumsPath}"
       id='giFormPath' autocomplete="off"/>
@@ -54,6 +47,10 @@
     </div>
     {/if}
   </div>
+
+  <span>
+    {g->text text="<b>Note:</b> Before you import any data you should make sure your Gallery 1 is installed correctly by adding a photo through the Gallery 1 web interface.  Make sure you resolve any errors you see there first."}
+  </span>
 
   {if !empty($SelectGallery.recentPaths)}
   <script type="text/javascript">
