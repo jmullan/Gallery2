@@ -43,12 +43,6 @@ class UserAdminView extends GalleryView {
 	global $gallery;
 	$user = $gallery->getActiveUser();
 
-	/* Get system links */
-	list ($ret, $moduleSystemLinks) = $this->_getModuleSystemLinks();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	/* Load the module list */
 	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret->isError()) {
@@ -127,7 +121,6 @@ class UserAdminView extends GalleryView {
 	}
 
 	/* Set up my view parameters */
-	$UserAdmin['moduleSystemLinks'] = $moduleSystemLinks;
 	$UserAdmin['navigationLinks'] = $navigationLinks;
 	$UserAdmin['subViewChoices'] = $subViewChoices;
 	$UserAdmin['subViewName'] = $subViewName;

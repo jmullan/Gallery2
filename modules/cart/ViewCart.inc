@@ -75,12 +75,6 @@ class ViewCartView extends GalleryView {
 	}
 	$ViewCart['rootAlbum'] = $rootAlbum->getMemberData();
 
-	/* Get system links */
-	list ($ret, $moduleSystemLinks) = $this->_getModuleSystemLinks();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	/* Find all our cart plugins */
 	GalleryCoreApi::relativeRequireOnce('modules/cart/classes/CartPluginInterface_1_0.class');
 	list ($ret, $ids) =
@@ -144,7 +138,6 @@ class ViewCartView extends GalleryView {
 	    }
 	}
 
-	$ViewCart['moduleSystemLinks'] = $moduleSystemLinks;
 	$ViewCart['items'] = $items;
 	$ViewCart['itemTypeNames'] = $itemTypeNames;
 	$ViewCart['thumbnails'] = $thumbnails;

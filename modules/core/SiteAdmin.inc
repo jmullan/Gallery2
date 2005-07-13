@@ -60,12 +60,6 @@ class SiteAdminView extends GalleryView {
 	}
 	$rootAlbumData = $rootAlbum->getMemberData();
 
-	/* Get system links */
-	list ($ret, $moduleSystemLinks) = $this->_getModuleSystemLinks();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	/* Load the module list */
 	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret->isError()) {
@@ -182,7 +176,6 @@ class SiteAdminView extends GalleryView {
 
 	/* Set up my view parameters */
 	$SiteAdmin['rootAlbum'] = $rootAlbumData;
-	$SiteAdmin['moduleSystemLinks'] = $moduleSystemLinks;
 	$SiteAdmin['navigationLinks'] = $navigationLinks;
 	$SiteAdmin['subViewGroups'] = $subViewGroups;
 	$SiteAdmin['subViewName'] = $subViewName;

@@ -61,12 +61,6 @@ class ItemAdminView extends GalleryView {
 	    $thumbnailData = $thumbnail->getMemberData();
 	}
 
-	/* Get system links */
-	list ($ret, $moduleSystemLinks) = $this->_getModuleSystemLinks();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	/* Load the module list */
 	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret->isError()) {
@@ -185,7 +179,6 @@ class ItemAdminView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$ItemAdmin['moduleSystemLinks'] = $moduleSystemLinks;
 	$ItemAdmin['navigationLinks'] = $navigationLinks;
 	$ItemAdmin['viewBodyFile'] = $results['body'];
 	$ItemAdmin['item'] = $item->getMemberData();
