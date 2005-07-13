@@ -6,7 +6,7 @@
  *}
 {if $user.isGuest}
 <div class="{$class}">
-  <form id="LoginSystemContent" action="{g->url}" method="post">
+  <form id="LoginForm" action="{g->url}" method="post">
     <div>
       {g->hiddenFormVars}
       <input type="hidden" name="{g->formVar var="controller"}" value="core.UserLogin" />
