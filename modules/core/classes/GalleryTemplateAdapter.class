@@ -539,8 +539,8 @@ class GalleryTemplateAdapter {
 
 	if (isset($params['include'])) {
 	    $smarty->_smarty_include(array(
-	        'smarty_include_tpl_file' =>
- 	            'gallery:themes/' . $this->_theme->getId(). '/templates/' . $params['include'],
+		'smarty_include_tpl_file' =>
+		    'gallery:themes/' . $this->_theme->getId(). '/templates/' . $params['include'],
 		'smarty_include_vars' => array()));
 	} else if (isset($params['url'])) {
 	    $urlGenerator =& $gallery->getUrlGenerator();
@@ -555,7 +555,7 @@ class GalleryTemplateAdapter {
      */
     function block($params, $smarty) {
 	list ($module, $file) = explode('.', $params['type']);
-	$class = empty($params['class']) ? '' : $params['class'];
+	$class = empty($params['class']) ? '' : ' ' . $params['class'];
 
 	list ($ret, $pluginStatus) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret->isError()) {
@@ -571,7 +571,7 @@ class GalleryTemplateAdapter {
 	    $params = $params['params'];
 	}
 
-	$params['class'] = "block-$module-$file $class";
+	$params['class'] = "block-$module-$file$class";
 	$params['l10Domain'] = "modules_$module";
 
 	$smarty->_smarty_include(
@@ -670,7 +670,7 @@ class GalleryTemplateAdapter {
 	 * estimate will be wildly inaccurate at the transition.
 	 */
 	if ($percentComplete > 0 &&
-	        $percentComplete < 1 && time() > $this->_progressBarStats['startTime']) {
+		$percentComplete < 1 && time() > $this->_progressBarStats['startTime']) {
 	    $elapsed = (int)(time() - $this->_progressBarStats['startTime']);
 	    $timeRemaining = ($elapsed / $percentComplete) - $elapsed;
 	    $timeRemaining = $coreModule->translate(
