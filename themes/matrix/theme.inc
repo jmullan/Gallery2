@@ -64,7 +64,7 @@ class MatrixTheme extends GalleryTheme {
 	$ret = $this->loadCommonTemplateData(
 	    $template, $item, $params,
 	    array('owner', 'viewCount', 'descendentCount', 'parents', 'peers',
-		  'systemLinks', 'systemContent', 'itemLinks', 'itemSummaries',
+		  'systemLinks', 'itemLinks', 'itemSummaries',
 		  'itemDetailFiles', 'thumbnails', 'pageNavigator', 'jumpRange'),
 	     $childIds);
 	if ($ret->isError()) {
@@ -83,9 +83,8 @@ class MatrixTheme extends GalleryTheme {
      * @see GalleryTheme::showPhotoPage
      */
     function showPhotoPage(&$template, $item, $params) {
-	$dataTypes = array('owner', 'parents', 'peers', 'systemLinks', 'systemContent',
-			   'itemLinks', 'itemLinksDetailed', 'itemDetailFiles', 'itemNavigator',
-			   'imageViews');
+	$dataTypes = array('owner', 'parents', 'peers', 'systemLinks', 'itemLinks',
+			   'itemLinksDetailed', 'itemDetailFiles', 'itemNavigator', 'imageViews');
 	if (!empty($params['showMicroThumbs'])) {
 	    $dataTypes[] = 'peerThumbnails';
 	}
@@ -102,8 +101,7 @@ class MatrixTheme extends GalleryTheme {
      */
     function showModulePage(&$template, $item, $params, $templateFile) {
 	$ret = $this->loadCommonTemplateData(
-	    $template, $item, $params,
-	    array('parents', 'systemLinks', 'systemContent'));
+	    $template, $item, $params, array('parents', 'systemLinks'));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -121,8 +119,7 @@ class MatrixTheme extends GalleryTheme {
      */
     function showAdminPage(&$template, $item, $params, $templateFile) {
 	$ret = $this->loadCommonTemplateData(
-	    $template, $item, $params,
-	    array('parents', 'systemLinks', 'systemContent'));
+	    $template, $item, $params, array('parents', 'systemLinks'));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -146,8 +143,7 @@ class MatrixTheme extends GalleryTheme {
      */
     function showProgressBarPage(&$template, $item, $params) {
 	$ret = $this->loadCommonTemplateData(
-	    $template, $item, $params,
-	    array('parents', 'systemLinks', 'systemContent'));
+	    $template, $item, $params, array('parents', 'systemLinks'));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
