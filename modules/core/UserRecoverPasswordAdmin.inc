@@ -105,7 +105,7 @@ class UserRecoverPasswordAdminController extends GalleryController {
 		    $status['passwordRecovered'] = 1;
 
 		    /*
-		     * Return 0 is essential - it prevents core.UserLogin from sending the 
+		     * Return 0 is essential - it prevents core.UserLogin from sending the
 		     * user back to the recovery page after logging in
 		     */
 		    $results['return'] = 0;
@@ -154,15 +154,11 @@ class UserRecoverPasswordAdminView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
-
-	$error = array();
-	$status = array();
-
-	$platform =& $gallery->getPlatform();
-
-	$authFile = dirname(__FILE__) . '/../../login.txt';
-
+	$platform = $gallery->getPlatform();
 	$session =& $gallery->getSession();
+
+	$status = $error = array();
+	$authFile = dirname(__FILE__) . '/../../login.txt';
 
 	if ($form['formName'] != 'UserRecoverPasswordAdmin') {
 	    $form['formName'] = 'UserRecoverPasswordAdmin';

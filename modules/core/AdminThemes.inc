@@ -330,9 +330,9 @@ class AdminThemesView extends GalleryView {
 	    $entry['l10Domain'] = $theme->getL10Domain();
 	    $entry['action'] = array();
 	    $coreApiCompatible = GalleryUtilities::isCompatibleWithApi(
-                $theme->getRequiredCoreApi(), GalleryCoreApi::getApiVersion());
+		$theme->getRequiredCoreApi(), GalleryCoreApi::getApiVersion());
 	    $themeApiCompatible = GalleryUtilities::isCompatibleWithApi(
-                $theme->getRequiredThemeApi(), GalleryTheme::getApiVersion());
+		$theme->getRequiredThemeApi(), GalleryTheme::getApiVersion());
 	    if ($coreApiCompatible && $themeApiCompatible) {
 		if (empty($status['active'])) {
 		    $entry['state'] = 'inactive';
@@ -435,7 +435,7 @@ class AdminThemesView extends GalleryView {
 
 	    /* Set up our sort order selection list */
 	    GalleryCoreApi::relativeRequireOnce(
-                'modules/core/classes/GallerySortInterface_1_1.class');
+		'modules/core/classes/GallerySortInterface_1_1.class');
 	    list ($ret, $orderByList, $presortList, $orderDirectionList) =
 		GallerySortInterface_1_1::getAllSortOrders(false);
 	    if ($ret->isError()) {
@@ -503,7 +503,7 @@ class AdminThemesView extends GalleryView {
 		if (isset($settingTypes['block-list'])) {
 		    $urlGenerator =& $gallery->getUrlGenerator();
 		    $template->javascript(
-		        $urlGenerator->generateUrl(
+			$urlGenerator->generateUrl(
 			    array('href' => 'lib/javascript/BlockSelectWidget.js')));
 		}
 	    }
@@ -529,7 +529,7 @@ class AdminThemesView extends GalleryView {
      */
     function loadAvailableBlocks() {
 	global $gallery;
-	$platform =& $gallery->getPlatform();
+	$platform = $gallery->getPlatform();
 
 	list ($ret, $pluginStatus) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret->isError()) {

@@ -293,8 +293,7 @@ class RewriteModuleTest extends GalleryTestCase {
 	global $gallery;
 
 	/* Tell our mock platform to deny write access to the .htaccess file */
-	$platform =& $gallery->getPlatform();
-	$platform->setIsWriteable(false);
+	$this->_platform->setIsWriteable(false);
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
 	    'history.rewritemoduletest.0',

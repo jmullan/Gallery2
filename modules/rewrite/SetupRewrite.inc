@@ -41,15 +41,14 @@ class SetupRewriteController extends GalleryController {
      */
     function handleRequest(&$form) {
 	global $gallery;
-	$platform =& $gallery->getPlatform();
+	$platform = $gallery->getPlatform();
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$status = array();
-	$error = array();
+	$status = $error = array();
 
 	if (isset($form['action']['test'])) {
 	    $redirect['view'] = 'core.SiteAdmin';

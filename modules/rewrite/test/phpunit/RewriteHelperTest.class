@@ -52,7 +52,7 @@ class RewriteHelperTest extends GalleryTestCase {
 	$urlGenerator = new RewriteUrlGenerator();
 	$urlGenerator->init('phpunit_test.php');
 	$this->_platform = new RewriteHelperTestPlatform();
-	$this->_platform->init();
+	$this->_platform->init($this);
 	$gallery->setPlatform($this->_platform);
 	$gallery->setUrlGenerator($urlGenerator);
     }
@@ -79,7 +79,6 @@ class RewriteHelperTest extends GalleryTestCase {
 	}
 
 	$this->_platform->setPreviousContent($expected);
-	$gallery->setPlatform($this->_platform);
 
 	list ($ret, $code) = RewriteHelper::checkFile();
 	if ($ret->isError()) {
@@ -105,7 +104,6 @@ class RewriteHelperTest extends GalleryTestCase {
 
 	/* Make sure we fail if it's not writeable. */
 	$this->_platform->setIsWriteable(false);
-	$gallery->setPlatform($this->_platform);
 	list ($ret, $code) = RewriteHelper::checkFile();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -114,7 +112,6 @@ class RewriteHelperTest extends GalleryTestCase {
 
 	/* Make sure we fail if it's not readable */
 	$this->_platform->setIsReadable(false);
-	$gallery->setPlatform($this->_platform);
 	list ($ret, $code) = RewriteHelper::checkFile();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -123,7 +120,6 @@ class RewriteHelperTest extends GalleryTestCase {
 
 	/* Make sure we fail if it's there's no file */
 	$this->_platform->setFileExists(false);
-	$gallery->setPlatform($this->_platform);
 	list ($ret, $code) = RewriteHelper::checkFile();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -132,9 +128,6 @@ class RewriteHelperTest extends GalleryTestCase {
     }
 
     function testCheckSync() {
-	global $gallery;
-	$platform =& $gallery->getPlatform();
-
 	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'embeddedHtaccess',
 	    'phpunit/embedded');
 	if ($ret->isError()) {
@@ -142,12 +135,12 @@ class RewriteHelperTest extends GalleryTestCase {
 	}
 
 	$existingFile = array("Bogus info before section\n",
-	    		      "# BEGIN Url Rewrite section\n",
-	    		      "Bogus info in section\n",
-	    		      "# END Url Rewrite section\n",
-	    		      "Bogus info after section\n");
-	$platform->setPreviousContent($existingFile);
-	$platform->setEmbeddedPreviousContent($existingFile);
+			      "# BEGIN Url Rewrite section\n",
+			      "Bogus info in section\n",
+			      "# END Url Rewrite section\n",
+			      "Bogus info after section\n");
+	$this->_platform->setPreviousContent($existingFile);
+	$this->_platform->setEmbeddedPreviousContent($existingFile);
 
 	list ($ret, $code) = RewriteHelper::checkSync();
 	if ($ret->isError()) {
@@ -158,7 +151,6 @@ class RewriteHelperTest extends GalleryTestCase {
 
     function testCheckOutOfSync() {
 	global $gallery;
-	$platform =& $gallery->getPlatform();
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'embeddedHtaccess',
 	    'phpunit/embedded');
@@ -167,17 +159,17 @@ class RewriteHelperTest extends GalleryTestCase {
 	}
 
 	$existingFile = array("Bogus info before section\n",
-	    		      "# BEGIN Url Rewrite section\n",
-	    		      "Bogus info in section\n",
-	    		      "# END Url Rewrite section\n",
-	    		      "Bogus info after section\n");
-	$platform->setPreviousContent($existingFile);
+			      "# BEGIN Url Rewrite section\n",
+			      "Bogus info in section\n",
+			      "# END Url Rewrite section\n",
+			      "Bogus info after section\n");
+	$this->_platform->setPreviousContent($existingFile);
 	$existingFile = array("Bogus info before section\n",
-	    		      "# BEGIN Url Rewrite section\n",
-	    		      "!!OOPS - OUT OF SYNC !!!\n",
-	    		      "# END Url Rewrite section\n",
-	    		      "Bogus info after section\n");
-	$platform->setEmbeddedPreviousContent($existingFile);
+			      "# BEGIN Url Rewrite section\n",
+			      "!!OOPS - OUT OF SYNC !!!\n",
+			      "# END Url Rewrite section\n",
+			      "Bogus info after section\n");
+	$this->_platform->setEmbeddedPreviousContent($existingFile);
 
 	list ($ret, $code) = RewriteHelper::checkSync();
 	if ($ret->isError()) {
@@ -188,19 +180,18 @@ class RewriteHelperTest extends GalleryTestCase {
 
     function testWriteFile() {
 	global $gallery;
-	$platform =& $gallery->getPlatform();
 
 	$systemEol = array('windows' => "\r\n",
 			   'unix' => "\n",
-		           'mac' => "\r",
+			   'mac' => "\r",
 			   'aix' => "\x85");
 	foreach ($systemEol as $os => $eol) {
 	    $existingFile = array('Bogus info before section' . $eol,
-	    			  '# BEGIN Url Rewrite section' . $eol,
-	    			  'Bogus info in section'. $eol,
-	    			  '# END Url Rewrite section' . $eol,
-	    			  'Bogus info after section'. $eol);
-	    $platform->setPreviousContent($existingFile);
+				  '# BEGIN Url Rewrite section' . $eol,
+				  'Bogus info in section'. $eol,
+				  '# END Url Rewrite section' . $eol,
+				  'Bogus info after section'. $eol);
+	    $this->_platform->setPreviousContent($existingFile);
 
 	    list ($ret, $code) = RewriteHelper::writeFile(array());
 	    if ($ret->isError()) {
@@ -208,31 +199,30 @@ class RewriteHelperTest extends GalleryTestCase {
 	    }
 	    $this->assertEquals(REWRITE_STATUS_OK, $code, "cant write ($os)");
 
-	    $newFile = $platform->getFileContent();
-	    $this->assertEquals(strpos($newFile, '# BEGIN Url Rewrite section'),
-				strrpos($newFile, '# BEGIN Url Rewrite section'),
-				"multiple sections ($os)");
+	    $newFile = $this->_platform->getFileContent();
+	    $this->assert($i = strpos($newFile, '# BEGIN Url Rewrite section'), "begin ($os)");
+	    $this->assert(strpos($newFile, '# BEGIN Url Rewrite section', $i + 1) === false,
+			  "multiple sections ($os)");
 	}
     }
 
 
     function testClearFile() {
 	global $gallery;
-	$platform =& $gallery->getPlatform();
 
 	$existingFile = array("Bogus info before section\n",
-	    		      "# BEGIN Url Rewrite section\n",
-	    		      "Bogus info in section\n",
-	    		      "# END Url Rewrite section\n",
-	    		      "Bogus info after section\n");
+			      "# BEGIN Url Rewrite section\n",
+			      "Bogus info in section\n",
+			      "# END Url Rewrite section\n",
+			      "Bogus info after section\n");
 	$expected = "Bogus info before section\nBogus info after section\n";
-	$platform->setPreviousContent($existingFile);
+	$this->_platform->setPreviousContent($existingFile);
 	list ($ret, $code) = RewriteHelper::writeFile(null);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(REWRITE_STATUS_OK, $code, 'cant write');
-	$this->assertEquals($expected, $platform->getFileContent());
+	$this->assertEquals($expected, $this->_platform->getFileContent());
     }
 
     function testWriteBadFile() {
@@ -240,7 +230,6 @@ class RewriteHelperTest extends GalleryTestCase {
 
 	/* Make sure we fail if it's not writeable. */
 	$this->_platform->setIsWriteable(false);
-	$gallery->setPlatform($this->_platform);
 	list ($ret, $code) = RewriteHelper::writeFile(array());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -249,7 +238,6 @@ class RewriteHelperTest extends GalleryTestCase {
 
 	/* Make sure we fail if it's not readable */
 	$this->_platform->setIsReadable(false);
-	$gallery->setPlatform($this->_platform);
 	list ($ret, $code) = RewriteHelper::writeFile(array());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -337,11 +325,11 @@ class RewriteHelperTestPlatform extends GalleryPlatform{
     var $_isReadable;
     var $_fileExists;
     var $_previousContent;
-    var $_fileContent;
     var $_embeddedFileContent;
     var $_embeddedPreviousContent;
 
-    function init() {
+    function init(&$test) {
+	$this->_test =& $test;
 	$this->_isWriteable = true;
 	$this->_isReadable = true;
 	$this->_fileExists = true;
@@ -369,7 +357,7 @@ class RewriteHelperTestPlatform extends GalleryPlatform{
     }
 
     function getFileContent() {
-	return $this->_fileContent;
+	return $this->_test->_fileContent;
     }
 
     function file_exists($file) {
@@ -410,14 +398,14 @@ class RewriteHelperTestPlatform extends GalleryPlatform{
     function fopen($file, $mode, $useIncludePath=null, $zcontext=null) {
 	if (strpos($file, 'embedded/.htaccess') !== false) {
 	    if ($this->_isWriteable) {
-		$this->_fileContent = '';
+		$this->_test->_fileContent = '';
 		return '.embedded';
 	    } else {
 		return null;
 	    }
 	} else if (strpos($file, '/.htaccess') !== false) {
 	    if ($this->_isWriteable) {
-		$this->_fileContent = '';
+		$this->_test->_fileContent = '';
 		return '.htaccess';
 	    } else {
 		return null;
@@ -429,7 +417,7 @@ class RewriteHelperTestPlatform extends GalleryPlatform{
 
     function fwrite($handle, $string, $length=null) {
 	if ($handle == '.htaccess') {
-	    $this->_fileContent .= $string;
+	    $this->_test->_fileContent .= $string;
 	    return strlen($string);
 	} else if ($handle == '.embedded') {
 	    $this->_embeddedFileContent .= $string;
