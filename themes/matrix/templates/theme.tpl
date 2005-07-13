@@ -34,12 +34,9 @@
 
       <div id="gsNavBar" class="gcBorder1">
         <div class="gbSystemLinks">
-          {g->block type="core.SystemLink" linkId="core.SiteAdmin"}
-          {g->block type="core.SystemLink" linkId="core.UserAdmin"}
-          {g->block type="core.SystemLink" linkId="core.YourAccount"}
-          {g->block type="core.SystemLink" linkId="core.Login"}
-          {g->block type="core.SystemLink" linkId="core.Logout"}
-          {g->block type="core.SystemLink" linkId="register.Register"}
+          {g->block type="core.SystemLinks"
+		    order="core.SiteAdmin core.YourAccount core.Login core.Logout"
+		    othersAt=4}
         </div>
 
         <div class="gbBreadCrumb">
