@@ -199,7 +199,8 @@ class GallerySession {
 	if (!isset($this->_remoteIdentifier) ||
 	    $this->_compareIdentifiers($this->_remoteIdentifier,
 				       $currentRemoteIdentifier) == 0) {
-	    $allowFrom = $gallery->getConfig('allowSessionAccess');
+	    /* If we upgrade, allowSessionAccess could not be missing */
+	    $allowFrom = @$gallery->getConfig('allowSessionAccess');
 	    if (!$allowFrom || $currentRemoteIdentifier[0] != $allowFrom) {
 		if ($gallery->getDebug()) {
 		    $gallery->debug('Session hijack detected: saved vs. current below');
