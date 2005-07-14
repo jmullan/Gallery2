@@ -250,7 +250,7 @@ class RewriteHelper {
 	    if (strpos($newHtaccess, '{gallerySection}') !== false) {
 		$newHtaccess = str_replace('{gallerySection}', $htaccess, $newHtaccess);
 	    } else {
-		$newHtaccess .= $htaccess;
+		$newHtaccess .= "\n" . $htaccess;
 	    }
 	} else {
 	    $newHtaccess = $htaccess;
