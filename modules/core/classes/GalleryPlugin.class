@@ -505,11 +505,7 @@ class GalleryPlugin {
     }
 
     function getL10Domain() {
-	return $this->_l10Domain;
-    }
-
-    function setL10Domain($l10Domain) {
-	$this->_l10Domain = $l10Domain;
+	return $this->getPluginType() . 's_' . $this->getId();
     }
 
     function setRequiredCoreApi($requirement) {
