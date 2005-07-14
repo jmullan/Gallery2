@@ -292,8 +292,11 @@ class GalleryTemplateAdapter {
      * @param array
      * @param object Smarty the smarty instance
      * @return string HTML content
+     *
+     * Note: don't accept smarty as a reference here otherwise changes inside the
+     * smarty include can propagate back upwards!
      */
-    function head($params, &$smarty) {
+    function head($params, $smarty) {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
 	$templateVars =& $smarty->get_template_vars();
@@ -319,7 +322,7 @@ class GalleryTemplateAdapter {
 	    }
 	}
 
-	/* Tpl to include */
+	/* Tpl to include. */
 	foreach ($head['tpl'] as $path => $l10Domain) {
 	    $smarty->_smarty_include(
 		array('smarty_include_tpl_file' => "gallery:$path",
@@ -591,7 +594,7 @@ class GalleryTemplateAdapter {
 	list ($module, $file) = explode('.', $params['type']);
 	$smarty->_smarty_include(
 	    array('smarty_include_tpl_file' =>
-		      "gallery:modules/$module/templates/containers/$file.tpl",
+		  "gallery:modules/$module/templates/containers/$file.tpl",
 		  'smarty_include_vars' => array_merge(array('content' => $content),
 						       $params)));
     }
