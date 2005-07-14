@@ -136,6 +136,34 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	/* These tests expect a user with username 'admin' to exist */
+	list ($ret, $adminUser) = GalleryCoreApi::fetchUserByUsername('admin');
+	if ($ret->isError()) {
+	    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+		list ($ret, $adminUser) =
+		    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
+		if ($ret->isError()) {
+		    print $ret->getAsHtml();
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+		$ret = $adminUser->create('admin');
+		if ($ret->isError()) {
+		    print $ret->getAsHtml();
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+		$ret = $adminUser->save();
+		if ($ret->isError()) {
+		    print $ret->getAsHtml();
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+		$this->_markForCleanup($adminUser);
+	    } else {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+	$this->_adminUser = $adminUser;
     }
 
     function tearDown() {
@@ -290,6 +318,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
     }
 
     function testImportUserFailure() {
+	/* Try importing user with username 'admin' which should fail */
 	global $gallery;
 	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
@@ -406,10 +435,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	 * changed to fix it, so we will change it later - probably to
 	 * phpunit_foobar, or whatever we are loading in the other unit test
 	 */
-	list($ret, $testOwner) = GalleryCoreApi::fetchUserByUsername('admin');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$testOwner = $this->_adminUser;
 
 	/* Load the thumb and resized image sizes for later comparison */
 	list ($ret, $derivativePreferences) =
@@ -966,19 +992,11 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	 * changed to fix it, so we will change it later - probably to
 	 * phpunit_foobar, or whatever we are loading in the other unit test
 	 */
+	$testOwner = $this->_adminUser;
 
-	list($ret, $testOwner) = GalleryCoreApi::fetchUserByUsername('admin');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->assertEquals(array($testAlbum->getownerId()              // owner
-				  ),
-			    array($testOwner->getId()                   // owner
-				  )
-			    );
+	$this->assertEquals($testOwner->getId(), $testAlbum->getownerId(), 'album owner');
 	$testPerms = array();
 	$testPermsResult = array();
-
 	$testPerms['admin'] = array('core.all' => true,
 				    'comment.all' => true && $this->commentPermissionsExist
 				    );
@@ -1059,7 +1077,8 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals($testOwner->getId(),
+	/* we expect no 'phpunit_foobar' user in G2, so defaults to current user as owner */
+	$this->assertEquals($gallery->getActiveUserId(),
 			    $testItem->getownerId(),
 			    'item 1');
 
@@ -1099,7 +1118,8 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals($testOwner->getId(),
+	/* we expect no 'monkey' user in G2, so defaults to current user as owner */
+	$this->assertEquals($gallery->getActiveUserId(),
 			    $testItem->getownerId(),
 			    'item 6');
     }
@@ -1142,16 +1162,9 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	 * changed to fix it, so we will change it later - probably to
 	 * phpunit_foobar, or whatever we are loading in the other unit test
 	 */
+	$testOwner = $this->_adminUser;
 
-	list($ret, $testOwner) = GalleryCoreApi::fetchUserByUsername('admin');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->assertEquals(array($testAlbum->getownerId()              // owner
-				  ),
-			    array($testOwner->getId()                   // owner
-				  )
-			    );
+	$this->assertEquals($testOwner->getId(), $testAlbum->getownerId(), 'album owner');
 	$testPerms = array();
 	$testPermsResult = array();
 	$testPerms['admin'] = array('core.all' => true,
@@ -1258,14 +1271,9 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	 * changed to fix it, so we will change it later - probably to
 	 * phpunit_foobar, or whatever we are loading in the other unit test
 	 */
+	$testOwner = $this->_adminUser;
 
-	list($ret, $testOwner) = GalleryCoreApi::fetchUserByUsername('admin');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->assertEquals($testAlbum->getownerId(),             // owner
-			    $testOwner->getId());                 // owner
-
+	$this->assertEquals($testOwner->getId(), $testAlbum->getownerId(), 'album owner');
 	$testPerms = array();
 	$testPermsResult = array();
 	$testPerms['admin'] = array('core.all' => true,
@@ -1402,17 +1410,9 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	 * changed to fix it, so we will change it later - probably to
 	 * phpunit_foobar, or whatever we are loading in the other unit test
 	 */
+	$testOwner = $this->_adminUser;
 
-	list($ret, $testOwner) = GalleryCoreApi::fetchUserByUsername('admin');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->assertEquals(array($testAlbum->getownerId()              // owner
-				  ),
-			    array($testOwner->getId()                   // owner
-				  )
-			    );
-
+	$this->assertEquals($testOwner->getId(), $testAlbum->getownerId(), 'album owner');
 	$testPerms = array();
 	$testPermsResult = array();
 	$testPerms['admin'] = array('core.all' => true,
@@ -1551,17 +1551,9 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	     * changed to fix it, so we will change it later - probably to
 	     * phpunit_foobar, or whatever we are loading in the other unit test
 	     */
+	    $testOwner = $this->_adminUser;
 
-	    list($ret, $testOwner) = GalleryCoreApi::fetchUserByUsername('admin');
-	    if ($ret->isError()) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	    $this->assertEquals(array($testAlbum->getownerId()              // owner
-				      ),
-				array($testOwner->getId()                   // owner
-				      )
-				);
-
+	    $this->assertEquals($testOwner->getId(), $testAlbum->getownerId(), 'album owner');
 	    $testPerms = array();
 	    $testPermsResult = array();
 	    $testPerms['admin'] = array('core.all' => true,
