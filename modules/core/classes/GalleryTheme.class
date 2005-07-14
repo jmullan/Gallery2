@@ -1345,7 +1345,9 @@ class GalleryTheme extends GalleryPlugin {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
 		    foreach ($content as $id => $html) {
-			$itemSummaries[$id][$moduleId] = $html;
+			if (!empty($html)) {
+			    $itemSummaries[$id][$moduleId] = $html;
+			}
 		    }
 		}
 
