@@ -24,7 +24,7 @@
                 </p>
                 {/if}
               </td>
-              <td width="30%">
+              <td style="width: 30%">
                 {g->block type="core.ItemInfo"
                           item=$theme.item
                           showDate=true
@@ -151,6 +151,7 @@
         {/if}
 
         {g->block type="core.GuestPreview" class="gbBlock"}
+      </div>
     </td>
   </tr>
 </table>
