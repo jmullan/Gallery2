@@ -40,10 +40,9 @@ class CustomFieldModule extends GalleryModule {
 	$this->setId('customfield');
 	$this->setName($gallery->i18n('Custom Fields'));
 	$this->setDescription($gallery->i18n('Create custom data fields for Gallery items'));
-	$this->setVersion('0.9.5');
+	$this->setVersion('0.9.6');
 	$this->setGroup('data', $this->translate('Extra Data'));
-	$this->setCallbacks('registerEventListeners|' .
-			    'getSiteAdminViews|getItemSummaries|loadItemDetails');
+	$this->setCallbacks('registerEventListeners|getSiteAdminViews|getItemSummaries');
 	$this->setRequiredCoreApi(array(6, 0));
 	$this->setRequiredModuleApi(array(2, 0));
     }
@@ -98,21 +97,6 @@ class CustomFieldModule extends GalleryModule {
 	    $summaries[$item->getId()] = implode("<br/>\n", $list);
 	}
 	return array(GalleryStatus::success(), $summaries);
-    }
-
-    /**
-     * @see GalleryModule::loadItemDetails()
-     */
-    function loadItemDetails(&$template, $item, $permissions) {
-	GalleryCoreApi::relativeRequireOnce('modules/customfield/classes/CustomFieldHelper.class');
-	list ($ret, $fields) = CustomFieldHelper::fetchFieldValues($item, 'detail');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$CustomFieldItemDetails = array('fields' => $fields);
-	$template->setVariable('CustomFieldItemDetails', $CustomFieldItemDetails);
-	return array(GalleryStatus::success(),
-		     'modules/customfield/templates/CustomFieldItemDetails.tpl');
     }
 
     /**
