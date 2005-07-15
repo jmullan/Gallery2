@@ -80,7 +80,7 @@ class ConfirmDeleteView extends GalleryView {
 		GalleryUtilities::getRequestVariables('watermarkId', 'fromAdmin');
 	}
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($form['itemId']);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($form['watermarkId']);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
