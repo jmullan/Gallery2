@@ -305,7 +305,7 @@ function _GalleryMain($embedded=false) {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    $data = $theme->splitHtml($html);
+	    $data = $theme->splitHtml($html, $results);
 	    $data['isDone'] = false;
 	} else {
 	    $ret = $template->display($templatePath);
