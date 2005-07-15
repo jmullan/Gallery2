@@ -29,6 +29,18 @@
     {/if}
   </div>
 
+  {if (isset($currentPage) && isset($totalPages)) || (isset($currentItem) && isset($totalItems))}
+  <span class="current">
+    {if isset($currentPage)}
+      {g->text text="Page %d of %d" arg1=$currentPage arg2=$totalPages}
+    {else}
+      {if isset($currentItem)}
+        {g->text text="%d of %d" arg1=$currentItem arg2=$totalItems}
+      {/if}
+    {/if}
+  </span>
+  {/if}
+
   <div class="first-and-previous">
     {if isset($navigator.first)}
     <a href="{g->url params=$navigator.first.urlParams}" class="first">
