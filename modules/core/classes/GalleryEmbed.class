@@ -66,6 +66,8 @@ class GalleryEmbed {
      *   'activeLanguage' => (optional) language code in use for this session
      *   'fullInit' => (optional) call GalleryInitSecondPass
      *                            (only use when not calling handleRequest)
+     *   'extractSidebarBlocks' => (option) if true, return any sidebar blocks
+     *                             separately from the body html.
      * )
      * @return object GalleryStatus a status object
      * @static
@@ -108,6 +110,10 @@ class GalleryEmbed {
 	    }
 	}
 
+	if (!empty($initParams['extractSidebarBlocks'])) {
+	    GalleryCapabilities::set('showSidebarBlocks', false);
+	}
+
 	return GalleryStatus::success();
     }
 
@@ -145,12 +151,11 @@ class GalleryEmbed {
      *
      * @return array ('isDone' => boolean,
      *                [optional: 'headHtml' => string, 'bodyHtml' => string,
-     *                           'sidebarHtml' => string])
+     *                           'sidebarHtml' => array('blockHtml', 'blockHtml')]
      * @static
      */
-    function handleRequest() {
+    function handleRequest($options) {
 	static $secondCacheKey = 'GalleryEmbed::initSecondPass';
-	GalleryDataCache::put($secondCacheKey, true);
 	return GalleryMain(true);
     }
 

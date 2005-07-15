@@ -714,6 +714,11 @@ class GalleryTheme extends GalleryPlugin {
 	    return array(GalleryStatus::success(), $viewResults);
 	}
 
+	if (!GalleryCapabilities::can('showSidebarBlocks') && !empty($params['sidebarBlocks'])) {
+	    $extractedSidebarBlocks = $theme['params']['sidebarBlocks'];
+	    $theme['params']['sidebarBlocks'] = array();
+	}
+
 	/*
 	 * Figure out what type of view we've got.  This is lame and not very OO.  We should
 	 * create a view hierarchy that lets them implement their own showPage() method.
@@ -728,10 +733,6 @@ class GalleryTheme extends GalleryPlugin {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    return array(GalleryStatus::success(),
-			 is_array($result) ? $result :
-			 array('body' => sprintf('themes/%s/templates/%s', $this->getId(),
-						 $result)));
 	    break;
 
 	case 'showitemview':
@@ -873,20 +874,15 @@ class GalleryTheme extends GalleryPlugin {
 		    }
 		}
 	    }
-
-	    return array(GalleryStatus::success(),
-			 is_array($result) ? $result :
-			 array('body' => sprintf('themes/%s/templates/%s', $this->getId(),
-						 $result)));
+	    break;
 
 	case 'progressbarview':
 	    /* We only use this for progressbar views (for now) */
 	    $theme['pageType'] = 'progressbar';
 	    list ($ret, $result) = $this->showProgressBarPage($template, $item, $params);
-	    return array(GalleryStatus::success(),
-			 is_array($result) ? $result :
-			 array('body' => sprintf('themes/%s/templates/%s', $this->getId(),
-						 $result)));
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	    break;
 
 	default: /* module view */
@@ -896,12 +892,29 @@ class GalleryTheme extends GalleryPlugin {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-
-	    return array(GalleryStatus::success(),
-			 is_array($result) ? $result :
-			 array('body' => sprintf('themes/%s/templates/%s', $this->getId(),
-						 $result)));
+	    break;
 	}
+
+	if (!is_array($result)) {
+	    $result = array('body' => sprintf('themes/%s/templates/%s', $this->getId(), $result));
+	}
+
+	if (isset($extractedSidebarBlocks)) {
+	    $templateAdapter =& $gallery->getTemplateAdapter();
+
+	    /* Render the sidebar blocks and save them */
+	    foreach ($extractedSidebarBlocks as $block) {
+		$template->setVariable(
+		    'SidebarBlock', array('type' => $block[0], 'params' => $block[1]));
+		list ($ret, $result['sidebarBlocksHtml'][]) =
+		    $template->fetch('gallery:modules/core/templates/SidebarBlock.tpl');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+	}
+
+	return array(GalleryStatus::success(), $result);
     }
 
     /**
@@ -1743,15 +1756,23 @@ class GalleryTheme extends GalleryPlugin {
     /**
      * Split the HTML content into its various component pieces.
      *
-     * @param string the html
+     * @param string the main html (<head>, <body>, etc)
+     * @param array any extra html that we've generated, like sidebar HTML
      * @return array('headHtml' => ..., 'bodyHtml' => ...)
      */
-    function splitHtml($html) {
-	if (preg_match('|<head>(.*)</head>.*<body.*?>(.*)</body>|s', $html, $matches) == 1) {
-	    return array('headHtml' => $matches[1], 'bodyHtml' => $matches[2]);
+    function splitHtml($mainHtml, $extraHtml) {
+	if (preg_match('|<head>(.*)</head>.*<body.*?>(.*)</body>|s', $mainHtml, $matches) == 1) {
+	    $results = array('headHtml' => $matches[1], 'bodyHtml' => $matches[2]);
 	} else {
-	    return array('bodyHtml' => $html);
+	    $results = array('bodyHtml' => $mainHtml);
 	}
+
+	/* If we extracted the sidebar, it'll be in our extra html, so move that over */
+	if (isset($extraHtml['sidebarBlocksHtml'])) {
+	    $results['sidebarBlocksHtml'] = $extraHtml['sidebarBlocksHtml'];
+	}
+
+	return $results;
     }
 
     /**
