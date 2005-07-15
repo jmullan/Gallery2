@@ -5,27 +5,25 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 <div class="{$class}">
-  <div class="next-and-last">
+  <div class="next-and-last{if !isset($navigator.first) && !isset($navigator.back)} no-previous{/if}">
     {if isset($navigator.next)}
     <a href="{g->url params=$navigator.next.urlParams}" class="next">
       {g->text text="next"}
       {if isset($navigator.next.item.thumbnail)}
-      {g->image item=$navigator.next.item image=$navigator.next.item.thumbnail maxSize=40 class="next"}
+      {g->image item=$navigator.next.item image=$navigator.next.item.thumbnail
+		maxSize=40 class="next"}
       {/if}
     </a>
-    {else}
-    &nbsp;
     {/if}
 
     {if isset($navigator.last)}
     <a href="{g->url params=$navigator.last.urlParams}" class="last">
       {g->text text="last"}
       {if isset($navigator.last.item.thumbnail)}
-      {g->image item=$navigator.last.item image=$navigator.last.item.thumbnail maxSize=40 class="last"}
+      {g->image item=$navigator.last.item image=$navigator.last.item.thumbnail
+		maxSize=40 class="last"}
       {/if}
     </a>
-    {else}
-    &nbsp;
     {/if}
   </div>
 
@@ -49,8 +47,6 @@
       {/if}
       {g->text text="first"}
     </a>
-    {else}
-    &nbsp;
     {/if}
 
     {if isset($navigator.back)}
@@ -60,8 +56,6 @@
       {/if}
       {g->text text="previous"}
     </a>
-    {else}
-    &nbsp;
     {/if}
   </div>
 </div>
