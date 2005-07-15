@@ -25,6 +25,7 @@
     {$theme.parents[parent].title|default:$theme.parents[parent].pathComponent|markup:strip}
   </a>
   {/if}
+  {if isset($separator)} {$separator} {/if}
   {/section}
 
   {if ($theme.pageType == 'admin' || $theme.pageType == 'module')}
