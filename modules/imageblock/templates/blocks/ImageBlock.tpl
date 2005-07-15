@@ -4,13 +4,9 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-
-{*
- * The image block has a ton of optional parameters.  If we try to pass them
- * in here, we'll have to deal with the fact that many of them may not be defined
- * so instead, let the callback handle that.
- *}
-{g->callback type="imageblock.LoadImageBlock"}
+{g->callback type="imageblock.LoadImageBlock"
+	     blocks=$blocks|default:null show=$show|default:null maxSize=$maxSize|default:null
+	     itemId=$itemId|default:null linkTarget=$linkTarget|default:null}
 
 {if !empty($ImageBlockData)}
 <div class="{$class}">

@@ -40,12 +40,15 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
      * @param array (optional) image block parameters (to override module settings)
      * @return GalleryStatus a status code
      */
-    function loadImageBlocks(&$template, $params = array('heading' => 1)) {
+    function loadImageBlocks(&$template, $params) {
 	global $gallery;
 	list ($ret, $moduleParams) =
 	    GalleryCoreApi::fetchAllPluginParameters('module', 'imageblock');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	if (!isset($params['blocks'])) {
+	    $params['blocks'] = 'randomImage';
 	}
 	$params = array_merge($moduleParams, $params);
 	$parentId = isset($params['itemId']) ? $params['itemId'] : null;
@@ -54,7 +57,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    $show[$key] = 1;
 	}
 	$fullSize = isset($show['fullSize']);
-	$heading = isset($params['heading']) || isset($show['heading']);
+	$heading = isset($show['heading']);
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imageblock');
 	if ($ret->isError()) {

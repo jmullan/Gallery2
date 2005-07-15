@@ -214,34 +214,13 @@ class ImageBlockTest extends GalleryTestCase {
     }
 
     function testImageBlock() {
-	$ret = $this->_module->setParameter('blocks', '');
-	if ($ret->isError()) {
-	    $this->assert(false, 'Set blocks parameter');
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
 	$data = $this->_doImageBlockCallback();
-	$this->assert(!isset($data['ImageBlockData']), 'No blocks');
-
-	$ret = $this->_module->setParameter('blocks', 'randomImage');
-	if ($ret->isError()) {
-	    $this->assert(false, 'Set blocks parameter');
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	$data = $this->_doImageBlockCallback();
-	$this->assertEquals(1, count($data['ImageBlockData']['blocks']), 'One block');
+	$this->assertEquals(1, count($data['ImageBlockData']['blocks']), 'Default block');
 	$this->assertBlock($data['ImageBlockData']['blocks'][0]);
 
-	$ret = $this->_module->setParameter('blocks', 'randomImage|recentImage|viewedImage|' .
-					    'viewedAlbum|recentAlbum|randomAlbum');
-	if ($ret->isError()) {
-	    $this->assert(false, 'Set blocks parameter');
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	$data = $this->_doImageBlockCallback();
-	$this->assertEquals(6, count($data['ImageBlockData']['blocks']), 'All blocks');
+	$data = $this->_doImageBlockCallback(
+	    'randomImage|recentImage|viewedImage|viewedAlbum|recentAlbum|randomAlbum');
+	$this->assertEquals(6, count($data['ImageBlockData']['blocks']), 'Many blocks');
 	$gotAlbum = $gotPhoto = 0;
 	foreach ($data['ImageBlockData']['blocks'] as $block) {
 	    $this->assertBlock($block);
@@ -319,17 +298,12 @@ class ImageBlockTest extends GalleryTestCase {
     }
 
     function testPeriodicBlocks() {
-	$ret = $this->_module->setParameter('blocks', 'dailyImage');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	$data = $this->_doImageBlockCallback();
+	$data = $this->_doImageBlockCallback('dailyImage');
 	$this->assertEquals(1, count($data['ImageBlockData']['blocks']), 'One block');
 	$itemId = $this->assertBlock($data['ImageBlockData']['blocks'][0]);
 
 	/* Next call should return same id */
-	$data = $this->_doImageBlockCallback();
+	$data = $this->_doImageBlockCallback('dailyImage');
 	$this->assertEquals(1, count($data['ImageBlockData']['blocks']), 'One block');
 	$nextItemId = $this->assertBlock($data['ImageBlockData']['blocks'][0]);
 	$this->assertEquals($itemId, $nextItemId, 'keep same id');
@@ -340,18 +314,14 @@ class ImageBlockTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$ret = $this->_module->setParameter('blocks', 'monthlyAlbum');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
 
-	$data = $this->_doImageBlockCallback();
+	$data = $this->_doImageBlockCallback('monthlyAlbum');
 	$this->assertEquals(1, count($data['ImageBlockData']['blocks']), 'One block');
 	$itemId = $this->assertBlock($data['ImageBlockData']['blocks'][0]);
 	$this->assert($itemId > 0, 'valid id');
 
 	/* Next call should return same id */
-	$data = $this->_doImageBlockCallback();
+	$data = $this->_doImageBlockCallback('monthlyAlbum');
 	$this->assertEquals(1, count($data['ImageBlockData']['blocks']), 'One block');
 	$nextItemId = $this->assertBlock($data['ImageBlockData']['blocks'][0]);
 	$this->assertEquals($itemId, $nextItemId, 'keep same album id');
@@ -441,10 +411,11 @@ class ImageBlockTest extends GalleryTestCase {
 	$this->assertEquals(array(), $template->_data, 'No block');
     }
 
-    function _doImageBlockCallback() {
+    function _doImageBlockCallback($blocks=null) {
 	$smarty = new GallerySmarty();
 	$callbacks = new ImageBlockCallbacks();
-	$ret = $callbacks->callback(array(), $smarty, 'LoadImageBlock');
+	$params = isset($blocks) ? array('blocks' => $blocks) : array();
+	$ret = $callbacks->callback($params, $smarty, 'LoadImageBlock');
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    return array();

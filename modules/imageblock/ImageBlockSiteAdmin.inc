@@ -44,22 +44,7 @@ class ImageBlockSiteAdminController extends GalleryController {
 	$status = array();
 	if (isset($form['action']['save'])) {
 	    $param = array();
-	    foreach (array('randomImage', 'recentImage', 'viewedImage',
-			   'randomAlbum', 'recentAlbum', 'viewedAlbum',
-			   'dailyImage', 'weeklyImage', 'monthlyImage',
-			   'dailyAlbum', 'weeklyAlbum', 'monthlyAlbum')
-			as $key) {
-		if (isset($form[$key]) && $form[$key]) {
-		    $param[] = $key;
-		}
-	    }
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'imageblock',
-						      'blocks', implode('|', $param));
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    $param = array();
-	    foreach (array('title', 'date', 'views', 'owner') as $key) {
+	    foreach (array('heading', 'title', 'date', 'views', 'owner') as $key) {
 		if (isset($form[$key]) && $form[$key]) {
 		    $param[] = $key;
 		}
@@ -103,20 +88,13 @@ class ImageBlockSiteAdminView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	if ($form['formName'] != 'ImageBlockSiteAdmin') {
 	    $form['formName'] = 'ImageBlockSiteAdmin';
-	    foreach (array('randomImage', 'recentImage', 'viewedImage',
-			   'randomAlbum', 'recentAlbum', 'viewedAlbum',
-			   'dailyImage', 'weeklyImage', 'monthlyImage',
-			   'dailyAlbum', 'weeklyAlbum', 'monthlyAlbum',
-			   'title', 'date', 'views', 'owner') as $tmp) {
+	    foreach (array('heading', 'title', 'date', 'views', 'owner') as $tmp) {
 		$form[$tmp] = 0;
 	    }
 	    list ($ret, $param) =
 		GalleryCoreApi::fetchAllPluginParameters('module', 'imageblock');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    foreach (explode('|', $param['blocks']) as $tmp) {
-		$form[$tmp] = 1;
 	    }
 	    foreach (explode('|', $param['show']) as $tmp) {
 		$form[$tmp] = 1;

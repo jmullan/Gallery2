@@ -23,10 +23,10 @@ class ImageBlockCallbacks {
     /**
      */
     function callback($params, &$smarty, $callback, $userId=null) {
+	GalleryCoreApi::relativeRequireOnce('modules/imageblock/classes/ImageBlockHelper.class');
+
 	switch($callback) {
 	case 'LoadImageBlock':
-	    GalleryCoreApi::relativeRequireOnce('modules/imageblock/classes/ImageBlockHelper.class');
-
 	    /*
 	     * ImageBlockHelper expects a GalleryTemplate, but Smarty callbacks don't provide
 	     * one, so create a temporary wrapper.
@@ -34,14 +34,16 @@ class ImageBlockCallbacks {
 	     *       constructor) only to replace it with our current instance
 	     */
 	    $template = new GalleryTemplate(dirname(__FILE__));
-	    $template->_smarty = &$smarty;
+	    $template->_smarty =& $smarty;
 
-	    /*
-	     * Just use our current set of template vars as the params.  We may wind up passing some
-	     * extra data into loadImageBlocks but it will just ignore what it doesn't understand.
-	     */
-	    $template->setVariable('heading', 1);
-	    $ret = ImageBlockHelper::loadImageBlocks($template, $smarty->_tpl_vars);
+	    /* Remove null parameters */
+	    foreach (array_keys($params) as $key) {
+		if (!isset($params[$key])) {
+		    unset($params[$key]);
+		}
+	    }
+
+	    $ret = ImageBlockHelper::loadImageBlocks($template, $params);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

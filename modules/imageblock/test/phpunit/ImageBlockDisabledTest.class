@@ -95,12 +95,6 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $this->_blocks) = $this->_module->getParameter('blocks');
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
 	list ($ret, $this->_itemId) = $this->_module->getParameter('itemId');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -112,23 +106,12 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$ret = $this->_module->setParameter('blocks', 'randomImage');
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
     }
 
     /**
      * Delete the album that was used for testing
      */
     function tearDown() {
-	$ret = $this->_module->setParameter('blocks', $this->_blocks);
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
 	$ret = GalleryCoreApi::removePluginParameter(
 	    $this->_module->getPluginType(), $this->_module->getId(), 'itemId');
 	if ($ret->isError()) {

@@ -49,63 +49,68 @@ class ImageBlockSiteAdminControllerTest extends GalleryControllerTestCase {
     }
 
     function testImageBlockSiteAdminControllerReset() {
-
 	GalleryUtilities::putRequestVariable('form[action][reset]', '1');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
-						      'subView' => 'imageblock.ImageBlockSiteAdmin'),
+						   'subView' => 'imageblock.ImageBlockSiteAdmin'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
     }
 
     function testImageBlockSiteAdminControllerSaveNone() {
-
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
-						      'subView' => 'imageblock.ImageBlockSiteAdmin'),
+						   'subView' => 'imageblock.ImageBlockSiteAdmin'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
     }
 
     function testImageBlockSiteAdminControllerSaveOne() {
-
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
-	GalleryUtilities::putRequestVariable('form[randomAlbum]', '1');
 	GalleryUtilities::putRequestVariable('form[date]', '1');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
-						      'subView' => 'imageblock.ImageBlockSiteAdmin'),
+						   'subView' => 'imageblock.ImageBlockSiteAdmin'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
+
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'imageblock');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('date', $params['show']);
     }
 
     function testImageBlockSiteAdminControllerSaveMultiple() {
-
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
-	GalleryUtilities::putRequestVariable('form[recentImage]', '1');
-	GalleryUtilities::putRequestVariable('form[viewedAlbum]', '1');
-	GalleryUtilities::putRequestVariable('form[randomImage]', '1');
-	GalleryUtilities::putRequestVariable('form[weeklyAlbum]', '1');
 	GalleryUtilities::putRequestVariable('form[title]', '1');
 	GalleryUtilities::putRequestVariable('form[views]', '1');
+	GalleryUtilities::putRequestVariable('form[albumFrame]', 'solid');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
-						      'subView' => 'imageblock.ImageBlockSiteAdmin'),
+						   'subView' => 'imageblock.ImageBlockSiteAdmin'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
+
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'imageblock');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('title|views', $params['show']);
+	$this->assertEquals('solid', $params['albumFrame']);
     }
 }
 ?>

@@ -37,7 +37,7 @@ class ImageBlockModule extends GalleryModule {
 	$this->setId('imageblock');
 	$this->setName($gallery->i18n('Image Block'));
 	$this->setDescription($gallery->i18n('Random, Most Recent or Most Viewed Photo or Album'));
-	$this->setVersion('0.9.6');
+	$this->setVersion('0.9.7');
 	$this->setGroup('blocks', $this->translate('Blocks'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
@@ -63,8 +63,7 @@ class ImageBlockModule extends GalleryModule {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	foreach (array('blocks' => 'randomImage', 'show' => 'title|date|views',
-		       'albumFrame' => '', 'itemFrame' => '' )
+	foreach (array('show' => 'heading|title|date|views', 'albumFrame' => '', 'itemFrame' => '')
 		as $key => $value) {
 	    if (!isset($params[$key])) {
 		$ret = $this->setParameter($key, $value);

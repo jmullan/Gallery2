@@ -15,95 +15,14 @@
 {/if}
 
 <div class="gbBlock">
-  <h3> {g->text text="Image Blocks"} </h3>
-
-  <input type="checkbox" id="cbRandomImage"
-   name="{g->formVar var="form[randomImage]"}" {if $form.randomImage}checked="checked"{/if}/>
- <label for="cbRandomImage">
-    {g->text text="Random Image"}
-  </label>
-  <br/>
-
-  <input type="checkbox" id="cbRecentImage"
-   name="{g->formVar var="form[recentImage]"}" {if $form.recentImage}checked="checked"{/if}/>
-  <label for="cbRecentImage">
-    {g->text text="Newest Image"}
-  </label>
-  <br/>
-
-  <input type="checkbox" id="cbViewedImage"
-   name="{g->formVar var="form[viewedImage]"}" {if $form.viewedImage}checked="checked"{/if}/>
-  <label for="cbViewedImage">
-    {g->text text="Most Viewed Image"}
-  </label>
-  <br/>
-
-  <input type="checkbox" id="cbRandomAlbum"
-   name="{g->formVar var="form[randomAlbum]"}" {if $form.randomAlbum}checked="checked"{/if}/>
-  <label for="cbRandomAlbum">
-    {g->text text="Random Album"}
-  </label>
-  <br/>
-
-  <input type="checkbox" id="cbRecentAlbum"
-   name="{g->formVar var="form[recentAlbum]"}" {if $form.recentAlbum}checked="checked"{/if}/>
-  <label for="cbRecentAlbum">
-    {g->text text="Newest Album"}
-  </label>
-  <br/>
-
-  <input type="checkbox" id="cbViewedAlbum"
-   name="{g->formVar var="form[viewedAlbum]"}" {if $form.viewedAlbum}checked="checked"{/if}/>
-  <label for="cbViewedAlbum">
-    {g->text text="Most Viewed Album"}
-  </label>
-  <br/>
-
-  <input type="checkbox" id="cbDailyImage"
-   name="{g->formVar var="form[dailyImage]"}" {if $form.dailyImage}checked="checked"{/if}/>
-  <label for="cbDailyImage">
-    {g->text text="Picture of the Day"}
-  </label>
-  <br/>
-
-  <input type="checkbox" id="cbWeeklyImage"
-   name="{g->formVar var="form[weeklyImage]"}" {if $form.weeklyImage}checked="checked"{/if}/>
-  <label for="cbWeeklyImage">
-    {g->text text="Picture of the Week"}
-  </label>
-  <br/>
-
-  <input type="checkbox" id="cbMonthlyImage"
-   name="{g->formVar var="form[monthlyImage]"}" {if $form.monthlyImage}checked="checked"{/if}/>
-  <label for="cbMonthlyImage">
-    {g->text text="Picture of the Month"}
-  </label>
-  <br/>
-
-  <input type="checkbox" id="cbDailyAlbum"
-   name="{g->formVar var="form[dailyAlbum]"}" {if $form.dailyAlbum}checked="checked"{/if}/>
-  <label for="cbDailyAlbum">
-    {g->text text="Album of the Day"}
-  </label>
-  <br/>
-
-  <input type="checkbox" id="cbWeeklyAlbum"
-   name="{g->formVar var="form[weeklyAlbum]"}" {if $form.weeklyAlbum}checked="checked"{/if}/>
-  <label for="cbWeeklyAlbum">
-    {g->text text="Album of the Week"}
-  </label>
-  <br/>
-
-  <input type="checkbox" id="cbMonthlyAlbum"
-   name="{g->formVar var="form[monthlyAlbum]"}" {if $form.monthlyAlbum}checked="checked"{/if}/>
-  <label for="cbMonthlyAlbum">
-    {g->text text="Album of the Month"}
-  </label>
-  <br/>
-</div>
-
-<div class="gbBlock">
   <h3> {g->text text="Show"} </h3>
+
+  <input type="checkbox" id="cbHeading"
+   name="{g->formVar var="form[heading]"}" {if $form.heading}checked="checked"{/if}/>
+  <label for="cbHeading">
+    {g->text text="Heading"}
+  </label>
+  <br/>
 
   <input type="checkbox" id="cbTitle"
    name="{g->formVar var="form[title]"}" {if $form.title}checked="checked"{/if}/>
@@ -179,8 +98,8 @@
     &lt;?php @readfile('{g->url arg1="view=imageblock.External" arg2="blocks=randomImage" arg3="show=title" forceDirect=true forceSessionId=false}'); ?&gt;
   </p>
   <table class="gbDataTable"><tr>
-    <td> {$ImageBlockSiteAdmin.prefix}blocks&nbsp;*</td>
-    <td> {g->text text="Pipe(|) separate list chosen from: randomImage, recentImage, viewedImage, randomAlbum, recentAlbum, viewedAlbum, dailyImage, weeklyImage, monthlyImage, dailyAlbum, weeklyAlbum, monthlyAlbum, specificItem"} </td>
+    <td> {$ImageBlockSiteAdmin.prefix}blocks</td>
+    <td> {g->text text="Pipe(|) separate list chosen from: randomImage, recentImage, viewedImage, randomAlbum, recentAlbum, viewedAlbum, dailyImage, weeklyImage, monthlyImage, dailyAlbum, weeklyAlbum, monthlyAlbum, specificItem; default is randomImage"} </td>
   </tr><tr>
     <td> {$ImageBlockSiteAdmin.prefix}show&nbsp;*</td>
     <td> {g->text text="Pipe(|) separated list chosen from: title, date, views, owner, heading, fullSize; the value can also be: none"} </td>
@@ -203,7 +122,7 @@
   {/if}
   </tr></table>
   <p class="giDescription">
-    {g->text text="If any parameter marked with * is omitted then the site default defined above is used."}
+    {g->text text="If a parameter marked with * is omitted then the site default defined above is used."}
   </p>
   {if isset($ImageBlockSiteAdmin.list)}
   <p class="giDescription">
