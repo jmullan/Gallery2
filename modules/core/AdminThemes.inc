@@ -325,8 +325,8 @@ class AdminThemesView extends GalleryView {
 	    }
 	    
 	    /* Detect and remove old themes which not even had a setId() in their constructor */
-	    $themeId = $theme->getId();
-	    if (empty($themeId)) {
+	    $getId = $theme->getId();
+	    if (empty($getId)) {
 		unset($themes[$id]);
 		continue;
 	    }
