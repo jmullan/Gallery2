@@ -19,6 +19,10 @@
     {g->text text="Dcraw is a graphics toolkit that can be used to process RAW images produced by high end digital cameras.   You must install the Dcraw binary on your server, then enter the path to it in the text box below.  If you're on a Unix machine, don't forget to make the binary executable (<i>chmod 755 dcraw</i> should do it)."}
   </p>
 
+  <p class="giDescription">
+    {g->Text text="<b>Note</b>: Gallery supports v5, v6 and v7 of dcraw."}
+  </p>
+
   <table class="gbDataTable">
     <tr>
       <td>

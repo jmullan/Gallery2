@@ -39,7 +39,7 @@ class AdminDcrawControllerTest extends GalleryControllerTestCase {
 
     function setUp() {
 	global $gallery;
-	
+
 	parent::setUp();
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'dcraw');
@@ -53,8 +53,28 @@ class AdminDcrawControllerTest extends GalleryControllerTestCase {
     }
 
     function tearDown() {
-	$this->assert($this->_platform->isComplete(), $this->_platform->getRemaining());	
+	$this->assert($this->_platform->isComplete(), $this->_platform->getRemaining());
 	parent::tearDown();
+    }
+
+    function testSaveV562() {
+	GalleryUtilities::putRequestVariable('form[path]', '/path/to/dcraw');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+
+	$this->_platform->setReply('isRestrictedByOpenBaseDir', array('/path/to/dcraw'), 0);
+	$this->_platform->setReply('is_file', array('/path/to/dcraw'), 1);
+	$this->_platform->setReply(
+	    'exec',
+	    array(array(array('/path/to/dcraw'))),
+	    array(1, array(), array('Raw Photo Decoder v5.62')));
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array(
+				      'view' => 'core.SiteAdmin',
+				      'subView' => 'dcraw.AdminDcraw'),
+				  'error' => array(),
+				  'status' => array('saved' => 1)),
+			    $results);
     }
 
     function testSaveV6() {
