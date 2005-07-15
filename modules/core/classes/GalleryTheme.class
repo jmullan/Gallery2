@@ -53,6 +53,18 @@ class GalleryTheme extends GalleryPlugin {
     var $_standardSettings = array();
 
     /**
+     * Constructor
+     *
+     * Constructor to prevent PHP Notices in upgrader and AdminThemes.inc when
+     * old themes with a theme.inc are still in the themes folder
+     * The old themes call $this->GalleryTheme() in their constructor.
+     *
+     * @access public
+     */
+    function GalleryTheme() {
+    }
+    
+    /**
      * Return the major and minor version of the GalleryTheme API.
      *
      * This follows the same rules as the core API.
