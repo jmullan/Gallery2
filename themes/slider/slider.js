@@ -1,5 +1,5 @@
 /****************************
- * Slider layout for Gallery2
+ * Slider theme for Gallery2
  * @author Alan Harder <alan.harder@sun.com>
  * $Revision$ $Date$
  */
