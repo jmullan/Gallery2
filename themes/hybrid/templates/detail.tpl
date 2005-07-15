@@ -33,7 +33,7 @@
   </td></tr></table>
   {* Show any other item blocks *}
   {foreach from=$theme.params.photoBlocks item=block}
-    {g->block type=$block.0 params=$block.1}
+    {g->block type=$block.0 params=$block.1 class="gbBlock"}
   {/foreach}
 </div>
 </body></html>

@@ -203,6 +203,10 @@
     {/foreach}
     </table>
   </div>
+  {* Show any other album blocks *}
+  {foreach from=$theme.params.albumBlocks item=block}
+    {g->block type=$block.0 params=$block.1 class="gbBlock"}
+  {/foreach}
 </td>
 </tr></table>
 
