@@ -110,10 +110,6 @@ class GalleryEmbed {
 	    }
 	}
 
-	if (!empty($initParams['extractSidebarBlocks'])) {
-	    GalleryCapabilities::set('showSidebarBlocks', false);
-	}
-
 	return GalleryStatus::success();
     }
 
@@ -154,7 +150,7 @@ class GalleryEmbed {
      *                           'sidebarHtml' => array('blockHtml', 'blockHtml')]
      * @static
      */
-    function handleRequest($options) {
+    function handleRequest() {
 	static $secondCacheKey = 'GalleryEmbed::initSecondPass';
 	return GalleryMain(true);
     }
