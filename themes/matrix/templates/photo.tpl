@@ -9,9 +9,11 @@
 {/if}
 <table width="100%" cellspacing="0" cellpadding="0">
   <tr valign="top">
+    {if !empty($theme.params.sidebarBlocks)}
     <td id="gsSidebarCol">
       {g->theme include="sidebar.tpl"}
     </td>
+    {/if}
     <td>
       <div id="gsContent">
         <div class="gbBlock gcBackground1">
