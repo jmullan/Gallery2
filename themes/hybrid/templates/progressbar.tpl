@@ -15,8 +15,8 @@
 
   <table width="100%" cellspacing="0" cellpadding="0">
     <tr>
-      <td id="progressDone" style="width:0%">&nbsp;</td>
-      <td id="progressToGo" style="width:100%; border-left: none')">&nbsp;</td>
+      <td id="progressDone" style="display: inline-block; width:0%">&nbsp;</td>
+      <td id="progressToGo" style="display: inline-block; width:100%; border-left: none')">&nbsp;</td>
     </tr>
   </table>
 
@@ -49,6 +49,7 @@
 {literal}
 <script type="text/javascript">
   // <![CDATA[
+  var saveToGoDisplay = document.getElementById('progressToGo').style.display;
   function updateProgressBar(title, description, percentComplete, timeRemaining, memoryInfo) {
     document.getElementById('progressTitle').innerHTML = title;
     document.getElementById('progressDescription').innerHTML = description;
@@ -57,13 +58,13 @@
     var progressToGo = document.getElementById('progressToGo');
 
     if (progressMade == 100) {
-      progressToGo.style.display = 'none';
+      progressToGo.style.display = 'none'; 
     } else {
-      progressToGo.style.display = 'inline-block';
+      progressToGo.style.display = saveToGoDisplay;
       progressToGo.style.width = (100 - progressMade) + "%";
     }
 
-    document.getElementById('progressDone').style.width = progressMade + "%"
+    document.getElementById('progressDone').style.width = progressMade + "%";
     document.getElementById('progressTimeRemaining').innerHTML = timeRemaining;
     document.getElementById('progressMemoryInfo').innerHTML = memoryInfo;
   }
