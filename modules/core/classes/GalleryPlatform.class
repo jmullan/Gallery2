@@ -499,7 +499,12 @@ class GalleryPlatform {
 	if ($gallery->getDebug()) {
 	    $gallery->debug("getimagesize($filename)");
 	}
-	return getimagesize($filename);
+
+	/*
+	 * getimagesize() returns an E_WARNING if the file is unreadable or not an image.
+	 * We'd rather that it just returned false without the warning.
+	 */
+	return @getimagesize($filename);
     }
 
     /**
