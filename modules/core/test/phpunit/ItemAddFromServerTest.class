@@ -440,7 +440,22 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
      * path actually exists (which it won't, in some cases)
      */
     function realpath($path) {
-	return preg_replace('#[^\\/]+[\\/]\.\.([\\/]|$)#', '', $path);
+	/* This simple regex doesn't work on PHP 5.0.2 on Windows :-( :-( */
+	/* return preg_replace('#[^\\/]+[\\/]\.\.([\\/]|$)#', '', $path); */
+	while ($i = strpos($path, '..')) {
+	    $count = 2;
+	    $j = $i;
+	    while ($j > 0 && $count > 0) {
+		if ($path{$j} == '\\' || $path{$j} == '/') {
+		    $count--;
+		}
+		$j--;
+	    }
+	    if ($j > 0) {
+		$path = substr($path, 0, $j + 1) . substr($path, $i + 2);
+	    }
+	}
+	return $path;
     }
 
     function file_exists($path) {
