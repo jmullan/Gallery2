@@ -66,18 +66,23 @@ class RewriteModule extends GalleryModule {
 	GalleryCoreApi::relativeRequireOnce('modules/rewrite/classes/RewriteHelper.class');
 	list($ret, $code) = RewriteHelper::writeFile(null);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	if (GalleryUtilities::isEmbedded()) {
 	    list($ret, $code) = RewriteHelper::writeFile(null, true);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
 	/* Dont check $code, atleast we tried to remove the G2 content from the .htaccess file */
-	return parent::uninstall();
+	$ret = parent::uninstall();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
     }
 
     /**

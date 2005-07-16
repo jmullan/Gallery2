@@ -162,7 +162,7 @@ class RearrangeItemsView extends GalleryView {
 			list ($ret, $thumb) =
 			    GalleryCoreApi::rebuildDerivativeCache($thumb->getId());
 			if ($ret->isError()) {
-			    return $ret->wrap(__FILE__, __LINE__);
+			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 		    }
 		    $child['thumbnail'] = $thumb->getMemberData();

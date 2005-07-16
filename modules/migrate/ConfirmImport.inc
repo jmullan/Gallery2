@@ -102,7 +102,7 @@ class ConfirmImportController extends GalleryController {
 
 	list ($ret, $moduleStatusList) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	if (!empty($moduleStatusList['comment']['active'])) {
 	    $importComments = true;
@@ -121,7 +121,7 @@ class ConfirmImportController extends GalleryController {
 							 'CustomFieldHelper');
 	    if ($ret->isError() || !isset($customFieldInterface)) {
 		print $ret->getAsHtml();
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
@@ -163,27 +163,27 @@ class ConfirmImportController extends GalleryController {
 	list ($ret, $everybodyGroupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	list ($ret, $allUsersGroupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	list ($ret, $adminUsersGroupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	list ($ret, $guestUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'migrate');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$sourceEncoding = $form['sourceEncoding'];
@@ -1210,7 +1210,7 @@ class ConfirmImportController extends GalleryController {
 	if (isset($importLockIds)) {
 	    $ret = GalleryCoreApi::releaseLocks($importLockIds);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return $ret->wrap(__FILE__, __LINE__);
 	    } else {
 		$importLockIds = array();
 	    }

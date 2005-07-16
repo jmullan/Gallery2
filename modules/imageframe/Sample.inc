@@ -62,7 +62,7 @@ class SampleView extends GalleryView {
 	    }
 	    list ($ret, $thumbnail) = GalleryCoreApi::fetchThumbnailsByItemIds(array($itemId));
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    if (isset($thumbnail[$itemId])) {
 		$ImageFrameSample['item'] = $item->getMemberData();

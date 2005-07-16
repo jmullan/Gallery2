@@ -70,7 +70,7 @@ class MembersTest extends GalleryTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'members');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
 
@@ -80,14 +80,14 @@ class MembersTest extends GalleryTestCase {
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
-	
+
         $this->assertEquals(0, $itemCount);
 
         /*
          * Create some random items so that there's something for the API method to work with.
          * Set the timestamp to bogus (but well known) values and set the owner to our test user.
          */
-	$numItems = 4; 
+	$numItems = 4;
         for ($i = 0; $i < $numItems; $i++) {
             list ($ret, $originalItems[$i]) = $this->_createRandomDataItem(
 		$this->_album->getId(), 'application/unknown',
@@ -135,21 +135,19 @@ class MembersTest extends GalleryTestCase {
 	list ($ret, $adminGroupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryCoreApi::setPluginParameter('module',
-    	                                          'members',
-    	                                          'canViewMembersModule',
-    	                                          $adminGroupId);
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'members', 'canViewMembersModule', $adminGroupId);
     	if ($ret->isError()) {
-    	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
     	}
 
 	list ($ret, $result) =
 	    GalleryMembersHelper::canViewMembersModule($this->_user->getId());
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(false, $result);
 
@@ -160,7 +158,7 @@ class MembersTest extends GalleryTestCase {
 
 	list ($ret, $result) = GalleryMembersHelper::canViewMembersModule($this->_user->getId());
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(true, $result);
     }
@@ -174,12 +172,12 @@ class MembersTest extends GalleryTestCase {
     	                                          'canViewEmailAddress',
     	                                          0);
     	if ($ret->isError()) {
-    	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
     	}
 
 	list ($ret, $result) = GalleryMembersHelper::canViewProfileEmail($this->_user->getId());
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(false, $result);
 
@@ -189,12 +187,12 @@ class MembersTest extends GalleryTestCase {
     	                                          'canViewEmailAddress',
     	                                          1);
     	if ($ret->isError()) {
-    	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
     	}
 
 	list ($ret, $result) = GalleryMembersHelper::canViewProfileEmail($this->_user->getId());
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(true, $result);
 
@@ -204,13 +202,13 @@ class MembersTest extends GalleryTestCase {
     	                                          'canViewEmailAddress',
     	                                          0);
     	if ($ret->isError()) {
-    	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
     	}
 
 	list ($ret, $adminGroupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::addUserToGroup($this->_user->getId(), $adminGroupId);
@@ -220,7 +218,7 @@ class MembersTest extends GalleryTestCase {
 
 	list ($ret, $result) = GalleryMembersHelper::canViewProfileEmail($this->_user->getId());
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(true, $result);
 
@@ -230,7 +228,7 @@ class MembersTest extends GalleryTestCase {
     	                                          'canViewEmailAddress',
     	                                          1);
     	if ($ret->isError()) {
-    	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
     	}
 
 	$ret = GalleryCoreApi::addUserToGroup($this->_user->getId(), $adminGroupId);
@@ -240,7 +238,7 @@ class MembersTest extends GalleryTestCase {
 
 	list ($ret, $result) = GalleryMembersHelper::canViewProfileEmail($this->_user->getId());
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(true, $result);
     }
@@ -250,7 +248,7 @@ class MembersTest extends GalleryTestCase {
 
 	list ($ret, $result) = GalleryMembersHelper::daysSinceCreation($this->_user->getId());
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(0, $result, '0 days');
 
@@ -272,7 +270,7 @@ class MembersTest extends GalleryTestCase {
 
 	list ($ret, $result) = GalleryMembersHelper::daysSinceCreation($this->_user->getId());
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(7, $result, '7 days ago');
 
@@ -294,7 +292,7 @@ class MembersTest extends GalleryTestCase {
 
 	list ($ret, $result) = GalleryMembersHelper::daysSinceCreation($this->_user->getId());
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(6, $result, '6 days ago');
     }

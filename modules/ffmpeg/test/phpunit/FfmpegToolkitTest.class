@@ -811,7 +811,8 @@ class FfmpegToolkitTestPlatform {
     function is_dir($path) {
 	list ($ret, $ffmpegPath) = GalleryCoreApi::getPluginParameter('module', 'ffmpeg', 'path');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    print $ret->getAsHtml();
+	    return false;
 	}
 
 	switch($path) {

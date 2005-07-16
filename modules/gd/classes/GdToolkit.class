@@ -610,7 +610,12 @@ class GdToolkit extends GalleryToolkit {
 	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), 0, 0);
 	}
 
-	return $this->_getImageDimensionsForResource($res);
+	list ($ret, $width, $height) = $this->_getImageDimensionsForResource($res);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	return array(GalleryStatus::success(), $width, $height);
     }
 
     /**

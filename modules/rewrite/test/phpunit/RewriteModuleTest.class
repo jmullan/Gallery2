@@ -433,10 +433,11 @@ class RewriteModuleTestPlatform extends GalleryPlatform {
 
     function file($file) {
 	if ($file == dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/.htaccess') {
-	    return array();
+	    $results = array();
+	} else {
+	    $results = parent::file($file);
 	}
-
-	return parent::file($file);
+	return $results;
     }
 
     function fopen($file, $mode, $useIncludePath=null, $zcontext=null) {

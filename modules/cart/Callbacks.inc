@@ -31,7 +31,7 @@ class CartCallbacks {
 	    GalleryCoreApi::relativeRequireOnce('modules/cart/classes/CartHelper.class');
 	    list ($ret, $cartItemIds) = CartHelper::fetchCartItemCounts();
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    $unique = array_keys($cartItemIds);

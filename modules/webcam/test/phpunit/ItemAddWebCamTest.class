@@ -250,11 +250,16 @@ class ItemAddWebCamTestPlatform {
     function getimagesize($filename) {
 	switch (basename($filename)) {
 	case 'test.jpg':
-	    return array(100, 200);
+	    $result = array(100, 200);
+	    break;
+
+	default:
+	    print "unexpected getimagesize($filename)";
+	    $result = false;
+	    break;
 	}
 
-	print "unexpected getimagesize($filename)";
-	return 0;
+	return $result;
     }
 
     function filesize($filename) {

@@ -439,20 +439,20 @@ class GalleryStatus {
      */
     function getErrorCodeConstants($errorCode) {
 	if ($errorCode == 0) {
-	    return array('GALLERY_SUCCESS');
-	}
-
-	/* get_defined_constants() arrived in 4.1? */
-	if (function_exists('get_defined_constants')) {
-	    foreach (get_defined_constants() as $constantName => $constantValue) {
-		if (strpos($constantName, 'ERROR_') === 0) {
-		    if ($errorCode & $constantValue) {
-			$codes[] = $constantName;
+	    $codes = array('GALLERY_SUCCESS');
+	} else {
+	    /* get_defined_constants() arrived in 4.1? */
+	    if (function_exists('get_defined_constants')) {
+		foreach (get_defined_constants() as $constantName => $constantValue) {
+		    if (strpos($constantName, 'ERROR_') === 0) {
+			if ($errorCode & $constantValue) {
+			    $codes[] = $constantName;
+			}
 		    }
 		}
+	    } else {
+		$codes[] = 'UnknownErrorName';
 	    }
-	} else {
-	    $codes[] = 'UnknownErrorName';
 	}
 
 	return $codes;

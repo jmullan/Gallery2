@@ -1057,7 +1057,7 @@ class GalleryUtilities {
      */
     function createAlbumTree($albums) {
 	if (empty($albums)) {
-	    return array();
+	    $tree = array(); return $tree;  /* Help CodeAudit match up returns */
 	}
 
 	/* Index the albums by id */

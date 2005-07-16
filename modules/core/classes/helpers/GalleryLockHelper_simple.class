@@ -44,7 +44,7 @@ class GalleryLockHelper_simple {
 	$ret = $result[0];
 	if ($ret->isError()) {
 	    /* Swallow this error; the API does not allow us to return one here */
-	    return array();
+	    $result = array(); return $result;  /* Doing it this way keeps the Code Audit happy */
 	}
 	$lockSystem =& $result[1];
 
@@ -161,7 +161,9 @@ class GalleryLockHelper_simple {
 	$result =& $gallery->getLockSystem();
 	$ret = $result[0];
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    /* This method doesn't return a status code.  What should we do? */
+	    print $ret->getAsHtml();
+	    return false;
 	}
 	$lockSystem =& $result[1];
 
@@ -196,7 +198,9 @@ class GalleryLockHelper_simple {
 	$result =& $gallery->getLockSystem();
 	$ret = $result[0];
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    /* This method doesn't return a status code.  What should we do? */
+	    print $ret->getAsHtml();
+	    return false;
 	}
 	$lockSystem =& $result[1];
 

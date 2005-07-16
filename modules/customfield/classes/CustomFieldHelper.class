@@ -256,7 +256,7 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
 	list ($ret, $param) =
 	    GalleryCoreApi::fetchAllPluginParameters('module', 'customfield', $containerId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$isContainer = !empty($param);
 	GalleryCoreApi::relativeRequireOnce('modules/customfield/classes/CustomFieldMap.class');

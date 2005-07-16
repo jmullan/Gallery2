@@ -131,7 +131,7 @@ class GalleryItemHelper_advanced {
 	global $gallery;
 
 	if (empty($itemId)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
 
 	$query = '
@@ -145,7 +145,7 @@ class GalleryItemHelper_advanced {
 
 	list ($ret, $searchResults) = $gallery->search($query, array($itemId));
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$data = array();
@@ -210,7 +210,7 @@ class GalleryItemHelper_advanced {
 	global $gallery;
 
 	if (empty($itemId)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
 
 	$query = '
@@ -225,7 +225,7 @@ class GalleryItemHelper_advanced {
 
 	list ($ret, $searchResults) = $gallery->search($query, array($itemId));
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$data = array();
@@ -272,7 +272,7 @@ class GalleryItemHelper_advanced {
 	if (empty($aclIds)) {
 	    return array(GalleryStatus::success(), array());
 	}
-	
+
 	$accessListMarkers = GalleryUtilities::makeMarkers(count($aclIds));
 
 	$query = sprintf('
@@ -623,7 +623,7 @@ class GalleryItemHelper_advanced {
 	    return array(GalleryStatus::success(), array());
 	}
 	$aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
-	
+
 	$parentSequence = array();
 	if (isset($itemId)) {
 	    list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($itemId);

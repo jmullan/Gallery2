@@ -878,7 +878,8 @@ class NetPbmToolkitTestPlatform {
 	global $gallery;
 	list ($ret, $netPbmPath) = GalleryCoreApi::getPluginParameter('module', 'netpbm', 'path');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    print $ret->getAsHtml();
+	    return false;
 	}
 
 	switch($path) {
@@ -897,14 +898,17 @@ class NetPbmToolkitTestPlatform {
     function getimagesize($path) {
 	switch($path) {
 	case 'testGetProperties1.gif':
-	    return array(10, 20);
+	    $result = array(10, 20);
 	    break;
 
 	case 'testPerformOperations10.png':
-	    return array(200, 200);
+	    $result = array(200, 200);
 	    break;
+
+	default:
+	    $result = false;
 	}
-	return false;
+	return $result;
     }
 
     function realpath($file) {

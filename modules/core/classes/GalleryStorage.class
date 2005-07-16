@@ -115,7 +115,11 @@ class GalleryStorage {
 	    }
 	}
 
-	return $this->_impl->loadEntities($ids);
+	list ($ret, $entities) = $this->_impl->loadEntities($ids);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	return array(GalleryStatus::success(), $entities);
     }
 
     /**
@@ -135,7 +139,11 @@ class GalleryStorage {
 	    }
 	}
 
-	return $this->_impl->saveEntity($object);
+	$ret = $this->_impl->saveEntity($object);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
     }
 
     /**
@@ -155,7 +163,11 @@ class GalleryStorage {
 	    }
 	}
 
-	return $this->_impl->deleteEntity($object);
+	$ret = $this->_impl->deleteEntity($object);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
     }
 
     /**
@@ -175,7 +187,11 @@ class GalleryStorage {
 	    }
 	}
 
-	return $this->_impl->newEntity($object);
+	$ret = $this->_impl->newEntity($object);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
     }
 
     /**
@@ -198,7 +214,11 @@ class GalleryStorage {
 	    }
 	}
 
-	return $this->_impl->refreshEntity($object);
+	list ($ret, $entity) = $this->_impl->refreshEntity($object);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	return array(GalleryStatus::success(), $entity);
     }
 
     /**
@@ -222,7 +242,11 @@ class GalleryStorage {
 	    }
 	}
 
-	return $this->_impl->search($query, $data, $optional);
+	list ($ret, $results) = $this->_impl->search($query, $data, $optional);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	return array(GalleryStatus::success(), $results);
     }
 
     /**
@@ -243,7 +267,11 @@ class GalleryStorage {
 	    }
 	}
 
-	return $this->_impl->execute($statement, $data);
+	$ret = $this->_impl->execute($statement, $data);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
     }
 
     /**
@@ -263,7 +291,11 @@ class GalleryStorage {
 	    }
 	}
 
-	return $this->_impl->addMapEntry($map, $entry);
+	$ret = $this->_impl->addMapEntry($map, $entry);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
     }
 
     /**
@@ -283,7 +315,11 @@ class GalleryStorage {
 	    }
 	}
 
-	return $this->_impl->removeMapEntry($map, $entry);
+	$ret = $this->_impl->removeMapEntry($map, $entry);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
     }
 
     /**
@@ -302,7 +338,11 @@ class GalleryStorage {
 	    }
 	}
 
-	return $this->_impl->removeAllMapEntries($map);
+	$ret = $this->_impl->removeAllMapEntries($map);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
     }
 
     /**
@@ -322,7 +362,11 @@ class GalleryStorage {
 	    }
 	}
 
-	return $this->_impl->updateMapEntry($map, $match, $change);
+	$ret = $this->_impl->updateMapEntry($map, $match, $change);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
     }
 
     /**
@@ -340,7 +384,11 @@ class GalleryStorage {
 	    }
 	}
 
-	return $this->_impl->configureStore($moduleId);
+	$ret = $this->_impl->configureStore($moduleId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
     }
 
     /**
@@ -358,7 +406,11 @@ class GalleryStorage {
 	    }
 	}
 
-	return $this->_impl->configureStoreCleanup($moduleId);
+	$ret = $this->_impl->configureStoreCleanup($moduleId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
     }
 
     /**
@@ -376,7 +428,11 @@ class GalleryStorage {
 	    }
 	}
 
-	return $this->_impl->unconfigureStore($moduleId);
+	$ret = $this->_impl->unconfigureStore($moduleId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
     }
 
     /**
@@ -394,7 +450,11 @@ class GalleryStorage {
 	    }
 	}
 
-	return $this->_impl->cleanStore();
+	$ret = $this->_impl->cleanStore();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
     }
 
     /**
@@ -412,7 +472,11 @@ class GalleryStorage {
 	    }
 	}
 
-	return $this->_impl->beginTransaction();
+	$ret = $this->_impl->beginTransaction();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
     }
 
     /**
@@ -430,7 +494,11 @@ class GalleryStorage {
 	    }
 	}
 
-	return $this->_impl->commitTransaction();
+	$ret = $this->_impl->commitTransaction();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
     }
 
     /**
@@ -448,7 +516,11 @@ class GalleryStorage {
 	    }
 	}
 
-	return $this->_impl->rollbackTransaction();
+	$ret = $this->_impl->rollbackTransaction();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
     }
 
     /**
@@ -467,6 +539,10 @@ class GalleryStorage {
 	    return $ret;
 	}
 
+	$ret = GalleryStatus::success();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 	return GalleryStatus::success();
     }
 
@@ -489,7 +565,12 @@ class GalleryStorage {
 	    }
 	}
 
-	return $this->_impl->acquireReadLock($entityIds, $timeout);
+	list ($ret, $lock) = $this->_impl->acquireReadLock($entityIds, $timeout);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $lock);
     }
 
     /**
@@ -511,7 +592,12 @@ class GalleryStorage {
 	    }
 	}
 
-	return $this->_impl->acquireWriteLock($entityIds, $timeout);
+	list ($ret, $lock) = $this->_impl->acquireWriteLock($entityIds, $timeout);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $lock);
     }
 
     /**
@@ -532,7 +618,11 @@ class GalleryStorage {
 	    }
 	}
 
-	return $this->_impl->refreshLocks($lockIds, $freshUntil);
+	$ret = $this->_impl->refreshLocks($lockIds, $freshUntil);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
     }
 
     /**
@@ -553,7 +643,11 @@ class GalleryStorage {
 	    }
 	}
 
-	return $this->_impl->releaseLocks($lockIds);
+	$ret = $this->_impl->releaseLocks($lockIds);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
     }
 
     /**
@@ -566,13 +660,17 @@ class GalleryStorage {
  	if (!$this->_isInitialized) {
 	    $ret = $this->_impl->init();
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    } else {
 		$this->_isInitialized = true;
 	    }
 	}
 
-	return $this->_impl->getUniqueId();
+	list ($ret, $id) = $this->_impl->getUniqueId();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	return array(GalleryStatus::success(), $id);
     }
 
     /**
@@ -635,7 +733,11 @@ class GalleryStorage {
 	    }
 	}
 
-	return $this->_impl->isInstalled();
+	list ($ret, $isInstalled) = $this->_impl->isInstalled();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	return array(GalleryStatus::success(), $isInstalled);
     }
 
     /**
@@ -678,7 +780,11 @@ class GalleryStorage {
 	    }
 	}
 
-	return $this->_impl->optimize();
+	$ret = $this->_impl->optimize();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
     }
 }
 ?>

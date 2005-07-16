@@ -230,7 +230,7 @@ class GalleryUserHelper_medium {
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* First check if the User is a valid gallery user! */

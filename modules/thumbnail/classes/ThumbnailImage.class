@@ -205,7 +205,7 @@ class ThumbnailImage_core extends GalleryChildEntity {
 	$dir = $this->getThumbnailDir();
 	list ($success) = GalleryUtilities::guaranteeDirExists($dir);
 	if (!$success) {
-	    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null);
+	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
 	}
 
 	$newFileName = $this->getThumbnailDir() . $targetName;

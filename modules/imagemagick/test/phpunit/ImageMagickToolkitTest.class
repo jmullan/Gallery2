@@ -1137,11 +1137,14 @@ class ImageMagickToolkitTestPlatform {
     function getimagesize($path) {
 	$basename = basename($path);
 	if (preg_match('#\[(\d+)x(\d+)\]#', $basename, $matches)) {
-	    return array($matches[1], $matches[2], 1,
-			 sprintf('height="%d" width="%d"', $matches[1], $matches[2]));
+	    $result = array($matches[1], $matches[2], 1,
+			    sprintf('height="%d" width="%d"', $matches[1], $matches[2]));
+	} else {
+	    /*echo $this->_environment['path'] . ": getimagesize($path)<br>\n"; */
+	    $result = false;
 	}
-	/*echo $this->_environment['path'] . ": getimagesize($path)<br>\n"; */
-	return false;
+
+	return $result;
     }
 
     function getDirectorySeparator() {

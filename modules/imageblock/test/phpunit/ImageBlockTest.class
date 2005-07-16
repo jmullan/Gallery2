@@ -418,9 +418,11 @@ class ImageBlockTest extends GalleryTestCase {
 	$ret = $callbacks->callback($params, $smarty, 'LoadImageBlock');
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    return array();
+	    $result = array();
+	} else {
+	    $result = $smarty->_tpl_vars;
 	}
-	return $smarty->_tpl_vars;
+	return $result;
     }
 }
 

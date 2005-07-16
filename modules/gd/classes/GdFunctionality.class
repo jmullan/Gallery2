@@ -255,7 +255,12 @@ class GdFunctionality {
 					      __FILE__, __LINE__), null);
 	}
 	$res = @imageCreateFromGif($filename);
-	return $this->checkResource($res, $filename, __FILE__, __LINE__);
+	list ($ret, $resource) = $this->checkResource($res, $filename, __FILE__, __LINE__);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $resource);
     }
 
     /**

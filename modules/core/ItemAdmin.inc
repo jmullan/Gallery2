@@ -219,7 +219,12 @@ class ItemAdminView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return $subView->getViewDescription();
+	list ($ret, $description) = $subView->getViewDescription();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $description);
     }
 }
 ?>

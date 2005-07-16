@@ -150,7 +150,7 @@ class GalleryPendingUserHelper {
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'register');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	list($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'register');
 	if ($ret->isError()) {
@@ -194,7 +194,7 @@ class GalleryPendingUserHelper {
     function sendAdminEmail(&$pendingUser) {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'register');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'register');
 	if ($ret->isError()) {

@@ -86,7 +86,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	list ($ret, $this->guestUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$userName = 'phpunitfoo001';
@@ -114,7 +114,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	}
 	$ret = $user->save();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $this->_mapCount) = G1MigrateHelper::fetchMapCount();

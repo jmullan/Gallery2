@@ -54,7 +54,7 @@ class SimpleCallbackView extends GalleryView {
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	if (!headers_sent()) {
 	    header("Content-type: text/plain; charset=UTF-8");

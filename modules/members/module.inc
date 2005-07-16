@@ -53,7 +53,7 @@ class MembersModule extends GalleryModule {
 	    list ($ret, $viewSelectedGroupId) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    foreach (array('canViewMembersModule' => $viewSelectedGroupId,

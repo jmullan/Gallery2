@@ -354,7 +354,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	 */
 	$ret = GalleryCoreApi::removeDerivativePreferencesForItem($this->_album->getId());
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $photo) = GalleryCoreApi::newItemByMimeType('image/gif');

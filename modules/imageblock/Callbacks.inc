@@ -45,7 +45,7 @@ class ImageBlockCallbacks {
 
 	    $ret = ImageBlockHelper::loadImageBlocks($template, $params);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    return GalleryStatus::success();

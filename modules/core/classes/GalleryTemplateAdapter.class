@@ -642,7 +642,7 @@ class GalleryTemplateAdapter {
 	if ($ret->isError()) {
 	    /* What can we do with this error? */
 	    global $gallery;
-	    $gallery->debug("Error performing $params[id] callback");
+	    $gallery->debug("Error performing $params[type] callback");
 	    $gallery->debug($ret->getAsHtml());
 	}
     }

@@ -311,7 +311,11 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	global $gallery;
 
 	if ($this->isContainer()) {
-	    return $this->fetchPath();
+	    list ($ret, $path) = $this->fetchPath();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    return array(GalleryStatus::success(), $path);
 	} else {
 	    list ($ret, $parent) = $this->fetchParent();
 	    if ($ret->isError()) {

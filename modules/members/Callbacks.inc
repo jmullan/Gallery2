@@ -35,14 +35,14 @@ class MembersCallbacks {
 	    list ($ret, $block['members']['LoadMembers']['canViewList']) =
 		GalleryMembersHelper::canViewMembersModule($gallery->getActiveUserId());
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    /* The members count */
 	    list ($ret, $block['members']['LoadMembers']['count']) =
 		GalleryMembersHelper::getMembersCount();
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    return GalleryStatus::success();
 	}

@@ -1006,7 +1006,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    /* Acquire a non-transactional connection to use for this request */
 	    list ($ret, $db) = $this->_getNonTransactionalDatabaseConnection();
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    list ($lockTable, $unused) = $this->_translateTableName('Lock');
@@ -1039,7 +1039,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	/* Acquire a non-transactional connection to use for this request */
 	list ($ret, $db) = $this->_getNonTransactionalDatabaseConnection();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	list ($lockTable, $unused) = $this->_translateTableName('Lock');
@@ -1172,7 +1172,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
      */
     function execute($statement, $data=array()) {
 	if (empty($this->_db)) {
-	    return array(GalleryStatus::error(ERROR_STORAGE_CONNECTION, __FILE__, __LINE__), null);
+	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION, __FILE__, __LINE__);
 	}
 
 	$ret = $this->_guaranteeTransaction();
@@ -2164,7 +2164,8 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    } else {
 		list ($ret, $as) = $this->getFunctionSql('AS', array());
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    /* TODO: propagate this back up as a GalleryStatus */
+		    return 'QUERY ERROR';
 		}
 		$query = str_replace("[${class}]", "$table $as $alias", $query);
 	    }

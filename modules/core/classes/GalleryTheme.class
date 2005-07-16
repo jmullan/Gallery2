@@ -63,7 +63,7 @@ class GalleryTheme extends GalleryPlugin {
      */
     function GalleryTheme() {
     }
-    
+
     /**
      * Return the major and minor version of the GalleryTheme API.
      *
@@ -984,7 +984,7 @@ class GalleryTheme extends GalleryPlugin {
 
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/*

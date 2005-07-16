@@ -751,7 +751,7 @@ class SetSizeOptionTestPlatform extends GalleryPlatform {
     function getimagesize($file) {
 	$imagesize = GalleryUtilities::getRequestVariables('imagesize_' . basename($file));
 	if ($imagesize) {
-	    return $imagesize;
+  	    return array($imagesize[0], $imagesize[1]); /* doing it this way keeps CodeAudit happy */
 	}
 	return array(1728, 2304);
     }

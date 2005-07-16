@@ -285,7 +285,7 @@ class RewriteModuleExtras {
 	    if (GalleryUtilities::isEmbedded()) {
 		list($ret, $code) = RewriteHelper::writeFile($rewriteRules, true);
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
 
@@ -306,7 +306,7 @@ class RewriteModuleExtras {
 	list ($ret, $plugin) = GalleryCoreApi::loadPlugin('module', $pluginId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
-	}		
+	}
 	$rules = $plugin->getRewriteRules();
 
 	list ($ret, $params) = $module->fetchParameters();
@@ -367,7 +367,7 @@ class RewriteModuleExtras {
 	    if (GalleryUtilities::isEmbedded()) {
 		list($ret, $code) = RewriteHelper::writeFile($rewriteRules, true);
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 		if ($code != REWRITE_STATUS_OK) {
 		    return GalleryStatus::success();

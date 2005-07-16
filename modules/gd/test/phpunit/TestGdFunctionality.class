@@ -224,8 +224,9 @@ class TestGdFunctionality {
 
     function imageCreate($width, $height) {
 	if (!$this->functionExists('imageCreate')) {
-	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
-					'Environment: ' . $this->getEnvironmentName());
+	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
+					      'Environment: ' . $this->getEnvironmentName()),
+			 null);
 	}
 	$res = $this->getNewResource();
 	$this->setResourceData($res, 'x', $width);
@@ -236,8 +237,9 @@ class TestGdFunctionality {
 
     function imageCreateTruecolor($width, $height) {
 	if (!$this->functionExists('imageCreateTruecolor')) {
-	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
-					'Environment: ' . $this->getEnvironmentName());
+	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
+					      'Environment: ' . $this->getEnvironmentName()),
+			 null);
 	}
 	$res = $this->getNewResource();
 	$this->setResourceData($res, 'x', $width);

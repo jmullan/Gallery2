@@ -143,7 +143,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 	list ($base, $extension) = GalleryUtilities::getFileNameComponents($fileName);
 	list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	GalleryUtilities::sanitizeInputValues($base);
 

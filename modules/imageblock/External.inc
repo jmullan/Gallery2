@@ -83,7 +83,7 @@ class ExternalView extends GalleryView {
 
 	$ret = ImageBlockHelper::loadImageBlocks($template, $params);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	if (!empty($frameIds)) {

@@ -330,13 +330,18 @@ class GalleryTranslator {
 	$country = strtoupper($country);
 	if ((empty($country) || !isset($supportedLanguages[$language][$country]))
 		&& isset($defaultCountry[$language])) {
-	    // Use default country if none specified or particular country not supported
+	    /* Use default country if none specified or particular country not supported */
 	    $country = $defaultCountry[$language];
 	}
 	if (isset($supportedLanguages[$language][$country])) {
 	    return array("${language}_${country}", $supportedLanguages[$language][$country]);
 	}
-	return $fallback ? array('en_US', $supportedLanguages['en']['US']) : array(null, null);
+
+	if ($fallback) {
+	    return array('en_US', $supportedLanguages['en']['US']);
+	} else {
+	    return array(null, null);
+	}
     }
 
     /**

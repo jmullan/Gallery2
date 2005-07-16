@@ -91,10 +91,10 @@ class WatermarkTest extends GalleryTestCase {
 	global $gallery;
 
 	/* Give permission for us to see the watermark */
-	$ret = GalleryCoreApi::addUserPermission($this->_watermark->getId(), $gallery->getActiveUserId(),
-						 'core.all');
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_watermark->getId(), $gallery->getActiveUserId(), 'core.all');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus(__FILE__, __LINE__);
 	}
 	list ($ret, $watermarks) = WatermarkHelper::fetchWatermarks();
 	if ($ret->isError()) {
@@ -109,22 +109,25 @@ class WatermarkTest extends GalleryTestCase {
     function testFetchWatermarksByOwnerId1() {
 	global $gallery;
 
-	list ($ret, $watermarkIds) = WatermarkHelper::fetchWatermarkIdsByOwnerId($gallery->getActiveUserId());
+	list ($ret, $watermarkIds) =
+	    WatermarkHelper::fetchWatermarkIdsByOwnerId($gallery->getActiveUserId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus(__FILE__, __LINE__);
 	}
 
-	$this->assert(in_array($this->_watermark->getId(), $watermarkIds), 'Watermark doesn\'t appear when it should');
+	$this->assert(in_array($this->_watermark->getId(), $watermarkIds),
+		      'Watermark doesn\'t appear when it should');
     }
 
     function testFetchWatermarksByOwnerId2() {
-        // Use a random/bogus user id
+        /* Use a random/bogus user id */
 	list ($ret, $watermarkIds) = WatermarkHelper::fetchWatermarkIdsByOwnerId(1234567);
 	if ($ret->isError()) {
 	    return $this->failWithStatus(__FILE__, __LINE__);
 	}
 
-	$this->assert(!in_array($this->_watermark->getId(), $watermarkIds), 'Watermark appears when it shouldn\'t');
+	$this->assert(!in_array($this->_watermark->getId(), $watermarkIds),
+		      'Watermark appears when it shouldn\'t');
     }
 
     function testWatermarkItem() {
@@ -135,14 +138,15 @@ class WatermarkTest extends GalleryTestCase {
 	}
 
 	/* Give it some derivatives */
-	list ($ret, $preferred) = $this->_createDerivative($item, $item->getId(),
-							   DERIVATIVE_TYPE_IMAGE_PREFERRED, 'rotate|90');
+	list ($ret, $preferred) = $this->_createDerivative(
+	    $item, $item->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED, 'rotate|90');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $thumbnail) = $this->_createDerivative($item, $preferred->getId(),
-							   DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'crop|10,10,30,40;scale|200');
+	list ($ret, $thumbnail) = $this->_createDerivative(
+	    $item, $preferred->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+	    'crop|10,10,30,40;scale|200');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -216,7 +220,7 @@ class WatermarkTest extends GalleryTestCase {
 	    $preferred = $table[$item->getId()];
 	    $this->assertEquals($filter, $preferred->getPostFilterOperations());
 
-	    // Verify that the thumb/resizes are remapped to the preferred
+	    /* Verify that the thumb/resizes are remapped to the preferred */
 	    foreach (array($resize, $thumbnail) as $derivative) {
 		list ($ret, $derivative) = $derivative->refresh();
 		if ($ret->isError()) {
@@ -242,8 +246,9 @@ class WatermarkTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $thumbnail) = $this->_createDerivative($item, $preferred->getId(),
-							   DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'crop|10,10,30,40;scale|200');
+	list ($ret, $thumbnail) = $this->_createDerivative(
+	    $item, $preferred->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+	    'crop|10,10,30,40;scale|200');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -274,7 +279,7 @@ class WatermarkTest extends GalleryTestCase {
 
 	$this->assert(empty($table[$item->getId()]), 'preferred is not gone!');
 
-	// Verify that the thumb/resizes are remapped to the source id
+	/* Verify that the thumb/resizes are remapped to the source id */
 	foreach (array($resize, $thumbnail) as $derivative) {
 	    list ($ret, $derivative) = $derivative->refresh();
 	    if ($ret->isError()) {

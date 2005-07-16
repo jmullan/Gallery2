@@ -253,7 +253,7 @@ class CodeAuditTest extends CodeAuditTestCase {
 	    }
 
 	    for ($i = 0; $i < count($returns); $i++) {
-		if (preg_match('/^array\s*\(/', $returns[$i])) {
+		if (preg_match('/^array(:?_keys)?\s*\(/', $returns[$i])) {
 		    /*
 		     * Determine the number of elements in returned arrays:
 		     * 1. Strip off the enclosing array()
@@ -284,12 +284,13 @@ class CodeAuditTest extends CodeAuditTestCase {
 			$commaCount -= ($assignCount - 1);
 		    }
 
-		    $returnCount[$function][$i] = array($commaCount, $tmp);
-		    if ($i > 0 && $commaCount != $returnCount[$function][0][0]) {
-			$returnMismatch[$function] = 1;
-		    }
+		    $finalCount = "array($commaCount)";
+		    $returnCount[$function][$i] = array($finalCount, $tmp);
 		} else {
-		    $returnCount[$function][$i] = array(1, $returns[$i]);
+		    $returnCount[$function][$i] = array("scalar", $returns[$i]);
+		}
+		if ($i > 0 && $returnCount[$function][$i][0] != $returnCount[$function][0][0]) {
+		    $returnMismatch[$function] = 1;
 		}
 	    }
 	}
@@ -297,7 +298,7 @@ class CodeAuditTest extends CodeAuditTestCase {
 	foreach (array_keys($returnMismatch) as $function) {
 	    $returns = '';
 	    for ($i = 0; $i < count($returnTable[$function]); $i++) {
-		$returns .= sprintf("[%d] return %s%s\n",
+		$returns .= sprintf("[%s] return %s%s\n",
 				    $returnCount[$function][$i][0],
 				    $returnTable[$function][$i],
 				    false ? '' :  /* set to false to see the transformed return */
@@ -388,11 +389,11 @@ class CodeAuditTest extends CodeAuditTestCase {
 
 	/* Check result of longLineCount */
 	if (!$this->_shouldHalt) {
-	    if ($this->_longLineCount > 1280) {
+	    if ($this->_longLineCount > 1175) {
 		$this->assert(false, 'Found too many lines longer than 100 characters (' .
 			      $this->_longLineCount . ')');
 	    }
-	    if ($this->_longLineCount < 1180) {
+	    if ($this->_longLineCount < 1075) {
 		$this->assert(false, 'Yay!  We are down to ' . $this->_longLineCount .
 			      ' lines longer than 100 characters; update the failure' .
 			      ' thresholds in this unit test.');

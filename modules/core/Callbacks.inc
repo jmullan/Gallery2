@@ -38,7 +38,7 @@ class CoreCallbacks {
 
 	    list ($ret, $language) = $gallery->getActiveLanguageCode();
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    $block['core']['LanguageSelector'] =
