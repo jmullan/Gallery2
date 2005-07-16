@@ -18,5 +18,9 @@ $blocks['ImageBlock'] = array(
 		'monthlyImage' => $gallery->i18n('Monthly image'),
 		'dailyAlbum' => $gallery->i18n('Daily album'),
 		'weeklyAlbum' => $gallery->i18n('Weekly album'),
-		'monthlyAlbum' => $gallery->i18n('Monthly album')))));
+		'monthlyAlbum' => $gallery->i18n('Monthly album'))),
+	'showHeading' => array(
+	    'description' => $gallery->i18n('Show heading'),
+	    'type' => 'boolean',
+	    'default' => 'true')));
 ?>
