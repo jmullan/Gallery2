@@ -97,6 +97,31 @@ class CommentTest extends GalleryTestCase {
 	$this->assertEquals(3, $counts[$this->_item->getId()], 'Count is wrong');
     }
 
+    function testGetItemSummaries() {
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'comment');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$itemId = $this->_item->getId();
+	/* Verify we get a non empty item summary for the item */
+	$permissions[$itemId]['comment.view'] = 1;
+	list ($ret, $content) = $module->getItemSummaries(array($this->_item), $permissions);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(isset($content[$itemId]) && !empty($content[$itemId]),
+		      'did not get item summary');
+	
+	/* Get the item summary again, but without having the permissions */
+	unset($content);
+	list ($ret, $content) = $module->getItemSummaries(array($this->_item),
+							  array($itemId => array()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!isset($content[$itemId]), 'got an item summary');
+    }
+
     function testCreateModifyAndDeleteComment() {
 	global $gallery;
 

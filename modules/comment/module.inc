@@ -155,7 +155,7 @@ class CommentModule extends GalleryModule {
 	foreach ($items as $item) {
 	    $message = array();
 
-	    if (isset($permissions['comment.view'])) {
+	    if (isset($permissions[$item->getId()]['comment.view'])) {
 		if (!empty($commentCounts[$item->getId()])) {
 		    $summaries[$item->getId()] =
 			$this->translate(array('text' => 'Comments: %d',
