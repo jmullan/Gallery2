@@ -59,11 +59,11 @@
     if (progressMade == 100) {
       progressToGo.style.display = 'none';
     } else {
-      progressToGo.style.display = 'inline-block';
+      progressToGo.style.display = 'block';
       progressToGo.style.width = (100 - progressMade) + "%";
     }
 
-    document.getElementById('progressDone').style.width = progressMade + "%"
+    document.getElementById('progressDone').style.width = progressMade + "%";
     document.getElementById('progressTimeRemaining').innerHTML = timeRemaining;
     document.getElementById('progressMemoryInfo').innerHTML = memoryInfo;
   }
