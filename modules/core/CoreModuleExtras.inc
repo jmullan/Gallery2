@@ -284,41 +284,7 @@ class CoreModuleExtras {
 	    }
 
 	case '0.8.13':
-	    /*
-	     * We added layout versioning.  We need to call installOrUpgrade()
-	     * on the currently active layouts to let them update their
-	     * bookkeeping.  Reactivate them too for good measure.
-	     */
-	    list ($ret, $layouts) = GalleryCoreApi::fetchPluginStatus('layout');
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    foreach ($layouts as $layoutId => $layoutStatus) {
-		$gallery->guaranteeTimeLimit(30);
-		if (!empty($layoutStatus['active'])) {
-		    list($ret, $layout) = GalleryCoreApi::loadPlugin('layout', $layoutId);
-		    if ($ret->isError() &&
-			!($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
-			return $ret->wrap(__FILE__, __LINE__);
-		    }
-
-		    $ret = $layout->installOrUpgrade();
-		    if ($ret->isError()) {
-			return $ret->wrap(__FILE__, __LINE__);
-		    }
-
-		    list ($ret, $ignored) = $layout->activate();
-		    if ($ret->isError() &&
-			!($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
-			/*
-			 * Layout getSettings may try to load ImageFrame interface, but
-			 * ImageFrame may need to be upgraded.. ignore version mismatch here.
-			 */
-			return $ret->wrap(__FILE__, __LINE__);
-		    }
-		}
-	    }
+	    /* We used to add layout versioning here.  Now that's been moved to the 0.9.29 block */
 
 	case '0.8.14':
 	    /* Added Entity::onLoadHandlers; default all values to null, so nothing to do */
@@ -841,7 +807,7 @@ class CoreModuleExtras {
 		 * we add a progress bar and manipulate the PHP execution time limit periodically.
 		 */
 		$gallery->guaranteeTimeLimit(60);
-		
+
 		/* Show a progress bar */
 		$ret = $statusMonitor->renderStatusMessage(
 		    $module->translate('Detecting broken derivatives'), '', 0);
@@ -879,7 +845,7 @@ class CoreModuleExtras {
 			if ($ret->isError()) {
 			    return $ret->wrap(__FILE__, __LINE__);
 			}
-			
+
 			$currentDerivativeIds = array_splice($derivativeIds, 0, $loadBatchSize);
 			list ($ret, $derivatives) =
 			    GalleryCoreApi::loadEntitiesById($currentDerivativeIds);
@@ -887,13 +853,13 @@ class CoreModuleExtras {
 			    return $ret->wrap(__FILE__, __LINE__);
 			}
 		    }
-		    
+
 		    /* Detect if the derivative is broken */
 		    if (!empty($derivatives)) {
 			$itemsProcessed++;
 			$gallery->guaranteeTimeLimit(30);
 			$derivative = array_pop($derivatives);
-			
+
 			/*
 			 * Show the progress ..., but not for each derivative, this would slow down
 			 * the process considerably
@@ -912,7 +878,7 @@ class CoreModuleExtras {
 			    }
 			    $gallery->guaranteeTimeLimit(30);
 			}
-			
+
 			/*
 			 * 3. Filter out derivatives that don't return true for isCacheCurrent
 			 *    (= don't have a cache file yet = would be rebuilt anyway)
@@ -924,9 +890,9 @@ class CoreModuleExtras {
 			if (!$current) {
 			    continue;
 			}
-			
+
 			/*
-			 * 4. Filter out derivatives that don't have the same file size as the 
+			 * 4. Filter out derivatives that don't have the same file size as the
 			 *    broken image placeholder
 			 */
 			list($ret, $path) = $derivative->fetchPath();
@@ -940,7 +906,7 @@ class CoreModuleExtras {
 			if ($size != $referenceSize) {
 			    continue;
 			}
-			
+
 			/* 5. Binary compare the derivative file with the placeholder file */
 			if (($data = $platform->file($path)) === false) {
 			    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__,
@@ -952,7 +918,7 @@ class CoreModuleExtras {
 			    $brokenDerivatives[$derivative->getId()] = $derivative;
 			}
 		    }
-		
+
 		    /* 6. Mark the detected broken derivative as such and save it in the DB */
 		    if (sizeof($brokenDerivatives) == $saveBatchSize ||
 			    (!empty($brokenDerivatives) && empty($derivativeIds))) {
@@ -970,7 +936,7 @@ class CoreModuleExtras {
 			if ($ret->isError()) {
 			    return $ret->wrap(__FILE__, __LINE__);
 			}
-			
+
 			list ($ret, $lockId) =
 			    GalleryCoreApi::acquireWriteLock(array_keys($brokenDerivatives));
 			if ($ret->isError()) {
@@ -997,7 +963,7 @@ class CoreModuleExtras {
 				}
 				$gallery->guaranteeTimeLimit(30);
 			    }
-			    
+
 			    $brokenDerivative->setIsBroken(true);
 			    $ret = $brokenDerivative->save(false);
 			    if ($ret->isError()) {
@@ -1019,8 +985,10 @@ class CoreModuleExtras {
 		} while (!empty($derivativeIds) || !empty($brokenDerivatives) ||
 			 !empty($derivatives));
 	    }
+
 	case '0.9.28':
 	    /* Changed Module Api onLoad($entity, $duringUpgrade) definition */
+
 	case '0.9.29':
 	    /* Ginormous layout and theme consolidation refactor */
 
@@ -1086,6 +1054,45 @@ class CoreModuleExtras {
 		$ret = $module->removeParameter($paramName);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+
+	    /*
+	     * If we're coming from 0.8.13 or earlier, then our themes don't have version
+	     * information, so take care of that here by calling installOrUpgrade() on the
+	     * currently active themes to let them update their bookkeeping.  Reactivate them too
+	     * for good measure.
+	     */
+	    if (version_compare($currentVersion, '0.8.13', '<=')) {
+		list ($ret, $themes) = GalleryCoreApi::fetchPluginStatus('theme');
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		foreach ($themes as $themeId => $themeStatus) {
+		    $gallery->guaranteeTimeLimit(30);
+		    if (!empty($themeStatus['active'])) {
+			list($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId);
+			if ($ret->isError() &&
+			    !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+			    return $ret->wrap(__FILE__, __LINE__);
+			}
+
+			$ret = $theme->installOrUpgrade();
+			if ($ret->isError()) {
+			    return $ret->wrap(__FILE__, __LINE__);
+			}
+
+			list ($ret, $ignored) = $theme->activate();
+			if ($ret->isError() &&
+			    !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+			    /*
+			     * Theme getSettings may try to load ImageFrame interface, but
+			     * ImageFrame may need to be upgraded.. ignore version mismatch here.
+			     */
+			    return $ret->wrap(__FILE__, __LINE__);
+			}
+		    }
 		}
 	    }
 
