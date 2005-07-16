@@ -493,9 +493,9 @@ class PlatformTest extends GalleryTestCase {
 	$platform->setCwd("${s}test");
 	$this->assert(!$platform->isRestrictedByOpenBaseDir('bogus'),
 		      'valid relative path');
-	$this->assert(!$platform->isRestrictedByOpenBaseDir('..${s}bogus'),
+	$this->assert($platform->isRestrictedByOpenBaseDir("..${s}bogus"),
 		      'invalid relative path');
-	$this->assert(!$platform->isRestrictedByOpenBaseDir('bogus${s}path${s}..${s}..${s}test'),
+	$this->assert(!$platform->isRestrictedByOpenBaseDir("bogus${s}path${s}..${s}..${s}test"),
 		      'valid relative path with two dotdots');
     }
 
