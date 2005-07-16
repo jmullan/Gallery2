@@ -292,11 +292,8 @@ class GalleryTemplateAdapter {
      * @param array
      * @param object Smarty the smarty instance
      * @return string HTML content
-     *
-     * Note: don't accept smarty as a reference here otherwise changes inside the
-     * smarty include can propagate back upwards!
      */
-    function head($params, $smarty) {
+    function head($params, &$smarty) {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
 	$templateVars =& $smarty->get_template_vars();
@@ -324,9 +321,12 @@ class GalleryTemplateAdapter {
 
 	/* Tpl to include. */
 	foreach ($head['tpl'] as $path => $l10Domain) {
+	    /* Guard template vars so that the include doesn't pollute our namespace */
+	    $save = $smarty->_tpl_vars;
 	    $smarty->_smarty_include(
 		array('smarty_include_tpl_file' => "gallery:$path",
 		      'smarty_include_vars' => array('l10Domain' => $l10Domain)));
+	    $smarty->_tpl_vars = $save;
 	}
 
 	/* This should help out users whose browsers are confused about the character set */
@@ -342,12 +342,8 @@ class GalleryTemplateAdapter {
      * @param string content
      * @param object Smarty the smarty instance
      * @return string HTML content
-     *
-     * Note: don't accept smarty as a reference here otherwise changes inside the
-     * smarty include can propagate back upwards!
-     *
      */
-    function autoComplete($params, $content, $smarty) {
+    function autoComplete($params, $content, &$smarty) {
 	if (!isset($content)) {
 	    if (!isset($this->_callCount['autoComplete'])) {
 		$this->_callCount['autoComplete'] = 0;
@@ -355,12 +351,16 @@ class GalleryTemplateAdapter {
 	    return;
 	}
 	$url = trim($content);
+
+	/* Guard template vars so that the include doesn't pollute our namespace */
+	$save = $smarty->_tpl_vars;
 	$smarty->_smarty_include(
 	    array('smarty_include_tpl_file' => 'gallery:modules/core/templates/AutoComplete.tpl',
 		  'smarty_include_vars' =>
 			array('element' => $params['element'],
 			      'url' => $url,
 			      'callCount' => ++$this->_callCount['autoComplete'])));
+	$smarty->_tpl_vars = $save;
     }
 
     /**
@@ -369,14 +369,14 @@ class GalleryTemplateAdapter {
      * @param array params
      * @param object Smarty the smarty instance
      * @return string HTML content
-     *
-     * Note: don't accept smarty as a reference here otherwise changes inside the
-     * smarty include can propagate back upwards!
      */
-    function dimensions($params, $smarty) {
+    function dimensions($params, &$smarty) {
 	if (!isset($this->_callCount['dimensions'])) {
 	    $this->_callCount['dimensions'] = 0;
 	}
+
+	/* Guard template vars so that the include doesn't pollute our namespace */
+	$save = $smarty->_tpl_vars;
 	$smarty->_smarty_include(
 	    array('smarty_include_tpl_file' => 'gallery:modules/core/templates/Dimensions.tpl',
 		  'smarty_include_vars' => array(
@@ -385,6 +385,7 @@ class GalleryTemplateAdapter {
 		      'width' => isset($params['width']) ? $params['width'] : null,
 		      'height' => isset($params['height']) ? $params['height'] : null,
 		      'callCount' => ++$this->_callCount['dimensions'])));
+	$smarty->_tpl_vars = $save;
     }
 
     /**
@@ -533,18 +534,25 @@ class GalleryTemplateAdapter {
 	return $buf;
     }
 
-    /*
-     * Note: don't accept smarty as a reference here otherwise changes inside the
-     * smarty include can propagate back upwards!
+    /**
+     * Perform a theme related function.  Possible parameters are
+     *   include => file to include inside the theme's templates/ dir
+     *   url  => url to a file inside the themes dir
+     *
+     * @params array('include' => ..., 'url' => ...)
+     * @param reference to Smarty
      */
-    function theme($params, $smarty) {
+    function theme($params, &$smarty) {
 	global $gallery;
 
 	if (isset($params['include'])) {
+	    /* Guard template vars so that the include doesn't pollute our namespace */
+	    $save = $smarty->_tpl_vars;
 	    $smarty->_smarty_include(array(
 		'smarty_include_tpl_file' =>
 		    'gallery:themes/' . $this->_theme->getId(). '/templates/' . $params['include'],
 		'smarty_include_vars' => array()));
+	    $smarty->_tpl_vars = $save;
 	} else if (isset($params['url'])) {
 	    $urlGenerator =& $gallery->getUrlGenerator();
 	    return $urlGenerator->generateUrl(
@@ -552,11 +560,15 @@ class GalleryTemplateAdapter {
 	}
     }
 
-    /*
-     * Note: don't accept smarty as a reference here otherwise changes inside the
-     * smarty include can propagate back upwards!
+    /**
+     * Include a module's block into the current smarty page.  The only
+     * required param is 'type' which should be of the form <module>.<blockname>
+     * eg: "core.LoginBlock".  Any other parameters get passed on to the block itself.
+     *
+     * @params array('type' => <block descriptor>, ...)
+     * @param reference to Smarty
      */
-    function block($params, $smarty) {
+    function block($params, &$smarty) {
 	list ($module, $file) = explode('.', $params['type']);
 	$class = empty($params['class']) ? '' : ' ' . $params['class'];
 
@@ -577,28 +589,48 @@ class GalleryTemplateAdapter {
 	$params['class'] = "block-$module-$file$class";
 	$params['l10Domain'] = "modules_$module";
 
+	/* Guard template vars so that the include doesn't pollute our namespace */
+	$save = $smarty->_tpl_vars;
 	$smarty->_smarty_include(
 	    array('smarty_include_tpl_file' => "gallery:modules/$module/templates/blocks/$file.tpl",
 		  'smarty_include_vars' => $params));
+	$smarty->_tpl_vars = $save;
     }
 
-    /*
-     * Note: don't accept smarty as a reference here otherwise changes made inside the
-     * smarty include can propagate back upwards!
+    /**
+     * Include a module's container into the current smarty page.  The only
+     * required param is 'type' which should be of the form <module>.<blockname>
+     * eg: "core.LoginBlock".  Any other parameters get passed on to the block itself.
+     *
+     * This is like block() except it wraps actual content.
+     *
+     * @params array('type' => <block descriptor>, ...)
+     * @param reference to Smarty
      */
-    function container($params, $content, $smarty) {
+    function container($params, $content, &$smarty) {
 	if (!isset($content)) {
 	    return;
 	}
 
 	list ($module, $file) = explode('.', $params['type']);
+	/* Guard template vars so that the include doesn't pollute our namespace */
+	$save = $smarty->_tpl_vars;
 	$smarty->_smarty_include(
 	    array('smarty_include_tpl_file' =>
 		  "gallery:modules/$module/templates/containers/$file.tpl",
 		  'smarty_include_vars' => array_merge(array('content' => $content),
 						       $params)));
+	$smarty->_tpl_vars = $save;
     }
 
+    /**
+     * Call back to a module to get it to preload some data for the template. The only required
+     * param is 'type' which should be of the form <module>.<blockname> eg: "core.LoginBlock".
+     * Any other parameters get passed on to the block itself.
+     *
+     * @params array('type' => <block descriptor>, ...)
+     * @param reference to Smarty
+     */
     function callback($params, &$smarty) {
 	list ($module, $file) = explode('.', $params['type']);
 	GalleryCoreApi::relativeRequireOnce("modules/$module/Callbacks.inc");
