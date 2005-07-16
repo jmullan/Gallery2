@@ -627,8 +627,8 @@ class PlatformTest extends GalleryTestCase {
 	$this->assertEquals('2005 03', $this->_platform->strftime('%Y %m', 1110101111));
 	/* For windows we replace %e with %#d which doesn't have a leading space */
 	$this->assertEquals(
-	    GalleryUtilities::isA($this->_platform, 'WinNtPlatform') ? '6 03' : ' 6 03',
-	    $this->_platform->strftime('%e %H', 1110101111));
+	    GalleryUtilities::isA($this->_platform, 'WinNtPlatform') ? '6 11' : ' 6 11',
+	    $this->_platform->strftime('%e %S', 1110101111));
 	/* How to test that output is converted to UTF-8? */
     }
 }
