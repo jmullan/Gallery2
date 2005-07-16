@@ -9,14 +9,18 @@
 <div class="{$class}">
   <h3> {g->text text="Members"} </h3>
   <p>
-    {g->text one="%s member" many="%s members"
-	     count=$block.members.LoadMembers.count
-	     arg1=$block.members.LoadMembers.count}
-  </p>
-
   {if ($block.members.LoadMembers.canViewList)}
-  <a class="{g->linkId view="members.MembersList"}"
-     href="{g->url arg1="view=members.MembersList"}">{g->text text="Members List"}</a>
+    <a class="{g->linkId view="members.MembersList"}"
+       href="{g->url arg1="view=members.MembersList"}">
+      {g->text one="%s member" many="%s members"
+               count=$block.members.LoadMembers.count
+               arg1=$block.members.LoadMembers.count}
+    </a>
+  {else}
+    {g->text one="%s member" many="%s members"
+             count=$block.members.LoadMembers.count
+             arg1=$block.members.LoadMembers.count}
   {/if}
+  </p>
 </div>
 
