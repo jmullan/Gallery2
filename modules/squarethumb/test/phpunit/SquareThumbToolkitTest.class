@@ -199,7 +199,7 @@ class SquareThumbToolkitTest extends GalleryTestCase {
 
     function testFit() {
 	global $gallery;
-	$platform = GalleryUtilities::isA('WinNtPlatform', $gallery->getPlatform())
+	$platform = GalleryUtilities::isA($gallery->getPlatform(), 'WinNtPlatform')
 	    ? new SquareThumbTestWinNtPlatform() : new SquareThumbTestUnixPlatform();
 	$gallery->setPlatform($platform);
 
@@ -237,7 +237,7 @@ class SquareThumbToolkitTest extends GalleryTestCase {
     function testFallbackToComposite() {
 	/* Want to crop, but no toolkit support */
 	global $gallery;
-	$platform = GalleryUtilities::isA('WinNtPlatform', $gallery->getPlatform())
+	$platform = GalleryUtilities::isA($gallery->getPlatform(), 'WinNtPlatform')
 	    ? new SquareThumbTestWinNtPlatform() : new SquareThumbTestUnixPlatform();
 	$gallery->setPlatform($platform);
 	$destFile = $gallery->getConfig('data.gallery.tmp') . 'squareThumbTestFit';
