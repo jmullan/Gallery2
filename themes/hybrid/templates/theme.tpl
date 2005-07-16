@@ -65,6 +65,7 @@
 	<div id="gsFooter">
 	  {g->logoButton type="validation"}
 	  {g->logoButton type="gallery2"}
+	  {g->logoButton type="gallery2-version"}
 	</div>
       {/if}
     </div>
