@@ -104,7 +104,7 @@ class CodeAuditTest extends CodeAuditTestCase {
 	$this->_preamble = $this->getPreamble(file(__FILE__));
 
 	/* Turn the preamble into a pattern that we can use to match */
-	$pattern = join("\n", $this->_preamble);
+	$pattern = join("(:?\r\n|\n|\r)", $this->_preamble);
 	$pattern = str_replace('?', '\?', $pattern);
 	$pattern = str_replace('*', '\*', $pattern);
 	$pattern = str_replace('(', '\(', $pattern);
@@ -337,6 +337,7 @@ class CodeAuditTest extends CodeAuditTestCase {
 	    return;
 	} else {
 	    $this->_errorCount++;
+	    $errorReported = false;
 	    for ($i = 0; $i < count($this->_preamble); $i++) {
 		if ($i == 2) {
 		    /* Break up the RCSfile keyword so that CVS doesn't expand it */
@@ -351,8 +352,11 @@ class CodeAuditTest extends CodeAuditTestCase {
 				  "Preamble mismatch in $fileName on line " . ($i + 1) . ":<br/>" .
 				  "Expected: [$expected]<br/>" .
 				  "Received: [$lines[$i]]<br/>");
-		    break;
+		    $errorReported = true;
 		}
+	    }
+	    if (!$errorReported) {
+		$this->assert(false, "Unknown preamble mismatch in $fileName");
 	    }
 	}
     }
