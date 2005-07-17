@@ -23,6 +23,7 @@
  * @version $Revision$ $Date$
  * @package Gallery
  * @author Bharat Mediratta <bharat@menalto.com>
+ * @author Alan Harder <alan.harder@sun.com>
  */
 
 /**
@@ -42,7 +43,7 @@ class ClassicTheme extends GalleryTheme {
 	$this->setId('classic');
 	$this->setName($gallery->i18n('Classic'));
 	$this->setDescription($gallery->i18n('Classic Gallery2 root album look and feel'));
-	$this->setVersion('0.9.0');  /* Update ClassicTheme::upgrade also */
+	$this->setVersion('0.9.1');  /* Update ClassicTheme::upgrade also */
 	$this->setRequiredThemeApi(array(2, 0));
 	$this->setRequiredCoreApi(array(6, 4));
 	$this->setStandardSettings(
@@ -50,6 +51,7 @@ class ClassicTheme extends GalleryTheme {
 		  'showImageOwner' => 0, 'showAlbumOwner' => 1,
 		  'albumFrame' => '', 'itemFrame' => '', 'photoFrame' => '',
 		  'showMicroThumbs' => 0,
+		  'colorpack' => '',
 		  'sidebarBlocks' => serialize(
 		      array(
 			  array('search.SearchBlock', array('showAdvancedLink' => true)),
