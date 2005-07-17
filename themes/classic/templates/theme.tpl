@@ -12,7 +12,7 @@
 
     {* If Gallery doesn't provide a header, we use the album/photo title (or filename) *}
     {if empty($head.title)}
-      <title>{$theme.item.title|default:$theme.item.pathComponent|markup:stripBbcodeAndHtml}</title>
+      <title>{$theme.item.title|default:$theme.item.pathComponent|markup:strip}</title>
     {/if}
 
     {* Include this theme's style sheet *}
@@ -26,41 +26,41 @@
        * drawing everything.
        *}
       {if $theme.useFullScreen}
-        {include file=$theme.moduleTemplate}
+	{include file=$theme.moduleTemplate}
       {else}
       <div id="gsHeader">
-        <img src="{g->url href="images/galleryLogo_sm.gif"}" width="107" height="48" alt=""/>
+	<img src="{g->url href="images/galleryLogo_sm.gif"}" width="107" height="48" alt=""/>
       </div>
 
       <div id="gsNavBar" class="gcBorder1">
-        <div class="gbSystemLinks">
-          {g->block type="core.SystemLinks"
-                    order="core.SiteAdmin core.YourAccount core.Login core.Logout"
-                    othersAt=4}
-        </div>
+	<div class="gbSystemLinks">
+	  {g->block type="core.SystemLinks"
+		    order="core.SiteAdmin core.YourAccount core.Login core.Logout"
+		    othersAt=4}
+	</div>
 
-        <div class="gbBreadCrumb">
-          {g->block type="core.BreadCrumb"}
-        </div>
+	<div class="gbBreadCrumb">
+	  {g->block type="core.BreadCrumb"}
+	</div>
       </div>
 
       {* Include the appropriate content type for the page we want to draw. *}
       {if $theme.pageType == 'album'}
-        {g->theme include="album.tpl"}
+	{g->theme include="album.tpl"}
       {elseif $theme.pageType == 'photo'}
-        {g->theme include="photo.tpl"}
+	{g->theme include="photo.tpl"}
       {elseif $theme.pageType == 'admin'}
-        {g->theme include="admin.tpl"}
+	{g->theme include="admin.tpl"}
       {elseif $theme.pageType == 'module'}
-        {g->theme include="module.tpl"}
+	{g->theme include="module.tpl"}
       {elseif $theme.pageType == 'progressbar'}
-        {g->theme include="progressbar.tpl"}
+	{g->theme include="progressbar.tpl"}
       {/if}
 
       <div id="gsFooter">
-        {g->logoButton type="validation"}
-        {g->logoButton type="gallery2"}
-        {g->logoButton type="gallery2-version"}
+	{g->logoButton type="validation"}
+	{g->logoButton type="gallery2"}
+	{g->logoButton type="gallery2-version"}
       </div>
       {/if}  {* end of full screen check *}
     </div>
