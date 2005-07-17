@@ -1,6 +1,6 @@
 <?php 
 /*
-  V4.54 5 Nov 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.64 20 June 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -77,12 +77,14 @@ GLOBAL $gSQLMaxRows,$gSQLBlockRows;
 			$type = $typearr[$i];
 			switch($type) {
 			case 'D':
-				if (!strpos($v,':')) {
+				if (empty($v)) $s .= "<TD> &nbsp; </TD>\n";
+				else if (!strpos($v,':')) {
 					$s .= "	<TD>".$rs->UserDate($v,"D d, M Y") ."&nbsp;</TD>\n";
-					break;
 				}
+				break;
 			case 'T':
-				$s .= "	<TD>".$rs->UserTimeStamp($v,"D d, M Y, h:i:s") ."&nbsp;</TD>\n";
+				if (empty($v)) $s .= "<TD> &nbsp; </TD>\n";
+				else $s .= "	<TD>".$rs->UserTimeStamp($v,"D d, M Y, h:i:s") ."&nbsp;</TD>\n";
 			break;
 			case 'I':
 			case 'N':
