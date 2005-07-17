@@ -43,7 +43,8 @@
     {if isset($navigator.first)}
     <a href="{g->url params=$navigator.first.urlParams}" class="first">
       {if isset($navigator.first.item.thumbnail)}
-      {g->image item=$navigator.first.item image=$navigator.first.item.thumbnail maxSize=40}
+      {g->image item=$navigator.first.item image=$navigator.first.item.thumbnail
+                maxSize="40" border="0" class="first"}
       {/if}
       {g->text text="first"}
     </a>
@@ -52,7 +53,8 @@
     {if isset($navigator.back)}
     <a href="{g->url params=$navigator.back.urlParams}" class="previous">
       {if isset($navigator.back.item.thumbnail)}
-      {g->image item=$navigator.back.item image=$navigator.back.item.thumbnail maxSize=40 border=0}
+      {g->image item=$navigator.back.item image=$navigator.back.item.thumbnail
+                maxSize="40" class="previous"}
       {/if}
       {g->text text="previous"}
     </a>
