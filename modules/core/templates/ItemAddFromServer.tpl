@@ -304,6 +304,8 @@
   {/foreach}
 {/if}
 
+{if !empty($smarty.capture.submitLinks)}
 <div class="gbBlock gcBackground1">
   {$smarty.capture.submitLinks}
 </div>
+{/if}
