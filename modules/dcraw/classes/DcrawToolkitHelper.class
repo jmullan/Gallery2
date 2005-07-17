@@ -94,12 +94,14 @@ class DcrawToolkitHelper {
 	list ($success, $stdout, $stderr) = $platform->exec(array(array($dcrawPath)));
 	/* $success will be 0 here, since we gave no arguments */
 	$verCheck = implode(',', $stderr);
-	if (strstr($verCheck, 'Raw Photo Decoder v5') ||
-	        strstr($verCheck, 'Raw Photo Decoder "dcraw" v6') ||
-		strstr($verCheck, 'Raw Photo Decoder "dcraw" v7')) {
-	    $testArray[] = array('name' => 'dcraw',
-				 'success' => true);
-	} else {
+	if (preg_match('/Raw Photo Decoder(?: "dcraw")? v(\S+)/', $verCheck, $matches)) {
+	    $version = $matches[1];
+	    if (version_compare($version, '5.40', '>=')) {
+		$testArray[] = array('name' => 'dcraw', 'success' => true);
+	    }
+	}
+
+	if (empty($testArray)) {
 	    $testArray[] = array('name' => 'dcraw',
 				 'success' => false,
 				 'message' => array_merge(

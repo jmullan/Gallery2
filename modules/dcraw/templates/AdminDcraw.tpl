@@ -20,7 +20,7 @@
   </p>
 
   <p class="giDescription">
-    {g->Text text="<b>Note</b>: Gallery supports v5, v6 and v7 of dcraw."}
+    {g->Text text="<b>Note</b>: Gallery supports Dcraw v5.40 and more recent."}
   </p>
 
   <table class="gbDataTable">
