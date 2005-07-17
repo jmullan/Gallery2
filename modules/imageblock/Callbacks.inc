@@ -27,6 +27,36 @@ class ImageBlockCallbacks {
 
 	switch($callback) {
 	case 'LoadImageBlock':
+	    /* Pick up our overrides */
+	    $vars =& $smarty->_tpl_vars;
+	    if (empty($vars['useDefaults'])) {
+		/*
+		 * If we're overriding the defaults, then overlay our changes on top of the
+		 * defaults and pass in a complete 'show' parameter.
+		 */
+		list ($ret, $moduleParams) =
+		    GalleryCoreApi::fetchAllPluginParameters('module', 'imageblock');
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		$showMap = array_flip(explode('|', $moduleParams['show']));
+		foreach (array('showHeading' => 'heading',
+			       'showTitle' => 'title',
+			       'showViews' => 'views',
+			       'showOwner' => 'owner',
+			       'showDate' => 'date')
+			 as $blockVarName => $showMapName) {
+		    if (empty($vars[$blockVarName])) {
+			unset($showMap[$showMapName]);
+		    } else {
+			$showMap[$showMapName] = 1;
+		    }
+		}
+
+		$params['show'] = join('|', array_keys($showMap));
+	    }
+
 	    /*
 	     * ImageBlockHelper expects a GalleryTemplate, but Smarty callbacks don't provide
 	     * one, so create a temporary wrapper.
