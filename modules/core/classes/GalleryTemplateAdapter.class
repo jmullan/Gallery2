@@ -562,7 +562,7 @@ class GalleryTemplateAdapter {
 	    $smarty->_smarty_include(array(
 		'smarty_include_tpl_file' =>
 		    'gallery:themes/' . $this->_theme->getId(). '/templates/' . $params['include'],
-		'smarty_include_vars' => array()));
+		'smarty_include_vars' => $params));
 	    $smarty->_tpl_vars = $save;
 	} else if (isset($params['url'])) {
 	    $urlGenerator =& $gallery->getUrlGenerator();
