@@ -11,10 +11,8 @@
 
   <div class="gbBlock">
     {assign var="totalHeight" value=$Panorama.image.height+17}
-    <applet archive="{$Panorama.moduleUrl}/java/Metamorphose.jar"
-     code="Metamorphose"
-     width="{$Panorama.width}"
-     height="{$totalHeight}">
+    <applet codebase="{$Panorama.moduleUrl}/java/" archive="Metamorphose.jar" code="Metamorphose"
+     width="{$Panorama.width}" height="{$totalHeight}">
       <param name="BackgroundColor" value="#666666"/>
       <param name="PanoramaRect"    value="0,0,{$Panorama.width},{$Panorama.image.height}"/>
       <param name="ScrollerRect"    value="0,{$Panorama.image.height},{$Panorama.width},17"/>
