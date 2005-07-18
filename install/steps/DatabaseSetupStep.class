@@ -127,6 +127,7 @@ class DatabaseSetupStep extends InstallStep {
 		if ($result === false) {
 		    $templateData['errors'][] =
 			_('The database you specified does not exist.  Please create it.');
+		    $dbVersion = '';
 		} else {
 		    /*
 		     * Check if the db user has (all?) required db privileges to finish the
@@ -140,10 +141,10 @@ class DatabaseSetupStep extends InstallStep {
 			    $templateData['errors'][] = $error;
 			}
 		    }
-		}
 
-		/* Check the status and get the version of the Gallery database */
-		$dbVersion = $this->_getDbVersion($result);
+		    /* Check the status and get the version of the Gallery database */
+		    $dbVersion = $this->_getDbVersion($result);
+		}
 
 		$this->_captureEnd();
 
@@ -318,7 +319,8 @@ class DatabaseSetupStep extends InstallStep {
 	$ok = false;
 	for ($i = 0; $i < 10; $i++) {
 	    $tablePrefix = 'g2dbtest' . $i . '_';
-	    if (!in_array($tablePrefix . 'Schema', $metatables)) {
+	    if (!in_array($tablePrefix . 'Schema', $metatables) &&
+		    !in_array($tablePrefix . 'schema', $metatables)) {
 		$ok = true;
 		break;
 	    }
@@ -353,8 +355,16 @@ class DatabaseSetupStep extends InstallStep {
 	 * PL/SQL blocks will have other semicolons, so we can't split on every one.
 	 */
 	$statements = preg_split('/; *\r?\n *\r?\n/s', $buffer);
-	/* Do not execute the last statement, because we already drop the schema table */
-	array_pop($statements);
+	/* 
+	 * Execute the last statement before the second last
+	 * The last is DELETE FROM schema where g_name = 'Schema';
+	 * The second last is DROP TABLE schema;
+	 * So they have to be reversed to check for the DELETE privilege
+	 */
+	$dropStatement = $statements[sizeof($statements)-2];
+	$statements[sizeof($statements)-2] = $statements[sizeof($statements)-1];
+	$statements[sizeof($statements)-1] = $dropStatement;
+	
 	/* Execute the rest */
 	foreach ($statements as $query) {
 	    $query = trim($query);
