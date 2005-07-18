@@ -121,6 +121,11 @@
 			{/foreach}
 		      {/if}
 		      block.addVariable("{$varKey}", "{$varInfo.default}", "{g->text text=$varInfo.description l10Domain="modules_$moduleId"}", "{$varInfo.type}", tmp);
+	              {if !empty($varInfo.overrides)}
+	              {foreach from=$varInfo.overrides item=override}
+	              block.addVariableOverride("{$varKey}", "{$override}");
+                      {/foreach}
+	              {/if}
 		    {/foreach}
 		  {/if}
 		{/foreach}

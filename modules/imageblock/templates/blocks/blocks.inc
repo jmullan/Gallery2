@@ -2,10 +2,6 @@
 $blocks['ImageBlock'] = array(
     'description' => $gallery->i18n('Random image'),
     'vars' => array(
-	'useDefaults' => array(
-	    'description' => $gallery->i18n('Use default settings'),
-	    'type' => 'boolean',
-	    'default' => 'true'),
 	'blocks' => array(
 	    'description' => $gallery->i18n('Image type'),
 	    'type' => 'choice',
@@ -23,6 +19,12 @@ $blocks['ImageBlock'] = array(
 		'dailyAlbum' => $gallery->i18n('Daily album'),
 		'weeklyAlbum' => $gallery->i18n('Weekly album'),
 		'monthlyAlbum' => $gallery->i18n('Monthly album'))),
+	'useDefaults' => array(
+	    'description' => $gallery->i18n('Use default settings'),
+	    'type' => 'boolean',
+	    'default' => 'true',
+	    'overrides' => array('showHeading', 'showTitle', 'showDate',
+				 'showViews', 'showOwner')),
 	'showHeading' => array(
 	    'description' => $gallery->i18n('Show heading'),
 	    'type' => 'boolean',
