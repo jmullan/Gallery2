@@ -145,6 +145,7 @@ body.gallery {
 td.giAlbumCell, td.giItemCell {
     padding: 1em;
     text-align: center;
+    width: 1%;
 }
 
 #gallery td.giAlbumCell select, #gallery td.giItemCell select {
@@ -154,6 +155,17 @@ td.giAlbumCell, td.giItemCell {
 /* So imageframed thumbs can be centered */
 td.giAlbumCell table, td.giItemCell table {
     margin: auto;
+}
+
+#gallery td.tree ul {
+    list-style-type: none;
+    margin: 0 0 0 8px;
+    padding: 0;
+}
+* html #gallery td.tree ul ul { margin-top: -1em; } /* Why does IE need this? */
+
+#gallery td.tree li {
+    padding: 0;
 }
 
 #gsPages span {
