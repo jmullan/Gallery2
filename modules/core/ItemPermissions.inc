@@ -53,7 +53,8 @@ class ItemPermissionsController extends GalleryController {
 	$status = $error = array();
 	if (isset($form['action']['deleteGroupPermission'])) {
 	    /* Figure out which one we're working with */
-	    $index = array_pop(array_keys($form['action']['deleteGroupPermission']));
+	    $deleteGroupPermission = array_keys($form['action']['deleteGroupPermission']);
+	    $index = array_pop($deleteGroupPermission);
 
 	    /* Handle delete group perm actions */
 	    list ($groupId, $permissionId) = explode(',', $form['group']['delete'][$index]);
@@ -78,7 +79,8 @@ class ItemPermissionsController extends GalleryController {
 	    $verifySelfPermissions = true;
 	} else if (isset($form['action']['deleteUserPermission'])) {
 	    /* Figure out which one we're working with */
-	    $index = array_pop(array_keys($form['action']['deleteUserPermission']));
+	    $deleteUserPermission = array_keys($form['action']['deleteUserPermission']);
+	    $index = array_pop($deleteUserPermission);
 
 	    /* Handle delete user perm actions */
 	    list ($userId, $permissionId) = explode(',', $form['user']['delete'][$index]);

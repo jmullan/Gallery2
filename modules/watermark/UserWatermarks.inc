@@ -169,7 +169,8 @@ class UserWatermarksView extends GalleryView {
 	if ($form['formName'] != 'UserWatermarks') {
 	    $form['formName'] = 'UserWatermarks';
 	    if (!empty($watermarks)) {
-		$form['watermarkId'] = array_shift(array_keys($watermarks));
+		$ids = array_keys($watermarks);
+		$form['watermarkId'] = array_shift($ids);
 	    }
 	}
 

@@ -371,12 +371,13 @@ class Gallery {
      * @return array object GalleryStatus a status code
      *               object GalleryLockSystem the lock implementation (reference)
      */
-    function getLockSystem() {
+    function &getLockSystem() {
 	if (!isset($this->_lockSystem)) {
 	    list ($ret, $which) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'lock.system');
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		$ret = array($ret->wrap(__FILE__, __LINE__), null);
+		return $ret;
 	    }
 
 	    switch($which) {
@@ -391,11 +392,13 @@ class Gallery {
 		break;
 
 	    default:
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+		$ret = array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+		return $ret;
 	    }
 	}
 
-	return array(GalleryStatus::success(), &$this->_lockSystem);
+	$ret = array(GalleryStatus::success(), &$this->_lockSystem);
+	return $ret;
     }
 
     /**

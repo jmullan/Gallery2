@@ -39,7 +39,7 @@ class GalleryCharsetHelper_medium {
      *
      * @return array(int => character, ...)
      */
-    function getCharsetTable($desired) {
+    function &getCharsetTable($desired) {
 	static $charset;
 
 	if (!isset($charset)) {

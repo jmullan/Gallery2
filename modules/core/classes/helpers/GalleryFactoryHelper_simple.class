@@ -98,7 +98,8 @@ class GalleryFactoryHelper_simple {
                 ';
 		list ($ret, $searchResults) = $gallery->search($query);
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    $ret = array($ret->wrap(__FILE__, __LINE__), null);
+		    return $ret;
 		}
 
 		while ($result = $searchResults->nextResult()) {
@@ -116,7 +117,8 @@ class GalleryFactoryHelper_simple {
 	    }
 	}
 
-	return array(GalleryStatus::success(), $registry);
+	$ret = array(GalleryStatus::success(), &$registry);
+	return $ret;
     }
 
     /**

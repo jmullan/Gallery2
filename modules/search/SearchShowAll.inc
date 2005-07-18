@@ -94,7 +94,8 @@ class SearchShowAllView extends GalleryView {
 		}
 
 		if (isset($form['action']['showAll'])) {
-		    $form['moduleId'] = array_pop(array_keys($form['action']['showAll']));
+		    $showAll = array_keys($form['action']['showAll']);
+		    $form['moduleId'] = array_pop($showAll);
 		    $form['page'] = 1;
 		}
 

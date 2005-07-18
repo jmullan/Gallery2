@@ -110,7 +110,8 @@ class JPEG // extends PEAR
         $info = array();
 
         if ($this->_markers == null) {
-            return false;
+            $false = false;
+            return $false;
         }
 
         $info['Name'] = $this->_info['file']['Name'];
@@ -843,7 +844,7 @@ class JPEG // extends PEAR
 
             if ($capture) {
                 if ($length > 0) {
-		    $this->_markers[$count]['data'] =& fread($this->_fp, $length);
+		    $this->_markers[$count]['data'] = fread($this->_fp, $length);
 		} else {
 		    $this->_markers[$count]['data'] = '';
 		}
@@ -1564,7 +1565,8 @@ class JPEG // extends PEAR
         }
 
         if (!isset($this->_info['exif'])) {
-            return false;
+            $false = false;
+            return $false;
         }
 
         $data = "Exif\0\0";
@@ -2611,7 +2613,7 @@ class JPEG // extends PEAR
      *
      * @return array  an array with known tags; key is the tag number, value is the tag name
      */
-    function _iptcTagNames()
+    function &_iptcTagNames()
     {
         $tags = array();
         $tags[0x05] = 'ObjectName'; // 64 bytes max
@@ -2673,7 +2675,8 @@ class JPEG // extends PEAR
     function & _iptcNameTags()
     {
         $tags = $this->_iptcTagNames();
-        return $this->_names2Tags($tags);
+        $ret = $this->_names2Tags($tags);
+        return $ret;
     }
 
     /**
@@ -2856,7 +2859,8 @@ class JPEG // extends PEAR
             $length = strlen($data) - $pos;
         }
 
-        return substr($data, $pos, $length);
+        $ret = substr($data, $pos, $length);
+        return $ret;
     }
 
     /*************************************************************/

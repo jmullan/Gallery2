@@ -1330,7 +1330,7 @@ class ADORecordset_oci8 extends ADORecordSet {
 				if (ADODB_ASSOC_CASE != 2 || $this->databaseType != 'oci8') break;
 				
 				$ncols = @OCIfetchstatement($this->_queryID, $assoc, 0, $nRows, OCI_FETCHSTATEMENT_BY_ROW);
-				$results =& array_merge(array($this->fields),$assoc);
+				$results = array_merge(array($this->fields),$assoc);
 				return $results;
 			
 			default:

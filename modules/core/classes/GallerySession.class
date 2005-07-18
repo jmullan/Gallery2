@@ -598,12 +598,13 @@ class GallerySession {
      * @param string the key
      * @return string the value or null if it doesn't exist
      */
-    function get($key) {
+    function &get($key) {
 	if (isset($this->_sessionData[$key])) {
 	    return $this->_sessionData[$key];
 	}
 
-	return null;
+	$null = null;
+	return $null;
     }
 
     /**
