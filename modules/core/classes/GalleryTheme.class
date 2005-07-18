@@ -677,9 +677,11 @@ class GalleryTheme extends GalleryPlugin {
 	}
 
 	foreach (array('sidebarBlocks', 'albumBlocks', 'photoBlocks') as $blockKey) {
-	    if (isset($theme['params'][$blockKey])) {
-		$theme['params'][$blockKey] = unserialize($theme['params'][$blockKey]);
+	    if (!isset($theme['params'][$blockKey])) {
+		continue;
 	    }
+	    
+	    $theme['params'][$blockKey] = unserialize($theme['params'][$blockKey]);
 
 	    $seen = array();
 	    foreach ($theme['params'][$blockKey] as $block) {
