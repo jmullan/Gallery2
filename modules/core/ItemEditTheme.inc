@@ -218,10 +218,7 @@ class ItemEditTheme extends ItemEditPlugin {
 	$ItemEditTheme['theme']['name'] = $theme->getName();
 	$ItemEditTheme['theme']['l10Domain'] = $theme->getL10Domain();
 
-	$urlGenerator =& $gallery->getUrlGenerator();
-	$template->javascript(
-	    $urlGenerator->generateUrl(array('href' => 'lib/javascript/BlockSelectWidget.js')));
-
+	$template->javascript('lib/javascript/BlockSelectWidget.js');
 	$template->setVariable('ItemEditTheme', $ItemEditTheme);
 	$template->setVariable('controller', 'core.ItemEditTheme');
 	return array(GalleryStatus::success(), 'modules/core/templates/ItemEditTheme.tpl');

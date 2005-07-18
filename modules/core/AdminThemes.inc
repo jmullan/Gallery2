@@ -323,7 +323,7 @@ class AdminThemesView extends GalleryView {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
 	    /* Detect and remove old themes which not even had a setId() in their constructor */
 	    $getId = $theme->getId();
 	    if (empty($getId)) {
@@ -508,10 +508,7 @@ class AdminThemesView extends GalleryView {
 		}
 
 		if (isset($settingTypes['block-list'])) {
-		    $urlGenerator =& $gallery->getUrlGenerator();
-		    $template->javascript(
-			$urlGenerator->generateUrl(
-			    array('href' => 'lib/javascript/BlockSelectWidget.js')));
+		    $template->javascript('lib/javascript/BlockSelectWidget.js');
 		}
 	    }
 	}
