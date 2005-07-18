@@ -16,7 +16,7 @@
   <table width="100%" cellspacing="0" cellpadding="0">
     <tr>
       <td id="progressDone" style="display: inline-block; width:0%">&nbsp;</td>
-      <td id="progressToGo" style="display: inline-block; width:100%; border-left: none')">&nbsp;</td>
+      <td id="progressToGo" style="display: inline-block; width:100%; border-left: none">&nbsp;</td>
     </tr>
   </table>
 
@@ -24,7 +24,7 @@
     &nbsp;
   </p>
 
-  <p id="progressMemoryInfo" style="position: absolute; top: 0px; right: 15px;">
+  <p id="progressMemoryInfo" style="position: absolute; top: 0px; right: 15px">
     &nbsp;
   </p>
 
