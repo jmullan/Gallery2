@@ -20,7 +20,7 @@
       {/foreach}
     </select>
   </div>
-  {else}
+  {elseif count($links) > 1}
   <div class="{$class}">
     {foreach from=$links item=link}
     <a href="{g->url params=$link.params}" class="gbAdminLink {g->linkid urlParams=$link.params}">{$link.text}</a>
