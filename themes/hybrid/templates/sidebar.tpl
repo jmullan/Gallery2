@@ -83,4 +83,9 @@
   {foreach from=$theme.params.sidebarBlocks item=block}
     {g->block type=$block.0 params=$block.1 class="gbBlock"}
   {/foreach}
+
+  {* Our emergency edit link, if the user all blocks containing edit links *}
+  {g->block type="core.EmergencyEditItemLink" class="gbBlock"
+            checkSidebarBlocks=true
+            checkAlbumBlocks=true}
 </div>

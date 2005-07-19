@@ -93,6 +93,10 @@
 
         {g->block type="core.GuestPreview" class="gbBlock"}
 
+        {* Our emergency edit link, if the user all blocks containing edit links *}
+	{g->block type="core.EmergencyEditItemLink" class="gbBlock"
+                  checkSidebarBlocks=true
+                  checkPhotoBlocks=true}
       </div>
     </td>
   </tr>

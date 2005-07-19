@@ -44,6 +44,23 @@ class CoreCallbacks {
 	    $block['core']['LanguageSelector'] =
 		array('list' => $languageList, 'language' => $language);
 	    return GalleryStatus::success();
+
+	case 'ShouldShowEmergencyEditItemLink':
+	    $theme =& $smarty->_tpl_vars['theme'];
+	    $block['core']['ShouldShowEmergencyEditItemLink'] = true;
+	    foreach (array('checkSidebarBlocks' => 'sidebarBlocks',
+			   'checkAlbumBlocks' => 'albumBlocks',
+			   'checkPhotoBlocks' => 'photoBlocks')
+		     as $key => $value) {
+		if (!empty($params[$key])) {
+		    foreach ($theme['params'][$value] as $entry) {
+			if ($entry[0] == 'core.ItemLinks') {
+			    $block['core']['ShouldShowEmergencyEditItemLink'] = false;
+			    break 2;
+			}
+		    }
+		}
+	    }
 	}
 
 	return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
