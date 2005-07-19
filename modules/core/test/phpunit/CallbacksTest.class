@@ -1,0 +1,144 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+GalleryCoreApi::relativeRequireOnce('modules/core/Callbacks.inc');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GallerySmarty.class');
+
+/**
+ * Test module callbacks
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class CallbacksTest extends GalleryTestCase {
+
+    function setUp() {
+	parent::setUp();
+	$this->_callback = new CoreCallbacks();
+	$this->_smarty = new CoreCallbacks();
+    }
+
+    function testLoadLanguageSelector() {
+	global $gallery;
+	$translator =& $gallery->getTranslator();
+	$supportedLanguages = $translator->getSupportedLanguages();
+
+	$ret = $this->_callback->callback(array(), $this->_smarty, 'LoadLanguageSelector');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$LanguageSelector = $this->_smarty->_tpl_vars['block']['core']['LanguageSelector'];
+
+	list ($language, $countryList) = each($supportedLanguages);
+	list ($country, $countryData) = each($countryList);
+	$this->assertEquals(
+	    $countryData['description'],
+	    $LanguageSelector['list'][$language . '_' . $country]);
+
+	list ($ret, $activeLanguageCode) = $gallery->getActiveLanguageCode();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($activeLanguageCode, $LanguageSelector['language']);
+    }
+
+    function testShouldShowEmergencyEditItemLink1() {
+	$this->_smarty->_tpl_vars['theme']['params'] = array(
+	    'sidebarBlocks' => array(),
+	    'albumBlocks' => array(),
+	    'photoBlocks' => array());
+	$ret = $this->_callback->callback(array('checkSidebarBlocks' => true),
+					  $this->_smarty,
+					  'ShouldShowEmergencyEditItemLink');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(
+	    true,
+	    $this->_smarty->_tpl_vars['block']['core']['ShouldShowEmergencyEditItemLink'],
+	    'we should be showing the link');
+    }
+
+    function testShouldShowEmergencyEditItemLink2() {
+	$this->_smarty->_tpl_vars['theme']['params'] = array(
+	    'sidebarBlocks' => array(array('core.ItemLinks', array())),
+	    'albumBlocks' => array(),
+	    'photoBlocks' => array());
+	$ret = $this->_callback->callback(array('checkSidebarBlocks' => true),
+					  $this->_smarty,
+					  'ShouldShowEmergencyEditItemLink');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(
+	    false,
+	    $this->_smarty->_tpl_vars['block']['core']['ShouldShowEmergencyEditItemLink'],
+	    'we should not be showing the link');
+    }
+
+    function testShouldShowEmergencyEditItemLink3() {
+	$this->_smarty->_tpl_vars['theme']['params'] = array(
+	    'sidebarBlocks' => array(),
+	    'albumBlocks' => array(array('core.ItemLinks', array())),
+	    'photoBlocks' => array(array('core.ItemLinks', array())));
+	$ret = $this->_callback->callback(
+	    array('checkSidebarBlocks' => true, 'checkAlbumBlocks' => true),
+	    $this->_smarty,
+	    'ShouldShowEmergencyEditItemLink');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(
+	    false,
+	    $this->_smarty->_tpl_vars['block']['core']['ShouldShowEmergencyEditItemLink'],
+	    'we should not be showing the link');
+    }
+
+    function testShouldShowEmergencyEditItemLink4() {
+	$this->_smarty->_tpl_vars['theme']['params'] = array(
+	    'sidebarBlocks' => array(),
+	    'albumBlocks' => array(array('core.ItemLinks', array())),
+	    'photoBlocks' => array(array('core.ItemLinks', array())));
+	$ret = $this->_callback->callback(array('checkSidebarBlocks' => true),
+					  $this->_smarty,
+					  'ShouldShowEmergencyEditItemLink');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(
+	    true,
+	    $this->_smarty->_tpl_vars['block']['core']['ShouldShowEmergencyEditItemLink'],
+	    'we should be showing the link');
+    }
+}
+?>

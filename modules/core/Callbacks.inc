@@ -61,6 +61,8 @@ class CoreCallbacks {
 		    }
 		}
 	    }
+	    return GalleryStatus::success();
+
 	}
 
 	return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
