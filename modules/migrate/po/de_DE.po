@@ -1,39 +1,40 @@
 # de_DE.po,v
-# 
+#
 # Gallery - a web based photo album viewer and editor
 # Copyright (C) 2000-2005 Bharat Mediratta
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or (at
 # your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-# 
+#
 # Previous translators (as far as known, add yourself here, please):
 # - Jens Tkotz <jens@peino.de>
 # - Ernesto Baschny <ernst@baschny.de>
 # - Frederik Kunz <frederik.kunz@web.de>
 # - Georg Rehfeld <rehfeld@georg-rehfeld.de>
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: Gallery: Migrate 1.0\n"
 "POT-Creation-Date: 2003-10-19 05:10+0200\n"
-"PO-Revision-Date: 2005-05-14 13:11+0100\n"
+"PO-Revision-Date: 2005-07-12 15:28+0000\n"
 "Last-Translator: Frederik Kunz <frederik.kunz@web.de>\n"
 "Language-Team: German <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: KBabel 1.10.1\n"
 
 msgid "Importing Users"
 msgstr "Importiere Benutzer"
@@ -61,10 +62,10 @@ msgid "Gallery 1"
 msgstr "Gallery 1"
 
 msgid "G1-&gt;G2 Mapping"
-msgstr ""
+msgstr "G1-&gt;G2 Umleitung"
 
 msgid "G1 path"
-msgstr ""
+msgstr "G1-Pfad"
 
 #, c-format
 msgid ""
@@ -72,6 +73,9 @@ msgid ""
 "have run a G1 import with the URL redirect option selected. Otherwise follow "
 "instructions in %sMigrate Site Admin%s."
 msgstr ""
+"G1-URL-Umleitung. Verwenden Sie das nur, wenn G2 dort installiert wird, wo "
+"vorher G1 lag und Sie die URL-Umleitungsfunktion beim Import ausgewählt "
+"haben. Folgen Sie ansonsten der Anleitung unter %sMigrate Site Admin%s."
 
 msgid "Select Albums and Users"
 msgstr "Wählen Sie die Alben und Benutzer"
@@ -338,7 +342,6 @@ msgstr "Um die URL-Umleitung des Apache-Webservers zu aktivieren:"
 msgid "Ensure the %s Apache module is enabled."
 msgstr "Stellen Sie sicher, dass das %s-Modul in Ihrem Apache aktiviert ist."
 
-#, fuzzy
 msgid ""
 "Edit or create a file called <tt>.htaccess</tt> in your Gallery1 directory "
 "and add the text shown below to the file. Remove G1 rewrite rules from an "
@@ -349,10 +352,12 @@ msgid ""
 msgstr ""
 "Verändern oder erzeugen Sie eine Datei namens <tt>.htaccess</tt> in Ihrem "
 "Gallery1-Ordner und fügen Sie den unten dargestellten Text in die Datei ein. "
-"Dies funktioniert auch in Ihrem Gallery2-Ordner, wenn G2 in dem Ordner "
-"installiert wurde, in dem sich zuvor G1 befand."
+"Entfernen Sie dabei eventuell bereits vorhandene Umleitungs-Regeln.Die "
+"Umleitung funktioniert auch in Ihrem Gallery2-Ordner, wenn G2 in dem Ordner "
+"installiert wurde, in dem sich zuvor G1 befand. Wenn Sie jedoch das G2-Modul "
+"'kurze URLs' verwenden, dann aktuvieren Sie die G1-Umleitungs-Regel in "
+"diesem Modul und nicht den hier dargestellten Block."
 
-#, fuzzy
 msgid ""
 "Add the same <tt>.htaccess</tt> block in the Gallery1 albums directory if "
 "you also wish to redirect links to image files and album directories. Note "
@@ -361,7 +366,9 @@ msgid ""
 msgstr ""
 "Fügen Sie den gleichen <tt>.htaccess</tt>-Block in Ihren Gallery 1 \"albums"
 "\"-Ordner ein, wenn Sie auch Verweise zu Bilddateien und Albenordnern "
-"umleiten willen."
+"umleiten wollen. Bitte beachten Sie, dass diese Weiterleitungen erst aktiv "
+"werden, nach dem die G1-Bilder entfernt oder verschoben wurden. Wenn Sie "
+"jedoch die Zeile mit !-f weglassen, wird so oder so umgeleitet."
 
 msgid ""
 "If G2 is installed in the path where G1 used to exist, you will need to "
@@ -382,6 +389,9 @@ msgid ""
 "Copy all or part of an existing Gallery 1 installation into your Gallery 2.  "
 "It won't modify your Gallery 1 data in any way."
 msgstr ""
+"Vollständige oder teilweise Kopie einer bestehenden Gallery 1 Installation "
+"in Ihre Gallery 2. Dies wird Ihre Daten in der Gallery 1 in keinster Weise "
+"verändern."
 
 #, c-format
 msgid ""
@@ -394,12 +404,11 @@ msgstr ""
 "Besuchen Sie die <a href=\"%s\">Modul-Administration</a>, um ein Graphik-"
 "Werkzeug zu aktivieren."
 
-#, fuzzy
 msgid "Path to Gallery 1 albums directory"
-msgstr "Migrieren Sie Ihre Alben aus Gallery 1 nach Gallery 2"
+msgstr "Pfad zum Gallery 1 'albums'-Ordner"
 
 msgid "Example: /var/www/albums"
-msgstr ""
+msgstr "Beispiel: /var/www/albums"
 
 msgid "You did not enter a path."
 msgstr "Sie haben keinen Pfad angegeben"
@@ -412,6 +421,10 @@ msgid ""
 "is installed correctly by adding a photo through the Gallery 1 web "
 "interface.  Make sure you resolve any errors you see there first."
 msgstr ""
+"<b>Achtung:</b> Bevor sie irgendwelche Daten importieren sollten Sie sicher "
+"stellen, dass Ihre Gallery 1 korrekt installiert ist indem Sie ein Photo "
+"über die Gallery 1 Weboberfläche hinzufügen.  Beheben Sie unbedingt zuerst "
+"alle Fehler die Ihnen hierbei begegnen."
 
 msgid "Recently Used Paths"
 msgstr "Zuletzt benutzte Pfade"
@@ -438,41 +451,3 @@ msgstr "Alle löschen"
 
 msgid "Map entries deleted successfully"
 msgstr "Einträge erfolgreich entfernt"
-
-#~ msgid ""
-#~ "This operation takes data (images, albums, users, etc.) from "
-#~ "<strong>Gallery 1</strong> and brings it into <strong>Gallery 2</strong>."
-#~ msgstr ""
-#~ "Dieser Vorgang übernimmt Daten (Bilder, Alben, Benutzer, usw.) aus "
-#~ "<strong>Gallery 1</strong> in <strong>Gallery 2</strong>."
-
-#~ msgid ""
-#~ "Before you migrate any data you must try adding an album and image "
-#~ "through the main gallery interface first.  This will show you if your "
-#~ "gallery is correctly set up."
-#~ msgstr ""
-#~ "Bevor sie mit der Migration von Daten beginnen, sollten Sie versuchen, "
-#~ "ein Album und ein Bild über die Hauptoberfläche Ihrer Gallery "
-#~ "hinzuzufügen. Dies wird zeigen, ob Ihre Gallery richtig aufgesetzt ist."
-
-#~ msgid ""
-#~ "This module is unfinished.  It should not harm your Gallery 1 data, but "
-#~ "use it at your own risk."
-#~ msgstr ""
-#~ "Dieses Modul ist noch nicht fertig. Es sollte Ihre G1-Daten nicht "
-#~ "verletzen, die Benutzung ist dennoch auf eigene Gefahr."
-
-#~ msgid ""
-#~ "This process will copy data from an existing Gallery 1 installation.  It "
-#~ "won't modify your Gallery 1 data in any way.  You must enter the path to "
-#~ "your Gallery 1 <i>albums</i> directory.  If you enter the wrong path, "
-#~ "we'll let you know so it's safe to experiment.  Example: <i>/path/to/"
-#~ "albums</i>"
-#~ msgstr ""
-#~ "Dieses Modul wird Ihre G1-Daten importieren. Ihre Gallery1 wird in keiner "
-#~ "Weise verändert. Sie müssen den Pfad zum G1 <i>albums</i>-Ordner "
-#~ "angeben.  Falls der Pfad falsch ist, erhalten Sie eine Meldung. Beispiel: "
-#~ "<i>/pfad/zu/albums</i>"
-
-#~ msgid "Path"
-#~ msgstr "Pfad"
