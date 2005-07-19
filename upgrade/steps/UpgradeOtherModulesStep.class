@@ -35,8 +35,9 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 	$templateData['stackTrace'] = '';
 
         $template = new StatusTemplate();
-        $template->renderHeader();
-        $template->renderStatusBlock();
+
+        $template->renderHeader(true);
+	
         if (isset($_REQUEST['module'])) {
             $totalPlugins = count($_REQUEST['module']);
             $currentPlugin = 0;
@@ -144,7 +145,7 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 	    }
 	}
         $template->hideStatusBlock();
-        $template->renderBodyAndFooter($templateData);
+        $template->renderBodyAndFooter($templateData, true);
     }
 
     function loadTemplateData(&$templateData) {

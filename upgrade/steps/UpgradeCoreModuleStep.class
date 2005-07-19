@@ -69,10 +69,9 @@ class UpgradeCoreModuleStep extends UpgradeStep {
 	$templateData['canChmod'] = strncasecmp(PHP_OS, 'win', 3);
 
 	$template = new StatusTemplate();
-	$template->renderHeader();
-	$template->renderStatusBlock();
 
 	if (isset($_POST['confirm'])) {
+	    $template->renderHeader(true);
 	    /*
 	     * Do the upgrade in bootstrap mode so that we avoid going to the
 	     * database for anything that's not vital.
@@ -99,7 +98,10 @@ class UpgradeCoreModuleStep extends UpgradeStep {
 		$this->setComplete(true);
 		$this->_performedUpgrade = true;
 	    }
+	    $template->hideStatusBlock();
+	    $template->renderBodyAndFooter($templateData, true);
 	} else {
+	    $template->renderHeader();
 	    if ($core->getVersion() != $versions['core']) {
 		$templateData['bodyFile'] = 'UpgradeCoreModuleRequest.html';
 		$this->setComplete(false);
@@ -108,10 +110,8 @@ class UpgradeCoreModuleStep extends UpgradeStep {
 		    ? 'UpgradeCoreModuleSuccess.html' : 'UpgradeCoreModuleUpToDate.html';
 		$this->setComplete(true);
 	    }
+	    $template->renderBodyAndFooter($templateData);
 	}
-
-	$template->hideStatusBlock();
-	$template->renderBodyAndFooter($templateData);
     }
 }
 ?>

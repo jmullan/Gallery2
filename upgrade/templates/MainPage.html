@@ -9,10 +9,67 @@
 
   <body<?php global $translator; if (isset($translator)
 		 && $translator->isRightToLeft()) print ' style="direction:rtl"' ?>>
-    <table id="box" cellspacing="0">
+    <div id="box">
+<?php 
+/*
+ * This page is the main upgrade template. It shows a header, the navigation menu (overview over all upgrade
+ * steps with links), the body of the current step by including the corresponding template, a "Continue to
+ * step x" link, and an upgrade status bar.
+ * In the UpgradeCoreModule / UpgradeOtherModule steps, it shows a progress bar instead of the navigation 
+ * menu. 
+ * Note: The page is divided into two <table>s because Internet Explorer doesn't start rendering a table  
+ * before it receives the closing </table> tag. If the whole page was in a single <table>, IE would not
+ * display the progress bar at all (because as soon as the progress bar reaches 100%, we hide it and display
+ * a success message).
+ */
+ ?>
+    <table class="boxTable" cellspacing="0">
       <tr><td id="header" colspan="2">
 	<img src="<?php generateUrl('images/g2Logo_upgrade_head.png') ?>" alt="Gallery Upgrader"/>
       </td></tr>
+
+<?php if (isset($templateData['MainPage']['showStatusBlock'])): ?>
+<tr><td class="main">
+<div id="MainPageStatus_statusBlock">
+  <p>
+    <h3> <span id="MainPageStatus_title">&nbsp;</span> </h3>
+  </p>
+
+  <p>
+    <h4> <span id="MainPageStatus_description">&nbsp;</span> </h4>
+  </p>
+
+  <table width="100%" cellspacing="0" cellpadding="0">
+    <tr>
+      <td id="MainPageStatus_progressMade" class="progressMade" style="display: inline-block; width:0%">&nbsp;</td>
+      <td id="MainPageStatus_progressToGo" class="progressToGo" style="display: inline-block; width:100%; border-left: none">&nbsp;</td>
+    </tr>
+  </table>
+</div>
+<script type="text/javascript">
+  // <![CDATA[
+  var saveToGoDisplay = document.getElementById('MainPageStatus_progressToGo').style.display;
+  function updateStatus(title, description, percentComplete) {
+    document.getElementById('MainPageStatus_title').innerHTML = title;
+    document.getElementById('MainPageStatus_description').innerHTML = description;
+
+    var progressMade = Math.round(percentComplete * 100);
+    var progressToGo = document.getElementById('MainPageStatus_progressToGo');
+
+    if (progressMade == 100) {
+      progressToGo.style.display = 'none'; 
+    } else {
+      progressToGo.style.display = saveToGoDisplay;
+      progressToGo.style.width = (100 - progressMade) + "%";
+    }
+
+    document.getElementById('MainPageStatus_progressMade').style.width = progressMade + "%"
+  }
+  // ]]>
+</script>
+</td></tr>
+</table>
+<?php else: ?>
       <tr><td id="navbar"><div>
 	<table cellspacing="0">
 	  <tr><td class="heading" colspan="2">
@@ -56,46 +113,8 @@
 	  </td></tr>
 	</table>
       </div></td>
-      <td id="main">
+      <td class="main">
 <?php endif; ?>
-<?php if (isset($templateData['MainPage']['showStatusBlock'])): ?>
-<script type="text/javascript">
-  // <![CDATA[
-  function updateStatus(title, description, percentComplete) {
-    document.getElementById('MainPageStatus_title').innerHTML = title;
-    document.getElementById('MainPageStatus_description').innerHTML = description;
-
-    var progressMade = Math.round(percentComplete * 100);
-    var progressToGo = document.getElementById('MainPageStatus_progressToGo');
-
-    if (progressMade == 100) {
-      progressToGo.style.display = 'none';
-    } else {
-      progressToGo.style.display = 'inline-block';
-      progressToGo.style.width = (100 - progressMade) + "%";
-    }
-
-    document.getElementById('MainPageStatus_progressMade').style.width = progressMade + "%"
-  }
-  // ]]>
-</script>
-
-<div id="MainPageStatus_statusBlock">
-  <p>
-    <h3> <span id="MainPageStatus_title">&nbsp;</span> </h3>
-  </p>
-
-  <p>
-    <h4> <span id="MainPageStatus_description">&nbsp;</span> </h4>
-  </p>
-
-  <table width="100%" cellspacing="0" cellpadding="0">
-    <tr>
-      <td id="MainPageStatus_progressMade" class="progressMade" style="width:0%">&nbsp;</td>
-      <td id="MainPageStatus_progressToGo" class="progressToGo" style="width:100%; border-left: none">&nbsp;</td>
-    </tr>
-  </table>
-</div>
 <?php endif; ?>
 
 <?php if (isset($templateData['MainPage']['hideStatusBlock'])): ?>
@@ -107,6 +126,11 @@
 <?php endif; ?>
 
 <?php if (isset($templateData['MainPage']['showBodyAndFooter'])): ?>
+  <?php if (isset($templateData['MainPage']['showStatusPageBodyAndFooter'])): ?>
+    <table class="boxTable" cellspacing="0">
+      <tr><td class="main">
+  <?php endif; ?>
+
 	<?php if (!empty($templateData['errors'])): ?>
 	<h2 class="error">
 	  <?php foreach ($templateData['errors'] as $error): ?>
@@ -164,6 +188,7 @@
 	<?php printf(_('Upgrade %d%% complete'), $templateData['percentComplete']) ?>
       </td></tr>
     </table>
+    </div>
     <div id="footer">
       <?php print _('Gallery: <strong>your photos</strong> on <strong>your website</strong>') ?>
       &raquo; <a target="_blank" href="http://gallery.sourceforge.net/">gallery.sourceforge.net</a>
