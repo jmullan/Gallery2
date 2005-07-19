@@ -33,7 +33,7 @@ if (!empty($_SERVER['SERVER_NAME'])) {
     exit(1);
 }
 
-$exts = '(class|php|inc|tpl|html)';
+$exts = '(class|php|inc|tpl|css|html)';
 
 foreach ($_SERVER['argv'] as $moduleDir) {
     find($moduleDir);
