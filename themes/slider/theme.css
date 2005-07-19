@@ -421,9 +421,12 @@ div.gbTabBar span {
 #gallery.IE div.gbTabBar span {
     display: inline-block;   /* IE loses padding-left on wrapped inline nowrap element */
     margin-bottom: 1px;      /* ..and then adds padding differently with inline-block.. */
+    padding-top: 0;  padding-bottom: 0;
 }
 #gallery.IE div.gbTabBar { padding-bottom: 0; }
-#gallery.IE div.gbTabBar span.giSelected { margin-bottom: 0; }
+#gallery.IE div.gbTabBar span.giSelected { margin-bottom: 0; padding-bottom: 0; }
+#gallery.IE div.gbTabBar span span { padding-bottom: 5px; padding-top: 6px; }
+#gallery.IE div.gbTabBar span.giSelected span { margin-bottom: 0; padding-bottom: 7px; }
 
 #gallery div.gbTabBar span span {
     display: inline;
