@@ -52,7 +52,7 @@ class SecureStep extends InstallStep {
 
     function isRelevant() {
 	/* This step isn't relevant on Windows */
-	return (strtolower(PHP_OS) != 'winnt');
+	return (strncasecmp(PHP_OS, 'win', 3) != 0);
     }
 }
 ?>

@@ -51,7 +51,7 @@ function GalleryInitFirstPass($params=array()) {
     GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryView.class');
     GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryModule.class');
 
-    if (strtolower(PHP_OS) == 'winnt') {
+    if (!strncasecmp(PHP_OS, 'win', 3)) {
 	GalleryCoreApi::relativeRequireOnce(
 	    'modules/core/classes/GalleryPlatform/WinNtPlatform.class');
 	$platform = new WinNtPlatform();

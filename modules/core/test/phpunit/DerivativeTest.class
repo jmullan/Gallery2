@@ -375,7 +375,7 @@ class DerivativeTest extends GalleryTestCase {
 	$this->assertEquals(null, $derivative->getIsBroken());
 
 	/* Use a degenerate platform to make it fail when it tries to copy the broken image */
-	if (strtolower(PHP_OS) == 'winnt') {
+	if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
 	    $gallery->setPlatform(new DerivativeTestWinNtPlatform());
 	} else {
 	    $gallery->setPlatform(new DerivativeTestUnixPlatform());

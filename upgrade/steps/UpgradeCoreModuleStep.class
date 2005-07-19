@@ -66,7 +66,7 @@ class UpgradeCoreModuleStep extends UpgradeStep {
 	$platform = $gallery->getPlatform();
 	$configFilePath = GALLERY_CONFIG_DIR . '/config.php';
 	$templateData['isConfigWriteable'] = $platform->is_writeable($configFilePath);
-	$templateData['canChmod'] = strtolower(PHP_OS) != 'winnt';
+	$templateData['canChmod'] = strncasecmp(PHP_OS, 'win', 3);
 
 	$template = new StatusTemplate();
 	$template->renderHeader();
