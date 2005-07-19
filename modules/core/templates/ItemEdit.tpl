@@ -38,16 +38,16 @@
 <div class="gbTabBar">
   {foreach from=$ItemEdit.plugins item=plugin}
     {if $plugin.isSelected}
-      <span class="giSelected"><div>
+      <span class="giSelected"><span>
 	{$plugin.title}
-      </div></span>
+      </span></span>
     {else}
-      <span><div>
+      <span><span>
 	<a href="{g->url arg1="view=core.ItemAdmin" arg2="subView=core.ItemEdit"
 	 arg3="itemId=`$ItemAdmin.item.id`" arg4="editPlugin=`$plugin.id`"}">
 	  {$plugin.title}
 	</a>
-      </div></span>
+      </span></span>
     {/if}
   {/foreach}
 </div>

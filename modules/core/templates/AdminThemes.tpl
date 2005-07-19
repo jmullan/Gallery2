@@ -39,50 +39,38 @@
 
 <div class="gbTabBar">
   {if ($AdminThemes.mode == 'config')}
-    <span class="giSelected">
-      <div>
+    <span class="giSelected"><span>
 	{g->text text="All Themes"}
-      </div>
-    </span>
+    </span></span>
   {else}
-    <span>
-      <div>
-	<a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminThemes"
-			 arg3="mode=config"}">{g->text text="All Themes"}</a>
-      </div>
-    </span>
+    <span><span>
+      <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminThemes"
+		       arg3="mode=config"}">{g->text text="All Themes"}</a>
+    </span></span>
   {/if}
 
   {if ($AdminThemes.mode == 'defaults')}
-    <span class="giSelected">
-      <div>
-	{g->text text="Defaults"}
-      </div>
-    </span>
+    <span class="giSelected"><span>
+      {g->text text="Defaults"}
+    </span></span>
   {else}
-    <span>
-      <div>
-	<a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminThemes"
-			 arg3="mode=defaults"}">{g->text text="Defaults"}</a>
-      </div>
-    </span>
+    <span><span>
+      <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminThemes"
+		       arg3="mode=defaults"}">{g->text text="Defaults"}</a>
+    </span></span>
   {/if}
 
   {foreach from=$AdminThemes.themes key=themeId item=theme}
   {if $theme.active}
     {if ($AdminThemes.mode == 'editTheme') && ($AdminThemes.themeId == $themeId)}
-      <span class="giSelected">
-	<div>
-	  {g->text text=$theme.name l10Domain=$theme.l10Domain}
-	</div>
-      </span>
+      <span class="giSelected"><span>
+	{g->text text=$theme.name l10Domain=$theme.l10Domain}
+      </span></span>
     {else}
-      <span>
-	<div>
-	  <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminThemes"
-			   arg3="mode=editTheme" arg4="themeId=$themeId"}">{g->text text=$theme.name l10Domain=$theme.l10Domain}</a>
-	</div>
-      </span>
+      <span><span>
+	<a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminThemes"
+			 arg3="mode=editTheme" arg4="themeId=$themeId"}">{g->text text=$theme.name l10Domain=$theme.l10Domain}</a>
+      </span></span>
     {/if}
   {/if}
   {/foreach}
