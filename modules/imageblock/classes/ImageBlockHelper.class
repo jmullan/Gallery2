@@ -85,7 +85,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    $ret = ImageBlockHelper::_addBlock($blocks,
 		   ($heading && isset($headings[$block])) ? $module->translate($headings[$block])
 							  : '',
-		   $itemType, $order, $parentId, $fullSize);
+		   $itemType, $order, $parentId, $fullSize,
+		   isset($params['userId']) ? $params['userId'] : null);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -132,15 +133,18 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
      * @static
      * @access private
      */
-    function _addBlock(&$blocks, $title, $itemType, $order, $parentId=null, $fullSize=false) {
-	$userId = null;
+    function _addBlock(&$blocks, $title, $itemType, $order,
+		       $parentId=null, $fullSize=false, $userId=null) {
 	switch ($order) {
 	case 'specific':
 	    if (!isset($parentId)) {
 		return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	    }
-	    $ret = GalleryCoreApi::assertHasItemPermission($parentId, 'core.view');
+	    list ($ret, $ok) = GalleryCoreApi::hasItemPermission($parentId, 'core.view', $userId);
 	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    if (!$ok) {
 		/* Ignore permission error.. just don't add a block */
 		return GalleryStatus::success();
 	    }
@@ -180,8 +184,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 		}
 	    }
 	    if (isset($itemId)) {
-		$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.view');
-		if ($ret->isError()) {
+		list ($ret, $ok) = GalleryCoreApi::hasItemPermission($itemId, 'core.view', $userId);
+		if ($ret->isError() || !$ok) {
 		    /* Just pick a new item if this one is inaccessible or missing */
 		} else {
 		    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);

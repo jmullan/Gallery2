@@ -57,13 +57,16 @@ class ImageBlockCallbacks {
 		$params['show'] = join('|', array_keys($showMap));
 	    }
 
+	    if (isset($vars['theme']['actingUserId'])) {
+		/* Support guest-preview mode */
+		$params['userId'] = $vars['theme']['actingUserId'];
+	    }
+
 	    /*
 	     * ImageBlockHelper expects a GalleryTemplate, but Smarty callbacks don't provide
 	     * one, so create a temporary wrapper.
-	     * TODO: rework this so we don't create a new smarty instance (in GalleryTemplate
-	     *       constructor) only to replace it with our current instance
 	     */
-	    $template = new GalleryTemplate(dirname(__FILE__));
+	    $template = new GalleryTemplate(dirname(__FILE__), false);
 	    $template->_smarty =& $smarty;
 
 	    /* Remove null parameters */

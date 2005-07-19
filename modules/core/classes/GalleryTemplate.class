@@ -81,14 +81,16 @@ class GalleryTemplate {
     /**
      * Constructor
      */
-    function GalleryTemplate($templateDir) {
+    function GalleryTemplate($templateDir, $initSmarty=true) {
 	global $gallery;
 	$this->_templateDir = $templateDir;
 
 	/* This will be the place to put the compiled templates */
 	$this->_compiledTemplateDir = $gallery->getConfig('data.smarty.templates_c') .
 	    '%%' . sprintf("%u", crc32($templateDir));
-	$this->_smarty = GalleryTemplate::_getSmarty();
+	if ($initSmarty) {
+	    $this->_smarty = GalleryTemplate::_getSmarty();
+	}
     }
 
     /**

@@ -297,6 +297,34 @@ class ImageBlockTest extends GalleryTestCase {
 			    $data['ImageBlockData']['blocks'][0]['id'], 'Photo id');
     }
 
+    function testOverrideUserId() {
+	/* Test override userId (used to support guest-preview mode) */
+	global $gallery;
+	$ret = GalleryCoreApi::removeItemPermissions($this->_photo->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $testUser) = $this->_createRandomUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($testUser);
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_photo->getId(), $testUser->getId(), 'core.all');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$data = $this->_doImageBlockCallback('specificItem', null, $this->_photo->getId());
+	$this->assert(empty($data['ImageBlockData']['blocks']), 'Should be no blocks');
+
+	$data = $this->_doImageBlockCallback(
+	    'specificItem', $testUser->getId(), $this->_photo->getId());
+	$this->assertEquals(1, count($data['ImageBlockData']['blocks']), 'One block');
+	$itemId = $this->assertBlock($data['ImageBlockData']['blocks'][0]);
+	$this->assertEquals($this->_photo->getId(), $itemId, 'specific item');
+    }
+
     function testPeriodicBlocks() {
 	$data = $this->_doImageBlockCallback('dailyImage');
 	$this->assertEquals(1, count($data['ImageBlockData']['blocks']), 'One block');
@@ -411,10 +439,16 @@ class ImageBlockTest extends GalleryTestCase {
 	$this->assertEquals(array(), $template->_data, 'No block');
     }
 
-    function _doImageBlockCallback($blocks=null) {
+    function _doImageBlockCallback($blocks=null, $userId=null, $itemId=null) {
 	$smarty = new GallerySmarty();
 	$callbacks = new ImageBlockCallbacks();
 	$params = isset($blocks) ? array('blocks' => $blocks) : array();
+	if (isset($userId)) {
+	    $smarty->_tpl_vars['theme']['actingUserId'] = $userId;
+	}
+	if (isset($itemId)) {
+	    $params['itemId'] = $itemId;
+	}
 	$ret = $callbacks->callback($params, $smarty, 'LoadImageBlock');
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
