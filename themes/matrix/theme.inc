@@ -42,9 +42,9 @@ class MatrixTheme extends GalleryTheme {
 	$this->setId('matrix');
 	$this->setName($gallery->i18n('Matrix'));
 	$this->setDescription($gallery->i18n('Standard Gallery2 look and feel'));
-	$this->setVersion('0.9.8');  /* Update upgrade() also */
+	$this->setVersion('0.9.9');  /* Update upgrade() also */
 	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredThemeApi(array(2, 0));
+	$this->setRequiredThemeApi(array(2, 1));
 	$this->setStandardSettings(
 	    array('rows' => 3, 'columns' => 3,
 		  'showImageOwner' => 0, 'showAlbumOwner' => 1,
@@ -63,7 +63,7 @@ class MatrixTheme extends GalleryTheme {
 	$ret = $this->loadCommonTemplateData(
 	    $template, $item, $params,
 	    array('owner', 'viewCount', 'descendentCount', 'parents', 'peers',
-		  'systemLinks', 'itemLinks', 'itemSummaries',
+		  'systemLinks', 'itemLinks', 'itemSummaries', 'permissions',
 		  'itemDetailFiles', 'thumbnails', 'pageNavigator', 'jumpRange'),
 	     $childIds);
 	if ($ret->isError()) {
@@ -184,6 +184,9 @@ class MatrixTheme extends GalleryTheme {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+
+	case '0.9.8':
+	    /* We now require theme API 2.1 */
 
 	case 'end of upgrade path':
 	    break;

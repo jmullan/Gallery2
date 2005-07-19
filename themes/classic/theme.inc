@@ -43,8 +43,8 @@ class ClassicTheme extends GalleryTheme {
 	$this->setId('classic');
 	$this->setName($gallery->i18n('Classic'));
 	$this->setDescription($gallery->i18n('Classic Gallery2 root album look and feel'));
-	$this->setVersion('0.9.1');  /* Update ClassicTheme::upgrade also */
-	$this->setRequiredThemeApi(array(2, 0));
+	$this->setVersion('0.9.2');
+	$this->setRequiredThemeApi(array(2, 1));
 	$this->setRequiredCoreApi(array(6, 4));
 	$this->setStandardSettings(
 	    array('rows' => 10, 'columns' => 1,
@@ -113,7 +113,7 @@ class ClassicTheme extends GalleryTheme {
 	$ret = $this->loadCommonTemplateData(
 	    $template, $item, $params,
 	    array('owner', 'viewCount', 'descendentCount', 'parents', 'peers',
-		  'systemLinks', 'itemLinks', 'itemSummaries',
+		  'systemLinks', 'itemLinks', 'itemSummaries', 'permissions',
 		  'itemDetailFiles', 'thumbnails', 'pageNavigator', 'jumpRange'),
 	     $childIds);
 	if ($ret->isError()) {
