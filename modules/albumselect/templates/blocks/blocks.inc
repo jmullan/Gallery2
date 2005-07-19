@@ -1,8 +1,8 @@
 <?php
 $blocks = array(
     'AlbumTree' => array(
-	'description' => 'Album quick links (DHTML)'),
+	$gallery->i18n('description' => 'Album quick links (DHTML)')),
 
     'AlbumSelect' => array(
-	'description' => 'Album quick links (Dropdown)'));
+	$gallery->i18n('description' => 'Album quick links (Dropdown)')));
 ?>

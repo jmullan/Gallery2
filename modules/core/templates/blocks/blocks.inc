@@ -8,7 +8,7 @@ $blocks = array(
 	'vars' => array(
 	    'useDropdown' => array(
 		'default' => 'true',
-		'description' => 'Use dropdown menu',
+		'description' => $gallery->i18n('Use dropdown menu'),
 		'type' => 'boolean'))),
 
     'LoginBlock' => array(
