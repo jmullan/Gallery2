@@ -14,7 +14,7 @@
 
   {if !empty($showOwner)}
   <span class="owner">
-    {g->text text="Owner: %s" arg1=$item.owner.fullName|default:$item.owner.fullName}
+    {g->text text="Owner: %s" arg1=$item.owner.fullName|default:$item.owner.userName}
   </span>
   {/if}
 
