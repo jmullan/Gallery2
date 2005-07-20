@@ -286,8 +286,12 @@ function _GalleryMain($embedded=false) {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	if (isset($results['redirect'])) {
-	    $redirectUrl = $urlGenerator->generateUrl($results['redirect']);
+	if (isset($results['redirect']) || isset($results['redirectUrl'])) {
+	    if (isset($results['redirectUrl'])) {
+		$redirectUrl = $results['redirectUrl'];
+	    } else {
+		$redirectUrl = $urlGenerator->generateUrl($results['redirect']);
+	    }
 	    return array(GalleryStatus::success(),
 			 _GalleryMain_doRedirect($redirectUrl, $template));
 	}
