@@ -33,7 +33,7 @@ class StatusTemplate {
 	    $templateData['MainPage']['showStatusBlock'] = 1;
 	}
 	include(dirname(__FILE__) . '/templates/MainPage.html');
-    }  
+    }
 
     /**
      * Render a single status message
@@ -61,7 +61,7 @@ class StatusTemplate {
      *
      * @param array the template data
      */
-    function renderBodyAndFooter($templateData, $statusPage=false) {
+    function renderBodyAndFooter($templateData) {
 	global $steps;
 	global $currentStep;
 	global $stepNumber;
@@ -71,9 +71,6 @@ class StatusTemplate {
 	    (int)((100 * ($stepsComplete / (sizeof($steps)-1))) / 5) * 5;
 
 	$templateData['MainPage']['showBodyAndFooter'] = 1;
-	if ($statusPage) {
-	    $templateData['MainPage']['showStatusPageBodyAndFooter'] = 1;
-	}
 	include(dirname(__FILE__) . '/templates/MainPage.html');
     }
 

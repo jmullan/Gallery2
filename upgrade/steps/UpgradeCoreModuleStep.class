@@ -99,7 +99,6 @@ class UpgradeCoreModuleStep extends UpgradeStep {
 		$this->_performedUpgrade = true;
 	    }
 	    $template->hideStatusBlock();
-	    $template->renderBodyAndFooter($templateData, true);
 	} else {
 	    $template->renderHeader();
 	    if ($core->getVersion() != $versions['core']) {
@@ -110,8 +109,9 @@ class UpgradeCoreModuleStep extends UpgradeStep {
 		    ? 'UpgradeCoreModuleSuccess.html' : 'UpgradeCoreModuleUpToDate.html';
 		$this->setComplete(true);
 	    }
-	    $template->renderBodyAndFooter($templateData);
 	}
+
+	$template->renderBodyAndFooter($templateData);
     }
 }
 ?>
