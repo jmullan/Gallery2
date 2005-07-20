@@ -136,21 +136,7 @@ class AdminThemesController extends GalleryController {
 		$redirect['view'] = 'core.SiteAdmin';
 		$redirect['subView'] = 'core.AdminThemes';
 		$redirect['mode'] = 'config';
-	    } else if ($theme->isAdvancedSettings()) {
-		list ($ret, $error, $statusKey) = $theme->handleSettingsRequest($form);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		if (empty($error)) {
-		    /* Redirect upon success */
-		    $redirect['view'] = 'core.SiteAdmin';
-		    $redirect['subView'] = 'core.AdminThemes';
-		    $redirect['mode'] = 'editTheme';
-		    $redirect['themeId'] = $themeId;
-		    $status[$statusKey] = $theme->getName();
-		}
 	    } else if (isset($form['action']['saveTheme'])) {
-
 		/* Get all the possible settings */
 		list ($ret, $settings) = $theme->getSettings(null);
 		if ($ret->isError()) {
@@ -181,12 +167,24 @@ class AdminThemesController extends GalleryController {
 			}
 		    }
 
-		    /* Redirect upon success */
-		    $redirect['view'] = 'core.SiteAdmin';
-		    $redirect['subView'] = 'core.AdminThemes';
-		    $redirect['mode'] = 'editTheme';
-		    $redirect['themeId'] = $themeId;
-		    $status['savedTheme'] = $theme->getName();
+		    if ($theme->isAdvancedSettings()) {
+			list ($ret, $error, $statusKey) = $theme->handleSettingsRequest($form);
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+			if (empty($error)) {
+			    $status[$statusKey] = $theme->getName();
+			}
+		    }
+
+		    if (empty($error)) {
+			/* Redirect upon success */
+			$redirect['view'] = 'core.SiteAdmin';
+			$redirect['subView'] = 'core.AdminThemes';
+			$redirect['mode'] = 'editTheme';
+			$redirect['themeId'] = $themeId;
+			$status['savedTheme'] = $theme->getName();
+		    }
 		} else {
 		    foreach ($validationErrors as $validationKey => $validationMessage) {
 			$error[] = sprintf('form[error][key][%s][invalid]', $validationKey);
@@ -473,11 +471,11 @@ class AdminThemesView extends GalleryView {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		$AdminThemes['customTemplate'] = $tpl;
-	    } else {
-		list ($ret, $AdminThemes['settings']) = $theme->getSettings(null);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
+	    }
+
+	    list ($ret, $AdminThemes['settings']) = $theme->getSettings(null);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    list ($ret, $AdminThemes['availableBlocks']) = $this->loadAvailableBlocks();

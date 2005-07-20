@@ -249,9 +249,10 @@
   {if isset($AdminThemes.customTemplate)}
     {include file="gallery:`$AdminThemes.customTemplate`"
 	     l10Domain=$AdminThemes.themes[$AdminThemes.themeId].l10Domain}
-  {else}
-    {if !empty($AdminThemes.settings)}
-      <table class="gbDataTable">
+  {/if}
+
+  {if !empty($AdminThemes.settings)}
+    <table class="gbDataTable">
       {foreach from=$AdminThemes.settings item=setting}
 	<tr class="{cycle values="gbEven,gbOdd"}">
 	  <td>
@@ -260,7 +261,8 @@
 	  <td>
 	    {if ($setting.type == 'text-field')}
 	      <input type="text" size="{$setting.typeParams.size|default:6}"
-	       name="{g->formVar var="form[key][`$setting.key`]"}" value="{$form.key[$setting.key]}"/>
+	       name="{g->formVar var="form[key][`$setting.key`]"}"
+	       value="{$form.key[$setting.key]}"/>
 	    {elseif ($setting.type == 'single-select')}
 	      <select name="{g->formVar var="form[key][`$setting.key`]"}">
 		{html_options options=$setting.choices selected=$form.key[$setting.key]}
@@ -377,10 +379,9 @@
 	</tr>
 	{/if}
       {/foreach}
-      </table>
-    {else}
-      {g->text text="There are no settings for this theme"}
-    {/if}
+    </table>
+  {elseif !isset($AdminThemes.customTemplate)}
+    {g->text text="There are no settings for this theme"}
   {/if}
 </div>
 

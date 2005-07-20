@@ -10,13 +10,10 @@
   </p>
 
 {if isset($ItemEditTheme.customTemplate)}
+  {include file="gallery:`$ItemEditTheme.customTemplate`" l10Domain=$ItemEditTheme.theme.l10Domain}
+{/if}
 
-  {include file="gallery:`$ItemEditTheme.customTemplate`"
-	   l10Domain=$ItemEditTheme.theme.l10Domain}
-  </div>
-
-{else}
-  {if !empty($ItemEditTheme.settings)}
+{if !empty($ItemEditTheme.settings)}
   <table class="gbDataTable"><tr>
     <th> {g->text text="Setting"} </th>
     <th> {g->text text="Value"} </th>
@@ -104,8 +101,8 @@
 	    <input type="hidden"
 		   onchange="changeSetting('{$settingKey}'); bsw_reInitAdminForm('{$settingKey}');"
 		   id="albumBlockValue_{$setting.key}" size="60"
-		   name="{g->formVar var="form[key][`$setting.key`]"}"
-		   value="{$form.key[$setting.key]}"/>
+		   name="{g->formVar var="form[key][$settingKey]"}"
+		   value="{$form.key.$settingKey}"/>
 
 	    <script type="text/javascript">
 	      // <![CDATA[
@@ -164,9 +161,9 @@
     {/if}
   {/foreach}
   </table>
-  {else}
-    <b> {g->text text="There are no settings for this theme"} </b>
-  {/if}
+{elseif !isset($ItemEditTheme.customTemplate)}
+  <b> {g->text text="There are no settings for this theme"} </b>
+{/if}
 </div>
 
 <script type="text/javascript">
@@ -225,7 +222,6 @@
   {/literal}
   // ]]>
 </script>
-{/if}
 
 <div class="gbBlock gcBackground1">
   <input type="submit" class="inputTypeSubmit"

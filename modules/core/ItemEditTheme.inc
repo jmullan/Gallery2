@@ -50,24 +50,22 @@ class ItemEditTheme extends ItemEditPlugin {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
+	$status = null;
+	$error = $errorMessage = array();
+
 	if ($theme->isAdvancedSettings()) {
 	    list ($ret, $error, $status) = $theme->handleSettingsRequest($form, $item->getId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
-	    return array(GalleryStatus::success(), $error, $status);
 	}
-
-	$status = null;
-	$error = array();
-	$errorMessage = array();
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
-	if (isset($form['action']['save'])) {
+	if (isset($form['action']['save']) && empty($error)) {
 	    /* Validate the settings */
 	    $validationErrors = $theme->validateSettings($form['key']);
 	    if (empty($validationErrors)) {
@@ -152,63 +150,60 @@ class ItemEditTheme extends ItemEditPlugin {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $ItemEditTheme['customTemplate'] = $tpl;
-	    if ($form['formName'] != 'ItemEditTheme') {
-		$form['formName'] = 'ItemEditTheme';
+	}
+
+	/* Get the per-item settings (global + item) */
+	list ($ret, $settings) = $theme->getSettings($item->getId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Fetch the global-only params */
+	list ($ret, $globalParams) =
+	GalleryCoreApi::fetchAllPluginParameters('theme', $theme->getId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	for ($i = 0; $i < count($settings); $i++) {
+	    if (!empty($settings[$i]['typeParams']['packType'])) {
+		$packType = $settings[$i]['typeParams']['packType'];
+		$key = $settings[$i]['key'];
+
+		list ($success, $settings[$i]['value']) =
+		    $theme->unpackSetting($packType, $settings[$i]['value']);
+		list ($success, $globalParams[$key]) =
+		    $theme->unpackSetting($packType, $globalParams[$key]);
+	    }
+	}
+
+	/* Fetch the item-only params */
+	list ($ret, $itemParams) =
+	    GalleryCoreApi::fetchAllPluginParameters('theme', $theme->getId(), $item->getId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if ($form['formName'] != 'ItemEditTheme') {
+	    $form['formName'] = 'ItemEditTheme';
+	    foreach ($settings as $setting) {
+		$key = $setting['key'];
+		$form['key'][$key] = $setting['value'];
+
+		/* If the key doesn't exist in the item params then it's a global setting */
+		$form['useGlobal'][$key] = isset($itemParams[$key]) ? 0 : 1;
 	    }
 	} else {
-	    /* Get the per-item settings (global + item) */
-	    list ($ret, $settings) = $theme->getSettings($item->getId());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    /* Fetch the global-only params */
-	    list ($ret, $globalParams) =
-	    GalleryCoreApi::fetchAllPluginParameters('theme', $theme->getId());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    for ($i = 0; $i < count($settings); $i++) {
-		if (!empty($settings[$i]['typeParams']['packType'])) {
-		    $packType = $settings[$i]['typeParams']['packType'];
-		    $key = $settings[$i]['key'];
-
-		    list ($success, $settings[$i]['value']) =
-			$theme->unpackSetting($packType, $settings[$i]['value']);
-		    list ($success, $globalParams[$key]) =
-			$theme->unpackSetting($packType, $globalParams[$key]);
+	    /* Make sure all checkbox values are defined */
+	    foreach ($settings as $setting) {
+		$key = $setting['key'];
+		if (!isset($form['useGlobal'][$key])) {
+		    $form['useGlobal'][$key] = 0;
 		}
 	    }
-
-	    /* Fetch the item-only params */
-	    list ($ret, $itemParams) =
-		GalleryCoreApi::fetchAllPluginParameters('theme', $theme->getId(), $item->getId());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    if ($form['formName'] != 'ItemEditTheme') {
-		$form['formName'] = 'ItemEditTheme';
-		foreach ($settings as $setting) {
-		    $key = $setting['key'];
-		    $form['key'][$key] = $setting['value'];
-
-		    /* If the key doesn't exist in the item params then it's a global setting */
-		    $form['useGlobal'][$key] = isset($itemParams[$key]) ? 0 : 1;
-		}
-	    } else {
-		/* Make sure all checkbox values are defined */
-		foreach ($settings as $setting) {
-		    $key = $setting['key'];
-		    if (!isset($form['useGlobal'][$key])) {
-			$form['useGlobal'][$key] = 0;
-		    }
-		}
-	    }
-	    $ItemEditTheme['settings'] = $settings;
-	    $ItemEditTheme['globalParams'] = $globalParams;
 	}
+	$ItemEditTheme['settings'] = $settings;
+	$ItemEditTheme['globalParams'] = $globalParams;
 
 	list ($ret, $ItemEditTheme['availableBlocks']) = $this->loadAvailableBlocks();
 	if ($ret->isError()) {
