@@ -90,7 +90,8 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	    $this->assertEquals('this is a subject', $comments[0]->getSubject());
 	    $this->assertEquals($gallery->getActiveUserId(), $comments[0]->getCommenterId());
 	    $this->assertEquals($_SERVER['REMOTE_ADDR'], $comments[0]->getHost());
-	    $this->assert($comments[0]->getDate() >= $this->_startTime && $comments[0]->getDate() <= time());
+	    $this->assert($comments[0]->getDate() >= $this->_startTime &&
+			  $comments[0]->getDate() <= time(), 'date');
 	}
     }
 
@@ -170,10 +171,10 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
 	GalleryUtilities::putRequestVariable('form[action][add]', 1);
-	GalleryUtilities::putRequestVariable('form[subject]', 'this is a subject with <javascript>' .
-					     'evilness</javascript> in it.');
-	GalleryUtilities::putRequestVariable('form[comment]', 'this is a comment with <javascript>' .
-					     'evilness</javascript> in it.');
+	GalleryUtilities::putRequestVariable('form[subject]',
+	    'this is a subject with <javascript>evilness</javascript> in it.');
+	GalleryUtilities::putRequestVariable('form[comment]',
+	    'this is a comment with <javascript>evilness</javascript> in it.');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -223,6 +224,5 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
     }
-
 }
 ?>

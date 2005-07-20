@@ -59,10 +59,11 @@ class ArchiveExtractToolkit extends GalleryToolkit {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
- 
+
 	$cwd = $platform->getcwd();
 	if (!$platform->chdir($destFilename)) {
-	    return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__), null, null);  
+	    return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__),
+			 null, null);
 	}
 	$gallery->guaranteeTimeLimit(60);
 
@@ -71,7 +72,8 @@ class ArchiveExtractToolkit extends GalleryToolkit {
 	    @$platform->chdir($cwd);
 	}
 	if (!$success) {
-	    return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__), null, null);  
+	    return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__),
+			 null, null);
 	}
 
 	return array(GalleryStatus::success(), $mimeType, $context);
