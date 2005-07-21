@@ -26,7 +26,7 @@
                 </p>
                 {/if}
               </td>
-              <td width="30%">
+              <td style="width: 30%">
                 {g->block type="core.ItemInfo"
                           item=$theme.item
                           showDate=true
@@ -190,6 +190,7 @@
 	{g->block type="core.EmergencyEditItemLink" class="gbBlock"
                   checkSidebarBlocks=true
                   checkAlbumBlocks=true}
+      </div>
     </td>
   </tr>
 </table>
