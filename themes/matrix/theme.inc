@@ -105,11 +105,6 @@ class MatrixTheme extends GalleryTheme {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Add in our extra stuff */
-	$theme =& $template->getVariableByReference('theme');
-	$theme['moduleTemplate'] = $templateFile;
-
-	/* Add our header and styles */
 	return array(GalleryStatus::success(), 'theme.tpl');
     }
 
@@ -122,10 +117,6 @@ class MatrixTheme extends GalleryTheme {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
-	/* Add in our extra stuff */
-	$theme =& $template->getVariableByReference('theme');
-	$theme['adminTemplate'] = $templateFile;
 
 	return array(GalleryStatus::success(), 'theme.tpl');
     }

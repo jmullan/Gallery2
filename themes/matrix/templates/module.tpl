@@ -10,7 +10,7 @@
       {g->theme include="sidebar.tpl"}
     </td>
     <td>
-      {include file=$theme.moduleTemplate}
+      {include file="gallery:`$theme.moduleTemplate`" l10Domain=$theme.moduleL10Domain}
     </td>
   </tr>
 </table>

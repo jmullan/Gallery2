@@ -130,8 +130,6 @@ class SliderTheme extends GalleryTheme {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$theme =& $template->getVariableByReference('theme');
-	$theme['moduleTemplate'] = $templateFile;
 	return array(GalleryStatus::success(), 'theme.tpl');
     }
 
@@ -145,8 +143,6 @@ class SliderTheme extends GalleryTheme {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$theme =& $template->getVariableByReference('theme');
-	$theme['adminTemplate'] = $templateFile;
 	return array(GalleryStatus::success(), 'theme.tpl');
     }
 

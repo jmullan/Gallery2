@@ -26,7 +26,7 @@
        * drawing everything.
        *}
       {if $theme.useFullScreen}
-        {include file=$theme.moduleTemplate}
+	{include file="gallery:`$theme.moduleTemplate`" l10Domain=$theme.moduleL10Domain}
       {else}
       <div id="gsHeader">
         <img src="{g->url href="images/galleryLogo_sm.gif"}" width="107" height="48" alt=""/>

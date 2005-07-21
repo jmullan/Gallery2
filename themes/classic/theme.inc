@@ -176,17 +176,11 @@ class ClassicTheme extends GalleryTheme {
      */
     function showModulePage(&$template, $item, $params, $templateFile) {
 	$ret = $this->loadCommonTemplateData(
-	    $template, $item, $params,
-	    array('parents', 'systemLinks'));
+	    $template, $item, $params, array('parents', 'systemLinks'));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Add in our extra stuff */
-	$theme =& $template->getVariableByReference('theme');
-	$theme['moduleTemplate'] = $templateFile;
-
-	/* Add our header and styles */
 	return array(GalleryStatus::success(), 'theme.tpl');
     }
 
@@ -195,15 +189,10 @@ class ClassicTheme extends GalleryTheme {
      */
     function showAdminPage(&$template, $item, $params, $templateFile) {
 	$ret = $this->loadCommonTemplateData(
-	    $template, $item, $params,
-	    array('parents', 'systemLinks'));
+	    $template, $item, $params, array('parents', 'systemLinks'));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
-	/* Add in our extra stuff */
-	$theme =& $template->getVariableByReference('theme');
-	$theme['adminTemplate'] = $templateFile;
 
 	return array(GalleryStatus::success(), 'theme.tpl');
     }
@@ -220,8 +209,7 @@ class ClassicTheme extends GalleryTheme {
      */
     function showProgressBarPage(&$template, $item, $params) {
 	$ret = $this->loadCommonTemplateData(
-	    $template, $item, $params,
-	    array('parents', 'systemLinks'));
+	    $template, $item, $params, array('parents', 'systemLinks'));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

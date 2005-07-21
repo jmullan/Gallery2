@@ -742,6 +742,8 @@ class GalleryTheme extends GalleryPlugin {
 	case 'siteadminview':
 	case 'itemadminview':
 	    $theme['pageType'] = 'admin';
+	    $theme['adminTemplate'] = $viewResults['body'];
+	    $theme['adminL10Domain'] = $view->getL10Domain();
 	    list ($ret, $result) = $this->showAdminPage(
 		$template, $item, $params, $viewResults['body']);
 	    if ($ret->isError()) {
@@ -838,8 +840,8 @@ class GalleryTheme extends GalleryPlugin {
 		     * No pagination; load all children (this isn't going to scale, but the theme is
 		     * the boss... for now).
 		     */
-		    list ($ret, $childIds) =
-			GalleryCoreApi::fetchChildItemIds($item, null, null, $theme['actingUserId']);
+		    list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds(
+			$item, null, null, $theme['actingUserId']);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -901,6 +903,8 @@ class GalleryTheme extends GalleryPlugin {
 
 	default: /* module view */
 	    $theme['pageType'] = 'module';
+	    $theme['moduleTemplate'] = $viewResults['body'];
+	    $theme['moduleL10Domain'] = $view->getL10Domain();
 	    list ($ret, $result) = $this->showModulePage(
 		$template, $item, $params, $viewResults['body']);
 	    if ($ret->isError()) {

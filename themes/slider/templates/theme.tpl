@@ -23,7 +23,7 @@
       {if $theme.pageType == 'album' || $theme.pageType == 'photo'}
 	{g->theme include="slider.tpl"}
       {elseif $theme.useFullScreen}
-	{include file=$theme.moduleTemplate}
+	{include file="gallery:`$theme.moduleTemplate`" l10Domain=$theme.moduleL10Domain}
       {else}
 	<div id="gsHeader">
 	  <img src="{g->url href="images/galleryLogo_sm.gif"}" width="107" height="48" alt=""/>
@@ -41,7 +41,7 @@
         </div>
 
 	{if $theme.pageType == 'admin'}
-	  {include file=$theme.adminTemplate}
+	  {include file="gallery:`$theme.adminTemplate`" l10Domain=$theme.adminL10Domain}
 	{elseif $theme.pageType == 'progressbar'}
 	  {g->theme include="progressbar.tpl"}
 	{elseif $theme.pageType == 'module'}
@@ -56,7 +56,7 @@
 	      </div>
 	    </td>
 	    <td>
-	      {include file=$theme.moduleTemplate}
+	      {include file="gallery:`$theme.moduleTemplate`" l10Domain=$theme.moduleL10Domain}
 	    </td>
 	  </tr>
 	</table>
