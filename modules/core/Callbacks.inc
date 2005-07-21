@@ -19,6 +19,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/**
+ * @version $Revision$ $Date$
+ * @package Core
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
 class CoreCallbacks {
     function callback($params, &$smarty, $callback, $userId=null) {
 	global $gallery;
@@ -46,23 +51,25 @@ class CoreCallbacks {
 	    return GalleryStatus::success();
 
 	case 'ShouldShowEmergencyEditItemLink':
-	    $theme =& $smarty->_tpl_vars['theme'];
-	    $block['core']['ShouldShowEmergencyEditItemLink'] = true;
-	    foreach (array('checkSidebarBlocks' => 'sidebarBlocks',
-			   'checkAlbumBlocks' => 'albumBlocks',
-			   'checkPhotoBlocks' => 'photoBlocks')
-		     as $key => $value) {
-		if (!empty($params[$key])) {
-		    foreach ($theme['params'][$value] as $entry) {
-			if ($entry[0] == 'core.ItemLinks') {
-			    $block['core']['ShouldShowEmergencyEditItemLink'] = false;
-			    break 2;
+	    $block['core']['ShouldShowEmergencyEditItemLink'] = false;
+	    if (isset($params['permissions']['core_edit'])) {
+		$theme =& $smarty->_tpl_vars['theme'];
+		$block['core']['ShouldShowEmergencyEditItemLink'] = true;
+		foreach (array('checkSidebarBlocks' => 'sidebarBlocks',
+			       'checkAlbumBlocks' => 'albumBlocks',
+			       'checkPhotoBlocks' => 'photoBlocks')
+			as $key => $value) {
+		    if (!empty($params[$key])) {
+			foreach ($theme['params'][$value] as $entry) {
+			    if ($entry[0] == 'core.ItemLinks') {
+				$block['core']['ShouldShowEmergencyEditItemLink'] = false;
+				break 2;
+			    }
 			}
 		    }
 		}
 	    }
 	    return GalleryStatus::success();
-
 	}
 
 	return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);

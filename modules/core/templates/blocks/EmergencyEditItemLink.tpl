@@ -5,16 +5,15 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 {if !isset($item)} {assign var="item" value=$theme.item} {/if}
-{if !isset($checkSidebarBlocks)} {assign var="checkSidebarBlocks" value=false} {/if}
-{if !isset($checkAlbumBlocks)} {assign var="checkAlbumBlocks" value=false} {/if}
-{if !isset($checkPhotoBlocks)} {assign var="checkPhotoBlocks" value=false} {/if}
 {g->callback type="core.ShouldShowEmergencyEditItemLink"
-             checkSidebarBlocks=$checkSidebarBlocks
-             checkAlbumBlocks=$checkAlbumBlocks
-             checkPhotoBlocks=$checkPhotoBlocks}
+	     permissions=$permissions|default:$theme.permissions
+	     checkSidebarBlocks=$checkSidebarBlocks|default:false
+	     checkAlbumBlocks=$checkAlbumBlocks|default:false
+	     checkPhotoBlocks=$checkPhotoBlocks|default:false}
 
 {if ($block.core.ShouldShowEmergencyEditItemLink)}
 <div class="{$class}">
-  <a href="{g->url arg1="view=core.ItemAdmin" arg2="subView=core.ItemEdit" arg3="itemId=`$item.id`"}"> {g->text text="Edit"} </a>
+  <a href="{g->url arg1="view=core.ItemAdmin" arg2="subView=core.ItemEdit"
+		   arg3="itemId=`$item.id`"}"> {g->text text="Edit"} </a>
 </div>
 {/if}

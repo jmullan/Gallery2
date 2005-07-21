@@ -157,7 +157,7 @@ class ClassicTheme extends GalleryTheme {
      * @see GalleryTheme::showPhotoPage
      */
     function showPhotoPage(&$template, $item, $params) {
-	$dataTypes = array('owner', 'parents', 'peers', 'systemLinks',
+	$dataTypes = array('owner', 'parents', 'peers', 'systemLinks', 'permissions',
 			   'itemLinks', 'itemLinksDetailed', 'itemDetailFiles', 'itemNavigator',
 			   'imageViews');
 	if (!empty($params['showMicroThumbs'])) {

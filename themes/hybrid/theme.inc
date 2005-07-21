@@ -58,7 +58,7 @@ class HybridTheme extends GalleryTheme {
     function showAlbumPage(&$template, $item, $params, $childIds) {
 	$ret = $this->loadCommonTemplateData($template, $item, $params,
 	    array('owner', 'viewCount', 'parents', 'systemLinks', 'itemLinks',
-		  'childItemLinksDetailed'),
+		  'childItemLinksDetailed', 'permissions'),
 	    $childIds);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);

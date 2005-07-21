@@ -73,7 +73,8 @@ class CallbacksTest extends GalleryTestCase {
 	    'sidebarBlocks' => array(),
 	    'albumBlocks' => array(),
 	    'photoBlocks' => array());
-	$ret = $this->_callback->callback(array('checkSidebarBlocks' => true),
+	$ret = $this->_callback->callback(array('checkSidebarBlocks' => true,
+						'permissions' => array('core_edit' => 1)),
 					  $this->_smarty,
 					  'ShouldShowEmergencyEditItemLink');
 	if ($ret->isError()) {
@@ -91,7 +92,8 @@ class CallbacksTest extends GalleryTestCase {
 	    'sidebarBlocks' => array(array('core.ItemLinks', array())),
 	    'albumBlocks' => array(),
 	    'photoBlocks' => array());
-	$ret = $this->_callback->callback(array('checkSidebarBlocks' => true),
+	$ret = $this->_callback->callback(array('checkSidebarBlocks' => true,
+						'permissions' => array('core_edit' => 1)),
 					  $this->_smarty,
 					  'ShouldShowEmergencyEditItemLink');
 	if ($ret->isError()) {
@@ -110,7 +112,8 @@ class CallbacksTest extends GalleryTestCase {
 	    'albumBlocks' => array(array('core.ItemLinks', array())),
 	    'photoBlocks' => array(array('core.ItemLinks', array())));
 	$ret = $this->_callback->callback(
-	    array('checkSidebarBlocks' => true, 'checkAlbumBlocks' => true),
+	    array('checkSidebarBlocks' => true, 'checkAlbumBlocks' => true,
+		  'permissions' => array('core_edit' => 1)),
 	    $this->_smarty,
 	    'ShouldShowEmergencyEditItemLink');
 	if ($ret->isError()) {
@@ -128,7 +131,8 @@ class CallbacksTest extends GalleryTestCase {
 	    'sidebarBlocks' => array(),
 	    'albumBlocks' => array(array('core.ItemLinks', array())),
 	    'photoBlocks' => array(array('core.ItemLinks', array())));
-	$ret = $this->_callback->callback(array('checkSidebarBlocks' => true),
+	$ret = $this->_callback->callback(array('checkSidebarBlocks' => true,
+						'permissions' => array('core_edit' => 1)),
 					  $this->_smarty,
 					  'ShouldShowEmergencyEditItemLink');
 	if ($ret->isError()) {
@@ -139,6 +143,25 @@ class CallbacksTest extends GalleryTestCase {
 	    true,
 	    $this->_smarty->_tpl_vars['block']['core']['ShouldShowEmergencyEditItemLink'],
 	    'we should be showing the link');
+    }
+
+    function testShouldShowEmergencyEditItemLinkNoPermissions() {
+	$this->_smarty->_tpl_vars['theme']['params'] = array(
+	    'sidebarBlocks' => array(),
+	    'albumBlocks' => array(),
+	    'photoBlocks' => array());
+	$ret = $this->_callback->callback(array('checkSidebarBlocks' => true,
+						'permissions' => array()),
+					  $this->_smarty,
+					  'ShouldShowEmergencyEditItemLink');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(
+	    false,
+	    $this->_smarty->_tpl_vars['block']['core']['ShouldShowEmergencyEditItemLink'],
+	    'we should not be showing the link');
     }
 }
 ?>
