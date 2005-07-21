@@ -32,6 +32,7 @@
 	  </ul>
 	</div>
 
+        {if !empty($UserAdmin.navigationLinks)}
 	<div class="gbBlock">
 	  <h2> {g->text text="Navigation"} </h2>
 	  <ul>
@@ -44,6 +45,7 @@
 	    {/foreach}
 	  </ul>
 	</div>
+        {/if}
       </div></td>
 
       <td>
