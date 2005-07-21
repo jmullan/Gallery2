@@ -18,7 +18,7 @@
 #
 MODULE_DIR = $(shell dirname `pwd`)
 TYPE_DIR = $(shell dirname $(MODULE_DIR))
-APPLICATION = $(shell basename $(TYPE_DIR))_$(shell basename $(MODULE_DIR))
+APPLICATION ?= $(shell basename $(TYPE_DIR))_$(shell basename $(MODULE_DIR))
 
 ifdef QUIET
 MSGFMT_FLAGS =
