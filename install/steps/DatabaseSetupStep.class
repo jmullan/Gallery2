@@ -211,8 +211,11 @@ class DatabaseSetupStep extends InstallStep {
 		/* Drop all Gallery database tables listed in the schema table */
 		$this->_captureStart();
 		if (!$this->_cleanDatabase()) {
+		    global $gallery;
 		    $templateData['errors'][] =
 			_('Could not execute the required API to drop the Gallery database tables. Please clean the Gallery database manually.');
+		    $templateData['databaseErrors'] = $gallery->getDebugBuffer();
+		    $gallery->clearDebugBuffer();
 		} else {
 		    $dbCleaned = true;
 		}
@@ -586,8 +589,9 @@ class DatabaseSetupStep extends InstallStep {
 
 	$storage =& $gallery->getStorage();
 	$storage->_db->debug = true;
+	$gallery->setDebug('immediate');
 	$ret = $storage->cleanStore();
-
+	
 	return $ret->isSuccess();
     }
 }
