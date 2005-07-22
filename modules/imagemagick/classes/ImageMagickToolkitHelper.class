@@ -298,7 +298,8 @@ class ImageMagickToolkitHelper {
 	    list ($success, $results) = $platform->exec(array($command));
 
 	    $successCount += $success;
-	    if ($success) {
+	    if ($success || $test['file'] == 'truncated.pcd') {
+		/* Ignore error status for truncated.pcd.. it should still identify the file ok */
 		foreach ($results as $resultLine) {
 		    if (ereg($test['expected'], $resultLine)) {
 			foreach ($test['mime'] as $type) {
