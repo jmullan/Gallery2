@@ -44,6 +44,7 @@
 	  {g->text text="hide item links"}
 	</a>
       </li>
+      {if $user.isRegisteredUser}
       <li>
 	{if ($theme.guestPreviewMode)}
 	<a href="{g->url arg1="controller=core.ShowItem" arg2="guestPreviewMode=0"
@@ -53,6 +54,7 @@
 			    arg2="guestPreviewMode=1" arg3="return=1"}">{g->text text="guest"}</a>
 	{/if}
       </li>
+      {/if}
     </ul>
     <ul style="margin-top: 4px">
       <li>
@@ -86,6 +88,5 @@
 
   {* Our emergency edit link, if the user all blocks containing edit links *}
   {g->block type="core.EmergencyEditItemLink" class="gbBlock"
-            checkSidebarBlocks=true
-            checkAlbumBlocks=true}
+	    checkSidebarBlocks=true checkAlbumBlocks=true}
 </div>
