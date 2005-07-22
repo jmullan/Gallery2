@@ -43,7 +43,7 @@ class ClassicTheme extends GalleryTheme {
 	$this->setId('classic');
 	$this->setName($gallery->i18n('Classic'));
 	$this->setDescription($gallery->i18n('Classic Gallery2 root album look and feel'));
-	$this->setVersion('0.9.2');
+	$this->setVersion('0.9.3');
 	$this->setRequiredThemeApi(array(2, 1));
 	$this->setRequiredCoreApi(array(6, 4));
 	$this->setStandardSettings(
@@ -81,7 +81,8 @@ class ClassicTheme extends GalleryTheme {
 	}
 
 	/* Add in our custom settings */
-	$params = array_merge(array('showSubalbums' => 1, 'subalbumDepth' => 0), $params);
+	$params = array_merge(
+	    array('showSubalbums' => 1, 'subalbumDepth' => 0, 'subalbumSort' => 0), $params);
 	$settings[] = array('key' => 'showSubalbums',
 			    'name' => $this->translate('Show subalbum links'),
 			    'type' => 'checkbox',
@@ -91,6 +92,11 @@ class ClassicTheme extends GalleryTheme {
 			    'type' => 'text-field',
 			    'typeParams' => array('size' => 2),
 			    'value' => $params['subalbumDepth']);
+	$settings[] = array('key' => 'subalbumSort',
+			    'name' =>
+	    $this->translate('Show subalbums by sort order of each album (affects performance)'),
+			    'type' => 'checkbox',
+			    'value' => $params['subalbumSort']);
 
 	return array(GalleryStatus::success(), $settings);
     }
@@ -123,29 +129,38 @@ class ClassicTheme extends GalleryTheme {
 	/* Add in our extra stuff */
 	$theme =& $template->getVariableByReference('theme');
 	if ($params['showSubalbums']) {
-	    list ($ret, $tree) = GalleryCoreApi::fetchAlbumTree($item->getId(),
-		$params['subalbumDepth'] > 0 ? $params['subalbumDepth'] + 1 : null);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    $treeIds = $treeList = $treeItems = array();
-	    foreach ($theme['children'] as $child) {
-		$childId = $child['id'];
-		if (isset($tree[$childId])) {
-		    $treeList[$childId] = array();
-		    $this->_parseTree($tree[$childId], $treeList[$childId], $treeIds);
-		}
-	    }
-	    if (!empty($treeIds)) {
-		list ($ret, $treeItems) = GalleryCoreApi::loadEntitiesById($treeIds);
+	    if ($params['subalbumSort']) {
+		$theme['tree'] = $theme['treeItems'] = array();
+		$ret = $this->_buildTree($item, $theme['tree'], $theme['treeItems'],
+		    $params['subalbumDepth'] > 0 ? $params['subalbumDepth'] : null);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-	    }
-	    $theme['tree'] = $treeList;
-	    $theme['treeItems'] = array();
-	    foreach ($treeItems as $treeItem) {
-		$theme['treeItems'][$treeItem->getId()] = $treeItem->getMemberData();
+	    } else {
+		list ($ret, $tree) = GalleryCoreApi::fetchAlbumTree($item->getId(),
+		    $params['subalbumDepth'] > 0 ? $params['subalbumDepth'] + 1 : null);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$treeIds = $treeList = $treeItems = array();
+		foreach ($theme['children'] as $child) {
+		    $childId = $child['id'];
+		    if (isset($tree[$childId])) {
+			$treeList[$childId] = array();
+			$this->_parseTree($tree[$childId], $treeList[$childId], $treeIds);
+		    }
+		}
+		if (!empty($treeIds)) {
+		    list ($ret, $treeItems) = GalleryCoreApi::loadEntitiesById($treeIds);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		}
+		$theme['tree'] = $treeList;
+		$theme['treeItems'] = array();
+		foreach ($treeItems as $treeItem) {
+		    $theme['treeItems'][$treeItem->getId()] = $treeItem->getMemberData();
+		}
 	    }
 	}
 
@@ -229,6 +244,41 @@ class ClassicTheme extends GalleryTheme {
 		$this->_parseTree($list, $treeList, $treeIds, $depth+1);
 	    }
 	}
+    }
+
+    /**
+     * Build template data for subalbum tree (apply sort preference of each album)
+     * @return object GalleryStatus a status code
+     * @access private
+     */
+    function _buildTree($album, &$treeList, &$treeItems, $maxDepth, $depth=0, $branchId=0) {
+	list ($ret, $subAlbumIds) = GalleryCoreApi::fetchChildAlbumItemIds($album);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	if (!empty($subAlbumIds)) {
+	    list ($ret, $subAlbums) = GalleryCoreApi::loadEntitiesById($subAlbumIds);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    foreach ($subAlbums as $subAlbum) {
+		$id = $subAlbum->getId();
+		if (!$depth) {
+		    $branchId = $id;
+		} else {
+		    $treeList[$branchId][] = array('id' => $id, 'depth' => $depth - 1);
+		}
+		$treeItems[$id] = $subAlbum->getMemberData();
+		if (!isset($maxDepth) || $depth < $maxDepth) {
+		    $ret = $this->_buildTree($subAlbum, $treeList,
+					     $treeItems, $maxDepth, $depth + 1, $branchId);
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		}
+	    }
+	}
+	return GalleryStatus::success();
     }
 }
 ?>
