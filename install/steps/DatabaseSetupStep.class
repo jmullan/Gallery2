@@ -355,7 +355,7 @@ class DatabaseSetupStep extends InstallStep {
 	 * PL/SQL blocks will have other semicolons, so we can't split on every one.
 	 */
 	$statements = preg_split('/; *\r?\n *\r?\n/s', $buffer);
-	/* 
+	/*
 	 * Execute the last statement before the second last
 	 * The last is DELETE FROM schema where g_name = 'Schema';
 	 * The second last is DROP TABLE schema;
@@ -364,7 +364,7 @@ class DatabaseSetupStep extends InstallStep {
 	$dropStatement = $statements[sizeof($statements)-2];
 	$statements[sizeof($statements)-2] = $statements[sizeof($statements)-1];
 	$statements[sizeof($statements)-1] = $dropStatement;
-	
+
 	/* Execute the rest */
 	foreach ($statements as $query) {
 	    $query = trim($query);
@@ -408,7 +408,7 @@ class DatabaseSetupStep extends InstallStep {
      *
      * @return array ('installed' => string the storage versions.dat version,
      *                'codebase'  => string the codebase version)
-    */
+     */
     function _getVersions() {
 	global $galleryStub;
 
@@ -426,6 +426,7 @@ class DatabaseSetupStep extends InstallStep {
 	/* Get the codebase version for the CreateConfigFileStep */
 	$versions['codebase'] = $coreModule->getVersion();
 
+	$this->resetL10Domain();
 	return $versions;
     }
 
@@ -484,19 +485,19 @@ class DatabaseSetupStep extends InstallStep {
 	static $initiated;
 	$platformLevel = 2;
 	$firstPassLevel = 3;
+	$success = true;
 
 	if (!isset($initiated)) {
 	    $initiated = 1;
 
 	    /* Include basic G2 classes to use G2 API to get the core version etc. */
 	    require_once(dirname(__FILE__) . '/../../modules/core/classes/Gallery.class');
-	    require_once(dirname(__FILE__) .'/../../modules/core/classes/GalleryDataCache.class');	    
+	    require_once(dirname(__FILE__) .'/../../modules/core/classes/GalleryDataCache.class');
 	    $GLOBALS['gallery'] =& new Gallery();
-	    global $gallery;
-	    $gallery->setConfig('data.gallery.base',
-				$galleryStub->getConfig('data.gallery.base'));
-
+	    $GLOBALS['gallery']->setConfig('data.gallery.base',
+					   $galleryStub->getConfig('data.gallery.base'));
 	}
+	global $gallery;
 
 	if ($level == $platformLevel && $initiated < $platformLevel) {
 	    /* Platform level requested, platform level not already loaded */
@@ -521,14 +522,19 @@ class DatabaseSetupStep extends InstallStep {
 	    /* Init paths etc., used for the clean DB function */
 	    require_once(dirname(__FILE__) . '/../../init.inc');
 	    $ret = GalleryInitFirstPass();
+	    $success = $ret->isSuccess();
 
 	    GalleryDataCache::setFileCachingEnabled(false);
 	    GalleryDataCache::reset();
-
-	    return $ret->isSuccess();
 	}
 
-	return true;
+	if ($level >= $platformLevel) {
+	    /* Gallery init selects language from browser; reset to language currently in use */
+	    $translator =& $gallery->getTranslator();
+	    $translator->init($_SESSION['language']);
+	}
+
+	return $success;
     }
 
     /**
