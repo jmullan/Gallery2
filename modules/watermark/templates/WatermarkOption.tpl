@@ -9,7 +9,7 @@
   WatermarkOption_watermarkUrlMap = new Array;
   {foreach from=$WatermarkOption.watermarks item=watermark}
   WatermarkOption_watermarkUrlMap[{$watermark.id}] = new Array;
-  WatermarkOption_watermarkUrlMap[{$watermark.id}]['url'] = '{g->url forJavascript="true"
+  WatermarkOption_watermarkUrlMap[{$watermark.id}]['url'] = '{g->url forJavascript=true
     arg1="view=core.DownloadItem" arg2="itemId=`$watermark.id`"}';
   WatermarkOption_watermarkUrlMap[{$watermark.id}]['width'] = {$watermark.width};
   WatermarkOption_watermarkUrlMap[{$watermark.id}]['height'] = {$watermark.height};
@@ -17,13 +17,14 @@
 
   {literal}
   function WatermarkOption_chooseWatermark(id) {
-    watermark = document.getElementById("WatermarkOption_watermark");
+    var watermark = document.getElementById('WatermarkOption_watermark');
     if (id) {
       watermark.src = WatermarkOption_watermarkUrlMap[id]['url'];
       watermark.width = WatermarkOption_watermarkUrlMap[id]['width'];
       watermark.height = WatermarkOption_watermarkUrlMap[id]['height'];
+      watermark.style.display = 'block';
     } else {
-      watermark.src = "";
+      watermark.style.display = 'none';
     }
   }
   // ]]>
@@ -31,6 +32,9 @@
 </script>
 
 <div class="gbBlock">
+  <img id="WatermarkOption_watermark" src="" alt="" width="0" height="0"
+       style="display: none; float: right; padding: 10px 30px 0"/>
+
   <h3> {g->text text="Watermark"} </h3>
 
   <p class="giDescription">
@@ -39,10 +43,8 @@
     <a href="{g->url arg1="view=core.UserAdmin" arg2="subView=watermark.UserWatermarks"}">
       {g->text text="Edit your watermarks"}
     </a>
-  </p>
-
-  <div style="position: relative; height: 80px">
-    <select style="position: relative; left: 0; top: 0"
+    <br/>
+    <select style="margin: 5px 0 5px 3px"
      name="{g->formVar var="form[WatermarkOption][watermarkId]"}"
      onchange="WatermarkOption_chooseWatermark(this.value)">
       <option value="">&laquo; {g->text text="none"} &raquo;</option>
@@ -50,9 +52,6 @@
 	<option value="{$watermark.id}">{$watermark.name}</option>
       {/foreach}
     </select>
-    <img style="position: relative; left: 100px; top: 0"
-     id="WatermarkOption_watermark" src="" alt=""
-     width="{$WatermarkOption.watermarks[$WatermarkOption.currentId].width}"
-     height="{$WatermarkOption.watermarks[$WatermarkOption.currentId].height}"/>
-  </div>
+  </p>
+  <div style="clear: both"></div>
 </div>
