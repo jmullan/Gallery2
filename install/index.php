@@ -77,12 +77,12 @@ if (!ini_get('session.auto_start')) {
     session_start();
 }
 
-if (!isset($_SESSION['path'])) {
-    $_SESSION['path'] = __FILE__;
-} else if ($_SESSION['path'] != __FILE__) {
+if (!isset($_SESSION['install_path'])) {
+    $_SESSION['install_path'] = __FILE__;
+} else if ($_SESSION['install_path'] != __FILE__) {
     /* Security error!  This session is not valid for this copy of the installer. Start over. */
     session_unset();
-    $_SESSION['path'] = __FILE__;
+    $_SESSION['install_path'] = __FILE__;
 }
 
 require_once(dirname(dirname(__FILE__)) . '/modules/core/classes/GalleryStatus.class');
@@ -104,10 +104,8 @@ if (function_exists('dgettext')) {
 }
 
 /*
- * For reasons unclear to me, register_globals causes the $galleryStub variable to be put into
- * the global context on session_start, which we don't expect or want.  Possibly because we
- * declare "global $galleryStub" when we use it in our step classes.  The $steps variable does not
- * seem to be affected by this.  So unset $galleryStub here to prevent this from causing problems.
+ * If register_globals is on then a global $galleryStub may have already been created.
+ * Clear it here and initialize ourselves.
  */
 unset($galleryStub);
 

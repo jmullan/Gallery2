@@ -10,9 +10,10 @@
       <?php print _("Select Language:") ?>
       <select name="language" onchange="this.form.submit()" style="direction:ltr">
 	<?php
-	  foreach ($translator->getSupportedLanguages() as $language => $list) {
+	  /* Don't use $language here as it conflicts with $_SESSION if register_globals is on */
+	  foreach ($translator->getSupportedLanguages() as $lang => $list) {
 	    foreach ($list as $country => $data) {
-	      $code = $language . '_' . $country;
+	      $code = $lang . '_' . $country;
 	      print '<option value="' . $code . '"';
 	      if ($code == $_SESSION['language']) print ' selected="selected"';
 	      print '>' . $data['description'] . "</option>\n";
