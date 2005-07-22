@@ -354,9 +354,15 @@ class DatabaseSetupStep extends InstallStep {
 	}
 	fclose($fd);
 
-	/* Split the file where semicolons are followed by a blank line..
+	/*
+	 * Split the file where semicolons are followed by a blank line..
 	 * PL/SQL blocks will have other semicolons, so we can't split on every one.
+	 * But first, remove that last semicolon such that all statements have no semicolon
+	 * (required for oracle)
 	 */
+	if ($pos = strrpos($buffer, ';')) {
+	    $buffer = substr($buffer, 0, $pos);
+	}
 	$statements = preg_split('/; *\r?\n *\r?\n/s', $buffer);
 	/*
 	 * Execute the last statement before the second last
