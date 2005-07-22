@@ -58,12 +58,14 @@ class FlushDatabaseCacheTaskTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$expected = array();
+	foreach (array('/cache/entity', '/cache/theme', '/cache/module') as $dir) {
+	    $expected[] = $module->translate(
+		array('text' => 'Successfully deleted directory: %s',
+		      'arg1' => $dir));
+	}
 	$this->assert($success, 'should have succeeded');
-	$this->assertEquals(
-	    $details,
-	    array($module->translate('Successfully deleted directory: /cache/entity'),
-		  $module->translate('Successfully deleted directory: /cache/theme'),
-		  $module->translate('Successfully deleted directory: /cache/module')));
+	$this->assertEquals($details, $expected);
 	$this->assertEquals(array('file_exists(/cache/entity)',
 				  'recursiveRmdir(/cache/entity)',
 				  'file_exists(/cache/theme)',
@@ -94,11 +96,15 @@ class FlushDatabaseCacheTaskTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$expected = array();
+	$expected[] = $module->translate(
+	    array('text' => 'Unable to delete directory: %s',
+		  'arg1' => '/cache/theme' ));
+	$expected[] = $module->translate(
+	    array('text' => 'Successfully deleted directory: %s',
+		  'arg1' => '/cache/module' ));
 	$this->assert(!$success, 'should have failed');
-	$this->assertEquals(
-	    array($module->translate('Unable to delete directory: /cache/theme'),
-		  $module->translate('Successfully deleted directory: /cache/module')),
-	    $details);
+	$this->assertEquals($expected,$details);
 	$this->assertEquals(array('file_exists(/cache/entity)',
 				  'file_exists(/cache/theme)',
 				  'recursiveRmdir(/cache/theme)',

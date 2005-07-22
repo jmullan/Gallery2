@@ -48,7 +48,8 @@ class MockTemplateAdapter {
     }
 
     function updateProgressBar($title, $description, $percentComplete) {
-	$this->_progress[] = round($percentComplete, 2);
+	/* Replace localized comma decimal separator with a dot */
+	$this->_progress[] = str_replace(',', '.', round($percentComplete, 2));
 	return GalleryStatus::success();
     }
 
