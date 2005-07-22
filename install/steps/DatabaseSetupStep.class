@@ -54,7 +54,7 @@ class DatabaseSetupStep extends InstallStep {
 	    case 'mysqlt':
 		if (!function_exists('mysql_connect')) {
 		    $templateData['error']['phpDbMissing'] =
-			'You must have the MySQL PHP module installed';
+			_('You must have the MySQL PHP module installed');
 		}
 		$dbPlatformType = 'mysql';
 		break;
@@ -62,14 +62,14 @@ class DatabaseSetupStep extends InstallStep {
 	    case 'postgres':
 		if (!function_exists('pg_connect')) {
 		    $templateData['error']['phpDbMissing'] =
-			'You must have the PostgreSQL PHP module installed';
+			_('You must have the PostgreSQL PHP module installed');
 		}
 		$dbPlatformType = 'postgres';
 		break;
 	    case 'oci8po':
 		if (!function_exists('OCIPLogon')) {
 		    $templateData['error']['phpDbMissing'] =
-			'You must have the Oracle OCI8 PHP module installed';
+			_('You must have the Oracle OCI8 PHP module installed');
 		}
 		$dbPlatformType = 'oracle';
 		break;
@@ -135,8 +135,8 @@ class DatabaseSetupStep extends InstallStep {
 		     */
 		    list ($ret, $error) = $this->_testPrivileges($dbPlatformType, $result);
 		    if ($ret === false) {
-			$templateData['errors'][] = 'The database privileges test did not ' .
-			    'complete successfully.';
+			$templateData['errors'][] =
+			    _('The database privileges test did not complete successfully.');
 			if (!empty($error)) {
 			    $templateData['errors'][] = $error;
 			}
@@ -228,7 +228,7 @@ class DatabaseSetupStep extends InstallStep {
 
 	    } else {
 		$templateData['errors'][] =
-			_('Could not load the G2 API. Please erase the Gallery database tables and the storage directory manually.');
+		    _('Could not load the G2 API. Please erase the Gallery database tables and the storage directory manually.');
 	    }
 	}
 
@@ -305,7 +305,7 @@ class DatabaseSetupStep extends InstallStep {
      */
     function _testPrivileges($platform, $metatables) {
 	if (!is_array($metatables) || empty($platform)) {
-	    return array(false, 'Unknown DB type or no known tables information.');
+	    return array(false, _('Unknown DB type or no known tables information.'));
 	}
 	/*
 	 * The test script executes an InstallerTest_sql script from the core module.
@@ -329,8 +329,8 @@ class DatabaseSetupStep extends InstallStep {
 	    }
 	}
 	if (!$ok) {
-	    return array(false, 'Could not find an unused table prefix similar to "' .
-			 $tablePrefix . '".');
+	    return array(false,
+		sprintf(_('Could not find an unused table prefix similar to "%s".'), $tablePrefix));
 	}
 
 	/* Load the Test SQL code */
@@ -342,11 +342,11 @@ class DatabaseSetupStep extends InstallStep {
 
 	/* GalleryPlatform not available at this point */
 	if (!file_exists($fileName)) {
-	    return array(false, 'SQL test file "' . $fileName .'" not found.');
+	    return array(false, sprintf(_('SQL test file "%s" not found.'), $fileName));
 	}
 	/* The following code is copied from DatabaseStorage::_getModuleSql() */
 	if (!($fd = fopen($fileName, 'r'))) {
-	    return array(false, 'Could not open SQL test file "' . $fileName .'".');
+	    return array(false, sprintf(_('Could not open SQL test file "%s".'), $fileName));
 	}
 	$buffer = null;
 	while (!feof($fd)) {
@@ -379,8 +379,8 @@ class DatabaseSetupStep extends InstallStep {
 
 		$result = $this->_db->Execute($query);
 		if (empty($result)) {
-		    return array(false, 'Check the returned error message and the ' .
-				 'README.html for missing privileges and clean up the database.');
+		    return array(false, _('Check the returned error message and README.html ' .
+				 'for missing privileges and clean up the database.'));
 		}
 	    }
 	}
@@ -389,15 +389,15 @@ class DatabaseSetupStep extends InstallStep {
 	$sequenceId = 'g2privtestseq';
 	$result = $this->_db->CreateSequence($tablePrefix . $sequenceId);
 	if (empty($result)) {
-	    return array(false, 'Failed to create a DB test sequence.'.
-			 'Check the returned error message and the ' .
-			 'README.html for missing privileges and clean up the database.');
+	    return array(false, _('Failed to create a DB test sequence.' .
+			 'Check the returned error message and README.html ' .
+			 'for missing privileges and clean up the database.'));
 	}
 	$result = $this->_db->DropSequence($tablePrefix . $sequenceId);
 	if (empty($result)) {
-	    return array(false, 'Test failed to drop a DB test sequence.'.
-			 'Check the returned error message and the ' .
-			 'README.html for missing privileges and clean up the database.');
+	    return array(false, _('Test failed to drop a DB test sequence.' .
+			 'Check the returned error message and README.html ' .
+			 'for missing privileges and clean up the database.'));
 	}
 
 	return array(true, null);
@@ -591,7 +591,7 @@ class DatabaseSetupStep extends InstallStep {
 	$storage->_db->debug = true;
 	$gallery->setDebug('immediate');
 	$ret = $storage->cleanStore();
-	
+
 	return $ret->isSuccess();
     }
 }
