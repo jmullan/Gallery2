@@ -17,6 +17,12 @@
 
     {* Include this theme's style sheet *}
     <link rel="stylesheet" type="text/css" href="{g->theme url="theme.css"}"/>
+    {if $theme.pageType == 'album' || $theme.pageType == 'photo'}{literal}
+    <style type="text/css">
+      body.gallery { overflow: hidden; }
+      #gallery { margin: 0; padding: 0; border-width: 0; } /*For IE*/
+    </style>
+    {/literal}{/if}
   </head>
   <body class="gallery">
     <div id="gallery" {g->mainDivAttributes}>
