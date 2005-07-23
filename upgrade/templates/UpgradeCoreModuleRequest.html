@@ -25,7 +25,7 @@
 	  </b>
 	</td>
       </tr>
-      <?php if ($templateData['isConfigUpgradeRequired']): ?>
+      <?php if ($templateData['isConfigUpgradeRequired'] && !isset($templateData['isTryingToDowngrade'])): ?>
       <tr>
 	<td>
 	  <?php print _("Config.php upgrade") ?>
@@ -45,6 +45,11 @@
       <?php endif; ?>
     </table>
 
+    <?php if (isset($templateData['isTryingToDowngrade'])): ?>
+    <p class="error">
+      <?php print _("The installed version is newer than the version you are trying to upgrade to. You cannot downgrade G2. Please replace the gallery2 files with files from the currently installed version or later.") ?>
+    </p>
+    <?php else: ?>
     <p>
       <?php print _("Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  If you fail to make a backup and something goes wrong, there is a strong possibility that we will not be able to help you recover your data!  Refer to the following examples:") ?>
     </p>
@@ -86,3 +91,4 @@
 	<?php endif; ?>
       </span>
     </div>
+    <?php endif; ?>
