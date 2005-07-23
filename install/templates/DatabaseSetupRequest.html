@@ -95,8 +95,14 @@
     <h2 class="error">
       <?php print _('We received the following database related errors:') ?>
     </h2>
-    <div>
+    <div class="debug">
       <?php print $templateData['databaseErrors'] ?>
+    </div>
+    <?php endif; ?>
+
+    <?php if (!empty($templateData['stackTrace'])): ?>
+    <div class="stack_trace">
+      <?php print $templateData['stackTrace'] ?>
     </div>
     <?php endif; ?>
 

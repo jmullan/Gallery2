@@ -210,11 +210,14 @@ class DatabaseSetupStep extends InstallStep {
 
 		/* Drop all Gallery database tables listed in the schema table */
 		$this->_captureStart();
-		if (!$this->_cleanDatabase()) {
+		$ret = $this->_cleanDatabase();
+		if ($ret->isError()) {
+		    $ret = $ret->wrap(__FILE__, __LINE__);
 		    global $gallery;
 		    $templateData['errors'][] =
 			_('Could not execute the required API to drop the Gallery database tables. Please clean the Gallery database manually.');
 		    $templateData['databaseErrors'] = $gallery->getDebugBuffer();
+		    $templateData['stackTrace'] = $ret->getAsHtml();
 		    $gallery->clearDebugBuffer();
 		} else {
 		    $dbCleaned = true;
@@ -588,7 +591,7 @@ class DatabaseSetupStep extends InstallStep {
      * Drop all Gallery database tables
      *
      * Drop all Gallery database tables that are listed in the Gallery schema table
-     * @return boolean success
+     * @return array GalleryStatus a status code
      */
     function _cleanDatabase() {
 	global $gallery;
@@ -597,8 +600,11 @@ class DatabaseSetupStep extends InstallStep {
 	$storage->_db->debug = true;
 	$gallery->setDebug('immediate');
 	$ret = $storage->cleanStore();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
-	return $ret->isSuccess();
+	return GalleryStatus::success();
     }
 }
 ?>
