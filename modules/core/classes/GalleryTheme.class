@@ -793,8 +793,10 @@ class GalleryTheme extends GalleryPlugin {
 			}
 
 			/* Redirect to the new page */
-			$redirect = array(
-			    'view' => 'core.ShowItem', 'itemId' => $item->getId(), 'page' => $page);
+			$redirect = array('view' => 'core.ShowItem', 'itemId' => $item->getId());
+			if ($page != 1) {
+			    $redirect['page'] = $page;
+			}
 			return array(GalleryStatus::success(), array('redirect' => $redirect));
 		    } else {
 			$page = 1;
@@ -831,8 +833,10 @@ class GalleryTheme extends GalleryPlugin {
 
 		    /* If our page is over the max, redirect the user to the max page */
 		    if ($page > $theme['totalPages'] && $theme['childCount'] > 0) {
-			$redirect = array('view' => 'core.ShowItem', 'itemId' => $item->getId(),
-					  'page' => $theme['totalPages']);
+			$redirect = array('view' => 'core.ShowItem', 'itemId' => $item->getId());
+			if ($theme['totalPages'] != 1) {
+			    $redirect['page'] = $theme['totalPages'];
+			}
 			return array(GalleryStatus::success(), array('redirect' => $redirect));
 		    }
 		} else {
@@ -1461,10 +1465,13 @@ class GalleryTheme extends GalleryPlugin {
 	    $navigator = array();
 	    if ($page > 1) {
 		$navigator['first']['urlParams'] =
-		    array('view' => 'core.ShowItem', 'itemId' => $item->getId(), 'page' => 1);
+		    array('view' => 'core.ShowItem', 'itemId' => $item->getId());
 		if ($page - 1 != 1) {
 		    $navigator['back']['urlParams'] = array(
-			'view' => 'core.ShowItem', 'itemId' => $item->getId(), 'page' => $page - 1);
+			'view' => 'core.ShowItem', 'itemId' => $item->getId());
+		    if ($page - 1 != 1) {
+			$navigator['back']['urlParams']['page'] = $page - 1;
+		    }
 		}
 	    }
 	    if ($page < $theme['totalPages']) {
@@ -1474,8 +1481,10 @@ class GalleryTheme extends GalleryPlugin {
 		}
 
 		$navigator['last']['urlParams'] =
-		    array('view' => 'core.ShowItem', 'itemId' => $item->getId(),
-			  'page' => $theme['totalPages']);
+		    array('view' => 'core.ShowItem', 'itemId' => $item->getId());
+		if ($theme['totalPages'] != 1) {
+		    $navigator['last']['urlParams']['page'] = $theme['totalPages'];
+		}
 	    }
 	    $theme['navigator'] = $navigator;
 	}
