@@ -604,6 +604,11 @@ class DatabaseSetupStep extends InstallStep {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	$ret = $storage->commitTransaction();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
 	return GalleryStatus::success();
     }
 }
