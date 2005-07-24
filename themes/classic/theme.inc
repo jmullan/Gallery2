@@ -118,7 +118,7 @@ class ClassicTheme extends GalleryTheme {
     function showAlbumPage(&$template, $item, $params, $childIds) {
 	$ret = $this->loadCommonTemplateData(
 	    $template, $item, $params,
-	    array('owner', 'viewCount', 'descendentCount', 'parents', 'peers',
+	    array('owner', 'viewCount', 'childCount', 'descendentCount', 'parents', 'peers',
 		  'systemLinks', 'itemLinks', 'itemSummaries', 'permissions',
 		  'itemDetailFiles', 'thumbnails', 'pageNavigator', 'jumpRange'),
 	     $childIds);

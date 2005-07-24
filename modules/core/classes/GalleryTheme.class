@@ -771,7 +771,9 @@ class GalleryTheme extends GalleryPlugin {
 		$perPage = $this->getPageSize($params);
 
 		$page = GalleryUtilities::getRequestVariables('page');
-		if (empty($page)) {
+		if ($perPage == 0) {
+		    $page = 1;
+		} else if (empty($page)) {
 		    /*
 		     * We don't have a page number.  If we have a highlight id, then figure out what
 		     * page that id is on and redirect to that page.
