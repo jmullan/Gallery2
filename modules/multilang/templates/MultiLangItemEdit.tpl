@@ -29,9 +29,9 @@ function changed() { isChanged = 1; }
 {counter start=-1 assign=idx}
 {foreach from=$form.languageList key=language item=label}{counter assign=idx}
 {if isset($form.languageData[$language])}
-<div id="ttl_{$idx}">{$form.languageData[$language].title|markup}</div>
-<div id="sum_{$idx}">{$form.languageData[$language].summary|markup}</div>
-<div id="dsc_{$idx}">{$form.languageData[$language].description|markup}</div>
+<div id="ttl_{$idx}">{$form.languageData[$language].title}</div>
+<div id="sum_{$idx}">{$form.languageData[$language].summary}</div>
+<div id="dsc_{$idx}">{$form.languageData[$language].description}</div>
 {else}
 <div id="ttl_{$idx}"></div><div id="sum_{$idx}"></div><div id="dsc_{$idx}"></div>
 {/if}
