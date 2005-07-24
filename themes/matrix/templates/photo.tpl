@@ -80,7 +80,7 @@
         </div>
         {/if}
 
-        {* Show any other album blocks (comments, exif etc) *}
+        {* Show any other photo blocks (comments, exif etc) *}
         {foreach from=$theme.params.photoBlocks item=block}
           {g->block type=$block.0 params=$block.1}
         {/foreach}
