@@ -135,25 +135,28 @@ class CustomFieldItemEditPluginTest extends ItemEditPluginTestCase {
 	$this->assertEquals(array(array(), $this->_translate('Changes saved successfully')),
 			    $results);
 
-	list ($ret, $data) = CustomFieldHelper::fetchFieldValues($this->_itemG, 'summary');
+	list ($ret, $data) = CustomFieldHelper::fetchFieldValues(array($this->_itemG), 'summary');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals(array('Location' => 'There'), $data, 'Summary data');
+	$this->assertEquals(array('Location' => 'There'),
+		$data[$this->_itemG->getId()], 'Summary data');
 
-	list ($ret, $data) = CustomFieldHelper::fetchFieldValues($this->_itemG, 'detail');
+	list ($ret, $data) = CustomFieldHelper::fetchFieldValues(array($this->_itemG), 'detail');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array('Catalog Id' => '123', 'Location' => 'There'),
-			    $data, 'Detail data');
+			    $data[$this->_itemG->getId()], 'Detail data');
 
-	list ($ret, $data) = CustomFieldHelper::fetchFieldValues($this->_itemG, null, 'photo');
+	list ($ret, $data) =
+		CustomFieldHelper::fetchFieldValues(array($this->_itemG), null, 'photo');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array('Catalog Id' => '123', 'My Data' => '',
-				  'Location' => 'There', 'Category' => 'B'), $data, 'All data');
+				  'Location' => 'There', 'Category' => 'B'), 
+			    $data[$this->_itemG->getId()], 'All data');
 
 	/* Set field values (album-specific settings) */
 	GalleryUtilities::removeFormVariables('form');
@@ -166,24 +169,27 @@ class CustomFieldItemEditPluginTest extends ItemEditPluginTestCase {
 	$this->assertEquals(array(array(), $this->_translate('Changes saved successfully')),
 			    $results);
 
-	list ($ret, $data) = CustomFieldHelper::fetchFieldValues($this->_albumS, 'summary');
+	list ($ret, $data) = CustomFieldHelper::fetchFieldValues(array($this->_albumS), 'summary');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals(array('Category' => 'C'), $data, 'Summary data 2');
+	$this->assertEquals(array('Category' => 'C'),
+		$data[$this->_albumS->getId()], 'Summary data 2');
 
-	list ($ret, $data) = CustomFieldHelper::fetchFieldValues($this->_albumS, 'detail');
+	list ($ret, $data) = CustomFieldHelper::fetchFieldValues(array($this->_albumS), 'detail');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals(array('Catalog Id' => '456', 'Year' => '2004'), $data, 'Detail data 2');
+	$this->assertEquals(array('Catalog Id' => '456', 'Year' => '2004'),
+			    $data[$this->_albumS->getId()], 'Detail data 2');
 
-	list ($ret, $data) = CustomFieldHelper::fetchFieldValues($this->_albumS, null, 'album');
+	list ($ret, $data) =
+		CustomFieldHelper::fetchFieldValues(array($this->_albumS), null, 'album');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array('Category' => 'C', 'Catalog Id' => '456', 'Year' => '2004'),
-			    $data, 'All data 2');
+			    $data[$this->_albumS->getId()], 'All data 2');
 
 	/* ==== Item Admin functions -- set album-specific settings ==== */
 
@@ -356,11 +362,12 @@ class CustomFieldItemEditPluginTest extends ItemEditPluginTestCase {
 			    $params, 'Check Data 4');
 
 	/* Check appropriate field values have been removed with settings changes */
-	list ($ret, $data) = CustomFieldHelper::fetchFieldValues($this->_albumS);
+	list ($ret, $data) = CustomFieldHelper::fetchFieldValues(array($this->_albumS));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals(array('Category' => 'C'), $data, 'Field values');
+	$this->assertEquals(array('Category' => 'C'),
+			    $data[$this->_albumS->getId()], 'Field values');
     }
 }
 ?>

@@ -160,13 +160,14 @@ class CustomFieldInterfaceTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $data, $tmp, $isContainer) = CustomFieldHelper::fetchFieldValues($this->_item);
+	list ($ret, $data, $tmp, $isContainer) =
+		CustomFieldHelper::fetchFieldValues(array($this->_item));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array('Photographer' => 'Me', 'Location' => 'Here'),
-			    $data, 'Field values');
-	$this->assertEquals(true, $isContainer, 'Album-specific settings');
+			    $data[$this->_item->getId()], 'Field values');
+	$this->assertEquals(true, $isContainer[$this->_item->getId()], 'Album-specific settings');
     }
 }
 ?>

@@ -85,11 +85,14 @@ class CustomFieldModule extends GalleryModule {
     function getItemSummaries($items, $permissions) {
 	GalleryCoreApi::relativeRequireOnce('modules/customfield/classes/CustomFieldHelper.class');
 	$summaries = array();
+
+	list ($ret, $fields) = CustomFieldHelper::fetchFieldValues($items, 'summary');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	foreach ($items as $item) {
-	    list ($ret, $fields) = CustomFieldHelper::fetchFieldValues($item, 'summary');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
+	    $itemIds[] = $item->getId();
 	    $list = array();
 	    foreach ($fields as $field => $value) {
 		$list[] = "$field: $value";

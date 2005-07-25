@@ -37,13 +37,13 @@ class CustomFieldCallbacks {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    list ($ret, $fields) = CustomFieldHelper::fetchFieldValues($item, 'detail');
+	    list ($ret, $fields) = CustomFieldHelper::fetchFieldValues(array($item), 'detail');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    $block =& $smarty->_tpl_vars['block'];
-	    $block['customfield']['LoadCustomFields']['fields'] = $fields;
+	    $block['customfield']['LoadCustomFields']['fields'] = $fields[$item->getId()];
 
 	    return GalleryStatus::success();
 	}

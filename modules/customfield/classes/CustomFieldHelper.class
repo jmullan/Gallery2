@@ -93,7 +93,8 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
 	    }
 	    $list = array();
 	    foreach ($param[$set] as $item) {
-		$list[] = $item['field'] . '`' . ($item['summary']?1:0) . '`' . ($item['detail']?1:0)
+		$list[] = $item['field'] . '`' . ($item['summary'] ? 1 : 0) . '`'
+			. ($item['detail'] ? 1 : 0)
 			. (!empty($item['choices']) ? ('`' . implode('`', $item['choices'])) : '');
 	    }
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'customfield', $set,
@@ -190,50 +191,61 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
     }
 
     /**
-     * Load custom field values for specified item
+     * Load custom field values for specified items
      *
-     * @param object GalleryEntity item
+     * @param array  object GalleryEntity item, ...
      * @param string if specified then only include fields for that view (summary or detail)
      * @param string if specified then include in results all valid fields for
      *               this type, even if item has no value
      * @return array GalleryStatus a status code
-     *               array(field => value)
-     *               array, boolean  loadParameters results
+     *               array(itemId => array(field => value))
+     *               array(itemId => array) loadParameters results
+     *		     array(itemId => boolean) loadParameters results
      * @static
      */
-    function fetchFieldValues(&$item, $viewType=null, $fillSet=null) {
+    function fetchFieldValues($items, $viewType=null, $fillSet=null) {
 	global $gallery;
 	$data = $result = array();
-	$containerId = GalleryUtilities::isA($item, 'GalleryAlbumItem')
-					? $item->getId() : $item->getParentId();
 
-	list ($ret, $param, $isContainer) = CustomFieldHelper::loadParameters($containerId);
+	foreach ($items as $item) {
+	    $itemId = $item->getId();
+	    $itemIds[] = $itemId;
+	    $containerId = GalleryUtilities::isA($item, 'GalleryAlbumItem')
+					    ? $itemId : $item->getParentId();
+
+	    list ($ret, $param[$itemId], $isContainer[$itemId]) =
+		    CustomFieldHelper::loadParameters($containerId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+	    }
+	}
+
+	$query = 'SELECT [CustomFieldMap::itemId], [CustomFieldMap::field], [CustomFieldMap::value]
+		  FROM [CustomFieldMap] WHERE [CustomFieldMap::itemId] IN ('
+		  . GalleryUtilities::makeMarkers($items) . ')';
+
+	list ($ret, $searchResults) = $gallery->search($query, $itemIds);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 	}
 
-	$query = 'SELECT [CustomFieldMap::field], [CustomFieldMap::value]
-		  FROM [CustomFieldMap] WHERE [CustomFieldMap::itemId] = ?';
-
-	list ($ret, $searchResults) = $gallery->search($query, array($item->getId()));
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
-	}
 	while ($rec = $searchResults->nextResult()) {
-	    $data[$rec[0]] = $rec[1];
+	    $data[$rec[0]][$rec[1]] = $rec[2];
 	}
 
-	foreach (array('common', 'album', 'photo') as $set) {
-	    foreach ($param[$set] as $it) {
-		$field = $it['field'];
-		if (isset($viewType) && !$it[$viewType]) {
-		    continue;
-		}
-		if (isset($data[$field])) {
-		    $result[$field] = $data[$field];
-		}
-		else if (isset($fillSet) && ($set == 'common' || $set == $fillSet)) {
-		    $result[$field] = '';
+	foreach ($itemIds as $itemId) {
+	    foreach (array('common', 'album', 'photo') as $set) {
+		foreach ($param[$itemId][$set] as $it) {
+		    $field = $it['field'];
+		    if (isset($viewType) && !$it[$viewType]) {
+			continue;
+		    }
+		    if (isset($data[$itemId][$field])) {
+			$result[$itemId][$field] = $data[$itemId][$field];
+		    }
+		    else if (isset($fillSet) && ($set == 'common' || $set == $fillSet)) {
+			$result[$itemId][$field] = '';
+		    }
 		}
 	    }
 	}
@@ -347,7 +359,8 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
 	    }
 	} else if (isset($form['action']['go'])) {
 	    foreach ($form['action']['go'] as $set => $tmp) {}
-	    list ($ret, $param, $isContainer) = CustomFieldHelper::loadParameters($containerId, false);
+	    list ($ret, $param, $isContainer) =
+		    CustomFieldHelper::loadParameters($containerId, false);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

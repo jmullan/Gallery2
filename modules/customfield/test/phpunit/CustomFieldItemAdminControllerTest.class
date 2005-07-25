@@ -106,12 +106,14 @@ class CustomFieldItemAdminControllerTest extends GalleryControllerTestCase {
 			    $results, 'Activate album-specific');
 
 	// Check values are retained..
-	list ($ret, $data, $tmp, $isContainer) = CustomFieldHelper::fetchFieldValues($this->_item);
+	list ($ret, $data, $tmp, $isContainer) =
+		CustomFieldHelper::fetchFieldValues(array($this->_item));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals(array('Catalog Id' => 'A2', 'Category' => 'A'), $data, 'Field values');
-	$this->assertEquals(true, $isContainer, 'Album-specific settings');
+	$this->assertEquals(array('Catalog Id' => 'A2', 'Category' => 'A'),
+		$data[$this->_item->getId()], 'Field values');
+	$this->assertEquals(true, $isContainer[$this->_item->getId()], 'Album-specific settings');
 
 	// Check adminMode in session..
 	$adminMode = $session->get(CUSTOM_FIELD_SESSION_KEY);
@@ -155,12 +157,14 @@ class CustomFieldItemAdminControllerTest extends GalleryControllerTestCase {
 			    $results, 'Revert to global-settings');
 
 	// Check values..
-	list ($ret, $data, $tmp, $isContainer) = CustomFieldHelper::fetchFieldValues($this->_item);
+	list ($ret, $data, $tmp, $isContainer) =
+		CustomFieldHelper::fetchFieldValues(array($this->_item));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals(array('Catalog Id' => 'A3', 'Category' => 'B'), $data, 'Field values');
-	$this->assertEquals(false, $isContainer, 'Global settings');
+	$this->assertEquals(array('Catalog Id' => 'A3', 'Category' => 'B'),
+		$data[$this->_item->getId()], 'Field values');
+	$this->assertEquals(false, $isContainer[$this->_item->getId()], 'Global settings');
     }
 }
 ?>

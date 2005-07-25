@@ -50,7 +50,80 @@ class CustomFieldHelperTest extends GalleryTestCase {
         }
         $this->assertEquals(array('error' => array('empty' => 1)),
             $status, 'handleAdmin Action status');
-    }        
-}
+    }
 
+    function testFetchFieldValues() {
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($this->_album);
+
+	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_item2) = $this->_createRandomDataItem($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+        list ($ret, $data) = CustomFieldHelper::fetchFieldValues(array($this->_album, $this->_item,
+		    $this->_item2));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array(), $data, 'Multi-item no value retrieve failed');
+
+
+	$ret = $this->_markPluginParametersForCleanup('module', 'customfield');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+        $ret = CustomFieldHelper::saveParameters(array(
+            'common' => array(
+                array('field' => 'Category',
+                      'summary' => true, 'detail' => false, 'choices' => array('A', 'B', 'C'))
+            ),
+            'album' => array(
+                array('field' => 'Catalog Id',
+                      'summary' => false, 'detail' => true, 'choices' => array()),
+                array('field' => 'Year',
+                      'summary' => false, 'detail' => true, 'choices' => array())
+            ),
+            'photo' => array(
+                array('field' => 'Photographer',
+                      'summary' => true, 'detail' => true, 'choices' => array()),
+            )
+        ), $this->_album->getId());
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+
+	$itemFields = array('Catalog Id' => '123', 'Year' => 2010,
+			    'Photographer' => 'Jack Frost');
+	$ret = CustomFieldHelper::saveFieldValues($this->_item, $itemFields);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	$ret = CustomFieldHelper::saveFieldValues($this->_album, $itemFields);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+        list ($ret, $data) = CustomFieldHelper::fetchFieldValues(array($this->_album, $this->_item,
+		    $this->_item2), 'detail');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array($this->_item->getId() => $itemFields,
+				  $this->_album->getId() => $itemFields),
+			    $data, 'Multi-item retrieve failed');
+    }
+}
 ?>
