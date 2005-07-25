@@ -142,22 +142,22 @@ class MultiLangItemEditPluginTest extends ItemEditPluginTestCase {
     }
     
     function testMissingRootTitle() {
-	    $rootAlbumId = $this->_getRootId();
-	    $ret = GalleryCoreApi::setPluginParameter(
-            'module', 'core', 'id.rootAlbum', $this->_album->getId());
-	    if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null, null);
-	    }
-        GalleryUtilities::putRequestVariable('form[language]', 'zh_CN');
-		GalleryUtilities::putRequestVariable('form[action][save]', 1);
-        $results = $this->handleRequest($this->_album, $this->_album);
-        $this->assertEquals(array(array('form[error][title][missingRootTitle]'), null),
+	$rootAlbumId = $this->_getRootId();
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'core', 'id.rootAlbum', $this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	GalleryUtilities::putRequestVariable('form[language]', 'zh_CN');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	$results = $this->handleRequest($this->_album, $this->_album);
+	$this->assertEquals(array(array('form[error][title][missingRootTitle]'), null),
 			    $results);
-	    $ret = GalleryCoreApi::setPluginParameter(
-            'module', 'core', 'id.rootAlbum', $rootAlbumId);
-	    if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null, null);
-	    }
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'core', 'id.rootAlbum', $rootAlbumId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
     }
 }
 ?>
