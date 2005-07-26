@@ -116,7 +116,8 @@ class ItemEditMovie extends ItemEditPlugin {
 
 	$template->setVariable('ItemEditMovie', $ItemEditMovie);
 	$template->setVariable('controller', 'core.ItemEditMovie');
-	return array(GalleryStatus::success(), 'modules/core/templates/ItemEditMovie.tpl');
+	return array(GalleryStatus::success(),
+		     'modules/core/templates/ItemEditMovie.tpl', 'modules_core');
     }
 
     /**

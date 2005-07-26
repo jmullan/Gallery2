@@ -52,4 +52,4 @@
   {/foreach}
 </div>
 
-{include file="gallery:`$ItemEdit.pluginFile`" l10Domain=$ItemAdmin.viewL10Domain}
+{include file="gallery:`$ItemEdit.pluginFile`" l10Domain=$ItemEdit.pluginL10Domain}

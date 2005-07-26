@@ -137,17 +137,17 @@ class ItemEditTheme extends ItemEditPlugin {
 
 	list ($ret, $themeId) = GalleryCoreApi::fetchThemeId($item);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	if ($theme->isAdvancedSettings()) {
 	    list ($ret, $tpl) = $theme->loadSettingsTemplate($template, $form, $item->getId());
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    $ItemEditTheme['customTemplate'] = $tpl;
 	}
@@ -155,14 +155,14 @@ class ItemEditTheme extends ItemEditPlugin {
 	/* Get the per-item settings (global + item) */
 	list ($ret, $settings) = $theme->getSettings($item->getId());
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	/* Fetch the global-only params */
 	list ($ret, $globalParams) =
 	GalleryCoreApi::fetchAllPluginParameters('theme', $theme->getId());
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	for ($i = 0; $i < count($settings); $i++) {
@@ -181,7 +181,7 @@ class ItemEditTheme extends ItemEditPlugin {
 	list ($ret, $itemParams) =
 	    GalleryCoreApi::fetchAllPluginParameters('theme', $theme->getId(), $item->getId());
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	if ($form['formName'] != 'ItemEditTheme') {
@@ -207,7 +207,7 @@ class ItemEditTheme extends ItemEditPlugin {
 
 	list ($ret, $ItemEditTheme['availableBlocks']) = $this->loadAvailableBlocks();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	$ItemEditTheme['theme']['name'] = $theme->getName();
@@ -216,7 +216,8 @@ class ItemEditTheme extends ItemEditPlugin {
 	$template->javascript('lib/javascript/BlockSelectWidget.js');
 	$template->setVariable('ItemEditTheme', $ItemEditTheme);
 	$template->setVariable('controller', 'core.ItemEditTheme');
-	return array(GalleryStatus::success(), 'modules/core/templates/ItemEditTheme.tpl');
+	return array(GalleryStatus::success(),
+		     'modules/core/templates/ItemEditTheme.tpl', 'modules_core');
     }
 
     /**

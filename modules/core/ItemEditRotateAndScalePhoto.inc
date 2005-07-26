@@ -204,8 +204,8 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 		}
 
 		/* Let our change ripple down the derivative tree, if necessary */
-		$ret = GalleryCoreApi::adjustDependentDerivatives($item->getId(),
-                    sprintf('%s|%s', $operation, join(',', $args)));
+		$ret = GalleryCoreApi::adjustDependentDerivatives(
+		    $item->getId(), sprintf('%s|%s', $operation, join(',', $args)));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
@@ -349,7 +349,7 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 	list ($ret, $ItemEditRotateAndScalePhoto['isAdmin']) =
 	    GalleryCoreApi::isUserInSiteAdminGroup();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	if ($form['formName'] != 'ItemEditRotateAndScalePhoto') {
@@ -365,7 +365,7 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 	} else {
 	    list ($ret, $linkedIds) = GalleryCoreApi::fetchEntitiesLinkedTo($item->getId());
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
 	    $ItemEditRotateAndScalePhoto['editPhoto']['isLinkedTo'] = !empty($linkedIds);
@@ -376,7 +376,7 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 	list ($ret, $results) =
 	    GalleryCoreApi::fetchPreferredsByItemIds(array($item->getId()));
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	$sourceMimeTypes = array($item->getMimeType());
@@ -396,19 +396,19 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 	list ($ret, $ItemEditRotateAndScalePhoto['editPhoto']['can']['rotate']) =
 	    $this->_checkForOperation('rotate', $sourceMimeTypes);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	list ($ret, $ItemEditRotateAndScalePhoto['editPhoto']['can']['resize']) =
 	    $this->_checkForOperation('scale', $sourceMimeTypes);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	$template->setVariable('ItemEditRotateAndScalePhoto', $ItemEditRotateAndScalePhoto);
 	$template->setVariable('controller', 'core.ItemEditRotateAndScalePhoto');
 	return array(GalleryStatus::success(),
-		     'modules/core/templates/ItemEditRotateAndScalePhoto.tpl');
+		     'modules/core/templates/ItemEditRotateAndScalePhoto.tpl', 'modules_core');
     }
 
     /**

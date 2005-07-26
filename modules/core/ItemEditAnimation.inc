@@ -114,7 +114,8 @@ class ItemEditAnimation extends ItemEditPlugin {
 	$ItemEditAnimation = array();
 	$template->setVariable('ItemEditAnimation', $ItemEditAnimation);
 	$template->setVariable('controller', 'core.ItemEditAnimation');
-	return array(GalleryStatus::success(), 'modules/core/templates/ItemEditAnimation.tpl');
+	return array(GalleryStatus::success(),
+		     'modules/core/templates/ItemEditAnimation.tpl', 'modules_core');
     }
 
     /**

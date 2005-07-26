@@ -112,7 +112,7 @@ class CustomFieldItemEdit extends ItemEditPlugin {
 	case 1:
 	    $ret = CustomFieldHelper::loadAdminForm($form, $item->getId());
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    $tpl = 'modules/customfield/templates/CustomFieldItemAdmin.tpl';
 	    break;
@@ -122,7 +122,7 @@ class CustomFieldItemEdit extends ItemEditPlugin {
 	    list ($ret, $form['fields'], $param, $isContainerSettings) =
 		CustomFieldHelper::fetchFieldValues($item, null, $set);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    foreach (array('common' => 1, $set => 1) as $s => $tmp) {
 		foreach ($param[$s] as $it) {
@@ -137,7 +137,7 @@ class CustomFieldItemEdit extends ItemEditPlugin {
 	    $tpl = 'modules/customfield/templates/CustomFieldItemEdit.tpl';
 	}
 	$template->setVariable('controller', 'customfield.CustomFieldItemEdit');
-	return array(GalleryStatus::success(), $tpl);
+	return array(GalleryStatus::success(), $tpl, 'modules_customfield');
     }
 
     /**

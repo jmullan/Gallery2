@@ -162,14 +162,14 @@ class ItemEditWatermark extends ItemEditPlugin {
 
 	list ($ret, $ItemEditWatermark['isAdmin']) = GalleryCoreApi::isUserInSiteAdminGroup();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	/* Load up all watermarks */
 	GalleryCoreApi::relativeRequireOnce('modules/watermark/classes/WatermarkHelper.class');
 	list ($ret, $watermarks) = WatermarkHelper::fetchWatermarks();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	if (!empty($watermarks)) {
@@ -233,7 +233,7 @@ class ItemEditWatermark extends ItemEditPlugin {
 	list ($ret, $derivatives) =
 	    GalleryCoreApi::fetchDerivativesByItemIds(array($item->getId()));
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	$smallestSize = null;
 	$displayDerivative = null;
@@ -256,7 +256,8 @@ class ItemEditWatermark extends ItemEditPlugin {
 
 	$template->setVariable('ItemEditWatermark', $ItemEditWatermark);
 	$template->setVariable('controller', 'core.ItemEditWatermark');
-	return array(GalleryStatus::success(), 'modules/watermark/templates/ItemEditWatermark.tpl');
+	return array(GalleryStatus::success(),
+		     'modules/watermark/templates/ItemEditWatermark.tpl', 'modules_watermark');
     }
 
     /**

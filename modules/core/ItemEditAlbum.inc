@@ -374,7 +374,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 	    /* Load up the data for the resizes table */
 	    list ($ret, $preferences) = GalleryCoreApi::fetchDerivativePreferencesForItem($item->getId());
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
 	    foreach ($preferences as $preference) {
@@ -425,7 +425,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	/* Set up our sort order selection list */
@@ -433,13 +433,13 @@ class ItemEditAlbum extends ItemEditPlugin {
 	list ($ret, $orderByList, $presortList, $orderDirectionList) =
 	    GallerySortInterface_1_1::getAllSortOrders();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	/* Set up our theme selection list */
 	list ($ret, $themeStatusList) = GalleryCoreApi::fetchPluginStatus('theme');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	$themeList = array('' => $module->translate('&laquo; default theme &raquo;'));
 	foreach ($themeStatusList as $themeId => $themeStatus) {
@@ -449,7 +449,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 
 	    list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    $themeList[$themeId] = $theme->getName();
 	}
@@ -461,7 +461,8 @@ class ItemEditAlbum extends ItemEditPlugin {
 
 	$template->setVariable('ItemEditAlbum', $ItemEditAlbum);
 	$template->setVariable('controller', 'core.ItemEditAlbum');
-	return array(GalleryStatus::success(), 'modules/core/templates/ItemEditAlbum.tpl');
+	return array(GalleryStatus::success(),
+		     'modules/core/templates/ItemEditAlbum.tpl', 'modules_core');
     }
 
     /**

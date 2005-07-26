@@ -108,11 +108,12 @@ class ItemEditThumbOffset extends ItemEditPlugin {
 	}
 	list ($ret, $duration) = $this->_getDuration($item);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	$form['duration'] = sprintf('%.3f', $duration);
 	$template->setVariable('controller', 'thumbpage.ItemEditThumbOffset');
-	return array(GalleryStatus::success(), 'modules/thumbpage/templates/Offset.tpl');
+	return array(GalleryStatus::success(),
+		     'modules/thumbpage/templates/Offset.tpl', 'modules_thumbpage');
     }
 
     /**

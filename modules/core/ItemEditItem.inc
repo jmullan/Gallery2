@@ -297,7 +297,7 @@ class ItemEditItem extends ItemEditPlugin {
 	list ($ret, $rootAlbumId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	$can = array('createThumbnail' => false);
@@ -308,7 +308,7 @@ class ItemEditItem extends ItemEditPlugin {
 	    if (!isset($thumbnail)) {
 		list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item, 0, 1);
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 		if (empty($childIds)) {
 		    $can['editThumbnail'] = false;
@@ -318,7 +318,7 @@ class ItemEditItem extends ItemEditPlugin {
 	    list ($ret, $operations) = GalleryCoreApi::makeSupportedViewableOperationSequence(
 						       $item->getMimeType(), 'thumbnail|150');
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    $can['createThumbnail'] = isset($operations);
 	}
@@ -329,7 +329,7 @@ class ItemEditItem extends ItemEditPlugin {
 	/* The originateTimestamp that we can get from our toolkits */
 	list ($ret, $originationTimestamp) = GalleryCoreApi::fetchOriginationTimestamp($item);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	if (!empty($originationTimestamp)) {
 	    $ItemEditItem['originationTimestamp'] = array(
@@ -354,7 +354,8 @@ class ItemEditItem extends ItemEditPlugin {
 	$template->setVariable('ItemEditItem', $ItemEditItem);
 	$template->setVariable('controller', 'core.ItemEditItem');
 
-	return array(GalleryStatus::success(), 'modules/core/templates/ItemEditItem.tpl');
+	return array(GalleryStatus::success(),
+		     'modules/core/templates/ItemEditItem.tpl', 'modules_core');
     }
 
     /**

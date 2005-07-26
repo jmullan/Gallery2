@@ -283,7 +283,7 @@ class ItemEditView extends GalleryView {
 	}
 
 	/* Let the plugin load its template data */
-	list ($ret, $ItemEdit['pluginFile']) =
+	list ($ret, $ItemEdit['pluginFile'], $ItemEdit['pluginL10Domain']) =
 	    $pluginInstances[$editPlugin]->loadTemplate($template, $form, $item, $thumbnail);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -339,7 +339,7 @@ class ItemEditView extends GalleryView {
 }
 
 /**
- * Interface for plugins to th ItemEdit view and controller
+ * Interface for plugins to the ItemEdit view and controller
  *
  * @package GalleryCore
  * @subpackage UserInterface
@@ -366,9 +366,10 @@ class ItemEditPlugin {
      * @param the item's thumbnail
      * @return array object GalleryStatus a status code
      *               string the path to a template file to include
+     *               string localization domain for the template file
      */
     function loadTemplate(&$template, &$form, $item, $thumbnail) {
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
     }
 
     /**
@@ -390,7 +391,7 @@ class ItemEditPlugin {
      * Return a localized title for this plugin, suitable for display to the user
      *
      * @return array object GalleryStatus a status code
-     *               return-array (same as GalleryController::handleRequest)
+     *               string localized title
      */
     function getTitle() {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);

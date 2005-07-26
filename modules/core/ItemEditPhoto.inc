@@ -136,7 +136,7 @@ class ItemEditPhoto extends ItemEditPlugin {
 			    $derivative->setMimeType($outputMimeType);
 			    $derivative->setDerivativeOperations($operations);
 			}
-			
+
 			$derivative->setDerivativeSourceId($source->getId());
 			if (isset($postFilter)) {
 			    $derivative->setPostFilterOperations($postFilter);
@@ -174,7 +174,7 @@ class ItemEditPhoto extends ItemEditPlugin {
 	    /* Load the resizes */
 	    list ($ret, $resizes) = GalleryCoreApi::fetchResizesByItemIds(array($item->getId()));
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
 	    if (!empty($resizes)) {
@@ -218,13 +218,14 @@ class ItemEditPhoto extends ItemEditPlugin {
 	list ($ret, $toolkit) =
 	    GalleryCoreApi::getToolkitByOperation($item->getMimeType(), 'scale');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	$ItemEditPhoto['editSizes']['can']['createResizes'] = isset($toolkit);
 
 	$template->setVariable('ItemEditPhoto', $ItemEditPhoto);
 	$template->setVariable('controller', 'core.ItemEditPhoto');
-	return array(GalleryStatus::success(), 'modules/core/templates/ItemEditPhoto.tpl');
+	return array(GalleryStatus::success(),
+		     'modules/core/templates/ItemEditPhoto.tpl', 'modules_core');
     }
 
     /**

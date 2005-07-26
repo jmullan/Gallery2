@@ -98,7 +98,7 @@ class ItemEditThumbPage extends ItemEditPlugin {
 	}
 	list ($ret, $count) = $this->_getPageCount($item);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	$ItemEditThumbPage = array('pageList' => array());
 	for ($i = 1; $i <= $count; $i++) {
@@ -106,7 +106,8 @@ class ItemEditThumbPage extends ItemEditPlugin {
 	}
 	$template->setVariable('ItemEditThumbPage', $ItemEditThumbPage);
 	$template->setVariable('controller', 'thumbpage.ItemEditThumbPage');
-	return array(GalleryStatus::success(), 'modules/thumbpage/templates/Page.tpl');
+	return array(GalleryStatus::success(),
+		     'modules/thumbpage/templates/Page.tpl', 'modules_thumbpage');
     }
 
     /**

@@ -93,7 +93,7 @@ class MultiLangItemEdit extends ItemEditPlugin {
 	$form['mainDescription'] = $item->getDescription();
 	list ($ret, $form['languageData']) = MultiLangHelper::getItemData($item->getId());
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	/*
 	 * If there was an error and the data wasn't saved
@@ -115,7 +115,7 @@ class MultiLangItemEdit extends ItemEditPlugin {
 	list ($ret, $languages) =
 	    GalleryCoreApi::getPluginParameter('module', 'multilang', 'languages');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	$languages = empty($languages) ? array() : explode('|', $languages);
 	sort($languages);
@@ -130,7 +130,7 @@ class MultiLangItemEdit extends ItemEditPlugin {
 	if (empty($selectedLanguage)) {
 	    list ($ret, $selectedLanguage) = $gallery->getActiveLanguageCode();
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	} else {
 	    $session->remove('multilang.language');
@@ -148,7 +148,8 @@ class MultiLangItemEdit extends ItemEditPlugin {
 	$form['selectedIndex'] = $selectedLanguageIndex;
 
 	$template->setVariable('controller', 'multilang.MultiLangItemEdit');
-	return array(GalleryStatus::success(), 'modules/multilang/templates/MultiLangItemEdit.tpl');
+	return array(GalleryStatus::success(),
+		     'modules/multilang/templates/MultiLangItemEdit.tpl', 'modules_multilang');
     }
 
     /**
