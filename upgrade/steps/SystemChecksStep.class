@@ -284,9 +284,5 @@ class SystemChecksStep extends UpgradeStep {
 	return array('missing' => $missing, 'modified' => $modified,
 		     'shouldRemove' => $shouldRemove);
     }
-
-    function abbreviate($str, $len=60) {
-	return (strlen($str) > $len) ? ('...' . substr($str, -1 * $len)) : $str;
-    }
 }
 ?>
