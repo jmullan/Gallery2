@@ -82,7 +82,7 @@
 <?php endif; ?>
 
 <?php if (isset($templateData['MainPage']['showStatus'])): ?>
-<script type="text/javascript">updateStatus(<?php printf('"%s", "%s", %0.3F', $templateData['MainPage']['status']['title'], $templateData['MainPage']['status']['description'], $templateData['MainPage']['status']['percentComplete']); ?>)</script>
+<script type="text/javascript">updateStatus(<?php printf('"%s", "%s", %s', $templateData['MainPage']['status']['title'], $templateData['MainPage']['status']['description'], $templateData['MainPage']['status']['percentComplete']); ?>)</script>
 <?php endif; ?>
 
 <?php if (isset($templateData['MainPage']['hideStatusBlock'])): ?>

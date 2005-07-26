@@ -49,7 +49,7 @@ class StatusTemplate {
 	$templateData['MainPage']['status'] = array(
 	    'title' => $title,
 	    'description' => $description,
-	    'percentComplete' => $percentComplete);
+	    'percentComplete' => GalleryUtilities::roundToString($percentComplete, 2));
 	include(dirname(__FILE__) . '/templates/MainPage.html');
 	flush();
 
