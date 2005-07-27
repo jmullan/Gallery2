@@ -78,7 +78,7 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
      * @see GalleryModule::isRecommendedDuringInstall
      */
     function isRecommendedDuringInstall() {
-	return true;
+	return false;
     }
 
     /**

@@ -94,7 +94,7 @@ class ImageBlockModule extends GalleryModule {
      * @see GalleryModule::isRecommendedDuringInstall()
      */
     function isRecommendedDuringInstall() {
-	return true;
+	return false;
     }
 
     /**
