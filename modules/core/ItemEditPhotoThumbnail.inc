@@ -293,9 +293,6 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
-	    $aspectRatioList[] = array('label' => $module->translate('Screen 4x3'),
-				       'width' => 4,
-				       'height' => 3);
 	    $aspectRatioList[] = array('label' => $module->translate('Photo 5x3'),
 				       'width' => 5,
 				       'height' => 3);
@@ -308,7 +305,10 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 	    $aspectRatioList[] = array('label' => $module->translate('Photo 10x8'),
 				       'width' => 10,
 				       'height' => 8);
-	    $aspectRatioList[] = array('label' => $module->translate('HDTV 16x9'),
+	    $aspectRatioList[] = array('label' => $module->translate('Fullscreen 4x3'),
+				       'width' => 4,
+				       'height' => 3);
+	    $aspectRatioList[] = array('label' => $module->translate('Widescreen 16x9'),
 				       'width' => 16,
 				       'height' => 9);
 	    $aspectRatioList[] = array('label' => $module->translate('CinemaScope 2.35x1'),
