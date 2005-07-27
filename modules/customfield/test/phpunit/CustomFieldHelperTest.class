@@ -36,20 +36,20 @@ GalleryCoreApi::relativeRequireOnce('modules/customfield/classes/CustomFieldHelp
  */
 class CustomFieldHelperTest extends GalleryTestCase {
     function CustomFieldHelperTest($methodname) {
-        $this->GalleryTestCase($methodname);
+	$this->GalleryTestCase($methodname);
     }
-    
+
     function testHandleAdminAction() {
-        $form = GalleryUtilities::getFormVariables('form');
-        $form['action']['add']['common'] = 'Add';
-        $form['common']['newField'] = '';
-        /* This only test empty field name (Bug 1165012) */
-        list($ret, $status) = CustomFieldHelper::handleAdminAction($form);
-        if ($ret->isError()) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
-        $this->assertEquals(array('error' => array('empty' => 1)),
-            $status, 'handleAdmin Action status');
+	$form = GalleryUtilities::getFormVariables('form');
+	$form['action']['add']['common'] = 'Add';
+	$form['common']['newField'] = '';
+	/* This only test empty field name (Bug 1165012) */
+	list($ret, $status) = CustomFieldHelper::handleAdminAction($form);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('error' => array('empty' => 1)),
+	    $status, 'handleAdmin Action status');
     }
 
     function testFetchFieldValues() {
@@ -69,7 +69,7 @@ class CustomFieldHelperTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-        list ($ret, $data) = CustomFieldHelper::fetchFieldValues(array($this->_album, $this->_item,
+	list ($ret, $data) = CustomFieldHelper::fetchFieldValues(array($this->_album, $this->_item,
 		    $this->_item2));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -77,45 +77,44 @@ class CustomFieldHelperTest extends GalleryTestCase {
 
 	$this->assertEquals(array(), $data, 'Multi-item no value retrieve failed');
 
-
 	$ret = $this->_markPluginParametersForCleanup('module', 'customfield');
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-        $ret = CustomFieldHelper::saveParameters(array(
-            'common' => array(
-                array('field' => 'Category',
-                      'summary' => true, 'detail' => false, 'choices' => array('A', 'B', 'C'))
-            ),
-            'album' => array(
-                array('field' => 'Catalog Id',
-                      'summary' => false, 'detail' => true, 'choices' => array()),
-                array('field' => 'Year',
-                      'summary' => false, 'detail' => true, 'choices' => array())
-            ),
-            'photo' => array(
-                array('field' => 'Photographer',
-                      'summary' => true, 'detail' => true, 'choices' => array()),
-            )
-        ), $this->_album->getId());
-        if ($ret->isError()) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
+	$ret = CustomFieldHelper::saveParameters(array(
+	    'common' => array(
+		array('field' => 'Category',
+		      'summary' => true, 'detail' => false, 'choices' => array('A', 'B', 'C'))
+	    ),
+	    'album' => array(
+		array('field' => 'Catalog Id',
+		      'summary' => false, 'detail' => true, 'choices' => array()),
+		array('field' => 'Year',
+		      'summary' => false, 'detail' => true, 'choices' => array())
+	    ),
+	    'photo' => array(
+		array('field' => 'Photographer',
+		      'summary' => true, 'detail' => true, 'choices' => array()),
+	    )
+	), $this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
 	$itemFields = array('Catalog Id' => '123', 'Year' => 2010,
 			    'Photographer' => 'Jack Frost');
 	$ret = CustomFieldHelper::saveFieldValues($this->_item, $itemFields);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = CustomFieldHelper::saveFieldValues($this->_album, $itemFields);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-        list ($ret, $data) = CustomFieldHelper::fetchFieldValues(array($this->_album, $this->_item,
+	list ($ret, $data) = CustomFieldHelper::fetchFieldValues(array($this->_album, $this->_item,
 		    $this->_item2), 'detail');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
