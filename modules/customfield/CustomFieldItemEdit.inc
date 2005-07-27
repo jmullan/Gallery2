@@ -120,12 +120,12 @@ class CustomFieldItemEdit extends ItemEditPlugin {
 	    $set = GalleryUtilities::isA($item, 'GalleryAlbumItem') ? 'album'
 		 : (GalleryUtilities::isA($item, 'GalleryPhotoItem') ? 'photo' : 'common');
 	    list ($ret, $form['fields'], $param, $isContainerSettings) =
-		CustomFieldHelper::fetchFieldValues($item, null, $set);
+		CustomFieldHelper::fetchFieldValues(array($item), null, $set);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    foreach (array('common' => 1, $set => 1) as $s => $tmp) {
-		foreach ($param[$s] as $it) {
+		foreach ($param[$item->getId()][$s] as $it) {
 		    if (!empty($it['choices'])) {
 			$form['choices'][$it['field']] = $it['choices'];
 		    }

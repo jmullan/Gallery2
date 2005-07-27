@@ -207,6 +207,12 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
 	global $gallery;
 	$data = $result = array();
 
+	if (empty($items) || !is_array($items)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), 
+		    null, null, null);
+	}
+		    
+
 	foreach ($items as $item) {
 	    $itemId = $item->getId();
 	    $itemIds[] = $itemId;

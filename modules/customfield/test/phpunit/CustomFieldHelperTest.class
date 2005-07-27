@@ -124,6 +124,14 @@ class CustomFieldHelperTest extends GalleryTestCase {
 	$this->assertEquals(array($this->_item->getId() => $itemFields,
 				  $this->_album->getId() => $itemFields),
 			    $data, 'Multi-item retrieve failed');
+
+	list ($ret) = CustomFieldHelper::fetchFieldValues("");
+	$this->assert(ERROR_BAD_PARAMETER & $ret->getErrorCode(),
+		'Non-array value should return an error 1');
+
+	list ($ret) = CustomFieldHelper::fetchFieldValues(array());
+	$this->assert(ERROR_BAD_PARAMETER & $ret->getErrorCode(),
+		'Non-array value should return an error 2');
     }
 }
 ?>
