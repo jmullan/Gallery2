@@ -37,7 +37,7 @@ class UpgradeOtherModulesStep extends UpgradeStep {
         $template = new StatusTemplate();
 
         $template->renderHeader(true);
-	
+
         if (isset($_REQUEST['module'])) {
             $totalPlugins = count($_REQUEST['module']);
             $currentPlugin = 0;
@@ -202,7 +202,7 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 		}
 	    }
 
-	    ksort($modules);
+	    uksort($modules, array($this, '_sortModules'));
 	    foreach (array_keys($modules) as $moduleId) {
 		$gallery->guaranteeTimeLimit(120);
 
@@ -281,6 +281,24 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 
     function isOptional() {
 	return true;
+    }
+
+    /**
+     * Put GD at the end of the list so that it's the lowest priority toolkit.  This is a hack,
+     * that we should replace with a more sophisticated system in the future.
+     *
+     * Note: we do the same in the installer
+     */
+    function _sortModules($a, $b) {
+	if ($a == 'gd' && $b == 'gd') {
+	    return 0;
+	} else if ($a == 'gd') {
+	    return 1;
+	} else if ($b == 'gd') {
+	    return -1;
+	} else {
+	    return strcmp($a, $b);
+	}
     }
 }
 ?>
