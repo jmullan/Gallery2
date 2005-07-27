@@ -25,7 +25,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Core 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-10-15 09:02+0200\n"
-"PO-Revision-Date: 2005-06-12 16:20+0200\n"
+"PO-Revision-Date: 2005-07-25 18:27+0200\n"
 "Last-Translator: Allan Beaufour <allan@beaufour.dk>\n"
 "Language-Team: Danish <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -157,7 +157,7 @@ msgid "All Users"
 msgstr "Alle brugere"
 
 msgid "Detecting broken derivatives"
-msgstr ""
+msgstr "Finder afledte filer med fejl"
 
 msgid "Site Admins"
 msgstr "Sideadministratorer"
@@ -175,16 +175,16 @@ msgid "This is the main page of your Gallery"
 msgstr "Dette er hovedsiden af dit galleri"
 
 msgid "Detecting broken derivatives, loading "
-msgstr ""
+msgstr "Finder afledte filer med fejl, henter "
 
 msgid "Detecting broken derivatives "
-msgstr ""
+msgstr "Finder afledte filer med fejl "
 
 msgid "Detecting broken derivatives, "
-msgstr ""
+msgstr "Finder afledte filer med fejl, "
 
 msgid "Detecting broken derivatives, saving "
-msgstr ""
+msgstr "Finder afledte filer med fejl, gemmer "
 
 msgid "add items"
 msgstr "tilføj elementer"
@@ -284,9 +284,6 @@ msgstr "Miniaturen blev beskåret."
 msgid "Thumbnail reset successfully"
 msgstr "Miniaturen blev nulstillet"
 
-msgid "Screen 4x3"
-msgstr "Skærm 4x3"
-
 msgid "Photo 5x3"
 msgstr "Foto 5x3"
 
@@ -299,8 +296,12 @@ msgstr "Foto 7x5"
 msgid "Photo 10x8"
 msgstr "Foto 10x8"
 
-msgid "HDTV 16x9"
-msgstr "HDTV 16x9"
+#, fuzzy
+msgid "Fullscreen 4x3"
+msgstr "Skærm 4x3"
+
+msgid "Widescreen 16x9"
+msgstr ""
 
 msgid "CinemaScope 2.35x1"
 msgstr "CinemaScope 2.35x1"
@@ -332,7 +333,6 @@ msgstr "Fotoet blev skaleret"
 msgid "Modify Photo"
 msgstr "Rediger billede"
 
-#, fuzzy
 msgid "Successfully saved theme settings"
 msgstr "Layoutopsætningen blev gemt"
 
@@ -377,19 +377,18 @@ msgstr "Genskab kodeord"
 msgid "Build all thumbnails/resizes"
 msgstr "Opret alle miniaturer og størrelsesændringer"
 
-#, fuzzy
 msgid ""
 "Ensure data files for all derivatives (thumbnails, etc) have been built and "
 "rebuild broken ones."
 msgstr ""
 "Kontroller at datafiler for alle afledte filer (miniaturer, etc.) er blevet "
-"bygget."
+"bygget og genopbyg fejlbehæftede datafiler."
 
 msgid "Build All Thumbnails/Resizes"
 msgstr "Opret alle miniaturer og størrelsesændringer"
 
 msgid "Debug output for failed items:"
-msgstr ""
+msgstr "Debug informationer for elementer med fejl:"
 
 #, c-format
 msgid "Processing image %d of %d"
@@ -399,13 +398,13 @@ msgstr "Behandler billede %d af %d"
 msgid "Checked %d items"
 msgstr "Kontrollerede %d elementer"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%d items built"
-msgstr "tilføj elementer"
+msgstr "%d filer bygget."
 
 #, c-format
 msgid "%d items failed"
-msgstr ""
+msgstr "%d elementer fejlede"
 
 msgid "Delete database cache"
 msgstr "Slet databasecachen"
@@ -547,6 +546,7 @@ msgstr "Faldende"
 
 msgid "Validation disabled until you set allowSessionAccess in config.php"
 msgstr ""
+"Validering er slået fra indtil du sætter allowSessionAccess i config.php"
 
 msgid "This page is valid XHTML 1.0"
 msgstr "Denne side er gyldig XHTML 1.0"
@@ -560,7 +560,7 @@ msgstr "Anslået tilbageværende tid: %d:%02d"
 
 #, c-format
 msgid "Memory used: %s, total: %s"
-msgstr ""
+msgstr "Hukommelse brugt: %s, i alt: %s"
 
 msgid "Rows per album page"
 msgstr "Rækker pr. albumside"
@@ -581,13 +581,13 @@ msgid "Number of items to show per page"
 msgstr "Antal elementer der skal vises pr. side"
 
 msgid "Blocks to show in the sidebar"
-msgstr ""
+msgstr "Antal blokke der skal vises i sidebjælken"
 
 msgid "Blocks to show on album pages"
-msgstr ""
+msgstr "Antal blokke der skal vises på albumsiderne"
 
 msgid "Blocks to show on photo pages"
-msgstr ""
+msgstr "Antal blokke der skal vises på billedsiderne"
 
 msgid "View Samples"
 msgstr "Vis prøver"
@@ -601,18 +601,19 @@ msgstr "Elementramme"
 msgid "Photo Frame"
 msgstr "Fotoramme"
 
+# Color pack?
 msgid "Color Pack"
-msgstr ""
+msgstr "Farvepakke"
 
 msgid "You must enter a number greater than 0"
 msgstr "Du skal indtaste et tal større end 0"
 
 msgid "Format: [module.BlockName param=value] ..."
-msgstr ""
+msgstr "Format: [modul.BlockName parameter=værdi] ..."
 
 #, c-format
 msgid "%dx%d"
-msgstr ""
+msgstr "%dx%d"
 
 msgid "Audio"
 msgstr "Lyd"
@@ -751,9 +752,8 @@ msgstr "tilføj album"
 msgid "edit permissions"
 msgstr "rediger tilladelser"
 
-#, fuzzy
 msgid "view permissions"
-msgstr "rediger tilladelser"
+msgstr "vis tilladelser"
 
 msgid "Site Admin"
 msgstr "Sideadministration"
@@ -770,9 +770,8 @@ msgstr "Log af"
 msgid "Modules"
 msgstr "Moduler"
 
-#, fuzzy
 msgid "Themes"
-msgstr "Tema"
+msgstr "Temaer"
 
 msgid "Display"
 msgstr "Vis"
@@ -807,9 +806,8 @@ msgstr "Fremhæv"
 msgid "Edit Permissions"
 msgstr "Rediger tilladelser"
 
-#, fuzzy
 msgid "View Permissions"
-msgstr "Tilladelser"
+msgstr "Vis tilladelser"
 
 msgid "Add Items"
 msgstr "Tilføj elementer"
@@ -848,13 +846,13 @@ msgstr "Lokal overførselsmappe blev fjernet"
 msgid "Test email sent successfully"
 msgstr "Testemailen blev afsendt"
 
-#, fuzzy
 msgid "There was a problem processing your request, see below for details."
-msgstr "Der opstod en fejl ved behandlingen af din forespørgsel."
+msgstr ""
+"Der opstod en fejl ved behandlingen af din forespørgsel, se nedenstående for "
+"detaljer."
 
-#, fuzzy
 msgid "Error sending test email, see below for details."
-msgstr "Kunne ikke sende test-email, se nedenstående for detaljer"
+msgstr "Kunne ikke sende test-email, se nedenstående for detaljer."
 
 msgid "Language Settings"
 msgstr "Sprog opsætning"
@@ -977,7 +975,6 @@ msgstr ""
 msgid "Email"
 msgstr "Email"
 
-#, fuzzy
 msgid ""
 "By default Gallery uses PHP's built in mail function to send email which "
 "requires no configuration.  To use a smtp/mail server enter the information "
@@ -986,7 +983,10 @@ msgid ""
 msgstr ""
 "Som standard bruger Gallery PHPs indbyggede mailfunktioner til at sende "
 "email med, og det kræver ingen konfiguration. For at bruge en smtp/"
-"postserver som kræver autentifikation så skal nedenstående felter udfyldes."
+"postserver skal nedenstående felter udfyldes, inklusiv "
+"autentifikationsoplysninger hvis det er nødvendigt. Eventuelt kan der "
+"tilføjes et :port efter servernavnet hvis der skal bruges en ikke-standard "
+"port."
 
 msgid "Server"
 msgstr "Server"
@@ -1018,15 +1018,17 @@ msgstr "Send email"
 msgid "Email Test Error"
 msgstr "Test-email fejl"
 
-#, fuzzy
 msgid "Cookies"
-msgstr "Værktøjer"
+msgstr "'Cookies'"
 
 msgid ""
 "When Gallery is embedded in another application (portal, CMS, forum, etc.), "
 "then you have the choice between two options. Everyone else does not have to "
 "care about the cookie settings. Read on for more details."
 msgstr ""
+"Når Gallery er indlejret i en anden applikation (portal, CMS, forum, osv.), "
+"har du et valg mellem to muligheder. Alle andre behøver ikke bekymre sig om "
+"'cookie' indstillinger. Læs videre for flere detaljer."
 
 msgid ""
 "If your Gallery is embedded and you leave the following fields empty, then "
@@ -1041,6 +1043,17 @@ msgid ""
 "gallery2/ with /application/. The cookie path is the part of the paths that "
 "is equal, in this case it is '/application/'. Most often it is just '/'."
 msgstr ""
+"Hvis dit galleri er indlejret og du lader de følgende felter være tomme vil "
+"alle DownloadItem links (URLerne for billeder og andre elementer) i dit "
+"indlejrede galleri have <b>tilføjet en GALLERYSID streng</b> i URL'en som er "
+"en <b>lille sikkerhedsrisiko</b> når dine galleri brugere kopierer og "
+"klistrer billed-URL'er ind i forummer, gæstebøger, osv. Alternativet er at "
+"sætte <b>'cookie' stien</b>. Gallery vil da <b>ikke tilføje GALLERYSID til "
+"indlejrede DownloadITEM URL'er</b>. Dvs. når Gallery ligger på http://www."
+"example.com/application/gallery2/ og den indlejrede application er på http://"
+"www.example.com/application/, så skal du sammenligne stien /application/"
+"gallery2/ med /application/. 'cookie' stien er den del af stierne der er "
+"ens, i dette tilfælde '/application/'. For det meste er det bare '/'."
 
 msgid ""
 "The <b>cookie domain</b> is also only needed for embedded Gallery installs "
@@ -1052,21 +1065,32 @@ msgid ""
 "have to set the cookie domain example.com (the part of the host string that "
 "is common to both, Gallery and the embedding application)."
 msgstr ""
+"'cookie' domænet behøves også kun for indlejrede Gallery installationer og "
+"kun hvis du vil slippe af med GALLERYSID strengen i den indlejrede "
+"DownloadItem URL. <b>I de fleste tilfælde kan 'cookie' domænet være tomt.</"
+"b> Sæt det kun hvis Gallery og den indlejrede applikation kun kan nås fra "
+"<b>forskellige sub-domæner</b>. Dvs. når Gallery er på http://photos.example."
+"com/ og applikationen er på http://www.example.com/, så skal du sætte "
+"'cookie' domænet example.com (den del af URL'en som Gallery og den "
+"indlejrede applikation tilfælles)."
 
 msgid ""
 "Once you change the cookie settings, <b>all registered users</b> of your "
 "Gallery will <b>have to clear their browser cookie cache</b>. If they do "
 "not, they will experience login / logout / lost session problems."
 msgstr ""
+"Hvis du ændrer 'cookie' indstillingerne skal <b>alle registrede brugere</b> "
+"af dit galleri <b>slette deres browser cookie cache</b>. Hvis ikke vil de "
+"opleve problemer med log ind / log ud / mistede sessioner."
 
 msgid "Invalid cookie path"
-msgstr ""
+msgstr "Ugyldig 'cookie' sti"
 
 msgid "Domain"
-msgstr ""
+msgstr "Domæne"
 
 msgid "Invalid cookie domain"
-msgstr ""
+msgstr "Ugyldigt 'cookie' domæne"
 
 msgid "Locking System"
 msgstr "Låsesystem"
@@ -1505,59 +1529,53 @@ msgstr ""
 msgid "Uninstall"
 msgstr "Afinstallér"
 
-#, fuzzy
 msgid "Gallery Themes"
-msgstr "Gallery %s"
+msgstr "Gallery Temaer"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Successfully activated theme %s"
-msgstr "Modulet %s blev aktiveret"
+msgstr "Temaet %s blev aktiveret"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Successfully deactivated theme %s"
-msgstr "Modulet %s blev deaktiveret"
+msgstr "Temaet %s blev deaktiveret"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Successfully installed theme %s"
-msgstr "Installerede %s modulet"
+msgstr "Installerede %s temaet"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Successfully uninstalled theme %s"
-msgstr "Afinstallerede %s modulet"
+msgstr "Afinstallerede %s temaet"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Successfully upgraded theme %s"
-msgstr "Opgraderede %s modulet"
+msgstr "Opgraderede %s temaet"
 
 msgid "Successfully saved default album settings"
 msgstr "Standard albumopsætning blev gemt"
 
-#, fuzzy
 msgid "Restored theme settings"
-msgstr "Layoutopsætning blev genskabt"
+msgstr "Temaopsætning blev genskabt"
 
-#, fuzzy
 msgid "All Themes"
-msgstr "Tema"
+msgstr "Alle Temaer"
 
 msgid "Defaults"
 msgstr "Standarder"
 
-#, fuzzy
 msgid "Theme Name"
-msgstr "Tema"
+msgstr "Temanavn"
 
-#, fuzzy
 msgid "Status: Incompatible Theme (Inactive)"
-msgstr "Status: Inkompatibelt modul (Inaktiv)"
+msgstr "Status: Inkompatibelt Tema (Inaktivt)"
 
-#, fuzzy
 msgid "Incompatible theme!"
-msgstr "Inkompatibelt modul!"
+msgstr "Inkompatibelt tema!"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Theme API Required: %s (available: %s)"
-msgstr "Krævet Core API: %s (tilgængeligt: %s)"
+msgstr "Krævet Tema API: %s (tilgængeligt: %s)"
 
 msgid "(default)"
 msgstr "(standard)"
@@ -1581,48 +1599,43 @@ msgstr "Standard tema"
 msgid "New albums"
 msgstr "Nye albummer"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s Theme Settings"
-msgstr "Brug disse indstillinger"
+msgstr "%s Tema Indstillinger"
 
-#, fuzzy
 msgid ""
 "These are the global settings for the theme.  They can be overridden at the "
 "album level."
 msgstr ""
-"Disse er globale indstillinger for layoutet. De kan overskrives på "
+"Disse er de globale indstillinger for temaet. De kan overskrives på "
 "albumniveau."
 
 msgid "Available"
-msgstr ""
+msgstr "Tilgængelig"
 
 msgid "Choose a block"
-msgstr ""
+msgstr "Vælg en blok"
 
-#, fuzzy
 msgid "Selected"
-msgstr "Slet"
+msgstr "Valgt"
 
 msgid "Remove"
 msgstr "Fjern"
 
-#, fuzzy
 msgid "Move Up"
-msgstr "Flyt"
+msgstr "Flyt Op"
 
-#, fuzzy
 msgid "Move Down"
-msgstr "Flyt %s"
+msgstr "Flyt Ned"
 
 msgid "Parameter"
-msgstr ""
+msgstr "Parameter"
 
 msgid "Value"
 msgstr "Værdi"
 
-#, fuzzy
 msgid "There are no settings for this theme"
-msgstr "Der er ingen opsætning for dette layout."
+msgstr "Der er ingen opsætning for dette tema"
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime "
@@ -2155,10 +2168,9 @@ msgstr ""
 "Dette angiver sorteringen i albummet. Dette anvendes på alle nuværende "
 "elementer og nyligt tilføjede elementer."
 
-#, fuzzy
 msgid ""
 "Choose a theme for this album. (The way the album is arranged on the page)"
-msgstr "Vælg et layout til dette album (albummets opstilling)."
+msgstr "Vælg et tema for dette album. (Måden som albummet vises på siden)"
 
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr ""
@@ -2486,13 +2498,13 @@ msgstr ""
 msgid "Restore original"
 msgstr "Genskab original"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "This album is configured to use the <b>%s</b> theme. These settings only "
 "apply to the theme for this album."
 msgstr ""
-"Dette album er konfigureret til at bruge layoutet <b>%s</b>. Ændringerne "
-"gælder kun for layoutet på dette album."
+"Dette album er konfigureret til at bruge temaet <b>%s</b>. Ændringerne "
+"gælder kun for temaet på dette album."
 
 msgid "Setting"
 msgstr "Indstilling"
@@ -2576,21 +2588,17 @@ msgstr "Tilladelser"
 msgid "Owner changed successfully"
 msgstr "Ejeren blev ændret"
 
-#, fuzzy
 msgid "Group permission added successfully"
-msgstr "Kontoopsætning blev gemt"
+msgstr "Gruppeopsætningen blev gemt"
 
-#, fuzzy
 msgid "User permission added successfully"
-msgstr "Opsætningen blev gemt"
+msgstr "Brugeropsætningen blev tilføjet"
 
-#, fuzzy
 msgid "Group permission removed successfully"
-msgstr "Kontoopsætning blev gemt"
+msgstr "Gruppeopsætningen blev slettet"
 
-#, fuzzy
 msgid "User permission removed successfully"
-msgstr "Visningstællerne er blevet nulstillet"
+msgstr "Brugeropsætningen blev slettet"
 
 msgid ""
 "Each item has its own independent set of permissions.  Changing the parent's "
@@ -2747,19 +2755,18 @@ msgstr "url"
 msgid "image"
 msgstr "billede"
 
-#, fuzzy
 msgid "Configuration Error: Missing Theme"
-msgstr "Konfigurationsfejl: Mangler layout"
+msgstr "Konfigurationsfejl: Mangler Tema"
 
 msgid "Missing Theme"
-msgstr ""
+msgstr "Manglende Tema"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "This album is configured to use the %s theme, but it is either inactive or "
 "not installed."
 msgstr ""
-"Dette album er konfigureret til at bruge %s layoutet, men det er enten ikke "
+"Dette album er konfigureret til at bruge %s temaet, men det er enten ikke "
 "aktivt eller ikke installeret."
 
 msgid "login"
@@ -2768,20 +2775,19 @@ msgstr "log på"
 msgid "and then"
 msgstr "og så"
 
-#, fuzzy
 msgid "choose a new theme for this album"
-msgstr "vælg et nyt layout for dette album"
+msgstr "vælg et nyt tema for dette album"
 
 msgid "login as a site administrator"
 msgstr "log på som administrator"
 
-#, fuzzy
 msgid "install or activate this theme"
-msgstr "installer og aktiver dette layout"
+msgstr "installer og aktiver dette tema"
 
-#, fuzzy, c-format
+#, c-format
 msgid "To fix this problem you can %s or select another default theme."
-msgstr "For at rette dette problem kan du enten %s eller %s."
+msgstr ""
+"For at rette dette problem kan du %s eller vælge et andet standardtema."
 
 #, c-format
 msgid "To fix this problem you can either %s or %s."
@@ -2881,6 +2887,10 @@ msgid ""
 "the admin account if they fail to receive recovery email due to server "
 "problems, or lack of a working email address."
 msgstr ""
+"Administratorer kan bruge %sNødgenskabning af Kodeord%s siden til at "
+"genskabe aministratorkontoen hvis det ikke er muligt at modtage "
+"genskabningsmailen på grund af serverproblemer eller mangel på en gyldig "
+"emailadresse."
 
 msgid "Recover"
 msgstr "Gendan"
@@ -2894,10 +2904,16 @@ msgid ""
 "s in your gallery2 directory. It must contain the following randomly "
 "generated characters:"
 msgstr ""
+"For at gå videre med genskabningen af kodeordet, skal vi verificere at du er "
+"den som du påstår du er. Den bedste metode til at bekræfte det er at få dig "
+"til at lave en lille ændring i Gallery biblioteket, som da vil bevise at du "
+"har de rigtige rettigheder. Vil vil derfor bede dig om at lave en ny "
+"tekstfil kaldet %s i dit gallery2 bibliotek. Den skal indeholde følgende "
+"tilfældige tilfældigt genererede tegn:"
 
 #, c-format
 msgid "%s"
-msgstr ""
+msgstr "%s"
 
 #, c-format
 msgid ""
@@ -2905,62 +2921,64 @@ msgid ""
 "for you.  Download that and copy it into your install directory and you're "
 "all set."
 msgstr ""
+"For at hjælpe dig har vi lavet en %skorrekt version af login.txt%s til dig. "
+"Det eneste du så skal gøre er at hente den og kopiere den til dit install "
+"bibliotek."
 
 msgid "Once you've uploaded the file, click refresh to continue."
-msgstr ""
+msgstr "Når du har uploadet filen, så klik genopfrisk for at fortsætte."
 
 msgid "Emergency Administrator Password Reset"
-msgstr ""
+msgstr "Nødgenskabning af Adminstrator Kodeord"
 
-#, fuzzy
 msgid ""
 "This page can be used by a system administrator to securely reset the "
 "password on any account."
-msgstr "Denne siden tillader dig at nulstille kodeordet for din konto."
+msgstr ""
+"Denne side kan bruges af systemadministratoren til sikker at nulstille "
+"kodeordet for en konto."
 
-#, fuzzy
 msgid "Authorization Confirmed"
-msgstr "Mangler autorisation"
+msgstr "Autorisation Bekræftet"
 
 msgid ""
 "Your authorization has been confirmed.  Please enter your new password "
 "below.  After setting your new password you will be taken to the login page."
 msgstr ""
+"Din autorisation er blevet bekræftet. Indtast venligst et nyt kodeord "
+"nedenunder. Efter dit nye kodeord er blevet sat vil du blive ført til "
+"loginsiden."
 
 msgid "Recover Password for Username"
-msgstr ""
+msgstr "Genskab Kodeord for Brugernavn"
 
-#, fuzzy
 msgid "You must enter a username to recover the password for."
-msgstr "Du skal indtaste en ny adgangskode"
+msgstr "Du skal indtaste et brugernavn du vil genskabe kodeordet for."
 
-#, fuzzy
 msgid "The username you entered does not exist."
-msgstr "Det indtastede brugernavn er ugyldigt."
+msgstr "Det indtastede brugernavn eksisterer ikke."
 
-#, fuzzy
 msgid "Authorization Incorrect"
-msgstr "Mangler autorisation"
+msgstr "Forkert Autorisation"
 
 msgid "Recovery Instructions"
-msgstr ""
+msgstr "Genskabningsvejledning"
 
-#, fuzzy
 msgid "AuthFile Missing"
-msgstr "Mangler autorisation"
+msgstr "AuthFile Mangler"
 
 msgid "AuthFile Unreadable"
-msgstr ""
+msgstr "AuthFile kan ikke læses"
 
 #, c-format
 msgid ""
 "Your %s file is not readable. Please give Gallery read permissions on the "
 "file."
 msgstr ""
+"Din %s fil kan ikke læses. Giv venligst Gallery adgang til at læse filen."
 
-#, fuzzy
 msgid "Refresh"
-msgstr "før"
+msgstr "Genopfrisk"
 
 msgid "This page will allow you to reset the password on your account."
 msgstr "Denne siden tillader dig at nulstille kodeordet for din konto."
@@ -3020,117 +3038,94 @@ msgstr "Hvis du ikke har bedt om denne email kan du blot ignorere den."
 msgid "Thank you!"
 msgstr "Mange tak!"
 
-#, fuzzy
 msgid "guest"
-msgstr "Gæst"
+msgstr "gæst"
 
 #, c-format
 msgid "display mode: %s"
-msgstr ""
+msgstr "visningstilstand: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Date: %s"
-msgstr "Dato:"
+msgstr "Dato: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Owner: %s"
-msgstr "Ejer"
+msgstr "Ejer: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Size: %d item"
 msgid_plural "Size: %d items"
-msgstr[0] "(%d element)"
-msgstr[1] "(%d elementer)"
+msgstr[0] "Størrelse: %d element<"
+msgstr[1] "Størrelse: %d elementer"
 
-#, fuzzy, c-format
+#, c-format
 msgid "(%d item total)"
 msgid_plural "(%d items total)"
-msgstr[0] "(%d element)"
-msgstr[1] "(%d elementer)"
+msgstr[0] "(ialt %d element)"
+msgstr[1] "(ialt %d elementer)"
 
 #, c-format
 msgid "Views: %d"
-msgstr ""
+msgstr "Visninger: %d"
 
-#, fuzzy
 msgid "&laquo; album actions &raquo;"
-msgstr "&laquo; Ingen &raquo;"
+msgstr "&laquo; albumhandlinger &raquo;"
 
-#, fuzzy
 msgid "&laquo; item actions &raquo;"
-msgstr "&laquo; Ingen &raquo;"
+msgstr "&laquo; elementhandlinger &raquo;"
 
 msgid "Go"
 msgstr "Gå til"
 
 msgid "next"
-msgstr ""
+msgstr "næste"
 
-#, fuzzy
 msgid "last"
-msgstr "liste"
+msgstr "sidste"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Page %d of %d"
-msgstr "(side %d af %d)"
+msgstr "Side %d af %d"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%d of %d"
-msgstr "(side %d af %d)"
+msgstr "%d af %d"
 
-#, fuzzy
 msgid "first"
-msgstr "liste"
+msgstr "første"
 
-#, fuzzy
 msgid "previous"
-msgstr "Forrige side"
+msgstr "forrige"
 
 msgid "Page:"
-msgstr ""
+msgstr "Side:"
 
 #, c-format
 msgid "%d. %s"
 msgstr "%d. %s"
 
-#, fuzzy
 msgid "Size: "
-msgstr "Størrelse"
+msgstr "Størrelse: "
 
 msgid "Full size: "
-msgstr ""
+msgstr "Fuld størrelse: "
 
-#, fuzzy
 msgid "Language selector"
-msgstr "Sprogvælger i sidebjælke"
+msgstr "Sprogvælger"
 
-#, fuzzy
 msgid "Item actions"
-msgstr "ret billedtekster"
+msgstr "Elementhandlinger"
 
 msgid "Use dropdown menu"
-msgstr ""
+msgstr "Brug rullelistemenu"
 
-#, fuzzy
 msgid "Login block"
-msgstr "Log på"
+msgstr "Loginblok"
 
+# peers?
 msgid "Links to album/photo peers"
 msgstr ""
-
-msgid "Successfully deleted directory: /cache/entity"
-msgstr "Slettede biblioteket: /cache/entity"
-
-#, fuzzy
-msgid "Successfully deleted directory: /cache/theme"
-msgstr "Slettede biblioteket: /cache/module"
-
-msgid "Successfully deleted directory: /cache/module"
-msgstr "Slettede biblioteket: /cache/module"
-
-#, fuzzy
-msgid "Unable to delete directory: /cache/theme"
-msgstr "Kunne ikke slette biblioteket: /cache/layout"
 
 msgid "Unable to delete directory: /templates_c"
 msgstr "Kunne ikke slette biblioteket: /templates_c"
@@ -3141,13 +3136,23 @@ msgstr "Enhedstest modul"
 msgid "[test] A permission"
 msgstr "[test] En tilladelse"
 
-#, fuzzy
 msgid "[test] A second permission"
-msgstr "[test] En tilladelse"
+msgstr "[test] En anden tilladelse"
 
-#, fuzzy
 msgid "Unit test theme"
-msgstr "Enhedstest modul"
+msgstr "Enhedstest tema"
 
-#~ msgid "Missing Layout"
-#~ msgstr "Mangler layout"
+#~ msgid "HDTV 16x9"
+#~ msgstr "HDTV 16x9"
+
+#~ msgid "Successfully deleted directory: /cache/entity"
+#~ msgstr "Slettede biblioteket: /cache/entity"
+
+#~ msgid "Successfully deleted directory: /cache/theme"
+#~ msgstr "Slettede biblioteket: /cache/theme"
+
+#~ msgid "Successfully deleted directory: /cache/module"
+#~ msgstr "Slettede biblioteket: /cache/module"
+
+#~ msgid "Unable to delete directory: /cache/theme"
+#~ msgstr "Kunne ikke slette biblioteket: /cache/theme"

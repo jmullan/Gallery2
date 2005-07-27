@@ -105,6 +105,15 @@ msgstr ""
 msgid "Database Setup"
 msgstr "Veritabanı Kurulumu"
 
+msgid "You must have the MySQL PHP module installed"
+msgstr ""
+
+msgid "You must have the PostgreSQL PHP module installed"
+msgstr ""
+
+msgid "You must have the Oracle OCI8 PHP module installed"
+msgstr ""
+
 #, c-format
 msgid "You must specify a column prefix (we recommend %s)"
 msgstr "Sütün öneki belirtmek zorundasınız (tavsiyemiz %s)"
@@ -128,6 +137,10 @@ msgstr "Vermiş olduğunuz bilgilerle veritabanına bağlantı sağlanamadı."
 
 msgid "The database you specified does not exist.  Please create it."
 msgstr "Vermiş olduğunuz veritabanı mevcut değil. Lütfen veritabanı oluşturun."
+
+#, fuzzy
+msgid "The database privileges test did not complete successfully."
+msgstr "Veritabanı başarıyla kuruldu."
 
 msgid ""
 "Gallery tables already exist in this database!  But there is no 'versions."
@@ -187,6 +200,36 @@ msgstr "PostgreSQL v6.x (iyi test edilmedi)"
 
 msgid "Oracle (9i and newer)"
 msgstr "Oracle (9i ve üstü)"
+
+msgid "Unknown DB type or no known tables information."
+msgstr ""
+
+#, c-format
+msgid "Could not find an unused table prefix similar to \"%s\"."
+msgstr ""
+
+#, c-format
+msgid "SQL test file \"%s\" not found."
+msgstr ""
+
+#, c-format
+msgid "Could not open SQL test file \"%s\"."
+msgstr ""
+
+msgid ""
+"Check the returned error message and README.html for missing privileges and "
+"clean up the database."
+msgstr ""
+
+msgid ""
+"Failed to create a DB test sequence.Check the returned error message and "
+"README.html for missing privileges and clean up the database."
+msgstr ""
+
+msgid ""
+"Test failed to drop a DB test sequence.Check the returned error message and "
+"README.html for missing privileges and clean up the database."
+msgstr ""
 
 msgid "Finished"
 msgstr "Bitti"
@@ -769,7 +812,8 @@ msgstr "Modifiye edilmiş dosyalar (%d)"
 
 msgid ""
 "Note: You're running Gallery from CVS, so some modified files are to be "
-"expected.  You can probably safely ignore these."
+"expected.  You can probably ignore these, but to be safe you should make "
+"sure that you do 'cvs update -Pd' before continuing."
 msgstr ""
 
 #, c-format

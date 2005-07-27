@@ -20,7 +20,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Core 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-01-28 21:40+0100\n"
-"PO-Revision-Date: 2005-06-04 16:13+0100\n"
+"PO-Revision-Date: 2005-07-24 19:12+0200\n"
 "Last-Translator: Jan Korbel <jackc@teptin.net>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -157,7 +157,7 @@ msgid "All Users"
 msgstr "Všichni uživatelé"
 
 msgid "Detecting broken derivatives"
-msgstr ""
+msgstr "Detekuji chybné zmenšeniny"
 
 msgid "Site Admins"
 msgstr "Správci"
@@ -175,16 +175,16 @@ msgid "This is the main page of your Gallery"
 msgstr "Toto je hlavní stránka Vaší Galerie"
 
 msgid "Detecting broken derivatives, loading "
-msgstr ""
+msgstr "Detekuji chybné zmenšeniny, nahrávám "
 
 msgid "Detecting broken derivatives "
-msgstr ""
+msgstr "Detekuji chybné zmenšeniny "
 
 msgid "Detecting broken derivatives, "
-msgstr ""
+msgstr "Detekuji chybné zmenšeniny, "
 
 msgid "Detecting broken derivatives, saving "
-msgstr ""
+msgstr "Detekuji chybné zmenšeniny, ukládám "
 
 msgid "add items"
 msgstr "přidat položky"
@@ -286,9 +286,6 @@ msgstr "Náhled úspěšně oříznut"
 msgid "Thumbnail reset successfully"
 msgstr "Náhled úspěšně znovu vytvořen"
 
-msgid "Screen 4x3"
-msgstr "Obrazovka 4x3"
-
 msgid "Photo 5x3"
 msgstr "Foto 5x3"
 
@@ -301,8 +298,12 @@ msgstr "Foto 7x5"
 msgid "Photo 10x8"
 msgstr "Foto 10x8"
 
-msgid "HDTV 16x9"
-msgstr "HDTV 16x9"
+#, fuzzy
+msgid "Fullscreen 4x3"
+msgstr "Obrazovka 4x3"
+
+msgid "Widescreen 16x9"
+msgstr ""
 
 msgid "CinemaScope 2.35x1"
 msgstr "CinemaScope 2.35x1"
@@ -334,7 +335,6 @@ msgstr "Měřítko úspěšně změněno"
 msgid "Modify Photo"
 msgstr "Upravit fotografii"
 
-#, fuzzy
 msgid "Successfully saved theme settings"
 msgstr "Nastavení rozvržení úspěšně uloženo"
 
@@ -379,17 +379,18 @@ msgstr "Obnova hesla"
 msgid "Build all thumbnails/resizes"
 msgstr "Vytvořit všechny náhledy a zmenšeniny"
 
-#, fuzzy
 msgid ""
 "Ensure data files for all derivatives (thumbnails, etc) have been built and "
 "rebuild broken ones."
-msgstr "Všechny vedlejší datové soubory (náhledy apod.) byly vytvořeny."
+msgstr ""
+"Zajistit vytvoření datových souborů pro všechny náhledy a vytvořit nové pro "
+"poškozené."
 
 msgid "Build All Thumbnails/Resizes"
 msgstr "Vytvořit všechny náhledy a další zmenšené obrázky"
 
 msgid "Debug output for failed items:"
-msgstr ""
+msgstr "Ladící výstup pro selhané položky:"
 
 #, c-format
 msgid "Processing image %d of %d"
@@ -399,13 +400,13 @@ msgstr "Zpracovávám obrázek %d z %d"
 msgid "Checked %d items"
 msgstr "Zkontrolováno %d položek"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%d items built"
-msgstr "přidat položky"
+msgstr "vytvořeno %d položek"
 
 #, c-format
 msgid "%d items failed"
-msgstr ""
+msgstr "%d položek selhalo"
 
 msgid "Delete database cache"
 msgstr "Smazat cache databáze"
@@ -545,13 +546,13 @@ msgid "Descending"
 msgstr "Sestupně"
 
 msgid "Validation disabled until you set allowSessionAccess in config.php"
-msgstr ""
+msgstr "Ověřování je vypnuto dokud nenastavíte allowSessionAccess v config.php"
 
 msgid "This page is valid XHTML 1.0"
 msgstr "Tato stránka je validní XHTML 1.0"
 
 msgid "G2B4: Flippin' Sweet!!!"
-msgstr ""
+msgstr "G2B4: Flippin' Sweet!!!"
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -559,7 +560,7 @@ msgstr "Odhad zbývajícího času: %d:%02d"
 
 #, c-format
 msgid "Memory used: %s, total: %s"
-msgstr ""
+msgstr "Použitá paměť: %s, celkem: %s"
 
 msgid "Rows per album page"
 msgstr "Počet řádků na stránku"
@@ -580,13 +581,13 @@ msgid "Number of items to show per page"
 msgstr "Počet položek na stránku"
 
 msgid "Blocks to show in the sidebar"
-msgstr ""
+msgstr "Bloky pro zobrazení v postranní liště"
 
 msgid "Blocks to show on album pages"
-msgstr ""
+msgstr "Bloky pro zobrazení na stránkách alb"
 
 msgid "Blocks to show on photo pages"
-msgstr ""
+msgstr "Bloky pro zobrazení na stránkách fotografií"
 
 msgid "View Samples"
 msgstr "Zobrazit vzorky"
@@ -601,17 +602,17 @@ msgid "Photo Frame"
 msgstr "Rámeček fotky"
 
 msgid "Color Pack"
-msgstr ""
+msgstr "Barevná nastavení"
 
 msgid "You must enter a number greater than 0"
 msgstr "Musíte zadat číslo větší než nula"
 
 msgid "Format: [module.BlockName param=value] ..."
-msgstr ""
+msgstr "Formát: [modul.JménoBloku param=hodnota] ..."
 
 #, c-format
 msgid "%dx%d"
-msgstr ""
+msgstr "%dx%d"
 
 msgid "Audio"
 msgstr "Audio"
@@ -748,9 +749,8 @@ msgstr "přidat album"
 msgid "edit permissions"
 msgstr "upravit oprávnění"
 
-#, fuzzy
 msgid "view permissions"
-msgstr "upravit oprávnění"
+msgstr "zobrazit oprávnění"
 
 msgid "Site Admin"
 msgstr "Nastavení"
@@ -767,9 +767,8 @@ msgstr "Odhlásit"
 msgid "Modules"
 msgstr "Moduly"
 
-#, fuzzy
 msgid "Themes"
-msgstr "Téma"
+msgstr "Témata"
 
 msgid "Display"
 msgstr "Zobrazit"
@@ -804,9 +803,8 @@ msgstr "Zvýraznit"
 msgid "Edit Permissions"
 msgstr "Upravit oprávnění"
 
-#, fuzzy
 msgid "View Permissions"
-msgstr "Oprávnění"
+msgstr "Zobrazit oprávnění"
 
 msgid "Add Items"
 msgstr "Přidat položky"
@@ -845,11 +843,9 @@ msgstr "Úspěšně odstraněn místní adresář pro nové soubory"
 msgid "Test email sent successfully"
 msgstr "Zkušební email úspěšně odeslán"
 
-#, fuzzy
 msgid "There was a problem processing your request, see below for details."
 msgstr "Při zpracování Vaší žádosti se vyskytl problém."
 
-#, fuzzy
 msgid "Error sending test email, see below for details."
 msgstr "Chyba při odesílání testovacího emailu, další informace níže"
 
@@ -975,7 +971,6 @@ msgstr "Značkování"
 msgid "Email"
 msgstr "E-mail"
 
-#, fuzzy
 msgid ""
 "By default Gallery uses PHP's built in mail function to send email which "
 "requires no configuration.  To use a smtp/mail server enter the information "
@@ -984,7 +979,8 @@ msgid ""
 msgstr ""
 "Ve výchozím nastavení používá Galerie pro odesílání e-mailů funkce PHP, "
 "které nepotřebují žádnou konfiguraci. Pokud chcete použít jiný SMTP server, "
-"vyplňte informace níže, včetně autentizace (pokud je vyžadována)."
+"vyplňte informace níže, včetně autentizace (pokud je vyžadována). Pro jiný "
+"port než výchozí přidejte port za dvojtečku."
 
 msgid "Server"
 msgstr "Server"
@@ -1016,15 +1012,17 @@ msgstr "Poslat email"
 msgid "Email Test Error"
 msgstr "Chyba při testování mailu"
 
-#, fuzzy
 msgid "Cookies"
-msgstr "Nástroje"
+msgstr "Cookies"
 
 msgid ""
 "When Gallery is embedded in another application (portal, CMS, forum, etc.), "
 "then you have the choice between two options. Everyone else does not have to "
 "care about the cookie settings. Read on for more details."
 msgstr ""
+"Pokud je Galerie vnořená do jiné aplikace (portál, CMS, fórum atd.), musíte "
+"si vybrat mezi dvěmi možnostmi. V opačném případě se o nastavení cookies "
+"nemusíte starat. Více je popsáno níže."
 
 msgid ""
 "If your Gallery is embedded and you leave the following fields empty, then "
@@ -1039,6 +1037,15 @@ msgid ""
 "gallery2/ with /application/. The cookie path is the part of the paths that "
 "is equal, in this case it is '/application/'. Most often it is just '/'."
 msgstr ""
+"Pokud je Galerie vnořená a necháte tyto položky nenastavené, všechny URL "
+"odkazy na obrázky a další položky vnořené Galerie budou obsahovat "
+"<b>připojený GALLERYSID řetězec</b>, což je <b>drobné bezpečnostní riziko</"
+"b>, pokud budou uživatelé publikovat tyto URL adresy na Internetu. Nebo "
+"můžete nastavit <b>cestu cookie</b>. Galerie pak k těmto adresám <b>nebude "
+"připojovat GALLERYSID</b>. Pokud je samotná Galerie dostupná na adrese "
+"http://www.example.com/application/gallery2/ a aplikace, do které je Galerie "
+"vnořená na http://www.example.com/application/, cesta cookie je '/"
+"application/'. Je to tedy společná část cesty. Často bývá také prostě '/'."
 
 msgid ""
 "The <b>cookie domain</b> is also only needed for embedded Gallery installs "
@@ -1050,21 +1057,31 @@ msgid ""
 "have to set the cookie domain example.com (the part of the host string that "
 "is common to both, Gallery and the embedding application)."
 msgstr ""
+"<b>Doména cookie</b> je také potřebná pouze v případě vnořování a odstranění "
+"problému s GALLERYSID řetězcem v URL. <b>Ve většině připadů může zůstat "
+"prázdná.</b> Nastavte ji pouze v případě, kdy jsou Galerie a aplikace "
+"dostupné v <b>různých subdoménách</b>. Například pokud je Galerie na adrese "
+"http://photos.example.com/ a aplikace na http://www.example.com/, potom je "
+"doména cookie 'example.com' (společná část domény)."
 
 msgid ""
 "Once you change the cookie settings, <b>all registered users</b> of your "
 "Gallery will <b>have to clear their browser cookie cache</b>. If they do "
 "not, they will experience login / logout / lost session problems."
 msgstr ""
+"Pokud někdy změníte nastavení cookie, <b>všichni registrovaní uživatelé</b> "
+"Vaší Galerie <b>musí smazat cookie cache v jejich prohlížečích</b>. Pokud to "
+"neudělají, mohou narazit na problémy při přihlašování, odhlašovaní nebo i v "
+"průběhu prohlížení."
 
 msgid "Invalid cookie path"
-msgstr ""
+msgstr "Neplatná cesta cookie"
 
 msgid "Domain"
-msgstr ""
+msgstr "Doména"
 
 msgid "Invalid cookie domain"
-msgstr ""
+msgstr "Neplatná doména cookie"
 
 msgid "Locking System"
 msgstr "Systém zamykání"
@@ -1506,59 +1523,53 @@ msgstr ""
 msgid "Uninstall"
 msgstr "Odinstalovat"
 
-#, fuzzy
 msgid "Gallery Themes"
-msgstr "Galerie %s"
+msgstr "Témata Galerie"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Successfully activated theme %s"
-msgstr "Modul %s úspěšně aktivován"
+msgstr "Úspěšně aktivováno téma %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Successfully deactivated theme %s"
-msgstr "Modul %s úspěšně deaktivován"
+msgstr "Úspěšně deaktivováno téma %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Successfully installed theme %s"
-msgstr "Modul %s úspěšně aktivován"
+msgstr "Úspěšně nainstalováno téma %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Successfully uninstalled theme %s"
-msgstr "Modul %s úspěšně odinstalován"
+msgstr "Úspěšně odinstalováno téma %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Successfully upgraded theme %s"
-msgstr "Modul %s úspěšně aktualizován"
+msgstr "Úspěšně aktualizováno téma %s"
 
 msgid "Successfully saved default album settings"
 msgstr "Výchozí nastavení alba úspěšně uloženo"
 
-#, fuzzy
 msgid "Restored theme settings"
-msgstr "Obnoveno nastavení rozvržení"
+msgstr "Obnoveno nastavení tématu"
 
-#, fuzzy
 msgid "All Themes"
-msgstr "Téma"
+msgstr "Všechna témata"
 
 msgid "Defaults"
 msgstr "Výchozí hodnoty"
 
-#, fuzzy
 msgid "Theme Name"
-msgstr "Téma"
+msgstr "Jméno tématu"
 
-#, fuzzy
 msgid "Status: Incompatible Theme (Inactive)"
-msgstr "Stav: Nekompatibilní modul (neaktivní)"
+msgstr "Stav: Nekompatibilní téma (neaktivní)"
 
-#, fuzzy
 msgid "Incompatible theme!"
-msgstr "Nekompatibilní modul!"
+msgstr "Nekompatibilní téma!"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Theme API Required: %s (available: %s)"
-msgstr "Vyžadované API jádra: %s (dostupné: %s)"
+msgstr "Vyžadované API témat: %s (dostupné: %s)"
 
 msgid "(default)"
 msgstr "(výchozí)"
@@ -1582,48 +1593,43 @@ msgstr "Výchozí téma"
 msgid "New albums"
 msgstr "Nová alba"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s Theme Settings"
-msgstr "Použít tato nastavení"
+msgstr "%s nastavení tématu"
 
-#, fuzzy
 msgid ""
 "These are the global settings for the theme.  They can be overridden at the "
 "album level."
 msgstr ""
-"Toto jsou globální nastavení rozvržení.  Ty mohou být potlačena nastavením "
+"Toto jsou globální nastavení tématu.  Ty mohou být potlačena nastavením "
 "každého alba."
 
 msgid "Available"
-msgstr ""
+msgstr "Dostupné"
 
 msgid "Choose a block"
-msgstr ""
+msgstr "Vyberte blok"
 
-#, fuzzy
 msgid "Selected"
-msgstr "Smazat"
+msgstr "Vybraná"
 
 msgid "Remove"
 msgstr "Odstranit"
 
-#, fuzzy
 msgid "Move Up"
-msgstr "Přesunout"
+msgstr "Přesunout nahoru"
 
-#, fuzzy
 msgid "Move Down"
-msgstr "Přesunout %s"
+msgstr "Přesunout dolu"
 
 msgid "Parameter"
-msgstr ""
+msgstr "Parametr"
 
 msgid "Value"
 msgstr "Hodnota"
 
-#, fuzzy
 msgid "There are no settings for this theme"
-msgstr "Pro toto rozvržení není žádné nastavení"
+msgstr "Pro toto téma není žádné nastavení"
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime "
@@ -2165,12 +2171,10 @@ msgstr ""
 "Toto je nastavení třídění pro album.  To bude aplikováno pro všechny "
 "současné položky a také pro všechny nové."
 
-#, fuzzy
 msgid ""
 "Choose a theme for this album. (The way the album is arranged on the page)"
 msgstr ""
-"Vybrat rozvržení pro toto album. (Způsob jak je toto album uspořádáno na "
-"stránce)"
+"Vyberte téma pro toto album (způsob jak je toto album uspořádáno na stránce)."
 
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr "Každá položka potřebuje náhled. Vyberte výchozí velikost v pixelech."
@@ -2491,13 +2495,13 @@ msgstr ""
 msgid "Restore original"
 msgstr "Obnovit původní"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "This album is configured to use the <b>%s</b> theme. These settings only "
 "apply to the theme for this album."
 msgstr ""
-"Toto album je nastavené, aby používalo <b>%s</b> rozvržení. Toto nastavení "
-"bude použito pouze pro rozvržení tohoto alba."
+"Toto album je nastavené, aby používalo téma <b>%s</b>. Tato nastavení budou "
+"použita pouze pro téma tohoto alba."
 
 msgid "Setting"
 msgstr "Nastavení"
@@ -2578,21 +2582,17 @@ msgstr "Oprávnění"
 msgid "Owner changed successfully"
 msgstr "Vlastník byl úspěšně změněn"
 
-#, fuzzy
 msgid "Group permission added successfully"
-msgstr "Nastavení účtu úspěšně uloženo"
+msgstr "Skupinová oprávnění úspěšně přidána"
 
-#, fuzzy
 msgid "User permission added successfully"
-msgstr "Nastavení úspěšně uloženo"
+msgstr "Uživatelská oprávnění úspěšně přidána"
 
-#, fuzzy
 msgid "Group permission removed successfully"
-msgstr "Nastavení účtu úspěšně uloženo"
+msgstr "Skupinová oprávnění úspěšně odebrána"
 
-#, fuzzy
 msgid "User permission removed successfully"
-msgstr "Počet zobrazení úspěšně vynulován"
+msgstr "Uživatelská oprávnění úspěšně odebrána"
 
 msgid ""
 "Each item has its own independent set of permissions.  Changing the parent's "
@@ -2637,7 +2637,6 @@ msgstr "Jméno uživatele, které jste zadali není správné"
 msgid "Apply changes"
 msgstr "Použít změny"
 
-#, fuzzy
 msgid ""
 "This item has sub-items.  The changes you make here can be applied to just "
 "this item, or you can apply them to all sub-items.  Note that applying "
@@ -2751,19 +2750,18 @@ msgstr "URL"
 msgid "image"
 msgstr "obrázek"
 
-#, fuzzy
 msgid "Configuration Error: Missing Theme"
-msgstr "Chyba konfigurace: Chybějící rozvržení"
+msgstr "Chyba konfigurace: Chybějící téma"
 
 msgid "Missing Theme"
-msgstr ""
+msgstr "Chybějící téma"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "This album is configured to use the %s theme, but it is either inactive or "
 "not installed."
 msgstr ""
-"Pro toto album je nastavené rozvržení %s, ale to je buď neaktivní nebo není "
+"Pro toto album je nastavené téma %s, ale to je buď neaktivní nebo není "
 "nainstalované."
 
 msgid "login"
@@ -2772,20 +2770,19 @@ msgstr "přihlásit"
 msgid "and then"
 msgstr "a pak"
 
-#, fuzzy
 msgid "choose a new theme for this album"
-msgstr "vyberte nové rozvržení pro toto album"
+msgstr "vyberte nové téma pro toto album"
 
 msgid "login as a site administrator"
 msgstr "přihlásit jako správce"
 
-#, fuzzy
 msgid "install or activate this theme"
-msgstr "nainstalovat nebo aktivovat toto rozvržení"
+msgstr "nainstalovat nebo aktivovat toto téma"
 
-#, fuzzy, c-format
+#, c-format
 msgid "To fix this problem you can %s or select another default theme."
-msgstr "K odstranění tohoto problému můžete buď %s nebo %s."
+msgstr ""
+"K odstranění tohoto problému můžete buď %s nebo vybrat jiné výchozí téma."
 
 #, c-format
 msgid "To fix this problem you can either %s or %s."
@@ -2885,6 +2882,9 @@ msgid ""
 "the admin account if they fail to receive recovery email due to server "
 "problems, or lack of a working email address."
 msgstr ""
+"Správci mohou využít stránku %sNouzová obnova hesla%s pro obnovu účtu, pokud "
+"nemohou získat email s přihlašovacími údaji nebo v Galerii nemají zadán "
+"správný email."
 
 msgid "Recover"
 msgstr "Obnovit"
@@ -2898,10 +2898,15 @@ msgid ""
 "s in your gallery2 directory. It must contain the following randomly "
 "generated characters:"
 msgstr ""
+"Před procesem obnovy hesla musíme ověřit Vaší totožnost. Nejjednodušší "
+"způsob je požádat Vás o malou změnu v adresáři Galerie, čímž zjistíme zda "
+"máte dostatečná oprávnění. Takže prosím vytvořte nový textový soubor %s v "
+"adresáři Vaší Galerie. Tento soubor musí obsahovat následující náhodně "
+"generované znaky:"
 
 #, c-format
 msgid "%s"
-msgstr ""
+msgstr "%s"
 
 #, c-format
 msgid ""
@@ -2909,62 +2914,63 @@ msgid ""
 "for you.  Download that and copy it into your install directory and you're "
 "all set."
 msgstr ""
+"Pro zjednodušení jsme pro Vás připravili %ssprávný soubor login.txt%s. Stačí "
+"tedy, když ho stáhnete a zkopírujete do správného adresáře."
 
 msgid "Once you've uploaded the file, click refresh to continue."
-msgstr ""
+msgstr "Jakmile tento soubor nahrajete, klikněte na tlačítko obnovit."
 
 msgid "Emergency Administrator Password Reset"
-msgstr ""
+msgstr "Nouzové nastavení hesla správce"
 
-#, fuzzy
 msgid ""
 "This page can be used by a system administrator to securely reset the "
 "password on any account."
-msgstr "Tato stránka Vám umožní vynulovat heslo k Vašemu účtu."
+msgstr ""
+"Tato stránka může být správcem použita pro bezpečné zrušení hesla k "
+"jakémukoliv účtu."
 
-#, fuzzy
 msgid "Authorization Confirmed"
-msgstr "Chybí správná autorizace"
+msgstr "Autorizace potvrzena"
 
 msgid ""
 "Your authorization has been confirmed.  Please enter your new password "
 "below.  After setting your new password you will be taken to the login page."
 msgstr ""
+"Vaše autorizace byla potvrzena. Prosím zadejte nové heslo. Po jeho nastavení "
+"budete přesměrováni na přihlašovací stránku."
 
 msgid "Recover Password for Username"
-msgstr ""
+msgstr "Obnovit heslo pro uživatele"
 
-#, fuzzy
 msgid "You must enter a username to recover the password for."
-msgstr "Musíte zadat nové heslo"
+msgstr "Musíte zadat uživatelské jméno."
 
-#, fuzzy
 msgid "The username you entered does not exist."
-msgstr "Jméno uživatele, které jste zadali není správné"
+msgstr "Uživatelské jméno, které jste zadali, neexistuje."
 
-#, fuzzy
 msgid "Authorization Incorrect"
-msgstr "Chybí správná autorizace"
+msgstr "Chybná autorizace"
 
 msgid "Recovery Instructions"
-msgstr ""
+msgstr "Instrukce pro obnovu"
 
-#, fuzzy
 msgid "AuthFile Missing"
-msgstr "Chybí správná autorizace"
+msgstr "Chybějící AuthFile"
 
 msgid "AuthFile Unreadable"
-msgstr ""
+msgstr "Autorizační soubor nečitelný"
 
 #, c-format
 msgid ""
 "Your %s file is not readable. Please give Gallery read permissions on the "
 "file."
 msgstr ""
+"Váš soubor %s není čitelný. Prosím přidělte Galerii oprávnění pro čtení "
+"souboru."
 
-#, fuzzy
 msgid "Refresh"
-msgstr "před"
+msgstr "Obnovit"
 
 msgid "This page will allow you to reset the password on your account."
 msgstr "Tato stránka Vám umožní vynulovat heslo k Vašemu účtu."
@@ -3024,119 +3030,95 @@ msgstr "Pokud jste si nevyžádali tento mail, můžete ho klidně ignorovat."
 msgid "Thank you!"
 msgstr "Děkujeme!"
 
-#, fuzzy
 msgid "guest"
-msgstr "Návštěvník"
+msgstr "návštěvník"
 
 #, c-format
 msgid "display mode: %s"
-msgstr ""
+msgstr "mód zobrazení: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Date: %s"
-msgstr "Datum:"
+msgstr "Datum: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Owner: %s"
-msgstr "Vlastník"
+msgstr "Vlastník: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Size: %d item"
 msgid_plural "Size: %d items"
-msgstr[0] "(%d položka)"
-msgstr[1] "(%d položky)"
-msgstr[2] "(%d položek)"
+msgstr[0] "Velikost: %d položka"
+msgstr[1] "Velikost: %d položky"
+msgstr[2] "Velikost: %d položek"
 
-#, fuzzy, c-format
+#, c-format
 msgid "(%d item total)"
 msgid_plural "(%d items total)"
-msgstr[0] "(%d položka)"
-msgstr[1] "(%d položky)"
-msgstr[2] "(%d položek)"
+msgstr[0] "(celkem %d položka)"
+msgstr[1] "(celkem %d položky)"
+msgstr[2] "(celkem %d položek)"
 
 #, c-format
 msgid "Views: %d"
-msgstr ""
+msgstr "Zobrazení: %d"
 
-#, fuzzy
 msgid "&laquo; album actions &raquo;"
-msgstr "&laquo; Žádná &raquo;"
+msgstr "&laquo; akce alba &raquo;"
 
-#, fuzzy
 msgid "&laquo; item actions &raquo;"
-msgstr "&laquo; Žádná &raquo;"
+msgstr "&laquo; akce položky &raquo;"
 
 msgid "Go"
 msgstr "Jít"
 
 msgid "next"
-msgstr ""
+msgstr "další"
 
-#, fuzzy
 msgid "last"
-msgstr "seznam"
+msgstr "poslední"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Page %d of %d"
-msgstr "(strana %d z %d)"
+msgstr "Strana %d z %d"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%d of %d"
-msgstr "(strana %d z %d)"
+msgstr "%d z %d"
 
-#, fuzzy
 msgid "first"
-msgstr "seznam"
+msgstr "první"
 
-#, fuzzy
 msgid "previous"
-msgstr "Předchozí stránka"
+msgstr "předchozí"
 
 msgid "Page:"
-msgstr ""
+msgstr "Stránka:"
 
 #, c-format
 msgid "%d. %s"
 msgstr "%d. %s"
 
-#, fuzzy
 msgid "Size: "
-msgstr "Velikost"
+msgstr "Velikost: "
 
 msgid "Full size: "
-msgstr ""
+msgstr "Plná velikost: "
 
-#, fuzzy
 msgid "Language selector"
-msgstr "Výběr jazyka v postranní liště uvidí"
+msgstr "Výběr jazyka"
 
-#, fuzzy
 msgid "Item actions"
-msgstr "editovat podtitulky"
+msgstr "Akce položky"
 
 msgid "Use dropdown menu"
-msgstr ""
+msgstr "Použít dropdown menu"
 
-#, fuzzy
 msgid "Login block"
-msgstr "Přihlásit"
+msgstr "Blok přihlášení"
 
 msgid "Links to album/photo peers"
-msgstr ""
-
-msgid "Successfully deleted directory: /cache/entity"
-msgstr "Úspěšně smazán adresář: /cache/entity"
-
-#, fuzzy
-msgid "Successfully deleted directory: /cache/theme"
-msgstr "Úspěšně smazán adresář: /cache/module"
-
-msgid "Successfully deleted directory: /cache/module"
-msgstr "Úspěšně smazán adresář: /cache/module"
-
-#, fuzzy
-msgid "Unable to delete directory: /cache/theme"
-msgstr "Nelze smazat adresář: /cache/layout"
+msgstr "Odkazy na vrstevníky alba/fotografie"
 
 msgid "Unable to delete directory: /templates_c"
 msgstr "Nelze smazat adresář: /templates_c"
@@ -3147,13 +3129,26 @@ msgstr "Testovací modul"
 msgid "[test] A permission"
 msgstr "[test] Oprávnění"
 
-#, fuzzy
 msgid "[test] A second permission"
-msgstr "[test] Oprávnění"
+msgstr "[test] Druhá oprávnění"
 
-#, fuzzy
 msgid "Unit test theme"
-msgstr "Testovací modul"
+msgstr "Téma testovací jednotky"
+
+#~ msgid "HDTV 16x9"
+#~ msgstr "HDTV 16x9"
+
+#~ msgid "Successfully deleted directory: /cache/entity"
+#~ msgstr "Úspěšně smazán adresář: /cache/entity"
+
+#~ msgid "Successfully deleted directory: /cache/theme"
+#~ msgstr "Úspěšně smazán adresář: /cache/theme"
+
+#~ msgid "Successfully deleted directory: /cache/module"
+#~ msgstr "Úspěšně smazán adresář: /cache/module"
+
+#~ msgid "Unable to delete directory: /cache/theme"
+#~ msgstr "Nelze smazat adresář: /cache/theme"
 
 #~ msgid "Missing Layout"
 #~ msgstr "Chybějící rozvržení"

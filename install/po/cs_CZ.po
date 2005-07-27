@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Installer 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-06-04 17:42+0200\n"
-"PO-Revision-Date: 2005-06-11 18:21+0100\n"
+"PO-Revision-Date: 2005-07-25 20:55+0200\n"
 "Last-Translator: Jan Korbel <jackc@teptin.net>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -38,11 +38,10 @@ msgid "Admin User Setup"
 msgstr "Nastavení uživatelů"
 
 msgid "admin"
-msgstr ""
+msgstr "správce"
 
-#, fuzzy
 msgid "Gallery Administrator"
-msgstr "Integrita souborů Galerie"
+msgstr "Správce Galerie"
 
 msgid "Authenticate"
 msgstr "Autentikace"
@@ -98,19 +97,28 @@ msgstr ""
 msgid "Database Setup"
 msgstr "Nastavení databáze"
 
+msgid "You must have the MySQL PHP module installed"
+msgstr "Musíte mít nainstalovaný PHP modul pro MySQL"
+
+msgid "You must have the PostgreSQL PHP module installed"
+msgstr "Musíte mít nainstalovaný PHP modul pro PostgreSQL"
+
+msgid "You must have the Oracle OCI8 PHP module installed"
+msgstr "Musíte mít nainstalovaný PHP modul pro Oracle OCI8"
+
 #, c-format
 msgid "You must specify a column prefix (we recommend %s)"
 msgstr "Musíte zadat prefix sloupců (doporučujeme %s)"
 
 msgid "Use only letters, numbers and underscore in the column prefix"
-msgstr ""
+msgstr "V prefixu sloupců použijte pouze písmena, číslice a podtržítko"
 
 #, c-format
 msgid "You must specify a table prefix (we recommend %s)"
 msgstr "Musíte zadat prefix tabulek (doporučujeme %s)"
 
 msgid "Use only letters, numbers and underscore in the table prefix"
-msgstr ""
+msgstr "V prefixu tabulek použijte pouze písmena, číslice a podtržítko"
 
 #, c-format
 msgid "Unable to create a database connection of type %s"
@@ -122,6 +130,9 @@ msgstr "S dodanými informacemi se nelze připojit k databázi."
 msgid "The database you specified does not exist.  Please create it."
 msgstr "Databáze, kterou jste zadali, neexistuje. Prosím, vytvořte ji."
 
+msgid "The database privileges test did not complete successfully."
+msgstr "Chyba při zkoušení oprávnění databáze."
+
 msgid ""
 "Gallery tables already exist in this database!  But there is no 'versions."
 "dat' file in your G2 storage directory which we interpret as a broken state "
@@ -129,12 +140,20 @@ msgid ""
 "think your G2 should still work or select a clean install, which will erase "
 "all data in the database and in the storage directory."
 msgstr ""
+"V této databázi už existují tabulky Galerie! Navíc v datovém adresáři G2 "
+"neexistuje soubor 'versions.dat', což pravděpodobně znamená poškozenou "
+"instalaci G2. Buď vytvořte soubor versions.dat ve správném formátu (pokud si "
+"stále myslíte že by Galerie měla fungovat) nebo vyberte čistou instalaci, "
+"která smaže všechna data v databázi a datovém adresáři."
 
 msgid ""
 "The G2 storage directory has a versions.dat file of an old install. But the "
 "Gallery database tables don't exist. Select a clean install to erase all "
 "data in the Gallery storage directory and advance to the next step."
 msgstr ""
+"Datový adresář G2 obsahuje soubor versions.dat ze starší instalace, ale "
+"tabulky Galerie v databázi nejsou. Vyberte čistou instalaci pro výmaz všech "
+"dat v datovém adresáři galerie a pokračujte dalším krokem."
 
 msgid ""
 "Gallery tables already exist in the database and there is a versions.dat "
@@ -143,6 +162,10 @@ msgid ""
 "the Gallery storage directory. Select a clean install to erase all data in "
 "the database and in the storage directory and to advance to the next step."
 msgstr ""
+"V databázi už existují tabulky Galerie a v datovém adresáři je soubor "
+"versions.dat, ale verze tabulek v databázi neodpovídá verzi datových "
+"souborů. Vyberte čistou instalaci pro výmaz všech dat v databázi a datovém "
+"adresáři a pokračujte dalším krokem."
 
 msgid ""
 "Gallery tables already exist in the database and the Gallery storage "
@@ -150,21 +173,30 @@ msgid ""
 "tables and storage directory data or select a clean install to erase all "
 "existing data in the database and the storage directory."
 msgstr ""
+"V databázi už existují tabulky Galerie a datový adresář se zdá být "
+"neporušen. Vyberte buď použití existujících tabulek databáze a datového "
+"adresáře nebo čistou instalaci, čímž smažete všechna existující data v "
+"databázi a datovém adresáři."
 
 msgid ""
 "Could not execute the required API to erase the storage directory. Please "
 "erase the Gallery storage directory manually."
 msgstr ""
+"Nelze spustit vyžadované API pro výmaz datového adresáře. Prosím vymažte "
+"datový adresář ručně."
 
 msgid ""
 "Could not execute the required API to drop the Gallery database tables. "
 "Please clean the Gallery database manually."
 msgstr ""
+"Nelze spustit vyžadované API pro smazání tabulek Galerie v databázi. Prosím "
+"smažte je ručně."
 
 msgid ""
 "Could not load the G2 API. Please erase the Gallery database tables and the "
 "storage directory manually."
 msgstr ""
+"Nelze nahrát API G2. Prosím vymažte databázi Galerie a datový adresář ručně."
 
 msgid "MySQL (all versions)"
 msgstr "MySQL (všechny verze)"
@@ -180,6 +212,42 @@ msgstr "PostgreSQL v6.x (nedostatečně otestováno)"
 
 msgid "Oracle (9i and newer)"
 msgstr "Oracle (9i a novější)"
+
+msgid "Unknown DB type or no known tables information."
+msgstr "Neznámý typ databáze nebo neznámé tabulky."
+
+#, c-format
+msgid "Could not find an unused table prefix similar to \"%s\"."
+msgstr "Nelze najít nepoužitý prefix tabulek podobný \"%s\"."
+
+#, c-format
+msgid "SQL test file \"%s\" not found."
+msgstr "SQL testovací soubor \"%s\" nenalezen."
+
+#, c-format
+msgid "Could not open SQL test file \"%s\"."
+msgstr "Nelze otevřít SQL testovací soubor \"%s\"."
+
+msgid ""
+"Check the returned error message and README.html for missing privileges and "
+"clean up the database."
+msgstr ""
+"Zkontrolujte chybovou hlášku a soubor README.html pro chybějící oprávnění a "
+"vyčištěte databázi."
+
+msgid ""
+"Failed to create a DB test sequence.Check the returned error message and "
+"README.html for missing privileges and clean up the database."
+msgstr ""
+"Chyba při vytváření testovací sekvence databáze. Zkontrolujte chybovou hlášku "
+"a soubor README.html pro chybějící oprávnění a vyčištěte databázi."
+
+msgid ""
+"Test failed to drop a DB test sequence.Check the returned error message and "
+"README.html for missing privileges and clean up the database."
+msgstr ""
+"Chyba při rušení testovací sekvence databáze. Zkontrolujte chybovou hlášku "
+"a soubor README.html pro chybějící oprávnění a vyčištěte databázi."
 
 msgid "Finished"
 msgstr "Dokončeno"
@@ -409,16 +477,14 @@ msgstr ""
 msgid "Admin username"
 msgstr "Uživatelské jméno správce"
 
-#, fuzzy
 msgid "Please enter a valid user name"
-msgstr "Prosím zadejte heslo"
+msgstr "Prosím zadejte platné uživatelské jméno"
 
 msgid "Password"
 msgstr "Heslo"
 
-#, fuzzy
 msgid "Setup password"
-msgstr "Heslo"
+msgstr "Nastavení hesla"
 
 msgid "Please enter a password"
 msgstr "Prosím zadejte heslo"
@@ -427,14 +493,13 @@ msgid "(type again)"
 msgstr "(ještě jednou)"
 
 msgid "Admin email address"
-msgstr ""
+msgstr "Email adresa správce"
 
-#, fuzzy
 msgid "Please enter a valid email address"
-msgstr "Prosím zadejte heslo"
+msgstr "Prosím zadejte platnou email adresu"
 
 msgid "Admin full name (optional)"
-msgstr ""
+msgstr "Celé jméno správce (nepovinné)"
 
 msgid "Missing password!  Please enter the same password twice"
 msgstr "Chybějící heslo! Prosím zadejte stejné heslo dvakrát"
@@ -448,6 +513,9 @@ msgid ""
 "site admin. To change the password of the site admin, choose the forgot "
 "password mechanism of Gallery."
 msgstr ""
+"Protože chcete použít existující databázi, nejde o čistou instalaci. Tento "
+"proces změní pouze instalační heslo, ale nezmění heslo správce. Pro změnu "
+"hesla správce budete muset použít mechanismus Galerie pro obnovu hesla."
 
 msgid "Create"
 msgstr "Vytvořit"
@@ -458,7 +526,7 @@ msgstr "Uložit"
 msgid "Admin user info entered successfully."
 msgstr "Uživatelské informace pro správce úspěšně zadány."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "In order to proceed with the install, we have to verify that you are who you "
 "claim.  The best way to be sure is to ask you to make a tiny change in the "
@@ -475,14 +543,15 @@ msgstr ""
 "<tt>%s</tt> (to je stejný adresář, kde je nainstalována Galerie). Soubor "
 "musí obsahovat následující náhodně vygenerované znaky:"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "As a convenience to you, we've prepared a %scorrect version of login.txt%s "
 "for you.  Download that and copy it into your <tt>%s</tt> directory and "
 "you're all set."
 msgstr ""
 "Pro Vaše větší pohodlí jsme pro Vás připravili %ssprávnou verzi souboru "
-"login.txt%s. Stačí, když soubor stáhnete a zkopírujete do správného adresáře."
+"login.txt%s. Stačí, když soubor stáhnete a zkopírujete do adresáře <tt>%s</"
+"tt>."
 
 msgid "Once you've uploaded the file, click below to continue."
 msgstr ""
@@ -495,24 +564,25 @@ msgid "Authentication successful!"
 msgstr "Autentizace úspěšná!"
 
 msgid "Erase data for a clean install"
-msgstr ""
+msgstr "Čistá instalace (výmaz dat)"
 
 msgid ""
 "Are you really sure you want to delete all your data in your Gallery storage "
 "directory and all your data in your Gallery database?"
 msgstr ""
+"Jste si jisti, že chcete smazat všechna data v databázi a datovém adresáři "
+"Galerie?"
 
-#, fuzzy
 msgid ""
 "There was an error erasing the db and storage directory data. Here's the "
 "error:"
-msgstr "Při instalaci modulu jádra se vyskytla chyba. Zde je výpis trasování:"
+msgstr "Při mazání databáze a datového adresáře se vyskytla tato chyba: "
 
 msgid "Cancel"
-msgstr ""
+msgstr "Zrušit"
 
 msgid "Erase all data"
-msgstr ""
+msgstr "Smazat všechna data"
 
 msgid "Please fix this error and try again."
 msgstr "Prosím vyřešte tento problém a zkuste to znovu."
@@ -607,7 +677,7 @@ msgid "We received the following database related errors:"
 msgstr "Zjistili jsme následující chyby související s databází:"
 
 msgid "Erase Data For A Clean Install"
-msgstr ""
+msgstr "Čistá instalace (výmaz dat)"
 
 msgid "Reuse Existing Tables"
 msgstr "Použít existující tabulky"
@@ -726,7 +796,7 @@ msgid "Description"
 msgstr "Popis"
 
 msgid "(Incompatible with this Gallery version)"
-msgstr ""
+msgstr "(nekompatibilní s touto verzí Galerie)"
 
 msgid "(un)check all"
 msgstr "(zrušit) výběr všech"
@@ -806,10 +876,12 @@ msgstr "Modifikované soubory (%d)"
 
 msgid ""
 "Note: You're running Gallery from CVS, so some modified files are to be "
-"expected.  You can probably safely ignore these."
+"expected.  You can probably ignore these, but to be safe you should make "
+"sure that you do 'cvs update -Pd' before continuing."
 msgstr ""
 "Poznámka: Toto je Galerie z CVS, takže se zde mohou vyskytnout nedávno "
-"upravené soubory. Nejspíše lze bez problému ignorovat."
+"upravené soubory. Nejspíše lze bez problému ignorovat, ale pokud si "
+"chcete být jisti, můžete (než budete pokračovat) spustit 'cvs update -Pd'."
 
 #, c-format
 msgid "Old files (%d)"
@@ -1078,41 +1150,40 @@ msgstr ""
 "Pokud používáte webový server Apache, vytvořte v hlavním adresáři Vaší "
 "Galerie soubor .htaccess s následujícím obsahem:"
 
-#, fuzzy
 msgid "Version Check"
-msgstr "Verze"
+msgstr "Kontrola verze"
 
 msgid ""
 "This is not a fresh install and the installed version does not match the new "
 "version."
-msgstr ""
+msgstr "Toto není čistá instalace a nainstalovaná verze neodpovídá nové."
 
 msgid "The installed version cannot be upgraded to the new version!"
-msgstr ""
+msgstr "Nainstalovaná verze nemůže být aktualizovaná na novou!"
 
 msgid ""
 "The installed version is older than the new version. You should run the "
 "upgrader and not the installer!"
 msgstr ""
+"Nainstalovaná verze je starší než tato nová. Měli byste spustit aktualizaci "
+"a ne instalaci!"
 
 msgid "Currently installed"
-msgstr ""
+msgstr "Aktuálně nainstalovaná"
 
-#, fuzzy
 msgid "New version"
-msgstr "Verze"
+msgstr "Nová verze"
 
-#, fuzzy
 msgid "Go to the Upgrader!"
-msgstr "Jdi do mé Galerie!"
+msgstr "Jdi na aktualizaci!"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You should go now to the upgrader.  Enter the URL in your browser for %s/"
 "upgrade/index.php%s in your %s directory."
 msgstr ""
-"Nyní můžete jít do Vaší nové Galerie. Zadejte do browseru URL %smain.php%s v "
-"adresáři %s."
+"Nyní byste měli zaktualizovat Galerii. Do Vašeho prohlížeče zadejte URL "
+"adresu %supgrade/index.php%s v adresáři %s."
 
 #, c-format
 msgid ""

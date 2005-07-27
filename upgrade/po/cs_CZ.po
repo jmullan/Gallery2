@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Upgrader 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-06-11 11:57+0200\n"
-"PO-Revision-Date: 2005-06-11 18:21+0100\n"
+"PO-Revision-Date: 2005-07-25 20:39+0200\n"
 "Last-Translator: Jan Korbel <jackc@teptin.net>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -215,9 +215,8 @@ msgstr "Aktualizace modulů"
 msgid "Unable to load the %s module"
 msgstr "Nelze nahrát modul %s"
 
-#, fuzzy
 msgid "Upgrading modules"
-msgstr "Aktualizace modulů"
+msgstr "Aktualizuji moduly"
 
 #, c-format
 msgid "%s module needs configuration"
@@ -227,17 +226,16 @@ msgstr "Modul %s potřebuje nakonfigurovat"
 msgid "Unable to upgrade the %s module"
 msgstr "Nelze zaktualizovat modul %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to load the %s theme"
-msgstr "Nelze nahrát modul %s"
+msgstr "Nelze nahrát téma %s"
 
-#, fuzzy
 msgid "Upgrading themes"
-msgstr "Aktualizace modulů"
+msgstr "Aktualizuji témata"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to upgrade the %s theme"
-msgstr "Nelze zaktualizovat modul %s"
+msgstr "Nelze zaktualizovat téma %s"
 
 msgid "Unable to commit database transaction"
 msgstr "Nelze commitnout transakce databáze"
@@ -245,15 +243,14 @@ msgstr "Nelze commitnout transakce databáze"
 msgid "Unable to get the module list"
 msgstr "Nelze získat seznam modulů"
 
-#, fuzzy
 msgid "Unable to get the theme list"
-msgstr "Nelze získat seznam modulů"
+msgstr "Nelze získat seznam témat"
 
 msgid "Other"
 msgstr "Další"
 
 msgid "Themes"
-msgstr ""
+msgstr "Témata"
 
 msgid "Welcome"
 msgstr "Vítejte"
@@ -379,12 +376,15 @@ msgstr ""
 msgid "Modified files (%d)"
 msgstr "Modifikované soubory (%d)"
 
+#, fuzzy
 msgid ""
 "Note: You're running Gallery from CVS, so some modified files are to be "
-"expected.  You can probably safely ignore these."
+"expected.  You can probably ignore these, but to be safe you should make "
+"sure that you do <b>cvs update -Pd</b> before continuing."
 msgstr ""
 "Poznámka: Toto je Galerie z CVS, takže se zde mohou vyskytnout nedávno "
-"upravené soubory. Nejspíše lze bez problému ignorovat."
+"upravené soubory. Nejspíše lze bez problému ignorovat, ale pokud si chcete "
+"být jisti, můžete (než budete pokračovat) spustit 'cvs update -Pd'."
 
 #, c-format
 msgid "Old files (%d)"
@@ -420,7 +420,6 @@ msgstr ""
 "Pokud používáte webový server Apache, vytvořte v hlavním adresáři Vaší "
 "Galerie soubor .htaccess s následujícím obsahem:"
 
-#, fuzzy
 msgid "An error occurred while upgrading Gallery Core Module"
 msgstr "Při aktualizaci modulu jádra došlo k chybě"
 
@@ -474,6 +473,15 @@ msgstr ""
 
 msgid "You can do <i>chmod 666 config.php</i> to fix this."
 msgstr "Pro opravu práv by mělo pomoci něco jako <i>chmod 666 config.php</i>."
+
+msgid ""
+"The installed version is newer than the version you are trying to upgrade "
+"to. You cannot downgrade G2. Please replace the gallery2 files with files "
+"from the currently installed version or later."
+msgstr ""
+"Nainstalovaná verze je novější než verze, na kterou se snažíte aktualizovat. "
+"Nelze snížit verzi G2. Prosím nahraďte soubory gallery2 nainstalovanou nebo "
+"novější verzí."
 
 msgid ""
 "Before you upgrade, we <b>strongly recommend</b> that you make a backup of "
@@ -570,9 +578,9 @@ msgstr "Aktualizovat vybrané moduly"
 msgid "Upgraded the %s module successfully"
 msgstr "Modul %s úspěšně zaktualizován"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Upgraded the %s theme successfully"
-msgstr "Modul %s úspěšně zaktualizován"
+msgstr "Téma %s úspěšně zaktualizováno"
 
 msgid "Upgrade More Modules"
 msgstr "Aktualizovat více modulů"
