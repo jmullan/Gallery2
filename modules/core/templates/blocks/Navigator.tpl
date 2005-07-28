@@ -4,8 +4,14 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
+{*
+ * The strip calls in this tpl are to avoid a safari bug where padding-right is lost
+ * in floated containers for elements that have whitespace before the closing tag.
+ *}
 <div class="{$class}">
-  <div class="next-and-last{if !isset($navigator.first) && !isset($navigator.back)} no-previous{/if}">
+  <div class="next-and-last{if !isset($navigator.first) &&
+			       !isset($navigator.back)} no-previous{/if}">
+    {strip}
     {if isset($navigator.next)}
     <a href="{g->url params=$navigator.next.urlParams}" class="next">
       {g->text text="next"}
@@ -25,6 +31,7 @@
       {/if}
     </a>
     {/if}
+    {/strip}
   </div>
 
   {if (isset($currentPage) && isset($totalPages)) || (isset($currentItem) && isset($totalItems))}
@@ -40,6 +47,7 @@
   {/if}
 
   <div class="first-and-previous">
+    {strip}
     {if isset($navigator.first)}
     <a href="{g->url params=$navigator.first.urlParams}" class="first">
       {if isset($navigator.first.item.thumbnail)}
@@ -59,5 +67,6 @@
       {g->text text="previous"}
     </a>
     {/if}
+    {/strip}
   </div>
 </div>
