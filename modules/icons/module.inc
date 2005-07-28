@@ -62,10 +62,17 @@ class IconsModule extends GalleryModule {
 	}
 
 	if (empty($currentVersion)) {
-	    return GalleryStatus::success();
+	    $currentVersion = '0';
 	}
 
 	switch ($currentVersion) {
+	case '0':
+	    $ret = $this->setParameter('iconpack', 'paularmstrongdesigns');
+	    if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    break;
+
 	case '0.9.0':
 	case '0.9.1':
 	case '0.9.2':
