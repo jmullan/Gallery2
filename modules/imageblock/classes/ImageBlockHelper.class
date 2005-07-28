@@ -503,7 +503,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	     */
 	    GalleryCoreApi::relativeRequireOnce(
 		'modules/imageblock/classes/ImageBlockCacheMap.class');
-	    $param = $event->getEntity();
+	    $param = $event->getData();
 	    if (!empty($param['userId'])) {
 		$ret = ImageBlockCacheMap::removeMapEntry(array('userId' => $param['userId']));
 		if ($ret->isError()) {
