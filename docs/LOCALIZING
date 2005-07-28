@@ -62,7 +62,7 @@ stands for "portable object").  Here's one way to find them:
 
 	find . -type d -name po			<-- you type this
 
-	./layouts/matrix/po	          	<-- you see this
+	./themes/matrix/po			<-- you see this
 	./lib/tools/po
 	./modules/core/po
 	./modules/comment/po
@@ -179,7 +179,7 @@ And it will compile your .po file into a .mo file and install it in
 the appropriate place for the module.  Note that this will generate a
 lot of output because it will compile all the .po files in the
 directory, so read the output carefully to see the relevant stuff from
-your new .po file.  Repeat this for every directory where you tweaked
+your new .po file.  Repeat this in every directory where you tweaked
 a .po file.  Finally, you need to edit
 modules/core/classes/GalleryTranslator.class and in function
 getLanguageData(), add lines like this (if not already present):
@@ -187,7 +187,7 @@ getLanguageData(), add lines like this (if not already present):
 	$supportedLanguages['el']['GR']['description'] = 'Greek';
 	$supportedLanguages['el']['GR']['charset'] = 'UTF-8';
 
- 	   (but put in the appropriate charset if you didn't use UTF-8)
+	   (but put in the appropriate charset if you didn't use UTF-8)
 
 Now, log onto G2 and in the User preferences (you may need to edit the
 user via the Site Administrator) you should see Greek appear in the
@@ -230,7 +230,7 @@ This is pretty straightforward.  We'll work out some kind of
 notification system, but at any time you should be able to do this:
 
 	cd po
-	gmake el_GR.po  	(using Greek as an example)
+	gmake el_GR.po		(using Greek as an example)
 
 This will extract all messages from the module that you're in, and
 update the .po file.  Look through the .po file for any blocks that
@@ -270,7 +270,7 @@ places to go:
 
    2.  The Gallery IRC channel
 
-        #gallery on irc.freenode.net
+	#gallery on irc.freenode.net
 
    3.  The Gallery 2 development forum:
 
