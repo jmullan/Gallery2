@@ -253,8 +253,8 @@ class GalleryMovieItem_core extends GalleryDataItem {
 			   <param name="loop" value="false"/>
 			   <embed src="%s" width="%s" height="%s" type="%s"
 				  pluginspage="http://www.apple.com/quicktime/download/"
-				  controller="true" autoplay="true" loop="false">
-			    %s </embed>
+				  controller="true" autoplay="true" loop="false"/>
+			   <noembed>%s</noembed>
 		 </object>',
 
 		$width, $height + 16,
@@ -278,8 +278,8 @@ class GalleryMovieItem_core extends GalleryDataItem {
 			   <param name="Volume" value="0"/>
 			   <param name="FileName" value="%s"/>
 			   <embed src="%s" width="%s" height="%s" type="%s"
-				  controller="true" autoplay="true" loop="false">
-			    %s </embed>
+				  controller="true" autoplay="true" loop="false"/>
+			   <noembed>%s</noembed>
 		 </object>',
 
 		$width, $height + 50,
@@ -293,6 +293,7 @@ class GalleryMovieItem_core extends GalleryDataItem {
 	    default:
 		return $fallback;
 	    }
+
 	default:
 	    return null;
 	}
