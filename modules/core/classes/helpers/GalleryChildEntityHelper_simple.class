@@ -254,7 +254,19 @@ class GalleryChildEntityHelper_simple {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $classes = array_unique(array_merge($classes, $orderClasses));
+	}
 
+	if (!empty($orderBy)) {
+	    $orderClause = $orderBy . ', ';
+
+	    /* Postgres requires the order by column to be in the select list.. */
+	    $selectExtra = !empty($orderColumn) ? (', ' . $orderColumn) : '';
+	} else {
+	    $orderClause = $selectExtra = '';
+	}
+
+
+	if (!empty($extraJoin)) {
 	    /*
 	     * $extraJoin can contain classes also.  If it does, we should
 	     * remove them from $classes so that they're not in the FROM
@@ -267,16 +279,6 @@ class GalleryChildEntityHelper_simple {
 		}
 	    }
 	    $classes = array_flip($classes);
-	}
-	if (!empty($orderBy)) {
-	    /* Postgres requires the order by column to be in the select list.. */
-	    $orderClause = $orderBy . ', ';
-	    $selectExtra = ', ' . $orderColumn;
-	} else {
-	    $orderClause = $selectExtra = '';
-	}
-
-	if (!empty($extraJoin)) {
 	    $classes[] = $extraJoin;
 	}
 
@@ -586,6 +588,13 @@ class GalleryChildEntityHelper_simple {
 	    case 'originationTimestamp':
 		$column = '[GalleryItem::originationTimestamp]';
 		$condition[] = '[GalleryItem::id] = [GalleryChildEntity::id]';
+		break;
+
+	    case 'random':
+		list($ret, $order[]) = $storage->getFunctionSql('RAND', array());
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null, null, null);
+		}
 		break;
 
 	    case 'albumsFirst':
