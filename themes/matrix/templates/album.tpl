@@ -46,13 +46,13 @@
 
         {if !count($theme.children)}
         <div class="gbBlock giDescription gbEmptyAlbum">
-          <h1 class="emptyAlbum">
+          <h3 class="emptyAlbum">
 	    {g->text text="This album is empty."}
 	    {if isset($theme.permissions.core_addDataItem)}
 	    <br/>
               <a href="{g->url arg1="view=core.ItemAdmin" arg2="subView=core.ItemAdd" arg3="itemId=`$theme.item.id`"}"> {g->text text="Add a photo!"} </a>
 	    {/if}
-          </h1>
+          </h3>
         </div>
         {else}
 
