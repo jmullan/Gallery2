@@ -338,10 +338,9 @@ class GalleryTemplateAdapter {
     /**
      * Include our AutoCompletion template.
      *
-     * @param array
+     * @param array params
      * @param string content
      * @param object Smarty the smarty instance
-     * @return string HTML content
      */
     function autoComplete($params, $content, &$smarty) {
 	if (!isset($content)) {
@@ -368,7 +367,6 @@ class GalleryTemplateAdapter {
      *
      * @param array params
      * @param object Smarty the smarty instance
-     * @return string HTML content
      */
     function dimensions($params, &$smarty) {
 	if (!isset($this->_callCount['dimensions'])) {
@@ -385,6 +383,29 @@ class GalleryTemplateAdapter {
 		      'width' => isset($params['width']) ? $params['width'] : null,
 		      'height' => isset($params['height']) ? $params['height'] : null,
 		      'callCount' => ++$this->_callCount['dimensions'])));
+	$smarty->_tpl_vars = $save;
+    }
+
+    /**
+     * Add hidden form elements to select a default submit button
+     * that is used if enter is pressed in a text input.
+     * Include this before any submit buttons are added to the form.
+     *
+     * @param array params
+     * @param object Smarty the smarty instance
+     */
+    function defaultButton($params, &$smarty) {
+	if (!isset($this->_callCount['defaultButton'])) {
+	    $this->_callCount['defaultButton'] = 0;
+	}
+
+	/* Guard template vars so that the include doesn't pollute our namespace */
+	$save = $smarty->_tpl_vars;
+	$smarty->_smarty_include(
+	    array('smarty_include_tpl_file' => 'gallery:modules/core/templates/DefaultButton.tpl',
+		  'smarty_include_vars' => array(
+		      'name' => $params['name'],
+		      'callCount' => ++$this->_callCount['defaultButton'])));
 	$smarty->_tpl_vars = $save;
     }
 

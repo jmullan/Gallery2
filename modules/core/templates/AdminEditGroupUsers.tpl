@@ -86,6 +86,9 @@
     {/foreach}
   </table>
 
+  {* We want "Add" to be invoked if enter is pressed *}
+  {g->defaultButton name="form[action][add]"}
+
   {if !empty($form.list.filter) || ($form.list.maxPages > 1)}
     <input type="text"
      name="{g->formVar var="form[list][filter]"}" value="{$form.list.filter}"/>
