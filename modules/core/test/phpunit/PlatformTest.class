@@ -463,8 +463,8 @@ class PlatformTest extends GalleryTestCase {
 
 	/* Open_basedir with . */
 	$gallery->_phpVm = new PlatformTestPhpVm('.');
-	$this->assert(!$this->_platform->isRestrictedByOpenBaseDir($_SERVER['SCRIPT_FILENAME']),
-		      'dot basedir');
+	$this->assert(!$this->_platform->isRestrictedByOpenBaseDir(
+	    dirname(__FILE__) . '/../../../../lib/tools/phpunit/index.php'), 'dot basedir');
 
 	/* Open_basedir with trailing slash */
 	$s = $this->_platform->getDirectorySeparator();
