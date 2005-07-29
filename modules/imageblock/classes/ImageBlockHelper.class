@@ -240,7 +240,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    if ($fullSize) {
+	    if ($fullSize && GalleryUtilities::isA($item, 'GalleryDataItem')) {
 		$ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'core.viewSource');
 		if ($ret->isError()) {
 		    /* Ignore permission error.. just don't add a block */
