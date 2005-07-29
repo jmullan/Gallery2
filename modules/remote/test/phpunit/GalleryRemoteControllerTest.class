@@ -269,8 +269,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	}
 
 	$this->assertEquals('testfile.txt', $newItem->getPathComponent());
-	$this->assertEquals('this is a caption', $newItem->getSummary());
-	$this->assertEquals('testfile.txt', $newItem->getTitle());
+	$this->assertEquals('this is a caption', $newItem->getTitle());
 	$this->assertEquals($platform->filesize(__FILE__), $newItem->getSize());
     }
 
@@ -280,6 +279,9 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	$platform = $gallery->getPlatform();
 	GalleryUtilities::putRequestVariable('form[cmd]', 'add-item');
 	GalleryUtilities::putRequestVariable('form[set_albumName]', $this->_rootAlbum->getId());
+	GalleryUtilities::putRequestVariable('form[caption]', 'this is a caption');
+	GalleryUtilities::putRequestVariable('form[extrafield.Summary]', 'this is a summary');
+	GalleryUtilities::putRequestVariable('form[extrafield.Description]', 'this is a description');
 	GalleryUtilities::putRequestVariable('form[caption]', 'this is a caption');
 
 	$this->_controller->setOptionInstances(
@@ -317,8 +319,9 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 			    GalleryRemoteControllerTestAddOption::getCalledWithId());
 
 	$this->assertEquals('testfile.txt', $newItem->getPathComponent());
-	$this->assertEquals('this is a caption', $newItem->getSummary());
-	$this->assertEquals('testfile.txt', $newItem->getTitle());
+	$this->assertEquals('this is a caption', $newItem->getTitle());
+	$this->assertEquals('this is a description', $newItem->getDescription());
+	$this->assertEquals('this is a summary', $newItem->getSummary());
 	$this->assertEquals($platform->filesize(__FILE__), $newItem->getSize());
     }
 

@@ -262,6 +262,7 @@ class GalleryRemoteController extends GalleryController {
 				   isset($perms['core.delete']) ? 'true' : 'false');
 	    $response->setProperty('album.perms.create_sub.' . $i,
 				   isset($perms['core.addAlbumItem']) ? 'true' : 'false');
+	    $response->setProperty('album.info.extrafields.' . $i, "Summary,Description");
 
 	    $i++;
 	}
@@ -360,9 +361,13 @@ class GalleryRemoteController extends GalleryController {
 	    $itemName = $file['name'];
 	}
 
+	$title = $form['caption'];
+	$summary = isset($form['extrafield.Summary'])?$form['extrafield.Summary']:NULL;
+	$description = isset($form['extrafield.Description'])?$form['extrafield.Description']:NULL;
+
 	list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum(
-	    $file['tmp_name'], basename($itemName), basename($itemName),
-	    $form['caption'], $form['caption'], $mimeType, $parentId);
+	    $file['tmp_name'], basename($itemName), $title,
+	    $summary, $description, $mimeType, $parentId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
