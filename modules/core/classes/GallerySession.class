@@ -165,8 +165,16 @@ class GallerySession {
 	    }
 	}
 
-	/* If we don't have a session id at this point, create one. */
-	if (empty($this->_sessionId)) {
+
+	/*
+	 * If we don't have a session id at this point, create one. And expire the session if
+	 * necessary
+	 */
+	list ($ret, $valid) = $this->_isSessionValid();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	if (!$valid) {
 	    do {
 		$this->_sessionId = md5(microtime() . rand(1, 32767));
 
@@ -532,8 +540,7 @@ class GallerySession {
 
 	    $path = $sessionsDir . $filename;
 	    $statData = $platform->stat($path);
-	    if ($statData['mtime'] < $inactiveCutoff ||
-		    $statData['ctime'] < $lifetimeCutoff) {
+	    if ($statData['mtime'] < $inactiveCutoff || $statData['ctime'] < $lifetimeCutoff) {
 		$platform->unlink($path);
 	    }
 	}
@@ -636,9 +643,54 @@ class GallerySession {
     }
 
     /**
+     * Check whether the session is valid
+     *
+     * Valid := sessionId is non-empty and the session file exists and the
+     * session has not expired, or if the session file does not exist
+     *
+     * @return array ( object GalleryStatus a status code, boolean valid)
+     * @access private
+     */
+    function _isSessionValid() {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	
+	if (!empty($this->_sessionId)) {
+	    /* Check if the session has expired */
+	    $sessionFile = $gallery->getConfig('data.gallery.sessions') . $this->_sessionId;
+	    if ($platform->file_exists($sessionFile)) {
+		list ($ret, $lifetime) =
+		    GalleryCoreApi::getPluginParameter('module', 'core', 'session.lifetime');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		list ($ret, $inactivityTimeout) =
+		    GalleryCoreApi::getPluginParameter('module', 'core',
+						       'session.inactivityTimeout');
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		$lifetimeCutoff = time() - $lifetime;
+		$inactiveCutoff = time() - $inactivityTimeout;
+		$statData = $platform->stat($sessionFile);
+		if ($statData['mtime'] < $inactiveCutoff || $statData['ctime'] < $lifetimeCutoff) {
+		    /* The session has timed out, remove it */
+		    $platform->unlink($sessionFile);
+		} else {
+		    return array(GalleryStatus::success(), true);
+		}
+	    } else {
+		return array(GalleryStatus::success(), true);
+	    }
+	}
+	
+	return array(GalleryStatus::success(), false);
+    }
+    
+    /**
      * Load the session data
      *
-     * @returns object GalleryStatus a status code
+     * @return object GalleryStatus a status code
      * @access private
      */
     function _loadSessionData() {

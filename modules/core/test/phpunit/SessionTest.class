@@ -332,6 +332,121 @@ class SessionTest extends GalleryTestCase {
 	$this->assert($platform->isComplete(), $platform->getRemaining());
     }
 
+    /*
+     * User agents should not send back expired cookies (RFC 2965), but what if they do?
+     * Thus G2 should not blindly load the session data for a given sessionId, but first check
+     * if the session already expired
+     */
+    function testServerSideSessionExpiration() {
+	global $gallery;
+	$session =& $gallery->getSession();
+	
+	$ret = $this->_markPluginParametersForCleanup('module', 'core');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'session.lifetime', '3600');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core',
+						  'session.inactivityTimeout', '1800');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $lifetime) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'session.lifetime');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $inactivityTimeout) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'session.inactivityTimeout');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('3600', $lifetime, 'lifetime assertion failed');
+	$this->assertEquals('1800', $inactivityTimeout, 'inactivityTimeout assertion failed');
+	GalleryUtilities::removeRequestVariable(SESSION_ID_PARAMETER);
+	$this->assert(isset($_COOKIE[SESSION_ID_PARAMETER]) &&
+		      !empty($_COOKIE[SESSION_ID_PARAMETER]), 'SID assertion failed');
+	$sessionId = $_COOKIE[SESSION_ID_PARAMETER];
+	$_SERVER['HTTP_COOKIE'] = SESSION_ID_PARAMETER . '=' . $sessionId;
+	$sessionFile = $gallery->getConfig('data.gallery.sessions') . $sessionId;
+
+	/* First case, non-expired session.  */
+	/* Mock platform to emulate a non-expired session */
+	$platform = new UnitTestPlatform();
+	$platform->setReply('file_exists', array($sessionFile), true);
+	$creationTime = time() - 0.8 * $lifetime;
+	$modificationTime = time() - 0.8 * $inactivityTimeout;
+	$platform->setReply('stat', array($sessionFile),
+			    array('ctime' => $creationTime, 'mtime' => $modificationTime));
+	/* At this point the session data is loaded */
+	$platform->setReply('file_exists', array($sessionFile), true);
+	$platform->setReply('fopen', array($sessionFile, 'rb', 0), 'fh');
+	$platform->setReply('feof', array('fh'), false);
+	$platform->setReply('fread', array('fh', 4096),
+			    serialize(array($creationTime, $session->_getRemoteIdentifier(),
+					    array('session' => 'data'))));
+	$platform->setReply('feof', array('fh'), true);
+	$platform->setReply('fclose', array('fh'), true);
+	$gallery->setPlatform($platform);
+	
+	$session = new GallerySession();
+	$ret = $session->init();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}	
+
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+	$this->assert($sessionId, $session->getId(), 'sessionId should not have changed');
+
+	/* Second case, expired session due to inactivity timeout */	
+	/* Mock platform to emulate expired session */
+	$platform = new UnitTestPlatform();
+	$platform->setReply('file_exists', array($sessionFile), true);
+	$platform->setReply('stat',        array($sessionFile),
+			    array('ctime' => time() - 0.8 * $lifetime,
+				  'mtime' => time() - 0.8 * $lifetime));
+	$platform->setReply('unlink', array($sessionFile), 1);
+	/* At this point it generates a new session id and checks if it's an unused id */
+	$platform->setReply('file_exists', array('fuzzy' => '{.*}'), false);
+	$gallery->setPlatform($platform);
+	
+	$session = new GallerySession();
+	$ret = $session->init();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}	
+
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+	$this->assert($session->getId() != $sessionId, 'sessionId should have changed');
+	
+	/* Third case, expired session due to lifetime timeout */	
+	/* Mock platform to emulate expired session */
+	$sessionId = $_COOKIE[SESSION_ID_PARAMETER];
+	$sessionFile = $gallery->getConfig('data.gallery.sessions') . $sessionId;
+	$platform = new UnitTestPlatform();
+	$platform->setReply('file_exists', array($sessionFile), true);
+	$platform->setReply('stat',        array($sessionFile),
+			    array('ctime' => time() - 1.2 * $lifetime,
+				  'mtime' => time() - 0.8 * $inactivityTimeout));
+	$platform->setReply('unlink', array($sessionFile), 1);
+	/* At this point it generates a new session id and checks if it's an unused id */
+	$platform->setReply('file_exists', array('fuzzy' => '{.*}'), false);
+	$gallery->setPlatform($platform);
+	
+	$session = new GallerySession();
+	$ret = $session->init();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}	
+
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+	$this->assert($session->getId() != $sessionId, 'sessionId should have changed');
+    }
+
     function testSessionSaveLoad() {
 	global $gallery;
 	$session = $gallery->_session;
