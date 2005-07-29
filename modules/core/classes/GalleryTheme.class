@@ -965,7 +965,6 @@ class GalleryTheme extends GalleryPlugin {
      *   childItemLinksDetailed = boolean.  true if you want detailed item links for children.
      *                            you always get detailed item links for the current item
      *   itemSummaries = set itemSummaries (array of moduleId => html) on each child item
-     *   itemDetailFiles = array of moduleId => template file path
      *   thumbnails = if childIds non-empty then set thumbnail on each child item
      *   peerThumbnails = set the thumbnails for all the peers
      *   pageNavigator = calculate urls for first/back/next/last links for album page navigation
@@ -1277,12 +1276,11 @@ class GalleryTheme extends GalleryPlugin {
 
 	/*
 	 * --------------------------------------------------------------------------------------
-	 * 'systemLinks', 'itemLinks', 'itemSummaries', 'itemDetailFiles'
+	 * 'systemLinks', 'itemLinks', 'itemSummaries'
 	 * Load links and content from all active modules
 	 */
 	if (isset($load['systemLinks'])
-		|| isset($load['itemLinks']) || isset($load['itemSummaries'])
-		|| isset($load['itemDetailFiles'])) {
+		|| isset($load['itemLinks']) || isset($load['itemSummaries'])) {
 	    $urlGenerator =& $gallery->getUrlGenerator();
 
 	    list ($ret, $permissions) =
@@ -1305,9 +1303,6 @@ class GalleryTheme extends GalleryPlugin {
 		    $itemSummaries[$id] = array();
 		}
 		$childData[] = 'itemSummaries';
-	    }
-	    if (isset($load['itemDetailFiles'])) {
-		$theme['itemDetailFiles'] = array();
 	    }
 
 	    list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
@@ -1332,8 +1327,7 @@ class GalleryTheme extends GalleryPlugin {
 		$required = false;
 		foreach (array('systemLinks' => 'getSystemLinks',
 			       'itemLinks' => 'getItemLinks',
-			       'itemSummaries' => 'getItemSummaries',
-			       'itemDetailFiles' => 'loadItemDetails') as $key => $callbackKey) {
+			       'itemSummaries' => 'getItemSummaries') as $key => $callbackKey) {
 		    if (isset($load[$key]) && isset($callbacks[$callbackKey])) {
 			$required = true;
 			break;
@@ -1390,19 +1384,6 @@ class GalleryTheme extends GalleryPlugin {
 			if (!empty($html)) {
 			    $itemSummaries[$id][$moduleId] = $html;
 			}
-		    }
-		}
-
-		if (isset($load['itemDetailFiles']) && isset($callbacks['loadItemDetails'])) {
-		    $itemPermissions =
-			empty($permissions[$item->getId()]) ? array() : $permissions[$item->getId()];
-		    list ($ret, $content) =
-			$module->loadItemDetails($template, $item, $itemPermissions);
-		    if ($ret->isError()) {
-			return $ret->wrap(__FILE__, __LINE__);
-		    }
-		    if (!empty($content)) {
-			$theme['itemDetailFiles'][$moduleId] = $content;
 		    }
 		}
 	    }

@@ -120,7 +120,7 @@ class ClassicTheme extends GalleryTheme {
 	    $template, $item, $params,
 	    array('owner', 'viewCount', 'childCount', 'descendentCount', 'parents', 'peers',
 		  'systemLinks', 'itemLinks', 'itemSummaries', 'permissions',
-		  'itemDetailFiles', 'thumbnails', 'pageNavigator', 'jumpRange'),
+		  'thumbnails', 'pageNavigator', 'jumpRange'),
 	     $childIds);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -173,8 +173,7 @@ class ClassicTheme extends GalleryTheme {
      */
     function showPhotoPage(&$template, $item, $params) {
 	$dataTypes = array('owner', 'parents', 'peers', 'systemLinks', 'permissions',
-			   'itemLinks', 'itemLinksDetailed', 'itemDetailFiles', 'itemNavigator',
-			   'imageViews');
+			   'itemLinks', 'itemLinksDetailed', 'itemNavigator', 'imageViews');
 	if (!empty($params['showMicroThumbs'])) {
 	    $dataTypes[] = 'peerThumbnails';
 	}

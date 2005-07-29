@@ -56,7 +56,6 @@ class GalleryModule extends GalleryPlugin {
      *   getSystemLinks
      *   getItemLinks
      *   getItemSummaries
-     *   loadItemDetails
      *
      * eg: getItemAdminViews|getSystemLinks|getItemLinks
      *
@@ -82,6 +81,7 @@ class GalleryModule extends GalleryPlugin {
      * @return array major number, minor number
      */
     function getApiVersion() {
+	/* TODO: Remove loadItemDetails on next major version bump */
 	return array(2, 0);
     }
 
@@ -426,10 +426,10 @@ class GalleryModule extends GalleryPlugin {
     }
 
     /**
-     * Return module-specific details content about the item This is localized
+     * TODO: remove this obsolete api.
+     * Return module-specific details content about the item. This is localized
      * content specific to a given item.  You can use this to return in-depth
-     * item content.  In theory it should be more detailed than the item
-     * summaries.
+     * item content.  In theory it should be more detailed than the item summaries.
      *
      * @param object GalleryTemplate a template
      * @param object GalleryItem
@@ -438,7 +438,7 @@ class GalleryModule extends GalleryPlugin {
      *               string path to template file to include
      */
     function loadItemDetails(&$template, $item, $permissions) {
-	return array(GalleryStatus::success(), null);
+	return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__), null);
     }
 
     /**

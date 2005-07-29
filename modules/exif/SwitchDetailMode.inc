@@ -28,7 +28,7 @@
  */
 
 /**
- * This controller will switch the ItemDetails mode in the session
+ * This controller will switch the detail mode in the session
  * and return to the previous page
  *
  * @package Exif
