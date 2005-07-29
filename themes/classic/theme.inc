@@ -67,7 +67,7 @@ class ClassicTheme extends GalleryTheme {
     }
 
     /**
-     * @see GalleryLayout::getSettings()
+     * @see GalleryTheme::getSettings()
      */
     function getSettings($itemId=null) {
 	list ($ret, $settings) = parent::getSettings($itemId);
@@ -102,7 +102,7 @@ class ClassicTheme extends GalleryTheme {
     }
 
     /**
-     * @see GalleryLayout::validateSettings
+     * @see GalleryTheme::validateSettings
      */
     function validateSettings($settings) {
 	$error = parent::validateSettings($settings);
