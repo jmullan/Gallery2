@@ -115,7 +115,6 @@ class GalleryAnimationItem_core extends GalleryDataItem {
      */
     function create($parentId, $animationFileName, $mimeType, $targetName=null, $symlink=false) {
 	global $gallery;
-
 	$platform = $gallery->getPlatform();
 
 	/* Validate the input filename */
@@ -143,6 +142,11 @@ class GalleryAnimationItem_core extends GalleryDataItem {
 	/* Detect our dimensions, if possible */
 	$ret = $this->rescan();
 	if ($ret->isError()) {
+	    /* Cleanup our datafile on failure */
+	    list ($ret2, $path) = $this->fetchPath();
+	    if ($ret2->isSuccess()) {
+		@$platform->unlink($path);
+	    }
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 

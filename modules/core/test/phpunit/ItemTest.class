@@ -1506,6 +1506,48 @@ class ItemTest extends GalleryTestCase {
 	    'test-operation;convert-to-image/x-portable-pixmap;convert-to-image/jpeg',
 	    $preferred->getDerivativeOperations());
     }
+
+    function testSymlinkTwice() {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	if (!$platform->isSymlinkSupported()) {
+	    /* Skip this test if symlink is not supported */
+	    return;
+	}
+
+	/* Register the dimensions property for our mock data item */
+	$ret = GalleryCoreApi::registerToolkitProperty('ItemTestToolkit',
+	    array('image/test'), 'dimensions', 'int,int', 'Get the dimensions');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/*
+	 * Ensure we don't error out if we add-with-symlink and a problem with the datafile
+	 * requires falling back to GalleryUnknownItem (so we try the symlink twice).
+	 */
+	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum(
+	    __FILE__, 'itemName', 'title', 'caption', 'description',
+	    'image/test', $this->_album->getId(), true);
+	if ($ret->isError()) {
+	    GalleryCoreApi::releaseLocks($lockId);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Just verify a GalleryUnknownItem was created */
+	$this->assert(GalleryUtilities::isA($newItem, 'GalleryUnknownItem'),
+		      'newItem is not a GalleryUnknownItem');
+    }
 }
 
 /**
@@ -1525,6 +1567,7 @@ class ItemTestToolkit extends GalleryToolkit {
 	    }
 	    return array(GalleryStatus::success(), $results);
 	}
+	/* We'll reach this point in testSymlinkTwice, but we want to return an error */
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
     }
 
