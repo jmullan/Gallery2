@@ -129,14 +129,15 @@ class GalleryChildEntityHelper_simple {
      * @param object GalleryItem an item
      * @param int where to start
      * @param int how many to return
+     * @param int optional user id.  Defaults to current user id
      * @return array object GalleryStatus a status code
      *               array integer ids
      * @access public
      * @static
      */
-    function fetchChildDataItemIds($item, $offset=null, $count=null) {
+    function fetchChildDataItemIds($item, $offset=null, $count=null, $userId=null) {
 	list ($ret, $ids) = GalleryChildEntityHelper_simple::_fetchChildItemIds(
-	    $item, $offset, $count, 'GalleryDataItem', null, false, null);
+	    $item, $offset, $count, 'GalleryDataItem', null, false, $userId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -151,14 +152,15 @@ class GalleryChildEntityHelper_simple {
      * @param object GalleryItem an item
      * @param int where to start
      * @param int how many to return
+     * @param int optional user id.  Defaults to current user id
      * @return array object GalleryStatus a status code
      *               array integer ids
      * @access public
      * @static
      */
-    function fetchChildAlbumItemIds($item, $offset=null, $count=null) {
+    function fetchChildAlbumItemIds($item, $offset=null, $count=null, $userId=null) {
 	list ($ret, $ids) = GalleryChildEntityHelper_simple::_fetchChildItemIds(
-	    $item, $offset, $count, 'GalleryAlbumItem', null, false, null);
+	    $item, $offset, $count, 'GalleryAlbumItem', null, false, $userId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

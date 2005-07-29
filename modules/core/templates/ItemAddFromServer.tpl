@@ -286,11 +286,7 @@
        name="{g->formVar var="form[action][addFromLocalServer]"}"
        value="{g->text text="Add Files"}"/>
       <input type="submit" class="inputTypeSubmit"
-       name="{g->formVar var="form[action][startOver]"}" value="{g->text text="Start Over"}"
-       onclick="document.location='{g->url arg1="view=core.ItemAdmin"
-	arg2="subView=core.ItemAdd" arg3="itemId=`$ItemAdmin.item.id`"
-	arg4="form[localServerPath]=`$form.localServerPath`"
-	arg5="form[formName]=ItemAddFromServer" arg6="addPlugin=ItemAddFromServer"}'"/>
+       name="{g->formVar var="form[action][startOver]"}" value="{g->text text="Start Over"}"/>
     {/capture}
     {assign var="showOptions" value="true"}
   {/if} {* {if !empty($form.localServerFiles)} *}

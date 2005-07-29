@@ -137,10 +137,66 @@ class GalleryCharsetHelper_simple {
 		return preg_replace('/([\x80-\xFF])/se',
 				    '$charset[ord(\'$1\')]',
 				    $string);
-	    } else if (!strcmp($sourceEncoding, 'ISO-8859-1')) {
-		return preg_replace('/([\x80-\xFF])/e',
-				    'chr(192 | ord(\'$1\') >> 6) . chr(128 | ord(\'$1\') & 63)',
-				    $string);
+	    }
+	}
+	return $string;
+    }
+
+    /**
+     * Convert the string from the internal encoding (ITF-8) to target encoding
+     * Target encoding defaults to the system charset
+     *
+     * Warning: If neither iconv, mb_convert_encoding, or recode_string is available
+     *          we will use a manual mapping from UTF-8 to the target encoding which is
+     *          INCOMPLETE. That is, we only convert the characters that are in our
+     *          charset tables from GalleryCharsetHelper_medium.
+     *
+     * @param string the input string
+     * @param string the target encoding (eg, 'ISO-8859-1'), defaults to system charset
+     * @return string the result
+     */
+    function convertFromUtf8($string, $targetEncoding=null) {
+	global $gallery;
+	$phpVm = $gallery->getPhpVm();
+
+	if (empty($targetEncoding)) {
+	    $targetEncoding = GalleryCharsetHelper_simple::detectSystemCharset();
+	}
+	if (empty($targetEncoding) || !strcmp($targetEncoding, 'UTF-8')) {
+	    return $string;
+	}
+
+	/* Iconv can return false, so try it first.  If it fails, continue */
+	if ($phpVm->function_exists('iconv')) {
+	    if (($result =
+		     $phpVm->iconv('UTF-8', $targetEncoding . '//IGNORE', $string)) !== false) {
+		return $result;
+	    }
+	}
+
+	if ($phpVm->function_exists('mb_convert_encoding')) {
+	    return $phpVm->mb_convert_encoding($string, $targetEncoding, 'UTF-8');
+	} else if ($phpVm->function_exists('recode_string')) {
+	    return $phpVm->recode_string('UTF-8..' . $targetEncoding, $string);
+	}  else {
+	    GalleryCoreApi::relativeRequireOnce(
+		'modules/core/classes/helpers/GalleryCharsetHelper_medium.class');
+	    $sourceCharset =& GalleryCharsetHelper_medium::getCharsetTable($targetEncoding);
+	    if (isset($sourceCharset)) {
+		/*
+		 * The charset table is organized for sourceEncoding -> UTF-8 conversion,
+		 * we need the inverse charset table, UTF-8 -> targetEncoding
+		 */
+		$search = $replace = array();
+		foreach ($sourceCharset as $key => $value) {
+		    if (empty($value)) {
+			continue;
+		    }
+		    /* Convert decimal value 128-255 to character */
+		    $search[] = $value;
+		    $replace[] = chr($key);
+		}
+		return str_replace($search, $replace, $string);
 	    }
 	}
 	return $string;

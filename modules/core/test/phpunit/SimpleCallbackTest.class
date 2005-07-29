@@ -48,6 +48,7 @@ class SimpleCallbackTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_userNames = $this->_groupNames = array();
+	GalleryDataCache::reset();
     }
 
     function _createUser() {
@@ -197,6 +198,32 @@ class SimpleCallbackTest extends GalleryTestCase {
 	$this->assert($platform->isComplete(), $platform->getRemaining());
     }
 
+    function testLookupDirectoriesWithUmlauts() {
+	/* Filesystem doesn't accept / return UTF-8 characters */
+	global $gallery;
+	$gallery->_phpVm =  new SimpleCallbackTestPhpVm();
+	$platform = new UnitTestPlatform();
+	$platform->setReply('file_exists', array('/phpäunit'), true);
+	$platform->setReply('is_dir', array('/phpäunit'), true);
+	$platform->setReply('getDirectorySeparator', array(), '/');
+	$platform->setReply('opendir', array('/phpäunit'), 'dh');
+	$platform->setReply('readdir', array('dh'), 'täst');
+	$platform->setReply('is_dir', array('/phpäunit/täst'), true);
+	$platform->setReply('readdir', array('dh'), false);
+	$platform->setReply('closedir', array('dh'), true);
+	$gallery->setPlatform($platform);
+
+	/* German umlaut 'ä' in ISO-8859-1 */
+	$umlautUtf8 = GalleryCoreApi::convertToUtf8(chr(228), 'ISO-8859-1');
+	$prefix = '/php' . $umlautUtf8 . 'unit';
+	GalleryUtilities::putRequestVariable('command', 'lookupDirectories');
+	GalleryUtilities::putRequestVariable('prefix', $prefix);
+	$results = $this->_runCallback();
+	
+	$this->assertEquals($prefix . '/t' . $umlautUtf8 . 'st', $results, 'results');
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+
     function testLookupDirectoriesAsNonSiteAdmin() {
 	global $gallery;
 
@@ -256,6 +283,36 @@ class SimpleCallbackTest extends GalleryTestCase {
 	$this->assert($platform->isComplete(), $platform->getRemaining());
     }
 
+    function testLookupFilesWithUmlauts() {
+	/* Filesystem doesn't accepts / return UTF-8 characters */
+	global $gallery;
+	$gallery->_phpVm = new SimpleCallbackTestPhpVm();
+	$platform = new UnitTestPlatform();
+	$platform->setReply('file_exists', array('/phpäunit'), true);
+	$platform->setReply('is_dir', array('/phpäunit'), true);
+	$platform->setReply('getDirectorySeparator', array(), '/');
+	$platform->setReply('opendir', array('/phpäunit'), 'dh');
+	$platform->setReply('readdir', array('dh'), 'täst');
+	$platform->setReply('is_dir', array('/phpäunit/täst'), false);
+	$platform->setReply('is_file', array('/phpäunit/täst'), true);
+	$platform->setReply('readdir', array('dh'), 'dir');
+	$platform->setReply('is_dir', array('/phpäunit/dir'), true);
+	$platform->setReply('readdir', array('dh'), false);
+	$platform->setReply('closedir', array('dh'), true);
+	$gallery->setPlatform($platform);
+
+	/* German umlaut 'ä' in ISO-8859-1 */
+	$umlautUtf8 = GalleryCoreApi::convertToUtf8(chr(228), 'ISO-8859-1');
+	$prefix = '/php' . $umlautUtf8 . 'unit';
+	GalleryUtilities::putRequestVariable('command', 'lookupFiles');
+	GalleryUtilities::putRequestVariable('prefix', $prefix);
+	$results = $this->_runCallback();
+
+	/* Dirs listed first, results in UTF-8  */
+	$this->assertEquals("$prefix/dir\n$prefix/t" . $umlautUtf8 . "st", $results, 'results');
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+    
     function testLookupFilesAsNonSiteAdmin() {
 	global $gallery;
 
@@ -279,6 +336,35 @@ class SimpleCallbackTest extends GalleryTestCase {
 
 	/* Guests can't see results */
 	$this->assertEquals('', $results);
+    }
+}
+
+/* For the directory listing tests, we need a mock PHP VM */
+class SimpleCallbackTestPhpVm {
+    function function_exists($functionName) {
+	/* make it use our charset tables, they work on all platforms */
+	switch ($functionName) {
+	case 'iconv':
+	case 'mb_convert_encoding':
+	case 'recode_string':
+	    return false;
+	case 'nl_langinfo':
+	    return true;
+	default:
+	    return function_exists($functionName);
+	}
+    }
+
+    function nl_langinfo($item) {
+	if ($item == CODESET) {
+	    return 'ISO-8859-1';
+	} else {
+	    return '';
+	}
+    }
+
+    function setlocale($category, $locale) {
+	return '';
     }
 }
 ?>

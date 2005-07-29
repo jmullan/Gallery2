@@ -107,6 +107,8 @@ class SimpleCallbackView extends GalleryView {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 
+	/* $path is UTF-8, we need it in the system charset for filesystem interactions */
+	$path = GalleryCoreApi::convertFromUtf8($path);
 	$dirList = array();
 	if (!$platform->file_exists($path) || !$platform->is_dir($path)) {
 	    return $dirList;
@@ -126,7 +128,8 @@ class SimpleCallbackView extends GalleryView {
 		}
 
 		if ($platform->is_dir($file)) {
-		    $dirList[] = $file;
+		    /* Filesystem charset -> UTF-8 conversion required */
+		    $dirList[] = GalleryCoreApi::convertToUtf8($file);
 		}
 	    }
 	    $platform->closedir($dir);
@@ -140,6 +143,9 @@ class SimpleCallbackView extends GalleryView {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 
+	/* $path is UTF-8, we need it in the system charset for filesystem interactions */
+	$path = GalleryCoreApi::convertFromUtf8($path);
+	
 	$dirList = $fileList = array();
 	if (!$platform->file_exists($path) || !$platform->is_dir($path)) {
 	    return $dirList;
@@ -159,9 +165,9 @@ class SimpleCallbackView extends GalleryView {
 		}
 
 		if ($platform->is_dir($file)) {
-		    $dirList[] = $file;
+		    $dirList[] = GalleryCoreApi::convertToUtf8($file);
 		} else if ($platform->is_file($file)) {
-		    $fileList[] = $file;
+		    $fileList[] = GalleryCoreApi::convertToUtf8($file);
 		}
 	    }
 	    $platform->closedir($dir);

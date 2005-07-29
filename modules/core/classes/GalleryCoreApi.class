@@ -54,7 +54,7 @@ class GalleryCoreApi {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(6, 4);
+	return array(6, 5);
     }
 
     /**
@@ -2262,15 +2262,16 @@ class GalleryCoreApi {
      * @param object GalleryItem an item
      * @param int where to start
      * @param int how many to return
+     * @param int optional user id.  Defaults to current user id
      *
      * @access public
      * @return array object GalleryStatus a status code
      *               array integer ids
      * @static
      */
-    function fetchChildAlbumItemIds($item, $offset=null, $count=null) {
+    function fetchChildAlbumItemIds($item, $offset=null, $count=null, $userId=null) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryChildEntityHelper_simple.class');
-	return GalleryChildEntityHelper_simple::fetchChildAlbumItemIds($item, $offset, $count);
+	return GalleryChildEntityHelper_simple::fetchChildAlbumItemIds($item, $offset, $count, $userId);
     }
 
     /**
@@ -2279,15 +2280,16 @@ class GalleryCoreApi {
      * @param object GalleryItem an item
      * @param int where to start
      * @param int how many to return
+     * @param int optional user id.  Defaults to current user id
      *
      * @access public
      * @return array object GalleryStatus a status code
      *               array integer ids
      * @static
      */
-    function fetchChildDataItemIds($item, $offset=null, $count=null) {
+    function fetchChildDataItemIds($item, $offset=null, $count=null, $userId=null) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryChildEntityHelper_simple.class');
-	return GalleryChildEntityHelper_simple::fetchChildDataItemIds($item, $offset, $count);
+	return GalleryChildEntityHelper_simple::fetchChildDataItemIds($item, $offset, $count, $userId);
     }
 
     /**
@@ -2454,6 +2456,20 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce(
 	    'modules/core/classes/helpers/GalleryCharsetHelper_simple.class');
 	return GalleryCharsetHelper_simple::convertToUtf8($inputString, $sourceEncoding);
+    }
+
+    /**
+     * Convert the string from the internal encoding (ITF-8) to target encoding
+     * Target encoding defaults to the system charset
+     *
+     * @param string the input string
+     * @param string the target encoding (eg, 'ISO-8859-1'), defaults to system charset
+     * @return string the result
+     */
+    function convertFromUtf8($inputString, $targetEncoding=null) {
+	GalleryCoreApi::relativeRequireOnce(
+	    'modules/core/classes/helpers/GalleryCharsetHelper_simple.class');
+	return GalleryCharsetHelper_simple::convertFromUtf8($inputString, $targetEncoding);
     }
 
     /**

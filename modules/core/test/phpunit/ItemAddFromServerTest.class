@@ -153,6 +153,22 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	return $this->_testAddChildrenFromLocalServer(true, false, false, true);
     }
 
+    function testAddChildrenFromLocalServerRecursiveSetSummaryDescription() {
+	return $this->_testAddChildrenFromLocalServer(false, true, false, true, false, true, true);
+    }
+
+    function testAddChildrenFromLocalServerRecursiveOnlySubSubAlbum() {
+	/* Goal: test the case when the localServerDirectories has umlauts */
+	return $this->_testAddChildrenFromLocalServer(false, true, false, false, false, true, true,
+						      true);
+    }
+
+    function testAddChildrenFromLocalServerRecursiveOnlySubSubAlbumChildren() {
+	/* Goal: test the case when the localServerPath has umlauts */
+	return $this->_testAddChildrenFromLocalServer(false, true, false, false, false, true, true,
+						      true, true);
+    }
+
     function testInvalidLocalServerPath() {
 	GalleryUtilities::putRequestVariable('form[action][addFromLocalServer]', 1);
 	GalleryUtilities::putRequestVariable('form[localServerPath]', '/');
@@ -175,7 +191,9 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
     function _testAddChildrenFromLocalServer($useSymlink, $symlinkSupported=true,
 					     $addFiles=true, $addDirectories=false,
 					     $setTitle=false, $setSummary=false,
-					     $setDescription=false) {
+					     $setDescription=false,
+					     $onlyAddSubSubDirectory=false,
+					     $onlyAddSubSubDirectoryContents=false) {
 	global $gallery;
 
 	/*
@@ -209,14 +227,14 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	$dirSep = $platform->getDirectorySeparator();
 	$baseDir = dirname(dirname(__FILE__)) . $dirSep . 'data';
 	$fileKeys = array();
-	GalleryUtilities::putRequestVariable('form[localServerPath]', $baseDir);
 
 	if ($addFiles) {
-	    $files = array('test1.gif', 'test1.jpg', 'test2.gif',
+	    $files = array('test1.gif', 'test1.jpg', 'täst1.png', 'test2.gif',
 			   'test[3].gif', 'apo\'strophe.jpg');
 	    rsort($files);
 
-	    $escapedBasenames = array('test1', 'test1', 'test2', 'test[3]', 'apo\'strophe');
+	    $escapedBasenames = array('test1', 'test1', 'täst1', 'test2', 'test[3]',
+				      'apo\'strophe');
 	    rsort($escapedBasenames);
 
 	    foreach ($files as $fileName) {
@@ -230,11 +248,13 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	    }
 	}
 
-	if ($addDirectories) {
-	    $files = array('test1.gif', 'test1.jpg', 'test2.gif', 'test[3].gif', 'test4.gif');
+	if ($addDirectories && !$onlyAddSubSubDirectory) {
+	    $files = array('test1.gif', 'test1.jpg', 'test2.gif', 'test[3].gif', 'test4.gif',
+			   'täst1.png', 'test5.jpg');
 	    rsort($files);
-
-	    $escapedBasenames = array('test1', 'test1', 'test2', 'test[3]', 'test4');
+	    
+	    $escapedBasenames = array('test1', 'test1',  'test2', 'test[3]', 'test4',
+				      'täst1', 'test5');
 	    rsort($escapedBasenames);
 
 	    $dirName = urlencode('localUploadDir');
@@ -248,7 +268,45 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 		GalleryUtilities::putRequestVariable(
 		    'form[localServerDirectories][..][useSymlink]', 1);
 	    }
+	} elseif ($onlyAddSubSubDirectory) {
+	    $baseDir .= '/localUploadDir';
+	    if ($onlyAddSubSubDirectoryContents) {
+		$baseDir .= '/subädir';
+	    }
+	    
+	    $files = array('täst1.png', 'test5.jpg');
+	    rsort($files);
+
+	    $escapedBasenames = array('täst1', 'test5');
+	    rsort($escapedBasenames);
+
+	    if (!$onlyAddSubSubDirectoryContents) {
+		$dirName = urlencode('subädir');
+		GalleryUtilities::putRequestVariable(
+		    'form[localServerDirectories][' . $dirName . '][selected]', 1);
+		GalleryUtilities::putRequestVariable(
+		    'form[localServerDirectories][..][selected]', 1);
+		if ($useSymlink) {
+		    GalleryUtilities::putRequestVariable(
+			'form[localServerDirectories][' . $dirName . '][useSymlink]', 1);
+		    GalleryUtilities::putRequestVariable(
+			'form[localServerDirectories][..][useSymlink]', 1);
+		}
+	    } else {
+		foreach ($files as $fileName) {
+		    $fileName = urlencode($fileName);
+		    GalleryUtilities::putRequestVariable(
+			'form[localServerFiles][' . $fileName . '][selected]', 1);
+		    if ($useSymlink) {
+			GalleryUtilities::putRequestVariable(
+			    'form[localServerFiles][' . $fileName . '][useSymlink]', 1);
+		    }
+		}
+	    }
 	}
+
+	GalleryUtilities::putRequestVariable('form[localServerPath]',
+					     GalleryCoreApi::convertToUtf8($baseDir));
 
 	/* Perform the request and verify that we succeeded */
 	if ($symlinkSupported) {
@@ -266,10 +324,11 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 
 	/* We don't know the ids, but we can verify everything else */
 	$i = 0;
-	$this->assertEquals(5, count($results[1]['addedFiles']), 'added count');
+	$this->assertEquals(count($files), count($results[1]['addedFiles']), 'added count');
 	usort($results[1]['addedFiles'], $sortAddedFilesFunc);
 	foreach ($files as $file) {
-	    $this->assertEquals($file, $results[1]['addedFiles'][$i]['fileName'], 'added #' . $i);
+	    $this->assertEquals(GalleryCoreApi::convertToUtf8($file),
+				$results[1]['addedFiles'][$i]['fileName'], 'added #' . $i);
 	    $this->assert(isset($results[1]['addedFiles'][$i]['id']));
 	    $i++;
 	}
@@ -279,32 +338,86 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	if ($addDirectories) {
+	if ($addDirectories || ($onlyAddSubSubDirectory && !$onlyAddSubSubDirectoryContents)) {
 	    $this->assertEquals(1, count($ids), 'top child count');
 	    list ($ret, $subalbum) = GalleryCoreApi::loadEntitiesById($ids[0]);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
+	    $pathComponent = 'localUploadDir';
+	    $count = 6;
+	    if ($onlyAddSubSubDirectory) {
+		$pathComponent = 'sub_dir';
+		$count = 2;
+	    }
 	    $this->assertEquals('galleryalbumitem', strtolower(get_class($subalbum)), 'subalbum');
-	    $this->assertEquals('localUploadDir', $subalbum->getPathComponent(), 'subalbum path');
+	    $this->assertEquals($pathComponent, $subalbum->getPathComponent(), 'subalbum path');
 	    list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($subalbum);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
+	    $this->assertEquals($count, count($ids), 'sub dir child count');
+	} else {
+	    $count = 6;
+	    if ($onlyAddSubSubDirectoryContents) {
+		$count = 2;
+	    }
+	    $this->assertEquals($count, count($ids), 'child count');
 	}
-	$this->assertEquals(5, count($ids), 'child count');
 	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($ids);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	if ($addDirectories && !$onlyAddSubSubDirectory) {
+	    /* One of the children should be the subsubalbum */
+	    $found = false;
+	    $newItems = array();
+	    foreach ($items as $item) {
+		if ($item->getCanContainChildren()) {
+		    $subSubAlbum = $item;
+		    $found = true;
+		} else {
+		    $newItems[] = $item;
+		}
+	    }
+	    $items = $newItems;
+	    $this->assert($found, 'did not create subsubalbum with umlaut');
+	    if ($found) {
+		/* Check sub sub album with umlaut */
+		$this->assertEquals('galleryalbumitem', strtolower(get_class($subSubAlbum)),
+				    'subSubalbum');
+		$this->assertEquals('sub_dir', $subSubAlbum->getPathComponent(),
+				    'subsubalbum path');
+		list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($subSubAlbum);
+		if ($ret->isError()) {
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+		$this->assertEquals(2, count($ids), 'sub sub dir child count');
+		list ($ret, $subItems) = GalleryCoreApi::loadEntitiesById($ids);
+		if ($ret->isError()) {
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+		$items = array_merge($subItems, $items);
+	    }
+	}
+
+	/* Organize items array by id */
+	$newItems = array();
+	foreach ($items as $item) {
+	    $newItems[$item->getId()] = $item;
+	}
+	$items = $newItems;
+	
 	$seenWeights = array();
 	$i = 0;
-	foreach ($items as $item) {
-	    $base = $escapedBasenames[$i++];
-	    $this->assertEquals($setTitle ? $base : null, $item->getTitle(), 'title');
-	    $this->assertEquals($setSummary ? $base : null, $item->getSummary(), 'summary');
-	    $this->assertEquals($setDescription ? $base : null, $item->getDescription(),
+	foreach ($escapedBasenames as $base) {
+	    $item =& $items[$results[1]['addedFiles'][$i]['id']];
+	    $expectedName = GalleryCoreApi::convertToUtf8($base);
+	    $this->assertEquals($setTitle ? $expectedName : null, $item->getTitle(), 'title');
+	    $this->assertEquals($setSummary ? $expectedName : null, $item->getSummary(),
+				'summary');
+	    $this->assertEquals($setDescription ? $expectedName : null, $item->getDescription(),
 				'description');
 
 	    list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCount($item->getId());
@@ -317,8 +430,10 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    $this->assert(!isset($seenWeights[$orderWeight]), 'Seen this weight before');
-	    $seenWeights[$orderWeight] = 1;
+	    $this->assert(!isset($seenWeights[$item->getParentId()][$orderWeight]),
+			  'Seen this weight before');
+	    $seenWeights[$item->getParentId()][$orderWeight] = 1;
+	    $i++;
 	}
     }
 
@@ -431,7 +546,7 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
 	$this->_delegate = $delegate;
 	$this->_symlinkSupported = $symlinkSupported;
 	$this->_baseDir = dirname(dirname(__FILE__)) . "{$dirSep}data{$dirSep}";
-	$this->_baseDirRecursive = dirname(__FILE__) .
+	$this->_baseDirRecursive = dirname(dirname(__FILE__)) .
 		"{$dirSep}..{$dirSep}data{$dirSep}localUploadDir{$dirSep}";
     }
 
@@ -451,7 +566,6 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
 	case $this->_baseDirRecursive . 'apo\'strophe.jpg':
 	    /* The windows path is a little weird -- but we can live with it */
 	case $this->_baseDir . '\\apo\'strophe.jpg':
-	case $this->_baseDirRecursive . '\\apo\'strophe.jpg':
 	    return true;
 
 	default:
@@ -485,7 +599,7 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
 	    $source = $this->_baseDir . 'test1.jpg';
 	    break;
 	}
-
+	
 	if ( $this->_delegate->isSymlinkSupported() == true ) {
 	    return $this->_delegate->symlink($source, $dest);
 	} else {

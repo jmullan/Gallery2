@@ -40,14 +40,14 @@ class CoreModule extends GalleryModule {
 	$this->setGalleryVersion('2.0-beta-4');
 
 	/* Don't forget to update CoreModuleExtras::upgrade and _prepareConfigUpgrade too! */
-	$this->setVersion('0.9.32');
+	$this->setVersion('0.9.33');
 
 	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('registerEventListeners|' .
 			    'getItemLinks|getSystemLinks|' .
 			    'getSiteAdminViews|getUserAdminViews|getItemAdminViews');
-	$this->setRequiredCoreApi(array(6, 4));
+	$this->setRequiredCoreApi(array(6, 5));
 	$this->setRequiredModuleApi(array(2, 0));
     }
 

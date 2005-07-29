@@ -118,25 +118,29 @@ class AdminCoreController extends GalleryController {
 
 	if (isset($form['action']['addUploadLocalServerDir'])) {
 	    $path = GalleryUtilities::htmlEntityDecode($form['uploadLocalServer']['newDir']);
+	    /* $path is UTF-8, $realPath is in the system charset for filesystem interactions */
+	    $realPath = GalleryCoreApi::convertFromUtf8($path);
 	    if (empty($path)) {
 		$error[] = 'form[error][uploadLocalServer][newDir][missing]';
 	    } else {
 		$platform = $gallery->getPlatform();
-		$splitPath = $platform->splitPath($path);
+		$splitPath = $platform->splitPath($realPath);
 		if (!preg_match('{[\\/]}', $splitPath[0]) || in_array('..', $splitPath)) {
 		    /* Use realpath value if path is relative or has .. */
-		    $path = $platform->realpath($path);
+		    $realPath = $platform->realpath($realPath);
+		    $path = GalleryCoreApi::convertToUtf8($realPath);
 		}
 
-		if ($platform->isRestrictedByOpenBaseDir($path)) {
+		if ($platform->isRestrictedByOpenBaseDir($realPath)) {
 		    $error[] = 'form[error][uploadLocalServer][newDir][restrictedByOpenBaseDir]';
-		} else if (!$platform->is_readable($path)) {
+		} else if (!$platform->is_readable($realPath)) {
 		    $error[] = 'form[error][uploadLocalServer][newDir][notReadable]';
-		} else if (!$platform->is_dir($path)) {
+		} else if (!$platform->is_dir($realPath)) {
 		    $error[] = 'form[error][uploadLocalServer][newDir][notADirectory]';
 		}
 	    }
 
+	    /* Store the path in UTF-8 in the database */
 	    if (empty($error)) {
 		for ($i = 1; !empty($param['uploadLocalServer.dir.' . $i])
 			  && ($param['uploadLocalServer.dir.' . $i] != $path); $i++) { }

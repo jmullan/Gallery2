@@ -49,14 +49,20 @@ class ItemAddFromServer extends ItemAddPlugin {
 	if (isset($form['action']['addFromLocalServer'])
 		&& (!empty($form['localServerFiles']) || !empty($form['localServerDirectories']))) {
 	    /* Add the selected items */
-	    $dir = GalleryUtilities::htmlEntityDecode($form['localServerPath']);
-
 	    $textFields = array(
 		'title' => (isset($form['set']['title'])) ? 1 : 0,
 		'summary' => (isset($form['set']['summary'])) ? 1 : 0,
 		'description' => (isset($form['set']['description'])) ? 1 : 0);
 
-	    list ($ret, $localServerDirList) = $this->fetchLocalServerDirList();
+	    /*
+	     * See loadTemplate: the input is in UTF-8,
+	     * the filesystem needs the path in the system charset
+	     */
+	    $dir = GalleryCoreApi::convertFromUtf8($form['localServerPath']);
+	    $dir = GalleryUtilities::htmlEntityDecode($dir);
+
+	    /* We need the localServerDirList only in the system charset */
+	    list ($ret, $unused, $localServerDirList) = $this->fetchLocalServerDirList();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
@@ -134,7 +140,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	}
-
+	
 	return array(GalleryStatus::success(), $error, $status);
     }
 
@@ -145,6 +151,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+	$base = GalleryCoreApi::convertToUtf8($base);
 	GalleryUtilities::sanitizeInputValues($base);
 
 	$title = ($textFields['title']) ? $base : '';
@@ -163,7 +170,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$status['addedFiles'][] = array('fileName' => $fileName,
+	$status['addedFiles'][] = array('fileName' => GalleryCoreApi::convertToUtf8($fileName),
 					'id' => $newItem->getId(),
 					'warnings' => array());
 
@@ -187,9 +194,10 @@ class ItemAddFromServer extends ItemAddPlugin {
 
 	/* Create new Album */
 	$dirName = basename($path);
-	$dirTitle = $textFields['title'] ? $dirName : null;
-	$dirSummary = $textFields['summary'] ? $dirName : null;
-	$dirDescription = $textFields['description'] ? $dirName : null;
+	$dirNameUtf8 = GalleryCoreApi::convertToUtf8($dirName);
+	$dirTitle = $textFields['title'] ? $dirNameUtf8 : null;
+	$dirSummary = $textFields['summary'] ? $dirNameUtf8 : null;
+	$dirDescription = $textFields['description'] ? $dirNameUtf8 : null;
 	list ($ret, $album) = GalleryCoreApi::createAlbum($parentId, $dirName, $dirTitle,
 							  $dirSummary, $dirDescription, "");
 	if ($ret->isError()) {
@@ -283,16 +291,25 @@ class ItemAddFromServer extends ItemAddPlugin {
 	return GalleryStatus::success();
     }
 
+    /*
+     * @return array (object GalleryStatus a status code,
+     *                array of UTF-8 strings localServerDirList,
+     *                array of system charset strings localServerDirList)
+     */
     function fetchLocalServerDirList() {
 	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$localServerDirList = array();
+	$localServerDirListInSystemCharset = array();
 	for ($i = 1; !empty($param['uploadLocalServer.dir.' . $i]); $i++) {
 	    $localServerDirList[] = $param['uploadLocalServer.dir.' . $i];
+	    $localServerDirListInSystemCharset[] =
+		GalleryCoreApi::convertFromUtf8($param['uploadLocalServer.dir.' . $i]);
 	}
-	return array(GalleryStatus::success(), $localServerDirList);
+	return array(GalleryStatus::success(), $localServerDirList,
+		     $localServerDirListInSystemCharset);
     }
 
     /**
@@ -307,7 +324,8 @@ class ItemAddFromServer extends ItemAddPlugin {
 	    $form['formName'] = 'ItemAddFromServer';
 	}
 
-	list ($ret, $localServerDirList) = $this->fetchLocalServerDirList();
+	list ($ret, $localServerDirList, $localServerDirListInSystemCharset) =
+	    $this->fetchLocalServerDirList();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
@@ -315,35 +333,47 @@ class ItemAddFromServer extends ItemAddPlugin {
 	/* Look up the platform type */
 	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
-
+  
 	if (isset($form['action']['startOver'])) {
 	    $form['localServerFiles'] = array();
 	} else if (isset($form['action']['findFilesFromLocalServer'])) {
 	    /* If we're uploading from the local server, get a file list now */
-	    $form['localServerPath'] = trim($form['localServerPath']);
-	    $form['localServerPath'] = GalleryUtilities::htmlEntityDecode($form['localServerPath']);
-	    $form['localServerPath'] = $platform->realpath($form['localServerPath']);
-
+	    $localServerPath = trim($form['localServerPath']);
+	    /*
+	     * All input is UTF-8, whether it comes from the browser or from the database.
+	     * When we use realpath, is_dir, opendir, readdir, .., we need the path in the system
+	     * charset and not in UTF-8.
+	     * Therefore, we use UTF-8 for everything (output, db input) but the filesystem
+	     * interactions.
+	     * $form['localServerPath'] is UTF-8, $localServerPath is in the system charset
+	     */
+	    $localServerPath = GalleryCoreApi::convertFromUtf8($localServerPath);
+	    $localServerPath = GalleryUtilities::htmlEntityDecode($localServerPath);
+	    $localServerPath = $platform->realpath($localServerPath);
+	    $form['localServerPath'] = GalleryCoreApi::convertToUtf8($localServerPath);
+	    
 	    /* Validate the path */
 	    $form['localServerFiles'] = array();
-	    if (empty($form['localServerPath'])) {
+	    if (empty($localServerPath)) {
 		$form['error']['localServerPath']['missing'] = 1;
-	    } else if (!$platform->file_exists($form['localServerPath']) ||
-		       !$platform->is_readable($form['localServerPath'])) {
+	    } else if (!$platform->file_exists($localServerPath) ||
+		       !$platform->is_readable($localServerPath)) {
 		$form['error']['localServerPath']['invalid'] = 1;
-	    } else if (!GalleryUtilities::isPathInList($form['localServerPath'],
-						       $localServerDirList)) {
+	    } else if (!GalleryUtilities::isPathInList($localServerPath,
+						       $localServerDirListInSystemCharset)) {
 		$form['error']['localServerPath']['illegal'] = 1;
 	    } else {
 		$gallery->guaranteeTimeLimit(30);
-		$path = $form['localServerPath'];
+		$path = $localServerPath;
 		if ($platform->is_dir($path)) {
 		    $handle = $platform->opendir($path);
 		    $mimeTypeItemMap = array();
 
 		    /* Add path to the recent path list */
 		    $session =& $gallery->getSession();
-		    $recentPaths = $session->get('core.view.ItemAdd.ItemAddFromServer.recentPaths');
+		    $recentPaths =
+			$session->get('core.view.ItemAdd.ItemAddFromServer.recentPaths');
+		    /* Use the UTF-8 string, recent paths is only for the output */
 		    $recentPaths[$form['localServerPath']] = 1;
 		    $session->put('core.view.ItemAdd.ItemAddFromServer.recentPaths', $recentPaths);
 
@@ -352,19 +382,20 @@ class ItemAddFromServer extends ItemAddPlugin {
 			    continue;
 			}
 			$filePath = $path . $slash . $fileName;
-
+			
 			if ($platform->is_readable($filePath)) {
 			    if ($platform->is_dir($filePath)) {
 				$filePath = $platform->realpath($filePath);
-				$legal = GalleryUtilities::isPathInList($filePath,
-									$localServerDirList);
+				$legal =
+				    GalleryUtilities::isPathInList($filePath,
+							      $localServerDirListInSystemCharset);
 				if (!$legal && $fileName == '..') {
 				    continue;
 				}
 				$form['localServerFiles'][] =
 				    array('type' => 'directory',
-					  'fileName' => $fileName,
-					  'filePath' => $filePath,
+					  'fileName' => GalleryCoreApi::convertToUtf8($fileName),
+					  'filePath' => GalleryCoreApi::convertToUtf8($filePath),
 					  'fileKey' => urlencode($fileName),
 					  'legal' => $legal,
 					  'unknown' => false);
@@ -388,7 +419,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 
 				$form['localServerFiles'][] =
 				    array('type' => 'file',
-					  'fileName' => $fileName,
+					  'fileName' => GalleryCoreApi::convertToUtf8($fileName),
 					  'stat' => $platform->stat($filePath),
 					  'itemType' => $mimeTypeItemMap[$mimeType][0],
 					  'unknown' => $mimeTypeItemMap[$mimeType][3] == 'unknown',
@@ -414,14 +445,14 @@ class ItemAddFromServer extends ItemAddPlugin {
 		    $fileName = basename($path);
 		    $form['localServerFiles'][] =
 			array('type' => 'file',
-			      'fileName' => $fileName,
+			      'fileName' => GalleryCoreApi::convertToUtf8($fileName),
 			      'stat' => $platform->stat($path),
 			      'itemType' => $mimeTypeItemName[0],
 			      'unknown' => $mimeTypeItemName[3] == 'unknown',
 			      'fileKey' => urlencode($fileName));
 
 		    /* Change localServerPath from file path to parent dir */
-		    $form['localServerPath'] = dirname($form['localServerPath']);
+		    $form['localServerPath'] = GalleryCoreApi::convertToUtf8(dirname($path));
 		}
 	    }
 	}
@@ -438,7 +469,9 @@ class ItemAddFromServer extends ItemAddPlugin {
 		$accumulator .= $element;
 		$ItemAddFromServer['pathElements'][] = array(
 		    'name' => $element, 'path' => $accumulator,
-		    'legal' => GalleryUtilities::isPathInList($accumulator, $localServerDirList));
+		    'legal' => GalleryUtilities::isPathInList(
+			GalleryCoreApi::convertFromUtf8($accumulator),
+			$localServerDirListInSystemCharset));
 		if (count($ItemAddFromServer['pathElements']) > 1) {
 		    $accumulator .= $slash;
 		}
@@ -472,7 +505,6 @@ class ItemAddFromServer extends ItemAddPlugin {
 	$ItemAddFromServer['showSymlink'] = $platform->isSymlinkSupported();
 
 	$template->setVariable('ItemAddFromServer', $ItemAddFromServer);
-
 
 	return array(GalleryStatus::success(),
 		     'modules/core/templates/ItemAddFromServer.tpl',
