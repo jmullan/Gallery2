@@ -28,8 +28,7 @@ class ImageBlockCallbacks {
 	switch($callback) {
 	case 'LoadImageBlock':
 	    /* Pick up our overrides */
-	    $vars =& $smarty->_tpl_vars;
-	    if (empty($vars['useDefaults'])) {
+	    if (!$params['useDefaults']) {
 		/*
 		 * If we're overriding the defaults, then overlay our changes on top of the
 		 * defaults and pass in a complete 'show' parameter.
@@ -42,21 +41,20 @@ class ImageBlockCallbacks {
 
 		$showMap = array_flip(explode('|', $moduleParams['show']));
 		foreach (array('showHeading' => 'heading',
-			       'showTitle' => 'title',
-			       'showViews' => 'views',
-			       'showOwner' => 'owner',
-			       'showDate' => 'date')
+			       'showTitle' => 'title', 'showViews' => 'views',
+			       'showOwner' => 'owner', 'showDate' => 'date')
 			 as $blockVarName => $showMapName) {
-		    if (empty($vars[$blockVarName])) {
+		    if (empty($params[$blockVarName])) {
 			unset($showMap[$showMapName]);
 		    } else {
 			$showMap[$showMapName] = 1;
 		    }
 		}
 
-		$params['show'] = join('|', array_keys($showMap));
+		$params['show'] = implode('|', array_keys($showMap));
 	    }
 
+	    $vars =& $smarty->_tpl_vars;
 	    if (isset($vars['theme']['actingUserId'])) {
 		/* Support guest-preview mode */
 		$params['userId'] = $vars['theme']['actingUserId'];
