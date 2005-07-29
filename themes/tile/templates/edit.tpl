@@ -54,7 +54,7 @@
     {/if}
   </td><td>
     <input type="radio"{if $theme.param.backgroundId==$it.image.id} checked="checked"{/if}
-     name="{g->formVar var="form[backgroundId]"}" value="{$it.id}"/>
+     name="{g->formVar var="form[backgroundId]"}" value="{$it.image.id}"/>
   </td><td>
     <span class="giTitle">{$it.title|markup}</span>
   </td><td>
