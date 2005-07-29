@@ -299,7 +299,7 @@ class ItemAddFromServer extends ItemAddPlugin {
     function fetchLocalServerDirList() {
 	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	$localServerDirList = array();
 	$localServerDirListInSystemCharset = array();
