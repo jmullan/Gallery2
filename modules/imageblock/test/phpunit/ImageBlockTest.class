@@ -443,6 +443,7 @@ class ImageBlockTest extends GalleryTestCase {
 	$smarty = new GallerySmarty();
 	$callbacks = new ImageBlockCallbacks();
 	$params = isset($blocks) ? array('blocks' => $blocks) : array();
+	$params['useDefaults'] = true;
 	if (isset($userId)) {
 	    $smarty->_tpl_vars['theme']['actingUserId'] = $userId;
 	}

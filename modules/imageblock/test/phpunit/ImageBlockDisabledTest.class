@@ -243,7 +243,7 @@ class ImageBlockDisabledTest extends GalleryTestCase {
     function testImageBlockDisabledNoItemsReturned() {
 	$smarty = new GallerySmarty();
 	$callbacks = new ImageBlockCallbacks();
-	$ret = $callbacks->callback(array(), $smarty, 'LoadImageBlock');
+	$ret = $callbacks->callback(array('useDefaults' => true), $smarty, 'LoadImageBlock');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -260,7 +260,7 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 
 	$smarty = new GallerySmarty();
 	$callbacks = new ImageBlockCallbacks();
-	$ret = $callbacks->callback(array(), $smarty, 'LoadImageBlock');
+	$ret = $callbacks->callback(array('useDefaults' => true), $smarty, 'LoadImageBlock');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
