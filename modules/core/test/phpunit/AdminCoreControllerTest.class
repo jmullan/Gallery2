@@ -346,6 +346,12 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 
     function testAddUploadLocalServerDirBogus() {
 	global $gallery;
+
+	/* On windows boxes, we don't have the CODESET constant, so fake it */
+	if (!defined('CODESET')) {
+	    define('CODESET', 'CODESET');
+	}
+	
 	$gallery->_phpVm = new AdminCoreControllerTestPhpVm('');
 
 	GalleryUtilities::putRequestVariable('form[uploadLocalServer][newDir]',
@@ -504,6 +510,12 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 
     function testAddUploadLocalServerDirWithUmlaut() {
 	global $gallery;
+
+	/* On windows boxes, we don't have the CODESET constant, so fake it */
+	if (!defined('CODESET')) {
+	    define('CODESET', 'CODESET');
+	}
+	
 	$gallery->_phpVm = new AdminCoreControllerTestPhpVm('');
 	$platform = new UnitTestPlatform();
 	$platform->setReply('splitPath', array('/phpäunit'), array('/', 'phpäunit'));
