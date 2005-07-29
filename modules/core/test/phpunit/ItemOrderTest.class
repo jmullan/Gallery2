@@ -39,16 +39,13 @@ class ItemOrderTest extends GalleryTestCase {
 	$this->GalleryTestCase($methodName);
     }
 
-    function setUp() {
+    function _createTestAlbum($orderBy, $orderDirection=ORDER_ASCENDING) {
 	global $gallery;
 
-	parent::setUp();
-
-	list ($ret, $this->_parentItem) =
-	    $this->_createRandomAlbum($this->_getRootId(), array('orderBy' => 'orderWeight'));
+	list ($ret, $this->_parentItem) = $this->_createRandomAlbum($this->_getRootId(),
+	    array('orderBy' => $orderBy, 'orderDirection' => $orderDirection));
 	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$this->_markForCleanup($this->_parentItem);
 
@@ -57,41 +54,127 @@ class ItemOrderTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::addUserPermission($this->_parentItem->getId(),
 						 $userId, 'core.all', false);
 	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	$titles = array('ztitle', 'ytitle', 'xtitle');
 	for ($i = 0; $i < 3; $i++) {
-	    list ($ret, $this->_childItems[$i]) =
-		$this->_createRandomAlbum($this->_parentItem->getId());
+	    sleep(1); /* So items get different timestamps */
+	    list ($ret, $this->_childItems[$i]) = $this->_createRandomAlbum(
+		$this->_parentItem->getId(), array('title' => $titles[$i]));
 	    if ($ret->isError()) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
+	return GalleryStatus::success();
     }
 
     function testFetchByOrder() {
+	$ret = $this->_createTestAlbum('orderWeight');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
 	/* Assign the item order in reverse */
-	for ($i = 0; $i < sizeof($this->_childItems); $i++) {
-	    $ret = GalleryCoreApi::setItemOrderWeight($this->_childItems[$i]->getId(), 100-$i);
+	$correctResults = array();
+	for ($i = 0; $i < count($this->_childItems); $i++) {
+	    $ret = GalleryCoreApi::setItemOrderWeight($this->_childItems[$i]->getId(), 100 - $i);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
+	    array_unshift($correctResults, $this->_childItems[$i]->getId());
 	}
 
-	/* Fetch them out */
 	list ($ret, $results) = GalleryCoreApi::fetchChildItemIds($this->_parentItem);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$this->assertEquals($correctResults, $results);
+    }
+
+    function testFetchByCreateDate() {
+	$ret = $this->_createTestAlbum('creationTimestamp');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Make manual order different from creation order */
 	$correctResults = array();
-	for ($i = 0; $i < sizeof($this->_childItems); $i++) {
+	for ($i = 0; $i < count($this->_childItems); $i++) {
+	    $ret = GalleryCoreApi::setItemOrderWeight($this->_childItems[$i]->getId(), 100 - $i);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $correctResults[] = $this->_childItems[$i]->getId();
+	}
+
+	list ($ret, $results) = GalleryCoreApi::fetchChildItemIds($this->_parentItem);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($correctResults, $results);
+    }
+
+    function testFetchByModifyDate() {
+	$ret = $this->_createTestAlbum('modificationTimestamp', ORDER_DESCENDING);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$correctResults = array();
+	for ($i = 0; $i < count($this->_childItems); $i++) {
 	    array_unshift($correctResults, $this->_childItems[$i]->getId());
 	}
 
+	list ($ret, $results) = GalleryCoreApi::fetchChildItemIds($this->_parentItem);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($correctResults, $results);
+    }
+
+    function testFetchByTitle() {
+	$ret = $this->_createTestAlbum('title');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$correctResults = array();
+	for ($i = 0; $i < count($this->_childItems); $i++) {
+	    array_unshift($correctResults, $this->_childItems[$i]->getId());
+	}
+
+	list ($ret, $results) = GalleryCoreApi::fetchChildItemIds($this->_parentItem);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($correctResults, $results);
+    }
+
+    function testFetchByRandom() {
+	$ret = $this->_createTestAlbum('random');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Can't verify the order (it's random), just make sure we got the right ids */
+	$correctResults = array();
+	for ($i = 0; $i < count($this->_childItems); $i++) {
+	    $correctResults[] = $this->_childItems[$i]->getId();
+	}
+	sort($correctResults);
+
+	list ($ret, $results) = GalleryCoreApi::fetchChildItemIds($this->_parentItem);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	sort($results);
 	$this->assertEquals($correctResults, $results);
     }
 }
