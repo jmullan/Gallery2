@@ -11,7 +11,7 @@
 {if isset($status.saved)}
 <div class="gbBlock"><h2 class="giSuccess">
   {g->text text="Settings saved successfully"}
-</div>
+</h2></div>
 {/if}
 
 <div class="gbBlock">
