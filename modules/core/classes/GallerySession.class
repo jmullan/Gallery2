@@ -648,13 +648,13 @@ class GallerySession {
      * Valid := sessionId is non-empty and the session file exists and the
      * session has not expired, or if the session file does not exist
      *
-     * @return array ( object GalleryStatus a status code, boolean valid)
+     * @return array (object GalleryStatus a status code, boolean valid)
      * @access private
      */
     function _isSessionValid() {
 	global $gallery;
 	$platform = $gallery->getPlatform();
-	
+
 	if (!empty($this->_sessionId)) {
 	    /* Check if the session has expired */
 	    $sessionFile = $gallery->getConfig('data.gallery.sessions') . $this->_sessionId;
@@ -668,7 +668,7 @@ class GallerySession {
 		    GalleryCoreApi::getPluginParameter('module', 'core',
 						       'session.inactivityTimeout');
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		$lifetimeCutoff = time() - $lifetime;
 		$inactiveCutoff = time() - $inactivityTimeout;
@@ -683,10 +683,10 @@ class GallerySession {
 		return array(GalleryStatus::success(), true);
 	    }
 	}
-	
+
 	return array(GalleryStatus::success(), false);
     }
-    
+
     /**
      * Load the session data
      *
