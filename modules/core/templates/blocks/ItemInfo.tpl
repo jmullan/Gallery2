@@ -6,20 +6,20 @@
  *}
 <div class="{$class}">
   {if !empty($showDate)}
-  <span class="date">
+  <span class="date summary">
     {capture name=childTimestamp}{g->date timestamp=$item.originationTimestamp}{/capture}
     {g->text text="Date: %s" arg1=$smarty.capture.childTimestamp}
   </span>
   {/if}
 
   {if !empty($showOwner)}
-  <span class="owner">
+  <span class="owner summary">
     {g->text text="Owner: %s" arg1=$item.owner.fullName|default:$item.owner.userName}
   </span>
   {/if}
 
   {if !empty($showSize) && $item.canContainChildren && $item.childCount > 0}
-  <span class="size">
+  <span class="size summary">
     {g->text one="Size: %d item"
 	     many="Size: %d items"
 	     count=$item.childCount
@@ -34,7 +34,7 @@
   {/if}
 
   {if !empty($showViewCount) && $item.viewCount > 0}
-  <span class="viewCount">
+  <span class="viewCount summary">
     {g->text text="Views: %d" arg1=$item.viewCount}
   </span>
   {/if}

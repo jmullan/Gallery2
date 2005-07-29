@@ -229,10 +229,10 @@
     <div class="giTitle"><span id="title"></span></div>
     <div class="giDescription"><span id="summary"></span></div>
     <div class="giInfo">
-      <span>
+      <span class="summary">
 	<span id="date"></span>
       </span>
-      <span>
+      <span class="summary">
 	<span id="description"></span>
       </span>
     </div>

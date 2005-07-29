@@ -53,18 +53,21 @@
       isset($ImageBlockData.show.owner)}
     <p class="giInfo">
       {if isset($ImageBlockData.show.date)}
+      <span class="summary">
 	{g->text text="Date:"} {g->date timestamp=$block.item.originationTimestamp}
-	<br/>
+      </span>
       {/if}
 
       {if isset($ImageBlockData.show.views)}
+      <span class="summary">
 	{g->text text="Views: %d" arg1=$block.viewCount}
-	<br/>
+      </span>
       {/if}
 
       {if isset($ImageBlockData.show.owner)}
+      <span class="summary">
 	{g->text text="Owner: %s" arg1=$block.owner.fullName|default:$block.owner.userName}
-	<br/>
+      </span>
       {/if}
     </p>
   {/if}

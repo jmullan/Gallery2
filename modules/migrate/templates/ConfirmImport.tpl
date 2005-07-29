@@ -64,11 +64,11 @@
     {g->text text="Top level albums and albums whose parents are not selected will be imported into this album:"}
   </p>
   <div class="giInfo">
-    <span>
+    <span class="summary">
       {g->text text="Title: %s"
        arg1=$ConfirmImport.targetAlbum.title|default:$ConfirmImport.targetAlbum.pathComponent}
-    </span><br/>
-    <span>
+    </span>
+    <span class="summary">
       {g->text text="Description: %s" arg1=$ConfirmImport.targetAlbum.description|default:""}
     </span>
   </div>
@@ -81,7 +81,7 @@
     {g->text text="Your Gallery 1 will be converted from this character encoding into UTF-8:"}
   </p>
   <div class="giInfo">
-    <span>
+    <span class="summary">
       {g->text text="Encoding: %s" arg1=$form.sourceEncoding}
     </span>
   </div>
