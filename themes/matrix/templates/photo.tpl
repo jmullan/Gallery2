@@ -43,7 +43,7 @@
 
         {if !empty($theme.navigator)}
         <div class="gbBlock gcBackground2 gbNavigator">
-          {g->block type="core.Navigator" navigator=$theme.navigator}
+          {g->block type="core.Navigator" navigator=$theme.navigator reverseOrder=true}
         </div>
         {/if}
 
@@ -87,7 +87,7 @@
 
         {if !empty($theme.navigator)}
         <div class="gbBlock gcBackground2 gbNavigator">
-          {g->block type="core.Navigator" navigator=$theme.navigator}
+          {g->block type="core.Navigator" navigator=$theme.navigator reverseOrder=true}
         </div>
         {/if}
 
