@@ -93,6 +93,8 @@ class GalleryRemoteController extends GalleryController {
 		    $response->setProperty('status', $grStatusCodes['UPLOAD_PHOTO_FAIL']);
 		    $response->setProperty('status_text',
 			sprintf("Upload failed: '%s'.", $ret->getErrorMessage()));
+		    $response->setProperty('status_debug', print_r($ret, false));
+		    print_r($ret);
 		}
 		break;
 
@@ -105,6 +107,13 @@ class GalleryRemoteController extends GalleryController {
 
 	    case 'fetch-album-images':
 		$ret = $this->fetchAlbumImages($form, $response);
+		if ($ret->isError()) {
+		    $status['controllerError'] = $ret->wrap(__FILE__, __LINE__);
+		}
+		break;
+
+	    case 'album-properties':
+		$ret = $this->albumProperties($form, $response);
 		if ($ret->isError()) {
 		    $status['controllerError'] = $ret->wrap(__FILE__, __LINE__);
 		}
@@ -361,7 +370,7 @@ class GalleryRemoteController extends GalleryController {
 	    $itemName = $file['name'];
 	}
 
-	$title = $form['caption'];
+	$title = isset($form['caption'])?$form['caption']:NULL;
 	$summary = isset($form['extrafield.Summary'])?$form['extrafield.Summary']:NULL;
 	$description = isset($form['extrafield.Description'])?$form['extrafield.Description']:NULL;
 
@@ -604,6 +613,87 @@ class GalleryRemoteController extends GalleryController {
 		$urlGenerator->getCurrentUrlDir(true) . GALLERY_MAIN_PHP,
 		array('view' => 'core.DownloadItem', 'itemId' => ''))));
 	$response->setProperty('image_count', $i - 1);
+	$response->setProperty('status', $grStatusCodes['SUCCESS']);
+	$response->setProperty('status_text', 'Fetch-album-images successful.');
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Album properties
+     *
+     * @param form array key value pairs from Gallery Remote
+     * @param object GalleryRemoteProperties a reference to our response object
+     * @return object GalleryStatus a status code
+     */
+    function albumProperties($form, &$response) {
+	global $gallery;
+
+	/* GR now only supports 1-dimension size constraints. It used to support 2-d
+	   but since G1 supported 1-d, I simplified GR a while ago, so now we have
+	   to cheat a bit and select the largest of width and height to return to GR */
+
+	$grStatusCodes = GalleryRemoteConstants::getStatusCodes();
+
+	if (isset($form['set_albumName'])) {
+	    /* list an actual album */
+	    $albumId = $form['set_albumName'];
+	} else {
+	    /* list the root album */
+	    list ($ret, $albumId) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	$biggestDerivative = $maxSize = 0;
+
+	/* Find the derivative preferences for the album */
+	list ($ret, $derivatives) = GalleryCoreApi::fetchDerivativePreferencesForItem($albumId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	foreach ($derivatives as $derivative) {
+	    preg_match('/scale\|(\d*),(\d*)/', $derivative['derivativeOperations'], $matches);
+
+	    if ($derivative['derivativeType'] != DERIVATIVE_TYPE_IMAGE_THUMBNAIL && isset($matches[1])) {
+		if ($matches[1] > $biggestDerivative) {
+		    $biggestDerivative = $matches[1];
+		}
+		if ($matches[2] > $biggestDerivative) {
+		    $biggestDerivative = $matches[2];
+		}
+	    }
+	}
+
+	/* Is the sizelimit module active? */
+	list ($ret, $modules) = GalleryCoreApi::fetchPluginStatus('module');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	if (isset($modules['sizelimit']['active']) && $modules['sizelimit']['active']) {
+	    /* If the sizelimit module is enabled, find the max size for the album */
+	    list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters(
+		'module', 'sizelimit', $albumId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+
+	    if (isset($param['width'])) {
+	    	$maxSize = $param['width'];
+	    }
+
+	    if (isset($param['height']) && $param['height'] > $maxSize) {
+	    	$maxSize = $param['height'];
+	    }
+	}
+
+	$response->setProperty('auto_resize', $biggestDerivative);
+	$response->setProperty('max_size', $maxSize);
+
 	$response->setProperty('status', $grStatusCodes['SUCCESS']);
 	$response->setProperty('status_text', 'Fetch-album-images successful.');
 

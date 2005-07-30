@@ -397,7 +397,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	$response = $results['status']['controllerResponse'];
 	$this->assertEquals($this->_code['SUCCESS'], (int)$response->getProperty('status'));
 
-	/* Make sure the there are no images */
+	/* Make sure the there are 2 images */
 	$this->assertEquals('2', $response->getProperty('image_count'));
 	$this->assert($response->hasProperty('status_text'));
     }
@@ -414,6 +414,29 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 
 	$response = $results['status']['controllerResponse'];
 	$this->assertEquals($this->_code['SUCCESS'], (int)$response->getProperty('status'));
+	$this->assert($response->hasProperty('status_text'));
+    }
+
+    function testAlbumProperties() {
+	global $gallery;
+
+	/* Set the preferences */
+	$ret = GalleryCoreApi::addDerivativePreference(
+		1, $this->_rootAlbum->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|640,640');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryUtilities::putRequestVariable('form[cmd]', 'album-properties');
+	GalleryUtilities::putRequestVariable('form[set_albumName]', $this->_rootAlbum->getId());
+	$results = $this->handleRequest();
+	$this->assertEquals(array(), $results['error']);
+	$this->assertEquals('remote.GalleryRemote', $results['delegate']['view']);
+
+	$response = $results['status']['controllerResponse'];
+	$this->assertEquals($this->_code['SUCCESS'], (int)$response->getProperty('status'));
+
+	$this->assertEquals('640', $response->getProperty('auto_resize'));
 	$this->assert($response->hasProperty('status_text'));
     }
 }
