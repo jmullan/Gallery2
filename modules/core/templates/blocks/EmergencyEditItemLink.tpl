@@ -14,6 +14,6 @@
 {if ($block.core.ShouldShowEmergencyEditItemLink)}
 <div class="{$class}">
   <a href="{g->url arg1="view=core.ItemAdmin" arg2="subView=core.ItemEdit"
-		   arg3="itemId=`$item.id`"}"> {g->text text="Edit"} </a>
+		   arg3="itemId=`$item.id`" arg4="return=true"}"> {g->text text="Edit"} </a>
 </div>
 {/if}
