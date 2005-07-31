@@ -10,7 +10,7 @@
 <div id="gsContent">
   <div class="gbBlock">
     {if !empty($theme.item.title)}
-      <h2 style="margin-top: 0"> {$theme.item.title|markup} </h2>
+      <h2> {$theme.item.title|markup} </h2>
     {/if}
     {if !empty($theme.item.description)}
     <p class="giDescription">

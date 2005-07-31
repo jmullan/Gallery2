@@ -4,13 +4,6 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-<table width="100%" cellspacing="0" cellpadding="0">
-  <tr valign="top">
-    <td id="gsSidebarCol">
-      {g->theme include="sidebar.tpl"}
-    </td>
-    <td>
-      {include file=$theme.moduleTemplate}
-    </td>
-  </tr>
-</table>
+<div class="gbBlock">
+  {include file=$theme.moduleTemplate}
+</div>

@@ -5,7 +5,7 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 <div class="gbBlock">
-  <h2 style="margin-top: 0"> {$theme.item.title|markup} </h2>
+  <h2> {$theme.item.title|markup} </h2>
 
   {if !empty($theme.children)}
   {* Albums (in Root Album) *}
