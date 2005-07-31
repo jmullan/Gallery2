@@ -35,6 +35,8 @@ class StorageSetupStep extends InstallStep {
 	    }
 	}
 
+	$templateData['isMultisite'] = $galleryStub->getConfig('isMultisite');
+
 	if (!empty($_POST['action']) && $_POST['action'] == 'save') {
 	    if (empty($_POST['dir'])) {
 		$templateData['error']['missing_value'] = 1;

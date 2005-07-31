@@ -2,6 +2,12 @@
 
     <p> <?php print _('Please select your database type and enter your database authentication information.  The installer will not create the database for you, so you must create one yourself and enter the database name here.  If you are installing Gallery into a database that already has tables in it, the table and column prefixes will keep Gallery data from conflicting with what you already have.') ?> </p>
 
+    <?php if (isset($templateData['isMultisite']) && $templateData['isMultisite']): ?>
+    <p class="warning">
+      <?php print _("This is a multisite installation. Remember that each multisite requires its own database tables. Either choose a different database or a different table prefix for each multisite!"); ?>
+    </p>
+    <?php endif; ?>
+
     <form method="post" action="">
       <table>
 	<tr>

@@ -235,6 +235,8 @@ class DatabaseSetupStep extends InstallStep {
 	    }
 	}
 
+	$templateData['isMultisite'] = $galleryStub->getConfig('isMultisite');
+	
 	if ($this->isComplete()) {
 	    $galleryStub->setConfig('storage.config', $this->_config);
 	    if (empty($_POST['confirmReuseTables'])) {

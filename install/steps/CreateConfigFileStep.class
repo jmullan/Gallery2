@@ -91,8 +91,7 @@ class CreateConfigFileStep extends InstallStep {
 		    $this->setComplete(false);
 		    $templateData['recommendUpgrade'] = $upgradeRecommended;
 		    $templateData['versions'] = $versions;
-		    $templateData['isMultisite'] =
-			$_SESSION['configPath'] != dirname(dirname(dirname(__FILE__)));
+		    $templateData['isMultisite'] = $galleryStub->getConfig('isMultisite');
 		    $templateData['galleryDir'] = basename($_SESSION['configPath']);
 		    $templateData['configFileWritten'] = $writeConfigFile;
 		    $templateData['bodyFile'] = 'VersionCheckFailed.html';
