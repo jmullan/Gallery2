@@ -436,6 +436,10 @@ class ImageBlockTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$ret = GalleryCoreApi::removeItemPermissions($this->_photo2->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 	$ret = GalleryCoreApi::addUserPermission(
 	    $this->_photo->getId(), $gallery->getActiveUserId(), 'core.viewAll');
 	if ($ret->isError()) {
