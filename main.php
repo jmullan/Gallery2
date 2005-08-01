@@ -225,7 +225,8 @@ function _GalleryMain($embedded=false) {
 
 	/* If we have a redirect url.. use it */
 	if (!empty($redirectUrl)) {
-	    return array(GalleryStatus::success(), _GalleryMain_doRedirect($redirectUrl));
+	    return array(GalleryStatus::success(),
+			 _GalleryMain_doRedirect($redirectUrl, null, $controllerName));
 	}
 
 	/* Let the controller specify the next view */
@@ -323,7 +324,7 @@ function _GalleryMain($embedded=false) {
     return array(GalleryStatus::success(), $data);
 }
 
-function _GalleryMain_doRedirect($redirectUrl, $template=null) {
+function _GalleryMain_doRedirect($redirectUrl, $template=null, $controller=null) {
     global $gallery;
     if ($gallery->getDebug() == false || $gallery->getDebug() == 'logged') {
 	/*
@@ -332,7 +333,37 @@ function _GalleryMain_doRedirect($redirectUrl, $template=null) {
 	 */
 	$redirectUrl = str_replace('&amp;', '&', $redirectUrl);
 
-	header("Location: $redirectUrl");
+	/*
+	 * IIS 3.0 - 5.0 webservers will ignore all other headers if the location header is set.
+	 * It will simply not send other headers, e.g. the set-cookie header, which is important
+	 * for us in the login and logout requests / redirects.
+	 * see: http://support.microsoft.com/kb/q176113/
+	 * Our solution: detect IIS version and append GALLERYSID to the Location URL if necessary
+	 */
+	if (in_array($controller, array('core.Logout', 'core.UserLogin'))) {
+	    /* Check if it's IIS and if the version is < 6.0 */
+	    $webserver = GalleryUtilities::getServerVar('SERVER_SOFTWARE');
+	    if (!empty($webserver) &&
+		    preg_match('|^Microsoft-IIS/(\d)\.\d$|', trim($webserver), $matches) &&
+		    $matches[1] < 6) {
+		/*
+		 * It is IIS and it's a version with this bug, check if GALLERYSID is already in
+		 * the URL, else append it
+		 */
+		$session =& $gallery->getSession();
+		$sessionParamString =
+		    GalleryUtilities::prefixFormVariable(urlencode($session->getKey())) . '=' .
+		    urlencode($session->getId());
+		if (!strstr($redirectUrl, $sessionParamString)) {
+		    $redirectUrl .= (strpos($redirectUrl, '?') === false) ? '?' : '&';
+		    $redirectUrl .= $sessionParamString;
+		}
+	    }
+	}
+
+	/* Use our PHP VM for testability */
+	$phpVm = $gallery->getPhpVm();
+	$phpVm->header("Location: $redirectUrl");
 	return array('isDone' => true);
     } else {
 	return array('isDone' => true, 'redirectUrl' => $redirectUrl, 'template' => $template);
