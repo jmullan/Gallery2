@@ -461,6 +461,11 @@ class SessionTest extends GalleryTestCase {
 	    GalleryUtilities::putRequestVariable(SESSION_ID_PARAMETER, $sid);
 	}
 
+	/* Session should be saved in ShowItem requests */
+	GalleryUtilities::removeRequestVariable('view');
+	GalleryUtilities::removeRequestVariable('controller');
+	GalleryUtilities::putRequestVariable('view', 'core.ShowItem');
+	
 	/* Request #1, save some status information and remove it */
 	$gallery->_session = null;
 	$gallery->initSession();
@@ -491,6 +496,46 @@ class SessionTest extends GalleryTestCase {
 	$session =& $gallery->getSession();
 
 	$this->assertEquals(array('j' => 'b'), $session->getStatus($otherStatusId));
+    }
+
+    /*
+     * Test if save() actually doesn't save if the current request is in the
+     * exclude list
+     */
+    function testSaveSessionShouldNotSave() {
+	global $gallery;
+	$session = $gallery->_session;
+	$isUsingCookies = $session->isUsingCookies();
+	$sid = md5(rand());
+
+	$_COOKIE[SESSION_ID_PARAMETER] = $sid;
+	$delimiter = !empty($this->_originalServerHttpCookie) ? ' ; ' : '';
+	$_SERVER['HTTP_COOKIE'] = SESSION_ID_PARAMETER . '=' . $sid . $delimiter .
+	    $_SERVER['HTTP_COOKIE'];
+	if (!$isUsingCookies) {
+	    GalleryUtilities::putRequestVariable(SESSION_ID_PARAMETER, $sid);
+	}
+
+	/* Session shouldn't be saved in DownloadItem requests */
+	GalleryUtilities::removeRequestVariable('view');
+	GalleryUtilities::putRequestVariable('view', 'core.DownloadItem');
+	
+	/* Add some status data to the session and then try to save it */
+	$gallery->_session = null;
+	$gallery->initSession();
+	$session =& $gallery->getSession();
+	$statusId = $session->putStatus(array('i' => 'a'));
+	$this->assertEquals(array('i' => 'a'), $session->getStatus($statusId));
+
+	$ret = $session->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Assert that the session was not saved */
+	$platform = $gallery->getPlatform();
+	$sessionFile = $gallery->getConfig('data.gallery.sessions') . $session->getId();
+	$this->assert(!file_exists($sessionFile));
     }
 
     function testBasicNavigation() {
@@ -791,7 +836,7 @@ class SessionTest extends GalleryTestCase {
 	$tests = array();
 	/* We don't expect a cookie header when requesting a DownloadItem */
 	$tests[] = array('key' => 'view', 'value' => 'core.DownloadItem', 'er' => false);
-	$tests[] = array('key' => 'view', 'value' => 'core:DownloadItem', 'er' => false);
+	$tests[] = array('key' => 'view', 'value' => 'imageframe.CSS', 'er' => false);
 	$tests[] = array('key' => 'view', 'value' => 'core.ShowItem', 'er' => true);
 	$tests[] = array('key' => 'controller', 'value' => 'migrate.Redirect', 'er' => false);
 
@@ -916,6 +961,35 @@ class SessionTest extends GalleryTestCase {
 	 * We have a getCookiePath function in GallerySession to not have to deal with db errors
 	 * when we actually need the cookie path
 	 */
+    }
+
+    /*
+     * Check that we don't save sessions for core.DownloadItem, migrate.Redirect and CSS requests
+     */
+    function testShouldSaveSession() {
+	global $gallery;
+
+	$session =& $gallery->getSession();
+	
+	/* Test cases */
+	$tests = array();
+	
+	$tests[] = array('type' => 'view', 'value' => 'core.DownloadItem', 'er' => false);
+	$tests[] = array('type' => 'view', 'value' => 'core.ShowItem', 'er' => true);
+	$tests[] = array('type' => 'controller', 'value' => 'migrate.Redirect', 'er' => false);
+	$tests[] = array('type' => 'view', 'value' => 'imageframe.CSS', 'er' => false);
+	$tests[] = array('type' => 'view', 'value' => 'core.ItemAdmin', 'er' => true);
+	$tests[] = array('type' => 'controller', 'value' => 'core.Logout', 'er' => true);
+
+	foreach ($tests as $testCase) {
+	    /* Now set the request variables */
+	    GalleryUtilities::removeRequestVariable('view');
+	    GalleryUtilities::removeRequestVariable('controller');
+	    GalleryUtilities::putRequestVariable($testCase['type'], $testCase['value']);
+
+	    $this->assertEquals($testCase['er'], $session->_shouldSaveSession(),
+				$testCase['type'] . ': ' . $testCase['value']);
+	}
     }
 }
 

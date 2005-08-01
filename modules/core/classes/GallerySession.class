@@ -228,21 +228,8 @@ class GallerySession {
 	    }
 	}
 
-	/*
-	 * Certain requests should not create a new session in the persistent store / send back a
-	 * cookie. E.g. DownloadItem request, there's no use for cookies there, another case
-	 * is the G1 redirect (modules/migreate/Redirect.inc), because the cookie path it would
-	 * create would be based on the current request-URI which is already mod_rewritten from
-	 * a G1 URI to a G2 URI, i.e. getCurrentUrl(Dir) would return crap.
-	 * Another use case: People link a G2 Download URL in forums / webpages. We don't want to
-	 * create a ton of sessions just for hotlinked G2 items.
-	 */
-	list ($view, $controller) = GalleryUtilities::getRequestVariables('view', 'controller');
-	if ((empty($view) || !in_array($view,
-		    array('core.DownloadItem', 'core:DownloadItem', 'imageframe.CSS'))) &&
-	    (empty($controller) || !in_array($controller,
-		    array('migrate.Redirect', 'migrate:Redirect')))) {
-
+	/* Don't save session / send cookie for DownloadItem, CSS, migrate.Redirect requests .. */
+	if ($this->_shouldSaveSession()) {
 	    /* It's not one of the special cases; create session / send cookie if necessary */
 	    if ($forceSessionSave) {
 		$ret = $this->save();
@@ -395,30 +382,32 @@ class GallerySession {
 	$platform = $gallery->getPlatform();
 	$dieRoll = rand(1, 100);
 
-	/* Only bother saving if we've been modified at all */
-	$serialized = serialize(array($this->_creationTime,
-				      $this->_remoteIdentifier,
-				      $this->_sessionData));
-	if ($serialized != $this->_loadedSessionData) {
-	    $sessionFile = $gallery->getConfig('data.gallery.sessions') . $this->_sessionId;
-	    $platform->atomicWrite($sessionFile, $serialized);
-	} else {
-	    /*
-	     * 5% of the time touch the session file so that it doesn't get expired.
-	     * We can't count on the atime being set, since you can disable that on
-	     * some operating systems to get performance gains
-	     */
-	    if ($dieRoll <= 5) {
+	if ($this->_shouldSaveSession()) {
+	    /* Only bother saving if we've been modified at all */
+	    $serialized = serialize(array($this->_creationTime,
+					  $this->_remoteIdentifier,
+					  $this->_sessionData));
+	    if ($serialized != $this->_loadedSessionData) {
 		$sessionFile = $gallery->getConfig('data.gallery.sessions') . $this->_sessionId;
-		$platform->touch($sessionFile);
+		$platform->atomicWrite($sessionFile, $serialized);
+	    } else {
+		/*
+		 * 5% of the time touch the session file so that it doesn't get expired.
+		 * We can't count on the atime being set, since you can disable that on
+		 * some operating systems to get performance gains
+		 */
+		if ($dieRoll <= 5) {
+		    $sessionFile = $gallery->getConfig('data.gallery.sessions') . $this->_sessionId;
+		    $platform->touch($sessionFile);
+		}
 	    }
-	}
-
-	/* Perform garbage collection 1% of the time. */
-	if ($dieRoll == 1) {
-	    $ret = $this->_expireSessions();
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+	    
+	    /* Perform garbage collection 1% of the time. */
+	    if ($dieRoll == 1) {
+		$ret = $this->_expireSessions();
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 	    }
 	}
 
@@ -940,6 +929,44 @@ class GallerySession {
 	    $currentId = $returnNavId;
 	}
 	$this->put('core.navigation', $navigation);
+    }
+	     
+    /**
+     * Check if we should create and save a session for this request
+     * 
+     * Don't save session in core.DownloadItem, migrate.Redirect, ... requests
+     * Reason: In these requests we don't need to save the session or create a new one because
+     *         a) the session is not modified (DownloadItem, CSS)
+     *         b) we return an image / css and not a HTML page (DownloadItem, CSS)
+     *         c) there will be either a DownloadItem / ShowItem request anyway (migrate.Redirect)
+     *         d) in migrate.Redirect requests, the cookie path we would set would most certainly
+     *            be wrong, because the internal mod_rewrite redirect doesn't change all $_SERVER
+     *            variables
+     *    
+     *         And if we stored the session, it would result in *a lot* unneeded sessions,
+     *         e.g. for migrate redirects or hotlinked images.
+     *
+     * @return boolean true if the session should be saved, else false
+     * @access private
+     */
+    function _shouldSaveSession() {
+	/* Default to true */
+	$ret = true;
+	
+	list ($view, $controller) = GalleryUtilities::getRequestVariables('view', 'controller');
+
+	/* Check if the current request's view or controller is in the exlude list */
+	if (!empty($view) && in_array($view, array('core.DownloadItem',
+						   'core:DownloadItem', 'imageframe.CSS'))) {
+	    /* view is in the exclude list */
+	    $ret = false;
+	} elseif (!empty($controller) && in_array($controller, array('migrate.Redirect',
+								     'migrate:Redirect'))) {
+	    /* controller is in the exclude list */
+	    $ret = false;
+	}
+
+	return $ret;
     }
 }
 
