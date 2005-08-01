@@ -629,9 +629,11 @@ class GalleryRemoteController extends GalleryController {
     function albumProperties($form, &$response) {
 	global $gallery;
 
-	/* GR now only supports 1-dimension size constraints. It used to support 2-d
-	   but since G1 supported 1-d, I simplified GR a while ago, so now we have
-	   to cheat a bit and select the largest of width and height to return to GR */
+	/*
+	 * GR now only supports 1-dimension size constraints. It used to support 2-d
+	 * but since G1 supported 1-d, I simplified GR a while ago, so now we have
+	 * to cheat a bit and select the largest of width and height to return to GR
+	 */
 
 	$grStatusCodes = GalleryRemoteConstants::getStatusCodes();
 
@@ -658,7 +660,8 @@ class GalleryRemoteController extends GalleryController {
 	foreach ($derivatives as $derivative) {
 	    preg_match('/scale\|(\d*),(\d*)/', $derivative['derivativeOperations'], $matches);
 
-	    if ($derivative['derivativeType'] != DERIVATIVE_TYPE_IMAGE_THUMBNAIL && isset($matches[1])) {
+	    if ($derivative['derivativeType'] != DERIVATIVE_TYPE_IMAGE_THUMBNAIL &&
+		    isset($matches[1])) {
 		if ($matches[1] > $biggestDerivative) {
 		    $biggestDerivative = $matches[1];
 		}
@@ -671,7 +674,7 @@ class GalleryRemoteController extends GalleryController {
 	/* Is the sizelimit module active? */
 	list ($ret, $modules) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	if (isset($modules['sizelimit']['active']) && $modules['sizelimit']['active']) {
@@ -679,15 +682,15 @@ class GalleryRemoteController extends GalleryController {
 	    list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters(
 		'module', 'sizelimit', $albumId);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    if (isset($param['width'])) {
-	    	$maxSize = $param['width'];
+		$maxSize = $param['width'];
 	    }
 
 	    if (isset($param['height']) && $param['height'] > $maxSize) {
-	    	$maxSize = $param['height'];
+		$maxSize = $param['height'];
 	    }
 	}
 
