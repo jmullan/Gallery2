@@ -156,12 +156,9 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::removeRequestVariable('full', false);
 	GalleryUtilities::putRequestVariable('path', 'invalid-' . rand() . '/aaa');
 
-	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('href' => $href,
-						      'view' => 'core.ShowItem'),
-				  'status' => array(),
-				  'error' => array()),
-			    $results, 'invalid item');
+	/* Invalid item sends 404 and does exit; we don't want to bail out of unit tests.. */
+	/* $results = $this->handleRequest(); */
+	/* assert(got 404) */
 
 	/* Direct link to full size image */
 	GalleryUtilities::putRequestVariable('path',

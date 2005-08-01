@@ -105,6 +105,11 @@ class RedirectController extends GalleryController {
 	    }
 	}
 
+	if (!isset($id)) {
+	    header('HTTP/1.0 404 Not Found');
+	    exit;
+	}
+
 	/* Redirect browser */
 	$scriptName = GalleryUtilities::getServerVar('PHP_SELF');
 	if (empty($scriptName)) {
@@ -112,17 +117,16 @@ class RedirectController extends GalleryController {
 	    $scriptName = GalleryUtilities::getServerVar('SCRIPT_NAME');
 	}
 	$results = array('redirect' => array('href' => GalleryUrlGenerator::makeUrl($scriptName),
-					     'view' => $view),
+					     'view' => $view,
+					     'itemId' => $id),
 			 'status' => array(), 'error' => array());
-	if (isset($id)) {
-	    $results['redirect']['itemId'] = $id;
-	    list ($full, $page) = GalleryUtilities::getRequestVariablesNoPrefix('full', 'page');
-	    if (!empty($full)) {
-		$results['redirect']['imageViewsIndex'] = 1;
-	    }
-	    if (!empty($page)) {
-		$results['redirect']['page'] = $page;
-	    }
+
+	list ($full, $page) = GalleryUtilities::getRequestVariablesNoPrefix('full', 'page');
+	if (!empty($full)) {
+	    $results['redirect']['imageViewsIndex'] = 1;
+	}
+	if (!empty($page)) {
+	    $results['redirect']['page'] = $page;
 	}
 
 	return array(GalleryStatus::success(), $results);
