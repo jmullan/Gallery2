@@ -305,8 +305,9 @@ msgstr "Kan de %s module niet activeren"
 msgid "Other"
 msgstr "Anders"
 
-msgid "Multisite Setup"
-msgstr "Multisite Setup"
+#, fuzzy
+msgid "Installation Type"
+msgstr "Installatie Status"
 
 msgid "Check Security"
 msgstr "Controleer Beveiliging"
@@ -671,6 +672,12 @@ msgstr ""
 "in een database dat al tabellen bevat, zullen de tabel- en kolomvoorvoegsels "
 "ervoor zorgen dat er geen conflicten optreden met hetgeen er al aanwezig is."
 
+msgid ""
+"This is a multisite installation. Remember that each multisite requires its "
+"own database tables. Either choose a different database or a different table "
+"prefix for each multisite!"
+msgstr ""
+
 msgid "Database type:"
 msgstr "Database type:"
 
@@ -918,33 +925,51 @@ msgstr ""
 "veroorzaken ze geen problemen, maar het zou goed zijn om deze te "
 "verwijderen, om uw installatie schoon te houden."
 
-msgid ""
-"Gallery can support multiple independent sites with a single installation of "
-"the code. Additional sites may support different URL domains, subdomains or "
-"paths."
+msgid "Please select the installation type"
 msgstr ""
-"Gallery ondersteunt meerdere onafhankelijke sites vanuit één enkele "
-"installatie van de code. Extra sites kunnen verschillende URL domeinen, "
-"subdomeinen of paden ondersteunen."
 
 msgid "Standard installation"
 msgstr "Standaardinstallatie"
 
 #, c-format
-msgid "Configuration file located in %s"
-msgstr "Configuratiebestand opgeslagen in %s"
+msgid ""
+"This is the default installation type. Choose this installation type if you "
+"want to install a new Gallery in the directory %s which will be accessible "
+"with the URL %s."
+msgstr ""
 
 msgid "Multisite installation"
 msgstr "Multisite installatie"
 
-msgid "Enter directory for configuration file below:"
-msgstr "Geen hieronder een directory op voor het configuratiebestand:"
+#, fuzzy
+msgid ""
+"Gallery can support multiple independent sites with a single installation of "
+"the code. Choose this installation type if you want to install a new Gallery "
+"on the same webserver but in a different path, subdomain or URL domain."
+msgstr ""
+"Gallery ondersteunt meerdere onafhankelijke sites vanuit één enkele "
+"installatie van de code. Extra sites kunnen verschillende URL domeinen, "
+"subdomeinen of paden ondersteunen."
+
+#, c-format
+msgid ""
+"The multisites don't share albums, photos, users, or anything else. They all "
+"need their own database and their own storage directory. For more "
+"information and explanations about Multisite installations, visit the %s "
+"page."
+msgstr ""
 
 msgid "You must enter a directory"
 msgstr "U dient een directory op te geven"
 
 msgid "The directory you entered does not exist"
 msgstr "De opgegeven directory bestaat niet"
+
+msgid ""
+"The directory you entered is the codebase directory. If you want to install "
+"a Gallery in the codebase directory, select the standard installation type. "
+"If you want to install a multisite, choose another directory."
+msgstr ""
 
 msgid ""
 "The directory you entered is not accessible.  Change the permissions so that "
@@ -1053,6 +1078,11 @@ msgstr ""
 "mogelijk bij te werken naar een veilige locatie, zoals een pad in uw "
 "homedirectory. Als u uw site benaderd via FTP, dan heeft u deze optie "
 "mogelijk niet."
+
+msgid ""
+"This is a multisite installation. Remember that each multisite requires its "
+"own storage directory."
+msgstr ""
 
 msgid ""
 "If you're using a modern browser, we'll try to autocomplete any path you "
@@ -1247,3 +1277,12 @@ msgstr "Gaan"
 
 msgid "Begin Installation&raquo;"
 msgstr "Begin Installatie&raquo;"
+
+#~ msgid "Multisite Setup"
+#~ msgstr "Multisite Setup"
+
+#~ msgid "Configuration file located in %s"
+#~ msgstr "Configuratiebestand opgeslagen in %s"
+
+#~ msgid "Enter directory for configuration file below:"
+#~ msgstr "Geen hieronder een directory op voor het configuratiebestand:"

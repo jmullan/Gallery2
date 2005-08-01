@@ -311,8 +311,9 @@ msgstr "Das Modul '%s' konnte nicht aktiviert werden"
 msgid "Other"
 msgstr "Andere"
 
-msgid "Multisite Setup"
-msgstr "Multisite-Installation"
+#, fuzzy
+msgid "Installation Type"
+msgstr "Status der Installation"
 
 msgid "Check Security"
 msgstr "Sicherheitprüfung"
@@ -688,6 +689,12 @@ msgstr ""
 "Tabellen enthält, sorgen die Tabellen- und Spalten-Präfixe dafür, dass Ihre "
 "Gallerydaten nicht mit bestehenden Daten kollidieren."
 
+msgid ""
+"This is a multisite installation. Remember that each multisite requires its "
+"own database tables. Either choose a different database or a different table "
+"prefix for each multisite!"
+msgstr ""
+
 msgid "Database type:"
 msgstr "Datenbank-Typ:"
 
@@ -943,33 +950,51 @@ msgstr ""
 "keine Probleme, aber es ist dennoch eine gute Idee, sie zu entfernen, um "
 "Ihre Installation sauber zu halten."
 
-msgid ""
-"Gallery can support multiple independent sites with a single installation of "
-"the code. Additional sites may support different URL domains, subdomains or "
-"paths."
+msgid "Please select the installation type"
 msgstr ""
-"Gallery kann mehrere unabhängige Auftritte (Fotogallerien) mit nur einer "
-"einzigen Code-Installation bedienen. Zusätzliche Auftritte können "
-"unterschiedliche URL-Domänen, Sub-Domänen oder Pfade unterstützen."
 
 msgid "Standard installation"
 msgstr "Standard-Installation"
 
 #, c-format
-msgid "Configuration file located in %s"
-msgstr "Konfigurationsdatei gefunden in %s"
+msgid ""
+"This is the default installation type. Choose this installation type if you "
+"want to install a new Gallery in the directory %s which will be accessible "
+"with the URL %s."
+msgstr ""
 
 msgid "Multisite installation"
 msgstr "MultiSite-Installation"
 
-msgid "Enter directory for configuration file below:"
-msgstr "Geben Sie hier den Ordner für die Konfigurationsdatei an:"
+#, fuzzy
+msgid ""
+"Gallery can support multiple independent sites with a single installation of "
+"the code. Choose this installation type if you want to install a new Gallery "
+"on the same webserver but in a different path, subdomain or URL domain."
+msgstr ""
+"Gallery kann mehrere unabhängige Auftritte (Fotogallerien) mit nur einer "
+"einzigen Code-Installation bedienen. Zusätzliche Auftritte können "
+"unterschiedliche URL-Domänen, Sub-Domänen oder Pfade unterstützen."
+
+#, c-format
+msgid ""
+"The multisites don't share albums, photos, users, or anything else. They all "
+"need their own database and their own storage directory. For more "
+"information and explanations about Multisite installations, visit the %s "
+"page."
+msgstr ""
 
 msgid "You must enter a directory"
 msgstr "Sie müssen einen Ordner angeben"
 
 msgid "The directory you entered does not exist"
 msgstr "Der von Ihnen angegebene Ordner existiert nicht"
+
+msgid ""
+"The directory you entered is the codebase directory. If you want to install "
+"a Gallery in the codebase directory, select the standard installation type. "
+"If you want to install a multisite, choose another directory."
+msgstr ""
 
 msgid ""
 "The directory you entered is not accessible.  Change the permissions so that "
@@ -1079,6 +1104,11 @@ msgstr ""
 "einen sicheren Ort verweist, wie zum Beispiel - falls möglich - einen Ordner "
 "in Ihrem Heimatverzeichnis. Falls Sie auf Ihre Seite per FTP zugreifen, kann "
 "es sein, dass Sie diese Möglichkeit nicht haben."
+
+msgid ""
+"This is a multisite installation. Remember that each multisite requires its "
+"own storage directory."
+msgstr ""
 
 msgid ""
 "If you're using a modern browser, we'll try to autocomplete any path you "
@@ -1280,3 +1310,12 @@ msgstr "Sprache einstellen"
 
 msgid "Begin Installation&raquo;"
 msgstr "Installation starten&raquo;"
+
+#~ msgid "Multisite Setup"
+#~ msgstr "Multisite-Installation"
+
+#~ msgid "Configuration file located in %s"
+#~ msgstr "Konfigurationsdatei gefunden in %s"
+
+#~ msgid "Enter directory for configuration file below:"
+#~ msgstr "Geben Sie hier den Ordner für die Konfigurationsdatei an:"

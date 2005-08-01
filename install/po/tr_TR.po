@@ -279,8 +279,9 @@ msgstr "%s modülü aktif duruma getirilemiyor"
 msgid "Other"
 msgstr "Diğer"
 
-msgid "Multisite Setup"
-msgstr "Çoklusite Kurulumu"
+#, fuzzy
+msgid "Installation Type"
+msgstr "Kurulum Durumu"
 
 msgid "Check Security"
 msgstr "Güvenliği Kontrol et"
@@ -611,6 +612,12 @@ msgid ""
 "already have."
 msgstr ""
 
+msgid ""
+"This is a multisite installation. Remember that each multisite requires its "
+"own database tables. Either choose a different database or a different table "
+"prefix for each multisite!"
+msgstr ""
+
 msgid "Database type:"
 msgstr "Veritabanı türü:"
 
@@ -828,30 +835,47 @@ msgstr ""
 "bir probleme yol açmaz ancak kurulumunuzu temiz tutmak açısından bunları "
 "kaldırmak iyi fikir."
 
-msgid ""
-"Gallery can support multiple independent sites with a single installation of "
-"the code. Additional sites may support different URL domains, subdomains or "
-"paths."
+msgid "Please select the installation type"
 msgstr ""
 
 msgid "Standard installation"
 msgstr "Standart kurulum"
 
 #, c-format
-msgid "Configuration file located in %s"
-msgstr "Yapılandırma dosyasının bulunduğu yer %s"
+msgid ""
+"This is the default installation type. Choose this installation type if you "
+"want to install a new Gallery in the directory %s which will be accessible "
+"with the URL %s."
+msgstr ""
 
 msgid "Multisite installation"
 msgstr "Çoklusite kurulumu"
 
-msgid "Enter directory for configuration file below:"
-msgstr "Yapılandırma dosyanız için klasörü aşağıya giriniz:"
+msgid ""
+"Gallery can support multiple independent sites with a single installation of "
+"the code. Choose this installation type if you want to install a new Gallery "
+"on the same webserver but in a different path, subdomain or URL domain."
+msgstr ""
+
+#, c-format
+msgid ""
+"The multisites don't share albums, photos, users, or anything else. They all "
+"need their own database and their own storage directory. For more "
+"information and explanations about Multisite installations, visit the %s "
+"page."
+msgstr ""
 
 msgid "You must enter a directory"
 msgstr "Klasör girmelisiniz"
 
 msgid "The directory you entered does not exist"
 msgstr "Girmiş olduğunuz klasör mevcut değil"
+
+msgid ""
+"The directory you entered is the codebase directory. If you want to install "
+"a Gallery in the codebase directory, select the standard installation type. "
+"If you want to install a multisite, choose another directory."
+msgstr ""
 
 msgid ""
 "The directory you entered is not accessible.  Change the permissions so that "
@@ -928,6 +952,11 @@ msgid ""
 "site. You should update it with a secure location, such as a path under your "
 "user home directory, if possible. If you access your site via FTP, you might "
 "not have this option."
+msgstr ""
+
+msgid ""
+"This is a multisite installation. Remember that each multisite requires its "
+"own storage directory."
 msgstr ""
 
 msgid ""
@@ -1086,3 +1115,12 @@ msgstr "Git"
 
 msgid "Begin Installation&raquo;"
 msgstr "Kurulumu Başlat&raquo;"
+
+#~ msgid "Multisite Setup"
+#~ msgstr "Çoklusite Kurulumu"
+
+#~ msgid "Configuration file located in %s"
+#~ msgstr "Yapılandırma dosyasının bulunduğu yer %s"
+
+#~ msgid "Enter directory for configuration file below:"
+#~ msgstr "Yapılandırma dosyanız için klasörü aşağıya giriniz:"
