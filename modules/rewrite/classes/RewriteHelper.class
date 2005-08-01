@@ -165,7 +165,7 @@ class RewriteHelper {
     }
 
     /**
-     * Checks if the embedded htaccess file is up to date with the standalone. Out of synced
+     * Checks if the embedded htaccess file is up to date. Out of synced
      * files may occure if one install/uninstall modules in standalone mode and has Gallery
      * setup with an embedded entry point.
      *
@@ -173,15 +173,24 @@ class RewriteHelper {
      *               int rewrite status code
      */
     function checkSync() {
+	GalleryCoreApi::relativeRequireOnce('modules/rewrite/classes/RewriteMap.class');
 	global $gallery;
 	$platform = $gallery->getPlatform();
 
-	list ($ret, $galleryPath) = RewriteHelper::getHtaccessPath();
+	list ($ret, $activeRules) = RewriteMap::getActiveRules();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	if (!$platform->is_readable($galleryPath)) {
-	    return array(GalleryStatus::success(), REWRITE_STATUS_HTACCESS_CANT_READ);
+	list($ret, $code, $rewriteRules) = RewriteHelper::parseActiveRules($activeRules);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if ($code != REWRITE_STATUS_OK) {
+	    return array(GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__), null);
+	}
+	list ($ret, $galleryHtaccess) = RewriteHelper::getTemplate($rewriteRules, true);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $embeddedPath) = RewriteHelper::getHtaccessPath(true);
@@ -192,17 +201,17 @@ class RewriteHelper {
 	    return array(GalleryStatus::success(), REWRITE_STATUS_HTACCESS_CANT_READ);
 	}
 
-	$galleryHtaccess = implode('', $platform->file($galleryPath));
 	$embeddedHtaccess = implode('', $platform->file($embeddedPath));
+	$embeddedHtaccess = str_replace("\r\n", "\n", $embeddedHtaccess);
 
 	if (!preg_match(
-		'/\# BEGIN Url Rewrite section(.+)\# END Url Rewrite section(\n\r|\n|\r|\x85)/s',
+		'/\# BEGIN Url Rewrite section(.+)\# END Url Rewrite section/s',
 		$embeddedHtaccess, $embeddedSection)) {
 	    return array(GalleryStatus::success(), REWRITE_STATUS_HTACCESS_MISMATCH);
 	}
 
 	if (!preg_match(
-		'/\# BEGIN Url Rewrite section(.+)\# END Url Rewrite section(\n\r|\n|\r|\x85)/s',
+		'/\# BEGIN Url Rewrite section(.+)\# END Url Rewrite section/s',
 		$galleryHtaccess, $gallerySection)) {
 	    return array(GalleryStatus::success(), REWRITE_STATUS_HTACCESS_MISMATCH);
 	}

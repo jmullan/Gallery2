@@ -43,6 +43,22 @@ class RewriteHelperTest extends GalleryTestCase {
 	global $gallery;
 	parent::setUp();
 
+	/* Save original activeRules and use mock rules */
+	list ($ret, $this->_saveActiveRules) = RewriteMap::getActiveRules();
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = RewriteMap::setActiveRules(array('rewrite' => array(
+		array('pattern' => 'v/%path%',
+		      'match' => 'core.ShowItem'),
+		array('pattern' => 'd/%itemId%-%serialNumber%/%fileName%',
+		      'match' => 'core.DownloadItem'))));
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	$ret = $this->_markPluginParametersForCleanup('module', 'rewrite');
 	if ($ret->isError()) {
 		print $ret->getAsHtml();
@@ -55,6 +71,15 @@ class RewriteHelperTest extends GalleryTestCase {
 	$this->_platform->init($this);
 	$gallery->setPlatform($this->_platform);
 	$gallery->setUrlGenerator($urlGenerator);
+    }
+
+    function tearDown() {
+	$ret = RewriteMap::setActiveRules($this->_saveActiveRules);
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	parent::tearDown();
     }
 
     function testCheckFile() {
@@ -127,31 +152,7 @@ class RewriteHelperTest extends GalleryTestCase {
 	$this->assertEquals(REWRITE_STATUS_HTACCESS_MISSING, $code, 'cant read');
     }
 
-    function testCheckSync() {
-	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'embeddedHtaccess',
-	    'phpunit/embedded');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	$existingFile = array("Bogus info before section\n",
-			      "# BEGIN Url Rewrite section\n",
-			      "Bogus info in section\n",
-			      "# END Url Rewrite section\n",
-			      "Bogus info after section\n");
-	$this->_platform->setPreviousContent($existingFile);
-	$this->_platform->setEmbeddedPreviousContent($existingFile);
-
-	list ($ret, $code) = RewriteHelper::checkSync();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->assertEquals(REWRITE_STATUS_OK, $code);
-    }
-
     function testCheckOutOfSync() {
-	global $gallery;
-
 	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'embeddedHtaccess',
 	    'phpunit/embedded');
 	if ($ret->isError()) {
@@ -161,12 +162,6 @@ class RewriteHelperTest extends GalleryTestCase {
 	$existingFile = array("Bogus info before section\n",
 			      "# BEGIN Url Rewrite section\n",
 			      "Bogus info in section\n",
-			      "# END Url Rewrite section\n",
-			      "Bogus info after section\n");
-	$this->_platform->setPreviousContent($existingFile);
-	$existingFile = array("Bogus info before section\n",
-			      "# BEGIN Url Rewrite section\n",
-			      "!!OOPS - OUT OF SYNC !!!\n",
 			      "# END Url Rewrite section\n",
 			      "Bogus info after section\n");
 	$this->_platform->setEmbeddedPreviousContent($existingFile);
@@ -176,6 +171,40 @@ class RewriteHelperTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(REWRITE_STATUS_HTACCESS_MISMATCH, $code);
+    }
+
+    function testCheckSync() {
+	global $gallery;
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'embeddedHtaccess',
+	    'phpunit/embedded');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $activeRules) = RewriteMap::getActiveRules();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list($ret, $code, $rewriteRules) = RewriteHelper::parseActiveRules($activeRules);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $existingFile) = RewriteHelper::getTemplate($rewriteRules, true);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$existingFile = explode("\n", $existingFile);
+	foreach (array_keys($existingFile) as $i) {
+	    $existingFile[$i] .= "\n";
+	}
+	$this->_platform->setEmbeddedPreviousContent($existingFile);
+
+	list ($ret, $code) = RewriteHelper::checkSync();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(REWRITE_STATUS_OK, $code);
     }
 
     function testWriteFile() {
