@@ -340,7 +340,7 @@ function _GalleryMain_doRedirect($redirectUrl, $template=null, $controller=null)
 	 * see: http://support.microsoft.com/kb/q176113/
 	 * Our solution: detect IIS version and append GALLERYSID to the Location URL if necessary
 	 */
-	if (in_array($controller, array('core.Logout', 'core.UserLogin'))) {
+	if (in_array($controller, array('core.Logout', 'core.UserLogin', 'publishxp.Login'))) {
 	    /* Check if it's IIS and if the version is < 6.0 */
 	    $webserver = GalleryUtilities::getServerVar('SERVER_SOFTWARE');
 	    if (!empty($webserver) &&
