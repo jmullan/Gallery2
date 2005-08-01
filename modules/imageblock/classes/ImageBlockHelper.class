@@ -77,18 +77,30 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 			  'monthlyAlbum' => $gallery->i18n('Album of the Month'));
 
 	$blocks = array();
-	foreach (explode('|', $params['blocks']) as $block) {
+	$blockCount = array();
+	$blockList = explode('|', $params['blocks']);
+	foreach ($blockList as $block) {
+	    if (!isset($blockCount[$block])) {
+		$blockCount[$block] = 0;
+	    }
+	    $blockCount[$block]++;
+	}
+	foreach ($blockCount as $block => $count) {
 	    if (!preg_match('{^(.*?)([A-Z].*)$}', $block, $matches)) {
 		continue;
 	    }
 	    list ($tmp, $order, $itemType) = $matches;
-	    $ret = ImageBlockHelper::_addBlock($blocks,
-		   ($heading && isset($headings[$block])) ? $module->translate($headings[$block])
-							  : '',
-		   $itemType, $order, $parentId, $fullSize,
-		   isset($params['userId']) ? $params['userId'] : null);
+	    list ($ret, $blockData[$block]) = ImageBlockHelper::_getBlockData(
+		($heading && isset($headings[$block])) ? $module->translate($headings[$block]) : '',
+		$itemType, $order, $count, $parentId, $fullSize,
+		isset($params['userId']) ? $params['userId'] : null);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+	foreach ($blockList as $block) {
+	    if (!empty($blockData[$block])) {
+		$blocks[] = array_shift($blockData[$block]);
 	    }
 	}
 
@@ -133,24 +145,25 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
      * @static
      * @access private
      */
-    function _addBlock(&$blocks, $title, $itemType, $order,
-		       $parentId=null, $fullSize=false, $userId=null) {
+    function _getBlockData($title, $itemType, $order, $count,
+			   $parentId=null, $fullSize=false, $userId=null) {
+	$blocks = $data = array();
 	switch ($order) {
 	case 'specific':
 	    if (!isset($parentId)) {
-		return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	    }
 	    list ($ret, $ok) = GalleryCoreApi::hasItemPermission($parentId, 'core.view', $userId);
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    if (!$ok) {
 		/* Ignore permission error.. just don't add a block */
-		return GalleryStatus::success();
+		return array(GalleryStatus::success(), array());
 	    }
 	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($parentId);
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    break;
 
@@ -175,7 +188,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    }
 	    list ($ret, $tmp) = GalleryCoreApi::getPluginParameter('module', 'imageblock', $key);
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    if (!empty($tmp)) {
 		list ($itemId, $then) = explode('|', $tmp);
@@ -190,25 +203,26 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 		} else {
 		    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 		    if ($ret->isError()) {
-			return $ret->wrap(__FILE__, __LINE__);
+			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		    break;
 		}
 	    }
 	    /* Set random selection for anonymous user */
 	    $order = 'random';
+	    $count = 1;
 	    list ($ret, $userId) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    /* Fall through to pick new item */
 
 	default:
 	    list ($ret, $data) =
-		ImageBlockHelper::fetchViewableData($itemType, $order, $parentId, $userId);
+		ImageBlockHelper::fetchViewableData($itemType, $order, $count, $parentId, $userId);
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 
@@ -217,55 +231,55 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    $data = array('id' => $id);
 	    list ($ret, $data['viewCount']) = GalleryCoreApi::fetchItemViewCount($item->getId());
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	} else if (isset($data)) {
-	    $id = $data['id'];
-	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($id);
+	    $data = array($data);
+	} else if (isset($key) && !empty($data)) {
+	    /* Record the id and time for selected item */
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'imageblock',
+						      $key, $data[0]['id'] . '|' . $now);
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    if (isset($key)) {
-		/* Record the id and time for selected item */
-		$ret = GalleryCoreApi::setPluginParameter(
-		       'module', 'imageblock', $key, $id . '|' . $now);
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 
-	if (isset($data)) {
+	foreach ($data as $itemData) {
+	    $id = $itemData['id'];
+	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($id);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	    list ($ret, $owner) = GalleryCoreApi::loadEntitiesById($item->getOwnerId());
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
+	    $image = null;
 	    if ($fullSize && GalleryUtilities::isA($item, 'GalleryDataItem')) {
 		$ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'core.viewSource');
 		if ($ret->isError()) {
 		    /* Ignore permission error.. just don't add a block */
-		    return GalleryStatus::success();
+		    continue;
 		}
 		$image = $item;
 	    } else {
 		list ($ret, $thumbnail) = GalleryCoreApi::fetchThumbnailsByItemIds(array($id));
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		if (isset($thumbnail[$id])) {
 		    $image = $thumbnail[$id];
 		}
 	    }
 
-	    $data['title'] = $title;
-	    $data['item'] = $item->getMemberData();
-	    $data['owner'] = $owner->getMemberData();
 	    if (isset($image)) {
-		$data['thumb'] = $image->getMemberData();
-		$blocks[] = $data;
+		$itemData['title'] = $title;
+		$itemData['item'] = $item->getMemberData();
+		$itemData['owner'] = $owner->getMemberData();
+		$itemData['thumb'] = $image->getMemberData();
+		$blocks[] = $itemData;
 	    }
 	}
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(), $blocks);
     }
 
     /**
@@ -273,13 +287,14 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
      *
      * @param string the item type
      * @param string the order type (random, recent, viewed, daily, weekly, monthly)
+     * @param int how many items to select
      * @param int limit item selection to descendents of this item (optional)
      * @param int user id for permissions check (optional; defaults to current user)
      * @return array GalleryStatus a status code
-     *               array containing id, viewCount of item or null if none found
+     *               array of arrays containing id, viewCount of items (empty array if none found)
      * @static
      */
-    function fetchViewableData($itemType, $order, $parentId=null, $userId=null) {
+    function fetchViewableData($itemType, $order, $count, $parentId=null, $userId=null) {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 	$typeMap = array('Image' => 1, 'Album' => 2);
@@ -328,7 +343,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 		 ' WHERE ' . implode(' AND ', $where) .
 		 ' ORDER BY ' . $orderBy;
 
-	list ($ret, $query) = $storage->getFunctionSql('LIMIT', array(1, $query));
+	list ($ret, $query) = $storage->getFunctionSql('LIMIT', array($count, $query));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -345,19 +360,22 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    }
 	}
 
-	list ($ret, $result) = ImageBlockHelper::_runQuery($query, $data);
+	list ($ret, $results) = ImageBlockHelper::_runQuery($query, $data);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if (isset($result) && !isset($result['viewCount'])) {
-	    list ($ret, $result['viewCount']) = GalleryCoreApi::fetchItemViewCount($result['id']);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+	foreach ($results as $i => $result) {
+	    if (!isset($result['viewCount'])) {
+		list ($ret, $results[$i]['viewCount']) =
+		    GalleryCoreApi::fetchItemViewCount($result['id']);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 	    }
 	}
 
-	return array(GalleryStatus::success(), $result);
+	return array(GalleryStatus::success(), $results);
     }
 
     /**
@@ -402,14 +420,15 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$result = null;
-	if ($rec = $searchResults->nextResult()) {
+	$results = array();
+	while ($rec = $searchResults->nextResult()) {
 	    $result = array('id' => (int)$rec[0]);
 	    if (isset($rec[1])) {
 		$result['viewCount'] = (int)$rec[1];
 	    }
+	    $results[] = $result;
 	}
-	return array(GalleryStatus::success(), $result);
+	return array(GalleryStatus::success(), $results);
     }
 
     /**

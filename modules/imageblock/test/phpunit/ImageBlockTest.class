@@ -64,20 +64,26 @@ class ImageBlockTest extends GalleryTestCase {
 	}
 
 	/* Create a new album and image, set thumbnail and highlight */
-	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->_markForCleanup($album);
+	$this->_markForCleanup($this->_album);
 
-	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($album->getId());
+	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->_album->getId());
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$imagePath = dirname(__FILE__) . '/../../../core/test/data/test1.gif';
-	list ($ret, $photo, $thumbId) = $this->_addPhoto($album->getId(), $imagePath);
+	list ($ret, $this->_photo2) = $this->_addPhoto($this->_album->getId(), $imagePath);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	sleep(1);
+	list ($ret, $this->_photo) = $this->_addPhoto($this->_album->getId(), $imagePath);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -87,34 +93,34 @@ class ImageBlockTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	list ($ret, $tmpId) =
-	    $this->_addDerivative($album, $photo, DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 150);
+	list ($ret, $tmpId) = $this->_addDerivative($this->_album, $this->_photo,
+						    DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 150);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Add permission so album/item can appear in dailyImage, monthlyAlbum, etc. */
-	list ($ret, $everybodyGroupId) =
+	list ($ret, $this->_everybodyGroupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::addGroupPermission(
-	    $album->getId(), $everybodyGroupId, 'core.view', true);
+	    $this->_album->getId(), $this->_everybodyGroupId, 'core.view', true);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imageblock');
-	if ($ret->isError() || !isset($module)) {
+	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'imageblock');
+	if ($ret->isError() || !isset($this->_module)) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	list ($ret, $view) = GalleryView::loadView('imageblock.ImageBlockSiteAdmin');
-	if ($ret->isError() || !isset($view)) {
+	list ($ret, $this->_view) = GalleryView::loadView('imageblock.ImageBlockSiteAdmin');
+	if ($ret->isError() || !isset($this->_view)) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -124,12 +130,6 @@ class ImageBlockTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
-	$this->_album = $album;
-	$this->_photo = $photo;
-	$this->_module = $module;
-	$this->_view = $view;
-	$this->_everybodyGroupId = $everybodyGroupId;
     }
 
     function _addPhoto($parentId, $imagePath) {
@@ -255,6 +255,26 @@ class ImageBlockTest extends GalleryTestCase {
 	$data = $template->_data;
 	$this->assertEquals(1, count($data['ImageBlockData']['blocks']), 'One block');
 	$this->assertBlock($data['ImageBlockData']['blocks'][0]);
+
+	/* Select more than one recentImage.. should be most-recent and 2nd-most-recent */
+	GalleryUtilities::putRequestVariable('blocks', 'recentImage|recentImage');
+
+	$template = new ImageBlockDummyGalleryTemplate();
+	$external->setTemplate($template);
+	$ret = $external->renderImmediate(array(), array());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('gallery:modules/imageblock/templates/ImageBlock.tpl',
+			    $template->getPath());
+	$data = $template->_data;
+	$this->assertEquals(2, count($data['ImageBlockData']['blocks']), 'Two blocks');
+	$this->assertBlock($data['ImageBlockData']['blocks'][0]);
+	$this->assertBlock($data['ImageBlockData']['blocks'][1]);
+	$this->assertEquals($this->_photo->getId(),
+			    $data['ImageBlockData']['blocks'][0]['id'], 'Most recent id');
+	$this->assertEquals($this->_photo2->getId(),
+			    $data['ImageBlockData']['blocks'][1]['id'], '2nd most recent id');
 
 	/* Select only from subtree.. */
 	GalleryUtilities::putRequestVariable('blocks', 'recentImage|viewedAlbum');
