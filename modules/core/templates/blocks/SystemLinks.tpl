@@ -8,12 +8,15 @@
 {assign var="order" value=$order|default:""|split}
 {assign var="othersAt" value=$othersAt|default:0}
 {assign var="othersAt" value=$othersAt-1}
+{assign var="separator" value=$separator|default:""}
+
 {capture name="SystemLinks"}
   {foreach from=$theme.systemLinks key=linkId item=link}
     {if !in_array($linkId, $order)}
     <span class="{$class}">
       <a href="{g->url params=$link.params}"> {$link.text} </a>
     </span>
+    {$separator}
     {/if}
   {/foreach}
 {/capture}
@@ -29,6 +32,7 @@
       {$theme.systemLinks[$linkId].text}
     </a>
   </span>
+  {$separator}
   {/if}
 {/foreach}
 {if !isset($SystemLinksShown)}{$smarty.capture.SystemLinks}{/if}
