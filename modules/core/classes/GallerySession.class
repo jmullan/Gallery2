@@ -940,7 +940,7 @@ class GallerySession {
      *         b) we return an image / css and not a HTML page (DownloadItem, CSS)
      *         c) there will be either a DownloadItem / ShowItem request anyway (migrate.Redirect)
      *         d) in migrate.Redirect requests, the cookie path we would set would most certainly
-     *            be wrong, because the internal mod_rewrite redirect doesn't change all $_SERVER
+     *            be wrong, because the internal mod_rewrite redirect doesn't change all PHP SERVER
      *            variables
      *    
      *         And if we stored the session, it would result in *a lot* unneeded sessions,
