@@ -988,6 +988,7 @@ class GalleryTheme extends GalleryPlugin {
      *                   {if isset($theme.permissions.core_addDataItem)}
      *
      * @param object GalleryItem the item to display
+     * @param array theme parameters
      * @param array (string data key, ..) data to load into template
      * @param array (optional) ids of child items to display
      * @return object GalleryStatus a status code
@@ -1101,7 +1102,8 @@ class GalleryTheme extends GalleryPlugin {
 		    }
 		}
 		if (isset($peerItemIndex)) {
-		    $peerWindowSize = 6;
+		    $peerWindowSize =
+			isset($params['peerWindowSize']) ? $params['peerWindowSize'] : 6;
 		    $peerLast = count($peerIds) - 1;
 		    $peerNeighborStart = max($peerItemIndex - (int)($peerWindowSize/2), 0);
 		    $peerNeighborEnd = min($peerItemIndex + (int)($peerWindowSize/2), $peerLast);
