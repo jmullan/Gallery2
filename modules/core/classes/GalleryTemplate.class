@@ -339,8 +339,8 @@ class GalleryTemplate {
     * @see http://smarty.php.net/manual/en/template.resources.php
     *
     * This is basically the same as the file: resource except that we look for a template
-    * called "xxx.local" first and use that instead, if it exists.  This allows users to override
-    * templates with our own copies without modifying the original.
+    * called "local/foo.tpl" first and use that instead, if it exists.  This allows users to
+    * override templates with our own copies without modifying the original.
     */
    function resourceGetTemplate($templateName, &$templateSource, &$smarty) {
 	$templateName =
@@ -354,8 +354,8 @@ class GalleryTemplate {
     * @see http://smarty.php.net/manual/en/template.resources.php
     *
     * This is basically the same as the file: resource except that we look for a template
-    * called "xxx.local" first and use that instead, if it exists.  This allows users to override
-    * templates with our own copies without modifying the original.
+    * called "local/foo.tpl" first and use that instead, if it exists.  This allows users to
+    * override templates with our own copies without modifying the original.
     */
     function resourceGetTimestamp($templateName, &$templateTimestamp, &$smarty) {
 	global $gallery;
@@ -378,8 +378,7 @@ class GalleryTemplate {
      * Given a template name (/foo/bar.tpl), return one of the following
      * strings (in order of precedence).
      *   1.  /foo/local/bar.tpl  (if it exists)
-     *   2.  /foo/bar.tpl.local  (if it exists -- deprecated old style)
-     *   3.  /foo/bar.tpl        (whether or not it exists)
+     *   2.  /foo/bar.tpl        (whether or not it exists)
      *
      * @return string
      * @static
