@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Installer 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-07-06 23:48+0200\n"
-"PO-Revision-Date: 2005-07-30 00:00+0200\n"
+"PO-Revision-Date: 2005-08-02 00:00+0200\n"
 "Last-Translator: Arnaud MOURONVAL <ArnaudMouronval@yahoo.com>\n"
 "Language-Team: French <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -99,13 +99,13 @@ msgid "Database Setup"
 msgstr "Paramétrage de la base de données"
 
 msgid "You must have the MySQL PHP module installed"
-msgstr ""
+msgstr "Le module PHP MySQL doit être installé"
 
 msgid "You must have the PostgreSQL PHP module installed"
-msgstr ""
+msgstr "Le module PHP PostgreSQL doit être installé"
 
 msgid "You must have the Oracle OCI8 PHP module installed"
-msgstr ""
+msgstr "Le module PHP Oracle OCI8 doit être installé"
 
 #, c-format
 msgid "You must specify a column prefix (we recommend %s)"
@@ -138,9 +138,8 @@ msgid "The database you specified does not exist.  Please create it."
 msgstr ""
 "La base de données que vous avez spécifié n'existe pas. Merci de la créer."
 
-#, fuzzy
 msgid "The database privileges test did not complete successfully."
-msgstr "Base de données paramétrée avec succès."
+msgstr "Le test des privilèges de la base de données ne s'est pas terminé correctement."
 
 msgid ""
 "Gallery tables already exist in this database!  But there is no 'versions."
@@ -168,7 +167,6 @@ msgstr ""
 "supprimer toutes les données dans le répertoire de stockage et continuer à "
 "l'étape suivante."
 
-#, fuzzy
 msgid ""
 "Gallery tables already exist in the database and there is a versions.dat "
 "file in the Gallery storage directory. But the version of the installed "
@@ -232,34 +230,39 @@ msgid "Oracle (9i and newer)"
 msgstr "Oracle (9i et plus récent)"
 
 msgid "Unknown DB type or no known tables information."
-msgstr ""
+msgstr "Type de base de données inconnu ou aucune information sur les tables connues."
 
 #, c-format
 msgid "Could not find an unused table prefix similar to \"%s\"."
-msgstr ""
+msgstr "Impossible de trouver un préfixe de table similaire à \"%s\" et inutilisé."
 
 #, c-format
 msgid "SQL test file \"%s\" not found."
-msgstr ""
+msgstr "Fichier de test SQL \"%s\" non trouvé."
 
 #, c-format
 msgid "Could not open SQL test file \"%s\"."
-msgstr ""
+msgstr "Impossible d'ouvrir le fichier de test SQL \"%s\"."
 
 msgid ""
 "Check the returned error message and README.html for missing privileges and "
 "clean up the database."
-msgstr ""
+msgstr "Consultez le message d'erreur retourné et le fichier README.html pour "
+"déterminer les privilèges manquants et pour nettoyer la base de données."
 
 msgid ""
 "Failed to create a DB test sequence.Check the returned error message and "
 "README.html for missing privileges and clean up the database."
-msgstr ""
+msgstr "Impossible de créer une séquence de test pour la base de données. "
+"Consultez le message d'erreur retourné et le fichier README.html pour "
+"déterminer les privilèges manquants et pour nettoyer la base de données."
 
 msgid ""
 "Test failed to drop a DB test sequence.Check the returned error message and "
 "README.html for missing privileges and clean up the database."
-msgstr ""
+msgstr "La séquence de test de la base de données a échoué."
+"Consultez le message d'erreur retourné et le fichier README.html pour "
+"déterminer les privilèges manquants et pour nettoyer la base de données."
 
 msgid "Finished"
 msgstr "Fin"
@@ -309,9 +312,8 @@ msgstr "Impossible d'activer le module %s"
 msgid "Other"
 msgstr "Autre"
 
-#, fuzzy
 msgid "Installation Type"
-msgstr "État de l'installation"
+msgstr "Type d'installation"
 
 msgid "Check Security"
 msgstr "Vérification de la sécurité"
@@ -692,7 +694,9 @@ msgid ""
 "This is a multisite installation. Remember that each multisite requires its "
 "own database tables. Either choose a different database or a different table "
 "prefix for each multisite!"
-msgstr ""
+msgstr "L'installation est de type multi-site. N'oubliez pas que chaque site "
+"nécessite ses propres tables dans la base de données. Choisissez une autre base "
+"de données ou changez le préfixe des tables pour chacun des site&nbsp;!"
 
 msgid "Database type:"
 msgstr "Type de base de données&nbsp;:"
@@ -924,15 +928,15 @@ msgstr ""
 msgid "Modified files (%d)"
 msgstr "Fichiers modifiés (%d)"
 
-#, fuzzy
 msgid ""
 "Note: You're running Gallery from CVS, so some modified files are to be "
 "expected.  You can probably ignore these, but to be safe you should make "
 "sure that you do 'cvs update -Pd' before continuing."
 msgstr ""
 "Note&nbsp;: Vous utilisez une copie CVS de Gallery, il est donc probable que "
-"des fichiers soient modifiés. Vous pouvez certainement les ignorer cette "
-"alerte."
+"des fichiers soient modifiés. Vous pouvez certainement ignorer cette "
+"alerte, mais par précaution, vous devriez exécuter un <b>cvs update -Pd</b> "
+"avant de continuer."
 
 #, c-format
 msgid "Old files (%d)"
@@ -947,7 +951,7 @@ msgstr ""
 "garder votre installation propre."
 
 msgid "Please select the installation type"
-msgstr ""
+msgstr "Veuillez choisir le type d'installation"
 
 msgid "Standard installation"
 msgstr "Installation standard"
@@ -957,20 +961,22 @@ msgid ""
 "This is the default installation type. Choose this installation type if you "
 "want to install a new Gallery in the directory %s which will be accessible "
 "with the URL %s."
-msgstr ""
+msgstr "Le type d'installation par défaut de Gallery. Choisissez ce type "
+"d'installation si vous désirez installer une nouvelle instance de Gallery dans "
+"le répertoire %s qui sera accessible par l'URL %s."
 
 msgid "Multisite installation"
 msgstr "Installation multi-site"
 
-#, fuzzy
 msgid ""
 "Gallery can support multiple independent sites with a single installation of "
 "the code. Choose this installation type if you want to install a new Gallery "
 "on the same webserver but in a different path, subdomain or URL domain."
 msgstr ""
 "Gallery peut supporter plusieurs sites indépendants à partir d'une seule "
-"installation du code. Les sites supplémentaires peuvent être liés à des "
-"domaines, sous domaines ou même chemins différents."
+"installation du code. Choisissez ce type d'installation si vous désirez installer "
+"une nouvelle instance de Gallery sur le même serveur Web mais dans un chemin, un "
+"sous domaine ou un domaine différent."
 
 #, c-format
 msgid ""
@@ -978,7 +984,10 @@ msgid ""
 "need their own database and their own storage directory. For more "
 "information and explanations about Multisite installations, visit the %s "
 "page."
-msgstr ""
+msgstr "Les sites ne partagent pas les albums, photos, utilisateurs ou tout autre "
+"chose. Ils ont tous besoin de leur propre base de données et leur propre répertoire "
+"de stockage. Pour plus d'information au sujet des installation multi-site, "
+"consultez la page %s."
 
 msgid "You must enter a directory"
 msgstr "Vous devez indiquer un répertoire"
@@ -990,7 +999,10 @@ msgid ""
 "The directory you entered is the codebase directory. If you want to install "
 "a Gallery in the codebase directory, select the standard installation type. "
 "If you want to install a multisite, choose another directory."
-msgstr ""
+msgstr "Le répertoire que vous avez saisi correspond au répertoire contenant le "
+"code. Si vous désirez installer une instance de Gallery dans ce répertoire, choisissez "
+"le type d'installation standard, si vous voulez installer un site (du multi-site), "
+"choisissez un autre répertoire."
 
 msgid ""
 "The directory you entered is not accessible.  Change the permissions so that "
@@ -1105,7 +1117,8 @@ msgstr ""
 msgid ""
 "This is a multisite installation. Remember that each multisite requires its "
 "own storage directory."
-msgstr ""
+msgstr "Ceci est une installation multi-site. N'oubliez pas que chaque site "
+"nécessite son propre répertoire de stockage."
 
 msgid ""
 "If you're using a modern browser, we'll try to autocomplete any path you "
@@ -1304,13 +1317,3 @@ msgstr "Go"
 
 msgid "Begin Installation&raquo;"
 msgstr "Commencer l'installation&raquo;"
-
-#~ msgid "Multisite Setup"
-#~ msgstr "Paramétrage du Multi-site"
-
-#~ msgid "Configuration file located in %s"
-#~ msgstr "Fichier de configuration localisé dans %s"
-
-#~ msgid "Enter directory for configuration file below:"
-#~ msgstr ""
-#~ "Saisir le chemin d'un répertoire pour le fichier de configuration&nbsp;:"
