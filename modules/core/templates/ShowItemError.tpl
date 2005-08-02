@@ -16,36 +16,33 @@
       <b>{$ShowItemError.themeId}</b>
     {/capture}
     {g->text text="This album is configured to use the %s theme, but it is either inactive or not installed." arg1=$smarty.capture.themeId}
-    {capture name="optionOne"}
-      {if !$ShowItemError.canEdit}
-	<a href="{g->url arg1="view=core.UserAdmin" arg2="subView=core.UserLogin" arg3="return=1"}">
-	  {g->text text="login"}
-	</a>
-	{g->text text="and then"}
-      {/if}
-      <a href="{g->url arg1="view=core.ItemAdmin" arg2="subView=core.ItemEdit"
-       arg3="editPlugin=ItemEditAlbum" arg4="itemId=`$ShowItemError.itemId`"}">
-	{g->text text="choose a new theme for this album"}
-      </a>
+
+    {capture name="loginLink"}
+      <a href="{g->url arg1="view=core.UserAdmin" arg2="subView=core.UserLogin" arg3="return=1"}">
     {/capture}
-    {capture name="optionTwo"}
-      {if !$ShowItemError.isAdmin}
-	<a href="{g->url arg1="view=core.UserAdmin" arg2="subView=core.UserLogin" arg3="return=1"}">
-	  {g->text text="login as a site administrator"}
-	</a>
-	{g->text text="and then"}
-      {/if}
+    {capture name="adminLink"}
       <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminThemes"
-       arg3="mode=config"}">
-	{g->text text="install or activate this theme"}
-      </a>
+	 arg3="mode=config" arg4="return=1"}">
     {/capture}
+    {capture name="editLink"}
+      <a href="{g->url arg1="view=core.ItemAdmin" arg2="subView=core.ItemEdit"
+	 arg3="editPlugin=ItemEditAlbum" arg4="itemId=`$ShowItemError.itemId`" arg5="return=1"}">
+    {/capture}
+
     {if isset($theme.isFallback)}
-      {g->text text="To fix this problem you can %s or select another default theme."
-       arg1=$smarty.capture.optionTwo}
+      {if $ShowItemError.isAdmin}
+	{g->text text="To fix this problem you can %sinstall or activate this theme%s or select another default theme." arg1=$smarty.capture.adminLink arg2="</a>"}
+      {else}
+	{g->text text="To fix this problem you can %slogin as a site administrator%s and then %sinstall or activate this theme%s or select another default theme." arg1=$smarty.capture.loginLink arg2="</a>" arg3=$smarty.capture.adminLink arg4="</a>"}
+      {/if}
     {else}
-      {g->text text="To fix this problem you can either %s or %s." arg1=$smarty.capture.optionOne
-       arg2=$smarty.capture.optionTwo}
+      {if $ShowItemError.isAdmin} 
+	{g->text text="To fix this problem you can either %schoose a new theme for this album%s or %sinstall or activate this theme%s." arg1=$smarty.capture.editLink arg2="</a>" arg3=$smarty.capture.adminLink arg4="</a>"}
+      {elseif $ShowItemError.canEdit}
+	{g->text text="To fix this problem you can either %schoose a new theme for this album%s or %slogin as a site administrator%s and then %sinstall or activate this theme%s." arg1=$smarty.capture.editLink arg2="</a>" arg3=$smarty.capture.loginLink arg4="</a>" arg5=$smarty.capture.adminLink arg6="</a>"}
+      {else}
+	{g->text text="To fix this problem you can either %slogin%s and then %schoose a new theme for this album%s or %slogin as a site administrator%s and then %sinstall or activate this theme%s." arg1=$smarty.capture.loginLink arg2="</a>" arg3=$smarty.capture.editLink arg4="</a>" arg5=$smarty.capture.loginLink arg6="</a>" arg7=$smarty.capture.adminLink arg8="</a>"}
+      {/if}
     {/if}
   </p>
 </div>
