@@ -66,12 +66,14 @@ class SystemChecksStep extends InstallStep {
 
 	$suggestedHtaccess = array();
 
-	/* assert compatible version of PHP */
-	if (!function_exists('version_compare') || version_compare(phpversion(), '4.1.0', '<')) {
+	/* assert compatible version of PHP, we accept 4.1.0+ / 5.0.4+ */
+	if (!function_exists('version_compare') || version_compare(phpversion(), '4.1.0', '<') ||
+	        (version_compare(phpversion(), '5.0.0', '>=') &&
+		       version_compare(phpversion(), '5.0.4', '<'))) {
 	    $templateData['check'][] =
-		array('title' => _('PHP version >= 4.1.0'),
+		array('title' => _('PHP version >= 4.1.0 or >= 5.0.4'),
 		      'error' => true,
-		      'notice' => sprintf(_("Error: Gallery 2 requires PHP version 4.1.0 or newer. You have PHP version %s installed. Contact your webserver administrator to request an upgrade, available at the %sPHP website%s."), '<a href="http://php.net/">', '</a>', phpversion()));
+		      'notice' => sprintf(_("Error: Gallery 2 requires PHP version 4.1.0 or newer or 5.0.4 or newer. You have PHP version %s installed. Contact your webserver administrator to request an upgrade, available at the %sPHP website%s."), phpversion(), '<a href="http://php.net/">', '</a>'));
 	    $failCount++;
 	} else {
 	    $templateData['check'][] =
