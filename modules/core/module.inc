@@ -111,7 +111,7 @@ class CoreModule extends GalleryModule {
 	    if (isset($wantsDetailedLinks[$itemId]) && $isAlbum &&
 		    isset($permissions[$itemId]['core.addDataItem'])) {
 		$links[$itemId][] =
-		    array('text' => $this->translate('Add Items'),
+		    array('text' => $this->_translate('Add Items'),
 			  'params' => array('view' => 'core.ItemAdmin',
 					    'subView' => 'core.ItemAdd',
 					    'itemId' => $itemId,
@@ -120,9 +120,10 @@ class CoreModule extends GalleryModule {
 
 	    $itemTypeNames = $item->itemTypeName();
 	    if (isset($permissions[$itemId]['core.edit'])) {
+		/* Specific translations: _('Edit Album') _('Edit Photo') _('Edit Movie') */
 		$links[$itemId][] =
-		    array('text' => $this->translate(array('text' => 'Edit %s',
-							   'arg1' => $itemTypeNames[0])),
+		    array('text' => $this->_translate(array('text' => 'Edit %s',
+							    'arg1' => $itemTypeNames[0]), true),
 			  'params' => array('view' => 'core.ItemAdmin',
 					    'subView' => 'core.ItemEdit',
 					    'itemId' => $itemId,
@@ -149,7 +150,7 @@ class CoreModule extends GalleryModule {
 
 		    if ($count > 0) {
 			$links[$itemId][] =
-			    array('text' => $this->translate('Create Link'),
+			    array('text' => $this->_translate('Create Link'),
 				  'params' => array('view' => 'core.ItemAdmin',
 						    'subView' => 'core.ItemCreateLink',
 						    'itemId' => $item->getParentId(),
@@ -162,7 +163,7 @@ class CoreModule extends GalleryModule {
 	    if (isset($wantsDetailedLinks[$itemId]) &&
 		    $isAlbum && isset($permissions[$itemId]['core.addAlbumItem'])) {
 		$links[$itemId][] =
-		    array('text' => $this->translate('Add Album'),
+		    array('text' => $this->_translate('Add Album'),
 			  'params' => array('view' => 'core.ItemAdmin',
 					    'subView' => 'core.ItemAddAlbum',
 					    'itemId' => $itemId,
@@ -172,8 +173,8 @@ class CoreModule extends GalleryModule {
 	    if (isset($permissions[$itemId]['core.edit'])) {
 		$links[$itemId][] =
 		    array('text' => isset($permissions[$itemId]['core.changePermissions'])
-				? $this->translate('Edit Permissions')
-				: $this->translate('View Permissions'),
+				? $this->_translate('Edit Permissions')
+				: $this->_translate('View Permissions'),
 			  'params' => array('view' => 'core.ItemAdmin',
 					    'subView' => 'core.ItemPermissions',
 					    'itemId' => $itemId,
@@ -181,9 +182,10 @@ class CoreModule extends GalleryModule {
 	    }
 
 	    if (!$isRoot && isset($permissions[$itemId]['core.delete'])) {
+		/* Specific translations: _('Delete Album') _('Delete Photo') _('Delete Movie') */
 		$links[$itemId][] =
-		    array('text' => $this->translate(array('text' => 'Delete %s',
-							   'arg1' => $itemTypeNames[0])),
+		    array('text' => $this->_translate(array('text' => 'Delete %s',
+							    'arg1' => $itemTypeNames[0]), true),
 			  'params' => array('view' => 'core.ItemAdmin',
 					    'subView' => 'core.ItemDelete',
 					    'itemId' => $item->getParentId(),
@@ -192,9 +194,10 @@ class CoreModule extends GalleryModule {
 	    }
 
 	    if (!$isRoot && isset($permissions[$itemId]['core.delete'])) {
+		/* Specific translations: _('Move Album') _('Move Photo') _('Move Movie') */
 		$links[$itemId][] =
-		    array('text' => $this->translate(array('text' => 'Move %s',
-							   'arg1' => $itemTypeNames[0])),
+		    array('text' => $this->_translate(array('text' => 'Move %s',
+							    'arg1' => $itemTypeNames[0]), true),
 			  'params' => array('view' => 'core.ItemAdmin',
 					    'subView' => 'core.ItemMove',
 					    'itemId' => $item->getParentId(),
@@ -208,7 +211,7 @@ class CoreModule extends GalleryModule {
 		    !empty($childCounts[$itemId]) &&
 		    $childCounts[$itemId] > 0) {
 		$links[$itemId][] =
-		    array('text' => $this->translate('Edit Captions'),
+		    array('text' => $this->_translate('Edit Captions'),
 			  'params' => array('view' => 'core.ItemAdmin',
 					    'subView' => 'core.ItemEditCaptions',
 					    'itemId' => $itemId,
@@ -218,7 +221,7 @@ class CoreModule extends GalleryModule {
 	    if (!$isRoot && isset($thumbTable[$itemId]) &&
 		    isset($permissions[$itemId]['core.edit'])) {
 		$links[$itemId][] =
-		    array('text' => $this->translate('Make Highlight'),
+		    array('text' => $this->_translate('Make Highlight'),
 			  'params' => array('view' => 'core.ItemAdmin',
 					    'subView' => 'core.ItemMakeHighlight',
 					    'itemId' => $itemId,
@@ -229,7 +232,7 @@ class CoreModule extends GalleryModule {
 		    !empty($childCounts[$itemId]) &&
 		    $childCounts[$itemId] > 1) {
 		$links[$itemId][] =
-		    array('text' => $this->translate('Reorder Items'),
+		    array('text' => $this->_translate('Reorder Items'),
 			  'params' => array('view' => 'core.ItemAdmin',
 					    'subView' => 'core.ItemReorder',
 					    'itemId' => $itemId,
@@ -386,19 +389,19 @@ class CoreModule extends GalleryModule {
 	if (isset($permissions['core.edit'])) {
 	    if ($isAlbum) {
 		if ($childCount > 1) {
-		    $views[] = array('name' => $this->translate('Reorder Items'),
+		    $views[] = array('name' => $this->_translate('Reorder Items'),
 				     'view' => 'core.ItemReorder');
 		}
 	    }
 
 	    /* Edit view for all item types */
-	    $views[] = array('name' => $this->translate(
-					array('text' => 'Edit %s', 'arg1' => $itemTypeNames[0])),
+	    $views[] = array('name' => $this->_translate(
+				  array('text' => 'Edit %s', 'arg1' => $itemTypeNames[0]), true),
 			     'view' => 'core.ItemEdit');
 
 	    if (!empty($parentId) && $hasThumb && $parentId != $rootId
 		    && isset($parentPermissions['core.edit'])) {
-		$views[] = array('name' => $this->translate('Make Highlight'),
+		$views[] = array('name' => $this->_translate('Make Highlight'),
 				 'view' => 'core.ItemMakeHighlight');
 	    }
 	}
@@ -420,8 +423,9 @@ class CoreModule extends GalleryModule {
 		}
 
 		if ($count > 0) {
-		    $views[] = array('name' => $this->translate(
-					array('text' => 'Link %s', 'arg1' => $itemTypeNames[0])),
+		    $views[] = array('name' => $this->_translate(
+					array('text' => 'Link %s', 'arg1' => $itemTypeNames[0]),
+					true),
 				     'view' => 'core.ItemCreateLinkSingle');
 		}
 	    }
@@ -429,38 +433,68 @@ class CoreModule extends GalleryModule {
 
 	if (isset($permissions['core.delete'])) {
 	    if ($item->getId() != $rootId) {
-		$views[] = array('name' => $this->translate(
-					array('text' => 'Delete %s', 'arg1' => $itemTypeNames[0])),
+		$views[] = array('name' => $this->_translate(
+				   array('text' => 'Delete %s', 'arg1' => $itemTypeNames[0]), true),
 				 'view' => 'core.ItemDeleteSingle');
 
-		$views[] = array('name' => $this->translate(
-					array('text' => 'Move %s', 'arg1' => $itemTypeNames[0])),
+		$views[] = array('name' => $this->_translate(
+				   array('text' => 'Move %s', 'arg1' => $itemTypeNames[0]), true),
 				 'view' => 'core.ItemMoveSingle');
 	    }
 	}
 
 	if (isset($permissions['core.edit'])) {
 	    $views[] = array('name' => isset($permissions['core.changePermissions'])
-				 ? $this->translate('Edit Permissions')
-				 : $this->translate('View Permissions'),
+				 ? $this->_translate('Edit Permissions')
+				 : $this->_translate('View Permissions'),
 			     'view' => 'core.ItemPermissions');
 	}
 
 	if (isset($permissions['core.addDataItem'])) {
 	    if ($item->getCanContainChildren()) {
-		$views[] = array('name' => $this->translate('Add Items'),
+		$views[] = array('name' => $this->_translate('Add Items'),
 				 'view' => 'core.ItemAdd');
 	    }
 	}
 
 	if (isset($permissions['core.addAlbumItem'])) {
 	    if ($item->getCanContainChildren()) {
-		$views[] = array('name' => $this->translate('Add Album'),
+		$views[] = array('name' => $this->_translate('Add Album'),
 				 'view' => 'core.ItemAddAlbum');
 	    }
 	}
 
 	return array(GalleryStatus::success(), $views);
+    }
+
+    /**
+     * Translate string.  Results are cached.
+     * @param mixed string or array for translation
+     * @param boolean (optional) true to attempt to translate post-sprintf string
+     *    This allows specific translation of strings like "Edit Album" or "Edit Photo"
+     *    with a fallback to translation of "Edit %s" for other %s values.
+     * @return translated string
+     * @access private
+     */
+    function _translate($params, $postSprintf=false) {
+	if ($postSprintf) {
+	    $string = sprintf($params['text'], $params['arg1']);
+	} else if (is_string($params)) {
+	    $string = $params;
+	}
+	if (isset($string) && GalleryDataCache::containsKey($string)) {
+	    return GalleryDataCache::get($string);
+	}
+	if ($postSprintf) {
+	    $result = $this->translate($string);
+	}
+	if (!isset($result) || $result == $string) {
+	    $result = $this->translate($params);
+	}
+	if (isset($string)) {
+	    GalleryDataCache::put($string, $result);
+	}
+	return $result;
     }
 
     /**
