@@ -42,9 +42,7 @@ class ItemDeleteController extends GalleryController {
 	global $gallery;
 
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
-
-	$status = array();
-	$error = array();
+	$status = $error = array();
 
 	if (isset($form['action']['delete'])) {
 	    $status['deleted']['count'] = 0;
@@ -273,6 +271,7 @@ class ItemDeleteView extends GalleryView {
 	$ItemDelete['numPages'] = $numPages;
 	$ItemDelete['numPerPage'] = $form['numPerPage'];
 	$ItemDelete['selectedIds'] = array_keys($selectedIds);
+	$ItemDelete['selectedIdCount'] = count($selectedIds);
 
 	$template->setVariable('controller', 'core.ItemDelete');
 	$template->setVariable('ItemDelete', $ItemDelete);

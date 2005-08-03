@@ -13,14 +13,12 @@
   {if ($status.deleted.count == 0)}
     <h2 class="giError">
       {g->text text="No items were selected for deletion"}
-    </h2>
   {else}
     <h2 class="giSuccess">
       {g->text one="Successfully deleted %d item" many="Successfully deleted %d items"
 	       count=$status.deleted.count arg1=$status.deleted.count}
-    </h2>
   {/if}
-</div>
+</h2></div>
 {/if}
 
 <div class="gbBlock">
@@ -33,6 +31,13 @@
     {g->text text="Choose the items you want to delete"}
     {if ($ItemDelete.numPages > 1) }
       {g->text text="(page %d of %d)" arg1=$ItemDelete.page arg2=$ItemDelete.numPages}
+      <br/>
+      {g->text text="Items selected here will remain selected when moving between pages."}
+      {if !empty($ItemDelete.selectedIds)}
+	 <br/>
+	 {g->text one="One item selected on other pages." many="%d items selected on other pages."
+		  count=$ItemDelete.selectedIdCount arg1=$ItemDelete.selectedIdCount}
+      {/if}
     {/if}
   </p>
 

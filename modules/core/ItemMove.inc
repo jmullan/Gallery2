@@ -68,7 +68,8 @@ class ItemMoveController extends GalleryController {
 		}
 
 		/* Load destination parent ids: we don't want recursive moves */
-		list($ret, $newParentAncestorIds) = GalleryCoreApi::fetchParentSequence($newParentId);
+		list ($ret, $newParentAncestorIds) =
+		    GalleryCoreApi::fetchParentSequence($newParentId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -113,9 +114,11 @@ class ItemMoveController extends GalleryController {
 
 		    /* Check if the destination allows this source to be added */
 		    if ($selectedItem->getCanContainChildren() && ! $canAddAlbum) {
-			$error[] = 'form[error][source][' . $selectedId . '][permission][addAlbumItem]';
+			$error[] = 'form[error][source][' . $selectedId .
+				   '][permission][addAlbumItem]';
 		    } else if (! $selectedItem->getCanContainChildren() && ! $canAddItem) {
-			$error[] = 'form[error][source][' . $selectedId . '][permission][addDataItem]';
+			$error[] = 'form[error][source][' . $selectedId .
+				   '][permission][addDataItem]';
 		    }
 		}
 		$oldParentIds = array_values(array_unique($oldParentIds));
@@ -176,8 +179,8 @@ class ItemMoveController extends GalleryController {
 	    }
 	} else if (isset($form['action']['next'])) {
 	    $page = GalleryUtilities::getRequestVariables('page');
-	    list($ret, $peerIds) =
-		    GalleryCoreApi::fetchChildItemIdsWithPermission($itemId, 'core.delete');
+	    list ($ret, $peerIds) =
+		GalleryCoreApi::fetchChildItemIdsWithPermission($itemId, 'core.delete');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -223,28 +226,29 @@ class ItemMoveView extends GalleryView {
 	global $gallery;
 
 	/* itemId is the album where we want to move items from */
-	list ($itemId, $selectedId, $page) = GalleryUtilities::getRequestVariables('itemId', 'selectedId', 'page');
-        if ($form['formName'] != 'ItemMove') {
-            /* First time around, load the form with item data */
-            if ($selectedId) {
-                $form['selectedIds'][$selectedId] = true;
-            }
-            $form['destination'] = '';
+	list ($itemId, $selectedId, $page) =
+	    GalleryUtilities::getRequestVariables('itemId', 'selectedId', 'page');
+	if ($form['formName'] != 'ItemMove') {
+	    /* First time around, load the form with item data */
+	    if ($selectedId) {
+		$form['selectedIds'][$selectedId] = true;
+	    }
+	    $form['destination'] = '';
 	    $form['formName'] = 'ItemMove';
 	    $form['numPerPage'] = 15;
-        }
+	}
 
-        list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
 	/* Get all peers that we can delete */
-        list ($ret, $peerIds) =
-            GalleryCoreApi::fetchChildItemIdsWithPermission($itemId, 'core.delete');
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
+	list ($ret, $peerIds) =
+	    GalleryCoreApi::fetchChildItemIdsWithPermission($itemId, 'core.delete');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
 	$albumIds = array();
 	$peers = array();
@@ -274,6 +278,16 @@ class ItemMoveView extends GalleryView {
 		foreach ($peerIds as $peerId) {
 		    if (isset($selectedIds[$peerId])) {
 			unset($selectedIds[$peerId]);
+		    }
+		}
+	    }
+
+	    /* Add any items with error messages that would otherwise not be shown */
+	    if (!empty($form['error']['source'])) {
+		foreach ($form['error']['source'] as $id => $tmp) {
+		    if (!in_array($id, $peerIds)) {
+			array_unshift($peerIds, $id);
+			unset($selectedIds[$id]);
 		    }
 		}
 	    }
@@ -360,19 +374,20 @@ class ItemMoveView extends GalleryView {
 	$ItemMove = array();
 	$ItemMove['canCancel'] = $urlGenerator->isNavigationBackPossible();
 	$ItemMove['albumIds'] = $albumIds;
-        $ItemMove['peers'] = $peers;
-        $ItemMove['peerTypes'] = $peerTypes;
+	$ItemMove['peers'] = $peers;
+	$ItemMove['peerTypes'] = $peerTypes;
 	$ItemMove['peerDescendentCounts'] = $peerDescendentCounts;
-        $ItemMove['albumTree'] = $albumTree;
+	$ItemMove['albumTree'] = $albumTree;
 	$ItemMove['page'] = $page;
 	$ItemMove['numPages'] = $numPages;
 	$ItemMove['numPerPage'] = $form['numPerPage'];
 	$ItemMove['selectedIds'] = array_keys($selectedIds);
+	$ItemMove['selectedIdCount'] = count($selectedIds);
 
-        $template->setVariable('ItemMove', $ItemMove);
-        $template->setVariable('controller', 'core.ItemMove');
+	$template->setVariable('ItemMove', $ItemMove);
+	$template->setVariable('controller', 'core.ItemMove');
 
-        return array(GalleryStatus::success(),
+	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/ItemMove.tpl'));
     }
 

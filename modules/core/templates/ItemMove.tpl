@@ -14,6 +14,11 @@
 	   count=$status.moved.count arg1=$status.moved.count}
 </h2></div>
 {/if}
+{if !empty($form.error)}
+<div class="gbBlock"><h2 class="giError">
+  {g->text text="There was a problem processing your request."}
+</h2></div>
+{/if}
 
 <div class="gbBlock">
 {if empty($ItemMove.peers)}
@@ -27,6 +32,13 @@
     {g->text text="Choose the items you want to move"}
     {if ($ItemMove.numPages > 1) }
       {g->text text="(page %d of %d)" arg1=$ItemMove.page arg2=$ItemMove.numPages}
+      <br/>
+      {g->text text="Items selected here will remain selected when moving between pages."}
+      {if !empty($ItemMove.selectedIds)}
+	<br/>
+	{g->text one="One item selected on other pages." many="%d items selected on other pages."
+		 count=$ItemMove.selectedIdCount arg1=$ItemMove.selectedIdCount}
+      {/if}
     {/if}
   </p>
 
