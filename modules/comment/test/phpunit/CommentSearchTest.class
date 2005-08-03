@@ -112,8 +112,7 @@ class CommentSearchTest extends GalleryTestCase {
 
 	    case 1:
 		$ret = GalleryCoreApi::addGroupPermission($this->_item[$j]->getId(),
-								$groupId,
-								'comment.view');
+								$groupId, 'comment.view');
 		if ($ret->isError()) {
 		    print $ret->getAsHtml();
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -122,8 +121,15 @@ class CommentSearchTest extends GalleryTestCase {
 
 	    case 2:
 		$ret = GalleryCoreApi::addUserPermission($this->_item[$j]->getId(),
-							       $gallery->getActiveUserId(),
-							       'comment.search');
+							 $gallery->getActiveUserId(),
+							 'comment.view');
+		if ($ret->isError()) {
+		    print $ret->getAsHtml();
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+		$ret = GalleryCoreApi::addUserPermission($this->_item[$j]->getId(),
+							 $gallery->getActiveUserId(),
+							 'core.view');
 		if ($ret->isError()) {
 		    print $ret->getAsHtml();
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -132,8 +138,13 @@ class CommentSearchTest extends GalleryTestCase {
 
 	    case 3:
 		$ret = GalleryCoreApi::addGroupPermission($this->_item[$j]->getId(),
-								$groupId,
-								'comment.search');
+							  $groupId, 'comment.view');
+		if ($ret->isError()) {
+		    print $ret->getAsHtml();
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+		$ret = GalleryCoreApi::addGroupPermission($this->_item[$j]->getId(),
+							  $groupId, 'core.view');
 		if ($ret->isError()) {
 		    print $ret->getAsHtml();
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

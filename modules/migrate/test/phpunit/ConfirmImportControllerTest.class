@@ -937,7 +937,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
      *
      * canRead => core.view,core.viewResizes
      * canViewFullImages => core.viewSource
-     * canViewComments => comment.view,comment.search
+     * canViewComments => comment.view
      * canAddComments => comment.add
      * canChangeText => core.edit
      * canAddTo => core.addDataItem
@@ -1004,7 +1004,6 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 					    'core.viewResizes' => true,
 					    'core.viewSource' => true,
 					    'comment.view' => true && $this->testComments,
-					    'comment.search' => true && $this->testComments,
 					    'comment.add' => true && $this->testComments,
 					    'core.edit' => true,
 					    'core.addDataItem' => true,
@@ -1174,7 +1173,6 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 					    'core.viewResizes' => true,
 					    'core.viewSource' => false,
 					    'comment.view' => false && $this->testComments,
-					    'comment.search' => false && $this->testComments,
 					    'comment.add' => false && $this->testComments,
 					    'core.edit' => false,
 					    'core.addDataItem' => false,
@@ -1282,7 +1280,6 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 					    'core.viewResizes' => false,
 					    'core.viewSource' => false,
 					    'comment.view' => false && $this->testComments,
-					    'comment.search' => false && $this->testComments,
 					    'comment.add' => false && $this->testComments,
 					    'core.edit' => false,
 					    'core.addDataItem' => false,
@@ -1422,7 +1419,6 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 					    'core.viewResizes' => false,
 					    'core.viewSource' => false,
 					    'comment.view' => false && $this->testComments,
-					    'comment.search' => false && $this->testComments,
 					    'comment.add' => false && $this->testComments,
 					    'core.edit' => false,
 					    'core.addDataItem' => false,
@@ -1563,7 +1559,6 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 						'core.viewResizes' => false,
 						'core.viewSource' => false,
 						'comment.view' => false && $this->testComments,
-						'comment.search' => false && $this->testComments,
 						'comment.add' => false && $this->testComments,
 						'core.edit' => false,
 						'core.addDataItem' => false,

@@ -131,7 +131,7 @@ class ConfirmImportController extends GalleryController {
 	 * canRead => core.view,core.viewResizes
 	 * canViewFullImages => core.viewSource
 	 * canViewComments =>
-	 * comment.view,comment.search
+	 * comment.view
 	 * canAddComments => comment.add
 	 * canChangeText => core.edit
 	 * canAddTo => core.addDataItem
@@ -153,7 +153,7 @@ class ConfirmImportController extends GalleryController {
 				       );
 	if ($importComments) {
 	    $permissionTranslation['canAddComments'] = array('comment.add');
-	    $permissionTranslation['canViewComments'] = array('comment.view', 'comment.search');
+	    $permissionTranslation['canViewComments'] = array('comment.view');
 	} else {
 	    $permissionTranslation['canAddComments'] = array();
 	    $permissionTranslation['canViewComments'] = array();
