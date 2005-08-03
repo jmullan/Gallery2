@@ -31,7 +31,9 @@ if (!@$gallery->getConfig('setup.password')) {
     return;
 }
 
-if (!GalleryUtilities::isEmbedded()) {
+if (GalleryUtilities::isEmbedded()) {
+    require_once(dirname(__FILE__) . '/init.inc');
+} else {
     /* If this is a request for a public data file, give it to the user immediately */
     list ($view, $itemId) = GalleryUtilities::getRequestVariables('view', 'itemId');
     if ($view == 'core.DownloadItem' && !empty($itemId)) {
@@ -44,6 +46,7 @@ if (!GalleryUtilities::isEmbedded()) {
 	    $headers = GetAllHeaders();
 	    if (isset($headers['If-Modified-Since']) || isset($headers['If-modified-since'])) {
 		header('HTTP/1.x 304 Not Modified');
+		flush();
 		return;
 	    }
 	}
@@ -61,6 +64,7 @@ if (!GalleryUtilities::isEmbedded()) {
 	if (file_exists($path)) {
 	    include($path);
 	    if (GalleryFastDownload()) {
+		flush();
 		return;
 	    }
 	}
@@ -76,8 +80,7 @@ if (!GalleryUtilities::isEmbedded()) {
 
     /* Process the request */
     GalleryMain();
-} else {
-    require_once(dirname(__FILE__) . '/init.inc');
+    flush();
 }
 
 function GalleryMain($embedded=false) {
@@ -111,8 +114,8 @@ function GalleryMain($embedded=false) {
 	}
     } else if (isset($g2Data['redirectUrl'])) {
 	/* If we're in debug mode, show a redirect page */
-	print '<H1> Debug Redirect </H1>';
-	print 'Not automatically redirecting you to the next page because we\'re in debug mode<br/>';
+	print '<h1> Debug Redirect </h1> ' .
+	    'Not automatically redirecting you to the next page because we\'re in debug mode<br/>';
 	printf('<a href="%s">Continue to the next page</a>', $g2Data['redirectUrl']);
 	print '<hr/>';
 	print $gallery->getDebugBuffer();
