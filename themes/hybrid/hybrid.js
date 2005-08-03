@@ -412,7 +412,7 @@ function popup_menu(event,i,ii) {
   pop.style.visibility = 'hidden';
   pop.style.display = 'block';
   var links = ii >= 0 ? '<a href="" onclick="popup_info(' + ii +
-                        ');this.blur();return false">item details</a><br/>' : '';
+                        ');this.blur();return false">' + item_details + '</a><br/>' : '';
   if (obj) links += obj.innerHTML;
   ui_sethtml('popup_links', links);
   if (!event) event = window.event;

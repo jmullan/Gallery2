@@ -62,7 +62,7 @@ class SlideshowAppletModule extends GalleryModule {
 	    $itemId = $item->getId();
 	    if (isset($wantsDetailedLinks[$itemId])) {
 		$links[$itemId][] =
-		    array('text' => $this->translate('view slideshow (fullscreen)'),
+		    array('text' => $this->translate('View Slideshow (Fullscreen)'),
 			  'params' => array(
 			      'view' => 'slideshowapplet.SlideshowApplet',
 			      'itemId' => $itemId));

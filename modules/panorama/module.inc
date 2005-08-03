@@ -188,7 +188,7 @@ class PanoramaModule extends GalleryModule {
 		    $width > $param['width'] &&
 		    ($image->getHeight() / $width < 0.6)) {
 		    $links[$itemId][] =
-			array('text' => $this->translate('view panorama'),
+			array('text' => $this->translate('View Panorama'),
 			      'params' => array('view' => 'panorama.Panorama',
 						'itemId' => $itemId));
 		}

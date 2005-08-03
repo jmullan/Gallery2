@@ -82,7 +82,7 @@ class SlideshowModule extends GalleryModule {
 	    $itemId = $item->getId();
 	    if (isset($wantsDetailedLinks[$itemId])) {
 		$links[$itemId][] =
-		    array('text' => $this->translate('view slideshow'),
+		    array('text' => $this->translate('View Slideshow'),
 			  'params' => array(
 			      'view' => 'slideshow.Slideshow',
 			      'itemId' => $itemId));

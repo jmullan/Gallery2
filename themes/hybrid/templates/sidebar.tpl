@@ -36,16 +36,17 @@
     <ul>
       <li>
 	<a id="dtl_link" href="" onclick="album_detailsonoff();this.blur();return false">
-	  {g->text text="hide details"}
+	  {g->text text="Hide Details"}
 	</a>
       </li>
       <li>
 	<a id="lnk_link" href="" onclick="album_itemlinksonoff();this.blur();return false">
-	  {g->text text="hide item links"}
+	  {g->text text="Hide Item Links"}
 	</a>
       </li>
       {if $user.isRegisteredUser}
       <li>
+	{g->text text="View"}:&nbsp;
 	{if ($theme.guestPreviewMode)}
 	<a href="{g->url arg1="controller=core.ShowItem" arg2="guestPreviewMode=0"
 			 arg3="return=1"}">{$user.userName}</a> | {g->text text="guest"}
@@ -61,7 +62,7 @@
 	<strong>{g->text text="Slideshow Options"}:</strong>
       </li>
       <li>
-	{g->text text="delay"}:
+	{g->text text="Delay"}:&nbsp;
 	<select id="slide_delay" onchange="slide_setdelay(this.value)">
 	 <option value="3">{g->text text="3 seconds"}</option>
 	 <option selected="selected" value="5">{g->text text="5 seconds"}</option>
@@ -71,7 +72,7 @@
 	 <option value="20">{g->text text="20 seconds"}</option>
 	</select>
 	<br/>
-	{g->text text="direction"}:
+	{g->text text="Direction"}:&nbsp;
 	<select id="slide_order" onchange="slide_setorder(this.value)">
 	 <option selected="selected" value="1">{g->text text="forward"}</option>
 	 <option value="-1">{g->text text="reverse"}</option>

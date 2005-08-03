@@ -72,7 +72,7 @@ class DebugModule extends GalleryModule {
 		$itemId = $item->getId();
 		if (isset($wantsDetailedLinks[$itemId])) {
 		    $links[$itemId][] =
-			array('text' => $this->translate('show debug tree'),
+			array('text' => $this->translate('Show Debug Tree'),
 			      'params' => array('view' => 'debug.ShowTree',
 						'itemId' => $itemId));
 		}

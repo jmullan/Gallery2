@@ -122,8 +122,8 @@ class CartModule extends GalleryModule {
 	foreach ($items as $item) {
 	    $itemTypeNames = $item->itemTypeName();
 	    $links[$item->getId()][] =
-		array('text' => $this->translate(array('text' => 'add %s to cart',
-						       'arg1' => $itemTypeNames[1])),
+		array('text' => $this->translate(array('text' => 'Add %s To Cart',
+						       'arg1' => $itemTypeNames[0])),
 		      'params' => array('controller' => 'cart.AddToCart',
 					'itemId' => $item->getId(),
 					'return' => true));

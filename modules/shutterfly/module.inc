@@ -88,7 +88,7 @@ class ShutterflyModule extends GalleryModule {
 		    $params['itemId'] = $itemId;
 		    $params['return'] = 1;
 		    $links[$item->getId()][] =
-			array('text' => $this->translate('print on shutterfly.com'),
+			array('text' => $this->translate('Print on Shutterfly.com'),
 			      'params' => $params);
 		}
 	    }

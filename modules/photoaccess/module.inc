@@ -88,7 +88,7 @@ class PhotoAccessModule extends GalleryModule {
 		    $params['itemId'] = $itemId;
 		    $params['returnUrl'] = '%CURRENT_URL%';
 		    $links[$item->getId()][] =
-			array('text' => $this->translate('print on photoaccess.com'),
+			array('text' => $this->translate('Print on PhotoAccess.com'),
 			      'params' => $params);
 		}
 	    }

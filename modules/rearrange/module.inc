@@ -87,7 +87,7 @@ class RearrangeModule extends GalleryModule {
 		    if (isset($permissions[$itemId]['core.edit']) &&
 			!empty($childCounts[$itemId]) && $childCounts[$itemId] > 1) {
 			$links[$itemId][] =
-			    array('text' => $this->translate('rearrange items'),
+			    array('text' => $this->translate('Rearrange Items'),
 				  'params' => array('view' => 'core.ItemAdmin',
 						    'subView' => 'rearrange.RearrangeItems',
 						    'itemId' => $itemId, 'return' => 1));

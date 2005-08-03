@@ -111,7 +111,7 @@ class CoreModule extends GalleryModule {
 	    if (isset($wantsDetailedLinks[$itemId]) && $isAlbum &&
 		    isset($permissions[$itemId]['core.addDataItem'])) {
 		$links[$itemId][] =
-		    array('text' => $this->translate('add items'),
+		    array('text' => $this->translate('Add Items'),
 			  'params' => array('view' => 'core.ItemAdmin',
 					    'subView' => 'core.ItemAdd',
 					    'itemId' => $itemId,
@@ -121,8 +121,8 @@ class CoreModule extends GalleryModule {
 	    $itemTypeNames = $item->itemTypeName();
 	    if (isset($permissions[$itemId]['core.edit'])) {
 		$links[$itemId][] =
-		    array('text' => $this->translate(array('text' => 'edit %s',
-							   'arg1' => $itemTypeNames[1])),
+		    array('text' => $this->translate(array('text' => 'Edit %s',
+							   'arg1' => $itemTypeNames[0])),
 			  'params' => array('view' => 'core.ItemAdmin',
 					    'subView' => 'core.ItemEdit',
 					    'itemId' => $itemId,
@@ -149,7 +149,7 @@ class CoreModule extends GalleryModule {
 
 		    if ($count > 0) {
 			$links[$itemId][] =
-			    array('text' => $this->translate('create link'),
+			    array('text' => $this->translate('Create Link'),
 				  'params' => array('view' => 'core.ItemAdmin',
 						    'subView' => 'core.ItemCreateLink',
 						    'itemId' => $item->getParentId(),
@@ -162,7 +162,7 @@ class CoreModule extends GalleryModule {
 	    if (isset($wantsDetailedLinks[$itemId]) &&
 		    $isAlbum && isset($permissions[$itemId]['core.addAlbumItem'])) {
 		$links[$itemId][] =
-		    array('text' => $this->translate('add album'),
+		    array('text' => $this->translate('Add Album'),
 			  'params' => array('view' => 'core.ItemAdmin',
 					    'subView' => 'core.ItemAddAlbum',
 					    'itemId' => $itemId,
@@ -172,8 +172,8 @@ class CoreModule extends GalleryModule {
 	    if (isset($permissions[$itemId]['core.edit'])) {
 		$links[$itemId][] =
 		    array('text' => isset($permissions[$itemId]['core.changePermissions'])
-				? $this->translate('edit permissions')
-				: $this->translate('view permissions'),
+				? $this->translate('Edit Permissions')
+				: $this->translate('View Permissions'),
 			  'params' => array('view' => 'core.ItemAdmin',
 					    'subView' => 'core.ItemPermissions',
 					    'itemId' => $itemId,
@@ -182,8 +182,8 @@ class CoreModule extends GalleryModule {
 
 	    if (!$isRoot && isset($permissions[$itemId]['core.delete'])) {
 		$links[$itemId][] =
-		    array('text' => $this->translate(array('text' => 'delete %s',
-							   'arg1' => $itemTypeNames[1])),
+		    array('text' => $this->translate(array('text' => 'Delete %s',
+							   'arg1' => $itemTypeNames[0])),
 			  'params' => array('view' => 'core.ItemAdmin',
 					    'subView' => 'core.ItemDelete',
 					    'itemId' => $item->getParentId(),
@@ -193,8 +193,8 @@ class CoreModule extends GalleryModule {
 
 	    if (!$isRoot && isset($permissions[$itemId]['core.delete'])) {
 		$links[$itemId][] =
-		    array('text' => $this->translate(array('text' => 'move %s',
-							   'arg1' => $itemTypeNames[1])),
+		    array('text' => $this->translate(array('text' => 'Move %s',
+							   'arg1' => $itemTypeNames[0])),
 			  'params' => array('view' => 'core.ItemAdmin',
 					    'subView' => 'core.ItemMove',
 					    'itemId' => $item->getParentId(),
@@ -208,7 +208,7 @@ class CoreModule extends GalleryModule {
 		    !empty($childCounts[$itemId]) &&
 		    $childCounts[$itemId] > 0) {
 		$links[$itemId][] =
-		    array('text' => $this->translate('edit captions'),
+		    array('text' => $this->translate('Edit Captions'),
 			  'params' => array('view' => 'core.ItemAdmin',
 					    'subView' => 'core.ItemEditCaptions',
 					    'itemId' => $itemId,
@@ -218,7 +218,7 @@ class CoreModule extends GalleryModule {
 	    if (!$isRoot && isset($thumbTable[$itemId]) &&
 		    isset($permissions[$itemId]['core.edit'])) {
 		$links[$itemId][] =
-		    array('text' => $this->translate('make highlight'),
+		    array('text' => $this->translate('Make Highlight'),
 			  'params' => array('view' => 'core.ItemAdmin',
 					    'subView' => 'core.ItemMakeHighlight',
 					    'itemId' => $itemId,
@@ -229,7 +229,7 @@ class CoreModule extends GalleryModule {
 		    !empty($childCounts[$itemId]) &&
 		    $childCounts[$itemId] > 1) {
 		$links[$itemId][] =
-		    array('text' => $this->translate('reorder items'),
+		    array('text' => $this->translate('Reorder Items'),
 			  'params' => array('view' => 'core.ItemAdmin',
 					    'subView' => 'core.ItemReorder',
 					    'itemId' => $itemId,

@@ -127,7 +127,7 @@ class CommentModule extends GalleryModule {
 		    $params['itemId'] = $item->getId();
 		    $params['return'] = 1;
 		    $links[$item->getId()][] =
-			array('text' => $this->translate('add comment'),
+			array('text' => $this->translate('Add Comment'),
 			      'params' => $params);
 		}
 	    }
