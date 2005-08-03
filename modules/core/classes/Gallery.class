@@ -749,7 +749,7 @@ class Gallery {
      */
     function debug_r($object, $escapeHtmlEntities=false) {
 	if (!empty($this->_debug)) {
-	    if (phpversion() >= '4.3.0') {
+	    if (version_compare(phpversion(), '4.3.0', '>=')) {
 		$buf = print_r($object, true);
 	    } else {
 		ob_start();
