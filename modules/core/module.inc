@@ -118,12 +118,13 @@ class CoreModule extends GalleryModule {
 					    'return' => 1));
 	    }
 
-	    $itemTypeNames = $item->itemTypeName();
+	    $itemTypeNames = array_merge($item->itemTypeName(), $item->itemTypeName(false));
 	    if (isset($permissions[$itemId]['core.edit'])) {
 		/* Specific translations: _('Edit Album') _('Edit Photo') _('Edit Movie') */
 		$links[$itemId][] =
-		    array('text' => $this->_translate(array('text' => 'Edit %s',
-							    'arg1' => $itemTypeNames[0]), true),
+		    array('text' => $this->_translate(
+			      array('text' => 'Edit %s', 'arg1' => $itemTypeNames[0]),
+			      $itemTypeNames[2]),
 			  'params' => array('view' => 'core.ItemAdmin',
 					    'subView' => 'core.ItemEdit',
 					    'itemId' => $itemId,
@@ -184,8 +185,9 @@ class CoreModule extends GalleryModule {
 	    if (!$isRoot && isset($permissions[$itemId]['core.delete'])) {
 		/* Specific translations: _('Delete Album') _('Delete Photo') _('Delete Movie') */
 		$links[$itemId][] =
-		    array('text' => $this->_translate(array('text' => 'Delete %s',
-							    'arg1' => $itemTypeNames[0]), true),
+		    array('text' => $this->_translate(
+			      array('text' => 'Delete %s', 'arg1' => $itemTypeNames[0]),
+			      $itemTypeNames[2]),
 			  'params' => array('view' => 'core.ItemAdmin',
 					    'subView' => 'core.ItemDelete',
 					    'itemId' => $item->getParentId(),
@@ -196,8 +198,9 @@ class CoreModule extends GalleryModule {
 	    if (!$isRoot && isset($permissions[$itemId]['core.delete'])) {
 		/* Specific translations: _('Move Album') _('Move Photo') _('Move Movie') */
 		$links[$itemId][] =
-		    array('text' => $this->_translate(array('text' => 'Move %s',
-							    'arg1' => $itemTypeNames[0]), true),
+		    array('text' => $this->_translate(
+			      array('text' => 'Move %s', 'arg1' => $itemTypeNames[0]),
+			      $itemTypeNames[2]),
 			  'params' => array('view' => 'core.ItemAdmin',
 					    'subView' => 'core.ItemMove',
 					    'itemId' => $item->getParentId(),
@@ -385,7 +388,7 @@ class CoreModule extends GalleryModule {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$itemTypeNames = $item->itemTypeName();
+	$itemTypeNames = array_merge($item->itemTypeName(), $item->itemTypeName(false));
 	if (isset($permissions['core.edit'])) {
 	    if ($isAlbum) {
 		if ($childCount > 1) {
@@ -396,7 +399,8 @@ class CoreModule extends GalleryModule {
 
 	    /* Edit view for all item types */
 	    $views[] = array('name' => $this->_translate(
-				  array('text' => 'Edit %s', 'arg1' => $itemTypeNames[0]), true),
+				  array('text' => 'Edit %s', 'arg1' => $itemTypeNames[0]),
+				  $itemTypeNames[2]),
 			     'view' => 'core.ItemEdit');
 
 	    if (!empty($parentId) && $hasThumb && $parentId != $rootId
@@ -423,9 +427,10 @@ class CoreModule extends GalleryModule {
 		}
 
 		if ($count > 0) {
+		    /* Specific translations: _('Link Album') _('Link Photo') _('Link Movie') */
 		    $views[] = array('name' => $this->_translate(
 					array('text' => 'Link %s', 'arg1' => $itemTypeNames[0]),
-					true),
+					$itemTypeNames[2]),
 				     'view' => 'core.ItemCreateLinkSingle');
 		}
 	    }
@@ -434,11 +439,13 @@ class CoreModule extends GalleryModule {
 	if (isset($permissions['core.delete'])) {
 	    if ($item->getId() != $rootId) {
 		$views[] = array('name' => $this->_translate(
-				   array('text' => 'Delete %s', 'arg1' => $itemTypeNames[0]), true),
+				   array('text' => 'Delete %s', 'arg1' => $itemTypeNames[0]),
+				   $itemTypeNames[2]),
 				 'view' => 'core.ItemDeleteSingle');
 
 		$views[] = array('name' => $this->_translate(
-				   array('text' => 'Move %s', 'arg1' => $itemTypeNames[0]), true),
+				   array('text' => 'Move %s', 'arg1' => $itemTypeNames[0]),
+				   $itemTypeNames[2]),
 				 'view' => 'core.ItemMoveSingle');
 	    }
 	}
@@ -470,22 +477,22 @@ class CoreModule extends GalleryModule {
     /**
      * Translate string.  Results are cached.
      * @param mixed string or array for translation
-     * @param boolean (optional) true to attempt to translate post-sprintf string
+     * @param string (optional) attempt to translate post-sprintf string using this value
      *    This allows specific translation of strings like "Edit Album" or "Edit Photo"
      *    with a fallback to translation of "Edit %s" for other %s values.
      * @return translated string
      * @access private
      */
-    function _translate($params, $postSprintf=false) {
-	if ($postSprintf) {
-	    $string = sprintf($params['text'], $params['arg1']);
+    function _translate($params, $postSprintf=null) {
+	if (isset($postSprintf)) {
+	    $string = sprintf($params['text'], $postSprintf);
 	} else if (is_string($params)) {
 	    $string = $params;
 	}
 	if (isset($string) && GalleryDataCache::containsKey($string)) {
 	    return GalleryDataCache::get($string);
 	}
-	if ($postSprintf) {
+	if (isset($postSprintf)) {
 	    $result = $this->translate($string);
 	}
 	if (!isset($result) || $result == $string) {
