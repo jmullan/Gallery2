@@ -52,20 +52,21 @@ class MailHelperTest extends GalleryTestCase {
 
     function testSendTemplatedEmail() {
 	global $gallery;
+	$platform = $gallery->getPlatform();
+	$gallery->_platform = new MailHelperDummyPlatform($platform);
 
-        $platform = $gallery->getPlatform();
-        $gallery->_platform = new MailHelperDummyPlatform($platform);
-
-        $ret = GalleryCoreApi::setPluginParameter('module', 'core', 'smtp.from', '');
-        if ($ret->isError()) {
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'smtp.from', '');
+	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
+	}
 
 	$emailData = array(
 	    'to' => 'mailhelpertest@test.com',
 	    'subject' => 'MailHelperTest subject',
-	    'body' => 'MailHelperTest test string',
-	    'headers' => '');
+	    'body' => 'MailHelperTest test string');
+	$expectedData = $emailData;
+	$expectedData['subject'] = '=?utf-8?q?' . $expectedData['subject'] . '?=';
+	$expectedData['headers'] = "Content-Type: text/plain; charset=\"utf-8\"\r\n";
 
 	/* Test that the from header is empty */
 	$ret = GalleryCoreApi::sendTemplatedEmail(
@@ -73,11 +74,11 @@ class MailHelperTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals($emailData, $gallery->_platform->getMailData(), 'Blank From');
+	$this->assertEquals($expectedData, $gallery->_platform->getMailData(), 'Blank From');
 
 	/* Set the from address and update the test data */
 	$from = 'mailhelpertest@test.com';
-	$emailData['headers'] = "From: $from\r\n";
+	$expectedData['headers'] = "Content-Type: text/plain; charset=\"utf-8\"\r\nFrom: $from\r\n";
 
 	/* Test that the from header is retrieved from function input */
 	$ret = GalleryCoreApi::sendTemplatedEmail(
@@ -85,24 +86,24 @@ class MailHelperTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals($emailData, $gallery->_platform->getMailData(), 'Function From');
+	$this->assertEquals($expectedData, $gallery->_platform->getMailData(), 'Function From');
 
 	/* Test that the from header is retrieved from the core.smtp.from field */
-        $ret = GalleryCoreApi::setPluginParameter('module', 'core', 'smtp.from', $from);
-        if ($ret->isError()) {
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'smtp.from', $from);
+	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
+	}
 
 	$ret = GalleryCoreApi::sendTemplatedEmail(
 	    $this->templateFile, $emailData, null, $emailData['to'], $emailData['subject']);
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals($emailData, $gallery->_platform->getMailData(), 'smtp.from');
+	$this->assertEquals($expectedData, $gallery->_platform->getMailData(), 'smtp.from');
 
 	/* Set the from address and update the test data */
 	$from = 'mailhelpertest2@test.com';
-	$emailData['headers'] = "From: $from\r\n";
+	$expectedData['headers'] = "Content-Type: text/plain; charset=\"utf-8\"\r\nFrom: $from\r\n";
 
 	/* Test that the from header is preferred from the function over the core.smtp.from field */
 	$ret = GalleryCoreApi::sendTemplatedEmail(
@@ -110,14 +111,40 @@ class MailHelperTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals($emailData, $gallery->_platform->getMailData(),
+	$this->assertEquals($expectedData, $gallery->_platform->getMailData(),
 			    'function over smtp.from');
+
+	/* Specify content-type */
+	$emailData['headers'] = "Content-Type: text/html\r\n";
+	$expectedData['headers'] = "From: $from\r\nContent-Type: text/html\r\n";
+
+	$ret = GalleryCoreApi::sendTemplatedEmail(
+	    $this->templateFile, $emailData, $from, $emailData['to'], $emailData['subject'],
+								      $emailData['headers']);
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($expectedData, $gallery->_platform->getMailData(),
+			    'Specify content-type');
+
+	/* Extended character in subject */
+	$emailData['subject'] = "s\xc3\xa5 utrolig";
+	$expectedData['subject'] = '=?utf-8?q?s=c3=a5 utrolig?=';
+
+	$ret = GalleryCoreApi::sendTemplatedEmail(
+	    $this->templateFile, $emailData, $from, $emailData['to'], $emailData['subject'],
+								      $emailData['headers']);
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($expectedData, $gallery->_platform->getMailData(),
+			    'Specify content-type');
     }
 
     function testSendTemplatedEmailMultiRecipient() {
 	global $gallery;
 
-        $platform = $gallery->getPlatform();
+	$platform = $gallery->getPlatform();
 	$gallery->_platform = $dummyPlatform = new MailHelperDummyPlatform($platform);
 
 	$emailData = array(
@@ -150,12 +177,11 @@ class MailHelperDummyPlatform {
     }
 
     function mail($to, $subject, $body, $headers=null) {
-	GalleryUtilities::putRequestVariable(
-	    'maildata',
+	$_REQUEST['maildata'] =
 	    array('to' => $to,
 		  'subject' => $subject,
 		  'body' => trim($body),
-		  'headers' => $headers));
+		  'headers' => $headers);
 
 	$_REQUEST['mailedCount']++;
 	return true;
@@ -166,51 +192,51 @@ class MailHelperDummyPlatform {
     }
 
     function getMailData() {
-	return GalleryUtilities::getRequestVariables('maildata');
+	return $_REQUEST['maildata'];
     }
 
     function realpath($file) {
-        return $this->_platform->realpath($file);
+	return $this->_platform->realpath($file);
     }
 
     function getDirectorySeparator() {
-        return $this->_platform->getDirectorySeparator();
+	return $this->_platform->getDirectorySeparator();
     }
 
     function file_exists($filename) {
-        return $this->_platform->file_exists($filename);
+	return $this->_platform->file_exists($filename);
     }
 
     function is_dir($filename) {
-        return $this->_platform->is_dir($filename);
+	return $this->_platform->is_dir($filename);
     }
 
     function is_writeable($filename) {
-        return $this->_platform->is_writeable($filename);
+	return $this->_platform->is_writeable($filename);
     }
 
     function stat($filename) {
-        return $this->_platform->stat($filename);
+	return $this->_platform->stat($filename);
     }
 
     function mkdir($path) {
-        return $this->_platform->mkdir($path);
+	return $this->_platform->mkdir($path);
     }
 
     function fopen($filename, $mode, $use_include_path=0) {
-        return $this->_platform->fopen($filename, $mode, $use_include_path);
+	return $this->_platform->fopen($filename, $mode, $use_include_path);
     }
 
     function recursiveRmdir($dirname) {
-        return $this->_platform->recursiveRmdir($dirname);
+	return $this->_platform->recursiveRmdir($dirname);
     }
 
     function fclose($handle) {
-        return $this->_platform->fclose($handle);
+	return $this->_platform->fclose($handle);
     }
 
     function flock($handle, $operation, &$wouldblock) {
-        return $this->_platform->flock($handle, $operation, $wouldblock);
+	return $this->_platform->flock($handle, $operation, $wouldblock);
     }
 }
 ?>
