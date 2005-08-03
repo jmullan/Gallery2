@@ -1,6 +1,6 @@
 <?php
 /*
-V4.64 20 June 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.65 22 July 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -530,6 +530,42 @@ class ADODB_mysql extends ADOConnection {
 	{
 		return 4294967295; 
 	}
+	
+	// "Innox - Juan Carlos Gonzalez" <jgonzalez#innox.com.mx>
+	function MetaForeignKeys( $table, $owner = FALSE, $upper = FALSE, $asociative = FALSE )
+     {
+         if ( !empty($owner) ) {
+            $table = "$owner.$table";
+         }
+         $a_create_table = $this->getRow(sprintf('SHOW CREATE TABLE %s', $table));
+         $create_sql     = $a_create_table[1];
+
+         $matches        = array();
+         $foreign_keys   = array();
+         if ( preg_match_all("/FOREIGN KEY \(`(.*?)`\) REFERENCES `(.*?)` \(`(.*?)`\)/", $create_sql, $matches) ) {
+             $num_keys = count($matches[0]);
+             for ( $i = 0;  $i < $num_keys;  $i ++ ) {
+                 $my_field  = explode('`, `', $matches[1][$i]);
+                 $ref_table = $matches[2][$i];
+                 $ref_field = explode('`, `', $matches[3][$i]);
+
+                 if ( $upper ) {
+                     $ref_table = strtoupper($ref_table);
+                 }
+
+                 $foreign_keys[$ref_table] = array();
+                 $num_fields               = count($my_field);
+                 for ( $j = 0;  $j < $num_fields;  $j ++ ) {
+                     if ( $asociative ) {
+                         $foreign_keys[$ref_table][$ref_field[$j]] = $my_field[$j];
+                     } else {
+                         $foreign_keys[$ref_table][] = "{$my_field[$j]}={$ref_field[$j]}";
+                     }
+                 }
+             }
+         }
+         return  $foreign_keys;
+     }
 	
 }
 	

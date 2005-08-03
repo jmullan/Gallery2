@@ -1,7 +1,7 @@
 <?php
 /*
 
-  version V4.64 20 June 2005 (c) 2000-2005 John Lim. All rights reserved.
+  version V4.65 22 July 2005 (c) 2000-2005 John Lim. All rights reserved.
 
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
@@ -227,7 +227,7 @@ NATSOFT.DOMAIN =
 				:
 				OCILogon($argUsername,$argPassword, $argDatabasename,$this->charSet);
 		}
-		if ($this->_connectionID === false) return false;
+		if (!$this->_connectionID) return false;
 		if ($this->_initdate) {
 			$this->Execute("ALTER SESSION SET NLS_DATE_FORMAT='".$this->NLS_DATE_FORMAT."'");
 		}
@@ -937,7 +937,6 @@ NATSOFT.DOMAIN =
 	*/ 
 	function _query($sql,$inputarr)
 	{
-		
 		if (is_array($sql)) { // is prepared sql
 			$stmt = $sql[1];
 			
@@ -1330,7 +1329,7 @@ class ADORecordset_oci8 extends ADORecordSet {
 				if (ADODB_ASSOC_CASE != 2 || $this->databaseType != 'oci8') break;
 				
 				$ncols = @OCIfetchstatement($this->_queryID, $assoc, 0, $nRows, OCI_FETCHSTATEMENT_BY_ROW);
-				$results = array_merge(array($this->fields),$assoc);
+				$results =& array_merge(array($this->fields),$assoc);
 				return $results;
 			
 			default:
