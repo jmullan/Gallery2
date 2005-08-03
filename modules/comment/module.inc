@@ -40,7 +40,7 @@ class CommentModule extends GalleryModule {
 	$this->setId('comment');
 	$this->setName($gallery->i18n('Comments'));
 	$this->setDescription($gallery->i18n('User commenting system'));
-	$this->setVersion('0.9.6');
+	$this->setVersion('0.9.7');
 	$this->setGroup('data', $this->translate('Extra Data'));
 	$this->setCallbacks('getItemLinks|getItemSummaries|getItemAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
@@ -63,9 +63,6 @@ class CommentModule extends GalleryModule {
 	    $permissions[] = array('all', $gallery->i18n('[comment] All access'),
 		GALLERY_PERMISSION_COMPOSITE,
 		array('comment.add', 'comment.edit', 'comment.delete', 'comment.view'));
-	    $permissions[] = array('search', $gallery->i18n('[comment] Search comments'),
-		GALLERY_PERMISSION_COMPOSITE,
-		array('core.view', 'comment.view'));
 	    foreach ($permissions as $p) {
 		$ret = GalleryCoreApi::registerPermission($this->getId(),
 							  'comment.' . $p[0],
@@ -73,6 +70,19 @@ class CommentModule extends GalleryModule {
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
+	    }
+	} else if (version_compare($currentVersion, '0.9.7', '<')) {
+	    /*
+	     * Remove comment.search permission included in older module versions.
+	     * As this is a composite permission we can simply remove its entry in the
+	     * PermissionSet table and not touch any item permissions.
+	     */
+	    GalleryCoreApi::relativeRequireOnce(
+		'modules/core/classes/GalleryPermissionSetMap.class');
+	    $ret = GalleryPermissionSetMap::removeMapEntry(
+		array('module' => 'comment', 'permission' => 'comment.search'));
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
