@@ -34,7 +34,7 @@ class MultisiteStep extends InstallStep {
 
     function processRequest() {
 	global $galleryStub;
-	
+
 	if (!empty($_GET['doAutoComplete'])) {
 	    processAutoCompleteRequest();
 	    return false;
@@ -61,14 +61,14 @@ class MultisiteStep extends InstallStep {
 
     function loadTemplateData(&$templateData) {
 	global $galleryStub;
-	
+
 	if (!isset($this->_isMultisite)) {
 	    $this->_isMultisite = false;
 	    $this->_configPath = '';
 	}
-	
+
 	$galleryDir = dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR;
-	
+
 	if (isset($_POST['isMultisite']) && $_POST['isMultisite'] == '1') {
 	    $this->_isMultisite = true;
 	    if (empty($this->_configPath)) {
@@ -76,7 +76,7 @@ class MultisiteStep extends InstallStep {
 	    } else if (!is_dir($this->_configPath)) {
 		$templateData['error']['missing_dir'] = 1;
 	    } else if ($this->_configPath == $galleryDir ||
-		           $this->_configPath . DIRECTORY_SEPARATOR == $galleryDir) {
+		       $this->_configPath . DIRECTORY_SEPARATOR == $galleryDir) {
 		$templateData['error']['codebase_dir'] = 1;
 	    } else if (!is_readable($this->_configPath)) {
 		$templateData['error']['inaccessible_dir'] = 1;
@@ -141,7 +141,7 @@ class MultisiteStep extends InstallStep {
 	/* Load existing config.php (if found), which requires $gallery to be valid */
 	$configFile = $_SESSION['configPath'] . DIRECTORY_SEPARATOR . 'config.php';
 	$gallery = new GalleryStub();
-	if (is_file($configFile) && is_readable($configFile)) {
+	if (@is_file($configFile) && is_readable($configFile)) {
 	    ob_start();
 	    @include($configFile);
 	    ob_end_clean();
