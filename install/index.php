@@ -235,6 +235,10 @@ function populateDataDirectory($dataBase) {
     /* Use non-restrictive umask to create directories with lax permissions */
     umask(0);
 
+    if ($dataBase{strlen($dataBase)-1} != DIRECTORY_SEPARATOR) {
+	$dataBase .= DIRECTORY_SEPARATOR;
+    }
+    
     /* Create the sub directories, if necessary */
     foreach (array('albums',
 		   'cache',
@@ -249,7 +253,7 @@ function populateDataDirectory($dataBase) {
 		   'plugins_data/themes',
 		   'smarty',
 		   'smarty/templates_c') as $key) {
-	$dir = "$dataBase/$key";
+	$dir = $dataBase . $key;
 
 	if (file_exists($dir) && !is_dir($dir)) {
 	    return false;

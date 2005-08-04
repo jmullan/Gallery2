@@ -564,14 +564,18 @@ class DatabaseSetupStep extends InstallStep {
 	$baseDir = $gallery->getConfig('data.gallery.base');
 	$platform = $gallery->getPlatform();
 
+	if ($baseDir{strlen($baseDir)-1} != $platform->getDirectorySeparator()) {
+	    $baseDir .= $platform->getDirectorySeparator();
+	}
+	
 	/* Scrub the contents of the gallery data directory */
 	$dir = $platform->opendir($baseDir);
-
+	
 	while (($filename = $platform->readdir($dir)) !== false) {
 	    if (!strcmp($filename, '.') || !strcmp($filename, '..')) {
 		continue;
 	    }
-	    $path = "$baseDir$filename";
+	    $path = $baseDir . $filename;
 
 	    if ($platform->is_dir($path)) {
 		$ret = $platform->recursiveRmdir($path);
