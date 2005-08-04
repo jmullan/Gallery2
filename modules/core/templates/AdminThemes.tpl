@@ -39,22 +39,22 @@
 
 <div class="gbTabBar">
   {if ($AdminThemes.mode == 'config')}
-    <span class="giSelected"><span>
+    <span class="giSelected o"><span>
 	{g->text text="All Themes"}
     </span></span>
   {else}
-    <span><span>
+    <span class="o"><span>
       <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminThemes"
 		       arg3="mode=config"}">{g->text text="All Themes"}</a>
     </span></span>
   {/if}
 
   {if ($AdminThemes.mode == 'defaults')}
-    <span class="giSelected"><span>
+    <span class="giSelected o"><span>
       {g->text text="Defaults"}
     </span></span>
   {else}
-    <span><span>
+    <span class="o"><span>
       <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminThemes"
 		       arg3="mode=defaults"}">{g->text text="Defaults"}</a>
     </span></span>
@@ -63,11 +63,11 @@
   {foreach from=$AdminThemes.themes key=themeId item=theme}
   {if $theme.active}
     {if ($AdminThemes.mode == 'editTheme') && ($AdminThemes.themeId == $themeId)}
-      <span class="giSelected"><span>
+      <span class="giSelected o"><span>
 	{g->text text=$theme.name l10Domain=$theme.l10Domain}
       </span></span>
     {else}
-      <span><span>
+      <span class="o"><span>
 	<a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminThemes"
 			 arg3="mode=editTheme" arg4="themeId=$themeId"}">{g->text text=$theme.name l10Domain=$theme.l10Domain}</a>
       </span></span>

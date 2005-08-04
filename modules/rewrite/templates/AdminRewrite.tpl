@@ -49,33 +49,33 @@
 
 <div class="gbTabBar">
   {if ($AdminRewrite.mode == 'rules')}
-    <span class="giSelected"><span>
+    <span class="giSelected o"><span>
       {g->text text="Rules"}
     </span></span>
   {else}
-    <span><span>
+    <span class="o"><span>
       <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=rewrite.AdminRewrite"
        arg3="mode=rules"}">{g->text text="Rules"}</a>
     </span></span>
   {/if}
 
   {if ($AdminRewrite.mode == 'setup')}
-    <span class="giSelected"><span>
+    <span class="giSelected o"><span>
       {g->text text="Setup"}
     </span></span>
   {else}
-    <span><span>
+    <span class="o"><span>
       <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=rewrite.AdminRewrite"
        arg3="mode=setup"}">{g->text text="Setup"}</a>
     </span></span>
   {/if}
 
   {if ($AdminRewrite.mode == 'test')}
-    <span class="giSelected"><span>
+    <span class="giSelected o"><span>
       {g->text text="Test"}
     </span></span>
   {else}
-    <span><span>
+    <span class="o"><span>
       <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=rewrite.AdminRewrite"
        arg3="mode=test"}">{g->text text="Test"}</a>
     </span></span>

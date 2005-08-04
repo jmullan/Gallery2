@@ -23,11 +23,11 @@
 <div class="gbTabBar">
   {foreach from=$ItemAdd.plugins item=plugin}
     {if $plugin.isSelected}
-      <span class="giSelected"><span>
+      <span class="giSelected o"><span>
 	{$plugin.title}
       </span></span>
     {else}
-      <span><span>
+      <span class="o"><span>
 	<a href="{g->url arg1="view=core.ItemAdmin" arg2="subView=core.ItemAdd"
 	 arg3="itemId=`$ItemAdmin.item.id`" arg4="addPlugin=`$plugin.id`"}">{$plugin.title}</a>
       </span></span>

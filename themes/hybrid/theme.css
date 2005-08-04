@@ -233,7 +233,7 @@ div#popup_titlebar {
 }
 
 table.gbDataTable {
-    margin-bottom: 4px;
+    padding-bottom: 4px;
 }
 
 table.gbDataTable th, table.gbDataTable td {
@@ -493,22 +493,19 @@ div.gbTabBar {
     white-space: nowrap;
 }
 
-div.gbTabBar span {
+div.gbTabBar span.o {
     padding: 6px 0 5px 8px;
     background: url('../matrix/images/tab_left.jpg') no-repeat left top;
 }
-#gallery.IE div.gbTabBar span {
+#gallery.IE div.gbTabBar span.o {
     display: inline-block;   /* IE loses padding-left on wrapped inline nowrap element */
     margin-bottom: 1px;      /* ..and then adds padding differently with inline-block.. */
-    padding-top: 0;  padding-bottom: 0;
 }
-#gallery.IE div.gbTabBar { padding-bottom: 0; }
-#gallery.IE div.gbTabBar span.giSelected { margin-bottom: 0; padding-bottom: 0; }
-#gallery.IE div.gbTabBar span span { padding-bottom: 5px; padding-top: 6px; }
-#gallery.IE div.gbTabBar span.giSelected span { margin-bottom: 0; padding-bottom: 7px; }
+/* IE may clip off the right end of a long set of tabs, so allow IE to wrap them */
+#gallery.IE div.gbTabBar { padding-bottom: 0; white-space: normal; }
+#gallery.IE div.gbTabBar span.giSelected { margin-bottom: 0; }
 
 #gallery div.gbTabBar span span {
-    display: inline;
     padding: 6px 12px 5px 4px;
     background: url('../matrix/images/tab_right.jpg') no-repeat right top;
 }
