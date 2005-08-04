@@ -552,6 +552,10 @@ class GalleryPlatform {
 	    $gallery->debug("recursiveRmdir($dirname)");
 	}
 
+	if ($dirname{strlen($dirname)-1} != $this->getDirectorySeparator()) {
+	    $dirname .= $this->getDirectorySeparator();
+	}
+	
 	if (!($fd = $this->opendir($dirname))) {
 	    return false;
 	}
@@ -560,7 +564,7 @@ class GalleryPlatform {
 	    if (!strcmp($filename, '.') || !strcmp($filename, '..')) {
 		continue;
 	    }
-	    $path = "$dirname/$filename";
+	    $path = $dirname . $filename;
 
 	    if ($this->is_dir($path)) {
 		$ret = $this->recursiveRmdir($path);
