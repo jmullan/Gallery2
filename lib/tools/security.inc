@@ -49,17 +49,13 @@ $gallery = new GalleryStub();
 if (file_exists(dirname(__FILE__) . '/../../config.php')) {
     include(dirname(__FILE__) . '/../../config.php');
 } else {
-    include(dirname(__FILE__) . '/messages/messageHeader.inc');
-    include(dirname(__FILE__) . '/messages/missingConfig.inc');
-    include(dirname(__FILE__) . '/messages/messageFooter.inc');
+    render('missingConfig');
     exit;
 }
 
 $setupPassword = $gallery->getConfig('setup.password');
 if (empty($setupPassword)) {
-    include(dirname(__FILE__) . '/messages/messageHeader.inc');
-    include(dirname(__FILE__) . '/messages/missingPassword.inc');
-    include(dirname(__FILE__) . '/messages/messageFooter.inc');
+    render('missingPassword');
     exit;
 }
 
@@ -110,14 +106,69 @@ function askForPassword() {
 	$message['password'] = $_POST['g2_password'];
     }
 
-    include(dirname(__FILE__) . '/messages/messageHeader.inc');
-    include(dirname(__FILE__) . '/messages/passwordForm.inc');
-    include(dirname(__FILE__) . '/messages/messageFooter.inc');
+    render('passwordForm');
 }
 
 function redirectBackToSelf() {
     require_once(dirname(__FILE__) . '/../../modules/core/classes/GalleryUrlGenerator.class');
     $urlGenerator = new GalleryUrlGenerator();
     header('Location: ' . $urlGenerator->getCurrentUrl());
+}
+
+function render($renderType) {
+?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Security Check</title>
+    <link rel="stylesheet" type="text/css" href="tools.css"/>
+  </head>
+  <body>
+     <h1> Security Check </h1>
+
+     <h2>
+	You are attempting to access a secure section of this Gallery installation.  You can't
+        proceed until you pass the security check.
+     </h2>
+
+     <?php if ($renderType == 'missingConfig'): ?>
+     <div class="error">
+       You must create a config.php file in the Gallery directory before
+       you can continue configuring the application.  Use the
+       <a href="../../../install">installer</a> to create one.
+     </div>
+     <?php endif; ?>
+
+     <?php if ($renderType == 'missingPassword'): ?>
+     <div class="error">
+       You must enter a setup password in your gallery/config.php file in order
+       to be able to set up Gallery. If your config.php is empty, you should run
+       <a href="../../install">the installer</a> to install your Gallery.
+     </div>
+     <?php endif; ?>
+
+     <?php if ($renderType == 'passwordForm'): ?>
+     <div class="password_form">
+       <div class="box">
+         <span class="message">
+           In order to verify you, we require you to enter your Gallery setup password.  This is
+           the password you entered when you installed Gallery.  It can be found in your
+           gallery/config.php file like this:
+         </span>
+         <pre>
+           $gallery->setConfig('setup.password', '<b>your password here</b>');
+         </pre>
+         <form method="post">
+           Password:
+           <input type="password" name="g2_password"/>
+           <script type="text/javascript">document.forms[0]['g2_password'].focus();</script>
+           <input type="submit" value="Verify Me"/>
+         </form>
+       </div>
+     </div>
+     <?php endif; ?>
+  </body>
+</html>
+<?php
 }
 ?>
