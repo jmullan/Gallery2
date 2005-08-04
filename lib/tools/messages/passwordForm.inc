@@ -1,6 +1,6 @@
 <div class="password_form">
 
-  <div class="example">
+  <div class="box">
     <span class="message">
       In order to verify you, we require you to enter your Gallery setup password.  This is the
       password you entered when you installed Gallery.  It can be found in your gallery/config.php
