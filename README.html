@@ -163,19 +163,19 @@
 	  <ul class="toc-level-2">
 	    <li> <a href="#quick_start">Quick Start</a> </li>
 	    <li> <a href="#what_is_gallery">What is Gallery?</a> </li>
-	    <li> <a href="#what_is_g2">What is this &ldquo;beta&rdquo; thing?</a> </li>
+	    <li> <a href="#what_is_g2">What is this &ldquo;RC&rdquo; thing?</a> </li>
 	  </ul>
 	</li>
 	<li> About Gallery 2
 	  <ul class="toc-level-2">
 	    <li> <a href="#system_requirements">System Requirements</a> </li>
 	    <li> <a href="#when_to_use">When should I use it?</a> </li>
-	    <li> <a href="#when_not_to_use">When should I NOT use it?</a> </li>
 	    <li> <a href="#whats_new">What&rsquo;s new in this release?</a> </li>
 	  </ul>
 	</li>
 	<li> Installation
 	  <ul class="toc-level-2">
+            <li> <a href="#packages">Choosing a package</a> </li>
 	    <li> <a href="#prerequisites">Preparing to install</a> </li>
 	    <li> <a href="#installing">Installing</a> </li>
 	    <li> <a href="#getting_started">Using your new Gallery</a> </li>
@@ -197,9 +197,9 @@
     </div>
 
     <p>
-      Welcome to Gallery 2.0. This is the fourth &ldquo;Beta&rdquo;
-      release of Gallery 2, code named <b>&ldquo;Flippin'
-      Sweet!&rdquo;</b>.  Please read through this document carefully
+      Welcome to Gallery 2.0. This is the first release candidate (RC)
+      of Gallery 2, code named <b>&ldquo;+5 Insightful</b>&ldquo;.
+      Please read through this document carefully
       before installing Gallery 2 and before asking for help.  We have
       taken care to try to answer as many of your questions here as
       possible.  If you don't read this and have problems, we may
@@ -214,8 +214,7 @@
       target="_guided">installer</a> and start clicking.  It should
       walk you through everything you need to get going.  Before you
       do that though, you really should read the <a
-      href="#when_to_use">When should I use it?</a> and <a
-      href="#when_not_to_use">When should I NOT use it?</a> sections.
+      href="#when_to_use">When should I use it?</a> section.
       <b>But</b> if you hit a snag, please come back here and read
       more before asking questions!  Enjoy.
     </p>
@@ -230,13 +229,13 @@
       intuitive interface.  Photo management includes automatic
       thumbnail creation, image resizing, rotation, ordering,
       captioning, searching and more.  Albums and photos can have
-      read, write, caption and other permissions per individual
+      view, edit, delete and other permissions per individual
       authenticated user for an additional level of privacy.  It's
       great for communities - give accounts to your friends and family
       and let them upload and manage their own photos on your website!
     </p>
 
-    <h2><a name="what_is_g2">What is this &ldquo;beta&rdquo; thing?</a></h2>
+    <h2><a name="what_is_g2">What is this &ldquo;RC&rdquo; thing?</a></h2>
     <p class="toc-link"> <a href="#toc">[table of contents]</a> </p>
     <p>
       The final version of Gallery 2 hasn't been released yet.  This
@@ -275,28 +274,17 @@
     <h2><a name="when_to_use">When should I use it?</a></h2>
     <p class="toc-link"> <a href="#toc">[table of contents]</a> </p>
     <p>
-      You should install Gallery 2 to try it out.  You could
-      install it next to your production version of Gallery 1 in a
-      hidden directory.  You could install it on a development server.
-      We want you to try it, test it, break it, and tell us all about
-      it.  Get your friends and colleagues to poke around.  You can
-      use the migration module to import some or all of your Gallery 1
-      albums into Gallery 2 for test purposes (this shouldn&rsquo;t
-      affect your Gallery 1 installation at all).
+      If you need a web-browsable photo (or generally item) presenation and 
+      management application which is secure, scalable, reliable, modular, 
+      customizable, portable and intuitive, Gallery 2 is the software of your
+      choice. 
     </p>
-
-    <h2><a name="when_not_to_use">When should I NOT use it?</a></h2>
-    <p class="toc-link"> <a href="#toc">[table of contents]</a> </p>
     <p>
-      Do not use it as the main repository for your data.  Do not use
-      it for a production web site.  Although we provide an upgrade
-      path <b>we do not provide the same level of support for Gallery
-      2 that we provide for Gallery 1</b> until we get to release
-      candidates.  We <i>know</i> that Gallery 2 is much better than
-      Gallery 1, and it may be tempting to just replace your Gallery 1
-      with it.  But we're still making plenty of changes and mistakes
-      happen so if you use it in production, be prepared to dig into
-      it yourself and fix things if they break.
+      Gallery 2 is at the beginning of its product cycle, thus it&rsquo;s
+      not yet as stable as Gallery 1. If you&rsquo;re migrating from
+      Gallery 1, we recommend to keep Gallery 1 in a hidden directory 
+      for a while.<br/>
+      Do not use Gallery 2 as the main repository for your data or backup often.
     </p>
 
     <div class="important">
@@ -328,11 +316,38 @@
     </p>
 
     <h3>
+      Highlight of changes in Gallery 2 RC 1 (+5 Insightful)
+      <span id="rc1-toggle" class="toggle"
+       onclick="toggle('rc1-list', 'rc1-toggle')"> - </span>
+    </h3>
+    <ol id="rc1-list">
+      <li>
+        <b> New Packages  </b> - You can now choose from <a href="#packages">four different packages</a>: minimal, 
+        typical, full, and developer.
+      </li>
+      <li>
+        <b> Siriux is Back </b> - The Siriux theme was ported to the new theme system.
+      </li>
+      <li>
+        <b> User Contributed Themes </b> - There are now more and more user contributed themes
+        to choose from.
+      </li>
+      <li>
+	<b> New Installer Log </b> - G2 generates now a log of the core module installation
+        process which will make it much easier for you to provide the necessary information  
+        and for us to help you.
+      </li>
+      <li>
+	Many, many bugs fixed.
+      </li>
+    </ol>
+
+    <h3>
       Highlight of changes in Gallery 2 Beta 4 (Flippin' Sweet!)
       <span id="beta4-toggle" class="toggle"
-       onclick="toggle('beta4-list', 'beta4-toggle')"> - </span>
+       onclick="toggle('beta4-list', 'beta4-toggle')"> + </span>
     </h3>
-    <ol id="beta4-list">
+    <ol id="beta4-list" style="display:none">
       <li>
 	<b> New Theme System </b> - You spoke -- we listened.  The old
 	layout and theme system was far too complicated so we've
@@ -1131,6 +1146,43 @@
       </li>
     </ul>
 
+ <h2><a name="packages">Choosing a package</a></h2>
+    <p class="toc-link"> <a href="#toc">[table of contents]</a> </p>
+    <p>
+      You can choose from four different packages:
+      <ul>
+        <li>
+          <b>Minimal</b> - The base application, 2 themes and 3 graphics toolkits.
+          Everything you need to publish photos, and nothing more.
+        </li>
+        <li>
+          <b>Typical</b> - The base application, 6 themes and a selection of popular 
+          modules.  Enough to satisfy the demands of most Gallery users.
+        </li>
+        <li>
+          <b>Full</b> - The base application, 6 themes and 46 modules.  Every cool
+          feature we've got.  
+        </li>
+        <li>
+          <b>Developer</b> - Same as the full package, except it includes all the 
+          developer tools so that you can work on improving the code.
+        </li>
+      </ul>
+    </p>
+    <p>
+      You get to pick and choose which modules you activate, so even if you download
+      a package that has more modules than you need you can always choose not to 
+      activate the ones you don't want.  You can also activate a module and test it
+      out for a while, then later deactivate and deinstall it.  You can also delete 
+      any modules/themes that you're not using if you want to save space.
+    </p>
+    <p>
+      All of our modules and themes are available separately so if you install a
+      smaller package and then later on decide that you want to add more 
+      functionality you can download just the modules/themes that you want and install 
+      them yourself.
+    </p>
+
     <h2><a name="prerequisites">Preparing to install</a></h2>
     <p class="toc-link"> <a href="#toc">[table of contents]</a> </p>
     <ol>
@@ -1375,7 +1427,9 @@
       <li>
 	<b> Multisite Setup </b> - Gallery can support multiple independent sites with
 	a single installation of the code.  Here you will select a standard single install
-	or the location of a new multisite install.
+	or the location of a new multisite install. There is more information about multisite
+        in the <a href="http://codex.gallery2.org/index.php/Gallery2:Multisite"target="_blank">
+        G2 Codex</a>.
       </li>
       <li>
 	<b> Storage Setup </b> - Read the instructions on the
@@ -1631,7 +1685,9 @@
     <h2><a name="getting_help">Getting Help</a></h2>
     <p class="toc-link"> <a href="#toc">[table of contents]</a> </p>
     <p>
-      If you have problems, you should start by looking in the <a
+      If you have problems, you should start by looking in the <a 
+      href="http://codex.gallery2.org/index.php/Gallery2:faq" 
+      target="_blank" >G2 FAQ</a> and in the <a
       href="http://gallery.menalto.com/index.php?name=PNphpBB2&amp;file=viewforum&amp;f=22"
       target="_blank">Gallery 2 Support Forum</a> on the <a
       href="http://gallery.sourceforge.net" target="_blank">Gallery
@@ -1671,10 +1727,8 @@
 	delete old GALLERYSID cookie(s) in your browser if Gallery seems to ignore login requests.
       </li>
       <li>
-	<b>Performance</b> - This beta release is another 10% faster
-	than the previous alphas/betas.  There are still some tweaks
-	that we can make to have it go faster, but we may not get to
-	them before the final release.
+	<b>Performance</b> -  There are still some tweaks that we can make to have it go faster,
+        but we won&rsquo;t get to them before the final release.
       </li>
       <li>
 	<a name="multisite"></a>
@@ -1779,6 +1833,13 @@
     </p>
 
     <p>
+      <b> For Themers </b> - There is now some <a
+      href="http://codex.gallery2.org/index.php/Gallery2:Themes">theme documentation</a> 
+      that you should read if you want to change the look of your Gallery 2 by customizing
+      an existing theme and its templates or by creating your own theme.
+    </p>
+
+    <p>
       <b> Localization </b> - If you&rsquo;re interested in localizing
       Gallery 2 into another language, you can <a
       href="lib/tools/reports/localization.php"
@@ -1792,9 +1853,10 @@
 
     <p>
       <b> For Developers </b> - We've gotten started on some <a
-      href="http://gallery.menalto.com/modules.php?op=modload&amp;name=phpWiki&amp;file=index&amp;pagename=Development%20Documents">developer documentation</a>
-      that you should read if you want to start hacking on Gallery 2.  Some of the
-      information is a little bit out of date or in early drafts, but it's a start.
+      href="http://gallery.menalto.com/modules.php?op=modload&amp;name=phpWiki&amp;file=index&amp;pagename=Development%20Documents">
+      developer documentation</a>that you should read if you want to start hacking on
+      Gallery 2.  Some of the information is a little bit out of date or in early drafts,
+      but it's a start.
     </p>
 
     <p>
@@ -1812,8 +1874,8 @@
 
       <a href="http://gallery.sourceforge.net"><img
 	  src="images/gallery.gif"
-	  alt="Gallery 2.0 beta-4"
-	  title="Gallery 2.0 beta-4"
+	  alt="Gallery 2.0 RC-1"
+	  title="Gallery 2.0 RC-1"
 	  style="border: none" width="80" height="15"/></a>
     </p>
 
