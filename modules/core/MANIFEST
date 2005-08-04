@@ -16,7 +16,7 @@ modules/core/AdminToolkitPriority.inc	3998730550	1452742926	3608	3725
 modules/core/AdminUsers.inc	1094474225	659916238	7003	7237
 modules/core/Callbacks.inc	2237730335	2078027911	2634	2712
 modules/core/ChangeLanguage.inc	1973384537	2471457081	1685	1742
-modules/core/CoreModuleExtras.inc	4290265025	3608471018	56749	58510
+modules/core/CoreModuleExtras.inc	2584797135	2630623863	58728	60522
 modules/core/CreateThumbnailOption.inc	3280424368	1762581632	2583	2668
 modules/core/DownloadItem.inc	1266119087	3071940324	4655	4814
 modules/core/ErrorPage.inc	3609864995	1101247968	3389	3489
@@ -97,7 +97,7 @@ modules/core/classes/GalleryItemAttributesMap.class	2919846118	2758810144	2488	2
 modules/core/classes/GalleryLockSystem.class	3108801615	2327390028	3737	3867
 modules/core/classes/GalleryMaintenanceMap.class	1695518837	2917653425	2315	2388
 modules/core/classes/GalleryMimeTypeMap.class	298588095	2093475537	2044	2109
-modules/core/classes/GalleryModule.class	1918416024	2473545555	17564	18083
+modules/core/classes/GalleryModule.class	3304104161	1110494412	19450	20019
 modules/core/classes/GalleryMovieItem.class	2617830029	3034658296	8552	8860
 modules/core/classes/GalleryPermissionSetMap.class	2440165991	3176163040	2474	2551
 modules/core/classes/GalleryPersistent.class	3451102441	399596723	5250	5451
@@ -106,7 +106,7 @@ modules/core/classes/GalleryPhpVm.class	3006220523	3750138299	4476	4634
 modules/core/classes/GalleryPlatform.class	1069703946	3724970117	29933	31067
 modules/core/classes/GalleryPlatform/UnixPlatform.class	3604843419	471797748	3966	4127
 modules/core/classes/GalleryPlatform/WinNtPlatform.class	3886647426	2462174763	5221	5427
-modules/core/classes/GalleryPlugin.class	1910904723	1224536915	16122	16648
+modules/core/classes/GalleryPlugin.class	2281455904	27880158	17270	17836
 modules/core/classes/GalleryPluginMap.class	1761804021	2775080207	2198	2268
 modules/core/classes/GalleryPluginParameterMap.class	3418463396	2493635883	3011	3101
 modules/core/classes/GalleryRecoverPasswordMap.class	23320988	3724831163	2200	2269
@@ -289,7 +289,7 @@ modules/core/classes/GalleryStorage/DatabaseStorage/schema/xml-src/R_GalleryPerm
 modules/core/classes/GalleryStorage/DatabaseStorage/schema/xml-src/Schema.xml	2822524161	2397787518	807	838
 modules/core/classes/GalleryTemplate.class	15316209	1959551017	12240	12656
 modules/core/classes/GalleryTemplateAdapter.class	2826860666	2147750291	24558	25339
-modules/core/classes/GalleryTheme.class	2534642519	3468594152	60374	62204
+modules/core/classes/GalleryTheme.class	183964366	3322482194	61163	63020
 modules/core/classes/GalleryToolkit.class	1005375400	1552264713	9527	9804
 modules/core/classes/GalleryToolkitOperationMap.class	141411929	1643140287	2326	2398
 modules/core/classes/GalleryToolkitOperationMimeTypeMap.class	2917156401	4026411694	2415	2489
@@ -334,8 +334,8 @@ modules/core/classes/helpers/GalleryMimeTypeHelper_simple.class	3276758124	61140
 modules/core/classes/helpers/GalleryPermissionHelper_advanced.class	3861614116	3899644781	40795	42067
 modules/core/classes/helpers/GalleryPermissionHelper_medium.class	3484614950	1336942718	8570	8843
 modules/core/classes/helpers/GalleryPermissionHelper_simple.class	4122449711	4048059669	6765	6982
-modules/core/classes/helpers/GalleryPluginHelper_medium.class	3072593719	440347311	14724	15185
-modules/core/classes/helpers/GalleryPluginHelper_simple.class	3545297571	1804709536	14530	14991
+modules/core/classes/helpers/GalleryPluginHelper_medium.class	2970100240	533612747	15022	15494
+modules/core/classes/helpers/GalleryPluginHelper_simple.class	944801359	165626043	15229	15714
 modules/core/classes/helpers/GalleryToolkitHelper_medium.class	2123697735	2393078944	25087	25818
 modules/core/classes/helpers/GalleryToolkitHelper_simple.class	2155229812	617453477	7856	8108
 modules/core/classes/helpers/GalleryUserGroupHelper_medium.class	1457091296	1634493908	8988	9274
@@ -522,20 +522,6 @@ modules/core/templates/blocks/PhotoSizes.tpl	3862553101	1447694629	1810	1861
 modules/core/templates/blocks/SystemLink.tpl	4153282088	544593132	465	478
 modules/core/templates/blocks/SystemLinks.tpl	4287270290	587303607	1272	1310
 modules/core/templates/blocks/blocks.inc	3504865617	701317870	514	533
-modules/core/test/TestCase/CleanStore.class	3415156576	1577601528	997	1040
-modules/core/test/TestCase/CreateAlbum.class	2084350173	724943663	1893	1968
-modules/core/test/TestCase/CreatePhotoItem.class	3449771356	2562303965	4483	4645
-modules/core/test/TestCase/CreateRandomGroup.class	4040588386	4093261211	1453	1518
-modules/core/test/TestCase/CreateRandomTree.class	2227867581	2132467036	10018	10361
-modules/core/test/TestCase/CreateRandomUser.class	2880035999	3250291940	1490	1556
-modules/core/test/TestCase/DeleteAllItems.class	1009111788	1181036274	1693	1767
-modules/core/test/TestCase/EmptyGallery.class	136102279	2453283375	2345	2444
-modules/core/test/TestCase/FlushCache.class	147169533	3997714135	1087	1142
-modules/core/test/TestCase/FlushTemplates.class	38426822	1489756524	1097	1152
-modules/core/test/TestCase/InitializeGallery.class	1450150247	3426489441	3854	3991
-modules/core/test/TestCase/PerformanceTestData.class	1997179756	503316159	2638	2744
-modules/core/test/TestCase/ReInitializeGallery.class	1741017139	1451551291	1366	1423
-modules/core/test/TestCase/ResetGallery.class	184573369	1900260245	751	787
 modules/core/test/data/MailHelperTest.tpl	2799655722	477195606	355	363
 modules/core/test/data/director.dcr	1282249980	1282249980	56410	56410
 modules/core/test/data/flash.swf	1822579798	1822579798	66468	66468
@@ -714,9 +700,8 @@ R	modules/core/templates/SplitMarker.tpl
 R	modules/core/templates/StatusMessage.tpl
 R	modules/core/templates/UserAdminHead.tpl
 R	modules/core/templates/UserPreferencesHead.tpl
+R	modules/core/test/TestCase
 R	modules/core/test/data/localUploadDir/subädir
-R	modules/core/test/data/localUploadDir/subädir/test5.jpg
-R	modules/core/test/data/localUploadDir/subädir/täst1.png
 R	modules/core/test/data/localUploadDir/test3.gif
 R	modules/core/test/data/test3.gif
 R	modules/core/test/data/täst1.png
