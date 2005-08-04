@@ -62,6 +62,10 @@ class SystemChecksStep extends InstallStep {
     }
 
     function loadTemplateData(&$templateData) {
+	/* Create GalleryStub to store information for the install core step / install log */
+	global $galleryStub;
+	$galleryStub = new GalleryStub();
+	
 	$failCount = 0;
 
 	$suggestedHtaccess = array();
@@ -213,9 +217,15 @@ class SystemChecksStep extends InstallStep {
 		    array('title' => $title,
 			  'warning' => true,
 			  'notice' => _('Manifest missing or inaccessible.'));
+		
+		$galleryStub->setConfig('systemchecks.fileintegrity',
+					'Manifest missing or inaccessible.');
 	    } else if (empty($manifest['missing']) && empty($manifest['modified'])
 		       && empty($manifest['shouldRemove'])) {
 		$templateData['check'][] = array('title' => $title, 'success' => true);
+		
+		$galleryStub->setConfig('systemchecks.fileintegrity',
+					'Ok');
 	    } else {
 		ob_start();
 		include(dirname(__FILE__) . '/../templates/ManifestSystemCheck.html');
@@ -226,7 +236,16 @@ class SystemChecksStep extends InstallStep {
 		    array('title' => $title,
 			  'warning' => true,
 			  'notice' => $notice);
+		
+		if (empty($manifest['missing']) && empty($manifest['modified'])) {
+		    $galleryStub->setConfig('systemchecks.fileintegrity',
+					    'There are some old files');
+		} else {
+		    $galleryStub->setConfig('systemchecks.fileintegrity',
+					    'There are missing/modified files!');
+		}
 	    }
+	    $galleryStub->setConfig('systemchecks.iscvsinstall', $isCvsInstall);
 	}
 
 	$templateData['suggestedHtaccess'] = join("\n", $suggestedHtaccess);

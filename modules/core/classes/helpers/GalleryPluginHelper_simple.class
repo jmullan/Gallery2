@@ -47,6 +47,10 @@ class GalleryPluginHelper_simple {
     function loadPlugin($pluginType, $pluginId, $ignoreVersionMismatch=false, $depth=0) {
 	global $gallery;
 
+	if ($gallery->getDebug()) {
+	    $gallery->debug(sprintf('Loading plugin %s', $pluginId));
+	}
+	
 	$cacheKey = "GalleryPluginHelper::loadPlugin($pluginType, $pluginId)";
 	if (!GalleryDataCache::containsKey($cacheKey)) {
 
@@ -67,6 +71,10 @@ class GalleryPluginHelper_simple {
 	    }
 
 	    if (!class_exists($pluginClass)) {
+		if ($gallery->getDebug()) {
+		    $gallery->debug('Class not defined, trying to include it.');
+		}
+		
 		$pluginBaseDir = dirname(__FILE__) . '/../../../../';
 		$pluginFile = sprintf('%ss/%s/%s.inc', $pluginType, $pluginId, $pluginType);
 				      
@@ -113,7 +121,15 @@ class GalleryPluginHelper_simple {
 	    $plugin = GalleryDataCache::get($cacheKey);
 	}
 
+	if ($gallery->getDebug()) {
+	    $gallery->debug(sprintf('%s plugin successfully instantiated', $pluginId));
+	}
+	
 	if (!$ignoreVersionMismatch) {
+	    if ($gallery->getDebug()) {
+		$gallery->debug(sprintf('Check the version of the %s plugin', $pluginId));
+	    }
+	    
 	    /* Verify that the versions match */
 	    list ($ret, $status) = GalleryPluginHelper_simple::fetchPluginStatus($pluginType);
 	    if ($ret->isError()) {
@@ -171,6 +187,9 @@ class GalleryPluginHelper_simple {
 				 $plugin);
 		}
 	    }
+	    if ($gallery->getDebug()) {
+		$gallery->debug(sprintf('The version of the %s plugin is ok', $pluginId));
+	    }
 	}
 
 	return array(GalleryStatus::success(), $plugin);
@@ -207,7 +226,12 @@ class GalleryPluginHelper_simple {
      * @static
      */
     function getParameter($pluginType, $pluginId, $parameterName, $itemId=0) {
+	global $gallery;
 
+	if ($gallery->getDebug()) {
+	    $gallery->debug(sprintf('getParameter %s for %s plugin', $parameterName, $pluginId));
+	}
+	
 	/* Convert null to 0, just in case */
 	if ($itemId == null) {
 	    $itemId = 0;

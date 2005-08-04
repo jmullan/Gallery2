@@ -147,6 +147,12 @@ class MultisiteStep extends InstallStep {
 	    ob_end_clean();
 	}
 	global $galleryStub;
+	/* Copy config data from system checks step which will be used in the install log */
+	$gallery->setConfig('systemchecks.fileintegrity',
+			    $galleryStub->getConfig('systemchecks.fileintegrity'));
+	$gallery->setConfig('systemchecks.iscvsinstall',
+			    $galleryStub->getConfig('systemchecks.iscvsinstall'));
+	/* Replace galleryStub */
 	$galleryStub = $gallery;
     }
 }

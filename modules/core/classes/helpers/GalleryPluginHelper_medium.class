@@ -318,6 +318,12 @@ class GalleryPluginHelper_medium {
      * @static
      */
     function setParameter($pluginType, $pluginId, $parameterName, $parameterValue, $itemId=0) {
+	global $gallery;
+
+	if ($gallery->getDebug()) {
+	    $gallery->debug(sprintf('setParameter %s for %s plugin', $parameterName, $pluginId));
+	}
+	
 	if (empty($pluginType) || empty($pluginId) || empty($parameterName)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
@@ -363,6 +369,11 @@ class GalleryPluginHelper_medium {
 					       'itemId' => $itemId,
 					       'id' => $pluginId));
 
+	if ($gallery->getDebug()) {
+	    $gallery->debug(sprintf('Plugin parameter %s for %s plugin set successfully',
+				    $parameterName, $pluginId));
+	}
+	
 	return GalleryStatus::success();
     }
 

@@ -111,12 +111,17 @@ class GalleryModule extends GalleryPlugin {
     function installOrUpgrade($bootstrap=false, $statusMonitor=null) {
 	global $gallery;
 
+	if ($gallery->getDebug()) {
+	    $gallery->debug(sprintf('GalleryModule::installOrUpgrade %s module', $this->getId()));
+	}
+	
 	if (!GalleryCoreApi::isPluginCompatibleWithApis($this)) {
 	    return GalleryStatus::error(ERROR_PLUGIN_VERSION_MISMATCH, __FILE__, __LINE__,
 		sprintf('incompatible %s %s', $this->getPluginType(), $this->getId()));
 	}
 
 	if ($bootstrap) {
+	    $gallery->debug('In bootstrap mode (core module)');
 	    /*
 	     * If we're in bootstrap mode, then we may not even have a version
 	     * table.  If we try to query it, we will cause our current
@@ -132,20 +137,44 @@ class GalleryModule extends GalleryPlugin {
 	}
 
 	if ($installedVersion != $this->getVersion()) {
+	    if ($gallery->getDebug()) {
+		$gallery->debug(sprintf('Configure store for %s module', $this->getId()));
+	    }
 	    /* The store requires configuration. */
 	    $storage =& $gallery->getStorage();
 	    $ret = $storage->configureStore($this->getId());
 	    if ($ret->isError()) {
+		if ($gallery->getDebug()) {
+		    $gallery->debug(sprintf('Error: Failed to configure the persistent store, ' .
+					    'this is the error stack trace: %s',
+					    $ret->getAsText()));
+		}
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
+	    if ($gallery->getDebug()) {
+		$gallery->debug(sprintf('Upgrade (or install) %s module', $this->getId()));
+	    }
 	    $ret = $this->upgrade($installedVersion, $statusMonitor);
 	    if ($ret->isError()) {
+		if ($gallery->getDebug()) {
+		    $gallery->debug(sprintf('Error: Failed to upgrade the %s module, this ' .
+					    'is the error stack trace: %s', $this->getId(),
+					    $ret->getAsText()));
+		}
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
+	    if ($gallery->getDebug()) {
+		$gallery->debug(sprintf('ConfigureStoreCleanup for %s module', $this->getId()));
+	    }
 	    $ret = $storage->configureStoreCleanup($this->getId());
 	    if ($ret->isError()) {
+		if ($gallery->getDebug()) {
+		    $gallery->debug(sprintf('Error: Failed to clean up the persistent store, ' .
+					   'this is the error stack trace: %s',
+					    $ret->getAsText()));
+		}
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
@@ -155,11 +184,22 @@ class GalleryModule extends GalleryPlugin {
 	     * this to successfully deactivate and then fail to activate again.  upgrade() should
 	     * get the module read properly but it may fail under some edge cases.
 	     */
+	    if ($gallery->getDebug()) {
+		$gallery->debug(sprintf('Reactivate %s module', $this->getId()));
+	    }
 	    list ($ret, $redirect) = $this->reactivate();
 	    if ($ret->isError()) {
+		if ($gallery->getDebug()) {
+		    $gallery->debug(sprintf('Error: Failed to reactivate the module, this' .
+					    ' is the error stack trace: %s', $ret->getAsText()));
+		}
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
+	    if ($gallery->getDebug()) {
+		$gallery->debug(sprintf('Update module paramater for the %s module',
+					$this->getId()));
+	    }
 	    $data = array('_version' => $this->getVersion(),
 			  '_callbacks' => $this->getCallbacks(),
 			  '_requiredCoreApi' => join(',', $this->getRequiredCoreApi()),
@@ -167,11 +207,21 @@ class GalleryModule extends GalleryPlugin {
 	    foreach ($data as $key => $value) {
 		$ret = $this->setParameter($key, $value);
 		if ($ret->isError()) {
+		    if ($gallery->getDebug()) {
+			$gallery->debug(sprintf('Error: Failed to update the module parameter %s' .
+						', this is the error stack trace: %s', $key,
+						$ret->getAsText()));
+		    }
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
 	}
 
+	if ($gallery->getDebug()) {
+	    $gallery->debug(sprintf('Successfully finished installOrUpgrade %s module',
+				    $this->getId()));
+	}
+	
 	return GalleryStatus::success();
     }
 

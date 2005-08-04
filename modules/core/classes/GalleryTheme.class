@@ -511,9 +511,19 @@ class GalleryTheme extends GalleryPlugin {
      * @return object GalleryStatus a status code
      */
     function installOrUpgrade() {
+	global $gallery;
+
+	if ($gallery->getDebug()) {
+	    $gallery->debug(sprintf('GalleryTheme::installOrUpgrade %s theme', $this->getId()));
+	}
+	
 	if (!GalleryCoreApi::isPluginCompatibleWithApis($this)) {
 	    return GalleryStatus::error(ERROR_PLUGIN_VERSION_MISMATCH, __FILE__, __LINE__,
 		sprintf('incompatible %s %s', $this->getPluginType(), $this->getId()));
+	}
+
+	if ($gallery->getDebug()) {
+	    $gallery->debug('GalleryTheme::installOrUpgrade get the version parameter');
 	}
 
 	list ($ret, $installedVersion) = $this->getParameter('_version');
@@ -521,12 +531,25 @@ class GalleryTheme extends GalleryPlugin {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	if ($gallery->getDebug()) {
+	    $gallery->debug('GalleryTheme::installOrUpgrade compare versions');
+	}
+	
 	if ($installedVersion != $this->getVersion()) {
+	    if ($gallery->getDebug()) {
+		$gallery->debug(sprintf('GalleryTheme::installOrUpgrade, installed version is %s,' .
+					' theme upgrade required', $installedVersion));
+	    }
+	    
 	    $ret = $this->upgrade($installedVersion);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
+	    if ($gallery->getDebug()) {
+		$gallery->debug('GalleryTheme::installOrUpgrade set new theme version etc.');
+	    }
+	    
 	    $data = array('_version' => $this->getVersion(),
 			  '_requiredCoreApi' => join(',', $this->getRequiredCoreApi()),
 			  '_requiredThemeApi' => join(',', $this->getRequiredThemeApi()));
@@ -538,6 +561,10 @@ class GalleryTheme extends GalleryPlugin {
 	    }
 	}
 
+	if ($gallery->getDebug()) {
+	    $gallery->debug('GalleryTheme::installOrUpgrade finished successfully');
+	}
+	
 	return GalleryStatus::success();
     }
 

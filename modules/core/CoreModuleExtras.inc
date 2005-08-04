@@ -44,15 +44,16 @@ class CoreModuleExtras {
     function upgrade($module, $currentVersion, $statusMonitor) {
 	global $gallery;
 	$storage =& $gallery->getStorage();
-
+	$gallery->debug('Entering CoreModuleExras::upgrade');
+	
 	/*
 	 * We store our version outside of the database so that we can upgrade
 	 * even if the database is in an undependable state.
 	 */
 	$versions = $module->getInstalledVersions();
 	$currentVersion = $versions['core'];
-
 	if (!isset($currentVersion)) {
+	    $gallery->debug('Current version not set');
 	    /*
 	     * This is either an initial install or an upgrade from version
 	     * 0.8 (which didn't have the core versions.dat file).  Use a module
@@ -80,8 +81,10 @@ class CoreModuleExtras {
 	 * that one with the old version number.  For our example you'd add: "case '1.0.1':" and
 	 * then your code.  Do *not* put in a break statement. (Update _prepareConfigUpgrade too)
 	 */
+	$gallery->debug(sprintf('The current version is %s', $currentVersion));
 	switch ($currentVersion) {
 	case '0':
+	    $gallery->debug('Install core module');
 	    if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
 		$flockType = 'database';
 	    } else {
@@ -94,7 +97,9 @@ class CoreModuleExtras {
 		}
 		$platform->fclose($fileToLock);
 	    }
+	    $gallery->debug(sprintf('Locktype %s selected', $flockType));
 	    /* Initial install.  Make sure all our module parameters are set. */
+	    $gallery->debug('Set core module parameters');
 	    GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTranslator.class');
 	    foreach (array('permissions.directory' => '0755',
 			   'permissions.file' => '0644',
@@ -113,24 +118,36 @@ class CoreModuleExtras {
 		if (!isset($param[$key])) {
 		    $ret = $module->setParameter($key, $value);
 		    if ($ret->isError()) {
+			$gallery->debug(sprintf('Error: Failed to set core module parameter %s, ' .
+					       'this is the error stack trace: %s', $key,
+					       $ret->getAsText()));
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
 		}
 	    }
 
 	    /* Activate the Matrix theme */
+	    $gallery->debug('Load Matrix theme');
 	    list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', 'matrix');
 	    if ($ret->isError()) {
+		$gallery->debug(sprintf('Error: Failed to load matrix theme, this is the error ' .
+				'stack trace; %s', $ret->getAsText()));
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
+	    $gallery->debug('InstallOrUpgrade Matrix theme');
 	    $ret = $theme->installOrUpgrade();
 	    if ($ret->isError()) {
+		$gallery->debug(sprintf('Error: Failed to installOrUpgrade matrix theme, this is ' .
+				'the error stack trace; %s', $ret->getAsText()));
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
+	    $gallery->debug('Activate Matrix theme');
 	    list ($ret, $ignored) = $theme->activate();
 	    if ($ret->isError()) {
+		$gallery->debug(sprintf('Error: Failed to activate matrix theme, this is ' .
+				'the error stack trace; %s', $ret->getAsText()));
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
@@ -141,6 +158,7 @@ class CoreModuleExtras {
 	     * put a line like this translate('key') in for each description so
 	     * that our extractor can find it.
 	     */
+	    $gallery->debug('Register core module permissions');
 	    $permissions[] = array('all', $gallery->i18n('All access'),
 				   GALLERY_PERMISSION_ALL_ACCESS, array());
 	    $permissions[] = array('view', $gallery->i18n('[core] View item'), 0, array());
@@ -166,6 +184,9 @@ class CoreModuleExtras {
 		$ret = GalleryCoreApi::registerPermission(
 		    $module->getId(), 'core.' . $p[0], $p[1], $p[2], $p[3]);
 		if ($ret->isError()) {
+		    $gallery->debug(sprintf('Error: Failed to register a permission, ' .
+					       'this is the error stack trace: %s',
+					   $ret->getAsText()));
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
@@ -178,21 +199,30 @@ class CoreModuleExtras {
 			   '_createAdminUser',
 			   '_createRootAlbumItem') as $func) {
 
+		$gallery->debug(sprintf('Call user func %s', $func));
 		$ret = call_user_func(array('CoreModuleExtras', $func), $module);
 		if ($ret->isError()) {
+		    $gallery->debug(sprintf('Error: %s returned an error, ' .
+					   'this is the error stack trace: %s', $func,
+					   $ret->getAsText()));
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
 
+	    $gallery->debug('Initialize MIME types');
 	    GalleryCoreApi::relativeRequireOnce(
 		'modules/core/classes/helpers/GalleryMimeTypeHelper_advanced.class');
 	    $ret = GalleryMimeTypeHelper_advanced::initializeMimeTypes();
 	    if ($ret->isError()) {
+		$gallery->debug(sprintf('Error: Failed to initialize MIME types, this is ' .
+					'the error stack trace: %s', $ret->getAsText()));
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+	    $gallery->debug('CoreModulesExtra::upgrade: successfully installed core');
 	    break;
 
 	case '0.8':
+	    $gallery->debug('Warning: Upgrading from version 0.8 (not supported)');
 	case '0.8.1':
 	case '0.8.2':
 	    /*
@@ -1130,10 +1160,12 @@ class CoreModuleExtras {
 	    break;
 
 	default:
+	    $gallery->debug('Error: Unknown module version');
 	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
 					sprintf('Unknown module version %s', $currentVersion));
 	}
 
+	$gallery->debug('Write new version to versions file');
 	$baseDir = $gallery->getConfig('data.gallery.base');
 	$versionFile = sprintf('%s%s%s',
 			       $baseDir,
@@ -1154,6 +1186,7 @@ class CoreModuleExtras {
 	}
 
 	if ($versionDatError) {
+	    $gallery->debug('Error: Can\'t write to versions file');
 	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 					'Can\'t write to the versions file');
 	}

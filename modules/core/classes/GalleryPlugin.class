@@ -160,9 +160,15 @@ class GalleryPlugin {
      *               array redirect info for error page (empty for success)
      */
     function activate($postActivationEvent=true) {
+	global $gallery;
+	
 	$pluginType = $this->getPluginType();
 	$pluginId = $this->getId();
 
+	if ($gallery->getDebug()) {
+	    $gallery->debug(sprintf('GalleryPlugin::activate %s plugin', $pluginId));
+	}
+	
 	list ($ret, $pluginStatus) = GalleryCoreApi::fetchPluginStatus($pluginType);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -191,6 +197,10 @@ class GalleryPlugin {
 	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginList($pluginType)");
 
 	if ($postActivationEvent) {
+	    if ($gallery->getDebug()) {
+		$gallery->debug('GalleryPlugin::activate post activation event');
+	    }
+	    
 	    $event = GalleryCoreApi::newEvent('Gallery::ActivatePlugin');
 	    $event->setData(array('pluginType' => $this->getPluginType(),
 				  'pluginId' => $this->getId()));
@@ -198,6 +208,11 @@ class GalleryPlugin {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
+	}
+
+	if ($gallery->getDebug()) {
+	    $gallery->debug(sprintf('GalleryPlugin::activate %s plugin successfully activated',
+				    $pluginId));
 	}
 
 	return array(GalleryStatus::success(), array());
@@ -251,14 +266,29 @@ class GalleryPlugin {
      *               array redirect info for error page (empty for success)
      */
     function reactivate() {
+	global $gallery;
+	
+	if ($gallery->getDebug()) {
+	    $gallery->debug(sprintf('GalleryPlugin::reactivate %s plugin', $this->getId()));
+	}
+	
 	list ($ret, $isActive) = $this->isActive();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if (!$isActive) {
+	    if ($gallery->getDebug()) {
+		$gallery->debug(sprintf('GalleryPlugin::reactivate %s plugin, plugin is ' .
+					'not active, nothing to do', $this->getId()));
+	    }	    
 	    return array(GalleryStatus::success(), null);
 	}
 
+	if ($gallery->getDebug()) {
+	    $gallery->debug(sprintf('GalleryPlugin::reactivate %s plugin, deactivate',
+				    $this->getId()));
+	}
+	
 	list ($ret, $redirect) = $this->deactivate(false);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -267,6 +297,11 @@ class GalleryPlugin {
 	    return array(GalleryStatus::success(), $redirect);
 	}
 
+	if ($gallery->getDebug()) {
+	    $gallery->debug(sprintf('GalleryPlugin::reactivate %s plugin, activate again',
+				    $this->getId()));
+	}
+	
 	list ($ret, $redirect) = $this->activate(false);
 	if ($ret->isError()) {
 	    /* Try to send the deactivation event before failing completely. */
@@ -280,6 +315,11 @@ class GalleryPlugin {
 	    return array(GalleryStatus::success(), $redirect);
 	}
 
+	if ($gallery->getDebug()) {
+	    $gallery->debug(sprintf('GalleryPlugin::reactivate %s plugin, successfully ' .
+				    'reactivated', $this->getId()));
+	}
+	
 	return array(GalleryStatus::success(), array());
     }
 

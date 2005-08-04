@@ -152,6 +152,7 @@ class DatabaseSetupStep extends InstallStep {
 		$versions = $this->_getVersions();
 		$datVersion = $versions['installed'];
 		$codebaseVersion = $versions['codebase'];
+		$galleryStub->setConfig('codebase.version', $codebaseVersion);
 	    }
 
 	    $templateData['databaseErrors'] = $this->_getCaptured();
@@ -246,7 +247,6 @@ class DatabaseSetupStep extends InstallStep {
 		$galleryStub->setConfig('freshInstall', false);
 		/* Remember the installed version to compare it later to the codebase version */
 		$galleryStub->setConfig('installed.version', $datVersion);
-		$galleryStub->setConfig('codebase.version', $codebaseVersion);
 	    }
 	    $templateData['bodyFile'] = 'DatabaseSetupSuccess.html';
 	} elseif ((empty($templateData['errors']) && empty($templateData['error']) ||
