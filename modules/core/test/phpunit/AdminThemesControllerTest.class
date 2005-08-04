@@ -112,6 +112,7 @@ class AdminThemesControllerTest extends GalleryControllerTestCase {
     function testUpgrade() {
 	GalleryUtilities::putRequestVariable('themeId', 'AdminThemesControllerTest');
 	GalleryUtilities::putRequestVariable('form[action][upgrade]', 1);
+	$this->_testTheme->_set('_isActive', false);
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
