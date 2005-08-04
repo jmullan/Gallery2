@@ -57,7 +57,7 @@ foreach my $manifest (@manifests) {
       die "Unexpected file <$file>";
     }
 
-    if ($filterFiles{$file}) {
+    if (!$filterFiles{$file}) {
       print OFD $line;
     }
   }
@@ -66,5 +66,8 @@ foreach my $manifest (@manifests) {
 
   if (-s "${manifest}.new" != -s $manifest) {
     rename("${manifest}.new", "${manifest}") || die;
+  } else {
+    unlink("${manifest}.new") || die;
   }
 }
+
