@@ -176,7 +176,9 @@ class CreateConfigFileStep extends InstallStep {
 	    $versionsOk = true;
 	} else {
 	    /* Get the installed version from the DatabaseSetup Step */
-	    $versions['installed'] = $galleryStub->getConfig('installed.version');
+	    $tmp = $galleryStub->getConfig('installed.version');
+	    $versions['installed'] = empty($tmp) ? ' ' : $tmp;
+	    /* ^Avoid http://bugs.php.net/bug.php?id=17433 */
 	    /* Get the codebase version, also from the DB setup step */
 	    $versions['codebase'] = $galleryStub->getConfig('codebase.version');
 
@@ -184,7 +186,7 @@ class CreateConfigFileStep extends InstallStep {
 	    if (($cmp = version_compare($versions['installed'], $versions['codebase'])) == 0) {
 		/* Installed version and codebase version are the same. Good. */
 		$versionsOk = true;
-	    } elseif ($cmp == -1) {
+	    } else if ($cmp < 0) {
 		/*
 		 * G2 is installed, but its version doesn't match the codebase version.
 		 * Recommend an upgrade (redirect to the upgrader)

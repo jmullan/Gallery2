@@ -195,7 +195,7 @@ class HybridTheme extends GalleryTheme {
      * @see GalleryTheme::upgrade
      */
     function upgrade($installedVersion) {
-	if (version_compare($installedVersion, '0.10.6', '<')) {
+	if (empty($installedVersion) || version_compare($installedVersion, '0.10.6', '<')) {
 	    /* Older than the big theme changeover.  Set some default blocks */
 	    foreach (array('sidebarBlocks' => serialize(
 			     array(

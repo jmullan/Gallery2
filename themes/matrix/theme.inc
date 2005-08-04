@@ -146,11 +146,11 @@ class MatrixTheme extends GalleryTheme {
      */
     function upgrade($installedVersion) {
 	global $gallery;
-	
-	if (version_compare($installedVersion, '0.9.7', '<')) {
+
+	if (empty($installedVersion) || version_compare($installedVersion, '0.9.7', '<')) {
 	    /* Older than the big theme changeover.  Set some default blocks */
 	    $gallery->debug('Matrix theme upgrade to the new theme system');
-	    
+
 	    foreach (array(
 			 'sidebarBlocks' => serialize(
 			     array(
@@ -174,7 +174,7 @@ class MatrixTheme extends GalleryTheme {
 	}
 
 	if ($gallery->getDebug()) {
-	    $gallery->debug(sprintf('Matrix theme upgrade, installed version is %s', 
+	    $gallery->debug(sprintf('Matrix theme upgrade, installed version is %s',
 				    $installedVersion));
 	}
 

@@ -79,7 +79,7 @@ class AlbumSelectModule extends GalleryModule {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	if (version_compare($currentVersion, '0.9.8', '<')) {
+	if (!empty($currentVersion) && version_compare($currentVersion, '0.9.8', '<')) {
 	    /* We removed the 'show' parameter in 0.9.8 */
 	    $ret = $this->removeParameter('show');
 	    if ($ret->isError()) {
@@ -95,7 +95,7 @@ class AlbumSelectModule extends GalleryModule {
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
-	    } else if ($key == 'sort' && ($params[$key] == 0 || $params[$key] == 1)) {
+	    } else if ($key == 'sort' && ($params[$key] == '0' || $params[$key] == '1')) {
 		/* v0.9.4 changed 'sort' param from 0/1 to manual/title */
 		$value = ($params[$key] == 1) ? 'title' : 'manual';
 		$ret = $this->setParameter($key, $value);

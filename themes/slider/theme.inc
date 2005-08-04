@@ -170,7 +170,7 @@ class SliderTheme extends GalleryTheme {
      * @see GalleryTheme::upgrade
      */
     function upgrade($installedVersion) {
-	if (version_compare($installedVersion, '0.10.5', '<')) {
+	if (empty($installedVersion) || version_compare($installedVersion, '0.10.5', '<')) {
 	    /* Older than the big theme changeover.  Set some default blocks */
 	    foreach (array('sidebarBlocks' => serialize(
 			     array(
