@@ -72,12 +72,12 @@ if (isset($_REQUEST['clear'])) {
 <html>
   <head>
     <title>Cache Maintenance</title>
-    <link rel="stylesheet" type="text/css" href="tools.css"/>
+    <link rel="stylesheet" type="text/css" href="support.css"/>
   </head>
 
   <body>
       <H1> Cache Maintenance </H1>
-
+      <a href="index.php"> Back to Support Page </a>
       <h2>
         Gallery caches data on disk to increase performance.
         Sometimes these caches get out of date and need to be deleted.

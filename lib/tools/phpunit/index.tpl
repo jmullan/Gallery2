@@ -18,13 +18,11 @@
     </script>
     <h1>Gallery Unit Tests</h1>
     <div class="section">
-      This is the Gallery test framework.  We'll use this to verify that
-      the Gallery code is functioning properly.  It'll help us identify
-      bugs in the code when we add new features, port to new systems, or
-      add support for new database back ends.  Some of these tests will
-      not pass unless you are logged in as a Gallery site administrator.
-      When logged on, all the tests below should pass (each line will
-      have a green box that says <b>OK</b> in it).
+      This is the Gallery test framework.  We'll use this to verify
+      that the Gallery code is functioning properly.  It'll help us
+      identify bugs in the code when we add new features, port to new
+      systems, or add support for new database back ends.  All the
+      tests should pass with a green box that says <b>OK</b> in it).
     </div>
 
     <?php if (!$isSiteAdmin): ?>

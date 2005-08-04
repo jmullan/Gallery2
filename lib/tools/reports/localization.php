@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -23,8 +23,8 @@
 /*
  * Authors: Jens Tkotz, Bharat Mediratta
  */
-require_once(dirname(__FILE__) . '/../security.inc');
-$poFiles = findPoFiles("../../..");
+require_once(dirname(__FILE__) . '/../../support/security.inc');
+$poFiles = findPoFiles('../../..');
 
 $type = 'summary';
 if (!empty($_REQUEST['type']) && $_REQUEST['type'] == 'detail') {
@@ -43,7 +43,7 @@ function findPoFiles($dir) {
     if (!is_dir($dir)) {
 	return $results;
     }
-    
+
     if ($dh = opendir($dir)) {
 	while (($file = readdir($dh)) !== false) {
 	    if ($file == '.' || $file == '..') {
@@ -54,7 +54,7 @@ function findPoFiles($dir) {
 		$results = array_merge($results, findPoFiles($path));
 	    } else {
 		if (preg_match("/\.po$/", $file)) {
-		    $results[] = $path;	
+		    $results[] = $path;
 		}
 	    }
 	}
@@ -96,7 +96,7 @@ function parsePoFiles($poFiles) {
 	 *   msgstr ""
 	 *   "blah blah blah"
 	 *
-	 * Untranslated: 
+	 * Untranslated:
 	 *   msgid "foo"
 	 *   msgstr[0] ""
 	 *   msgstr[1] ""
@@ -112,12 +112,12 @@ function parsePoFiles($poFiles) {
 	 *   # fuzzy
 	 *   msgid "foo"
 	 *   msgstr "bar"
-	 *  
+	 *
 	 * Deleted, Fuzzy:
 	 *   # fuzzy
 	 *   #~ msgid "foo"
 	 *   #~ msgstr "bar"
-	 *  
+	 *
 	 */
 	$msgId = null;
 	$nextIsFuzzy = 0;
@@ -157,7 +157,7 @@ function parsePoFiles($poFiles) {
 	    if (strpos($line, '#, fuzzy') === 0) {
 		$nextIsFuzzy = 1;
 		continue;
-	    }	    
+	    }
 
 	    if (preg_match('/^#~ msgid "(.*)"/', $line, $matches)) {
 		$obsolete++;
@@ -185,7 +185,7 @@ function parsePoFiles($poFiles) {
 		$nextIsFuzzy = 0;
 		$lastLineWasEmptyMsgStr = 0;
 	    }
-		
+
 	    /*
 	     * Scan for:
 	     *   msgstr "foo bar"
@@ -232,7 +232,7 @@ function parsePoFiles($poFiles) {
 	    if (!isset($summary[$locale][$key])) {
 		$summary[$locale][$key] = 0;
 	    }
-	    
+
 	    $summary[$locale][$key] += $poData[$locale]['plugins'][$plugin][$key];
 	}
 
@@ -247,7 +247,7 @@ function parsePoFiles($poFiles) {
 
     foreach (array_keys($poData) as $locale) {
 	$pluginTotal = 0;
-	
+
 	/* Fill in any missing locales */
 	foreach (array_keys($seenPlugins) as $plugin) {
 	    if (!isset($poData[$locale]['plugins'][$plugin])) {
@@ -288,7 +288,7 @@ function parsePoFiles($poFiles) {
  * given params has a key 'missing' and the other not, the entry with 'missing' is sorted last,
  * regardless of percentage. When two entries are otherwise equal and both have a 'name' entry,
  * then the sort is by 'name' ASC.
- * 
+ *
  * @param array  first entry to sort
  * @param array  second entry to sort
  * @return int   -1, 0, +1, depending on the comparision
@@ -299,7 +299,7 @@ function sortByPercentDone($a, $b) {
     } else if (isset($b['missing']) && !isset($a['missing'])) {
 	return -1;
     }
-    
+
     if ($a['percentDone'] == $b['percentDone']) {
 	if (isset($a['name']) && isset($b['name'])) {
 	    return ($a['name'] < $b['name']) ? -1 : 1;

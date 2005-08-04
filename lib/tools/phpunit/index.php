@@ -3,7 +3,7 @@
  * @package Gallery
  * @subpackage PHPUnit
  */
-include('../security.inc');
+include('../../support/security.inc');
 include('../../../bootstrap.inc');
 require_once('../../../init.inc');
 require_once('phpunit.inc');

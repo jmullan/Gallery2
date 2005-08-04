@@ -4,25 +4,25 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /**
- * This script is useful to gather information about a specific PHP 
- * environment. The output is an array that can be appended to the 
- * GdFunctionalityMatrix.inc in the gd module's phpunit tests. This is used 
+ * This script is useful to gather information about a specific PHP
+ * environment. The output is an array that can be appended to the
+ * GdFunctionalityMatrix.inc in the gd module's phpunit tests. This is used
  * by the phpunit tests to test the GdToolkit functionality in different PHP
  * environments in a single installation.
  *
@@ -32,8 +32,7 @@
  *
  * @author Ernesto Baschny <ernst@baschny.de>
  */
-
-include('../security.inc');
+include(dirname(__FILE__) . '/security.inc');
 
 /*
  * Gets a lot of information about our GD installation and return it as a
@@ -64,14 +63,14 @@ function getGdLibraryInfo() {
         $gdVersion = 0;
     }
     if (isset($matches[2])) {
-        $gd_version = sprintf('>%s', $gd_version);
+        $gdVersion = sprintf('>%s', $gdVersion);
     }
     $isGdBundled = 0;
     if (preg_match($matcherBundled, $matchString)) {
         $isGdBundled = 1;
     }
 
-    /* Find out supported mime types */    
+    /* Find out supported mime types */
     $mimeChecks = array(
         array(
             'mimeType' => 'image/gif',
@@ -119,21 +118,21 @@ function getGdLibraryInfo() {
             $mimeTypes[] = $check['mimeType'];
         }
     }
-    
+
     $out = '';
     $out .= '$gdEnvironments[] = array(' . "\n";
-    $name = sprintf('%s|%s%s|%s', 
+    $name = sprintf('%s|%s%s|%s',
                  phpversion(),
                  $gdVersion,
                  ($isGdBundled ? '-bundled' : '-external'),
                  PHP_OS
                 );
-    
+
     $out .= "\t" . sprintf('\'name\' => \'%s\',', $name) . "\n";
     $out .= "\t" . sprintf('\'phpVersion\' => \'%s\',', phpversion()) . "\n";
     $out .= "\t" . sprintf('\'gdVersion\' => \'%s\',', $gdVersion) . "\n";
     $out .= "\t" . sprintf('\'gdBundled\' => %s,', $isGdBundled) . "\n";
-    
+
     $imageTypes = 0;
     if (function_exists('imageTypes')) {
         $imageTypes = imageTypes();
@@ -160,13 +159,13 @@ function getGdLibraryInfo() {
         $out .= "\t\t" . sprintf('\'%s\' => %s,', $constant, $value) . "\n";
     }
     $out .= "\t" . '),' . "\n";
-    
+
     $out .= "\t" . '\'mimeTypes\' => array(' . "\n";
     foreach ($mimeTypes as $mimeType) {
         $out .= "\t\t" . sprintf('\'%s\',', $mimeType) . "\n";
     }
     $out .= "\t" . '),' . "\n";
-    
+
     ob_start();
     phpinfo(8);
     $phpinfo = ob_get_contents();
@@ -175,13 +174,13 @@ function getGdLibraryInfo() {
     $phpinfo = preg_replace('/\'/', '\\\'', $phpinfo);
     $out .= "\t" . sprintf('\'phpinfo(8)\' => \'%s\',', $phpinfo) . "\n";
 
-    /* Functions defined in this GD module */    
+    /* Functions defined in this GD module */
     $functions = get_extension_funcs('gd');
     $out .= "\t" . '\'functions\' => array(' . "\n";
     foreach ($functions as $fct) {
         $out .= "\t\t" . sprintf('\'%s\' => true,', $fct) . "\n";
     }
-    
+
     $otherFunctions = array(
         'getimagesize',
         'image_type_to_extension',
@@ -204,10 +203,38 @@ $gdInfo = getGdLibraryInfo();
 <html>
   <head>
     <title>GD Library information gathering</title>
-    <link rel="stylesheet" href="stylesheet.css" />
+    <style>
+      body {
+	font:normal 68% verdana,arial,helvetica;
+	color:#000000;
+      }
+      p {
+	line-height:1.5em;
+	margin-top:0.5em; margin-bottom:1.0em;
+      }
+      h1 {
+	margin: 0 0 5px; font: 165% verdana,arial,helvetica
+      }
+      h2 {
+	margin-top: 1em; margin-bottom: 0.5em; font: bold 125% verdana,arial,helvetica
+      }
+      h3 {
+	margin-bottom: 0.5em; font: bold 115% verdana,arial,helvetica
+      }
+      h4 {
+	margin-bottom: 0.5em; font: bold 100% verdana,arial,helvetica
+      }
+      h5 {
+	margin-bottom: 0.5em; font: bold 100% verdana,arial,helvetica
+      }
+      h6 {
+	margin-bottom: 0.5em; font: bold 100% verdana,arial,helvetica
+      }
+    </style>
   </head>
   <body>
    <h1>GD library information gathering</h1>
+   <a href="index.php"> Back to Support Page </a>
 <?php if ($gdInfo == '') { ?>
    <p>No GD library found</p>
 <?php } else { ?>

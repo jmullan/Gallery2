@@ -121,7 +121,7 @@ function render($renderType) {
 <html>
   <head>
     <title>Security Check</title>
-    <link rel="stylesheet" type="text/css" href="tools.css"/>
+    <style> <?php readfile(dirname(__FILE__) . '/support.css'); ?> </style>
   </head>
   <body>
      <h1> Security Check </h1>
