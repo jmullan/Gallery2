@@ -908,6 +908,12 @@ class SessionTest extends GalleryTestCase {
 	    }    
 	}
     }
+
+    function testSessionInitializesIsUsingCookies() {
+	$session = new GallerySession();
+	$this->assert(isset($session->_isUsingCookies), 'not set');
+	$this->assertEquals(false, $session->_isUsingCookies, 'wrong value');
+    }
     
     /* Test configured cookie domain vs. not configured cookie domain */
     function testSessionCookieDomain() {
