@@ -6,10 +6,13 @@ include(dirname(__FILE__) . '/../../config.php');
 
 function getCacheDirs() {
     global $gallery;
-    $dirs = array();
-    foreach (glob($gallery->getConfig('data.gallery.base') . '/cache/*') as $dir) {
-	$dirs[] = basename($dir);
-    }
+    $dirs = array(
+	'cache/derivative',
+	'cache/entity',
+	'cache/module',
+	'cache/theme',
+	'smarty/templates_c'
+	);
     return $dirs;
 }
 
@@ -53,16 +56,23 @@ function recursiveRmdir($dirname) {
 $status = array();
 if (isset($_REQUEST['clear'])) {
     if (isset($_REQUEST['dirs'])) {
+	$legalDirs = getCacheDirs();
 	foreach ($_REQUEST['dirs'] as $dir => $ignored) {
 	    /* Make sure the dir is legit */
-	    if (preg_match('/\W/', $dir)) {
+	    if (!in_array($dir, $legalDirs)) {
 		$status[] = array("error", "Ignoring illegal dir: $dir");
 		continue;
 	    }
 
-	    $path = $gallery->getConfig('data.gallery.base') . '/cache/' . $dir;
+	    $path = $gallery->getConfig('data.gallery.base') . '/' . $dir;
 	    $status[] = array("info", "Deleting dir: $path");
 	    $status = array_merge($status, recursiveRmdir($path));
+
+	    if (mkdir($path)) {
+		$status[] = array("info", "Recreating dir: $path");
+	    } else {
+		$status[] = array("error", "Unable to recreate dir: $path");
+	    }
 	}
     }
 }
@@ -104,9 +114,9 @@ if (isset($_REQUEST['clear'])) {
           <?php foreach ($dirs as $dir): ?>
           <div>
             <input type="checkbox" name="dirs[<?php print $dir ?>]"
-                   <?php if ($dir != 'derivative'): ?> checked="checked" <?php endif; ?> />
+                   <?php if (basename($dir) != 'derivative'): ?> checked="checked" <?php endif; ?> />
             g2data/cache/<?php print $dir?>
-            <?php if ($dir == 'derivative'): ?>
+            <?php if (basename($dir) == 'derivative'): ?>
               <span class="subtext"> (Contains thumbnails and resizes; expensive to rebuild) </span>
             <?php endif; ?>
           </div>
