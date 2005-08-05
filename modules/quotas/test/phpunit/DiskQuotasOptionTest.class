@@ -130,6 +130,13 @@ class DiskQuotasOptionTest extends ItemAddOptionTestCase {
 	$this->_GB = $this->_module->translate('GB');
 
 	$this->_platform = $gallery->getPlatform();
+
+	/*
+	 * We'll be running shutdown actions in these tests, but we don't want to update
+	 * the modification timestamp of the root album (due to adding a subalbum) so
+	 * clear the list before we start our tests.
+	 */
+	$gallery->_shutdownActions = null;
     }
 
     function tearDown() {
