@@ -314,15 +314,16 @@ msgstr "Местоположение на Данните"
 msgid "System Checks"
 msgstr "Проверка на Системата"
 
-msgid "PHP version >= 4.1.0"
+#, fuzzy
+msgid "PHP version >= 4.1.0 or >= 5.0.4"
 msgstr "Версията na PHP >= 4.1.0"
 
 # param0 = existing php version, param1 = '<a href...>', param2 = '</a>'
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Error: Gallery 2 requires PHP version 4.1.0 or newer. You have PHP version %"
-"s installed. Contact your webserver administrator to request an upgrade, "
-"available at the %sPHP website%s."
+"Error: Gallery 2 requires PHP version 4.1.0 or newer or 5.0.4 or newer. You "
+"have PHP version %s installed. Contact your webserver administrator to "
+"request an upgrade, available at the %sPHP website%s."
 msgstr ""
 "Грешка: Галерия v2 изисква PHP версия 4.1.0 или по-нова. Вие имате PHP "
 "версия %s инсталирана. Свържете се с вашия администратор за да поискате "
@@ -708,29 +709,41 @@ msgid ""
 "Gallery to do exactly what you want."
 msgstr ""
 
-msgid "There was an error installing the core module.  Here's the stack trace:"
-msgstr ""
-"Имаше грешка при инсталирането на ядрото на Галерията. Следва 'stack trace':"
-
 msgid "Error installing Gallery Core"
 msgstr "Грешка при инсталирането на ядрото на Галерията"
 
-# param0 = '<a href...>', param1 = '</a>'
+msgid ""
+"Something went wrong when we tried to install the core module.  What to do "
+"next?"
+msgstr ""
+
+msgid ""
+"Go to the System Checks step of the installer and make sure all checks shows "
+"'Success'. A common issue is that the file integrity warning is ignored."
+msgstr ""
+
+msgid ""
+"If there are no warnings or failures in the System Checks step, empty your "
+"storage directory and delete the database tables and start the installation "
+"process a second time (redo all steps)."
+msgstr ""
+
 #, c-format
 msgid ""
-"Something went wrong when we tried to install the core module.  In the boxes "
-"below you can find some debug information.  Report this in the %sGallery "
-"Forums%s and we'll help you diagnose the problem."
+"Please visit the %sG2 FAQ%s and read the %sKnown issues section of the Readme"
+"%s."
 msgstr ""
-"Нещо не се получи както трябва когато се опитахме да инсталираме модула "
-"'ядро'. По-долу можете да намерите малко debug-информация. Изпратете това в %"
-"sФорумите на Галерията%s и ние ще ви помогнем да диагнозирате проблема."
+
+#, c-format
+msgid ""
+"If the problem persists, please copy the installation log which is located "
+"at %s and attach it (as install.log.zip) to a new forum topic in the %sG2 "
+"support forum%s or, if possible, just add a link to the install.log in the "
+"forum topic such that the support staff can analyze it if necessary."
+msgstr ""
 
 msgid "Stack Trace:"
 msgstr "Stack Trace:"
-
-msgid "Debug Output:"
-msgstr "Debug Output:"
 
 msgid "Installed Gallery Core successfully."
 msgstr "Ядрото на Галерията е успешно инсталирано."
@@ -1217,6 +1230,25 @@ msgstr ""
 
 msgid "Begin Installation&raquo;"
 msgstr "Започнете Инсталацията&raquo;"
+
+#~ msgid ""
+#~ "There was an error installing the core module.  Here's the stack trace:"
+#~ msgstr ""
+#~ "Имаше грешка при инсталирането на ядрото на Галерията. Следва 'stack "
+#~ "trace':"
+
+# param0 = '<a href...>', param1 = '</a>'
+#~ msgid ""
+#~ "Something went wrong when we tried to install the core module.  In the "
+#~ "boxes below you can find some debug information.  Report this in the %"
+#~ "sGallery Forums%s and we'll help you diagnose the problem."
+#~ msgstr ""
+#~ "Нещо не се получи както трябва когато се опитахме да инсталираме модула "
+#~ "'ядро'. По-долу можете да намерите малко debug-информация. Изпратете това "
+#~ "в %sФорумите на Галерията%s и ние ще ви помогнем да диагнозирате проблема."
+
+#~ msgid "Debug Output:"
+#~ msgstr "Debug Output:"
 
 #~ msgid "Multisite Setup"
 #~ msgstr "Вид на Инсталацията"

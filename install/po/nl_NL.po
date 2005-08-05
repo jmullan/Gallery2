@@ -318,14 +318,15 @@ msgstr "Opslag Setup"
 msgid "System Checks"
 msgstr "Systeemcontroles"
 
-msgid "PHP version >= 4.1.0"
+#, fuzzy
+msgid "PHP version >= 4.1.0 or >= 5.0.4"
 msgstr "PHP versie >= 4.1.0"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Error: Gallery 2 requires PHP version 4.1.0 or newer. You have PHP version %"
-"s installed. Contact your webserver administrator to request an upgrade, "
-"available at the %sPHP website%s."
+"Error: Gallery 2 requires PHP version 4.1.0 or newer or 5.0.4 or newer. You "
+"have PHP version %s installed. Contact your webserver administrator to "
+"request an upgrade, available at the %sPHP website%s."
 msgstr ""
 "Fout: Gallery 2 vereist PHP versie 4.1.0 of nieuwer. U heeft PHP versie %"
 "sgeïnstalleerd. Neem contact op met uw beheerder om een upgrade aan te "
@@ -749,29 +750,41 @@ msgstr ""
 "het proces loodsen waarbij u modules kunt installeren, waarmee u Gallery "
 "kunt afstemmen naar uw behoeften."
 
-msgid "There was an error installing the core module.  Here's the stack trace:"
-msgstr ""
-"Er is een fout opgetreden tijdens het installeren van de core module: Hier "
-"is de stack trace:"
-
 msgid "Error installing Gallery Core"
 msgstr "Fout bij het installeren van Gallery Core"
 
+msgid ""
+"Something went wrong when we tried to install the core module.  What to do "
+"next?"
+msgstr ""
+
+msgid ""
+"Go to the System Checks step of the installer and make sure all checks shows "
+"'Success'. A common issue is that the file integrity warning is ignored."
+msgstr ""
+
+msgid ""
+"If there are no warnings or failures in the System Checks step, empty your "
+"storage directory and delete the database tables and start the installation "
+"process a second time (redo all steps)."
+msgstr ""
+
 #, c-format
 msgid ""
-"Something went wrong when we tried to install the core module.  In the boxes "
-"below you can find some debug information.  Report this in the %sGallery "
-"Forums%s and we'll help you diagnose the problem."
+"Please visit the %sG2 FAQ%s and read the %sKnown issues section of the Readme"
+"%s."
 msgstr ""
-"Er is iets misgegaan tijdens het installeren van de core module. In de "
-"vakken hieronder vind u wat debuginformatie. Rapporteer deze in de %sGallery "
-"Forums%s en dan kunnen wij u helpen om een diagnose te stellen."
+
+#, c-format
+msgid ""
+"If the problem persists, please copy the installation log which is located "
+"at %s and attach it (as install.log.zip) to a new forum topic in the %sG2 "
+"support forum%s or, if possible, just add a link to the install.log in the "
+"forum topic such that the support staff can analyze it if necessary."
+msgstr ""
 
 msgid "Stack Trace:"
 msgstr "Stack Trace"
-
-msgid "Debug Output:"
-msgstr "Bebug Uitvoer:"
 
 msgid "Installed Gallery Core successfully."
 msgstr "Gallery Core succesvol geïnstalleerd"
@@ -1277,6 +1290,24 @@ msgstr "Gaan"
 
 msgid "Begin Installation&raquo;"
 msgstr "Begin Installatie&raquo;"
+
+#~ msgid ""
+#~ "There was an error installing the core module.  Here's the stack trace:"
+#~ msgstr ""
+#~ "Er is een fout opgetreden tijdens het installeren van de core module: "
+#~ "Hier is de stack trace:"
+
+#~ msgid ""
+#~ "Something went wrong when we tried to install the core module.  In the "
+#~ "boxes below you can find some debug information.  Report this in the %"
+#~ "sGallery Forums%s and we'll help you diagnose the problem."
+#~ msgstr ""
+#~ "Er is iets misgegaan tijdens het installeren van de core module. In de "
+#~ "vakken hieronder vind u wat debuginformatie. Rapporteer deze in de %"
+#~ "sGallery Forums%s en dan kunnen wij u helpen om een diagnose te stellen."
+
+#~ msgid "Debug Output:"
+#~ msgstr "Bebug Uitvoer:"
 
 #~ msgid "Multisite Setup"
 #~ msgstr "Multisite Setup"

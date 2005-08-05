@@ -292,15 +292,16 @@ msgstr "Depolama Kurulumu"
 msgid "System Checks"
 msgstr "Sistem Kontrolleri"
 
-msgid "PHP version >= 4.1.0"
+#, fuzzy
+msgid "PHP version >= 4.1.0 or >= 5.0.4"
 msgstr "PHP versiyon >= 4.1.0"
 
 # param0 = existing php version, param1 = '<a href...>', param2 = '</a>'
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Error: Gallery 2 requires PHP version 4.1.0 or newer. You have PHP version %"
-"s installed. Contact your webserver administrator to request an upgrade, "
-"available at the %sPHP website%s."
+"Error: Gallery 2 requires PHP version 4.1.0 or newer or 5.0.4 or newer. You "
+"have PHP version %s installed. Contact your webserver administrator to "
+"request an upgrade, available at the %sPHP website%s."
 msgstr ""
 "Fehler: Gallery 2 benötigt PHP Version 4.1.0 oder neuer.  Sie haben PHP "
 "Version %s installiert.  Wenden Sie sich bitte an den Administrator Ihres "
@@ -681,26 +682,41 @@ msgid ""
 "Gallery to do exactly what you want."
 msgstr ""
 
-msgid "There was an error installing the core module.  Here's the stack trace:"
-msgstr ""
-"Çekirdek modül kurulurken bir hatayla karşılaşıldı. Stack trace burada:"
-
 msgid "Error installing Gallery Core"
 msgstr "Galeri Çekirdeği kurulumunda Hata"
 
-# param0 = '<a href...>', param1 = '</a>'
+msgid ""
+"Something went wrong when we tried to install the core module.  What to do "
+"next?"
+msgstr ""
+
+msgid ""
+"Go to the System Checks step of the installer and make sure all checks shows "
+"'Success'. A common issue is that the file integrity warning is ignored."
+msgstr ""
+
+msgid ""
+"If there are no warnings or failures in the System Checks step, empty your "
+"storage directory and delete the database tables and start the installation "
+"process a second time (redo all steps)."
+msgstr ""
+
 #, c-format
 msgid ""
-"Something went wrong when we tried to install the core module.  In the boxes "
-"below you can find some debug information.  Report this in the %sGallery "
-"Forums%s and we'll help you diagnose the problem."
+"Please visit the %sG2 FAQ%s and read the %sKnown issues section of the Readme"
+"%s."
+msgstr ""
+
+#, c-format
+msgid ""
+"If the problem persists, please copy the installation log which is located "
+"at %s and attach it (as install.log.zip) to a new forum topic in the %sG2 "
+"support forum%s or, if possible, just add a link to the install.log in the "
+"forum topic such that the support staff can analyze it if necessary."
 msgstr ""
 
 msgid "Stack Trace:"
 msgstr "Stack Trace:"
-
-msgid "Debug Output:"
-msgstr "Debug Çıktısı:"
 
 msgid "Installed Gallery Core successfully."
 msgstr "Galeri Çekirdeği başarıyla kuruldu."
@@ -1115,6 +1131,14 @@ msgstr "Git"
 
 msgid "Begin Installation&raquo;"
 msgstr "Kurulumu Başlat&raquo;"
+
+#~ msgid ""
+#~ "There was an error installing the core module.  Here's the stack trace:"
+#~ msgstr ""
+#~ "Çekirdek modül kurulurken bir hatayla karşılaşıldı. Stack trace burada:"
+
+#~ msgid "Debug Output:"
+#~ msgstr "Debug Çıktısı:"
 
 #~ msgid "Multisite Setup"
 #~ msgstr "Çoklusite Kurulumu"
