@@ -1718,8 +1718,15 @@
 	delete old GALLERYSID cookie(s) in your browser if Gallery seems to ignore login requests.
       </li>
       <li>
-	<b>Performance</b> -  There are still some tweaks that we can make to have it go faster,
+	<b>Performance</b> - There are still some tweaks that we can make to have it go faster,
 	but we won&rsquo;t get to them before the final release.
+      </li>
+      <li>
+	<b>URL Rewrite upgrade</b> - Upgrade from some older versions of the Rewrite module
+	may leave a .htaccess file in place that is incompatible with the current code.
+	If after upgrade you can no longer see thumbnails or navigate into subalbums then
+	visit URL Rewrite site admin and click Save on the Rules tab to resave .htaccess
+	and bring it up to date.
       </li>
       <li>
 	<a name="multisite"></a>
