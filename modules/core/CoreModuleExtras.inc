@@ -1151,6 +1151,8 @@ class CoreModuleExtras {
 	    /* Beta 4! */
 	case '0.9.32':
 	    /* Minor core api change */
+	case '0.9.33':
+	    /* Release Candidate 1! */
 
 	case 'end of upgrade path':
 	    /*
@@ -1320,6 +1322,7 @@ $gallery->setConfig(\'cookieId\', \'' . $cookieId . '\');
 	case '0.9.30':
 	case '0.9.31':
 	case '0.9.32':
+	case '0.9.33':
 
 	case 'end of upgrade path':
 	    /*
