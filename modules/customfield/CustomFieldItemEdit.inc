@@ -119,11 +119,12 @@ class CustomFieldItemEdit extends ItemEditPlugin {
 	default:
 	    $set = GalleryUtilities::isA($item, 'GalleryAlbumItem') ? 'album'
 		 : (GalleryUtilities::isA($item, 'GalleryPhotoItem') ? 'photo' : 'common');
-	    list ($ret, $form['fields'], $param, $isContainerSettings) =
+	    list ($ret, $tmp, $param, $isContainerSettings) =
 		CustomFieldHelper::fetchFieldValues(array($item), null, $set);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
+	    $form['fields'] = $tmp[$item->getId()];
 	    foreach (array('common' => 1, $set => 1) as $s => $tmp) {
 		foreach ($param[$item->getId()][$s] as $it) {
 		    if (!empty($it['choices'])) {
@@ -132,7 +133,7 @@ class CustomFieldItemEdit extends ItemEditPlugin {
 		}
 	    }
 	    if ($set == 'album') {
-		$form['adminFlag'] = $isContainerSettings ? 1 : 2;
+		$form['adminFlag'] = $isContainerSettings[$item->getId()] ? 1 : 2;
 	    }
 	    $tpl = 'modules/customfield/templates/CustomFieldItemEdit.tpl';
 	}

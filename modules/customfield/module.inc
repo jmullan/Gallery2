@@ -86,18 +86,19 @@ class CustomFieldModule extends GalleryModule {
 	GalleryCoreApi::relativeRequireOnce('modules/customfield/classes/CustomFieldHelper.class');
 	$summaries = array();
 
-	list ($ret, $fields) = CustomFieldHelper::fetchFieldValues($items, 'summary');
+	list ($ret, $data) = CustomFieldHelper::fetchFieldValues($items, 'summary');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	foreach ($items as $item) {
-	    $itemIds[] = $item->getId();
+	foreach ($data as $itemId => $fields) {
 	    $list = array();
 	    foreach ($fields as $field => $value) {
 		$list[] = "$field: $value";
 	    }
-	    $summaries[$item->getId()] = implode("<br/>\n", $list);
+	    if (!empty($list)) {
+		$summaries[$itemId] = implode("<br/>\n", $list);
+	    }
 	}
 	return array(GalleryStatus::success(), $summaries);
     }
