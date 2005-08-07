@@ -40,7 +40,7 @@ class ImageMagickModule extends GalleryModule {
 
 	$this->setId('imagemagick');
 	$this->setName($gallery->i18n('ImageMagick'));
-	$this->setDescription($gallery->i18n('ImageMagick Graphics Toolkit'));
+	$this->setDescription($gallery->i18n('ImageMagick / GraphicsMagick Graphics Toolkit'));
 	$this->setVersion('0.9.9');
 	$this->setGroup('toolkits', $this->translate('Graphics Toolkits'));
 	$this->setCallbacks('getSiteAdminViews');
