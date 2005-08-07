@@ -92,6 +92,38 @@ class PluginTest extends GalleryTestCase {
 	$this->assert(!GalleryCoreApi::isPluginCompatibleWithApis($plugin),
 		      'should not be compatible');
     }
+
+    function testFetchAllPluginIds() {
+	global $gallery;
+
+	foreach (array('theme', 'module') as $type) {
+	    /* Mock platform */
+	    $platform = new UnitTestPlatform();
+	    $path = str_replace('.', '\.', '/../../../../' . $type . 's/');
+	    $platform->setReply('opendir', array('fuzzy' => '{^.+' . $path . '$}'), 'fh');
+	    $platform->setReply('readdir', array('fh'), '.');
+	    $platform->setReply('readdir', array('fh'), '..');
+	    $platform->setReply('readdir', array('fh'), 'CVS');
+	    $platform->setReply('readdir', array('fh'), 'moo');
+	    $platform->setReply('is_file', array('fuzzy' => '{^.+' . $path .
+						 'moo/' . $type . '\.inc$}'), true);
+	    $platform->setReply('readdir', array('fh'), 'foo');
+	    $platform->setReply('is_file', array('fuzzy' => '{^.+' . $path .
+						 'foo/' . $type . '\.inc$}'), false);
+	    $platform->setReply('readdir', array('fh'), 'bar');
+	    $platform->setReply('is_file', array('fuzzy' => '{^.+' . $path .
+						 'bar/' . $type . '\.inc$}'), true);
+	    $platform->setReply('readdir', array('fh'), false);
+	    $platform->setReply('closedir', array('fh'), true);
+	    $gallery->setPlatform($platform);
+
+	    list ($ret, $themeIds) = GalleryCoreApi::getAllPluginIds($type);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assertEquals(array('moo', 'bar'), $themeIds, "$type ids do not match");
+	}
+    }
 }
 
 class PluginTestPlugin extends GalleryPlugin {
