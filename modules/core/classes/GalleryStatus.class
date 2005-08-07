@@ -441,7 +441,8 @@ class GalleryStatus {
 	if ($errorCode == 0) {
 	    $codes = array('GALLERY_SUCCESS');
 	} else {
-	    /* get_defined_constants() arrived in 4.1? */
+	    $codes = array();
+	    /* get_defined_constants() arrived in 4.1.0 */
 	    if (function_exists('get_defined_constants')) {
 		foreach (get_defined_constants() as $constantName => $constantValue) {
 		    if (strpos($constantName, 'ERROR_') === 0) {
@@ -449,6 +450,10 @@ class GalleryStatus {
 			    $codes[] = $constantName;
 			}
 		    }
+		}
+		if (empty($codes)) {
+		    /* No specific error specified */
+		    $codes = array('GALLERY_ERROR');
 		}
 	    } else {
 		$codes[] = 'UnknownErrorName';
