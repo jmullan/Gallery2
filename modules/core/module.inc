@@ -475,36 +475,6 @@ class CoreModule extends GalleryModule {
     }
 
     /**
-     * Translate string.  Results are cached.
-     * @param mixed string or array for translation
-     * @param string (optional) attempt to translate post-sprintf string using this value
-     *    This allows specific translation of strings like "Edit Album" or "Edit Photo"
-     *    with a fallback to translation of "Edit %s" for other %s values.
-     * @return translated string
-     * @access private
-     */
-    function _translate($params, $postSprintf=null) {
-	if (isset($postSprintf)) {
-	    $string = sprintf($params['text'], $postSprintf);
-	} else if (is_string($params)) {
-	    $string = $params;
-	}
-	if (isset($string) && GalleryDataCache::containsKey($string)) {
-	    return GalleryDataCache::get($string);
-	}
-	if (isset($postSprintf)) {
-	    $result = $this->translate($string);
-	}
-	if (!isset($result) || $result == $string) {
-	    $result = $this->translate($params);
-	}
-	if (isset($string)) {
-	    GalleryDataCache::put($string, $result);
-	}
-	return $result;
-    }
-
-    /**
      * @see GalleryModule::install
      *
      * We pushed all this code into its own file since we need it very rarely so it doesn't

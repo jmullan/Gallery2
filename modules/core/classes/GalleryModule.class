@@ -565,5 +565,36 @@ class GalleryModule extends GalleryPlugin {
     function getRequiredModuleApi() {
 	return $this->_requiredModuleApi;
     }
+
+    /**
+     * Translate string.  Results are cached.
+     * @param mixed string or array for translation
+     * @param string (optional) attempt to translate post-sprintf string using this value
+     *    This allows specific translation of strings like "Edit Album" or "Edit Photo"
+     *    with a fallback to translation of "Edit %s" for other %s values.
+     *    Currently only input string with single % token is supported.
+     * @return translated string
+     * @access private
+     */
+    function _translate($params, $postSprintf=null) {
+	if (isset($postSprintf)) {
+	    $string = sprintf($params['text'], $postSprintf);
+	} else if (is_string($params)) {
+	    $string = $params;
+	}
+	if (isset($string) && GalleryDataCache::containsKey('_translate ' . $string)) {
+	    return GalleryDataCache::get('_translate ' . $string);
+	}
+	if (isset($postSprintf)) {
+	    $result = $this->translate($string);
+	}
+	if (!isset($result) || $result == $string) {
+	    $result = $this->translate($params);
+	}
+	if (isset($string)) {
+	    GalleryDataCache::put('_translate ' . $string, $result);
+	}
+	return $result;
+    }
 }
 ?>

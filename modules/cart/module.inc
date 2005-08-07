@@ -120,10 +120,11 @@ class CartModule extends GalleryModule {
     function getItemLinks($items, $wantsDetailedLinks, $permissions) {
 	$links = array();
 	foreach ($items as $item) {
-	    $itemTypeNames = $item->itemTypeName();
+	    $itemTypeNames = array_merge($item->itemTypeName(), $item->itemTypeName(false));
+	    /* Specific translations: _('Add Album To Cart') _('Add Photo To Cart') */
 	    $links[$item->getId()][] =
-		array('text' => $this->translate(array('text' => 'Add %s To Cart',
-						       'arg1' => $itemTypeNames[0])),
+		array('text' => $this->_translate(array('text' => 'Add %s To Cart',
+						  'arg1' => $itemTypeNames[0]), $itemTypeNames[2]),
 		      'params' => array('controller' => 'cart.AddToCart',
 					'itemId' => $item->getId(),
 					'return' => true));
