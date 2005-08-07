@@ -391,9 +391,9 @@ class GalleryStatus {
 	if (!is_null($message)) {
 	    $buf .= ' : ' . htmlentities($message);
 	}
-	$buf .= '<UL>';
+	$buf .= '<ul>';
 	foreach ($trace as $traceEntry) {
-	    $buf .= sprintf("<LI><B>in</B> %s <B>at line</B> %d",
+	    $buf .= sprintf("<li><b>in</b> %s <b>at line</b> %d",
 			    $traceEntry['file'], $traceEntry['line']);
 	    if (isset($traceEntry['class']) && isset($traceEntry['function'])) {
 		$buf .= " ($traceEntry[class]::$traceEntry[function]) ";
@@ -401,7 +401,7 @@ class GalleryStatus {
 		$buf .= " ($traceEntry[function]) ";
 	    }
 	}
-	$buf .= '</UL>';
+	$buf .= '</ul>';
 
 	return $buf;
     }
@@ -421,7 +421,7 @@ class GalleryStatus {
 	    $buf .= ' : ' . htmlentities($message);
 	}
 	foreach ($trace as $traceEntry) {
-	    $buf .= sprintf("<B>in</B> %s <B>at line</B> %d",
+	    $buf .= sprintf("<b>in</b> %s <b>at line</b> %d",
 			    $traceEntry['file'], $traceEntry['line']);
 	    if (isset($traceEntry['class']) && isset($traceEntry['function'])) {
 		$buf .= " ($traceEntry[class]::$traceEntry[function]) ";
