@@ -112,7 +112,7 @@
     <td colspan="2">
       <div class="gbBlock">
         {if $SetupRewrite.htaccessCode == REWRITE_STATUS_HTACCESS_MISSING}
-        <h3> {g->text text="Please create a file in you Gallery directory named .htaccess"} </h3>
+        <h3> {g->text text="Please create a file in your Gallery directory named .htaccess"} </h3>
         
         <pre class="giDescription">touch {$SetupRewrite.htaccessPath}<br/>chmod 666 {$SetupRewrite.htaccessPath}</pre>
         {/if}

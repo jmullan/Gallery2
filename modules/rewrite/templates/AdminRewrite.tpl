@@ -306,7 +306,7 @@
     <td colspan="2">
       <div class="gbBlock">
         {if $AdminRewrite.htaccessCode == REWRITE_STATUS_HTACCESS_MISSING}
-        <h3> {g->text text="Please create a file in you Gallery directory named .htaccess"} </h3>
+        <h3> {g->text text="Please create a file in your Gallery directory named .htaccess"} </h3>
         
         <pre class="giDescription">touch {$AdminRewrite.htaccessPath}<br/>chmod 666 {$AdminRewrite.htaccessPath}</pre>
         {/if}
@@ -351,7 +351,7 @@
     <td colspan="2">
       <div class="gbBlock">
         {if $AdminRewrite.embeddedCode == REWRITE_STATUS_HTACCESS_MISSING}
-        <h3> {g->text text="Please create a file in you Gallery directory named .htaccess"} </h3>
+        <h3> {g->text text="Please create a file in your Gallery directory named .htaccess"} </h3>
         
         <pre class="giDescription">touch {$AdminRewrite.embeddedPath}<br/>chmod 666 {$AdminRewrite.embeddedPath}</pre>
         {/if}
