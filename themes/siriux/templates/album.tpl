@@ -41,7 +41,7 @@
 
 	  <div class="meta">
 	    {if ($child.childCount > 0)}
-	      {$child.descendentCount} {g->text text="Images"}
+	      {g->text text="%d Images" arg1=$child.descendentCount}
 	    {/if}
 	  </div>
 
