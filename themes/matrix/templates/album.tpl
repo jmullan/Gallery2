@@ -141,11 +141,6 @@
         </div>
         {/if}
 
-        {* Show any other album blocks (comments, etc) *}
-        {foreach from=$theme.params.albumBlocks item=block}
-          {g->block type=$block.0 params=$block.1}
-        {/foreach}
-
         {if !empty($theme.navigator)}
         <div class="gbBlock gcBackground2 gbNavigator">
           {g->block type="core.Navigator" navigator=$theme.navigator reverseOrder=true}
@@ -164,6 +159,11 @@
 	{g->block type="core.EmergencyEditItemLink" class="gbBlock"
                   checkSidebarBlocks=true
                   checkAlbumBlocks=true}
+
+        {* Show any other album blocks (comments, etc) *}
+        {foreach from=$theme.params.albumBlocks item=block}
+          {g->block type=$block.0 params=$block.1}
+        {/foreach}
       </div>
     </td>
   </tr>
