@@ -19,7 +19,7 @@
     <link rel="stylesheet" type="text/css" href="{g->theme url="theme.css"}"/>
   </head>
   <body class="gallery">
-    <div id="gallery" {g->mainDivAttributes}>
+    <div {g->mainDivAttributes}>
       {*
        * Some module views (eg slideshow) want the full screen.  So for those, we
        * don't draw a header, footer, navbar, etc.  Those views are responsible for

@@ -25,7 +25,7 @@
     {/literal}{/if}
   </head>
   <body class="gallery">
-    <div id="gallery" {g->mainDivAttributes}>
+    <div {g->mainDivAttributes}>
       {if $theme.pageType == 'album' || $theme.pageType == 'photo'}
 	{g->theme include="slider.tpl"}
       {elseif $theme.useFullScreen}

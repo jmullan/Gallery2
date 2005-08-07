@@ -19,7 +19,7 @@
     <link rel="stylesheet" type="text/css" href="{g->theme url="theme.css"}"/>
   </head>
   <body class="gallery">
-    <div id="gallery" {g->mainDivAttributes}>
+    <div {g->mainDivAttributes}>
       {if $theme.pageType == 'album' || $theme.pageType == 'photo'}
 	{g->theme include="hybrid.tpl"}
       {elseif $theme.useFullScreen}

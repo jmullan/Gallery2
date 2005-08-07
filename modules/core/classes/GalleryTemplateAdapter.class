@@ -466,22 +466,23 @@ class GalleryTemplateAdapter {
     function mainDivAttributes($params, &$smarty) {
 	global $gallery;
 
-	$buf = '';
-	$translator =& $gallery->getTranslator();
-	if ($translator->isRightToLeft()) {
-	    $buf .= 'style="direction:rtl" ';
-	}
-
+	$classes = array();
 	$userAgent = strtolower(GalleryUtilities::getServerVar('HTTP_USER_AGENT'));
 	if (strpos($userAgent, 'safari') !== false) {
-	    $buf .= 'class="safari" ';
+	    $classes[] = 'safari';
 	} else if (strpos($userAgent, 'opera') !== false) {
-	    $buf .= 'class="opera" ';
+	    $classes[] = 'opera';
 	} else if (strpos($userAgent, 'msie') !== false) {
-	    $buf .= 'class="IE" ';
+	    $classes[] = 'IE';
 	}
 
-	return $buf;
+	$translator =& $gallery->getTranslator();
+	if ($translator->isRightToLeft()) {
+	    $classes[] = 'rtl';
+	}
+
+	$classes = empty($classes) ? '' : ' class="' . implode(' ', $classes) . '"';
+	return 'id="gallery"' . $classes;
     }
 
     function logoButton($params, &$smarty) {
