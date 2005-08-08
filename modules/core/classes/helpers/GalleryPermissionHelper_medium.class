@@ -94,6 +94,8 @@ class GalleryPermissionHelper_medium {
 
 	$permTable = array();
 	while ($result = $searchResults->nextResult()) {
+	    /* Temporary fix for defect 1244916 */
+	    $gallery->guaranteeTimeLimit(10);
 	    $bits = $storage->convertBitsToInt($result[1]);
 	    if (!empty($bits)) {
 		list ($ret, $permissions) = GalleryCoreApi::convertPermissionBitsToIds($bits);
