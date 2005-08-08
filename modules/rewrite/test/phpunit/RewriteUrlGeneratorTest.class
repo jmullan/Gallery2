@@ -178,6 +178,11 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	list ($ret, $derivative) =
+	    $this->_createDerivative($testItem, $testItem->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
 	list ($ret, $testAlbumPath) = $testAlbum->fetchLogicalPath();
 	if ($ret->isError()) {
@@ -260,6 +265,10 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
 		/* core.ShowItem at the top level has no prefix */
 		$tests[] = array('v/',
 				 array('view' => 'core.ShowItem'));
+		/* %path% for non-FileSystemEntity falls back to long url */
+		$tests[] = array(
+		    'phpunit_test.php?g2_view=core.ShowItem&amp;g2_itemId=' . $derivative->getId(),
+		    array('view' => 'core.ShowItem', 'itemId' => $derivative->getId()));
 		/*
 		 * core.DownloadItem on items have the id, serial number,
 		 * path component and file type

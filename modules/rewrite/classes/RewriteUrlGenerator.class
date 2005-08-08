@@ -175,7 +175,8 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 	    foreach ($regs[1] as $arg) {
 		switch ($arg) {
 		case 'path':
-		    if (!isset($entity) && !$this->_loadEntity($itemId, $entity)) {
+		    if ((!isset($entity) && !$this->_loadEntity($itemId, $entity)) ||
+			    !GalleryUtilities::isA($entity, 'GalleryFileSystemEntity')) {
 			return parent::generateUrl($params, $forceSessionId);
 		    }
 		    list ($ret, $path) = $entity->fetchLogicalPath();
