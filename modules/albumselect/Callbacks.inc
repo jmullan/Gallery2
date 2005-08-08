@@ -19,12 +19,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/**
+ * @version $Revision$ $Date$
+ * @package AlbumSelect
+ * @author Alan Harder <alan.harder@sun.com>
+ */
 class AlbumSelectCallbacks {
-    /**
-     */
+
     function callback($params, &$smarty, $callback, $userId) {
+	static $idCount = '';
 	switch($callback) {
 	case 'LoadAlbumData':
+	    if (isset($params['albumTree']) && $params['albumTree']) {
+		/* Set unique name for javascript object */
+		$albumTreeName = 'albumTree' . $idCount++;
+	    }
 	    list ($ret, $params) =
 		GalleryCoreApi::fetchAllPluginParameters('module', 'albumselect');
 	    if ($ret->isError()) {
@@ -103,6 +112,9 @@ class AlbumSelectCallbacks {
 		'tree' => $treeList,
 		'titles' => $titles,
 		'params' => $params);
+	    if (isset($albumTreeName)) {
+		$block['albumselect']['LoadAlbumData']['albumTreeName'] = $albumTreeName;
+	    }
 
 	    return GalleryStatus::success();
 	}
