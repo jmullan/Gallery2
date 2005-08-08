@@ -264,7 +264,7 @@ class RewriteModule extends GalleryModule {
 	$rule['keywords'] = array(
 	    'serialNumber' => array(
 		'pattern' => '([0-9]+)',
-		'help' => $this->translate('Item version to download (original/sized/thumb)')),
+		'help' => $this->translate('Ensures browsers do not use cached version when image has changed')),
 	    'fileName' => array(
 		'pattern' => '([^\/]+)',
 		'help' => $this->translate('Item file name (eg, image.jpg)'),
