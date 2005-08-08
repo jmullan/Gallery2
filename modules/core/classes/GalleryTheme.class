@@ -448,18 +448,15 @@ class GalleryTheme extends GalleryPlugin {
     }
 
     /**
-     * Activate this theme.
-     *
-     * @return array object GalleryStatus a status code
-     *               array redirect info for error page (empty for success)
+     * @see GalleryPlugin::activate
      */
-    function activate() {
-    	if (!GalleryCoreApi::isPluginCompatibleWithApis($this)) {
+    function activate($postActivationEvent=true) {
+	if (!GalleryCoreApi::isPluginCompatibleWithApis($this)) {
 	    return array(GalleryStatus::error(ERROR_PLUGIN_VERSION_MISMATCH, __FILE__, __LINE__,
 		sprintf('incompatible %s %s', $this->getPluginType(), $this->getId())), null);
 	}
 
-	list ($ret, $redirect) = parent::activate();
+	list ($ret, $redirect) = parent::activate($postActivationEvent);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -516,7 +513,7 @@ class GalleryTheme extends GalleryPlugin {
 	if ($gallery->getDebug()) {
 	    $gallery->debug(sprintf('GalleryTheme::installOrUpgrade %s theme', $this->getId()));
 	}
-	
+
 	if (!GalleryCoreApi::isPluginCompatibleWithApis($this)) {
 	    return GalleryStatus::error(ERROR_PLUGIN_VERSION_MISMATCH, __FILE__, __LINE__,
 		sprintf('incompatible %s %s', $this->getPluginType(), $this->getId()));
@@ -534,13 +531,13 @@ class GalleryTheme extends GalleryPlugin {
 	if ($gallery->getDebug()) {
 	    $gallery->debug('GalleryTheme::installOrUpgrade compare versions');
 	}
-	
+
 	if ($installedVersion != $this->getVersion()) {
 	    if ($gallery->getDebug()) {
 		$gallery->debug(sprintf('GalleryTheme::installOrUpgrade, installed version is %s,' .
 					' theme upgrade required', $installedVersion));
 	    }
-	    
+
 	    $ret = $this->upgrade($installedVersion);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -549,7 +546,7 @@ class GalleryTheme extends GalleryPlugin {
 	    if ($gallery->getDebug()) {
 		$gallery->debug('GalleryTheme::installOrUpgrade set new theme version etc.');
 	    }
-	    
+
 	    $data = array('_version' => $this->getVersion(),
 			  '_requiredCoreApi' => join(',', $this->getRequiredCoreApi()),
 			  '_requiredThemeApi' => join(',', $this->getRequiredThemeApi()));
@@ -564,7 +561,7 @@ class GalleryTheme extends GalleryPlugin {
 	if ($gallery->getDebug()) {
 	    $gallery->debug('GalleryTheme::installOrUpgrade finished successfully');
 	}
-	
+
 	return GalleryStatus::success();
     }
 
@@ -628,7 +625,7 @@ class GalleryTheme extends GalleryPlugin {
     /**
      * @see GalleryPlugin::deactivate
      */
-    function deactivate() {
+    function deactivate($postDeactivationEvent=true) {
 	list ($ret, $defaultTheme) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
 	if ($ret->isError()) {
@@ -644,7 +641,7 @@ class GalleryTheme extends GalleryPlugin {
 	    return array(GalleryStatus::success(), array('href' => 'upgrade/'));
 	}
 
-	list ($ret, $redirect) = parent::deactivate();
+	list ($ret, $redirect) = parent::deactivate($postDeactivationEvent);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

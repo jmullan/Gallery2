@@ -114,7 +114,7 @@ class GalleryModule extends GalleryPlugin {
 	if ($gallery->getDebug()) {
 	    $gallery->debug(sprintf('GalleryModule::installOrUpgrade %s module', $this->getId()));
 	}
-	
+
 	if (!GalleryCoreApi::isPluginCompatibleWithApis($this)) {
 	    return GalleryStatus::error(ERROR_PLUGIN_VERSION_MISMATCH, __FILE__, __LINE__,
 		sprintf('incompatible %s %s', $this->getPluginType(), $this->getId()));
@@ -221,7 +221,7 @@ class GalleryModule extends GalleryPlugin {
 	    $gallery->debug(sprintf('Successfully finished installOrUpgrade %s module',
 				    $this->getId()));
 	}
-	
+
 	return GalleryStatus::success();
     }
 
@@ -268,13 +268,7 @@ class GalleryModule extends GalleryPlugin {
     }
 
     /**
-     * Deactivate this module
-     *
-     * @param bool should we post a deactivation event?  Normally true, but the
-     *             upgrader may choose to suppress this event so that it can
-     *             reactivate a module without causing a ripple effect.
-     * @return array object GalleryStatus a status code
-     *               array redirect info for error page (empty for success)
+     * @see GalleryPlugin::deactivate()
      */
     function deactivate($postDeactivationEvent=true) {
 	list ($ret, $redirect) = parent::deactivate($postDeactivationEvent);
@@ -301,41 +295,37 @@ class GalleryModule extends GalleryPlugin {
      * Note: if you add something here, consider adding  the same functionality
      * to installOrUpgrade (see the TODO there).
      */
-    function activate() {
+    function activate($postActivationEvent=true) {
 	if (!GalleryCoreApi::isPluginCompatibleWithApis($this)) {
 	    return array(GalleryStatus::error(ERROR_PLUGIN_VERSION_MISMATCH, __FILE__, __LINE__,
 		sprintf('incompatible %s %s', $this->getPluginType(), $this->getId())), null);
 	}
 
-	/*
-	 * Make sure that we don't need configuration before we allow
-	 * activation.
-	 */
+	/* Make sure that we don't need configuration before we allow activation. */
 	list ($ret, $needs) = $this->needsConfiguration();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
 	if ($needs) {
 	    return array(GalleryStatus::error(ERROR_CONFIGURATION_REQUIRED, __FILE__, __LINE__),
 			 null);
-	} else {
-	    list ($ret, $redirect) = parent::activate();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    if (!empty($redirect)) {
-		return array(GalleryStatus::success(), $redirect);
-	    }
-
-	    $ret = $this->performFactoryRegistrations();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    return array(GalleryStatus::success(), array());
 	}
+
+	list ($ret, $redirect) = parent::activate($postActivationEvent);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (!empty($redirect)) {
+	    return array(GalleryStatus::success(), $redirect);
+	}
+
+	$ret = $this->performFactoryRegistrations();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), array());
     }
 
     /**

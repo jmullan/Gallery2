@@ -156,6 +156,9 @@ class GalleryPlugin {
     /**
      * Activate this plugin
      *
+     * @param bool should we post an activation event?  Normally true, but the
+     *             upgrader may choose to suppress this event so that it can
+     *             reactivate a module without causing a ripple effect.
      * @return array object GalleryStatus a status code
      *               array redirect info for error page (empty for success)
      */
@@ -356,7 +359,8 @@ class GalleryPlugin {
 	}
 
 	$event = GalleryCoreApi::newEvent('Gallery::UninstallPlugin');
-	$event->setData(array('pluginType' => $this->getPluginType(), 'pluginId' => $this->getId()));
+	$event->setData(array('pluginType' => $this->getPluginType(),
+			      'pluginId' => $this->getId()));
 	list ($ret) = GalleryCoreApi::postEvent($event);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
