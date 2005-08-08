@@ -111,15 +111,22 @@ class RedirectController extends GalleryController {
 	}
 
 	/* Redirect browser */
+	$results = array('redirect' => array('view' => $view, 'itemId' => $id),
+			 'status' => array(), 'error' => array());
+
 	$scriptName = GalleryUtilities::getServerVar('PHP_SELF');
 	if (empty($scriptName)) {
 	    /* PHP as CGI needs to use PHP_SELF; fallback to SCRIPT_NAME just in case */
 	    $scriptName = GalleryUtilities::getServerVar('SCRIPT_NAME');
 	}
-	$results = array('redirect' => array('href' => GalleryUrlGenerator::makeUrl($scriptName),
-					     'view' => $view,
-					     'itemId' => $id),
-			 'status' => array(), 'error' => array());
+	if (strpos($scriptName, GALLERY_MAIN_PHP) !== false) {
+	    /*
+	     * $scriptName may not be the right path.. see http://bugs.php.net/bug.php?id=31843
+	     * If not, omit 'href' in redirect params which means we hope REQUEST_URI has been
+	     * rewritten to the correct path (that is the case on php 5.0.3 cgi at least).
+	     */
+	    $results['redirect']['href'] = GalleryUrlGenerator::makeUrl($scriptName);
+	}
 
 	list ($full, $page) = GalleryUtilities::getRequestVariablesNoPrefix('full', 'page');
 	if (!empty($full)) {

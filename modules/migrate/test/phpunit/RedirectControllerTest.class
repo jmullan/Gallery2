@@ -46,7 +46,6 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
 	$this->_markForCleanup($this->_item);
 
 	list ($ret, $this->_thumb) = $this->_createDerivative($this->_item, $this->_item->getId(),
@@ -76,6 +75,8 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	$_SERVER['PHP_SELF'] = '/gallery2/' . GALLERY_MAIN_PHP;
     }
 
     function tearDown() {
@@ -90,15 +91,15 @@ class RedirectControllerTest extends GalleryControllerTestCase {
     function testRedirect() {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
-	$href = $urlGenerator->generateUrl(array('href' => 'lib/tools/phpunit/index.php'));
+	$href = $urlGenerator->generateUrl(array('href' => $_SERVER['PHP_SELF']));
 
 	/* Album */
 	GalleryUtilities::putRequestVariable('path', $this->_albumName);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('href' => $href,
-						      'view' => 'core.ShowItem',
-						      'itemId' => $this->_albumId),
+	$this->assertEquals(array('redirect' => array('view' => 'core.ShowItem',
+						      'itemId' => $this->_albumId,
+						      'href' => $href),
 				  'status' => array(),
 				  'error' => array()),
 			    $results, 'album');
@@ -107,9 +108,9 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('path', $this->_albumName . '/');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('href' => $href,
-						      'view' => 'core.ShowItem',
-						      'itemId' => $this->_albumId),
+	$this->assertEquals(array('redirect' => array('view' => 'core.ShowItem',
+						      'itemId' => $this->_albumId,
+						      'href' => $href),
 				  'status' => array(),
 				  'error' => array()),
 			    $results, 'album trailing slash');
@@ -119,9 +120,9 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('page', '2', false);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('href' => $href,
-						      'view' => 'core.ShowItem',
+	$this->assertEquals(array('redirect' => array('view' => 'core.ShowItem',
 						      'itemId' => $this->_albumId,
+						      'href' => $href,
 						      'page' => '2'),
 				  'status' => array(),
 				  'error' => array()),
@@ -132,9 +133,9 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('path', $this->_albumName . '/' . $this->_itemName);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('href' => $href,
-						      'view' => 'core.ShowItem',
-						      'itemId' => $this->_itemId),
+	$this->assertEquals(array('redirect' => array('view' => 'core.ShowItem',
+						      'itemId' => $this->_itemId,
+						      'href' => $href),
 				  'status' => array(),
 				  'error' => array()),
 			    $results, 'item');
@@ -144,9 +145,9 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('full', '1', false);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('href' => $href,
-						      'view' => 'core.ShowItem',
+	$this->assertEquals(array('redirect' => array('view' => 'core.ShowItem',
 						      'itemId' => $this->_itemId,
+						      'href' => $href,
 						      'imageViewsIndex' => '1'),
 				  'status' => array(),
 				  'error' => array()),
@@ -165,9 +166,9 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 	    $this->_albumName . '/' . $this->_itemName . '.jpg');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('href' => $href,
-						      'view' => 'core.DownloadItem',
-						      'itemId' => $this->_itemId),
+	$this->assertEquals(array('redirect' => array('view' => 'core.DownloadItem',
+						      'itemId' => $this->_itemId,
+						      'href' => $href),
 				  'status' => array(),
 				  'error' => array()),
 			    $results, 'item image file');
@@ -177,9 +178,9 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 	    $this->_albumName . '/' . $this->_itemName . '.sized.jpg');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('href' => $href,
-						      'view' => 'core.DownloadItem',
-						      'itemId' => $this->_sized->getId()),
+	$this->assertEquals(array('redirect' => array('view' => 'core.DownloadItem',
+						      'itemId' => $this->_sized->getId(),
+						      'href' => $href),
 				  'status' => array(),
 				  'error' => array()),
 			    $results, 'item resized file');
@@ -189,12 +190,38 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 	    $this->_albumName . '/' . $this->_itemName . '.thumb.jpg');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('href' => $href,
-						      'view' => 'core.DownloadItem',
-						      'itemId' => $this->_thumb->getId()),
+	$this->assertEquals(array('redirect' => array('view' => 'core.DownloadItem',
+						      'itemId' => $this->_thumb->getId(),
+						      'href' => $href),
 				  'status' => array(),
 				  'error' => array()),
 			    $results, 'item thumbnail file');
+
+	/* Fallback to SCRIPT_NAME if PHP_SELF isn't set */
+	$_SERVER['SCRIPT_NAME'] = $_SERVER['PHP_SELF'];
+	unset($_SERVER['PHP_SELF']);
+	GalleryUtilities::putRequestVariable('path', $this->_albumName . '/' . $this->_itemName);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.ShowItem',
+						      'itemId' => $this->_itemId,
+						      'href' => $href),
+				  'status' => array(),
+				  'error' => array()),
+			    $results, 'item, no PHP_SELF');
+
+	/*
+	 * Bad PHP_SELF, see http://bugs.php.net/bug.php?id=31843
+	 * In this case we currently rely on REQUEST_URI being rewritten to a valid value.
+	 */
+	$_SERVER['PHP_SELF'] = $_SERVER['SCRIPT_NAME'] = '/G1/path/myalbum/aaa.jpg';
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.ShowItem',
+						      'itemId' => $this->_itemId),
+				  'status' => array(),
+				  'error' => array()),
+			    $results, 'item, bad PHP_SELF');
     }
 }
 ?>
