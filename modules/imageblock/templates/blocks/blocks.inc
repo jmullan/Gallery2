@@ -1,6 +1,6 @@
 <?php
 $blocks['ImageBlock'] = array(
-    'description' => $gallery->i18n('Random image'),
+    'description' => $gallery->i18n('Image Block'),
     'vars' => array(
 	'blocks' => array(
 	    'description' => $gallery->i18n('Image type'),

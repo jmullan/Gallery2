@@ -110,7 +110,7 @@ class ImageBlockModule extends GalleryModule {
      */
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
-		     array(array('name' => $this->translate('Random/Popular'),
+		     array(array('name' => $this->translate('Image Block'),
 				 'view' => 'imageblock.ImageBlockSiteAdmin')));
     }
 }

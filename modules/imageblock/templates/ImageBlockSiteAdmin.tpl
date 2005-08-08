@@ -5,7 +5,7 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 <div class="gbBlock gcBackground1">
-  <h2> {g->text text="Image Block Admin"} </h2>
+  <h2> {g->text text="Image Block Settings"} </h2>
 </div>
 
 {if isset($status.saved)}
