@@ -52,6 +52,8 @@ if (!function_exists('_')) {
     }
 }
 
+$error = false;
+
 /* Our install steps, in order */
 $stepOrder[] = 'Welcome';
 $stepOrder[] = 'Authenticate';
@@ -80,48 +82,46 @@ if (!isset($_SESSION['path'])) {
 
 require_once(dirname(__FILE__) . '/../bootstrap.inc');
 require_once(dirname(__FILE__) . '/../init.inc');
-$ret = GalleryInitFirstPass(array('debug' => 'buffered', 'noDatabase' => 1));
-if ($ret->isError()) {
-    print $ret->getAsHtml();
-    return;
-}
+/* Check if config.php is ok */
+$storageConfig = @$gallery->getConfig('storage.config');
+if (!empty($storageConfig)) {
+    $ret = GalleryInitFirstPass(array('debug' => 'buffered', 'noDatabase' => 1));
+    if ($ret->isError()) {
+	print $ret->getAsHtml();
+	return;
+    }
 
-$translator = $gallery->getTranslator();
-if (!$translator->canTranslate()) {
-    unset($translator);
+    $translator = $gallery->getTranslator();
+    if (!$translator->canTranslate()) {
+	unset($translator);
+    } else {
+	if (empty($_SESSION['language'])) {
+	    $_SESSION['language'] = GalleryTranslator::getLanguageCodeFromRequest();
+	}
+	$translator->init($_SESSION['language']);
+	/* Select domain for translation */
+	bindtextdomain('gallery2_upgrade', dirname(__FILE__) . '/locale');
+	textdomain('gallery2_upgrade');
+	if (function_exists('bind_textdomain_codeset')) {
+	    bind_textdomain_codeset('gallery2_upgrade', 'UTF-8');
+	}
+    }
+    
+    /* We want to avoid using the cache */
+    GalleryDataCache::setFileCachingEnabled(false);
+    GalleryDataCache::setMemoryCachingEnabled(false);
+    
+    /* Preallocate at least 5 minutes for the upgrade */
+    $gallery->guaranteeTimeLimit(300);
+    
+    /* Check to see if we have a database.  If we don't, then go to the installer */
+    $storage =& $gallery->getStorage();
+    list ($ret, $isInstalled) = $storage->isInstalled();
+    if ($ret->isError() || !$isInstalled) {
+	$error = true;
+    }
 } else {
-    if (empty($_SESSION['language'])) {
-	$_SESSION['language'] = GalleryTranslator::getLanguageCodeFromRequest();
-    }
-    $translator->init($_SESSION['language']);
-    /* Select domain for translation */
-    bindtextdomain('gallery2_upgrade', dirname(__FILE__) . '/locale');
-    textdomain('gallery2_upgrade');
-    if (function_exists('bind_textdomain_codeset')) {
-	bind_textdomain_codeset('gallery2_upgrade', 'UTF-8');
-    }
-}
-
-/* We want to avoid using the cache */
-GalleryDataCache::setFileCachingEnabled(false);
-GalleryDataCache::setMemoryCachingEnabled(false);
-
-/* Preallocate at least 5 minutes for the upgrade */
-$gallery->guaranteeTimeLimit(300);
-
-/* Check to see if we have a database.  If we don't, then go to the installer */
-$storage =& $gallery->getStorage();
-list ($ret, $isInstalled) = $storage->isInstalled();
-if ($ret->isError() || !$isInstalled) {
-    require_once(dirname(dirname(__FILE__)) . '/modules/core/classes/GalleryUrlGenerator.class');
-    /* Add @ here in case we haven't yet upgraded config.php to include galleryBaseUrl */
-    $baseUrl = @$gallery->getConfig('galleryBaseUrl');
-    if (empty($baseUrl)) {
-	$baseUrl = GalleryUrlGenerator::makeUrl(preg_replace('{upgrade/(index.php)?(\?.*)?}', '',
-						GalleryUrlGenerator::getCurrentRequestUri()));
-    }
-    header('Location: ' . $baseUrl . 'install/index.php');
-    return;
+    $error = true;
 }
 
 /* If we don't have our steps in our session, initialize them now. */
@@ -160,7 +160,13 @@ for ($i = 0; $i < $stepNumber; $i++) {
 	break;
     }
 }
-$currentStep =& $steps[$stepNumber];
+
+if (!$error) {
+    $currentStep =& $steps[$stepNumber];
+} else {
+    require_once(dirname(__FILE__) . '/steps/RedirectToInstallerStep.class');
+    $currentStep =& new RedirectToInstallerStep();
+}
 
 if (!empty($_GET['doOver'])) {
     $currentStep->setComplete(false);

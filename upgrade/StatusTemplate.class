@@ -65,7 +65,7 @@ class StatusTemplate {
 	global $steps;
 	global $currentStep;
 	global $stepNumber;
-
+	
 	$stepsComplete = $stepNumber - ($currentStep->isComplete() ? 0 : 1);
 	$templateData['percentComplete'] =
 	    (int)((100 * ($stepsComplete / (sizeof($steps)-1))) / 5) * 5;

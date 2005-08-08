@@ -62,6 +62,8 @@ class SystemChecksStep extends UpgradeStep {
     }
 
     function loadTemplateData(&$templateData) {
+	global $gallery;
+	
 	$failCount = 0;
 
 	$suggestedHtaccess = array();
@@ -198,6 +200,27 @@ class SystemChecksStep extends UpgradeStep {
 		);
 	} /* skip showing 'success' for this one */
 
+	/* Check if the files and dirs in the storage dir are (still) writeable */
+	$title = _('Storage Directory Permissions');
+	if (!SystemChecksStep::CheckFileDirective()) {
+	    $templateData['check'][] =
+		array('title' => $title,
+		      'warning' => true,
+		      'notice' => _('Test skipped due to other errors.'));
+	} else if (!SystemChecksStep::CheckStorageDirectory()) {
+	    $templateData['check'][] =
+		array('title' => $title,
+		      'error' => true,
+		      'notice' =>  sprintf(_('Error: Some files and or directories in your storage directory are not writeable by the webserver user. Run chown -R webserverUser %s OR run chmod -R 777 %s.'),
+					   $gallery->getConfig('data.gallery.base'),
+					   $gallery->getConfig('data.gallery.base'))
+		      );
+	    $failCount++;
+	} else {
+	    $templateData['check'][] =
+		array('title' => $title, 'success' => true);
+	}
+	
 	/* Check all files against MANIFEST */
 	$title = _('Gallery file integrity');
 	if (!SystemChecksStep::CheckFileDirective()) {
@@ -242,6 +265,75 @@ class SystemChecksStep extends UpgradeStep {
 	} else {
 	    return false;
 	}
+    }
+
+    /* Check if the files / dirs in the storage directory are writeable */
+    function CheckStorageDirectory() {
+	global $gallery;
+
+	$storagePath = $gallery->getConfig('data.gallery.base');
+	$platform = $gallery->getPlatform();
+	if (empty($storagePath)) {
+	    return false;
+	} else if ($storagePath{strlen($storagePath)-1} != $platform->getDirectorySeparator()) {
+	    $storagePath .= $platform->getDirectorySeparator();
+	}
+	
+	/* An exhaustive test would take too long, test a few dirs / files */
+	foreach (array('.', 'versions.dat', 'albums') as $path) {
+	    $path = $storagePath . $path;
+	    if (!$platform->file_exists($path) || !$platform->is_readable($path) ||
+		    !$platform->is_writeable($path)) {
+		return false;
+	    }
+	}
+
+	/* Check up to 200 other files */
+	$tested = 0;
+	$max = 200;
+	$storagePath = substr($storagePath, 0, strlen($storagePath)-1);
+	return SystemChecksStep::_checkStorageSubDirectory($storagePath, $tested, $max);
+    }
+
+    /**
+     * Check up to $max files / dirs in a directory tree if they are still read/writeable
+     *
+     * @param string directory
+     * @param integer number of already tested files / dirs
+     * @param integer max files/dirs to check
+     * @return  boolean success
+     */
+    function _checkStorageSubDirectory($dirname, &$tested, $max) {
+	global $gallery;
+
+	$platform = $gallery->getPlatform();
+	
+	if (!($fd = $platform->opendir($dirname))) {
+	    return false;
+	}
+	
+	while (($filename = $platform->readdir($fd)) !== false && $tested < $max) {
+	    if (!strcmp($filename, '.') || !strcmp($filename, '..')) {
+		continue;
+	    }
+
+	    $tested++;
+	    $path = $dirname . $platform->getDirectorySeparator() . $filename;
+
+	    if (!$platform->is_writeable($path) || !$platform->is_readable($path)) {
+		return false;
+	    }
+	    
+	    if ($platform->is_dir($path) && $tested < $max) {
+		/* Threshold not yet reached, check subdirectory tree */
+		if (!SystemChecksStep::_checkStorageSubDirectory($path, $tested, $max)) {
+		    return false;
+		}
+	    }
+	}
+	$platform->closedir($fd);
+
+	return true;
     }
 
     function CheckManifest() {
