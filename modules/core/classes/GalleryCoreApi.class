@@ -54,7 +54,7 @@ class GalleryCoreApi {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(6, 5);
+	return array(6, 6);
     }
 
     /**
@@ -1546,12 +1546,15 @@ class GalleryCoreApi {
      * Fetch album tree visible to current user,
      * optionally starting from a given album and to a given depth.
      *
+     * @param int (optional) id of album for root of tree
+     * @param int (optional) max depth of tree
+     * @param int (optional) items visible to this user id, instead of current user
      * @return array object GalleryStatus a status code
      *               array (albumId => array(albumId => array, ..), ..)
      */
-    function fetchAlbumTree($itemId=null, $depth=null) {
+    function fetchAlbumTree($itemId=null, $depth=null, $userId=null) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemHelper_advanced.class');
-	return GalleryItemHelper_advanced::fetchAlbumTree($itemId, $depth);
+	return GalleryItemHelper_advanced::fetchAlbumTree($itemId, $depth, $userId);
     }
 
     /**

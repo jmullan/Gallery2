@@ -610,15 +610,20 @@ class GalleryItemHelper_advanced {
      * Fetch album tree visible to current user,
      * optionally starting from a given album and to a given depth.
      *
+     * @param int (optional) id of album for root of tree
+     * @param int (optional) max depth of tree
+     * @param int (optional) items visible to this user id, instead of current user
      * @return array object GalleryStatus a status code
      *               array (albumId => array(albumId => array, ..), ..)
      */
-    function fetchAlbumTree($itemId=null, $depth=null) {
+    function fetchAlbumTree($itemId=null, $depth=null, $userId=null) {
 	global $gallery;
 	$storage =& $gallery->getStorage();
+	if (!isset($userId)) {
+	    $userId = $gallery->getActiveUserId();
+	}
 
-	list ($ret, $aclIds) =
-	    GalleryCoreApi::fetchAccessListIds('core.view', $gallery->getActiveUserId());
+	list ($ret, $aclIds) = GalleryCoreApi::fetchAccessListIds('core.view', $userId);
 	if (empty($aclIds)) {
 	    return array(GalleryStatus::success(), array());
 	}

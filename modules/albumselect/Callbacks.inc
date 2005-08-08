@@ -51,7 +51,7 @@ class AlbumSelectCallbacks {
 		$treeList = array();
 
 		if ($params['sort'] != 'album') {
-		    list ($ret, $tree) = GalleryCoreApi::fetchAlbumTree();
+		    list ($ret, $tree) = GalleryCoreApi::fetchAlbumTree(null, null, $userId);
 		    if ($ret->isError()) {
 			if ($ret->getErrorCode() & ERROR_PERMISSION_DENIED) {
 			    $tree = null;
@@ -80,12 +80,12 @@ class AlbumSelectCallbacks {
 
 		} else {
 		    list ($ret, $canView) =
-			GalleryCoreApi::hasItemPermission($rootAlbumId, 'core.view');
+			GalleryCoreApi::hasItemPermission($rootAlbumId, 'core.view', $userId);
 		    if ($ret->isError()) {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
 		    if ($canView) {
-			$ret = $this->_buildTree($rootAlbum, $treeList, $titles, $nodeId);
+			$ret = $this->_buildTree($rootAlbum, $treeList, $titles, $nodeId, $userId);
 			if ($ret->isError()) {
 			    return $ret->wrap(__FILE__, __LINE__);
 			}
@@ -132,8 +132,9 @@ class AlbumSelectCallbacks {
      * @return object GalleryStatus a status code
      * @access private
      */
-    function _buildTree($album, &$treeList, &$titles, &$nodeId, $parentNode=0, $depth=0) {
-	list ($ret, $subAlbumIds) = GalleryCoreApi::fetchChildAlbumItemIds($album);
+    function _buildTree($album, &$treeList, &$titles, &$nodeId, $userId, $parentNode=0, $depth=0) {
+	list ($ret, $subAlbumIds) =
+	    GalleryCoreApi::fetchChildAlbumItemIds($album, null, null, $userId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -149,7 +150,7 @@ class AlbumSelectCallbacks {
 					       : $subAlbum->getPathComponent();
 		$titles[$subAlbum->getId()] = preg_replace('/\r\n/', ' ', $title);
 		$ret = $this->_buildTree($subAlbum, $treeList, $titles,
-					 $nodeId, $nodeId, $depth + 1);
+					 $nodeId, $userId, $nodeId, $depth + 1);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}

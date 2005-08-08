@@ -39,10 +39,10 @@ class AlbumSelectModule extends GalleryModule {
 	$this->setName($gallery->i18n('Album Select'));
 	$this->setDescription(
 	    $gallery->i18n('Jump directly to any album using a select box or tree view'));
-	$this->setVersion('0.9.9');
+	$this->setVersion('0.9.10');
 	$this->setGroup('blocks', $this->translate('Blocks'));
 	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
-	$this->setRequiredCoreApi(array(6, 0));
+	$this->setRequiredCoreApi(array(6, 6));
 	$this->setRequiredModuleApi(array(2, 0));
     }
 
