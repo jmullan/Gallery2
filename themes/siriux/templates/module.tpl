@@ -5,5 +5,5 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 <div class="gbBlock">
-  {include file=$theme.moduleTemplate}
+  {include file="gallery:`$theme.moduleTemplate`" l10Domain=$theme.moduleL10Domain}
 </div>

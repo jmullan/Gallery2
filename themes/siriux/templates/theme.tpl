@@ -26,7 +26,7 @@
        * drawing everything.
        *}
       {if $theme.useFullScreen}
-	{include file=$theme.moduleTemplate}
+	{include file="gallery:`$theme.moduleTemplate`" l10Domain=$theme.moduleL10Domain}
       {else}
       <div class="header"></div>
       <div class="content">
