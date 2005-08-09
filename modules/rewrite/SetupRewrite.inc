@@ -125,11 +125,11 @@ class SetupRewriteView extends GalleryView {
 	}
 
 	$baseUrl = parse_url($urlGenerator->generateUrl(
-	    array('href' => 'modules/rewrite/test/'), false));
-	$SetupRewrite['customFile'] = dirname(__FILE__) . '/test/mod_rewrite/custom/.htaccess';
+	    array('href' => 'modules/rewrite/data/'), false));
+	$SetupRewrite['customFile'] = dirname(__FILE__) . '/data/mod_rewrite/custom/.htaccess';
 	$SetupRewrite['customLine'] = 'RewriteBase ' . $baseUrl['path'] . 'mod_rewrite/custom/';
 	$SetupRewrite['customFileNoOptions'] = dirname(__FILE__) .
-	    '/test/mod_rewrite_no_options/custom/.htaccess';
+	    '/data/mod_rewrite_no_options/custom/.htaccess';
 	$SetupRewrite['customLineNoOptions'] = 'RewriteBase ' . $baseUrl['path'] .
 	    'mod_rewrite_no_options/custom/';
 
@@ -141,10 +141,10 @@ class SetupRewriteView extends GalleryView {
 	    $target = 'custom';
 	}
 	$SetupRewrite['test1'] = $urlGenerator->generateUrl(
-	    array('href' => 'modules/rewrite/test/mod_rewrite_no_options/'.
+	    array('href' => 'modules/rewrite/data/mod_rewrite_no_options/'.
 		$target . '/Rewrite.txt'));
 	$SetupRewrite['test2'] = $urlGenerator->generateUrl(
-	    array('href' => 'modules/rewrite/test/mod_rewrite/'.
+	    array('href' => 'modules/rewrite/data/mod_rewrite/'.
 		$target . '/Rewrite.txt'));
 
 	list ($ret, $SetupRewrite['htaccessPath']) = RewriteHelper::getHtaccessPath();

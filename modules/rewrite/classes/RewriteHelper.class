@@ -303,7 +303,7 @@ class RewriteHelper {
 	    $baseUrl = preg_replace('{(install|upgrade)/index\.php.*}', '',
 				    $urlGenerator->getCurrentUrlDir(true));
 	}
-	$baseUrl .= 'modules/rewrite/test/';
+	$baseUrl .= 'modules/rewrite/data/';
 	$components = parse_url($baseUrl);
 	$path = $components['path'];
 

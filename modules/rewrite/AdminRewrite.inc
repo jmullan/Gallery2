@@ -339,11 +339,11 @@ class AdminRewriteView extends GalleryView {
 
 	case 'test':
 	    $baseUrl = parse_url($urlGenerator->generateUrl(
-		array('href' => 'modules/rewrite/test/'), false));
-	    $AdminRewrite['customFile'] = dirname(__FILE__) . '/test/mod_rewrite/custom/.htaccess';
+		array('href' => 'modules/rewrite/data/'), false));
+	    $AdminRewrite['customFile'] = dirname(__FILE__) . '/data/mod_rewrite/custom/.htaccess';
 	    $AdminRewrite['customLine'] = 'RewriteBase ' . $baseUrl['path'] . 'mod_rewrite/custom/';
 	    $AdminRewrite['customFileNoOptions'] = dirname(__FILE__) .
-		'/test/mod_rewrite_no_options/custom/.htaccess';
+		'/data/mod_rewrite_no_options/custom/.htaccess';
 	    $AdminRewrite['customLineNoOptions'] = 'RewriteBase ' . $baseUrl['path'] .
 		'mod_rewrite_no_options/custom/';
 
