@@ -1229,9 +1229,13 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[set][summary]', 'blank');
 	GalleryUtilities::putRequestVariable('form[set][description]', 'blank');
 
+	/* This import will truncate a title; use buffering to prevent output during unit tests */
+	ob_start();
 	list ($ret, $status) = $this->_runBackgroundTask(
 	    '1 reset [\d \.]* reset ' .
 	    'complete:view=core.SiteAdmin,subView=migrate.ImportResults,statusId=STATUSID');
+	$buflen = ob_get_length();
+	ob_end_clean();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -1240,6 +1244,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array(), $status['userImportFailure']);
 	$this->assertEquals(array(), $status['userImportSuccess']);
 	$this->assertEquals(array(), $status['albumImportFailure']);
+	$this->assert($buflen > 0, 'Should have gotten truncate message');
 	$testAlbumId = $status['albumImportSuccess']['no_NO'];
 	/* Get the allegedly successfully imported album */
 	list($ret, $testAlbum) = GalleryCoreApi::loadEntitiesById($testAlbumId);
@@ -1368,9 +1373,13 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[set][summary]', 'blank');
 	GalleryUtilities::putRequestVariable('form[set][description]', 'blank');
 
+	/* This import will truncate a title; use buffering to prevent output during unit tests */
+	ob_start();
 	list ($ret, $status) = $this->_runBackgroundTask(
 	    '1 reset [\d \.]* reset ' .
 	    'complete:view=core.SiteAdmin,subView=migrate.ImportResults,statusId=STATUSID');
+	$buflen = ob_get_length();
+	ob_end_clean();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -1379,6 +1388,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array(), $status['userImportFailure']);
 	$this->assertEquals(array(), $status['userImportSuccess']);
 	$this->assertEquals(array(), $status['albumImportFailure']);
+	$this->assert($buflen > 0, 'Should have gotten truncate message');
 	$testAlbumId = $status['albumImportSuccess']['fr_FR'];
 	/* Get the allegedly successfully imported album */
 	list($ret, $testAlbum) = GalleryCoreApi::loadEntitiesById($testAlbumId);

@@ -185,6 +185,8 @@ class ConfirmImportController extends GalleryController {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+	$importUsersMessage = $module->translate('Importing Users');
+	$importPhotosMessage = $module->translate('Importing Photos');
 
 	$sourceEncoding = $form['sourceEncoding'];
 
@@ -230,8 +232,7 @@ class ConfirmImportController extends GalleryController {
 		$totalUsersToImport = 1;
 	    }
 	    $ret = $templateAdapter->updateProgressBar(
-		$module->translate('Importing Users'), $userName,
-		$numberOfUsersImported / $totalUsersToImport);
+		$importUsersMessage, $userName, $numberOfUsersImported / $totalUsersToImport);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -302,8 +303,7 @@ class ConfirmImportController extends GalleryController {
 	    $numberOfUsersImported++;
 	}
 
-	$ret = $templateAdapter->updateProgressBar(
-	    $module->translate('Importing Users'), '', 1);
+	$ret = $templateAdapter->updateProgressBar($importUsersMessage, '', 1);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -343,12 +343,13 @@ class ConfirmImportController extends GalleryController {
 	/* Go through the list of selected gallery1 albums to import */
 
 	$totalItemsToImport = 0;
+	$albumfields = $albumHighlight = array();
 	foreach (array_keys ($form['sourceAlbums']) as $sourceAlbumName) {
 	    /*
 	     * attempt to load the metadata from the selected album into a
 	     * local cache for later manipulation
 	     */
-	    if (!in_array($sourceAlbumName,array_keys($albumList))) {
+	    if (!in_array($sourceAlbumName, array_keys($albumList))) {
 		return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	    }
 	    list ($ret, $albumfields[$sourceAlbumName]) =
@@ -357,19 +358,12 @@ class ConfirmImportController extends GalleryController {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    list ($ret, $photos) =
-		Gallery1DataParser::getPhotos($albumsPath . $sourceAlbumName);
-	    $totalItemsToImport += count($photos);
+	    list ($ret, $photos) = Gallery1DataParser::getPhotos($albumsPath . $sourceAlbumName);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $totalItemsToImport += 1 + count($photos);
 	}
-	if (empty($totalItemsToImport)) {
-	    $totalItemsToImport = 1;
-	}
-	$i=0;
-	/* First initialize the $albumfields array to avoid php warnings */
-	if(!isset($albumfields)){
-	    $albumfields = array();
-	}
-	$albumHighlight = array();
 
 	/*
 	 * Go through the array of albums' metadata one album at a time.
@@ -378,7 +372,7 @@ class ConfirmImportController extends GalleryController {
 	 * parent albums first by taking albums out of the list as they are
 	 * handled.
 	 */
-	$numberOfItemsImported = 0;
+	$i = $numberOfItemsImported = 0;
 	while ($albumfields && $i < count($form['sourceAlbums'])^2 && !connection_aborted()) {
 	    $gallery->guaranteeTimeLimit(30);
 	    $album = array_shift($albumfields);
@@ -407,8 +401,7 @@ class ConfirmImportController extends GalleryController {
 		/*
 		 * We definitely need notices before each album.
 		 */
-		$ret = $templateAdapter->updateProgressBar(
-		    $module->translate('Importing photos'),
+		$ret = $templateAdapter->updateProgressBar($importPhotosMessage,
 		    $album['name'], $numberOfItemsImported / $totalItemsToImport);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
@@ -489,19 +482,22 @@ class ConfirmImportController extends GalleryController {
 			}
 
 			$newAlbumInstanceId = $newAlbumInstance->getId();
+			$sourceData = array('title' => null, 'summary' => null);
 			/* load up the album with metadata from the old album */
 			if (isset($album['title'])) {
-			    $newAlbumInstance->setTitle(
-				$this->convertHtml($markupType, $album['title'], $sourceEncoding));
+			    $sourceData['title'] =
+				$this->convertHtml($markupType, $album['title'], $sourceEncoding);
+			    $newAlbumInstance->setTitle($sourceData['title']);
 			}
 			if (isset($album['summary'])) {
-			    $newAlbumInstance->setDescription(
-				$this->convertHtml($markupType, $album['summary'], $sourceEncoding));
+			    $newAlbumInstance->setDescription($this->convertHtml(
+				$markupType, $album['summary'], $sourceEncoding));
 			}
 			$newAlbumInstance->setKeywords('');
 			if (isset($album['description'])) {
-			    $newAlbumInstance->setSummary(
-				$this->convertHtml($markupType, $album['description'], $sourceEncoding));
+			    $sourceData['summary'] = $this->convertHtml(
+				$markupType, $album['description'], $sourceEncoding);
+			    $newAlbumInstance->setSummary($sourceData['summary']);
 			}
 			// $newAlbumInstance->settheme
 			if (isset($album['last_mod_time']) && $album['last_mod_time']) {
@@ -523,7 +519,8 @@ class ConfirmImportController extends GalleryController {
 
 			/* Set album owner */
 			if (isset($album['owner'])) {
-			    $validUID = Gallery1DataParser::isValidUid($albumsPath, $album['owner']);
+			    $validUID = Gallery1DataParser::isValidUid($albumsPath,
+								       $album['owner']);
 			    if ($validUID) {
 				list($ret, $albumUserFields) =
 				    Gallery1DataParser::getUserFieldsByUid($albumsPath,
@@ -547,6 +544,12 @@ class ConfirmImportController extends GalleryController {
 			}
 			/* Save the new album */
 			$ret = $newAlbumInstance->save();
+			if ($ret->isError()) {
+			    return $ret->wrap(__FILE__, __LINE__);
+			}
+			$numberOfItemsImported++;
+
+			$ret = $this->checkTruncation($newAlbumInstance, $sourceData);
 			if ($ret->isError()) {
 			    return $ret->wrap(__FILE__, __LINE__);
 			}
@@ -820,8 +823,7 @@ class ConfirmImportController extends GalleryController {
 			    $filepath = $dir . $filename;
 
 			    $ret = $templateAdapter->updateProgressBar(
-				$module->translate('Importing photos'),
-				$album['name'] . ' ' . $filename,
+				$importPhotosMessage, $album['name'] . ' ' . $filename,
 				$numberOfItemsImported / $totalItemsToImport);
 			    if ($ret->isError()) {
 				return $ret->wrap(__FILE__, __LINE__);
@@ -868,6 +870,11 @@ class ConfirmImportController extends GalleryController {
 			    }
 			    $itemsCreated[] = $newItem->getId();
 			    $numberOfItemsImported++;
+
+			    $ret = $this->checkTruncation($newItem, $data);
+			    if ($ret->isError()) {
+				return $ret->wrap(__FILE__, __LINE__);
+			    }
 
 			    if (isset($form['urlRedirect'])) {
 				$ret = $this->createG1ToG2Mapping(
@@ -1174,6 +1181,11 @@ class ConfirmImportController extends GalleryController {
 			}
 		    }
 		}
+		$ret = $templateAdapter->updateProgressBar($importPhotosMessage,
+		    $album['name'], $numberOfItemsImported / $totalItemsToImport);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 		$album = null;
 		/* $i keeps track of how many passes we make over the data */
 		$i++;
@@ -1231,6 +1243,7 @@ class ConfirmImportController extends GalleryController {
 	     *
 	     * Note: this destroys the $itemsCreated array!
 	     */
+	    $createThumbsMessage = $module->translate('Creating thumbnails');
 	    $itemsCreatedCount = count($itemsCreated);
 	    $thumbsCreated = 0;
 	    while (!empty($itemsCreated)) {
@@ -1249,7 +1262,7 @@ class ConfirmImportController extends GalleryController {
 
 		    $thumbsCreated++;
 		    $ret = $templateAdapter->updateProgressBar(
-			$module->translate('Creating thumbnails'),
+			$createThumbsMessage,
 			$module->translate(array('text' => 'Thumbnail %d of %d',
 						 'arg1' => $thumbsCreated,
 						 'arg2' => $itemsCreatedCount)),
@@ -1359,6 +1372,47 @@ class ConfirmImportController extends GalleryController {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Print message if any fields were truncated on imported item.
+     */
+    function checkTruncation(&$item, $sourceData) {
+	global $gallery;
+	static $titleMessage, $summaryMessage, $setMessage, $truncatedMessage;
+	if (!isset($titleMessage)) {
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'migrate');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $titleMessage = $module->translate('%sTitle%s was truncated for %sitem %d%s.');
+	    $summaryMessage = $module->translate('%sSummary%s was truncated for %sitem %d%s.');
+	    $setMessage = $module->translate('Set:');
+	    $truncatedMessage = $module->translate('Truncated:');
+	}
+
+	$data = array($item->getTitle(), $sourceData['title'], $titleMessage,
+		      $item->getSummary(), $sourceData['summary'], $summaryMessage);
+	while (!empty($data)) {
+	    list ($value, $source, $message) = array_splice($data, 0, 3);
+	    if ($value != $source) {
+		if (!isset($urlGenerator)) {
+		    $urlGenerator =& $gallery->getUrlGenerator();
+		}
+		printf("<div class=\"gbBlock\">$message<br/>" .
+		   "<b>$setMessage</b> %s<br/><b>$truncatedMessage</b> %s</div>",
+		   '<b>', '</b>',
+		   '<a href="' . $urlGenerator->generateUrl(
+			array('view' => 'core.ItemAdmin', 'subView' => 'core.ItemEdit',
+			      'itemId' => $item->getId(), 'editPlugin' => 'ItemEditItem')) . '">',
+		   $item->getId(),
+		   '</a>',
+		   $value,
+		   substr($source, strlen($value)));
+	    }
+	}
+
 	return GalleryStatus::success();
     }
 }
