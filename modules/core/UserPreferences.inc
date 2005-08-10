@@ -58,9 +58,8 @@ class UserPreferencesController extends GalleryController {
 	$error = array();
 	if (isset($form['action']['cancel'])) {
 
-	    /* Redirect back to the current view */
-	    $redirect['view'] = 'core.UserAdmin';
-	    $redirect['subView'] = 'core.UserPreferences';
+	    /* Redirect back to the previous view */
+	    $results['return'] = true;
 
 	} else if (isset($form['action']['undo'])) {
 

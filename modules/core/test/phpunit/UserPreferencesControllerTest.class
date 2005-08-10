@@ -64,8 +64,9 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core.UserAdmin',
+	$this->assertEquals(array('delegate' => array('view' => 'core.UserAdmin',
 						      'subView' => 'core.UserPreferences'),
+				  'return' => true,
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
