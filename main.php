@@ -46,7 +46,6 @@ if (GalleryUtilities::isEmbedded()) {
 	    $headers = GetAllHeaders();
 	    if (isset($headers['If-Modified-Since']) || isset($headers['If-modified-since'])) {
 		header('HTTP/1.x 304 Not Modified');
-		flush();
 		return;
 	    }
 	}
@@ -64,7 +63,6 @@ if (GalleryUtilities::isEmbedded()) {
 	if (file_exists($path)) {
 	    include($path);
 	    if (GalleryFastDownload()) {
-		flush();
 		return;
 	    }
 	}
@@ -80,7 +78,6 @@ if (GalleryUtilities::isEmbedded()) {
 
     /* Process the request */
     GalleryMain();
-    flush();
 }
 
 function GalleryMain($embedded=false) {
