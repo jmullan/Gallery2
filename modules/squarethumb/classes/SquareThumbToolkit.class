@@ -107,11 +107,10 @@ class SquareThumbToolkit extends GalleryToolkit {
 						  "crop $mimeType"), null, null);
 	    }
 	    if ($width > $parameters[0] && $height > $parameters[0]) {
-		list ($ret, $nextToolkit) =
-		    GalleryCoreApi::getToolkitByOperation($nextMime, 'scale');
-		if ($ret->isSuccess() && isset($nextToolkit)) {
+		list ($ret, $nextToolkit) = $this->_getThumbnailToolkit($nextMime);
+		if ($ret->isSuccess()) {
 		    $subContext['next.toolkit'] = $nextToolkit;
-		    $subContext['next.operation'] = 'scale';
+		    $subContext['next.operation'] = 'thumbnail';
 		}
 	    }
 
@@ -128,17 +127,13 @@ class SquareThumbToolkit extends GalleryToolkit {
 
 	if ($subContext['width'] > $parameters[0] || $subContext['height'] > $parameters[0]) {
 	    /* Scale to thumb size */
-	    list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation($mimeType, 'scale');
+	    list ($ret, $toolkit) = $this->_getThumbnailToolkit($mimeType);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
-	    if (!isset($toolkit)) {
-		return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
-						  "scale $mimeType"), null, null);
-	    }
 	    $subContext['next.toolkit'] = $subContext['next.operation'] = null;
 	    list ($ret, $mimeType, $subContext) =
-		$toolkit->performOperation($mimeType, 'scale', $sourceFilename, $destFilename,
+		$toolkit->performOperation($mimeType, 'thumbnail', $sourceFilename, $destFilename,
 					   $parameters, $subContext);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
@@ -265,6 +260,40 @@ class SquareThumbToolkit extends GalleryToolkit {
 	if (!$handled) {
 	    return parent::estimateDimensions($derivative, $source);
 	}
+    }
+
+    /**
+     * Get toolkit for thumbnail operation.
+     * @param string mime type
+     * @return array object GalleryStatus a status code
+     *               object GalleryToolkit
+     * @access private
+     */
+    function _getThumbnailToolkit($mimeType) {
+	static $data;
+	if (!isset($data)) {
+	    list ($ret, $data) = GalleryCoreApi::getToolkitOperationMimeTypes('thumbnail');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+	if (!empty($data[$mimeType]) && $data[$mimeType][0] == 'SquareThumb') {
+	    array_shift($data[$mimeType]);
+	}
+	if (empty($data[$mimeType])) {
+	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
+					      "thumbnail $mimeType"), null);
+	}
+	list ($ret, $toolkit) =
+	    GalleryCoreApi::newFactoryInstanceById('GalleryToolkit', $data[$mimeType][0]);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (!isset($toolkit)) {
+	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
+					      "thumbnail $mimeType"), null);
+	}
+	return array(GalleryStatus::success(), $toolkit);
     }
 }
 ?>

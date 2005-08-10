@@ -71,7 +71,7 @@ class SquareThumbToolkitTest extends GalleryTestCase {
 	$this->_markToolkitForCleanup('SquareThumbTestToolkit');
 
 	$ret = GalleryCoreApi::registerToolkitProperty('SquareThumbTestToolkit',
-	    array('test/dim', 'test/crop', 'test/composite', 'test/scale', 'test/image'),
+	    array('test/dim', 'test/crop', 'test/composite', 'test/thumbnail', 'test/image'),
 	    'dimensions', 'int,int', 'desc');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -101,7 +101,7 @@ class SquareThumbToolkitTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::registerToolkitOperation('SquareThumbTestToolkit',
-	    array('test/scale', 'test/image'), 'scale',
+	    array('test/thumbnail', 'test/image'), 'thumbnail',
 	    array(array('type' => 'int', 'description' => 'width'),
 		  array('type' => 'int', 'description' => 'height')), 'desc');
 	if ($ret->isError()) {
@@ -144,11 +144,11 @@ class SquareThumbToolkitTest extends GalleryTestCase {
 			    'Error expected due to missing composite toolkit');
     }
 
-    function testNoScale() {
+    function testNoThumbnail() {
 	list ($ret, $mimeType) = $this->_toolkit->performOperation('test/crop', 'thumbnail',
-	      'noScaleSrc', 'noScaleDest', array(150));
+	      'noThumbnailSrc', 'noThumbnailDest', array(150));
 	$this->assertEquals(GALLERY_ERROR | ERROR_UNSUPPORTED_OPERATION, $ret->getErrorCode(),
-			    'Error expected due to missing scale toolkit');
+			    'Error expected due to missing thumbnail toolkit');
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'squarethumb', 'mode', 'fit');
 	if ($ret->isError()) {
@@ -156,19 +156,19 @@ class SquareThumbToolkitTest extends GalleryTestCase {
 	}
 
 	list ($ret, $mimeType) = $this->_toolkit->performOperation('test/composite', 'thumbnail',
-	      'noScaleSrc', 'noScaleDest', array(150));
+	      'noThumbnailSrc', 'noThumbnailDest', array(150));
 	$this->assertEquals(GALLERY_ERROR | ERROR_UNSUPPORTED_OPERATION, $ret->getErrorCode(),
-			    'Error expected due to missing scale toolkit 2');
+			    'Error expected due to missing thumbnail toolkit 2');
     }
 
     function testAlreadySquare() {
 	/* Already square */
-	list ($ret, $mimeType) = $this->_toolkit->performOperation('test/scale', 'thumbnail',
+	list ($ret, $mimeType) = $this->_toolkit->performOperation('test/thumbnail', 'thumbnail',
 	      'squareSrc', 'squareDest', array(150));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals('test/scale', $mimeType, 'Output mime type');
+	$this->assertEquals('test/thumbnail', $mimeType, 'Output mime type');
     }
 
     function testCrop() {
@@ -182,7 +182,7 @@ class SquareThumbToolkitTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('test/image', $mimeType, 'Output mime type');
-	$this->assertEquals(array('queue:crop', 'scale'), $gallery->_squareQueue, 'operations');
+	$this->assertEquals(array('queue:crop', 'thumbnail'), $gallery->_squareQueue, 'operations');
 
 	/* Already small */
 	$gallery->_squareQueue = array();
@@ -218,7 +218,7 @@ class SquareThumbToolkitTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('image/jpeg', $mimeType, 'Output mime type');
-	$this->assertEquals(array('scale', 'composite'), $gallery->_squareQueue, 'operations');
+	$this->assertEquals(array('thumbnail', 'composite'), $gallery->_squareQueue, 'operations');
 
 	/* Already small */
 	$gallery->_squareQueue = array();
@@ -366,7 +366,7 @@ class SquareThumbTestToolkit extends GalleryToolkit {
 	}
 	switch ($sourceFilename) {
 	case 'noCCSrc':
-	case 'noScaleSrc':
+	case 'noThumbnailSrc':
 	case 'cropSrc':
 	case 'compositeSrc':
 	    return array(GalleryStatus::success(), array(800, 600));
@@ -392,14 +392,14 @@ class SquareThumbTestToolkit extends GalleryToolkit {
 	switch ($operationName) {
 	case 'crop':
 	    switch ($sourceFilename) {
-	    case 'noScaleSrc':
+	    case 'noThumbnailSrc':
 	    case 'cropSrc':
 	    case 'smallCropSrc':
 		$context['width'] = $context['height'] = min($context['width'], $context['height']);
 		return array(GalleryStatus::success(), $mimeType, $context);
 	    }
 	    break;
-	case 'scale':
+	case 'thumbnail':
 	    if ($sourceFilename == 'squareSrc' || $sourceFilename == 'cropDest' ||
 		    $sourceFilename == 'compositeSrc') {
 		return array(GalleryStatus::success(), $mimeType, $context);

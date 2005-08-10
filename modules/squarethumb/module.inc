@@ -29,7 +29,7 @@
  * Square thumbnails
  *
  * This module creates thumbnails with a 1x1 aspect ratio; it relies on some other toolkit
- * being active to perform the actual image manipulation (dimensions, crop, scale)
+ * being active to perform the actual image manipulation (dimensions, crop, thumbnail)
  *
  * @package SquareThumb
  */
@@ -41,7 +41,7 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('squarethumb');
 	$this->setName($gallery->i18n('Square Thumbnails'));
 	$this->setDescription($gallery->i18n('Build all thumbnails so they are square'));
-	$this->setVersion('0.9.7');
+	$this->setVersion('0.9.8');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
@@ -164,7 +164,7 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
 
     /**
      * Find out what mime-types currently have toolkit support for:
-     *    scale, dimensions and crop [or composite]
+     *    thumbnail, dimensions and crop [or composite]
      *
      * @param boolean true to include types with composite support
      * @return array object GalleryStatus a status code
@@ -172,7 +172,7 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
      * @access private
      */
     function _getSupportedMimeTypes($useComposite) {
-	list ($ret, $scale) = GalleryCoreApi::getToolkitOperationMimeTypes('scale');
+	list ($ret, $thumbnail) = GalleryCoreApi::getToolkitOperationMimeTypes('thumbnail');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -190,7 +190,7 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
 	}
 
 	$mimeTypes = array();
-	foreach (array_intersect(array_keys(array_merge($crop, $composite)), array_keys($scale))
+	foreach (array_intersect(array_keys(array_merge($crop, $composite)), array_keys($thumbnail))
 		 as $mimeType) {
 	    list ($ret, $properties) = GalleryCoreApi::getToolkitProperties($mimeType);
 	    if ($ret->isError()) {
