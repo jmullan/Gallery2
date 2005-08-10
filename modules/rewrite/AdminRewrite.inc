@@ -167,6 +167,14 @@ class AdminRewriteController extends GalleryController {
 		}
 	    }
 
+	    list ($ret, $code) = RewriteHelper::checkFile();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if ($code != REWRITE_STATUS_HTACCESS_READY) {
+		$error[] = 'form[error][cantWrite][gallery]';
+	    }
+
 	    if (empty($error)) {
 		if (isset($form['embedded']['save'])) {
 		    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
@@ -188,10 +196,42 @@ class AdminRewriteController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		$status['setupSaved'] = 1;
-		$redirect['view'] = 'core.SiteAdmin';
-		$redirect['subView'] = 'rewrite.AdminRewrite';
-		$redirect['mode'] = 'setup';
+		list ($ret, $activeRules) = RewriteMap::getActiveRules();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		list($ret, $code, $rewriteRules) = RewriteHelper::parseActiveRules($activeRules);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		if ($code != REWRITE_STATUS_OK) {
+		    return array(GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__), null);
+		}
+
+		list($ret, $code) = RewriteHelper::writeFile($rewriteRules);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		if ($code != REWRITE_STATUS_OK) {
+		    $error[] = 'form[error][cantWrite][gallery]';
+		}
+
+		if (GalleryUtilities::isEmbedded()) {
+		    list($ret, $code) = RewriteHelper::writeFile($rewriteRules, true);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    if ($code != REWRITE_STATUS_OK) {
+			$error[] = 'form[error][cantWrite][embedded]';
+		    }
+		}
+
+		if (empty($error)) {
+		    $status['setupSaved'] = 1;
+		    $redirect['view'] = 'core.SiteAdmin';
+		    $redirect['subView'] = 'rewrite.AdminRewrite';
+		    $redirect['mode'] = 'setup';
+		}
 	    }
 	}
 

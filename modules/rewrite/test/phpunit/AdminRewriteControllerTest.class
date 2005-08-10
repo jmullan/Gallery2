@@ -255,18 +255,19 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 			    $results);
 
 	list ($ret, $embeddedLocation) =
-		GalleryCoreApi::getPluginParameter('module', 'rewrite', 'embeddedLocation');
+	    GalleryCoreApi::getPluginParameter('module', 'rewrite', 'embeddedLocation');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$this->assertEquals('/gallery2/', $embeddedLocation, 'embedded location');
 
 	list ($ret, $embeddedHtaccess) =
-		GalleryCoreApi::getPluginParameter('module', 'rewrite', 'embeddedHtaccess');
+	    GalleryCoreApi::getPluginParameter('module', 'rewrite', 'embeddedHtaccess');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$this->assertEquals(dirname(__FILE__), $embeddedHtaccess, 'embedded htaccess');
+	$this->assert(strlen($this->_platform->_fileContent), 'htaccess');
     }
 
     function testSaveBadEmbeddedSetup() {
@@ -293,11 +294,12 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals('', $embeddedLocation, 'embedded location');
 
 	list ($ret, $embeddedHtaccess) =
-		GalleryCoreApi::getPluginParameter('module', 'rewrite', 'embeddedHtaccess');
+	    GalleryCoreApi::getPluginParameter('module', 'rewrite', 'embeddedHtaccess');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$this->assertEquals('', $embeddedLocation, 'embedded htaccess');
+	$this->assert(!isset($this->_platform->_fileContent), 'htaccess');
     }
 
     function testSaveAccessList() {
@@ -323,6 +325,7 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 
 	$this->assertEquals(array('example.com', 'sub.example.net'),
 			    $accessList, 'access list');
+	$this->assert(strlen($this->_platform->_fileContent), 'htaccess');
     }
 }
 
@@ -386,6 +389,7 @@ class AdminRewriteControllerTestPlatform extends GalleryPlatform{
 
     function fwrite($handle, $string, $length=null) {
 	if ($handle == '.htaccess') {
+	    $this->_fileContent .= $string;
 	    return strlen($string);
 	}
 
