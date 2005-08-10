@@ -235,6 +235,7 @@ class GalleryEmbed {
      */
     function logout($params=array()) {
 	require_once(dirname(__FILE__) . '/GalleryCoreApi.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryStatus.class');
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GallerySession.class');
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryUtilities.class');
 	$hasSession = GalleryUtilities::getCookieVar(SESSION_ID_PARAMETER);
