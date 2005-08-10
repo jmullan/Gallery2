@@ -51,11 +51,9 @@
       <input type="hidden" name="{g->formVar var="form[useDefaultSettings]"}" value="1" />
     </div>
     {if $showAdvancedLink}
-    <p class="advanced">
       <a href="{g->url arg1="view=search.SearchScan" arg2="form[useDefaultSettings]=1"
 		       arg3="return=1"}"
 	 class="{g->linkId view="search.SearchScan"} advanced">{g->text text="Advanced Search"}</a>
-    </p>
     {/if}
   </form>
 </div>
