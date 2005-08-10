@@ -49,7 +49,7 @@
 </p>
 
 <p id="comment-full-{$comment.id}" class="comment" style="display: none">
-  {$comment.comment}
+  {$comment.comment|markup}
 </p>
 {else}
 <p class="comment">
