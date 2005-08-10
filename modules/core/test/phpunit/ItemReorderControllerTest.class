@@ -73,6 +73,17 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 	}
     }
 
+    function testCancel() {
+	GalleryUtilities::putRequestVariable('itemId', $this->_parentAlbum->getId());
+	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('return' => true),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+    }
+
     /**
      * Test moving an item
      */
