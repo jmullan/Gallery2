@@ -37,23 +37,20 @@ class IconsSiteAdminControllerTest extends GalleryControllerTestCase {
     function IconsSiteAdminControllerTest($methodName) {
 	$this->GalleryControllerTestCase($methodName, 'icons.IconsSiteAdmin');
     }
-    
+
     function setUp() {
 	parent::setUp();
+
 	$ret = $this->_markPluginParametersForCleanup('module', 'icons');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
     }
-    
-    function tearDown() {
-	parent::tearDown();
-    }
-    
+
     function testIconsSiteAdminControllerReset() {
 	GalleryUtilities::putRequestVariable('form[action][reset]', '1');
-	
+
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
 						      'subView' => 'icons.IconsSiteAdmin'),
@@ -61,18 +58,18 @@ class IconsSiteAdminControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
     }
-    
+
     function testIconsSiteAdminControllerSave() {
 	GalleryUtilities::putRequestVariable('form[iconpack]', 'testpack');
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
-	
+
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
 						      'subView' => 'icons.IconsSiteAdmin'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
-	
+
 	list ($ret, $iconpack) =
 		GalleryCoreApi::getPluginParameter('module', 'icons', 'iconpack');
 	if ($ret->isError()) {
@@ -80,10 +77,10 @@ class IconsSiteAdminControllerTest extends GalleryControllerTestCase {
 	}
 	$this->assertEquals('testpack', $iconpack, 'iconpack');
     }
-    
+
     function testIconsSiteAdminControllerSaveNoIconPack() {
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
-	
+
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
 						      'subView' => 'icons.IconsSiteAdmin'),
@@ -91,61 +88,5 @@ class IconsSiteAdminControllerTest extends GalleryControllerTestCase {
 				  'error' => array('form[error][iconpack][missing]')),
 			    $results);
     }
-    
-    function testNewFactoryInstance() {
-	list ($ret, $iconpack) = GalleryCoreApi::newFactoryInstance('IconsInterface_1_0');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$this->assert(isset($iconpack), 'Icon pack was not set');
-	$this->assert(GalleryUtilities::isA($iconpack, 'IconsImpl'),
-		      'The factory instance was not an IconsImpl');
-    }
-    
-    function testSetupTemplateNone() {
-	$impl = new IconsImpl();
-	$ret = GalleryCoreApi::setPluginParameter('module', 'icons', 'iconpack', '');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$template = new IconsDummyGalleryTemplate();
-	$ret = $impl->init($template);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$this->assertEquals($template->style, null);
-    }
-    
-    function testSetupTemplateIcons() {
-	$impl = new IconsImpl();
-	$ret = GalleryCoreApi::setPluginParameter('module', 'icons', 'iconpack', '_phpunitfoo');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$template = new IconsDummyGalleryTemplate();
-	$ret = $impl->init($template);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$this->assertEquals($template->style, 'modules/icons/iconpacks/_phpunitfoo/icons.css');
-    }
 }
-
-/**
- * @package Icons
- * @subpackage PHPUnit
- */
-class IconsDummyGalleryTemplate {
-    var $data = array();
-    var $style = null;
-    function setVariable($key, $value) {
-	$this->data[$key] = $value;
-    }
-    function style($path) {
-	$this->style = $path;
-    }
-    function javascript($path) {
-    }
-}
-
 ?>
