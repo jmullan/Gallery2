@@ -705,14 +705,12 @@ class GalleryTemplateAdapter {
 
     function trailer($params, &$smarty) {
 	print $this->_trailer;
-	flush();
 
 	foreach ($this->_trailerCallbacks as $callback) {
 	    $ret = call_user_func_array($callback['function'], $callback['args']);
 	    if (is_array($ret)) {
 		$ret = $ret[0];
 	    }
-	    flush();
 	}
     }
 
