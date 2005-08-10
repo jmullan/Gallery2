@@ -1854,7 +1854,7 @@ class GalleryCoreApi {
      * @static
      * @param string operation name
      * @return array object GalleryStatus a status code
-     *               array(mime type => array(toolkit ids))
+     *               array(mime type => array(toolkit ids, sorted by priority))
      */
     function getToolkitOperationMimeTypes($operationName) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryToolkitHelper_medium.class');
