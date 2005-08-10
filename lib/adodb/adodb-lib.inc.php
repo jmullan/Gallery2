@@ -950,7 +950,7 @@ function _adodb_debug_execute(&$zthis, $sql, $inputarr)
 
 function _adodb_backtrace($printOrArr=true,$levels=9999,$skippy=0)
 {
-	if ((float) PHPVERSION() < 4.3) return '';
+	if (version_compare(PHPVERSION(), '4.3.0', '<')) return '';
 	 
 	$html =  (isset($_SERVER['HTTP_USER_AGENT']));
 	$fmt =  ($html) ? "</font><font color=#808080 size=-1> %% line %4d, file: <a href=\"file:/%s\">%s</a></font>" : "%% line %4d, file: %s";
