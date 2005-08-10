@@ -146,6 +146,8 @@ class ItemReorderController extends GalleryController {
 		$redirect['subView'] = 'core.ItemReorder';
 		$redirect['itemId'] = $itemId;
 	    }
+	} else if (isset($form['action']['cancel'])) {
+	    $redirect['return'] = true;
 	}
 
 	if (!empty($redirect)) {
@@ -156,7 +158,6 @@ class ItemReorderController extends GalleryController {
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
-
 
 	return array(GalleryStatus::success(), $results);
     }
