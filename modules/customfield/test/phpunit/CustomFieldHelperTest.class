@@ -75,7 +75,10 @@ class CustomFieldHelperTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals(array(), $data, 'Multi-item no value retrieve failed');
+	$this->assertEquals(array($this->_album->getId() => array(),
+				  $this->_item->getId() => array(),
+				  $this->_item2->getId() => array()),
+			    $data, 'Multi-item no value retrieve failed');
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'customfield');
 	if ($ret->isError()) {
@@ -120,8 +123,9 @@ class CustomFieldHelperTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals(array($this->_item->getId() => $itemFields,
-				  $this->_album->getId() => $itemFields),
+	$this->assertEquals(array($this->_album->getId() => $itemFields,
+				  $this->_item->getId() => $itemFields,
+				  $this->_item2->getId() => array()),
 			    $data, 'Multi-item retrieve failed');
 
 	list ($ret) = CustomFieldHelper::fetchFieldValues("");
