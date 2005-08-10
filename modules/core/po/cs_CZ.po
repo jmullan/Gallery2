@@ -20,7 +20,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Core 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-01-28 21:40+0100\n"
-"PO-Revision-Date: 2005-07-31 20:46+0200\n"
+"PO-Revision-Date: 2005-08-09 15:48+0200\n"
 "Last-Translator: Jan Korbel <jackc@teptin.net>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -51,7 +51,7 @@ msgid "Database"
 msgstr "Databáze"
 
 msgid "File"
-msgstr "Souborové"
+msgstr "Soubor"
 
 #, c-format
 msgid "%d minute"
@@ -298,18 +298,17 @@ msgstr "Foto 7x5"
 msgid "Photo 10x8"
 msgstr "Foto 10x8"
 
-#, fuzzy
 msgid "Fullscreen 4x3"
-msgstr "Obrazovka 4x3"
+msgstr "Celá obrazovka 4x3"
 
 msgid "Widescreen 16x9"
-msgstr ""
+msgstr "Širokoúhlý 16x9"
 
 msgid "CinemaScope 2.35x1"
 msgstr "CinemaScope 2.35x1"
 
 msgid "Square 1x1"
-msgstr "Čtvercová 1x1"
+msgstr "Čtverec 1x1"
 
 msgid "As Image"
 msgstr "Jako obrázek"
@@ -359,7 +358,7 @@ msgid "reorder items"
 msgstr "změnit pořadí položek"
 
 msgid "Gallery Site Administration"
-msgstr "Nastavení Galerie"
+msgstr "Administrace Galerie"
 
 msgid "site admin"
 msgstr "správce"
@@ -531,7 +530,7 @@ msgid "View Count"
 msgstr "Zobraz počet"
 
 msgid "Random"
-msgstr ""
+msgstr "Náhodný"
 
 msgid "&laquo; no presort &raquo;"
 msgstr "&laquo; bez předtřídění &raquo;"
@@ -555,7 +554,7 @@ msgid "This page is valid XHTML 1.0"
 msgstr "Tato stránka je validní XHTML 1.0"
 
 msgid "G2RC1: +5 Insightful"
-msgstr ""
+msgstr "G2RC1: +5 Insightful"
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -749,21 +748,17 @@ msgstr "Hlavní modul Galerie 2"
 msgid "Add Items"
 msgstr "Přidat položky"
 
-#, fuzzy
 msgid "Edit Album"
-msgstr "Přidat album"
+msgstr "Upravit album"
 
-#, fuzzy
 msgid "Edit Photo"
-msgstr "Upravit fotografii"
+msgstr "Upravit foto"
 
-#, fuzzy
 msgid "Edit Movie"
-msgstr "Video"
+msgstr "Upravit video"
 
-#, fuzzy
 msgid "Create Link"
-msgstr "vytvořit odkaz"
+msgstr "Vytvořit odkaz"
 
 msgid "Add Album"
 msgstr "Přidat album"
@@ -774,29 +769,23 @@ msgstr "Upravit oprávnění"
 msgid "View Permissions"
 msgstr "Zobrazit oprávnění"
 
-#, fuzzy
 msgid "Delete Album"
-msgstr "Smazat skupinu"
+msgstr "Smazat album"
 
-#, fuzzy
 msgid "Delete Photo"
-msgstr "Smazat %s"
+msgstr "Smazat foto"
 
-#, fuzzy
 msgid "Delete Movie"
-msgstr "Smazat %s"
+msgstr "Smazat video"
 
-#, fuzzy
 msgid "Move Album"
-msgstr "Změnit pořadí alba"
+msgstr "Přesunout album"
 
-#, fuzzy
 msgid "Move Photo"
-msgstr "Fotografie upravená"
+msgstr "Přesunout foto"
 
-#, fuzzy
 msgid "Move Movie"
-msgstr "Velikost videa"
+msgstr "Přesunout video"
 
 msgid "Edit Captions"
 msgstr "Editovat popisky"
@@ -808,7 +797,7 @@ msgid "Reorder Items"
 msgstr "Změnit pořadí položek"
 
 msgid "Site Admin"
-msgstr "Nastavení"
+msgstr "Administrace"
 
 msgid "Login"
 msgstr "Přihlásit"
@@ -849,17 +838,14 @@ msgstr "Nastavení účtu"
 msgid "Change Password"
 msgstr "Změnit heslo"
 
-#, fuzzy
 msgid "Link Album"
-msgstr "album"
+msgstr "Vytvořit odkaz na album"
 
-#, fuzzy
 msgid "Link Photo"
-msgstr "Foto"
+msgstr "Vytvořit odkaz na foto"
 
-#, fuzzy
 msgid "Link Movie"
-msgstr "Video"
+msgstr "Vytvořit odkaz na video"
 
 #, c-format
 msgid "Edit %s"
@@ -2175,13 +2161,14 @@ msgid "Choose the items you want to delete"
 msgstr "Vyberte položky, které chcete smazat"
 
 msgid "Items selected here will remain selected when moving between pages."
-msgstr ""
+msgstr "Položky zde vybrané zůstanou během přesunů mezi stránkami vybrané."
 
 #, c-format
 msgid "One item selected on other pages."
 msgid_plural "%d items selected on other pages."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Vybrána jedna položka na jiné stránce."
+msgstr[1] "Vybrány %d položky na jiné stránce."
+msgstr[2] "Vybráno %d položek na jiné stránce."
 
 msgid "(data)"
 msgstr "(data)"
@@ -2819,31 +2806,37 @@ msgstr ""
 "Pro toto album je nastavené téma %s, ale to je buď neaktivní nebo není "
 "nainstalované."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "To fix this problem you can %sinstall or activate this theme%s or select "
 "another default theme."
 msgstr ""
-"K odstranění tohoto problému můžete buď %s nebo vybrat jiné výchozí téma."
+"K odstranění tohoto problému můžete %snainstalovat nebo zaktivovat toto "
+"téma%s nebo vybrat jiné výchozí téma."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "To fix this problem you can %slogin as a site administrator%s and then %"
 "sinstall or activate this theme%s or select another default theme."
 msgstr ""
-"K odstranění tohoto problému můžete buď %s nebo vybrat jiné výchozí téma."
+"K odstranění tohoto problému se můžete %spřihlásit jako správce%s a potom "
+"%snainstalovat nebo zaktivovat toto téma%s nebo vybrat jiné výchozí téma."
 
 #, c-format
 msgid ""
 "To fix this problem you can either %schoose a new theme for this album%s or %"
 "sinstall or activate this theme%s."
 msgstr ""
+"K odstranění tohoto problému můžete %svybrat nové téma tohoto alba%s nebo "
+"%snainstalovat nebo zaktivovat toto téma%s."
 
 #, c-format
 msgid ""
 "To fix this problem you can either %schoose a new theme for this album%s or %"
 "slogin as a site administrator%s and then %sinstall or activate this theme%s."
 msgstr ""
+"K odstranění tohoto problému můžete %svybrat nové téma tohoto alba%s nebo se "
+"%spřihlásit jako správce%s a pak %snainstalovat nebo zaktivovat toto téma%s."
 
 #, c-format
 msgid ""
@@ -2851,6 +2844,9 @@ msgid ""
 "for this album%s or %slogin as a site administrator%s and then %sinstall or "
 "activate this theme%s."
 msgstr ""
+"K odstranění tohoto problému se můžete %spřihlásit%s a potom %svybrat nové "
+"téma tohoto alba%s nebo se %spřihlásit jako správce%s a pak %snainstalovat "
+"nebo zaktivovat toto téma%s."
 
 msgid "Admin Options"
 msgstr "Nastavení správce"
@@ -2904,8 +2900,8 @@ msgid ""
 "Lost or forgotten passwords can be retrieved using the <a href=\"%s"
 "\">recover password</a> page"
 msgstr ""
-"Ztracená nebo zapomenutá hesla mohou být zjištěna pomocí stránky <a href=\"%s"
-"\">obnovit heslo</a>"
+"Ztracená nebo zapomenutá hesla mohou být změněna pomocí <a href=\"%s"
+"\">stránky pro obnovu hesla</a>"
 
 msgid "Account settings saved successfully"
 msgstr "Nastavení účtu úspěšně uloženo"

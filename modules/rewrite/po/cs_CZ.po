@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Rewrite 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-06-11 18:26+0200\n"
-"PO-Revision-Date: 2005-07-31 18:49+0200\n"
+"PO-Revision-Date: 2005-08-09 14:08+0200\n"
 "Last-Translator: Jan Korbel <jackc@teptin.net>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -73,8 +73,9 @@ msgstr "Cesta k položce (např. /album/image.jpg.html)"
 msgid "Download Item"
 msgstr "Stáhnout položku"
 
-msgid "Item version to download (original/sized/thumb)"
-msgstr "Verze položky ke stáhnutí (původní/zmenšená/náhled)"
+msgid "Ensures browsers do not use cached version when image has changed"
+msgstr ""
+"Zajišťuje aby prohlížeče nepoužívali nacachovanou verzi změněného obrázku"
 
 msgid "Item file name (eg, image.jpg)"
 msgstr "Jméno souboru položky (např. image.jpg)"
@@ -83,7 +84,9 @@ msgid "404 File Not Found"
 msgstr "404 Soubor nenalezen"
 
 msgid "Block hotlinked items"
-msgstr "Blokovat rychlé odkazy položek"
+msgstr ""
+"Blokovat přímý přístup k položkám (položky je možné zobrazit pouze v html "
+"kódu Galerie)"
 
 msgid "URL Rewrite Administration"
 msgstr "Správa přepisu URL"
@@ -244,7 +247,6 @@ msgstr ""
 msgid "Error"
 msgstr "Chyba"
 
-#, fuzzy
 msgid "Please create a file in your Gallery directory named .htaccess"
 msgstr "Prosím vytvořte v adresáři Vaší Galerie soubor .htaccess"
 
@@ -368,11 +370,12 @@ msgstr ""
 "Moje Galerie používá Apache modul mod_auth pro zabezpečení heslem. Vím, že "
 "mod_rewrite funguje, tak proč ho Galerie nedetekuje?"
 
+#, fuzzy
 msgid ""
 "Gallery tries to fetch a page from your server and most likely Gallery gets "
 "an unauthorized access error. In order to fix this you need to allow "
 "requests from the server IP. If you are paranoid you could narrow it down to "
-"requests to the gallery2/modules/rewrite/test directory."
+"requests to the gallery2/modules/rewrite/data directory."
 msgstr ""
 "Galerie se snaží z Vašeho serveru stáhnout stránku a pravděpodobně dostává "
 "pouze chybu o neautorizovaném přístupu. Pro odstranění této chyby "
@@ -382,6 +385,9 @@ msgstr ""
 
 msgid "Unit test module"
 msgstr "Modul jednotky testování"
+
+#~ msgid "Item version to download (original/sized/thumb)"
+#~ msgstr "Verze položky ke stáhnutí (původní/zmenšená/náhled)"
 
 #~ msgid "Testing your Webserver"
 #~ msgstr "Testuji Váš webový server"

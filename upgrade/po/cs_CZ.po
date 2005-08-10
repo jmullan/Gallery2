@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Upgrader 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-06-11 11:57+0200\n"
-"PO-Revision-Date: 2005-07-31 15:03+0200\n"
+"PO-Revision-Date: 2005-08-09 11:57+0200\n"
 "Last-Translator: Jan Korbel <jackc@teptin.net>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -52,19 +52,18 @@ msgstr "Hotovo"
 msgid "System Checks"
 msgstr "Kontrola systému"
 
-#, fuzzy
 msgid "PHP version >= 4.1.0 or >= 5.0.4"
-msgstr "PHP verze >= 4.1.0"
+msgstr "PHP verze >= 4.1.0 nebo >= 5.0.4"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error: Gallery 2 requires PHP version 4.1.0 or newer or 5.0.4 or newer. You "
 "have PHP version %s installed. Contact your webserver administrator to "
 "request an upgrade, available at the %sPHP website%s."
 msgstr ""
-"Chyba: Galerie 2 vyžaduje PHP verze 4.1.0 nebo novější. Vaše PHP je verze %"
-"s. Kontaktujte Vašeho správce a požádejte o aktualizaci, která je dostupná "
-"například na %sPHP webu%s."
+"Chyba: Galerie 2 vyžaduje PHP verze 4.1.0 a novější nebo 5.0.4 a novější. "
+"Vaše PHP je verze %s. Kontaktujte Vašeho správce a požádejte o aktualizaci, "
+"která je dostupná na %swebu PHP%s."
 
 msgid "PHP Version"
 msgstr "Verze PHP"
@@ -197,11 +196,24 @@ msgstr ""
 "uvidíte chybu nebo nedostanete odpověď, budete muset vypnout "
 "ze1_compatibility_mode."
 
-msgid "Gallery file integrity"
-msgstr "Integrita souborů Galerie"
+msgid "Storage Directory Permissions"
+msgstr "Oprávnění pro adresář úložište"
 
 msgid "Test skipped due to other errors."
 msgstr "Zkouška přeskočena z důvodu jiných chyb."
+
+#, c-format
+msgid ""
+"Error: Some files and or directories in your storage directory are not "
+"writeable by the webserver user. Run chown -R webserverUser %s OR run chmod -"
+"R 777 %s."
+msgstr ""
+"Chyba: Některé soubory nebo podadresáře v adresáři úložište nejsou zapisovatelné "
+"uživatelem, pod kterým je spuštěn webserver. Spusťte 'chown -R uzivatel %s', "
+"případně 'chmod -R 777 %s'."
+
+msgid "Gallery file integrity"
+msgstr "Integrita souborů Galerie"
 
 msgid "Manifest missing or inaccessible."
 msgstr "Chybějící nebo nedostupný soubor Manifest."
@@ -317,12 +329,11 @@ msgstr "Úspěšně jsme vymazali cache adresáře."
 msgid "Finished!"
 msgstr "Hotovo!"
 
-#, fuzzy
 msgid ""
 "Congratulations! Your Gallery 2 upgrade is complete!  To upgrade any "
 "additional Gallery 2 modules you may use the Site Administrator interface."
 msgstr ""
-"Gratulujeme! Aktualizace Vaší Galerie 2 %sBeta%s je kompletní! Pro případnou "
+"Gratulujeme! Aktualizace Vaší Galerie 2 je kompletní! Pro případnou "
 "aktualizaci nějakých dalších modulů použijte administrační panel."
 
 msgid "Go to my Gallery!"
@@ -407,6 +418,39 @@ msgstr "README"
 
 msgid "Start Over"
 msgstr "Začít znovu"
+
+msgid "Missing or invalid config.php"
+msgstr "Chybějící nebo špatný config.php"
+
+msgid "You tried to run the upgrade process but a valid config.php is missing."
+msgstr "Snažíte se spustit aktualizaci, ale chybí validní soubor config.php."
+
+msgid ""
+"If you've lost your config.php file when replacing the Gallery 2 files in "
+"the preparation for this upgrade, please restore it and try again."
+msgstr ""
+"Pokud jste při nahrazování souborů Galerie 2 ztratili soubor config.php, "
+"obnovte ho a zkuste to znovu."
+
+msgid ""
+"If you actually want to run the Gallery 2 installer, please follow the link "
+"below."
+msgstr ""
+"Pokud ve skutečnosti chcete spustit instalátor Galerie 2, prosím následujte "
+"odkaz níže."
+
+msgid ""
+"If you want to upgrade from Gallery 1, you first need to install Gallery 2 "
+"and then use the import module to import your data from Gallery 1. Please "
+"follow the link below to install Gallery 2."
+msgstr ""
+"Pokud chcete aktualizovat Galerii z verze 1, musíte nejdříve nainstalovat verzi "
+"2 a pak použít modul importu dat z Galerie verze 1. Pro instalaci Galerie 2 "
+"následujte odkaz níže."
+
+#, c-format
+msgid "%sGo to the Gallery 2 Installer%s"
+msgstr "%sJít na instalaci Galerie 2%s"
 
 msgid "Success"
 msgstr "OK"
