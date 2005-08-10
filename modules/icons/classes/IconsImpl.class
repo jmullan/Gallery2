@@ -81,7 +81,10 @@ class IconsImpl extends IconsInterface_1_0 {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	if (!empty($iconpack)) {
-	    $template->style("modules/icons/iconpacks/$iconpack/icons.css");
+	    global $gallery;
+	    $translator =& $gallery->getTranslator();
+	    $rtl = $translator->isRightToLeft() ? '-rtl' : '';
+	    $template->style("modules/icons/iconpacks/$iconpack/icons$rtl.css");
 	}
 
 	return GalleryStatus::success();
