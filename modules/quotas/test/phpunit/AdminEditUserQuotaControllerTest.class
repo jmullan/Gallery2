@@ -26,14 +26,7 @@
  * @author Robert Balousek <volksport@users.sf.net>
  */
 
-/**
- * Helper class
- */
 GalleryCoreApi::relativeRequireOnce('modules/quotas/classes/GalleryQuotasHelper.class');
-
-/**
- * Map class
- */
 GalleryCoreApi::relativeRequireOnce('modules/quotas/classes/QuotasMap.class');
 
 /**
@@ -47,13 +40,18 @@ class AdminEditUserQuotaControllerTest extends GalleryControllerTestCase {
 	$this->GalleryControllerTestCase($methodName, 'quotas.AdminEditUserQuota');
     }
 
-    function testCancel() {
-	list ($ret, $user) = $this->_createRandomUser();
+    function setUp() {
+	parent::setUp();
+
+	list ($ret, $this->_user) = $this->_createRandomUser();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->_markForCleanup($this->_user);
+    }
 
-	GalleryUtilities::putRequestVariable('userId', $user->getId());
+    function testCancel() {
+	GalleryUtilities::putRequestVariable('userId', $this->_user->getId());
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 
 	$results = $this->handleRequest();
@@ -62,79 +60,58 @@ class AdminEditUserQuotaControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
-	$this->_deleteEntity($user);
     }
 
     function testUndo() {
-	list ($ret, $user) = $this->_createRandomUser();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	GalleryUtilities::putRequestVariable('userId', $user->getId());
+	GalleryUtilities::putRequestVariable('userId', $this->_user->getId());
 	GalleryUtilities::putRequestVariable('form[action][undo]', 1);
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
 						      'subView' => 'quotas.AdminEditUserQuota',
-						      'userId' => $user->getId()),
+						      'userId' => $this->_user->getId()),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
-
-	$this->_deleteEntity($user);
     }
 
     function testEditUserQuota() {
-	list ($ret, $user) = $this->_createRandomUser();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$this->_createUserQuota($this->_user->getId(), 4096);
 
-	$this->_createUserQuota($user->getId(), 4096);
-
-	GalleryUtilities::putRequestVariable('userId', $user->getId());
+	GalleryUtilities::putRequestVariable('userId', $this->_user->getId());
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
-	GalleryUtilities::putRequestVariable('form[userName]', $user->getUserName());
+	GalleryUtilities::putRequestVariable('form[userName]', $this->_user->getUserName());
 	GalleryUtilities::putRequestVariable('form[quotaSize]', 6);
 	GalleryUtilities::putRequestVariable('form[quotaUnit]', 'MB');
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
 						      'subView' => 'quotas.AdminQuotas'),
-				  'status' => array('modifiedUser' => $user->getUserName()),
+				  'status' => array('modifiedUser' => $this->_user->getUserName()),
 				  'error' => array()),
 			    $results);
 
 	list ($ret, $quotaExists, $userQuota) =
-	    GalleryQuotasHelper::fetchUserQuota($user->getId());
+	    GalleryQuotasHelper::fetchUserQuota($this->_user->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert($quotaExists, 'Quota does not exist');
-	$this->assertEquals(''.$user->getId(), $userQuota['id'], 'User Ids do not match');
+	$this->assertEquals(''.$this->_user->getId(), $userQuota['id'], 'User Ids do not match');
 	$this->assertEquals('6144', $userQuota['quota'], 'User quota does not match');
 
-	$this->_deleteUserQuota($user->getId());
-	$this->_deleteEntity($user);
+	$this->_deleteUserQuota($this->_user->getId());
     }
 
     function testEditUserQuotaMissingValues() {
 	/* No Values */
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
-
 	$results = $this->handleRequest(ERROR_BAD_PARAMETER);
 
-	/* Create a user for our tests */
-	list ($ret, $user) = $this->_createRandomUser();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	$this->_createUserQuota($user->getId(), 1024);
+	$this->_createUserQuota($this->_user->getId(), 1024);
 
 	/* quota size */
-	GalleryUtilities::putRequestVariable('userId', $user->getId());
+	GalleryUtilities::putRequestVariable('userId', $this->_user->getId());
 	GalleryUtilities::putRequestVariable('form[quotaSize]', 2048);
 
 	$results = $this->handleRequest();
@@ -148,30 +125,21 @@ class AdminEditUserQuotaControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::removeRequestVariable('form[quotaSize]');
 	GalleryUtilities::putRequestVariable('form[quotaUnit]', 'MB');
 
-
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
 						      'subView' => 'quotas.AdminEditUserQuota'),
 				  'status' => array(),
 				  'error' => array('form[error][quotaSize][missing]')),
 			    $results);
-
-	$this->_deleteEntity($user);
     }
 
     /**
      * Edit a non-existant user quota
      */
     function testEditUserQuotaNonExistantQuota() {
-	/* Create a user, but no quota for it */
-	list ($ret, $user) = $this->_createRandomUser();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	GalleryUtilities::putRequestVariable('userId', $user->getId());
+	GalleryUtilities::putRequestVariable('userId', $this->_user->getId());
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
-	GalleryUtilities::putRequestVariable('form[userName]', $user->getUserName());
+	GalleryUtilities::putRequestVariable('form[userName]', $this->_user->getUserName());
 	GalleryUtilities::putRequestVariable('form[quotaSize]', 7);
 	GalleryUtilities::putRequestVariable('form[quotaUnit]', 'MB');
 
@@ -182,26 +150,16 @@ class AdminEditUserQuotaControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
-
-	$this->_deleteEntity($user);
-
     }
 
     function testEditUserQuotaUserIdMissing() {
-    	GalleryUtilities::putRequestVariable('form[action][save]', 1);
-    	$results = $this->handleRequest(ERROR_BAD_PARAMETER);
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	$results = $this->handleRequest(ERROR_BAD_PARAMETER);
     }
 
     function _createUserQuota($userId, $quota) {
 	$ret = QuotasMap::addMapEntry(array('userOrGroupId' => $userId,
 					    'quotaSize' => $quota));
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-    }
-
-    function _deleteEntity($entity) {
-	$ret = GalleryCoreApi::deleteEntityById($entity->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

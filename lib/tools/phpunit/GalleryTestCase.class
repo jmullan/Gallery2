@@ -747,16 +747,6 @@ class GalleryTestCase extends TestCase {
 	return array(GalleryStatus::success(), $user);
     }
 
-    function _deleteUser($user) {
-	global $gallery;
-	$ret = GalleryCoreApi::deleteEntityById($user->getId());
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	return GalleryStatus::success();
-    }
-
     /**
      * Get an id that is not used for anything.
      */

@@ -65,7 +65,11 @@ class AdminCreateUserControllerTest extends GalleryControllerTestCase {
 			    $results,
 			    'Failed to create user');
 
-	$this->_deleteUser($userName);
+	list ($ret, $user) = GalleryCoreApi::fetchUserByUserName($userName);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($user);
     }
 
     function testMissingInputs() {
@@ -133,21 +137,11 @@ class AdminCreateUserControllerTest extends GalleryControllerTestCase {
 				  'error' => array('form[error][userName][exists]')),
 			    $results);
 
-	$this->_deleteUser($userName);
-    }
-
-    function _deleteUser($userName) {
-	global $gallery;
-
 	list ($ret, $user) = GalleryCoreApi::fetchUserByUserName($userName);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
-	$ret = GalleryCoreApi::deleteEntityById($user->getId());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$this->_markForCleanup($user);
     }
 }
 ?>

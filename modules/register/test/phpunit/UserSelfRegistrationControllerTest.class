@@ -99,10 +99,7 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	}
 	$this->assertEquals(GalleryUtilities::isA($user, 'GalleryUser'), true);
 
-	$ret = $this->_deleteUser($user);
-	if ($ret != null && $ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$this->_markForCleanup($user);
     }
 
     function testRegisterWithEMailActivation() {
@@ -139,8 +136,7 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
-	$this->_deletePendingUser($userName);
+	$this->_markForCleanup($user);
     }
 
     function testMissingInputs() {
@@ -234,7 +230,11 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 		  'error' => array('form[error][userName][exists]')),
 	    $results, 'Create duplicate');
 
-	$this->_deletePendingUser($userName);
+	list ($ret, $user) = GalleryPendingUserHelper::fetchPendingUserByUserName($userName);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($user);
     }
 
     function testCreateDuplicateUser() {
@@ -278,11 +278,7 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
-	$ret = $this->_deleteUser($user);
-	if ($ret!=null && $ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$this->_markForCleanup($user);
     }
 
     /**
@@ -373,7 +369,8 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(
-	    array('redirect' => array('view' => 'core.UserAdmin', 'subView' => 'register.SelfRegistrationSuccess'),
+	    array('redirect' => array('view' => 'core.UserAdmin',
+				      'subView' => 'register.SelfRegistrationSuccess'),
 		  'status' => array('activatedUser' => $userName),
 		  'error' => array()),
 	    $results);
@@ -383,25 +380,7 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
-	$ret = $this->_deleteUser($user);
-	if ($ret != null && $ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-    }
-
-    function _deletePendingUser($userName) {
-	global $gallery;
-
-	list ($ret, $user) = GalleryPendingUserHelper::fetchPendingUserByUserName($userName);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	$ret = GalleryCoreApi::deleteEntityById($user->getId());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$this->_markForCleanup($user);
     }
 }
 
@@ -415,7 +394,7 @@ class RegisterDummyPlatform {
     }
 
     function mail($to, $subject, $body, $headers=null) {
-	// Don't actually send email..
+	/* Don't actually send email */
 	return true;
     }
 

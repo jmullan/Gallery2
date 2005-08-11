@@ -41,14 +41,14 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 	parent::setUp();
 
 	/* Create a test group */
-	list ($ret, $this->_group) = $this->_createGroup();
+	list ($ret, $this->_group) = $this->_createRandomGroup();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($this->_group);
 
 	/* Create a test user */
-	list ($ret, $this->_user) = $this->_createUser();
+	list ($ret, $this->_user) = $this->_createRandomUser();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -56,14 +56,8 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
     }
 
     function testDone() {
-	list ($ret, $group) = $this->_createGroup();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	GalleryUtilities::putRequestVariable('groupId', $group->getId());
+	GalleryUtilities::putRequestVariable('groupId', $this->_group->getId());
 	GalleryUtilities::putRequestVariable('form[action][done]', 1);
-
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
@@ -71,7 +65,6 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
-	$this->_deleteGroup($group);
     }
 
     function testRemoveUser() {
@@ -237,70 +230,6 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array('form[error][text][userName][alreadyInGroup]')),
 			    $results);
-    }
-
-    function _createGroup($groupType=GROUP_NORMAL) {
-	global $gallery;
-
-	list ($ret, $group) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryGroup');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	if (!isset($group)) {
-	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
-			 null);
-	}
-
-	$ret = $group->create('testgroup-'.rand(), $groupType);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$ret = $group->save();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	return array(GalleryStatus::success(), $group);
-    }
-
-    function _deleteGroup($group) {
-	global $gallery;
-	$ret = GalleryCoreApi::deleteEntityById($group->getId());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-    }
-
-    function _createUser() {
-	global $gallery;
-
-	list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	if (!isset($user)) {
-	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
-			 null);
-	}
-
-	$ret = $user->create('testuser-'.rand());
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$ret = $user->save();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	return array(GalleryStatus::success(), $user);
-    }
-
-    function _deleteUser($user) {
-	global $gallery;
-	$ret = GalleryCoreApi::deleteEntityById($user->getId());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
     }
 }
 ?>

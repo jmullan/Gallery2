@@ -63,6 +63,7 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->_markForCleanup($user);
 
 	GalleryUtilities::putRequestVariable('form[action][editFromText]', 1);
 	GalleryUtilities::putRequestVariable('form[text][userName]', $user->getUserName());
@@ -74,8 +75,6 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
-	$this->_deleteUser($user);
-
 
 	/* Missing user name */
 	GalleryUtilities::putRequestVariable('form[action][editFromText]', 1);
@@ -90,7 +89,8 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 
 	/* Invalid user name */
 	GalleryUtilities::putRequestVariable('form[action][editFromText]', 1);
-	GalleryUtilities::putRequestVariable('form[text][userName]', 'some-invalid-user-name-'.rand());
+	GalleryUtilities::putRequestVariable('form[text][userName]',
+					     'some-invalid-user-name-'.rand());
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
@@ -106,6 +106,7 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->_markForCleanup($user);
 
 	GalleryUtilities::putRequestVariable('form[action][deleteFromText]', 1);
 	GalleryUtilities::putRequestVariable('form[text][userName]', $user->getUserName());
@@ -117,8 +118,6 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
-	$this->_deleteUser($user);
-
 
 	/* Missing user name */
 	GalleryUtilities::putRequestVariable('form[action][deleteFromText]', 1);
@@ -133,7 +132,8 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 
 	/* Invalid user name */
 	GalleryUtilities::putRequestVariable('form[action][deleteFromText]', 1);
-	GalleryUtilities::putRequestVariable('form[text][userName]', 'some-invalid-user-name-'.rand());
+	GalleryUtilities::putRequestVariable('form[text][userName]',
+					     'some-invalid-user-name-'.rand());
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
@@ -146,7 +146,8 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
     function testDeleteAnonymous() {
 	global $gallery;
 
-	list ($ret, $anonymousUserId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	list ($ret, $anonymousUserId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -205,14 +206,6 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	return array(GalleryStatus::success(), $user);
-    }
-
-    function _deleteUser($user) {
-	global $gallery;
-	$ret = GalleryCoreApi::deleteEntityById($user->getId());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
     }
 }
 ?>

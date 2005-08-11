@@ -47,75 +47,65 @@ class AdminDeleteUserQuotaControllerTest extends GalleryControllerTestCase {
 	$this->GalleryControllerTestCase($methodName, 'quotas.AdminDeleteUserQuota');
     }
 
-    function testCancel() {
-	/* Create a user user that we can delete */
-	list ($ret, $user) = $this->_createRandomUser();
+    function setUp() {
+	parent::setUp();
+
+	/* Create a user that we can delete */
+	list ($ret, $this->_user) = $this->_createRandomUser();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->_markForCleanup($this->_user);
+    }
 
+    function testCancel() {
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
-	GalleryUtilities::putRequestVariable('userId', $user->getId());
+	GalleryUtilities::putRequestVariable('userId', $this->_user->getId());
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
 						      'subView' => 'quotas.AdminQuotas'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
-	$this->_deleteEntity($user);
     }
 
     /**
      * Create and delete a user quota
      */
     function testDeleteUserQuota() {
-        global $gallery;
-	/* Create a user quota that we can delete */
-	list ($ret, $user) = $this->_createRandomUser();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->_createUserQuota($user->getId(), 2048);
+	$this->_createUserQuota($this->_user->getId(), 2048);
 
-	GalleryUtilities::putRequestVariable('userId', $user->getId());
+	GalleryUtilities::putRequestVariable('userId', $this->_user->getId());
 	GalleryUtilities::putRequestVariable('form[action][delete]', 1);
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
 						      'subView' => 'quotas.AdminQuotas'),
-				  'status' => array('deletedUser' => $user->getUserName()),
+				  'status' => array('deletedUser' => $this->_user->getUserName()),
 				  'error' => array()),
 			    $results,
 			    'Failed to delete user quota');
 
 	/* Verify the user quota is gone */
-	list ($ret, $quotaExists, $quota) = GalleryQuotasHelper::fetchUserQuota($user->getId());
+	list ($ret, $quotaExists, $quota) =
+	    GalleryQuotasHelper::fetchUserQuota($this->_user->getId());
 	if ($quotaExists) {
 	    $this->assert(false, 'The user quota was not actually deleted');
 	} else {
-	    $this->_deleteUserQuota($user->getId());
+	    $this->_deleteUserQuota($this->_user->getId());
 	}
-	$this->_deleteEntity($user);
-
     }
 
     function testDeleteUserQuotaUserIdMissing() {
-    	GalleryUtilities::putRequestVariable('form[action][save]', 1);
-    	$results = $this->handleRequest(ERROR_BAD_PARAMETER);
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	$results = $this->handleRequest(ERROR_BAD_PARAMETER);
     }
 
     /**
-     * Create and delete a non-existant user quota
+     * Delete a non-existant user quota
      */
     function testDeleteNonExistantUserQuota() {
-        global $gallery;
-	/* Create a user, but no quota for it */
-	list ($ret, $user) = $this->_createRandomUser();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	GalleryUtilities::putRequestVariable('userId', $user->getId());
+	GalleryUtilities::putRequestVariable('userId', $this->_user->getId());
 	GalleryUtilities::putRequestVariable('form[action][delete]', 1);
 
 	$results = $this->handleRequest();
@@ -125,8 +115,6 @@ class AdminDeleteUserQuotaControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
-
-	$this->_deleteEntity($user);  
     }
 
     function _createUserQuota($userId, $quota) {
@@ -137,14 +125,6 @@ class AdminDeleteUserQuotaControllerTest extends GalleryControllerTestCase {
 	}
     }
 
-    function _deleteEntity($entity) {
-	global $gallery;
-	$ret = GalleryCoreApi::deleteEntityById($entity->getId());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-    } 
-    
     function _deleteUserQuota($userId) {
 	$ret = QuotasMap::removeMapEntry(array('userOrGroupId' => $userId));
 	if ($ret->isError()) {
