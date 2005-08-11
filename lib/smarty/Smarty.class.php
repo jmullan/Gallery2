@@ -27,7 +27,7 @@
  * @author Monte Ohrt <monte at ohrt dot com>
  * @author Andrei Zmievski <andrei@php.net>
  * @package Smarty
- * @version 2.6.7
+ * @version 2.6.10
  */
 
 /* $Id$ */
@@ -232,7 +232,7 @@ class Smarty
                                                                'isset', 'empty',
                                                                'count', 'sizeof',
                                                                'in_array', 'is_array',
-                                                               'true','false'),
+                                                               'true', 'false', 'null'),
                                     'INCLUDE_ANY'     => false,
                                     'PHP_TAGS'        => false,
                                     'MODIFIER_FUNCS'  => array('count'),
@@ -464,7 +464,7 @@ class Smarty
      *
      * @var string
      */
-    var $_version              = '2.6.7';
+    var $_version              = '2.6.10';
 
     /**
      * current template inclusion depth
