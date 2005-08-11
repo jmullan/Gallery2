@@ -46,8 +46,10 @@ class GalleryPendingUserHelper {
     function fetchPendingUserByUserName($userName) {
 	global $gallery;
 
-        $query = 'SELECT [GalleryPendingUser::id] FROM [GalleryPendingUser]
-		  WHERE [GalleryPendingUser::userName] = ?';
+	$query = '
+	SELECT [GalleryPendingUser::id] FROM [GalleryPendingUser]
+	WHERE [GalleryPendingUser::userName] = ?
+	';
 	list ($ret, $searchResults) = $gallery->search($query, array($userName));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -78,7 +80,9 @@ class GalleryPendingUserHelper {
     function fetchUserCount($substring=null) {
 	global $gallery;
 	$data = array();
-	$query = 'SELECT COUNT([GalleryPendingUser::id]) FROM [GalleryPendingUser]';
+	$query = '
+	SELECT COUNT([GalleryPendingUser::id]) FROM [GalleryPendingUser]
+	';
 	if (!empty($substring)) {
 	    $query .= ' WHERE [GalleryPendingUser::userName] LIKE ?';
 	    $data[] = "%$substring%";
@@ -109,10 +113,13 @@ class GalleryPendingUserHelper {
     function fetchUserData($count=null, $offset=null, $substring=null) {
 	global $gallery;
 	$data = array();
-	$query = 'SELECT [GalleryPendingUser::id], [GalleryPendingUser::userName],
-		  [GalleryPendingUser::fullName], [GalleryPendingUser::email],
-		  [GalleryEntity::creationTimestamp] FROM [GalleryPendingUser], [GalleryEntity]
-		  WHERE [GalleryPendingUser::id]=[GalleryEntity::id]';
+	$query = '
+	SELECT [GalleryPendingUser::id], [GalleryPendingUser::userName],
+	       [GalleryPendingUser::fullName], [GalleryPendingUser::email],
+	       [GalleryEntity::creationTimestamp]
+	FROM [GalleryPendingUser], [GalleryEntity]
+	WHERE [GalleryPendingUser::id]=[GalleryEntity::id]
+	';
 
 	if (!empty($substring)) {
 	    $query .= ' AND [GalleryPendingUser::userName] LIKE ?';
@@ -160,18 +167,19 @@ class GalleryPendingUserHelper {
 	$generator =& $gallery->getUrlGenerator();
 	$confirmationUrl = $generator->generateUrl(
 			 array( 'controller' => 'register.ConfirmRegistration',
-				'username' => $pendingUser->getUserName(),
+				  /* Incoming url params will get sanitized, so decode here */
+				'username' =>
+				  GalleryUtilities::htmlEntityDecode($pendingUser->getUserName()),
 				'key' => $pendingUser->getRegistrationKey() ));
-	/* it seems that spaces in the username are not translated to %20, so do it here */
-	/* otherwise mail clients will certainly put a line break there */
-	$confirmationUrl = str_replace('&amp;', '&', str_replace(' ', '%20', $confirmationUrl));
+	$confirmationUrl = str_replace('&amp;', '&', $confirmationUrl);
 	$baseUrl = str_replace('&amp;', '&', $generator->generateUrl());
 
 	$ret = GalleryCoreApi::sendTemplatedEmail(
 		'modules/register/templates/ConfirmationEmail.tpl',
 		array(
 		    'name' => $pendingUser->getFullName(),
-		    'username' => $pendingUser->getUserName(),
+			/* We send plain text email so decode entities in username */
+		    'username' => GalleryUtilities::htmlEntityDecode($pendingUser->getUserName()),
 		    'confirmationUrl' => $confirmationUrl,
 		    'baseUrl' => $baseUrl),
 		$params['from'],
@@ -225,7 +233,9 @@ class GalleryPendingUserHelper {
 	    $ret = GalleryCoreApi::sendTemplatedEmail(
 		    'modules/register/templates/AdminEmail.tpl',
 		    array('name' => $pendingUser->getFullName(),
-			  'username' => $pendingUser->getUserName(),
+			      /* We send plain text email so decode entities in username */
+			  'username' =>
+			      GalleryUtilities::htmlEntityDecode($pendingUser->getUserName()),
 			  'email' => $pendingUser->getEmail()),
 		    $params['from'],
 		    implode(',', $toList),

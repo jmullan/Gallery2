@@ -26,9 +26,6 @@
  * @author Sebastian Eichner <mailsp@sebastian-eichner.de>
  */
 
-/**
- * require necessary classes
- */
 GalleryCoreApi::relativeRequireOnce('modules/register/classes/GalleryPendingUserHelper.class');
 GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryValidationPlugin.class');
 
@@ -49,8 +46,8 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'register');
 	if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'register', 'emailadmins', '0');
@@ -118,8 +115,8 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[password1]', 'password');
 	GalleryUtilities::putRequestVariable('form[password2]', 'password');
 
-	$platform = $gallery->getPlatform();
-	$gallery->_platform = new RegisterDummyPlatform($platform);
+	$savePlatform = $gallery->getPlatform();
+	$gallery->_platform = new RegisterDummyPlatform($savePlatform, $this);
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.UserAdmin',
@@ -129,7 +126,7 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	    $results,
 	    'Failed to register user with email activation');
 
-	$gallery->_platform = $platform;
+	$gallery->_platform = $savePlatform;
 
 	/* make sure the pending user exists */
 	list($ret, $user) = GalleryPendingUserHelper::fetchPendingUserByUserName($userName);
@@ -137,6 +134,51 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($user);
+    }
+
+    function testUsernameWithEntity() {
+	/* Make sure emails sent out don't include text like &amp; */
+	global $gallery;
+	$ret = GalleryCoreApi::setPluginParameter('module', 'register', 'confirmation', 'email');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$userName = $entitizedName = 'test < & > ' . rand();
+	GalleryUtilities::sanitizeInputValues($entitizedName);
+
+	GalleryUtilities::putRequestVariable('form[action][create]', 1);
+	GalleryUtilities::putRequestVariable('form[userName]', $userName);
+	GalleryUtilities::putRequestVariable('form[fullName]', 'full name');
+	GalleryUtilities::putRequestVariable('form[email]', 'email@test.com');
+	GalleryUtilities::putRequestVariable('form[language]', 'language');
+	GalleryUtilities::putRequestVariable('form[password1]', 'password');
+	GalleryUtilities::putRequestVariable('form[password2]', 'password');
+
+	$savePlatform = $gallery->getPlatform();
+	$gallery->_platform = new RegisterDummyPlatform($savePlatform, $this);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.UserAdmin',
+	      'subView' => 'register.SelfRegistrationSuccess'),
+	  'status' => array('registeredUser' => $entitizedName),
+	  'error' => array()),
+	    $results,
+	    'Failed to register user with email activation');
+
+	$gallery->_platform = $savePlatform;
+
+	/* make sure the pending user exists */
+	list($ret, $user) = GalleryPendingUserHelper::fetchPendingUserByUserName($entitizedName);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($user);
+
+	/* verify un-entitized username was used in email */
+	/* the confirm link should also use unentitized(but urlencoded) value; not verified here */
+	$this->assert(strpos($this->_emailBody, $userName) !== false,
+		      'Email body should have unentitized username: ' . $this->_emailBody);
     }
 
     function testMissingInputs() {
@@ -389,12 +431,14 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
  * @subpackage PHPUnit
  */
 class RegisterDummyPlatform {
-    function RegisterDummyPlatform($platform) {
+    function RegisterDummyPlatform($platform, &$test) {
 	$this->_platform = $platform;
+	$this->_test =& $test;
     }
 
     function mail($to, $subject, $body, $headers=null) {
 	/* Don't actually send email */
+	$this->_test->_emailBody = $body;
 	return true;
     }
 

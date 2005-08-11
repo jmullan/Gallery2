@@ -42,26 +42,22 @@ class ConfirmRegistrationController extends GalleryController {
     function handleRequest($form) {
 	GalleryCoreApi::relativeRequireOnce(
 	    'modules/register/classes/GalleryPendingUserHelper.class');
-	global $gallery;
-	$results = array();
-	$results['redirect'] = array();
-	$results['status'] = array();
-	$results['error'] = array();
+	$results = array('status' => array(), 'error' => array());
 
-   	/* turn the pending user into a real user */
+	/* turn the pending user into a real user */
 	list ($username, $regKey) = GalleryUtilities::getRequestVariables('username', 'key');
 
-	list($ret, $user) = GalleryPendingUserHelper::fetchPendingUserByUsername($username);
+	list ($ret, $user) = GalleryPendingUserHelper::fetchPendingUserByUsername($username);
 	if ($ret->isError()) {
 	    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-	    	$results['error'][] = 'form[error][unknownUser]';
+		$results['error'][] = 'form[error][unknownUser]';
 	    } else {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	} else {
-	    // verify registration key:
+	    /* verify registration key: */
 	    if ($regKey != $user->getRegistrationKey()) {
-	    	$results['error'][] = 'form[error][unknownUser]';
+		$results['error'][] = 'form[error][unknownUser]';
 	    } else {
 		$ret = GalleryPendingUserHelper::createGalleryUser($user);
 		if ($ret->isError()) {
@@ -89,10 +85,7 @@ class ConfirmRegistrationView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	global $gallery;
-
 	$template->setVariable('controller', 'register.ConfirmRegistration');
-
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/register/templates/ConfirmRegistration.tpl'));
     }
