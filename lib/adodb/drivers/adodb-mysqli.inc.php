@@ -598,7 +598,7 @@ class ADODB_mysqli extends ADOConnection {
 				else $a .= 'd';
 			}
 			
-			$fnarr =& array_merge( array($stmt,$a) , $inputarr);
+			$fnarr = array_merge( array($stmt,$a) , $inputarr);
 			$ret = call_user_func_array('mysqli_stmt_bind_param',$fnarr);
 
 			$ret = mysqli_stmt_execute($stmt);
