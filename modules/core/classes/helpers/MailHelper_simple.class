@@ -81,12 +81,14 @@ class MailHelper_simple {
 	    $headers = "From: $from\r\n" . $headers;
 	}
 	if (!empty($subject)) {
-	    $buf = '=?utf-8?q?';
-	    for ($i = 0; $i < strlen($subject); $i++) {
+	    for ($buf = '', $i = 0; $i < strlen($subject); $i++) {
 		$val = ord($subject{$i});
 		$buf .= ($val > 127) ? '=' . dechex($val) : $subject{$i};
 	    }
-	    $subject = $buf . '?=';
+	    if ($buf != $subject) {
+		/* Encode subject for UTF-8 display if any extended characters are present */
+		$subject = '=?utf-8?q?' . $buf . '?=';
+	    }
 	}
 	if (strpos(strtolower($headers), 'content-type:') === false) {
 	    $headers = "Content-Type: text/plain; charset=\"utf-8\"\r\n" . $headers;
