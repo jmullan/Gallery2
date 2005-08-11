@@ -114,17 +114,15 @@
 
     <div class="go">
       <?php if (isset($templateData['showConfirmCleanInstall'])): ?>
-      <span class="goToNext">
+      <span class="goToNextL">
 	<a href="javascript:document.forms[0].confirmCleanInstall.value='true'; document.forms[0].submit()"><?php print _('Erase Data For A Clean Install') ?></a>
       </span>
-      <span class="goToNextL">
-      <?php else: ?>
-      <span class="goToNext">
       <?php endif; ?>
+      <span class="goToNext<?php if (isset($templateData['showConfirmReuseTables'])) print 'L' ?>">
 	<a href="javascript:document.forms[0].submit()"><?php print _('Save') ?></a>
       </span>
       <?php if (isset($templateData['showConfirmReuseTables'])): ?>
-      <span class="goToNextL">
+      <span class="goToNext">
 	<a href="javascript:document.forms[0].confirmReuseTables.value='true'; document.forms[0].submit()"><?php print _('Reuse Existing Tables') ?></a>
       </span>
       <?php endif; ?>

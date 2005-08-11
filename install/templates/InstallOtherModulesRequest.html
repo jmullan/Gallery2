@@ -103,12 +103,12 @@
     <?php if ($templateData['anyInstallable']): ?>
     <div class="go">
       <?php $nextStep = $stepNumber + 1 ?>
-      <span class="goToNext">
+      <span class="goToNextL">
 	<a href="<?php printf('%s?step=%s', INDEX_PHP, $nextStep) ?>">
 	  <?php printf(_('Continue to Step %d Without Activating&raquo;'), $nextStep); ?>
 	</a>
       </span>
-      <span class="goToNextL">
+      <span class="goToNext">
 	<a href="javascript:document.forms[0].submit();"><?php print _('Activate Selected Modules') ?></a>
       </span>
     </div>
