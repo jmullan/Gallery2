@@ -20,13 +20,14 @@
 # Previous translators (as far as known, add yourself here, please):
 # - Frederik Kunz <frederik.kunz@web.de>
 # - Georg Rehfeld <rehfeld@georg-rehfeld.de>
+# - Bananeweizen <bananeweizen@gmx.de>
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Gallery: Upgrader 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-05-20 12:20+0200\n"
-"PO-Revision-Date: 2005-08-07 21:50+0000\n"
+"PO-Revision-Date: 2005-08-11 23:36+0000\n"
 "Last-Translator: Frederik Kunz <frederik.kunz@web.de>\n"
 "Language-Team: German <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -211,7 +212,7 @@ msgstr ""
 "<tt>ze1_compatibility_mode</tt> abschalten, bevor Sie fortfahren."
 
 msgid "Storage Directory Permissions"
-msgstr ""
+msgstr "Speicherordner-Zugriffsrechte"
 
 msgid "Test skipped due to other errors."
 msgstr "Aufgrund anderer Fehler wurde der Test übersprungen."
@@ -222,6 +223,9 @@ msgid ""
 "writeable by the webserver user. Run chown -R webserverUser %s OR run chmod -"
 "R 777 %s."
 msgstr ""
+"Fehler:Einige Dateien oder Ordner in Ihrem Speicherordner können vom "
+"Webserver nicht verändert werden. Führen Sie chown -R webserverBenutzer %s "
+"ODER chmod -R 777 %s aus."
 
 msgid "Gallery file integrity"
 msgstr "Gallery-Dateiintegrität"
@@ -262,7 +266,7 @@ msgid "Unable to upgrade the %s theme"
 msgstr "Das Motiv '%s' kann nicht aktualisiert werden"
 
 msgid "Unable to commit database transaction"
-msgstr "Die Datenbank-Transaktion konnte nicht abgeschlossen weden (commit)"
+msgstr "Die Datenbank-Transaktion konnte nicht abgeschlossen werden (commit)"
 
 msgid "Unable to get the module list"
 msgstr "Die Modulliste ist nicht abrufbar"
@@ -437,30 +441,41 @@ msgid "Start Over"
 msgstr "Neu anfangen"
 
 msgid "Missing or invalid config.php"
-msgstr ""
+msgstr "Fehlende oder fehlerhafte config.php"
 
 msgid "You tried to run the upgrade process but a valid config.php is missing."
 msgstr ""
+"Sie haben versucht, den Aktualisierungsprozess zu starten, aber es ist keine "
+"gültige config.php vorhanden."
 
 msgid ""
 "If you've lost your config.php file when replacing the Gallery 2 files in "
 "the preparation for this upgrade, please restore it and try again."
 msgstr ""
+"Sie haben beim Ersetzen Ihrer Gallery-2-Dateien während der Vorbereitung für "
+"diese Aktualisierung Ihre config.php-Datei verloren. Bitte stellen Sie diese "
+"wieder her und versuchen Sie es erneut."
 
 msgid ""
 "If you actually want to run the Gallery 2 installer, please follow the link "
 "below."
 msgstr ""
+"Falls Sie wirklich den Gallery-2-Installer ausführen wollen, folgen Sie "
+"bitte diesem Verweis."
 
 msgid ""
 "If you want to upgrade from Gallery 1, you first need to install Gallery 2 "
 "and then use the import module to import your data from Gallery 1. Please "
 "follow the link below to install Gallery 2."
 msgstr ""
+"Falls Sie ausgehend von Ihrer Gallery 1 Ihren Datenbestand aktualisieren "
+"wollen, müssen Sie zuerst Gallery 2 installieren und dann das Import-Modul "
+"verwenden, um Ihre Daten von Gallery 1 zu importieren. Bitte folgen Sie "
+"diesem Link um Gallery 2 zu installieren."
 
-#, fuzzy, c-format
+#, c-format
 msgid "%sGo to the Gallery 2 Installer%s"
-msgstr "Willkommen zur Gallery-Aktualisierung"
+msgstr "%sGehe zum Gallery-2-Installer%s"
 
 msgid "Success"
 msgstr "Erfolgreich"
