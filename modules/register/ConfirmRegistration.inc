@@ -50,7 +50,16 @@ class ConfirmRegistrationController extends GalleryController {
 	list ($ret, $user) = GalleryPendingUserHelper::fetchPendingUserByUsername($username);
 	if ($ret->isError()) {
 	    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-		$results['error'][] = 'form[error][unknownUser]';
+		/*
+		 * If the username is now a real user then maybe we got here via return-url
+		 * after login.. let's just return to previous url instead of showing error msg.
+		 */
+		list ($ret, $user) = GalleryCoreApi::fetchUserByUsername($username);
+		if ($ret->isSuccess()) {
+		    $results['redirect'] = array('return' => true);
+		} else {
+		    $results['error'][] = 'form[error][unknownUser]';
+		}
 	    } else {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -66,8 +75,10 @@ class ConfirmRegistrationController extends GalleryController {
 	    }
 	}
 
-	$results['delegate']['view'] = 'core.UserAdmin';
-	$results['delegate']['subView'] = 'register.ConfirmRegistration';
+	if (empty($results['redirect'])) {
+	    $results['delegate'] = array('view' => 'core.UserAdmin',
+					 'subView' => 'register.ConfirmRegistration');
+	}
 
 	return array(GalleryStatus::success(), $results);
     }
