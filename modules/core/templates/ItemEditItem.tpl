@@ -124,7 +124,9 @@
   </p>
 
   <p>
-    {capture name=originationTimestampField}{g->formVar var="form[originationTimestampSplit]"}{/capture}
+    {capture name=originationTimestampField}{strip}
+      {g->formVar var="form[originationTimestampSplit]"}
+    {/strip}{/capture}
     {g->text text="Date:"}
     {capture name=htmlSelectDate}
       {html_select_date time=$form.originationTimestamp
@@ -132,7 +134,8 @@
     {/capture}
     {$smarty.capture.htmlSelectDate|utf8}
     {g->text text="Time:"}
-    {html_select_time time=$form.originationTimestamp field_array=$smarty.capture.originationTimestampField}
+    {html_select_time time=$form.originationTimestamp
+     field_array=$smarty.capture.originationTimestampField}
     <br/>
   </p>
 
@@ -154,7 +157,7 @@
     {g->text text="Use the original capture date and time from file information (e.g. Exif tag):"}
     <br/>
     <a href="#" onclick="setOriginationTimestamp();return false">
-      {$ItemEditItem.originationTimestamp.timestamp|date_format:"%B %d %Y, %H:%M:%S"}
+      {g->date timestamp=$ItemEditItem.originationTimestamp.timestamp format="%c"}
     </a>
   </p>
   {/if}

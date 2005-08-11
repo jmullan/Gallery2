@@ -331,7 +331,7 @@ class ItemEditItem extends ItemEditPlugin {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
-	if (!empty($originationTimestamp)) {
+	if ($originationTimestamp > 0) {
 	    $ItemEditItem['originationTimestamp'] = array(
 		'timestamp' => $originationTimestamp,
 		'Time_Hour' => $platform->strftime('%H', $originationTimestamp),
