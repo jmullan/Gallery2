@@ -70,5 +70,24 @@ class SlideshowAppletModule extends GalleryModule {
 	}
 	return array(GalleryStatus::success(), $links);
     }
+
+    /**
+     * @see GalleryModule::getRewriteRules
+     */
+    function getRewriteRules() {
+        $rules = array();
+
+        $rule = array();
+        $rule['comment'] = $this->translate('View Slideshow (Fullscreen)');
+        $rule['match'] = array('view' => 'slideshowapplet.SlideshowApplet');
+        $rule['pattern'] = 'v/%path%/slideshowapplet.html';
+        $rule['keywords'] = array(
+            'path' => array(
+                'pattern' => '([^?]+)',
+                'help' => $this->translate('Path to an item (eg, /album/image.jpg.html)')));
+        $rules[] = $rule;
+
+        return $rules;
+    }
 }
 ?>

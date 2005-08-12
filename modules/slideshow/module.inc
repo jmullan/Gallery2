@@ -95,14 +95,19 @@ class SlideshowModule extends GalleryModule {
      * @see GalleryModule::getRewriteRules
      */
     function getRewriteRules() {
-	return array(
-	    array('comment' => $this->translate('View Slideshow'),
-		  'match' => array('view' => 'slideshow.Slideshow'),
-		  'pattern' => 'v/%path%/slideshow.html',
-		  'keywords' => array('path' => array(
-		      'pattern' => '([^?]+)',
-		      'help' => $this->translate('Path to an item (eg, /album/image.jpg.html)'))))
-	);
+	$rules = array();
+	
+	$rule = array();
+	$rule['comment'] = $this->translate('View Slideshow');
+	$rule['match'] = array('view' => 'slideshow.Slideshow');
+	$rule['pattern'] = 'v/%path%/slideshow.html';
+        $rule['keywords'] = array(
+            'path' => array(
+                'pattern' => '([^?]+)',
+                'help' => $this->translate('Path to an item (eg, /album/image.jpg.html)')));
+	$rules[] = $rule;
+
+	return $rules;
     }
 }
 ?>
