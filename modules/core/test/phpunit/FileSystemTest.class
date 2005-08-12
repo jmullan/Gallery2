@@ -297,13 +297,13 @@ class FileSystemTest extends GalleryTestCase {
 	}
 	$this->assertEquals('my_test_file__php', $path, 'a few bad characters');
 
-	/* Filename of all extended characters, except extension */
+	/* Filename of all extended characters, except extension: we rewrite with date-filename */
 	list ($ret, $path) = GalleryCoreApi::getLegalPathComponent(
 			     "\xe6\xaa\x94\xe6\xa1\x88.jpg", $this->_albums[1]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals('______.jpg', $path, 'extended characters');
+	$this->assertEquals(strftime('%Y%m%d') . '.jpg', $path, 'extended characters');
     }
 }
 

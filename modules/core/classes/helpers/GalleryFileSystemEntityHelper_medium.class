@@ -103,6 +103,14 @@ class GalleryFileSystemEntityHelper_medium {
 	}
 
 	/*
+	 * If given string was extended characters that were all converted to "_" then
+	 * autogenerate a new filename.. we'll use today's date.
+	 */
+	if (rtrim($fileBase, '_') == '') {
+	    $fileBase = $platform->strftime('%Y%m%d');
+	}
+
+	/*
 	 * Try <fileBase>.<extension>
 	 *     <fileBase>_001.<extension>
 	 *     <fileBase>_002.<extension>
