@@ -262,13 +262,48 @@ class FileSystemTest extends GalleryTestCase {
 	    $gallery->_platform = $originalPlatform;
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$gallery->_platform = $originalPlatform;
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$gallery->_platform = $originalPlatform;
+    }
+
+    function testGetLegalPathComponent() {
+	/* Simple case, no collision */
+	list ($ret, $path) =
+	    GalleryCoreApi::getLegalPathComponent('testpath', $this->_albums[2]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('testpath', $path, 'no collision');
+
+	/* Collision with existing album: _001 gets added */
+	list ($ret, $path) = GalleryCoreApi::getLegalPathComponent(
+			     $this->_albums[1]->getPathComponent(), $this->_albums[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($this->_albums[1]->getPathComponent() . '_001', $path,
+			    'avoid collision');
+
+	/* Filename with some invalid path characters and .php extension */
+	list ($ret, $path) = GalleryCoreApi::getLegalPathComponent(
+			     'my/test&file!.php', $this->_albums[1]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('my_test_file__php', $path, 'a few bad characters');
+
+	/* Filename of all extended characters, except extension */
+	list ($ret, $path) = GalleryCoreApi::getLegalPathComponent(
+			     "\xe6\xaa\x94\xe6\xa1\x88.jpg", $this->_albums[1]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('______.jpg', $path, 'extended characters');
     }
 }
 
