@@ -465,30 +465,29 @@ div.gbTabBar span.o {
 div.gbNavigator div.next-and-last {
   float: right;
 }
-
-div.gbNavigator div.no-previous {
-  float: none !important;
-  text-align: right;;
+div.gbNavigator div.next-and-last.no-previous {
+  float: none;
+  text-align: right;
 }
 
 div.gbNavigator a.first {
   padding-left: 27px;
-  background: url("images/nav_first.gif") 0% 50% no-repeat;
+  background: url("images/nav_first.gif") left no-repeat;
 }
 
 div.gbNavigator a.previous {
   padding-left: 27px;
-  background: url("images/nav_prev.gif") 0% 50% no-repeat;
+  background: url("images/nav_prev.gif") left no-repeat;
 }
 
 div.gbNavigator a.next {
   padding-right: 27px;
-  background: url("images/nav_next.gif") 100% 50% no-repeat;
+  background: url("images/nav_next.gif") right no-repeat;
 }
 
 div.gbNavigator a.last {
   padding-right: 27px;
-  background: url("images/nav_last.gif") 100% 50% no-repeat;
+  background: url("images/nav_last.gif") right no-repeat;
 }
 
 div.gbNavigator div.first-and-previous img {
@@ -498,6 +497,47 @@ div.gbNavigator div.first-and-previous img {
 div.gbNavigator div.next-and-last img {
   vertical-align: middle;
   padding-left: 0.5em;
+}
+
+#gallery.rtl div.gbNavigator div.next-and-last {
+  float: left;
+}
+#gallery.rtl div.gbNavigator div.next-and-last.no-previous {
+  float: none;
+  text-align: left;
+}
+#gallery.rtl div.gbNavigator div.first-and-previous {
+  text-align: right;
+}
+/* Both IE and Gecko have bugs with omitting padding on rtl inline content */
+#gallery.IE.rtl div.gbNavigator a {
+  display: inline-block;
+}
+#gallery.gecko.rtl div.gbNavigator a {
+  display: -moz-inline-box;
+}
+
+#gallery.rtl div.gbNavigator a.first {
+  padding: 0 27px 0 0;
+  background: url("images/nav_last.gif") right no-repeat;
+}
+#gallery.rtl div.gbNavigator a.previous {
+  padding: 0 27px 0 0;
+  background: url("images/nav_next.gif") right no-repeat;
+}
+#gallery.rtl div.gbNavigator a.next {
+  padding: 0 0 0 27px;
+  background: url("images/nav_prev.gif") left no-repeat;
+}
+#gallery.rtl div.gbNavigator a.last {
+  padding: 0 0 0 27px;
+  background: url("images/nav_first.gif") left no-repeat;
+}
+#gallery.rtl div.gbNavigator div.first-and-previous img {
+  padding: 0 0 0 0.5em;
+}
+#gallery.rtl div.gbNavigator div.next-and-last img {
+  padding: 0 0.5em 0 0;
 }
 
 div.block-search-SearchBlock a.advanced {
