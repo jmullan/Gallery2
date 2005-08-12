@@ -74,8 +74,8 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	    }
 	}
 
-	$this->_platform = new AdminRewriteControllerTestPlatform();
-	$gallery->setPlatform($this->_platform);
+	$platform = new AdminRewriteControllerTestPlatform($this);
+	$gallery->setPlatform($platform);
 
 	/* Tell or mock platform to allow the file to be writeable */
 	GalleryUtilities::putRequestVariable('isWriteable', true);
@@ -267,7 +267,7 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$this->assertEquals(dirname(__FILE__), $embeddedHtaccess, 'embedded htaccess');
-	$this->assert(strlen($this->_platform->_fileContent), 'htaccess');
+	$this->assert(strlen($this->_fileContent), 'htaccess');
     }
 
     function testSaveBadEmbeddedSetup() {
@@ -299,7 +299,7 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$this->assertEquals('', $embeddedLocation, 'embedded htaccess');
-	$this->assert(!isset($this->_platform->_fileContent), 'htaccess');
+	$this->assert(!isset($this->_fileContent), 'htaccess');
     }
 
     function testSaveAccessList() {
@@ -325,7 +325,7 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 
 	$this->assertEquals(array('example.com', 'sub.example.net'),
 			    $accessList, 'access list');
-	$this->assert(strlen($this->_platform->_fileContent), 'htaccess');
+	$this->assert(strlen($this->_fileContent), 'htaccess');
     }
 }
 
@@ -336,7 +336,11 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
  * @package Rewrite
  * @subpackage PHPUnit
  */
-class AdminRewriteControllerTestPlatform extends GalleryPlatform{
+class AdminRewriteControllerTestPlatform extends GalleryPlatform {
+    function AdminRewriteControllerTestPlatform(&$test) {
+	$this->_test =& $test;
+    }
+
     function file_exists($file) {
 	if ($file == dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/.htaccess') {
 	    return true;
@@ -377,7 +381,7 @@ class AdminRewriteControllerTestPlatform extends GalleryPlatform{
 	if ($file == dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/.htaccess') {
 	    $isWriteable = GalleryUtilities::getRequestVariables('isWriteable');
 	    if ($isWriteable) {
-		$this->_fileContent = '';
+		$this->_test->_fileContent = '';
 		return '.htaccess';
 	    } else {
 		return null;
@@ -389,7 +393,7 @@ class AdminRewriteControllerTestPlatform extends GalleryPlatform{
 
     function fwrite($handle, $string, $length=null) {
 	if ($handle == '.htaccess') {
-	    $this->_fileContent .= $string;
+	    $this->_test->_fileContent .= $string;
 	    return strlen($string);
 	}
 
