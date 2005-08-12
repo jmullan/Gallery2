@@ -509,27 +509,33 @@ class GalleryToolkitHelper_medium {
     function getOperationMimeTypes($operationName) {
 	global $gallery;
 
-	$query = '
-	SELECT
-	  [GalleryToolkitOperationMimeTypeMap::mimeType],
-	  [GalleryToolkitOperationMimeTypeMap::toolkitId]
-	FROM
-	  [GalleryToolkitOperationMimeTypeMap]
-	WHERE
-	  [GalleryToolkitOperationMimeTypeMap::operationName] = ?
-	ORDER BY
-	  [GalleryToolkitOperationMimeTypeMap::mimeType] ASC,
-	  [GalleryToolkitOperationMimeTypeMap::priority] ASC
-	';
+	$cacheKey = "GalleryToolkitHelper::getOperationMimeTypes($operationName)";
+	if (!GalleryDataCache::containsKey($cacheKey)) {
+	    $query = '
+	    SELECT
+	      [GalleryToolkitOperationMimeTypeMap::mimeType],
+	      [GalleryToolkitOperationMimeTypeMap::toolkitId]
+	    FROM
+	      [GalleryToolkitOperationMimeTypeMap]
+	    WHERE
+	      [GalleryToolkitOperationMimeTypeMap::operationName] = ?
+	    ORDER BY
+	      [GalleryToolkitOperationMimeTypeMap::mimeType] ASC,
+	      [GalleryToolkitOperationMimeTypeMap::priority] ASC
+	    ';
 
-	list ($ret, $searchResults) = $gallery->search($query, array($operationName));
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	    list ($ret, $searchResults) = $gallery->search($query, array($operationName));
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 
-	$data = array();
-	while ($result = $searchResults->nextResult()) {
-	    $data[$result[0]][] = $result[1];
+	    $data = array();
+	    while ($result = $searchResults->nextResult()) {
+		$data[$result[0]][] = $result[1];
+	    }
+	    GalleryDataCache::put($cacheKey, $data);
+	} else {
+	    $data = GalleryDataCache::get($cacheKey);
 	}
 
 	return array(GalleryStatus::success(), $data);

@@ -270,12 +270,9 @@ class SquareThumbToolkit extends GalleryToolkit {
      * @access private
      */
     function _getThumbnailToolkit($mimeType) {
-	static $data;
-	if (!isset($data)) {
-	    list ($ret, $data) = GalleryCoreApi::getToolkitOperationMimeTypes('thumbnail');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
+	list ($ret, $data) = GalleryCoreApi::getToolkitOperationMimeTypes('thumbnail');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if (!empty($data[$mimeType]) && $data[$mimeType][0] == 'SquareThumb') {
 	    array_shift($data[$mimeType]);
