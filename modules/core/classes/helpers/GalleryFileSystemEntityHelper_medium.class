@@ -40,12 +40,12 @@ class GalleryFileSystemEntityHelper_medium {
      *
      * @param string the path component
      * @param int the id of the target parent
+     * @param int (optional) ignore path collision with this id
      * @return array object GalleryStatus a status code
      *               boolean true if there's a collision
-     * @access public
      * @static
      */
-    function checkPathCollision($pathComponent, $parentId) {
+    function checkPathCollision($pathComponent, $parentId, $selfId=null) {
 	global $gallery;
 
 	$query = '
@@ -61,6 +61,12 @@ class GalleryFileSystemEntityHelper_medium {
 	    [GalleryChildEntity::id] = [GalleryFileSystemEntity::id]
 	';
 	$data = array($parentId, $pathComponent);
+	if (isset($selfId)) {
+	    $query .= '
+	      AND [GalleryChildEntity::id] <> ?
+	    ';
+	    $data[] = $selfId;
+	}
 
 	list ($ret, $searchResults) = $gallery->search($query, $data);
 	if ($ret->isError()) {
@@ -79,11 +85,12 @@ class GalleryFileSystemEntityHelper_medium {
      *
      * @param string the starting path component (eg, "IMG_10293.JPG")
      * @param int the target parent id
+     * @param int (optional) ignore path collision with this id
      * @return array object GalleryStatus a status code
      *               string the legal path component
      * @static
      */
-    function getLegalPathComponent($pathComponent, $parentId) {
+    function getLegalPathComponent($pathComponent, $parentId, $selfId=null) {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 
@@ -126,7 +133,7 @@ class GalleryFileSystemEntityHelper_medium {
 
 	    /* Make sure that we don't have a collision in the db. */
 	    list ($ret, $isCollision) = GalleryFileSystemEntityHelper_medium::checkPathCollision(
-					$newPathComponent, $parentId);
+					$newPathComponent, $parentId, $selfId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

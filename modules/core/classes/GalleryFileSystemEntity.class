@@ -198,7 +198,7 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 
 	$parentId = $this->getParentId();
 	list ($ret, $newPathComponent) =
-	    GalleryCoreApi::getLegalPathComponent($newPathComponent, $parentId);
+	    GalleryCoreApi::getLegalPathComponent($newPathComponent, $parentId, $this->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -245,8 +245,8 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
-	list ($ret, $newPathComponent) =
-	    GalleryCoreApi::getLegalPathComponent($this->getPathComponent(), $newParentId);
+	list ($ret, $newPathComponent) = GalleryCoreApi::getLegalPathComponent(
+					 $this->getPathComponent(), $newParentId, $this->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

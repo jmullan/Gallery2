@@ -289,6 +289,15 @@ class FileSystemTest extends GalleryTestCase {
 	$this->assertEquals($this->_albums[1]->getPathComponent() . '_001', $path,
 			    'avoid collision');
 
+	/* Ignore self-collision */
+	list ($ret, $path) = GalleryCoreApi::getLegalPathComponent(
+			     $this->_albums[1]->getPathComponent(), $this->_albums[0]->getId(),
+			     $this->_albums[1]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($this->_albums[1]->getPathComponent(), $path, 'ignore self-collision');
+
 	/* Filename with some invalid path characters and .php extension */
 	list ($ret, $path) = GalleryCoreApi::getLegalPathComponent(
 			     'my/test&file!.php', $this->_albums[1]->getId());

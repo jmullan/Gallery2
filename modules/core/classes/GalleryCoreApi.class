@@ -54,7 +54,7 @@ class GalleryCoreApi {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(6, 6);
+	return array(6, 7);
     }
 
     /**
@@ -1701,15 +1701,16 @@ class GalleryCoreApi {
      *
      * @param string the path component
      * @param int the id of the target parent
+     * @param int (optional) ignore path collision with this id
      * @return array object GalleryStatus a status code
      *               boolean true if there's a collision
      * @access private
      * @static
      */
-    function checkPathCollision($pathComponent, $newParentId) {
+    function checkPathCollision($pathComponent, $parentId, $selfId=null) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryFileSystemEntityHelper_medium.class');
 	return GalleryFileSystemEntityHelper_medium::checkPathCollision($pathComponent,
-									$newParentId);
+									$parentId, $selfId);
     }
 
     /**
@@ -1718,14 +1719,15 @@ class GalleryCoreApi {
      *
      * @param string the starting path component (eg, "IMG_10293.JPG")
      * @param int the target parent id
+     * @param int (optional) ignore path collision with this id
      * @return array object GalleryStatus a status code
      *               string the legal path component
      * @static
      */
-    function getLegalPathComponent($pathComponent, $parentId) {
+    function getLegalPathComponent($pathComponent, $parentId, $selfId=null) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryFileSystemEntityHelper_medium.class');
 	return GalleryFileSystemEntityHelper_medium::getLegalPathComponent($pathComponent,
-									   $parentId);
+									   $parentId, $selfId);
     }
 
     /**
