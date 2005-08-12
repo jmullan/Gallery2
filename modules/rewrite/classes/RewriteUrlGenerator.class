@@ -186,7 +186,11 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 
 		    if (substr($url, -6) != '%path%') {
 			/* Trim / off end of path if rule has a suffix */
-			$path = rtrim($path, '/');
+			if ($path != '/') {
+			    $path = rtrim($path, '/');
+			} else {
+			    $url = str_replace('%path%/', '%path%', $url);
+			}
 		    } else if (!GalleryUtilities::isA($entity, 'GalleryAlbumItem')) {
 			/* Append .html suffix on non-album paths if rule has no suffix */
 			$path .= '.html';

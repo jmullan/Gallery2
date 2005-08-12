@@ -541,6 +541,7 @@ class RewriteHelper {
 		if ($code != REWRITE_STATUS_OK) {
 		    return array(GalleryStatus::success(), $code);
 		}
+		$urlPattern = str_replace('%_path_%/', '', $urlPattern);
 		$urlPattern = str_replace('%_path_%', '', $urlPattern);
 	    } else {
 		if (!isset($keywords[$keyword]['pattern'])) {

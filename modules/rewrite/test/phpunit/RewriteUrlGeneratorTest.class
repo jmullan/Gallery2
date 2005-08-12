@@ -295,6 +295,13 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
 		$tests[] = array(ltrim($testItemPath, '/') . '/test.html',
 				 array('view' => 'php.Unit', 'subView' => 'test.suffixPath',
 				       'itemId' => $testItem->getId()));
+		/* path rule with suffix for root album */
+		$tests[] = array('test.html',
+				 array('view' => 'php.Unit', 'subView' => 'test.suffixPath',
+				       'itemId' => $this->_getRootId()));
+		$tests[] = array('t/.test',
+				 array('view' => 'php.Unit', 'subView' => 'test.suffixExt',
+				       'itemId' => $this->_getRootId()));
 
 		foreach ($tests as $test) {
 		    list ($expectedUrlPath, $params) = $test;
