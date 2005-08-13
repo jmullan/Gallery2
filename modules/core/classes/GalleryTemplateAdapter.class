@@ -474,6 +474,8 @@ class GalleryTemplateAdapter {
 	    $classes[] = 'opera';
 	} else if (strpos($userAgent, 'msie') !== false) {
 	    $classes[] = 'IE';
+	} else if (strpos($userAgent, 'gecko/') !== false) {
+	    $classes[] = 'gecko';
 	}
 
 	$translator =& $gallery->getTranslator();
