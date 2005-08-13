@@ -283,6 +283,28 @@
 	// ]]>
     {/literal}</script>
   </div>
+
+  <div>
+    <h4> {g->text text="Custom fields"} </h4>
+
+    {if !$ChooseObjects.customFieldsActive}
+    <p class="giDescription">
+      {g->text text="Custom fields will not be imported.  Activate Custom Fields module to enable this option."}
+    </p>
+    {else}
+      <input type="checkbox" id="cbCustomFields"{if !empty($form.customFields)}
+       checked="checked"{/if} name="{g->formVar var="form[customFields]"}"/>
+      <label for="cbCustomFields">
+	{g->text text="Import custom fields"}
+      </label>
+      <br/>
+      <input type="checkbox" id="cbSkipCustomItemFields"{if !empty($form.skipCustomItemFields)}
+       checked="checked"{/if} name="{g->formVar var="form[skipCustomItemFields]"}"/>
+      <label for="cbSkipCustomItemFields">
+	{g->text text="Do not create Gallery 2 custom fields for fields selected above for title, summary or description"}
+      </label>
+    {/if}
+  </div>
 </div>
 
 <div class="gbBlock gcBackground1">

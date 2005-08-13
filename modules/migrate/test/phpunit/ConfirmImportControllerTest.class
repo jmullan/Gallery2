@@ -374,6 +374,15 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[set][summary]', 'blank');
 	GalleryUtilities::putRequestVariable('form[set][description]', 'filename');
 
+	list ($ret, $test) = GalleryCoreApi::newFactoryInstance('CustomFieldInterface_1_0');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$importCustomFields = isset($test);
+	if ($importCustomFields) {
+	    GalleryUtilities::putRequestVariable('form[customFields]', 1);
+	}
+
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'misc.markup', 'bbcode');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -444,6 +453,14 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	if ($importCustomFields) {
+	    list ($ret, $fieldList) =
+		GalleryCoreApi::getPluginParameter('module', 'customfield', 'common', $testAlbumId);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assertEquals('Description`0`1', $fieldList, 'list of custom fields');
+	}
 
 	/*
 	 * Array of example data
@@ -607,6 +624,18 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				  $itemViewCount[$testItem->getId()]     // count of clicks
 				  ),
 			    'item 0');
+
+	if ($importCustomFields) {
+	    GalleryCoreApi::relativeRequireOnce(
+		'modules/customfield/classes/CustomFieldHelper.class');
+	    list ($ret, $fields) = CustomFieldHelper::fetchFieldValues(array($testItem), 'detail');
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assertEquals(array($testItem->getId() =>
+		array('Description' => 'This is actually not a chipper, but a stump grinder.')),
+		$fields, 'custom field values');
+	}
 
 	list ($ret, $chipperThumb) =
 	    GalleryCoreApi::fetchThumbnailsByItemIds(array($testItem->getId()));
@@ -834,6 +863,16 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[customfield][description]', 'Long Description');
 	GalleryUtilities::putRequestVariable('form[set][defaultDescription]', 1);
 
+	list ($ret, $test) = GalleryCoreApi::newFactoryInstance('CustomFieldInterface_1_0');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$importCustomFields = isset($test);
+	if ($importCustomFields) {
+	    GalleryUtilities::putRequestVariable('form[customFields]', 1);
+	    GalleryUtilities::putRequestVariable('form[skipCustomItemFields]', 1);
+	}
+
 	list ($ret, $status) = $this->_runBackgroundTask(
 	    '1 reset [\d \.]* reset ' .
 	    'complete:view=core.SiteAdmin,subView=migrate.ImportResults,statusId=STATUSID');
@@ -885,6 +924,16 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 			    $item->getSummary(), 'summary');
 	$this->assertEquals('This is actually not a chipper, but a stump grinder.',
 			    $item->getDescription(), 'description');
+
+	/* verify custom field was not created */
+	if ($importCustomFields) {
+	    list ($ret, $fieldList) =
+		GalleryCoreApi::getPluginParameter('module', 'customfield', 'common', $testAlbumId);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assertEquals(null, $fieldList, 'should be no custom fields');
+	}
     }
 
     /* $album['perms']
@@ -1516,6 +1565,15 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[set][summary]', 'blank');
 	GalleryUtilities::putRequestVariable('form[set][description]', 'blank');
 
+	list ($ret, $test) = GalleryCoreApi::newFactoryInstance('CustomFieldInterface_1_0');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$importCustomFields = isset($test);
+	if ($importCustomFields) {
+	    GalleryUtilities::putRequestVariable('form[customFields]', 1);
+	}
+
 	list ($ret, $status) = $this->_runBackgroundTask(
 	    '1 reset [\d \.]* reset ' .
 	    'complete:view=core.SiteAdmin,subView=migrate.ImportResults,statusId=STATUSID');
@@ -1534,108 +1592,140 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	    $this->assertEquals(array("\xd0\x9d\xd0\xb5\xd0\xbd\xd0\xb0\xd0" .
-				      "\xb7\xd0\xb2\xd0\xb0\xd0\xbd\xd0\xbd" .
-				      "\xd1\x8b\xd0\xb9",                    // title
-				      NULL,                                  // summary
-				      NULL,                                  // keywords
-				      NULL,               // description
-				      1089666683,                            // album creation
-				      1089666683,                            // clicks counted since
-				      ),
-				array($testAlbum->getTitle(),                // title
-				      $testAlbum->getSummary(),              // summary
-				      $testAlbum->getKeywords(),             // keywords
-				      $testAlbum->getDescription(),          // description
-				      $testAlbum->getcreationTimestamp(),    // album creation
-				      $testAlbum->getviewedSinceTimestamp()  // clicks counted since
-				      )
-				);
-	    /*
-	     * This is the user that we expect to be associated with this album.
-	     * It really shouldn't be the admin, but the test data needs to be
-	     * changed to fix it, so we will change it later - probably to
-	     * phpunit_foobar, or whatever we are loading in the other unit test
-	     */
-	    $testOwner = $this->_adminUser;
+	$this->assertEquals(array("\xd0\x9d\xd0\xb5\xd0\xbd\xd0\xb0\xd0" .
+				  "\xb7\xd0\xb2\xd0\xb0\xd0\xbd\xd0\xbd" .
+				  "\xd1\x8b\xd0\xb9",                    // title
+				  NULL,                                  // summary
+				  NULL,                                  // keywords
+				  NULL,               // description
+				  1089666683,                            // album creation
+				  1089666683,                            // clicks counted since
+				  ),
+			    array($testAlbum->getTitle(),                // title
+				  $testAlbum->getSummary(),              // summary
+				  $testAlbum->getKeywords(),             // keywords
+				  $testAlbum->getDescription(),          // description
+				  $testAlbum->getcreationTimestamp(),    // album creation
+				  $testAlbum->getviewedSinceTimestamp()  // clicks counted since
+				  )
+			   );
+	/*
+	 * This is the user that we expect to be associated with this album.
+	 * It really shouldn't be the admin, but the test data needs to be
+	 * changed to fix it, so we will change it later - probably to
+	 * phpunit_foobar, or whatever we are loading in the other unit test
+	 */
+	$testOwner = $this->_adminUser;
 
-	    $this->assertEquals($testOwner->getId(), $testAlbum->getownerId(), 'album owner');
-	    $testPerms = array();
-	    $testPermsResult = array();
-	    $testPerms['admin'] = array('core.all' => true,
-					'comment.all' => true && $this->commentPermissionsExist
-					);
-	    $testPerms['phpunitfoo001'] = array('core.view' => false,
-						'core.viewResizes' => false,
-						'core.viewSource' => false,
-						'comment.view' => false && $this->testComments,
-						'comment.add' => false && $this->testComments,
-						'core.edit' => false,
-						'core.addDataItem' => false,
-						'core.edit' => false,
-						'core.delete' => false,
-						'core.addAlbumItem' => false
-						);
-	    foreach ($testPerms as $testUserName => $permsToTest){
-		list($ret, $testUserInstance) = GalleryCoreApi::fetchUserByUsername($testUserName);
-		if ($ret->isError()) {
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-		}
-		list ($ret, $permissions) =
-			GalleryCoreApi::fetchAllPermissionsForItem($testAlbum->getId(), false);
-		$userPerms = array();
-		$groupPerms = array();
-		foreach ($permissions as $permission) {
-		    if ($permission['userId']>0) {
-			$userPerms[$permission['userId']][$permission['permission']]=TRUE;
-		    } else {
-			$groupPerms[$permission['groupId']][$permission['permission']]=TRUE;
-		    }
-		}
-		foreach ($permsToTest as $permToTest => $expected) {
-		    if (array_key_exists($testUserInstance->getId(), $userPerms)) {
-			$testPermsResult[$testUserName][$permToTest] =
-				array_key_exists($permToTest, $userPerms[$testUserInstance->getId()]);
-		    } else {
-			$testPermsResult[$testUserName][$permToTest] = FALSE;
-		    }
-		}
-	    }
-	    $this->assertEquals($testPerms, $testPermsResult);
-
-	    list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($testAlbum);
+	$this->assertEquals($testOwner->getId(), $testAlbum->getownerId(), 'album owner');
+	$testPerms = array();
+	$testPermsResult = array();
+	$testPerms['admin'] = array('core.all' => true,
+				    'comment.all' => true && $this->commentPermissionsExist);
+	$testPerms['phpunitfoo001'] = array('core.view' => false,
+					    'core.viewResizes' => false,
+					    'core.viewSource' => false,
+					    'comment.view' => false && $this->testComments,
+					    'comment.add' => false && $this->testComments,
+					    'core.edit' => false,
+					    'core.addDataItem' => false,
+					    'core.edit' => false,
+					    'core.delete' => false,
+					    'core.addAlbumItem' => false
+					    );
+	foreach ($testPerms as $testUserName => $permsToTest) {
+	    list($ret, $testUserInstance) = GalleryCoreApi::fetchUserByUsername($testUserName);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-
-	    /* Get the allegedly successfully imported albumItem */
-	    list($ret, $testItem) = GalleryCoreApi::loadEntitiesById($ids[0]);
-	    if ($ret->isError()) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    list ($ret, $permissions) =
+		GalleryCoreApi::fetchAllPermissionsForItem($testAlbum->getId(), false);
+	    $userPerms = $groupPerms = array();
+	    foreach ($permissions as $permission) {
+		if ($permission['userId'] > 0) {
+		    $userPerms[$permission['userId']][$permission['permission']] = true;
+		} else {
+		    $groupPerms[$permission['groupId']][$permission['permission']] = true;
+		}
 	    }
-	    $this->assertEquals(array("Russian - KOI-8\r\n" .
-				      "Hello World\r\n" .
-				      "Russian\r\n" .
-				      "\xd0\xa0\xd1\x83\xd1\x81\xd1\x81\xd0" .
-				      "\xba\xd0\xb8\xd0\xb9\r\n" .
-				      "\xd0\x97\xd0\xb4\xd1\x80\xd0\xb0\xd0" .
-				      "\xb2\xd1\x81\xd1\x82\xd0\xb2\xd1\x83" .
-				      "\xd0\xb9 \xd0\xbc\xd0\xb8\xd1\x80",   // title
-				      NULL,                                  // summary
-				      'Gallery 2 migration testing',         // keywords
-				      NULL,                                  // description
-				      1089666791,                            // album creation
-				      1089666683                             // clicks counted since
-				      ),
-				array($testItem->getTitle(),                 // title
-				      $testItem->getSummary(),               // summary
-				      $testItem->getKeywords(),              // keywords
-				      $testItem->getDescription(),           // description
-				      $testItem->getcreationTimestamp(),     // album creation
-				      $testItem->getviewedSinceTimestamp()   // clicks counted since
-				      )
-				);
+	    foreach ($permsToTest as $permToTest => $expected) {
+		if (array_key_exists($testUserInstance->getId(), $userPerms)) {
+		    $testPermsResult[$testUserName][$permToTest] =
+			    array_key_exists($permToTest, $userPerms[$testUserInstance->getId()]);
+		} else {
+		    $testPermsResult[$testUserName][$permToTest] = false;
+		}
+	    }
 	}
+	$this->assertEquals($testPerms, $testPermsResult);
+
+	if ($importCustomFields) {
+	    list ($ret, $fieldList) =
+		GalleryCoreApi::getPluginParameter('module', 'customfield', 'common', $testAlbumId);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assertEquals('Description`0`1', $fieldList, 'list of custom fields');
+	}
+
+	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($testAlbum);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Get the allegedly successfully imported albumItem */
+	list($ret, $testItem) = GalleryCoreApi::loadEntitiesById($ids[0]);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array("Russian - KOI-8\r\n" .
+				  "Hello World\r\n" .
+				  "Russian\r\n" .
+				  "\xd0\xa0\xd1\x83\xd1\x81\xd1\x81\xd0" .
+				  "\xba\xd0\xb8\xd0\xb9\r\n" .
+				  "\xd0\x97\xd0\xb4\xd1\x80\xd0\xb0\xd0" .
+				  "\xb2\xd1\x81\xd1\x82\xd0\xb2\xd1\x83" .
+				  "\xd0\xb9 \xd0\xbc\xd0\xb8\xd1\x80",   // title
+				  NULL,                                  // summary
+				  'Gallery 2 migration testing',         // keywords
+				  NULL,                                  // description
+				  1089666791,                            // album creation
+				  1089666683                             // clicks counted since
+				  ),
+			    array($testItem->getTitle(),                 // title
+				  $testItem->getSummary(),               // summary
+				  $testItem->getKeywords(),              // keywords
+				  $testItem->getDescription(),           // description
+				  $testItem->getcreationTimestamp(),     // album creation
+				  $testItem->getviewedSinceTimestamp()   // clicks counted since
+				  )
+			    );
+
+	if ($importCustomFields) {
+	    GalleryCoreApi::relativeRequireOnce(
+		'modules/customfield/classes/CustomFieldHelper.class');
+	    list ($ret, $fields) = CustomFieldHelper::fetchFieldValues(array($testItem), 'detail');
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assertEquals(array($testItem->getId() =>
+		array('Description' =>
+		    "\xd0\x95\xd1\x81\xd0\xbb\xd0\xb8 \xd0\xb7\xd0\xb2\xd0\xb5\xd0\xb7\xd0\xb4" .
+		    "\xd1\x8b \xd0\xb7\xd0\xb0\xd0\xb6\xd0\xb8\xd0\xb3\xd0\xb0\xd1\x8e\xd1\x82" .
+		    " \xd0\xbd\xd0\xbe\xd1\x87\xd1\x8c\xd1\x8e - \xd0\xb7\xd0\xbd\xd0\xb0\xd1" .
+		    "\x87\xd0\xb8\xd1\x82 \xd1\x8d\xd1\x82\xd0\xbe \xd0\xba\xd0\xbe\xd0\xbc\xd1" .
+		    "\x83-\xd0\xbd\xd0\xb8\xd0\xb1\xd1\x83\xd0\xb4\xd1\x8c \xd0\xbd\xd0\xb0\xd0" .
+		    "\xb4\xd0\xbe. \xd0\x95\xd1\x81\xd0\xbb\xd0\xb8 \xd0\xba\xd1\x82\xd0\xbe-" .
+		    "\xd1\x82\xd0\xbe \xd0\xb2\xd1\x8b\xd1\x81\xd1\x82\xd0\xb0\xd1\x81\xd0\xb2" .
+		    "\xd0\xbb\xd1\x8f\xd0\xb5\xd1\x82 \xd1\x84\xd0\xbe\xd1\x82\xd0\xbe\xd0\xb3" .
+		    "\xd1\x80\xd0\xb0\xd1\x84\xd0\xb8\xd0\xb8 - \xd1\x8d\xd1\x82\xd0\xbe \xd0" .
+		    "\xb2\xd0\xb5\xd0\xb4\xd1\x8c \xd0\xbd\xd0\xb5\xd1\x81\xd0\xbf\xd1\x80\xd0" .
+		    "\xbe\xd1\x81\xd1\x82\xd0\xb0! \xd0\x9c\xd0\xbe\xd0\xb6\xd0\xb5\xd1\x82, " .
+		    "\xd0\xb2 \xd1\x8d\xd1\x82\xd0\xbe\xd0\xbc \xd0\xb2\xd0\xb5\xd0\xbb\xd0\xb8" .
+		    "\xd0\xba\xd0\xb0\xd1\x8f \xd0\xb8 \xd1\x81\xd0\xb5\xd1\x80")),
+		$fields, 'custom field values');
+	}
+    }
 
     function testConvertHtmlToBbcode() {
 	/* UTF8 characters are ignored */

@@ -109,19 +109,23 @@ class ConfirmImportController extends GalleryController {
 	} else {
 	    $importComments = false;
 	}
-	if (!empty($moduleStatusList['customfield']['active'])) {
-	    $importCustomFields = true;
-	} else {
-	    $importCustomFields = false;
-	}
 
-	if (false && $importCustomFields) {
-	    list ($ret, $customFieldInterface)
-		    = GalleryCoreApi::newFactoryInstance('CustomFieldInterface_1_0',
-							 'CustomFieldHelper');
-	    if ($ret->isError() || !isset($customFieldInterface)) {
-		print $ret->getAsHtml();
+	if (!empty($form['customFields'])) {
+	    list ($ret, $customFieldInterface) =
+		GalleryCoreApi::newFactoryInstance('CustomFieldInterface_1_0');
+	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    if (!isset($customFieldInterface)) {
+		return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	    }
+	    $skipCustomItemFields = array();
+	    if (!empty($form['skipCustomItemFields'])) {
+		foreach (array('title', 'summary', 'description') as $field) {
+		    if ($form['set'][$field] == 'custom') {
+			$skipCustomItemFields[] = $form['customfield'][$field];
+		    }
+		}
 	    }
 	}
 
@@ -379,8 +383,7 @@ class ConfirmImportController extends GalleryController {
 
 	    /*
 	     * if the album's parent is not in the list of sourcealbums,
-	     * load it into the targeted G2 top album as set in
-	     * $destinationAlbumID
+	     * load it into the targeted G2 top album as set in $destinationAlbumID
 	     */
 	    $targetAlbumID = false;
 	    $newAlbumInstanceId = false;
@@ -398,9 +401,7 @@ class ConfirmImportController extends GalleryController {
 	    }
 
 	    if ($targetAlbumID && $album) {
-		/*
-		 * We definitely need notices before each album.
-		 */
+		/* We definitely need notices before each album */
 		$ret = $templateAdapter->updateProgressBar($importPhotosMessage,
 		    $album['name'], $numberOfItemsImported / $totalItemsToImport);
 		if ($ret->isError()) {
@@ -454,10 +455,7 @@ class ConfirmImportController extends GalleryController {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
 
-		    /*
-		     * If everything is good so far, we create a new instance to be our new
-		     * album
-		     */
+		    /* If everything is good so far, we create a new instance to be our new album */
 		    if (!empty($desiredname) && $platform->isLegalPathComponent($desiredname)) {
 			list ($ret, $newAlbumInstance) =
 			    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryAlbumItem');
@@ -560,21 +558,28 @@ class ConfirmImportController extends GalleryController {
 			    return $ret->wrap(__FILE__, __LINE__);
 			}
 
-			/*
-			 * $album->fields["extra_fields"]
-			 *
-			 * list ($ret, $duplicates) =
-			 * $customFieldInterface->createCustomFields(array('Photographer',
-			 * 'Location', 'One'), $this->_album->getId());
-			 * if ($ret->isError()) {
-			 *     return $ret->wrap(__FILE__, __LINE__);
-			 * }
-			 *
-			 */
+			/* Create custom fields */
+			if (isset($customFieldInterface) && !empty($album['extra_fields'])) {
+			    /* Skip these metadata type fields: */
+			    $extraFields = array_diff($album['extra_fields'],
+				array('Upload Date', 'Capture Date', 'Dimensions', 'EXIF'),
+				$skipCustomItemFields);
+			    if (!empty($extraFields)) {
+				foreach ($extraFields as $i => $field) {
+				    $extraFields[$i] =
+					$this->convertHtml('html', $field, $sourceEncoding);
+				}
+				list ($ret) = $customFieldInterface->createCustomFields(
+						     $extraFields, $newAlbumInstance->getId());
+				if ($ret->isError()) {
+				    return $ret->wrap(__FILE__, __LINE__);
+				}
+			    }
+			}
 
 			$itemsCreated[] = $newAlbumInstance->getId();
 
-			// Set order weight
+			/* Set order weight */
 			if (isset($albumPosition[$album['name']])) {
 			    $weight = $albumPosition[$album['name']];
 			} else {
@@ -609,7 +614,7 @@ class ConfirmImportController extends GalleryController {
 			    }
 			}
 
-			// Set album owner permissions
+			/* Set album owner permissions */
 			$validUID = Gallery1DataParser::isValidUid($albumsPath, $album['owner']);
 			if ($validUID) {
 			    list($ret, $albumUserFields) = Gallery1DataParser::getUserFieldsByUid(
@@ -1118,18 +1123,27 @@ class ConfirmImportController extends GalleryController {
 				return $ret->wrap(__FILE__, __LINE__);
 			    }
 
+			    /* Set custom field values */
+			    if (isset($customFieldInterface) &&
+				    !empty($importAlbumItem->extraFields)) {
+				$extraFields = array();
+				foreach ($importAlbumItem->extraFields as $key => $value) {
+				    if (in_array($key, $skipCustomItemFields)) {
+					continue;
+				    }
+				    $key = $this->convertHtml('html', $key, $sourceEncoding);
+				    $extraFields[$key] = $this->convertHtml($markupType, $value,
+									    $sourceEncoding);
+				}
+				if (!empty($extraFields)) {
+				    $ret = $customFieldInterface->setCustomFieldValues(
+						  $newItem->getId(), $extraFields);
+				    if ($ret->isError()) {
+					return $ret->wrap(__FILE__, __LINE__);
+				    }
+				}
+			    }
 
-			    /*
-			     *
-			     * // Set field values..
-			     * $ret =
-			     * $customFieldInterface->setCustomFieldValues(
-			     *              $this->_item->getId(),array('Photographer'
-			     * => 'Me', 'Location' => 'Here'));
-			     * if ($ret->isError()) {
-			     *     return $ret->wrap(__FILE__, __LINE__);
-			     * }
-			     */
 			    if ($importComments && isset($importAlbumItem->comments) &&
 				count($importAlbumItem->comments)>0) {
 				foreach ($importAlbumItem->comments as

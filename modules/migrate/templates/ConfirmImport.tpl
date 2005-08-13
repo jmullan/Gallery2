@@ -169,6 +169,21 @@
   </tr></table>
 </div>
 
+{if isset($form.customFields)}
+<div class="gbBlock">
+  <p class="giDescription">
+    {g->text text="Custom fields will be imported"}
+    {if isset($form.skipCustomItemFields) &&
+     ($form.set.title=="custom" || $form.set.summary=="custom" || $form.set.description=="custom")}
+      <br/> {g->text text="Custom fields imported into item fields above will not be duplicated as custom fields"}
+      <input type="hidden" name="{g->formVar var="form[skipCustomItemFields]"}"
+			   value="{$form.skipCustomItemFields}"/>
+    {/if}
+    <input type="hidden" name="{g->formVar var="form[customFields]"}" value="{$form.customFields}"/>
+  </p>
+</div>
+{/if}
+
 <div class="gbBlock gcBackground1">
   <input type="hidden" name="{g->formVar var="albumsPath"}" value="{$ConfirmImport.albumsPath}"/>
   <input type="submit" class="inputTypeSubmit"

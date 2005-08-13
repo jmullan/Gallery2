@@ -42,14 +42,13 @@ class ChooseObjectsController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-	// Verify that active user is an admin
+	/* Verify that active user is an admin */
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$error = array();
-	$status = array();
+	$status = $error = array();
 
 	/* Make sure the user selected *something* to migrate */
 	if (isset($form['action']['import'])) {
@@ -213,6 +212,7 @@ class ChooseObjectsView extends GalleryView {
 	    $form['generateThumbnails'] = 1;
 	    $form['set'] = array('title' => 'caption',
 				 'summary' => 'blank', 'description' => 'blank');
+	    $form['customFields'] = $form['skipCustomItemFields'] = 1;
 	}
 	list ($ret, $g1AlbumTree) = $this->_createG1AlbumTree($albumsPath);
 	if ($ret->isError()) {
@@ -239,6 +239,13 @@ class ChooseObjectsView extends GalleryView {
 	}
 	$g2AlbumTree = GalleryUtilities::createAlbumTree($albums);
 
+	/* See if customfield module is available */
+	list ($ret, $customFieldInterface) =
+	    GalleryCoreApi::newFactoryInstance('CustomFieldInterface_1_0');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	$ChooseObjects['albumsPath'] = $albumsPath;
 	$ChooseObjects['newUsers'] = $newUsers;
 	$ChooseObjects['existingUsers'] = $existingUsers;
@@ -246,6 +253,7 @@ class ChooseObjectsView extends GalleryView {
 	$ChooseObjects['g2AlbumTree'] = $g2AlbumTree;
 	$ChooseObjects['availableEncodings'] = $availableEncodings;
 	$ChooseObjects['possibleEncodingMatch'] = $possibleEncodingMatch;
+	$ChooseObjects['customFieldsActive'] = isset($customFieldInterface);
 	$template->setVariable('ChooseObjects', $ChooseObjects);
 	$template->setVariable('controller', 'migrate.ChooseObjects');
 
