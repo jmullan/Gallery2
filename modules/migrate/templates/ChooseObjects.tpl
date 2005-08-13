@@ -48,15 +48,14 @@
     // ]]>
   {/literal}</script>
 
-  <span>
-    <a href="javascript:setCheck(1)">{g->text text="Check All"}</a>
-    &nbsp;
-    <a href="javascript:setCheck(0)">{g->text text="Clear All"}</a>
-    &nbsp;
-    <a href="javascript:invertCheck()">{g->text text="Invert Selection"}</a>
-  </span>
-
   {if (sizeof($ChooseObjects.newUsers) > 0)}
+    <span>
+      <a href="javascript:setCheck(1)">{g->text text="Check All"}</a>
+      &nbsp;
+      <a href="javascript:setCheck(0)">{g->text text="Clear All"}</a>
+      &nbsp;
+      <a href="javascript:invertCheck()">{g->text text="Invert Selection"}</a>
+    </span>
     <table class="gbDataTable"><tr>
       <th> {g->text text="Select"} </th>
       <th> {g->text text="Username"} </th>
@@ -80,7 +79,7 @@
     {/foreach}
     </tr></table>
   {else}
-    <b> {g->text text="No available users"} </b>
+    <p><b> {g->text text="No available users"} </b></p>
   {/if}
 
   {if sizeof($ChooseObjects.existingUsers) > 0}
