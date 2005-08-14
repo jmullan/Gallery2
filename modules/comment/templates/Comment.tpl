@@ -58,7 +58,7 @@
 {/if}
 
 <p class="info">
-  {capture name="date"}{g->date timestamp=$comment.date format="%e-%b-%Y %H:%M"}{/capture}
+  {capture name="date"}{g->date timestamp=$comment.date format="%c"}{/capture}
   {if $can.edit}
     {g->text text="Posted by %s on %s (%s)"
              arg1=$user.fullName|default:$user.userName

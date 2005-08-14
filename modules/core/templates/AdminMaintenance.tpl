@@ -43,7 +43,7 @@
 	{g->text text=$info.title l10Domain=$info.l10Domain}
       </td><td>
 	{if isset($info.timestamp)}
-	  {g->date format="%X %x" timestamp=$info.timestamp}
+	  {g->date format="%c" timestamp=$info.timestamp}
 	{else}
 	  {g->text text="Not run yet"}
 	{/if}
