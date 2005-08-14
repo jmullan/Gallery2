@@ -39,7 +39,8 @@ foreach ($_SERVER['argv'] as $moduleDir) {
     find($moduleDir);
 }
 $strings = array_keys($strings);
-print implode("\n", $strings) . "\n";
+print '# $Id$';
+print "\n\n" . implode("\n", $strings) . "\n";
 
 /**
  * Recursive go through subdirectories
