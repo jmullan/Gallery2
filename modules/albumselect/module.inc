@@ -39,7 +39,7 @@ class AlbumSelectModule extends GalleryModule {
 	$this->setName($gallery->i18n('Album Select'));
 	$this->setDescription(
 	    $gallery->i18n('Jump directly to any album using a select box or tree view'));
-	$this->setVersion('0.9.10');
+	$this->setVersion('0.9.11');
 	$this->setGroup('blocks', $this->translate('Blocks'));
 	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
 	$this->setRequiredCoreApi(array(6, 6));
@@ -79,15 +79,17 @@ class AlbumSelectModule extends GalleryModule {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	if (!empty($currentVersion) && version_compare($currentVersion, '0.9.8', '<')) {
-	    /* We removed the 'show' parameter in 0.9.8 */
-	    $ret = $this->removeParameter('show');
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+	/* We removed the 'show' parameter in 0.9.8 and 'type' in 0.9.11 */
+	foreach (array('show', 'type') as $param) {
+	    if (isset($params[$param])) {
+		$ret = $this->removeParameter($param);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 	    }
 	}
 
-	foreach (array('type' => 'select', 'sort' => 'manual',
+	foreach (array('sort' => 'manual',
 		       'treeLines' => 1, 'treeIcons' => 0, 'treeCookies' => 0,
 		       'treeExpandCollapse' => 0, 'treeCloseSameLevel' => 0) as $key => $value) {
 	    if (!isset($params[$key])) {

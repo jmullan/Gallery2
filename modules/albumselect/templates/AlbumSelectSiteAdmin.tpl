@@ -19,21 +19,6 @@
     {g->text text="Albums can be displayed in a simple list box or a dynamic tree."}
   </p>
 
-  <h4> {g->text text="Selector type"} </h4>
-
-  <input type="radio" id="rbSelect"{if $form.type=='select'} checked="checked"{/if}
-   name="{g->formVar var="form[type]"}" value="select"/>
-  <label for="rbSelect">
-    {g->text text="List box"}
-  </label>
-  <br/>
-  <input type="radio" id="rbTree"{if $form.type=='tree'} checked="checked"{/if}
-   name="{g->formVar var="form[type]"}" value="tree"/>
-  <label for="rbTree">
-    {g->text text="Tree"}
-  </label>
-  <br/>
-
   <h4> {g->text text="Sort order"} </h4>
 
   <input type="radio" id="rbSortManual"{if $form.sort=='manual'} checked="checked"{/if}

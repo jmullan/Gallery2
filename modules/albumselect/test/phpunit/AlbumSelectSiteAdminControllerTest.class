@@ -61,7 +61,6 @@ class AlbumSelectSiteAdminControllerTest extends GalleryControllerTestCase {
     }
 
     function testAlbumSelectSiteAdminControllerSave() {
-	GalleryUtilities::putRequestVariable('form[type]', 'tree');
 	GalleryUtilities::putRequestVariable('form[sort]', 'manual');
 	GalleryUtilities::putRequestVariable('form[treeIcons]', '1');
 	GalleryUtilities::putRequestVariable('form[treeCloseSameLevel]', '1');
@@ -74,7 +73,7 @@ class AlbumSelectSiteAdminControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
 
-	foreach (array('type' => 'tree', 'sort' => 'manual', 'treeLines' => '0',
+	foreach (array('sort' => 'manual', 'treeLines' => '0',
 		       'treeIcons' => '1', 'treeCookies' => '0', 'treeExpandCollapse' => '0',
 		       'treeCloseSameLevel' => '1') as $key => $expectedValue) {
 	    list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'albumselect', $key);
