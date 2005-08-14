@@ -229,7 +229,7 @@ class GalleryUrlGenerator {
 	$this->_embedSessionString = $embedSessionString;
 
 	$this->_isBaseFullUrl = preg_match('{^https?:}', $this->_baseFile);
-	$this->_isBaseAbsolute = $this->_baseFile{0} == '/';
+	$this->_isBaseAbsolute = !empty($this->_baseFile) && $this->_baseFile{0} == '/';
 
 	if (!empty($this->_embedPath)) {
 	    if ($this->_embedPath{strlen($this->_embedPath) - 1} != '/') {
@@ -292,7 +292,9 @@ class GalleryUrlGenerator {
 	     * TODO: now that short urls are gone, do we need to do anything
 	     *       other than look at the path component of the url?
 	     */
-	    if (($i = strpos($url, $this->_baseFile)) !== false) {
+	    if (empty($this->_baseFile)) {
+		$url = substr($url, 0, strrpos($url, '/') + 1);
+	    } else if (($i = strpos($url, $this->_baseFile)) !== false) {
 		$url = substr($url, 0, $i);
 	    }
 	}
