@@ -91,8 +91,7 @@ class ConfirmImportController extends GalleryController {
 	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 
-	$finishedAlbums = array();
-	$albumPosition = array();
+	$finishedAlbums = $albumPosition = $hiddenAlbums = array();
 
 	$status = array('userImportFailure' => array(),
 			'userImportSuccess' => array(),
@@ -385,16 +384,29 @@ class ConfirmImportController extends GalleryController {
 	     * if the album's parent is not in the list of sourcealbums,
 	     * load it into the targeted G2 top album as set in $destinationAlbumID
 	     */
-	    $targetAlbumID = false;
-	    $newAlbumInstanceId = false;
+	    $targetAlbumID = $newAlbumInstanceId = $isHiddenAlbum = false;
 	    if (!in_array($album['parentAlbumName'], array_keys($form['sourceAlbums']))) {
 		$targetAlbumID = $destinationAlbumID;
+		if ($album['parentAlbumName'] != '.root') {
+		    /* load parent album to check if this album is hidden */
+		    list ($ret, $parentPhotos) =
+			Gallery1DataParser::getPhotos($albumsPath . $album['parentAlbumName']);
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		    foreach($parentPhotos as $parentAlbumItem) {
+			if (isset($parentAlbumItem->isAlbumName) &&
+				$parentAlbumItem->isAlbumName == $album['name']) {
+			    $isHiddenAlbum =
+				isset($parentAlbumItem->hidden) && $parentAlbumItem->hidden;
+			    break;
+			}
+		    }
+		}
 	    } else if (in_array($album['parentAlbumName'], array_keys($finishedAlbums))){
-		/*
-		 * if the album's parent has already been imported, import
-		 * it into the parent
-		 */
+		/* if the album's parent has already been imported, import it into the parent */
 		$targetAlbumID = $finishedAlbums[$album['parentAlbumName']];
+		$isHiddenAlbum = isset($hiddenAlbums[$album['name']]);
 	    } else {
 		$albumfields[$album['name']] = $album;
 		$album = null;
@@ -435,8 +447,8 @@ class ConfirmImportController extends GalleryController {
 
 		if ($targetAlbumID) {
 		    /* Make sure we have permission to edit the target item */
-		    $ret = GalleryCoreApi::assertHasItemPermission(
-			$targetAlbumID, 'core.addAlbumItem');
+		    $ret = GalleryCoreApi::assertHasItemPermission($targetAlbumID,
+								   'core.addAlbumItem');
 		    if ($ret->isError()) {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
@@ -598,6 +610,7 @@ class ConfirmImportController extends GalleryController {
 			    return $ret->wrap(__FILE__, __LINE__);
 			}
 
+			/* album permissions */
 			$ret = GalleryCoreApi::removeItemPermissions($newAlbumInstance->getId());
 			if ($ret->isError()) {
 			    GalleryCoreApi::releaseLocks($importLockIds);
@@ -607,8 +620,7 @@ class ConfirmImportController extends GalleryController {
 			    $ret = GalleryCoreApi::addGroupPermission($newAlbumInstance->getId(),
 								      $adminUsersGroupId,
 								      'core.all',
-								      FALSE
-								      );
+								      false);
 			    if ($ret->isError()) {
 				return $ret->wrap(__FILE__, __LINE__);
 			    }
@@ -637,8 +649,7 @@ class ConfirmImportController extends GalleryController {
 			    $ret = GalleryCoreApi::addUserPermission($newAlbumInstance->getId(),
 								     $owner->getId(),
 								     'core.all',
-								     true
-								     );
+								     true);
 			    if ($ret->isError()) {
 				GalleryCoreApi::releaseLocks($importLockIds);
 				return $ret->wrap(__FILE__, __LINE__);
@@ -648,6 +659,10 @@ class ConfirmImportController extends GalleryController {
 			if (isset($album['perms'])) {
 			    foreach($album['perms'] as $tmpperm => $tmpusers) {
 				foreach($permissionTranslation[$tmpperm] as $tmpTranslatedPerm) {
+				    if ($isHiddenAlbum && $tmpTranslatedPerm == 'core.view') {
+					/* Omit view permission for hidden albums */
+					continue;
+				    }
 				    foreach(array_keys($tmpusers) as $tmpuser) {
 					switch ($tmpuser) {
 					case 'Logged In':
@@ -836,8 +851,7 @@ class ConfirmImportController extends GalleryController {
 
 		    foreach($photos as $j => $importAlbumItem) {
 			$gallery->guaranteeTimeLimit(30);
-			if (isset($importAlbumItem->isAlbumName) &&
-			    $importAlbumItem->isAlbumName) {
+			if (isset($importAlbumItem->isAlbumName) && $importAlbumItem->isAlbumName) {
 			    if ($importAlbumItem->highlight == 1) {
 				$albumHighlight[$newAlbumInstanceId] =
 				    $importAlbumItem->isAlbumName;
@@ -849,6 +863,9 @@ class ConfirmImportController extends GalleryController {
 				return $ret->wrap(__FILE__, __LINE__);
 			    }
 			    $albumPosition[$importAlbumItem->isAlbumName] = $weight + 100 + $j;
+			    if (isset($importAlbumItem->hidden) && $importAlbumItem->hidden) {
+				$hiddenAlbums[$importAlbumItem->isAlbumName] = true;
+			    }
 			    $importAlbumItem = null;
 			} else {
 			    $dir = $albumsPath . $album['name'] . $slash;
@@ -1097,30 +1114,43 @@ class ConfirmImportController extends GalleryController {
 				}
 			    }
 
-			    if (isset($importAlbumItem->hidden) && $importAlbumItem->hidden) {
-				/* delete group perm actions */
-				$allPerms = array(
-				    'core.view', 'core.viewSource', 'core.viewResizes');
-				foreach ($allPerms as $perm) {
-				    $ret = GalleryCoreApi::removeGroupPermission(
-					$newItem->getId(), $everybodyGroupId, $perm, false);
-				    if ($ret->isError()) {
-					GalleryCoreApi::releaseLocks($importLockIds);
-					return $ret->wrap(__FILE__, __LINE__);
-				    }
-				    $ret = GalleryCoreApi::removeGroupPermission(
-					$newItem->getId(), $allUsersGroupId, $perm, false);
-				    if ($ret->isError()) {
-					GalleryCoreApi::releaseLocks($importLockIds);
-					return $ret->wrap(__FILE__, __LINE__);
-				    }
-				}
-			    }
-
 			    $ret = $newItem->save();
 			    if ($ret->isError()) {
 				GalleryCoreApi::releaseLocks($importLockIds);
 				return $ret->wrap(__FILE__, __LINE__);
+			    }
+
+			    if (isset($importAlbumItem->hidden) && $importAlbumItem->hidden) {
+				/* remove view permission for hidden item */
+				list ($ret, $itemPermissions) =
+				    GalleryCoreApi::fetchAllPermissionsForItem($newItem->getId());
+				if ($ret->isError()) {
+				    GalleryCoreApi::releaseLocks($importLockIds);
+				    return $ret->wrap(__FILE__, __LINE__);
+				}
+				foreach ($itemPermissions as $itemPermission) {
+				    if ($itemPermission['permission'] == 'core.view' &&
+					    $itemPermission['userId'] != $newItem->getOwnerId() &&
+					    $itemPermission['groupId'] != $adminUsersGroupId) {
+					if ($itemPermission['userId'] > 0) {
+					    $ret = GalleryCoreApi::removeUserPermission(
+						$newItem->getId(), $itemPermission['userId'],
+						'core.view', false);
+					    if ($ret->isError()) {
+						GalleryCoreApi::releaseLocks($importLockIds);
+						return $ret->wrap(__FILE__, __LINE__);
+					    }
+					} else {
+					    $ret = GalleryCoreApi::removeGroupPermission(
+						$newItem->getId(), $itemPermission['groupId'],
+						'core.view', false);
+					    if ($ret->isError()) {
+						GalleryCoreApi::releaseLocks($importLockIds);
+						return $ret->wrap(__FILE__, __LINE__);
+					    }
+					}
+				    }
+				}
 			    }
 
 			    /* Set custom field values */
