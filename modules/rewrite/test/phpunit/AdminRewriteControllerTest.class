@@ -105,7 +105,12 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 		'form[shortUrls][rewrite][1][match]', 'core.DownloadItem');
 
 	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][2][active]', 'on');
-	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][2][pattern]', '%path%');
+	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][2][pattern]', 'admin/');
+	GalleryUtilities::putRequestVariable(
+		'form[shortUrls][rewrite][2][match]', 'core.SiteAdmin');
+
+	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][3][active]', 'on');
+	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][3][pattern]', '%path%');
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
@@ -120,6 +125,8 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 		      'match' => 'core.ShowItem'),
 		array('pattern' => 'd/%itemId%-%serialNumber%/%fileName%',
 		      'match' => 'core.DownloadItem'),
+		array('pattern' => 'admin/',
+		      'match' => 'core.SiteAdmin'),
 		array('pattern' => '%path%')));
 	list($ret, $savedRules) = RewriteMap::getActiveRules();
 	if ($ret->isError()) {

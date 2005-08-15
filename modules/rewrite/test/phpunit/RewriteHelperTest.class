@@ -286,8 +286,13 @@ class RewriteHelperTest extends GalleryTestCase {
 		      'match' => 'core.ShowItem'),
 		array('pattern' => 'd/%itemId%-%serialNumber%/%fileName%',
 		      'match' => 'core.DownloadItem'),
+		array('pattern' => 'admin/',
+		      'match' => 'core.SiteAdmin'),
 		array('pattern' => '%path%')));
 	$expected = array(
+		array('urlPattern' => 'admin/',
+		      'queryString' => 'g2_view=core.SiteAdmin',
+		      'settings' => array('flags' => 'QSA,L')),
 		array('urlPattern' => 'v/',
 		      'queryString' => 'g2_view=core.ShowItem',
 		      'settings' => array('flags' => 'QSA,L')),
