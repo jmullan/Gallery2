@@ -77,11 +77,13 @@ class ItemAddAlbumController extends GalleryController {
 		    if ($ret->getErrorCode() & ERROR_COLLISION) {
 			$error[] = 'form[error][pathComponent][collision]';
 		    } else {
+			GalleryCoreApi::releaseLocks($lockIds);
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		}
 
 		if (!isset($instance)) {
+		    GalleryCoreApi::releaseLocks($lockIds);
 		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
 				 null);
 		}
@@ -93,6 +95,7 @@ class ItemAddAlbumController extends GalleryController {
 							 'core.all',
 							 false);
 		if ($ret->isError()) {
+		    GalleryCoreApi::releaseLocks($lockIds);
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
@@ -105,6 +108,7 @@ class ItemAddAlbumController extends GalleryController {
 		/* Prepare our status message */
 		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 		if ($ret->isError()) {
+		    GalleryCoreApi::releaseLocks($lockIds);
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
