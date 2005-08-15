@@ -39,7 +39,7 @@ class RewriteModule extends GalleryModule {
 	$this->setId('rewrite');
 	$this->setName($gallery->i18n('URL Rewrite'));
 	$this->setDescription($gallery->i18n('Enables short URLs using mod_rewrite.'));
-	$this->setVersion('0.9.16'); /* Update RewriteModuleExtras::upgrade also! */
+	$this->setVersion('0.9.17'); /* Update RewriteModuleExtras::upgrade also! */
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
 	$this->setRequiredCoreApi(array(6, 0));
@@ -197,7 +197,10 @@ class RewriteModule extends GalleryModule {
 				  array('pattern' => 'v/%path%',
 					'match' => 'core.ShowItem'),
 				  array('pattern' => 'd/%itemId%-%serialNumber%/%fileName%',
-					'match' => 'core.DownloadItem')));
+				      'match' => 'core.DownloadItem'),
+				  array('pattern' => 'admin/',
+				      'match' => 'core.SiteAdmin')
+				  ));
 
 	    $ret = RewriteMap::setActiveRules($activeRules);
 	    if ($ret->isError()) {
@@ -269,6 +272,12 @@ class RewriteModule extends GalleryModule {
 		'pattern' => '([^\/]+)',
 		'help' => $this->translate('Item file name (eg, image.jpg)'),
 		'ignore' => 1));
+	$rules[] = $rule;
+
+	$rule = array();
+	$rule['comment'] = $this->translate('Site Admin');
+	$rule['match'] = array('view' => 'core.SiteAdmin');
+	$rule['pattern'] = 'admin/';
 	$rules[] = $rule;
 
 	$rule = array();
