@@ -84,6 +84,13 @@ class RearrangeItemsController extends GalleryController {
 		}
 	    }
 
+	    $event = GalleryCoreApi::newEvent('Gallery::ItemOrder');
+	    $event->setData($itemId);
+	    list ($ret) = GalleryCoreApi::postEvent($event);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
 	    $status['saved'] = 1;
 	} /* else $form['action']['reset'] */
 

@@ -141,6 +141,13 @@ class ItemReorderController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
+		$event = GalleryCoreApi::newEvent('Gallery::ItemOrder');
+		$event->setData($itemId);
+		list ($ret) = GalleryCoreApi::postEvent($event);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
 		/* Redirect back to the same page so that we can do more reordering */
 		$redirect['view'] = 'core.ItemAdmin';
 		$redirect['subView'] = 'core.ItemReorder';

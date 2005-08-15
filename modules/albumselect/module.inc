@@ -39,7 +39,7 @@ class AlbumSelectModule extends GalleryModule {
 	$this->setName($gallery->i18n('Album Select'));
 	$this->setDescription(
 	    $gallery->i18n('Jump directly to any album using a select box or tree view'));
-	$this->setVersion('0.9.11');
+	$this->setVersion('0.9.12');
 	$this->setGroup('blocks', $this->translate('Blocks'));
 	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
 	$this->setRequiredCoreApi(array(6, 6));
@@ -67,6 +67,7 @@ class AlbumSelectModule extends GalleryModule {
     function registerEventListeners() {
 	$listener = new AlbumSelectModule();
 	GalleryCoreApi::registerEventListener('Gallery::ViewableTreeChange', $listener);
+	GalleryCoreApi::registerEventListener('Gallery::ItemOrder', $listener);
 	GalleryCoreApi::registerEventListener('GalleryEntity::save', $listener);
     }
 
@@ -128,6 +129,15 @@ class AlbumSelectModule extends GalleryModule {
 	if ($event->getEventName() == 'Gallery::ViewableTreeChange') {
 	    GalleryDataCache::removeFromDisk(
 		array('type' => 'module-data', 'module' => 'albumselect'));
+	} else if ($event->getEventName() == 'Gallery::ItemOrder') {
+	    list ($ret, $sort) = $this->getParameter('sort');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if ($sort == 'manual') {
+		GalleryDataCache::removeFromDisk(
+		    array('type' => 'module-data', 'module' => 'albumselect'));
+	    }
 	} else if ($event->getEventName() == 'GalleryEntity::save') {
 	    $entity = $event->getEntity();
 	    if ($entity->getEntityType() == 'GalleryAlbumItem'
