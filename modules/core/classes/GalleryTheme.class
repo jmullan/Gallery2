@@ -983,6 +983,7 @@ class GalleryTheme extends GalleryPlugin {
      *   peers = array of peer data (first, last and a window of peers around this item),
      *      also set peerIds(of all peers), peerCount(total count),
      *      peerItemIndex(index of this item in peers array)
+     *      Include 'peerWindowSize'=># in $params to override default of 6
      *   systemLinks = array of array('text'=>.., 'params'=>.., 'moduleId'=>..)
      *   itemLinks = array of id => array('text'=>.., 'params'=>.., 'moduleId'=>..)
      *      ^if childIds non-empty also set itemLinks on each child item
@@ -995,6 +996,7 @@ class GalleryTheme extends GalleryPlugin {
      *   itemNavigator = calculate urls for first/back/next/last links for photo navigation
      *                   (requires you to load 'peers' also)
      *   jumpRange = calculate page urls for inter-album navigation (eg, "page: 1, 2 .. 7, 8")
+     *       Include 'pageWindowSize'=># in $params to override default of 6
      *   imageViews = loads entity data for resizes and source images, suitable for display
      *                when viewing a single image:
      *                'imageViews' => derivatives,
@@ -1540,7 +1542,11 @@ class GalleryTheme extends GalleryPlugin {
 	 * 'jumpRange'
 	 */
 	if (isset($load['jumpRange']) && isset($theme['totalPages'])) {
-	    $windowSize = 6;      /* TODO: make this configurable */
+	    $page = GalleryUtilities::getRequestVariables('page');
+	    if (empty($page)) {
+		$page = 1;
+	    }
+	    $windowSize = isset($params['pageWindowSize']) ? $params['pageWindowSize'] : 6;
 	    $jumpRange = array();
 	    $lowerPage = max($page - (int)($windowSize / 2), 1);
 	    $upperPage = min($page + (int)($windowSize / 2), $theme['totalPages']);
