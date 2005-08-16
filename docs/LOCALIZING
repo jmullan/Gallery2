@@ -185,9 +185,7 @@ modules/core/classes/GalleryTranslator.class and in function
 getLanguageData(), add lines like this (if not already present):
 
 	$supportedLanguages['el']['GR']['description'] = 'Greek';
-	$supportedLanguages['el']['GR']['charset'] = 'UTF-8';
-
-	   (but put in the appropriate charset if you didn't use UTF-8)
+	$defaultCountry['el'] = 'GR';
 
 Now, log onto G2 and in the User preferences (you may need to edit the
 user via the Site Administrator) you should see Greek appear in the
