@@ -132,13 +132,15 @@ class ClassicTheme extends GalleryTheme {
 	    if ($params['subalbumSort']) {
 		$theme['tree'] = $theme['treeItems'] = array();
 		$ret = $this->_buildTree($item, $theme['tree'], $theme['treeItems'],
-		    $params['subalbumDepth'] > 0 ? $params['subalbumDepth'] : null);
+		    $params['subalbumDepth'] > 0 ? $params['subalbumDepth'] : null,
+		    $theme['actingUserId']);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    } else {
 		list ($ret, $tree) = GalleryCoreApi::fetchAlbumTree($item->getId(),
-		    $params['subalbumDepth'] > 0 ? $params['subalbumDepth'] + 1 : null);
+		    $params['subalbumDepth'] > 0 ? $params['subalbumDepth'] + 1 : null,
+		    $theme['actingUserId']);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -250,8 +252,10 @@ class ClassicTheme extends GalleryTheme {
      * @return object GalleryStatus a status code
      * @access private
      */
-    function _buildTree($album, &$treeList, &$treeItems, $maxDepth, $depth=0, $branchId=0) {
-	list ($ret, $subAlbumIds) = GalleryCoreApi::fetchChildAlbumItemIds($album);
+    function _buildTree($album, &$treeList, &$treeItems, $maxDepth, $userId,
+			$depth=0, $branchId=0) {
+	list ($ret, $subAlbumIds) =
+	    GalleryCoreApi::fetchChildAlbumItemIds($album, null, null, $userId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -269,8 +273,8 @@ class ClassicTheme extends GalleryTheme {
 		}
 		$treeItems[$id] = $subAlbum->getMemberData();
 		if (!isset($maxDepth) || $depth < $maxDepth) {
-		    $ret = $this->_buildTree($subAlbum, $treeList,
-					     $treeItems, $maxDepth, $depth + 1, $branchId);
+		    $ret = $this->_buildTree($subAlbum, $treeList, $treeItems, $maxDepth, $userId,
+					     $depth + 1, $branchId);
 		    if ($ret->isError()) {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
