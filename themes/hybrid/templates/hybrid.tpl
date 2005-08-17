@@ -109,7 +109,7 @@
   <div id="gsAlbumContent" class="gcBackground1">
     <table class="content">
     {foreach name="hybrid" from=$theme.children key=i item=it}
-      {if ($i is even)}<tr>{/if}
+      {if ($i % $theme.params.columns == 0)}<tr>{/if}
       <td class="i">
 	{if isset($it.image)}
 	  {if isset($it.renderItem)}
@@ -199,8 +199,18 @@
 	  </span>
 	{/if}
       </td>
-      {if ($i is odd)}</tr>{elseif $smarty.foreach.hybrid.last}<td></td><td></td></tr>{/if}
+      {if (($i+1) % $theme.params.columns == 0)}</tr>
+      {elseif $smarty.foreach.hybrid.last}
+	{assign var="i" value=$i%$theme.params.columns}
+	{assign var="i" value=$theme.params.columns-$i-1}
+	{"<td></td><td></td>"|repeat:$i}</tr>
+      {/if}
     {/foreach}
+    {if $theme.totalPages > 1}
+      <tr><td colspan="{$theme.params.columns*2}">
+	{g->block type="core.Pager" class="gbBlock gcBackground2"}
+      </td></tr>
+    {/if}
     </table>
   </div>
   {* Show any other album blocks *}

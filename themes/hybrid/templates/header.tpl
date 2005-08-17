@@ -23,3 +23,6 @@ var data_count = data_iw.length, data_name = '{$theme.item.id}',
 // ]]>
 </script>
 <script type="text/javascript" src="{$theme.themeUrl}/hybrid.js"></script>
+<style type="text/css">
+#gsAlbumContent td.t {ldelim} width: {$theme.columnWidthPct}%; {rdelim}
+</style>

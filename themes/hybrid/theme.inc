@@ -44,12 +44,23 @@ class HybridTheme extends GalleryTheme {
 	$this->setName($gallery->i18n('Hybrid'));
 	$this->setDescription(
 	    $gallery->i18n('Combined album/image/slideshow dynamic view'));
-	$this->setVersion('0.10.6');
+	$this->setVersion('0.10.7');
 	$this->setRequiredCoreApi(array(6, 0));
 	$this->setRequiredThemeApi(array(2, 0));
 	$this->setStandardSettings(array(
+	    'rows' => 30, 'columns' => 2,
 	    'albumFrame' => '', 'itemFrame' => '', 'colorpack' => '',
-	    'sidebarBlocks' => '', 'albumBlocks' => '', 'photoBlocks' => ''));
+	    'sidebarBlocks' => serialize(array(
+				array('search.SearchBlock', array('showAdvancedLink' => true)),
+				array('core.ItemLinks', array('useDropdown' => false)),
+				array('core.PeerList', array()),
+				array('imageblock.ImageBlock', array()))),
+	    'albumBlocks' => serialize(array(
+				array('comment.ViewComments', array()))),
+	    'photoBlocks' => serialize(array(
+				array('exif.ExifInfo', array()),
+				array('comment.ViewComments', array()))),
+	));
     }
 
     /**
@@ -58,7 +69,7 @@ class HybridTheme extends GalleryTheme {
     function showAlbumPage(&$template, $item, $params, $childIds) {
 	$ret = $this->loadCommonTemplateData($template, $item, $params,
 	    array('owner', 'viewCount', 'parents', 'systemLinks', 'itemLinks',
-		  'childItemLinksDetailed', 'permissions'),
+		  'childItemLinksDetailed', 'permissions', 'jumpRange'),
 	    $childIds);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -74,6 +85,22 @@ class HybridTheme extends GalleryTheme {
 	$theme['imageWidths'] = implode(',', $imageWidths);
 	$theme['imageHeights'] = implode(',', $imageHeights);
 	$theme['imageCount'] = count($imageWidths);
+	$theme['columnWidthPct'] = floor(90 / $params['columns']);
+
+	$showId = GalleryUtilities::getRequestVariables('showId');
+	if (!empty($showId)) {
+	    /* Start with initial view of this item */
+	    foreach ($theme['children'] as $tmp) {
+		if ($tmp['id'] == $showId) {
+		    if (isset($tmp['imageIndex'])) {
+			$theme['viewIndex'] = $tmp['imageIndex'];
+			/* Set cookie to popup image just once */
+			setcookie('G2_hybrid_view', '1');
+		    }
+		    break;
+		}
+	    }
+	}
 
 	$template->head('themes/hybrid/templates/header.tpl');
 	return array(GalleryStatus::success(), 'theme.tpl');
@@ -115,7 +142,7 @@ class HybridTheme extends GalleryTheme {
 	    return array(GalleryStatus::success(), 'detail.tpl');
 	}
 
-	/* Otherwise, load the parent with initial view of this item  */
+	/* Otherwise, redirect to parent with initial view of this item  */
 	list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($item->getParentId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -126,23 +153,20 @@ class HybridTheme extends GalleryTheme {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
-	list ($ret, $tplFile) = $this->showAlbumPage($template, $parent, $params, $childIds);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	foreach ($theme['children'] as $tmp) {
-	    if ($tmp['id'] == $item->getId()) {
-		if (isset($tmp['imageIndex'])) {
-		    $theme['viewIndex'] = $tmp['imageIndex'];
-		    /* Set cookie to popup image just once */
-		    setcookie('G2_hybrid_view', '1');
-		}
+	$perPage = $this->getPageSize($params);
+	$page = 1;
+	for ($i = 0; $i < count($childIds); $i++) {
+	    if ($childIds[$i] == $item->getId()) {
+		$page = ceil(($i + 1) / $perPage);
 		break;
 	    }
 	}
-
-	return array(GalleryStatus::success(), $tplFile);
+	$redirect = array('view' => 'core.ShowItem', 'itemId' => $parent->getId());
+	if ($page != 1) {
+	    $redirect['page'] = $page;
+	}
+	$redirect['showId'] = $item->getId();
+	return array(GalleryStatus::success(), array('redirect' => $redirect));
     }
 
     /**
@@ -192,36 +216,9 @@ class HybridTheme extends GalleryTheme {
     }
 
     /**
-     * @see GalleryTheme::upgrade
+     * Prepare data about items in this album.
+     * @access private
      */
-    function upgrade($installedVersion) {
-	if (empty($installedVersion) || version_compare($installedVersion, '0.10.6', '<')) {
-	    /* Older than the big theme changeover.  Set some default blocks */
-	    foreach (array('sidebarBlocks' => serialize(
-			     array(
-				 array('search.SearchBlock', array('showAdvancedLink' => true)),
-				 array('core.ItemLinks', array('useDropdown' => false)),
-				 array('core.PeerList', array()),
-				 array('imageblock.ImageBlock', array()))),
-			   'albumBlocks' => serialize(
-			     array(array('comment.ViewComments', array()))),
-			   'photoBlocks' => serialize(
-			     array(
-				 array('exif.ExifInfo', array()),
-				 array('comment.ViewComments', array()))),
-			   'colorpack' => '')
-		     as $key => $value) {
-		$ret = $this->setParameter($key, $value);
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-	    }
-	    $installedVersion = '0.10.6';
-	}
-
-	return GalleryStatus::success();
-    }
-
     function _buildItemList($childIds, &$children) {
 	$imageWidths = $imageHeights = $childItems = array();
 	if (!empty($childIds)) {

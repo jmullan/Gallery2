@@ -414,7 +414,10 @@ function popup_menu(event,i,ii) {
   var links = ii >= 0 ? '<a href="" onclick="popup_info(' + ii +
                         ');this.blur();return false">' + item_details + '</a><br/>' : '';
   if (obj) links += obj.innerHTML;
+  pop.style.left = '0';
+  pop.style.width = 'auto';
   ui_sethtml('popup_links', links);
+  pop.style.width = pop.offsetWidth + 'px';
   if (!event) event = window.event;
   var pw = pop.offsetWidth, ph = pop.offsetHeight,
       iw = event.target ? event.target.width : event.srcElement.width, //Gecko+Opera : IE
@@ -426,7 +429,7 @@ function popup_menu(event,i,ii) {
 	 : (event.y - event.offsetY + app_body.scrollTop - 2), //IE
       sy = (typeof(window.scrollY)=='number' ? window.scrollY : app_body.scrollTop); //Gecko:other
   pop.style.left = (ix + iw - pw) + 'px';
-  pop.style.top = min(iy, app_wh + sy - ph) + 'px';
+  pop.style.top = min(iy, app_wh + sy - ph) + 'px'; // Maybe too low on gecko with horiz scrollbar
   pop.style.visibility = 'visible';
 }
 function popup_info(i) {
