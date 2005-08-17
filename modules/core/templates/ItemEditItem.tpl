@@ -157,7 +157,7 @@
     {g->text text="Use the original capture date and time from file information (e.g. Exif tag):"}
     <br/>
     <a href="#" onclick="setOriginationTimestamp();return false">
-      {g->date timestamp=$ItemEditItem.originationTimestamp.timestamp format="%c"}
+      {g->date timestamp=$ItemEditItem.originationTimestamp.timestamp style="datetime"}
     </a>
   </p>
   {/if}

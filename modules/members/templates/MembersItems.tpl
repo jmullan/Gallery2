@@ -78,9 +78,9 @@
 	     alt="{g->text text="Item"}" width="16" height="16"/>
       {/if}
       </td><td>
-	{g->date timestamp=$item.creationTimestamp format="%x"}
+	{g->date timestamp=$item.creationTimestamp style="date"}
       </td><td>
-	{g->date timestamp=$item.creationTimestamp format="%X"}
+	{g->date timestamp=$item.creationTimestamp style="time"}
       </td><td>
 	<a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$item.id`"}">
 	  {$item.title|default:$item.pathComponent}

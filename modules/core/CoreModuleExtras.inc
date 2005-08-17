@@ -44,8 +44,8 @@ class CoreModuleExtras {
     function upgrade($module, $currentVersion, $statusMonitor) {
 	global $gallery;
 	$storage =& $gallery->getStorage();
-	$gallery->debug('Entering CoreModuleExras::upgrade');
-	
+	$gallery->debug('Entering CoreModuleExtras::upgrade');
+
 	/*
 	 * We store our version outside of the database so that we can upgrade
 	 * even if the database is in an undependable state.
@@ -113,7 +113,10 @@ class CoreModuleExtras {
 			   'session.lifetime' => 25 * 365 * 86400, /* 25 years */
 			   'session.inactivityTimeout' => 14 * 86400, /* two weeks */
 			   'misc.markup' => 'bbcode',
-			   'lock.system' => $flockType
+			   'lock.system' => $flockType,
+			   'format.date' => '%x',
+			   'format.time' => '%X',
+			   'format.datetime' => '%c'
 			   ) as $key => $value) {
 		if (!isset($param[$key])) {
 		    $ret = $module->setParameter($key, $value);
@@ -895,7 +898,7 @@ class CoreModuleExtras {
 			 * the process considerably
 			 */
 			if ($itemsProcessed % $progressStepSize == 0 ||
-			        $itemsProcessed == $totalDerivatives) {
+				$itemsProcessed == $totalDerivatives) {
 			    $ret = $statusMonitor->renderStatusMessage(
 				$module->translate(
 				    array('text' => 'Detecting broken derivatives ' .
@@ -1154,6 +1157,16 @@ class CoreModuleExtras {
 	case '0.9.33':
 	    /* Release Candidate 1! */
 
+	case '0.9.34':
+	    /* Add date/time formats */
+	    foreach (array('format.date' => '%x', 'format.time' => '%X', 'format.datetime' => '%c')
+		     as $key => $value) {
+		$ret = $module->setParameter($key, $value);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
@@ -1323,6 +1336,7 @@ $gallery->setConfig(\'cookieId\', \'' . $cookieId . '\');
 	case '0.9.31':
 	case '0.9.32':
 	case '0.9.33':
+	case '0.9.34':
 
 	case 'end of upgrade path':
 	    /*

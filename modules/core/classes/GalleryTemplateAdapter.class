@@ -206,9 +206,26 @@ class GalleryTemplateAdapter {
      */
     function date($params, &$smarty) {
 	global $gallery;
+	static $defaultFormat;
 	$platform = $gallery->getPlatform();
-	return $platform->strftime(
-	    !empty($params['format']) ? $params['format'] : '%x',
+
+	if (empty($params['format'])) {
+	    if (!isset($defaultFormat)) {
+		$defaultFormat = array('date' => '%x', 'time' => '%X', 'datetime' => '%c');
+		list ($ret, $core) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
+		if ($ret->isSuccess()) {
+		    $defaultFormat = array('date' => $core['format.date'],
+					   'time' => $core['format.time'],
+					   'datetime' => $core['format.datetime']);
+		}
+	    }
+
+	    $params['format'] =
+		(!empty($params['style']) && isset($defaultFormat[$params['style']]))
+		? $defaultFormat[$params['style']] : $defaultFormat['date'];
+	}
+
+	return $platform->strftime($params['format'],
 	    !empty($params['timestamp']) ? $params['timestamp'] : null);
     }
 

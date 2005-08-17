@@ -39,7 +39,7 @@
   <h3> {g->text text="Language Settings"} </h3>
 
   <p class="giDescription">
-    {g->text text="Select language defaults for Gallery. Individual users can override this setting in their personal preferences or via the language selector if activated below."}
+    {g->text text="Select language defaults for Gallery. Individual users can override this setting in their personal preferences or via the language selector block if available."}
   </p>
 
   {if isset($AdminCore.can.translate)}
@@ -60,6 +60,45 @@
       {g->text text="Your webserver does not support localization.  Please instruct your system administrator to reconfigure PHP with the %s option enabled." arg1=$smarty.capture.gettext}
     </div>
   {/if}
+</div>
+
+<div class="gbBlock">
+  <h3> {g->text text="Date Formats"} </h3>
+
+  <p class="giDescription">
+    {g->text text="Specify how dates and times are displayed by Gallery.  See %sphp.net%s for details of how to enter a format string.  Note that the display of some tokens varies according to the active language." arg1="<a href=\"http://php.net/strftime\">" arg2="</a>"}
+  </p>
+
+  <table class="gbDataTable"><tr>
+    <th>
+      {g->text text="Style"}
+    </th><th>
+      {g->text text="Format"}
+    </th><th>
+      {g->text text="Sample"}
+    </th></tr><tr><td>
+      {g->text text="Date"}
+    </td><td>
+      <input type="text" size="12"
+       name="{g->formVar var="form[format][date]"}" value="{$form.format.date}"/>
+    </td><td>
+      {g->date format=$form.format.date}
+    </td></tr><tr><td>
+      {g->text text="Time"}
+    </td><td>
+      <input type="text" size="12"
+       name="{g->formVar var="form[format][time]"}" value="{$form.format.time}"/>
+    </td><td>
+      {g->date format=$form.format.time}
+    </td></tr><tr><td>
+      {g->text text="Date/Time"}
+    </td><td>
+      <input type="text" size="12"
+       name="{g->formVar var="form[format][datetime]"}" value="{$form.format.datetime}"/>
+    </td><td>
+      {g->date format=$form.format.datetime}
+    </td></tr>
+  </table>
 </div>
 
 {if isset($AdminCore.can.setPermissions)}

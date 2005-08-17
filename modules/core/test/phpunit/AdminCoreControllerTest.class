@@ -68,7 +68,10 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 			  'smtp.host' => 'smtp.example.com',
 			  'smtp.username' => 'x14',
 			  'smtp.password' => 'x15',
-			  'smtp.from' => 'gallery@example.com');
+			  'smtp.from' => 'gallery@example.com',
+			  'format.date' => 'x16',
+			  'format.time' => 'x17',
+			  'format.datetime' => 'x18');
 
 	/* Change the defaults to something meaningless */
 	foreach ($valueMap as $key => $value) {
@@ -116,7 +119,8 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 			  'misc.markup' => 'IGNORED',
 			  /* Set the cookie path in this test, the domain has to be a valid value */
 			  'cookie.domain' => '.example.com',
-			  'lock.system' => 'IGNORED');
+			  'lock.system' => 'IGNORED',
+			  'format.date' => 'IGNORED');
 
 	/* Some test cases */
 	$tests = array();
@@ -187,7 +191,8 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 			  'misc.markup' => 'IGNORED',
 			  /* Set the cookie domain in this test, set the path to a valid value */
 			  'cookie.path' => '/sub/',
-			  'lock.system' => 'IGNORED');
+			  'lock.system' => 'IGNORED',
+			  'format.date' => 'IGNORED');
 
 	/* Some test cases */
 	$tests = array();
@@ -351,7 +356,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	if (!defined('CODESET')) {
 	    define('CODESET', 'CODESET');
 	}
-	
+
 	$gallery->_phpVm = new AdminCoreControllerTestPhpVm('');
 
 	GalleryUtilities::putRequestVariable('form[uploadLocalServer][newDir]',
@@ -515,7 +520,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	if (!defined('CODESET')) {
 	    define('CODESET', 'CODESET');
 	}
-	
+
 	$gallery->_phpVm = new AdminCoreControllerTestPhpVm('');
 	$platform = new UnitTestPlatform();
 	$platform->setReply('splitPath', array('/phpäunit'), array('/', 'phpäunit'));
@@ -755,7 +760,6 @@ class AdminCoreControllerTestPhpVm extends GalleryPhpVm {
 	return parent::ini_get($varname);
     }
 
-    
     /* For the upload directory test */
     function function_exists($functionName) {
 	/* make it use our charset tables, they work on all platforms */

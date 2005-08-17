@@ -203,7 +203,10 @@ class AdminCoreController extends GalleryController {
 			   'smtp.username',
 			   'cookie.path',
 			   'cookie.domain',
-			   'lock.system') as $key) {
+			   'lock.system',
+			   'format.date',
+			   'format.time',
+			   'format.datetime') as $key) {
 		list ($outer, $inner) = explode('.', $key);
 		if (isset($form[$outer][$inner])) {
 		    $ret = GalleryCoreApi::setPluginParameter(
@@ -291,7 +294,10 @@ class AdminCoreView extends GalleryView {
 			   'smtp.password',
 			   'cookie.path',
 			   'cookie.domain',
-			   'lock.system') as $key) {
+			   'lock.system',
+			   'format.date',
+			   'format.time',
+			   'format.datetime') as $key) {
 
 		list ($ret, $value) =
 		    GalleryCoreApi::getPluginParameter('module', 'core', $key);
