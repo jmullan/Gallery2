@@ -51,7 +51,7 @@ function lookup_Canon_tag($tag) {
 //=================
 // Formats Data for the data type
 //====================================================================
-function formatCanonData($type,$tag,$intel,$data,&$result) {
+function formatCanonData($type,$tag,$intel,$data,$exif,&$result) {
 	$place = 0;
 	
 	if($type=="ASCII") {
@@ -125,10 +125,10 @@ function formatCanonData($type,$tag,$intel,$data,&$result) {
 				case 0: $result['FocusMode'] = "One-Shot"; break;
 				case 1: $result['FocusMode'] = "AI Servo"; break;
 				case 2: $result['FocusMode'] = "AI Focus"; break;
-				case 3: $result['FocusMode'] = "MF"; break;
+				case 3: $result['FocusMode'] = "Manual"; break;
 				case 4: $result['FocusMode'] = "Single"; break;
 				case 5: $result['FocusMode'] = "Continuous"; break;
-				case 6: $result['FocusMode'] = "MF"; break;
+				case 6: $result['FocusMode'] = "Manual"; break;
 				default: $result['FocusMode'] = "Unknown"; break;
 				}
 			$result['Unknown']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//8
@@ -158,7 +158,8 @@ function formatCanonData($type,$tag,$intel,$data,&$result) {
 				}
 			$result['DigitalZoomRatio']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//12
 				switch ($result['DigitalZoomRatio']) {
-				case 0: $result['DigitalZoomRatio'] = "None"; break;
+				case 0:
+				case 65535: $result['DigitalZoomRatio'] = "None"; break;
 				case 1: $result['DigitalZoomRatio'] = "2x"; break;
 				case 2: $result['DigitalZoomRatio'] = "4x"; break;
 				default: $result['DigitalZoomRatio'] = "Unknown"; break;
@@ -170,13 +171,23 @@ function formatCanonData($type,$tag,$intel,$data,&$result) {
 				case "0001": $result['Contrast'] = "High"; break;
 				default: $result['Contrast'] = "Unknown"; break;
 				}
-			$result['Saturation']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//14
-				if($result['Saturation']==0) $result['Saturation'] = "Normal";
-			$result['Sharpness']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//15
-				if($result['Sharpness']==0) $result['Sharpness'] = "Normal";
+			$result['Saturation']=intel2Moto(substr($data,$place,4));$place+=4;//14
+				switch ($result['Saturation']) {
+				case "ffff": $result['Saturation'] = "Low"; break;
+				case "0000": $result['Saturation'] = "Normal"; break;
+				case "0001": $result['Saturation'] = "High"; break;
+				default: $result['Saturation'] = "Unknown"; break;
+				}
+			$result['Sharpness']=intel2Moto(substr($data,$place,4));$place+=4;//15
+				switch ($result['Sharpness']) {
+				case "ffff": $result['Sharpness'] = "Low"; break;
+				case "0000": $result['Sharpness'] = "Normal"; break;
+				case "0001": $result['Sharpness'] = "High"; break;
+				default: $result['Sharpness'] = "Unknown"; break;
+				}
 			$result['ISO']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//16
 				switch ($result['ISO']) {
-				case 0: break; // Will set from SubIFD/ISOSpeedRatings later
+				case 0: $result['ISO'] = $exif['SubIFD']['ISOSpeedRatings']; break;
 				case 15: $result['ISO'] = "Auto"; break;
 				case 16: $result['ISO'] = "50"; break;
 				case 17: $result['ISO'] = "100"; break;
@@ -188,7 +199,14 @@ function formatCanonData($type,$tag,$intel,$data,&$result) {
 				if($result['MeteringMode']==3) $result['MeteringMode'] = "Evaluative";
 				if($result['MeteringMode']==4) $result['MeteringMode'] = "Partial";
 				if($result['MeteringMode']==5) $result['MeteringMode'] = "Center-weighted";
-			$result['Unknown']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//18
+			$result['FocusType']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//18
+				switch ($result['FocusType']) {
+				case 0: $result['FocusType'] = "Manual"; break;
+				case 1: $result['FocusType'] = "Auto"; break;
+				case 3: $result['FocusType'] = "Close-up (Macro)"; break;
+				case 8: $result['FocusType'] = "Locked (Pan Mode)"; break;
+				default: $result['FocusType'] = "Unknown"; break;
+				}
 			$result['AFPointSelected']=intel2Moto(substr($data,$place,4));$place+=4;//19
 				switch ($result['AFPointSelected']) {
 				case "3000": $result['AFPointSelected'] = "None (MF)"; break;
@@ -236,12 +254,14 @@ function formatCanonData($type,$tag,$intel,$data,&$result) {
 				}
 			$result['Unknown']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//30
 			$result['Unknown']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//31
-			$result['FocusMode']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//32
-				switch ($result['FocusMode']) {
+			$anotherFocusMode=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//32
+			if (strpos(strtoupper($exif['IFD0']['Model']), "G1") !== false) {
+				switch ($anotherFocusMode) {
 				case 0: $result['FocusMode'] = "Single"; break;
 				case 1: $result['FocusMode'] = "Continuous"; break;
 				default: $result['FocusMode'] = "Unknown"; break;
 				}
+			}
 			
 		} else if($tag=="0004") { //second chunk
 			$result['Bytes']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//0
@@ -387,15 +407,7 @@ function parseCanon($block,&$result,$seek, $globalOffset) {
 				$result['Errors'] = $result['Errors']++;
 			}
 		}
-		$formated_data = formatCanonData($type,$tag,$intel,$data,$result['SubIFD']['MakerNote'][$tag_name]);
-
-		if (isset($result['SubIFD']['MakerNote'][$tag_name]['ISO']) &&
-			$result['SubIFD']['MakerNote'][$tag_name]['ISO'] == 0) {
-		    // Get ISO for models like Canon 300D
-		    $result['SubIFD']['MakerNote'][$tag_name]['ISO'] =
-			isset($result['SubIFD']['ISOSpeedRatings'])
-			? $result['SubIFD']['ISOSpeedRatings'] : 'Unknown';
-		}
+		$formated_data = formatCanonData($type,$tag,$intel,$data,$result,$result['SubIFD']['MakerNote'][$tag_name]);
 
 		if($result['VerboseOutput']==1) {
 			//$result['SubIFD']['MakerNote'][$tag_name] = $formated_data;
