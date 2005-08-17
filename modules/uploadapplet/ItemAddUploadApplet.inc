@@ -64,7 +64,7 @@ class ItemAddUploadApplet extends ItemAddPlugin {
 	    $ItemAddUploadApplet['cookieDomain'] = $session->getCookieDomain();
 	    $ItemAddUploadApplet['cookiePath'] = $cookiePath;
 	    $ItemAddUploadApplet['album'] = $item->getId();
-	    $ItemAddUploadApplet['defaults'] = array();
+	    $ItemAddUploadApplet['defaults'] = array('htmlEscapeCaptions' => 'false');
 	    $ItemAddUploadApplet['overrides'] = array('toSysOut' => 'true');
 	    $ItemAddUploadApplet['userAgent'] = GalleryUtilities::getServerVar('HTTP_USER_AGENT');
 	    $ItemAddUploadApplet['galleryVersion'] = 2;
