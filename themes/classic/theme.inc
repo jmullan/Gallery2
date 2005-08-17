@@ -43,9 +43,9 @@ class ClassicTheme extends GalleryTheme {
 	$this->setId('classic');
 	$this->setName($gallery->i18n('Classic'));
 	$this->setDescription($gallery->i18n('Classic Gallery2 root album look and feel'));
-	$this->setVersion('0.9.3');
+	$this->setVersion('0.9.4');
 	$this->setRequiredThemeApi(array(2, 1));
-	$this->setRequiredCoreApi(array(6, 4));
+	$this->setRequiredCoreApi(array(6, 6));
 	$this->setStandardSettings(
 	    array('rows' => 10, 'columns' => 1,
 		  'showImageOwner' => 0, 'showAlbumOwner' => 1,
@@ -118,7 +118,7 @@ class ClassicTheme extends GalleryTheme {
     function showAlbumPage(&$template, $item, $params, $childIds) {
 	$ret = $this->loadCommonTemplateData(
 	    $template, $item, $params,
-	    array('owner', 'viewCount', 'childCount', 'descendentCount', 'parents', 'peers',
+	    array('owner', 'viewCount', 'childCount', 'descendentCount', 'parents',
 		  'systemLinks', 'itemLinks', 'itemSummaries', 'permissions',
 		  'thumbnails', 'pageNavigator', 'jumpRange'),
 	     $childIds);
@@ -174,10 +174,10 @@ class ClassicTheme extends GalleryTheme {
      * @see GalleryTheme::showPhotoPage
      */
     function showPhotoPage(&$template, $item, $params) {
-	$dataTypes = array('owner', 'parents', 'peers', 'systemLinks', 'permissions',
+	$dataTypes = array('owner', 'parents', 'systemLinks', 'permissions',
 			   'itemLinks', 'itemLinksDetailed', 'itemNavigator', 'imageViews');
 	if (!empty($params['showMicroThumbs'])) {
-	    $dataTypes[] = 'peerThumbnails';
+	    $dataTypes[] = 'navThumbnails';
 	}
 	$ret = $this->loadCommonTemplateData($template, $item, $params, $dataTypes);
 	if ($ret->isError()) {

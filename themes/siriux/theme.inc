@@ -42,8 +42,8 @@ class SiriuxTheme extends GalleryTheme {
 	$this->setId('siriux');
 	$this->setName($gallery->i18n('Siriux'));
 	$this->setDescription($gallery->i18n('Siriux.net Gallery theme'));
-	$this->setVersion('0.9.8');
-	$this->setRequiredCoreApi(array(6, 0));
+	$this->setVersion('0.9.9');
+	$this->setRequiredCoreApi(array(6, 5));
 	$this->setRequiredThemeApi(array(2, 0));
 	$this->setStandardSettings(
 	    array('showImageOwner' => 0,
@@ -61,7 +61,7 @@ class SiriuxTheme extends GalleryTheme {
     function showAlbumPage(&$template, $item, $params, $childIds) {
 	$ret = $this->loadCommonTemplateData(
 	    $template, $item, $params,
-	    array('owner', 'viewCount', 'childCount', 'descendentCount', 'parents', 'peers',
+	    array('owner', 'viewCount', 'childCount', 'descendentCount', 'parents',
 		  'systemLinks', 'itemLinks', 'itemSummaries', 'permissions',
 		  'thumbnails', 'pageNavigator', 'jumpRange'),
 	     $childIds);
@@ -71,12 +71,11 @@ class SiriuxTheme extends GalleryTheme {
 
 	/* Override some navigator settings */
 	$theme =& $template->getVariableByReference('theme');
-	if (!isset($theme['navigator']['back']) && isset($theme['navigator']['first'])) {
-	    $theme['navigator']['back'] = $theme['navigator']['first'];
+	if (isset($theme['navigator']['first'])) {
+	    unset($theme['navigator']['first']);
 	}
-	$theme =& $template->getVariableByReference('theme');
-	if (!isset($theme['navigator']['next']) && isset($theme['navigator']['last'])) {
-	    $theme['navigator']['next'] = $theme['navigator']['last'];
+	if (isset($theme['navigator']['last'])) {
+	    unset($theme['navigator']['last']);
 	}
 
 	/* Add our header and styles */
@@ -87,24 +86,20 @@ class SiriuxTheme extends GalleryTheme {
      * @see GalleryTheme::showPhotoPage
      */
     function showPhotoPage(&$template, $item, $params) {
-	$dataTypes = array('owner', 'parents', 'peers', 'systemLinks', 'itemLinks', 'permissions',
-			   'itemLinksDetailed', 'itemNavigator', 'imageViews');
-	if (!empty($params['showMicroThumbs'])) {
-	    $dataTypes[] = 'peerThumbnails';
-	}
-	$ret = $this->loadCommonTemplateData($template, $item, $params, $dataTypes);
+	$ret = $this->loadCommonTemplateData($template, $item, $params,
+	    array('owner', 'parents', 'systemLinks', 'itemLinks', 'permissions',
+		  'itemLinksDetailed', 'itemNavigator', 'imageViews'));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Override some navigator settings */
 	$theme =& $template->getVariableByReference('theme');
-	if (!isset($theme['navigator']['back']) && isset($theme['navigator']['first'])) {
-	    $theme['navigator']['back'] = $theme['navigator']['first'];
+	if (isset($theme['navigator']['first'])) {
+	    unset($theme['navigator']['first']);
 	}
-	$theme =& $template->getVariableByReference('theme');
-	if (!isset($theme['navigator']['next']) && isset($theme['navigator']['last'])) {
-	    $theme['navigator']['next'] = $theme['navigator']['last'];
+	if (isset($theme['navigator']['last'])) {
+	    unset($theme['navigator']['last']);
 	}
 
 	return array(GalleryStatus::success(), 'theme.tpl');

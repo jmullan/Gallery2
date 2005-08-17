@@ -48,7 +48,11 @@ class SliderTheme extends GalleryTheme {
 	$this->setVersion('0.10.5');
 	$this->setRequiredCoreApi(array(6, 0));
 	$this->setRequiredThemeApi(array(2, 0));
-	$this->setStandardSettings(array('colorpack' => '', 'sidebarBlocks' => ''));
+	$this->setStandardSettings(array(
+	    'colorpack' => '',
+	    'sidebarBlocks' => serialize(array(
+		 array('search.SearchBlock', array('showAdvancedLink' => true)),
+		 array('imageblock.ImageBlock', array())))));
     }
 
     /**
@@ -167,28 +171,9 @@ class SliderTheme extends GalleryTheme {
     }
 
     /**
-     * @see GalleryTheme::upgrade
+     * Prepare data about items in this album.
+     * @access private
      */
-    function upgrade($installedVersion) {
-	if (empty($installedVersion) || version_compare($installedVersion, '0.10.5', '<')) {
-	    /* Older than the big theme changeover.  Set some default blocks */
-	    foreach (array('sidebarBlocks' => serialize(
-			     array(
-				 array('search.SearchBlock', array('showAdvancedLink' => true)),
-				 array('imageblock.ImageBlock', array()))),
-			   'colorpack' => '')
-		     as $key => $value) {
-		$ret = $this->setParameter($key, $value);
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-	    }
-	    $installedVersion = '0.10.5';
-	}
-
-	return GalleryStatus::success();
-    }
-
     function _buildItemList($childIds, &$children) {
 	$imageWidths = $imageHeights = $childItems = array();
 	if (!empty($childIds)) {

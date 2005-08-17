@@ -42,8 +42,8 @@ class MatrixTheme extends GalleryTheme {
 	$this->setId('matrix');
 	$this->setName($gallery->i18n('Matrix'));
 	$this->setDescription($gallery->i18n('Standard Gallery2 look and feel'));
-	$this->setVersion('0.9.9');  /* Update upgrade() also */
-	$this->setRequiredCoreApi(array(6, 0));
+	$this->setVersion('0.9.10');
+	$this->setRequiredCoreApi(array(6, 5));
 	$this->setRequiredThemeApi(array(2, 1));
 	$this->setStandardSettings(
 	    array('rows' => 3, 'columns' => 3,
@@ -51,9 +51,16 @@ class MatrixTheme extends GalleryTheme {
 		  'albumFrame' => '', 'itemFrame' => '', 'photoFrame' => '',
 		  'colorpack' => '',
 		  'showMicroThumbs' => 0,
-		  'sidebarBlocks' => '',
-		  'albumBlocks' => '',
-		  'photoBlocks' => ''));
+		  'sidebarBlocks' => serialize(array(
+			array('search.SearchBlock', array('showAdvancedLink' => true)),
+			array('core.ItemLinks', array('useDropdown' => false)),
+			array('core.PeerList', array()),
+			array('imageblock.ImageBlock', array()))),
+		  'albumBlocks' => serialize(array(
+			array('comment.ViewComments', array()))),
+		  'photoBlocks' => serialize(array(
+			array('exif.ExifInfo', array()),
+			array('comment.ViewComments', array())))));
     }
 
     /**
@@ -62,7 +69,7 @@ class MatrixTheme extends GalleryTheme {
     function showAlbumPage(&$template, $item, $params, $childIds) {
 	$ret = $this->loadCommonTemplateData(
 	    $template, $item, $params,
-	    array('owner', 'viewCount', 'childCount', 'descendentCount', 'parents', 'peers',
+	    array('owner', 'viewCount', 'childCount', 'descendentCount', 'parents',
 		  'systemLinks', 'itemLinks', 'itemSummaries', 'permissions',
 		  'thumbnails', 'pageNavigator', 'jumpRange'),
 	     $childIds);
@@ -82,10 +89,10 @@ class MatrixTheme extends GalleryTheme {
      * @see GalleryTheme::showPhotoPage
      */
     function showPhotoPage(&$template, $item, $params) {
-	$dataTypes = array('owner', 'parents', 'peers', 'systemLinks', 'itemLinks', 'permissions',
+	$dataTypes = array('owner', 'parents', 'systemLinks', 'itemLinks', 'permissions',
 			   'itemLinksDetailed', 'itemNavigator', 'imageViews');
 	if (!empty($params['showMicroThumbs'])) {
-	    $dataTypes[] = 'peerThumbnails';
+	    $dataTypes[] = 'navThumbnails';
 	}
 	$ret = $this->loadCommonTemplateData($template, $item, $params, $dataTypes);
 	if ($ret->isError()) {
@@ -139,64 +146,6 @@ class MatrixTheme extends GalleryTheme {
 	}
 
 	return array(GalleryStatus::success(), 'theme.tpl');
-    }
-
-    /**
-     * @see GalleryTheme::upgrade
-     */
-    function upgrade($installedVersion) {
-	global $gallery;
-
-	if (empty($installedVersion) || version_compare($installedVersion, '0.9.7', '<')) {
-	    /* Older than the big theme changeover.  Set some default blocks */
-	    $gallery->debug('Matrix theme upgrade to the new theme system');
-
-	    foreach (array(
-			 'sidebarBlocks' => serialize(
-			     array(
-				 array('search.SearchBlock', array('showAdvancedLink' => true)),
-				 array('core.ItemLinks', array('useDropdown' => false)),
-				 array('core.PeerList', array()),
-				 array('imageblock.ImageBlock', array()))),
-			 'albumBlocks' => serialize(
-			     array(array('comment.ViewComments', array()))),
-			 'photoBlocks' => serialize(
-			     array(
-				 array('exif.ExifInfo', array()),
-				 array('comment.ViewComments', array()))))
-		     as $key => $value) {
-		$ret = $this->setParameter($key, $value);
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-	    }
-	    $installedVersion = '0.9.7';
-	}
-
-	if ($gallery->getDebug()) {
-	    $gallery->debug(sprintf('Matrix theme upgrade, installed version is %s',
-				    $installedVersion));
-	}
-
-	switch ($installedVersion) {
-	case '0.9.7':
-	    $ret = $this->setParameter('colorpack', '');
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	case '0.9.8':
-	    /* We now require theme API 2.1 */
-
-	case 'end of upgrade path':
-	    break;
-
-	default:
-	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
-					sprintf('Unknown theme version %s', $installedVersion));
-	}
-
-	return GalleryStatus::success();
     }
 }
 ?>

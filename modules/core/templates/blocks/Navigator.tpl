@@ -21,12 +21,13 @@
   <div class="next-and-last{if !isset($navigator.first) &&
 			       !isset($navigator.back)} no-previous{/if}">
     {strip}
-    {if isset($navigator.next)}
+    {if isset($navigator.next) &&
+	(!isset($navigator.last) || $navigator.next.urlParams != $navigator.last.urlParams)}
     <a href="{g->url params=$navigator.next.urlParams}" class="next">
       {g->text text="next"}{$suffix}
-      {if isset($navigator.next.item.thumbnail)}
-      {g->image item=$navigator.next.item image=$navigator.next.item.thumbnail
-		maxSize=40 class="next"}
+      {if isset($navigator.next.thumbnail)}
+	{g->image item=$navigator.next.item image=$navigator.next.thumbnail
+		  maxSize=40 class="next"}
       {/if}
     </a>
     {/if}
@@ -34,9 +35,9 @@
     {if isset($navigator.last)}
     <a href="{g->url params=$navigator.last.urlParams}" class="last">
       {g->text text="last"}{$suffix}
-      {if isset($navigator.last.item.thumbnail)}
-      {g->image item=$navigator.last.item image=$navigator.last.item.thumbnail
-		maxSize=40 class="last"}
+      {if isset($navigator.last.thumbnail)}
+	{g->image item=$navigator.last.item image=$navigator.last.thumbnail
+		  maxSize=40 class="last"}
       {/if}
     </a>
     {/if}
@@ -49,7 +50,7 @@
       {g->text text="Page %d of %d" arg1=$currentPage arg2=$totalPages}
     {else}
       {if isset($currentItem)}
-        {g->text text="%d of %d" arg1=$currentItem arg2=$totalItems}
+	{g->text text="%d of %d" arg1=$currentItem arg2=$totalItems}
       {/if}
     {/if}
   </span>
@@ -59,19 +60,20 @@
     {strip}
     {if isset($navigator.first)}
     <a href="{g->url params=$navigator.first.urlParams}" class="first">
-      {if isset($navigator.first.item.thumbnail)}
-      {g->image item=$navigator.first.item image=$navigator.first.item.thumbnail
-                maxSize="40" border="0" class="first"}
+      {if isset($navigator.first.thumbnail)}
+	{g->image item=$navigator.first.item image=$navigator.first.thumbnail
+		  maxSize="40" class="first"}
       {/if}
       {$prefix}{g->text text="first"}
     </a>
     {/if}
 
-    {if isset($navigator.back)}
+    {if isset($navigator.back) &&
+	(!isset($navigator.first) || $navigator.back.urlParams != $navigator.first.urlParams)}
     <a href="{g->url params=$navigator.back.urlParams}" class="previous">
-      {if isset($navigator.back.item.thumbnail)}
-      {g->image item=$navigator.back.item image=$navigator.back.item.thumbnail
-                maxSize="40" class="previous"}
+      {if isset($navigator.back.thumbnail)}
+	{g->image item=$navigator.back.item image=$navigator.back.thumbnail
+		  maxSize="40" class="previous"}
       {/if}
       {$prefix}{g->text text="previous"}
     </a>

@@ -49,8 +49,9 @@
 
   {if !empty($theme.navigator)}
   <div class="gbBlock gbNavigator">
+    {g->callback type="core.LoadPeers" item=$theme.item windowSize=1}
     {g->block type="core.Navigator" navigator=$theme.navigator prefix="&laquo; " suffix=" &raquo;"
-	      currentItem=$theme.peers[$theme.peerItemIndex].peerIndex totalItems=$theme.peerCount}
+     currentItem=$block.core.LoadPeers.thisPeerIndex totalItems=$block.core.LoadPeers.peerCount}
   </div>
   {/if}
 

@@ -27,8 +27,8 @@
 class CoreCallbacks {
     function callback($params, &$smarty, $callback, $userId=null) {
 	global $gallery;
-
 	$block =& $smarty->_tpl_vars['block'];
+	$theme =& $smarty->_tpl_vars['theme'];
 
 	switch($callback) {
 	case 'LoadLanguageSelector':
@@ -53,7 +53,6 @@ class CoreCallbacks {
 	case 'ShouldShowEmergencyEditItemLink':
 	    $block['core']['ShouldShowEmergencyEditItemLink'] = false;
 	    if (isset($params['permissions']['core_edit'])) {
-		$theme =& $smarty->_tpl_vars['theme'];
 		$block['core']['ShouldShowEmergencyEditItemLink'] = true;
 		foreach (array('checkSidebarBlocks' => 'sidebarBlocks',
 			       'checkAlbumBlocks' => 'albumBlocks',
@@ -68,6 +67,82 @@ class CoreCallbacks {
 			}
 		    }
 		}
+	    }
+	    return GalleryStatus::success();
+
+	case 'LoadPeers':
+	    $item = $params['item'];
+	    $canViewParent = false;
+	    if ($item['parentId'] > 0) {
+		list ($ret, $canViewParent) = GalleryCoreApi::hasItemPermission(
+		    $item['parentId'], 'core.view', $theme['actingUserId']);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	    if ($canViewParent) {
+		list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($item['parentId']);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		list ($ret, $peerIds) =
+		    GalleryCoreApi::fetchChildItemIds($parent, null, null, $theme['actingUserId']);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		foreach ($peerIds as $i => $id) {
+		    if ($id == $item['id']) {
+			$peerItemIndex = $i;
+			break;
+		    }
+		}
+	    }
+	    if (isset($peerItemIndex)) {
+		$windowSize = isset($params['windowSize']) ? $params['windowSize'] : 6;
+		$peerLast = count($peerIds) - 1;
+		$peerNeighborStart = max($peerItemIndex - (int)($windowSize/2), 0);
+		$peerNeighborEnd = min($peerItemIndex + (int)($windowSize/2), $peerLast);
+		/* If the window is pinned to one end, expand it to the entire windowSize */
+		if ($peerNeighborStart == 0) {
+		    $peerNeighborEnd = min($peerLast, $windowSize-1);
+		} else if ($peerNeighborEnd == $peerLast) {
+		    $peerNeighborStart = max($peerLast - $windowSize, 0);
+		}
+		if ($peerNeighborStart > 0) {
+		    $peerMap[0] = $peerIds[0];
+		}
+		for ($i = $peerNeighborStart; $i <= $peerNeighborEnd; $i++) {
+		    $peerMap[$i] = $peerIds[$i];
+		}
+		if ($peerNeighborEnd < $peerLast) {
+		    $peerMap[$peerLast] = $peerIds[$peerLast];
+		}
+
+		list ($ret, $peerItems) = GalleryCoreApi::loadEntitiesById($peerMap);
+                if ($ret->isError()) {
+                    return $ret->wrap(__FILE__, __LINE__);
+                }
+		if (!empty($params['loadThumbnails'])) {
+		    list ($ret, $thumbTable) = GalleryCoreApi::fetchThumbnailsByItemIds($peerMap);
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		}
+		$j = 0;
+		foreach ($peerMap as $i => $id) {
+		    $peer = $peerItems[$j++]->getMemberData();
+		    $peer['peerIndex'] = $i + 1;
+		    if (isset($thumbTable[$id])) {
+			$peer['thumbnail'] = $thumbTable[$id]->getMemberData();
+		    }
+		    $peers[] = $peer;
+		}
+		$block['core']['LoadPeers'] = array('peers' => $peers,
+		    'peerCount' => count($peerIds), 'thisPeerIndex' => $peerItemIndex + 1,
+		    'parent' => $parent->getMemberData());
+	    } else {
+		$block['core']['LoadPeers'] =
+		    array('peers' => array(), 'peerCount' => 0);
 	    }
 	    return GalleryStatus::success();
 	}
