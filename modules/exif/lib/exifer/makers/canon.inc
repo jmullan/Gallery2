@@ -176,6 +176,7 @@ function formatCanonData($type,$tag,$intel,$data,&$result) {
 				if($result['Sharpness']==0) $result['Sharpness'] = "Normal";
 			$result['ISO']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//16
 				switch ($result['ISO']) {
+				case 0: break; // Will set from SubIFD/ISOSpeedRatings later
 				case 15: $result['ISO'] = "Auto"; break;
 				case 16: $result['ISO'] = "50"; break;
 				case 17: $result['ISO'] = "100"; break;
@@ -387,7 +388,15 @@ function parseCanon($block,&$result,$seek, $globalOffset) {
 			}
 		}
 		$formated_data = formatCanonData($type,$tag,$intel,$data,$result['SubIFD']['MakerNote'][$tag_name]);
-		
+
+		if (isset($result['SubIFD']['MakerNote'][$tag_name]['ISO']) &&
+			$result['SubIFD']['MakerNote'][$tag_name]['ISO'] == 0) {
+		    // Get ISO for models like Canon 300D
+		    $result['SubIFD']['MakerNote'][$tag_name]['ISO'] =
+			isset($result['SubIFD']['ISOSpeedRatings'])
+			? $result['SubIFD']['ISOSpeedRatings'] : 'Unknown';
+		}
+
 		if($result['VerboseOutput']==1) {
 			//$result['SubIFD']['MakerNote'][$tag_name] = $formated_data;
 			if($type=="URATIONAL" || $type=="SRATIONAL" || $type=="USHORT" || $type=="SSHORT" || $type=="ULONG" || $type=="SLONG" || $type=="FLOAT" || $type=="DOUBLE") {
