@@ -14,7 +14,7 @@
   {foreach from=$theme.systemLinks key=linkId item=link}
     {if !in_array($linkId, $order)}
     <span class="{$class}">
-      <a href="{g->url params=$link.params}"> {$link.text} </a>
+      <a href="{g->url params=$link.params}">{$link.text}</a>
     </span>
     {$separator}
     {/if}
@@ -28,9 +28,8 @@
   {/if}
   {if isset($theme.systemLinks[$linkId])}
   <span class="{$class}">
-    <a href="{g->url params=$theme.systemLinks[$linkId].params}">
-      {$theme.systemLinks[$linkId].text}
-    </a>
+    <a href="{g->url
+       params=$theme.systemLinks[$linkId].params}">{$theme.systemLinks[$linkId].text}</a>
   </span>
   {$separator}
   {/if}
