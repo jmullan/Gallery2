@@ -728,11 +728,11 @@ class GalleryRemoteView extends GalleryView {
 	}
 
 	if (isset($status['controllerError'])) {
-	    echo 'Error: ' . $status['controllerError']->getAsText();
+	    print 'Error: ' . $status['controllerError']->getAsText();
 	}
 
 	if (isset($status['controllerResponse'])) {
-	    echo $status['controllerResponse']->listProperties();
+	    print $status['controllerResponse']->listProperties();
 	}
 
 	if (isset($controllerError)) {
