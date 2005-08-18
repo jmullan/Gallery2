@@ -1395,18 +1395,6 @@ class ConfirmImportController extends GalleryController {
     }
 
     /**
-     * Inform the caller if this controller would make use of an immediate
-     * status view
-     *
-     * @return array object GalleryStatus a status code
-     *               boolean Can we use an immediate status view?
-     * @static
-     */
-    function canUseImmediateView() {
-	return true;
-    }
-
-    /**
      * Convert html according to given markup type
      * @param string markup type (none, bbcode, html)
      * @param string input string

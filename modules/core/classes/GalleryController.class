@@ -157,7 +157,7 @@ class GalleryController {
 
 	$controllerClassName = $class . 'Controller';
 	if (!class_exists($controllerClassName)) {
-	    $moduleBaseDir = dirname(__FILE__) . '/../../../'; 
+	    $moduleBaseDir = dirname(__FILE__) . '/../../../';
 	    $fileName = 'modules/' . $module . '/' . $class . '.inc';
 
 	    $platform = $gallery->getPlatform();
@@ -174,17 +174,6 @@ class GalleryController {
 	}
 
 	return array(GalleryStatus::success(), new $controllerClassName);
-    }
-
-    /**
-     * Inform the caller if this controller would make use of an immediate status view
-     *
-     * @return array object GalleryStatus a status code
-     *               boolean Can we use an immediate status view?
-     * @static
-     */
-    function canUseImmediateView() {
-	return false;
     }
 }
 ?>
