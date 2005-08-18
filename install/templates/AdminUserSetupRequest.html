@@ -4,14 +4,15 @@
     </p>
 
     <form method="post" action="">
-      <table class="adminForm">
+      <table>
 	<?php if ($templateData['freshInstall']): ?>
 	<tr>
-	  <td>
+	  <td class="label">
 	    <?php print _('Admin username') ?>
 	  </td>
 	  <td>
-	    <input type="text" name="adminName" value="<?php print $templateData['adminName']?>" />
+	    <input type="text" size="25"
+	     name="adminName" value="<?php print $templateData['adminName']?>" />
 	  </td>
 	</tr>
 	<?php if (isset($templateData['error']['invalid_adminName'])): ?>
@@ -23,7 +24,7 @@
 	<?php endif; ?>
 	<?php endif; ?>
 	<tr>
-	  <td>
+	  <td class="label">
 	    <?php if ($templateData['freshInstall']): ?>
 	    <?php print _('Password') ?>
 	    <?php else: ?>
@@ -31,8 +32,8 @@
 	    <?php endif; ?>
 	  </td>
 	  <td>
-	    <input name="passwordA" type="password"
-	     value="<?php print $templateData['passwordA']?>" />
+	    <input type="password" size="25"
+	     name="passwordA" value="<?php print $templateData['passwordA']?>" />
 	    <input type="hidden" name="action" value="create"/>
 	  </td>
 	</tr>
@@ -44,21 +45,22 @@
 	</tr>
 	<?php endif; ?>
 	<tr>
-	  <td>
+	  <td class="label">
 	    <?php print _('(type again)') ?>
 	  </td>
 	  <td>
-	    <input name="passwordB" type="password"
-	     value="<?php print $templateData['passwordB']?>" />
+	    <input type="password" size="25"
+	     name="passwordB" value="<?php print $templateData['passwordB']?>" />
 	  </td>
 	</tr>
 	<?php if ($templateData['freshInstall']): ?>
 	<tr>
-	  <td>
+	  <td class="label">
 	    <?php print _('Admin email address') ?>
 	  </td>
 	  <td>
-	    <input type="text" name="email" value="<?php print $templateData['email']?>" />
+	    <input type="text" size="25"
+	     name="email" value="<?php print $templateData['email']?>" />
 	  </td>
 	</tr>
 	<?php if (isset($templateData['error']['invalid_email'])): ?>
@@ -69,11 +71,12 @@
 	</tr>
 	<?php endif; ?>
 	<tr>
-	  <td>
+	  <td class="label">
 	    <?php print _('Admin full name (optional)') ?>
 	  </td>
 	  <td>
-	    <input type="text" name="fullName" value="<?php print $templateData['fullName']?>" />
+	    <input type="text" size="25"
+	     name="fullName" value="<?php print $templateData['fullName']?>" />
 	  </td>
 	</tr>
 	<?php endif; ?>

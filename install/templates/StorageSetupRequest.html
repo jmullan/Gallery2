@@ -20,18 +20,20 @@
     <form method="post" action="">
       <table>
 	<tr>
-	  <td style="text-align: left;">
+	  <td class="label">
 	    <?php print _('Directory path:') ?>
 	  </td>
 
 	  <td>
-	    <input id="dir" name="dir" type="text" size="50" value="<?php print $templateData['dir'] ?>" autocomplete="off"/>
+	    <input id="dir" name="dir" type="text" size="50"
+	     value="<?php print $templateData['dir'] ?>" autocomplete="off"/>
 	    <input type="hidden" name="action" value="save" />
-            <script type="text/javascript">
-              // <![CDATA[
-              autoCompleteAttach('dir', '<?php printf('%s?step=%s', INDEX_PHP, $currentStep->getStepNumber()) ?>&doAutoComplete=1&path=__VALUE__');
-              // ]]>
-            </script>
+	    <script type="text/javascript">
+	      // <![CDATA[
+	      autoCompleteAttach('dir', '<?php printf('%s?step=%s', INDEX_PHP,
+		  $currentStep->getStepNumber()) ?>&doAutoComplete=1&path=__VALUE__');
+	      // ]]>
+	    </script>
 	  </td>
 	</tr>
 
