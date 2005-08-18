@@ -282,13 +282,13 @@ class RewriteHelperTest extends GalleryTestCase {
 
     function testParseActiveRules() {
 	$activeRules = array('rewrite' => array(
-		array('pattern' => 'v/%path%',
-		      'match' => 'core.ShowItem'),
-		array('pattern' => 'd/%itemId%-%serialNumber%/%fileName%',
-		      'match' => 'core.DownloadItem'),
-		array('pattern' => 'admin/',
-		      'match' => 'core.SiteAdmin'),
-		array('pattern' => '%path%')));
+		0 => array('pattern' => 'v/%path%',
+			   'match' => 'core.ShowItem'),
+		1 => array('pattern' => 'd/%itemId%-%serialNumber%/%fileName%',
+			   'match' => 'core.DownloadItem'),
+		4 => array('pattern' => 'admin/',
+			   'match' => 'core.SiteAdmin'),
+		2 => array('pattern' => '%path%')));
 	$expected = array(
 		array('urlPattern' => 'admin/',
 		      'queryString' => 'g2_view=core.SiteAdmin',

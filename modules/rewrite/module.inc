@@ -39,7 +39,7 @@ class RewriteModule extends GalleryModule {
 	$this->setId('rewrite');
 	$this->setName($gallery->i18n('URL Rewrite'));
 	$this->setDescription($gallery->i18n('Enables short URLs using mod_rewrite.'));
-	$this->setVersion('0.9.17'); /* Update RewriteModuleExtras::upgrade also! */
+	$this->setVersion('0.9.18'); /* Update RewriteModuleExtras::upgrade also! */
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
 	$this->setRequiredCoreApi(array(6, 0));
@@ -194,12 +194,12 @@ class RewriteModule extends GalleryModule {
 	}
 	if (empty($activeRules)) {
 	    $activeRules = array('rewrite' => array(
-				  array('pattern' => 'v/%path%',
-					'match' => 'core.ShowItem'),
-				  array('pattern' => 'd/%itemId%-%serialNumber%/%fileName%',
-				      'match' => 'core.DownloadItem'),
-				  array('pattern' => 'admin/',
-				      'match' => 'core.SiteAdmin')
+				  0 => array('pattern' => 'v/%path%',
+					     'match' => 'core.ShowItem'),
+				  1 => array('pattern' => 'd/%itemId%-%serialNumber%/%fileName%',
+				             'match' => 'core.DownloadItem'),
+				  4 => array('pattern' => 'admin/',
+				             'match' => 'core.SiteAdmin')
 				  ));
 
 	    $ret = RewriteMap::setActiveRules($activeRules);
@@ -258,7 +258,7 @@ class RewriteModule extends GalleryModule {
 	    'path' => array(
 		'pattern' => '([^?]+)',
 		'help' => $this->translate('Path to an item (eg, /album/image.jpg.html)')));
-	$rules[] = $rule;
+	$rules[0] = $rule;
 
 	$rule = array();
 	$rule['comment'] = $this->translate('Download Item');
@@ -272,13 +272,13 @@ class RewriteModule extends GalleryModule {
 		'pattern' => '([^\/]+)',
 		'help' => $this->translate('Item file name (eg, image.jpg)'),
 		'ignore' => 1));
-	$rules[] = $rule;
+	$rules[1] = $rule;
 
 	$rule = array();
 	$rule['comment'] = $this->translate('Site Admin');
 	$rule['match'] = array('view' => 'core.SiteAdmin');
 	$rule['pattern'] = 'admin/';
-	$rules[] = $rule;
+	$rules[4] = $rule;
 
 	$rule = array();
 	$rule['comment'] = $this->translate('404 File Not Found');
@@ -288,7 +288,7 @@ class RewriteModule extends GalleryModule {
 	    'path' => array(
 		'pattern' => '([^?]+)'));
 	$rule['locked'] = 1;
-	$rules[] = $rule;
+	$rules[2] = $rule;
 
 	$rule = array();
 	$rule['comment'] = $this->translate('Block hotlinked items');
@@ -296,7 +296,7 @@ class RewriteModule extends GalleryModule {
 	$rule['locked'] = 1;
 	$rule['flags'] = array('F');
 	$rule['restrict'] = array('view' => 'core.DownloadItem');
-	$rules[] = $rule;
+	$rules[3] = $rule;
 
 	return $rules;
     }
