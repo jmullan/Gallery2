@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title>README: Gallery 2 Release Candidate 1 (+5 Insightful)</title>
+    <title>README: Gallery 2 Release Candidate 2 (kthxbye)</title>
     <style type="text/css">
       html {
 	font-family: "Lucida Grande", Verdana, Arial, sans-serif;
@@ -197,8 +197,8 @@
     </div>
 
     <p>
-      Welcome to Gallery 2.0. This is the first release candidate (RC)
-      of Gallery 2, code named &ldquo;<b>+5 Insightful</b>&rdquo;.
+      Welcome to Gallery 2.0. This is the second release candidate (RC)
+      of Gallery 2, code named &ldquo;<b>kthxbye</b>&rdquo;.
       Please read through this document carefully
       before installing Gallery 2 and before asking for help.  We have
       taken care to try to answer as many of your questions here as
@@ -209,14 +209,12 @@
     <h2><a name="quick_start">Quick Start</a></h2>
     <p>
       If you&rsquo;re impatient like us, you just want to get going.
-      The odds are that your system is all set to handle Gallery 2 so
-      just skip right to the <a href="install/index.php"
-      target="_guided">installer</a> and start clicking.  It should
-      walk you through everything you need to get going.  Before you
-      do that though, you really should read the <a
-      href="#when_to_use">When should I use it?</a> section.
-      <b>But</b> if you hit a snag, please come back here and read
-      more before asking questions!  Enjoy.
+      The odds are that your system is all set to handle Gallery 2 so just skip
+      right to the <a href="install/index.php" target="_guided">installer</a>
+      and start clicking.  It should walk you through everything you need to
+      get going.  Before you do that though, you really should read the
+      <a href="#when_to_use">When should I use it?</a> section.  If you hit
+      a snag, please come back here and read more before asking questions!  Enjoy.
     </p>
 
     <h2><a name="what_is_gallery">What is Gallery?</a></h2>
@@ -252,7 +250,10 @@
     <ul>
       <li>
 	Web server that can run <a href="http://php.net/">PHP</a>
-	(<a href="http://httpd.apache.org/docs/">Apache 1</a>, <a href="http://httpd.apache.org/docs-2.0/">Apache 2</a>, <a href="http://www.microsoft.com/WindowsServer2003/iis/default.mspx">IIS</a>, <a href="http://www.zeus.com/">Zeus</a>, etc)
+	(<a href="http://httpd.apache.org/docs/">Apache 1</a>,
+	<a href="http://httpd.apache.org/docs-2.0/">Apache 2</a>,
+	<a href="http://www.microsoft.com/WindowsServer2003/iis/default.mspx">IIS</a>,
+	<a href="http://www.zeus.com/">Zeus</a>, etc)
       </li>
       <li>
 	PHP version 4.x (4.1.0 or more recent) or 5.x (5.0.4 or more recent)
@@ -260,14 +261,17 @@
 	<b>Note:</b> <a href="http://us2.php.net/manual/en/features.safe-mode.php#ini.safe-mode">PHP's safe_mode</a> must be disabled!  Read <a href="http://gallery.menalto.com/index.php?name=PNphpBB2&amp;file=viewtopic&amp;t=2848">this forum thread</a> for a safe_mode discussion.
       </li>
       <li>
-	One of the following databases: <a href="http://mysql.com/">MySQL</a> 3.x or 4.x, <a href="http://www.postgresql.org/">PostgreSQL</a> 7.x, <a href="http://www.oracle.com/">Oracle</a> 9i or 10g
+	One of the following databases: <a href="http://mysql.com/">MySQL</a> 3.x or 4.x,
+	<a href="http://www.postgresql.org/">PostgreSQL</a> 7.x,
+	<a href="http://www.oracle.com/">Oracle</a> 9i or 10g
       </li>
       <li>
 	One of the following graphics toolkits: <a target="_blank"
 	href="http://netpbm.sourceforge.net/">NetPBM</a> 9.x or newer, <a target="_blank"
 	href="http://www.imagemagick.org/">ImageMagick</a> 5.x or newer, <a target="_blank"
 	href="http://php.net/gd">GD</a> 2.x or newer, <a target="_blank"
-	href="http://www.graphicsmagick.org/">GraphicsMagick</a> 1.x or newer (or else you get no thumbnails!)
+	href="http://www.graphicsmagick.org/">GraphicsMagick</a> 1.x or newer
+	(or else you get no thumbnails!)
       </li>
     </ul>
 
@@ -308,11 +312,50 @@
     </p>
 
     <h3>
+      Highlight of changes in Gallery 2 RC 2 (kthxbye)
+      <span id="rc2-toggle" class="toggle"
+       onclick="toggle('rc2-list', 'rc2-toggle')"> - </span>
+    </h3>
+    <ol id="rc2-list">
+      <li>
+	<b> Gallery 1 migration </b>
+	<ul>
+	  <li>
+	    Custom fields from G1 can now be imported if the Gallery 2 custom
+	    fields module is active.
+	  </li>
+	  <li>
+	    Restricted permissions are now set for imported photos and albums
+	    from G1 that are hidden.  G2 does not yet have a hidden feature so
+	    for now these items are restricted by permissions.
+	  </li>
+	  <li>
+	    Migration process now generates a report of any captions that
+	    were trunctated to fit the field size of title or summary in G2.
+	  </li>
+	</ul>
+      </li>
+      <li>
+	<b> Localization </b> - Some translation fixes including several updates
+	to better support right-to-left languages.  Gallery 2 now has 29 available
+	locales; over 90% translated in 6 languages, over 50% in 7 and partially
+	translated in 16 more!  We still bundle all language data with the modules..
+	eventually we will have separate downloadable translations.
+      </li>
+      <li>
+	<b> Date formats </b> - Customizable date/time formats defined in Site Admin.
+      </li>
+      <li>
+	Many, many bugs fixed.
+      </li>
+    </ol>
+
+    <h3>
       Highlight of changes in Gallery 2 RC 1 (+5 Insightful)
       <span id="rc1-toggle" class="toggle"
-       onclick="toggle('rc1-list', 'rc1-toggle')"> - </span>
+       onclick="toggle('rc1-list', 'rc1-toggle')"> + </span>
     </h3>
-    <ol id="rc1-list">
+    <ol id="rc1-list" style="display:none">
       <li>
 	<b> New Packages  </b> - You can now choose from <a href="#packages">four
 	different packages</a>: minimal, typical, full, and developer.
@@ -589,7 +632,9 @@
 	    Considerable progress in the API and documentation.
 	  </li>
 	  <li>
-	    Xaraya, PHP-Nuke, Tikipro, Drupal and Mambo integrations <a href="http://cvs.sourceforge.net/viewcvs.py/gallery/integration/gallery2/">available in CVS</a>.
+	    Xaraya, PHP-Nuke, Tikipro, Drupal and Mambo integrations
+	    <a href="http://cvs.sourceforge.net/viewcvs.py/gallery/integration/gallery2/">available
+	    in CVS</a>.
 	  </li>
 	</ul>
       </li>
@@ -736,7 +781,9 @@
 	    Added support for search and image block.
 	  </li>
 	  <li>
-	    Xaraya, PHP-Nuke, Tikipro and Drupal integrations <a href="http://cvs.sourceforge.net/viewcvs.py/gallery/integration/gallery2/">available in CVS</a>.
+	    Xaraya, PHP-Nuke, Tikipro and Drupal integrations
+	    <a href="http://cvs.sourceforge.net/viewcvs.py/gallery/integration/gallery2/">available
+	    in CVS</a>.
 	  </li>
 	</ul>
       </li>
@@ -1425,11 +1472,11 @@
 	checks are successful!
       </li>
       <li>
-	<b> Multisite Setup </b> - Gallery can support multiple independent sites with
+	<b> Installation Type </b> - Gallery can support multiple independent sites with
 	a single installation of the code.  Here you will select a standard single install
 	or the location of a new multisite install. There is more information about multisite
-	in the <a href="http://codex.gallery2.org/index.php/Gallery2:Multisite"target="_blank">
-	G2 Codex</a>.
+	in the <a href="http://codex.gallery2.org/index.php/Gallery2:Multisite"
+	target="_blank">G2 Codex</a>.
       </li>
       <li>
 	<b> Storage Setup </b> - Read the instructions on the
@@ -1722,24 +1769,44 @@
 
     <ol>
       <li>
-	<b>Login Problems</b> - In previous versions, there were known login / session problems.
-	As a consequence of our fix for this problem, you and all your Gallery users have to
-	delete old GALLERYSID cookie(s) in your browser if Gallery seems to ignore login requests.
+	<b>Theme upgrade</b> - In beta-4 all layouts have been replaced with the new
+	theme system.  During the upgrade process the layout setting on all albums
+	is cleared and the site-wide default theme is set to matrix.  You'll have to
+	reselect the default theme and any album specific settings to restore the
+	layout configuration in place prior to this upgrade.
       </li>
       <li>
 	<b>Performance</b> - There are still some tweaks that we can make to have it go faster,
 	but we won&rsquo;t get to them before the final release.
       </li>
       <li>
-	<b>URL Rewrite upgrade</b> - Upgrade from some older versions of the Rewrite module
-	may leave a .htaccess file in place that is incompatible with the current code.
-	If after upgrade you can no longer see thumbnails or navigate into subalbums then
-	visit URL Rewrite site admin and click Save on the Rules tab to resave .htaccess
-	and bring it up to date.
+	<b>Login Problems</b> - Before beta-4 there were known login / session problems.
+	As a consequence of our fix for this problem, you and all your Gallery users have to
+	delete old GALLERYSID cookie(s) in your browser if Gallery seems to ignore login requests.
+      </li>
+      <li>
+	<b>View names</b> - In beta-4 the naming convention for views changed from using
+	a colon separator to a period (core:ShowItem is now core.ShowItem).  All Gallery
+	code has been updated but there are a few places you should check to make sure
+	your site is up to date:
+	<ul>
+	  <li>
+	    Local tpl files: make sure to update all view names in your customized
+	    templates.  Compare to the current version of the default tpls if needed.
+	  </li>
+	  <li>
+	    External imageblock: update imageblock:External to imageblock.External in
+	    any uses of this feature.
+	  </li>
+	  <li>
+	    PublishXP: Select 'add items' / Windows XP and follow the directions to
+	    update your registry so it will reflect the new view name.
+	  </li>
+	</ul>
       </li>
       <li>
 	<a name="multisite"></a>
-	<b>Multisite config.php</b> - The multisite system has changed and old style
+	<b>Multisite config.php</b> - The multisite system changed in beta-4 and old style
 	multisite config.php files are no longer supported.  Follow these steps to move
 	your sites to the new system:
 	<ul>
@@ -1786,33 +1853,6 @@
 	    Note this is the URL for the primary site, not the site you are currently
 	    upgrading.  Save this change and finish the remaining steps of the upgrader.
 	    Make sure this site now works correctly.
-	  </li>
-	</ul>
-      </li>
-      <li>
-	<b>Theme upgrade</b> - In beta-4 all layouts have been replaced with the new
-	theme system.  During the upgrade process the layout setting on all albums
-	is cleared and the site-wide default theme is set to matrix.  You'll have to
-	reselect the default theme and any album specific settings to restore the
-	layout configuration in place prior to this upgrade.
-      </li>
-      <li>
-	<b>View names</b> - In beta-4 the naming convention for views changed from using
-	a colon separator to a period (core:ShowItem is now core.ShowItem).  All Gallery
-	code has been updated but there are a few places you should check to make sure
-	your site is up to date:
-	<ul>
-	  <li>
-	    Local tpl files: make sure to update all view names in your customized
-	    templates.  Compare to the current version of the default tpls if needed.
-	  </li>
-	  <li>
-	    External imageblock: update imageblock:External to imageblock.External in
-	    any uses of this feature.
-	  </li>
-	  <li>
-	    PublishXP: Select 'add items' / Windows XP and follow the directions to
-	    update your registry so it will reflect the new view name.
 	  </li>
 	</ul>
       </li>
@@ -1881,9 +1921,15 @@
 
       <a href="http://gallery.sourceforge.net"><img
 	  src="images/gallery.gif"
-	  alt="Gallery 2.0 RC-1"
-	  title="Gallery 2.0 RC-1"
+	  alt="Gallery 2.0 RC-2"
+	  title="Gallery 2.0 RC-2"
 	  style="border: none" width="80" height="15"/></a>
+
+      <img
+	  src="modules/core/data/g2rc2-kthxbye.png"
+	  alt="Gallery 2.0 RC-2"
+	  title="Gallery 2.0 RC-2"
+	  width="80" height="15"/>
     </p>
 
     <hr />

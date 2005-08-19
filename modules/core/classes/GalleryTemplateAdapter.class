@@ -550,15 +550,15 @@ class GalleryTemplateAdapter {
 		'style="border-style: none" width="80" height="15"/></a>';
 
 	case 'gallery2-version':
-	    return '';
-		/* sprintf(
+	    return sprintf(
 		'<a href="%s"><img src="%s" alt="%s" title="%s" ' .
 		'style="border-style: none" width="80" height="15"/></a>',
-		'http://www.google.com/search?q=%2B5+Insightful',
 		$urlGenerator->generateUrl(
-		    array('href' => 'modules/core/data/g2rc1-+5-insightful.png')),
-		$core->translate('G2RC1: +5 Insightful'),
-		$core->translate('G2RC1: +5 Insightful')); */
+		    array('href' => 'modules/core/data/g2rc2-kthxbye.mp3')),
+		$urlGenerator->generateUrl(
+		    array('href' => 'modules/core/data/g2rc2-kthxbye.png')),
+		$core->translate('G2RC2: kthxbye'),
+		$core->translate('G2RC2: kthxbye'));
 	}
     }
 
