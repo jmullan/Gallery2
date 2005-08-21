@@ -33,7 +33,7 @@
 GalleryCoreApi::relativeRequireOnce('modules/cart/classes/CartHelper.class');
 
 /**
- * This controller will handle the addition of a comment to an item
+ * This controller will handle adding an item to the cart.
  *
  * @package Cart
  * @subpackage UserInterface
