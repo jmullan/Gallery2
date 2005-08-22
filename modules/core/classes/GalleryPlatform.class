@@ -1117,14 +1117,15 @@ class GalleryPlatform {
     }
 
     /**
-     * Format a local time/date according to locale settings and convert to UTF-8
+     * Format a local time/date according to locale settings.
+     * Converts any text output from strftime tokens to UTF-8.
      * @param string format
      * @param (optional) int timestamp
      * @return string
      */
     function strftime($format, $timestamp=null) {
-	return GalleryCoreApi::convertToUtf8(
-	    isset($timestamp) ? strftime($format, $timestamp) : strftime($format));
+	return preg_replace('{(%.)}se', 'GalleryCoreApi::convertToUtf8(isset($timestamp) ' .
+	    '? strftime("$1", $timestamp) : strftime("$1"))', $format);
     }
 
     /**
