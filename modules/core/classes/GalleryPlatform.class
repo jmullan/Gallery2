@@ -1124,8 +1124,23 @@ class GalleryPlatform {
      * @return string
      */
     function strftime($format, $timestamp=null) {
-	return preg_replace('{(%.)}se', 'GalleryCoreApi::convertToUtf8(isset($timestamp) ' .
-	    '? strftime("$1", $timestamp) : strftime("$1"))', $format);
+	$i = 0;
+	$newFormat = '';
+	$textPieces = array('');
+	/* Separate text and tokens so we can convert only token output to UTF-8 */
+	foreach (preg_split('{(%.)}', $format, -1, PREG_SPLIT_DELIM_CAPTURE) as $piece) {
+	    if (++$i % 2) {
+		$textPieces[] = $piece;
+		$newFormat .= '&%%&s';
+	    } else {
+		$newFormat .= $piece;
+	    }
+	}
+	/* Call strftime and convert to UTF-8; escape % characters before sprintf */
+	$textPieces[0] = str_replace(array('%', '&%%&'), array('%%', '%'),
+	    GalleryCoreApi::convertToUtf8(
+		isset($timestamp) ? strftime($newFormat, $timestamp) : strftime($newFormat)));
+	return call_user_func_array('sprintf', $textPieces);
     }
 
     /**
