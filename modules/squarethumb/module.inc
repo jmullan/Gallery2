@@ -117,7 +117,7 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
     /**
      * @see GalleryModule::activate()
      */
-    function activate() {
+    function activate($postActivationEvent=true) {
 	global $gallery;
 
 	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation('image/x-portable-pixmap',
@@ -154,7 +154,7 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
 	    }
 	}
 
-	list ($ret, $redirect) = parent::activate();
+	list ($ret, $redirect) = parent::activate($postActivationEvent);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -210,10 +210,10 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
     /**
      * @see GalleryModule::deactivate()
      */
-    function deactivate() {
+    function deactivate($postDeactivationEvent=true) {
 	global $gallery;
 
-	list ($ret, $redirect) = parent::deactivate();
+	list ($ret, $redirect) = parent::deactivate($postDeactivationEvent);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

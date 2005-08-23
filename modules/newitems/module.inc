@@ -97,24 +97,25 @@ class NewItemsModule extends GalleryModule {
     /**
      * @see GalleryModule::deactivate()
      */
-    function deactivate() {
+    function deactivate($postDeactivationEvent=true) {
 	GalleryCoreApi::relativeRequireOnce('modules/newitems/classes/NewItemsHelper.class');
 	list ($ret, $count) = NewItemsHelper::fetchAlbumCount();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	list ($ret, $default) = GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderBy');
+	list ($ret, $default) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderBy');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if ($count > 0 || strpos($default, 'NewItems') !== false) {
-	    // Can't deactivate if NewItems sort is in use..
+	    /* Can't deactivate if NewItems sort is in use */
 	    return array(GalleryStatus::success(),
 			 array('view' => 'core.SiteAdmin',
 			       'subView' => 'newitems.NewItemsSiteAdmin'));
 	}
 
-	list ($ret, $redirect) = parent::deactivate();
+	list ($ret, $redirect) = parent::deactivate($postDeactivationEvent);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

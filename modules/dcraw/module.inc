@@ -66,7 +66,7 @@ class DcrawModule extends GalleryModule {
     /**
      * @see GalleryModule::activate
      */
-    function activate() {
+    function activate($postActivationEvent=true) {
 	global $gallery;
 
         list ($ret, $priority) = GalleryCoreApi::getToolkitPriorityById('Dcraw');
@@ -108,7 +108,7 @@ class DcrawModule extends GalleryModule {
 	    }
 	}
 
-	list ($ret, $redirect) = parent::activate();
+	list ($ret, $redirect) = parent::activate($postActivationEvent);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -119,7 +119,7 @@ class DcrawModule extends GalleryModule {
     /**
      * @see GalleryModule::deactivate
      */
-    function deactivate() {
+    function deactivate($postDeactivationEvent=true) {
 	/*
 	 * Unregister all of our properties and operations.  Do this before the parent deactivates
 	 * so that any event handlers triggered by the deactivation will see the world as it will
@@ -130,7 +130,7 @@ class DcrawModule extends GalleryModule {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $redirect) = parent::deactivate();
+	list ($ret, $redirect) = parent::deactivate($postDeactivationEvent);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

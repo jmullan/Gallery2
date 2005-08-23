@@ -127,14 +127,14 @@ class CaptchaModule extends GalleryModule {
     /**
      * @see GalleryModule::activate()
      */
-    function activate() {
+    function activate($postActivationEvent=true) {
 	/* Set some reasonable defaults */
 	$ret = $this->setParameter('failedAttemptThreshold', 3);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), false);
 	}
 
-	list ($ret, $redirect) = parent::activate();
+	list ($ret, $redirect) = parent::activate($postActivationEvent);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

@@ -122,7 +122,7 @@ class PanoramaModule extends GalleryModule {
     /**
      * @see GalleryModule::deactivate()
      */
-    function deactivate() {
+    function deactivate($postDeactivationEvent=true) {
 	GalleryCoreApi::relativeRequireOnce('modules/panorama/classes/PanoramaHelper.class');
 	list ($ret, $count) = PanoramaHelper::fetchItemCount();
 	if ($ret->isError()) {
@@ -135,7 +135,7 @@ class PanoramaModule extends GalleryModule {
 			       'subView' => 'panorama.PanoramaSiteAdmin'));
 	}
 
-	list ($ret, $redirect) = parent::deactivate();
+	list ($ret, $redirect) = parent::deactivate($postDeactivationEvent);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

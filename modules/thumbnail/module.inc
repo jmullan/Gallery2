@@ -239,7 +239,7 @@ class ThumbnailModule extends GalleryModule {
     /**
      * @see GalleryModule::activate()
      */
-    function activate() {
+    function activate($postActivationEvent=true) {
 	GalleryCoreApi::relativeRequireOnce('modules/thumbnail/classes/ThumbnailHelper.class');
 	global $gallery;
 
@@ -290,7 +290,7 @@ class ThumbnailModule extends GalleryModule {
 	    }
 	}
 
-	list ($ret, $redirect) = parent::activate();
+	list ($ret, $redirect) = parent::activate($postActivationEvent);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -301,10 +301,10 @@ class ThumbnailModule extends GalleryModule {
     /**
      * @see GalleryModule::deactivate()
      */
-    function deactivate() {
+    function deactivate($postDeactivationEvent=true) {
 	global $gallery;
 
-	list ($ret, $redirect) = parent::deactivate();
+	list ($ret, $redirect) = parent::deactivate($postDeactivationEvent);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

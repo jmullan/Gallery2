@@ -138,7 +138,7 @@ class ArchiveUploadModule extends GalleryModule {
     /**
      * @see GalleryModule::activate()
      */
-    function activate() {
+    function activate($postActivationEvent=true) {
 	$ret = GalleryCoreApi::registerToolkitOperation('ArchiveUpload',
 							array('application/zip'),
 							'extract',
@@ -148,7 +148,7 @@ class ArchiveUploadModule extends GalleryModule {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $redirect) = parent::activate();
+	list ($ret, $redirect) = parent::activate($postActivationEvent);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -159,8 +159,8 @@ class ArchiveUploadModule extends GalleryModule {
     /**
      * @see GalleryModule::deactivate()
      */
-    function deactivate() {
-	list ($ret, $redirect) = parent::deactivate();
+    function deactivate($postDeactivationEvent=true) {
+	list ($ret, $redirect) = parent::deactivate($postDeactivationEvent);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

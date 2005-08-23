@@ -91,7 +91,7 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
     /**
      * @see GalleryModule::activate()
      */
-    function activate() {
+    function activate($postActivationEvent=true) {
 	list ($ret, $page) = $this->_getSupportedMultiPageTypes();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -116,7 +116,7 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
 	    }
 	}
 
-	list ($ret, $redirect) = parent::activate();
+	list ($ret, $redirect) = parent::activate($postActivationEvent);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

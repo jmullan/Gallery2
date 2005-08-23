@@ -169,7 +169,7 @@ class ExifModule extends GalleryModule {
     /**
      * @see GalleryModule::activate
      */
-    function activate() {
+    function activate($postActivationEvent=true) {
 	global $gallery;
 	$ret = GalleryCoreApi::registerToolkitProperty(
 		'Exif',
@@ -181,7 +181,7 @@ class ExifModule extends GalleryModule {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $redirect) = parent::activate();
+	list ($ret, $redirect) = parent::activate($postActivationEvent);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
