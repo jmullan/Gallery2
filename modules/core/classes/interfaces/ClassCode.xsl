@@ -23,7 +23,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 /**
  * @package @@package@@
@@ -101,7 +101,8 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
     <xsl:apply-templates select="map" />
     <xsl:apply-templates select="member" />
 }
-?&gt;</xsl:template>
+?&gt;
+</xsl:template>
 
   <xsl:template match="map">
     /**
