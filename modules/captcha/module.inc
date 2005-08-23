@@ -107,7 +107,11 @@ class CaptchaModule extends GalleryModule {
      */
     function autoConfigure() {
 	/* We need to perform a test before activating */
-	return array(GalleryStatus::success(), true);
+	list ($ret, $needsConfiguration) = $this->needsConfiguration();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return array(GalleryStatus::success(), !$needsConfiguration);
     }
 
     /**
