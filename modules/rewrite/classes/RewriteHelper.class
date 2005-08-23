@@ -293,7 +293,8 @@ class RewriteHelper {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$status = unserialize($status);
+	/* autoConfigure may be called from upgrader before 'status' is set: */
+	$status = !empty($status) ? unserialize($status) : array();
 	if (isset($status['forced'])) {
 	    return array(GalleryStatus::success(), REWRITE_STATUS_OK);
 	}
