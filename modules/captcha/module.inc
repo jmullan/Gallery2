@@ -109,7 +109,7 @@ class CaptchaModule extends GalleryModule {
 	/* We need to perform a test before activating */
 	list ($ret, $needsConfiguration) = $this->needsConfiguration();
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	return array(GalleryStatus::success(), !$needsConfiguration);
     }
