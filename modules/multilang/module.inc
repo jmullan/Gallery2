@@ -112,8 +112,12 @@ class MultiLangModule extends GalleryModule /* and GalleryEventListener */ {
      * @see GalleryModule::autoConfigure()
      */
     function autoConfigure() {
-	/* We don't require any special configuration */
-	return array(GalleryStatus::success(), true);
+	/* This module requires gettext to be installed */
+	list ($ret, $needsConfiguration) = $this->needsConfiguration();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return array(GalleryStatus::success(), !$needsConfiguration);
     }
 
     /**
