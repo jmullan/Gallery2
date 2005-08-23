@@ -63,7 +63,7 @@ class SystemChecksStep extends UpgradeStep {
 
     function loadTemplateData(&$templateData) {
 	global $gallery;
-	
+
 	$failCount = 0;
 
 	$suggestedHtaccess = array();
@@ -220,7 +220,7 @@ class SystemChecksStep extends UpgradeStep {
 	    $templateData['check'][] =
 		array('title' => $title, 'success' => true);
 	}
-	
+
 	/* Check all files against MANIFEST */
 	$title = _('Gallery file integrity');
 	if (!SystemChecksStep::CheckFileDirective()) {
@@ -278,7 +278,7 @@ class SystemChecksStep extends UpgradeStep {
 	} else if ($storagePath{strlen($storagePath)-1} != $platform->getDirectorySeparator()) {
 	    $storagePath .= $platform->getDirectorySeparator();
 	}
-	
+
 	/* An exhaustive test would take too long, test a few dirs / files */
 	foreach (array('.', 'versions.dat', 'albums') as $path) {
 	    $path = $storagePath . $path;
@@ -307,11 +307,11 @@ class SystemChecksStep extends UpgradeStep {
 	global $gallery;
 
 	$platform = $gallery->getPlatform();
-	
+
 	if (!($fd = $platform->opendir($dirname))) {
 	    return false;
 	}
-	
+
 	while (($filename = $platform->readdir($fd)) !== false && $tested < $max) {
 	    if (!strcmp($filename, '.') || !strcmp($filename, '..')) {
 		continue;
@@ -320,10 +320,11 @@ class SystemChecksStep extends UpgradeStep {
 	    $tested++;
 	    $path = $dirname . $platform->getDirectorySeparator() . $filename;
 
-	    if (!$platform->is_writeable($path) || !$platform->is_readable($path)) {
+	    if (!$platform->is_link($path) &&
+		(!$platform->is_writeable($path) || !$platform->is_readable($path))) {
 		return false;
 	    }
-	    
+
 	    if ($platform->is_dir($path) && $tested < $max) {
 		/* Threshold not yet reached, check subdirectory tree */
 		if (!SystemChecksStep::_checkStorageSubDirectory($path, $tested, $max)) {
