@@ -1475,6 +1475,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
      */
     function configureStore($moduleId) {
 	global $gallery;
+	$gallery->guaranteeTimeLimit(20);
 
 	if (empty($this->_db)) {
 	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION, __FILE__, __LINE__);
@@ -1538,6 +1539,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	 * version.  If so, apply it.
 	 */
 	foreach ($tableDefinition as $rawTableName => $sqlFile) {
+	    $gallery->guaranteeTimeLimit(20);
 	    list ($tableName, $unused, $tableNameInSchema) =
 		$this->_translateTableName($rawTableName);
 	    if (!in_array(strtolower($tableName), $metatables)) {
@@ -1648,6 +1650,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 			$gallery->debug("Table $rawTableName: missing entry in Schema table");
 		    }
 		} else {
+		    $gallery->guaranteeTimeLimit(20);
 		    list ($major,  $minor) = $tableVersions[$tableNameInSchema];
 		    if (!empty($tableDelete[$rawTableName][$major][$minor])) {
 			$ret = $this->_executeSqlFile($tableDelete[$rawTableName][$major][$minor]);
