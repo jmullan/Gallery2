@@ -275,7 +275,8 @@ class NetPbmToolkitHelper {
 		    $tests[] = $test;
 		} else {
 		    if (!isset($module)) {
-			list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'netpbm');
+			/* Only used for translation, so ignore version mismatch during upgrade */
+			list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'netpbm', true);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null, null);
 			}
