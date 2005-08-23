@@ -1766,17 +1766,17 @@ $gallery->setConfig(\'cookieId\', \'' . $cookieId . '\');
 			array('application/x-director', 'application/x-shockwave-flash'));
 	$regs[] = array('GalleryItem', 'GalleryUnknownItem', 'class', array('*'));
 	$regs[] = array('GallerySearchInterface_1_0', 'GalleryCoreSearch', 'class', null);
-	$regs[] = array('ItemEditPlugin', 'ItemEditItem', 'inc', null);
-	$regs[] = array('ItemEditPlugin', 'ItemEditAnimation', 'inc', null);
-	$regs[] = array('ItemEditPlugin', 'ItemEditMovie', 'inc', null);
-	$regs[] = array('ItemEditPlugin', 'ItemEditAlbum', 'inc', null);
-	$regs[] = array('ItemEditPlugin', 'ItemEditTheme', 'inc', null);
-	$regs[] = array('ItemEditPlugin', 'ItemEditPhoto', 'inc', null);
-	$regs[] = array('ItemEditPlugin', 'ItemEditRotateAndScalePhoto', 'inc', null);
-	$regs[] = array('ItemEditPlugin', 'ItemEditPhotoThumbnail', 'inc', null);
-	$regs[] = array('ItemAddPlugin', 'ItemAddFromBrowser', 'inc', null);
-	$regs[] = array('ItemAddPlugin', 'ItemAddFromServer', 'inc', null);
-	$regs[] = array('ItemAddPlugin', 'ItemAddFromWeb', 'inc', null);
+	$regs[] = array('ItemEditPlugin', 'ItemEditItem', 'inc', null, 1);
+	$regs[] = array('ItemEditPlugin', 'ItemEditAnimation', 'inc', null, 2);
+	$regs[] = array('ItemEditPlugin', 'ItemEditMovie', 'inc', null, 2);
+	$regs[] = array('ItemEditPlugin', 'ItemEditAlbum', 'inc', null, 2);
+	$regs[] = array('ItemEditPlugin', 'ItemEditTheme', 'inc', null, 3);
+	$regs[] = array('ItemEditPlugin', 'ItemEditPhoto', 'inc', null, 2);
+	$regs[] = array('ItemEditPlugin', 'ItemEditRotateAndScalePhoto', 'inc', null, 3);
+	$regs[] = array('ItemEditPlugin', 'ItemEditPhotoThumbnail', 'inc', null, 4);
+	$regs[] = array('ItemAddPlugin', 'ItemAddFromBrowser', 'inc', null, 2);
+	$regs[] = array('ItemAddPlugin', 'ItemAddFromServer', 'inc', null, 3);
+	$regs[] = array('ItemAddPlugin', 'ItemAddFromWeb', 'inc', null, 4);
 	$regs[] = array('ItemAddOption', 'CreateThumbnailOption', 'inc', null);
 	$regs[] = array('MaintenanceTask', 'OptimizeDatabaseTask', 'class', null);
 	$regs[] = array('MaintenanceTask', 'FlushTemplatesTask', 'class', null);
@@ -1803,7 +1803,7 @@ $gallery->setConfig(\'cookieId\', \'' . $cookieId . '\');
 		$entry[2] == 'class' ?
 		  sprintf('modules/core/classes/%s.class', $entry[1]) :
 		  sprintf('modules/core/%s.inc', $entry[1]),
-		'core', $entry[3], 4);
+		'core', $entry[3], isset($entry[4]) ? $entry[4] : 4);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
