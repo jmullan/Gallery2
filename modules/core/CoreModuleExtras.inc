@@ -1167,6 +1167,9 @@ class CoreModuleExtras {
 		}
 	    }
 
+	case '0.9.35':
+	    /* Release Candidate 2! */
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
@@ -1337,6 +1340,7 @@ $gallery->setConfig(\'cookieId\', \'' . $cookieId . '\');
 	case '0.9.32':
 	case '0.9.33':
 	case '0.9.34':
+	case '0.9.35':
 
 	case 'end of upgrade path':
 	    /*
