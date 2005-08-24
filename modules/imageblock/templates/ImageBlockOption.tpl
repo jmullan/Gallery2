@@ -18,6 +18,6 @@
   <input type="checkbox" id="ImageBlockOption_setRecursive" checked="checked"
    name="{g->formVar var="form[ImageBlockOption][setRecursive]"}"/>
   <label for="ImageBlockOption_setRecursive">
-    {g->text text="Apply to sub-albums"}
+    {g->text text="Apply ImageBlock settings to sub-albums"}
   </label>
 </div>
