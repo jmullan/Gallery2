@@ -346,6 +346,11 @@
 	<b> Date formats </b> - Customizable date/time formats defined in Site Admin.
       </li>
       <li>
+	<b> Security </b> - Fixed minor cross site scripting flaw
+	where uploaded images could contain <script> tags in their
+	EXIF and IPTC keywords.
+      </li>
+      <li>
 	Many, many bugs fixed.
       </li>
     </ol>
@@ -1354,7 +1359,7 @@
 	href="http://www.graphicsmagick.org/"
 	target="_blank">GraphicsMagick</a>.  They&rsquo;re all equally good,
 	though some say that NetPBM has slightly better quality and
-	that ImageMagick is slightly faster than NetPBM. GraphicsMagick and 
+	that ImageMagick is slightly faster than NetPBM. GraphicsMagick and
         ImageMagick are very similar. GD can be
 	very fast, but it will also use a lot of memory so it may
 	cause you to run into predefined server limits.  It is also

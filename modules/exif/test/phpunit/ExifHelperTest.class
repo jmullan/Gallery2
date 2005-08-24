@@ -149,6 +149,25 @@ class ExifHelperTest extends GalleryTestCase {
     }
 
     /**
+     * Make sure that we sanitize EXIF data as if it were any other input data
+     */
+    function testGetExifDataWithEmbeddedScript() {
+	$ret = ExifPropertiesMap::setProperties(EXIF_SUMMARY, array('Copyright'));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $exifData) = ExifHelper::getExifData(
+	    dirname(__FILE__) . '/../data/exif-embedded-script.jpg', EXIF_SUMMARY);
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('Copyright', $exifData[0]['title']);
+	$this->assertEquals('&lt;script&gt;&lt;/script&gt;', $exifData[0]['value']);
+    }
+
+    /**
      * Test getting all the EXIF keys
      */
     function testGetExifKeys() {
@@ -367,6 +386,25 @@ class ExifHelperTest extends GalleryTestCase {
 	    'caption with german umlauts and sharp s: ' .
 		"\xC3\xA4\xC3\xB6\xC3\xBC\xC3\x84\xC3\x96\xC3\x9C\xC3\x9F",
 	    $data, 'IPTC/Caption ISO-8859-1 mismatch');
+    }
+
+    /**
+     * Make sure that we sanitize IPTC data as if it were any other input data
+     */
+    function testGetIptcDataWithEmbeddedScript() {
+	$ret = ExifPropertiesMap::setProperties(EXIF_SUMMARY, array('IPTC/Keywords'));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $exifData) = ExifHelper::getExifData(
+	    dirname(__FILE__) . '/../data/iptc-embedded-script.jpg', EXIF_SUMMARY);
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('IPTC: Keywords', $exifData[0]['title']);
+	$this->assertEquals('&lt;script&gt;&lt;/script&gt;', $exifData[0]['value']);
     }
 
     /**

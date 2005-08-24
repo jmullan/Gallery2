@@ -298,6 +298,8 @@ class ExifHelper {
     function postProcessValue($property, $value) {
 	global $gallery;
 
+	GalleryUtilities::sanitizeInputValues($value);
+
 	switch($property) {
 	case 'ShutterSpeedValue':
 	    /* Convert "25/10000 sec" to "1/400 sec" */
