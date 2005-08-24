@@ -179,7 +179,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->_activeUserId = $gallery->getActiveUserId();
+	$this->_adminGroupId = (int)$this->_adminGroupId;
     }
 
     function tearDown() {
@@ -789,7 +789,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				       'permission' => 'core.viewSource');
 	$expectedPermissions[] = array('userId' => 0, 'groupId' => $this->_adminGroupId,
 				       'permission' => 'core.all');
-	$expectedPermissions[] = array('userId' => $this->_activeUserId, 'groupId' => 0,
+	$expectedPermissions[] = array('userId' => $this->_adminUser->getId(), 'groupId' => 0,
 				       'permission' => 'core.all');
 
 	usort($expectedPermissions, array($this, '_sortByPermission'));
@@ -899,7 +899,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				       'permission' => 'core.viewSource');
 	$expectedPermissions[] = array('userId' => 0, 'groupId' => $this->_adminGroupId,
 				       'permission' => 'core.all');
-	$expectedPermissions[] = array('userId' => $this->_activeUserId, 'groupId' => 0,
+	$expectedPermissions[] = array('userId' => $this->_adminUser->getId(), 'groupId' => 0,
 				       'permission' => 'core.all');
 
 	list ($ret, $permissions) = GalleryCoreApi::fetchAllPermissionsForItem($testAlbumId, true);
