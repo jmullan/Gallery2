@@ -1,0 +1,102 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Required classes
+ */
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryEventListener.class');
+
+/**
+ * Test Event functionality
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class EventTest extends GalleryTestCase {
+
+    function EventTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function testPostEvent() {
+	$eventName = 'EventTest::test';
+
+	$listener = new EventTestEventListener($this);
+	GalleryCoreApi::registerEventListener($eventName, $listener);
+
+	$event = GalleryCoreApi::newEvent($eventName);
+	$event->setEntity("bogus entity");
+	$event->setData('some data');
+	list ($ret, $result) = GalleryCoreApi::postEvent($event);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($event, $listener->getEvent());
+	$this->assertEquals(array(), $result);
+    }
+
+    function testPostEventReturnData() {
+	$eventName = 'EventTest::test2';
+
+	$listener = new EventTestEventListener($this);
+	GalleryCoreApi::registerEventListener($eventName, $listener);
+
+	$event = GalleryCoreApi::newEvent($eventName);
+	$event->setEntity("bogus entity");
+	$event->setData('send result');
+	list ($ret, $result) = GalleryCoreApi::postEvent($event);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($event, $listener->getEvent());
+	$this->assertEquals(array('result'), $result);
+    }
+}
+
+/**
+ * Dummy event listener
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class EventTestEventListener extends GalleryEventListener {
+    var $_event;
+
+    function handleEvent($event) {
+	$this->_event = $event;
+	$data = $event->getData();
+	$result = ($data == 'send result') ? 'result' : null;
+
+	return array(GalleryStatus::success(), $result);
+    }
+
+    function getEvent() {
+	return $this->_event;
+    }
+}
+?>

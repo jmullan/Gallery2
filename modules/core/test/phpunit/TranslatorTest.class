@@ -1,0 +1,211 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Test Translator functionality
+ *
+ * Note: This file contains UTF-8 characters!
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ *
+ */
+class TranslatorTest extends GalleryTestCase {
+
+    function TranslatorTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	global $gallery;
+	parent::setUp();
+
+	list ($ret, $this->_languageCode) = $gallery->getActiveLanguageCode();
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function tearDown() {
+	global $gallery;
+	$ret = $gallery->setActiveLanguageCode($this->_languageCode);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Init a new translator so that we reset our locale */
+	$translator = new GalleryTranslator();
+	$translator->init($this->_languageCode);
+
+	parent::tearDown();
+    }
+
+    function testGetLanguageCodeFromRequest() {
+	global $gallery;
+	$origLang = getenv('LANG');
+
+	/* Init with a null language code and a valid accept language */
+	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'de';
+	$translator = new GalleryTranslator();
+	$translator->init();
+	if (function_exists('dgettext')) {
+	    $this->assertEquals('de_DE', getenv('LANG'), 'null init, valid language');
+	} else {
+	    $this->assertEquals($origLang, getenv('LANG'), 'null init, lang unchanged');
+	}
+
+	/* Init with a null language code and a valid accept language/country */
+	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'pt_BR';
+	$translator = new GalleryTranslator();
+	$translator->init();
+	if (function_exists('dgettext')) {
+	    $this->assertEquals('pt_BR', getenv('LANG'), 'null init, valid language/country');
+	} else {
+	    $this->assertEquals($origLang, getenv('LANG'), 'null init, lang unchanged 2');
+	}
+
+	/* Invalid accept language/country */
+	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'xx_YY';
+	$this->assertEquals('en_US', $translator->getLanguageCodeFromRequest(), 'invalid locale');
+
+	/* Invalid,valid accept language */
+	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'xx,no';
+	$this->assertEquals('no_NO', $translator->getLanguageCodeFromRequest(),
+			    'invalid, valid language');
+
+	/* Init with a real language code */
+	$translator = new GalleryTranslator();
+	$translator->init('no_NO');
+	if (function_exists('dgettext')) {
+	    $this->assertEquals('no_NO', getenv('LANG'), 'valid init');
+	} else {
+	    $this->assertEquals($origLang, getenv('LANG'), 'valid init, lang unchanged');
+	}
+    }
+
+    function testTranslateSingular() {
+	global $gallery;
+
+	$domain = 'modules_core';
+	$translator = new GalleryTranslator();
+	$translator->init('es_AR');
+
+	/* Singular text data */
+	list ($ret, $results) =
+	    $translator->translateDomain($domain, array('text' => 'Description'));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	if ($translator->canTranslate()) {
+	    $this->assertEquals('Descripci&oacute;n', $results);
+	} else {
+	    $this->assertEquals('Description', $results);
+	}
+
+	/* Test something with some non-ascii in the result */
+	$translator->init('fr_FR');
+	list ($ret, $results) =
+	    $translator->translateDomain($domain, array('text' => 'Create'));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	if ($translator->canTranslate()) {
+	    $this->assertEquals('Créer', $results);
+	} else {
+	    $this->assertEquals('Create', $results);
+	}
+    }
+
+    function testTranslatePlural() {
+	global $gallery;
+
+	$domain = 'modules_core';
+	$translator = new GalleryTranslator();
+	$translator->init('es_AR');
+
+	/* Plural text data, count=1 */
+	list ($ret, $results) =
+	    $translator->translateDomain($domain,
+					 array('one' => '%d user matches your filter',
+					       'many' => '%d users match your filter',
+					       'count' => 1,
+					       'arg1' => 1));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	if ($translator->canTranslate()) {
+	    $this->assertEquals('1 usuario coincide con su filtro', $results);
+	} else {
+	    $this->assertEquals('1 user matches your filter', $results);
+	}
+
+	/* Plural text data, count=2 (plural) */
+	list ($ret, $results) =
+	    $translator->translateDomain($domain,
+					 array('one' => '%d user matches your filter',
+					       'many' => '%d users match your filter',
+					       'count' => 2,
+					       'arg1' => 2));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	if ($translator->canTranslate()) {
+	    if ($translator->canTranslatePlural()) {
+		$this->assertEquals('2 usuarios coinciden con su filtro', $results);
+	    } else {
+		$this->assertEquals('2 usuario coincide con su filtro', $results);
+	    }
+	} else {
+	    $this->assertEquals('2 users match your filter', $results);
+	}
+    }
+
+    function testTranslateCharset() {
+	global $gallery;
+
+	$domain = 'modules_core';
+
+	$translator = new GalleryTranslator();
+	$translator->init('pt_BR');
+
+	/* Singular text data */
+	list ($ret, $results) =
+	    $translator->translateDomain($domain, array('text' => 'Album'));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	if ($translator->canTranslate()) {
+	    $this->assertEquals('Álbum', $results);
+	} else {
+	    $this->assertEquals('Album', $results);
+	}
+    }
+}
+?>

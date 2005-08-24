@@ -1,0 +1,359 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTheme.class');
+
+/**
+ * Test GalleryTheme functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ThemeTest extends GalleryTestCase {
+
+    function ThemeTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	global $gallery;
+	parent::setUp();
+
+	$this->_platform = new ThemeTestPlatform();
+	$gallery->setPlatform($this->_platform);
+
+	GalleryDataCache::reset();
+	list ($ret, $this->_theme) = GalleryCoreApi::loadPlugin('theme', 'ThemeTest');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_theme->setRequiredCoreApi(GalleryCoreApi::getApiVersion());
+	$this->_theme->setRequiredThemeApi(GalleryTheme::getApiVersion());
+    }
+
+    function tearDown() {
+	/* If a unitest fails it might not deactivate/uninstall the mock theme properly */
+	list ($ret, $isActive) = $this->_theme->isActive();
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	if ($isActive) {
+	    list ($ret, $redirect) = $this->_theme->deactivate();
+	    if ($ret->isError()) {
+		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	$ret = $this->_theme->uninstall();
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    	
+	$ret = GalleryCoreApi::removePlugin('theme', 'ThemeTest');
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	parent::tearDown();
+    }
+
+    function testPackSettingBlockList1() {
+	$this->assertEquals(
+	    array(true, serialize(array(array('module.BlockName', array('param1' => 'value1'))))),
+	    $this->_theme->packSetting('block-list', '[module.BlockName param1=value1]'));
+    }
+
+    function testPackSettingBlockList2() {
+	$this->assertEquals(
+	    array(true,
+		  serialize(
+		      array(
+			  array('module.BlockName',
+				array('param1' => 'value1')),
+			  array('module2.Block2',
+				array()),
+			  array('module.BlockName',
+				array('param1' => 'value1',
+				      'param2' => 'value2'))))),
+	    $this->_theme->packSetting('block-list',
+				'[module.BlockName param1=value1] ' .
+				'[module2.Block2] ' .
+				'[module.BlockName param1=value1 param2=value2]'));
+    }
+
+    function testPackSettingBlockListTrueFalse() {
+	$this->assertEquals(
+	    array(true,
+		  serialize(
+		      array(
+			  array('module.BlockName',
+				array('param1' => false,
+				      'param2' => true))))),
+	    $this->_theme->packSetting('block-list',
+				       '[module.BlockName param1=false param2=true]'));
+    }
+
+    function testPackSettingBlockListWhitespace1() {
+	$this->assertEquals(
+	    array(true, serialize(array(array('a.B', array('x' => 'y')), array('b.c', array())))),
+	    $this->_theme->packSetting('block-list', '[a.B x=y][b.c]'));
+    }
+
+    function testPackSettingBlockListWhitespace2() {
+	$this->assertEquals(
+	    array(true, serialize(array(array('a.B', array('x' => 'y')), array('b.c', array())))),
+	    $this->_theme->packSetting('block-list', "[a.B\n\r\tx=y]\n\n\t\n[b.c]"));
+    }
+
+    function testPackSettingBlockListEmpty() {
+	$this->assertEquals(array(true, serialize(array())),
+			    $this->_theme->packSetting('block-list', ''));
+    }
+
+    function testPackSettingBlockListMissingBlockName() {
+	$this->assertEquals(array(false, serialize(array())),
+			    $this->_theme->packSetting('block-list', '[foo]'));
+    }
+
+    function testPackSettingBlockListMissingRightBracket() {
+	$this->assertEquals(array(false, serialize(array())),
+			    $this->_theme->packSetting('block-list', '[foo.Bar'));
+    }
+
+    function testPackSettingBlockListMissingRightBracket2() {
+	$this->assertEquals(
+	    array(false, serialize(array())),
+	    $this->_theme->packSetting('block-list', '[foo.Bar a=b [foo.Baz b=c]'));
+    }
+
+    function testPackSettingBlockListMissingLeftBracket() {
+	$this->assertEquals(
+	    array(false, serialize(array())),
+	    $this->_theme->packSetting('block-list', 'foo.Bar]'));
+    }
+
+    function testPackSettingBlockListMissingBothBrackets() {
+	$this->assertEquals(array(false, serialize(array())),
+			    $this->_theme->packSetting('block-list', 'foo.Bar'));
+    }
+
+    function testPackSettingBlockListVeryLongList() {
+	$count = 100;
+	$value = str_repeat('[a.b c=d]', $count);
+	for ($i = 0; $i < $count; $i++) {
+	    $expected[] = array('a.b', array('c' => 'd'));
+	}
+	$this->assertEquals(array(true, serialize($expected)),
+			    $this->_theme->packSetting('block-list', $value));
+    }
+
+    function testUnpackSettingBlockList1() {
+	$this->assertEquals(
+	    array(true, '[a.B foo=bar]'),
+	    $this->_theme->unpackSetting('block-list',
+					 serialize(array(array('a.B', array('foo' => 'bar'))))));
+    }
+
+    function testUnpackSettingBlockList2() {
+	$this->assertEquals(
+	    array(true, '[a.B foo=bar] [c.D]'),
+	    $this->_theme->unpackSetting('block-list',
+					 serialize(array(array('a.B', array('foo' => 'bar')),
+							 array('c.D')))));
+    }
+
+    function testUnpackSettingBlockListTrueFalse() {
+	$this->assertEquals(
+	    array(true, '[a.B foo=true bar=false]'),
+	    $this->_theme->unpackSetting(
+		'block-list',
+		serialize(array(array('a.B', array('foo' => true, 'bar' => false))))));
+    }
+
+    function testUnpackSettingBlockListEmpty() {
+	$this->assertEquals(array(true, ''),
+			    $this->_theme->unpackSetting('block-list', serialize(array())));
+    }
+
+    function testUnpackSettingBlockListMalformed1() {
+	$this->assertEquals(array(false, ''),
+			    $this->_theme->unpackSetting('block-list', serialize(array('x'))));
+    }
+
+    function testUnpackSettingBlockListMalformed2() {
+	$this->assertEquals(
+	    array(false, ''),
+	    $this->_theme->unpackSetting('block-list', serialize(array('x' => 'y'))));
+    }
+
+    function testInstallBadThemeApi() {
+
+	list ($major, $minor) = $this->_theme->getRequiredThemeApi();
+	$this->_theme->setRequiredThemeApi(array($major - 1, $minor));
+
+	$ret = $this->_theme->installOrUpgrade();
+	if ($ret->isError() && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($ret->isError() && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
+	    'success?');
+    }
+
+    function testActivateBadThemeApiActivate() {
+	$ret = $this->_theme->installOrUpgrade();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($major, $minor) = $this->_theme->getRequiredThemeApi();
+	$this->_theme->setRequiredThemeApi(array($major - 1, $minor));
+
+	list ($ret, $redirect) = $this->_theme->activate();
+	if ($ret->isError() && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($ret->isError() && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
+	    'success?');
+
+	list ($ret, $isActive) = $this->_theme->isActive();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!$isActive, 'is active');
+    }
+
+    function testInstallBadCoreApi() {
+	list ($major, $minor) = $this->_theme->getRequiredCoreApi();
+	$this->_theme->setRequiredCoreApi(array($major - 1, $minor));
+
+	$ret = $this->_theme->installOrUpgrade();
+	if ($ret->isError() && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($ret->isError() && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
+	    'success?');
+    }
+
+    function testActivateBadCoreApiActivate() {
+	$ret = $this->_theme->installOrUpgrade();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($major, $minor) = $this->_theme->getRequiredCoreApi();
+	$this->_theme->setRequiredCoreApi(array($major - 1, $minor));
+
+	list ($ret, $redirect) = $this->_theme->activate();
+	if ($ret->isError() && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($ret->isError() && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
+	    'success?');
+
+	list ($ret, $isActive) = $this->_theme->isActive();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!$isActive, 'is active');
+    }
+}
+
+/**
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ThemeTestTheme extends GalleryTheme {
+    function ThemeTestTheme() {
+	global $gallery;
+
+	$this->setId('themetest');
+	$this->setName('ThemeTest Theme');
+	$this->setDescription($gallery->i18n('Unit test theme'));
+	$this->setVersion('0.9.0');
+	$this->setRequiredCoreApi(GalleryCoreApi::getApiVersion());
+	$this->setRequiredThemeApi(GalleryTheme::getApiVersion());
+    }
+}
+
+/**
+ * Test platform for this test
+ *
+ * @package Core
+ * @subpackage PHPUnit
+ */
+class ThemeTestPlatform extends GalleryPlatform {
+    function opendir($path) {
+	if (strpos($path, '/themes/') !== false) {
+	    $this->_list = array();
+	    if ($dir = parent::opendir($path)) {
+		while(false !== ($file = parent::readdir($dir))) {
+		    array_push($this->_list, $file);
+		}
+	    }
+	    array_push($this->_list, 'themetest');
+	    return 'themetest';
+	}
+
+	return parent::opendir($path);
+    }
+
+    function is_dir($path) {
+	if (strpos($path, '/themes/themetest') !== false) {
+	    return true;
+	}
+
+	return parent::is_dir($path);
+    }
+
+    function readdir($handle) {
+	if ($handle == 'themetest') {
+	    return array_shift($this->_list);
+	}
+
+	return parent::readdir($handle);
+    }
+
+    function closedir($handle) {
+	if ($handle == 'themetest') {
+	    unset($this->_list);
+	    return true;
+	}
+
+	return parent::closedir($handle);
+    }
+
+    function file_exists($file) {
+	if (strpos($file, 'themes/themetest/theme.inc') !== false) {
+	    return true;
+	}
+
+	return parent::file_exists($file);
+    }
+}
+?>

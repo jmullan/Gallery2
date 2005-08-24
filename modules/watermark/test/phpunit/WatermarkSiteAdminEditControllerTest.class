@@ -1,0 +1,210 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Watermark
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Load required classes
+ */
+GalleryCoreApi::relativeRequireOnce('modules/watermark/classes/WatermarkHelper.class');
+GalleryCoreApi::relativeRequireOnce('modules/watermark/classes/WatermarkImage.class');
+
+/**
+ * WatermarkSiteAdminEdit controller tests
+ *
+ * @package Watermark
+ * @subpackage PHPUnit
+ */
+class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
+
+    function WatermarkSiteAdminEditControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'watermark.WatermarkSiteAdminEdit');
+    }
+
+    function setUp() {
+	global $gallery;
+	parent::setUp();
+
+	list ($ret, $this->_user) = $this->_createUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->_markForCleanup($this->_user);
+	$gallery->setActiveUser($this->_user);
+
+	/* Create a watermark */
+	$watermark = new WatermarkImage();
+	$ret = $watermark->create(__FILE__, 'test/file', 'phpunit_' . rand() . '.gif');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus(__FILE__, __LINE__);
+	}
+
+	$ret = $watermark->save();
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus(__FILE__, __LINE__);
+	}
+
+	$ret = GalleryCoreApi::addUserPermission(
+	    $watermark->getId(), $this->_user->getId(), 'core.all');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus(__FILE__, __LINE__);
+	}
+
+	$this->_watermark = $watermark;
+    }
+
+    function testEditWatermarkEverything() {
+	GalleryUtilities::putRequestVariable('watermarkId', $this->_watermark->getId());
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[name]', 'foo bar');
+	GalleryUtilities::putRequestVariable('form[xPercentage]', '25.51');
+	GalleryUtilities::putRequestVariable('form[yPercentage]', '50.12');
+	GalleryUtilities::putRequestVariable('form[whichDerivative][preferred]', 'on');
+	GalleryUtilities::putRequestVariable('form[whichDerivative][resizes]', 'on');
+	GalleryUtilities::putRequestVariable('form[whichDerivative][thumbnail]', 'on');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'watermark.WatermarkSiteAdmin'),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
+			    $results);
+
+	// Verify the watermark
+	list ($ret, $this->_watermark) = $this->_watermark->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('foo bar', $this->_watermark->getName());
+	$this->assertEquals('25.51', $this->_watermark->getXPercentage());
+	$this->assertEquals('50.12', $this->_watermark->getYPercentage());
+	$this->assert($this->_watermark->getApplyToPreferred(), 'missing preferred');
+	$this->assert($this->_watermark->getApplyToResizes(), 'missing resizes');
+	$this->assert($this->_watermark->getApplyToThumbnail(), 'missing thumbnail');
+    }
+
+    function testEditWatermarkThumbnailOnly() {
+	GalleryUtilities::putRequestVariable('watermarkId', $this->_watermark->getId());
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[name]', 'foo bar');
+	GalleryUtilities::putRequestVariable('form[xPercentage]', '25.51');
+	GalleryUtilities::putRequestVariable('form[yPercentage]', '50.12');
+	GalleryUtilities::putRequestVariable('form[whichDerivative][thumbnail]', 'on');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'watermark.WatermarkSiteAdmin'),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
+			    $results);
+
+	// Verify the watermark
+	list ($ret, $this->_watermark) = $this->_watermark->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('foo bar', $this->_watermark->getName());
+	$this->assertEquals('25.51', $this->_watermark->getXPercentage());
+	$this->assertEquals('50.12', $this->_watermark->getYPercentage());
+	$this->assert(!$this->_watermark->getApplyToPreferred(), 'shouldn\'t have preferred');
+	$this->assert(!$this->_watermark->getApplyToResizes(), 'shouldn\'t have resizes');
+	$this->assert($this->_watermark->getApplyToThumbnail(), 'missing thumbnail');
+    }
+
+    function testEditMissingEverything() {
+	GalleryUtilities::putRequestVariable('watermarkId', $this->_watermark->getId());
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array(
+				      'view' => 'core.SiteAdmin',
+				      'subView' => 'watermark.WatermarkSiteAdminEdit'),
+				  'status' => array(),
+				  'error' => array('form[error][name][missing]',
+						   'form[error][whichDerivative][missing]')),
+			    $results);
+
+	// Verify the watermark
+	list ($ret, $this->_watermark) = $this->_watermark->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(1, $this->_watermark->getSerialNumber());
+    }
+
+    function testCancel() {
+	GalleryUtilities::putRequestVariable('watermarkId', $this->_watermark->getId());
+	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'watermark.WatermarkSiteAdmin'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+
+	// Verify the watermark
+	list ($ret, $this->_watermark) = $this->_watermark->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(1, $this->_watermark->getSerialNumber());
+    }
+
+    function testBadCoordinates() {
+	GalleryUtilities::putRequestVariable('watermarkId', $this->_watermark->getId());
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[name]', 'foo bar');
+	GalleryUtilities::putRequestVariable('form[xPercentage]', '101.51');
+	GalleryUtilities::putRequestVariable('form[yPercentage]', '-5.12');
+	GalleryUtilities::putRequestVariable('form[whichDerivative][thumbnail]', 'on');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'watermark.WatermarkSiteAdmin'),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
+			    $results);
+
+	// Verify the watermark
+	list ($ret, $this->_watermark) = $this->_watermark->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('100', $this->_watermark->getXPercentage());
+	$this->assertEquals('0', $this->_watermark->getYPercentage());
+    }
+}
+?>

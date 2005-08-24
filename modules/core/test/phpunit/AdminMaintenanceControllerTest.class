@@ -1,0 +1,360 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryMaintenanceMap.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/AdminMaintenance.inc');
+
+/**
+ * AdminMaintenance controller tests
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
+
+    function AdminMaintenanceControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'core.AdminMaintenance');
+    }
+
+    function setUp() {
+	parent::setUp();
+
+	$path = 'modules/core/test/phpunit/AdminMaintenanceControllerTest.class';
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'MaintenanceTask', 'AdminMaintenanceControllerTestTaskSuccess',
+	    'AdminMaintenanceControllerTestTaskSuccess', $path, 'coreTest', null);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'MaintenanceTask', 'AdminMaintenanceControllerTestTaskProgressBar',
+	    'AdminMaintenanceControllerTestTaskProgressBar', $path, 'coreTest', null);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'MaintenanceTask', 'AdminMaintenanceControllerTestTaskFail',
+	    'AdminMaintenanceControllerTestTaskFail', $path, 'coreTest', null);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markFactoryModuleForCleanup('coreTest');
+    }
+
+    function tearDown() {
+	parent::tearDown();
+
+	foreach (array('AdminMaintenanceControllerTestTaskFail',
+		       'AdminMaintenanceControllerTestTaskSuccess',
+		       'AdminMaintenanceControllerTestTaskProgressBar') as $taskId) {
+	    $ret = GalleryMaintenanceMap::removeMapEntry(array('taskId' => $taskId));
+	    if ($ret->isError()) {
+		/* Don't return early here, give the loop a chance to try to clear all tasks */
+		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+    }
+
+    function testRunTaskSuccess() {
+	GalleryUtilities::putRequestVariable('form[action][runTask]', 1);
+	GalleryUtilities::putRequestVariable('taskId', 'AdminMaintenanceControllerTestTaskSuccess');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminMaintenance'),
+				  'status' => array(
+				      'run' => array(
+					  'taskId' => 'AdminMaintenanceControllerTestTaskSuccess',
+					  'success' => true)),
+				  'error' => array()),
+			    $results);
+
+	list ($ret, $info) =
+	    MaintenanceHelper_simple::fetchLastRun('AdminMaintenanceControllerTestTaskSuccess');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert($info['runId'] > 0);
+	$this->assert($info['timestamp'] > time() - 2);  /* assert that it's recent */
+	$this->assert($info['success']);
+	$this->assertEquals(array('success details'), $info['details']);
+    }
+
+    function testRunTaskProgressBar() {
+	global $gallery;
+	GalleryUtilities::putRequestVariable('form[action][runTask]', 1);
+	GalleryUtilities::putRequestVariable(
+	    'taskId', 'AdminMaintenanceControllerTestTaskProgressBar');
+
+	$mockAdapter = new MockTemplateAdapter();
+	$gallery->_templateAdapter =& $mockAdapter;
+
+	$mockUrlGenerator = new AdminMaintenanceControllerTestUrlGenerator();
+	$gallery->_urlGenerator =& $mockUrlGenerator;
+
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('delegate' => array('view' => 'core.ProgressBar'),
+		  'status' => array(),
+		  'error' => array()),
+	    $results);
+
+	/* Assert that we have 1 callback in the queue */
+	$this->assertEquals(1, $mockAdapter->getCallbackCount());
+
+	/* Run the tasks */
+	$ret = $mockAdapter->runCallbacks();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Assert that we saw what we expected */
+	$this->assertEquals(
+	    array(0, 50, 100,
+		  'complete:view=core.SiteAdmin,subView=core.AdminMaintenance,statusId=STATUSID'),
+	    $mockAdapter->getProgressBarDump());
+
+	list ($ret, $info) =
+	    MaintenanceHelper_simple::fetchLastRun('AdminMaintenanceControllerTestTaskProgressBar');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert($info['runId'] > 0);
+	$this->assert($info['timestamp'] > time() - 2);  /* assert that it's recent */
+	$this->assert($info['success']);
+	$this->assertEquals(array('success details'), $info['details']);
+    }
+
+    function testRunTaskProgressBarFail() {
+	global $gallery;
+	GalleryUtilities::putRequestVariable('form[action][runTask]', 1);
+	GalleryUtilities::putRequestVariable(
+	    'taskId', 'AdminMaintenanceControllerTestTaskProgressBar');
+	GalleryUtilities::putRequestVariable('forceTaskToFail', 1);
+
+	$mockAdapter = new MockTemplateAdapter();
+	$gallery->_templateAdapter =& $mockAdapter;
+
+	$mockUrlGenerator = new AdminMaintenanceControllerTestUrlGenerator();
+	$gallery->_urlGenerator =& $mockUrlGenerator;
+
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('delegate' => array('view' => 'core.ProgressBar'),
+		  'status' => array(),
+		  'error' => array()),
+	    $results);
+
+	/* Assert that we have 1 callback in the queue */
+	$this->assertEquals(1, $mockAdapter->getCallbackCount());
+
+	/* Run the tasks */
+	$ret = $mockAdapter->runCallbacks();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Assert that we saw what we expected */
+	$this->assertEquals(
+	    array(0, 50, 100,
+		  'complete:view=core.SiteAdmin,subView=core.AdminMaintenance,statusId=STATUSID'),
+	    $mockAdapter->getProgressBarDump());
+
+	list ($ret, $info) =
+	    MaintenanceHelper_simple::fetchLastRun('AdminMaintenanceControllerTestTaskProgressBar');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert($info['runId'] > 0);
+	$this->assert($info['timestamp'] > time() - 2);  /* assert that it's recent */
+	$this->assert(!$info['success']);
+	$this->assertEquals(array('fail details'), $info['details']);
+    }
+
+    function testRunTaskProgressBarError() {
+	global $gallery;
+	GalleryUtilities::putRequestVariable('form[action][runTask]', 1);
+	GalleryUtilities::putRequestVariable(
+	    'taskId', 'AdminMaintenanceControllerTestTaskProgressBar');
+	GalleryUtilities::putRequestVariable('forceTaskToError', 1);
+
+	$mockAdapter = new MockTemplateAdapter();
+	$gallery->_templateAdapter =& $mockAdapter;
+
+	$mockUrlGenerator = new AdminMaintenanceControllerTestUrlGenerator();
+	$gallery->_urlGenerator =& $mockUrlGenerator;
+
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('delegate' => array('view' => 'core.ProgressBar'),
+		  'status' => array(),
+		  'error' => array()),
+	    $results);
+
+	/* Assert that we have 1 callback in the queue */
+	$this->assertEquals(1, $mockAdapter->getCallbackCount());
+
+	/* Run the tasks */
+	$ret = $mockAdapter->runCallbacks();
+	if ($ret->isError()) {
+	    if ($ret->getErrorCode() & ERROR_UNKNOWN) {
+		/* This is what we expected */
+	    } else {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	} else {
+	    $this->assert(false, 'The task should have failed');
+	}
+
+	/* Assert that we saw what we expected */
+	$this->assertEquals(array(0, 50, 'error'), $mockAdapter->getProgressBarDump());
+
+	list ($ret, $info) =
+	    MaintenanceHelper_simple::fetchLastRun('AdminMaintenanceControllerTestTaskProgressBar');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert($info['runId'] > 0);
+	$this->assert($info['timestamp'] > time() - 2);  /* assert that it's recent */
+	$this->assert(!$info['success']);
+	$this->assert(strstr($info['details'], 'ERROR_UNKNOWN'));
+    }
+
+    function testRunTaskFail() {
+	GalleryUtilities::putRequestVariable('form[action][runTask]', 1);
+	GalleryUtilities::putRequestVariable('taskId', 'AdminMaintenanceControllerTestTaskFail');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminMaintenance'),
+				  'status' => array(
+				      'run' => array(
+					  'taskId' => 'AdminMaintenanceControllerTestTaskFail',
+					  'success' => false)),
+				  'error' => array()),
+			    $results);
+
+	list ($ret, $info) =
+	    MaintenanceHelper_simple::fetchLastRun('AdminMaintenanceControllerTestTaskFail');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert($info['runId'] > 0);
+	$this->assert($info['timestamp'] > time() - 2);  /* assert that it's recent */
+	$this->assert(!$info['success']);
+	$this->assertEquals(array('fail details'), $info['details']);
+    }
+}
+
+class AdminMaintenanceControllerTestTaskSuccess extends MaintenanceTask {
+    function getInfo() {
+	return array('title' => 'AdminMaintenanceControllerTestTaskSuccess title',
+		     'description' => 'AdminMaintenanceControllerTestTaskSuccess description',
+		     'l10Domain' => 'modules_core');
+    }
+
+    function run() {
+	return array(GalleryStatus::success(), true, array('success details'));
+    }
+}
+
+class AdminMaintenanceControllerTestTaskProgressBar extends MaintenanceTask {
+    function getInfo() {
+	return array('title' => 'AdminMaintenanceControllerTestTaskProgressBar title',
+		     'description' => 'AdminMaintenanceControllerTestTaskProgressBar description',
+		     'l10Domain' => 'modules_core');
+    }
+
+    function run() {
+	global $gallery;
+	$templateAdapter =& $gallery->getTemplateAdapter();
+
+	$success = !GalleryUtilities::getRequestVariables('forceTaskToFail');
+
+	$ret = $templateAdapter->updateProgressBar('ignored', 'ignored', 0);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+	$ret = $templateAdapter->updateProgressBar('ignored', 'ignored', 50);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	if (GalleryUtilities::getRequestVariables('forceTaskToError')) {
+	    return array(GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__),
+			 null, null);
+	}
+
+	$ret = $templateAdapter->updateProgressBar('ignored', 'ignored', 100);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__),  null, null);
+	}
+
+	return array(GalleryStatus::success(), $success,
+		     array(($success ? 'success' : 'fail') . ' details'));
+    }
+
+    function requiresProgressBar() {
+	return true;
+    }
+}
+
+class AdminMaintenanceControllerTestTaskFail extends MaintenanceTask {
+    function getInfo() {
+	return array('title' => 'AdminMaintenanceControllerTestTaskFail title',
+		     'description' => 'AdminMaintenanceControllerTestTaskFail description',
+		     'l10Domain' => 'modules_core');
+    }
+
+    function run() {
+	return array(GalleryStatus::success(), false, array('fail details'));
+    }
+}
+
+class AdminMaintenanceControllerTestUrlGenerator {
+    function generateUrl($args) {
+	$buf = array();
+	foreach ($args as $key => $value) {
+	    if ($key == 'statusId') {
+		$value = 'STATUSID';
+	    }
+	    $buf[] = "$key=$value";
+	}
+	return join(',', $buf);
+    }
+}
+?>

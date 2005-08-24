@@ -1,0 +1,335 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package PhotoAccess
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Test PhotoAccess cart functionality
+ *
+ * @package PhotoAccess
+ * @subpackage PHPUnit
+ */
+class PhotoAccessCartPluginTest extends GalleryTestCase {
+
+    function PhotoAccessCartPluginTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	global $gallery;
+	parent::setUp();
+
+	/* Control the user agent; we pass this to PhotoAccess */
+	$_SERVER['HTTP_USER_AGENT'] = 'Test User Agent';
+	$_SERVER['HTTP_REFERER'] = 'TestHttpReferer';
+
+	/* Create some random photo items that we can print */
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->_markForCleanup($this->_album);
+
+	for ($i = 0; $i < 3; $i++) {
+	    /*
+	     * Create a new item and force it to be a GalleryPhotoItem, cause that's the only type that this
+	     * plugin will print.  Make it an unsupported mime type so that no graphics toolkits will get
+	     * involved.
+	     */
+	    list ($ret, $this->_items[$i]) =
+		$this->_createRandomDataItem($this->_album->getId(),
+					     'test/jpeg',
+					     array(),
+					     __FILE__,
+					     'GalleryPhotoItem');
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+
+	    /* Create a stub thumbnail */
+	    list ($ret, $derivative) =
+		GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $this->_items[$i]->getEntityType());
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    $ret = $derivative->create($this->_items[$i]->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    $derivative->setDerivativeSourceId($this->_items[$i]->getId());
+	    $derivative->setDerivativeOperations('thumbnail|150');
+	    $derivative->setMimeType('test/file');
+
+	    $ret = $derivative->save();
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    /*
+	     * Save the thumb and source ids for the test platform so that it can verify that the right post
+	     * data goes through.
+	     */
+	    $this->_thumbIds[$i] = $derivative->getId();
+	    $this->_sourceIds[$i] = $this->_items[$i]->getId();
+	}
+
+	/* Create a least one preferred */
+	list ($ret, $derivative) =
+	    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $this->_items[2]->getEntityType());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $derivative->create($this->_items[2]->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$derivative->setDerivativeSourceId($this->_items[2]->getId());
+	$derivative->setDerivativeOperations('thumbnail|150');
+	$derivative->setMimeType('test/file');
+	$derivative->setWidth(0);
+	$derivative->setHeight(0);
+	$ret = $derivative->save();
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->_sourceIds[2] = $derivative->getId();
+
+	/* Empty out the plugin session id */
+	$session =& $gallery->getSession();
+	$this->_saveCartUrlFragment = $session->get('photoaccess.cartUrlFragment');
+	$session->remove('photoaccess.cartUrlFragment');
+
+	/* Swap in a dummy platform and url generator */
+	$this->_save = array($gallery->_platform, $gallery->_urlGenerator);
+	$gallery->_platform = new PhotoAccessCartPluginTestPlatform($this);
+	$gallery->_urlGenerator = new PhotoAccessCartPluginTestUrlGenerator();
+    }
+
+    function tearDown() {
+	global $gallery;
+
+	/* Restore session id */
+	$session =& $gallery->getSession();
+	if (isset($this->_saveCartUrlFragment)) {
+	    $session->put('photoaccess.cartUrlFragment', $this->_saveCartUrlFragment);
+	} else {
+	    $session->remove('photoaccess.cartUrlFragment');
+	}
+	parent::tearDown();
+    }
+
+    function testFulfillCart() {
+	/* Create our cart */
+	$cartItemIds = array();
+	for ($i = 0; $i < sizeof($this->_items); $i++) {
+	    $cartItemIds[$this->_items[$i]->getId()] = $i+1;
+	}
+
+	GalleryCoreApi::relativeRequireOnce('modules/cart/classes/CartPluginInterface_1_0.class');
+	GalleryCoreApi::relativeRequireOnce(
+	    'modules/photoaccess/classes/PhotoAccessCartPlugin.class');
+	$cartPlugin = new PhotoAccessCartPlugin();
+	list ($ret, $urlParams) = $cartPlugin->fulfillCart($cartItemIds);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array('href' => 'http://www.photoaccess.com/REDIRECT_URL'), $urlParams);
+    }
+}
+
+/**
+ * Platform for this test
+ *
+ * @package PhotoAccess
+ * @subpackage PHPUnit
+ */
+class PhotoAccessCartPluginTestPlatform {
+
+    function PhotoAccessCartPluginTestPlatform(&$test) {
+	$this->_test =& $test;
+    }
+
+    function fsockopen($target, $port, &$errno, &$errstr, $timeout) {
+	if ($target == 'www.photoaccess.com' && $port == '80') {
+	    return 'test-resource-1';
+	}
+
+	$errno = 1;
+	$errstring = 'test failure';
+    }
+
+    function fwrite($handle, $string, $length=0) {
+	global $gallery;
+
+	/*
+	 * This is a little tricky.  We need to anticipate precisely the sequence of GET and POST requests
+	 * that the plugin is going to make.  It will first make a request to get the cart so that it can get
+	 * a session id from the photoaccess server, then it will make a POST for each photo in the cart.
+	 */
+	$xml = '<add-cart-request cobrand="CB_GP" pricelist="1" ' .
+	    'entry-page="/buy/anonCart.jsp" return-url="view=cart.ViewCart">';
+	for ($i = 0; $i < sizeof($this->_test->_items); $i++) {
+	    $xml .= sprintf('<image id="%d" url="%s" thumb-url="%s" height="%d" width="%d"/>',
+			    $this->_test->_sourceIds[$i],
+			    'view=core.DownloadItem/itemId=' . $this->_test->_sourceIds[$i],
+			    'view=core.DownloadItem/itemId=' . $this->_test->_thumbIds[$i],
+			    0, 0);
+	}
+	$xml .= '</add-cart-request>';
+
+	$postData = join('&', array('cb=CB_GP', 'xml_request=' . urlencode($xml)));
+
+	$expectedPost =
+	    join("\r\n",
+		 array('POST /buy/anonCartXML.jsp HTTP/1.0',
+		       'Host: www.photoaccess.com',
+		       'User-Agent: Test User Agent',
+		       'Content-Type: application/x-www-form-urlencoded',
+		       'Content-Length: ' . strlen($postData),
+		       '',
+		       $postData)) . "\r\n";
+
+	if ($handle == 'test-resource-1') {
+	    switch($string) {
+	    case $expectedPost:
+		$response = '<add-cart-response request-url="/REQUEST_URL" redirect-url="/REDIRECT_URL"/>';
+		$buffer = array();
+		$buffer[] = 'HTTP/1.1 200 OK';
+		$buffer[] = 'Connection: close';
+		$buffer[] = 'Content-Length: ' . strlen($response);
+		$buffer[] = '';
+		$buffer[] = $response;
+		$this->_readBuffer[$handle] = $buffer;
+		return strlen($string);
+
+	    default:
+		printf("<pre> Expected: %s</pre>", GalleryTestCase::sprint_r($expectedPost));
+		printf("<pre>Unxpected: %s</pre>", GalleryTestCase::sprint_r($string));
+
+		for ($i = 0; $i < strlen($string); $i++) {
+		    if ($expectedPost[$i] != $string[$i]) {
+			printf("<pre>Differs at byte: %d <...%s...> <...%s...></pre>",
+			       GalleryTestCase::sprint_r($i),
+			       substr($expectedPost, $i-5, 10),
+			       substr($string, $i-5, 10));
+			break;
+		    }
+		}
+	    }
+	}
+
+	return 0;
+    }
+
+    function feof($handle) {
+	return (empty($this->_readBuffer[$handle]));
+    }
+
+    function fgets($handle) {
+	if (empty($this->_readBuffer[$handle])) {
+	    return null;
+	}
+
+	return array_shift($this->_readBuffer[$handle]);
+    }
+
+    function fread($handle, $length) {
+	if (empty($this->_readBuffer[$handle])) {
+	    return null;
+	}
+
+	/*
+	 * Return the number of bytes requested, or if that exceeds what we have available return what we have
+	 * available.
+	 */
+	if ($length >= strlen(join("\n", $this->_readBuffer[$handle]))) {
+	    $tmp = join("\n", $this->_readBuffer[$handle]);
+	    unset($this->_readBuffer[$handle]);
+	    return $tmp;
+	} else {
+	    $tmp = substr(join("\n", $this->_readBuffer[$handle]), 0, $length);
+	    $this->_readBuffer[$handle] = split("\n", substr(join("\n", $this->_readBuffer[$handle]), $length+1));
+	    return $tmp;
+	}
+    }
+
+    function fclose($handle) {
+	switch($handle) {
+	case 'test-resource-1':
+	    if (isset($this->_readBuffer[$handle])) {
+		unset($this->_readBuffer[$handle]);
+	    }
+	    return true;
+
+	default:
+	    return false;
+	}
+    }
+
+    function fflush($handle) {
+	switch($handle) {
+	case 'test-resource-1':
+	    return true;
+
+	default:
+	    return false;
+	}
+    }
+}
+
+
+/**
+ * Mock url generator for this test
+ *
+ * @package PhotoAccess
+ * @subpackage PHPUnit
+ */
+class PhotoAccessCartPluginTestUrlGenerator {
+    function generateUrl($params) {
+	$lines = array();
+	foreach ($params as $key => $value) {
+	    $lines[] = "$key=$value";
+	}
+	return join("/", $lines);
+    }
+}
+?>

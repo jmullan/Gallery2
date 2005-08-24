@@ -1,0 +1,443 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * ItemEditAlbum controller tests
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
+
+    function ItemEditAlbumPluginTest($methodName) {
+	$this->ItemEditPluginTestCase($methodName, 'core', 'ItemEditAlbum');
+    }
+
+    function setUp() {
+	parent::setUp();
+
+	/* Register a dummy entity */
+	$path = 'modules/core/test/phpunit/ItemEditAlbumPluginTest.class';
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryEntity', 'ItemEditAlbumPluginTestDataItem', 'ItemEditAlbumPluginTestDataItem',
+	    $path, 'coreTest', null);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Register a dummy toolkit */
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryToolkit', 'ItemEditAlbumPluginTestToolkit', 'ItemEditAlbumPluginTestToolkit',
+	    $path, 'coreTest', null);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markToolkitForCleanup('ItemEditAlbumPluginTestToolkit');
+	$this->_markFactoryModuleForCleanup('coreTest');
+
+	/* Register operations that we can perform on our mock data items */
+	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditAlbumPluginTestToolkit',
+		array('test/file'), 'scale',
+		array(array('type' => 'int', 'description' => 'test'),
+		      array('type' => 'int', 'description' => 'test')),
+		'test-description');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditAlbumPluginTestToolkit',
+		array('test/file'), 'thumbnail',
+		array(array('type' => 'int', 'description' => 'test'),
+		      array('type' => 'int', 'description' => 'test')),
+		'test-description');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditAlbumPluginTestToolkit',
+		array('test/file'), 'crop',
+		array(array('type' => 'float', 'description' => 'test'),
+		      array('type' => 'float', 'description' => 'test'),
+		      array('type' => 'float', 'description' => 'test'),
+		      array('type' => 'float', 'description' => 'test')), 'test-description');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->_markForCleanup($this->_album);
+    }
+
+    function testUndo() {
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][undo]', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_album, $this->_preferred);
+	$this->assertEquals(array(array(), null), $results);
+    }
+
+    function testSave() {
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[theme]', 'bar');
+	GalleryUtilities::putRequestVariable('form[orderBy]', 'baz');
+	GalleryUtilities::putRequestVariable('form[orderDirection]', 'bletch');
+	GalleryUtilities::putRequestVariable('form[presort]', 'foa');
+	GalleryUtilities::putRequestVariable('form[thumbnail][size]', 123);
+	GalleryUtilities::putRequestVariable('form[resizes][0][active]', 1);
+	GalleryUtilities::putRequestVariable('form[resizes][0][width]', 234);
+	GalleryUtilities::putRequestVariable('form[resizes][0][height]', 234);
+	GalleryUtilities::putRequestVariable('form[resizes][1][active]', 1);
+	GalleryUtilities::putRequestVariable('form[resizes][1][width]', 345);
+	GalleryUtilities::putRequestVariable('form[resizes][1][height]', 543);
+	GalleryUtilities::putRequestVariable('form[resizes][2][active]', 1);
+	GalleryUtilities::putRequestVariable('form[resizes][2][width]', 456);
+	GalleryUtilities::putRequestVariable('form[resizes][2][height]', 456);
+	GalleryUtilities::putRequestVariable('form[serialNumber]',
+					     $this->_album->getSerialNumber());
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_album, $this->_preferred);
+	$this->assertEquals(array(array(),
+				  $this->_translate('Settings saved successfully.')),
+			    $results);
+
+	list ($ret, $this->_album) = $this->_album->refresh();
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Verify basic settings */
+	$this->assertEquals('bar', $this->_album->getTheme());
+	$this->assertEquals('foa|baz', $this->_album->getOrderBy());
+	$this->assertEquals('bletch', $this->_album->getOrderDirection());
+
+	/* Verify derivative preferences */
+	list ($ret, $preferences) =
+	    GalleryCoreApi::fetchDerivativePreferencesForItem($this->_album->getId());
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(array(array('order' => 0,
+				  'derivativeType' => 2,
+				  'derivativeOperations' => 'scale|234,234'),
+			    array('order' => 0,
+				  'derivativeType' => 2,
+				  'derivativeOperations' => 'scale|345,543'),
+			    array('order' => 0,
+				  'derivativeType' => 2,
+				  'derivativeOperations' => 'scale|456,456')),
+		      $preferences);
+    }
+
+    function testInvalidSave() {
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[thumbnail][size]', 'foo');
+	GalleryUtilities::putRequestVariable('form[resizes][0][active]', 1);
+	GalleryUtilities::putRequestVariable('form[resizes][0][width]', 'foo');
+	GalleryUtilities::putRequestVariable('form[resizes][0][height]', 100);
+	GalleryUtilities::putRequestVariable('form[resizes][1][active]', 1);
+	GalleryUtilities::putRequestVariable('form[resizes][1][width]', 100);
+	GalleryUtilities::putRequestVariable('form[resizes][1][height]', 'foo');
+	GalleryUtilities::putRequestVariable('form[resizes][2][active]', 1);
+	GalleryUtilities::putRequestVariable('form[resizes][2][width]', -10);
+	GalleryUtilities::putRequestVariable('form[resizes][2][height]', 100);
+
+	/* Perform the request and verify that we failed */
+	$results = $this->handleRequest($this->_album, $this->_preferred);
+	$this->assertEquals(array(array('form[error][thumbnail][size][invalid]',
+					'form[error][resizes][0][size][invalid]',
+					'form[error][resizes][1][size][invalid]',
+					'form[error][resizes][2][size][invalid]'),
+				  null),
+			    $results);
+    }
+
+    function testInvalidSave2() {
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[thumbnail][size]', 123);
+	GalleryUtilities::putRequestVariable('form[resizes][0][active]', 1);
+	GalleryUtilities::putRequestVariable('form[resizes][1][active]', 1);
+	GalleryUtilities::putRequestVariable('form[resizes][2][active]', 1);
+
+	/* Perform the request and verify that we failed */
+	$results = $this->handleRequest($this->_album, $this->_preferred);
+	$this->assertEquals(array(array('form[error][resizes][0][size][missing]',
+					'form[error][resizes][1][size][missing]',
+					'form[error][resizes][2][size][missing]'),
+				  null),
+			    $results);
+    }
+
+    function testInvalidSerialNumber() {
+	/* valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[theme]', 'bar');
+	GalleryUtilities::putRequestVariable('form[orderBy]', 'baz');
+	GalleryUtilities::putRequestVariable('form[orderDirection]', 'bletch');
+	GalleryUtilities::putRequestVariable('form[thumbnail][size]', 123);
+	GalleryUtilities::putRequestVariable('form[resizes][0][active]', 1);
+	GalleryUtilities::putRequestVariable('form[resizes][0][width]', 234);
+	GalleryUtilities::putRequestVariable('form[resizes][0][height]', 234);
+	GalleryUtilities::putRequestVariable('form[resizes][1][active]', 1);
+	GalleryUtilities::putRequestVariable('form[resizes][1][width]', 345);
+	GalleryUtilities::putRequestVariable('form[resizes][1][height]', 543);
+	GalleryUtilities::putRequestVariable('form[resizes][2][active]', 1);
+	GalleryUtilities::putRequestVariable('form[resizes][2][width]', 456);
+	GalleryUtilities::putRequestVariable('form[resizes][2][height]', 456);
+	/* invalid serial number */
+	GalleryUtilities::putRequestVariable('form[serialNumber]', -1);
+
+	$results = $this->handleRequest($this->_album, $this->_preferred, ERROR_OBSOLETE_DATA);
+    }
+
+    function testSaveAndRecreate() {
+
+	/* Create some children */
+	for ($i = 0; $i < 2; $i++) {
+	    list ($ret, $child[$i]) = $this->_createRandomDataItem(
+		$this->_album->getId(), 'test/file', array(),
+		__FILE__, 'ItemEditAlbumPluginTestDataItem');
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    /* The first item has a thumbnail and a resize,
+	     * the second has a cropped thumbnail and a preferred */
+	    if ($i == 0) {
+		list ($ret, $ignore) = $this->_createDerivative($child[$i], $child[$i]->getId(),
+								DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+								'thumbnail|100',
+								'test/file');
+		if ($ret->isError()) {
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+
+		list ($ret, $ignore) = $this->_createDerivative($child[$i], $child[$i]->getId(),
+								DERIVATIVE_TYPE_IMAGE_RESIZE,
+								'scale|100,100',
+								'test/file');
+		if ($ret->isError()) {
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+	    } else if ($i == 1) {
+		list ($ret, $ignore) = $this->_createDerivative($child[$i], $child[$i]->getId(),
+								DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+								'crop|0,0,50,50;thumbnail|100',
+								'test/file');
+		if ($ret->isError()) {
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+
+		list ($ret, $ignore) = $this->_createDerivative($child[$i], $child[$i]->getId(),
+								DERIVATIVE_TYPE_IMAGE_PREFERRED,
+								'rotate|90',
+								'test/file');
+		if ($ret->isError()) {
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+	    }
+	}
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[theme]', 'bar');
+	GalleryUtilities::putRequestVariable('form[orderBy]', '');
+	/* for empty orderBy, orderDirection can be omitted */
+	GalleryUtilities::putRequestVariable('form[thumbnail][size]', 123);
+	GalleryUtilities::putRequestVariable('form[resizes][0][active]', 1);
+	GalleryUtilities::putRequestVariable('form[resizes][0][width]', 234);
+	GalleryUtilities::putRequestVariable('form[resizes][0][height]', 234);
+	GalleryUtilities::putRequestVariable('form[resizes][1][active]', 1);
+	GalleryUtilities::putRequestVariable('form[resizes][1][width]', 345);
+	GalleryUtilities::putRequestVariable('form[resizes][1][height]', 543);
+	GalleryUtilities::putRequestVariable('form[resizes][2][active]', 1);
+	GalleryUtilities::putRequestVariable('form[resizes][2][width]', 456);
+	GalleryUtilities::putRequestVariable('form[resizes][2][height]', 456);
+	GalleryUtilities::putRequestVariable('form[recreateThumbnails]', 1);
+	GalleryUtilities::putRequestVariable('form[recreateResizes]', 1);
+	GalleryUtilities::putRequestVariable('form[serialNumber]',
+					     $this->_album->getSerialNumber());
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_album, $this->_preferred);
+	$this->assertEquals(array(array(),
+				  $this->_translate('Settings saved successfully.')),
+			    $results);
+
+	list ($ret, $this->_album) = $this->_album->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Verify the thumbnail and resizes on our children */
+	list ($ret, $thumbnails) =
+	    GalleryCoreApi::fetchThumbnailsByItemIds(array($child[0]->getId(), $child[1]->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('thumbnail|123',
+	    $thumbnails[$child[0]->getId()]->getDerivativeOperations());
+	$this->assertEquals('crop|0,0,50,50;thumbnail|123',
+	    $thumbnails[$child[1]->getId()]->getDerivativeOperations());
+
+	list ($ret, $resizes) =
+	    GalleryCoreApi::fetchResizesByItemIds(array($child[0]->getId(), $child[1]->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	for ($i = 0; $i < 2; $i++) {
+	    $this->assertEquals('scale|234,234',
+		$resizes[$child[$i]->getId()][0]->getDerivativeOperations(), "$i 0");
+	    $this->assertEquals('scale|345,543',
+		$resizes[$child[$i]->getId()][1]->getDerivativeOperations(), "$i 1");
+	    $this->assertEquals('scale|456,456',
+		$resizes[$child[$i]->getId()][2]->getDerivativeOperations(), "$i 2");
+	}
+    }
+
+    /**
+     * Add a small (dimension wise) photo to an album and make sure that we don't create resizes
+     * that are larger (dimension wise) than the original.
+     */
+    function testRecreateResizesForSmallPhoto() {
+	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/*
+	 * Set the album preferences such that we have one resize that's smaller than the
+	 * original, and one that's larger.  We know that the image we're using is 62x75
+	 */
+	$ret = GalleryCoreApi::removeDerivativePreferencesForItem($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $photo) = GalleryCoreApi::newItemByMimeType('image/gif');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $photo->create($this->_album->getId(),
+			      dirname(__FILE__) . '/../data/test1.gif',
+			      'image/gif',
+			      'test image');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::addExistingItemToAlbum($photo, $this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $photo->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[theme]', 'bar');
+	GalleryUtilities::putRequestVariable('form[orderBy]', 'baz');
+	GalleryUtilities::putRequestVariable('form[orderDirection]', 'bletch');
+	GalleryUtilities::putRequestVariable('form[thumbnail][size]', 123);
+	GalleryUtilities::putRequestVariable('form[resizes][0][active]', 1);
+	GalleryUtilities::putRequestVariable('form[resizes][0][width]', 50);
+	GalleryUtilities::putRequestVariable('form[resizes][0][height]', 50);
+	GalleryUtilities::putRequestVariable('form[resizes][1][active]', 1);
+	GalleryUtilities::putRequestVariable('form[resizes][1][width]', 100);
+	GalleryUtilities::putRequestVariable('form[resizes][1][height]', 100);
+	GalleryUtilities::putRequestVariable('form[recreateResizes]', 1);
+	GalleryUtilities::putRequestVariable('form[serialNumber]',
+					     $this->_album->getSerialNumber());
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_album, $this->_preferred);
+	$this->assertEquals(array(array(),
+				  $this->_translate('Settings saved successfully.')),
+			    $results);
+
+	/* Now verify that we didn't upsample our resizes */
+	list ($ret, $resizes) = GalleryCoreApi::fetchResizesByItemIds(array($photo->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(isset($resizes[$photo->getId()]), 'Missing resizes for new photo');
+	if (isset($resizes[$photo->getId()])) {
+	    $resizes = $resizes[$photo->getId()];
+	    $this->assertEquals(1, sizeof($resizes), 'There should only be one resize');
+	    $this->assertEquals(
+		'scale|50,50', $resizes[0]->getDerivativeOperations(),
+		'The resize operation should be resize|50,50');
+	}
+    }
+}
+
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryDataItem.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryToolkit.class');
+
+/**
+ * Mock data item
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ItemEditAlbumPluginTestDataItem extends GalleryDataItem { }
+
+/**
+ * Mock toolkit
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ItemEditAlbumPluginTestToolkit extends GalleryToolkit { }
+?>

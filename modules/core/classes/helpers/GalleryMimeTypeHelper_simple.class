@@ -1,0 +1,155 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * A collection of useful mime type related utilities
+ *
+ * @package GalleryCore
+ * @subpackage Classes
+ */
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryMimeTypeMap.class');
+
+class GalleryMimeTypeHelper_simple {
+
+    /**
+     * Convert a file extension to a mime type
+     *
+     * @param string a file extension
+     * @return array object GalleryStatus a status code
+     *               string a mime type
+     * @static
+     */
+    function convertExtensionToMime($extension) {
+	global $gallery;
+
+	$query = '
+	SELECT
+            [GalleryMimeTypeMap::mimeType]
+	FROM
+            [GalleryMimeTypeMap]
+	WHERE
+            [GalleryMimeTypeMap::extension] = ?
+	';
+	$data[] = strtolower($extension);
+	list ($ret, $searchResults) = $gallery->search($query, $data);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if ($searchResults->resultCount() == 0) {
+	    return array(GalleryStatus::success(), 'application/unknown');
+	}
+	$result = $searchResults->nextResult();
+	return array(GalleryStatus::success(), $result[0]);
+    }
+
+    /**
+     * Convert a mime type to a file extension
+     *
+     * @param string a mime type
+     * @return array object GalleryStatus a status code
+     *               array of file extensions
+     * @static
+     */
+    function convertMimeToExtensions($mimeType) {
+	global $gallery;
+
+	$query = '
+	SELECT
+            [GalleryMimeTypeMap::extension]
+	FROM
+            [GalleryMimeTypeMap]
+	WHERE
+            [GalleryMimeTypeMap::mimeType] = ?
+	';
+	$data[] = strtolower($mimeType);
+	list ($ret, $searchResults) = $gallery->search($query, $data);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if ($searchResults->resultCount() == 0) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$extensions = array();
+	while ($result = $searchResults->nextResult()) {
+	    $extensions[] = $result[0];
+	}
+	return array(GalleryStatus::success(), $extensions);
+    }
+
+    /**
+     * Figure out the file's mime type
+     *
+     * Eg, "foo.jpg" returns "image/jpeg"
+     *
+     * @param string the filename
+     * @return array object GalleryStatus a status code
+     *               string a mime type
+     * @static
+     */
+    function getMimeType($filename) {
+	list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
+	list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	return array(GalleryStatus::success(), $mimeType);
+    }
+
+    /**
+     * Return true if the given mime type is viewble in a web browser
+     *
+     * @param string the mime type
+     * @return array object GalleryStatus a status code
+     *               boolean
+     */
+    function isViewableMimeType($mimeType) {
+	global $gallery;
+
+	$query = '
+	SELECT
+            [GalleryMimeTypeMap::viewable]
+	FROM
+            [GalleryMimeTypeMap]
+	WHERE
+            [GalleryMimeTypeMap::mimeType] = ?
+	';
+	$data[] = strtolower($mimeType);
+	list ($ret, $searchResults) = $gallery->search($query, $data);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), false);
+	}
+
+	if ($searchResults->resultCount() == 0) {
+	    return array(GalleryStatus::success(), false);
+	}
+	$result = $searchResults->nextResult();
+	return array(GalleryStatus::success(), (boolean)$result[0]);
+    }
+}
+?>

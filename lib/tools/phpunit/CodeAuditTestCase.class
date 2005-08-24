@@ -1,0 +1,167 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * A framework for scanning all of our source files for specific
+ * patterns.  Subclasses must override the checkFile() method
+ * to implement their own checks.
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class CodeAuditTestCase extends GalleryTestCase {
+
+    function CodeAuditTestCase($methodName) {
+	$this->GalleryTestCase($methodName);
+	$this->_shouldHalt = false;
+	$this->_baseDir = realpath(dirname(__FILE__) . '/../../..');
+    }
+
+    function testCodeAudit() {
+	global $gallery;
+
+	/* If the base gallery dir has a CVS dir, then we're all set */
+	$platform = $gallery->getPlatform();
+	if ($platform->file_exists($this->_baseDir . '/CVS/Entries')) {
+	    $this->_scanDir($this->_baseDir);
+	}
+
+	if ($this->_shouldHalt) {
+	    $this->assert(false, 'Halted prematurely');
+	}
+
+	$this->finishScan($this->_shouldHalt);
+    }
+
+    function _scanDir($dirPath) {
+	if ($this->_shouldHalt) {
+	    return;
+	}
+
+	global $gallery;
+	$platform = $gallery->getPlatform();
+
+	if ($dirPath == $this->_baseDir . '/lib') {
+	    return;
+	}
+
+	if (!file_exists($dirPath) || !is_dir($dirPath)) {
+	    /*
+	     * It appears that CVS doesn't tend its entries file very well so we get entries that
+	     * no longer exist in the local workspace.  That's ok -- just ignore them.
+	     */
+	    return;
+	}
+
+	$fd = $platform->fopen("$dirPath/CVS/Entries", 'r');
+	$this->assert(!empty($fd), "Unable to parse CVS for dir: $dirPath");
+	if ($fd) {
+	    while ($line = $platform->fgets($fd, 4096)) {
+		$line = trim($line);
+		if ($line == 'D') {
+		    continue;
+		}
+
+		if ($line[0] == 'D') {
+		    if (preg_match('|^D/(.*?)/|', $line, $matches)) {
+			$dirName = $matches[1];
+			$this->_scanDir(sprintf("%s/%s", $dirPath, $dirName));
+		    } else {
+			$this->assert(false, "Unable to parse [$line]");
+		    }
+		} else {
+		    if (preg_match('|^/(.*?)/(-?)|', $line, $matches)) {
+			// deleted files have a negative version number
+			if ($matches[2] != '-') {
+			    $fileName = $matches[1];
+			    if (preg_match('/\.(class|inc|php|tpl|po)$/', $fileName)) {
+				$this->_scanFile(sprintf("%s/%s", $dirPath, $fileName));
+			    }
+			}
+		    } else {
+			$this->assert(false, "Unable to parse [$line]");
+		    }
+		}
+	    }
+	    $platform->fclose($fd);
+	}
+    }
+
+    function _scanFile($fileName) {
+	global $gallery;
+
+	if ($this->_shouldHalt) {
+	    return;
+	}
+
+	if ($this->shouldCheckFile($fileName)) {
+	    $gallery->guaranteeTimeLimit(30);
+	    $platform = $gallery->getPlatform();
+	    $fd = $platform->fopen($fileName, 'r');
+	    $buf = $platform->fread($fd, $platform->filesize($fileName));
+	    $this->checkFile($fileName, $buf);
+	}
+    }
+
+    /**
+     * Subclasses can call this to stop scanning.
+     */
+    function halt() {
+	$this->_shouldHalt = true;
+    }
+
+    /**
+     * Overload this method in subclasses to audit the file
+     * @access protected
+     */
+    function checkFile($fileName, $buffer) {
+    }
+
+    /**
+     * Overload this method in subclasses to run any tasks after the scan is complete.
+     *
+     * @param bool true if the scan was halted early
+     * @access protected
+     */
+    function finishScan($halted) {
+    }
+
+    /**
+     * Overload this method in subclasses.  If this method
+     * returns true, we'll call checkFile() on it
+     *
+     * @return true if we should check this file
+     * @access protected
+     */
+    function shouldCheckFile($fileName) {
+	/* By default all files are checked */
+	return true;
+    }
+}
+
+?>
