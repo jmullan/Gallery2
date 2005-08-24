@@ -540,6 +540,24 @@ class GalleryTheme extends GalleryPlugin {
 
 	    $ret = $this->upgrade($installedVersion);
 	    if ($ret->isError()) {
+		if ($gallery->getDebug()) {
+		    $gallery->debug(sprintf('Error: Failed to upgrade the %s theme, this ' .
+					    'is the error stack trace: %s', $this->getId(),
+					    $ret->getAsText()));
+		}
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    /* Reactivate myself to perform any activate based tasks like adding new parameters */
+	    if ($gallery->getDebug()) {
+		$gallery->debug(sprintf('Reactivate %s theme', $this->getId()));
+	    }
+	    list ($ret, $redirect) = $this->reactivate();
+	    if ($ret->isError()) {
+		if ($gallery->getDebug()) {
+		    $gallery->debug(sprintf('Error: Failed to reactivate the theme, this' .
+					    ' is the error stack trace: %s', $ret->getAsText()));
+		}
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
@@ -631,12 +649,13 @@ class GalleryTheme extends GalleryPlugin {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	if ($defaultTheme == $this->getId()) {
+	if ($defaultTheme == $this->getId() && $postDeactivationEvent) {
 	    /*
 	     * Can't deactivate default theme.  UI doesn't offer this option, so we should
 	     * only reach this code if default theme needs to be upgraded.  loadPlugin
 	     * will see a redirect url is returned and jump to upgrader (the actual redirect
 	     * returned below isn't used).
+	     * Allow this deactivate if $postDeactivationEvent is false (during reactivate).
 	     */
 	    return array(GalleryStatus::success(), array('href' => 'upgrade/'));
 	}
