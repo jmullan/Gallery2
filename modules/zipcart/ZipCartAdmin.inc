@@ -63,7 +63,10 @@ class ZipCartAdminController extends GalleryController {
 		$zipFile = $zipBase . '.zip';
 		$gallery->guaranteeTimeLimit(30);
 		$gallery->startRecordingDebugSnippet();
-		list ($success) = $platform->exec(array(array($form['path'], $zipFile, __FILE__)));
+		if ($success = $platform->copy(__FILE__, $zipBase)) {
+		    list ($success) =
+			$platform->exec(array(array($form['path'], $zipFile, $zipBase)));
+		}
 		$debugSnippet = $gallery->stopRecordingDebugSnippet();
 		if (!$success || !$platform->file_exists($zipFile)) {
 		    $error[] = 'form[error][path][badZip]';

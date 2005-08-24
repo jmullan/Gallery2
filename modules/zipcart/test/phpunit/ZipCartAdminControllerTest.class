@@ -145,10 +145,12 @@ class ZipCartAdminControllerTest extends GalleryControllerTestCase {
 	$this->_platform->setReply('is_executable', array('/validPath/zip'), true);
 	$this->_platform->setReply(
 	    'tempnam', array($gallery->getConfig('data.gallery.tmp'), 'zip_'), 'tempfile');
+	$this->_platform->setReply('copy', array(
+					     sprintf('%s%s%s', dirname(dirname(dirname(__FILE__))),
+						     DIRECTORY_SEPARATOR, 'ZipCartAdmin.inc'),
+					   'tempfile'), true);
 	$this->_platform->setReply(
-	    'exec', array(array(array('/validPath/zip', 'tempfile.zip',
-				      sprintf('%s%s%s', dirname(dirname(dirname(__FILE__))),
-					      DIRECTORY_SEPARATOR, 'ZipCartAdmin.inc')))),
+	    'exec', array(array(array('/validPath/zip', 'tempfile.zip', 'tempfile'))),
 	    array(true, array(), array()));
 	$this->_platform->setReply('file_exists', array('tempfile.zip'), true);
 	$this->_platform->setReply('unlink', array('tempfile.zip'), true);
@@ -176,10 +178,12 @@ class ZipCartAdminControllerTest extends GalleryControllerTestCase {
 	$this->_platform->setReply('is_executable', array('/validPath/zip'), true);
 	$this->_platform->setReply(
 	    'tempnam', array($gallery->getConfig('data.gallery.tmp'), 'zip_'), 'tempfile');
+	$this->_platform->setReply('copy', array(
+					     sprintf('%s%s%s', dirname(dirname(dirname(__FILE__))),
+						     DIRECTORY_SEPARATOR, 'ZipCartAdmin.inc'),
+					   'tempfile'), true);
 	$this->_platform->setReply(
-	    'exec', array(array(array('/validPath/zip', 'tempfile.zip',
-				      sprintf('%s%s%s', dirname(dirname(dirname(__FILE__))),
-					      DIRECTORY_SEPARATOR, 'ZipCartAdmin.inc')))),
+	    'exec', array(array(array('/validPath/zip', 'tempfile.zip', 'tempfile'))),
 	    array(true, array(), array()));
 	$this->_platform->setReply('file_exists', array('tempfile.zip'), true);
 	$this->_platform->setReply('unlink', array('tempfile.zip'), true);
@@ -203,10 +207,12 @@ class ZipCartAdminControllerTest extends GalleryControllerTestCase {
 	$this->_platform->setReply('isRestrictedByOpenBaseDir', array('/validPath/zip'), true);
 	$this->_platform->setReply(
 	    'tempnam', array($gallery->getConfig('data.gallery.tmp'), 'zip_'), 'tempfile');
+	$this->_platform->setReply('copy', array(
+					     sprintf('%s%s%s', dirname(dirname(dirname(__FILE__))),
+						     DIRECTORY_SEPARATOR, 'ZipCartAdmin.inc'),
+					   'tempfile'), true);
 	$this->_platform->setReply(
-	    'exec', array(array(array('/validPath/zip', 'tempfile.zip',
-				      sprintf('%s%s%s', dirname(dirname(dirname(__FILE__))),
-					      DIRECTORY_SEPARATOR, 'ZipCartAdmin.inc')))),
+	    'exec', array(array(array('/validPath/zip', 'tempfile.zip', 'tempfile'))),
 	    array(true, array(), array()));
 	$this->_platform->setReply('file_exists', array('tempfile.zip'), true);
 	$this->_platform->setReply('unlink', array('tempfile.zip'), true);
@@ -232,10 +238,12 @@ class ZipCartAdminControllerTest extends GalleryControllerTestCase {
 	$this->_platform->setReply('is_executable', array('/validPath/unzip'), true);
 	$this->_platform->setReply(
 	    'tempnam', array($gallery->getConfig('data.gallery.tmp'), 'zip_'), 'tempfile');
+	$this->_platform->setReply('copy', array(
+					     sprintf('%s%s%s', dirname(dirname(dirname(__FILE__))),
+						     DIRECTORY_SEPARATOR, 'ZipCartAdmin.inc'),
+					   'tempfile'), true);
 	$this->_platform->setReply(
-	    'exec', array(array(array('/validPath/unzip', 'tempfile.zip',
-				      sprintf('%s%s%s', dirname(dirname(dirname(__FILE__))),
-					      DIRECTORY_SEPARATOR, 'ZipCartAdmin.inc')))),
+	    'exec', array(array(array('/validPath/unzip', 'tempfile.zip', 'tempfile'))),
 	    array(false, array(), array()));
 	$this->_platform->setReply('unlink', array('tempfile.zip'), true);
 	$this->_platform->setReply('unlink', array('tempfile'), true);
@@ -259,10 +267,12 @@ class ZipCartAdminControllerTest extends GalleryControllerTestCase {
 	$this->_platform->setReply('isRestrictedByOpenBaseDir', array('/validPath/unzip'), true);
 	$this->_platform->setReply(
 	    'tempnam', array($gallery->getConfig('data.gallery.tmp'), 'zip_'), 'tempfile');
+	$this->_platform->setReply('copy', array(
+					     sprintf('%s%s%s', dirname(dirname(dirname(__FILE__))),
+						     DIRECTORY_SEPARATOR, 'ZipCartAdmin.inc'),
+					   'tempfile'), true);
 	$this->_platform->setReply(
-	    'exec', array(array(array('/validPath/unzip', 'tempfile.zip',
-				      sprintf('%s%s%s', dirname(dirname(dirname(__FILE__))),
-					      DIRECTORY_SEPARATOR, 'ZipCartAdmin.inc')))),
+	    'exec', array(array(array('/validPath/unzip', 'tempfile.zip', 'tempfile'))),
 	    array(false, array(), array()));
 	$this->_platform->setReply('unlink', array('tempfile.zip'), true);
 	$this->_platform->setReply('unlink', array('tempfile'), true);
