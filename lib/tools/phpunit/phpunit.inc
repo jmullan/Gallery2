@@ -49,14 +49,10 @@ if (phpversion() >= '4') {
     function PHPUnit_error_handler($errno, $errstr, $errfile, $errline) {
 	global $PHPUnit_testRunning;
 
-	if ($errno == 2048 || !error_reporting()) {
+	if ($errno == 2048) {
 	    /*
 	     * We're ignoring E_STRICT for now because of PHP 5's retarded inability
 	     * to allow us to use standard PHP4 constructs like 'var'
-	     *
-	     * Additionally, any error which has an error_reporting() value of 0 has
-	     * been intentionally suppressed by the developer, so we should ignore these.
-	     * http://www.php.net/manual/en/function.set-error-handler.php#29315
 	     */
 	    return;
 	}
