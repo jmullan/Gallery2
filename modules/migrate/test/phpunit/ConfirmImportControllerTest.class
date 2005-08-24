@@ -171,6 +171,8 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->_everybodyGroupId = (int)$this->_everybodyGroupId;
+
 	list ($ret, $this->_adminGroupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret->isError()) {
@@ -789,6 +791,9 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				       'permission' => 'core.all');
 	$expectedPermissions[] = array('userId' => $this->_activeUserId, 'groupId' => 0,
 				       'permission' => 'core.all');
+
+	usort($expectedPermissions, array($this, '_sortByPermission'));
+	usort($permissions, array($this, '_sortByPermission'));
 	$this->assertEquals($expectedPermissions, $permissions, 'permissions on hidden item');
 
 	$testAlbumId = $status['albumImportSuccess']['album02'];
@@ -901,12 +906,16 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	usort($expectedPermissions, array($this, '_sortByPermission'));
+	usort($permissions, array($this, '_sortByPermission'));
 	$this->assertEquals($expectedPermissions, $permissions, 'permissions on hidden album');
 
 	list ($ret, $permissions) = GalleryCoreApi::fetchAllPermissionsForItem($ids[0], true);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	usort($expectedPermissions, array($this, '_sortByPermission'));
+	usort($permissions, array($this, '_sortByPermission'));
 	$this->assertEquals($expectedPermissions, $permissions,
 			    'permissions on item in hidden album');
     }
@@ -1887,6 +1896,16 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	/* Non-supported HTML is stripped completely */
 	$this->assertEquals('foo',
 	    ConfirmImportController::convertHtmlToBbcode('<hr><h1 title="foo">foo</h1>'));
+    }
+
+    function _sortByPermission($a, $b) {
+	if ($cmp = strcmp($a['permission'], $b['permission'])) {
+	    return $cmp;
+	}
+	if ($cmp = strcmp($a['userId'], $b['userId'])) {
+	    return $cmp;
+	}
+	return strcmp($a['userId'], $b['userId']);
     }
 }
 
