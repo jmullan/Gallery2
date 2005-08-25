@@ -9,7 +9,7 @@
 <script type="text/javascript">{literal}
   // <![CDATA[
   function openOrCloseTextElement(elementId, bbCodeElement, button, buttonLabel) {
-    element = document.getElementById(elementId);
+    var element = document.getElementById(elementId);
     if (!button.g2ToggleMode) {
       element.value = element.value + '[' + bbCodeElement + ']';
       button.value = '*' + buttonLabel;
@@ -22,24 +22,25 @@
   }
 
   function appendTextElement(elementId, bbCodeElement, button) {
-    element = document.getElementById(elementId);
+    var element = document.getElementById(elementId);
     element.value = element.value + '[' + bbCodeElement + ']';
     element.focus();
   }
 
   {/literal}
   function appendUrlElement(elementId, bbCodeElement) {ldelim}
-    element = document.getElementById(elementId);
-    url = prompt("{g->text text="Enter a URL"}");
-    text = prompt("{g->text text="Enter some text describing the URL"}");
-    element.value = element.value + '[url=' + url + ']' + text + '[/url]';
+    var element = document.getElementById(elementId);
+    var url = prompt('{g->text text="Enter a URL" forJavascript=true}'), text = null;
+    if (url != null) text = prompt('{g->text text="Enter some text describing the URL"
+					     forJavascript=true}');
+    if (text != null) element.value = element.value + '[url=' + url + ']' + text + '[/url]';
     element.focus();
   {rdelim}
 
   function appendImageElement(elementId, bbCodeElement) {ldelim}
-    element = document.getElementById(elementId);
-    url = prompt("{g->text text="Enter an image URL"}");
-    element.value = element.value + '[img]' + url + '[/img]';
+    var element = document.getElementById(elementId);
+    var url = prompt('{g->text text="Enter an image URL" forJavascript=true}');
+    if (url != null) element.value = element.value + '[img]' + url + '[/img]';
     element.focus();
   {rdelim}
   // ]]>
