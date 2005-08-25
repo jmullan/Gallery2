@@ -136,7 +136,8 @@ function _GalleryMain($embedded=false) {
     /* Figure out the target view/controller */
     list($viewName, $controllerName) = GalleryUtilities::getRequestVariables('view', 'controller');
 
-    if (!$embedded && $gallery->getConfig('mode.embed.only') && $viewName != 'core.DownloadItem') {
+    if (!$embedded && $gallery->getConfig('mode.embed.only') &&
+	    $viewName != 'core.DownloadItem' && $viewName != 'imageframe.CSS') {
 	/* Lock out direct access when embed-only is set */
 	return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
     }
