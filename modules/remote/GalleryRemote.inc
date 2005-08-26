@@ -496,7 +496,7 @@ class GalleryRemoteController extends GalleryController {
 
 	/* Get children of the album */
 	list ($ret, $ids) =
-	    GalleryCoreApi::fetchLinkableChildItemIdsWithPermission($albumId, 'core.view');
+	    GalleryCoreApi::fetchChildItemIdsWithPermission($albumId, 'core.view');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -597,6 +597,7 @@ class GalleryRemoteController extends GalleryController {
 		}
 
 		$response->setProperty('image.caption.' . $i, $item->getTitle());
+		$response->setProperty('image.title.' . $i, $item->getPathComponent());
 		$response->setProperty('image.hidden.' . $i, 'no');
 
 		$i++;

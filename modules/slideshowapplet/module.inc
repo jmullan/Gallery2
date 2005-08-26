@@ -32,9 +32,9 @@ class SlideshowAppletModule extends GalleryModule {
 	$this->setId('slideshowapplet');
 	$this->setName($gallery->i18n('Slideshow Applet'));
 	$this->setDescription($gallery->i18n('Fullscreen slideshow using a Java applet'));
-	$this->setVersion('0.9.8');
+	$this->setVersion('0.9.9');
 	$this->setGroup('display', $this->translate('Display'));
-	$this->setCallbacks('getItemLinks');
+	$this->setCallbacks('getItemLinks|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
 	$this->setRequiredModuleApi(array(2, 0));
     }
@@ -88,6 +88,15 @@ class SlideshowAppletModule extends GalleryModule {
         $rules[] = $rule;
 
         return $rules;
+    }
+
+    /**
+     * @see GalleryModule::getSiteAdminViews()
+     */
+    function getSiteAdminViews() {
+	return array(GalleryStatus::success(),
+		     array(array('name' => $this->translate('Slideshow Applet'),
+				 'view' => 'slideshowapplet.SlideshowAppletSiteAdmin')));
     }
 }
 ?>

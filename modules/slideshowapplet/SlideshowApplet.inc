@@ -83,7 +83,7 @@ class SlideshowAppletView extends GalleryView {
 	    $SlideshowApplet['cookieDomain'] = $session->getCookieDomain();
 	    $SlideshowApplet['cookiePath'] = $cookiePath;
 	    $SlideshowApplet['album'] = $item->getId();
-	    $SlideshowApplet['defaults'] = array();
+	    //$SlideshowApplet['defaults'] = array();
 	    $SlideshowApplet['overrides'] = array('toSysOut' => 'true');
 	    $SlideshowApplet['userAgent'] = GalleryUtilities::getServerVar('HTTP_USER_AGENT');
 	    $SlideshowApplet['galleryVersion'] = 2;
@@ -93,6 +93,12 @@ class SlideshowAppletView extends GalleryView {
 	    	/* format the start_from as album_picture, that's what GR expects */
 	    	$SlideshowApplet['extra']['gr_slideshow_start_from'] = $item->getId().'_'.$startId;
 	    }
+
+	    list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'slideshowapplet');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $SlideshowApplet['defaults'] = $params;
 	}
 
 	$form['formName'] = '';

@@ -402,6 +402,43 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	$this->assert($response->hasProperty('status_text'));
     }
 
+    function testFetchAlbumImagesAlbumsToo() {
+	global $gallery;
+
+	/* Create some images */
+	$parentId = $this->_rootAlbum->getId();
+	for ($i = 0; $i < 2; $i++) {
+	    list ($ret, $image[$i]) = $this->_createRandomDataItem($parentId, 'image/jpg');
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    
+	    list ($ret, $derivative[$i]) = $this->_createDerivative(
+		$image[$i], $image[$i]->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+	list ($ret, $album) = $this->_createRandomAlbum($parentId);
+	if ($ret->isError()) {
+	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	GalleryUtilities::putRequestVariable('form[cmd]', 'fetch-album-images');
+	GalleryUtilities::putRequestVariable('form[set_albumName]', $this->_rootAlbum->getId());
+	GalleryUtilities::putRequestVariable('form[albums_too]', 'yes');
+	$results = $this->handleRequest();
+	$this->assertEquals(array(), $results['error']);
+	$this->assertEquals('remote.GalleryRemote', $results['delegate']['view']);
+
+	$response = $results['status']['controllerResponse'];
+	$this->assertEquals($this->_code['SUCCESS'], (int)$response->getProperty('status'));
+
+	/* Make sure the there are 2 images and 1 album */
+	$this->assertEquals('3', $response->getProperty('image_count'));
+	$this->assert($response->hasProperty('status_text'));
+    }
+
     function testNoop() {
 	global $gallery;
 
