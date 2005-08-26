@@ -305,6 +305,7 @@ function _GalleryMain($embedded=false) {
 
 	$templatePath = 'gallery:' . $results['body'];
 	$template->setVariable('l10Domain', $theme->getL10Domain());
+	$template->setVariable('isEmbedded', $embedded);
 
 	if ($embedded) {
 	    list ($ret, $html) = $template->fetch($templatePath);
