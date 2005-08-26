@@ -121,6 +121,16 @@ class PlatformTest extends GalleryTestCase {
 	$this->assertEquals("/* --> Target Line <-- */", trim($lines[__LINE__-2]));
     }
 
+    function testFileGetContents() {
+	$contents = $this->_platform->file_get_contents(__FILE__);
+	$this->assert(is_string($contents), 'string');
+	$this->assert(strpos($contents, '--> Target Content <--') !== false, 'contents');
+
+	/* file_get_contents/fopen gets PHP ERROR so can't test we get false for bogus path */
+	/* $contents = $this->_platform->file_get_contents('/bogus/path'); */
+	/* $this->assertEquals(false, $contents, 'bogus path'); */
+    }
+
     function testFopen() {
 	$fd = $this->_platform->fopen($this->_sourceFile, 'r');
 	$this->assert($fd);

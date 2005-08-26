@@ -330,6 +330,26 @@ class GalleryPlatform {
     }
 
     /**
+     * Reads the entire contents of the specified file into a string.
+     * file_get_contents PHP function is used if available.
+     * 
+     * @param string file path
+     * @return string file contents or boolean false on failure
+     */
+    function file_get_contents($path) {
+	if (function_exists('file_get_contents')) {
+	    return file_get_contents($path);
+	}
+	if (!($fd = $this->fopen($path, 'rb'))) {
+	    return false;
+	}
+	$fileSize = $this->filesize($path);
+	$contents = $fileSize == 0 ? '' : $this->fread($fd, $fileSize);
+	$this->fclose($fd);
+	return $contents;
+    }
+
+    /**
      * Open a file or URL
      *
      * @param string a file path or URL
