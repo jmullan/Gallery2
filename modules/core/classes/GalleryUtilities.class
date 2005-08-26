@@ -1131,30 +1131,42 @@ class GalleryUtilities {
 	/*
 	 * If our GalleryEntity is a GalleryFileSystemEntity, then we've got a
 	 * path component so we're cool.  If it's a derivative, then get the
-	 * pseudo filename of its derivative source and use that instead.  If
-	 * it's neither, then return 'unknown' for now.
+	 * pseudo filename of its parent and use that instead (but make sure
+	 * the extension matches derivative, as parent mime type may differ).
+	 * If it's neither, then return 'unknown' for now.
 	 */
 	if (GalleryUtilities::isA($entity, 'GalleryFileSystemEntity')) {
 	    $pseudoFileName = $entity->getPathComponent();
 	} else if (GalleryUtilities::isA($entity, 'GalleryDerivative')) {
-	    list ($ret, $sourceEntity) = GalleryCoreApi::loadEntitiesById($entity->getParentId());
+	    list ($ret, $parentEntity) = GalleryCoreApi::loadEntitiesById($entity->getParentId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    if (GalleryUtilities::isA($sourceEntity, 'GalleryFileSystemEntity')) {
-		$pseudoFileName = $sourceEntity->getPathComponent();
-	    } else {
-		list ($ret, $pseudoFileName) = GalleryUtilities::getPseudoFileName($sourceEntity);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+	    if (GalleryUtilities::isA($parentEntity, 'GalleryFileSystemEntity')) {
+		$pseudoFileName = $parentEntity->getPathComponent();
+		if (!method_exists($parentEntity, 'getMimeType') ||
+			$parentEntity->getMimeType() != $entity->getMimeType()) {
+		    list ($ret, $extensions) =
+			GalleryCoreApi::convertMimeToExtensions($entity->getMimeType());
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    if (!empty($extensions)) {
+			if (method_exists($parentEntity, 'getMimeType')) {
+			    /* Change extension for mime type of this derivative */
+			    $pseudoFileName =
+				preg_replace('{\.[^.]+$}', '.' . $extensions[0], $pseudoFileName);
+			} else {
+			    /* Non-item parent, like an album.. add extension for this mime type */
+			    $pseudoFileName .= '.' . $extensions[0];
+			}
+		    }
 		}
 	    }
-	} else {
-	    return array(GalleryStatus::success(), 'unknown');
 	}
-
-	return array(GalleryStatus::success(), $pseudoFileName);
+	return array(GalleryStatus::success(),
+		     isset($pseudoFileName) ? $pseudoFileName : 'unknown');
     }
 
     /**

@@ -47,6 +47,7 @@ class UtilitiesTest extends GalleryTestCase {
 	    $_SERVER['HTTP_COOKIE'] : null;
 
 	$this->_mkdir = array();
+	$this->_savePlatform = $gallery->getPlatform();
 	$gallery->_platform = new UtilitiesTestPlatform($this);
     }
 
@@ -1182,6 +1183,95 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->assertEquals(12.34, GalleryUtilities::castToFloat('12.34'), 'string german');
 
 	setlocale(LC_ALL, $currentLocale);
+    }
+
+    function testGetPseudoFileName() {
+	global $gallery;
+	$gallery->_platform = $this->_savePlatform;
+
+	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($album);
+
+	$ret = GalleryCoreApi::addMimeType('phpunit_movie', 'test/movie', false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $item) = $this->_createRandomDataItem($album->getId(), 'test/movie',
+					   array('pathComponent' => 'testitem.phpunit_movie'));
+	if ($ret->isError()) {
+	    GalleryCoreApi::removeMimeType(array('extension' => 'phpunit_movie'));
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $clip) = $this->_createDerivative($item, $item->getId(),
+	    DERIVATIVE_TYPE_IMAGE_PREFERRED, 'movieclip|5,10', 'test/movie');
+	if ($ret->isError()) {
+	    GalleryCoreApi::removeMimeType(array('extension' => 'phpunit_movie'));
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::addMimeType('phpunit_image', 'test/image', true);
+	if ($ret->isError()) {
+	    GalleryCoreApi::removeMimeType(array('extension' => 'phpunit_movie'));
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $thumb) = $this->_createDerivative($item, $item->getId(),
+	    DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'convert-to-test/image;thumbnail|150', 'test/image');
+	if ($ret->isError()) {
+	    GalleryCoreApi::removeMimeType(
+			    array('extension' => array('phpunit_movie', 'phpunit_image')));
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $highlight) = $this->_createDerivative($album, $thumb->getId(),
+	    DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'thumbnail|200', 'test/image');
+	if ($ret->isError()) {
+	    GalleryCoreApi::removeMimeType(
+			    array('extension' => array('phpunit_movie', 'phpunit_image')));
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Item gives its own name */
+	list ($ret, $result) = GalleryUtilities::getPseudoFileName($item);
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('testitem.phpunit_movie', $result);
+
+	/* Derivative with same mime type as parent */
+	list ($ret, $result) = GalleryUtilities::getPseudoFileName($clip);
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('testitem.phpunit_movie', $result);
+
+	/* Derivative with different mime type from parent */
+	list ($ret, $result) = GalleryUtilities::getPseudoFileName($thumb);
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('testitem.phpunit_image', $result);
+
+	/* Derivative with non-item parent */
+	list ($ret, $result) = GalleryUtilities::getPseudoFileName($highlight);
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($album->getPathComponent() . '.phpunit_image', $result);
+
+	/* Entity that is not a FileSystemEntity or Derivative */
+	list ($ret, $result) = GalleryUtilities::getPseudoFileName($gallery->getActiveUser());
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('unknown', $result);
+
+	/* Cleanup */
+	$ret = GalleryCoreApi::removeMimeType(
+			       array('extension' => array('phpunit_movie', 'phpunit_image')));
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
     }
 }
 
