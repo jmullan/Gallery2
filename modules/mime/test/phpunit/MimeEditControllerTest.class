@@ -19,15 +19,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
  * @version $Revision$ $Date$
  * @package Mime
  * @subpackage PHPUnit
  * @author Felix Rabinovich <felix@rabinovich.org>
  */
-
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryMimeTypeMap.class');
-
 class MimeEditControllerTest extends GalleryControllerTestCase {
 
     function MimeEditControllerTest($methodName) {
@@ -35,14 +33,12 @@ class MimeEditControllerTest extends GalleryControllerTestCase {
     }
 
     function tearDown() {
-	$ret = GalleryMimeTypeMap::removeMapEntry(array('mimeType' =>'test/test'));
+	$ret = GalleryCoreApi::removeMimeType(
+			       array('mimeType' => array('test/test', 'test/test2')));
 	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$ret = GalleryMimeTypeMap::removeMapEntry(array('mimeType' =>'test/test2'));
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+
 	parent::tearDown();
     }
 
@@ -148,8 +144,7 @@ class MimeEditControllerTest extends GalleryControllerTestCase {
 
     function testReuseExtension() {
 	$extension = 'test-' . rand(111, 999);
-	$ret = GalleryMimeTypeMap::addMapEntry(
-	    array('extension' => $extension, 'mimeType' => 'test/test2', 'viewable' => 0));
+	$ret = GalleryCoreApi::addMimeType($extension, 'test/test2', false);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -194,7 +189,7 @@ class MimeEditControllerTest extends GalleryControllerTestCase {
 
 	if (empty($extensions)) {
 	    /* Delete mime entry in case test failed.. */
-	    $ret = GalleryMimeTypeMap::removeMapEntry(array('mimeType' =>'Test/Test'));
+	    $ret = GalleryCoreApi::removeMimeType(array('mimeType' => 'Test/Test'));
 	    if ($ret->isError()) {
 		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }

@@ -32,83 +32,93 @@
  * @package GalleryCore
  * @subpackage PHPUnit
  */
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryMimeTypeMap.class');
-
 class MimeTest extends GalleryTestCase {
 
     function MimeTest($methodName) {
-        $this->GalleryTestCase($methodName);
+	$this->GalleryTestCase($methodName);
     }
 
     function setUp() {
-        parent::setUp();
-        $mimeTypeMap = array('extension' => 'xxx', 'mimeType' => 'test/test',
-            'viewable' => 0);
-        $ret = GalleryMimeTypeMap::addMapEntry($mimeTypeMap);
-        if ($ret->isError()) {
-            print $ret->getAsHtml();
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
-        $mimeTypeMap = array('extension' => 'yyy', 'mimeType' => 'test/test',
-            'viewable' => 0);
-        $ret = GalleryMimeTypeMap::addMapEntry($mimeTypeMap);
-        if ($ret->isError()) {
-            print $ret->getAsHtml();
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
+	parent::setUp();
+
+	$ret = GalleryCoreApi::addMimeType('xxx', 'test/test', false);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::addMimeType('yyy', 'test/test', false);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
     }
 
     function tearDown() {
-        $ret = GalleryMimeTypeMap::removeMapEntry(array('mimeType' => 'test/test'));
-        if ($ret->isError()) {
-            print $ret->getAsHtml();
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
-        parent::tearDown();
+	$ret = GalleryCoreApi::removeMimeType(array('mimeType' => 'test/test'));
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	parent::tearDown();
     }
 
     function testGetMimeType() {
-        list ($ret, $mimeType) = GalleryCoreApi::getMimeType('file.xxx');
-        if ($ret->isError()) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
-        $this->assertEquals('test/test', $mimeType);
+	list ($ret, $mimeType) = GalleryCoreApi::getMimeType('file.xxx');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('test/test', $mimeType);
     }
 
     function testConvertExtensionToMime() {
-        list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime('xxx');
-        if ($ret->isError()) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
-        $this->assertEquals('test/test', $mimeType);
-        list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime('XXX');
-        if ($ret->isError()) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
-        $this->assertEquals('test/test', $mimeType);
+	list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime('xxx');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('test/test', $mimeType);
+
+	list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime('XXX');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('test/test', $mimeType);
     }
 
     function testConvertMimeToExtensions() {
-        list ($ret, $exts) = GalleryCoreApi::convertMimeToExtensions('test/test');
-        if ($ret->isError()) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
+	list ($ret, $exts) = GalleryCoreApi::convertMimeToExtensions('test/test');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 	sort($exts);
-        $this->assertEquals(array('xxx', 'yyy'), $exts);
+	$this->assertEquals(array('xxx', 'yyy'), $exts);
+
+	list ($ret, $exts) = GalleryCoreApi::convertMimeToExtensions('test/Test');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	sort($exts);
+	$this->assertEquals(array('xxx', 'yyy'), $exts);
+
+	/* empty list (previously returned wrap(success),null if no mapping found) */
+	list ($ret, $exts) = GalleryCoreApi::convertMimeToExtensions('test/unmapped-mime');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(), $exts);
     }
 
     function testIsViewableMimeType() {
-        list ($ret, $isViewable) = GalleryCoreApi::isViewableMimeType('image/jpeg');
-        if ($ret->isError()) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
-        $this->assert($isViewable, 'jpeg');
+	list ($ret, $isViewable) = GalleryCoreApi::isViewableMimeType('image/jpeg');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($isViewable, 'jpeg');
 
-        list ($ret, $isViewable) = GalleryCoreApi::isViewableMimeType('test/test');
-        if ($ret->isError()) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
-        $this->assert(!$isViewable, 'test');
+	list ($ret, $isViewable) = GalleryCoreApi::isViewableMimeType('test/test');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!$isViewable, 'test');
     }
 
     function testAddMimeType() {
@@ -116,14 +126,14 @@ class MimeTest extends GalleryTestCase {
 	$this->assert($ret->isError() && $ret->getErrorCode() & ERROR_COLLISION);
 
 	$ret = GalleryCoreApi::addMimeType('zzz', 'test/test', 1);
-        if ($ret->isError()) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
 	list ($ret, $mime) = GalleryCoreApi::convertExtensionToMime('zzz');
-        if ($ret->isError()) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
 	$this->assertEquals('test/test', $mime);
     }

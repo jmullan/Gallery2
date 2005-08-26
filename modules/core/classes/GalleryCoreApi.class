@@ -2334,7 +2334,7 @@ class GalleryCoreApi {
      *
      * @param string a file extension
      * @return array object GalleryStatus a status code
-     *               string a mime type
+     *               string a mime type (application/unknown if no known mapping)
      * @static
      */
     function convertExtensionToMime($extension) {
@@ -2347,7 +2347,7 @@ class GalleryCoreApi {
      *
      * @param string a mime type
      * @return array object GalleryStatus a status code
-     *               array of file extensions
+     *               array of file extensions (empty array if no known mapping)
      * @static
      */
     function convertMimeToExtensions($mimeType) {
@@ -2362,7 +2362,7 @@ class GalleryCoreApi {
      *
      * @param string the filename
      * @return array object GalleryStatus a status code
-     *               string a mime type
+     *               string a mime type (application/unknown if no known extension)
      * @static
      */
     function getMimeType($filename) {
@@ -2383,14 +2383,15 @@ class GalleryCoreApi {
     }
 
     /**
-     * Remove given mime type from the list
+     * Remove specified mime data from the list.
+     * examples: array('mimeType' => 'test/image') or array('extension' => array('img', 'im2'))
      *
-     * @param associative array the mime type
+     * @param associative array mime match (keys/values to delete)
      * @return object GalleryStatus a status code
      */
-    function removeMimeType($mimeType) {
+    function removeMimeType($mimeMatch) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryMimeTypeHelper_advanced.class');
-	return GalleryMimeTypeHelper_advanced::removeMimeType($mimeType);
+	return GalleryMimeTypeHelper_advanced::removeMimeType($mimeMatch);
     }
 
 

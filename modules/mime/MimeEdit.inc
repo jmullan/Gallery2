@@ -81,7 +81,8 @@ class MimeEditController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		foreach ($mimeTypeMap as $mimeType) {
-		    $ret = GalleryMimeTypeMap::addMapEntry($mimeType);
+		    $ret = GalleryCoreApi::addMimeType(
+			   $mimeType['extension'], $mimeType['mimeType'], $mimeType['viewable']);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }

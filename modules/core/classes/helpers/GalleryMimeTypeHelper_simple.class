@@ -40,31 +40,19 @@ class GalleryMimeTypeHelper_simple {
      *
      * @param string a file extension
      * @return array object GalleryStatus a status code
-     *               string a mime type
+     *               string a mime type (application/unknown if no known mapping)
      * @static
      */
     function convertExtensionToMime($extension) {
-	global $gallery;
-
-	$query = '
-	SELECT
-            [GalleryMimeTypeMap::mimeType]
-	FROM
-            [GalleryMimeTypeMap]
-	WHERE
-            [GalleryMimeTypeMap::extension] = ?
-	';
-	$data[] = strtolower($extension);
-	list ($ret, $searchResults) = $gallery->search($query, $data);
+	list ($ret, $mimeData) = GalleryMimeTypeHelper_simple::_getMimeData();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if ($searchResults->resultCount() == 0) {
-	    return array(GalleryStatus::success(), 'application/unknown');
-	}
-	$result = $searchResults->nextResult();
-	return array(GalleryStatus::success(), $result[0]);
+	$extension = strtolower($extension);
+	return array(GalleryStatus::success(),
+		     isset($mimeData['by-extension'][$extension])
+			 ? $mimeData['by-extension'][$extension] : 'application/unknown');
     }
 
     /**
@@ -72,34 +60,19 @@ class GalleryMimeTypeHelper_simple {
      *
      * @param string a mime type
      * @return array object GalleryStatus a status code
-     *               array of file extensions
+     *               array of file extensions (empty array if no known mapping)
      * @static
      */
     function convertMimeToExtensions($mimeType) {
-	global $gallery;
-
-	$query = '
-	SELECT
-            [GalleryMimeTypeMap::extension]
-	FROM
-            [GalleryMimeTypeMap]
-	WHERE
-            [GalleryMimeTypeMap::mimeType] = ?
-	';
-	$data[] = strtolower($mimeType);
-	list ($ret, $searchResults) = $gallery->search($query, $data);
+	list ($ret, $mimeData) = GalleryMimeTypeHelper_simple::_getMimeData();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if ($searchResults->resultCount() == 0) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$extensions = array();
-	while ($result = $searchResults->nextResult()) {
-	    $extensions[] = $result[0];
-	}
-	return array(GalleryStatus::success(), $extensions);
+	$mimeType = strtolower($mimeType);
+	return array(GalleryStatus::success(),
+		     isset($mimeData['by-mimetype'][$mimeType])
+			 ? $mimeData['by-mimetype'][$mimeType]['exts'] : array());
     }
 
     /**
@@ -109,12 +82,12 @@ class GalleryMimeTypeHelper_simple {
      *
      * @param string the filename
      * @return array object GalleryStatus a status code
-     *               string a mime type
+     *               string a mime type (application/unknown if no known extension)
      * @static
      */
     function getMimeType($filename) {
 	list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
-	list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
+	list ($ret, $mimeType) = GalleryMimeTypeHelper_simple::convertExtensionToMime($extension);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -129,27 +102,90 @@ class GalleryMimeTypeHelper_simple {
      *               boolean
      */
     function isViewableMimeType($mimeType) {
-	global $gallery;
-
-	$query = '
-	SELECT
-            [GalleryMimeTypeMap::viewable]
-	FROM
-            [GalleryMimeTypeMap]
-	WHERE
-            [GalleryMimeTypeMap::mimeType] = ?
-	';
-	$data[] = strtolower($mimeType);
-	list ($ret, $searchResults) = $gallery->search($query, $data);
+	list ($ret, $mimeData) = GalleryMimeTypeHelper_simple::_getMimeData();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), false);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if ($searchResults->resultCount() == 0) {
-	    return array(GalleryStatus::success(), false);
+	return array(GalleryStatus::success(),
+		     isset($mimeData['by-mimetype'][$mimeType])
+			 ? $mimeData['by-mimetype'][$mimeType]['viewable'] : false);
+    }
+
+    /**
+     * Get all mime type data
+     *
+     * @return array object GalleryStatus a status code
+     *               array('by-extension' => array(string extension => string mime type),
+     *                     'by-mimetype' => array(string mime => array('exts' => array of strings,
+     *                                                                 'viewable' => boolean)))
+     * @access private
+     * @static
+     */
+    function &_getMimeData() {
+	$mimeData =& GalleryMimeTypeHelper_simple::_getSingleton();
+	if (empty($mimeData)) {
+	    $cacheParams = array('type' => 'module', 'id' => '_all',
+				 'itemId' => 'GalleryMimeTypeHelper_mimeData');
+	    $cached = GalleryDataCache::getFromDisk($cacheParams);
+	    if (isset($cached)) {
+		$mimeData = $cached;
+	    } else {
+		global $gallery;
+		$query = '
+		SELECT
+		    [GalleryMimeTypeMap::extension],
+		    [GalleryMimeTypeMap::mimeType],
+		    [GalleryMimeTypeMap::viewable]
+		FROM
+		    [GalleryMimeTypeMap]
+		';
+		list ($ret, $searchResults) = $gallery->search($query);
+		if ($ret->isError()) {
+		    $ret = array($ret->wrap(__FILE__, __LINE__), null);
+		    return $ret;
+		}
+
+		$mimeData = array('by-extension' => array(), 'by-mimetype' => array());
+		while ($result = $searchResults->nextResult()) {
+		    $mimeData['by-extension'][$result[0]] = $result[1];
+		    if (!isset($mimeData['by-mimetype'][$result[1]])) {
+			$mimeData['by-mimetype'][$result[1]] =
+			    array('exts' => array($result[0]), 'viewable' => (boolean)$result[2]);
+		    } else {
+			$mimeData['by-mimetype'][$result[1]]['exts'][] = $result[0];
+			$mimeData['by-mimetype'][$result[1]]['viewable'] |= (boolean)$result[2];
+		    }
+		}
+		GalleryDataCache::putToDisk($cacheParams, $mimeData);
+	    }
 	}
-	$result = $searchResults->nextResult();
-	return array(GalleryStatus::success(), (boolean)$result[0]);
+	$ret = array(GalleryStatus::success(), &$mimeData);
+	return $ret;
+    }
+
+    /**
+     * Singleton that can be cleared.
+     * @access private
+     * @staticvar array $mimeData
+     * @static
+     */
+    function &_getSingleton() {
+	static $mimeData = array();
+	return $mimeData;
+    }
+
+    /**
+     * Clear cached mime type data
+     *
+     * @access private
+     * @static
+     */
+    function _deleteCache() {
+	GalleryDataCache::removeFromDisk(array('type' => 'module', 'id' => '_all',
+					       'itemId' => 'GalleryMimeTypeHelper_mimeData'));
+	$mimeData =& GalleryMimeTypeHelper_simple::_getSingleton();
+	$mimeData = array();
     }
 }
 ?>

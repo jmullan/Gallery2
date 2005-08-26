@@ -32,6 +32,8 @@
  * @subpackage Classes
  */
 GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryMimeTypeMap.class');
+GalleryCoreApi::relativeRequireOnce(
+    'modules/core/classes/helpers/GalleryMimeTypeHelper_simple.class');
 
 class GalleryMimeTypeHelper_advanced {
 
@@ -85,9 +87,9 @@ class GalleryMimeTypeHelper_advanced {
 	    'ief' => 'image/ief',
 	    'iges' => 'model/iges',
 	    'igs' => 'model/iges',
-	    'jpe' => 'image/jpeg',
-	    'jpeg' => 'image/jpeg',
 	    'jpg' => 'image/jpeg',
+	    'jpeg' => 'image/jpeg',
+	    'jpe' => 'image/jpeg',
 	    'js' => 'application/x-javascript',
 	    'kar' => 'audio/midi',
 	    'latex' => 'application/x-latex',
@@ -225,20 +227,24 @@ class GalleryMimeTypeHelper_advanced {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
+
+	GalleryMimeTypeHelper_simple::_deleteCache();
 	return GalleryStatus::success();
     }
 
     /**
-     * Remove given mime type from the list
+     * Remove specified mime data from the list.
+     * examples: array('mimeType' => 'test/image') or array('extension' => array('img', 'im2'))
      *
-     * @param associative array the mime type
+     * @param associative array mime match (keys/values to delete)
      * @return object GalleryStatus a status code
      */
-    function removeMimeType($mimeType) {
-	$ret = GalleryMimeTypeMap::removeMapEntry($mimeType);
+    function removeMimeType($mimeMatch) {
+	$ret = GalleryMimeTypeMap::removeMapEntry($mimeMatch);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+	GalleryMimeTypeHelper_simple::_deleteCache();
 	return GalleryStatus::success();
     }
 
@@ -281,6 +287,7 @@ class GalleryMimeTypeHelper_advanced {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	GalleryMimeTypeHelper_simple::_deleteCache();
 	return GalleryStatus::success();
     }
 }
