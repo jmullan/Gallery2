@@ -237,7 +237,7 @@ class DatabaseSetupStep extends InstallStep {
 	}
 
 	$templateData['isMultisite'] = $galleryStub->getConfig('isMultisite');
-	
+
 	if ($this->isComplete()) {
 	    $galleryStub->setConfig('storage.config', $this->_config);
 	    if (empty($_POST['confirmReuseTables'])) {
@@ -349,14 +349,12 @@ class DatabaseSetupStep extends InstallStep {
 	if (!file_exists($fileName)) {
 	    return array(false, sprintf(_('SQL test file "%s" not found.'), $fileName));
 	}
-	/* The following code is copied from DatabaseStorage::_getModuleSql() */
-	if (!($fd = fopen($fileName, 'r'))) {
+	/* The following code is copied from $platform->file_get_contents() */
+	if (!($fd = fopen($fileName, 'rb'))) {
 	    return array(false, sprintf(_('Could not open SQL test file "%s".'), $fileName));
 	}
-	$buffer = null;
-	while (!feof($fd)) {
-	    $buffer .= fgets($fd, 4096);
-	}
+	$fileSize = filesize($fileName);
+	$buffer = $fileSize == 0 ? '' : fread($fd, $fileSize);
 	fclose($fd);
 
 	/*
@@ -567,10 +565,10 @@ class DatabaseSetupStep extends InstallStep {
 	if ($baseDir{strlen($baseDir)-1} != $platform->getDirectorySeparator()) {
 	    $baseDir .= $platform->getDirectorySeparator();
 	}
-	
+
 	/* Scrub the contents of the gallery data directory */
 	$dir = $platform->opendir($baseDir);
-	
+
 	while (($filename = $platform->readdir($dir)) !== false) {
 	    if (!strcmp($filename, '.') || !strcmp($filename, '..')) {
 		continue;

@@ -75,12 +75,14 @@ function find($dir) {
  */
 function extractStrings($filename) {
     global $strings;
-    $fd = fopen($filename, 'r');
-    $data = '';
-    while (! feof($fd)) {
-	$data .= fgets($fd, 4096);
+    if (function_exists('file_get_contents')) {
+	$data = file_get_contents($filename);
+    } else {
+	$fd = fopen($filename, 'r');
+	$fileSize = filesize($filename);
+	$data = $fileSize == 0 ? '' : fread($fd, $fileSize);
+	fclose($fd);
     }
-    fclose($fd);
     #echo "$data\n";
 
     # grab phrases for translate( or i18n( or _( calls; capture string parameter enclosed

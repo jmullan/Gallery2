@@ -157,7 +157,7 @@ class GallerySession {
 		$this->_sessionId =
 		    sprintf('%s-%s', $searchEngineId, GalleryUtilities::getRemoteHostAddress());
 	    } else {
-		/* When loggin out (resetting the session), we already know if cookies are used */
+		/* When logging out (resetting the session), we already know if cookies are used */
 		if (!$this->isUsingCookies()) {
 		    $this->_isUsingCookies = false;
 		}
@@ -401,7 +401,7 @@ class GallerySession {
 		    $platform->touch($sessionFile);
 		}
 	    }
-	    
+
 	    /* Perform garbage collection 1% of the time. */
 	    if ($dieRoll == 1) {
 		$ret = $this->_expireSessions();
@@ -689,24 +689,12 @@ class GallerySession {
 	$sessionFile = $gallery->getConfig('data.gallery.sessions') . $this->_sessionId;
 
 	$valid = false;
-	if ($platform->file_exists($sessionFile)) {
-	    $serialized = '';
-	    $fd = $platform->fopen($sessionFile, 'rb');
-	    if ($fd) {
-		while (!$platform->feof($fd)) {
-		    $serialized .= $platform->fread($fd, 4096);
-		}
-		$platform->fclose($fd);
-	    }
-
-	    if ($serialized) {
-		$data = unserialize($serialized);
-		if (sizeof($data) == 3) {
-		    list ($this->_creationTime,
-			  $this->_remoteIdentifier,
-			  $this->_sessionData) = $data;
-		    $this->_loadedSessionData = $serialized;
-		}
+	if ($platform->file_exists($sessionFile) &&
+		$serialized = $platform->file_get_contents($sessionFile)) {
+	    $data = unserialize($serialized);
+	    if (count($data) == 3) {
+		list ($this->_creationTime, $this->_remoteIdentifier, $this->_sessionData) = $data;
+		$this->_loadedSessionData = $serialized;
 		$valid = true;
 	    }
 	}
@@ -930,10 +918,10 @@ class GallerySession {
 	}
 	$this->put('core.navigation', $navigation);
     }
-	     
+
     /**
      * Check if we should create and save a session for this request
-     * 
+     *
      * Don't save session in core.DownloadItem, migrate.Redirect, ... requests
      * Reason: In these requests we don't need to save the session or create a new one because
      *         a) the session is not modified (DownloadItem, CSS)
@@ -942,7 +930,7 @@ class GallerySession {
      *         d) in migrate.Redirect requests, the cookie path we would set would most certainly
      *            be wrong, because the internal mod_rewrite redirect doesn't change all PHP SERVER
      *            variables
-     *    
+     *
      *         And if we stored the session, it would result in *a lot* unneeded sessions,
      *         e.g. for migrate redirects or hotlinked images.
      *
@@ -952,7 +940,7 @@ class GallerySession {
     function _shouldSaveSession() {
 	/* Default to true */
 	$ret = true;
-	
+
 	list ($view, $controller) = GalleryUtilities::getRequestVariables('view', 'controller');
 
 	/* Check if the current request's view or controller is in the exlude list */

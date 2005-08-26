@@ -51,6 +51,7 @@ class Php41CompatibilityTest extends CodeAuditTestCase {
 	$this->_exceptions['gd_info']['GdToolkitHelper.class'] = 1;
 	$this->_exceptions['gd_info']['TestGdFunctionality.class'] = 1;
 	$this->_exceptions['memory_get_usage']['GalleryTemplateAdapter.class'] = 1;
+	$this->_exceptions['file_get_contents']['GalleryPlatform.class'] = 1;
     }
 
     /**
@@ -95,11 +96,15 @@ class Php41CompatibilityTest extends CodeAuditTestCase {
 		    /* Remove trailing open paren matched by the pattern, and any spaces */
 		    $keyword = trim(substr($keyword, 0, -1));
 		    if (!isset($this->_exceptions[$keyword]) ||
-			!isset($this->_exceptions[$keyword][basename($fileName)])) {
-			$this->assert(false,
-				      sprintf('%s contains illegal keyword <b>%s</b> ' .
-					      'on line <b>%d</b>',
-					      basename($fileName), $keyword, $i+1));
+			    !isset($this->_exceptions[$keyword][basename($fileName)])) {
+			/* Allow $platform->{keyword} calls */
+			$line = str_replace('$platform->' . $keyword, '', $lines[$i]);
+			if (strpos($line, $keyword) !== false) {
+			    $this->assert(false,
+					  sprintf('%s contains illegal keyword <b>%s</b> ' .
+						  'on line <b>%d</b>',
+						  basename($fileName), $keyword, $i+1));
+			}
 		    }
 		}
 	    }

@@ -49,7 +49,7 @@ class SessionTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	/*
 	 * Backup things that we will overwrite during the test (original values also needed in the
 	 * tests)
@@ -64,7 +64,7 @@ class SessionTest extends GalleryTestCase {
     function tearDown() {
 	global $gallery;
 	$gallery->_session = $this->_savedSession;
-	
+
 	foreach ($this->_originalServerVars as $key => $value) {
 	    $_SERVER[$key] = $value;
 	}
@@ -217,7 +217,7 @@ class SessionTest extends GalleryTestCase {
 		unset($_COOKIE[SESSION_ID_PARAMETER]);
 		$expected = false;
 	    }
-	    
+
 	    $session = new GallerySession();
 	    $session->init();
 	    $this->assertEquals($expected, $session->isUsingCookies(),
@@ -231,7 +231,7 @@ class SessionTest extends GalleryTestCase {
 			  $type . '"');
 	}
     }
-    
+
     function testExpireSessions() {
 	/* Make sure the SQL runs */
 	GallerySession::_expireSessions();
@@ -314,12 +314,8 @@ class SessionTest extends GalleryTestCase {
 	/* Mock platform creates sessionid collision for first id picked */
 	$platform = new UnitTestPlatform();
 	$platform->setReply('file_exists', array('fuzzy' => '{.*}'), true);
-	$platform->setReply('fopen', array('fuzzy' => '{.*}', 'rb', 0), 'fh');
-	$platform->setReply('feof', array('fh'), false);
-	$platform->setReply('fread', array('fh', 4096),
+	$platform->setReply('file_get_contents', array('fuzzy' => '{.*}'),
 			    serialize(array(123, 'abc', array('session' => 'data'))));
-	$platform->setReply('feof', array('fh'), true);
-	$platform->setReply('fclose', array('fh'), true);
 	$platform->setReply('file_exists', array('fuzzy' => '{.*}'), false);
 	$gallery->setPlatform($platform);
 
@@ -340,7 +336,7 @@ class SessionTest extends GalleryTestCase {
     function testServerSideSessionExpiration() {
 	global $gallery;
 	$session =& $gallery->getSession();
-	
+
 	$ret = $this->_markPluginParametersForCleanup('module', 'core');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -384,64 +380,60 @@ class SessionTest extends GalleryTestCase {
 			    array('ctime' => $creationTime, 'mtime' => $modificationTime));
 	/* At this point the session data is loaded */
 	$platform->setReply('file_exists', array($sessionFile), true);
-	$platform->setReply('fopen', array($sessionFile, 'rb', 0), 'fh');
-	$platform->setReply('feof', array('fh'), false);
-	$platform->setReply('fread', array('fh', 4096),
+	$platform->setReply('file_get_contents', array($sessionFile),
 			    serialize(array($creationTime, $session->_getRemoteIdentifier(),
 					    array('session' => 'data'))));
-	$platform->setReply('feof', array('fh'), true);
-	$platform->setReply('fclose', array('fh'), true);
 	$gallery->setPlatform($platform);
-	
+
 	$session = new GallerySession();
 	$ret = $session->init();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}	
+	}
 
 	$this->assert($platform->isComplete(), $platform->getRemaining());
 	$this->assert($sessionId, $session->getId(), 'sessionId should not have changed');
 
-	/* Second case, expired session due to inactivity timeout */	
+	/* Second case, expired session due to inactivity timeout */
 	/* Mock platform to emulate expired session */
 	$platform = new UnitTestPlatform();
 	$platform->setReply('file_exists', array($sessionFile), true);
-	$platform->setReply('stat',        array($sessionFile),
+	$platform->setReply('stat', array($sessionFile),
 			    array('ctime' => time() - 0.8 * $lifetime,
 				  'mtime' => time() - 0.8 * $lifetime));
 	$platform->setReply('unlink', array($sessionFile), 1);
 	/* At this point it generates a new session id and checks if it's an unused id */
 	$platform->setReply('file_exists', array('fuzzy' => '{.*}'), false);
 	$gallery->setPlatform($platform);
-	
+
 	$session = new GallerySession();
 	$ret = $session->init();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}	
+	}
 
 	$this->assert($platform->isComplete(), $platform->getRemaining());
 	$this->assert($session->getId() != $sessionId, 'sessionId should have changed');
-	
-	/* Third case, expired session due to lifetime timeout */	
+
+	/* Third case, expired session due to lifetime timeout */
 	/* Mock platform to emulate expired session */
 	$sessionId = $_COOKIE[SESSION_ID_PARAMETER];
 	$sessionFile = $gallery->getConfig('data.gallery.sessions') . $sessionId;
 	$platform = new UnitTestPlatform();
 	$platform->setReply('file_exists', array($sessionFile), true);
-	$platform->setReply('stat',        array($sessionFile),
+	$platform->setReply('stat', array($sessionFile),
 			    array('ctime' => time() - 1.2 * $lifetime,
 				  'mtime' => time() - 0.8 * $inactivityTimeout));
 	$platform->setReply('unlink', array($sessionFile), 1);
 	/* At this point it generates a new session id and checks if it's an unused id */
 	$platform->setReply('file_exists', array('fuzzy' => '{.*}'), false);
 	$gallery->setPlatform($platform);
-	
+
 	$session = new GallerySession();
 	$ret = $session->init();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}	
+	}
 
 	$this->assert($platform->isComplete(), $platform->getRemaining());
 	$this->assert($session->getId() != $sessionId, 'sessionId should have changed');
@@ -465,7 +457,7 @@ class SessionTest extends GalleryTestCase {
 	GalleryUtilities::removeRequestVariable('view');
 	GalleryUtilities::removeRequestVariable('controller');
 	GalleryUtilities::putRequestVariable('view', 'core.ShowItem');
-	
+
 	/* Request #1, save some status information and remove it */
 	$gallery->_session = null;
 	$gallery->initSession();
@@ -519,7 +511,7 @@ class SessionTest extends GalleryTestCase {
 	/* Session shouldn't be saved in DownloadItem requests */
 	GalleryUtilities::removeRequestVariable('view');
 	GalleryUtilities::putRequestVariable('view', 'core.DownloadItem');
-	
+
 	/* Add some status data to the session and then try to save it */
 	$gallery->_session = null;
 	$gallery->initSession();
@@ -842,25 +834,25 @@ class SessionTest extends GalleryTestCase {
 
 	unset($_COOKIE[SESSION_ID_PARAMETER]);
 	unset($_SERVER['HTTP_COOKIE']);
-	
+
 	foreach ($tests as $testCase) {
 	    /* First replace the phpVm with a mock VM */
 	    unset($_REQUEST['phpVmHeaders']);
 	    $phpVm = new SessionTestPhpVm();
 	    $gallery->_phpVm = $phpVm;
-	    
+
 	    /* Now set the request variables */
 	    GalleryUtilities::removeRequestVariable('view');
 	    GalleryUtilities::removeRequestVariable('controller');
 	    GalleryUtilities::putRequestVariable($testCase['key'], $testCase['value']);
-	    
+
 	    $session = new GallerySession();
 	    /* The init call should actually send or not send a cookie */
 	    $ret = $session->init();
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    
+
 	    /*
 	     * And now check the headers (that would have been sent if we didn't use our fantastic
 	     * mock VM :)
@@ -905,7 +897,7 @@ class SessionTest extends GalleryTestCase {
 		} else {
 		    $this->assert(0, 'G2 session cookie does not exist!');
 		}
-	    }    
+	    }
 	}
     }
 
@@ -914,7 +906,7 @@ class SessionTest extends GalleryTestCase {
 	$this->assert(isset($session->_isUsingCookies), 'not set');
 	$this->assertEquals(false, $session->_isUsingCookies, 'wrong value');
     }
-    
+
     /* Test configured cookie domain vs. not configured cookie domain */
     function testSessionCookieDomain() {
 	/* First check if the configured value is taken if available */
@@ -976,10 +968,10 @@ class SessionTest extends GalleryTestCase {
 	global $gallery;
 
 	$session =& $gallery->getSession();
-	
+
 	/* Test cases */
 	$tests = array();
-	
+
 	$tests[] = array('type' => 'view', 'value' => 'core.DownloadItem', 'er' => false);
 	$tests[] = array('type' => 'view', 'value' => 'core.ShowItem', 'er' => true);
 	$tests[] = array('type' => 'controller', 'value' => 'migrate.Redirect', 'er' => false);

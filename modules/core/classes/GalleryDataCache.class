@@ -311,33 +311,17 @@ class GalleryDataCache {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 	$cacheFile = GalleryDataCache::getCachePath($pathInfo);
-	if ($platform->file_exists($cacheFile)) {
-	    if ($fd = $platform->fopen($cacheFile, 'rb')) {
-		$buf = '';
-		while (!feof($fd)) {
-		    $buf .= $platform->fread($fd, 4096);
-		    if ($buf[0] == '<') {
-			/*
-			 * This is an old style cache entry; should be deleted,
-			 * but when we load G2 the first time that we see an old
-			 * style cache we may have a problem with these, so just
-			 * ignore it for now.
-			 */
-			return $null;
-		    }
+	if ($platform->file_exists($cacheFile) &&
+		$buf = $platform->file_get_contents($cacheFile)) {
+	    /* Parse the cache file */
+	    $marker = strcspn($buf, '|');
+	    foreach (explode(',', substr($buf, 0, $marker)) as $classFile) {
+		if ($classFile) {
+		    GalleryCoreApi::relativeRequireOnce($classFile);
 		}
-		$platform->fclose($fd);
-
-		/* Parse the cache file */
-		$marker = strcspn($buf, '|');
-		foreach (explode(',', substr($buf, 0, $marker)) as $classFile) {
-		    if ($classFile) {
-			GalleryCoreApi::relativeRequireOnce($classFile);
-		    }
-		}
-		$data = unserialize(substr($buf, $marker+1));
-		return $data;
 	    }
+	    $data = unserialize(substr($buf, $marker+1));
+	    return $data;
 	}
 
 	return $null;

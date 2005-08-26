@@ -183,6 +183,10 @@ class UnitTestPlatform {
 	return $this->_makeReply('readfile', array($filename, $use_include_path));
     }
 
+    function file_get_contents($filename) {
+	return $this->_makeReply('file_get_contents', array($filename));
+    }
+
     function fopen($filename, $mode, $use_include_path=0) {
 	return $this->_makeReply('fopen', array($filename, $mode, $use_include_path));
     }

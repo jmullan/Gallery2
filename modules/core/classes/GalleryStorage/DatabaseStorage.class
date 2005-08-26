@@ -1783,47 +1783,41 @@ class DatabaseStorage /* implements GalleryStorage */ {
      */
     function _executeSqlFile($fileName) {
 	global $gallery;
+	$platform = $gallery->getPlatform();
 
 	$ret = $this->_guaranteeTransaction();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$platform = $gallery->getPlatform();
-
-	if ($fd = $platform->fopen($fileName, 'r')) {
-	    $buffer = null;
-	    while (!$platform->feof($fd)) {
-		$buffer .= $platform->fgets($fd, 4096);
-	    }
-	    $platform->fclose($fd);
-
-	    /* Split the file where semicolons are followed by a blank line..
-	     * PL/SQL blocks will have other semicolons, so we can't split on every one.
-	     */
-	    foreach (preg_split('/; *\r?\n *\r?\n/s', $buffer) as $query) {
-		$query = trim($query);
-		if (!empty($query)) {
-		    $query = str_replace('DB_TABLE_PREFIX', $this->_tablePrefix, $query);
-		    $query = str_replace('DB_COLUMN_PREFIX', $this->_columnPrefix, $query);
-
-		    /* Perform database specific replacements */
-		    foreach ($this->getSqlReplacements() as $key => $value) {
-			$query = str_replace($key, $value, $query);
-		    }
-
-		    $this->_traceStart();
-		    $recordSet = $this->_db->Execute($query);
-		    $this->_traceStop();
-		    if (empty($recordSet)) {
-			return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
-						    "Error trying to load $fileName");
-		    }
-		}
-	    }
-	} else {
+	if (($buffer = $platform->file_get_contents($fileName)) === false) {
 	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__,
 					"Unable to read file $fileName");
+	}
+
+	/*
+	 * Split the file where semicolons are followed by a blank line..
+	 * PL/SQL blocks will have other semicolons, so we can't split on every one.
+	 */
+	foreach (preg_split('/; *\r?\n *\r?\n/s', $buffer) as $query) {
+	    $query = trim($query);
+	    if (!empty($query)) {
+		$query = str_replace('DB_TABLE_PREFIX', $this->_tablePrefix, $query);
+		$query = str_replace('DB_COLUMN_PREFIX', $this->_columnPrefix, $query);
+
+		/* Perform database specific replacements */
+		foreach ($this->getSqlReplacements() as $key => $value) {
+		    $query = str_replace($key, $value, $query);
+		}
+
+		$this->_traceStart();
+		$recordSet = $this->_db->Execute($query);
+		$this->_traceStop();
+		if (empty($recordSet)) {
+		    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
+						"Error trying to load $fileName");
+		}
+	    }
 	}
 
 	return GalleryStatus::success();
