@@ -330,7 +330,7 @@ class GalleryDataCache {
 
 		/* Parse the cache file */
 		$marker = strcspn($buf, '|');
-		foreach (explode('|', substr($buf, 0, $marker)) as $classFile) {
+		foreach (explode(',', substr($buf, 0, $marker)) as $classFile) {
 		    if ($classFile) {
 			GalleryCoreApi::relativeRequireOnce($classFile);
 		    }
@@ -404,7 +404,7 @@ class GalleryDataCache {
 
 	/* This will either succeed, or leave no trace of its attempt. */
 	$platform->atomicWrite(
-	    $cacheFile, join(',', $requiredClasses) . "|" . serialize($data));
+	    $cacheFile, implode(',', $requiredClasses) . "|" . serialize($data));
     }
 
     /**

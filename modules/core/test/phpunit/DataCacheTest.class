@@ -66,7 +66,8 @@ class DataCacheTest extends GalleryTestCase {
 	$this->assert(!GalleryDataCache::containsKey($key), 'Could not reset GDC');
 	$this->assert(GalleryDataCache::containsKey($pKey), 'Reset GDC deleted a protected var');
 	GalleryDataCache::reset(true);
-	$this->assert(!GalleryDataCache::containsKey($pKey), 'Reset(true) did not delete protected vars');
+	$this->assert(!GalleryDataCache::containsKey($pKey),
+		      'Reset(true) did not delete protected vars');
     }
 
     function testRemoveByPattern() {
@@ -91,6 +92,7 @@ class DataCacheTest extends GalleryTestCase {
 	$this->assertEquals(array('0', '9'), GalleryDataCache::getCacheTuple(99));
 	$this->assertEquals(array('7', '2'), GalleryDataCache::getCacheTuple(721));
 	$this->assertEquals(array('3', '4'), GalleryDataCache::getCacheTuple(3412312));
+	$this->assertEquals(array('0', '0'), GalleryDataCache::getCacheTuple('_all'));
     }
 
     function testGetCachePath() {
@@ -98,34 +100,34 @@ class DataCacheTest extends GalleryTestCase {
 	$gallery->setConfig('data.gallery.cache', '/data/cache/');
 
 	$this->assertEquals('/data/cache/module/core/0/0/1.inc',
-            GalleryDataCache::getCachePath(array('type' => 'module',
+	    GalleryDataCache::getCachePath(array('type' => 'module',
 						 'id' => 'core',
 						 'itemId' => 1)));
 	$this->assertEquals('/data/cache/theme/matrix',
-            GalleryDataCache::getCachePath(array('type' => 'theme', 'id' => 'matrix')));
+	    GalleryDataCache::getCachePath(array('type' => 'theme', 'id' => 'matrix')));
 
 	$this->assertEquals('/data/cache/entity/7/2/725.inc',
-            GalleryDataCache::getCachePath(array('type' => 'entity', 'itemId' => 725)));
+	    GalleryDataCache::getCachePath(array('type' => 'entity', 'itemId' => 725)));
 
 	$this->assertEquals('/data/cache/derivative/1/2/123.dat',
-            GalleryDataCache::getCachePath(array('type' => 'derivative', 'itemId' => 123)));
+	    GalleryDataCache::getCachePath(array('type' => 'derivative', 'itemId' => 123)));
 
 	$this->assertEquals('derivative/1/2/123.dat',
-            GalleryDataCache::getCachePath(array('type' => 'derivative-relative',
+	    GalleryDataCache::getCachePath(array('type' => 'derivative-relative',
 						 'itemId' => 123)));
 
 	$this->assertEquals('/data/cache/derivative/1/2/123-meta.inc',
-            GalleryDataCache::getCachePath(array('type' => 'derivative-meta', 'itemId' => 123)));
+	    GalleryDataCache::getCachePath(array('type' => 'derivative-meta', 'itemId' => 123)));
 
 	$this->assertEquals('/data/cache/derivative/1/2/123-fast.inc',
-            GalleryDataCache::getCachePath(array('type' => 'fast-download', 'itemId' => 123)));
+	    GalleryDataCache::getCachePath(array('type' => 'fast-download', 'itemId' => 123)));
 
 	$this->assertEquals('/data/cache/module/foo/1/2/123.dat',
-            GalleryDataCache::getCachePath(
+	    GalleryDataCache::getCachePath(
 		array('type' => 'module-data', 'module' => 'foo', 'itemId' => 123)));
 
 	$this->assertEquals('/data/cache/module/foo/',
-            GalleryDataCache::getCachePath(array('type' => 'module-data', 'module' => 'foo')));
+	    GalleryDataCache::getCachePath(array('type' => 'module-data', 'module' => 'foo')));
     }
 
     function testPutToDisk() {
@@ -139,30 +141,30 @@ class DataCacheTest extends GalleryTestCase {
 	$testdata = "testdata c:\foo\bar";
 	GalleryDataCache::putToDisk(array('type' => 'entity', 'itemId' => 1), $testdata);
 	$this->assertEquals('|' . serialize($testdata),
-            DataCacheTestPlatform::getFileContents('/data/cache/entity/0/0/1.inc'));
+	    DataCacheTestPlatform::getFileContents('/data/cache/entity/0/0/1.inc'));
 	DataCacheTestPlatform::reset();
 
 	GalleryDataCache::putToDisk(array('type' => 'entity', 'itemId' => 1),
 				    $testdata, array('required-class'));
 	$this->assertEquals('required-class|' . serialize($testdata),
-            DataCacheTestPlatform::getFileContents('/data/cache/entity/0/0/1.inc'));
+	    DataCacheTestPlatform::getFileContents('/data/cache/entity/0/0/1.inc'));
 	DataCacheTestPlatform::reset();
 
 	GalleryDataCache::putToDisk(array('type' => 'entity', 'itemId' => 1),
 				    $testdata, array('required-class1', 'required-class2'));
 	$this->assertEquals('required-class1,required-class2|' . serialize($testdata),
-            DataCacheTestPlatform::getFileContents('/data/cache/entity/0/0/1.inc'));
+	    DataCacheTestPlatform::getFileContents('/data/cache/entity/0/0/1.inc'));
 	DataCacheTestPlatform::reset();
 
 	GalleryDataCache::putToDisk(array('type' => 'entity', 'itemId' => 21), $testdata);
 	$this->assertEquals('|' . serialize($testdata),
-            DataCacheTestPlatform::getFileContents('/data/cache/entity/0/2/21.inc'));
+	    DataCacheTestPlatform::getFileContents('/data/cache/entity/0/2/21.inc'));
 	DataCacheTestPlatform::reset();
 
 	$testdata = '|test#with\'funky"chars? \\*&%$[]}{ end';
 	GalleryDataCache::putToDisk(array('type' => 'entity', 'itemId' => 721), $testdata);
 	$this->assertEquals('|' . serialize($testdata),
-            DataCacheTestPlatform::getFileContents('/data/cache/entity/7/2/721.inc'));
+	    DataCacheTestPlatform::getFileContents('/data/cache/entity/7/2/721.inc'));
 	DataCacheTestPlatform::reset();
     }
 
@@ -234,6 +236,31 @@ class DataCacheTest extends GalleryTestCase {
 	 */
 	GalleryDataCache::getFromDisk(array('type' => 'entity', 'itemId' => 1));
 	GalleryDataCache::getFromDisk(array('type' => 'module', 'id' => 'core', 'itemId' => 1));
+    }
+
+    function testPutAndGetFromDisk() {
+	GalleryDataCache::setFileCachingEnabled(true);
+
+	/* Put some content containing | and , and make sure it parses back ok */
+	$cacheParams = array('type' => 'module',
+			     'itemId' => 'phpunit_DataCacheTest_testData',
+			     'id' => '_all');
+	$data = array('key' => 'value,with|pipe', 'test' => 5);
+	GalleryDataCache::putToDisk($cacheParams, $data);
+	$readBack = GalleryDataCache::getFromDisk($cacheParams);
+	$this->assertEquals($data, $readBack, 'no classes');
+	GalleryDataCache::removeFromDisk($cacheParams);
+
+	/* Put content with multiple required classes and make sure all are read */
+	$data = array('one' => array('2|two' => 3), 4.5 => 'six,7');
+	GalleryDataCache::putToDisk($cacheParams, $data,
+				    array('modules/core/test/data/DataCacheTest_1.class',
+					  'modules/core/test/data/DataCacheTest_2.class'));
+	$readBack = GalleryDataCache::getFromDisk($cacheParams);
+	$this->assertEquals($data, $readBack, 'two required classes');
+	GalleryDataCache::removeFromDisk($cacheParams);
+	$this->assert(class_exists('DataCacheTest_class1'), 'class1 should exist');
+	$this->assert(class_exists('DataCacheTest_class2'), 'class2 should exist');
     }
 
     function testCachePermission() {
@@ -325,7 +352,7 @@ class DataCacheTestPlatform {
     }
 
     function flock($handle, $type) {
-	// Ignore for now
+	/* Ignore for now */
     }
 
     function unlink($filename) {
@@ -346,5 +373,4 @@ class DataCacheTestPlatform {
 	return preg_match('{/(module|theme)/\w+$}', $path);
     }
 }
-
 ?>
