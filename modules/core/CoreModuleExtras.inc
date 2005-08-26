@@ -846,8 +846,8 @@ class CoreModuleExtras {
 		    $module->translate('Detecting broken derivatives'), '', 0);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
-
 		}
+
 		/*
 		 * The outer loop is for each derivativeId and we upgrade a progress bar every
 		 * $progressStepSize ids. We don't load entity by entity, but in batches of
@@ -1170,6 +1170,38 @@ class CoreModuleExtras {
 	case '0.9.35':
 	    /* Release Candidate 2! */
 
+	case '0.9.36':
+	    /*
+	     * Fixed GalleryUtilities::getPseudoFileName for derivatives.
+	     * Delete fast-download files that may have cached incorrect filenames.
+	     */
+	    $slash = $platform->getDirectorySeparator();
+	    $baseDir = $gallery->getConfig('data.gallery.cache') . 'derivative' . $slash;
+	    for ($i = 0; $i < 10; $i++) {
+		$gallery->guaranteeTimeLimit(60);
+		$ret = $statusMonitor->renderStatusMessage(
+		    $module->translate('Clearing fast-download cache'), '', $i / 10);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		for ($j = 0; $j < 10; $j++) {
+		    $dir = $baseDir . $i . $slash . $j . $slash;
+		    if ($dh = @$platform->opendir($dir)) {
+			while (($file = $platform->readdir($dh)) !== false) {
+			    if (substr($file, -9) == '-fast.inc') {
+				@$platform->unlink($dir . $file);
+			    }
+			}
+			$platform->closedir($dh);
+		    }
+		}
+	    }
+	    $ret = $statusMonitor->renderStatusMessage(
+		$module->translate('Clearing fast-download cache'), '', 1);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
@@ -1184,12 +1216,7 @@ class CoreModuleExtras {
 	}
 
 	$gallery->debug('Write new version to versions file');
-	$baseDir = $gallery->getConfig('data.gallery.base');
-	$versionFile = sprintf('%s%s%s',
-			       $baseDir,
-			       $platform->getDirectorySeparator(),
-			       'versions.dat');
-
+	$versionFile = $gallery->getConfig('data.gallery.base') . 'versions.dat';
 	$versionDatError =  0;
 	if ($fd = $platform->fopen($versionFile, 'wb')) {
 	    $data = sprintf("%s\n%s",
@@ -1341,6 +1368,7 @@ $gallery->setConfig(\'cookieId\', \'' . $cookieId . '\');
 	case '0.9.33':
 	case '0.9.34':
 	case '0.9.35':
+	case '0.9.36':
 
 	case 'end of upgrade path':
 	    /*
