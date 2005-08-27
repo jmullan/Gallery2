@@ -165,22 +165,22 @@
 
 	{if !empty($form.error.source.$peerItemId.permission.delete)}
 	<div class="giError">
-	  {g->text text="You are not allowed to move this item away from here."}<br>
+	  {g->text text="You are not allowed to move this item away from here."}<br/>
 	</div>
 	{/if}
 	{if !empty($form.error.source.$peerItemId.permission.addAlbumItem)}
 	<div class="giError">
-	  {g->text text="You are not allowed to move an album to the chosen destination."}<br>
+	  {g->text text="You are not allowed to move an album to the chosen destination."}<br/>
 	</div>
 	{/if}
 	{if !empty($form.error.source.$peerItemId.permission.addDataItem)}
 	<div class="giError">
-	  {g->text text="You are not allowed to move an item to the chosen destination."}<br>
+	  {g->text text="You are not allowed to move an item to the chosen destination."}<br/>
 	</div>
 	{/if}
 	{if !empty($form.error.source.$peerItemId.selfMove)}
 	<div class="giError">
-	  {g->text text="You cannot move an album into its own subtree."}<br>
+	  {g->text text="You cannot move an album into its own subtree."}<br/>
 	</div>
 	{/if}
       </td>
