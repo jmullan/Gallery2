@@ -50,7 +50,7 @@ class GalleryPluginHelper_simple {
 	if ($gallery->getDebug()) {
 	    $gallery->debug(sprintf('Loading plugin %s', $pluginId));
 	}
-	
+
 	$cacheKey = "GalleryPluginHelper::loadPlugin($pluginType, $pluginId)";
 	if (!GalleryDataCache::containsKey($cacheKey)) {
 
@@ -74,13 +74,13 @@ class GalleryPluginHelper_simple {
 		if ($gallery->getDebug()) {
 		    $gallery->debug('Class not defined, trying to include it.');
 		}
-		
+
 		$pluginBaseDir = dirname(__FILE__) . '/../../../../';
 		$pluginFile = sprintf('%ss/%s/%s.inc', $pluginType, $pluginId, $pluginType);
-				      
+
 		GalleryCoreApi::relativeRequireOnce(
 		    sprintf('modules/core/classes/%s.class', $pluginSuperClass));
-		
+
 		$platform = $gallery->getPlatform();
 		if (!$platform->file_exists($pluginBaseDir . $pluginFile)) {
 		    /*
@@ -107,7 +107,7 @@ class GalleryPluginHelper_simple {
 		}
 
 		GalleryCoreApi::relativeRequireOnce($pluginFile);
-		    
+
 		if (!class_exists($pluginClass)) {
 		    return array(GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
 						      "Class $pluginClass does not exist"), null);
@@ -124,12 +124,12 @@ class GalleryPluginHelper_simple {
 	if ($gallery->getDebug()) {
 	    $gallery->debug(sprintf('%s plugin successfully instantiated', $pluginId));
 	}
-	
+
 	if (!$ignoreVersionMismatch) {
 	    if ($gallery->getDebug()) {
 		$gallery->debug(sprintf('Check the version of the %s plugin', $pluginId));
 	    }
-	    
+
 	    /* Verify that the versions match */
 	    list ($ret, $status) = GalleryPluginHelper_simple::fetchPluginStatus($pluginType);
 	    if ($ret->isError()) {
@@ -231,7 +231,7 @@ class GalleryPluginHelper_simple {
 	if ($gallery->getDebug()) {
 	    $gallery->debug(sprintf('getParameter %s for %s plugin', $parameterName, $pluginId));
 	}
-	
+
 	/* Convert null to 0, just in case */
 	if ($itemId == null) {
 	    $itemId = 0;
@@ -441,7 +441,7 @@ class GalleryPluginHelper_simple {
      *
      * @param string the plugin type
      * @return array GalleryStatus a status code
-     *               array an array of (pluginId => (active, version))
+     *               array of (pluginId => ('active' => boolean))
      * @static
      */
     function fetchPluginList($pluginType) {

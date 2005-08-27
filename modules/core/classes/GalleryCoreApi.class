@@ -54,7 +54,7 @@ class GalleryCoreApi {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(6, 7);
+	return array(6, 8);
     }
 
     /**
@@ -273,6 +273,19 @@ class GalleryCoreApi {
     function fetchPluginStatus($pluginType, $ignoreCache=false) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPluginHelper_simple.class');
 	return GalleryPluginHelper_simple::fetchPluginStatus($pluginType, $ignoreCache);
+    }
+
+    /**
+     * Return a plugin list by plugin type
+     *
+     * @param string the plugin type
+     * @return array GalleryStatus a status code
+     *               array of (pluginId => ('active' => boolean))
+     * @static
+     */
+    function fetchPluginList($pluginType) {
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPluginHelper_simple.class');
+	return GalleryPluginHelper_simple::fetchPluginList($pluginType);
     }
 
     /**

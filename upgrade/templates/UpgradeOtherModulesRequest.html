@@ -18,7 +18,20 @@
     <?php print _("The following modules can be automatically upgraded for you.  If you choose not to upgrade them now, you may experience problems with your Gallery.   You can always upgrade or deactivate them on the Site Administration page, or return to this page later so any decision you make here is not permanent.") ?>
   </p>
 
-  <?php if (!empty($templateData['groupedModules'])): ?>
+  <?php if (!empty($templateData['missingCode'])): ?>
+    <h2 class="error"> <?php print _('Missing Code') ?> </h2>
+    <div class="stack_trace">
+      <?php print _('The code for some plugins that were previously active can no longer be found. You must restore code for these plugins before this upgrade can continue. Code for the plugins must be the same version or newer than what was installed before.') ?>
+      <div class="go">
+	<?php foreach ($templateData['missingCode'] as $pluginType => $list) {
+		$pluginType = ($pluginType == 'module') ? _('Module') : _('Theme');
+		foreach ($list as $pluginId) {
+		  print "$pluginType: $pluginId<br/>\n";
+		}
+	      } ?>
+      </div>
+    </div>
+  <?php elseif (!empty($templateData['groupedModules'])): ?>
     <form method="post" action="">
       <table class="modules">
 	<tr style="background-color: #ccc">
@@ -38,7 +51,8 @@
 	    <?php print _("Description") ?>
 	  </th>
 	</tr>
-	<?php foreach ($templateData['groupedModules'] as $group => $modules): ?>
+	<?php $upgradableCount = 0;
+	  foreach ($templateData['groupedModules'] as $group => $modules): ?>
 	  <tr style="background-color: #fff">
 	    <td colspan="4"><h3><?php print $templateData['groupLabel'][$group] ?></h3></td>
 	  </tr>
@@ -51,8 +65,7 @@
                 name="<?php print ($templateData['groupType'][$group] . '[' . $id . ']')?>"
 		<?php if ($isUpgradeable): ?>
 		  checked="checked"
-		<?php endif; ?>
-		<?php if (!$isUpgradeable): ?>
+		<?php $upgradableCount++; else: ?>
 		  disabled="disabled"
 		<?php endif; ?>
 	      />
@@ -91,7 +104,7 @@
 	  <td colspan="4">
 	    <?php print _("(un)check all") ?>
 	    <input type="hidden" name="step" value="<?php print $currentStep->getStepNumber() ?>"/>
-	    <input type="hidden" name="upgrade" value="1"/>
+	    <input type="hidden" name="upgrade" value="<?php print $upgradableCount ?>"/>
 	  </td>
 	</tr>
 	<?php endif; ?>

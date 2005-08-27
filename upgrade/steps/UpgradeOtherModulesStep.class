@@ -26,126 +26,109 @@ class UpgradeOtherModulesStep extends UpgradeStep {
     }
 
     function processRequest() {
-        global $gallery;
+	global $gallery;
 
-      	if (!isset($_REQUEST['upgrade'])) {
-            return true;
-        }
+	if (!isset($_REQUEST['upgrade'])) {
+	    return true;
+	}
 
+	$totalPlugins = $currentModule = $currentTheme = 0;
 	$templateData['stackTrace'] = '';
+	$template = new StatusTemplate();
+	$template->renderHeader(true);
 
-        $template = new StatusTemplate();
+	if (isset($_REQUEST['module'])) {
+	    $totalPlugins += ($totalModules = count($_REQUEST['module']));
+	    foreach (array_keys($_REQUEST['module']) as $moduleId) {
+		$currentModule++;
+		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId, true);
+		if ($ret->isError()) {
+		    $this->resetL10Domain();
+		    $templateData['errors'][] =
+			sprintf(_('Unable to load the %s module'), $moduleId);
+		    $templateData['stackTrace'] .= $ret->getAsHtml();
+		    continue;
+		}
+		$module->setName($module->translate($module->getName()));
+		$module->setDescription($module->translate($module->getDescription()));
+		$this->resetL10Domain();
+		$gallery->guaranteeTimeLimit(120);
 
-        $template->renderHeader(true);
+		$ret = $template->renderStatusMessage(_('Upgrading modules'),
+		    $module->getName(), $currentModule / $totalModules);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 
-        if (isset($_REQUEST['module'])) {
-            $totalPlugins = count($_REQUEST['module']);
-            $currentPlugin = 0;
-            foreach (array_keys($_REQUEST['module']) as $moduleId) {
-                $currentPlugin++;
-                list ($ret, $modulePlugin) = GalleryCoreApi::loadPlugin('module', $moduleId, true);
-                if ($ret->isError()) {
-                    $this->resetL10Domain();
-                    $templateData['errors'][] =
-                        sprintf(_('Unable to load the %s module'), $moduleId);
-                    $templateData['stackTrace'] .= $ret->getAsHtml();
-                } else {
-                    $modulePlugin->setName($modulePlugin->translate($modulePlugin->getName()));
-                    $modulePlugin->setDescription(
-                        $modulePlugin->translate($modulePlugin->getDescription()));
-                    $modules[$moduleId] = $modulePlugin;
-                    $this->resetL10Domain();
-                }
-                $gallery->guaranteeTimeLimit(120);
+		$ret = $module->installOrUpgrade();
+		$this->resetL10Domain();
+		if ($ret->isError()) {
+		    if ($ret->getErrorCode() & ERROR_CONFIGURATION_REQUIRED) {
+			$templateData['needsConfig'][] =
+			    sprintf(_('%s module needs configuration'), $module->getName());
+		    } else {
+			$templateData['errors'][] =
+			    sprintf(_('Unable to upgrade the %s module'), $module->getName());
+			$templateData['stackTrace'] .= $ret->getAsHtml();
+		    }
+		    continue;
+		}
+		$templateData['upgradedModule'][$moduleId] = $module->getName();
+	    }
+	}
 
-                $module =& $modules[$moduleId];
-                $ret = $template->renderStatusMessage(_('Upgrading modules'),
-                    $module->getName(), $currentPlugin / $totalPlugins);
-                if ($ret->isError()) {
-                    return $ret->wrap(__FILE__, __LINE__);
-                }
+	if (isset($_REQUEST['theme'])) {
+	    $totalPlugins += ($totalThemes = count($_REQUEST['theme']));
+	    foreach (array_keys($_REQUEST['theme']) as $themeId) {
+		$currentTheme++;
+		list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId, true);
+		if ($ret->isError()) {
+		    $this->resetL10Domain();
+		    $templateData['errors'][] =
+			sprintf(_('Unable to load the %s theme'), $themeId);
+		    $templateData['stackTrace'] .= $ret->getAsHtml();
+		    continue;
+		}
+		$theme->setName($theme->translate($theme->getName()));
+		$theme->setDescription($theme->translate($theme->getDescription()));
+		$this->resetL10Domain();
 
-                $ret = $module->installOrUpgrade();
-                $this->resetL10Domain();
-                if ($ret->isError()) {
-                    if ($ret->getErrorCode() & ERROR_CONFIGURATION_REQUIRED) {
-                        $templateData['needsConfig'][] =
-                            sprintf(_('%s module needs configuration'), $module->getName());
-                        $moduleIsUpgradeable[$moduleId] = false;
-                    } else {
-                        $templateData['errors'][] =
-                            sprintf(_('Unable to upgrade the %s module'), $module->getName());
-                        $templateData['stackTrace'] .= $ret->getAsHtml();
-                    }
-                    continue;
-                }
-                $moduleIsUpgradeable[$moduleId] = false;
-                $templateData['upgradedModule'][$moduleId] = $module->getName();
-            }
-        }
+		$ret = $template->renderStatusMessage(_('Upgrading themes'),
+		    $theme->getName(), $currentTheme / $totalThemes);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 
-        if (isset($_REQUEST['theme'])) {
-            $totalPlugins = count($_REQUEST['theme']);
-            $currentPlugin = 0;
-            foreach (array_keys($_REQUEST['theme']) as $themeId) {
-                $currentPlugin++;
-                list ($ret, $themePlugin) = GalleryCoreApi::loadPlugin('theme', $themeId, true);
-                if ($ret->isError()) {
-                    $this->resetL10Domain();
-                    $templateData['errors'][] =
-                        sprintf(_('Unable to load the %s theme'), $themeId);
-                    $templateData['stackTrace'] .= $ret->getAsHtml();
-                } else {
-                    $themePlugin->setName($themePlugin->translate($themePlugin->getName()));
-                    $themePlugin->setDescription(
-                        $themePlugin->translate($themePlugin->getDescription()));
-                    $themes[$themeId] = $themePlugin;
-                    $this->resetL10Domain();
-                }
-                $theme =& $themes[$themeId];
-
-                $ret = $template->renderStatusMessage(_('Upgrading themes'),
-                    $themePlugin->getName(), $currentPlugin / $totalPlugins);
-                if ($ret->isError()) {
-                    return $ret->wrap(__FILE__, __LINE__);
-                }
-
-                $ret = $theme->installOrUpgrade();
-                $this->resetL10Domain();
-                if ($ret->isError()) {
-                    $templateData['errors'][] =
-                        sprintf(_('Unable to upgrade the %s theme'), $theme->getName());
-                    $templateData['stackTrace'] .= $ret->getAsHtml();
-                    continue;
-                }
-                $moduleIsUpgradeable[$themeId] = false;
-                $templateData['upgradedTheme'][$themeId] = $theme->getName();
-
-            }
-        }
-        $storage =& $gallery->getStorage();
-        $ret = $storage->commitTransaction();
-        if ($ret->isError()) {
-            $templateData['errors'][] = _('Unable to commit database transaction');
-            $templateData['stackTrace'] .= $ret->getAsHtml();
-        }
-        $templateData['bodyFile'] = 'UpgradeOtherModulesSuccess.html';
+		$ret = $theme->installOrUpgrade();
+		$this->resetL10Domain();
+		if ($ret->isError()) {
+		    $templateData['errors'][] =
+			sprintf(_('Unable to upgrade the %s theme'), $theme->getName());
+		    $templateData['stackTrace'] .= $ret->getAsHtml();
+		    continue;
+		}
+		$templateData['upgradedTheme'][$themeId] = $theme->getName();
+	    }
+	}
+	$storage =& $gallery->getStorage();
+	$ret = $storage->commitTransaction();
+	if ($ret->isError()) {
+	    $templateData['errors'][] = _('Unable to commit database transaction');
+	    $templateData['stackTrace'] .= $ret->getAsHtml();
+	}
+	$templateData['bodyFile'] = 'UpgradeOtherModulesSuccess.html';
 	$templateData['anyUpgradeable'] = false;
 	if (!empty($templateData['errors'])) {
 	    $templateData['debug'] = $gallery->getDebugBuffer();
-	} else if (!empty($moduleIsUpgradeable)) {
-	    foreach ($moduleIsUpgradeable as $tmp) {
-		if ($tmp) {
-		    $templateData['anyUpgradeable'] = true;
-		    break;
-		}
-	    }
-	    if (!$templateData['anyUpgradeable']) {
+	} else {
+	    if ($totalPlugins < $_REQUEST['upgrade']) {
+		$templateData['anyUpgradeable'] = true;
+	    } else {
 		$this->setComplete(true);
 	    }
 	}
-        $template->hideStatusBlock();
-        $template->renderBodyAndFooter($templateData);
+	$template->hideStatusBlock();
+	$template->renderBodyAndFooter($templateData);
     }
 
     function loadTemplateData(&$templateData) {
@@ -153,6 +136,7 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 	if (!$gallery->getDebug()) {
 	    $gallery->setDebug('buffered');
 	}
+	$gallery->guaranteeTimeLimit(60);
 
 	/*
 	 * We'll need a translator to load up our modules for the
@@ -167,7 +151,7 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 	}
 
 	$groupedModules = $groupLabel = array();
-	$moduleInstalledStatus = $moduleIsUpgradeable = $installedVersion = array();
+	$moduleInstalledStatus = $moduleIsUpgradeable = $installedVersion = $missingCode = array();
 	$templateData['stackTrace'] = '';
 
 	if (empty($templateData['errors'])) {
@@ -176,12 +160,32 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 		$templateData['errors'][] = _('Unable to get the module list');
 		$templateData['stackTrace'] .= $ret->getAsHtml();
 	    }
+	    list ($ret, $installedModules) = GalleryCoreApi::fetchPluginList('module');
+	    if ($ret->isError()) {
+		$templateData['errors'][] = _('Unable to get the module list');
+		$templateData['stackTrace'] .= $ret->getAsHtml();
+	    }
+	    foreach ($installedModules as $moduleId => $data) {
+		if ($data['active'] && !isset($moduleList[$moduleId])) {
+		    $missingCode['module'][] = $moduleId;
+		}
+	    }
 	}
 	if (empty($templateData['errors'])) {
 	    list ($ret, $themeList) = GalleryCoreApi::fetchPluginStatus('theme', true);
 	    if ($ret->isError()) {
 		$templateData['errors'][] = _('Unable to get the theme list');
 		$templateData['stackTrace'] .= $ret->getAsHtml();
+	    }
+	    list ($ret, $installedThemes) = GalleryCoreApi::fetchPluginList('theme');
+	    if ($ret->isError()) {
+		$templateData['errors'][] = _('Unable to get the theme list');
+		$templateData['stackTrace'] .= $ret->getAsHtml();
+	    }
+	    foreach ($installedThemes as $themeId => $data) {
+		if ($data['active'] && !isset($themeList[$themeId])) {
+		    $missingCode['theme'][] = $themeId;
+		}
 	    }
 	}
 
@@ -204,8 +208,6 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 
 	    uksort($modules, array($this, '_sortModules'));
 	    foreach (array_keys($modules) as $moduleId) {
-		$gallery->guaranteeTimeLimit(120);
-
 		$module =& $modules[$moduleId];
 		$moduleIsUpgradeable[$moduleId] =
 		    !empty($moduleList[$moduleId]['version']) &&
@@ -239,7 +241,7 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 
 	    ksort($themes);
 	    $groupLabel['themes'] = _('Themes');
-            $groupType['themes'] = 'theme';
+	    $groupType['themes'] = 'theme';
 	    foreach (array_keys($themes) as $themeId) {
 		$theme =& $themes[$themeId];
 		$moduleIsUpgradeable[$themeId] =
@@ -253,13 +255,14 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 	    $templateData['bodyFile'] = 'UpgradeOtherModulesRequest.html';
 	}
 
-        $templateData['groupedModules'] =& $groupedModules;
-        $templateData['groupLabel'] = $groupLabel;
-        $templateData['groupType'] = $groupType;
-        $templateData['moduleIsUpgradeable'] = $moduleIsUpgradeable;
-        $templateData['currentVersion'] = $currentVersion;
-        $templateData['bodyFile'] = 'UpgradeOtherModulesRequest.html';
+	$templateData['groupedModules'] =& $groupedModules;
+	$templateData['groupLabel'] = $groupLabel;
+	$templateData['groupType'] = $groupType;
+	$templateData['moduleIsUpgradeable'] = $moduleIsUpgradeable;
+	$templateData['currentVersion'] = $currentVersion;
+	$templateData['bodyFile'] = 'UpgradeOtherModulesRequest.html';
 	$templateData['anyUpgradeable'] = false;
+	$templateData['missingCode'] = $missingCode;
 	if (!empty($templateData['errors'])) {
 	    $templateData['debug'] = $gallery->getDebugBuffer();
 	} else if (!empty($moduleIsUpgradeable)) {
