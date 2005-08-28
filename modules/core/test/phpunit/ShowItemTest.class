@@ -100,5 +100,90 @@ class ShowItemTest extends GalleryTestCase {
 	 */
 	$this->_testViewCount($this->_item->getId());
     }
+
+    function testGuestNoPermission() {
+	/* Verify guest is redirected to login page if no core.view permission */
+	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_becomeGuestUser();
+
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	list ($ret, $result, $theme) = $this->_view->doLoadTemplate($this->_template);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(
+	    array('redirect' => array('view' => 'core.UserAdmin', 'subView' => 'core.UserLogin',
+				      'return' => true)), $result);
+    }
+
+    function testUserNoPermission() {
+	/* Verify registered user is redirected to root album if no core.view permission */
+	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	list ($ret, $result, $theme) = $this->_view->doLoadTemplate($this->_template);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(
+	    array('redirect' => array('view' => 'core.ShowItem', 'itemId' => $this->_getRootId())),
+	    $result);
+    }
+
+    function testAlbumSourcePermission() {
+	/* Verify album requires core.viewSource permission */
+	global $gallery;
+	$ret = GalleryCoreApi::removeItemPermissions($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_album->getId(), $gallery->getActiveUserId(), 'core.view', false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
+	list ($ret, $result, $theme) = $this->_view->doLoadTemplate($this->_template);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(
+	    array('redirect' => array('view' => 'core.ShowItem', 'itemId' => $this->_getRootId())),
+	    $result);
+    }
+
+    function testItemSourcePermission() {
+	/* Verify data item does not require core.viewSource permission */
+	global $gallery;
+	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_item->getId(), $gallery->getActiveUserId(), 'core.view', false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	list ($ret, $result, $theme) = $this->_view->doLoadTemplate($this->_template);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$match = 'themes/' . $theme->getId() . '/templates';
+	$this->assertEquals(substr($result['body'], 0, strlen($match)), $match,
+			    'template should be inside a theme');
+    }
 }
 ?>
