@@ -129,7 +129,8 @@
     {g->text text="Image frames require CSS to be displayed correctly. Include the following in the %s section to support image frames." arg1="&lt;head&gt;"}
   </p>
   <p class="giInfo">
-    &lt;link rel="stylesheet" href="{g->url arg1="controller=imageblock.ExternalCSS" arg2="frames=wood" forceDirect=true forceSessionId=false}"/&gt;
+    {capture name="cssUrl"}{g->url arg1="controller=imageblock.ExternalCSS" arg2="frames=wood" forceDirect=true forceSessionId=false}{/capture}
+    &lt;link rel="stylesheet" href="{$smarty.capture.cssUrl|replace:"&":"&amp;"}"/&gt;
   </p>
   <p class="giDescription">
     {g->text text="Specify the frame id (or pipe separated list of ids) in the frames parameter. Omit the parameter to support the image frames configured above. Frame ids are the directory names in the %s directory." arg1="<tt>modules/imageframe/frames</tt>"}
