@@ -38,20 +38,8 @@
 	</ul>
       </div>
 
-      {if !empty($SiteAdmin.navigationLinks)}
-      <div class="gbBlock">
-	<h2> {g->text text="Navigation"} </h2>
-	<ul>
-	  {foreach from=$SiteAdmin.navigationLinks item=link}
-	    <li>
-	      <a href="{$link.url}">
-		{$link.name}
-	      </a>
-	    </li>
-	  {/foreach}
-	</ul>
-      </div>
-      {/if}
+      {g->block type="core.NavigationLinks" class="gbBlock"
+		navigationLinks=$SiteAdmin.navigationLinks}
     </div></td>
 
     <td>
