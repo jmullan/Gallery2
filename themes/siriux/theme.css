@@ -1,585 +1,190 @@
-#gallery {
-    font-family: Verdana, Arial, Helvetica, sans-serif;
-    color: #333;
-    background: #efeee7 url(images/background.png) repeat;
-    font-size: 90%;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-}
+/* -- Main layout definitions ------------- */
 
 body.gallery {
-    background-color: #fff;
+	font-family: "Lucida Grande", Verdana, Arial, sans-serif;
+	font-size: small;
+	margin: 1.5em;
+	background-color: #fff;
+	color: #333;
+	text-align: center;
 }
 
-/* -- Gallery elements -------------------- */
+
+.gallery-album {
+        width: 46%; /* Change to 96% if you want 1 Album per line */
+	padding-right: 3%;
+}
+
+
+
+a {
+	color: #38c;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+
+hr {
+	color: #fff;
+	height: 1px;
+	border: none;
+	border-bottom: 1px solid #ccc;
+	margin: 0;
+	padding: 0;
+	clear: both;
+}
+
+.clear {
+	clear: both;
+}
+
+.breadcrumb {
+	float: right;
+	color: #999;
+	font-size: 0.9em;
+}
+
+.content {
+	clear: both;
+	margin: 0 auto;
+	text-align: left;
+}
+
+.footer {
+	font-size: 0.8em;
+	color: #999;
+	margin-top: 3em;
+}
+
+.gallery h2 {
+	clear: both;
+	margin: 1.5em 0;
+	padding-bottom: 0.2em;
+	border-bottom: 1px solid #ccc;
+	font-size: 1.4em;
+}
+
+
+/* -- Gallery thumbnails ------------------ */
 
 .gallery-thumb {
-    margin: 0;
-    float: left;
-    text-align: center;
+	margin: 5px;
+	float: left;
+	text-align: center;
 }
 
-#gallery .gallery-thumb img {
-    background: #fff;
-    border-width: 1px;
-    padding: 4px;
-    margin: 1px;
-    -moz-border-radius: 2px;
+.gallery-thumb img {
+	background: #eee;
+	border: 1px solid #ccc;
+	padding: 7px;
+	margin: 1px;
+	-moz-border-radius: 5px;
 }
 
-#gallery .gallery-thumb a:hover img {
-    border-width: 2px;
-    border-color: #38c;
-    margin: 0;
-    -moz-border-radius: 3px;
+.gallery-thumb a img {
+	border-color: #ccc;
 }
 
-.gallery-photo {
-    text-align: center;
+.gallery-thumb a:hover img {
+	border-width: 2px;
+	border-color: #38c;
+	margin: 0;
+	-moz-border-radius: 7px;
 }
 
-#gallery .gallery-photo img {
-    background: #fff;
-    border-width: 1px;
-    padding: 7px;
-    -moz-border-radius: 4px;
-}
+
+/* -- Gallery Album listing --------------- */
 
 .gallery-albums {
-    clear: both;
+	clear: both;
 }
 
-#gallery .gallery-albums h3 {
-    clear: both;
-    font-family: Verdana, Arial, sans-serif;
-    font-size: 0.9em;
-    font-weight: normal;
-    letter-spacing: 2px;
-    margin: 20px 0 15px 0;
-    padding-bottom: 2px;
-    border-bottom-width: 1px;
-}
-
-.gallery-items {
-    margin: 0 23px;
-    clear: both;
-}
-
-#gallery .gallery-albums h4 {
-    margin: 0;
+.gallery-albums h4 {
+	margin: 10px 0 0 0;
+	font-size: 1.1em;
 }
 
 .gallery-albums .gallery-thumb {
-    margin-right: 5px;
-    height: 200px;
+	margin-right: 5px !important;
 }
 
 .gallery-album {
-    width: 300px;
-    height: 200px;
-    padding-right: 20px;
-    display: block;
-    float: left;
-    overflow: hidden;
+	display: block;
+	float: left;
+	overflow: hidden;
 }
 
-#gallery .gallery-album p {
-    font-size: 1em;
+.gallery-album p {
+	font-size: 1em;
 }
 
 .gallery-album .meta {
-    margin-top: 3px;
-    color: #999;
-    font-size: 1.1em;
+	margin-top: 3px;
+	color: #999;
+	font-size: 0.9em;
 }
 
-.prevnext {
-    margin-top: 1em;
-    text-align: center;
-}
-
-div.block-core-BreadCrumb {
-  display: inline;
-}
-
-div.gbSystemLinks {
-  padding-left: 20px;
-}
-
-div.gbSystemLinks a {
-  display: block;
-}
-
-div.gbBlock {
-  padding-left: 5px;
-  margin-right: 2px;
-  font-size: 0.9em;
-}
-
-div.gbBlock h3 {
-  border-bottom: 1px solid #dedede;
-}
-
-div.gbBlock h2 {
-  border-bottom: 1px solid #dedede;
-  margin-top: 0;
-}
-
-/* ********************************************************************************
- * Matrix Theme for Gallery 2
- * by Ross A. Reyman, Jon Huang, and Chad Kieffer
- * updated by Alan Harder
- */
-
-/* ********************************************************************************
- * Building blocks
- * #gallery              Default font/color settings
- * .gcBackground1,2..    Palette of backgrounds
- * .gcBorder1,2..        Palette of borders
- * a, h2, h3, etc        Standard html tags
- * .giTitle, .giSubtitle, .giDescription, .giInfo, .giSuccess, .giWarning, .giError
- *                       Palette of text styles
- * div.gbBreadCrumb      List of links/path elements
- * table.gbDataTable     Table for data/form elements with styles for shading rows
- * div.gbTabBar          UI component for selectable tabs
- * .autoComplete*        Styles for autoComplete popup lists
- */
-
-.gcBackground1 {
-    background-color: #eee;
-}
-
-.gcBackground2 {
-    background-color: #e7e7e7;
-}
-
-.gcBorder1 {
-    border: 0 solid #ccc;
-}
-
-.gcBorder2 {
-    border: 0 solid #888;
-}
-
-#gallery a {
-    text-decoration: none;
-    color: #6b8cb7;
-}
-#gallery a:hover {
-    text-decoration: underline;
-    color: #f4560f;
-}
-#gallery a:active {
-    text-decoration: none;
-    color: #f9c190;
-}
-
-#gallery img {
-    border-width: 0;
-}
-
-#gallery h1, #gallery h2, #gallery h3, #gallery h4 {
-    font-family: "Trebuchet MS", Arial, Verdana, Helvetica, sans-serif;
-}
-
-#gallery input:focus, #gallery textarea:focus {
-    background-color: #ffc;
-    color: #000;
-}
-
-#gallery input.inputTypeSubmit, #gallery input.inputTypeButton {  /* No input[type=submit] in IE */
-    color: #333;
-    background-color: #eee;
-    border-width: 2px;
-    border-style: solid;
-    border-color: #e7e7e7 #666 #666 #e7e7e7;
-}
-
-#gallery select {
-    font-size: 1em;
-}
-
-#gallery h1 { font-size: 1.25em; }
-#gallery h2 { font-size: 1.15em; }
-#gallery h3 { font-size: 1.10em; }
-#gallery h4 { font-size: 1.05em; }
-
-#gallery h3, #gallery h4 {
-    font-weight: bold;
-}
-
-#gallery pre, #gallery tt {
-    font-family: Courier New;
-    font-size: 1.2em;
-}
-
-.giSubtitle {
-    font-size: 0.9em;
-    font-weight: normal;
-    vertical-align: text-bottom;
-}
-
-.giDescription {
-    font-size: 1.1em;
-    line-height: 1.4em;
-}
-
-.giInfo {
-    font-size: 0.9em;
-    color: #888;
-}
-
-.giInfo span.summary {
-    display: block;
-}
-
-.giSuccess, .giWarning, .giError  {
-    font-weight: bold;
-}
-
-.giSuccess { color: #5c0; }
-.giWarning { color: #c50; }
-.giError { color: #a44; }
-
-.giNew, .giUpdated {
-    border-width: 2px;
-    border-style: ridge;
-    padding: 0 0.8em;
-    line-height: 1.9em;
-}
-
-#gsNavBar div.block-core-BreadCrumb {
-  float: right;
-  font-size: 0.7em;
-  padding-right: 1em;
-}
-
-table.gbDataTable th {
-    text-align: left;
-    background-color: #e7e7e7;
-}
-
-.gbEven {
-    background-color: #fff;
-}
-
-.gbOdd {
-    background-color: #eee;
-}
-
-
-#gallery div.gbTabBar {
-    font-size: 0.85em;
-    font-weight: bold;
-    margin: 0.8em 0 0;
-    padding: 6px;
-    background: url('../matrix/images/tab_bg.gif') repeat-x bottom;
-    white-space: nowrap;
-}
-
-div.gbTabBar span {
-    padding: 6px 0 5px 8px;
-    background: url('../matrix/images/tab_left.jpg') no-repeat left top;
-}
-#gallery.IE div.gbTabBar span {
-    display: inline-block;   /* IE loses padding-left on wrapped inline nowrap element */
-    margin-bottom: 1px;      /* ..and then adds padding differently with inline-block.. */
-    padding-top: 0;  padding-bottom: 0;
-}
-#gallery.IE div.gbTabBar { padding-bottom: 0; }
-#gallery.IE div.gbTabBar span.giSelected { margin-bottom: 0; padding-bottom: 0;}
-#gallery.IE div.gbTabBar span span { padding-bottom: 5px; padding-top: 6px; }
-#gallery.IE div.gbTabBar span.giSelected span { margin-bottom: 0; padding-bottom: 7px; }
-
-#gallery div.gbTabBar span span {
-    display: inline;
-    padding: 6px 12px 5px 4px;
-    background: url('../matrix/images/tab_right.jpg') no-repeat right top;
-}
-
-#gallery div.gbTabBar a {
-    color: #777;
-    text-decoration: none;
-}
-
-#gallery div.gbTabBar a:hover {
-    color: #333;
-}
-
-#gallery div.gbTabBar span.giSelected {
-    padding-bottom: 6px;
-    background-image: url('../matrix/images/tab_left_on.jpg');
-}
-
-#gallery div.gbTabBar span.giSelected span {
-    color: #333;
-    padding-bottom: 6px;
-    background-image: url('../matrix/images/tab_right_on.jpg');
-}
-
-.autoCompleteBackground {
-    border: 1px solid #ccc;
-    border-top-style: none;
-    margin: 0;
-}
-
-.autoCompleteHighlight {
-    text-decoration: underline;
-}
-
-.autoCompleteNotSelected {
-    background-color: #eee;
-    padding: 3px 4px 3px 17px;
-}
-
-.autoCompleteSelected {
-    background-color: #ffc;
-    padding: 3px 4px 3px 17px;
-}
-
-
-#gallery .gbMarkupBar input {
-    font-size: 1.1em;
-}
-
-
-#ProgressBar #progressDone {
-    background-color: #fd6704;
-    border: thin solid #ddd;
-}
-
-#ProgressBar #progressToGo {
-    background-color: #eee;
-    border: thin solid #ddd;
-}
-
-.giSearchHighlight {
-    font-weight: bold;
-    background-color: #ff6;
-}
-
-#gallery {
-  margin: 0;
-  padding: 5px;
-  text-align: center;
-  font-family: 'Lucida Grande', Verdana, Arial, sans-serif;
-  color: #333;
-  background: #efeee7 url('images/background.png') repeat;)
-}
-
-#gallery div.header {
-  background: url('images/background-header.png') no-repeat bottom;
-  padding: 10px 0 6px 0;
-}
-
-#gallery div.footer {
-  background: url('images/background-footer.png') no-repeat bottom;
-  padding: 10px 0 6px 0;
-  text-align: center;
-}
-
-#gallery div.content {
-  height: 100%;
-  width: 700px;
-  background: #fff url('images/background-content.png') repeat-y;
-  margin: auto;
-  text-align: left;
-}
-
-/* ********************************************************************************
- * Sections
- * #gallery         Page container
- * #gsNavBar   Top bar with breadcrumb and other links
- * #gsSidebar       Sidebar
- * #giFormUsername  Form field for entering a username
- * #giFormGroupname Form field for entering a group name
- */
-
-#gallery.rtl {
-    direction: rtl;
-}
-
-#gsNavBar div {
-    margin-right: 0.1em;
-}
-
-#gsSidebar {
-  display: block;
-  width: 160px;
-}
-
-#gsSidebar div ul {   /* no > in IE */
-    font-size: 0.9em;
-    font-weight: bold;
-    list-style-type: none;
-    padding-left: 16px;
-}
-
-#gsSidebar div ul ul {
-  font-size: 0.9em;
-  padding-left: 16px;
-}
-
-#gsSidebar div ul li {
-  padding-top: 2px;
-}
-
-#gsSidebar ul span {
-    color: #999;
-}
-
-#giFormUsername, .giFormUsername {
-    background: url('images/userinfo.png') no-repeat 0 1px;
-    padding-left: 17px;
-}
-
-#giFormGroupname {
-    background: url('images/groupinfo.png') no-repeat 0 1px;
-    padding-left: 17px;
-}
-
-#giFormPassword {
-    background: url('images/key7-16-bw.gif') no-repeat 0 1px;
-    padding-left: 17px;
-}
-
-/* Opera ignores padding in form inputs; put icons on right side instead */
-#gallery.opera #giFormUsername, #gallery.opera .giFormUsername,
-#gallery.opera #giFormGroupname, #gallery.opera #giFormPassword {
-    background-position: right center;
-}
-
-div.block-core-Navigator {
-   text-align: center;
-   font-size: 0.8em;
-}
-
-div.block-core-Navigator span.current {
-   text-align: center;
-}
-
-div.block-core-Navigator div.next-and-last {
-   display: inline;
-   padding-left: 10px;
-}
-
-div.block-core-Navigator div.first-and-previous {
-   padding-right: 10px;
-   display: inline;
-}
-
-div.block-search-SearchBlock a.advanced {
-  display: block;
-  padding: 3px;
-}
 
-div.gallery-album-item-links {
-  padding-left: 20px;
-}
-
-div.gallery-album-item-links a {
-  display: block;
-  padding: 3px;
-}
-
-div#gsSidebar div.block-core-PeerList a {
-  display: block;
-  padding: 3px;
-}
-
-div#gsSidebar div.block-core-PeerList span {
-  font-weight: bold;
-  display: block;
-  padding: 3px;
-}
-
-div#gsSidebar div.block-core-PeerList span.current {
-  color: #0b6cff;
-}
+/* -- Gallery Items ----------------------- */
 
-/* ***************************************************** */
-/*                   Dynamic blocks                      */
-/* ***************************************************** */
-
-div.block-comment-ViewComments {
-  margin: 5px;
-}
-
-div.block-comment-ViewComments div.one-comment {
-  border: 1px solid #e7e7e7;
-  padding: 5px;
-  margin-bottom: 5px;
+.gallery-items {
+	margin: 0;
+	clear: both;
 }
 
-div.block-comment-ViewComments h3 {
-}
 
-div.block-comment-ViewComments span {
-  padding-right: 5px;
-}
+/* -- Gallery Photo (detail page) --------- */
 
-div.block-comment-ViewComments p.info {
-  font-style: italic;
-  text-align: right;
-  font-size: 0.95em;
+.gallery-photo {
+	text-align: center;
 }
 
-div.block-core-GuestPreview {
-  float: right;
-  padding-right: 1em;
-  font-size: 0.6em;
+.gallery-photo img {
+	background: #eee;
+	border: 1px solid #ccc;
+	padding: 7px;
+	-moz-border-radius: 5px;
 }
-#gallery.rtl div.block-core-GuestPreview {
-  float: left;
-  padding-left: 1em;
-}
 
-span.block-core-SystemLink {
-}
 
-div.block-exif-ExifInfo {
-  margin: 5px;
-}
+/* -- Navigator --------------------------- */
 
-span.bsw_ButtonDisabled {
-  color: #999;
+.block-core-Navigator {
+	float: right;
+	margin: 1.5em 0;
+	font-size: 0.9em;
+	color: #999;
 }
 
-span.bsw_ButtonEnabled {
-  color: #000;
-  cursor: pointer;
+.block-core-Navigator .current,
+.block-core-Navigator .first-and-previous,
+.block-core-Navigator .next-and-last {
+	display: inline;
 }
 
-table.bsw_ParamTable {
-  width: 100%;
-  border: 1px solid #999;
-  border-collapse: collapse;
+.block-core-Navigator .current {
+	margin: 0 0.5em;
 }
 
-tr.bsw_ParamHeaderRow {
-  background-color: #eee;
-}
 
-tr.bsw_ParamHeaderRow td {
-  font-weight: bold;
-  text-align: center;
-  border: 1px solid #999;
-}
+/* -- ExifInfo ---------------------------- */
 
-td.bsw_BlockCommands {
-  white-space: nowrap;
-  text-align: center;
+.block-exif-ExifInfo div {
+	font-size: 0.8em;
+	color: #999;
+	margin: 1em 0;
 }
 
-.gbEmptyAlbum {
-    height: 400px;
+table.gbDataTable {
+	width: 100%;
+	font-size: 0.8em;
+	margin: 1.5em 0;
 }
 
-.giDescription h3.emptyAlbum {
-    line-height: 4.0em;
-    text-align: center;
+table.gbDataTable .gbOdd {
+	font-weight: bold;
 }
 

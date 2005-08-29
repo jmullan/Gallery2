@@ -17,6 +17,15 @@
 
     {* Include this theme's style sheet *}
     <link rel="stylesheet" type="text/css" href="{g->theme url="theme.css"}"/>
+
+    <style type="text/css">
+	.content {ldelim} width: {$theme.params.contentWidth}px; {rdelim}
+	{if !empty($theme.params.thumbnailSize)}
+	  {assign var="thumbCellSize" value=$theme.params.thumbnailSize+30}
+	  .gallery-thumb {ldelim} width: {$thumbCellSize}px; height: {$thumbCellSize}px; {rdelim}
+	  .gallery-album {ldelim} height: {$thumbCellSize+30}px; {rdelim}
+	{/if}
+    </style>
   </head>
   <body class="gallery">
     <div {g->mainDivAttributes}>
@@ -30,7 +39,7 @@
       {else}
       <div class="header"></div>
       <div class="content">
-	<div id="gsNavBar" class="gcBorder1">
+	<div class="breadcrumb">
 	  {g->block type="core.BreadCrumb" skipRoot=true separator="/"}
 	</div>
 
@@ -48,7 +57,7 @@
 	{/if}
 
 	<div class="footer">
-  	  {g->logoButton type="validation"}
+	  {g->logoButton type="validation"}
 	  {g->logoButton type="gallery2"}
 	  {g->logoButton type="gallery2-version"}
 	</div>

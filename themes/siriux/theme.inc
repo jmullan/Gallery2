@@ -22,7 +22,7 @@
 /**
  * @version $Revision$ $Date$
  * @package Gallery
- * @author Bharat Mediratta <bharat@menalto.com>
+ * @author Nico Kaiser <nico@siriux.net>
  */
 
 /**
@@ -42,12 +42,13 @@ class SiriuxTheme extends GalleryTheme {
 	$this->setId('siriux');
 	$this->setName($gallery->i18n('Siriux'));
 	$this->setDescription($gallery->i18n('Siriux.net Gallery theme'));
-	$this->setVersion('0.9.9');
+	$this->setVersion('0.9.10');
 	$this->setRequiredCoreApi(array(6, 5));
 	$this->setRequiredThemeApi(array(2, 0));
 	$this->setStandardSettings(
 	    array('showImageOwner' => 0,
 		  'perPage' => 9,
+		  'contentWidth' => 700,
 		  'albumBlocks' => serialize(array(
 			array('comment.ViewComments', array()))),
 		  'photoBlocks' => serialize(array(
@@ -77,8 +78,23 @@ class SiriuxTheme extends GalleryTheme {
 	if (isset($theme['navigator']['last'])) {
 	    unset($theme['navigator']['last']);
 	}
+	$theme['params']['groupByYear'] = !$item->getParentId();
 
-	/* Add our header and styles */
+	/* Find the thumbnail size for this album */
+	$theme['params']['thumbnailSize'] = 150;
+	list ($ret, $preferences) =
+	    GalleryCoreApi::fetchDerivativePreferencesForItem($item->getId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	foreach ($preferences as $preference) {
+	    if ($preference['derivativeType'] == DERIVATIVE_TYPE_IMAGE_THUMBNAIL &&
+		  preg_match('/thumbnail\|(\d+)/', $preference['derivativeOperations'], $matches)) {
+		$theme['params']['thumbnailSize'] =  $matches[1];
+		break;
+	    }
+	}
+
 	return array(GalleryStatus::success(), 'theme.tpl');
     }
 
@@ -158,6 +174,42 @@ class SiriuxTheme extends GalleryTheme {
 	}
 
 	return array(GalleryStatus::success(), 'theme.tpl');
+    }
+
+    /**
+     * @see GalleryTheme::getSettings()
+     */
+    function getSettings($itemId=null) {
+	list ($ret, $settings) = parent::getSettings($itemId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $params) = $this->fetchParameters($itemId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Add in our custom settings */
+	$params = array_merge(array('contentWidth' => 700), $params);
+	$settings[] = array('key' => 'contentWidth',
+	                    'name' => $this->translate('Width of page content in pixels'),
+	                    'type' => 'text-field',
+	                    'typeParams' => array('size' => 2),
+	                    'value' => $params['contentWidth']);
+
+	return array(GalleryStatus::success(), $settings);
+    }
+
+    /**
+     * @see GalleryTheme::validateSettings
+     */
+    function validateSettings($settings) {
+	$error = parent::validateSettings($settings);
+	if (!is_numeric($settings['contentWidth'])) {
+	    $error['contentWidth'] = $this->translate('You must enter a number');
+	}
+	return $error;
     }
 }
 ?>
