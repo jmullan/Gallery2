@@ -42,6 +42,7 @@ define('REWRITE_STATUS_HTACCESS_CANT_WRITE', 5);
 define('REWRITE_STATUS_HTACCESS_READY', 6);
 define('REWRITE_STATUS_BAD_KEYWORD', 7);
 define('REWRITE_STATUS_HTACCESS_MISMATCH', 8);
+define('REWRITE_STATUS_MULTISITE', 9);
 
 /**
  * A helper class for the RewriteUrlGenerator class
@@ -281,6 +282,7 @@ class RewriteHelper {
      *   REWRITE_STATUS_OK                              everything is fine
      *   REWRITE_STATUS_APACHE_NO_MOD_REWRITE           no mod rewrite support
      *   REWRITE_STATUS_APACHE_UNABLE_TO_TEST           unable to properly test mod_rewrite
+     *   REWRITE_STATUS_MULTISITE       		can't test mod_rewrite in multisite
      *
      * @return array object GalleryStatus a status code
      *               int rewrite status code.
@@ -299,6 +301,9 @@ class RewriteHelper {
 	    return array(GalleryStatus::success(), REWRITE_STATUS_OK);
 	}
 
+	if ($gallery->getConfig('galleryBaseUrl')) {
+	    return array(GalleryStatus::success(), REWRITE_STATUS_MULTISITE);
+	}
 	$baseUrl = $gallery->getConfig('galleryBaseUrl');
 	if (empty($baseUrl)) {
 	    $baseUrl = preg_replace('{(install|upgrade)/index\.php.*}', '',
