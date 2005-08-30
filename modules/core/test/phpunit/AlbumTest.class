@@ -387,6 +387,24 @@ class AlbumTest extends GalleryTestCase {
 	$this->assertEquals(array($root, $album), $actual);
     }
 
+    function testFetchParentsWithoutPermission() {
+	/* For this test we expect guest user to not have delete permission on root album */
+	$this->_becomeGuestUser();
+	GalleryDataCache::clearPermissionCache();
+	$ret = GalleryCoreApi::assertHasItemPermission($this->_getRootId(), 'core.delete');
+	if ($ret->isSuccess()) {
+	    $this->assert(false, 'Guest should not have core.delete on root album');
+	    return;
+	}
+
+	list ($ret, $actual) = GalleryCoreApi::fetchParents($this->_parentAlbum, 'core.delete');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array(), $actual);
+    }
+
     /**
      * Create a parent, a child, verify that fetchChildren on the parent
      * returns the child, delete both.

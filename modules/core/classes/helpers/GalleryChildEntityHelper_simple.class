@@ -385,6 +385,9 @@ class GalleryChildEntityHelper_simple {
 		    unset($parentIds[$i]);
 		}
 	    }
+	    if (empty($parentIds)) {
+		return array(GalleryStatus::success(), array());
+	    }
 	}
 
 	list ($ret, $parents) = GalleryCoreApi::loadEntitiesById($parentIds);
