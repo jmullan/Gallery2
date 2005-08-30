@@ -151,13 +151,23 @@ class CartHelperTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($item);
-
-	$ret = CartHelper::setCartItemCounts(array('1000000' => 3, $item->getId() => 2));
+	list ($ret, $item2) = $this->_createRandomDataItem($this->_getRootId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($item2);
+	$ret = GalleryCoreApi::removeItemPermissions($item2->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	/* Load cart items and verify invalid id was removed from cart */
+	$ret = CartHelper::setCartItemCounts(
+	    array($item2->getId() => 1, '1000000' => 3, $item->getId() => 2));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Load cart items and verify invalid id and no-permission item were removed from cart */
 	list ($ret, $cartItems) = CartHelper::loadCartItems();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

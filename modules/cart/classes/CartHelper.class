@@ -57,6 +57,7 @@ class CartHelper {
 
     /**
      * Add the item ids to the user's cart
+     * (Note that permissions should be checked in advance; this function does not check)
      *
      * @param array int item ids
      * @return object GalleryStatus a status code
@@ -117,13 +118,18 @@ class CartHelper {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	$idList = array_keys($cartItemIds);
+	$ret = GalleryCoreApi::studyPermissions($idList);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 	$changed = false;
 	$items = array();
-	foreach (array_keys($cartItemIds) as $itemId) {
+	foreach ($idList as $itemId) {
 	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	    if ($ret->isError()) {
 		if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-		    /* Item deleted from the gallery; remove if from the cart */
+		    /* Item deleted from the gallery; remove it from the cart */
 		    unset($cartItemIds[$itemId]);
 		    $changed = true;
 		    continue;
@@ -131,7 +137,16 @@ class CartHelper {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
-	    $items[] = $item;
+	    list ($ret, $canView) = GalleryCoreApi::hasItemPermission($itemId, 'core.view');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if ($canView) {
+		$items[] = $item;
+	    } else {
+		unset($cartItemIds[$itemId]);
+		$changed = true;
+	    }
 	}
 	if ($changed) {
 	    $ret = CartHelper::setCartItemCounts($cartItemIds);

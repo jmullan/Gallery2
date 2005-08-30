@@ -60,6 +60,10 @@ class AddToCartController extends GalleryController {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	} else {
+	    $ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.view');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	    $ids = array($item->getId());
 	}
 
