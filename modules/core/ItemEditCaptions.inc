@@ -29,7 +29,7 @@
  */
 
 /**
- * This controller will handle the deletion of an item
+ * This controller will save many item captions at once.
  *
  * @package GalleryCore
  * @subpackage UserInterface
@@ -40,13 +40,9 @@ class ItemEditCaptionsController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	global $gallery;
-
 	list ($itemId, $page) = GalleryUtilities::getRequestVariables('itemId', 'page');
 
-	$status = array();
-	$error = array();
-
+	$status = $error = array();
 	if (isset($form['action']['save'])) {
 	    $ids = array_keys($form['items']);
 
@@ -152,8 +148,8 @@ class ItemEditCaptionsView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	list ($itemId, $page, $selectedId) =
-	    GalleryUtilities::getRequestVariables('itemId', 'page', 'selectedId');
+	list ($itemId, $page, $selectedId, $albumPage) =
+	    GalleryUtilities::getRequestVariables('itemId', 'page', 'selectedId', 'albumPage');
 
 	if ($form['formName'] != 'ItemEditCaption') {
 	    $form['formName'] = 'ItemEditCaption';
@@ -173,14 +169,31 @@ class ItemEditCaptionsView extends GalleryView {
 	    $form['childItems'] = array();
 	    $numPages = 1;
 	    $numPages = ceil(sizeof($childIds) / $form['numPerPage']);
-	    if (empty($page)) {
+	    if (empty($page) && !empty($selectedId)) {
 		/* No page given.  Determine which page we're on from the selectedId */
-		$page = 1;
-		for ($i = 0; $i < sizeof($childIds); $i++) {
+		for ($i = 0; $i < count($childIds); $i++) {
 		    if ($childIds[$i] == $selectedId) {
 			$page = ceil(($i + 1) / $form['numPerPage']);
 		    }
 		}
+	    }
+	    if (empty($page) && !empty($albumPage)) {
+		/* Still no page.  Determine which page we're on from albumPage */
+		list ($ret, $theme) = $this->loadThemeForItem($item);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		list ($ret, $params) = $theme->fetchParameters($itemId);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$albumPageSize = $theme->getPageSize($params);
+		if (!empty($albumPageSize)) {
+		    $page = ceil((($albumPage - 1) * $albumPageSize + 1) / $form['numPerPage']);
+		}
+	    }
+	    if (empty($page)) {
+		$page = 1;
 	    }
 
 	    $start = $form['numPerPage'] * ($page - 1);

@@ -213,12 +213,17 @@ class CoreModule extends GalleryModule {
 		    isset($permissions[$itemId]['core.edit']) &&
 		    !empty($childCounts[$itemId]) &&
 		    $childCounts[$itemId] > 0) {
-		$links[$itemId][] =
-		    array('text' => $this->_translate('Edit Captions'),
-			  'params' => array('view' => 'core.ItemAdmin',
-					    'subView' => 'core.ItemEditCaptions',
-					    'itemId' => $itemId,
-					    'return' => 1));
+		$link = array('text' => $this->_translate('Edit Captions'),
+			      'params' => array('view' => 'core.ItemAdmin',
+						'subView' => 'core.ItemEditCaptions',
+						'itemId' => $itemId,
+						'return' => 1));
+		list ($thisItemId, $thisPage) =
+		    GalleryUtilities::getRequestVariables('itemId', 'page');
+		if (!empty($thisItemId) && !empty($thisPage) && $thisItemId == $item->getId()) {
+		    $link['params']['albumPage'] = $thisPage;
+		}
+		$links[$itemId][] = $link;
 	    }
 
 	    if (!$isRoot && isset($thumbTable[$itemId]) &&
