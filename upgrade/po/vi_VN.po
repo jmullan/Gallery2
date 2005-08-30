@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gallery: Upgrader 1.0\n"
 "POT-Creation-Date: 2005-05-23 11:39-0400\n"
-"PO-Revision-Date: 2005-06-02 11:00+0100\n"
+"PO-Revision-Date: 2005-08-29 15:17+0100\n"
 "Last-Translator: Trung Dong Huynh <trungdong@donggiang.com>\n"
 "Language-Team: Vietnamese <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -49,17 +49,16 @@ msgstr "Hoàn tất"
 msgid "System Checks"
 msgstr "Các kiểm tra hệ thống"
 
-#, fuzzy
 msgid "PHP version >= 4.1.0 or >= 5.0.4"
-msgstr "Phiên bản PHP >= 4.1.0"
+msgstr "Phiên bản PHP >= 4.1.0 hoặc >= 5.0.4"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error: Gallery 2 requires PHP version 4.1.0 or newer or 5.0.4 or newer. You "
 "have PHP version %s installed. Contact your webserver administrator to "
 "request an upgrade, available at the %sPHP website%s."
 msgstr ""
-"Lỗi: Gallery 2 yêu cầu phải có PHP phiên bản 4.1.0 hoặc mới hơn. Phiên bản "
+"Lỗi: Gallery 2 yêu cầu phải có PHP phiên bản 4.1.0 hoặc mới hơn, hay 5.0.4 hoặc mới hơn. Phiên bản "
 "PHP bạn đang dùng là %s. Hãy liên hệ với quản trị máy chủ của bạn để yêu cầu "
 "nâng cấp lên lên phiên bản PHP mới hơn có tại %strang web PHP%s."
 
@@ -197,7 +196,7 @@ msgstr ""
 "lỗi thì bạn phải tắt chế độ ze1_compatibility_mode trước khi tiếp tục."
 
 msgid "Storage Directory Permissions"
-msgstr ""
+msgstr "Quyền hạn trong thư mục lưu trữ"
 
 msgid "Test skipped due to other errors."
 msgstr "Kiểm tra bị bỏ qua vì một số lỗi khác."
@@ -208,6 +207,9 @@ msgid ""
 "writeable by the webserver user. Run chown -R webserverUser %s OR run chmod -"
 "R 777 %s."
 msgstr ""
+"Lỗi: Một số tập tin và thư mục trong thư mục lưu trữ của bạn không thể ghi được "
+"dưới quyền người dùng webuser. Bạn hãy chạy lệnh chown -R webserverUser %s "
+"HOẶC lệnh chmod - R 777 %s."
 
 msgid "Gallery file integrity"
 msgstr "Tính toàn vẹn các tập tin Gallery"
@@ -225,9 +227,8 @@ msgstr "Nâng cấp các module"
 msgid "Unable to load the %s module"
 msgstr "Không thể nạp module %s"
 
-#, fuzzy
 msgid "Upgrading modules"
-msgstr "Nâng cấp các module"
+msgstr "Đang nâng cấp các module"
 
 #, c-format
 msgid "%s module needs configuration"
@@ -237,17 +238,16 @@ msgstr "Module %s cần được chỉnh cấu hình"
 msgid "Unable to upgrade the %s module"
 msgstr "Không thể nâng cấp module %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to load the %s theme"
-msgstr "Không thể nạp module %s"
+msgstr "Không thể nạp kiểu trình bày %s"
 
-#, fuzzy
 msgid "Upgrading themes"
-msgstr "Nâng cấp các module"
+msgstr "Đang nâng cấp các kiểu trình bày"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to upgrade the %s theme"
-msgstr "Không thể nâng cấp module %s"
+msgstr "Không thể nâng cấp kiểu trình bày %s"
 
 msgid "Unable to commit database transaction"
 msgstr "Không thể thực hiện thao tác cơ sở dữ liệu"
@@ -255,15 +255,14 @@ msgstr "Không thể thực hiện thao tác cơ sở dữ liệu"
 msgid "Unable to get the module list"
 msgstr "Không thể nạp danh sách các module"
 
-#, fuzzy
 msgid "Unable to get the theme list"
-msgstr "Không thể nạp danh sách các module"
+msgstr "Không thể nạp danh sách các kiểu trình bày"
 
 msgid "Other"
 msgstr "Khác"
 
 msgid "Themes"
-msgstr ""
+msgstr "Kiểu trình bày"
 
 msgid "Welcome"
 msgstr "Chào mừng"
@@ -329,12 +328,11 @@ msgstr "Các thư mục cache đã được xóa thành công."
 msgid "Finished!"
 msgstr "Đã hoàn tất!"
 
-#, fuzzy
 msgid ""
 "Congratulations! Your Gallery 2 upgrade is complete!  To upgrade any "
 "additional Gallery 2 modules you may use the Site Administrator interface."
 msgstr ""
-"Chúc mừng bạn! Quá trình nâng cấp Gallery 2 %sBeta%s của bạn đã hoàn tất. Để "
+"Chúc mừng bạn! Quá trình nâng cấp Gallery 2 của bạn đã hoàn tất. Để "
 "nâng cấp các module khác của Gallery 2, bạn hãy vào phần Quản trị của "
 "Gallery."
 
@@ -392,15 +390,15 @@ msgstr ""
 msgid "Modified files (%d)"
 msgstr "Các tập tin bị hiệu chỉnh (%d)"
 
-#, fuzzy
 msgid ""
 "Note: You're running Gallery from CVS, so some modified files are to be "
 "expected.  You can probably ignore these, but to be safe you should make "
 "sure that you do <b>cvs update -Pd</b> before continuing."
 msgstr ""
 "Lưu ý: Bạn đang dùng phiên bản Gallery từ CVS và một số tập tin mới được "
-"hiệu chỉnh được liệt kê dưới đây. Tuy nhiên, thường bạn có thể bỏ qua các "
-"cảnh báo này."
+"hiệu chỉnh được liệt kê dưới đây. Tuy bạn có thể bỏ qua các cảnh báo "
+"này, nhưng để an toàn, bạn nên chạy lệnh <b>cvs update -Pd</b> trước "
+"khi tiếp tục."
 
 #, c-format
 msgid "Old files (%d)"
@@ -424,30 +422,37 @@ msgid "Start Over"
 msgstr "Bắt đầu lại từ đầu"
 
 msgid "Missing or invalid config.php"
-msgstr ""
+msgstr "Tập tin config.php bị thiếu hoặc không hợp lệ"
 
 msgid "You tried to run the upgrade process but a valid config.php is missing."
-msgstr ""
+msgstr "Bạn chạy chương trình nâng cấp nhưng thiếu tập tin config.php hợp lệ."
 
 msgid ""
 "If you've lost your config.php file when replacing the Gallery 2 files in "
 "the preparation for this upgrade, please restore it and try again."
 msgstr ""
+"Nếu bạn mất tập tin config.php khi thay thế các tập tin của Gallery 2 "
+"trong lúc chuẩn bị nâng cấp thì bạn hãy khôi phục lại nó trước khi thử "
+"lại lần nữa."
 
 msgid ""
 "If you actually want to run the Gallery 2 installer, please follow the link "
 "below."
 msgstr ""
+"Nếu bạn muốn chạy chương trình cài đặt Gallery 2 thì hãy dùng liên "
+"kết dưới đây."
 
 msgid ""
 "If you want to upgrade from Gallery 1, you first need to install Gallery 2 "
 "and then use the import module to import your data from Gallery 1. Please "
 "follow the link below to install Gallery 2."
 msgstr ""
+"Nếu bạn muốn nâng cấp từ Gallery 1, trước hết bạn phải cài Gallery 2 và "
+"sau đó dùng module import để chuyển dữ liệu từ Gallery 1 của bạn. Hãy "
+"dùng liên kết dưới đây để cài đặt Gallery 2."
 
-#, fuzzy
 msgid "Go to the Gallery 2 Installer"
-msgstr "Chào mừng bạn đến Công cụ cập nhật Gallery"
+msgstr "Đi đến Chương trình cài đặt Gallery 2"
 
 msgid "Success"
 msgstr "Thành công"
@@ -462,7 +467,6 @@ msgstr ""
 "Nếu bạn đang dùng Apache, hãy tạo tập tin có tên .htaccess trong thư mục "
 "chính của Gallery với nội dung dưới đây:"
 
-#, fuzzy
 msgid "An error occurred while upgrading Gallery Core Module"
 msgstr "Có lỗi khi nâng cấp module Lõi của Gallery"
 
@@ -522,6 +526,9 @@ msgid ""
 "to. You cannot downgrade G2. Please replace the gallery2 files with files "
 "from the currently installed version or later."
 msgstr ""
+"Phiên bản đang cài mới hơn phiên bản bạn đang định nâng cấp. Bạn không "
+"thể giảm cấp G2. Bạn hãy thay thế các tập tin của gallery2 bằng các tập tin "
+"của phiên bản đang được cài hoặc mới hơn."
 
 msgid ""
 "Before you upgrade, we <b>strongly recommend</b> that you make a backup of "
@@ -591,6 +598,26 @@ msgstr ""
 "lúc nào cũng có thể nâng cấp hoặc bỏ kích hoạt chúng trong trang Quản trị, "
 "hoặc quay lại trang này sau để nâng cấp chúng."
 
+msgid "Missing Code"
+msgstr "Mã bị thiếu"
+
+msgid ""
+"The code for some plugins that were previously active can no longer be "
+"found. You must restore code for these plugins before this upgrade can "
+"continue. Code for the plugins must be the same version or newer than what "
+"was installed before."
+msgstr ""
+"Mã chương trình của một số plugin đang hoạt động trước đây không tìm "
+"thấy. Bạn cần phải khôi phục lại mã của các plugin này trước khi tiếp tục "
+"nâng cấp. Mã chương trình cho các plugin này phải cùng phiên bản hoặc "
+"mới hơn phiên bản đã được cài trước đây."
+
+msgid "Module"
+msgstr "Module"
+
+msgid "Theme"
+msgstr "Kiểu trình bày"
+
 msgid "Name"
 msgstr "Tên"
 
@@ -617,9 +644,9 @@ msgstr "Nâng cấp các module đang chọn"
 msgid "Upgraded the %s module successfully"
 msgstr "Nâng cấp module %s thành công"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Upgraded the %s theme successfully"
-msgstr "Nâng cấp module %s thành công"
+msgstr "Nâng cấp kiểu trình bày %s thành công"
 
 msgid "Upgrade More Modules"
 msgstr "Nâng cấp thêm module"
@@ -639,6 +666,3 @@ msgstr "Chọn ngôn ngữ:"
 
 msgid "Go"
 msgstr "Đi tiếp"
-
-#~ msgid "Upgraded the %s layout successfully"
-#~ msgstr "Nâng cấp kiểu trình bày %s thành công"

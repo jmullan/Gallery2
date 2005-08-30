@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gallery: Installer 1.0\n"
 "POT-Creation-Date: 2005-05-29 05:54-0400\n"
-"PO-Revision-Date: 2005-05-29 23:55+0100\n"
+"PO-Revision-Date: 2005-08-29 18:40+0100\n"
 "Last-Translator: Trung Dong Huynh <trungdong@donggiang.com>\n"
 "Language-Team: Vietnamese <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -35,11 +35,10 @@ msgid "Admin User Setup"
 msgstr "Cài đặt người dùng Quản trị (Admin)"
 
 msgid "admin"
-msgstr ""
+msgstr "người quản trị"
 
-#, fuzzy
 msgid "Gallery Administrator"
-msgstr "Tính toàn vẹn các tập tin Gallery"
+msgstr "Người Quản trị Gallery"
 
 msgid "Authenticate"
 msgstr "Xác nhận"
@@ -96,21 +95,20 @@ msgid "Database Setup"
 msgstr "Cài đặt Cơ sở dữ liệu"
 
 msgid "You must have the MySQL PHP module installed"
-msgstr ""
+msgstr "Bạn cần có module MySQL cài trong chương trình PHP"
 
 msgid "You must have the PostgreSQL PHP module installed"
-msgstr ""
+msgstr "Bạn cần có module PostgreSQL cài trong chương trình PHP"
 
 msgid "You must have the Oracle OCI8 PHP module installed"
-msgstr ""
+msgstr "Bạn cần có module Oracle OCI8 cài trong chương trình PHP"
 
 #, c-format
 msgid "You must specify a column prefix (we recommend %s)"
-msgstr ""
-"Bạn cần phải chỉ định một tiếp đầu ngữ cho cột (chúng tôi khuyên bạn dùng %s)"
+msgstr "Bạn cần phải chỉ định một tiếp đầu ngữ cho cột (chúng tôi khuyên bạn dùng %s)"
 
 msgid "Use only letters, numbers and underscore in the column prefix"
-msgstr ""
+msgstr "Chỉ dùng chữ cái, số và gạch chân cho tiếp đầu ngữ của cột"
 
 #, c-format
 msgid "You must specify a table prefix (we recommend %s)"
@@ -119,7 +117,7 @@ msgstr ""
 "s)"
 
 msgid "Use only letters, numbers and underscore in the table prefix"
-msgstr ""
+msgstr "Chỉ dùng chữ cái, số và gạch chân cho tiếp đầu ngữ của bảng"
 
 #, c-format
 msgid "Unable to create a database connection of type %s"
@@ -131,9 +129,8 @@ msgstr "Không thể kết nối với cơ sở dữ liệu với các thông ti
 msgid "The database you specified does not exist.  Please create it."
 msgstr "Cơ sở dữ liệu mà bạn chỉ định không tồn tại. Hãy tạo CSDL đó trước."
 
-#, fuzzy
 msgid "The database privileges test did not complete successfully."
-msgstr "Cơ sở dữ liệu đã được cài đặt thành công."
+msgstr "Kiểm tra quyền trên cơ sở dữ liệu không thành công."
 
 msgid ""
 "Gallery tables already exist in this database!  But there is no 'versions."
@@ -142,12 +139,22 @@ msgid ""
 "think your G2 should still work or select a clean install, which will erase "
 "all data in the database and in the storage directory."
 msgstr ""
+"Các bảng của Gallery đang có sẵn trong cơ sở dữ liệu. Nhưng không có "
+"tập tin 'versions.dat' trong thư mục lưu trữ G2 của bạn nên chúng tôi coi "
+"bản cài đặt này bị hỏng. Bạn hãy tạo tập tin versions.dat theo định đúng "
+"nếu bạn nghĩ là G2 của bạn vẫn hoạt động được, hoặc chọn cài đặt mới "
+"và tất cả dữ liệu trong cơ sở dữ liệu và thư mục lưu trữ của bạn sẽ bị "
+"xóa."
 
 msgid ""
 "The G2 storage directory has a versions.dat file of an old install. But the "
 "Gallery database tables don't exist. Select a clean install to erase all "
 "data in the Gallery storage directory and advance to the next step."
 msgstr ""
+"Thư mục lưu trữ G2 có tập tin versions.dat của một bản cài đặt cũ nhưng "
+"các bảng trong cơ sở dữ liệu của Gallery không tồn tại. Hãy chọn cài đặt "
+"mới để xóa tất cả dữ liệu trong cơ sở dữ liệu và thư mục lưu trữ và chuyển "
+"sang bước kế tiếp." 
 
 msgid ""
 "Gallery tables already exist in the database and there is a versions.dat "
@@ -156,6 +163,11 @@ msgid ""
 "the Gallery storage directory. Select a clean install to erase all data in "
 "the database and in the storage directory and to advance to the next step."
 msgstr ""
+"Các bảng dữ liệu của Gallery đang có trong cơ sở dữ liệu và có tập tin "
+"versions.dat trong thư mục lưu trữ của Gallery nhưng số phiên bản trong "
+"cơ sở dữ liệu không trùng với số phiên bảng trong thư mục lưu trữ. Hãy "
+"chọn cài đặt mới để xóa tất cả dữ liệu trong cơ sở dữ liệu và thư mục lưu "
+"trữ và chuyển sang bước kế tiếp." 
 
 msgid ""
 "Gallery tables already exist in the database and the Gallery storage "
@@ -163,21 +175,32 @@ msgid ""
 "tables and storage directory data or select a clean install to erase all "
 "existing data in the database and the storage directory."
 msgstr ""
+"Các bảng dữ liệu của Gallery đang có trong cơ sở dữ liệu và thư mục lưu "
+"trữ của Gallery có vẻ vẫn toàn vẹn. Bạn có thể chọn dùng lại các bảng "
+"đang có trong cơ sở dữ liệu và dữ liệu trong thư mục lưu trữ hoặc "
+"chọn cài đặt mới để xóa tất cả dữ liệu trong cơ sở dữ liệu và thư mục lưu "
+"trữ và chuyển sang bước kế tiếp."
 
 msgid ""
 "Could not execute the required API to erase the storage directory. Please "
 "erase the Gallery storage directory manually."
 msgstr ""
+"Không thể thực hiện hàm API cần để xóa thư mục lưu trữ. Bạn hãy tự xóa "
+"thư mục lưu trữ của Gallery."
 
 msgid ""
 "Could not execute the required API to drop the Gallery database tables. "
 "Please clean the Gallery database manually."
 msgstr ""
+"Không thể thực hiện hàm API cần để xóa các bảng trong cơ sở dữ liệu "
+"của Gallery. Bạn hãy tự xóa các bảng này."
 
 msgid ""
 "Could not load the G2 API. Please erase the Gallery database tables and the "
 "storage directory manually."
 msgstr ""
+"Không thể nạp các hàm API của G2. Bạn hãy tự xóa các bảng trong cơ "
+"sở dữ liệu và thư mục lưu trữ của Gallery."
 
 msgid "MySQL (all versions)"
 msgstr "MySQL (tất cả phiên bản)"
@@ -195,34 +218,40 @@ msgid "Oracle (9i and newer)"
 msgstr "Oracle (9i và mới hơn)"
 
 msgid "Unknown DB type or no known tables information."
-msgstr ""
+msgstr "Không xác định được kiểu cơ sở dữ liệu hoặc thông tin về bảng."
 
 #, c-format
 msgid "Could not find an unused table prefix similar to \"%s\"."
-msgstr ""
+msgstr "Không thể xác định một tiếp đầu ngữ chưa sử dụng cho bản tương tự như \"%s\"."
 
 #, c-format
 msgid "SQL test file \"%s\" not found."
-msgstr ""
+msgstr "Tập tin kiểm tra SQL \"%s\" không tìm thấy."
 
 #, c-format
 msgid "Could not open SQL test file \"%s\"."
-msgstr ""
+msgstr "Không thể mở tập tin kiểm tra SQL \"%s\"."
 
 msgid ""
 "Check the returned error message and README.html for missing privileges and "
 "clean up the database."
 msgstr ""
+"Hãy kiểm tra thông báo lỗi được trả lại và tập tin README.html "
+"về quyền bị thiếu và xóa trắng cơ sở dữ liệu."
 
 msgid ""
 "Failed to create a DB test sequence.Check the returned error message and "
 "README.html for missing privileges and clean up the database."
 msgstr ""
+"Thử tạo CSDL thất bại. Hãy kiểm tra thông báo lỗi được "
+"trả lại và tập tin README.html về quyền bị thiếu và xóa trắng cơ sở dữ liệu."
 
 msgid ""
 "Test failed to drop a DB test sequence.Check the returned error message and "
 "README.html for missing privileges and clean up the database."
 msgstr ""
+"Thử xóa CSDL thất bại. Hãy kiểm tra thông báo lỗi được "
+"trả lại và tập tin README.html về quyền bị thiếu và xóa trắng cơ sở dữ liệu."
 
 msgid "Finished"
 msgstr "Hoàn tất"
@@ -272,9 +301,8 @@ msgstr "Không thể kích hoạt module %s"
 msgid "Other"
 msgstr "Khác"
 
-#, fuzzy
 msgid "Installation Type"
-msgstr "Trạng thái cài đặt"
+msgstr "Kiểu cài đặt"
 
 msgid "Check Security"
 msgstr "Kiểm tra an ninh"
@@ -285,19 +313,19 @@ msgstr "Cài đặt lưu trữ"
 msgid "System Checks"
 msgstr "Các kiểm tra hệ thống"
 
-#, fuzzy
 msgid "PHP version >= 4.1.0 or >= 5.0.4"
-msgstr "Phiên bản PHP >= 4.1.0"
+msgstr "Phiên bản PHP >= 4.1.0 hoặc >= 5.0.4"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error: Gallery 2 requires PHP version 4.1.0 or newer or 5.0.4 or newer. You "
 "have PHP version %s installed. Contact your webserver administrator to "
 "request an upgrade, available at the %sPHP website%s."
 msgstr ""
-"Lỗi: Gallery 2 cần có PHP phiên bản 4.1.0 hoặc mới hơn. Bạn đang dùng PHP "
-"phiên bản %s. Hãy liên hệ với quản trị máy chủ web của bạn để yêu cầu nâng "
-"cấp. PHP có thể download ở %strang web PHP%s."
+"Lỗi: Gallery 2 cần có PHP phiên bản 4.1.0 hoặc mới hơn, hay 5.0.4 hoặc "
+"mới hơn. Bạn đang dùng PHP phiên bản %s. Hãy liên hệ với quản trị máy "
+"chủ web của bạn để yêu cầu nâng cấp. PHP có thể download ở %strang "
+"web PHP%s."
 
 msgid "PHP Version"
 msgstr "Phiên bản PHP"
@@ -457,16 +485,14 @@ msgstr ""
 msgid "Admin username"
 msgstr "Tên người dùng Quản trị"
 
-#, fuzzy
 msgid "Please enter a valid user name"
-msgstr "Xin hãy nhập một mật khẩu"
+msgstr "Bạn hãy nhập một tên người dùng hợp lệ"
 
 msgid "Password"
-msgstr "Mật khẩu:"
+msgstr "Mật khẩu"
 
-#, fuzzy
 msgid "Setup password"
-msgstr "Mật khẩu:"
+msgstr "Mật khẩu cài đặt"
 
 msgid "Please enter a password"
 msgstr "Xin hãy nhập một mật khẩu"
@@ -475,14 +501,13 @@ msgid "(type again)"
 msgstr "(đánh lại)"
 
 msgid "Admin email address"
-msgstr ""
+msgstr "Địa chỉ email của người quản trị"
 
-#, fuzzy
 msgid "Please enter a valid email address"
-msgstr "Xin hãy nhập một mật khẩu"
+msgstr "Bạn hãy nhập một địa chỉ email hợp lệ"
 
 msgid "Admin full name (optional)"
-msgstr ""
+msgstr "Tên đầy đủ của người quản trị (không bắt buộc)"
 
 msgid "Missing password!  Please enter the same password twice"
 msgstr "Thiếu mật khẩu! Hãy nhập mật khẩu hai lần"
@@ -496,6 +521,10 @@ msgid ""
 "site admin. To change the password of the site admin, choose the forgot "
 "password mechanism of Gallery."
 msgstr ""
+"Vì bạn dùng lại các bảng đang có trong cơ sở dữ liệu, đây không phải là "
+"bản cài đặt mới. Do đó, mật khẩu cài đặt sẽ được thay đổi nhưng mật "
+"khẩu của người quản trị sẽ vẫn dùng mật khẩu cũ. Để thay đổi mật khẩu "
+"của người quản trị, bạn hãy dùng chức năng quên mật khẩu của Gallery."
 
 msgid "Create"
 msgstr "Tạo"
@@ -506,7 +535,7 @@ msgstr "Lưu"
 msgid "Admin user info entered successfully."
 msgstr "Thông tin người dùng Quản trị đã được nhập."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "In order to proceed with the install, we have to verify that you are who you "
 "claim.  The best way to be sure is to ask you to make a tiny change in the "
@@ -520,17 +549,17 @@ msgstr ""
 "Gallery này. Cách tốt nhất là yêu cầu bạn tạo một thay đổi nhỏ trong thư mục "
 "của Gallery để chứng tỏ bạn có đủ quyền hạn. Cho nên chúng tôi sẽ yêu cầu "
 "bạn tạo một tập tin có tên <strong>login.txt</strong> trong thư mục <tt>%s</"
-"tt> ở máy chủ web của bạn (đó là thư mục chứa công cụ cài đặt này). Tập tin "
+"tt> ở máy chủ web của bạn (đó là thư mục chứa tập tin main.php). Tập tin "
 "này phải chứa chuỗi các ký tự được tạo ngẫu nhiên dưới đây:"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "As a convenience to you, we've prepared a %scorrect version of login.txt%s "
 "for you.  Download that and copy it into your <tt>%s</tt> directory and "
 "you're all set."
 msgstr ""
 "Để tiện lợi cho bạn, chúng tôi đã chuẩn bị %stập tin login.txt%s cho bạn. "
-"Hãy tải tập tin này về và chép nó vào thư mục install của bạn là được."
+"Hãy tải tập tin này về và chép nó vào thư mục <tt>%s</tt> của bạn là được."
 
 msgid "Once you've uploaded the file, click below to continue."
 msgstr "Một khi bạn đã tải tập tin đó lên, hãy ấn vào phía dưới để tiếp tục."
@@ -542,24 +571,25 @@ msgid "Authentication successful!"
 msgstr "Đã xác nhận"
 
 msgid "Erase data for a clean install"
-msgstr ""
+msgstr "Xóa dữ liệu để cài đặt mới"
 
 msgid ""
 "Are you really sure you want to delete all your data in your Gallery storage "
 "directory and all your data in your Gallery database?"
 msgstr ""
+"Bạn có chắc là bạn muốn xóa tất cả dữ liệu của bạn trong thư mục "
+"lưu trữ của Gallery và tất cả dữ liệu trong cơ sở dữ liệu của Gallery?"
 
-#, fuzzy
 msgid ""
 "There was an error erasing the db and storage directory data. Here's the "
 "error:"
-msgstr "Có lỗi khi cài module lõi. Sau đây là stack trace:"
+msgstr "Có lỗi khi xóa CSDL và thư mục lưu trữ. Sau đây là thông báo lỗi:"
 
 msgid "Cancel"
-msgstr ""
+msgstr "Hủy"
 
 msgid "Erase all data"
-msgstr ""
+msgstr "Xóa tất cả dữ liệu"
 
 msgid "Please fix this error and try again."
 msgstr "Xin hãy sửa lỗi này và thử lại."
@@ -635,6 +665,9 @@ msgid ""
 "own database tables. Either choose a different database or a different table "
 "prefix for each multisite!"
 msgstr ""
+"Đây là kiểu cài đặt nhiều trang web. Hãy nhớ là mỗi trang cần có các bảng "
+"cơ sở dữ liệu riêng. Hãy chọn một cơ sở dữ liệu khác hoặc một tiếp đầu tố "
+"khác cho bảng cho mỗi trang!"
 
 msgid "Database type:"
 msgstr "Kiểu CSDL:"
@@ -661,7 +694,7 @@ msgid "We received the following database related errors:"
 msgstr "Chúng tôi nhận được các lỗi liên quan đến CSDL sau:"
 
 msgid "Erase Data For A Clean Install"
-msgstr ""
+msgstr "Xóa dữ liệu để cài đặt mới"
 
 msgid "Reuse Existing Tables"
 msgstr "Dùng các bảng đã có sẵn"
@@ -672,12 +705,11 @@ msgstr "Cơ sở dữ liệu đã được cài đặt thành công."
 msgid "Finished!"
 msgstr "Hoàn tất!"
 
-#, fuzzy
 msgid ""
 "Congratulations! Your Gallery 2 install is complete! See... that wasn't so "
 "hard, was it? Now it's time to upload some photos!"
 msgstr ""
-"Chúc mừng bạn! Cài đặt Gallery 2 %sBeta%s đã hoàn tất! Bạn thấy chưa... cài "
+"Chúc mừng bạn! Cài đặt Gallery 2 đã hoàn tất! Bạn thấy chưa... cài "
 "đặt cũng không quá khó, đúng không? Bây giờ là lúc bạn tải ảnh lên!"
 
 msgid "Go to my Gallery!"
@@ -713,23 +745,32 @@ msgid ""
 "Something went wrong when we tried to install the core module.  What to do "
 "next?"
 msgstr ""
+"Có gì sai trong khi chúng tôi cài module lõi. Cần phải làm gì tiếp?"
 
 msgid ""
 "Go to the System Checks step of the installer and make sure all checks shows "
 "'Success'. A common issue is that the file integrity warning is ignored."
 msgstr ""
+"Quay lại bước Kiểm tra hệ thống của chương trình cài đặt và bảo đảm tất cả "
+"các kiểm tra đều Thành công. Một vấn đề thường gặp là cảnh bảo về tính toàn "
+"vẹn bị bỏ qua."
 
 msgid ""
 "If there are no warnings or failures in the System Checks step, empty your "
 "storage directory and delete the database tables and start the installation "
 "process a second time (redo all steps)."
 msgstr ""
+"Nếu không có cảnh báo hay thất bại trong bước Kiểm tra hệ thống, hãy "
+"xóa trắng thư mục lưu trữ và xóa các bảng trong cơ sở dữ liệu và thử bắt "
+"đầu lại quá trình cài đặt (thực hiện lại tất cả các bước)."
 
 #, c-format
 msgid ""
 "Please visit the %sG2 FAQ%s and read the %sKnown issues section of the Readme"
 "%s."
 msgstr ""
+"Bạn hãy xem trang %sCác câu hỏi G2 thường gặp%s và đọc %sphần Các vấn đề "
+"đã biết của tập tin Readme%s."
 
 #, c-format
 msgid ""
@@ -738,6 +779,10 @@ msgid ""
 "support forum%s or, if possible, just add a link to the install.log in the "
 "forum topic such that the support staff can analyze it if necessary."
 msgstr ""
+"Nếu vấn đề của bạn vẫn còn tiếp diễn, hãy chép log cài đặt tại %s và "
+"gửi kèm (như là install.log.zip) vào một bài trong %sdiễn đàn hỗ trợ "
+"G2%s hoặc, nếu có thể, chỉ thêm một liên kết đến tập tin install.log "
+"trong một bài gửi ở diễn đàn để bộ phận hỗ trợ có thể phân tích nếu cần."
 
 msgid "Stack Trace:"
 msgstr "Stack Trace:"
@@ -794,7 +839,7 @@ msgid "Description"
 msgstr "Mô tả"
 
 msgid "(Incompatible with this Gallery version)"
-msgstr ""
+msgstr "(Không tương thích với phiên bản Gallery này)"
 
 msgid "(un)check all"
 msgstr "(bỏ) đánh dấu tất cả"
@@ -874,15 +919,14 @@ msgstr ""
 msgid "Modified files (%d)"
 msgstr "Các tập tin bị hiệu chỉnh (%d)"
 
-#, fuzzy
 msgid ""
 "Note: You're running Gallery from CVS, so some modified files are to be "
 "expected.  You can probably ignore these, but to be safe you should make "
 "sure that you do 'cvs update -Pd' before continuing."
 msgstr ""
 "Lưu ý: Bạn đang dùng phiên bản Gallery từ CVS và một số tập tin mới được "
-"hiệu chỉnh được liệt kê dưới đây. Tuy nhiên, thường bạn có thể bỏ qua các "
-"cảnh báo này."
+"hiệu chỉnh được liệt kê dưới đây. Tuy bạn có thể bỏ qua các cảnh báo này, "
+"nhưng để an toàn thì bạn nên chạy lệnh 'cvs update -Pd' trước khi tiếp tục."
 
 #, c-format
 msgid "Old files (%d)"
@@ -897,7 +941,7 @@ msgstr ""
 "được sạch."
 
 msgid "Please select the installation type"
-msgstr ""
+msgstr "Hãy chọn kiểu cài đặt"
 
 msgid "Standard installation"
 msgstr "Cài đặt chuẩn"
@@ -908,18 +952,21 @@ msgid ""
 "want to install a new Gallery in the directory %s which will be accessible "
 "with the URL %s."
 msgstr ""
+"Đây là kiểu cài đặt chuẩn. Hãy chọn kiểu cài đặt này nếu bạn muốn cài "
+"một bản Gallery mới trong thư mục %s và được truy cập với đường dẫn "
+"(URL) %s."
 
 msgid "Multisite installation"
 msgstr "Cài đặt cho nhiều trang web"
 
-#, fuzzy
 msgid ""
 "Gallery can support multiple independent sites with a single installation of "
 "the code. Choose this installation type if you want to install a new Gallery "
 "on the same webserver but in a different path, subdomain or URL domain."
 msgstr ""
 "Gallery cho phép các trang web độc lập dùng chung một bản cài đặt mã nguồn. "
-"Các trang web thêm có thể dùng tên miền, tên miền con, hoặc đường dẫn."
+"Hãy chọn kiểu cài đặt này nếu bạn muốn cài bản Gallery mới trên cùng một "
+"máy chủ web nhưng trong các đường dẫn, tên miền con khác nhau."
 
 #, c-format
 msgid ""
@@ -928,15 +975,21 @@ msgid ""
 "information and explanations about Multisite installations, visit the %s "
 "page."
 msgstr ""
+"Cài đặt nhiều trang không chia sẻ album, ảnh, người dùng hay bất cứ gì. Tất "
+"cả các trang này đều cần cơ sở dữ liệu riêng và thư mục lưu trữ riêng. Để biết "
+"thêm thông tin và giải thích về cài đặt nhiều trang web, hãy xem trang %s."
 
 msgid ""
 "All multisites are installed from this central code repository (codebase)."
 msgstr ""
+"Tất cả trang đều được cài từ một bản mã nguồn trung tâm (codebase)."
 
 msgid ""
 "Enter the directory for the new multisite below. The path must be different "
 "from this codebase installation's path:"
 msgstr ""
+"Hãy nhập thư mục cho trang mới dưới đây. Đường dẫn phải khác với đường "
+"dẫn cài codebase:"
 
 msgid "You must enter a directory"
 msgstr "Bạn cần phải nhập một thư mục"
@@ -949,6 +1002,9 @@ msgid ""
 "a Gallery in the codebase directory, select the standard installation type. "
 "If you want to install a multisite, choose another directory."
 msgstr ""
+"Thư mục bạn nhập vào là thư mục của codebase. Nếu bạn muốn cài một "
+"chương trình Gallery vào thư mục codebase, hãy chọn kiểu cài đặt chuẩn. "
+"Nếu bạn muốn cài cho nhiều trang web, hãy chọn một thư mục khác."
 
 msgid ""
 "The directory you entered is not accessible.  Change the permissions so that "
@@ -1060,6 +1116,8 @@ msgid ""
 "This is a multisite installation. Remember that each multisite requires its "
 "own storage directory."
 msgstr ""
+"Đây là cài đặt cho nhiều trang. Hãy nhớ là mỗi trang cần có thư mục lưu "
+"trữ riêng."
 
 msgid ""
 "If you're using a modern browser, we'll try to autocomplete any path you "
@@ -1192,41 +1250,43 @@ msgstr ""
 "Nếu bạn đang dùng Apache, hãy tạo tập tin có tên .htaccess trong thư mục "
 "chính của Gallery với nội dung dưới đây:"
 
-#, fuzzy
 msgid "Version Check"
-msgstr "Phiên bản"
+msgstr "Kiểm tra phiên bản"
 
 msgid ""
 "This is not a fresh install and the installed version does not match the new "
 "version."
 msgstr ""
+"Đây không phải cài đặt mới và phiên bản cài đặt cũ không trùng phiên bản "
+"mới."
 
 msgid "The installed version cannot be upgraded to the new version!"
-msgstr ""
+msgstr "Phiên bàn đang cài đặt không thể nâng cấp lên phiên bản mới!"
 
 msgid ""
 "The installed version is older than the new version. You should run the "
 "upgrader and not the installer!"
 msgstr ""
+"Phiên bản đang cài đặt cũ hơn phiên bản mới. Bạn nên chạy chương "
+"trình nâng cấp thay vì chương trình cài đặt!"
 
 msgid "Currently installed"
-msgstr ""
+msgstr "Hiện đang cài"
 
-#, fuzzy
 msgid "New version"
-msgstr "Phiên bản"
+msgstr "Phiên bản mới"
 
-#, fuzzy
 msgid "Go to the Upgrader!"
-msgstr "Vào Gallery của tôi!"
+msgstr "Vào chương trình nâng cấp!"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You should go now to the upgrader.  Enter the URL in your browser for %s/"
 "upgrade/index.php%s in your %s directory."
 msgstr ""
-"Bây giờ bạn có thể vào Gallery của bạn. Hãy nhập đường dẫn trong trình duyệt "
-"của bạn cho %smain.php%s trong thư mục %s của bạn."
+"Bây giờ bạn nên vào chương trình nâng cấp. Hãy nhập đường dẫn "
+"trong trình duyệt của bạn cho %s/upgrade/index.php%s trong thư mục "
+"%s của bạn."
 
 #, c-format
 msgid ""
@@ -1250,28 +1310,3 @@ msgstr "Đi tiếp"
 
 msgid "Begin Installation&raquo;"
 msgstr "Bắt đầu cài đặt&raquo;"
-
-#~ msgid ""
-#~ "There was an error installing the core module.  Here's the stack trace:"
-#~ msgstr "Có lỗi khi cài module lõi. Sau đây là stack trace:"
-
-#~ msgid ""
-#~ "Something went wrong when we tried to install the core module.  In the "
-#~ "boxes below you can find some debug information.  Report this in the %"
-#~ "sGallery Forums%s and we'll help you diagnose the problem."
-#~ msgstr ""
-#~ "Có lỗi khi cài đặt module lõi. Trong các hộp ở bên dưới có hiển thị các "
-#~ "thông tin debug. Hãy báo lại lỗi này trong %sDiễn đàn Gallery%s và chúng "
-#~ "tôi sẽ giúp bạn tìm hiểu chẩn đoán lỗi này."
-
-#~ msgid "Debug Output:"
-#~ msgstr "Kết xuất Debug:"
-
-#~ msgid "Multisite Setup"
-#~ msgstr "Cài đặt cho nhiều trang web"
-
-#~ msgid "Configuration file located in %s"
-#~ msgstr "Tập tin cấu hình được đặt trong %s"
-
-#~ msgid "Enter directory for configuration file below:"
-#~ msgstr "Hãy nhập đường dẫn cho tập tin cấu hình dưới đây:"

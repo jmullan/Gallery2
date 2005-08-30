@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gallery: Core 1.0\n"
 "POT-Creation-Date: 2005-07-27 23:11-0400\n"
-"PO-Revision-Date: 2005-07-27 23:11-0400\n"
+"PO-Revision-Date: 2005-08-24 14:00-0400\n"
 "Last-Translator: Stephen Chu <stephen@ju-ju.com>\n"
 "Language-Team: Chinese Traditional <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -42,10 +42,10 @@ msgid "No Markup"
 msgstr "無標簽"
 
 msgid "BBCode"
-msgstr "BBCode代碼"
+msgstr "BBCode 代碼"
 
 msgid "Raw HTML"
-msgstr "HTML源碼"
+msgstr "原始 HTML 碼"
 
 msgid "Database"
 msgstr "資料庫"
@@ -155,6 +155,9 @@ msgstr "所有用戶"
 msgid "Detecting broken derivatives"
 msgstr "偵測壞掉的衍生檔案"
 
+msgid "Clearing fast-download cache"
+msgstr "正在清除快速下載快取"
+
 msgid "Site Admins"
 msgstr "網站管理"
 
@@ -254,7 +257,7 @@ msgid "Settings saved successfully."
 msgstr "設定儲存成功。"
 
 msgid "&laquo; default theme &raquo;"
-msgstr "&laquo; 預設風格主題 &raquo;"
+msgstr "&laquo; 預設佈景主題 &raquo;"
 
 msgid "Album"
 msgstr "相簿"
@@ -329,10 +332,10 @@ msgid "Modify Photo"
 msgstr "修改照片"
 
 msgid "Successfully saved theme settings"
-msgstr "主題設定儲存成功"
+msgstr "佈景主題設定儲存成功"
 
 msgid "Theme"
-msgstr "主題"
+msgstr "佈景主題"
 
 msgid "make highlight"
 msgstr "選為封面"
@@ -541,10 +544,10 @@ msgid "Validation disabled until you set allowSessionAccess in config.php"
 msgstr "在 config.php 中設定 allowSessionAccess 之前，驗證功能是關閉的。"
 
 msgid "This page is valid XHTML 1.0"
-msgstr "此頁面符合XHTML 1.0標準"
+msgstr "這個頁面符合 XHTML 1.0 標準"
 
 msgid "G2RC2: kthxbye"
-msgstr ""
+msgstr "G2RC2: kthxbye"
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -798,7 +801,7 @@ msgid "Modules"
 msgstr "模組"
 
 msgid "Themes"
-msgstr "主題"
+msgstr "佈景主題"
 
 msgid "Display"
 msgstr "顯示"
@@ -932,7 +935,7 @@ msgid ""
 "creates. This doesn't apply to files/directories that Gallery has already "
 "created."
 msgstr ""
-"指定 Gallery 建立的檔案和目錄的預設權限。此設定不影響已經建立的檔案和目錄。"
+"指定 Gallery 產生檔案和目錄時的預設權限。這個設定不會用在現有的檔案和目錄。"
 
 msgid "New directories"
 msgstr "新目錄"
@@ -951,10 +954,10 @@ msgid ""
 "upload privileges, so you should limit this to directories that won't "
 "contain sensitive data (eg. /tmp or /usr/ftp/incoming)"
 msgstr ""
-"在本地伺服器中指定用戶可儲存檔案的合法目錄，用戶可通過「從本地伺服器上傳」功"
-"能將這些儲存檔案上傳到 Gallery 中。你在此輸入的路徑以及此路徑下的所有檔案和目"
-"錄將會對所有擁有上傳權限的 Gallery 用戶開放，所以請限制此目錄不要包含敏感數據"
-"（例如：/tmp 或 /usr/ftp/incoming 等）。"
+"指定在本地伺服器上用戶可儲存檔案並透過「從本地伺服器上傳」功能上傳到 Gallery "
+"的合法目錄。你在這裡輸入的路徑以及這個路徑下的所有檔案和目錄將會對所有擁有上"
+"傳權限的 Gallery 用戶開放，所以請限制這個目錄於不含敏感資料的目錄（如：/tmp "
+"或 /usr/ftp/incoming）"
 
 msgid "Path"
 msgstr "路徑"
@@ -978,19 +981,20 @@ msgstr "open_basedir 說明文件"
 msgid ""
 "Your webserver is configured to prevent you from accessing that directory.  "
 "Please refer to the %s and consult your webserver administrator."
-msgstr "你的伺服器設定不允許你訪問此目錄。請參考 %s 並與你的系統管理員協商。"
+msgstr ""
+"你的伺服器的設定不允許你存取這個目錄。請參考 %s 並與你的系統管理員協商。"
 
 msgid "The webserver does not have permissions to read that directory."
-msgstr "網站伺服器沒有權限讀取此目錄。"
+msgstr "網站伺服器沒有讀取這個目錄的權限。"
 
 msgid "The path you specified is not a valid directory."
 msgstr "你指定的路徑不是一個有效的目錄。"
 
 msgid "Session Settings"
-msgstr "Session設定"
+msgstr "連線期間設定"
 
 msgid "Session Lifetime"
-msgstr "Session存活時間"
+msgstr "連線期間存活時間"
 
 msgid "Inactivity Timeout"
 msgstr "閑置時間超時"
@@ -1215,7 +1219,7 @@ msgstr "你確定嗎？"
 
 #, c-format
 msgid "This will completely remove %s from Gallery.  There is no undo!"
-msgstr "這將從 Gallery 中完全刪除%s。此操作無法恢復！"
+msgstr "這會從 Gallery 中將%s完全刪除。這個動作無法恢復！"
 
 msgid "Delete"
 msgstr "刪除"
@@ -1258,7 +1262,7 @@ msgstr "新的所有人不能是訪客或匿名用戶！"
 msgid ""
 "This will completely remove <strong>%s</strong> from Gallery.  There is no "
 "undo!"
-msgstr "這將從 Gallery 中完全刪除 <strong>%s</strong>。此操作無法恢復！"
+msgstr "這會從 Gallery 中將<strong>%s</strong>完全刪除。這個動作無法恢復！"
 
 msgid "Edit a group"
 msgstr "編輯成員組"
@@ -1280,8 +1284,8 @@ msgstr[1] "從成員組「%2$s」中刪除用戶「%1$s」"
 #, c-format
 msgid "This group contains %d user"
 msgid_plural "This group contains %d users"
-msgstr[0] "此成員組包含 %d 位用戶"
-msgstr[1] "此成員組包含 %d 位用戶"
+msgstr[0] "這個成員組包含 %d 位用戶"
+msgstr[1] "這個成員組包含 %d 位用戶"
 
 msgid "Members"
 msgstr "會員"
@@ -1334,7 +1338,7 @@ msgid "User '%s' does not exist."
 msgstr "用戶「%s」不存在。"
 
 msgid "This user already is in this group."
-msgstr "此用戶已存在於此成員組中"
+msgstr "這個用戶已存在於這個成員組中。"
 
 msgid "Done"
 msgstr "完成"
@@ -1343,7 +1347,7 @@ msgid "Edit a user"
 msgstr "編輯用戶"
 
 msgid "That username is already in use"
-msgstr "此用戶名稱已被使用"
+msgstr "這個用戶名稱已被使用"
 
 msgid "You must enter a new username"
 msgstr "你必須輸入一個新用戶名"
@@ -1537,54 +1541,54 @@ msgstr "你確定要卸載%s模組嗎？"
 msgid ""
 "This will also remove any permissions and clean up any temporary data "
 "created by this module."
-msgstr "這也將刪除所有權限並清除由此模組建立的所有暫存資料。"
+msgstr "這也會清除這個模組建立的所有權限設定和暫存資料。"
 
 msgid "Uninstall"
 msgstr "卸載"
 
 msgid "Gallery Themes"
-msgstr "Gallery 主題"
+msgstr "Gallery 佈景主題"
 
 #, c-format
 msgid "Successfully activated theme %s"
-msgstr "主題 %s 啟動成功"
+msgstr "佈景主題 %s 啟動成功"
 
 #, c-format
 msgid "Successfully deactivated theme %s"
-msgstr "主題 %s 關閉成功"
+msgstr "佈景主題 %s 關閉成功"
 
 #, c-format
 msgid "Successfully installed theme %s"
-msgstr "主題 %s 安裝成功"
+msgstr "佈景主題 %s 安裝成功"
 
 #, c-format
 msgid "Successfully uninstalled theme %s"
-msgstr "主題 %s 卸載成功"
+msgstr "佈景主題 %s 卸載成功"
 
 #, c-format
 msgid "Successfully upgraded theme %s"
-msgstr "主題 %s 升級成功"
+msgstr "佈景主題 %s 升級成功"
 
 msgid "Successfully saved default album settings"
 msgstr "預設相簿設定儲存成功"
 
 msgid "Restored theme settings"
-msgstr "重新載入主題設定"
+msgstr "重新載入佈景主題設定"
 
 msgid "All Themes"
-msgstr "所有主題"
+msgstr "所有佈景主題"
 
 msgid "Defaults"
 msgstr "預設值"
 
 msgid "Theme Name"
-msgstr "主題名稱"
+msgstr "佈景主題名稱"
 
 msgid "Status: Incompatible Theme (Inactive)"
-msgstr "狀態：主題不相容 (關閉)"
+msgstr "狀態：佈景主題不相容 (關閉)"
 
 msgid "Incompatible theme!"
-msgstr "不相容的主題！"
+msgstr "不相容的佈景主題！"
 
 #, c-format
 msgid "Theme API Required: %s (available: %s)"
@@ -1597,7 +1601,7 @@ msgid ""
 "These are default display settings for albums in your gallery.  They can be "
 "overridden in each album."
 msgstr ""
-"這是你的 Gallery 中相簿的預設顯示設定。此設定將被各個相簿的個別設定取代。"
+"這些是你的 Gallery 中相簿的預設顯示設定。這個設定可以在個別相簿的設定中取代。"
 
 msgid "Default sort order"
 msgstr "預設排序方式"
@@ -1606,19 +1610,19 @@ msgid "with"
 msgstr "和"
 
 msgid "Default theme"
-msgstr "預設風格主題"
+msgstr "預設風格佈景主題"
 
 msgid "New albums"
 msgstr "新相簿"
 
 #, c-format
 msgid "%s Theme Settings"
-msgstr "%s 主題設定"
+msgstr "%s 佈景主題設定"
 
 msgid ""
 "These are the global settings for the theme.  They can be overridden at the "
 "album level."
-msgstr "這是此主題的全局設定。此設定將被相簿級別的設定取代。"
+msgstr "這些是這個佈景主題的全局設定。它們可以在相簿層級的設定中取代。"
 
 msgid "Available"
 msgstr "可用"
@@ -1645,7 +1649,7 @@ msgid "Value"
 msgstr "值"
 
 msgid "There are no settings for this theme"
-msgstr "沒有此主題的設定"
+msgstr "沒有這個佈景主題的設定"
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime "
@@ -1759,9 +1763,9 @@ msgid ""
 "enable buffered debug output and retry the operation.  Look near the bottom "
 "of the lengthy debug output to find error details."
 msgstr ""
-"資料庫錯誤的詳細內容沒有被記錄，除非 Gallery 除錯模式在 config.php 中被啟動。"
-"在尋找此錯誤的幫助前，請打開出錯輸出緩存並再次嘗試此操作。在很長的出錯輸出底"
-"部查找錯誤細節。"
+"除非在 config.php 中啟動 Gallery 除錯模式，確切的資料庫錯誤內容不會被記錄。在"
+"尋求有關這個錯誤的協助前，請打開緩衝式除錯輸出並再試一次。在除錯輸出最後可以"
+"找到錯誤細節。"
 
 msgid "An error has occurred."
 msgstr "發生一個錯誤。"
@@ -1794,29 +1798,29 @@ msgid ""
 "Only use alphanumeric characters, underscores or dashes.  You will be able "
 "to rename it later."
 msgstr ""
-"此相簿在你硬碟上的名稱。在此相簿中此名稱必須是唯一的。只能使用英文字母、底線"
-"或連字符（減號）。你可以稍後重新命名。"
+"這個相簿在你硬碟上的名稱。在這個相簿中這個名稱必須是唯一的。只能使用英文字"
+"母、底線或連字符（減號）。你可以稍後重新命名。"
 
 msgid "Your name contains invalid characters.  Please enter another."
 msgstr "你的名字中包含無效字符，請重新輸入。"
 
 msgid "You must enter a name for this album."
-msgstr "你必須輸入此相簿的名稱。"
+msgstr "你必須輸入這個相簿的名稱。"
 
 msgid "The name you entered is already in use.  Please enter another."
 msgstr "你輸入的名稱已被使用，請另輸入一個。"
 
 msgid "This is the album title."
-msgstr "這是此相簿的主題。"
+msgstr "這是這個相簿的主題。"
 
 msgid "This is the album summary."
-msgstr "這是此相簿的摘要。"
+msgstr "這是這個相簿的摘要。"
 
 msgid "Keywords are not visible, but are searchable."
 msgstr "關鍵字不會顯示，但可以用來搜尋。"
 
 msgid "This is the long description of the album."
-msgstr "這是此相簿的詳細描述。"
+msgstr "這是這個相簿的詳細描述。"
 
 msgid "Create"
 msgstr "新建"
@@ -1898,7 +1902,7 @@ msgstr ""
 msgid ""
 "For security purposes, you can't use this feature until the Gallery Site "
 "Administrator configures a set of legal upload directories."
-msgstr "出於安全考慮，在網站管理員設定允許的上傳目錄前，你不能使用此功能。"
+msgstr "出於安全考慮，在網站管理員設定允許的上傳目錄前，你不能使用這個功能。"
 
 msgid "Server Path"
 msgstr "伺服器路徑"
@@ -1909,7 +1913,7 @@ msgstr "你必須輸入一個目錄。"
 msgid ""
 "The directory you entered is invalid.  Make sure that the directory is "
 "readable by all users."
-msgstr "你輸入的目錄不合法。請確認此目錄是所有用戶可讀取的。"
+msgstr "你輸入的目錄不合法。請確認這個目錄是所有用戶可讀取的。"
 
 msgid ""
 "The directory you entered is illegal.  It must be a sub directory of one of "
@@ -2034,9 +2038,6 @@ msgstr "無縮略圖"
 msgid "Options"
 msgstr "選項"
 
-msgid "Navigation"
-msgstr "導覽工具"
-
 msgid "Link an Item"
 msgstr "鏈接項目"
 
@@ -2047,7 +2048,7 @@ msgstr[0] "成功鏈接 %d 個項目"
 msgstr[1] "成功鏈接 %d 個項目"
 
 msgid "This album contains no items to link."
-msgstr "此相簿沒有可鏈接的項目"
+msgstr "這個相簿沒有可鏈接的項目"
 
 msgid "Source"
 msgstr "來源"
@@ -2108,7 +2109,7 @@ msgstr[0] "成功刪除 %d 個項目。"
 msgstr[1] "成功刪除 %d 個項目。"
 
 msgid "This album contains no items to delete"
-msgstr "此相簿沒有可刪除的項目"
+msgstr "這個相簿沒有可刪除的項目"
 
 msgid "Choose the items you want to delete"
 msgstr "選擇你要刪除的項目"
@@ -2166,10 +2167,10 @@ msgstr "設定相簿排序方式。將應用到所有目前項目和新添項目
 
 msgid ""
 "Choose a theme for this album. (The way the album is arranged on the page)"
-msgstr "為此相簿選擇一個主題。（相簿在頁面顯示的排列方式）"
+msgstr "為這個相簿選擇一個佈景主題。（相簿在頁面顯示的排列方式）"
 
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
-msgstr "每個項目都需要一個縮略圖，請在此設定預設點數大小。"
+msgstr "每個項目都需要一個縮略圖，請在這裡設定預設點數大小。"
 
 msgid "You must enter a number (greater than zero)"
 msgstr "你必須輸入一個數字（大於零）"
@@ -2180,7 +2181,7 @@ msgstr "變更大小的圖片"
 msgid ""
 "Each item in your album can have multiple sizes. Define the default sizes "
 "here."
-msgstr "在你的相簿中的每個項目可以包含多種大小。請在此定義預設大小。"
+msgstr "在你的相簿中的每個項目可以包含多種大小。請在這裡定義預設大小。"
 
 msgid "Active"
 msgstr "啟動"
@@ -2241,7 +2242,7 @@ msgid "Successfully saved all items"
 msgstr "所有項目已儲存成功"
 
 msgid "This album contains no items"
-msgstr "此相簿沒有項目"
+msgstr "這個相簿沒有項目"
 
 msgid "Saved successfully."
 msgstr "儲存成功"
@@ -2249,63 +2250,63 @@ msgstr "儲存成功"
 msgid ""
 "This item was modified by somebody else at the same time.  Your changes were "
 "lost."
-msgstr "此項目同時被其他人修改。你所做的變更沒有儲存。"
+msgstr "這個項目同時被其他人修改。你所做的變更沒有儲存。"
 
 msgid "You do not have permissions to modify this item."
-msgstr "你沒有修改此項目的權限。"
+msgstr "你沒有修改這個項目的權限。"
 
 msgid "Save and Done"
 msgstr "儲存並完成"
 
 #, c-format
 msgid "Save and Edit Previous %s"
-msgstr "儲存並編輯上一%s"
+msgstr "儲存並編輯前%s項"
 
 #, c-format
 msgid "Save and Edit Next %s"
-msgstr "儲存並編輯下一%s"
+msgstr "儲存並編輯後%s項"
 
 msgid ""
 "The name of this item on your hard disk.  It must be unique in this album.  "
 "Only use alphanumeric characters, underscores or dashes."
 msgstr ""
-"此項目在你硬碟上的名稱。在此相簿中此名稱必須是唯一的，只能使用英文字母、下劃"
-"線或連字符（減號）。"
+"這個項目在你硬碟上的名稱。這個名稱在這個相簿中必須是唯一的。只能使用英文字"
+"母、底線或連字號（減號）。"
 
 msgid "Your name contains invalid characters.  Please choose another."
 msgstr "你的名字中包含無效字符，請重新選擇。"
 
 msgid "You must enter a name for this item."
-msgstr "你必須輸入此項目的名稱"
+msgstr "你必須輸入這個項目的名稱"
 
 msgid "The name you entered is already in use.  Please choose another."
 msgstr "你輸入的名稱已被使用，請另選一個。"
 
 msgid "The title of this item."
-msgstr "此項目的主題"
+msgstr "這個項目的主題"
 
 msgid "The root album must have a title."
 msgstr "根相簿必須有一個主題。"
 
 msgid "The summary of this item."
-msgstr "此項目的摘要"
+msgstr "這個項目的摘要。"
 
 msgid "This is the long description of the item."
-msgstr "這是此項目的詳細描述。"
+msgstr "這是這個項目的詳細描述。"
 
 #, c-format
 msgid "%s Date and Time"
 msgstr "%s日期和時間"
 
 msgid "Set the date and time when this image was captured."
-msgstr "把此圖片的日期和時間設成記錄時的日期和時間"
+msgstr "把這個圖片的日期和時間設成記錄時的日期和時間。"
 
 msgid "Set the date and time to be displayed for this item."
-msgstr "為此項目設定顯示的日期和時間。"
+msgstr "為這個項目設定顯示的日期和時間。"
 
 #, c-format
 msgid "Set the date and time to be displayed for this %s."
-msgstr "為此%s設定顯示的日期和時間。"
+msgstr "為這個%s設定顯示的日期和時間。"
 
 msgid "Date:"
 msgstr "日期："
@@ -2327,12 +2328,13 @@ msgid ""
 "Set the size of the thumbnail.  The largest side of the thumbnail will be no "
 "larger than this value. Leave this field blank if you don't want a thumbnail."
 msgstr ""
-"設定縮略圖大小。最大縮略圖大小將不會超過這個值。如不需要縮略圖請將此欄留空。"
+"設定縮略圖大小。最大縮略圖大小將不會超過這個值。如不需要縮略圖請將這個欄位留"
+"空。"
 
 msgid ""
 "There are no graphics toolkits enabled that support this type of item, so we "
 "cannot create or modify a thumbnail."
-msgstr "沒有啟動的圖形工具支援此照片格式，因此無法建立或更改縮略圖。"
+msgstr "沒有啟動的圖形工具支援這個照片格式，所以無法建立或更改縮略圖。"
 
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the "
@@ -2360,7 +2362,8 @@ msgstr "這是你可以在查看時選擇的變更大小版本。"
 msgid ""
 "There are no graphics toolkits enabled that support this type of photo, so "
 "we cannot create or modify resized versions."
-msgstr "沒有啟動的圖形工具支援此照片格式，因此無法建立或更改已改變大小的版本。"
+msgstr ""
+"沒有啟動的圖形工具支援這個照片格式，所以無法建立或更改已改變大小的版本。"
 
 msgid ""
 "You can select which part of the photo will be used for the thumbnail.  This "
@@ -2381,7 +2384,7 @@ msgstr "重置為預設值"
 msgid ""
 "There are no graphics toolkits enabled that support this type of photo, so "
 "we cannot crop the thumbnail."
-msgstr "沒有啟動的圖形工具支援此照片格式，因此無法裁切縮略圖。"
+msgstr "沒有啟動的圖形工具支援這個照片格式，所以無法裁切縮略圖。"
 
 msgid "Rotate"
 msgstr "旋轉"
@@ -2401,7 +2404,7 @@ msgstr "順時針90&deg;"
 msgid ""
 "There are no graphics toolkits enabled that support this type of photo, so "
 "we cannot rotate it."
-msgstr "沒有啟動的圖形工具支援此照片格式，因此無法旋轉它。"
+msgstr "沒有啟動的圖形工具支援這個照片格式，所以無法旋轉它。"
 
 msgid "Scale"
 msgstr "縮放"
@@ -2418,7 +2421,7 @@ msgstr ""
 msgid ""
 "There are no graphics toolkits enabled that support this type of photo, so "
 "we cannot scale it."
-msgstr "沒有啟動的圖形工具支援此照片格式，因此無法縮放它。"
+msgstr "沒有啟動的圖形工具支援這個照片格式，所以無法縮放它。"
 
 msgid "You must enter a size"
 msgstr "你必須輸入一個大小"
@@ -2433,15 +2436,15 @@ msgid ""
 "Disabling this option will cause any actions (rotating, scaling, etc) to "
 "modify the original."
 msgstr ""
-"當旋轉和縮放時，Gallery 並不會修改你的原始照片。而會先覆製一份你的照片然後在"
+"當旋轉和縮放時，Gallery 並不會修改你的原始照片。而會先複製一份你的照片然後在"
 "那份拷貝上工作。這樣會需要一些額外的磁碟空間但可避免損壞你的原檔。關閉這個功"
 "能將導致任何操作（旋轉、縮放等）直接修改原檔。"
 
 msgid "This is a link to another photo, so you cannot change the original"
-msgstr "這是一個其他照片的鏈接，因此你不能改變原始照片。"
+msgstr "這是一個其他照片的鏈接，所以你不能改變原始照片。"
 
 msgid "There are links to this photo, so you cannot change the original"
-msgstr "這僅是此照片的鏈接，因此你不能更改原始照片"
+msgstr "這僅是這個照片的鏈接，所以你不能更改原始照片"
 
 msgid "Preserve Original Photo"
 msgstr "保留原始照片"
@@ -2464,7 +2467,8 @@ msgstr "回復到原始圖片"
 msgid ""
 "This album is configured to use the <b>%s</b> theme. These settings only "
 "apply to the theme for this album."
-msgstr "此相簿已設定使用 <b>%s</b> 主題。這些設定僅應用在此相簿的主題中。"
+msgstr ""
+"這個相簿已設定使用 <b>%s</b> 佈景主題。這些設定僅適用在這個相簿的佈景主題中。"
 
 msgid "Setting"
 msgstr "設定"
@@ -2477,7 +2481,7 @@ msgstr "相簿封面"
 
 msgid ""
 "You can make this item the thumbnail for its parent or any ancestor album."
-msgstr "你可以將此項目的縮略圖用於上層相簿。"
+msgstr "你可以用這個項目作為任何一個它的上層相簿的縮略圖。"
 
 msgid "Highlight for:"
 msgstr "封面用於："
@@ -2495,7 +2499,7 @@ msgstr[0] "成功移動 %d 個項目"
 msgstr[1] "成功移動 %d 個項目"
 
 msgid "This album contains no items to move."
-msgstr "此相簿沒有可移動的項目"
+msgstr "這個相簿沒有可移動的項目。"
 
 msgid "Choose the items you want to move"
 msgstr "選擇你要移動的項目"
@@ -2503,21 +2507,21 @@ msgstr "選擇你要移動的項目"
 msgid ""
 "The destination you chose does not accept sub-albums, so all sub-albums have "
 "been deselected."
-msgstr "你選擇的目標位置不接受子相簿，因此所有子相簿已被取消選擇。"
+msgstr "你選擇的目標位置不接受子相簿，所以所有子相簿已被取消選擇。"
 
 msgid ""
 "The destination you chose only accepts sub-albums, so all non-albums have "
 "been deselected."
-msgstr "你選擇的目標位置僅接受子相簿，因此所有非相簿已被取消選擇。"
+msgstr "你選擇的目標位置僅接受子相簿，所以所有非相簿已被取消選擇。"
 
 msgid "You are not allowed to move this item away from here."
-msgstr "你不能移動此項目到其他位置。"
+msgstr "你不能把這個項目移開。"
 
 msgid "You are not allowed to move an album to the chosen destination."
-msgstr "你不能移動相簿到選定的目標位置。"
+msgstr "你不能把相簿移動到選定的目標位置。"
 
 msgid "You are not allowed to move an item to the chosen destination."
-msgstr "你不能移動項目到選定的目標位置。"
+msgstr "你不能把項目移動到選定的目標位置。"
 
 msgid "You cannot move an album into its own subtree."
 msgstr "你不能將相簿移動到其自身的子目錄中。"
@@ -2526,7 +2530,7 @@ msgid "Choose a new album for them"
 msgstr "為它們選擇一個新相簿"
 
 msgid "You don't have the permission to add items in this album"
-msgstr "你沒有在此相簿中增加項目的權限"
+msgstr "你沒有在這個相簿中增加項目的權限"
 
 msgid "Move"
 msgstr "移動"
@@ -2564,7 +2568,7 @@ msgstr ""
 "每個項目都有獨立的權限設定，變更上層的權限設定並不影響下層。這將允許你限制某"
 "個項目的上層權限，但保留該項目的完全權限，反之亦然。使用此權限系統的最有效方"
 "法是建立一個成員組並指定權限，這樣如果你需要對某個特定用戶授予完全權限的時"
-"候，只需將這個用戶增加到（或刪除出）合適的成員組就可以了。"
+"候，只需將這個用戶增加到（或移出）適當的成員組就可以了。"
 
 #, c-format
 msgid "This item is owned by user: %s"
@@ -2702,46 +2706,47 @@ msgid "image"
 msgstr "圖片"
 
 msgid "Configuration Error: Missing Theme"
-msgstr "設定錯誤：找不到主題"
+msgstr "設定錯誤：沒有佈景主題"
 
 msgid "Missing Theme"
-msgstr "找不到主題"
+msgstr "沒有佈景主題"
 
 #, c-format
 msgid ""
 "This album is configured to use the %s theme, but it is either inactive or "
 "not installed."
-msgstr "此相簿已設定使用 %s 主題，但此主題沒有啟動或沒有安裝。"
+msgstr "此相簿已設定使用 %s 佈景主題，但是這個佈景主題沒有啟動或沒有安裝。"
 
 #, c-format
 msgid ""
 "To fix this problem you can %sinstall or activate this theme%s or select "
 "another default theme."
-msgstr "你可以%s安裝或啟用這個主題%s或選擇另外一個預設主題來修正這個問題。"
+msgstr ""
+"你可以%s安裝或啟用這個佈景主題%s或選擇另外一個預設佈景主題來修正這個問題。"
 
 #, c-format
 msgid ""
 "To fix this problem you can %slogin as a site administrator%s and then %"
 "sinstall or activate this theme%s or select another default theme."
 msgstr ""
-"你可以%s以網站管理員身分登入%s並%ss安裝或啟用這個主題%s或選擇另外一個預設主題"
-"來修正這個問題。"
+"你可以%s以網站管理員身分登入%s並%s安裝或啟用這個佈景主題%s或選擇另外一個預設"
+"佈景主題來修正這個問題。"
 
 #, c-format
 msgid ""
 "To fix this problem you can either %schoose a new theme for this album%s or %"
 "sinstall or activate this theme%s."
 msgstr ""
-"你可以為%s這個相簿另外選擇一個新的主題%s，或是%s安裝或啟用這個主題%s來修正這"
-"個問題。"
+"你可以為%s這個相簿另外選擇一個新的佈景主題%s，或是%s安裝或啟用這個佈景主題%s"
+"來修正這個問題。"
 
 #, c-format
 msgid ""
 "To fix this problem you can either %schoose a new theme for this album%s or %"
 "slogin as a site administrator%s and then %sinstall or activate this theme%s."
 msgstr ""
-"你可以%s這個相簿另外選擇一個新的主題%s，或是%s用網站管理員身分登入%s並%s安裝"
-"或啟用這個主題%s來修正這個問題。"
+"你可以%s這個相簿另外選擇一個新的佈景主題%s，或是%s用網站管理員身分登入%s並%s"
+"安裝或啟用這個佈景主題%s來修正這個問題。"
 
 #, c-format
 msgid ""
@@ -2749,8 +2754,8 @@ msgid ""
 "for this album%s or %slogin as a site administrator%s and then %sinstall or "
 "activate this theme%s."
 msgstr ""
-"你可以%s登入%s並%s這個相簿另外選擇一個新的主題%s，或是%s用網站管理員身分登入%"
-"s並%s安裝或啟用這個主題%s來修正這個問題。"
+"你可以%s登入%s並%s這個相簿另外選擇一個新的佈景主題%s，或是%s用網站管理員身分"
+"登入%s並%s安裝或啟用這個佈景主題%s來修正這個問題。"
 
 msgid "Admin Options"
 msgstr "管理選項"
@@ -3017,6 +3022,9 @@ msgstr "&laquo; 項目操作 &raquo;"
 msgid "Go"
 msgstr "開始"
 
+msgid "Navigation"
+msgstr "導覽工具"
+
 msgid "next"
 msgstr "下一頁"
 
@@ -3078,7 +3086,4 @@ msgid "[test] A second permission"
 msgstr "[測試] 第二個權限"
 
 msgid "Unit test theme"
-msgstr "單元測試主題"
-
-#~ msgid "G2RC1: +5 Insightful"
-#~ msgstr "G2RC1: +5 Insightful"
+msgstr "單元測試佈景主題"
