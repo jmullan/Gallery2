@@ -247,9 +247,11 @@ class GalleryTestCase extends TestCase {
 	$_COOKIE = array_shift($this->_saveVars);
 	$_SERVER = array_shift($this->_saveVars);
 	$_ENV = array_shift($this->_saveVars);
-	$gallery->setPlatform(array_shift($this->_saveVars));
+	$platform = array_shift($this->_saveVars);
+	$gallery->setPlatform($platform);
 	$gallery->setActiveUser(array_shift($this->_saveVars));
-	$gallery->setUrlGenerator(array_shift($this->_saveVars));
+	$urlGenerator = array_shift($this->_saveVars);
+	$gallery->setUrlGenerator($urlGenerator);
 	$gallery->_config = array_shift($this->_saveVars);
 	$gallery->_phpVm = array_shift($this->_saveVars);
 
