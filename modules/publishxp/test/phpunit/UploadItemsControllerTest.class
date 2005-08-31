@@ -42,10 +42,26 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	
 	list ($ret, $this->_parent) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($this->_parent);
 	$this->_controller->setOptionInstances(array());
+
+	$ret = GalleryCoreApi::addMimeType('phpunit_ext', 'test/file', false);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function tearDown() {
+	$ret = GalleryCoreApi::removeMimeType(array('extension' => 'phpunit_ext'));
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	parent::tearDown();
     }
 
     function testUploadItems() {

@@ -87,10 +87,12 @@ class UploadItemsController extends GalleryController {
 	     * recognize, take a swing at it using the file name.
 	     */
 	    $mimeType = $file['type'];
-	    list($ret, $exts) = GalleryCoreApi::convertMimeToExtensions($mimeType);
-	    if ($ret->isError()) {
-		GalleryCoreApi::releaseLocks($lockIds);
-		return array($ret->wrap(__FILE__, __LINE__), null);
+	    if (!empty($mimeType)) {
+		list ($ret, $exts) = GalleryCoreApi::convertMimeToExtensions($mimeType);
+		if ($ret->isError()) {
+		    GalleryCoreApi::releaseLocks($lockIds);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 	    }
 
 	    if (empty($mimeType) ||
