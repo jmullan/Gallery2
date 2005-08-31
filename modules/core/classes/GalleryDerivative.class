@@ -619,13 +619,13 @@ class GalleryDerivative_core extends GalleryChildEntity {
     }
 
     /**
-     * Get the complete set of operations required by this derivative.  This will
-     * return the original source GalleryDataItem and an array of all the
-     * operations that must be performed in order to create the correct output
+     * Get the complete set of operations required by this derivative.  This will return
+     * the original source GalleryDataItem or preferred GalleryDerivative and an array of
+     * all the operations that must be performed in order to create the correct output
      * file, including the post filter.
      *
      * @return array object GalleryStatus a status code
-     *               object GalleryDataItem a data item
+     *               object GalleryDataItem data item or GalleryDerivative preferred derivative
      *               array the operations
      */
     function fetchFinalOperations() {
