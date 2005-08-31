@@ -260,7 +260,11 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 		    /* Ignore permission error.. just don't add a block */
 		    continue;
 		}
-		$image = $item;
+		list ($ret, $preferred) = GalleryCoreApi::fetchPreferredsByItemIds(array($id));
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$image = isset($preferred[$id]) ? $preferred[$id] : $item;
 	    } else {
 		list ($ret, $thumbnail) = GalleryCoreApi::fetchThumbnailsByItemIds(array($id));
 		if ($ret->isError()) {
@@ -268,6 +272,28 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 		}
 		if (isset($thumbnail[$id])) {
 		    $image = $thumbnail[$id];
+
+		    if ($fullSize && GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
+			/* Fullsize for album highlight.. get preferred derivative source */
+			$source = $image;
+			while (GalleryUtilities::isA($source, 'GalleryDerivative') &&
+				 $source->getDerivativeType() != DERIVATIVE_TYPE_IMAGE_PREFERRED) {
+			    list ($ret, $source) =
+				GalleryCoreApi::loadEntitiesById($source->getDerivativeSourceId());
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }
+			}
+			$ret = GalleryCoreApi::assertHasItemPermission(
+			    GalleryUtilities::isA($source, 'GalleryDerivative') ?
+				$source->getParentId() : $source->getId(),
+			    'core.viewSource');
+			if ($ret->isError()) {
+			    /* Ignore permission error.. just don't add a block */
+			    continue;
+			}
+			$image = $source;
+		    }
 		}
 	    }
 

@@ -83,7 +83,7 @@ class ImageBlockTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	sleep(1);
-	list ($ret, $this->_photo) = $this->_addPhoto($this->_album->getId(), $imagePath);
+	list ($ret, $this->_photo, $thumb) = $this->_addPhoto($this->_album->getId(), $imagePath);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -93,8 +93,8 @@ class ImageBlockTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	list ($ret, $tmpId) = $this->_addDerivative($this->_album, $this->_photo,
-						    DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 150);
+	list ($ret) = $this->_addDerivative($this->_album, $thumb,
+					    DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 150);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -153,17 +153,17 @@ class ImageBlockTest extends GalleryTestCase {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	/* add thumbnail */
-	list ($ret, $thumbId) = $this->_addDerivative($photo, $photo,
-	    DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 150);
+	list ($ret, $thumb) = $this->_addDerivative($photo, $photo,
+						    DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 150);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
-	return array(GalleryStatus::success(), $photo, $thumbId);
+	return array(GalleryStatus::success(), $photo, $thumb);
     }
 
     function _addDerivative(&$item, &$src, $derivativeType, $size) {
 	list ($ret, $derivative) =
-	    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $item->getEntityType());
+	    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $src->getEntityType());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -201,7 +201,7 @@ class ImageBlockTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	return array(GalleryStatus::success(), $derivative->getId());
+	return array(GalleryStatus::success(), $derivative);
     }
 
     function assertBlock($block) {
@@ -461,6 +461,106 @@ class ImageBlockTest extends GalleryTestCase {
 	}
 	$this->assertEquals(null, $template->getPath());
 	$this->assertEquals(array(), $template->_data, 'No block');
+    }
+
+    function testAlbumFullsize() {
+	/* fullSize request for album item should trace back to preferred source of thumbnail */
+	list ($ret, $external) = GalleryView::loadView('imageblock.External');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryUtilities::putRequestVariable('blocks', 'specificItem');
+	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
+	GalleryUtilities::putRequestVariable('show', 'fullSize');
+
+	$template = new ImageBlockDummyGalleryTemplate();
+	$external->setTemplate($template);
+	$ret = $external->renderImmediate(array(), array());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$data = $template->_data;
+
+	$this->assertEquals(1, count($data['ImageBlockData']['blocks']), 'One block');
+	$itemId = $this->assertBlock($data['ImageBlockData']['blocks'][0]);
+	$this->assertEquals($this->_album->getId(), $itemId, 'block is for album');
+	$this->assertEquals($this->_photo->getId(),
+	    $data['ImageBlockData']['blocks'][0]['thumb']['id'], 'image source is photo');
+    }
+
+    function testAlbumFullsizePreferred() {
+	/* fullSize request for album item should trace back to preferred source of thumbnail */
+	list ($ret, $external) = GalleryView::loadView('imageblock.External');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Add preferred derivative for photo, update photo thumbnail source */
+	list ($ret, $preferred) = $this->_addDerivative($this->_photo, $this->_photo,
+							DERIVATIVE_TYPE_IMAGE_PREFERRED, 0);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::remapSourceIds($this->_photo->getId(), $preferred->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryUtilities::putRequestVariable('blocks', 'specificItem');
+	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
+	GalleryUtilities::putRequestVariable('show', 'fullSize');
+
+	$template = new ImageBlockDummyGalleryTemplate();
+	$external->setTemplate($template);
+	$ret = $external->renderImmediate(array(), array());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$data = $template->_data;
+
+	$this->assertEquals(1, count($data['ImageBlockData']['blocks']), 'One block');
+	$itemId = $this->assertBlock($data['ImageBlockData']['blocks'][0]);
+	$this->assertEquals($this->_album->getId(), $itemId, 'block is for album');
+	$this->assertEquals($preferred->getId(),
+	    $data['ImageBlockData']['blocks'][0]['thumb']['id'], 'image source is preferred deriv');
+    }
+
+    function testPhotoFullsizePreferred() {
+	/* verify we get preferred deriv for fullSize photo */
+	list ($ret, $external) = GalleryView::loadView('imageblock.External');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Add preferred derivative for photo, update photo thumbnail source */
+	list ($ret, $preferred) = $this->_addDerivative($this->_photo, $this->_photo,
+							DERIVATIVE_TYPE_IMAGE_PREFERRED, 0);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::remapSourceIds($this->_photo->getId(), $preferred->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryUtilities::putRequestVariable('blocks', 'specificItem');
+	GalleryUtilities::putRequestVariable('itemId', $this->_photo->getId());
+	GalleryUtilities::putRequestVariable('show', 'fullSize');
+
+	$template = new ImageBlockDummyGalleryTemplate();
+	$external->setTemplate($template);
+	$ret = $external->renderImmediate(array(), array());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$data = $template->_data;
+
+	$this->assertEquals(1, count($data['ImageBlockData']['blocks']), 'One block');
+	$itemId = $this->assertBlock($data['ImageBlockData']['blocks'][0]);
+	$this->assertEquals($this->_photo->getId(), $itemId, 'block is for photo');
+	$this->assertEquals($preferred->getId(),
+	    $data['ImageBlockData']['blocks'][0]['thumb']['id'], 'image source is preferred deriv');
     }
 
     function _doImageBlockCallback($blocks=null, $userId=null, $itemId=null) {
