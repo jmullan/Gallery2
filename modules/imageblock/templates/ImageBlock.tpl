@@ -23,22 +23,22 @@
   {/if}
   {if array_key_exists('maxSize', $ImageBlockData)}
     {assign var=maxSize value=$ImageBlockData.maxSize}
-  {elseif isset($ImageBlockData.$frameType)
-	  && $ImageBlockData.$frameType != 'none'}
+  {elseif isset($ImageBlockData.$frameType) && $ImageBlockData.$frameType != 'none'}
     {assign var=maxSize value=120}
   {else}
     {assign var=maxSize value=150}
   {/if}
+  {assign var=imageItem value=$block.item}
+  {if isset($block.forceItem)}{assign var=imageItem value=$block.thumb}{/if}
   {if isset($ImageBlockData.$frameType)}
-    {g->container type="imageframe.ImageFrame"
-		  frame=$ImageBlockData.$frameType}
+    {g->container type="imageframe.ImageFrame" frame=$ImageBlockData.$frameType}
       {$smarty.capture.link}
-      {g->image item=$block.item image=$block.thumb id="%ID%" class="%CLASS%" maxSize=$maxSize}
+	{g->image item=$imageItem image=$block.thumb id="%ID%" class="%CLASS%" maxSize=$maxSize}
       </a>
     {/g->container}
   {else}
     {$smarty.capture.link}
-      {g->image item=$block.item image=$block.thumb class="giThumbnail" maxSize=$maxSize}
+      {g->image item=$imageItem image=$block.thumb class="giThumbnail" maxSize=$maxSize}
     </a>
   {/if}
 

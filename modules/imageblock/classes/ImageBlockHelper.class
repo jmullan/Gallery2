@@ -293,6 +293,10 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 			    continue;
 			}
 			$image = $source;
+			/* {g->image} won't work with item!=image and image not a derivative */
+			if (!GalleryUtilities::isA($source, 'GalleryDerivative')) {
+			    $forceItem = true;
+			}
 		    }
 		}
 	    }
@@ -302,6 +306,9 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 		$itemData['item'] = $item->getMemberData();
 		$itemData['owner'] = $owner->getMemberData();
 		$itemData['thumb'] = $image->getMemberData();
+		if (isset($forceItem)) {
+		    $itemData['forceItem'] = true;
+		}
 		$blocks[] = $itemData;
 	    }
 	}
