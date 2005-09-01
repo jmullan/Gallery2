@@ -763,7 +763,7 @@ class ConfirmImportController extends GalleryController {
 			    return $ret->wrap(__FILE__, __LINE__);
 			}
 
-			if (isset($album['resize_size']) && strcmp($album['resize_size'], 'off')) {
+			if (isset($album['resize_size']) && $album['resize_size'] > 0) {
 			    $ret = GalleryCoreApi::addDerivativePreference(
 				1, $newAlbumInstanceId, DERIVATIVE_TYPE_IMAGE_RESIZE,
 				'scale|' . $album['resize_size']);
