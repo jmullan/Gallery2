@@ -731,6 +731,10 @@ class GalleryEmbed {
 	    $template = new GalleryTemplate(dirname(__FILE__) . '/../../..');
 	    $template->setVariable('l10Domain', 'module_' . $moduleId);
 
+	    if (!isset($params['maxSize'])) {
+		$params['maxSize'] = null;
+	    }
+
 	    /* Generate the imageblock */
 	    GalleryCoreApi::relativeRequireOnce(
 		'modules/imageblock/classes/ImageBlockHelper.class');
