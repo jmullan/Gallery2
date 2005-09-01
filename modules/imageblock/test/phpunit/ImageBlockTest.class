@@ -487,6 +487,7 @@ class ImageBlockTest extends GalleryTestCase {
 	$this->assertEquals($this->_album->getId(), $itemId, 'block is for album');
 	$this->assertEquals($this->_photo->getId(),
 	    $data['ImageBlockData']['blocks'][0]['thumb']['id'], 'image source is photo');
+	$this->assert(isset($data['ImageBlockData']['blocks'][0]['forceItem']), 'forceItem flag');
     }
 
     function testAlbumFullsizePreferred() {
@@ -524,6 +525,7 @@ class ImageBlockTest extends GalleryTestCase {
 	$this->assertEquals($this->_album->getId(), $itemId, 'block is for album');
 	$this->assertEquals($preferred->getId(),
 	    $data['ImageBlockData']['blocks'][0]['thumb']['id'], 'image source is preferred deriv');
+	$this->assert(!isset($data['ImageBlockData']['blocks'][0]['forceItem']), 'forceItem flag');
     }
 
     function testPhotoFullsizePreferred() {
@@ -561,6 +563,7 @@ class ImageBlockTest extends GalleryTestCase {
 	$this->assertEquals($this->_photo->getId(), $itemId, 'block is for photo');
 	$this->assertEquals($preferred->getId(),
 	    $data['ImageBlockData']['blocks'][0]['thumb']['id'], 'image source is preferred deriv');
+	$this->assert(!isset($data['ImageBlockData']['blocks'][0]['forceItem']), 'forceItem flag');
     }
 
     function _doImageBlockCallback($blocks=null, $userId=null, $itemId=null) {
