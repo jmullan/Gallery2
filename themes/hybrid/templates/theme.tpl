@@ -67,6 +67,7 @@
 	  {g->logoButton type="validation"}
 	  {g->logoButton type="gallery2"}
 	  {g->logoButton type="gallery2-version"}
+          {g->logoButton type="donate"}
 	</div>
       {/if}
     </div>

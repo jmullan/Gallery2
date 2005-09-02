@@ -514,7 +514,6 @@ class GalleryTemplateAdapter {
 
 	switch($params['type']) {
 	case 'validation':
-
 	    if ($gallery->getConfig('allowSessionAccess')) {
 		/* Calculate a URI that we can use for the validation link */
 		$validationUri = $urlGenerator->getCurrentUrl();
@@ -548,6 +547,35 @@ class GalleryTemplateAdapter {
 		'alt="' . $version . '" '.
 		'title="' . $version . '" ' .
 		'style="border-style: none" width="80" height="15"/></a>';
+
+	case 'donate':
+	    list ($ret, $adminGroupId) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
+	    if ($ret->isError()) {
+		return;
+	    }
+
+	    list ($ret, $isAdmin) = GalleryUserGroupHelper_simple::isUserInGroup(
+		$smarty->_tpl_vars['theme']['actingUserId'], $adminGroupId);
+	    if ($ret->isError()) {
+		return;
+	    }
+
+	    if ($isAdmin) {
+		GalleryCoreApi::relativeRequireOnce('modules/core/module.inc');
+		$installedVersions = CoreModule::getInstalledVersions();
+		return sprintf(
+		    '<a href="%s"><img src="%s" alt="%s" title="%s" ' .
+		    'style="border-style: none" width="80" height="15"/></a>',
+		    $urlGenerator->generateUrl(
+			array('href' => 'http://gallery.sourceforge.net/donate.php?tag=' .
+			      $installedVersions['gallery'])),
+		    $urlGenerator->generateUrl(
+			array('href' => 'modules/core/data/donate.png')),
+		    $core->translate('Donate to the Gallery project'),
+		    $core->translate('Donate to the Gallery project'));
+	    }
+	    break;
 
 	case 'gallery2-version':
 	    return '';
