@@ -39,7 +39,7 @@ foreach ($_SERVER['argv'] as $moduleDir) {
     find($moduleDir);
 }
 $strings = array_keys($strings);
-print '# $Id$';
+print '# $' . 'Id$';
 print "\n\n" . implode("\n", $strings) . "\n";
 
 /**
@@ -75,14 +75,12 @@ function find($dir) {
  */
 function extractStrings($filename) {
     global $strings;
-    if (function_exists('file_get_contents')) {
-	$data = file_get_contents($filename);
-    } else {
-	$fd = fopen($filename, 'r');
-	$fileSize = filesize($filename);
-	$data = $fileSize == 0 ? '' : fread($fd, $fileSize);
-	fclose($fd);
+    $fd = fopen($filename, 'r');
+    $data = '';
+    while (! feof($fd)) {
+	$data .= fgets($fd, 4096);
     }
+    fclose($fd);
     #echo "$data\n";
 
     # grab phrases for translate( or i18n( or _( calls; capture string parameter enclosed
