@@ -42,13 +42,14 @@ class GalleryUserGroupHelper_simple {
      */
     function isUserInSiteAdminGroup() {
 	global $gallery;
-	list ($ret, $adminGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
+	list ($ret, $adminGroupId) =
+	  GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), false);
 	}
 
-	list ($ret, $result) = GalleryUserGroupHelper_simple::isUserInGroup($gallery->getActiveUserId(),
-									    $adminGroupId);
+	list ($ret, $result) = GalleryUserGroupHelper_simple::isUserInGroup(
+	  $gallery->getActiveUserId(), $adminGroupId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), false);
 	}
