@@ -180,5 +180,27 @@ class CartHelperTest extends GalleryTestCase {
 	}
 	$this->assertEquals(array($item->getId() => 2), $cartItemCounts, 'deleted invalid');
     }
+
+    /* Make sure it works even when the cart is empty */
+    function testLoadEmptyCartItems() {
+	/* Set an empty cart */
+	$ret = CartHelper::setCartItemCounts(array());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Just make sure it's really empty */
+	list($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(), $cartItemCounts, 'preparation of test failed');
+	
+	/* Load the items */
+	list ($ret, $cartItems) = CartHelper::loadCartItems();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(), $cartItems, 'cart items');
+    }
 }
 ?>

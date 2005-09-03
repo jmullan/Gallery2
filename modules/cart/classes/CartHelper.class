@@ -119,9 +119,11 @@ class CartHelper {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$idList = array_keys($cartItemIds);
-	$ret = GalleryCoreApi::studyPermissions($idList);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	if (!empty($cartItemIds)) {
+	    $ret = GalleryCoreApi::studyPermissions($idList);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	}
 	$changed = false;
 	$items = array();
@@ -154,7 +156,7 @@ class CartHelper {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
-
+    
 	return array(GalleryStatus::success(), $items);
     }
 }
