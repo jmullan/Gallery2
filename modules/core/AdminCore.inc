@@ -308,6 +308,8 @@ class AdminCoreView extends GalleryView {
 		list ($outer, $inner) = explode('.', $key);
 		$form[$outer][$inner] = $value;
 	    }
+
+	    $form['smtp']['password'] = base64_decode($form['smtp']['password']);
 	    $form['formName'] = 'AdminCore';
 	    $form['uploadLocalServer']['newDir'] = '';
 	    $form['emailTest']['to'] = '';
