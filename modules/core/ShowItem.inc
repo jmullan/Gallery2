@@ -74,10 +74,6 @@ class ShowItemView extends GalleryView {
 
 	/* Make sure we have permission to view this item */
 	$ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'core.view');
-	if ($ret->isSuccess() && $item->getCanContainChildren()) {
-	    /* Also require viewSource permission to see the contents of an album */
-	    $ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'core.viewSource');
-	}
 	if ($ret->isError()) {
 	    if ($ret->getErrorCode() & ERROR_PERMISSION_DENIED) {
 		list ($ret2, $anonymousId) = GalleryCoreApi::getPluginParameter(
