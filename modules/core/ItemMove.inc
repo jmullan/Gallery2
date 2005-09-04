@@ -134,34 +134,53 @@ class ItemMoveController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		/* Write lock all the items we're moving */
-		list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($selectedIds);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		/* If we have no problems, do the moves */
+		/* Do the move / locking in batches to prevent too many open files issues */
+		$batchSize = 100;
 		$status['moved']['count'] = 0;
-		foreach ($selectedItems as $selectedItem) {
-		    $ret = $selectedItem->move($newParentId);
+		do {
+		    $currentItems = array_splice($selectedItems, 0, $batchSize);
+		    $currentIds = array();
+		    foreach ($currentItems as $item) {
+			$currentIds[] = $item->getId();
+		    }
+		    /* Write lock all the items we're moving */
+		    list ($ret, $currentLockIds) = GalleryCoreApi::acquireWriteLock($currentIds);
 		    if ($ret->isError()) {
+			GalleryCoreApi::releaseLocks($lockIds);
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
-		    $status['moved']['count']++;
 
-		    $ret = $selectedItem->save();
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-
-		    if (GalleryUtilities::isA($selectedItem, 'GalleryDataItem')) {
-			/* Update for derivative preferences of new parent */
-			$ret = GalleryCoreApi::addExistingItemToAlbum($selectedItem, $newParentId);
+		    /* If we have no problems, do the moves */
+		    foreach ($currentItems as $selectedItem) {
+			$ret = $selectedItem->move($newParentId);
 			if ($ret->isError()) {
+			    GalleryCoreApi::releaseLocks(array_merge($lockIds, $currentLockIds));
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
+			$status['moved']['count']++;
+			
+			$ret = $selectedItem->save();
+			if ($ret->isError()) {
+			    GalleryCoreApi::releaseLocks(array_merge($lockIds, $currentLockIds));
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+			
+			if (GalleryUtilities::isA($selectedItem, 'GalleryDataItem')) {
+			    /* Update for derivative preferences of new parent */
+			    $ret = GalleryCoreApi::addExistingItemToAlbum($selectedItem, $newParentId);
+			    if ($ret->isError()) {
+				GalleryCoreApi::releaseLocks(array_merge($lockIds, $currentLockIds));
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }
+			}
 		    }
-		}
+		    $ret = GalleryCoreApi::releaseLocks($currentLockIds);
+		    if ($ret->isError()) {
+			GalleryCoreApi::releaseLocks($lockIds);
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		} while (!empty($selectedItems));
+		
 		$ret = GalleryCoreApi::releaseLocks($lockIds);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
