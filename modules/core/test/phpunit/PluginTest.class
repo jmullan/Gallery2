@@ -92,7 +92,12 @@ class PluginTest extends GalleryTestCase {
 	$this->assert(!GalleryCoreApi::isPluginCompatibleWithApis($plugin),
 		      'should not be compatible');
     }
-
+    
+    function testFetchPluginStatusForWrongPluginType() {
+	list ($ret, $status) = GalleryCoreApi::fetchPluginStatus('foo');
+	$this->assert(ERROR_BAD_PARAMETER & $ret->getErrorCode(), 'Wrong status code');
+    }
+    
     function testFetchAllPluginIds() {
 	global $gallery;
 

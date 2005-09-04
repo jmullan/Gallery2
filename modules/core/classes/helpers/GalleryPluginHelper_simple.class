@@ -360,6 +360,12 @@ class GalleryPluginHelper_simple {
 		    $pluginsDir = dirname(__FILE__) . '/../../../../themes/';
 		    $pluginFile = 'theme.inc';
 		    break;
+
+		default:
+		    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+						      sprintf("Wrong pluginType [%s]",
+							      $pluginType)),
+				 null);
 		}
 
 		if ($dir = $platform->opendir($pluginsDir)) {
