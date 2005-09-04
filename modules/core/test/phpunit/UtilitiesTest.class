@@ -233,6 +233,14 @@ class UtilitiesTest extends GalleryTestCase {
 			    GalleryUtilities::makeMarkers(3, '(?,?)'));
 	$this->assertEquals('(?,?),(?,?),(?,?)',
 			    GalleryUtilities::makeMarkers(array('x', 'y', 'z'), '(?,?)'));
+	$this->assertEquals('',
+			    GalleryUtilities::makeMarkers(0));
+	$this->assertEquals('?',
+			    GalleryUtilities::makeMarkers(1));
+	$this->assertEquals('',
+			    GalleryUtilities::makeMarkers(array()));
+	$this->assertEquals('?',
+			    GalleryUtilities::makeMarkers(array('foo')));
     }
 
     function testConvertPathToUrl() {

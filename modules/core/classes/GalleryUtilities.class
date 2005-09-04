@@ -446,7 +446,9 @@ class GalleryUtilities {
 	if ($count > 1) {
 	    $markers = str_repeat($markerFragment . ',', $count-1);
 	}
-	$markers .= $markerFragment;
+	if ($count != 0) {
+	    $markers .= $markerFragment;
+	}
 
 	return $markers;
     }
