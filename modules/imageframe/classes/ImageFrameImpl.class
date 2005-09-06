@@ -55,8 +55,7 @@ class ImageFrameImpl extends ImageFrameInterface_1_1 {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$frames = array('none' => $module->translate('None'),
-			'solid' => $module->translate('Solid'));
+	$frames = array('solid' => $module->translate('Solid'));
 	$dir = dirname(__FILE__) . '/../frames';
 	if ($platform->is_dir($dir) && $platform->is_readable($dir)
 		&& $fd = $platform->opendir($dir)) {
@@ -68,8 +67,12 @@ class ImageFrameImpl extends ImageFrameInterface_1_1 {
 		    $frames[$file] = $module->translate($frameData['name']);
 		}
 	    }
+	    $platform->closedir($fd);
 	}
-	return array(GalleryStatus::success(), $frames);
+	sort($frames);
+
+	return array(GalleryStatus::success(),
+		     array_merge(array('none' => $module->translate('None')), $frames));
     }
 
     /**

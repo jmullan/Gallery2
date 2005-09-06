@@ -45,7 +45,7 @@ class ColorPackImpl extends ColorPackInterface_1_0 {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 
-	$colorpacks = array('' => $this->translate('None'));
+	$colorpacks = array();
 	$dir = dirname(dirname(__FILE__)) . '/packs';
 	if ($platform->is_dir($dir) && $platform->is_readable($dir)
 		&& $fd = $platform->opendir($dir)) {
@@ -61,9 +61,12 @@ class ColorPackImpl extends ColorPackInterface_1_0 {
 		}
 	    }
 	    ob_end_clean();
+	    $platform->closedir($fd);
+	    sort($colorpacks);
 	}
 
-	return array(GalleryStatus::success(), $colorpacks);
+	return array(GalleryStatus::success(),
+		     array_merge(array('' => $this->translate('None')), $colorpacks));
     }
 
     /**
