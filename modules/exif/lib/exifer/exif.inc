@@ -393,11 +393,11 @@ function formatData($type,$tag,$intel,$data) {
 		} else if($tag=="8822") { //ExposureProgram
 			if($data==1) $data = "Manual";
 			else if($data==2) $data = "Program";
-			else if($data==3) $data = "Aperature Priority";
+			else if($data==3) $data = "Aperture Priority";
 			else if($data==4) $data = "Shutter Priority";
 			else if($data==5) $data = "Program Creative";
 			else if($data==6) $data = "Program Action";
-			else if($data==7) $data = "Portrat";
+			else if($data==7) $data = "Portrait";
 			else if($data==8) $data = "Landscape";
 			else $data = "Unknown: ".$data;
 		} else if($tag=="9207") { //MeteringMode
@@ -413,7 +413,7 @@ function formatData($type,$tag,$intel,$data) {
 		} else if($tag=="9208") { //LightSource
 			if($data==0) $data = "Unknown or Auto";
 			else if($data==1) $data = "Daylight";
-			else if($data==2) $data = "Flourescent";
+			else if($data==2) $data = "Fluorescent";
 			else if($data==3) $data = "Tungsten";
 			else if($data==10) $data = "Flash";
 			else if($data==17) $data = "Standard Light A";
@@ -428,7 +428,7 @@ function formatData($type,$tag,$intel,$data) {
 			if($data==0) $data = "No Flash";
 			else if($data==1) $data = "Flash";
 			else if($data==5) $data = "Flash, strobe return light not detected";
-			else if($data==7) $data = "Flash, strob return light detected";
+			else if($data==7) $data = "Flash, strobe return light detected";
 			else if($data==9) $data = "Compulsory Flash";
 			else if($data==13) $data = "Compulsory Flash, Return light not detected";
 			else if($data==15) $data = "Compulsory Flash, Return light detected";
