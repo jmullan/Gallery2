@@ -113,7 +113,7 @@
       </td>
 
       <td{if ($themeId == $AdminThemes.defaultThemeId)} style="font-weight: bold"{/if}>
-	{$theme.name}
+	{g->text text=$theme.name l10Domain=$theme.l10Domain}
       </td>
 
       <td align="center"{if
