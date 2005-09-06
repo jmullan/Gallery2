@@ -451,7 +451,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
-	    $themeList[$themeId] = $theme->getName();
+	    $themeList[$themeId] = $theme->translate($theme->getName());
 	}
 
 	$ItemEditAlbum['themeList'] = $themeList;
