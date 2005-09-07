@@ -39,7 +39,7 @@ class AlbumSelectModule extends GalleryModule {
 	$this->setName($gallery->i18n('Album Select'));
 	$this->setDescription(
 	    $gallery->i18n('Jump directly to any album using a select box or tree view'));
-	$this->setVersion('0.9.12');
+	$this->setVersion('0.9.13');
 	$this->setGroup('blocks', $this->translate('Blocks'));
 	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
 	$this->setRequiredCoreApi(array(6, 6));
@@ -106,6 +106,12 @@ class AlbumSelectModule extends GalleryModule {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
+	}
+
+	/* Changed cache keys to include language code in 0.9.13 */
+	if (!empty($currentVersion) && version_compare($currentVersion, '0.9.13', '<')) {
+	    GalleryDataCache::removeFromDisk(
+		array('type' => 'module-data', 'module' => 'albumselect'));
 	}
 
 	return GalleryStatus::success();

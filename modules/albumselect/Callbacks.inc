@@ -27,6 +27,7 @@
 class AlbumSelectCallbacks {
 
     function callback($params, &$smarty, $callback, $userId) {
+	global $gallery;
 	static $idCount = '';
 	switch($callback) {
 	case 'LoadAlbumData':
@@ -41,9 +42,13 @@ class AlbumSelectCallbacks {
 	    }
 
 	    /* Try to load it from the cache */
+	    list ($ret, $languageCode) = $gallery->getActiveLanguageCode();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	    $cachePathInfo = array('type' => 'module-data',
 				   'module' => 'albumselect',
-				   'itemId' => $userId);
+				   'itemId' => $userId . '_' . $languageCode);
 	    list ($treeList, $titles) = GalleryDataCache::getFromDisk($cachePathInfo);
 
 	    if (!isset($titles) || !isset($treeList)) {

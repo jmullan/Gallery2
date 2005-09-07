@@ -146,6 +146,16 @@ class MultiLangHelper {
 	    }
 	}
 
+	if ($item->getParentId()) {
+	    global $gallery;
+	    $event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
+	    $event->setData(array('userId' => null, 'itemId' => $item->getParentId()));
+	    list ($ret) = GalleryCoreApi::postEvent($event);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
 	return GalleryStatus::success();
     }
 
