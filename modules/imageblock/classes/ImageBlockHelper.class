@@ -582,7 +582,12 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 
 	    GalleryCoreApi::relativeRequireOnce(
 		'modules/imageblock/classes/ImageBlockDisabledMap.class');
-	    if (ImageBlockHelper::getDisabledFlag($entity->getId())) {
+	    
+	    list ($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($entity->getId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if (!empty($disabledFlag)) {
 		$ret = ImageBlockDisabledMap::removeMapEntry(array('itemId' => $entity->getId()));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -593,7 +598,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	case 'GalleryEntity::save':
 	    /*
 	     * Determines if the item being added has a parent that is listed in the
-	     * ImageBlockDisabledMap and if so, adds it to the map
+	     * ImageBlockDisabledMap and if so, add it to the map, else remove it
 	     */
 	    $entity = $event->getEntity();
 
@@ -608,24 +613,47 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 		     GalleryUtilities::isA($entity, 'GalleryAlbumItem')))) {
 		break;
 	    }
-
+	    
 	    GalleryCoreApi::relativeRequireOnce(
 		'modules/imageblock/classes/ImageBlockDisabledMap.class');
 	    $parentId = $entity->getParentId();
 
-	    list ($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($parentId);
+	    list ($ret, $parentDisabledFlag) = ImageBlockHelper::getDisabledFlag($parentId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
+	    list ($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($entity->getId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    if (!empty($disabledFlag) && GalleryUtilities::isA($entity, 'GalleryDataItem')) {
-		$ret = ImageBlockDisabledMap::addMapEntry(array('itemId' => $entity->getId()));
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+	    if (GalleryUtilities::isA($entity, 'GalleryDataItem')) {
+		$echo = !empty($parentDisabledFlag) ? "true" : "false";
+		
+		/* Disable flag is managed (GUI) on album level, reflect this here */
+		if (!empty($parentDisabledFlag) && empty($disabledFlag)) {
+		    /* New parent has disabled flag, item hasn't. Change it. */
+		    $ret = ImageBlockDisabledMap::addMapEntry(array('itemId' => $entity->getId()));
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		} else if (empty($parentDisabledFlag) && !empty($disabledFlag)) {
+		    /* New parent doesn't have disabled flag, remove it from the item */
+		    $ret = ImageBlockDisabledMap::removeMapEntry(array('itemId' => $entity->getId()));
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
 		}
-	    } else if (!empty($disabledFlag)
-		       && GalleryUtilities::isA($entity, 'GalleryAlbumItem')) {
-		$ret = ImageBlockHelper::setDisabledFlag($entity, true, true);
+	    } else if (GalleryUtilities::isA($entity, 'GalleryAlbumItem')
+		           && $entity->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)
+		           && !empty($parentDisabledFlag) && empty($disabledFlag)
+		       ) {
+		/*
+		 * A new album cannot have sub items and setDisabledFlag doesn't work for items
+		 * that are not yet in the persistent store (database), thus use addMapEntry()
+		 */
+		$ret = ImageBlockDisabledMap::addMapEntry(array('itemId' => $entity->getId()));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -636,10 +664,11 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
     }
 
     /**
-     * Set the disabled flag on all album items.
+     * Set the disabled flag for an album
      *
      * @param object GalleryAlbumItem AlbumItem which is to be flagged
-     * @param string Flag to be set to album items
+     * @param bool whether to set the disabledFlag recursively to all subalbums
+     * @param whether to set the disabledFlag to true or to false
      * @return object GalleryStatus a status code
      * @static
      */
@@ -714,11 +743,11 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
     }
 
     /**
-     * Get the disabled flag on all album items.
+     * Get the disabled flag for an item
      *
-     * @param object GalleryAlbumItem AlbumItem which contains the flag to be retrieved
+     * @param integer entityId of a GalleryItem for which the flag is to be retrieved
      * @return array object GalleryStatus a status code
-     *               bool Flag on all album items
+     *               bool disabledFlag for the GalleryDataItem
      * @static
      */
     function getDisabledFlag($itemId) {
