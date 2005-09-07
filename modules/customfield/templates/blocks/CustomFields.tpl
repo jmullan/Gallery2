@@ -11,7 +11,7 @@
   <h3> {g->text text="Custom Fields"} </h3>
   <p class="giDescription">
     {foreach from=$block.customfield.LoadCustomFields.fields key=field item=value}
-      {$field}: {$value}<br/>
+      {$field}: {$value|markup}<br/>
     {/foreach}
   </p>
 </div>

@@ -84,6 +84,7 @@ class CustomFieldModule extends GalleryModule {
      */
     function getItemSummaries($items, $permissions) {
 	GalleryCoreApi::relativeRequireOnce('modules/customfield/classes/CustomFieldHelper.class');
+	GalleryCoreApi::relativeRequireOnce('lib/smarty_plugins/modifier.markup.php');
 	$summaries = array();
 
 	list ($ret, $data) = CustomFieldHelper::fetchFieldValues($items, 'summary');
@@ -94,7 +95,7 @@ class CustomFieldModule extends GalleryModule {
 	foreach ($data as $itemId => $fields) {
 	    $list = array();
 	    foreach ($fields as $field => $value) {
-		$list[] = "$field: $value";
+		$list[] = $field . ': ' . smarty_modifier_markup($value);
 	    }
 	    if (!empty($list)) {
 		$summaries[$itemId] = implode("<br/>\n", $list);
