@@ -139,7 +139,16 @@ class ShowItemTest extends GalleryTestCase {
     }
 
     function testAlbumSourcePermission() {
-	/* Verify album requires core.viewSource permission */
+	/* Verify viewing album contents requires ?? permission */
+	/*
+	 * We briefly put code in place to require core.viewSource to view album contents..
+	 * This allows setting permissions such that guests can see an album thumbnail but
+	 * must login to view the album itself.  However, albums with core.viewSource would
+	 * then pass on that permission to newly added items and many people only allow
+	 * resizes to be viewed.. so we rolled back this code in ShowItem.inc rev 1.70.
+	 * TODO: update this unit test when this functionality is restored, perhaps with
+	 * a new core.viewAlbum permission?
+	 */
 	global $gallery;
 	$ret = GalleryCoreApi::removeItemPermissions($this->_album->getId());
 	if ($ret->isError()) {
@@ -157,9 +166,13 @@ class ShowItemTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	/* Desired result:
 	$this->assertEquals(
 	    array('redirect' => array('view' => 'core.ShowItem', 'itemId' => $this->_getRootId())),
 	    $result);
+	*/
+	/* Current result: */
+	$this->assert(isset($result['body']));
     }
 
     function testItemSourcePermission() {
