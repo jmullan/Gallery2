@@ -69,7 +69,7 @@ class ImageFrameImpl extends ImageFrameInterface_1_1 {
 	    }
 	    $platform->closedir($fd);
 	}
-	sort($frames);
+	asort($frames);
 
 	return array(GalleryStatus::success(),
 		     array_merge(array('none' => $module->translate('None')), $frames));
