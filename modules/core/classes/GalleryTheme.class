@@ -1204,7 +1204,7 @@ class GalleryTheme extends GalleryPlugin {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    $theme['viewCount'] = $viewCount[$itemId];
+	    $theme['item']['viewCount'] = $viewCount[$itemId];
 	    $childData[] = 'viewCount';
 	}
 

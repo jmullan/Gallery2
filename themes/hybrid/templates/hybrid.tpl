@@ -102,7 +102,7 @@
 		 arg1=$theme.item.owner.fullName|default:$theme.item.owner.userName}
 	<br/>
 	{g->text one="Viewed: %d time" many="Viewed: %d times"
-		 count=$theme.viewCount arg1=$theme.viewCount}
+		 count=$theme.item.viewCount arg1=$theme.item.viewCount}
       </div>
     </td></tr></table>
   </div>
