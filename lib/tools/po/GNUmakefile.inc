@@ -34,7 +34,10 @@ all: update install
 all-remove-obsolete: update remove-obsolete install
 
 messages.po:
-	@php -f $(TOOLDIR)/po/extract.php $(MODULE_DIR) $(EXTRA_DIR) > strings.raw
+	@php -f $(TOOLDIR)/po/extract.php $(MODULE_DIR) $(EXTRA_DIR) > strings.raw.tmp
+	@# Don't extract right to strings.raw because extract.php tries to preserve
+	@# some old data from strings.raw and the > redirect blanks it out.
+	@mv strings.raw.tmp strings.raw
 	@xgettext --keyword=_ -C --no-location strings.raw
 	@perl -ne 'print if $$. > 4' < messages.po > messages.tmp
 	@cat $(TOOLDIR)/po/header.txt messages.tmp > messages.po

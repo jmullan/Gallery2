@@ -12,6 +12,7 @@ use Getopt::Long;
 use Symbol;
 
 my %OPTS;
+$OPTS{'VERBOSE'} = 0;
 $OPTS{'MAKE_BINARY'} = 0;
 $OPTS{'PATTERN'} = '';
 $OPTS{'DRY_RUN'} = 0;
@@ -22,6 +23,7 @@ die "Missing make" unless $MAKE;
 GetOptions('make-binary!' => \$OPTS{'MAKE_BINARY'},
 	   'pattern=s' => \$OPTS{'PATTERN'},
 	   'dry-run!' => \$OPTS{'DRY_RUN'},
+	   'verbose|v!' => \$OPTS{'VERBOSE'},
 	   'remove-obsolete!' => \$OPTS{'REMOVE_OBSOLETE'});
 
 my %PO_DIRS = ();
@@ -41,7 +43,7 @@ foreach my $poDir (keys(%PO_DIRS)) {
   unless ($OPTS{'DRY_RUN'}) {
     if (-f "$poDir/GNUmakefile") {
       chdir $poDir;
-      system("$MAKE $TARGET clean QUIET=1 2>&1")
+      my_system("$MAKE $TARGET clean QUIET=1 2>&1")
 	and print "FAIL!\n"
 	  and push(@failures, $poDir);
     } else {
@@ -57,7 +59,15 @@ if ($OPTS{'MAKE_BINARY'}) {
   #
   find(\&locateMoFile, $basedir);
   chdir $basedir;
-  system("cvs admin -kb " . join(" ", keys(%MO_FILES)));
+  my_system("cvs admin -kb " . join(" ", keys(%MO_FILES)));
+}
+
+sub my_system {
+  my $cmd = shift;
+  if ($OPTS{'VERBOSE'}) {
+    print STDERR "System: $cmd\n";
+  }
+  system($cmd);
 }
 
 if (@failures) {

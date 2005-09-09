@@ -34,13 +34,27 @@ if (!empty($_SERVER['SERVER_NAME'])) {
 }
 
 $exts = '(class|php|inc|tpl|css|html)';
-
+$idEmitted = false;
 foreach ($_SERVER['argv'] as $moduleDir) {
     find($moduleDir);
+
+    $oldStringsRaw = "$moduleDir/po/strings.raw";
+    if (file_exists($oldStringsRaw)) {
+	$lines = file($oldStringsRaw);
+	if (preg_match('/^#.*Id/', $lines[0])) {
+	    print $lines[0];
+	    $idEmitted = true;
+	}
+    }
 }
+
+if (!$idEmitted) {
+    print '# $' . 'Id$' . "\n";
+}
+print "\n";
 $strings = array_keys($strings);
-print '# $' . 'Id$';
-print "\n\n" . implode("\n", $strings) . "\n";
+print implode("\n", $strings);
+print "\n";
 
 /**
  * Recursive go through subdirectories
