@@ -18,9 +18,9 @@
   {if $status.errorCount > 0}
   <h2 class="giError">
     {if $status.successCount > 0}
-      {g->text text="There errors saving some items"}
+      {g->text text="There were errors saving some items"}
     {else}
-      {g->text text="There errors saving all items"}
+      {g->text text="There were errors saving all items"}
     {/if}
   </h2>
   {elseif $status.successCount > 0}
