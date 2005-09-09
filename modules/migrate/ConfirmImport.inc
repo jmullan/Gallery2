@@ -322,11 +322,15 @@ class ConfirmImportController extends GalleryController {
 	/*
 	 * Import Any Selected Albums
 	 *
-	 * First initialize the $form['sourceAlbums'] array to avoid php
-	 * warnings
+	 * First initialize the $form['sourceAlbums'] array to avoid php warnings
 	 */
 	if (!isset($form['sourceAlbums'])) {
-	    $form['sourceAlbums']=array();
+	    $form['sourceAlbums'] = array();
+	}
+	foreach ($form['sourceAlbums'] as $key => $value) {
+	    /* See comment for same loop below in ConfirmImportView */
+	    unset($form['sourceAlbums'][$key]);
+	    $form['sourceAlbums'][urldecode($key)] = $value;
 	}
 
 	/*
@@ -1519,17 +1523,13 @@ class ConfirmImportView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 	$platform = $gallery->getPlatform();
-	$illegalAlbumNames = array();
-	$existingAlbums = array();
-	$albumValidOwner = array();
-	$albumOwnerUserName = array();
-	$albumOwnerUid = array();
-	$titles = array();
+	$illegalAlbumNames = $existingAlbums = $titles = array();
+	$albumValidOwner = $albumOwnerUserName = $albumOwnerUid = $albumfields = array();
 	if (!isset($form['sourceAlbums'])) {
-	    $form['sourceAlbums']=array();
+	    $form['sourceAlbums'] = array();
 	}
 	if (!isset($form['sourceEncoding'])) {
-	    $form['sourceEncoding']='ISO-8859-1';
+	    $form['sourceEncoding'] = 'ISO-8859-1';
 	}
 	$albumsPath = GalleryUtilities::getRequestVariables('albumsPath');
 	$destinationAlbumID = $form['destinationAlbumID'];
@@ -1545,6 +1545,14 @@ class ConfirmImportView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	foreach ($form['sourceAlbums'] as $key => $value) {
+	    /*
+	     * We shouldn't really need to encode album names, but we may pass non UTF-8
+	     * characters in the form data, so we urlencode these values to avoid mangling
+	     * by some browsers.
+	     */
+	    $form['sourceAlbums'][$key] = urldecode($value);
+	}
 	foreach ($form['sourceAlbums'] as $sourceAlbumName) {
 	    if (!in_array($sourceAlbumName, array_keys($albums))) {
 		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
@@ -1556,9 +1564,6 @@ class ConfirmImportView extends GalleryView {
 	    }
 	}
 	$i = 0;
-	if (!isset($albumfields)){
-	    $albumfields = array();
-	}
 	while ($albumfields) {
 	    $existingAlbumId = false;
 	    $album = array_shift($albumfields);
@@ -1585,7 +1590,7 @@ class ConfirmImportView extends GalleryView {
 	    }
 
 	    $validUid = Gallery1DataParser::isValidUid($albumsPath, $album['owner']);
-	    if ($validUid){
+	    if ($validUid) {
 		list($ret, $testUser) = Gallery1DataParser::getUserFieldsByUid($albumsPath,
 									       $album['owner']);
 		if ($ret->isError()) {

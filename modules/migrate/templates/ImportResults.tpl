@@ -65,7 +65,7 @@
     <ul>
       {foreach from=$status.albumImportSuccess key=albumname item=junk}
       <li>
-	{g->text text="Imported %s" arg1=$albumname}
+	{g->text text="Imported %s" arg1=$albumname|htmlentities}
       </li>
       {/foreach}
     </ul>
@@ -85,7 +85,7 @@
   <ul>
     {foreach from=$ImportResults.status.albumImportFailure key=albumname item=junk}
     <li>
-      {g->text text="Error importing %s" arg1=$albumname}
+      {g->text text="Error importing %s" arg1=$albumname|htmlentities}
     </li>
     {/foreach}
   </ul>

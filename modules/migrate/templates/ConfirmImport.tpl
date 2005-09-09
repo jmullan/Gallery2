@@ -28,10 +28,12 @@
     <th> {g->text text="Album Notes"} </th>
   </tr>
   {foreach from=$form.sourceAlbums item=albumName}
+  {assign var="encodedAlbumName" value=$albumName|urlencode}
   <tr class="{cycle values="gbEven,gbOdd"}">
     <td>
-      {$albumName}
-      <input type="hidden" name="{g->formVar var="form[sourceAlbums][$albumName]"}" value="1"/>
+      {$albumName|htmlentities}
+      <input type="hidden"
+	     name="{g->formVar var="form[sourceAlbums][$encodedAlbumName]"}" value="1"/>
     </td><td>
       {$ConfirmImport.titles.$albumName}
     </td><td>
