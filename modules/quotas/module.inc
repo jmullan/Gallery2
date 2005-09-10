@@ -38,7 +38,7 @@ class QuotasModule extends GalleryModule {
 	$this->setId('quotas');
 	$this->setName($gallery->i18n('Quotas'));
 	$this->setDescription($gallery->i18n('User/Group Disk Quotas'));
-	$this->setVersion('0.9.5');
+	$this->setVersion('1.0.0');
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));

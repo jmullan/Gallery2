@@ -1201,7 +1201,10 @@ class CoreModuleExtras {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    
+
+	case '0.9.37':
+	    /* 2.0 Release! */
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
@@ -1369,6 +1372,7 @@ $gallery->setConfig(\'cookieId\', \'' . $cookieId . '\');
 	case '0.9.34':
 	case '0.9.35':
 	case '0.9.36':
+	case '0.9.37':
 
 	case 'end of upgrade path':
 	    /*

@@ -40,7 +40,7 @@ class PublishXpModule extends GalleryModule {
 	$this->setId('publishxp');
 	$this->setName($gallery->i18n('Publish XP'));
 	$this->setDescription($gallery->i18n('Implementation for direct publishing from XP'));
-	$this->setVersion('0.9.6');
+	$this->setVersion('1.0.0');
 	$this->setGroup('import', $this->translate('Import'));
 	$this->setCallbacks('');
 	$this->setRequiredCoreApi(array(6, 1));

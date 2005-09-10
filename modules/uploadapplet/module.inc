@@ -32,7 +32,7 @@ class UploadAppletModule extends GalleryModule {
 	$this->setId('uploadapplet');
 	$this->setName($gallery->i18n('Upload Applet'));
 	$this->setDescription($gallery->i18n('Easy to use upload applet for media'));
-	$this->setVersion('0.9.5');
+	$this->setVersion('1.0.0');
 	$this->setGroup('import', $this->translate('Import'));
 	$this->setCallbacks('');
 	$this->setRequiredCoreApi(array(6, 0));

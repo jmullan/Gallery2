@@ -38,7 +38,7 @@ class RegisterModule extends GalleryModule {
 	$this->setId('register');
 	$this->setName($gallery->i18n('Registration'));
 	$this->setDescription($gallery->i18n('New User Registration'));
-	$this->setVersion('0.9.5');
+	$this->setVersion('1.0.0');
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('getSystemLinks|getUserAdminViews|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
@@ -49,8 +49,6 @@ class RegisterModule extends GalleryModule {
      * @see GalleryModule::upgrade()
      */
     function upgrade($currentVersion) {
-	global $gallery;
-
 	if (!isset($currentVersion)) {
 	    foreach (array('confirmation' => 'admin',
 			   'emailadmins' => 1,
@@ -129,7 +127,7 @@ class RegisterModule extends GalleryModule {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	// Only anonymous users will see the register link
+	/* Only anonymous users will see the register link */
 	if ($gallery->getActiveUserId() == $anonymousUserId) {
 	    $views[] = array('name' => $this->translate('Register'),
 			     'view' => 'register.UserSelfRegistration');

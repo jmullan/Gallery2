@@ -42,7 +42,7 @@ class SiriuxTheme extends GalleryTheme {
 	$this->setId('siriux');
 	$this->setName($gallery->i18n('Siriux'));
 	$this->setDescription($gallery->i18n('Siriux.net Gallery theme'));
-	$this->setVersion('0.9.10');
+	$this->setVersion('1.0.0');
 	$this->setRequiredCoreApi(array(6, 5));
 	$this->setRequiredThemeApi(array(2, 0));
 	$this->setStandardSettings(

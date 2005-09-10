@@ -37,7 +37,7 @@ class ColorPackModule extends GalleryModule {
 	$this->setId('colorpack');
 	$this->setName($gallery->i18n('Color Packs'));
 	$this->setDescription($gallery->i18n('Select different color palettes for themes'));
-	$this->setVersion('0.9.0');
+	$this->setVersion('1.0.0');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('');
 	$this->setRequiredCoreApi(array(6, 4));
