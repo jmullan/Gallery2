@@ -1,7 +1,7 @@
 # $Id$
 # 
 # Gallery - a web based photo album viewer and editor
-# Copyright (C) 2000-2004 Bharat Mediratta
+# Copyright (C) 2000-2005 Bharat Mediratta
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,8 +21,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gallery: Image Block 1.0\n"
 "POT-Creation-Date: 2003-02-11 03:09-0800\n"
-"PO-Revision-Date: 2005-04-18 11:46+0200\n"
-"Last-Translator: Aliaksandr <webmaster@novopolotsk.biz>\n"
+"PO-Revision-Date: 2005-08-01 17:07+0200\n"
+"Last-Translator: modus <webmaster@novopolotsk.biz>\n"
 "Language-Team: Novopolotsk <webmaster@novopolotsk.biz>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -49,26 +49,25 @@ msgid "Most Viewed Album"
 msgstr "Наиболее Рассматриваемый Альбом"
 
 msgid "Picture of the Day"
-msgstr ""
+msgstr "Картина Дня"
 
 msgid "Picture of the Week"
-msgstr ""
+msgstr "Картина Недели"
 
 msgid "Picture of the Month"
-msgstr ""
+msgstr "Картина Месяца"
 
 msgid "Album of the Day"
-msgstr ""
+msgstr "Альбом Дня"
 
 msgid "Album of the Week"
-msgstr ""
+msgstr "Альбом Недели"
 
 msgid "Album of the Month"
-msgstr ""
+msgstr "Альбом Месяца"
 
-#, fuzzy
 msgid "Image Block"
-msgstr "Блоки Изображений"
+msgstr "Блок Изображения"
 
 msgid "Random, Most Recent or Most Viewed Photo or Album"
 msgstr ""
@@ -82,18 +81,18 @@ msgstr "Дата:"
 
 #, c-format
 msgid "Views: %d"
-msgstr "Обозрения: %d"
+msgstr "Просмотров: %d"
 
 #, c-format
 msgid "Owner: %s"
 msgstr "Владелец: %s"
 
 msgid "Prevent this album from being displayed in the Image Block"
-msgstr ""
+msgstr "Препятствуйте этому альбому быть показанным в Блоке Изображений"
 
 #, fuzzy
 msgid "Apply ImageBlock settings to sub-albums"
-msgstr "Администрирование Блоков Изображений"
+msgstr "Обратитесь к подальбомам"
 
 #, fuzzy
 msgid "Image Block Settings"
@@ -106,7 +105,7 @@ msgid "Show"
 msgstr "Показ"
 
 msgid "Heading"
-msgstr ""
+msgstr "Заголовок"
 
 msgid "Title"
 msgstr "Заголовок"
@@ -121,16 +120,16 @@ msgid "Owner"
 msgstr "Владелец"
 
 msgid "Frames"
-msgstr ""
+msgstr "Фреймы"
 
 msgid "View samples"
-msgstr ""
+msgstr "Просмотр примера"
 
 msgid "Album Frame"
-msgstr ""
+msgstr "Рамка Альбома"
 
 msgid "Photo Frame"
-msgstr ""
+msgstr "Рамка Фотографии"
 
 msgid "Save"
 msgstr "Сохранить"
@@ -154,40 +153,54 @@ msgid ""
 "monthlyImage, dailyAlbum, weeklyAlbum, monthlyAlbum, specificItem; default "
 "is randomImage"
 msgstr ""
+"Канал (|) отделяет список, выбранный из: randomImage, recentImage, "
+"viewedImage, randomAlbum, recentAlbum, viewedAlbum, dailyImage, weeklyImage, "
+"monthlyImage, dailyAlbum, weeklyAlbum, monthlyAlbum, specificItem; значение "
+"по умолчанию - randomImage"
 
 msgid ""
 "Pipe(|) separated list chosen from: title, date, views, owner, heading, "
 "fullSize; the value can also be: none"
 msgstr ""
+"Канал (|) отделенный список, выбранный из: заголовок, дата, обозрения, "
+"владелец, возглавляющий, полноразмерный; значение также может быть: ни одного"
 
 msgid ""
 "Limit the item selection to the subtree of the gallery under the album with "
 "the given id; or the id of the item to display when used with specificItem "
 "block type"
 msgstr ""
+"Ограничьте выбор элементов в дереве галереи под альбомом с данным id; или id "
+"элемента, чтобы показать когда используется с specificItem гротесковым "
+"шрифтом"
 
 msgid "Scale images to this maximum size"
-msgstr ""
+msgstr "Масштаб отображения - этот максимальный размер"
 
 msgid "Add a link target (for example, to open links in a new browser window)"
 msgstr ""
+"Добавьте адресата связей (например, открыть связи в новом окне браузера)"
 
 msgid "Image frame to use around images"
-msgstr ""
+msgstr "Рамка изображения, чтобы использовать вокруг изображений"
 
 msgid "Image frame to use around albums"
-msgstr ""
+msgstr "Рамка изображения, чтобы использовать вокруг альбомов"
 
 msgid ""
 "If a parameter marked with * is omitted then the site default defined above "
 "is used."
 msgstr ""
+"Если параметр, отмеченное с * опущено, тогда используется значение сайта по "
+"умолчанию, определенное выше."
 
 #, c-format
 msgid ""
 "Image frames require CSS to be displayed correctly. Include the following in "
 "the %s section to support image frames."
 msgstr ""
+"Рамки изображения требуют, чтобы CSS был показан правильно. Включите "
+"следующее в %s раздел, чтобы поддержать рамки изображения."
 
 #, c-format
 msgid ""
@@ -195,71 +208,66 @@ msgid ""
 "parameter. Omit the parameter to support the image frames configured above. "
 "Frame ids are the directory names in the %s directory."
 msgstr ""
+"Определите рамку ID (или передайте отделенный список ID) в параметрах рамок. "
+"Опустите параметр, чтобы поддержать рамки изображения, конфигурированные "
+"выше. Развейте ID - названий каталога в %s директории."
 
 msgid "Image type"
-msgstr ""
+msgstr "Тип изображения"
 
-#, fuzzy
 msgid "Random image"
-msgstr "Случайное Изображение"
+msgstr "Случайное изображение"
 
-#, fuzzy
 msgid "Recent image"
-msgstr "Самое новое Изображение"
+msgstr "Недавнее изображение"
 
-#, fuzzy
 msgid "Viewed image"
-msgstr "Наиболее Рассматриваемое Изображение"
+msgstr "Рассматриваемое изображение"
 
-#, fuzzy
 msgid "Random album"
-msgstr "Случайный Альбом"
+msgstr "Случайный альбом"
 
-#, fuzzy
 msgid "Recent album"
-msgstr "Самый новый Альбом"
+msgstr "Недавний альбом"
 
-#, fuzzy
 msgid "Viewed album"
-msgstr "Наиболее Рассматриваемый Альбом"
+msgstr "Рассматриваемый альбом"
 
 msgid "Daily image"
-msgstr ""
+msgstr "Ежедневное изображение"
 
 msgid "Weekly image"
-msgstr ""
+msgstr "Еженедельное изображение"
 
 msgid "Monthly image"
-msgstr ""
+msgstr "Ежемесячное изображение"
 
 msgid "Daily album"
-msgstr ""
+msgstr "Ежедневный альбом"
 
 msgid "Weekly album"
-msgstr ""
+msgstr "Еженедельный альбом"
 
 msgid "Monthly album"
-msgstr ""
+msgstr "Ежемесячный альбом"
 
 msgid "Use default settings"
-msgstr ""
+msgstr "Использовать настройки по умолчанию"
 
 msgid "Show heading"
-msgstr ""
+msgstr "Возглавляющий показ"
 
 msgid "Show title"
-msgstr ""
+msgstr "Заголовок показа"
 
-#, fuzzy
 msgid "Show date"
-msgstr "Показ"
+msgstr "Дата просмотра"
 
-#, fuzzy
 msgid "Show view count"
-msgstr "Вид Графы"
+msgstr "Счет представления показа"
 
 msgid "Show owner"
-msgstr ""
+msgstr "Владелец показа"
 
 #~ msgid "Random/Popular"
 #~ msgstr "Случайный/Популярный"
