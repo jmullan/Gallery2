@@ -1433,9 +1433,9 @@ class ConfirmImportController extends GalleryController {
 	if (!isset($patterns)) {
 	    $patterns = array(
 	      '#<br\s*(/?)>#i' => "\n",
-	      '#<(/?)(b|strong)>#i' => '[${1}b]',
-	      '#<(/?)(i|em)>#i' => '[${1}i]',
-	      '#<(/?)ul>#i' => '[${1}list]',
+	      '#<(/?)(b|strong)>#i' => '[$1b]',
+	      '#<(/?)(i|em)>#i' => '[$1i]',
+	      '#<(/?)ul>#i' => '[$1list]',
 	      '#<li>#i' => '[*]',
 	      '#</li>#i' => '',
 	      '#<img[^>]*\s+src\s*=\s*["\']{0,1}([^\s"\'>]+)["\']{0,1}[^>]*>#is' => '[img]$1[/img]',
