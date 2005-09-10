@@ -52,7 +52,11 @@ class ImageBlockPreloads {
 		if (isset($imageframe)) {
 		    $ret = $imageframe->init($template, $frameIds);
 		    if ($ret->isError()) {
-			return $ret->wrap(__FILE__, __LINE__);
+			if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
+			    /* It's there, but unusable so ignore it. */
+			} else {
+			    return $ret->wrap(__FILE__, __LINE__);
+			}
 		    }
 		}
 	    }
