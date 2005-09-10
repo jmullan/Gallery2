@@ -860,7 +860,8 @@ class SessionTest extends GalleryTestCase {
 	    $headers = $phpVm->headers_sent() ? $_REQUEST['phpVmHeaders'] : array();
 	    ob_start();
 	    var_dump($headers);
-	    $debugHeaders = ob_get_clean();
+	    $debugHeaders = ob_get_contents();
+	    ob_end_clean();
 	    $this->assertEquals($testCase['er'], isset($headers['Set-Cookie']),
 				'Set-Cookie header not set. These are the headers: ' .
 				$debugHeaders);
