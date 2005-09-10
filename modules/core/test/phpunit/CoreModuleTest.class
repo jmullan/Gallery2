@@ -106,9 +106,10 @@ class CoreModuleTest extends GalleryTestCase {
 
 	$this->assertEquals(
 	    array(
-		array('name' => $this->_module->translate(
+		array('name' => $this->_module->_translate(
 			  array('text' => 'Edit %s',
-				'arg1' => $this->_module->translate('Album'))),
+				'arg1' => $this->_module->translate('Album')),
+			  'Album'),
 		      'view' => 'core.ItemEdit'),
 		array('name' => $this->_module->translate(
 			  array('text' => 'Delete %s',
