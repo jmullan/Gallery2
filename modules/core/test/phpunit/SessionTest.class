@@ -472,6 +472,7 @@ class SessionTest extends GalleryTestCase {
 
 	/* Request #2, save some more status information */
 	$gallery->_session = null;
+	clearstatcache();
 	$gallery->initSession();
 	$session =& $gallery->getSession();
 	$otherStatusId = $session->putStatus(array('j' => 'b'));
@@ -484,6 +485,7 @@ class SessionTest extends GalleryTestCase {
 	/* Request #3, get back the status saved in previous request */
 	GalleryDataCache::reset();
 	$gallery->_session = null;
+	clearstatcache();
 	$gallery->initSession();
 	$session =& $gallery->getSession();
 
