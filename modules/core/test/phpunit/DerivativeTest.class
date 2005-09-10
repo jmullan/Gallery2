@@ -274,7 +274,7 @@ class DerivativeTest extends GalleryTestCase {
 	/* sanity check */
 	$this->assertEquals(100, $derivative->getWidth());
 	$this->assertEquals(200, $derivative->getHeight());
-	$this->assertEquals(null, $derivative->getIsBroken());
+	$this->assertEquals(0, $derivative->getIsBroken());
 
 	/*
 	 * Rebuild the cached derivative, it should fail internally and replace the derivative by
@@ -372,7 +372,7 @@ class DerivativeTest extends GalleryTestCase {
 	/* sanity check */
 	$this->assertEquals(100, $derivative->getWidth());
 	$this->assertEquals(200, $derivative->getHeight());
-	$this->assertEquals(null, $derivative->getIsBroken());
+	$this->assertEquals(0, $derivative->getIsBroken());
 
 	/* Use a degenerate platform to make it fail when it tries to copy the broken image */
 	if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
