@@ -1085,7 +1085,8 @@ class UtilitiesTest extends GalleryTestCase {
 		/* Test the result */
 		ob_start();
 		var_dump($tC);
-		$debugInfo = ob_get_clean();
+		$debugInfo = ob_get_contents();
+		ob_end_clean();
 
 		$this->assertEquals(count($tC['er']), count($_COOKIE), $addSlashesInfo .
 				    'number of registerd keys ' .
