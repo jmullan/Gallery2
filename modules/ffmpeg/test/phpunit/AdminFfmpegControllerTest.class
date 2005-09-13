@@ -1,0 +1,251 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Ffmpeg
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * AdminFfmpeg controller tests
+ * @package Ffmpeg
+ * @subpackage PHPUnit
+ */
+class AdminFfmpegControllerTest extends GalleryControllerTestCase {
+
+    function AdminFfmpegControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'ffmpeg.AdminFfmpeg');
+    }
+
+    function setUp() {
+	global $gallery;
+	parent::setUp();
+
+	$ret = $this->_markPluginParametersForCleanup('module', 'ffmpeg');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$gallery->_platform = new AdminFfmpegControllerTestPlatform();
+    }
+
+    function testSaveGoodPath() {
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[path]', '/validPath/ffmpeg');
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'ffmpeg.AdminFfmpeg'),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
+			    $results);
+
+	/* Verify the settings went in properly */
+	list ($ret, $path) = GalleryCoreApi::getPluginParameter('module', 'ffmpeg', 'path');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('/validPath/ffmpeg', $path);
+    }
+
+    function testSaveIncompletePath() {
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[path]', '/incompletePath/');
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'ffmpeg.AdminFfmpeg'),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
+			    $results);
+
+	/* Verify the settings went in properly */
+	list ($ret, $path) = GalleryCoreApi::getPluginParameter('module', 'ffmpeg', 'path');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('/incompletePath/ffmpeg', $path);
+    }
+
+    function testReset() {
+	GalleryUtilities::putRequestVariable('form[action][reset]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'ffmpeg.AdminFfmpeg'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+    }
+
+    function testCancel() {
+	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminModules'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+    }
+
+    function testSaveTestErrorPath() {
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[path]', '/validPathBadBinary/ffmpeg');
+
+	/* Perform the request and verify that we failed */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'ffmpeg.AdminFfmpeg'),
+				  'status' => array(),
+				  'error' => array('form[error][path][testError]')),
+				  $results);
+    }
+
+    function testSaveBadPath() {
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[path]', '/invalidPath/ffmpeg');
+
+	/* Perform the request and verify that we failed */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'ffmpeg.AdminFfmpeg'),
+				  'status' => array(),
+				  'error' => array('form[error][path][badPath]')),
+			    $results);
+    }
+
+    function testNotExecutablePath() {
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[path]', '/notExecutablePath/ffmpeg');
+
+	/* Perform the request and verify that we failed */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'ffmpeg.AdminFfmpeg'),
+				  'status' => array(),
+				  'error' => array('form[error][path][notExecutable]')),
+			    $results);
+    }
+
+    function testSaveMissingPath() {
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[path]', '');
+
+	/* Perform the request and verify that we failed */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'ffmpeg.AdminFfmpeg'),
+				  'status' => array(),
+				  'error' => array('form[error][path][missing]')),
+			    $results);
+    }
+}
+
+/**
+ * Test platform for this test
+ *
+ * @package Ffmpeg
+ * @subpackage PHPUnit
+ */
+class AdminFfmpegControllerTestPlatform {
+    function getDirectorySeparator() {
+	return '/';
+    }
+
+    function file_exists($path) {
+	switch ($path) {
+	case '/validPath/ffmpeg':
+	case '/validPathBadBinary/ffmpeg':
+	case '/notExecutablePath/ffmpeg':
+	case '/incompletePath/':
+	case '/incompletePath/ffmpeg':
+	    return true;
+	}
+
+	return false;
+    }
+
+    function is_dir($dir) {
+	switch ($dir) {
+	case '/validPath/':
+	case '/validPathBadBinary/':
+	case '/incompletePath/':
+	    return true;
+	}
+
+	return false;
+    }
+
+    function is_file($path) {
+	switch ($path) {
+	case '/validPath/ffmpeg':
+	case '/validPathBadBinary/ffmpeg':
+	case '/notExecutablePath/ffmpeg':
+	case '/incompletePath/ffmpeg':
+	    return true;
+	}
+
+	return false;
+    }
+
+    function is_executable($path) {
+	switch ($path) {
+	case '/validPath/ffmpeg':
+	case '/validPathBadBinary/ffmpeg':
+	case '/incompletePath/ffmpeg':
+	    return true;
+	}
+
+	return false;
+    }
+
+    function unlink($args) {
+	// do nothing
+    }
+
+    function isRestrictedByOpenBaseDir($path) {
+	return false;
+    }
+
+    function exec($args) {
+	switch ($args[0][0]) {
+	case '/validPath/ffmpeg':
+	case '/incompletePath/ffmpeg':
+	    return array(1, array('Input audio/video file formats: mpeg'));
+
+	default:
+	    return array(0, array());
+	}
+    }
+}
+?>

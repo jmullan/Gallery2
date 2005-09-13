@@ -1,0 +1,211 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Panorama
+ * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * Load required classes
+ */
+GalleryCoreApi::relativeRequireOnce('modules/panorama/classes/PanoramaHelper.class');
+
+/**
+ * PanoramaSiteAdmin controller tests
+ * Also tests PanoramaHelper::assignEntityType,resetPanoramaItems,fetchItemCount
+ *
+ * @package Panorama
+ * @subpackage PHPUnit
+ */
+class PanoramaSiteAdminControllerTest extends GalleryControllerTestCase {
+
+    function PanoramaSiteAdminControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'panorama.PanoramaSiteAdmin');
+    }
+
+    function setUp() {
+	parent::setUp();
+
+	$ret = $this->_markPluginParametersForCleanup('module', 'panorama');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_getRootId(), 'image/test',
+		array(), __FILE__, 'GalleryPhotoItem');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->_markForCleanup($this->_item);
+
+	$this->_item->setMimeType('image/gif');
+	$ret = PanoramaHelper::assignEntityType($this->_item, true);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $derivative) =
+	    $this->_createDerivative($this->_item, $this->_item->getId(),
+				     DERIVATIVE_TYPE_IMAGE_PREFERRED);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = PanoramaHelper::assignEntityType($derivative, true);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_derivative = $derivative;
+    }
+
+    function testPanoramaSiteAdminControllerUndo() {
+	GalleryUtilities::putRequestVariable('form[action][undo]', '1');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'panorama.PanoramaSiteAdmin'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+    }
+
+    function testPanoramaSiteAdminControllerSave() {
+	GalleryUtilities::putRequestVariable('form[itemLink]', '1');
+	GalleryUtilities::putRequestVariable('form[width]', '1000');
+	GalleryUtilities::putRequestVariable('form[action][save]', '1');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'panorama.PanoramaSiteAdmin'),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
+			    $results);
+    }
+
+    function testPanoramaSiteAdminControllerSaveNoWidth() {
+
+	GalleryUtilities::putRequestVariable('form[itemType]', '1');
+	GalleryUtilities::putRequestVariable('form[action][save]', '1');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'panorama.PanoramaSiteAdmin'),
+				  'status' => array(),
+				  'error' => array('form[error][width]')),
+			    $results);
+    }
+
+    function testPanoramaSiteAdminControllerSaveBadWidth() {
+
+	GalleryUtilities::putRequestVariable('form[width]', 'abc5000');
+	GalleryUtilities::putRequestVariable('form[action][save]', '1');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'panorama.PanoramaSiteAdmin'),
+				  'status' => array(),
+				  'error' => array('form[error][width]')),
+			    $results);
+    }
+
+    function testPanoramaSiteAdminControllerReset() {
+
+	$ret = $this->_savePanoramaItems();
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $count) = PanoramaHelper::fetchItemCount();
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($count >= 2, 'Should be at least two Panorama entities in db');
+
+	GalleryUtilities::putRequestVariable('form[action][reset]', '1');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'panorama.PanoramaSiteAdmin'),
+				  'status' => array('reset' => 1),
+				  'error' => array()),
+			    $results);
+
+	list ($ret, $count) = PanoramaHelper::fetchItemCount();
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(0, $count, 'Should be no Panorama entities in db after reset');
+
+	$ret = $this->_restorePanoramaItems();
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function _savePanoramaItems() {
+	global $gallery;
+	$query = 'SELECT [GalleryEntity::id] FROM [GalleryEntity]
+	WHERE [GalleryEntity::entityType] = \'PanoramaPhotoItem\'
+	   OR [GalleryEntity::entityType] = \'PanoramaDerivativeImage\'';
+
+	list ($ret, $results) = $gallery->search($query, array(), array());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$ids = array();
+	while ($result = $results->nextResult()) {
+	    $ids[] = (int)$result[0];
+	}
+	$this->_panoramaIds = $ids;
+	return GalleryStatus::success();
+    }
+
+    function _restorePanoramaItems() {
+	if (empty($this->_panoramaIds)) {
+	    return GalleryStatus::success();
+	}
+	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($this->_panoramaIds);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	foreach ($items as $item) {
+	    $ret = PanoramaHelper::assignEntityType($item, true);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+	return GalleryStatus::success();
+    }
+
+}
+?>

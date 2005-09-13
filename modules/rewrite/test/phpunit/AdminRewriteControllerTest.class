@@ -1,0 +1,423 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Rewrite
+ * @subpackage PHPUnit
+ * @author Douglas Cau <douglas@cau.se>
+ */
+
+/**
+ * Test RewriteUrlGenerator functionality
+ *
+ * @package Rewrite
+ * @subpackage PHPUnit
+ *
+ */
+class AdminRewriteControllerTest extends GalleryControllerTestCase {
+
+    function AdminRewriteControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'rewrite.AdminRewrite');
+    }
+
+    function setUp() {
+    	global $gallery;
+    	parent::setUp();
+
+	/* Save original activeRules */
+	list ($ret, $this->_saveActiveRules) = RewriteMap::getActiveRules();
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Use empty table by default */
+	$ret = RewriteMap::setActiveRules(array());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $this->_markPluginParametersForCleanup('module', 'rewrite');
+	if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	foreach (array('embeddedLocation' => '',
+		       'embeddedHtaccess' => '',
+		       'accessList' => serialize(array()))
+		 as $param => $value) {
+	    /* Set test value */
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', $param, $value);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	$platform = new AdminRewriteControllerTestPlatform($this);
+	$gallery->setPlatform($platform);
+
+	/* Tell or mock platform to allow the file to be writeable */
+	GalleryUtilities::putRequestVariable('isWriteable', true);
+    }
+
+    function tearDown() {
+	$ret = RewriteMap::setActiveRules($this->_saveActiveRules);
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+    	parent::tearDown();
+    }
+
+    function testSave() {
+	GalleryUtilities::putRequestVariable('form[action][saveRules]', 1);
+
+	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][0][active]', 'on');
+	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][0][pattern]', 'v/%path%');
+	GalleryUtilities::putRequestVariable(
+		'form[shortUrls][rewrite][0][match]', 'core.ShowItem');
+
+	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][1][active]', 'on');
+	GalleryUtilities::putRequestVariable(
+		'form[shortUrls][rewrite][1][pattern]', 'd/%itemId%-%serialNumber%/%fileName%');
+	GalleryUtilities::putRequestVariable(
+		'form[shortUrls][rewrite][1][match]', 'core.DownloadItem');
+
+	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][2][active]', 'on');
+	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][2][pattern]', '%path%');
+
+	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][3][active]', 'on');
+	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][3][pattern]', '.');
+
+	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][4][active]', 'on');
+	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][4][pattern]', 'admin/');
+	GalleryUtilities::putRequestVariable(
+		'form[shortUrls][rewrite][4][match]', 'core.SiteAdmin');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'rewrite.AdminRewrite',
+						      'mode' => 'rules'),
+				  'status' => array('rulesSaved' => 1),
+				  'error' => array()),
+			    $results);
+
+	$activeRules = array( 'rewrite' => array(
+		array('pattern' => 'v/%path%',
+		      'match' => 'core.ShowItem'),
+		array('pattern' => 'd/%itemId%-%serialNumber%/%fileName%',
+		      'match' => 'core.DownloadItem'),
+		array('pattern' => '%path%'),
+		array('pattern' => '.'),
+		array('pattern' => 'admin/',
+		      'match' => 'core.SiteAdmin')));
+	list($ret, $savedRules) = RewriteMap::getActiveRules();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$this->assertEquals($activeRules, $savedRules);
+    }
+
+    function testSaveNoRules() {
+	GalleryUtilities::putRequestVariable('form[action][saveRules]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'rewrite.AdminRewrite',
+						      'mode' => 'rules'),
+				  'status' => array('rulesSaved' => 1),
+				  'error' => array()),
+			    $results);
+
+	$activeRules = array();
+	list($ret, $savedRules) = RewriteMap::getActiveRules();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$this->assertEquals($activeRules, $savedRules);
+    }
+
+    function testSaveBadRules1() {
+    	GalleryUtilities::putRequestVariable('form[action][saveRules]', 1);
+    	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][0][active]', 'on');
+	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][0][pattern]', 'v/%badKeyword%');
+	GalleryUtilities::putRequestVariable(
+		'form[shortUrls][rewrite][0][match]', 'core.ShowItem');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('mode' => 'rules',
+						      'view' => 'core.SiteAdmin',
+						      'subView' => 'rewrite.AdminRewrite'),
+				  'status' => array(),
+				  'error' => array('form[error][badKeyword]')),
+			    $results, 'bad keyword');
+
+	$activeRules = array();
+	list($ret, $savedRules) = RewriteMap::getActiveRules();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$this->assertEquals($activeRules, $savedRules);
+    }
+
+    function testSaveBadRules2() {
+    	GalleryUtilities::putRequestVariable('form[action][saveRules]', 1);
+    	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][0][active]', 'on');
+	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][0][pattern]', 'same/');
+	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][1][active]', 'on');
+	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][1][pattern]', 'same/');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('mode' => 'rules',
+						      'view' => 'core.SiteAdmin',
+						      'subView' => 'rewrite.AdminRewrite'),
+				  'status' => array(),
+				  'error' => array('form[error][dupe][same/]')),
+			    $results, 'dupe');
+
+	$activeRules = array();
+	list($ret, $savedRules) = RewriteMap::getActiveRules();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$this->assertEquals($activeRules, $savedRules);
+    }
+
+    function testSaveBadRules3() {
+    	global $gallery;
+	/* Tell or mock platform not to allow the file to be writeable */
+	GalleryUtilities::putRequestVariable('isWriteable', false);
+
+	GalleryUtilities::putRequestVariable('form[action][saveRules]', 1);
+    	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][0][active]', 'on');
+	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][0][pattern]', 'v/%path%');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('mode' => 'rules',
+						      'view' => 'core.SiteAdmin',
+						      'subView' => 'rewrite.AdminRewrite'),
+				  'status' => array(),
+				  'error' => array('form[error][cantWrite][gallery]')),
+			    $results, 'bad file');
+
+	$activeRules = array();
+	list($ret, $savedRules) = RewriteMap::getActiveRules();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$this->assertEquals($activeRules, $savedRules);
+    }
+
+    function testSaveBadRules4() {
+    	GalleryUtilities::putRequestVariable('form[action][saveRules]', 1);
+    	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][0][active]', 'on');
+	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][0][pattern]', '');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('mode' => 'rules',
+						      'view' => 'core.SiteAdmin',
+						      'subView' => 'rewrite.AdminRewrite'),
+				  'status' => array(),
+				  'error' => array('form[error][empty][rewrite][0]')),
+			    $results, 'empty pattern');
+
+	$activeRules = array();
+	list($ret, $savedRules) = RewriteMap::getActiveRules();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$this->assertEquals($activeRules, $savedRules);
+    }
+
+    function testSaveEmbeddedSetup() {
+	GalleryUtilities::putRequestVariable('form[action][saveSetup]', 1);
+	GalleryUtilities::putRequestVariable('form[embedded][save]', 1);
+	GalleryUtilities::putRequestVariable('form[allow][0]', '');
+	GalleryUtilities::putRequestVariable('form[embedded][htaccessPath]', dirname(__FILE__));
+	GalleryUtilities::putRequestVariable('form[embedded][publicPath]', '/gallery2/');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'rewrite.AdminRewrite',
+						      'mode' => 'setup'),
+				  'status' => array('setupSaved' => 1),
+				  'error' => array()),
+			    $results);
+
+	list ($ret, $embeddedLocation) =
+	    GalleryCoreApi::getPluginParameter('module', 'rewrite', 'embeddedLocation');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$this->assertEquals('/gallery2/', $embeddedLocation, 'embedded location');
+
+	list ($ret, $embeddedHtaccess) =
+	    GalleryCoreApi::getPluginParameter('module', 'rewrite', 'embeddedHtaccess');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$this->assertEquals(dirname(__FILE__), $embeddedHtaccess, 'embedded htaccess');
+	$this->assert(strlen($this->_fileContent), 'htaccess');
+    }
+
+    function testSaveBadEmbeddedSetup() {
+	GalleryUtilities::putRequestVariable('form[action][saveSetup]', 1);
+	GalleryUtilities::putRequestVariable('form[embedded][save]', 1);
+	GalleryUtilities::putRequestVariable('form[allow][0]', '');
+	GalleryUtilities::putRequestVariable('form[embedded][htaccessPath]', '/gallery2/phpunit/');
+	GalleryUtilities::putRequestVariable('form[embedded][publicPath]', '');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('mode' => 'setup',
+						      'view' => 'core.SiteAdmin',
+						      'subView' => 'rewrite.AdminRewrite'),
+				  'status' => array(),
+				  'error' => array('form[error][invalidDir]',
+				  		   'form[error][invalidPath]')),
+			    $results);
+
+	list ($ret, $embeddedLocation) =
+		GalleryCoreApi::getPluginParameter('module', 'rewrite', 'embeddedLocation');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$this->assertEquals('', $embeddedLocation, 'embedded location');
+
+	list ($ret, $embeddedHtaccess) =
+	    GalleryCoreApi::getPluginParameter('module', 'rewrite', 'embeddedHtaccess');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$this->assertEquals('', $embeddedLocation, 'embedded htaccess');
+	$this->assert(!isset($this->_fileContent), 'htaccess');
+    }
+
+    function testSaveAccessList() {
+	GalleryUtilities::putRequestVariable('form[action][saveSetup]', 1);
+	GalleryUtilities::putRequestVariable('form[allow][0]', 'example.com');
+	GalleryUtilities::putRequestVariable('form[allow][1]', '');
+	GalleryUtilities::putRequestVariable('form[allow][2]', 'sub.example.net');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'rewrite.AdminRewrite',
+						      'mode' => 'setup'),
+				  'status' => array('setupSaved' => 1),
+				  'error' => array()),
+			    $results, 'save');
+
+	list ($ret, $accessList) = GalleryCoreApi::getPluginParameter(
+		'module', 'rewrite', 'accessList');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$accessList = unserialize($accessList);
+
+	$this->assertEquals(array('example.com', 'sub.example.net'),
+			    $accessList, 'access list');
+	$this->assert(strlen($this->_fileContent), 'htaccess');
+    }
+}
+
+
+/**
+ * Test platform for this test
+ *
+ * @package Rewrite
+ * @subpackage PHPUnit
+ */
+class AdminRewriteControllerTestPlatform extends GalleryPlatform {
+    function AdminRewriteControllerTestPlatform(&$test) {
+	$this->_test =& $test;
+    }
+
+    function file_exists($file) {
+	if ($file == dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/.htaccess') {
+	    return true;
+	}
+
+	return parent::file_exists($file);
+    }
+
+    function is_readable($file) {
+	if ($file == dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/.htaccess') {
+	    return true;
+	}
+
+	return parent::is_readable($file);
+    }
+
+    function is_writeable($file) {
+	$isWriteable = GalleryUtilities::getRequestVariables('isWriteable');
+
+	if ($file == dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/.htaccess') {
+	    return $isWriteable;
+	}
+
+	return parent::is_writeable($file);
+    }
+
+    function file($file) {
+	if ($file == dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/.htaccess') {
+	    $results = array();
+	} else {
+	    $results = parent::file($file);
+	}
+
+	return $results;
+    }
+
+    function fopen($file, $mode, $useIncludePath=null, $zcontext=null) {
+	if ($file == dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/.htaccess') {
+	    $isWriteable = GalleryUtilities::getRequestVariables('isWriteable');
+	    if ($isWriteable) {
+		$this->_test->_fileContent = '';
+		return '.htaccess';
+	    } else {
+		return null;
+	    }
+	}
+
+	return parent::fopen($file, $mode, $useIncludePath, $zcontext);
+    }
+
+    function fwrite($handle, $string, $length=null) {
+	if ($handle == '.htaccess') {
+	    $this->_test->_fileContent .= $string;
+	    return strlen($string);
+	}
+
+	return fwrite($handle, $string, $length);
+    }
+
+    function fclose($handle) {
+	if ($handle == '.htaccess') {
+	    return true;
+	}
+
+	return fclose($handle);
+    }
+}
+
+?>

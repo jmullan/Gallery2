@@ -1,0 +1,228 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Comment
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Required classes
+ */
+GalleryCoreApi::relativeRequireOnce('modules/comment/classes/GalleryCommentHelper.class');
+
+/**
+ * AddComment controller tests
+ * @package Comment
+ * @subpackage PHPUnit
+ */
+class AddCommentControllerTest extends GalleryControllerTestCase {
+
+    function AddCommentControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'comment.AddComment');
+    }
+
+    function setUp() {
+	global $gallery;
+	parent::setUp();
+
+	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_getRootId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->_markForCleanup($this->_item);
+
+	$this->_startTime = time();
+    }
+
+    function testAddComment() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	GalleryUtilities::putRequestVariable('form[action][add]', 1);
+	GalleryUtilities::putRequestVariable('form[subject]', 'this is a subject');
+	GalleryUtilities::putRequestVariable('form[comment]', 'this is a comment');
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('return' => 1,
+		  'redirect' => array(
+		      'view' => 'comment.CommentChangeConfirmation',
+		      'itemId' => $this->_item->getId()),
+		  'status' => array('added' => 1),
+		  'error' => array()),
+	    $results);
+
+	/* Grab the comment and take a look at it */
+	list ($ret, $comments) = GalleryCommentHelper::fetchComments($this->_item->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(1, sizeof($comments));
+	if (sizeof($comments) == 1) {
+	    $this->assert(GalleryUtilities::isA($comments[0], 'GalleryComment'));
+	    $this->assertEquals('this is a comment', $comments[0]->getComment());
+	    $this->assertEquals('this is a subject', $comments[0]->getSubject());
+	    $this->assertEquals($gallery->getActiveUserId(), $comments[0]->getCommenterId());
+	    $this->assertEquals($_SERVER['REMOTE_ADDR'], $comments[0]->getHost());
+	    $this->assert($comments[0]->getDate() >= $this->_startTime &&
+			  $comments[0]->getDate() <= time(), 'date');
+	}
+    }
+
+    function testPreviewComment() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	GalleryUtilities::putRequestVariable('form[action][preview]', 1);
+	GalleryUtilities::putRequestVariable('form[comment]', 'this is a comment');
+	GalleryUtilities::putRequestVariable('form[subject]', 'this is a subject');
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('delegate' => array('view' => 'comment.AddComment'),
+		  'status' => array(),
+		  'error' => array()),
+	    $results);
+    }
+
+    function testAddEmptyComment() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	GalleryUtilities::putRequestVariable('form[action][add]', 1);
+	GalleryUtilities::putRequestVariable('form[comment]', '');
+	GalleryUtilities::putRequestVariable('form[subject]', '');
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'comment.AddComment'),
+				  'status' => array(),
+				  'error' => array('form[error][subject][missing]',
+						   'form[error][comment][missing]')),
+			    $results);
+
+	/* Verify that there are no comments */
+	list ($ret, $counts) =
+	    GalleryCommentHelper::fetchCommentCounts(array($this->_item->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(empty($counts[$this->_item->getId()]));
+    }
+
+    function testPreviewEmptyComment() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	GalleryUtilities::putRequestVariable('form[action][add]', 1);
+	GalleryUtilities::putRequestVariable('form[comment]', '');
+	GalleryUtilities::putRequestVariable('form[subject]', '');
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'comment.AddComment'),
+				  'status' => array(),
+				  'error' => array('form[error][subject][missing]',
+						   'form[error][comment][missing]')),
+			    $results);
+
+	/* Verify that there are no comments */
+	list ($ret, $counts) =
+	    GalleryCommentHelper::fetchCommentCounts(array($this->_item->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(empty($counts[$this->_item->getId()]));
+    }
+
+    function testAddMaliciousComment() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	GalleryUtilities::putRequestVariable('form[action][add]', 1);
+	GalleryUtilities::putRequestVariable('form[subject]',
+	    'this is a subject with <javascript>evilness</javascript> in it.');
+	GalleryUtilities::putRequestVariable('form[comment]',
+	    'this is a comment with <javascript>evilness</javascript> in it.');
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('return' => 1,
+		  'redirect' => array('view' => 'comment.CommentChangeConfirmation',
+				      'itemId' => $this->_item->getId()),
+		  'status' => array('added' => 1),
+		  'error' => array()),
+	    $results);
+
+	/* Grab the comment and take a look at it */
+	list ($ret, $comments) = GalleryCommentHelper::fetchComments($this->_item->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(1, sizeof($comments));
+	if (!GalleryUtilities::isA($comments[0], 'GalleryComment')) {
+	    return $this->fail('result is not a GalleryComment!');
+	}
+
+	$this->assertEquals(
+	    'this is a comment with &lt;javascript&gt;evilness&lt;/javascript&gt; in it.',
+	    $comments[0]->getComment());
+	$this->assertEquals(
+	    'this is a subject with &lt;javascript&gt;evilness&lt;/javascript&gt; in it.',
+	    $comments[0]->getSubject());
+	$this->assertEquals($gallery->getActiveUserId(), $comments[0]->getCommenterId());
+	$this->assertEquals($_SERVER['REMOTE_ADDR'], $comments[0]->getHost());
+	$this->assert($comments[0]->getDate() >= $this->_startTime &&
+		      $comments[0]->getDate() <= time());
+    }
+
+    function testCancelComment() {
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
+	GalleryUtilities::putRequestVariable('form[comment]', 'this is a comment');
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('return' => 1,
+				  'redirect' => array('view' => 'core.ShowItem',
+						      'itemId' => $this->_item->getId()),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+    }
+}
+?>

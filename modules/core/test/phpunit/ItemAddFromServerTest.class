@@ -1,0 +1,540 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * ItemAddFromServer plugin test
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ItemAddFromServerTest extends ItemAddPluginTestCase {
+
+    function ItemAddFromServerTest($methodName) {
+	$this->ItemAddPluginTestCase($methodName, 'core', 'ItemAddFromServer');
+    }
+
+    function setUp() {
+	global $gallery;
+
+	parent::setUp();
+
+	list ($ret, $this->_rootAlbum) =
+	    $this->_createRandomAlbum($this->_getRootId(), array('orderBy' => 'orderWeight'));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($this->_rootAlbum);
+
+	list ($ret, $this->_lockId) = GalleryCoreApi::acquireReadLock($this->_rootAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->_symlinkAllowedPlatform =
+	    new ItemAddFromServerTestPlatform($gallery->getPlatform(), true);
+	$this->_symlinkDisallowedPlatform =
+	    new ItemAddFromServerTestPlatform($gallery->getPlatform(), false);
+
+	$ret = $this->_markPluginParametersForCleanup('module', 'core');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dir.1',
+						  dirname(dirname(__FILE__)));
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dir.2',
+						  $gallery->getConfig('data.gallery.base'));
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::removePluginParameter('module', 'core', 'uploadLocalServer.dir.3');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$gallery->_platform = $this->_symlinkAllowedPlatform;
+    }
+
+    function tearDown() {
+	$ret = GalleryCoreApi::releaseLocks($this->_lockId);
+	if ($ret->isError()) {
+	   return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	parent::tearDown();
+    }
+
+    /*
+     * call _testAddChildrenFromLocalServer with the '$useSymlink'
+     * parameter set to false, thus specifying that the files should be
+     * copied.
+     */
+    function testAddChildrenFromLocalServer() {
+	return $this->_testAddChildrenFromLocalServer(false);
+    }
+
+
+    /*
+     * call _testAddChildrenFromLocalServer specifying that we want to use
+     * a symlink. Also specify that the symlink should be supported (and
+     * thus the mock platform object that supports symlinks will be used.
+     */
+    function testAddChildrenFromLocalServerUsingSymlinkWithSymlinkSupported() {
+	return $this->_testAddChildrenFromLocalServer(true, true);
+    }
+
+
+    /*
+     * call _testAddChildrenFromLocalServer specifying that we want to use
+     * a symlink. Also specify that the symlink should >not< be supported
+     * (and thus the mock platform object that does not support symlinks
+     * will be used.
+     */
+    function testAddChildrenFromLocalServerUsingSymlinkWithSymlinkNotSupported() {
+	return $this->_testAddChildrenFromLocalServer(true, false);
+    }
+
+
+    /*
+     * call _testAddChildrenFromLocalServer with setTitle (set to base filename)
+     */
+    function testAddChildrenFromLocalServerSetTitle() {
+	return $this->_testAddChildrenFromLocalServer(false, true, true, false, true);
+    }
+
+
+    /*
+     * call _testAddChildrenFromLocalServer with setTitle/setDescription (set to base filename)
+     */
+    function testAddChildrenFromLocalServerSetTitleDescription() {
+	return $this->_testAddChildrenFromLocalServer(false, true, true, false, true, false, true);
+    }
+
+    function testAddChildrenFromLocalServerRecursive() {
+	return $this->_testAddChildrenFromLocalServer(false, true, false, true);
+    }
+
+    function testAddChildrenFromLocalServerRecursiveUsingSymlinkWithSymlinkSupported() {
+	return $this->_testAddChildrenFromLocalServer(true, true, false, true);
+    }
+
+    function testAddChildrenFromLocalServerRecursiveUsingSymlinkWithSymlinkNotSupported() {
+	return $this->_testAddChildrenFromLocalServer(true, false, false, true);
+    }
+
+    /* TODO: add subsubfolder with umlaut in foldername and subsubsubfile with umlaut */
+    function testAddChildrenFromLocalServerRecursiveSetSummaryDescription() {
+	return $this->_testAddChildrenFromLocalServer(false, true, false, true, false, true, true);
+    }
+    /*
+     * TODO: virtualize the whole test and add test where the dir to add  has an umlaut in the name
+     * function testAddChildrenFromLocalServerRecursiveOnlySubSubAlbum() {
+     *     // Goal: test the case when the localServerDirectories has umlauts
+     *     return $this->_testAddChildrenFromLocalServer(false, true, false, false, false, true, true,
+     *					      true);
+     * }
+     *
+     * TODO: virtualize the whole test and add test where localServerPath has an umlaut in the name
+     * function testAddChildrenFromLocalServerRecursiveOnlySubSubAlbumChildren() {
+     *     // Goal: test the case when the localServerPath has umlauts
+     *	   return $this->_testAddChildrenFromLocalServer(false, true, false, false, false, true, true,
+     *				      true, true);
+     * }
+    */
+
+    function testInvalidLocalServerPath() {
+	GalleryUtilities::putRequestVariable('form[action][addFromLocalServer]', 1);
+	GalleryUtilities::putRequestVariable('form[localServerPath]', '/');
+	GalleryUtilities::putRequestVariable(
+	    'form[localServerFiles][ItemAddFromServerTest.foo][selected]', 1);
+	$this->handleRequest($this->_rootAlbum, ERROR_BAD_PARAMETER);
+    }
+
+    /**
+     * All 'testAddChildrenFromLocalServer*' tests are very similar, hence
+     * they all run through this method. The two parameters to this method
+     * are: '$useSymlink', which is a boolean specifying if we should try
+     * to add the files using a symlink or not.  The second param is
+     * '$shouldSucceed'.  Since windows based OSes don't support symlinks,
+     * G2 will not support adding a file using symlinks on those OSes.
+     * We have two different mock platform objects, one that supports
+     * symlinks and one that does not.  If we expect using a symlink to
+     * fail, we bail check for that condition, and then bail out immediately.
+     */
+    function _testAddChildrenFromLocalServer($useSymlink, $symlinkSupported=true,
+					     $addFiles=true, $addDirectories=false,
+					     $setTitle=false, $setSummary=false,
+					     $setDescription=false) {
+	global $gallery;
+
+	/*
+	 * Use b<->a comparison here and rsort below because sanitizeInputValues on
+	 * form input will sanitize apo\'strophe.jpg and move it to the "end" of the
+	 * array, no matter what order we use to construct form[localServerFiles].
+	 * rsort keeps this item at the end anyway, so we get the expected results.
+	 */
+	$sortAddedFilesFunc = create_function('$a, $b',
+		'return strcmp($b[\'fileName\'], $a[\'fileName\']);');
+
+	if ($symlinkSupported) {
+	    $gallery->_platform = $this->_symlinkAllowedPlatform;
+	} else {
+	    $gallery->_platform = $this->_symlinkDisallowedPlatform;
+	}
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][addFromLocalServer]', 1);
+	if ($setTitle) {
+	    GalleryUtilities::putRequestVariable('form[set][title]', 1);
+	}
+	if ($setSummary) {
+	    GalleryUtilities::putRequestVariable('form[set][summary]', 1);
+	}
+	if ($setDescription) {
+	    GalleryUtilities::putRequestVariable('form[set][description]', 1);
+	}
+
+	$platform = $gallery->getPlatform();
+	$dirSep = $platform->getDirectorySeparator();
+	$baseDir = dirname(dirname(__FILE__)) . $dirSep . 'data';
+	$fileKeys = array();
+
+	if ($addFiles) {
+	    $files = array('test1.gif', 'test1.jpg', 'test2.gif', 'test[3].gif',
+			   'apo\'strophe.jpg');
+	    rsort($files);
+
+	    $escapedBasenames = array('test1', 'test1', 'test2', 'test[3]', 'apo\'strophe');
+	    rsort($escapedBasenames);
+
+	    foreach ($files as $fileName) {
+		$fileName = urlencode($fileName);
+		GalleryUtilities::putRequestVariable(
+		    'form[localServerFiles][' . $fileName . '][selected]', 1);
+		if ($useSymlink) {
+		    GalleryUtilities::putRequestVariable(
+			'form[localServerFiles][' . $fileName . '][useSymlink]', 1);
+		}
+	    }
+	}
+
+	if ($addDirectories) {
+	    $files = array('test1.gif', 'test1.jpg', 'test2.gif', 'test[3].gif', 'test4.gif');
+	    rsort($files);
+	    
+	    $escapedBasenames = array('test1', 'test1',  'test2', 'test[3]', 'test4');
+	    rsort($escapedBasenames);
+
+	    $dirName = urlencode('localUploadDir');
+	    GalleryUtilities::putRequestVariable(
+		'form[localServerDirectories][' . $dirName . '][selected]', 1);
+	    GalleryUtilities::putRequestVariable(
+		'form[localServerDirectories][..][selected]', 1);
+	    if ($useSymlink) {
+		GalleryUtilities::putRequestVariable(
+		    'form[localServerDirectories][' . $dirName . '][useSymlink]', 1);
+		GalleryUtilities::putRequestVariable(
+		    'form[localServerDirectories][..][useSymlink]', 1);
+	    }
+	} 
+
+	GalleryUtilities::putRequestVariable('form[localServerPath]',
+					     GalleryCoreApi::convertToUtf8($baseDir));
+
+	/* Perform the request and verify that we succeeded */
+	if ($symlinkSupported) {
+	    $results = $this->handleRequest($this->_rootAlbum);
+	} else {
+	    $results = $this->handleRequest($this->_rootAlbum, ERROR_UNSUPPORTED_OPERATION);
+	    /*
+	     * we're setting the mock platform back to the one that
+	     * supports symlink for consistency.
+	     */
+	    $gallery->_platform = $this->_symlinkAllowedPlatform;
+	    return;
+	}
+	$this->assertEquals(array(), $results[0]);
+
+	/* We don't know the ids, but we can verify everything else */
+	$i = 0;
+	$this->assertEquals(count($files), count($results[1]['addedFiles']), 'added count');
+	usort($results[1]['addedFiles'], $sortAddedFilesFunc);
+	foreach ($files as $file) {
+	    $this->assertEquals(GalleryCoreApi::convertToUtf8($file),
+				$results[1]['addedFiles'][$i]['fileName'], 'added #' . $i);
+	    $this->assert(isset($results[1]['addedFiles'][$i]['id']));
+	    $i++;
+	}
+
+	/* Verify item attributes (like order weight) */
+	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($this->_rootAlbum);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	if ($addDirectories) {
+	    $this->assertEquals(1, count($ids), 'top child count');
+	    list ($ret, $subalbum) = GalleryCoreApi::loadEntitiesById($ids[0]);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assertEquals('galleryalbumitem', strtolower(get_class($subalbum)), 'subalbum');
+	    $this->assertEquals('localUploadDir', $subalbum->getPathComponent(), 'subalbum path');
+	    list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($subalbum);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+	$addDirectoriesString = $addDirectories ? ' addDirectories' : ' !addDirectories';
+	$this->assertEquals(count($files), count($ids), 'child count' . $addDirectoriesString);
+	
+	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($ids);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Organize items array by id */
+	$newItems = array();
+	foreach ($items as $item) {
+	    $newItems[$item->getId()] = $item;
+	}
+	$items = $newItems;
+	
+	$seenWeights = array();
+	$i = 0;
+	foreach ($escapedBasenames as $base) {
+	    $item =& $items[$results[1]['addedFiles'][$i]['id']];
+	    $expectedName = GalleryCoreApi::convertToUtf8($base);
+	    $this->assertEquals($setTitle ? $expectedName : null, $item->getTitle(), 'title');
+	    $this->assertEquals($setSummary ? $expectedName : null, $item->getSummary(),
+				'summary');
+	    $this->assertEquals($setDescription ? $expectedName : null, $item->getDescription(),
+				'description');
+
+	    list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCount($item->getId());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assertEquals(0, $viewCount);
+
+	    list ($ret, $orderWeight) = GalleryCoreApi::fetchItemOrderWeight($item->getId());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assert(!isset($seenWeights[$item->getParentId()][$orderWeight]),
+			  'Seen this weight before');
+	    $seenWeights[$item->getParentId()][$orderWeight] = 1;
+	    $i++;
+	}
+    }
+
+    /*
+     * Checks if the urlencoded filename gets correctly converted to a nice filename
+     * in pathComponent, title and summary
+     */
+    function testAddFromServerFilenameToFields() {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	$dirSep = $platform->getDirectorySeparator();
+	$baseDir = dirname(dirname(__FILE__)) . $dirSep . 'data';
+
+	GalleryUtilities::putRequestVariable('form[action][addFromLocalServer]', 1);
+	GalleryUtilities::putRequestVariable('form[localServerPath]', $baseDir);
+	GalleryUtilities::putRequestVariable('form[set][title]', 1);
+	GalleryUtilities::putRequestVariable('form[set][summary]', 1);
+	/* This is what the browser will send us (urlencoded): */
+	GalleryUtilities::putRequestVariable(
+	    'form[localServerFiles][' . urlencode('December - <#952>.jpg') . '][selected]', 1);
+
+	$results = $this->handleRequest($this->_rootAlbum);
+	$this->assertEquals(array(), $results[0]);
+	$this->assertEquals(1, count($results[1]));
+	$this->assertEquals(1, count($results[1]['addedFiles']));
+
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($results[1]['addedFiles'][0]['id']);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('December - _#952_.jpg', $item->getPathComponent(), 'pathComponent');
+	$this->assertEquals('December - &lt;#952&gt;', $item->getTitle(), 'title');
+	$this->assertEquals('December - &lt;#952&gt;', $item->getSummary(), 'summary');
+	$this->assertEquals(null, $item->getDescription(), 'description');
+    }
+
+    /**
+     * Checks that we disallow recursive add from our own g2data directory.
+     */
+    function testAddFromServerG2DataDir() {
+	global $gallery;
+
+	list ($ret, $path) = $this->_rootAlbum->fetchPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryUtilities::putRequestVariable('form[action][addFromLocalServer]', 1);
+	GalleryUtilities::putRequestVariable('form[localServerPath]', dirname($path));
+	GalleryUtilities::putRequestVariable('form[set][title]', 1);
+	GalleryUtilities::putRequestVariable('form[localServerDirectories][' .
+	    urlencode(basename($path)) . '][selected]', 1);
+
+	$results = $this->handleRequest($this->_rootAlbum);
+	$this->assertEquals(array(array(), array()), $results);
+    }
+
+    function testAddFromServerMalformedInput() {
+	/* Test that manually constructed input can't get outside our approved dirs */
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	$dirSep = $platform->getDirectorySeparator();
+	$baseDir = dirname(dirname(__FILE__)) . $dirSep;
+
+	GalleryUtilities::putRequestVariable('form[action][addFromLocalServer]', 1);
+	GalleryUtilities::putRequestVariable('form[localServerPath]', $baseDir);
+	GalleryUtilities::putRequestVariable('form[localServerFiles][..%2Ffoo][selected]', 1);
+	GalleryUtilities::putRequestVariable('form[localServerDirectories][..%2Fbar][selected]', 1);
+	GalleryUtilities::putRequestVariable('form[set][title]', 1);
+
+	$results = $this->handleRequest($this->_rootAlbum);
+	$this->assertEquals(array(array(), array()), $results);
+    }
+
+    function testAddFromServerEntityDir() {
+	/* Test that characters in dirname that get entitized still work ok */
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	$dirSep = $platform->getDirectorySeparator();
+	$baseDir = dirname(dirname(__FILE__)) . $dirSep . 'data' . $dirSep;
+
+	GalleryUtilities::putRequestVariable('form[action][addFromLocalServer]', 1);
+	GalleryUtilities::putRequestVariable('form[localServerPath]', $baseDir . '<My "Files">');
+	GalleryUtilities::putRequestVariable('form[localServerFiles][foo][selected]', 1);
+	GalleryUtilities::putRequestVariable('form[set][title]', 1);
+
+	$results = $this->handleRequest($this->_rootAlbum);
+	if (empty($results[1]['addedFiles'][0]['id'])) {
+	    $this->assert(false, 'missing id of added item');
+	} else {
+	    $id = $results[1]['addedFiles'][0]['id'];
+	    $this->assertEquals(array(array(), array('addedFiles' =>
+		array(array('fileName' => 'foo', 'id' => $id, 'warnings' => array())))), $results);
+	}
+    }
+}
+
+/**
+ * Test platform
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ItemAddFromServerTestPlatform extends GalleryPlatform {
+    function ItemAddFromServerTestPlatform($delegate, $symlinkSupported) {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	$dirSep = $this->_dirSep = $platform->getDirectorySeparator();
+
+	$this->_delegate = $delegate;
+	$this->_symlinkSupported = $symlinkSupported;
+	$this->_baseDir = dirname(dirname(__FILE__)) . "{$dirSep}data{$dirSep}";
+	$this->_baseDirRecursive = dirname(dirname(__FILE__)) .
+		"{$dirSep}..{$dirSep}data{$dirSep}localUploadDir{$dirSep}";
+    }
+
+    /*
+     * Simply collapse .. clauses out of paths.  If we use realpath() it'll try to verify that the
+     * path actually exists (which it won't, in some cases)
+     */
+    function realpath($path) {
+	return preg_replace('#[^\\\/]+[\\\/]\.\.([\\\/]|$)#', '', $path);
+    }
+
+    function file_exists($path) {
+	switch ($path) {
+	case $this->_baseDir . 'December - <#952>.jpg':
+	case $this->_baseDir . '<My "Files">' . $this->_dirSep . 'foo':
+	case $this->_baseDir . 'apo\'strophe.jpg':
+	case $this->_baseDirRecursive . 'apo\'strophe.jpg':
+	    /* The windows path is a little weird -- but we can live with it */
+	case $this->_baseDir . '\\apo\'strophe.jpg':
+	    return true;
+
+	default:
+	    return $this->_delegate->file_exists($path);
+	}
+    }
+
+    function copy($source, $dest) {
+	switch ($source) {
+	case $this->_baseDir . 'December - <#952>.jpg':
+	case $this->_baseDir . '<My "Files">' . $this->_dirSep . 'foo':
+	case $this->_baseDir . 'apo\'strophe.jpg':
+	case $this->_baseDirRecursive . 'apo\'strophe.jpg':
+	    /* The windows path is a little weird -- but we can live with it */
+	case $this->_baseDir . '\\apo\'strophe.jpg':
+	case $this->_baseDirRecursive . '\\apo\'strophe.jpg':
+	    $source = $this->_baseDir . 'test1.jpg';
+	    break;
+	}
+	return $this->_delegate->copy($source, $dest);
+    }
+
+    function symlink($source, $dest) {
+	switch ($source) {
+	case $this->_baseDir . 'December - <#952>.jpg':
+	case $this->_baseDir . 'apo\'strophe.jpg':
+	case $this->_baseDirRecursive . 'apo\'strophe.jpg':
+	    /* The windows path is a little weird -- but we can live with it */
+	case $this->_baseDir . '\\apo\'strophe.jpg':
+	case $this->_baseDirRecursive . '\\apo\'strophe.jpg':
+	    $source = $this->_baseDir . 'test1.jpg';
+	    break;
+	}
+	
+	if ( $this->_delegate->isSymlinkSupported() == true ) {
+	    return $this->_delegate->symlink($source, $dest);
+	} else {
+	    return $this->copy($source, $dest);
+	}
+    }
+
+    function isSymlinkSupported() {
+	return $this->_symlinkSupported;
+    }
+
+    function exec($cmd) {
+	/* In case add of jpeg tries to get 'colorspace' property */
+	return array(true, array(''), array());
+    }
+}
+?>

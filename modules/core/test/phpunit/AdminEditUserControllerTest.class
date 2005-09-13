@@ -1,0 +1,178 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * AdminEditUser controller tests
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class AdminEditUserControllerTest extends GalleryControllerTestCase {
+
+    function AdminEditUserControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'core.AdminEditUser');
+    }
+
+    function setUp() {
+	parent::setUp();
+
+	list ($ret, $this->_user[0]) = $this->_createUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->_markForCleanup($this->_user[0]);
+
+	list ($ret, $this->_user[1]) = $this->_createUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->_markForCleanup($this->_user[1]);
+    }
+
+    function testCancel() {
+	GalleryUtilities::putRequestVariable('userId', $this->_user[0]->getId());
+	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminUsers'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+    }
+
+    function testUndo() {
+	GalleryUtilities::putRequestVariable('userId', $this->_user[0]->getId());
+	GalleryUtilities::putRequestVariable('form[action][undo]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminEditUser',
+						      'userId' => $this->_user[0]->getId()),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+    }
+
+    function testEditUserSameUsername() {
+	GalleryUtilities::putRequestVariable('userId', $this->_user[0]->getId());
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[userName]', $this->_user[0]->getUserName());
+	GalleryUtilities::putRequestVariable('form[fullName]', 'full name');
+	GalleryUtilities::putRequestVariable('form[email]', 'email@email.com');
+	GalleryUtilities::putRequestVariable('form[language]', 'language');
+	GalleryUtilities::putRequestVariable('form[password1]', '');
+	GalleryUtilities::putRequestVariable('form[password2]', '');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminUsers'),
+				  'status' => array('modifiedUser' => $this->_user[0]->getUserName()),
+				  'error' => array()),
+			    $results);
+    }
+
+    function testEditUserNewUsername() {
+	$newUserName = 'newname-'.rand();
+	GalleryUtilities::putRequestVariable('userId', $this->_user[0]->getId());
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[userName]', $newUserName);
+	GalleryUtilities::putRequestVariable('form[fullName]', 'full name');
+	GalleryUtilities::putRequestVariable('form[email]', 'email@email.com');
+	GalleryUtilities::putRequestVariable('form[language]', 'language');
+	GalleryUtilities::putRequestVariable('form[password1]', '');
+	GalleryUtilities::putRequestVariable('form[password2]', '');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminUsers'),
+				  'status' => array('modifiedUser' => $newUserName),
+				  'error' => array()),
+			    $results);
+    }
+
+    function testEditUserDuplicateUsername() {
+	$newUserName = $this->_user[1]->getUserName();
+	GalleryUtilities::putRequestVariable('userId', $this->_user[0]->getId());
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[userName]', $newUserName);
+	GalleryUtilities::putRequestVariable('form[fullName]', 'full name');
+	GalleryUtilities::putRequestVariable('form[email]', 'email@email.com');
+	GalleryUtilities::putRequestVariable('form[language]', 'language');
+	GalleryUtilities::putRequestVariable('form[password1]', '');
+	GalleryUtilities::putRequestVariable('form[password2]', '');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminEditUser'),
+				  'status' => array(),
+				  'error' => array('form[error][userName][duplicate]')),
+			    $results);
+    }
+
+    function testMissingFields() {
+	GalleryUtilities::putRequestVariable('userId', $this->_user[0]->getId());
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[userName]', '');
+	GalleryUtilities::putRequestVariable('form[email]', '');
+	GalleryUtilities::putRequestVariable('form[fullName]', '');
+	GalleryUtilities::putRequestVariable('form[language]', '');
+	GalleryUtilities::putRequestVariable('form[password1]', 'x');
+	GalleryUtilities::putRequestVariable('form[password2]', '');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminEditUser'),
+				  'status' => array(),
+				  'error' => array('form[error][userName][missing]',
+						   'form[error][password2][mismatch]')),
+			    $results);
+    }
+
+    function testInvalidEmail() {
+	GalleryUtilities::putRequestVariable('userId', $this->_user[0]->getId());
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[userName]', $this->_user[0]->getUserName());
+	GalleryUtilities::putRequestVariable('form[email]', 'email');
+	GalleryUtilities::putRequestVariable('form[fullName]', 'full name');
+	GalleryUtilities::putRequestVariable('form[language]', '');
+	GalleryUtilities::putRequestVariable('form[password1]', '');
+	GalleryUtilities::putRequestVariable('form[password2]', '');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminEditUser'),
+				  'status' => array(),
+				  'error' => array('form[error][email][invalid]')),
+			    $results);
+    }
+
+
+}
+?>

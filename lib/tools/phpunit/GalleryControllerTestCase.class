@@ -1,0 +1,87 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Gallery
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * A controller specific version of GalleryTestCase
+ * @package Gallery
+ * @subpackage PHPUnit
+ */
+class GalleryControllerTestCase extends GalleryTestCase {
+
+    /**
+     * The controller instance
+     * @access protected
+     */
+    var $_controller;
+
+    function GalleryControllerTestCase($methodName, $controllerName) {
+	$this->GalleryTestCase($methodName);
+
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryController.class');
+	list ($ret, $this->_controller) = GalleryController::loadController($controllerName);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function setUp() {
+	parent::setUp();
+    }
+
+    function tearDown() {
+	parent::tearDown();
+    }
+
+    function handleRequest($errorCode=null) {
+	/* Get our form variables */
+	$form = GalleryUtilities::getFormVariables('form');
+
+	list ($ret, $results) = $this->_controller->handleRequest($form);
+	if (isset($errorCode)) {
+	    if (($ret->getErrorCode() & $errorCode) != $errorCode) {
+		$this->assert(
+		    false, sprintf(
+			'Expected error code (%s) but received (%s)',
+			join(' | ', GalleryStatus::getErrorCodeConstants($errorCode)),
+			join(' | ', GalleryStatus::getErrorCodeConstants($ret->getErrorCode()))));
+	    }
+	} else if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	} else {
+	    /* Check to make sure we got back everything we want */
+	    $this->assert(isset($results['status']), 'controller results missing status');
+	    $this->assert(isset($results['error']), 'controller results missing error');
+	    $this->assert(isset($results['redirect']) || isset($results['delegate']) ||
+			      isset($results['return']),
+			  'controller results needs one of (redirect, delegate)');
+	}
+
+	return $results;
+    }
+}
+?>

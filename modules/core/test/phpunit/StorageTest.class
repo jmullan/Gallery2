@@ -1,0 +1,81 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * Test some Storage functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class StorageTest extends GalleryTestCase {
+
+    function StorageTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function testTranslateQuery() {
+	/*
+	 * Ensure DatabaseStorage::_translateQuery() can handle table and column names
+	 * with underscore character..
+	 */
+	global $gallery;
+	$storage =& $gallery->getStorage();
+	$impl =& $storage->_impl;
+
+	$this->assertEquals(
+	    'SELECT ' . $impl->_tablePrefix . 'Test_table.' . $impl->_columnPrefix .
+	    'Test_column FROM ' . $impl->_tablePrefix . 'Test_table',
+	    $impl->_translateQuery(
+		'SELECT [Test_table::Test_column] FROM [Test_table]')
+	);
+    }
+
+    function testGetUniqueId() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	/*
+	 * Hard to test this properly, so get two ids and make sure that the
+	 * second id is bigger than the first.
+	 */
+	list ($ret, $id1) = $storage->getUniqueId();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $id2) = $storage->getUniqueId();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(is_int($id1), 'Id1 is not an int');
+	$this->assert(is_int($id2), 'Id2 is not an int');
+	$this->assert($id2 > $id1);
+    }
+}
+?>

@@ -1,0 +1,485 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Test Module functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ *
+ */
+class ModuleTest extends GalleryTestCase {
+
+    function setUp() {
+	global $gallery;
+	parent::setUp();
+
+	$this->_platform = new ModuleTestPlatform();
+	$gallery->setPlatform($this->_platform);
+
+	/* Register a new module */
+	GalleryDataCache::reset();
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$module->setRequiredCoreApi(GalleryCoreApi::getApiVersion());
+	$module->setRequiredModuleApi(GalleryModule::getApiVersion());
+
+	list ($ret, $this->_rootAlbum) = $this->_createRandomAlbum($this->_getRootId(),
+	    array('onLoadHandlers' => '|ModuleTestOnLoadHandler|'));
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($this->_rootAlbum);
+
+	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_rootAlbum->getId(),
+	    'test/file', array('onLoadHandlers' => '|ModuleTestOnLoadHandler|OtherHandler|'));
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function tearDown() {
+	/* If a unitest fails it might not deactivate/uninstall the mock module properly */
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	list ($ret, $isActive) = $module->isActive();
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	if ($isActive) {
+	    list ($ret, $redirect) = $module->deactivate();
+	    if ($ret->isError()) {
+		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	$ret = $module->uninstall();
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    	
+	$ret = GalleryCoreApi::removePlugin('module', 'ModuleTest');
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	parent::tearDown();
+    }
+
+    function testModuleCycle() {
+	global $gallery;
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Install the module */
+	$ret = $module->installOrUpgrade();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Verify that the first permission was added*/
+	list ($ret, $ids) = GalleryCoreApi::getPermissionIds();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(array_key_exists('moduletest.one', $ids), 'Permission was not added');
+	
+	/* Remove all permissions */
+	$ret = GalleryCoreApi::removeItemPermissions($this->_rootAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Add a token permission so that we have something tangible to compare */
+	$ret = GalleryCoreApi::addUserPermission($this->_rootAlbum->getId(),
+						 $gallery->getActiveUserId(),
+						 'core.view');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $originalBits) =
+	    $this->_fetchPermissionBitsForItem($this->_rootAlbum->getId(),
+					       $gallery->getActiveUserId(),
+					       null);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Assign our permission */
+	$ret = GalleryCoreApi::addUserPermission($this->_rootAlbum->getId(),
+						 $gallery->getActiveUserId(),
+						 'moduletest.one');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Activate the module */
+	list ($ret, $redirect) = $module->activate();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(), $redirect, 'activate redirect');
+	list ($ret, $isActive) = $module->isActive();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($isActive, 'Is active');
+
+	/* Deactivate the module */
+	list ($ret, $redirect) = $module->deactivate();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(), $redirect, 'deactivate redirect');
+
+	/* Upgrade the module */
+	$module->setVersion('0.9.1');
+	$ret = $module->installOrUpgrade();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Verify that the second permission was added*/
+	list ($ret, $ids) = GalleryCoreApi::getPermissionIds();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(array_key_exists('moduletest.two', $ids), 'Permission was not added');
+
+	/* Uninstall the module */
+	$ret = $module->uninstall();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Flush cached permissions */
+	GalleryDataCache::reset();
+
+	/* Verify that the item permissions are gone. */
+	list ($ret, $newBits) =
+	    $this->_fetchPermissionBitsForItem($this->_rootAlbum->getId(),
+					       $gallery->getActiveUserId(),
+					       null);
+
+	$this->assertEquals($originalBits, $newBits, 'Permission bits not restored');
+
+	/* Verify that the permission itself is gone */
+	list ($ret, $ids) = GalleryCoreApi::getPermissionIds();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	foreach ($ids as $id) {
+	    $this->assert($id != 'moduletest.one' && $id != 'moduletest.two',
+		'Permission was not removed');
+	}
+
+	/* Verify our OnLoadHandler was removed from all entities */
+	list ($ret, $album) = $this->_rootAlbum->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(null, $album->getOnLoadHandlers(), 'album onLoadHandlers');
+
+	list ($ret, $item) = $this->_item->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('|OtherHandler|', $item->getOnLoadHandlers(), 'item onLoadHandlers');
+
+	/* TODO: How do we verify that the tables are removed successfully? */
+    }
+
+    function testInstallBadModuleApi() {
+	global $gallery;
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($major, $minor) = $module->getRequiredModuleApi();
+	$module->setRequiredModuleApi(array($major - 1, $minor));
+
+	$ret = $module->installOrUpgrade();
+	if ($ret->isError() && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($ret->isError() && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
+	    'success?');
+    }
+
+    function testActivateBadModuleApiActivate() {
+	global $gallery;
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $module->installOrUpgrade();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($major, $minor) = $module->getRequiredModuleApi();
+	$module->setRequiredModuleApi(array($major - 1, $minor));
+
+	list ($ret, $redirect) = $module->activate();
+	if ($ret->isError() && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($ret->isError() && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
+	    'success?');
+
+	list ($ret, $isActive) = $module->isActive();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!$isActive, 'is active');
+    }
+
+    function testInstallBadCoreApi() {
+	global $gallery;
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($major, $minor) = $module->getRequiredCoreApi();
+	$module->setRequiredCoreApi(array($major - 1, $minor));
+
+	$ret = $module->installOrUpgrade();
+	if ($ret->isError() && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($ret->isError() && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
+	    'success?');
+    }
+
+    function testActivateBadCoreApiActivate() {
+	global $gallery;
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $module->installOrUpgrade();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($major, $minor) = $module->getRequiredCoreApi();
+	$module->setRequiredCoreApi(array($major - 1, $minor));
+
+	list ($ret, $redirect) = $module->activate();
+	if ($ret->isError() && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($ret->isError() && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
+	    'success?');
+
+	list ($ret, $isActive) = $module->isActive();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!$isActive, 'is active');
+    }
+
+    function _fetchPermissionBitsForItem($itemId) {
+	global $gallery;
+
+	$userId = $gallery->getActiveUserId();
+	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($userId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$groupIds = array_keys($groupIds);
+	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
+
+	$query = '
+	SELECT
+	  BIT_OR([GalleryAccessMap::permission])
+	FROM
+	  [GalleryAccessMap],[GalleryAccessSubscriberMap]
+	WHERE
+	  [GalleryAccessSubscriberMap::itemId] = ?
+AND
+[GalleryAccessSubscriberMap::accessListId] = [GalleryAccessMap::accessListId]
+	  AND
+	  ([GalleryAccessMap::userId] = ?
+	    OR
+	   [GalleryAccessMap::groupId] IN (' . $groupIdMarkers . '))
+	';
+
+	$data = array($itemId, $userId);
+	array_splice($data, sizeof($data), 0, $groupIds);
+
+	list($ret, $searchResults) = $gallery->search($query, $data);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$storage =& $gallery->getStorage();
+
+	$permTable = array();
+	$result = $searchResults->nextResult();
+	$bits = $storage->convertBitsToInt($result[0]);
+	return array(GalleryStatus::success(), $bits);
+    }
+}
+
+/**
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ModuleTestModule extends GalleryModule {
+    function ModuleTestModule() {
+	global $gallery;
+
+	$this->setId('moduletest');
+	$this->setName('ModuleTest Module');
+	$this->setDescription($gallery->i18n('Unit test module'));
+	$this->setVersion('0.9.0');
+	$this->setGroup('data', $gallery->i18n('Gallery'));
+	$this->setCallbacks('');
+	$this->setRequiredCoreApi(GalleryCoreApi::getApiVersion());
+	$this->setRequiredModuleApi(GalleryModule::getApiVersion());
+    }
+
+    function upgrade($currentVersion) {
+	global $gallery;
+
+	if (!isset($currentVersion)) {
+	    $ret = GalleryCoreApi::registerPermission($this->getId(),
+		'moduletest.one', $gallery->i18n('[test] A permission'));
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	} else {
+	    $ret = GalleryCoreApi::registerPermission($this->getId(),
+		'moduletest.two', $gallery->i18n('[test] A second permission'));
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
+
+    function performFactoryRegistrations() {
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryOnLoadHandler', 'ModuleTestOnLoadHandler', 'ModuleTestOnLoadHandler',
+	     'modules/core/test/phpunit/ModuleTest.class', 'moduletest', null);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	return GalleryStatus::success();
+    }
+
+    function getOnLoadHandlerIds() {
+	return array('ModuleTestOnLoadHandler');
+    }
+}
+
+/**
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ModuleTestOnLoadHandler {
+    function onLoad(&$entity, $duringUpgrade) {
+	return GalleryStatus::success();
+    }
+}
+
+/**
+ * Test platform for this test
+ *
+ * @package Core
+ * @subpackage PHPUnit
+ */
+class ModuleTestPlatform extends GalleryPlatform {
+    function opendir($path) {
+	if (strpos($path, '/modules/') !== false) {
+	    $this->_list = array();
+	    if ($dir = parent::opendir($path)) {
+		while(false !== ($file = parent::readdir($dir))) {
+		    array_push($this->_list, $file);
+		}
+	    }
+	    array_push($this->_list, 'moduletest');
+	    return 'moduletest';
+	}
+
+	return parent::opendir($path);
+    }
+
+    function is_dir($path) {
+	if (strpos($path, '/modules/moduletest') !== false) {
+	    return true;
+	}
+
+	return parent::is_dir($path);
+    }
+
+    function readdir($handle) {
+	if ($handle == 'moduletest') {
+	    return array_shift($this->_list);
+	}
+
+	return parent::readdir($handle);
+    }
+
+    function closedir($handle) {
+	if ($handle == 'moduletest') {
+	    unset($this->_list);
+	    return true;
+	}
+
+	return parent::closedir($handle);
+    }
+
+    function file_exists($file) {
+	if (strpos($file, 'modules/moduletest/module.inc') !== false) {
+	    return true;
+	}
+
+	return parent::file_exists($file);
+    }
+}
+?>
