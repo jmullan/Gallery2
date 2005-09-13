@@ -1,8 +1,8 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+cc<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title>README: Gallery 2 Release Candidate 2 (kthxbye)</title>
+    <title>README: Gallery 2 (Unpossible!)</title>
     <style type="text/css">
       html {
 	font-family: "Lucida Grande", Verdana, Arial, sans-serif;
@@ -274,12 +274,12 @@
     <div class="important">
       <h3>Warning!</h3>
       <span>
-	Gallery 2 has not yet been subjected to a rigorous security
-	audit!  While we have taken great pains to make sure that it
-	is secure, there is still the chance that there are some big
-	security holes in it that might cause you trouble.  We take
-	security very seriously, so if you find a security flaw, do
-	not hesitate to email us at:
+	While Gallery 2 has not yet been subjected to a rigorous
+	security audit, it has been widely used for over a year during
+	the alpha, beta and release candidates phases.  Only minor
+	security flaws have been identified during this time, and they
+	were quickly addressed.  We take security very seriously, so
+	if you find a security flaw, do not hesitate to email us at:
       </span>
       <div class="email"> security AT gallery.menalto.com </div>
     </div>
@@ -326,13 +326,15 @@
 	    fields module is active.
 	  </li>
 	  <li>
-	    Restricted permissions are now set for imported photos and albums
-	    from G1 that are hidden.  G2 does not yet have a hidden feature so
-	    for now these items are restricted by permissions.
+	    Restricted permissions are now set for imported photos and
+	    albums from G1 that are hidden.  Gallery 2 does not yet
+	    have a hidden feature so for now these items are
+	    restricted by permissions.
 	  </li>
 	  <li>
-	    Migration process now generates a report of any captions that
-	    were trunctated to fit the field size of title or summary in G2.
+	    Migration process now generates a report of any captions
+	    that were trunctated to fit the field size of title or
+	    summary in Gallery 2.
 	  </li>
 	</ul>
       </li>
@@ -374,9 +376,10 @@
 	to choose from.
       </li>
       <li>
-	<b> New Installer Log </b> - G2 generates now a log of the core module installation
-	process which will make it much easier for you to provide the necessary information
-	and for us to help you.
+	<b> New Installer Log </b> - Gallery 2 generates now a log of
+	the core module installation process which will make it much
+	easier for you to provide the necessary information and for us
+	to help you.
       </li>
       <li>
 	Many, many bugs fixed.
@@ -407,9 +410,10 @@
 	original file available for download.
       </li>
       <li>
-	<b> Multisite Support </b> - The multisite system has been completely
-	redesigned and is now compatible with both URL Rewrite module and embedded G2.
-	Multisite G2 refers to multiple independent sites using a single codebase.
+	<b> Multisite Support </b> - The multisite system has been
+	completely redesigned and is now compatible with both URL
+	Rewrite module and embedded Gallery 2.  Multisite Gallery 2
+	refers to multiple independent sites using a single codebase.
       </li>
       <li>
 	<b> Localization </b> - The installer and upgrader can now be localized.
@@ -429,9 +433,11 @@
 	you want to test permissions and other settings.
       </li>
       <li>
-	<b> Improved Cookie Management </b> - New optional configuration parameters enable
-	cookie support in embedded G2 while maintaining maximum security by default and the
-	flexibility to support embedded G2 installs on separate subdomains.
+	<b> Improved Cookie Management </b> - New optional
+	configuration parameters enable cookie support in embedded
+	Gallery 2 while maintaining maximum security by default and
+	the flexibility to support embedded Gallery 2 installs on
+	separate subdomains.
       </li>
       <li>
 	<b> Colorpacks </b> - Now that layouts are gone and there are
@@ -1358,20 +1364,21 @@
 	target="_blank">ImageMagick</a>, <a href="http://php.net/gd"
 	target="_blank">GD</a> or <a
 	href="http://www.graphicsmagick.org/"
-	target="_blank">GraphicsMagick</a>.  They&rsquo;re all equally good,
-	though some say that NetPBM has slightly better quality and
-	that ImageMagick is slightly faster than NetPBM. GraphicsMagick and
-        ImageMagick are very similar. GD can be
-	very fast, but it will also use a lot of memory so it may
-	cause you to run into predefined server limits.  It is also
-	compiled into PHP by default if your PHP is 4.3.0 or more
-	recent, however it may not have support for all image types
-	(e.g. it might not have JPEG support). If the binaries for
-	NetPBM and ImageMagick are installed in default, or standard,
-	locations then Gallery 2 will auto-detect them during Gallery 2
-	installation.  It won&rsquo;t cause any harm to enable all of
-	these toolkits&#8212;in fact you&rsquo;ll get the widest file
-	type support if you do so.
+	target="_blank">GraphicsMagick</a>.  They&rsquo;re all almost
+	equally good, though some say that NetPBM has slightly better
+	quality and that ImageMagick is slightly faster than
+	NetPBM. GD cannot do image rotation.  GraphicsMagick and
+	ImageMagick are very similar. GD can be very fast, but it will
+	also use a lot of memory so it may cause you to run into
+	predefined server limits.  It is also compiled into PHP by
+	default if your PHP is 4.3.0 or more recent, however it may
+	not have support for all image types (e.g. it might not have
+	JPEG support). If the binaries for NetPBM and ImageMagick are
+	installed in default, or standard, locations then Gallery 2
+	will auto-detect them during Gallery 2 installation.  It
+	won&rsquo;t cause any harm to enable all of these
+	toolkits&#8212;in fact you&rsquo;ll get the widest file type
+	support if you do so.
       </li>
     </ol>
 
@@ -1481,7 +1488,7 @@
 	a single installation of the code.  Here you will select a standard single install
 	or the location of a new multisite install. There is more information about multisite
 	in the <a href="http://codex.gallery2.org/index.php/Gallery2:Multisite"
-	target="_blank">G2 Codex</a>.
+	target="_blank">Gallery Codex</a>.
       </li>
       <li>
 	<b> Storage Setup </b> - Read the instructions on the
@@ -1562,7 +1569,7 @@
 	<b> Add photos </b> - Browse back to <a
 	href="main.php" target="_guided">the top of your new Gallery 2</a>
 	and click on the <a
-	href="main.php?g2_view=core.ItemAdmin&amp;g2_subView=core.ItemAdd&amp;g2_itemId=6"
+	href="main.php?g2_view=core.ItemAdmin&amp;g2_subView=core.ItemAdd&amp;g2_itemId=7"
 	target="_guided">Add Items</a> link.  This will bring up a
 	page with a few different upload options (at least 3, more if
 	you have other upload modules installed).  Select the one you
@@ -1576,8 +1583,8 @@
 	creating a new album.  Browse back to <a href="main.php"
 	target="_guided">the top of your new Gallery 2</a> and click on the
 	<a
-	href="main.php?g2_view=core.ItemAdmin&amp;g2_subView=core.ItemAddAlbum&amp;g2_itemId=6"
-	target="_guided">add album</a> link from the left side of
+	href="main.php?g2_view=core.ItemAdmin&amp;g2_subView=core.ItemAddAlbum&amp;g2_itemId=7"
+	target="_guided">Add Album</a> link from the left side of
 	the page.  This will give you a form where you can enter
 	information about the new album you want to create.  Fill it
 	out and click the <b>Create</b> button.  Now try adding images
@@ -1739,7 +1746,7 @@
     <p>
       If you have problems, you should start by looking in the <a
       href="http://codex.gallery2.org/index.php/Gallery2:faq"
-      target="_blank" >G2 FAQ</a> and in the <a
+      target="_blank" >Gallery 2 FAQ</a> and in the <a
       href="http://gallery.menalto.com/forum/62"
       target="_blank">Gallery 2 Support Forum</a> on the <a
       href="http://gallery.sourceforge.net" target="_blank">Gallery
@@ -1818,7 +1825,7 @@
 	  <li>
 	    Replace any symlinks created for multisite support with real directories
 	    and/or remove any .htaccess files that were setup to redirect requests
-	    from a multisite directory to the G2 codebase.
+	    from a multisite directory to the Gallery 2 codebase.
 	  </li>
 	  <li>
 	    Examine your config.php file and learn the basics of its structure.  You
@@ -1929,9 +1936,9 @@
 	  alt="Gallery 2.0" title="Gallery 2.0"
 	  style="border: none" width="80" height="15"/></a>
 
-      <img 	 
+      <img
 	  src="modules/core/data/g2-unpossible.png"
-	  alt="G2.0: Unpossible!" title="G2.0: Unpossible!" 
+	  alt="G2.0: Unpossible!" title="G2.0: Unpossible!"
 	  width="80" height="15"/>
     </p>
 
