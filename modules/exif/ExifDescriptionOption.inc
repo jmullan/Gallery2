@@ -56,7 +56,7 @@ class ExifDescriptionOption extends ItemAddOption {
 	$warnings = array();
 	GalleryCoreApi::relativeRequireOnce('modules/exif/classes/ExifExtractor.class');
 	GalleryCoreApi::relativeRequireOnce('modules/exif/classes/ExifHelper.class');
-	
+
 	list ($ret, $addOption) =
 	    GalleryCoreApi::getPluginParameter('module', 'exif', 'addOption');
 	if ($ret->isError()) {
@@ -78,30 +78,29 @@ class ExifDescriptionOption extends ItemAddOption {
 	    }
 	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($itemIds);
 	    if ($ret->isError()) {
-		GalleryCoreApi::releaseLocks($lockId);
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
 	    for ($i = 0; $i < count($currentItems); $i++) {
 		$warnings[] = array();
 		$itemId = $currentItems[$i]->getId();
-		
+
 		list ($ret, $exifData) =
 		    ExifExtractor::getMetaData(
 			array($itemId),
-			array('IPTC/Caption', 
+			array('IPTC/Caption',
 			      'ImageDescription',
-			      'UserComment', 
-			      'IPTC/Keywords', 
+			      'UserComment',
+			      'IPTC/Keywords',
 			      )
 			);
 		if ($ret->isError()) {
 		    GalleryCoreApi::releaseLocks($lockId);
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
-		
+
 		$mustSave = false;
-		
+
 		/* TODO(xlerb) reconsider, if ExifHelper should be changed to do the preferences. */
 		$itemDescription = '';
 		if (!empty($exifData[$itemId]['IPTC/Caption']['value'])) {
@@ -113,7 +112,7 @@ class ExifDescriptionOption extends ItemAddOption {
 		elseif (!empty($exifData[$itemId]['UserComment']['value'])) {
 		    $itemDescription = $exifData[$itemId]['UserComment']['value'];
 		}
-		
+
 		if (!empty($itemDescription)) {
 		    if ($addOption & EXIF_ITEM_SUMMARY) {
 			$currentItems[$i]->setSummary($itemDescription);
@@ -124,7 +123,7 @@ class ExifDescriptionOption extends ItemAddOption {
 			$mustSave = true;
 		    }
 		}
-		
+
 		if (!empty($exifData[$itemId]['IPTC/Keywords']['value'])) {
 		    $iptcKeywords = $exifData[$itemId]['IPTC/Keywords']['value'];
 		    if ($addOption & IPTC_ITEM_KEYWORDS) {
@@ -132,7 +131,7 @@ class ExifDescriptionOption extends ItemAddOption {
 			$mustSave = true;
 		    }
 		}
-		
+
 		if ($mustSave) {
 		    $ret = $currentItems[$i]->save();
 		    if ($ret->isError()) {
@@ -141,13 +140,13 @@ class ExifDescriptionOption extends ItemAddOption {
 		    }
 		}
 	    }
-	    
+
 	    $ret = GalleryCoreApi::releaseLocks($lockId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	} while (!empty($itemsInBatches));
-	
+
 	return array(GalleryStatus::success(), $errors, $warnings);
     }
 }

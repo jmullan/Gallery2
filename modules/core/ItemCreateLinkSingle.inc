@@ -57,7 +57,8 @@ class ItemCreateLinkSingleController extends GalleryController {
 		$destinationId = $form['destination'];
 
 		/* Make sure we can write to the destination */
-		list ($ret, $permissions) = GalleryCoreApi::fetchPermissionsForItems(array($itemId, $destinationId));
+		list ($ret, $permissions) =
+		    GalleryCoreApi::fetchPermissionsForItems(array($itemId, $destinationId));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -89,7 +90,8 @@ class ItemCreateLinkSingleController extends GalleryController {
 		 * Lock everything up and start linkin'.  We need to read lock
 		 * the source ids, source hierarchy and destination hierarchy.
 		 */
-		list ($ret, $locks[]) = GalleryCoreApi::acquireReadLock(array($itemId, $destinationId));
+		list ($ret, $locks[]) =
+		    GalleryCoreApi::acquireReadLock(array($itemId, $destinationId));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -110,7 +112,10 @@ class ItemCreateLinkSingleController extends GalleryController {
 		$classType = get_class($item);
 		$linkedItem = new $classType;
 
-		/* If we're linking to an item that's already a link, then link to its source instead */
+		/*
+		 * If we're linking to an item that's already a link,
+		 * then link to its source instead.
+		 */
 		if ($item->isLinked()) {
 		    $linkedEntity = $item->getLinkedEntity();
 		    $ret = $linkedItem->createLink($linkedEntity, $destinationId);
@@ -178,11 +183,11 @@ class ItemCreateLinkSingleView extends GalleryView {
 	global $gallery;
 
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
-        if ($form['formName'] != 'ItemCreateLinkSingle') {
-            /* First time around, load the form with item data */
-            $form['destination'] = '';
+	if ($form['formName'] != 'ItemCreateLinkSingle') {
+	    /* First time around, load the form with item data */
+	    $form['destination'] = '';
 	    $form['formName'] = 'ItemCreateLinkSingle';
-        }
+	}
 
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret->isError()) {
@@ -190,7 +195,8 @@ class ItemCreateLinkSingleView extends GalleryView {
 	}
 
 	/* Find all the possible locations where this item can be linked. */
-	list ($ret, $albumIds) = GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.addDataItem');
+	list ($ret, $albumIds) =
+	    GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.addDataItem');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -206,7 +212,7 @@ class ItemCreateLinkSingleView extends GalleryView {
 	$ItemCreateLinkSingle['itemTypeNames'] = $item->itemTypeName();
 
 	$template->setVariable('ItemCreateLinkSingle', $ItemCreateLinkSingle);
-        $template->setVariable('controller', 'core.ItemCreateLinkSingle');
+	$template->setVariable('controller', 'core.ItemCreateLinkSingle');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/ItemCreateLinkSingle.tpl'));
     }

@@ -46,15 +46,14 @@ class ItemCreateLinkController extends GalleryController {
 
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 
-	$status = array();
-	$error = array();
+	$status = $error = array();
 	if (isset($form['action']['link'])) {
 	    if (empty($form['destination'])) {
 		$error[] = 'form[error][destination][empty]';
 	    }
-        if (empty($form['selectedIds'])) {
-            $error[] = 'form[error][sources][empty]';
-        }
+	    if (empty($form['selectedIds'])) {
+		$error[] = 'form[error][sources][empty]';
+	    }
 
 	    if (empty($error)) {
 		$destinationId = $form['destination'];
@@ -85,20 +84,19 @@ class ItemCreateLinkController extends GalleryController {
 		/* Look out for monkey business */
 		foreach ($selectedItems as $selectedItem) {
 		    if (!isset($permissions[$selectedItem->getId()]['core.viewSource'])) {
-			return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__),
-				     null);
+			return array(GalleryStatus::error(ERROR_PERMISSION_DENIED,
+							  __FILE__, __LINE__), null);
 		    }
 
 		    if ($selectedItem->getParentId() != $itemId) {
-			return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__),
-				     null);
+			return array(GalleryStatus::error(ERROR_PERMISSION_DENIED,
+							  __FILE__, __LINE__), null);
 		    }
 
 		    if (!$selectedItem->getIsLinkable()) {
-			return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__),
-				     null);
+			return array(GalleryStatus::error(ERROR_PERMISSION_DENIED,
+							  __FILE__, __LINE__), null);
 		    }
-
 		}
 
 		/*
@@ -131,7 +129,10 @@ class ItemCreateLinkController extends GalleryController {
 		    $classType = get_class($selectedItem);
 		    $linkedItem = new $classType;
 
-		    /* If we're linking to an item that's already a link, then link to its source instead */
+		    /*
+		     * If we're linking to an item that's already a link,
+		     * then link to its source instead.
+		     */
 		    if ($selectedItem->isLinked()) {
 			$linkedEntity = $selectedItem->getLinkedEntity();
 			$ret = $linkedItem->createLink($linkedEntity, $destinationId);
@@ -219,16 +220,17 @@ class ItemCreateLinkView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	list ($itemId, $selectedId, $page) = GalleryUtilities::getRequestVariables('itemId', 'selectedId', 'page');
-        if ($form['formName'] != 'ItemCreateLink') {
-            /* First time around, load the form with item data */
-            if ($selectedId) {
-                $form['selectedIds'][$selectedId] = true;
-            }
-            $form['destination'] = '';
+	list ($itemId, $selectedId, $page) =
+	    GalleryUtilities::getRequestVariables('itemId', 'selectedId', 'page');
+	if ($form['formName'] != 'ItemCreateLink') {
+	    /* First time around, load the form with item data */
+	    if ($selectedId) {
+		$form['selectedIds'][$selectedId] = true;
+	    }
+	    $form['destination'] = '';
 	    $form['formName'] = 'ItemCreateLink';
 	    $form['numPerPage'] = 15;
-        }
+	}
 
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret->isError()) {
@@ -236,18 +238,14 @@ class ItemCreateLinkView extends GalleryView {
 	}
 
 	/* Get all peers that we can link */
-	list ($ret, $peerIds) =
-	    GalleryCoreApi::fetchLinkableChildItemIdsWithPermission($item->getId(), 'core.viewSource');
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
+	list ($ret, $peerIds) = GalleryCoreApi::fetchLinkableChildItemIdsWithPermission(
+						$item->getId(), 'core.viewSource');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
-	$peers = array();
-	$peerTypes = array();
-	$peerDescendentCounts = array();
+	$peers = $peerTypes = $peerDescendentCounts = $selectedIds = $albums = array();
 	$numPages = 1;
-	$selectedIds = array();
-	$albums = array();
 	if (!empty($peerIds)) {
 	    $numPages = ceil(sizeof($peerIds) / $form['numPerPage']);
 	    if (empty($page)) {
@@ -300,7 +298,8 @@ class ItemCreateLinkView extends GalleryView {
 	    }
 
 	    /* Find all the possible locations where this item can be linked. */
-	    list ($ret, $ids) = GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.addDataItem');
+	    list ($ret, $ids) =
+		GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.addDataItem');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -324,7 +323,7 @@ class ItemCreateLinkView extends GalleryView {
 	$ItemCreateLink['selectedIds'] = array_keys($selectedIds);
 
 	$template->setVariable('ItemCreateLink', $ItemCreateLink);
-        $template->setVariable('controller', 'core.ItemCreateLink');
+	$template->setVariable('controller', 'core.ItemCreateLink');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/ItemCreateLink.tpl'));
     }

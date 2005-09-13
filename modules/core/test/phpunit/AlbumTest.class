@@ -601,9 +601,15 @@ class AlbumTest extends GalleryTestCase {
 
 	list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock(
 	    array($this->_getRootId(), $this->_parentAlbum->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
 	list ($ret, $lockIds[]) =
 	    GalleryCoreApi::acquireWriteLock(array($innerAlbum->getId(), $outerAlbum->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
 	$ret = $innerAlbum->rename('test');
 	if ($ret->isError()) {

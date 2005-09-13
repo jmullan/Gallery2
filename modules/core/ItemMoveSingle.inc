@@ -67,22 +67,25 @@ class ItemMoveSingleController extends GalleryController {
 		$newParentId = $form['destination'];
 
 		/*
-		 * Assert that our permissions are correct.  The view should never try to make a move that
-		 * isn't legal so we can just bail if there's an inconsistency
+		 * Assert that our permissions are correct.  The view should never try to make a
+		 * move that isn't legal so we can just bail if there's an inconsistency.
 		 */
 		if (GalleryUtilities::isA($item, 'GalleryDataItem')) {
-		    $ret = GalleryCoreApi::assertHasItemPermission($newParentId, 'core.addDataItem');
+		    $ret = GalleryCoreApi::assertHasItemPermission($newParentId,
+								   'core.addDataItem');
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		} else if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
-		    $ret = GalleryCoreApi::assertHasItemPermission($newParentId, 'core.addAlbumItem');
+		    $ret = GalleryCoreApi::assertHasItemPermission($newParentId,
+								   'core.addAlbumItem');
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		} else {
-		    // The view should never let this happen
-		    return array(GalleryStatus::error(ERROR_BAD_DATA_TYPE, __FILE__, __LINE__), null);
+		    /* The view should never let this happen */
+		    return array(GalleryStatus::error(ERROR_BAD_DATA_TYPE, __FILE__, __LINE__),
+				 null);
 		}
 	    }
 
@@ -94,14 +97,16 @@ class ItemMoveSingleController extends GalleryController {
 		}
 
 		if (!GalleryUtilities::isA($newParent, 'GalleryAlbumItem')) {
-		    // The view should never let this happen
-		    return array(GalleryStatus::error(ERROR_BAD_DATA_TYPE, __FILE__, __LINE__), null);
+		    /* The view should never let this happen */
+		    return array(GalleryStatus::error(ERROR_BAD_DATA_TYPE, __FILE__, __LINE__),
+				 null);
 		}
 	    }
 
 	    /* Make sure we don't have recursive moves */
 	    if (empty($error)) {
-		list($ret, $newParentAncestorIds) = GalleryCoreApi::fetchParentSequence($newParentId);
+		list($ret, $newParentAncestorIds) =
+		    GalleryCoreApi::fetchParentSequence($newParentId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -124,34 +129,41 @@ class ItemMoveSingleController extends GalleryController {
 		$oldParentId = $item->getParentId();
 		list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLockParents($oldParentId);
 		if ($ret->isError()) {
+		    GalleryCoreApi::releaseLocks($lockIds);
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock(array($newParentId, $oldParentId));
+		list ($ret, $lockIds[]) =
+		    GalleryCoreApi::acquireReadLock(array($newParentId, $oldParentId));
 		if ($ret->isError()) {
+		    GalleryCoreApi::releaseLocks($lockIds);
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		/* Write lock the item we're moving */
 		list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($itemId);
 		if ($ret->isError()) {
+		    GalleryCoreApi::releaseLocks($lockIds);
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		/* Refresh the item in case it changed before it was locked */
 		list ($ret, $item) = $item->refresh();
 		if ($ret->isError()) {
+		    GalleryCoreApi::releaseLocks($lockIds);
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		/* Do the move */
 		$ret = $item->move($newParentId);
 		if ($ret->isError()) {
+		    GalleryCoreApi::releaseLocks($lockIds);
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		$ret = $item->save();
 		if ($ret->isError()) {
+		    GalleryCoreApi::releaseLocks($lockIds);
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
@@ -159,6 +171,7 @@ class ItemMoveSingleController extends GalleryController {
 		    /* Update for derivative preferences of new parent */
 		    $ret = GalleryCoreApi::addExistingItemToAlbum($item, $newParentId);
 		    if ($ret->isError()) {
+			GalleryCoreApi::releaseLocks($lockIds);
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		}
@@ -214,16 +227,16 @@ class ItemMoveSingleView extends GalleryView {
 
 	/* itemId is the album where we want to move items from */
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
-        if ($form['formName'] != 'ItemMoveSingle') {
-            /* First time around, load the form with item data */
-            $form['destination'] = '';
+	if ($form['formName'] != 'ItemMoveSingle') {
+	    /* First time around, load the form with item data */
+	    $form['destination'] = '';
 	    $form['formName'] = 'ItemMoveSingle';
-        }
+	}
 
-        list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
 	if (GalleryUtilities::isA($item, 'GalleryDataItem')) {
 	    $permission = 'core.addDataItem';
@@ -248,13 +261,13 @@ class ItemMoveSingleView extends GalleryView {
 	$albumTree = GalleryUtilities::createAlbumTree($albums);
 
 	$ItemMoveSingle = array();
-        $ItemMoveSingle['albumTree'] = $albumTree;
+	$ItemMoveSingle['albumTree'] = $albumTree;
 	$ItemMoveSingle['itemTypeNames'] = $item->itemTypeName();
 
-        $template->setVariable('ItemMoveSingle', $ItemMoveSingle);
-        $template->setVariable('controller', 'core.ItemMoveSingle');
+	$template->setVariable('ItemMoveSingle', $ItemMoveSingle);
+	$template->setVariable('controller', 'core.ItemMoveSingle');
 
-        return array(GalleryStatus::success(),
+	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/ItemMoveSingle.tpl'));
     }
 
@@ -274,8 +287,8 @@ class ItemMoveSingleView extends GalleryView {
 
 	$itemTypeNames = $item->itemTypeName(true);
 
-	return array(GalleryStatus::success(), $core->translate(array('text' => 'move %s',
-								      'arg1' => $itemTypeNames[1])));
+	return array(GalleryStatus::success(),
+		     $core->translate(array('text' => 'move %s', 'arg1' => $itemTypeNames[1])));
     }
 }
 ?>

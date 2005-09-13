@@ -75,7 +75,6 @@ class ItemAddController extends GalleryController {
 
 	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($item->getId());
 	if ($ret->isError()) {
-	    GalleryCoreApi::releaseLocks($lockId);
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 

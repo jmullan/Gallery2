@@ -258,5 +258,48 @@ class LockTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
+
+    /*
+     * Verify that releaseLocks accepts sloppy input (null entries or empty list)
+     * so that error handling code can pass in whatever array it has and not worry
+     * about cleaning it up to have only valid locks.
+     */
+    function testReleaseNull() {
+	return $this->_tryAllLockSystems('testReleaseNull');
+    }
+
+    function _testReleaseNull($lockSystem) {
+	$targetId = $this->_item->getId();
+	$lockIds = array();
+
+	list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($targetId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(GalleryCoreApi::isWriteLocked($targetId), $lockSystem);
+
+	$lockIds[] = null;
+	$ret = GalleryCoreApi::releaseLocks($lockIds);
+	if ($ret->isError()) {
+	    $this->assert(false, $lockSystem);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(!GalleryCoreApi::isWriteLocked($targetId), $lockSystem . ' unlock');
+    }
+
+    /* see comment above */
+    function testReleaseEmpty() {
+	return $this->_tryAllLockSystems('testReleaseEmpty');
+    }
+
+    function _testReleaseEmpty($lockSystem) {
+	$ret = GalleryCoreApi::releaseLocks(array());
+	if ($ret->isError()) {
+	    $this->assert(false, $lockSystem);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
 }
 ?>
