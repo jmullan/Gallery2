@@ -147,7 +147,7 @@ class CoreModuleExtras {
 	    }
 
 	    $gallery->debug('Activate Matrix theme');
-	    list ($ret, $ignored) = $theme->activate();
+	    list ($ret, $ignored) = $theme->activate(false);
 	    if ($ret->isError()) {
 		$gallery->debug(sprintf('Error: Failed to activate matrix theme, this is ' .
 				'the error stack trace; %s', $ret->getAsText()));
@@ -1116,7 +1116,7 @@ class CoreModuleExtras {
 			    return $ret->wrap(__FILE__, __LINE__);
 			}
 
-			list ($ret, $ignored) = $theme->activate();
+			list ($ret, $ignored) = $theme->activate(false);
 			if ($ret->isError() &&
 			    !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
 			    /*
