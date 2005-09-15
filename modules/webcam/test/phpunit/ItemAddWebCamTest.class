@@ -121,6 +121,22 @@ class ItemAddWebCamTest extends ItemAddPluginTestCase {
 	$this->assertEquals('test.jpg', $results[1]['addedFiles'][0]['fileName'], 'fileName');
     }
 
+    function testAddWebCamAltHeader() {
+	global $gallery;
+	$gallery->_platform->_contentType = 'Content-type';
+
+	GalleryUtilities::putRequestVariable('form[action][addWebCam]', 1);
+	GalleryUtilities::putRequestVariable('form[imageUrl]', 'http://test.com/testimage');
+
+	$results = $this->handleRequest($this->_album);
+	$this->assertEquals(array(), $results[0], 'should succeed');
+	$this->assertEquals(array('addedFiles'), array_keys($results[1]), 'addedFiles');
+	$this->assertEquals(1, count($results[1]['addedFiles']), '1 file');
+	$this->assertEquals(array('fileName', 'id', 'warnings'),
+			    array_keys($results[1]['addedFiles'][0]), 'key');
+	$this->assertEquals('testimage', $results[1]['addedFiles'][0]['fileName'], 'fileName');
+    }
+
     function testAddWebCamNotFound() {
 	GalleryUtilities::putRequestVariable('form[action][addWebCam]', 1);
 	GalleryUtilities::putRequestVariable('form[imageUrl]', 'http://test.com/404.jpg');
@@ -157,6 +173,10 @@ class ItemAddWebCamTest extends ItemAddPluginTestCase {
  */
 class ItemAddWebCamTestPlatform {
 
+    function ItemAddWebCamTestPlatform() {
+	$this->_contentType = 'Content-Type';
+    }
+
     function tempnam($tmpDir, $base) {
 	return "/test/$base";
     }
@@ -174,6 +194,7 @@ class ItemAddWebCamTestPlatform {
 	if ($handle == 'test-resource-1') {
 	    switch ($string) {
 	    case "GET /test.jpg HTTP/1.0\r\nHost: test.com\r\n\r\n":
+	    case "GET /testimage HTTP/1.0\r\nHost: test.com\r\n\r\n":
 		$status = 'HTTP/1.1 200 OK';
 		$mime = 'image/jpeg';
 		break;
@@ -197,7 +218,7 @@ class ItemAddWebCamTestPlatform {
 		$buffer[] = 'ETag: "122ae4-5-3fc199b0"';
 		$buffer[] = 'Server: Apache/1.3.28 (Unix)';
 		$buffer[] = 'Content-Length: 5';
-		$buffer[] = "Content-Type: $mime";
+		$buffer[] = $this->_contentType . ': ' . $mime;
 		$buffer[] = 'Last-Modified: Mon, 3 Nov 2004 05:40:00 GMT';
 		$buffer[] = 'Client-Date: Mon, 3 Nov 2004 05:40:03 GMT';
 		$buffer[] = 'Client-Peer: 209.237.226.157:80';
@@ -222,6 +243,7 @@ class ItemAddWebCamTestPlatform {
     function legalizePathComponent($component) {
 	switch ($component) {
 	case 'test.jpg':
+	case 'testimage':
 	case 'test.html':
 	    return $component;
 
@@ -235,6 +257,7 @@ class ItemAddWebCamTestPlatform {
 	if ($fromFile == '/test/webcam') {
 	    switch (basename($toFile)) {
 	    case 'test.jpg':
+	    case 'testimage':
 	    case 'test.html':
 		return true;
 	    }
@@ -250,6 +273,7 @@ class ItemAddWebCamTestPlatform {
     function getimagesize($filename) {
 	switch (basename($filename)) {
 	case 'test.jpg':
+	case 'testimage':
 	    $result = array(100, 200);
 	    break;
 
@@ -265,6 +289,7 @@ class ItemAddWebCamTestPlatform {
     function filesize($filename) {
 	switch (basename($filename)) {
 	case 'test.jpg':
+	case 'testimage':
 	case 'test.html':
 	    return 5;
 	}
