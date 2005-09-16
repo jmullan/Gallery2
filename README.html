@@ -1322,16 +1322,15 @@
 	  <h3>MySQL</h3>
 	  <p>
 	    $ mysqladmin -uroot create gallery2  <br />
-	    $ mysql gallery2 -uroot -e"GRANT ALL ON gallery2.* TO<br/> &nbsp;&nbsp;<strong>username</strong>@localhost IDENTIFIED BY <strong>'password'</strong>" <br />
+	    $ mysql gallery2 -uroot -e"GRANT ALL ON gallery2.* TO<br/> &nbsp;&nbsp;<strong>username</strong>@localhost IDENTIFIED BY <strong>'password'</strong>"<br/>
 	  </p>
 	</div>
 
 	<ul class="note">
-	  <li> Choose your own <strong>username</strong> and
-	    <strong>password</strong>
+	  <li> Choose your own <strong>username</strong> and <strong>password</strong>
 	  </li>
 	  <li>
-	    If MySQL denies you access, try adding "-p" right before the "-e "
+	    If MySQL denies you access, try adding "-p" right after "-uroot" in each command
 	  </li>
 	</ul>
 
