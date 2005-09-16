@@ -132,6 +132,11 @@ class GalleryMimeTypeHelper_simple {
 		$mimeData = $cached;
 	    } else {
 		global $gallery;
+		/*
+		 * TODO: add a column to define "primary" extension for mime type -> extension
+		 * conversions.. for now I set desc order by extension so image/jpeg will
+		 * map to jpg instead of jpe (quick fix for most common case).
+		 */
 		$query = '
 		SELECT
 		    [GalleryMimeTypeMap::extension],
@@ -139,6 +144,8 @@ class GalleryMimeTypeHelper_simple {
 		    [GalleryMimeTypeMap::viewable]
 		FROM
 		    [GalleryMimeTypeMap]
+		ORDER BY
+		    [GalleryMimeTypeMap::extension] DESC
 		';
 		list ($ret, $searchResults) = $gallery->search($query);
 		if ($ret->isError()) {
