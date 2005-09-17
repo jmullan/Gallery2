@@ -108,7 +108,7 @@
     <td> {g->text text="Limit the item selection to the subtree of the gallery under the album with the given id; or the id of the item to display when used with specificItem block type"} </td>
   </tr><tr>
     <td> {$ImageBlockSiteAdmin.prefix}maxSize </td>
-    <td> {g->text text="Scale images to this maximum size"} </td>
+    <td> {g->text text="Scale images to this maximum size. If maxSize exceeds the thumbnail dimensions, you must also specify g2_show=fullSize"} </td>
   </tr><tr>
     <td> {$ImageBlockSiteAdmin.prefix}linkTarget </td>
     <td> {g->text text="Add a link target (for example, to open links in a new browser window)"} </td>
