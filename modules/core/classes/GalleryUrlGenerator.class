@@ -497,7 +497,7 @@ class GalleryUrlGenerator {
      * and the requestVariables, but before we start generating URLs with
      * generateUrl().  Currently it's called from _GalleryMain().
      *
-     * @access private
+     * @return object Gallery status
      */
     function initNavigation() {
 	global $gallery;
@@ -505,6 +505,21 @@ class GalleryUrlGenerator {
 	list ($returnUrl, $returnName, $navId, $fromNavId) =
 	    GalleryUtilities::getRequestVariables('return', 'returnName', 'navId', 'fromNavId');
 	if (!empty($returnUrl)) {
+	    /* Check for phishing attacks, don't allow return URLs to other sites */
+	    if (strpos($returnUrl, $this->getCurrentUrlDir()) !== 0) {
+		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		$message = sprintf(
+		    $module->translate('Invalid return URL! The requested URL %s tried to ' .
+				       'insert a redirection to %s which is not a part of '.
+				       'this Gallery.'),
+		    GalleryUrlGenerator::makeUrl($this->getCurrentRequestUri()), $returnUrl);
+		return GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__, $message);
+					    
+	    }
+	    
 	    /* Branch a new navigation */
 	    $navData = array('returnUrl' => $returnUrl,
 			     'returnName' => $returnName);
@@ -524,6 +539,8 @@ class GalleryUrlGenerator {
 		$this->_navId = $navId;
 	    }
 	}
+	
+	return GalleryStatus::success();
     }
 
     /**

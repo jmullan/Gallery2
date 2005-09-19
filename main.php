@@ -131,8 +131,11 @@ function _GalleryMain($embedded=false) {
 
     $main = array();
     $urlGenerator =& $gallery->getUrlGenerator();
-    $urlGenerator->initNavigation();
-
+    $ret = $urlGenerator->initNavigation();
+    if ($ret->isError()) {
+	return array($ret->wrap(__FILE__, __LINE__), null);
+    }
+    
     /* Figure out the target view/controller */
     list($viewName, $controllerName) = GalleryUtilities::getRequestVariables('view', 'controller');
 

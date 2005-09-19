@@ -564,6 +564,28 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$this->assertEquals($expected, $this->_urlGenerator->getNavigationReturnUrl());
     }
 
+    /*
+     * With the g2_return parameter users can add any "back to " link or direct redirect to any
+     * URL. We try to detect those phishing attacks by comparing the returnUrl with our current
+     * $this->getCurrentUrlDir(). If returnUrl doesn't start with getCurrentUrlDir(), it's not a
+     * redirect into the same G2 installation.
+     * initNavigation is called after GalleryInitFirstPass and init storage, thus we can use
+     * getCurrentUrlDir(), else it might have been a problem (RewriteUrlGenerator)
+     */
+    function testDetectPhishingAttack() {
+	$_GET['g2_return'] = 'http://malicious.com/gallery2/main.php?g2_view=core.UserAdmin&' .
+	    'g2_subView=core.UserLogin';
+	$ret = $this->_urlGenerator->initNavigation();
+	$this->assert($ret->getErrorCode() & ERROR_PERMISSION_DENIED,
+		      'Phishing attack not detected');
+	/* Also test if normal returnUrls are still ok... */
+	$_GET['g2_return'] =
+	    $this->_urlGenerator->generateUrl(array('view' => 'core.UserAdmin',
+						    'subView' => 'core.UserLogin'));
+	$ret = $this->_urlGenerator->initNavigation();
+	$this->assertEquals(GalleryStatus::success(), $ret, 'Normal returnUrl not accepted');
+    }
+
     function testRelativeUrlOverrides() {
 	global $gallery;
 	$session =& $gallery->getSession();
