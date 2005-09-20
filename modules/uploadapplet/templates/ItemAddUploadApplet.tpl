@@ -10,9 +10,10 @@
     {g->text text="The upload applet relies on a G2 module that is not currently enabled.  Please ask an administrator to enable the 'remote' module."}
   </div>
   {else}
+  <form name="form1">
   <object classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93"
 	  codebase="http://java.sun.com/products/plugin/autodl/jinstall-1_4-windows-i586.cab#Version=1,4,0,0"
-	  width="600" height="400">
+	  width="600" height="400" mayscript="true">
     <param name="code" value="com.gallery.GalleryRemote.GRAppletMini"/>
     <param name="archive" value="{g->url href="modules/uploadapplet/applets/GalleryRemoteAppletMini.jar},{g->url href="modules/uploadapplet/applets/GalleryRemoteHTTPClient.jar"},{g->url href="modules/uploadapplet/applets/applet_img.jar"}"/>
     <param name="type" value="application/x-java-applet;version=1.4"/>
@@ -41,7 +42,7 @@
           archive="{g->url href="modules/uploadapplet/applets/GalleryRemoteAppletMini.jar},{g->url href="modules/uploadapplet/applets/GalleryRemoteHTTPClient.jar"},{g->url href="modules/uploadapplet/applets/applet_img.jar"}"
           width="600"
           height="400"
-          scriptable="false"
+          mayscript="true"
           progressbar="true"
           boxmessage="{g->text text="Downloading the Gallery Remote Applet"}"
           pluginspage="http://java.sun.com/j2se/1.4.2/download.html"
@@ -66,5 +67,71 @@
       </embed>
     </comment>
   </object>
+  </form>
   {/if}
 </div>
+
+<div id="uploadapplet_Feedback">
+</div>
+
+{g->addToTrailer}
+<script type="text/javascript">
+  // <![CDATA[
+  var text = '';
+  var textUrls = '';
+
+  function startingUpload() {ldelim}
+    text = textUrls = '';
+    addText('<h2>{g->text text="Uploading files..."}</h2><ul>');
+  {rdelim}
+
+  function uploadedOne(itemId, itemName) {ldelim}
+    addTextUrls('<li>' + itemName + '</li>',
+    	'<li><a href="{g->url arg1="view=core.ShowItem" arg2="itemId="}' + itemId + '">' + itemName + '</a></li>');
+  {rdelim}
+
+  function doneUploading() {ldelim}
+    addText('</ul><h2>{g->text text="Upload complete"}</h2>'
+    	+ '<p>{g->text text="you can keep uploading or go to some of the pictures you uploaded by clicking on the links above"}<p>');
+
+    showUrls();
+  {rdelim}
+
+  function addTextUrls(s, s1) {ldelim}
+    text = text + s;
+    textUrls = textUrls + s1;
+
+    getRef().innerHTML='<div class="gbBlock gcBackground1">' + text + '</div>';
+  {rdelim}
+
+  function addText(s) {ldelim}
+    text = text + s;
+    textUrls = textUrls + s;
+
+    getRef().innerHTML='<div class="gbBlock gcBackground1">' + text + '</div>';
+  {rdelim}
+
+  function showUrls() {ldelim}
+    getRef().innerHTML='<div class="gbBlock gcBackground1">' + textUrls + '</div>';
+  {rdelim}
+
+  function getRef() {ldelim}
+    if (document.getElementById) {ldelim}
+      return document.getElementById("uploadapplet_Feedback");
+    {rdelim} else if (document.all) {ldelim}
+      return document.all["uploadapplet_Feedback"];
+    {rdelim}
+  {rdelim}
+
+  //setTimeout('test()', 2000);
+
+  function test() {ldelim}
+    startingUpload();
+    setTimeout('test1()', 2000);
+  {rdelim}
+  function test1() {ldelim}
+    uploadedOne('7', 'toto');
+  {rdelim}
+  // ]]>
+</script>
+{/g->addToTrailer}

@@ -439,6 +439,56 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	$this->assert($response->hasProperty('status_text'));
     }
 
+    function testIncrementViewCount() {
+	global $gallery;
+
+	/* Create some images */
+	$parentId = $this->_rootAlbum->getId();
+
+	list ($ret, $image) = $this->_createRandomDataItem($parentId, 'image/jpg');
+	if ($ret->isError()) {
+	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $album) = $this->_createRandomAlbum($parentId);
+	if ($ret->isError()) {
+	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	/* increase the view count on the image */
+	GalleryUtilities::putRequestVariable('form[cmd]', 'increment-view-count');
+	GalleryUtilities::putRequestVariable('form[itemId]', $image->getId());
+	$results = $this->handleRequest();
+	$this->assertEquals(array(), $results['error']);
+	$this->assertEquals('remote.GalleryRemote', $results['delegate']['view']);
+
+	$response = $results['status']['controllerResponse'];
+	$this->assertEquals($this->_code['SUCCESS'], (int)$response->getProperty('status'));
+
+	/* increase the view count on the album */
+	GalleryUtilities::putRequestVariable('form[cmd]', 'increment-view-count');
+	GalleryUtilities::putRequestVariable('form[itemId]', $album->getId());
+	$results = $this->handleRequest();
+	$this->assertEquals(array(), $results['error']);
+	$this->assertEquals('remote.GalleryRemote', $results['delegate']['view']);
+
+	$response = $results['status']['controllerResponse'];
+	$this->assertEquals($this->_code['SUCCESS'], (int)$response->getProperty('status'));
+
+	/* Make sure the the view count is 1 */
+	list($ret, $imageViewCount) = GalleryCoreApi::fetchItemViewCount($image->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	list($ret, $albumViewCount) = GalleryCoreApi::fetchItemViewCount($album->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$this->assertEquals(1, $imageViewCount);
+	$this->assertEquals(1, $albumViewCount);
+	$this->assert($response->hasProperty('status_text'));
+    }
+
     function testNoop() {
 	global $gallery;
 
