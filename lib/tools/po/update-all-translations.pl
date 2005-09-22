@@ -24,7 +24,8 @@ GetOptions('make-binary!' => \$OPTS{'MAKE_BINARY'},
 	   'pattern=s' => \$OPTS{'PATTERN'},
 	   'dry-run!' => \$OPTS{'DRY_RUN'},
 	   'verbose|v!' => \$OPTS{'VERBOSE'},
-	   'remove-obsolete!' => \$OPTS{'REMOVE_OBSOLETE'});
+	   'remove-obsolete!' => \$OPTS{'REMOVE_OBSOLETE'},
+	   'po=s' => \$OPTS{'PO'});	   
 
 my %PO_DIRS = ();
 my %MO_FILES = ();
@@ -43,7 +44,7 @@ foreach my $poDir (keys(%PO_DIRS)) {
   unless ($OPTS{'DRY_RUN'}) {
     if (-f "$poDir/GNUmakefile") {
       chdir $poDir;
-      my_system("$MAKE $TARGET clean QUIET=1 2>&1")
+      my_system("$MAKE $TARGET clean QUIET=0 PO=$OPTS{'PO'} 2>&1")
 	and print "FAIL!\n"
 	  and push(@failures, $poDir);
     } else {
