@@ -764,7 +764,7 @@ class GalleryRemoteView extends GalleryView {
      */
     function renderImmediate($status, $error) {
 	if (!headers_sent()) {
-	    header("Content-type: text/plain");
+	    header("Content-type: text/plain; charset=UTF-8");
 	}
 
 	if (isset($status['controllerError'])) {
