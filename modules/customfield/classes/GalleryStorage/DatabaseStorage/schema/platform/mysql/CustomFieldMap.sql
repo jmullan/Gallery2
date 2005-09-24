@@ -13,8 +13,8 @@
     DB_COLUMN_PREFIXfield
       varchar(
       
-          128
-        
+	  128
+	
       )
     
     NOT NULL
@@ -23,8 +23,8 @@
     DB_COLUMN_PREFIXvalue
       varchar(
       
-          255
-        
+	  255
+	
       )
     
       ,
@@ -35,9 +35,9 @@
     DB_COLUMN_PREFIXsetType
       int(11)
     
-    , 
+    ,
   
-    INDEX (DB_COLUMN_PREFIXitemId)
+    INDEX DB_TABLE_PREFIXCustomFieldMap_75985 (DB_COLUMN_PREFIXitemId)
     
 
     ) TYPE=DB_TABLE_TYPE;

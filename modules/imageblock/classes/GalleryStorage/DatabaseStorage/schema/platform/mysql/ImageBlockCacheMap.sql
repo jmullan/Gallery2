@@ -27,9 +27,9 @@
     
     NOT NULL
   
-    , 
+    ,
   
-    INDEX (DB_COLUMN_PREFIXuserId
+    INDEX DB_TABLE_PREFIXImageBlockCacheMap_1627 (DB_COLUMN_PREFIXuserId
       ,
     DB_COLUMN_PREFIXitemType)
     

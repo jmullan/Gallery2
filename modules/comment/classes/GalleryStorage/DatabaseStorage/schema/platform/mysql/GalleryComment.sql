@@ -19,8 +19,8 @@
     DB_COLUMN_PREFIXhost
       varchar(
       
-          128
-        
+	  128
+	
       )
     
     NOT NULL
@@ -29,8 +29,8 @@
     DB_COLUMN_PREFIXsubject
       varchar(
       
-          128
-        
+	  128
+	
       )
     
       ,
@@ -43,13 +43,13 @@
     
     NOT NULL
   
-    , 
+    ,
   
       PRIMARY KEY (DB_COLUMN_PREFIXid)
     
-    , 
+    ,
   
-    INDEX (DB_COLUMN_PREFIXdate)
+    INDEX DB_TABLE_PREFIXComment_95610 (DB_COLUMN_PREFIXdate)
     
 
     ) TYPE=DB_TABLE_TYPE;
