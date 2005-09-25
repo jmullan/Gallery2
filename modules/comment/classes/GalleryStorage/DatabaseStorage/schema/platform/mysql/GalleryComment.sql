@@ -61,7 +61,7 @@
       ) VALUES (
       'Comment',
       1,
-      0
+      1
       );
 
   

@@ -7,30 +7,30 @@
   DB_COLUMN_PREFIXid
       INTEGER
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXcommenterId
       INTEGER
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXhost
       VARCHAR(
       
-          128
-        
+	  128
+	
       )
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXsubject
       VARCHAR(
       
-          128
-        
+	  128
+	
       )
     
       ,
@@ -41,12 +41,12 @@
     DB_COLUMN_PREFIXdate
       INTEGER
     
-    NOT NULL
-  
+      NOT NULL
+    
     );
 
   
-    CREATE INDEX DB_TABLE_PREFIXComment_95610 
+    CREATE INDEX DB_TABLE_PREFIXComment_95610
     ON DB_TABLE_PREFIXComment
     (DB_COLUMN_PREFIXdate);
 
@@ -62,7 +62,7 @@
       ) VALUES (
       'Comment',
       1,
-      0
+      1
       );
 
   

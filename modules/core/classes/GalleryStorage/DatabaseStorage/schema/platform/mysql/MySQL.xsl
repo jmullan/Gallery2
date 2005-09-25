@@ -259,14 +259,17 @@
   </xsl:template>
 
   <xsl:template name="indexName">
-    <xsl:value-of select="crc:reset()"/>
-    <xsl:for-each select="column-name">
-      <xsl:value-of select="crc:update(.)"/>
-    </xsl:for-each>
-    <xsl:value-of select="$tablePrefix"/><xsl:choose>
+    <xsl:if test="@name_mysql"><xsl:value-of select="@name_mysql"/></xsl:if>
+    <xsl:if test="not(@name_mysql)">
+      <xsl:value-of select="crc:reset()"/>
+      <xsl:for-each select="column-name">
+        <xsl:value-of select="crc:update(.)"/>
+      </xsl:for-each>
+      <xsl:value-of select="$tablePrefix"/><xsl:choose>
       <xsl:when test="../table-name"><xsl:value-of select="../table-name"/></xsl:when>
       <xsl:otherwise><xsl:value-of select="../../table-name"/></xsl:otherwise>
-    </xsl:choose>_<xsl:value-of select="crc:getValue()"/>
+      </xsl:choose>_<xsl:value-of select="crc:getValue()"/>
+    </xsl:if>
   </xsl:template>
 
   <!-- InstallerTest -->

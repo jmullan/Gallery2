@@ -7,8 +7,8 @@
   DB_COLUMN_PREFIXitemId
       INTEGER
     
-    NOT NULL
-  
+      NOT NULL
+    
     );
 
   

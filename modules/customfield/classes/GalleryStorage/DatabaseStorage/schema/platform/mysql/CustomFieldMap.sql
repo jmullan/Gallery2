@@ -49,7 +49,7 @@
       ) VALUES (
       'CustomFieldMap',
       1,
-      0
+      1
       );
 
   

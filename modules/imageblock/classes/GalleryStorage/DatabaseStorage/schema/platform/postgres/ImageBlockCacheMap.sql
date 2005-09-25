@@ -7,33 +7,33 @@
   DB_COLUMN_PREFIXuserId
       INTEGER
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXitemType
       INTEGER
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXitemTimestamp
       INTEGER
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXitemId
       INTEGER
     
-    NOT NULL
-  
+      NOT NULL
+    
     );
 
   
-    CREATE INDEX DB_TABLE_PREFIXImageBlockCacheMap_1627 
+    CREATE INDEX DB_TABLE_PREFIXImageBlockCacheMap_1627
     ON DB_TABLE_PREFIXImageBlockCacheMap
     (DB_COLUMN_PREFIXuserId
-        ,
+	,
       DB_COLUMN_PREFIXitemType);
 
   
@@ -45,7 +45,7 @@
       ) VALUES (
       'ImageBlockCacheMap',
       1,
-      0
+      1
       );
 
   

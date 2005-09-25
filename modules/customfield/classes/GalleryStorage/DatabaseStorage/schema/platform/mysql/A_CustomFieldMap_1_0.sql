@@ -1,0 +1,15 @@
+
+      ALTER TABLE DB_TABLE_PREFIXCustomFieldMap
+      DROP INDEX DB_COLUMN_PREFIXitemId,
+      ADD INDEX DB_TABLE_PREFIXCustomFieldMap_75985 (DB_COLUMN_PREFIXitemId)
+    
+      ;
+    
+
+    UPDATE DB_TABLE_PREFIXSchema
+      SET DB_COLUMN_PREFIXmajor=1,
+	  DB_COLUMN_PREFIXminor=1
+      WHERE DB_COLUMN_PREFIXname='CustomFieldMap' AND
+	  DB_COLUMN_PREFIXmajor=1 AND
+	  DB_COLUMN_PREFIXminor=0;
+  

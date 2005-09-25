@@ -43,7 +43,7 @@
       ) VALUES (
       'ImageBlockCacheMap',
       1,
-      0
+      1
       );
 
   

@@ -7,24 +7,24 @@
   DB_COLUMN_PREFIXitemId
       INTEGER
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXfield
       VARCHAR(
       
-          128
-        
+	  128
+	
       )
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXvalue
       VARCHAR(
       
-          255
-        
+	  255
+	
       )
     
       ,
@@ -38,7 +38,7 @@
     );
 
   
-    CREATE INDEX DB_TABLE_PREFIXCustomFieldMap_75985 
+    CREATE INDEX DB_TABLE_PREFIXCustomFieldMap_75985
     ON DB_TABLE_PREFIXCustomFieldMap
     (DB_COLUMN_PREFIXitemId);
 
@@ -51,7 +51,7 @@
       ) VALUES (
       'CustomFieldMap',
       1,
-      0
+      1
       );
 
   

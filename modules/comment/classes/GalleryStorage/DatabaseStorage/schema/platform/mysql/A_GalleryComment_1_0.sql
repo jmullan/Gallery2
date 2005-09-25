@@ -1,0 +1,15 @@
+
+      ALTER TABLE DB_TABLE_PREFIXComment
+      DROP INDEX DB_COLUMN_PREFIXdate,
+      ADD INDEX DB_TABLE_PREFIXComment_95610 (DB_COLUMN_PREFIXdate)
+    
+      ;
+    
+
+    UPDATE DB_TABLE_PREFIXSchema
+      SET DB_COLUMN_PREFIXmajor=1,
+	  DB_COLUMN_PREFIXminor=1
+      WHERE DB_COLUMN_PREFIXname='Comment' AND
+	  DB_COLUMN_PREFIXmajor=1 AND
+	  DB_COLUMN_PREFIXminor=0;
+  
