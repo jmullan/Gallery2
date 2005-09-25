@@ -106,10 +106,16 @@
     <xsl:if test="column and (key or index)">,</xsl:if>
 
     <xsl:for-each select="key">
-      ADD UNIQUE KEY (<xsl:call-template name="key"/>)
-    <xsl:if test="position()!=last()">
-      ,
-    </xsl:if>
+      <xsl:if test="@primary='true'">
+        ADD PRIMARY KEY (<xsl:call-template name="key"/>)
+      </xsl:if>
+
+      <xsl:if test="@primary!='true'">
+        ADD UNIQUE KEY (<xsl:call-template name="key"/>)
+      </xsl:if>
+      <xsl:if test="position()!=last()">
+        ,
+      </xsl:if>
     </xsl:for-each>
 
     <xsl:if test="key and index">,</xsl:if>
