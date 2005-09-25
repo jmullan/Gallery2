@@ -7,6 +7,8 @@
   DB_COLUMN_PREFIXuserOrGroupId
       int(11)
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXquotaSize
       int(11)
@@ -15,7 +17,7 @@
   
     ,
   
-    INDEX DB_TABLE_PREFIXQuotasMap_48775 (DB_COLUMN_PREFIXuserOrGroupId)
+      PRIMARY KEY (DB_COLUMN_PREFIXuserOrGroupId)
     
 
     ) TYPE=DB_TABLE_TYPE;
@@ -27,7 +29,7 @@
       ) VALUES (
       'QuotasMap',
       1,
-      0
+      1
       );
 
   

@@ -7,6 +7,8 @@
   DB_COLUMN_PREFIXuserOrGroupId
       INTEGER
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXquotaSize
       INTEGER
@@ -16,9 +18,9 @@
     );
 
   
-    CREATE INDEX DB_TABLE_PREFIXQuotasMap_48775
-    ON DB_TABLE_PREFIXQuotasMap
-    (DB_COLUMN_PREFIXuserOrGroupId);
+    ALTER TABLE DB_TABLE_PREFIXQuotasMap
+      ADD PRIMARY KEY (DB_COLUMN_PREFIXuserOrGroupId)
+  ;
   
 
     INSERT INTO DB_TABLE_PREFIXSchema (
@@ -28,7 +30,7 @@
       ) VALUES (
       'QuotasMap',
       1,
-      0
+      1
       );
 
   
