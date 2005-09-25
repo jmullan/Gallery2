@@ -62,13 +62,19 @@
 
   <!-- CHANGE -->
   <xsl:template match="change">
-    <xsl:if test="add/column or add/key or remove/column or remove/key">
+    <xsl:if test="add/column or remove/column or remove/key">
       ALTER TABLE <xsl:value-of select="$tablePrefix"/><xsl:value-of select="table-name"/>
       <xsl:apply-templates select="remove"/>
-      <xsl:if test="(add/column or add/key) and (remove/column or remove/key)">
+      <xsl:if test="add/column and (remove/column or remove/key)">
 	,
       </xsl:if>
-      <xsl:apply-templates select="add"/>
+
+      <xsl:for-each select="add/column">
+        ADD COLUMN <xsl:call-template name="columnName"/><xsl:call-template name="columnTypeWithoutNotNull"/>
+        <xsl:if test="position()!=last()">
+          ,
+        </xsl:if>
+      </xsl:for-each>
       ;
     </xsl:if>
 
@@ -92,6 +98,22 @@
 
     <xsl:apply-templates select="alter"/>
 
+    <xsl:if test="add/key">
+      ALTER TABLE <xsl:value-of select="$tablePrefix"/><xsl:value-of select="table-name"/>
+      <xsl:for-each select="add/key">
+        <xsl:if test="@primary='true'">
+          ADD PRIMARY KEY (<xsl:call-template name="key"/>)
+        </xsl:if>
+        <xsl:if test="@primary!='true'">
+          ADD UNIQUE KEY (<xsl:call-template name="key"/>)
+        </xsl:if>
+        <xsl:if test="position()!=last()">
+          ,
+        </xsl:if>
+      </xsl:for-each>
+      ;
+    </xsl:if>
+
     UPDATE <xsl:value-of select="$tablePrefix"/>Schema
       SET <xsl:value-of select="$columnPrefix"/>major=<xsl:value-of
 							   select="schema-to/schema-major"/>,
@@ -102,26 +124,6 @@
 							   select="schema-from/schema-major"/> AND
 	  <xsl:value-of select="$columnPrefix"/>minor=<xsl:value-of
 							   select="schema-from/schema-minor"/>;
-  </xsl:template>
-
-  <!-- Change/add -->
-  <xsl:template match="add">
-    <xsl:for-each select="column">
-      ADD COLUMN <xsl:call-template name="columnName"/><xsl:call-template
-							name="columnTypeWithoutNotNull"/>
-    <xsl:if test="position()!=last()">
-      ,
-    </xsl:if>
-    </xsl:for-each>
-
-    <xsl:if test="column and key">,</xsl:if>
-
-    <xsl:for-each select="key">
-      ADD UNIQUE KEY (<xsl:call-template name="key"/>)
-    <xsl:if test="position()!=last()">
-      ,
-    </xsl:if>
-    </xsl:for-each>
   </xsl:template>
 
   <!-- Change/remove -->
