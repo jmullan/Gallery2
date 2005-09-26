@@ -110,7 +110,10 @@ class GalleryPermissionHelper_medium {
 		/* $result[0] = itemId */
 		/* $permission['id'] = the permission name for that bit */
 		$permTable[$result[0]][$permission['id']] = 1;
-		GalleryDataCache::cachePermissions($result[0], $permission['id']);
+		/* Only cache permissions in the session for the activeUser */
+		if ($userId == $gallery->getActiveUserId()) {
+		    GalleryDataCache::cachePermissions($result[0], $permission['id']);
+		}
 	    }
 	}
 

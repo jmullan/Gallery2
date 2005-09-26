@@ -1312,11 +1312,62 @@ class UserAndGroupTest extends GalleryTestCase {
     function testHasItemPermission() {
 	global $gallery;
 
+	GalleryDataCache::clearPermissionCache();	
 	list ($ret, $hasPermission) =
 	    GalleryCoreApi::hasItemPermission($this->_getRootId(), 'core.view');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->assert($hasPermission, 'activeUser should have core.view on root');
+
+	$userId = $gallery->getActiveUserId();
+	/* Get id of anonymous id */
+	list ($ret, $anonymousUserId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	/* Add an item such that we can set permissions to check hasItemPermission */
+	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($item);
+
+	/* Reset permissions */
+	$ret = GalleryCoreApi::removeItemPermissions($item->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Add a permission to the active user */
+	$ret = GalleryCoreApi::addUserPermission($item->getId(), $userId, 'core.view', false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Now test activeUser with and without userId param */
+	list ($ret, $hasPermission) =
+	    GalleryCoreApi::hasItemPermission($item->getId(), 'core.view');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($hasPermission, 'default user should have core.view on item');
+
+	list ($ret, $hasPermission) =
+	    GalleryCoreApi::hasItemPermission($item->getId(), 'core.view', $userId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($hasPermission, 'userId should have core.view on item');
+
+	list ($ret, $hasPermission) =
+	    GalleryCoreApi::hasItemPermission($item->getId(), 'core.view', $anonymousUserId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!$hasPermission, 'guest user shouldn\'t have core.view on item');
     }
 
     function testAddDuplicateUserToGroup() {

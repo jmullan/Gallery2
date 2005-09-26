@@ -768,6 +768,43 @@ class PermissionTest extends GalleryTestCase {
 	}
     }
 
+    /*
+     * Make sure it doesn't put the results for another userId into the session
+     * of the activeUser
+     */
+    function testFetchPermissionsForItemsForOtherUserId() {
+	global $gallery;
+	
+	GalleryDataCache::clearPermissionCache();
+	$this->assert(!GalleryDataCache::hasPermission($this->_getRootId(), 'core.view'),
+		      'Nothing should be cached in the beginning');
+	/* Get the anonymous user id */
+	list ($ret, $anonymousUserId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Get the accessListIds for the anonymous user and make sure it doesn't cache */
+	list ($ret, $aclIds) =
+	    GalleryCoreApi::fetchPermissionsForItems(array($this->_getRootId()), $anonymousUserId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!GalleryDataCache::hasPermission($this->_getRootId(), 'core.view'),
+		      'Nothing should be cached when using another userId');
+
+	/* And make sure it caches when using the activeUserId */
+		list ($ret, $aclIds) =
+	    GalleryCoreApi::fetchPermissionsForItems(array($this->_getRootId()),
+						     $gallery->getActiveUserId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(GalleryDataCache::hasPermission($this->_getRootId(), 'core.view'),
+		      'Cache was not set for activeUserId');
+    }
+
     function testCompactAccessLists() {
 	global $gallery;
 
