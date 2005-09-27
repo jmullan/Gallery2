@@ -141,7 +141,7 @@ class RewriteMap_core{
     	FROM
     	  [RewriteMap]
     	WHERE
-    	  [RewriteMap::match] != ''
+    	  [RewriteMap::match] <> ''
     	";
 
 	list ($ret, $searchResults) = $gallery->search($query);

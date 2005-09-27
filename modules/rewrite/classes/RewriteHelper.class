@@ -309,18 +309,18 @@ class RewriteHelper {
 	    $baseUrl = preg_replace('{(install|upgrade)/index\.php.*}', '',
 				    $urlGenerator->getCurrentUrlDir(true));
 	}
-	$baseUrl .= 'modules/rewrite/data/';
 	$components = parse_url($baseUrl);
 	$path = $components['path'];
+	$baseUrl .= 'modules/rewrite/data/';
 
 	/*
 	 * Testing mod_rewrite functionality.  In order for mod_rewrite to work
 	 * properly, it needs a .htaccess file containing a RewriteBase
 	 * directive that matches the URL of its containing directory.
 	 */
-	if (!strncmp($path, '/gallery2/', 10)) {
+	if ($path == '/gallery2') {
 	    $target = 'gallery2';
-	} else if (!strncmp($path, '/gallery/', 9)) {
+	} else if ($path == '/gallery') {
 	    $target = 'gallery';
 	} else {
 	    $target = 'custom';

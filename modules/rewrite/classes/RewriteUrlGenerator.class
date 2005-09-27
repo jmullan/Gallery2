@@ -136,9 +136,9 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
     /**
      * @see GalleryUrlGenerator::generateUrl
      */
-    function generateUrl($params=array(), $forceSessionId=null) {
+    function generateUrl($params=array(), $forceSessionId=null, $baseUrl=null) {
 	if ($this->_error) {
-	    return parent::generateUrl($params, $forceSessionId);
+	    return parent::generateUrl($params, $forceSessionId, $baseUrl=null);
 	}
 
 	if (isset($params['view'])) {
@@ -149,7 +149,8 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 	}
 
 	/* Build the short style URL */
-	if (isset($index) && isset($this->_shortUrls[$index]) && !isset($params['href'])) {
+	if (isset($index) && isset($this->_shortUrls[$index])
+		&& !isset($params['href']) && empty($baseUrl)) {
 	    /* Navigation */
 	    global $gallery;
 	    $currentView = $gallery->getCurrentView();
@@ -177,11 +178,11 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 		case 'path':
 		    if ((!isset($entity) && !$this->_loadEntity($itemId, $entity)) ||
 			    !GalleryUtilities::isA($entity, 'GalleryFileSystemEntity')) {
-			return parent::generateUrl($params, $forceSessionId);
+			return parent::generateUrl($params, $forceSessionId, $baseUrl=null);
 		    }
 		    list ($ret, $path) = $entity->fetchLogicalPath();
 		    if ($ret->isError()) {
-			return parent::generateUrl($params, $forceSessionId);
+			return parent::generateUrl($params, $forceSessionId, $baseUrl=null);
 		    }
 
 		    if (substr($url, -6) != '%path%') {
@@ -207,14 +208,14 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 		    }
 		    list ($ret, $pseudoFileName) = GalleryUtilities::getPseudoFileName($entity);
 		    if ($ret->isError()) {
-			return parent::generateUrl($params, $forceSessionId);
+			return parent::generateUrl($params, $forceSessionId, $baseUrl=null);
 		    }
 		    $url = str_replace('%fileName%', urlencode($pseudoFileName), $url);
 		    break;
 
 		case 'serialNumber':
 		    if (!isset($entity) && !$this->_loadEntity($itemId, $entity)) {
-			return parent::generateUrl($params, $forceSessionId);
+			return parent::generateUrl($params, $forceSessionId, $baseUrl=null);
 		    }
 		    $url = str_replace('%serialNumber%', $entity->getSerialNumber(), $url);
 		    unset($params['serialNumber']);
@@ -236,7 +237,7 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 	    return parent::generateUrl($params, $forceSessionId, $this->getCurrentUrlDir() . $url);
 	}
 
-	return parent::generateUrl($params, $forceSessionId);
+	return parent::generateUrl($params, $forceSessionId, $baseUrl=null);
     }
 
     /**

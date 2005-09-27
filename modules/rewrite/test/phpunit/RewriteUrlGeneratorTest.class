@@ -353,6 +353,13 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
 	}
     }
 
+    function testBaseUrl() {
+	$url = $this->_urlGenerator->generateUrl(array('view' => 'core.ShowItem'), null,
+	    'phpunit');
+
+	$this->assert(strpos($url, 'phpunit_test.php') !== false, $url);
+    }
+
     function testNavigationId() {
 	global $gallery;
 	$gallery->setCurrentView('php.Unit');

@@ -124,18 +124,18 @@ class SetupRewriteView extends GalleryView {
 	    $form['formName'] = 'SetupRewrite';
 	}
 
-	$baseUrl = parse_url($urlGenerator->generateUrl(
-	    array('href' => 'modules/rewrite/data/'), false));
+	$baseUrl = parse_url($urlGenerator->getCurrentUrlDir());
 	$SetupRewrite['customFile'] = dirname(__FILE__) . '/data/mod_rewrite/custom/.htaccess';
-	$SetupRewrite['customLine'] = 'RewriteBase ' . $baseUrl['path'] . 'mod_rewrite/custom/';
+	$SetupRewrite['customLine'] = 'RewriteBase ' . $baseUrl['path'] .
+	    'modules/rewrite/data/mod_rewrite/custom/';
 	$SetupRewrite['customFileNoOptions'] = dirname(__FILE__) .
 	    '/data/mod_rewrite_no_options/custom/.htaccess';
 	$SetupRewrite['customLineNoOptions'] = 'RewriteBase ' . $baseUrl['path'] .
-	    'mod_rewrite_no_options/custom/';
+	    'modules/rewrite/data/mod_rewrite_no_options/custom/';
 
-	if (!strncmp($baseUrl['path'], '/gallery2/', 10)) {
+	if ($baseUrl['path'] == '/gallery2') {
 	    $target = 'gallery2';
-	} else if (!strncmp($baseUrl['path'], '/gallery/', 9)) {
+	} else if ($baseUrl['path'] == '/gallery') {
 	    $target = 'gallery';
 	} else {
 	    $target = 'custom';
