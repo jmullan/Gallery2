@@ -51,9 +51,6 @@ class GalleryUserHelper_simple {
 	    return GalleryStatus::success();
 	}
 
-	/* Use the active user id */
-	$userId = $gallery->getActiveUserId();
-
 	list ($ret, $hasPermission) =
 	    GalleryUserHelper_simple::hasItemPermission($itemId, $permission);
 	if ($ret->isError()) {
