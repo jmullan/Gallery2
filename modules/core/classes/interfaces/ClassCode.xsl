@@ -3,24 +3,24 @@
                 version="1.0">
 
   <xsl:output method="text"/>
-  
+
   <xsl:template match="class">&lt;?php
 /*
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
@@ -66,8 +66,8 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
      * @return array memberName => memberValue
      */
     function getMemberData() {
-	$data = parent::getMemberData();<xsl:for-each select="member">
- 	<xsl:if test="linked">if (isset($this->_linkedEntity)) {
+	$data = parent::getMemberData();<xsl:for-each select="member"><xsl:if test="linked">
+        if (isset($this->_linkedEntity)) {
             $data['<xsl:value-of select="member-name"/>'] = isset($this->_linkedEntity->_<xsl:value-of select="member-name"/>) ? $this->_linkedEntity->_<xsl:value-of select="member-name"/> : null;
 	} else {
             $data['<xsl:value-of select="member-name"/>'] = isset($this->_<xsl:value-of select="member-name"/>) ? $this->_<xsl:value-of select="member-name"/> : null;
@@ -88,15 +88,15 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
 	return '<xsl:value-of select="class-name"/>';
     }
 
-    /** 
+    /**
      * Return the path to the PHP file for this class, relative to the gallery2 dir
-     * 
+     *
      * @return string path
-     */ 
-    function getClassFile() { 
-        return 'modules/' .  
-            basename(dirname(dirname(dirname(__FILE__)))) .  
-            '/classes/<xsl:value-of select="class-name"/>.class'; 
+     */
+    function getClassFile() {
+        return 'modules/' .
+            basename(dirname(dirname(dirname(__FILE__)))) .
+            '/classes/<xsl:value-of select="class-name"/>.class';
     }
     <xsl:apply-templates select="map" />
     <xsl:apply-templates select="member" />
@@ -106,14 +106,14 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
 
   <xsl:template match="map">
     /**
-     * Get meta information about this class' map 
+     * Get meta information about this class' map
      *
      * @return array map member => type
      */
     function getMapInfo() {
 	$info = array();<xsl:for-each select="member">
 	$info['members']['<xsl:value-of select="member-name"/>'] = STORAGE_TYPE_<xsl:value-of select="member-type"/>;</xsl:for-each>
-	return $info; 
+	return $info;
     }
 
     /**
@@ -258,5 +258,5 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
 	}
     }
   </xsl:template>
-      
+
 </xsl:stylesheet>
