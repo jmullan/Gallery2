@@ -41,7 +41,8 @@
  * @subpackage Classes
  */
 class QuotasMap extends QuotasMap_core {
-  
+
+ 
     /**
      * Return the name of this class with the proper mix of uppercase and
      * lowercase (get_class() always returns lowercase)
@@ -62,7 +63,6 @@ class QuotasMap extends QuotasMap_core {
             basename(dirname(dirname(dirname(__FILE__)))) .
             '/classes/QuotasMap.class';
     }
-    
     /**
      * Get meta information about this class' map
      *
@@ -84,7 +84,7 @@ class QuotasMap extends QuotasMap_core {
      */
     function addMapEntry($data) {
 	global $gallery;
-        foreach (array('userOrGroupId', 'quotaSize', ) as $key) {
+                foreach (array('userOrGroupId', 'quotaSize', ) as $key) {
 	    if (!array_key_exists($key, $data)) {
 	        return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
                                             'Missing parameter: ' . $key);
@@ -160,6 +160,6 @@ class QuotasMap extends QuotasMap_core {
 	}
 	return GalleryStatus::success();
     }
-  
+ 
 }
 ?>

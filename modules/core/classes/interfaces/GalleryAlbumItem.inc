@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
@@ -41,7 +41,7 @@
  * @subpackage Classes
  */
 class GalleryAlbumItem extends GalleryAlbumItem_core {
-  
+
     /**
      * Return meta information about the members of this class
      *
@@ -49,12 +49,12 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
      */
     function getPersistentMemberInfo() {
 	$meta = parent::getPersistentMemberInfo();
-	$meta['members']['theme'] = array('class' => 'GalleryAlbumItem', 'type' => STORAGE_TYPE_STRING);
-    
-	$meta['members']['orderBy'] = array('class' => 'GalleryAlbumItem', 'type' => STORAGE_TYPE_STRING);
-    
-	$meta['members']['orderDirection'] = array('class' => 'GalleryAlbumItem', 'type' => STORAGE_TYPE_STRING);
-    
+        $meta['members']['theme'] = array('class' => 'GalleryAlbumItem', 'type' => STORAGE_TYPE_STRING);
+
+        $meta['members']['orderBy'] = array('class' => 'GalleryAlbumItem', 'type' => STORAGE_TYPE_STRING);
+
+        $meta['members']['orderDirection'] = array('class' => 'GalleryAlbumItem', 'type' => STORAGE_TYPE_STRING);
+
 	return $meta;
     }
 
@@ -64,7 +64,7 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
      * @return array memberName => memberValue
      */
     function getMemberData() {
-	$data = parent::getMemberData();
+        $data = parent::getMemberData();
         $data['theme'] = isset($this->_theme) ? $this->_theme : null;
         $data['orderBy'] = isset($this->_orderBy) ? $this->_orderBy : null;
         $data['orderDirection'] = isset($this->_orderDirection) ? $this->_orderDirection : null;
@@ -81,17 +81,17 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
 	return 'GalleryAlbumItem';
     }
 
-    /** 
+    /**
      * Return the path to the PHP file for this class, relative to the gallery2 dir
-     * 
+     *
      * @return string path
-     */ 
-    function getClassFile() { 
-        return 'modules/' .  
-            basename(dirname(dirname(dirname(__FILE__)))) .  
-            '/classes/GalleryAlbumItem.class'; 
+     */
+    function getClassFile() {
+        return 'modules/' .
+            basename(dirname(dirname(dirname(__FILE__)))) .
+            '/classes/GalleryAlbumItem.class';
     }
-    
+
     /**
      * Get the value of theme
      *
@@ -121,7 +121,7 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
 	    $this->_theme = $value;
 	}
     }
-  
+
     /**
      * Get the value of orderBy
      *
@@ -151,7 +151,7 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
 	    $this->_orderBy = $value;
 	}
     }
-  
+
     /**
      * Get the value of orderDirection
      *
@@ -181,6 +181,6 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
 	    $this->_orderDirection = $value;
 	}
     }
-  
+ 
 }
 ?>

@@ -41,7 +41,7 @@
  * @subpackage Classes
  */
 class GalleryDataItem extends GalleryDataItem_core {
-  
+
     /**
      * Return meta information about the members of this class
      *
@@ -49,10 +49,10 @@ class GalleryDataItem extends GalleryDataItem_core {
      */
     function getPersistentMemberInfo() {
 	$meta = parent::getPersistentMemberInfo();
-	$meta['members']['mimeType'] = array('class' => 'GalleryDataItem', 'type' => STORAGE_TYPE_STRING);
-    
-	$meta['members']['size'] = array('class' => 'GalleryDataItem', 'type' => STORAGE_TYPE_INTEGER);
-    
+        $meta['members']['mimeType'] = array('class' => 'GalleryDataItem', 'type' => STORAGE_TYPE_STRING);
+
+        $meta['members']['size'] = array('class' => 'GalleryDataItem', 'type' => STORAGE_TYPE_INTEGER);
+
 	return $meta;
     }
 
@@ -62,19 +62,17 @@ class GalleryDataItem extends GalleryDataItem_core {
      * @return array memberName => memberValue
      */
     function getMemberData() {
-	$data = parent::getMemberData();
+        $data = parent::getMemberData();
         if (isset($this->_linkedEntity)) {
             $data['mimeType'] = isset($this->_linkedEntity->_mimeType) ? $this->_linkedEntity->_mimeType : null;
 	} else {
             $data['mimeType'] = isset($this->_mimeType) ? $this->_mimeType : null;
         }
-	
         if (isset($this->_linkedEntity)) {
             $data['size'] = isset($this->_linkedEntity->_size) ? $this->_linkedEntity->_size : null;
 	} else {
             $data['size'] = isset($this->_size) ? $this->_size : null;
         }
-	
 	return $data;
     }
   
@@ -98,7 +96,7 @@ class GalleryDataItem extends GalleryDataItem_core {
             basename(dirname(dirname(dirname(__FILE__)))) .
             '/classes/GalleryDataItem.class';
     }
-    
+
     /**
      * Get the value of mimeType
      *
@@ -109,7 +107,6 @@ class GalleryDataItem extends GalleryDataItem_core {
 	if (isset($linkedEntity)) {
 	    return $linkedEntity->getmimeType();
 	}
-	
 	if (!isset($this->_mimeType)) {
 	    return null;
 	}
@@ -133,7 +130,7 @@ class GalleryDataItem extends GalleryDataItem_core {
 	    $this->_mimeType = $value;
 	}
     }
-  
+
     /**
      * Get the value of size
      *
@@ -144,7 +141,6 @@ class GalleryDataItem extends GalleryDataItem_core {
 	if (isset($linkedEntity)) {
 	    return $linkedEntity->getsize();
 	}
-	
 	if (!isset($this->_size)) {
 	    return null;
 	}
@@ -157,14 +153,12 @@ class GalleryDataItem extends GalleryDataItem_core {
      * @param INTEGER the value
      */
     function setsize($value) {
-	/* Type cast the incoming value to be an integer */
-	if ($value != null) {
-	    $value = (int)$value;
-	}
-        
+        /* Type cast the incoming value to be an integer */
+        if ($value != null) {
+            $value = (int)$value;
+        }
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
-      
 	$orig = isset($this->_size) ? $this->_size : null;
 
         /* Only take action if the value actually changes */
@@ -173,6 +167,6 @@ class GalleryDataItem extends GalleryDataItem_core {
 	    $this->_size = $value;
 	}
     }
-  
+ 
 }
 ?>

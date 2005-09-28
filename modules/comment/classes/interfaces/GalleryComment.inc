@@ -41,7 +41,7 @@
  * @subpackage Classes
  */
 class GalleryComment extends GalleryComment_core {
-  
+
     /**
      * Return meta information about the members of this class
      *
@@ -49,16 +49,16 @@ class GalleryComment extends GalleryComment_core {
      */
     function getPersistentMemberInfo() {
 	$meta = parent::getPersistentMemberInfo();
-	$meta['members']['commenterId'] = array('class' => 'GalleryComment', 'type' => STORAGE_TYPE_INTEGER);
-    
-	$meta['members']['host'] = array('class' => 'GalleryComment', 'type' => STORAGE_TYPE_STRING);
-    
-	$meta['members']['subject'] = array('class' => 'GalleryComment', 'type' => STORAGE_TYPE_STRING);
-    
-	$meta['members']['comment'] = array('class' => 'GalleryComment', 'type' => STORAGE_TYPE_TEXT);
-    
-	$meta['members']['date'] = array('class' => 'GalleryComment', 'type' => STORAGE_TYPE_INTEGER);
-    
+        $meta['members']['commenterId'] = array('class' => 'GalleryComment', 'type' => STORAGE_TYPE_INTEGER);
+
+        $meta['members']['host'] = array('class' => 'GalleryComment', 'type' => STORAGE_TYPE_STRING);
+
+        $meta['members']['subject'] = array('class' => 'GalleryComment', 'type' => STORAGE_TYPE_STRING);
+
+        $meta['members']['comment'] = array('class' => 'GalleryComment', 'type' => STORAGE_TYPE_TEXT);
+
+        $meta['members']['date'] = array('class' => 'GalleryComment', 'type' => STORAGE_TYPE_INTEGER);
+
 	return $meta;
     }
 
@@ -68,7 +68,7 @@ class GalleryComment extends GalleryComment_core {
      * @return array memberName => memberValue
      */
     function getMemberData() {
-	$data = parent::getMemberData();
+        $data = parent::getMemberData();
         $data['commenterId'] = isset($this->_commenterId) ? $this->_commenterId : null;
         $data['host'] = isset($this->_host) ? $this->_host : null;
         $data['subject'] = isset($this->_subject) ? $this->_subject : null;
@@ -97,7 +97,7 @@ class GalleryComment extends GalleryComment_core {
             basename(dirname(dirname(dirname(__FILE__)))) .
             '/classes/GalleryComment.class';
     }
-    
+
     /**
      * Get the value of commenterId
      *
@@ -116,14 +116,12 @@ class GalleryComment extends GalleryComment_core {
      * @param INTEGER the value
      */
     function setcommenterId($value) {
-	/* Type cast the incoming value to be an integer */
-	if ($value != null) {
-	    $value = (int)$value;
-	}
-        
+        /* Type cast the incoming value to be an integer */
+        if ($value != null) {
+            $value = (int)$value;
+        }
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
-      
 	$orig = isset($this->_commenterId) ? $this->_commenterId : null;
 
         /* Only take action if the value actually changes */
@@ -132,7 +130,7 @@ class GalleryComment extends GalleryComment_core {
 	    $this->_commenterId = $value;
 	}
     }
-  
+
     /**
      * Get the value of host
      *
@@ -162,7 +160,7 @@ class GalleryComment extends GalleryComment_core {
 	    $this->_host = $value;
 	}
     }
-  
+
     /**
      * Get the value of subject
      *
@@ -192,7 +190,7 @@ class GalleryComment extends GalleryComment_core {
 	    $this->_subject = $value;
 	}
     }
-  
+
     /**
      * Get the value of comment
      *
@@ -213,7 +211,6 @@ class GalleryComment extends GalleryComment_core {
     function setcomment($value) {
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
-      
 	$orig = isset($this->_comment) ? $this->_comment : null;
 
         /* Only take action if the value actually changes */
@@ -222,7 +219,7 @@ class GalleryComment extends GalleryComment_core {
 	    $this->_comment = $value;
 	}
     }
-  
+
     /**
      * Get the value of date
      *
@@ -241,14 +238,12 @@ class GalleryComment extends GalleryComment_core {
      * @param INTEGER the value
      */
     function setdate($value) {
-	/* Type cast the incoming value to be an integer */
-	if ($value != null) {
-	    $value = (int)$value;
-	}
-        
+        /* Type cast the incoming value to be an integer */
+        if ($value != null) {
+            $value = (int)$value;
+        }
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
-      
 	$orig = isset($this->_date) ? $this->_date : null;
 
         /* Only take action if the value actually changes */
@@ -257,6 +252,6 @@ class GalleryComment extends GalleryComment_core {
 	    $this->_date = $value;
 	}
     }
-  
+ 
 }
 ?>

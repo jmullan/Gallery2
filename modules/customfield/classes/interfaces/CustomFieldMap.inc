@@ -41,7 +41,8 @@
  * @subpackage Classes
  */
 class CustomFieldMap extends CustomFieldMap_core {
-  
+
+ 
     /**
      * Return the name of this class with the proper mix of uppercase and
      * lowercase (get_class() always returns lowercase)
@@ -62,7 +63,6 @@ class CustomFieldMap extends CustomFieldMap_core {
             basename(dirname(dirname(dirname(__FILE__)))) .
             '/classes/CustomFieldMap.class';
     }
-    
     /**
      * Get meta information about this class' map
      *
@@ -87,7 +87,7 @@ class CustomFieldMap extends CustomFieldMap_core {
      */
     function addMapEntry($data) {
 	global $gallery;
-        foreach (array('itemId', 'field', 'value', 'setId', 'setType', ) as $key) {
+                foreach (array('itemId', 'field', 'value', 'setId', 'setType', ) as $key) {
 	    if (!array_key_exists($key, $data)) {
 	        return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
                                             'Missing parameter: ' . $key);
@@ -163,6 +163,6 @@ class CustomFieldMap extends CustomFieldMap_core {
 	}
 	return GalleryStatus::success();
     }
-  
+ 
 }
 ?>

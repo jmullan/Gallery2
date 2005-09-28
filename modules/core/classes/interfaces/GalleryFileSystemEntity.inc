@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
@@ -41,7 +41,7 @@
  * @subpackage Classes
  */
 class GalleryFileSystemEntity extends GalleryFileSystemEntity_core {
-  
+
     /**
      * Return meta information about the members of this class
      *
@@ -49,8 +49,8 @@ class GalleryFileSystemEntity extends GalleryFileSystemEntity_core {
      */
     function getPersistentMemberInfo() {
 	$meta = parent::getPersistentMemberInfo();
-	$meta['members']['pathComponent'] = array('class' => 'GalleryFileSystemEntity', 'type' => STORAGE_TYPE_STRING);
-    
+        $meta['members']['pathComponent'] = array('class' => 'GalleryFileSystemEntity', 'type' => STORAGE_TYPE_STRING);
+
 	return $meta;
     }
 
@@ -60,7 +60,7 @@ class GalleryFileSystemEntity extends GalleryFileSystemEntity_core {
      * @return array memberName => memberValue
      */
     function getMemberData() {
-	$data = parent::getMemberData();
+        $data = parent::getMemberData();
         $data['pathComponent'] = isset($this->_pathComponent) ? $this->_pathComponent : null;
 	return $data;
     }
@@ -75,17 +75,17 @@ class GalleryFileSystemEntity extends GalleryFileSystemEntity_core {
 	return 'GalleryFileSystemEntity';
     }
 
-    /** 
+    /**
      * Return the path to the PHP file for this class, relative to the gallery2 dir
-     * 
+     *
      * @return string path
-     */ 
-    function getClassFile() { 
-        return 'modules/' .  
-            basename(dirname(dirname(dirname(__FILE__)))) .  
-            '/classes/GalleryFileSystemEntity.class'; 
+     */
+    function getClassFile() {
+        return 'modules/' .
+            basename(dirname(dirname(dirname(__FILE__)))) .
+            '/classes/GalleryFileSystemEntity.class';
     }
-    
+
     /**
      * Get the value of pathComponent
      *
@@ -115,6 +115,6 @@ class GalleryFileSystemEntity extends GalleryFileSystemEntity_core {
 	    $this->_pathComponent = $value;
 	}
     }
-  
+ 
 }
 ?>

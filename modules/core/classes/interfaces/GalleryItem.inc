@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
@@ -41,7 +41,7 @@
  * @subpackage Classes
  */
 class GalleryItem extends GalleryItem_core {
-  
+
     /**
      * Return meta information about the members of this class
      *
@@ -49,22 +49,22 @@ class GalleryItem extends GalleryItem_core {
      */
     function getPersistentMemberInfo() {
 	$meta = parent::getPersistentMemberInfo();
-	$meta['members']['canContainChildren'] = array('class' => 'GalleryItem', 'type' => STORAGE_TYPE_BOOLEAN);
-    
-	$meta['members']['description'] = array('class' => 'GalleryItem', 'type' => STORAGE_TYPE_TEXT);
-    
-	$meta['members']['keywords'] = array('class' => 'GalleryItem', 'type' => STORAGE_TYPE_STRING);
-    
-	$meta['members']['ownerId'] = array('class' => 'GalleryItem', 'type' => STORAGE_TYPE_INTEGER);
-    
-	$meta['members']['summary'] = array('class' => 'GalleryItem', 'type' => STORAGE_TYPE_STRING);
-    
-	$meta['members']['title'] = array('class' => 'GalleryItem', 'type' => STORAGE_TYPE_STRING);
-    
-	$meta['members']['viewedSinceTimestamp'] = array('class' => 'GalleryItem', 'type' => STORAGE_TYPE_INTEGER);
-    
-	$meta['members']['originationTimestamp'] = array('class' => 'GalleryItem', 'type' => STORAGE_TYPE_INTEGER);
-    
+        $meta['members']['canContainChildren'] = array('class' => 'GalleryItem', 'type' => STORAGE_TYPE_BOOLEAN);
+
+        $meta['members']['description'] = array('class' => 'GalleryItem', 'type' => STORAGE_TYPE_TEXT);
+
+        $meta['members']['keywords'] = array('class' => 'GalleryItem', 'type' => STORAGE_TYPE_STRING);
+
+        $meta['members']['ownerId'] = array('class' => 'GalleryItem', 'type' => STORAGE_TYPE_INTEGER);
+
+        $meta['members']['summary'] = array('class' => 'GalleryItem', 'type' => STORAGE_TYPE_STRING);
+
+        $meta['members']['title'] = array('class' => 'GalleryItem', 'type' => STORAGE_TYPE_STRING);
+
+        $meta['members']['viewedSinceTimestamp'] = array('class' => 'GalleryItem', 'type' => STORAGE_TYPE_INTEGER);
+
+        $meta['members']['originationTimestamp'] = array('class' => 'GalleryItem', 'type' => STORAGE_TYPE_INTEGER);
+
 	return $meta;
     }
 
@@ -74,7 +74,7 @@ class GalleryItem extends GalleryItem_core {
      * @return array memberName => memberValue
      */
     function getMemberData() {
-	$data = parent::getMemberData();
+        $data = parent::getMemberData();
         $data['canContainChildren'] = isset($this->_canContainChildren) ? $this->_canContainChildren : null;
         $data['description'] = isset($this->_description) ? $this->_description : null;
         $data['keywords'] = isset($this->_keywords) ? $this->_keywords : null;
@@ -96,17 +96,17 @@ class GalleryItem extends GalleryItem_core {
 	return 'GalleryItem';
     }
 
-    /** 
+    /**
      * Return the path to the PHP file for this class, relative to the gallery2 dir
-     * 
+     *
      * @return string path
-     */ 
-    function getClassFile() { 
-        return 'modules/' .  
-            basename(dirname(dirname(dirname(__FILE__)))) .  
-            '/classes/GalleryItem.class'; 
+     */
+    function getClassFile() {
+        return 'modules/' .
+            basename(dirname(dirname(dirname(__FILE__)))) .
+            '/classes/GalleryItem.class';
     }
-    
+
     /**
      * Get the value of canContainChildren
      *
@@ -127,10 +127,8 @@ class GalleryItem extends GalleryItem_core {
     function setcanContainChildren($value) {
 	/* Set the incoming value to be a 1 or 0 */
 	$value = empty($value) ? 0 : 1;
-        
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
-      
 	$orig = isset($this->_canContainChildren) ? $this->_canContainChildren : null;
 
         /* Only take action if the value actually changes */
@@ -139,7 +137,7 @@ class GalleryItem extends GalleryItem_core {
 	    $this->_canContainChildren = $value;
 	}
     }
-  
+
     /**
      * Get the value of description
      *
@@ -160,7 +158,6 @@ class GalleryItem extends GalleryItem_core {
     function setdescription($value) {
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
-      
 	$orig = isset($this->_description) ? $this->_description : null;
 
         /* Only take action if the value actually changes */
@@ -169,7 +166,7 @@ class GalleryItem extends GalleryItem_core {
 	    $this->_description = $value;
 	}
     }
-  
+
     /**
      * Get the value of keywords
      *
@@ -199,7 +196,7 @@ class GalleryItem extends GalleryItem_core {
 	    $this->_keywords = $value;
 	}
     }
-  
+
     /**
      * Get the value of ownerId
      *
@@ -218,14 +215,12 @@ class GalleryItem extends GalleryItem_core {
      * @param INTEGER the value
      */
     function setownerId($value) {
-	/* Type cast the incoming value to be an integer */
-	if ($value != null) {
-	    $value = (int)$value;
-	}
-        
+        /* Type cast the incoming value to be an integer */
+        if ($value != null) {
+            $value = (int)$value;
+        }
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
-      
 	$orig = isset($this->_ownerId) ? $this->_ownerId : null;
 
         /* Only take action if the value actually changes */
@@ -234,7 +229,7 @@ class GalleryItem extends GalleryItem_core {
 	    $this->_ownerId = $value;
 	}
     }
-  
+
     /**
      * Get the value of summary
      *
@@ -264,7 +259,7 @@ class GalleryItem extends GalleryItem_core {
 	    $this->_summary = $value;
 	}
     }
-  
+
     /**
      * Get the value of title
      *
@@ -294,7 +289,7 @@ class GalleryItem extends GalleryItem_core {
 	    $this->_title = $value;
 	}
     }
-  
+
     /**
      * Get the value of viewedSinceTimestamp
      *
@@ -313,14 +308,12 @@ class GalleryItem extends GalleryItem_core {
      * @param INTEGER the value
      */
     function setviewedSinceTimestamp($value) {
-	/* Type cast the incoming value to be an integer */
-	if ($value != null) {
-	    $value = (int)$value;
-	}
-        
+        /* Type cast the incoming value to be an integer */
+        if ($value != null) {
+            $value = (int)$value;
+        }
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
-      
 	$orig = isset($this->_viewedSinceTimestamp) ? $this->_viewedSinceTimestamp : null;
 
         /* Only take action if the value actually changes */
@@ -329,7 +322,7 @@ class GalleryItem extends GalleryItem_core {
 	    $this->_viewedSinceTimestamp = $value;
 	}
     }
-  
+
     /**
      * Get the value of originationTimestamp
      *
@@ -348,14 +341,12 @@ class GalleryItem extends GalleryItem_core {
      * @param INTEGER the value
      */
     function setoriginationTimestamp($value) {
-	/* Type cast the incoming value to be an integer */
-	if ($value != null) {
-	    $value = (int)$value;
-	}
-        
+        /* Type cast the incoming value to be an integer */
+        if ($value != null) {
+            $value = (int)$value;
+        }
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
-      
 	$orig = isset($this->_originationTimestamp) ? $this->_originationTimestamp : null;
 
         /* Only take action if the value actually changes */
@@ -364,6 +355,6 @@ class GalleryItem extends GalleryItem_core {
 	    $this->_originationTimestamp = $value;
 	}
     }
-  
+ 
 }
 ?>

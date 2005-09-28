@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
@@ -41,7 +41,7 @@
  * @subpackage Classes
  */
 class GalleryMovieItem extends GalleryMovieItem_core {
-  
+
     /**
      * Return meta information about the members of this class
      *
@@ -49,12 +49,12 @@ class GalleryMovieItem extends GalleryMovieItem_core {
      */
     function getPersistentMemberInfo() {
 	$meta = parent::getPersistentMemberInfo();
-	$meta['members']['width'] = array('class' => 'GalleryMovieItem', 'type' => STORAGE_TYPE_INTEGER);
-    
-	$meta['members']['height'] = array('class' => 'GalleryMovieItem', 'type' => STORAGE_TYPE_INTEGER);
-    
-	$meta['members']['duration'] = array('class' => 'GalleryMovieItem', 'type' => STORAGE_TYPE_INTEGER);
-    
+        $meta['members']['width'] = array('class' => 'GalleryMovieItem', 'type' => STORAGE_TYPE_INTEGER);
+
+        $meta['members']['height'] = array('class' => 'GalleryMovieItem', 'type' => STORAGE_TYPE_INTEGER);
+
+        $meta['members']['duration'] = array('class' => 'GalleryMovieItem', 'type' => STORAGE_TYPE_INTEGER);
+
 	return $meta;
     }
 
@@ -64,22 +64,22 @@ class GalleryMovieItem extends GalleryMovieItem_core {
      * @return array memberName => memberValue
      */
     function getMemberData() {
-	$data = parent::getMemberData();if (isset($this->_linkedEntity)) {
+        $data = parent::getMemberData();
+        if (isset($this->_linkedEntity)) {
             $data['width'] = isset($this->_linkedEntity->_width) ? $this->_linkedEntity->_width : null;
 	} else {
             $data['width'] = isset($this->_width) ? $this->_width : null;
         }
-	if (isset($this->_linkedEntity)) {
+        if (isset($this->_linkedEntity)) {
             $data['height'] = isset($this->_linkedEntity->_height) ? $this->_linkedEntity->_height : null;
 	} else {
             $data['height'] = isset($this->_height) ? $this->_height : null;
         }
-	if (isset($this->_linkedEntity)) {
+        if (isset($this->_linkedEntity)) {
             $data['duration'] = isset($this->_linkedEntity->_duration) ? $this->_linkedEntity->_duration : null;
 	} else {
             $data['duration'] = isset($this->_duration) ? $this->_duration : null;
         }
-	
 	return $data;
     }
   
@@ -93,17 +93,17 @@ class GalleryMovieItem extends GalleryMovieItem_core {
 	return 'GalleryMovieItem';
     }
 
-    /** 
+    /**
      * Return the path to the PHP file for this class, relative to the gallery2 dir
-     * 
+     *
      * @return string path
-     */ 
-    function getClassFile() { 
-        return 'modules/' .  
-            basename(dirname(dirname(dirname(__FILE__)))) .  
-            '/classes/GalleryMovieItem.class'; 
+     */
+    function getClassFile() {
+        return 'modules/' .
+            basename(dirname(dirname(dirname(__FILE__)))) .
+            '/classes/GalleryMovieItem.class';
     }
-    
+
     /**
      * Get the value of width
      *
@@ -114,7 +114,6 @@ class GalleryMovieItem extends GalleryMovieItem_core {
 	if (isset($linkedEntity)) {
 	    return $linkedEntity->getwidth();
 	}
-	
 	if (!isset($this->_width)) {
 	    return null;
 	}
@@ -127,14 +126,12 @@ class GalleryMovieItem extends GalleryMovieItem_core {
      * @param INTEGER the value
      */
     function setwidth($value) {
-	/* Type cast the incoming value to be an integer */
-	if ($value != null) {
-	    $value = (int)$value;
-	}
-        
+        /* Type cast the incoming value to be an integer */
+        if ($value != null) {
+            $value = (int)$value;
+        }
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
-      
 	$orig = isset($this->_width) ? $this->_width : null;
 
         /* Only take action if the value actually changes */
@@ -143,7 +140,7 @@ class GalleryMovieItem extends GalleryMovieItem_core {
 	    $this->_width = $value;
 	}
     }
-  
+
     /**
      * Get the value of height
      *
@@ -154,7 +151,6 @@ class GalleryMovieItem extends GalleryMovieItem_core {
 	if (isset($linkedEntity)) {
 	    return $linkedEntity->getheight();
 	}
-	
 	if (!isset($this->_height)) {
 	    return null;
 	}
@@ -167,14 +163,12 @@ class GalleryMovieItem extends GalleryMovieItem_core {
      * @param INTEGER the value
      */
     function setheight($value) {
-	/* Type cast the incoming value to be an integer */
-	if ($value != null) {
-	    $value = (int)$value;
-	}
-        
+        /* Type cast the incoming value to be an integer */
+        if ($value != null) {
+            $value = (int)$value;
+        }
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
-      
 	$orig = isset($this->_height) ? $this->_height : null;
 
         /* Only take action if the value actually changes */
@@ -183,7 +177,7 @@ class GalleryMovieItem extends GalleryMovieItem_core {
 	    $this->_height = $value;
 	}
     }
-  
+
     /**
      * Get the value of duration
      *
@@ -194,7 +188,6 @@ class GalleryMovieItem extends GalleryMovieItem_core {
 	if (isset($linkedEntity)) {
 	    return $linkedEntity->getduration();
 	}
-	
 	if (!isset($this->_duration)) {
 	    return null;
 	}
@@ -207,14 +200,12 @@ class GalleryMovieItem extends GalleryMovieItem_core {
      * @param INTEGER the value
      */
     function setduration($value) {
-	/* Type cast the incoming value to be an integer */
-	if ($value != null) {
-	    $value = (int)$value;
-	}
-        
+        /* Type cast the incoming value to be an integer */
+        if ($value != null) {
+            $value = (int)$value;
+        }
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
-      
 	$orig = isset($this->_duration) ? $this->_duration : null;
 
         /* Only take action if the value actually changes */
@@ -223,6 +214,6 @@ class GalleryMovieItem extends GalleryMovieItem_core {
 	    $this->_duration = $value;
 	}
     }
-  
+ 
 }
 ?>

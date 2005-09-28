@@ -1,32 +1,31 @@
 GALLERYDIR ?= ../../../..
 TOOLDIR ?= $(GALLERYDIR)/lib/tools
 CLASSDIR ?= ..
-XSLFILE ?= $(GALLERYDIR)/modules/core/classes/interfaces/ClassCode.xsl
 PACKAGE ?= GalleryCore
 G2_TMPDIR ?= tmp
 
 include $(TOOLDIR)/GNUmakefile.inc
 
+PWD	    = $(pwd)
 CLASSFILES  = $(wildcard $(CLASSDIR)/*.class)
-XMLFILES    = $(patsubst $(CLASSDIR)/%.class,%.xml,$(CLASSFILES))
+XMLFILES    = $(patsubst $(CLASSDIR)/%.class,$(G2_TMPDIR)/%.xml,$(CLASSFILES))
 INCFILES    = $(patsubst %.xml,%.inc,$(XMLFILES))
 
-inc: $(G2_TMPDIR) $(INCFILES)
+all: $(G2_TMPDIR) inc
+
+inc: $(XMLFILES)
+	php $(TOOLDIR)/bin/generate-interfaces.php $(PACKAGE)
 
 $(G2_TMPDIR):
 	mkdir $(G2_TMPDIR)
-
-%.inc: $(G2_TMPDIR)/%.xml $(XSLFILE)
-	if [ -f $< ]; then $(SAXON) $< $(XSLFILE) \
-		| perl -pe 's/\@\@package\@\@/$(PACKAGE)/' \
-		> $@; fi
 
 $(G2_TMPDIR)/%.xml: $(CLASSDIR)/%.class
 	perl $(TOOLDIR)/bin/extractClassXml.pl \
 		--dtd=../$(TOOLDIR)/dtd/GalleryClass2.0.dtd \
 		--stub-ok \
+	        --quiet \
 		--out $@ \
-		$^ 
+		$^
 	if [ -f $@ ]; then $(VALIDATOR) $@; fi
 
 clean:

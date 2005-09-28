@@ -41,7 +41,7 @@
  * @subpackage Classes
  */
 class GalleryAnimationItem extends GalleryAnimationItem_core {
-  
+
     /**
      * Return meta information about the members of this class
      *
@@ -49,10 +49,10 @@ class GalleryAnimationItem extends GalleryAnimationItem_core {
      */
     function getPersistentMemberInfo() {
 	$meta = parent::getPersistentMemberInfo();
-	$meta['members']['width'] = array('class' => 'GalleryAnimationItem', 'type' => STORAGE_TYPE_INTEGER);
-    
-	$meta['members']['height'] = array('class' => 'GalleryAnimationItem', 'type' => STORAGE_TYPE_INTEGER);
-    
+        $meta['members']['width'] = array('class' => 'GalleryAnimationItem', 'type' => STORAGE_TYPE_INTEGER);
+
+        $meta['members']['height'] = array('class' => 'GalleryAnimationItem', 'type' => STORAGE_TYPE_INTEGER);
+
 	return $meta;
     }
 
@@ -62,19 +62,17 @@ class GalleryAnimationItem extends GalleryAnimationItem_core {
      * @return array memberName => memberValue
      */
     function getMemberData() {
-	$data = parent::getMemberData();
+        $data = parent::getMemberData();
         if (isset($this->_linkedEntity)) {
             $data['width'] = isset($this->_linkedEntity->_width) ? $this->_linkedEntity->_width : null;
 	} else {
             $data['width'] = isset($this->_width) ? $this->_width : null;
         }
-	
         if (isset($this->_linkedEntity)) {
             $data['height'] = isset($this->_linkedEntity->_height) ? $this->_linkedEntity->_height : null;
 	} else {
             $data['height'] = isset($this->_height) ? $this->_height : null;
         }
-	
 	return $data;
     }
   
@@ -98,7 +96,7 @@ class GalleryAnimationItem extends GalleryAnimationItem_core {
             basename(dirname(dirname(dirname(__FILE__)))) .
             '/classes/GalleryAnimationItem.class';
     }
-    
+
     /**
      * Get the value of width
      *
@@ -109,7 +107,6 @@ class GalleryAnimationItem extends GalleryAnimationItem_core {
 	if (isset($linkedEntity)) {
 	    return $linkedEntity->getwidth();
 	}
-	
 	if (!isset($this->_width)) {
 	    return null;
 	}
@@ -122,14 +119,12 @@ class GalleryAnimationItem extends GalleryAnimationItem_core {
      * @param INTEGER the value
      */
     function setwidth($value) {
-	/* Type cast the incoming value to be an integer */
-	if ($value != null) {
-	    $value = (int)$value;
-	}
-        
+        /* Type cast the incoming value to be an integer */
+        if ($value != null) {
+            $value = (int)$value;
+        }
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
-      
 	$orig = isset($this->_width) ? $this->_width : null;
 
         /* Only take action if the value actually changes */
@@ -138,7 +133,7 @@ class GalleryAnimationItem extends GalleryAnimationItem_core {
 	    $this->_width = $value;
 	}
     }
-  
+
     /**
      * Get the value of height
      *
@@ -149,7 +144,6 @@ class GalleryAnimationItem extends GalleryAnimationItem_core {
 	if (isset($linkedEntity)) {
 	    return $linkedEntity->getheight();
 	}
-	
 	if (!isset($this->_height)) {
 	    return null;
 	}
@@ -162,14 +156,12 @@ class GalleryAnimationItem extends GalleryAnimationItem_core {
      * @param INTEGER the value
      */
     function setheight($value) {
-	/* Type cast the incoming value to be an integer */
-	if ($value != null) {
-	    $value = (int)$value;
-	}
-        
+        /* Type cast the incoming value to be an integer */
+        if ($value != null) {
+            $value = (int)$value;
+        }
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
-      
 	$orig = isset($this->_height) ? $this->_height : null;
 
         /* Only take action if the value actually changes */
@@ -178,6 +170,6 @@ class GalleryAnimationItem extends GalleryAnimationItem_core {
 	    $this->_height = $value;
 	}
     }
-  
+ 
 }
 ?>
