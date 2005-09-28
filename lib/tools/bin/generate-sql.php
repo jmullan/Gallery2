@@ -24,6 +24,8 @@ if (!empty($_SERVER['SERVER_NAME'])) {
     exit(1);
 }
 
+require_once(dirname(__FILE__) . '/XmlParser.inc');
+
 foreach (glob('../xml-out/*.xml') as $xmlFile) {
     $p =& new XmlParser();
     $root = $p->parse($xmlFile);
@@ -823,66 +825,6 @@ class OracleGenerator extends BaseGenerator {
 
     function getDbType() {
 	return 'oracle';
-    }
-}
-
-/*
- * XmlParser class adapted from a version by Monte Ohrt (monte at NOT-SP-AM dot ohrt dot com)
- * published at http://php.net/xml
- */
-class XmlParser {
-    var $_xmlObject = null;
-    var $_output = array();
-
-    function XmlParser() {
-	$this->_xmlObject = xml_parser_create();
-	xml_set_object($this->_xmlObject, $this);
-	xml_set_character_data_handler($this->_xmlObject, 'dataHandler');
-	xml_set_element_handler($this->_xmlObject, 'startHandler', 'endHandler');
-    }
-
-    function parse($path ){
-	if (!($fp = fopen($path, 'r'))) {
-	    die('Cannot open XML data file: ' . $path);
-	}
-
-	while ($data = fread($fp, 4096)) {
-	    if (!xml_parse($this->_xmlObject, $data, feof($fp))) {
-		die(sprintf('XML error: %s at line %d',
-			    xml_error_string(xml_get_error_code($this->_xmlObject)),
-			    xml_get_current_line_number($this->_xmlObject)));
-		xml_parser_free($this->_xmlObject);
-	    }
-	}
-
-	return $this->_output;
-    }
-
-    function startHandler($parser, $name, $attribs) {
-	$content = array('name' => $name);
-	if (!empty($attribs)) {
-	    $content['attrs'] = $attribs;
-	}
-	array_push($this->_output, $content);
-    }
-
-    function dataHandler($parser, $data){
-	if (!empty($data)) {
-	    $outputIndex = count($this->_output) - 1;
-	    $this->_output[$outputIndex]['content'] = $data;
-	}
-    }
-
-    function endHandler($parser, $name){
-	if (count($this->_output) > 1) {
-	    $data = array_pop($this->_output);
-	    $outputIndex = count($this->_output) - 1;
-	    $this->_output[$outputIndex]['child'][] = $data;
-	}
-    }
-
-    function cleanUp() {
-	xml_parser_free($this->_xmlObject);
     }
 }
 ?>
