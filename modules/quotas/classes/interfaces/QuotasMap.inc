@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 /**
- * @package Comment
+ * @package Quotas
  * @subpackage ClassInterfaces
  * @version $Revision$ $Date$
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -37,7 +37,7 @@
  * them in the core class.  If you want to change the format of this
  * file, then you should edit the XSL template.
  *
- * @package Comment
+ * @package Quotas
  * @subpackage Classes
  */
 class QuotasMap extends QuotasMap_core {
