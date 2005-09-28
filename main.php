@@ -316,6 +316,7 @@ function _GalleryMain($embedded=false) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $data = $theme->splitHtml($html, $results);
+	    $data['themeData'] =& $template->getVariableByReference('theme');
 	    $data['isDone'] = false;
 	} else {
 	    $ret = $template->display($templatePath);
