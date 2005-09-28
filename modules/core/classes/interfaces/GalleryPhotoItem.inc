@@ -35,7 +35,7 @@
  * it by hand, as your changes will be lost next time this file is
  * rebuilt.  If you want to add more getters/setters, you should add
  * them in the core class.  If you want to change the format of this
- * file, then you should edit the XSL template.
+ * file, then you should edit lib/tools/bin/interface.tpl.
  *
  * @package GalleryCore
  * @subpackage Classes
@@ -50,9 +50,7 @@ class GalleryPhotoItem extends GalleryPhotoItem_core {
     function getPersistentMemberInfo() {
 	$meta = parent::getPersistentMemberInfo();
         $meta['members']['width'] = array('class' => 'GalleryPhotoItem', 'type' => STORAGE_TYPE_INTEGER);
-
         $meta['members']['height'] = array('class' => 'GalleryPhotoItem', 'type' => STORAGE_TYPE_INTEGER);
-
 	return $meta;
     }
 
@@ -92,20 +90,18 @@ class GalleryPhotoItem extends GalleryPhotoItem_core {
      * @return string path
      */
     function getClassFile() {
-        return 'modules/' .
-            basename(dirname(dirname(dirname(__FILE__)))) .
-            '/classes/GalleryPhotoItem.class';
+        return 'modules/' . basename(dirname(dirname(dirname(__FILE__)))) . '/classes/GalleryPhotoItem.class';
     }
 
     /**
      * Get the value of width
      *
-     * @return INTEGER the value
+     * @return integer the value
      */
-    function getwidth() {
+    function getWidth() {
 	$linkedEntity = $this->getLinkedEntity();
 	if (isset($linkedEntity)) {
-	    return $linkedEntity->getwidth();
+	    return $linkedEntity->getWidth();
 	}
 	if (!isset($this->_width)) {
 	    return null;
@@ -116,13 +112,14 @@ class GalleryPhotoItem extends GalleryPhotoItem_core {
     /**
      * Set the value of width
      *
-     * @param INTEGER the value
+     * @param integer the value
      */
-    function setwidth($value) {
+    function setWidth($value) {
         /* Type cast the incoming value to be an integer */
         if ($value != null) {
             $value = (int)$value;
         }
+
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
 	$orig = isset($this->_width) ? $this->_width : null;
@@ -137,12 +134,12 @@ class GalleryPhotoItem extends GalleryPhotoItem_core {
     /**
      * Get the value of height
      *
-     * @return INTEGER the value
+     * @return integer the value
      */
-    function getheight() {
+    function getHeight() {
 	$linkedEntity = $this->getLinkedEntity();
 	if (isset($linkedEntity)) {
-	    return $linkedEntity->getheight();
+	    return $linkedEntity->getHeight();
 	}
 	if (!isset($this->_height)) {
 	    return null;
@@ -153,13 +150,14 @@ class GalleryPhotoItem extends GalleryPhotoItem_core {
     /**
      * Set the value of height
      *
-     * @param INTEGER the value
+     * @param integer the value
      */
-    function setheight($value) {
+    function setHeight($value) {
         /* Type cast the incoming value to be an integer */
         if ($value != null) {
             $value = (int)$value;
         }
+
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
 	$orig = isset($this->_height) ? $this->_height : null;

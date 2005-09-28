@@ -35,7 +35,7 @@
  * it by hand, as your changes will be lost next time this file is
  * rebuilt.  If you want to add more getters/setters, you should add
  * them in the core class.  If you want to change the format of this
- * file, then you should edit the XSL template.
+ * file, then you should edit lib/tools/bin/interface.tpl.
  *
  * @package GalleryCore
  * @subpackage Classes
@@ -50,11 +50,8 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
     function getPersistentMemberInfo() {
 	$meta = parent::getPersistentMemberInfo();
         $meta['members']['theme'] = array('class' => 'GalleryAlbumItem', 'type' => STORAGE_TYPE_STRING);
-
         $meta['members']['orderBy'] = array('class' => 'GalleryAlbumItem', 'type' => STORAGE_TYPE_STRING);
-
         $meta['members']['orderDirection'] = array('class' => 'GalleryAlbumItem', 'type' => STORAGE_TYPE_STRING);
-
 	return $meta;
     }
 
@@ -87,17 +84,15 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
      * @return string path
      */
     function getClassFile() {
-        return 'modules/' .
-            basename(dirname(dirname(dirname(__FILE__)))) .
-            '/classes/GalleryAlbumItem.class';
+        return 'modules/' . basename(dirname(dirname(dirname(__FILE__)))) . '/classes/GalleryAlbumItem.class';
     }
 
     /**
      * Get the value of theme
      *
-     * @return STRING the value
+     * @return string the value
      */
-    function gettheme() {
+    function getTheme() {
 	if (!isset($this->_theme)) {
 	    return null;
 	}
@@ -107,9 +102,9 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
     /**
      * Set the value of theme
      *
-     * @param STRING the value
+     * @param string the value
      */
-    function settheme($value) {
+    function setTheme($value) {
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
         $value = $this->_truncateString($value, 32);
@@ -125,9 +120,9 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
     /**
      * Get the value of orderBy
      *
-     * @return STRING the value
+     * @return string the value
      */
-    function getorderBy() {
+    function getOrderBy() {
 	if (!isset($this->_orderBy)) {
 	    return null;
 	}
@@ -137,9 +132,9 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
     /**
      * Set the value of orderBy
      *
-     * @param STRING the value
+     * @param string the value
      */
-    function setorderBy($value) {
+    function setOrderBy($value) {
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
         $value = $this->_truncateString($value, 128);
@@ -155,9 +150,9 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
     /**
      * Get the value of orderDirection
      *
-     * @return STRING the value
+     * @return string the value
      */
-    function getorderDirection() {
+    function getOrderDirection() {
 	if (!isset($this->_orderDirection)) {
 	    return null;
 	}
@@ -167,9 +162,9 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
     /**
      * Set the value of orderDirection
      *
-     * @param STRING the value
+     * @param string the value
      */
-    function setorderDirection($value) {
+    function setOrderDirection($value) {
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
         $value = $this->_truncateString($value, 32);

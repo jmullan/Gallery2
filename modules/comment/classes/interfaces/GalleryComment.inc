@@ -35,7 +35,7 @@
  * it by hand, as your changes will be lost next time this file is
  * rebuilt.  If you want to add more getters/setters, you should add
  * them in the core class.  If you want to change the format of this
- * file, then you should edit the XSL template.
+ * file, then you should edit lib/tools/bin/interface.tpl.
  *
  * @package Comment
  * @subpackage Classes
@@ -50,15 +50,10 @@ class GalleryComment extends GalleryComment_core {
     function getPersistentMemberInfo() {
 	$meta = parent::getPersistentMemberInfo();
         $meta['members']['commenterId'] = array('class' => 'GalleryComment', 'type' => STORAGE_TYPE_INTEGER);
-
         $meta['members']['host'] = array('class' => 'GalleryComment', 'type' => STORAGE_TYPE_STRING);
-
         $meta['members']['subject'] = array('class' => 'GalleryComment', 'type' => STORAGE_TYPE_STRING);
-
         $meta['members']['comment'] = array('class' => 'GalleryComment', 'type' => STORAGE_TYPE_TEXT);
-
         $meta['members']['date'] = array('class' => 'GalleryComment', 'type' => STORAGE_TYPE_INTEGER);
-
 	return $meta;
     }
 
@@ -93,17 +88,15 @@ class GalleryComment extends GalleryComment_core {
      * @return string path
      */
     function getClassFile() {
-        return 'modules/' .
-            basename(dirname(dirname(dirname(__FILE__)))) .
-            '/classes/GalleryComment.class';
+        return 'modules/' . basename(dirname(dirname(dirname(__FILE__)))) . '/classes/GalleryComment.class';
     }
 
     /**
      * Get the value of commenterId
      *
-     * @return INTEGER the value
+     * @return integer the value
      */
-    function getcommenterId() {
+    function getCommenterId() {
 	if (!isset($this->_commenterId)) {
 	    return null;
 	}
@@ -113,13 +106,14 @@ class GalleryComment extends GalleryComment_core {
     /**
      * Set the value of commenterId
      *
-     * @param INTEGER the value
+     * @param integer the value
      */
-    function setcommenterId($value) {
+    function setCommenterId($value) {
         /* Type cast the incoming value to be an integer */
         if ($value != null) {
             $value = (int)$value;
         }
+
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
 	$orig = isset($this->_commenterId) ? $this->_commenterId : null;
@@ -134,9 +128,9 @@ class GalleryComment extends GalleryComment_core {
     /**
      * Get the value of host
      *
-     * @return STRING the value
+     * @return string the value
      */
-    function gethost() {
+    function getHost() {
 	if (!isset($this->_host)) {
 	    return null;
 	}
@@ -146,9 +140,9 @@ class GalleryComment extends GalleryComment_core {
     /**
      * Set the value of host
      *
-     * @param STRING the value
+     * @param string the value
      */
-    function sethost($value) {
+    function setHost($value) {
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
         $value = $this->_truncateString($value, 128);
@@ -164,9 +158,9 @@ class GalleryComment extends GalleryComment_core {
     /**
      * Get the value of subject
      *
-     * @return STRING the value
+     * @return string the value
      */
-    function getsubject() {
+    function getSubject() {
 	if (!isset($this->_subject)) {
 	    return null;
 	}
@@ -176,9 +170,9 @@ class GalleryComment extends GalleryComment_core {
     /**
      * Set the value of subject
      *
-     * @param STRING the value
+     * @param string the value
      */
-    function setsubject($value) {
+    function setSubject($value) {
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
         $value = $this->_truncateString($value, 128);
@@ -194,9 +188,9 @@ class GalleryComment extends GalleryComment_core {
     /**
      * Get the value of comment
      *
-     * @return TEXT the value
+     * @return text the value
      */
-    function getcomment() {
+    function getComment() {
 	if (!isset($this->_comment)) {
 	    return null;
 	}
@@ -206,9 +200,9 @@ class GalleryComment extends GalleryComment_core {
     /**
      * Set the value of comment
      *
-     * @param TEXT the value
+     * @param text the value
      */
-    function setcomment($value) {
+    function setComment($value) {
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
 	$orig = isset($this->_comment) ? $this->_comment : null;
@@ -223,9 +217,9 @@ class GalleryComment extends GalleryComment_core {
     /**
      * Get the value of date
      *
-     * @return INTEGER the value
+     * @return integer the value
      */
-    function getdate() {
+    function getDate() {
 	if (!isset($this->_date)) {
 	    return null;
 	}
@@ -235,13 +229,14 @@ class GalleryComment extends GalleryComment_core {
     /**
      * Set the value of date
      *
-     * @param INTEGER the value
+     * @param integer the value
      */
-    function setdate($value) {
+    function setDate($value) {
         /* Type cast the incoming value to be an integer */
         if ($value != null) {
             $value = (int)$value;
         }
+
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
 	$orig = isset($this->_date) ? $this->_date : null;

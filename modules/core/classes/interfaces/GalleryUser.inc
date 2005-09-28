@@ -35,7 +35,7 @@
  * it by hand, as your changes will be lost next time this file is
  * rebuilt.  If you want to add more getters/setters, you should add
  * them in the core class.  If you want to change the format of this
- * file, then you should edit the XSL template.
+ * file, then you should edit lib/tools/bin/interface.tpl.
  *
  * @package GalleryCore
  * @subpackage Classes
@@ -50,15 +50,10 @@ class GalleryUser extends GalleryUser_core {
     function getPersistentMemberInfo() {
 	$meta = parent::getPersistentMemberInfo();
         $meta['members']['userName'] = array('class' => 'GalleryUser', 'type' => STORAGE_TYPE_STRING);
-
         $meta['members']['fullName'] = array('class' => 'GalleryUser', 'type' => STORAGE_TYPE_STRING);
-
         $meta['members']['hashedPassword'] = array('class' => 'GalleryUser', 'type' => STORAGE_TYPE_STRING);
-
         $meta['members']['email'] = array('class' => 'GalleryUser', 'type' => STORAGE_TYPE_STRING);
-
         $meta['members']['language'] = array('class' => 'GalleryUser', 'type' => STORAGE_TYPE_STRING);
-
 	return $meta;
     }
 
@@ -93,17 +88,15 @@ class GalleryUser extends GalleryUser_core {
      * @return string path
      */
     function getClassFile() {
-        return 'modules/' .
-            basename(dirname(dirname(dirname(__FILE__)))) .
-            '/classes/GalleryUser.class';
+        return 'modules/' . basename(dirname(dirname(dirname(__FILE__)))) . '/classes/GalleryUser.class';
     }
 
     /**
      * Get the value of userName
      *
-     * @return STRING the value
+     * @return string the value
      */
-    function getuserName() {
+    function getUserName() {
 	if (!isset($this->_userName)) {
 	    return null;
 	}
@@ -113,9 +106,9 @@ class GalleryUser extends GalleryUser_core {
     /**
      * Set the value of userName
      *
-     * @param STRING the value
+     * @param string the value
      */
-    function setuserName($value) {
+    function setUserName($value) {
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
         $value = $this->_truncateString($value, 32);
@@ -131,9 +124,9 @@ class GalleryUser extends GalleryUser_core {
     /**
      * Get the value of fullName
      *
-     * @return STRING the value
+     * @return string the value
      */
-    function getfullName() {
+    function getFullName() {
 	if (!isset($this->_fullName)) {
 	    return null;
 	}
@@ -143,9 +136,9 @@ class GalleryUser extends GalleryUser_core {
     /**
      * Set the value of fullName
      *
-     * @param STRING the value
+     * @param string the value
      */
-    function setfullName($value) {
+    function setFullName($value) {
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
         $value = $this->_truncateString($value, 128);
@@ -161,9 +154,9 @@ class GalleryUser extends GalleryUser_core {
     /**
      * Get the value of hashedPassword
      *
-     * @return STRING the value
+     * @return string the value
      */
-    function gethashedPassword() {
+    function getHashedPassword() {
 	if (!isset($this->_hashedPassword)) {
 	    return null;
 	}
@@ -173,9 +166,9 @@ class GalleryUser extends GalleryUser_core {
     /**
      * Set the value of hashedPassword
      *
-     * @param STRING the value
+     * @param string the value
      */
-    function sethashedPassword($value) {
+    function setHashedPassword($value) {
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
         $value = $this->_truncateString($value, 128);
@@ -191,9 +184,9 @@ class GalleryUser extends GalleryUser_core {
     /**
      * Get the value of email
      *
-     * @return STRING the value
+     * @return string the value
      */
-    function getemail() {
+    function getEmail() {
 	if (!isset($this->_email)) {
 	    return null;
 	}
@@ -203,9 +196,9 @@ class GalleryUser extends GalleryUser_core {
     /**
      * Set the value of email
      *
-     * @param STRING the value
+     * @param string the value
      */
-    function setemail($value) {
+    function setEmail($value) {
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
         $value = $this->_truncateString($value, 128);
@@ -221,9 +214,9 @@ class GalleryUser extends GalleryUser_core {
     /**
      * Get the value of language
      *
-     * @return STRING the value
+     * @return string the value
      */
-    function getlanguage() {
+    function getLanguage() {
 	if (!isset($this->_language)) {
 	    return null;
 	}
@@ -233,9 +226,9 @@ class GalleryUser extends GalleryUser_core {
     /**
      * Set the value of language
      *
-     * @param STRING the value
+     * @param string the value
      */
-    function setlanguage($value) {
+    function setLanguage($value) {
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
         $value = $this->_truncateString($value, 128);

@@ -35,7 +35,7 @@
  * it by hand, as your changes will be lost next time this file is
  * rebuilt.  If you want to add more getters/setters, you should add
  * them in the core class.  If you want to change the format of this
- * file, then you should edit the XSL template.
+ * file, then you should edit lib/tools/bin/interface.tpl.
  *
  * @package GalleryCore
  * @subpackage Classes
@@ -50,7 +50,6 @@ class GalleryChildEntity extends GalleryChildEntity_core {
     function getPersistentMemberInfo() {
 	$meta = parent::getPersistentMemberInfo();
         $meta['members']['parentId'] = array('class' => 'GalleryChildEntity', 'type' => STORAGE_TYPE_INTEGER);
-
 	return $meta;
     }
 
@@ -81,17 +80,15 @@ class GalleryChildEntity extends GalleryChildEntity_core {
      * @return string path
      */
     function getClassFile() {
-        return 'modules/' .
-            basename(dirname(dirname(dirname(__FILE__)))) .
-            '/classes/GalleryChildEntity.class';
+        return 'modules/' . basename(dirname(dirname(dirname(__FILE__)))) . '/classes/GalleryChildEntity.class';
     }
 
     /**
      * Get the value of parentId
      *
-     * @return INTEGER the value
+     * @return integer the value
      */
-    function getparentId() {
+    function getParentId() {
 	if (!isset($this->_parentId)) {
 	    return null;
 	}
@@ -101,13 +98,14 @@ class GalleryChildEntity extends GalleryChildEntity_core {
     /**
      * Set the value of parentId
      *
-     * @param INTEGER the value
+     * @param integer the value
      */
-    function setparentId($value) {
+    function setParentId($value) {
         /* Type cast the incoming value to be an integer */
         if ($value != null) {
             $value = (int)$value;
         }
+
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
 	$orig = isset($this->_parentId) ? $this->_parentId : null;

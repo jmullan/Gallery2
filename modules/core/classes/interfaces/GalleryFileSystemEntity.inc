@@ -35,7 +35,7 @@
  * it by hand, as your changes will be lost next time this file is
  * rebuilt.  If you want to add more getters/setters, you should add
  * them in the core class.  If you want to change the format of this
- * file, then you should edit the XSL template.
+ * file, then you should edit lib/tools/bin/interface.tpl.
  *
  * @package GalleryCore
  * @subpackage Classes
@@ -50,7 +50,6 @@ class GalleryFileSystemEntity extends GalleryFileSystemEntity_core {
     function getPersistentMemberInfo() {
 	$meta = parent::getPersistentMemberInfo();
         $meta['members']['pathComponent'] = array('class' => 'GalleryFileSystemEntity', 'type' => STORAGE_TYPE_STRING);
-
 	return $meta;
     }
 
@@ -81,17 +80,15 @@ class GalleryFileSystemEntity extends GalleryFileSystemEntity_core {
      * @return string path
      */
     function getClassFile() {
-        return 'modules/' .
-            basename(dirname(dirname(dirname(__FILE__)))) .
-            '/classes/GalleryFileSystemEntity.class';
+        return 'modules/' . basename(dirname(dirname(dirname(__FILE__)))) . '/classes/GalleryFileSystemEntity.class';
     }
 
     /**
      * Get the value of pathComponent
      *
-     * @return STRING the value
+     * @return string the value
      */
-    function getpathComponent() {
+    function getPathComponent() {
 	if (!isset($this->_pathComponent)) {
 	    return null;
 	}
@@ -101,9 +98,9 @@ class GalleryFileSystemEntity extends GalleryFileSystemEntity_core {
     /**
      * Set the value of pathComponent
      *
-     * @param STRING the value
+     * @param string the value
      */
-    function setpathComponent($value) {
+    function setPathComponent($value) {
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
         $value = $this->_truncateString($value, 128);

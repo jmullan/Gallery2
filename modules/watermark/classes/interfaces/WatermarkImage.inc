@@ -35,7 +35,7 @@
  * it by hand, as your changes will be lost next time this file is
  * rebuilt.  If you want to add more getters/setters, you should add
  * them in the core class.  If you want to change the format of this
- * file, then you should edit the XSL template.
+ * file, then you should edit lib/tools/bin/interface.tpl.
  *
  * @package Watermark
  * @subpackage Classes
@@ -50,29 +50,17 @@ class WatermarkImage extends WatermarkImage_core {
     function getPersistentMemberInfo() {
 	$meta = parent::getPersistentMemberInfo();
         $meta['members']['applyToPreferred'] = array('class' => 'WatermarkImage', 'type' => STORAGE_TYPE_BOOLEAN);
-
         $meta['members']['applyToResizes'] = array('class' => 'WatermarkImage', 'type' => STORAGE_TYPE_BOOLEAN);
-
         $meta['members']['applyToThumbnail'] = array('class' => 'WatermarkImage', 'type' => STORAGE_TYPE_BOOLEAN);
-
         $meta['members']['name'] = array('class' => 'WatermarkImage', 'type' => STORAGE_TYPE_STRING);
-
         $meta['members']['fileName'] = array('class' => 'WatermarkImage', 'type' => STORAGE_TYPE_STRING);
-
         $meta['members']['mimeType'] = array('class' => 'WatermarkImage', 'type' => STORAGE_TYPE_STRING);
-
         $meta['members']['size'] = array('class' => 'WatermarkImage', 'type' => STORAGE_TYPE_INTEGER);
-
         $meta['members']['width'] = array('class' => 'WatermarkImage', 'type' => STORAGE_TYPE_INTEGER);
-
         $meta['members']['height'] = array('class' => 'WatermarkImage', 'type' => STORAGE_TYPE_INTEGER);
-
         $meta['members']['ownerId'] = array('class' => 'WatermarkImage', 'type' => STORAGE_TYPE_INTEGER);
-
         $meta['members']['xPercentage'] = array('class' => 'WatermarkImage', 'type' => STORAGE_TYPE_STRING);
-
         $meta['members']['yPercentage'] = array('class' => 'WatermarkImage', 'type' => STORAGE_TYPE_STRING);
-
 	return $meta;
     }
 
@@ -114,17 +102,15 @@ class WatermarkImage extends WatermarkImage_core {
      * @return string path
      */
     function getClassFile() {
-        return 'modules/' .
-            basename(dirname(dirname(dirname(__FILE__)))) .
-            '/classes/WatermarkImage.class';
+        return 'modules/' . basename(dirname(dirname(dirname(__FILE__)))) . '/classes/WatermarkImage.class';
     }
 
     /**
      * Get the value of applyToPreferred
      *
-     * @return BOOLEAN the value
+     * @return boolean the value
      */
-    function getapplyToPreferred() {
+    function getApplyToPreferred() {
 	if (!isset($this->_applyToPreferred)) {
 	    return null;
 	}
@@ -134,11 +120,12 @@ class WatermarkImage extends WatermarkImage_core {
     /**
      * Set the value of applyToPreferred
      *
-     * @param BOOLEAN the value
+     * @param boolean the value
      */
-    function setapplyToPreferred($value) {
+    function setApplyToPreferred($value) {
 	/* Set the incoming value to be a 1 or 0 */
 	$value = empty($value) ? 0 : 1;
+
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
 	$orig = isset($this->_applyToPreferred) ? $this->_applyToPreferred : null;
@@ -153,9 +140,9 @@ class WatermarkImage extends WatermarkImage_core {
     /**
      * Get the value of applyToResizes
      *
-     * @return BOOLEAN the value
+     * @return boolean the value
      */
-    function getapplyToResizes() {
+    function getApplyToResizes() {
 	if (!isset($this->_applyToResizes)) {
 	    return null;
 	}
@@ -165,11 +152,12 @@ class WatermarkImage extends WatermarkImage_core {
     /**
      * Set the value of applyToResizes
      *
-     * @param BOOLEAN the value
+     * @param boolean the value
      */
-    function setapplyToResizes($value) {
+    function setApplyToResizes($value) {
 	/* Set the incoming value to be a 1 or 0 */
 	$value = empty($value) ? 0 : 1;
+
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
 	$orig = isset($this->_applyToResizes) ? $this->_applyToResizes : null;
@@ -184,9 +172,9 @@ class WatermarkImage extends WatermarkImage_core {
     /**
      * Get the value of applyToThumbnail
      *
-     * @return BOOLEAN the value
+     * @return boolean the value
      */
-    function getapplyToThumbnail() {
+    function getApplyToThumbnail() {
 	if (!isset($this->_applyToThumbnail)) {
 	    return null;
 	}
@@ -196,11 +184,12 @@ class WatermarkImage extends WatermarkImage_core {
     /**
      * Set the value of applyToThumbnail
      *
-     * @param BOOLEAN the value
+     * @param boolean the value
      */
-    function setapplyToThumbnail($value) {
+    function setApplyToThumbnail($value) {
 	/* Set the incoming value to be a 1 or 0 */
 	$value = empty($value) ? 0 : 1;
+
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
 	$orig = isset($this->_applyToThumbnail) ? $this->_applyToThumbnail : null;
@@ -215,9 +204,9 @@ class WatermarkImage extends WatermarkImage_core {
     /**
      * Get the value of name
      *
-     * @return STRING the value
+     * @return string the value
      */
-    function getname() {
+    function getName() {
 	if (!isset($this->_name)) {
 	    return null;
 	}
@@ -227,9 +216,9 @@ class WatermarkImage extends WatermarkImage_core {
     /**
      * Set the value of name
      *
-     * @param STRING the value
+     * @param string the value
      */
-    function setname($value) {
+    function setName($value) {
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
         $value = $this->_truncateString($value, 128);
@@ -245,9 +234,9 @@ class WatermarkImage extends WatermarkImage_core {
     /**
      * Get the value of fileName
      *
-     * @return STRING the value
+     * @return string the value
      */
-    function getfileName() {
+    function getFileName() {
 	if (!isset($this->_fileName)) {
 	    return null;
 	}
@@ -257,9 +246,9 @@ class WatermarkImage extends WatermarkImage_core {
     /**
      * Set the value of fileName
      *
-     * @param STRING the value
+     * @param string the value
      */
-    function setfileName($value) {
+    function setFileName($value) {
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
         $value = $this->_truncateString($value, 128);
@@ -275,9 +264,9 @@ class WatermarkImage extends WatermarkImage_core {
     /**
      * Get the value of mimeType
      *
-     * @return STRING the value
+     * @return string the value
      */
-    function getmimeType() {
+    function getMimeType() {
 	if (!isset($this->_mimeType)) {
 	    return null;
 	}
@@ -287,9 +276,9 @@ class WatermarkImage extends WatermarkImage_core {
     /**
      * Set the value of mimeType
      *
-     * @param STRING the value
+     * @param string the value
      */
-    function setmimeType($value) {
+    function setMimeType($value) {
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
         $value = $this->_truncateString($value, 128);
@@ -305,9 +294,9 @@ class WatermarkImage extends WatermarkImage_core {
     /**
      * Get the value of size
      *
-     * @return INTEGER the value
+     * @return integer the value
      */
-    function getsize() {
+    function getSize() {
 	if (!isset($this->_size)) {
 	    return null;
 	}
@@ -317,13 +306,14 @@ class WatermarkImage extends WatermarkImage_core {
     /**
      * Set the value of size
      *
-     * @param INTEGER the value
+     * @param integer the value
      */
-    function setsize($value) {
+    function setSize($value) {
         /* Type cast the incoming value to be an integer */
         if ($value != null) {
             $value = (int)$value;
         }
+
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
 	$orig = isset($this->_size) ? $this->_size : null;
@@ -338,9 +328,9 @@ class WatermarkImage extends WatermarkImage_core {
     /**
      * Get the value of width
      *
-     * @return INTEGER the value
+     * @return integer the value
      */
-    function getwidth() {
+    function getWidth() {
 	if (!isset($this->_width)) {
 	    return null;
 	}
@@ -350,13 +340,14 @@ class WatermarkImage extends WatermarkImage_core {
     /**
      * Set the value of width
      *
-     * @param INTEGER the value
+     * @param integer the value
      */
-    function setwidth($value) {
+    function setWidth($value) {
         /* Type cast the incoming value to be an integer */
         if ($value != null) {
             $value = (int)$value;
         }
+
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
 	$orig = isset($this->_width) ? $this->_width : null;
@@ -371,9 +362,9 @@ class WatermarkImage extends WatermarkImage_core {
     /**
      * Get the value of height
      *
-     * @return INTEGER the value
+     * @return integer the value
      */
-    function getheight() {
+    function getHeight() {
 	if (!isset($this->_height)) {
 	    return null;
 	}
@@ -383,13 +374,14 @@ class WatermarkImage extends WatermarkImage_core {
     /**
      * Set the value of height
      *
-     * @param INTEGER the value
+     * @param integer the value
      */
-    function setheight($value) {
+    function setHeight($value) {
         /* Type cast the incoming value to be an integer */
         if ($value != null) {
             $value = (int)$value;
         }
+
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
 	$orig = isset($this->_height) ? $this->_height : null;
@@ -404,9 +396,9 @@ class WatermarkImage extends WatermarkImage_core {
     /**
      * Get the value of ownerId
      *
-     * @return INTEGER the value
+     * @return integer the value
      */
-    function getownerId() {
+    function getOwnerId() {
 	if (!isset($this->_ownerId)) {
 	    return null;
 	}
@@ -416,13 +408,14 @@ class WatermarkImage extends WatermarkImage_core {
     /**
      * Set the value of ownerId
      *
-     * @param INTEGER the value
+     * @param integer the value
      */
-    function setownerId($value) {
+    function setOwnerId($value) {
         /* Type cast the incoming value to be an integer */
         if ($value != null) {
             $value = (int)$value;
         }
+
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
 	$orig = isset($this->_ownerId) ? $this->_ownerId : null;
@@ -437,9 +430,9 @@ class WatermarkImage extends WatermarkImage_core {
     /**
      * Get the value of xPercentage
      *
-     * @return STRING the value
+     * @return string the value
      */
-    function getxPercentage() {
+    function getXPercentage() {
 	if (!isset($this->_xPercentage)) {
 	    return null;
 	}
@@ -449,9 +442,9 @@ class WatermarkImage extends WatermarkImage_core {
     /**
      * Set the value of xPercentage
      *
-     * @param STRING the value
+     * @param string the value
      */
-    function setxPercentage($value) {
+    function setXPercentage($value) {
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
         $value = $this->_truncateString($value, 32);
@@ -467,9 +460,9 @@ class WatermarkImage extends WatermarkImage_core {
     /**
      * Get the value of yPercentage
      *
-     * @return STRING the value
+     * @return string the value
      */
-    function getyPercentage() {
+    function getYPercentage() {
 	if (!isset($this->_yPercentage)) {
 	    return null;
 	}
@@ -479,9 +472,9 @@ class WatermarkImage extends WatermarkImage_core {
     /**
      * Set the value of yPercentage
      *
-     * @param STRING the value
+     * @param string the value
      */
-    function setyPercentage($value) {
+    function setYPercentage($value) {
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
         $value = $this->_truncateString($value, 32);

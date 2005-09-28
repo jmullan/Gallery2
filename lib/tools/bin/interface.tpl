@@ -35,14 +35,14 @@
  * it by hand, as your changes will be lost next time this file is
  * rebuilt.  If you want to add more getters/setters, you should add
  * them in the core class.  If you want to change the format of this
- * file, then you should edit the XSL template.
+ * file, then you should edit lib/tools/bin/interface.tpl.
  *
  * @package {$package}
  * @subpackage Classes
  */
 class {$className} extends {$className}_core {ldelim}
-
 {if !$isMap}
+
 {if !empty($members)}
     /**
      * Return meta information about the members of this class
@@ -53,7 +53,6 @@ class {$className} extends {$className}_core {ldelim}
 	$meta = parent::getPersistentMemberInfo();
 {foreach from=$members item=member}
         $meta['members']['{$member.name}'] = array('class' => '{$className}', 'type' => STORAGE_TYPE_{$member.type}{if isset($member.id)}| STORAGE_TYPE_ID{/if});
-
 {/foreach}
 	return $meta;
     {rdelim}
@@ -97,11 +96,10 @@ class {$className} extends {$className}_core {ldelim}
      * @return string path
      */
     function getClassFile() {ldelim}
-        return 'modules/' .
-            basename(dirname(dirname(dirname(__FILE__)))) .
-            '/classes/{$className}.class';
+        return 'modules/' . basename(dirname(dirname(dirname(__FILE__)))) . '/classes/{$className}.class';
     {rdelim}
 {if $isMap}
+
     /**
      * Get meta information about this class' map
      *
@@ -124,8 +122,7 @@ class {$className} extends {$className}_core {ldelim}
      */
     function addMapEntry($data) {ldelim}
 	global $gallery;
-        {* TODO: after the Saxon->PHP conversion, remove the extra comma from the foreach loop below *}
-        foreach (array({foreach from=$members item=member}'{$member.name}', {/foreach}) as $key) {ldelim}
+        foreach (array({foreach name=members from=$members item=member}'{$member.name}'{if !$smarty.foreach.members.last}, {/if}{/foreach}) as $key) {ldelim}
 	    if (!array_key_exists($key, $data)) {ldelim}
 	        return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
                                             'Missing parameter: ' . $key);
@@ -207,13 +204,13 @@ class {$className} extends {$className}_core {ldelim}
     /**
      * Get the value of {$member.name}
      *
-     * @return {$member.type} the value
+     * @return {$member.lcType} the value
      */
-    function get{$member.name}() {ldelim}
+    function get{$member.ucName}() {ldelim}
 {if $member.linked}
 	$linkedEntity = $this->getLinkedEntity();
 	if (isset($linkedEntity)) {ldelim}
-	    return $linkedEntity->get{$member.name}();
+	    return $linkedEntity->get{$member.ucName}();
 	{rdelim}
 {/if}
 	if (!isset($this->_{$member.name})) {ldelim}
@@ -225,17 +222,19 @@ class {$className} extends {$className}_core {ldelim}
     /**
      * Set the value of {$member.name}
      *
-     * @param {$member.type} the value
+     * @param {$member.lcType} the value
      */
-    function set{$member.name}($value) {ldelim}
+    function set{$member.ucName}($value) {ldelim}
 {if $member.type == 'INTEGER'}
         /* Type cast the incoming value to be an integer */
         if ($value != null) {ldelim}
             $value = (int)$value;
         {rdelim}
+
 {elseif $member.type == 'BOOLEAN'}
 	/* Set the incoming value to be a 1 or 0 */
 	$value = empty($value) ? 0 : 1;
+
 {/if}
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;

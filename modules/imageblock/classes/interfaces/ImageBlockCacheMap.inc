@@ -35,13 +35,12 @@
  * it by hand, as your changes will be lost next time this file is
  * rebuilt.  If you want to add more getters/setters, you should add
  * them in the core class.  If you want to change the format of this
- * file, then you should edit the XSL template.
+ * file, then you should edit lib/tools/bin/interface.tpl.
  *
  * @package ImageBlock
  * @subpackage Classes
  */
 class ImageBlockCacheMap extends ImageBlockCacheMap_core {
-
  
     /**
      * Return the name of this class with the proper mix of uppercase and
@@ -59,10 +58,9 @@ class ImageBlockCacheMap extends ImageBlockCacheMap_core {
      * @return string path
      */
     function getClassFile() {
-        return 'modules/' .
-            basename(dirname(dirname(dirname(__FILE__)))) .
-            '/classes/ImageBlockCacheMap.class';
+        return 'modules/' . basename(dirname(dirname(dirname(__FILE__)))) . '/classes/ImageBlockCacheMap.class';
     }
+
     /**
      * Get meta information about this class' map
      *
@@ -86,7 +84,7 @@ class ImageBlockCacheMap extends ImageBlockCacheMap_core {
      */
     function addMapEntry($data) {
 	global $gallery;
-                foreach (array('userId', 'itemType', 'itemTimestamp', 'itemId', ) as $key) {
+        foreach (array('userId', 'itemType', 'itemTimestamp', 'itemId') as $key) {
 	    if (!array_key_exists($key, $data)) {
 	        return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
                                             'Missing parameter: ' . $key);

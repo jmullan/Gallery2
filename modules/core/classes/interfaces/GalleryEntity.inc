@@ -35,7 +35,7 @@
  * it by hand, as your changes will be lost next time this file is
  * rebuilt.  If you want to add more getters/setters, you should add
  * them in the core class.  If you want to change the format of this
- * file, then you should edit the XSL template.
+ * file, then you should edit lib/tools/bin/interface.tpl.
  *
  * @package GalleryCore
  * @subpackage Classes
@@ -50,21 +50,13 @@ class GalleryEntity extends GalleryEntity_core {
     function getPersistentMemberInfo() {
 	$meta = parent::getPersistentMemberInfo();
         $meta['members']['id'] = array('class' => 'GalleryEntity', 'type' => STORAGE_TYPE_INTEGER| STORAGE_TYPE_ID);
-
         $meta['members']['creationTimestamp'] = array('class' => 'GalleryEntity', 'type' => STORAGE_TYPE_INTEGER);
-
         $meta['members']['isLinkable'] = array('class' => 'GalleryEntity', 'type' => STORAGE_TYPE_BOOLEAN);
-
         $meta['members']['linkId'] = array('class' => 'GalleryEntity', 'type' => STORAGE_TYPE_INTEGER);
-
         $meta['members']['modificationTimestamp'] = array('class' => 'GalleryEntity', 'type' => STORAGE_TYPE_INTEGER);
-
         $meta['members']['serialNumber'] = array('class' => 'GalleryEntity', 'type' => STORAGE_TYPE_INTEGER);
-
         $meta['members']['entityType'] = array('class' => 'GalleryEntity', 'type' => STORAGE_TYPE_STRING);
-
         $meta['members']['onLoadHandlers'] = array('class' => 'GalleryEntity', 'type' => STORAGE_TYPE_STRING);
-
 	return $meta;
     }
 
@@ -102,17 +94,15 @@ class GalleryEntity extends GalleryEntity_core {
      * @return string path
      */
     function getClassFile() {
-        return 'modules/' .
-            basename(dirname(dirname(dirname(__FILE__)))) .
-            '/classes/GalleryEntity.class';
+        return 'modules/' . basename(dirname(dirname(dirname(__FILE__)))) . '/classes/GalleryEntity.class';
     }
 
     /**
      * Get the value of id
      *
-     * @return INTEGER the value
+     * @return integer the value
      */
-    function getid() {
+    function getId() {
 	if (!isset($this->_id)) {
 	    return null;
 	}
@@ -122,13 +112,14 @@ class GalleryEntity extends GalleryEntity_core {
     /**
      * Set the value of id
      *
-     * @param INTEGER the value
+     * @param integer the value
      */
-    function setid($value) {
+    function setId($value) {
         /* Type cast the incoming value to be an integer */
         if ($value != null) {
             $value = (int)$value;
         }
+
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
 	$orig = isset($this->_id) ? $this->_id : null;
@@ -143,9 +134,9 @@ class GalleryEntity extends GalleryEntity_core {
     /**
      * Get the value of creationTimestamp
      *
-     * @return INTEGER the value
+     * @return integer the value
      */
-    function getcreationTimestamp() {
+    function getCreationTimestamp() {
 	if (!isset($this->_creationTimestamp)) {
 	    return null;
 	}
@@ -155,13 +146,14 @@ class GalleryEntity extends GalleryEntity_core {
     /**
      * Set the value of creationTimestamp
      *
-     * @param INTEGER the value
+     * @param integer the value
      */
-    function setcreationTimestamp($value) {
+    function setCreationTimestamp($value) {
         /* Type cast the incoming value to be an integer */
         if ($value != null) {
             $value = (int)$value;
         }
+
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
 	$orig = isset($this->_creationTimestamp) ? $this->_creationTimestamp : null;
@@ -176,9 +168,9 @@ class GalleryEntity extends GalleryEntity_core {
     /**
      * Get the value of isLinkable
      *
-     * @return BOOLEAN the value
+     * @return boolean the value
      */
-    function getisLinkable() {
+    function getIsLinkable() {
 	if (!isset($this->_isLinkable)) {
 	    return null;
 	}
@@ -188,11 +180,12 @@ class GalleryEntity extends GalleryEntity_core {
     /**
      * Set the value of isLinkable
      *
-     * @param BOOLEAN the value
+     * @param boolean the value
      */
-    function setisLinkable($value) {
+    function setIsLinkable($value) {
 	/* Set the incoming value to be a 1 or 0 */
 	$value = empty($value) ? 0 : 1;
+
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
 	$orig = isset($this->_isLinkable) ? $this->_isLinkable : null;
@@ -207,9 +200,9 @@ class GalleryEntity extends GalleryEntity_core {
     /**
      * Get the value of linkId
      *
-     * @return INTEGER the value
+     * @return integer the value
      */
-    function getlinkId() {
+    function getLinkId() {
 	if (!isset($this->_linkId)) {
 	    return null;
 	}
@@ -219,13 +212,14 @@ class GalleryEntity extends GalleryEntity_core {
     /**
      * Set the value of linkId
      *
-     * @param INTEGER the value
+     * @param integer the value
      */
-    function setlinkId($value) {
+    function setLinkId($value) {
         /* Type cast the incoming value to be an integer */
         if ($value != null) {
             $value = (int)$value;
         }
+
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
 	$orig = isset($this->_linkId) ? $this->_linkId : null;
@@ -240,9 +234,9 @@ class GalleryEntity extends GalleryEntity_core {
     /**
      * Get the value of modificationTimestamp
      *
-     * @return INTEGER the value
+     * @return integer the value
      */
-    function getmodificationTimestamp() {
+    function getModificationTimestamp() {
 	if (!isset($this->_modificationTimestamp)) {
 	    return null;
 	}
@@ -252,13 +246,14 @@ class GalleryEntity extends GalleryEntity_core {
     /**
      * Set the value of modificationTimestamp
      *
-     * @param INTEGER the value
+     * @param integer the value
      */
-    function setmodificationTimestamp($value) {
+    function setModificationTimestamp($value) {
         /* Type cast the incoming value to be an integer */
         if ($value != null) {
             $value = (int)$value;
         }
+
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
 	$orig = isset($this->_modificationTimestamp) ? $this->_modificationTimestamp : null;
@@ -273,9 +268,9 @@ class GalleryEntity extends GalleryEntity_core {
     /**
      * Get the value of serialNumber
      *
-     * @return INTEGER the value
+     * @return integer the value
      */
-    function getserialNumber() {
+    function getSerialNumber() {
 	if (!isset($this->_serialNumber)) {
 	    return null;
 	}
@@ -285,13 +280,14 @@ class GalleryEntity extends GalleryEntity_core {
     /**
      * Set the value of serialNumber
      *
-     * @param INTEGER the value
+     * @param integer the value
      */
-    function setserialNumber($value) {
+    function setSerialNumber($value) {
         /* Type cast the incoming value to be an integer */
         if ($value != null) {
             $value = (int)$value;
         }
+
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
 	$orig = isset($this->_serialNumber) ? $this->_serialNumber : null;
@@ -306,9 +302,9 @@ class GalleryEntity extends GalleryEntity_core {
     /**
      * Get the value of entityType
      *
-     * @return STRING the value
+     * @return string the value
      */
-    function getentityType() {
+    function getEntityType() {
 	if (!isset($this->_entityType)) {
 	    return null;
 	}
@@ -318,9 +314,9 @@ class GalleryEntity extends GalleryEntity_core {
     /**
      * Set the value of entityType
      *
-     * @param STRING the value
+     * @param string the value
      */
-    function setentityType($value) {
+    function setEntityType($value) {
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
         $value = $this->_truncateString($value, 32);
@@ -336,9 +332,9 @@ class GalleryEntity extends GalleryEntity_core {
     /**
      * Get the value of onLoadHandlers
      *
-     * @return STRING the value
+     * @return string the value
      */
-    function getonLoadHandlers() {
+    function getOnLoadHandlers() {
 	if (!isset($this->_onLoadHandlers)) {
 	    return null;
 	}
@@ -348,9 +344,9 @@ class GalleryEntity extends GalleryEntity_core {
     /**
      * Set the value of onLoadHandlers
      *
-     * @param STRING the value
+     * @param string the value
      */
-    function setonLoadHandlers($value) {
+    function setOnLoadHandlers($value) {
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
         $value = $this->_truncateString($value, 128);

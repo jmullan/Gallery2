@@ -35,7 +35,7 @@
  * it by hand, as your changes will be lost next time this file is
  * rebuilt.  If you want to add more getters/setters, you should add
  * them in the core class.  If you want to change the format of this
- * file, then you should edit the XSL template.
+ * file, then you should edit lib/tools/bin/interface.tpl.
  *
  * @package GalleryCore
  * @subpackage Classes
@@ -50,9 +50,7 @@ class GalleryDataItem extends GalleryDataItem_core {
     function getPersistentMemberInfo() {
 	$meta = parent::getPersistentMemberInfo();
         $meta['members']['mimeType'] = array('class' => 'GalleryDataItem', 'type' => STORAGE_TYPE_STRING);
-
         $meta['members']['size'] = array('class' => 'GalleryDataItem', 'type' => STORAGE_TYPE_INTEGER);
-
 	return $meta;
     }
 
@@ -92,20 +90,18 @@ class GalleryDataItem extends GalleryDataItem_core {
      * @return string path
      */
     function getClassFile() {
-        return 'modules/' .
-            basename(dirname(dirname(dirname(__FILE__)))) .
-            '/classes/GalleryDataItem.class';
+        return 'modules/' . basename(dirname(dirname(dirname(__FILE__)))) . '/classes/GalleryDataItem.class';
     }
 
     /**
      * Get the value of mimeType
      *
-     * @return STRING the value
+     * @return string the value
      */
-    function getmimeType() {
+    function getMimeType() {
 	$linkedEntity = $this->getLinkedEntity();
 	if (isset($linkedEntity)) {
-	    return $linkedEntity->getmimeType();
+	    return $linkedEntity->getMimeType();
 	}
 	if (!isset($this->_mimeType)) {
 	    return null;
@@ -116,9 +112,9 @@ class GalleryDataItem extends GalleryDataItem_core {
     /**
      * Set the value of mimeType
      *
-     * @param STRING the value
+     * @param string the value
      */
-    function setmimeType($value) {
+    function setMimeType($value) {
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
         $value = $this->_truncateString($value, 128);
@@ -134,12 +130,12 @@ class GalleryDataItem extends GalleryDataItem_core {
     /**
      * Get the value of size
      *
-     * @return INTEGER the value
+     * @return integer the value
      */
-    function getsize() {
+    function getSize() {
 	$linkedEntity = $this->getLinkedEntity();
 	if (isset($linkedEntity)) {
-	    return $linkedEntity->getsize();
+	    return $linkedEntity->getSize();
 	}
 	if (!isset($this->_size)) {
 	    return null;
@@ -150,13 +146,14 @@ class GalleryDataItem extends GalleryDataItem_core {
     /**
      * Set the value of size
      *
-     * @param INTEGER the value
+     * @param integer the value
      */
-    function setsize($value) {
+    function setSize($value) {
         /* Type cast the incoming value to be an integer */
         if ($value != null) {
             $value = (int)$value;
         }
+
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
 	$orig = isset($this->_size) ? $this->_size : null;

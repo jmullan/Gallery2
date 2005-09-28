@@ -81,7 +81,9 @@ foreach (glob('tmp/*.xml') as $xmlFile) {
     foreach ($membersBase as $child) {
 	if ($child['name'] == 'MEMBER') {
 	    $member = array('name' => $child['child'][0]['content'],
-			    'type' => $child['child'][1]['content']);
+			    'type' => $child['child'][1]['content'],
+			    'ucName' => ucfirst($child['child'][0]['content']),
+			    'lcType' => strtolower($child['child'][1]['content']));
 	    for ($i = 2; $i < count($child['child']); $i++) {
 		switch($child['child'][$i]['name']) {
 		case 'MEMBER-SIZE':
@@ -128,7 +130,7 @@ foreach (glob('tmp/*.xml') as $xmlFile) {
     fwrite($fd, join("\n", $new));
     fclose($fd);
 
-    if (filesize($tmpFile) != filesize($origFile)) {
+    if (md5_file($tmpFile) != md5_file($origFile)) {
 	unlink($origFile);
 	rename($tmpFile, $origFile);
 	$modifiedCount++;

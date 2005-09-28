@@ -35,7 +35,7 @@
  * it by hand, as your changes will be lost next time this file is
  * rebuilt.  If you want to add more getters/setters, you should add
  * them in the core class.  If you want to change the format of this
- * file, then you should edit the XSL template.
+ * file, then you should edit lib/tools/bin/interface.tpl.
  *
  * @package GalleryCore
  * @subpackage Classes
@@ -50,9 +50,7 @@ class GalleryGroup extends GalleryGroup_core {
     function getPersistentMemberInfo() {
 	$meta = parent::getPersistentMemberInfo();
         $meta['members']['groupType'] = array('class' => 'GalleryGroup', 'type' => STORAGE_TYPE_INTEGER);
-
         $meta['members']['groupName'] = array('class' => 'GalleryGroup', 'type' => STORAGE_TYPE_STRING);
-
 	return $meta;
     }
 
@@ -84,17 +82,15 @@ class GalleryGroup extends GalleryGroup_core {
      * @return string path
      */
     function getClassFile() {
-        return 'modules/' .
-            basename(dirname(dirname(dirname(__FILE__)))) .
-            '/classes/GalleryGroup.class';
+        return 'modules/' . basename(dirname(dirname(dirname(__FILE__)))) . '/classes/GalleryGroup.class';
     }
 
     /**
      * Get the value of groupType
      *
-     * @return INTEGER the value
+     * @return integer the value
      */
-    function getgroupType() {
+    function getGroupType() {
 	if (!isset($this->_groupType)) {
 	    return null;
 	}
@@ -104,13 +100,14 @@ class GalleryGroup extends GalleryGroup_core {
     /**
      * Set the value of groupType
      *
-     * @param INTEGER the value
+     * @param integer the value
      */
-    function setgroupType($value) {
+    function setGroupType($value) {
         /* Type cast the incoming value to be an integer */
         if ($value != null) {
             $value = (int)$value;
         }
+
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
 	$orig = isset($this->_groupType) ? $this->_groupType : null;
@@ -125,9 +122,9 @@ class GalleryGroup extends GalleryGroup_core {
     /**
      * Get the value of groupName
      *
-     * @return STRING the value
+     * @return string the value
      */
-    function getgroupName() {
+    function getGroupName() {
 	if (!isset($this->_groupName)) {
 	    return null;
 	}
@@ -137,9 +134,9 @@ class GalleryGroup extends GalleryGroup_core {
     /**
      * Set the value of groupName
      *
-     * @param STRING the value
+     * @param string the value
      */
-    function setgroupName($value) {
+    function setGroupName($value) {
 	/* Convert unset values to null, to avoid generating warnings. */
 	$value = isset($value) ? $value : null;
         $value = $this->_truncateString($value, 128);
