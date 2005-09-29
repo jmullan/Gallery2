@@ -30,19 +30,16 @@
 {/if}
    </column>
 {/foreach}
-{if $requiresId} {* TODO: after refactor, combine this with the regular key output *}
-  <key primary="true">
-    <column-name>id</column-name>
-  </key>
-{/if}
 {foreach from=$keys item=key}
-{if !$key.primary}
+{if $key.primary}
+   <key primary="true">
+{else}
    <key>
+{/if}
 {foreach from=$key.columns item=column}
      <column-name>{$column}</column-name>
 {/foreach}
    </key>
-{/if}
 {/foreach}
 {foreach from=$indexes item=index}
    <index>
@@ -51,18 +48,4 @@
 {/foreach}
    </index>
 {/foreach}
-{foreach from=$keys item=key}
-{* primary keys come after indexes in the XSLT file *}
-{* TODO: after ditching Saxon, merge this with the keys above *}
-{if $key.primary}
-   <key primary="true">
-{foreach from=$key.columns item=column}
-     <column-name>{$column}</column-name>
-{/foreach}
-   </key>
-{/if}
-{/foreach}
 </table>
-{if 0 && $className=='GalleryPluginParameterMap'} {* debug code *}
-{$root|print_r}
-{/if}

@@ -153,12 +153,12 @@ foreach (glob('tmp/*.xml') as $xmlFile) {
 	    $index['primary'] =
 		isset($child['attrs']['PRIMARY']) && $child['attrs']['PRIMARY'] == 'true';
 
-	    /* XSLT ordered them this way.  TODO: add the new index at the end instead */
-	    array_unshift($indexes, $index);
+	    $indexes[] = $index;
 	    break;
 
 	case 'REQUIRES-ID':
 	    $requiresId = true;
+	    $keys[] = array('columns' => array('id'), 'primary' => 1);
 	    break;
 	}
     }
