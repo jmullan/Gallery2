@@ -142,10 +142,12 @@ class GalleryEmbed {
      * headHtml and bodyHtml keys for content to display via CMS.
      * Include activeUserName parameter if integration is not calling GalleryEmbed::login()
      * at CMS login time.
+     * themeData is set if isDone is false and populated with the corresponding template variable.
      *
      * @return array ('isDone' => boolean,
-     *                [optional: 'headHtml' => string, 'bodyHtml' => string,
-     *                           'sidebarBlocksHtml' => array('blockHtml', 'blockHtml')]
+     *                [optional: 'headHtml' => string, 'bodyHtml' => string, 
+     *                           'sidebarBlocksHtml' => array('blockHtml', 'blockHtml'),
+     *                           'themeData' => mixed theme data]
      * @static
      */
     function handleRequest() {
