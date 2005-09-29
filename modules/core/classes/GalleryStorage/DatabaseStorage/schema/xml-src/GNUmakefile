@@ -1,39 +1,14 @@
-GALLERYDIR ?= ../../../../../../..
-TOOLDIR ?= $(GALLERYDIR)/lib/tools
+TOOLDIR ?= ../../../../../../../lib/tools
 CLASSDIR ?= ../../../..
-XSLFILE ?= $(GALLERYDIR)/modules/core/classes/GalleryStorage/DatabaseStorage/schema/xml-src/DbXml.xsl
 G2_TMPDIR ?= tmp
-EXTRAXML ?= $(wildcard *.xml)
 OUTDIR ?= ../xml-out
 
-include $(TOOLDIR)/GNUmakefile.inc
-
-CLASSFILES  = $(wildcard $(CLASSDIR)/*.class)
-XMLFILES = $(patsubst $(CLASSDIR)/%.class,$(OUTDIR)/%.xml,$(CLASSFILES))
-
-xml: $(G2_TMPDIR) $(OUTDIR) $(XMLFILES)
-ifneq ($(EXTRAXML),)
-	cp $(EXTRAXML) $(OUTDIR)
-endif
-
-$(G2_TMPDIR):
-	mkdir $(G2_TMPDIR)
-
-$(OUTDIR):
-	mkdir $(OUTDIR)
-
-$(OUTDIR)/%.xml: $(G2_TMPDIR)/%.xml $(XSLFILE)
-	if [ -f $< ]; then \
-		$(SAXON) $< $(XSLFILE) > $@; \
-		$(VALIDATOR) $@; \
-	fi
-
-$(G2_TMPDIR)/%.xml: $(CLASSDIR)/%.class
-	perl $(TOOLDIR)/bin/extractClassXml.pl \
-		--dtd=../$(TOOLDIR)/dtd/GalleryClass2.0.dtd $^ \
-		--quiet \
-		--out=$@
-	if [ -f $@ ]; then $(VALIDATOR) $@; fi
+xml:
+	@if [ ! -d $(G2_TMPDIR) ]; then mkdir $(G2_TMPDIR); fi
+	@if [ ! -d $(OUTDIR) ]; then mkdir $(OUTDIR); fi
+	perl $(TOOLDIR)/bin/extractClassXml.pl --dtd=../$(TOOLDIR)/dtd/GalleryClass2.0.dtd --quiet --out-dir=$(G2_TMPDIR) $(CLASSDIR)/*.class
+	find . -name '*.xml' -exec cp {} ../xml-out \;
+	php -f $(TOOLDIR)/bin/generate-dbxml.php
 
 scrub: clean
 

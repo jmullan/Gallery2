@@ -1,32 +1,12 @@
-GALLERYDIR ?= ../../../..
-TOOLDIR ?= $(GALLERYDIR)/lib/tools
+TOOLDIR ?= ../../../../lib/tools
 CLASSDIR ?= ..
 PACKAGE ?= GalleryCore
 G2_TMPDIR ?= tmp
 
-include $(TOOLDIR)/GNUmakefile.inc
-
-PWD	    = $(pwd)
-CLASSFILES  = $(wildcard $(CLASSDIR)/*.class)
-XMLFILES    = $(patsubst $(CLASSDIR)/%.class,$(G2_TMPDIR)/%.xml,$(CLASSFILES))
-INCFILES    = $(patsubst %.xml,%.inc,$(XMLFILES))
-
-all: $(G2_TMPDIR) inc
-
 inc: $(XMLFILES)
+	@if [ ! -d $(G2_TMPDIR) ]; then mkdir $(G2_TMPDIR); fi
+	perl $(TOOLDIR)/bin/extractClassXml.pl --dtd=../$(TOOLDIR)/dtd/GalleryClass2.0.dtd --stub-ok --quiet --out-dir=$(G2_TMPDIR) $(CLASSDIR)/*.class
 	php $(TOOLDIR)/bin/generate-interfaces.php $(PACKAGE)
-
-$(G2_TMPDIR):
-	mkdir $(G2_TMPDIR)
-
-$(G2_TMPDIR)/%.xml: $(CLASSDIR)/%.class
-	perl $(TOOLDIR)/bin/extractClassXml.pl \
-		--dtd=../$(TOOLDIR)/dtd/GalleryClass2.0.dtd \
-		--stub-ok \
-	        --quiet \
-		--out $@ \
-		$^
-	if [ -f $@ ]; then $(VALIDATOR) $@; fi
 
 clean:
 	rm -rf $(G2_TMPDIR)

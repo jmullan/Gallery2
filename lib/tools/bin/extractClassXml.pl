@@ -8,9 +8,11 @@ my $DTD;
 my $OUTFILE;
 my $STUB_OK = 0;
 my $QUIET = 0;
+my $OUT_DIR;
 
 GetOptions("dtd:s" => \$DTD,
 	   "out:s" => \$OUTFILE,
+	   "out-dir:s" => \$OUT_DIR,
 	   "stub-ok+" => \$STUB_OK,
 	   "quiet!" => \$QUIET);
 
@@ -18,7 +20,7 @@ foreach my $file (@ARGV) {
   my $tagCount = 0;
   my $base = basename($file);
   $base =~ s/\..*?$//;
-  my $xml = $OUTFILE || "$base.xml";
+  my $xml = $OUTFILE || "$OUT_DIR/$base.xml";
   my $schemaName = undef;
 
   open(IFD, "<$file") || die;
