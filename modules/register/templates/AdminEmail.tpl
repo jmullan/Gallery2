@@ -4,9 +4,9 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-New user registration:
+{g->text text="New user registration:"}
 
-    Username: {$username}
-   Full name: {$name}
-       Email: {$email}
+{g->text text="    Username: %s" arg1=$username}
+{g->text text="   Full name: %s" arg1=$name}
+{g->text text="       Email: %s" arg1=$email}
 
