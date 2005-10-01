@@ -73,7 +73,7 @@ class GalleryTheme extends GalleryPlugin {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(2, 1);
+	return array(2, 2);
     }
 
     /**
@@ -105,16 +105,17 @@ class GalleryTheme extends GalleryPlugin {
      * @param int optional itemId
      * @return array object GalleryStatus a status code
      *               settings array
+     *               params array (useful for a theme overriding this function)
      */
     function getSettings($itemId=null) {
 	list ($ret, $params) = $this->fetchParameters($itemId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	/**
@@ -198,7 +199,7 @@ class GalleryTheme extends GalleryPlugin {
 	/* ImageFrame settings, if available */
 	list ($ret, $imageframe) = GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	if (isset($imageframe) &&
@@ -207,11 +208,11 @@ class GalleryTheme extends GalleryPlugin {
 	     isset($params['photoFrame']))) {
 	    list ($ret, $list) = $imageframe->getImageFrameList();
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    list ($ret, $sampleUrl) = $imageframe->getSampleUrl($itemId);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    $sample = ' (<a href="' . $sampleUrl . '">'
 		    . $core->translate('View Samples') . '</a>)';
@@ -244,13 +245,13 @@ class GalleryTheme extends GalleryPlugin {
 	/* ColorPack setting, if available */
 	list ($ret, $colorpack) = GalleryCoreApi::newFactoryInstance('ColorPackInterface_1_0');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	if (isset($colorpack) && isset($params['colorpack'])) {
 	    list ($ret, $list) = $colorpack->getColorPacks();
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    $settings[] = array('key' => 'colorpack',
 				'name' => $core->translate('Color Pack'),
@@ -259,7 +260,7 @@ class GalleryTheme extends GalleryPlugin {
 				'value' => $params['colorpack']);
 	}
 
-	return array(GalleryStatus::success(), $settings);
+	return array(GalleryStatus::success(), $settings, $params);
     }
 
     /**
@@ -1278,8 +1279,6 @@ class GalleryTheme extends GalleryPlugin {
 	 */
 	if (isset($load['systemLinks'])
 		|| isset($load['itemLinks']) || isset($load['itemSummaries'])) {
-	    $urlGenerator =& $gallery->getUrlGenerator();
-
 	    list ($ret, $permissions) =
 		GalleryCoreApi::fetchPermissionsForItems($allItemIds, $theme['actingUserId']);
 	    if ($ret->isError()) {

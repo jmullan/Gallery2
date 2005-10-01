@@ -43,8 +43,8 @@ class ClassicTheme extends GalleryTheme {
 	$this->setId('classic');
 	$this->setName($gallery->i18n('Classic'));
 	$this->setDescription($gallery->i18n('Classic Gallery2 root album look and feel'));
-	$this->setVersion('1.0.0');
-	$this->setRequiredThemeApi(array(2, 1));
+	$this->setVersion('1.0.1');
+	$this->setRequiredThemeApi(array(2, 2));
 	$this->setRequiredCoreApi(array(6, 6));
 	$this->setStandardSettings(
 	    array('rows' => 10, 'columns' => 1,
@@ -63,26 +63,20 @@ class ClassicTheme extends GalleryTheme {
 		  'photoBlocks' => serialize(
 		      array(
 			  array('exif.ExifInfo', array()),
-			  array('comment.ViewComments', array())))));
+			  array('comment.ViewComments', array()))),
+		  'showSubalbums' => 1, 'subalbumDepth' => 0, 'subalbumSort' => 0));
     }
 
     /**
      * @see GalleryTheme::getSettings()
      */
     function getSettings($itemId=null) {
-	list ($ret, $settings) = parent::getSettings($itemId);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	list ($ret, $params) = $this->fetchParameters($itemId);
+	list ($ret, $settings, $params) = parent::getSettings($itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Add in our custom settings */
-	$params = array_merge(
-	    array('showSubalbums' => 1, 'subalbumDepth' => 0, 'subalbumSort' => 0), $params);
 	$settings[] = array('key' => 'showSubalbums',
 			    'name' => $this->translate('Show subalbum links'),
 			    'type' => 'checkbox',
