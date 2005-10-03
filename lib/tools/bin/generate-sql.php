@@ -83,8 +83,13 @@ class BaseGenerator {
 	return crc32($buf) % 100000;
     }
 
-    function isColumnNotNull($child) {
-	return sizeof($child) == 4;
+    function getNotNullElement($child) {
+	for ($i = 0; $i < count($child); $i++) {
+	    if ($child[$i]['name'] == 'NOT-NULL') {
+		return $child[$i];
+	    }
+	}
+	return null;
     }
 
     function setColumnDefinitionMap($map) {
@@ -101,7 +106,7 @@ class BaseGenerator {
 	}
 
 	if ($includeNotNull) {
-	    if ($this->isColumnNotNull($child)) {
+	    if ($this->getNotNullElement($child)) {
 		$output .= ' NOT NULL';
 	    }
 	}
@@ -527,7 +532,7 @@ class PostgresGenerator extends BaseGenerator {
 		$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
 		    ' RENAME DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . 'Temp' .
 		    ' to DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . ";\n\n";
-		if ($this->isColumnNotNull($child[$i]['child'])) {
+		if ($this->getNotNullElement($child[$i]['child'])) {
 		    $output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
 			' ALTER DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] .
 			" SET NOT NULL;\n\n";
@@ -757,8 +762,8 @@ class OracleGenerator extends BaseGenerator {
 	    /* column-name, column-type, column-size, not-null? */
 	    $output .= ' DB_COLUMN_PREFIX' . $child[0]['content'];
 	    $output .= ' ' . $this->columnDefinition($child, false);
-	    if ($this->isColumnNotNull($child)) {
-		if (empty($child[3]['attrs']['EMPTY']) || $child[3]['attrs']['EMPTY'] != 'allowed') {
+	    if ($notNull = $this->getNotNullElement($child)) {
+		if (empty($notNull['attrs']['EMPTY']) || $notNull['attrs']['EMPTY'] != 'allowed') {
 		    $output .= ' NOT NULL';
 		}
 	    }
@@ -769,7 +774,13 @@ class OracleGenerator extends BaseGenerator {
 	    $output .= '  MODIFY (';
 	    for ($i = 0; $i < count($child); $i++) {
 		$output .= 'DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'];
-		$output .= ' ' . $this->columnDefinition($child[$i]['child']);
+		$output .= ' ' . $this->columnDefinition($child[$i]['child'], false);
+		if ($notNull = $this->getNotNullElement($child[$i]['child'])) {
+		    if (empty($notNull['attrs']['EMPTY']) ||
+			$notNull['attrs']['EMPTY'] != 'allowed') {
+			$output .= ' NOT NULL';
+		    }
+		}
 		if ($i < count($child) - 1) {
 		    $output .= ', ';
 		}
