@@ -69,7 +69,7 @@ function app_setcookie() {
   var d = new Date(), c = slide_order + ';' + (slide_delay/1000) + ';' + sidebar_on + ';' +
     album_detailson + ';' + album_itemlinkson + ';' + text_on + ';';
   d.setTime(d.getTime() + 90*24*60*60*1000); // 90 day cookie
-  document.cookie = 'G2_hybrid=' + escape(c) + ';expires=' + d.toUTCString();
+  document.cookie = 'G2_hybrid=' + escape(c) + ';path=' + cookie_path + ';expires=' + d.toUTCString();
 }
 function app_getcookie() {
   var c = getcookie('G2_hybrid'), i,j,v,n,it=1,r=-1;
@@ -234,6 +234,7 @@ function image_show(i) {
   slide_reset();
   image_index = i;
   ui_sethtml('title', document.getElementById('title_'+image_index).innerHTML);
+  ui_sethtml('date', document.getElementById('date_'+image_index).innerHTML);
   image_setsize();
   if (data_iw[i] < 0) {
     imagediv.innerHTML = '<iframe style="width:100%;height:' + (imagearea.offsetHeight - 4)
@@ -292,7 +293,8 @@ function image_precache(i) {
   }
 }
 function image_loaded() {
-  var i = slide_nextindex(); if (i >= 0) image_precache(i);
+  var i = slide_nextindex(); if (i < 0 || image_iscached[i]) i = slide_previndex();
+  if (i >= 0) image_precache(i);
   slide_go(i);
 }
 function image_next() {

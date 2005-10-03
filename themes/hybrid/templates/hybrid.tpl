@@ -39,6 +39,7 @@
      /><img id="slide_rand" src="{$theme.themeUrl}/images/rand.png"
        width="18" height="18" onclick="slide_onoff()" style="display: none"
        alt="{g->text text="Start Slideshow"}" title="{g->text text="Start Slideshow"}"/>
+     <span id="date" class="giInfo"></span>
     </div>
     <div id="tools_right">
       <img id="full_size" src="{$theme.themeUrl}/images/full.png"
@@ -97,12 +98,11 @@
       <div class="giTitle"> {$theme.item.title|markup} </div>
       <div id="album_desc" class="giDescription"> {$theme.item.description|markup} </div>
     </td><td>
-      <div id="album_info" class="giInfo">
-	{g->text text="Owner: %s"
-		 arg1=$theme.item.owner.fullName|default:$theme.item.owner.userName}
-	<br/>
-	{g->text one="Viewed: %d time" many="Viewed: %d times"
-		 count=$theme.item.viewCount arg1=$theme.item.viewCount}
+      <div id="album_info">
+	{g->block type="core.ItemInfo" item=$theme.item
+		  showSummaries=false showDate=$theme.params.showAlbumDate
+		  showSize=$theme.params.showSize showViewCount=$theme.params.showViewCount
+		  showOwner=$theme.params.showAlbumOwner class="giInfo"}
       </div>
     </td></tr></table>
   </div>
@@ -169,28 +169,44 @@
 	{/if}
       </td>
       <td class="t">
+      {if $theme.params.showText}
 	<table class="itemtext"><tr><td>
 	  <div class="title gcBackground2">
+      {/if}
 	    {if isset($it.image) || isset($it.itemLinks)}
-	      <span style="float: right; margin-left: 2px"><img
+	      <span style="{if $theme.params.showText}float: right; {/if}margin-left: 2px"><img
 	       src="{$theme.themeUrl}/images/menu.png" class="popup_button" width="18" height="18"
 	       alt="{g->text text="Item Actions"}" title="{g->text text="Item Actions"}"
 	       onclick="popup_menu(event,{$i}
 		{if isset($it.image)},{$it.imageIndex})"/></span>
-	      <span id="title_{$it.imageIndex}" class="giTitle">
+	      <span id="title_{$it.imageIndex}" class="giTitle"
 		{else},-1)"/></span>
-	      <span class="giTitle">{/if}
+	      <span class="giTitle"{/if}
 	    {else}
-	      <span class="giTitle">
+	      <span class="giTitle"
 	    {/if}
+	    {if !$theme.params.showText} style="display: none"{/if}>
 	    {$it.title|markup}</span>
+      {if $theme.params.showText}
 	  </div>
 	</td></tr><tr><td class="giDescription">
 	  {if isset($it.summary)}{$it.summary|markup}{/if}
+	  {if $it.canContainChildren}{assign var="showOwner" value=$theme.params.showAlbumOwner}
+	  {else}{assign var="showOwner" value=$theme.params.showImageOwner}{/if}
+	  {if $it.canContainChildren}{assign var="showDate" value=$theme.params.showAlbumDate}
+	  {else}{assign var="showDate" value=$theme.params.showImageDate}{/if}
+	  {g->block type="core.ItemInfo" item=$it class="giInfo"
+		    showSummaries=true showDate=$showDate showSize=$theme.params.showSize
+		    showViewCount=$theme.params.showViewCount showOwner=$showOwner}
+      {/if}
 	  {if isset($it.image)}
 	    <span id="text_{$it.imageIndex}" style="display: none">{$it.description|markup}</span>
+	    <span id="date_{$it.imageIndex}" style="display: none">{if
+	     $theme.params.showDateInViewer}{g->date timestamp=$it.originationTimestamp}{/if}</span>
 	  {/if}
+      {if $theme.params.showText}
 	</td></tr></table>
+      {/if}
 	{if isset($it.itemLinks)}
 	  <span id="links_{$i}" style="display: none">
 	  {foreach from=$it.itemLinks item=link}

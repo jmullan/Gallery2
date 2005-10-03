@@ -14,7 +14,7 @@ var data_iw = new Array({$theme.imageWidths});
 var data_ih = new Array({$theme.imageHeights});
 {/if}
 var data_count = data_iw.length, data_name = '{$theme.item.id}',
-    data_view = {$theme.viewIndex|default:-1},
+    data_view = {$theme.viewIndex|default:-1}, cookie_path = '{$theme.cookiePath}',
     album_showtext = '{g->text text="Show Details" forJavascript=true}',
     album_hidetext = '{g->text text="Hide Details" forJavascript=true}',
     album_showlinks = '{g->text text="Show Item Links" forJavascript=true}',

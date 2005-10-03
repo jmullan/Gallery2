@@ -44,9 +44,9 @@ class HybridTheme extends GalleryTheme {
 	$this->setName($gallery->i18n('Hybrid'));
 	$this->setDescription(
 	    $gallery->i18n('Combined album/image/slideshow dynamic view'));
-	$this->setVersion('1.0.0');
+	$this->setVersion('1.0.1');
 	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredThemeApi(array(2, 0));
+	$this->setRequiredThemeApi(array(2, 2));
 	$this->setStandardSettings(array(
 	    'rows' => 30, 'columns' => 2,
 	    'albumFrame' => '', 'itemFrame' => '', 'colorpack' => '',
@@ -60,17 +60,68 @@ class HybridTheme extends GalleryTheme {
 	    'photoBlocks' => serialize(array(
 				array('exif.ExifInfo', array()),
 				array('comment.ViewComments', array()))),
+	    'showText' => 1, 'showAlbumDate' => 1, 'showImageDate' => 1, 'showDateInViewer' => 1,
+	    'showSize' => 1, 'showViewCount' => 1, 'showAlbumOwner' => 0, 'showImageOwner' => 0,
 	));
+    }
+
+    /**
+     * @see GalleryTheme::getSettings()
+     */
+    function getSettings($itemId=null) {
+	list ($ret, $settings, $params) = parent::getSettings($itemId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Add in our custom settings */
+	$settings[] = array('key' => 'showText',
+			    'name' => $this->translate('Show text with thumbnails'),
+			    'type' => 'checkbox',
+			    'value' => $params['showText']);
+	$settings[] = array('key' => 'showAlbumDate',
+			    'name' => $this->translate('Show dates for albums'),
+			    'type' => 'checkbox',
+			    'value' => $params['showAlbumDate']);
+	$settings[] = array('key' => 'showImageDate',
+			    'name' => $this->translate('Show dates with thumbnails'),
+			    'type' => 'checkbox',
+			    'value' => $params['showImageDate']);
+	$settings[] = array('key' => 'showDateInViewer',
+			    'name' => $this->translate('Show dates in image view'),
+			    'type' => 'checkbox',
+			    'value' => $params['showDateInViewer']);
+	$settings[] = array('key' => 'showSize',
+			    'name' => $this->translate('Show album sizes'),
+			    'type' => 'checkbox',
+			    'value' => $params['showSize']);
+	$settings[] = array('key' => 'showViewCount',
+			    'name' => $this->translate('Show view counts'),
+			    'type' => 'checkbox',
+			    'value' => $params['showViewCount']);
+
+	return array(GalleryStatus::success(), $settings);
     }
 
     /**
      * @see GalleryTheme::showAlbumPage
      */
     function showAlbumPage(&$template, $item, $params, $childIds) {
-	$ret = $this->loadCommonTemplateData($template, $item, $params,
-	    array('owner', 'viewCount', 'parents', 'systemLinks', 'itemLinks',
-		  'childItemLinksDetailed', 'permissions', 'jumpRange'),
-	    $childIds);
+	global $gallery;
+	$urlGenerator =& $gallery->getUrlGenerator();
+
+	$data = array('parents', 'systemLinks', 'itemLinks',
+		      'itemSummaries', 'childItemLinksDetailed', 'permissions', 'jumpRange');
+	if ($params['showSize']) {
+	    $data[] = 'descendentCount';
+	}
+	if ($params['showViewCount']) {
+	    $data[] = 'viewCount';
+	}
+	if ($params['showAlbumOwner'] || $params['showImageOwner']) {
+	    $data[] = 'owner';
+	}
+	$ret = $this->loadCommonTemplateData($template, $item, $params, $data, $childIds);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -86,6 +137,8 @@ class HybridTheme extends GalleryTheme {
 	$theme['imageHeights'] = implode(',', $imageHeights);
 	$theme['imageCount'] = count($imageWidths);
 	$theme['columnWidthPct'] = floor(90 / $params['columns']);
+	$theme['cookiePath'] = preg_replace('#^.*?://.*?(/|$)#', '/',
+					    $urlGenerator->getCurrentUrlDir());
 
 	$showId = GalleryUtilities::getRequestVariables('showId');
 	if (!empty($showId)) {
