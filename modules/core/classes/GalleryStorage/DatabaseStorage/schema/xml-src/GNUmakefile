@@ -4,6 +4,7 @@ G2_TMPDIR ?= tmp
 OUTDIR ?= ../xml-out
 RXP=$(shell which rxp)
 XMLLINT=$(shell which xmllint)
+XMLFILES=$(wildcard *.xml)
 
 xml:
 	@if [ ! -d $(G2_TMPDIR) ]; then mkdir $(G2_TMPDIR); fi
@@ -13,12 +14,14 @@ xml:
 	php -f $(TOOLDIR)/bin/generate-dbxml.php
 
 validate:
-	@if [ -x "$(XMLLINT)" ]; then \
-		xmllint --valid --noout *.xml; \
-	elif [ -x "$(RXP)" ]; then \
-		for xmlfile in *.xml; do \
-			rxp -sV $$xmlfile; \
-		done \
+	if [ "x" != "$(XMLFILES)x" ]; then \
+		if [ -x "$(XMLLINT)" ]; then \
+			xmllint --valid --noout *.xml; \
+		elif [ -x "$(RXP)" ]; then \
+			for xmlfile in *.xml; do \
+				rxp -sV $$xmlfile; \
+			done \
+		fi \
 	fi
 
 scrub: clean

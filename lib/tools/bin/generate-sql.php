@@ -256,9 +256,8 @@ class MySqlGenerator extends BaseGenerator {
 		/* (column-name, key, index)+ */
 		foreach ($child as $c) {
 		    switch($c['name']) {
-		    case 'COLUMN':
-			/* column-name */
-			$output .= '  DROP COLUMN DB_COLUMN_PREFIX' . $c['child'][0]['content'];
+		    case 'COLUMN-NAME':
+			$output .= '  DROP COLUMN DB_COLUMN_PREFIX' . $c['content'];
 			break;
 
 		    case 'KEY':
@@ -370,10 +369,10 @@ class PostgresGenerator extends BaseGenerator {
 		/* (column-name, key, index)+ */
 		foreach ($child as $c) {
 		    switch($c['name']) {
-		    case 'COLUMN':
+		    case 'COLUMN-NAME':
 			/* column-name */
 			$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'];
-			$output .= ' DROP COLUMN DB_COLUMN_PREFIX' . $c['child'][0]['content'];
+			$output .= ' DROP COLUMN DB_COLUMN_PREFIX' . $c['content'];
 			$output .= ';';
 			break;
 
@@ -618,9 +617,9 @@ class OracleGenerator extends BaseGenerator {
 		/* (column-name, key, index)+ */
 		foreach ($child as $c) {
 		    switch($c['name']) {
-		    case 'COLUMN':
+		    case 'COLUMN-NAME':
 			/* column-name */
-			$output .= ' DROP (DB_COLUMN_PREFIX' . $c['child'][0]['content'] . ')';
+			$output .= ' DROP (DB_COLUMN_PREFIX' . $c['content'] . ')';
 			break;
 
 		    case 'KEY':
