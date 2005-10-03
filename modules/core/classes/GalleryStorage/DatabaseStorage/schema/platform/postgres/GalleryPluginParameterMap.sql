@@ -16,6 +16,6 @@ INSERT INTO DB_TABLE_PREFIXSchema (
  DB_COLUMN_PREFIXname,
  DB_COLUMN_PREFIXmajor,
  DB_COLUMN_PREFIXminor
-) VALUES('PluginParameterMap', 1, 2);
+) VALUES('PluginParameterMap', 1, 3);
 
 
