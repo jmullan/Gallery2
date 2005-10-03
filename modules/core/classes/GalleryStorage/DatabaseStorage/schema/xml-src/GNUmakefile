@@ -2,6 +2,8 @@ TOOLDIR ?= ../../../../../../../lib/tools
 CLASSDIR ?= ../../../..
 G2_TMPDIR ?= tmp
 OUTDIR ?= ../xml-out
+RXP=$(shell which rxp)
+XMLLINT=$(shell which xmllint)
 
 xml:
 	@if [ ! -d $(G2_TMPDIR) ]; then mkdir $(G2_TMPDIR); fi
@@ -9,6 +11,15 @@ xml:
 	perl $(TOOLDIR)/bin/extractClassXml.pl --dtd=../$(TOOLDIR)/dtd/GalleryClass2.0.dtd --quiet --out-dir=$(G2_TMPDIR) $(CLASSDIR)/*.class
 	find . -name '*.xml' -exec cp {} ../xml-out \;
 	php -f $(TOOLDIR)/bin/generate-dbxml.php
+
+validate:
+	@if [ -x "$(XMLLINT)" ]; then \
+		xmllint --valid --noout *.xml; \
+	elif [ -x "$(RXP)" ]; then \
+		for xmlfile in *.xml; do \
+			rxp -sV $$xmlfile; \
+		done \
+	fi
 
 scrub: clean
 
