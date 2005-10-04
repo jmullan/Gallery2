@@ -24,6 +24,12 @@ if (!empty($_SERVER['SERVER_NAME'])) {
     exit(1);
 }
 
+if (crc32("groupId") != 3984689328) {
+    print "Your CRC32 is not returning the expected value!\n";
+    print "We're not yet sure why this happens, but it might be a php bug\n";
+    exit(1);
+}
+
 require_once(dirname(__FILE__) . '/XmlParser.inc');
 
 foreach (glob('../xml-out/*.xml') as $xmlFile) {
