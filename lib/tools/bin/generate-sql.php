@@ -82,9 +82,13 @@ class BaseGenerator {
 	}
 
 	/*
-	 * crc32 returns different results on 32-bit vs. 64-bit systems.  On 64-bit systems it'll
-	 * return a negative CRC value for some cases, so in those cases uses 64-bit safe addition
-	 * and eschew the 64-bit unsafe modulo operation
+	 * crc32 returns different results on 32-bit vs. 64-bit systems.  e.g. crc32('groupId')
+	 * returns -310277968 for 32-bit systems and 3984689328 on 64-bit systems. We don't
+	 * completely understand the issue, but adding 2^32 for negative crc32 values
+	 * (32-bit overflows?!) seems to do the trick. And we eschew the 64-bit unsafe modulo
+	 * operation by using substr instead of % 100000.
+	 * Note: We also want strictly positive values since we use the value in SQL index key
+	 * names.
 	 */
 	$crc = crc32($buf);
 	if ($crc > 0) {
