@@ -1,6 +1,6 @@
 # File crc32 crc32(crlf) size size(crlf)  or  R File
 LICENSE	3778559985	3184057198	18011	18351
-README.html	1305464969	705289397	68076	70025
+README.html	1938346158	1291181211	67938	69882
 bootstrap.inc	3282863810	2329700379	1786	1828
 docs/DEVELOPER_GUIDELINES	1686673481	4170020250	2558	2615
 docs/EMBEDDING	2949374225	2836936300	7547	7689
@@ -46,7 +46,7 @@ install/po/zh_TW.po	3002931963	3140121840	46663	47870
 install/steps/AdminUserSetupStep.class	3087732259	1670000716	4055	4172
 install/steps/AuthenticateStep.class	698706208	643385129	3253	3358
 install/steps/CreateConfigFileStep.class	1204411494	1703522182	7968	8175
-install/steps/DatabaseSetupStep.class	1796937206	3410661263	22511	23130
+install/steps/DatabaseSetupStep.class	3989969223	2732808715	22557	23183
 install/steps/FinishedStep.class	3820441645	1593505205	1266	1303
 install/steps/InstallCoreModuleStep.class	710884283	449893559	8786	9010
 install/steps/InstallOtherModulesStep.class	3659812977	2689573970	6230	6414
@@ -200,21 +200,22 @@ lib/support/index.php	3204682359	3867551442	916	948
 lib/support/phpinfo.php	3402601152	388640268	154	164
 lib/support/security.inc	4123560894	1740855429	4937	5111
 lib/support/support.css	887804749	2618199775	793	849
-R	lib/tools/CRC32.jar
-R	lib/tools/GNUmakefile.inc
 lib/tools/bin/.htaccess	421983041	3149581760	31	33
+lib/tools/bin/XmlParser.inc	720592150	91828151	2465	2545
 lib/tools/bin/codex-download.tpl	2076781053	2454417630	2365	2447
-lib/tools/bin/extractClassXml.pl	431007447	3929168958	1259	1317
+lib/tools/bin/dbxml.tpl	3862494099	1715686367	1271	1322
+lib/tools/bin/extractClassXml.pl	3154579765	2127723463	1311	1371
 lib/tools/bin/filterManifests.pl	4219568822	1455485770	1427	1500
-lib/tools/bin/generate-interfaces.php	1490347900	1367251502	5589	5791
-lib/tools/bin/generate-sql.php	847011789	2092715070	26039	26927
+lib/tools/bin/generate-dbxml.php	485810498	834193645	5417	5602
+lib/tools/bin/generate-interfaces.php	4043871224	3415679589	4164	4309
+lib/tools/bin/generate-sql.php	3992511318	3425953015	25373	26233
 lib/tools/bin/getIllegalFunctions.pl	2694286659	3868382365	1197	1248
-lib/tools/bin/interface.tpl	2973780147	3153511717	8248	8516
+lib/tools/bin/interface.tpl	1365613681	767156716	8195	8462
 lib/tools/bin/makeManifest.pl	3913839410	3897275588	4138	4317
-R	lib/tools/bin/rebuild-modules.sh
+lib/tools/bin/rebuild-modules.pl	1990372879	1286431880	671	692
 lib/tools/bin/update-codex-download-page.php	2643023147	2052393309	6789	7020
-lib/tools/dtd/DatabaseChangeDefinition2.0.dtd	2502883134	1553181837	976	1000
-lib/tools/dtd/DatabaseRemoveDefinition2.0.dtd	1675466626	3810010920	129	134
+lib/tools/dtd/DatabaseChangeDefinition2.0.dtd	2315682845	2380282960	968	992
+lib/tools/dtd/DatabaseRemoveDefinition2.0.dtd	326094190	4082287261	203	210
 lib/tools/dtd/DatabaseTableDefinition2.0.dtd	3813059960	1521873026	610	626
 lib/tools/dtd/GalleryClass2.0.dtd	2814331582	2131603877	969	994
 lib/tools/phpunit/CodeAuditTestCase.class	3589071972	4174214092	4483	4650
@@ -254,7 +255,7 @@ lib/tools/uml/JavaClasses.xsl	1301723047	3945700576	2212	2265
 lib/tools/uml/make-java-classes.pl	3765624927	2605669075	2734	2840
 lib/wz_dragdrop/transparentpixel.gif	140141401	140141401	43	43
 lib/wz_dragdrop/wz_dragdrop.js	3756427581	4136821188	38687	40134
-main.php	2838044180	4130236090	14847	15296
+main.php	2649289258	3882002539	15573	16034
 upgrade/GalleryStub.class	3606521607	1233262600	1200	1238
 upgrade/StatusTemplate.class	2600326803	1298051873	3342	3445
 upgrade/UpgradeStep.class	1641610611	3407736305	2415	2524
@@ -323,6 +324,9 @@ R	lib/java
 R	lib/smarty/core
 R	lib/smarty_plugins/function.adminlinkid.php
 R	lib/smarty_plugins/function.safecssname.php
+R	lib/tools/CRC32.jar
+R	lib/tools/GNUmakefile.inc
+R	lib/tools/bin/rebuild-modules.sh
 R	lib/tools/gd
 R	lib/tools/messages
 R	lib/tools/phpinfo.php
