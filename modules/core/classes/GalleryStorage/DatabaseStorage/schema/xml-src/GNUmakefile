@@ -14,7 +14,7 @@ xml:
 	php -f $(TOOLDIR)/bin/generate-dbxml.php
 
 validate:
-	if [ "x" != "$(XMLFILES)x" ]; then \
+	@if [ "x" != "$(XMLFILES)x" ]; then \
 		if [ -x "$(XMLLINT)" ]; then \
 			xmllint --valid --noout *.xml; \
 		elif [ -x "$(RXP)" ]; then \
