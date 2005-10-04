@@ -26,7 +26,9 @@ if (!empty($_SERVER['SERVER_NAME'])) {
 
 if (crc32("groupId") != 3984689328) {
     print "Your CRC32 is not returning the expected value!\n";
-    print "We're not yet sure why this happens, but it might be a php bug\n";
+    print "This is probably because you're not on a 64-bit cpu\n";
+    print "and we don't yet have a solution to generate the right\n";
+    print "index keys on 32-bit cpus.  We'll fix this soon!\n";
     exit(1);
 }
 
