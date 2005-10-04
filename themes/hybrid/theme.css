@@ -49,6 +49,9 @@ div#album_tools img {
     margin-right: 6px;
     padding: 0 1px 0 2px;
 }
+#gsAlbumContent img.popup_button {
+    visibility: hidden;
+}
 
 div#imageview {
     display: none;
@@ -57,6 +60,7 @@ div#imageview {
     width: 100%;
     height: 100%;
     z-index: 1; /* for Opera */
+    border-bottom: 1px solid transparent; /* for Firefox Mac */
 }
 div#imagearea {
     overflow: hidden;

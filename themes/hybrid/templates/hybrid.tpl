@@ -71,17 +71,17 @@
 
 <table id="hybridMain" border="0" cellspacing="0" cellpadding="0"><tr valign="top">
 <td>
-  <div id="sidebar" class="gcBorder2">
+  <div id="sidebar" class="gcBackground1 gcBorder2" style="display: none">
     {g->theme include="sidebar.tpl"}
   </div>
 </td><td id="gsContent">
-  <div id="album_titlebar" class="gcBackground2 gcBorder2">
+  <div id="album_titlebar" class="gcBackground1 gcBorder2">
    <div id="album_tools">
       <img id="sidebar_min" src="{$theme.themeUrl}/images/left.png"
-       width="18" height="18" onclick="sidebar_onoff()"
+       width="18" height="18" onclick="sidebar_onoff()" style="display: none"
        alt="{g->text text="Hide sidebar"}" title="{g->text text="Hide sidebar"}"
      /><img id="sidebar_max" src="{$theme.themeUrl}/images/right.png"
-       width="18" height="18" onclick="sidebar_onoff()" style="display: none"
+       width="18" height="18" onclick="sidebar_onoff()"
        alt="{g->text text="Show sidebar"}" title="{g->text text="Show sidebar"}"
      /><img id="slide__fwd" src="{$theme.themeUrl}/images/fwd.png"
        width="18" height="18" onclick="slide_onoff()"
@@ -106,7 +106,7 @@
       </div>
     </td></tr></table>
   </div>
-  <div id="gsAlbumContent" class="gcBackground1">
+  <div id="gsAlbumContent">
     <table class="content">
     {foreach name="hybrid" from=$theme.children key=i item=it}
       {if ($i % $theme.params.columns == 0)}<tr>{/if}
@@ -171,7 +171,7 @@
       <td class="t">
       {if $theme.params.showText}
 	<table class="itemtext"><tr><td>
-	  <div class="title gcBackground2">
+	  <div class="title gcBackground1">
       {/if}
 	    {if isset($it.image) || isset($it.itemLinks)}
 	      <span style="{if $theme.params.showText}float: right; {/if}margin-left: 2px"><img
@@ -224,7 +224,7 @@
     {/foreach}
     {if $theme.totalPages > 1}
       <tr><td colspan="{$theme.params.columns*2}">
-	{g->block type="core.Pager" class="gbBlock gcBackground2"}
+	{g->block type="core.Pager" class="gbBlock gcBackground1"}
       </td></tr>
     {/if}
     </table>

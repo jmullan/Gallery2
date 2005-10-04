@@ -80,9 +80,9 @@ function app_getcookie() {
       switch (it++) {
 	case 1: ui_select('slide_order', n); slide_setorder(n); break;
 	case 2: ui_select('slide_delay', n); slide_setdelay(n); break;
-	case 3: if (!n) sidebar_onoff(); break;
+	case 3: if (n) sidebar_onoff(); break;
 	case 4: if (!n) album_detailsonoff(); break;
-	case 5: if (!n) album_itemlinksonoff(); break;
+	case 5: if (n) album_itemlinksonoff(); break;
 	case 6: if (n) text_onoff(); break;
       }
     }
@@ -105,6 +105,7 @@ function app_onkeypress(event) {
     case 63235: keyCode=39; break;  case 63277: keyCode=34; break;
   }
   /* Album view: space = start slideshow
+   *             ctrl-left/right = hide/show sidebar
    * Image view: space = start/pause slideshow
    *             escape = return to album view
    *             left/right = next/prev image
@@ -116,10 +117,18 @@ function app_onkeypress(event) {
    */
   if (keyCode==32) slide_onoff();
   else if (keyCode==27) { if (popup_on) popup_vis(0); else if (image_on) image_vis(0); }
-  if (!image_on || keyCode < 33 || keyCode > 40) return;
+  if (keyCode < 33 || keyCode > 40) return;
   if (event.shiftKey) keyCode += 100;
   if (event.ctrlKey) keyCode += 200;
-  switch (keyCode) {
+  if (!image_on) switch (keyCode) {
+    case 237: //Ctrl-Left
+      if (sidebar_on) sidebar_onoff();
+      break;
+    case 239: //Ctrl-Right
+      if (!sidebar_on) sidebar_onoff();
+      break;
+  }
+  else switch (keyCode) {
     case 37: //Left
       if (image_zoomon) { imagearea.scrollLeft -= 20; break; }
     case 137: //Shift-Left
@@ -163,7 +172,7 @@ function app_onkeydown() {
 
 //Class album :: gsContent(album_titlebar(album_tools,album_desc,album_info),gsAlbumContent)
 var album_detailson=1, // Details are visible
-    album_itemlinkson=1, // Item links are visible
+    album_itemlinkson=0, // Item links are visible
     album_fixedtitle=0; // Using fixed position for album_titlebar
 function album_detailsonoff() {
   ui_vis('album_info', (album_detailson = album_detailson?0:1));
@@ -194,7 +203,7 @@ function album_setmargin() {
 }
 
 //Class sidebar :: div sidebar
-var sidebar_on=1; // Sidebar is visible
+var sidebar_on=0; // Sidebar is visible
 function sidebar_onoff() {
   ui_vis('sidebar_max', sidebar_on, 1);
   ui_vis('sidebar_min', (sidebar_on = sidebar_on?0:1), 1);
