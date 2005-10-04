@@ -24,14 +24,6 @@ if (!empty($_SERVER['SERVER_NAME'])) {
     exit(1);
 }
 
-if (crc32("groupId") != 3984689328) {
-    print "Your CRC32 is not returning the expected value!\n";
-    print "This is probably because you're not on a 64-bit cpu\n";
-    print "and we don't yet have a solution to generate the right\n";
-    print "index keys on 32-bit cpus.  We'll fix this soon!\n";
-    exit(1);
-}
-
 require_once(dirname(__FILE__) . '/XmlParser.inc');
 
 foreach (glob('../xml-out/*.xml') as $xmlFile) {
@@ -88,7 +80,18 @@ class BaseGenerator {
 	for ($i = 0; $i < count($columns); $i++) {
 	    $buf .= $columns[$i]['content'];
 	}
-	return crc32($buf) % 100000;
+
+	/*
+	 * crc32 returns different results on 32-bit vs. 64-bit systems.  On 64-bit systems it'll
+	 * return a negative CRC value for some cases, so in those cases uses 64-bit safe addition
+	 * and eschew the 64-bit unsafe modulo operation
+	 */
+	$crc = crc32($buf);
+	if ($crc > 0) {
+	    return $crc % 100000;
+	} else {
+	    return (int)substr(crc32($buf) + pow(2, 32), -5);
+	}
     }
 
     function getNotNullElement($child) {
