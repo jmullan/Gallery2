@@ -1439,6 +1439,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 		 *   "A_Foo_1.0.sql" -- an alteration to upgrade the 1.0 version of
 		 *                      table "Foo" to the current version
 		 *   "R_Foo_1.0.sql" -- delete table Foo.sql if it's currently at version 1.0
+		 *   "T_Foo.sql"     -- test sql, used by the installer.
 		 *
 		 * We need to parse these file names and group them together
 		 * such that once we figure out what version of the Foo table
@@ -1456,7 +1457,9 @@ class DatabaseStorage /* implements GalleryStorage */ {
 			$tableAlter[$matches[2]][$matches[3]][$matches[4]] = $sqlDir . '/' . $file;
 		    }
 		} else if (preg_match('/^(.*)\.sql$/', $file, $matches)) {
-		    $tableDefinition[$matches[1]] = $sqlDir . '/' . $file;
+		    if (!preg_match('/^T_/', $file)) {
+			$tableDefinition[$matches[1]] = $sqlDir . '/' . $file;
+		    }
 		}
 	    }
 	    $platform->closedir($dir);
