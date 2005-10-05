@@ -2,8 +2,8 @@ TOOLDIR ?= ../../../../../../../lib/tools
 CLASSDIR ?= ../../../..
 G2_TMPDIR ?= tmp
 OUTDIR ?= ../xml-out
-RXP=$(shell which rxp)
-XMLLINT=$(shell which xmllint)
+@RXP=$(shell which rxp)
+@XMLLINT=$(shell which xmllint)
 XMLFILES=$(wildcard *.xml)
 
 xml:
