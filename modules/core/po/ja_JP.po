@@ -21,7 +21,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Core 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-08-06 00:53+0900\n"
-"PO-Revision-Date: 2005-08-17 02:47+0900\n"
+"PO-Revision-Date: 2005-09-29 11:13+0900\n"
 "Last-Translator: Kennichi Uehara <ken.w3m+nospam@gmail.com>\n"
 "Language-Team: Japanese <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -302,9 +302,8 @@ msgstr "シネマスコープ 2.35x1"
 msgid "Square 1x1"
 msgstr "正方形 1x1"
 
-#, fuzzy
 msgid "As Image"
-msgstr "画像編集"
+msgstr "編集として"
 
 msgid "Landscape"
 msgstr "横長"
@@ -371,10 +370,14 @@ msgstr "パスワード リカバリ"
 msgid "Build all thumbnails/resizes"
 msgstr "サムネイル/リサイズ画像を生成"
 
+#, fuzzy
 msgid ""
 "Ensure data files for all derivatives (thumbnails, etc) have been built and "
 "rebuild broken ones."
 msgstr ""
+"全ての派生物(サムネイルなど)が\n"
+"Ensure data files for all derivatives (thumbnails, etc) have been built and "
+"rebuild broken ones."
 
 msgid "Build All Thumbnails/Resizes"
 msgstr "全てのサムネイル/リサイズ画像を生成"
@@ -407,12 +410,16 @@ msgid ""
 "to clean out the cache and force Gallery to reload the information from the "
 "database."
 msgstr ""
+"Gallery 共通して使われるデータベース情報を、パフォーマンスアップのためにディ"
+"スクに保存します。もしデータベースを直接編集した場合、このタスクを実行して"
+"キャッシュを掃除し、Gallery にデータベースから情報を再読み込みさせてくださ"
+"い。"
 
 #, c-format
 msgid "Successfully deleted directory: %s"
 msgstr "ディレクトリ削除に成功しました: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to delete directory: %s"
 msgstr "ディレクトリを削除できませんでした: %s"
 
@@ -547,7 +554,7 @@ msgstr ""
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
-msgstr ""
+msgstr "推定残り時間: %d:%02d"
 
 #, c-format
 msgid "Memory used: %s, total: %s"
@@ -592,8 +599,9 @@ msgstr "アイテムフレーム"
 msgid "Photo Frame"
 msgstr "画像のフレーム"
 
+#, fuzzy
 msgid "Color Pack"
-msgstr ""
+msgstr "カラーパック"
 
 msgid "You must enter a number greater than 0"
 msgstr "0より大きい数字を入力しなくてはなりません"
@@ -634,6 +642,12 @@ msgstr "未知"
 
 msgid "unknown"
 msgstr "未知"
+
+#, c-format
+msgid ""
+"Invalid return URL! The requested URL %s tried to insert a redirection to %s "
+"which is not a part of this Gallery."
+msgstr ""
 
 msgid "Back"
 msgstr "戻る"
@@ -683,6 +697,8 @@ msgid ""
 "Update capture date stored in Gallery for all items with an available date "
 "in the original data file (usually from EXIF data)."
 msgstr ""
+"Gallery に保存された、オリジナルファイル内に有効な日付データのある全てのアイ"
+"テムの撮影日を更新します。(EXIF データからとります)"
 
 msgid "Processing..."
 msgstr "処理中..."
@@ -731,7 +747,7 @@ msgid "Core"
 msgstr "Core"
 
 msgid "Gallery 2 Core Module"
-msgstr "Gallery 2 Core モジュール"
+msgstr "Gallery 2 コア モジュール"
 
 msgid "Add Items"
 msgstr "アイテム追加"
@@ -867,7 +883,7 @@ msgid "Test email sent successfully"
 msgstr "テストメールの送信に成功しました。"
 
 msgid "There was a problem processing your request, see below for details."
-msgstr ""
+msgstr "要求を処理しているときに問題が発生しました、詳細は以下です。"
 
 msgid "Error sending test email, see below for details."
 msgstr ""
@@ -882,8 +898,9 @@ msgid ""
 "setting in their personal preferences or via the language selector block if "
 "available."
 msgstr ""
-"Galleryのデフォルトの言語を選択してください。それぞれのユーザーはこの設定を上"
-"書きして、好みの言語を設定することができます。"
+"Galleryのデフォルトの言語を選択してください。以下で有効になっていれば、それぞ"
+"れのユーザーはこの設定を上書きするか、言語セレクター経由で好みの言語を設定す"
+"ることができます。"
 
 msgid "Default language"
 msgstr "デフォルト言語"
@@ -915,23 +932,19 @@ msgid "Style"
 msgstr "拡大/縮小"
 
 msgid "Format"
-msgstr ""
+msgstr "フォーマット"
 
-#, fuzzy
 msgid "Sample"
-msgstr "拡大/縮小"
+msgstr "サンプル"
 
-#, fuzzy
 msgid "Date"
-msgstr "日付:"
+msgstr "日付"
 
-#, fuzzy
 msgid "Time"
-msgstr "時間:"
+msgstr "時間"
 
-#, fuzzy
 msgid "Date/Time"
-msgstr "%s 日付と時間"
+msgstr "日付と時間"
 
 msgid "Filesystem Permissions"
 msgstr "ファイルシステム パーミッション"
@@ -997,6 +1010,8 @@ msgid ""
 "Your webserver is configured to prevent you from accessing that directory.  "
 "Please refer to the %s and consult your webserver administrator."
 msgstr ""
+"ウェブサーバはそのディレクトリへアクセスできないように設定されています。%s を"
+"参照してウェブサーバの管理者へ相談してください。"
 
 msgid "The webserver does not have permissions to read that directory."
 msgstr "ウェブサーバはそのディレクトリを読む権限がありません。"
@@ -1014,7 +1029,7 @@ msgid "Inactivity Timeout"
 msgstr "無効化タイムアウト"
 
 msgid "Embedded Markup"
-msgstr ""
+msgstr "組み込みマークアップ"
 
 msgid ""
 "What kind of markup should we allow in user-entered fields?  For security "
@@ -1035,6 +1050,10 @@ msgid ""
 "below, including authentication information if required.  Optionally add :"
 "port after the server name to use a non-default port."
 msgstr ""
+"デフォルトでは Gallery は設定の必要のない PHP内蔵のメール機能を使います。SMTP"
+"メールサーバを使用するには以下の情報を入力して、必要なら認証の情報も入力して"
+"ください。デフォルト以外のポートを使う場合は、サーバ名の後にオプションとし"
+"て :port を加えてください。"
 
 msgid "Server"
 msgstr "サーバ"
@@ -1149,7 +1168,7 @@ msgstr "グループ名を入力しなくてはなりません"
 
 #, c-format
 msgid "Group '%s' already exists"
-msgstr "グループ '%s'は既に存在しています"
+msgstr "グループ '%s' は既に存在しています"
 
 msgid "Create Group"
 msgstr "グループ作成"
@@ -1165,7 +1184,7 @@ msgstr "ユーザーネームを入力しなくてはなりません"
 
 #, c-format
 msgid "Username '%s' already exists"
-msgstr "ユーザーネーム '%s'は既に存在しています。"
+msgstr "ユーザー名 '%s' は既に存在しています。"
 
 msgid "Full Name"
 msgstr "フルネーム"
@@ -1614,10 +1633,10 @@ msgstr ""
 "きます。"
 
 msgid "Available"
-msgstr ""
+msgstr "有効なもの"
 
 msgid "Choose a block"
-msgstr ""
+msgstr "ブロックを選択"
 
 msgid "Selected"
 msgstr "選択されたもの"
@@ -1754,7 +1773,7 @@ msgid "Back to the Gallery"
 msgstr "Galleryに戻る"
 
 msgid "Error Detail"
-msgstr ""
+msgstr "エラーの詳細"
 
 msgid "System Information"
 msgstr "システム情報"
@@ -2253,9 +2272,8 @@ msgid ""
 "lost."
 msgstr ""
 
-#, fuzzy
 msgid "You do not have permissions to modify this item."
-msgstr "このアルバムにアイテムを追加する権限がありません。"
+msgstr "このアイテムを編集する権限がありません。"
 
 msgid "Save and Done"
 msgstr "保存して完了する"
@@ -2439,7 +2457,7 @@ msgid ""
 "Disabling this option will cause any actions (rotating, scaling, etc) to "
 "modify the original."
 msgstr ""
-"Galleryは画像の回転やサイズ変更をする際にも、元の画像を変更することはありませ"
+"Galleryは画像の回転やサイズ変更をする際にも、元の画像を変更��ることはありませ"
 "ん。その代わりに、画像の複製を作ってそれを扱います。これには少し余分なディス"
 "クスペースが必要です。このオプションを無効にすると、どんな作業も元の画像に作"
 "用します。これは元の画像を元に戻せなくなります。"
@@ -2478,8 +2496,9 @@ msgstr ""
 msgid "Setting"
 msgstr "設定"
 
+#, fuzzy
 msgid "Use Global"
-msgstr ""
+msgstr "グローバルを使う"
 
 msgid "Album Highlight"
 msgstr "アルバムハイライト"
@@ -2547,7 +2566,7 @@ msgid "Move"
 msgstr "移動"
 
 msgid "Successfully moved"
-msgstr "移動に成功し�した"
+msgstr "移動に成功しました"
 
 msgid "Permissions"
 msgstr "パーミッション"
@@ -2973,7 +2992,7 @@ msgid "If you did not request this recovery email, you may safely ignore it."
 msgstr ""
 
 msgid "Thank you!"
-msgstr ""
+msgstr "ありがとう"
 
 msgid "guest"
 msgstr "ゲスト"

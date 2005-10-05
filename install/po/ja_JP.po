@@ -15,14 +15,14 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Gallery: Installer 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-08-09 01:16+0900\n"
-"PO-Revision-Date: 2005-08-17 02:51+0900\n"
+"PO-Revision-Date: 2005-09-28 14:51+0900\n"
 "Last-Translator: Kennichi Uehara <ken.w3m+nospam@gmail.com>\n"
 "Language-Team: Japanese <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -48,17 +48,23 @@ msgstr "認証"
 msgid ""
 "<b>Error:</b> could not locate <b>login.txt</b>. Please place it in your <tt>"
 "%s/</tt> directory."
-msgstr "<b>エラー:</b> <b>login.txt</b> の存在を確認できませんでした。このファイルを <tt>%s/</tt> ディレクトリに置いてください。"
+msgstr ""
+"<b>エラー:</b> <b>login.txt</b> の存在を確認できませんでした。このファイルを "
+"<tt>%s/</tt> ディレクトリに置いてください。"
 
 msgid ""
 "<b>Error:</b> your <b>login.txt</b> file is not readable. Please give "
 "Gallery read permissions on the file."
-msgstr "<b>エラー:</b> <b>login.txt</b> ファイルが読めません。Gallery に読み込みパーミッションをあたえてください。"
+msgstr ""
+"<b>エラー:</b> <b>login.txt</b> ファイルが読めません。Gallery に読み込みパー"
+"ミッションをあたえてください。"
 
 msgid ""
 "<b>Error:</b> your <b>login.txt</b> key does not match correctly. Please "
 "download a new authentication string from below and try again."
-msgstr "<b>エラー:</b> <b>login.txt</b> のキーが正しく一致しませんでした。新しい認証文字列を以下からダウンロードしてもう一度試してください。"
+msgstr ""
+"<b>エラー:</b> <b>login.txt</b> のキーが正しく一致しませんでした。新しい認証"
+"文字列を以下からダウンロードしてもう一度試してください。"
 
 msgid "Create Config File"
 msgstr "設定ファイルの作成"
@@ -68,7 +74,10 @@ msgid ""
 "Unable to write to the <b>config.php</b> configuration file in your <tt>%s</"
 "tt> directory.  Please change its permissions.  If you're on Unix you can do "
 "<i>chmod 666 config.php</i> to fix this."
-msgstr "<tt>%s</tt> ディレクトリにある <b>config.php</b> 設定ファイルに書き込めません。パーミッションを変更してください。Unix シェルで操作しているなら、 <i>chmod 666 config.php</i> を実行して修正できます。"
+msgstr ""
+"<tt>%s</tt> ディレクトリにある <b>config.php</b> 設定ファイルに書き込めませ"
+"ん。パーミッションを変更してください。Unix シェルで操作しているなら、 "
+"<i>chmod 666 config.php</i> を実行して修正できます。"
 
 #, c-format
 msgid "The config.php file does not exist in your %s directory"
@@ -78,7 +87,10 @@ msgid ""
 "The config.php file exists but is not writeable.  If your server is Windows, "
 "you may have to disable file sharing for config.php and set its permissions "
 "manually."
-msgstr "config.php ファイルは存在しますが書き込みできません。サーバが Windows の場合は、config.php のファイル共有を無効にし、パーミッションを手動で変えなければならないでしょう。"
+msgstr ""
+"config.php ファイルは存在しますが書き込みできません。サーバが Windows の場合"
+"は、config.php のファイル共有を無効にし、パーミッションを手動で変えなければな"
+"らないでしょう。"
 
 msgid "Database Setup"
 msgstr "データベースセットアップ"
@@ -97,15 +109,17 @@ msgid "You must specify a column prefix (we recommend %s)"
 msgstr "カラムのプレフィックスを指定しなくてはなりません (推奨 %s)"
 
 msgid "Use only letters, numbers and underscore in the column prefix"
-msgstr "カラムのプレフィックスには、半角英数文字とアンダースコアのみ使用してください"
+msgstr ""
+"カラムのプレフィックスには、半角英数文字とアンダースコアのみ使用してください"
 
 #, c-format
 msgid "You must specify a table prefix (we recommend %s)"
 msgstr "テーブルのプレフィックスを指定しなくてはなりません (推奨 %s)"
 
-#, fuzzy
 msgid "Use only letters, numbers and underscore in the table prefix"
-msgstr "テーブルのプレフィックスには、半角英数文字とアンダースコアのみ使用してください"
+msgstr ""
+"テーブルのプレフィックスには、半角英数文字とアンダースコアのみしか使用できま"
+"せん"
 
 #, c-format
 msgid "Unable to create a database connection of type %s"
@@ -128,14 +142,24 @@ msgid ""
 "think your G2 should still work or select a clean install, which will erase "
 "all data in the database and in the storage directory."
 msgstr ""
-"Gallery のテーブルは既にデータベースに存在します。しかし、G2ストレージディレクトリには 'versions.dat' ファイルが存在しません。which we interpret as a broken state of G2.　正しいフォーマットの\n"
-"Gallery tables already exist in this database!  But there is no 'versions.dat' file in your G2 storage directory which we interpret as a broken state of G2. Either create a versions.dat file with the correct format if you think your G2 should still work or select a clean install, which will erase all data in the database and in the storage directory."
+"Gallery のテーブルは既にデータベースに存在します。しかし、G2ストレージディレ"
+"クトリには 'versions.dat' ファイルが存在しません。which we interpret as a "
+"broken state of G2.　正しいフォーマットの\n"
+"Gallery tables already exist in this database!  But there is no 'versions."
+"dat' file in your G2 storage directory which we interpret as a broken state "
+"of G2. Either create a versions.dat file with the correct format if you "
+"think your G2 should still work or select a clean install, which will erase "
+"all data in the database and in the storage directory."
 
 msgid ""
 "The G2 storage directory has a versions.dat file of an old install. But the "
 "Gallery database tables don't exist. Select a clean install to erase all "
 "data in the Gallery storage directory and advance to the next step."
 msgstr ""
+"G2 ストレージディレクトリには過去のインストールの versions.dat が存在します。"
+"しかし、Gallery データベーステーブルは存在しません。Gallery ストレージディレ"
+"クトリにある全てのデータを消去するクリーンインストールを選択し、次のステップ"
+"へ進んでください。"
 
 msgid ""
 "Gallery tables already exist in the database and there is a versions.dat "
@@ -144,6 +168,11 @@ msgid ""
 "the Gallery storage directory. Select a clean install to erase all data in "
 "the database and in the storage directory and to advance to the next step."
 msgstr ""
+"Galleryテーブルが既にデータベースに存在し、Galleryストレージディレクトリに "
+"versions.dat ファイルがあります。しかし、インストール済みのGalleryデータベー"
+"ステーブルのバージョンは、Galleryストレージディレクトリのデータのバージョンと"
+"一致しません。ストレージディレクトリにあるデータを全て消去するためにクリーン"
+"インストールを選択し、次のステップへ進んでください。"
 
 msgid ""
 "Gallery tables already exist in the database and the Gallery storage "
@@ -156,22 +185,28 @@ msgid ""
 "Could not execute the required API to erase the storage directory. Please "
 "erase the Gallery storage directory manually."
 msgstr ""
+"ストレージディレクトリを消去するために必要なAPIが実行できませんでした。手動で"
+"Galleryストレージディレクトリを削除してください。"
 
 msgid ""
 "Could not execute the required API to drop the Gallery database tables. "
 "Please clean the Gallery database manually."
 msgstr ""
+"Galleryデータベーステーブルをdropするために必要なAPIを実行できませんでした。"
+"手動でGalleryデータベースを掃除してください。"
 
 msgid ""
 "Could not load the G2 API. Please erase the Gallery database tables and the "
 "storage directory manually."
 msgstr ""
+"G2 APIを読み込めませんでした。Galleryデータベーステーブルとストレージディレク"
+"トリを手動で削除してください。"
 
 msgid "MySQL (all versions)"
 msgstr "MySQL (全てのバージョン)"
 
 msgid "MySQL with Transactions (v3.23.34a and newer)"
-msgstr ""
+msgstr "MySQL トランザクションあり (v3.23.34a 以上)"
 
 msgid "PostgreSQL v7.x"
 msgstr "PostgreSQL v7.x"
@@ -183,24 +218,11 @@ msgid "Oracle (9i and newer)"
 msgstr "Oracle (9i 以上)"
 
 msgid "Unknown DB type or no known tables information."
-msgstr ""
+msgstr "未知のタイプのデータベースかテーブル情報です"
 
 #, c-format
 msgid "Could not find an unused table prefix similar to \"%s\"."
-msgstr ""
-
-#, c-format
-msgid "SQL test file \"%s\" not found."
-msgstr ""
-
-#, c-format
-msgid "Could not open SQL test file \"%s\"."
-msgstr ""
-
-msgid ""
-"Check the returned error message and README.html for missing privileges and "
-"clean up the database."
-msgstr ""
+msgstr "\"%s\" に似た未使用のテーブルプレフィックスが見つかりませんでした。"
 
 msgid ""
 "Failed to create a DB test sequence.Check the returned error message and "
@@ -210,6 +232,19 @@ msgstr ""
 msgid ""
 "Test failed to drop a DB test sequence.Check the returned error message and "
 "README.html for missing privileges and clean up the database."
+msgstr ""
+
+#, c-format
+msgid "SQL test file \"%s\" not found."
+msgstr "SQL テストファイル \"%s\" が見つかりません"
+
+#, c-format
+msgid "Could not open SQL test file \"%s\"."
+msgstr "SQL テストファイル \"%s\" が開けません"
+
+msgid ""
+"Check the returned error message and README.html for missing privileges and "
+"clean up the database."
 msgstr ""
 
 msgid "Finished"
@@ -222,7 +257,7 @@ msgid "Unable to initialize our Gallery data"
 msgstr "Gallery データを初期化できません"
 
 msgid "Unable to communicate with the database"
-msgstr ""
+msgstr "データベースと通信できません"
 
 msgid "Unable to load the core module"
 msgstr "コアモジュールを読み込みません"
@@ -237,7 +272,7 @@ msgid "Unable to commit database transaction"
 msgstr "データベーストランザクションをコミットできません"
 
 msgid "Core module is only partially installed."
-msgstr ""
+msgstr "コアモジュールは部分的にしかインストールされていません。"
 
 msgid "Install More Modules"
 msgstr "モジュールをもっとインストールする"
@@ -247,18 +282,18 @@ msgstr "モジュールリストを取得できません"
 
 #, c-format
 msgid "Unable to load the %s module"
-msgstr ""
+msgstr "%s モジュールを読み込めません"
 
 #, c-format
 msgid "Unable to install the %s module"
-msgstr ""
+msgstr "%s モジュールをインストールできません"
 
 #, c-format
 msgid "Unable to activate the %s module"
-msgstr ""
+msgstr "%s モジュールを有効化できません"
 
 msgid "Other"
-msgstr ""
+msgstr "その他"
 
 msgid "Installation Type"
 msgstr "インストールタイプ"
@@ -272,43 +307,53 @@ msgstr "ストレージセットアップ"
 msgid "System Checks"
 msgstr "システムチェック"
 
+#, fuzzy
 msgid "PHP version >= 4.1.0 or >= 5.0.4"
-msgstr ""
+msgstr "PHP バージョン >= 4.1.0 or >= 5.0.4"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Error: Gallery 2 requires PHP version 4.1.0 or newer or 5.0.4 or newer. You "
 "have PHP version %s installed. Contact your webserver administrator to "
 "request an upgrade, available at the %sPHP website%s."
 msgstr ""
+"エラー: Gallery 2 はバージョン以上または以上が必要です。インストールされてい"
+"るPHPのバージョンは %s です。ウェブサーバの管理者に連絡して、アップグレードを"
+"要望してください。%sPHP のウェブサイト%s"
 
 msgid "PHP Version"
 msgstr "PHP バージョン"
 
 msgid "FILE directive supported"
-msgstr ""
+msgstr "FILE ディレクティブはサポートされています"
 
+#, fuzzy
 msgid ""
 "Error: your PHP __FILE__ directive is not functioning correctly. Please file "
 "a support request with your webserver administrator or in the Gallery forums."
 msgstr ""
+"エラー: PHPの __FILE__ ディレクティブは正しく機能していません。\n"
+"directive is not functioning correctly. Please file a support request with "
+"your webserver administrator or in the Gallery forums."
 
 msgid "FILE Directive"
-msgstr ""
+msgstr "FILE ディレクティブ"
 
 msgid "Safe mode disabled"
-msgstr ""
+msgstr "セーフモードは無効です"
 
 msgid ""
 "Error: Your version of PHP is configured with safe mode enabled.  You must "
 "disable safe mode before Gallery will run."
 msgstr ""
+"エラー: このPHPはセーフモードが有効に設定されています。Gallery を動作させる前"
+"にセーフモードを無効にしなければなりません。"
 
 msgid "Safe Mode"
 msgstr "セーフモード"
 
 msgid "exec() allowed"
-msgstr ""
+msgstr "exec() 許可"
 
 msgid ""
 "Warning: The exec() function is disabled in your php by the "
@@ -319,7 +364,7 @@ msgid ""
 msgstr ""
 
 msgid "set_time_limit() allowed"
-msgstr ""
+msgstr "set_time_limit() 許可"
 
 #, c-format
 msgid ""
@@ -344,13 +389,17 @@ msgid ""
 msgstr ""
 
 msgid "File uploads allowed"
-msgstr "ファイルのアップロードは許可されています"
+msgstr "ファイルのアップロード許可"
 
+#, fuzzy
 msgid ""
 "Warning: Your PHP is configured not to allow file uploads (<b>file_uploads</"
 "b> parameter in php.ini). You will need to enable this option if you want to "
 "upload files to your Gallery with a web browser."
 msgstr ""
+"警告: Your PHP is configured not to allow file uploads (<b>file_uploads</b> "
+"parameter in php.ini). You will need to enable this option if you want to "
+"upload files to your Gallery with a web browser."
 
 msgid "Maximum upload size"
 msgstr "アップロードの最大サイズ"
@@ -384,13 +433,13 @@ msgid ""
 msgstr ""
 
 msgid "Gallery file integrity"
-msgstr ""
+msgstr "Gallery ファイルの完全性"
 
 msgid "Test skipped due to other errors."
-msgstr ""
+msgstr "他のエラーのためにテストがスキップされました"
 
 msgid "Manifest missing or inaccessible."
-msgstr ""
+msgstr "Manifest がないかアクセスできません"
 
 msgid "Welcome"
 msgstr "ようこそ"
@@ -399,7 +448,10 @@ msgid ""
 "Every Gallery will have at least one administrator user who has full access "
 "to view/modify everything. Please choose a username and password for your "
 "main administrator account. You can add additional users later."
-msgstr "Galleryは常に、全てを閲覧/編集できるフルアクセス可能な最低一人の管理者ユーザが存在します。中心となる管理者アカウントのユーザ名とパスワードを選択してください。また、後でユーザを追加することもできます。"
+msgstr ""
+"Galleryは常に、全てを閲覧/編集できるフルアクセス可能な最低一人の管理者ユーザ"
+"が存在します。中心となる管理者アカウントのユーザ名とパスワードを選択してくだ"
+"さい。また、後でユーザを追加することもできます。"
 
 msgid "Admin username"
 msgstr "管理者ユーザー名"
@@ -434,12 +486,17 @@ msgstr "パスワードが欠けています。同じパスワードを2回入�
 msgid "The passwords you entered do not match!  Please try again."
 msgstr "入力したパスワードが一致しません。もう一度試してください。"
 
+#, fuzzy
 msgid ""
 "As you are reusing existing database tables, this is not a fresh install. "
 "This will only change the setup password, but not change the password of the "
 "site admin. To change the password of the site admin, choose the forgot "
 "password mechanism of Gallery."
 msgstr ""
+"存在するデータベーステーブルを再使用しているため、これは新規インストールでは"
+"ありません。これはセットアップパスワードを変更するのみですが、サイト管理者の"
+"パスワードは変更しません。サイと管理者のパスワードを変更するには、Galleryメカ"
+"ニズムのパスワードを忘れたを選択してください"
 
 msgid "Create"
 msgstr "作成"
@@ -460,6 +517,12 @@ msgid ""
 "directory where main.php is located). It must contain the following randomly "
 "generated characters:"
 msgstr ""
+"インストールを進めるには、あなたが権利を有する人であるか確かめなければなりま"
+"せん。もっともよい方法は、あなたが正しい権限を持っていると証明できるGallery"
+"ディレクトリに、小さな変更を加えるようあなたに頼むことです。したがって、 "
+"<strong>login.txt</strong> というファイルをウェブサーバ上の <tt>%s</tt> ディ"
+"レクトリに作成してください。(main.phpがある場所と同じディレクトリです) その"
+"ファイルの内容は以下のランダムに生成された文字列でなければなりません。:"
 
 #, c-format
 msgid ""
@@ -467,6 +530,8 @@ msgid ""
 "for you.  Download that and copy it into your <tt>%s</tt> directory and "
 "you're all set."
 msgstr ""
+"便利なように、%s正しいバージョンのlogin.txt%sを用意しました。ダウンロードし"
+"て <tt>%s</tt> ディレクトリに入れてください。これで準備完了です"
 
 msgid "Once you've uploaded the file, click below to continue."
 msgstr "ファイルをアップロードしたら、下をクリックして続けてください。"
@@ -484,11 +549,14 @@ msgid ""
 "Are you really sure you want to delete all your data in your Gallery storage "
 "directory and all your data in your Gallery database?"
 msgstr ""
+"Gallery ストレージディレクトリおよび Gallery データベースにある全てのデータを"
+"削除してよろしいですか?"
 
 msgid ""
 "There was an error erasing the db and storage directory data. Here's the "
 "error:"
 msgstr ""
+"DBとストレージディレクトリのデータ削除中にエラーが発生しました。これがエラー:"
 
 msgid "Cancel"
 msgstr "キャンセル"
@@ -551,6 +619,9 @@ msgid ""
 "own database tables. Either choose a different database or a different table "
 "prefix for each multisite!"
 msgstr ""
+"これはマルチサイトインストールです。それぞれのマルチサイトは自身のデータベー"
+"ステーブルが必要です。それぞれに違うデータベースを選択するか、違うテーブルプ"
+"レフィックスを用いてください。"
 
 msgid "Database type:"
 msgstr "データベースタイプ:"
@@ -565,7 +636,7 @@ msgid "DB Password:"
 msgstr "DB パスワード:"
 
 msgid "DB Name:"
-msgstr ""
+msgstr "データベース名:"
 
 msgid "Table Prefix:"
 msgstr "テーブルのプレフィックス:"
@@ -574,16 +645,16 @@ msgid "Column Prefix:"
 msgstr "カラムのプレフィックス:"
 
 msgid "We received the following database related errors:"
-msgstr ""
+msgstr "以下のデータベースに関連するエラーを受けました:"
 
 msgid "Erase Data For A Clean Install"
-msgstr ""
+msgstr "クリーンインストールのためにデータ消去"
 
 msgid "Reuse Existing Tables"
-msgstr ""
+msgstr "既存のテーブルを再利用"
 
 msgid "Database set up successfully."
-msgstr ""
+msgstr "データベースのセットアップに成功しました"
 
 msgid "Finished!"
 msgstr "完了"
@@ -592,19 +663,25 @@ msgid ""
 "Congratulations! Your Gallery 2 install is complete! See... that wasn't so "
 "hard, was it? Now it's time to upload some photos!"
 msgstr ""
+"おめでとうございます! Gallery 2 のインストールが完了しました。ほら、そんなに"
+"難しくなかったでしょう？ さあ、何か写真をアップロードしましょう!"
 
 msgid "Go to my Gallery!"
-msgstr ""
+msgstr "Gallery を訪れる"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "You may now go to your new Gallery.  Enter the URL in your browser for %"
 "smain.php%s in your %s directory."
 msgstr ""
+"あなたはいますぐ\n"
+"You may now go to your new Gallery.  Enter the URL in your browser for %"
+"smain.php%s in your %s directory."
 
 msgid "Installed Gallery Core successfully"
-msgstr ""
+msgstr "Gallery コアのインストールに成功しました"
 
+#, fuzzy
 msgid ""
 "Congratulations, we've successfully installed the Gallery framework.  "
 "However, most of the really cool features from Gallery come from additional "
@@ -612,14 +689,19 @@ msgid ""
 "through the process of selecting modules to install so that you can tune "
 "Gallery to do exactly what you want."
 msgstr ""
+"おめでとうございます、Galleryフレームワークのインストールに成功しました。しか"
+"し、ほとんどのGalleryのクールな機能は、あなたがインストールと設定をする追加モ"
+"ジュールからきます。次のステップではThe next step will take you through the "
+"process of selecting modules to install so that you can tune Gallery to do "
+"exactly what you want."
 
 msgid "Error installing Gallery Core"
-msgstr ""
+msgstr "Gallery コアのインストールでエラーが発生しました"
 
 msgid ""
 "Something went wrong when we tried to install the core module.  What to do "
 "next?"
-msgstr ""
+msgstr "コアもジュールインストール時に何か問題がおきました。次はどうしますか?"
 
 msgid ""
 "Go to the System Checks step of the installer and make sure all checks shows "
@@ -637,6 +719,7 @@ msgid ""
 "Please visit the %sG2 FAQ%s and read the %sKnown issues section of the Readme"
 "%s."
 msgstr ""
+"%sG2 FAQ%sを訪れて、%sKnown issues section of the Readme%sを読んでください。"
 
 #, c-format
 msgid ""
@@ -647,10 +730,10 @@ msgid ""
 msgstr ""
 
 msgid "Stack Trace:"
-msgstr ""
+msgstr "スタックトレース:"
 
 msgid "Installed Gallery Core successfully."
-msgstr ""
+msgstr "Gallery コアのインストールに成功しました。"
 
 msgid ""
 "We've successfully installed the core of Gallery.  Although everything will "
@@ -660,7 +743,7 @@ msgid ""
 msgstr ""
 
 msgid "Install Other Modules"
-msgstr ""
+msgstr "他のモジュールをインストール"
 
 msgid ""
 "The following modules can be automatically installed and activated for you.  "
@@ -685,41 +768,46 @@ msgid "Version"
 msgstr "バージョン"
 
 msgid "Description"
-msgstr ""
+msgstr "説明"
 
 msgid "(Incompatible with this Gallery version)"
-msgstr ""
+msgstr "(このバージョンの Gallery と互換性がありません)"
 
 msgid "(un)check all"
-msgstr ""
+msgstr "全てをチェック(チェックを外す)"
 
 #, c-format
 msgid "Continue to Step %d Without Activating&raquo;"
-msgstr ""
+msgstr "有効化せずに続けてステップ %d へ&raquo;"
 
 msgid "Activate Selected Modules"
-msgstr ""
+msgstr "選択したモジュールを有効化"
 
 #, c-format
 msgid "Activated the <i>%s</i> module successfully"
-msgstr ""
+msgstr "<i>%s</i> モジュールの有効化に成功しました"
 
 #, c-format
 msgid ""
 "The <i>%s</i> module was installed, but needs configuration to be activated"
 msgstr ""
+"<i>%s</i> モジュールはインストールされていますが、有効化するには設定が必要で"
+"す"
 
 msgid ""
 "After finishing this installation, login as Admin and browse to Site Admin. "
 "Go to the <i>Modules</i> view and configure the above listed modules."
 msgstr ""
+"このインストールの終了後に、管理者としてログインし、サイト管理をブラウズして"
+"ください。<i>モジュール</i> ビューへいって以上のモジュールの設定をしてくださ"
+"い。"
 
 msgid "Activate More Modules"
-msgstr ""
+msgstr "他のモジュールも有効化する"
 
 #, c-format
 msgid "Continue to Step %d&raquo;"
-msgstr ""
+msgstr "続けてステップ %d へ&raquo;"
 
 msgid "Welcome to the Gallery Installer"
 msgstr "Gallery インストーラへようこそ"
@@ -728,27 +816,28 @@ msgid "Install Steps"
 msgstr "インストールステップ"
 
 msgid "Installer Help"
-msgstr ""
+msgstr "インストーラのヘルプ"
 
 msgid "Start Over"
-msgstr ""
+msgstr "やり直してください"
 
 msgid "Redo this step"
-msgstr ""
+msgstr "このステップをもう一度"
 
 msgid "Installation Status"
-msgstr ""
+msgstr "インストールの状況"
 
 #, c-format
 msgid "Install %d%% complete"
-msgstr ""
+msgstr "インストール進行率 %d%%"
 
+#, fuzzy
 msgid "Gallery: <strong>your photos</strong> on <strong>your website</strong>"
-msgstr ""
+msgstr "Gallery: <strong>your photos</strong> on <strong>your website</strong>"
 
 #, c-format
 msgid "Missing files (%d)"
-msgstr ""
+msgstr "欠落したファイル (%d)"
 
 msgid ""
 "Note: You're running Gallery from CVS, so recently removed files may appear "
@@ -757,7 +846,7 @@ msgstr ""
 
 #, c-format
 msgid "Modified files (%d)"
-msgstr ""
+msgstr "変更されたファイル (%d)"
 
 msgid ""
 "Note: You're running Gallery from CVS, so some modified files are to be "
@@ -767,18 +856,21 @@ msgstr ""
 
 #, c-format
 msgid "Old files (%d)"
-msgstr ""
+msgstr "古いファイル (%d)"
 
 msgid ""
 "These files are no longer part of Gallery. They probably won't cause any "
 "problems but it is a good idea to remove them to keep your install clean."
 msgstr ""
+"これらのファイルはもうGalleryの一部ではありません。それらは何か問題の原因にな"
+"ることはありませんが、インストール状態をきれいに保つために削除しておくことは"
+"よい考えです。"
 
 msgid "Please select the installation type"
-msgstr ""
+msgstr "インストールタイプを選択してください。"
 
 msgid "Standard installation"
-msgstr ""
+msgstr "標準インストール"
 
 #, c-format
 msgid ""
@@ -786,15 +878,21 @@ msgid ""
 "want to install a new Gallery in the directory %s which will be accessible "
 "with the URL %s."
 msgstr ""
+"これはデフォルトのインストールタイプです。%2$s のURLからアクセスできる、新し"
+"いGalleryディレクトリ %1$s にインストールしたい場合はこちらを選択してくださ"
+"い。"
 
 msgid "Multisite installation"
-msgstr ""
+msgstr "マルチサイトインストール"
 
 msgid ""
 "Gallery can support multiple independent sites with a single installation of "
 "the code. Choose this installation type if you want to install a new Gallery "
 "on the same webserver but in a different path, subdomain or URL domain."
 msgstr ""
+"Galleryはひとつのインストールで、複数の独立したサイトをサポートできます。同じ"
+"ウェブサーバだが違うパスやサブドメイン、URLドメインに新しいGalleryをインス"
+"トールしたい場合は、こちらを選択してください。"
 
 #, c-format
 msgid ""
@@ -803,21 +901,28 @@ msgid ""
 "information and explanations about Multisite installations, visit the %s "
 "page."
 msgstr ""
+"マルチサイトはアルバム、画像、ユーザその他一切を共有しません。それらはそれぞ"
+"れデータベースとストレージディレクトリを必要とします。マルチサイトインストー"
+"ルに関するさらなる情報と説明は、%s ページを参照してください。"
 
 msgid ""
 "All multisites are installed from this central code repository (codebase)."
 msgstr ""
+"全てのマルチサイトは、この中央コード保管場所(codebase)からインストールされま"
+"す。"
 
 msgid ""
 "Enter the directory for the new multisite below. The path must be different "
 "from this codebase installation's path:"
 msgstr ""
+"新しいマルチサイトのディレクトリを以下に入力してください。パスはこのcodebase"
+"インストールのパスとは異なるものでなければなりません:"
 
 msgid "You must enter a directory"
-msgstr ""
+msgstr "ディレクトリを入力しなければなりません"
 
 msgid "The directory you entered does not exist"
-msgstr ""
+msgstr "入力されたディレクトリは存在しません"
 
 msgid ""
 "The directory you entered is the codebase directory. If you want to install "
@@ -841,13 +946,13 @@ msgid ""
 msgstr ""
 
 msgid "Select Directory"
-msgstr ""
+msgstr "ディレクトリを選択"
 
 msgid "Multisite directory setup successfully."
-msgstr ""
+msgstr "マルチサイトディレクトリのセットアップに成功しました"
 
 msgid "Standard installation selected."
-msgstr ""
+msgstr "標準インストールが選択されました。"
 
 #, c-format
 msgid ""
@@ -886,7 +991,7 @@ msgstr "もう一度チェック"
 msgid "We've verified that your config.php is secure."
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Gallery needs to store data in a directory on your server. It will use this "
 "directory to store your images as well as other important data. For "
@@ -899,24 +1004,41 @@ msgid ""
 "user home directory, if possible. If you access your site via FTP, you might "
 "not have this option."
 msgstr ""
+"Galleryはサーバ上のディレクトリにデータを格納します。このディレクトリは画像や"
+"他の重要なデータを格納するために使われます。セキュリティのため、この場所は"
+"ウェブから直接ブラウズできないようウェブサイトの <b>外側</b> に置くことを推奨"
+"します。Gallery [%s] で画像にアクセスできるようにするには、これは必要です。デ"
+"フォルトパスは以下のウェブサーバエリアの中にあります。\n"
+"\n"
+" Note that the default path provided below is inside the webserver area. "
+"This is because we are unable to reliably guess a directory outside of your "
+"web site. You should update it with a secure location, such as a path under "
+"your user home directory, if possible. If you access your site via FTP, you "
+"might not have this option."
 
 msgid ""
 "This is a multisite installation. Remember that each multisite requires its "
 "own storage directory."
 msgstr ""
 
+#, fuzzy
 msgid ""
 "If you're using a modern browser, we'll try to autocomplete any path you "
 "enter here.  So if you're having trouble finding the right path to your "
 "g2data directory, try experimenting with paths in the text box below and see "
 "what completions it provides for you."
 msgstr ""
+"最近のブラウザを使っている場合、パスの自動補間をしようとします。\n"
+"If you're using a modern browser, we'll try to autocomplete any path you "
+"enter here.  So if you're having trouble finding the right path to your "
+"g2data directory, try experimenting with paths in the text box below and see "
+"what completions it provides for you."
 
 msgid "Directory path:"
-msgstr ""
+msgstr "ディレクトリパス:"
 
 msgid "The directory you entered is read only"
-msgstr ""
+msgstr "入力したディレクトリは読み込み専用です"
 
 msgid ""
 "There was an error creating the directory structure within the storage "
@@ -963,7 +1085,7 @@ msgid ""
 msgstr ""
 
 msgid "Unix (with shell access)"
-msgstr ""
+msgstr "Unix (シェル経由)"
 
 #, c-format
 msgid "mkdir %s"
@@ -974,7 +1096,7 @@ msgid "chmod 777 %s"
 msgstr "chmod 777 %s"
 
 msgid "Unix (with ftp access)"
-msgstr ""
+msgstr "Unix (ftp 経由)"
 
 msgid ""
 "Note that ftp servers and clients vary so these instructions may not work "
@@ -990,7 +1112,7 @@ msgid "This is sometimes known as an <b>image firewall</b>."
 msgstr ""
 
 msgid "Storage directory set successfully."
-msgstr ""
+msgstr "ストレージディレクトリの設定に成功しました"
 
 msgid "Success"
 msgstr "成功"
@@ -1005,6 +1127,8 @@ msgid ""
 "If you are using Apache, create a file named .htaccess in the main Gallery "
 "directory with the following content:"
 msgstr ""
+"Apacheを使っているなら、Gallery メインディレクトリに .haccess という名前の"
+"ファイルを以下の内容で作成してください:"
 
 msgid "Version Check"
 msgstr "バージョンチェック"
@@ -1013,29 +1137,37 @@ msgid ""
 "This is not a fresh install and the installed version does not match the new "
 "version."
 msgstr ""
+"これは新規インストールではありません。インストール済みのバージョンは新しい"
+"バージョンと一致しません。"
 
 msgid "The installed version cannot be upgraded to the new version!"
 msgstr ""
+"インストールされているバージョンは新しいバージョンにアップグレードできませ"
+"ん。"
 
 msgid ""
 "The installed version is older than the new version. You should run the "
 "upgrader and not the installer!"
 msgstr ""
+"インストールされているバージョンは新しいバージョンより古いです。インストーラ"
+"ではなく、アップグレーダーを実行すべきです。"
 
 msgid "Currently installed"
-msgstr ""
+msgstr "現在インストールされているもの"
 
 msgid "New version"
 msgstr "新しいバージョン"
 
 msgid "Go to the Upgrader!"
-msgstr ""
+msgstr "アップグレーダーへ移動"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "You should go now to the upgrader.  Enter the URL in your browser for %s/"
 "upgrade/index.php%s in your %s directory."
 msgstr ""
+"いますぐアップグレードをすべきです。%3$s ディレクトリのURL %1$s/upgrade/"
+"index.php%2$s を入力してください。"
 
 #, c-format
 msgid ""
@@ -1045,6 +1177,11 @@ msgid ""
 "Once a step has been completed, you can go back and make changes at any "
 "time. Please read the %sInstaller Help File%s before proceeding."
 msgstr ""
+"サーバに Gallery 2.0 をインストールするには、%d ステップ必要です。もしGallery"
+"を動作させるために追加のステップが必要な場合は、このインストーラはあなたがこ"
+"れらのステップを通ることをサポートするでしょう。一度ステップを完了しても、い"
+"つでも戻って変更を加えることができます。進める前に %sインストーラヘルプファイ"
+"ル%s を読んでください。(訳注: ヘルプは英語)"
 
 msgid "Select Language:"
 msgstr "言語選択:"
@@ -1053,4 +1190,4 @@ msgid "Go"
 msgstr ""
 
 msgid "Begin Installation&raquo;"
-msgstr ""
+msgstr "インストールを始める&raquo;"
