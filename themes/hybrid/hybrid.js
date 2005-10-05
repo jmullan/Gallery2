@@ -383,6 +383,7 @@ function slide_fillrandom(lockfirst) {
   }
 }
 function slide_setbuttons() {
+  if (!data_count) return;
   ui_vis('slide_poz', slide_on, 1);
   ui_vis('slide_fwd', (!slide_on && slide_order > 0), 1);
   ui_vis('slide__fwd', (slide_order > 0), 1);

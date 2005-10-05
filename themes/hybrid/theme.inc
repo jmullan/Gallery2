@@ -44,7 +44,7 @@ class HybridTheme extends GalleryTheme {
 	$this->setName($gallery->i18n('Hybrid'));
 	$this->setDescription(
 	    $gallery->i18n('Combined album/image/slideshow dynamic view'));
-	$this->setVersion('1.0.1');
+	$this->setVersion('1.0.2');
 	$this->setRequiredCoreApi(array(6, 0));
 	$this->setRequiredThemeApi(array(2, 2));
 	$this->setStandardSettings(array(
@@ -62,6 +62,7 @@ class HybridTheme extends GalleryTheme {
 				array('comment.ViewComments', array()))),
 	    'showText' => 1, 'showAlbumDate' => 1, 'showImageDate' => 1, 'showDateInViewer' => 1,
 	    'showSize' => 1, 'showViewCount' => 1, 'showAlbumOwner' => 0, 'showImageOwner' => 0,
+	    'thumbTitle' => 'none',
 	));
     }
 
@@ -99,6 +100,17 @@ class HybridTheme extends GalleryTheme {
 			    'name' => $this->translate('Show view counts'),
 			    'type' => 'checkbox',
 			    'value' => $params['showViewCount']);
+	$settings[] = array('key' => 'thumbTitle',
+			    'name' => $this->translate('Mouseover on thumbnails'),
+			    'type' => 'single-select',
+			    'choices' => array(
+				'none' => $this->translate('None'),
+				'title' => $this->translate('Title'),
+				'date' => $this->translate('Date'),
+				'datetime' => $this->translate('Date/Time'),
+				'titledate' => $this->translate('Title (Date)'),
+				'titledatetime' => $this->translate('Title (Date/Time)')),
+			    'value' => $params['thumbTitle']);
 
 	return array(GalleryStatus::success(), $settings);
     }

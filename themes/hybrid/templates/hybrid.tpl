@@ -88,6 +88,7 @@
        alt="{g->text text="Show sidebar"}" title="{g->text text="Show sidebar"}"
      /><img id="slide__fwd" src="{$theme.themeUrl}/images/fwd.png"
        width="18" height="18" onclick="slide_onoff()"
+       {if $theme.imageCount==0}style="display: none"{/if}
        alt="{g->text text="Start Slideshow"}" title="{g->text text="Start Slideshow"}"
      /><img id="slide__rev" src="{$theme.themeUrl}/images/rev.png"
        width="18" height="18" onclick="slide_onoff()" style="display: none"
@@ -97,7 +98,7 @@
        alt="{g->text text="Start Slideshow"}" title="{g->text text="Start Slideshow"}"/>
     </div>
 
-    <table width="90%"><tr><td style="width: 40%">
+    <table width="90%"><tr><td style="width: 50%">
       <div class="giTitle"> {$theme.item.title|markup} </div>
       <div id="album_desc" class="giDescription"> {$theme.item.description|markup} </div>
     </td><td>
@@ -114,6 +115,19 @@
     {foreach name="hybrid" from=$theme.children key=i item=it}
       {if ($i % $theme.params.columns == 0)}<tr>{/if}
       <td class="i">
+	{capture name="thumbTitle"}{strip}
+	  {if $theme.params.thumbTitle == 'title'}
+	    {$it.title|markup:strip}
+	  {elseif $theme.params.thumbTitle == 'date'}
+	    {g->date timestamp=$it.originationTimestamp}
+	  {elseif $theme.params.thumbTitle == 'datetime'}
+	    {g->date timestamp=$it.originationTimestamp style="datetime"}
+	  {elseif $theme.params.thumbTitle == 'titledate'}
+	    {$it.title|markup:strip} ({g->date timestamp=$it.originationTimestamp})
+	  {elseif $theme.params.thumbTitle == 'titledatetime'}
+	    {$it.title|markup:strip} ({g->date timestamp=$it.originationTimestamp style="datetime"})
+	  {/if}
+	{/strip}{/capture}
 	{if isset($it.image)}
 	  {if isset($it.renderItem)}
 	    <a id="img_{$it.imageIndex}" href="{g->url arg1="view=core.ShowItem"
@@ -130,13 +144,15 @@
 	  {if isset($it.thumbnail) && isset($theme.params.itemFrame)}
 	    {g->container type="imageframe.ImageFrame" frame=$theme.params.itemFrame}
 	      {$smarty.capture.link}
-	      {g->image item=$it image=$it.thumbnail id="%ID%" class="%CLASS% giThumbnail"}
+	      {g->image item=$it image=$it.thumbnail id="%ID%" class="%CLASS% giThumbnail"
+			title=$smarty.capture.thumbTitle}
 	      </a>
 	    {/g->container}
 	  {else}
 	    {$smarty.capture.link}
 	    {if isset($it.thumbnail)}
-	      {g->image item=$it image=$it.thumbnail class="giThumbnail"}
+	      {g->image item=$it image=$it.thumbnail class="giThumbnail"
+			title=$smarty.capture.thumbTitle}
 	    {else}
 	      {g->text text="no thumbnail"}
 	    {/if}
@@ -149,13 +165,15 @@
 	  {if isset($it.thumbnail) && isset($theme.params.albumFrame)}
 	    {g->container type="imageframe.ImageFrame" frame=$theme.params.albumFrame}
 	      {$smarty.capture.link}
-	      {g->image item=$it image=$it.thumbnail id="%ID%" class="%CLASS% giThumbnail"}
+	      {g->image item=$it image=$it.thumbnail id="%ID%" class="%CLASS% giThumbnail"
+			title=$smarty.capture.thumbTitle}
 	      </a>
 	    {/g->container}
 	  {else}
 	    {$smarty.capture.link}
 	    {if isset($it.thumbnail)}
-	      {g->image item=$it image=$it.thumbnail class="giThumbnail"}
+	      {g->image item=$it image=$it.thumbnail class="giThumbnail"
+			title=$smarty.capture.thumbTitle}
 	    {else}
 	      {g->text text="no thumbnail"}
 	    {/if}
@@ -164,7 +182,8 @@
 	{else}
 	  <a href="{g->url arg1="view=core.DownloadItem" arg2="itemId=`$it.id`"}">
 	    {if isset($it.thumbnail)}
-	      {g->image item=$it image=$it.thumbnail class="giThumbnail"}
+	      {g->image item=$it image=$it.thumbnail class="giThumbnail"
+			title=$smarty.capture.thumbTitle}
 	    {else}
 	      {g->text text="no thumbnail"}
 	    {/if}
