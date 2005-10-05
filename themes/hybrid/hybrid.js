@@ -217,7 +217,8 @@ var image_on=0, // Image is visible
     image_cache = new Image, // For precaching an image
     image_iscached = new Array(data_count), // Track precached images
     imagearea, imagediv, textdiv, // Containers
-    text_on=0; // Description text is visible
+    text_on=0, // Description text is visible
+    text_empty=0; // Description text is empty
 function image_setsize() {
   imagearea.style.height = (app_wh - textdiv.offsetHeight) + 'px';
 }
@@ -318,10 +319,15 @@ function image_setbuttons() {
   ui_vis('next_off', i < 0, 1);
   ui_vis('prev_img', j >= 0, 1);
   ui_vis('prev_off', j < 0, 1);
+  text_empty = document.getElementById('text_'+image_index).innerHTML ?0:1;
+  if (!text_on) {
+    ui_vis('text_on', !text_empty, 1);
+    ui_vis('text_none', text_empty, 1);
+  }
 }
 function text_onoff() {
   if ((text_on = text_on?0:1) && data_count > 0) text_fill();
-  ui_vis('text_on', !text_on, 1);
+  ui_vis(text_empty ? 'text_none' : 'text_on', !text_on, 1);
   ui_vis('text_off', text_on, 1);
   ui_vis('text', text_on);
   if (image_on) { image_setsize(); image_fit(); }
