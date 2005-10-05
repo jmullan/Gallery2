@@ -3,6 +3,10 @@ use strict;
 chomp(my $CURDIR = `pwd`);
 chomp(my $MAKE = `(which gmake || which make) 2>/dev/null`);
 
+if (!$MAKE) {
+  die "Unable to locate 'make' or 'gmake'";
+}
+
 my @SCHEMAS = <modules/*/classes/GalleryStorage/DatabaseStorage/schema>;
 foreach my $schema (@SCHEMAS) {
   (my $module = $schema) =~ s|(modules/.*?)/.*|$1|;
