@@ -38,6 +38,11 @@ if (!mkdir($tmpdir)) {
     exit(1);
 }
 
+if (!ini_get('register_argc_argv')) {
+    print "You must enable the 'register_argc_argv' php variable for this script to work\n";
+    exit(1);
+}
+
 if (count($argv) < 2) {
     print "Usage: generate-interfaces.php <PackageName>\n";
     exit(1);
