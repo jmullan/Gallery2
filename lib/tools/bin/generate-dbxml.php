@@ -25,9 +25,13 @@ if (!empty($_SERVER['SERVER_NAME'])) {
 }
 
 require_once(dirname(__FILE__) . '/XmlParser.inc');
-require_once('../../../../../../../lib/smarty/Smarty.class.php');
+require_once('../../../../../../lib/smarty/Smarty.class.php');
 
-$tmpdir = "$_ENV[TMP]/g2_" . rand(1, 30000);
+$tmpdir = $_ENV['TMP'];
+if (empty($tmpdir)) {
+    $tmpdir = '/tmp';
+}
+$tmpdir .= "/g2_" . rand(1, 30000);
 if (file_exists($tmpdir)) {
     print "Tmp dir already exists: $tmpdir\n";
     exit(1);
@@ -47,13 +51,13 @@ $smarty->template_dir = dirname(__FILE__);
 
 $modifiedCount = 0;
 $checkedCount = 0;
-foreach (glob('tmp/*.xml') as $xmlFile) {
+foreach (glob('tmp/classxml/*.xml') as $xmlFile) {
     $checkedCount++;
     $p =& new XmlParser();
     $root = $p->parse($xmlFile);
     $base = basename($xmlFile);
     $base = preg_replace('/\.[^\.]*$/', '', $base);
-    $tmpFile = "../xml-out/$base.xml";
+    $tmpFile = "tmp/dbxml/$base.xml";
     $origFile = "$base.xml";
 
     if ($root[0]['child'][2]['name'] == 'MAP') {

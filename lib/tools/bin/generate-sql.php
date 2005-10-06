@@ -26,7 +26,7 @@ if (!empty($_SERVER['SERVER_NAME'])) {
 
 require_once(dirname(__FILE__) . '/XmlParser.inc');
 
-foreach (glob('../xml-out/*.xml') as $xmlFile) {
+foreach (glob('tmp/dbxml/*.xml') as $xmlFile) {
     $p =& new XmlParser();
     $root = $p->parse($xmlFile);
 
@@ -37,7 +37,7 @@ foreach (glob('../xml-out/*.xml') as $xmlFile) {
 	$base = basename($xmlFile);
 	$base = preg_replace('/\.[^\.]*$/', '', $base);
 
-	$fd = fopen("$db/$base.sql", "w");
+	$fd = fopen("platform/$db/$base.sql", "w");
 	fwrite($fd, $output);
 	fclose($fd);
     }
