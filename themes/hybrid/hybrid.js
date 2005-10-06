@@ -105,7 +105,8 @@ function app_onkeypress(event) {
     case 63235: keyCode=39; break;  case 63277: keyCode=34; break;
   }
   /* Album view: space = start slideshow
-   *             ctrl-left/right = hide/show sidebar
+   *             ctrl-right/left = show/hide sidebar
+   *             ctrl-up/down = show/hide item links
    * Image view: space = start/pause slideshow
    *             escape = return to album view
    *             left/right = next/prev image
@@ -121,11 +122,17 @@ function app_onkeypress(event) {
   if (event.shiftKey) keyCode += 100;
   if (event.ctrlKey) keyCode += 200;
   if (!image_on) switch (keyCode) {
+    case 239: //Ctrl-Right
+      if (!sidebar_on) sidebar_onoff();
+      break;
     case 237: //Ctrl-Left
       if (sidebar_on) sidebar_onoff();
       break;
-    case 239: //Ctrl-Right
-      if (!sidebar_on) sidebar_onoff();
+    case 238: //Ctrl-Up
+      if (!album_itemlinkson) album_itemlinksonoff();
+      break;
+    case 240: //Ctrl-Down
+      if (album_itemlinkson) album_itemlinksonoff();
       break;
   }
   else switch (keyCode) {
