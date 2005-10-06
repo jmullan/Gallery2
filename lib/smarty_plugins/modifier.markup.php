@@ -147,13 +147,13 @@ class GalleryBbcodeMarkupParser {
 	static $lastOpenSuccess;
 
 	if ($openClose == 'all') {
-	    if (preg_match('/^(http|ftp|mailto|https):/', $elementContents)) {
+	    if (preg_match('#^(https?|ftp|mailto):|^/#', $elementContents)) {
 		return sprintf('<a href="%s">%s</a>', $elementContents, $elementContents);
 	    } else {
-		return sprintf('[url=%s]', $elementContents, $elementContents);
+		return sprintf('[url]%s[/url]', $elementContents);
 	    }
 	} else if ($openClose == 'open') {
-	    if (preg_match('/^(http|ftp|mailto|https):/', $attrs['default'])) {
+	    if (preg_match('#^(https?|ftp|mailto):|^/#', $attrs['default'])) {
 		$lastOpenSuccess = true;
 		return sprintf('<a href="%s">', $attrs['default']);
 	    } else {
@@ -172,12 +172,12 @@ class GalleryBbcodeMarkupParser {
     }
 
     function image($tagName, $attrs, $elementContents, $funcParam, $openClose) {
-	if (!preg_match('/^(http|ftp|mailto|https):/', $elementContents)) {
+	if (!preg_match('#^(https?|ftp|mailto):|^/#', $elementContents)) {
 	    return sprintf('[img]%s[/img]', $elementContents);
 	}
 
 	if ($openClose == 'all') {
-	    return sprintf('<img src="%s" alt="">', htmlspecialchars($elementContents));
+	    return sprintf('<img src="%s" alt=""/>', htmlspecialchars($elementContents));
 	} else {
 	    return false;
 	}

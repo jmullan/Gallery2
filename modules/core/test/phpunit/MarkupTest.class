@@ -123,7 +123,12 @@ class MarkupTest extends GalleryTestCase {
 
     function testImage() {
 	$results = $this->_bbcode->parse('[img]http://example.com/foo.gif[/img]');
-	$this->assertEquals('<img src="http://example.com/foo.gif" alt="">', $results);
+	$this->assertEquals('<img src="http://example.com/foo.gif" alt=""/>', $results);
+    }
+
+    function testImage2() {
+	$results = $this->_bbcode->parse('[img]/path/foo.gif[/img]');
+	$this->assertEquals('<img src="/path/foo.gif" alt=""/>', $results);
     }
 
     function testJavascriptInImage() {
@@ -160,6 +165,18 @@ class MarkupTest extends GalleryTestCase {
     function testUrl6() {
 	$results = $this->_bbcode->parse('[url=bogus://example.com]content[/url]');
 	$this->assertEquals('[url=bogus://example.com]content[/url]', $results);
+    }
+
+    function testUrl7() {
+	$results = $this->_bbcode->parse('[url=/path/file.php]content[/url]');
+	$this->assertEquals('<a href="/path/file.php">content</a>', $results);
+    }
+
+    function testUrl8() {
+	$results = $this->_bbcode->parse('[url=javascript:alert()]content[/url]');
+	$this->assertEquals('[url=javascript:alert()]content[/url]', $results);
+	$results = $this->_bbcode->parse('[url]javascript:alert()[/url]');
+	$this->assertEquals('[url]javascript:alert()[/url]', $results);
     }
 
     function testJavascript() {
