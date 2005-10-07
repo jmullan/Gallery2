@@ -1,8 +1,8 @@
 CLASSDIR ?= ../../..
 TOOLDIR ?= ../../../../../../lib/tools
 TMPDIR ?= tmp
-RXP ?= $(shell which rxp)
-XMLLINT ?= $(shell which xmllint)
+RXP ?= $(shell which rxp 2>/dev/null)
+XMLLINT ?= $(shell which xmllint 2>/dev/null)
 XMLFILES = $(wildcard xml-src/*.xml)
 
 all: validate tmp dbxml sql
