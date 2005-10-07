@@ -31,6 +31,9 @@ foreach (glob('tmp/dbxml/*.xml') as $xmlFile) {
     $root = $p->parse($xmlFile);
 
     foreach (array('mysql', 'postgres', 'oracle') as $db) {
+	if (!file_exists($db)) {
+	    @mkdir("platform/$db");
+	}
 	$generatorClass = "${db}Generator";
 	$generator = new $generatorClass;
 	$output = $generator->createSql($root[0], 0, 0, null) . "\n";
