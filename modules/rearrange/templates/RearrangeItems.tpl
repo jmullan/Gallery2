@@ -57,7 +57,7 @@ function doclick(idx) {
   } else {
     var a = document.getElementById('item_'+sel);
     a.getElementsByTagName('*')[0].style.borderColor = 'black';
-    a.parentNode.style.backgroundColor = 'white';
+    a.parentNode.style.backgroundColor = 'transparent';
     if (idx != sel) {
       var dir = (sel < idx) ? 1 : -1, tt, ti, i, b;
       ti = list[sel];
