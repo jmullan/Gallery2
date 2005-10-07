@@ -28,6 +28,7 @@ class DatabaseSetupStep extends InstallStep {
     function loadTemplateData(&$templateData) {
 	global $galleryStub;
 
+	$firstConfig = false;
 	if (empty($this->_config)) {
 	    $this->_config = $galleryStub->getConfig('storage.config');
 	    if (empty($this->_config)) {
@@ -39,6 +40,7 @@ class DatabaseSetupStep extends InstallStep {
 		$this->_config['database'] = 'gallery2';
 		$this->_config['tablePrefix'] = 'g2_';
 		$this->_config['columnPrefix'] = 'g_';
+		$firstConfig = true;
 	    }
 	}
 
@@ -52,7 +54,7 @@ class DatabaseSetupStep extends InstallStep {
 	switch ($this->_config['type']) {
 	    case 'mysql':
 	    case 'mysqlt':
-		if (!function_exists('mysql_connect')) {
+		if (!$firstConfig && !function_exists('mysql_connect')) {
 		    $templateData['error']['phpDbMissing'] =
 			_('You must have the MySQL PHP module installed');
 		}
@@ -60,14 +62,14 @@ class DatabaseSetupStep extends InstallStep {
 		break;
 	    case 'postgres7':
 	    case 'postgres':
-		if (!function_exists('pg_connect')) {
+		if (!$firstConfig && !function_exists('pg_connect')) {
 		    $templateData['error']['phpDbMissing'] =
 			_('You must have the PostgreSQL PHP module installed');
 		}
 		$dbPlatformType = 'postgres';
 		break;
 	    case 'oci8po':
-		if (!function_exists('OCIPLogon')) {
+		if (!$firstConfig && !function_exists('OCIPLogon')) {
 		    $templateData['error']['phpDbMissing'] =
 			_('You must have the Oracle OCI8 PHP module installed');
 		}
