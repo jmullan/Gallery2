@@ -192,7 +192,7 @@ function album_itemlinksonoff() {
   album_itemlinkson = album_itemlinkson?0:1;
   for (var i = 0; i < imgs.length; i++)
     if (imgs[i].className == 'popup_button')
-      imgs[i].style.visibility = album_itemlinkson ? 'visible' : 'hidden';
+      imgs[i].style.display = album_itemlinkson ? 'inline' : 'none';
   ui_sethtml('lnk_link', album_itemlinkson ? album_hidelinks : album_showlinks);
 }
 function album_setfixedtitle() {

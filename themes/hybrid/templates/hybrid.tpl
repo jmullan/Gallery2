@@ -196,7 +196,7 @@
 	  <div class="title gcBackground1">
       {/if}
 	    {if isset($it.image) || isset($it.itemLinks)}
-	      <span style="{if $theme.params.showText}float: right; {/if}margin-left: 2px"><img
+	      <span{if $theme.params.showText} style="float: right"{/if}><img
 	       src="{$theme.themeUrl}/images/menu.png" class="popup_button" width="18" height="18"
 	       alt="{g->text text="Item Actions"}" title="{g->text text="Item Actions"}"
 	       onclick="popup_menu(event,{$i}
