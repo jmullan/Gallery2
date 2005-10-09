@@ -19,6 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+ini_set('error_reporting', 2047);
 if (!empty($_SERVER['SERVER_NAME'])) {
     print "You must run this from the command line\n";
     exit(1);

@@ -19,6 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+ini_set('error_reporting', 2047);
 if (!empty($_SERVER['SERVER_NAME'])) {
     print "You must run this from the command line\n";
     exit(1);
@@ -27,8 +28,9 @@ if (!empty($_SERVER['SERVER_NAME'])) {
 require_once(dirname(__FILE__) . '/XmlParser.inc');
 require_once('../../../../../../lib/smarty/Smarty.class.php');
 
-$tmpdir = $_ENV['TMP'];
-if (empty($tmpdir)) {
+if (!empty($_ENV['TMP'])) {
+    $tmpdir = $_ENV['TMP'];
+} else {
     $tmpdir = '/tmp';
 }
 $tmpdir .= "/g2_" . rand(1, 30000);
@@ -66,17 +68,16 @@ foreach (glob('tmp/classxml/*.xml') as $xmlFile) {
 	$schema = array(
 	    'name' => $root[0]['child'][1]['child'][0]['content'],
 	    'major' => $root[0]['child'][1]['child'][1]['content'],
-	    'minor' => $root[0]['child'][1]['child'][2]['content']);
+	    'minor' => (!empty($root[0]['child'][1]['child'][2]['content']) ?
+			$root[0]['child'][1]['child'][2]['content'] : 0));
     } else {
 	$isMap = false;
 	$membersBase = $root[0]['child'];
 	$schema = array(
 	    'name' => $root[0]['child'][2]['child'][0]['content'],
 	    'major' => $root[0]['child'][2]['child'][1]['content'],
-	    'minor' => $root[0]['child'][2]['child'][2]['content']);
-    }
-    if (empty($schema['minor'])) {
-	$schema['minor'] = 0;
+	    'minor' => (!empty($root[0]['child'][2]['child'][2]['content']) ?
+			$root[0]['child'][2]['child'][2]['content'] : 0));
     }
 
     $className = $root[0]['child'][0]['content'];
@@ -168,7 +169,6 @@ foreach (glob('tmp/classxml/*.xml') as $xmlFile) {
     }
 
     $smarty->assign('root', $root);
-    $smarty->assign('package', $package);
     $smarty->assign('schema', $schema);
     $smarty->assign('className', $className);
     $smarty->assign('members', $members);

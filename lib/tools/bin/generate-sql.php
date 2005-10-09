@@ -19,6 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+ini_set('error_reporting', 2047);
 if (!empty($_SERVER['SERVER_NAME'])) {
     print "You must run this from the command line\n";
     exit(1);
@@ -116,7 +117,8 @@ class BaseGenerator {
 
     function columnDefinition($child, $includeNotNull=true) {
 	$output = '';
-	$key = $child[1]['content'] . '-' . $child[2]['content'];
+	$key = $child[1]['content'] . '-' .
+	    (!empty($child[2]['content']) ? $child[2]['content'] : '');
 	if (isset($this->_columnDefinitionMap[$key])) {
 	    $output .= $this->_columnDefinitionMap[$key];
 	} else {
@@ -140,7 +142,8 @@ class BaseGenerator {
 			   "AND DB_COLUMN_PREFIXminor=%d;\n\n",
 			   $child[0]['content'],
 			   $child[1]['child'][0]['content'],
-			   $child[1]['child'][1]['content']);
+			   (!empty($child[1]['child'][1]['content']) ?
+			    $child[1]['child'][1]['content'] : 0));
 	return $output;
     }
 
@@ -676,7 +679,8 @@ class OracleGenerator extends BaseGenerator {
 
 	case 'ADD':
 	    /* (column, key, index)+ */
-	    foreach ($child as $c) {
+	    for ($k = 0; $k < count($child); $k++) {
+		$c = $child[$k];
 		switch($c['name']) {
 		case 'COLUMN':
 		    /* column-name */
@@ -705,14 +709,14 @@ class OracleGenerator extends BaseGenerator {
 		    /* column-name */
 		    $output .= 'CREATE INDEX ';
 		    $nameKey = strtoupper('name_' . $this->getDbType());
-		    $columns = $child[0]['child'];
-		    if (isset($child[0]['attrs'][$nameKey])) {
-			$output .= $child[0]['attrs'][$nameKey];
+		    $columns = $c['child'];
+		    if (isset($c['attrs'][$nameKey])) {
+			$output .= $c['attrs'][$nameKey];
 		    } else {
 			$output .= 'DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
 			    '_' . $this->getIndexCrc($columns);
 		    }
-		    $output .= "\n  ON DB_TABLE_PREFIX" . $parent['child'][0]['content'] . '(';
+		    $output .= " ON DB_TABLE_PREFIX" . $parent['child'][0]['content'] . '(';
 		    for ($i = 0; $i < count($columns); $i++) {
 			$output .= 'DB_COLUMN_PREFIX' . $columns[$i]['content'];
 			if ($i < count($columns) - 1) {
@@ -724,6 +728,9 @@ class OracleGenerator extends BaseGenerator {
 
 		default:
 		    $output .= "8. UNIMPLEMLENTED: ADD $c[name]\n";
+		}
+		if ($k < count($child) - 1) {
+		    $output .= "\n  ";
 		}
 	    }
 	    break;
