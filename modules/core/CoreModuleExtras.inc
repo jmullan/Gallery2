@@ -1208,6 +1208,16 @@ class CoreModuleExtras {
 	case '1.0.0':
 	    /* Schema only upgrade */
 
+	case '1.0.1':
+	    /* And image/wmf mime type */
+	    list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime('wmf');
+	    if ($ret->isSuccess() && $mimeType == 'application/unknown') {
+		$ret = GalleryCoreApi::addMimeType('wmf', 'image/wmf', false);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	    
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
@@ -1377,6 +1387,7 @@ $gallery->setConfig(\'cookieId\', \'' . $cookieId . '\');
 	case '0.9.36':
 	case '0.9.37':
 	case '1.0.0':
+	case '1.0.1':
 
 	case 'end of upgrade path':
 	    /*
