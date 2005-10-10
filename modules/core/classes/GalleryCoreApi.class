@@ -54,6 +54,7 @@ class GalleryCoreApi {
      * @return array major number, minor number
      */
     function getApiVersion() {
+	/* NOTE: On the next major core api bump, remove DatabaseStorage::_loadOldStyleSqlFiles */
 	return array(6, 8);
     }
 

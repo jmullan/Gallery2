@@ -1422,53 +1422,144 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	global $gallery;
 
 	$platform = $gallery->getPlatform();
+	$sqlFile = dirname(__FILE__) . '/../../../../modules/' . $moduleId .
+	    '/classes/GalleryStorage/DatabaseStorage/schema/schema.tpl';
+
+	if ($platform->file_exists($sqlFile)) {
+	    $sqlData = $platform->file_get_contents($sqlFile);
+	    $moduleSql = $this->_parseSqlTemplate($sqlData);
+	} else {
+	    /* Stop supporting this on the next major core api change */
+	    list ($ret, $moduleSql) = $this->_loadOldStyleSqlFiles($moduleId);
+	    if ($ret->isError()) {
+		return array(GalleryStatus::success(), array());
+	    }
+	}
+
+	return array(GalleryStatus::success(), $moduleSql);
+    }
+
+    /**
+     * Old style of SQL files.  Deprecated; should be removed on the next core api bump.
+     */
+    function _loadOldStyleSqlFiles($moduleId) {
+	global $gallery;
+
+	$info = array('table' => array(), 'alter' => array(),
+		      'remove' => array(), 'test' => array());
+	$platform = $gallery->getPlatform();
 	$sqlDir = dirname(__FILE__) . '/../../../../modules/' . $moduleId .
 	    '/classes/GalleryStorage/DatabaseStorage/schema/platform/' .
 	    $this->getType();
-
 	if (!$platform->file_exists($sqlDir)) {
-	    return array(GalleryStatus::success(), array(), array(), array());
+	    return array(GalleryStatus::success(), $info);
 	}
 
-	$tableDefinition = $tableAlter = $tableDelete = array();
-	if ($dir = $platform->opendir($sqlDir)) {
-	    while (($file = $platform->readdir($dir)) !== false) {
-		/*
-		 * There are three classes of files here, distinguished by name.
-		 *   "Foo.sql" -- the definition for table "Foo"
-		 *   "A_Foo_1.0.sql" -- an alteration to upgrade the 1.0 version of
-		 *                      table "Foo" to the current version
-		 *   "R_Foo_1.0.sql" -- delete table Foo.sql if it's currently at version 1.0
-		 *   "T_Foo.sql"     -- test sql, used by the installer.
-		 *
-		 * We need to parse these file names and group them together
-		 * such that once we figure out what version of the Foo table
-		 * we have in the database we can figure out which file to
-		 * apply to install/update it.
-		 * In earlier versions (beta 3) we used the format R_Foo_1_0.sql), an underscore
-		 * instead of a dot as the version separator. If a user has still these old files
-		 * in his gallery2 dirs, they would be executed on each upgrade unless we accept
-		 * here the old 1_0 and the new 1.0 format.
-		 */
-		if (preg_match('/^([AR])_(.*)_(\d+)[\._](\d+)\.sql$/', $file, $matches)) {
-		    if ($matches[1] == 'R') {
-			$tableDelete[$matches[2]][$matches[3]][$matches[4]] = $sqlDir . '/' . $file;
-		    } else {
-			$tableAlter[$matches[2]][$matches[3]][$matches[4]] = $sqlDir . '/' . $file;
+	$results = array('## ' . $this->getType());
+ 	if ($dir = $platform->opendir($sqlDir)) {
+ 	    while (($file = $platform->readdir($dir)) !== false) {
+ 		/*
+ 		 * There are three classes of files here, distinguished by name.
+ 		 *   "Foo.sql" -- the definition for table "Foo"
+ 		 *   "A_Foo_1.0.sql" -- an alteration to upgrade the 1.0 version of
+ 		 *                      table "Foo" to the current version
+ 		 *   "R_Foo_1.0.sql" -- delete table Foo.sql if it's currently at version 1.0
+ 		 *   "T_Foo.sql"     -- test sql, used by the installer.
+ 		 *
+ 		 * We need to parse these file names and group them together
+ 		 * such that once we figure out what version of the Foo table
+ 		 * we have in the database we can figure out which file to
+ 		 * apply to install/update it.
+ 		 * In earlier versions (beta 3) we used the format R_Foo_1_0.sql), an underscore
+ 		 * instead of a dot as the version separator. If a user has still these old files
+ 		 * in his gallery2 dirs, they would be executed on each upgrade unless we accept
+ 		 * here the old 1_0 and the new 1.0 format.
+ 		 */
+ 		if (preg_match('/^([ART])_(.*)_(\d+)[\._](\d+)\.sql$/', $file, $matches)) {
+ 		    if ($matches[1] == 'R') {
+ 			$info['remove'][$matches[2]][$matches[3]][$matches[4]] =
+			    $platform->file_get_contents($sqlDir . '/' . $file);
+  		    } else if ($matches[1] == 'A') {
+ 			$info['alter'][$matches[2]][$matches[3]][$matches[4]] =
+			    $platform->file_get_contents($sqlDir . '/' . $file);
+  		    } else {
+ 			$info['test'][$matches[2]][$matches[3]][$matches[4]] =
+			    $platform->file_get_contents($sqlDir . '/' . $file);
 		    }
-		} else if (preg_match('/^(.*)\.sql$/', $file, $matches)) {
-		    if (!preg_match('/^T_/', $file)) {
-			$tableDefinition[$matches[1]] = $sqlDir . '/' . $file;
-		    }
+ 		} else if (preg_match('/^(.*)\.sql$/', $file, $matches)) {
+ 		    if (!preg_match('/^T_/', $file)) {
+ 			$info['table'][$matches[1]] =
+			    $platform->file_get_contents($sqlDir . '/' . $file);
+  		    }
+  		}
+  	    }
+ 	    $platform->closedir($dir);
+  	} else {
+ 	    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), array());
+  	}
+
+	return array(GalleryStatus::success(), $info);
+    }
+
+    /**
+     * Parse the SQL template file and break it down by database and sql file type and return the
+     * results in an array.  The best way to see how this is supposed to work is to look in the
+     * unit test.
+     *
+     * @param array the raw template data
+     * @param array the parsed results
+     */
+    function _parseSqlTemplate($sqlData) {
+	$info = array('table' => array(), 'alter' => array(),
+		      'remove' => array(), 'test' => array());
+	$dbname = null;
+	$tablename = null;
+	$record = false;
+	foreach ($sqlData as $line) {
+	    if (preg_match('/^## (.*)$/', $line, $matches)) {
+		if ($matches[1] == $this->getType()) {
+		    $record = true;
+		} else {
+		    $record = false;
 		}
+		continue;
 	    }
-	    $platform->closedir($dir);
-	} else {
-	    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__),
-			 null, null, null);
+	    if (!$record) {
+		continue;
+	    }
+
+	    if (preg_match('/^# (.*)$/', $line, $matches)) {
+		$tablename = $matches[1];
+		if (preg_match('/^T_(.*)_(\d+)/', $tablename, $matches)) {
+		    if (!isset($info['test'][$matches[1]][$matches[2]])) {
+			$info['test'][$matches[1]][$matches[2]] = '';
+		    }
+		    $insertPointer =& $info['test'][$matches[1]][$matches[2]];
+		} else if (preg_match('/^A_(.*)_(\d+)\.(\d+)/', $tablename, $matches)) {
+		    if (!isset($info['alter'][$matches[1]][$matches[2]][$matches[3]])) {
+			$info['alter'][$matches[1]][$matches[2]][$matches[3]] = '';
+		    }
+		    $insertPointer =& $info['alter'][$matches[1]][$matches[2]][$matches[3]];
+		} else if (preg_match('/^R_(.*)_(\d+)\.(\d+)/', $tablename, $matches)) {
+		    if (!isset($info['remove'][$matches[1]][$matches[2]][$matches[3]])) {
+			$info['remove'][$matches[1]][$matches[2]][$matches[3]] = '';
+		    }
+		    $insertPointer =& $info['remove'][$matches[1]][$matches[2]][$matches[3]];
+		} else {
+		    if (!isset($info['table'][$tablename])) {
+			$info['table'][$tablename] = '';
+		    }
+		    $insertPointer =& $info['table'][$tablename];
+		}
+		continue;
+	    }
+	    if (!empty($insertPointer)) {
+		$insertPointer .= "\n";
+	    }
+	    $insertPointer .= $line;
 	}
 
-	return array(GalleryStatus::success(), $tableDefinition, $tableAlter, $tableDelete);
+	return $info;
     }
 
     /**
@@ -1489,7 +1580,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    return $ret;
 	}
 
-	list ($ret, $tableDefinition, $tableAlter, $tableDelete) = $this->_getModuleSql($moduleId);
+	list ($ret, $moduleSql) = $this->_getModuleSql($moduleId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -1512,11 +1603,11 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	/* Do the schema table first */
 	list ($schemaTableName, $unused) = $this->_translateTableName('Schema');
 	if (!in_array(strtolower($schemaTableName), $metatables)) {
-	    $ret = $this->_executeSqlFile($tableDefinition['Schema']);
+	    $ret = $this->_executeSql($moduleSql['table']['Schema']);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    unset($tableDefinition['Schema']);
+	    unset($moduleSql['table']['Schema']);
 
 	    /* Create our sequences now */
 	    foreach (array(DATABASE_SEQUENCE_LOCK, DATABASE_SEQUENCE_ID) as $sequenceId) {
@@ -1541,12 +1632,12 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	 * check to see if there is an upgrade available for the given table
 	 * version.  If so, apply it.
 	 */
-	foreach ($tableDefinition as $rawTableName => $sqlFile) {
+	foreach ($moduleSql['table'] as $rawTableName => $sql) {
 	    $gallery->guaranteeTimeLimit(20);
 	    list ($tableName, $unused, $tableNameInSchema) =
 		$this->_translateTableName($rawTableName);
 	    if (!in_array(strtolower($tableName), $metatables)) {
-		$ret = $this->_executeSqlFile($sqlFile);
+		$ret = $this->_executeSql($sql);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
@@ -1567,9 +1658,9 @@ class DatabaseStorage /* implements GalleryStorage */ {
 
 		    /* If we locate an appropriate upgrade, apply it. */
 		    list ($major,  $minor) = $tableVersions[$tableNameInSchema];
-		    if (!empty($tableAlter[$rawTableName][$major][$minor])) {
-			$sqlFile = $tableAlter[$rawTableName][$major][$minor];
-			$ret = $this->_executeSqlFile($sqlFile);
+		    if (!empty($moduleSql['alter'][$rawTableName][$major][$minor])) {
+			$sql = $moduleSql['alter'][$rawTableName][$major][$minor];
+			$ret = $this->_executeSql($sql);
 			if ($ret->isError()) {
 			    return $ret->wrap(__FILE__, __LINE__);
 			}
@@ -1607,7 +1698,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    return $ret;
 	}
 
-	list ($ret, $tableDefinition, $tableAlter, $tableDelete) = $this->_getModuleSql($moduleId);
+	list ($ret, $moduleSql) = $this->_getModuleSql($moduleId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -1634,7 +1725,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	}
 
 	/* Now locate any existing tables that should be deleted and drop them. */
-	foreach (array_keys($tableDelete) as $rawTableName) {
+	foreach (array_keys($moduleSql['remove']) as $rawTableName) {
 	    if ($rawTableName == 'Schema') {
 		continue;
 	    }
@@ -1655,8 +1746,9 @@ class DatabaseStorage /* implements GalleryStorage */ {
 		} else {
 		    $gallery->guaranteeTimeLimit(20);
 		    list ($major,  $minor) = $tableVersions[$tableNameInSchema];
-		    if (!empty($tableDelete[$rawTableName][$major][$minor])) {
-			$ret = $this->_executeSqlFile($tableDelete[$rawTableName][$major][$minor]);
+		    if (!empty($moduleSql['remove'][$rawTableName][$major][$minor])) {
+			$ret = $this->_executeSql(
+			    $moduleSql['remove'][$rawTableName][$major][$minor]);
 			if ($ret->isError()) {
 			    return $ret->wrap(__FILE__, __LINE__);
 			}
@@ -1685,7 +1777,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    return $ret;
 	}
 
-	list ($ret, $tableDefinition, $tableAlter, $tableDelete) = $this->_getModuleSql($moduleId);
+	list ($ret, $moduleSql) = $this->_getModuleSql($moduleId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -1713,7 +1805,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	 */
 	list ($schemaTableName, $unused) = $this->_translateTableName('Schema');
 	$schemaColumnName = $this->_translateColumnName('name');
-	foreach ($tableDefinition as $rawTableName => $sqlFile) {
+	foreach ($moduleSql['table'] as $rawTableName => $ignored) {
 	    /* Don't drop the schema table, it's part of the core. */
 	    if ($rawTableName == 'Schema') {
 		continue;
@@ -1778,24 +1870,18 @@ class DatabaseStorage /* implements GalleryStorage */ {
     }
 
     /**
-     * Execute a given SQL file against the database.  Prefix table and column
+     * Execute a given SQL against the database.  Prefix table and column
      * names as necessary.  Split multiple commands in the file into separate
      * Execute() calls.
      *
      * @return object GalleryStatus a status code
      */
-    function _executeSqlFile($fileName) {
+    function _executeSql($buffer) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
 
 	$ret = $this->_guaranteeTransaction();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	if (($buffer = $platform->file_get_contents($fileName)) === false) {
-	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__,
-					"Unable to read file $fileName");
 	}
 
 	/*
@@ -2281,7 +2367,6 @@ class DatabaseStorage /* implements GalleryStorage */ {
      * @access protected
      */
     function _describeMapMembers($mapName) {
-
 	if (empty($this->_mapInfoCache[$mapName])) {
 	    eval("\$info = $mapName::getMapInfo();");
 	    $this->_mapInfoCache[$mapName] = $info;
