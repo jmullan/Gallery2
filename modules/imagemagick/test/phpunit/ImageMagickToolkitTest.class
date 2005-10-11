@@ -714,8 +714,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	    }
 
 	    $canConvert = array();
-	    foreach (array('image/jpeg', 'image/png', 'image/gif', 'image/tiff', 'image/jp2',
-			   'image/wmf') as $mimeType) {
+	    foreach (array('image/jpeg', 'image/png', 'image/gif', 'image/tiff', 'image/jp2')
+		     as $mimeType) {
 		if (is_int($i = array_search($mimeType, $environment['mimeTypes']))) {
 		    $convertTo = array_merge(
 			$environment['mimeTypes'], array('image/x-portable-pixmap'));
