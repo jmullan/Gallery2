@@ -33,6 +33,7 @@
 
   <?php if (!empty($manifest['modified'])): ?>
   <span id="ManifestSystemCheck_modified_toggle" onclick="BlockToggle('ManifestSystemCheck_modified', 'ManifestSystemCheck_modified_toggle_indicator')">
+
     <span id="ManifestSystemCheck_modified_toggle_indicator" class="showHideToggle">+</span>
     <b>
       <?php printf(_("Modified files (%d)"), count($manifest['modified'])) ?>
@@ -59,6 +60,4 @@
   <br/>
   <?php print _("These files are no longer part of Gallery. They probably won't cause any problems but it is a good idea to remove them to keep your install clean."); ?>
   <textarea wrap="off" readonly="readonly" rows="<?php print count($manifest['shouldRemove'])?>" class="manifestBlock" id="ManifestSystemCheck_shouldRemove" style="display: none"><?php foreach ($manifest['shouldRemove'] as $fileName): ?><?php print "$fileName\n" ?><?php endforeach; ?></textarea>
-  <br/>
-  If you'd help removing these files, you <a href="#">can download a script</> that will remove them for you.
   <?php endif; ?>
