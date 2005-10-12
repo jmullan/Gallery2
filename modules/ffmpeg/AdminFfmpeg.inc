@@ -47,8 +47,7 @@ class AdminFfmpegController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$status = array();
-	$error = array();
+	$status = $error = array();
 	if (isset($form['action']['save']) || isset($form['action']['test'])) {
 
 	    if (empty($form['path'])) {
@@ -113,8 +112,38 @@ class AdminFfmpegController extends GalleryController {
 	    }
 
 	    if (empty($error) && isset($form['action']['save'])) {
+		if (isset($form['addWatermark']) && $form['addWatermark']) {
+		    $query = '
+		    SELECT [GalleryDerivative::id]
+		    FROM [GalleryDerivative], [GalleryChildEntity], [GalleryEntity]
+		    WHERE [GalleryDerivative::id] = [GalleryChildEntity::id]
+		      AND [GalleryChildEntity::parentId] = [GalleryEntity::id]
+		      AND [GalleryEntity::entityType] = \'GalleryMovieItem\'';
+		    $ret = $this->_processThumbnails($query, '_addWatermark');
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    $status['added'] = 1;
+		} else if (isset($form['removeWatermark']) && $form['removeWatermark']) {
+		    $query = '
+		    SELECT [GalleryDerivative::id]
+		    FROM [GalleryDerivative]
+		    WHERE [GalleryDerivative::derivativeOperations]
+			  LIKE \'%composite|%filmreel.png%\'';
+		    $ret = $this->_processThumbnails($query, '_removeWatermark');
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    $status['removed'] = 1;
+		}
+
 		$ret = GalleryCoreApi::setPluginParameter('module', 'ffmpeg',
 							  'path', $form['path']);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$ret = GalleryCoreApi::setPluginParameter('module', 'ffmpeg',
+		    'useWatermark', isset($form['useWatermark']) && $form['useWatermark']);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -156,6 +185,58 @@ class AdminFfmpegController extends GalleryController {
 
 	return array(GalleryStatus::success(), $results);
     }
+
+    function _processThumbnails($query, $operation) {
+	global $gallery;
+	list ($ret, $searchResults) = $gallery->search($query);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$ids = array();
+	while ($result = $searchResults->nextResult()) {
+	    $ids[] = $result[0];
+	}
+	while (!empty($ids)) {
+	    $idSet = array_splice($ids, 0, 100);
+	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($idSet);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    list ($ret, $thumbnails) = GalleryCoreApi::loadEntitiesById($idSet);
+	    if ($ret->isError()) {
+		GalleryCoreApi::releaseLocks($lockId);
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    foreach ($thumbnails as $thumbnail) {
+		$this->$operation($thumbnail);
+		$ret = $thumbnail->save();
+		if ($ret->isError()) {
+		    GalleryCoreApi::releaseLocks($lockId);
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	    $ret = GalleryCoreApi::releaseLocks($lockId);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+	return GalleryStatus::success();
+    }
+
+    function _addWatermark(&$thumbnail) {
+	static $op = 'composite|plugins_data/modules/ffmpeg/filmreel.png,image/png,12,399';
+	$operations = $thumbnail->getDerivativeOperations();
+	if (strpos($operations, 'filmreel.png') === false) {
+	    $operations .= (empty($operations) ? '' : ';') . "$op,top-left,0,0;$op,top-right,0,0";
+	    $thumbnail->setDerivativeOperations($operations);
+	}
+    }
+
+    function _removeWatermark(&$thumbnail) {
+	$operations = $thumbnail->getDerivativeOperations();
+	$thumbnail->setDerivativeOperations(rtrim(preg_replace(
+	    '#(^|;)(composite\|[^;]*filmreel.png.*?(;|$))+#', '$1', $operations), ';'));
+    }
 }
 
 /**
@@ -172,7 +253,7 @@ class AdminFfmpegView extends GalleryView {
 
 	/* Load our default values if we didn't just come from this form. */
 	if ($form['formName'] != 'AdminFfmpeg') {
-	    foreach (array('path') as $key) {
+	    foreach (array('path', 'useWatermark') as $key) {
 		list ($ret, $form[$key]) =
 		    GalleryCoreApi::getPluginParameter('module', 'ffmpeg', $key);
 		if ($ret->isError()) {
@@ -210,6 +291,11 @@ class AdminFfmpegView extends GalleryView {
 	    }
 	}
 
+	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation('image/jpeg', 'composite');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ffmpeg');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -225,6 +311,7 @@ class AdminFfmpegView extends GalleryView {
 	$AdminFfmpeg['debugSnippet'] = $debugSnippet;
 	$AdminFfmpeg['failCount'] = $failCount;
 	$AdminFfmpeg['isConfigure'] = !$isActive;
+	$AdminFfmpeg['canWatermark'] = isset($toolkit);
 
 	if ($failCount > 0) {
 	    $template->javascript('lib/javascript/BlockToggle.js');

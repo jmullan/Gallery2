@@ -40,7 +40,7 @@ class FfmpegModule extends GalleryModule {
 	$this->setId('ffmpeg');
 	$this->setName($gallery->i18n('Ffmpeg'));
 	$this->setDescription($gallery->i18n('A toolkit for processing movies'));
-	$this->setVersion('1.0.0');
+	$this->setVersion('1.0.1');
 	$this->setGroup('toolkits', $this->translate('Graphics Toolkits'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
@@ -51,12 +51,36 @@ class FfmpegModule extends GalleryModule {
      * @see GalleryModule::upgrade()
      */
     function upgrade($currentVersion) {
-	if (!isset($currentVersion)) {
-	    /* Initial install. */
-	    $ret = $this->setParameter('path', '');
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+	global $gallery;
+	$platform = $gallery->getPlatform();
+
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'ffmpeg');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	foreach (array('path' => '', 'useWatermark' => 0) as $key => $value) {
+	    if (!isset($params[$key])) {
+		$ret = $this->setParameter($key, $value);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 	    }
+	}
+
+	$slash = $platform->getDirectorySeparator();
+	$imageDir = $gallery->getConfig('data.gallery.plugins_data') . "modules${slash}ffmpeg";
+	list ($success) = GalleryUtilities::guaranteeDirExists($imageDir);
+	if (!$success) {
+	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+					"Unable to create directory: $imageDir");
+	}
+
+	$imageFile = "$imageDir${slash}filmreel.png";
+	if (!$platform->is_file($imageFile) &&
+	    !$platform->copy(dirname(__FILE__) . "${slash}images${slash}filmreel.png",
+			     $imageFile)) {
+	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+					"Unable to copy filmreel.png to $imageDir");
 	}
 
 	return GalleryStatus::success();
@@ -70,6 +94,13 @@ class FfmpegModule extends GalleryModule {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GalleryToolkit', 'FfmpegToolkit', 'Ffmpeg',
 	    'modules/ffmpeg/classes/FfmpegToolkit.class', 'ffmpeg', null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation('ItemAddOption',
+	    'MovieThumbnailOption', 'MovieThumbnailOption',
+	    'modules/ffmpeg/MovieThumbnailOption.inc', 'ffmpeg', null);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -189,12 +220,12 @@ class FfmpegModule extends GalleryModule {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-        list ($ret, $priority) = GalleryCoreApi::getToolkitPriorityById('Ffmpeg');
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
+	list ($ret, $priority) = GalleryCoreApi::getToolkitPriorityById('Ffmpeg');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
-        if (!$priority) {
+	if (!$priority) {
 	    list ($ret, $priority) = GalleryCoreApi::getMaximumManagedToolkitPriority();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);

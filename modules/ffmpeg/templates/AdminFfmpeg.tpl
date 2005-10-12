@@ -8,9 +8,17 @@
   <h2> {g->text text="FFMPEG Settings"} </h2>
 </div>
 
-{if isset($status.saved)}
+{if !empty($status)}
 <div class="gbBlock"><h2 class="giSuccess">
-  {g->text text="Settings saved successfully"}
+{if isset($status.saved)}
+  {g->text text="Settings saved successfully"} <br/>
+{/if}
+{if isset($status.added)}
+  {g->text text="Watermark successfully added to movie thumbnails"}
+{/if}
+{if isset($status.removed)}
+  {g->text text="Watermark successfully removed from movie thumbnails"}
+{/if}
 </h2></div>
 {/if}
 
@@ -18,6 +26,10 @@
   <p class="giDescription">
     {g->text text="FFMPEG is a graphics toolkit that can be used to process video files that you upload to Gallery.  You must install the FFMPEG binary on your server, then enter the path to it in the text box below.  If you're on a Unix machine, don't forget to make the binary executable (<i>chmod 755 ffmpeg</i> in the right directory should do it)"}
   </p>
+  {if $AdminFfmpeg.canWatermark}
+    <img src="{g->url href="modules/ffmpeg/images/sample.jpg"}" width="100" height="75" alt=""
+     style="float: right"/>
+  {/if}
 
   {g->text text="Path to FFMPEG:"}
   <input type="text" size="40" name="{g->formVar var="form[path]"}" value="{$form.path}"
@@ -46,6 +58,30 @@
   <div class="giError">
     {g->text text="The <b>ffmpeg</b> binary is not executable.  To fix it, run <b>chmod 755 %s</b> in a shell." arg1=$form.path}
   </div>
+  {/if}
+
+  <p class="giDescription">
+    {g->text text="This module can automatically watermark the thumbnails for movies to help distinguish them from photos."}
+    {if $AdminFfmpeg.canWatermark} {g->text text="See sample at right."} {/if}
+  </p>
+  {if $AdminFfmpeg.canWatermark}
+    <input type="checkbox" id="cbWatermark"{if $form.useWatermark} checked="checked"{/if}
+     name="{g->formVar var="form[useWatermark]"}" style="vertical-align: -5px"/>
+    <label for="cbWatermark">
+      {g->text text="Watermark new movie thumbnails"}
+    </label>
+    <br/>
+    <input type="checkbox" id="cbAddWatermark" name="{g->formVar var="form[addWatermark]"}"
+     style="vertical-align: -5px" onclick="document.getElementById('cbRemoveWatermark').checked=0"/>
+    {capture name="cbRemoveWatermark"}
+    <input type="checkbox" id="cbRemoveWatermark" name="{g->formVar var="form[removeWatermark]"}"
+     style="vertical-align: -5px" onclick="document.getElementById('cbAddWatermark').checked=0"/>
+    {/capture}
+    {g->text text="%sAdd%s or %sRemove%s watermark from all existing movie thumbnails."
+     arg1="<label for=\"cbAddWatermark\">" arg2="</label>"
+     arg3="`$smarty.capture.cbRemoveWatermark`<label for=\"cbRemoveWatermark\">" arg4="</label>"}
+  {else}
+    {g->text text="Activate another graphics toolkit with watermark support to make this function available."}
   {/if}
 </div>
 

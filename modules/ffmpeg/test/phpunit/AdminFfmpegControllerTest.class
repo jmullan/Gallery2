@@ -47,6 +47,23 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	list ($ret, $this->_movie) =
+	    $this->_createRandomDataItem($this->_getRootId(), 'video/mpeg');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($this->_movie);
+
+	list ($ret, $this->_thumbnail) = $this->_createDerivative(
+	    $this->_movie, $this->_movie->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+	    'convert-to-image/jpeg;thumbnail|150');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->_savePlatform = $gallery->getPlatform();
 	$gallery->_platform = new AdminFfmpegControllerTestPlatform();
     }
 
@@ -64,11 +81,34 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 			    $results);
 
 	/* Verify the settings went in properly */
-	list ($ret, $path) = GalleryCoreApi::getPluginParameter('module', 'ffmpeg', 'path');
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'ffmpeg');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals('/validPath/ffmpeg', $path);
+	$this->assertEquals('/validPath/ffmpeg', $params['path']);
+	$this->assertEquals('0', $params['useWatermark']);
+    }
+
+    function testSaveUseWatermark() {
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[path]', '/validPath/ffmpeg');
+	GalleryUtilities::putRequestVariable('form[useWatermark]', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'ffmpeg.AdminFfmpeg'),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
+			    $results);
+
+	/* Verify the settings went in properly */
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'ffmpeg');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('/validPath/ffmpeg', $params['path']);
+	$this->assertEquals('1', $params['useWatermark']);
     }
 
     function testSaveIncompletePath() {
@@ -168,6 +208,113 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array('form[error][path][missing]')),
 			    $results);
+    }
+
+    function testAddRemoveWatermark() {
+	global $gallery;
+	$gallery->_platform = $this->_savePlatform;
+
+	$ret = $this->_saveThumbnailOps();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $path) = GalleryCoreApi::getPluginParameter('module', 'ffmpeg', 'path');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryUtilities::putRequestVariable('form[path]', $path);
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[addWatermark]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'ffmpeg.AdminFfmpeg'),
+				  'status' => array('added' => 1, 'saved' => 1),
+				  'error' => array()),
+			    $results);
+
+	list ($ret, $thumbnail) = $this->_thumbnail->refresh();
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('convert-to-image/jpeg;thumbnail|150;composite|plugins_data/modules/' .
+	    'ffmpeg/filmreel.png,image/png,12,399,top-left,0,0;composite|plugins_data/modules/' .
+	    'ffmpeg/filmreel.png,image/png,12,399,top-right,0,0',
+	    $thumbnail->getDerivativeOperations(), 'add watermark');
+
+	GalleryUtilities::putRequestVariable('form[addWatermark]', 0);
+	GalleryUtilities::putRequestVariable('form[removeWatermark]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'ffmpeg.AdminFfmpeg'),
+				  'status' => array('removed' => 1, 'saved' => 1),
+				  'error' => array()),
+			    $results);
+
+	list ($ret, $thumbnail) = $this->_thumbnail->refresh();
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('convert-to-image/jpeg;thumbnail|150',
+	    $thumbnail->getDerivativeOperations(), 'remove watermark');
+
+	$ret = $this->_restoreThumbnailOps();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function _saveThumbnailOps() {
+	global $gallery;
+	$query = '
+	SELECT [GalleryDerivative::id], [GalleryDerivative::derivativeOperations]
+	FROM [GalleryDerivative], [GalleryChildEntity], [GalleryEntity]
+	WHERE [GalleryDerivative::id] = [GalleryChildEntity::id]
+	  AND [GalleryChildEntity::parentId] = [GalleryEntity::id]
+	  AND [GalleryEntity::entityType] = \'GalleryMovieItem\'';
+	list ($ret, $searchResults) = $gallery->search($query);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$this->_thumbnailOps = array();
+	while ($result = $searchResults->nextResult()) {
+	    $this->_thumbnailOps[$result[0]] = $result[1];
+	}
+	return GalleryStatus::success();
+    }
+
+    function _restoreThumbnailOps() {
+	if (empty($this->_thumbnailOps)) {
+	    return GalleryStatus::success();
+	}
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock(array_keys($this->_thumbnailOps));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	list ($ret, $thumbnails) =
+	    GalleryCoreApi::loadEntitiesById(array_keys($this->_thumbnailOps));
+	if ($ret->isError()) {
+	    GalleryCoreApi::releaseLocks($lockId);
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	foreach ($thumbnails as $thumbnail) {
+	    $thumbnail->setDerivativeOperations($this->_thumbnailOps[$thumbnail->getId()]);
+	    $ret = $thumbnail->save();
+	    if ($ret->isError()) {
+		GalleryCoreApi::releaseLocks($lockId);
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
     }
 }
 
