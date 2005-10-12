@@ -99,35 +99,29 @@ class DataCacheTest extends GalleryTestCase {
 	global $gallery;
 	$gallery->setConfig('data.gallery.cache', '/data/cache/');
 
-	$this->assertEquals('/data/cache/module/core/0/0/1.inc',
-	    GalleryDataCache::getCachePath(array('type' => 'module',
-						 'id' => 'core',
-						 'itemId' => 1)));
-	$this->assertEquals('/data/cache/theme/matrix',
-	    GalleryDataCache::getCachePath(array('type' => 'theme', 'id' => 'matrix')));
+	$cases = array();
+	$cases['/data/cache/module/core/0/0/1.inc'] =
+	    array('type' => 'module', 'id' => 'core', 'itemId' => 1);
+	$cases['/data/cache/theme/matrix'] =
+	    array('type' => 'theme', 'id' => 'matrix');
+	$cases['/data/cache/entity/7/2/725.inc'] =
+	    array('type' => 'entity', 'itemId' => 725);
+	$cases['/data/cache/derivative/1/2/123.dat'] =
+	    array('type' => 'derivative', 'itemId' => 123);
+	$cases['derivative/1/2/123.dat'] =
+	    array('type' => 'derivative-relative', 'itemId' => 123);
+	$cases['/data/cache/derivative/1/2/123-meta.inc'] =
+	    array('type' => 'derivative-meta', 'itemId' => 123);
+	$cases['/data/cache/derivative/1/2/123-fast.inc'] =
+	    array('type' => 'fast-download', 'itemId' => 123);
+	$cases['/data/cache/module/foo/1/2/123.dat'] =
+	    array('type' => 'module-data', 'module' => 'foo', 'itemId' => 123);
+	$cases['/data/cache/module/foo/'] =
+	    array('type' => 'module-data', 'module' => 'foo');
 
-	$this->assertEquals('/data/cache/entity/7/2/725.inc',
-	    GalleryDataCache::getCachePath(array('type' => 'entity', 'itemId' => 725)));
-
-	$this->assertEquals('/data/cache/derivative/1/2/123.dat',
-	    GalleryDataCache::getCachePath(array('type' => 'derivative', 'itemId' => 123)));
-
-	$this->assertEquals('derivative/1/2/123.dat',
-	    GalleryDataCache::getCachePath(array('type' => 'derivative-relative',
-						 'itemId' => 123)));
-
-	$this->assertEquals('/data/cache/derivative/1/2/123-meta.inc',
-	    GalleryDataCache::getCachePath(array('type' => 'derivative-meta', 'itemId' => 123)));
-
-	$this->assertEquals('/data/cache/derivative/1/2/123-fast.inc',
-	    GalleryDataCache::getCachePath(array('type' => 'fast-download', 'itemId' => 123)));
-
-	$this->assertEquals('/data/cache/module/foo/1/2/123.dat',
-	    GalleryDataCache::getCachePath(
-		array('type' => 'module-data', 'module' => 'foo', 'itemId' => 123)));
-
-	$this->assertEquals('/data/cache/module/foo/',
-	    GalleryDataCache::getCachePath(array('type' => 'module-data', 'module' => 'foo')));
+	foreach ($cases as $expectedPath => $info) {
+	    $this->assertEquals($expectedPath, GalleryDataCache::getCachePath($info));
+	}
     }
 
     function testPutToDisk() {
