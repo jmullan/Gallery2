@@ -39,7 +39,7 @@ class ModuleTest extends GalleryTestCase {
 	global $gallery;
 	parent::setUp();
 
-	$this->_platform = new ModuleTestPlatform();
+	$this->_platform = new ModuleTestPlatform($this);
 	$gallery->setPlatform($this->_platform);
 
 	/* Register a new module */
@@ -187,6 +187,8 @@ class ModuleTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->assert(!empty($this->_removedDir),
+		      'plugins_data/modules/moduletest directory not removed in uninstall');
 
 	/* Flush cached permissions */
 	GalleryDataCache::reset();
@@ -434,6 +436,10 @@ class ModuleTestOnLoadHandler {
  * @subpackage PHPUnit
  */
 class ModuleTestPlatform extends GalleryPlatform {
+    function ModuleTestPlatform(&$test) {
+	$this->_test =& $test;
+    }
+
     function opendir($path) {
 	if (strpos($path, '/modules/') !== false) {
 	    $this->_list = array();
@@ -480,6 +486,18 @@ class ModuleTestPlatform extends GalleryPlatform {
 	}
 
 	return parent::file_exists($file);
+    }
+
+    function recursiveRmdir($path) {
+	if (strpos($path, 'modules/moduletest') !== false) {
+	    $this->_test->_removedDir = true;
+	    return true;
+	}
+	return false;
+    }
+
+    function getDirectorySeparator() {
+	return '/';
     }
 }
 ?>
