@@ -8,8 +8,7 @@ modules/watermark/WatermarkOption.inc	3764301631	2185080178	3722	3834
 modules/watermark/WatermarkSiteAdmin.inc	1506229454	828973348	6973	7183
 modules/watermark/WatermarkSiteAdminEdit.inc	4142386677	1857383362	2158	2225
 modules/watermark/classes/GNUmakefile	203966724	1700990336	230	238
-modules/watermark/classes/GalleryStorage/DatabaseStorage/schema/GNUmakefile	4013428385	123139257	173	180
-R	modules/watermark/classes/GalleryStorage/DatabaseStorage/schema/platform/GNUmakefile
+modules/watermark/classes/GalleryStorage/DatabaseStorage/schema/GNUmakefile	184861627	3814197853	125	127
 modules/watermark/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/A_WatermarkImage_1.0.sql	3246822450	2047421465	265	273
 modules/watermark/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/WatermarkImage.sql	1471491306	4106451491	791	816
 modules/watermark/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/A_WatermarkImage_1.0.sql	327057127	3115684604	271	280
@@ -17,7 +16,6 @@ modules/watermark/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/
 modules/watermark/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/A_WatermarkImage_1.0.sql	3450093973	86473257	267	276
 modules/watermark/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/WatermarkImage.sql	2813262695	594628121	903	930
 modules/watermark/classes/GalleryStorage/DatabaseStorage/schema/xml-src/A_WatermarkImage_1.0.xml	2184976594	3325848002	481	501
-R	modules/watermark/classes/GalleryStorage/DatabaseStorage/schema/xml-src/GNUmakefile
 modules/watermark/classes/WatermarkHelper.class	2044098742	813038022	16636	17167
 modules/watermark/classes/WatermarkImage.class	3583484018	3877919594	11063	11477
 modules/watermark/classes/interfaces/GNUmakefile	3565757152	4165287369	176	181
@@ -26,13 +24,14 @@ modules/watermark/locale/cs_CZ/LC_MESSAGES/modules_watermark.mo	1497725030	14977
 modules/watermark/locale/de_DE/LC_MESSAGES/modules_watermark.mo	4252957970	4252957970	7496	7496
 modules/watermark/locale/fr_FR/LC_MESSAGES/modules_watermark.mo	3629917589	3629917589	7108	7108
 modules/watermark/locale/is_IS/LC_MESSAGES/modules_watermark.mo	299310468	299310468	459	459
+modules/watermark/locale/it_IT/LC_MESSAGES/modules_watermark.mo	3875105717	3875105717	6936	6936
 modules/watermark/locale/ja_JP/LC_MESSAGES/modules_watermark.mo	56255191	56255191	1590	1590
 modules/watermark/locale/nl_NL/LC_MESSAGES/modules_watermark.mo	1579607765	1579607765	6932	6932
 modules/watermark/locale/no_NO/LC_MESSAGES/modules_watermark.mo	4238274309	4238274309	5638	5638
 modules/watermark/locale/ru_RU/LC_MESSAGES/modules_watermark.mo	354627020	354627020	9576	9576
 modules/watermark/locale/sr_YU/LC_MESSAGES/modules_watermark.mo	2713256290	2713256290	6619	6619
 modules/watermark/locale/sv_SE/LC_MESSAGES/modules_watermark.mo	1207085331	1207085331	7655	7655
-modules/watermark/locale/tr_TR/LC_MESSAGES/modules_watermark.mo	3803942359	3803942359	2024	2024
+modules/watermark/locale/tr_TR/LC_MESSAGES/modules_watermark.mo	2711231620	2711231620	3515	3515
 modules/watermark/locale/zh_CN/LC_MESSAGES/modules_watermark.mo	2763259360	2763259360	5298	5298
 modules/watermark/locale/zh_TW/LC_MESSAGES/modules_watermark.mo	4184926591	4184926591	6366	6366
 modules/watermark/module.inc	2539883680	4217468378	8924	9230
@@ -41,6 +40,7 @@ modules/watermark/po/cs_CZ.po	1629676485	3833249746	7645	7914
 modules/watermark/po/de_DE.po	660254647	4101394761	8525	8808
 modules/watermark/po/fr_FR.po	3015241061	1098148755	7928	8199
 modules/watermark/po/is_IS.po	2807376086	2684391651	5018	5267
+modules/watermark/po/it_IT.po	2915247526	2541061936	7639	7872
 modules/watermark/po/ja_JP.po	3813899054	3894899361	5392	5641
 modules/watermark/po/nl_NL.po	4186040297	1084129194	7842	8114
 modules/watermark/po/no_NO.po	2556775208	2347616410	7245	7514
@@ -48,7 +48,7 @@ modules/watermark/po/ru_RU.po	1449444441	824738318	10355	10591
 modules/watermark/po/sr_YU.po	920467779	423883891	7373	7624
 modules/watermark/po/strings.raw	1291233353	3625348232	3130	3198
 modules/watermark/po/sv_SE.po	855502398	3376047822	8541	8812
-modules/watermark/po/tr_TR.po	2456778504	356287982	5701	5956
+modules/watermark/po/tr_TR.po	3156805403	2972079333	6187	6426
 modules/watermark/po/zh_CN.po	2647563793	2313970385	6740	6998
 modules/watermark/po/zh_TW.po	2203214870	327060153	7128	7382
 modules/watermark/templates/ConfirmDelete.tpl	2448518460	1935521021	1383	1417
@@ -67,7 +67,9 @@ modules/watermark/test/phpunit/WatermarkOptionTest.class	2403009643	4123296330	1
 modules/watermark/test/phpunit/WatermarkSiteAdminControllerTest.class	4038050409	2719716224	14467	14864
 modules/watermark/test/phpunit/WatermarkSiteAdminEditControllerTest.class	870136456	2145124252	7925	8135
 modules/watermark/test/phpunit/WatermarkTest.class	124516247	3760176269	10199	10491
+R	modules/watermark/classes/GalleryStorage/DatabaseStorage/schema/platform/GNUmakefile
 R	modules/watermark/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GNUmakefile
 R	modules/watermark/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GNUmakefile
 R	modules/watermark/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GNUmakefile
+R	modules/watermark/classes/GalleryStorage/DatabaseStorage/schema/xml-src/GNUmakefile
 R	modules/watermark/templates/SiteAdmin.tpl

@@ -2,8 +2,7 @@
 modules/thumbnail/CustomThumbnailOption.inc	1416073681	3864318359	4625	4758
 modules/thumbnail/ThumbnailSiteAdmin.inc	1218842181	160252372	6031	6208
 modules/thumbnail/classes/GNUmakefile	203966724	1700990336	230	238
-modules/thumbnail/classes/GalleryStorage/DatabaseStorage/schema/GNUmakefile	4013428385	123139257	173	180
-R	modules/thumbnail/classes/GalleryStorage/DatabaseStorage/schema/platform/GNUmakefile
+modules/thumbnail/classes/GalleryStorage/DatabaseStorage/schema/GNUmakefile	184861627	3814197853	125	127
 modules/thumbnail/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/A_ThumbnailImage_1.0.sql	2527963929	2444792076	189	194
 modules/thumbnail/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/ThumbnailImage.sql	3525058336	136642105	549	568
 modules/thumbnail/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/A_ThumbnailImage_1.0.sql	2527963929	2444792076	189	194
@@ -11,7 +10,6 @@ modules/thumbnail/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/
 modules/thumbnail/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/A_ThumbnailImage_1.0.sql	2527963929	2444792076	189	194
 modules/thumbnail/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/ThumbnailImage.sql	3808845640	4117255592	655	676
 modules/thumbnail/classes/GalleryStorage/DatabaseStorage/schema/xml-src/A_ThumbnailImage_1.0.xml	1837885570	1473130768	399	414
-R	modules/thumbnail/classes/GalleryStorage/DatabaseStorage/schema/xml-src/GNUmakefile
 modules/thumbnail/classes/ThumbnailHelper.class	3716665794	2126056962	16072	16568
 modules/thumbnail/classes/ThumbnailImage.class	2499819426	1690338821	8846	9175
 modules/thumbnail/classes/ThumbnailToolkit.class	3318278743	873597479	3070	3160
@@ -24,6 +22,7 @@ modules/thumbnail/locale/de_DE/LC_MESSAGES/modules_thumbnail.mo	2807660580	28076
 modules/thumbnail/locale/fr_FR/LC_MESSAGES/modules_thumbnail.mo	973719225	973719225	3746	3746
 modules/thumbnail/locale/hu_HU/LC_MESSAGES/modules_thumbnail.mo	2179313878	2179313878	2573	2573
 modules/thumbnail/locale/is_IS/LC_MESSAGES/modules_thumbnail.mo	1951703228	1951703228	426	426
+modules/thumbnail/locale/it_IT/LC_MESSAGES/modules_thumbnail.mo	1560616032	1560616032	3703	3703
 modules/thumbnail/locale/ja_JP/LC_MESSAGES/modules_thumbnail.mo	771748814	771748814	1175	1175
 modules/thumbnail/locale/nl_NL/LC_MESSAGES/modules_thumbnail.mo	2099572958	2099572958	3736	3736
 modules/thumbnail/locale/no_NO/LC_MESSAGES/modules_thumbnail.mo	2358804103	2358804103	3646	3646
@@ -31,7 +30,7 @@ modules/thumbnail/locale/pl_PL/LC_MESSAGES/modules_thumbnail.mo	2235293709	22352
 modules/thumbnail/locale/ru_RU/LC_MESSAGES/modules_thumbnail.mo	506105268	506105268	4832	4832
 modules/thumbnail/locale/sr_YU/LC_MESSAGES/modules_thumbnail.mo	758078837	758078837	3697	3697
 modules/thumbnail/locale/sv_SE/LC_MESSAGES/modules_thumbnail.mo	3843384486	3843384486	3855	3855
-modules/thumbnail/locale/tr_TR/LC_MESSAGES/modules_thumbnail.mo	1047887409	1047887409	3371	3371
+modules/thumbnail/locale/tr_TR/LC_MESSAGES/modules_thumbnail.mo	257467501	257467501	3640	3640
 modules/thumbnail/locale/zh_CN/LC_MESSAGES/modules_thumbnail.mo	1545747614	1545747614	3342	3342
 modules/thumbnail/locale/zh_TW/LC_MESSAGES/modules_thumbnail.mo	3933216535	3933216535	3360	3360
 modules/thumbnail/module.inc	3003668356	2288878590	11216	11577
@@ -41,6 +40,7 @@ modules/thumbnail/po/de_DE.po	2877017138	3979822228	4803	4961
 modules/thumbnail/po/fr_FR.po	3968139915	3946113081	4569	4722
 modules/thumbnail/po/hu_HU.po	3185040379	2948374068	3962	4106
 modules/thumbnail/po/is_IS.po	37509919	2087245158	3088	3227
+modules/thumbnail/po/it_IT.po	3223538882	85228659	4464	4597
 modules/thumbnail/po/ja_JP.po	3454867123	1181255339	3339	3478
 modules/thumbnail/po/nl_NL.po	4057448088	3552722593	4652	4807
 modules/thumbnail/po/no_NO.po	1732155708	197800630	4461	4611
@@ -49,7 +49,7 @@ modules/thumbnail/po/ru_RU.po	3144582761	776920111	5597	5731
 modules/thumbnail/po/sr_YU.po	314657183	746908207	4476	4616
 modules/thumbnail/po/strings.raw	453433143	2540422186	1562	1598
 modules/thumbnail/po/sv_SE.po	2117707219	3230714627	4761	4919
-modules/thumbnail/po/tr_TR.po	2194605843	1129149866	4416	4555
+modules/thumbnail/po/tr_TR.po	2517261484	3129053085	4552	4691
 modules/thumbnail/po/zh_CN.po	2725271113	3134577207	4131	4272
 modules/thumbnail/po/zh_TW.po	4082371586	1225493185	4150	4292
 modules/thumbnail/templates/CustomThumbnail.tpl	1032766545	660792230	1252	1288
@@ -57,7 +57,9 @@ modules/thumbnail/templates/ThumbnailSiteAdmin.tpl	2020922508	771293361	5340	550
 modules/thumbnail/test/phpunit/CustomThumbnailOptionTest.class	2787579918	280793863	15286	15678
 modules/thumbnail/test/phpunit/ThumbnailSiteAdminControllerTest.class	3604243825	2804460271	9501	9731
 modules/thumbnail/test/phpunit/ThumbnailToolkitTest.class	2797357726	494482305	4449	4586
+R	modules/thumbnail/classes/GalleryStorage/DatabaseStorage/schema/platform/GNUmakefile
 R	modules/thumbnail/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GNUmakefile
 R	modules/thumbnail/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GNUmakefile
 R	modules/thumbnail/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GNUmakefile
+R	modules/thumbnail/classes/GalleryStorage/DatabaseStorage/schema/xml-src/GNUmakefile
 R	modules/thumbnail/templates/SiteAdmin.tpl
