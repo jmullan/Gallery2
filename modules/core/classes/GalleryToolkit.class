@@ -213,14 +213,13 @@ class GalleryToolkit {
 	case 'resize':
 	case 'scale':
 	case 'thumbnail':
-	case 'composite':
 	    /* For like operations, the second operation takes precedence */
 	    return array(true, $operation2, $args2);
 	    break;
 
 	case 'rotate':
 	    /* Rotation is additive */
-	    $rotation = ($args1[0] + $args2[0]) % 360;
+	    $rotation = (360 + $args1[0] + $args2[0]) % 360;
 
 	    /* 0 rotation means the operation goes away */
 	    if ($rotation == 0) {

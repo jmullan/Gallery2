@@ -26,6 +26,8 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryToolkit.class');
+
 /**
  * Test Toolkit functionality
  *
@@ -608,13 +610,54 @@ class ToolkitTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(30, $priority, 'Toolkit Priority Doesn\'t Match');
-	
+
 	/* Test return for an undefined toolkit */
 	list ($ret, $priority) = GalleryCoreApi::getToolkitPriorityById('TestToolkit2');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(null, $priority, 'Returned value for undefined toolkit');
+    }
+
+    function testMergeOperations() {
+	$toolkit = new TestToolkit();
+	$this->assertEquals(array(true, 'thumbnail', array(150)),
+	    $toolkit->mergeOperations('thumbnail', array(100), 'thumbnail', array(150)),
+	    'thumbnail');
+	$this->assertEquals(array(true, 'scale', array(800)),
+	    $toolkit->mergeOperations('scale', array(600, 500), 'scale', array(800)),
+	    'scale');
+	$this->assertEquals(array(true, 'resize', array(640, 480)),
+	    $toolkit->mergeOperations('resize', array(800, 600), 'resize', array(640, 480)),
+	    'resize');
+	$this->assertEquals(array(true, 'scale', array(800, 600)),
+	    $toolkit->mergeOperations('thumbnail', array(200), 'scale', array(800, 600)),
+	    'thumbnail scale');
+	$this->assertEquals(array(true, 'resize', array(640, 480)),
+	    $toolkit->mergeOperations('scale', array(800, 600), 'resize', array(640, 480)),
+	    'scale resize');
+	$this->assertEquals(array(true, 'thumbnail', array(150)),
+	    $toolkit->mergeOperations('resize', array(900, 700), 'thumbnail', array(150)),
+	    'resize thumbnail');
+	$this->assertEquals(array(true, 'crop', array(20, 20, 60, 60)),
+	    $toolkit->mergeOperations('crop', array(40, 40, 20, 20), 'crop', array(20, 20, 60, 60)),
+	    'crop');
+	$this->assertEquals(array(false, null, null), $toolkit->mergeOperations(
+		'composite', array('img', 'image/png', 30, 20, 'top-left', 0, 0),
+		'composite', array('myimage', 'image/gif', 60, 60, 'center', 0, 0)),
+	    'composite should not merge');
+	$this->assertEquals(array(true, 'rotate', array(180)),
+	    $toolkit->mergeOperations('rotate', array(90), 'rotate', array(90)),
+	    'rotate 90 90');
+	$this->assertEquals(array(true, 'rotate', array(180)),
+	    $toolkit->mergeOperations('rotate', array(-90), 'rotate', array(-90)),
+	    'rotate -90 -90');
+	$this->assertEquals(array(true, 'rotate', array(-90)),
+	    $toolkit->mergeOperations('rotate', array(180), 'rotate', array(90)),
+	    'rotate 180 90');
+	$this->assertEquals(array(true, null, null),
+	    $toolkit->mergeOperations('rotate', array(180), 'rotate', array(180)),
+	    'rotate 180 180');
     }
 }
 
@@ -624,6 +667,6 @@ class ToolkitTest extends GalleryTestCase {
  * @package GalleryCore
  * @subpackage PHPUnit
  */
-class TestToolkit { }
+class TestToolkit extends GalleryToolkit { }
 class TestToolkit2 { }
 ?>
