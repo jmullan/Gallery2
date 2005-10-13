@@ -333,6 +333,7 @@ class GalleryView {
     function _getItem() {
 	global $gallery;
 	list ($itemId, $path) = GalleryUtilities::getRequestVariables('itemId', 'path');
+	$itemId = (int)$itemId;
 
 	/* Check for path param if no itemId given */
 	if (empty($itemId) && !empty($path)) {

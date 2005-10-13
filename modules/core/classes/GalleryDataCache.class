@@ -437,38 +437,44 @@ class GalleryDataCache {
 	switch ($pathInfo['type']) {
 	case 'entity':
 	    list ($first, $second) = GalleryDataCache::getCacheTuple($pathInfo['itemId']);
-	    $cacheFile = sprintf('%sentity/%s/%s/%s.inc',
+	    $cacheFile = sprintf('%sentity/%s/%s/%d.inc',
 				 $base, $first, $second, $pathInfo['itemId']);
 	    break;
 
 	case 'derivative':
 	    list ($first, $second) = GalleryDataCache::getCacheTuple($pathInfo['itemId']);
-	    $cacheFile = sprintf('%sderivative/%s/%s/%s.dat',
+	    $cacheFile = sprintf('%sderivative/%s/%s/%d.dat',
 				 $base, $first, $second, $pathInfo['itemId']);
 	    break;
 
 	case 'derivative-relative':
 	    list ($first, $second) = GalleryDataCache::getCacheTuple($pathInfo['itemId']);
-	    $cacheFile = sprintf('derivative/%s/%s/%s.dat',
+	    $cacheFile = sprintf('derivative/%s/%s/%d.dat',
 				 $first, $second, $pathInfo['itemId']);
 	    break;
 
 	case 'derivative-meta':
 	    list ($first, $second) = GalleryDataCache::getCacheTuple($pathInfo['itemId']);
-	    $cacheFile = sprintf('%sderivative/%s/%s/%s-meta.inc',
+	    $cacheFile = sprintf('%sderivative/%s/%s/%d-meta.inc',
 				 $base, $first, $second, $pathInfo['itemId']);
 	    break;
 
 	case 'fast-download':
 	    list ($first, $second) = GalleryDataCache::getCacheTuple($pathInfo['itemId']);
-	    $cacheFile = sprintf('%sderivative/%s/%s/%s-fast.inc',
+	    $cacheFile = sprintf('%sderivative/%s/%s/%d-fast.inc',
 				 $base, $first, $second, $pathInfo['itemId']);
 	    break;
 
 	case 'module':
 	case 'theme':
 	    if (isset($pathInfo['id'])) {
+		if (strstr($pathInfo['id'], '..') !== false) {
+		    $pathInfo['id'] = '0';
+		}
 		if (isset($pathInfo['itemId'])) {
+		    if (strstr($pathInfo['itemId'], '..') !== false) {
+			$pathInfo['itemId'] = '0';
+		    }
 		    list ($first, $second) = GalleryDataCache::getCacheTuple($pathInfo['itemId']);
 		    $cacheFile = sprintf('%s%s/%s/%s/%s/%s.inc',
 					 $base, $pathInfo['type'], $pathInfo['id'],
@@ -480,9 +486,12 @@ class GalleryDataCache {
 	    break;
 
 	case 'module-data':
+	    if (strstr($pathInfo['module'], '..') !== false) {
+		$pathInfo['module'] = '0';
+	    }
 	    if (isset($pathInfo['itemId'])) {
 		list ($first, $second) = GalleryDataCache::getCacheTuple($pathInfo['itemId']);
-		$cacheFile = sprintf('%s%s/%s/%s/%s/%s.dat',
+		$cacheFile = sprintf('%s%s/%s/%s/%s/%d.dat',
 				     $base, 'module', $pathInfo['module'],
 				     $first, $second, $pathInfo['itemId']);
 	    } else {

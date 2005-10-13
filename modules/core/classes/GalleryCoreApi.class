@@ -2517,6 +2517,9 @@ class GalleryCoreApi {
      */
     function relativeRequireOnce($file) {
 	static $loaded;
+	if (strpos($file, '..') !== false) {
+	    return;
+	}
 	if (!isset($loaded[$file])) {
 	    $loaded[$file] = 1;
 	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/../../../' . $file);
