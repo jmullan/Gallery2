@@ -1206,6 +1206,7 @@ class CoreModuleExtras {
 	    /* 2.0 Release! */
 
 	case '1.0.0':
+	case '1.0.0.1':
 	    /* Schema only upgrade */
 
 	case '1.0.1':
@@ -1390,6 +1391,7 @@ $gallery->setConfig(\'cookieId\', \'' . $cookieId . '\');
 	case '0.9.36':
 	case '0.9.37':
 	case '1.0.0':
+	case '1.0.0.1':
 	case '1.0.1':
 	case '1.0.2':
 
