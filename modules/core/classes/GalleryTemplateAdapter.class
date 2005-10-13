@@ -512,6 +512,21 @@ class GalleryTemplateAdapter {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	if ($params['type'] == 'gallery2' || $params['type'] == 'donate') {
+	    list ($ret, $adminGroupId) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
+	    if ($ret->isError()) {
+		return;
+	    }
+	    list ($ret, $isAdmin) = GalleryCoreApi::isUserInGroup(
+		$smarty->_tpl_vars['theme']['actingUserId'], $adminGroupId);
+	    if ($ret->isError()) {
+		return;
+	    }
+	    GalleryCoreApi::relativeRequireOnce('modules/core/module.inc');
+	    $installedVersions = CoreModule::getInstalledVersions();
+	}
+
 	switch($params['type']) {
 	case 'validation':
 	    if ($gallery->getConfig('allowSessionAccess')) {
@@ -537,8 +552,11 @@ class GalleryTemplateAdapter {
 		'style="border-style: none" width="80" height="15"/></a>';
 
 	case 'gallery2':
-	    GalleryCoreApi::relativeRequireOnce('modules/core/module.inc');
-	    $installedVersions = CoreModule::getInstalledVersions();
+	    if (!$isAdmin) {
+		/* Don't show exact patch release to non-admins */
+		$installedVersions['gallery'] =
+		    preg_replace('/^(.*?\..*?)(\.\d+)+/', '$1', $installedVersions['gallery']);
+	    }
 	    $version = $core->translate(
 		array('text' => "Gallery %s", 'arg1' => $installedVersions['gallery']));
 	    return '<a href="http://gallery.sourceforge.net">' .
@@ -549,26 +567,12 @@ class GalleryTemplateAdapter {
 		'style="border-style: none" width="80" height="15"/></a>';
 
 	case 'donate':
-	    list ($ret, $adminGroupId) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
-	    if ($ret->isError()) {
-		return;
-	    }
-
-	    list ($ret, $isAdmin) = GalleryUserGroupHelper_simple::isUserInGroup(
-		$smarty->_tpl_vars['theme']['actingUserId'], $adminGroupId);
-	    if ($ret->isError()) {
-		return;
-	    }
-
 	    if ($isAdmin) {
-		GalleryCoreApi::relativeRequireOnce('modules/core/module.inc');
-		$installedVersions = CoreModule::getInstalledVersions();
 		return sprintf(
 		    '<a href="%s"><img src="%s" alt="%s" title="%s" ' .
 		    'style="border-style: none" width="80" height="15"/></a>',
 		    $urlGenerator->generateUrl(
-			array('href' => 'http://gallery.sourceforge.net/donate.php?tag=' .
+			array('href' => 'http://gallery.sourceforge.net/donate.php?donate_tag=' .
 			      $installedVersions['gallery'])),
 		    $urlGenerator->generateUrl(
 			array('href' => 'modules/core/data/donate.png')),
