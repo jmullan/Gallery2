@@ -46,7 +46,7 @@
   {/if}
 </div>
 
-{* Include our extra ItemAddOptions *}
+{* Include our ValidationPlugins *}
 {foreach from=$UserLogin.plugins item=plugin}
   {include file="gallery:`$plugin.file`" l10Domain=$plugin.l10Domain}
 {/foreach}
