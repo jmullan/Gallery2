@@ -99,35 +99,66 @@ class DataCacheTest extends GalleryTestCase {
 	global $gallery;
 	$gallery->setConfig('data.gallery.cache', '/data/cache/');
 
-	$this->assertEquals('/data/cache/module/core/0/0/1.inc',
-	    GalleryDataCache::getCachePath(array('type' => 'module',
-						 'id' => 'core',
-						 'itemId' => 1)));
-	$this->assertEquals('/data/cache/theme/matrix',
-	    GalleryDataCache::getCachePath(array('type' => 'theme', 'id' => 'matrix')));
+	$cases = array();
+	$cases['/data/cache/module/core/0/0/1.inc'] =
+	    array('type' => 'module', 'id' => 'core', 'itemId' => 1);
+	$cases['/data/cache/module/core/0/0/0.inc'] =
+	    array('type' => 'module', 'id' => 'core', 'itemId' => '../EVIL');
+	$cases['/data/cache/module/0/0/0/1.inc'] =
+	    array('type' => 'module', 'id' => '../EVIL', 'itemId' => 1);
 
-	$this->assertEquals('/data/cache/entity/7/2/725.inc',
-	    GalleryDataCache::getCachePath(array('type' => 'entity', 'itemId' => 725)));
+	/* We use itemId to store keys like 'GalleryFactoryHelper_loadRegistry' */
+	$cases['/data/cache/module/core/0/0/Legal_key.inc'] =
+	    array('type' => 'module', 'id' => 'core', 'itemId' => 'Legal_key');
 
-	$this->assertEquals('/data/cache/derivative/1/2/123.dat',
-	    GalleryDataCache::getCachePath(array('type' => 'derivative', 'itemId' => 123)));
 
-	$this->assertEquals('derivative/1/2/123.dat',
-	    GalleryDataCache::getCachePath(array('type' => 'derivative-relative',
-						 'itemId' => 123)));
+	$cases['/data/cache/theme/matrix'] =
+	    array('type' => 'theme', 'id' => 'matrix');
+	$cases['/data/cache/theme/matrix/1/2/123.inc'] =
+	    array('type' => 'theme', 'id' => 'matrix', 'itemId' => 123);
+	$cases['/data/cache/theme/0/1/2/123.inc'] =
+	    array('type' => 'theme', 'id' => '../EVIL', 'itemId' => 123);
+	$cases['/data/cache/theme/matrix/0/0/0.inc'] =
+	    array('type' => 'theme', 'id' => 'matrix', 'itemId' => '../EVIL');
 
-	$this->assertEquals('/data/cache/derivative/1/2/123-meta.inc',
-	    GalleryDataCache::getCachePath(array('type' => 'derivative-meta', 'itemId' => 123)));
+	$cases['/data/cache/entity/7/2/725.inc'] =
+	    array('type' => 'entity', 'itemId' => 725);
+	$cases['/data/cache/entity/0/0/0.inc'] =
+	    array('type' => 'entity', 'itemId' => '../EVIL');
 
-	$this->assertEquals('/data/cache/derivative/1/2/123-fast.inc',
-	    GalleryDataCache::getCachePath(array('type' => 'fast-download', 'itemId' => 123)));
+	$cases['/data/cache/derivative/1/2/123.dat'] =
+	    array('type' => 'derivative', 'itemId' => 123);
+	$cases['/data/cache/derivative/0/0/0.dat'] =
+	    array('type' => 'derivative', 'itemId' => '../EVIL');
 
-	$this->assertEquals('/data/cache/module/foo/1/2/123.dat',
-	    GalleryDataCache::getCachePath(
-		array('type' => 'module-data', 'module' => 'foo', 'itemId' => 123)));
+	$cases['derivative/1/2/123.dat'] =
+	    array('type' => 'derivative-relative', 'itemId' => 123);
+	$cases['derivative/0/0/0.dat'] =
+	    array('type' => 'derivative-relative', 'itemId' => '../EVIL');
 
-	$this->assertEquals('/data/cache/module/foo/',
-	    GalleryDataCache::getCachePath(array('type' => 'module-data', 'module' => 'foo')));
+	$cases['/data/cache/derivative/1/2/123-meta.inc'] =
+	    array('type' => 'derivative-meta', 'itemId' => 123);
+	$cases['/data/cache/derivative/0/0/0-meta.inc'] =
+	    array('type' => 'derivative-meta', 'itemId' => '../EVIL');
+
+	$cases['/data/cache/derivative/1/2/123-fast.inc'] =
+	    array('type' => 'fast-download', 'itemId' => 123);
+	$cases['/data/cache/derivative/0/0/0-fast.inc'] =
+	    array('type' => 'fast-download', 'itemId' => '../EVIL');
+
+	$cases['/data/cache/module/foo/1/2/123.dat'] =
+	    array('type' => 'module-data', 'module' => 'foo', 'itemId' => 123);
+	$cases['/data/cache/module/foo/0/0/0.dat'] =
+	    array('type' => 'module-data', 'module' => 'foo', 'itemId' => '../EVIL');
+	$cases['/data/cache/module/0/1/2/123.dat'] =
+	    array('type' => 'module-data', 'module' => '../EVIL', 'itemId' => 123);
+
+	$cases['/data/cache/module/foo/'] =
+	    array('type' => 'module-data', 'module' => 'foo');
+
+	foreach ($cases as $expectedPath => $info) {
+	    $this->assertEquals($expectedPath, GalleryDataCache::getCachePath($info));
+	}
     }
 
     function testPutToDisk() {
