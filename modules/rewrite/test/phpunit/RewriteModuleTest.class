@@ -508,6 +508,10 @@ class RewriteModuleTestPlatform extends GalleryPlatform {
 
 	return parent::closedir($handle);
     }
+
+    function recursiveRmdir($path) {
+	return true;
+    }
 }
 
 ?>
