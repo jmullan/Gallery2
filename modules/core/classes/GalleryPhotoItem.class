@@ -245,10 +245,13 @@ class GalleryPhotoItem_core extends GalleryDataItem {
 		$sizeStr = sprintf(' width="%s" height="%s"', $width, $height);
 	    }
 	    if (!isset($params['alt'])) {
-		$params['alt'] = $this->getTitle() ? $this->getTitle() : $this->getPathComponent();
+		$params['alt'] =
+		    $this->getTitle() ? GalleryUtilities::markup($this->getTitle(), 'strip')
+				      : $this->getPathComponent();
 	    }
 	    if (!isset($params['longdesc'])) {
-		$params['longdesc'] = preg_replace('/[\r\n]+/', ' ', $this->getDescription());
+		$params['longdesc'] = preg_replace('/[\r\n]+/', ' ',
+		    GalleryUtilities::markup($this->getDescription(), 'strip'));
 	    }
 
 	    $html = sprintf('<img src="%s"%s', $src, $sizeStr);

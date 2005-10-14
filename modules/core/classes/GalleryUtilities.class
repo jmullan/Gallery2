@@ -916,6 +916,17 @@ class GalleryUtilities {
     }
 
     /**
+     * Apply markup to given text.
+     *
+     * @param string (optional) markup type, defaults from core markup parameter
+     * @return string resulting text
+     */
+    function markup($text, $markupType=null) {
+	GalleryCoreApi::relativeRequireOnce('lib/smarty_plugins/modifier.markup.php');
+	return smarty_modifier_markup($text, $markupType);
+    }
+
+    /**
      * Return a specified request variable from the GET or POST vars.
      *
      * @param string a single key
