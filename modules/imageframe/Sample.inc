@@ -64,7 +64,11 @@ class SampleView extends GalleryView {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    if (isset($thumbnail[$itemId])) {
+	    list ($ret, $canSee) = GalleryCoreApi::hasItemPermission($itemId, 'core.view');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if ($canSee && isset($thumbnail[$itemId])) {
 		$ImageFrameSample['item'] = $item->getMemberData();
 		$ImageFrameSample['thumb'] = $thumbnail[$itemId]->getMemberData();
 	    }
