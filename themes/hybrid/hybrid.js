@@ -23,10 +23,17 @@ function app_init() {
   app_body = document.getElementById('hybridMain');
   while (app_body && app_body.tagName != 'BODY') app_body = app_body.parentNode;
   if (app_is_ie) app_body = app_body.parentNode;
-  app_onresize();
   imagearea = document.getElementById('imagearea');
   imagediv = document.getElementById('imagediv');
   textdiv = document.getElementById('textdiv');
+
+  // Replace <object> (XHTML compliant) with <iframe>
+  // Currently <object> works only with Mozilla and Opera.  IE doesn't accept
+  // any object.data changes, Safari only accepts new data src when object is
+  // visible, Firefox only when object is invisible.  Easier to just use iframe.
+  var popup = document.getElementById('popup_details'), iframe = document.createElement('iframe');
+  iframe.frameBorder = 0;
+  popup.replaceChild(iframe, popup.firstChild);
 
   document.onkeypress = app_onkeypress;
   if (window.attachEvent) window.attachEvent("onresize", app_onresize);
@@ -35,12 +42,13 @@ function app_init() {
   if (app_is_ie) {
     document.onkeydown = app_onkeydown;
     document.getElementById('imageview').style.position = 'absolute';
-    document.getElementById('popup_details').style.position = 'absolute';
+    popup.style.position = 'absolute';
     document.getElementById('popup_titlebar').style.position = 'absolute';
   } else if (app_is_safari) {
     document.getElementById('tools_right').style.paddingRight = '8px';
   }
 
+  app_onresize();
   var i = app_getcookie();
   if (i >= 0) image_show(i);
 }
@@ -458,13 +466,9 @@ function popup_menu(event,i,ii) {
   pop.style.visibility = 'visible';
 }
 function popup_info(i) {
-  if (window.frames.length) {
-    window.frames[0].document.location.replace(
-      document.getElementById('info_' + (i >= 0 ? i : image_index)).href);
-  } else { //For Safari
-    document.getElementById('popup_details').firstChild.src =
-      document.getElementById('info_' + (i >= 0 ? i : image_index)).href;
-  }
+  var o = document.getElementById('popup_details').firstChild,
+      href = document.getElementById('info_' + (i >= 0 ? i : image_index)).href;
+  o.src = href;  // See app_init; use o.data = href if browsers ever support object.
   popup_vis(1);
 }
 function popup_vis(on) {
