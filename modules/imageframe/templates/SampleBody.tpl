@@ -13,15 +13,18 @@
   {foreach from=$ImageFrameSample.list key=frame item=name}
     <div style="float:left;margin:6px">
     {$name}<br/>
-    {g->container type="imageframe.ImageFrame" frame=$frame}
-      {if isset($ImageFrameSample.item)}
+    {if isset($ImageFrameSample.item)}
+      {g->container type="imageframe.ImageFrame" frame=$frame
+	  width=$ImageFrameSample.thumb.width height=$ImageFrameSample.thumb.height maxSize=150}
 	{g->image item=$ImageFrameSample.item image=$ImageFrameSample.thumb
 		  maxSize=150 id="%ID%" class="%CLASS%"}
-      {else}
+      {/g->container}
+    {else}
+      {g->container type="imageframe.ImageFrame" frame=$frame width=150 height=126}
 	<img src="{g->url href="modules/imageframe/images/sample.jpg"}"
 	     width="150" height="126" id="%ID%" class="%CLASS%"/>
-      {/if}
-    {/g->container}
+      {/g->container}
+    {/if}
     </div>
   {/foreach}
   </div>

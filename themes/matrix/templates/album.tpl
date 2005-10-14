@@ -79,7 +79,8 @@
                 {/if}
                 <div>
                   {if isset($theme.params.$frameType) && isset($child.thumbnail)}
-		    {g->container type="imageframe.ImageFrame" frame=$theme.params.$frameType}
+		    {g->container type="imageframe.ImageFrame" frame=$theme.params.$frameType
+				  width=$child.thumbnail.width height=$child.thumbnail.height}
 		      <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$child.id`"}">
 			{g->image id="%ID%" item=$child image=$child.thumbnail
 			 class="%CLASS% giThumbnail"}

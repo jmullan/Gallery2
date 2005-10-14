@@ -31,7 +31,8 @@
   {assign var=imageItem value=$block.item}
   {if isset($block.forceItem)}{assign var=imageItem value=$block.thumb}{/if}
   {if isset($ImageBlockData.$frameType)}
-    {g->container type="imageframe.ImageFrame" frame=$ImageBlockData.$frameType}
+    {g->container type="imageframe.ImageFrame" frame=$ImageBlockData.$frameType
+		  width=$block.thumb.width height=$block.thumb.height maxSize=$maxSize}
       {$smarty.capture.link}
 	{g->image item=$imageItem image=$block.thumb id="%ID%" class="%CLASS%" maxSize=$maxSize}
       </a>

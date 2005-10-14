@@ -57,7 +57,8 @@
 
 	    {if ($image.viewInline)}
 	      {if isset($theme.photoFrame)}
-		{g->container type="imageframe.ImageFrame" frame=$theme.photoFrame}
+		{g->container type="imageframe.ImageFrame" frame=$theme.photoFrame
+			      width=$image.width height=$image.height}
 		  {g->image id="%ID%" item=$theme.item image=$image fallback=$smarty.capture.fallback class="%CLASS%"}
 		{/g->container}
 	      {else}

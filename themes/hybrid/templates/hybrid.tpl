@@ -142,7 +142,8 @@
 	    <a href="" onclick="image_show({$it.imageIndex});return false">
 	  {/capture}
 	  {if isset($it.thumbnail) && isset($theme.params.itemFrame)}
-	    {g->container type="imageframe.ImageFrame" frame=$theme.params.itemFrame}
+	    {g->container type="imageframe.ImageFrame" frame=$theme.params.itemFrame
+			  width=$it.thumbnail.width height=$it.thumbnail.height}
 	      {$smarty.capture.link}
 	      {g->image item=$it image=$it.thumbnail id="%ID%" class="%CLASS% giThumbnail"
 			title=$smarty.capture.thumbTitle}
@@ -163,7 +164,8 @@
 	    <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$it.id`"}">
 	  {/capture}
 	  {if isset($it.thumbnail) && isset($theme.params.albumFrame)}
-	    {g->container type="imageframe.ImageFrame" frame=$theme.params.albumFrame}
+	    {g->container type="imageframe.ImageFrame" frame=$theme.params.albumFrame
+			  width=$it.thumbnail.width height=$it.thumbnail.height}
 	      {$smarty.capture.link}
 	      {g->image item=$it image=$it.thumbnail id="%ID%" class="%CLASS% giThumbnail"
 			title=$smarty.capture.thumbTitle}

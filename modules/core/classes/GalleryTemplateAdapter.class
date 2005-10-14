@@ -766,6 +766,26 @@ class GalleryTemplateAdapter {
 	}
     }
 
+    /**
+     * Use GalleryUtilities::shrinkDimensionsToFit to scale template vars to new target size.
+     *
+     * @param array args; should contain widthVar, heightVar, maxSize keys
+     */
+    function shrinkDimensions($params, &$smarty) {
+	if (!isset($params['widthVar']) || !isset($params['heightVar']) ||
+		!isset($params['maxSize'])) {
+	    return;
+	}
+	$widthVar = $params['widthVar'];
+	$heightVar = $params['heightVar'];
+	if (!isset($smarty->_tpl_vars[$widthVar]) || !isset($smarty->_tpl_vars[$heightVar])) {
+	    return;
+	}
+	list ($smarty->_tpl_vars[$widthVar], $smarty->_tpl_vars[$heightVar]) =
+	    GalleryUtilities::shrinkDimensionsToFit(
+		$smarty->_tpl_vars[$widthVar], $smarty->_tpl_vars[$heightVar], $params['maxSize']);
+    }
+
     function updateProgressBar($title, $description, $percentComplete) {
 	static $coreModule;
 	if (!isset($coreModule)) {
