@@ -32,17 +32,21 @@
 class FileNotFoundView extends GalleryView {
 
     /**
+     * @see GalleryView::getViewDescription
+     */
+    function getViewDescription() {
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'rewrite');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $module->translate('404 File Not Found'));
+    }
+    
+    /**
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-    	global $gallery;
-    	$urlGenerator =& $gallery->getUrlGenerator();
-
-	$FileNotFound = array();
-	$FileNotFound['path'] = $urlGenerator->getCurrentUrlDir() .
-		GalleryUtilities::getRequestVariables('path');
-	$template->setVariable('FileNotFound', $FileNotFound);
-
 	header('HTTP/1.0 404 Not Found');
 
     	return array(GalleryStatus::success(),
