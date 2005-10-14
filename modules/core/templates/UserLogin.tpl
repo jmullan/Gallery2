@@ -8,6 +8,7 @@
   <h2> {g->text text="Login to your account"} </h2>
 </div>
 
+{if $user.isGuest}
 <div class="gbBlock">
   {if isset($status.passwordRecovered)}
   <div class="gbBlock"><h2 class="giSuccess">
@@ -64,3 +65,8 @@
   <input type="submit" class="inputTypeSubmit"
    name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
 </div>
+{else} {* User is already logged in *}
+<div class="gbBlock">
+  <h4> {g->text text="Welcome, %s!" arg1=$user.fullName|default:$user.userName} </h4>
+</div>
+{/if}
