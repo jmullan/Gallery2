@@ -116,8 +116,8 @@
                 </p>
                 {/if}
 
-                {if ($theme.item.canContainChildren && $theme.params.showAlbumOwner) ||
-                    (!$theme.item.canContainChildren && $theme.params.showImageOwner)}
+                {if ($child.canContainChildren && $theme.params.showAlbumOwner) ||
+                    (!$child.canContainChildren && $theme.params.showImageOwner)}
                 {assign var="showOwner" value=true}
                 {else}
                 {assign var="showOwner" value=false}
