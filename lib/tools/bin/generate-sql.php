@@ -61,7 +61,7 @@ class BaseGenerator {
 	    $output .= " DB_COLUMN_PREFIXminor\n";
 	    $output .= ") VALUES(";
 	    $output .= "'" . $parent['child'][0]['content'] . "', " . $child[0]['content'] . ", " .
-		(empty($child[1]['content']) ? '0' : $child[1]['content']);
+		$child[1]['content'];
 	    $output .= ");\n\n";
 	    break;
 

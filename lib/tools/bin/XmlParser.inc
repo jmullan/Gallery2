@@ -59,7 +59,7 @@ class XmlParser {
     }
 
     function dataHandler($parser, $data){
-	if (!empty($data)) {
+	if (isset($data)) {
 	    $outputIndex = count($this->_output) - 1;
 	    $this->_output[$outputIndex]['content'] = $data;
 	}

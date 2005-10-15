@@ -65,7 +65,7 @@ class {$className} extends {$className}_core {ldelim}
     function getMemberData() {ldelim}
         $data = parent::getMemberData();
 {foreach from=$members item=member}
-{if $member.linked}
+{if isset($member.linked)}
         if (isset($this->_linkedEntity)) {ldelim}
             $data['{$member.name}'] = isset($this->_linkedEntity->_{$member.name}) ? $this->_linkedEntity->_{$member.name} : null;
 	{rdelim} else {ldelim}
@@ -207,7 +207,7 @@ class {$className} extends {$className}_core {ldelim}
      * @return {$member.lcType} the value
      */
     function get{$member.ucName}() {ldelim}
-{if $member.linked}
+{if isset($member.linked)}
 	$linkedEntity = $this->getLinkedEntity();
 	if (isset($linkedEntity)) {ldelim}
 	    return $linkedEntity->get{$member.ucName}();
