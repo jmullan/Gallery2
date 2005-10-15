@@ -58,19 +58,20 @@ class LocalizationAuditTest extends CodeAuditTestCase {
      *
      * 1. Check for a sane Project-Id-Version field
      * 2. Check for #,fuzzy before the first msgid
-     * 3. Check that the first line is # $Id$
+     * 3. Check that the first line is # <dollar-sign>Id<dollar-sign>
+     *    (can't use $ in the example above because CVS will actually expand it)
      */
     function checkFile($fileName, $buffer) {
 	/* Grab Project-Id-Version, which we'll check against this file's peers in finishScan() */
 	preg_match('/Project-Id-Version:(.*).."/', $buffer, $matches);
 	$this->_idMap[dirname($fileName)][basename($fileName)] = $matches[1];
 
-	/* First line must be "# $Id$" */
+	/* First line must be "# <dollar-sign>Id<dollar-sign> */
 	$line = preg_replace("/\n.*/", "", $buffer);
 	if (!preg_match('/^# \$Id(: [^\$]*|)\$/', $line)) {
 	    $path = substr($fileName, strlen(dirname(dirname(dirname(dirname($fileName)))))+1);
 	    $line = preg_replace("/\n.*/", "", $buffer);
-	    $this->assert(false, $path . ': first line should be "# $Id$" but was: ' . $line);
+	    $this->assert(false, $path . ': first line should be "# $" ."Id$" but was: ' . $line);
 	    $this->_errorCount++;
 	}
 
