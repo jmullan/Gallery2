@@ -129,8 +129,10 @@ foreach (glob('tmp/*.xml') as $xmlFile) {
      * do this the quick and dirty way.
      */
     $orig = str_replace("\n", "", file($origFile));
-    $new[2] = $orig[2];
-    $new[24] = $orig[24];
+    if (count($orig) > 25) {
+	$new[2] = $orig[2];
+	$new[24] = $orig[24];
+    }
 
     $fd = fopen($tmpFile, "w");
     fwrite($fd, join("\n", $new));
