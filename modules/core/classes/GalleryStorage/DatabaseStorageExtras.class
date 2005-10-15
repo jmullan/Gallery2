@@ -1589,7 +1589,7 @@ class DatabaseStorageExtras /* the other half of DatabaseStorage */ {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$statement = $this->getOptimizeStatement();
+	$statement = $this->_ds->getOptimizeStatement();
 	if (!empty($statement)) {
 	    foreach (array_keys($tableVersions) as $tableName) {
 		$query = sprintf($statement, $this->_ds->_tablePrefix . $tableName);
