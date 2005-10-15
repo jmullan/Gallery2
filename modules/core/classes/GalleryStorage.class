@@ -626,11 +626,9 @@ class GalleryStorage {
     }
 
     /**
-     * Internal function to release a lock by id.  Outsiders should use
-     * releaseLock()
+     * Release the given locks.
      *
-     * @access private
-     * @param int the lock id
+     * @param array int the lock ids
      * @return object GalleryStatus a status code
      */
     function releaseLocks($lockIds) {
