@@ -63,9 +63,14 @@ class DatabaseStorageTest extends GalleryTestCase {
 			     '## database_with_nothing');
     }
 
+    function _parseSqlTemplate($ds) {
+	$extras =& $ds->_getExtras();
+	return $extras->_parseSqlTemplate($this->_data);
+    }
+
     function testParseSqlTemplate1() {
 	$ds = new SubclassOfDatabaseStorage('database_with_everything');
-	$results = $ds->_parseSqlTemplate($this->_data);
+	$results = $this->_parseSqlTemplate($ds);
 	$this->assertEquals(
 	    array('alter' => array(
 		      'SomeTable' => array(
@@ -97,7 +102,7 @@ class DatabaseStorageTest extends GalleryTestCase {
 
     function testParseSqlTemplate2() {
 	$ds = new SubclassOfDatabaseStorage('database_with_only_tables');
-	$results = $ds->_parseSqlTemplate($this->_data);
+	$results = $this->_parseSqlTemplate($ds);
 	$this->assertEquals(
 	    array('table' => array(
 		      'SomeTable' => 'Some postgres SQL'
@@ -111,7 +116,7 @@ class DatabaseStorageTest extends GalleryTestCase {
 
     function testParseSqlTemplate3() {
 	$ds = new SubclassOfDatabaseStorage('database_with_only_removes');
-	$results = $ds->_parseSqlTemplate($this->_data);
+	$results = $this->_parseSqlTemplate($ds);
 	$this->assertEquals(
 	    array('table' => array(),
 		  'alter' => array(),
@@ -129,7 +134,7 @@ class DatabaseStorageTest extends GalleryTestCase {
 
     function testParseSqlTemplate4() {
 	$ds = new SubclassOfDatabaseStorage('database_with_nothing');
-	$results = $ds->_parseSqlTemplate($this->_data);
+	$results = $this->_parseSqlTemplate($ds);
 	$this->assertEquals(array('table' => array(),
 				  'alter' => array(),
 				  'remove' => array(),
