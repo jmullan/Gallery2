@@ -216,6 +216,13 @@ class ThumbnailModule extends GalleryModule {
     }
 
     /**
+     * @see GalleryModule::getModuleEntityTypes()
+     */
+    function getModuleEntityTypes() {
+	return array('ThumbnailImage');
+    }
+
+    /**
      * @see GalleryModule::registerEventListeners()
      */
     function registerEventListeners() {
@@ -317,6 +324,47 @@ class ThumbnailModule extends GalleryModule {
 	}
 
 	return array(GalleryStatus::success(), $redirect);
+    }
+
+    /**
+     * @see GalleryModule::uninstall()
+     */
+    function uninstall() {
+	GalleryCoreApi::relativeRequireOnce('modules/thumbnail/classes/ThumbnailHelper.class');
+	global $gallery;
+
+	/* Remove custom thumbnails from items */
+	$query = '
+	SELECT [GalleryChildEntity::parentId]
+	  FROM [GalleryChildEntity], [ThumbnailImage]
+	 WHERE [GalleryChildEntity::id] = [ThumbnailImage::id]
+	   AND [GalleryChildEntity::parentId] > 0
+	';
+	list ($ret, $searchResults) = $gallery->search($query);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	while ($result = $searchResults->nextResult()) {
+	    $itemIds[] = $result[0];
+	}
+	while (!empty($itemIds)) {
+	    list ($ret, $items) = GalleryCoreApi::loadEntitiesById(array_splice($itemIds, 0, 100));
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    foreach ($items as $item) {
+		$ret = ThumbnailHelper::restoreThumbnail($item);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	}
+
+	$ret = parent::uninstall();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
     }
 
     /**
