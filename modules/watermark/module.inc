@@ -177,6 +177,36 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
+     * @see GalleryModule::uninstall()
+     */
+    function uninstall() {
+	global $gallery;
+	GalleryCoreApi::relativeRequireOnce('modules/watermark/classes/WatermarkHelper.class');
+
+	/* Delete all watermarks and remove uses of them */
+	$query = '
+	SELECT [WatermarkImage::id]
+	FROM [WatermarkImage]
+	';
+	list ($ret, $searchResults) = $gallery->search($query);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	while ($result = $searchResults->nextResult()) {
+	    list ($ret) = WatermarkHelper::deleteWatermarkImageById($result[0], true);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	$ret = parent::uninstall();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
+    }
+
+    /**
      * @see GalleryModule::performFactoryRegistrations()
      */
     function performFactoryRegistrations() {
