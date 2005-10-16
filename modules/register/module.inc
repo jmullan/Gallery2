@@ -81,6 +81,13 @@ class RegisterModule extends GalleryModule {
     }
 
     /**
+     * @see GalleryModule::getModuleEntityTypes
+     */
+    function getModuleEntityTypes() {
+	return array('GalleryPendingUser');
+    }
+
+    /**
      * @see GalleryModule::autoConfigure
      */
     function autoConfigure() {

@@ -14,7 +14,7 @@
     {g->text text="Do you really want to uninstall the %s module?" arg1=$smarty.capture.moduleName}
   </h3>
   <p class="giDescription">
-    {g->text text="This will also remove any permissions and clean up any temporary data created by this module."}
+    {g->text text="This will also remove any permissions and clean up any data created by this module."}
   </p>
 </div>
 

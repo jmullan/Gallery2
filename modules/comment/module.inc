@@ -111,6 +111,13 @@ class CommentModule extends GalleryModule {
     }
 
     /**
+     * @see GalleryModule::getModuleEntityTypes
+     */
+    function getModuleEntityTypes() {
+	return array('GalleryComment');
+    }
+
+    /**
      * @see GalleryModule::isRecommendedDuringInstall
      */
     function isRecommendedDuringInstall() {

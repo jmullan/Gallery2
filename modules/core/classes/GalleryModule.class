@@ -245,8 +245,8 @@ class GalleryModule extends GalleryPlugin {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Remove factory implementations */
-	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
+	/* Delete entities for types registered by this module */
+	$ret = $this->_deleteModuleEntities();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -264,6 +264,36 @@ class GalleryModule extends GalleryPlugin {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Delete all entities with a type registered by this module.
+     * @return object GalleryStatus a status code
+     * @access private
+     */
+    function _deleteModuleEntities() {
+	global $gallery;
+	$types = $this->getModuleEntityTypes();
+	if (empty($types)) {
+	    return GalleryStatus::success();
+	}
+
+	$query = '
+	SELECT [GalleryEntity::id]
+	  FROM [GalleryEntity]
+	 WHERE [GalleryEntity::entityType] IN (' . GalleryUtilities::makeMarkers($types) . ')
+	';
+	list ($ret, $searchResults) = $gallery->search($query, $types);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	while ($result = $searchResults->nextResult()) {
+	    $ret = GalleryCoreApi::deleteEntityById($result[0]);
+	    if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
 	return GalleryStatus::success();
     }
 
@@ -499,6 +529,16 @@ class GalleryModule extends GalleryPlugin {
      * @return array of factory impl ids
      */
     function getOnLoadHandlerIds() {
+	return array();
+    }
+
+    /**
+     * Get names of all GalleryEntity types this module may register.
+     * Entities of these types will be deleted upon module uninstall.
+     *
+     * @return array of class names
+     */
+    function getModuleEntityTypes() {
 	return array();
     }
 

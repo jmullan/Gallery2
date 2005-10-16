@@ -74,7 +74,7 @@ class ModuleTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	list ($ret, $isActive) = $module->isActive();
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -90,7 +90,7 @@ class ModuleTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-    	
+
 	$ret = GalleryCoreApi::removePlugin('module', 'ModuleTest');
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -118,7 +118,7 @@ class ModuleTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(array_key_exists('moduletest.one', $ids), 'Permission was not added');
-	
+
 	/* Remove all permissions */
 	$ret = GalleryCoreApi::removeItemPermissions($this->_rootAlbum->getId());
 	if ($ret->isError()) {
@@ -161,6 +161,17 @@ class ModuleTest extends GalleryTestCase {
 	}
 	$this->assert($isActive, 'Is active');
 
+	/* Create an entity */
+	$entity = new ModuleTestEntity();
+	$ret = $entity->create();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = $entity->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	/* Deactivate the module */
 	list ($ret, $redirect) = $module->deactivate();
 	if ($ret->isError()) {
@@ -169,7 +180,7 @@ class ModuleTest extends GalleryTestCase {
 	$this->assertEquals(array(), $redirect, 'deactivate redirect');
 
 	/* Upgrade the module */
-	$module->setVersion('0.9.1');
+	$module->setVersion('1.0.1');
 	$ret = $module->installOrUpgrade();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -224,6 +235,10 @@ class ModuleTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('|OtherHandler|', $item->getOnLoadHandlers(), 'item onLoadHandlers');
+
+	/* Verify our entity was deleted */
+	list ($ret) = $entity->refresh();
+	$this->assertEquals(GALLERY_ERROR | ERROR_MISSING_OBJECT, $ret->getErrorCode(), 'entity');
 
 	/* TODO: How do we verify that the tables are removed successfully? */
     }
@@ -341,8 +356,8 @@ class ModuleTest extends GalleryTestCase {
 	  [GalleryAccessMap],[GalleryAccessSubscriberMap]
 	WHERE
 	  [GalleryAccessSubscriberMap::itemId] = ?
-AND
-[GalleryAccessSubscriberMap::accessListId] = [GalleryAccessMap::accessListId]
+	AND
+	[GalleryAccessSubscriberMap::accessListId] = [GalleryAccessMap::accessListId]
 	  AND
 	  ([GalleryAccessMap::userId] = ?
 	    OR
@@ -377,7 +392,7 @@ class ModuleTestModule extends GalleryModule {
 	$this->setId('moduletest');
 	$this->setName('ModuleTest Module');
 	$this->setDescription($gallery->i18n('Unit test module'));
-	$this->setVersion('0.9.0');
+	$this->setVersion('1.0.0');
 	$this->setGroup('data', $gallery->i18n('Gallery'));
 	$this->setCallbacks('');
 	$this->setRequiredCoreApi(GalleryCoreApi::getApiVersion());
@@ -417,6 +432,10 @@ class ModuleTestModule extends GalleryModule {
     function getOnLoadHandlerIds() {
 	return array('ModuleTestOnLoadHandler');
     }
+
+    function getModuleEntityTypes() {
+	return array('ModuleTestEntity');
+    }
 }
 
 /**
@@ -426,6 +445,16 @@ class ModuleTestModule extends GalleryModule {
 class ModuleTestOnLoadHandler {
     function onLoad(&$entity, $duringUpgrade) {
 	return GalleryStatus::success();
+    }
+}
+
+/**
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ModuleTestEntity extends GalleryEntity {
+    function getClassName() {
+	return 'ModuleTestEntity';
     }
 }
 
