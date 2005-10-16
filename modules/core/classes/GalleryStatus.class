@@ -476,7 +476,8 @@ class GalleryStatus {
 	$trace = array();
 	if (!class_exists('GalleryTestCase')) {
 	    $platform = $gallery->getPlatform();
-	    $base = $platform->realpath(dirname(__FILE__) . '/../../../') . '/';
+	    $base = $platform->realpath(dirname(__FILE__) . '/../../../') .
+		$platform->getDirectorySeparator();
 	} else {
 	    $base = '';
 	}
