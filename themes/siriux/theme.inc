@@ -46,8 +46,7 @@ class SiriuxTheme extends GalleryTheme {
 	$this->setRequiredCoreApi(array(6, 5));
 	$this->setRequiredThemeApi(array(2, 2));
 	$this->setStandardSettings(
-	    array('showImageOwner' => 0,
-		  'perPage' => 9,
+	    array('perPage' => 9,
 		  'contentWidth' => 700,
 		  'albumBlocks' => serialize(array(
 			array('comment.ViewComments', array()))),
@@ -188,10 +187,10 @@ class SiriuxTheme extends GalleryTheme {
 
 	/* Add in our custom settings */
 	$settings[] = array('key' => 'contentWidth',
-	                    'name' => $this->translate('Width of page content in pixels'),
-	                    'type' => 'text-field',
-	                    'typeParams' => array('size' => 2),
-	                    'value' => $params['contentWidth']);
+			    'name' => $this->translate('Width of page content in pixels'),
+			    'type' => 'text-field',
+			    'typeParams' => array('size' => 2),
+			    'value' => $params['contentWidth']);
 
 	return array(GalleryStatus::success(), $settings);
     }
