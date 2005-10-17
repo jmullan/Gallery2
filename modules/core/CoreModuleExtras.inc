@@ -85,6 +85,18 @@ class CoreModuleExtras {
 	switch ($currentVersion) {
 	case '0':
 	    $gallery->debug('Install core module');
+	    /*
+	     * Checkpoint (commit configurStore transaction)
+	     * Later in the installation code, we create the root album and therefore need
+	     * locking. Locks are acquired with a non-transactional db connection. So before we
+	     * can query the db with a second connection, the INSERT id into SequenceLock needs to
+	     * be committed. Related g2 bug id: 1235284.
+	     */
+	    $ret = $storage->checkPoint();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    
 	    if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
 		$flockType = 'database';
 	    } else {
