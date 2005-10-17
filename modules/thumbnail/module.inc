@@ -40,11 +40,11 @@ class ThumbnailModule extends GalleryModule {
 	$this->setId('thumbnail');
 	$this->setName($gallery->i18n('Thumbnail Manager'));
 	$this->setDescription($gallery->i18n('Set default thumbnails for non-image items'));
-	$this->setVersion('1.0.0'); /* Update upgrade() function below too */
+	$this->setVersion('1.0.1'); /* Update upgrade() function below too */
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
 	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredModuleApi(array(2, 0));
+	$this->setRequiredModuleApi(array(2, 1));
     }
 
     /**
@@ -171,6 +171,7 @@ class ThumbnailModule extends GalleryModule {
 	case '0.9.6':
 	case '0.9.7':
 	case '0.9.8':
+	case '1.0.0':
 
 	case 'end of upgrade path':
 	    /*
