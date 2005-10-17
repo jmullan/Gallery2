@@ -54,6 +54,9 @@ class DownloadView extends GalleryView {
 
 	if ($platform->is_readable($file)) {
 	    $size = $platform->filesize($file);
+	    /* Disable output compression (if necessary) since IE seems to have problems with it */
+	    @ini_set('zlib.output_compression', 0);
+	    
 	    $sendMultipart = !preg_match('{msie |safari}i',
 					 GalleryUtilities::getServerVar('HTTP_USER_AGENT'));
 	    if ($sendMultipart) {
