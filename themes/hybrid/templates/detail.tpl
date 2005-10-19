@@ -12,7 +12,7 @@
 {g->head}
 </head>
 <body class="gallery">
-<div id="gallery" style="padding: 0.7em">
+<div style="padding: 0.7em" {g->mainDivAttributes}>
   <table cellspacing="0"><tr>
   {if isset($theme.thumbnail)}
     <td>{g->image item=$theme.item image=$theme.thumbnail class="giThumbnail"}</td>
