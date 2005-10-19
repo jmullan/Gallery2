@@ -67,5 +67,9 @@
      name="{g->formVar var="form[col_`$it.id`]"}" value="{$theme.param[$key]|default:''}"/>
   </td></tr>
   {/if}
+{foreachelse}
+  <tr><td colspan="5"><h4 class="giWarning">
+    {g->text text="Add some photos!"}
+  </h4></td></tr>
 {/foreach}
 </table>
