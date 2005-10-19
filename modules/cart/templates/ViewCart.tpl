@@ -46,6 +46,7 @@
   <p>
     {g->text text="To add items, browse the gallery and select 'Add to cart' from the item's action menu."}
   </p>
+  </strong>
 </div>
 {else}
 
