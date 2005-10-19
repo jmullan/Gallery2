@@ -16,7 +16,7 @@ modules/core/AdminToolkitPriority.inc	2855458621	155379951	3613	3730
 modules/core/AdminUsers.inc	1849600793	108827668	7008	7242
 modules/core/Callbacks.inc	2983893237	3798770301	5310	5464
 modules/core/ChangeLanguage.inc	250264244	625469742	1690	1747
-modules/core/CoreModuleExtras.inc	2204370269	670279813	60901	62769
+modules/core/CoreModuleExtras.inc	2006773915	2421361076	61482	63366
 modules/core/CreateThumbnailOption.inc	1697817318	2643200353	2588	2673
 modules/core/DownloadItem.inc	3954296287	1760805501	4660	4819
 modules/core/ErrorPage.inc	2590883780	276221894	3395	3496
@@ -97,7 +97,7 @@ modules/core/classes/GalleryItemAttributesMap.class	2025307648	1093497183	2493	2
 modules/core/classes/GalleryLockSystem.class	738492557	2259796339	3742	3872
 modules/core/classes/GalleryMaintenanceMap.class	4255491329	3116494082	2320	2393
 modules/core/classes/GalleryMimeTypeMap.class	710058837	1143929675	2049	2114
-modules/core/classes/GalleryModule.class	821896784	2535294630	21330	21960
+modules/core/classes/GalleryModule.class	3042572395	3166624550	22009	22652
 modules/core/classes/GalleryMovieItem.class	1926564990	2755997207	8557	8865
 modules/core/classes/GalleryPermissionSetMap.class	535001631	2106839025	2479	2556
 modules/core/classes/GalleryPersistent.class	2681662451	1658103862	5255	5456
@@ -119,12 +119,12 @@ modules/core/classes/GalleryStorage.class	3607881885	3246988927	20569	21357
 modules/core/classes/GalleryStorage/DatabaseSearchResults.class	650958883	928169337	1845	1911
 modules/core/classes/GalleryStorage/DatabaseSqlFragment.class	3937106841	1906290173	2155	2237
 modules/core/classes/GalleryStorage/DatabaseStorage.class	1693465511	4082852446	22233	23092
+modules/core/classes/GalleryStorage/DatabaseStorage/CreateBitOr.sql	2845920750	4263422247	1649	1695
 modules/core/classes/GalleryStorage/DatabaseStorage/ErrorHandler.inc	201789214	3256277655	2626	2708
 modules/core/classes/GalleryStorage/DatabaseStorage/MySqlDatabaseStorage.class	1976150790	2825561375	3996	4168
-modules/core/classes/GalleryStorage/DatabaseStorage/OracleDatabaseStorage.class	425396405	1338079861	5189	5396
+modules/core/classes/GalleryStorage/DatabaseStorage/OracleDatabaseStorage.class	3916518621	2711983442	5163	5369
 modules/core/classes/GalleryStorage/DatabaseStorage/PostgreSqlDatabaseStorage.class	2082789416	1914459120	5612	5845
 modules/core/classes/GalleryStorage/DatabaseStorage/schema/GNUmakefile	1829837397	1732237385	1013	1050
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/CreateBitOr_sql	2845920750	4263422247	1649	1695
 modules/core/classes/GalleryStorage/DatabaseStorage/schema/schema.tpl	3263693950	782712879	70848	73093
 modules/core/classes/GalleryStorage/DatabaseStorage/schema/xml-src/A_GalleryAlbumItem_1.0.xml	3419603533	1495327326	456	475
 modules/core/classes/GalleryStorage/DatabaseStorage/schema/xml-src/A_GalleryDerivative_1.0.xml	337899791	3135723279	522	543
@@ -143,7 +143,7 @@ modules/core/classes/GalleryStorage/DatabaseStorage/schema/xml-src/T_InstallerTe
 modules/core/classes/GalleryStorage/DatabaseStorage/schema/xml-src/T_InstallerTest_2.xml	388685907	657777429	621	645
 modules/core/classes/GalleryStorage/DatabaseStorage/schema/xml-src/T_InstallerTest_3.xml	2355159549	4063624708	479	498
 modules/core/classes/GalleryStorage/DatabaseStorage/schema/xml-src/T_InstallerTest_4.xml	1142704323	3482515395	282	293
-modules/core/classes/GalleryStorage/DatabaseStorageExtras.class	511212001	1595152291	54709	56474
+modules/core/classes/GalleryStorage/DatabaseStorageExtras.class	1142853414	286630747	55059	56830
 modules/core/classes/GalleryTemplate.class	2874754311	3538647249	12245	12661
 modules/core/classes/GalleryTemplateAdapter.class	2198240440	1775319200	27554	28413
 modules/core/classes/GalleryTheme.class	607190216	3249804856	59821	61622
@@ -274,7 +274,7 @@ modules/core/locale/tr_TR/LC_MESSAGES/modules_core.mo	3921506508	3921506508	3916
 modules/core/locale/vi_VN/LC_MESSAGES/modules_core.mo	2390496470	2390496470	96605	96605
 modules/core/locale/zh_CN/LC_MESSAGES/modules_core.mo	2931829919	2931829919	52831	52831
 modules/core/locale/zh_TW/LC_MESSAGES/modules_core.mo	458952478	458952478	81662	81662
-modules/core/module.inc	3183487067	3736729458	18237	18791
+modules/core/module.inc	2909878073	3923865462	18237	18791
 modules/core/plugins/ImageCrop.jar	1928512550	1928512550	6030	6030
 modules/core/po/GNUmakefile	3629214203	414192192	244	254
 modules/core/po/ar_SA.po	2992547076	1831901960	95983	99131
@@ -427,7 +427,7 @@ modules/core/test/phpunit/CoreSearchTest.class	508225951	3619057032	14440	14898
 modules/core/test/phpunit/CreateThumbnailOptionTest.class	3060885727	4253261764	7376	7583
 modules/core/test/phpunit/DataCacheTest.class	1290262162	2268402260	14915	15322
 modules/core/test/phpunit/DataItemTest.class	1392369999	920121518	7069	7305
-modules/core/test/phpunit/DatabaseStorageTest.class	2013484076	1061160858	4228	4387
+modules/core/test/phpunit/DatabaseStorageTest.class	841039636	2120796671	4228	4387
 modules/core/test/phpunit/DerivativeTest.class	2975874755	118765982	32689	33584
 modules/core/test/phpunit/EmbedTest.class	3030691125	1330932184	15398	15771
 modules/core/test/phpunit/EntityTest.class	3143755045	1040255072	11137	11477
@@ -592,6 +592,7 @@ R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/A_G
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/A_GalleryPluginParameterMap_1.1.sql
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/A_GalleryPluginParameterMap_1.2.sql
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/CreateBitOr.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/CreateBitOr_sql
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/ExternalIdMap.sql
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GNUmakefile
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryAccessMap.sql
