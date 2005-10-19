@@ -28,7 +28,7 @@ if (!empty($_SERVER['SERVER_NAME'])) {
 require_once(dirname(__FILE__) . '/XmlParser.inc');
 
 $output = '';
-foreach (array('mysql', 'postgres', 'oracle') as $db) {
+foreach (array('mysql', 'postgres', 'oracle', 'db2') as $db) {
     $output .= '## ' . $db . "\n";
     foreach (glob('tmp/dbxml/*.xml') as $xmlFile) {
 	$p =& new XmlParser();
@@ -874,4 +874,268 @@ class OracleGenerator extends BaseGenerator {
 	return 'oracle';
     }
 }
+
+/**
+ *  Notes regarding DB2 limitations on Table and Index names:
+ *
+ *  DB2 currently limits the length of table names to 30 characters, and index names to 18
+ *  characters.  We don't have to worry about the 30 character table name problem because we force
+ *  table names to be shorter than this in DatabaseStorage (and it's very important that the table
+ *  names we choose here match up with the ones that DatabseStorage expects).  However we have
+ *  (and need) no such provision for indexes because this is the only place where we define index
+ *  names.
+ *
+ *  The installer "database setup" step prefixes all tables and indexes with "gtst#" (5 chars).
+ *  The installer default is "g2_" (3 chars).  So if we allow room for a 5 char prefix, that
+ *  leaves us 13 characters for an 18-character index name.  Our index CRC values are another 5
+ *  characters.  That leaves us 8 characters to use for a descriptive index name.  I don't know if
+ *  DB2 index names are required to be unique in the database or just to the table so to avoid any
+ *  risks we can't just use a prefix or suffix of the table name because it may overlap with
+ *  another similar table name.
+ *
+ *  So for indexes we'll use the following format:
+ *    DB_TABLE_PREFIX + substr(table name, 0, 5) + substr(md5(table name), -2) + '_' + index crc
+ *
+ *  That works out to:
+ *    <= 5 chars      + 5                        + 2                           +  1  + 5 = <= 18
+ */
+class Db2Generator extends BaseGenerator {
+    function Db2Generator() {
+	$this->setColumnDefinitionMap(
+	    array(
+		'INTEGER-' => 'INTEGER',
+		'INTEGER-MEDIUM' => 'INTEGER',
+		'INTEGER-LARGE' => 'INTEGER',
+		'BIT-LARGE' => 'VARCHAR(32) FOR BIT DATA',
+		'BIT-MEDIUM' => 'VARCHAR(32) FOR BIT DATA',
+		'STRING-SMALL' => 'VARCHAR(32)',
+		'STRING-MEDIUM' => 'VARCHAR(128)',
+		'STRING-LARGE' => 'VARCHAR(255)',
+		'TEXT-' => 'LONG VARCHAR',
+		'TEXT-MEDIUM' => 'LONG VARCHAR',
+		'BOOLEAN-' => 'SMALLINT',
+		'BOOLEAN-MEDIUM' => 'SMALLINT',
+		'TIMESTAMP-' => 'datestamp'));
+    }
+
+    function createSql($node, $index, $lastPeerIndex, $parent) {
+	$output = '';
+
+	$child = $node['child'] = isset($node['child']) ? $node['child'] : array();
+	switch($node['name']) {
+	case 'CHANGE':
+	    /* table-name, schema-from, schema-to, (add, alter, remove)+ */
+	    for ($i = 3; $i < count($child); $i++) {
+		$output .= $this->createSql($child[$i], $i, count($child) - 1, $node);
+	    }
+	    $output .= $this->generateSchemaUpdate($child);
+	    break;
+
+	case 'REMOVE':
+	    if (!isset($parent['name'])) {
+		$output .= 'DROP TABLE DB_TABLE_PREFIX' . $node['child'][0]['content'] . ";\n\n";
+		if ($node['child'][0]['content'] != 'Schema') {
+		    $output .= "DELETE FROM DB_TABLE_PREFIXSchema WHERE DB_COLUMN_PREFIXname='" .
+			$node['child'][0]['content'] . "';\n\n";
+		}
+	    } else if ($parent['name'] == 'CHANGE') {
+		/* (column-name, key, index)+ */
+		for ($i = 0; $i < count($child); $i++) {
+		    $c = $child[$i];
+		    switch($c['name']) {
+		    case 'COLUMN-NAME':
+			/* column-name */
+			$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'];
+			$output .= ' DROP COLUMN DB_COLUMN_PREFIX' . $c['content'];
+			$output .= ";\n\n";
+			break;
+
+		    case 'KEY':
+			$output .= 'ALTER TABLE DB_TABLE_PREFIX' .
+			    $parent['child'][0]['content'] . ";\n\n";
+			$output .= '  DROP KEY DB_COLUMN_PREFIX' . $c['child'][0]['content'];
+			$output .= ";\n\n";
+			break;
+
+		    case 'INDEX':
+			/* column-name */
+			$output .= 'DROP INDEX ';
+			$nameKey = strtoupper('name_' . $this->getDbType());
+			if (isset($c['attrs'][$nameKey])) {
+			    $output .= $c['attrs'][$nameKey];
+			} else {
+			    $output .= 'DB_TABLE_PREFIX' .
+				substr($parent['child'][0]['content'], 0, 5) .
+				substr(md5($child[0]['content']), -2) .
+			        '_' . $this->getIndexCrc($c['child']);
+			}
+			$output .= ";\n\n";
+			break;
+
+		    default:
+			$output .= "5. UNIMPLEMENTED: REMOVE $c[name]\n";
+		    }
+		}
+	    }
+	    break;
+
+	case 'ADD':
+	    /* (column, key, index)+ */
+	    foreach ($child as $c) {
+		switch($c['name']) {
+		case 'COLUMN':
+		    /* column-name */
+		    $output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'];
+		    $output .= ' ADD COLUMN DB_COLUMN_PREFIX' . $c['child'][0]['content'];
+		    $output .= ' ' . $this->columnDefinition($c['child']);
+		    $output .= ";\n\n";
+		    break;
+
+		case 'KEY':
+		    /* column-name+ */
+		    $output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
+			' ADD ';
+		    if (!empty($c['attrs']['PRIMARY'])) {
+			$output .= 'PRIMARY KEY(';
+		    } else {
+			$output .= 'UNIQUE KEY(';
+		    }
+		    for ($i = 0; $i < count($child); $i++) {
+			$output .= 'DB_COLUMN_PREFIX' . $c['child'][0]['content'];
+			if ($i < count($child) - 1) {
+			    $output .= ', ';
+			}
+		    }
+		    $output .= ')';
+		    $output .= ";\n\n";
+		    break;
+
+		case 'INDEX':
+		    /* column-name */
+		    $output .= 'CREATE INDEX ';
+		    $nameKey = strtoupper('name_' . $this->getDbType());
+		    $columns = $c['child'];
+		    if (isset($c['attrs'][$nameKey])) {
+			$output .= $c['attrs'][$nameKey];
+		    } else {
+			$output .= 'DB_TABLE_PREFIX' .
+			    substr($parent['child'][0]['content'], 0, 5) .
+			    substr(md5($child[0]['content']), -2) .
+			    '_' . $this->getIndexCrc($c['child']);
+		    }
+		    $output .= ' ON ' . 'DB_TABLE_PREFIX' . $parent['child'][0]['content'] . '(';
+		    for ($i = 0; $i < count($columns); $i++) {
+			$output .= 'DB_COLUMN_PREFIX' . $columns[$i]['content'];
+			if ($i < count($columns) - 1) {
+			    $output .= ', ';
+			}
+		    }
+		    $output .= ')';
+		    $output .= ";\n\n";
+		    break;
+
+		default:
+		    $output .= "6. UNIMPLEMLENTED: ADD $c[name]\n";
+		}
+	    }
+	    break;
+
+	case 'TABLE':
+	    /* table-name, schema, column+, (key | index)* */
+	    $output .= 'CREATE TABLE DB_TABLE_PREFIX' . $child[0]['content'] . "(\n";
+	    for ($i = 2; $i < count($child); $i++) {
+		if ($child[$i]['name'] != 'COLUMN') {
+		    $output .= "\n";
+		    break;
+		}
+		if ($i > 2) {
+		    $output .= ",\n";
+		}
+		$output .= $this->createSql($child[$i], $i, count($child) - 1, $node);
+		$firstNonColumn = $i + 1;
+	    }
+	    $output .= ");\n\n";
+
+	    for ($i = $firstNonColumn; $i < count($child); $i++) {
+		if ($child[$i]['name'] == 'INDEX') {
+		    $crc = $this->getIndexCrc($child[$i]['child']);
+		    $output .= 'CREATE INDEX DB_TABLE_PREFIX' .
+			substr($child[0]['content'], 0, 5) .
+			substr(md5($child[0]['content']), -2) . '_' . $crc .
+			"\n  " . ' ON DB_TABLE_PREFIX' . $child[0]['content'] . "(";
+		    for ($j = 0; $j < count($child[$i]['child']); $j++) {
+			$output .= 'DB_COLUMN_PREFIX' . $child[$i]['child'][$j]['content'];
+			if ($j < count($child[$i]['child']) - 1) {
+			    $output .= ", ";
+			}
+		    }
+		    $output .= ");\n\n";
+		} else /* key */ {
+		    if (!empty($child[$i]['attrs']['PRIMARY'])) {
+			$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $child[0]['content'] .
+			    ' ADD PRIMARY KEY (';
+			$columns = $child[$i]['child'];
+			for ($j = 0; $j < count($columns); $j++) {
+			    $output .= 'DB_COLUMN_PREFIX' . $columns[$j]['content'];
+			    if ($j < count($columns) - 1) {
+				$output .= ', ';
+			    }
+			}
+			$output .= ");\n\n";
+		    } else {
+			$crc = $this->getIndexCrc($child[$i]['child']);
+			$output .= 'CREATE UNIQUE INDEX DB_TABLE_PREFIX' .
+			    substr($child[0]['content'], 0, 5) .
+			    substr(md5($child[0]['content']), -2) . '_' . $crc .
+			    "  \n" . ' ON DB_TABLE_PREFIX' . $child[0]['content'] . "(";
+			for ($j = 0; $j < count($child[$i]['child']); $j++) {
+			    $output .= 'DB_COLUMN_PREFIX' . $child[$i]['child'][$j]['content'];
+			    if ($j < count($child[$i]['child']) - 1) {
+				$output .= ", ";
+			    }
+			}
+			$output .= ");\n\n";
+		    }
+		}
+	    }
+
+	    /* Schema info */
+	    $output .= $this->createSql($child[1], 0, 0, $node);
+	    break;
+
+	case 'ALTER':
+	    /* column+ */
+	    for ($i = 0; $i < count($child); $i++) {
+		$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
+		    ' ADD COLUMN DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . 'Temp';
+		$output .= ' ' . $this->columnDefinition($child[$i]['child'], false) . ";\n\n";
+		$output .= 'UPDATE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
+		    ' SET DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . 'Temp' .
+		    ' = CAST(DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . ' AS ' .
+		    $this->columnDefinition($child[$i]['child'], false) . ");\n\n";
+		$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
+		    ' DROP DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . ";\n\n";
+		$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
+		    ' RENAME DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . 'Temp' .
+		    ' to DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . ";\n\n";
+		if ($this->getNotNullElement($child[$i]['child'])) {
+		    $output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
+			' ALTER DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] .
+			" SET NOT NULL;\n\n";
+		}
+	    }
+	    break;
+
+	default:
+	    $output .= parent::createSql($node, $index, $lastPeerIndex, $parent);
+	}
+
+	return $output;
+    }
+
+    function getDbType() {
+	return 'db2';
+    }
+}
+
 ?>

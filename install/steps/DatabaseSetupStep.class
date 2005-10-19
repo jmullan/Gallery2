@@ -60,6 +60,13 @@ class DatabaseSetupStep extends InstallStep {
 		}
 		$dbPlatformType = 'mysql';
 		break;
+	    case 'db2':
+		if (!$firstConfig && !function_exists('odbc_connect')) {
+		    $templateData['error']['phpDbMissing'] =
+			_('You must have the ODBC module installed');
+		}
+		$dbPlatformType = 'db2';
+		break;
 	    case 'postgres7':
 	    case 'postgres':
 		if (!$firstConfig && !function_exists('pg_connect')) {
@@ -263,7 +270,8 @@ class DatabaseSetupStep extends InstallStep {
 			   'mysqlt' => _('MySQL with Transactions (v3.23.34a and newer)'),
 			   'postgres7' => _('PostgreSQL v7.x'),
 			   'postgres' => _('PostgreSQL v6.x (not well tested)'),
-			   'oci8po' => _('Oracle (9i and newer)'))
+			   'oci8po' => _('Oracle (9i and newer)'),
+			   'db2' => _('(EXPERIMENTAL!) IBM DB2 for Unix/Windows, v8.2.2 and newer'))
 		     as $key => $value) {
 		$templateData['dbList'][$key] = $value;
 	    }
@@ -329,7 +337,7 @@ class DatabaseSetupStep extends InstallStep {
 	 */
 	$ok = false;
 	for ($i = 0; $i < 10; $i++) {
-	    $tablePrefix = 'g2dbtest' . $i . '_';
+	    $tablePrefix = 'gtst' . $i;
 	    if (!in_array($tablePrefix . 'Schema', $metatables) &&
 		    !in_array($tablePrefix . 'schema', $metatables)) {
 		$ok = true;

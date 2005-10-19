@@ -76,6 +76,11 @@ class GalleryStorage {
 		'modules/core/classes' . $base . 'DatabaseStorage/PostgreSqlDatabaseStorage.class');
 	    $this->_impl = new PostgreSqlDatabaseStorage($config);
 	    break;
+	case 'db2':
+	    GalleryCoreApi::relativeRequireOnce(
+		'modules/core/classes' . $base . 'DatabaseStorage/Db2DatabaseStorage.class');
+	    $this->_impl = new Db2DatabaseStorage($config);
+	    break;
 
 	default:
 	case 'mysql':
