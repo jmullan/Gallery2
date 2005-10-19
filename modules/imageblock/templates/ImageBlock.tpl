@@ -12,7 +12,7 @@
 
   {capture name="link"}
   <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$block.id`"}" {strip}
-    {if isset($ImageBlockData.linkTarget)}
+    {if !empty($ImageBlockData.linkTarget)}
       target="{$ImageBlockData.linkTarget}"
     {/if}{/strip}>
   {/capture}
