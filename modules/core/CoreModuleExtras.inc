@@ -96,7 +96,7 @@ class CoreModuleExtras {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    
+
 	    if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
 		$flockType = 'database';
 	    } else {
@@ -1234,6 +1234,9 @@ class CoreModuleExtras {
 	case '1.0.2':
 	    /* Security fix */
 
+	case '1.0.3':
+	    /* Consolidated .sql files into schema.tpl */
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
@@ -1406,6 +1409,7 @@ $gallery->setConfig(\'cookieId\', \'' . $cookieId . '\');
 	case '1.0.0.1':
 	case '1.0.1':
 	case '1.0.2':
+	case '1.0.3':
 
 	case 'end of upgrade path':
 	    /*

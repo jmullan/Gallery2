@@ -235,6 +235,7 @@ class RewriteModuleExtras {
 	case '0.9.18':
 	case '1.0.0':
 	case '1.0.1':
+	case '1.0.2':
 
 	case 'end of upgrade path':
 	    break;

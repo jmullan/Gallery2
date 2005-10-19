@@ -310,8 +310,10 @@ class DatabaseSetupStep extends InstallStep {
      * @param: array (string tableName)
      * @return array (boolean success, string errors)
      */
-    function _testPrivileges($platform, $metatables) {
-	if (!is_array($metatables) || empty($platform)) {
+    function _testPrivileges($dbType, $metatables) {
+	global $gallery;
+
+	if (!is_array($metatables) || empty($dbType)) {
 	    return array(false, _('Unknown DB type or no known tables information.'));
 	}
 
@@ -340,15 +342,27 @@ class DatabaseSetupStep extends InstallStep {
 	}
 
 	/* Load the Test SQL code */
-	$slash = DIRECTORY_SEPARATOR;
-	$baseName = dirname(__FILE__) . $slash . '..' . $slash . '..' . $slash .
-	    'modules' . $slash . 'core' . $slash . 'classes' . $slash .
-	    'GalleryStorage' . $slash . 'DatabaseStorage' . $slash . 'schema' .
-	    $slash . 'platform' . $slash . $platform . $slash;
+	require_once(dirname(__FILE__) .
+		     '/../../modules/core/classes/GalleryStorage/DatabaseStorageExtras.class');
+	/* GalleryPlatform is not available at this point */
+	$schemaTpl = dirname(__FILE__) . '/../../modules/core/classes/GalleryStorage/' .
+	    'DatabaseStorage/schema/schema.tpl';
+	if (!($fd = fopen($schemaTpl, 'rb'))) {
+	    return array(false, sprintf(_('Could not open schema file: "%s".'), $schemaTpl));
+	}
+	$fileSize = filesize($schemaTpl);
+	$sqlData = $fileSize == 0 ? '' : fread($fd, $fileSize);
+	fclose($fd);
+	/* TODO: Stop using a private method for this */
+	$moduleSql = DatabaseStorageExtras::_parseSqlTemplate($sqlData);
+
+	printf("<pre>%s</pre>", print_r($sqlData, 1));
+	printf("<pre>%s</pre>", print_r($moduleSql, 1));
 
 	for ($i = 1; $i <= 4; $i++) {
-	    $sqlFile = sprintf('%sT_InstallerTest_%d.sql', $baseName, $i);
-	    list ($success, $errorMessage) = $this->_executeSqlFile($sqlFile, $tablePrefix);
+	    $test = sprintf('T_InstallerTest_%d.sql', $i);
+	    list ($success, $errorMessage) =
+		$this->_executeSql($moduleSql['test'][$test], $tablePrefix);
 	    if (!$success) {
 		return array(false, $errorMessage);
 	    }
@@ -373,25 +387,13 @@ class DatabaseSetupStep extends InstallStep {
     }
 
     /**
-     * Execute a single SQL file
+     * Execute a series of SQL statements
+     *
      * @param the path to the file
      * @param the table prefix to use
      * @return array(boolean success, string error message)
      */
-    function _executeSqlFile($fileName, $tablePrefix) {
-
-	/* GalleryPlatform not available at this point */
-	if (!file_exists($fileName)) {
-	    return array(false, sprintf(_('SQL test file "%s" not found.'), $fileName));
-	}
-	/* The following code is copied from $platform->file_get_contents() */
-	if (!($fd = fopen($fileName, 'rb'))) {
-	    return array(false, sprintf(_('Could not open SQL test file "%s".'), $fileName));
-	}
-	$fileSize = filesize($fileName);
-	$buffer = $fileSize == 0 ? '' : fread($fd, $fileSize);
-	fclose($fd);
-
+    function _executeSql($buffer, $tablePrefix) {
 	/*
 	 * Split the file where semicolons are followed by a blank line..
 	 * PL/SQL blocks will have other semicolons, so we can't split on every one.

@@ -16,7 +16,7 @@ modules/core/AdminToolkitPriority.inc	2855458621	155379951	3613	3730
 modules/core/AdminUsers.inc	1849600793	108827668	7008	7242
 modules/core/Callbacks.inc	2983893237	3798770301	5310	5464
 modules/core/ChangeLanguage.inc	250264244	625469742	1690	1747
-modules/core/CoreModuleExtras.inc	3805343085	532024734	60817	62679
+modules/core/CoreModuleExtras.inc	2204370269	670279813	60901	62769
 modules/core/CreateThumbnailOption.inc	1697817318	2643200353	2588	2673
 modules/core/DownloadItem.inc	3954296287	1760805501	4660	4819
 modules/core/ErrorPage.inc	2590883780	276221894	3395	3496
@@ -77,12 +77,12 @@ modules/core/classes/GalleryCapabilities.class	3876121329	2266084484	3003	3113
 modules/core/classes/GalleryChildEntity.class	1130594041	2839968722	4418	4593
 modules/core/classes/GalleryConstants.class	809129414	1972079757	3663	3852
 modules/core/classes/GalleryController.class	634955948	3346738970	7207	7386
-modules/core/classes/GalleryCoreApi.class	2571394788	1655070845	100221	102765
+modules/core/classes/GalleryCoreApi.class	2345929106	331170813	100275	102822
 modules/core/classes/GalleryCoreSearch.class	2466263375	2705171833	6883	7092
-modules/core/classes/GalleryDataCache.class	961659378	3630675406	15941	16529
+modules/core/classes/GalleryDataCache.class	1113025953	1484420878	16210	16807
 modules/core/classes/GalleryDataItem.class	2311527701	641644070	12511	12958
 modules/core/classes/GalleryDerivative.class	3387686597	817210810	25026	25844
-modules/core/classes/GalleryDerivativeImage.class	1896414267	1759056361	6987	7236
+modules/core/classes/GalleryDerivativeImage.class	533312926	2720003198	7079	7331
 modules/core/classes/GalleryDerivativePreferencesMap.class	3516048113	2295901573	2313	2383
 modules/core/classes/GalleryDescendentCountsMap.class	1815740404	923867821	2440	2513
 modules/core/classes/GalleryEmbed.class	3294033577	723802282	30490	31353
@@ -97,11 +97,11 @@ modules/core/classes/GalleryItemAttributesMap.class	2025307648	1093497183	2493	2
 modules/core/classes/GalleryLockSystem.class	738492557	2259796339	3742	3872
 modules/core/classes/GalleryMaintenanceMap.class	4255491329	3116494082	2320	2393
 modules/core/classes/GalleryMimeTypeMap.class	710058837	1143929675	2049	2114
-modules/core/classes/GalleryModule.class	2917277925	1697472908	20206	20796
+modules/core/classes/GalleryModule.class	821896784	2535294630	21330	21960
 modules/core/classes/GalleryMovieItem.class	1926564990	2755997207	8557	8865
 modules/core/classes/GalleryPermissionSetMap.class	535001631	2106839025	2479	2556
 modules/core/classes/GalleryPersistent.class	2681662451	1658103862	5255	5456
-modules/core/classes/GalleryPhotoItem.class	962388173	2933714238	7603	7873
+modules/core/classes/GalleryPhotoItem.class	3952069847	3753650056	7695	7968
 modules/core/classes/GalleryPhpVm.class	878200384	589777881	4481	4639
 modules/core/classes/GalleryPlatform.class	2525573384	915170218	31229	32403
 modules/core/classes/GalleryPlatform/UnixPlatform.class	2001462690	2369134638	3971	4132
@@ -114,168 +114,18 @@ modules/core/classes/GallerySearchResults.class	1266763060	1740326924	1571	1629
 modules/core/classes/GallerySession.class	3177132025	2632412815	29910	30871
 modules/core/classes/GallerySmarty.class	1322574446	811859977	3275	3389
 modules/core/classes/GallerySortInterface_1_1.class	1251084373	2306605436	4839	4970
-modules/core/classes/GalleryStatus.class	327961587	1421101464	12723	13233
-modules/core/classes/GalleryStorage.class	2276077763	1944979710	20646	21436
+modules/core/classes/GalleryStatus.class	788729716	1531484345	12756	13267
+modules/core/classes/GalleryStorage.class	3607881885	3246988927	20569	21357
 modules/core/classes/GalleryStorage/DatabaseSearchResults.class	650958883	928169337	1845	1911
 modules/core/classes/GalleryStorage/DatabaseSqlFragment.class	3937106841	1906290173	2155	2237
-modules/core/classes/GalleryStorage/DatabaseStorage.class	3779022234	954234937	73827	76313
+modules/core/classes/GalleryStorage/DatabaseStorage.class	1693465511	4082852446	22233	23092
 modules/core/classes/GalleryStorage/DatabaseStorage/ErrorHandler.inc	201789214	3256277655	2626	2708
 modules/core/classes/GalleryStorage/DatabaseStorage/MySqlDatabaseStorage.class	1976150790	2825561375	3996	4168
 modules/core/classes/GalleryStorage/DatabaseStorage/OracleDatabaseStorage.class	425396405	1338079861	5189	5396
 modules/core/classes/GalleryStorage/DatabaseStorage/PostgreSqlDatabaseStorage.class	2082789416	1914459120	5612	5845
 modules/core/classes/GalleryStorage/DatabaseStorage/schema/GNUmakefile	1829837397	1732237385	1013	1050
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/A_GalleryAlbumItem_1.0.sql	3167409728	3243860455	260	268
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/A_GalleryDerivative_1.0.sql	1417673083	865822183	270	278
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/A_GalleryEntity_1.0.sql	1134539064	3923775078	274	282
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/A_GalleryGroup_1.0.sql	2704576345	1493660643	270	278
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/A_GalleryItem_1.0.sql	1119212350	1516901981	271	279
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/A_GalleryPluginMap_1.0.sql	1182525585	191912716	350	359
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/A_GalleryPluginParameterMap_1.0.sql	610464399	911249124	368	377
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/A_GalleryPluginParameterMap_1.1.sql	1639530220	3115566172	193	198
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/A_GalleryPluginParameterMap_1.2.sql	180500858	1062223423	302	310
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/ExternalIdMap.sql	209110358	1468529970	421	435
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryAccessMap.sql	2626941500	1504708082	714	733
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryAccessSubscriberMap.sql	1002690273	643775695	425	439
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryAlbumItem.sql	1265269112	1230841826	390	405
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryAnimationItem.sql	594784081	3967887007	343	357
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryChildEntity.sql	3977283946	474294434	385	399
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryDataItem.sql	440159121	2118274608	339	353
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryDerivative.sql	1418475827	727357522	876	899
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryDerivativeImage.sql	4241044253	77431069	347	361
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryDerivativePreferencesMap.sql	2467388414	4030235438	446	461
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryDescendentCountsMap.sql	1540279580	2703823445	415	429
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryEntity.sql	3489715491	884220718	872	895
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryFactoryMap.sql	756705726	2675432103	484	501
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryFileSystemEntity.sql	3634321847	2134935898	405	419
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryGroup.sql	2999483475	941910187	388	403
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryItem.sql	2454432573	855655873	854	878
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryItemAttributesMap.sql	1521449214	3235095597	502	518
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryMaintenanceMap.sql	381862134	1500914438	501	518
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryMimeTypeMap.sql	1169901732	1191189194	374	388
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryMovieItem.sql	57889701	9353076	370	385
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryPermissionSetMap.sql	3288925591	2177212083	475	491
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryPhotoItem.sql	3778276993	4209827121	335	349
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryPluginMap.sql	2915620653	1788888889	405	419
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryPluginParameterMap.sql	2447564365	1396925135	781	799
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryRecoverPasswordMap.sql	462093925	2463158922	404	418
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryToolkitOperationMap.sql	749949879	4175305142	427	442
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryToolkitOperationMimeTypeMap.sql	3264637678	2294578788	573	589
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryToolkitOperationParameterMap.sql	2727017157	2915810142	489	504
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryToolkitPropertyMap.sql	2974135198	1243345985	348	361
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryToolkitPropertyMimeTypeMap.sql	719138969	462544471	532	547
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryUnknownItem.sql	3892095441	2965247397	274	286
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryUser.sql	2550965701	3021687912	510	528
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryUserGroupMap.sql	4121874935	264773702	422	436
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/Lock.sql	779176017	3828110119	429	445
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/R_GalleryItemPropertiesMap_1.0.sql	3052293532	1080314532	130	135
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/R_GalleryPermissionMap_1.0.sql	3904428456	2957438121	122	127
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/Schema.sql	3129819276	870859752	355	369
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/T_InstallerTest_1.sql	3129819276	870859752	355	369
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/T_InstallerTest_2.sql	199454297	1480206866	333	342
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/T_InstallerTest_3.sql	4231106970	282111851	258	266
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/T_InstallerTest_4.sql	2910802397	3241436640	36	39
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/A_GalleryAlbumItem_1.0.sql	2896942991	1701708448	255	264
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/A_GalleryDerivative_1.0.sql	1256785031	3686481273	269	278
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/A_GalleryEntity_1.0.sql	1372037591	645394575	271	280
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/A_GalleryGroup_1.0.sql	4154466895	542783697	267	276
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/A_GalleryItem_1.0.sql	1565980489	210675129	267	276
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/A_GalleryPluginMap_1.0.sql	1000266041	3430962777	332	341
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/A_GalleryPluginParameterMap_1.0.sql	336087096	34831704	350	359
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/A_GalleryPluginParameterMap_1.1.sql	1639530220	3115566172	193	198
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/A_GalleryPluginParameterMap_1.2.sql	3264617312	202484041	299	308
 modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/CreateBitOr_sql	2845920750	4263422247	1649	1695
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/ExternalIdMap.sql	1970518729	3074876795	452	469
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryAccessMap.sql	1199150646	1771733505	887	917
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryAccessSubscriberMap.sql	3658090287	2067844449	508	527
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryAlbumItem.sql	2755624456	2983664521	418	436
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryAnimationItem.sql	2800608922	1499861966	372	389
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryChildEntity.sql	1534467296	4171150296	452	471
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryDataItem.sql	2756871696	1511483815	364	381
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryDerivative.sql	1856722025	1903153039	1025	1057
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryDerivativeImage.sql	3228624402	4189510358	378	395
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryDerivativePreferencesMap.sql	3730075258	652031399	475	492
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryDescendentCountsMap.sql	2710555291	3425309049	450	467
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryEntity.sql	82172056	3207039518	1039	1073
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryFactoryMap.sql	3018987508	3942948522	471	487
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryFileSystemEntity.sql	4160341505	1861840562	483	502
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryGroup.sql	21525284	427539872	410	428
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryItem.sql	1261325415	1272904985	1022	1057
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryItemAttributesMap.sql	320814501	366033856	573	594
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryMaintenanceMap.sql	2749482890	1704250297	588	610
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryMimeTypeMap.sql	1602420881	708918770	406	423
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryMovieItem.sql	3798743484	4105467633	395	413
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryPermissionSetMap.sql	451656566	3168816009	506	525
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryPhotoItem.sql	3849643502	2409840225	360	377
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryPluginMap.sql	2104122768	4011410393	435	452
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryPluginParameterMap.sql	2884577654	3407955468	909	934
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryRecoverPasswordMap.sql	294949357	3605040060	440	457
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryToolkitOperationMap.sql	1487587795	1160354923	459	477
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryToolkitOperationMimeTypeMap.sql	235289857	2271659895	655	675
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryToolkitOperationParameterMap.sql	3565948460	1403854087	523	540
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryToolkitPropertyMap.sql	1898525546	3475825044	331	343
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryToolkitPropertyMimeTypeMap.sql	3209395787	200771223	616	635
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryUnknownItem.sql	3692762189	889059684	301	316
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryUser.sql	708969928	1249541747	535	556
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryUserGroupMap.sql	1541753156	2532462824	485	503
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/InitRandom.sql	2150253277	712399663	127	132
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/Lock.sql	1359923496	1251254250	443	461
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/R_GalleryItemPropertiesMap_1.0.sql	3052293532	1080314532	130	135
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/R_GalleryPermissionMap_1.0.sql	3904428456	2957438121	122	127
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/Schema.sql	1326407826	2283192052	378	395
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/T_InstallerTest_1.sql	1326407826	2283192052	378	395
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/T_InstallerTest_2.sql	935390486	2253614601	357	367
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/T_InstallerTest_3.sql	2738977981	351359318	222	229
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/T_InstallerTest_4.sql	3218124626	73958743	108	113
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/A_GalleryAlbumItem_1.0.sql	561052213	1781915366	258	265
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/A_GalleryDerivative_1.0.sql	3863498315	1375062663	270	277
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/A_GalleryEntity_1.0.sql	738509062	4269423183	272	279
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/A_GalleryGroup_1.0.sql	4130642654	2861375987	550	563
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/A_GalleryItem_1.0.sql	500731962	1269973886	269	276
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/A_GalleryPluginMap_1.0.sql	867035759	2704979133	1120	1145
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/A_GalleryPluginParameterMap_1.0.sql	3385334057	1319409709	1219	1244
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/A_GalleryPluginParameterMap_1.1.sql	1639530220	3115566172	193	198
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/A_GalleryPluginParameterMap_1.2.sql	137157411	2407978086	727	742
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/ExternalIdMap.sql	1070645625	4081955460	448	463
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryAccessMap.sql	2842176765	1989085454	903	927
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryAccessSubscriberMap.sql	3406478581	2278137133	503	519
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryAlbumItem.sql	3829170772	3359671725	413	429
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryAnimationItem.sql	3831930289	3993520244	370	385
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryChildEntity.sql	509190363	3125927347	447	463
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryDataItem.sql	4271646031	1013123719	361	376
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryDerivative.sql	1182016838	470422070	1010	1037
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryDerivativeImage.sql	1007086618	3044933086	376	391
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryDerivativePreferencesMap.sql	2935383814	1885556923	471	487
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryDescendentCountsMap.sql	4266832814	2331986420	448	463
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryEntity.sql	2258305966	425809064	1022	1050
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryFactoryMap.sql	309858722	1211070959	464	480
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryFileSystemEntity.sql	1130034309	1918061594	477	493
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryGroup.sql	904567463	4120425968	467	484
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryItem.sql	1552841671	2945659052	994	1023
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryItemAttributesMap.sql	1865964233	966969982	576	594
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryMaintenanceMap.sql	478136326	465611600	571	590
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryMimeTypeMap.sql	103398847	1152256183	401	416
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryMovieItem.sql	417533110	2204120161	393	409
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryPermissionSetMap.sql	3341716641	3463274785	538	555
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryPhotoItem.sql	1906178309	3428795725	358	373
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryPluginMap.sql	1290769500	1714498772	430	445
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryPluginParameterMap.sql	1146391870	2929704035	936	957
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryRecoverPasswordMap.sql	3194857938	4277540028	436	451
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryToolkitOperationMap.sql	227700343	918128914	453	469
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryToolkitOperationMimeTypeMap.sql	1822311547	1963692757	646	664
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryToolkitOperationParameterMap.sql	1829862078	3810047574	517	533
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryToolkitPropertyMap.sql	1573872353	2809493671	328	340
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryToolkitPropertyMimeTypeMap.sql	61964310	628459814	607	624
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryUnknownItem.sql	226755849	1885148420	299	312
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryUser.sql	56633908	2060631712	586	606
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryUserGroupMap.sql	3251568389	754837001	479	495
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/Lock.sql	4249877718	930447010	440	457
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/R_GalleryItemPropertiesMap_1.0.sql	3052293532	1080314532	130	135
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/R_GalleryPermissionMap_1.0.sql	3904428456	2957438121	122	127
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/Schema.sql	2951306295	1871142319	375	390
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/T_InstallerTest_1.sql	2951306295	1871142319	375	390
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/T_InstallerTest_2.sql	1765769304	2000758179	358	367
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/T_InstallerTest_3.sql	2738977981	351359318	222	229
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/T_InstallerTest_4.sql	2910802397	3241436640	36	39
+modules/core/classes/GalleryStorage/DatabaseStorage/schema/schema.tpl	3263693950	782712879	70848	73093
 modules/core/classes/GalleryStorage/DatabaseStorage/schema/xml-src/A_GalleryAlbumItem_1.0.xml	3419603533	1495327326	456	475
 modules/core/classes/GalleryStorage/DatabaseStorage/schema/xml-src/A_GalleryDerivative_1.0.xml	337899791	3135723279	522	543
 modules/core/classes/GalleryStorage/DatabaseStorage/schema/xml-src/A_GalleryEntity_1.0.xml	2809187222	1306008671	563	585
@@ -293,8 +143,9 @@ modules/core/classes/GalleryStorage/DatabaseStorage/schema/xml-src/T_InstallerTe
 modules/core/classes/GalleryStorage/DatabaseStorage/schema/xml-src/T_InstallerTest_2.xml	388685907	657777429	621	645
 modules/core/classes/GalleryStorage/DatabaseStorage/schema/xml-src/T_InstallerTest_3.xml	2355159549	4063624708	479	498
 modules/core/classes/GalleryStorage/DatabaseStorage/schema/xml-src/T_InstallerTest_4.xml	1142704323	3482515395	282	293
+modules/core/classes/GalleryStorage/DatabaseStorageExtras.class	511212001	1595152291	54709	56474
 modules/core/classes/GalleryTemplate.class	2874754311	3538647249	12245	12661
-modules/core/classes/GalleryTemplateAdapter.class	1053312391	3525912508	26681	27516
+modules/core/classes/GalleryTemplateAdapter.class	2198240440	1775319200	27554	28413
 modules/core/classes/GalleryTheme.class	607190216	3249804856	59821	61622
 modules/core/classes/GalleryToolkit.class	2029103798	4174387457	9519	9795
 modules/core/classes/GalleryToolkitOperationMap.class	3784251924	3763262320	2331	2403
@@ -307,9 +158,9 @@ modules/core/classes/GalleryUnknownItem.class	2510660303	3569209044	4116	4244
 modules/core/classes/GalleryUrlGenerator.class	2506263113	512121173	22757	23440
 modules/core/classes/GalleryUser.class	2821986932	859558291	9622	9968
 modules/core/classes/GalleryUserGroupMap.class	1339006347	624950693	1878	1939
-modules/core/classes/GalleryUtilities.class	2565442443	1706757747	48281	49863
+modules/core/classes/GalleryUtilities.class	1474568018	1069818134	48643	50236
 modules/core/classes/GalleryValidationPlugin.class	2679399639	3638918373	2229	2292
-modules/core/classes/GalleryView.class	4254770982	2138147239	13428	13852
+modules/core/classes/GalleryView.class	1701067258	3915630585	13453	13878
 modules/core/classes/OptimizeDatabaseTask.class	2500950174	1353184379	2390	2466
 modules/core/classes/ResetViewCountsTask.class	2851697119	855710244	2878	2973
 modules/core/classes/SetOriginationTimestampTask.class	1384437104	1840005289	5231	5396
@@ -423,7 +274,7 @@ modules/core/locale/tr_TR/LC_MESSAGES/modules_core.mo	3921506508	3921506508	3916
 modules/core/locale/vi_VN/LC_MESSAGES/modules_core.mo	2390496470	2390496470	96605	96605
 modules/core/locale/zh_CN/LC_MESSAGES/modules_core.mo	2931829919	2931829919	52831	52831
 modules/core/locale/zh_TW/LC_MESSAGES/modules_core.mo	458952478	458952478	81662	81662
-modules/core/module.inc	2622551183	925251797	18235	18789
+modules/core/module.inc	3183487067	3736729458	18237	18791
 modules/core/plugins/ImageCrop.jar	1928512550	1928512550	6030	6030
 modules/core/po/GNUmakefile	3629214203	414192192	244	254
 modules/core/po/ar_SA.po	2992547076	1831901960	95983	99131
@@ -468,7 +319,7 @@ modules/core/templates/AdminEditUser.tpl	868070198	2891598190	3260	3366
 modules/core/templates/AdminGroups.tpl	781443899	2173068136	5549	5705
 modules/core/templates/AdminMaintenance.tpl	658148732	3879678072	2920	3007
 modules/core/templates/AdminModules.tpl	783484496	1700370226	4710	4852
-modules/core/templates/AdminModulesVerifyUninstall.tpl	3851895003	1545446796	1183	1211
+modules/core/templates/AdminModulesVerifyUninstall.tpl	2307177112	4023674215	1173	1201
 modules/core/templates/AdminThemes.tpl	3909206903	1443247938	13386	13784
 modules/core/templates/AdminToolkitPriority.tpl	1909203580	811797740	2363	2431
 modules/core/templates/AdminUsers.tpl	638124757	4269204489	5131	5279
@@ -514,7 +365,7 @@ modules/core/templates/SidebarBlock.tpl	2482025720	2767634449	503	514
 modules/core/templates/SiteAdmin.tpl	3594026610	821312114	1655	1706
 modules/core/templates/UserAdmin.tpl	3235695242	1214673801	1537	1583
 modules/core/templates/UserChangePassword.tpl	1773289675	1724012487	2487	2576
-modules/core/templates/UserLogin.tpl	1459830285	3515168890	2229	2295
+modules/core/templates/UserLogin.tpl	217220245	4102961428	2405	2477
 modules/core/templates/UserPreferences.tpl	554027151	3567604877	2120	2194
 modules/core/templates/UserRecoverPassword.tpl	1609025653	1198904783	2663	2719
 modules/core/templates/UserRecoverPasswordAdmin.tpl	2055884921	2809808133	4913	5039
@@ -574,9 +425,9 @@ modules/core/test/phpunit/ControllerTest.class	2600105787	3736561427	3129	3232
 modules/core/test/phpunit/CoreModuleTest.class	3740959272	2193751449	6132	6327
 modules/core/test/phpunit/CoreSearchTest.class	508225951	3619057032	14440	14898
 modules/core/test/phpunit/CreateThumbnailOptionTest.class	3060885727	4253261764	7376	7583
-modules/core/test/phpunit/DataCacheTest.class	2236223226	562089146	13345	13715
+modules/core/test/phpunit/DataCacheTest.class	1290262162	2268402260	14915	15322
 modules/core/test/phpunit/DataItemTest.class	1392369999	920121518	7069	7305
-modules/core/test/phpunit/DatabaseStorageTest.class	533850205	1292895181	4130	4284
+modules/core/test/phpunit/DatabaseStorageTest.class	2013484076	1061160858	4228	4387
 modules/core/test/phpunit/DerivativeTest.class	2975874755	118765982	32689	33584
 modules/core/test/phpunit/EmbedTest.class	3030691125	1330932184	15398	15771
 modules/core/test/phpunit/EntityTest.class	3143755045	1040255072	11137	11477
@@ -615,7 +466,7 @@ modules/core/test/phpunit/ItemPermissionsControllerTest.class	234623993	35586409
 modules/core/test/phpunit/ItemReorderControllerTest.class	2625265656	1250814539	12354	12722
 modules/core/test/phpunit/ItemTest.class	1132624974	761061336	56924	58513
 modules/core/test/phpunit/LanguageTest.class	1877720815	2552284761	3350	3458
-modules/core/test/phpunit/LocalizationAuditTest.class	2934295582	1300917626	4301	4433
+modules/core/test/phpunit/LocalizationAuditTest.class	697120428	545274686	4226	4359
 modules/core/test/phpunit/LockTest.class	3008805135	3718940807	9824	10129
 modules/core/test/phpunit/LogoutControllerTest.class	901744846	2965819382	2357	2451
 modules/core/test/phpunit/MailHelperTest.class	1736309521	1338625740	7677	7918
@@ -624,7 +475,7 @@ modules/core/test/phpunit/MaintenanceHelperTest.class	1376466258	3183407759	4309
 modules/core/test/phpunit/MapTest.class	668069183	2510023235	3624	3729
 modules/core/test/phpunit/MarkupTest.class	3367629558	171529577	8676	8921
 modules/core/test/phpunit/MimeTest.class	605077827	1529750995	4438	4579
-modules/core/test/phpunit/ModuleTest.class	1878640711	3216315555	15152	15655
+modules/core/test/phpunit/ModuleTest.class	2761416810	3555675534	15861	16393
 modules/core/test/phpunit/OptimizeDatabaseTaskTest.class	4245472367	3559237522	2476	2562
 modules/core/test/phpunit/PermissionSetTest.class	3407199520	694322478	8731	9001
 modules/core/test/phpunit/PermissionTest.class	1540544423	783013017	40529	41599
@@ -672,31 +523,182 @@ R	modules/core/classes/GalleryLayout.class
 R	modules/core/classes/GalleryPermissionMap.class
 R	modules/core/classes/GallerySortInterface_1.0.class
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/GNUmakefile
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/A_GalleryAlbumItem_1.0.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/A_GalleryDerivative_1.0.sql
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/A_GalleryDerivative_1_0.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/A_GalleryEntity_1.0.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/A_GalleryGroup_1.0.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/A_GalleryItem_1.0.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/A_GalleryPluginMap_1.0.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/A_GalleryPluginParameterMap_1.0.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/A_GalleryPluginParameterMap_1.1.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/A_GalleryPluginParameterMap_1.2.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/ExternalIdMap.sql
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GNUmakefile
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryAccessMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryAccessSubscriberMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryAlbumItem.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryAnimationItem.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryChildEntity.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryDataItem.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryDerivative.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryDerivativeImage.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryDerivativePreferencesMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryDescendentCountsMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryEntity.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryFactoryMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryFileSystemEntity.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryGroup.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryItem.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryItemAttributesMap.sql
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryItemPropertiesMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryMaintenanceMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryMimeTypeMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryMovieItem.sql
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryPermissionMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryPermissionSetMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryPhotoItem.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryPluginMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryPluginParameterMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryRecoverPasswordMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryToolkitOperationMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryToolkitOperationMimeTypeMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryToolkitOperationParameterMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryToolkitPropertyMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryToolkitPropertyMimeTypeMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryUnknownItem.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryUser.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/GalleryUserGroupMap.sql
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/InstallerTest_sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/Lock.sql
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/MySQL.xsl
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/R_GalleryItemPropertiesMap_1.0.sql
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/R_GalleryItemPropertiesMap_1_0.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/R_GalleryPermissionMap_1.0.sql
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/R_GalleryPermissionMap_1_0.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/Schema.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/T_InstallerTest_1.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/T_InstallerTest_2.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/T_InstallerTest_3.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/T_InstallerTest_4.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/A_GalleryAlbumItem_1.0.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/A_GalleryDerivative_1.0.sql
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/A_GalleryDerivative_1_0.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/A_GalleryEntity_1.0.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/A_GalleryGroup_1.0.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/A_GalleryItem_1.0.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/A_GalleryPluginMap_1.0.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/A_GalleryPluginParameterMap_1.0.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/A_GalleryPluginParameterMap_1.1.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/A_GalleryPluginParameterMap_1.2.sql
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/CreateBitOr.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/ExternalIdMap.sql
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GNUmakefile
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryAccessMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryAccessSubscriberMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryAlbumItem.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryAnimationItem.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryChildEntity.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryDataItem.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryDerivative.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryDerivativeImage.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryDerivativePreferencesMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryDescendentCountsMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryEntity.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryFactoryMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryFileSystemEntity.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryGroup.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryItem.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryItemAttributesMap.sql
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryItemPropertiesMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryMaintenanceMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryMimeTypeMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryMovieItem.sql
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryPermissionMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryPermissionSetMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryPhotoItem.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryPluginMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryPluginParameterMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryRecoverPasswordMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryToolkitOperationMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryToolkitOperationMimeTypeMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryToolkitOperationParameterMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryToolkitPropertyMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryToolkitPropertyMimeTypeMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryUnknownItem.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryUser.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/GalleryUserGroupMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/InitRandom.sql
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/InstallerTest_sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/Lock.sql
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/Oracle.xsl
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/R_GalleryItemPropertiesMap_1.0.sql
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/R_GalleryItemPropertiesMap_1_0.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/R_GalleryPermissionMap_1.0.sql
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/R_GalleryPermissionMap_1_0.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/Schema.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/T_InstallerTest_1.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/T_InstallerTest_2.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/T_InstallerTest_3.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/T_InstallerTest_4.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/A_GalleryAlbumItem_1.0.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/A_GalleryDerivative_1.0.sql
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/A_GalleryDerivative_1_0.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/A_GalleryEntity_1.0.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/A_GalleryGroup_1.0.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/A_GalleryItem_1.0.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/A_GalleryPluginMap_1.0.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/A_GalleryPluginParameterMap_1.0.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/A_GalleryPluginParameterMap_1.1.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/A_GalleryPluginParameterMap_1.2.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/ExternalIdMap.sql
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GNUmakefile
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryAccessMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryAccessSubscriberMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryAlbumItem.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryAnimationItem.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryChildEntity.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryDataItem.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryDerivative.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryDerivativeImage.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryDerivativePreferencesMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryDescendentCountsMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryEntity.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryFactoryMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryFileSystemEntity.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryGroup.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryItem.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryItemAttributesMap.sql
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryItemPropertiesMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryMaintenanceMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryMimeTypeMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryMovieItem.sql
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryPermissionMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryPermissionSetMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryPhotoItem.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryPluginMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryPluginParameterMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryRecoverPasswordMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryToolkitOperationMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryToolkitOperationMimeTypeMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryToolkitOperationParameterMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryToolkitPropertyMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryToolkitPropertyMimeTypeMap.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryUnknownItem.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryUser.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/GalleryUserGroupMap.sql
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/InstallerTest_sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/Lock.sql
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/PostgreSQL.xsl
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/R_GalleryItemPropertiesMap_1.0.sql
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/R_GalleryItemPropertiesMap_1_0.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/R_GalleryPermissionMap_1.0.sql
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/R_GalleryPermissionMap_1_0.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/Schema.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/T_InstallerTest_1.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/T_InstallerTest_2.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/T_InstallerTest_3.sql
+R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/T_InstallerTest_4.sql
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/xml-out/InstallerTest.xml
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/xml-src/A_GalleryDerivative_1_0.xml
 R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/xml-src/DbXml.xsl

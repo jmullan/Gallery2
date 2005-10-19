@@ -27,25 +27,25 @@ if (!empty($_SERVER['SERVER_NAME'])) {
 
 require_once(dirname(__FILE__) . '/XmlParser.inc');
 
-foreach (glob('tmp/dbxml/*.xml') as $xmlFile) {
-    $p =& new XmlParser();
-    $root = $p->parse($xmlFile);
+$output = '';
+foreach (array('mysql', 'postgres', 'oracle') as $db) {
+    $output .= '## ' . $db . "\n";
+    foreach (glob('tmp/dbxml/*.xml') as $xmlFile) {
+	$p =& new XmlParser();
+	$root = $p->parse($xmlFile);
 
-    foreach (array('mysql', 'postgres', 'oracle') as $db) {
-	if (!file_exists($db)) {
-	    @mkdir("platform/$db");
-	}
 	$generatorClass = "${db}Generator";
 	$generator = new $generatorClass;
-	$output = $generator->createSql($root[0], 0, 0, null) . "\n";
+
 	$base = basename($xmlFile);
 	$base = preg_replace('/\.[^\.]*$/', '', $base);
-
-	$fd = fopen("platform/$db/$base.sql", "w");
-	fwrite($fd, $output);
-	fclose($fd);
+	$output .= '# ' . $base . "\n";
+	$output .= $generator->createSql($root[0], 0, 0, null);
     }
 }
+$fd = fopen('schema.tpl', 'w');
+fwrite($fd, $output);
+fclose($fd);
 
 class BaseGenerator {
     function createSql($node, $index, $lastPeerIndex, $parent) {

@@ -1008,7 +1008,7 @@ class DatabaseStorageExtras /* the other half of DatabaseStorage */ {
 	    '/classes/GalleryStorage/DatabaseStorage/schema/schema.tpl';
 
 	if ($platform->file_exists($sqlFile)) {
-	    $sqlData = $platform->file_get_contents($sqlFile);
+	    $sqlData = explode("\n", $platform->file_get_contents($sqlFile));
 	    $moduleSql = $this->_parseSqlTemplate($sqlData);
 	} else {
 	    /* Stop supporting this on the next major core api change */
@@ -1110,6 +1110,12 @@ class DatabaseStorageExtras /* the other half of DatabaseStorage */ {
 		continue;
 	    }
 
+	    /**
+	     * In earlier versions (beta 3) we used the format R_Foo_1_0.sql), an underscore
+	     * instead of a dot as the version separator. If a user has still these old files
+	     * in his gallery2 dirs, they would be executed on each upgrade unless we accept
+	     * here the old 1_0 and the new 1.0 format.
+	     */
 	    if (preg_match('/^# (.*)$/', $line, $matches)) {
 		$tablename = $matches[1];
 		if (preg_match('/^T_(.*)_(\d+)/', $tablename, $matches)) {
@@ -1117,12 +1123,12 @@ class DatabaseStorageExtras /* the other half of DatabaseStorage */ {
 			$info['test'][$matches[1]][$matches[2]] = '';
 		    }
 		    $insertPointer =& $info['test'][$matches[1]][$matches[2]];
-		} else if (preg_match('/^A_(.*)_(\d+)\.(\d+)/', $tablename, $matches)) {
+		} else if (preg_match('/^A_(.*)_(\d+)[\._](\d+)/', $tablename, $matches)) {
 		    if (!isset($info['alter'][$matches[1]][$matches[2]][$matches[3]])) {
 			$info['alter'][$matches[1]][$matches[2]][$matches[3]] = '';
 		    }
 		    $insertPointer =& $info['alter'][$matches[1]][$matches[2]][$matches[3]];
-		} else if (preg_match('/^R_(.*)_(\d+)\.(\d+)/', $tablename, $matches)) {
+		} else if (preg_match('/^R_(.*)_(\d+)[\._](\d+)/', $tablename, $matches)) {
 		    if (!isset($info['remove'][$matches[1]][$matches[2]][$matches[3]])) {
 			$info['remove'][$matches[1]][$matches[2]][$matches[3]] = '';
 		    }
@@ -1480,7 +1486,7 @@ class DatabaseStorageExtras /* the other half of DatabaseStorage */ {
 		$this->_ds->_traceStop();
 		if (empty($recordSet)) {
 		    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
-						"Error trying to load $fileName");
+						"Error trying to run query: $query");
 		}
 	    }
 	}

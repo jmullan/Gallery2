@@ -81,8 +81,21 @@ class GalleryModule extends GalleryPlugin {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	/* TODO: Remove loadItemDetails on next major version bump */
-	return array(2, 1);
+	/*
+	 * TODO for the next major version bump:
+	 *   - Remove GalleryModule::loadItemDetails()
+	 *   - Remove DatabaseStorageExtras::_loadOldStyleSqlFiles
+	 *   - Consider removing isRecommendedDuringInstall() since
+	 *     we now have 4 different types of installs
+	 *   - Fix DatabaseStorageExtras::_parseSqlTemplate so that it no longer
+	 *     accepts database files of the old form (A|R)_Table_#_# but requires
+	 *     the new form (A|R)_Table_#.# instead
+	 *   - Flatten classes/GalleryStorage/DatabaseStorage/schema under
+	 *     GalleryStorage; we're no longer going to seriously attempt to do
+	 *     any other kind of storage besides DatabaseStorage.  Roll as much
+	 *     functionality as possible up into GalleryStorage.class
+	 */
+	return array(2, 2);
     }
 
     /**

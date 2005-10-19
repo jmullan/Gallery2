@@ -41,9 +41,9 @@ class DatabaseStorageTest extends GalleryTestCase {
     function setUp() {
 	parent::setUp();
 	$this->_data = array('## database_with_everything',
-			     '# A_SomeTable_1.0',
+			     '# A_SomeTable_1_0',
 			     'Some 0->1 alter SQL',
-			     '# A_SomeTable_1.1',
+			     '# A_SomeTable_1_1',
 			     'Some 1->2 alter SQL',
 			     '# T_AnInstallerTest_1',
 			     'Some test SQL',
@@ -52,13 +52,13 @@ class DatabaseStorageTest extends GalleryTestCase {
 			     '# SomeTable',
 			     'Some mysql SQL',
 			     'Some multiline SQL',
-			     '# R_SomeTable_1.0',
+			     '# R_SomeTable_1_0',
 			     'Some mysql drop table SQL',
 			     '## database_with_only_tables',
 			     '# SomeTable',
 			     'Some postgres SQL',
 			     '## database_with_only_removes',
-			     '# R_SomeTable_1.0',
+			     '# R_SomeTable_1_0',
 			     'Some oracle drop table SQL',
 			     '## database_with_nothing');
     }

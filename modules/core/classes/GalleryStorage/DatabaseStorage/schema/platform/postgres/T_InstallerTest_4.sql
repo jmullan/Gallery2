@@ -1,3 +1,0 @@
-DROP TABLE DB_TABLE_PREFIXSchema;
-
-
