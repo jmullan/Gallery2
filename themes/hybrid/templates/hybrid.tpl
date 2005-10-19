@@ -101,6 +101,9 @@
     <table width="90%"><tr><td style="width: 50%">
       <div class="giTitle"> {$theme.item.title|markup} </div>
       <div id="album_desc" class="giDescription"> {$theme.item.description|markup} </div>
+      <noscript><p class="giError">
+	{g->text text="Warning: This site requires javascript"}
+      </p></noscript>
     </td><td>
       <div id="album_info">
 	{g->block type="core.ItemInfo" item=$theme.item
