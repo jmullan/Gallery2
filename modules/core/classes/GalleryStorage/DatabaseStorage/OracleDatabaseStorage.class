@@ -172,8 +172,7 @@ class OracleDatabaseStorage extends DatabaseStorage {
     function configureStore($moduleId) {
 	if ($moduleId == 'core') {
 	    /* Install our custom aggregate function */
-	    $ret = $this->_executeSqlFile(
-		dirname(__FILE__) . '/schema/platform/oracle/CreateBitOr_sql');
+	    $ret = $this->_executeSqlFile(dirname(__FILE__) . '/CreateBitOr.sql');
 
 	    /*
 	     * Ignore errors here, since we'll get them every time we try to
