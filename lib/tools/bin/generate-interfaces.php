@@ -128,22 +128,29 @@ foreach (glob('tmp/*.xml') as $xmlFile) {
      * Move any RCS tags over.  We know exactly where they are in the template so
      * do this the quick and dirty way.
      */
-    $orig = str_replace("\n", "", file($origFile));
-    if (count($orig) > 25) {
-	$new[2] = $orig[2];
-	$new[24] = $orig[24];
+    if (file_exists($origFile)) {
+	$orig = str_replace("\n", "", file($origFile));
+	if (count($orig) > 25) {
+	    $new[2] = $orig[2];
+	    $new[24] = $orig[24];
+	}
     }
 
     $fd = fopen($tmpFile, "w");
     fwrite($fd, join("\n", $new));
     fclose($fd);
 
-    if (md5_file($tmpFile) != md5_file($origFile)) {
-	unlink($origFile);
+    if (file_exists($origFile)) {
+	if (md5_file($tmpFile) != md5_file($origFile)) {
+	    unlink($origFile);
+	    rename($tmpFile, $origFile);
+	    $modifiedCount++;
+	} else {
+	    unlink($tmpFile);
+	}
+    } else {
 	rename($tmpFile, $origFile);
 	$modifiedCount++;
-    } else {
-	unlink($tmpFile);
     }
 }
 
