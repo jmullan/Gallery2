@@ -175,5 +175,23 @@ class GalleryController {
 
 	return array(GalleryStatus::success(), new $controllerClassName);
     }
+
+    /**
+     * Does this controller allow direct access even in embed-only mode?
+     *
+     * @return boolean true if access always allowed
+     */
+    function isAllowedInEmbedOnly() {
+	return false;
+    }
+
+    /**
+     * Should session be saved and session cookie sent when this controller is used?
+     *
+     * @return boolean true to enable session
+     */
+    function shouldSaveSession() {
+	return true;
+    }
 }
 ?>

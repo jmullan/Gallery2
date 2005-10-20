@@ -40,6 +40,20 @@ class CSSView extends GalleryView {
     }
 
     /**
+     * @see GalleryView::isAllowedInEmbedOnly()
+     */
+    function isAllowedInEmbedOnly() {
+	return true;
+    }
+
+    /**
+     * @see GalleryView::shouldSaveSession()
+     */
+    function shouldSaveSession() {
+	return false;
+    }
+
+    /**
      * @see GalleryView::renderImmediate
      */
     function renderImmediate($status, $error) {

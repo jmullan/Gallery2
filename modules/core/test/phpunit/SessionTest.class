@@ -511,7 +511,7 @@ class SessionTest extends GalleryTestCase {
 	}
 
 	/* Session shouldn't be saved in DownloadItem requests */
-	GalleryUtilities::removeRequestVariable('view');
+	GalleryDataCache::reset();
 	GalleryUtilities::putRequestVariable('view', 'core.DownloadItem');
 
 	/* Add some status data to the session and then try to save it */
@@ -529,7 +529,7 @@ class SessionTest extends GalleryTestCase {
 	/* Assert that the session was not saved */
 	$platform = $gallery->getPlatform();
 	$sessionFile = $gallery->getConfig('data.gallery.sessions') . $session->getId();
-	$this->assert(!file_exists($sessionFile));
+	$this->assert(!file_exists($sessionFile), 'session file should not exist');
     }
 
     function testBasicNavigation() {
@@ -847,6 +847,7 @@ class SessionTest extends GalleryTestCase {
 	    GalleryUtilities::removeRequestVariable('view');
 	    GalleryUtilities::removeRequestVariable('controller');
 	    GalleryUtilities::putRequestVariable($testCase['key'], $testCase['value']);
+	    GalleryDataCache::reset();
 
 	    $session = new GallerySession();
 	    /* The init call should actually send or not send a cookie */
@@ -987,6 +988,7 @@ class SessionTest extends GalleryTestCase {
 	    GalleryUtilities::removeRequestVariable('view');
 	    GalleryUtilities::removeRequestVariable('controller');
 	    GalleryUtilities::putRequestVariable($testCase['type'], $testCase['value']);
+	    GalleryDataCache::reset();
 
 	    $this->assertEquals($testCase['er'], $session->_shouldSaveSession(),
 				$testCase['type'] . ': ' . $testCase['value']);

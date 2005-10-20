@@ -94,7 +94,7 @@ class GalleryModule extends GalleryPlugin {
 	 *     GalleryStorage; we're no longer going to seriously attempt to do
 	 *     any other kind of storage besides DatabaseStorage.  Roll as much
 	 *     functionality as possible up into GalleryStorage.class
-	 *   - Commit mindless' change to GallerySession::_shouldSaveSession that
+	 *   - Uncomment new code in GallerySession::_shouldSaveSession that
 	 *     will require modules not to call translate() from contructors
 	 */
 	return array(2, 2);
@@ -586,13 +586,12 @@ class GalleryModule extends GalleryPlugin {
 
     function getGroup() {
 	if (empty($this->_group)) {
-	    global $gallery;
-	    $group = array('group' => 'other', 'groupLabel' => 'Other');
+	    $groupLabel = 'Other';
 	    list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
 	    if ($ret->isSuccess()) {
-		$group['groupLabel'] = $core->translate('Other');
+		$groupLabel = $core->translate('Other');
 	    }
-	    return $group;
+	    return array('group' => 'other', 'groupLabel' => $groupLabel);
 	}
 	return array('group' => $this->_group['group'],
 		     'groupLabel' => $this->translate($this->_group['groupLabel']));

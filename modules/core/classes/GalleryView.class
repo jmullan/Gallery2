@@ -100,6 +100,24 @@ class GalleryView {
     }
 
     /**
+     * Does this view allow direct access even in embed-only mode?
+     *
+     * @return boolean true if access always allowed
+     */
+    function isAllowedInEmbedOnly() {
+	return false;
+    }
+
+    /**
+     * Should session be saved and session cookie sent when this view is accessed?
+     *
+     * @return boolean true to enable session
+     */
+    function shouldSaveSession() {
+	return true;
+    }
+
+    /**
      * Load a view
      *
      * Be very security conscious about checking the inputs for possible

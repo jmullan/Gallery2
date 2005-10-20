@@ -36,6 +36,13 @@
 class RedirectController extends GalleryController {
 
     /**
+     * @see GalleryController::shouldSaveSession()
+     */
+    function shouldSaveSession() {
+	return false;
+    }
+
+    /**
     * @see GalleryController::handleRequest()
     */
     function handleRequest($form) {

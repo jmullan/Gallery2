@@ -938,23 +938,42 @@ class GallerySession {
      * @access private
      */
     function _shouldSaveSession() {
-	/* Default to true */
-	$ret = true;
+	static $cacheKey = 'GallerySession::_shouldSaveSession';
+	if (!GalleryDataCache::containsKey($cacheKey)) {
+	    $flag = true; /* Default to true */
+	    list ($view, $controller) =
+		GalleryUtilities::getRequestVariables('view', 'controller');
 
-	list ($view, $controller) = GalleryUtilities::getRequestVariables('view', 'controller');
+	    /* old code still in use for now: */
+	    /* Check if the current request's view or controller is in the exclude list */
+	    if (!empty($view) && in_array($view, array('core.DownloadItem',
+						       'core:DownloadItem', 'imageframe.CSS'))) {
+		$flag = false;
+	    } else if (!empty($controller) && in_array($controller, array('migrate.Redirect',
+									  'migrate:Redirect'))) {
+		$flag = false;
+	    }
 
-	/* Check if the current request's view or controller is in the exlude list */
-	if (!empty($view) && in_array($view, array('core.DownloadItem',
-						   'core:DownloadItem', 'imageframe.CSS'))) {
-	    /* view is in the exclude list */
-	    $ret = false;
-	} elseif (!empty($controller) && in_array($controller, array('migrate.Redirect',
-								     'migrate:Redirect'))) {
-	    /* controller is in the exclude list */
-	    $ret = false;
+	    /* TODO: use this code instead with next major version bump of module api..
+	    if (!empty($controller)) {
+		GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryController.class');
+		list ($ret, $controller) = GalleryController::loadController($controller);
+		if ($ret->isSuccess() && !$controller->shouldSaveSession()) {
+		    $flag = false;
+		}
+	    }
+	    if (!empty($view)) {
+		GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryView.class');
+		list ($ret, $view) = GalleryView::loadView($view);
+		if ($ret->isSuccess() && !$view->shouldSaveSession()) {
+		    $flag = false;
+		}
+	    }
+	    */
+	    GalleryDataCache::put($cacheKey, $flag);
 	}
 
-	return $ret;
+	return GalleryDataCache::get($cacheKey);
     }
 }
 

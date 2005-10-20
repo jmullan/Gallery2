@@ -61,6 +61,13 @@ class GalleryRemoteController extends GalleryController {
     }
 
     /**
+     * @see GalleryController::isAllowedInEmbedOnly()
+     */
+    function isAllowedInEmbedOnly() {
+	return true;
+    }
+
+    /**
      * @see GalleryController::handleRequest()
      */
     function handleRequest($form) {
@@ -756,6 +763,13 @@ class GalleryRemoteView extends GalleryView {
      * @see GalleryView::isImmediate()
      */
     function isImmediate() {
+	return true;
+    }
+
+    /**
+     * @see GalleryView::isAllowedInEmbedOnly()
+     */
+    function isAllowedInEmbedOnly() {
 	return true;
     }
 
