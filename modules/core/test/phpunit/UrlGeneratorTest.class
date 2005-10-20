@@ -573,17 +573,30 @@ class UrlGeneratorTest extends GalleryTestCase {
      * getCurrentUrlDir(), else it might have been a problem (RewriteUrlGenerator)
      */
     function testDetectPhishingAttack() {
-	$_GET['g2_return'] = 'http://malicious.com/gallery2/main.php?g2_view=core.UserAdmin&' .
-	    'g2_subView=core.UserLogin';
-	$ret = $this->_urlGenerator->initNavigation();
-	$this->assert($ret->getErrorCode() & ERROR_PERMISSION_DENIED,
-		      'Phishing attack not detected');
-	/* Also test if normal returnUrls are still ok... */
-	$_GET['g2_return'] =
-	    $this->_urlGenerator->generateUrl(array('view' => 'core.UserAdmin',
-						    'subView' => 'core.UserLogin'));
-	$ret = $this->_urlGenerator->initNavigation();
-	$this->assertEquals(GalleryStatus::success(), $ret, 'Normal returnUrl not accepted');
+	/* Not the same domain name or not the same path are not allowed */
+	$badUrls = array('http://malicious.com/gallery2/main.php?g2_view=core.UserAdmin&' .
+			 'g2_subView=core.UserLogin',
+			 'www.malicious.com/gallery2/main.php?g2_view=core.UserAdmin&' .
+			 'g2_subView=core.UserLogin',
+			 $this->_urlGenerator->getCurrentDomain() . '/malicious/main.php?' .
+			 'g2_subView=core.UserLogin',
+			 '../malicious/main.php?g2_view=core.UserAdmin',
+			 '/malicious/../gallery2/main.php?g2_view=core.UserAdmin');
+	foreach ($badUrls as $url) {
+	    $_GET['g2_return'] = $url;
+	    $ret = $this->_urlGenerator->initNavigation();
+	    $this->assert($ret->getErrorCode() & ERROR_PERMISSION_DENIED,
+			  "Phishing attack $url not detected for url");
+	}
+	/* Check host and path for absolute urls and just the path for reltive urls */
+	$goodUrls = array($this->_urlGenerator->generateUrl(array('view' => 'core.UserAdmin',
+								  'subView' => 'core.UserLogin')),
+			  '/gallery2/main.php?g2_view=core.UserAdmin');
+	foreach ($goodUrls as $url) {
+	    $_GET['g2_return'] = $url;
+	    $ret = $this->_urlGenerator->initNavigation();
+	    $this->assertEquals(GalleryStatus::success(), $ret, "Normal returnUrl $url not accepted");
+	}
     }
 
     function testRelativeUrlOverrides() {
