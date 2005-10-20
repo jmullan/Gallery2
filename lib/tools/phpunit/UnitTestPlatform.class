@@ -87,6 +87,9 @@ class UnitTestPlatform {
 	       $function, UnitTestPlatform::sprint_r($request));
 	printf("Expected:<br/>\nFunction: %s<br/>\nRequest: <pre>%s</pre><br/>\n",
 	       $expected[0], UnitTestPlatform::sprint_r($expected[1]));
+	$ret = GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+				    'Unhandled reply in UnitTestPlatform');
+	print $ret->getAsHtml();
     }
 
     function _parametersMatch($expected, $actual) {
