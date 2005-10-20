@@ -58,16 +58,22 @@ class UnitTestPlatform {
      * Specify inputs and outputs for a function
      *
      * @param string the function name
-     * @param mixed input values
+     * @param mixed input values; any key starting with 'fuzzy' will use value as regexp
      * @param mixed output values
+     * @param boolean true if this platform call is optional
      */
-    function setReply($function, $inputs, $outputs) {
-	$_GET['UnitTestPlatform']['replies'][] = array($function, $inputs, $outputs);
+    function setReply($function, $inputs, $outputs, $optional=false) {
+	$_GET['UnitTestPlatform']['replies'][] = array($function, $inputs, $outputs, $optional);
     }
 
     function isComplete() {
-	return empty($_GET['UnitTestPlatform']['replies']) &&
-	       !$_GET['UnitTestPlatform']['errorCount'];
+	foreach ($_GET['UnitTestPlatform']['replies'] as $reply) {
+	    if (!$reply[3]) { /* ignore optional replies */
+		$incomplete = true;
+		break;
+	    }
+	}
+	return empty($incomplete) && !$_GET['UnitTestPlatform']['errorCount'];
     }
 
     function getRemaining() {
@@ -76,9 +82,13 @@ class UnitTestPlatform {
     }
 
     function _makeReply($function, $request) {
-	$expected = array_shift($_GET['UnitTestPlatform']['replies']);
-	if ($expected[0] == $function && $this->_parametersMatch($expected[1], $request)) {
-	    return $expected[2];
+	while ($expected = array_shift($_GET['UnitTestPlatform']['replies'])) {
+	    if ($expected[0] == $function && $this->_parametersMatch($expected[1], $request)) {
+		return $expected[2];
+	    }
+	    if (!$expected[3]) {
+		break; /* Not optional -- error */
+	    }
 	}
 
 	$_GET['UnitTestPlatform']['errorCount']++;
