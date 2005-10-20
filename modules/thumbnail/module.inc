@@ -41,7 +41,7 @@ class ThumbnailModule extends GalleryModule {
 	$this->setName($gallery->i18n('Thumbnail Manager'));
 	$this->setDescription($gallery->i18n('Set default thumbnails for non-image items'));
 	$this->setVersion('1.0.2'); /* Update upgrade() function below too */
-	$this->setGroup('display', $this->translate('Display'));
+	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
 	$this->setRequiredCoreApi(array(6, 0));
 	$this->setRequiredModuleApi(array(2, 2));

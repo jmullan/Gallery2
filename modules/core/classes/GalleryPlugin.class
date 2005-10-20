@@ -141,13 +141,17 @@ class GalleryPlugin {
 	}
 
 	$translator =& $gallery->getTranslator();
+	if (!isset($translator)) {
+	    /* No translator! (could be an old module calling translate() from constructor) */
+	    return 'Translation error: ' . $params['text'];
+	}
 	list ($ret, $content) =
 	    $translator->translateDomain($this->getPluginType() . 's_' . $this->getId(), $params);
 	if ($ret->isError()) {
 	    if ($gallery->getDebug()) {
 		$gallery->debug($ret->getAsHtml());
 	    }
-	    return 'Translation error';
+	    return 'Translation error: ' . $params['text'];
 	} else {
 	    return $content;
 	}
@@ -546,14 +550,6 @@ class GalleryPlugin {
 
     function getVersion() {
 	return $this->_version;
-    }
-
-    function setGroup($group, $groupLabel) {
-	$this->_group = array('group' => $group, 'groupLabel' => $groupLabel);
-    }
-
-    function getGroup() {
-	return $this->_group;
     }
 
     function getL10Domain() {

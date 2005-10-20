@@ -41,7 +41,7 @@ class GalleryModule extends GalleryPlugin {
      * The module group (optional)
      * Used to better organize site admin pages
      *
-     * @var array('group'=>group, 'groupLabel'=>localized label) _group
+     * @var array('group'=>group, 'groupLabel'=>label) _group
      * @access private
      */
     var $_group;
@@ -94,6 +94,8 @@ class GalleryModule extends GalleryPlugin {
 	 *     GalleryStorage; we're no longer going to seriously attempt to do
 	 *     any other kind of storage besides DatabaseStorage.  Roll as much
 	 *     functionality as possible up into GalleryStorage.class
+	 *   - Commit mindless' change to GallerySession::_shouldSaveSession that
+	 *     will require modules not to call translate() from contructors
 	 */
 	return array(2, 2);
     }
@@ -417,7 +419,7 @@ class GalleryModule extends GalleryPlugin {
      *
      * @return array object GalleryStatus a status code
      *               array( array('name' => name, 'view' => view,
-     *                 [optional: 'group' => group, 'groupLabel' => label]), ...)
+     *                 [optional: 'group' => group, 'groupLabel' => localized label]), ...)
      */
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(), array());
@@ -583,7 +585,17 @@ class GalleryModule extends GalleryPlugin {
     }
 
     function getGroup() {
-	return $this->_group;
+	if (empty($this->_group)) {
+	    global $gallery;
+	    $group = array('group' => 'other', 'groupLabel' => 'Other');
+	    list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	    if ($ret->isSuccess()) {
+		$group['groupLabel'] = $core->translate('Other');
+	    }
+	    return $group;
+	}
+	return array('group' => $this->_group['group'],
+		     'groupLabel' => $this->translate($this->_group['groupLabel']));
     }
 
     function getCallbacks() {

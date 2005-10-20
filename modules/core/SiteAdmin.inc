@@ -91,9 +91,6 @@ class SiteAdminView extends GalleryView {
 		}
 
 		$group = $module->getGroup();
-		if (empty($group)) {
-		    $group = array('group' => 'other');
-		}
 		foreach (array_keys($moduleViews) as $i) {
 		    $moduleViews[$i] = array_merge($group, $moduleViews[$i]);
 		}
@@ -102,7 +99,7 @@ class SiteAdminView extends GalleryView {
 	    }
 	}
 
-	// Sort and group..
+	/* Sort and group */
 	$subViewGroups = $groupLabels = array();
 	foreach ($subViewChoices as $adminView) {
 	    $group = $adminView['group'];
@@ -118,7 +115,7 @@ class SiteAdminView extends GalleryView {
 	    }
 	}
 
-	// Set labels..
+	/* Set labels */
 	foreach (array_keys($subViewGroups) as $group) {
 	    $data =& $subViewGroups[$group];
 	    usort($data, array($this, 'nameSort'));
@@ -220,7 +217,7 @@ class SiteAdminView extends GalleryView {
     function groupSort($a, $b) {
 	static $groupOrder;
 	if (!isset($groupOrder)) {
-	    // gallery first, toolkits second, other last
+	    /* gallery first, toolkits second, other last */
 	    $groupOrder = array('gallery' => 1, 'toolkits' => 2, '' => 3, 'other' => 4);
 	}
 	$ag = $a[0]['group'];

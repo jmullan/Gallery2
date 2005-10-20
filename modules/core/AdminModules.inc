@@ -184,9 +184,9 @@ class AdminModulesView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-        list ($ret, $coreModule) = GalleryCoreApi::loadPlugin('module', 'core');
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
+	list ($ret, $coreModule) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Load the module list */
@@ -233,9 +233,9 @@ class AdminModulesView extends GalleryView {
 	    $entry['name'] = $module->translate($module->getName());
 	    $entry['action'] = array();
 	    $coreApiCompatible = GalleryUtilities::isCompatibleWithApi(
-                $module->getRequiredCoreApi(), GalleryCoreApi::getApiVersion());
+		$module->getRequiredCoreApi(), GalleryCoreApi::getApiVersion());
 	    $moduleApiCompatible = GalleryUtilities::isCompatibleWithApi(
-                $module->getRequiredModuleApi(), GalleryModule::getApiVersion());
+		$module->getRequiredModuleApi(), GalleryModule::getApiVersion());
 	    if ($coreApiCompatible && $moduleApiCompatible) {
 		if (empty($status['active'])) {
 		    $version = $status['version'];
@@ -304,17 +304,11 @@ class AdminModulesView extends GalleryView {
 	    $entry['description'] = $module->translate($module->getDescription());
 	    $entry['version'] = $module->getVersion();
 	    $entry['installedVersion'] = isset($status['version']) ? $status['version'] : null;
-	    $group = $module->getGroup();
-	    $entry = array_merge($entry, empty($group) ?
-		array('group' => 'other', 'groupLabel' => $module->translate('Other')) : $group);
-	    $modules[] = $entry;
+	    $modules[] = array_merge($entry, $module->getGroup());
 	}
 
 	usort($modules, array($this, 'moduleSort'));
-	$AdminModules['modules'] = $modules;
-
-	/* Render the HTML body */
-	$template->setVariable('AdminModules', $AdminModules);
+	$template->setVariable('AdminModules', array('modules' => $modules));
 	$template->setVariable('controller', 'core.AdminModules');
 
 	return array(GalleryStatus::success(),
@@ -324,7 +318,7 @@ class AdminModulesView extends GalleryView {
     function moduleSort($a, $b) {
 	static $groupOrder;
 	if (!isset($groupOrder)) {
-	    // gallery first, toolkits second, other last
+	    /* gallery first, toolkits second, other last */
 	    $groupOrder = array('gallery' => 1, 'toolkits' => 2, '' => 3, 'other' => 4);
 	}
 	$ag = $a['group'];

@@ -43,7 +43,7 @@ class CoreModule extends GalleryModule {
 	$this->setVersion('1.0.4');
 
 	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
-	$this->setGroup('gallery', $this->translate('Gallery'));
+	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks('registerEventListeners|' .
 			    'getItemLinks|getSystemLinks|' .
 			    'getSiteAdminViews|getUserAdminViews|getItemAdminViews');

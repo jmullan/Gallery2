@@ -40,7 +40,7 @@ class MimeModule extends GalleryModule {
 	$this->setName($gallery->i18n('MIME Maintenance'));
 	$this->setDescription($gallery->i18n('Maintain MIME types and file extensions'));
 	$this->setVersion('1.0.0');
-	$this->setGroup('data', $this->translate('Extra Data'));
+	$this->setGroup('data', $gallery->i18n('Extra Data'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
 	$this->setRequiredModuleApi(array(2, 0));
