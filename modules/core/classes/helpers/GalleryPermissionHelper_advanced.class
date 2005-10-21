@@ -349,6 +349,7 @@ class GalleryPermissionHelper_advanced {
 				      'userId' => $userId,
 				      'groupId' => $groupId),
 				array('permission' => $newBits));
+			    $removeEventDataForAcl[$oldAclId] = $currentBits & ~$newBits;
 			}
 			if ($ret->isError()) {
 			    return $ret->wrap(__FILE__, __LINE__);
@@ -359,7 +360,7 @@ class GalleryPermissionHelper_advanced {
 		$oldToNewAclMapping[$oldAclId] = $newAclId;
 	    }
 
-	    if ($newAclId) {
+	    if ($newAclId = $oldToNewAclMapping[$oldAclId]) {
 		$itemsToBeRemapped[$oldAclId][] = $targetItemId;
 
 		if (count($itemsToBeRemapped[$oldAclId]) >= 200) {
@@ -374,7 +375,7 @@ class GalleryPermissionHelper_advanced {
 
 		if ($changeType == 'remove') {
 		    /* Keep track of all items with removed permissions for the postEvent call */
-		    $removeEventData[$targetItemId] = $currentBits & ~$newBits;
+		    $removeEventData[$targetItemId] = $removeEventDataForAcl[$oldAclId];
 		}
 	    }
 	}
