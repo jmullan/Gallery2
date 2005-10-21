@@ -14,7 +14,7 @@ index.php	2543511426	1242933120	1606	1646
 init.inc	889559049	3397993137	6839	7017
 install/GalleryStub.class	2293725073	3959443030	1224	1262
 install/InstallStep.class	2505834344	3674563465	2415	2524
-install/config.php-template	3033210608	721129143	6035	6183
+install/config.php-template	130190947	866080910	6107	6256
 install/images/background.png	2766840926	2766840926	23329	23329
 install/images/g2Logo_install_head.png	3946127092	3946127092	13743	13743
 install/index.php	4169987673	1660096995	8750	9053
@@ -45,7 +45,7 @@ install/po/zh_TW.po	1987630400	3700396939	46657	47862
 install/steps/AdminUserSetupStep.class	3087732259	1670000716	4055	4172
 install/steps/AuthenticateStep.class	698706208	643385129	3253	3358
 install/steps/CreateConfigFileStep.class	1204411494	1703522182	7968	8175
-install/steps/DatabaseSetupStep.class	427708815	2982468001	22649	23279
+install/steps/DatabaseSetupStep.class	4163101515	1203169048	22931	23569
 install/steps/FinishedStep.class	3820441645	1593505205	1266	1303
 install/steps/InstallCoreModuleStep.class	710884283	449893559	8786	9010
 install/steps/InstallOtherModulesStep.class	3659812977	2689573970	6230	6414
@@ -88,12 +88,14 @@ lib/adodb/adodb-perf.inc.php	1402422590	2299237798	30669	31722
 lib/adodb/adodb-php4.inc.php	1669925684	2721487400	322	338
 lib/adodb/adodb-time.inc.php	1928003692	589135776	38309	39596
 lib/adodb/adodb.inc.php	564751406	846616384	110444	114320
+lib/adodb/drivers/adodb-db2.inc.php	438838014	491530951	9001	9361
 lib/adodb/drivers/adodb-mysql.inc.php	736436489	2484851888	20197	20962
 lib/adodb/drivers/adodb-mysqli.inc.php	3810395695	2029575170	22892	23797
 lib/adodb/drivers/adodb-mysqlt.inc.php	3238524927	1073388507	3155	3291
 lib/adodb/drivers/adodb-oci8.inc.php	252984552	295727008	42362	43839
 lib/adodb/drivers/adodb-oci805.inc.php	2168296824	3575527679	1581	1640
 lib/adodb/drivers/adodb-oci8po.inc.php	3651933450	2214443315	5503	5720
+lib/adodb/drivers/adodb-odbc.inc.php	199758350	395992292	19509	20246
 lib/adodb/drivers/adodb-oracle.inc.php	4014458939	1041881342	8987	9307
 lib/adodb/drivers/adodb-postgres.inc.php	3948024068	3653464705	521	535
 lib/adodb/drivers/adodb-postgres64.inc.php	238435762	2975266248	30508	31525
@@ -206,13 +208,20 @@ lib/tools/bin/dbxml.tpl	3862494099	1715686367	1271	1322
 lib/tools/bin/extractClassXml.pl	3154579765	2127723463	1311	1371
 lib/tools/bin/filterManifests.pl	4219568822	1455485770	1427	1500
 lib/tools/bin/generate-dbxml.php	2947422443	1017554010	5562	5751
-lib/tools/bin/generate-interfaces.php	1449092805	3577116011	4375	4529
-lib/tools/bin/generate-sql.php	53703279	1416406669	25888	26765
+lib/tools/bin/generate-interfaces.php	3493394409	3329900351	4523	4684
+lib/tools/bin/generate-sql.php	569666947	4086642549	35166	36307
 lib/tools/bin/getIllegalFunctions.pl	2694286659	3868382365	1197	1248
 lib/tools/bin/interface.tpl	7574603	409957479	8209	8476
 lib/tools/bin/makeManifest.pl	3913839410	3897275588	4138	4317
 lib/tools/bin/rebuild-modules.pl	1349153253	1285048642	475	491
 lib/tools/bin/update-codex-download-page.php	2643023147	2052393309	6789	7020
+lib/tools/creator/GNUmakefile.tpl	4206709443	1871264538	498	514
+lib/tools/creator/MyPage.inc.tpl	671857949	3563370773	3268	3376
+lib/tools/creator/MyPage.tpl.tpl	4104452985	3636842738	1427	1467
+lib/tools/creator/MyPageHelper.class.tpl	3699956269	4198238432	2048	2121
+lib/tools/creator/create-module.php	3899225756	2371121761	5524	5712
+lib/tools/creator/map.tpl	453777921	152334364	1745	1804
+lib/tools/creator/module.inc.tpl	3461662154	1604413115	2245	2318
 lib/tools/dtd/DatabaseChangeDefinition2.0.dtd	2315682845	2380282960	968	992
 lib/tools/dtd/DatabaseRemoveDefinition2.0.dtd	326094190	4082287261	203	210
 lib/tools/dtd/DatabaseTableDefinition2.0.dtd	3813059960	1521873026	610	626
@@ -225,7 +234,7 @@ lib/tools/phpunit/ItemAddPluginTestCase.class	4071311202	1680947289	3554	3661
 lib/tools/phpunit/ItemEditOptionTestCase.class	3921037208	3857094100	4536	4688
 lib/tools/phpunit/ItemEditPluginTestCase.class	4176956092	2433813660	3431	3537
 lib/tools/phpunit/MockTemplateAdapter.class	2108389071	284645965	1973	2041
-lib/tools/phpunit/UnitTestPlatform.class	1928931572	2627591462	9852	10189
+lib/tools/phpunit/UnitTestPlatform.class	10144141	3745436080	10352	10702
 lib/tools/phpunit/index.php	3237443525	358440152	6736	6960
 lib/tools/phpunit/index.tpl	3232203125	1223037588	8162	8382
 lib/tools/phpunit/phpunit.inc	21831659	3521135413	22321	23077
@@ -254,7 +263,7 @@ lib/tools/uml/JavaClasses.xsl	1301723047	3945700576	2212	2265
 lib/tools/uml/make-java-classes.pl	3765624927	2605669075	2734	2840
 lib/wz_dragdrop/transparentpixel.gif	140141401	140141401	43	43
 lib/wz_dragdrop/wz_dragdrop.js	3756427581	4136821188	38687	40134
-main.php	2649289258	3882002539	15573	16034
+main.php	1042577152	622610258	15195	15649
 upgrade/GalleryStub.class	3606521607	1233262600	1200	1238
 upgrade/StatusTemplate.class	2600326803	1298051873	3342	3445
 upgrade/UpgradeStep.class	1641610611	3407736305	2415	2524
@@ -332,42 +341,6 @@ R	lib/tools/messages
 R	lib/tools/phpinfo.php
 R	lib/tools/security.inc
 R	lib/tools/test
-R	modules/comment/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/
-R	modules/comment/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/
-R	modules/comment/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/
-R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/
-R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/
-R	modules/core/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/
-R	modules/customfield/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/
-R	modules/customfield/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/
-R	modules/customfield/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/
-R	modules/exif/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/
-R	modules/exif/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/
-R	modules/exif/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/
-R	modules/imageblock/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/
-R	modules/imageblock/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/
-R	modules/imageblock/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/
-R	modules/migrate/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/
-R	modules/migrate/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/
-R	modules/migrate/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/
-R	modules/multilang/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/
-R	modules/multilang/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/
-R	modules/multilang/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/
-R	modules/quotas/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/
-R	modules/quotas/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/
-R	modules/quotas/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/
-R	modules/register/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/
-R	modules/register/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/
-R	modules/register/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/
-R	modules/rewrite/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/
-R	modules/rewrite/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/
-R	modules/rewrite/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/
-R	modules/thumbnail/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/
-R	modules/thumbnail/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/
-R	modules/thumbnail/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/
-R	modules/watermark/classes/GalleryStorage/DatabaseStorage/schema/platform/mysql/
-R	modules/watermark/classes/GalleryStorage/DatabaseStorage/schema/platform/oracle/
-R	modules/watermark/classes/GalleryStorage/DatabaseStorage/schema/platform/postgres/
 R	templates
 R	themes/mblue
 R	themes/veloria
