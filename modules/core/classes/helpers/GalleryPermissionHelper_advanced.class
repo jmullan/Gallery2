@@ -349,11 +349,11 @@ class GalleryPermissionHelper_advanced {
 				      'userId' => $userId,
 				      'groupId' => $groupId),
 				array('permission' => $newBits));
-			    $removeEventDataForAcl[$oldAclId] = $currentBits & ~$newBits;
 			}
 			if ($ret->isError()) {
 			    return $ret->wrap(__FILE__, __LINE__);
 			}
+			$removeEventDataForAcl[$oldAclId] = $currentBits & $deltaBits;
 		    }
 		}
 
