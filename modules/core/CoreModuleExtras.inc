@@ -1237,6 +1237,9 @@ class CoreModuleExtras {
 	case '1.0.3':
 	    /* Consolidated .sql files into schema.tpl */
 
+	case '1.0.4':
+	    /* Added maintenance mode */
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
@@ -1410,6 +1413,22 @@ $gallery->setConfig(\'cookieId\', \'' . $cookieId . '\');
 	case '1.0.1':
 	case '1.0.2':
 	case '1.0.3':
+
+	case '1.0.4':
+	    $configChanges[] = array('remove' => array(), 'add' => array(
+'
+/*
+ * Maintenance mode.  You can disable access to the site for anyone but
+ * site administrators by setting this this flag.  Set value below to:
+ *  true (without quotes) - to use a basic notification page; themed
+ *    view with admin login link when codebase is up to date, but a
+ *    plain unstyled page when codebase has been updated but upgrader
+ *    has not yet been run.
+ *  url (with quotes) - provide a url where requests are redirected in
+ *    either case described above.  Example: \'/maintenance.html\'
+ */
+$gallery->setConfig(\'mode.maintenance\', false);
+'));
 
 	case 'end of upgrade path':
 	    /*

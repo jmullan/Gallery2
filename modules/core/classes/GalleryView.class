@@ -100,6 +100,15 @@ class GalleryView {
     }
 
     /**
+     * Does this view allow access to non-admins when site is in maintenance mode?
+     *
+     * @return boolean true if access always allowed
+     */
+    function isAllowedInMaintenance() {
+	return false;
+    }
+
+    /**
      * Does this view allow direct access even in embed-only mode?
      *
      * @return boolean true if access always allowed

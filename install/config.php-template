@@ -129,6 +129,18 @@ $gallery->setDebug(false);
 $gallery->setProfile(false);
 
 /*
+ * Maintenance mode.  You can disable access to the site for anyone but
+ * site administrators by setting this this flag.  Set value below to:
+ *  true (without quotes) - to use a basic notification page; themed
+ *    view with admin login link when codebase is up to date, but a
+ *    plain unstyled page when codebase has been updated but upgrader
+ *    has not yet been run.
+ *  url (with quotes) - provide a url where requests are redirected in
+ *    either case described above.  Example: '/maintenance.html'
+ */
+$gallery->setConfig('mode.maintenance', false);
+
+/*
  * Embedded mode.  You can disable direct access to main.php (standalone G2)
  * by setting this this flag to true.
  */

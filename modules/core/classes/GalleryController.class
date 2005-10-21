@@ -177,6 +177,15 @@ class GalleryController {
     }
 
     /**
+     * Does this controller allow access to non-admins when site is in maintenance mode?
+     *
+     * @return boolean true if access always allowed
+     */
+    function isAllowedInMaintenance() {
+	return false;
+    }
+
+    /**
      * Does this controller allow direct access even in embed-only mode?
      *
      * @return boolean true if access always allowed

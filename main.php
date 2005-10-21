@@ -60,7 +60,8 @@ if (GalleryUtilities::isEmbedded()) {
 	$path = GalleryDataCache::getCachePath(
 	    array('type' => 'fast-download', 'itemId' => $itemId));
 	/* We don't have a platform yet so we have to use the raw file_exists */
-	if (file_exists($path)) {
+	/* Disable fast-download in maintenance mode.. admins still get via core.DownloadItem */
+	if (file_exists($path) && !$gallery->getConfig('mode.maintenance')) {
 	    include($path);
 	    if (GalleryFastDownload()) {
 		return;
@@ -147,7 +148,15 @@ function _GalleryMain($embedded=false) {
     }
     $installedVersions = $core->getInstalledVersions();
     if ($installedVersions['core'] != $core->getVersion()) {
-	$redirectUrl = $urlGenerator->getCurrentUrlDir(true) . 'upgrade/index.php';
+	if ($redirectUrl = @$gallery->getConfig('mode.maintenance')) {
+	    /* Maintenance mode -- redirect if given url, else simple message */
+	    if ($redirectUrl === true) {
+		print $core->translate('Site is temporarily down for maintenance.');
+		exit;
+	    }
+	} else {
+	    $redirectUrl = $urlGenerator->getCurrentUrlDir(true) . 'upgrade/index.php';
+	}
 	return array(GalleryStatus::success(), _GalleryMain_doRedirect($redirectUrl));
     }
 
@@ -168,6 +177,20 @@ function _GalleryMain($embedded=false) {
 		!$controller->isAllowedInEmbedOnly()) {
 	    /* Lock out direct access when embed-only is set */
 	    return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
+	}
+	if ($gallery->getConfig('mode.maintenance') && !$controller->isAllowedInMaintenance()) {
+	    /* Maintenance mode - allow admins, else redirect to given or standard url */
+	    list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if (!$isAdmin) {
+		if (($redirectUrl = $gallery->getConfig('mode.maintenance')) === true) {
+		    $redirectUrl =
+			$urlGenerator->generateUrl(array('view' => 'core.MaintenanceMode'));
+		}
+		return array(GalleryStatus::success(), _GalleryMain_doRedirect($redirectUrl));
+	    }
 	}
 
 	/* Get our form and return variables */
@@ -265,6 +288,23 @@ function _GalleryMain($embedded=false) {
     list ($ret, $view) = GalleryView::loadView($viewName);
     if ($ret->isError()) {
 	return array($ret->wrap(__FILE__, __LINE__), null);
+    }
+    if ($gallery->getConfig('mode.maintenance') && !$view->isAllowedInMaintenance()) {
+	/* Maintenance mode - allow admins, else redirect to given url or show standard view */
+	list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (!$isAdmin) {
+	    if (($redirectUrl = $gallery->getConfig('mode.maintenance')) !== true) {
+		return array(GalleryStatus::success(), _GalleryMain_doRedirect($redirectUrl));
+	    }
+	    $viewName = 'core.MaintenanceMode';
+	    list ($ret, $view) = GalleryView::loadView($viewName);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
     }
     if (!$embedded && $gallery->getConfig('mode.embed.only') && !$view->isAllowedInEmbedOnly()) {
 	/* Lock out direct access when embed-only is set */

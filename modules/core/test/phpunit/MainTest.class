@@ -74,8 +74,48 @@ class MainTest extends GalleryTestCase {
 	global $gallery;
 	$gallery->setConfig('mode.embed.only', true);
 
-	list($ret, $g2Data) = _GalleryMain(false);
+	list ($ret, $g2Data) = _GalleryMain(false);
 	$this->assertEquals(GALLERY_ERROR | ERROR_PERMISSION_DENIED, $ret->getErrorCode());
+    }
+
+    function testMaintenanceMode() {
+	/* Test maintenance mode controller redirect with standard redirect url */
+	global $gallery;
+	$gallery->_phpVm = $phpVm = new MainTestPhpVm();
+	$gallery->setConfig('mode.maintenance', true);
+	GalleryUtilities::putRequestVariable('controller', 'core.FooController');
+
+	list ($ret, $g2Data) = _GalleryMain(false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$headers = $phpVm->headers_sent() ? $_REQUEST['phpVmHeaders'] : array();
+	if (isset($headers['Location'])) {
+	    $urlGenerator =& $gallery->getUrlGenerator();
+	    $expectedUrl = str_replace('&amp;', '&',
+		$urlGenerator->generateUrl(array('view' => 'core.MaintenanceMode')));
+	    $this->assertEquals($expectedUrl, trim($headers['Location']), 'wrong redirect url');
+	} else {
+	    $this->assert(false, 'should have redirected');
+	}
+    }
+
+    function testMaintenanceModeUrl() {
+	/* Test maintenance mode view redirect with configured redirect url */
+	global $gallery;
+	$gallery->_phpVm = $phpVm = new MainTestPhpVm();
+	$gallery->setConfig('mode.maintenance', $expectedUrl = '/maintenance.html');
+
+	list ($ret, $g2Data) = _GalleryMain(false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$headers = $phpVm->headers_sent() ? $_REQUEST['phpVmHeaders'] : array();
+	if (isset($headers['Location'])) {
+	    $this->assertEquals($expectedUrl, trim($headers['Location']), 'wrong redirect url');
+	} else {
+	    $this->assert(false, 'should have redirected');
+	}
     }
 
     /* Test that we only append the GALLERYSID to Location URLs if really needed */
@@ -171,4 +211,7 @@ class MainTestPhpVm extends GalleryPhpVm {
 
 GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryView.class');
 class FooViewView extends GalleryView { }
+
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryController.class');
+class FooControllerController extends GalleryController { }
 ?>

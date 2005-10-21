@@ -19,57 +19,46 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 /**
  * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage UserInterface
- * @author Bharat Mediratta <bharat@menalto.com>
+ * @package Core
+ * @author Alan Harder <alan.harder@sun.com>
  */
 
 /**
- * This controller will handle an user logging out of Gallery
+ * View to display message when site is down for maintenance.
  *
- * @package GalleryCore
+ * @package Core
  * @subpackage UserInterface
- *
  */
-class LogoutController extends GalleryController {
+class MaintenanceModeView extends GalleryView {
 
     /**
-     * @see GalleryController::isAllowedInMaintenance()
+     * @see GalleryView::loadTemplate
      */
-    function isAllowedInMaintenance() {
-	return true;
+    function loadTemplate(&$template, &$form) {
+	$theme =& $template->getVariableByReference('theme');
+	$theme['useFullScreen'] = true;
+
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$template->title($module->translate('Maintenance'));
+	return array(GalleryStatus::success(),
+	    array('body' => 'modules/core/templates/MaintenanceMode.tpl'));
     }
 
     /**
-     * @see GalleryController::handleRequest()
+     * @see GalleryView::getViewDescription
      */
-    function handleRequest() {
-	global $gallery;
-
-	$event = GalleryCoreApi::newEvent('Gallery::Logout');
-	$event->setEntity($gallery->getActiveUser());
-	list ($ret) = GalleryCoreApi::postEvent($event);
+    function getViewDescription() {
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
-	$session =& $gallery->getSession();
-	$ret = $session->reset();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Force return to core.ShowItem, as we don't know if the guest user
-	 * has necessary permissions for the return page
-	 */
-	$results['redirect']['view'] = 'core.ShowItem';
-	$results['status'] = array();
-	$results['error'] = array();
-
-	return array(GalleryStatus::success(), $results);
+	return array(GalleryStatus::success(), $module->translate('Maintenance'));
     }
 }
 ?>

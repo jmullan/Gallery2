@@ -61,7 +61,14 @@ class UserLoginController extends GalleryController {
     }
 
     /**
-     * @see GalleryController::handleRequest
+     * @see GalleryController::isAllowedInMaintenance()
+     */
+    function isAllowedInMaintenance() {
+	return true;
+    }
+
+    /**
+     * @see GalleryController::handleRequest()
      */
     function handleRequest($form) {
 	global $gallery;

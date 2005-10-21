@@ -37,7 +37,7 @@
 class UserAdminView extends GalleryView {
 
     /**
-     * @see GalleryView::loadTemplate
+     * @see GalleryView::loadTemplate()
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
@@ -150,6 +150,13 @@ class UserAdminView extends GalleryView {
 	$template->title($module->translate('Gallery User Administration'));
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/UserAdmin.tpl'));
+    }
+
+    /**
+     * @see GalleryView::isAllowedInMaintenance()
+     */
+    function isAllowedInMaintenance() {
+	return (GalleryUtilities::getRequestVariables('subView') == 'core.UserLogin');
     }
 
     /**
