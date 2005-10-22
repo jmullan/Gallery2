@@ -364,9 +364,6 @@ class DatabaseSetupStep extends InstallStep {
 	/* TODO: Stop using a private method for this */
 	$moduleSql = DatabaseStorageExtras::_parseSqlTemplate($sqlData);
 
-	printf("<pre>%s</pre>", print_r($sqlData, 1));
-	printf("<pre>%s</pre>", print_r($moduleSql, 1));
-
 	for ($i = 1; $i <= 4; $i++) {
 	    $test = sprintf('T_InstallerTest_%d.sql', $i);
 	    list ($success, $errorMessage) =
