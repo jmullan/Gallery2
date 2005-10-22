@@ -45,6 +45,24 @@ class GalleryItemAttributesHelper_simple {
      * @static
      */
     function incrementViewCount($itemId, $step=1) {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	$elapsed = time() - $session->getCreationTime();
+	if (!$session->exists('core.lastViewed')) {
+	    $lastViewed = array($itemId => $elapsed);
+	    $session->put('core.lastViewed', $lastViewed);
+	} else {
+	    $lastViewed =& $session->get('core.lastViewed');
+	    if (isset($lastViewed[$itemId])) {
+		if ($elapsed - $lastViewed[$itemId] < 86400) {
+		    /* They viewed it within the last day, so this doesn't count */
+		    return GalleryStatus::success();
+		}
+	    }
+	    $lastViewed[$itemId] = $elapsed;
+	}
+
 	GalleryCoreApi::relativeRequireOnce(
 	    'modules/core/classes/GalleryStorage/DatabaseSqlFragment.class');
 	$func = '= [GalleryItemAttributesMap::viewCount] + ?';

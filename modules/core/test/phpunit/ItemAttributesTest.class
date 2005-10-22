@@ -88,6 +88,15 @@ class ItemAttributesTest extends GalleryTestCase {
 	}
     }
 
+    function tearDown() {
+	global $gallery;
+	if (isset($this->_saveSession)) {
+	    $gallery->_session = $this->_saveSession;
+	}
+
+	parent::tearDown();
+    }
+
     /**
      * Update the view count and verify it
      */
@@ -109,7 +118,12 @@ class ItemAttributesTest extends GalleryTestCase {
      * Update the view count and verify it
      */
     function testIncrementItemViewCount() {
-	$ret = GalleryCoreApi::setItemViewCount($this->_childItems[0]->getId(), 999);
+	global $gallery;
+	$session = new ItemAttributesTestMockSession();
+	$this->_saveSession =& $gallery->getSession();
+	$gallery->_session =& $session;
+
+	$ret = GalleryCoreApi::setItemViewCount($this->_childItems[0]->getId(), 0);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -124,8 +138,96 @@ class ItemAttributesTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals(1002, $viewCount);
+	$this->assertEquals(3, $viewCount);
     }
+
+    /**
+     * Verify that we don't increment the view count until a day after the last increment within
+     * the same session.
+     */
+    function testDontIncrementItemViewCountTooOften() {
+	global $gallery;
+	$session = new ItemAttributesTestMockSession();
+	$this->_saveSession =& $gallery->getSession();
+	$gallery->_session =& $session;
+
+	$ret = GalleryCoreApi::setItemViewCount($this->_childItems[0]->getId(), 0);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::incrementItemViewCount($this->_childItems[0]->getId(), 1);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::incrementItemViewCount($this->_childItems[0]->getId(), 1);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCount($this->_childItems[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(1, $viewCount);
+    }
+
+    /**
+     * Verify that we don't increment the view count until a day after the last increment within
+     * the same session.
+     */
+    function testIncrementItemViewCountThreshold() {
+	global $gallery;
+	$session = new ItemAttributesTestMockSession();
+	$this->_saveSession =& $gallery->getSession();
+	$gallery->_session =& $session;
+
+	$ret = GalleryCoreApi::setItemViewCount($this->_childItems[0]->getId(), 0);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::incrementItemViewCount($this->_childItems[0]->getId(), 1);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Backdate our last viewed time by *almost* one day. */
+	$lastViewed =& $session->get('core.lastViewed');
+	$lastViewed[$this->_childItems[0]->getId()] -= 86398;
+
+	$ret = GalleryCoreApi::incrementItemViewCount($this->_childItems[0]->getId(), 1);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCount($this->_childItems[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* No change; a full day has not elapsed */
+	$this->assertEquals(1, $viewCount);
+
+	/* Backdate it further over the day line */
+	$lastViewed =& $session->get('core.lastViewed');
+	$lastViewed[$this->_childItems[0]->getId()] -= 4;
+
+	$ret = GalleryCoreApi::incrementItemViewCount($this->_childItems[0]->getId(), 1);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCount($this->_childItems[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Now it changes */
+	$this->assertEquals(2, $viewCount);
+    }
+
 
     /**
      * Update the view count and verify it
@@ -136,7 +238,8 @@ class ItemAttributesTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $orderWeight) = GalleryCoreApi::fetchItemOrderWeight($this->_childItems[0]->getId());
+	list ($ret, $orderWeight) =
+	    GalleryCoreApi::fetchItemOrderWeight($this->_childItems[0]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -382,6 +485,29 @@ class ItemAttributesTest extends GalleryTestCase {
 	$this->assertEquals(array($this->_parentItem->getId() => 5,
 				  $album->getId() => 2),
 			    $counts);
+    }
+}
+
+class ItemAttributesTestMockSession {
+
+    function ItemAttributesTestMockSession() {
+	$this->_creationTime = time();
+    }
+
+    function put($key, $value) {
+	$this->_data[$key] = $value;
+    }
+
+    function getCreationTime() {
+	return $this->_creationTime;
+    }
+
+    function exists($key) {
+	return isset($this->_data[$key]);
+    }
+
+    function &get($key) {
+	return $this->_data[$key];
     }
 }
 

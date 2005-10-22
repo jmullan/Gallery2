@@ -920,6 +920,14 @@ class GallerySession {
     }
 
     /**
+     * Return the Unix timestamp from when this session was created.
+     * @return int the creation time
+     */
+    function getCreationTime() {
+	return $this->_creationTime;
+    }
+
+    /**
      * Check if we should create and save a session for this request
      *
      * Don't save session in core.DownloadItem, migrate.Redirect, ... requests
