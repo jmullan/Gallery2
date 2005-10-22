@@ -155,6 +155,7 @@ function _GalleryMain($embedded=false) {
 		exit;
 	    }
 	} else {
+	    $gallery->debug('Redirect to the upgrade wizard, core module version is out of date');
 	    $redirectUrl = $urlGenerator->getCurrentUrlDir(true) . 'upgrade/index.php';
 	}
 	return array(GalleryStatus::success(), _GalleryMain_doRedirect($redirectUrl));
