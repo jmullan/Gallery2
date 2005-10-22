@@ -1009,7 +1009,7 @@ class DatabaseStorageExtras /* the other half of DatabaseStorage */ {
 
 	if ($platform->file_exists($sqlFile)) {
 	    $sqlData = explode("\n", $platform->file_get_contents($sqlFile));
-	    $moduleSql = $this->_parseSqlTemplate($sqlData);
+	    $moduleSql = DatabaseStorageExtras::parseSqlTemplate($sqlData, $this->_ds->getType());
 	} else {
 	    /* Stop supporting this on the next major core api change */
 	    list ($ret, $moduleSql) = $this->_loadOldStyleSqlFiles($moduleId);
@@ -1089,9 +1089,11 @@ class DatabaseStorageExtras /* the other half of DatabaseStorage */ {
      * unit test.
      *
      * @param array the raw template data
-     * @param array the parsed results
+     * @param string the database type
+     * @return array the parsed results
+     * @static
      */
-    function _parseSqlTemplate($sqlData) {
+    function parseSqlTemplate($sqlData, $dbType) {
 	$info = array('table' => array(), 'alter' => array(),
 		      'remove' => array(), 'test' => array());
 	$dbname = null;
@@ -1099,7 +1101,7 @@ class DatabaseStorageExtras /* the other half of DatabaseStorage */ {
 	$record = false;
 	foreach ($sqlData as $line) {
 	    if (preg_match('/^## (.*)$/', $line, $matches)) {
-		if ($matches[1] == $this->_ds->getType()) {
+		if ($matches[1] == $dbType) {
 		    $record = true;
 		} else {
 		    $record = false;

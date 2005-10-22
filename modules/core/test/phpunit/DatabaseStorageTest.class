@@ -26,6 +26,9 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
+GalleryCoreApi::relativeRequireOnce(
+    'modules/core/classes/GalleryStorage/DatabaseStorageExtras.class');
+
 /**
  * Test Item functionality
  *
@@ -63,14 +66,8 @@ class DatabaseStorageTest extends GalleryTestCase {
 			     '## database_with_nothing');
     }
 
-    function _parseSqlTemplate($ds) {
-	$extras =& $ds->_getExtras();
-	return $extras->_parseSqlTemplate($this->_data);
-    }
-
     function testParseSqlTemplate1() {
-	$ds = new SubclassOfDatabaseStorage('database_with_everything');
-	$results = $this->_parseSqlTemplate($ds);
+	$results = DatabaseStorageExtras::parseSqlTemplate($this->_data, 'database_with_everything');
 	$this->assertEquals(
 	    array('alter' => array(
 		      'SomeTable' => array(
@@ -101,8 +98,8 @@ class DatabaseStorageTest extends GalleryTestCase {
     }
 
     function testParseSqlTemplate2() {
-	$ds = new SubclassOfDatabaseStorage('database_with_only_tables');
-	$results = $this->_parseSqlTemplate($ds);
+	$results =
+	    DatabaseStorageExtras::parseSqlTemplate($this->_data, 'database_with_only_tables');
 	$this->assertEquals(
 	    array('table' => array(
 		      'SomeTable' => 'Some postgres SQL'
@@ -115,8 +112,8 @@ class DatabaseStorageTest extends GalleryTestCase {
     }
 
     function testParseSqlTemplate3() {
-	$ds = new SubclassOfDatabaseStorage('database_with_only_removes');
-	$results = $this->_parseSqlTemplate($ds);
+	$results =
+	    DatabaseStorageExtras::parseSqlTemplate($this->_data, 'database_with_only_removes');
 	$this->assertEquals(
 	    array('table' => array(),
 		  'alter' => array(),
@@ -133,27 +130,11 @@ class DatabaseStorageTest extends GalleryTestCase {
     }
 
     function testParseSqlTemplate4() {
-	$ds = new SubclassOfDatabaseStorage('database_with_nothing');
-	$results = $this->_parseSqlTemplate($ds);
+	$results = DatabaseStorageExtras::parseSqlTemplate($this->_data, 'database_with_nothing');
 	$this->assertEquals(array('table' => array(),
 				  'alter' => array(),
 				  'remove' => array(),
 				  'test' => array()), $results);
-    }
-}
-
-/**
- * Create a fake subclass of DatabaseStorage that
- */
-class SubclassOfDatabaseStorage extends DatabaseStorage {
-    var $_dbType;
-
-    function SubclassOfDatabaseStorage($dbType) {
-	$this->_dbType = $dbType;
-    }
-
-    function getType() {
-	return $this->_dbType;
     }
 }
 ?>

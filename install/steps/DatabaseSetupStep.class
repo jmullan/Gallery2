@@ -361,13 +361,12 @@ class DatabaseSetupStep extends InstallStep {
 	$fileSize = filesize($schemaTpl);
 	$sqlData = $fileSize == 0 ? '' : fread($fd, $fileSize);
 	fclose($fd);
-	/* TODO: Stop using a private method for this */
-	$moduleSql = DatabaseStorageExtras::_parseSqlTemplate($sqlData);
+	$sqlData = explode("\n", $sqlData);
+	$moduleSql = DatabaseStorageExtras::parseSqlTemplate($sqlData, $dbType);
 
 	for ($i = 1; $i <= 4; $i++) {
-	    $test = sprintf('T_InstallerTest_%d.sql', $i);
 	    list ($success, $errorMessage) =
-		$this->_executeSql($moduleSql['test'][$test], $tablePrefix);
+		$this->_executeSql($moduleSql['test']['InstallerTest'][$i], $tablePrefix);
 	    if (!$success) {
 		return array(false, $errorMessage);
 	    }
@@ -399,6 +398,9 @@ class DatabaseSetupStep extends InstallStep {
      * @return array(boolean success, string error message)
      */
     function _executeSql($buffer, $tablePrefix) {
+	if (empty($buffer)) {
+	    return array(false, _('Missing SQL statements'));
+	}
 	/*
 	 * Split the file where semicolons are followed by a blank line..
 	 * PL/SQL blocks will have other semicolons, so we can't split on every one.
