@@ -96,7 +96,7 @@ class FfmpegToolkit extends GalleryToolkit {
 	$outputMimeType = null;
 	switch($operationName) {
 	case 'convert-to-image/jpeg':
-	    $args = array('-f', 'singlejpeg', '-t', '0.001', '-y', $tmpFilename);
+	    $args = array('-f', 'mjpeg', '-t', '0.001', '-y', $tmpFilename);
 	    if (isset($context['ffmpeg.offset'])) {
 		array_unshift($args, '-ss', $context['ffmpeg.offset']);
 		unset($context['ffmpeg.offset']);

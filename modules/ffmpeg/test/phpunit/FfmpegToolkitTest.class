@@ -121,7 +121,7 @@ class FfmpegToolkitTest extends GalleryTestCase {
 	$output[] = 'Output audio/video file formats: mpeg vcd vob mpegts crc image ' .
 	    'imagepipe mp2 ac3 h263 m4v h264 mpeg1video mjpeg s16le s16be u16le u16be ' .
 	    's8 u8 mulaw alaw rawvideo null rm asf asf_stream avi wav swf au gif mpjpeg ' .
-	    'singlejpeg dv flv yuv4mpegpipe ffm audio_device rtp';
+	    'dv flv yuv4mpegpipe ffm audio_device rtp';
 	$output[] = 'Input audio/video file formats: mpeg mpegts image imagepipe mp3 ' .
 	    'ac3 h263 m4v h264 mpegvideo mjpeg s16le s16be u16le u16be s8 u8 mulaw ' .
 	    'alaw rawvideo rm asf avi wav swf au gif mov dv 4xm flv yuv4mpegpipe ffm ' .
@@ -151,9 +151,10 @@ class FfmpegToolkitTest extends GalleryTestCase {
 	$this->assertEquals($expectedMimeTypes, $mimeTypes);
     }
 
-    function testBinariesAlternateFormatsOutput() {
+    /* 0.4.8 and newer have an alternative / new output format, one video format per line */
+    function testBinariesFormat048Output() {
 	list ($ret, $results, $mimeTypes) =
-	    FfmpegToolkitHelper::testBinary('/validPath/ffmpegAlternateFormatsOutput');
+	    FfmpegToolkitHelper::testBinary('/validPath/ffmpeg048FormatsOutput');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -213,7 +214,6 @@ class FfmpegToolkitTest extends GalleryTestCase {
 	$output[] = ' DE s16le';
 	$output[] = ' DE s8';
 	$output[] = ' D  sdp';
-	$output[] = '  E singlejpeg';
 	$output[] = '  E svcd';
 	$output[] = ' DE swf';
 	$output[] = ' DE u16be';
@@ -361,6 +361,7 @@ class FfmpegToolkitTest extends GalleryTestCase {
 	    'video/mpeg', 'video/x-ms-asf', 'video/x-msvideo', 'video/quicktime', 'video/x-ms-wmv');
 	sort($expectedMimeTypes);
 
+	/* Versions prior to 0.4.9-pre1 supported singlejpeg (which is the same as mjpeg) */
 	$output = array();
 	$output[] = 'File formats:';
 	$output[] = '  Encoding: mpeg vcd vob crc pgm pgmyuv ppm .Y.U.V pgmpipe pgmyuvpipe ' .
@@ -483,8 +484,8 @@ class FfmpegToolkitTestPlatform {
 	case serialize(array(array($this->_ffmpegPath, '-formats'))):
 	    $results[] = 'Output audio/video file formats: mpeg vcd vob mpegts crc image ' .
 	    'imagepipe mp2 ac3 h263 m4v h264 mpeg1video mjpeg s16le s16be u16le u16be s8 u8 ' .
-	    'mulaw alaw rawvideo null rm asf asf_stream avi wav swf au gif mpjpeg singlejpeg ' .
-	    'dv flv yuv4mpegpipe ffm audio_device rtp';
+	    'mulaw alaw rawvideo null rm asf asf_stream avi wav swf au gif mpjpeg dv flv ' .
+	    'yuv4mpegpipe ffm audio_device rtp';
 	    $results[] = 'Input audio/video file formats: mpeg mpegts image imagepipe mp3 ac3 ' .
 		'h263 m4v h264 mpegvideo mjpeg s16le s16be u16le u16be s8 u8 mulaw alaw ' .
 		'rawvideo rm asf avi wav swf au gif mov dv 4xm flv yuv4mpegpipe ffm video4linux ' .
@@ -532,7 +533,7 @@ class FfmpegToolkitTestPlatform {
 		'epzs(default) x1';
 	    return array(1, $results, $stderr);
 
-	case serialize(array(array('/validPath/ffmpegAlternateFormatsOutput', '-formats'))):
+	case serialize(array(array('/validPath/ffmpeg048FormatsOutput', '-formats'))):
 	case serialize(array(array($this->_ffmpegPath, '-formats'))):
 	    $results[] = 'File formats:';
 	    $results[] = '  E 3gp';
@@ -585,7 +586,6 @@ class FfmpegToolkitTestPlatform {
 	    $results[] = ' DE s16le';
 	    $results[] = ' DE s8';
 	    $results[] = ' D  sdp';
-	    $results[] = '  E singlejpeg';
 	    $results[] = '  E svcd';
 	    $results[] = ' DE swf';
 	    $results[] = ' DE u16be';
@@ -720,12 +720,12 @@ class FfmpegToolkitTestPlatform {
 	    return array(1, $results, $stderr);
 
 	case serialize(array(array($this->_ffmpegPath, '-i', 'testPerformOperation1.avi',
-				   '-f', 'singlejpeg', '-t', '0.001', '-y', 'TEMPFILE'))):
+				   '-f', 'mjpeg', '-t', '0.001', '-y', 'TEMPFILE'))):
 	    $stderr[] = 'Input #0, avi, from \'testPerformOperation1.avi\':';
 	    $stderr[] = '  Duration: 00:00:04.0, bitrate: 329 kb/s';
 	    $stderr[] = '  Stream #0.0: Video: mjpeg, 160x120, 15.00 fps';
 	    $stderr[] = '  Stream #0.1: Audio: pcm_u8, 8000 Hz, mono, 64 kb/s';
-	    $stderr[] = 'Output #0, singlejpeg, to \'TEMPFILE\':';
+	    $stderr[] = 'Output #0, , to \'TEMPFILE\':';
 	    $stderr[] = '  Stream #0.0: Video: mjpeg, 160x120, 15.00 fps, q=2-31, 200 kb/s';
 	    $stderr[] = 'Stream mapping:';
 	    $stderr[] = '  Stream #0.0 -> #0.0';
@@ -734,12 +734,12 @@ class FfmpegToolkitTestPlatform {
 	    return array(1, $results, $stderr);
 
 	case serialize(array(array($this->_ffmpegPath, '-i', 'testPerformOperation2.avi',
-			     '-ss', '1.2', '-f', 'singlejpeg', '-t', '0.001', '-y', 'TEMPFILE'))):
+			     '-ss', '1.2', '-f', 'mjpeg', '-t', '0.001', '-y', 'TEMPFILE'))):
 	    $stderr[] = 'Input #0, avi, from \'testPerformOperation2.avi\':';
 	    $stderr[] = '  Duration: 00:00:04.0, bitrate: 329 kb/s';
 	    $stderr[] = '  Stream #0.0: Video: mjpeg, 160x120, 15.00 fps';
 	    $stderr[] = '  Stream #0.1: Audio: pcm_u8, 8000 Hz, mono, 64 kb/s';
-	    $stderr[] = 'Output #0, singlejpeg, to \'TEMPFILE\':';
+	    $stderr[] = 'Output #0, mjpeg, to \'TEMPFILE\':';
 	    $stderr[] = '  Stream #0.0: Video: mjpeg, 160x120, 15.00 fps, q=2-31, 200 kb/s';
 	    $stderr[] = 'Stream mapping:';
 	    $stderr[] = '  Stream #0.0 -> #0.0';
@@ -749,7 +749,7 @@ class FfmpegToolkitTestPlatform {
 
 	case serialize(array(array($this->_ffmpegPath, '-h'))):
 	case serialize(array(array('/validPath/ffmpeg', '-h'))):
-	case serialize(array(array('/validPath/ffmpegAlternateFormatsOutput', '-h'))):
+	case serialize(array(array('/validPath/ffmpeg048FormatsOutput', '-h'))):
 	    $results[] = '-ss time_off        set the start time offset';
 	    return array(1, $results, $stderr);
 
@@ -787,7 +787,7 @@ class FfmpegToolkitTestPlatform {
     function file_exists($path) {
 	switch($path) {
 	case $this->_ffmpegPath:
-	case '/validPath/ffmpegAlternateFormatsOutput':
+	case '/validPath/ffmpeg048FormatsOutput':
 	case '/validPath/ffmpeg046FormatsOutput':
 	case '/validPath/ffmpeg':
 	case '/validPath/bogusBinary':
@@ -798,7 +798,7 @@ class FfmpegToolkitTestPlatform {
     function is_file($path) {
 	switch ($path) {
 	case $this->_ffmpegPath:
-	case '/validPath/ffmpegAlternateFormatsOutput':
+	case '/validPath/ffmpeg048FormatsOutput':
 	case '/validPath/ffmpeg046FormatsOutput':
 	case '/validPath/ffmpeg':
 	case '/validPath/bogusBinary':
