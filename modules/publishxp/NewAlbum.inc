@@ -142,6 +142,11 @@ class NewAlbumView extends GalleryView {
 	$template->setVariable('NewAlbum', $NewAlbum);
 	$template->setVariable('controller', 'publishxp.NewAlbum');
 	$template->head('modules/publishxp/templates/Head.tpl');
+
+	/* Tell the theme that we want the full screen */
+	$theme =& $template->getVariableByReference('theme');
+	$theme['useFullScreen'] = true;
+
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/publishxp/templates/NewAlbum.tpl'));
     }

@@ -6,23 +6,17 @@
  *}
 <form action="{g->url}" enctype="application/x-www-form-urlencoded" method="post"
  id="publishXpForm">
-  <div>      
+  <div>
     <script type="text/javascript">
-       setSubtitle("{g->text text="Specify your authentication credentials."}");
+       setSubtitle("{g->text text="Login to your account"}");
        setSubmitOnNext(true);
        setButtons(false, true, false);
     </script>
-  
+
     {g->hiddenFormVars}
     <input type="hidden" name="{g->formVar var="controller"}" value="publishxp.Login"/>
     <input type="hidden" name="{g->formVar var="form[formName]"}" value="{$form.formName}"/>
     <input type="hidden" name="{g->formVar var="form[action][login]"}" value="1"/>
-  </div>
- 
-  <div class="gbBlock gcBackground1">
-    <h2>
-      {g->text text="Login to your account"}
-    </h2>
   </div>
 
   <div class="gbBlock">
@@ -50,7 +44,7 @@
       {g->text text="You must enter a password"}
     </div>
     {/if}
-      
+
     {if isset($form.error.password.invalid)}
     <div class="giError">
       {g->text text="Your login information is incorrect.  Please try again."}

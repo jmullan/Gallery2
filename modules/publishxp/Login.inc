@@ -115,6 +115,11 @@ class LoginView extends GalleryView {
 
 	$template->setVariable('controller', 'publishxp.Login');
 	$template->head('modules/publishxp/templates/Head.tpl');
+
+	/* Tell the theme that we want the full screen */
+	$theme =& $template->getVariableByReference('theme');
+	$theme['useFullScreen'] = true;
+
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/publishxp/templates/Login.tpl'));
     }
