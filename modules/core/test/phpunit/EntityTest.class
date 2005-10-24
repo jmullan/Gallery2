@@ -143,15 +143,22 @@ class EntityTest extends GalleryTestCase {
 
 	$entity->removeOnLoadHandler('NotThere');
 	$this->assertEquals(null, $entity->getOnLoadHandlers(), 1);
+	/*
+	 * The following assertion would fail with a PHP Warning if PHP is using mb_strpos()
+	 * internally for strpos() calls, since mb_strpos() doesn't accept an empty needle
+	 * TODO: Consider moving all PHP str functions into our PHP VM if further differences
+	 * are found
+	 */
+	$this->assertEquals(false, $entity->hasOnLoadHandler('NotThere'), 2);
 	$entity->addOnLoadHandler('EntityTestOnLoadHandler');
-	$this->assertEquals('|EntityTestOnLoadHandler|', $entity->getOnLoadHandlers(), 2);
+	$this->assertEquals('|EntityTestOnLoadHandler|', $entity->getOnLoadHandlers(), 3);
 	$entity->removeOnLoadHandler('EntityTestOnLoadHandler');
-	$this->assertEquals(null, $entity->getOnLoadHandlers(), 3);
+	$this->assertEquals(null, $entity->getOnLoadHandlers(), 4);
 	$entity->addOnLoadHandler('OneTest');
 	$entity->addOnLoadHandler('EntityTestOnLoadHandler');
-	$this->assertEquals('|OneTest|EntityTestOnLoadHandler|', $entity->getOnLoadHandlers(), 4);
+	$this->assertEquals('|OneTest|EntityTestOnLoadHandler|', $entity->getOnLoadHandlers(), 5);
 	$entity->removeOnLoadHandler('OneTest');
-	$this->assertEquals('|EntityTestOnLoadHandler|', $entity->getOnLoadHandlers(), 5);
+	$this->assertEquals('|EntityTestOnLoadHandler|', $entity->getOnLoadHandlers(), 6);
 
 	$ret = $entity->save();
 	if ($ret->isError()) {
