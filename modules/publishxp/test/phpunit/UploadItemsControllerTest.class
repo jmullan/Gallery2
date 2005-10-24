@@ -38,8 +38,9 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
+	global $gallery;
 	parent::setUp();
-	
+
 	list ($ret, $this->_parent) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -53,13 +54,18 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	$this->_saveSession = $gallery->getSession();
     }
 
     function tearDown() {
+	global $gallery;
 	$ret = GalleryCoreApi::removeMimeType(array('extension' => 'phpunit_ext'));
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	$gallery->_session = $this->_saveSession;
 
 	parent::tearDown();
     }
@@ -97,7 +103,7 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	$_FILES['userFile']['type'] = 'application/unknown';
 	$_FILES['userFile']['tmp_name'] = __FILE__;
 	$_FILES['userFile']['name'] = 'Foo.dat';
-	
+
 	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
     }
 
@@ -106,7 +112,7 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[albumId]', $this->_parent->getId());
 	$_FILES['userFile']['type'] = 'application/unknown';
 	$_FILES['userFile']['tmp_name'] = __FILE__;
-	
+
 	$results = $this->handleRequest(ERROR_BAD_PARAMETER);
     }
 
@@ -116,7 +122,7 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	$_FILES['userFile']['type'] = '';
 	$_FILES['userFile']['tmp_name'] = __FILE__;
 	$_FILES['userFile']['name'] = 'Foo.csh';
-	
+
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'publishxp.UploadedItem'),
 				  'status' => array(),
@@ -145,7 +151,7 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	$_FILES['userFile']['type'] = 'test/file';
 	$_FILES['userFile']['tmp_name'] = __FILE__;
 	$_FILES['userFile']['name'] = 'Foo.dat';
-	
+
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'publishxp.UploadedItem'),
 				  'status' => array(),
@@ -167,6 +173,11 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
     }
 
     function testUploadItemsWithOption() {
+	global $gallery;
+	$session =& $gallery->getSession();
+	$session->put('publishxp.extraOptionsForm',
+		      serialize(array('optionValue' => 'myOptionValue')));
+
 	GalleryUtilities::putRequestVariable('form[action][uploadItem]', 1);
 	GalleryUtilities::putRequestVariable('form[albumId]', $this->_parent->getId());
 	$_FILES['userFile']['type'] = 'test/file';
@@ -174,7 +185,7 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	$_FILES['userFile']['name'] = 'Foo.dat';
 
 	$this->_controller->setOptionInstances(
-	    array('instance' => new UploadedItemsControllerTestAddOption()));
+	    array('instance' => new UploadItemsControllerTestAddOption()));
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'publishxp.UploadedItem'),
@@ -190,8 +201,8 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	}
 
 	/* Make sure our option was called */
-	$this->assertEquals($entity->getId(),
-			    UploadedItemsControllerTestAddOption::getCalledWithId());
+	$this->assertEquals(array($entity->getId(), 'myOptionValue'),
+			    UploadItemsControllerTestAddOption::getRequestData());
 
 	$this->assertEquals($this->_parent->getId(), $entity->getParentId());
 	$this->assertEquals('test/file', $entity->getMimeType());
@@ -201,15 +212,16 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
     }
 }
 
-class UploadedItemsControllerTestAddOption {
+class UploadItemsControllerTestAddOption {
 
     function handleRequestAfterAdd($form, $items) {
-	GalleryUtilities::putRequestVariable('calledWith', $items[0]->getId());
+	GalleryUtilities::putRequestVariable(
+	    'requestData', array($items[0]->getId(), $form['optionValue']));
 	return array(GalleryStatus::success(), array(), array());
     }
 
-    function getCalledWithId() {
-	return (int)GalleryUtilities::getRequestVariables('calledWith');
+    function getRequestData() {
+	return GalleryUtilities::getRequestVariables('requestData');
     }
 }
 ?>

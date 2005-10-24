@@ -138,9 +138,15 @@ class UploadItemsController extends GalleryController {
 	    }
 
 	    /* Allow ItemAddOptions to process added item(s) */
+	    $session =& $gallery->getSession();
+	    if ($session->exists('publishxp.extraOptionsForm')) {
+		$extraOptionsForm = unserialize($session->get('publishxp.extraOptionsForm'));
+	    } else {
+		$extraOptionsForm = array();
+	    }
 	    foreach ($optionInstances as $option) {
 		list ($ret, $optionErrors, $optionWarnings) =
-		    $option->handleRequestAfterAdd($form, array($newItem));
+		    $option->handleRequestAfterAdd($extraOptionsForm, array($newItem));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -210,6 +216,11 @@ class UploadItemsView extends GalleryView {
 
 	$template->setVariable('UploadItems', $UploadItems);
 	$template->head('modules/publishxp/templates/Head.tpl');
+
+	/* Tell the theme that we want the full screen */
+	$theme =& $template->getVariableByReference('theme');
+	$theme['useFullScreen'] = true;
+
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/publishxp/templates/UploadItems.tpl'));
     }

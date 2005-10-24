@@ -32,9 +32,10 @@
  */
 class OptionsController extends GalleryController {
     /**
-     * @see GalleryControler::handleRequest
+     * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
+	global $gallery;
 	$results = array();
 	if (isset($form['action']['setOptions'])) {
 	    /* No form processing/validation required so just continue the next page */
@@ -42,6 +43,14 @@ class OptionsController extends GalleryController {
 	    $results['redirect']['stripExtensions'] = isset($form['stripExtensions']);
 	    $results['redirect']['setCaptions'] = isset($form['setCaptions']);
 	    $results['redirect']['albumId'] = $form['albumId'];
+
+	    /*
+	     * Any options set by ItemAddOptions also need to get passed forward but
+	     * we don't know what or how complex they are, so let's take the easy route of storing
+	     * the form in the session for later.
+	     */
+	    $session =& $gallery->getSession();
+	    $session->put('publishxp.extraOptionsForm', serialize($form));
 	} else {
 	    $results['delegate']['view'] = 'publishxp.Options';
 	}
@@ -84,6 +93,36 @@ class OptionsView extends GalleryView {
 	    }
 	}
 
+	/* Get all the add options */
+	GalleryCoreApi::relativeRequireOnce('modules/core/ItemAdd.inc');
+	if (isset($this->_optionInstances)) {
+	    $optionInstances = $this->_optionInstances;
+	} else {
+	    list ($ret, $optionInstances) = ItemAddOption::getAllAddOptions();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	/* Now let all options load their template data */
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($form['albumId']);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$Options['options'] = array();
+	foreach ($optionInstances as $option) {
+	    list ($ret, $entry['file'], $entry['l10Domain']) =
+		$option->loadTemplate($template, $form, $item);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if (!empty($entry['file'])) {
+		$Options['options'][] = $entry;
+	    }
+	}
+
+	$template->setVariable('Options', $Options);
 	$template->head('modules/publishxp/templates/Head.tpl');
 
 	/* Tell the theme that we want the full screen */

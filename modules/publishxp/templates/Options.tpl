@@ -21,6 +21,7 @@
   </div>
 
   <div class="gbBlock">
+    <h3> {g->text text="Standard Options"} </h3>
     <p class="giDescription">
       {g->text text="Now that you have chosen the destination album, the following options can be used when adding the photos to Gallery."}
     </p>
@@ -33,4 +34,9 @@
     <input type="checkbox" name="{g->formVar var="form[setCaptions]"}" {if !empty($form.setCaptions)}checked{/if}>
     {g->text text="Set captions on the published items?"}
   </div>
+
+  {* Include our extra ItemAddOptions *}
+  {foreach from=$Options.options item=option}
+    {include file="gallery:`$option.file`" l10Domain=$option.l10Domain}
+  {/foreach}
 </form>

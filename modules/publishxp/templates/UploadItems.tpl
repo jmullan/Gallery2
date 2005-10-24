@@ -6,7 +6,7 @@
  *}
 <script type="text/javascript">
   // <![CDATA[
-  setSubtitle("{g->text text="Choose an album"}");
+  setSubtitle("");
   setOnBackUrl("{g->url arg1="view=publishxp.Options" arg2="albumId=`$UploadItems.albumId`" arg3="setCaptions=`$UploadItems.setCaptions`" arg4="stripExtensions=`$UploadItems.stripExtensions`" forJavascript=true}");
   setSubmitOnNext(true);
   setButtons(false, true, false);
@@ -19,7 +19,7 @@
       var postTag = xml.createNode(1, "post", "");
       postTag.setAttribute("href", "{g->url arg1="controller=publishxp.UploadItems" forJavascript=true}");
       postTag.setAttribute("name", "userFile");
-      
+
       var dataTag = xml.createNode(1, "formdata", "");
       dataTag.setAttribute("name", "MAX_FILE_SIZE");
       dataTag.text = "10000000";
@@ -34,7 +34,7 @@
       dataTag.setAttribute("name", "{g->formVar var="form[action][uploadItem]"}");
       dataTag.text = "1";
       postTag.appendChild(dataTag);
-      
+
       var dataTag = xml.createNode(1, "formdata", "");
       dataTag.setAttribute("name", "{g->formVar var="form[albumId]"}");
       dataTag.text = "{$UploadItems.albumId}";
@@ -49,7 +49,7 @@
       dataTag.setAttribute("name", "{g->formVar var="form[stripExtensions]"}");
       dataTag.text = "{$UploadItems.stripExtensions}";
       postTag.appendChild(dataTag);
-      
+
       files.item(i).appendChild(postTag);
     {rdelim}
     var uploadTag = xml.createNode(1, "uploadinfo", "");
@@ -57,9 +57,9 @@
 
     htmluiTag.text = "{g->url arg1="view=core.ShowItem" arg2="itemId=`$UploadItems.albumId`" forJavascript=true}";
     uploadTag.appendChild(htmluiTag);
-    
+
     xml.documentElement.appendChild(uploadTag);
-    
+
     window.external.Property("TransferManifest")=xml;
     window.external.FinalNext();
   {rdelim}
