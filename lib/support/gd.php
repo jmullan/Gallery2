@@ -32,7 +32,7 @@
  *
  * @author Ernesto Baschny <ernst@baschny.de>
  */
-include(dirname(__FILE__) . '/security.inc');
+if (!defined('G2_SUPPORT')) return;
 
 /*
  * Gets a lot of information about our GD installation and return it as a
@@ -40,93 +40,93 @@ include(dirname(__FILE__) . '/security.inc');
  */
 function getGdLibraryInfo() {
     if (! extension_loaded('gd')) {
-        return '';
+	return '';
     }
 
     /* Get GD version from phpinfo or gd_info */
     if (function_exists('gd_info')) {
-        $gdInfo = gd_info();
-        $matchString = $gdInfo['GD Version'];
-        $matcherVersion = '/([\d\.]+)(\s+or\s+higher)?/i';
-        $matcherBundled = '/bundled/i';
+	$gdInfo = gd_info();
+	$matchString = $gdInfo['GD Version'];
+	$matcherVersion = '/([\d\.]+)(\s+or\s+higher)?/i';
+	$matcherBundled = '/bundled/i';
     } else {
-        ob_start();
-        phpinfo(8);
-        $matchString = ob_get_contents();
-        $matcherVersion = '/\bgd\s+version\b[^\d\n\r]+?([\d\.]+)(\s+or\s+higher)?/i';
-        $matcherBundled = '/\bgd\s+version\b[^\d\n\r]+?bundled/i';
-        ob_end_clean();
+	ob_start();
+	phpinfo(8);
+	$matchString = ob_get_contents();
+	$matcherVersion = '/\bgd\s+version\b[^\d\n\r]+?([\d\.]+)(\s+or\s+higher)?/i';
+	$matcherBundled = '/\bgd\s+version\b[^\d\n\r]+?bundled/i';
+	ob_end_clean();
     }
     if (preg_match($matcherVersion, $matchString, $matches)) {
-        $gdVersion = $matches[1];
+	$gdVersion = $matches[1];
     } else {
-        $gdVersion = 0;
+	$gdVersion = 0;
     }
     if (isset($matches[2])) {
-        $gdVersion = sprintf('>%s', $gdVersion);
+	$gdVersion = sprintf('>%s', $gdVersion);
     }
     $isGdBundled = 0;
     if (preg_match($matcherBundled, $matchString)) {
-        $isGdBundled = 1;
+	$isGdBundled = 1;
     }
 
     /* Find out supported mime types */
     $mimeChecks = array(
-        array(
-            'mimeType' => 'image/gif',
-            'value' => defined('IMG_GIF') ? IMG_GIF : '',
-            'functions' => array('imageCreateFromGif', 'imageGif')
-        ),
-        array(
-            'mimeType' => 'image/jpeg',
-            'value' => defined('IMG_JPEG') ? IMG_JPEG : '',
-            'functions' => array('imageCreateFromJpeg', 'imageJpeg')
-        ),
-        array(
-            'mimeType' => 'image/png',
-            'value' => defined('IMG_PNG') ? IMG_PNG : '',
-            'functions' => array('imageCreateFromPng', 'imagePng')
-        ),
-        array(
-            'mimeType' => 'image/vnd.wap.wbmp',
-            'value' => defined('IMG_WBMP') ? IMG_WBMP : '',
-            'functions' => array('imageCreateFromWbmp', 'imageWbmp')
-        ),
-        array(
-            'mimeType' => 'image/x-xpixmap',
-            'value' => defined('IMG_XPM') ? IMG_XPM : '',
-            'functions' => array('imageCreateFromXpm', 'imageXpm')
-        ),
-        array(
-            'mimeType' => 'image/x-xbitmap',
-            'value' => defined('IMG_XBM') ? IMG_XBM : '',
-            'functions' => array('imageCreateFromXbm', 'imageXbm')
-        ),
+	array(
+	    'mimeType' => 'image/gif',
+	    'value' => defined('IMG_GIF') ? IMG_GIF : '',
+	    'functions' => array('imageCreateFromGif', 'imageGif')
+	),
+	array(
+	    'mimeType' => 'image/jpeg',
+	    'value' => defined('IMG_JPEG') ? IMG_JPEG : '',
+	    'functions' => array('imageCreateFromJpeg', 'imageJpeg')
+	),
+	array(
+	    'mimeType' => 'image/png',
+	    'value' => defined('IMG_PNG') ? IMG_PNG : '',
+	    'functions' => array('imageCreateFromPng', 'imagePng')
+	),
+	array(
+	    'mimeType' => 'image/vnd.wap.wbmp',
+	    'value' => defined('IMG_WBMP') ? IMG_WBMP : '',
+	    'functions' => array('imageCreateFromWbmp', 'imageWbmp')
+	),
+	array(
+	    'mimeType' => 'image/x-xpixmap',
+	    'value' => defined('IMG_XPM') ? IMG_XPM : '',
+	    'functions' => array('imageCreateFromXpm', 'imageXpm')
+	),
+	array(
+	    'mimeType' => 'image/x-xbitmap',
+	    'value' => defined('IMG_XBM') ? IMG_XBM : '',
+	    'functions' => array('imageCreateFromXbm', 'imageXbm')
+	),
     );
     $mimeTypes = array();
     foreach ($mimeChecks as $check) {
-        $ok = true;
-        foreach ($check['functions'] as $fct) {
-            if (! function_exists($fct)) {
-                $ok = false;
-            }
-        }
-        if ($ok && ! ($check['value'] & imageTypes())) {
-            $ok = false;
-        }
-        if ($ok) {
-            $mimeTypes[] = $check['mimeType'];
-        }
+	$ok = true;
+	foreach ($check['functions'] as $fct) {
+	    if (! function_exists($fct)) {
+		$ok = false;
+	    }
+	}
+	if ($ok && ! ($check['value'] & imageTypes())) {
+	    $ok = false;
+	}
+	if ($ok) {
+	    $mimeTypes[] = $check['mimeType'];
+	}
     }
 
     $out = '';
     $out .= '$gdEnvironments[] = array(' . "\n";
     $name = sprintf('%s|%s%s|%s',
-                 phpversion(),
-                 $gdVersion,
-                 ($isGdBundled ? '-bundled' : '-external'),
-                 PHP_OS
-                );
+		 phpversion(),
+		 $gdVersion,
+		 ($isGdBundled ? '-bundled' : '-external'),
+		 PHP_OS
+		);
 
     $out .= "\t" . sprintf('\'name\' => \'%s\',', $name) . "\n";
     $out .= "\t" . sprintf('\'phpVersion\' => \'%s\',', phpversion()) . "\n";
@@ -135,34 +135,34 @@ function getGdLibraryInfo() {
 
     $imageTypes = 0;
     if (function_exists('imageTypes')) {
-        $imageTypes = imageTypes();
+	$imageTypes = imageTypes();
     }
     $out .= "\t" . sprintf('\'imageTypes\' => %s,', $imageTypes) . "\n";
 
     if (function_exists('gd_info')) {
-        $gdInfo = gd_info();
-        $out .= "\t" . '\'gd_info\' => array(' . "\n";
-        foreach ($gdInfo as $field => $value) {
-            $out .= "\t\t" . sprintf('\'%s\' => \'%s\',', $field, $value) . "\n";
-        }
-        $out .= "\t" . '),' . "\n";
+	$gdInfo = gd_info();
+	$out .= "\t" . '\'gd_info\' => array(' . "\n";
+	foreach ($gdInfo as $field => $value) {
+	    $out .= "\t\t" . sprintf('\'%s\' => \'%s\',', $field, $value) . "\n";
+	}
+	$out .= "\t" . '),' . "\n";
     }
 
     /* Check which constants are defined */
     $constants = get_defined_constants();
     $out .= "\t" . '\'constants\' => array(' . "\n";
     foreach ($constants as $constant => $value) {
-        if (! preg_match('/^(IMAGE|IMG|GD|PHP)/', $constant)) { continue; }
-        if (! is_int($value)) {
-            $value = sprintf('\'%s\'', $value);
-        }
-        $out .= "\t\t" . sprintf('\'%s\' => %s,', $constant, $value) . "\n";
+	if (! preg_match('/^(IMAGE|IMG|GD|PHP)/', $constant)) { continue; }
+	if (! is_int($value)) {
+	    $value = sprintf('\'%s\'', $value);
+	}
+	$out .= "\t\t" . sprintf('\'%s\' => %s,', $constant, $value) . "\n";
     }
     $out .= "\t" . '),' . "\n";
 
     $out .= "\t" . '\'mimeTypes\' => array(' . "\n";
     foreach ($mimeTypes as $mimeType) {
-        $out .= "\t\t" . sprintf('\'%s\',', $mimeType) . "\n";
+	$out .= "\t\t" . sprintf('\'%s\',', $mimeType) . "\n";
     }
     $out .= "\t" . '),' . "\n";
 
@@ -178,19 +178,19 @@ function getGdLibraryInfo() {
     $functions = get_extension_funcs('gd');
     $out .= "\t" . '\'functions\' => array(' . "\n";
     foreach ($functions as $fct) {
-        $out .= "\t\t" . sprintf('\'%s\' => true,', $fct) . "\n";
+	$out .= "\t\t" . sprintf('\'%s\' => true,', $fct) . "\n";
     }
 
     $otherFunctions = array(
-        'getimagesize',
-        'image_type_to_extension',
-        'image_type_to_mime_type',
-        'iptcembed',
-        'iptcparse',
+	'getimagesize',
+	'image_type_to_extension',
+	'image_type_to_mime_type',
+	'iptcembed',
+	'iptcparse',
     );
     foreach ($otherFunctions as $fct) {
-        if (! function_exists($fct)) { continue; }
-        $out .= "\t\t" . sprintf('\'%s\' => true,', $fct) . "\n";
+	if (! function_exists($fct)) { continue; }
+	$out .= "\t\t" . sprintf('\'%s\' => true,', $fct) . "\n";
     }
     $out .= "\t" . '),' . "\n";
     $out .= ');' . "\n";
