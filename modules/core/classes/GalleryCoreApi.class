@@ -47,7 +47,7 @@ class GalleryCoreApi {
      * o If the major number is lower, or it's the same and the minor number is
      *   lower then it means that the API is older than you require.
      * o If the major number is higher, then it means that the API is newer, but
-     *   has made a change that maybe incompatible with your module
+     *   has made a change that may be incompatible with your module
      * o If the major number is the same and the minor number is higher, then
      *   the API has more features than you need but should still work for you.
      *
@@ -55,7 +55,7 @@ class GalleryCoreApi {
      */
     function getApiVersion() {
 	/* NOTE: On the next major core api bump, remove DatabaseStorage::_loadOldStyleSqlFiles */
-	return array(6, 8);
+	return array(6, 9);
     }
 
     /**
@@ -2509,21 +2509,96 @@ class GalleryCoreApi {
     }
 
     /**
-     * Like requireOnce, but use a path relative from the gallery2 directory.
-     * Eventually we want to use this everywhere, because it'll let us detach
-     * our files from the gallery2 directory (giving us freedom to install
-     * modules, etc into the g2data directory also).
-     *
-     * @param the file name
+     * Returns an array of directories that can contain plugins.
+     * 
+     * This function should only be used in special circumstances,
+     * for example when a list of all plugins needs to be made.
+     * Currently it returns gallery2/ and gallery2/plugins/.
      */
-    function relativeRequireOnce($file) {
+     function getPluginBaseDirs() {
+	GalleryCoreApi::relativeRequireOnce(
+	    'modules/core/classes/helpers/GalleryPluginHelper_simple.class');
+	return GalleryPluginHelper_simple::getPluginBaseDirs();
+    }
+
+    /**
+     * Returns the base directory of the specified plugin.
+     *
+     * Modules should never assume the filesystem location of any module, not
+     * even the core module. Use this function to get the base directory of a
+     * module. Possible base directories are usually gallery2/ and gallery2/plugins.
+     * The complete list can be read with GalleryCoreApi::getPluginBaseDirs().
+     * 
+     * @param string 'module' or 'theme'
+     * @param string the plugin ID
+     * @param bool force index to be reread from the filesystem
+     * @return string plugin base directory
+     */
+    function getPluginBaseDir($pluginType, $pluginId, $clearCache=false) {
+	GalleryCoreApi::relativeRequireOnce(
+	    'modules/core/classes/helpers/GalleryPluginHelper_simple.class', true);
+	return GalleryPluginHelper_simple::getPluginBaseDir($pluginType, $pluginId, $clearCache);
+    }
+    
+    /**
+     * Indicates whether the specified plugin is in the default plugin directory.
+     * 
+     * Sometimes it's useful to know just whether a plugin is in its default
+     * directory or not, without actually getting any information about its path.
+     * It is used for rewriting URLs in the UrlGenerator.
+     *
+     * We don't use GalleryPlatform in this function, because it is too low-level
+     * and there are significant problems with making it work here. One of the
+     * problems is that it breaks dozens of tests that rely on UnitTestPlatform.
+     *
+     * @param string 'modules' or 'themes'
+     * @param string the plugin ID
+     * @param bool force index to be reread from the filesystem
+     * @return boolean
+     */
+    function isPluginInDefaultLocation($pluginType, $pluginId, $clearCache=false) {
+	GalleryCoreApi::relativeRequireOnce(
+	    'modules/core/classes/helpers/GalleryPluginHelper_simple.class', true);
+	return GalleryPluginHelper_simple::isPluginInDefaultLocation(
+	    $pluginType, $pluginId, $clearCache);
+    }
+
+    /**
+     * Like requireOnce, but use a path relative from the gallery2 directory.
+     * 
+     * It will detect the base directory of the specified file and load it from there. Setting
+     * the second argument to true skips this check and assumes that the file is relative to
+     * the gallery2 directory.
+     *
+     * @param string the file name
+     * @param boolean assume file is relative to the gallery2 directory
+     */
+    function relativeRequireOnce($file, $skipBaseDirectoryDetection=false) {
 	static $loaded;
 	if (strpos($file, '..') !== false) {
 	    return;
 	}
 	if (!isset($loaded[$file])) {
+	    if ($skipBaseDirectoryDetection) {
+		$pluginBaseDir = dirname(__FILE__) . '/../../../';
+	    } else {
+		if (!preg_match('/^(modules|themes|lib)\/(.+)(\/.+)/iU', $file, $pluginData)) {
+		    print('Invalid path: ' . $file);
+		    return;
+		}
+		$pluginId = $pluginData[2];
+		$pluginType = $pluginData[1];
+
+		if ($pluginType == 'modules') {
+		    $pluginType = 'module';
+		} else if ($pluginType == 'themes') {
+		    $pluginType = 'theme';
+		}
+		$pluginBaseDir = GalleryCoreApi::getPluginBaseDir($pluginType, $pluginId);
+	    }
+
 	    $loaded[$file] = 1;
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/../../../' . $file);
+	    GalleryCoreApi::requireOnce($pluginBaseDir . $file);
 	}
     }
 

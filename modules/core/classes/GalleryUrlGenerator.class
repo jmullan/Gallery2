@@ -369,7 +369,16 @@ class GalleryUrlGenerator {
 		if ($platform->file_exists(dirname(__FILE__) . '/../../../' . $override)) {
 		    $href = $override;
 		}
-		$url .= $href;
+		/* Rewrite URL if theme is in plugins directory */
+		$pluginRelativeBaseDir = '';
+		$pluginData = explode('/', $href);
+		$pluginId = $pluginData[1];
+		$pluginType = $pluginData[0];
+		if ((($pluginType == 'modules') || $pluginType == 'themes') 
+			&& !GalleryCoreApi::isPluginInDefaultLocation($pluginType, $pluginId)) {
+		    $pluginRelativeBaseDir = $gallery->getConfig('plugins.dirname') . '/';
+		}
+		$url .= $pluginRelativeBaseDir . $href;
 	    }
 	} else if ((isset($params['view']) && $params['view'] == 'core.DownloadItem') ||
 		   isset($params['forceDirect'])) {

@@ -157,7 +157,7 @@ class GalleryController {
 
 	$controllerClassName = $class . 'Controller';
 	if (!class_exists($controllerClassName)) {
-	    $moduleBaseDir = dirname(__FILE__) . '/../../../';
+	    $moduleBaseDir = GalleryCoreApi::getPluginBaseDir('module', $module);
 	    $fileName = 'modules/' . $module . '/' . $class . '.inc';
 
 	    $platform = $gallery->getPlatform();

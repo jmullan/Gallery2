@@ -332,7 +332,7 @@ class GalleryPlatform {
     /**
      * Reads the entire contents of the specified file into a string.
      * file_get_contents PHP function is used if available.
-     * 
+     *
      * @param string file path
      * @return string file contents or boolean false on failure
      */
@@ -575,7 +575,7 @@ class GalleryPlatform {
 	if ($dirname{strlen($dirname)-1} != $this->getDirectorySeparator()) {
 	    $dirname .= $this->getDirectorySeparator();
 	}
-	
+
 	if (!($fd = $this->opendir($dirname))) {
 	    return false;
 	}
@@ -836,6 +836,26 @@ class GalleryPlatform {
 	} else {
 	    return fwrite($handle, $string);
 	}
+    }
+
+    /**
+     * Writes specified data to file.
+     * Uses PHP's file_put_contents() function if it is available.
+     *
+     * @param string data to write
+     * @param string output file path
+     * @return boolean true on success, false on failure
+     */
+    function file_put_contents($path, $data) {
+	if (function_exists('file_put_contents')) {
+	    return file_put_contents($path, $data);
+	}
+
+	if (false === ($file = fopen($path, 'w')) || false === fwrite($file, $data)) {
+	    return false;
+	}
+	fclose($file);
+	return true;
     }
 
     /**

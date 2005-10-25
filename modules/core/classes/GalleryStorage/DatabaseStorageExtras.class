@@ -1004,8 +1004,9 @@ class DatabaseStorageExtras /* the other half of DatabaseStorage */ {
 	global $gallery;
 
 	$platform = $gallery->getPlatform();
-	$sqlFile = dirname(__FILE__) . '/../../../../modules/' . $moduleId .
-	    '/classes/GalleryStorage/DatabaseStorage/schema/schema.tpl';
+	$sqlFile = sprintf(
+	    '%smodules/' . $moduleId . '/classes/GalleryStorage/DatabaseStorage/schema/schema.tpl',
+	    GalleryCoreApi::getPluginBaseDir('module', $moduleId));
 
 	if ($platform->file_exists($sqlFile)) {
 	    $sqlData = explode("\n", $platform->file_get_contents($sqlFile));

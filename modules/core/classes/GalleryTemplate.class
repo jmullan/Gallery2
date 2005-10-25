@@ -336,6 +336,23 @@ class GalleryTemplate {
     }
 
    /**
+    * Returns the base directory of the specified template. This is required
+    * to support loading templates from g2data/plugins.
+    * 
+    * @author Jozef Selesi (selesi at gmail dot com)
+    * 
+    * @param string Template to get base directory for.
+    * @param object Smarty object.
+    */
+   function resourceGetTemplateBaseDir($templateName, &$smarty) {
+	if(preg_match('/^(module|theme)s\/(.+)(\/.+)/iU', $templateName, $pluginId)) {
+	    return GalleryCoreApi::getPluginBaseDir($pluginId[1], $pluginId[2]) . '/';
+	} else {
+	    return $smarty->template_dir . '/';
+	}
+    }
+
+   /**
     * @see http://smarty.php.net/manual/en/template.resources.php
     *
     * This is basically the same as the file: resource except that we look for a template
@@ -343,8 +360,9 @@ class GalleryTemplate {
     * override templates with our own copies without modifying the original.
     */
    function resourceGetTemplate($templateName, &$templateSource, &$smarty) {
-	$templateName =
-	    GalleryTemplate::_getActualTemplateName($smarty->template_dir . '/' . $templateName);
+	$templateName = GalleryTemplate::_getActualTemplateName(
+	    GalleryTemplate::resourceGetTemplateBaseDir($templateName, $smarty) . $templateName);
+
 	$templateSource = $smarty->_read_file($templateName);
 
 	return true;
@@ -361,8 +379,8 @@ class GalleryTemplate {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 
-	$templateName =
-	    GalleryTemplate::_getActualTemplateName($smarty->template_dir . '/' . $templateName);
+	$templateName = GalleryTemplate::_getActualTemplateName(
+	    GalleryTemplate::resourceGetTemplateBaseDir($templateName, $smarty) . $templateName);
 
 	if ($platform->file_exists($templateName)) {
 	    $stat = $platform->stat($templateName);
