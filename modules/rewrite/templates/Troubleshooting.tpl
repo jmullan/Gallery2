@@ -14,7 +14,7 @@
 	    onclick="BlockToggle('question-0-help', 'question-0-toggle', 'inline')">+</span>
     <b>{g->text text="How can I check if mod_rewrite is loaded?"}</b><br/>
     <span id="question-0-help" style="display: none;">
-      {capture name=url}{g->url href="lib/support/phpinfo.php"}{/capture}
+      {capture name=url}{g->url href="lib/support/index.php?phpinfo"}{/capture}
       {g->text text="Go to the <a href=\"%s\">Gallery phpinfo page</a> and look for Loaded Modules. You should see mod_rewrite in the list if it's loaded." arg1=$smarty.capture.url}
     </span>
   </p>
