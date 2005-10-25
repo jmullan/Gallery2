@@ -140,29 +140,31 @@ class GalleryPluginHelper_medium {
 
 	switch($pluginType) {
 	case 'module':
-	    $pluginsDir = dirname(__FILE__) . '/../../../../modules/';
+	    $pluginsDir = 'modules/';
 	    $pluginFile = 'module.inc';
 	    break;
 
 	case 'theme':
-	    $pluginsDir = dirname(__FILE__) . '/../../../../themes/';
+	    $pluginsDir = 'themes/';
 	    $pluginFile = 'theme.inc';
 	    break;
 	}
 
 	$platform = $gallery->getPlatform();
-	if ($dir = $platform->opendir($pluginsDir)) {
-	    while (($file = $platform->readdir($dir)) != false) {
-		$path = $pluginsDir . $file;
-		if (preg_match('/^(\.|CVS)/', $file)) {
-		    continue;
-		}
+	foreach(GalleryCoreApi::getPluginBaseDirs() as $pluginsBaseDir) {
+	    if ($dir = $platform->opendir($pluginsBaseDir . $pluginsDir)) {
+		while (($file = $platform->readdir($dir)) != false) {
+		    $path = $pluginsBaseDir . $pluginsDir . $file;
+		    if (preg_match('/^(\.|CVS)/', $file)) {
+			continue;
+		    }
 
-		if ($platform->is_file($path . '/' . $pluginFile)) {
-		    $pluginIds[] = $file;
+		    if ($platform->is_file($path . '/' . $pluginFile)) {
+			$pluginIds[] = $file;
+		    }
 		}
+		$platform->closedir($dir);
 	    }
-	    $platform->closedir($dir);
 	}
 
 	return array(GalleryStatus::success(), $pluginIds);
@@ -298,7 +300,8 @@ class GalleryPluginHelper_medium {
 	}
 
 	/* Invalidate our cache */
-	GalleryDataCache::removeByPattern("GalleryPluginHelper::fetchAllParameters\($pluginType, $pluginId, ");
+	GalleryDataCache::removeByPattern(
+	    "GalleryPluginHelper::fetchAllParameters\($pluginType, $pluginId, ");
 	GalleryDataCache::removeFromDisk(array('type' => $pluginType,
 					       'id' => $pluginId));
 	GalleryDataCache::removeFromDisk(array('type' => $pluginType,
@@ -338,7 +341,8 @@ class GalleryPluginHelper_medium {
 	 * we don't have an existing parameter by that name.  Otherwise, it's
 	 * an update.
 	 */
-        GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPluginHelper_simple.class');
+        GalleryCoreApi::relativeRequireOnce(
+	    'modules/core/classes/helpers/GalleryPluginHelper_simple.class');
 	list ($ret, $params) =
 	    GalleryPluginHelper_simple::fetchAllParameters($pluginType, $pluginId, $itemId);
 	if ($ret->isError()) {

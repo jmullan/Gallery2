@@ -1,0 +1,120 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Jozef Selesi <selesi at gmail dot com>
+ */
+
+/**
+ * Test storage class used for testing functions that interact with the database.
+ * Only the features required for testing the repository code are implemented.
+ */
+class RepositoryTestStorage {
+
+    var $_addedMapData;
+    var $_updatedMapData;
+    var $_searchResults;
+    var $_searches;
+
+    function &getSingleton() {
+	static $singleton;
+	if (!isset($singleton)) {
+	    $singleton = new RepositoryTestStorage();
+	}
+
+	return $singleton;
+    }
+
+    function reset() {
+	$singleton =& $this->getSingleton();
+	$singleton->_searches = array();
+	$singleton->_searchResults = array();
+	$singleton->_addedMapData = array();
+	$singleton->_updatedMapData = array();
+    }
+
+    function search($query, $args) {
+	$singleton =& $this->getSingleton();
+	$singleton->_searches[] = array('query' => $query, 'arguments' => $args);
+
+	return array(GalleryStatus::success(),
+		     new RepositoryTestSearchResults($singleton->_searchResults));
+    }
+
+    function setSearchResults($results) {
+	$singleton =& $this->getSingleton();
+	$singleton->_searchResults = $results;
+    }
+
+    function getSearches() {
+	$singleton =& $this->getSingleton();
+	return $singleton->_searches;
+    }
+
+    function addMapEntry($map, $data) {
+	$singleton =& $this->getSingleton();
+	$singleton->_addedMapData[$map] = $data;
+	return GalleryStatus::success();
+    }
+
+    function getAddedMapData() {
+	$singleton =& $this->getSingleton();
+	return $singleton->_addedMapData;
+    }
+
+    function updateMapEntry($map, $match, $change) {
+	$singleton =& $this->getSingleton();
+	$singleton->_updatedMapData[$map] = array('match' => $match, 'change' => $change);
+	return GalleryStatus::success();
+    }
+
+    function getUpdatedMapData() {
+	$singleton =& $this->getSingleton();
+	return $singleton->_updatedMapData;
+    }
+
+    function rollbackTransaction() {
+    }
+}
+
+class RepositoryTestSearchResults {
+
+    var $_results;
+    var $_resultIndex;
+
+    function RepositoryTestSearchResults($results) {
+	$this->_results = $results;
+	$this->_resultIndex = 0;
+    }
+
+    function resultCount() {
+	return count($this->_results);
+    }
+
+    function nextResult() {
+	$result = $this->_resultIndex < $this->resultCount() ? $this->_results[$this->_resultIndex]
+							     : false;
+	$this->_resultIndex++;
+	return $result;
+    }
+}
+?>

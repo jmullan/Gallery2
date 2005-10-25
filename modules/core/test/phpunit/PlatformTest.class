@@ -121,16 +121,6 @@ class PlatformTest extends GalleryTestCase {
 	$this->assertEquals("/* --> Target Line <-- */", trim($lines[__LINE__-2]));
     }
 
-    function testFileGetContents() {
-	$contents = $this->_platform->file_get_contents(__FILE__);
-	$this->assert(is_string($contents), 'string');
-	$this->assert(strpos($contents, '--> Target Content <--') !== false, 'contents');
-
-	/* file_get_contents/fopen gets PHP ERROR so can't test we get false for bogus path */
-	/* $contents = $this->_platform->file_get_contents('/bogus/path'); */
-	/* $this->assertEquals(false, $contents, 'bogus path'); */
-    }
-
     function testFopen() {
 	$fd = $this->_platform->fopen($this->_sourceFile, 'r');
 	$this->assert($fd);
@@ -643,6 +633,20 @@ class PlatformTest extends GalleryTestCase {
 	    $this->_platform->strftime("\xd0\x9d\xd0\xb5 %Y \xd0\xbd %%\n%m", 1110101111));
 
 	/* How to test that strftime output is converted to UTF-8? */
+    }
+
+    function testFileGetAndPutContents() {
+	global $gallery;
+
+	$platform = $gallery->getPlatform();
+	$fileContents = $platform->file_get_contents($this->_sourceFile);
+	$this->assert(is_string($fileContents), 'contents not a string');
+	$this->assert(false !== strpos($fileContents, 'GIF89'), 'invalid contents');
+	$this->assert(1083, strlen($fileContents));
+
+	$success = $platform->file_put_contents($this->_destFile, $fileContents);
+	$this->assert($success, 'file_put_contents error');
+	$this->assert(1083, $platform->filesize($this->_destFile));
     }
 }
 

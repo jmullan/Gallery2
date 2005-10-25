@@ -41,6 +41,9 @@ function GalleryInitFirstPass($params=array()) {
     /* Figure out the Gallery base directory here, from our filename. */
     $galleryBase = dirname(__FILE__) . '/';
 
+    /* This needs to be set before the first relativeRequireOnce call. */
+    $gallery->setConfig('plugins.dirname', 'plugins');
+
     /* Load all the core Gallery classes */
     $classDir = dirname(__FILE__) . '/modules/core/classes/';
     require_once($classDir . 'GalleryCoreApi.class');
@@ -84,8 +87,11 @@ function GalleryInitFirstPass($params=array()) {
     $gallery->setConfig('data.smarty.base', $dataBase . 'smarty' . $slash);
     $gallery->setConfig('data.smarty.templates_c',
 	$dataBase . 'smarty' . $slash . 'templates_c' . $slash);
-    $gallery->setConfig('data.gallery.plugins', $dataBase . 'plugins' . $slash);
+    $gallery->setConfig('data.gallery.plugins', $galleryBase . 'plugins' . $slash);
     $gallery->setConfig('data.gallery.plugins_data', $dataBase . 'plugins_data' . $slash);
+    $gallery->setConfig('repository.url', 'http://gallery.menalto.com/repository/gallery2/');
+    $gallery->setConfig('repository.cache', sprintf('%s%s%smodules%score%srepository%s',
+	$dataBase, 'plugins_data', $slash, $slash, $slash, $slash));
     $platform->_calculateUmaskAndFilePerms(); /* Init platform umask */
 
     /* Configure our url Generator */

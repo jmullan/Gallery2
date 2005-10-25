@@ -40,7 +40,7 @@ class CoreModule extends GalleryModule {
 	$this->setGalleryVersion('2.0.1+');
 
 	/* Don't forget to update CoreModuleExtras::upgrade and _prepareConfigUpgrade too! */
-	$this->setVersion('1.0.5');
+	$this->setVersion('1.0.6');
 
 	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
@@ -302,6 +302,8 @@ class CoreModule extends GalleryModule {
 			    'view' => 'core.AdminCore'),
 		      array('name' => $this->translate('Modules'),
 			    'view' => 'core.AdminModules'),
+		      array('name' => $this->translate('Repository'),
+			    'view' => 'core.AdminRepository'),
 		      array('name' => $this->translate('Themes'),
 			    'view' => 'core.AdminThemes',
 			    'group' => 'display',

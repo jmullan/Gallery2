@@ -75,7 +75,7 @@ class GalleryPluginHelper_simple {
 		    $gallery->debug('Class not defined, trying to include it.');
 		}
 
-		$pluginBaseDir = dirname(__FILE__) . '/../../../../';
+		$pluginBaseDir = GalleryCoreApi::getPluginBaseDir($pluginType, $pluginId);
 		$pluginFile = sprintf('%ss/%s/%s.inc', $pluginType, $pluginId, $pluginType);
 
 		GalleryCoreApi::relativeRequireOnce(
@@ -349,15 +349,19 @@ class GalleryPluginHelper_simple {
 
 		$platform = $gallery->getPlatform();
 
+		$pluginBaseDirs = GalleryCoreApi::getPluginBaseDirs();
+		$pluginBaseIndexFile = sprintf(
+		    '%sindex.%ss', $gallery->getConfig('data.gallery.plugins'), $pluginType);
+
 		/* Scan modules directory for installed modules */
 		switch ($pluginType) {
 		case 'module':
-		    $pluginsDir = dirname(__FILE__) . '/../../../../modules/';
+		    $pluginsDir = 'modules/';
 		    $pluginFile = 'module.inc';
 		    break;
 
 		case 'theme':
-		    $pluginsDir = dirname(__FILE__) . '/../../../../themes/';
+		    $pluginsDir = 'themes/';
 		    $pluginFile = 'theme.inc';
 		    break;
 
@@ -368,51 +372,53 @@ class GalleryPluginHelper_simple {
 				 null);
 		}
 
-		if ($dir = $platform->opendir($pluginsDir)) {
-		    while ($pluginId = $platform->readdir($dir)) {
-			if ($pluginId{0} == '.') {
-			    continue;
-			}
-			if (!$platform->is_dir($pluginsDir . $pluginId)) {
-			    continue;
-			}
-
-			$path = $pluginsDir . $pluginId . '/' . $pluginFile;
-			if ($platform->file_exists($path)) {
-			    $plugins[$pluginId]['available'] = 1;
-
-			    $frameworkParams = array('version', 'callbacks', 'requiredCoreApi');
-			    if ($pluginType == 'module') {
-				$frameworkParams[] = 'requiredModuleApi';
-			    } else {
-				$frameworkParams[] = 'requiredThemeApi';
+		foreach ($pluginBaseDirs as $pluginBaseDir) {
+		    if ($dir = $platform->opendir($pluginBaseDir . $pluginsDir)) {
+			while ($pluginId = $platform->readdir($dir)) {
+			    if ($pluginId{0} == '.') {
+				continue;
+			    }
+			    if (!$platform->is_dir($pluginBaseDir . $pluginsDir . $pluginId)) {
+				continue;
 			    }
 
-			    foreach ($frameworkParams as $paramName) {
-				list ($ret, $plugins[$pluginId][$paramName]) =
-				    GalleryPluginHelper_simple::getParameter(
-					$pluginType, $pluginId, '_' . $paramName);
-				if ($ret->isError()) {
-				    return array($ret->wrap(__FILE__, __LINE__), null);
+			    $path = $pluginBaseDir . $pluginsDir . $pluginId . '/' . $pluginFile;
+			    if ($platform->file_exists($path)) {
+				$plugins[$pluginId]['available'] = 1;
+
+				$frameworkParams = array('version', 'callbacks', 'requiredCoreApi');
+				if ($pluginType == 'module') {
+				    $frameworkParams[] = 'requiredModuleApi';
+				} else {
+				    $frameworkParams[] = 'requiredThemeApi';
 				}
 
-				/* Separate out the major/minor version. */
-				if (!strncmp($paramName, 'required', 8)) {
-				    $tmp = split(',', $plugins[$pluginId][$paramName]);
-				    // DEBUG: remove these lines below when we
-				    // commit; make sure that we bump all module
-				    // versions instead so that the module
-				    // version reqs aren't empty
-				    if (empty($tmp) || count($tmp) < 2) {
-					$tmp = array(-1, -1);
+				foreach ($frameworkParams as $paramName) {
+				    list ($ret, $plugins[$pluginId][$paramName]) =
+					GalleryPluginHelper_simple::getParameter(
+					    $pluginType, $pluginId, '_' . $paramName);
+				    if ($ret->isError()) {
+					return array($ret->wrap(__FILE__, __LINE__), null);
 				    }
-				    $plugins[$pluginId][$paramName] =
-					array((int)$tmp[0], (int)$tmp[1]);
+
+				    /* Separate out the major/minor version. */
+				    if (!strncmp($paramName, 'required', 8)) {
+					$tmp = split(',', $plugins[$pluginId][$paramName]);
+					// DEBUG: remove these lines below when we
+					// commit; make sure that we bump all module
+					// versions instead so that the module
+					// version reqs aren't empty
+					if (empty($tmp) || count($tmp) < 2) {
+					    $tmp = array(-1, -1);
+					}
+					$plugins[$pluginId][$paramName] =
+					    array((int)$tmp[0], (int)$tmp[1]);
+				    }
 				}
 			    }
 			}
+			$platform->closedir($dir);
 		    }
-		    $platform->closedir($dir);
 		}
 
 		/* Find and remove plugins that are active, but not installed */
@@ -486,6 +492,105 @@ class GalleryPluginHelper_simple {
 	}
 
 	return array(GalleryStatus::success(), $data);
+    }
+
+    /**
+     * Returns an array of directories that can contain plugins.
+     *
+     * This function should only be used in special circumstances,
+     * for example when a list of all plugins needs to be made.
+     * Currently it returns gallery2/ and gallery2/plugins/.
+     */
+     function getPluginBaseDirs() {
+	static $data;
+	if (!isset($data)) {
+	    global $gallery;
+	    $data = array();
+	    $data['base'] = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/';
+
+	    $pluginsPath = $gallery->getConfig('data.gallery.plugins');
+	    if (file_exists($pluginsPath)) {
+		$data['g2data'] = $pluginsPath;
+	    }
+	}
+	return $data;
+    }
+
+    /**
+     * Returns the base directory of the specified plugin.
+     *
+     * Modules should never assume the filesystem location of any module, not
+     * even the core module. Use this function to get the base directory of a
+     * module. Possible base directories are usually gallery2/ and gallery2/plugins.
+     * The complete list can be read with GalleryCoreApi::getPluginBaseDirs().
+     *
+     * @param string 'module' or 'theme'
+     * @param string the plugin ID
+     * @param bool force index to be reread from the filesystem
+     * @return string plugin base directory
+     */
+    function getPluginBaseDir($pluginType, $pluginId, $clearCache=false) {
+	static $baseDirs;
+	if (!isset($baseDirs[$pluginId . $pluginType]) || $clearCache) {
+	    global $gallery;
+	    $defaultPluginBasePath = dirname(__FILE__) . '/../../../../';
+	    $pluginDataDir = $defaultPluginBasePath . $gallery->getConfig('plugins.dirname') . '/';
+
+	    if (GalleryCoreApi::isPluginInDefaultLocation($pluginType, $pluginId, $clearCache)) {
+		$baseDirs[$pluginId . $pluginType] = $defaultPluginBasePath;
+	    } else {
+		$baseDirs[$pluginId . $pluginType] = $pluginDataDir;
+	    }
+	}
+	return $baseDirs[$pluginId . $pluginType];
+    }
+
+    /**
+     * Indicates whether the specified plugin is in the default plugin directory.
+     *
+     * Sometimes it's useful to know just whether a plugin is in its default
+     * directory or not, without actually getting any information about its path.
+     * It is used for rewriting URLs in the UrlGenerator.
+     *
+     * We don't use GalleryPlatform in this function, because it is too low-level
+     * and there are significant problems with making it work here. One of the
+     * problems is that it breaks dozens of tests that rely on a mock platform.
+     *
+     * @param string 'module' or 'theme'
+     * @param string the plugin ID
+     * @param bool force index to be reread from the filesystem
+     * @return boolean
+     */
+    function isPluginInDefaultLocation($pluginType, $pluginId, $clearCache=false) {
+	static $pluginIndex;
+
+	/* Don't we need to know if the index file has changed to keep the cache updated? */
+	if (!isset($pluginIndex[$pluginType]) || $clearCache) {
+	    global $gallery;
+	    $pluginDataDir =
+	        dirname(__FILE__) . '/../../../../' . $gallery->getConfig('plugins.dirname');
+	    $pluginIndexFile = sprintf('%s/index.%ss', $pluginDataDir, $pluginType);
+
+	    /*
+	     * If the config file doesn't exist, install is in progress. In that
+	     * case we assume that all plugins are in their default directories.
+	     */
+	    if (!file_exists(dirname(__FILE__) . '/../../../../config.php')
+		    || !file_exists($pluginIndexFile)) {
+		return true;
+	    }
+	    $dataDirPluginList = file($pluginIndexFile);
+
+	    foreach($dataDirPluginList as $line) {
+		$pluginIndex[$pluginType][rtrim($line)] = 1;
+	    }
+	}
+
+	if (isset($pluginIndex[$pluginType][$pluginId])) {
+	    return false;
+	} else {
+	    return true;
+	}
     }
 }
 ?>

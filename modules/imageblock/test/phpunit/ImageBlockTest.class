@@ -48,7 +48,7 @@ class ImageBlockTest extends GalleryTestCase {
 	/* Register a dummy toolkit and operation */
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GalleryToolkit', 'ImageBlockToolkit', 'ImageBlockToolkit',
-	    'modules/imageblock/test/phpunit/ImageBlockTest.class', 'imageblockTest', null);
+	    'modules/imageblock/test/phpunit/ImageBlockTest.class', 'imageblock', null);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -76,7 +76,8 @@ class ImageBlockTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$imagePath = dirname(__FILE__) . '/../../../core/test/data/test1.gif';
+	$imagePath = GalleryCoreApi::getPluginBaseDir('module', 'core')
+	    . 'modules/core/test/data/test1.gif';
 	list ($ret, $this->_photo2) = $this->_addPhoto($this->_album->getId(), $imagePath);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();

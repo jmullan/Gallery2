@@ -41,7 +41,7 @@ class OptionsControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	parent::setUp();
 
-	$this->_saveSession = $gallery->getSession();
+	$this->_saveSession =& $gallery->getSession();
 	$this->_mockSession = new OptionsControllerTestMockSession();
 	$gallery->_session =& $this->_mockSession;
     }

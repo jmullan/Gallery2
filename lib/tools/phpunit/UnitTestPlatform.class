@@ -284,6 +284,10 @@ class UnitTestPlatform {
 	return $this->_makeReply('fwrite', array($handle, $string, $length));
     }
 
+    function file_put_contents($path, $contents) {
+	return $this->_makeReply('file_put_contents', array($path, $contents));
+    }
+
     function fclose($handle) {
 	return $this->_makeReply('fclose', array($handle));
     }

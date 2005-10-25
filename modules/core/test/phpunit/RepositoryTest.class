@@ -1,0 +1,787 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Jozef Selesi <selesi at gmail dot com>
+ */
+
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryRepository.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryRepositoryIndex.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryRepositoryUtilities.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/test/phpunit/RepositoryTestStorage.class');
+
+/**
+ * Test repository functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class RepositoryTest extends GalleryTestCase {
+
+    var $_index;
+    var $_sampleIndex;
+
+    function setUp() {
+	parent::setUp();
+
+	/* Set up mock translator and storage. */
+	global $gallery;
+	$this->_galleryTranslator = $gallery->_translator;
+	$gallery->translator = new RepositoryIndexTestTranslator();
+
+	$this->_galleryStorage =& $gallery->_storage;
+	$this->_testStorage =& RepositoryTestStorage::getSingleton();
+	$gallery->_storage =& $this->_testStorage;
+	
+	/* Prepare test index. */
+	include(dirname(__FILE__) . '/../../../../lib/tools/repository/test/data/SampleIndex.inc');
+	$this->_sampleIndex = $sampleIndex;
+	$this->_index = new GalleryRepositoryIndex();
+	$this->_index->_index = $this->_sampleIndex;
+	$this->_index->_isLoaded = true;
+    }
+
+    function tearDown() {
+	/* Return original translator and storage. */
+	global $gallery;
+	$gallery->_translator = $this->_galleryTranslator;
+	$gallery->_storage =& $this->_galleryStorage;
+
+	parent::tearDown();
+    }
+
+    /**
+     * Test getAllUpgradeablePackages and getUpgradeInfo.
+     */
+    function testUpgrade() {
+	$testcases = array(array(
+	    'installedPackages' => array(
+		'base' => array('version' => '1.0.0', 'build' => '19710411131300')),
+	    'expectedUpgradeInfo' => array(
+		'downloadablePackages' => array('test' => 1),
+		'downloadableLanguages' => array(
+		    'codes' => array('en_US', 'en_GB', 'pt_PT', 'pt_BR'),
+		    'names' => array('en_US', 'en_GB', 'pt_PT', 'pt_BR'))),
+	    'expectedPackages' => array()), array(
+
+	    'installedPackages' => array(
+		'base' => array('version' => '2.0.0', 'build' => '19710411131300'),
+		'test' => array('version' => '2.0.0', 'build' => '19710411131300')),
+	    'expectedUpgradeInfo' => array(
+		'downloadableLanguages' => array(
+		    'codes' => array('en_US', 'en_GB', 'pt_PT', 'pt_BR'),
+		    'names' => array('en_US', 'en_GB', 'pt_PT', 'pt_BR'))),
+	    'expectedPackages' => array()), array(
+
+	    'installedPackages' => array(
+		'base' => array('version' => '1.0.0', 'build' => '19700111131300')),
+	    'expectedUpgradeInfo' => array(
+		'isBaseUpgradeable' => 1,
+		'downloadablePackages' => array('test' => 1),
+		'downloadableLanguages' => array(
+		    'codes' => array('en_US', 'en_GB', 'pt_PT', 'pt_BR'),
+		    'names' => array('en_US', 'en_GB', 'pt_PT', 'pt_BR'))),
+	    'expectedPackages' => array('module' => array('testModule' => array(
+		'base' => 1)),	'theme' => array('testTheme' => array(
+		'base' => 1)))), array(
+
+	    'installedPackages' => array(
+		'base' => array('version' => '1.0.0', 'build' => '19700412131300'),
+		'test' => array('version' => '1.0.0', 'build' => '19700412131300'),
+		'lang-en_US' => array('version' => '2.2', 'build' => '2.3'),
+		'lang-en_GB' => array('version' => '2.2', 'build' => '2.3'),
+		'lang-pt_BR' => array('version' => '2.2', 'build' => '2.3'),
+		'lang-pt_PT' => array('version' => '2.2', 'build' => '2.3')),
+	    'expectedUpgradeInfo' => array(),
+	    'expectedPackages' => array()), array(
+
+	    'installedPackages' => array(),
+	    'expectedUpgradeInfo' => array(
+		'isBaseDownloadable' => 1,
+		'downloadablePackages' => array('test' => 1),
+		'downloadableLanguages' => array(
+		    'codes' => array('en_US', 'en_GB', 'pt_PT', 'pt_BR'),
+		    'names' => array('en_US', 'en_GB', 'pt_PT', 'pt_BR'))),
+	    'expectedPackages' => array()), array(
+
+	    'installedPackages' => array(
+		'base' => array('version' => '1.0.0', 'build' => '19700412131300'),
+		'test' => array('version' => '1.0.0', 'build' => '19700412131300'),
+		'lang-en_US' => array('version' => '2.2', 'build' => '2.1'),
+		'lang-en_GB' => array('version' => '2.2', 'build' => '2.2'),
+		'lang-pt_PT' => array('version' => '2.2', 'build' => '2.3')),
+	    'expectedUpgradeInfo' => array(
+		'upgradeableLanguages' => array(
+		    'codes' => array('en_US', 'en_GB'),
+		    'names' => array('en_US', 'en_GB')),
+		'downloadableLanguages' => array(
+		    'codes' => array('pt_BR'),
+		    'names' => array('pt_BR'))),
+	    'expectedPackages' => array('module' => array('testModule' => array(
+		'lang-en_US' => 1, 'lang-en_GB' => 1)),	'theme' => array('testTheme' => array(
+		'lang-en_US' => 1)))));
+
+	foreach ($testcases as $case) {
+	    $utilities = new RepositoryTestUtilities($case['installedPackages']);
+	    $repository = new GalleryRepository();
+	    $repository->_utilities = $utilities;
+	    $repository->_index = $this->_index;
+	    $repository->_index->_utilities = $utilities;
+
+	    list ($ret, $upgradeInfo) = $repository->getPluginUpgradeInfo('module', 'testModule');
+	    if ($ret->isError()) {
+		$this->failWithStatus($ret);
+	    }
+
+	    $this->assertEquals($case['expectedUpgradeInfo'], $upgradeInfo,
+		'Unexpected upgrade data.');
+
+	    /*
+	     * Set up the platform so that it returns both testModule and testTheme only in the
+	     * first plugin base directory. This way there won't be duplication in the plugin list.
+	     */
+	    global $gallery;
+	    $platform = new UnitTestPlatform();
+	    foreach (array('module', 'theme') as $pluginType) {
+		$firstBaseDirectory = true;
+		foreach (GalleryCoreApi::getPluginBaseDirs() as $baseDir) {
+		    $path = $baseDir . $pluginType . 's/';
+		    $platform->setReply('opendir', array($path), 'fh');
+
+		    if ($firstBaseDirectory) {
+			$firstBaseDirectory = false;
+
+			$platform->setReply('readdir', array('fh'),  'test' . ucfirst($pluginType));
+			$platform->setReply('is_file', array(sprintf('%stest%s/%s.inc', $path,
+							     ucfirst($pluginType), $pluginType)),
+					    true);
+		    }
+		    $platform->setReply('readdir', array('fh'), false);
+		    $platform->setReply('closedir', array('fh'), true);
+	        }
+	    }
+	    $gallery->setPlatform($platform);
+
+	    list ($ret, $packages) = $repository->getAllUpgradeablePackages();
+	    if ($ret->isError()) {
+		$this->failWithStatus($ret);
+	    }
+	    $this->assertEquals($case['expectedPackages'], $packages);
+	}
+    }
+
+    function testIsCoreUpgradeAvailable() {
+	/* Get installed core version. */
+	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+	$installedCoreVersion = $core->getVersion();
+
+	/* Assign arbitrary repository API versions. */
+	$repositoryModuleApiVersion = '1.2';
+	$repositoryThemeApiVersion = '3.4';
+	$repositoryCoreApiVersion = '5.6';
+	$this->_index->_index['modules']['core']['header']['themeApiVersion'] =
+	    explode('.', $repositoryThemeApiVersion);
+	$this->_index->_index['modules']['core']['header']['moduleApiVersion'] =
+	    explode('.', $repositoryModuleApiVersion);
+	$this->_index->_index['modules']['core']['header']['coreApiVersion'] =
+	    explode('.', $repositoryCoreApiVersion);
+
+	$testCases = array(array(
+	    /* Simulate a newer repository core version than the one currently installed. */
+	    'repositoryCoreVersion' => $this->calculateVersion($installedCoreVersion, '0.1.0', '+'),
+	    'expectedRelation' => 'newer',
+	    'expectedApiVersions' => array(
+		'core' => $repositoryCoreApiVersion,
+		'module' => $repositoryModuleApiVersion,
+		'theme' => $repositoryThemeApiVersion)), array(
+
+	    /* Simulate an older repository core version than the one currently installed. */
+	    'repositoryCoreVersion' => $this->calculateVersion($installedCoreVersion, '0.1.0', '-'),
+	    'expectedRelation' => 'older',
+	    'expectedApiVersions' => array()), array(
+
+	    /* Simulate an identical repository core version as the one currently installed. */
+	    'repositoryCoreVersion' => $installedCoreVersion,
+	    'expectedRelation' => 'equal',
+	    'expectedApiVersions' => array()));
+
+	foreach ($testCases as $case) {
+	    $this->_index->_index['modules']['core']['header']['version'] =
+		$case['repositoryCoreVersion'];
+
+	    $utilities = new RepositoryTestUtilities();
+	    $repository = new GalleryRepository();
+	    $repository->_utilities = $utilities;
+	    $repository->_index = $this->_index;
+	    $repository->_index->_utilities = $utilities;
+
+	    list ($ret, $isAvailable, $apiVersions) = $repository->isCoreUpgradeAvailable();
+	    if ($ret->isError()) {
+		$this->failWithStatus($ret);
+	    }
+	    $this->assertEquals($case['expectedRelation'] == 'newer', $isAvailable,
+				"Expected relation: {$case['expectedRelation']}, $isAvailable");
+	    $this->assertEquals($case['expectedApiVersions'], $apiVersions);
+	}
+	$this->_index->_index = $this->_sampleIndex;
+    }
+
+    /**
+     * Adds/subtracts two version strings and returns the result.
+     *
+     * This is a helper function for testIsCoreUpgradeAvailable. Examples:
+     *   calculateVersion(1.2.0, 0.1.0, '+') = 1.3.0
+     *   calculateVersion(1.2.0, 1.1.0, '-') = 0.1.0
+     *
+     * @param string first operand
+     * @param string second operand
+     * @param string operator, '+' or '-'
+     * @return string result
+     */
+    function calculateVersion($operand1, $operand2, $operator) {
+	$operand1 = explode('.', $operand1);
+	$operand2 = explode('.', $operand2);
+
+	$result[0] = $operator == '+' ? $operand1[0] + $operand2[0] : $operand1[0] - $operand2[0];
+	$result[1] = $operator == '+' ? $operand1[1] + $operand2[1] : $operand1[1] - $operand2[1];
+	$result[2] = $operator == '+' ? $operand1[2] + $operand2[2] : $operand1[2] - $operand2[2];
+	return implode('.', $result);
+    }
+
+    function testGetRepositoryPluginList() {
+
+	$testModule = $this->_sampleIndex['modules']['testModule'];
+	$testModuleWithVersion = $testModule;
+	$testModuleWithVersion['localVersion'] = 'someVersion';
+
+	$testCases = array(array(
+	    /* Compatible, locally available, upgradeable. */
+	    'pluginData' => array(
+		'showAll' => 'showAll', 'pluginType' => 'module', 'coreApis' => array(
+		    'core' => array(1, 2), 'module' => array(3, 4), 'theme' => array(5, 6)),
+		'plugins' => array('module' => array('testModule' => $testModule))),
+	    'isCompatible' => true,
+	    'isAvailable' => true,
+	    'installedPackages' => array(
+		'base' => array('version' => '1.0.0', 'build' => '19700412131300'),
+		'test' => array('version' => '1.0.0', 'build' => '19700412131300')),
+	    'expectedPluginList' => array(
+		'testModule' =>	array(
+		    'type' => 'module',
+		    'name' => 'Test Module',
+		    'description' => 'This is a test module.',
+		    'groupLabel' => 'Test Group',
+		    'repositoryVersion' => '1.0.0',
+		    'localVersion' => 'someVersion',
+		    'isCompatible' => true,
+		    'api' => array('required' => array('core' => '1.2', 'plugin' => '3.4'),
+				   'provided' => array('core' => '1.2', 'plugin' => '3.4')),
+		    'action' => 'upgrade'))), array(
+
+	    /* Incompatible, locally unavailable, no action. */
+	    'pluginData' => array(
+		'showAll' => 'showAll', 'pluginType' => 'module', 'coreApis' => array(
+		    'core' => array(1, 2), 'module' => array(3, 4), 'theme' => array(5, 6)),
+		'plugins' => array('module' => array('testModule' => $testModule))),
+	    'isCompatible' => false,
+	    'isAvailable' => false,
+	    'installedPackages' => array(),
+	    'expectedPluginList' => array(
+		'testModule' =>	array(
+		    'type' => 'module',
+		    'name' => 'Test Module',
+		    'description' => 'This is a test module.',
+		    'groupLabel' => 'Test Group',
+		    'repositoryVersion' => '1.0.0',
+		    'localVersion' => '',
+		    'isCompatible' => false,
+		    'api' => array('required' => array('core' => '1.2', 'plugin' => '3.4'),
+				   'provided' => array('core' => '1.2', 'plugin' => '3.4')),
+		    'action' => ''))), array(
+
+	    /* Compatible, locally available, no action (all packages up-to-date). */
+	    'pluginData' => array(
+		'showAll' => 'showAll', 'pluginType' => 'module', 'coreApis' => array(
+		    'core' => array(1, 2), 'module' => array(3, 4), 'theme' => array(5, 6)),
+		'plugins' => array('module' => array('testModule' => $testModule))),
+	    'isCompatible' => true,
+	    'isAvailable' => true,
+	    'installedPackages' => array(
+		'base' => array('version' => '1.0.0', 'build' => '19700412131300'),
+		'test' => array('version' => '1.0.0', 'build' => '19700412131300'),
+		'lang-en_US' => array('version' => '2.2', 'build' => '2.4'),
+		'lang-en_GB' => array('version' => '2.2', 'build' => '2.4'),
+		'lang-pt_BR' => array('version' => '2.2', 'build' => '2.4'),
+		'lang-pt_PT' => array('version' => '2.2', 'build' => '2.4')),
+	    'expectedPluginList' => array(
+		'testModule' =>	array(
+		    'type' => 'module',
+		    'name' => 'Test Module',
+		    'description' => 'This is a test module.',
+		    'groupLabel' => 'Test Group',
+		    'repositoryVersion' => '1.0.0',
+		    'localVersion' => 'someVersion',
+		    'isCompatible' => true,
+		    'api' => array('required' => array('core' => '1.2', 'plugin' => '3.4'),
+				   'provided' => array('core' => '1.2', 'plugin' => '3.4')),
+		    'action' => ''))));
+
+	foreach ($testCases as $case) {
+	    $utilities = new RepositoryTestUtilities($case['installedPackages']);
+	    $repository = new GalleryRepository();
+	    $repository->_utilities = $utilities;
+
+	    $case['pluginData']['plugins']['module']['testModule']['isCompatible'] =
+		$case['isCompatible'];
+
+	    /*
+	     * If the plugin should be locally available, we set localVersion to some value,
+	     * because that's what GalleryRepositoryIndex::getPlugins() would do.
+	     */
+	    if ($case['isAvailable']) {
+		$case['pluginData']['plugins']['module']['testModule']['localVersion'] =
+		    'someVersion';
+	    }
+	    $repository->_index = new RepositoryTestIndex($this->_sampleIndex, $case['pluginData']);
+
+	    list ($ret, $pluginList) =
+		$repository->getRepositoryPluginList($case['pluginData']['pluginType'],
+		$case['pluginData']['showAll'],	$case['pluginData']['coreApis']);
+	    if ($ret->isError()) {
+		$this->failWithStatus($ret);
+	    }
+
+	    $this->assertEquals($case['expectedPluginList'], $pluginList);
+	}
+    }
+
+    function testComparePluginListEntries() {
+	$repository = new GalleryRepository();
+
+	$testCase = array('plugin1Id' => array('groupLabel' => 'foo', 'name' => 'bar'),
+			  'plugin2Id' => array('groupLabel' => 'bar', 'name' => 'zoo'),
+			  'plugin3Id' => array('groupLabel' => 'bar', 'name' => 'moo'));
+
+	uasort($testCase, array('GalleryRepository', 'comparePluginListEntries'));
+	$this->assertEquals(array('plugin3Id' => array('groupLabel' => 'bar', 'name' => 'moo'),
+				  'plugin2Id' => array('groupLabel' => 'bar', 'name' => 'zoo'),
+				  'plugin1Id' => array('groupLabel' => 'foo', 'name' => 'bar')),	
+			    $testCase, 'List not sorted properly.');
+    }
+
+    function testUpdatePackageMetaData() {
+	$this->_testStorage->reset();
+	$expectedQuery = '
+	    SELECT
+	      [GalleryPluginPackageMap::packageVersion],
+	      [GalleryPluginPackageMap::packageBuild]
+	    FROM
+	      [GalleryPluginPackageMap]
+	    WHERE
+	      [GalleryPluginPackageMap::pluginType] = ?
+	      AND
+	      [GalleryPluginPackageMap::pluginId] = ?
+	      AND
+	      [GalleryPluginPackageMap::packageName] = ?
+	    ';
+	$expectedArguments = array('module', 'testModule', 'package');
+
+	/* Test initial map entry add scenario. */
+	$this->_testStorage->setSearchResults(array());
+
+	$repository = new GalleryRepository();
+	$ret = $repository->updatePackageMetaData(
+	    'module', 'testModule', 'package', 'version', 'build');
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret);
+	}
+	$this->assertEquals(array('GalleryPluginPackageMap' => array('pluginType' => 'module',
+								     'pluginId' => 'testModule',
+								     'packageName' => 'package',
+								     'packageVersion' => 'version',
+								     'packageBuild' => 'build')),
+			    $this->_testStorage->getAddedMapData(),
+			    'Invalid data added.');
+
+	$searches = $this->_testStorage->getSearches();
+	$this->assertEquals(array('query' => $expectedQuery, 'arguments' => $expectedArguments),
+			    $searches[0],
+			    'Unexpected query on map addition.');
+
+	/* Test map entry update scenario. */
+	$this->_testStorage->setSearchResults(array('someResults'));
+
+	$repository = new GalleryRepository();
+	$ret = $repository->updatePackageMetaData(
+	    'module', 'testModule', 'package', 'version', 'build');
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret);
+	}
+	$this->assertEquals(array('GalleryPluginPackageMap' =>
+				  array('match' => array('pluginType' => 'module',
+							 'pluginId' => 'testModule',
+							 'packageName' => 'package'),
+					'change' => array('packageVersion' => 'version',
+							  'packageBuild' => 'build'))),
+			    $this->_testStorage->getUpdatedMapData(),
+			    'Wrong data updated.');
+
+	$searches = $this->_testStorage->getSearches();
+	$this->assertEquals(array('query' => $expectedQuery, 'arguments' => $expectedArguments),
+			    $searches[0],
+			    'Unexpected query on map update.');
+    }
+
+    function testCreatePluginDirectory() {
+	global $gallery;
+
+	$repository = new GalleryRepository();
+
+	$repositoryCachePath = 'modules/core/cache';
+	$gallery->setConfig('repository.cache', $repositoryCachePath);
+	$expectedPluginsDirectory = realpath(dirname(__FILE__) . '/../../../../')
+	    . '/modules/core/classes/../../../' . $gallery->getConfig('plugins.dirname');
+	$pluginsDirectory = 'plugins';
+
+	/* Test when all of the directories are set up properly. */
+	$platform = new UnitTestPlatform();
+	$platform->setReply('realpath', array($expectedPluginsDirectory), $pluginsDirectory);
+	$platform->setReply('is_dir', array($pluginsDirectory), true);
+	$platform->setReply('is_dir', array($pluginsDirectory . '/modules'), true);
+	$platform->setReply('is_dir', array($pluginsDirectory . '/themes'), true);
+	$platform->setReply('file_exists', array($repositoryCachePath), true);
+	$platform->setReply('is_dir', array($repositoryCachePath . 'modules'), true);
+	$platform->setReply('is_dir', array($repositoryCachePath . 'themes'), true);
+	$gallery->setPlatform($platform);
+	list ($isSetUp, $message) = $repository->createPluginsDirectory();
+	$this->assert($isSetUp, $message);
+
+	/* Test when the plugins directory does not exist. */
+	$platform = new UnitTestPlatform();
+	$platform->setReply('realpath', array($expectedPluginsDirectory), $pluginsDirectory);
+	$platform->setReply('is_dir', array($pluginsDirectory), false);
+	$gallery->setPlatform($platform);
+	list ($isSetUp, $message) = $repository->createPluginsDirectory();
+	$this->assert(!$isSetUp, 'Return value should be false.');
+
+	/* Test the creation of all directories. */
+	$platform = new UnitTestPlatform();
+	$platform->setReply('realpath', array($expectedPluginsDirectory), $pluginsDirectory);
+	$platform->setReply('is_dir', array($pluginsDirectory), true);
+	$platform->setReply('is_dir', array($pluginsDirectory . '/modules'), false);
+	$platform->setReply('mkdir', array($pluginsDirectory . '/modules', 755), true);
+	$platform->setReply('is_dir', array($pluginsDirectory . '/themes'), false);
+	$platform->setReply('mkdir', array($pluginsDirectory . '/themes', 755), true);
+
+	/* Test recursive repository cache directory creation. */
+	$platform->setReply('file_exists', array($repositoryCachePath), false);
+	$platform->setReply('is_dir', array('modules/core/cache'), false);
+	$platform->setReply('is_dir', array('modules/core'), false);
+	$platform->setReply('is_dir', array('modules'), true);
+	$platform->setReply('mkdir', array('modules/core', 755), true);
+	$platform->setReply('mkdir', array('modules/core/cache', 755), true);
+	$platform->setReply('file_exists', array($repositoryCachePath), true);
+
+	/* Test creation of cache subdirectories. */
+	$platform->setReply('is_dir', array($repositoryCachePath . 'modules'), false);
+	$platform->setReply('mkdir', array($repositoryCachePath . 'modules', 755), true);
+	$platform->setReply('is_dir', array($repositoryCachePath . 'themes'), false);
+	$platform->setReply('mkdir', array($repositoryCachePath . 'themes', 755), true);
+	$gallery->setPlatform($platform);
+	list ($isSetUp, $message) = $repository->createPluginsDirectory();
+	$this->assert($isSetUp, $message);
+
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+
+    function testGetDownloadFileList() {
+	$indexData = array('module' => array(
+	    'testModule' => array('descriptorUrl' => 'testModuleDescriptorUrl',
+				  'name' => 'Test Module',
+	    			  'package1' => 'package1Url',
+	    			  'package2' => 'package2Url')));
+
+	$repository = new GalleryRepository();
+	$repository->_index = new RepositoryTestIndex($this->_sampleIndex, $indexData);
+
+	$pluginData = array('module' => array('testModule' => array('package1' => 1,
+								    'package2' => 1)));
+	list ($ret, $files) = $repository->getDownloadFileList($pluginData);
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array('module' =>  array('testModule' => array(
+	    'name' => $indexData['module']['testModule']['name'],
+	    'files' => array('descriptor' => $indexData['module']['testModule']['descriptorUrl'],
+			     'package1' => $indexData['module']['testModule']['package1'],
+			     'package2' => $indexData['module']['testModule']['package2'])))),
+	    $files, 'Unexpected file data.');
+    }
+    
+    function testUpdatePluginIndexFile() {
+	global $gallery;
+	$gallery->setConfig('data.gallery.plugins', 'plugins/');
+
+	$indexWithoutPlugin = "pluginId1\npluginId2\n";
+	$indexWithPlugin = "pluginId1\npluginId2\ntestModule\n";
+	$repository = new GalleryRepository();
+
+	$platform = new UnitTestPlatform();
+	/* Return index without the specified plugin ID. */
+	$platform->setReply('file_exists', array('plugins/index.modules'), true);
+	$platform->setReply('file_get_contents',
+	    array('plugins/index.modules'), $indexWithoutPlugin);
+	$platform->setReply('file_put_contents', array('plugins/index.modules', $indexWithPlugin),
+	    true);
+			    
+	/* Return index with the specified plugin ID. */
+	$platform->setReply('file_exists', array('plugins/index.modules'), true);
+	$platform->setReply('file_get_contents',
+	    array('plugins/index.modules'), $indexWithPlugin);
+	$gallery->setPlatform($platform);
+
+	/* Test case when the plugin index file doesn't contain the specified plugin ID. */ 
+	$ret = $repository->updatePluginIndexFile('module', 'testModule');
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret);
+	}
+	
+	/* Test case when the plugin index already contains the specified plugin ID. */ 
+	$ret = $repository->updatePluginIndexFile('module', 'testModule');
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret);
+	}
+	
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+
+    function testDownloadAndUnpack() {
+	global $gallery;
+
+	$testCachePath = dirname(__FILE__) . '/../data/';
+	$testPackagePath = dirname(__FILE__) . '/../data/RepositoryTest.package';
+	$testPackageUrl = 'repositoryUrl/RepositoryTest.package';
+	$testDescriptorPath = dirname(__FILE__) . '/../data/RepositoryTest.descriptor';
+	$testDescriptorUrl = 'repositoryUrl/RepositoryTest.descriptor';
+	$gallery->setConfig('repository.cache', $testCachePath);
+	$gallery->setConfig('repository.url', 'repositoryUrl/');
+	$gallery->setConfig('data.gallery.plugins', 'plugins/');
+
+	$platform = new UnitTestPlatform();
+	/* Package download. */ 
+	$platform->setReply('file_exists', array('plugins/modules/testModule/'), true);
+	$platform->setReply('file_put_contents',
+	    array($testPackagePath, serialize(array($testPackageUrl))), true);
+
+	/* Descriptor download. */
+	$platform->setReply('file_exists', array('plugins/modules/testModule/'), true);
+	$platform->setReply('file_put_contents',
+	    array($testDescriptorPath, serialize(array($testDescriptorUrl))), true);
+	$gallery->setPlatform($platform);
+
+	$repository = new GalleryRepository();
+	$repository->_utilities = new RepositoryTestUtilities();
+
+	/* Test downloading a package. */
+	list ($ret, $descriptor) = $repository->downloadAndUnpack(
+	    'module', 'testModule', 'testPackage', 'RepositoryTest.package');
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret);
+	}
+	$this->assert(empty($descriptor), 'Descriptor should be empty after package download.');
+
+	/* Test downloading a descriptor. */
+	list ($ret, $descriptor) = $repository->downloadAndUnpack(
+	    'module', 'testModule', 'testPackage', 'RepositoryTest.descriptor');
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret);
+	}
+	$this->assertEquals(array('pluginId' => 'testModule', 'pluginType' => 'module',
+				  'contents' => array ('repositoryUrl/RepositoryTest.descriptor')),
+			    $descriptor, 'Invalid descriptor returned.');
+
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+
+    function testVerifyPackageIntegrity() {
+	global $gallery;
+
+	$gallery->setConfig('data.gallery.plugins', 'plugins/');
+	$testDescriptor = array(
+	    'pluginType' => 'module',
+	    'pluginId' => 'testModule',
+	    'contents' => array('files' => array(
+		'moduleFile1' => array('packages' => array('package1'),
+				       'bytes' => 1337,
+				       'hash' => md5('plugins/modules/testModule/moduleFile1')),
+		'moduleFile2' => array('packages' => array('package1'),
+				       'bytes' => 31337,
+				       'hash' => md5('plugins/modules/testModule/moduleFile2')))));
+
+	$platform = new UnitTestPlatform();
+	/* moduleFile1 */
+	$platform->setReply('file_exists', array('plugins/modules/testModule/moduleFile1'), true);
+	$platform->setReply('filesize', array('plugins/modules/testModule/moduleFile1'), 1337);
+	$platform->setReply('file_get_contents', array('plugins/modules/testModule/moduleFile1'),
+	    'plugins/modules/testModule/moduleFile1');
+
+	/* moduleFile2 */
+	$platform->setReply('file_exists', array('plugins/modules/testModule/moduleFile2'), true);
+	$platform->setReply('filesize', array('plugins/modules/testModule/moduleFile2'), 31337);
+	$platform->setReply('file_get_contents', array('plugins/modules/testModule/moduleFile2'),
+	    'plugins/modules/testModule/moduleFile2');
+	$gallery->setPlatform($platform);
+
+	$repository = new GalleryRepository();
+	$ret = $repository->verifyPackageIntegrity('package1', $testDescriptor);
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret);
+	}
+
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+}
+
+class RepositoryTestTranslator {
+
+    function getActiveLanguageCode() {
+	return 'en_US';
+    }
+}
+
+class RepositoryTestUtilities {
+
+    var $_packages;
+    var $_utilities;
+
+    function RepositoryTestUtilities($packages = null) {
+	$this->_packages = $packages;
+	$this->_utilities = new GalleryRepositoryUtilities();
+    }
+
+    function getLanguageDescription($language) {
+	return array(GalleryStatus::success(), $language);
+    }
+
+    function compareRevisions($revision1, $revision2) {
+	return $this->_utilities->compareRevisions($revision1, $revision2);
+    }
+
+    function compareVersions($version1, $version2, $revision1 = '', $revision2 = '') {
+	return $this->_utilities->compareVersions($version1, $version2, $revision1, $revision2);
+    }
+
+    function getProvidedApis($pluginType, $apis) {
+	return $this->_utilities->getProvidedApis($pluginType, $apis);
+    }
+
+    function getPluginPackages($pluginId, $plugin) {
+	return array(GalleryStatus::success(), $this->_packages);
+    }
+
+    function getLanguageBaseRevision() {
+	return array(GalleryStatus::success(), '2.2');
+    }
+
+    function isPluginAvailable($pluginType, $pluginId) {
+	return array(GalleryStatus::success(), !empty($this->_packages));
+    }
+
+    function isPluginCompatible($pluginType, $version1, $version2) {
+	return $this->_utilities->isPluginCompatible($pluginType, $version1, $version2);
+    }
+    
+    function downloadFile($url) {
+	return array(true, serialize(array($url)));
+    }
+}
+
+class RepositoryTestIndex {
+
+    var $_pluginData;
+    var $_index;
+
+    function RepositoryTestIndex($sampleIndex, $pluginData) {
+	$this->_index = new GalleryRepositoryIndex();
+	$this->_index->_index = $sampleIndex;
+	$this->_index->_isLoaded = true;
+
+	$this->_pluginData = $pluginData;
+    }
+
+    function getPlugins($pluginType, $showAll, $coreApis = null) {
+	if ($this->_pluginData['pluginType'] != $pluginType
+		|| $this->_pluginData['showAll'] != $showAll
+		|| $this->_pluginData['coreApis'] != $coreApis) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					      'Wrong arguments passed.'),
+			 null);
+	}
+	return array(GalleryStatus::success(), $this->_pluginData['plugins']);
+    }
+
+    function getPluginHeader($pluginType, $pluginId) {
+	return $this->_index->getPluginHeader($pluginType, $pluginId);
+    }
+
+    function getAvailableLanguagesInPlugin($pluginType, $pluginId) {
+	return $this->_index->getAvailableLanguagesInPlugin($pluginType, $pluginId);
+    }
+
+    function getPackageUrl($pluginType, $pluginId, $package) {
+	if (!isset($this->_pluginData[$pluginType][$pluginId][$package])) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					      "[$pluginType] [$pluginId] [$package]: No url found"),
+			 null);
+	}
+	return array(GalleryStatus::success(),
+		     $this->_pluginData[$pluginType][$pluginId][$package]);
+    }
+
+    function getDescriptorUrl($pluginType, $pluginId) {
+	if (!isset($this->_pluginData[$pluginType][$pluginId]['descriptorUrl'])) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					      "[$pluginType] [$pluginId]: Descriptor not found."),
+			 null);
+	}
+	return array(GalleryStatus::success(),
+		     $this->_pluginData[$pluginType][$pluginId]['descriptorUrl']);
+    }
+
+    function getPluginName($pluginType, $pluginId) {
+	if (!isset($this->_pluginData[$pluginType][$pluginId]['name'])) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					      "[$pluginType] [$pluginId]: Name not found."),
+			 null);
+	}
+	return array(GalleryStatus::success(), $this->_pluginData[$pluginType][$pluginId]['name']);
+    }
+
+    function getPackageVersionAndBuild($pluginType, $pluginId, $packageName) {
+	return array(GalleryStatus::success(), $pluginType, $pluginId);
+    }
+}
+?>

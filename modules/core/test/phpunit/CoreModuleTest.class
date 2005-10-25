@@ -74,6 +74,8 @@ class CoreModuleTest extends GalleryTestCase {
 				'view' => 'core.AdminCore'),
 			  array('name' => $this->_module->translate('Modules'),
 				'view' => 'core.AdminModules'),
+			  array('name' => $this->_module->translate('Repository'),
+				'view' => 'core.AdminRepository'),
 			  array('name' => $this->_module->translate('Themes'),
 				'view' => 'core.AdminThemes',
 				'group' => 'display',
@@ -111,13 +113,15 @@ class CoreModuleTest extends GalleryTestCase {
 				'arg1' => $this->_module->translate('Album')),
 			  'Album'),
 		      'view' => 'core.ItemEdit'),
-		array('name' => $this->_module->translate(
+		array('name' => $this->_module->_translate(
 			  array('text' => 'Delete %s',
-				'arg1' => $this->_module->translate('Album'))),
+				'arg1' => $this->_module->translate('Album')),
+			  'Album'),
 		      'view' => 'core.ItemDeleteSingle'),
-		array('name' => $this->_module->translate(
+		array('name' => $this->_module->_translate(
 			  array('text' => 'Move %s',
-				'arg1' => $this->_module->translate('Album'))),
+				'arg1' => $this->_module->translate('Album')),
+			  'Album'),
 		      'view' => 'core.ItemMoveSingle'),
 		array('name' => $this->_module->translate('Edit Permissions'),
 		      'view' => 'core.ItemPermissions'),

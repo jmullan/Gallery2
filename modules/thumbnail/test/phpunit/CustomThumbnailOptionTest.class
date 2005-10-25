@@ -49,7 +49,7 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	  'GalleryToolkit', 'CustomThumbnailOptionTestToolkit', 'CustomThumbnailOptionTestToolkit',
-	  'modules/thumbnail/test/phpunit/CustomThumbnailOptionTest.class', 'thumbnailTest', null);
+	  'modules/thumbnail/test/phpunit/CustomThumbnailOptionTest.class', 'thumbnail', null);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -113,7 +113,8 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 	$form = array('name' => array(1 => 'test.gif'),
 		      'type' => array(1 => 'image/gif'),
 		      'tmp_name' => array(1 =>
-			    dirname(__FILE__) . '/../../../core/test/data/test1.gif'));
+			    GalleryCoreApi::getPluginBaseDir('module', 'core')
+				. 'modules/core/test/data/test1.jpg'));
 
 	list ($error, $warning) = $this->_handleRequestAfterEdit($form, $this->_item);
 	$this->assertEquals(array('form[CustomThumbnailOption][error][imageMime]'), $error);
@@ -125,7 +126,8 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 	$form = array('name' => array(1 => 'test.jpg'),
 		      'type' => array(1 => 'image/jpeg'),
 		      'tmp_name' => array(1 =>
-			    dirname(__FILE__) . '/../../../core/test/data/test1.jpg'));
+			    GalleryCoreApi::getPluginBaseDir('module', 'core')
+				. 'modules/core/test/data/test1.jpg'));
 
 	$result = $this->_handleRequestAfterEdit($form, $this->_item);
 	$this->assertEquals(array(array(), array()), $result);
@@ -170,7 +172,8 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 	$form = array('name' => array(1 => 'test.jpg'),
 		      'type' => array(1 => 'image/jpeg'),
 		      'tmp_name' => array(1 =>
-			    dirname(__FILE__) . '/../../../core/test/data/test1.jpg'));
+			    GalleryCoreApi::getPluginBaseDir('module', 'core')
+				. 'modules/core/test/data/test1.jpg'));
 
 	$result = $this->_handleRequestAfterEdit($form, $this->_item);
 	$this->assertEquals(array(array(), array()), $result);
@@ -217,7 +220,8 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 	$form = array('name' => array(1 => 'test.jpg'),
 		      'type' => array(1 => 'image/jpeg'),
 		      'tmp_name' => array(1 =>
-			    dirname(__FILE__) . '/../../../core/test/data/test1.jpg'));
+			    GalleryCoreApi::getPluginBaseDir('module', 'core')
+				. 'modules/core/test/data/test1.jpg'));
 
 	$result = $this->_handleRequestAfterEdit($form, $this->_image);
 	$this->assertEquals(array(array(), array()), $result);
@@ -275,7 +279,8 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 	$form = array('name' => array(1 => 'test.jpg'),
 		      'type' => array(1 => 'application/unknown'),
 		      'tmp_name' => array(1 =>
-			    dirname(__FILE__) . '/../../../core/test/data/test1.jpg'));
+			    GalleryCoreApi::getPluginBaseDir('module', 'core')
+				. 'modules/core/test/data/test1.jpg'));
 
 	$result = $this->_handleRequestAfterEdit($form, $this->_album);
 	$this->assertEquals(array(array(), array()), $result);
@@ -332,7 +337,8 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 	$form = array('name' => array(1 => 'test.jpg'),
 		      'type' => array(1 => 'image/jpeg'),
 		      'tmp_name' => array(1 =>
-			    dirname(__FILE__) . '/../../../core/test/data/test1.jpg'));
+			    GalleryCoreApi::getPluginBaseDir('module', 'core')
+				. 'modules/core/test/data/test1.jpg'));
 
 	$result = $this->_handleRequestAfterEdit($form, $album);
 	$this->assertEquals(array(array(), array()), $result);
@@ -376,7 +382,8 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 	$form = array('name' => array(1 => 'test.jpg'),
 		      'type' => array(1 => 'image/jpeg'),
 		      'tmp_name' => array(1 =>
-			    dirname(__FILE__) . '/../../../core/test/data/test1.jpg'));
+			    GalleryCoreApi::getPluginBaseDir('module', 'core')
+				. 'modules/core/test/data/test1.jpg'));
 
 	$result = $this->_handleRequestAfterEdit($form, $this->_album);
 	$this->assertEquals(array(array(), array()), $result);

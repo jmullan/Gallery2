@@ -59,40 +59,20 @@ function PhpUnitGalleryMain(&$testSuite, $filter) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$platform = $gallery->getPlatform();
-	$modulesDir = dirname(__FILE__) . '/../../../modules/';
 	$suiteArray = array();
 	foreach ($moduleStatusList as $moduleId => $moduleStatus) {
+	    $modulesDir = GalleryCoreApi::getPluginBaseDir('module', $moduleId) . 'modules/';
 	    if (empty($moduleStatus['active'])) {
 		continue;
 	    }
 
 	    $testDir = $modulesDir . $moduleId . '/test/phpunit';
-
-	    if ($platform->file_exists($testDir) &&
-		$platform->is_dir($testDir) &&
-		$dir = $platform->opendir($testDir)) {
-
-		if (empty($filter)) {
-		    $filterRegexp = '.*';
-		} else {
-		    $filterRegexp = $filter;
-		}
-
-		while (($file = $platform->readdir($dir)) != false) {
-		    if (preg_match('/(.*).class$/', $file, $matches)) {
-			require_once($testDir . '/' . $file);
-
-			$className = $matches[1];
-			if (class_exists($className) &&
-			        GalleryUtilities::isA(new $className(null), 'GalleryTestCase')) {
-			    $suiteArray[$className] = new TestSuite($className, $moduleId, $filterRegexp);
-			}
-		    }
-		}
-		$platform->closedir($dir);
-	    }
+	    $suiteArray += loadTests($moduleId, $testDir, $filter);
 	}
+
+	/* Add repository tools tests. */
+	$suiteArray += loadTests(
+	    'repositorytools', dirname(__FILE__) . '/../repository/test/phpunit', $filter);
 
 	$keys = array_keys($suiteArray);
 	natcasesort($keys);
@@ -107,6 +87,37 @@ function PhpUnitGalleryMain(&$testSuite, $filter) {
     GalleryCoreApi::registerEventListener('GalleryEntity::delete', $counter);
 
     return GalleryStatus::success();
+}
+
+function loadTests($moduleId, $testDir, $filter) {
+    global $gallery;
+    $moduleArray = array();
+
+    $platform = $gallery->getPlatform();
+    if ($platform->file_exists($testDir) &&
+	$platform->is_dir($testDir) &&
+	$dir = $platform->opendir($testDir)) {
+
+	if (empty($filter)) {
+	    $filterRegexp = '.*';
+	} else {
+	    $filterRegexp = $filter;
+	}
+
+	while (($file = $platform->readdir($dir)) != false) {
+	    if (preg_match('/(.*).class$/', $file, $matches)) {
+		require_once($testDir . '/' . $file);
+			$className = $matches[1];
+		if (class_exists($className) &&
+		        GalleryUtilities::isA(new $className(null), 'GalleryTestCase')) {
+		    $moduleArray[$className] = new TestSuite($className, $moduleId, $filterRegexp);
+		}
+	    }
+	}
+	$platform->closedir($dir);
+    }
+    
+    return $moduleArray;
 }
 
 define('FILTER_MAX', 1000000);

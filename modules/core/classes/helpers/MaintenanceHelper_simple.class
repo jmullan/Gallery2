@@ -123,7 +123,7 @@ class MaintenanceHelper_simple {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	GalleryCoreApi::relativeRequireOnce('/modules/core/classes/GalleryMaintenanceMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryMaintenanceMap.class');
 	$ret = GalleryMaintenanceMap::addMapEntry(
 	    array('runId' => $runId,
 		  'taskId' => $taskId,

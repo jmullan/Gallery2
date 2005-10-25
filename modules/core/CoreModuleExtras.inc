@@ -1240,6 +1240,20 @@ class CoreModuleExtras {
 	case '1.0.4':
 	    /* Added maintenance mode */
 
+	case '1.0.5':
+	    /* Remove plugins directory from g2data. */
+	    $pluginDirectory = $gallery->getConfig('data.gallery.base') . 'plugins';
+	    $pluginDirectories = array($pluginDirectory . '/modules',
+				       $pluginDirectory . '/themes',
+				       $pluginDirectory);
+
+	    foreach ($pluginDirectories as $pluginDirectory) {
+		if (@$platform->file_exists($pluginDirectory)) {
+		    /* We're not interested in whether it succeeded or not. */
+		    @$platform->recursiveRmDir($pluginDirectory);
+		}
+	    }
+	
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
@@ -1429,6 +1443,8 @@ $gallery->setConfig(\'cookieId\', \'' . $cookieId . '\');
  */
 $gallery->setConfig(\'mode.maintenance\', false);
 '));
+
+	case '1.0.5':
 
 	case 'end of upgrade path':
 	    /*

@@ -877,8 +877,8 @@ class DerivativeTestToolkit extends GalleryToolkit {
  */
 class DerivativeTestItem extends GalleryDataItem { }
 
-GalleryCoreApi::relativeRequireOnce('/modules/core/classes/GalleryPlatform/WinNtPlatform.class');
-GalleryCoreApi::relativeRequireOnce('/modules/core/classes/GalleryPlatform/UnixPlatform.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPlatform/WinNtPlatform.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPlatform/UnixPlatform.class');
 /* Used for the rebuildCache test */
 class DerivativeTestWinNtPlatform extends WinNtPlatform {
     /* Let the copy() call fail */

@@ -89,7 +89,8 @@ class WatermarkOptionTest extends ItemAddOptionTestCase {
 
 	/* Create a watermark */
 	$this->_watermark = new WatermarkImage();
-	$ret = $this->_watermark->create(dirname(__FILE__) . '/../../../core/test/data/test1.gif',
+	$ret = $this->_watermark->create(GalleryCoreApi::getPluginBaseDir('module', 'core')
+					 . 'modules/core/test/data/test1.gif',
 					 'image/gif',
 					 'phpunit_' . rand() . '.gif');
 	if ($ret->isError()) {

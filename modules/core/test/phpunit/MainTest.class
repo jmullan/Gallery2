@@ -51,7 +51,7 @@ class MainTest extends GalleryTestCase {
 	 * buffering.  G2_EMBED is not required for testEmbedOnly().
 	 */
 	ob_start();
-	GalleryCoreApi::relativeRequireOnce('main.php');
+	require_once(dirname(__FILE__) . '/../../../../main.php');
 	ob_end_clean();
 
 	GalleryUtilities::putRequestVariable('view', 'core.FooView');
