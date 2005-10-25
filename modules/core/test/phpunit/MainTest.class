@@ -43,7 +43,12 @@ class MainTest extends GalleryTestCase {
 	parent::setUp();
 
 	$this->_saveGallery = $GLOBALS['gallery'];
-
+	/*
+	 * Copies of the Gallery object still have all the same reference to the one and only
+	 * session object. Thus we need to backup the session too
+	 */
+	$this->_saveSession = $GLOBALS['gallery']->_session;
+	
 	/*
 	 * Previously we defined G2_EMBED here to prevent main.php from displaying any content
 	 * when it was included.  This caused problems with some tests that varied their behavior
@@ -66,6 +71,7 @@ class MainTest extends GalleryTestCase {
 
     function tearDown() {
 	$GLOBALS['gallery'] = $this->_saveGallery;
+	$GLOBALS['gallery']->_session = $this->_saveSession;
 
 	parent::tearDown();
     }
