@@ -61,7 +61,8 @@ class Php41CompatibilityTest extends CodeAuditTestCase {
 	/* Skip files we don't care about */
 	if ($fileName == 'Php41IllegalFunctions.inc' ||
 		substr($fileName, -10) == 'Test.class' ||
-		substr($fileName, -4) == '.tpl') {
+		substr($fileName, -4) == '.tpl' ||
+		!parent::shouldCheckFile($fileName)) {
 	    return false;
 	}
 

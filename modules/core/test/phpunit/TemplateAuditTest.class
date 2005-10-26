@@ -77,7 +77,8 @@ class TemplateAuditTest extends CodeAuditTestCase {
      * @see CodeAuditTestCase::shouldCheckFile()
      */
     function shouldCheckFile($fileName) {
-	if (preg_match('#Storage.schema.schema\.tpl$#', $fileName)) {
+	if (preg_match('#Storage.schema.schema\.tpl$|tools/repository/.*tpl#', $fileName)
+		|| !parent::shouldCheckFile($fileName)) {
 	    return false;
 	}
 	if (substr($fileName, -4) == '.tpl') {
