@@ -500,13 +500,13 @@ class GalleryRepository {
 	    foreach ($plugin as $pluginId => $packages) {
 		list ($ret, $pluginName) = $this->_index->getPluginName($pluginType, $pluginId);
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		list ($ret, $descriptorUrl) =
 		    $this->_index->getDescriptorUrl($pluginType, $pluginId);
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		$files[$pluginType][$pluginId]['name'] = $pluginName;
@@ -516,7 +516,7 @@ class GalleryRepository {
 			$this->_index->getPackageUrl($pluginType, $pluginId, $package);
 		    if ($ret->isError()) {
 			print($ret->getAsHtml());
-			return $ret->wrap(__FILE__, __LINE__);
+			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
 		    $files[$pluginType][$pluginId]['files'][$package] = $packageUrl;
@@ -597,7 +597,7 @@ class GalleryRepository {
 	    $ret = GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
 					"Couldn't create directory [$pluginOutputDir]");
 	    $templateAdapter->errorProgressBar($ret);
-	    return $ret;
+	    return array($ret, null);
 	}
 
 	/* Write package to the local repository cache directory. */

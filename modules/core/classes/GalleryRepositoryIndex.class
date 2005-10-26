@@ -381,7 +381,7 @@ class GalleryRepositoryIndex {
 	if (!$this->_isLoaded) {
 	    return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
 					      'Index must be loaded.'),
-		    null);
+		    null, null);
 	}
 
 	list ($ret, $header) = $this->getPluginHeader($pluginType, $pluginId);

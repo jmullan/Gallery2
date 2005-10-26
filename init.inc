@@ -98,7 +98,7 @@ function GalleryInitFirstPass($params=array()) {
     if (!isset($params['noDatabase'])) {
 	/* 
 	 * Swallow error to prevent GalleryFactoryHelper_loadRegistry
-	 * cache from breaking upgrade to core 1.0.5.
+	 * cache from breaking upgrade to core 1.0.6.
 	 */
 	list ($ret, $urlGenerator) = @GalleryCoreApi::newFactoryInstance('GalleryUrlGenerator');
 	/* Swallow ERROR_STORAGE_FAILURE, or automatic upgrading fails */

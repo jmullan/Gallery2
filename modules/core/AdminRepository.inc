@@ -216,7 +216,7 @@ class AdminRepositoryController extends GalleryController {
 	$repository = $this->_getRepository();
 	$ret = $repository->init();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Create download file list. */
