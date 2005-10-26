@@ -25,7 +25,7 @@
  *
  * @author Jozef Selesi <selesi at gmail dot com>
  *
- * @version $Id$
+ * @version $Revision$ $Date$
  * @package RepositoryTools
  * @subpackage Controllers
  * @module MainPageController
@@ -41,7 +41,7 @@ class MainPageControllerAndView extends RepositoryControllerAndView {
 	global $gallery;
 	$data = array();
 	$urlGenerator = $gallery->getUrlGenerator();
-	
+
 	/* Make sure logged in user is an administrator. */
 	list ($ret, $data['isSiteAdmin']) = GalleryCoreApi::isUserInSiteAdminGroup();
 	if ($ret->isError()) {

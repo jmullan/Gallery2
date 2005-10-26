@@ -29,7 +29,7 @@ GalleryCoreApi::relativeRequireOnce('lib/tools/repository/classes/RepositoryInde
  *
  * @author Jozef Selesi <selesi at gmail dot com>
  *
- * @version $Id$
+ * @version $Revision$ $Date$
  * @package RepositoryTools
  * @subpackage Controllers
  * @module RepositoryManagerController
@@ -45,7 +45,7 @@ class RepositoryManagerControllerAndView extends RepositoryControllerAndView {
 	global $gallery;
 	$urlGenerator = $gallery->getUrlGenerator();
 
-	/* Get repository plugin meta data. */ 
+	/* Get repository plugin meta data. */
 	$index = new RepositoryIndex();
 	$index->init($gallery->getConfig('repository.path'));
 	list ($ret, $pluginInfo) = $index->getPluginInfo();

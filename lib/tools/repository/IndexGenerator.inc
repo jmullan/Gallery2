@@ -29,7 +29,7 @@ GalleryCoreApi::relativeRequireOnce('lib/tools/repository/classes/RepositoryInde
  *
  * @author Jozef Selesi <selesi at gmail dot com>
  *
- * @version $Id$
+ * @version $Revision$ $Date$
  * @package RepositoryTools
  * @subpackage Controllers
  * @module IndexGeneratorController

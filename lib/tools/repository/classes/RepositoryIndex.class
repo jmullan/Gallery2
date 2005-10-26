@@ -28,7 +28,7 @@ GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTheme.class');
  *
  * @author Jozef Selesi <selesi at gmail dot com>
  *
- * @version $Id$
+ * @version $Revision$ $Date$
  * @package RepositoryTools
  * @subpackage Classes
  * @module RepositoryIndex
@@ -58,7 +58,7 @@ class RepositoryIndex extends RepositoryObject {
      */
     function init($repositoryDir) {
 	parent::init();
-	
+
 	$ret = $this->setOutputDir($repositoryDir);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
