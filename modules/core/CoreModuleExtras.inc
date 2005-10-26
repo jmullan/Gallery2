@@ -1253,7 +1253,10 @@ class CoreModuleExtras {
 		    @$platform->recursiveRmDir($pluginDirectory);
 		}
 	    }
-	
+
+	case '1.0.6':
+	    /* Add PluginPackageMap table */
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
@@ -1445,6 +1448,7 @@ $gallery->setConfig(\'mode.maintenance\', false);
 '));
 
 	case '1.0.5':
+	case '1.0.6':
 
 	case 'end of upgrade path':
 	    /*
