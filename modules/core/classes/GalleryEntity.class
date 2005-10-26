@@ -465,13 +465,7 @@ class GalleryEntity_core extends GalleryPersistent {
      * @return boolean
      */
     function hasOnLoadHandler($handlerId) {
-	$onLoadHandlers = $this->getOnLoadHandlers();
-	/* Don't call strpos with an empty needle since mb_strpos doesn't accept an empty needle */
-	if (empty($onLoadHandlers)) {
-	    return false;
-	} else  {
-	    return (strpos("|$handlerId|", $onLoadHandlers) !== false);
-	}
+	return (strpos($this->getOnLoadHandlers(), "|$handlerId|") !== false);
     }
 
     /**
