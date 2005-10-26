@@ -81,7 +81,7 @@ class RepositoryPackage extends RepositoryObject {
 	foreach ($this->_descriptor->getPackages() as $packageType) {
 	    $ret = $this->writeSinglePackageToDisk($packageType, $overwritePackages);
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    if ($this->_wasFileWritten) {
 		$packagesWritten[] = $packageType;

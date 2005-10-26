@@ -23,14 +23,26 @@ function RepositoryToolsMain() {
 	'lib/tools/repository/classes/RepositoryControllerAndView.class');
 
     /* Set repository configuration data. */
-    $gallery->setConfig('repository.path',
-	'/home/titanium/eclipse-workspace/Gallery2/lib/tools/repository/data/');
-    $gallery->setConfig('repository.templates',
-	'lib/tools/repository/templates/');
+    $repositoryPath = $gallery->getConfig('data.gallery.base') . '/repository/';
+    $gallery->setConfig('repository.path', $repositoryPath);
+    $gallery->setConfig('repository.templates', 'lib/tools/repository/templates/');
+
+    /* Verify our repository structure exists */
+    $platform =& $gallery->getPlatform();
+    foreach (array($repositoryPath,
+		   $repositoryPath . '/modules',
+		   $repositoryPath . '/themes') as $path) {
+	if (!$platform->file_exists($path)) {
+	    if (!$platform->mkdir($path)) {
+		return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+					    "Unable to create directory: $path");
+	    }
+	}
+    }
 
     /* Configure our url Generator for repository mode. */
     $urlGenerator = new GalleryUrlGenerator();
-    $urlGenerator->init('lib/tools/repository/index.php');
+    $urlGenerator->init('lib/tools/repository');
     $gallery->setUrlGenerator($urlGenerator);
 
     /* Load controller. */
