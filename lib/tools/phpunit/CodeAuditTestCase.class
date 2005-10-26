@@ -66,13 +66,9 @@ class CodeAuditTestCase extends GalleryTestCase {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 
-	if ($dirPath == $this->_baseDir . '/lib') {
-	    return;
-	}
-
 	if (!file_exists($dirPath) || !is_dir($dirPath)) {
 	    /*
-	     * It appears that CVS doesn't tend its entries file very well so we get entries that
+	     * It appears that CVS doesn't tend its Entries file very well so we get entries that
 	     * no longer exist in the local workspace.  That's ok -- just ignore them.
 	     */
 	    return;
@@ -96,7 +92,7 @@ class CodeAuditTestCase extends GalleryTestCase {
 		    }
 		} else {
 		    if (preg_match('|^/(.*?)/(-?)|', $line, $matches)) {
-			// deleted files have a negative version number
+			/* deleted files have a negative version number */
 			if ($matches[2] != '-') {
 			    $fileName = $matches[1];
 			    if (preg_match('/\.(class|inc|php|tpl|po)$/', $fileName)) {
@@ -159,7 +155,14 @@ class CodeAuditTestCase extends GalleryTestCase {
      * @access protected
      */
     function shouldCheckFile($fileName) {
-	/* By default all files are checked */
+	/*
+	 * By default we accept everything, with the exception that we only take
+	 * lib/tools/repository from the lib directory.
+	 */
+	if (strpos($fileName, $this->_baseDir . '/lib/') === 0) {
+	    return strpos($fileName, $this->_baseDir . '/lib/tools/repository/') === 0;
+	}
+
 	return true;
     }
 }
