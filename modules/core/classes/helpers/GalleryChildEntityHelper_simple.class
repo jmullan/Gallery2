@@ -241,7 +241,8 @@ class GalleryChildEntityHelper_simple {
 	}
 
 	list ($ret, $orderBy, $orderColumn, $extraWhere, $extraJoin) =
-	    GalleryChildEntityHelper_simple::_getOrderInfo($item);
+	    GalleryChildEntityHelper_simple::_getOrderInfo(
+		$item->getOrderBy(), $item->getOrderDirection());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -494,6 +495,8 @@ class GalleryChildEntityHelper_simple {
      * be included too, the calling function has to decide that (using
      * GalleryStorage::extractClasses())
      *
+     * @param string orderBy (null/empty to use site default for both parameters)
+     * @param string orderDirection
      * @return array object GalleryStatus a status code
      *               string order by clause, string select clause,
      *               string a row matching condition,
@@ -501,7 +504,7 @@ class GalleryChildEntityHelper_simple {
      * @access private
      * @static
      */
-    function _getOrderInfo(&$item) {
+    function _getOrderInfo($orderBy, $orderDirection) {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
@@ -509,8 +512,6 @@ class GalleryChildEntityHelper_simple {
 	 * Don't simply plug getOrderBy into the SQL clause, or we could open
 	 * the door for SQL injection.
 	 */
-	$orderBy = $item->getOrderBy();
-	$orderDirection = $item->getOrderDirection();
 	if (empty($orderBy)) {
 	    list ($ret, $orderBy) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderBy');
