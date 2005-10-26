@@ -40,7 +40,7 @@ class MainPageControllerAndView extends RepositoryControllerAndView {
      function showAvailableActions() {
 	global $gallery;
 	$data = array();
-	$urlGenerator = $gallery->getUrlGenerator();
+	$urlGenerator =& $gallery->getUrlGenerator();
 
 	/* Make sure logged in user is an administrator. */
 	list ($ret, $data['isSiteAdmin']) = GalleryCoreApi::isUserInSiteAdminGroup();

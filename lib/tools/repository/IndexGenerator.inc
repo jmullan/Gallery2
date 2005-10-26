@@ -44,7 +44,7 @@ class IndexGeneratorControllerAndView extends RepositoryControllerAndView {
     function generate() {
 	global $gallery;
 	$index = new RepositoryIndex();
-	$urlGenerator = $gallery->getUrlGenerator();
+	$urlGenerator =& $gallery->getUrlGenerator();
 
 	$repositoryDir = $gallery->getConfig('repository.path');
 

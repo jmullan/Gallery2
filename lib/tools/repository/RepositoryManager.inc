@@ -43,7 +43,7 @@ class RepositoryManagerControllerAndView extends RepositoryControllerAndView {
      */
     function browse() {
 	global $gallery;
-	$urlGenerator = $gallery->getUrlGenerator();
+	$urlGenerator =& $gallery->getUrlGenerator();
 
 	/* Get repository plugin meta data. */
 	$index = new RepositoryIndex();

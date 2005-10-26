@@ -175,7 +175,7 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
      */
     function getAvailablePluginList($links) {
 	global $gallery;
-	$urlGenerator = $gallery->getUrlGenerator();
+	$urlGenerator =& $gallery->getUrlGenerator();
 	$data = array();
 	$pluginTypes = array('module', 'theme');
 
