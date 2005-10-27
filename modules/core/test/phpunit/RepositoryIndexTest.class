@@ -265,7 +265,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 	$this->_index->_index = '';
 	$this->_index->_isLoaded = false;
 
-	$ret = $this->_index->unserializeIndex(serialize($this->_sampleIndex));
+	$ret = $this->_index->unserializeIndex($serializedIndex = serialize($this->_sampleIndex));
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret);
 	}
