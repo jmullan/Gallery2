@@ -1,11 +1,7 @@
 <?php
 if (!defined('G2_SUPPORT')) return;
 
-$gallery = new GalleryStub();
-include(dirname(__FILE__) . '/../../config.php');
-
 function getCacheDirs() {
-    global $gallery;
     $dirs = array(
 	'cache/derivative',
 	'cache/entity',
@@ -80,7 +76,7 @@ if (isset($_REQUEST['clear'])) {
 <html>
   <head>
     <title>Cache Maintenance</title>
-    <link rel="stylesheet" type="text/css" href="support.css"/>
+    <link rel="stylesheet" type="text/css" href="<?php print $baseUrl ?>support.css"/>
   </head>
 
   <body>

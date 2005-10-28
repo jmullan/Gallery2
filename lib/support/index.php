@@ -16,7 +16,7 @@ if (!empty($_SERVER['QUERY_STRING'])) {
 <html>
   <head>
     <title>Gallery Support</title>
-    <link rel="stylesheet" type="text/css" href="support.css"/>
+    <link rel="stylesheet" type="text/css" href="<?php print $baseUrl ?>support.css"/>
     <style>
       p { padding-left: 10px; margin-top: 2px; }
       h3 { margin-bottom: 2px; }

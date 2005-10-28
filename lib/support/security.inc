@@ -46,11 +46,18 @@ class GalleryStub {
 $gallery = new GalleryStub();
 
 /* Load config.php */
-if (file_exists(dirname(__FILE__) . '/../../config.php')) {
-    include(dirname(__FILE__) . '/../../config.php');
+if (!defined('GALLERY_CONFIG_DIR')) {
+    define('GALLERY_CONFIG_DIR', dirname(dirname(dirname(__FILE__))));
+}
+if (file_exists(GALLERY_CONFIG_DIR . '/config.php')) {
+    include(GALLERY_CONFIG_DIR . '/config.php');
 } else {
+    $baseUrl = '';
     render('missingConfig');
     exit;
+}
+if ($baseUrl = $gallery->getConfig('galleryBaseUrl')) {
+    $baseUrl .= 'lib/support/';
 }
 
 $setupPassword = $gallery->getConfig('setup.password');
@@ -72,7 +79,6 @@ if (passwordProvided()) {
     askForPassword();
     exit;
 } else if ($_COOKIE['g2Setup'] == md5($setupPassword)) {
-    unset($gallery);
     return;
 } else {
     askForPassword();
@@ -116,19 +122,20 @@ function redirectBackToSelf() {
 }
 
 function render($renderType) {
+    global $baseUrl;
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
   <head>
     <title>Security Check</title>
-    <style> <?php readfile(dirname(__FILE__) . '/support.css'); ?> </style>
+    <link rel="stylesheet" type="text/css" href="<?php print $baseUrl ?>support.css"/>
   </head>
   <body>
      <h1> Security Check </h1>
 
      <h2>
 	You are attempting to access a secure section of this Gallery installation.  You can't
-        proceed until you pass the security check.
+	proceed until you pass the security check.
      </h2>
 
      <?php if ($renderType == 'missingConfig'): ?>
@@ -150,20 +157,20 @@ function render($renderType) {
      <?php if ($renderType == 'passwordForm'): ?>
      <div class="password_form">
        <div class="box">
-         <span class="message">
-           In order to verify you, we require you to enter your Gallery setup password.  This is
-           the password you entered when you installed Gallery.  It can be found in your
-           gallery/config.php file like this:
-         </span>
-         <pre>
-           $gallery->setConfig('setup.password', '<b>your password here</b>');
-         </pre>
-         <form method="post">
-           Password:
-           <input type="password" name="g2_password"/>
-           <script type="text/javascript">document.forms[0]['g2_password'].focus();</script>
-           <input type="submit" value="Verify Me"/>
-         </form>
+	 <span class="message">
+	   In order to verify you, we require you to enter your Gallery setup password.  This is
+	   the password you entered when you installed Gallery.  It can be found in your
+	   gallery/config.php file like this:
+	 </span>
+	 <pre>
+	   $gallery-&gt;setConfig('setup.password', '<b>your password here</b>');
+	 </pre>
+	 <form method="post">
+	   Password:
+	   <input type="password" name="g2_password"/>
+	   <script type="text/javascript">document.forms[0]['g2_password'].focus();</script>
+	   <input type="submit" value="Verify Me"/>
+	 </form>
        </div>
      </div>
      <?php endif; ?>
