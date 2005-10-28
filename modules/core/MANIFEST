@@ -17,7 +17,7 @@ modules/core/AdminToolkitPriority.inc	2855458621	155379951	3613	3730
 modules/core/AdminUsers.inc	1849600793	108827668	7008	7242
 modules/core/Callbacks.inc	2983893237	3798770301	5310	5464
 modules/core/ChangeLanguage.inc	250264244	625469742	1690	1747
-modules/core/CoreModuleExtras.inc	3683283265	631468926	62725	64644
+modules/core/CoreModuleExtras.inc	3801185212	2094854657	62793	64716
 modules/core/CreateThumbnailOption.inc	1697817318	2643200353	2588	2673
 modules/core/DownloadItem.inc	3231986848	1317147075	4899	5070
 modules/core/ErrorPage.inc	2590883780	276221894	3395	3496
@@ -88,7 +88,7 @@ modules/core/classes/GalleryDerivativeImage.class	533312926	2720003198	7079	7331
 modules/core/classes/GalleryDerivativePreferencesMap.class	3516048113	2295901573	2313	2383
 modules/core/classes/GalleryDescendentCountsMap.class	1815740404	923867821	2440	2513
 modules/core/classes/GalleryEmbed.class	3294033577	723802282	30490	31353
-modules/core/classes/GalleryEntity.class	3988290342	2189107658	17244	17836
+modules/core/classes/GalleryEntity.class	900861068	421689258	17047	17633
 modules/core/classes/GalleryEvent.class	673392654	210265491	2923	3060
 modules/core/classes/GalleryEventListener.class	1915517219	1246562716	1479	1526
 modules/core/classes/GalleryFactoryMap.class	3941831484	2235041427	2832	2916
@@ -132,7 +132,7 @@ modules/core/classes/GalleryStorage/DatabaseStorage/MySqlDatabaseStorage.class	1
 modules/core/classes/GalleryStorage/DatabaseStorage/OracleDatabaseStorage.class	3916518621	2711983442	5163	5369
 modules/core/classes/GalleryStorage/DatabaseStorage/PostgreSqlDatabaseStorage.class	2082789416	1914459120	5612	5845
 modules/core/classes/GalleryStorage/DatabaseStorage/schema/GNUmakefile	1829837397	1732237385	1013	1050
-modules/core/classes/GalleryStorage/DatabaseStorage/schema/schema.tpl	2678297643	1416844629	96658	99702
+modules/core/classes/GalleryStorage/DatabaseStorage/schema/schema.tpl	368664675	466963690	98993	102106
 modules/core/classes/GalleryStorage/DatabaseStorage/schema/xml-src/A_GalleryAlbumItem_1.0.xml	3419603533	1495327326	456	475
 modules/core/classes/GalleryStorage/DatabaseStorage/schema/xml-src/A_GalleryDerivative_1.0.xml	337899791	3135723279	522	543
 modules/core/classes/GalleryStorage/DatabaseStorage/schema/xml-src/A_GalleryEntity_1.0.xml	2809187222	1306008671	563	585
@@ -174,7 +174,7 @@ modules/core/classes/SetOriginationTimestampTask.class	1384437104	1840005289	523
 modules/core/classes/SystemInfoTask.class	652133746	1142208980	3025	3119
 modules/core/classes/helpers/GalleryCharsetHelper_medium.class	2752042650	3185276395	47742	48462
 modules/core/classes/helpers/GalleryCharsetHelper_simple.class	2024626581	3087147085	6920	7125
-modules/core/classes/helpers/GalleryChildEntityHelper_simple.class	4040903265	829146203	21258	21911
+modules/core/classes/helpers/GalleryChildEntityHelper_simple.class	1830496698	432080072	21360	22014
 modules/core/classes/helpers/GalleryDerivativeHelper_advanced.class	78695127	3103277736	23496	24264
 modules/core/classes/helpers/GalleryDerivativeHelper_medium.class	1938554362	222314476	7073	7298
 modules/core/classes/helpers/GalleryDerivativeHelper_simple.class	3345339324	3349040958	2544	2620
@@ -282,7 +282,7 @@ modules/core/locale/tr_TR/LC_MESSAGES/modules_core.mo	3921506508	3921506508	3916
 modules/core/locale/vi_VN/LC_MESSAGES/modules_core.mo	2390496470	2390496470	96605	96605
 modules/core/locale/zh_CN/LC_MESSAGES/modules_core.mo	2931829919	2931829919	52831	52831
 modules/core/locale/zh_TW/LC_MESSAGES/modules_core.mo	458952478	458952478	81662	81662
-modules/core/module.inc	543863641	964388245	18333	18889
+modules/core/module.inc	181467648	1971350609	18333	18889
 modules/core/plugins/ImageCrop.jar	1928512550	1928512550	6030	6030
 modules/core/po/GNUmakefile	3629214203	414192192	244	254
 modules/core/po/ar_SA.po	1318583620	752832039	102411	105850
@@ -434,7 +434,7 @@ modules/core/test/phpunit/AlbumTest.class	2359889972	2638153102	31245	32214
 modules/core/test/phpunit/CallbacksTest.class	2922109397	1803645923	5802	5969
 modules/core/test/phpunit/CharsetTest.class	1460689681	3684784657	16105	16560
 modules/core/test/phpunit/ChildTest.class	1243874690	3825309568	12497	12847
-modules/core/test/phpunit/CodeAuditTest.class	2143177070	2407105411	12153	12557
+modules/core/test/phpunit/CodeAuditTest.class	3553176172	1777871936	12183	12587
 modules/core/test/phpunit/ControllerTest.class	2600105787	3736561427	3129	3232
 modules/core/test/phpunit/CoreModuleTest.class	1247272360	4173167362	6263	6462
 modules/core/test/phpunit/CoreSearchTest.class	508225951	3619057032	14440	14898
@@ -444,7 +444,7 @@ modules/core/test/phpunit/DataItemTest.class	1392369999	920121518	7069	7305
 modules/core/test/phpunit/DatabaseStorageTest.class	2531394775	3192844870	3889	4029
 modules/core/test/phpunit/DerivativeTest.class	472944133	3487511331	32687	33582
 modules/core/test/phpunit/EmbedTest.class	3030691125	1330932184	15398	15771
-modules/core/test/phpunit/EntityTest.class	2103623859	1199243557	11488	11835
+modules/core/test/phpunit/EntityTest.class	1223572715	1484314452	11594	11941
 modules/core/test/phpunit/EventTest.class	4224133473	2917658890	2894	2996
 modules/core/test/phpunit/FactoryTest.class	3062851288	4004911253	9322	9624
 modules/core/test/phpunit/FastDownloadTest.class	2381840302	634612709	9957	10283
@@ -494,13 +494,13 @@ modules/core/test/phpunit/OptimizeDatabaseTaskTest.class	4245472367	3559237522	2
 modules/core/test/phpunit/PermissionSetTest.class	3407199520	694322478	8731	9001
 modules/core/test/phpunit/PermissionTest.class	1540544423	783013017	40529	41599
 modules/core/test/phpunit/PhotoTest.class	1198884929	3095188508	5934	6131
-modules/core/test/phpunit/Php41CompatibilityTest.class	4170620854	1751281985	3915	4029
+modules/core/test/phpunit/Php41CompatibilityTest.class	1639325641	2525388980	3956	4071
 modules/core/test/phpunit/Php41IllegalFunctions.inc	3999602858	3428758840	55916	56501
 modules/core/test/phpunit/PhpVmTest.class	2636922786	443986864	4505	4634
 modules/core/test/phpunit/PlatformTest.class	3319713977	2427814914	25857	26556
 modules/core/test/phpunit/PluginParameterTest.class	890582964	1536604217	6765	6984
 modules/core/test/phpunit/PluginTest.class	155652685	448093799	5564	5726
-modules/core/test/phpunit/RepositoryIndexTest.class	1098641551	1098641551	14629	14629
+modules/core/test/phpunit/RepositoryIndexTest.class	3891003388	3891003388	14648	14648
 modules/core/test/phpunit/RepositoryTest.class	1684627918	1684627918	31124	31124
 modules/core/test/phpunit/RepositoryTestStorage.class	3299228005	3299228005	3274	3274
 modules/core/test/phpunit/RepositoryUtilitiesTest.class	3676138779	3676138779	14734	14734
@@ -511,7 +511,7 @@ modules/core/test/phpunit/SimpleCallbackTest.class	834744116	3971822538	12524	12
 modules/core/test/phpunit/StatusTest.class	2821999443	4155219905	1873	1931
 modules/core/test/phpunit/StorageTest.class	225226079	3020121549	2386	2467
 modules/core/test/phpunit/TemplateAdapterTest.class	2917642258	140888140	3347	3451
-modules/core/test/phpunit/TemplateAuditTest.class	426727379	1379811885	4257	4390
+modules/core/test/phpunit/TemplateAuditTest.class	3332953054	2551265508	4321	4455
 modules/core/test/phpunit/TemplateTest.class	86335742	244615592	4926	5060
 modules/core/test/phpunit/ThemeTest.class	687557558	2957602600	11017	11380
 modules/core/test/phpunit/ToolkitTest.class	163399649	2232574258	23553	24225
