@@ -163,6 +163,31 @@ class ItemAddWebCamTest extends ItemAddPluginTestCase {
 	/* If refreshed successfully then our fake filesize should be set */
 	$this->assertEquals(7, $refresh->getSize());
     }
+
+    function testRefreshFail() {
+	/* Register a dummy toolkit and property */
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryToolkit', 'ItemAddWebCamTestToolkit', 'ItemAddWebCamTestToolkit',
+	    'modules/webcam/test/phpunit/ItemAddWebCamTest.class', 'webcamTest', null);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markToolkitForCleanup('ItemAddWebCamTestToolkit');
+
+	$ret = GalleryCoreApi::registerToolkitProperty('ItemAddWebCamTestToolkit',
+	    array('image/test'), 'dimensions', 'int,int', 'Get the dimensions');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Now we have a toolkit to get image/test dimensions, but it will fail */
+	list ($ret, $refresh) = GalleryCoreApi::loadEntitiesById($this->_item->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* If refreshed successfully then our fake filesize should be set */
+	$this->assertEquals(7, $refresh->getSize());
+    }
 }
 
 /**
@@ -264,6 +289,8 @@ class ItemAddWebCamTestPlatform {
 	    if (preg_match('{^test.*dat$}', basename($toFile))) {
 		return true;
 	    }
+	} else if ($toFile == '/test/webcam.bak' || $fromFile == '/test/webcam.bak') {
+	    return true;
 	}
 
 	print "unexpected copy($fromFile, $toFile)";
@@ -307,8 +334,7 @@ class ItemAddWebCamTestPlatform {
     }
 
     function file_exists($filename) {
-	switch($filename) {
-	case '/test/webcam':
+	if ($filename == '/test/webcam' || basename($filename) == 'ItemAddWebCamTest.class') {
 	    return 1;
 	}
 
@@ -318,6 +344,7 @@ class ItemAddWebCamTestPlatform {
     function unlink($filename) {
 	switch($filename) {
 	case '/test/webcam':
+	case '/test/webcam.bak':
 	    return 1;
 	}
 
@@ -419,4 +446,6 @@ class ItemAddWebCamTestPlatform {
 	return array(true, array(''), array());
     }
 }
+
+class ItemAddWebCamTestToolkit extends GalleryToolkit { }
 ?>

@@ -219,6 +219,12 @@ class WebCamModule extends GalleryModule {
 		    GalleryCoreApi::releaseLocks($lockId);
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
+		/* Backup previous file */
+		$ret = $platform->copy($path, $tmpFile . '.bak');
+		if (!$ret) {
+		    GalleryCoreApi::releaseLocks($lockId);
+		    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
+		}
 		$ret = $platform->copy($tmpFile, $path);
 		if (!$ret) {
 		    GalleryCoreApi::releaseLocks($lockId);
@@ -226,20 +232,26 @@ class WebCamModule extends GalleryModule {
 		}
 		$ret = $item->rescan();
 		if ($ret->isError()) {
-		    GalleryCoreApi::releaseLocks($lockId);
-		    return $ret->wrap(__FILE__, __LINE__);
+		    if (!($ret->getErrorCode() & ERROR_BAD_DATA_TYPE)) {
+			GalleryCoreApi::releaseLocks($lockId);
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		    /* Problem with new file (maybe html response, not data file); rollback */
+		    $platform->copy($tmpFile . '.bak', $path);
+		} else {
+		    $item->setOriginationTimestamp(time());
+		    $ret = $item->save();
+		    if ($ret->isError()) {
+			GalleryCoreApi::releaseLocks($lockId);
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		    $ret = GalleryCoreApi::expireDerivativeTreeBySourceIds(array($id));
+		    if ($ret->isError()) {
+			GalleryCoreApi::releaseLocks($lockId);
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
 		}
-		$item->setOriginationTimestamp(time());
-		$ret = $item->save();
-		if ($ret->isError()) {
-		    GalleryCoreApi::releaseLocks($lockId);
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-		$ret = GalleryCoreApi::expireDerivativeTreeBySourceIds(array($id));
-		if ($ret->isError()) {
-		    GalleryCoreApi::releaseLocks($lockId);
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
+		@$platform->unlink($tmpFile . '.bak');
 	    }
 	    @$platform->unlink($tmpFile);
 	}
