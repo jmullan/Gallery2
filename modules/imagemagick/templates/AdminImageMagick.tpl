@@ -62,8 +62,12 @@
     </td>
   {if $form.cmykSupport!="none"}
   </tr><tr>
+    <td colspan=2>
+      {g->text text="ImageMagick can detect non-webviewable color spaces like CMYK and create a webviewable copy of such images. Only activate this option if you actually add CMYK based JPEG or TIFF images since the color space detection slows down the add item process a little bit."}
+    </td>
+  </tr><tr>
     <td>
-      {g->text text="CMYK JPEG Support:"}
+      {g->text text="CMYK Support:"}
     </td><td>
       <input type="checkbox"{if $form.cmykSupport=="on"} checked="checked"{/if}
        onclick="document.getElementById('cmykSupport').value = this.checked ? 'on' : 'off'"/>
