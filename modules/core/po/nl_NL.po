@@ -103,27 +103,21 @@ msgstr "deïnstalleren"
 msgid "deactivate"
 msgstr "deactiveren"
 
-msgid "Other"
-msgstr "Ander"
-
-#, fuzzy
 msgid "Performing Maintenance Tasks"
-msgstr "Systeem Onderhoud"
+msgstr "Onderhoudstaken Uitvoeren"
 
 #, c-format
 msgid "Downloading %s"
-msgstr ""
+msgstr "Downloaden van %s"
 
-#, fuzzy
 msgid "Done."
-msgstr "Klaar"
+msgstr "Klaar."
 
-#, fuzzy
 msgid "Upgrade"
-msgstr "opwaarderen"
+msgstr "Opwaarderen"
 
 msgid "Download"
-msgstr ""
+msgstr "Download"
 
 msgid "Inherit settings from parent album"
 msgstr "Instellingen overnemen van bovenliggend album"
@@ -378,6 +372,9 @@ msgstr "bewerk %s rechten"
 msgid "reorder items"
 msgstr "items volgorde"
 
+msgid "Maintenance"
+msgstr "Onderhoud"
+
 msgid "Gallery Site Administration"
 msgstr "Gallery Site Beheer"
 
@@ -522,6 +519,9 @@ msgstr "Groep"
 msgid "group"
 msgstr "groep"
 
+msgid "Other"
+msgstr "Ander"
+
 msgid "Movie"
 msgstr "Film"
 
@@ -531,44 +531,46 @@ msgstr "film"
 msgid "photo"
 msgstr "foto"
 
-#, fuzzy
 msgid "download"
-msgstr "naar beneden"
+msgstr "download"
 
-#, fuzzy
 msgid "Plugins directory does not exist."
-msgstr "Gebruiker '%s' bestaat niet."
+msgstr "Plugins directory bestaat niet."
 
 #, c-format
 msgid ""
 "Couldn't create plugin directory '%s' in '%s', make sure the web server has "
 "write permissions in it."
 msgstr ""
+"Kan de plugin directory '%s' in '%s' niet aanmaken, zorg dat de web server "
+"hier de juiste rechten heeft."
 
 #, c-format
 msgid "Couldn't create repository cache path '%s'."
-msgstr ""
+msgstr "Kan het repository cache pad '%s' niet aanmaken."
 
 #, c-format
 msgid ""
 "Couldn't create cache directory '%s' in '%s', make sure the web server has "
 "write permissions in it."
 msgstr ""
+"Kan de cache directory '%s' in '%s' niet aanmaken, zorg dat de web server "
+"hier de juiste rechten heeft. "
 
 #, c-format
 msgid "Error downloading package from '%s'."
-msgstr ""
+msgstr "Fout bij het downloaden van pakket van '%s'."
 
 #, c-format
 msgid "Error downloading index from '%s'."
-msgstr ""
+msgstr "Fout bij het downloaden van index '%s'."
 
 #, c-format
 msgid "Error downloading index hash from '%s'."
-msgstr ""
+msgstr "Fout bij het downloaden van index hash van '%s'."
 
 msgid "Index integrity check failed."
-msgstr ""
+msgstr "Index integriteit controle mislukt."
 
 msgid "&laquo; default sort order &raquo;"
 msgstr "&laquo; standaard storteervolgorde &raquo;"
@@ -620,8 +622,8 @@ msgstr "Deze pagina is geldig XHTML 1.0"
 msgid "Donate to the Gallery project"
 msgstr "Terug naar de gallery"
 
-msgid "G2RC2: kthxbye"
-msgstr "G2RC2: kthxbye"
+msgid "G2.0: Unpossible!"
+msgstr "G2.0: Unpossible!"
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -718,6 +720,8 @@ msgid ""
 "Invalid return URL! The requested URL %s tried to insert a redirection to %s "
 "which is not a part of this Gallery."
 msgstr ""
+"Ongeldig teruggezonden URL! De opgevraagde URL %s probeerde u te verwijzen "
+"naar %s, welke niet deel uitmaakt van deze Gallery."
 
 msgid "Back"
 msgstr "Terug"
@@ -888,7 +892,7 @@ msgid "Modules"
 msgstr "Modules"
 
 msgid "Repository"
-msgstr ""
+msgstr "Repository"
 
 msgid "Themes"
 msgstr "Thema's"
@@ -901,9 +905,6 @@ msgstr "Gebruikers"
 
 msgid "Groups"
 msgstr "Groepen"
-
-msgid "Maintenance"
-msgstr "Onderhoud"
 
 msgid "Toolkit Priority"
 msgstr "Toolkit Prioriteit"
@@ -1030,12 +1031,12 @@ msgid ""
 "creates. This doesn't apply to files/directories that Gallery has already "
 "created."
 msgstr ""
-"Hier kunt u de standaard rechten opgeven voor bestanden en mappen die "
-"Gallery aanmaakt. Dit wordt niet gewijzigt in mappen/bestanden die nu al "
-"bestaan."
+"Hier kunt u de standaard rechten opgeven voor bestanden en directories die "
+"Gallery aanmaakt. Dit wordt niet gewijzigt in bestanden/directories die nu "
+"al bestaan."
 
 msgid "New directories"
-msgstr "Nieuwe mappen"
+msgstr "Nieuwe directories"
 
 msgid "New files"
 msgstr "Nieuwe bestanden"
@@ -1672,11 +1673,11 @@ msgid "Do you really want to uninstall the %s module?"
 msgstr "Weet u zeker dat u de %s module wilt deïnstalleren?"
 
 msgid ""
-"This will also remove any permissions and clean up any temporary data "
-"created by this module."
+"This will also remove any permissions and clean up any data created by this "
+"module."
 msgstr ""
-"Hiermee verwijderd u ook alle rechten en verwijderd u tijdelijke data die "
-"door deze module is aangemaakt."
+"Hiermee verwijderd u ook alle rechten en verwijderd u alle tijdelijke data "
+"die door deze module is aangemaakt."
 
 msgid "Uninstall"
 msgstr "Deïnstalleren"
@@ -1685,18 +1686,31 @@ msgid ""
 "Please make sure that your internet connection is set up properly or try "
 "again later."
 msgstr ""
+"Zorg dat uw internet verbinding juist is ingesteld of probeer het later "
+"opnieuw."
 
 msgid "The repository index has been successfully updated."
-msgstr ""
+msgstr "De repository index is succesvol bijgewerkt."
 
 msgid "All plugins are already up-to-date."
-msgstr ""
+msgstr "De plugins zijn reeds bijgewerkt."
 
 msgid "Common Tasks"
+msgstr "Gemeenschappelijke Taken"
+
+msgid "Warning: Experimental feature!"
+msgstr "Waarschuwing: Experimentele functionaliteit!"
+
+msgid ""
+"The repository features are currently experimental, and no actual repository "
+"has been set up yet, so none of these features will work at this time."
 msgstr ""
+"De repository functionaliteit is op dit moment experimenteel, en er is nog "
+"geen werkelijke repository opgezet, dus geen van deze functionaliteiten zal "
+"op dit moment werken."
 
 msgid "Update Index"
-msgstr ""
+msgstr "Index Bijwerken"
 
 msgid ""
 "The Gallery repository contains the latest modules and themes extensively "
@@ -1707,28 +1721,37 @@ msgid ""
 "information is sent to the Gallery server during updating. On slower "
 "connections the process might take a minute or two."
 msgstr ""
+"De Gallery repository bevat de laatste modules en thema's die uitgebreid "
+"getest zijn door het Gallery team. De repository index bevat informatie over "
+"de beschikbare plugins, zoals de laatste vesies, beschikbare talen en "
+"compatabiliteit. De index dient periodiek met de Gallery server te worden "
+"bijgewerkt, zodat u over alle beschikbare updates geïnformeerd bent Er wordt "
+"tijdens het bijwerken geen persoonlijke informatie naar de Gallery server "
+"verzonden. Bij langzame verbinding kan dit process een paar minuten duren."
 
 msgid "As of the last update on"
-msgstr ""
+msgstr "Zoals bij de laatste update op"
 
 #, c-format
 msgid ""
 ", the repository contains %s modules and %s themes. Its contents can be "
 "viewed on the Modules and Themes tabs."
 msgstr ""
+", de repositort bevat %s modules en %s thema's. De inhoud kan bekeken worden "
+"op de tabbladen Modules en Thema's."
 
 msgid ""
 "The index has never been updated. Click on the Update button to see what "
 "updates are available."
 msgstr ""
+"De index is nog nooit bijgewerkt. Klik op de Bijwerken knop om te zien welke "
+"updates beschikbaar zijn."
 
-#, fuzzy
 msgid "Update"
-msgstr "Datum"
+msgstr "Bijwerken"
 
-#, fuzzy
 msgid "Upgrade Gallery"
-msgstr "Gallery"
+msgstr "Gallery Opwaarderen"
 
 msgid ""
 "A new version of Gallery is available, but it cannot be upgraded through "
@@ -1736,178 +1759,206 @@ msgid ""
 "working, but others that rely on the features of the new version may become "
 "available. Here are the recommended steps for upgrading:"
 msgstr ""
+"Er is een nieuwe versie van Gallery beschikbaar, maar het kan niet door "
+"middel van deze interface worden bijgewerkt. Dit bijwerken kan ervoor zorgen "
+"dat een aantal van uw huidige plugins niet mee werken, maar andere die "
+"steunen op de functies van de nieuwe versie kunnen beschikbaar komen. "
+"Hieronder staan de aanbevolen stappen om te upgraden:"
 
 msgid "Review plugin compatibility (on the Themes and Modules tabs)"
-msgstr ""
+msgstr "Inspecteer plugin combabiliteit (op de tabbladen Thema's en Modules)"
 
 #, c-format
 msgid "<a href=\"%s\">Download</a> Gallery core"
-msgstr ""
+msgstr "<a href=\"%s\">Download</a> Gallery core"
 
 #, c-format
 msgid ""
 "Read the <a href=\"%s\">upgrade instructions</a> and perform the upgrade"
-msgstr ""
+msgstr "Lees de <a href=\"%s\"upgrade instructies</a> en voer de upgrade uit"
 
-#, fuzzy
 msgid "Gallery Up-To-Date"
-msgstr "Gallery Core"
+msgstr "Gallery Up-To-Date"
 
 msgid ""
 "Gallery cannot be upgraded through this interface. When a new version "
 "becomes available, upgrade instructions will be presented here."
 msgstr ""
+"Gallery kan niet door middel van deze interface worden bijgewerkt. Wanneer "
+"een nieuwe versie beschikbaar komt zullen de opwaardeer instructies hier "
+"worden weergegeven."
 
 msgid "Upgrade All Plugins"
-msgstr ""
+msgstr "Alle Plugins Bijwerken"
 
 msgid ""
 "Gallery can automatically upgrade your themes and modules to the latest "
 "available versions. No new plugins will be downloaded."
 msgstr ""
+"Galery kan automatisch uw thema's en modules opwaarderen naar de laatst "
+"beschikbare versies. Er zullen geen nieuwe plugins worden gedownload."
 
-#, fuzzy
 msgid "Upgrade All"
-msgstr "opwaarderen"
+msgstr "Alles Opwaarderen"
 
 msgid ""
 "Once the repository index has been downloaded, a list of available plugins "
 "will be presented. It can be downloaded by clicking on the Update button on "
 "the Common Tasks tab."
 msgstr ""
+"Wanneer de repository index gedownload is, zal een lijst van beschikbare "
+"plugins hier worden weergegeven. Deze kan worden gedownload door op de "
+"Bijwerken knop te klikken op het tabblad Gemeenschappelijke Taken."
 
 msgid ""
 "The following plugins are available. Click on the action beside the plugin "
 "you're interested in to see what's available in the repository."
 msgstr ""
+"De volgende plugins zijn beschikbaar. Klik op de actie naast de plugin als u "
+"geïntereseerd bent om te zien wat beschikbaar is in de repository."
 
 msgid "Incompatible plugins are marked with an exclamation icon."
-msgstr ""
+msgstr "Niet compatibele plugins zijn gemarkeerd met een uitroepteken icoon."
 
 msgid ""
 "A new core module version is available. There may be plugins that are "
 "incompatible with the installed core module, which are not shown here."
 msgstr ""
+"Er is een nieuwe core module vesie beschikbaar. Er kunnen plugins zijn die "
+"niet compatibel zijn met de geïnstaleerde core module, deze zijn hier niet "
+"weergegeven."
 
 msgid "You can view a"
-msgstr ""
+msgstr "U kunt een weergeven"
 
 msgid ""
 "of plugins, including incompatible ones, which are marked with a red icon."
 msgstr ""
+"van plugin, inclusief de niet compatibele, welke zijn gemarkeerd met een "
+"rood icoon."
 
 msgid "Theme Name"
 msgstr "Thema Naam"
 
-#, fuzzy
 msgid "Latest"
-msgstr "laatste"
+msgstr "Laatste"
 
-#, fuzzy
 msgid "Incompatible Plugin"
-msgstr "Niet compatibele module!"
+msgstr "Niet Compatibele Plugin"
 
-#, fuzzy
 msgid "Incompatible plugin!"
-msgstr "Niet compatibele module!"
+msgstr "Niet compatibele plugin!"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Plugin API Required: %s (available: %s)"
-msgstr "Module API Vereist: %s (beschikbaar: %s)"
+msgstr "Plugin API Vereist: %s (beschikbaar: %s)"
 
 msgid "No packages have been selected."
-msgstr ""
+msgstr "Er zijn geen paketten geselecteerd."
 
-#, fuzzy
 msgid "Base Files"
-msgstr "Basis bestandsnaam"
+msgstr "Basis Bestanden"
 
 msgid ""
 "The base files required for the theme to work and the English (US) "
 "translation will be downloaded."
 msgstr ""
+"De basis bestanden vereist om het thema te laten werken en de Engels (US) "
+"vertalingen zullen worden gedownload."
 
 msgid "Upgrade Base Files"
-msgstr ""
+msgstr "Basis Bestandsnaam bijwerken"
 
 msgid "You can upgrade the base module files."
-msgstr ""
+msgstr "U kunt de basis module bestanden bijwerken."
 
 msgid "Upgrade base files"
-msgstr ""
+msgstr "Basis bestanden bijwerken"
 
 msgid "Base Files Up-To-Date"
-msgstr ""
+msgstr "Basis Bestanden Bijgewerkt"
 
 msgid "This plugin's base files are up-to-date."
-msgstr ""
+msgstr "Deze plugins basis bestanden zijn bijgewerkt."
 
 msgid "Updated Translations"
-msgstr ""
+msgstr "Vertalingen Bijgewerkt"
 
 msgid ""
 "Below is a list of translations that have been updated since they were last "
 "downloaded. Select the ones you want to download."
 msgstr ""
+"Hieronder is een lijst van de vertalingen die zijn bijgewert sinds zij voor "
+"het laatst zijn gedownload. Selecteerd degene die u wilt downloaden."
 
 msgid "Additional Languages"
-msgstr ""
+msgstr "Extra Talen"
 
 msgid ""
 "Below is a list of languages this plugin has been translated to. Select the "
 "ones you want included in addition to the ones already downloaded."
 msgstr ""
+"Hieronder is een lijst van talen waarin deze plugin in vertaald. Selecteer "
+"degen die u wilt bovenop degene die reeds gedownload zijn."
 
-#, fuzzy
 msgid "Unit Tests"
-msgstr "Eenheids test thema"
+msgstr "Eenheids Testen"
 
 msgid ""
 "This plugin has unit tests available for download, which are useful for "
 "Gallery developers. All of the module's features are available without the "
 "tests."
 msgstr ""
+"Deze plugin heeft eenheids testen beschikbaar om te downloaden, welke "
+"bruikbaar zijn voor de Gallery ontwikkelaars. Alle functies van de modules "
+"zijn beschikbaar zonder de testen."
 
 msgid "Download unit tests"
-msgstr ""
+msgstr "Download eenhid testen"
 
-#, fuzzy
 msgid "Gallery Repository Setup"
-msgstr "Gallery versie"
+msgstr "Gallery Repository Setup"
 
 msgid "Warning: `$errorMessage`"
-msgstr ""
+msgstr "Waarschuwing: `$errorMessage`"
 
 msgid ""
 "In order to download plugins from the Gallery repository, a special "
 "directory needs to be created where Gallery will store the data."
 msgstr ""
+"Om de plugins van de Gallery repository te downloaden dient een speciale "
+"directory aangemaakt te worden waarin Galery de data zal opslaan."
 
 #, c-format
 msgid ""
 "Under your Gallery base directory, create a directory called '%s' and allow "
 "the web server to write into it by appropriately setting the permissions."
 msgstr ""
+"Maak een directory aan onder uw Gallery basis directory, genaamd '%s' and "
+"sta de web server toe om hiernaar te schrijven door de juiste rechten in te "
+"stellen."
 
 msgid "Instructions for Unix-type platforms:"
-msgstr ""
+msgstr "Instructies voor platforms van het Unix type:"
 
-#, fuzzy, c-format
+#, c-format
 msgid "$ cd %s"
-msgstr "%d. %s"
+msgstr " cd %s"
 
 #, c-format
 msgid "$ mkdir %s"
-msgstr ""
+msgstr "$ mkdir %s"
 
 #, c-format
 msgid "$ chmod 777 %s"
-msgstr ""
+msgstr "$ chmod 777 %s"
 
 msgid ""
 "Refreshing this page will take you to the Repository if the directory has "
 "been successfully created."
 msgstr ""
+"Verversen van deze pagina zal u naar de Repository brengen indien de "
+"directory succesvol is aangemaakt."
 
 msgid "Gallery Themes"
 msgstr "Gallery Thema's"
@@ -2247,7 +2298,7 @@ msgid ""
 "more than that, you must upload the files separately, use a different upload "
 "format, or ask your system administrator to allow larger uploads."
 msgstr ""
-"<b>Let op:</b> U kunt hier tot %s per keer uploaden. Als u meer wilt "
+"<b>Let op:</b> u kunt hier tot %s per keer uploaden. Als u meer wilt "
 "uploaden moet u de bestanden apart uploaden, gebruik maken van een andere "
 "upload methode of uw beheerder vragen om grotere uploads toe te staan."
 
@@ -2258,7 +2309,7 @@ msgid ""
 "files separately, use a different upload format, or ask your system "
 "administrator to allow larger uploads."
 msgstr ""
-"<b>Let op:</b> U kunt hier tot %s per keer uploaden. Een individueel bestand "
+"<b>Let op:</b> u kunt hier tot %s per keer uploaden. Een individueel bestand "
 "mag niet groter zijn dan %s. Als u meer wilt uploaden, moet u de bestanden "
 "apart upladen, gebruik maken van een andere upload methode of uw beheerder "
 "vragen om grotere uploads to te staan."
@@ -2641,11 +2692,9 @@ msgstr "U moet een nummer ingeven (groter dan of gelijk aan nul)"
 msgid "Height"
 msgstr "Hoogte"
 
-#, fuzzy
 msgid "There were errors saving some items"
 msgstr "Er zijn fouten opgetreden bij het opslaan van sommige items"
 
-#, fuzzy
 msgid "There were errors saving all items"
 msgstr "Er zijn fouten opgetreden bij het opslaan van alle items"
 
@@ -3134,6 +3183,12 @@ msgstr "Verplaatsen"
 msgid "Continue..."
 msgstr "Doorgaan..."
 
+msgid "Site is temporarily down for maintenance."
+msgstr "Site is tijdelijk niet beschikbaar vanwege onderhoud."
+
+msgid "Admin Login"
+msgstr "Beheer Inloggen"
+
 msgid "Enter a URL"
 msgstr "Geef een URL in"
 
@@ -3273,6 +3328,10 @@ msgid ""
 msgstr ""
 "Verloren of vergeten wachtwoorden kunnen ontvangen worden met gebruik van de "
 "<a href=\"%s\">wachtwoord vergeten pagina</a> pagina"
+
+#, c-format
+msgid "Welcome, %s!"
+msgstr "Welkom, %s!"
 
 msgid "Account settings saved successfully"
 msgstr "Account instellingen succesvol opgeslagen"
@@ -3577,6 +3636,3 @@ msgstr "[test] Een tweede recht"
 
 msgid "Unit test theme"
 msgstr "Eenheids test thema"
-
-#~ msgid "G2.0: Unpossible!"
-#~ msgstr "G2.0: Onmogelijk!"
