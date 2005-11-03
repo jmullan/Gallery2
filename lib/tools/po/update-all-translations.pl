@@ -30,6 +30,7 @@ GetOptions('make-binary!' => \$OPTS{'MAKE_BINARY'},
 my %PO_DIRS = ();
 my %MO_FILES = ();
 my @failures = ();
+my @warnings = ();
 
 my $curdir = cwd();
 my $basedir = cwd();
@@ -44,12 +45,17 @@ foreach my $poDir (keys(%PO_DIRS)) {
   unless ($OPTS{'DRY_RUN'}) {
     if (-f "$poDir/GNUmakefile") {
       chdir $poDir;
-      my_system("$MAKE $TARGET clean QUIET=0 PO=$OPTS{'PO'} 2>&1")
-	and print "FAIL!\n"
-	  and push(@failures, $poDir);
+      if (!$OPTS{'PO'} || -f "$OPTS{PO}.po") {
+	my_system("$MAKE $TARGET clean QUIET=0 PO=$OPTS{'PO'} 2>&1")
+	  and print "FAIL!\n"
+	    and push(@failures, $poDir);
+      } else {
+	print "Missing $OPTS{PO}.po!\n";
+	push(@warnings, $poDir);
+      }
     } else {
       print "Missing GNUmakefile!\n";
-      push(@failures, $poDir);
+      push(@warnings, $poDir);
     }
   }
 }
@@ -71,6 +77,13 @@ sub my_system {
   system($cmd);
 }
 
+if (@warnings) {
+  print "\n\n";
+  print scalar(@warnings) . " warnings\n";
+  foreach (@warnings) {
+    print "\t$_\n";
+  }
+}
 if (@failures) {
   print "\n\n";
   print scalar(@failures) . " failures\n";
