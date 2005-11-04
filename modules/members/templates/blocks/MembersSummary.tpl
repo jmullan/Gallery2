@@ -10,7 +10,7 @@
   <h3> {g->text text="Members"} </h3>
   <p>
   {if ($block.members.LoadMembers.canViewList)}
-    <a class="{g->linkId view="members.MembersList"}"
+    <a class="{g->linkId view="members.MembersList"}" style="padding: 3px"
        href="{g->url arg1="view=members.MembersList"}">
       {g->text one="%s member" many="%s members"
                count=$block.members.LoadMembers.count
