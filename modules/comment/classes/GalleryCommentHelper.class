@@ -34,7 +34,7 @@
  * @package Comment
  * @subpackage Classes
  */
-class GalleryCommentHelper {
+class GalleryCommentHelper /* implements GalleryEventListener */ {
 
     /*
      * ****************************************
@@ -47,7 +47,7 @@ class GalleryCommentHelper {
      *
      * @param array int GalleryItem id
      * @return array (object GalleryStatus a status code,
-     *                array (item id => array (GalleryComment, ...), ...)
+     *                array (entityId => GalleryComment, ...)
      * @access private
      * @static
      */
@@ -144,6 +144,50 @@ class GalleryCommentHelper {
 	}
 
 	return array(GalleryStatus::success(), $data);
+    }
+
+     /**
+     * Event handler for GalleryEntity::delete
+     *
+     * Delete all comments by a user
+     * (Item deletion and their attached comments is already handled in GalleryItem::delete)
+     *
+     * @see GalleryEventListener::handleEvent
+     */
+    function handleEvent($event) {
+	global $gallery;
+	
+	switch ($event->getEventName()) {
+	case 'GalleryEntity::delete':
+	    $entity = $event->getEntity();
+	    if (!GalleryUtilities::isA($entity, 'GalleryUser')) {
+		return array(GalleryStatus::success(), null);
+	    }
+
+	    /* Delete all comments owned by this user */
+	    $query = '
+            SELECT
+              [GalleryComment::id]
+            FROM
+              [GalleryComment]
+            WHERE
+              [GalleryComment::commenterId] = ?
+            ';
+
+	    list($ret, $searchResults) = $gallery->search($query, array($entity->getId()));
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
+	    while ($result = $searchResults->nextResult()) {
+		$ret = GalleryCoreApi::deleteEntityById($result[0]);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+	}
+
+	return array(GalleryStatus::success(), null);
     }
 }
 ?>

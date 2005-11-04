@@ -40,9 +40,10 @@ class CommentModule extends GalleryModule {
 	$this->setId('comment');
 	$this->setName($gallery->i18n('Comments'));
 	$this->setDescription($gallery->i18n('User commenting system'));
-	$this->setVersion('1.0.3');
+	$this->setVersion('1.0.4'); /* Update upgrade() function below too */
 	$this->setGroup('data', $gallery->i18n('Extra Data'));
-	$this->setCallbacks('getItemLinks|getItemSummaries|getItemAdminViews');
+	$this->setCallbacks('registerEventListeners|getItemLinks|getItemSummaries|' .
+			    'getItemAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
 	$this->setRequiredModuleApi(array(2, 2));
     }
@@ -54,24 +55,34 @@ class CommentModule extends GalleryModule {
 	global $gallery;
 
 	if (!isset($currentVersion)) {
+	    $currentVersion = '0';
+	} else if (version_compare($currentVersion, '0.9.6', '<=')) {
+	    /* Instead of enumerating all previous versions... */
+	    $currentVersion = '0.9.6';
+	}
+
+	switch ($currentVersion) {
+	case '0':
 	    /* Initial install.  Register our permissions */
 	    $permissions[] = array('add', $gallery->i18n('[comment] Add comments'), 0, array());
 	    $permissions[] = array('edit', $gallery->i18n('[comment] Edit comments'), 0, array());
-	    $permissions[] = array('delete', $gallery->i18n('[comment] Delete comments'),
-				   0, array());
-	    $permissions[] = array('view', $gallery->i18n('[comment] View comments'), 0, array());
-	    $permissions[] = array('all', $gallery->i18n('[comment] All access'),
-		GALLERY_PERMISSION_COMPOSITE,
-		array('comment.add', 'comment.edit', 'comment.delete', 'comment.view'));
-	    foreach ($permissions as $p) {
-		$ret = GalleryCoreApi::registerPermission($this->getId(),
-							  'comment.' . $p[0],
-							  $p[1], $p[2], $p[3]);
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-	    }
-	} else if (version_compare($currentVersion, '0.9.7', '<')) {
+ 	    $permissions[] = array('delete', $gallery->i18n('[comment] Delete comments'),
+	 			   0, array());
+	     $permissions[] = array('view', $gallery->i18n('[comment] View comments'), 0, array());
+	     $permissions[] = array('all', $gallery->i18n('[comment] All access'),
+		 GALLERY_PERMISSION_COMPOSITE,
+		 array('comment.add', 'comment.edit', 'comment.delete', 'comment.view'));
+	     foreach ($permissions as $p) {
+	 	$ret = GalleryCoreApi::registerPermission($this->getId(),
+		 					  'comment.' . $p[0],
+		 					  $p[1], $p[2], $p[3]);
+	 	if ($ret->isError()) {
+	 	    return $ret->wrap(__FILE__, __LINE__);
+	 	}
+	     }
+	     break;
+	     
+	case '0.9.6':
 	    /*
 	     * Remove comment.search permission included in older module versions.
 	     * As this is a composite permission we can simply remove its entry in the
@@ -84,9 +95,34 @@ class CommentModule extends GalleryModule {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+	    
+	case '1.0.0':
+	case '1.0.1':
+	case '1.0.2':
+	case '1.0.3':
+	    
+	case 'end of upgrade path':
+	    /*
+	     * Leave this bogus case at the end of the legitimate case statements so that we
+	     * always properly terminate our upgrade path with a break.
+	     */
+	    break;
+
+	default:
+	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
+					sprintf('Unknown module version %s', $currentVersion));
 	}
 
 	return GalleryStatus::success();
+    }
+
+    /**
+     * @see GalleryModule::registerEventListeners()
+     */
+    function registerEventListeners() {
+	GalleryCoreApi::relativeRequireOnce('modules/comment/classes/GalleryCommentHelper.class');
+	$listener = new GalleryCommentHelper();
+	GalleryCoreApi::registerEventListener('GalleryEntity::delete', $listener, true);
     }
 
     /**
