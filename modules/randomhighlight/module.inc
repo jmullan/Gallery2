@@ -199,7 +199,7 @@ class RandomHighlightModule extends GalleryModule {
 	$isOld = (time() - $thumbnail->getModificationTimestamp() > $duration);
 	$canSee = true;
 	if (!isset($loop[$id]) && !$isOld &&
-		strpos($thumbnail->getOnLoadHandlers(), '|RandomHighlightPrivate|') !== false) {
+		$thumbnail->hasOnLoadHandler('RandomHighlightPrivate')) {
 	    /* Highlight is currently a non-public item.. can current user view that item? */
 	    list ($ret, $highlight) =
 		GalleryCoreApi::loadEntitiesById($thumbnail->getDerivativeSourceId());
