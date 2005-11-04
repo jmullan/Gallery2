@@ -74,6 +74,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	  [GalleryAccessSubscriberMap::itemId] = [GalleryEntity::id]
 	  AND
 	  [GalleryAccessSubscriberMap::accessListId] IN (%s)
+	ORDER BY [GalleryItem::title]
 	', $aclMarkers);
 
 	$data = array();
