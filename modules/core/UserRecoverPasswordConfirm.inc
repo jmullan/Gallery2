@@ -28,7 +28,8 @@
  */
 
 GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryRecoverPasswordMap.class');
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/UserRecoverPasswordHelper_simple.class');
+GalleryCoreApi::relativeRequireOnce(
+    'modules/core/classes/helpers/UserRecoverPasswordHelper_simple.class');
 
 /**
  * This controller will handle the recovery of passwords that have
@@ -38,26 +39,6 @@ GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/UserRecoverPas
  * @subpackage UserInterface
  */
 class UserRecoverPasswordConfirmController extends GalleryController {
-
-    /**
-     * ValidationPlugin instances to use when handling this request.  Only used by
-     * test code.
-     *
-     * @var array(pluginId => object ValidationPlugin) $_plugins
-     * @access private
-     */
-    var $_pluginInstances;
-
-    /**
-     * Tests can use this method to hardwire a specific set of plugin instances to use.
-     * This avoids situations where some of the option instances will do unpredictable
-     * things and derail the tests.
-     *
-     * @param array (pluginId => ValidationPlugin, ...)
-     */
-    function setPluginInstances($pluginInstances) {
-	$this->_pluginInstances = $pluginInstances;
-    }
 
     /**
      * @see GalleryController::handleRequest

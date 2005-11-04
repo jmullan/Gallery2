@@ -78,14 +78,15 @@ class UserSelfRegistrationController extends GalleryController {
 	    } else {
 		/* Get all the login plugins */
 		list ($ret, $pluginInstances) =
-		    GalleryCoreApi::getAllFactoryImplementationIds('ValidationPlugin');
+		    GalleryCoreApi::getAllFactoryImplementationIds('GalleryValidationPlugin');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		foreach (array_keys($pluginInstances) as $pluginId) {
 		    list ($ret, $pluginInstances[$pluginId]) =
-			GalleryCoreApi::newFactoryInstanceById('ValidationPlugin', $pluginId);
+			GalleryCoreApi::newFactoryInstanceById('GalleryValidationPlugin',
+							       $pluginId);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -232,7 +233,7 @@ class UserSelfRegistrationView extends GalleryView {
 
 	/* Get all the login plugins */
 	list ($ret, $allPluginIds) =
-	    GalleryCoreApi::getAllFactoryImplementationIds('ValidationPlugin');
+	    GalleryCoreApi::getAllFactoryImplementationIds('GalleryValidationPlugin');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -241,7 +242,7 @@ class UserSelfRegistrationView extends GalleryView {
 	$UserSelfRegistration['plugins'] = array();
 	foreach (array_keys($allPluginIds) as $pluginId) {
 	    list ($ret, $plugin) =
-		GalleryCoreApi::newFactoryInstanceById('ValidationPlugin', $pluginId);
+		GalleryCoreApi::newFactoryInstanceById('GalleryValidationPlugin', $pluginId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

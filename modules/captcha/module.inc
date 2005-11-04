@@ -39,7 +39,7 @@ class CaptchaModule extends GalleryModule {
 	$this->setId('captcha');
 	$this->setName($gallery->i18n('Captcha'));
 	$this->setDescription($gallery->i18n('Prevents abuse by deterring automated bots with input that requires visual comprehension'));
-	$this->setVersion('1.0.0'); /* Update upgrade() function below too */
+	$this->setVersion('1.0.1'); /* Update upgrade() function below too */
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
@@ -51,7 +51,7 @@ class CaptchaModule extends GalleryModule {
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-	    'ValidationPlugin', 'CaptchaValidationPlugin', 'CaptchaValidationPlugin',
+	    'GalleryValidationPlugin', 'CaptchaValidationPlugin', 'CaptchaValidationPlugin',
 	    'modules/captcha/CaptchaValidationPlugin.inc', 'captcha', null);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -91,6 +91,8 @@ class CaptchaModule extends GalleryModule {
 	case '0.9.5':
 	    /* Upgraded GalleryModule requirement to 2.0 */
 	case '0.9.6':
+	case '1.0.0':
+	    /* Renamed ValidationPlugin to GalleryValidationPlugin */
 
 	case 'end of upgrade path':
 	    break;

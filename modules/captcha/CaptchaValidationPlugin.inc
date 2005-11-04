@@ -27,13 +27,15 @@
  * @author Bharat Mediratta <bharat@menalto.com>  
  */
 
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryValidationPlugin.class');
+
 /**
  * Implement ValidationPlugin to present the HTML for the captcha image
  * and an input box for the user to type in the correct value.
  *
  * @package Captcha
  */
-class CaptchaValidationPlugin extends ValidationPlugin {
+class CaptchaValidationPlugin extends GalleryValidationPlugin {
 
     /**
      * @see ValidationPlugin::performValidation
