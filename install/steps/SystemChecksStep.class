@@ -108,6 +108,15 @@ class SystemChecksStep extends InstallStep {
 		array('title' => _('Safe Mode'), 'success' => true);
 	}
 
+	/* Make sure we have PCRE support */
+	if (!function_exists('preg_match') || !function_exists('preg_replace')) {
+	    $templateData['check'][] =
+		array('title' => _('Regular expressions'),
+		      'error' => true,
+		      'notice' => sprintf(_('Error: Your PHP is configured without support for %sPerl Compatible Regular Expressions%s. You must enable these functions before Gallery will run.'),
+					  '<a href="http://php.net/pcre">', '</a>'));
+	} /* skip showing 'success' for this one */
+
 	/* Warning when exec() is disabled */
 	if (in_array('exec', split(',\s*', ini_get('disable_functions')))) {
 	    $templateData['check'][] =
@@ -191,6 +200,30 @@ class SystemChecksStep extends InstallStep {
 	} else {
 	    $templateData['check'][] =
 		array('title' => $title, 'success' => true);
+	}
+
+	/* Check for gettext support */
+	$title = _('Translation support');
+	if (!function_exists('dgettext')) {
+	    $templateData['check'][] =
+		array('title' => $title,
+		      'warning' => true,
+		      'notice' => sprintf(_('Your webserver does not support localization. To enable support for additional languages please instruct your system administrator to reconfigure PHP with the %sgettext%s option enabled.'),
+					  '<a href="http://php.net/gettext">', '</a>'));
+	} else if (!function_exists('bind_textdomain_codeset')) {
+	    $templateData['check'][] =
+		array('title' => $title,
+		      'warning' => true,
+		      'notice' => sprintf(_('Your PHP is missing the function %sbind_textdomain_codeset%s. This means Gallery may display extended characters for some languages incorrectly.'),
+				  '<a href="http://php.net/bind_textdomain_codeset">', '</a>'));
+	} else if (!function_exists('dngettext')) {
+	    $templateData['check'][] =
+		array('title' => $title,
+		      'warning' => true,
+		      'notice' => sprintf(_('Your PHP is missing the function %sdngettext%s. This means Gallery will be unable to translate plural forms.'),
+				  '<a href="http://php.net/dngettext">', '</a>'));
+	} else {
+	    $templateData['check'][] = array('title' => $title, 'success' => true);
 	}
 
 	/* $x=$x[0] <--(an object) can crash PHP with zend.ze1_compatibility_mode ON */
