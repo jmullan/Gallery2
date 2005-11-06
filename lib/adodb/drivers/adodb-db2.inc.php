@@ -106,7 +106,9 @@ class ADODB_DB2 extends ADODB_odbc {
 	
 	function ADODB_DB2()
 	{
-		if (strncmp(PHP_OS,'WIN',3) === 0) $this->curmode = SQL_CUR_USE_ODBC;
+		// G2 FIX by Larry Menard
+		// if (strncmp(PHP_OS,'WIN',3) === 0) $this->curmode = SQL_CUR_USE_ODBC;
+		if (strncmp(PHP_OS,'WIN',3) === 0) $this->curmode = SQL_CUR_USE_IF_NEEDED;
 		$this->ADODB_odbc();
 	}
 	
