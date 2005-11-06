@@ -526,6 +526,8 @@ class DatabaseSetupStep extends InstallStep {
 	    $GLOBALS['gallery'] =& new Gallery();
 	    $GLOBALS['gallery']->setConfig('data.gallery.base',
 					   $galleryStub->getConfig('data.gallery.base'));
+	    $GLOBALS['gallery']->setConfig('plugins.dirname',
+					   $galleryStub->getConfig('plugins.dirname'));
 	}
 	global $gallery;
 
