@@ -22,6 +22,10 @@
     {/if}
 
     <script type="text/javascript">
+      function albumSelect_goToNode(nodeId) {ldelim}
+        document.location = new String('{g->url forJavascript=true arg1="view=core.ShowItem" arg2="itemId=__ID__"}').replace('__ID__', nodeId);
+      {rdelim}
+
       // <![CDATA[
       var {$albumTree} = new dTree('{$albumTree}');
       {$albumTree}.icon = {ldelim}
@@ -48,8 +52,7 @@
 		    '{g->url}');
       {foreach from=$block.albumselect.LoadAlbumData.tree item=node}
 	{assign var="title" value=$block.albumselect.LoadAlbumData.titles[$node.id]|markup:strip}
-	{$albumTree}.add({$node.nodeId}, {$node.parentNode}, "{$title}",
-		      '{g->url arg1="view=core.ShowItem" arg2="itemId=`$node.id`"}');
+	{$albumTree}.add({$node.nodeId}, {$node.parentNode}, "{$title}", 'javascript:albumSelect_goToNode({$node.id})');
       {/foreach}
       document.write({$albumTree});
       // ]]>

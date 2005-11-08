@@ -8,13 +8,13 @@
 
 {if isset($block.albumselect)}
 <div class="{$class}">
-  <select onchange="{literal}if (this.value) { var newLocation = this.value; this.options[0].selected = true; location.href = newLocation; }{/literal}">
+  <select onchange="if (this.value) {ldelim} var newLocation = new String('{g->url arg1="view=core.ShowItem" arg2="itemId=__ID__"}').replace('__ID__', this.value); this.options[0].selected = true; location.href = newLocation; {rdelim}">
     <option value="">
       {g->text text="&laquo; Jump to Album &raquo;"}
     </option>
     {foreach from=$block.albumselect.LoadAlbumData.tree item=node}
       {assign var="title" value=$block.albumselect.LoadAlbumData.titles[$node.id]}
-      <option value="{g->url arg1="view=core.ShowItem" arg2="itemId=`$node.id`"}">
+      <option value="{$node.id}">
 	{$title|markup:strip|entitytruncate:20|indent:$node.depth:"-- "}
       </option>
     {/foreach}
