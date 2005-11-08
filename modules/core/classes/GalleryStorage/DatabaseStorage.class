@@ -856,4 +856,43 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	}
     }
 }
+
+/**
+ * Database implementation of the GallerySearchResult interface.
+ *
+ * @package GalleryCore
+ * @subpackage Storage
+ */
+class DatabaseSearchResults {
+
+    /**
+     * Internal record set object
+     *
+     * @var object ADORecordSet $_recordSet
+     * @access private
+     */
+    var $_recordSet;
+
+    function DatabaseSearchResults($recordSet) {
+	$this->_recordSet = $recordSet;
+    }
+
+    /**
+     * The number of results from this search
+     *
+     * @return int the number of results
+     */
+    function resultCount() {
+	return $this->_recordSet->RecordCount();
+    }
+
+    /**
+     * Return the next search result, as an associative array
+     *
+     * @return array the next result or false if EOF
+     */
+    function nextResult() {
+	return $this->_recordSet->FetchRow();
+    }
+}
 ?>

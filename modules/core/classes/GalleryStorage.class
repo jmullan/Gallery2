@@ -65,8 +65,6 @@ class GalleryStorage {
 	$base = '/GalleryStorage/';
 	GalleryCoreApi::relativeRequireOnce(
 	    'modules/core/classes' . $base . 'DatabaseStorage.class');
-	GalleryCoreApi::relativeRequireOnce(
-	    'modules/core/classes' . $base . 'DatabaseSearchResults.class');
 
 	$config = $gallery->getConfig('storage.config');
 	switch ($config['type']) {
