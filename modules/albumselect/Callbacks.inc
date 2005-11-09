@@ -124,7 +124,6 @@ class AlbumSelectCallbacks {
 			return GalleryStatus::success();
 		    }
 		}
-		printf("<pre>cache: %s</pre>", print_r($titles, 1));
 		GalleryDataCache::putToDisk($cachePathInfo,
 					    $dataToCache = array($treeList, $titles));
 	    }
