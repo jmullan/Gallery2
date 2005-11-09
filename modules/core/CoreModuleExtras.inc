@@ -116,6 +116,7 @@ class CoreModuleExtras {
 	    foreach (array('permissions.directory' => '0755',
 			   'permissions.file' => '0644',
 			   'exec.expectedStatus' => '0',
+			   'exec.beNice' => '0',
 			   'default.orderBy' => 'orderWeight',
 			   'default.orderDirection' => '1',
 			   'default.theme' => 'matrix',
@@ -128,7 +129,7 @@ class CoreModuleExtras {
 			   'lock.system' => $flockType,
 			   'format.date' => '%x',
 			   'format.time' => '%X',
-			   'format.datetime' => '%c'
+			   'format.datetime' => '%c',
 			   ) as $key => $value) {
 		if (!isset($param[$key])) {
 		    $ret = $module->setParameter($key, $value);
@@ -1257,6 +1258,12 @@ class CoreModuleExtras {
 	case '1.0.6':
 	    /* Add PluginPackageMap table */
 
+	case '1.0.7':
+	    $ret = GalleryCoreApi::setPluginParameter('modules', 'core', 'exec.beNice', '0');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
@@ -1449,6 +1456,7 @@ $gallery->setConfig(\'mode.maintenance\', false);
 
 	case '1.0.5':
 	case '1.0.6':
+	case '1.0.7':
 
 	case 'end of upgrade path':
 	    /*

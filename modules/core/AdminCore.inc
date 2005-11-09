@@ -190,6 +190,7 @@ class AdminCoreController extends GalleryController {
 	if ($canSave && empty($error)) {
 	    foreach (array('permissions.directory',
 			   'permissions.file',
+			   'exec.beNice',
 			   'exec.expectedStatus',
 			   'default.orderBy',
 			   'default.orderDirection',
@@ -283,6 +284,7 @@ class AdminCoreView extends GalleryView {
 	    /* Load up our form data */
 	    foreach (array('permissions.directory',
 			   'permissions.file',
+			   'exec.beNice',
 			   'exec.expectedStatus',
 			   'default.language',
 			   'session.lifetime',
@@ -388,6 +390,11 @@ class AdminCoreView extends GalleryView {
 	    $AdminCore['permissionsDirectoryList'] =
 		array('700', '750', '755', '770', '775', '777');
 	    $AdminCore['permissionsFileList'] = array('600', '640', '644', '660', '664', '666');
+
+	    $can['tweakSystemProcesses'] = true;
+	    $AdminCore['beNiceList'] = array(
+		'0' => $module->translate('High Priority (Me first!)'),
+		'1' => $module->translate('Low Priority (I want to share!)'));
 	}
 
 	/* Miscellaneous lists */

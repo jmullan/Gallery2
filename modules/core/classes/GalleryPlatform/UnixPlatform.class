@@ -46,11 +46,28 @@ class UnixPlatform extends GalleryPlatform {
 	global $gallery;
 	$gallery->guaranteeTimeLimit(5);
 
+	if (!isset($this->_beNice)) {
+	    list ($ret, $this->_beNice) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'exec.beNice');
+	    if ($ret->isError()) {
+		if ($gallery->getDebug()) {
+		    $gallery->debug('Unable to look up core.exec.beNice param');
+		}
+		$this->_beNice = 0;
+	    }
+	}
+
+	if ($this->_beNice) {
+	    $preamble = 'nice ';
+	} else {
+	    $preamble = '';
+	}
+
 	/* Assemble the command array into a pipeline */
-	$command = '';
+	$command = $preamble;
 	foreach ($cmdArray as $cmdAndArgs) {
-	    if (strlen($command)) {
-		$command .= ' | ';
+	    if (strlen($command) && $command != $preamble) {
+		$command .= ' | ' . $preamble;
 	    }
 
 	    foreach ($cmdAndArgs as $arg) {
@@ -78,13 +95,15 @@ class UnixPlatform extends GalleryPlatform {
 	exec($command, $results, $status);
 	umask($umask);
 
-	list ($ret, $expected) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'exec.expectedStatus');
-	if ($ret->isError()) {
-	    if ($gallery->getDebug()) {
-		$gallery->debug('Unable to look up core.exec.expectedStatus param');
+	if (!isset($this->_execExpectedStatus)) {
+	    list ($ret, $this->_execExpectedStatus) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'exec.expectedStatus');
+	    if ($ret->isError()) {
+		if ($gallery->getDebug()) {
+		    $gallery->debug('Unable to look up core.exec.expectedStatus param');
+		}
+		$this->_execExpectedStatus = 0;
 	    }
-	    $expected = 0;
 	}
 
 	$stderr = array();
@@ -115,10 +134,10 @@ class UnixPlatform extends GalleryPlatform {
 	    foreach ($stderr as $line) {
 		$gallery->debug($line);
 	    }
-	    $gallery->debug("Status: $status (expected $expected)");
+	    $gallery->debug("Status: $status (expected " . $this->_execExpectedStatus . ')');
 	}
 
-	return array($status == $expected, $results, $stderr);
+	return array($status == $this->_execExpectedStatus, $results, $stderr);
     }
 
     /**
