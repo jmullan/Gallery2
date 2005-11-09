@@ -26,12 +26,12 @@
  */
 class AlbumSelectCallbacks {
 
-    function callback($params, &$smarty, $callback, $userId) {
+    function callback($callbackParams, &$smarty, $callback, $userId) {
 	global $gallery;
 	static $idCount = '';
 	switch($callback) {
 	case 'LoadAlbumData':
-	    if (isset($params['albumTree']) && $params['albumTree']) {
+	    if (isset($callbackParams['albumTree']) && $callbackParams['albumTree']) {
 		/* Set unique name for javascript object */
 		$albumTreeName = 'albumTree' . $idCount++;
 	    }
@@ -62,6 +62,13 @@ class AlbumSelectCallbacks {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 		$titles = array('root' => preg_replace('/\r\n/', ' ', $rootAlbum->getTitle()));
+		if (isset($callbackParams['stripTitles'])) {
+		    $titles['root'] = smarty_modifier_markup($titles['root'], 'strip');
+		}
+		if (isset($callbackParams['truncateTitles'])) {
+		    $titles['root'] = smarty_modifier_entitytruncate(
+			$titles['root'], $callbackParams['truncateTitles']);
+		}
 		$treeList = array();
 
 		if ($params['sort'] != 'album') {
@@ -84,7 +91,15 @@ class AlbumSelectCallbacks {
 		    }
 		    foreach ($items as $item) {
 			$title = $item->getTitle() ? $item->getTitle() : $item->getPathComponent();
-			$titles[$item->getId()] = preg_replace('/\r\n/', ' ', $title);
+			$title = preg_replace('/\r\n/', ' ', $title);
+			if (isset($callbackParams['stripTitles'])) {
+			    $title = smarty_modifier_markup($title, 'strip');
+			}
+			if (isset($callbackParams['truncateTitles'])) {
+			    $title = smarty_modifier_entitytruncate(
+				$title, $callbackParams['truncateTitles']);
+			}
+			$titles[$item->getId()] = $title;
 		    }
 
 		    $sorter = ($params['sort'] == 'title') ?

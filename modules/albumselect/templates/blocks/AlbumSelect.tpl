@@ -4,7 +4,7 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-{g->callback type="albumselect.LoadAlbumData"}
+{g->callback type="albumselect.LoadAlbumData" stripTitles="true" truncateTitles="20"}
 
 {if isset($block.albumselect)}
 <div class="{$class}">
@@ -15,7 +15,7 @@
     {foreach from=$block.albumselect.LoadAlbumData.tree item=node}
       {assign var="title" value=$block.albumselect.LoadAlbumData.titles[$node.id]}
       <option value="{$node.id}">
-	{$title|markup:strip|entitytruncate:20|indent:$node.depth:"-- "}
+	{$title|indent:$node.depth:"-- "}
       </option>
     {/foreach}
   </select>
