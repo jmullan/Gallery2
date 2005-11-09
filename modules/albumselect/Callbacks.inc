@@ -52,6 +52,13 @@ class AlbumSelectCallbacks {
 				   '_' . substr(md5(serialize($callbackParams)), 0, 5));
 	    list ($treeList, $titles) = GalleryDataCache::getFromDisk($cachePathInfo);
 	    if (!isset($titles) || !isset($treeList)) {
+		if (isset($callbackParams['stripTitles'])) {
+		    GalleryCoreApi::relativeRequireOnce('lib/smarty_plugins/modifier.markup.php');
+		}
+		if (isset($callbackParams['truncateTitles'])) {
+		    GalleryCoreApi::relativeRequireOnce(
+			'lib/smarty_plugins/modifier.entitytruncate.php');
+		}
 		list ($ret, $rootAlbumId) =
 		    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 		if ($ret->isError()) {
