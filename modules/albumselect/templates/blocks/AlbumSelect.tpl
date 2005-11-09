@@ -12,10 +12,10 @@
     <option value="">
       {g->text text="&laquo; Jump to Album &raquo;"}
     </option>
-    {foreach from=$block.albumselect.LoadAlbumData.tree item=node}
-      {assign var="title" value=$block.albumselect.LoadAlbumData.titles[$node.id]}
+    {foreach from=$block.albumselect.LoadAlbumData.albumSelect.tree item=node}
+      {assign var="title" value=$block.albumselect.LoadAlbumData.albumSelect.titles[$node.id]}
       <option value="{$node.id}">
-	{$title|indent:$node.depth:"-- "}
+	{$title}
       </option>
     {/foreach}
   </select>

@@ -48,9 +48,9 @@ class AlbumSelectCallbacks {
 	    }
 	    $cachePathInfo = array('type' => 'module-data',
 				   'module' => 'albumselect',
-				   'itemId' => $userId . '_' . $languageCode);
+				   'itemId' => $userId . '_' . $languageCode .
+				   '_' . substr(md5(serialize($callbackParams)), 0, 5));
 	    list ($treeList, $titles) = GalleryDataCache::getFromDisk($cachePathInfo);
-
 	    if (!isset($titles) || !isset($treeList)) {
 		list ($ret, $rootAlbumId) =
 		    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
@@ -124,17 +124,19 @@ class AlbumSelectCallbacks {
 			return GalleryStatus::success();
 		    }
 		}
+		printf("<pre>cache: %s</pre>", print_r($titles, 1));
 		GalleryDataCache::putToDisk($cachePathInfo,
 					    $dataToCache = array($treeList, $titles));
 	    }
 
 	    $block =& $smarty->_tpl_vars['block'];
-	    $block['albumselect']['LoadAlbumData'] = array(
+	    $type = isset($callbackParams['albumTree']) ? 'albumTree' : 'albumSelect';
+	    $block['albumselect']['LoadAlbumData'][$type] = array(
 		'tree' => $treeList,
 		'titles' => $titles,
 		'params' => $params);
 	    if (isset($albumTreeName)) {
-		$block['albumselect']['LoadAlbumData']['albumTreeName'] = $albumTreeName;
+		$block['albumselect']['LoadAlbumData'][$type]['albumTreeName'] = $albumTreeName;
 	    }
 
 	    return GalleryStatus::success();
@@ -148,7 +150,7 @@ class AlbumSelectCallbacks {
      * @access private
      */
     function _parseTree($tree, &$treeList, &$sorter, &$nodeId, $parentNode, $depth,
-			&$titles, &$callbackParams) {
+			&$callbackParams, &$titles) {
 	if (isset($sorter)) {
 	    uksort($tree, array($sorter, 'sort'));
 	}
@@ -156,11 +158,11 @@ class AlbumSelectCallbacks {
 	    $treeList[] = array('id' => $id, 'nodeId' => ++$nodeId,
 				'parentNode' => $parentNode, 'depth' => $depth);
 	    if (isset($callbackParams['createTextTree'])) {
-		$titles[$id] = preg_replace('/^/m', str_repeat($depth, '-- '), $titles[$id]);
+		$titles[$id] = str_repeat('-- ', $depth) . $titles[$id];
 	    }
 	    if (!empty($list)) {
 		$this->_parseTree($list, $treeList, $sorter, $nodeId, $nodeId, $depth + 1,
-				  $titles, $callbackParams);
+				  $callbackParams, $titles);
 	    }
 	}
     }
@@ -197,8 +199,7 @@ class AlbumSelectCallbacks {
 			$titles[$subAlbumId], $callbackParams['truncateTitles']);
 		}
 		if (isset($callbackParams['createTextTree'])) {
-		    $titles[$subAlbumId] =
-			preg_replace('/^/m', str_repeat($depth, '-- '), $titles[$subAlbumId]);
+		    $titles[$subAlbumId] = str_repeat('--' , $depth) . $titles[$subAlbumId];
 		}
 		$ret = $this->_buildTree($subAlbum, $treeList, $titles,
 					 $nodeId, $userId, $nodeId, $depth + 1,
@@ -221,7 +222,7 @@ class AlbumSelectTreeSorter {
 	$this->_titles =& $titles;
     }
     function sort($a, $b) {
-	return strcmp($this->_titles[$a], $this->_titles[$b]);
+	return strcasecmp($this->_titles[$a], $this->_titles[$b]);
     }
 }
 ?>
