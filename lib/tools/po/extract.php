@@ -187,7 +187,7 @@ function extractStrings($filename) {
 		# parse error
 		$stderr = fopen('php://stderr', 'w');
 		$text = preg_replace("/\n/s", '\n>', $text);
-		fwrite($stderr, "extract.pl parse error: $file:\n");
+		fwrite($stderr, "extract.php parse error: $file:\n");
 		fwrite($stderr, "> $text\n");
 		exit(1);
 	    }
