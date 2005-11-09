@@ -171,9 +171,9 @@ class WebCamModule extends GalleryModule {
      * Check age and refresh from external source if needed..
      */
     function onLoad(&$item, $duringUpgrade) {
-	static $loop = array();
 	$old = false;
 	$id = $item->getId();
+	$loop = GalleryDataCache::containsKey("webcam:load-$id");
 	/* We don't want to refresh the external source during an upgrade */
 	if ($duringUpgrade) {
 	    return GalleryStatus::success();
@@ -182,13 +182,13 @@ class WebCamModule extends GalleryModule {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	if (time() - $item->getModificationTimestamp() > $duration && !isset($loop[$id])) {
+	if (time() - $item->getModificationTimestamp() > $duration && !$loop) {
 	    /* Lock and refresh to ensure another request didn't just update image.. */
 	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($id);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    $loop[$id] = true;
+	    GalleryDataCache::put("webcam:load-$id", true);
 	    list ($ret, $refresh) = $item->refresh();
 	    if ($ret->isError()) {
 		GalleryCoreApi::releaseLocks($lockId);
