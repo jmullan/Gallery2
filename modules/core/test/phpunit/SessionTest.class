@@ -957,13 +957,11 @@ class SessionTest extends GalleryTestCase {
     }
 
     /* Test configured cookie path vs. not configured cookie path */
-    function testSessionGetCookiePath() {
-	/*
+    /* function testSessionGetCookiePath() {
 	 * This is already tested in UrlGeneratorTest
 	 * We have a getCookiePath function in GallerySession to not have to deal with db errors
 	 * when we actually need the cookie path
-	 */
-    }
+    } */
 
     /*
      * Check that we don't save sessions for core.DownloadItem, migrate.Redirect and CSS requests
@@ -993,6 +991,48 @@ class SessionTest extends GalleryTestCase {
 	    $this->assertEquals($testCase['er'], $session->_shouldSaveSession(),
 				$testCase['type'] . ': ' . $testCase['value']);
 	}
+    }
+
+    /**
+     * Normally we initialize remoteIdentifer when a session is created and check it
+     * on each request for session hijack protection.  However, in some cases (create new
+     * session for print services to access) we initialize with empty remoteIdentifier.
+     * In this case the first init() call should allow access and set the remoteIdentifier
+     * based on this request.
+     */
+    function testInitRemoteIdentifier() {
+	$session = new GallerySession();
+	$session->initEmpty(true);
+	unset($_COOKIE[SESSION_ID_PARAMETER]);
+	GalleryUtilities::putRequestVariable(SESSION_ID_PARAMETER, $sid = $session->getId());
+	$this->assert(!empty($sid), 'sessionid should be set');
+	$this->assert(empty($session->_remoteIdentifier), 'remoteIdentifier should be empty');
+
+	$session->put('test', 'value');
+	$ret = $session->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryUtilities::putRequestVariable('view', 'core.DownloadItem');
+	GalleryDataCache::reset();
+	$ret = $session->init();
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Verify init didn't treat request as session hijack */
+	$this->assertEquals($sid, $session->getId(), 'sessionid should not change');
+	/* Verify remoteIdentifer has been initialized */
+	$this->assert(!empty($session->_remoteIdentifier), 'remoteIdentify should not be empty');
+	/* Verify session data */
+	$this->assertEquals('value', $session->get('test'), 'session data missing');
+	/* Verify session will save remoteId change, even for core.DownloadItem request */
+	$this->assert($session->_shouldSaveSession(), 'should save session');
+
+	/* Remove this session file */
+	$session->_sessionId = $sid;
+	$session->reset();
     }
 }
 

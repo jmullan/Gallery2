@@ -69,9 +69,9 @@ class GallerySession {
     var $_isUsingCookies = false;
 
     /**
-     * The session data as loaded from file
+     * The serialized session data as loaded from file
      *
-     * @var array $_loadedSessionData;
+     * @var string $_loadedSessionData;
      * @access private
      */
     var $_loadedSessionData;
@@ -165,7 +165,6 @@ class GallerySession {
 	    }
 	}
 
-
 	/*
 	 * If we don't have a session id at this point, create one. And expire the session if
 	 * necessary
@@ -175,15 +174,7 @@ class GallerySession {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	if (!$valid) {
-	    do {
-		$this->_sessionId = md5(microtime() . rand(1, 32767));
-
-		$ret = $this->_loadSessionData();
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-		/* Ensure we don't randomly pick an id already in use.. */
-	    } while (!empty($this->_sessionData));
+	    $this->initEmpty();
 	} else {
 	    /*
 	     * Sanitize the session id (which may have come from user input) to
@@ -198,16 +189,18 @@ class GallerySession {
 	    }
 	}
 
-	$forceResendCookie = false;
-	$forceSessionSave = false;
+	$forceResendCookie = $forceSessionSave = false;
 
 	/* Verify the remote address to avoid casual session hijacking */
 	$currentRemoteIdentifier = $this->_getRemoteIdentifier();
 
-	if (!isset($this->_remoteIdentifier) ||
-	    $this->_compareIdentifiers($this->_remoteIdentifier,
-				       $currentRemoteIdentifier) == 0) {
-	    /* If we upgrade, allowSessionAccess could not be missing */
+	if (!isset($this->_remoteIdentifier)) {
+	    /* Initialize remoteIdentifier if not yet set (via initEmpty(true)) */
+	    $this->_remoteIdentifier = $currentRemoteIdentifier;
+	    $forceSessionSave = true;
+	} else if ($this->_compareIdentifiers($this->_remoteIdentifier,
+					      $currentRemoteIdentifier) == 0) {
+	    /* If we upgrade, allowSessionAccess could be missing */
 	    $allowFrom = @$gallery->getConfig('allowSessionAccess');
 	    if (!$allowFrom || $currentRemoteIdentifier[0] != $allowFrom) {
 		if ($gallery->getDebug()) {
@@ -221,22 +214,20 @@ class GallerySession {
 		 * our data to prevent hijacking.
 		 */
 		$this->_remoteIdentifier = $currentRemoteIdentifier;
-		$this->_emptySessionData();
-		$this->_sessionId = md5(microtime() . rand(1, 32767));
-		$forceResendCookie = true;
-		$forceSessionSave = true;
+		$this->initEmpty();
+		$forceResendCookie = $forceSessionSave = true;
 	    }
+	}
+
+	if ($forceSessionSave) {
+	    /* Ensure next save() call will actually save */
+	    $this->_shouldSaveSession(true);
+	    $this->_loadedSessionData = '';
 	}
 
 	/* Don't save session / send cookie for DownloadItem, CSS, migrate.Redirect requests .. */
 	if ($this->_shouldSaveSession()) {
 	    /* It's not one of the special cases; create session / send cookie if necessary */
-	    if ($forceSessionSave) {
-		$ret = $this->save();
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-	    }
 
 	    /*
 	     * As part of the cookie management, we are forced to append the SID to all DownloadItem
@@ -370,6 +361,25 @@ class GallerySession {
 	}
 
 	return GalleryStatus::success();
+    }
+
+    /**
+     * Set a new/unused sessionid.
+     * @param boolean (optional) if true don't initialize remoteIdentifier
+     */
+    function initEmpty($emptyRemoteId=false) {
+	do {
+	    $this->_sessionId = md5(microtime() . rand(1, 32767));
+
+	    $ret = $this->_loadSessionData();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    /* Ensure we don't randomly pick an id already in use.. */
+	} while (!empty($this->_sessionData));
+	if ($emptyRemoteId) {
+	    $this->_remoteIdentifier = null;
+	}
     }
 
     /**
@@ -714,7 +724,7 @@ class GallerySession {
      */
     function _emptySessionData() {
 	$this->_sessionData = array();
-	$this->_loadedSessionData = array();
+	$this->_loadedSessionData = '';
 	$this->_creationTime = time();
 	$this->_remoteIdentifier = $this->_getRemoteIdentifier();
     }
@@ -750,10 +760,8 @@ class GallerySession {
 	$score = 0;
 	if (is_array($a) && is_array($b)) {
 	    for ($i = 0; $i < sizeof($a); $i++) {
-		if (sizeof($b) > $i) {
-		    if ($a[$i] == $b[$i]) {
-			$score++;
-		    }
+		if (sizeof($b) > $i && $a[$i] == $b[$i]) {
+		    $score++;
 		}
 	    }
 	}
@@ -942,12 +950,15 @@ class GallerySession {
      *         And if we stored the session, it would result in *a lot* unneeded sessions,
      *         e.g. for migrate redirects or hotlinked images.
      *
+     * @param boolean (optional) cache the given value
      * @return boolean true if the session should be saved, else false
      * @access private
      */
-    function _shouldSaveSession() {
+    function _shouldSaveSession($forceValue=null) {
 	static $cacheKey = 'GallerySession::_shouldSaveSession';
-	if (!GalleryDataCache::containsKey($cacheKey)) {
+	if (isset($forceValue)) {
+	    GalleryDataCache::put($cacheKey, $forceValue);
+	} else if (!GalleryDataCache::containsKey($cacheKey)) {
 	    $flag = true; /* Default to true */
 	    list ($view, $controller) =
 		GalleryUtilities::getRequestVariables('view', 'controller');
@@ -977,7 +988,8 @@ class GallerySession {
 		    $flag = false;
 		}
 	    }
-	    */
+	     */
+
 	    GalleryDataCache::put($cacheKey, $flag);
 	}
 
