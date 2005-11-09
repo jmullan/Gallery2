@@ -185,21 +185,21 @@ class RandomHighlightModule extends GalleryModule {
      * Check age and pick new highlight if needed..
      */
     function onLoad(&$thumbnail, $duringUpgrade) {
-	static $loop = array();
 	$picknew = false;
 	$id = $thumbnail->getId();
+	$loop = GalleryDataCache::containsKey("randomhighlight:load-$id");
 	/* We don't want to refresh the highlight during an upgrade */
 	if ($duringUpgrade) {
 	    return GalleryStatus::success();
 	}
+	/* Acquire information whether we need to choose a new highlight */
 	list ($ret, $duration) = $this->getParameter('duration');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$isOld = (time() - $thumbnail->getModificationTimestamp() > $duration);
 	$canSee = true;
-	if (!isset($loop[$id]) && !$isOld &&
-		$thumbnail->hasOnLoadHandler('RandomHighlightPrivate')) {
+	if (!$loop && !$isOld && $thumbnail->hasOnLoadHandler('RandomHighlightPrivate')) {
 	    /* Highlight is currently a non-public item.. can current user view that item? */
 	    list ($ret, $highlight) =
 		GalleryCoreApi::loadEntitiesById($thumbnail->getDerivativeSourceId());
@@ -212,13 +212,19 @@ class RandomHighlightModule extends GalleryModule {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
-	if (!isset($loop[$id]) && ($isOld || !$canSee)) {
+	$viewName = GalleryUtilities::getRequestVariables('view');
+	/*
+	 * Check if we need to pick a new highlight. Don't pick a new one on DownloadItem
+	 * requests, unless we don't have the permission to see the current highlight
+	 */
+	if (!$loop && (($isOld && $viewName != 'core.DownloadItem') || !$canSee)) {
 	    /* Lock and refresh to ensure another request didn't just update highlight */
 	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($id);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    $loop[$id] = true;
+	    /* ->refresh() will load the onLoad handler again, thus use the GDC $loop variable */
+	    GalleryDataCache::put("randomhighlight:load-$id", true);
 	    list ($ret, $refresh) = $thumbnail->refresh();
 	    if ($ret->isError()) {
 		GalleryCoreApi::releaseLocks($lockId);
@@ -228,6 +234,7 @@ class RandomHighlightModule extends GalleryModule {
 		$picknew = true;
 	    }
 	}
+	
 	if ($picknew) {
 	    list ($ret, $album) = GalleryCoreApi::loadEntitiesById($thumbnail->getParentId());
 	    if ($ret->isError()) {
@@ -248,6 +255,22 @@ class RandomHighlightModule extends GalleryModule {
 		GalleryCoreApi::releaseLocks($lockId);
 		return GalleryStatus::success();
 	    }
+	    /* Prevent from choosing the old highlight again if there are 2 or more candidates */
+	    if (count($thumbnails) > 1) {
+		/* Get the id of the highlight if we don't have it already */
+		if (!isset($highlight)) {
+		    list ($ret, $highlight) =
+			GalleryCoreApi::loadEntitiesById($thumbnail->getDerivativeSourceId());
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		}
+		/* $thumbnails array is indexed by itemIds */
+		if (isset($thumbnails[$highlight->getParentId()])) {
+		    unset($thumbnails[$highlight->getParentId()]);
+		}
+	    }
+	    /* Pick a new random highlight */
 	    $itemId = array_keys($thumbnails);
 	    $itemId = $itemId[rand(0, count($itemId)-1)];
 	    $highlight = $thumbnails[$itemId];
