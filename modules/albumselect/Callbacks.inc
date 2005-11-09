@@ -105,8 +105,8 @@ class AlbumSelectCallbacks {
 		    $sorter = ($params['sort'] == 'title') ?
 			new AlbumSelectTreeSorter($titles) : null;
 		    $nodeId = 0;
-		    $this->_parseTree($tree, $treeList, $sorter, $nodeId);
-
+		    $this->_parseTree($tree, $treeList, $sorter, $nodeId,
+				      0, 0, $callbackParams, $titles);
 		} else {
 		    list ($ret, $canView) =
 			GalleryCoreApi::hasItemPermission($rootAlbumId, 'core.view', $userId);
@@ -114,7 +114,8 @@ class AlbumSelectCallbacks {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
 		    if ($canView) {
-			$ret = $this->_buildTree($rootAlbum, $treeList, $titles, $nodeId, $userId);
+			$ret = $this->_buildTree($rootAlbum, $treeList, $titles, $nodeId,
+						 $userId, 0, 0, $callbackParams);
 			if ($ret->isError()) {
 			    return $ret->wrap(__FILE__, __LINE__);
 			}
@@ -146,15 +147,20 @@ class AlbumSelectCallbacks {
      * Build template data for subalbum tree (manual and title sorting)
      * @access private
      */
-    function _parseTree($tree, &$treeList, &$sorter, &$nodeId, $parentNode=0, $depth=0) {
+    function _parseTree($tree, &$treeList, &$sorter, &$nodeId, $parentNode, $depth,
+			&$titles, &$callbackParams) {
 	if (isset($sorter)) {
 	    uksort($tree, array($sorter, 'sort'));
 	}
 	foreach ($tree as $id => $list) {
 	    $treeList[] = array('id' => $id, 'nodeId' => ++$nodeId,
 				'parentNode' => $parentNode, 'depth' => $depth);
+	    if (isset($callbackParams['createTextTree'])) {
+		$titles[$id] = preg_replace('/^/m', str_repeat($depth, '-- '), $titles[$id]);
+	    }
 	    if (!empty($list)) {
-		$this->_parseTree($list, $treeList, $sorter, $nodeId, $nodeId, $depth + 1);
+		$this->_parseTree($list, $treeList, $sorter, $nodeId, $nodeId, $depth + 1,
+				  $titles, $callbackParams);
 	    }
 	}
     }
@@ -164,7 +170,8 @@ class AlbumSelectCallbacks {
      * @return object GalleryStatus a status code
      * @access private
      */
-    function _buildTree($album, &$treeList, &$titles, &$nodeId, $userId, $parentNode=0, $depth=0) {
+    function _buildTree($album, &$treeList, &$titles, &$nodeId, $userId,
+			$parentNode, $depth, &$callbackParams) {
 	list ($ret, $subAlbumIds) =
 	    GalleryCoreApi::fetchChildAlbumItemIds($album, null, null, $userId);
 	if ($ret->isError()) {
@@ -180,9 +187,22 @@ class AlbumSelectCallbacks {
 				    'parentNode' => $parentNode, 'depth' => $depth);
 		$title = $subAlbum->getTitle() ? $subAlbum->getTitle()
 					       : $subAlbum->getPathComponent();
-		$titles[$subAlbum->getId()] = preg_replace('/\r\n/', ' ', $title);
+		$subAlbumId = $subAlbum->getId();
+		$titles[$subAlbumId] = preg_replace('/\r\n/', ' ', $title);
+		if (isset($callbackParams['stripTitles'])) {
+		    $titles[$subAlbumId] = smarty_modifier_markup($titles[$subAlbumId], 'strip');
+		}
+		if (isset($callbackParams['truncateTitles'])) {
+		    $titles[$subAlbumId] = smarty_modifier_entitytruncate(
+			$titles[$subAlbumId], $callbackParams['truncateTitles']);
+		}
+		if (isset($callbackParams['createTextTree'])) {
+		    $titles[$subAlbumId] =
+			preg_replace('/^/m', str_repeat($depth, '-- '), $titles[$subAlbumId]);
+		}
 		$ret = $this->_buildTree($subAlbum, $treeList, $titles,
-					 $nodeId, $userId, $nodeId, $depth + 1);
+					 $nodeId, $userId, $nodeId, $depth + 1,
+					 $callbackParams);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}

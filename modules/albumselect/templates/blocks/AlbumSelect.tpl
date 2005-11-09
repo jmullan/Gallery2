@@ -4,7 +4,7 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-{g->callback type="albumselect.LoadAlbumData" stripTitles="true" truncateTitles="20"}
+{g->callback type="albumselect.LoadAlbumData" stripTitles="true" truncateTitles="20" createTextTree="true"}
 
 {if isset($block.albumselect)}
 <div class="{$class}">
