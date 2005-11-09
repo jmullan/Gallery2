@@ -491,9 +491,12 @@ class GalleryDataCache {
 	    }
 	    if (isset($pathInfo['itemId'])) {
 		list ($first, $second) = GalleryDataCache::getCacheTuple($pathInfo['itemId']);
-		$cacheFile = sprintf('%s%s/%s/%s/%s/%d.dat',
+
+		/* $itemId is overloaded here; sanitize it so that it only accepts [0-9A-Za-z_]+ */
+		$itemId = preg_replace('/[^0-9A-Za-z_]/', '_', $pathInfo['itemId']);
+		$cacheFile = sprintf('%s%s/%s/%s/%s/%s.dat',
 				     $base, 'module', $pathInfo['module'],
-				     $first, $second, $pathInfo['itemId']);
+				     $first, $second, $itemId);
 	    } else {
 		$cacheFile = sprintf('%s%s/%s/', $base, 'module', $pathInfo['module']);
 	    }
