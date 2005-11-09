@@ -157,8 +157,10 @@ class GalleryPluginHelper_simple {
 			 * Forcibly abort this request and jump to the upgrader so this
 			 * module can be upgraded.
 			 */
-			$gallery->debug("Unable to deactivate $pluginId, jumping to upgrader.");
-			$gallery->debug_r($redirectInfo);
+			if ($gallery->getDebug()) {
+			    $gallery->debug("Unable to deactivate $pluginId, jumping to upgrader.");
+			    $gallery->debug_r($redirectInfo);
+			}
 			$urlGenerator =& $gallery->getUrlGenerator();
 			header('Location: ' .
 			       $urlGenerator->getCurrentUrlDir(true) . 'upgrade/index.php');
@@ -424,7 +426,9 @@ class GalleryPluginHelper_simple {
 		/* Find and remove plugins that are active, but not installed */
 		foreach ($plugins as $pluginId => $pluginStatus) {
 		    if (!isset($pluginStatus['available'])) {
-			$gallery->debug("Plugin $pluginId no longer installed");
+			if ($gallery->getDebug()) {
+			    $gallery->debug("Plugin $pluginId no longer installed");
+			}
 			unset($plugins[$pluginId]);
 		    }
 		}
