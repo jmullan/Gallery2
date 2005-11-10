@@ -63,10 +63,7 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	     */
 	    list ($ret, $this->_items[$i]) =
 		$this->_createRandomDataItem($this->_album->getId(),
-					     'test/jpeg',
-					     array(),
-					     __FILE__,
-					     'GalleryPhotoItem');
+					     'test/jpeg', array(), __FILE__, 'GalleryPhotoItem');
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -132,14 +129,38 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 
 	$this->_sourceIds[2] = $derivative->getId();
 
+        /* Print permission on all but one */
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_album->getId(), $gallery->getActiveUserId(), 'photoaccess.print', true);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::removeItemPermissions($this->_items[1]->getId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_items[1]->getId(), $gallery->getActiveUserId(), 'core.viewAll');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	/* Empty out the plugin session id */
 	$session =& $gallery->getSession();
 	$this->_saveCartUrlFragment = $session->get('photoaccess.cartUrlFragment');
 	$session->remove('photoaccess.cartUrlFragment');
 
-	/* Swap in a dummy platform and url generator */
-	$this->_save = array($gallery->_platform, $gallery->_urlGenerator);
-	$gallery->_platform = new PhotoAccessCartPluginTestPlatform($this);
+	/* Make sure translate calls during test won't generate any platform calls */
+	list ($ret) = GalleryCoreApi::getPermissionIds();
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Swap in a dummy url generator */
 	$gallery->_urlGenerator = new PhotoAccessCartPluginTestUrlGenerator();
     }
 
@@ -157,15 +178,36 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
     }
 
     function testFulfillCart() {
-	/* Create our cart */
-	$cartItemIds = array();
-	for ($i = 0; $i < sizeof($this->_items); $i++) {
-	    $cartItemIds[$this->_items[$i]->getId()] = $i+1;
-	}
-
+	global $gallery;
 	GalleryCoreApi::relativeRequireOnce('modules/cart/classes/CartPluginInterface_1_0.class');
 	GalleryCoreApi::relativeRequireOnce(
 	    'modules/photoaccess/classes/PhotoAccessCartPlugin.class');
+
+	/* Create our cart */
+	$cartItemIds = array();
+	for ($i = 0; $i < count($this->_items); $i++) {
+	    $cartItemIds[$this->_items[$i]->getId()] = $i+1;
+	}
+
+	$platform = new UnitTestPlatform();
+	$platform->setReply('file_exists', array('fuzzy' => '{.*}'), false);
+	$platform->setReply('atomicWrite', array('fuzzy' => '{.*}', 'fuzzy2' => '{a.*}'), true);
+	$platform->setReply('fsockopen', array('www.photoaccess.com', 80, '', '', 1), 'testFd');
+	$postPattern = str_repeat('.*image\+id', count($this->_items) - 1) . '(?!.*image\+id)';
+	$platform->setReply('fwrite', array('testFd',
+	    'fuzzy' => '{POST /buy/anonCartXML.jsp HTTP/1\.0' . $postPattern . '}s', ''), 100);
+	$platform->setReply('fflush', array('testFd'), true);
+	$platform->setReply('fgets', array('testFd', 4096), 'HTTP/1.1 200 OK');
+	$platform->setReply('feof', array('testFd'), false);
+	$platform->setReply('fgets', array('testFd', 4096), '');
+	$platform->setReply('feof', array('testFd'), false);
+	$platform->setReply('fread', array('testFd', 4096),
+	    '<add-cart-response request-url="/REQUEST_URL" redirect-url="/REDIRECT_URL"/>');
+	$platform->setReply('fflush', array('testFd'), true);
+	$platform->setReply('feof', array('testFd'), true);
+	$platform->setReply('fclose', array('testFd'), true);
+	$gallery->setPlatform($platform);
+
 	$cartPlugin = new PhotoAccessCartPlugin();
 	list ($ret, $urlParams) = $cartPlugin->fulfillCart($cartItemIds);
 	if ($ret->isError()) {
@@ -175,154 +217,6 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	$this->assertEquals(array('href' => 'http://www.photoaccess.com/REDIRECT_URL'), $urlParams);
     }
 }
-
-/**
- * Platform for this test
- *
- * @package PhotoAccess
- * @subpackage PHPUnit
- */
-class PhotoAccessCartPluginTestPlatform {
-
-    function PhotoAccessCartPluginTestPlatform(&$test) {
-	$this->_test =& $test;
-    }
-
-    function fsockopen($target, $port, &$errno, &$errstr, $timeout) {
-	if ($target == 'www.photoaccess.com' && $port == '80') {
-	    return 'test-resource-1';
-	}
-
-	$errno = 1;
-	$errstring = 'test failure';
-    }
-
-    function fwrite($handle, $string, $length=0) {
-	global $gallery;
-
-	/*
-	 * This is a little tricky.  We need to anticipate precisely the sequence of GET and
-	 * POST requests that the plugin is going to make.  It will first make a request to
-	 * get the cart so that it can get a session id from the photoaccess server, then it
-	 * will make a POST for each photo in the cart.
-	 */
-	$xml = '<add-cart-request cobrand="CB_GP" pricelist="1" ' .
-	    'entry-page="/buy/anonCart.jsp" return-url="view=cart.ViewCart">';
-	for ($i = 0; $i < sizeof($this->_test->_items); $i++) {
-	    $xml .= sprintf('<image id="%d" url="%s" thumb-url="%s" height="%d" width="%d"/>',
-			    $this->_test->_sourceIds[$i],
-			    'view=core.DownloadItem/itemId=' . $this->_test->_sourceIds[$i],
-			    'view=core.DownloadItem/itemId=' . $this->_test->_thumbIds[$i],
-			    0, 0);
-	}
-	$xml .= '</add-cart-request>';
-
-	$postData = join('&', array('cb=CB_GP', 'xml_request=' . urlencode($xml)));
-
-	$expectedPost =
-	    join("\r\n",
-		 array('POST /buy/anonCartXML.jsp HTTP/1.0',
-		       'Host: www.photoaccess.com',
-		       'User-Agent: Test User Agent',
-		       'Content-Type: application/x-www-form-urlencoded',
-		       'Content-Length: ' . strlen($postData),
-		       '',
-		       $postData)) . "\r\n";
-
-	if ($handle == 'test-resource-1') {
-	    switch($string) {
-	    case $expectedPost:
-		$response = '<add-cart-response request-url="/REQUEST_URL" ' .
-			    'redirect-url="/REDIRECT_URL"/>';
-		$buffer = array();
-		$buffer[] = 'HTTP/1.1 200 OK';
-		$buffer[] = 'Connection: close';
-		$buffer[] = 'Content-Length: ' . strlen($response);
-		$buffer[] = '';
-		$buffer[] = $response;
-		$this->_readBuffer[$handle] = $buffer;
-		return strlen($string);
-
-	    default:
-		printf("<pre> Expected: %s</pre>", GalleryTestCase::sprint_r($expectedPost));
-		printf("<pre>Unxpected: %s</pre>", GalleryTestCase::sprint_r($string));
-
-		for ($i = 0; $i < strlen($string); $i++) {
-		    if ($expectedPost[$i] != $string[$i]) {
-			printf("<pre>Differs at byte: %d <...%s...> <...%s...></pre>",
-			       GalleryTestCase::sprint_r($i),
-			       substr($expectedPost, $i-5, 10),
-			       substr($string, $i-5, 10));
-			break;
-		    }
-		}
-	    }
-	}
-
-	return 0;
-    }
-
-    function feof($handle) {
-	return (empty($this->_readBuffer[$handle]));
-    }
-
-    function fgets($handle) {
-	if (empty($this->_readBuffer[$handle])) {
-	    return null;
-	}
-
-	return array_shift($this->_readBuffer[$handle]);
-    }
-
-    function fread($handle, $length) {
-	if (empty($this->_readBuffer[$handle])) {
-	    return null;
-	}
-
-	/*
-	 * Return the number of bytes requested, or if that exceeds what we have available
-	 * return what we have available.
-	 */
-	if ($length >= strlen(join("\n", $this->_readBuffer[$handle]))) {
-	    $tmp = join("\n", $this->_readBuffer[$handle]);
-	    unset($this->_readBuffer[$handle]);
-	    return $tmp;
-	} else {
-	    $tmp = substr(join("\n", $this->_readBuffer[$handle]), 0, $length);
-	    $this->_readBuffer[$handle] = split("\n", substr(join("\n",
-							$this->_readBuffer[$handle]), $length+1));
-	    return $tmp;
-	}
-    }
-
-    function fclose($handle) {
-	switch($handle) {
-	case 'test-resource-1':
-	    if (isset($this->_readBuffer[$handle])) {
-		unset($this->_readBuffer[$handle]);
-	    }
-	    return true;
-
-	default:
-	    return false;
-	}
-    }
-
-    function fflush($handle) {
-	switch($handle) {
-	case 'test-resource-1':
-	    return true;
-
-	default:
-	    return false;
-	}
-    }
-
-    function realpath($path) {
-	return $path;
-    }
-}
-
 
 /**
  * Mock url generator for this test

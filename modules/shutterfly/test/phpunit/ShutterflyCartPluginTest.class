@@ -62,6 +62,25 @@ class ShutterflyCartPluginTest extends GalleryTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
+
+	/* Print permission on all but one */
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_album->getId(), $gallery->getActiveUserId(), 'shutterfly.print', true);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::removeItemPermissions($this->_items[1]->getId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_items[1]->getId(), $gallery->getActiveUserId(), 'core.viewAll');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
     }
 
     function testFulfillCart() {
@@ -85,7 +104,38 @@ class ShutterflyCartPluginTest extends GalleryTestCase {
 	$session =& $gallery->getSession();
 	$printCart = $session->get('shutterfly.cart');
 	$this->assertEquals($cartItemIds, $printCart, 'cart');
+
+	/* Render PrintPhotos view to test processing of cart items */
+	list ($ret, $view) = GalleryView::loadView('shutterfly.PrintPhotos');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	} else {
+	    GalleryUtilities::putRequestVariable('return', '/testUrl');
+	    ob_start();
+	    $view->renderImmediate(array(), array());
+	    $form = ob_get_contents();
+	    ob_end_clean();
+	    $this->assert(strpos($form, '"returl" value="/testUrl"'), 'return url');
+	    $this->assert(strpos($form, '"imnum" value="4"'),
+		'form should include 4 photos: qty 1 of item 0, none of item 1 ' .
+		'(no print permission), qty 3 of item 2');
+	    preg_match('/' . GalleryUtilities::prefixFormVariable($session->getKey()) .
+		'=([A-Za-z0-9]+)/', $form, $matches);
+	}
+
+	$printCart = $session->get('shutterfly.cart');
+	$this->assertEquals(null, $printCart, 'cart');
+
+	/* Clean up */
 	$session->remove('shutterfly.cart');
+	if (!empty($matches[1]) && $matches[1] != $session->getId()) {
+	    $platform = $gallery->getPlatform();
+	    $testSession = new GallerySession();
+	    $testSession->_sessionId = $matches[1];
+	    $testSession->reset();
+	} else {
+	    $this->assert(false, 'missing/invalid sessionid for shutterfly access ' . $matches[1]);
+	}
     }
 }
 ?>

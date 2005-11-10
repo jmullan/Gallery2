@@ -44,6 +44,7 @@ class PhotoAccessHelper {
      */
     function printPhotos($cartItemIds, $returnUrl) {
 	global $gallery;
+	$urlGenerator =& $gallery->getUrlGenerator();
 	$itemIds = array_keys($cartItemIds);
 
 	/* Load the necessary item data */
@@ -75,13 +76,33 @@ class PhotoAccessHelper {
 	$session =& $gallery->getSession();
 	$cartUrlFragment = $session->get('photoaccess.cartUrlFragment');
 
-	/* If we don't have a cart url, that means we don't have a session so start with a new url */
+	/* If we don't have a cart url that means we don't have a photoaccess session yet */
 	$photoAccessServer = 'www.photoaccess.com';
 	if (empty($cartUrlFragment)) {
 	    $cartUrlFragment = '/buy/anonCartXML.jsp';
 	}
 
-	$urlGenerator =& $gallery->getUrlGenerator();
+	/*
+	 * Get G2 session for photoaccess..
+	 * We can't use this session because hijack protection will prevent access
+	 * plus the current user could logout before photoaccess retrieves the images.
+	 * Create a new session with the rights of current user for photoaccess to use.
+	 */
+	$paSession = new GallerySession();
+	$paSession->initEmpty(true);
+	$paSession->put('core.id.activeUser', $gallery->getActiveUserId());
+	/*
+	 * TODO: Would like to enforce a particular session timeout to ensure this session
+	 * lasts long enough for photoaccess to retrieve the images.  With current file based
+	 * sessions this would require modifying ctime of files which we can't do.
+	 * Maybe if sessions move to the database we'll be able to guarantee session lifetime.
+	 * When we can do this, maybe also store the sessionid in this session so we can
+	 * reuse it for multiple print requests (and just bump timeout each time).
+	 */
+	$ret = $paSession->save();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
 	/* Assemble all our data */
 	$entries = array();
@@ -94,6 +115,10 @@ class PhotoAccessHelper {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
+	    if (!isset($permissions['photoaccess.print'])) {
+		/* Skip any cart items for which we don't have print permission */
+		continue;
+	    }
 	    if (isset($permissions['core.viewSource'])) {
 		$source = isset($preferreds[$itemId]) ? $preferreds[$itemId] : $item;
 	    } else if (isset($permissions['core.viewResizes']) && !empty($resizes[$itemId])) {
@@ -113,14 +138,15 @@ class PhotoAccessHelper {
 
 	    $entry['id'] = $source->getId();
 	    $entry['imageUrl'] = $urlGenerator->generateUrl(
-		array('view' => 'core.DownloadItem', 'itemId' => $source->getId()),
-		true);
+		array('view' => 'core.DownloadItem', 'itemId' => $source->getId(),
+		      $paSession->getKey() => $paSession->getId()),
+		false);
 
 	    if (isset($thumbnails[$itemId])) {
 		$entry['thumbUrl'] = $urlGenerator->generateUrl(
-		    array('view' => 'core.DownloadItem',
-			  'itemId' => $thumbnails[$itemId]->getId()),
-		    true);
+		    array('view' => 'core.DownloadItem', 'itemId' => $thumbnails[$itemId]->getId(),
+			  $paSession->getKey() => $paSession->getId()),
+		    false);
 	    } else {
 		$entry['thumbUrl'] = '';
 	    }
