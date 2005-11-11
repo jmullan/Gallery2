@@ -88,24 +88,13 @@ class PrintPhotosView extends GalleryView {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/*
-	 * Get G2 session for shutterfly..
-	 * We can't use this session because hijack protection will prevent access
-	 * plus the current user could logout before shutterfly retrieves the images.
-	 * Create a new session with the rights of current user for shutterfly to use.
-	 */
-	$sfSession = new GallerySession();
-	$sfSession->initEmpty(true);
-	$sfSession->put('core.id.activeUser', $gallery->getActiveUserId());
-	/*
-	 * TODO: Would like to enforce a particular session timeout to ensure this session
-	 * lasts long enough for shutterfly to retrieve the images.  With current file based
-	 * sessions this would require modifying ctime of files which we can't do.
-	 * Maybe if sessions move to the database we'll be able to guarantee session lifetime.
-	 * When we can do this, maybe also store the sessionid in this session so we can
-	 * reuse it for multiple print requests (and just bump timeout each time).
-	 */
-	$ret = $sfSession->save();
+	/* We want to know which are viewable to guests */
+	list ($ret, $anonymousUserId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$ret = GalleryCoreApi::studyPermissions($itemIds, $anonymousUserId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -119,6 +108,11 @@ class PrintPhotosView extends GalleryView {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+	    list ($ret, $publicPermissions) =
+		GalleryCoreApi::getPermissions($itemId, $anonymousUserId);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 
 	    if (!isset($permissions['shutterfly.print'])) {
 		/* Skip any cart items for which we don't have print permission */
@@ -126,6 +120,7 @@ class PrintPhotosView extends GalleryView {
 	    }
 	    if (isset($permissions['core.viewSource'])) {
 		$source = isset($preferreds[$itemId]) ? $preferreds[$itemId] : $item;
+		$needSession = !isset($publicPermissions['core.viewSource']);
 	    } else if (isset($permissions['core.viewResizes']) && !empty($resizes[$itemId])) {
 		$maxSize = null;
 		foreach ($resizes[$itemId] as $resize) {
@@ -135,22 +130,52 @@ class PrintPhotosView extends GalleryView {
 			$maxSize = $size;
 		    }
 		}
+		$needSession = !isset($publicPermissions['core.viewResizes']);
 	    } else if (isset($thumbnails[$itemId])) {
 		$source = $thumbnails[$itemId];
+		$needSession = !isset($publicPermissions['core.view']);
 	    } else {
 		continue;
 	    }
 
+	    if ($needSession && !isset($sfSession)) {
+		/*
+		 * Get G2 session for shutterfly to access non-public images.
+		 * We can't use this session because hijack protection will prevent access
+		 * plus the current user could logout before shutterfly retrieves the images.
+		 * Create a new session with the rights of current user for shutterfly to use.
+		 */
+		$sfSession = new GallerySession();
+		$sfSession->initEmpty(true);
+		$sfSession->put('core.id.activeUser', $gallery->getActiveUserId());
+		/*
+		 * TODO: Would like to enforce a particular session timeout to ensure this
+		 * session lasts long enough for shutterfly to retrieve the images.  With
+		 * current file based sessions this would require modifying ctime of files
+		 * which we can't do.  Maybe if sessions move to the database we'll be able
+		 * to guarantee session lifetime.
+		 * When we can do this, maybe also store the sessionid in this session so we
+		 * can reuse it for multiple print requests (and just bump timeout each time).
+		 */
+		$ret = $sfSession->save();
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	    $sessionParam =
+		$needSession ? array($sfSession->getKey() => $sfSession->getId()) : array();
+
 	    $entry = array('item' => $item->getMemberData());
 	    $entry['imageUrl'] = $urlGenerator->generateUrl(
-		array('view' => 'core.DownloadItem', 'itemId' => $source->getId(),
-		      $sfSession->getKey() => $sfSession->getId()),
+		array_merge(array('view' => 'core.DownloadItem', 'itemId' => $source->getId()),
+			    $sessionParam),
 		false);
 
 	    if (isset($thumbnails[$itemId])) {
 		$entry['thumbUrl'] = $urlGenerator->generateUrl(
-		    array('view' => 'core.DownloadItem', 'itemId' => $thumbnails[$itemId]->getId(),
-			  $sfSession->getKey() => $sfSession->getId()),
+		    array_merge(array('view' => 'core.DownloadItem',
+				      'itemId' => $thumbnails[$itemId]->getId()),
+				$sessionParam),
 		    false);
 		$entry['thumbWidth'] = $thumbnails[$itemId]->getWidth();
 		$entry['thumbHeight'] = $thumbnails[$itemId]->getHeight();

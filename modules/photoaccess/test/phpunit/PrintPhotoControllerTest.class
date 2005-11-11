@@ -93,8 +93,13 @@ class PrintPhotoControllerTest extends GalleryControllerTestCase {
 	}
 
 	/* Ensure we have print permission */
+	$ret = GalleryCoreApi::removeItemPermissions($this->_photo->getId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 	$ret = GalleryCoreApi::addUserPermission(
-	    $this->_photo->getId(), $gallery->getActiveUserId(), 'photoaccess.print');
+	    $this->_photo->getId(), $gallery->getActiveUserId(), 'core.all');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $ret->wrap(__FILE__, __LINE__);

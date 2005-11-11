@@ -50,6 +50,18 @@ class ShutterflyCartPluginTest extends GalleryTestCase {
 	}
 	$this->_markForCleanup($this->_album);
 
+	$ret = GalleryCoreApi::removeItemPermissions($this->_album->getId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_album->getId(), $gallery->getActiveUserId(), 'core.all');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	for ($i = 0; $i < 3; $i++) {
 	    list ($ret, $this->_items[$i]) =
 		$this->_createRandomDataItem($this->_album->getId(),
@@ -64,19 +76,21 @@ class ShutterflyCartPluginTest extends GalleryTestCase {
 	}
 
 	/* Print permission on all but one */
-	$ret = GalleryCoreApi::addUserPermission(
-	    $this->_album->getId(), $gallery->getActiveUserId(), 'shutterfly.print', true);
+	$ret = GalleryCoreApi::removeUserPermission(
+	    $this->_items[1]->getId(), $gallery->getActiveUserId(), 'shutterfly.print');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$ret = GalleryCoreApi::removeItemPermissions($this->_items[1]->getId());
+	/* Public view permission on one */
+	list ($ret, $anonymousUserId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::addUserPermission(
-	    $this->_items[1]->getId(), $gallery->getActiveUserId(), 'core.viewAll');
+	    $this->_items[2]->getId(), $anonymousUserId, 'core.viewAll');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -119,8 +133,12 @@ class ShutterflyCartPluginTest extends GalleryTestCase {
 	    $this->assert(strpos($form, '"imnum" value="4"'),
 		'form should include 4 photos: qty 1 of item 0, none of item 1 ' .
 		'(no print permission), qty 3 of item 2');
-	    preg_match('/' . GalleryUtilities::prefixFormVariable($session->getKey()) .
+	    preg_match_all('/' . GalleryUtilities::prefixFormVariable($session->getKey()) .
 		'=([A-Za-z0-9]+)/', $form, $matches);
+	    /* Only first photo should add sessionid; the other is viewable to guests */
+	    $this->assert(!empty($matches[1]), 'missing sessionid for shutterfly access');
+	    $this->assert(1, count($matches[1]), 'number of urls with sessionid');
+	    $this->assert($matches[1][0] != $session->getId(), 'wrong sessionid in form');
 	}
 
 	$printCart = $session->get('shutterfly.cart');
@@ -128,13 +146,11 @@ class ShutterflyCartPluginTest extends GalleryTestCase {
 
 	/* Clean up */
 	$session->remove('shutterfly.cart');
-	if (!empty($matches[1]) && $matches[1] != $session->getId()) {
+	if (!empty($matches[1]) && $matches[1][0] != $session->getId()) {
 	    $platform = $gallery->getPlatform();
 	    $testSession = new GallerySession();
-	    $testSession->_sessionId = $matches[1];
+	    $testSession->_sessionId = $matches[1][0];
 	    $testSession->reset();
-	} else {
-	    $this->assert(false, 'missing/invalid sessionid for shutterfly access ' . $matches[1]);
 	}
     }
 }

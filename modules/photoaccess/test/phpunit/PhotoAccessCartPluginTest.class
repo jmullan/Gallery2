@@ -52,8 +52,19 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
 	$this->_markForCleanup($this->_album);
+
+	$ret = GalleryCoreApi::removeItemPermissions($this->_album->getId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_album->getId(), $gallery->getActiveUserId(), 'core.all');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
 	for ($i = 0; $i < 3; $i++) {
 	    /*
@@ -130,19 +141,8 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	$this->_sourceIds[2] = $derivative->getId();
 
         /* Print permission on all but one */
-	$ret = GalleryCoreApi::addUserPermission(
-	    $this->_album->getId(), $gallery->getActiveUserId(), 'photoaccess.print', true);
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$ret = GalleryCoreApi::removeItemPermissions($this->_items[1]->getId());
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$ret = GalleryCoreApi::addUserPermission(
-	    $this->_items[1]->getId(), $gallery->getActiveUserId(), 'core.viewAll');
+	$ret = GalleryCoreApi::removeUserPermission(
+	    $this->_items[1]->getId(), $gallery->getActiveUserId(), 'photoaccess.print');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
