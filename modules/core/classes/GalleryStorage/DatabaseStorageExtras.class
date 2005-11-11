@@ -927,7 +927,7 @@ class DatabaseStorageExtras /* the other half of DatabaseStorage */ {
     /**
      * @see GalleryStorage::removeMapEntry
      */
-    function removeMapEntry($mapName, $entry) {
+    function removeMapEntry($mapName, $match) {
 	global $gallery;
 
 	$ret = $this->_ds->_guaranteeTransaction();
@@ -939,19 +939,35 @@ class DatabaseStorageExtras /* the other half of DatabaseStorage */ {
 	list ($tableName, $unused) = $this->_ds->_translateTableName($mapName);
 	$data = array();
 	$where = array();
+	
 	foreach ($mapInfo['members'] as $memberName => $memberType) {
-	    if (isset($entry[$memberName])) {
-		if (is_array($entry[$memberName])) {
+	    if (array_key_exists($memberName, $match)) {
+		if (GalleryUtilities::isA($match[$memberName], 'DatabaseSqlFragment')) {
+		    $where[] = $this->_ds->_translateColumnName($memberName) . ' ' .
+				$this->_ds->_translateQuery($match[$memberName]->getFragment());
+		    foreach ($match[$memberName]->getValues() as $value) {
+			$data[] = $value;
+		    }
+		} else if (is_array($match[$memberName])) {
 		    $qs = array();
-		    foreach ($entry[$memberName] as $value) {
+		    foreach ($match[$memberName] as $value) {
 			$qs[] = '?';
+			if ($memberType & STORAGE_TYPE_BIT) {
+			    $value = $this->_ds->convertIntToBits($value);
+			}
 			$data[] = $value;
 		    }
 		    $where[] = $this->_ds->_translateColumnName($memberName) . ' IN ('
 			     . implode(',', $qs) . ')';
+		} else if (is_null($match[$memberName])) {
+		    $where[] = $this->_ds->_translateColumnName($memberName) . ' IS NULL';
 		} else {
 		    $where[] = $this->_ds->_translateColumnName($memberName) . '=?';
-		    $data[] = $entry[$memberName];
+		    $value = $match[$memberName];
+		    if ($memberType & STORAGE_TYPE_BIT) {
+			$value = $this->_ds->convertIntToBits($value);
+		    }
+		    $data[] = $value;
 		}
 	    }
 	}

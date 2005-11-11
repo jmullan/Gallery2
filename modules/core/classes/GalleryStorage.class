@@ -280,7 +280,7 @@ class GalleryStorage {
     /**
      * Add a new entry to a map
      *
-     * @param object the map we're working on
+     * @param string the map we're working on
      * @param array an associative array of data about the entry
      * @return object GalleryStatus a status code
      */
@@ -302,13 +302,13 @@ class GalleryStorage {
     }
 
     /**
-     * Remove an entry from a map
+     * Remove entries from a map
      *
-     * @param object the map we're working on
-     * @param array an associative array of data about the entry
+     * @param string the map we're working on
+     * @param array an associative array of data about the entries to match
      * @return object GalleryStatus a status code
      */
-    function removeMapEntry($map, $entry) {
+    function removeMapEntry($map, $match) {
 	if (!$this->_isInitialized) {
 	    $ret = $this->_impl->init();
 	    if ($ret->isError()) {
@@ -318,7 +318,7 @@ class GalleryStorage {
 	    }
 	}
 
-	$ret = $this->_impl->removeMapEntry($map, $entry);
+	$ret = $this->_impl->removeMapEntry($map, $match);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -328,7 +328,7 @@ class GalleryStorage {
     /**
      * Remove ALL entries from a map.. use with caution!
      *
-     * @param object the map we're working on
+     * @param string the map we're working on
      * @return object GalleryStatus a status code
      */
     function removeAllMapEntries($map) {
@@ -349,9 +349,10 @@ class GalleryStorage {
     }
 
     /**
-     * Update an entry in this map
+     * Update entries in this map
      *
-     * @param array the entry to match
+     * @param string the map we're working on
+     * @param array the entries to match
      * @param array the values to change
      * @return object GalleryStatus a status code
      */
