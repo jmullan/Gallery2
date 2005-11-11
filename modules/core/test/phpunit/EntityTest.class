@@ -179,13 +179,10 @@ class EntityTest extends GalleryTestCase {
 	$this->assertEquals('onLoadHandler was called', $newEntity->getLinkedEntity(),
 			    'handler not called');
 
-	/* During upgrades, the session is not set */
+	/* During upgrades the session has 'isUpgrade' key */
 	GalleryDataCache::reset();
 	unset($newEntity);
-	/* session=null is the "are we in an upgrade?" criterion */
-	$gallery->_session = null;
-	$session =& $gallery->getSession();
-	$this->assert(!isset($session), 'session is still set');
+	$session->put('isUpgrade', true);
 	list ($ret, $newEntity) = GalleryCoreApi::loadEntitiesById($entity->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -193,8 +190,8 @@ class EntityTest extends GalleryTestCase {
 
 	$this->assertEquals('entitytestentity', strtolower(get_class($newEntity)), 'Entity class');
 	$this->assert($newEntity->_wasOnLoadCalled(), 'onLoad for database load');
-	$this->assertEquals('onLoadHandler was called during upgrade', $newEntity->getLinkedEntity(),
-			    'handler not called during upgrade');
+	$this->assertEquals('onLoadHandler was called during upgrade',
+	    $newEntity->getLinkedEntity(), 'handler not called during upgrade');
     }
 
     function testSetSameValueDifferentType() {

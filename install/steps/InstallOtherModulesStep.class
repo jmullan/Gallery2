@@ -37,11 +37,18 @@ class InstallOtherModulesStep extends InstallStep {
 	define('GALLERY_CONFIG_DIR', $_SESSION['configPath']);
 	require(dirname(__FILE__) . '/../../bootstrap.inc');
 	require(dirname(__FILE__) . '/../../init.inc');
-	$ret = GalleryInitFirstPass(array('debug' => 'buffered',
+	$ret = GalleryInitFirstPass(array('debug' => 'buffered', 'noDatabase' => true,
 					  'activeLanguage' => $_SESSION['language']));
 	if ($ret->isError()) {
 	    $templateData['errors'][] = _('Unable to initialize our Gallery data');
 	    $templateData['stackTrace'] = $ret->getAsHtml();
+	}
+	if (empty($templateData['errors'])) {
+	    $ret = $this->_selectAdminUser();
+	    if ($ret->isError()) {
+		$templateData['errors'][] = _('Unable to initialize our Gallery session');
+		$templateData['stackTrace'] = $ret->getAsHtml();
+	    }
 	}
 
 	$groupedModules = $groupLabel = $moduleInstalled = $moduleInvalid = array();
@@ -135,6 +142,9 @@ class InstallOtherModulesStep extends InstallStep {
 		$templateData['errors'][] = _('Unable to commit database transaction');
 		$templateData['stackTrace'] = $ret->getAsHtml();
 	    }
+	    if (!empty($templateData['stackTrace'])) {
+		$templateData['debug'] = $gallery->getDebugBuffer();
+	    }
 	    $templateData['bodyFile'] = 'InstallOtherModulesSuccess.html';
 	} else {
 	    $templateData['groupedModules'] =& $groupedModules;
@@ -161,6 +171,37 @@ class InstallOtherModulesStep extends InstallStep {
 
     function isOptional() {
 	return true;
+    }
+
+    /**
+     * Find admin user and set as active user
+     * @return object GalleryStatus a status code
+     */
+    function _selectAdminUser() {
+	global $gallery;
+
+	list ($ret, $siteAdminGroupId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	list ($ret, $adminUserInfo) = GalleryCoreApi::fetchUsersForGroup($siteAdminGroupId, 1);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	if (empty($adminUserInfo)) {
+	    return GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__);
+	}
+	$adminUserInfo = array_keys($adminUserInfo);
+	list ($ret, $adminUser) = GalleryCoreApi::loadEntitiesById($adminUserInfo[0]);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$gallery->setActiveUser($adminUser);
+	$session =& $gallery->getSession();
+	$session->put('isInstall', true);
+	return GalleryStatus::success();
     }
 
     /**

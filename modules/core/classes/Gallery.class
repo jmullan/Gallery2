@@ -308,10 +308,7 @@ class Gallery {
     }
 
     /**
-     * Get the Gallery session object.
-     *
-     * Return a reference to the unique Gallery session object.  Any changes
-     * made to this object will be saved in the session.
+     * Initialize session.
      *
      * @access public
      * @return object GalleryStatus a status code
@@ -327,6 +324,16 @@ class Gallery {
 	}
 
 	return GalleryStatus::success();
+    }
+
+    /**
+     * Initialize an empty session.
+     *
+     * @access public
+     */
+    function initEmptySession() {
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GallerySession.class');
+	$this->_session = new GallerySession();
     }
 
     /**

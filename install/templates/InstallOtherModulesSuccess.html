@@ -40,3 +40,10 @@
       </span>
     </div>
     <?php endif; ?>
+
+    <?php if (isset($templateData['debug'])): ?>
+    <div class="debug">
+      <h3> <?php print _("Debug Output") ?> </h3>
+      <pre><?php print $templateData['debug'] ?></pre>
+    </div>
+    <?php endif; ?>

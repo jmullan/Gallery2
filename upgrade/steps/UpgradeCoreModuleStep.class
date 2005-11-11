@@ -72,19 +72,22 @@ class UpgradeCoreModuleStep extends UpgradeStep {
 
 	if (isset($_POST['confirm'])) {
 	    $template->renderHeader(true);
-	    /*
-	     * Do the upgrade in bootstrap mode so that we avoid going to the
-	     * database for anything that's not vital.
-	     */
-	    $ret = $core->installOrUpgrade(true, $template);
+	    $ret = selectAdminUser();
 	    if ($ret->isSuccess()) {
-		list ($ret,  $ignored) = $core->activate();
+		/*
+		* Do the upgrade in bootstrap mode so that we avoid going to the
+		* database for anything that's not vital.
+		*/
+		$ret = $core->installOrUpgrade(true, $template);
 		if ($ret->isSuccess()) {
-		    $storage =& $gallery->getStorage();
-		    $ret = $storage->commitTransaction();
+		    list ($ret,  $ignored) = $core->activate();
+		    if ($ret->isSuccess()) {
+			$storage =& $gallery->getStorage();
+			$ret = $storage->commitTransaction();
 
-		    if ($templateData['isConfigUpgradeRequired']) {
-			$ret = CoreModuleExtras::performConfigUpgrade($versions['core']);
+			if ($ret->isSuccess() && $templateData['isConfigUpgradeRequired']) {
+			    $ret = CoreModuleExtras::performConfigUpgrade($versions['core']);
+			}
 		    }
 		}
 	    }

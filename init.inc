@@ -127,6 +127,8 @@ function GalleryInitFirstPass($params=array()) {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+    } else {
+	$gallery->initEmptySession();
     }
 
     /* Initialize our translator */

@@ -41,8 +41,8 @@ class InstallCoreModuleStep extends InstallStep {
 	$this->_createDebugLogHeader();
 
 	$gallery->debug('Init first pass');
-	$ret = GalleryInitFirstPass(array('debug' => 'logged',
-					  'noDatabase' => 1));
+	$ret = GalleryInitFirstPass(array('noDatabase' => true,
+					  'activeLanguage' => $_SESSION['language']));
 	if ($ret->isError()) {
 	    $gallery->debug(sprintf('Error: Unable to initialize our Gallery data, this is the ' .
 				    'error stack trace: %s', $ret->getAsText()));
@@ -54,11 +54,6 @@ class InstallCoreModuleStep extends InstallStep {
 
 	/* We want to avoid using the cache */
 	GalleryDataCache::setFileCachingEnabled(false);
-
-	/* Gallery init selects language from browser; reset to language currently in use */
-	$gallery->debug('Initialize translator');
-	$translator =& $gallery->getTranslator();
-	$translator->init($_SESSION['language']);
 
 	/*
 	 * Delete anything in the cache, which can be left around if we're

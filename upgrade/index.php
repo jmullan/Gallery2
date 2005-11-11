@@ -91,6 +91,10 @@ if (!empty($storageConfig)) {
 	return;
     }
 
+    /* We want to avoid using the cache */
+    GalleryDataCache::setFileCachingEnabled(false);
+    GalleryDataCache::setMemoryCachingEnabled(false);
+
     $translator = $gallery->getTranslator();
     if (!$translator->canTranslate()) {
 	unset($translator);
@@ -106,14 +110,10 @@ if (!empty($storageConfig)) {
 	    bind_textdomain_codeset('gallery2_upgrade', 'UTF-8');
 	}
     }
-    
-    /* We want to avoid using the cache */
-    GalleryDataCache::setFileCachingEnabled(false);
-    GalleryDataCache::setMemoryCachingEnabled(false);
-    
+
     /* Preallocate at least 5 minutes for the upgrade */
     $gallery->guaranteeTimeLimit(300);
-    
+
     /* Check to see if we have a database.  If we don't, then go to the installer */
     $storage =& $gallery->getStorage();
     list ($ret, $isInstalled) = $storage->isInstalled();
@@ -198,6 +198,37 @@ if ($currentStep->processRequest()) {
     /* Add session ids if we don't have cookies */
     $html = addSessionIdToUrls($html);
     print $html;
+}
+
+/**
+ * Find admin user and set as active user
+ * @return object GalleryStatus a status code
+ */
+function selectAdminUser() {
+    global $gallery;
+
+    list ($ret, $siteAdminGroupId) =
+	GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
+    }
+    list ($ret, $adminUserInfo) = GalleryCoreApi::fetchUsersForGroup($siteAdminGroupId, 1);
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
+    }
+    if (empty($adminUserInfo)) {
+	return GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__);
+    }
+    $adminUserInfo = array_keys($adminUserInfo);
+    list ($ret, $adminUser) = GalleryCoreApi::loadEntitiesById($adminUserInfo[0]);
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
+    }
+
+    $gallery->setActiveUser($adminUser);
+    $session =& $gallery->getSession();
+    $session->put('isUpgrade', true);
+    return GalleryStatus::success();
 }
 
 /**
