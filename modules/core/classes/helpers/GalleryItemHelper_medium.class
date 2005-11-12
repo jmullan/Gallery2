@@ -429,9 +429,11 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 
 	    /* Special case to make sure that we don't upsample photos */
 	    if (GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
-		if (preg_match('/(^|;)scale\|(\d+)/', $operations, $matches)) {
-		    $maxDimension = max($item->getWidth(), $item->getHeight());
-		    if ($matches[2] >= $maxDimension) {
+		if (preg_match('/(^|;)scale\|(\d+)(,(\d+))?/', $operations, $matches)) {
+		    if (empty($matches[4])) {
+			$matches[4] = $matches[2];
+		    }
+		    if ($item->getWidth() <= $matches[2] && $item->getHeight() <= $matches[4]) {
 			continue;
 		    }
 		}

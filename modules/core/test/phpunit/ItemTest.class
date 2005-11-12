@@ -1301,6 +1301,13 @@ class ItemTest extends GalleryTestCase {
 	}
 
 	$ret = GalleryCoreApi::addDerivativePreference(3, $this->_album->getId(),
+						       DERIVATIVE_TYPE_IMAGE_RESIZE,
+						       'scale|65,100');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::addDerivativePreference(4, $this->_album->getId(),
 						       DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
 						       'thumbnail|25');
 	if ($ret->isError()) {
@@ -1313,8 +1320,8 @@ class ItemTest extends GalleryTestCase {
 	}
 
 	$ret = $photo->create($this->_album->getId(),
-			      dirname(__FILE__) . '/../data/test1.jpg',
-			      'image/jpeg',
+			      dirname(__FILE__) . '/../data/test1.gif',
+			      'image/gif',
 			      'test image');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
