@@ -355,19 +355,18 @@ function _GalleryMain($embedded=false) {
 	$template->setVariable('l10Domain', $theme->getL10Domain());
 	$template->setVariable('isEmbedded', $embedded);
 
+	list ($ret, $html) = $template->fetch($templatePath);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$html = preg_replace('/^\s+/m', '', $html);
+
 	if ($embedded) {
-	    list ($ret, $html) = $template->fetch($templatePath);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
 	    $data = $theme->splitHtml($html, $results);
 	    $data['themeData'] =& $template->getVariableByReference('theme');
 	    $data['isDone'] = false;
 	} else {
-	    $ret = $template->display($templatePath);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
+	    print $html;
 	    $data['isDone'] = true;
 	}
     }
