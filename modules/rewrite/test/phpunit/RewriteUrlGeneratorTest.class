@@ -253,7 +253,6 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
 		$gallery->_session = $session;
 
 		/* Create some test cases */
-		$expectedUrlBase = 'http://example.com';
 		/* array(expected path, params for generateUrl) */
 		$tests = array();
 		/* core.ShowItem on albums have the logical path */
@@ -305,13 +304,12 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
 
 		foreach ($tests as $test) {
 		    list ($expectedUrlPath, $params) = $test;
-		    $expectedUrl = $expectedUrlBase;
 		    if (!$embedded) {
-			$expectedUrl .= '/gallery2/';
+			$expectedUrl = '/gallery2/';
 		    } elseif (empty($uGC['embedPath'])) {
-			$expectedUrl .= '/cms/';
+			$expectedUrl = '/cms/';
 		    } else {
-			$expectedUrl .= $uGC['embedPath'];
+			$expectedUrl = $uGC['embedPath'];
 		    }
 		    $expectedUrl .= $expectedUrlPath;
 
@@ -367,7 +365,7 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
 
 	$actualUrl = $this->_urlGenerator->generateUrl(
 	    array('view' => 'php.Unit', 'subView' => 'test.subView', 'itemId' => 123), false);
-	$this->assertEquals('http://example.com/gallery2/phpunitsub/123?g2_navId=456', $actualUrl);
+	$this->assertEquals('/gallery2/phpunitsub/123?g2_navId=456', $actualUrl);
     }
 }
 ?>

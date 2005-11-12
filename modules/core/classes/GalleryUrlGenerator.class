@@ -374,7 +374,7 @@ class GalleryUrlGenerator {
 		$pluginData = explode('/', $href);
 		$pluginId = $pluginData[1];
 		$pluginType = $pluginData[0];
-		if ((($pluginType == 'modules') || $pluginType == 'themes') 
+		if ((($pluginType == 'modules') || $pluginType == 'themes')
 			&& !GalleryCoreApi::isPluginInDefaultLocation($pluginType, $pluginId)) {
 		    $pluginRelativeBaseDir = $gallery->getConfig('plugins.dirname') . '/';
 		}
@@ -447,6 +447,19 @@ class GalleryUrlGenerator {
 	    $url .= ((strpos($url, '?') === false) ? '?' : '&amp;') . $embedSessionString;
 	}
 
+	/*
+	 * Elide as much of the common url as we can to save space.  This will not cover all the
+	 * cases, since other url generators could be subclassing this, but it should be
+	 * relatively safe because it's only removing substrings that match exactly.  If rewrite
+	 * is on, then we have to use a server relative path since we may be at a url like
+	 * /v/foo/bar so if we try for a pure relative path then we'll wind up using /v/foo/bar as
+	 * the base for relative urls.
+	 */
+	if (strpos($this->getCurrentRequestUri(), $this->_baseFile) === false) {
+	    $url = str_replace($this->makeUrl('/'), '/', $url);
+	} else {
+	    $url = str_replace($this->getCurrentUrlDir(), '', $url);
+	}
 	return $url;
     }
 
@@ -520,7 +533,8 @@ class GalleryUrlGenerator {
 	     */
 	    $validPath =  '/' . str_replace(GalleryUrlGenerator::makeUrl(''), '',
 					    $this->getCurrentUrlDir());
-	    if (strpos($returnUrl, $validPath) !== 0 &&
+	    if (strpos($returnUrl, $this->_baseFile) !== 0 &&
+		    strpos($returnUrl, $validPath) !== 0 &&
 		    strpos($returnUrl, $this->getCurrentUrlDir()) !== 0) {
 		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 		if ($ret->isError()) {
@@ -532,9 +546,9 @@ class GalleryUrlGenerator {
 				       'this Gallery.'),
 		    GalleryUrlGenerator::makeUrl($this->getCurrentRequestUri()), $returnUrl);
 		return GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__, $message);
-					    
+
 	    }
-	    
+
 	    /* Branch a new navigation */
 	    $navData = array('returnUrl' => $returnUrl,
 			     'returnName' => $returnName);
@@ -554,7 +568,7 @@ class GalleryUrlGenerator {
 		$this->_navId = $navId;
 	    }
 	}
-	
+
 	return GalleryStatus::success();
     }
 
