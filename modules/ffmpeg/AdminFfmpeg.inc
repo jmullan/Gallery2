@@ -143,7 +143,7 @@ class AdminFfmpegController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		$ret = GalleryCoreApi::setPluginParameter('module', 'ffmpeg',
-		    'useWatermark', (isset($form['useWatermark']) && $form['useWatermark']) ?1:0);
+		    'useWatermark', (isset($form['useWatermark']) && $form['useWatermark']) ? 1 : 0);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -261,6 +261,10 @@ class AdminFfmpegView extends GalleryView {
 		}
 	    }
 	    $form['formName'] = 'AdminFfmpeg';
+	} else {
+	    if (!isset($form['useWatermark'])) {
+		$form['useWatermark'] = 0;
+	    }
 	}
 
 	$platform = $gallery->getPlatform();
