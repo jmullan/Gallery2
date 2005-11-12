@@ -9,35 +9,13 @@
 {g->addToTrailer}
 <script type="text/javascript">
   // <![CDATA[
-  var search_SearchBlock_searchDefault = '{g->text text="Search the Gallery"}';
-  var search_SearchBlock_input = document.getElementById('search_SearchBlock').searchCriteria;
-  function search_SearchBlock_checkForm() {ldelim}
-    var sc = search_SearchBlock_input.value;
-    if (sc == searchDefault || sc == '') {ldelim}
-      alert('{g->text text="Please enter keywords to search."}');
-      return false;
-    {rdelim} else {ldelim}
-      document.getElementById('search_SearchBlock').submit();
-    {rdelim}
-  {rdelim}
-
-  function search_SearchBlock_focus() {ldelim}
-    if (search_SearchBlock_input.value == search_SearchBlock_searchDefault) {ldelim}
-      search_SearchBlock_input.value = '';
-    {rdelim}
-  {rdelim}
-
-  function search_SearchBlock_blur() {ldelim}
-    if (search_SearchBlock_input.value == '') {ldelim}
-      search_SearchBlock_input.value = search_SearchBlock_searchDefault;
-    {rdelim}
-  {rdelim}
+  search_SearchBlock_init('{g->text text="Search the Gallery"}', '{g->text text="Please enter a search term."}');
   // ]]>
 </script>
 {/g->addToTrailer}
 
 <div class="{$class}">
-  <form id="search_SearchBlock" action="{g->url}" method="post" onsubmit="return checkForm()">
+  <form id="search_SearchBlock" action="{g->url}" method="post" onsubmit="return search_SearchBlock_checkForm()">
     <div>
       {g->hiddenFormVars}
       <input type="hidden" name="{g->formVar var="view"}" value="search.SearchScan"/>
