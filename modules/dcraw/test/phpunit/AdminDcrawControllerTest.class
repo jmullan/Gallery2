@@ -57,6 +57,15 @@ class AdminDcrawControllerTest extends GalleryControllerTestCase {
 	parent::tearDown();
     }
 
+    function _getParam($param) {
+	list ($ret, $path) = GalleryCoreApi::getPluginParameter('module', 'dcraw', $param);
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return 'FAILED';
+	}
+	return $path;
+    }
+
     function testSaveV562() {
 	GalleryUtilities::putRequestVariable('form[path]', '/path/to/dcraw');
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
@@ -75,6 +84,9 @@ class AdminDcrawControllerTest extends GalleryControllerTestCase {
 				  'error' => array(),
 				  'status' => array('saved' => 1)),
 			    $results);
+
+	$this->assertEquals('/path/to/dcraw', $this->_getParam('path'));
+	$this->assertEquals('5.62', $this->_getParam('version'));
     }
 
     function testSaveV6() {
@@ -95,6 +107,9 @@ class AdminDcrawControllerTest extends GalleryControllerTestCase {
 				  'error' => array(),
 				  'status' => array('saved' => 1)),
 			    $results);
+
+	$this->assertEquals('/path/to/dcraw', $this->_getParam('path'));
+	$this->assertEquals('6.35', $this->_getParam('version'));
     }
 
     function testSaveV7() {
@@ -115,6 +130,32 @@ class AdminDcrawControllerTest extends GalleryControllerTestCase {
 				  'error' => array(),
 				  'status' => array('saved' => 1)),
 			    $results);
+
+	$this->assertEquals('/path/to/dcraw', $this->_getParam('path'));
+	$this->assertEquals('7.17', $this->_getParam('version'));
+    }
+
+    function testSaveV773() {
+	GalleryUtilities::putRequestVariable('form[path]', '/path/to/dcraw');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+
+	$this->_platform->setReply('isRestrictedByOpenBaseDir', array('/path/to/dcraw'), 0);
+	$this->_platform->setReply('is_file', array('/path/to/dcraw'), 1);
+	$this->_platform->setReply(
+	    'exec',
+	    array(array(array('/path/to/dcraw'))),
+	    array(1, array(), array('Raw Photo Decoder "dcraw" v7.73')));
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array(
+				      'view' => 'core.SiteAdmin',
+				      'subView' => 'dcraw.AdminDcraw'),
+				  'error' => array(),
+				  'status' => array('saved' => 1)),
+			    $results);
+
+	$this->assertEquals('/path/to/dcraw', $this->_getParam('path'));
+	$this->assertEquals('7.73', $this->_getParam('version'));
     }
 
     function testSaveMissingPath() {

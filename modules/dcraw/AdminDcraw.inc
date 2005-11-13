@@ -48,13 +48,12 @@ class AdminDcrawController extends GalleryController {
 	$error = array();
 	$status = array();
 	if (isset($form['action']['save'])) {
-
 	    if (empty($form['path'])) {
 		$error[] = 'form[error][path][missing]';
 	    } else {
 		$form['path'] = trim($form['path']);
 
-		list ($ret, $testResults) = DcrawToolkitHelper::testBinary($form['path']);
+		list ($ret, $testResults, $version) = DcrawToolkitHelper::testBinary($form['path']);
 		if ($ret->isError()) {
 		    if ($ret->getErrorCode() & ERROR_BAD_PATH) {
 			$error[] = 'form[error][path][badPath]';
@@ -77,10 +76,13 @@ class AdminDcrawController extends GalleryController {
 	    }
 
 	    if (empty($error)) {
-		$ret = GalleryCoreApi::setPluginParameter(
-		    'module', 'dcraw', 'path', $form['path']);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		foreach (array('path' => $form['path'],
+			       'version' => $version)
+			 as $key => $value) {
+		    $ret = GalleryCoreApi::setPluginParameter('module', 'dcraw', $key, $value);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
 		}
 
 		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'dcraw');

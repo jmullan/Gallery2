@@ -124,7 +124,18 @@ class DcrawToolkit extends GalleryToolkit {
 			     null, null);
 	    }
 
-	    $cmd = array($dcraw, '-c', '-a', '-q', $sourceFilename, '>', $tmpFilename);
+	    list ($ret, $version) = GalleryCoreApi::getPluginParameter('module', 'dcraw', 'version');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+
+	    if (version_compare($version, '7.73', '>=')) {
+		/* -q takes a numeric argument in 7.73+ */
+		$cmd = array($dcraw, '-c', '-a', '-q', '0', $sourceFilename, '>', $tmpFilename);
+	    } else {
+		$cmd = array($dcraw, '-c', '-a', '-q', $sourceFilename, '>', $tmpFilename);
+	    }
+
 	    $gallery->guaranteeTimeLimit(90);
 	    list ($success, $output) = $platform->exec(array($cmd));
 	    if (!$success) {
