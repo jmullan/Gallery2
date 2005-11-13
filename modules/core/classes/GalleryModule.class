@@ -98,8 +98,11 @@ class GalleryModule extends GalleryPlugin {
 	 *     will require modules not to call translate() from contructors
 	 *   - Combine userId/groupId columns in all our various tables into one
 	 *     column (entityId?)
+	 *   - Allow getItemSummaries to return a file to include, instead of
+	 *     just HTML so that item summaries can be integrated into the master
+	 *     template.
 	 */
-	return array(2, 2);
+	return array(2, 3);
     }
 
     /**
@@ -505,10 +508,11 @@ class GalleryModule extends GalleryPlugin {
      *
      * @param array object GalleryItem
      * @param array id => array(permission => 1, ...) of item permissions
+     * @param object GalleryTemplate the master template instance
      * @return array object GalleryStatus a status code
      *               string HTML content
      */
-    function getItemSummaries($items, $permissions) {
+    function getItemSummaries($items, $permissions, &$template) {
 	return array(GalleryStatus::success(), array());
     }
 

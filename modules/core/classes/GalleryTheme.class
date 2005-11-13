@@ -1372,7 +1372,8 @@ class GalleryTheme extends GalleryPlugin {
 		}
 
 		if (isset($itemSummaries) && isset($callbacks['getItemSummaries'])) {
-		    list ($ret, $content) = $module->getItemSummaries($childItems, $permissions);
+		    list ($ret, $content) =
+			$module->getItemSummaries($childItems, $permissions, $template);
 		    if ($ret->isError()) {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
