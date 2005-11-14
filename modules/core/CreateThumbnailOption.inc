@@ -30,7 +30,7 @@
  * This ItemAddOption allows the user to choose to create thumbnails
  * when the image is uploaded.
  *
- * @package Core
+ * @package GalleryCore
  * @subpackage UserInterface
  */
 class CreateThumbnailOption extends ItemAddOption {

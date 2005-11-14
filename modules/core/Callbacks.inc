@@ -21,7 +21,7 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package Core
+ * @package GalleryCore
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 class CoreCallbacks {

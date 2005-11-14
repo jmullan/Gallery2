@@ -21,14 +21,14 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package Core
+ * @package GalleryCore
  * @author Alan Harder <alan.harder@sun.com>
  */
 
 /**
  * View to display message when site is down for maintenance.
  *
- * @package Core
+ * @package GalleryCore
  * @subpackage UserInterface
  */
 class MaintenanceModeView extends GalleryView {

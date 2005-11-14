@@ -21,7 +21,7 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package GalleryCore
+ * @package Dcraw
  * @subpackage PHPUnit
  * @author Bharat Mediratta <bharat@menalto.com>
  */
@@ -29,8 +29,8 @@
 GalleryCoreApi::relativeRequireOnce('modules/dcraw/classes/DcrawToolkit.class');
 
 /**
- * AdminDcraw controller tests
- * @package GalleryCore
+ * Dcraw toolkit tests
+ * @package Dcraw
  * @subpackage PHPUnit
  */
 class DcrawToolkitTest extends GalleryTestCase {
@@ -53,8 +53,8 @@ class DcrawToolkitTest extends GalleryTestCase {
 	$this->_setParam('path', '/usr/bin/dcraw');
 
 	/*
-	 * Simulate a version after the most recent API change we know/care about, which is currently
-	 * 7.73 when they added a numeric argument to the -q flag.
+	 * Simulate a version after the most recent API change we know/care about, which is
+	 * currently 7.73 when they added a numeric argument to the -q flag.
 	 */
 	$this->_setParam('version', '7.73');
 

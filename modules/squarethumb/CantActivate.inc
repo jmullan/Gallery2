@@ -22,7 +22,7 @@
 
 /**
  * @version $Revision$ $Date$
- * @package GalleryCore
+ * @package SquareThumb
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
  */
