@@ -76,6 +76,15 @@ class ImageMagickModule extends GalleryModule {
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
+	    } else {
+		list ($ret, $isActive) = $this->isActive();
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		if ($isActive) {
+		    /* Force upgrade from site admin to see vulnerable-version warning */
+		    return GalleryStatus::error(ERROR_CONFIGURATION_REQUIRED, __FILE__, __LINE__);
+		}
 	    }
 	}
 
