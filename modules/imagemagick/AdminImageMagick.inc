@@ -47,8 +47,7 @@ class AdminImageMagickController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$error = array();
-	$status = array();
+	$error = $status = array();
 	if (isset($form['action']['save'])) {
 
 	    if (empty($form['path'])) {
@@ -87,6 +86,17 @@ class AdminImageMagickController extends GalleryController {
 	    }
 
 	    if (empty($error)) {
+		list ($ret, $version, $vulnerable) =
+		    ImageMagickToolkitHelper::discoverVersion($form['path']);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		if (empty($form['forceSave']) && $vulnerable) {
+		    $error[] = 'form[error][version][vulnerable]';
+		}
+	    }
+
+	    if (empty($error)) {
 		list ($ret, $params) =
 		    GalleryCoreApi::fetchAllPluginParameters('module', 'imagemagick');
 		if ($ret->isError()) {
@@ -95,6 +105,11 @@ class AdminImageMagickController extends GalleryController {
 
 		$ret = GalleryCoreApi::setPluginParameter(
 		    'module', 'imagemagick', 'path', $form['path']);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$ret = GalleryCoreApi::setPluginParameter(
+		    'module', 'imagemagick', 'versionOk', '1');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -208,9 +223,7 @@ class AdminImageMagickView extends GalleryView {
 	}
 
 	$platform = $gallery->getPlatform();
-	$tests = array();
-	$mimeTypes = array();
-	$version = array();
+	$tests = $mimeTypes = $version = array();
 	$debugSnippet = '';
 	$failCount = 0;
 	if (isset($form['action']['test'])) {
@@ -242,15 +255,24 @@ class AdminImageMagickView extends GalleryView {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 
-			list ($ret, $version) =
+			list ($ret, $version, $vulnerable) =
 			    ImageMagickToolkitHelper::discoverVersion($form['path']);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+			if ($vulnerable) {
+			    $form['error']['version']['vulnerable'] = true;
 			}
 		    }
 		}
 	    } else {
 		$form['error']['path']['missing'] = 1;
+	    }
+	}
+	if (!empty($form['error']['version']['vulnerable']) && empty($version)) {
+	    list ($ret, $version) = ImageMagickToolkitHelper::discoverVersion($form['path']);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 

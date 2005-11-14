@@ -574,6 +574,8 @@ class ImageMagickToolkitHelper {
      * @return array object GalleryStatus
      *               array string "ImageMagick" | "GraphicsMagick"
      *                     string version
+     *               boolean true if version is vulnerable to
+     *                       http://nvd.nist.gov/nvd.cfm?cvename=CVE-2005-1739
      */
     function discoverVersion($imageMagickPath=null) {
 	global $gallery;
@@ -581,16 +583,21 @@ class ImageMagickToolkitHelper {
 
 	list ($ret, $command) = ImageMagickToolkitHelper::getCommand('identify', $imageMagickPath);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	list ($success, $results) = $platform->exec(array($command));
 	foreach ($results as $resultLine) {
-	    if (preg_match('/(ImageMagick|GraphicsMagick)\s+([\d\.]+)/', $resultLine, $matches)) {
-		return array(GalleryStatus::success(), array($matches[1], $matches[2]));
+	    if (preg_match('/(ImageMagick|GraphicsMagick)\s+([\d\.r-]+)/', $resultLine, $matches)) {
+		$version = array($matches[1], $matches[2]);
+		$vulnerable = ($version[0] == 'ImageMagick' &&
+			       version_compare($version[1], '6.2.2.3', '<')) ||
+			      ($version[0] == 'GraphicsMagick' &&
+			       version_compare($version[1], '1.1.6-r1', '<'));
+		return array(GalleryStatus::success(), $version, $vulnerable);
 	    }
 	}
-	return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), array());
+	return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null, null);
     }
 
     /**

@@ -41,7 +41,7 @@ class ImageMagickModule extends GalleryModule {
 	$this->setId('imagemagick');
 	$this->setName($gallery->i18n('ImageMagick'));
 	$this->setDescription($gallery->i18n('ImageMagick / GraphicsMagick Graphics Toolkit'));
-	$this->setVersion('1.0.1');
+	$this->setVersion('1.0.2');
 	$this->setGroup('toolkits', $gallery->i18n('Graphics Toolkits'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
@@ -56,10 +56,23 @@ class ImageMagickModule extends GalleryModule {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	foreach (array('path' => '', 'jpegQuality' => '75', 'cmykSupport' => 'none')
-		as $key => $value) {
+	foreach (array('path' => '', 'jpegQuality' => '75', 'cmykSupport' => 'none',
+		       'versionOk' => '') as $key => $value) {
 	    if (!isset($params[$key])) {
 		$ret = $this->setParameter($key, $value);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	}
+
+	if (!empty($params['path']) && empty($params['versionOk'])) {
+	    GalleryCoreApi::relativeRequireOnce(
+		'modules/imagemagick/classes/ImageMagickToolkitHelper.class');
+	    list ($ret, $version, $vulnerable) =
+		ImageMagickToolkitHelper::discoverVersion($params['path']);
+	    if ($ret->isSuccess() && !$vulnerable) {
+		$ret = $this->setParameter('versionOk', '1');
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
@@ -198,7 +211,7 @@ class ImageMagickModule extends GalleryModule {
      */
     function needsConfiguration() {
 	/* This module requires all fields to be filled out before it can be activated. */
-	foreach (array('path', 'jpegQuality', 'cmykSupport') as $key) {
+	foreach (array('path', 'jpegQuality', 'cmykSupport', 'versionOk') as $key) {
 	    list ($ret, $value) = $this->getParameter($key);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -310,7 +323,19 @@ class ImageMagickModule extends GalleryModule {
 		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}
 
-		return array(GalleryStatus::success(), true);
+		/* Force admin to visit site admin to view warning for vulnerable version */
+		list ($ret, $version, $vulnerable) =
+		    ImageMagickToolkitHelper::discoverVersion($path);
+		if ($ret->isSuccess() && !$vulnerable) {
+		    $ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick',
+							      'versionOk', '1');
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), false);
+		    }
+		} else {
+		    $vulnerable = true;
+		}
+		return array(GalleryStatus::success(), !$vulnerable);
 	    }
 	}
 
