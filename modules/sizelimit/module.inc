@@ -29,7 +29,7 @@
 /**
  * This module sets size limit for the picture
  *
- * @package
+ * @package SizeLimit
  */
 class SizeLimitModule extends GalleryModule {
 
