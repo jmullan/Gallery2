@@ -38,15 +38,28 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
+	global $gallery;
 	parent::setUp();
 
 	/* create an album to hold all of the test items */
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
 	$this->_markForCleanup($this->_album);
+
+	$ret = GalleryCoreApi::removeItemPermissions($this->_album->getId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_album->getId(), $this->_userId = $gallery->getActiveUserId(), 'core.all');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
 	/* Save the existing cart */
 	list($ret, $this->_saveCartItemCounts) = CartHelper::fetchCartItemCounts();
@@ -68,8 +81,7 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
 	/* Restore the existing cart */
 	$ret = CartHelper::setCartItemCounts($this->_saveCartItemCounts);
 	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	parent::tearDown();
@@ -186,7 +198,7 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
 			    $results);
 
 	/* Verify our cart */
-	list($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
+	list ($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -196,13 +208,13 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
 			    $cartItemCounts);
     }
 
-    function testAddNoPermissionItem() {
+    function testAddNoViewPermissionItem() {
 	/* Create a test item */
 	list ($ret, $item) = $this->_createRandomDataItem($this->_album->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$ret = GalleryCoreApi::removeItemPermissions($item->getId());
+	$ret = GalleryCoreApi::removeUserPermission($item->getId(), $this->_userId, 'core.viewAll');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -219,13 +231,69 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array(1 => 3, 2 => 3), $cartItemCounts);
     }
 
-    function testAddAlbumWithNoPermissionItem() {
+    function testAddNoCartPermissionItem() {
+	/* Create a test item */
+	list ($ret, $item) = $this->_createRandomDataItem($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::removeUserPermission($item->getId(), $this->_userId, 'cart.add');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryUtilities::putRequestVariable('itemId', $item->getId());
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'cart.ViewCart'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+
+	/* Verify our cart */
+	list($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(1 => 3, 2 => 3), $cartItemCounts);
+    }
+
+    function testAddAlbumWithNoViewPermissionItem() {
 	/* Create test items */
 	list ($ret, $item) = $this->_createRandomDataItem($this->_album->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$ret = GalleryCoreApi::removeItemPermissions($item->getId());
+	$ret = GalleryCoreApi::removeUserPermission($item->getId(), $this->_userId, 'core.viewAll');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $item2) = $this->_createRandomDataItem($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'cart.ViewCart'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+
+	/* Verify our cart - one item added, no permission item skipped */
+	list($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(1 => 3, 2 => 3, $item2->getId() => 1), $cartItemCounts);
+    }
+
+    function testAddAlbumWithNoCartPermissionItem() {
+	/* Create test items */
+	list ($ret, $item) = $this->_createRandomDataItem($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::removeUserPermission($item->getId(), $this->_userId, 'cart.add');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

@@ -38,7 +38,7 @@ class CartModule extends GalleryModule {
 	$this->setId('cart');
 	$this->setName($gallery->i18n('Cart'));
 	$this->setDescription($gallery->i18n('Shopping Cart Module'));
-	$this->setVersion('1.0.0'); /* Update upgrade() function below too */
+	$this->setVersion('1.0.1'); /* Update upgrade() function below too */
 	$this->setGroup('commerce', $gallery->i18n('Commerce'));
 	$this->setCallbacks('getItemLinks');
 	$this->setRequiredCoreApi(array(6, 0));
@@ -51,50 +51,84 @@ class CartModule extends GalleryModule {
     function upgrade($currentVersion) {
 	global $gallery;
 
-	if (!empty($currentVersion)) {
-	    switch ($currentVersion) {
-	    case '0.8':
-	    case '0.8.1':
-	    case '0.8.2':
-	    case '0.8.3':
-	    case '0.8.4':
-	    case '0.8.5':
-	    case '0.8.6':
-	    case '0.8.7':
-	    case '0.8.8':
-		$storage =& $gallery->getStorage();
-		$query = '
-		  DROP TABLE [CartMap]
-		';
-		$ret = $storage->execute($query);
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-		$query = '
-		  DELETE FROM [Schema]
-		  WHERE [Schema::name] = \'CartMap\'
-		';
-		$ret = $storage->execute($query);
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
+	if (empty($currentVersion)) {
+	    $currentVersion = '0';
+	}
+	list ($ret, $coreParams) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
-	    case '0.8.9':
-	    case '0.8.10':
-	    case '0.9.1':
-	    case '0.9.2':
-	    case '0.9.3':
-	    case '0.9.4':
-	    case '0.9.5':
-	    case '0.9.6':
-
-	    case 'end of upgrade path':
-		break;
-
-	    default:
-		return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
-					    sprintf('Unknown module version %s', $currentVersion));
+	switch ($currentVersion) {
+	case '0':
+	    /* Register our permission */
+	    $ret = GalleryCoreApi::registerPermission($this->getId(), 'cart.add',
+						      $gallery->i18n('[cart] Add to cart'));
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
+	    /* Give everybody cart permission by default */
+	    $ret = GalleryCoreApi::addGroupPermission(
+		$coreParams['id.rootAlbum'], $coreParams['id.everybodyGroup'], 'cart.add', true);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    break;
+
+	case '0.8':
+	case '0.8.1':
+	case '0.8.2':
+	case '0.8.3':
+	case '0.8.4':
+	case '0.8.5':
+	case '0.8.6':
+	case '0.8.7':
+	case '0.8.8':
+	    $storage =& $gallery->getStorage();
+	    $query = '
+	      DROP TABLE [CartMap]
+	    ';
+	    $ret = $storage->execute($query);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $query = '
+	      DELETE FROM [Schema]
+	      WHERE [Schema::name] = \'CartMap\'
+	    ';
+	    $ret = $storage->execute($query);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	case '0.8.9':
+	case '0.8.10':
+	case '0.9.1':
+	case '0.9.2':
+	case '0.9.3':
+	case '0.9.4':
+	case '0.9.5':
+	case '0.9.6':
+	case '1.0.0':
+	    /* Register our permission */
+	    $ret = GalleryCoreApi::registerPermission($this->getId(), 'cart.add',
+						      $gallery->i18n('[cart] Add to cart'));
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    /* Give everybody cart permission by default */
+	    $ret = GalleryCoreApi::addGroupPermission(
+		$coreParams['id.rootAlbum'], $coreParams['id.everybodyGroup'], 'cart.add', true);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	case 'end of upgrade path':
+	    break;
+
+	default:
+	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
+					sprintf('Unknown module version %s', $currentVersion));
 	}
 
 	return GalleryStatus::success();
@@ -121,14 +155,16 @@ class CartModule extends GalleryModule {
     function getItemLinks($items, $wantsDetailedLinks, $permissions) {
 	$links = array();
 	foreach ($items as $item) {
-	    $itemTypeNames = array_merge($item->itemTypeName(), $item->itemTypeName(false));
-	    /* Specific translations: _('Add Album To Cart') _('Add Photo To Cart') */
-	    $links[$item->getId()][] =
-		array('text' => $this->_translate(array('text' => 'Add %s To Cart',
-						  'arg1' => $itemTypeNames[0]), $itemTypeNames[2]),
-		      'params' => array('controller' => 'cart.AddToCart',
-					'itemId' => $item->getId(),
-					'return' => true));
+	    if (isset($permissions[$item->getId()]['cart.add'])) {
+		$itemTypeNames = array_merge($item->itemTypeName(), $item->itemTypeName(false));
+		/* Specific translations: _('Add Album To Cart') _('Add Photo To Cart') */
+		$links[$item->getId()][] =
+		    array('text' => $this->_translate(
+				array('text' => 'Add %s To Cart',
+				      'arg1' => $itemTypeNames[0]), $itemTypeNames[2]),
+			  'params' => array('controller' => 'cart.AddToCart',
+					    'itemId' => $item->getId(), 'return' => true));
+	    }
 	}
 
 	return array(GalleryStatus::success(), $links);

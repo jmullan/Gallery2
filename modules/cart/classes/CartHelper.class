@@ -57,7 +57,8 @@ class CartHelper {
 
     /**
      * Add the item ids to the user's cart
-     * (Note that permissions should be checked in advance; this function does not check)
+     * (Note that view permission should be checked in advance; this function only checks
+     *  cart.add permission)
      *
      * @param array int item ids
      * @return object GalleryStatus a status code
@@ -69,11 +70,24 @@ class CartHelper {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	if (!empty($ids)) {
+	    $ret = GalleryCoreApi::studyPermissions($ids);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
 	foreach ($ids as $id) {
-	    if (isset($cartItemIds[$id])) {
-		$cartItemIds[$id]++;
-	    } else {
-		$cartItemIds[$id] = 1;
+	    list ($ret, $canAdd) = GalleryCoreApi::hasItemPermission($id, 'cart.add');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    if ($canAdd) {
+		if (isset($cartItemIds[$id])) {
+		    $cartItemIds[$id]++;
+		} else {
+		    $cartItemIds[$id] = 1;
+		}
 	    }
 	}
 
