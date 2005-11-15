@@ -173,9 +173,10 @@ class ExifHelperTest extends GalleryTestCase {
     function testGetExifKeys() {
 	/* There are a bajillion keys.  Do a quick sanity check */
 	$exifKeys = ExifHelper::getExifKeys();
-	$this->assertEquals(166, sizeof($exifKeys));
+	$this->assertEquals(197, sizeof($exifKeys));
 	$this->assert(isset($exifKeys['ImageType']));
 	$this->assert(isset($exifKeys['IPTC/Keywords']));
+	$this->assert(isset($exifKeys['GPS/Latitude']));
     }
 
     /**
