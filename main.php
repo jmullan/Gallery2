@@ -355,19 +355,30 @@ function _GalleryMain($embedded=false) {
 	$template->setVariable('l10Domain', $theme->getL10Domain());
 	$template->setVariable('isEmbedded', $embedded);
 
-	list ($ret, $html) = $template->fetch($templatePath);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$html = preg_replace('/^\s+/m', '', $html);
+	$templateAdapter =& $gallery->getTemplateAdapter();
 
-	if ($embedded) {
-	    $data = $theme->splitHtml($html, $results);
-	    $data['themeData'] =& $template->getVariableByReference('theme');
-	    $data['isDone'] = false;
-	} else {
-	    print $html;
+	if ($viewName == 'core.ProgressBar') {
+	    /* Render progress bar pages immediately so that the user sees the bar moving */
+	    $ret = $template->display($templatePath);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	    $data['isDone'] = true;
+	} else {
+	    list ($ret, $html) = $template->fetch($templatePath);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $html = preg_replace('/^\s+/m', '', $html);
+
+	    if ($embedded) {
+		$data = $theme->splitHtml($html, $results);
+		$data['themeData'] =& $template->getVariableByReference('theme');
+		$data['isDone'] = false;
+	    } else {
+		print $html;
+		$data['isDone'] = true;
+	    }
 	}
     }
 
