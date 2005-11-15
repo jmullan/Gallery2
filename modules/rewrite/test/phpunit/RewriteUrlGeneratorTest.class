@@ -367,5 +367,17 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
 	    array('view' => 'php.Unit', 'subView' => 'test.subView', 'itemId' => 123), false);
 	$this->assertEquals('/gallery2/phpunitsub/123?g2_navId=456', $actualUrl);
     }
+
+    /**
+     * Note: This is really testing the fact that the relative url code in GalleryUrlGenerator
+     * works properly with rewritten urls.  We can't test that properly in UrlGeneratorTest though
+     * because it won't handle rewritten urls like the one we use here.
+     */
+    function testRelativeUrlsWithBasefileInQueryString() {
+	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit/?foo=bar&return=phpunit_test.php';
+	$this->assertEquals(
+	    '/gallery2/module/foo/bar.css',
+	    $this->_urlGenerator->generateUrl(array('href' => 'module/foo/bar.css')));
+    }
 }
 ?>

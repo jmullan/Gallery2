@@ -125,12 +125,13 @@ class GalleryTemplateAdapter {
 	}
 
 	$forceSessionId = isset($params['forceSessionId']) ? $params['forceSessionId'] : null;
+	$forceFullUrl = isset($params['forceFullUrl']) ? true : false;
 	if (isset($params['forceDirect'])) {
 	    $hrefParams['forceDirect'] = $params['forceDirect'];
 	}
 
 	$urlGenerator =& $gallery->getUrlGenerator();
-	$url = $urlGenerator->generateUrl($hrefParams, $forceSessionId);
+	$url = $urlGenerator->generateUrl($hrefParams, $forceSessionId, null, $forceFullUrl);
 
 	if (!empty($params['forJavascript'])) {
 	    $url = str_replace('&amp;', '&', $url);

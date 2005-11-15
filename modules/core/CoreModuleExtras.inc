@@ -1264,6 +1264,9 @@ class CoreModuleExtras {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
+	case '1.0.8':
+	    /* Added new argument to GalleryUrlGenerator::generateUrl() */
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
@@ -1457,6 +1460,7 @@ $gallery->setConfig(\'mode.maintenance\', false);
 	case '1.0.5':
 	case '1.0.6':
 	case '1.0.7':
+	case '1.0.8':
 
 	case 'end of upgrade path':
 	    /*

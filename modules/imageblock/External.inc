@@ -104,9 +104,13 @@ class ExternalView extends GalleryView {
 	}
 
 	if ($template->hasVariable('ImageBlockData')) {
+	    $ImageBlockData =& $template->getVariableByReference('ImageBlockData');
+	    $ImageBlockData['forceFullUrl'] = 1;
+
 	    $template->setVariable('l10Domain', 'modules_imageblock');
 	    $template->display('gallery:modules/imageblock/templates/ImageBlock.tpl');
 	}
+
 	return GalleryStatus::success();
     }
 }

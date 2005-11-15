@@ -11,7 +11,7 @@
   {/if}
 
   {capture name="link"}
-  <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$block.id`"}" {strip}
+  <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$block.id`" forceFullUrl=$ImageBlockData.forceFullUrl}" {strip}
     {if !empty($ImageBlockData.linkTarget)}
       target="{$ImageBlockData.linkTarget}"
     {/if}{/strip}>
@@ -34,12 +34,12 @@
     {g->container type="imageframe.ImageFrame" frame=$ImageBlockData.$frameType
 		  width=$block.thumb.width height=$block.thumb.height maxSize=$maxSize}
       {$smarty.capture.link}
-	{g->image item=$imageItem image=$block.thumb id="%ID%" class="%CLASS%" maxSize=$maxSize}
+	{g->image item=$imageItem image=$block.thumb id="%ID%" class="%CLASS%" maxSize=$maxSize forceFullUrl=$ImageBlockData.forceFullUrl}
       </a>
     {/g->container}
   {else}
     {$smarty.capture.link}
-      {g->image item=$imageItem image=$block.thumb class="giThumbnail" maxSize=$maxSize}
+      {g->image item=$imageItem image=$block.thumb class="giThumbnail" maxSize=$maxSize forceFullUrl=$ImageBlockData.forceFullUrl}
     </a>
   {/if}
 

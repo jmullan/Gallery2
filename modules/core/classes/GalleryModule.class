@@ -101,8 +101,11 @@ class GalleryModule extends GalleryPlugin {
 	 *   - Allow getItemSummaries to return a file to include, instead of
 	 *     just HTML so that item summaries can be integrated into the master
 	 *     template.
+	 *   - Change GalleryUrlGenerator to take an $options array instead of
+	 *     a series of optional params so that we can avoid future API changes
+	 *     if we add a new generation option.
 	 */
-	return array(2, 3);
+	return array(2, 4);
     }
 
     /**

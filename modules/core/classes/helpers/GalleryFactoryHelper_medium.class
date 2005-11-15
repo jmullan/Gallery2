@@ -143,7 +143,7 @@ class GalleryFactoryHelper_medium {
 	}
 
 	GalleryFactoryHelper_simple::deleteCache();
-	
+
 	return GalleryStatus::success();
     }
 
@@ -164,13 +164,13 @@ class GalleryFactoryHelper_medium {
 				    $implModuleId, $hints, $orderWeight) {
 	global $gallery;
 	$platform = $gallery->getPlatform();
-	
+
 	$baseDir = GalleryCoreApi::getPluginBaseDir('module', $implModuleId);
 	if (!$platform->file_exists($baseDir . $implPath)) {
 	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__,
 					"Bad implementation path: $baseDir$implPath");
 	}
-	
+
 	if (empty($hints)) {
 	    $hints = null;
 	} else {

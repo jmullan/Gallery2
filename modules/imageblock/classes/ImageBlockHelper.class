@@ -135,6 +135,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    }
 
 	    $ImageBlockData['blocks'] = $blocks;
+	    $ImageBlockData['forceFullUrl'] = 0;
 	    $template->setVariable('ImageBlockData', $ImageBlockData);
 	}
 
@@ -582,7 +583,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 
 	    GalleryCoreApi::relativeRequireOnce(
 		'modules/imageblock/classes/ImageBlockDisabledMap.class');
-	    
+
 	    list ($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($entity->getId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -613,7 +614,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 		     GalleryUtilities::isA($entity, 'GalleryAlbumItem')))) {
 		break;
 	    }
-	    
+
 	    GalleryCoreApi::relativeRequireOnce(
 		'modules/imageblock/classes/ImageBlockDisabledMap.class');
 	    $parentId = $entity->getParentId();
@@ -622,7 +623,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
 	    list ($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($entity->getId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -630,7 +631,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 
 	    if (GalleryUtilities::isA($entity, 'GalleryDataItem')) {
 		$echo = !empty($parentDisabledFlag) ? "true" : "false";
-		
+
 		/* Disable flag is managed (GUI) on album level, reflect this here */
 		if (!empty($parentDisabledFlag) && empty($disabledFlag)) {
 		    /* New parent has disabled flag, item hasn't. Change it. */

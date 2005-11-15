@@ -322,13 +322,18 @@ class GalleryUrlGenerator {
     /**
      * Return a valid Gallery URL.
      *
+     * TODO: move 'href' and 'forceDirect' out of the $params variable since they wind up
+     *       sitting on top of any similarly named cgi arg that a module may want to use.
+     *       Convert all other params into an array like $options so that we don't balloon
+     *       the api (and roll forceSessionId, baseUrl, etc into $options).
+     *
      * @param array key/value pairs to be included in the URL
      *  special 'href' key specifies path to append to G2 base url instead of a query param
      *  special 'forceDirect' key specifies to generate from G2 site url even if embedded
      * @param boolean (optional) set to true/false to force the session id to be in/not in the url
      *  by default it is included when cookies are not in use (for href urls, default=not included)
      */
-    function generateUrl($params=array(), $forceSessionId=null, $baseUrl=null) {
+    function generateUrl($params=array(), $forceSessionId=null, $baseUrl=null, $forceFullUrl=false) {
 	global $gallery;
 	$currentView = $gallery->getCurrentView();
 
@@ -362,7 +367,7 @@ class GalleryUrlGenerator {
 	    } elseif(strlen($href) && $href{0} == '/') {
 		/* Absolute URL path */
 		$url = GalleryUrlGenerator::makeUrl($href);
-	    } else {
+	    } else if (strpos($href, '/') !== false) {
 		/* Check for local override */
 		$override = sprintf('%s/local/%s', dirname($href), basename($href));
 		$platform = $gallery->getPlatform();
@@ -379,6 +384,8 @@ class GalleryUrlGenerator {
 		    $pluginRelativeBaseDir = $gallery->getConfig('plugins.dirname') . '/';
 		}
 		$url .= $pluginRelativeBaseDir . $href;
+	    } else {
+		$url .= $href;
 	    }
 	} else if ((isset($params['view']) && $params['view'] == 'core.DownloadItem') ||
 		   isset($params['forceDirect'])) {
@@ -454,11 +461,17 @@ class GalleryUrlGenerator {
 	 * is on, then we have to use a server relative path since we may be at a url like
 	 * /v/foo/bar so if we try for a pure relative path then we'll wind up using /v/foo/bar as
 	 * the base for relative urls.
+	 *
+	 * Note: don't be fooled if $this->_baseFile shows up in the query string!
 	 */
-	if (strpos($this->getCurrentRequestUri(), $this->_baseFile) === false) {
-	    $url = str_replace($this->makeUrl('/'), '/', $url);
-	} else {
-	    $url = str_replace($this->getCurrentUrlDir(), '', $url);
+	if (!$forceFullUrl) {
+	    $currentUri = $this->getCurrentRequestUri();
+	    $pos = strpos($currentUri, $this->_baseFile);
+	    if ($pos === false || $pos > strpos($currentUri, '?')) {
+		$url = str_replace($this->makeUrl('/'), '/', $url);
+	    } else {
+		$url = str_replace($this->getCurrentUrlDir(), '', $url);
+	    }
 	}
 	return $url;
     }

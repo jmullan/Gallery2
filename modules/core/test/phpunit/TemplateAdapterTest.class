@@ -42,6 +42,15 @@ class TemplateAdapterTest extends GalleryTestCase {
 	$this->GalleryTestCase($methodName);
     }
 
+    function _setupMockAdapter() {
+	global $gallery;
+	$this->_mockUrlGenerator = new TemplateAdapterMockUrlGenerator();
+	$gallery->setUrlGenerator($this->_mockUrlGenerator);
+
+	$this->_mockSmarty = new TemplateAdapterMockSmarty();
+	$this->_templateAdapter = new GalleryTemplateAdapter();
+    }
+
     function testLinkId1() {
 	$test = array('urlParams' => array());
 	$result = GalleryTemplateAdapter::linkId($test);
@@ -99,6 +108,32 @@ class TemplateAdapterTest extends GalleryTestCase {
 	$string = '.;-_monkey';
 	$result = GalleryTemplateAdapter::_safeCssName($string);
 	$this->assertEquals('-monkey', $result);
+    }
+
+    function testForceFullUrlOn() {
+	$this->_setupMockAdapter();
+	$this->_templateAdapter->url(array('arg1' => 'foo=bar',
+				    'forceFullUrl' => 'anything'), $this->_mockSmarty);
+
+	$this->assertEquals(array(array('foo' => 'bar'), null, null, true),
+			    $this->_mockUrlGenerator->_calls[0]);
+    }
+
+    function testForceFullUrlOff() {
+	$this->_setupMockAdapter();
+	$this->_templateAdapter->url(array('arg1' => 'foo=bar'), $this->_mockSmarty);
+
+	$this->assertEquals(array(array('foo' => 'bar'), null, null, false),
+			    $this->_mockUrlGenerator->_calls[0]);
+    }
+}
+
+class TemplateAdapterMockSmarty {
+}
+
+class TemplateAdapterMockUrlGenerator {
+    function generateUrl($hrefParams, $forceSessionId, $baseUrl, $forceFullUrl) {
+	$this->_calls[] = array($hrefParams, $forceSessionId, $baseUrl, $forceFullUrl);
     }
 }
 ?>

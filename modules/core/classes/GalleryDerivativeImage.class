@@ -208,7 +208,8 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 	    $urlGenerator =& $gallery->getUrlGenerator();
 	    $src = $urlGenerator->generateUrl(array('view' => 'core.DownloadItem',
 						    'itemId' => $this->getId(),
-						    'serialNumber' => $this->getSerialNumber()));
+						    'serialNumber' => $this->getSerialNumber()),
+					      null, null, !empty($params['forceFullUrl']));
 
 	    list ($width, $height) = array($this->getWidth(), $this->getHeight());
 
@@ -235,6 +236,7 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 
 	    $html = sprintf('<img src="%s"%s', $src, $sizeStr);
 	    unset($params['fallback']);
+	    unset($params['forceFullUrl']);
 	    foreach ($params as $attr => $value) {
 		if (isset($value)) {
 		    $html .= " $attr=\"$value\"";
