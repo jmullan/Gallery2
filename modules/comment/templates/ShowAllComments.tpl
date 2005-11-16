@@ -10,9 +10,9 @@
 
 {if !empty($status)}
 <div class="gbBlock"><h2 class="giSuccess">
-    {if isset($status.changed)}
+  {if isset($status.changed)}
     {g->text text="Comment changed successfully"}
-    {/if}
+  {/if}
 </h2></div>
 {/if}
 
@@ -21,6 +21,12 @@
   <h3> {g->text text="There are no comments for this item"} </h3>
 </div>
 {else}
+{if $ShowAllComments.navigator.pageCount > 1}
+  {g->block type="core.Navigator" class="commentNavigator"
+	    navigator=$ShowAllComments.navigator
+	    currentPage=$ShowAllComments.navigator.page
+	    totalPages=$ShowAllComments.navigator.pageCount}
+{/if}
 <table>
 {foreach from=$ShowAllComments.comments item=comment}
 <tr><td style="text-align: center; padding: 0 4px">
@@ -35,7 +41,7 @@
 </td><td>
   {include file="gallery:modules/comment/templates/Comment.tpl"
 	   comment=$comment can=$ShowAllComments.can[$comment.id]
-	   user=$ShowAllComments.commenters[$comment.commenterId]}
+	   item=$item user=$ShowAllComments.commenters[$comment.commenterId]}
 </td></tr>
 {/foreach}
 </table>

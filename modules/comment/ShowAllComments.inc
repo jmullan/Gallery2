@@ -56,9 +56,13 @@ class ShowAllCommentsView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	$page = GalleryUtilities::getRequestVariables('page');
+	if (empty($page)) {
+	    $page = 1;
+	}
 
-	list ($ret, $comments) = GalleryCommentHelper::fetchAllComments(
-	    $item->getId(), $showCount, null, ORDER_DESCENDING);
+	list ($ret, $comments, $count) = GalleryCommentHelper::fetchAllComments(
+	    $item->getId(), $showCount, ($page - 1) * $showCount, ORDER_DESCENDING);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -123,12 +127,28 @@ class ShowAllCommentsView extends GalleryView {
 	    }
 	}
 
+	$navigator = array('page' => $page, 'pageCount' => ceil($count/$showCount));
+	if ($page > 1) {
+	    $navigator['first'] = array('urlParams' => array('view' => 'comment.ShowAllComments',
+				  'itemId' => $item->getId(), 'page' => 1));
+	    $navigator['back'] = array('urlParams' => array('view' => 'comment.ShowAllComments',
+				 'itemId' => $item->getId(), 'page' => $page - 1));
+	}
+	if ($page < $navigator['pageCount']) {
+	    $navigator['next'] = array('urlParams' => array('view' => 'comment.ShowAllComments',
+				 'itemId' => $item->getId(), 'page' => $page + 1));
+	    $navigator['last'] = array('urlParams' => array('view' => 'comment.ShowAllComments',
+				 'itemId' => $item->getId(), 'page' => $navigator['pageCount']));
+	}
+
 	$template->setVariable('ShowAllComments', array(
 	    'comments' => $comments,
 	    'commenters' => $commenters,
 	    'can' => $can,
 	    'item' => $item->getMemberData(),
-	    'itemData' => $itemData));
+	    'itemData' => $itemData,
+	    'navigator' => $navigator));
+	$template->style('modules/comment/comment.css');
 
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/comment/templates/ShowAllComments.tpl'));
