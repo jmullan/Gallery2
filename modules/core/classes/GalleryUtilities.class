@@ -1354,7 +1354,7 @@ class GalleryUtilities {
 	    return null;
 	}
 	$userAgent = $_SERVER['HTTP_USER_AGENT'];
-	if (strstr($userAgent, 'Google')) {
+	if (strstr($userAgent, 'Google') || strstr($userAgent, 'gsa-crawler')) {
 	    return 'google';
 	} else if (strstr($userAgent, 'Yahoo')) {
 	    return 'yahoo';
