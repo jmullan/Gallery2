@@ -576,29 +576,68 @@ class UrlGeneratorTest extends GalleryTestCase {
 	/* Not the same domain name or not the same path are not allowed */
 	$badUrls = array(
 	    'http://EVIL.com/gallery2/main.php?g2_view=core.UserAdmin&g2_subView=core.UserLogin',
-	    'www.EVIL.com/gallery2/main.php?g2_view=core.UserAdmin&g2_subView=core.UserLogin',
-	    $this->_urlGenerator->getCurrentDomain() . '/EVIL/main.php?g2_subView=core.UserLogin',
+	    'https://EVIL.com/gallery2/main.php',
+	    $this->_urlGenerator->makeUrl('/EVIL/main.php?g2_subView=core.UserLogin'),
 	    '../EVIL/main.php?g2_view=core.UserAdmin',
-	    '/EVIL/../gallery2/main.php?g2_view=core.UserAdmin');
+	    '/EVIL/../gallery2/main.php?g2_view=core.UserAdmin',
+	    '/gallery2/../EVIL/main.php?g2_view=core.UserAdmin',
+	    "..\\\\EVIL\\\\main.php",
+	    "/gallery/foo\\\\../main.php",
+	    ' /EVIL/gallery2/main.php',
+	    ' /../gallery2/EVIL/main.php',
+	    ' ../gallery2/EVIL/main.php');
 	foreach ($badUrls as $url) {
 	    $_GET['g2_return'] = $url;
 	    $ret = $this->_urlGenerator->initNavigation();
 	    $this->assert($ret->getErrorCode() & ERROR_PERMISSION_DENIED,
-			  "Phishing attack $url not detected for url");
+			  "Phishing attack '$url' not detected for url");
 	}
-	/* Check host and path for absolute urls and just the path for relative urls */
+	/*
+	 * Check host and path for absolute urls, absolute path for server relative URLs
+	 * and allow relative URLs that don't try to break out of the good path
+	 */
 	$goodUrls = array(
 	    $this->_urlGenerator->generateUrl(
 		array('view' => 'core.UserAdmin', 'subView' => 'core.UserLogin')),
-	    '/gallery2/main.php?g2_view=core.UserAdmin');
+	    '/gallery2/main.php?g2_view=core.UserAdmin',
+	    'v/GoodAlbumName/',
+	    'www.DONTCARE.com/gallery2/main.php',
+	    '\\\\gallery2\\\\main.php');
 	foreach ($goodUrls as $url) {
 	    $_GET['g2_return'] = $url;
 	    $ret = $this->_urlGenerator->initNavigation();
 	    if ($ret->isError()) {
-		$this->assert(false, "Normal returnUrl $url not accepted");
+		$this->assert(false, "Normal returnUrl '$url' not accepted");
 		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
+    }
+
+    /*
+     * Make sure getNavigationLinks() returns unchanged URLs 
+     * (part of our phishing attack protection)
+     */
+    function testGetNavigationLinks() {
+	/*
+	 * In initNavigation we accept returnUrl = 'www.EVIL.com' because we have to interpret it
+	 * as relative URL, e.g. for http://example.com/www.EVIL.com/ (album called www.EVIL.com)
+	 * Here we must ensure that we don't add http:// in front the returned URL, since that
+	 * would change the relative to an absolute URL.
+	 */
+	$_GET['g2_return'] = 'www.DONTCARE.com';
+	$_GET['g2_returnName'] = 'I want a pony';
+	$ret = $this->_urlGenerator->initNavigation();
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $links) = $this->_urlGenerator->getNavigationLinks();
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$params = array('fromNavId' => $this->_urlGenerator->_navId);
+	$expectedUrl = GalleryUrlGenerator::appendParamsToUrl('www.DONTCARE.com', $params);
+	$this->assertEquals(array(array('url' => $expectedUrl, 'name' => 'Back to I want a pony')),
+			    $links, 'Navigation link was altered');
     }
 
     function testRelativeUrlOverrides() {

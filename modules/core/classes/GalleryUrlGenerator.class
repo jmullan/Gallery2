@@ -467,7 +467,8 @@ class GalleryUrlGenerator {
 	if (!$forceFullUrl) {
 	    $currentUri = $this->getCurrentRequestUri();
 	    $pos = strpos($currentUri, $this->_baseFile);
-	    if ($pos === false || $pos > strpos($currentUri, '?')) {
+	    if ($pos === false ||
+		    (($qPos = strpos($currentUri, '?')) !== false && $pos > $qPos )) {
 		$url = str_replace($this->makeUrl('/'), '/', $url);
 	    } else {
 		$url = str_replace($this->getCurrentUrlDir(), '', $url);
@@ -543,12 +544,26 @@ class GalleryUrlGenerator {
 	    /*
 	     * Check for phishing attacks, don't allow return URLs to other sites or to other
 	     * paths. Therefore first get the validPath, e.g. '/gallery2/'
+	     * Do not allow ../ to break out of the path
+	     * Allow all URLs that don't start with a protocol and neither with '/', e.g.
+	     * v/albumname but also www.EVIL.com is fine, since it's interpreted as a relative url
 	     */
 	    $validPath =  '/' . str_replace(GalleryUrlGenerator::makeUrl(''), '',
 					    $this->getCurrentUrlDir());
-	    if (strpos($returnUrl, $this->_baseFile) !== 0 &&
-		    strpos($returnUrl, $validPath) !== 0 &&
-		    strpos($returnUrl, $this->getCurrentUrlDir()) !== 0) {
+	    /*
+	     * We check for ../ and /../ patterns and on windows \../ would also break out, 
+	     * normalize to URL / *nix style paths to check fewer cases
+	     */
+	    $normReturnUrl = str_replace("\\", '/', $returnUrl);
+	    if ((strpos($returnUrl, $this->_baseFile) !== 0 &&
+		    strpos($normReturnUrl, $validPath) !== 0 &&
+		    strpos($returnUrl, $this->getCurrentUrlDir()) !== 0 &&
+		    !( !preg_match('{^\s*\w*://}i', $normReturnUrl) &&
+		          preg_match('{^\s*[^/\s]}i', $normReturnUrl)
+		       )
+		 ) ||
+		    preg_match('{^\s*\.\./}', $normReturnUrl) ||
+		    strpos($normReturnUrl, '/../') !== false) {
 		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
