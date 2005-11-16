@@ -345,6 +345,14 @@ class ExifHelper {
 		$value = $platform->strftime('%x %X', $time);
 	    }
 	    break;
+
+	case 'ExposureBiasValue':
+	case 'FocalLength':
+	case 'FocalPlaneXResolution':
+	case 'FocalPlaneYResolution':
+	    /* Round to two decimal places */
+	    $value = preg_replace('/(\d*\.\d{3,})/e', 'sprintf(\'%.2f\', $1)', $value);
+	    break;
 	}
 
 	return $value;
