@@ -43,12 +43,13 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
      */
 
     /**
-     * Return the comments associated with the given item ids
+     * Return the comments associated with the given item
      *
-     * @param array int GalleryItem id
+     * @param int GalleryItem id
+     * @param int (optional) max number to retrieve
+     * @param string (optional) ORDER_DESCENDING to list newest first
      * @return array (object GalleryStatus a status code,
      *                array (entityId => GalleryComment, ...)
-     * @access private
      * @static
      */
     function fetchComments($itemId, $count=null, $orderDirection=ORDER_ASCENDING) {
@@ -64,26 +65,121 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	    break;
 
 	default:
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
-			 null);
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
 
 	$query = '
-        SELECT
-          [GalleryComment::id]
-        FROM
-          [GalleryComment], [GalleryChildEntity]
-        WHERE
-          [GalleryChildEntity::parentId] = ?
-          AND
-          [GalleryChildEntity::id] = [GalleryComment::id]
-        ORDER BY
-          [GalleryComment::date] ' . $direction . '
-        ';
+	SELECT
+	  [GalleryComment::id]
+	FROM
+	  [GalleryComment], [GalleryChildEntity]
+	WHERE
+	  [GalleryChildEntity::parentId] = ?
+	  AND
+	  [GalleryChildEntity::id] = [GalleryComment::id]
+	ORDER BY
+	  [GalleryComment::date] ' . $direction . '
+	';
 	list($ret, $searchResults) = $gallery->search($query,
 						       array($itemId),
 						       array('limit' => array('count' => $count)));
 
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Get all of our ids */
+	$allIds = array();
+	while ($result = $searchResults->nextResult()) {
+	    $allIds[] = $result[0];
+	}
+
+	/* Load all the comments at once */
+	$comments = array();
+	if (!empty($allIds)) {
+	    list ($ret, $comments) = GalleryCoreApi::loadEntitiesById($allIds);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	return array(GalleryStatus::success(), $comments);
+    }
+
+    /**
+     * Return all comments in subtree under given item, with comment.view permission
+     *
+     * @param array int GalleryItem id
+     * @param int (optional) max number to retrieve
+     * @param int (optional) start of the range
+     * @param string (optional) ORDER_DESCENDING to list newest first
+     * @return array (object GalleryStatus a status code,
+     *                array (entityId => GalleryComment, ...)
+     * @static
+     */
+    function fetchAllComments($itemId, $count=null, $offset=null, $orderDirection=ORDER_ASCENDING) {
+	global $gallery;
+
+	switch($orderDirection) {
+	case ORDER_ASCENDING:
+	    $direction = 'ASC';
+	    break;
+
+	case ORDER_DESCENDING:
+	    $direction = 'DESC';
+	    break;
+
+	default:
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	}
+
+	list ($ret, $sequence) = GalleryCoreApi::fetchParentSequence($itemId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$sequence = implode('/', $sequence);
+	if (!empty($sequence)) {
+	    $sequence .= '/';
+	}
+	$sequence .= $itemId . '/%';
+
+	list ($ret, $aclIds) =
+	    GalleryCoreApi::fetchAccessListIds('comment.view', $gallery->getActiveUserId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
+
+	if (empty($aclIds)) {
+	    return array(GalleryStatus::success(), array());
+	}
+
+	$query = '
+	SELECT
+	  [GalleryComment::id]
+	FROM
+	  [GalleryItemAttributesMap], [GalleryAccessSubscriberMap],
+	  [GalleryChildEntity], [GalleryComment]
+	WHERE
+	  ([GalleryItemAttributesMap::itemId] = ?
+	   OR
+	   [GalleryItemAttributesMap::parentSequence] LIKE ?)
+	 AND
+	   [GalleryAccessSubscriberMap::itemId] = [GalleryItemAttributesMap::itemId]
+	 AND
+	   [GalleryAccessSubscriberMap::accessListId] IN (' . $aclMarkers . ')
+	 AND
+	   [GalleryChildEntity::parentId] = [GalleryItemAttributesMap::itemId]
+	 AND
+	   [GalleryComment::id] = [GalleryChildEntity::id]
+	ORDER BY
+	  [GalleryComment::date] ' . $direction . '
+	';
+	$data = array_merge(array($itemId, $sequence), $aclIds);
+
+	list ($ret, $searchResults) =
+	    $gallery->search($query, $data,
+			     array('limit' => array('count' => $count, 'offset' => $offset)));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -112,7 +208,6 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
      * @param array int GalleryItem ids
      * @return array object GalleryStatus a status code
      *               int a count
-     * @access private
      * @static
      */
     function fetchCommentCounts($itemIds) {
@@ -120,18 +215,18 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 
 	$markers = GalleryUtilities::makeMarkers(sizeof($itemIds));
 	$query = '
-        SELECT
-          [GalleryChildEntity::parentId],
-          COUNT([GalleryComment::id])
-        FROM
-          [GalleryComment], [GalleryChildEntity]
-        WHERE
-          [GalleryChildEntity::parentId] IN (' . $markers . ')
-          AND
-          [GalleryChildEntity::id] = [GalleryComment::id]
-        GROUP BY
-          [GalleryChildEntity::parentId]
-        ';
+	SELECT
+	  [GalleryChildEntity::parentId],
+	  COUNT([GalleryComment::id])
+	FROM
+	  [GalleryComment], [GalleryChildEntity]
+	WHERE
+	  [GalleryChildEntity::parentId] IN (' . $markers . ')
+	  AND
+	  [GalleryChildEntity::id] = [GalleryComment::id]
+	GROUP BY
+	  [GalleryChildEntity::parentId]
+	';
 
 	list($ret, $searchResults) = $gallery->search($query, $itemIds);
 	if ($ret->isError()) {
@@ -146,6 +241,34 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	return array(GalleryStatus::success(), $data);
     }
 
+    /**
+     * Determine if we should use validation plugins for new comments.
+     *
+     * @return array object GalleryStatus a status code
+     *               boolean true to use validation plugins
+     * @static
+     */
+    function useValidationPlugins() {
+	global $gallery;
+
+	list ($ret, $on) =
+	    GalleryCoreApi::getPluginParameter('module', 'comment', 'comments.captcha');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (!$on) {
+	    return array(GalleryStatus::success(), false);
+	}
+
+	list ($ret, $anonymousUserId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $anonymousUserId == $gallery->getActiveUserId());
+    }
+
      /**
      * Event handler for GalleryEntity::delete
      *
@@ -156,7 +279,7 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
      */
     function handleEvent($event) {
 	global $gallery;
-	
+
 	switch ($event->getEventName()) {
 	case 'GalleryEntity::delete':
 	    $entity = $event->getEntity();
@@ -166,19 +289,19 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 
 	    /* Delete all comments owned by this user */
 	    $query = '
-            SELECT
-              [GalleryComment::id]
-            FROM
-              [GalleryComment]
-            WHERE
-              [GalleryComment::commenterId] = ?
-            ';
+	    SELECT
+	      [GalleryComment::id]
+	    FROM
+	      [GalleryComment]
+	    WHERE
+	      [GalleryComment::commenterId] = ?
+	    ';
 
 	    list($ret, $searchResults) = $gallery->search($query, array($entity->getId()));
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
 	    while ($result = $searchResults->nextResult()) {
 		$ret = GalleryCoreApi::deleteEntityById($result[0]);
 		if ($ret->isError()) {

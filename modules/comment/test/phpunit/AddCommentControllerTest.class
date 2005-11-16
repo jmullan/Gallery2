@@ -224,5 +224,52 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
     }
+
+    function testValidationPlugin() {
+	$ret = $this->_markPluginParametersForCleanup('module', 'comment');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'comment', 'comments.captcha', 1);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryValidationPlugin', 'AddCommentTestValidation', 'AddCommentTestValidation',
+	    'modules/comment/test/phpunit/AddCommentControllerTest.class', 'commentTest', null);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markFactoryModuleForCleanup('commentTest');
+
+	global $gallery;
+	$this->_becomeGuestUser();
+	$ret = GalleryCoreApi::addUserPermission($this->_item->getId(),
+						 $gallery->getActiveUserId(), 'comment.add');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	GalleryUtilities::putRequestVariable('form[action][add]', 1);
+	GalleryUtilities::putRequestVariable('form[subject]', 'test');
+	GalleryUtilities::putRequestVariable('form[comment]', 'test');
+
+	/* Perform the request and verify validation plugin got error */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'comment.AddComment'),
+				  'status' => array(),
+				  'error' => array('form[error][AddCommentTestValidation]')),
+			    $results);
+    }
+}
+
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryValidationPlugin.class');
+class AddCommentTestValidation extends GalleryValidationPlugin {
+    function performValidation(&$form) {
+	return array(GalleryStatus::success(),
+		     array('form[error][AddCommentTestValidation]'), false);
+    }
 }
 ?>

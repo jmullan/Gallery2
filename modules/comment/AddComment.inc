@@ -50,17 +50,50 @@ class AddCommentController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$redirect = array();
-	$status = array();
-	$error = array();
+	$redirect = $status = $error = array();
 	if (isset($form['action']['add'])) {
+	    GalleryCoreApi::relativeRequireOnce(
+		'modules/comment/classes/GalleryCommentHelper.class');
 
 	    if (empty($form['subject'])) {
 		$error[] = 'form[error][subject][missing]';
 	    }
-
 	    if (empty($form['comment'])) {
 		$error[] = 'form[error][comment][missing]';
+	    }
+
+	    list ($ret, $useValidationPlugins) = GalleryCommentHelper::useValidationPlugins();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if (empty($error) && $useValidationPlugins) {
+		list ($ret, $pluginInstances) =
+		    GalleryCoreApi::getAllFactoryImplementationIds('GalleryValidationPlugin');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		foreach (array_keys($pluginInstances) as $pluginId) {
+		    list ($ret, $pluginInstances[$pluginId]) =
+			GalleryCoreApi::newFactoryInstanceById('GalleryValidationPlugin',
+							       $pluginId);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		}
+
+		/* Let each plugin do its verification */
+		foreach ($pluginInstances as $pluginId => $plugin) {
+		    list ($ret, $pluginErrors, $continue) = $plugin->performValidation($form);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+
+		    $error = array_merge($error, $pluginErrors);
+		    if (!$continue) {
+			break;
+		    }
+		}
 	    }
 
 	    if (empty($error)) {
@@ -140,6 +173,8 @@ class AddCommentView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
+	GalleryCoreApi::relativeRequireOnce('modules/comment/classes/GalleryCommentHelper.class');
+
 	/* Load our item */
 	list ($ret, $item) = $this->_getItem();
 	if ($ret->isError()) {
@@ -154,8 +189,7 @@ class AddCommentView extends GalleryView {
 
 	if ($form['formName'] != 'AddComment') {
 	    $form['formName'] = 'AddComment';
-	    $form['subject'] = '';
-	    $form['comment'] = '';
+	    $form['subject'] = $form['comment'] = '';
 	} else {
 	    foreach (array('subject', 'comment') as $key) {
 		if (empty($form[$key])) {
@@ -164,11 +198,42 @@ class AddCommentView extends GalleryView {
 	    }
 	}
 
-	$AddComment = array();
-	$AddComment['host'] = GalleryUtilities::getRemoteHostAddress();
-	$AddComment['itemId'] = $item->getId();
+	/* Check if we should use validation plugins for new comments */
+	$plugins = array();
+	list ($ret, $useValidationPlugins) = GalleryCommentHelper::useValidationPlugins();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if ($useValidationPlugins) {
+	    list ($ret, $allPluginIds) =
+		GalleryCoreApi::getAllFactoryImplementationIds('GalleryValidationPlugin');
+	    if ( $ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 
-	$template->setVariable('AddComment', $AddComment);
+	    /* Let each plugin load its template data */
+	    foreach (array_keys($allPluginIds) as $pluginId) {
+		list ($ret, $plugin) =
+		    GalleryCoreApi::newFactoryInstanceById('GalleryValidationPlugin', $pluginId);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		/* HIGH security so validation form always shows */
+		list ($ret, $data['file'], $data['l10Domain']) =
+		    $plugin->loadTemplate($template, $form, 'HIGH');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		if (isset($data['file'])) {
+		    $plugins[] = $data;
+		}
+	    }
+	}
+
+	$template->setVariable('AddComment',
+	    array('itemId' => $item->getId(),
+		  'host' => GalleryUtilities::getRemoteHostAddress(),
+		  'plugins' => $plugins));
 	$template->setVariable('controller', 'comment.AddComment');
 
 	list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'comment');

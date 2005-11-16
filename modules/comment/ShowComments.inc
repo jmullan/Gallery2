@@ -94,10 +94,6 @@ class ShowCommentsView extends GalleryView {
 	    'can' => $can,
 	    'item' => $item->getMemberData()));
 
-	/*
-	 * We don't have a form, so don't need a controller, but ItemAdmin demands
-	 * one so just leave it blank.
-	 */
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/comment/templates/ShowComments.tpl'));
     }

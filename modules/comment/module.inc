@@ -40,10 +40,10 @@ class CommentModule extends GalleryModule {
 	$this->setId('comment');
 	$this->setName($gallery->i18n('Comments'));
 	$this->setDescription($gallery->i18n('User commenting system'));
-	$this->setVersion('1.0.4'); /* Update upgrade() function below too */
+	$this->setVersion('1.0.6'); /* Update upgrade() function below too */
 	$this->setGroup('data', $gallery->i18n('Extra Data'));
 	$this->setCallbacks('registerEventListeners|getItemLinks|getItemSummaries|' .
-			    'getItemAdminViews');
+			    'getSiteAdminViews|getItemAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
 	$this->setRequiredModuleApi(array(2, 2));
     }
@@ -66,22 +66,30 @@ class CommentModule extends GalleryModule {
 	    /* Initial install.  Register our permissions */
 	    $permissions[] = array('add', $gallery->i18n('[comment] Add comments'), 0, array());
 	    $permissions[] = array('edit', $gallery->i18n('[comment] Edit comments'), 0, array());
- 	    $permissions[] = array('delete', $gallery->i18n('[comment] Delete comments'),
-	 			   0, array());
+	    $permissions[] = array('delete', $gallery->i18n('[comment] Delete comments'),
+				   0, array());
 	     $permissions[] = array('view', $gallery->i18n('[comment] View comments'), 0, array());
 	     $permissions[] = array('all', $gallery->i18n('[comment] All access'),
 		 GALLERY_PERMISSION_COMPOSITE,
 		 array('comment.add', 'comment.edit', 'comment.delete', 'comment.view'));
 	     foreach ($permissions as $p) {
-	 	$ret = GalleryCoreApi::registerPermission($this->getId(),
-		 					  'comment.' . $p[0],
-		 					  $p[1], $p[2], $p[3]);
-	 	if ($ret->isError()) {
-	 	    return $ret->wrap(__FILE__, __LINE__);
-	 	}
+		$ret = GalleryCoreApi::registerPermission($this->getId(),
+							  'comment.' . $p[0],
+							  $p[1], $p[2], $p[3]);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 	     }
-	     break;
-	     
+
+	    foreach (array('comments.show' => 10, 'comments.captcha' => 0, 'comments.latest' => 1)
+		     as $key => $value) {
+		$ret = $this->setParameter($key, $value);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	    break;
+
 	case '0.9.6':
 	    /*
 	     * Remove comment.search permission included in older module versions.
@@ -95,12 +103,21 @@ class CommentModule extends GalleryModule {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    
+
 	case '1.0.0':
 	case '1.0.1':
 	case '1.0.2':
 	case '1.0.3':
-	    
+	case '1.0.4':
+	case '1.0.5':
+	    foreach (array('comments.show' => 10, 'comments.captcha' => 0, 'comments.latest' => 1)
+		     as $key => $value) {
+		$ret = $this->setParameter($key, $value);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
@@ -172,16 +189,26 @@ class CommentModule extends GalleryModule {
      * @see GalleryModule::getItemLinks()
      */
     function getItemLinks($items, $wantsDetailedLinks, $permissions) {
+	list ($ret, $showAll) = $this->getParameter('comments.latest');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 	$links = array();
 	foreach ($items as $item) {
-	    if (isset($wantsDetailedLinks[$item->getId()])) {
-		if (isset($permissions[$item->getId()]['comment.add'])) {
-		    $params['view'] = 'comment.AddComment';
-		    $params['itemId'] = $item->getId();
-		    $params['return'] = 1;
-		    $links[$item->getId()][] =
-			array('text' => $this->translate('Add Comment'),
-			      'params' => $params);
+	    $itemId = $item->getId();
+	    if (isset($wantsDetailedLinks[$itemId])) {
+		if (isset($permissions[$itemId]['comment.add'])) {
+		    $links[$itemId][] = array(
+			'text' => $this->translate('Add Comment'),
+			'params' => array('view' => 'comment.AddComment',
+					  'itemId' => $itemId, 'return' => 1));
+		}
+
+		if ($showAll && isset($permissions[$itemId]['comment.view'])) {
+		    $links[$itemId][] = array(
+			'text' => $this->translate('View Latest Comments'),
+			'params' => array('view' => 'comment.ShowAllComments',
+					  'itemId' => $itemId, 'return' => 1));
 		}
 	    }
 	}
@@ -235,9 +262,21 @@ class CommentModule extends GalleryModule {
 	    isset($permissions['comment.view'])) {
 		$views[] = array('name' => $this->translate('View Comments'),
 				 'view' => 'comment.ShowComments');
+
+
+
 	}
 
 	return array(GalleryStatus::success(), $views);
+    }
+
+    /**
+     * @see GalleryModule::getSiteAdminViews()
+     */
+    function getSiteAdminViews() {
+	return array(GalleryStatus::success(),
+		     array(array('name' => 'Comments',
+				 'view' => 'comment.CommentSiteAdmin')));
     }
 
     /**

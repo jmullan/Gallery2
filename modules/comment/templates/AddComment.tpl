@@ -71,6 +71,11 @@
     {/if}
   </div>
 
+  {* Include validation plugins *}
+  {foreach from=$AddComment.plugins item=plugin}
+     {include file="gallery:`$plugin.file`" l10Domain=$plugin.l10Domain}
+  {/foreach}
+
   <div class="gbBlock gcBackground1">
     <input type="submit" class="inputTypeSubmit"
       name="{g->formVar var="form[action][preview]"}" value="{g->text text="Preview"}"/>
