@@ -181,7 +181,6 @@ function lookup_tag($tag) {
 		case "8298": $tag = "Copyright";break;						//text string up to 999 bytes long
 		case "8649": $tag = "PhotoshopSettings";break;				//??	
 		case "8825": $tag = "GPSInfoOffset";break;
-		case "9286": $tag = "UserCommentOld";break;					//??
 		case "8769": $tag = "ExifOffset";break;						//positive integer
 		
 			//used by Exif SubIFD "Image Tags"
@@ -233,6 +232,7 @@ function lookup_tag($tag) {
 		case "a402": $tag = "ExposureMode";break;					//values 0-2
 		case "a403": $tag = "WhiteBalance";break;					//values 0 or 1
 		case "a404": $tag = "DigitalZoomRatio";break;				//positive rational number
+		case "a405": $tag = "FocalLengthIn35mmFilm";break;				//??
 		case "a406": $tag = "SceneCaptureMode";break;				//values 0-3
 		case "a407": $tag = "GainControl";break;					//values 0-4
 		case "a408": $tag = "Contrast";break;						//values 0-2
@@ -391,8 +391,8 @@ function formatData($type,$tag,$intel,$data) {
 		
 	} else if($type=="USHORT" || $type=="SSHORT" || $type=="ULONG" || $type=="SLONG" || $type=="FLOAT" || $type=="DOUBLE") {
 		$data = bin2hex($data);
+		if($type=="USHORT" || $type=="SSHORT") $data = substr($data,0,4);
 		if($intel==1) $data = intel2Moto($data);
-		if($intel==0 && ($type=="USHORT" || $type=="SSHORT")) $data = substr($data,0,4);
 		$data=hexdec($data);
 		
 		if($type=="SSHORT" && $data>32767) $data = $data - 65536;	//this makes the number signed instead of unsigned
@@ -400,28 +400,28 @@ function formatData($type,$tag,$intel,$data) {
 		
 		if($tag=="0112") { //Orientation
 			if($data==1) $data = "Normal (O deg)";
-			if($data==2) $data = "Mirrored";
-			if($data==3) $data = "Upsidedown";
-			if($data==4) $data = "Upsidedown Mirrored";
-			if($data==5) $data = "90 deg CW Mirrored";
-			if($data==6) $data = "90 deg CCW";
-			if($data==7) $data = "90 deg CCW Mirrored";
-			if($data==8) $data = "90 deg CW";
+			else if($data==2) $data = "Mirrored";
+			else if($data==3) $data = "Upsidedown";
+			else if($data==4) $data = "Upsidedown Mirrored";
+			else if($data==5) $data = "90 deg CW Mirrored";
+			else if($data==6) $data = "90 deg CCW";
+			else if($data==7) $data = "90 deg CCW Mirrored";
+			else if($data==8) $data = "90 deg CW";
 		} else if($tag=="0128" || $tag=="a210" || $tag=="0128") {  //ResolutionUnit and FocalPlaneResolutionUnit and ThumbnailResolutionUnit
 			if($data==1) $data = "No Unit";
-			if($data==2) $data = "Inch";
-			if($data==3) $data = "Centimeter";
+			else if($data==2) $data = "Inch";
+			else if($data==3) $data = "Centimeter";
 		} else if($tag=="0213") { //YCbCrPositioning
 			if($data==1) $data = "Center of Pixel Array";
-			if($data==2) $data = "Datum Point";
+			else if($data==2) $data = "Datum Point";
 		} else if($tag=="8822") { //ExposureProgram
 			if($data==1) $data = "Manual";
 			else if($data==2) $data = "Program";
-			else if($data==3) $data = "Aperature Priority";
+			else if($data==3) $data = "Aperture Priority";
 			else if($data==4) $data = "Shutter Priority";
 			else if($data==5) $data = "Program Creative";
 			else if($data==6) $data = "Program Action";
-			else if($data==7) $data = "Portrat";
+			else if($data==7) $data = "Portrait";
 			else if($data==8) $data = "Landscape";
 			else $data = "Unknown: ".$data;
 		} else if($tag=="9207") { //MeteringMode
@@ -437,7 +437,7 @@ function formatData($type,$tag,$intel,$data) {
 		} else if($tag=="9208") { //LightSource
 			if($data==0) $data = "Unknown or Auto";
 			else if($data==1) $data = "Daylight";
-			else if($data==2) $data = "Flourescent";
+			else if($data==2) $data = "Fluorescent";
 			else if($data==3) $data = "Tungsten";
 			else if($data==10) $data = "Flash";
 			else if($data==17) $data = "Standard Light A";
@@ -452,7 +452,7 @@ function formatData($type,$tag,$intel,$data) {
 			if($data==0) $data = "No Flash";
 			else if($data==1) $data = "Flash";
 			else if($data==5) $data = "Flash, strobe return light not detected";
-			else if($data==7) $data = "Flash, strob return light detected";
+			else if($data==7) $data = "Flash, strobe return light detected";
 			else if($data==9) $data = "Compulsory Flash";
 			else if($data==13) $data = "Compulsory Flash, Return light not detected";
 			else if($data==15) $data = "Compulsory Flash, Return light detected";
@@ -483,12 +483,12 @@ function formatData($type,$tag,$intel,$data) {
 			else $data = "Unknown: ".$data;
 		} else if($tag=="a217") { //SensingMethod
 			if($data==1) $data = "Not defined";
-			if($data==2) $data = "One Chip Color Area Sensor";
-			if($data==3) $data = "Two Chip Color Area Sensor";
-			if($data==4) $data = "Three Chip Color Area Sensor";
-			if($data==5) $data = "Color Sequential Area Sensor";
-			if($data==7) $data = "Trilinear Sensor";
-			if($data==8) $data = "Color Sequential Linear Sensor";
+			else if($data==2) $data = "One Chip Color Area Sensor";
+			else if($data==3) $data = "Two Chip Color Area Sensor";
+			else if($data==4) $data = "Three Chip Color Area Sensor";
+			else if($data==5) $data = "Color Sequential Area Sensor";
+			else if($data==7) $data = "Trilinear Sensor";
+			else if($data==8) $data = "Color Sequential Linear Sensor";
 			else $data = "Unknown: ".$data;
 		} else if($tag=="0106") { //PhotometricInterpretation
 			if($data==1) $data = "Monochrome";
@@ -521,6 +521,9 @@ function formatData($type,$tag,$intel,$data) {
 			$data	= str_replace("05","G",$data);
 			$data	= str_replace("06","B",$data);
 			$data	= str_replace("00","",$data);
+		}
+		if($tag=="9286") { //UserComment
+			$data	= rtrim($data);
 		}
 	} else {
 		$data = bin2hex($data);
@@ -914,8 +917,8 @@ function read_exif_data_raw($path,$verbose) {
 function ConvertToFraction($v, &$n, &$d)
 {
   $MaxTerms = 15;         //Limit to prevent infinite loop
-  $MinDivisor = 0.000001; //Limit to prevent divide by zero
-  $MaxError = 0.00000001; //How close is enough
+  $MinDivisor = 1E-6; //Limit to prevent divide by zero
+  $MaxError = 1E-8; //How close is enough
 
   $f = $v; //Initialize fraction being converted
 
