@@ -355,18 +355,22 @@ class GalleryTestCase extends TestCase {
 	$gallery->_platform->resetPlatform();
     }
 
+    /** @return int id */
     function _getRootId() {
 	return (int)$this->_rootAlbumId;
     }
 
+    /** @param object GalleryEntity to delete in tearDown */
     function _markForCleanup($entity) {
 	$this->_cleanup['entity'][] = $entity;
     }
 
+    /** @param string module id to unregister from factory in tearDown */
     function _markFactoryModuleForCleanup($moduleId) {
 	$this->_cleanup['factoryModuleId'][] = $moduleId;
     }
 
+    /** @param string id of toolkit to unregister in tearDown */
     function _markToolkitForCleanup($toolkitId) {
 	$this->_cleanup['toolkitId'][] = $toolkitId;
     }
@@ -406,11 +410,11 @@ class GalleryTestCase extends TestCase {
 	parent::assertEquals($expected, $actual, $message);
     }
 
-    /*
+    /**
      * Create a random album
      *
      * @param int the id of the parent album
-     * @param array fields to plug into the new instance (field => value, field => value)
+     * @param array (optional) fields to set in the new instance (field => value, ..)
      * @return array object GalleryStatus a status code
      *               object GalleryAlbumItem
      * @access private
@@ -462,10 +466,14 @@ class GalleryTestCase extends TestCase {
     }
 
 
-    /*
+    /**
      * Create a random data item
      *
      * @param int the id of the parent album
+     * @param string (optional) mime type (default application/unknown)
+     * @param array (optional) fields
+     * @param string (optional) data file (default __FILE__)
+     * @param string (optional) class to instantiate (default from factory)
      * @return array object GalleryStatus a status code
      *               object GalleryDataItem
      * @access private
@@ -531,10 +539,11 @@ class GalleryTestCase extends TestCase {
 	return array(GalleryStatus::success(), $item);
     }
 
-    /*
-     * Create a random data item
+    /**
+     * Create a random link item
      *
      * @param int the id of the parent album
+     * @param object GalleryItem target item
      * @return array object GalleryStatus a status code
      *               object GalleryDataItem
      * @access private
@@ -576,6 +585,14 @@ class GalleryTestCase extends TestCase {
 	return array(GalleryStatus::success(), $linkedItem);
     }
 
+    /**
+     * Create a random user
+     *
+     * @param string (optional) suffix to add on username
+     * @return array object GalleryStatus a status code
+     *               object GalleryUser
+     * @access private
+     */
     function _createRandomUser($userTag=null) {
 	list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
 	if ($ret->isError()) {
@@ -607,6 +624,14 @@ class GalleryTestCase extends TestCase {
 	return array(GalleryStatus::success(), $user);
     }
 
+    /**
+     * Create a random group
+     *
+     * @param string (optional) suffix to add on group name
+     * @return array object GalleryStatus a status code
+     *               object GalleryGroup
+     * @access private
+     */
     function _createRandomGroup($groupTag=null) {
 	list ($ret, $group) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryGroup');
 	if ($ret->isError()) {
