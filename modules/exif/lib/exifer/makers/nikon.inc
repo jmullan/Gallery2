@@ -56,12 +56,21 @@ function lookup_Nikon_tag($tag,$model) {
 			case "0006": $tag = "ImageSharpening";break;
 			case "0007": $tag = "FocusMode";break;
 			case "0008": $tag = "FlashSetting";break;
+			case "0009": $tag = "FlashMode";break;
+			case "000b": $tag = "WhiteBalanceFine";break;
 			case "000f": $tag = "ISOSelection";break;
+			case "0013": $tag = "ISOSelection2";break;
 			case "0080": $tag = "ImageAdjustment";break;
+			case "0081": $tag = "ToneCompensation";break;
 			case "0082": $tag = "Adapter";break;
-			case "0085": $tag = "ManualFocusDistance";break;
+			case "0083": $tag = "LensType";break;
+			case "0084": $tag = "LensInfo";break;
+			case "0085": $tag = "ManualFocusDistance";break; 
 			case "0086": $tag = "DigitalZoom";break;
+			case "0087": $tag = "FlashUsed";break;
 			case "0088": $tag = "AFFocusPosition";break;
+			case "008d": $tag = "ColorMode";break;
+			case "0090": $tag = "LightType";break;
 			case "0094": $tag = "Saturation";break;
 			case "0095": $tag = "NoiseReduction";break;
 			case "0010": $tag = "DataDump";break;
@@ -90,7 +99,7 @@ function formatNikonData($type,$tag,$intel,$model,$data) {
 		else if($top==0) $data = 0;
 		else $data=$top."/".$bottom;
 		
-		if($tag=="0085" && $model==1) { //ManualFocusDistance
+       	if($tag=="0085" && $model==1) { //ManualFocusDistance
 			$data=$data." m";
 		} 
 		if($tag=="0086" && $model==1) { //DigitalZoom
@@ -167,6 +176,24 @@ function formatNikonData($type,$tag,$intel,$model,$data) {
 	} else {
 		$data = bin2hex($data);
 		if($intel==1) $data = intel2Moto($data);
+		
+		if($tag=="0083" && $model==1) { //Lens Type
+		    $data = hexdec(substr($data,0,2));
+			if($data == 0) $data = "AF non D";
+			else if($data == 1) $data = "Manual";
+			else if($data == 2) $data = "AF-D or AF-S";
+			else if($data == 6) $data = "AF-D G";
+			else if($data == 10) $data = "AF-D VR";
+			else $data = "Unknown: ".$data;
+		}
+		if($tag=="0087" && $model==1) { //Flash type
+		    $data = hexdec(substr($data,0,2));
+			if($data == 0) $data = "Did Not Fire";
+			else if($data == 4) $data = "Unknown";
+			else if($data == 7) $data = "External";
+			else if($data == 9) $data = "On Camera";
+			else $data = "Unknown: ".$data;
+		}
 	}
 	
 	return $data;
@@ -182,7 +209,7 @@ function parseNikon($block,&$result) {
 	else $intel=0;
 	
 	$model = $result['IFD0']['Model'];
-			
+
 	//these 6 models start with "Nikon".  Other models dont.
 	if($model=="E700\0" || $model=="E800\0" || $model=="E900\0" || $model=="E900S\0" || $model=="E910\0" || $model=="E950\0") {
 		$place=8; //current place
@@ -279,7 +306,7 @@ function parseNikon($block,&$result) {
 			} else {
 				$value = bin2hex($value);
 				if($intel==1) $value = intel2Moto($value);
-				$data = substr($block,hexdec($value)+hexdec($offset)+1,$bytesofdata);
+				$data = substr($block,hexdec($value)+hexdec($offset)+2,$bytesofdata);
 			}
 			$formated_data = formatNikonData($type,$tag,$intel,$model,$data);
 		
