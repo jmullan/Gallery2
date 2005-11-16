@@ -39,9 +39,9 @@ class ExifCallbacks {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    /* We only work on JPEG data items */
+	    /* We only work on JPEG/raw data items */
 	    if (!GalleryUtilities::isA($item, 'GalleryDataItem') ||
-		!preg_match('{^image/p?jpeg(-cmyk)?$}', $item->getMimeType())) {
+		!preg_match('{^image/(p?jpeg(-cmyk)?|x-dcraw)$}', $item->getMimeType())) {
 		return GalleryStatus::success();
 	    }
 

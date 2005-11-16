@@ -41,7 +41,7 @@ class ExifModule extends GalleryModule {
 	$this->setId('exif');
 	$this->setName($gallery->i18n('EXIF/IPTC'));
 	$this->setDescription($gallery->i18n('Extract EXIF/IPTC data from JPEG photos'));
-	$this->setVersion('1.0.2'); /* Update upgrade() function below too */
+	$this->setVersion('1.0.3'); /* Update upgrade() function below too */
 	$this->setGroup('data', $gallery->i18n('Extra Data'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
@@ -125,6 +125,8 @@ class ExifModule extends GalleryModule {
 	    case '1.0.0':
 	    case '1.0.1':
 		/* Added EXIF GPS tags */
+	    case '1.0.2':
+		/* Upgrade to Exifixer 1.5 and add support for image/x-dcraw */
 
 	    case 'end of upgrade path':
 		/*
@@ -177,7 +179,8 @@ class ExifModule extends GalleryModule {
 	global $gallery;
 	$ret = GalleryCoreApi::registerToolkitProperty(
 		'Exif',
-		array('image/jpeg', 'image/jpeg-cmyk'),
+		array('image/jpeg', 'image/pjpeg',
+		      'image/jpeg-cmyk', 'image/pjpeg-cmyk', 'image/x-dcraw'),
 		'originationTimestamp',
 		'int',
 		$gallery->i18n('Get the origination timestamp'));

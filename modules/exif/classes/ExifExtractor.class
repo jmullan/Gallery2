@@ -61,10 +61,9 @@ class ExifExtractor extends ExifInterface_1_0 {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    /* Only look at JPEG DataItems.. */
+	    /* Only look at JPEG/raw DataItems.. */
 	    if (!GalleryUtilities::isA($item, 'GalleryDataItem') ||
-		    ($item->getMimeType() != 'image/jpeg' &&
-		     $item->getMimeType() != 'image/pjpeg')) {
+		    !preg_match('{^image/(p?jpeg(-cmyk)?|x-dcraw)$}', $item->getMimeType())) {
 		continue;
 	    }
 	    list($ret, $path) = $item->fetchPath();
