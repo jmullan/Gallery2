@@ -341,8 +341,13 @@ class ExifHelper {
 			$time -= $offset;
 		    }
 		}
+		list ($ret, $format) =
+		    GalleryCoreApi::getPluginParameter('module', 'core', 'format.datetime');
+		if ($ret->isError() || empty($format)) {
+		    $format = '$x $X';
+		}
 		$platform = $gallery->getPlatform();
-		$value = $platform->strftime('%x %X', $time);
+		$value = $platform->strftime($format, $time);
 	    }
 	    break;
 
