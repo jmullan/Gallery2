@@ -69,7 +69,7 @@ class ModuleTest extends GalleryTestCase {
     }
 
     function tearDown() {
-	/* If a unitest fails it might not deactivate/uninstall the mock module properly */
+	/* If a unittest fails it might not deactivate/uninstall the mock module properly */
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -335,6 +335,52 @@ class ModuleTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(!$isActive, 'is active');
+    }
+
+    function testPermissionsCleanup() {
+	/* Test against bug where module uninstall can leave AccessMap rows with g_permission=0 */
+	global $gallery;
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = $module->installOrUpgrade();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::removeItemPermissions($this->_rootAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::addUserPermission($this->_rootAlbum->getId(),
+						 $gallery->getActiveUserId(),
+						 'moduletest.one');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = $module->uninstall();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $bits) = $this->_fetchPermissionBitsForItem($this->_rootAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($bits == 0, 'no bits');
+
+	/* If above leaves a row with g_permission=0 it will foul up this call: */
+	$ret = GalleryCoreApi::addUserPermission($this->_rootAlbum->getId(),
+						 $gallery->getActiveUserId(),
+						 'core.viewAll');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $bits) = $this->_fetchPermissionBitsForItem($this->_rootAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($bits > 0, 'bits');
     }
 
     function _fetchPermissionBitsForItem($itemId) {

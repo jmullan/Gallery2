@@ -1085,6 +1085,12 @@ class GalleryPermissionHelper_advanced {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	/* Now remove any rows left with g_permission = 0 */
+	$ret = GalleryAccessMap::removeMapEntry(array('permission' => 0));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
 	/*
 	 * TODO: What if view type permissions are removed? Then we need RemovePermission and
 	 * ViewableTreeChange events here.
