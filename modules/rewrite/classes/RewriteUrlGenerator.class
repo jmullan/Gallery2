@@ -128,7 +128,7 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 	foreach ($urlVariables as $key => $value) {
 	    $params[substr($key, strlen(GALLERY_FORM_VARIABLE_PREFIX))] = $value;
 	}
-	$url = $this->generateUrl($params);
+	$url = $this->generateUrl($params, null, null, true);
 
 	return $url;
     }
