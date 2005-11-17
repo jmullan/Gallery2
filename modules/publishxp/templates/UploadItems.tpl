@@ -17,7 +17,7 @@
 
     for (i = 0; i < files.length; i++) {ldelim}
       var postTag = xml.createNode(1, "post", "");
-      postTag.setAttribute("href", "{g->url arg1="controller=publishxp.UploadItems" forJavascript=true}");
+      postTag.setAttribute("href", "{g->url arg1="controller=publishxp.UploadItems" forJavascript=true forceFullUrl=true}");
       postTag.setAttribute("name", "userFile");
 
       var dataTag = xml.createNode(1, "formdata", "");
@@ -55,7 +55,7 @@
     var uploadTag = xml.createNode(1, "uploadinfo", "");
     var htmluiTag = xml.createNode(1, "htmlui", "");
 
-    htmluiTag.text = "{g->url arg1="view=core.ShowItem" arg2="itemId=`$UploadItems.albumId`" forJavascript=true}";
+    htmluiTag.text = "{g->url arg1="view=core.ShowItem" arg2="itemId=`$UploadItems.albumId`" forJavascript=true forceFullUrl=true}";
     uploadTag.appendChild(htmluiTag);
 
     xml.documentElement.appendChild(uploadTag);
