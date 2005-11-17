@@ -142,7 +142,7 @@ class PhotoAccessModule extends GalleryModule {
 	    if (isset($wantsDetailedLinks[$itemId]) &&
 		    isset($permissions[$itemId]['photoaccess.print']) &&
 		    GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
-		$links[$item->getId()][] =
+		$links[$itemId][] =
 		    array('text' => $this->translate('Print on PhotoAccess.com'),
 			  'params' => array('controller' => 'photoaccess.PrintPhoto',
 					    'itemId' => $itemId, 'returnUrl' => '%CURRENT_URL%'));

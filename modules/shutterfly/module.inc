@@ -142,7 +142,7 @@ class ShutterflyModule extends GalleryModule {
 	    if (isset($wantsDetailedLinks[$itemId]) &&
 		    isset($permissions[$itemId]['shutterfly.print']) &&
 		    GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
-		$links[$item->getId()][] =
+		$links[$itemId][] =
 		    array('text' => $this->translate('Print on Shutterfly.com'),
 			  'params' => array('view' => 'shutterfly.PrintPhotos',
 					    'itemId' => $itemId, 'return' => 1));
