@@ -43,7 +43,7 @@ class PrintPhotosView extends GalleryView {
     }
 
     /**
-     * @see GalleryView::loadTemplate()
+     * @see GalleryView::renderImmedate()
      */
     function renderImmediate($status, $error) {
 	global $gallery;
@@ -167,7 +167,7 @@ class PrintPhotosView extends GalleryView {
 
 	    $entry = array('item' => $item->getMemberData());
 	    $entry['imageUrl'] = $urlGenerator->generateUrl(
-		array_merge(array('view' => 'core.DownloadItem', 'itemId' => $source->getId()),
+		array_merge(array('view' => isset($permissions['offsite.download']) ? 'offsite.DownloadItem' : 'core.DownloadItem', 'itemId' => $source->getId()),
 			    $sessionParam),
 		false, null, true);
 
