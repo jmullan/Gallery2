@@ -26,12 +26,12 @@ class WelcomeStep extends InstallStep {
     }
 
     function processRequest() {
-	if (!empty($_GET['language'])) {
+	if (!empty($_POST['language'])) {
 	    global $translator, $gallery;
 	    $gallery = new GalleryStub();
-	    $translator->init($_GET['language']);
+	    $translator->init($_POST['language']);
 	    unset($gallery);
-	    $_SESSION['language'] = $_GET['language'];
+	    $_SESSION['language'] = $_POST['language'];
 	}
 	return true;
     }
