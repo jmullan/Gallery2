@@ -81,7 +81,7 @@ class SetOriginationTimestampTask extends MaintenanceTask {
 	$toolkitMap = array();
 	$total = $results->resultCount();
 	while ($result = $results->nextResult()) {
-	    $gallery->guaranteeTimeLimit(30);
+	    $gallery->guaranteeTimeLimit(90);
 	    /* Grab 5 items at a time */
 	    $ids = array($result[0]);
 	    for ($j = 0; $j < 4 && ($result = $results->nextResult()); $j++) {
