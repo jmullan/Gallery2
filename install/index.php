@@ -189,7 +189,7 @@ function addSessionIdToUrls($html) {
      */
     $sid = SID;
     if (!empty($sid) && !ini_get('session.use_trans_sid')) {
-	$html = preg_replace('/href="(.*\?.*)"/', 'href="$1&amp;' . $sid . '"', $html);
+	$html = preg_replace('/(href|action)="(.*\?.*)"/', '$1="$2&amp;' . $sid . '"', $html);
     }
     return $html;
 }

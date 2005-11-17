@@ -5,7 +5,7 @@
     <p>
       <?php print _('Please select the installation type') ?>
     </p>
-    <form method="post" action="">
+    <form method="post" action="<?php printf('%s?step=%s', INDEX_PHP, $stepNumber) ?>">
     <p style="margin-left: 2.2em; text-indent: -2.2em">
       <input type="radio" id="rbStandard" name="isMultisite" value="0" onclick="linkToggle(0)"
 	<?php if (!$templateData['isMultisite']) print 'checked="checked"' ?>>
@@ -37,7 +37,7 @@
 	     value="<?php print $templateData['configPath'] ?>" autocomplete="off"/>
       <script type="text/javascript">
 	// <![CDATA[
-	autoCompleteAttach('dir', '<?php printf('%s?step=%s', INDEX_PHP, $currentStep->getStepNumber()) ?>&doAutoComplete=1&path=__VALUE__');
+	autoCompleteAttach('dir', '<?php printf('%s?step=%s&%s=%s', INDEX_PHP, $currentStep->getStepNumber(), session_name(), session_id()) ?>&doAutoComplete=1&path=__VALUE__');
 
 	function linkToggle(m) {
 	  document.getElementById('linkContinue').style.display = m ? 'none' : 'inline';

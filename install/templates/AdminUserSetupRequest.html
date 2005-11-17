@@ -3,7 +3,7 @@
       <?php print _("Every Gallery will have at least one administrator user who has full access to view/modify everything. Please choose a username and password for your main administrator account. You can add additional users later.") ?>
     </p>
 
-    <form method="post" action="">
+    <form method="post" action="<?php printf('%s?step=%s', INDEX_PHP, $stepNumber) ?>">
       <table>
 	<?php if ($templateData['freshInstall']): ?>
 	<tr>

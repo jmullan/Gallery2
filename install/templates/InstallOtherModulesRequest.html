@@ -28,7 +28,7 @@
   </p>
 
   <?php if (!empty($templateData['groupedModules'])): ?>
-    <form method="post" action="">
+    <form method="post" action="<?php printf('%s?step=%s', INDEX_PHP, $stepNumber) ?>">
       <table class="modules">
 	<tr style="background-color: #ccc">
 	  <th>

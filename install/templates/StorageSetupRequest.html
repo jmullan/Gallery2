@@ -17,7 +17,7 @@
       <?php print _("If you're using a modern browser, we'll try to autocomplete any path you enter here.  So if you're having trouble finding the right path to your g2data directory, try experimenting with paths in the text box below and see what completions it provides for you."); ?>
     </p>
 
-    <form method="post" action="">
+    <form method="post" action="<?php printf('%s?step=%s', INDEX_PHP, $stepNumber) ?>">
       <table>
 	<tr>
 	  <td class="label">
