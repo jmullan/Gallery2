@@ -26,10 +26,10 @@ class WelcomeStep extends UpgradeStep {
     }
 
     function processRequest() {
-	if (isset($_GET['language'])) {
+	if (isset($_POST['language'])) {
 	    global $translator;
-	    $translator->init($_GET['language']);
-	    $_SESSION['language'] = $_GET['language'];
+	    $translator->init($_POST['language']);
+	    $_SESSION['language'] = $_POST['language'];
 	}
 	return true;
     }

@@ -229,7 +229,7 @@ class SystemChecksStep extends UpgradeStep {
 	    $templateData['check'][] =
 		array('title' => _('Zend compatibility mode'),
 		      'warning' => true,
-		      'notice' => sprintf(_('Warning: Your PHP is configured with Zend ze1_compatibility_mode which can cause PHP to crash.  Click <a href="%s">here</a> to test your PHP.  If you see "SUCCESS" then your PHP is ok.  If you get an error then you must turn off ze1_compatibility_mode before proceeding.'), 'index.php?step=' . $this->_stepNumber . '&amp;zendtest=1'),
+		      'notice' => sprintf(_('Warning: Your PHP is configured with Zend ze1_compatibility_mode which can cause PHP to crash.  Click <a href="%s">here</a> to test your PHP.  If you see "SUCCESS" then your PHP is ok.  If you get an error then you must turn off ze1_compatibility_mode before proceeding.'), generateUrl('index.php?step=' . $this->_stepNumber . '&amp;zendtest=1')),
 		);
 	} /* skip showing 'success' for this one */
 

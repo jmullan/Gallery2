@@ -32,7 +32,7 @@
       </div>
     </div>
   <?php elseif (!empty($templateData['groupedModules'])): ?>
-    <form method="post" action="">
+    <form method="post" action="<?php generateUrl('index.php?step=' . $stepNumber) ?>">
       <table class="modules">
 	<tr style="background-color: #ccc">
 	  <th>

@@ -188,16 +188,9 @@ if ($currentStep->processRequest()) {
     $templateData['errors'] = array();
     $currentStep->loadTemplateData($templateData);
 
-    /* Fetch our page into a variable */
-    ob_start();
+    /* Render the output */
     $template = new StatusTemplate();
     $template->renderHeaderBodyAndFooter($templateData);
-    $html = ob_get_contents();
-    ob_end_clean();
-
-    /* Add session ids if we don't have cookies */
-    $html = addSessionIdToUrls($html);
-    print $html;
 }
 
 /**
@@ -232,21 +225,6 @@ function selectAdminUser() {
 }
 
 /**
- * Add the session id to our url, if necessary
- */
-function addSessionIdToUrls($html) {
-    /*
-     * SID is empty if we have a session cookie.
-     * If session.use_trans_sid is on then it will add the session id.
-     */
-    $sid = SID;
-    if (!empty($sid) && !ini_get('session.use_trans_sid')) {
-	$html = preg_replace('/href="(.*\?.*)"/', 'href="$1&amp;' . $sid . '"', $html);
-    }
-    return $html;
-}
-
-/**
  * Mini url generator for upgrader
  */
 function generateUrl($uri, $print=true) {
@@ -257,7 +235,20 @@ function generateUrl($uri, $print=true) {
 	if (!empty($baseUrl)) {
 	     $uri = $baseUrl . 'upgrade/' . $uri;
 	}
+    } else if (!strncmp($uri, 'index.php', 9)) {
+	/*
+	 * Cookieless browsing: SID is empty if we have a session cookie.
+	 * If session.use_trans_sid is on then it will add the session id.
+	 */
+	$sid = SID;
+	if (!empty($sid) && !ini_get('session.use_trans_sid')) {
+	    $uri .= !strpos($uri, '?') ? '?' : '&amp;';
+	    $uri .= $sid;
+	}
     }
+
+    
+    
     if ($print) {
 	print $uri;
     }

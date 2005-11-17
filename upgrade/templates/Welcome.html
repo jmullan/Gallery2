@@ -5,7 +5,7 @@
 	'<a href="' . generateUrl('../README.html', false) . '" target="_blank">', '</a>') ?>
     </p>
     <?php global $translator; if (isset($translator)): ?>
-    <form method="get" action="index.php"><p>
+    <form method="post" action="<?php generateUrl('index.php', true) ?>"><p>
       <?php print _("Select Language:") ?>
       <input type="hidden" name="step" value="<?php print $stepNumber ?>"/>
       <select name="language" onchange="this.form.submit()" style="direction:ltr">
