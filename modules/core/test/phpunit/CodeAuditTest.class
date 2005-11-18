@@ -84,6 +84,9 @@ class CodeAuditTest extends CodeAuditTestCase {
 	    'modules/nokiaupload/classes/ImageUploadHelper.class' => array(
 		'ImageUploadHelper::getRSCapabilities' => 1,
 		),
+	    'modules/fotokasten/test/phpunit/PrintPhotosControllerTest.class' => array(
+		'FotokastenTestSoapClient::call' => 1,
+		),
 	    'modules/core/classes/FlockLockSystem.class' => array(
 		'FlockLockSystem::_acquireLock' => 1,
 		),
@@ -140,12 +143,12 @@ class CodeAuditTest extends CodeAuditTestCase {
 	$base4 = basename($dir3);
 
 	/* Skip known embedded 3rd party libs */
-	if ($base4 == 'lib' && $base3 == 'exifer' ||
-		$base3 == 'lib' && $base2 == 'exifer') {
+	if (($base4 == 'lib' && $base3 == 'exifer') ||
+		($base3 == 'lib' && $base2 == 'exifer')) {
 	    return false;
 	}
-	if ($base4 == 'lib' && $base3 == 'JPEG' ||
-		$base3 == 'lib' && $base2 == 'JPEG') {
+	if (($base3 == 'lib' && $base2 == 'JPEG') ||
+		($base2 == 'lib' && $base1 == 'nusoap.inc')) {
 	    return false;
 	}
 
