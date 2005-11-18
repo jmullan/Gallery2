@@ -105,6 +105,10 @@ class GalleryModule extends GalleryPlugin {
 	 *     a series of optional params so that we can avoid future API changes
 	 *     if we add a new generation option.
 	 *   - Add a GalleryStatus object return for GalleryUrlGenerator::init
+         *   - Move from returning GalleryStatus::success() to returning null
+	 *     on success so that we can avoid thousands of calls to success()
+	 *     and isError() on every request (and avoid loading GalleryStatus at all
+	 *     unless we need it.
 	 */
 	return array(2, 4);
     }
