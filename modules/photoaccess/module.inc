@@ -42,7 +42,7 @@ class PhotoAccessModule extends GalleryModule {
 	$this->setGroup('commerce', $gallery->i18n('Commerce'));
 	$this->setCallbacks('getItemLinks');
 	$this->setRequiredCoreApi(array(6, 10));
-	$this->setRequiredModuleApi(array(2, 0));
+	$this->setRequiredModuleApi(array(2, 3));
     }
 
     /**
