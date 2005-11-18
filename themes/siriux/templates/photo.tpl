@@ -63,7 +63,7 @@
 {if !empty($theme.sourceImage) &&
     (count($theme.imageViews) > 1 || $theme.sourceImage.mimeType != $theme.item.mimeType)}
  <p>
-  <a href="{g->url arg1="view=core:DownloadItem" arg2="itemId=`$theme.item.id`"}">
+  <a href="{g->url arg1="view=core.DownloadItem" arg2="itemId=`$theme.item.id`"}">
     {if $theme.sourceImage.mimeType != $theme.item.mimeType}
       {g->text text="Download %s in original format" arg1=$theme.sourceImage.itemTypeName.1}
     {else}
