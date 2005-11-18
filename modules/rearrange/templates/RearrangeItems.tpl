@@ -84,7 +84,7 @@ function doclick(idx) {
 
 <div class="gbBlock">
   <p class="giDescription">
-    {g->text text="Change the order of the items in this album."}
+    {g->text text="Change the order of the items in this album.%s Click an item to move, then click the new location." arg1="<br/>"}
   </p>
 
   {if $RearrangeItems.columns > 0}
