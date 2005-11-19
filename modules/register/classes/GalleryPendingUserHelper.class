@@ -166,13 +166,13 @@ class GalleryPendingUserHelper {
 
 	$generator =& $gallery->getUrlGenerator();
 	$confirmationUrl = $generator->generateUrl(
-			 array( 'controller' => 'register.ConfirmRegistration',
-				  /* Incoming url params will get sanitized, so decode here */
-				'username' =>
-				  GalleryUtilities::htmlEntityDecode($pendingUser->getUserName()),
-				'key' => $pendingUser->getRegistrationKey() ));
+	    array('controller' => 'register.ConfirmRegistration',
+		  /* Incoming url params will get sanitized, so decode here */
+		  'username' => GalleryUtilities::htmlEntityDecode($pendingUser->getUserName()),
+		  'key' => $pendingUser->getRegistrationKey()),
+	    null, null, true);
 	$confirmationUrl = str_replace('&amp;', '&', $confirmationUrl);
-	$baseUrl = str_replace('&amp;', '&', $generator->generateUrl());
+	$baseUrl = str_replace('&amp;', '&', $generator->generateUrl(array(), null, null, true));
 
 	$ret = GalleryCoreApi::sendTemplatedEmail(
 		'modules/register/templates/ConfirmationEmail.tpl',
