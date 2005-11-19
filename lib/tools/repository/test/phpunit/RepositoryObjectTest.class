@@ -76,11 +76,13 @@ class RepositoryObjectTest extends GalleryTestCase {
 
 	$platform = new UnitTestPlatform();
 	$platform->setReply('file_exists', array($outputPath), true);
-	$platform->setReply('file_exists', array($outputPath), false);
-	$platform->setReply('file_put_contents', array($outputPath, $processedTemplateContents),
-	    true);
+
 	$platform->setReply('file_exists', array($outputPath), false);
 	$platform->setReply('file_put_contents', array($outputPath, $templateVariableContents),
+	    true);
+
+	$platform->setReply('file_exists', array($outputPath), false);
+	$platform->setReply('file_put_contents', array($outputPath, $processedTemplateContents),
 	    true);
 	$gallery->setPlatform($platform);
 
@@ -91,16 +93,17 @@ class RepositoryObjectTest extends GalleryTestCase {
 	}
 	$this->assert(!$object->wasFileWritten(), 'Existing file overwritten.');
 
-	/* Test overwriting an existing file with a processed template. */
-	$object->setTemplate(new RepositoryTestTemplate($processedTemplateContents));
+	/* Test overwriting an existing file with a template variable contents. */
+	$object->setTemplate(new RepositoryTestTemplate('', $templateVariableContents));
 	$ret = $object->writeToDisk(true);
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret);
 	}
 	$this->assert($object->wasFileWritten(), 'Existing file not overwritten.');
 
-	/* Test overwriting an existing file with a template variable contents. */
-	$object->setTemplate(new RepositoryTestTemplate('', $templateVariableContents));
+	/* Test overwriting an existing file with a processed template. */
+	$object->setTemplate(new RepositoryTestTemplate($processedTemplateContents));
+	$object->setTemplateFile('test.tpl');
 	$ret = $object->writeToDisk(true);
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret);

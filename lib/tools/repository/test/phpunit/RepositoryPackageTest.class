@@ -48,10 +48,11 @@ class RepositoryPackageTest extends GalleryTestCase {
 
 	$this->_package = new RepositoryPackage();
 	$this->_package->setTemplate(new RepositoryTestTemplate());
+	$this->_package->setTemplateFile('test.tpl');
 	$this->_package->_outputDir = 'someoutputdir/';
 
 	/* Prepare the data we expect from the methods tested for comparison. */
-	$this->_expectedPackageData['package1'] = array (
+	$this->_expectedPackageData['package1'] = array(
 	    0 => array('random' => 'random'),
 	    1 => array('directories' => array('dir1', 'dir2')),
 	    2 => array('files' => array(array('path' => 'file1',
@@ -148,7 +149,7 @@ class RepositoryPackageTest extends GalleryTestCase {
 	$templateVariables = $this->_package->_template->getVariables();
 
 	$this->assertEquals($this->_expectedPackageData['package1']
-	    + $this->_expectedPackageData['package2'], $templateVariables, '');
+	    + $this->_expectedPackageData['package2'], $templateVariables, 'package data');
 
 	$this->assert($platform->isComplete(), $platform->getRemaining());
     }
