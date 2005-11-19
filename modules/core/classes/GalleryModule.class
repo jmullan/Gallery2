@@ -114,6 +114,10 @@ class GalleryModule extends GalleryPlugin {
 	 *   - Change Arguments to GalleryUrlGenerator::init to init($baseUri, $embedUri,
 	 *     $embedSessionString) since GalleryEmbed params will be changed too
 	 *     And add optional forceG2Base to various UrlGen methods
+	 *   - Remove unused GALLERY_PERMISSION_ITEM_ADMIN flag.  There's a patch
+	 *     for it here:  http://tinyurl.com/9l9wz
+	 *     others may depend on this constant, so we have to do it with an API
+	 *     change.
 	 */
 	return array(2, 4);
     }
