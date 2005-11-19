@@ -80,7 +80,7 @@ class ImageFrameTest extends GalleryTestCase {
 		      'Dots style');
 	$this->assert(count($data['data']['wood']) > 20 && isset($data['data']['wood']['name']),
 		      'Wood');
-	$this->assertEquals('http', substr($data['data']['wood']['imageTL'], 0, 4), 'Wood image');
+	$this->assert(strpos($data['data']['wood']['imageTL'], 'frames/wood'), 'Wood image');
 	$this->assert(isset($template->data['head']), 'head data');
 	$this->assertEquals(array('modules/imageframe/templates/ImageFrameHead.tpl'),
 			    $template->data['head'], 'head tpl');
@@ -99,13 +99,12 @@ class ImageFrameTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals('http', substr($url, 0, 4), 'Url protocol');
+	$this->assert(strpos($url, 'imageframe.Sample'), 'sample url');
 	list ($ret, $url) = $this->_imageframe->getSampleUrl(12345);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals('http', substr($url, 0, 4), 'Url2 protocol');
-	$this->assert(preg_match('/12345/', $url), 'Url2 id');
+	$this->assert(strpos($url, 'itemId=12345'), 'url2 id');
     }
 
     function testSmartyCounter() {
