@@ -111,6 +111,9 @@ class GalleryModule extends GalleryPlugin {
 	 *     unless we need it.
 	 *   - Rename save to _save in GalleryEntity child classes,
 	 *     GalleryEntity::save calls $this->_save then sends event (ensure event last)
+	 *   - Change Arguments to GalleryUrlGenerator::init to init($baseUri, $embedUri,
+	 *     $embedSessionString) since GalleryEmbed params will be changed too
+	 *     And add optional forceG2Base to various UrlGen methods
 	 */
 	return array(2, 4);
     }
