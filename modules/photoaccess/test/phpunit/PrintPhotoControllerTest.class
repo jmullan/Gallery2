@@ -144,8 +144,13 @@ class PrintPhotoControllerTest extends GalleryControllerTestCase {
 
     function _getTestPlatform($fragment, $requestUrl, $redirectUrl) {
 	$platform = new UnitTestPlatform();
-	$platform->setReply('file_exists', array('fuzzy' => '{.*}'), false);
-	$platform->setReply('atomicWrite', array('fuzzy' => '{.*}', 'fuzzy2' => '{a.*}'), true);
+	$platform->setReply('file_exists', array('fuzzy' => '{.}'), false);
+	$platform->setReply('atomicWrite', array('fuzzy' => '{.}', 'fuzzy2' => '{a.*}'), true);
+	/* Optional calls if _expireSessions happens to get called during session save() */
+	$platform->setReply('opendir', array('fuzzy' => '{.}'), 'dh', true);
+	$platform->setReply('readdir', array('dh'), false, true);
+	$platform->setReply('closedir', array('dh'), true, true);
+	/* End optional calls */
 	$platform->setReply('fsockopen', array('www.photoaccess.com', 80, '', '', 1), 'testFd');
 	$platform->setReply('fwrite',
 	    array('testFd', 'fuzzy' => "{POST /buy/$fragment HTTP/1\.0}", ''), 100);
