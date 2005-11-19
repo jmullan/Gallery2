@@ -88,6 +88,7 @@ class MainTest extends GalleryTestCase {
 	/* Test maintenance mode controller redirect with standard redirect url */
 	global $gallery;
 	$gallery->_phpVm = $phpVm = new MainTestPhpVm();
+	$gallery->_session->_sessionId = 'fakeSID';
 	$gallery->setConfig('mode.maintenance', true);
 	GalleryUtilities::putRequestVariable('controller', 'core.FooController');
 
