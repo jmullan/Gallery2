@@ -127,6 +127,10 @@ class OracleDatabaseStorage extends DatabaseStorage {
 	    $sql = 'CASE ' . implode(' ', $sql) . ' ELSE ' . $args[0] . ' END';
 	    break;
 
+	case 'LIKE':
+	    $sql = $args[0] . ' LIKE ' . $args[1];
+	    break;
+
 	default:
 	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__,
 					      $functionName . ' ' . implode(' ', $args)), null);

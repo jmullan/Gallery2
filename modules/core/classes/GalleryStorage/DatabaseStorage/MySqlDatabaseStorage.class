@@ -133,6 +133,10 @@ class MySqlDatabaseStorage extends DatabaseStorage {
 	    }
 	    break;
 
+	case 'LIKE':
+	    $sql = $args[0] . ' LIKE ' . $args[1];
+	    break;
+
 	default:
 	    return array(GalleryStatus::ERROR_UNIMPLEMENTED(__FILE__, __LINE__), null);
 	}

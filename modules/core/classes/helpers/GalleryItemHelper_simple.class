@@ -267,6 +267,16 @@ class GalleryItemHelper_simple {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	list ($ret, $like) =
+	    $storage->getFunctionSql(
+		'LIKE',
+		array('[GalleryItemAttributesMap=2::parentSequence]',
+		      $concat)
+		);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	$query = sprintf('
         SELECT
           [GalleryItemAttributesMap=1::itemId],
@@ -278,14 +288,14 @@ class GalleryItemHelper_simple {
         WHERE
           [GalleryItemAttributesMap=1::itemId] IN (%s)
           AND
-          [GalleryItemAttributesMap=2::parentSequence] LIKE %s
+          %s
           AND
           [GalleryItemAttributesMap=2::itemId] = [GalleryAccessSubscriberMap::itemId]
           AND
           [GalleryAccessSubscriberMap::accessListId] IN (%s)
         GROUP BY
           [GalleryItemAttributesMap=1::itemId]
-        ', $itemMarkers, $concat, $aclMarkers);
+        ', $itemMarkers, $like, $aclMarkers);
 
 	$data = array_merge($itemIds, $aclIds);
 	list ($ret, $searchResults) = $gallery->search($query, $data);

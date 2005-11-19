@@ -92,7 +92,12 @@ class Db2DatabaseStorage extends DatabaseStorage {
         }
 
         $this->_traceStart();
-        $recordSet = $tmpDb->Execute('DROP FUNCTION BIT_OR(smallint, smallint)');
+	$recordSet1 = $tmpDb->Execute(
+	    'DROP FUNCTION G2_BIT_AND(CHAR(32), CHAR(32))');
+	$recordSet2 = $tmpDb->Execute('DROP FUNCTION BIT_AND(SMALLINT, SMALLINT)');
+	$recordSet3 = $tmpDb->Execute('DROP FUNCTION G2_LIKE(VARCHAR(4000), VARCHAR(4000))');
+	/* TODO: BIT_OR is still missing! */
+        /* $recordSet4 = $tmpDb->Execute('DROP FUNCTION BIT_OR(CHAR(32))'); */
         $tmpDb->Close();
         $this->_traceStop();
 
@@ -106,48 +111,24 @@ class Db2DatabaseStorage extends DatabaseStorage {
     /**
      * @see DatabaseStorage::configureStore      
      */          
-    function configureStore($moduleId) {         
-        if ($moduleId == 'core') {       
-            $query = '
-            CREATE FUNCTION BIT_OR(X smallint, Y smallint)
-                RETURNS INTEGER
-            BEGIN ATOMIC
-                IF x =0  AND y = 0 THEN
-                  RETURN 0;
-                ELSE RETURN 1;
-                END IF;
-            END                
-            ';
+    function configureStore($moduleId) {
+	if ($moduleId == 'core') {
+	    /* Install our custom aggregate function */
+	    $ret = $this->_executeSqlFile(dirname(__FILE__) . '/CreateDb2Udfs.sql');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 
+	    /*
+	     * XXX: At some point figure out a way to detect if the UDFs are
+	     * already there before trying to install them again.
+	     */
+	}
 
-            /*
-             * Create a temporary database connection and install our custom
-             * aggregate function.
-             */
-            list ($ret, $tmpDb) = $this->_getConnection(true);
-            if ($ret->isError()) {
-                return $ret->wrap(__FILE__, __LINE__);
-            }
-
-            $this->_traceStart();
-            $recordSet = $tmpDb->Execute($query);
-            $tmpDb->Close();
-            $this->_traceStop();
-
-            /*
-             * Ignore errors here, since we'll get them every time we try to
-             * install the aggregate, which will happen every time we upgrade core
-             * or install in a database with another Gallery already present.
-             *
-             * XXX: At some point figure out a way to detect if the aggregate is
-             * already there before trying to install it again.
-             */
-        }
-
-        $ret = parent::configureStore($moduleId);        
-        if ($ret->isError()) {   
-            return $ret->wrap(__FILE__, __LINE__);       
-        }        
+	$ret = parent::configureStore($moduleId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
         return GalleryStatus::success();         
      }   
@@ -172,13 +153,13 @@ class Db2DatabaseStorage extends DatabaseStorage {
     function getFunctionSql($functionName, $args) {
         switch($functionName) {
         case 'CONCAT':
-            $sql = implode(' || ', $args);
+            $sql = 'char(' . implode(') || char(', $args) . ')';
             break;
 
         case 'BITAND':
-            /* Cast any input values as the 'bit' type */
-            $args = str_replace('?', 'B?', $args);
-            $sql = $args[0] . ' & ' . $args[1];
+	    $sql = 'G2_BIT_AND (CAST(' . $args[0] . ' AS CHAR(32)), ' .
+		'CAST(' . $args[1] . ' AS CHAR(32)))';
+	    $sql = 'BITAND(' . $args[0] . ', ' . $arg[1] . ')';
             break;
 
         case 'UNIX_TIMESTAMP':
@@ -208,6 +189,11 @@ class Db2DatabaseStorage extends DatabaseStorage {
             }
             $sql = 'CASE ' . implode(' ', $sql) . ' ELSE ' . $args[0] . ' END';
             break;
+
+	case 'LIKE':
+	    /* DB2's LIKE predicate support is very restrictive.  No non-strings, no SQL UDFs. */
+	    $sql = 'G2_LIKE(' . $args[0] . ', ' . $args[1] . ')';
+	    break;
 
         default:
             return array(GalleryStatus::ERROR_UNIMPLEMENTED(__FILE__, __LINE__), null);
