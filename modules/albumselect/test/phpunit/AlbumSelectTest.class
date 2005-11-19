@@ -97,7 +97,7 @@ class AlbumSelectTest extends GalleryTestCase {
 	$callbacks = new AlbumSelectCallbacks();
 	$ret = $callbacks->callback(
 	    array(), $smarty, 'LoadAlbumData', $gallery->getActiveUserId());
-	$data = $smarty->_tpl_vars['block']['albumselect']['LoadAlbumData'];
+	$data = $smarty->_tpl_vars['block']['albumselect']['LoadAlbumData']['albumSelect'];
 
 	$this->assertEquals('zzzzzzzz', $data['titles'][$this->_album->getId()], 'title');
 	$this->assert(!empty($data['params']), 'params');
@@ -129,7 +129,7 @@ class AlbumSelectTest extends GalleryTestCase {
 	$callbacks = new AlbumSelectCallbacks();
 	$ret = $callbacks->callback(
 	    array(), $smarty, 'LoadAlbumData', $gallery->getActiveUserId());
-	$data = $smarty->_tpl_vars['block']['albumselect']['LoadAlbumData'];
+	$data = $smarty->_tpl_vars['block']['albumselect']['LoadAlbumData']['albumSelect'];
 
 
 	$this->assertEquals('zzzzzzzz',
@@ -169,7 +169,7 @@ class AlbumSelectTest extends GalleryTestCase {
 	$callbacks = new AlbumSelectCallbacks();
 	$ret = $callbacks->callback(
 	    array(), $smarty, 'LoadAlbumData', $gallery->getActiveUserId());
-	$data = $smarty->_tpl_vars['block']['albumselect']['LoadAlbumData'];
+	$data = $smarty->_tpl_vars['block']['albumselect']['LoadAlbumData']['albumSelect'];
 
 	$this->assertEquals('zzzzzzzz',
 	    $data['titles'][$this->_album->getId()], 'title');
