@@ -142,7 +142,7 @@ class PrintPhotoControllerTest extends GalleryControllerTestCase {
 	parent::tearDown();
     }
 
-    function _getTestPlatform($fragment, $requestUrl, $redirectUrl) {
+    function &_getTestPlatform($fragment, $requestUrl, $redirectUrl) {
 	$platform = new UnitTestPlatform();
 	$platform->setReply('file_exists', array('fuzzy' => '{.}'), false);
 	$platform->setReply('atomicWrite', array('fuzzy' => '{.}', 'fuzzy2' => '{a.*}'), true);
