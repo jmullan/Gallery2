@@ -116,7 +116,9 @@ function GalleryMain($embedded=false) {
 	    'Not automatically redirecting you to the next page because we\'re in debug mode<br/>';
 	printf('<a href="%s">Continue to the next page</a>', $g2Data['redirectUrl']);
 	print '<hr/>';
+	print "<pre>";
 	print $gallery->getDebugBuffer();
+	print "</pre>";
     }
 
     return $g2Data;
