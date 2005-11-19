@@ -618,6 +618,11 @@ class UrlGeneratorTest extends GalleryTestCase {
      * (part of our phishing attack protection)
      */
     function testGetNavigationLinks() {
+	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	/*
 	 * In initNavigation we accept returnUrl = 'www.EVIL.com' because we have to interpret it
 	 * as relative URL, e.g. for http://example.com/www.EVIL.com/ (album called www.EVIL.com)
@@ -636,7 +641,8 @@ class UrlGeneratorTest extends GalleryTestCase {
 	}
 	$params = array('fromNavId' => $this->_urlGenerator->_navId);
 	$expectedUrl = GalleryUrlGenerator::appendParamsToUrl('www.DONTCARE.com', $params);
-	$this->assertEquals(array(array('url' => $expectedUrl, 'name' => 'Back to I want a pony')),
+	$this->assertEquals(array(array('url' => $expectedUrl, 'name' => $core->translate(
+				array('text' => 'Back to %s', 'arg1' => 'I want a pony')))),
 			    $links, 'Navigation link was altered');
     }
 
