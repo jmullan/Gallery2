@@ -47,7 +47,7 @@ class AdminRepositoryController extends GalleryController {
     var $_repository;
 
     function _getRepository() {
-	if (!is_object($this->_repository)) {
+	if (!isset($this->_repository)) {
 	    $this->_repository = new GalleryRepository();
 	}
 	return $this->_repository;
@@ -175,7 +175,7 @@ class AdminRepositoryController extends GalleryController {
 			array($packages, 'commonTasks'));
 		    $delegate['view'] = 'core.ProgressBar';
 		    break;
-	        }
+		}
 	    }
 	    /* Show common tasks tab. */
 	    $redirect['view'] = 'core.SiteAdmin';
@@ -264,8 +264,8 @@ class AdminRepositoryController extends GalleryController {
 		    }
 
 		    if (!empty($pluginDescriptor)) {
-		    	/* Save current package's descriptor. */
-		    	$descriptor = $pluginDescriptor;
+			/* Save current package's descriptor. */
+			$descriptor = $pluginDescriptor;
 		    } else {
 			/* Sanity check. */
 			if (empty($descriptor)) {
@@ -336,7 +336,7 @@ class AdminRepositoryView extends GalleryView {
     var $_repository;
 
     function _getRepository() {
-	if (!is_object($this->_repository)) {
+	if (!isset($this->_repository)) {
 	    $this->_repository = new GalleryRepository();
 	}
 	return $this->_repository;
