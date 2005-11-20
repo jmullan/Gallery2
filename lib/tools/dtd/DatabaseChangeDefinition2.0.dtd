@@ -1,10 +1,11 @@
-<!ELEMENT change ( table-name, schema-from, schema-to, (add | alter | remove)* ) >
+<!ELEMENT change ( table-name, schema-from, schema-to, (add | alter | remove | split)* ) >
 
 <!ELEMENT schema-from ( schema-major, schema-minor ) >
 <!ELEMENT schema-to ( schema-major, schema-minor ) >
 <!ELEMENT add ( (column | key | index)+ ) >
 <!ELEMENT alter ( column+ ) >
 <!ELEMENT remove ( (column-name | key | index)+ ) >
+<!ELEMENT split EMPTY >
 <!ELEMENT column ( column-name, column-type, column-size?, not-null? ) >
 <!ELEMENT key ( column-name+ ) >
 <!ELEMENT index ( column-name+ ) >

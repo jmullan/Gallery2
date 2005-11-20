@@ -40,6 +40,7 @@ foreach (array('mysql', 'postgres', 'oracle', 'db2') as $db) {
 	$base = basename($xmlFile);
 	$base = preg_replace('/\.[^\.]*$/', '', $base);
 	$output .= '# ' . $base . "\n";
+	$root[0]['base'] = $base;
 	$output .= $generator->createSql($root[0], 0, 0, null);
     }
 }
@@ -208,19 +209,21 @@ class MySqlGenerator extends BaseGenerator {
 	    break;
 
 	case 'CHANGE':
-	    /* table-name, schema-from, schema-to, (add, alter, remove)+ */
+	    /* table-name, schema-from, schema-to, (add, alter, remove, split)+ */
 	    if (count($child) > 3) {
-		$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $child[0]['content'] . "\n";
 		$count = 0;
-		foreach (array('REMOVE', 'ALTER', 'ADD') as $op) {
-		    for ($i = 3; $i < count($child); $i++) {
-			if ($child[$i]['name'] == $op) {
-			    $output .= $this->createSql($child[$i], $i, count($child) - 1, $node);
-			    if (++$count < count($child)-3) {
-				$output .= ",\n";
-			    }
-			}
+		for ($i = 3; $i < count($child); $i++) {
+		    if ($child[$i]['name'] == 'SPLIT') {
+			/* Label remaining sql as R_ so it will execute after upgrade code */
+			$output .= ";\n\n# R" . substr($node['base'], 1) . "\n";
+			$count = 0;
+			continue;
+		    } else if (!$count++) {
+			$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $child[0]['content'] . "\n";
+		    } else {
+			$output .= ",\n";
 		    }
+		    $output .= $this->createSql($child[$i], $i, count($child) - 1, $node);
 		}
 		$output .= ";\n\n";
 	    }
@@ -376,9 +379,14 @@ class PostgresGenerator extends BaseGenerator {
 	$child = $node['child'] = isset($node['child']) ? $node['child'] : array();
 	switch($node['name']) {
 	case 'CHANGE':
-	    /* table-name, schema-from, schema-to, (add, alter, remove)+ */
+	    /* table-name, schema-from, schema-to, (add, alter, remove, split)+ */
 	    for ($i = 3; $i < count($child); $i++) {
-		$output .= $this->createSql($child[$i], $i, count($child) - 1, $node);
+		if ($child[$i]['name'] == 'SPLIT') {
+		    /* Label remaining sql as R_ so it will execute after upgrade code */
+		    $output .= "# R" . substr($node['base'], 1) . "\n";
+		} else {
+		    $output .= $this->createSql($child[$i], $i, count($child) - 1, $node);
+		}
 	    }
 	    $output .= $this->generateSchemaUpdate($child);
 	    break;
@@ -403,10 +411,15 @@ class PostgresGenerator extends BaseGenerator {
 			break;
 
 		    case 'KEY':
-			$output .= 'ALTER TABLE DB_TABLE_PREFIX' .
-			    $parent['child'][0]['content'] . ";\n\n";
-			$output .= '  DROP KEY DB_COLUMN_PREFIX' . $c['child'][0]['content'];
-			$output .= ";\n\n";
+			if (empty($c['attrs']['PRIMARY'])) {
+			    $crc = $this->getIndexCrc($c['child']);
+			    $output .= 'DROP INDEX DB_TABLE_PREFIX' .
+				$parent['child'][0]['content'] . '_' . $crc . ";\n\n";
+			} else {
+			    /* Constraint name unknown -- unable to drop */
+			    $output .= '11. UNIMPLEMENTED: DROP PRIMARY KEY ' .
+				$parent['child'][0]['content'] . "\n";
+			}
 			break;
 
 		    case 'INDEX':
@@ -607,36 +620,31 @@ class OracleGenerator extends BaseGenerator {
 	$child = $node['child'] = isset($node['child']) ? $node['child'] : array();
 	switch($node['name']) {
 	case 'CHANGE':
-	    /* table-name, schema-from, schema-to, (add, alter, remove)+ */
-	    $alters = 0;
+	    /* table-name, schema-from, schema-to, (add, alter, remove, split)+ */
+	    $alters = $others = '';
 	    for ($i = 3; $i < count($child); $i++) {
-		if (!$this->isIndex($child[$i]['child'][0]) ||
-		    $this->isPrimaryKey($child[$i]['child'][0])) {
-		    $alters++;
+		if ($child[$i]['name'] == 'SPLIT') {
+		    if ($alters) {
+			$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $node['child'][0]['content'];
+			$output .= "\n" . $alters . ";\n\n";
+		    }
+		    /* Label remaining sql as R_ so it will execute after upgrade code */
+		    $output .= $others . "# R" . substr($node['base'], 1) . "\n";
+		    $alters = $others = '';
+		} else if (!$this->isIndex($child[$i]['child'][0]) ||
+			   $this->isPrimaryKey($child[$i]['child'][0])) {
+		    $alters .= $this->createSql($child[$i], $i, count($child) - 1, $node) . "\n";
+		} else {
+		    $others .= $this->createSql($child[$i], $i, count($child) - 1, $node) . ";\n\n";
 		}
 	    }
 
 	    if ($alters) {
-		$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $node['child'][0]['content'] . "\n";
-		for ($i = 3; $i < count($child); $i++) {
-		    if (!$this->isIndex($child[$i]['child'][0]) ||
-			$this->isPrimaryKey($child[$i]['child'][0])) {
-			$output .= $this->createSql($child[$i], $i, count($child) - 1, $node);
-			$output .= "\n";
-		    }
-		}
-		$output .= ";\n\n";
+		$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $node['child'][0]['content'];
+		$output .= "\n" . $alters . ";\n\n";
 	    }
 
-	    for ($i = 3; $i < count($child); $i++) {
-		if ($this->isIndex($child[$i]['child'][0]) &&
-		        !$this->isPrimaryKey($child[$i]['child'][0])) {
-		    $output .= $this->createSql($child[$i], $i, count($child) - 1, $node);
-		    $output .= ";\n\n";
-		}
-	    }
-
-	    $output .= $this->generateSchemaUpdate($child);
+	    $output .= $others . $this->generateSchemaUpdate($child);
 	    break;
 
 	case 'REMOVE':
@@ -654,8 +662,11 @@ class OracleGenerator extends BaseGenerator {
 			break;
 
 		    case 'KEY':
-			$output .= '  DROP UNIQUE (DB_COLUMN_PREFIX' .
-			    $c['child'][0]['content'] . ')';
+			$keyColumns = array();
+			foreach ($c['child'] as $keyColumn) {
+			    $keyColumns[] = 'DB_COLUMN_PREFIX' . $keyColumn['content'];
+			}
+			$output .= '  DROP UNIQUE (' . implode(', ', $keyColumns) . ')';
 			break;
 
 		    case 'INDEX':
@@ -924,9 +935,14 @@ class Db2Generator extends BaseGenerator {
 	$child = $node['child'] = isset($node['child']) ? $node['child'] : array();
 	switch($node['name']) {
 	case 'CHANGE':
-	    /* table-name, schema-from, schema-to, (add, alter, remove)+ */
+	    /* table-name, schema-from, schema-to, (add, alter, remove, split)+ */
 	    for ($i = 3; $i < count($child); $i++) {
-		$output .= $this->createSql($child[$i], $i, count($child) - 1, $node);
+		if ($child[$i]['name'] == 'SPLIT') {
+		    /* Label remaining sql as R_ so it will execute after upgrade code */
+		    $output .= "# R" . substr($node['base'], 1) . "\n";
+		} else {
+		    $output .= $this->createSql($child[$i], $i, count($child) - 1, $node);
+		}
 	    }
 	    $output .= $this->generateSchemaUpdate($child);
 	    break;
@@ -951,10 +967,15 @@ class Db2Generator extends BaseGenerator {
 			break;
 
 		    case 'KEY':
-			$output .= 'ALTER TABLE DB_TABLE_PREFIX' .
-			    $parent['child'][0]['content'] . ";\n\n";
-			$output .= '  DROP KEY DB_COLUMN_PREFIX' . $c['child'][0]['content'];
-			$output .= ";\n\n";
+			if (empty($c['attrs']['PRIMARY'])) {
+			    $crc = $this->getIndexCrc($c['child']);
+			    $output .= 'DROP INDEX DB_TABLE_PREFIX' .
+				$parent['child'][0]['content'] . '_' . $crc . ";\n\n";
+			} else {
+			    /* Constraint name unknown -- unable to drop */
+			    $output .= '11. UNIMPLEMENTED: DROP PRIMARY KEY ' .
+				$parent['child'][0]['content'] . "\n";
+			}
 			break;
 
 		    case 'INDEX':
