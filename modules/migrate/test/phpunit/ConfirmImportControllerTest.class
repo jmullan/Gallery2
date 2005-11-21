@@ -748,8 +748,8 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	    $this->assertEquals(1, count($comments), 'number of comments');
 	    if (!empty($comments)) {
 		$this->assertEquals(array('209.98.212.219',
-					  'foo',
-					  'This is a terrific picture!  Hooray!',
+					  "Voil\xc3\xa0 du texte",
+					  "contenant des caract\xc3\xa8res accentu\xc3\xa9s.",
 					  1088916185
 					  ),
 				    array($comments[0]->_host,

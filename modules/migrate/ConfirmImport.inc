@@ -1238,7 +1238,9 @@ class ConfirmImportController extends GalleryController {
 						      'unknown' :
 						      $importComment->IPNumber);
 				    if ($commenterId == $guestUserId) {
-					$comment->setSubject($importComment->name);
+					$comment->setSubject(
+					    GalleryCoreApi::convertToUtf8($importComment->name,
+									  $sourceEncoding));
 				    } else {
 					$comment->setSubject('');
 				    }
