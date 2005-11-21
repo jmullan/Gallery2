@@ -159,7 +159,6 @@ class Db2DatabaseStorage extends DatabaseStorage {
         case 'BITAND':
 	    $sql = 'G2_BIT_AND (CAST(' . $args[0] . ' AS CHAR(32)), ' .
 		'CAST(' . $args[1] . ' AS CHAR(32)))';
-	    $sql = 'BITAND(' . $args[0] . ', ' . $args[1] . ')';
             break;
 
         case 'UNIX_TIMESTAMP':
