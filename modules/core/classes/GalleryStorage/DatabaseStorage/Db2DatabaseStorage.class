@@ -191,7 +191,7 @@ class Db2DatabaseStorage extends DatabaseStorage {
 
 	case 'LIKE':
 	    /* DB2's LIKE predicate support is very restrictive.  No non-strings, no SQL UDFs. */
-	    $sql = 'G2_LIKE(' . $args[0] . ', ' . $args[1] . ')';
+	    $sql = 'G2_LIKE(' . $args[0] . ', ' . $args[1] . ') = 1';
 	    break;
 
         default:
