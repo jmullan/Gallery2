@@ -1514,6 +1514,31 @@ class DatabaseStorageExtras /* the other half of DatabaseStorage */ {
     }
 
     /**
+     * @see DatabaseStorage::_executeSqlFile
+     */
+    function executeSqlFile($fileName) {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+
+	if (!$platform->file_exists($fileName)) {
+	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__,
+					"File $fileName does not exist");
+	}
+	
+	if (($buffer = $platform->file_get_contents($fileName)) === false) {
+	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__,
+					"Unable to read file $fileName");
+	}
+
+	$ret = $this->_executeSql($buffer);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	return GalleryStatus::success();
+    }
+
+    /**
      * @see GalleryStorage::cleanStore
      */
     function cleanStore() {

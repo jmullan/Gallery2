@@ -669,6 +669,19 @@ class DatabaseStorage /* implements GalleryStorage */ {
     }
 
     /**
+     * Execute a given SQL file against the database.  Prefix table and column
+     * names as necessary.  Split multiple commands in the file into separate
+     * Execute() calls.
+     *
+     * @param string absolute path of the sql file
+     * @return object GalleryStatus a status code
+     */
+    function _executeSqlFile($fileName) {
+	$extras =& $this->_getExtras();
+	return $extras->executeSqlFile($fileName);
+    }
+
+    /**
      * Translate all table and column names from the [Entity::member] notation to
      * table.column notation.
      *
