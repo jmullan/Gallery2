@@ -2,6 +2,7 @@
 
 -- AND two bits
 DROP FUNCTION BIT_AND(SMALLINT, SMALLINT);
+
 CREATE FUNCTION BIT_AND (X SMALLINT, Y SMALLINT) RETURNS INTEGER
 BEGIN ATOMIC
 IF x = 1  AND y = 1 THEN
@@ -13,13 +14,14 @@ END;
 
 -- Bitwise AND (two streams of 32 bits)
 DROP FUNCTION G2_BIT_AND(CHAR(32), CHAR(32));
+
 CREATE FUNCTION G2_BIT_AND (BITSTRING1 CHAR(32), BITSTRING2 CHAR(32)) RETURNS CHAR(32)
 BEGIN ATOMIC
-		
+-- Declarations	
 DECLARE counter INTEGER;
 DECLARE tempint INTEGER;
 DECLARE retval CHAR(32);
-		
+-- AND bit by bit
 SET counter = 1;
 WHILE counter <= 32 DO
   SET tempint = BIT_AND(CAST(SUBSTR(BITSTRING1, counter, 1) AS SMALLINT),
@@ -35,9 +37,9 @@ RETURN retval;
 END;
 
 DROP FUNCTION G2_LIKE(VARCHAR(4000), VARCHAR(4000));
+
 CREATE FUNCTION G2_LIKE (subject VARCHAR(4000), pattern VARCHAR(4000)) RETURNS INTEGER
 BEGIN ATOMIC
-
 --
 -- G2_LIKE()
 --
@@ -56,35 +58,28 @@ BEGIN ATOMIC
 --
 --   '_' = 1 character
 --
-
 DECLARE subject_position, pattern_position,
         percent_position, underscore_position,
         pattern_chunk_end, rc, character_required INTEGER;
 DECLARE next_chunk VARCHAR(4000);
-
 -- Get rid of a few oddball cases (when no subject string provided) right off the bat
 IF LENGTH(subject) = 0 AND LENGTH(pattern) = 0  -- ('', '')
 THEN
   RETURN 1;
 END IF;
-
 IF (LENGTH(subject) = 0) AND (SUBSTR(pattern, 1, 1) != '%')  -- ('', 'x%')
 THEN
   RETURN 0;
 END IF;
-
 -- Oddballs are out of the way, we know that a subject line exists.  Let's rock.
 SET subject_position = 1;
 SET pattern_position = 1;
-
 WHILE (pattern_position <= LENGTH(pattern)) DO
-
   IF subject_position > LENGTH(subject)            -- We've reached the end of the subject line,
   AND SUBSTR(pattern, pattern_position, 1) != '%'  -- and remainder of pattern starts with anything 
   THEN                                             -- other than '%'
     RETURN 0;
   END IF;
-
   IF (SUBSTR(pattern, pattern_position, 1) = '_') OR
   (SUBSTR(pattern, pattern_position, 1) = SUBSTR(subject, subject_position, 1))
   THEN                                     -- Current two characters match (including '_' wildcard)
@@ -92,17 +87,14 @@ WHILE (pattern_position <= LENGTH(pattern)) DO
   ELSE                                     -- Current two characters do not match
     IF SUBSTR(pattern, pattern_position, 1) = '%'
     THEN  -- start processing a 'chunk'
-
       --
       -- Is there more pattern after the current '%'?
       --
       IF LENGTH(pattern) > pattern_position
       THEN
-
         -- Are there any more wildcards ('%' or '_') in the pattern after this one?
         SET percent_position = LOCATE('%', pattern, pattern_position + 1);
         SET underscore_position = LOCATE('_', pattern, pattern_position + 1);
-
         --
         -- There is another wildcard later in the pattern,
         --
@@ -125,14 +117,12 @@ WHILE (pattern_position <= LENGTH(pattern)) DO
               END IF;
             END IF;
           END IF;
-
         ELSE
           --
           -- There are no more wildcards in the pattern,
           --
           SET pattern_chunk_end = LENGTH(pattern);
         END IF;
-
         -- If there's another wildcard immediately following this one, there isn't really a chunk 
         -- to process. If that next wildcard is a '_', we want to simply increment the pattern and 
         -- subject positions. If that next wildcard is a '%', we want to increment only the pattern
@@ -165,7 +155,6 @@ WHILE (pattern_position <= LENGTH(pattern)) DO
                                   pattern_position + 1,
                                   pattern_chunk_end - pattern_position);
           SET rc = LOCATE(next_chunk, subject, subject_position);
-
           IF rc = 0
           THEN
             RETURN 1;
@@ -184,12 +173,9 @@ WHILE (pattern_position <= LENGTH(pattern)) DO
       RETURN 0;
     END IF;  -- if current pattern char is '%'
   END IF;  -- current characters match
- 
   SET subject_position = subject_position + 1;
   SET pattern_position = pattern_position + 1;
-                
 END WHILE;
-  
 -- We've reached the end of the pattern
 IF (subject_position - 1) < LENGTH(subject)  -- there are more characters in the subject
 THEN
@@ -199,10 +185,8 @@ THEN
   ELSE  -- if there is more subject left, that's bad
     RETURN 0;
   END IF;
-END IF;
-                
-RETURN 1;
-                
+END IF;      
+RETURN 1;         
 END;
 
 --
