@@ -1,10 +1,7 @@
--- Author: Larry Menard, 11/2005
-
--- AND two bits
-DROP FUNCTION BIT_AND(SMALLINT, SMALLINT);
-
 CREATE FUNCTION BIT_AND (X SMALLINT, Y SMALLINT) RETURNS INTEGER
 BEGIN ATOMIC
+-- Author: Larry Menard, 11/2005
+-- AND two bits
 IF x = 1  AND y = 1 THEN
   RETURN 1;
 ELSE 
@@ -12,11 +9,10 @@ ELSE
 END IF;
 END;
 
--- Bitwise AND (two streams of 32 bits)
-DROP FUNCTION G2_BIT_AND(CHAR(32), CHAR(32));
-
 CREATE FUNCTION G2_BIT_AND (BITSTRING1 CHAR(32), BITSTRING2 CHAR(32)) RETURNS CHAR(32)
 BEGIN ATOMIC
+-- Author: Larry Menard, 11/2005
+-- Bitwise AND (two streams of 32 bits)
 -- Declarations	
 DECLARE counter INTEGER;
 DECLARE tempint INTEGER;
@@ -36,10 +32,10 @@ END WHILE;
 RETURN retval;
 END;
 
-DROP FUNCTION G2_LIKE(VARCHAR(4000), VARCHAR(4000));
-
 CREATE FUNCTION G2_LIKE (subject VARCHAR(4000), pattern VARCHAR(4000)) RETURNS INTEGER
 BEGIN ATOMIC
+--
+-- Author: Larry Menard, 11/2005
 --
 -- G2_LIKE()
 --
@@ -186,9 +182,7 @@ THEN
     RETURN 0;
   END IF;
 END IF;      
-RETURN 1;         
-END;
-
+RETURN 1;
 --
 -- Testcases for G2_LIKE
 --
@@ -231,4 +225,5 @@ END;
 --                 '_The quick%jumped over the lazy dog')
 -- values g2_like ('', 'Bar')
 -- values g2_like ('The quick brown fox jumped over the lazy dog', 
---                 'The quick%jumped over the lazy dog_')
+--                 'The quick%jumped over the lazy dog_')         
+END;

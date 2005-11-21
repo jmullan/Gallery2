@@ -112,13 +112,36 @@ class Db2DatabaseStorage extends DatabaseStorage {
      * @see DatabaseStorage::configureStore      
      */          
     function configureStore($moduleId) {
+	global $gallery;
 	if ($moduleId == 'core') {
-	    /* Install our custom aggregate function */
-	    $ret = $this->_executeSqlFile(dirname(__FILE__) . '/CreateDb2Udfs.sql');
+	    /* Install our user defined functions */
+	    $platform = $gallery->getPlatform();
+	    $sqlFile = dirname(__FILE__) . '/CreateDb2Udfs.sql';
+	    if (!$platform->file_exists($sqlFile)) {
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	    if (($sqlData = $platform->file_get_contents($sqlFile)) === false) {
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	    
+	    $extras =& $this->_getExtras();
+	    $ret = $extras->_executeSql($sqlData );
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
+	    
+	    /* Install our custom aggregate function */
+	    /* executeSqlFile doesn't exist right now
+	    $ret = $this->_executeSqlFile(dirname(__FILE__) . '/CreateDb2Udfs.sql');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    */
 	    /*
 	     * XXX: At some point figure out a way to detect if the UDFs are
 	     * already there before trying to install them again.
@@ -159,7 +182,7 @@ class Db2DatabaseStorage extends DatabaseStorage {
         case 'BITAND':
 	    $sql = 'G2_BIT_AND (CAST(' . $args[0] . ' AS CHAR(32)), ' .
 		'CAST(' . $args[1] . ' AS CHAR(32)))';
-	    $sql = 'BITAND(' . $args[0] . ', ' . $arg[1] . ')';
+	    $sql = 'BITAND(' . $args[0] . ', ' . $args[1] . ')';
             break;
 
         case 'UNIX_TIMESTAMP':
