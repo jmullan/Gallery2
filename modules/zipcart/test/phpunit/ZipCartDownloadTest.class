@@ -38,18 +38,22 @@ class ZipCartDownloadTest extends GalleryTestCase {
 	$this->GalleryTestCase($methodName);
     }
 
-    function testDownloadIE() {
+    function setUp() {
 	global $gallery;
-	$gallery->_phpVm = new ZipCartDownloadPhpVm($this);
-	$gallery->setConfig('data.gallery.tmp', '/data/tmp/');
-	GalleryUtilities::putRequestVariable('file', 'test.zip');
-	$_SERVER['HTTP_USER_AGENT'] = 'This is MSIE 6 browser';
+	parent::setUp();
 
-	list ($ret, $view) = GalleryView::loadView('zipcart.Download');
+	list ($ret, $this->_view) = GalleryView::loadView('zipcart.Download');
 	if ($ret->isError()) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$gallery->_phpVm = new ZipCartDownloadPhpVm($this);
+	$gallery->setConfig('data.gallery.tmp', '/data/tmp/');
+    }
+
+    function testDownloadIE() {
+	global $gallery;
 	$platform = new UnitTestPlatform();
 	$platform->setReply('is_readable', array('/data/tmp/test.zip'), true);
 	$platform->setReply('filesize', array('/data/tmp/test.zip'), 123);
@@ -61,8 +65,11 @@ class ZipCartDownloadTest extends GalleryTestCase {
 	$platform->setReply('unlink', array('/data/tmp/test'), true);
 	$gallery->setPlatform($platform);
 
+	GalleryUtilities::putRequestVariable('file', 'test');
+	$_SERVER['HTTP_USER_AGENT'] = 'This is MSIE 6 browser';
+
 	ob_start();
-	$ret = $view->renderImmediate(array(), array());
+	$ret = $this->_view->renderImmediate(array(), array());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -78,16 +85,6 @@ class ZipCartDownloadTest extends GalleryTestCase {
 
     function testDownloadMultipart() {
 	global $gallery;
-	$gallery->_phpVm = new ZipCartDownloadPhpVm($this);
-	$gallery->setConfig('data.gallery.tmp', '/data/tmp/');
-	GalleryUtilities::putRequestVariable('file', 'test.zip');
-	$_SERVER['HTTP_USER_AGENT'] = 'This is some Gecko browser';
-
-	list ($ret, $view) = GalleryView::loadView('zipcart.Download');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
 	$platform = new UnitTestPlatform();
 	$platform->setReply('is_readable', array('/data/tmp/test.zip'), true);
 	$platform->setReply('filesize', array('/data/tmp/test.zip'), 123);
@@ -99,8 +96,11 @@ class ZipCartDownloadTest extends GalleryTestCase {
 	$platform->setReply('unlink', array('/data/tmp/test'), true);
 	$gallery->setPlatform($platform);
 
+	GalleryUtilities::putRequestVariable('file', 'test');
+	$_SERVER['HTTP_USER_AGENT'] = 'This is some Gecko browser';
+
 	ob_start();
-	$ret = $view->renderImmediate(array(), array());
+	$ret = $this->_view->renderImmediate(array(), array());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -117,21 +117,36 @@ class ZipCartDownloadTest extends GalleryTestCase {
 
     function testCartRedirect() {
 	global $gallery;
-	$gallery->_phpVm = new ZipCartDownloadPhpVm($this);
-	$gallery->setConfig('data.gallery.tmp', '/data/tmp/');
-	GalleryUtilities::putRequestVariable('file', 'test.zip');
-
-	list ($ret, $view) = GalleryView::loadView('zipcart.Download');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
 	$platform = new UnitTestPlatform();
 	$platform->setReply('is_readable', array('/data/tmp/test.zip'), false);
 	$gallery->setPlatform($platform);
 
+	GalleryUtilities::putRequestVariable('file', 'test');
+
 	ob_start();
-	$ret = $view->renderImmediate(array(), array());
+	$ret = $this->_view->renderImmediate(array(), array());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$output = ob_get_contents();
+	ob_end_clean();
+
+	$this->assertEquals(1, count($this->_header), 'header lines');
+	$this->assertEquals('Location:', substr($this->_header[0], 0, 9), 'header');
+	$this->assertEquals('', $output, 'output');
+    }
+
+    function testBadFile() {
+	global $gallery;
+	$platform = new UnitTestPlatform();
+	$platform->setReply('is_readable', array('/data/tmp/passwd.zip'), false);
+	$gallery->setPlatform($platform);
+
+	/* Verify a malicious file param can't get out of the tmp dir */
+	GalleryUtilities::putRequestVariable('file', '../../etc/passwd');
+
+	ob_start();
+	$ret = $this->_view->renderImmediate(array(), array());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

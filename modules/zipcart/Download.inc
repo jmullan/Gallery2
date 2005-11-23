@@ -50,7 +50,7 @@ class DownloadView extends GalleryView {
 
 	$file = GalleryUtilities::getRequestVariables('file');
 	if (!empty($file)) {
-	    $file = $gallery->getConfig('data.gallery.tmp') . $file;
+	    $file = $gallery->getConfig('data.gallery.tmp') . basename($file) . '.zip';
 	}
 
 	if ($platform->is_readable($file)) {
