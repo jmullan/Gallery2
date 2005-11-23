@@ -46,6 +46,7 @@ class DownloadView extends GalleryView {
     function renderImmediate($status, $error) {
 	global $gallery;
 	$platform = $gallery->getPlatform();
+	$phpVm = $gallery->getPhpVm();
 
 	$file = GalleryUtilities::getRequestVariables('file');
 	if (!empty($file)) {
@@ -55,13 +56,13 @@ class DownloadView extends GalleryView {
 	if ($platform->is_readable($file)) {
 	    $size = $platform->filesize($file);
 	    /* Disable output compression (if necessary) since IE seems to have problems with it */
-	    @ini_set('zlib.output_compression', 0);
-	    
+	    @$phpVm->ini_set('zlib.output_compression', 0);
+
 	    $sendMultipart = !preg_match('{msie |safari}i',
 					 GalleryUtilities::getServerVar('HTTP_USER_AGENT'));
 	    if ($sendMultipart) {
 		/* Send multipart reply: zip + html-to-reload */
-		header('Content-Type: multipart/mixed; boundary=G2ZipCart');
+		$phpVm->header('Content-Type: multipart/mixed; boundary=G2ZipCart');
 		print "--G2ZipCart\nContent-Type: application/zip\n";
 		print "Content-Disposition: inline; filename=\"G2cart.zip\"\n";
 
@@ -72,10 +73,10 @@ class DownloadView extends GalleryView {
 	    } else {
 		/* Poor IE6 doesn't know multipart.. just send zip */
 		/* Safari doesn't get filename in multipart and may even crash */
-		header('Content-Type: application/zip');
-		header('Content-Disposition: inline; filename="G2cart.zip"');
+		$phpVm->header('Content-Type: application/zip');
+		$phpVm->header('Content-Disposition: inline; filename="G2cart.zip"');
 		if ($size > 0) {
-		    header("Content-Length: $size");
+		    $phpVm->header("Content-Length: $size");
 		}
 	    }
 
@@ -103,7 +104,7 @@ class DownloadView extends GalleryView {
 	    /* On reload return to View Cart */
 	    $urlGenerator =& $gallery->getUrlGenerator();
 	    $url = $urlGenerator->generateUrl(array('view' => 'cart.ViewCart'));
-	    header('Location: ' . str_replace('&amp;', '&', $url));
+	    $phpVm->header('Location: ' . str_replace('&amp;', '&', $url));
 	}
 
 	return GalleryStatus::success();
