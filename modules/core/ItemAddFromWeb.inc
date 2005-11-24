@@ -167,6 +167,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
 			$url = !empty($matches[2][$i]) ? $matches[2][$i]
 				: (!empty($matches[3][$i]) ? $matches[3][$i]
 				: $matches[4][$i]);
+			GalleryUtilities::sanitizeInputValues($url);
 			if (empty($url) || isset($seenBefore[$url])) {
 			    continue;
 			}
