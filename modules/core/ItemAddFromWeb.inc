@@ -167,6 +167,10 @@ class ItemAddFromWeb extends ItemAddPlugin {
 			$url = !empty($matches[2][$i]) ? $matches[2][$i]
 				: (!empty($matches[3][$i]) ? $matches[3][$i]
 				: $matches[4][$i]);
+
+			/* Avoid XSS by eliminating any HTML from the url */
+			$url = str_replace(array('<', '>'), array('&lt;', '&gt;'), $url);
+
 			if (empty($url) || isset($seenBefore[$url])) {
 			    continue;
 			}
