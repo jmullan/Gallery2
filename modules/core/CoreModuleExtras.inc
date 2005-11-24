@@ -1220,6 +1220,7 @@ class CoreModuleExtras {
 
 	case '1.0.0':
 	case '1.0.0.1':
+	case '1.0.0.2':
 	    /* Schema only upgrade */
 
 	case '1.0.1':
@@ -1266,6 +1267,9 @@ class CoreModuleExtras {
 
 	case '1.0.8':
 	    /* Added new argument to GalleryUrlGenerator::generateUrl() */
+
+	case '1.0.9':
+	    /* Security fix in zipcart */
 
 	case 'end of upgrade path':
 	    /*
@@ -1437,6 +1441,7 @@ $gallery->setConfig(\'cookieId\', \'' . $cookieId . '\');
 	case '0.9.37':
 	case '1.0.0':
 	case '1.0.0.1':
+	case '1.0.0.2':
 	case '1.0.1':
 	case '1.0.2':
 	case '1.0.3':
@@ -1461,6 +1466,7 @@ $gallery->setConfig(\'mode.maintenance\', false);
 	case '1.0.6':
 	case '1.0.7':
 	case '1.0.8':
+	case '1.0.9':
 
 	case 'end of upgrade path':
 	    /*
