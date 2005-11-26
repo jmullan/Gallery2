@@ -45,7 +45,7 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 	    unset($_REQUEST['theme']);
 	}
 
-	if (isset($_REQUEST['module'])) {
+	if (isset($_REQUEST['module']) && is_array($_REQUEST['module'])) {
 	    $totalPlugins += ($totalModules = count($_REQUEST['module']));
 	    foreach (array_keys($_REQUEST['module']) as $moduleId) {
 		$currentModule++;
@@ -85,7 +85,7 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 	    }
 	}
 
-	if (isset($_REQUEST['theme'])) {
+	if (isset($_REQUEST['theme']) && is_array($_REQUEST['theme'])) {
 	    $totalPlugins += ($totalThemes = count($_REQUEST['theme']));
 	    foreach (array_keys($_REQUEST['theme']) as $themeId) {
 		$currentTheme++;
