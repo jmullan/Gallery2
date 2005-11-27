@@ -68,7 +68,10 @@ foreach ($stepOrder as $stepName) {
     require("steps/$className.class");
 }
 
-if (!ini_get('session.auto_start')) {
+if (@ini_get('session.save_handler') != 'files') {
+    @ini_set('session.save_handler','files');
+    session_start();
+} else if (!ini_get('session.auto_start')) {
     session_start();
 }
 
