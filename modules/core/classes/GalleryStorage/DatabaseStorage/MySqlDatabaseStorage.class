@@ -101,6 +101,10 @@ class MySqlDatabaseStorage extends DatabaseStorage {
 	    $sql = $args[0] . ' & ' . $args[1];
 	    break;
 
+	case 'BIT_OR':
+	    $sql = 'BIT_OR(' . $args[0] . ')';
+            break;
+	    
 	case 'UNIX_TIMESTAMP':
 	    $sql = sprintf('UNIX_TIMESTAMP(%s)', $args[0]);
 	    break;

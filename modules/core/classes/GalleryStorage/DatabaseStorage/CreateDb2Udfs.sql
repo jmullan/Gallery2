@@ -227,3 +227,16 @@ RETURN 1;
 -- values g2_like ('The quick brown fox jumped over the lazy dog', 
 --                 'The quick%jumped over the lazy dog_')         
 END;
+
+CREATE FUNCTION G2_BIT_OR (VARCHAR(32))
+ EXTERNAL NAME 'g2_db2_jar:g2_db2_bit_or!g2_db2_bit_or'
+ RETURNS VARCHAR(64) FOR BIT DATA
+ RETURNS NULL ON NULL INPUT
+ FENCED
+ NOT VARIANT
+ NO SQL
+ PARAMETER STYLE DB2GENERAL
+ LANGUAGE JAVA
+ NO EXTERNAL ACTION
+ SCRATCHPAD
+ DISALLOW PARALLEL

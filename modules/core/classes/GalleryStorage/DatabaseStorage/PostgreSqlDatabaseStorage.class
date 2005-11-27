@@ -175,7 +175,11 @@ class PostgreSqlDatabaseStorage extends DatabaseStorage {
 	    $args = str_replace('?', 'B?', $args);
 	    $sql = $args[0] . ' & ' . $args[1];
 	    break;
-
+	    
+	case 'BIT_OR':
+	    $sql = 'BIT_OR(' . $args[0] . ')';
+            break;
+	    
 	case 'UNIX_TIMESTAMP':
 	    $sql = 'date_part(\'epoch\', ' . $args[0] . ')';
 	    break;

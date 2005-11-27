@@ -395,9 +395,16 @@ class ModuleTest extends GalleryTestCase {
 	$groupIds = array_keys($groupIds);
 	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
 
+	$storage =& $gallery->getStorage();
+	list ($ret, $bitOr) = $storage->getFunctionSql('BIT_OR',
+						       array('[GalleryAccessMap::permission]'));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
 	$query = '
 	SELECT
-	  BIT_OR([GalleryAccessMap::permission])
+	  ' . $bitOr . '
 	FROM
 	  [GalleryAccessMap],[GalleryAccessSubscriberMap]
 	WHERE
@@ -417,8 +424,6 @@ class ModuleTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
-	$storage =& $gallery->getStorage();
 
 	$permTable = array();
 	$result = $searchResults->nextResult();

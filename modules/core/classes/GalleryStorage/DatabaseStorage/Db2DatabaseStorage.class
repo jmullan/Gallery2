@@ -92,12 +92,15 @@ class Db2DatabaseStorage extends DatabaseStorage {
         }
 
         $this->_traceStart();
-	$recordSet1 = $tmpDb->Execute(
-	    'DROP FUNCTION G2_BIT_AND(CHAR(32), CHAR(32))');
+	$recordSet1 = $tmpDb->Execute('DROP FUNCTION G2_BIT_AND(CHAR(32), CHAR(32))');
 	$recordSet2 = $tmpDb->Execute('DROP FUNCTION BIT_AND(SMALLINT, SMALLINT)');
 	$recordSet3 = $tmpDb->Execute('DROP FUNCTION G2_LIKE(VARCHAR(4000), VARCHAR(4000))');
-	/* TODO: BIT_OR is still missing! */
-        /* $recordSet4 = $tmpDb->Execute('DROP FUNCTION BIT_OR(CHAR(32))'); */
+        $recordSet4 = $tmpDb->Execute('DROP FUNCTION G2_BIT_OR(CHAR(32))');
+	/*
+	 * These SQLJ.*_JAR() calls blow up, looks like CLI can't handle it
+	 * Instead, our configureStore() removes the g2_db2_jar if necessary
+	 * $recordSet5 = $tmpDb->Execute("CALL SQLJ.REMOVE_JAR ('g2_db2_jar')");
+	 */
         $tmpDb->Close();
         $this->_traceStop();
 
@@ -113,8 +116,85 @@ class Db2DatabaseStorage extends DatabaseStorage {
      */          
     function configureStore($moduleId) {
 	if ($moduleId == 'core') {
-	    /* Install our custom aggregate function */
-	    $ret = $this->_executeSqlFile(dirname(__FILE__) . '/CreateDb2Udfs.sql');
+	    global $gallery;
+	    
+	    /*
+	     * Need to install the JAR file for the java UDF here
+	     * because the path to the jar file is variable, so it can't be hard-coded in
+	     * 'createDb2Udfs.sql'.
+	     * The source code for the Java DB2 UDF can be downloaded at:
+	     * http://codex.gallery2.org/index.php/Gallery2:DB2
+	     *
+	     * The INSTALL call looks like it's unsupported in CLI (and therefore PHP)
+	     * so we have to use (shudder) CLP.
+	     *
+	     * And DB2 considers the CLP call to be a separate application, so it requires
+	     * its own CONNECT and CONNECT RESET.  Which means the userid and password need
+	     * to be included in the CLP script.
+	     *
+	     * 1. Create a SQL file with correct username, password, and jar file path
+	     *    which can be called from the command line
+	     * 2. Execute the db2 command line call
+	     * 3. Cleanup: Delete the SQL generated file 
+	     * 4. Verify the successful installation of the UDF
+	     * 5. Create the UDFs with a normal G2 DB connection
+	     */
+
+	    /* 1. Create a temporary file to hold the SQL */
+	    $platform = $gallery->getPlatform();
+	    $fileName = $platform->tempnam($gallery->getConfig('data.gallery.tmp'), 'db2_');
+
+	    $slash = $platform->getDirectorySeparator();
+	    $pathToJar = dirname(__FILE__) . $slash . 'g2_db2_bit_or.jar';
+	    
+	    $buf = sprintf("CONNECT TO gallery2 USER %s USING %s\n
+CALL SQLJ.REMOVE_JAR('g2_db2_jar')\n
+CALL SQLJ.INSTALL_JAR('file:%s', 'g2_db2_jar')\n
+CONNECT RESET", $this->_username, $this->_password, $pathToJar);
+
+	    $platform->atomicWrite($fileName, $buf);
+
+	    /* Assemble the command line call to install the Java UDF */
+	    if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
+	        $cmdArgs= array("db2cmd", "/c",  "/w",  "/i",  "db2", "-vf");
+	    } else {
+	        $cmdArgs = array("db2",  "-vf");
+	    }
+	    $cmdArgs[] = $fileName;
+
+	    /* 2. Execute the command */
+	    list ($success, $outputArray) = $platform->exec(array($cmdArgs));
+
+	    /*
+	     * 3. Cleanup: Delete the SQL file since it contains the DB username / password and
+	     *    it's not needed anymore
+	     */
+	    @$platform->unlink($fileName);
+
+	    /* 4. Check for successful installation of the UDF */
+	    if (!$success) {
+		return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
+	    }
+
+	    /* We expect a success code (DB20000I) right after the INSTALL_JAR line */
+	    $ok = $checkNextLine = false;
+	    while ($line = array_shift($results)) {
+		if (!$checkNextline && strpos(strtoupper($line), 'CALL SQLJ.INSTALL_JAR(') === 0) {
+		    $checkNextline = true;
+		} else if ($checkNextline && strpos($line, 'DB20000I ') === 0) {
+		    $ok = true;
+		    break;
+		} else {
+		    $checkNextline = false;
+		}
+	    }
+
+	    if (!$ok) {
+		return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+	    }
+ 
+	    /* 5. Create our user-defined DB2 functions */
+	    $ret = $this->_executeSqlFile(dirname(__FILE__) . $slash .'CreateDb2Udfs.sql');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -161,6 +241,16 @@ class Db2DatabaseStorage extends DatabaseStorage {
 		'CAST(' . $args[1] . ' AS CHAR(32)))';
             break;
 
+	case 'BIT_OR':
+	    /*
+	     * Emulation of a user-defined aggregate function by using a UDF that always operates
+	     * on 2 operands (last result from scratchpad and current row) and outputs the result,
+	     * plus it stores the result in the DB2 scratchpad. We use the built-in aggregate
+	     * function MAX() to select the last "intermediate" result of the BIT_OR
+	     */
+	    $sql = 'MAX(G2_BIT_OR (' . $args[0] . '))';
+            break;
+	    
         case 'UNIX_TIMESTAMP':
             $sql = 'date_part(\'epoch\', ' . $args[0] . ')';
             break;

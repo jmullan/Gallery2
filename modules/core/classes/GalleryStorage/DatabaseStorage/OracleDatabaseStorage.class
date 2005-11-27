@@ -99,6 +99,10 @@ class OracleDatabaseStorage extends DatabaseStorage {
 	    $sql = 'BITAND(' . $args[0] . ',' . $args[1] . ')';
 	    break;
 
+	case 'BIT_OR':
+	    $sql = 'BIT_OR(' . $args[0] . ')';
+            break;
+	    
 	case 'AS':
 	    $sql = '';
 	    break;
