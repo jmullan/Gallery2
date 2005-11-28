@@ -66,9 +66,9 @@ class DcrawToolkitHelper {
      *
      * @param string path to the dcraw binary
      * @return array object GalleryStatus general status of tests
-     *	             array ('name' => string: the name of the binary,
-     *		            'success' => boolean: test successful?
-     *		            'message' => string: the error message
+     *               array ('name' => string: the name of the binary,
+     *                      'success' => boolean: test successful?
+     *                      'message' => string: the error message
      *
      * @static
      */
@@ -85,8 +85,8 @@ class DcrawToolkitHelper {
 	    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null, null);
 	}
 
-	/* We need to translate some strings */
-	list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'dcraw');
+	/* Only used for translation, so ignore version mismatch during upgrade */
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'dcraw', true);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
