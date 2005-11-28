@@ -204,7 +204,7 @@ class PhotoAccessHelper {
 	for ($i = 0; $i < sizeof($entries); $i++) {
 	    $lines[] = sprintf('<image id="%d" url="%s" thumb-url="%s" height="%d" width="%d"/>',
                 $entries[$i]['id'], $entries[$i]['imageUrl'], $entries[$i]['thumbUrl'],
-                $entries[$i]['imageWidth'], $entries[$i]['imageHeight']);
+			       $entries[$i]['imageHeight'], $entries[$i]['imageWidth']);
 	}
 	$lines[] = '</add-cart-request>';
 
