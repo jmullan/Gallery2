@@ -155,7 +155,7 @@ class AdminDcrawView extends GalleryView {
 	if (isset($form['action']['test'])) {
 	    if (!empty($form['path'])) {
 		$gallery->startRecordingDebugSnippet();
-		list($ret, $testResults) = DcrawToolkitHelper::testBinary($form['path']);
+		list ($ret, $testResults) = DcrawToolkitHelper::testBinary($form['path']);
 		$debugSnippet = $gallery->stopRecordingDebugSnippet();
 
 		$success = true;
