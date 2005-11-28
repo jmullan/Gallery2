@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Installer 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-07-06 23:48+0200\n"
-"PO-Revision-Date: 2005-08-24 00:00+0200\n"
+"PO-Revision-Date: 2005-11-27 00:00+0200\n"
 "Last-Translator: Arnaud MOURONVAL <ArnaudMouronval@yahoo.com>\n"
 "Language-Team: French <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -101,9 +101,8 @@ msgstr "Paramétrage de la base de données"
 msgid "You must have the MySQL PHP module installed"
 msgstr "Le module PHP MySQL doit être installé"
 
-#, fuzzy
 msgid "You must have the ODBC module installed"
-msgstr "Le module PHP MySQL doit être installé"
+msgstr "Le module PHP ODBC doit être installé"
 
 msgid "You must have the PostgreSQL PHP module installed"
 msgstr "Le module PHP PostgreSQL doit être installé"
@@ -237,6 +236,7 @@ msgstr "Oracle (9i et plus récent)"
 
 msgid "(EXPERIMENTAL!) IBM DB2 for Unix/Windows, v8.2.2 and newer"
 msgstr ""
+"(Expérimental&nbsp;!) IBM DB2 pour Unix/Windows, v8.2.2 et plus récentes"
 
 msgid "Unknown DB type or no known tables information."
 msgstr ""
@@ -247,9 +247,9 @@ msgid "Could not find an unused table prefix similar to \"%s\"."
 msgstr ""
 "Impossible de trouver un préfixe de table similaire à \"%s\" et inutilisé."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Could not open schema file: \"%s\"."
-msgstr "Impossible d'ouvrir le fichier de test SQL \"%s\"."
+msgstr "Impossible d'ouvrir le fichier de schéma&nbsp;: \"%s\"."
 
 msgid ""
 "Failed to create a DB test sequence.Check the returned error message and "
@@ -268,7 +268,7 @@ msgstr ""
 "manquants et pour nettoyer la base de données."
 
 msgid "Missing SQL statements"
-msgstr ""
+msgstr "Instructions SQL manquantes"
 
 msgid ""
 "Check the returned error message and README.html for missing privileges and "
@@ -306,6 +306,10 @@ msgstr "Le module &laquo;Core&raquo; n'est que partiellement installé"
 
 msgid "Install More Modules"
 msgstr "Installation des modules supplémentaires"
+
+#, fuzzy
+msgid "Unable to initialize our Gallery session"
+msgstr "Impossible d'initialiser les données de Gallery"
 
 msgid "Unable to get the module list"
 msgstr "Impossible d'obtenir la liste des modules"
@@ -380,6 +384,17 @@ msgstr ""
 
 msgid "Safe Mode"
 msgstr "Mode Safe"
+
+msgid "Regular expressions"
+msgstr ""
+
+#, fuzzy, c-format
+msgid ""
+"Error: Your PHP is configured without support for %sPerl Compatible Regular "
+"Expressions%s. You must enable these functions before Gallery will run."
+msgstr ""
+"Erreur&nbsp;: votre installation de PHP est configurée avec l'option Safe "
+"Mode. Vous devez désactiver cette option pour que Gallery fonctionne."
 
 msgid "exec() allowed"
 msgstr "Autorisation de la commande exec()"
@@ -472,6 +487,28 @@ msgstr ""
 "taille des POST à %sb (paramètre <b>post_max_size</b> dans php.ini). Vous "
 "devez augmenter cette limite si vous désirez pouvoir télécharger des "
 "fichiers plus gros."
+
+msgid "Translation support"
+msgstr ""
+
+#, c-format
+msgid ""
+"Your webserver does not support localization. To enable support for "
+"additional languages please instruct your system administrator to "
+"reconfigure PHP with the %sgettext%s option enabled."
+msgstr ""
+
+#, c-format
+msgid ""
+"Your PHP is missing the function %sbind_textdomain_codeset%s. This means "
+"Gallery may display extended characters for some languages incorrectly."
+msgstr ""
+
+#, c-format
+msgid ""
+"Your PHP is missing the function %sdngettext%s. This means Gallery will be "
+"unable to translate plural forms."
+msgstr ""
 
 msgid "Zend compatibility mode"
 msgstr "Mode compatible avec Zend"
@@ -926,6 +963,9 @@ msgstr "Activer d'autres modules"
 msgid "Continue to Step %d&raquo;"
 msgstr "Continuer à l'étape %d&raquo;"
 
+msgid "Debug Output"
+msgstr ""
+
 msgid "Welcome to the Gallery Installer"
 msgstr "Bienvenue sur l'installeur de Gallery"
 
@@ -1374,6 +1414,3 @@ msgstr "Go"
 
 msgid "Begin Installation&raquo;"
 msgstr "Commencer l'installation&raquo;"
-
-#~ msgid "SQL test file \"%s\" not found."
-#~ msgstr "Fichier de test SQL \"%s\" non trouvé."

@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Installer 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-05-31 18:07+0000\n"
-"PO-Revision-Date: 2005-09-06 17:38+0100\n"
+"PO-Revision-Date: 2005-10-13 10:51+0100\n"
 "Last-Translator: Ermanno Baschiera <ebaschiera@gmail.com>\n"
 "Language-Team: Italian <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -96,6 +96,10 @@ msgid "Database Setup"
 msgstr "Configurazione Database"
 
 msgid "You must have the MySQL PHP module installed"
+msgstr "Devi avere il modulo PHP per MySQL installato"
+
+#, fuzzy
+msgid "You must have the ODBC module installed"
 msgstr "Devi avere il modulo PHP per MySQL installato"
 
 msgid "You must have the PostgreSQL PHP module installed"
@@ -220,6 +224,9 @@ msgstr "PostgreSQL v6.x (non ancora testato per bene)"
 msgid "Oracle (9i and newer)"
 msgstr "Oracle (9i e pi&ugrave; recente)"
 
+msgid "(EXPERIMENTAL!) IBM DB2 for Unix/Windows, v8.2.2 and newer"
+msgstr ""
+
 msgid "Unknown DB type or no known tables information."
 msgstr ""
 "Tipo di DB sconosciuto oppure nessuna informazione conosciuta nelle tabelle."
@@ -227,6 +234,10 @@ msgstr ""
 #, c-format
 msgid "Could not find an unused table prefix similar to \"%s\"."
 msgstr "Non ho potuto trovare un prefisso per tabelle libero simile a \"%s\"."
+
+#, fuzzy, c-format
+msgid "Could not open schema file: \"%s\"."
+msgstr "Non ho potuto aprire il file di test per SQL \"%s\"."
 
 msgid ""
 "Failed to create a DB test sequence.Check the returned error message and "
@@ -244,13 +255,8 @@ msgstr ""
 "errore ritornato e README.html per i privilegi mancanti e ripulisci il "
 "database."
 
-#, c-format
-msgid "SQL test file \"%s\" not found."
-msgstr "File di test per SQL \"%s\" non trovato."
-
-#, c-format
-msgid "Could not open SQL test file \"%s\"."
-msgstr "Non ho potuto aprire il file di test per SQL \"%s\"."
+msgid "Missing SQL statements"
+msgstr ""
 
 msgid ""
 "Check the returned error message and README.html for missing privileges and "
@@ -288,6 +294,10 @@ msgstr "Il modulo core &egrave; installato solo parzialmente."
 
 msgid "Install More Modules"
 msgstr "Installa Moduli Aggiuntivi"
+
+#, fuzzy
+msgid "Unable to initialize our Gallery session"
+msgstr "Impossibile inizializzare i dati di Gallery"
 
 msgid "Unable to get the module list"
 msgstr "Impossibile ottenere la lista dei moduli."
@@ -362,6 +372,17 @@ msgstr ""
 
 msgid "Safe Mode"
 msgstr "Safe Mode"
+
+msgid "Regular expressions"
+msgstr ""
+
+#, fuzzy, c-format
+msgid ""
+"Error: Your PHP is configured without support for %sPerl Compatible Regular "
+"Expressions%s. You must enable these functions before Gallery will run."
+msgstr ""
+"Errore: La versione di PHP che hai &egrave; configurata con safe mode "
+"abilitato. Devi disabilitare safe mode affinch&eacute; Gallery funzioni."
 
 msgid "exec() allowed"
 msgstr "exec() consentito"
@@ -450,6 +471,28 @@ msgstr ""
 "Warning: Il tuo PHP &egrave; configurato in modo da limitare i dati di post "
 "ad un massimo di %sb (parametro <b>post_max_size</b> in php.ini). Dovresti "
 "aumentare questo limite per permettere l'upload di file pi&ugrave; grandi."
+
+msgid "Translation support"
+msgstr ""
+
+#, c-format
+msgid ""
+"Your webserver does not support localization. To enable support for "
+"additional languages please instruct your system administrator to "
+"reconfigure PHP with the %sgettext%s option enabled."
+msgstr ""
+
+#, c-format
+msgid ""
+"Your PHP is missing the function %sbind_textdomain_codeset%s. This means "
+"Gallery may display extended characters for some languages incorrectly."
+msgstr ""
+
+#, c-format
+msgid ""
+"Your PHP is missing the function %sdngettext%s. This means Gallery will be "
+"unable to translate plural forms."
+msgstr ""
 
 msgid "Zend compatibility mode"
 msgstr "Compatibility mode di Zend"
@@ -897,6 +940,9 @@ msgstr "Attiva Altri Moduli"
 msgid "Continue to Step %d&raquo;"
 msgstr "Continua con la Fase %d&raquo;"
 
+msgid "Debug Output"
+msgstr ""
+
 msgid "Welcome to the Gallery Installer"
 msgstr "Benvenuto nell'Installer di Gallery"
 
@@ -1334,31 +1380,5 @@ msgstr "Vai"
 msgid "Begin Installation&raquo;"
 msgstr "Inizia Installazione&raquo;"
 
-#~ msgid ""
-#~ "There was an error installing the core module.  Here's the stack trace:"
-#~ msgstr ""
-#~ "C'&egrave; stato un errore durante l'installazione del modulo core. Qui "
-#~ "c'&egrave; lo stack trace:"
-
-#~ msgid ""
-#~ "Something went wrong when we tried to install the core module.  In the "
-#~ "boxes below you can find some debug information.  Report this in the %"
-#~ "sGallery Forums%s and we'll help you diagnose the problem."
-#~ msgstr ""
-#~ "Qualcosa &egrave; andato storto quando si &egrave; tentata "
-#~ "l'installazione del modulo core. Nei riquadri qui sotto puoi trovare "
-#~ "qualche informazione di debug. Riportale nei %sGallery Forums%s e ti "
-#~ "aiuteremo a capire qual &egrave; il problema."
-
-#~ msgid "Debug Output:"
-#~ msgstr "Output Debug:"
-
-#~ msgid "Multisite Setup"
-#~ msgstr "Configurazione Siti Multipli"
-
-#~ msgid "Configuration file located in %s"
-#~ msgstr "File di configurazione localizzato in %s"
-
-#~ msgid "Enter directory for configuration file below:"
-#~ msgstr ""
-#~ "Inserisci qui di seguito la directory per il file di configurazione:"
+#~ msgid "SQL test file \"%s\" not found."
+#~ msgstr "File di test per SQL \"%s\" non trovato."

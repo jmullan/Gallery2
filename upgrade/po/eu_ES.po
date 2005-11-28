@@ -1,0 +1,709 @@
+# $Id$
+#
+# Gallery - a web based photo album viewer and editor
+# Copyright (C) 2000-2005 Bharat Mediratta
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or (at
+# your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+# Piarres Beobide <pi@beobide.net>, 2005.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Gallery: Upgrader 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2005-11-06 22:51+0100\n"
+"PO-Revision-Date: 2005-11-09 21:25+0100\n"
+"Last-Translator: Piarres Beobide <pi@beobide.net>\n"
+"Language-Team: librezale.org <librezale@librezale.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.10.2\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+msgid "Unknown"
+msgstr "Ezezaguna"
+
+msgid "Authenticate"
+msgstr "Egiaztapena"
+
+msgid "<b>Error:</b> missing password."
+msgstr "<b> Errorea:</b> pasahitza falta da."
+
+msgid "<b>Error:</b> invalid password."
+msgstr "<b> Errorea:</b>okerreko pasahitza."
+
+msgid "Empty Cache"
+msgstr "Katxea Garbitu"
+
+msgid "Finished"
+msgstr "Amaituta"
+
+msgid "System Checks"
+msgstr "Sistema Egiaztapenak"
+
+msgid "PHP version >= 4.1.0 or >= 5.0.4"
+msgstr "PHP bertsioa >= 4.1.0 edo >= 5.0.4"
+
+#, c-format
+msgid ""
+"Error: Gallery 2 requires PHP version 4.1.0 or newer or 5.0.4 or newer. You "
+"have PHP version %s installed. Contact your webserver administrator to "
+"request an upgrade, available at the %sPHP website%s."
+msgstr ""
+"Errorea: Gallery 2 PHP 4.1.0 bertsio edo berriagoa edo 5.0.4 edo berriago "
+"behar du.Zuk php %s bertsioa duzu instalaturik. Harremanetan ipini "
+"zerbitzari kudeatzailearekin %sPGP webgunean%s eskuragarri dagoen "
+"eguneraketa eskatzeko."
+
+msgid "PHP Version"
+msgstr "PHP Bertsioa"
+
+msgid "FILE directive supported"
+msgstr "FITXATEGI direktiba onartzen da"
+
+msgid ""
+"Error: your PHP __FILE__ directive is not functioning correctly. Please file "
+"a support request with your webserver administrator or in the Gallery forums."
+msgstr ""
+"Errorea: PHP __FILE_ direktiba ez da behar bezla funtzionatzen ari. Mesedez "
+"bete zure web kudeatzailearekin batera Gallery foroan eskaera bat."
+
+msgid "FILE Directive"
+msgstr "FITXATEGI Direktiba"
+
+msgid "Safe mode disabled"
+msgstr "Modu segurua ezgaiturik"
+
+msgid ""
+"Error: Your version of PHP is configured with safe mode enabled.  You must "
+"disable safe mode before Gallery will run."
+msgstr ""
+"Errorea: Zure PHP modu segurua gaiturik du. Modu segurua ezgqaitu egin behar "
+"duzu Gallery erabiltzeko."
+
+msgid "Safe Mode"
+msgstr "Modu Segurua"
+
+msgid "Regular expressions"
+msgstr ""
+
+#, fuzzy, c-format
+msgid ""
+"Error: Your PHP is configured without support for %sPerl Compatible Regular "
+"Expressions%s. You must enable these functions before Gallery will run."
+msgstr ""
+"Errorea: Zure PHP modu segurua gaiturik du. Modu segurua ezgqaitu egin behar "
+"duzu Gallery erabiltzeko."
+
+msgid "exec() allowed"
+msgstr "exec() onarturik"
+
+msgid ""
+"Warning: The exec() function is disabled in your php by the "
+"<b>disabled_functions</b> parameter in php.ini. You won't be able to use "
+"modules that require external binaries (e.g. ImageMagick, NetPBM or Ffmpeg). "
+"This can only be set server-wide, so you will need to change it in the "
+"global php.ini."
+msgstr ""
+"Abisua: exec() funtzioa ezgaituri dago zure php konfigurazioan php.ini "
+"fitxategian <b>disabled_functions</b> parametroaz.  Kanpo bitarrik behar "
+"duten modulurik (adib ImageMagick, NetPBM edo Ffmpeg) erabili. Hau "
+"zerbitzari aldean bakarrik ezarri daiteke, beraz erabili nahi izanez gero "
+"php.ini orokorrean aldatu beharko duzu."
+
+msgid "set_time_limit() allowed"
+msgstr "set_time_limit() onarturik"
+
+#, c-format
+msgid ""
+"Warning: The set_time_limit() function is disabled in your php by the "
+"<b>disabled_functions</b> parameter in php.ini.  Gallery can function with "
+"this setting, but it will not operate reliably.  Any operation that takes "
+"longer than %d seconds will fail (and in some cases just return a blank "
+"page) possibly leading to data corruption."
+msgstr ""
+"Abisua: zure set_time_limit() funtzioa ez gaiturik dago php.ini fitxategiko "
+"<b>disabled_functions</b> parametroaren bidez.  Gallery-k ezarpena hauez "
+"funtziona dezake baina ez behar bezain ondo. %d segundutik gora behar duen "
+"edozein eskarik huts egin dezake (kasu batzuetan orri zuri bat itzuliaz) "
+"datu apurtze aukeraz."
+
+msgid "Memory limit"
+msgstr "Memoria muga"
+
+msgid "no limit"
+msgstr "mugarik gabe"
+
+#, c-format
+msgid ""
+"Warning: Your PHP is configured to limit the memory to %sb (<b>memory_limit</"
+"b> parameter in php.ini). You should raise this limit to at least <b>%sMB</"
+"b> for proper Gallery operation."
+msgstr ""
+"Abisua: PHP memoria erabilera %sb-ra mugaturik konfiguraturik dago php.ini "
+"(<b>memory_limit</b> parametroaz. Muga hau beintzat <b>%sMB</b>-ra handitu "
+"beharko zenuke Gallery-k behar bezal funtziona dezan."
+
+msgid "File uploads allowed"
+msgstr "Fitxategi Igoera gaiturik"
+
+msgid ""
+"Warning: Your PHP is configured not to allow file uploads (<b>file_uploads</"
+"b> parameter in php.ini). You will need to enable this option if you want to "
+"upload files to your Gallery with a web browser."
+msgstr ""
+"Abisua: Zure PHP fitxategi igoerak ez onartzeko konfiguraturik dago (php.ini "
+"fitxategian <b>file_uploads</b> parametroan bidez). Aukera hau gaitu beharko "
+"duzu galeriara web nabigatzaile baten bidez rgazkiak igo nahi izan ezkero."
+
+msgid "Maximum upload size"
+msgstr "Gehienezkoa igoera tamaina"
+
+#, c-format
+msgid ""
+"Warning: Your PHP is configured to limit the size of file uploads to %sb "
+"(<b>upload_max_filesize</b> parameter in php.ini). You should rise this "
+"limit to allow uploading bigger files."
+msgstr ""
+"Abisua: Zure php igotako fitxategi tamaina %sb-ra mugatzeko konfiguraturik "
+"dago (php.ini fitxategiko <b>upload_max_filesize</b> parametroaren bidez). "
+"Muga hau handitu beharko zenuke fitxategi handiagoak onartzeko"
+
+msgid "Maximum POST size"
+msgstr "Gehienezkoa MEZU tamaina"
+
+#, c-format
+msgid ""
+"Warning: Your PHP is configured to limit the post data to a maximum of %sb "
+"(<b>post_max_size</b> parameter in php.ini). You should raise this limit to "
+"allow uploading bigger files."
+msgstr ""
+"Abisua: PHP mezu tamaina %sb-ra mugatzeko konfiguraturik dago (php.ini "
+"fitxategiko <b>post_max_size</b> parametroaz).  Muga hau handiagotu beharko "
+"zenuke fitxategi handiagoak onartzeko."
+
+msgid "Translation support"
+msgstr ""
+
+#, c-format
+msgid ""
+"Your webserver does not support localization. To enable support for "
+"additional languages please instruct your system administrator to "
+"reconfigure PHP with the %sgettext%s option enabled."
+msgstr ""
+
+#, c-format
+msgid ""
+"Your PHP is missing the function %sbind_textdomain_codeset%s. This means "
+"Gallery may display extended characters for some languages incorrectly."
+msgstr ""
+
+#, c-format
+msgid ""
+"Your PHP is missing the function %sdngettext%s. This means Gallery will be "
+"unable to translate plural forms."
+msgstr ""
+
+msgid "Zend compatibility mode"
+msgstr "Zend bateragarritasun modua"
+
+#, c-format
+msgid ""
+"Warning: Your PHP is configured with Zend ze1_compatibility_mode which can "
+"cause PHP to crash.  Click <a href=\"%s\">here</a> to test your PHP.  If you "
+"see \"SUCCESS\" then your PHP is ok.  If you get an error then you must turn "
+"off ze1_compatibility_mode before proceeding."
+msgstr ""
+"Abisua: PHP Zend ze1_compatibility_mode onarpenaz konfiguraturik dago, honek "
+"PHP apurtzea eragin dezake <a href=\"%s\">Hemen</b> klikatu zure PHP "
+"probatzeko. \"Lortua\" ikusi ezkero PHP ondo d:ago. Errorea bat eman ezkero "
+"ze1_compatibility_mode ezgaitu beharko zenuke aurrera jarraitu aurretik."
+
+msgid "Storage Directory Permissions"
+msgstr "Biltegiratze Direktorio Baimenak"
+
+msgid "Test skipped due to other errors."
+msgstr "Proba beste errore batzugatik alde batetara utzia"
+
+#, c-format
+msgid ""
+"Error: Some files and or directories in your storage directory are not "
+"writeable by the webserver user. Run chown -R webserverUser %s OR run chmod -"
+"R 777 %s."
+msgstr ""
+"Errorea: Zure biltegiratze direktorioko zenbait direktorio eta fitxategi ez "
+"dira web zerbitzari erabiltzaileaz idazgarriak. chown -R WebErabiltzailea %s "
+"edo chmod -R 777 %s abiarazi."
+
+msgid "Gallery file integrity"
+msgstr "Gallery fitxategi integritatea"
+
+msgid "Manifest missing or inaccessible."
+msgstr "Manifestoa falta da edo ez da eskuragarri"
+
+msgid "Upgrade Core"
+msgstr "Muina Bertsio-berritu"
+
+msgid "Upgrade Modules"
+msgstr "Moduluak Bertsio-berritu"
+
+msgid "Unable to initialize Gallery session"
+msgstr ""
+
+#, c-format
+msgid "Unable to load the %s module"
+msgstr "Ezin da %s modulua kargatu"
+
+msgid "Upgrading modules"
+msgstr "Moduloak bertsio-berritzen"
+
+#, c-format
+msgid "%s module needs configuration"
+msgstr "%s moduloak konfiguraketa behar du"
+
+#, c-format
+msgid "Unable to upgrade the %s module"
+msgstr "Ezin da %s modulua bertsio-berritu"
+
+#, c-format
+msgid "Unable to load the %s theme"
+msgstr "Ezin da %s gaia kargatu"
+
+msgid "Upgrading themes"
+msgstr "Gaiak bertsio-berritzen"
+
+#, c-format
+msgid "Unable to upgrade the %s theme"
+msgstr "Ezin da %s gaia bertsio-berritu"
+
+msgid "Unable to commit database transaction"
+msgstr "Ezin da datu-base transakzioa egin"
+
+msgid "Unable to get the module list"
+msgstr "Ezin da modulu zerrenda eskuratu"
+
+msgid "Unable to get the theme list"
+msgstr "Ezin da gai zerrenda eskuratu"
+
+msgid "Other"
+msgstr "Bestelakoak"
+
+msgid "Themes"
+msgstr "Gaiak"
+
+msgid "Welcome"
+msgstr "Ongi etorri"
+
+msgid ""
+"In order to proceed with the install, we have to verify that you are who you "
+"claim.  When you performed the install, you entered a password which went "
+"into your config.php.  Type that in now.  Refer to your config.php if you've "
+"forgotten what you entered."
+msgstr ""
+"Instalazioarekin aurrera jarraitu ahal izateko zu esaten duzuna zareñla "
+"ziurtatu behar dugu.  Instalazioa egiterakoan config.php fitxategian "
+"gordetzen den pasahitz bat idatzi duzu.  Idatzi pasahitz hori orain.  "
+"Begiratu config.php fitxategia zein pasahitz sartu zenuen gogoratzen ez "
+"bazara"
+
+msgid "Password:"
+msgstr "Pasahitza:"
+
+msgid "Authenticate Me"
+msgstr "Egiaztatu iezadazu"
+
+msgid "Authentication successful!"
+msgstr "Autentifikazioa behar bezala egin da!"
+
+msgid "Delete Cache Directories"
+msgstr "Katxea Direktorioak Ezabatu"
+
+msgid ""
+"Gallery creates temporary copies of some of your data on your hard drive.  "
+"This helps it to run faster.  But when you upgrade, some of these files "
+"might be out of date so it's a good idea to get rid of them now.  Gallery "
+"will create them again as it needs them."
+msgstr ""
+"Gallery-k zure datu batzuen aldiroko kopiak gordetzen ditu disko gogorrean. "
+"Honek azkarragoa izaten laguntzen du.  Baina bertsio-berritzea, fitxategi "
+"hauetako batzuek zaharkiturik geratu zitezken beraz ideai ona da fixtataegi "
+"horiek orain berriz sortzea. Gallery-k fitxategi horiek behar dituenean "
+"berriz sortuko ditu."
+
+msgid ""
+"We were unable to clean the following cache directories.  This is probably "
+"ok, but if you notice any weird behaviour, you should try to delete these "
+"directories yourself.  It's perfectly safe to get rid of them at any time."
+msgstr ""
+"Ezin dira hurrengo direktorioa hauek garbitu.  Hau ziurrenik ondo dago, "
+"baina hauen inguruan arazorik aurkitu ezkero direktorio horiek eskuz "
+"ezabatzen saia zaitezke. Guztiz ziurra da ezabatu gabe uztea edo edozein "
+"momentutan ezabatzea."
+
+msgid ""
+"Even though there were errors, you can still continue.  Or, you can try "
+"deleting these directories yourself and then click the <b>Try Again</b> link "
+"below."
+msgstr ""
+"Bikoitia Edo eta egin klik<b></b> esteka.Nahi eta erroreak aurkitu, aurrera "
+"jarraitu dezakezu.  Edo, direktorio hauek eskuz ezabatu eta <b>Berriz "
+"Saiatu</b> lotura klikatu dezakezu."
+
+msgid "Try Again"
+msgstr "Saiatu berriro"
+
+msgid "We have successfully cleaned out your cache directories."
+msgstr "Katxe diraktorioak behar bezala garbitu dira."
+
+msgid "Finished!"
+msgstr "Amaituta!"
+
+msgid ""
+"Congratulations! Your Gallery 2 upgrade is complete!  To upgrade any "
+"additional Gallery 2 modules you may use the Site Administrator interface."
+msgstr ""
+"Zorionak! Gallery 2 bertsio-berritzea osatua da.  Beste modulu gehigarriak "
+"bertsio-berritzeko gune kudeaketa iterfazea erabil dezakezu."
+
+msgid "Go to my Gallery!"
+msgstr "Joan Galeriara!"
+
+msgid "Warning"
+msgstr "Abisua"
+
+#, c-format
+msgid ""
+"Your config.php appears to use the old form of multisite support.  Please "
+"see the %sHelp File%s for instructions to update your configuration before "
+"proceeding."
+msgstr ""
+"Zure config.php fitxategiak une-anitzeko onarpen zaharkitu erabiltzen duela "
+"dirudi. %sLaguntza fitxategia%s begiratu eguneraketa argibideentzat aurrera "
+"jarraitu aurretik."
+
+msgid "Welcome to the Gallery Upgrader"
+msgstr "Ongi etorri Galeria Bertsi-berritzera"
+
+msgid "Redo this step"
+msgstr "Urrats hau berregin"
+
+#, c-format
+msgid "Continue to Step %d&raquo;"
+msgstr "Jarraitu %d Urratsera&raquo;"
+
+msgid "Upgrade Status"
+msgstr "Bertsio-berritze egoera"
+
+#, c-format
+msgid "Upgrade %d%% complete"
+msgstr " %d%% Bertsio-berritzea osatua"
+
+msgid "Gallery: <strong>your photos</strong> on <strong>your website</strong>"
+msgstr ""
+"Galeria:<strong>Zure argazkiak </strong> -<strong>zure webgunean</strong>"
+
+#, c-format
+msgid "Missing files (%d)"
+msgstr "fitxategiak falta dira (%d)"
+
+msgid ""
+"Note: You're running Gallery from CVS, so recently removed files may appear "
+"here.  It might be safe to ignore these."
+msgstr ""
+"Oharra: Zu CVS-ko Gallery erabiltzen ari zara, beraz azken aldian "
+"ezabaturiko fitxategi batzu agertu daitezke.  Abisuari kasu ez egitea "
+"segurua izan daiteke."
+
+#, c-format
+msgid "Modified files (%d)"
+msgstr "Aldaturiko fitxategiak (%d)"
+
+msgid ""
+"Note: You're running Gallery from CVS, so some modified files are to be "
+"expected.  You can probably ignore these, but to be safe you should make "
+"sure that you do <b>cvs update -Pd</b> before continuing."
+msgstr ""
+"Oharra: CVS-ko Gallery bertsioa erabiltzen ari zara, beraz zenbait fitxategi "
+"aldatu izana posible da. Ziurrein alde batetara utz ditzakezu baina aurrera "
+"jarraitu aurretik <b>cvs update -Pd</b> egin duzula ziurtatu beharko zenuke."
+
+#, c-format
+msgid "Old files (%d)"
+msgstr "fitxategi zaharrak (%d)"
+
+msgid ""
+"These files are no longer part of Gallery. They probably won't cause any "
+"problems but it is a good idea to remove them to keep your install clean."
+msgstr ""
+"Fitxaegi hauek ez dira hemendik aurrera Gallery-ren zati.  Ziurrenik ez dute "
+"arazorik sortuko baina ideia ona izaten da ezabatzea instalazio garbi bat "
+"mantentzeko."
+
+msgid "Upgrade Steps"
+msgstr "Bertsio-berritze Urratsak"
+
+msgid "Upgrader Help"
+msgstr "Bertsio-berritzaile Laguntza"
+
+msgid "Start Over"
+msgstr "Berriz Hasi"
+
+msgid "Missing or invalid config.php"
+msgstr "config.php falta da edo baliogabea da"
+
+msgid "You tried to run the upgrade process but a valid config.php is missing."
+msgstr ""
+"Bertsio-berritze prozesua abiarazten saiatu zara baina baliozko config.php "
+"fitxategia falta da."
+
+msgid ""
+"If you've lost your config.php file when replacing the Gallery 2 files in "
+"the preparation for this upgrade, please restore it and try again."
+msgstr ""
+"Eguneraketa honetarako Gallery 2 fitxategiak ordezkatzean config.php "
+"fixtategia ezabatu baduzu, berreskuratu ezazu eta berriz saia zaitez."
+
+msgid ""
+"If you actually want to run the Gallery 2 installer, please follow the link "
+"below."
+msgstr ""
+"Orain Gallery 2 instalatzailea abiarazi nahi ezkero, beheko lotura jarraitu "
+"ezazu."
+
+msgid ""
+"If you want to upgrade from Gallery 1, you first need to install Gallery 2 "
+"and then use the import module to import your data from Gallery 1. Please "
+"follow the link below to install Gallery 2."
+msgstr ""
+"Gallery 1-etik eguneratu nahi izan ezkero, lehenik Gallery 2 instalatu ezazu "
+"eta gero inportatze modulua erabili Gallery 1-etik datuak inportatzeko."
+"Mesedez jarraitu behekaldeko lotura Gallery 2 instalatzeko"
+
+msgid "Go to the Gallery 2 Installer"
+msgstr "Joan Gallery 2 instalatzailera"
+
+msgid "Success"
+msgstr "Behar bezala egin da"
+
+msgid "Failed"
+msgstr "Huts egin du"
+
+msgid ""
+"If you are using Apache, create a file named .htaccess in the main Gallery "
+"directory with the following content:"
+msgstr ""
+"Apache rabiltzen ari bazara .htaccess izeneko fitxategi bat sortu Galeria "
+"direktorioan eduki honekin:"
+
+msgid "An error occurred while upgrading Gallery Core Module"
+msgstr "errorea gertatu da Galeria muin modulua bertsio-berritzean"
+
+#, c-format
+msgid ""
+"Something went wrong when we tried to upgrade the core module.  In the boxes "
+"below you can find some debug information.  Report this in the %sGallery "
+"Forums%s and we'll help you diagnose the problem."
+msgstr ""
+"Zerbait oker atera da muin modulua bertsio-berritzen saiatzean.  Azpiko "
+"kutxetan arazpen informazioa emango zaizu.  Honen berri eman %sGallery "
+"Foroetan%s eta arazoa aurkitzen lagunduko zaitugu."
+
+msgid "Stack Trace:"
+msgstr "Aztarna Pilaketa :"
+
+msgid "Debug Output:"
+msgstr "Arazpen Irteera:"
+
+msgid "Upgrading the Gallery Core Module"
+msgstr "Galeria Muin Modulua Bertsio-berritzen"
+
+msgid ""
+"The Gallery Core Module is the heart of the Gallery application.  You can "
+"upgrade most other modules using the Site Administration interface, but this "
+"module must be handled separately in order for the upgrade to go smoothly."
+msgstr ""
+"Gallery muin modulua galeria aplikazioaren bihotza da. Beste edozein modulu "
+"Gune Kudeaketa interfazearen bidez egunera dezakezu, baina modulu hau beste "
+"alde bateik kudeatu behar da eguneraketa leunki egiteko"
+
+msgid "Currently installed"
+msgstr "instalaturik"
+
+msgid "New version"
+msgstr "Bertsio berria"
+
+msgid "Config.php upgrade"
+msgstr "config.php bertsio-berritu"
+
+msgid "Required"
+msgstr "Beharrezkoa"
+
+#, c-format
+msgid ""
+"Unable to write to config.php in your %s directory.  Please change its "
+"permissions."
+msgstr ""
+"Ezin da zure %s direktorioko config.php fitxategian idatzi.  Mesedez "
+"baimenak aldatu iezazkiozu."
+
+msgid "You can do <i>chmod 666 config.php</i> to fix this."
+msgstr "<i>chmod 666 config.php</i> egin dezakezu hau konpontzeko."
+
+msgid ""
+"The installed version is newer than the version you are trying to upgrade "
+"to. You cannot downgrade G2. Please replace the gallery2 files with files "
+"from the currently installed version or later."
+msgstr ""
+"Instalatutako bertsioa bertsio berritzen saiatzen ari zaren bertsioa baino "
+"berriagoa da. Mesedez gallery 2 fitxategiak orain instalaturiko bertioko "
+"fitxategiez edo berriagoz ordezkatu."
+
+msgid ""
+"Before you upgrade, we <b>strongly recommend</b> that you make a backup of "
+"your database!  If you fail to make a backup and something goes wrong, there "
+"is a strong possibility that we will not be able to help you recover your "
+"data!  Refer to the following examples:"
+msgstr ""
+"Bertsio berritzearen aurretik zure datu-basearen babes-kopia bat egitea "
+"<b>oso gomendagarria</b> da!  Babes-kopia ez egin eta zerbait oker atera "
+"ezkero posible da zure datuak ezin berreskuratu izatea!  Hurrengo adibideak "
+"begiratu:"
+
+msgid "MySQL"
+msgstr "MySQL"
+
+#, c-format
+msgid "mysqldump -u%s -p<i>YourPassword</i> --opt %s > %s.sql"
+msgstr "mysqldump -u%s -p<i>ZurePasahitza</i> --opt %s > %s.sql"
+
+msgid "PostgreSQL"
+msgstr "PostgreSQL"
+
+#, c-format
+msgid "pg_dump --format=t %s > %s.sql"
+msgstr "pg_dump --format=t %s > %s.sql"
+
+msgid ""
+"Once the upgrade has begun, please be patient.  If you cancel or reload the "
+"page, you may interfere with the upgrade process."
+msgstr ""
+"Bein bertsio-berritzea hasi dela, mesedez itxoin.  Orrialdea utzi edo "
+"freskatuz gero bertsio-berritze prozesua apur daiteke."
+
+msgid "Begin Upgrade"
+msgstr "Bertsio-berritzea hasi"
+
+msgid "Recheck config.php"
+msgstr "conifg.php berriz egiaztatu"
+
+msgid "Upgraded Gallery Core Module successfully."
+msgstr "Galeria muin modulua behar bezala bertsio-berritu da."
+
+msgid "We've successfully upgraded the Gallery Core Module."
+msgstr "Galeria Muin Modulua behar bezala bertsio-berritu da."
+
+msgid ""
+"<b>Reminder</b>: Now check the permissions on config.php and make sure it is "
+"not globally writeable."
+msgstr ""
+"<b> Oroigarria</b> Orain config.php fitxategiaren baimenak begiratu beharko "
+"zenituzke edozeinek idatzi ez dezakela ziurtatzeko."
+
+msgid "Your Gallery Core Module is up to date!"
+msgstr "Galeria Muina Modulua eguneraturik dago!"
+
+msgid "Upgrade Other Modules"
+msgstr "Bestelakoak Moduluak Bertsio-berritu"
+
+msgid ""
+"The following modules can be automatically upgraded for you.  If you choose "
+"not to upgrade them now, you may experience problems with your Gallery.   "
+"You can always upgrade or deactivate them on the Site Administration page, "
+"or return to this page later so any decision you make here is not permanent."
+msgstr ""
+"Honako modulu hauek automatikoki bertsio-berritu daitezke.  Orain ez "
+"eguneratzea hautatu ezkero galeriarekin arazoak izan ditzakezu.  Edozein "
+"momentutan moduluak Gune Kudeaketa orrian bertsio-berritu edo ezgaitu "
+"diztakezu edo honera itzuli eta eguneraketa egin ebraz orain emandako "
+"erabakia beranduago alda dezakezu"
+
+msgid "Missing Code"
+msgstr "Kodea Falta da "
+
+msgid ""
+"The code for some plugins that were previously active can no longer be "
+"found. You must restore code for these plugins before this upgrade can "
+"continue. Code for the plugins must be the same version or newer than what "
+"was installed before."
+msgstr ""
+"Lehen gaiturik zeuden zenbait plugin kodea ez da luzaroago aurkizten. Plugin "
+"horien kodea berreskuratu beharko duzu bertsio-berritzea jarraitzeko.  "
+"Plugin horien kodea instalaturiko bertsiokoa edo berriagoa izan behar da."
+
+msgid "Module"
+msgstr "Modulua"
+
+msgid "Theme"
+msgstr "Gaia"
+
+msgid "Name"
+msgstr "Izena"
+
+msgid "Current"
+msgstr "Unekoa"
+
+msgid "New"
+msgstr "Berria"
+
+msgid "Description"
+msgstr "Azalpena"
+
+msgid "(un)check all"
+msgstr "(des)markatu denak"
+
+#, c-format
+msgid "Skip Upgrade and Continue to Step %d&raquo;"
+msgstr "Saltatu Bertsio-berritzea eta Jarraitu %d Urratsera&raquo;"
+
+msgid "Upgrade Selected Modules"
+msgstr "Hautatutako Moduluak Bertsio-berritu"
+
+#, c-format
+msgid "Upgraded the %s module successfully"
+msgstr "%s modulua behar bezala bertsio-berritu da"
+
+#, c-format
+msgid "Upgraded the %s theme successfully"
+msgstr "%s gaia behar bezala bertsio-berritu da"
+
+msgid "Upgrade More Modules"
+msgstr "Modulu Gehiago Bertsio-berritu"
+
+#, c-format
+msgid ""
+"Upgrading Gallery 2.0 requires %d steps. This upgrade tool will guide you "
+"through these steps and provide assistance along the way if additional steps "
+"are required. Please read the %sHelp File%s before proceeding."
+msgstr ""
+"Gallery 2.0 bertsio-berritzeko %d urrats bete behar dira. Bertsio-berritze "
+"tresna honek urrats orien zehar gidatu eta urrats gehigarririk egin beharko "
+"balitz laguntza ematen saiatuko da.  Irakurri %sLaguntza Fitxategia%s "
+"jarraitu aurretik."
+
+msgid "Select Language:"
+msgstr "Hizkuntza Hautatu:"
+
+msgid "Go"
+msgstr "Joan"

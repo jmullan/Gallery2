@@ -23,7 +23,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Core 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-08-25 16:49+0200\n"
-"PO-Revision-Date: 2005-10-10 18:37+0100\n"
+"PO-Revision-Date: 2005-10-13 10:36+0100\n"
 "Last-Translator: Ermanno Baschiera <ebaschiera@gmail.com>\n"
 "Language-Team: Italian <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -42,6 +42,12 @@ msgstr "&laquo; Nessuno &raquo;"
 
 msgid "forever"
 msgstr "per sempre"
+
+msgid "High Priority (Me first!)"
+msgstr ""
+
+msgid "Low Priority (I want to share!)"
+msgstr ""
 
 msgid "No Markup"
 msgstr "Nessun Markup"
@@ -102,9 +108,6 @@ msgstr "disinstalla"
 
 msgid "deactivate"
 msgstr "disattiva"
-
-msgid "Other"
-msgstr "Altro"
 
 #, fuzzy
 msgid "Performing Maintenance Tasks"
@@ -378,6 +381,9 @@ msgstr "modifica permessi di %s"
 msgid "reorder items"
 msgstr "riordina oggetti"
 
+msgid "Maintenance"
+msgstr "Manutenzione"
+
 msgid "Gallery Site Administration"
 msgstr "Amministrazione Sito Gallery"
 
@@ -521,6 +527,9 @@ msgstr "Gruppo"
 msgid "group"
 msgstr "gruppo"
 
+msgid "Other"
+msgstr "Altro"
+
 msgid "Movie"
 msgstr "Filmato"
 
@@ -619,8 +628,8 @@ msgstr "Questa pagina &egrave; conforme a XHTML 1.0"
 msgid "Donate to the Gallery project"
 msgstr "Fai una donazione al Gallery project"
 
-msgid "G2RC2: kthxbye"
-msgstr "G2RC2: kthxbye"
+msgid "G2.0: Unpossible!"
+msgstr "G2.0: Unpossible!"
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -717,6 +726,8 @@ msgid ""
 "Invalid return URL! The requested URL %s tried to insert a redirection to %s "
 "which is not a part of this Gallery."
 msgstr ""
+"URL di ritorno non valida! L'URL %s richiesta ha provato a inserire una "
+"redirezione verso %s che non &egrave; parte di questa Gallery."
 
 msgid "Back"
 msgstr "Indietro"
@@ -900,9 +911,6 @@ msgstr "Utenti"
 
 msgid "Groups"
 msgstr "Gruppi"
-
-msgid "Maintenance"
-msgstr "Manutenzione"
 
 msgid "Toolkit Priority"
 msgstr "Priorit&agrave; Strumenti"
@@ -1269,6 +1277,22 @@ msgstr ""
 msgid "Lock system"
 msgstr "Sistema di lock"
 
+msgid "Helper Processes"
+msgstr ""
+
+msgid ""
+"Some Gallery modules will use programs on your server to do image "
+"processing, archiving and other operations.  These programs can be very "
+"compute intensive and can impact the overall performance of a shared web "
+"server.  You can make these programs run at a lower priority so that they "
+"play nice.  If you're in a shared hosting environment and your web host is "
+"complaining, try setting your priority low."
+msgstr ""
+
+#, fuzzy
+msgid "Priority"
+msgstr "Priorit&agrave; Strumenti"
+
 msgid "Save"
 msgstr "Salva"
 
@@ -1364,10 +1388,11 @@ msgstr "Elimina l'utente <strong>%s</strong> e..."
 msgid "Assign a new owner for all items of %s"
 msgstr "Assegna un nuovo proprietario a tutti gli oggetti di %s"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Delete all items of %s and assign a new owner for all remaining non empty "
-"albums"
+"albums. Items that %s doesn't have permission to delete will also be "
+"reassigned to a new owner."
 msgstr ""
 "Elimina tutti gli oggetti di %s e assegna un nuovo proprietario ai restanti "
 "album non vuoti"
@@ -1673,9 +1698,10 @@ msgstr "Conferma la disinstallazione del modulo"
 msgid "Do you really want to uninstall the %s module?"
 msgstr "Sei sicuro di voler disinstallare il modulo %s?"
 
+#, fuzzy
 msgid ""
-"This will also remove any permissions and clean up any temporary data "
-"created by this module."
+"This will also remove any permissions and clean up any data created by this "
+"module."
 msgstr ""
 "Questo rimuover&agrave; anche tutti i permessi ed eliminer&agrave; ogni dato "
 "temporaneo creato da questo modulo."
@@ -1695,6 +1721,14 @@ msgid "All plugins are already up-to-date."
 msgstr ""
 
 msgid "Common Tasks"
+msgstr ""
+
+msgid "Warning: Experimental feature!"
+msgstr ""
+
+msgid ""
+"The repository features are currently experimental, and no actual repository "
+"has been set up yet, so none of these features will work at this time."
 msgstr ""
 
 msgid "Update Index"
@@ -2643,11 +2677,9 @@ msgstr "Devi inserire un valore maggiore o uguale a 0"
 msgid "Height"
 msgstr "Altezza"
 
-#, fuzzy
 msgid "There were errors saving some items"
 msgstr "Ci sono stati errori nel salvataggio di alcuni oggetti"
 
-#, fuzzy
 msgid "There were errors saving all items"
 msgstr "Ci sono stati errori nel salvataggio di tutti gli oggetti"
 
@@ -3147,6 +3179,13 @@ msgstr "Riordina"
 msgid "Continue..."
 msgstr "Continua..."
 
+msgid "Site is temporarily down for maintenance."
+msgstr ""
+
+#, fuzzy
+msgid "Admin Login"
+msgstr "Opzioni Amministrazione"
+
 msgid "Enter a URL"
 msgstr "Inserisci un URL"
 
@@ -3284,6 +3323,10 @@ msgid ""
 msgstr ""
 "Le password perdute o dimenticate possono essere richieste usando la pagina "
 "<a href=\"%s\">recupera password</a>"
+
+#, c-format
+msgid "Welcome, %s!"
+msgstr ""
 
 msgid "Account settings saved successfully"
 msgstr "Configurazione account salvata con successo"
@@ -3584,54 +3627,3 @@ msgstr "[test] Una seconda autorizzazione"
 
 msgid "Unit test theme"
 msgstr "Unit&agrave; di test tema"
-
-#, fuzzy
-#~ msgid "add album"
-#~ msgstr "aggiungi sotto-album"
-
-#~ msgid "edit permissions"
-#~ msgstr "modifica permessi"
-
-#, fuzzy
-#~ msgid "view permissions"
-#~ msgstr "modifica permessi"
-
-#~ msgid "login"
-#~ msgstr "login"
-
-#~ msgid "and then"
-#~ msgstr "e poi"
-
-#, fuzzy
-#~ msgid "choose a new theme for this album"
-#~ msgstr "seleziona un nuovo layout per questo album"
-
-#~ msgid "login as a site administrator"
-#~ msgstr "entra come amministratore"
-
-#, fuzzy
-#~ msgid "install or activate this theme"
-#~ msgstr "Installa o attiva questo layout"
-
-#~ msgid "To fix this problem you can either %s or %s."
-#~ msgstr "Per risolvere questo problema puoi %s oppure %s."
-
-#~ msgid "HDTV 16x9"
-#~ msgstr "HDTV 16x9"
-
-#~ msgid "Successfully deleted directory: /cache/entity"
-#~ msgstr "Directory /cache/entity eliminata con successo"
-
-#, fuzzy
-#~ msgid "Successfully deleted directory: /cache/theme"
-#~ msgstr "Directory /cache/module eliminata con successo."
-
-#~ msgid "Successfully deleted directory: /cache/module"
-#~ msgstr "Directory /cache/module eliminata con successo."
-
-#, fuzzy
-#~ msgid "Unable to delete directory: /cache/theme"
-#~ msgstr "Impossibile eliminare la directory: /cache/layout"
-
-#~ msgid "Missing Layout"
-#~ msgstr "Layout Mancante"
