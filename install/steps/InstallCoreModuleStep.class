@@ -30,12 +30,13 @@ class InstallCoreModuleStep extends InstallStep {
 	define('GALLERY_CONFIG_DIR', $_SESSION['configPath']);
 	require(dirname(__FILE__) . '/../../bootstrap.inc');
 	require(dirname(__FILE__) . '/../../init.inc');
-	
+
 	/* We want to log all debug output in our install log */
 	global $gallery;
 	$gallery->setDebug('logged');
+	$tag = substr(md5(microtime() . rand(1, 32767)), 0, 5);
 	$dataBase = $gallery->getConfig('data.gallery.base');
-	$installLogPath = sprintf('%s/install.log', $dataBase);
+	$installLogPath = sprintf('%s/install_%s.log', $dataBase, $tag);
 	$gallery->setDebugLogFile($installLogPath);
 	$templateData['installLogPath'] = $installLogPath;
 	$this->_createDebugLogHeader();
@@ -186,22 +187,22 @@ class InstallCoreModuleStep extends InstallStep {
     /* Adds a header to the debug log */
     function _createDebugLogHeader() {
 	global $gallery;
-	
+
 	$gallery->debug("\n\n
 --------------------------------------------------------
         Prepare installation of the core module
 --------------------------------------------------------\n\n");
     }
-    
+
     /* Adds some system information to the log */
     function _addSystemInformationToDebugLog() {
 	global $gallery;
 	global $galleryStub;
-	
+
 	$storage =& $gallery->getStorage();
 	$isCvsInstall = $galleryStub->getConfig('systemchecks.iscvsinstall');
 	$isCvsInstall = empty($isCvsInstall) ? "No" : "Yes";
-		
+
 	$gallery->debug("\n
 --------------------------------------------------------
 System and Gallery information:
