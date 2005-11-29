@@ -145,7 +145,7 @@ class Db2DatabaseStorage extends DatabaseStorage {
 	    $fileName = $platform->tempnam($gallery->getConfig('data.gallery.tmp'), 'db2_');
 
 	    $slash = $platform->getDirectorySeparator();
-	    $pathToJar = dirname(__FILE__) . $slash . 'g2_db2_bit_or.jar';
+	    $pathToJar = dirname(__FILE__) . $slash . 'g2_db2.jar';
 	    
 	    $buf = sprintf("CONNECT TO gallery2 USER %s USING %s\n
 CALL SQLJ.REMOVE_JAR('g2_db2_jar')\n
@@ -178,14 +178,14 @@ CONNECT RESET", $this->_username, $this->_password, $pathToJar);
 
 	    /* We expect a success code (DB20000I) right after the INSTALL_JAR line */
 	    $ok = $checkNextLine = false;
-	    while ($line = array_shift($results)) {
-		if (!$checkNextline && strpos(strtoupper($line), 'CALL SQLJ.INSTALL_JAR(') === 0) {
-		    $checkNextline = true;
-		} else if ($checkNextline && strpos($line, 'DB20000I ') === 0) {
+	    while ($line = array_shift($outputArray)) {
+		if (!$checkNextLine && strpos(strtoupper($line), 'CALL SQLJ.INSTALL_JAR(') === 0) {
+		    $checkNextLine = true;
+		} else if ($checkNextLine && strpos($line, 'DB20000I ') === 0) {
 		    $ok = true;
 		    break;
 		} else {
-		    $checkNextline = false;
+		    $checkNextLine = false;
 		}
 	    }
 
