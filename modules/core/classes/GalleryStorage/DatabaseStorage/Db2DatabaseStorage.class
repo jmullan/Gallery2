@@ -178,7 +178,7 @@ CONNECT RESET", $this->_username, $this->_password, $pathToJar);
 
 	    /* We expect a success code (DB20000I) right after the INSTALL_JAR line */
 	    $ok = $checkNextLine = false;
-	    while ($line = array_shift($outputArray)) {
+	    while (!is_null($line = array_shift($outputArray))) {
 		if (!$checkNextLine && strpos(strtoupper($line), 'CALL SQLJ.INSTALL_JAR(') === 0) {
 		    $checkNextLine = true;
 		} else if ($checkNextLine && strpos($line, 'DB20000I ') === 0) {
