@@ -438,7 +438,15 @@ function formatData($type,$tag,$intel,$data) {
 			if($data==0) $data = "Unknown or Auto";
 			else if($data==1) $data = "Daylight";
 			else if($data==2) $data = "Fluorescent";
-			else if($data==3) $data = "Tungsten";
+			else if($data==3) $data = "Tungsten (Incandescent light)";
+			else if($data==4) $data = "Flash";
+			else if($data==9) $data = "Fine Weather";
+			else if($data==10) $data = "Cloudy Weather";
+			else if($data==11) $data = "Shade";
+			else if($data==12) $data = "Daylight Fluorescent (D 5700 - 7100K)";
+			else if($data==13) $data = "Day White Fluorescent (N 4600 - 5400K)";
+			else if($data==14) $data = "Cool White Fluorescent (W 3900 -4500K)";
+			else if($data==15) $data = "White Fluorescent (WW 3200 - 3700K)";
 			else if($data==10) $data = "Flash";
 			else if($data==17) $data = "Standard Light A";
 			else if($data==18) $data = "Standard Light B";
@@ -446,6 +454,8 @@ function formatData($type,$tag,$intel,$data) {
 			else if($data==20) $data = "D55";
 			else if($data==21) $data = "D65";
 			else if($data==22) $data = "D75";
+			else if($data==23) $data = "D50";
+			else if($data==24) $data = "ISO Studio Tungsten";
 			else if($data==255) $data = "Other";
 			else $data = "Unknown: ".$data;
 		} else if($tag=="9209") { //Flash
