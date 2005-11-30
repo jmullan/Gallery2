@@ -91,21 +91,25 @@ class Db2DatabaseStorage extends DatabaseStorage {
             return $ret->wrap(__FILE__, __LINE__);
         }
 
-        $this->_traceStart();
-	$recordSet1 = $tmpDb->Execute('DROP FUNCTION G2_BIT_AND(CHAR(32), CHAR(32))');
-	$recordSet2 = $tmpDb->Execute('DROP FUNCTION BIT_AND(SMALLINT, SMALLINT)');
-	$recordSet3 = $tmpDb->Execute('DROP FUNCTION G2_LIKE(VARCHAR(4000), VARCHAR(4000))');
-        $recordSet4 = $tmpDb->Execute('DROP FUNCTION G2_BIT_OR(CHAR(32))');
+	$statements = array();
+	$statements[] = 'DROP FUNCTION G2_BIT_AND(CHAR(32), CHAR(32))';
+	$statements[] = 'DROP FUNCTION BIT_AND(SMALLINT, SMALLINT)';
+	$statements[] = 'DROP FUNCTION G2_LIKE(VARCHAR(4000), VARCHAR(4000))';
+	$statements[] = 'DROP FUNCTION G2_BIT_OR(CHAR(32))';
 	/*
 	 * These SQLJ.*_JAR() calls blow up, looks like CLI can't handle it
 	 * $recordSet5 = $tmpDb->Execute("CALL SQLJ.REMOVE_JAR ('g2_db2_jar')");
 	 */
+	foreach ($statements as $sql) {
+	    $this->_traceStart();	    
+	    $recordSet = $tmpDb->Execute($sql);
+	    $this->_traceStop();
+	    if (empty($recordSet)) {
+		return GalleryStatus::error(ERROR_STORAGE_FAILURE,
+					    __FILE__, __LINE__);
+	    }
+	}
         $tmpDb->Close();
-        $this->_traceStop();
-
-        if (empty($recordSet)) {
-            return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
-        }
 
         return GalleryStatus::success();
     }
