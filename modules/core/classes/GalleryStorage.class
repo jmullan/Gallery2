@@ -374,6 +374,29 @@ class GalleryStorage {
     }
 
     /**
+     * Return number for affected rows from last UPDATE/DELETE.
+     *
+     * @return array object GalleryStatus a status code
+     *               int number of rows
+     */
+    function getAffectedRows() {
+	if (!$this->_isInitialized) {
+	    $ret = $this->_impl->init();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    } else {
+		$this->_isInitialized = true;
+	    }
+	}
+
+	list ($ret, $affectedRows) = $this->_impl->getAffectedRows();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	return array(GalleryStatus::success(), $affectedRows);
+    }
+
+    /**
      * Configure the persistent store for this strategy, for the given module.
      *
      * @return object GalleryStatus a status code
@@ -636,7 +659,7 @@ class GalleryStorage {
      * @return object GalleryStatus a status code
      */
     function releaseLocks($lockIds) {
- 	if (!$this->_isInitialized) {
+	if (!$this->_isInitialized) {
 	    $ret = $this->_impl->init();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -659,7 +682,7 @@ class GalleryStorage {
      *               int an id
      */
     function getUniqueId() {
- 	if (!$this->_isInitialized) {
+	if (!$this->_isInitialized) {
 	    $ret = $this->_impl->init();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -756,7 +779,7 @@ class GalleryStorage {
      *               array strings table names
      */
     function extractClasses($query) {
-    	$regexp = '/\[([^:]*)::[^\]]*\]/';
+	$regexp = '/\[([^:]*)::[^\]]*\]/';
 	$classes = array();
 
 	preg_match_all($regexp, $query, $matches, PREG_PATTERN_ORDER);

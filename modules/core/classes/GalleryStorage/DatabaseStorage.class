@@ -534,6 +534,17 @@ class DatabaseStorage /* implements GalleryStorage */ {
     }
 
     /**
+     * @see GalleryStorage::getAffectedRows
+     */
+    function getAffectedRows() {
+	if (($affectedRows = $this->_db->Affected_Rows()) === false) {
+	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__),
+			 null);
+	}
+	return array(GalleryStatus::success(), $affectedRows);
+    }
+
+    /**
      * @see GalleryStorage::configureStore
      */
     function configureStore($moduleId) {
