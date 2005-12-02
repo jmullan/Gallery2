@@ -83,8 +83,7 @@ class SlideshowAppletView extends GalleryView {
 	    $SlideshowApplet['cookieDomain'] = $session->getCookieDomain();
 	    $SlideshowApplet['cookiePath'] = $cookiePath;
 	    $SlideshowApplet['album'] = $item->getId();
-	    //$SlideshowApplet['defaults'] = array();
-	    $SlideshowApplet['overrides'] = array('toSysOut' => 'true');
+
 	    $SlideshowApplet['userAgent'] = GalleryUtilities::getServerVar('HTTP_USER_AGENT');
 	    $SlideshowApplet['galleryVersion'] = 2;
 	    $SlideshowApplet['code'] = 'com.gallery.GalleryRemote.GRAppletSlideshow';
@@ -98,7 +97,16 @@ class SlideshowAppletView extends GalleryView {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    $SlideshowApplet['defaults'] = $params;
+		foreach (array('default', 'override') as $type) {
+			$SlideshowApplet[$type] = array();
+			if (!empty($params["slideshow${type}Variables"])) {
+				$variablesArray = explode('|', $params["slideshow${type}Variables"]);
+				foreach ($variablesArray as $variable) {
+					list($name, $value) = explode('=', $variable);
+					$SlideshowApplet[$type][$name] = $value;
+				}
+			}
+		}
 	}
 
 	$form['formName'] = '';

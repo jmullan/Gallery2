@@ -35,10 +35,10 @@
     {foreach key=key item=value from=$SlideshowApplet.extra}
     <param name="{$key}" value="{$value}"/>
     {/foreach}
-    {foreach key=key item=value from=$SlideshowApplet.defaults}
+    {foreach key=key item=value from=$SlideshowApplet.default}
     <param name="GRDefault_{$key}" value="{$value}"/>
     {/foreach}
-    {foreach key=key item=value from=$SlideshowApplet.overrides}
+    {foreach key=key item=value from=$SlideshowApplet.override}
     <param name="GROverride_{$key}" value="{$value}"/>
     {/foreach}
 
@@ -64,10 +64,10 @@
           {foreach key=key item=value from=$SlideshowApplet.extra}
           {$key}="{$value}"
           {/foreach}
-          {foreach key=key item=value from=$SlideshowApplet.defaults}
+          {foreach key=key item=value from=$SlideshowApplet.default}
           GRDefault_{$key}="{$value}"
           {/foreach}
-          {foreach key=key item=value from=$SlideshowApplet.overrides}
+          {foreach key=key item=value from=$SlideshowApplet.override}
           GROverride_{$key}="{$value}"
           {/foreach}
       >

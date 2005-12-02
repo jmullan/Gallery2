@@ -32,7 +32,7 @@ class SlideshowAppletModule extends GalleryModule {
 	$this->setId('slideshowapplet');
 	$this->setName($gallery->i18n('Slideshow Applet'));
 	$this->setDescription($gallery->i18n('Fullscreen slideshow using a Java applet'));
-	$this->setVersion('1.0.0');
+	$this->setVersion('1.0.1');
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('getItemLinks|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
@@ -53,6 +53,62 @@ class SlideshowAppletModule extends GalleryModule {
 	return array(GalleryStatus::success(), true);
     }
 
+    /**
+     * @see GalleryPlugin::upgrade()
+     */
+    function upgrade($currentVersion) {
+		global $gallery;
+		
+		$gallery->debug("<br/>SlideshowAppletModule::upgrade");
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'slideshowapplet');
+	if ($ret->isError()) {
+	return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	if (!isset($params['slideshowdefaultVariables'])) {
+		$gallery->debug("<br/>no default");
+		/* upgrade or install */
+		if (isset($params['slideshowRecursive']) && isset($params['slideshowMaxPictures'])) {
+			/* definitely upgrade */
+			$newDefault = "slideshowRecursive=${params['slideshowRecursive']}|"
+					."slideshowMaxPictures=${params['slideshowMaxPictures']}";
+
+			/* remove the old parameters */
+			$ret = GalleryCoreApi::removePluginParameter('module', 'slideshowapplet',
+					'slideshowRecursive');
+			if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+
+			$ret = GalleryCoreApi::removePluginParameter('module', 'slideshowapplet',
+					'slideshowMaxPictures');
+			if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+		} else {
+			/* install */
+			$newDefault = "slideshowRecursive=false|slideshowMaxPictures=0";
+		}
+		$gallery->debug("<br/>new default: $newDefault");
+		$ret = GalleryCoreApi::setPluginParameter('module', 'slideshowapplet',
+				'slideshowdefaultVariables', $newDefault);
+		if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	}
+
+	if (!isset($params['slideshowoverrideVariables'])) {
+		$gallery->debug("<br/>no override");
+		$ret = GalleryCoreApi::setPluginParameter('module', 'slideshowapplet',
+				'slideshowoverrideVariables', 'toSysOut=true');
+		if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	}
+
+	return GalleryStatus::success();
+    }
+	
     /**
      * @see GalleryModule::getItemLinks()
      */
