@@ -106,7 +106,7 @@ class SlideshowAppletModule extends GalleryModule {
 		}
 	}
 
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(), null);
     }
 	
     /**
