@@ -374,29 +374,6 @@ class GalleryStorage {
     }
 
     /**
-     * Return number for affected rows from last UPDATE/DELETE.
-     *
-     * @return array object GalleryStatus a status code
-     *               int number of rows
-     */
-    function getAffectedRows() {
-	if (!$this->_isInitialized) {
-	    $ret = $this->_impl->init();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    } else {
-		$this->_isInitialized = true;
-	    }
-	}
-
-	list ($ret, $affectedRows) = $this->_impl->getAffectedRows();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	return array(GalleryStatus::success(), $affectedRows);
-    }
-
-    /**
      * Configure the persistent store for this strategy, for the given module.
      *
      * @return object GalleryStatus a status code
