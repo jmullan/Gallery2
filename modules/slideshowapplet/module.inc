@@ -57,58 +57,54 @@ class SlideshowAppletModule extends GalleryModule {
      * @see GalleryPlugin::upgrade()
      */
     function upgrade($currentVersion) {
-		global $gallery;
-		
-		$gallery->debug("<br/>SlideshowAppletModule::upgrade");
-	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'slideshowapplet');
+	global $gallery;
+
+	list ($ret, $params) =
+	    GalleryCoreApi::fetchAllPluginParameters('module', 'slideshowapplet');
 	if ($ret->isError()) {
-	return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	if (!isset($params['slideshowdefaultVariables'])) {
-		$gallery->debug("<br/>no default");
-		/* upgrade or install */
-		if (isset($params['slideshowRecursive']) && isset($params['slideshowMaxPictures'])) {
-			/* definitely upgrade */
-			$newDefault = "slideshowRecursive=${params['slideshowRecursive']}|"
-					."slideshowMaxPictures=${params['slideshowMaxPictures']}";
+	    $gallery->debug("<br/>no default");
+	    /* upgrade or install */
+	    if (isset($params['slideshowRecursive']) && isset($params['slideshowMaxPictures'])) {
+		/* definitely upgrade */
+		$newDefault = 'slideshowRecursive=' . $params['slideshowRecursive'] .
+			      '|slideshowMaxPictures=' . $params['slideshowMaxPictures'];
 
-			/* remove the old parameters */
-			$ret = GalleryCoreApi::removePluginParameter('module', 'slideshowapplet',
-					'slideshowRecursive');
-			if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-			}
-
-			$ret = GalleryCoreApi::removePluginParameter('module', 'slideshowapplet',
-					'slideshowMaxPictures');
-			if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-			}
-		} else {
-			/* install */
-			$newDefault = "slideshowRecursive=false|slideshowMaxPictures=0";
-		}
-		$gallery->debug("<br/>new default: $newDefault");
-		$ret = GalleryCoreApi::setPluginParameter('module', 'slideshowapplet',
-				'slideshowdefaultVariables', $newDefault);
+		/* remove the old parameters */
+		$ret = $this->removeParameter('slideshowRecursive');
 		if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
+
+		$ret = $this->removeParameter('slideshowMaxPictures');
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    } else {
+		/* install */
+		$newDefault = 'slideshowRecursive=false|slideshowMaxPictures=0';
+	    }
+	    $gallery->debug("<br/>new default: $newDefault");
+	    $ret = $this->setParameter('slideshowdefaultVariables', $newDefault);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	}
 
 	if (!isset($params['slideshowoverrideVariables'])) {
-		$gallery->debug("<br/>no override");
-		$ret = GalleryCoreApi::setPluginParameter('module', 'slideshowapplet',
-				'slideshowoverrideVariables', 'toSysOut=true');
-		if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-		}
+	    $gallery->debug("<br/>no override");
+	    $ret = $this->setParameter('slideshowoverrideVariables', 'toSysOut=true');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	}
 
-	return array(GalleryStatus::success(), null);
+	return GalleryStatus::success();
     }
-	
+
     /**
      * @see GalleryModule::getItemLinks()
      */
@@ -131,19 +127,19 @@ class SlideshowAppletModule extends GalleryModule {
      * @see GalleryModule::getRewriteRules
      */
     function getRewriteRules() {
-        $rules = array();
+	$rules = array();
 
-        $rule = array();
-        $rule['comment'] = $this->translate('View Slideshow (Fullscreen)');
-        $rule['match'] = array('view' => 'slideshowapplet.SlideshowApplet');
-        $rule['pattern'] = 'v/%path%/slideshowapplet.html';
-        $rule['keywords'] = array(
-            'path' => array(
-                'pattern' => '([^?]+)',
-                'help' => $this->translate('Path to an item (eg, /album/image.jpg.html)')));
-        $rules[] = $rule;
+	$rule = array();
+	$rule['comment'] = $this->translate('View Slideshow (Fullscreen)');
+	$rule['match'] = array('view' => 'slideshowapplet.SlideshowApplet');
+	$rule['pattern'] = 'v/%path%/slideshowapplet.html';
+	$rule['keywords'] = array(
+	    'path' => array(
+		'pattern' => '([^?]+)',
+		'help' => $this->translate('Path to an item (eg, /album/image.jpg.html)')));
+	$rules[] = $rule;
 
-        return $rules;
+	return $rules;
     }
 
     /**
