@@ -524,8 +524,15 @@ class DatabaseSetupStep extends InstallStep {
 	    require_once(dirname(__FILE__) . '/../../modules/core/classes/Gallery.class');
 	    require_once(dirname(__FILE__) .'/../../modules/core/classes/GalleryDataCache.class');
 	    $GLOBALS['gallery'] =& new Gallery();
-	    $GLOBALS['gallery']->setConfig('data.gallery.base',
-					   $galleryStub->getConfig('data.gallery.base'));
+	    /*
+	     * GalleryInitFirstPass adds a trailing slash if necessary, but we don't call it in
+	     * all cases
+	     */
+	    $configPath = $galleryStub->getConfig('data.gallery.base');
+	    if ($configPath{strlen($configPath)-1} != DIRECTORY_SEPARATOR) {
+		$configPath .=  DIRECTORY_SEPARATOR;
+	    }
+	    $GLOBALS['gallery']->setConfig('data.gallery.base', $configPath);
 	    $GLOBALS['gallery']->setConfig('plugins.dirname',
 					   $galleryStub->getConfig('plugins.dirname'));
 	}
