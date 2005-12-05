@@ -1,24 +1,24 @@
 <?php
 /*
- * $RCSfile$
- *
- * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
- * your option) any later version.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
- */
+* $RCSfile$
+*
+* Gallery - a web based photo album viewer and editor
+* Copyright (C) 2000-2005 Bharat Mediratta
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or (at
+* your option) any later version.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+*/
 /**
  * @version $Revision$ $Date$
  * @package SlideshowApplet
@@ -30,201 +30,155 @@
  * @subpackage UserInterface
  */
 class SlideshowAppletSiteAdminController extends GalleryController {
-
+    
     /**
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
 	global $gallery;
-
+	
 	/* Make sure we have adequate permissions */
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
+	
 	$status = array();
 	$error = array();
-	/*if (isset($form['action']['save'])) {
-	    if (!isset($form['slideshowMaxPictures'])
-	    	    || !is_numeric($form['slideshowMaxPictures'])
-	    	    || ((int)$form['slideshowMaxPictures']) < 0) {
-		$error[] = 'form[error][limit]';
+	if (isset($form['action']['add'])) {
+	    $type = $form['variable']['type'];
+	    
+	    if (empty($form[$type]['name']) || empty($form[$type]['value'])) {
+		$error[] = "form[error][$type]";
 	    } else {
-		$key = 'slideshowRecursive';
-		$ret = GalleryCoreApi::setPluginParameter('module', 'slideshowapplet', $key,
-		    (isset($form[$key]) && $form[$key]) ? 1 : 0);
+		list ($ret, $variables) = $this->getVariables($type);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-
-		$key = 'slideshowMaxPictures';
-		$ret = GalleryCoreApi::setPluginParameter('module', 'slideshowapplet', $key,
-		    $form[$key]);
+		
+		/* modify it */
+		$variables[$form[$type]['name']] = $form[$type]['value'];
+		
+		/* serialize it again */
+		$ret = $this->setVariables($type, $variables);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-
-		$status['saved'] = 1;
 	    }
-	} else*/ if (isset($form['action']['add'])) {
-		$type = $form['variable']['type'];
-		
-		if (empty($form[$type]['name']) || empty($form[$type]['value'])) {
-			$error[] = "form[error][$type]";
-		} else {
-			list ($ret, $variables) = $this->getVariables($type);
-			if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-			}
-			
-			/* modify it */
-			$variables[$form[$type]['name']] = $form[$type]['value'];
-			
-			/* serialize it again */
-			$ret = $this->setVariables($type, $variables);
-			if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-			}
-		}
 	} else if (isset($form['action']['delete'])) {
-		$type = $form['variable']['type'];
+	    $type = $form['variable']['type'];
+	    
+	    if (empty($form['delete']['variable'])) {
+		$error[] = "form[error][nonexistent_variable]";
+	    } else {
+		list ($ret, $variables) = $this->getVariables($type);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 		
-		if (empty($form['delete']['variable'])) {
-			$error[] = "form[error][nonexistent_variable]";
-		} else {
-			list ($ret, $variables) = $this->getVariables($type);
-			if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+		/* delete it */
+		unset($variables[$form['delete']['variable']]);
+		
+		/* serialize it again */
+		$ret = $this->setVariables($type, $variables);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-			
-			/* delete it */
-			unset($variables[$form['delete']['variable']]);
-			
-			/* serialize it again */
-			$ret = $this->setVariables($type, $variables);
-			if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-			}
-		}
+	    }
 	}
-
-
+	
 	/* Figure out where to redirect upon success */
 	$method = empty($error) ? 'redirect' : 'delegate';
-	/*$results[$method]['mode'] = GalleryUtilities::getRequestVariables('mode');*/
 	$results[$method]['view'] = 'core.SiteAdmin';
 	$results[$method]['subView'] = 'slideshowapplet.SlideshowAppletSiteAdmin';
 	$results['status'] = $status;
 	$results['error'] = $error;
-
+	
 	return array(GalleryStatus::success(), $results);
     }
-	
-	function implode_with_key($assoc, $inglue = '=', $outglue = '&'){
-		$return = '';
-		if (!empty($assoc)) {
-			foreach ($assoc as $tk => $tv) {
-				$return = ($return != '' ? $return . $outglue : '') .
-				$tk . $inglue . $tv;
-			}
-		}
-		return $return;
+    
+    function implode_with_key($assoc, $inglue = '=', $outglue = '&'){
+	$return = '';
+	if (!empty($assoc)) {
+	    foreach ($assoc as $tk => $tv) {
+		$return = ($return != '' ? $return . $outglue : '') .
+		$tk . $inglue . $tv;
+	    }
 	}
-
-	function getVariables($type) {
-		list ($ret, $variables) = GalleryCoreApi::getPluginParameter('module', 'slideshowapplet', 
-				"slideshow${type}Variables");
-		if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		
-		/* unserialize the plugin parameter */
-		if (!empty($variables)) {
-			$variables1 = explode('|', $variables);
-			foreach ($variables1 as $variable) {
-				list($key, $value) = explode('=', $variable);
-				$variables2[$key] = $value;
-			}
-
-			return array(GalleryStatus::success(), $variables2);
-		}
-
-		return array(GalleryStatus::success(), null);
+	return $return;
+    }
+    
+    function getVariables($type) {
+	list ($ret, $variables) = GalleryCoreApi::getPluginParameter('module', 'slideshowapplet', 
+		'slideshow' . $type . 'Variables');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
-	function setVariables($type, $variables) {
-		$params = $this->implode_with_key($variables, '=', '|');
-	
-		return GalleryCoreApi::setPluginParameter('module', 'slideshowapplet', 
-				"slideshow${type}Variables", $params);
+	/* unserialize the plugin parameter */
+	if (!empty($variables)) {
+	    $variables1 = explode('|', $variables);
+	    foreach ($variables1 as $variable) {
+		list($key, $value) = explode('=', $variable);
+		$variables2[$key] = $value;
+	    }
+	    
+	    return array(GalleryStatus::success(), $variables2);
 	}
+	
+	return array(GalleryStatus::success(), null);
+    }
+    
+    function setVariables($type, $variables) {
+	$params = $this->implode_with_key($variables, '=', '|');
+	
+	return GalleryCoreApi::setPluginParameter('module', 'slideshowapplet', 
+		'slideshow' . $type . 'Variables', $params);
+    }
 }
 
 /**
- * @package Remote
+ * @package SlideshowApplet
  * @subpackage UserInterface
  */
 class SlideshowAppletSiteAdminView extends GalleryView {
-
+    
     /**
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 	$AdminSlideshowApplet = array();
-
+	
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
-	/*$AdminSlideshowApplet['mode'] = GalleryUtilities::getRequestVariables('mode');
-	if (empty($AdminSlideshowApplet['mode'])) {
-		$AdminSlideshowApplet['mode'] = 'variables';
-	}*/
-
-	/*if (!isset($form['slideshowRecursive'])) {
-		$form['slideshowRecursive'] = false;
-	}
-	if (!isset($form['slideshowMaxPictures'])) {
-		$form['slideshowMaxPictures'] = 0;
-	}*/
-	/*if (!isset($form['slideshowDefaultVariables'])) {
-		$form['slideshowDefaultVariables'] = 'slideshowRecursive=false|slideshowMaxPictures=0';
-	}
-	if (!isset($form['slideshowOverrideVariables'])) {
-		$form['slideshowOverrideVariables'] = 'toSysOut=true';
-	}
-	if ($form['formName'] != 'SlideshowAppletSiteAdmin') {*/
-		$form['formName'] = 'SlideshowAppletSiteAdmin';
-	/*}*/
+	
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'slideshowapplet');
 	if ($ret->isError()) {
-	return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	foreach ($params as $key => $value) {
-	$form[$key] = $value;
+	    $form[$key] = $value;
 	}
 	
-	/*if ($AdminSlideshowApplet['mode'] == 'variables') {*/
-		foreach (array('slideshowdefaultVariables', 'slideshowoverrideVariables') as $key) {
-		if (!empty($form[$key])) {
+	foreach (array('slideshowdefaultVariables', 'slideshowoverrideVariables') as $key) {
+	    if (!empty($form[$key])) {
 		$variablesArray = explode('|', $form[$key]);
 		$variables = array();
 		foreach ($variablesArray as $variable) {
-			$variables[] = $variable;
+		    $variables[] = $variable;
 		}
 		$form[$key] = $variables;
-		}
-		}
-	/*}*/
-
+	    }
+	}
+	
 	$template->javascript('lib/javascript/BlockToggle.js');
 	$template->setVariable('AdminSlideshowApplet', $AdminSlideshowApplet);
 	$template->setVariable('controller', 'slideshowapplet.SlideshowAppletSiteAdmin');
 	return array(GalleryStatus::success(),
-		     array('body' => 'modules/slideshowapplet/templates/SlideshowAppletSiteAdmin.tpl'));
+		array('body' => 'modules/slideshowapplet/templates/SlideshowAppletSiteAdmin.tpl'));
     }
 }
 ?>

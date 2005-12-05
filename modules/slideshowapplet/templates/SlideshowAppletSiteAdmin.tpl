@@ -8,73 +8,6 @@
   <h2> {g->text text="Slideshow Applet Settings"} </h2>
 </div>
 
-{if isset($status.saved)}
-<div class="gbBlock"><h2 class="giSuccess">
-  {g->text text="Settings saved successfully"}
-</h2></div>
-{/if}
-
-{*<input type="hidden" name="{g->formVar var="mode"}" value="{$AdminSlideshowApplet.mode}" />
-
-<div class="gbTabBar">
-  {if ($AdminSlideshowApplet.mode == 'setup')}
-    <span class="giSelected o"><span>
-      {g->text text="Setup"}
-    </span></span>
-  {else}
-    <span class="o"><span>
-      <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=slideshowapplet.SlideshowAppletSiteAdmin"
-       arg3="mode=setup"}">{g->text text="Setup"}</a>
-    </span></span>
-  {/if}
-
-  {if ($AdminSlideshowApplet.mode == 'variables')}
-    <span class="giSelected o"><span>
-      {g->text text="Variables"}
-    </span></span>
-  {else}
-    <span class="o"><span>
-      <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=slideshowapplet.SlideshowAppletSiteAdmin"
-       arg3="mode=variables"}">{g->text text="Variables"}</a>
-    </span></span>
-  {/if}
-</div>
-
-{if $AdminSlideshowApplet.mode == 'setup'}
-<div class="gbBlock">
-  <p>
-  <input type="checkbox" id="cbRecursive"{if $form.slideshowRecursive} checked="checked"{/if}
-   name="{g->formVar var="form[slideshowRecursive]"}"/>
-  <label for="cbRecursive">
-    {g->text text="Include the pictures inside sub-albums in slideshows"}
-  </label>
-  </p>
-
-  <p>
-  <label for="tfLimit">
-    {g->text text="Limit the slideshow to: "}
-  </label>
-  <input type="text" size="6" id="tfLimit" name="{g->formVar var="form[slideshowMaxPictures]"}" value="{$form.slideshowMaxPictures}"/>
-  pictures (0 for no limit)
-
-  {if isset($form.error.limit)}
-  <div class="giError">
-    {g->text text="The limit must be a positive number"}
-  </div>
-  {/if}
-  </p>
-</div>
-
-<div class="gbBlock gcBackground1">
-  <input type="submit" class="inputTypeSubmit"
-   name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
-  <input type="submit" class="inputTypeSubmit"
-   name="{g->formVar var="form[action][reset]"}" value="{g->text text="Reset"}"/>
-</div>
-{/if}
-
-
-{if $AdminSlideshowApplet.mode == 'variables'}*}
 <input type="hidden" name="{g->formVar var="form[variable][type]"}" />
 
 <table><tr valign="top"><td>
@@ -83,7 +16,7 @@
   <h3>{g->text text="Defaults"}</h3>
   <p>{g->text text="These variables provide default values for applets users execute on
     your site. Users will be able to override these defaults by making changes in the
-	user interface of the applets, or by changing their local defaults file."}</p>
+    user interface of the applets, or by changing their local defaults file."}</p>
 {if empty($form.slideshowdefaultVariables)}
   <p>{g->text text="You have no default variables"}</p>
 {else}
@@ -194,5 +127,3 @@
   	{g->text text="Complete list of variables"}</a></p>
 </div>
 </td></tr></table>
-
-{*{/if}*}
