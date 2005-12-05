@@ -32,11 +32,55 @@ class UploadAppletModule extends GalleryModule {
 	$this->setId('uploadapplet');
 	$this->setName($gallery->i18n('Upload Applet'));
 	$this->setDescription($gallery->i18n('Easy to use upload applet for media'));
-	$this->setVersion('1.0.0');
+	$this->setVersion('1.0.1');
 	$this->setGroup('import', $gallery->i18n('Import'));
-	$this->setCallbacks('');
+	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
 	$this->setRequiredModuleApi(array(2, 0));
+    }
+
+    /**
+     * @see GalleryModule::isRecommendedDuringInstall()
+     */
+    function isRecommendedDuringInstall() {
+	return false;
+    }
+
+    /**
+     * @see GalleryModule::autoConfigure()
+     */
+    function autoConfigure() {
+	/* We don't require any special configuration */
+	return array(GalleryStatus::success(), true);
+    }
+    
+    /**
+     * @see GalleryPlugin::upgrade()
+     */
+    function upgrade($currentVersion) {
+	global $gallery;
+
+	list ($ret, $params) =
+	    GalleryCoreApi::fetchAllPluginParameters('module', 'uploadapplet');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (!isset($params['uploaddefaultVariables'])) {
+	    $ret = $this->setParameter('uploaddefaultVariables', '');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	if (!isset($params['uploadoverrideVariables'])) {
+	    $ret = $this->setParameter('uploadoverrideVariables', 'toSysOut=true');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	return GalleryStatus::success();
     }
 
     /**
@@ -54,18 +98,12 @@ class UploadAppletModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::isRecommendedDuringInstall()
+     * @see GalleryModule::getSiteAdminViews()
      */
-    function isRecommendedDuringInstall() {
-	return false;
-    }
-
-    /**
-     * @see GalleryModule::autoConfigure()
-     */
-    function autoConfigure() {
-	/* We don't require any special configuration */
-	return array(GalleryStatus::success(), true);
+    function getSiteAdminViews() {
+	return array(GalleryStatus::success(),
+		     array(array('name' => $this->translate('Upload Applet'),
+				 'view' => 'uploadapplet.UploadAppletSiteAdmin')));
     }
 }
 ?>

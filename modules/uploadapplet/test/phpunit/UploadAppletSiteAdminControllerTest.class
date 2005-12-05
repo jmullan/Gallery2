@@ -1,0 +1,171 @@
+<?php
+/*
+* $RCSfile$
+*
+* Gallery - a web based photo album viewer and editor
+* Copyright (C) 2000-2005 Bharat Mediratta
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or (at
+* your option) any later version.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+*/
+/**
+* @version $Revision$ $Date$
+* @package UploadApplet
+* @subpackage PHPUnit
+* @author Pierre-Luc Paour <paour@users.sf.net>
+*/
+
+/**
+* UploadAppletSiteAdmin controller tests
+*
+* @package UploadApplet
+* @subpackage PHPUnit
+*/
+class UploadAppletSiteAdminControllerTest extends GalleryControllerTestCase {
+    
+    function UploadAppletSiteAdminControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'uploadapplet.UploadAppletSiteAdmin');
+    }
+    
+    function setUp() {
+	parent::setUp();
+	
+	$ret = $this->_markPluginParametersForCleanup('module', 'uploadapplet');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+    
+    function testUploadAppletSiteAdminControllerAddReplaceDefault() {
+	list ($ret, $orig) = GalleryCoreApi::getPluginParameter('module', 'uploadapplet', 'uploaddefaultVariables');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	GalleryUtilities::putRequestVariable('form[default][name]', 'name');
+	GalleryUtilities::putRequestVariable('form[default][value]', 'value');
+	GalleryUtilities::putRequestVariable('form[variable][type]', 'default');
+	GalleryUtilities::putRequestVariable('form[action][add]', '1');
+	
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+	    'subView' => 'uploadapplet.UploadAppletSiteAdmin'),
+	    'status' => array(),
+	    'error' => array()),
+	    $results);
+	
+	$target = empty($orig)?'name=value':$orig.'|name=value';
+	foreach (array('uploaddefaultVariables' => $target) as $key => $expectedValue) {
+	    list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'uploadapplet', $key);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assertEquals($expectedValue, $value, $key);
+	}
+	
+	/* now test replacing */
+	GalleryUtilities::putRequestVariable('form[default][value]', 'value1');
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+	    'subView' => 'uploadapplet.UploadAppletSiteAdmin'),
+	    'status' => array(),
+	    'error' => array()),
+	    $results);
+	
+	$target = empty($orig)?'name=value1':$orig.'|name=value1';
+	foreach (array('uploaddefaultVariables' => $target) as $key => $expectedValue) {
+	    list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'uploadapplet', $key);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assertEquals($expectedValue, $value, $key);
+	}
+    }
+    
+    function testUploadAppletSiteAdminControllerAddOverride() {
+	list ($ret, $orig) = GalleryCoreApi::getPluginParameter('module', 'uploadapplet', 'uploadoverrideVariables');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	GalleryUtilities::putRequestVariable('form[override][name]', 'name');
+	GalleryUtilities::putRequestVariable('form[override][value]', 'value');
+	GalleryUtilities::putRequestVariable('form[variable][type]', 'override');
+	GalleryUtilities::putRequestVariable('form[action][add]', '1');
+	
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+	    'subView' => 'uploadapplet.UploadAppletSiteAdmin'),
+	    'status' => array(),
+	    'error' => array()),
+	    $results);
+	
+	$target = empty($orig)?'name=value':$orig.'|name=value';
+	foreach (array('uploadoverrideVariables' => $target) as $key => $expectedValue) {
+	    list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'uploadapplet', $key);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assertEquals($expectedValue, $value, $key);
+	}
+    }
+    
+    function testUploadAppletSiteAdminControllerDelete() {
+	list ($ret, $orig) = GalleryCoreApi::getPluginParameter('module', 'uploadapplet', 'uploaddefaultVariables');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	GalleryUtilities::putRequestVariable('form[default][name]', 'name');
+	GalleryUtilities::putRequestVariable('form[default][value]', 'value');
+	GalleryUtilities::putRequestVariable('form[variable][type]', 'default');
+	GalleryUtilities::putRequestVariable('form[action][add]', '1');
+	
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+	    'subView' => 'uploadapplet.UploadAppletSiteAdmin'),
+	    'status' => array(),
+	    'error' => array()),
+	    $results);
+	
+	$target = empty($orig)?'name=value':$orig.'|name=value';
+	foreach (array('uploaddefaultVariables' => $target) as $key => $expectedValue) {
+	    list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'uploadapplet', $key);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assertEquals($expectedValue, $value, $key);
+	}
+	
+	/* now test deleting */
+	GalleryUtilities::removeRequestVariable('form[action][add]');
+	GalleryUtilities::removeRequestVariable('form[default][name]');
+	GalleryUtilities::removeRequestVariable('form[default][value]');
+	GalleryUtilities::putRequestVariable('form[action][delete]', '1');
+	GalleryUtilities::putRequestVariable('form[delete][variable]', 'name');
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+	    'subView' => 'uploadapplet.UploadAppletSiteAdmin'),
+	    'status' => array(),
+	    'error' => array()),
+	    $results);
+	
+	foreach (array('uploaddefaultVariables' => $orig) as $key => $expectedValue) {
+	    list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'uploadapplet', $key);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assertEquals($expectedValue, $value, $key);
+	}
+    }
+}
+?>

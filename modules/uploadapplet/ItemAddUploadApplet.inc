@@ -64,11 +64,24 @@ class ItemAddUploadApplet extends ItemAddPlugin {
 	    $ItemAddUploadApplet['cookieDomain'] = $session->getCookieDomain();
 	    $ItemAddUploadApplet['cookiePath'] = $cookiePath;
 	    $ItemAddUploadApplet['album'] = $item->getId();
-	    $ItemAddUploadApplet['defaults'] = array('htmlEscapeCaptions' => 'false');
-	    $ItemAddUploadApplet['overrides'] = array('toSysOut' => 'true');
 	    $ItemAddUploadApplet['userAgent'] = GalleryUtilities::getServerVar('HTTP_USER_AGENT');
 	    $ItemAddUploadApplet['galleryVersion'] = 2;
 	    $ItemAddUploadApplet['code'] = 'com.gallery.GalleryRemote.ItemAddUploadAppletMini';
+
+	    list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'uploadapplet');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    foreach (array('default', 'override') as $type) {
+		$ItemAddUploadApplet[$type] = array();
+		if (!empty($params['upload' . $type . 'Variables'])) {
+		    $variablesArray = explode('|', $params['upload' . $type . 'Variables']);
+		    foreach ($variablesArray as $variable) {
+			list($name, $value) = explode('=', $variable);
+			$ItemAddUploadApplet[$type][$name] = $value;
+		    }
+		}
+	    }
 	}
 
 	$template->setVariable('ItemAddUploadApplet', $ItemAddUploadApplet);

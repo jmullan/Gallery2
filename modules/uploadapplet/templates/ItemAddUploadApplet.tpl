@@ -28,10 +28,10 @@
     <param name="gr_album" value="{$ItemAddUploadApplet.album}"/>
     <param name="gr_user_agent" value="{$ItemAddUploadApplet.userAgent}"/>
     <param name="gr_gallery_version" value="{$ItemAddUploadApplet.galleryVersion}"/>
-    {foreach key=key item=value from=$ItemAddUploadApplet.defaults}
+    {foreach key=key item=value from=$ItemAddUploadApplet.default}
     <param name="GRDefault_{$key}" value="{$value}"/>
     {/foreach}
-    {foreach key=key item=value from=$ItemAddUploadApplet.overrides}
+    {foreach key=key item=value from=$ItemAddUploadApplet.override}
     <param name="GROverride_{$key}" value="{$value}"/>
     {/foreach}
 
@@ -54,10 +54,10 @@
           gr_album="{$ItemAddUploadApplet.album}"
           gr_user_agent="{$ItemAddUploadApplet.userAgent}"
           gr_gallery_version="{$ItemAddUploadApplet.galleryVersion}"
-          {foreach key=key item=value from=$ItemAddUploadApplet.defaults}
+          {foreach key=key item=value from=$ItemAddUploadApplet.default}
           GRDefault_{$key}="{$value}"
           {/foreach}
-          {foreach key=key item=value from=$ItemAddUploadApplet.overrides}
+          {foreach key=key item=value from=$ItemAddUploadApplet.override}
           GROverride_{$key}="{$value}"
           {/foreach}
       >
