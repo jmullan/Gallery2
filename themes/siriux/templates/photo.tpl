@@ -55,7 +55,7 @@
 <hr/>
 
 {* Description *}
-{if ($theme.item.description != $theme.item.title)}
+{if !empty($theme.item.description) && ($theme.item.description != $theme.item.title)}
   <p>{$theme.item.description|markup}</p>
 {/if}
 
