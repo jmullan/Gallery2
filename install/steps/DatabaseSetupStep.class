@@ -154,7 +154,7 @@ class DatabaseSetupStep extends InstallStep {
 		    /* Check the status and get the version of the Gallery database */
 		    $dbVersion = $this->_getDbVersion($result);
 		}
-
+		
 		$this->_captureEnd();
 
 		/* Check the status of the disk storage (g2data directory) */
@@ -271,7 +271,7 @@ class DatabaseSetupStep extends InstallStep {
 			   'postgres7' => _('PostgreSQL v7.x'),
 			   'postgres' => _('PostgreSQL v6.x (not well tested)'),
 			   'oci8po' => _('Oracle (9i and newer)'),
-			   'db2' => _('(EXPERIMENTAL!) IBM DB2 for Unix/Windows, v8.2.2 and newer'))
+			   'db2' => _('(EXPERIMENTAL!) IBM DB2 (v8.2.2 and newer)'))
 		     as $key => $value) {
 		$templateData['dbList'][$key] = $value;
 	    }
@@ -338,15 +338,15 @@ class DatabaseSetupStep extends InstallStep {
 	$ok = false;
 	for ($i = 0; $i < 10; $i++) {
 	    $tablePrefix = 'gtst' . $i;
-	    if (!in_array($tablePrefix . 'Schema', $metatables) &&
-		    !in_array($tablePrefix . 'schema', $metatables)) {
+	    if (!$this->in_array_cin($tablePrefix . 'Schema', $metatables)) {
 		$ok = true;
 		break;
 	    }
 	}
 	if (!$ok) {
 	    return array(false,
-		sprintf(_('Could not find an unused table prefix similar to "%s".'), $tablePrefix));
+		sprintf(_('Could not find an unused table prefix similar to "%s".'),
+			$tablePrefix));
 	}
 
 	/* Load the Test SQL code */
@@ -449,7 +449,8 @@ class DatabaseSetupStep extends InstallStep {
 	require_once(dirname(__FILE__) . '/../../modules/core/module.inc');
 	$coreModule = new CoreModule();
 	$instVersions = $coreModule->getInstalledVersions();
-	if (isset($instVersions) && isset($instVersions['core']) && !empty($instVersions['core'])) {
+	if (isset($instVersions) && isset($instVersions['core']) &&
+	        !empty($instVersions['core'])) {
 	    $versions['installed'] = $instVersions['core'];
 	}
 
@@ -469,15 +470,14 @@ class DatabaseSetupStep extends InstallStep {
     function _getDbVersion($metaTables) {
 
 	$dbVersion = '';
-	if (in_array($this->_config['tablePrefix'] . 'Schema', $metaTables) ||
-		in_array($this->_config['tablePrefix'] . 'schema', $metaTables)) {
+	if ($this->in_array_cin($this->_config['tablePrefix'] . 'Schema', $metaTables)) {
 	    /*
 	     * Get core module version from the database. But first verify that we
 	     * have plugin params db table. Default to dummy version
 	     */
 	    $dbVersion = 'corrupt db install';
-	    if (in_array($this->_config['tablePrefix'] . 'PluginParameterMap', $metaTables) ||
-		    in_array($this->_config['tablePrefix'] . 'pluginparametermap', $metaTables)) {
+	    if ($this->in_array_cin($this->_config['tablePrefix'] . 'PluginParameterMap',
+				    $metaTables)) {
 
 		/* Initiate the G2 API to use its db abstraction layer */
 		if ($this->_loadG2Api(3)) {
@@ -641,6 +641,30 @@ class DatabaseSetupStep extends InstallStep {
 	}
 
 	return GalleryStatus::success();
+    }
+
+    /**
+     * in_array_cin: case-insensitive in_array
+     *
+     * case-insensitive version of php function in_array()
+     * returns true if param 1 is in array param 2
+     *
+     * PostgreSQL in windows/linux, Mysql on Windows both return a all lower-case list of existing
+     * tables. DB2 on Windows returns a all upper-case list of tablenames.
+     * Probably, only MySQL on linux returns a case-sensitive list of tablenames. Generalize to
+     * compare tablenames case-insensitively.
+     *
+     * @param var the search argument
+     * @param array of vars to search in
+     * @return bool success status
+     */
+    function in_array_cin($strItem, $arItems) {
+	foreach ($arItems as $strValue) {
+	    if (strtoupper($strItem) == strtoupper($strValue)) {
+		return true;
+	    }
+	}
+	return false;
     }
 }
 ?>
