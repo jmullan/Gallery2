@@ -7,7 +7,9 @@ function getCacheDirs() {
 	'cache/entity',
 	'cache/module',
 	'cache/theme',
-	'smarty/templates_c'
+	'smarty/templates_c',
+	'tmp',
+	'sessions'
 	);
     return $dirs;
 }
@@ -108,10 +110,13 @@ if (isset($_REQUEST['clear'])) {
 	  <?php foreach ($dirs as $dir): ?>
 	  <div>
 	    <input type="checkbox" name="dirs[<?php print $dir ?>]"
-		   <?php if (basename($dir) != 'derivative'): ?> checked="checked" <?php endif; ?> />
+		   <?php if (basename($dir) != 'derivative' &&
+                             basename($dir) != 'sessions'): ?> checked="checked" <?php endif; ?> />
 	    g2data/<?php print $dir ?>
 	    <?php if (basename($dir) == 'derivative'): ?>
 	      <span class="subtext"> (Contains thumbnails and resizes; expensive to rebuild) </span>
+            <?php elseif(basename($dir) == 'sessions'): ?>
+	      <span class="subtext"> (Contains user sessions; all users need to login again if deleted) </span>
 	    <?php endif; ?>
 	  </div>
 	  <?php endforeach; ?>
