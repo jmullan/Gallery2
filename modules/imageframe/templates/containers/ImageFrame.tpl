@@ -40,8 +40,8 @@
     {/if}><div class="V">&nbsp;</div></td>
   {/capture}
   {if $data.hVT}<td class="LLT"></td>{else}{$smarty.capture.LL}{/if}
-  <td rowspan="{$data.rowspan}" colspan="{$data.colspan}" class="IMG"
-  >{$content|replace:"%ID%":$objectId|replace:"%CLASS%":"ImageFrame_image"}</td>
+  <td rowspan="{$data.rowspan}" colspan="{$data.colspan}" class="IMG">
+  {$content|replace:"%ID%":$objectId|replace:"%CLASS%":"ImageFrame_image"}</td>
   {if $data.hVT}<td class="RRT"></td>{else}{$smarty.capture.RR}{/if}
   </tr>
   {if $data.hVT}
