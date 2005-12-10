@@ -45,15 +45,14 @@ class GalleryPendingUserTest extends GalleryTestCase {
     }
 
     function setUp() {
-    	global $gallery;
+	global $gallery;
+	parent::setUp();
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'register');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
-	parent::setUp();
     }
 
     function testPendingUserCreation() {
@@ -80,14 +79,40 @@ class GalleryPendingUserTest extends GalleryTestCase {
 	}
     }
 
+    function testPendingUserPassword() {
+	/* Verify hashed password is created as GalleryUser would */
+	list ($ret, $pendingUser) =
+	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryPendingUser');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $user) =
+	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	if (empty($pendingUser) || empty($user)) {
+	    return $this->assert(false, 'factory error');
+	}
+
+	$password = 'testpass' . rand(1, 999);
+	$user->changePassword($password);
+	$pendingUser->changePassword($password);
+	$this->assertEquals(strlen($user->getHashedPassword()),
+			    strlen($pendingUser->getHashedPassword()), 'hash length');
+	$user->setHashedPassword($pendingUser->getHashedPassword());
+	$this->assert($user->isCorrectPassword($password), 'check password');
+    }
+
     function _createRandomPendingUser() {
-	list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryPendingUser');
+	list ($ret, $user) =
+	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryPendingUser');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	if (!isset($user)) {
-	    return array( GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
 	}
 
 	$username = 'testuser_' . rand(1000, 1000000);

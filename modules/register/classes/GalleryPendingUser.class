@@ -158,15 +158,15 @@ class GalleryPendingUser_core extends GalleryEntity {
     function create($userName) {
 	global $gallery;
 
-	// first check for a collision in the pending users table
+	/* first check for a collision in the pending users table */
 	$query = '
-        SELECT
-          [GalleryPendingUser::id]
-        FROM
-          [GalleryPendingUser]
-        WHERE
-          [GalleryPendingUser::userName] = ?
-        ';
+	SELECT
+	  [GalleryPendingUser::id]
+	FROM
+	  [GalleryPendingUser]
+	WHERE
+	  [GalleryPendingUser::userName] = ?
+	';
 
 	/* Check to see if we have a collision */
 	list($ret, $results) =
@@ -181,15 +181,15 @@ class GalleryPendingUser_core extends GalleryEntity {
 	    return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
 	}
 
-	// then check for a collision in the real user table
+	/* then check for a collision in the real user table */
 	$query = '
-        SELECT
-          [GalleryUser::id]
-        FROM
-          [GalleryUser]
-        WHERE
-          [GalleryUser::userName] = ?
-        ';
+	SELECT
+	  [GalleryUser::id]
+	FROM
+	  [GalleryUser]
+	WHERE
+	  [GalleryUser::userName] = ?
+	';
 
 	/* Check to see if we have a collision */
 	list($ret, $results) =
@@ -204,7 +204,7 @@ class GalleryPendingUser_core extends GalleryEntity {
 	    return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
 	}
 
-	// okay, we don't have any collisions, so go on
+	/* okay, we don't have any collisions, so go on */
 	$ret = parent::create();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -216,23 +216,19 @@ class GalleryPendingUser_core extends GalleryEntity {
     }
 
     /**
-     * Is the password provided correct?
-     *
-     * @param string a plaintext password
-     * @return boolean true if the password is correct
-     */
-    function isCorrectPassword($password) {
-	return !strcmp(md5($password), $this->getHashedPassword());
-    }
-
-    /**
      * Change the user's password to the new value provided.
      *
      * @param string a plaintext password
      */
     function changePassword($newPassword) {
-	$this->setHashedPassword(md5($newPassword));
-    }
+	$salt = '';
+	for ($i = 0; $i < 4; $i++) {
+	    $char = mt_rand(48, 109);
+	    $char += ($char > 90) ? 13 : ($char > 57) ? 7 : 0;
+	    $salt .= chr($char);
+	}   
+	$this->setHashedPassword($salt . md5($salt . $newPassword));
+    }   
 }
 
 include(dirname(__FILE__) . '/interfaces/GalleryPendingUser.inc');
