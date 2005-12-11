@@ -186,6 +186,12 @@ class GalleryUser_core extends GalleryEntity {
 	$salt = substr($valid, 0, 4);
 	/* Support both old (G1 thru 1.4.0; G2 thru alpha-4) and new password schemes: */
 	$guess = (strlen($valid) == 32) ? md5($password) : ($salt . md5($salt . $password));
+	if (!strcmp($guess, $valid)) {
+	    return true;
+	}
+	/* Passwords with <&"> created by G2 prior to 2.1 were hashed with entities */
+	GalleryUtilities::sanitizeInputValues($password, false);
+	$guess = (strlen($valid) == 32) ? md5($password) : ($salt . md5($salt . $password));
 	return !strcmp($guess, $valid);
     }
 

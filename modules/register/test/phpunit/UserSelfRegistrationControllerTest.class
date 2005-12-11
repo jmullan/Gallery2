@@ -136,8 +136,9 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	$this->_markForCleanup($user);
     }
 
-    function testUsernameWithEntity() {
+    function testEntities() {
 	/* Make sure emails sent out don't include text like &amp; */
+	/* Also verify password with <&"> characters is not entitized before being hashed */
 	global $gallery;
 	$ret = GalleryCoreApi::setPluginParameter('module', 'register', 'confirmation', 'email');
 	if ($ret->isError()) {
@@ -152,15 +153,15 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[fullName]', 'full name');
 	GalleryUtilities::putRequestVariable('form[email]', 'email@test.com');
 	GalleryUtilities::putRequestVariable('form[language]', 'language');
-	GalleryUtilities::putRequestVariable('form[password1]', 'password');
-	GalleryUtilities::putRequestVariable('form[password2]', 'password');
+	GalleryUtilities::putRequestVariable('form[password1]', 'pass&word>');
+	GalleryUtilities::putRequestVariable('form[password2]', 'pass&word>');
 
 	$savePlatform = $gallery->getPlatform();
 	$gallery->_platform = new RegisterDummyPlatform($savePlatform, $this);
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.UserAdmin',
-	      'subView' => 'register.SelfRegistrationSuccess'),
+				  'subView' => 'register.SelfRegistrationSuccess'),
 	  'status' => array('registeredUser' => $entitizedName),
 	  'error' => array()),
 	    $results,
@@ -179,6 +180,15 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	/* the confirm link should also use unentitized(but urlencoded) value; not verified here */
 	$this->assert(strpos($this->_emailBody, $userName) !== false,
 		      'Email body should have unentitized username: ' . $this->_emailBody);
+
+	list ($ret, $userEntity) =
+	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!empty($userEntity), 'factory error');
+	$userEntity->setHashedPassword($user->getHashedPassword());
+	$this->assert($userEntity->isCorrectPassword('pass&word>'), 'password check');
     }
 
     function testMissingInputs() {
@@ -338,19 +348,22 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[password2]', 'password');
 
 	$plugin1 = new UserSelfRegistrationControllerTestPlugin();
-	$plugin1->setErrors(array('form[error][UserSelfRegistrationControllerTestPlugin1][anError]'));
+	$plugin1->setErrors(
+	    array('form[error][UserSelfRegistrationControllerTestPlugin1][anError]'));
 	$plugin1->setContinue(false);
 
 	$plugin2 = new UserSelfRegistrationControllerTestPlugin();
-	$plugin2->setErrors(array('form[error][UserSelfRegistrationControllerTestPlugin2][anError]'));
+	$plugin2->setErrors(
+	    array('form[error][UserSelfRegistrationControllerTestPlugin2][anError]'));
 	$plugin2->setContinue(true);
 	$this->_controller->setPluginInstances(array($plugin1, $plugin2));
 
 	$results = $this->handleRequest();
-	$this->assertEquals(
-	    array('delegate' => array('view' => 'core.UserAdmin', 'subView' => 'register.UserSelfRegistration'),
-		  'status' => array(),
-		  'error' => array('form[error][UserSelfRegistrationControllerTestPlugin1][anError]')),
+	$this->assertEquals(array(
+	    'delegate' => array('view' => 'core.UserAdmin',
+				'subView' => 'register.UserSelfRegistration'),
+	    'status' => array(),
+	    'error' => array('form[error][UserSelfRegistrationControllerTestPlugin1][anError]')),
 	    $results);
     }
 
@@ -368,20 +381,23 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[password2]', 'password');
 
 	$plugin1 = new UserSelfRegistrationControllerTestPlugin();
-	$plugin1->setErrors(array('form[error][UserSelfRegistrationControllerTestPlugin1][anError]'));
+	$plugin1->setErrors(
+	    array('form[error][UserSelfRegistrationControllerTestPlugin1][anError]'));
 	$plugin1->setContinue(true);
 
 	$plugin2 = new UserSelfRegistrationControllerTestPlugin();
-	$plugin2->setErrors(array('form[error][UserSelfRegistrationControllerTestPlugin2][anError]'));
+	$plugin2->setErrors(
+	    array('form[error][UserSelfRegistrationControllerTestPlugin2][anError]'));
 	$plugin2->setContinue(false);
 	$this->_controller->setPluginInstances(array($plugin1, $plugin2));
 
 	$results = $this->handleRequest();
-	$this->assertEquals(
-	    array('delegate' => array('view' => 'core.UserAdmin', 'subView' => 'register.UserSelfRegistration'),
-		  'status' => array(),
-		  'error' => array('form[error][UserSelfRegistrationControllerTestPlugin1][anError]',
-				   'form[error][UserSelfRegistrationControllerTestPlugin2][anError]')),
+	$this->assertEquals(array(
+	    'delegate' => array('view' => 'core.UserAdmin',
+				'subView' => 'register.UserSelfRegistration'),
+	    'status' => array(),
+	    'error' => array('form[error][UserSelfRegistrationControllerTestPlugin1][anError]',
+			     'form[error][UserSelfRegistrationControllerTestPlugin2][anError]')),
 	    $results);
     }
 

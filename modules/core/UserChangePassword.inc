@@ -44,7 +44,8 @@ class UserChangePasswordController extends GalleryController {
 
 	$user = $gallery->getActiveUser();
 
-	list ($ret, $anonymousUserId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	list ($ret, $anonymousUserId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -52,9 +53,7 @@ class UserChangePasswordController extends GalleryController {
 	    return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
 	}
 
-	$results = array();
-	$status = array();
-	$error = array();
+	$results = $status = $error = array();
 	if (isset($form['action']['cancel'])) {
 
 	    /* Redirect back to user preferences */
@@ -105,7 +104,7 @@ class UserChangePasswordController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		$user->changePassword($form['password1']);
+		$user->changePassword(GalleryUtilities::htmlEntityDecode($form['password1']));
 
 		$ret = $user->save();
 		if ($ret->isError()) {

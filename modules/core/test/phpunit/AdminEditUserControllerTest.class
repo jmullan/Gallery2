@@ -91,11 +91,11 @@ class AdminEditUserControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[password2]', '');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
-						      'subView' => 'core.AdminUsers'),
-				  'status' => array('modifiedUser' => $this->_user[0]->getUserName()),
-				  'error' => array()),
-			    $results);
+	$this->assertEquals(
+	    array('redirect' => array('view' => 'core.SiteAdmin', 'subView' => 'core.AdminUsers'),
+		  'status' => array('modifiedUser' => $this->_user[0]->getUserName()),
+		  'error' => array()),
+	    $results);
     }
 
     function testEditUserNewUsername() {
@@ -173,6 +173,29 @@ class AdminEditUserControllerTest extends GalleryControllerTestCase {
 			    $results);
     }
 
+    function testChangePassword() {
+	$password = '<test"pass &word;>' . rand(1, 999) . "'";
+	GalleryUtilities::putRequestVariable('userId', $this->_user[0]->getId());
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[userName]', $this->_user[0]->getUserName());
+	GalleryUtilities::putRequestVariable('form[fullName]', 'full name');
+	GalleryUtilities::putRequestVariable('form[email]', 'email@email.com');
+	GalleryUtilities::putRequestVariable('form[language]', 'language');
+	GalleryUtilities::putRequestVariable('form[password1]', $password);
+	GalleryUtilities::putRequestVariable('form[password2]', $password);
 
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('redirect' => array('view' => 'core.SiteAdmin', 'subView' => 'core.AdminUsers'),
+		  'status' => array('modifiedUser' => $this->_user[0]->getUserName()),
+		  'error' => array()),
+	    $results);
+
+	list ($ret, $user) = $this->_user[0]->refresh();
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($user->isCorrectPassword($password), 'check password');
+    }
 }
 ?>

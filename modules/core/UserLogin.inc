@@ -121,7 +121,8 @@ class UserLoginController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		if ($user != null && $user->isCorrectPassword($form['password'])) {
+		if ($user != null && $user->isCorrectPassword(
+				      GalleryUtilities::htmlEntityDecode($form['password']))) {
 		    $gallery->setActiveUser($user);
 
 		    $event = GalleryCoreApi::newEvent('Gallery::Login');

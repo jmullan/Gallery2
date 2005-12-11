@@ -70,6 +70,35 @@ class AdminCreateUserControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($user);
+
+	$this->assert($user->isCorrectPassword('password'), 'check password');
+    }
+
+    function testCreateEntityPassword() {
+	$userName = 'user-'.rand();
+	GalleryUtilities::putRequestVariable('form[action][create]', 1);
+	GalleryUtilities::putRequestVariable('form[userName]', $userName);
+	GalleryUtilities::putRequestVariable('form[fullName]', 'full name');
+	GalleryUtilities::putRequestVariable('form[email]', 'email');
+	GalleryUtilities::putRequestVariable('form[language]', 'language');
+	GalleryUtilities::putRequestVariable('form[password1]', 'pass&word');
+	GalleryUtilities::putRequestVariable('form[password2]', 'pass&word');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminUsers'),
+				  'status' => array('createdUser' => $userName),
+				  'error' => array()),
+			    $results,
+			    'Failed to create user');
+
+	list ($ret, $user) = GalleryCoreApi::fetchUserByUserName($userName);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($user);
+
+	$this->assert($user->isCorrectPassword('pass&word'), 'check password');
     }
 
     function testMissingInputs() {

@@ -1416,6 +1416,38 @@ class UserAndGroupTest extends GalleryTestCase {
 	}
 	$this->assertEquals(1, $count, 'second');
     }
-}
 
+    function testCheckUserPassword() {
+	list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!empty($user), 'factory error');
+
+	$user->changePassword('password');
+	$this->assert($user->isCorrectPassword('password'), 'password');
+	$user->changePassword('Ab1#+$_ ;]\?.,');
+	$this->assert($user->isCorrectPassword('Ab1#+$_ ;]\?.,'), 'Ab1#+$_ ;]\?.,');
+	$user->changePassword('pass&word>');
+	$this->assert($user->isCorrectPassword('pass&word>'), 'pass&word>');
+
+	/* We still support old style simple md5 (G1 thru 1.4.0, G2 thru alpha-4) */
+	$user->setHashedPassword(md5('password'));
+	$this->assert($user->isCorrectPassword('password'), 'password');
+
+	/*
+	 * 2.0 was released with installer not entitizing password prior to hashing, while
+	 * site admin(edit/create), user admin and registration all did.  Rather than simply
+	 * make the installer match the others we've opted for cleaner data moving forward:
+	 * hash the actual password, not entitized value.  To keep old hashed passwords
+	 * working we check against both entitized and plain text in isCorrectPassword.
+	 * If this is ever changed, ensure all these interfaces set the password correctly.
+	 */
+	$password = $entityPassword = 'pass<word"';
+	GalleryUtilities::sanitizeInputValues($entityPassword, false);
+	$user->changePassword($entityPassword);
+	$this->assert($user->isCorrectPassword($entityPassword), 'check password entitized');
+	$this->assert($user->isCorrectPassword($password), 'check password original');
+    }
+}
 ?>

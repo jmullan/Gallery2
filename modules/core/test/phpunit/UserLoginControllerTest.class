@@ -48,7 +48,7 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	parent::setUp();
 
 	/* Create a new user */
-	list ($ret, $this->_user) = $this->_createRandomUser();
+	list ($ret, $this->_user) = $this->_createRandomUser(null, 'password');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -84,7 +84,6 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 
 	GalleryUtilities::putRequestVariable('form[action][login]', 1);
 	GalleryUtilities::putRequestVariable('form[username]', $this->_user->getUserName());
-	/* from _createRandomUser: */
 	GalleryUtilities::putRequestVariable('form[password]', 'password');
 
 	$results = $this->handleRequest();
@@ -94,6 +93,29 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array(), $results['error'], 'error');
 
 	$this->assertEquals($this->_user->getId(), $gallery->getActiveUserId());
+	$this->assert($this->_mockSession->regenerateWasCalled(),
+		      '$session->regenerate() was not called');
+    }
+
+    function testEntityPassword() {
+	global $gallery;
+	list ($ret, $user) = $this->_createRandomUser(null, 'pass&word');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($user);
+
+	GalleryUtilities::putRequestVariable('form[action][login]', 1);
+	GalleryUtilities::putRequestVariable('form[username]', $user->getUserName());
+	GalleryUtilities::putRequestVariable('form[password]', 'pass&word');
+
+	$results = $this->handleRequest();
+	/* May get a redirect url (like from useralbum module) or return */
+	$this->assert(isset($results['return']) || isset($results['redirect']), 'result');
+	$this->assertEquals(array(), $results['status'], 'status');
+	$this->assertEquals(array(), $results['error'], 'error');
+
+	$this->assertEquals($user->getId(), $gallery->getActiveUserId());
 	$this->assert($this->_mockSession->regenerateWasCalled(),
 		      '$session->regenerate() was not called');
     }
@@ -163,7 +185,7 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	$plugin->setErrors(array('form[error][UserLoginControllerTestPlugin][anError]'));
 	$plugin->setContinue(false);
 	$this->_controller->setPluginInstances(array($plugin));
-	
+
 	$results = $this->handleRequest();
 	$this->assertEquals(
 	    array('delegate' => array('view' => 'core.UserAdmin', 'subView' => 'core.UserLogin'),
@@ -190,7 +212,7 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	$plugin2->setErrors(array('form[error][UserLoginControllerTestPlugin2][anError]'));
 	$plugin2->setContinue(false);
 	$this->_controller->setPluginInstances(array($plugin1, $plugin2));
-	
+
 	$results = $this->handleRequest();
 	$this->assertEquals(
 	    array('delegate' => array('view' => 'core.UserAdmin', 'subView' => 'core.UserLogin'),
@@ -218,7 +240,7 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	$plugin2->setErrors(array('form[error][UserLoginControllerTestPlugin2][anError]'));
 	$plugin2->setContinue(false);
 	$this->_controller->setPluginInstances(array($plugin1, $plugin2));
-	
+
 	$results = $this->handleRequest();
 	$this->assertEquals(
 	    array('delegate' => array('view' => 'core.UserAdmin', 'subView' => 'core.UserLogin'),
@@ -254,7 +276,7 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
      */
     function testPlugins5() {
 	global $gallery;
-	
+
 	GalleryUtilities::putRequestVariable('form[action][login]', 1);
 	GalleryUtilities::putRequestVariable('form[username]', $this->_user->getUserName());
 	/* from _createRandomUser: */
@@ -284,7 +306,7 @@ class UserLoginControllerTestPlugin extends GalleryValidationPlugin {
     function setContinue($continue) {
 	$this->_continue = $continue;
     }
-    
+
     function setErrors($errors) {
 	$this->_errors = $errors;
     }

@@ -593,7 +593,7 @@ class GalleryTestCase extends TestCase {
      *               object GalleryUser
      * @access private
      */
-    function _createRandomUser($userTag=null) {
+    function _createRandomUser($userTag=null, $password='password') {
 	list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -613,7 +613,7 @@ class GalleryTestCase extends TestCase {
 	}
 
 	$user->setFullName('User ' . $userTag);
-	$user->changePassword('password');
+	$user->changePassword($password);
 	$user->setEmail('user-' . $userTag . '@example.com');
 
 	$ret = $user->save();
