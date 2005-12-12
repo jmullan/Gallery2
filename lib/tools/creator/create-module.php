@@ -41,7 +41,12 @@ if (function_exists('posix_getlogin')) {
 }
 
 require_once(dirname(__FILE__) . '/../../../lib/smarty/Smarty.class.php');
-$tmpdir = "/tmp/g2_" . rand(1, 30000);
+if (!empty($_ENV['TMP'])) {
+    $tmpdir = $_ENV['TMP'];
+} else {
+    $tmpdir = '/tmp';
+}
+$tmpdir .= "/g2_" . rand(1, 30000);
 if (file_exists($tmpdir)) {
     print "Tmp dir already exists: $tmpdir\n";
     exit(1);
