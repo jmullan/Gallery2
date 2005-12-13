@@ -355,8 +355,13 @@ class ExifHelper {
 	case 'FocalLength':
 	case 'FocalPlaneXResolution':
 	case 'FocalPlaneYResolution':
-	    /* Round to two decimal places */
-	    $value = preg_replace('/(\d*\.\d{3,})/e', 'sprintf(\'%.2f\', $1)', $value);
+	    /*
+	     * Round to two decimal places, sprintf must be feeded with non-localized floating
+	     * numbers (dot as decimal separator). sprintf('%.2f', '21.3725') returns a localized
+	     * decimal separator, but it does not accept '21,3725' as argument. Weird, but it's
+	     * like that.
+	     */
+	    $value = preg_replace('/(\d*)[\.,](\d{3,})/e', 'sprintf(\'%.2f\', $1.$2)', $value);
 	    break;
 	}
 
