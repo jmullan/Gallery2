@@ -3417,7 +3417,7 @@ class soap_parser extends nusoap_base {
 * usage:
 *
 * // instantiate client with server info
-* $soapclient = new soapclient( string path [ ,boolean wsdl] );
+* $soapclient = new nusoapclient( string path [ ,boolean wsdl] );
 *
 * // call method, get results
 * echo $soapclient->call( string methodname [ ,array parameters] );
@@ -3429,7 +3429,7 @@ class soap_parser extends nusoap_base {
 * @version  v 0.6.3
 * @access   public
 */
-class soapclient extends nusoap_base  {
+class nusoapclient extends nusoap_base  {
 
 	var $username = '';
 	var $password = '';
@@ -3462,7 +3462,7 @@ class soapclient extends nusoap_base  {
 	* @param	int $portName optional portName in WSDL document
 	* @access   public
 	*/
-	function soapclient($endpoint,$wsdl = false){
+	function nusoapclient($endpoint,$wsdl = false){
 		$this->endpoint = $endpoint;
 
 		// make values
@@ -3789,7 +3789,7 @@ class soapclient extends nusoap_base  {
 				unset($paramStr);
 			}
 		}
-		$evalStr = 'class soap_proxy extends soapclient {
+		$evalStr = 'class soap_proxy extends nusoapclient {
 				'.$evalStr.'
 			}';
 		//print "proxy class:<pre>$evalStr</pre>";

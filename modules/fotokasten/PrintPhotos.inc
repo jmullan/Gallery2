@@ -50,7 +50,7 @@ class PrintPhotosController extends GalleryController {
     var $server;
 
     /* For testability */
-    var $soapclient = 'soapclient';
+    var $soapclient = 'nusoapclient';
 
     /**
      * Constructor
