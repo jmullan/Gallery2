@@ -14,9 +14,7 @@
 
 <div class="gbBlock">
   <h3>{g->text text="Defaults"}</h3>
-  <p>{g->text text="These variables provide default values for applets users execute on
-    your site. Users will be able to override these defaults by making changes in the
-    user interface of the applets, or by changing their local defaults file."}</p>
+  <p>{g->text text="These variables provide default values for applets users execute on your site. Users will be able to override these defaults by making changes in the user interface of the applets, or by changing their local defaults file."}</p>
 {if empty($form.slideshowdefaultVariables)}
   <p>{g->text text="You have no default variables"}</p>
 {else}
@@ -61,8 +59,7 @@
 
 <div class="gbBlock">
   <h3>{g->text text="Overrides"}</h3>
-  <p>{g->text text="These variables override any other values for applets users execute on
-    your site. Users will not be able to change these values."}</p>
+  <p>{g->text text="These variables override any other values for applets users execute on your site. Users will not be able to change these values."}</p>
 {if empty($form.slideshowoverrideVariables)}
   <p>{g->text text="You have no override variables"}</p>
 {else}
