@@ -15,13 +15,13 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 msgid ""
 msgstr ""
 "Project-Id-Version: Gallery: Core 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-08-06 00:53+0900\n"
-"PO-Revision-Date: 2005-09-29 11:13+0900\n"
+"PO-Revision-Date: 2005-11-26 14:28+0900\n"
 "Last-Translator: Kennichi Uehara <ken.w3m+nospam@gmail.com>\n"
 "Language-Team: Japanese <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -37,6 +37,13 @@ msgstr "&laquo; なし &raquo;"
 
 msgid "forever"
 msgstr "永久"
+
+#, fuzzy
+msgid "High Priority (Me first!)"
+msgstr "優先度高 (わたしを最初に!)"
+
+msgid "Low Priority (I want to share!)"
+msgstr "優先度低 (共有したい!)"
 
 msgid "No Markup"
 msgstr "マークアップなし"
@@ -94,27 +101,21 @@ msgstr "アンインストール"
 msgid "deactivate"
 msgstr "無効化"
 
-msgid "Other"
-msgstr "他"
-
-#, fuzzy
 msgid "Performing Maintenance Tasks"
-msgstr "システムメインテナンス"
+msgstr "メンテナンスタスクを実行"
 
 #, c-format
 msgid "Downloading %s"
-msgstr ""
+msgstr "%s をダウンロード中"
 
-#, fuzzy
 msgid "Done."
 msgstr "完了"
 
-#, fuzzy
 msgid "Upgrade"
 msgstr "アップグレード"
 
 msgid "Download"
-msgstr ""
+msgstr "ダウンロード"
 
 msgid "Inherit settings from parent album"
 msgstr "親アルバムから設定を継承する"
@@ -171,7 +172,7 @@ msgid "Detecting broken derivatives"
 msgstr "壊れた派生物を検出"
 
 msgid "Clearing fast-download cache"
-msgstr ""
+msgstr "高速ダウンロードキャッシュをクリアしています"
 
 msgid "Site Admins"
 msgstr "サイト管理者"
@@ -255,9 +256,8 @@ msgstr "アイテムにリンクする"
 msgid "delete an item"
 msgstr "アイテム削除"
 
-#, fuzzy
 msgid "delete confirmation"
-msgstr "アイテム削除"
+msgstr "削除の確認"
 
 #, c-format
 msgid "delete %s"
@@ -368,6 +368,9 @@ msgstr "%s パーミッションを編集"
 msgid "reorder items"
 msgstr "アイテムの並べ替え"
 
+msgid "Maintenance"
+msgstr "メンテナンス"
+
 msgid "Gallery Site Administration"
 msgstr "Gallery サイト管理"
 
@@ -445,12 +448,20 @@ msgstr "ディレクトリを削除できませんでした: %s"
 msgid "Delete template cache"
 msgstr "テンプレートキャッシュ削除"
 
+#, fuzzy
 msgid ""
 "Gallery compiles template files and saves them for increased performance.  "
 "If you're experiencing problems that say <i>Smarty error</i> then you might "
 "try running this task.  Also run this if you remove a local/*.tpl file so "
 "Smarty will switch back to the default tpl file."
 msgstr ""
+"Galleryはパフォーマンス改善のためにテンプレートファイルをコンパイルして保存し"
+"ておきます。<i>Smarty error</i> の問題に遭遇したらこのタスクを実行してくださ"
+"い。\n"
+"Gallery compiles template files and saves them for increased performance.  "
+"If you're experiencing problems that say <i>Smarty error</i> then you might "
+"try running this task.  Also run this if you remove a local/*.tpl file so "
+"Smarty will switch back to the default tpl file."
 
 msgid "Template cache deleted successfully"
 msgstr "テンプレートキャッシュの削除に成功しました"
@@ -509,6 +520,9 @@ msgstr "グループ"
 msgid "group"
 msgstr "グループ"
 
+msgid "Other"
+msgstr "他"
+
 msgid "Movie"
 msgstr "動画"
 
@@ -518,19 +532,19 @@ msgstr "動画"
 msgid "photo"
 msgstr "画像"
 
-#, fuzzy
 msgid "download"
-msgstr "下"
+msgstr "ダウンロード"
 
-#, fuzzy
 msgid "Plugins directory does not exist."
-msgstr "ユーザー '%s'は存在していません。"
+msgstr "プラグインディレクトリは存在しません"
 
 #, c-format
 msgid ""
 "Couldn't create plugin directory '%s' in '%s', make sure the web server has "
 "write permissions in it."
 msgstr ""
+"'%2$s' にプラグインディレクトリ '%1$s' を作成できませんでした。ウェブサーバが"
+"それに書き込み権限があることを確認してください。"
 
 #, c-format
 msgid "Couldn't create repository cache path '%s'."
@@ -544,7 +558,7 @@ msgstr ""
 
 #, c-format
 msgid "Error downloading package from '%s'."
-msgstr ""
+msgstr "'%s' からパッケージのダウンロード中にエラーが発生しました。"
 
 #, c-format
 msgid "Error downloading index from '%s'."
@@ -603,12 +617,11 @@ msgstr ""
 msgid "This page is valid XHTML 1.0"
 msgstr "このページは XHTML 1.0 に準拠しています。"
 
-#, fuzzy
 msgid "Donate to the Gallery project"
-msgstr "Galleryに戻る"
+msgstr "Galleryプロジェクトに寄付をする"
 
-msgid "G2RC2: kthxbye"
-msgstr ""
+msgid "G2.0: Unpossible!"
+msgstr "G2.0: Unpossible!"
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -657,7 +670,6 @@ msgstr "アイテムフレーム"
 msgid "Photo Frame"
 msgstr "画像のフレーム"
 
-#, fuzzy
 msgid "Color Pack"
 msgstr "カラーパック"
 
@@ -874,7 +886,7 @@ msgid "Modules"
 msgstr "モジュール"
 
 msgid "Repository"
-msgstr ""
+msgstr "リポジトリ"
 
 msgid "Themes"
 msgstr "テーマ"
@@ -887,9 +899,6 @@ msgstr "ユーザー"
 
 msgid "Groups"
 msgstr "グループ"
-
-msgid "Maintenance"
-msgstr "メンテナンス"
 
 msgid "Toolkit Priority"
 msgstr "ツールキットの優先順位"
@@ -953,15 +962,14 @@ msgstr ""
 msgid "Language Settings"
 msgstr "言語設定"
 
-#, fuzzy
 msgid ""
 "Select language defaults for Gallery. Individual users can override this "
 "setting in their personal preferences or via the language selector block if "
 "available."
 msgstr ""
-"Galleryのデフォルトの言語を選択してください。以下で有効になっていれば、それぞ"
-"れのユーザーはこの設定を上書きするか、言語セレクター経由で好みの言語を設定す"
-"ることができます。"
+"Galleryのデフォルトの言語を選択してください。それぞれのユーザーはこの設定を上"
+"書きするか、(可能なら)言語セレクター経由で好みの言語を設定することができま"
+"す。"
 
 msgid "Default language"
 msgstr "デフォルト言語"
@@ -977,9 +985,8 @@ msgstr ""
 "このサーバはローカライゼーションに対応していません。%s オプションを有効にして"
 "PHPを設定し直すようシステム管理者に連絡してください。"
 
-#, fuzzy
 msgid "Date Formats"
-msgstr "日付: %s"
+msgstr "日付のフォーマット"
 
 #, c-format
 msgid ""
@@ -987,10 +994,12 @@ msgid ""
 "details of how to enter a format string.  Note that the display of some "
 "tokens varies according to the active language."
 msgstr ""
+"日付や時刻がGalleryでどのように表示されるか指定します。フォーマットの詳細は %"
+"sphp.net%s をみてください。いくつかのトークンはアクティブな言語によるので注意"
+"してください。"
 
-#, fuzzy
 msgid "Style"
-msgstr "拡大/縮小"
+msgstr "スタイル"
 
 msgid "Format"
 msgstr "フォーマット"
@@ -1182,6 +1191,9 @@ msgid ""
 "Gallery will <b>have to clear their browser cookie cache</b>. If they do "
 "not, they will experience login / logout / lost session problems."
 msgstr ""
+"一度クッキーの設定を変更すると、このGalleryの<b>全ての登録済みユーザのブラウ"
+"ザのクッキーのキャッシュを削除しなければなりません</b>。できないならば、ログ"
+"イン、ログアウト、セッション消失などの問題に見まわれるでしょう"
 
 msgid "Invalid cookie path"
 msgstr "無効なクッキーパス"
@@ -1208,6 +1220,22 @@ msgstr ""
 
 msgid "Lock system"
 msgstr "ロックシステム"
+
+msgid "Helper Processes"
+msgstr ""
+
+msgid ""
+"Some Gallery modules will use programs on your server to do image "
+"processing, archiving and other operations.  These programs can be very "
+"compute intensive and can impact the overall performance of a shared web "
+"server.  You can make these programs run at a lower priority so that they "
+"play nice.  If you're in a shared hosting environment and your web host is "
+"complaining, try setting your priority low."
+msgstr ""
+
+#, fuzzy
+msgid "Priority"
+msgstr "ツールキットの優先順位"
 
 msgid "Save"
 msgstr "保存"
@@ -1280,10 +1308,9 @@ msgstr "グループ削除"
 msgid "Are you sure?"
 msgstr "了解しましたか?"
 
-#, fuzzy, c-format
+#, c-format
 msgid "This will completely remove %s from Gallery.  There is no undo!"
-msgstr ""
-"このアルバムを削除すると子アイテムも全て削除されます。やり直しはできません。"
+msgstr "これはGalleryから %s を完全に削除します。やり直しはできません。"
 
 msgid "Delete"
 msgstr "削除"
@@ -1306,27 +1333,32 @@ msgstr ""
 #, c-format
 msgid ""
 "Delete all items of %s and assign a new owner for all remaining non empty "
-"albums"
+"albums. Items that %s doesn't have permission to delete will also be "
+"reassigned to a new owner."
 msgstr ""
 
 msgid "New owner (leaving blank means one of the Site Admins):"
-msgstr "新しい所有者 (空白はサイと管理者を意味します):"
+msgstr "新しい所有者 (空白はサイト管理者を意味します):"
 
 #, c-format
 msgid "User '%s' does not exist! Cannot assign items to a nonexistent user."
 msgstr ""
+"ユーザ '%s' は存在しません。存在しないユーザにアイテムを割り当てることはでき"
+"ません。"
 
 msgid "The new owner must be a different user than the user we are deleting!"
 msgstr "新しい所有者は削除しようとするユーザとは別でなければなりません。"
 
 msgid "The new owner cannot be a Guest / Anonymous user!"
-msgstr ""
+msgstr "新しい所有者はゲスト/匿名ユーザにはできません。"
 
 #, c-format
 msgid ""
 "This will completely remove <strong>%s</strong> from Gallery.  There is no "
 "undo!"
 msgstr ""
+"これはGalleryから <strong>%s</strong> を完全に削除します。やり直しはできませ"
+"ん。"
 
 msgid "Edit a group"
 msgstr "グループ編集"
@@ -1473,7 +1505,7 @@ msgstr "削除"
 msgid "members"
 msgstr "メンバー"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%d group matches your filter"
 msgid_plural "%d groups match your filter"
 msgstr[0] "%d グループがフィルタにマッチしました"
@@ -1482,13 +1514,13 @@ msgstr[1] ""
 msgid "System Maintenance"
 msgstr "システムメインテナンス"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Completed %s task successfully."
-msgstr "画像の回転に成功しました"
+msgstr "%s タスクが完了しました。"
 
-#, fuzzy, c-format
+#, c-format
 msgid "The %s task failed to complete successfully."
-msgstr "アルバム作成に成功しました。"
+msgstr ""
 
 msgid "Task name"
 msgstr "タスク名"
@@ -1604,8 +1636,8 @@ msgid "Do you really want to uninstall the %s module?"
 msgstr "モジュール %s を本当にアンインストールしますか?"
 
 msgid ""
-"This will also remove any permissions and clean up any temporary data "
-"created by this module."
+"This will also remove any permissions and clean up any data created by this "
+"module."
 msgstr ""
 
 msgid "Uninstall"
@@ -1615,19 +1647,27 @@ msgid ""
 "Please make sure that your internet connection is set up properly or try "
 "again later."
 msgstr ""
+"インターネット接続が正しく設定されているか確認するか、後出ためしてください。"
 
-#, fuzzy
 msgid "The repository index has been successfully updated."
-msgstr "ユーザー '%s'の削除に成功しました。"
-
-msgid "All plugins are already up-to-date."
 msgstr ""
 
+msgid "All plugins are already up-to-date."
+msgstr "全てのプラグインは最新です。"
+
 msgid "Common Tasks"
+msgstr "共通のタスク"
+
+msgid "Warning: Experimental feature!"
+msgstr "警告: 実験的な機能です!"
+
+msgid ""
+"The repository features are currently experimental, and no actual repository "
+"has been set up yet, so none of these features will work at this time."
 msgstr ""
 
 msgid "Update Index"
-msgstr ""
+msgstr "インデックスをアップデート"
 
 msgid ""
 "The Gallery repository contains the latest modules and themes extensively "
@@ -1653,13 +1693,11 @@ msgid ""
 "updates are available."
 msgstr ""
 
-#, fuzzy
 msgid "Update"
-msgstr "日付"
+msgstr "アップデート"
 
-#, fuzzy
 msgid "Upgrade Gallery"
-msgstr "Galleryを閲覧"
+msgstr "Galleryをアップグレード"
 
 msgid ""
 "A new version of Gallery is available, but it cannot be upgraded through "
@@ -1673,16 +1711,15 @@ msgstr ""
 
 #, c-format
 msgid "<a href=\"%s\">Download</a> Gallery core"
-msgstr ""
+msgstr "Gallery core を <a href=\"%s\">ダウンロード</a>"
 
 #, c-format
 msgid ""
 "Read the <a href=\"%s\">upgrade instructions</a> and perform the upgrade"
 msgstr ""
 
-#, fuzzy
 msgid "Gallery Up-To-Date"
-msgstr "Gallery Core"
+msgstr "Gallery 最新版"
 
 msgid ""
 "Gallery cannot be upgraded through this interface. When a new version "
@@ -1690,16 +1727,17 @@ msgid ""
 msgstr ""
 
 msgid "Upgrade All Plugins"
-msgstr ""
+msgstr "全てのプラグインをアップグレード"
 
 msgid ""
 "Gallery can automatically upgrade your themes and modules to the latest "
 "available versions. No new plugins will be downloaded."
 msgstr ""
+"Galleryはテーマとモジュールの最新版へのアップグレードを自動的に行えます。新し"
+"いプラグインはダウンロードされません。"
 
-#, fuzzy
 msgid "Upgrade All"
-msgstr "アップグレード"
+msgstr "全てをアップグレード"
 
 msgid ""
 "Once the repository index has been downloaded, a list of available plugins "
@@ -1730,17 +1768,14 @@ msgstr ""
 msgid "Theme Name"
 msgstr "テーマ名"
 
-#, fuzzy
 msgid "Latest"
-msgstr "レイアウト"
+msgstr "最終"
 
-#, fuzzy
 msgid "Incompatible Plugin"
-msgstr "互換性のないレイアウト"
+msgstr "互換性のないプラグイン"
 
-#, fuzzy
 msgid "Incompatible plugin!"
-msgstr "互換性のないレイアウト"
+msgstr "互換性のないプラグイン"
 
 #, c-format
 msgid "Plugin API Required: %s (available: %s)"
@@ -1749,9 +1784,8 @@ msgstr ""
 msgid "No packages have been selected."
 msgstr ""
 
-#, fuzzy
 msgid "Base Files"
-msgstr "ベースファイル名"
+msgstr "ベースファイル"
 
 msgid ""
 "The base files required for the theme to work and the English (US) "
@@ -1782,16 +1816,15 @@ msgid ""
 msgstr ""
 
 msgid "Additional Languages"
-msgstr ""
+msgstr "追加言語"
 
 msgid ""
 "Below is a list of languages this plugin has been translated to. Select the "
 "ones you want included in addition to the ones already downloaded."
 msgstr ""
 
-#, fuzzy
 msgid "Unit Tests"
-msgstr "ユニットテストモジュール"
+msgstr "ユニットテスト"
 
 msgid ""
 "This plugin has unit tests available for download, which are useful for "
@@ -1802,9 +1835,8 @@ msgstr ""
 msgid "Download unit tests"
 msgstr ""
 
-#, fuzzy
 msgid "Gallery Repository Setup"
-msgstr "Gallery バージョン"
+msgstr "Gallery リポジトリセットアップ"
 
 msgid "Warning: `$errorMessage`"
 msgstr ""
@@ -1823,17 +1855,17 @@ msgstr ""
 msgid "Instructions for Unix-type platforms:"
 msgstr ""
 
-#, fuzzy, c-format
+#, c-format
 msgid "$ cd %s"
-msgstr "%d。 %s"
+msgstr "$ cd %s"
 
 #, c-format
 msgid "$ mkdir %s"
-msgstr ""
+msgstr "$ mkdir %s"
 
 #, c-format
 msgid "$ chmod 777 %s"
-msgstr ""
+msgstr "$ chmod 777 %s"
 
 msgid ""
 "Refreshing this page will take you to the Repository if the directory has "
@@ -1875,9 +1907,8 @@ msgstr "全てのテーマ"
 msgid "Defaults"
 msgstr "デフォルト"
 
-#, fuzzy
 msgid "Status: Incompatible Theme (Inactive)"
-msgstr "アクティブ"
+msgstr "状態: 互換性のないテーマ (無効)"
 
 msgid "Incompatible theme!"
 msgstr "互換性のないテーマです"
@@ -1907,9 +1938,9 @@ msgstr "デフォルトテーマ"
 msgid "New albums"
 msgstr "新しいアルバム"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s Theme Settings"
-msgstr "アカウント設定"
+msgstr "%s テーマ設定"
 
 #, fuzzy
 msgid ""
@@ -2011,12 +2042,11 @@ msgstr ""
 msgid "Create thumbnails now"
 msgstr "いますぐサムネイルを生成"
 
-#, fuzzy
 msgid "This is a test email from Gallery2"
-msgstr "これはあなたのGalleryのトップです"
+msgstr "これはGallery2からのテストメールです。"
 
 msgid "Edit Conflict!"
-msgstr ""
+msgstr "衝突を編集"
 
 msgid "Security Violation"
 msgstr "セキュリティ侵害"
@@ -2044,7 +2074,7 @@ msgid "The action you attempted is not permitted."
 msgstr "あなたが試行したアクションは許可されていません。"
 
 msgid "An error has occurred while interacting with the database."
-msgstr ""
+msgstr "データベースと通信中にエラーが発生しました。"
 
 msgid ""
 "The exact nature of database errors is not captured unless Gallery debug "
@@ -2074,6 +2104,8 @@ msgstr ""
 msgid ""
 "Visit the <a href=\"%s\">Modules</a> page to activate a Graphics Toolkit."
 msgstr ""
+"<a href=\"%s\">モジュール</a> ページを訪れてグラフィックツールキットを有効化"
+"してください。"
 
 msgid "Add Sub-Album"
 msgstr "サブアルバム追加"
@@ -2177,9 +2209,8 @@ msgstr "もっと.."
 msgid "Set item titles from:"
 msgstr "アイテムのタイトル設定:"
 
-#, fuzzy
 msgid "Assign caption to:"
-msgstr "サイト管理"
+msgstr ""
 
 #, fuzzy
 msgid ""
@@ -2282,7 +2313,7 @@ msgid "Add Files"
 msgstr "ファイル追加"
 
 msgid "Start Over"
-msgstr ""
+msgstr "やり直す"
 
 msgid ""
 "Import files into Gallery from another website.  Enter a URL below to a web "
@@ -2361,9 +2392,8 @@ msgstr "リンクしたいアイテムを選択してください"
 msgid "(page %d of %d)"
 msgstr "(ページ %d / %d)"
 
-#, fuzzy
 msgid "No sources chosen"
-msgstr "選択された宛先がありません"
+msgstr "選択された元がありません"
 
 msgid "Check All"
 msgstr "全てをチェック"
@@ -2453,10 +2483,10 @@ msgstr[0] ""
 msgstr[1] ""
 
 msgid "There is no undo!"
-msgstr ""
+msgstr "やり直しはありません"
 
 msgid "There was a problem processing your request."
-msgstr ""
+msgstr "要求の処理中に問題が発生しました"
 
 msgid "Sort order"
 msgstr "ソート順"
@@ -2473,7 +2503,7 @@ msgstr ""
 msgid ""
 "Choose a theme for this album. (The way the album is arranged on the page)"
 msgstr ""
-"このアルバムの配置方法を選択してください。 (ギャラリーがページ上で配置される"
+"このアルバム��配置方法を選択してください。 (ギャラリーがページ上で配置される"
 "方法)"
 
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
@@ -2783,7 +2813,6 @@ msgstr ""
 msgid "Setting"
 msgstr "設定"
 
-#, fuzzy
 msgid "Use Global"
 msgstr "グローバルを使う"
 
@@ -2795,9 +2824,8 @@ msgid ""
 "You can make this item the thumbnail for its parent or any ancestor album."
 msgstr "このアイテムを親アルバムのサムネイルにしたいですか?"
 
-#, fuzzy
 msgid "Highlight for:"
-msgstr "ハイライト作成"
+msgstr "以下のハイライト:"
 
 msgid "Highlight"
 msgstr "ハイライト"
@@ -3003,6 +3031,12 @@ msgstr "並べ替え"
 msgid "Continue..."
 msgstr "続ける..."
 
+msgid "Site is temporarily down for maintenance."
+msgstr ""
+
+msgid "Admin Login"
+msgstr "管理者ログイン"
+
 msgid "Enter a URL"
 msgstr "URLを入力"
 
@@ -3031,10 +3065,10 @@ msgid "image"
 msgstr "画像"
 
 msgid "Configuration Error: Missing Theme"
-msgstr ""
+msgstr "コンフィグレーションエラー: テーマ欠落"
 
 msgid "Missing Theme"
-msgstr ""
+msgstr "テーマ欠落"
 
 #, c-format
 msgid ""
@@ -3121,6 +3155,10 @@ msgstr "ログイン情報が間違っています。もう一度試してくだ
 msgid ""
 "Lost or forgotten passwords can be retrieved using the <a href=\"%s"
 "\">recover password</a> page"
+msgstr ""
+
+#, c-format
+msgid "Welcome, %s!"
 msgstr ""
 
 msgid "Account settings saved successfully"

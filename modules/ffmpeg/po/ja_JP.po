@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gallery: Ffmpeg 1.0\n"
 "POT-Creation-Date: 2003-09-21 23:29+0900\n"
-"PO-Revision-Date: 2005-09-11 12:56+0900\n"
+"PO-Revision-Date: 2005-11-27 10:31+0900\n"
 "Last-Translator: Kennichi Uehara <ken.w3m+nospam@gmail.com>\n"
 "Language-Team: Japanese <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -33,23 +33,22 @@ msgid "Convert to a JPEG"
 msgstr "JPEGに変換"
 
 msgid "offset in seconds"
-msgstr ""
+msgstr "オフセット(秒単位)"
 
 msgid "Select time offset in movie file"
-msgstr ""
+msgstr "動画ファイルのタイムオフセットを選択してください。"
 
 msgid "Get the width and height of the movie"
 msgstr "ムービーの幅と高さを取得"
 
-#, fuzzy
 msgid "Get the width, height and duration of the movie"
-msgstr "ムービーの幅と高さを取得"
+msgstr "ムービーの幅と高さ、長さを取得"
 
 msgid "Ffmpeg"
 msgstr "Ffmpeg"
 
 msgid "A toolkit for processing movies"
-msgstr ""
+msgstr "動画を処理するツールキット"
 
 msgid "Graphics Toolkits"
 msgstr "グラフィックツールキット"
@@ -60,6 +59,12 @@ msgstr "FFMPEG  の設定"
 msgid "Settings saved successfully"
 msgstr "設定の保存に成功しました"
 
+msgid "Watermark successfully added to movie thumbnails"
+msgstr ""
+
+msgid "Watermark successfully removed from movie thumbnails"
+msgstr ""
+
 msgid ""
 "FFMPEG is a graphics toolkit that can be used to process video files that "
 "you upload to Gallery.  You must install the FFMPEG binary on your server, "
@@ -67,6 +72,11 @@ msgid ""
 "machine, don't forget to make the binary executable (<i>chmod 755 ffmpeg</i> "
 "in the right directory should do it)"
 msgstr ""
+"FFMPEGはGalleryにアップロードされたビデオファイルを処理するために使用される、"
+"グラフィックツールキットです。FFMPEGバイナリをインストールして、パスを以下の"
+"テキストボックスに入力しなければなりません。UNIXの場合は、バイナリを実行可能"
+"にすることを忘れないでください。(正しいディレクトリで <i>chmod 755 ffmpeg</"
+"i> を実行する)"
 
 msgid "Path to FFMPEG:"
 msgstr "FFMPEGのパス:"
@@ -92,6 +102,26 @@ msgstr ""
 "<b>ffmpeg</b> バイナリは実行可能ではありません。修正するには、シェルで "
 "<b>chmod 755 %s</b>を実行してください。"
 
+msgid ""
+"This module can automatically watermark the thumbnails for movies to help "
+"distinguish them from photos."
+msgstr ""
+
+msgid "See sample at right."
+msgstr ""
+
+msgid "Watermark new movie thumbnails"
+msgstr ""
+
+#, c-format
+msgid "%sAdd%s or %sRemove%s watermark from all existing movie thumbnails."
+msgstr ""
+
+msgid ""
+"Activate another graphics toolkit with watermark support to make this "
+"function available."
+msgstr ""
+
 msgid "Save Settings"
 msgstr "設定を保存"
 
@@ -108,13 +138,13 @@ msgid "FFMPEG binary test results"
 msgstr "FFMPEG バイナリテスト結果"
 
 msgid "Binary Name"
-msgstr ""
+msgstr "バイナリ名"
 
 msgid "Pass/Fail"
-msgstr "合格/失敗"
+msgstr "成功/失敗"
 
 msgid "Passed"
-msgstr "合格"
+msgstr "成功"
 
 msgid "Failed"
 msgstr "失敗"
@@ -131,7 +161,7 @@ msgstr "FFMPEGモジュールは以下のMIME typeのファイルをサポート
 #, c-format
 msgid "Debug output (%d failed test)"
 msgid_plural "Debug output (%d failed tests)"
-msgstr[0] ""
+msgstr[0] "デバッグ出力 (テストに失敗した数 %d)"
 
 msgid ""
 "We gathered this debug output while testing your Ffmpeg installation.  If "

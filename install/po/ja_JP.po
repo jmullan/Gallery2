@@ -19,10 +19,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Installer 1.0\n"
+"Project-Id-Version: Gallery: Install 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-08-09 01:16+0900\n"
-"PO-Revision-Date: 2005-09-28 14:51+0900\n"
+"PO-Revision-Date: 2005-11-26 15:51+0900\n"
 "Last-Translator: Kennichi Uehara <ken.w3m+nospam@gmail.com>\n"
 "Language-Team: Japanese <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -98,6 +98,9 @@ msgstr "データベースセットアップ"
 msgid "You must have the MySQL PHP module installed"
 msgstr "PHP の MySQL モジュールがインストールされていなければなりません"
 
+msgid "You must have the ODBC module installed"
+msgstr "ODBCモジュールがインストールされていなければなりません"
+
 msgid "You must have the PostgreSQL PHP module installed"
 msgstr "PHP の PostgreSQL モジュールがインストールされていなければなりません"
 
@@ -132,7 +135,7 @@ msgid "The database you specified does not exist.  Please create it."
 msgstr "指定されたデータベースは存在しません。作成してください。"
 
 msgid "The database privileges test did not complete successfully."
-msgstr ""
+msgstr "データベースの特権テストは完全に成功しませんでした。"
 
 #, fuzzy
 msgid ""
@@ -180,6 +183,10 @@ msgid ""
 "tables and storage directory data or select a clean install to erase all "
 "existing data in the database and the storage directory."
 msgstr ""
+"Galleryテーブルは既にデータベースに存在し、Galleryストレージディレクトリは損"
+"なわれていないようです。存在するデータベーステーブルとストレージディレクトリ"
+"のデータを救済するか、データベースとストレージディレクトリにあるデータを消去"
+"してクリーンインストールをするか選択してください。"
 
 msgid ""
 "Could not execute the required API to erase the storage directory. Please "
@@ -217,6 +224,10 @@ msgstr "PostgreSQL v6.x (十分にテストされていません)"
 msgid "Oracle (9i and newer)"
 msgstr "Oracle (9i 以上)"
 
+#, fuzzy
+msgid "(EXPERIMENTAL!) IBM DB2 (v8.2.2 and newer)"
+msgstr "(実験的!) IBM DB2 for Unix/Windows, v8.2.2 以上"
+
 msgid "Unknown DB type or no known tables information."
 msgstr "未知のタイプのデータベースかテーブル情報です"
 
@@ -224,28 +235,35 @@ msgstr "未知のタイプのデータベースかテーブル情報です"
 msgid "Could not find an unused table prefix similar to \"%s\"."
 msgstr "\"%s\" に似た未使用のテーブルプレフィックスが見つかりませんでした。"
 
+#, c-format
+msgid "Could not open schema file: \"%s\"."
+msgstr "スキーマファイル \"%s\" が開けません"
+
 msgid ""
 "Failed to create a DB test sequence.Check the returned error message and "
 "README.html for missing privileges and clean up the database."
 msgstr ""
+"データベーステストシーケンスの作成に失敗しました。エラーメッセージを確認し"
+"て、不足している特権とデータベースのクリーンアップのためにREADME.htmlを読んで"
+"ください。"
 
 msgid ""
 "Test failed to drop a DB test sequence.Check the returned error message and "
 "README.html for missing privileges and clean up the database."
 msgstr ""
+"データベースをドロップするテストに失敗しました。エラーメッセージを確認して、"
+"不足している特権とデータベースのクリーンアップのためにREADME.htmlを読んでくだ"
+"さい。"
 
-#, c-format
-msgid "SQL test file \"%s\" not found."
-msgstr "SQL テストファイル \"%s\" が見つかりません"
-
-#, c-format
-msgid "Could not open SQL test file \"%s\"."
-msgstr "SQL テストファイル \"%s\" が開けません"
+msgid "Missing SQL statements"
+msgstr "SQL ステートメントが欠落しています。"
 
 msgid ""
 "Check the returned error message and README.html for missing privileges and "
 "clean up the database."
 msgstr ""
+"エラーメッセージを確認して、不足している特権とデータベースのクリーンアップの"
+"ためにREADME.htmlを読んでください。"
 
 msgid "Finished"
 msgstr "完了"
@@ -276,6 +294,10 @@ msgstr "コアモジュールは部分的にしかインストールされてい
 
 msgid "Install More Modules"
 msgstr "モジュールをもっとインストールする"
+
+#, fuzzy
+msgid "Unable to initialize our Gallery session"
+msgstr "Gallery データを初期化できません"
 
 msgid "Unable to get the module list"
 msgstr "モジュールリストを取得できません"
@@ -352,6 +374,17 @@ msgstr ""
 msgid "Safe Mode"
 msgstr "セーフモード"
 
+msgid "Regular expressions"
+msgstr "正規表現"
+
+#, fuzzy, c-format
+msgid ""
+"Error: Your PHP is configured without support for %sPerl Compatible Regular "
+"Expressions%s. You must enable these functions before Gallery will run."
+msgstr ""
+"エラー: このPHPはセーフモードが有効に設定されています。Gallery を動作させる前"
+"にセーフモードを無効にしなければなりません。"
+
 msgid "exec() allowed"
 msgstr "exec() 許可"
 
@@ -362,6 +395,10 @@ msgid ""
 "This can only be set server-wide, so you will need to change it in the "
 "global php.ini."
 msgstr ""
+"注意: exec() 機能はphp.iniファイルの <b>diabled_functions</b> パラメータに"
+"よって無効にされています。外部バイナリを必要とするモジュール(ImageMagick "
+"NetPBM Ffmpeg など)を使用できないでしょう。これはサーバ全体にわたってのみ設定"
+"できますので、それはグローバルなphp.iniに変更を加える必要があります。"
 
 msgid "set_time_limit() allowed"
 msgstr "set_time_limit() 許可"
@@ -419,6 +456,28 @@ msgid ""
 "Warning: Your PHP is configured to limit the post data to a maximum of %sb "
 "(<b>post_max_size</b> parameter in php.ini). You should raise this limit to "
 "allow uploading bigger files."
+msgstr ""
+
+msgid "Translation support"
+msgstr ""
+
+#, c-format
+msgid ""
+"Your webserver does not support localization. To enable support for "
+"additional languages please instruct your system administrator to "
+"reconfigure PHP with the %sgettext%s option enabled."
+msgstr ""
+
+#, c-format
+msgid ""
+"Your PHP is missing the function %sbind_textdomain_codeset%s. This means "
+"Gallery may display extended characters for some languages incorrectly."
+msgstr ""
+
+#, c-format
+msgid ""
+"Your PHP is missing the function %sdngettext%s. This means Gallery will be "
+"unable to translate plural forms."
 msgstr ""
 
 msgid "Zend compatibility mode"
@@ -604,6 +663,10 @@ msgid ""
 "file and make changes to it if you want.  Be careful, though -- if you make "
 "mistakes in that file then Gallery won't work properly!"
 msgstr ""
+"あなたが提供した全てのデータをgallery2ディレクトリの <b>config.php</b> という"
+"ファイルに書き出しました。必要ならこのファイルを読んだり変更を加えたりできま"
+"す。しかし気をつけてください、そのファイルで間違いをおかすとGalleryは正しく動"
+"作しません。"
 
 msgid ""
 "Please select your database type and enter your database authentication "
@@ -808,6 +871,9 @@ msgstr "他のモジュールも有効化する"
 #, c-format
 msgid "Continue to Step %d&raquo;"
 msgstr "続けてステップ %d へ&raquo;"
+
+msgid "Debug Output"
+msgstr "デバッグ出力"
 
 msgid "Welcome to the Gallery Installer"
 msgstr "Gallery インストーラへようこそ"
@@ -1169,7 +1235,7 @@ msgstr ""
 "いますぐアップグレードをすべきです。%3$s ディレクトリのURL %1$s/upgrade/"
 "index.php%2$s を入力してください。"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Getting Gallery 2.0 installed on your webserver requires %d steps. This "
 "installer will guide you through these steps and provide assistance along "
@@ -1178,9 +1244,9 @@ msgid ""
 "time. Please read the %sInstaller Help File%s before proceeding."
 msgstr ""
 "サーバに Gallery 2.0 をインストールするには、%d ステップ必要です。もしGallery"
-"を動作させるために追加のステップが必要な場合は、このインストーラはあなたがこ"
-"れらのステップを通ることをサポートするでしょう。一度ステップを完了しても、い"
-"つでも戻って変更を加えることができます。進める前に %sインストーラヘルプファイ"
+"を動作させるために追加のステップが必要な場合は、あなたがそれらのステップを完"
+"了することをこのインストーラがサポートします。一度ステップを完了しても、いつ"
+"でも戻って変更を加えることができます。進める前に %sインストーラヘルプファイ"
 "ル%s を読んでください。(訳注: ヘルプは英語)"
 
 msgid "Select Language:"
@@ -1191,3 +1257,6 @@ msgstr ""
 
 msgid "Begin Installation&raquo;"
 msgstr "インストールを始める&raquo;"
+
+#~ msgid "SQL test file \"%s\" not found."
+#~ msgstr "SQL テストファイル \"%s\" が見つかりません"

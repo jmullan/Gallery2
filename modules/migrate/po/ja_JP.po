@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gallery: Migrate 1.0\n"
 "POT-Creation-Date: 2003-09-20 19:40+0900\n"
-"PO-Revision-Date: 2005-09-29 11:01+0900\n"
+"PO-Revision-Date: 2005-11-29 00:39+0900\n"
 "Last-Translator: Kennichi Uehara <ken.w3m+nospam@gmail.com>\n"
 "Language-Team: Japanese <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -74,12 +74,14 @@ msgstr "G1-&gt;G2 マッピング"
 msgid "G1 path"
 msgstr "G1 のパス"
 
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "G1 URL redirect. Use only if G2 is installed where G1 used to be and you "
 "have run a G1 import with the URL redirect option selected. Otherwise follow "
 "instructions in %sMigrate Site Admin%s."
 msgstr ""
+"G1 URL リダイレクト。\n"
+"G1 URL redirect. Use only if G2 is installed where G1 used to be and you have run a G1 import with the URL redirect option selected. Otherwise follow instructions in %sMigrate Site Admin%s."
 
 msgid "Select Albums and Users"
 msgstr "アルバムとユーザを選択してください。"
@@ -136,13 +138,13 @@ msgid "Destination:"
 msgstr "宛先:"
 
 msgid "Character Encoding of Source Text:"
-msgstr ""
+msgstr "ソーステキストの文字コード:"
 
 msgid "URL Redirection"
 msgstr "URL リダイレクト"
 
 msgid "Record G1->G2 mappings during import"
-msgstr ""
+msgstr "インポートしている間、 G1->G2 のマッピングを記録する。mappings during import"
 
 msgid "Thumbnail generation"
 msgstr "サムネイル生成"
@@ -152,10 +154,10 @@ msgid ""
 "then save them for subsequent views.  If you check this box, we'll create "
 "the thumbnails at migration time.  Migration will take longer but the first "
 "time you view an album will go much faster."
-msgstr ""
+msgstr "通常Galleryは最初の閲覧時にサムネイルを生成し、その後の閲覧のためにそれらを保存します。このチェックボックスにチェックを入れると、移行時にサムネイルを生成します。移行にかかる時間は長くなりますが、最初にアルバムを見るときは早くなります。"
 
 msgid "Item captions"
-msgstr ""
+msgstr "アイテムキャプション"
 
 msgid ""
 "Gallery 2 has the following fields for all items and albums: title, summary "
@@ -163,16 +165,16 @@ msgid ""
 "G1 albums already have these three items (though the names of summary and "
 "description are reversed). G1 items have only a filename and caption. For "
 "items imported into G2:"
-msgstr ""
+msgstr "Gallery 2は以下の全てのアイテムとアルバムに以下のフィールドを持ちます: タイトル / サムネイルとともに表示される概要文 / アイテムやアルバムビューに表示される詳細文。G1アルバムは既にこれら3つのアイテムを既に持っています。(概要と詳細の順は逆にされますが) G1のアイテムはファイル名とキャプションのみ持ちます。G2にインポートされるアイテムは:"
 
 msgid "Set title from:"
-msgstr ""
+msgstr "タイトルの設定:"
 
 msgid "Base filename"
-msgstr ""
+msgstr "ベースファイル名"
 
 msgid "Caption"
-msgstr ""
+msgstr "キャプション"
 
 msgid "Custom Field:"
 msgstr "カスタムフィールド:"
@@ -184,14 +186,14 @@ msgid "Blank"
 msgstr "空欄"
 
 msgid "Set summary from:"
-msgstr ""
+msgstr "概要の設定:"
 
 #, fuzzy
 msgid "Set description from:"
-msgstr "宛先:"
+msgstr "詳細文の設定:"
 
 msgid "Default to same as summary if custom field not set"
-msgstr ""
+msgstr "カスタムフィールドが設定されていない場合は概要と同じです。"
 
 msgid "Custom fields"
 msgstr "カスタムフィールド"
@@ -199,7 +201,7 @@ msgstr "カスタムフィールド"
 msgid ""
 "Custom fields will not be imported.  Activate Custom Fields module to enable "
 "this option."
-msgstr ""
+msgstr "カスタムフィールドはインポートされません。このオプションを使うにはカスタムフィールドモジュールを有効にしてください。"
 
 msgid "Import custom fields"
 msgstr "カスタムフィールドのインポート"
@@ -207,7 +209,7 @@ msgstr "カスタムフィールドのインポート"
 msgid ""
 "Do not create Gallery 2 custom fields for fields selected above for title, "
 "summary or description"
-msgstr ""
+msgstr "タイトル、概要、詳細のために上で選択されたフィールドのGallery 2カスタムフィールドを作成しない。"
 
 msgid "Prepare Import"
 msgstr "インポートの準備"
@@ -231,19 +233,19 @@ msgid "Album Notes"
 msgstr "アルバムメモ"
 
 msgid "An album already exists with this name.  This album will be renamed."
-msgstr ""
+msgstr "この名前で既にアルバムが存在します。このアルバムはリネームされます。"
 
 #, c-format
 msgid "This album has an illegal name and will be renamed to <i>%s</i>"
-msgstr ""
+msgstr "このアルバム名は違法なので <i>%s</i> に変更されます。"
 
 #, c-format
 msgid "This album's owner (%s) hasn't been imported."
-msgstr ""
+msgstr "このアルバムの所有者 (%s) がインポートされました。"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Import %s now."
-msgstr "%sをインポート"
+msgstr "%s を今すぐインポート"
 
 msgid ""
 "Top level albums and albums whose parents are not selected will be imported "
@@ -264,16 +266,16 @@ msgstr ""
 
 #, c-format
 msgid "Encoding: %s"
-msgstr ""
+msgstr "エンコード: %s"
 
 msgid "G1->G2 mappings will be recorded for use in URL Redirection"
-msgstr ""
+msgstr "G1->G2マッピングはURLリダイレクトで使うために記録されました"
 
 msgid "Thumbnails will be generated during migration"
-msgstr ""
+msgstr "移行作業中にサムネイルが生成されます"
 
 msgid "Item fields will be imported from:"
-msgstr ""
+msgstr "アイテムフィールドのインポート:"
 
 msgid "Title"
 msgstr "タイトル"
@@ -284,14 +286,15 @@ msgstr "カスタムフィールド:"
 msgid "Summary"
 msgstr "概要"
 
+#, fuzzy
 msgid "Description"
-msgstr ""
+msgstr "詳細"
 
 msgid "(Default to summary value if not set)"
 msgstr ""
 
 msgid "Custom fields will be imported"
-msgstr ""
+msgstr "カスタムフィールドはインポートされます"
 
 msgid ""
 "Custom fields imported into item fields above will not be duplicated as "
@@ -313,9 +316,9 @@ msgstr[1] ""
 msgid "No users imported."
 msgstr "ユーザはインポートされませんでした。"
 
-#, c-format, fuzzy
+#, c-format
 msgid "Imported %s"
-msgstr "%s をインポート"
+msgstr "インポート完了 %s"
 
 #, c-format
 msgid "Error while importing %d user."
@@ -327,31 +330,30 @@ msgstr[1] ""
 msgid "Error importing %s"
 msgstr "%s のインポートエラー"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Successfully imported %d album."
 msgid_plural "Successfully imported %d albums."
-msgstr[0] "%dユーザのインポートに成功しました。<"
+msgstr[0] "%d アルバムのインポートに成功しました。"
 msgstr[1] ""
 
-#, fuzzy
 msgid "No albums imported."
-msgstr "ユーザはインポートされませんでした。"
+msgstr "アルバムはインポートされませんでした。"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Error while importing %d album."
 msgid_plural "Errors while importing %d albums."
-msgstr[0] "%dユーザをインポート中にエラーが起こりました。"
+msgstr[0] "%d アルバムをインポート中にエラーが起こりました。"
 msgstr[1] ""
 
 msgid "Import more data"
 msgstr "さらなるデータのインポート"
 
 msgid "To enable URL Redirection under Apache webserver:"
-msgstr ""
+msgstr "ApacheウェブサーバでURLリダイレクトを有効にするには:"
 
 #, c-format
 msgid "Ensure the %s Apache module is enabled."
-msgstr ""
+msgstr "Apacheモジュールの %s が有効になっていることを確認してください。"
 
 msgid ""
 "Edit or create a file called <tt>.htaccess</tt> in your Gallery1 directory "
@@ -360,32 +362,31 @@ msgid ""
 "installed in the path where G1 used to be. However, if you also use the G2 "
 "URL Rewrite module then activate the G1 redirect rule in that module instead "
 "of using the block shown below."
-msgstr ""
+msgstr "Gallery1ディレクトリ内にある <tt>.htaccess</tt> という名前のファイルを作成するか編集し、以下のテキストをそのファイルに追加してください。既にあるファイルからG1 rewriteルールを削除してください。G1が使用されているパスにG2がインストールされている場合、リダイレクトはGallery2ディレクトリでも動作します。G2 URL書き換えモジュールも使用しているなら、以下に示すブロックを使用せずに、そのモジュールでG1リダイレクトルールを有効にしてください。"
 
 msgid ""
 "Add the same <tt>.htaccess</tt> block in the Gallery1 albums directory if "
 "you also wish to redirect links to image files and album directories. Note "
 "that these redirects are not active until the G1 images are actually removed "
 "or moved. Omit the !-f line shown below to redirect anyway."
-msgstr ""
+msgstr "画像ファイルやアルバムディレクトリのリダイレクトも利用したい場合、Gallery1ディレクトリの <tt>.htaccess</tt> の同じブロックに追加してください。これらのリダイレクトはG1の画像が実際に削除されるか移動するまで有効にならないので注意してください。とにかくリダイレクトするには、!-f の行を省略してください。"
 
 msgid ""
 "If G2 is installed in the path where G1 used to exist, you will need to "
 "remove the G1 file \"gallery_remote2.php\" file before you can use Gallery "
 "Remote to upload images to G2."
-msgstr ""
+msgstr "G1があったパスにG2がインストールされている場合、Gallery RemoteでG2にアップロードする前に、G1のファイルである\"gallery_remote2.php\"を削除しなければなりません。"
 
 msgid "Download .htaccess file"
-msgstr ""
+msgstr ".htaccess ファイルをダウンロード"
 
-#, fuzzy
 msgid "Import from Gallery 1"
-msgstr "インポート完了"
+msgstr "Gallery 1 からインポート"
 
 msgid ""
 "Copy all or part of an existing Gallery 1 installation into your Gallery 2.  "
 "It won't modify your Gallery 1 data in any way."
-msgstr ""
+msgstr "既にあるGallery 1の一部又は全部をGallery 2にコピーします。いかなる方法でもGallery 1のデータを変更することはありません。"
 
 #, c-format
 msgid ""
@@ -395,7 +396,7 @@ msgid ""
 msgstr ""
 
 msgid "Path to Gallery 1 albums directory"
-msgstr ""
+msgstr "Gallery 1のアルバムディレクトリのパス"
 
 msgid "Example: /var/www/albums"
 msgstr "例: /var/www/albums"
@@ -404,24 +405,24 @@ msgid "You did not enter a path."
 msgstr "パスを入力していません。"
 
 msgid "The path that you entered is invalid."
-msgstr "入浴したパスは無効です。"
+msgstr "入力されたパスは無効です。"
 
 msgid ""
 "<b>Note:</b> Before you import any data you should make sure your Gallery 1 "
 "is installed correctly by adding a photo through the Gallery 1 web "
 "interface.  Make sure you resolve any errors you see there first."
-msgstr ""
+msgstr "<b>注意:</b> データのインポートをする前に、Gallery 1ウェブインターフェースを使って画像を追加し、Gallery 1が正しくインストールされていることを確認してください。まずそこで表示されているエラーを解決してください。"
 
 msgid "Recently Used Paths"
-msgstr ""
+msgstr "最近使われたパス"
 
 msgid "Gallery can redirect old Gallery1 URLs to the new Gallery2 pages."
-msgstr ""
+msgstr "Galleryは古いGallery1のURLを新しいGallery2のページにリダイレクトできます。"
 
 #, c-format
 msgid "There is one G1->G2 map entry"
 msgid_plural "There are %d G1->G2 map entries"
-msgstr[0] ""
+msgstr[0] "%d のG1->G2マップエントリがあります。"
 
 msgid ""
 "Deleting map entries will cause old G1 URLs to produce HTTP Not Found errors "
@@ -432,7 +433,7 @@ msgid "Delete All"
 msgstr "全てを削除"
 
 msgid "Map entries deleted successfully"
-msgstr ""
+msgstr "マップエントリの削除に成功しました。"
 
 #, fuzzy
 #~ msgid "Import complete"

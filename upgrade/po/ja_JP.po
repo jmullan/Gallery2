@@ -1,0 +1,461 @@
+# $Id$
+#
+# Gallery - a web based photo album viewer and editor
+# Copyright (C) 2000-2005 Bharat Mediratta
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or (at
+# your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+#
+# Previous translators (as far as known, add yourself here, please):
+# - Kennichi Uehara <ken.w3m+nospam@gmail.com>
+msgid ""
+msgstr ""
+"Project-Id-Version: Gallery: Upgrade 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2005-08-17 02:34+0900\n"
+"PO-Revision-Date: 2005-12-13 20:28+0900\n"
+"Last-Translator: Yosuke Suzuki\n"
+"Language-Team: Japanese <gallery-devel@lists.sourceforge.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Unknown"
+msgstr "未知"
+
+msgid "Authenticate"
+msgstr "認証"
+
+msgid "<b>Error:</b> missing password."
+msgstr "<b>エラー:</b> パスワード欠落"
+
+msgid "<b>Error:</b> invalid password."
+msgstr "<b>エラー:</b> 無効なパスワード"
+
+msgid "Empty Cache"
+msgstr "キャッシュを空に"
+
+msgid "Finished"
+msgstr "完了"
+
+msgid "System Checks"
+msgstr "システムチェック"
+
+msgid "PHP version >= 4.1.0 or >= 5.0.4"
+msgstr "PHP バージョン 4.1.0 以上または 5.0.4 以上"
+
+#, c-format
+msgid "Error: Gallery 2 requires PHP version 4.1.0 or newer or 5.0.4 or newer. You have PHP version %s installed. Contact your webserver administrator to request an upgrade, available at the %sPHP website%s."
+msgstr "エラー: Gallery2は PHPのバージョン4.1.0より新しいもの、もしくは5.0.4より新しいものが必要です。あなたのPHPはバージョンが %s です。あなたの利用するウエブサーバーの管理者に連絡して、アップグレードをしてもらってください。%sPHP website%sのサイトで入手できます。"
+
+msgid "PHP Version"
+msgstr "PHP バージョン"
+
+msgid "FILE directive supported"
+msgstr "FILE ディレクティブはサポートされています"
+
+msgid "Error: your PHP __FILE__ directive is not functioning correctly. Please file a support request with your webserver administrator or in the Gallery forums."
+msgstr "エラー: PHPの __FILE__ ディレクティブは正しく機能していません。ウェブサーバーの管理者に連絡するか、Galleryのフォーラムで相談してください"
+
+msgid "FILE Directive"
+msgstr "FILE ディレクティブ"
+
+msgid "Safe mode disabled"
+msgstr "セーフモードは無効です"
+
+msgid "Error: Your version of PHP is configured with safe mode enabled.  You must disable safe mode before Gallery will run."
+msgstr "エラー:あなたの使用しているPHPは、セーフモードが有効になっています。Galleryを使うためには、セーフモードを無効にしてください"
+
+msgid "Safe Mode"
+msgstr "セーフモード"
+
+msgid "exec() allowed"
+msgstr "exec() 許可"
+
+msgid "Warning: The exec() function is disabled in your php by the <b>disabled_functions</b> parameter in php.ini. You won't be able to use modules that require external binaries (e.g. ImageMagick, NetPBM or Ffmpeg). This can only be set server-wide, so you will need to change it in the global php.ini."
+msgstr "注意: exec() 機能はphp.iniファイルの <b>diabled_functions</b> パラメータによって無効にされています。外部バイナリを必要とするモジュール(ImageMagick NetPBM Ffmpeg など)を使用できないでしょう。これはサーバ全体にわたってのみ設定できますので、それはグローバルなphp.iniに変更を加える必要があります。"
+
+msgid "set_time_limit() allowed"
+msgstr "set_time_limit() 許可"
+
+#, c-format
+msgid "Warning: The set_time_limit() function is disabled in your php by the <b>disabled_functions</b> parameter in php.ini.  Gallery can function with this setting, but it will not operate reliably.  Any operation that takes longer than %d seconds will fail (and in some cases just return a blank page) possibly leading to data corruption."
+msgstr "警告: set_time_limit() 機能はphp.iniファイルの<b>disabled_functions</b> パラメータによって無効にされています。Galleryはこの設定でも機能しますが、安定性に問題があるかもしれません。%d 秒以上の作業はデータの衝突を引き起こす可能性があります。（場合によっては空白のページが表示されます）"
+
+msgid "Memory limit"
+msgstr "メモリ制限"
+
+msgid "no limit"
+msgstr "無制限"
+
+#, c-format
+msgid "Warning: Your PHP is configured to limit the memory to %sb (<b>memory_limit</b> parameter in php.ini). You should raise this limit to at least <b>%sMB</b> for proper Gallery operation."
+msgstr "警告: あなたの使用しているPHPはメモリーが %sb に制限されています。(php.iniの<b>memory_limit</b> パラメータ)この制限を少なくとも<b>%sMB</b>に引き上げる必要があります"
+
+msgid "File uploads allowed"
+msgstr "ファイルのアップロードは許可されています"
+
+msgid "Warning: Your PHP is configured not to allow file uploads (<b>file_uploads</b> parameter in php.ini). You will need to enable this option if you want to upload files to your Gallery with a web browser."
+msgstr "警告: あなたの利用しているPHPは、ファイルのアップロードを許可するように設定されていません。(php.ini の<b>file_uploads</b> パラメータ). ブラウザーを使ってファイルをアップロードする場合は、このパラメータを有効にする必要があります"
+
+msgid "Maximum upload size"
+msgstr "アップロード最大サイズ"
+
+#, c-format
+msgid "Warning: Your PHP is configured to limit the size of file uploads to %sb (<b>upload_max_filesize</b> parameter in php.ini). You should rise this limit to allow uploading bigger files."
+msgstr "警告: あなたの使用しているPHPはアップロードできるファイルのサイズが %sb までに制限されています。(php.iniの<b>upload_max_filesize</b> パラメータ)。より大きいファイルをアップロードする場合は、この制限を引き上げてください"
+
+msgid "Maximum POST size"
+msgstr "POSTの最大サイズ"
+
+#, c-format
+msgid "Warning: Your PHP is configured to limit the post data to a maximum of %sb (<b>post_max_size</b> parameter in php.ini). You should raise this limit to allow uploading bigger files."
+msgstr "警告: あなたの使用しているPHPはPOSTのデータの最大値が %sb に設定されています。(php.iniの<b>post_max_size</b>パラメータ)。より大きいファイルをアップロードする場合は、この制限を引き上げてください"
+
+msgid "Zend compatibility mode"
+msgstr "Zend 互換モード"
+
+#, c-format
+msgid "Warning: Your PHP is configured with Zend ze1_compatibility_mode which can cause PHP to crash.  Click <a href=\"%s\">here</a> to test your PHP.  If you see \"SUCCESS\" then your PHP is ok.  If you get an error then you must turn off ze1_compatibility_mode before proceeding."
+msgstr "警告: あなたの使用しているPHPはクラッシュする可能性のあるZend ze1_compatibility_mode が設定されています。あなたのPHPをチェックするには<a href=\"%s\">ここ</a>をクリックしてください。もし \"SUCCESS\" と表示されれば、問題はありません。もしエラー表示が出た場合、まずze1_compatibility_mode の設定を解除してください。"
+
+msgid "Storage Directory Permissions"
+msgstr "ストレージディレクトリのパーミッション"
+
+msgid "Test skipped due to other errors."
+msgstr "その他のエラーによって、テストがスキップされました"
+
+#, c-format
+msgid "Error: Some files and or directories in your storage directory are not writeable by the webserver user. Run chown -R webserverUser %s OR run chmod -R 777 %s."
+msgstr "エラー: ストレージディレクトリ内のいくつかのファイルやディレクトリがウェブサーバーのユーザー権限で書き込むことができません。chown -R webserverUser %s か chmod -R 777 %s を実行してください"
+
+msgid "Gallery file integrity"
+msgstr "Gallery ファイルの完全性"
+
+msgid "Manifest missing or inaccessible."
+msgstr "Manifest がないかアクセスできません"
+
+msgid "Upgrade Core"
+msgstr "コアをアップグレード"
+
+msgid "Upgrade Modules"
+msgstr "モジュールをアップグレード"
+
+#, c-format
+msgid "Unable to load the %s module"
+msgstr "%s モジュールを読み込むことができません"
+
+msgid "Upgrading modules"
+msgstr "モジュールをアップグレード中"
+
+#, c-format
+msgid "%s module needs configuration"
+msgstr "%s モジュールは設定が必要です"
+
+#, c-format
+msgid "Unable to upgrade the %s module"
+msgstr "%s モジュールをアップグレードできません"
+
+#, c-format
+msgid "Unable to load the %s theme"
+msgstr "テーマ %s を読み込むことができません"
+
+msgid "Upgrading themes"
+msgstr "テーマをアップグレード中"
+
+#, c-format
+msgid "Unable to upgrade the %s theme"
+msgstr "テーマ %s をアップグレードできません"
+
+msgid "Unable to commit database transaction"
+msgstr "データベーストランザクションをコミットできません"
+
+msgid "Unable to get the module list"
+msgstr "モジュールリストを取得できません"
+
+msgid "Unable to get the theme list"
+msgstr "テーマリストを取得できません"
+
+msgid "Other"
+msgstr "その他"
+
+msgid "Themes"
+msgstr "テーマ"
+
+msgid "Welcome"
+msgstr "ようこそ"
+
+msgid "In order to proceed with the install, we have to verify that you are who you claim.  When you performed the install, you entered a password which went into your config.php.  Type that in now.  Refer to your config.php if you've forgotten what you entered."
+msgstr "インストールを進めるには、あなたが権利を有する人であるか確かめなければなりません。あなたがインストールを完了した時に、config.phpに入力したパスワードがあります。それを入力してください。忘れてしまった場合は、config.phpを参照してください"
+
+msgid "Password:"
+msgstr "パスワード:"
+
+msgid "Authenticate Me"
+msgstr "認証する"
+
+msgid "Authentication successful!"
+msgstr "認証に成功しました"
+
+msgid "Delete Cache Directories"
+msgstr "キャッシュディレクトリを削除する"
+
+msgid "Gallery creates temporary copies of some of your data on your hard drive.  This helps it to run faster.  But when you upgrade, some of these files might be out of date so it's a good idea to get rid of them now.  Gallery will create them again as it needs them."
+msgstr "Galleryは、データの一時的なコピーをハードディスク上に作成します。これは、実行を速くするためのものです。アップグレード後、これらのデータは古いものになってしまうため、今削除することをおすすめします。Galleryは、必要な場合に自動的にそれらのデータを再度作成します"
+
+msgid "We were unable to clean the following cache directories.  This is probably ok, but if you notice any weird behaviour, you should try to delete these directories yourself.  It's perfectly safe to get rid of them at any time."
+msgstr "次のキャッシュディレクトリの中を、削除することができませんでした。これは問題はありませんが、何かおかしな動作に気がついた場合、これらのディレクトリを削除してください。それらを削除しておく方が、いつでも安全です"
+
+msgid "Even though there were errors, you can still continue.  Or, you can try deleting these directories yourself and then click the <b>Try Again</b> link below."
+msgstr "いくつかエラーがありましたが、続けることができます。もしくはあなた自身でこれらのディレクトリを削除し、下の<b>もう一度実行する</b>のリンクをクリックしてください"
+
+msgid "Try Again"
+msgstr "もう一度実行する"
+
+msgid "We have successfully cleaned out your cache directories."
+msgstr "キャッシュディレクトリの中身の削除が完了しました"
+
+msgid "Finished!"
+msgstr "完了！"
+
+msgid "Congratulations! Your Gallery 2 upgrade is complete!  To upgrade any additional Gallery 2 modules you may use the Site Administrator interface."
+msgstr "おめでとうございます！あなたのGallery 2 のアップグレードは完了しました。さらに追加的なモジュールをアップグレードするには、サイト管理の項目を利用してください"
+
+msgid "Go to my Gallery!"
+msgstr "Gallery を訪れる"
+
+msgid "Warning"
+msgstr "警告"
+
+#, c-format
+msgid "Your config.php appears to use the old form of multisite support.  Please see the %sHelp File%s for instructions to update your configuration before proceeding."
+msgstr "あなたの config.php はマルチサイトサポートの古い形式を使用しているようです。形式をアップグレードするためには、先に進む前に %sHelp File%s の指示を見てください"
+
+msgid "Welcome to the Gallery Upgrader"
+msgstr "ようこそ Gallery アップグレードページへ"
+
+msgid "Redo this step"
+msgstr "このステップをもう一度"
+
+#, c-format
+msgid "Continue to Step %d&raquo;"
+msgstr "続けてステップ %d へ&raquo;"
+
+msgid "Upgrade Status"
+msgstr "アップグレードの状況"
+
+#, c-format
+msgid "Upgrade %d%% complete"
+msgstr "アップグレード進行率 %d%%"
+
+msgid "Gallery: <strong>your photos</strong> on <strong>your website</strong>"
+msgstr "Gallery: <strong>your photos</strong> on <strong>your website</strong>"
+
+#, c-format
+msgid "Missing files (%d)"
+msgstr "欠落したファイル (%d)"
+
+msgid "Note: You're running Gallery from CVS, so recently removed files may appear here.  It might be safe to ignore these."
+msgstr "注意: あなたはCVSから取得したGalleryを動かしています。そのため最近削除されたファイルがここに存在するかもしれません。これらは無視しておく方が安全です"
+
+#, c-format
+msgid "Modified files (%d)"
+msgstr "変更されたファイル (%d)"
+
+msgid "Note: You're running Gallery from CVS, so some modified files are to be expected.  You can probably ignore these, but to be safe you should make sure that you do <b>cvs update -Pd</b> before continuing."
+msgstr "注意: あなたはCVSから取得したGalleryを動かしています。そのためいくつかの変更されたファイルがあると思われます。これらを無視することもできますが、アップデート続ける前に<b>cvs update -Pd</b> を実行したほうが確実です"
+
+#, c-format
+msgid "Old files (%d)"
+msgstr "古いファイル (%d)"
+
+msgid "These files are no longer part of Gallery. They probably won't cause any problems but it is a good idea to remove them to keep your install clean."
+msgstr "これらのファイルはもはや Gallery の一部ではありません。特に何の問題も引き起こさないと思いますが、インストールをクリーンな状態に保つには削除した方が良いです"
+
+msgid "Upgrade Steps"
+msgstr "アップグレードのステップ"
+
+msgid "Upgrader Help"
+msgstr "アップグレーダーのヘルプ"
+
+msgid "Start Over"
+msgstr "やり直してください"
+
+msgid "Missing or invalid config.php"
+msgstr "config.php ファイルがないか、正しい状態ではありません"
+
+msgid "You tried to run the upgrade process but a valid config.php is missing."
+msgstr "あなたはアップグレードのプロセスを実行しましたが、正しいconfig.php ファイルが見つかりません"
+
+msgid "If you've lost your config.php file when replacing the Gallery 2 files in the preparation for this upgrade, please restore it and try again."
+msgstr "もしあなたがこのアップグレードの準備の際に config.php をなくしてしまったのなら、それを回復して再度挑戦してください"
+
+msgid "If you actually want to run the Gallery 2 installer, please follow the link below."
+msgstr "あなたが Gallery 2 のインストーラーを実行したいのなら、下のリンク先に飛んでください"
+
+msgid "If you want to upgrade from Gallery 1, you first need to install Gallery 2 and then use the import module to import your data from Gallery 1. Please follow the link below to install Gallery 2."
+msgstr "Gallery 1 からアップグレードしたい場合は、まずGallery 2 をインストールし、それからインポートモジュールを使ってデータをGallery 1 からインポートしてください。Gallery 2 をインストールする場合は、下のリンク先に飛んでください"
+
+msgid "Go to the Gallery 2 Installer"
+msgstr "Gallery 2 のインストーラーに行く"
+
+msgid "Success"
+msgstr "成功"
+
+msgid "Failed"
+msgstr "失敗"
+
+msgid "If you are using Apache, create a file named .htaccess in the main Gallery directory with the following content:"
+msgstr "Apacheを使用している場合は、以下の内容を含む.htaccess ファイルをGallery のメインディレクトリに作成してください"
+
+msgid "An error occurred while upgrading Gallery Core Module"
+msgstr "ギャラリーのコアモジュールをアップグレードする際にエラーが発生しました"
+
+#, c-format
+msgid "Something went wrong when we tried to upgrade the core module.  In the boxes below you can find some debug information.  Report this in the %sGallery Forums%s and we'll help you diagnose the problem."
+msgstr "コアモジュールをアップグレードする際に、何かがおかしくなりました。下の枠の中に、デバッグの情報があります。それを %sGallery Forums%s に報告してください。我々が問題の分析を手伝うことができるでしょう"
+
+msgid "Stack Trace:"
+msgstr "スタックトレース:"
+
+msgid "Debug Output:"
+msgstr "デバッグ出力:"
+
+msgid "Upgrading the Gallery Core Module"
+msgstr "Gallery のコアモジュールをアップグレード中"
+
+msgid "The Gallery Core Module is the heart of the Gallery application.  You can upgrade most other modules using the Site Administration interface, but this module must be handled separately in order for the upgrade to go smoothly."
+msgstr "Gallery のコアモジュールは、Gallery の心臓部です。その他モジュールはサイト管理からアップグレードできますが、コアモジュールはスムーズに進めるために別に扱われなければいけません。"
+
+msgid "Currently installed"
+msgstr "現在インストールされているもの"
+
+msgid "New version"
+msgstr "新しいバージョン"
+
+msgid "Config.php upgrade"
+msgstr "Config.php の更新"
+
+msgid "Required"
+msgstr "必要事項"
+
+#, c-format
+msgid "Unable to write to config.php in your %s directory.  Please change its permissions."
+msgstr "%s ディレクトリの config.php に書き込むことができません。パーミッションを変更してください"
+
+msgid "You can do <i>chmod 666 config.php</i> to fix this."
+msgstr "これを修正するには<i>chmod 666 config.php</i>を実行してください"
+
+msgid "The installed version is newer than the version you are trying to upgrade to. You cannot downgrade G2. Please replace the gallery2 files with files from the currently installed version or later."
+msgstr "インストールされいるバージョンは、アップグレードしようとしているバージョンよりも新しいものです。G2 をダウングレードすることはできません。gallery2 のファイルを現在インストールされているバージョンかより新しいバージョンのファイルに置き換えてください"
+
+msgid "Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  If you fail to make a backup and something goes wrong, there is a strong possibility that we will not be able to help you recover your data!  Refer to the following examples:"
+msgstr "アップグレードするまえに、データベースのバックアップをとることを<b>強くおすすめ</b>します。バックアップをとらずに、何か問題が発生した場合、データを修復する手伝いをできない可能性がきわめて高いです。次の例を参照してください:"
+
+msgid "MySQL"
+msgstr "MySQL"
+
+#, c-format
+msgid "mysqldump -u%s -p<i>YourPassword</i> --opt %s > %s.sql"
+msgstr "mysqldump -u%s -p<i>YourPassword</i> --opt %s > %s.sql"
+
+msgid "PostgreSQL"
+msgstr "PostgreSQL"
+
+#, c-format
+msgid "pg_dump --format=t %s > %s.sql"
+msgstr "pg_dump --format=t %s > %s.sql"
+
+msgid "Once the upgrade has begun, please be patient.  If you cancel or reload the page, you may interfere with the upgrade process."
+msgstr "いったんアップグレードを始めたら、焦らないでください。キャンセルやリロードをすると、アップグレードプロセスがうまく行かない可能性があります"
+
+msgid "Begin Upgrade"
+msgstr "アップグレード開始"
+
+msgid "Recheck config.php"
+msgstr "config.php を再チェック"
+
+msgid "Upgraded Gallery Core Module successfully."
+msgstr "Gallery のコアモジュールのアップグレードに成功しました"
+
+msgid "We've successfully upgraded the Gallery Core Module."
+msgstr "Gallery のコアモジュールのアップグレードに成功しました"
+
+msgid "<b>Reminder</b>: Now check the permissions on config.php and make sure it is not globally writeable."
+msgstr "<b>リマインダー</b>:config.php のパーミッションをチェックしてください。必ずグローバルに書き込まれないようにしてください。"
+
+msgid "Your Gallery Core Module is up to date!"
+msgstr "Gallery のコアモジュールは最新の状態です"
+
+msgid "Upgrade Other Modules"
+msgstr "他のモジュールをアップグレード"
+
+msgid "The following modules can be automatically upgraded for you.  If you choose not to upgrade them now, you may experience problems with your Gallery.   You can always upgrade or deactivate them on the Site Administration page, or return to this page later so any decision you make here is not permanent."
+msgstr "次のモジュールは自動的にアップグレードできます。もしアップグレードしないと、問題が発生するかもしれません。ただし、いつでも、サイト管理のページでアップグレードおよび無効化できます。ここでの決定は、恒久的なものではなく、いつでもこのページに戻ってくることができます"
+
+msgid "Missing Code"
+msgstr "見つからないコード"
+
+msgid "The code for some plugins that were previously active can no longer be found. You must restore code for these plugins before this upgrade can continue. Code for the plugins must be the same version or newer than what was installed before."
+msgstr "以前は有効だったいくつかのプラグインのコードは、もはや見つかりません。アップグレードを続ける前に、これらのコードを回復させてください。コードは現在インストールされているものと同じバージョンかより新しいものでなければいけません"
+
+msgid "Module"
+msgstr "モジュール"
+
+msgid "Theme"
+msgstr "テーマ"
+
+msgid "Name"
+msgstr "名前"
+
+msgid "Current"
+msgstr "現在"
+
+msgid "New"
+msgstr "新しい"
+
+msgid "Description"
+msgstr "説明"
+
+msgid "(un)check all"
+msgstr "すべてをチェック（しない）"
+
+#, c-format
+msgid "Skip Upgrade and Continue to Step %d&raquo;"
+msgstr "アップグレードをスキップし、ステップ Step %d に続く&raquo;"
+
+msgid "Upgrade Selected Modules"
+msgstr "選択したモジュールをアップグレード"
+
+#, c-format
+msgid "Upgraded the %s module successfully"
+msgstr "%s モジュールのアップグレードに成功"
+
+#, c-format
+msgid "Upgraded the %s theme successfully"
+msgstr "%s テーマのアップグレードに成功"
+
+msgid "Upgrade More Modules"
+msgstr "さらに別のモジュールをアップグレード"
+
+#, c-format
+msgid "Upgrading Gallery 2.0 requires %d steps. This upgrade tool will guide you through these steps and provide assistance along the way if additional steps are required. Please read the %sHelp File%s before proceeding."
+msgstr "Gallery 2.0 をアップグレードするのには、%d ステップが必要です。このアップグレードツールは、これらのステップを通じてガイドし、追加的なステップが必要になった場合は知らせてくれます。進む前に %sHelp File%s を読んでください"
+
+msgid "Select Language:"
+msgstr "言語選択:"
+
+msgid "Go"
+msgstr "進む"
+

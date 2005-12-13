@@ -22,15 +22,18 @@ msgstr ""
 "Project-Id-Version: Gallery: Rewrite 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-08-15 19:27+0900\n"
-"PO-Revision-Date: 2005-09-28 20:35+0900\n"
+"PO-Revision-Date: 2005-11-20 22:05+0900\n"
 "Last-Translator: Kennichi Uehara <ken.w3m+nospam@gmail.com>\n"
 "Language-Team: Japanese <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+msgid "404 File Not Found"
+msgstr "404 File Not Found"
+
 msgid "Check short style URLs for filesystem conflicts"
-msgstr ""
+msgstr "短いスタイルのURLとファイルシステムとの衝突をチェック"
 
 msgid ""
 "This will go through all your Gallery items and check if the short style URL "
@@ -41,15 +44,15 @@ msgid "Processing..."
 msgstr "処理中..."
 
 msgid "Bad path:"
-msgstr "悪いパス:"
+msgstr "問題のあるパス:"
 
 #, c-format
 msgid "Checking item %d of %d"
-msgstr ""
+msgstr "アイテムのチェック %d / %d"
 
 #, c-format
 msgid "Checked %d items and found %d conflicts"
-msgstr ""
+msgstr "%d アイテムをチェックし、%d 個の衝突が見つかりました。"
 
 msgid "URL Rewrite"
 msgstr "URL書き換え"
@@ -70,16 +73,13 @@ msgid "Download Item"
 msgstr "アイテムのダウンロード"
 
 msgid "Ensures browsers do not use cached version when image has changed"
-msgstr ""
+msgstr "画像が変更された場合は、ブラウザがキャッシュされたものを表示していないか確認してください。"
 
 msgid "Item file name (eg, image.jpg)"
 msgstr "アイテムのファイル名 (例 image.jpg)"
 
 msgid "Site Admin"
 msgstr "サイト管理"
-
-msgid "404 File Not Found"
-msgstr ""
 
 msgid "Block hotlinked items"
 msgstr ""
@@ -123,7 +123,7 @@ msgstr "テスト"
 msgid ""
 "Short URLs are compiled out of predefined keywords. Modules may provide "
 "additional keywords. Keywords are escaped with % (eg: %itemId%)."
-msgstr ""
+msgstr "短いURLはあらかじめ定義されたキーワードからコンパイルされます。おそらくモジュールはついかのキーワードを提供します。キーワードは%でエスケープしてください。(例: %itemID%)"
 
 msgid "Active"
 msgstr "アクティブ"
@@ -141,16 +141,16 @@ msgid "Additional Keywords"
 msgstr "追加キーワード"
 
 msgid "Status: Error"
-msgstr ""
+msgstr "ステータス: エラー"
 
 msgid "Status: Active"
-msgstr ""
+msgstr "ステータス: 有効"
 
 msgid "Status: Not Active"
-msgstr ""
+msgstr "ステータス: 無効"
 
 msgid "No help available"
-msgstr ""
+msgstr "ヘルプはありません"
 
 msgid "Keywords"
 msgstr "キーワード"
@@ -162,13 +162,13 @@ msgid "Save"
 msgstr "保存"
 
 msgid "Approved referers"
-msgstr "承認されたリファラー"
+msgstr "承認済みのリファラー"
 
 msgid ""
 "Some rules only apply if the referer (the site that linked to the item) is "
 "something other than Gallery itself. Hosts in the list below will be treated "
 "as friendly referers."
-msgstr ""
+msgstr "いくつかのルールはリファラー(アイテムにリンクしているサイト)がGallery以外の場合にのみ適用されます。以下のリストにあるホストは友好的なリファラーとして扱います。"
 
 msgid "Embedded Setup"
 msgstr ""
@@ -179,16 +179,17 @@ msgid ""
 msgstr ""
 
 msgid "Htaccess path:"
-msgstr ""
+msgstr "htaccessのパス:"
 
 msgid "Invalid directory."
-msgstr ""
+msgstr "無効なディレクトリ"
 
+#, fuzzy
 msgid "Public path:"
-msgstr ""
+msgstr "公共のパス:"
 
 msgid "Invalid path."
-msgstr ""
+msgstr "無効なパス"
 
 msgid "Apache mod_rewrite"
 msgstr "Apache mod_rewrite"
@@ -197,7 +198,7 @@ msgstr "Apache mod_rewrite"
 msgid ""
 "In order for this Gallery module to work you need %s enabled with your "
 "Apache server."
-msgstr ""
+msgstr "このGalleryモジュールが動作するには、Apacheサーバで %s が有効になっている必要があります。"
 
 msgid "Success"
 msgstr "成功"
@@ -206,7 +207,7 @@ msgid "Warning"
 msgstr "警告"
 
 msgid "Test mod_rewrite manually"
-msgstr ""
+msgstr "mod_rewirteのテストを手動でする"
 
 #, c-format
 msgid ""
@@ -215,10 +216,10 @@ msgid ""
 msgstr ""
 
 msgid "Test Webserver Again"
-msgstr ""
+msgstr "もう一度ウェブサーバのテストをする"
 
 msgid "Gallery .htaccess file"
-msgstr ""
+msgstr "Gallery .htaccess ファイル"
 
 msgid ""
 "Gallery's URL rewriting works by creating a new file in your gallery "
@@ -230,16 +231,16 @@ msgid "Error"
 msgstr "エラー"
 
 msgid "Please create a file in your Gallery directory named .htaccess"
-msgstr ""
+msgstr "Galleryディレクトリに.htaccessという名前のファイルを作成してください。"
 
 msgid "Please make sure Gallery can read the existing .htaccess file"
-msgstr ""
+msgstr "Galleryが既に存在する.htaccessファイルを読めることを確認してください。"
 
 msgid "Please make sure Gallery can write to the existing .htaccess file"
-msgstr ""
+msgstr "Galleryが既に存在する.htaccessファイルに書き込めることを確認してください。"
 
 msgid "Test .htaccess File Again"
-msgstr ""
+msgstr ".htaccessファイルのテストをもう一度する。"
 
 msgid "Embedded .htaccess file"
 msgstr ""
@@ -262,13 +263,16 @@ msgid ""
 msgstr ""
 
 msgid "Test .htaccess Files Again"
-msgstr ""
+msgstr "もう一度 .htaccess ファイルのテストを行う"
 
 msgid "Error: 404 File Not Found"
-msgstr ""
+msgstr "エラー: 404 File Not Found"
+
+msgid "The page you requested does not exist"
+msgstr "あなたが要求したページは存在しません。"
 
 msgid "URL Rewrite System Checks"
-msgstr ""
+msgstr "URL書き換えシステムのチェック"
 
 msgid "Custom Gallery directory test setup"
 msgstr ""
@@ -282,7 +286,7 @@ msgid "Line 6:"
 msgstr ""
 
 msgid "Multisite setup"
-msgstr ""
+msgstr "マルチサイトのセットアップ"
 
 msgid ""
 "Gallery tries to test mod_rewrite in action. This does not work with "
@@ -305,10 +309,10 @@ msgid "Works"
 msgstr ""
 
 msgid "Test mod_rewrite"
-msgstr ""
+msgstr "mod_rewriteのテスト"
 
 msgid "Test mod_rewrite with Options directive"
-msgstr ""
+msgstr "オプションディレクティブでmod_rewriteをテスト"
 
 msgid ""
 "If one of the two tests gives you a page with the text PASS_REWRITE you are "
@@ -322,7 +326,7 @@ msgid "Troubleshooting"
 msgstr "トラブルシューティング"
 
 msgid "How can I check if mod_rewrite is loaded?"
-msgstr ""
+msgstr "mod_rewirteがロードされているかをどのように確認すればいいですか?"
 
 #, c-format
 msgid ""
