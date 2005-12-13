@@ -26,7 +26,8 @@
   </li>
 </ol>
 
-{capture name="baseUrl"}{g->url arg1="controlle=migrate.Redirect"}{/capture}
+{capture name="baseUrl"}{g->url arg1="controlle=migrate.Redirect"
+				forceSessionId=false forceFullUrl=true}{/capture}
 <pre class="giDescription">&lt;IfModule mod_rewrite.c&gt;
   RewriteEngine On
   RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} !-f

@@ -74,13 +74,21 @@ class ExternalCSSController extends GalleryController {
 class ExternalCSSView extends GalleryView {
 
     /**
-     * @see GalleryView::loadTemplate()
+     * @see GalleryView::isImmediate
      */
-    function loadTemplate(&$template, &$form) {
-	header('Content-type: text/css');
+    function isImmediate() {
+	return true;
+    }
+
+    /**
+     * @see GalleryView::renderImmediate
+     */
+    function renderImmediate($status, $error) {
+	header('Content-type: text/html');
 	header('Expires: ' . GalleryUtilities::getHttpDate(time() + 2592000));
-	return array(GalleryStatus::success(),
-		     array('html' => 'modules/imageblock/templates/NoCSS.tpl'));
+	print '<style type="text/css"> img.giThumbnail { border-style: none; } </style>';
+	print "\n";
+	return GalleryStatus::success();
     }
 }
 ?>

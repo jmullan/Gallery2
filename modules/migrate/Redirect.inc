@@ -47,7 +47,6 @@ class RedirectController extends GalleryController {
     */
     function handleRequest($form) {
 	GalleryCoreApi::relativeRequireOnce('modules/migrate/classes/G1MigrateHelper.class');
-	global $gallery;
 
 	$path = GalleryUtilities::getRequestVariables('path');
 	$path = preg_split('|/|', $path, -1, PREG_SPLIT_NO_EMPTY);
@@ -152,19 +151,29 @@ class RedirectController extends GalleryController {
  */
 class RedirectView extends GalleryView {
     /**
-     * @see GalleryView::loadTemplate
+     * @see GalleryView::isImmediate
      */
-    function loadTemplate(&$template, &$form) {
-	global $gallery;
+    function isImmediate() {
+	return true;
+    }
 
+    /**
+     * @see GalleryView::renderImmediate
+     */
+    function renderImmediate($status, $error) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	header('Content-type: text/plain');
-	return array(GalleryStatus::success(),
-		     array('html' => 'modules/migrate/templates/Htaccess.tpl'));
+
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTemplate.class');
+	$template = new GalleryTemplate(dirname(dirname(dirname(__FILE__))));
+	$template->setVariable('l10Domain', 'modules_migrate');
+	$template->display('gallery:modules/migrate/templates/Htaccess.tpl');
+
+	return GalleryStatus::success();
     }
 }
 ?>
