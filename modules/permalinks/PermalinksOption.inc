@@ -105,7 +105,13 @@ class PermalinksOption extends ItemEditOption {
      * @see ItemEditOption::isAppropriate
      */
     function isAppropriate($item, $thumbnail) {
-	return array(GalleryStatus::success(), GalleryUtilities::isA($item, 'GalleryItem'));
+	list ($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return array(GalleryStatus::success(), GalleryUtilities::isA($item, 'GalleryItem') &&
+		$item->getId() != $rootId);
     }
 }
 ?>
