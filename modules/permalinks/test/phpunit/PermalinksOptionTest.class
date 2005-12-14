@@ -1,0 +1,116 @@
+<?php
+/*
+* $RCSfile$
+*
+* Gallery - a web based photo album viewer and editor
+* Copyright (C) 2000-2005 Bharat Mediratta
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or (at
+* your option) any later version.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+*/
+/**
+* @version $Revision$ $Date$
+* @package Permalinks
+* @subpackage PHPUnit
+* @author Pierre-Luc Paour <paour@users.sf.net>
+*/
+
+GalleryCoreApi::relativeRequireOnce('lib/tools/phpunit/ItemEditOptionTestCase.class');
+GalleryCoreApi::relativeRequireOnce('modules/permalinks/classes/helpers/PermalinksMapHelper.class');
+
+/**
+* PermalinksOption item edit tests
+*
+* @package Permalinks
+* @subpackage PHPUnit
+*/
+class PermalinksOptionTest extends ItemEditOptionTestCase {
+    
+    function PermalinksOptionTest($methodName) {
+	$this->ItemEditOptionTestCase($methodName, 'permalinks', 'PermalinksOption');
+    }
+    
+    function setUp() {
+	parent::setUp();
+	
+	$ret = $this->_markPluginParametersForCleanup('module', 'permalinks');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId(), 'image/test', array(), __FILE__, 'GalleryPhotoItem');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$item->setMimeType('image/gif');
+	
+	list ($ret, $item1) = $this->_createRandomDataItem($this->_getRootId(), 'image/test', array(), __FILE__, 'GalleryPhotoItem');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$item1->setMimeType('image/gif');
+
+	$this->_item = $item;
+	$this->_item1 = $item1;
+	$this->_markForCleanup($this->_item);
+	$this->_markForCleanup($this->_item1);
+    }
+    
+    function testPermalinksOptionCreate() {
+	$form['PermalinksOption']['aliasName'] = 'newAlias';
+	
+	$result = $this->_handleRequestAfterEdit($form, $this->_item);
+	
+	list ($ret, $destId) = PermalinksMapHelper::fetchItemIdForAlias('newAlias');
+	$this->assertEquals($destId, ''.$this->_item->getId());
+    }
+
+    function testPermalinksOptionCollision() {
+	$form['PermalinksOption']['aliasName'] = 'newAlias';
+	
+	$result = $this->_handleRequestAfterEdit($form, $this->_item1);
+	
+	list ($ret, $destId) = PermalinksMapHelper::fetchItemIdForAlias('newAlias');
+	$this->assertEquals($destId, ''.$this->_item1->getId());
+	
+	/* now test a collision */	
+	$result = $this->_handleRequestAfterEdit($form, $this->_item);
+	$this->assertEquals(array(array('form[error][PermalinksOption][exists]'), array()), $result);
+	
+	list ($ret, $destId) = PermalinksMapHelper::fetchItemIdForAlias('newAlias');
+	$this->assertEquals($destId, ''.$this->_item1->getId());
+    }
+
+    function testPermalinksOptionDelete() {
+	$form['PermalinksOption']['aliasName'] = 'newAlias';
+	
+	$result = $this->_handleRequestAfterEdit($form, $this->_item);
+	
+	list ($ret, $destId) = PermalinksMapHelper::fetchItemIdForAlias('newAlias');
+	$this->assertEquals($destId, ''.$this->_item->getId());
+
+	/* now delete it */
+	unset($form['PermalinksOption']['aliasName']);
+	$form['PermalinksOption']['delete']['newAlias'] = 'on';
+	
+	$result = $this->_handleRequestAfterEdit($form, $this->_item);
+	
+	list ($ret, $destId) = PermalinksMapHelper::fetchItemIdForAlias('newAlias');
+	$this->assert(empty($destId));
+    }
+}
+?>
