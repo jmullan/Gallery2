@@ -50,14 +50,16 @@ class PermalinksOptionTest extends ItemEditOptionTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId(), 'image/test', array(), __FILE__, 'GalleryPhotoItem');
+	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId(), 'image/test', 
+		array(), __FILE__, 'GalleryPhotoItem');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$item->setMimeType('image/gif');
 	
-	list ($ret, $item1) = $this->_createRandomDataItem($this->_getRootId(), 'image/test', array(), __FILE__, 'GalleryPhotoItem');
+	list ($ret, $item1) = $this->_createRandomDataItem($this->_getRootId(), 'image/test', 
+		array(), __FILE__, 'GalleryPhotoItem');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -89,7 +91,8 @@ class PermalinksOptionTest extends ItemEditOptionTestCase {
 	
 	/* now test a collision */	
 	$result = $this->_handleRequestAfterEdit($form, $this->_item);
-	$this->assertEquals(array(array('form[error][PermalinksOption][exists]'), array()), $result);
+	$this->assertEquals(array(array('form[error][PermalinksOption][exists]'), array()), 
+		$result);
 	
 	list ($ret, $destId) = PermalinksMapHelper::fetchItemIdForAlias('newAlias');
 	$this->assertEquals($destId, ''.$this->_item1->getId());

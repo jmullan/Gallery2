@@ -62,7 +62,8 @@ class PermalinksSiteAdminController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		
-		$status['PermalinksSiteAdmin']['success'] = $module->translate('Permalink(s) deleted successfully');
+		$status['PermalinksSiteAdmin']['success'] = 
+			$module->translate('Permalink(s) deleted successfully');
 	    }
 	}
 	
@@ -113,8 +114,8 @@ class PermalinksSiteAdminView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	
-	list ($ret, $PermalinksSiteAdmin['autoPermalink']) = GalleryCoreApi::getPluginParameter('module', 'permalinks', 
-		'autoPermalink');
+	list ($ret, $PermalinksSiteAdmin['autoPermalink']) = GalleryCoreApi::getPluginParameter(
+		'module', 'permalinks', 'autoPermalink');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

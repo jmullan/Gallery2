@@ -54,7 +54,8 @@ class PermalinksOption extends ItemEditOption {
 	}
 	
 	if (!empty($form['PermalinksOption']['aliasName'])) {
-	    $ret = PermalinksMapHelper::createAlias($form['PermalinksOption']['aliasName'], $item->getId());
+	    $ret = PermalinksMapHelper::createAlias($form['PermalinksOption']['aliasName'],
+		    $item->getId());
 	    if ($ret->isError()) {
 		if (!($ret->getErrorCode() & ERROR_STORAGE_FAILURE)) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);

@@ -40,7 +40,8 @@ class PermalinksModule extends GalleryModule /* and GalleryEventListener */ {
 	
 	$this->setId('permalinks');
 	$this->setName($gallery->i18n('Permalinks'));
-	$this->setDescription($gallery->i18n('Create simpler permanent aliases to your items space'));
+	$this->setDescription(
+		$gallery->i18n('Create simpler permanent aliases to your items space'));
 	$this->setVersion('1.0.3'); /* Update upgrade() too */
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews');
@@ -77,7 +78,8 @@ class PermalinksModule extends GalleryModule /* and GalleryEventListener */ {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
-	return array(GalleryStatus::success(), array('view' => 'core.SiteAdmin', 'subView' => 'permalinks.ActivationWarning'));
+	return array(GalleryStatus::success(), array('view' => 'core.SiteAdmin',
+						     'subView' => 'permalinks.ActivationWarning'));
     }
     
     /**
@@ -186,7 +188,8 @@ class PermalinksModule extends GalleryModule /* and GalleryEventListener */ {
 		    GalleryCoreApi::relativeRequireOnce(
 		    	'modules/permalinks/classes/helpers/PermalinksMapHelper.class');
 		    
-		    $ret = PermalinksMapHelper::createAlias($album->getPathComponent(), $album->getId());
+		    $ret = PermalinksMapHelper::createAlias($album->getPathComponent(), 
+			    $album->getId());
 		    if ($ret->isError()) {
 			if (!($ret->getErrorCode() & ERROR_COLLISION)) {
 			    return array($ret->wrap(__FILE__, __LINE__), null, null);
@@ -210,10 +213,11 @@ class PermalinksModule extends GalleryModule /* and GalleryEventListener */ {
 		'match' => array('controller' => 'permalinks.Redirect'),
 		'pattern' => 'f/%filename%',
 		'keywords' => array(
-		    'filename' => array(
-			'pattern' => '([^?]+)',
-			'help' => $this->translate('Name you have defined as an alias to your item'))),
-		'help' => $this->translate('Enable this rule to allow Flat URLs you define to work. Disabling this rule will break your Flat URLs.')
+		'filename' => array(
+		    'pattern' => '([^?]+)',
+		    'help' => $this->translate('Name you have defined as an alias to your item'))),
+		'help' => $this->translate('Enable this rule to allow Permalinks you define to ' .
+					   'work. Disabling this rule will break your Flat URLs.')
 	    )
 	);
     }
