@@ -195,6 +195,10 @@ class GalleryPermissionHelper_advanced {
 	    ($changeType != 'add') && ($changeType != 'remove')) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
+	$itemId = (int) $itemId;
+	$userId = (int) $userId;
+	$groupId = (int) $groupId;
+	
 	$storage =& $gallery->getStorage();
 
 	list ($ret, $lockId) =
@@ -1118,6 +1122,7 @@ class GalleryPermissionHelper_advanced {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	$semaphoreId = (int) $semaphoreId;
 
 	switch ($type) {
 	case 'read':
