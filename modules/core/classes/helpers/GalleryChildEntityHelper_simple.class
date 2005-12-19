@@ -323,7 +323,7 @@ class GalleryChildEntityHelper_simple {
 	}
 	for ($i = 0; $i < $extraIds; $i++) {
 	    /* add the data for $orderWhere's extra ?'s */
-	    $data[] = $this->getId();
+	    $data[] = $item->getId();
 	}
 	$options = array();
 	$options['limit'] = array('count' => $count, 'offset' => $offset);

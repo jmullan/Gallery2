@@ -348,7 +348,7 @@ class GalleryPluginHelper_medium {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
+	
 	if (!array_key_exists($parameterName, $params)) {
 	    $ret = GalleryPluginHelper_medium::_addParameter($pluginType,
 							     $pluginId,
@@ -402,21 +402,21 @@ class GalleryPluginHelper_medium {
 	if ($itemId == null) {
 	    $itemId = 0;
 	}
-
+	
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPluginParameterMap.class');
 	$ret = GalleryPluginParameterMap::addMapEntry(
 	    array('pluginType' => $pluginType,
 		  'pluginId' => $pluginId,
 		  'itemId' => $itemId,
 		  'parameterName' => $parameterName,
-		  'parameterValue' => $parameterValue));
+		  'parameterValue' => (string) $parameterValue));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$cacheKey = "GalleryPluginHelper::fetchAllParameters($pluginType, $pluginId, $itemId)";
 	GalleryDataCache::remove($cacheKey);
-
+	
 	return GalleryStatus::success();
     }
 
@@ -448,7 +448,7 @@ class GalleryPluginHelper_medium {
 		  'pluginId' => $pluginId,
 		  'itemId' => $itemId,
 		  'parameterName' => $parameterName),
-	    array('parameterValue' => $parameterValue));
+	    array('parameterValue' => (string) $parameterValue));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

@@ -186,7 +186,7 @@ class GalleryFactoryHelper_medium {
 						    'implId' => $implId,
 						    'implPath' => $implPath,
 						    'implModuleId' => $implModuleId,
-						    'orderWeight' => $orderWeight,
+						    'orderWeight' => (string) $orderWeight,
 						    'hints' => serialize($hints)));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

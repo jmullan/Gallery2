@@ -50,7 +50,7 @@ class GalleryUserGroupHelper_medium {
 	/* Is the user already in the group? */
 	list ($ret, $inGroup) = GalleryCoreApi::isUserInGroup($userId, $groupId);
 	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	if ($inGroup) {
 	    return GalleryStatus::success();

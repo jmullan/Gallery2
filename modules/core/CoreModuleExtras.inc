@@ -132,7 +132,7 @@ class CoreModuleExtras {
 			   'format.datetime' => '%c',
 			   ) as $key => $value) {
 		if (!isset($param[$key])) {
-		    $ret = $module->setParameter($key, $value);
+		    $ret = $module->setParameter($key, (string)$value);
 		    if ($ret->isError()) {
 			$gallery->debug(sprintf('Error: Failed to set core module parameter %s, ' .
 					       'this is the error stack trace: %s', $key,
@@ -1929,7 +1929,7 @@ $gallery->setConfig(\'mode.maintenance\', false);
 		$entry[2] == 'class' ?
 		  sprintf('modules/core/classes/%s.class', $entry[1]) :
 		  sprintf('modules/core/%s.inc', $entry[1]),
-		'core', $entry[3], isset($entry[4]) ? $entry[4] : 4);
+		'core', $entry[3], isset($entry[4]) ? (string) $entry[4] : '4');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
