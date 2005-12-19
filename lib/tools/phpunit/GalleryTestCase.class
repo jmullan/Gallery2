@@ -191,6 +191,7 @@ class GalleryTestCase extends TestCase {
 	$this->_saveVars[] = $_COOKIE;
 	$this->_saveVars[] = $_SERVER;
 	$this->_saveVars[] = $_ENV;
+	$this->_saveVars[] = $gallery->getStorage();
 	$this->_saveVars[] = $gallery->getPlatform();
 	$this->_saveVars[] = $gallery->getActiveUser();
 	$this->_saveVars[] = $gallery->getUrlGenerator();
@@ -247,6 +248,7 @@ class GalleryTestCase extends TestCase {
 	$_COOKIE = array_shift($this->_saveVars);
 	$_SERVER = array_shift($this->_saveVars);
 	$_ENV = array_shift($this->_saveVars);
+	$gallery->_storage = array_shift($this->_saveVars);
 	$platform = array_shift($this->_saveVars);
 	$gallery->setPlatform($platform);
 	$gallery->setActiveUser(array_shift($this->_saveVars));
