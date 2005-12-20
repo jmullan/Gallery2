@@ -26,7 +26,7 @@
  */
 
 /**
- * Photo printing at photoaccess.com
+ * Photo printing at photoworks.com
  *
  * @package PhotoAccess
  */
@@ -143,7 +143,7 @@ class PhotoAccessModule extends GalleryModule {
 		    isset($permissions[$itemId]['photoaccess.print']) &&
 		    GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
 		$links[$itemId][] =
-		    array('text' => $this->translate('Print on PhotoAccess.com'),
+		    array('text' => $this->translate('Print on PhotoWorks.com'),
 			  'params' => array('controller' => 'photoaccess.PrintPhoto',
 					    'itemId' => $itemId, 'returnUrl' => '%CURRENT_URL%'));
 	    }

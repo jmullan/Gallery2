@@ -151,9 +151,9 @@ class PrintPhotoControllerTest extends GalleryControllerTestCase {
 	$platform->setReply('readdir', array('dh'), false, true);
 	$platform->setReply('closedir', array('dh'), true, true);
 	/* End optional calls */
-	$platform->setReply('fsockopen', array('www.photoaccess.com', 80, '', '', 1), 'testFd');
+	$platform->setReply('fsockopen', array('www.photoworks.com', 80, '', '', 1), 'testFd');
 	$platform->setReply('fwrite',
-	    array('testFd', 'fuzzy' => "{POST /buy/$fragment HTTP/1\.0}", ''), 100);
+	    array('testFd', 'fuzzy' => "{POST /sbo/$fragment HTTP/1\.0}", ''), 100);
 	$platform->setReply('fflush', array('testFd'), true);
 	$platform->setReply('fgets', array('testFd', 4096), 'HTTP/1.1 200 OK');
 	$platform->setReply('feof', array('testFd'), false);
@@ -177,7 +177,7 @@ class PrintPhotoControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$expectedHref = 'http://www.photoaccess.com/REDIRECT_URL';
+	$expectedHref = 'http://www.photoworks.com/REDIRECT_URL';
 	$this->assertEquals(array('redirect' => array('href' => $expectedHref),
 				  'status' => array(),
 				  'error' => array()),
@@ -196,11 +196,11 @@ class PrintPhotoControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('returnUrl', 'RETURN_URL');
 
 	$session =& $gallery->getSession();
-	$session->put('photoaccess.cartUrlFragment', '/buy/EXISTING_FRAGMENT');
+	$session->put('photoaccess.cartUrlFragment', '/sbo/EXISTING_FRAGMENT');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$expectedHref = 'http://www.photoaccess.com/REDIRECT_URL2?foo=1&bar=2';
+	$expectedHref = 'http://www.photoworks.com/REDIRECT_URL2?foo=1&bar=2';
 	$this->assertEquals(array('redirect' => array('href' => $expectedHref),
 				  'status' => array(),
 				  'error' => array()),

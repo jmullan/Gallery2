@@ -27,7 +27,7 @@
  */
 
 /**
- * This is a helper class for interacting with PhotoAccess.com
+ * This is a helper class for interacting with PhotoWorks.com
  *
  * @package PhotoAccess
  * @subpackage Classes
@@ -36,10 +36,10 @@
 class PhotoAccessHelper {
 
     /**
-     * Print the items on photoaccess.com and provide them with the given return url
+     * Print the items on photoworks.com and provide them with the given return url
      *
      * @return array object GalleryStatus a status code
-     *               string the url to the photoaccess.com cart
+     *               string the url to the photoworks.com cart
      * @static
      */
     function printPhotos($cartItemIds, $returnUrl) {
@@ -88,9 +88,9 @@ class PhotoAccessHelper {
 	$cartUrlFragment = $session->get('photoaccess.cartUrlFragment');
 
 	/* If we don't have a cart url that means we don't have a photoaccess session yet */
-	$photoAccessServer = 'www.photoaccess.com';
+	$photoAccessServer = 'www.photoworks.com';
 	if (empty($cartUrlFragment)) {
-	    $cartUrlFragment = '/buy/anonCartXML.jsp';
+	    $cartUrlFragment = '/sbo/anonCartXML.jsp';
 	}
 
 	/* Assemble all our data */
@@ -186,7 +186,7 @@ class PhotoAccessHelper {
 	 *
 	 * <add-cart-request cobrand="CB_GP"
 	 *                   pricelist="1"
-	 *                   entry-page="/buy/anonCart.jsp"
+	 *                   entry-page="/sbo/anonCart.jsp"
 	 *                   return-url="http://localhost/anon/test.html">
 	 *     <image id="1" url="http://localhost/anon/John.jpg"
 	 *                   thumb-url="http://localhost/anon/John_BigThumb.jpg"
@@ -200,7 +200,7 @@ class PhotoAccessHelper {
 	 */
 	$lines = array();
 	$lines[] = sprintf('<add-cart-request cobrand="CB_GP" pricelist="1" ' .
-			   'entry-page="/buy/anonCart.jsp" return-url="%s">', $returnUrl);
+			   'entry-page="/sbo/anonCart.jsp" return-url="%s">', $returnUrl);
 	for ($i = 0; $i < sizeof($entries); $i++) {
 	    $lines[] = sprintf('<image id="%d" url="%s" thumb-url="%s" height="%d" width="%d"/>',
                 $entries[$i]['id'], $entries[$i]['imageUrl'], $entries[$i]['thumbUrl'],
@@ -229,8 +229,8 @@ class PhotoAccessHelper {
 	 * or:
 	 *
 	 * <add-cart-response
-	 *   request-url="/buy/anonCartXML.jsp;jsessionid=XXXXXXXX?cb=CB_GP&#38;svr=clay"
-	 *   redirect-url="/buy/anonCart.jsp;jsessionid=XXXXXXXX?cb=CB_GP&#38;svr=clay"/>
+	 *   request-url="/sbo/anonCartXML.jsp;jsessionid=XXXXXXXX?cb=CB_GP&#38;svr=clay"
+	 *   redirect-url="/sbo/anonCart.jsp;jsessionid=XXXXXXXX?cb=CB_GP&#38;svr=clay"/>
 	 */
 	if ($gallery->getDebug()) {
 	    $gallery->debug('Response Data');

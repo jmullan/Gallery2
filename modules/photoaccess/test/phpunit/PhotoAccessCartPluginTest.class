@@ -192,10 +192,10 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	$platform = new UnitTestPlatform();
 	$platform->setReply('file_exists', array('fuzzy' => '{.*}'), false);
 	$platform->setReply('atomicWrite', array('fuzzy' => '{.*}', 'fuzzy2' => '{a.*}'), true);
-	$platform->setReply('fsockopen', array('www.photoaccess.com', 80, '', '', 1), 'testFd');
+	$platform->setReply('fsockopen', array('www.photoworks.com', 80, '', '', 1), 'testFd');
 	$postPattern = str_repeat('.*image\+id', count($this->_items) - 1) . '(?!.*image\+id)';
 	$platform->setReply('fwrite', array('testFd',
-	    'fuzzy' => '{POST /buy/anonCartXML.jsp HTTP/1\.0' . $postPattern . '}s', ''), 100);
+	    'fuzzy' => '{POST /sbo/anonCartXML.jsp HTTP/1\.0' . $postPattern . '}s', ''), 100);
 	$platform->setReply('fflush', array('testFd'), true);
 	$platform->setReply('fgets', array('testFd', 4096), 'HTTP/1.1 200 OK');
 	$platform->setReply('feof', array('testFd'), false);
@@ -214,7 +214,7 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals(array('href' => 'http://www.photoaccess.com/REDIRECT_URL'), $urlParams);
+	$this->assertEquals(array('href' => 'http://www.photoworks.com/REDIRECT_URL'), $urlParams);
     }
 }
 
