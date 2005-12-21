@@ -1117,6 +1117,7 @@ class DatabaseStorageExtras /* the other half of DatabaseStorage */ {
 	$tablename = null;
 	$record = false;
 	foreach ($sqlData as $line) {
+	    $line = rtrim($line);
 	    if (preg_match('/^## (.*)$/', $line, $matches)) {
 		if ($matches[1] == $dbType) {
 		    $record = true;
