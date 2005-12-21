@@ -25,13 +25,13 @@
       <th> {g->text text="Action"} </th>
     </tr>
     {foreach from=$form.slideshowdefaultVariables item=variable}
-	  <tr class="{cycle values="gbEven,gbOdd"}">
-	    <td>{$variable}</td>
-	    <td><a href="{g->url arg1="controller=slideshowapplet.SlideshowAppletSiteAdmin"
-	       arg2="form[action][delete]=1" arg3="form[delete][variable]=`$variable`"
-		   arg4="form[variable][type]=default" arg5="mode=variables"}">
-		   {g->text text="Delete"}</a></td>
-	  </tr>
+      <tr class="{cycle values="gbEven,gbOdd"}">
+	<td>{$variable}</td>
+	<td><a href="{g->url arg1="controller=slideshowapplet.SlideshowAppletSiteAdmin"
+	   arg2="form[action][delete]=1" arg3="form[delete][variable]=`$variable`"
+	   arg4="form[variable][type]=default" arg5="mode=variables"}">
+	   {g->text text="Delete"}</a></td>
+      </tr>
     {/foreach}
   </table>
 {/if}
@@ -70,13 +70,13 @@
       <th> {g->text text="Action"} </th>
     </tr>
     {foreach from=$form.slideshowoverrideVariables item=variable}
-	  <tr class="{cycle values="gbEven,gbOdd"}">
-	    <td>{$variable}</td>
-	    <td><a href="{g->url arg1="controller=slideshowapplet.SlideshowAppletSiteAdmin"
-	       arg2="form[action][delete]=1" arg3="form[delete][variable]=`$variable`"
-		   arg4="form[variable][type]=override" arg5="mode=variables"}">
-		   {g->text text="Delete"}</a></td>
-	  </tr>
+      <tr class="{cycle values="gbEven,gbOdd"}">
+	<td>{$variable}</td>
+	<td><a href="{g->url arg1="controller=slideshowapplet.SlideshowAppletSiteAdmin"
+	   arg2="form[action][delete]=1" arg3="form[delete][variable]=`$variable`"
+	   arg4="form[variable][type]=override" arg5="mode=variables"}">
+	   {g->text text="Delete"}</a></td>
+      </tr>
     {/foreach}
   </table>
 {/if}
@@ -109,16 +109,16 @@
   <p>{g->text text="Here are a selection of variables that affect slideshows."}</p>
   <table class="gbDataTable">
     <tr><th>{g->text text="variable"}</th><th>{g->text text="values"}</th><th>{g->text text="help"}</th></tr>
-	<tr class="gbEven"><td>slideshowMaxPictures</td><td>100</td><td>{g->text text="maximum number of pictures shown in one go"}</td>
-	<tr class="gbOdd"><td>slideshowRecursive</td><td>true/false</td><td>{g->text text="does slideshow display pictures inside sub-albums?"}</td>
-	<tr class="gbEven"><td>slideshowLowRez</td><td>true/false</td><td>{g->text text="if true, will prevent the slideshow from downloading the full-resolution pictures"}</td>
-	<tr class="gbOdd"><td>slideshowLoop</td><td>true/false</td><td>{g->text text="does slideshow loop when it gets to the end?"}</td>
-	<tr class="gbEven"><td>slideshowNoStretch</td><td>true/false</td><td>{g->text text="if true, pictures smaller than the screen won't be stretched"}</td>
-	<tr class="gbOdd"><td>slideshowPreloadAll</td><td>true/false</td><td>{g->text text="if true, the slideshow will download pictures before they're needed, which can speed up, but also may waste bandwidth"}</td>
-	<tr class="gbEven"><td>slideshowColor</td><td>0,0,0</td><td>{g->text text="color or the slideshow background"}</td>
-	<tr class="gbOdd"><td>slideshowFontSize</td><td>30</td><td>{g->text text="size of text overlay"}</td>
-	<tr class="gbEven"><td>slideshowFontName</td><td>arial</td><td>{g->text text="font of text overlay"}</td>
-	<tr class="gbOdd"><td>slideshowRandom</td><td>true/false</td><td>{g->text text="should the pictures be shown in random order?"}</td>
+    <tr class="gbEven"><td>slideshowMaxPictures</td><td>100</td><td>{g->text text="maximum number of pictures shown in one go"}</td>
+    <tr class="gbOdd"><td>slideshowRecursive</td><td>true/false</td><td>{g->text text="does slideshow display pictures inside sub-albums?"}</td>
+    <tr class="gbEven"><td>slideshowLowRez</td><td>true/false</td><td>{g->text text="if true, will prevent the slideshow from downloading the full-resolution pictures"}</td>
+    <tr class="gbOdd"><td>slideshowLoop</td><td>true/false</td><td>{g->text text="does slideshow loop when it gets to the end?"}</td>
+    <tr class="gbEven"><td>slideshowNoStretch</td><td>true/false</td><td>{g->text text="if true, pictures smaller than the screen won't be stretched"}</td>
+    <tr class="gbOdd"><td>slideshowPreloadAll</td><td>true/false</td><td>{g->text text="if true, the slideshow will download pictures before they're needed, which can speed up, but also may waste bandwidth"}</td>
+    <tr class="gbEven"><td>slideshowColor</td><td>0,0,0</td><td>{g->text text="color or the slideshow background"}</td>
+    <tr class="gbOdd"><td>slideshowFontSize</td><td>30</td><td>{g->text text="size of text overlay"}</td>
+    <tr class="gbEven"><td>slideshowFontName</td><td>arial</td><td>{g->text text="font of text overlay"}</td>
+    <tr class="gbOdd"><td>slideshowRandom</td><td>true/false</td><td>{g->text text="should the pictures be shown in random order?"}</td>
   </table>
   <p><a href="http://cvs.sourceforge.net/viewcvs.py/*checkout*/gallery/gallery_remote/defaults.properties" target="other">
   	{g->text text="Complete list of variables"}</a></p>
