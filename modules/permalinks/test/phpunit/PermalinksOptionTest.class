@@ -104,7 +104,7 @@ class PermalinksOptionTest extends ItemEditOptionTestCase {
 	
 	$result = $this->_handleRequestAfterEdit($form, $this->_item1);
 	
-	$this->_aliasNamesToDelete[] = 'testAlias1';
+	$this->_aliasNamesToDelete[] = 'newAlias';
 
 	list ($ret, $destId) = PermalinksMapHelper::fetchItemIdForAlias('newAlias');
 	$this->assertEquals($destId, ''.$this->_item1->getId());
