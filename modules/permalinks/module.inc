@@ -209,7 +209,7 @@ class PermalinksModule extends GalleryModule /* and GalleryEventListener */ {
      */
     function getRewriteRules() {
 	return array(
-	    array( 'comment' => $this->translate('Flat URLs'),
+	    array( 'comment' => $this->translate('Permalinks'),
 		'match' => array('controller' => 'permalinks.Redirect'),
 		'pattern' => 'f/%filename%',
 		'keywords' => array(
@@ -217,7 +217,7 @@ class PermalinksModule extends GalleryModule /* and GalleryEventListener */ {
 		    'pattern' => '([^?]+)',
 		    'help' => $this->translate('Name you have defined as an alias to your item'))),
 		'help' => $this->translate('Enable this rule to allow Permalinks you define to ' .
-					   'work. Disabling this rule will break your Flat URLs.')
+					   'work. Disabling this rule will break your Permalinks.')
 	    )
 	);
     }

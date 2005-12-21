@@ -37,6 +37,8 @@ GalleryCoreApi::relativeRequireOnce('modules/permalinks/classes/helpers/Permalin
 */
 class PermalinksOptionTest extends ItemEditOptionTestCase {
     
+    var $_aliasNamesToDelete;
+
     function PermalinksOptionTest($methodName) {
 	$this->ItemEditOptionTestCase($methodName, 'permalinks', 'PermalinksOption');
     }
@@ -72,11 +74,27 @@ class PermalinksOptionTest extends ItemEditOptionTestCase {
 	$this->_markForCleanup($this->_item1);
     }
     
+    function tearDown() {
+	parent::tearDown();
+	
+	if (!empty($this->_aliasNamesToDelete)) {
+	    foreach ($this->_aliasNamesToDelete as $name) {
+		$ret =
+		    PermalinksMapHelper::deleteAlias($name);
+		if ($ret->isError()) {
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+	    }
+	}
+    }
+
     function testPermalinksOptionCreate() {
 	$form['PermalinksOption']['aliasName'] = 'newAlias';
 	
 	$result = $this->_handleRequestAfterEdit($form, $this->_item);
 	
+	$this->_aliasNamesToDelete[] = 'newAlias';
+
 	list ($ret, $destId) = PermalinksMapHelper::fetchItemIdForAlias('newAlias');
 	$this->assertEquals($destId, ''.$this->_item->getId());
     }
@@ -86,10 +104,12 @@ class PermalinksOptionTest extends ItemEditOptionTestCase {
 	
 	$result = $this->_handleRequestAfterEdit($form, $this->_item1);
 	
+	$this->_aliasNamesToDelete[] = 'testAlias1';
+
 	list ($ret, $destId) = PermalinksMapHelper::fetchItemIdForAlias('newAlias');
 	$this->assertEquals($destId, ''.$this->_item1->getId());
 	
-	/* now test a collision */	
+	/* now test a collision, this generates an error with some DB drivers, that's OK */	
 	$result = $this->_handleRequestAfterEdit($form, $this->_item);
 	$this->assertEquals(array(array('form[error][PermalinksOption][exists]'), array()), 
 		$result);

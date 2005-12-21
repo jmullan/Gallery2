@@ -37,6 +37,8 @@ GalleryCoreApi::relativeRequireOnce('modules/permalinks/classes/helpers/Permalin
  *
  */
 class PermalinksTest extends GalleryTestCase {
+    
+    var $_aliasNamesToDelete;
 
     function PermalinksTest($methodName) {
 	$this->GalleryTestCase($methodName);
@@ -46,6 +48,8 @@ class PermalinksTest extends GalleryTestCase {
 	global $gallery;
 	parent::setUp();
 
+	$this->_aliasNamesToDelete = array();
+    
 	$ret = $this->_markPluginParametersForCleanup('module', 'permalinks');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -72,11 +76,27 @@ class PermalinksTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	
+	$this->_aliasNamesToDelete[] = 'testAlias';
 
 	$ret =
 	    PermalinksMapHelper::createAlias('testAlias1', $this->_album->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->_aliasNamesToDelete[] = 'testAlias1';
+    }
+    
+    function tearDown() {
+	parent::tearDown();
+	
+	foreach ($this->_aliasNamesToDelete as $name) {
+	    $ret =
+		PermalinksMapHelper::deleteAlias($name);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
 	}
     }
 
@@ -172,7 +192,6 @@ class PermalinksTest extends GalleryTestCase {
 	list ($ret, $item) = $this->_createRandomDataItem($album->getId(),
 		'image/test', array(), __FILE__, 'GalleryPhotoItem');
 	if ($ret->isError()) {
-	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$item->setMimeType('image/gif');

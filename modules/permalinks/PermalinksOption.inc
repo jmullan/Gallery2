@@ -64,7 +64,7 @@ class PermalinksOption extends ItemEditOption {
 		/* Set our error status and fall back to the view. */
 		$error[] = 'form[error][PermalinksOption][exists]';
 	    } else {
-		$warning[] = $module->translate('Permalink created successfully');
+		/* don't do anything if we're successful */
 	    }
 	}
 	
@@ -75,7 +75,7 @@ class PermalinksOption extends ItemEditOption {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 		
-		$warning[] = $module->translate('Permalink(s) deleted successfully');
+		/* don't do anything if we're successful */
 	    }
 	}
 	
