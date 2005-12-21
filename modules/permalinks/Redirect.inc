@@ -38,10 +38,10 @@ GalleryCoreApi::relativeRequireOnce('modules/permalinks/classes/helpers/Permalin
  * @subpackage UserInterface
  *
  */
-class RedirectController extends GalleryView {
+class RedirectController extends GalleryController {
 
     /**
-     * @see GalleryView::loadTemplate
+     * @see GalleryController::handleRequest
      */
     function handleRequest(&$form) {
 	global $gallery;
@@ -63,18 +63,6 @@ class RedirectController extends GalleryView {
 					 'error' => array());
 	
 	return array(GalleryStatus::success(), $results);
-    }
-
-    /**
-     * @see GalleryView::getViewDescription()
-     */
-    function getViewDescription() {
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'permalinks');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	return array(GalleryStatus::success(), $module->translate('permalinks redirection'));
     }
 }
 ?>
