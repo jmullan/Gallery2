@@ -1025,7 +1025,7 @@ class DatabaseStorageExtras /* the other half of DatabaseStorage */ {
 	    GalleryCoreApi::getPluginBaseDir('module', $moduleId));
 
 	if ($platform->file_exists($sqlFile)) {
-	    $sqlData = explode("\n", $platform->file_get_contents($sqlFile));
+	    $sqlData = $platform->file($sqlFile);
 	    $moduleSql = DatabaseStorageExtras::parseSqlTemplate($sqlData, $this->_ds->getType());
 	} else {
 	    /* Stop supporting this on the next major core api change */
