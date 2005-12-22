@@ -56,15 +56,17 @@
 
     <div class="example">
       <h3> <?php print _("MySQL") ?> </h3>
-      <?php printf(_("mysqldump -u%s -p<i>YourPassword</i> --opt %s > %s.sql"),
+      <?php printf(_("mysqldump -u%s -p -h %s --opt %s > %s.sql"),
 		   $templateData['storeConfig']['username'],
+		   $templateData['storeConfig']['hostname'],
 		   $templateData['storeConfig']['database'],
 		   $templateData['storeConfig']['database']) ?>
     </div>
 
     <div class="example">
       <h3> <?php print _("PostgreSQL") ?> </h3>
-      <?php printf(_("pg_dump --format=t %s > %s.sql"),
+      <?php printf(_("pg_dump -h %s --format=t %s > %s.sql"),
+		   $templateData['storeConfig']['hostname'],
 		   $templateData['storeConfig']['database'],
 		   $templateData['storeConfig']['database']) ?>
     </div>
