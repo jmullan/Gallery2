@@ -264,10 +264,10 @@ class Gallery {
      */
     function getActiveUserId() {
 	if (isset($this->_activeUser)) {
-	    return $this->_activeUser->getId();
+	    return (int) $this->_activeUser->getId();
 	} else {
 	    $session =& $this->getSession();
-	    return $session->get('core.id.activeUser');
+	    return (int) $session->get('core.id.activeUser');
 	}
     }
 

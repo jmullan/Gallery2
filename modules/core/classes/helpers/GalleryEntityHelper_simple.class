@@ -57,6 +57,10 @@ class GalleryEntityHelper_simple {
 	    $ids = array($ids);
 	}
 
+	foreach ($ids as $idx => $id) {
+	    $ids[$idx] = (int) $id;
+	}
+
 	/* Grab what we can from the cache and make up a list of what's missing */
 	$cached = $missing = $onLoad = array();
 	foreach ($ids as $id) {

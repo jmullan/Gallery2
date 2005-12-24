@@ -49,7 +49,7 @@ class GalleryUserGroupHelper_simple {
 	}
 
 	list ($ret, $result) = GalleryUserGroupHelper_simple::isUserInGroup(
-	  $gallery->getActiveUserId(), $adminGroupId);
+	    $gallery->getActiveUserId(), $adminGroupId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), false);
 	}
@@ -68,6 +68,9 @@ class GalleryUserGroupHelper_simple {
     function isUserInGroup($userId, $groupId) {
 	global $gallery;
 
+	$userId = (int) $userId;
+	$groupId = (int) $groupId;
+	
 	$cacheKey = "GalleryUserGroupHelper::isUserInGroup($userId,$groupId)";
 	if (GalleryDataCache::containsKey($cacheKey)) {
 	    return array(GalleryStatus::success(), GalleryDataCache::get($cacheKey));
