@@ -66,9 +66,9 @@ class AlbumSelectModule extends GalleryModule {
      */
     function registerEventListeners() {
 	$listener = new AlbumSelectModule();
-	GalleryCoreApi::registerEventListener('Gallery::ViewableTreeChange', $listener);
-	GalleryCoreApi::registerEventListener('Gallery::ItemOrder', $listener);
-	GalleryCoreApi::registerEventListener('GalleryEntity::save', $listener);
+	GalleryCoreApi::registerEventListener('Gallery::ViewableTreeChange', $listener, true);
+	GalleryCoreApi::registerEventListener('Gallery::ItemOrder', $listener, true);
+	GalleryCoreApi::registerEventListener('GalleryEntity::save', $listener, true);
     }
 
     /**
@@ -132,32 +132,38 @@ class AlbumSelectModule extends GalleryModule {
      * @see GalleryEventListener::handleEvent
      */
     function handleEvent($event) {
+	$invalidateCache = false;
 	if ($event->getEventName() == 'Gallery::ViewableTreeChange') {
-	    GalleryDataCache::removeFromDisk(
-		array('type' => 'module-data', 'module' => 'albumselect'));
+	    $invalidateCache = true;
 	} else if ($event->getEventName() == 'Gallery::ItemOrder') {
 	    list ($ret, $sort) = $this->getParameter('sort');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    if ($sort == 'manual') {
-		GalleryDataCache::removeFromDisk(
-		    array('type' => 'module-data', 'module' => 'albumselect'));
+		$invalidateCache = true;
 	    }
 	} else if ($event->getEventName() == 'GalleryEntity::save') {
 	    $entity = $event->getEntity();
-	    if ($entity->getEntityType() == 'GalleryAlbumItem'
-		    && ($entity->getModifiedFlag('orderBy') & MEMBER_MODIFIED
-			|| $entity->getModifiedFlag('orderDirection') & MEMBER_MODIFIED)) {
-		list ($ret, $sort) = $this->getParameter('sort');
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		if ($sort == 'album') {
-		    GalleryDataCache::removeFromDisk(
-			array('type' => 'module-data', 'module' => 'albumselect'));
+	    if ($entity->getEntityType() == 'GalleryAlbumItem') {
+		if ($entity->getModifiedFlag('orderBy') & MEMBER_MODIFIED
+		        || $entity->getModifiedFlag('orderDirection') & MEMBER_MODIFIED) {
+		    list ($ret, $sort) = $this->getParameter('sort');
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    if ($sort == 'album') {
+			$invalidateCache = true;
+		    }
+		} else if ($entity->getModifiedFlag('title') & MEMBER_MODIFIED) {
+		    $invalidateCache = true;
 		}
 	    }
+	}
+
+	if ($invalidateCache) {
+	    GalleryDataCache::removeFromDisk(array('type' => 'module-data',
+						   'module' => 'albumselect'));
 	}
 
 	return array(GalleryStatus::success(), null);

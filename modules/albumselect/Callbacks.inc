@@ -52,6 +52,7 @@ class AlbumSelectCallbacks {
 				   '_' . substr(md5(serialize($callbackParams)), 0, 5));
 	    list ($treeList, $titles) = GalleryDataCache::getFromDisk($cachePathInfo);
 	    if (!isset($titles) || !isset($treeList)) {
+		GalleryCoreApi::relativeRequireOnce('lib/smarty/plugins/modifier.escape.php');
 		if (isset($callbackParams['stripTitles'])) {
 		    GalleryCoreApi::relativeRequireOnce('lib/smarty_plugins/modifier.markup.php');
 		}
@@ -69,6 +70,7 @@ class AlbumSelectCallbacks {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 		$titles = array('root' => preg_replace('/\r\n/', ' ', $rootAlbum->getTitle()));
+		$titles['root'] = smarty_modifier_escape($titles['root']);
 		if (isset($callbackParams['stripTitles'])) {
 		    $titles['root'] = smarty_modifier_markup($titles['root'], 'strip');
 		}
@@ -99,6 +101,7 @@ class AlbumSelectCallbacks {
 		    foreach ($items as $item) {
 			$title = $item->getTitle() ? $item->getTitle() : $item->getPathComponent();
 			$title = preg_replace('/\r\n/', ' ', $title);
+			$title = smarty_modifier_escape($title);
 			if (isset($callbackParams['stripTitles'])) {
 			    $title = smarty_modifier_markup($title, 'strip');
 			}
@@ -195,18 +198,19 @@ class AlbumSelectCallbacks {
 				    'parentNode' => $parentNode, 'depth' => $depth);
 		$title = $subAlbum->getTitle() ? $subAlbum->getTitle()
 					       : $subAlbum->getPathComponent();
-		$subAlbumId = $subAlbum->getId();
-		$titles[$subAlbumId] = preg_replace('/\r\n/', ' ', $title);
+		$title = preg_replace('/\r\n/', ' ', $title);
+		$title = smarty_modifier_escape($title);
 		if (isset($callbackParams['stripTitles'])) {
-		    $titles[$subAlbumId] = smarty_modifier_markup($titles[$subAlbumId], 'strip');
+		    $title = smarty_modifier_markup($title, 'strip');
 		}
 		if (isset($callbackParams['truncateTitles'])) {
-		    $titles[$subAlbumId] = smarty_modifier_entitytruncate(
-			$titles[$subAlbumId], $callbackParams['truncateTitles']);
+		    $title = smarty_modifier_entitytruncate($title,
+							    $callbackParams['truncateTitles']);
 		}
 		if (isset($callbackParams['createTextTree'])) {
-		    $titles[$subAlbumId] = str_repeat('--' , $depth) . $titles[$subAlbumId];
+		    $title = str_repeat('--' , $depth) . $title;
 		}
+		$titles[$subAlbum->getId()] = $title;
 		$ret = $this->_buildTree($subAlbum, $treeList, $titles,
 					 $nodeId, $userId, $nodeId, $depth + 1,
 					 $callbackParams);

@@ -57,7 +57,7 @@ class AlbumSelectTest extends GalleryTestCase {
 	}
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId(),
-	    array('title' => 'zzzzzzzz', 'summary' => 'zzzzzzzz',
+	    array('title' => 'zzz"zzzzz', 'summary' => 'zzzzzzzz',
 		  'orderBy' => 'summary', 'orderDirection' => 'asc'));
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -86,6 +86,11 @@ class AlbumSelectTest extends GalleryTestCase {
 	}
     }
 
+    function tearDown() {
+	GalleryDataCache::removeFromDisk(array('type' => 'module-data', 'module' => 'albumselect'));
+	parent::tearDown();
+    }
+    
     function testAlbumSelectManualSort() {
 	global $gallery;
 	$ret = $this->_module->setParameter('sort', 'manual');
@@ -99,7 +104,7 @@ class AlbumSelectTest extends GalleryTestCase {
 	    array(), $smarty, 'LoadAlbumData', $gallery->getActiveUserId());
 	$data = $smarty->_tpl_vars['block']['albumselect']['LoadAlbumData']['albumSelect'];
 
-	$this->assertEquals('zzzzzzzz', $data['titles'][$this->_album->getId()], 'title');
+	$this->assertEquals('zzz&quot;zzzzz', $data['titles'][$this->_album->getId()], 'title');
 	$this->assert(!empty($data['params']), 'params');
 	$this->assert(!empty($data['tree']), 'tree');
 	/* Test album and its subalbums should be last 4 tree items: subalbums 1,2,3 */
@@ -132,7 +137,7 @@ class AlbumSelectTest extends GalleryTestCase {
 	$data = $smarty->_tpl_vars['block']['albumselect']['LoadAlbumData']['albumSelect'];
 
 
-	$this->assertEquals('zzzzzzzz',
+	$this->assertEquals('zzz&quot;zzzzz',
 	    $data['titles'][$this->_album->getId()], 'title');
 	$this->assert(!empty($data['params']), 'params');
 	$this->assert(!empty($data['tree']), 'tree');
@@ -171,7 +176,7 @@ class AlbumSelectTest extends GalleryTestCase {
 	    array(), $smarty, 'LoadAlbumData', $gallery->getActiveUserId());
 	$data = $smarty->_tpl_vars['block']['albumselect']['LoadAlbumData']['albumSelect'];
 
-	$this->assertEquals('zzzzzzzz',
+	$this->assertEquals('zzz&quot;zzzzz',
 	    $data['titles'][$this->_album->getId()], 'title');
 	$this->assert(!empty($data['params']), 'params');
 	$this->assert(!empty($data['tree']), 'tree');
@@ -196,6 +201,56 @@ class AlbumSelectTest extends GalleryTestCase {
 		      'parentNode' => $albumNode, 'depth' => 1)),
 	    array_slice($tree, $i, 4),
 	    'test albums in tree');
+    }
+
+    function testCacheInvalidationByTitleChange() {
+	global $gallery;
+
+	$smarty = new GallerySmarty();
+	$callbacks = new AlbumSelectCallbacks();
+	GalleryDataCache::setFileCachingEnabled(true);
+	$this->_registerTestEventListener('GalleryEntity::save', new AlbumSelectModule());
+	$this->_registerTestEventListener('Gallery::ViewableTreeChange', new AlbumSelectModule());
+	$this->_registerTestEventListener('Gallery::ItemOrder', new AlbumSelectModule());
+	
+	/* Preparation */
+	$userId = $gallery->getActiveUserId();
+	list ($ret, $languageCode) = $gallery->getActiveLanguageCode();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$callbackParams = array();
+	$cachePathInfo = array('type' => 'module-data',
+			       'module' => 'albumselect',
+			       'itemId' => $userId . '_' . $languageCode .
+			       '_' . substr(md5(serialize($callbackParams)), 0, 5));
+	
+	/* Call it a first time */
+	$ret = $callbacks->callback($callbackParams, $smarty, 'LoadAlbumData', $userId);
+	$data = $smarty->_tpl_vars['block']['albumselect']['LoadAlbumData']['albumSelect'];
+	/* Make sure the value is correct and that it is cached */
+	$this->assertEquals('zzz&quot;zzzzz', $data['titles'][$this->_album->getId()], 'title');
+	list ($treeList, $titles) = GalleryDataCache::getFromDisk($cachePathInfo);
+	$this->assertEquals('zzz&quot;zzzzz', $titles[$this->_album->getId()], 'cached title');
+
+	/* Change the album title */
+	$this->_album->setTitle('Changed Title');
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = $this->_album->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Make sure the cache was invalidated */
+	list ($treeList, $titles) = GalleryDataCache::getFromDisk($cachePathInfo);
+	$this->assert(empty($titles), 'cache should be gone');
     }
 }
 
