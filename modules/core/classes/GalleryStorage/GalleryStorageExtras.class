@@ -879,6 +879,9 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	$recordSet = $this->_gs->_db->Execute($statement, $data);
 	$this->_gs->_traceStop();
 
+	/* Direct SQL commands can undermine our memory cache, so reset it */
+	GalleryDataCache::reset();
+
 	return $recordSet ? null
 			  : GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
     }
@@ -938,7 +941,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	return null;
     }
 
-     /**
+    /**
      * Add new entries to a map. This utility takes the values from entry array
      * e.g., (parm1 => (p1val1, p1val2, p1val3), parm2 => (p2val1, p2val2, p2val3))
      * and inserts them into the map similar to the following:

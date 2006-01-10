@@ -90,7 +90,6 @@ $storageConfig = @$gallery->getConfig('storage.config');
 if (!empty($storageConfig)) {
     /* We want to avoid using the cache */
     GalleryDataCache::setFileCachingEnabled(false);
-    GalleryDataCache::setMemoryCachingEnabled(false);
 
     $ret = GalleryInitFirstPass(array('debug' => 'buffered', 'noDatabase' => 1));
     if ($ret) {
@@ -251,8 +250,8 @@ function generateUrl($uri, $print=true) {
 	}
     }
 
-    
-    
+
+
     if ($print) {
 	print $uri;
     }
