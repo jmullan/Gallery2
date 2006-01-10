@@ -179,7 +179,7 @@ class OracleStorage extends GalleryStorage {
     /**
      * @see GalleryStorage::configureStore
      */
-    function configureStore($moduleId) {
+    function configureStore($moduleId, $upgradeInfo=array()) {
 	if ($moduleId == 'core') {
 	    /* Install our custom aggregate function */
 	    $ret = $this->_executeSqlFile(dirname(__FILE__) . '/OracleCreateBitOr.sql');
@@ -194,7 +194,7 @@ class OracleStorage extends GalleryStorage {
 	     */
 	}
 
-	$ret = parent::configureStore($moduleId);
+	$ret = parent::configureStore($moduleId, $upgradeInfo);
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

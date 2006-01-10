@@ -107,7 +107,7 @@ class PostgreSqlStorage extends GalleryStorage {
     /**
      * @see GalleryStorage::configureStore 	 
      */ 	 
-    function configureStore($moduleId) { 	 
+    function configureStore($moduleId, $upgradeInfo=array()) { 	 
 	if ($moduleId == 'core') { 	 
 	    $query = '
 	    CREATE AGGREGATE BIT_OR
@@ -141,7 +141,7 @@ class PostgreSqlStorage extends GalleryStorage {
 	     */
 	}
 
-	$ret = parent::configureStore($moduleId); 	 
+	$ret = parent::configureStore($moduleId, $upgradeInfo); 	 
 	if ($ret) { 	 
 	    return $ret->wrap(__FILE__, __LINE__); 	 
 	} 	 

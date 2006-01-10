@@ -116,7 +116,7 @@ class Db2Storage extends GalleryStorage {
     /**
      * @see GalleryStorage::configureStore
      */
-    function configureStore($moduleId) {
+    function configureStore($moduleId, $upgradeInfo=array()) {
 	if ($moduleId == 'core') {
 	    global $gallery;
 
@@ -206,7 +206,7 @@ class Db2Storage extends GalleryStorage {
 	     */
 	}
 
-	$ret = parent::configureStore($moduleId);
+	$ret = parent::configureStore($moduleId, $upgradeInfo);
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
