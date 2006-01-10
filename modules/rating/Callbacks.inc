@@ -92,10 +92,11 @@ class RatingCallbacks {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $RatingData[$itemId]['canRate'] = ($permission ? true : false);
+	    $RatingSummary = array('ratingValues' => array(1, 2, 3, 4, 5), 'firstCall' => true);
 
 	    $block =& $smarty->_tpl_vars['block'];
 	    $block['rating']['RatingData'] = $RatingData[$itemId];
-	    $block['rating']['RatingValues'] = array(1,2,3,4,5);
+	    $block['rating']['RatingSummary'] = $RatingSummary;
 
 
 	    return null;

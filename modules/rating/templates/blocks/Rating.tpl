@@ -13,7 +13,6 @@
 <div class="{$class}">
 {include file="gallery:modules/rating/templates/RatingInterface.tpl" 
 	RatingData=$block.rating.RatingData
-	RatingValues=$block.rating.RatingValues
-	firstCall=true}
+	RatingSummary=$block.rating.RatingSummary}
 </div>
 {/if}
