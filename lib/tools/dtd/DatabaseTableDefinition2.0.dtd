@@ -1,7 +1,7 @@
 <!ELEMENT table ( table-name, schema, column+, (key | index)* ) >
 
 <!ELEMENT schema ( schema-major, schema-minor ) >
-<!ELEMENT column ( column-name, column-type, column-size, not-null? ) >
+<!ELEMENT column ( column-name, column-type, column-size, not-null?, default? ) >
 <!ELEMENT key ( column-name+ ) >
 <!ELEMENT index ( column-name+ ) >
 
@@ -12,5 +12,6 @@
 <!ELEMENT column-type ( #PCDATA ) >
 <!ELEMENT column-size ( #PCDATA ) >
 <!ELEMENT not-null EMPTY >
+<!ELEMENT default ( #PCDATA ) >
 <!ATTLIST key primary (true | false) "false">
 <!ATTLIST not-null empty (allowed | disallowed) "disallowed">

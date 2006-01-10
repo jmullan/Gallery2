@@ -2,7 +2,7 @@
 <!ELEMENT class ( class-name, parent-class-name?, schema, requires-id?, member* ) >
 
 <!ELEMENT schema ( schema-name, schema-major, schema-minor ) >
-<!ELEMENT member ( member-name, member-type, member-size?, id?, (indexed | unique)?, required?, primary?, linked? ) >
+<!ELEMENT member ( member-name, member-type, member-size?, id?, (indexed | unique)?, required?, primary?, linked?, default? ) >
 <!ELEMENT key ( member-name+ ) >
 <!ELEMENT index ( member-name+ ) >
 
@@ -16,6 +16,7 @@
 <!ELEMENT member-size ( #PCDATA ) >
 <!ELEMENT requires-id EMPTY >
 <!ELEMENT required EMPTY >
+<!ELEMENT default ( #PCDATA ) >
 <!ELEMENT indexed EMPTY >
 <!ELEMENT unique EMPTY >
 <!ELEMENT linked EMPTY >

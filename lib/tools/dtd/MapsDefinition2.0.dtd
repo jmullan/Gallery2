@@ -1,6 +1,6 @@
 <!ELEMENT maps ( map* ) >
 <!ELEMENT map ( map-name, schema, member+, key?, index* ) >
-<!ELEMENT member ( member-name, member-type, member-size?, id?, (indexed | unique)?, required?, primary?, linked? ) >
+<!ELEMENT member ( member-name, member-type, member-size?, id?, (indexed | unique)?, required?, primary?, linked?, default? ) >
 <!ELEMENT schema ( schema-major, schema-minor ) >
 <!ELEMENT key ( member-name+ ) >
 <!ELEMENT index ( member-name+ ) >
@@ -13,6 +13,7 @@
 <!ELEMENT member-type ( #PCDATA ) >
 <!ELEMENT member-size ( #PCDATA ) >
 <!ELEMENT required EMPTY >
+<!ELEMENT default ( #PCDATA ) >
 <!ELEMENT indexed EMPTY >
 <!ELEMENT unique EMPTY >
 <!ELEMENT primary EMPTY >

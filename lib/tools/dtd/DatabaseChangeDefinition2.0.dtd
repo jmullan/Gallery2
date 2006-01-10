@@ -5,7 +5,7 @@
 <!ELEMENT add ( (column | key | index)+ ) >
 <!ELEMENT alter ( column+ ) >
 <!ELEMENT remove ( (column-name | key | index)+ ) >
-<!ELEMENT column ( column-name, column-type, column-size?, not-null? ) >
+<!ELEMENT column ( column-name, column-type, column-size?, not-null?, default? ) >
 <!ELEMENT key ( column-name+ ) >
 <!ELEMENT index ( column-name+ ) >
 
@@ -17,6 +17,7 @@
 <!ELEMENT column-size ( #PCDATA ) >
 <!ELEMENT not-null EMPTY >
 <!ELEMENT null EMPTY >
+<!ELEMENT default ( #PCDATA ) >
 <!ATTLIST key primary (true | false) "false">
 <!ATTLIST not-null empty (allowed | disallowed) "disallowed">
 <!ATTLIST index name_mysql CDATA #IMPLIED>

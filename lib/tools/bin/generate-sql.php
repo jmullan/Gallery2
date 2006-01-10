@@ -117,11 +117,20 @@ class BaseGenerator {
 	return null;
     }
 
+    function getDefaultElement($child) {
+	for ($i = 0; $i < count($child); $i++) {
+	    if ($child[$i]['name'] == 'DEFAULT') {
+		return $child[$i]['content'];
+	    }
+	}
+	return null;
+    }
+
     function setColumnDefinitionMap($map) {
 	$this->_columnDefinitionMap = $map;
     }
 
-    function columnDefinition($child, $includeNotNull=true) {
+    function columnDefinition($child, $includeNotNull=true, $includeDefault=true) {
 	$output = '';
 	$key = $child[1]['content'] . '-' .
 	    (!empty($child[2]['content']) ? $child[2]['content'] : '');
@@ -131,11 +140,19 @@ class BaseGenerator {
 	    $output .= "2. UNIMPLEMLENTED: $key";
 	}
 
+	if ($includeDefault) {
+	    $defaultValue = $this->getDefaultElement($child);
+	    if (isset($defaultValue)) {
+		$output .= " DEFAULT '$defaultValue'";
+	    }
+	}
+	
 	if ($includeNotNull) {
 	    if ($this->getNotNullElement($child)) {
 		$output .= ' NOT NULL';
 	    }
 	}
+
 	return $output;
     }
 
@@ -179,6 +196,20 @@ class MySqlGenerator extends BaseGenerator {
 		'BOOLEAN-' => 'int(1)',
 		'BOOLEAN-MEDIUM' => 'int(1)',
 		'TIMESTAMP-' => 'datetime'));
+    }
+
+    function columnDefinition($child, $includeNotNull=true, $includeDefault=true) {
+	$output = parent::columnDefinition($child, $includeNotNull, false);
+
+	/* MySQL -> DEFAULT expression after NOT NULL */
+	if ($includeDefault) {
+	    $defaultValue = $this->getDefaultElement($child);
+	    if (isset($defaultValue)) {
+		$output .= " DEFAULT '$defaultValue'";
+	    }
+	}
+
+	return $output;
     }
 
     function createSql($node, $index, $lastPeerIndex, $parent) {
@@ -456,9 +487,9 @@ class PostgresGenerator extends BaseGenerator {
 		    } else {
 			$output .= 'UNIQUE KEY(';
 		    }
-		    for ($i = 0; $i < count($child); $i++) {
-			$output .= 'DB_COLUMN_PREFIX' . $c['child'][0]['content'];
-			if ($i < count($child) - 1) {
+		    for ($i = 0; $i < count($c['child']); $i++) {
+			$output .= 'DB_COLUMN_PREFIX' . $c['child'][$i]['content'];
+			if ($i < count($c['child']) - 1) {
 			    $output .= ', ';
 			}
 		    }
@@ -558,7 +589,8 @@ class PostgresGenerator extends BaseGenerator {
 	    for ($i = 0; $i < count($child); $i++) {
 		$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
 		    ' ADD COLUMN DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . 'Temp';
-		$output .= ' ' . $this->columnDefinition($child[$i]['child'], false) . ";\n\n";
+		$output .=
+		    ' ' . $this->columnDefinition($child[$i]['child'], false) . ";\n\n";
 		$output .= 'UPDATE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
 		    ' SET DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . 'Temp' .
 		    ' = CAST(DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . ' AS ' .
@@ -692,9 +724,9 @@ class OracleGenerator extends BaseGenerator {
 		    } else {
 			$output .= 'UNIQUE KEY(';
 		    }
-		    for ($i = 0; $i < count($child); $i++) {
-			$output .= 'DB_COLUMN_PREFIX' . $c['child'][0]['content'];
-			if ($i < count($child) - 1) {
+		    for ($i = 0; $i < count($c['child']); $i++) {
+			$output .= 'DB_COLUMN_PREFIX' . $c['child'][$i]['content'];
+			if ($i < count($c['child']) - 1) {
 			    $output .= ', ';
 			}
 		    }
@@ -1001,9 +1033,9 @@ class Db2Generator extends BaseGenerator {
 		    } else {
 			$output .= 'UNIQUE KEY(';
 		    }
-		    for ($i = 0; $i < count($child); $i++) {
-			$output .= 'DB_COLUMN_PREFIX' . $c['child'][0]['content'];
-			if ($i < count($child) - 1) {
+		    for ($i = 0; $i < count($c['child']); $i++) {
+			$output .= 'DB_COLUMN_PREFIX' . $c['child'][$i]['content'];
+			if ($i < count($c['child']) - 1) {
 			    $output .= ', ';
 			}
 		    }

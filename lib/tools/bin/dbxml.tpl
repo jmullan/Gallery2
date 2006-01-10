@@ -28,6 +28,9 @@
       <not-null/>
 {/if}
 {/if}
+{if isset($member.default)}
+      <default>{$member.default}</default>
+{/if}
    </column>
 {/foreach}
 {foreach from=$keys item=key}

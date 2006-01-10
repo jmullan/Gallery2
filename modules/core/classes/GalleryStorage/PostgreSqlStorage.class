@@ -174,7 +174,7 @@ class PostgreSqlStorage extends GalleryStorage {
 
 	case 'BITAND':
 	    /* Cast any input values as the 'bit' type */
-	    $args = str_replace('?', 'B?', $args);
+	    $args = str_replace('?', '?', $args);
 	    $sql = $args[0] . ' & ' . $args[1];
 	    break;
 	    
