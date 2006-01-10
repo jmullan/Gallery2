@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,13 +38,11 @@ class ItemAttributesTest extends GalleryTestCase {
     }
 
     function setUp() {
-	global $gallery;
-
 	parent::setUp();
 
 	list ($ret, $this->_parentItem) = $this->_createRandomAlbum(
 	    $this->_getRootId(), array('orderBy' => 'id', 'orderDirection' => ORDER_ASCENDING));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -55,26 +53,26 @@ class ItemAttributesTest extends GalleryTestCase {
 	 * permissions for the tests here. Set it to core.view permission for everybody
 	 */
 	$ret = GalleryCoreApi::removeItemPermissions($this->_parentItem->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	list ($ret, $everybodyGroupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::addGroupPermission(
 	    $this->_parentItem->getId(), $everybodyGroupId, 'core.view', true);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	/* Verify the permissions */
 	list ($ret, $compressedPerms) =
 	    GalleryCoreApi::fetchAllPermissionsForItem($this->_parentItem->getId(), true);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals(array(array('userId' => 0, 'groupId' => $everybodyGroupId,
+	$this->assertEquals(array(array('groupId' => $everybodyGroupId,
 					'permission' => 'core.view')), $compressedPerms,
 			    'Failed to define initial permissions');
 
@@ -82,7 +80,7 @@ class ItemAttributesTest extends GalleryTestCase {
 	for ($i = 0; $i < 3; $i++) {
 	    list ($ret, $this->_childItems[$i]) =
 		$this->_createRandomAlbum($this->_parentItem->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
@@ -102,12 +100,13 @@ class ItemAttributesTest extends GalleryTestCase {
      */
     function testSetItemViewCount() {
 	$ret = GalleryCoreApi::setItemViewCount($this->_childItems[0]->getId(), 999);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCount($this->_childItems[0]->getId());
-	if ($ret->isError()) {
+	list ($ret, $viewCount) =
+	    GalleryCoreApi::fetchItemViewCount($this->_childItems[0]->getId());
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -124,17 +123,18 @@ class ItemAttributesTest extends GalleryTestCase {
 	$gallery->_session =& $session;
 
 	$ret = GalleryCoreApi::setItemViewCount($this->_childItems[0]->getId(), 0);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::incrementItemViewCount($this->_childItems[0]->getId(), 3);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCount($this->_childItems[0]->getId());
-	if ($ret->isError()) {
+	list ($ret, $viewCount) =
+	    GalleryCoreApi::fetchItemViewCount($this->_childItems[0]->getId());
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -152,22 +152,23 @@ class ItemAttributesTest extends GalleryTestCase {
 	$gallery->_session =& $session;
 
 	$ret = GalleryCoreApi::setItemViewCount($this->_childItems[0]->getId(), 0);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::incrementItemViewCount($this->_childItems[0]->getId(), 1);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::incrementItemViewCount($this->_childItems[0]->getId(), 1);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCount($this->_childItems[0]->getId());
-	if ($ret->isError()) {
+	list ($ret, $viewCount) =
+	    GalleryCoreApi::fetchItemViewCount($this->_childItems[0]->getId());
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(1, $viewCount);
@@ -184,12 +185,12 @@ class ItemAttributesTest extends GalleryTestCase {
 	$gallery->_session =& $session;
 
 	$ret = GalleryCoreApi::setItemViewCount($this->_childItems[0]->getId(), 0);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::incrementItemViewCount($this->_childItems[0]->getId(), 1);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -198,12 +199,13 @@ class ItemAttributesTest extends GalleryTestCase {
 	$lastViewed[$this->_childItems[0]->getId()] -= 86398;
 
 	$ret = GalleryCoreApi::incrementItemViewCount($this->_childItems[0]->getId(), 1);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCount($this->_childItems[0]->getId());
-	if ($ret->isError()) {
+	list ($ret, $viewCount) =
+	    GalleryCoreApi::fetchItemViewCount($this->_childItems[0]->getId());
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -215,12 +217,13 @@ class ItemAttributesTest extends GalleryTestCase {
 	$lastViewed[$this->_childItems[0]->getId()] -= 4;
 
 	$ret = GalleryCoreApi::incrementItemViewCount($this->_childItems[0]->getId(), 1);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCount($this->_childItems[0]->getId());
-	if ($ret->isError()) {
+	list ($ret, $viewCount) =
+	    GalleryCoreApi::fetchItemViewCount($this->_childItems[0]->getId());
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -234,13 +237,13 @@ class ItemAttributesTest extends GalleryTestCase {
      */
     function testSetOrderWeight() {
 	$ret = GalleryCoreApi::setItemOrderWeight($this->_childItems[0]->getId(), 123);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $orderWeight) =
 	    GalleryCoreApi::fetchItemOrderWeight($this->_childItems[0]->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -254,21 +257,21 @@ class ItemAttributesTest extends GalleryTestCase {
     function testFetchNextItemWeight() {
 	for ($i = 0; $i < sizeof($this->_childItems); $i++) {
 	    $ret = GalleryCoreApi::setItemOrderWeight($this->_childItems[$i]->getId(), $i);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
 
 	list ($ret, $higher) =
 	    GalleryCoreApi::fetchNextItemWeight($this->_childItems[1]->getId(), HIGHER_WEIGHT);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals($higher, 2);
 
 	list ($ret, $lower) =
 	    GalleryCoreApi::fetchNextItemWeight($this->_childItems[1]->getId(), LOWER_WEIGHT);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals($lower, 0);
@@ -282,21 +285,21 @@ class ItemAttributesTest extends GalleryTestCase {
 
 	for ($i = 0; $i < sizeof($this->_childItems); $i++) {
 	    $ret = GalleryCoreApi::setItemOrderWeight($this->_childItems[$i]->getId(), 100+$i);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
 
 	list ($ret, $max) =
 	    GalleryCoreApi::fetchMaxChildWeight($this->_parentItem->getId(), HIGHER_WEIGHT);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals($max, 102);
 
 	list ($ret, $min) =
 	    GalleryCoreApi::fetchMaxChildWeight($this->_parentItem->getId(), LOWER_WEIGHT);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals($max, 100);
@@ -308,12 +311,12 @@ class ItemAttributesTest extends GalleryTestCase {
     function testRebalanceOrderWeights() {
 	for ($i = 0; $i < sizeof($this->_childItems); $i++) {
 	    $ret = GalleryCoreApi::setItemOrderWeight($this->_childItems[$i]->getId(), $i);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
 	$ret = GalleryCoreApi::rebalanceChildOrderWeights($this->_parentItem->getId(), 100);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -321,7 +324,7 @@ class ItemAttributesTest extends GalleryTestCase {
 	for ($i = 0; $i < $count; $i++) {
 	    list ($ret, $weight) =
 		GalleryCoreApi::fetchItemOrderWeight($this->_childItems[$i]->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $this->assertEquals(($i+1)*100, $weight,
@@ -332,7 +335,7 @@ class ItemAttributesTest extends GalleryTestCase {
 
     function testFetchParentSequence() {
 	list($ret, $album) = $this->_createRandomAlbum($this->_childItems[1]->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -344,7 +347,7 @@ class ItemAttributesTest extends GalleryTestCase {
 			    'album parent sequence');
 
 	list ($ret, $item) = $this->_createRandomDataItem($album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -359,24 +362,24 @@ class ItemAttributesTest extends GalleryTestCase {
 
     function testFetchItemizedDescendentCounts() {
 	list($ret, $album) = $this->_createRandomAlbum($this->_childItems[1]->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	for ($i = 0; $i < 3; $i++) {
 	    list($ret, $item[$i]) = $this->_createRandomDataItem($album->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
 
 	/* Drop perms for one item and one album */
 	$ret = GalleryCoreApi::removeItemPermissions($item[0]->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::removeItemPermissions($this->_childItems[0]->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -384,7 +387,7 @@ class ItemAttributesTest extends GalleryTestCase {
 	list ($ret, $counts) =
 	    GalleryCoreApi::fetchItemizedDescendentCounts(array($this->_parentItem->getId(),
 								  $album->getId()));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -397,31 +400,31 @@ class ItemAttributesTest extends GalleryTestCase {
 
     function testFetchDescendentCounts() {
 	list($ret, $album) = $this->_createRandomAlbum($this->_childItems[1]->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	for ($i = 0; $i < 3; $i++) {
 	    list($ret, $item[$i]) = $this->_createRandomDataItem($album->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
 
 	/* Drop perms for one item and one album */
 	$ret = GalleryCoreApi::removeItemPermissions($item[0]->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::removeItemPermissions($this->_childItems[0]->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Verify our counts */
 	list ($ret, $counts) = GalleryCoreApi::fetchDescendentCounts(
 	    array($this->_parentItem->getId(), $album->getId()));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -430,47 +433,80 @@ class ItemAttributesTest extends GalleryTestCase {
 			    $counts);
     }
 
+    function testFetchDescendentCountsSessionPermission() {
+	/* Session based permissions should not apply when calculating cached descendent count */
+	global $gallery;
+	$session =& $gallery->getSession();
+	$this->_saveSessionPerms = $session->get(GALLERY_PERMISSION_SESSION_KEY);
+
+	$itemId = $this->_childItems[1]->getId();
+	$ret = GalleryCoreApi::removeItemPermissions($itemId);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::addEntityPermission($itemId, $itemId, 'core.all');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$session->put(GALLERY_PERMISSION_SESSION_KEY, array($itemId));
+
+	list ($ret, $counts) =
+	    GalleryCoreApi::fetchDescendentCounts(array($this->_parentItem->getId()));
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array($this->_parentItem->getId() => 2), $counts);
+
+	if (isset($this->_saveSessionPerms)) {
+	    $session->put(GALLERY_PERMISSION_SESSION_KEY, $this->_saveSessionPerms);
+	} else {
+	    $session->remove(GALLERY_PERMISSION_SESSION_KEY);
+	}
+
+    }
+
     function testFetchDescendentCountsDifferentUser() {
 	global $gallery;
 
 	list($ret, $album) = $this->_createRandomAlbum($this->_childItems[1]->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Create a new target user */
 	list ($ret, $user) = $this->_createRandomUser();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($user);
 
 	for ($i = 0; $i < 3; $i++) {
 	    list($ret, $item[$i]) = $this->_createRandomDataItem($album->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
 
 	/* Drop perms for one item and one album */
 	$ret = GalleryCoreApi::removeItemPermissions($item[0]->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::removeItemPermissions($this->_childItems[0]->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Add perms back for the active user, but not our target user */
 	$ret = GalleryCoreApi::addUserPermission(
 	    $item[0]->getId(), $gallery->getActiveUserId(), 'core.view', false);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::addUserPermission(
 	    $this->_childItems[0]->getId(), $gallery->getActiveUserId(), 'core.view', false);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -478,7 +514,7 @@ class ItemAttributesTest extends GalleryTestCase {
 	list ($ret, $counts) = GalleryCoreApi::fetchDescendentCounts(
 	    array($this->_parentItem->getId(), $album->getId()),
 	    $user->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ class CoreSearchTest extends GalleryTestCase {
 	parent::setUp();
 
 	list ($ret, $moduleStatusList) = GalleryCoreApi::fetchPluginStatus('module');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -58,14 +58,14 @@ class CoreSearchTest extends GalleryTestCase {
 
 	list ($ret, $groupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$this->_randomKey = "a" . rand(1,100000) . "z";
 
 	list ($ret, $this->_parentAlbum) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -81,12 +81,12 @@ class CoreSearchTest extends GalleryTestCase {
 			  'description' => 'Description ' . $this->_randomKey,
 			  'summary' => 'Summary ' . $this->_randomKey,
 			  'keywords' => 'Keywords ' . $this->_randomKey));
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
 	    $ret = GalleryCoreApi::removeItemPermissions($this->_item[$i]->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -98,7 +98,7 @@ class CoreSearchTest extends GalleryTestCase {
 		$ret = GalleryCoreApi::addUserPermission($this->_item[$i]->getId(),
 							       $gallery->getActiveUserId(),
 							       'core.view');
-		if ($ret->isError()) {
+		if ($ret) {
 		    print $ret->getAsHtml();
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
@@ -110,7 +110,7 @@ class CoreSearchTest extends GalleryTestCase {
 	    list ($ret, $this->_coreSearch) =
 		GalleryCoreApi::newFactoryInstance('GallerySearchInterface_1_0',
 						   'GalleryCoreSearch');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -119,7 +119,7 @@ class CoreSearchTest extends GalleryTestCase {
 	}
 
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -133,7 +133,7 @@ class CoreSearchTest extends GalleryTestCase {
 	}
 
 	list ($ret, $info) = $this->_coreSearch->getSearchModuleInfo();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -163,7 +163,7 @@ class CoreSearchTest extends GalleryTestCase {
 					     'descriptions' => 1,
 					     'keywords' => 1),
 				       $this->_randomKey);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -234,7 +234,7 @@ class CoreSearchTest extends GalleryTestCase {
 	    $this->_coreSearch->search(array('titles' => 1,
 					     'keywords' => 1),
 				       $this->_randomKey);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -299,7 +299,7 @@ class CoreSearchTest extends GalleryTestCase {
 				       $this->_randomKey,
 				       1,
 				       2);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -354,7 +354,7 @@ class CoreSearchTest extends GalleryTestCase {
 	list ($ret, $results) =
 	    $this->_coreSearch->search(array('titles' => 1),
 				       'some string that will never show up');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -373,7 +373,7 @@ class CoreSearchTest extends GalleryTestCase {
 	/* Create a link and make sure it shows up in the search results */
 	list ($ret, $linkedItem) =
 	    $this->_createLinkedItem($this->_parentAlbum->getId(), $this->_item[1]);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -383,7 +383,7 @@ class CoreSearchTest extends GalleryTestCase {
 					     'descriptions' => 1,
 					     'keywords' => 1),
 				       $this->_randomKey);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 

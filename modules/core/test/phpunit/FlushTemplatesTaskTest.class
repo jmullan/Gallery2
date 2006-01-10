@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/FlushTemplatesTask.class');
+GalleryCoreApi::requireOnce('modules/core/classes/FlushTemplatesTask.class');
 
 /**
  * Test the FlushTemplates maintenance task functionality
@@ -45,7 +45,7 @@ class FlushTemplatesTaskTest extends GalleryTestCase {
 
 	list ($ret, $dirPerms) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'permissions.directory');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -55,12 +55,12 @@ class FlushTemplatesTaskTest extends GalleryTestCase {
 	$task = new FlushTemplatesTask();
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $success, $details) = $task->run();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -81,12 +81,12 @@ class FlushTemplatesTaskTest extends GalleryTestCase {
 	$task = new FlushTemplatesTask();
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $success, $details) = $task->run();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 

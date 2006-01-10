@@ -9,5 +9,5 @@ Windows Registry Editor Version 5.00
 [HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\PublishingWizard\PublishingWizard\Providers\{$DownloadRegistryFile.domain}]
 "displayname"="{g->text text="%s at %s" arg1=$DownloadRegistryFile.title arg2=$DownloadRegistryFile.domain}"
 "description"="{g->text text="Publish Your Photos and Movies to %s" arg1=$DownloadRegistryFile.title}"
-"href"="{g->url arg1="view=publishxp.Login" forceFullUrl=1}"
-"icon"="{g->url href="favicon.ico" forceFullUrl=1}"
+"href"="{g->url arg1="view=publishxp.Login" forceFullUrl=1 htmlEntities=0}"
+"icon"="{g->url href="favicon.ico" forceFullUrl=1 htmlEntities=0}"

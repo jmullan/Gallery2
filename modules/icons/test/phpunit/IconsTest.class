@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
  * @author Alan Harder <alan.harder@sun.com>
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/icons/classes/IconsImpl.class');
+GalleryCoreApi::requireOnce('modules/icons/classes/IconsImpl.class');
 
 /**
  * Iconpack tests
@@ -45,7 +45,7 @@ class IconsTest extends GalleryControllerTestCase {
 	parent::setUp();
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'icons');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -64,7 +64,7 @@ class IconsTest extends GalleryControllerTestCase {
 
     function testGetIconPacks() {
 	list ($ret, $list) = $this->_icons->getIconPacks();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -74,7 +74,7 @@ class IconsTest extends GalleryControllerTestCase {
 
     function testNewFactoryInstance() {
 	list ($ret, $iconpack) = GalleryCoreApi::newFactoryInstance('IconsInterface_1_0');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(isset($iconpack), 'Icon pack was not set');
@@ -84,12 +84,12 @@ class IconsTest extends GalleryControllerTestCase {
 
     function testSetupTemplateNone() {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'icons', 'iconpack', '');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$template = new IconsDummyGalleryTemplate();
 	$ret = $this->_icons->init($template);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(null, $template->style);
@@ -97,12 +97,12 @@ class IconsTest extends GalleryControllerTestCase {
 
     function testSetupTemplateIcons() {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'icons', 'iconpack', '_phpunitfoo');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$template = new IconsDummyGalleryTemplate();
 	$ret = $this->_icons->init($template);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('modules/icons/iconpacks/_phpunitfoo/icons.css', $template->style);
@@ -113,12 +113,12 @@ class IconsTest extends GalleryControllerTestCase {
 	$gallery->_translator->_isRightToLeft = true;
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'icons', 'iconpack', '_phpunitfoo');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$template = new IconsDummyGalleryTemplate();
 	$ret = $this->_icons->init($template);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('modules/icons/iconpacks/_phpunitfoo/icons-rtl.css', $template->style);

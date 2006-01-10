@@ -3,7 +3,7 @@
 * $RCSfile$
 *
 * Gallery - a web based photo album viewer and editor
-* Copyright (C) 2000-2005 Bharat Mediratta
+* Copyright (C) 2000-2006 Bharat Mediratta
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -26,8 +26,8 @@
 * @author Pierre-Luc Paour <paour@users.sf.net>
 */
 
-GalleryCoreApi::relativeRequireOnce('lib/tools/phpunit/ItemEditOptionTestCase.class');
-GalleryCoreApi::relativeRequireOnce('modules/permalinks/classes/helpers/PermalinksMapHelper.class');
+GalleryCoreApi::requireOnce('lib/tools/phpunit/ItemEditOptionTestCase.class');
+GalleryCoreApi::requireOnce('modules/permalinks/classes/PermalinksMapHelper.class');
 
 /**
 * PermalinksOption item edit tests
@@ -36,33 +36,33 @@ GalleryCoreApi::relativeRequireOnce('modules/permalinks/classes/helpers/Permalin
 * @subpackage PHPUnit
 */
 class PermalinksOptionTest extends ItemEditOptionTestCase {
-    
+
     var $_aliasNamesToDelete;
 
     function PermalinksOptionTest($methodName) {
 	$this->ItemEditOptionTestCase($methodName, 'permalinks', 'PermalinksOption');
     }
-    
+
     function setUp() {
 	parent::setUp();
-	
+
 	$ret = $this->_markPluginParametersForCleanup('module', 'permalinks');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId(), 'image/test', 
+	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId(), 'image/test',
 		array(), __FILE__, 'GalleryPhotoItem');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$item->setMimeType('image/gif');
-	
-	list ($ret, $item1) = $this->_createRandomDataItem($this->_getRootId(), 'image/test', 
+
+	list ($ret, $item1) = $this->_createRandomDataItem($this->_getRootId(), 'image/test',
 		array(), __FILE__, 'GalleryPhotoItem');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -73,15 +73,15 @@ class PermalinksOptionTest extends ItemEditOptionTestCase {
 	$this->_markForCleanup($this->_item);
 	$this->_markForCleanup($this->_item1);
     }
-    
+
     function tearDown() {
 	parent::tearDown();
-	
+
 	if (!empty($this->_aliasNamesToDelete)) {
 	    foreach ($this->_aliasNamesToDelete as $name) {
 		$ret =
 		    PermalinksMapHelper::deleteAlias($name);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
 	    }
@@ -90,9 +90,9 @@ class PermalinksOptionTest extends ItemEditOptionTestCase {
 
     function testPermalinksOptionCreate() {
 	$form['PermalinksOption']['aliasName'] = 'newAlias';
-	
+
 	$result = $this->_handleRequestAfterEdit($form, $this->_item);
-	
+
 	$this->_aliasNamesToDelete[] = 'newAlias';
 
 	list ($ret, $destId) = PermalinksMapHelper::fetchItemIdForAlias('newAlias');
@@ -100,38 +100,50 @@ class PermalinksOptionTest extends ItemEditOptionTestCase {
     }
 
     function testPermalinksOptionCollision() {
+	/*
+	 * Collisions cause foreign key constraints in Postgres which invalidates the transaction.
+	 * That's hard to recover from.  Don't run this test on Postgres for now.
+	 *
+	 * TODO: Use a mock database for this test
+	 */
+	global $gallery;
+	$storage = $gallery->getStorage();
+	if ($storage->getType() == 'postgres') {
+	    return;
+	}
+
 	$form['PermalinksOption']['aliasName'] = 'newAlias';
-	
+
 	$result = $this->_handleRequestAfterEdit($form, $this->_item1);
-	
+
 	$this->_aliasNamesToDelete[] = 'newAlias';
 
 	list ($ret, $destId) = PermalinksMapHelper::fetchItemIdForAlias('newAlias');
 	$this->assertEquals($destId, ''.$this->_item1->getId());
-	
-	/* now test a collision, this generates an error with some DB drivers, that's OK */	
+
+	/* now test a collision, this generates an error with some DB drivers, that's OK */
 	$result = $this->_handleRequestAfterEdit($form, $this->_item);
-	$this->assertEquals(array(array('form[error][PermalinksOption][exists]'), array()), 
+	$this->assertEquals(array(array('form[error][PermalinksOption][exists]'), array()),
 		$result);
-	
+
 	list ($ret, $destId) = PermalinksMapHelper::fetchItemIdForAlias('newAlias');
 	$this->assertEquals($destId, ''.$this->_item1->getId());
     }
 
     function testPermalinksOptionDelete() {
 	$form['PermalinksOption']['aliasName'] = 'newAlias';
-	
+
 	$result = $this->_handleRequestAfterEdit($form, $this->_item);
-	
+
 	list ($ret, $destId) = PermalinksMapHelper::fetchItemIdForAlias('newAlias');
 	$this->assertEquals($destId, ''.$this->_item->getId());
 
 	/* now delete it */
 	unset($form['PermalinksOption']['aliasName']);
 	$form['PermalinksOption']['delete']['newAlias'] = 'on';
-	
+
 	$result = $this->_handleRequestAfterEdit($form, $this->_item);
-	
+
 	list ($ret, $destId) = PermalinksMapHelper::fetchItemIdForAlias('newAlias');
 	$this->assert(empty($destId));
     }

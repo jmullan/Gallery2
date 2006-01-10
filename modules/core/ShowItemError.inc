@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,8 +41,8 @@ class ShowItemErrorView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	list ($ret, $item) = $this->_getItem();
-	if ($ret->isError()) {
+	list ($ret, $item, $wasSpecified) = $this->_getItem();
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -50,24 +50,35 @@ class ShowItemErrorView extends GalleryView {
 
 	switch ($problem) {
 	case 'missingTheme':
-	    list ($ret, $themeId) = GalleryCoreApi::fetchThemeId($item);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
+	    if ($wasSpecified) {
+		list ($ret, $themeId) = GalleryCoreApi::fetchThemeId($item);
+		if ($ret) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 
-	    if (GalleryUtilities::isA($item, 'GalleryDataItem')) {
-		$targetId = $item->getParentId();
+		if (GalleryUtilities::isA($item, 'GalleryDataItem')) {
+		    $targetId = $item->getParentId();
+		} else {
+		    $targetId = $item->getId();
+		}
+
+		list ($ret, $canEdit) = GalleryCoreApi::hasItemPermission($targetId, 'core.edit');
+		if ($ret) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 	    } else {
-		$targetId = $item->getId();
-	    }
+		list ($ret, $themeId) =
+		    GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
+		if ($ret) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 
-	    list ($ret, $canEdit) = GalleryCoreApi::hasItemPermission($targetId, 'core.edit');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		$targetId = null;
+		$canEdit = false;
 	    }
 
 	    list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -76,7 +87,7 @@ class ShowItemErrorView extends GalleryView {
 					 'themeId' => $themeId,
 					 'canEdit' => $canEdit,
 					 'isAdmin' => $isAdmin));
-	    return array(GalleryStatus::success(),
+	    return array(null,
 			 array('body' => 'modules/core/templates/ShowItemError.tpl'));
 
 	default:
@@ -84,8 +95,15 @@ class ShowItemErrorView extends GalleryView {
 	     * We know of no other problems!   Returning an empty result will
 	     * throw up a security violation page.
 	     */
-	    return array(GalleryStatus::success(), array());
+	    return array(null, array());
 	}
+    }
+
+    /**
+     * @see GalleryView::getViewType()
+     */
+    function getViewType() {
+	return VIEW_TYPE_ADMIN;
     }
 }
 ?>

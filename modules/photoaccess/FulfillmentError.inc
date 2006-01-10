@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,12 +40,12 @@ class FulfillmentErrorView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'photoaccess');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$template->title($module->translate('PhotoAccess Fulfillment Error'));
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/photoaccess/templates/FulfillmentError.tpl'));
     }
 }

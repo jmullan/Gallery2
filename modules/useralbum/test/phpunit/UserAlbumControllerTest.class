@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,13 +42,13 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 	parent::setUp();
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'useralbum');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $targetAlbum) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -56,33 +56,33 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'useralbum', 'targetLocation', $targetAlbum->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $this->_userWithAlbum) = $this->_createRandomUser();
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($this->_userWithAlbum);
 
-	GalleryCoreApi::relativeRequireOnce('modules/useralbum/classes/UserAlbumHelper.class');
+	GalleryCoreApi::requireOnce('modules/useralbum/classes/UserAlbumHelper.class');
 	$ret = UserAlbumHelper::createUserAlbum($this->_userWithAlbum);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	list ($ret, $this->_userAlbumId) = GalleryCoreApi::getPluginParameter(
 	    'module', 'useralbum', 'albumId', $this->_userWithAlbum->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $this->_userWithoutAlbum) = $this->_createRandomUser();
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -107,7 +107,7 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 
 	/* Disable OnAccess creation and test to verify that album is not created */
 	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'create', 'immediate');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -115,7 +115,7 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $albumId) = GalleryCoreApi::getPluginParameter(
 	    'module', 'useralbum', 'albumId', $this->_userWithoutAlbum->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(empty($albumId), 'Album should not have been created');
@@ -128,7 +128,7 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 
 	/* Enable OnAccess creation and test to verify that album is created */
 	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'create', 'access');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -136,7 +136,7 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $albumId) = GalleryCoreApi::getPluginParameter(
 	    'module', 'useralbum', 'albumId', $this->_userWithoutAlbum->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(isset($albumId), 'Album was not created');
@@ -163,11 +163,11 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	list ($ret, $anonymousUserId) = GalleryCoreApi::getPluginParameter(
 	    'module', 'core', 'id.anonymousUser');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	list ($ret, $anonymousUser) = GalleryCoreApi::loadEntitiesById($anonymousUserId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$gallery->setActiveUser($anonymousUser);
@@ -179,25 +179,25 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'useralbum');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'homeLink', 1);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Create-on-access mode.. should get link whether or not album already exists */
 	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'create', 'access');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Anonymous should never see link */
 	$this->_becomeGuestUser();
 	list($ret, $links) = $module->getSystemLinks();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array(), $links, 'anonymous should not get link');
@@ -207,7 +207,7 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 	    'params' => array('view' => 'core.ShowItem', 'itemId' => $this->_userAlbumId));
 
 	list($ret, $links) = $module->getSystemLinks();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals($albumLink, $links, 'Link not displayed "on access" with album');
@@ -217,19 +217,19 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 	    'params' => array('controller' => 'useralbum.UserAlbum'));
 
 	list($ret, $links) = $module->getSystemLinks();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals($createLink, $links, 'Link not displayed "on access" without album');
 
 	/* Create-when-user-created mode.. should only get link if album already exists */
 	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'create', 'immediate');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list($ret, $links) = $module->getSystemLinks();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array(), $links, 'Link displayed "immediate" without album');
@@ -237,19 +237,19 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 	$gallery->setActiveUser($this->_userWithAlbum);
 
 	list($ret, $links) = $module->getSystemLinks();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals($albumLink, $links, 'Link not displayed "immediate" with album');
 
 	/* User with album should not get a link with homeLink off */
 	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'homeLink', 0);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list($ret, $links) = $module->getSystemLinks();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array(), $links, 'Link displayed, but homeLink off');
@@ -258,38 +258,38 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
     function testUserAlbumTitle() {
 	/* Check that album title is set from user fullname, or username if no fullname */
 	list ($ret, $album) = GalleryCoreApi::loadEntitiesById($this->_userAlbumId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals($this->_userWithAlbum->getFullName(), $album->getTitle(), 'fullname');
 
 	list ($ret, $lockId) =
 	    GalleryCoreApi::acquireWriteLock(array($this->_userWithoutAlbum->getId()));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_userWithoutAlbum->setFullName('');
 	$this->_userWithoutAlbum->save();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::releaseLocks($lockId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = UserAlbumHelper::createUserAlbum($this->_userWithoutAlbum);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	list ($ret, $albumId) = GalleryCoreApi::getPluginParameter(
 	    'module', 'useralbum', 'albumId', $this->_userWithoutAlbum->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $album) = GalleryCoreApi::loadEntitiesById($albumId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals($this->_userWithoutAlbum->getUserName(),

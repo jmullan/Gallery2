@@ -1,7 +1,7 @@
 <?php
 /*
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +25,9 @@
  * @author Jozef Selesi <selesi at gmail dot com>
  */
 
-GalleryCoreApi::relativeRequireOnce('lib/tools/repository/classes/RepositoryObject.class');
-GalleryCoreApi::relativeRequireOnce('lib/tools/repository/classes/RepositoryPackage.class');
-GalleryCoreApi::relativeRequireOnce(
+GalleryCoreApi::requireOnce('lib/tools/repository/classes/RepositoryObject.class');
+GalleryCoreApi::requireOnce('lib/tools/repository/classes/RepositoryPackage.class');
+GalleryCoreApi::requireOnce(
     'lib/tools/repository/test/phpunit/RepositoryTestTemplate.class');
 
 /**
@@ -96,7 +96,7 @@ class RepositoryPackageTest extends GalleryTestCase {
 	/* Send data to template. */
 	$this->_package->_descriptor = $testDescriptor;
 	$ret = $this->_package->writeSinglePackageToDisk('package1');
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
 
@@ -137,7 +137,7 @@ class RepositoryPackageTest extends GalleryTestCase {
 
 	/* Send data to template. */
 	list ($ret, $packagesWritten) = $this->_package->writeAllPackagesToDisk();
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
 

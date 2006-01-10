@@ -55,8 +55,8 @@
          name="{g->formVar var="form[text][groupName]"}" 
                            value="{$form.text.groupName}"/>
   {g->autoComplete element="giFormGroupname"}
-  {g->url forJavascript="true" arg1="view=core.SimpleCallback" 
-                               arg2="command=lookupGroupname" arg3="prefix=__VALUE__"}
+    {g->url arg1="view=core.SimpleCallback" arg2="command=lookupGroupname"
+	    arg3="prefix=__VALUE__" htmlEntities=false}
   {/g->autoComplete}
   <input type="submit" class="inputTypeSubmit"
 	 name="{g->formVar var="form[action][group][createFromText]"}" 
@@ -196,8 +196,8 @@
   <input id="giFormUsername" type="text" size="20" autocomplete="off" 
          name="{g->formVar var="form[text][userName]"}" value="{$form.text.userName}"/>
   {g->autoComplete element="giFormUsername"}
-  {g->url forJavascript="true" arg1="view=core.SimpleCallback" arg2="command=lookupUsername" 
-                               arg3="prefix=__VALUE__"}
+    {g->url arg1="view=core.SimpleCallback" arg2="command=lookupUsername" 
+	    arg3="prefix=__VALUE__" htmlEntities=false}
   {/g->autoComplete}
   <input type="submit" class="inputTypeSubmit"
 	 name="{g->formVar var="form[action][user][createFromText]"}" 

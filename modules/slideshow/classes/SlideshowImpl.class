@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 /**
  * Load the parent class
  */
-GalleryCoreApi::relativeRequireOnce('modules/slideshow/classes/SlideshowInterface_1_0.class');
+GalleryCoreApi::requireOnce('modules/slideshow/classes/SlideshowInterface_1_0.class');
 
 /**
  * Implementation of the SlideshowInterface for displaying photos in a slideshow
@@ -42,7 +42,7 @@ class SlideshowImpl extends SlideshowInterface_1_0 {
      * @see SlideshowInterface_1_0::getLinkData()
      */
     function getLinkData($itemIds) {
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array( 'view' => 'slideshow.Slideshow',
 			    'itemList' => implode('|', $itemIds) ));
     }

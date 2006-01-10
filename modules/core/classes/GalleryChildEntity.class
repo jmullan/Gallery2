@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 /**
  * Load the parent class
  */
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryEntity.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryEntity.class');
 
 /**
  * An entity that can be the child of another entity.
@@ -47,7 +47,7 @@ GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryEntity.class');
  * @package GalleryCore
  * @subpackage Classes
  */
-class GalleryChildEntity_core extends GalleryEntity {
+class GalleryChildEntity extends GalleryEntity {
 
     /**
      * The id of the parent of this GalleryChildEntity
@@ -59,16 +59,10 @@ class GalleryChildEntity_core extends GalleryEntity {
      * @g2   <required/>
      * @g2 </member>
      *
-     * @var int $_parentId
-     * @access private
+     * @var int $parentId
+     * @access public
      */
-    var $_parentId;
-
-    /*
-     * ****************************************
-     *                 Methods
-     * ****************************************
-     */
+    var $parentId;
 
     /**
      * Create this item in our persistent store
@@ -80,18 +74,18 @@ class GalleryChildEntity_core extends GalleryEntity {
 	global $gallery;
 
 	if (empty($parentId)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
 	$ret = parent::create();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Set the parent id */
 	$this->setParentId($parentId);
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -101,14 +95,14 @@ class GalleryChildEntity_core extends GalleryEntity {
 	global $gallery;
 
 	$ret = parent::createLink($entity);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Set the parent id */
 	$this->setParentId($parentId);
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -121,13 +115,13 @@ class GalleryChildEntity_core extends GalleryEntity {
 	global $gallery;
 
 	if (empty($newParentId)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
 	/* Set the new parent id */
 	$this->setParentId($newParentId);
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -138,14 +132,14 @@ class GalleryChildEntity_core extends GalleryEntity {
      */
     function createRoot() {
 	$ret = parent::create();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* No parent for root */
 	$this->setParentId(0);
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -160,16 +154,29 @@ class GalleryChildEntity_core extends GalleryEntity {
 	$parentId = $this->getParentId();
 	if (isset($parentId)) {
 	    list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($this->getParentId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	} else {
 	    $parent = null;
 	}
 
-	return array(GalleryStatus::success(), $parent);
+	return array(null, $parent);
+    }
+
+    /**
+     * @see GalleryEntity::getClassName()
+     */
+    function getClassName() {
+	return 'GalleryChildEntity';
+    }
+
+    function getParentId() {
+	return $this->parentId;
+    }
+
+    function setParentId($parentId) {
+	$this->parentId = $parentId;
     }
 }
-
-include(dirname(__FILE__) . '/interfaces/GalleryChildEntity.inc');
 ?>

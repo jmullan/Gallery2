@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,38 +49,38 @@ class PhotoAccessHelper {
 
 	/* Load the necessary item data */
 	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($itemIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds($itemIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $resizes) = GalleryCoreApi::fetchResizesByItemIds($itemIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $preferreds) = GalleryCoreApi::fetchPreferredsByItemIds($itemIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$ret = GalleryCoreApi::studyPermissions($itemIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* We want to know which are viewable to guests */
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$ret = GalleryCoreApi::studyPermissions($itemIds, $anonymousUserId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -100,12 +100,12 @@ class PhotoAccessHelper {
 	    $entry = array();
 
 	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($itemId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    list ($ret, $publicPermissions) =
 		GalleryCoreApi::getPermissions($itemId, $anonymousUserId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -142,7 +142,7 @@ class PhotoAccessHelper {
 		 */
 		$paSession = new GallerySession();
 		$paSession->initEmpty(true);
-		$paSession->put('core.id.activeUser', $gallery->getActiveUserId());
+		$paSession->setUserId($gallery->getActiveUserId());
 		/*
 		 * TODO: Would like to enforce a particular session timeout to ensure this
 		 * session lasts long enough for photoaccess to retrieve the images.  With
@@ -153,7 +153,7 @@ class PhotoAccessHelper {
 		 * can reuse it for multiple print requests (and just bump timeout each time).
 		 */
 		$ret = $paSession->save();
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
@@ -164,14 +164,14 @@ class PhotoAccessHelper {
 	    $entry['imageUrl'] = $urlGenerator->generateUrl(
 		array_merge(array('view' => 'core.DownloadItem', 'itemId' => $source->getId()),
 			    $sessionParam),
-		false, null, true);
+		array('forceSessionId' => false, 'forceFullUrl' => true));
 
 	    if (isset($thumbnails[$itemId])) {
 		$entry['thumbUrl'] = $urlGenerator->generateUrl(
 		    array_merge(array('view' => 'core.DownloadItem',
 				      'itemId' => $thumbnails[$itemId]->getId()),
 				$sessionParam),
-		    false, null, true);
+		    array('forceSessionId' => false, 'forceFullUrl' => true));
 	    } else {
 		$entry['thumbUrl'] = '';
 	    }
@@ -246,7 +246,7 @@ class PhotoAccessHelper {
 		$urlGenerator->generateUrl(array('view' => 'photoaccess.FulfillmentError'));
 	}
 
-	return array(GalleryStatus::success(), $redirectUrl);
+	return array(null, $redirectUrl);
     }
 }
 ?>

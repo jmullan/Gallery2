@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,16 +29,16 @@ class CustomFieldCallbacks {
      */
     function callback($params, &$smarty, $callback, $userId=null) {
 	global $gallery;
-	GalleryCoreApi::relativeRequireOnce('modules/customfield/classes/CustomFieldHelper.class');
+	GalleryCoreApi::requireOnce('modules/customfield/classes/CustomFieldHelper.class');
 
 	switch ($callback) {
 	case 'LoadCustomFields':
 	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($params['itemId']);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    list ($ret, $fields) = CustomFieldHelper::fetchFieldValues(array($item), 'detail');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
@@ -46,10 +46,10 @@ class CustomFieldCallbacks {
 	    $block['customfield']['LoadCustomFields']['fields'] = 
 		isset($fields[$item->getId()]) ? $fields[$item->getId()] : array();
 
-	    return GalleryStatus::success();
+	    return null;
 	}
 
-	return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
     }
 }
 ?>

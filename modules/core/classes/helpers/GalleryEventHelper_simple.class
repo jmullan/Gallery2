@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ class GalleryEventHelper_simple {
      * @static
      */
     function newEvent($eventName) {
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryEvent.class');
+	GalleryCoreApi::requireOnce('modules/core/classes/GalleryEvent.class');
 	$event = new GalleryEvent();
 	$event->setEventName($eventName);
 	return $event;
@@ -91,7 +91,7 @@ class GalleryEventHelper_simple {
 	static $allListenersRegistered;
 	if (!isset($allListenersRegistered)) {
 	    list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -106,7 +106,7 @@ class GalleryEventHelper_simple {
 			 */
 			list ($ret, $module) =
 			    GalleryCoreApi::loadPlugin('module', $moduleId, true);
-			if ($ret->isError()) {
+			if ($ret) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 
@@ -129,7 +129,7 @@ class GalleryEventHelper_simple {
 	    $listeners = $eventListeners[$event->getEventName()];
 	    for ($i = 0; $i < count($listeners); $i++) {
 		list ($ret, $data) = $listeners[$i]->handleEvent($event);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		if (isset($data)) {
@@ -138,7 +138,7 @@ class GalleryEventHelper_simple {
 	    }
 	}
 
-	return array(GalleryStatus::success(), $result);
+	return array(null, $result);
     }
 }
 ?>

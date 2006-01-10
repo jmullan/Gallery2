@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -221,11 +221,11 @@ class Gallery {
     function search($query, $data=array(), $options=array()) {
 	$storage =& $this->getStorage();
 	list ($ret, $results) = $storage->search($query, $data, $options);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 
     /**
@@ -234,7 +234,6 @@ class Gallery {
      * The active user is the user who is logged on in this session.
      *
      * @param object GalleryUser the current user
-     * @access public
      */
     function setActiveUser($user) {
 	$this->_activeUser = $user;
@@ -242,9 +241,9 @@ class Gallery {
 	/* It's possible for the session not to exist during bootstrap time */
 	$session =& $this->getSession();
 	if (isset($session)) {
-	    $activeUserId = $session->get('core.id.activeUser');
+	    $activeUserId = $session->getUserId();
 	    if ($activeUserId != $user->getId()) {
-		$session->put('core.id.activeUser', $user->getId());
+		$session->setUserId($user->getId());
 		$language = $user->getLanguage();
 		if (!empty($language)) {
 		    $session->put('core.language', $language);
@@ -259,7 +258,6 @@ class Gallery {
      * The active user is the user who is logged on in this
      * session.
      *
-     * @access public
      * @return int the id of the current User.
      */
     function getActiveUserId() {
@@ -267,7 +265,7 @@ class Gallery {
 	    return (int) $this->_activeUser->getId();
 	} else {
 	    $session =& $this->getSession();
-	    return (int) $session->get('core.id.activeUser');
+	    return (int) $session->getUserId();
 	}
     }
 
@@ -289,7 +287,6 @@ class Gallery {
      *
      * @param string the key name
      * @param mixed the value
-     * @access public
      */
     function setConfig($key, $value) {
 	assert('!empty($key)');
@@ -299,7 +296,6 @@ class Gallery {
     /**
      * Get a value from the Gallery configuration settings
      *
-     * @access public
      * @return mixed an arbitrary value
      */
     function getConfig($key) {
@@ -310,29 +306,27 @@ class Gallery {
     /**
      * Initialize session.
      *
-     * @access public
      * @return object GalleryStatus a status code
      */
     function initSession() {
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GallerySession.class');
+	GalleryCoreApi::requireOnce('modules/core/classes/GallerySession.class');
 	if (empty($this->_session)) {
 	    $this->_session = new GallerySession();
 	    $ret = $this->_session->init();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
      * Initialize an empty session.
      *
-     * @access public
      */
     function initEmptySession() {
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GallerySession.class');
+	GalleryCoreApi::requireOnce('modules/core/classes/GallerySession.class');
 	$this->_session = new GallerySession();
     }
 
@@ -342,7 +336,6 @@ class Gallery {
      * Return a reference to the unique Gallery session object.  Any changes
      * made to this object will be saved in the session.
      *
-     * @access public
      * @return object GallerySession a session instance
      */
     function &getSession() {
@@ -352,7 +345,6 @@ class Gallery {
     /**
      * Set the Gallery platform object.
      *
-     * @access public
      * @param object GalleryPlatform the Gallery platform object
      */
     function setPlatform(&$platform) {
@@ -365,10 +357,9 @@ class Gallery {
      *
      * Return a copy of the unique Gallery platform object.
      *
-     * @access public
      * @return object GalleryPlatform the Gallery platform object
      */
-    function getPlatform() {
+    function &getPlatform() {
 	return $this->_platform;
     }
 
@@ -382,29 +373,29 @@ class Gallery {
 	if (!isset($this->_lockSystem)) {
 	    list ($ret, $which) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'lock.system');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		$ret = array($ret->wrap(__FILE__, __LINE__), null);
 		return $ret;
 	    }
 
 	    switch($which) {
 	    case 'flock':
-		GalleryCoreApi::relativeRequireOnce('modules/core/classes/FlockLockSystem.class');
+		GalleryCoreApi::requireOnce('modules/core/classes/FlockLockSystem.class');
 		$this->_lockSystem = new FlockLockSystem();
 		break;
 
 	    case 'database':
-		GalleryCoreApi::relativeRequireOnce('modules/core/classes/DatabaseLockSystem.class');
+		GalleryCoreApi::requireOnce('modules/core/classes/DatabaseLockSystem.class');
 		$this->_lockSystem = new DatabaseLockSystem();
 		break;
 
 	    default:
-		$ret = array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+		$ret = array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 		return $ret;
 	    }
 	}
 
-	$ret = array(GalleryStatus::success(), &$this->_lockSystem);
+	$ret = array(null, &$this->_lockSystem);
 	return $ret;
     }
 
@@ -438,13 +429,48 @@ class Gallery {
     /**
      * Return an instance of the GalleryStorage class
      *
-     * @access public
      * @return object GalleryStorage a storage instance
      */
     function &getStorage() {
 	if (!isset($this->_storage)) {
-	    GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryStorage.class');
-	    $this->_storage = new GalleryStorage();
+	    $config = $this->getConfig('storage.config');
+	    switch ($config['type']) {
+	    case 'mysql':
+	    case 'mysqlt':
+		GalleryCoreApi::requireOnce(
+			'modules/core/classes/GalleryStorage/MySqlStorage.class', true);
+		$this->_storage = new MySqlStorage($config);
+		break;
+
+	    case 'postgres':
+	    case 'postgres7':
+		GalleryCoreApi::requireOnce(
+			'modules/core/classes/GalleryStorage/PostgreSqlStorage.class', true);
+		$this->_storage = new PostgreSqlStorage($config);
+		break;
+
+	    case 'db2':
+		GalleryCoreApi::requireOnce(
+			'modules/core/classes/GalleryStorage/Db2Storage.class', true);
+		$this->_storage = new Db2Storage($config);
+		break;
+
+	    case 'oci8':
+	    case 'oci805':
+	    case 'oci8po':
+	    case 'oracle':
+		GalleryCoreApi::requireOnce(
+			'modules/core/classes/GalleryStorage/OracleStorage.class', true);
+		$this->_storage = new OracleStorage($config);
+		break;
+
+	    default:
+		$this->debug('Unknown storage type');
+		$this->debug_r($config);
+		GalleryCoreApi::requireOnce(
+			'modules/core/classes/GalleryStorage.class', true);
+		$this->_storage = new GalleryStorage($config);
+	    }
 	}
 
 	return $this->_storage;
@@ -453,7 +479,6 @@ class Gallery {
     /**
      * Check if GalleryStorage has been instantiated
      *
-     * @access public
      * @return boolean
      */
     function isStorageInitialized() {
@@ -505,34 +530,37 @@ class Gallery {
     function &getTranslator() {
 	return $this->_translator;
     }
-
+    
     /**
      * Initialize our GalleryTranslator
      *
-     * @param boolean true if we should not use the database
+     * @param boolean [optional] true if we should not use the database
      * @return object GalleryStatus a status code
      */
     function initTranslator($dontUseDatabase=false) {
 	if (empty($this->_translator)) {
 	    /* Load the translator class */
-	    GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTranslator.class');
+	    GalleryCoreApi::requireOnce('modules/core/classes/GalleryTranslator.class');
 
-	    $language = null;
-	    if (!$dontUseDatabase) {
-		list ($ret, $language) = $this->getActiveLanguageCode();
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
+	    /* Do we already have an activeLanguage for this session? */
+	    list ($ret, $language) = $this->getActiveLanguageCode();
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+
 	    }
 
 	    $this->_translator = new GalleryTranslator();
-	    $ret = $this->_translator->init($language);
-	    if ($ret->isError()) {
+	    list ($ret, $languageCode) = $this->_translator->init($language, $dontUseDatabase);
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $ret = $this->setActiveLanguageCode($languageCode);
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -543,17 +571,14 @@ class Gallery {
      */
     function getActiveLanguageCode() {
 	$session =& $this->getSession();
-	$language = $session->get('core.language');
-
-	if (empty($language)) {
-	    list ($ret, $language) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'default.language');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
+	/* During installation, we don't have a session yet */
+	if (!empty($session)) {
+	    $language = $session->get('core.language');
+	} else {
+	    $language = '';
 	}
-
-	return array(GalleryStatus::success(), $language);
+	
+	return array(null, $language);
     }
 
     /**
@@ -564,8 +589,12 @@ class Gallery {
      */
     function setActiveLanguageCode($language) {
 	$session =& $this->getSession();
-	$session->put('core.language', $language);
-	return GalleryStatus::success();
+	/* During installation, we don't have a session yet */
+	if (!empty($session)) {
+	    $session->put('core.language', $language);
+	}
+	
+	return null;
     }
 
     /**
@@ -778,7 +807,7 @@ class Gallery {
      */
     function &getTemplateAdapter() {
 	if (!isset($this->_templateAdapter)) {
-	    GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTemplateAdapter.class');
+	    GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplateAdapter.class');
 	    $this->_templateAdapter = new GalleryTemplateAdapter();
 	}
 
@@ -797,15 +826,18 @@ class Gallery {
      * by using the function GalleryPlugin::translate().
      *
      * E.g. instead of:
-     *   print 'some text to be spit out in different languages';
+     *   print 'TEST to be displayed in different languages';
      * use (in any modules subclass of GalleryPlugin):
-     *   print $this->translate('some text to be spit out in different languages');
+     *   print $this->translate('TEST to be displayed in different languages');
      * and you are all set for pure literals. The translation teams will receive that literal
      * string as a job to translate and will translate it (when the message is clear enough).
-     * At runtime the message is then printed localized.
+     * At runtime the message is then localized when printed.
+     * The input string can contain a hint to assist translators:
+     *   print $this->translate('TT <!-- abbreviation for Translation Test -->');
+     * The hint portion of the string will not be printed.
      *
      * But consider this case:
-     *   $message_to_be_localized = 'You did it right!';
+     *   $message_to_be_localized = 'TEST to be displayed in different languages';
      *   print $this->translate($message_to_be_localized);
      *
      * The translate() method is called in the right place for runtime handling, but there
@@ -815,7 +847,7 @@ class Gallery {
      * teams, but not translated at runtime!
      *
      * This method resolves all such cases. Simply mark the candidates:
-     *   $message_to_be_localized = $gallery->i18n('You did it right!');
+     *   $message_to_be_localized = $gallery->i18n('TEST to be displayed in different languages');
      *   print $this->translate($message_to_be_localized);
      *
      * @param string the value
@@ -828,7 +860,7 @@ class Gallery {
     /**
      * Send a data file out to the browser as quickly as possible.
      *
-     * @param string the relative path to the file from the g2data/cache directory
+     * @param string the relative path to the file from the g2data/ directory
      * @param string the logical name of the file (used for the Content-Disposition header)
      * @param string the last modified date string (used for the Last-Modified header)
      * @param string the mime type (used for the Content-type header)
@@ -836,10 +868,16 @@ class Gallery {
      * @return true if we transferred the file successfully
      */
     function fastDownload($relativePath, $filename, $lastModified, $mimeType, $contentLength) {
+	/* Pass malicious URLs down to core.DownloadItem */
+	$requestFileName = GalleryUtilities::getRequestVariables('fileName');
+	if (!empty($requestFileName) && $requestFileName != $filename) {
+	    return false;
+	}
 	/* Don't use GalleryPlatform here -- we're aiming for max speed */
 	/* TODO: benchmark what it would cost us to use GalleryPlatform */
-	$cacheBase = $this->getConfig('data.gallery.cache');
-	if ($fd = fopen($cacheBase . $relativePath, 'rb')) {
+	$base = $this->getConfig('data.gallery.base');
+	$path = $base . $relativePath;
+	if (file_exists($path) && $fd = fopen($path, 'rb')) {
 	    header('Content-Disposition: inline; filename="' . $filename . '"');
 	    header('Last-Modified: ' . $lastModified);
 	    header('Content-type: ' . $mimeType);
@@ -893,7 +931,7 @@ class Gallery {
 		    } else if (!GalleryUtilities::isA($ret, 'GalleryStatus')) {
 			$ret = null;
 		    }
-		    if (isset($ret) && $ret->isError()) {
+		    if (isset($ret) && $ret) {
 			$this->debug('Error from shutdown action:');
 			$this->debug_r($action);
 			$this->debug_r($ret);
@@ -909,7 +947,7 @@ class Gallery {
      */
     function getPhpVm() {
 	if (!isset($this->_phpVm)) {
-	    GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPhpVm.class');
+	    GalleryCoreApi::requireOnce('modules/core/classes/GalleryPhpVm.class');
 	    $this->_phpVm = new GalleryPhpVm();
 	}
 	return $this->_phpVm;

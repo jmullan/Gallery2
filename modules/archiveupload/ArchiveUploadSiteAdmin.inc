@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,13 +38,13 @@ class ArchiveUploadSiteAdminController extends GalleryController {
 	global $gallery;
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$status = $error = array();
 	if (isset($form['action']['save']) || isset($form['action']['test'])) {
-	    GalleryCoreApi::relativeRequireOnce(
+	    GalleryCoreApi::requireOnce(
 		'modules/archiveupload/classes/ArchiveUploadHelper.class');
 
 	    if (empty($form['unzipPath'])) {
@@ -55,7 +55,7 @@ class ArchiveUploadSiteAdminController extends GalleryController {
 		    ArchiveUploadHelper::testBinary($form['unzipPath']);
 		if (!$valid && $errorType == 'badPath') {
 		    /* Maybe a directory was entered.. try adding /unzip */
-		    $platform = $gallery->getPlatform();
+		    $platform =& $gallery->getPlatform();
 		    $slash = $platform->getDirectorySeparator();
 		    $retryPath = $form['unzipPath'];
 		    if ($retryPath{strlen($retryPath)-1} != $slash) {
@@ -74,16 +74,16 @@ class ArchiveUploadSiteAdminController extends GalleryController {
 	    if (empty($error) && isset($form['action']['save'])) {
 		$ret = GalleryCoreApi::setPluginParameter(
 				       'module', 'archiveupload', 'unzipPath', $form['unzipPath']);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'archiveupload');
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		list ($ret, $isActive) = $module->isActive();
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
@@ -111,7 +111,7 @@ class ArchiveUploadSiteAdminController extends GalleryController {
 	$results['status'] = $status;
 	$results['error'] = $error;
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -130,18 +130,18 @@ class ArchiveUploadSiteAdminView extends GalleryView {
 	    foreach (array('unzipPath') as $key) {
 		list ($ret, $form[$key]) =
 		    GalleryCoreApi::getPluginParameter('module', 'archiveupload', $key);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
 	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'archiveupload');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	list ($ret, $isActive) = $module->isActive();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$form['isConfigure'] = !$isActive;
@@ -163,7 +163,7 @@ class ArchiveUploadSiteAdminView extends GalleryView {
 	}
 
 	$template->setVariable('controller', 'archiveupload.ArchiveUploadSiteAdmin');
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/archiveupload/templates/ArchiveUploadSiteAdmin.tpl'));
     }
 }

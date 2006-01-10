@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,26 +39,11 @@ class AlbumSelectModule extends GalleryModule {
 	$this->setName($gallery->i18n('Album Select'));
 	$this->setDescription(
 	    $gallery->i18n('Jump directly to any album using a select box or tree view'));
-	$this->setVersion('1.0.0');
+	$this->setVersion('1.0.1');
 	$this->setGroup('blocks', $gallery->i18n('Blocks'));
 	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
-	$this->setRequiredCoreApi(array(6, 6));
-	$this->setRequiredModuleApi(array(2, 0));
-    }
-
-    /**
-     * @see GalleryModule::isRecommendedDuringInstall()
-     */
-    function isRecommendedDuringInstall() {
-	return false;
-    }
-
-    /**
-     * @see GalleryModule::autoConfigure()
-     */
-    function autoConfigure() {
-	/* We don't require any special configuration */
-	return array(GalleryStatus::success(), true);
+	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredModuleApi(array(3, 0));
     }
 
     /**
@@ -76,7 +61,7 @@ class AlbumSelectModule extends GalleryModule {
      */
     function upgrade($currentVersion) {
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'albumselect');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -84,7 +69,7 @@ class AlbumSelectModule extends GalleryModule {
 	foreach (array('show', 'type') as $param) {
 	    if (isset($params[$param])) {
 		$ret = $this->removeParameter($param);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
@@ -95,14 +80,14 @@ class AlbumSelectModule extends GalleryModule {
 		       'treeExpandCollapse' => 0, 'treeCloseSameLevel' => 0) as $key => $value) {
 	    if (!isset($params[$key])) {
 		$ret = $this->setParameter($key, $value);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    } else if ($key == 'sort' && ($params[$key] == '0' || $params[$key] == '1')) {
 		/* v0.9.4 changed 'sort' param from 0/1 to manual/title */
 		$value = ($params[$key] == 1) ? 'title' : 'manual';
 		$ret = $this->setParameter($key, $value);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
@@ -114,14 +99,14 @@ class AlbumSelectModule extends GalleryModule {
 		array('type' => 'module-data', 'module' => 'albumselect'));
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
      * @see GalleryModule::getSiteAdminViews()
      */
     function getSiteAdminViews() {
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array(array('name' => $this->translate('Album Select'),
 				 'view' => 'albumselect.AlbumSelectSiteAdmin')));
     }
@@ -137,7 +122,7 @@ class AlbumSelectModule extends GalleryModule {
 	    $invalidateCache = true;
 	} else if ($event->getEventName() == 'Gallery::ItemOrder') {
 	    list ($ret, $sort) = $this->getParameter('sort');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    if ($sort == 'manual') {
@@ -146,16 +131,15 @@ class AlbumSelectModule extends GalleryModule {
 	} else if ($event->getEventName() == 'GalleryEntity::save') {
 	    $entity = $event->getEntity();
 	    if ($entity->getEntityType() == 'GalleryAlbumItem') {
-		if ($entity->getModifiedFlag('orderBy') & MEMBER_MODIFIED
-		        || $entity->getModifiedFlag('orderDirection') & MEMBER_MODIFIED) {
+		if ($entity->isModified('orderBy') || $entity->isModified('orderDirection')) {
 		    list ($ret, $sort) = $this->getParameter('sort');
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		    if ($sort == 'album') {
 			$invalidateCache = true;
 		    }
-		} else if ($entity->getModifiedFlag('title') & MEMBER_MODIFIED) {
+		} else if ($entity->isModified('title')) {
 		    $invalidateCache = true;
 		}
 	    }
@@ -166,7 +150,7 @@ class AlbumSelectModule extends GalleryModule {
 						   'module' => 'albumselect'));
 	}
 
-	return array(GalleryStatus::success(), null);
+	return array(null, null);
     }
 }
 ?>

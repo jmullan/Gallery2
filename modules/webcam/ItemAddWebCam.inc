@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,14 +43,14 @@ class ItemAddWebCam extends ItemAddPlugin {
 	    /* Delegate back to the same view */
 	} else if (isset($form['action']['addWebCam'])) {
 	    /* fetch url, create item, set WebCam handler, save params */
-	    $platform = $gallery->getPlatform();
+	    $platform =& $gallery->getPlatform();
 	    $tmpDir = $gallery->getConfig('data.gallery.tmp');
 	    $tmpFile = $platform->tempnam($tmpDir, 'webcam');
 	    $url = GalleryUtilities::htmlEntityDecode($form['imageUrl']);
 
 	    list ($successfullyCopied, $response, $headers) =
 		GalleryCoreApi::fetchWebFile($url, $tmpFile);
-	    if (!$successfullyCopied || strpos($response, '404 Not Found') !== false) {
+	    if (!$successfullyCopied) {
 		$error[] = 'form[error][imageUrl][unavailable]';
 	    }
 
@@ -61,7 +61,7 @@ class ItemAddWebCam extends ItemAddPlugin {
 	    } else {
 		list ($base, $extension) = GalleryUtilities::getFileNameComponents(basename($url));
 		list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
-		if ($ret->isError()) {
+		if ($ret) {
 		    $mimeType = 'application/unknown';
 		}
 	    }
@@ -70,29 +70,29 @@ class ItemAddWebCam extends ItemAddPlugin {
 		list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum(
 		    $tmpFile, basename($url), basename($url), '', '', $mimeType, $item->getId());
 		@$platform->unlink($tmpFile);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 
 		if (GalleryUtilities::isA($newItem, 'GalleryPhotoItem')) {
 		    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($newItem->getId());
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 		    $newItem->addOnLoadHandler('WebCam');
 		    $ret = $newItem->save();
-		    if ($ret->isError()) {
+		    if ($ret) {
 			GalleryCoreApi::releaseLocks($lockId);
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 		    $ret = GalleryCoreApi::setPluginParameter('module', 'webcam',
 							      'imageUrl', $url, $newItem->getId());
-		    if ($ret->isError()) {
+		    if ($ret) {
 			GalleryCoreApi::releaseLocks($lockId);
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 		    $ret = GalleryCoreApi::releaseLocks($lockId);
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 
@@ -101,7 +101,7 @@ class ItemAddWebCam extends ItemAddPlugin {
 						    'warnings' => array());
 		} else {
 		    $ret = GalleryCoreApi::deleteEntityById($newItem->getId());
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 
@@ -112,7 +112,7 @@ class ItemAddWebCam extends ItemAddPlugin {
 	    }
 	}
 
-	return array(GalleryStatus::success(), $error, $status);
+	return array(null, $error, $status);
     }
 
     /**
@@ -122,7 +122,7 @@ class ItemAddWebCam extends ItemAddPlugin {
 	global $gallery;
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'webcam');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
@@ -142,7 +142,7 @@ class ItemAddWebCam extends ItemAddPlugin {
 	    }
 	}
 
-	return array(GalleryStatus::success(),
+	return array(null,
 		     'modules/webcam/templates/ItemAddWebCam.tpl', 'modules_webcam');
     }
 
@@ -151,11 +151,11 @@ class ItemAddWebCam extends ItemAddPlugin {
      */
     function getTitle() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'webcam');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $module->translate('WebCam/Live Image'));
+	return array(null, $module->translate('WebCam/Live Image'));
     }
 }
 ?>

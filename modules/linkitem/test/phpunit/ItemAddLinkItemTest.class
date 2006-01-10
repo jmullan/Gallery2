@@ -1,0 +1,115 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2006 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package LinkItem
+ * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * ItemAddLinkItem plugin test
+ * @package LinkItem
+ * @subpackage PHPUnit
+ */
+class ItemAddLinkItemTest extends ItemAddPluginTestCase {
+
+    function ItemAddLinkItemTest($methodName) {
+	$this->ItemAddPluginTestCase($methodName, 'linkitem', 'ItemAddLinkItem');
+    }
+
+    function setUp() {
+	parent::setUp();
+
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($this->_album);
+
+	list ($ret, $this->_lockId) = GalleryCoreApi::acquireReadLock($this->_album->getId());
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function tearDown() {
+	$ret = GalleryCoreApi::releaseLocks($this->_lockId);
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	parent::tearDown();
+    }
+
+    function testAddAlbumLink() {
+	GalleryUtilities::putRequestVariable('form[action][addLinkItem]', 1);
+	GalleryUtilities::putRequestVariable('form[linkType]', 'album');
+	GalleryUtilities::putRequestVariable('form[linkedAlbumId]', $this->_album->getId());
+
+	$results = $this->handleRequest($this->_album);
+	$this->assertEquals(array(), $results[0], 'no error');
+	$this->assertEquals(array('addedFiles'), array_keys($results[1]), 'addedFiles');
+	$this->assertEquals(1, count($results[1]['addedFiles']), '1 file');
+	$this->assertEquals(array('fileName', 'id', 'warnings'),
+			    array_keys($results[1]['addedFiles'][0]), 'key');
+	$this->assertEquals($this->_album->getTitle(), $results[1]['addedFiles'][0]['fileName'],
+			    'fileName');
+    }
+
+    function testAddLinkItemAlbumNotFound() {
+	GalleryUtilities::putRequestVariable('form[action][addLinkItem]', 1);
+	GalleryUtilities::putRequestVariable('form[linkType]', 'album');
+	GalleryUtilities::putRequestVariable('form[linkedAlbumId]', -123);
+
+	$results = $this->handleRequest($this->_album);
+	$this->assertEquals(array('form[error][linkedAlbumId][invalid]'), $results[0], 'error');
+	$this->assertEquals(array(), $results[1], 'status');
+    }
+
+    function testAddLinkItemURL() {
+	GalleryUtilities::putRequestVariable('form[action][addLinkItem]', 1);
+	GalleryUtilities::putRequestVariable('form[linkType]', 'url');
+	GalleryUtilities::putRequestVariable('form[linkUrl]', 'http://test.com/test.html');
+
+	$results = $this->handleRequest($this->_album);
+	$this->assertEquals(array(), $results[0], 'no error');
+	$this->assertEquals(array('addedFiles'), array_keys($results[1]), 'addedFiles');
+	$this->assertEquals(1, count($results[1]['addedFiles']), '1 file');
+	$this->assertEquals(array('fileName', 'id', 'warnings'),
+			    array_keys($results[1]['addedFiles'][0]), 'key');
+	$this->assertEquals('test.html', $results[1]['addedFiles'][0]['fileName'], 'fileName');
+    }
+
+    function testAddLinkItemURLMissing() {
+	GalleryUtilities::putRequestVariable('form[action][addLinkItem]', 1);
+	GalleryUtilities::putRequestVariable('form[linkType]', 'url');
+	GalleryUtilities::putRequestVariable('form[linkUrl]', '');
+
+	$results = $this->handleRequest($this->_album);
+	$this->assertEquals(array('form[error][linkUrl][missing]'), $results[0], 'error');
+	$this->assertEquals(array(), $results[1], 'status');
+    }
+}
+?>

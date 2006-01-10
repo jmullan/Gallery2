@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -465,7 +465,7 @@ class GalleryUtilities {
      */
     function convertPathToUrl($path) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$dirbase = $platform->realpath(dirname(__FILE__) . '/../../..') . '/';
 
 	/*
@@ -922,7 +922,7 @@ class GalleryUtilities {
      * @return string resulting text
      */
     function markup($text, $markupType=null) {
-	GalleryCoreApi::relativeRequireOnce('lib/smarty_plugins/modifier.markup.php');
+	GalleryCoreApi::requireOnce('lib/smarty_plugins/modifier.markup.php');
 	return smarty_modifier_markup($text, $markupType);
     }
 
@@ -978,7 +978,7 @@ class GalleryUtilities {
      */
     function isPathInList($path, $list) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 	$path = $platform->realpath($path) . $slash;
 	$compare = GalleryUtilities::isA($platform, 'WinNtPlatform') ? 'strncasecmp' : 'strncmp';
@@ -1029,7 +1029,7 @@ class GalleryUtilities {
      */
     function guaranteeDirExists($dir) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	if ($platform->file_exists($dir)) {
 	    return array($platform->is_dir($dir), array());
 	}
@@ -1121,7 +1121,7 @@ class GalleryUtilities {
      */
     function _createDepthTree(&$map, $id, $depth=0) {
 	$data = array();
-	$data[] = array('depth' => $depth, 'data' => $map[$id]['instance']->getMemberData());
+	$data[] = array('depth' => $depth, 'data' => (array)$map[$id]['instance']);
 	if (isset($map[$id]['children'])) {
 	    foreach ($map[$id]['children'] as $childId) {
 		$data = array_merge($data,
@@ -1152,7 +1152,7 @@ class GalleryUtilities {
 	    $pseudoFileName = $entity->getPathComponent();
 	} else if (GalleryUtilities::isA($entity, 'GalleryDerivative')) {
 	    list ($ret, $parentEntity) = GalleryCoreApi::loadEntitiesById($entity->getParentId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -1162,7 +1162,7 @@ class GalleryUtilities {
 			$parentEntity->getMimeType() != $entity->getMimeType()) {
 		    list ($ret, $extensions) =
 			GalleryCoreApi::convertMimeToExtensions($entity->getMimeType());
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		    if (!empty($extensions)) {
@@ -1178,7 +1178,7 @@ class GalleryUtilities {
 		}
 	    }
 	}
-	return array(GalleryStatus::success(),
+	return array(null,
 		     isset($pseudoFileName) ? $pseudoFileName : 'unknown');
     }
 

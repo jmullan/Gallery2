@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,12 +43,10 @@ class ImageBlockHelperTest extends GalleryTestCase {
     function setUp() {
 	global $gallery;
 	parent::setUp();
-	GalleryCoreApi::relativeRequireOnce(
-	    'modules/imageblock/classes/ImageBlockDisabledMap.class');
 
 	list ($ret, $this->_topAlbum, $this->_topItems) =
 	    $this->_createSubAlbumWithItems($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -56,7 +54,7 @@ class ImageBlockHelperTest extends GalleryTestCase {
 
 	list ($ret, $this->_subAlbum, $this->_subItems) =
 	    $this->_createSubAlbumWithItems($this->_topAlbum->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
@@ -64,31 +62,33 @@ class ImageBlockHelperTest extends GalleryTestCase {
     function _createSubAlbumWithItems($parentId) {
 	/* Create a new album and image, set thumbnail and highlight */
 	list ($ret, $album) = $this->_createRandomAlbum($parentId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	$items = array();
 	for ($i = 0; $i < 5; $i++) {
 	    list($ret, $items[$i]) = $this->_createRandomDataItem($album->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	}
 
-	return array(GalleryStatus::success(), $album, $items);
+	return array(null, $album, $items);
     }
 
     function testImageBlockHelperGetDisabledFlag() {
-	$ret = ImageBlockDisabledMap::addMapEntry(array('itemId' => $this->_topAlbum->getId()));
-	if ($ret->isError()) {
+	$ret = GalleryCoreApi::addMapEntry(
+	    'ImageBlockDisabledMap', array('itemId' => $this->_topAlbum->getId()));
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	list ($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($this->_topAlbum->getId());
 	$this->assert($disabledFlag, 'getDisabledFlag returned false');
 
-    	$ret = ImageBlockDisabledMap::removeMapEntry(array('itemId' => $this->_topAlbum->getId()));
-	if ($ret->isError()) {
+    	$ret = GalleryCoreApi::removeMapEntry(
+	    'ImageBlockDisabledMap', array('itemId' => $this->_topAlbum->getId()));
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -100,7 +100,7 @@ class ImageBlockHelperTest extends GalleryTestCase {
     	global $gallery;
 
 	$ret = ImageBlockHelper::setDisabledFlag($this->_topAlbum, false, true);
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
 
@@ -118,7 +118,7 @@ class ImageBlockHelperTest extends GalleryTestCase {
         	 ')';
 
 	list ($ret, $searchResults) = $gallery->search($query, $itemIds);
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
 
@@ -131,12 +131,12 @@ class ImageBlockHelperTest extends GalleryTestCase {
 	$this->assertEquals($itemIds, $dbItemIds, 'Items not added to the DisableMap');
 
 	$ret = ImageBlockHelper::setDisabledFlag($this->_topAlbum, false, false);
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
 
         list ($ret, $searchResults) = $gallery->search($query, $itemIds);
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
 
@@ -151,7 +151,7 @@ class ImageBlockHelperTest extends GalleryTestCase {
     	global $gallery;
 
 	$ret = ImageBlockHelper::setDisabledFlag($this->_topAlbum, true, true);
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
 
@@ -170,7 +170,7 @@ class ImageBlockHelperTest extends GalleryTestCase {
         	 ')';
 
         list ($ret, $searchResults) = $gallery->search($query, $itemIds);
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
 
@@ -182,7 +182,7 @@ class ImageBlockHelperTest extends GalleryTestCase {
 	$this->assertEquals($itemIds, $dbItemIds, 'Items not added to the DisableMap');
 
         $ret = ImageBlockHelper::setDisabledFlag($this->_topAlbum, true, false);
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
 
@@ -193,7 +193,7 @@ class ImageBlockHelperTest extends GalleryTestCase {
         	 ')';
 
         list ($ret, $searchResults) = $gallery->search($query, $itemIds);
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
 

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ class AdminModulesVerifyUninstallController extends GalleryController {
 	global $gallery;
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -54,18 +54,18 @@ class AdminModulesVerifyUninstallController extends GalleryController {
 
 	if (!empty($moduleId) && isset($form['action']['uninstall'])) {
 	    list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    list ($ret, $isActive) = $module->isActive();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    if (!$isActive) {
 		$ret = $module->uninstall();
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		if (empty($redirect)) {
@@ -85,7 +85,7 @@ class AdminModulesVerifyUninstallController extends GalleryController {
 	$results['status'] = $status;
 	$results['error'] = $error;
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -106,7 +106,7 @@ class AdminModulesVerifyUninstallView extends GalleryView {
 	$moduleId = GalleryUtilities::getRequestVariables('moduleId');
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -124,7 +124,7 @@ class AdminModulesVerifyUninstallView extends GalleryView {
 	$template->setVariable('AdminModulesVerifyUninstall', $AdminModulesVerifyUninstall);
 	$template->setVariable('controller', 'core.AdminModulesVerifyUninstall');
 
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/core/templates/AdminModulesVerifyUninstall.tpl'));
     }
 }

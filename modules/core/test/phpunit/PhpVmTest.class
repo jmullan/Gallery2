@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
  * @author Jay Rossiter <cryptographite@users.sf.net>
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPhpVm.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryPhpVm.class');
 
 /**
  * Test the GalleryPhpVm.  These are passthrough functions so all we do is perform a smoke test to
@@ -98,7 +98,8 @@ class PhpVmTest extends GalleryTestCase {
 	$url = $urlGenerator->getCurrentUrl();
 	/* Strip of the /lib/tools/test/ part to get a valid G2 request uri */
 	$url = preg_replace('|^(.*/)lib/tools/.*$|', '$1', $url);
-	list ($body, $response, $headers) = GalleryCoreApi::fetchWebPage($url);
+	list ($success, $body, $response, $headers) = GalleryCoreApi::fetchWebPage($url);
+	$this->assert($success, 'Could not retrieve G2 page');
 	$this->assertEquals($response, 'HTTP/1.1 200 OK', 'Could not retrieve G2 page');
 	$this->assertEquals(true, isset($headers['Set-Cookie']), 'Set-Cookie header not set');
 	if (isset($headers['Set-Cookie'])) {
@@ -114,8 +115,8 @@ class PhpVmTest extends GalleryTestCase {
 	global $gallery;
 	/* When this unit test is executed, we already sent some data to the user agent */
 	$phpVm = $gallery->getPhpVm();
-	$this->assert($phpVm->headers_sent(), 'headers are sent at this point, but the vm function ' .
-		      'does not think so');
+	$this->assert($phpVm->headers_sent(), 'headers are sent at this point, but the vm ' .
+		      'function does not think so');
 
 	/* The other case, $phpVm->headers_sent() == false, is covered by testHeader() */
     }
@@ -124,6 +125,14 @@ class PhpVmTest extends GalleryTestCase {
     function testGetMagicQuotesGpc() {
 	$this->assertEquals(get_magic_quotes_gpc(), $this->_phpVm->get_magic_quotes_gpc(),
 			    'The Vm function does not return the correct value');
+    }
+
+    function testTime() {
+	/*
+	 * There's an incredibly slim chance that this will fail.  If it does, we should improve
+	 * this test.
+	 */
+	$this->assertEquals(time(), $this->_phpVm->time());
     }
 }
 ?>

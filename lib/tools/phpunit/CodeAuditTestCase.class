@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ class CodeAuditTestCase extends GalleryTestCase {
 	global $gallery;
 
 	/* If the base gallery dir has a CVS dir, then we're all set */
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	if ($platform->file_exists($this->_baseDir . '/CVS/Entries')) {
 	    $this->_scanDir($this->_baseDir);
 	}
@@ -64,7 +64,7 @@ class CodeAuditTestCase extends GalleryTestCase {
 	}
 
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	if (!file_exists($dirPath) || !is_dir($dirPath)) {
 	    /*
@@ -117,7 +117,7 @@ class CodeAuditTestCase extends GalleryTestCase {
 
 	if ($this->shouldCheckFile($fileName)) {
 	    $gallery->guaranteeTimeLimit(30);
-	    $platform = $gallery->getPlatform();
+	    $platform =& $gallery->getPlatform();
 	    $fd = $platform->fopen($fileName, 'r');
 	    $buf = $platform->fread($fd, $platform->filesize($fileName));
 	    $this->checkFile($fileName, $buf);

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,14 +48,14 @@ class ExifExtractorTest extends GalleryTestCase {
 
 	/* Create a new subalbum and add some jpegs */
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$this->_markForCleanup($this->_album);
 
 	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$photoIds = array();
@@ -70,23 +70,23 @@ class ExifExtractorTest extends GalleryTestCase {
 	for ($i = 0; $i < count($imagePaths); $i++) {
 	    list ($ret, $photoId) = $this->_addPhoto(
 		  $this->_album->getId(), $imagePaths[$i], $i + 1);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $photoIds[] = $photoId;
 	}
 	$ret = GalleryCoreApi::releaseLocks($lockId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'exif');
-	if ($ret->isError() || !isset($module)) {
+	if ($ret || !isset($module)) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	list ($ret, $exif) =
 	    GalleryCoreApi::newFactoryInstance('ExifInterface_1_0', 'ExifExtractor');
-	if ($ret->isError() || !isset($exif)) {
+	if ($ret || !isset($exif)) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -97,74 +97,74 @@ class ExifExtractorTest extends GalleryTestCase {
     function _addPhoto($parentId, $imagePath, $index) {
 	list ($ret, $photo) =
 	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryPhotoItem');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	list ($ret, $mimeType) = GalleryCoreApi::getMimeType($imagePath);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$ret = $photo->create($parentId, $imagePath, $mimeType,
 			      'testitem_' . time() . substr($imagePath, -4));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$photo->setTitle("Item #$index");
 	$photo->setSummary("Summary $index");
 	$photo->setDescription("Description $index");
 	$ret = $photo->save();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	/* add thumbnail */
 	list ($ret, $thumbId) = $this->_addDerivative($photo,
 	    'thumbnail', DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'thumbnail|150');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	return array(GalleryStatus::success(), $photo->getId());
+	return array(null, $photo->getId());
     }
 
     function _addDerivative($photo, $toolkitType,
 			    $derivativeType, $derivativeOperation) {
 	list ($ret, $toolkit, $outputMimeType) =
 	    GalleryCoreApi::getToolkitByOperation($photo->getMimeType(), $toolkitType);
-	if ($ret->isError() || !isset($toolkit)) {
+	if ($ret || !isset($toolkit)) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	list ($ret, $derivative) =
 	    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $photo->getEntityType());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if (!isset($derivative)) {
-	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
 	}
 
 	$ret = $derivative->create($photo->getId(), $derivativeType);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$derivative->setDerivativeSourceId($photo->getId());
 	$derivative->setDerivativeOperations($derivativeOperation);
 	$derivative->setMimeType($outputMimeType);
 	$ret = $derivative->save();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	return array(GalleryStatus::success(), $derivative->getId());
+	return array(null, $derivative->getId());
     }
 
     function testOneItemAllDataExif() {
 	list ($ret, $data) = $this->_exif->getMetaData($this->_photoIds[0]);
-	$this->assert(!$ret->isError() && isset($data[$this->_photoIds[0]]));
+	$this->assert(!$ret && isset($data[$this->_photoIds[0]]));
 	$this->assertEquals('1/59 sec',
 	    $data[$this->_photoIds[0]]['ShutterSpeedValue']['value']);
     }
 
     function testOneItemAllDataIptc() {
 	list ($ret, $data) = $this->_exif->getMetaData($this->_photoIds[3]);
-	$this->assert(!$ret->isError() && isset($data[$this->_photoIds[3]]));
+	$this->assert(!$ret && isset($data[$this->_photoIds[3]]));
 	$this->assertEquals('Caption: IPTC/Caption',
 	    $data[$this->_photoIds[3]]['IPTC/Caption']['value']);
     }
@@ -172,7 +172,7 @@ class ExifExtractorTest extends GalleryTestCase {
     function testMultiItemAllData() {
 	list ($ret, $data) = $this->_exif->getMetaData(
 	    array($this->_photoIds[0], $this->_photoIds[2], $this->_photoIds[3]));
-	$this->assert(!$ret->isError() && isset($data));
+	$this->assert(!$ret && isset($data));
 	$this->assertEquals(3, count($data), 'Data size');
 	$this->assertEquals('1/59 sec',
 	    $data[$this->_photoIds[0]]['ShutterSpeedValue']['value']);
@@ -184,7 +184,7 @@ class ExifExtractorTest extends GalleryTestCase {
 
     function testMultiItemMixedTypeAllData() {
 	list ($ret, $data) = $this->_exif->getMetaData($this->_photoIds);
-	$this->assert(!$ret->isError() && isset($data));
+	$this->assert(!$ret && isset($data));
 	$this->assertEquals(4, count($data), 'Data size');
 	$this->assertEquals('1/59 sec',
 	    $data[$this->_photoIds[0]]['ShutterSpeedValue']['value']);
@@ -197,7 +197,7 @@ class ExifExtractorTest extends GalleryTestCase {
     function testMultiItemSomeData() {
 	list ($ret, $data) = $this->_exif->getMetaData(
 	    $this->_photoIds, array('DateTime', 'ShutterSpeedValue', 'IPTC/Byline'));
-	$this->assert(!$ret->isError() && isset($data));
+	$this->assert(!$ret && isset($data));
 	$this->assertEquals(4, count($data), 'Data size');
 	$this->assertEquals('1/59 sec',
 	    $data[$this->_photoIds[0]]['ShutterSpeedValue']['value']);

@@ -23,7 +23,7 @@
 
     <script type="text/javascript">
       function albumSelect_goToNode(nodeId) {ldelim}
-        document.location = new String('{g->url forJavascript=true arg1="view=core.ShowItem" arg2="itemId=__ID__"}').replace('__ID__', nodeId);
+        document.location = new String('{g->url arg1="view=core.ShowItem" arg2="itemId=__ID__" htmlEntities=false}').replace('__ID__', nodeId);
       {rdelim}
 
       // <![CDATA[

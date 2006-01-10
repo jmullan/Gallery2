@@ -8,17 +8,21 @@
 
     <?php if (isset($templateData['activated'])): ?>
     <?php foreach ($templateData['activated'] as $moduleId => $moduleName): ?>
-    <h2 class="success">
+    <div class="success">
+    <h2>
       <?php printf(_("Activated the <i>%s</i> module successfully"), $moduleName) ?>
     </h2>
+    </div>
     <?php endforeach; ?>
     <?php endif; ?>
 
     <?php if (isset($templateData['needsConfiguration'])): ?>
     <?php foreach ($templateData['needsConfiguration'] as $moduleId => $moduleName): ?>
-    <h2 class="warning">
+    <div class="warning">
+    <h2>
       <?php printf(_("The <i>%s</i> module was installed, but needs configuration to be activated"), $moduleName) ?>
     </h2>
+    </div>
     <?php endforeach; ?>
     <p>
       <?php print _("After finishing this installation, login as Admin and browse to Site Admin. Go to the <i>Modules</i> view and configure the above listed modules."); ?>

@@ -3,7 +3,7 @@
  * $RCSfile: AdminModulesControllerTest.class,v $
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,8 +91,8 @@ class AdminRepositoryControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][update]', 1);
 
 	$repository = new AdminRepositoryControllerTestRepository();
-	$repository->setReply('init', array(), GalleryStatus::success());
-	$repository->setReply('downloadIndex', array(), GalleryStatus::success());
+	$repository->setReply('init', array(), null);
+	$repository->setReply('downloadIndex', array(), null);
 	$this->_controller->_repository = $repository;
 
 	$results = $this->handleRequest();
@@ -114,13 +114,13 @@ class AdminRepositoryControllerTest extends GalleryControllerTestCase {
 								  'lang-en_US' => 1)));
 
 	$repository = new AdminRepositoryControllerTestRepository();
-	$repository->setReply('init', array(), GalleryStatus::success());
+	$repository->setReply('init', array(), null);
 	$repository->setReply('getAllUpgradeablePackages', array(),
-	    array(GalleryStatus::success(), array()));
+	    array(null, array()));
 
-	$repository->setReply('init', array(), GalleryStatus::success());
+	$repository->setReply('init', array(), null);
 	$repository->setReply('getAllUpgradeablePackages', array(),
-	    array(GalleryStatus::success(), $packages));
+	    array(null, $packages));
 	$this->_controller->_repository = $repository;
 
 	/* Test case when no upgradeable packages exist. */
@@ -191,60 +191,60 @@ class AdminRepositoryControllerTest extends GalleryControllerTestCase {
 			     'test' => 'test-package'))));
 
 	$repository = new AdminRepositoryControllerTestRepository();
-	$repository->setReply('init', array(), GalleryStatus::success());
-	$repository->setReply('init', array(), GalleryStatus::success());
+	$repository->setReply('init', array(), null);
+	$repository->setReply('init', array(), null);
 	$repository->setReply('getDownloadFileList',
 			      array($expectedPluginData),
-			      array(GalleryStatus::success(), $pluginDownloadFileList));
+			      array(null, $pluginDownloadFileList));
 	$repository->setReply('updatePluginIndexFile',
 			      array('module', 'testModule'),
-			      GalleryStatus::success());
+			      null);
 	/* Descriptor. */
 	$repository->setReply('downloadAndUnpack',
 			      array('module', 'testModule', 'descriptor', 'testModule-descriptor'),
-			      array(GalleryStatus::success(), 'descriptorContents'));
+			      array(null, 'descriptorContents'));
 	/* lang-en_US */
 	$repository->setReply('downloadAndUnpack',
 			      array('module', 'testModule', 'lang-en_US', 'en_US-package'),
-			      array(GalleryStatus::success(), array()));
+			      array(null, array()));
 	$repository->setReply('verifyPackageIntegrity',
 			      array('lang-en_US', 'descriptorContents'),
-			      GalleryStatus::success());
+			      null);
 	$repository->setReply('getPackageVersionAndBuild',
 			      array('module', 'testModule', 'lang-en_US'),
-			      array(GalleryStatus::success(), 'en_US-version', 'en_US-build'));
+			      array(null, 'en_US-version', 'en_US-build'));
 	$repository->setReply('updatePackageMetaData',
 			      array('module', 'testModule', 'lang-en_US',
 				    'en_US-version', 'en_US-build'),
-			      GalleryStatus::success());
+			      null);
 	/* lang-hu_HU */
 	$repository->setReply('downloadAndUnpack',
 			      array('module', 'testModule', 'lang-hu_HU', 'hu_HU-package'),
-			      array(GalleryStatus::success(), array()));
+			      array(null, array()));
 	$repository->setReply('verifyPackageIntegrity',
 			      array('lang-hu_HU', 'descriptorContents'),
-			      GalleryStatus::success());
+			      null);
 	$repository->setReply('getPackageVersionAndBuild',
 			      array('module', 'testModule', 'lang-hu_HU'),
-			      array(GalleryStatus::success(), 'hu_HU-version', 'hu_HU-build'));
+			      array(null, 'hu_HU-version', 'hu_HU-build'));
 	$repository->setReply('updatePackageMetaData',
 			      array('module', 'testModule', 'lang-hu_HU',
 				    'hu_HU-version', 'hu_HU-build'),
-			      GalleryStatus::success());
+			      null);
 	/* test */
 	$repository->setReply('downloadAndUnpack',
 			      array('module', 'testModule', 'test', 'test-package'),
-			      array(GalleryStatus::success(), array()));
+			      array(null, array()));
 	$repository->setReply('verifyPackageIntegrity',
 			      array('test', 'descriptorContents'),
-			      GalleryStatus::success());
+			      null);
 	$repository->setReply('getPackageVersionAndBuild',
 			      array('module', 'testModule', 'test'),
-			      array(GalleryStatus::success(), 'test-version', 'test-build'));
+			      array(null, 'test-version', 'test-build'));
 	$repository->setReply('updatePackageMetaData',
 			      array('module', 'testModule', 'test',
 				    'test-version', 'test-build'),
-			      GalleryStatus::success());
+			      null);
 	$this->_controller->_repository = $repository;
 
 	GalleryUtilities::putRequestVariable('form[upgradeBaseFiles]', 1);
@@ -259,7 +259,7 @@ class AdminRepositoryControllerTest extends GalleryControllerTestCase {
 			    $results, 'Expected only core.ProgressBar delegation.');
 
 	$ret = $mockAdapter->runCallbacks();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -394,12 +394,12 @@ class AdminRepositoryControllerTestRepository {
 }
 
 class AdminRepositoryControllerTestUrlGenerator {
-    function generateUrl($args) {
+    function generateUrl($params=array(), $options=array()) {
 	$buf = array();
-	foreach ($args as $key => $value) {
+	foreach ($params as $key => $value) {
 	    $buf[] = "$key=$value";
 	}
-	return join(',', $buf);
+	return implode(',', $buf);
     }
 }
 ?>

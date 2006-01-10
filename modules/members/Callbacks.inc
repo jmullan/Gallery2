@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,24 +35,24 @@ class MembersCallbacks {
 	switch($callback) {
 	case 'LoadMembers':
 	    /* The "Members List" link */
-	    GalleryCoreApi::relativeRequireOnce(
+	    GalleryCoreApi::requireOnce(
 		'modules/members/classes/GalleryMembersHelper.class');
 	    list ($ret, $block['members']['LoadMembers']['canViewList']) =
 		GalleryMembersHelper::canViewMembersModule($gallery->getActiveUserId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    /* The members count */
 	    list ($ret, $block['members']['LoadMembers']['count']) =
 		GalleryMembersHelper::getMembersCount();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    return GalleryStatus::success();
+	    return null;
 	}
 
-	return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
     }
 }
 ?>

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,8 +44,8 @@ class HybridTheme extends GalleryTheme {
 	$this->setName($gallery->i18n('Hybrid'));
 	$this->setDescription(
 	    $gallery->i18n('Combined album/image/slideshow dynamic view'));
-	$this->setVersion('1.0.2');
-	$this->setRequiredCoreApi(array(6, 0));
+	$this->setVersion('1.0.3');
+	$this->setRequiredCoreApi(array(7, 0));
 	$this->setRequiredThemeApi(array(2, 2));
 	$this->setStandardSettings(array(
 	    'rows' => 30, 'columns' => 2,
@@ -71,7 +71,7 @@ class HybridTheme extends GalleryTheme {
      */
     function getSettings($itemId=null) {
 	list ($ret, $settings, $params) = parent::getSettings($itemId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -112,7 +112,7 @@ class HybridTheme extends GalleryTheme {
 				'titledatetime' => $this->translate('Title (Date/Time)')),
 			    'value' => $params['thumbTitle']);
 
-	return array(GalleryStatus::success(), $settings);
+	return array(null, $settings);
     }
 
     /**
@@ -134,14 +134,14 @@ class HybridTheme extends GalleryTheme {
 	    $data[] = 'owner';
 	}
 	$ret = $this->loadCommonTemplateData($template, $item, $params, $data, $childIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$theme =& $template->getVariableByReference('theme');
 
 	list ($ret, $imageWidths, $imageHeights) =
 	    $this->_buildItemList($childIds, $theme['children']);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -168,7 +168,7 @@ class HybridTheme extends GalleryTheme {
 	}
 
 	$template->head('themes/hybrid/templates/header.tpl');
-	return array(GalleryStatus::success(), 'theme.tpl');
+	return array(null, 'theme.tpl');
     }
 
     /**
@@ -179,43 +179,43 @@ class HybridTheme extends GalleryTheme {
 	if (!empty($renderId)) {
 	    /* Render this item */
 	    list ($ret, $image) = GalleryCoreApi::loadEntitiesById($renderId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    $template->setVariable('theme', array('item' => $item->getMemberData(),
-						  'image' => $image->getMemberData()));
-	    return array(GalleryStatus::success(), 'render.tpl');
+	    $template->setVariable('theme', array('item' => (array)$item,
+						  'image' => (array)$image));
+	    return array(null, 'render.tpl');
 	}
 
 	if (!empty($detail)) {
 	    /* View item details */
 	    $ret = $this->loadCommonTemplateData($template, $item, $params,
 						 array('owner', 'viewCount'));
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $theme =& $template->getVariableByReference('theme');
 	    list ($ret, $thumbnail) =
 		GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    if (!empty($thumbnail)) {
-		$theme['thumbnail'] = $thumbnail[$item->getId()]->getMemberData();
+		$theme['thumbnail'] = (array)$thumbnail[$item->getId()];
 	    }
 	    $template->style('themes/hybrid/theme.css');
-	    return array(GalleryStatus::success(), 'detail.tpl');
+	    return array(null, 'detail.tpl');
 	}
 
 	/* Otherwise, redirect to parent with initial view of this item  */
 	list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($item->getParentId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$theme =& $template->getVariableByReference('theme');
 	list ($ret, $childIds) =
 	    GalleryCoreApi::fetchChildItemIds($parent, null, null, $theme['actingUserId']);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$perPage = $this->getPageSize($params);
@@ -231,7 +231,7 @@ class HybridTheme extends GalleryTheme {
 	    $redirect['page'] = $page;
 	}
 	$redirect['showId'] = $item->getId();
-	return array(GalleryStatus::success(), array('redirect' => $redirect));
+	return array(null, array('redirect' => $redirect));
     }
 
     /**
@@ -240,11 +240,11 @@ class HybridTheme extends GalleryTheme {
     function showModulePage(&$template, $item, $params, $templateFile) {
 	$ret = $this->loadCommonTemplateData(
 	    $template, $item, $params, array('parents', 'systemLinks'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), 'theme.tpl');
+	return array(null, 'theme.tpl');
     }
 
     /**
@@ -253,18 +253,18 @@ class HybridTheme extends GalleryTheme {
     function showAdminPage(&$template, $item, $params, $templateFile) {
 	$ret = $this->loadCommonTemplateData(
 	    $template, $item, $params, array('parents', 'systemLinks'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), 'theme.tpl');
+	return array(null, 'theme.tpl');
     }
 
     /**
      * @see GalleryTheme::showErrorPage
      */
     function showErrorPage(&$template) {
-	return array(GalleryStatus::success(), 'error.tpl');
+	return array(null, 'error.tpl');
     }
 
     /**
@@ -273,11 +273,11 @@ class HybridTheme extends GalleryTheme {
     function showProgressBarPage(&$template, $item, $params) {
 	$ret = $this->loadCommonTemplateData(
 	    $template, $item, $params, array('parents', 'systemLinks'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), 'theme.tpl');
+	return array(null, 'theme.tpl');
     }
 
     /**
@@ -288,26 +288,26 @@ class HybridTheme extends GalleryTheme {
 	$imageWidths = $imageHeights = $childItems = array();
 	if (!empty($childIds)) {
 	    $ret = GalleryCoreApi::studyPermissions($childIds);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    list ($ret, $childItems) = GalleryCoreApi::loadEntitiesById($childIds);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    list ($ret, $preferredFullImages) =
 		GalleryCoreApi::fetchPreferredsByItemIds($childIds);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    list ($ret, $resizedImages) =
 		GalleryCoreApi::fetchResizesByItemIds($childIds);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    list ($ret, $thumbnails) =
 		GalleryCoreApi::fetchThumbnailsByItemIds($childIds);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	}
@@ -319,11 +319,11 @@ class HybridTheme extends GalleryTheme {
 		if (!($thumbnails[$childId]->getWidth() && $thumbnails[$childId]->getHeight())) {
 		    list ($ret, $thumbnails[$childId]) =
 			GalleryCoreApi::rebuildDerivativeCache($thumbnails[$childId]->getId());
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 		}
-		$children[$i]['thumbnail'] = $thumbnails[$childId]->getMemberData();
+		$children[$i]['thumbnail'] = (array)$thumbnails[$childId];
 	    }
 
 	    if (!GalleryUtilities::isA($child, 'GalleryDataItem')) {
@@ -331,7 +331,7 @@ class HybridTheme extends GalleryTheme {
 	    }
 
 	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($childId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
@@ -361,11 +361,11 @@ class HybridTheme extends GalleryTheme {
 		if (GalleryUtilities::isA($image, 'GalleryDerivativeImage')
 			&& !($image->getWidth() && $image->getHeight())) {
 		    list ($ret, $image) = GalleryCoreApi::rebuildDerivativeCache($image->getId());
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 		}
-		$image = $image->getMemberData();
+		$image = (array)$image;
 		$children[$i]['image'] = $image;
 		$children[$i]['imageIndex'] = count($imageWidths);
 		if (GalleryUtilities::isExactlyA($child, 'GalleryPhotoItem') &&
@@ -380,7 +380,7 @@ class HybridTheme extends GalleryTheme {
 		}
 	    }
 	}
-	return array(GalleryStatus::success(), $imageWidths, $imageHeights);
+	return array(null, $imageWidths, $imageHeights);
     }
 }
 ?>

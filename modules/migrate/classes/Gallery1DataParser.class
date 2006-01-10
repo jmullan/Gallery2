@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,10 +40,10 @@ class Gallery1DataParser {
      */
     function isValidAlbumsPath($path) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	if ($platform->file_exists($path . 'albumdb.dat')
-	    && $platform->is_readable($path . 'albumdb.dat')) {
+		&& $platform->is_readable($path . 'albumdb.dat')) {
 	    return true;
 	} else {
 	    return false;
@@ -59,21 +59,21 @@ class Gallery1DataParser {
      */
     function loadFile($fileName) {
         global $gallery;
-        $platform = $gallery->getPlatform();
+        $platform =& $gallery->getPlatform();
 
 	if (!$platform->file_exists($fileName) || !$platform->is_readable($fileName)) {
 	    if ($platform->file_exists($fileName . '.bak') &&
 		    $platform->is_readable($fileName . '.bak')) {
 		$fileName .= '.bak';
 	    } else {
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 					      "Missing or not readable file: $fileName"), null);
 	    }
 	}
         $tmp = $platform->file($fileName);
 
 	if (empty($tmp)) {
-	    return array(GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
 	}
 
 	$tmp = join('', $tmp);
@@ -87,7 +87,7 @@ class Gallery1DataParser {
 	}
 
 	$object = unserialize($tmp);
-	return array(GalleryStatus::success(), $object);
+	return array(null, $object);
     }
 
     /**
@@ -99,11 +99,11 @@ class Gallery1DataParser {
      */
     function getAlbumList($path) {
         global $gallery;
-        $platform = $gallery->getPlatform();
+        $platform =& $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 
 	list ($ret, $albumOrder) = Gallery1DataParser::loadFile($path . 'albumdb.dat');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -111,13 +111,13 @@ class Gallery1DataParser {
 	foreach ($albumOrder as $albumName){
 	    list ($ret, $albumFields) =
 		Gallery1DataParser::loadAlbumFields($path . $albumName . $slash);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__),'');
 	    }
 	    $albumList[$albumName] = $albumFields;
 	}
 
-	return array(GalleryStatus::success(), $albumList);
+	return array(null, $albumList);
     }
 
     /**
@@ -130,23 +130,23 @@ class Gallery1DataParser {
      */
     function getParentAlbumList($path) {
 	global $gallery;
-        $platform = $gallery->getPlatform();
+        $platform =& $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 
 	list ($ret, $albumOrder) = Gallery1DataParser::loadFile($path . 'albumdb.dat');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	foreach($albumOrder as $albumName){
 	    list ($ret, $albumFields) =
 		Gallery1DataParser::loadAlbumFields($path . $albumName . $slash);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__),'');
 	    }
 	    $parentAlbumList[$albumName] = $albumFields['parentAlbumName'];
 	}
-	return array(GalleryStatus::success(), $parentAlbumList);
+	return array(null, $parentAlbumList);
     }
 
     /**
@@ -158,7 +158,7 @@ class Gallery1DataParser {
      */
     function getAlbumHierarchy($path) {
 	list ($ret, $parentAlbumList) = Gallery1DataParser::getParentAlbumList($path);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -175,7 +175,7 @@ class Gallery1DataParser {
 		$tempAlbums[$parentName][$myName] = &$tempAlbums[$myName];
 	    }
 	}
-	return array(GalleryStatus::success(), $hierarchy);
+	return array(null, $hierarchy);
     }
 
     /**
@@ -187,25 +187,25 @@ class Gallery1DataParser {
      */
     function getRootAlbums($path) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 
 	list ($ret, $albumOrder) = Gallery1DataParser::loadFile($path . 'albumdb.dat');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	foreach($albumOrder as $albumName){
 	    list ($ret, $albumFields) =
 		Gallery1DataParser::loadAlbumFields($path . $albumName . $slash);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__),'');
 	    }
 	    if ($albumFields['parentAlbumName'] == '.root') {
 		$rootAlbums[] = $albumName;
 	    }
 	}
-	return array(GalleryStatus::success(), $rootAlbums);
+	return array(null, $rootAlbums);
     }
 
     /**
@@ -217,7 +217,7 @@ class Gallery1DataParser {
      */
     function loadAlbumFields($path) {
         global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 
 	$tmp = trim($path);
@@ -228,14 +228,14 @@ class Gallery1DataParser {
 	$albumPath = explode($slash, $path);
 	$albumName = $albumPath[count($albumPath)-2];
         list ($ret, $album) = Gallery1DataParser::loadFile($path . 'album.dat');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$album->fields['name'] = $albumName;
 	if (!$album->fields['parentAlbumName']){
 	    $album->fields['parentAlbumName'] = '.root';
 	}
-	return array(GalleryStatus::success(), $album->fields);
+	return array(null, $album->fields);
     }
 
     /**
@@ -247,11 +247,11 @@ class Gallery1DataParser {
      */
     function getPhotoCount($path) {
 	list ($ret, $photos) = Gallery1DataParser::loadFile($path . 'photos.dat');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$photoCount = count($photos);
-	return array(GalleryStatus::success(), $photoCount);
+	return array(null, $photoCount);
     }
 
     /**
@@ -263,14 +263,14 @@ class Gallery1DataParser {
      */
     function getPhotos($path) {
 	global $gallery;
-        $platform = $gallery->getPlatform();
+        $platform =& $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 
 	list ($ret, $photos) = Gallery1DataParser::loadFile($path . $slash . 'photos.dat');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	return array(GalleryStatus::success(), $photos);
+	return array(null, $photos);
     }
 
     /**
@@ -287,12 +287,12 @@ class Gallery1DataParser {
 	    if (!isset($uids)) {
 		$uids = array();
 	    }
-	    $platform = $gallery->getPlatform();
+	    $platform =& $gallery->getPlatform();
 	    $slash = $platform->getDirectorySeparator();
 
 	    list ($ret, $userDB) =
 		Gallery1DataParser::loadFile($path . '.users' . $slash . 'userdb.dat');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $uids[$path] = array();
@@ -304,7 +304,7 @@ class Gallery1DataParser {
 		}
 	    }
 	}
-	return array(GalleryStatus::success(), $uids[$path]);
+	return array(null, $uids[$path]);
     }
 
     /**
@@ -337,11 +337,11 @@ class Gallery1DataParser {
 	    if (!isset($valid[$path])) {
 		$valid[$path] = array();
 	    }
-	    $platform = $gallery->getPlatform();
+	    $platform =& $gallery->getPlatform();
 	    $slash = $platform->getDirectorySeparator();
 	    if (Gallery1DataParser::isValidUidString($uid)) {
 		list ($ret, $fields) = Gallery1DataParser::getUserFieldsByUid($path, $uid);
-		if ($ret->isSuccess()) {
+		if (!$ret) {
 		    $valid[$path][$uid] = TRUE;
 		} else {
 		    $valid[$path][$uid] = FALSE;
@@ -372,12 +372,12 @@ class Gallery1DataParser {
 	    if (!isset($fields[$path])) {
 		$fields[$path] = array();
 	    }
-	    $platform = $gallery->getPlatform();
+	    $platform =& $gallery->getPlatform();
 	    $slash = $platform->getDirectorySeparator();
 	    $fields[$path][$uid] = array();
 	    if (Gallery1DataParser::isValidUidString($uid)) {
 		list ($ret, $user) = Gallery1DataParser::loadFile($path . '.users' . $slash . $uid);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		foreach ($user as $key => $value){
@@ -385,7 +385,7 @@ class Gallery1DataParser {
 		}
 	    }
 	}
-	return array(GalleryStatus::success(), $fields[$path][$uid]);
+	return array(null, $fields[$path][$uid]);
     }
 
     /**
@@ -399,16 +399,16 @@ class Gallery1DataParser {
     function getUserFieldsByUsername($path, $username) {
         global $gallery;
         list($ret, $uids) = Gallery1DataParser::getUserUids($path);
-        if ($ret->isError()) {
+        if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
         }
 	$usernames = array_flip($uids);
         $uid = $usernames[$username];
 	list ($ret, $fields) = Gallery1DataParser::getUserFieldsByUid($path, $uid);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	return array(GalleryStatus::success(), $fields);
+	return array(null, $fields);
     }
 }
 

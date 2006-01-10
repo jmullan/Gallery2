@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ class DcrawToolkitHelper {
 				     'Get the width and height of the image'),
 				 'mimeTypes' => 'image/x-dcraw')));
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 
     /**
@@ -74,7 +74,7 @@ class DcrawToolkitHelper {
      */
     function testBinary($dcrawPath) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	/*
 	 * If the path is not restricted by open_basedir, then verify that it's
@@ -82,12 +82,12 @@ class DcrawToolkitHelper {
 	 */
 	if (!$platform->isRestrictedByOpenBaseDir($dcrawPath) &&
 		!@$platform->is_file($dcrawPath)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null, null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__), null, null);
 	}
 
 	/* Only used for translation, so ignore version mismatch during upgrade */
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'dcraw', true);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
@@ -111,7 +111,7 @@ class DcrawToolkitHelper {
 				     $stderr));
 	}
 
-	return array(GalleryStatus::success(), $testArray, $version);
+	return array(null, $testArray, $version);
     }
 }
 ?>

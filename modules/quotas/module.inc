@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,11 +38,28 @@ class QuotasModule extends GalleryModule {
 	$this->setId('quotas');
 	$this->setName($gallery->i18n('Quotas'));
 	$this->setDescription($gallery->i18n('User/Group Disk Quotas'));
-	$this->setVersion('1.0.2');
+	$this->setVersion('1.0.3');
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews');
-	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredModuleApi(array(2, 2));
+	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredModuleApi(array(3, 0));
+    }
+
+    /**
+     * @see GalleryModule::upgrade()
+     */
+    function upgrade($currentVersion) {
+	global $gallery;
+
+	if (!empty($currentVersion) && version_compare($currentVersion, '1.0.1', '<')) {
+	    $storage =& $gallery->getStorage();
+	    $ret = $storage->configureStore($this->getId(), array('QuotasMap:1.0'));
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	return null;
     }
 
     /**
@@ -53,25 +70,10 @@ class QuotasModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::isRecommendedDuringInstall
-     */
-    function isRecommendedDuringInstall() {
-	return false;
-    }
-
-    /**
-     * @see GalleryModule::autoConfigure
-     */
-    function autoConfigure() {
-	/* We don't require any special configuration */
-	return array(GalleryStatus::success(), true);
-    }
-
-    /**
      * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array(array('name' => $this->translate('Quotas'),
 				 'view' => 'quotas.AdminQuotas')));
     }
@@ -83,11 +85,11 @@ class QuotasModule extends GalleryModule {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'ItemAddOption', 'DiskQuotaOption', 'DiskQuotaOption',
 	    'modules/quotas/DiskQuotaOption.inc', 'quotas', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -103,35 +105,35 @@ class QuotasModule extends GalleryModule {
 
 	    if (GalleryUtilities::isA($entity, 'GalleryGroup') ||
 		GalleryUtilities::isA($entity, 'GalleryUser')) {
-		GalleryCoreApi::relativeRequireOnce('modules/quotas/classes/QuotasMap.class');
-		GalleryCoreApi::relativeRequireOnce(
+		GalleryCoreApi::requireOnce(
 		    'modules/quotas/classes/GalleryQuotasHelper.class');
 
 		/* If its a group, find if a group quota exists, if so delete it */
 		if (GalleryUtilities::isA($entity, 'GalleryGroup')) {
 		    list ($ret, $quotaExists, $groupQuota) =
 			GalleryQuotasHelper::fetchGroupQuota($entity->getId());
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		/* If its a user, find if a user quota exists, if so delete it */
 		} else if (GalleryUtilities::isA($entity, 'GalleryUser')) {
 		    list ($ret, $quotaExists, $userQuota) =
 			GalleryQuotasHelper::fetchUserQuota($entity->getId());
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		   }
 		}
 
 		if ($quotaExists) {
-		    $ret = QuotasMap::removeMapEntry(array('userOrGroupId' => $entity->getId()));
-		    if ($ret->isError()) {
+		    $ret = GalleryCoreApi::removeMapEntry(
+			'QuotasMap', array('userOrGroupId' => $entity->getId()));
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		}
 	    }
 	}
-	return array(GalleryStatus::success(), $result);
+	return array(null, $result);
     }
 
 }

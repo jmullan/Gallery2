@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ class NewItemsHelper {
 		 'WHERE [GalleryAlbumItem::orderBy] LIKE \'%NewItems%\'';
 
 	list ($ret, $results) = $gallery->search($query);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -54,7 +54,7 @@ class NewItemsHelper {
 	if ($result = $results->nextResult()) {
 	    $count = (int)$result[0];
 	}
-	return array(GalleryStatus::success(), $count);
+	return array(null, $count);
     }
 
     /**
@@ -69,7 +69,7 @@ class NewItemsHelper {
 		 'WHERE [GalleryAlbumItem::orderBy] LIKE \'%NewItems%\'';
 
 	list ($ret, $results) = $gallery->search($query);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -79,25 +79,25 @@ class NewItemsHelper {
 	    }
 	    $itemId = (int)$result[0];
 	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($itemId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $item->setOrderBy('');
 	    $item->setOrderDirection('');
 	    $ret = $item->save();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $ret = GalleryCoreApi::releaseLocks($lockId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
-	return GalleryStatus::success();
+	return null;
     }
 }
 ?>

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 /**
  * Load the parent class
  */
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryEntity.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryEntity.class');
 
 /**
  * Representation of a single user
@@ -42,20 +42,14 @@ GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryEntity.class');
  * @g2 <parent-class-name>GalleryEntity</parent-class-name>
  * @g2 <schema>
  * @g2   <schema-major>1</schema-major>
- * @g2   <schema-minor>0</schema-minor>
+ * @g2   <schema-minor>1</schema-minor>
  * @g2 </schema>
  * @g2 <requires-id/>
  *
  * @package GalleryCore
  * @subpackage Classes
  */
-class GalleryUser_core extends GalleryEntity {
-
-    /*
-     * ****************************************
-     *                 Members
-     * ****************************************
-     */
+class GalleryUser extends GalleryEntity {
 
     /**
      * The User's username
@@ -68,10 +62,10 @@ class GalleryUser_core extends GalleryEntity {
      * @g2   <required/>
      * @g2 </member>
      *
-     * @var string $_userName
-     * @access private
+     * @var string $userName
+     * @access public
      */
-    var $_userName;
+    var $userName;
 
     /**
      * The User's full name
@@ -82,10 +76,10 @@ class GalleryUser_core extends GalleryEntity {
      * @g2   <member-size>MEDIUM</member-size>
      * @g2 </member>
      *
-     * @var string $_fullName
-     * @access private
+     * @var string $fullName
+     * @access public
      */
-    var $_fullName;
+    var $fullName;
 
     /**
      * The User's password in a hashed form.
@@ -96,10 +90,10 @@ class GalleryUser_core extends GalleryEntity {
      * @g2   <member-size>MEDIUM</member-size>
      * @g2 </member>
      *
-     * @var string $_hashedPassword
-     * @access private
+     * @var string $hashedPassword
+     * @access public
      */
-    var $_hashedPassword;
+    var $hashedPassword;
 
     /**
      * The User's email address.
@@ -107,13 +101,13 @@ class GalleryUser_core extends GalleryEntity {
      * @g2 <member>
      * @g2   <member-name>email</member-name>
      * @g2   <member-type>STRING</member-type>
-     * @g2   <member-size>MEDIUM</member-size>
+     * @g2   <member-size>LARGE</member-size>
      * @g2 </member>
      *
-     * @var string $_email
-     * @access private
+     * @var string $email
+     * @access public
      */
-    var $_email;
+    var $email;
 
     /**
      * The User's language preference
@@ -124,16 +118,10 @@ class GalleryUser_core extends GalleryEntity {
      * @g2   <member-size>MEDIUM</member-size>
      * @g2 </member>
      *
-     * @var string $_language
-     * @access private
+     * @var string $language
+     * @access public
      */
-    var $_language;
-
-    /*
-     * ****************************************
-     *                 Methods
-     * ****************************************
-     */
+    var $language;
 
     /**
      * Create a new instance of this user in the persistent store
@@ -157,22 +145,22 @@ class GalleryUser_core extends GalleryEntity {
 	    $gallery->search($query, array($userName),
 			     array('limit' => array('count' => 1)));
 
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$result = $results->nextResult();
 	if ($result[0] > 0) {
-	    return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_COLLISION, __FILE__, __LINE__);
 	}
 
 	$ret = parent::create();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$this->setUserName($userName);
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -229,7 +217,7 @@ class GalleryUser_core extends GalleryEntity {
 	}
 
 	$ret = parent::save();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -238,18 +226,18 @@ class GalleryUser_core extends GalleryEntity {
 	    foreach (array('id.allUserGroup', 'id.everybodyGroup') as $groupKey) {
 		list($ret, $groupId) =
 		    GalleryCoreApi::getPluginParameter('module', 'core', $groupKey);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
 		$ret = GalleryCoreApi::addUserToGroup($this->getId(), $groupId);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -266,7 +254,7 @@ class GalleryUser_core extends GalleryEntity {
 	global $gallery;
 	$activeUserId = $gallery->getActiveUserId();
 	if ($activeUserId == $this->getId()) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
 	/*
@@ -279,7 +267,7 @@ class GalleryUser_core extends GalleryEntity {
 	 */
 	/* Check if activeUser is Site Admin, if not, get any of the Site Admins */
 	list($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	if ($isAdmin) {
@@ -287,50 +275,50 @@ class GalleryUser_core extends GalleryEntity {
 	} else {
 	    list ($ret, $siteAdminGroupId) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    list ($ret, $adminUsers) = GalleryCoreApi::fetchUsersForGroup($siteAdminGroupId, 2);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    if (empty($adminUsers)) {
-		return GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__);
+		return GalleryCoreApi::error(ERROR_MISSING_VALUE, __FILE__, __LINE__);
 	    }
 	    $adminUsers = array_keys($adminUsers);
 	    if ($adminUsers[0] == $this->getId() && count($adminUsers) == 1) {
 		/* Block attempt to delete the only site admin */
-		return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+		return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	    }
 	    $newOwnerId = $adminUsers[0] != $this->getId() ? $adminUsers[0] : $adminUsers[1];
 	}
 
 	/* Now remap the owner of all of his items */
 	$ret = GalleryCoreApi::remapOwnerId($this->getId(), $newOwnerId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Delete all of his permissions from the permissions map table */
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryAccessMap.class');
-	$ret = GalleryAccessMap::removeMapEntry(array('userId' => $this->getId()));
-	if ($ret->isError()) {
+	$ret = GalleryCoreApi::removeMapEntry(
+	    'GalleryAccessMap', array('userOrGroupId' => $this->getId()));
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* And remove him from all groups he was a member of */
 	$ret = GalleryCoreApi::removeUserFromAllGroups($this->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* And finally delete the user from the database */
 	$ret = parent::delete();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -340,13 +328,58 @@ class GalleryUser_core extends GalleryEntity {
 	global $gallery;
 	if ($localized) {
 	    list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
-	    if (! $ret->isError()) {
+	    if (! $ret) {
 		return array($core->translate('User'), $core->translate('user'));
 	    }
 	}
 	return array('User', 'user');
     }
-}
 
-include(dirname(__FILE__) . '/interfaces/GalleryUser.inc');
+    /**
+     * @see GalleryEntity::getClassName()
+     */
+    function getClassName() {
+	return 'GalleryUser';
+    }
+
+    function getUserName() {
+	return $this->userName;
+    }
+
+    function setUserName($userName) {
+	$this->userName = $userName;
+    }
+
+    function getFullName() {
+	return $this->fullName;
+    }
+
+    function setFullName($fullName) {
+	$this->fullName = $fullName;
+    }
+
+    function getHashedPassword() {
+	return $this->hashedPassword;
+    }
+
+    function setHashedPassword($hashedPassword) {
+	$this->hashedPassword = $hashedPassword;
+    }
+
+    function getEmail() {
+	return $this->email;
+    }
+
+    function setEmail($email) {
+	$this->email = $email;
+    }
+
+    function getLanguage() {
+	return $this->language;
+    }
+
+    function setLanguage($language) {
+	$this->language = $language;
+    }
+}
 ?>

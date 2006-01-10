@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ class MultiLangSearchTest extends GalleryTestCase {
 
 	/* Make sure search is active */
 	list ($ret, $moduleStatusList) = GalleryCoreApi::fetchPluginStatus('module');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -57,14 +57,14 @@ class MultiLangSearchTest extends GalleryTestCase {
 	/* Get search instance */
 	list ($ret, $this->_search) =
 	    GalleryCoreApi::newFactoryInstance('GallerySearchInterface_1_0', 'MultiLangSearch');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(isset($this->_search), 'Missing MultiLangSearch instance');
 
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'multilang');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -72,32 +72,32 @@ class MultiLangSearchTest extends GalleryTestCase {
 	$this->_randomKey = 'a' . rand() . 'z';
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId(),
 	    array('summary' => 't' . $this->_randomKey));
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($this->_album);
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = MultiLangHelper::setItemData($this->_album, 'zq_RX',
 	    't' . $this->_randomKey, 's' . $this->_randomKey, 'd' . $this->_randomKey);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = MultiLangHelper::setItemData($this->_album, 'zq_WX',
 	    'foo', 't' . $this->_randomKey, 'bar');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = MultiLangHelper::setItemData($this->_item, 'zq_RX',
 	    't' . $this->_randomKey, 's' . $this->_randomKey, 'd' . $this->_randomKey);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -123,13 +123,13 @@ class MultiLangSearchTest extends GalleryTestCase {
 	global $gallery;
 	list ($ret, $defaultLanguage) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.language');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$gallery->setActiveLanguageCode($defaultLanguage);
 
 	list ($ret, $info) = $this->_search->getSearchModuleInfo();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -144,13 +144,13 @@ class MultiLangSearchTest extends GalleryTestCase {
 	global $gallery;
 	list ($ret, $defaultLanguage) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.language');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$gallery->setActiveLanguageCode($defaultLanguage == 'de_DE' ? 'fr_FR' : 'de_DE');
 
 	list ($ret, $info) = $this->_search->getSearchModuleInfo();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -182,7 +182,7 @@ class MultiLangSearchTest extends GalleryTestCase {
 
 	list ($ret, $results) =
 	    $this->_search->search(array('title' => 1), 't' . $this->_randomKey);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -216,7 +216,7 @@ class MultiLangSearchTest extends GalleryTestCase {
 
 	list ($ret, $results) =
 	    $this->_search->search(array('title' => 1), $this->_randomKey, 1, 2);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -248,7 +248,7 @@ class MultiLangSearchTest extends GalleryTestCase {
 	list ($ret, $results) =
 	    $this->_search->search(array('summary' => 1, 'description' => 1),
 				   't' . $this->_randomKey);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 

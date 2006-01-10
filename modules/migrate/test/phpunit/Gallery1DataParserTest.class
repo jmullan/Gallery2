@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,20 +40,19 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
 
     function setUp() {
 	global $gallery;
-	$platform = $gallery->getPlatform();
-	$slash = $platform->getDirectorySeparator();
+
+	parent::setUp();
+
+	$platform =& $gallery->getPlatform();
+	$slash = $this->_slash = $platform->getDirectorySeparator();
 	$this->_albumsDir = dirname(__FILE__) . $slash . '..' . $slash . 'data' .
 	    $slash . 'albums' . $slash;
-	parent::setUp();
     }
 
     function testGetFieldsFromAlbum() {
-	global $gallery;
-	$platform = $gallery->getPlatform();
-	$slash = $platform->getDirectorySeparator();
         list ($ret, $albumFields) = Gallery1DataParser::loadAlbumFields(
-	    $this->_albumsDir . 'album01' . $slash);
-        if ($ret->isError()) {
+	    $this->_albumsDir . 'album01' . $this->_slash);
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
 
@@ -142,7 +141,7 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
     function testGetPhotoCountFromAlbum() {
         list ($ret, $countOfPhotos) =
 	    Gallery1DataParser::getPhotoCount($this->_albumsDir . 'album01/');
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
         $this->assertEquals(2, $countOfPhotos);
@@ -150,7 +149,7 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
 
     function testGetRootAlbums() {
         list ($ret, $rootAlbums) = Gallery1DataParser::getRootAlbums($this->_albumsDir);
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
         $this->assertEquals(array('monkey!',
@@ -164,7 +163,7 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
 
     function testGetParentAlbumList() {
         list ($ret, $parentAlbumList) = Gallery1DataParser::getParentAlbumList($this->_albumsDir);
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
         $this->assertEquals(array('monkey!' => '.root',
@@ -182,7 +181,7 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
 
     function testGetAlbumList() {
         list ($ret, $albumList) = Gallery1DataParser::getAlbumList($this->_albumsDir);
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
         $this->assertEquals(array('monkey!',
@@ -199,7 +198,7 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
 
     function testGetAlbumHierarchy() {
         list ($ret, $albumList) = Gallery1DataParser::getAlbumHierarchy($this->_albumsDir);
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
         $this->assertEquals(array('monkey!' => array(),
@@ -218,7 +217,7 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
 
     function testGetUserUids() {
         list ($ret, $uids) = Gallery1DataParser::getUserUids($this->_albumsDir);
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
         $this->assertEquals(array('1054014347_1233740678' => 'admin',
@@ -233,7 +232,7 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
         /* monkey is the target username */
         list ($ret, $fields) =
 	    Gallery1DataParser::getUserFieldsByUsername($this->_albumsDir, 'monkey');
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
 
@@ -257,7 +256,7 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
         /* monkey is the target username */
         list ($ret, $fields) =
 	    Gallery1DataParser::getUserFieldsByUid($this->_albumsDir, '1057837115_2072132305');
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
 
@@ -280,7 +279,7 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
         /* monkey is the target username */
         list ($ret, $fields) =
 	    Gallery1DataParser::getUserFieldsByUid($this->_albumsDir, '1057837154_228147420');
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
 

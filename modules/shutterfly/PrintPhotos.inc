@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,44 +58,44 @@ class PrintPhotosView extends GalleryView {
 	    $session->remove('shutterfly.cart');
 	}
 	if (empty($cartItemIds) || empty($returnUrl)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
 	/* Load the necessary item data */
 	$itemIds = array_keys($cartItemIds);
 	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($itemIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds($itemIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	list ($ret, $resizes) = GalleryCoreApi::fetchResizesByItemIds($itemIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	list ($ret, $preferreds) = GalleryCoreApi::fetchPreferredsByItemIds($itemIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$ret = GalleryCoreApi::studyPermissions($itemIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* We want to know which are viewable to guests */
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$ret = GalleryCoreApi::studyPermissions($itemIds, $anonymousUserId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -105,12 +105,12 @@ class PrintPhotosView extends GalleryView {
 	foreach ($items as $item) {
 	    $itemId = $item->getId();
 	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($itemId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    list ($ret, $publicPermissions) =
 		GalleryCoreApi::getPermissions($itemId, $anonymousUserId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
@@ -147,7 +147,7 @@ class PrintPhotosView extends GalleryView {
 		 */
 		$sfSession = new GallerySession();
 		$sfSession->initEmpty(true);
-		$sfSession->put('core.id.activeUser', $gallery->getActiveUserId());
+		$sfSession->setUserId($gallery->getActiveUserId());
 		/*
 		 * TODO: Would like to enforce a particular session timeout to ensure this
 		 * session lasts long enough for shutterfly to retrieve the images.  With
@@ -158,25 +158,25 @@ class PrintPhotosView extends GalleryView {
 		 * can reuse it for multiple print requests (and just bump timeout each time).
 		 */
 		$ret = $sfSession->save();
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
 	    $sessionParam =
 		$needSession ? array($sfSession->getKey() => $sfSession->getId()) : array();
 
-	    $entry = array('item' => $item->getMemberData());
+	    $entry = array('item' => (array)$item);
 	    $entry['imageUrl'] = $urlGenerator->generateUrl(
 		array_merge(array('view' => 'core.DownloadItem', 'itemId' => $source->getId()),
 			    $sessionParam),
-		false, null, true);
+		array('forceSessionId' => false, 'forceFullUrl' => true));
 
 	    if (isset($thumbnails[$itemId])) {
 		$entry['thumbUrl'] = $urlGenerator->generateUrl(
 		    array_merge(array('view' => 'core.DownloadItem',
 				      'itemId' => $thumbnails[$itemId]->getId()),
 				$sessionParam),
-		    false, null, true);
+		    array('forceSessionId' => false, 'forceFullUrl' => true));
 		$entry['thumbWidth'] = $thumbnails[$itemId]->getWidth();
 		$entry['thumbHeight'] = $thumbnails[$itemId]->getHeight();
 	    }
@@ -202,7 +202,7 @@ class PrintPhotosView extends GalleryView {
 	    setcookie('G2_shutterfly', '1');
 	}
 
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTemplate.class');
+	GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplate.class');
 	$template = new GalleryTemplate(dirname(dirname(dirname(__FILE__))));
 	$template->setVariable('l10Domain', 'modules_shutterfly');
 	$template->setVariable('PrintPhotos', array('returnUrl' => $returnUrl,
@@ -210,7 +210,7 @@ class PrintPhotosView extends GalleryView {
 						    'entries' => $entries));
 	$template->display('gallery:modules/shutterfly/templates/PrintPhotos.tpl');
 
-	return GalleryStatus::success();
+	return null;
     }
 }
 ?>

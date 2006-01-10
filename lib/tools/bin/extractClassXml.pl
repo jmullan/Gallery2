@@ -32,6 +32,8 @@ foreach my $file (@ARGV) {
       $tagCount++;
       print OFD $_;
 
+      # NOTE!  Keep this in sync with the similar block in generate-entities.php
+      # and generate-maps.php
       if (m|<class-name>(.*)</class-name>|) {
 	($schemaName = $1) =~ s/^Gallery//;
 	# Shorten some table names to fit Oracle's 30 char name limit..

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
  * @author Felix Rabinovich <felix@rabinovich.org>
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/sizelimit/classes/SizeLimitHelper.class');
+GalleryCoreApi::requireOnce('modules/sizelimit/classes/SizeLimitHelper.class');
 
 /**
  * SizeLimitHelper tests. Test the areas that are not covered by AddPhotoOption
@@ -51,7 +51,7 @@ class SizeLimitHelperTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GalleryToolkit', 'SizeLimitHelperTestToolkit', 'SizeLimitHelperTestToolkit',
 	    'modules/sizelimit/test/phpunit/SizeLimitHelperTest.class', 'sizelimitTest', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -61,7 +61,7 @@ class SizeLimitHelperTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::registerToolkitOperation('SizeLimitHelperTestToolkit',
 	    array('image/known'), 'test',
 	    array(array('type' => 'int', 'description' => 'size')), 'desc');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -69,13 +69,13 @@ class SizeLimitHelperTest extends GalleryTestCase {
 	/* we will return dimensions to whoever asks */
 	$ret = GalleryCoreApi::registerToolkitProperty('SizeLimitHelperTestToolkit',
 	    array('image/known'), 'dimensions', 'int,int', 'desc');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -85,7 +85,7 @@ class SizeLimitHelperTest extends GalleryTestCase {
 	list ($ret, $this->_item) = $this->_createRandomDataItem(
 	    $this->_album->getId(), 'image/known',
 	    array('summary' => 'original summary', 'description' => 'original description'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -94,7 +94,7 @@ class SizeLimitHelperTest extends GalleryTestCase {
 	list ($ret, $this->_itemUnknown) = $this->_createRandomDataItem($this->_album->getId(),
 	    'image/unknown',
 	    array('summary' => 'plagiarized summary', 'description' => 'plagiarized description'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -102,32 +102,29 @@ class SizeLimitHelperTest extends GalleryTestCase {
 
     /* change dimensions, keep original */
     function testKeepOriginal() {
-	global $gallery;
-	$platform = $gallery->getPlatform();
-
 	foreach (array('width' => 768, 'height' => 1024)
 	    as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
 		$key, $value, $this->_album->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
 	$ret = SizeLimitHelper::buildDerivativeWithLimits($this->_item, 'test', array(26));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Check to see if we have a preferred source */
 	list ($ret, $resized) = GalleryCoreApi::fetchPreferredSource($this->_item);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(GalleryUtilities::isExactlyA($resized, 'GalleryDerivativeImage'),
 		      'not a derivative image');
 
 	$ret = $resized->rebuildCache();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('image/known', $resized->getMimeType(), 'MIME Type');
@@ -144,19 +141,16 @@ class SizeLimitHelperTest extends GalleryTestCase {
 
     /* change size, replace original */
     function testNoOriginal() {
-	global $gallery;
-	$platform = $gallery->getPlatform();
-
 	$ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
 	    'size', 1000, $this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = SizeLimitHelper::applyLimits($this->_item, 'test', array(26));
-	$this->assert($ret->isSuccess(), 'applyLimits');
+	$this->assert(!$ret, 'applyLimits');
 
 	list ($ret, $this->_item) = $this->_item->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -169,13 +163,13 @@ class SizeLimitHelperTest extends GalleryTestCase {
 	    as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
 		$key, $value, $this->_album->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'sizelimit');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -250,11 +244,11 @@ class SizeLimitHelperTestToolkit extends GalleryToolkit {
 	    break;
 
 	default:
-	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
+	    return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
 	}
 	GalleryUtilities::putRequestVariable('operation', $operationName);
 
-	return array(GalleryStatus::success(), $mimeType, $context);
+	return array(null, $mimeType, $context);
     }
 
     /**
@@ -266,15 +260,15 @@ class SizeLimitHelperTestToolkit extends GalleryToolkit {
 	/* Our 'mime type' has to support dimensions */
 	switch($propertyName) {
 	case 'dimensions':
-	    $platform = $gallery->getPlatform();
+	    $platform =& $gallery->getPlatform();
 	    $results = $platform->getimagesize($file);
 	    break;
 
 	default:
-	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 ?>

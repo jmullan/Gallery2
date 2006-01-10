@@ -1,7 +1,7 @@
 <?php
 /*
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ class RepositoryTestStorage {
 	$singleton =& $this->getSingleton();
 	$singleton->_searches[] = array('query' => $query, 'arguments' => $args);
 
-	return array(GalleryStatus::success(),
+	return array(null,
 		     new RepositoryTestSearchResults($singleton->_searchResults));
     }
 
@@ -73,7 +73,7 @@ class RepositoryTestStorage {
     function addMapEntry($map, $data) {
 	$singleton =& $this->getSingleton();
 	$singleton->_addedMapData[$map] = $data;
-	return GalleryStatus::success();
+	return null;
     }
 
     function getAddedMapData() {
@@ -84,7 +84,7 @@ class RepositoryTestStorage {
     function updateMapEntry($map, $match, $change) {
 	$singleton =& $this->getSingleton();
 	$singleton->_updatedMapData[$map] = array('match' => $match, 'change' => $change);
-	return GalleryStatus::success();
+	return null;
     }
 
     function getUpdatedMapData() {

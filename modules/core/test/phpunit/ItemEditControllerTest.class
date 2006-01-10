@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ class ItemEditControllerTest extends GalleryControllerTestCase {
 	parent::setUp();
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -49,7 +49,7 @@ class ItemEditControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $this->_item) =
 	    $this->_createRandomDataItem($this->_album->getId(), 'test/file');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -57,7 +57,7 @@ class ItemEditControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'ItemEditPlugin', 'ItemEditControllerTestPluginSuccess',
 	    'ItemEditControllerTestPluginSuccess', $path, 'coreTest', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -65,7 +65,7 @@ class ItemEditControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'ItemEditPlugin', 'ItemEditControllerTestPluginFailAndWarn',
 	    'ItemEditControllerTestPluginFailAndWarn', $path, 'coreTest', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -73,7 +73,7 @@ class ItemEditControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'ItemEditOption', 'ItemEditControllerTestOption', 'ItemEditControllerTestOption',
 	    $path, 'coreTest', array('ItemEditControllerTestPluginFailAndWarn'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -84,7 +84,7 @@ class ItemEditControllerTest extends GalleryControllerTestCase {
 	list ($ret, $this->_preferred) =
 	    $this->_createDerivative($this->_item, $this->_item->getId(),
 				     DERIVATIVE_TYPE_IMAGE_PREFERRED, 'rotate|90');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -155,19 +155,19 @@ class ItemEditControllerTestPluginSuccess {
 	/* Check to see if we have a preferred source */
 	list ($ret, $preferredTable) =
 	    GalleryCoreApi::fetchPreferredsByItemIds(array($item->getId()));
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 	}
 
 	if ($preferred != null &&
 	    (empty($preferredTable) ||
 	     !is_object($preferredTable[$item->getId()]) ||
 	     $preferredTable[$item->getId()]->getId() != $preferred->getId())) {
-	    return array(GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__),
-			 array('PREFERRED MISMATCH'), null);
+	    return array(GalleryCoreApi::error(ERROR_UNKNOWN, __FILE__, __LINE__),
+			 array('PREFERRED MISMATCH'), null, null);
 	}
 
-	return array(GalleryStatus::success(), array(), 'success');
+	return array(null, array(), 'success', false);
     }
 }
 
@@ -179,7 +179,7 @@ class ItemEditControllerTestPluginSuccess {
  */
 class ItemEditControllerTestPluginFailAndWarn extends ItemEditPlugin {
     function handleRequest($form, &$item, &$preferred) {
-	return array(GalleryStatus::success(), array('failed'), null);
+	return array(null, array('failed'), null, false);
     }
 }
 
@@ -191,11 +191,11 @@ class ItemEditControllerTestPluginFailAndWarn extends ItemEditPlugin {
  */
 class ItemEditControllerTestOption extends ItemEditOption {
     function isAppropriate($item, $thumbnail) {
-	return array(GalleryStatus::success(), true);
+	return array(null, true);
     }
 
     function handleRequestAfterEdit($form, &$item, &$preferred) {
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('an error'),
 		     array('a warning'));
     }

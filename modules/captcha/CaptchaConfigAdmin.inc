@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,14 +39,14 @@ class CaptchaConfigAdminController extends GalleryController {
 	global $gallery;
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$results['status'] = array();
 	$results['error'] = array();
 	$results['redirect'] = array('view' => 'core.SiteAdmin', 'subView' => 'core.AdminModules');
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -67,14 +67,14 @@ class CaptchaConfigAdminView extends GalleryView {
 	    $form['formName'] = 'CaptchaConfigAdmin';
 	}
 
-	GalleryCoreApi::relativeRequireOnce('modules/captcha/classes/CaptchaHelper.class');
+	GalleryCoreApi::requireOnce('modules/captcha/classes/CaptchaHelper.class');
 	$gdReport = CaptchaHelper::testRequiredGdFunctions();
 
 	$CaptchaConfigAdmin = array();
 	$CaptchaConfigAdmin['gdReport'] = $gdReport;
 	$template->setVariable('CaptchaConfigAdmin', $CaptchaConfigAdmin);
 	$template->setVariable('controller', 'captcha.CaptchaConfigAdmin');
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/captcha/templates/CaptchaConfigAdmin.tpl'));
     }
 }

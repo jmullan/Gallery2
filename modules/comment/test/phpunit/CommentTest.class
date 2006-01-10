@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,14 +44,14 @@ class CommentTest extends GalleryTestCase {
 	parent::setUp();
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($this->_album);
 
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -60,7 +60,7 @@ class CommentTest extends GalleryTestCase {
 	for ($i = 0; $i < 3; $i++) {
 	    list ($ret, $this->_comment[$i]) =
 		GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryComment');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -72,7 +72,7 @@ class CommentTest extends GalleryTestCase {
 	    $this->_comment[$i]->setComment('this is a test comment #' . $i);
 	    $this->_comment[$i]->setDate(time()+$i);
 	    $ret = $this->_comment[$i]->save();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -82,7 +82,7 @@ class CommentTest extends GalleryTestCase {
     function testFetchComments() {
 	list ($ret, $comments) =
 	    GalleryCommentHelper::fetchComments($this->_item->getId(), 2, ORDER_ASCENDING);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -93,7 +93,7 @@ class CommentTest extends GalleryTestCase {
     function testFetchCommentCounts() {
 	list ($ret, $counts) =
 	    GalleryCommentHelper::fetchCommentCounts(array($this->_item->getId()));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -103,32 +103,32 @@ class CommentTest extends GalleryTestCase {
     function testFetchAllComments() {
 	global $gallery;
 	list ($ret, $item2) = $this->_createRandomDataItem($this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::removeItemPermissions($item2->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::addUserPermission(
 	    $item2->getId(), $gallery->getActiveUserId(), 'core.all');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	list ($ret, $everybodyGroupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::addGroupPermission(
 	    $this->_item->getId(), $everybodyGroupId, 'comment.view');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $comment) =
 	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryComment');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(isset($comment), 'Missing comment instance');
@@ -138,13 +138,13 @@ class CommentTest extends GalleryTestCase {
 	$comment->setComment('this is a test comment');
 	$comment->setDate(time()+5);
 	$ret = $comment->save();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $comments) = GalleryCommentHelper::fetchAllComments(
 				 $this->_album->getId(), 3, null, ORDER_DESCENDING);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array($comment, $this->_comment[2], $this->_comment[1]), $comments);
@@ -152,7 +152,7 @@ class CommentTest extends GalleryTestCase {
 	$this->_becomeGuestUser();
 
 	list ($ret, $comments) = GalleryCommentHelper::fetchAllComments($this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array($this->_comment[0], $this->_comment[1], $this->_comment[2]),
@@ -160,7 +160,7 @@ class CommentTest extends GalleryTestCase {
 
 	list ($ret, $comments) =
 	    GalleryCommentHelper::fetchAllComments($this->_album->getId(), 2, 2, ORDER_DESCENDING);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array($this->_comment[0]), $comments, 'guest/offset');
@@ -168,14 +168,14 @@ class CommentTest extends GalleryTestCase {
 
     function testGetItemSummaries() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'comment');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$itemId = $this->_item->getId();
 	/* Verify we get a non empty item summary for the item */
 	$permissions[$itemId]['comment.view'] = 1;
 	list ($ret, $content) = $module->getItemSummaries(array($this->_item), $permissions);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(isset($content[$itemId]) && !empty($content[$itemId]),
@@ -185,7 +185,7 @@ class CommentTest extends GalleryTestCase {
 	unset($content);
 	list ($ret, $content) = $module->getItemSummaries(array($this->_item),
 							  array($itemId => array()));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(!isset($content[$itemId]), 'got an item summary');
@@ -196,7 +196,7 @@ class CommentTest extends GalleryTestCase {
 
 	/* Create a comment */
 	list ($ret, $comment) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryComment');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(isset($comment), 'Missing comment instance');
@@ -206,30 +206,30 @@ class CommentTest extends GalleryTestCase {
 	$comment->setComment('this is a test comment');
 	$comment->setDate(time());
 	$ret = $comment->save();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Modify it */
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($comment->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$comment->setComment('foo bar');
 	$ret = $comment->save();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::releaseLocks($lockId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Delete it */
 	$ret = GalleryCoreApi::deleteEntityById($comment->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
@@ -240,7 +240,7 @@ class CommentTest extends GalleryTestCase {
 
 	/* Create a user that we can delete */
 	list ($ret, $user) = $this->_createRandomUser();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -248,7 +248,7 @@ class CommentTest extends GalleryTestCase {
 	for ($i = 0; $i < 3; $i++) {
 	    list ($ret, $myComment[$i]) =
 		GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryComment');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
@@ -259,14 +259,14 @@ class CommentTest extends GalleryTestCase {
 	    $myComment[$i]->setComment('my comment #' . $i);
 	    $myComment[$i]->setDate(time()+$i);
 	    $ret =$myComment[$i]->save();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
 
 	/* Assert that everything is as expected before executing the test */
 	list ($ret, $comments) = GalleryCommentHelper::fetchComments($this->_item->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$otherCommentsCount = count($this->_comment);
@@ -291,13 +291,13 @@ class CommentTest extends GalleryTestCase {
 
 	/* Delete the user (execute the test) */
 	$ret = GalleryCoreApi::deleteEntityById($user->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Verify that all comments by this user are gone */
 	list ($ret, $comments) = GalleryCommentHelper::fetchComments($this->_item->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(3, count($comments), 'nr of comments after the test');

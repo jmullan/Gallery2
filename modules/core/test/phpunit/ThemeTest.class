@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTheme.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryTheme.class');
 
 /**
  * Test GalleryTheme functionality
@@ -49,7 +49,7 @@ class ThemeTest extends GalleryTestCase {
 
 	GalleryDataCache::reset();
 	list ($ret, $this->_theme) = GalleryCoreApi::loadPlugin('theme', 'ThemeTest');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -60,23 +60,23 @@ class ThemeTest extends GalleryTestCase {
     function tearDown() {
 	/* If a unitest fails it might not deactivate/uninstall the mock theme properly */
 	list ($ret, $isActive) = $this->_theme->isActive();
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	if ($isActive) {
 	    list ($ret, $redirect) = $this->_theme->deactivate();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
 
 	$ret = $this->_theme->uninstall();
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::removePlugin('theme', 'ThemeTest');
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -218,16 +218,16 @@ class ThemeTest extends GalleryTestCase {
 	$this->_theme->setRequiredThemeApi(array($major - 1, $minor));
 
 	$ret = $this->_theme->installOrUpgrade();
-	if ($ret->isError() && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+	if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assert($ret->isError() && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
+	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
 	    'success?');
     }
 
     function testActivateBadThemeApiActivate() {
 	$ret = $this->_theme->installOrUpgrade();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -235,14 +235,14 @@ class ThemeTest extends GalleryTestCase {
 	$this->_theme->setRequiredThemeApi(array($major - 1, $minor));
 
 	list ($ret, $redirect) = $this->_theme->activate();
-	if ($ret->isError() && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+	if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assert($ret->isError() && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
+	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
 	    'success?');
 
 	list ($ret, $isActive) = $this->_theme->isActive();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(!$isActive, 'is active');
@@ -253,16 +253,16 @@ class ThemeTest extends GalleryTestCase {
 	$this->_theme->setRequiredCoreApi(array($major - 1, $minor));
 
 	$ret = $this->_theme->installOrUpgrade();
-	if ($ret->isError() && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+	if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assert($ret->isError() && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
+	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
 	    'success?');
     }
 
     function testActivateBadCoreApiActivate() {
 	$ret = $this->_theme->installOrUpgrade();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -270,14 +270,14 @@ class ThemeTest extends GalleryTestCase {
 	$this->_theme->setRequiredCoreApi(array($major - 1, $minor));
 
 	list ($ret, $redirect) = $this->_theme->activate();
-	if ($ret->isError() && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+	if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assert($ret->isError() && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
+	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
 	    'success?');
 
 	list ($ret, $isActive) = $this->_theme->isActive();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(!$isActive, 'is active');

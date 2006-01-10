@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ class AlbumSelectSiteAdminController extends GalleryController {
     function handleRequest($form) {
 	/* Make sure we have adequate permissions */
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -49,7 +49,7 @@ class AlbumSelectSiteAdminController extends GalleryController {
 		$ret = GalleryCoreApi::setPluginParameter('module', 'albumselect', $key,
 			      ($key == 'sort') ? $form['sort']
 					       : ((isset($form[$key]) && $form[$key]) ? 1 : 0));
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
@@ -65,7 +65,7 @@ class AlbumSelectSiteAdminController extends GalleryController {
 			 'status' => $status,
 			 'error' => $error);
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -89,7 +89,7 @@ class AlbumSelectSiteAdminView extends GalleryView {
 	    $form['formName'] = 'AlbumSelectSiteAdmin';
 	    list ($ret, $params) =
 		GalleryCoreApi::fetchAllPluginParameters('module', 'albumselect');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    foreach ($params as $key => $value) {
@@ -98,7 +98,7 @@ class AlbumSelectSiteAdminView extends GalleryView {
 	}
 
 	$template->setVariable('controller', 'albumselect.AlbumSelectSiteAdmin');
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/albumselect/templates/AlbumSelectSiteAdmin.tpl'));
     }
 }

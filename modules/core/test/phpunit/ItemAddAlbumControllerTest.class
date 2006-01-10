@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 	parent::setUp();
 
 	list ($ret, $this->_parentAlbum) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -60,7 +60,7 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[description]', 'description');
 
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -79,7 +79,7 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
     function testAddDuplicateAlbum() {
 	/* Create an album */
 	list ($ret, $subAlbum) = $this->_createRandomAlbum($this->_parentAlbum->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -96,7 +96,7 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[pathComponent]', $subAlbum->getPathComponent());
 
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -112,7 +112,7 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 			    $results);
 
 	list ($ret, $newAlbum) = GalleryCoreApi::loadEntitiesById($this->_getSecondChildId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -160,7 +160,7 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 
     function testAddAlbumWithSpaces() {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	$name = ' testalbum-' . rand() . ' ';
 	GalleryUtilities::putRequestVariable('itemId', $this->_parentAlbum->getId());
@@ -172,7 +172,7 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[description]', 'description');
 
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -188,13 +188,13 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 			    $results);
 
 	list ($ret, $newAlbum) = GalleryCoreApi::loadEntitiesById($id);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(trim($name), $newAlbum->getPathComponent(), 'path component');
 
 	list ($ret, $path) = $newAlbum->fetchPath();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert($platform->is_dir($path), "directory '$path'");

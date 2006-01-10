@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ class GalleryPluginHelper_simple {
 		break;
 
 	    default:
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 						  "pluginType = $pluginType"), null);
 	    }
 
@@ -78,10 +78,10 @@ class GalleryPluginHelper_simple {
 		$pluginBaseDir = GalleryCoreApi::getPluginBaseDir($pluginType, $pluginId);
 		$pluginFile = sprintf('%ss/%s/%s.inc', $pluginType, $pluginId, $pluginType);
 
-		GalleryCoreApi::relativeRequireOnce(
+		GalleryCoreApi::requireOnce(
 		    sprintf('modules/core/classes/%s.class', $pluginSuperClass));
 
-		$platform = $gallery->getPlatform();
+		$platform =& $gallery->getPlatform();
 		if (!$platform->file_exists($pluginBaseDir . $pluginFile)) {
 		    /*
 		     * If we have a bad path, it may be because our cached plugin list is out of
@@ -97,19 +97,19 @@ class GalleryPluginHelper_simple {
 			list ($ret, $plugin) =
 			    GalleryPluginHelper_simple::loadPlugin($pluginType, $pluginId,
 								   $ignoreVersionMismatch, $depth + 1);
-			if ($ret->isError()) {
+			if ($ret) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 		    } else {
-			return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+			return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 						      $pluginBaseDir . $pluginFile), null);
 		    }
 		}
 
-		GalleryCoreApi::relativeRequireOnce($pluginFile);
+		GalleryCoreApi::requireOnce($pluginFile);
 
 		if (!class_exists($pluginClass)) {
-		    return array(GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
+		    return array(GalleryCoreApi::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
 						      "Class $pluginClass does not exist"), null);
 		}
 	    }
@@ -132,7 +132,7 @@ class GalleryPluginHelper_simple {
 
 	    /* Verify that the versions match */
 	    list ($ret, $status) = GalleryPluginHelper_simple::fetchPluginStatus($pluginType);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -147,7 +147,7 @@ class GalleryPluginHelper_simple {
 
 		    /* Try to deactivate the plugin */
 		    list ($ret, $redirectInfo) = $plugin->deactivate();
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
@@ -168,7 +168,7 @@ class GalleryPluginHelper_simple {
 		    }
 
 		    /*  Return a handleable error */
-		    return array(GalleryStatus::error(ERROR_PLUGIN_VERSION_MISMATCH,
+		    return array(GalleryCoreApi::error(ERROR_PLUGIN_VERSION_MISMATCH,
 						      __FILE__, __LINE__,
 				     sprintf('[%s] db: (v: %s core api: %s, %s api: %s) '.
 					     'code: (v: %s core api: %s, %s api: %s) ',
@@ -194,7 +194,7 @@ class GalleryPluginHelper_simple {
 	    }
 	}
 
-	return array(GalleryStatus::success(), $plugin);
+	return array(null, $plugin);
     }
 
     /**
@@ -240,16 +240,16 @@ class GalleryPluginHelper_simple {
 	}
 
 	list ($ret, $params) =
-	    GalleryPluginHelper_simple::fetchAllParameters($pluginType, $pluginId, $itemId);
-	if ($ret->isError()) {
+	    GalleryPluginHelper_simple::_fetchAllParameters($pluginType, $pluginId, $itemId);
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Return the value, or null if the param doesn't exist */
-	if (!isset($params[$parameterName])) {
-	    return array(GalleryStatus::success(), null);
+	if (!isset($params[$itemId][$parameterName])) {
+	    return array(null, null);
 	} else {
-	    return array(GalleryStatus::success(), $params[$parameterName]);
+	    return array(null, $params[$itemId][$parameterName]);
 	}
     }
 
@@ -258,18 +258,40 @@ class GalleryPluginHelper_simple {
      *
      * @param string the type of the plugin
      * @param string the id of the plugin
-     * @param integer the id of item (or null for a global setting)
+     * @param integer the id of item (or null/zero for a global setting)
      * @return array object GalleryStatus a status code
      *               array (parameterName => parameterValue)
      * @static
      */
     function fetchAllParameters($pluginType, $pluginId, $itemId=0) {
+	/* Convert null to 0, just in case */
+	if ($itemId == null) {
+	    $itemId = 0;
+	}
+	list ($ret, $params) =
+	    GalleryPluginHelper_simple::_fetchAllParameters($pluginType, $pluginId, $itemId);
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	return array(null, $params[$itemId]);
+    }
+
+    /**
+     * Get all the parameters for this plugin
+     *
+     * @param string the type of the plugin
+     * @param string the id of the plugin
+     * @param mixed int id of item (or null/zero for a global setting) or array of ids
+     * @return array object GalleryStatus a status code
+     *               array (itemId/zero => array(parameterName => parameterValue), ..)
+     * @static
+     */
+    function _fetchAllParameters($pluginType, $pluginId, $itemId) {
 	global $gallery;
 	if (empty($pluginType) || empty($pluginId)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 					      sprintf("Missing pluginType [%s] or pluginId [%s]",
-						      $pluginType,
-						      $pluginId)),
+						      $pluginType, $pluginId)),
 			 null);
 	}
 
@@ -278,48 +300,67 @@ class GalleryPluginHelper_simple {
 	    $itemId = 0;
 	}
 
-	$cacheKey = "GalleryPluginHelper::fetchAllParameters($pluginType, $pluginId, $itemId)";
-	if (!GalleryDataCache::containsKey($cacheKey)) {
-	    $data =& GalleryDataCache::getFromDisk(array('type' => $pluginType,
-							 'itemId' => $itemId,
-							 'id' => $pluginId));
-	    if (!isset($data)) {
-		$query = '
-		  SELECT
-		    [GalleryPluginParameterMap::parameterName],
-		    [GalleryPluginParameterMap::parameterValue]
-		  FROM
-		    [GalleryPluginParameterMap]
-		  WHERE
-		    [GalleryPluginParameterMap::pluginType] = ?
-		    AND
-		    [GalleryPluginParameterMap::pluginId] = ?
-		    AND
-		    [GalleryPluginParameterMap::itemId] = ?
-		  ';
-
-		list ($ret, $searchResults) =
-		    $gallery->search($query, array($pluginType, $pluginId, $itemId));
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		$data = array();
-		while ($result = $searchResults->nextResult()) {
-		    $data[$result[0]] = $result[1];
-		}
-
-		GalleryDataCache::putToDisk(array('type' => $pluginType,
-						  'itemId' => $itemId,
-						  'id' => $pluginId),
-					    $data);
+	/* Check cache */
+	$data = $queryIds = array();
+	$itemIds = is_array($itemId) ? $itemId : array($itemId);
+	$cacheBase = "GalleryPluginHelper::fetchAllParameters($pluginType, $pluginId, ";
+	foreach ($itemIds as $itemId) {
+	    $cacheKey = $cacheBase . $itemId . ')';
+	    if (GalleryDataCache::containsKey($cacheKey)) {
+		$data[$itemId] = GalleryDataCache::get($cacheKey);
+		continue;
 	    }
-	    GalleryDataCache::put($cacheKey, $data);
-	} else {
-	    $data = GalleryDataCache::get($cacheKey);
+	    $cacheData =& GalleryDataCache::getFromDisk(
+		array('type' => $pluginType, 'itemId' => $itemId, 'id' => $pluginId));
+	    if (isset($cacheData)) {
+		$data[$itemId] = $cacheData;
+		GalleryDataCache::put($cacheKey, $cacheData);
+		continue;
+	    }
+	    $queryIds[] = $itemId;
+	}
+	if (empty($queryIds)) {
+	    return array(null, $data);
 	}
 
-	return array(GalleryStatus::success(), $data);
+	$whereId = count($queryIds) > 1 ? 'IN (' . GalleryUtilities::makeMarkers($queryIds) . ')'
+					: '= ?';
+	$query = '
+	  SELECT
+	    [GalleryPluginParameterMap::itemId],
+	    [GalleryPluginParameterMap::parameterName],
+	    [GalleryPluginParameterMap::parameterValue]
+	  FROM
+	    [GalleryPluginParameterMap]
+	  WHERE
+	    [GalleryPluginParameterMap::pluginType] = ?
+	    AND
+	    [GalleryPluginParameterMap::pluginId] = ?
+	    AND
+	    [GalleryPluginParameterMap::itemId] ' . $whereId;
+	array_unshift($queryIds, $pluginType, $pluginId);
+
+	list ($ret, $searchResults) = $gallery->search($query, $queryIds);
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	while ($result = $searchResults->nextResult()) {
+	    $data[$result[0]][$result[1]] = $result[2];
+	}
+
+	foreach (array_slice($queryIds, 2) as $itemId) {
+	    if (!isset($data[$itemId])) {
+		$data[$itemId] = array();
+	    }
+	    GalleryDataCache::putToDisk(array('type' => $pluginType,
+					      'itemId' => $itemId,
+					      'id' => $pluginId),
+					$data[$itemId]);
+	    GalleryDataCache::put($cacheBase . $itemId . ')', $data[$itemId]);
+	}
+
+	return array(null, $data);
     }
 
     /**
@@ -345,11 +386,11 @@ class GalleryPluginHelper_simple {
 	    }
 	    if (!isset($plugins)) {
 		list ($ret, $plugins) = GalleryPluginHelper_simple::fetchPluginList($pluginType);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		$platform = $gallery->getPlatform();
+		$platform =& $gallery->getPlatform();
 
 		$pluginBaseDirs = GalleryCoreApi::getPluginBaseDirs();
 		$pluginBaseIndexFile = sprintf(
@@ -368,11 +409,15 @@ class GalleryPluginHelper_simple {
 		    break;
 
 		default:
-		    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+		    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 						      sprintf("Wrong pluginType [%s]",
 							      $pluginType)),
 				 null);
 		}
+
+		$frameworkParams = array('version', 'callbacks', 'requiredCoreApi');
+		$frameworkParams[] =
+		    ($pluginType == 'module') ? 'requiredModuleApi' : 'requiredThemeApi';
 
 		foreach ($pluginBaseDirs as $pluginBaseDir) {
 		    if ($dir = $platform->opendir($pluginBaseDir . $pluginsDir)) {
@@ -388,33 +433,19 @@ class GalleryPluginHelper_simple {
 			    if ($platform->file_exists($path)) {
 				$plugins[$pluginId]['available'] = 1;
 
-				$frameworkParams = array('version', 'callbacks', 'requiredCoreApi');
-				if ($pluginType == 'module') {
-				    $frameworkParams[] = 'requiredModuleApi';
-				} else {
-				    $frameworkParams[] = 'requiredThemeApi';
-				}
-
 				foreach ($frameworkParams as $paramName) {
 				    list ($ret, $plugins[$pluginId][$paramName]) =
 					GalleryPluginHelper_simple::getParameter(
 					    $pluginType, $pluginId, '_' . $paramName);
-				    if ($ret->isError()) {
+				    if ($ret) {
 					return array($ret->wrap(__FILE__, __LINE__), null);
 				    }
 
 				    /* Separate out the major/minor version. */
 				    if (!strncmp($paramName, 'required', 8)) {
-					$tmp = split(',', $plugins[$pluginId][$paramName]);
-					// DEBUG: remove these lines below when we
-					// commit; make sure that we bump all module
-					// versions instead so that the module
-					// version reqs aren't empty
-					if (empty($tmp) || count($tmp) < 2) {
-					    $tmp = array(-1, -1);
-					}
-					$plugins[$pluginId][$paramName] =
-					    array((int)$tmp[0], (int)$tmp[1]);
+					$tmp = explode(',', $plugins[$pluginId][$paramName]);
+					$plugins[$pluginId][$paramName] = (count($tmp) < 2)
+					    ? array(-1, -1) : array((int)$tmp[0], (int)$tmp[1]);
 				    }
 				}
 			    }
@@ -439,17 +470,18 @@ class GalleryPluginHelper_simple {
 		    $plugins['core']['available'] = 1;
 		}
 
-		GalleryDataCache::putToDisk(array('type' => $pluginType,
-						  'itemId' => 'GalleryPluginHelper_fetchPluginStatus',
-						  'id' => '_all'),
-					    $plugins);
+		GalleryDataCache::putToDisk(
+			array('type' => $pluginType,
+			      'itemId' => 'GalleryPluginHelper_fetchPluginStatus',
+			      'id' => '_all'),
+			$plugins);
 	    }
 	    GalleryDataCache::put($cacheKey, $plugins);
 	} else {
 	    $plugins = GalleryDataCache::get($cacheKey);
 	}
 
-	return array(GalleryStatus::success(), $plugins);
+	return array(null, $plugins);
     }
 
     /**
@@ -464,7 +496,7 @@ class GalleryPluginHelper_simple {
 	global $gallery;
 
 	if (empty($pluginType)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 					      "Missing plugin type"),
 			 null);
 	}
@@ -482,7 +514,7 @@ class GalleryPluginHelper_simple {
 	    ';
 
 	    list ($ret, $searchResults) = $gallery->search($query, array($pluginType));
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -495,7 +527,7 @@ class GalleryPluginHelper_simple {
 	    $data = GalleryDataCache::get($cacheKey);
 	}
 
-	return array(GalleryStatus::success(), $data);
+	return array(null, $data);
     }
 
     /**
@@ -556,10 +588,6 @@ class GalleryPluginHelper_simple {
      * directory or not, without actually getting any information about its path.
      * It is used for rewriting URLs in the UrlGenerator.
      *
-     * We don't use GalleryPlatform in this function, because it is too low-level
-     * and there are significant problems with making it work here. One of the
-     * problems is that it breaks dozens of tests that rely on a mock platform.
-     *
      * @param string 'module' or 'theme'
      * @param string the plugin ID
      * @param bool force index to be reread from the filesystem
@@ -571,19 +599,21 @@ class GalleryPluginHelper_simple {
 	/* Don't we need to know if the index file has changed to keep the cache updated? */
 	if (!isset($pluginIndex[$pluginType]) || $clearCache) {
 	    global $gallery;
+	    $platform =& $gallery->getPlatform();
 	    $pluginDataDir =
-	        dirname(__FILE__) . '/../../../../' . $gallery->getConfig('plugins.dirname');
+		dirname(__FILE__) . '/../../../../' . $gallery->getConfig('plugins.dirname');
 	    $pluginIndexFile = sprintf('%s/index.%ss', $pluginDataDir, $pluginType);
+	    $pluginIndex[$pluginType] = array();
 
 	    /*
 	     * If the config file doesn't exist, install is in progress. In that
 	     * case we assume that all plugins are in their default directories.
 	     */
-	    if (!file_exists(dirname(__FILE__) . '/../../../../config.php')
-		    || !file_exists($pluginIndexFile)) {
+	    if (!$platform->file_exists(dirname(__FILE__) . '/../../../../config.php')
+		    || !$platform->file_exists($pluginIndexFile)) {
 		return true;
 	    }
-	    $dataDirPluginList = file($pluginIndexFile);
+	    $dataDirPluginList = $platform->file($pluginIndexFile);
 
 	    foreach($dataDirPluginList as $line) {
 		$pluginIndex[$pluginType][rtrim($line)] = 1;

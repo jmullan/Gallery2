@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
  * @author Jerome Rannikko <jeromer@hotpop.com>
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/nokiaupload/classes/ImageUploadHelper.class');
+GalleryCoreApi::requireOnce('modules/nokiaupload/classes/ImageUploadHelper.class');
 
 /**
  * This view implements the Nokia Image Uploader API's 'Remote Storage Capabilities' query.
@@ -57,7 +57,7 @@ class RemoteStorageCapabilitiesView extends GalleryView {
 	if (empty($capabilities)) {
 	    $reply = NOKIAUPLOAD_ERR_UNKNOWN . "\r\n";
 	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'nokiaupload');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		$reply .= "Couldn't retrieve settings.\r\n";
 	    } else {
 		$reply .= $module->translate("Couldn't retrieve settings.") . "\r\n";
@@ -71,7 +71,7 @@ class RemoteStorageCapabilitiesView extends GalleryView {
 	header('Content-Length: ' . strlen($reply));
 	print $reply;
 
-	return GalleryStatus::success();
+	return null;
     }
 }
 ?>

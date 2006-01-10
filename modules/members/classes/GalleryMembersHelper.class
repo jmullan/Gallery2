@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,11 +49,11 @@ class GalleryMembersHelper {
 
 	list ($ret, $aclIds) =
 	    GalleryCoreApi::fetchAccessListIds('core.view', $gallery->getActiveUserId());
-        if ($ret->isError()) {
+        if ($ret) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
 	if (empty($aclIds)) {
-	    return array(GalleryStatus::success(), 0);
+	    return array(null, 0);
 	}
 	$aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
 
@@ -75,14 +75,14 @@ class GalleryMembersHelper {
 	$data = array_merge($data, $aclIds);
 
 	list ($ret, $searchResults) = $gallery->search($query, $data);
-        if ($ret->isError()) {
+        if ($ret) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
 
 	$result = $searchResults->nextResult();
         $numItems = (int)$result[0];
 
-        return array(GalleryStatus::success(), $numItems);
+        return array(null, $numItems);
     }
 
     /**
@@ -106,17 +106,17 @@ class GalleryMembersHelper {
 	    break;
 
 	default:
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
 			 null);
 	}
 
 	list ($ret, $aclIds) =
 	    GalleryCoreApi::fetchAccessListIds('core.view', $gallery->getActiveUserId());
-        if ($ret->isError()) {
+        if ($ret) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
 	if (empty($aclIds)) {
-	    return array(GalleryStatus::success(), array());
+	    return array(null, array());
 	}
 	$aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
 
@@ -145,7 +145,7 @@ class GalleryMembersHelper {
 	$options['limit'] = array('count' => $count, 'offset' => $offset);
 
 	list ($ret, $searchResults) = $gallery->search($query, $data, $options);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -158,14 +158,14 @@ class GalleryMembersHelper {
 	/* Convert them to entities */
 	if (sizeof($itemIds) > 0) {
 	    list ($ret, $items) = GalleryCoreApi::loadEntitiesById($itemIds);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	} else {
 	    $items = array();
 	}
 
-	return array(GalleryStatus::success(), $items);
+	return array(null, $items);
     }
 
     /**
@@ -181,15 +181,15 @@ class GalleryMembersHelper {
 	global $gallery;
 	list ($ret, $viewSelectedGroupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'members', 'canViewMembersModule');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $result) = GalleryCoreApi::isUserInGroup($userId, $viewSelectedGroupId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	return array(GalleryStatus::success(), $result);
+	return array(null, $result);
     }
 
     /**
@@ -207,19 +207,19 @@ class GalleryMembersHelper {
 	/* Can the user view email addresses in the member profile? */
 	list ($ret, $resultOne) =
 	    GalleryCoreApi::getPluginParameter('module', 'members', 'canViewEmailAddress');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $groupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Is the current user an admin? */
 	list ($ret, $resultTwo) = GalleryCoreApi::isUserInGroup($userId, $groupId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -231,7 +231,7 @@ class GalleryMembersHelper {
 	    $result = true;
 	}
 
-	return array(GalleryStatus::success(), $result);
+	return array(null, $result);
     }
 
     /**
@@ -254,7 +254,7 @@ class GalleryMembersHelper {
 	$creationStamp = strtotime(date("F j, Y", $user->getCreationTimestamp()));
 	$age = (int)round(($todayStamp - $creationStamp) / (24 * 60 * 60));
 
-	return array(GalleryStatus::success(), $age);
+	return array(null, $age);
     }
 
     /**
@@ -267,14 +267,14 @@ class GalleryMembersHelper {
         global $gallery;
 	list ($ret, $groupId) =
             GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	list ($ret, $totalUserCount) = GalleryCoreApi::fetchUserCount(null, $groupId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-        return array(GalleryStatus::success(), (int)$totalUserCount);
+        return array(null, (int)$totalUserCount);
     }
 }
 ?>

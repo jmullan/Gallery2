@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ class SlideshowTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
             'GalleryToolkit', 'SlideshowToolkit', 'SlideshowToolkit',
             'modules/slideshow/test/phpunit/SlideshowTest.class', 'slideshow_test', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -58,7 +58,7 @@ class SlideshowTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::registerToolkitOperation('SlideshowToolkit',
 	    array('image/gif', 'image/jpeg'), 'testoperation',
 	    array(array('type' => 'int', 'description' => 'size')), 'desc');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -66,7 +66,7 @@ class SlideshowTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
             'ExifInterface_1_0', 'SlideshowExif', 'SlideshowExif',
             'modules/slideshow/test/phpunit/SlideshowTest.class', 'slideshowTest', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -74,7 +74,7 @@ class SlideshowTest extends GalleryTestCase {
 
 	/* Create a new subalbum and give AllUser group only core.view */
 	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -83,20 +83,20 @@ class SlideshowTest extends GalleryTestCase {
 
 	list ($ret, $allUsersGroupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::removeGroupPermission(
 	    $album->getId(), $allUsersGroupId, 'core.viewAll');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::addGroupPermission(
 	    $album->getId(), $allUsersGroupId, 'core.view');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -109,7 +109,7 @@ class SlideshowTest extends GalleryTestCase {
 	    array('P','T'), array('P','R','T'), array('P','R','R2','T'),
 	    array(), array('R'), array('P'), array('P','R'));
 	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -125,75 +125,75 @@ class SlideshowTest extends GalleryTestCase {
 	for ($i = 0; $i < 10; $i++) {
 	    list ($ret, $photoDatum) = $this->_addPhoto($album->getId(),
 		  $imagePaths[$i%5], $imageSizes[$i%5], $i + 1, $photoSizes[$i]);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $photoData[] = $photoDatum;
 	    if ($i == 7) {
 		list ($ret, $subalbum) =
 		    $this->_createRandomAlbum($album->getId());
-		if ($ret->isError()) {
+		if ($ret) {
 		    print $ret->getAsHtml();
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
 	    }
 	}
 	$ret = GalleryCoreApi::releaseLocks($lockId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($subalbum->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	list ($ret, $photoDatum) = $this->_addPhoto($subalbum->getId(),
 	    $imagePaths[2], $imageSizes[2], 11, $photoSizes[1]);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::addGroupPermission(
 	    $photoDatum['id'], $allUsersGroupId, 'core.viewAll');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$photoData[] = $photoDatum;
 	list ($ret, $photoDatum) = $this->_addPhoto($subalbum->getId(),
 	    $imagePaths[3], $imageSizes[3], 12, $photoSizes[3]);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::addGroupPermission(
 	    $photoDatum['id'], $allUsersGroupId, 'core.viewSource');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$photoData[] = $photoDatum;
 	$ret = GalleryCoreApi::releaseLocks($lockId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $guestId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'slideshow');
-	if ($ret->isError() || !isset($module)) {
+	if ($ret || !isset($module)) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	list ($ret, $view) = GalleryView::loadView('slideshow.Slideshow');
-	if ($ret->isError() || !isset($view)) {
+	if ($ret || !isset($view)) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -206,7 +206,7 @@ class SlideshowTest extends GalleryTestCase {
 	$this->_admin = $gallery->getActiveUser();
 
 	list ($ret, $this->_guest) = GalleryCoreApi::loadEntitiesById($guestId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -215,16 +215,16 @@ class SlideshowTest extends GalleryTestCase {
     function _addPhoto($parentId, $imagePath, $imageSize, $index, $sizes) {
 	list ($ret, $photo) =
 	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryPhotoItem');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	list ($ret, $mimeType) = GalleryCoreApi::getMimeType($imagePath);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$ret = $photo->create($parentId, $imagePath, $mimeType,
 			      'testitem_' . time() . substr($imagePath, -4));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	// omit data once in a while
@@ -240,7 +240,7 @@ class SlideshowTest extends GalleryTestCase {
 	$photo->setWidth($imageSize[0]);
 	$photo->setHeight($imageSize[1]);
 	$ret = $photo->save();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$idData = array('id' => $photo->getId());
@@ -248,7 +248,7 @@ class SlideshowTest extends GalleryTestCase {
 	    // add preferred image, with fake rotate|90 (just swap wd/ht)
 	    list ($ret, $idData['P']) =
 		$this->_addDerivative($photo, DERIVATIVE_TYPE_IMAGE_PREFERRED);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
@@ -256,7 +256,7 @@ class SlideshowTest extends GalleryTestCase {
 	    // add thumbnail
 	    list ($ret, $idData['T']) = $this->_addDerivative($photo,
 		DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 150);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
@@ -264,7 +264,7 @@ class SlideshowTest extends GalleryTestCase {
 	    // add one resize
 	    list ($ret, $idData['R']) = $this->_addDerivative($photo,
 		DERIVATIVE_TYPE_IMAGE_RESIZE, 300);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
@@ -272,24 +272,24 @@ class SlideshowTest extends GalleryTestCase {
 	    // add another resize
 	    list ($ret, $idData['R2']) = $this->_addDerivative($photo,
 		DERIVATIVE_TYPE_IMAGE_RESIZE, 600);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
-	return array(GalleryStatus::success(), $idData);
+	return array(null, $idData);
     }
 
     function _addDerivative($photo, $derivativeType, $size=0) {
 	list ($ret, $derivative) =
 	    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $photo->getEntityType());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if (!isset($derivative)) {
-	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
 	}
 	$ret = $derivative->create($photo->getId(), $derivativeType);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$derivative->setDerivativeSourceId($photo->getId());
@@ -316,10 +316,10 @@ class SlideshowTest extends GalleryTestCase {
 	    $derivative->setHeight($photo->getWidth());
 	}
 	$ret = $derivative->save();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	return array(GalleryStatus::success(), $derivative->getId());
+	return array(null, $derivative->getId());
     }
 
     function _runTest($test, $expectedResults, $startId=null, $itemList=null) {
@@ -328,7 +328,7 @@ class SlideshowTest extends GalleryTestCase {
 	$recursive = ($test == 'recursive');
 	list ($ret, $slideData, $start) = $this->_view->buildSlideshow(
 	    isset($itemList) ? $itemList : $this->_album, $startId, $recursive);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$this->assert(isset($slideData) && isset($start),
@@ -371,7 +371,7 @@ class SlideshowTest extends GalleryTestCase {
 			$obContent = ob_get_contents();
 			ob_clean();
 			printf("<pre>%s</pre>", $obContent);
-			return GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__);
+			return GalleryCoreApi::error(ERROR_UNKNOWN, __FILE__, __LINE__);
 		    }
 		}
 		if (in_array($slide['id'], $expectedResults['idsWithExif'])) {
@@ -387,7 +387,7 @@ class SlideshowTest extends GalleryTestCase {
 	    "$test: Slideshow doesn't contain correct set of photo ids");
 	$gallery->setActiveUser($this->_admin);
 
-	return GalleryStatus::success();
+	return null;
     }
 
     function _dump(&$object) {
@@ -434,7 +434,7 @@ class SlideshowTest extends GalleryTestCase {
 	    $pd[4]['id'] => array(array($pd[4]['T']), array(0,0,0,0,0,0)),
 	    $pd[5]['id'] => array(array($pd[5]['T']), array(0,0,0,0,0,0)),
 	    'idsWithExif' => array($pd[4]['id'])));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -443,7 +443,7 @@ class SlideshowTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::addGroupPermission(
 			$this->_album->getId(), $this->_allUsersGroupId,
 			'core.viewResizes', TRUE);
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->assert(false, "Set viewResizes permission");
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -466,7 +466,7 @@ class SlideshowTest extends GalleryTestCase {
 	    $pd[9]['id'] => array(array($pd[9]['R']),
 				  array(0,0,0,0,0,0)),
 	    'idsWithExif' => array($pd[4]['id'], $pd[9]['id'])));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -474,14 +474,14 @@ class SlideshowTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::removeGroupPermission(
 			$this->_album->getId(), $this->_allUsersGroupId,
 			'core.viewResizes', TRUE);
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->assert(false, 'Remove viewResizes permission');
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::addGroupPermission(
 			$this->_album->getId(), $this->_allUsersGroupId,
 			'core.viewSource', TRUE);
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->assert(false, 'Set viewSource permission');
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -508,7 +508,7 @@ class SlideshowTest extends GalleryTestCase {
 				  array(0,0,0,0,0,0)),
 	    'idsWithExif' => array($pd[4]['id'], $pd[9]['id'])),
 	  $pd[4]['id']);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -516,7 +516,7 @@ class SlideshowTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::addGroupPermission(
 			$this->_album->getId(), $this->_allUsersGroupId,
 			'core.viewAll', TRUE);
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->assert(false, "Set viewAll permission");
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -543,7 +543,7 @@ class SlideshowTest extends GalleryTestCase {
 				  array(1,1,1,1,1,1)),
 	    'idsWithExif' => array($pd[4]['id'], $pd[9]['id'])),
 	  $pd[7]['id']);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -574,7 +574,7 @@ class SlideshowTest extends GalleryTestCase {
 	    $pd[9]['id'] => array(array($pd[9]['P'], $pd[9]['R']),
 				  array(1,1,1,1,1,1)),
 	    'idsWithExif' => array($pd[4]['id'], $pd[9]['id'])));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -593,7 +593,7 @@ class SlideshowTest extends GalleryTestCase {
 	    'idsWithExif' => array($pd[4]['id'])), null,
 		array($pd[2]['id'], $pd[11]['id'], $pd[4]['id'],
 		      $pd[10]['id'], $pd[0]['id']));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
@@ -604,8 +604,8 @@ class SlideshowTest extends GalleryTestCase {
 /**
  * Required classes
  */
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryToolkit.class');
-GalleryCoreApi::relativeRequireOnce('modules/exif/classes/ExifInterface_1_0.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryToolkit.class');
+GalleryCoreApi::requireOnce('modules/exif/classes/ExifInterface_1_0.class');
 
 /**
  * Test toolkit
@@ -618,13 +618,13 @@ class SlideshowToolkit extends GalleryToolkit {
 	/* Just copy file and return dummy mime type */
 	global $gallery;
 	if ($sourceFilename != $destFilename) {
-	    $platform = $gallery->getPlatform();
+	    $platform =& $gallery->getPlatform();
 	    if (!$platform->copy($sourceFilename, $destFilename)) {
-		return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__),
+		return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__),
 			     null, null);
 	    }
 	}
-	return array(GalleryStatus::success(), 'test/image', $context);
+	return array(null, 'test/image', $context);
     }
 }
 
@@ -639,7 +639,7 @@ class SlideshowExif extends ExifInterface_1_0 {
 	    $itemIds = array($itemIds);
 	}
 	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($itemIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$data = array();
@@ -649,7 +649,7 @@ class SlideshowExif extends ExifInterface_1_0 {
 		$data[$item->getId()]['DateTime']['value'] = 'date';
 	    }
 	}
-	return array(GalleryStatus::success(), $data);
+	return array(null, $data);
     }
 }
 ?>

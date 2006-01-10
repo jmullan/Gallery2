@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ class CommentChangeConfirmationView extends GalleryView {
 
 	/* Load our item */
 	list ($ret, $item) = $this->_getItem();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -57,7 +57,7 @@ class CommentChangeConfirmationView extends GalleryView {
 	$template->setVariable('CommentChangeConfirmation', $CommentChangeConfirmation);
 	$template->setVariable('controller', 'comment.CommentChangeConfirmation');
 
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/comment/templates/CommentChangeConfirmation.tpl'));
     }
 }

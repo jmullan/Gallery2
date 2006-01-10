@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 /**
  * Load required classes
  */
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryToolkit.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryToolkit.class');
 
 /**
  * A GalleryToolkit that uses exifer
@@ -52,17 +52,17 @@ class ExifToolkit extends GalleryToolkit {
 
 	switch($propertyName) {
 	case 'originationTimestamp':
-	    GalleryCoreApi::relativeRequireOnce('modules/exif/classes/ExifHelper.class');
+	    GalleryCoreApi::requireOnce('modules/exif/classes/ExifHelper.class');
 	    $timestamp = ExifHelper::getOriginationTimestamp($sourceFilename);
 	    $results = array($timestamp);
 	    break;
 
 	default:
-	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
+	    return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
 			 null);
 	}
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 ?>

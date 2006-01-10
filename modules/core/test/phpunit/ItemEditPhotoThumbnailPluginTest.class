@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 	parent::setUp();
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($this->_album);
@@ -51,7 +51,7 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
 	    'ItemEditPhotoThumbnailPluginTestToolkit', 'ItemEditPhotoThumbnailPluginTestToolkit',
 	    $path, 'coreTest', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -63,7 +63,7 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 		array(array('type' => 'int', 'description' => 'test'),
 		      array('type' => 'int', 'description' => 'test')),
 		'test-description');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -71,7 +71,7 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 		array('test/file'), 'rotate',
 		array(array('type' => 'int', 'description' => 'test')),
 		'test-description');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -80,14 +80,14 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 		array(array('type' => 'int', 'description' => 'test'),
 		      array('type' => 'int', 'description' => 'test')),
 		'test-description', '');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GalleryEntity', 'ItemEditPhotoThumbnailTestItem', 'ItemEditPhotoThumbnailTestItem',
 	    $path, 'coreTest', array());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markFactoryModuleForCleanup('coreTest');
@@ -95,34 +95,34 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 	list ($ret, $this->_item) = $this->_createRandomDataItem(
 	    $this->_album->getId(), 'test/file', array('width' => 640, 'height' => 480),
 	    __FILE__, 'ItemEditPhotoThumbnailTestItem');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $this->_item2) = $this->_createRandomDataItem(
 	    $this->_album->getId(), 'test/file', array('width' => 640, 'height' => 480),
 	    __FILE__, 'ItemEditPhotoThumbnailTestItem');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $this->_derivative[0]) = $this->_createDerivative(
 	    $this->_item, $this->_item->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED, 'rotate|90',
 	    'test/file', array('width' => 640, 'height' => 480));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $this->_derivative[1]) = $this->_createDerivative(
 	    $this->_item, $this->_derivative[0]->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
 	    'scale|200');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $this->_derivative[2]) = $this->_createDerivative(
 	    $this->_item2, $this->_item2->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'scale|200');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
@@ -142,7 +142,7 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 
 	/* Get the thumbnail and verify its operations */
 	list ($ret, $this->_derivative[1]) = $this->_derivative[1]->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -166,7 +166,7 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 
 	/* Get the thumbnail and verify its operations */
 	list ($ret, $this->_derivative[1]) = $this->_derivative[1]->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -180,25 +180,25 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 	    'crop|0,0,100,100', $this->_derivative[2]->getDerivativeOperations());
 
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_derivative[2]->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$this->_derivative[2]->setDerivativeOperations($operations);
 
 	$ret = $this->_derivative[2]->save();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::releaseLocks($lockId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Get the thumbnail and verify its operations */
 	list ($ret, $this->_derivative[2]) = $this->_derivative[2]->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -214,7 +214,7 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 
 	/* Get the thumbnail and verify its operations */
 	list ($ret, $this->_derivative[2]) = $this->_derivative[2]->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -249,7 +249,7 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 			    $results);
 
 	list ($ret, $this->_derivative[1]) = $this->_derivative[1]->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    setlocale(LC_ALL, $currentLocale);
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -264,30 +264,40 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 /**
  * Required by our test toolkit
  */
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryUnknownItem.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryUnknownItem.class');
 
 class ItemEditPhotoThumbnailTestItem extends GalleryUnknownItem {
+    var $width;
+    var $height;
+
     function setWidth($width) {
-	$this->_width = $width;
+	$this->width = $width;
     }
 
     function getWidth() {
-	return $this->_width;
+	return $this->width;
     }
 
     function setHeight($height) {
-	$this->_height = $height;
+	$this->height = $height;
     }
 
     function getHeight() {
-	return $this->_height;
+	return $this->height;
+    }
+
+    /**
+     * @see GalleryEntity::getClassName()
+     */
+    function getClassName() {
+	return 'ItemEditPhotoThumbnailTestItem';
     }
 }
 
 /**
  * Required by our test toolkit
  */
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryToolkit.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryToolkit.class');
 
 /**
  * Test toolkitk
@@ -303,17 +313,17 @@ class ItemEditPhotoThumbnailPluginTestToolkit extends GalleryToolkit {
     function performOperation($mimeType, $operationName, $sourceFilename,
 			      $destFilename, $parameters, $context=array()) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	if ($sourceFilename != $destFilename) {
 	    $platform->copy($sourceFilename, $destFilename);
 	}
 
 	$fd = $platform->fopen($destFilename, 'a');
-	fwrite($fd, $operationName);
+	$platform->fwrite($fd, $operationName);
 	$platform->fclose($fd);
 
-	return array(GalleryStatus::success(), $mimeType, $context);
+	return array(null, $mimeType, $context);
     }
 }
 ?>

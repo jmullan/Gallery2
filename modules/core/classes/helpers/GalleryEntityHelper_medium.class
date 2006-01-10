@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,27 +43,27 @@ class GalleryEntityHelper_medium {
      */
     function deleteEntityById($id) {
 	if (empty($id)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 	$lockIds = array();
 
 	/* Don't write lock it if it's already locked somewhere else */
 	if (!GalleryCoreApi::isWriteLocked($id)) {
 	    list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($id);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
 	list ($ret, $entity) = GalleryEntityHelper_simple::loadEntitiesById($id);
-	if ($ret->isError()) {
+	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockIds);
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	if (GalleryUtilities::isA($entity, 'GalleryChildEntity')) {
 	    list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLockParents($id);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		GalleryCoreApi::releaseLocks($lockIds);
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -71,7 +71,7 @@ class GalleryEntityHelper_medium {
 
 	/* If this item has links to it, make one of those links the master */
 	list ($ret, $linkedIds) = GalleryEntityHelper_medium::fetchEntitiesLinkedTo($id);
-	if ($ret->isError()) {
+	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockIds);
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -79,26 +79,26 @@ class GalleryEntityHelper_medium {
 	if (!empty($linkedIds)) {
 	    /* Lock all of the linked items */
 	    list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($linkedIds);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		GalleryCoreApi::releaseLocks($lockIds);
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    /* Make the first link the master, and point the rest at it */
 	    list ($ret, $linkedEntities) = GalleryEntityHelper_simple::loadEntitiesById($linkedIds);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		GalleryCoreApi::releaseLocks($lockIds);
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    $ret = $linkedEntities[0]->detachLink();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		GalleryCoreApi::releaseLocks($lockIds);
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    $ret = $linkedEntities[0]->save();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		GalleryCoreApi::releaseLocks($lockIds);
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -106,7 +106,7 @@ class GalleryEntityHelper_medium {
 		$linkedEntities[$i]->setLinkId($linkedEntities[0]->getId());
 		$linkedEntities[$i]->setLinkedEntity($linkedEntities[0]);
 		$ret = $linkedEntities[$i]->save();
-		if ($ret->isError()) {
+		if ($ret) {
 		    GalleryCoreApi::releaseLocks($lockIds);
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
@@ -114,24 +114,24 @@ class GalleryEntityHelper_medium {
 
 	    /* Remap any derivatives sourced from old-master to new-master */
 	    $ret = GalleryCoreApi::remapSourceIds($id, $linkedEntities[0]->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		GalleryCoreApi::releaseLocks($lockIds);
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
 	$ret = $entity->delete();
-	if ($ret->isError()) {
+	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockIds);
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$ret = GalleryCoreApi::releaseLocks($lockIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -157,7 +157,7 @@ class GalleryEntityHelper_medium {
 	';
 	$storage =& $gallery->getStorage();
 	list ($ret, $searchResults) = $gallery->search($query, array($targetId));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -166,7 +166,7 @@ class GalleryEntityHelper_medium {
 	    $linkedIds[] = $result[0];
 	}
 
-	return array(GalleryStatus::success(), $linkedIds);
+	return array(null, $linkedIds);
     }
 
     /**
@@ -184,7 +184,7 @@ class GalleryEntityHelper_medium {
 	$i = 0;
 	foreach ($handlerIds as $handlerId) {
 	    list ($ret, $results) = $gallery->search($query, array("%|$handlerId|%"));
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
@@ -194,28 +194,28 @@ class GalleryEntityHelper_medium {
 		}
 		$id = (int)$result[0];
 		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($id);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 		list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($id);
-		if ($ret->isError()) {
+		if ($ret) {
 		    GalleryCoreApi::releaseLocks($lockId);
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 		$entity->removeOnLoadHandler($handlerId);
 		$ret = $entity->save();
-		if ($ret->isError()) {
+		if ($ret) {
 		    GalleryCoreApi::releaseLocks($lockId);
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 		$ret = GalleryCoreApi::releaseLocks($lockId);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -227,25 +227,137 @@ class GalleryEntityHelper_medium {
      */
     function updateModificationTimestamp($entityId) {
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($entityId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($entityId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockId);
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$entity->setModificationTimestamp(time());
 	$ret = $entity->save();
-	if ($ret->isError()) {
+	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockId);
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$ret = GalleryCoreApi::releaseLocks($lockId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	return GalleryStatus::success();
+	return null;
+    }
+    
+    /**
+     * Delete the fast download file for a specific entity
+     *
+     *  @param int id of a GalleryEntity
+     */
+    function deleteFastDownloadFileById($entityId) {
+	global $gallery;
+
+	$fastDownloadFilePath = GalleryDataCache::getCachePath(
+	    array('type' => 'fast-download', 'itemId' => $entityId));
+	$platform =& $gallery->getPlatform();
+	if ($platform->file_exists($fastDownloadFilePath)) {
+	    $platform->unlink($fastDownloadFilePath);
+	}
+    }
+
+    /**
+     * Create a small PHP file containing all the information we need to send
+     * a data item or derivative to the browser.
+     *
+     * @param GalleryDataItem or GalleryDerivative object
+     * @param bool force this to run, even inside the unit test framework
+     *
+     * @return object GalleryStatus a status code
+     */
+    function createFastDownloadFile($entity, $runEvenInUnitTest=false) {
+	global $gallery;
+
+	/* Disable this for unit tests, for now */
+	if (!$runEvenInUnitTest && class_exists('GalleryTestCase')) {
+	    return null;
+	}
+
+	/* Make sure this derivative is publicly viewable */
+	list ($ret, $anonymousUserId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$hasPermission = false;
+	$requiredPermission = null;
+	$itemIdForPermissions = $entity->getId();
+
+	if (GalleryUtilities::isA($entity, 'GalleryDerivative')) {
+	    switch ($entity->getDerivativeType()) {
+	    case DERIVATIVE_TYPE_IMAGE_THUMBNAIL:
+		$requiredPermission = 'core.view';
+		break;
+		
+	    case DERIVATIVE_TYPE_IMAGE_RESIZE:
+		$requiredPermission = 'core.viewResizes';
+		break;
+		
+	    case DERIVATIVE_TYPE_IMAGE_PREFERRED:
+		$requiredPermission = 'core.viewSource';
+		break;
+	    }
+	    $itemIdForPermissions = $entity->getParentId();
+	} else if (GalleryUtilities::isA($entity, 'GalleryDataItem')) {
+	    $requiredPermission = 'core.viewSource';
+	}
+	
+	if ($requiredPermission) {
+	    list ($ret, $hasPermission) = GalleryCoreApi::hasItemPermission(
+		$itemIdForPermissions, $requiredPermission, $anonymousUserId);
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	if ($hasPermission) {
+	    /* Write the fast download file */
+	    list ($ret, $pseudoFileName) = GalleryUtilities::getPseudoFileName($entity);
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    /*
+	     * Notice: To build the relative path, we assume that the cache and the albums folder
+	     * are both in the subdirectory-tree of gallery.data.base
+	     */
+	    $platform =& $gallery->getPlatform();
+	    $slash = $platform->getDirectorySeparator();
+	    if (GalleryUtilities::isA($entity, 'GalleryDerivative')) {
+		$fullPath = GalleryDataCache::getCachePath(
+		    array('type' => 'derivative', 'itemId' => $entity->getId()));
+	    } else {
+		list ($ret, $fullPath) = $entity->fetchPath();
+		if ($ret) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	    $relativePath = str_replace($gallery->getConfig('data.gallery.base'), '', $fullPath);
+	    
+	    $stats = $platform->stat($fullPath);
+	    $contentLength = $stats[7];
+	    $lastModified = GalleryUtilities::getHttpDate($stats[9]);
+
+	    $fastDownloadFilePath = GalleryDataCache::getCachePath(
+		array('type' => 'fast-download', 'itemId' => $entity->getId()));
+	    $buf = sprintf('<?php function GalleryFastDownload() { ' .
+			   'return $GLOBALS[\'gallery\']->fastDownload(\'%s\', \'%s\', ' .
+			   '\'%s\', \'%s\', %d);} ?>',
+			   $relativePath, $pseudoFileName, $lastModified,
+			   $entity->getMimeType(), $contentLength);
+	    $platform->atomicWrite($fastDownloadFilePath, $buf);
+	}
+
+	return null;
     }
 }
 ?>

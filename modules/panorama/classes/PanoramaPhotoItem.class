@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 /**
  * Load the parent class
  */
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPhotoItem.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryPhotoItem.class');
 
 /**
  * An extension of GalleryPhotoItem to render in panorama mode
@@ -44,7 +44,7 @@ GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPhotoItem.class
  * @package Panorama
  * @subpackage Classes
  */
-class PanoramaPhotoItem_core extends GalleryPhotoItem {
+class PanoramaPhotoItem extends GalleryPhotoItem {
 
     /**
      * @see GalleryDataItem::render
@@ -53,17 +53,17 @@ class PanoramaPhotoItem_core extends GalleryPhotoItem {
 	global $gallery;
 
 	list ($ret, $viewWidth) = GalleryCoreApi::getPluginParameter('module', 'panorama', 'width');
-	if ($ret->isError() || $this->getWidth() < $viewWidth) {
+	if ($ret || $this->getWidth() < $viewWidth) {
 	    return parent::render($format, $params);
 	}
 
 	switch($format) {
 	case 'HTML':
 	    $urlGenerator =& $gallery->getUrlGenerator();
-	    $src = $urlGenerator->generateUrl(array('view' => 'core.DownloadItem',
-						    'itemId' => $this->getId(),
-						    'serialNumber' => $this->getSerialNumber()),
-					      null, null, !empty($params['forceFullUrl']));
+	    $src = $urlGenerator->generateUrl(
+		array('view' => 'core.DownloadItem', 'itemId' => $this->getId(),
+		      'serialNumber' => $this->getSerialNumber()),
+		array('forceFullUrl' => !empty($params['forceFullUrl'])));
 
 	    list ($width, $height) = array($this->getWidth(), $this->getHeight());
 	    $baseUrl = GalleryUtilities::convertPathToUrl(dirname(dirname(__FILE__)));
@@ -84,7 +84,12 @@ class PanoramaPhotoItem_core extends GalleryPhotoItem {
 	    return null;
 	}
     }
-}
 
-GalleryCoreApi::relativeRequireOnce('modules/panorama/classes/interfaces/PanoramaPhotoItem.inc');
+    /**
+     * @see GalleryEntity::getClassName()
+     */
+    function getClassName() {
+	return 'PanoramaPhotoItem';
+    }
+}
 ?>

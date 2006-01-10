@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ class GallerySortInterface_1_1 {
      *               boolean true for presort
      */
     function getSortInfo() {
-	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
     }
 
     /**
@@ -58,7 +58,7 @@ class GallerySortInterface_1_1 {
      *               string optional join clause
      */
     function getSortOrder($direction) {
-	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
 		     null, null, null, null);
     }
 
@@ -74,7 +74,7 @@ class GallerySortInterface_1_1 {
      */
     function getAllSortOrders($includeDefault=true) {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 	}
 
@@ -100,18 +100,18 @@ class GallerySortInterface_1_1 {
 
 	list ($ret, $implIds) =
 	    GalleryCoreApi::getAllFactoryImplementationIds('GallerySortInterface_1_1');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 	}
 
 	foreach ($implIds as $sortId => $className) {
 	    list ($ret, $sort) =
 		GalleryCoreApi::newFactoryInstance('GallerySortInterface_1_1', $className);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 	    }
 	    list ($ret, $sortName, $isPresort) = $sort->getSortInfo();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 	    }
 	    if ($isPresort) {
@@ -125,7 +125,7 @@ class GallerySortInterface_1_1 {
 	     ORDER_ASCENDING => $module->translate('Ascending'),
 	    ORDER_DESCENDING => $module->translate('Descending'));
 
-	return array(GalleryStatus::success(), $orderByList, $presortList, $orderDirectionList);
+	return array(null, $orderByList, $presortList, $orderDirectionList);
     }
 }
 ?>

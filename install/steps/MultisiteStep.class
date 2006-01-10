@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +57,8 @@ class MultisiteStep extends InstallStep {
 		if (!empty($sid)) {
 		    $uri .= sprintf('&%s=%s', session_name(), session_id());
 		}
-		header('Location: ' . GalleryUrlGenerator::makeUrl($uri));
+
+		header('Location: ' . getBaseUrl() . $uri);
 		return false;
 	    }
 	}
@@ -105,7 +106,7 @@ class MultisiteStep extends InstallStep {
 	$templateData['isMultisite'] = $this->_isMultisite;
 	$templateData['configPath'] = $this->_configPath;
 	$templateData['galleryDir'] = $galleryDir;
-	$templateData['galleryUrl'] = GalleryUrlGenerator::makeUrl($urlPath);
+	$templateData['galleryUrl'] = getBaseUrl() . $urlPath;
 	$templateData['bodyFile'] = $this->isComplete() ? 'MultisiteSuccess.html'
 							: 'Multisite.html';
     }

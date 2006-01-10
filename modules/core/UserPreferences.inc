@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,11 +46,11 @@ class UserPreferencesController extends GalleryController {
 
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if ($userId == $anonymousUserId) {
-	    return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
 	}
 
 	$results = array();
@@ -76,7 +76,7 @@ class UserPreferencesController extends GalleryController {
 	    /* language is optional for everybody */
 
 	    list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -96,12 +96,12 @@ class UserPreferencesController extends GalleryController {
 	    /* If all the right fields are in place then go ahead and modify the user. */
 	    if (empty($error)) {
 		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($userId);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
@@ -116,12 +116,12 @@ class UserPreferencesController extends GalleryController {
 		}
 
 		$ret = $user->save();
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		$ret = GalleryCoreApi::releaseLocks($lockId);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
@@ -142,7 +142,7 @@ class UserPreferencesController extends GalleryController {
 	$results['error'] = $error;
 
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -164,11 +164,11 @@ class UserPreferencesView extends GalleryView {
 	$userId = $gallery->getActiveUserId();
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if ($userId == $anonymousUserId) {
-	    return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
 	}
 
 	$user = $gallery->getActiveUser();
@@ -184,7 +184,7 @@ class UserPreferencesView extends GalleryView {
 
 	/* Set up our language selection list */
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -204,7 +204,7 @@ class UserPreferencesView extends GalleryView {
 	/* Render the HTML body */
 	$template->setVariable('UserPreferences', $UserPreferences);
 	$template->setVariable('controller', 'core.UserPreferences');
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/core/templates/UserPreferences.tpl'));
     }
 
@@ -213,11 +213,11 @@ class UserPreferencesView extends GalleryView {
      */
     function getViewDescription() {
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $core->translate('your account'));
+	return array(null, $core->translate('your account'));
     }
 }
 ?>

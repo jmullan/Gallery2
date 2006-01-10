@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 	parent::setUp();
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($this->_album);
@@ -51,7 +51,7 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GalleryToolkit', 'ItemEditPhotoPluginTestToolkit', 'ItemEditPhotoPluginTestToolkit',
 	    $path, 'coreTest', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -63,14 +63,14 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 		array(array('type' => 'int', 'description' => 'test'),
 		      array('type' => 'int', 'description' => 'test')),
 		'test-description');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::registerToolkitOperation(
 	    'ItemEditPhotoPluginTestToolkit', array('test/file'), 'convert-to-image/jpeg',
 	    array(), 'test-description', 'image/jpeg');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -78,7 +78,7 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 		array('test/file'), 'rotate',
 		array(array('type' => 'int', 'description' => 'test')),
 		'test-description');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -87,7 +87,7 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 		array(array('type' => 'int', 'description' => 'test'),
 		      array('type' => 'int', 'description' => 'test')),
 		'test-description', '');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -97,14 +97,14 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 		array(array('type' => 'int', 'description' => 'test'),
 		      array('type' => 'int', 'description' => 'test')),
 		'test-description', '');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $this->_item) =
 	    $this->_createRandomDataItem($this->_album->getId(), 'test/file');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -112,7 +112,7 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 	list ($ret, $this->_derivative[0]) =
 	    $this->_createDerivative($this->_item, $this->_item->getId(),
 				     DERIVATIVE_TYPE_IMAGE_PREFERRED, 'rotate|90');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -120,7 +120,7 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 	list ($ret, $this->_derivative[1]) =
 	    $this->_createDerivative($this->_item, $this->_derivative[0]->getId(),
 				     DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'thumbnail|200');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -130,7 +130,7 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 		$this->_item, $this->_derivative[0]->getId(),
 		DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|500,500;convert-to-image/jpeg', 'test/file',
 		array('postFilterOperations' => 'test-operation|0'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -157,7 +157,7 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 	/* Examine the resizes and make sure they line up */
 	list ($ret, $resizeTable) =
 	    GalleryCoreApi::fetchResizesByItemIds(array($this->_item->getId()));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -221,7 +221,7 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 /**
  * Required by our test toolkit
  */
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryToolkit.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryToolkit.class');
 
 /**
  * Test toolkit
@@ -236,7 +236,7 @@ class ItemEditPhotoPluginTestToolkit extends GalleryToolkit {
     function performOperation($mimeType, $operationName, $sourceFilename,
 			      $destFilename, $parameters, $context=array()) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	if ($sourceFilename != $destFilename) {
 	    $platform->copy($sourceFilename, $destFilename);
@@ -246,7 +246,7 @@ class ItemEditPhotoPluginTestToolkit extends GalleryToolkit {
 	$platform->fwrite($fd, $operationName);
 	$platform->fclose($fd);
 
-	return array(GalleryStatus::success(), $mimeType, $context);
+	return array(null, $mimeType, $context);
     }
 
     /**
@@ -255,7 +255,7 @@ class ItemEditPhotoPluginTestToolkit extends GalleryToolkit {
      */
     function mergeOperations($operation1, $args1, $operation2, $args2) {
 	/* Do something stupid, but predictable */
-	return array(GalleryStatus::success(),
+	return array(null,
 		     $operation1 . '+' . $operation2,
 		     array_merge($args1, array('+'), $args2));
     }

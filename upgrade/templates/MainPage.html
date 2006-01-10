@@ -30,9 +30,28 @@
 	<tr>
 	  <td class="header" colspan="2">
 	    <img src="<?php generateUrl('images/g2Logo_upgrade_head.png') ?>" alt="Gallery Upgrader"/>
+	      <table id="helpbar" cellspacing="0">
+		    <tr class="help">
+		      <td>
+		        <span class="helpBox">?</span>
+		      </td>
+		      <td>
+		        <a href="<?php generateUrl('../README.html') ?>" target="_blank"><?php
+		           print _('Upgrader Help'); ?></a>
+		      </td>
+		    </tr>
+		    <tr>
+		      <td>
+		        <span class="helpBox">X</span>
+		      </td>
+		      <td>
+		        <a href="<?php generateUrl('index.php?startOver=1') ?>"><?php
+		           print _('Start Over'); ?></a>
+		      </td>
+		    </tr>
+		  </table>
 	  </td>
 	</tr>
-
 	<tr>
 	  <td class="navbar">
 	    <?php include(dirname(__FILE__) . '/NavBar.html'); ?>
@@ -94,6 +113,26 @@
 	<tr>
 	  <td class="header" colspan="2">
 	    <img src="<?php generateUrl('images/g2Logo_upgrade_head.png') ?>" alt="Gallery Upgrader"/>
+	      <table id="helpbar" cellspacing="0">
+		    <tr class="help">
+		      <td>
+		        <span class="helpBox">?</span>
+		      </td>
+		      <td>
+		        <a href="<?php generateUrl('../README.html') ?>" target="_blank"><?php
+		           print _('Upgrader Help'); ?></a>
+		      </td>
+		    </tr>
+		    <tr>
+		      <td>
+		        <span class="helpBox">X</span>
+		      </td>
+		      <td>
+		        <a href="<?php generateUrl('index.php?startOver=1') ?>"><?php
+		           print _('Start Over'); ?></a>
+		      </td>
+		    </tr>
+		  </table>
 	  </td>
 	</tr>
 
@@ -103,6 +142,24 @@
 	  </td>
 
 	  <td class="main">
+
+	    <table id="statusTable" cellspacing="0">
+	      <tr>
+		<?php if ($templateData['percentComplete'] != 0): ?>
+		<td class="progressMade"
+		    style="width:<?php print $templateData['percentComplete'] ?>%">&nbsp;</td>
+		<?php endif; ?>
+
+		<?php if ($templateData['percentComplete'] != 100): ?>
+		<td class="progressToGo"
+		    style="width:<?php print (100 - $templateData['percentComplete']) . '%' .
+		      (($templateData['percentComplete'] == 0) ? '' : ';border-left:none')
+		    ?>">&nbsp;</td>
+		<?php endif; ?>
+	      </tr>
+	    </table>
+      <p style="text-align: right; margin-bottom: 1.0em;"><?php printf(_('Upgrade %d%% complete'), $templateData['percentComplete']); ?></p>
+      	  
 	    <?php if (!empty($templateData['errors'])): ?>
 	    <h2 class="error">
 	      <?php foreach ($templateData['errors'] as $error): ?>
@@ -139,27 +196,6 @@
 	      </span>
 	    </div>
 	    <?php endif; ?>
-	  </td>
-	</tr>
-	<tr>
-	  <td id="bottom" colspan="2">
-	    <h3><?php print _('Upgrade Status') ?></h3>
-	    <table id="statusTable" cellspacing="0">
-	      <tr>
-		<?php if ($templateData['percentComplete'] != 0): ?>
-		<td class="progressMade"
-		    style="width:<?php print $templateData['percentComplete'] ?>%"><h3>&nbsp;</h3></td>
-		<?php endif; ?>
-
-		<?php if ($templateData['percentComplete'] != 100): ?>
-		<td class="progressToGo"
-		    style="width:<?php print (100 - $templateData['percentComplete']) . '%' .
-		      (($templateData['percentComplete'] == 0) ? '' : ';border-left:none')
-		    ?>"><h3>&nbsp;</h3></td>
-		<?php endif; ?>
-	      </tr>
-	    </table>
-	    <?php printf(_('Upgrade %d%% complete'), $templateData['percentComplete']) ?>
 	  </td>
 	</tr>
       </table>

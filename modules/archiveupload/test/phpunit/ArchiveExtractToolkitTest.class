@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 /**
  * Required classes
  */
-GalleryCoreApi::relativeRequireOnce('modules/archiveupload/classes/ArchiveExtractToolkit.class');
+GalleryCoreApi::requireOnce('modules/archiveupload/classes/ArchiveExtractToolkit.class');
 
 /**
  * Test ArchiveExtractToolkit functionality
@@ -50,7 +50,7 @@ class ArchiveExtractToolkitTest extends GalleryTestCase {
 
 	$gallery->_platform = new ArchiveExtractToolkitTestPlatform();
 	$ret = $gallery->_platform->init();
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -66,7 +66,7 @@ class ArchiveExtractToolkitTest extends GalleryTestCase {
 					      'testPerformOperation1.zip',
 					      'testPerformOperation2.dir',
 					      array());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals($results, 'application/zip');
@@ -84,10 +84,10 @@ class ArchiveExtractToolkitTestPlatform {
     function init() {
 	list ($ret, $this->_unzipPath) =
 	    GalleryCoreApi::getPluginParameter('module', 'archiveupload', 'unzipPath');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	return GalleryStatus::success();
+	return null;
     }
 
     function exec($cmd) {
@@ -122,6 +122,15 @@ class ArchiveExtractToolkitTestPlatform {
 
     function realpath($path) {
 	return $path;
+    }
+
+    function recursiveFixDirPermissions($path) {
+	switch($path) {
+	case 'testPerformOperation2.dir':
+	    return true;
+	}
+
+	return false;
     }
 }
 ?>

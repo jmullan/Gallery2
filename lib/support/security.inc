@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,10 +96,7 @@ function passwordIsCorrect() {
 
 function savePasswordCookie() {
     global $gallery;
-    require_once(dirname(__FILE__) . '/../../modules/core/classes/GalleryUrlGenerator.class');
 
-    $urlGenerator = new GalleryUrlGenerator();
-    $urlGenerator->init('lib/tools');
     header(sprintf('Set-Cookie: g2Setup=%s',
 		   md5($gallery->getConfig('setup.password'))));
 }

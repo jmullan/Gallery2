@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,23 +34,43 @@
  */
 class StorageTest extends GalleryTestCase {
 
+    var $_db;		/* backup of ADODB object */
+    var $_results;	/* results from the generated query */
+
     function StorageTest($methodName) {
 	$this->GalleryTestCase($methodName);
     }
 
+    function setUp() {
+	global $gallery;
+	parent::setUp();
+
+	$storage =& $gallery->getStorage();
+	$this->_db = $storage->_db;
+	$storage->_db = new StorageTestDB($this);
+    }
+
+    function tearDown() {
+	global $gallery;
+
+	$storage =& $gallery->getStorage();
+	$storage->_db = $this->_db;
+
+	parent::tearDown();
+    }
+
     function testTranslateQuery() {
 	/*
-	 * Ensure DatabaseStorage::_translateQuery() can handle table and column names
+	 * Ensure GalleryStorage::_translateQuery() can handle table and column names
 	 * with underscore character..
 	 */
 	global $gallery;
 	$storage =& $gallery->getStorage();
-	$impl =& $storage->_impl;
 
 	$this->assertEquals(
-	    'SELECT ' . $impl->_tablePrefix . 'Test_table.' . $impl->_columnPrefix .
-	    'Test_column FROM ' . $impl->_tablePrefix . 'Test_table',
-	    $impl->_translateQuery(
+	    'SELECT ' . $storage->_tablePrefix . 'Test_table.' . $storage->_columnPrefix .
+	    'Test_column FROM ' . $storage->_tablePrefix . 'Test_table',
+	    $storage->_translateQuery(
 		'SELECT [Test_table::Test_column] FROM [Test_table]')
 	);
     }
@@ -64,18 +84,255 @@ class StorageTest extends GalleryTestCase {
 	 * second id is bigger than the first.
 	 */
 	list ($ret, $id1) = $storage->getUniqueId();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $id2) = $storage->getUniqueId();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$this->assert(is_int($id1), 'Id1 is not an int');
 	$this->assert(is_int($id2), 'Id2 is not an int');
 	$this->assert($id2 > $id1);
+    }
+
+    function testAddMap() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	/*
+	 * We really should use a fake map, but it's hard to insert a fake map definition into
+	 * GalleryStorage at the moment.
+	 */
+	$ret = $storage->addMapEntry(
+	    'GalleryUserGroupMap',
+	    array('userId' => 0, 'groupId' => 1));
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(
+	    array(array(
+	        sprintf('INSERT INTO %sUserGroupMap (%suserId, %sgroupId) VALUES (?,?)',
+			$storage->_tablePrefix, $storage->_columnPrefix,
+			$storage->_columnPrefix),
+		array(0, 1))),
+	    $this->_results);
+    }
+
+    function testAddMapTruncate() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	/*
+	 * We really should use a fake map, but it's hard to insert a fake map definition into
+	 * GalleryStorage at the moment.
+	 */
+	$ret = $storage->addMapEntry(
+	    'ExternalIdMap',
+	    array('externalId' => str_repeat('x', 200),
+		  'entityType' => 'test',
+		  'entityId' => 1));
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(
+	    array(array(
+	        sprintf('INSERT INTO %1$sExternalIdMap (%2$sexternalId, %2$sentityType, ' .
+			'%2$sentityId) VALUES (?,?,?)',
+			$storage->_tablePrefix, $storage->_columnPrefix),
+		array(str_repeat('x', 128), 'test', 1))),
+	    $this->_results);
+    }
+
+    function testUpdateMapTruncate() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	/*
+	 * We really should use a fake map, but it's hard to insert a fake map definition into
+	 * GalleryStorage at the moment.
+	 */
+	$ret = $storage->updateMapEntry(
+	    'ExternalIdMap',
+	    array('externalId' => str_repeat('y', 200)),
+	    array('externalId' => str_repeat('x', 200)));
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(
+	    array(array(
+	        sprintf('UPDATE %1$sExternalIdMap SET %2$sexternalId=? WHERE %2$sexternalId=?',
+			$storage->_tablePrefix, $storage->_columnPrefix),
+		array(str_repeat('x', 128), str_repeat('y', 128)))),
+	    $this->_results);
+    }
+
+    function testUpdateMapTruncateMultipleMatches() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	/*
+	 * We really should use a fake map, but it's hard to insert a fake map definition into
+	 * GalleryStorage at the moment.
+	 */
+	$ret = $storage->updateMapEntry(
+	    'ExternalIdMap',
+	    array('externalId' => array(str_repeat('y', 200), str_repeat('z', 200))),
+	    array('externalId' => str_repeat('x', 200)));
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(
+	    array(array(
+	        sprintf('UPDATE %1$sExternalIdMap SET %2$sexternalId=? WHERE ' .
+			'%2$sexternalId IN (?,?)',
+			$storage->_tablePrefix, $storage->_columnPrefix),
+		array(str_repeat('x', 128), str_repeat('y', 128), str_repeat('z', 128)))),
+	    $this->_results);
+    }
+
+    function testAddMapArray() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	/*
+	 * We really should use a fake map, but it's hard to insert a fake map definition into
+	 * GalleryStorage at the moment.
+	 */
+	$ret = $storage->addMapEntry(
+	    'GalleryUserGroupMap',
+	    array('userId' =>array(1, 2, 3), 'groupId' => array(4, 5, 6)));
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $sql) = $storage->getFunctionSql(
+	    'MULTI_INSERT',
+	    array($storage->_tablePrefix . 'UserGroupMap',
+		  array($storage->_columnPrefix . 'userId',
+			$storage->_columnPrefix . 'groupId'), 3));
+
+	$this->assertEquals(
+	    array(array($sql, array(1, 4, 2, 5, 3, 6))),
+	    $this->_results);
+    }
+
+    function testAddMapArrayTruncate() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	/*
+	 * We really should use a fake map, but it's hard to insert a fake map definition into
+	 * GalleryStorage at the moment.
+	 */
+	$ret = $storage->addMapEntry(
+	    'ExternalIdMap',
+	    array('externalId' => array(str_repeat('x', 200), str_repeat('y', 200)),
+		  'entityType' => array('test1', 'test2'),
+		  'entityId' => array(1, 2)));
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $sql) = $storage->getFunctionSql(
+	    'MULTI_INSERT',
+	    array($storage->_tablePrefix . 'ExternalIdMap',
+		  array($storage->_columnPrefix . 'externalId',
+			$storage->_columnPrefix . 'entityType',
+			$storage->_columnPrefix . 'entityId'), 2));
+
+	$this->assertEquals(
+	    array(array($sql, array(str_repeat('x', 128), 'test1', 1,
+				    str_repeat('y', 128), 'test2', 2))),
+	    $this->_results);
+    }
+
+    function testSaveEntity() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+	$entity = new GalleryChildEntity();
+	$ret = $entity->create(1234);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $storage->saveEntity($entity);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Only some entity fields are set because we're not calling GalleryEntity::save() here */
+	$this->assertEquals(
+	    array(
+		array(
+		    sprintf('INSERT INTO %1$sChildEntity (%2$sparentId, %2$sid) VALUES (?,?)',
+			    $storage->_tablePrefix, $storage->_columnPrefix),
+		    array(1234, $entity->id)),
+		array(
+		    sprintf('INSERT INTO %1$sEntity (%2$sid, %2$screationTimestamp, ' .
+			    '%2$sisLinkable, %2$sserialNumber, %2$sentityType) ' .
+			    'VALUES (?,?,?,?,?)',
+			    $storage->_tablePrefix, $storage->_columnPrefix),
+		    array($entity->id, $entity->creationTimestamp, 0, 1, 'GalleryChildEntity')),
+		),
+	    $this->_results);
+    }
+
+    function testTruncateOnSave() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	$entity = new GalleryEntity();
+	$ret = $entity->create();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* onLoadHandlers is a medium string, which is 128 chars */
+	$entity->onLoadHandlers = str_repeat('x', 200);
+
+	$ret = $storage->saveEntity($entity);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Only some entity fields are set because we're not calling GalleryEntity::save() here */
+	$this->assertEquals(
+	    array(
+		array(
+		    sprintf('INSERT INTO %1$sEntity (%2$sid, %2$screationTimestamp, ' .
+			    '%2$sisLinkable, %2$sserialNumber, %2$sentityType, ' .
+			    '%2$sonLoadHandlers) VALUES (?,?,?,?,?,?)',
+			    $storage->_tablePrefix, $storage->_columnPrefix),
+		    array($entity->id, $entity->creationTimestamp, 0, 1, 'GalleryEntity',
+			  str_repeat('x', 128))
+		    )
+		),
+	    $this->_results);
+    }
+}
+
+class StorageTestDB {
+    var $_testCase;
+    var $transCnt = 1; /* Pretend we're already in a transaction */
+
+    function StorageTestDB(&$testCase) {
+	$this->_testCase =& $testCase;
+    }
+
+    function execute($query, $data) {
+	$this->_testCase->_results[] = array($query, $data);
+	return 1;
+    }
+
+    function GenID($val) {
+	return $this->_testCase->_db->GenID($val);
     }
 }
 ?>

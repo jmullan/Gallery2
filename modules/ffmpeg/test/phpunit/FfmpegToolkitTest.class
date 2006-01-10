@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,8 @@
 /**
  * Required classes
  */
-GalleryCoreApi::relativeRequireOnce('modules/ffmpeg/classes/FfmpegToolkitHelper.class');
-GalleryCoreApi::relativeRequireOnce('modules/ffmpeg/classes/FfmpegToolkit.class');
+GalleryCoreApi::requireOnce('modules/ffmpeg/classes/FfmpegToolkitHelper.class');
+GalleryCoreApi::requireOnce('modules/ffmpeg/classes/FfmpegToolkit.class');
 
 /**
  * Test FfmpegToolkit functionality
@@ -51,7 +51,7 @@ class FfmpegToolkitTest extends GalleryTestCase {
 
 	$gallery->_platform = new FfmpegToolkitTestPlatform();
 	$ret = $gallery->_platform->init();
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -63,14 +63,14 @@ class FfmpegToolkitTest extends GalleryTestCase {
     function testGetProperties() {
 	list ($ret, $results) =
 	    $this->_toolkit->getProperty('video/x-msvideo', 'dimensions', 'testGetProperties1.avi');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array(200, 240), $results, 'dimensions mismatch');
 
 	list ($ret, $results) = $this->_toolkit->getProperty(
 	    'video/x-msvideo', 'dimensions-and-duration', 'testGetProperties1.avi');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array(200, 240, 3.1), $results, 'dimensions-and-duration mismatch');
@@ -81,7 +81,7 @@ class FfmpegToolkitTest extends GalleryTestCase {
 
     function testGetOperationsAndProperties() {
 	list ($ret, $results) = FfmpegToolkitHelper::getOperationsAndProperties();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$expectedMimeTypes = array('video/mpeg', 'video/x-ms-asf', 'video/x-msvideo',
@@ -112,7 +112,7 @@ class FfmpegToolkitTest extends GalleryTestCase {
     function testBinaries() {
 	list ($ret, $results, $mimeTypes, $supportsOffset) =
 	    FfmpegToolkitHelper::testBinary('/validPath/ffmpeg');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -155,7 +155,7 @@ class FfmpegToolkitTest extends GalleryTestCase {
     function testBinariesFormat048Output() {
 	list ($ret, $results, $mimeTypes) =
 	    FfmpegToolkitHelper::testBinary('/validPath/ffmpeg048FormatsOutput');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -353,7 +353,7 @@ class FfmpegToolkitTest extends GalleryTestCase {
     function testBinariesFormat046Output() {
 	list ($ret, $results, $mimeTypes, $supportsOffset) =
 	    FfmpegToolkitHelper::testBinary('/validPath/ffmpeg046FormatsOutput');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -395,7 +395,7 @@ class FfmpegToolkitTest extends GalleryTestCase {
     function testBogusBinary() {
 	list ($ret, $results, $mimeTypes, $supportsOffset) =
 	    FfmpegToolkitHelper::testBinary('/validPath/bogusBinary');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -412,7 +412,7 @@ class FfmpegToolkitTest extends GalleryTestCase {
 					      'testPerformOperation1.avi',
 					      'testPerformOperation2.avi',
 					      array());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals($results, 'image/jpeg');
@@ -425,7 +425,7 @@ class FfmpegToolkitTest extends GalleryTestCase {
 					      'testPerformOperation1.avi',
 					      'testPerformOperation2.avi',
 					      array('1.2'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals($results, 'video/avi', 'mime after offset');
@@ -438,7 +438,7 @@ class FfmpegToolkitTest extends GalleryTestCase {
 					      'testPerformOperation3.jpg',
 					      array(),
 					      $context);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals($results, 'image/jpeg', 'mime after convert');
@@ -457,10 +457,10 @@ class FfmpegToolkitTestPlatform {
     function init() {
 	list ($ret, $this->_ffmpegPath) =
 	    GalleryCoreApi::getPluginParameter('module', 'ffmpeg', 'path');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	return GalleryStatus::success();
+	return null;
     }
 
     function exec($cmd) {
@@ -810,7 +810,7 @@ class FfmpegToolkitTestPlatform {
 
     function is_dir($path) {
 	list ($ret, $ffmpegPath) = GalleryCoreApi::getPluginParameter('module', 'ffmpeg', 'path');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return false;
 	}

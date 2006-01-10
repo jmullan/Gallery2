@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,14 +27,13 @@
  */
 
 /**
- * Test RewriteUrlGenerator functionality
+ * Rewrite URL Generator Helper tests
  *
  * @package Rewrite
  * @subpackage PHPUnit
- *
  */
+GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteUrlGenerator.class');
 class RewriteUrlGeneratorTest extends GalleryTestCase {
-    var $_urlGenerator;
 
     function RewriteUrlGeneratorTest($methodName) {
 	$this->GalleryTestCase($methodName);
@@ -43,92 +42,34 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
     function setUp() {
 	global $gallery;
 	parent::setUp();
+
+	$ret = $this->_markPluginParametersForCleanup('module', 'rewrite');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'shortUrls',
+	    serialize(array('php.Unit' => array('pattern' => 'p/%test%'))));
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	$_SERVER['HTTP_HOST'] = 'example.com';
+	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php?foo=1&bar=2';
 	$_SERVER['SERVER_PORT'] = 80;
 	$_SERVER['QUERY_STRING'] = '';
 
-	/* Core cookie.path for emmbedded DownloadItem test */
-	foreach (array('rewrite', 'core') as $pluginId) {
-	    $ret = $this->_markPluginParametersForCleanup('module', $pluginId);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
-
-	foreach (array('galleryLocation' => '/gallery2/', 'embeddedLocation' => '/cms/')
-		 as $param => $value) {
-	    /* Set test value */
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', $param, $value);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
-
-	/* Save original activeRules */
-	list ($ret, $this->_saveActiveRules) = RewriteMap::getActiveRules();
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	/* Set test activeRules */
-	$testRules = array('rewrite' => array(
-		array('pattern' => 'v/%path%', 'match' => 'core.ShowItem'),
-		array('pattern' => 'd/%itemId%-%serialNumber%/%fileName%',
-			'match' => 'core.DownloadItem'),
-		array('pattern' => 'phpunit/', 'match' => 'php.Unit'),
-		array('pattern' => 'phpunitsub/%itemId%', 'match' => 'php.Unit|test.subView'),
-		array('pattern' => 't/%path%.test', 'match' => 'php.Unit|test.suffixExt'),
-		array('pattern' => '%path%/test.html', 'match' => 'php.Unit|test.suffixPath')));
-	$ret = RewriteMap::setActiveRules($testRules);
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	$this->_savedSession = $gallery->_session;
-	$gallery->_session = new GallerySession();
-	$ret = $gallery->_session->init();
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	$this->_savedUrlGenerator = $gallery->_urlGenerator;
-
 	$this->_urlGenerator = new RewriteUrlGenerator();
-	$this->_urlGenerator->init('phpunit_test.php');
-	$gallery->setUrlGenerator($this->_urlGenerator);
-    }
-
-    function tearDown() {
-	global $gallery;
-
-	$gallery->_session = $this->_savedSession;
-	$gallery->_urlGenerator = $this->_savedUrlGenerator;
-
-	$ret = RewriteMap::setActiveRules($this->_saveActiveRules);
-	if ($ret->isError()) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	$ret = $this->_urlGenerator->init('phpunit_test.php');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
-	parent::tearDown();
-    }
-
-    function testInit() {
-	$this->assertEquals(false, $this->_urlGenerator->_error, 'error');
     }
 
     function testGetCurrentUrl() {
-	$expected = 'http://example.com/gallery2/phpunit_test.php';
-	$this->assertEquals($expected, $this->_urlGenerator->getCurrentUrl());
-	$this->assertEquals(false, $this->_urlGenerator->_error, 'error');
-    }
-
-    function testGetCurrentUrlWithQueryString() {
-	$_SERVER['QUERY_STRING'] = 'foo=1&bar=2';
 	$expected = 'http://example.com/gallery2/phpunit_test.php?foo=1&bar=2';
 	$this->assertEquals($expected, $this->_urlGenerator->getCurrentUrl());
 	$this->assertEquals(false, $this->_urlGenerator->_error, 'error');
@@ -140,244 +81,17 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
 	$this->assertEquals(false, $this->_urlGenerator->_error, 'error');
     }
 
-    function testGetCurrentShortUrl() {
+    function testInit() {
 	$urlGenerator = new RewriteUrlGenerator();
-	$urlGenerator->init('phpunit_test.php');
-	$this->assertEquals(false, $urlGenerator->_error, 'init error');
-
-	$this->assertEquals('http://example.com/gallery2/phpunit_test.php',
-			    $urlGenerator->getCurrentUrl(), 'get current url');
-	$this->assertEquals(false, $urlGenerator->_error, 'call error');
-
-	$this->assertEquals('http://example.com/gallery2/phpunit_test.php',
-			    $urlGenerator->_currentUrl, 'get cached url');
-	$this->assertEquals(false, $urlGenerator->_error, 'call error');
-    }
-
-    function testShortUrls() {
-	global $gallery;
-	$session =& $gallery->getSession();
-
-	/* Set embedded mode */
-	$embedKey = 'G2_EMBED';
-	$origEmbed = null;
-	if (GalleryDataCache::containsKey($embedKey)) {
-	    $origEmbed = GalleryDataCache::get($embedKey);
-	}
-
-	/* Setup.. */
-	list ($ret, $testAlbum) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->_markForCleanup($testAlbum);
-	list ($ret, $testItem) = $this->_createRandomDataItem(
-	    $testAlbum->getId(),
-	    'application/unknown',
-	    array('pathComponent' => 'foo# bar&.dat'));
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	list ($ret, $derivative) =
-	    $this->_createDerivative($testItem, $testItem->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE);
-	if ($ret->isError()) {
+	$ret = $urlGenerator->init('phpunit_test.php');
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $testAlbumPath) = $testAlbum->fetchLogicalPath();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	list ($ret, $testItemPath) = $testItem->fetchLogicalPath();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$testItemPath = str_replace('%2F', '/', urlencode($testItemPath));
-
-	$setups = array();
-	$setups[] = array('embedded' => false, 'cookiePath' => '');
-	$setups[] = array('embedded' => false, 'cookiePath' => '/');
-	$setups[] = array('embedded' => true, 'cookiePath' => '/');
-	$setups[] = array('embedded' => true, 'cookiePath' => '');
-
-	/* Permute cookie.path and embedded, mostly only relevant for the DownloadItem request */
-	foreach ($setups as $setup) {
-	    $embedded = $setup['embedded'];
-	    $cookiePath = $setup['cookiePath'];
-
-	    /* Drive G2 into the assumed state */
-	    GalleryDataCache::put($embedKey, $embedded, true);
-	    $this->assertEquals($embedded, GalleryUtilities::isEmbedded(),
-				'Could not change embed mode');
-	    /* Change also the cookie.path */
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', 'cookie.path', $cookiePath);
-	    if ($ret->isError()) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	    /* Check if the correct value was stored */
-	    list ($ret, $realValue) = GalleryCoreApi::getPluginParameter('module', 'core',
-									 'cookie.path');
-	    if ($ret->isError()) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	    $this->assertEquals($cookiePath, $realValue, 'Could not set the cookie path');
-
-	    $urlGenConfigs = array();
-	    if ($embedded) {
-		$urlGenConfigs['standalone'] = array('embedPath' => null,
-						     'relativeG2Path' => '../gallery2/');
-		$urlGenConfigs['embedded1'] = array('embedPath' => '/cms/',
-						    'relativeG2Path' => '../gallery2/');
-		$urlGenConfigs['embedded2'] = array('embedPath' => null,
-						    'relativeG2Path' => '../gallery2/');
-		$urlGenConfigs['embedded3'] = array('embedPath' => '/other/',
-						    'relativeG2Path' => '../gallery2/');
-	    } else {
-		$urlGenConfigs['standalone'] = array('embedPath' => null, 'relativeG2Path' => null);
-	    }
-
-	    foreach ($urlGenConfigs as $uGC) {
-
-		/* Let the url generator know of the new cookie.path value */
-		$this->_urlGenerator = new RewriteUrlGenerator();
-		$this->_urlGenerator->init('phpunit_test.php', $uGC['embedPath'],
-					   $uGC['relativeG2Path']);
-		$gallery->setUrlGenerator($this->_urlGenerator);
-		/* Let the session know of the new cookie.path value */
-		$session = new GallerySession();
-		$ret = $session->init();
-		if ($ret->isError()) {
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-		}
-		$gallery->_session = $session;
-
-		/* Create some test cases */
-		/* array(expected path, params for generateUrl) */
-		$tests = array();
-		/* core.ShowItem on albums have the logical path */
-		$tests[] = array('v' . $testAlbumPath,
-				 array('view' => 'core.ShowItem', 'itemId' => $testAlbum->getId()));
-		/* core.ShowItem on items have the logical path, file type and .html */
-		$tests[] = array('v' . $testItemPath . '.html',
-				 array('view' => 'core.ShowItem', 'itemId' => $testItem->getId()));
-		/* core.ShowItem at the top level has no prefix */
-		$tests[] = array('v/',
-				 array('view' => 'core.ShowItem'));
-		/* %path% for non-FileSystemEntity falls back to long url */
-		$tests[] = array(
-		    'phpunit_test.php?g2_view=core.ShowItem&amp;g2_itemId=' . $derivative->getId(),
-		    array('view' => 'core.ShowItem', 'itemId' => $derivative->getId()));
-		/*
-		 * core.DownloadItem on items have the id, serial number,
-		 * path component and file type
-		 */
-		$tests[] = array(sprintf('d/%d-%d/%s',
-					 $testItem->getId(), $testItem->getSerialNumber(),
-					 urlencode($testItem->getPathComponent())),
-				 array('view' => 'core.DownloadItem',
-				       'itemId' => $testItem->getId()));
-		/* php.Unit pattern withouth any keywords */
-		$tests[] = array('phpunit/',
-				 array('view' => 'php.Unit'));
-		/* path rule with extension suffix */
-		$tests[] = array('t' . rtrim($testAlbumPath, '/') . '.test',
-				 array('view' => 'php.Unit', 'subView' => 'test.suffixExt',
-				       'itemId' => $testAlbum->getId()));
-		$tests[] = array('t' . $testItemPath . '.test',
-				 array('view' => 'php.Unit', 'subView' => 'test.suffixExt',
-				       'itemId' => $testItem->getId()));
-		/* path rule with path suffix */
-		$tests[] = array(ltrim($testAlbumPath, '/') . 'test.html',
-				 array('view' => 'php.Unit', 'subView' => 'test.suffixPath',
-				       'itemId' => $testAlbum->getId()));
-		$tests[] = array(ltrim($testItemPath, '/') . '/test.html',
-				 array('view' => 'php.Unit', 'subView' => 'test.suffixPath',
-				       'itemId' => $testItem->getId()));
-		/* path rule with suffix for root album */
-		$tests[] = array('test.html',
-				 array('view' => 'php.Unit', 'subView' => 'test.suffixPath',
-				       'itemId' => $this->_getRootId()));
-		$tests[] = array('t/.test',
-				 array('view' => 'php.Unit', 'subView' => 'test.suffixExt',
-				       'itemId' => $this->_getRootId()));
-
-		foreach ($tests as $test) {
-		    list ($expectedUrlPath, $params) = $test;
-		    if (!$embedded) {
-			$expectedUrl = '/gallery2/';
-		    } elseif (empty($uGC['embedPath'])) {
-			$expectedUrl = '/cms/';
-		    } else {
-			$expectedUrl = $uGC['embedPath'];
-		    }
-		    $expectedUrl .= $expectedUrlPath;
-
-		    $expectedUrlWithSessionId = GalleryUrlGenerator::appendParamsToUrl(
-			$expectedUrl,
-			array($session->getKey() => $session->getId()));
-
-		    $debugInfo = 'embedded: ' . intval($embedded) . ', cookie.path: ' .
-			$cookiePath . ', embedPath: ' . $uGC['embedPath'] . ', relativeG2Path: ' .
-			$uGC['relativeG2Path'];
-
-		    /* Session id not in the url */
-		    $actualUrl = $this->_urlGenerator->generateUrl($params, false);
-		    if ($params['view'] == 'core.DownloadItem' && $embedded && empty($cookiePath)) {
-			/* embedded DownloadItem urls go to the G2 directly, a very special case */
-			$this->assertEquals($expectedUrlWithSessionId, $actualUrl,
-					    'embedded DownloadItem link without configured ' .
-					    'cookie path should have an appended session id. ' .
-					    $debugInfo);
-		    } else {
-			$this->assertEquals($expectedUrl, $actualUrl, 'Without session id. ' .
-					    $debugInfo);
-		    }
-
-		    /* Session id in the url */
-		    $actualUrl = $this->_urlGenerator->generateUrl($params, true);
-		    $this->assertEquals($expectedUrlWithSessionId, $actualUrl, 'With session id. ' .
-					$debugInfo);
-		}
-	    }
-	}
-
-	/* Restore */
-	if ($origEmbed) {
-	    GalleryDataCache::put($embedKey, $origEmbed, true);
-	} else {
-	    GalleryDataCache::remove($embedKey);
-	    $this->assert(!GalleryDataCache::containsKey($embedKey), 'Could not remove a GDC var');
-	}
+	$this->assert(!$urlGenerator->_error);
+	$this->assertEquals(array('php.Unit' => array('pattern' => 'p/%test%')),
+			    $urlGenerator->_shortUrls);
     }
 
-    function testBaseUrl() {
-	$url = $this->_urlGenerator->generateUrl(array('view' => 'core.ShowItem'), null,
-	    'phpunit');
-
-	$this->assert(strpos($url, 'phpunit_test.php') !== false, $url);
-    }
-
-    function testNavigationId() {
-	global $gallery;
-	$gallery->setCurrentView('php.Unit');
-	$this->_urlGenerator->_navId = '456';
-
-	$actualUrl = $this->_urlGenerator->generateUrl(
-	    array('view' => 'php.Unit', 'subView' => 'test.subView', 'itemId' => 123), false);
-	$this->assertEquals('/gallery2/phpunitsub/123?g2_navId=456', $actualUrl);
-    }
-
-    /**
-     * Note: This is really testing the fact that the relative url code in GalleryUrlGenerator
-     * works properly with rewritten urls.  We can't test that properly in UrlGeneratorTest though
-     * because it won't handle rewritten urls like the one we use here.
-     */
-    function testRelativeUrlsWithBasefileInQueryString() {
-	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit/?foo=bar&return=phpunit_test.php';
-	$this->assertEquals(
-	    '/gallery2/module/foo/bar.css',
-	    $this->_urlGenerator->generateUrl(array('href' => 'module/foo/bar.css')));
-    }
 }
 ?>

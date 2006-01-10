@@ -11,6 +11,18 @@
     <table id="box" cellspacing="0">
       <tr><td id="header" colspan="2">
 	<img src="images/g2Logo_install_head.png" alt="Gallery Installer"/>
+        <table id="helpbar" cellspacing="0">
+          <tr class="help"><td>
+            <span class="helpBox">?</span>
+          </td><td>
+            <a href="../README.html" target="_blank"><?php print _('Installer Help'); ?></a>
+          </td></tr>
+          <tr><td>
+            <span class="helpBox">X</span>
+          </td><td>
+            <a href="<?php print INDEX_PHP ?>?startOver=1"><?php print _('Start Over'); ?></a>
+          </td></tr>
+        </table>
       </td></tr>
       <tr><td id="navbar"><div>
 	<table cellspacing="0">
@@ -33,7 +45,11 @@
 			($steps[$i-1]->isComplete() || $steps[$i-1]->isOptional())));
 	    ?>
 	    <?php if ($linkable): ?>
-	      <a href="<?php printf('%s?step=%s', INDEX_PHP, $i) ?>">
+	      <a href="<?php printf('%s?step=%s', INDEX_PHP, $i) ?>" 
+	    	<?php if ($i == $currentStep->getStepNumber()): ?>
+	    	class="current"
+	      	<?php endif; ?>
+	      >
 	    <?php endif; ?>
 	    <?php print $steps[$i]->stepName(); ?>
 	    <?php if ($linkable): ?>
@@ -41,33 +57,44 @@
 	    <?php endif; ?>
 	  </td></tr>
 	  <?php endfor; ?>
-	  <tr class="help"><td>
-	    <span class="helpBox">?</span>
-	  </td><td>
-	    <a href="../README.html" target="_blank"><?php print _('Installer Help'); ?></a>
-	  </td></tr>
-	  <tr><td>
-	    <span class="helpBox">X</span>
-	  </td><td>
-	    <a href="<?php print INDEX_PHP ?>?startOver=1"><?php print _('Start Over'); ?></a>
-	  </td></tr>
 	</table>
       </div></td>
       <td id="main">
+
+	<table id="statusTable" cellspacing="0">
+	  <tr>
+	    <?php if ($templateData['percentComplete'] != 0): ?>
+	    <td class="progressMade"
+		style="width:<?php print $templateData['percentComplete'] ?>%">&nbsp;</td>
+	    <?php endif; ?>
+	    <?php if ($templateData['percentComplete'] != 100): ?>
+	    <td class="progressToGo"
+		style="width:<?php print (100 - $templateData['percentComplete']) . '%' .
+		  (($templateData['percentComplete'] == 0) ? '' : ';border-left:none')
+		?>">&nbsp;</td>
+	    <?php endif; ?>
+	  </tr>
+	</table>
+      <p style="text-align: right; margin-bottom: 1.0em;"><?php printf(_('Install %d%% complete'), $templateData['percentComplete']); ?></p>
+
 	<?php if (!empty($templateData['errors'])): ?>
-	<h2 class="error">
+	<div class="error">
+	  <h2>
 	  <?php foreach ($templateData['errors'] as $error): ?>
 	  <?php print $error ?> <br/>
 	  <?php endforeach; ?>
-	</h2>
+	  </h2>
+    </div>
 	<?php endif; ?>
 
 	<?php if (!empty($templateData['warnings'])): ?>
-	<h2 class="warning">
+	<div class="warning">
+	  <h2>
 	  <?php foreach ($templateData['warnings'] as $warning): ?>
 	  <?php print $warning ?> <br/>
 	  <?php endforeach; ?>
-	</h2>
+	  </h2>
+	</div>
 	<?php endif; ?>
 
 	<?php include(dirname(__FILE__) . '/' . $templateData['bodyFile']); ?>
@@ -90,25 +117,6 @@
 	  </span>
 	</div>
 	<?php endif; ?>
-      </td></tr>
-      <tr><td id="bottom" colspan="2">
-	<h3><?php print _('Installation Status') ?></h3>
-	<table id="statusTable" cellspacing="0">
-	  <tr>
-	    <?php if ($templateData['percentComplete'] != 0): ?>
-	    <td class="progressMade"
-		style="width:<?php print $templateData['percentComplete'] ?>%"><h3>&nbsp;</h3></td>
-	    <?php endif; ?>
-
-	    <?php if ($templateData['percentComplete'] != 100): ?>
-	    <td class="progressToGo"
-		style="width:<?php print (100 - $templateData['percentComplete']) . '%' .
-		  (($templateData['percentComplete'] == 0) ? '' : ';border-left:none')
-		?>"><h3>&nbsp;</h3></td>
-	    <?php endif; ?>
-	  </tr>
-	</table>
-	<?php printf(_('Install %d%% complete'), $templateData['percentComplete']); ?>
       </td></tr>
     </table>
     <div id="footer">

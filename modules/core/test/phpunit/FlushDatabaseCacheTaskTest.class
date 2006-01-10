@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/FlushDatabaseCacheTask.class');
+GalleryCoreApi::requireOnce('modules/core/classes/FlushDatabaseCacheTask.class');
 
 /**
  * Test the FlushDatabaseCache maintenance task functionality
@@ -49,12 +49,12 @@ class FlushDatabaseCacheTaskTest extends GalleryTestCase {
 	$task = new FlushDatabaseCacheTask();
 
 	list ($ret, $success, $details) = $task->run();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -87,12 +87,12 @@ class FlushDatabaseCacheTaskTest extends GalleryTestCase {
 	$task = new FlushDatabaseCacheTask();
 
 	list ($ret, $success, $details) = $task->run();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -143,6 +143,10 @@ class FlushDatabaseCacheTaskTestPlatform {
 
     function recursiveRmdir($dir) {
 	return $this->_addCall("recursiveRmdir($dir)");
+    }
+
+    function realpath($path) {
+	return $path;
     }
 }
 ?>

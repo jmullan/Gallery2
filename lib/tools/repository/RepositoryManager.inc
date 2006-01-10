@@ -1,7 +1,7 @@
 <?php
 /*
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +20,9 @@
  * $Id$
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryRepositoryUtilities.class');
-GalleryCoreApi::relativeRequireOnce('lib/tools/repository/classes/RepositoryObject.class');
-GalleryCoreApi::relativeRequireOnce('lib/tools/repository/classes/RepositoryIndex.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryRepositoryUtilities.class');
+GalleryCoreApi::requireOnce('lib/tools/repository/classes/RepositoryObject.class');
+GalleryCoreApi::requireOnce('lib/tools/repository/classes/RepositoryIndex.class');
 
 /**
  * Controller for the repository browser.
@@ -49,7 +49,7 @@ class RepositoryManagerControllerAndView extends RepositoryControllerAndView {
 	$index = new RepositoryIndex();
 	$index->init($gallery->getConfig('repository.path'));
 	list ($ret, $pluginInfo) = $index->getPluginInfo();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$data['pluginInfo'] = $pluginInfo;
@@ -69,11 +69,11 @@ class RepositoryManagerControllerAndView extends RepositoryControllerAndView {
 	}
 
 	$ret = $this->showView('RepositoryManager', $data);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -88,14 +88,14 @@ class RepositoryManagerControllerAndView extends RepositoryControllerAndView {
 	    GalleryUtilities::getRequestVariables('pluginId', 'pluginType');
 
 	if (empty($pluginId) || empty($pluginType)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-	    				sprintf('pluginId [%s] and/or pluginType [%s] not set.',
-	    					$pluginId, $pluginType));
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					sprintf('pluginId [%s] and/or pluginType [%s] not set.',
+						$pluginId, $pluginType));
 	}
 
 	/* Remove 'pluginId-*' files from 'repository/pluginType'. */
 	$removedFiles = array();
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$repositoryPluginDir = $gallery->getConfig('repository.path') . $pluginType . '/';
 	if ($dir = $platform->opendir($repositoryPluginDir)) {
 	    while (false !== ($file = readdir($dir))) {
@@ -107,7 +107,7 @@ class RepositoryManagerControllerAndView extends RepositoryControllerAndView {
 	}
 
 	$this->showView('PackageRemovalResults', array('files' => $removedFiles));
-	return GalleryStatus::success();
+	return null;
     }
 }
 ?>

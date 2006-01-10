@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,8 @@
 /**
  * Required classes
  */
-GalleryCoreApi::relativeRequireOnce('modules/netpbm/classes/NetPbmToolkitHelper.class');
-GalleryCoreApi::relativeRequireOnce('modules/netpbm/classes/NetPbmToolkit.class');
+GalleryCoreApi::requireOnce('modules/netpbm/classes/NetPbmToolkitHelper.class');
+GalleryCoreApi::requireOnce('modules/netpbm/classes/NetPbmToolkit.class');
 
 /**
  * Test NetPbmToolkit functionality
@@ -49,15 +49,15 @@ class NetPbmToolkitTest extends GalleryTestCase {
 
 	parent::setUp();
 
-	$gallery->_platform = new NetPbmToolkitTestPlatform($gallery->getPlatform());
-	$ret = $gallery->_platform->init();
-	if ($ret->isError()) {
+	$this->_platform = new NetPbmToolkitTestPlatform($gallery->getPlatform());
+	$ret = $this->_platform->init();
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'netpbm');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -69,25 +69,25 @@ class NetPbmToolkitTest extends GalleryTestCase {
 		       'jheadPath' => '/usr/local/bin/')
 		 as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', $key, $value);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
+
+	$gallery->setPlatform($this->_platform);
 
 	/* Get a toolkit to work with */
 	$this->_toolkit = new NetPbmToolkit();
     }
 
     function testPerformOperations() {
-	global $gallery;
-
 	list ($ret, $mimeType) =
 	    $this->_toolkit->performOperation('image/gif', 'thumbnail',
 					      'testPerformOperations1.gif',
 					      'testPerformOperations2.gif',
 					      array(100, 100));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -100,7 +100,7 @@ class NetPbmToolkitTest extends GalleryTestCase {
 					      'testPerformOperations41.jpg',
 					      'testPerformOperations5.jpg',
 					      array(100, 100));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -109,7 +109,7 @@ class NetPbmToolkitTest extends GalleryTestCase {
 					      'testPerformOperations4.jpg',
 					      'testPerformOperations5.jpg',
 					      array(100, 100));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -118,7 +118,7 @@ class NetPbmToolkitTest extends GalleryTestCase {
 					      'testPerformOperations6.tiff',
 					      'testPerformOperations7.tiff',
 					      array(90));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -127,7 +127,7 @@ class NetPbmToolkitTest extends GalleryTestCase {
 					      'testPerformOperations8.png',
 					      'testPerformOperations9.png',
 					      array('24.667', '23.5', '51.375', '52'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -136,7 +136,7 @@ class NetPbmToolkitTest extends GalleryTestCase {
 					      'testPerformOperationsA.bmp',
 					      'testPerformOperationsB.bmp',
 					      array(180));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -152,7 +152,7 @@ class NetPbmToolkitTest extends GalleryTestCase {
 		      50, 50, /* image width, height */
 		      'top-right',
 		      0, 0)); /* image alignment x, y (overridden by top-right alignment) */
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -166,31 +166,31 @@ class NetPbmToolkitTest extends GalleryTestCase {
 		  50, 50, /* image width, height */
 		  'manual',
 		  99, 99)); /* image alignment x, y */
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$gallery->_platform->_counter = 2;
+	$this->_platform->_counter = 2;
 	list ($ret, $mimeType) = $this->_toolkit->performOperation(
 	    'image/jpeg', 'compress',
 	    'testPerformOperations14.jpg',
 	    'testPerformOperations15.jpg',
 	    array(150));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Test preserving EXIF data */
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'netpbm', 'jheadPath', '/validJheadPath/');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	list ($ret, $mimeType) = $this->_toolkit->performOperation(
 	    'image/jpeg', 'rotate', 'testPerformOperations13.jpg',
 	    'testPerformOperations13.jpg', array(90));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -203,7 +203,7 @@ class NetPbmToolkitTest extends GalleryTestCase {
 	list ($ret, $mimeType) = $this->_toolkit->performOperation(
 	    'image/tiff', 'convert-to-image/jpeg', 'testPerformOperations15.tif',
 	    'testPerformOperations15.jpg', array());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(1, (int)GalleryUtilities::getRequestVariables('toolkitCallCount'));
@@ -214,7 +214,7 @@ class NetPbmToolkitTest extends GalleryTestCase {
 	list ($ret, $mimeType) = $this->_toolkit->performOperation(
 	    'image/x-portable-pixmap', 'convert-to-image/jpeg', 'testPerformOperations16.ppm',
 	    'testPerformOperations16.jpg', array());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(1, (int)GalleryUtilities::getRequestVariables('toolkitCallCount'));
@@ -224,7 +224,7 @@ class NetPbmToolkitTest extends GalleryTestCase {
     /* Ensure operation sequence is processed with one exec() */
     function testOperationSequence() {
 	list ($ret, $netPbmPath) = GalleryCoreApi::getPluginParameter('module', 'netpbm', 'path');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -232,7 +232,7 @@ class NetPbmToolkitTest extends GalleryTestCase {
 	list ($ret, $mimeType, $context) = $this->_toolkit->performOperation(
 	    'image/png', 'crop', 'testPerformOperations8.png', 'testPerformOperations8.png',
 	    array('24.667', '23.5', '51.375', '52'), $context);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -252,7 +252,7 @@ class NetPbmToolkitTest extends GalleryTestCase {
 					      'testPerformOperations8.png',
 					      'testPerformOperations15.png',
 					      array(100, 100), $context);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(!isset($context['netpbm.transform']), 'extra stuff in context');
@@ -262,7 +262,7 @@ class NetPbmToolkitTest extends GalleryTestCase {
 	list ($ret, $mimeType, $context) = $this->_toolkit->performOperation(
 	    'image/png', 'thumbnail', 'testPerformOperations8.png', 'testPerformOperations15.png',
 	    array(100, 100), $context);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -284,7 +284,7 @@ class NetPbmToolkitTest extends GalleryTestCase {
      */
     function testOperationSequenceSizeChange() {
 	list ($ret, $netPbmPath) = GalleryCoreApi::getPluginParameter('module', 'netpbm', 'path');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -346,7 +346,7 @@ class NetPbmToolkitTest extends GalleryTestCase {
 						  'testPerformOperations8.png',
 						  'testPerformOperations8.png',
 						  $operations[$i+1], $context);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
@@ -360,21 +360,21 @@ class NetPbmToolkitTest extends GalleryTestCase {
     function testGetProperties() {
 	list ($ret, $results) =
 	    $this->_toolkit->getProperty('image/gif', 'dimensions', 'testGetProperties1.gif');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array(10, 20), $results);
 
 	list ($ret, $results) =
 	    $this->_toolkit->getProperty('image/gif', 'dimensions', 'testGetProperties2.gif');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array(30, 40), $results);
 
 	list ($ret, $results) = $this->_toolkit->getProperty(
 	    'image/x-portable-pixmap', 'dimensions', 'testGetProperties3.ppm');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array(50, 60), $results);
@@ -458,11 +458,11 @@ class NetPbmToolkitTest extends GalleryTestCase {
 
     function testGetOperationsAndProperties() {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', 'path', '/validPath/');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	list ($ret, $results) = NetPbmToolkitHelper::getOperationsAndProperties(true);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$mimeTypes = array('image/jpeg', 'image/pjpeg', 'image/gif',
@@ -547,13 +547,13 @@ class NetPbmToolkitTest extends GalleryTestCase {
 	    $results['properties']);
 
 	/* Test that bmptopnm param was changed to bmptopnm */
-	$this->assertEquals(array(GalleryStatus::success(), 'bmptopnm'),
+	$this->assertEquals(array(null, 'bmptopnm'),
 			    GalleryCoreApi::getPluginParameter('module', 'netpbm', 'bmptopnm'));
     }
 
     function testBinaries() {
 	list ($ret, $results, $mimeTypes) = NetPbmToolkitHelper::testBinaries('/validPath/');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -600,18 +600,17 @@ class NetPbmToolkitTestPlatform {
     }
 
     function init() {
-	global $gallery;
 	list ($ret, $this->_netPbmPath) =
 	    GalleryCoreApi::getPluginParameter('module', 'netpbm', 'path');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	list ($ret, $this->_jheadPath) =
 	    GalleryCoreApi::getPluginParameter('module', 'netpbm', 'jheadPath');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	return GalleryStatus::success();
+	return null;
     }
 
     function exec($cmd) {
@@ -918,9 +917,8 @@ class NetPbmToolkitTestPlatform {
     }
 
     function is_dir($path) {
-	global $gallery;
 	list ($ret, $netPbmPath) = GalleryCoreApi::getPluginParameter('module', 'netpbm', 'path');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return false;
 	}

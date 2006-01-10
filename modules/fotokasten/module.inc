@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,11 +38,11 @@ class FotokastenModule extends GalleryModule {
 	$this->setId('fotokasten');
 	$this->setName($gallery->i18n('Fotokasten'));
 	$this->setDescription($gallery->i18n('Fotokasten Photo Printing Module'));
-	$this->setVersion('1.0.0');
+	$this->setVersion('1.0.1');
 	$this->setGroup('commerce', $this->translate('Commerce'));
 	$this->setCallbacks('getItemLinks');
-	$this->setRequiredCoreApi(array(6, 10));
-	$this->setRequiredModuleApi(array(2, 3));
+	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredModuleApi(array(3, 0));
     }
 
     /**
@@ -53,26 +53,26 @@ class FotokastenModule extends GalleryModule {
 
 	if (!isset($currentVersion)) {
 	    list ($ret, $coreParams) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    /* Register our permission */
 	    $ret = GalleryCoreApi::registerPermission($this->getId(), 'fotokasten.print',
 						      $gallery->i18n('[fotokasten] Print'));
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    /* Give everybody print permission by default */
 	    $ret = GalleryCoreApi::addGroupPermission(
 		$coreParams['id.rootAlbum'], $coreParams['id.everybodyGroup'],
 		'fotokasten.print', true);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -82,25 +82,11 @@ class FotokastenModule extends GalleryModule {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'CartPluginInterface_1_0', 'FotokastenCartPlugin', 'fotokasten',
 	    'modules/fotokasten/classes/FotokastenCartPlugin.class', 'fotokasten', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
-    }
-
-    /**
-     * @see GalleryModule::isRecommendedDuringInstall
-     */
-    function isRecommendedDuringInstall() {
-	return false;
-    }
-
-    /**
-     * @see GalleryModule::autoConfigure
-     */
-    function autoConfigure() {
-	return array(GalleryStatus::success(), true);
+	return null;
     }
 
     /**
@@ -121,7 +107,7 @@ class FotokastenModule extends GalleryModule {
 	    }
 	}
 
-	return array(GalleryStatus::success(), $links);
+	return array(null, $links);
     }
 }
 ?>

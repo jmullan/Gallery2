@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,10 +37,8 @@ class NewAlbumController extends GalleryController {
      */
     function handleRequest(&$form) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
-	$results = array();
-	$error = array();
-	$status = array();
+	$platform =& $gallery->getPlatform();
+	$results = $error = $status = array();
 
 	if (isset($form['action']['newAlbum'])) {
 	    /* Now check the value of name and title */
@@ -56,14 +54,14 @@ class NewAlbumController extends GalleryController {
 		list($ret, $newAlbum) = GalleryCoreApi::createAlbum(
                     $form['parentId'], $form['pathComponent'], $form['title'],
 		    $form['summary'], $form['description'], null);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		if (empty($error)) {
 		    /* Give the creator all permissions on the new album */
 		    $ret = GalleryCoreApi::addUserPermission(
 			$newAlbum->getId(), $newAlbum->getOwnerId(), 'core.all', false);
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		    $redirect['view'] = 'publishxp.SelectAlbum';
@@ -79,7 +77,7 @@ class NewAlbumController extends GalleryController {
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -105,7 +103,7 @@ class NewAlbumView extends GalleryView {
 	    $form['formName'] = 'NewAlbum';
 	    $parentId = GalleryUtilities::getRequestVariables('parentId');
 	    if (empty($parentId)) {
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	    }
 
 	    $form['parentId'] = $parentId;
@@ -117,22 +115,22 @@ class NewAlbumView extends GalleryView {
 	}
 
 	$ret = GalleryCoreApi::assertHasItemPermission($form['parentId'], 'core.addAlbumItem');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list($ret, $parent) = GalleryCoreApi::loadEntitiesById($form['parentId']);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Load the item's parents */
 	list($ret, $parents) = GalleryCoreApi::fetchParents($parent, 'core.view');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	for ($i = 0; $i < sizeof($parents); $i ++) {
-	    $parents[$i] = $parents[$i]->getMemberData();
+	    $parents[$i] = (array)$parents[$i];
 	}
 	$parents[] = $parent->getMemberData();
 
@@ -143,12 +141,9 @@ class NewAlbumView extends GalleryView {
 	$template->setVariable('controller', 'publishxp.NewAlbum');
 	$template->head('modules/publishxp/templates/Head.tpl');
 
-	/* Tell the theme that we want the full screen */
-	$theme =& $template->getVariableByReference('theme');
-	$theme['useFullScreen'] = true;
-
-	return array(GalleryStatus::success(),
-		     array('body' => 'modules/publishxp/templates/NewAlbum.tpl'));
+	return array(null,
+		     array('body' => 'modules/publishxp/templates/NewAlbum.tpl',
+			   'useFullScreen' => true));
     }
 }
 ?>

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ class ItemOrderTest extends GalleryTestCase {
 
 	list ($ret, $this->_parentItem) = $this->_createRandomAlbum($this->_getRootId(),
 	    array('orderBy' => $orderBy, 'orderDirection' => $orderDirection));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$this->_markForCleanup($this->_parentItem);
@@ -53,7 +53,7 @@ class ItemOrderTest extends GalleryTestCase {
 	$userId = $gallery->getActiveUserId();
 	$ret = GalleryCoreApi::addUserPermission($this->_parentItem->getId(),
 						 $userId, 'core.all', false);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -62,17 +62,17 @@ class ItemOrderTest extends GalleryTestCase {
 	    sleep(1); /* So items get different timestamps */
 	    list ($ret, $this->_childItems[$i]) = $this->_createRandomAlbum(
 		$this->_parentItem->getId(), array('title' => $titles[$i]));
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     function testFetchByOrder() {
 	$ret = $this->_createTestAlbum('orderWeight');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -80,14 +80,14 @@ class ItemOrderTest extends GalleryTestCase {
 	$correctResults = array();
 	for ($i = 0; $i < count($this->_childItems); $i++) {
 	    $ret = GalleryCoreApi::setItemOrderWeight($this->_childItems[$i]->getId(), 100 - $i);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    array_unshift($correctResults, $this->_childItems[$i]->getId());
 	}
 
 	list ($ret, $results) = GalleryCoreApi::fetchChildItemIds($this->_parentItem);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -96,7 +96,7 @@ class ItemOrderTest extends GalleryTestCase {
 
     function testFetchByCreateDate() {
 	$ret = $this->_createTestAlbum('creationTimestamp');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -104,14 +104,14 @@ class ItemOrderTest extends GalleryTestCase {
 	$correctResults = array();
 	for ($i = 0; $i < count($this->_childItems); $i++) {
 	    $ret = GalleryCoreApi::setItemOrderWeight($this->_childItems[$i]->getId(), 100 - $i);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $correctResults[] = $this->_childItems[$i]->getId();
 	}
 
 	list ($ret, $results) = GalleryCoreApi::fetchChildItemIds($this->_parentItem);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -120,7 +120,7 @@ class ItemOrderTest extends GalleryTestCase {
 
     function testFetchByModifyDate() {
 	$ret = $this->_createTestAlbum('modificationTimestamp', ORDER_DESCENDING);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -130,7 +130,7 @@ class ItemOrderTest extends GalleryTestCase {
 	}
 
 	list ($ret, $results) = GalleryCoreApi::fetchChildItemIds($this->_parentItem);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -139,7 +139,7 @@ class ItemOrderTest extends GalleryTestCase {
 
     function testFetchByTitle() {
 	$ret = $this->_createTestAlbum('title');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -149,7 +149,7 @@ class ItemOrderTest extends GalleryTestCase {
 	}
 
 	list ($ret, $results) = GalleryCoreApi::fetchChildItemIds($this->_parentItem);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -158,7 +158,7 @@ class ItemOrderTest extends GalleryTestCase {
 
     function testFetchByRandom() {
 	$ret = $this->_createTestAlbum('random');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -170,7 +170,7 @@ class ItemOrderTest extends GalleryTestCase {
 	sort($correctResults);
 
 	list ($ret, $results) = GalleryCoreApi::fetchChildItemIds($this->_parentItem);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 

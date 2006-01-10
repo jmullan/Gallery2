@@ -6,7 +6,7 @@
       <?php print _('Please select the installation type') ?>
     </p>
     <form method="post" action="<?php printf('%s?step=%s', INDEX_PHP, $stepNumber) ?>">
-    <p style="margin-left: 2.2em; text-indent: -2.2em">
+    <p style="padding: 0.5em 0.5em 0.5em 2.2em; text-indent: -2.2em; border: 1px solid #ccc;">
       <input type="radio" id="rbStandard" name="isMultisite" value="0" onclick="linkToggle(0)"
 	<?php if (!$templateData['isMultisite']) print 'checked="checked"' ?>>
       <label for="rbStandard" class="radio">
@@ -16,7 +16,7 @@
       <?php printf(_('This is the default installation type. Choose this installation type if you want to install a new Gallery in the directory %s which will be accessible with the URL %s.'),
                    '<tt>' . $templateData['galleryDir'] . '</tt>', '<tt>' . $templateData['galleryUrl'] . '</tt>') ?>
     </p>
-    <p style="margin-left: 2.2em; text-indent: -2.2em">
+    <p style="padding: 0.5em 0.5em 0.5em 2.2em; text-indent: -2.2em; border: 1px solid #ccc;">
       <input type="radio" id="rbMultisite" name="isMultisite" value="1" onclick="linkToggle(1)"
 	<?php if ($templateData['isMultisite']) print 'checked="checked"' ?>>
       <label for="rbMultisite" class="radio">

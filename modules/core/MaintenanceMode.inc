@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,17 +37,15 @@ class MaintenanceModeView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	$theme =& $template->getVariableByReference('theme');
-	$theme['useFullScreen'] = true;
-
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$template->title($module->translate('Maintenance'));
-	return array(GalleryStatus::success(),
-	    array('body' => 'modules/core/templates/MaintenanceMode.tpl'));
+	return array(null,
+		     array('body' => 'modules/core/templates/MaintenanceMode.tpl',
+			   'useFullScreen' => true));
     }
 
     /**
@@ -55,10 +53,10 @@ class MaintenanceModeView extends GalleryView {
      */
     function getViewDescription() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	return array(GalleryStatus::success(), $module->translate('Maintenance'));
+	return array(null, $module->translate('Maintenance'));
     }
 }
 ?>

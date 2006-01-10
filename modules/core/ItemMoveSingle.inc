@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ class ItemMoveSingleController extends GalleryController {
 
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -59,7 +59,7 @@ class ItemMoveSingleController extends GalleryController {
 	    }
 
 	    $ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.delete');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -73,18 +73,18 @@ class ItemMoveSingleController extends GalleryController {
 		if (GalleryUtilities::isA($item, 'GalleryDataItem')) {
 		    $ret = GalleryCoreApi::assertHasItemPermission($newParentId,
 								   'core.addDataItem');
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		} else if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
 		    $ret = GalleryCoreApi::assertHasItemPermission($newParentId,
 								   'core.addAlbumItem');
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		} else {
 		    /* The view should never let this happen */
-		    return array(GalleryStatus::error(ERROR_BAD_DATA_TYPE, __FILE__, __LINE__),
+		    return array(GalleryCoreApi::error(ERROR_BAD_DATA_TYPE, __FILE__, __LINE__),
 				 null);
 		}
 	    }
@@ -92,13 +92,13 @@ class ItemMoveSingleController extends GalleryController {
 	    /* Make sure the destination is the right type of item */
 	    if (empty($error)) {
 		list ($ret, $newParent) = GalleryCoreApi::loadEntitiesById($newParentId);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		if (!GalleryUtilities::isA($newParent, 'GalleryAlbumItem')) {
 		    /* The view should never let this happen */
-		    return array(GalleryStatus::error(ERROR_BAD_DATA_TYPE, __FILE__, __LINE__),
+		    return array(GalleryCoreApi::error(ERROR_BAD_DATA_TYPE, __FILE__, __LINE__),
 				 null);
 		}
 	    }
@@ -107,7 +107,7 @@ class ItemMoveSingleController extends GalleryController {
 	    if (empty($error)) {
 		list($ret, $newParentAncestorIds) =
 		    GalleryCoreApi::fetchParentSequence($newParentId);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
@@ -122,47 +122,47 @@ class ItemMoveSingleController extends GalleryController {
 		 * TODO: Optimize this
 		 */
 		list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLockParents($newParentId);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		$oldParentId = $item->getParentId();
 		list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLockParents($oldParentId);
-		if ($ret->isError()) {
+		if ($ret) {
 		    GalleryCoreApi::releaseLocks($lockIds);
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		list ($ret, $lockIds[]) =
 		    GalleryCoreApi::acquireReadLock(array($newParentId, $oldParentId));
-		if ($ret->isError()) {
+		if ($ret) {
 		    GalleryCoreApi::releaseLocks($lockIds);
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		/* Write lock the item we're moving */
 		list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($itemId);
-		if ($ret->isError()) {
+		if ($ret) {
 		    GalleryCoreApi::releaseLocks($lockIds);
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		/* Refresh the item in case it changed before it was locked */
 		list ($ret, $item) = $item->refresh();
-		if ($ret->isError()) {
+		if ($ret) {
 		    GalleryCoreApi::releaseLocks($lockIds);
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		/* Do the move */
 		$ret = $item->move($newParentId);
-		if ($ret->isError()) {
+		if ($ret) {
 		    GalleryCoreApi::releaseLocks($lockIds);
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		$ret = $item->save();
-		if ($ret->isError()) {
+		if ($ret) {
 		    GalleryCoreApi::releaseLocks($lockIds);
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -170,7 +170,7 @@ class ItemMoveSingleController extends GalleryController {
 		if (GalleryUtilities::isA($item, 'GalleryDataItem')) {
 		    /* Update for derivative preferences of new parent */
 		    $ret = GalleryCoreApi::addExistingItemToAlbum($item, $newParentId);
-		    if ($ret->isError()) {
+		    if ($ret) {
 			GalleryCoreApi::releaseLocks($lockIds);
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -178,13 +178,13 @@ class ItemMoveSingleController extends GalleryController {
 
 		/* Release all locks */
 		$ret = GalleryCoreApi::releaseLocks($lockIds);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		/* Fix thumbnail integrity */
 		list ($ret, $success) = GalleryCoreApi::guaranteeAlbumHasThumbnail($oldParentId);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
@@ -206,7 +206,7 @@ class ItemMoveSingleController extends GalleryController {
 	$results['status'] = $status;
 	$results['error'] = $error;
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -234,7 +234,7 @@ class ItemMoveSingleView extends GalleryView {
 	}
 
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -243,18 +243,18 @@ class ItemMoveSingleView extends GalleryView {
 	} else if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
 	    $permission = 'core.addAlbumItem';
 	} else {
-	    return array(GalleryStatus::error(ERROR_BAD_DATA_TYPE, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_DATA_TYPE, __FILE__, __LINE__), null);
 	}
 
 	/* Get ids of all all albums where we can add this items */
 	list ($ret, $albumIds) = GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', $permission);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Load all the album entities */
 	list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($albumIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -267,7 +267,7 @@ class ItemMoveSingleView extends GalleryView {
 	$template->setVariable('ItemMoveSingle', $ItemMoveSingle);
 	$template->setVariable('controller', 'core.ItemMoveSingle');
 
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/core/templates/ItemMoveSingle.tpl'));
     }
 
@@ -276,18 +276,18 @@ class ItemMoveSingleView extends GalleryView {
      */
     function getViewDescription() {
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $item) = $this->_getItem();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$itemTypeNames = $item->itemTypeName(true);
 
-	return array(GalleryStatus::success(),
+	return array(null,
 		     $core->translate(array('text' => 'move %s', 'arg1' => $itemTypeNames[1])));
     }
 }

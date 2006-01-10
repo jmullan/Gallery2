@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
-GalleryCoreApi::relativeRequireOnce('lib/tools/phpunit/ItemAddOptionTestCase.class');
+GalleryCoreApi::requireOnce('lib/tools/phpunit/ItemAddOptionTestCase.class');
 
 /**
  * CreateThumbnailOption tests
@@ -43,7 +43,7 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 	parent::setUp();
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -54,7 +54,7 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GalleryToolkit', 'CreateThumbnailOptionTestToolkit', 'CreateThumbnailOptionTestToolkit',
 	    $path, 'coreTest', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markToolkitForCleanup('CreateThumbnailOptionTestToolkit');
@@ -68,7 +68,7 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 	$this->_items = array();
 	list ($ret, $this->_items[0]) = $this->_createRandomDataItem($this->_album->getId(),
 								    'test/file');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -78,7 +78,7 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 	    $this->_createDerivative($this->_items[0], $this->_items[0]->getId(),
 				     DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
 				     'thumbnail|200');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -93,7 +93,7 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 	$this->assertEquals($errors, $this->_noErrors);
 
 	list ($ret, $isCurrent) = $this->_itemThumbnail[0]->isCacheCurrent();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -112,7 +112,7 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 	$this->assertEquals($errors, $this->_noErrors);
 
 	list ($ret, $isCurrent) = $this->_itemThumbnail[0]->isCacheCurrent();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -124,14 +124,14 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 	for ($j = 1; $j < $totalTestItems; $j++) {
 	    list ($ret, $this->_items[$j]) = $this->_createRandomDataItem($this->_album->getId(),
 									  'test/file');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    list ($ret, $this->_itemThumbnail[$j]) =
 		$this->_createDerivative($this->_items[$j], $this->_items[$j]->getId(),
 					 DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
 					 'thumbnail|200');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
@@ -145,7 +145,7 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 
 	for ($j = 0; $j < $totalTestItems; $j++) {
 	    list ($ret, $isCurrent) = $this->_itemThumbnail[$j]->isCacheCurrent();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $this->assert($isCurrent, "Thumbnail $j was not created!");
@@ -166,7 +166,7 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 	for ($j = 1; $j < $totalTestItems; $j++) {
 	    list ($ret, $this->_items[$j]) = $this->_createRandomDataItem($this->_album->getId(),
 									 'test/file');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $this->_noWarnings[] = $this->_noWarnings[$j-1];
@@ -181,7 +181,7 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 /**
  * Required by our test toolkit
  */
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryToolkit.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryToolkit.class');
 
 /**
  * Dummy test toolkit
@@ -198,10 +198,10 @@ class CreateThumbnailOptionTestToolkit extends GalleryToolkit {
 			      $destFilename, $parameters, $context=array()) {
 	global $gallery;
 	if ($sourceFilename != $destFilename) {
-	    $platform = $gallery->getPlatform();
+	    $platform =& $gallery->getPlatform();
 	    $platform->copy($sourceFilename, $destFilename);
 	}
-	return array(GalleryStatus::success(), $mimeType, $context);
+	return array(null, $mimeType, $context);
     }
 }
 ?>

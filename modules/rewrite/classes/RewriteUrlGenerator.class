@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,11 +28,10 @@
 /**
  * Required class
  */
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryUrlGenerator.class');
-GalleryCoreApi::relativeRequireOnce('modules/rewrite/classes/RewriteMap.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryUrlGenerator.class');
 
 /**
- * Url Generator
+ * Generic Rewrite URL Generator class
  *
  * @package Rewrite
  * @subpackage Classes
@@ -54,216 +53,189 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
      * @access private
      */
     var $_shortUrls = array();
-
+    
     /**
      * @see GalleryUrlGenerator::init
      */
-    function init($baseFile=null, $embedPath=null, $relativeG2Path=null, $embedSessionString=null) {
-	parent::init($baseFile, $embedPath, $relativeG2Path, $embedSessionString);
-
-	list($ret, $this->_shortUrls) = RewriteMap::getShortUrls();
-	if ($ret->isError()) {
-	    $this->_error = true;
+    function init($baseUri=null, $g2Uri=null, $embedSessionString=null) {
+	$ret = parent::init($baseUri, $g2Uri, $embedSessionString);
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	list ($ret, $this->_shortUrls) = GalleryCoreApi::getPluginParameter(
+	    'module', 'rewrite', 'shortUrls');
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$this->_shortUrls = empty($this->_shortUrls) ? array() : unserialize($this->_shortUrls);
+
+	return null;
     }
 
     /**
-     * @see GalleryUrlGenerator::getCurrentUrl
+     * This function is called at the end of URL generator initialization. If an onLoad
+     * function is specified for the current view it loads the needed file and calls
+     * the function which should parse any request params that wasn't parsed by the
+     * rewrite parser (eg %path% to itemId).
+     *
+     * @return object GalleryStatus a status code
+     * @private
      */
-    function getCurrentUrl() {
-	if ($this->_error) {
-	    return parent::getCurrentUrl();
+    function _onLoad() {
+	list ($view, $subView) = GalleryUtilities::getRequestVariables('view', 'subView');
+	$match = $view;
+	if (!empty($subView)) {
+	    $match .= '|' . $subView;
 	}
 
-	if (empty($this->_currentUrl)) {
-	    if (GalleryUtilities::isEmbedded() && !empty($this->_embedPath)) {
-		$path = $this->_embedPath;
-	    } else {
-		$location = GalleryUtilities::isEmbedded() ? 'embeddedLocation' : 'galleryLocation';
-		list ($ret, $path) =
-			GalleryCoreApi::getPluginParameter('module', 'rewrite', $location);
-		if ($ret->isError() || empty($path)) {
-		    /*
-		     * We dont know where we're at. This could happen if rewrite was installed
-		     * in G2 standalone, and now is accessed as G2 embedded. Turn off short URLs
-		     * for the embedded mode and wait until the user has set it up corectly.
-		     */
-		    $this->_error = true;
-		    return parent::getCurrentUrl();
-		}
+	if (!empty($match) && isset($this->_shortUrls[$match]['onLoad'])) {
+	    GalleryCoreApi::requireOnce('modules/' .
+		    $this->_shortUrls[$match]['onLoad'][0] . '/classes/' .
+		    $this->_shortUrls[$match]['onLoad'][1] . '.class');
+	    $ret = call_user_func(array(
+		    $this->_shortUrls[$match]['onLoad'][1],
+		    $this->_shortUrls[$match]['onLoad'][2]));
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
-
-	    $tmp = $path . $this->_baseFile;
-	    $queryString = GalleryUtilities::getServerVar('QUERY_STRING');
-	    if (!empty($queryString)) {
-		$tmp .= '?' . GalleryUtilities::htmlEntityDecode($queryString);
-	    }
-
-	    $this->_currentUrl = $this->makeUrl($tmp);
 	}
 
-	return $this->_currentUrl;
-    }
-
-    /**
-     * @see GalleryUrlGenerator::getNavigationReturnUrl
-     */
-    function getNavigationReturnUrl() {
-	$formUrl = GalleryUtilities::getRequestVariables('formUrl');
-	if (!empty($formUrl)) {
-	    /*
-	     * We don't really have an URL, because we are in a POST request.
-	     * This is the last known URL when the form was originally rendered:
-	     */
-	    return $formUrl;
-	}
-
-	/*
-	 * Lets strip out all unnecessary params and regenerate the url. Otherwise we
-	 * wont get a short URL if possible.
-	 */
-	$params = array();
-	$urlVariables = GalleryUtilities::getUrlVariablesFiltered(
-			array('return', 'returnName', 'navId', 'fromNavId', 'path'));
-	foreach ($urlVariables as $key => $value) {
-	    $params[substr($key, strlen(GALLERY_FORM_VARIABLE_PREFIX))] = $value;
-	}
-	$url = $this->generateUrl($params, null, null, true);
-
-	return $url;
+	return null;
     }
 
     /**
      * @see GalleryUrlGenerator::generateUrl
      */
-    function generateUrl($params=array(), $forceSessionId=null, $baseUrl=null, $forceFullUrl=null) {
+    function generateUrl($params=array(), $options=array()) {
+	$index = null;	
 	if ($this->_error) {
-	    return parent::generateUrl($params, $forceSessionId, $baseUrl=null, $forceFullUrl);
+	    return parent::generateUrl($params, $options);
 	}
 
-	if (isset($params['view'])) {
+	/* Match by view + subview, or only view. */
+	if (isset($params['view']) && isset($params['subView']) &&
+		isset($this->_shortUrls[$params['view'] . '|' . $params['subView']])) {
+	    $index = $params['view'] . '|' . $params['subView'];
+	} else if (isset($params['view']) && isset($this->_shortUrls[$params['view']])) {
 	    $index = $params['view'];
-	    if (isset($params['subView'])) {
-		$index .= '|' . $params['subView'];
-	    }
 	}
 
 	/* Build the short style URL */
-	if (isset($index) && isset($this->_shortUrls[$index])
-		&& !isset($params['href']) && empty($baseUrl)) {
-	    /* Navigation */
-	    global $gallery;
-	    $currentView = $gallery->getCurrentView();
-	    if (!empty($this->_navId) && (empty($currentView) ||
-		    $currentView == $params['view'] || !empty($params['controller']))) {
-		/*
-		 * We are moving around in the same view or we are redirecting to a controller,
-		 * who knows where it will redirect to.  Let's keep the navigation.
-		 */
-		$params['navId'] = $this->_navId;
-	    }
-
+	if (isset($index) && !isset($params['href'])) {
 	    /* Check if we are forced to append the session id in embedded G2 */
 	    if ($this->embedForceSessionId($params)) {
-		$forceSessionId = true;
+		$options['forceSessionId'] = true;
 	    }
-
-	    $url = $this->_shortUrls[$index];
-	    $entity = null;
-	    $itemId = isset($params['itemId']) ? $params['itemId'] : null;
-
-	    preg_match_all('/%([a-z]+)%/i', $url, $regs);
-	    foreach ($regs[1] as $arg) {
-		switch ($arg) {
-		case 'path':
-		    if ((!isset($entity) && !$this->_loadEntity($itemId, $entity)) ||
-			    !GalleryUtilities::isA($entity, 'GalleryFileSystemEntity')) {
-			return parent::generateUrl(
-			    $params, $forceSessionId, $baseUrl=null, $forceFullUrl);
-		    }
-		    list ($ret, $path) = $entity->fetchLogicalPath();
-		    if ($ret->isError()) {
-			return parent::generateUrl(
-			    $params, $forceSessionId, $baseUrl=null, $forceFullUrl);
-		    }
-
-		    if (substr($url, -6) != '%path%') {
-			/* Trim / off end of path if rule has a suffix */
-			if ($path != '/') {
-			    $path = rtrim($path, '/');
-			} else {
-			    $url = str_replace('%path%/', '%path%', $url);
-			}
-		    } else if (!GalleryUtilities::isA($entity, 'GalleryAlbumItem')) {
-			/* Append .html suffix on non-album paths if rule has no suffix */
-			$path .= '.html';
-		    }
-		    /* urlencode except for path separators(/) */
-		    $url = str_replace('%path%',
-			str_replace('%2F', '/', urlencode(substr($path, 1))), $url);
-		    unset($params['itemId']);
-		    break;
-
-		case 'fileName':
-		    if (!isset($entity) && !$this->_loadEntity($itemId, $entity)) {
-			return parent::generateUrl($params, $forceSessionId, $forceFullUrl);
-		    }
-		    list ($ret, $pseudoFileName) = GalleryUtilities::getPseudoFileName($entity);
-		    if ($ret->isError()) {
-			return parent::generateUrl(
-			    $params, $forceSessionId, $baseUrl=null, $forceFullUrl);
-		    }
-		    $url = str_replace('%fileName%', urlencode($pseudoFileName), $url);
-		    break;
-
-		case 'serialNumber':
-		    if (!isset($entity) && !$this->_loadEntity($itemId, $entity)) {
-			return parent::generateUrl(
-			    $params, $forceSessionId, $baseUrl=null, $forceFullUrl);
-		    }
-		    $url = str_replace('%serialNumber%', $entity->getSerialNumber(), $url);
-		    unset($params['serialNumber']);
-		    break;
-
-		default:
-		    $url = str_replace('%' . $arg . '%', urlencode($params[$arg]), $url);
-		    unset($params[$arg]);
-		}
+	    
+	    $trueParams = $params;
+	    /* Parse and replace all keywords */
+	    $url = $this->_shortUrls[$index]['pattern'];
+	    $functions = array();
+	    if (isset($this->_shortUrls[$index]['functions'])) {
+		$functions = $this->_shortUrls[$index]['functions'];
+	    }
+	    if (!$this->_parseShortUrl($url, $params, $functions)) {
+		return parent::generateUrl($trueParams, $options);
 	    }
 
 	    unset($params['view']);
-	    unset($params['subView']);
-
-	    if (empty($url)) {
-		$url = $this->_baseFile;
+	    if (strpos($index, '|') !== false) {
+		unset($params['subView']);
 	    }
 
-	    return parent::generateUrl(
-		$params, $forceSessionId, $this->getCurrentUrlDir() . $url, $forceFullUrl);
+	    $forceDirect = ($trueParams['view'] == 'core.DownloadItem' ||
+			    !empty($options['forceDirect']));
+	    $options['baseUrl'] = $this->_getBaseUrl($forceDirect) . $url .
+		$this->_getBaseParamString($forceDirect);
 	}
 
-	return parent::generateUrl($params, $forceSessionId, $baseUrl=null, $forceFullUrl);
+	return parent::generateUrl($params, $options);
     }
 
     /**
+     * Substitute all keywords with values from url params or custom functions.
+     *
+     * @param string url to be parsed
+     * @param array of url parameters
+     * @param array of custom functions
      * @return boolean true on success
      * @access private
      */
-    function _loadEntity(&$itemId, &$entity) {
+    function _parseShortUrl(&$url, &$params, $functions) {
+	$entity = null;
+
+	preg_match_all('/%([a-z]+)%/i', $url, $regs);
+	foreach ($regs[1] as $arg) {
+	    if (isset($functions[$arg])) {
+		GalleryCoreApi::requireOnce('modules/' . $functions[$arg][0] .
+		    '/classes/' . $functions[$arg][1] . '.class');
+
+		$ret = call_user_func_array(
+		    array($functions[$arg][1], $functions[$arg][2]),
+		    array(&$url, &$params, &$entity));
+		if (!$ret) {
+		    return $ret;
+		}
+	    } else {
+		$url = str_replace('%' . $arg . '%', urlencode($params[$arg]), $url);
+
+		/* We cant unset the itemId until we have replaced all keywords. a keyword */
+		if ($arg != 'itemId') {
+		    unset($params[$arg]);
+		} else {
+		    $unsetItemId = 1;
+		}
+	    }
+	}
+
+	if (isset($unsetItemId)) {
+	    unset($params['itemId']);
+	}
+	return true;
+    }
+
+    /**
+     * @param int itemId of the entity to load
+     * @return object GalleryEntity
+     */
+    function loadEntity(&$itemId) {
 	/* Assume rootAlbum if itemId not specified */
 	if (empty($itemId)) {
 	    list ($ret, $itemId) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
-	    if ($ret->isError()) {
-		return false;
+	    if ($ret) {
+		return null;
 	    }
 	}
 
 	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($itemId);
-	if ($ret->isError()) {
-	    return false;
+	if ($ret) {
+	    return null;
 	}
-	return true;
+	return $entity;
+    }
+
+    /**
+     * Return the base URL for all generated short URLs
+     *
+     * @param boolean (optional) if true, ensure G2 base url is returned (different when embedded)
+     * @return string the base URL
+     * @access private
+     */
+    function _getBaseUrl($forceDirect=false) {
+	return $this->getCurrentUrlDir($forceDirect);
+    }
+
+    /**
+     * Return the base URL parameters for all generated short URLs, e.g. '?module=gallery'
+     *
+     * @param boolean (optional) if true, ensure G2 base url is returned (different when embedded)
+     * @return string the base URL parameters
+     * @access private
+     */
+    function _getBaseParamString($forceDirect=false) {
+	return '';
     }
 }
 ?>

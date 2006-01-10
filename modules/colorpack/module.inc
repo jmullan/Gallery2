@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,11 +37,11 @@ class ColorPackModule extends GalleryModule {
 	$this->setId('colorpack');
 	$this->setName($gallery->i18n('Color Packs'));
 	$this->setDescription($gallery->i18n('Select different color palettes for themes'));
-	$this->setVersion('1.0.0');
+	$this->setVersion('1.0.1');
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('');
-	$this->setRequiredCoreApi(array(6, 4));
-	$this->setRequiredModuleApi(array(2, 0));
+	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredModuleApi(array(3, 0));
     }
 
     /**
@@ -51,25 +51,11 @@ class ColorPackModule extends GalleryModule {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'ColorPackInterface_1_0', 'ColorPackImpl', 'ColorPack',
 	    'modules/colorpack/classes/ColorPackImpl.class', 'colorpack', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
-    }
-
-    /**
-     * @see GalleryModule::isRecommendedDuringInstall()
-     */
-    function isRecommendedDuringInstall() {
-	return false;
-    }
-
-    /**
-     * @see GalleryModule::autoConfigure()
-     */
-    function autoConfigure() {
-	return array(GalleryStatus::success(), true);
+	return null;
     }
 }
 ?>

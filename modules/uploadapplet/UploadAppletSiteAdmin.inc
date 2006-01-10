@@ -3,7 +3,7 @@
 * $RCSfile$
 *
 * Gallery - a web based photo album viewer and editor
-* Copyright (C) 2000-2005 Bharat Mediratta
+* Copyright (C) 2000-2006 Bharat Mediratta
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -30,74 +30,74 @@
  * @subpackage UserInterface
  */
 class UploadAppletSiteAdminController extends GalleryController {
-    
+
     /**
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
 	global $gallery;
-	
+
 	/* Make sure we have adequate permissions */
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	$status = array();
 	$error = array();
 	if (isset($form['action']['add'])) {
 	    $type = $form['variable']['type'];
-	    
+
 	    if (empty($form[$type]['name']) || empty($form[$type]['value'])) {
 		$error[] = "form[error][$type]";
 	    } else {
 		list ($ret, $variables) = $this->getVariables($type);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
+
 		/* modify it */
 		$variables[$form[$type]['name']] = $form[$type]['value'];
-		
+
 		/* serialize it again */
 		$ret = $this->setVariables($type, $variables);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
 	} else if (isset($form['action']['delete'])) {
 	    $type = $form['variable']['type'];
-	    
+
 	    if (empty($form['delete']['variable'])) {
 		$error[] = "form[error][nonexistent_variable]";
 	    } else {
 		list ($ret, $variables) = $this->getVariables($type);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
+
 		/* delete it */
 		unset($variables[$form['delete']['variable']]);
-		
+
 		/* serialize it again */
 		$ret = $this->setVariables($type, $variables);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
 	}
-	
-	
+
+
 	/* Figure out where to redirect upon success */
 	$method = empty($error) ? 'redirect' : 'delegate';
 	$results[$method]['view'] = 'core.SiteAdmin';
 	$results[$method]['subView'] = 'uploadapplet.UploadAppletSiteAdmin';
 	$results['status'] = $status;
 	$results['error'] = $error;
-	
-	return array(GalleryStatus::success(), $results);
+
+	return array(null, $results);
     }
-    
+
     function implode_with_key($assoc, $inglue = '=', $outglue = '&'){
 	$return = '';
 	if (!empty($assoc)) {
@@ -108,14 +108,14 @@ class UploadAppletSiteAdminController extends GalleryController {
 	}
 	return $return;
     }
-    
+
     function getVariables($type) {
-	list ($ret, $variables) = GalleryCoreApi::getPluginParameter('module', 'uploadapplet', 
+	list ($ret, $variables) = GalleryCoreApi::getPluginParameter('module', 'uploadapplet',
 		'upload' . $type . 'Variables');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	/* unserialize the plugin parameter */
 	if (!empty($variables)) {
 	    $variables1 = explode('|', $variables);
@@ -123,17 +123,17 @@ class UploadAppletSiteAdminController extends GalleryController {
 		list($key, $value) = explode('=', $variable);
 		$variables2[$key] = $value;
 	    }
-	    
-	    return array(GalleryStatus::success(), $variables2);
+
+	    return array(null, $variables2);
 	}
-	
-	return array(GalleryStatus::success(), null);
+
+	return array(null, null);
     }
-    
+
     function setVariables($type, $variables) {
 	$params = $this->implode_with_key($variables, '=', '|');
-	
-	return GalleryCoreApi::setPluginParameter('module', 'uploadapplet', 
+
+	return GalleryCoreApi::setPluginParameter('module', 'uploadapplet',
 		'upload' . $type . 'Variables', $params);
     }
 }
@@ -143,27 +143,27 @@ class UploadAppletSiteAdminController extends GalleryController {
  * @subpackage UserInterface
  */
 class UploadAppletSiteAdminView extends GalleryView {
-    
+
     /**
     * @see GalleryView::loadTemplate
     */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 	$AdminUploadApplet = array();
-	
+
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'uploadapplet');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	foreach ($params as $key => $value) {
 	    $form[$key] = $value;
 	}
-	
+
 	foreach (array('uploaddefaultVariables', 'uploadoverrideVariables') as $key) {
 	    if (!empty($form[$key])) {
 		$variablesArray = explode('|', $form[$key]);
@@ -174,12 +174,12 @@ class UploadAppletSiteAdminView extends GalleryView {
 		$form[$key] = $variables;
 	    }
 	}
-	
+
 	$template->javascript('lib/javascript/BlockToggle.js');
 	$template->setVariable('AdminUploadApplet', $AdminUploadApplet);
 	$template->setVariable('controller', 'uploadapplet.UploadAppletSiteAdmin');
-	return array(GalleryStatus::success(),
-		array('body' => 'modules/uploadapplet/templates/UploadAppletSiteAdmin.tpl'));
+	return array(null,
+		     array('body' => 'modules/uploadapplet/templates/UploadAppletSiteAdmin.tpl'));
     }
 }
 ?>

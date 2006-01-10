@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,8 @@
 /**
  * Load required classes
  */
-GalleryCoreApi::relativeRequireOnce('lib/tools/phpunit/ItemEditOptionTestCase.class');
-GalleryCoreApi::relativeRequireOnce('modules/panorama/classes/PanoramaHelper.class');
+GalleryCoreApi::requireOnce('lib/tools/phpunit/ItemEditOptionTestCase.class');
+GalleryCoreApi::requireOnce('modules/panorama/classes/PanoramaHelper.class');
 
 /**
  * PanoramaOption tests
@@ -48,13 +48,13 @@ class PanoramaOptionTest extends ItemEditOptionTestCase {
 	parent::setUp();
 
 	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId(), 'image/test', array(), __FILE__, 'GalleryPhotoItem');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$item->setMimeType('image/gif');
 	$ret = PanoramaHelper::assignEntityType($item, true);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -63,12 +63,12 @@ class PanoramaOptionTest extends ItemEditOptionTestCase {
 
 	list ($ret, $derivative) =
 	    $this->_createDerivative($item, $item->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = PanoramaHelper::assignEntityType($derivative, true);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -80,14 +80,14 @@ class PanoramaOptionTest extends ItemEditOptionTestCase {
 	$this->assertEquals(array(array(), array()), $result);
 
 	list ($ret, $item) = $this->_item->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('GalleryPhotoItem', $item->getEntityType());
 
 	list ($ret, $item) = $this->_derivative->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -101,13 +101,13 @@ class PanoramaOptionTest extends ItemEditOptionTestCase {
 	$this->assertEquals(array(array(), array()), $result);
 
 	list ($ret, $item) = $this->_item->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('PanoramaPhotoItem', $item->getEntityType());
 
 	list ($ret, $item) = $this->_derivative->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('PanoramaDerivativeImage', $item->getEntityType());
@@ -115,7 +115,7 @@ class PanoramaOptionTest extends ItemEditOptionTestCase {
 
     function testHelper() {
 	list ($ret, $images) = PanoramaHelper::fetchViewableImages(array($this->_item));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(isset($images[$this->_item->getId()]), 'Missing result');

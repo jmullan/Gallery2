@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,23 +48,23 @@ class GalleryUserHelper_simple {
 	global $gallery;
 
 	if (GalleryDataCache::hasPermission($itemId, $permission)) {
-	    return GalleryStatus::success();
+	    return null;
 	}
 
 	list ($ret, $hasPermission) =
 	    GalleryUserHelper_simple::hasItemPermission($itemId, $permission);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	if (!$hasPermission) {
-	    return GalleryStatus::error(
+	    return GalleryCoreApi::error(
 		ERROR_PERMISSION_DENIED, __FILE__, __LINE__,
 		sprintf('user id: %s doesn\'t have permission: %s for item id: %s',
 			$gallery->getActiveUserId(), $permission, $itemId));
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -86,15 +86,15 @@ class GalleryUserHelper_simple {
 	/* Only use the permission cache from the session data for the activeUser */
 	if ($userId == $gallery->getActiveUserId() &&
 	        GalleryDataCache::hasPermission($itemId, $permission)) {
-	    return array(GalleryStatus::success(), true);
+	    return array(null, true);
 	}
 
 	list ($ret, $aclIds) = GalleryCoreApi::fetchAccessListIds($permission, $userId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if (empty($aclIds)) {
-	    return array(GalleryStatus::success(), false);
+	    return array(null, false);
 	}
 	$aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
 
@@ -118,13 +118,13 @@ class GalleryUserHelper_simple {
 
 	list($ret, $searchResults) =
 	    $gallery->search($query, $data, array('limit' => array('count' => 1)));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$hasPermission = ($searchResults->resultCount() > 0);
 
-	return array(GalleryStatus::success(), $hasPermission);
+	return array(null, $hasPermission);
     }
 }
 ?>

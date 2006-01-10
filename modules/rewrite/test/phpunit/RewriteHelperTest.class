@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,12 +27,12 @@
  */
 
 /**
- * Test RewriteHelper functionality
+ * Rewrite Helper tests
  *
  * @package Rewrite
  * @subpackage PHPUnit
- *
  */
+GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
 class RewriteHelperTest extends GalleryTestCase {
 
     function RewriteHelperTest($methodName) {
@@ -43,309 +43,344 @@ class RewriteHelperTest extends GalleryTestCase {
 	global $gallery;
 	parent::setUp();
 
-	/* Save original activeRules and use mock rules */
-	list ($ret, $this->_saveActiveRules) = RewriteMap::getActiveRules();
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$ret = RewriteMap::setActiveRules(array('rewrite' => array(
-		array('pattern' => 'v/%path%',
-		      'match' => 'core.ShowItem'),
-		array('pattern' => 'd/%itemId%-%serialNumber%/%fileName%',
-		      'match' => 'core.DownloadItem'))));
-	if ($ret->isError()) {
+        $ret = $this->_markPluginParametersForCleanup('module', 'rewrite');
+        if ($ret) {
+            print $ret->getAsHtml();
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'accessList',
+	    serialize(array('phpunit1', 'phpunit2')));
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = $this->_markPluginParametersForCleanup('module', 'rewrite');
-	if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+        /* Set up our mock parser */
+        $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'parserId',
+            'rewritehelpermock');
+        if ($ret) {
+            print $ret->getAsHtml();
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
 
-	$urlGenerator = new RewriteUrlGenerator();
-	$urlGenerator->init('phpunit_test.php');
-	$this->_platform = new RewriteHelperTestPlatform();
-	$this->_platform->init($this);
+        /* Make sure we use the mock parser */
+        list ($ret, $this->_parser) = RewriteHelper::getRewriteParser(true);
+        if ($ret) {
+            print $ret->getAsHtml();
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        $this->assertEquals('rewritehelpermock', $this->_parser->getParserId(), 'parserId');
+
+	/* Set up our mock platform */
+	$this->_platform = new RewriteHelperMockPlatform();
 	$gallery->setPlatform($this->_platform);
-	$gallery->setUrlGenerator($urlGenerator);
+
+	/* Register a new module */
+	GalleryDataCache::reset();
+	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'rewritehelpermock');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Install it */
+	$ret = $this->_module->installOrUpgrade();
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Activate the module */
+	list ($ret, $redirect) = $this->_module->activate(false);
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
     }
 
     function tearDown() {
-	$ret = RewriteMap::setActiveRules($this->_saveActiveRules);
-	if ($ret->isError()) {
+	list ($ret, $redirect) = $this->_module->deactivate(false);
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::removePlugin('module', 'rewritehelpermock');
+	if ($ret) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	parent::tearDown();
     }
 
-    function testCheckFile() {
-	global $gallery;
-
-	/* Make sure we pass if it's all good to write. */
-	list ($ret, $code) = RewriteHelper::checkFile();
-	if ($ret->isError()) {
+    function testGetRewriteParser() {
+	list ($ret, $parser) = RewriteHelper::getRewriteParser();
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->assertEquals('rewritehelpermock', $parser->getParserId(), 'parserId');
 
-	$this->assertEquals(REWRITE_STATUS_HTACCESS_READY, $code);
+        $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'parserId', '');
+        if ($ret) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }	
 
-	/* Make sure we're ok if there's already a Gallery section. */
-	list ($ret, $expected) = RewriteHelper::getTemplate(array());
-	if ($ret->isError()) {
+	/* Should still use the same parser (static check) */
+	list ($ret, $parser) = RewriteHelper::getRewriteParser();
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$expected = explode("\n", $expected);
-	foreach ($expected as $line => $string) {
-	    $expected[$line] .= "\n";
-	}
+	$this->assertEquals('rewritehelpermock', $parser->getParserId(), 'static');
 
-	$this->_platform->setPreviousContent($expected);
-
-	list ($ret, $code) = RewriteHelper::checkFile();
-	if ($ret->isError()) {
+        list ($ret, $parser) = RewriteHelper::getRewriteParser(true);
+	if ($ret && !($ret->getErrorCode() & ERROR_MISSING_VALUE)) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals(REWRITE_STATUS_HTACCESS_READY, $code, 'existing gallery section');
-    }
-
-    function testCheckFileNoPrefix() {
-	global $gallery;
-
-	/* Make sure we pass if it's all good to write. */
-	list ($ret, $code) = RewriteHelper::checkFile();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	$this->assertEquals(REWRITE_STATUS_HTACCESS_READY, $code);
-    }
-
-    function testCheckBadFile() {
-	global $gallery;
-
-	/* Make sure we fail if it's not writeable. */
-	$this->_platform->setIsWriteable(false);
-	list ($ret, $code) = RewriteHelper::checkFile();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->assertEquals(REWRITE_STATUS_HTACCESS_CANT_WRITE, $code, 'cant write');
-
-	/* Make sure we fail if it's not readable */
-	$this->_platform->setIsReadable(false);
-	list ($ret, $code) = RewriteHelper::checkFile();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->assertEquals(REWRITE_STATUS_HTACCESS_CANT_READ, $code, 'cant read');
-
-	/* Make sure we fail if it's there's no file */
-	$this->_platform->setFileExists(false);
-	list ($ret, $code) = RewriteHelper::checkFile();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->assertEquals(REWRITE_STATUS_HTACCESS_MISSING, $code, 'cant read');
-    }
-
-    function testCheckOutOfSync() {
-	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'embeddedHtaccess',
-	    'phpunit/embedded');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	$existingFile = array("Bogus info before section\n",
-			      "# BEGIN Url Rewrite section\n",
-			      "Bogus info in section\n",
-			      "# END Url Rewrite section\n",
-			      "Bogus info after section\n");
-	$this->_platform->setEmbeddedPreviousContent($existingFile);
-
-	list ($ret, $code) = RewriteHelper::checkSync();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->assertEquals(REWRITE_STATUS_HTACCESS_MISMATCH, $code);
-    }
-
-    function testCheckSync() {
-	global $gallery;
-
-	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'embeddedHtaccess',
-	    'phpunit/embedded');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	list ($ret, $activeRules) = RewriteMap::getActiveRules();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	list($ret, $code, $rewriteRules) = RewriteHelper::parseActiveRules($activeRules);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	list ($ret, $existingFile) = RewriteHelper::getTemplate($rewriteRules, true);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$existingFile = explode("\n", $existingFile);
-	foreach (array_keys($existingFile) as $i) {
-	    $existingFile[$i] .= "\n";
-	}
-	$this->_platform->setEmbeddedPreviousContent($existingFile);
-
-	list ($ret, $code) = RewriteHelper::checkSync();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->assertEquals(REWRITE_STATUS_OK, $code);
-    }
-
-    function testWriteFile() {
-	global $gallery;
-
-	$systemEol = array('windows' => "\r\n",
-			   'unix' => "\n",
-			   'mac' => "\r",
-			   'aix' => "\x85");
-	foreach ($systemEol as $os => $eol) {
-	    $existingFile = array('Bogus info before section' . $eol,
-				  '# BEGIN Url Rewrite section' . $eol,
-				  'Bogus info in section'. $eol,
-				  '# END Url Rewrite section' . $eol,
-				  'Bogus info after section'. $eol);
-	    $this->_platform->setPreviousContent($existingFile);
-
-	    list ($ret, $code) = RewriteHelper::writeFile(array());
-	    if ($ret->isError()) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	    $this->assertEquals(REWRITE_STATUS_OK, $code, "cant write ($os)");
-
-	    $newFile = $this->_platform->getFileContent();
-	    $this->assert($i = strpos($newFile, '# BEGIN Url Rewrite section'), "begin ($os)");
-	    $this->assert(strpos($newFile, '# BEGIN Url Rewrite section', $i + 1) === false,
-			  "multiple sections ($os)");
-	}
-    }
-
-
-    function testClearFile() {
-	global $gallery;
-
-	$existingFile = array("Bogus info before section\n",
-			      "# BEGIN Url Rewrite section\n",
-			      "Bogus info in section\n",
-			      "# END Url Rewrite section\n",
-			      "Bogus info after section\n");
-	$expected = "Bogus info before section\nBogus info after section\n";
-	$this->_platform->setPreviousContent($existingFile);
-	list ($ret, $code) = RewriteHelper::writeFile(null);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->assertEquals(REWRITE_STATUS_OK, $code, 'cant write');
-	$this->assertEquals($expected, $this->_platform->getFileContent());
-    }
-
-    function testWriteBadFile() {
-	global $gallery;
-
-	/* Make sure we fail if it's not writeable. */
-	$this->_platform->setIsWriteable(false);
-	list ($ret, $code) = RewriteHelper::writeFile(array());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->assertEquals(REWRITE_STATUS_HTACCESS_CANT_WRITE, $code, 'cant write');
-
-	/* Make sure we fail if it's not readable */
-	$this->_platform->setIsReadable(false);
-	list ($ret, $code) = RewriteHelper::writeFile(array());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->assertEquals(REWRITE_STATUS_HTACCESS_CANT_READ, $code, 'cant read');
-    }
-
-    function testGetHtaccessPath() {
-	$pluginBaseDirs = GalleryCoreApi::getPluginBaseDirs();
-	$this->assertEquals(array(GalleryStatus::success(),
-			$pluginBaseDirs['base'] . '.htaccess'),
-		RewriteHelper::getHtaccessPath());
+	$this->assert(ERROR_MISSING_VALUE & $ret->getErrorCode());
     }
 
     function testParseActiveRules() {
-	$activeRules = array('rewrite' => array(
-		0 => array('pattern' => 'v/%path%',
-			   'match' => 'core.ShowItem'),
-		1 => array('pattern' => 'd/%itemId%-%serialNumber%/%fileName%',
-			   'match' => 'core.DownloadItem'),
-		4 => array('pattern' => 'admin/',
-			   'match' => 'core.SiteAdmin'),
-		2 => array('pattern' => '%path%')));
-	$expected = array(
-		array('urlPattern' => 'admin/',
-		      'queryString' => 'g2_view=core.SiteAdmin',
-		      'settings' => array('flags' => 'QSA,L')),
-		array('urlPattern' => 'v/',
-		      'queryString' => 'g2_view=core.ShowItem',
-		      'settings' => array('flags' => 'QSA,L')),
-		array('urlPattern' => 'd/([0-9]+)-([0-9]+)/([^\/]+)',
-		      'queryString' => 'g2_view=core.DownloadItem&g2_itemId=%1&g2_serialNumber=%2',
-		      'settings' => array('flags' => 'QSA,L')),
-		array('urlPattern' => 'v/([^?]+)',
-		      'queryString' => 'g2_view=core.ShowItem&g2_path=%1',
-		      'settings' => array('flags' => 'QSA,L')),
-		array('urlPattern' => '([^?]+)',
-		      'queryString' => 'g2_view=rewrite.FileNotFound',
-		      'settings' => array('flags' => 'QSA,L')));
+	$tests = array();
+	$serverName = GalleryUtilities::getServerVar('SERVER_NAME');
 
-	list ($ret, $code, $result) = RewriteHelper::parseActiveRules($activeRules);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	/* Test basic rule without keyword */
+	$activeRules = array();
+	$activeRules['rewritehelpermock'][0] = 'phpunit';
+	$expectedActiveRules = $activeRules;
+	$expectedShortUrls = array();
+	$expectedRegexRules = array(array('pattern' => 'phpunit',
+					  'queryString' => '',
+					  'settings' => array('flags' => '')));
+	$tests[] = array($activeRules, REWRITE_STATUS_OK, $expectedRegexRules,
+	    $expectedShortUrls, null, $activeRules, null);
+
+	/* Test rule with keyword */
+	$activeRules = array();
+	$activeRules['rewritehelpermock'][1] = 'php/%unit%';
+	$expectedActiveRules = $activeRules;
+	$expectedShortUrls = array();
+	$expectedRegexRules = array(array('pattern' => 'php/(.*)',
+					  'queryString' => 'g2_unit=$1',
+					  'settings' => array('flags' => '')));
+	$tests[] = array($activeRules, REWRITE_STATUS_OK, $expectedRegexRules,
+	    $expectedShortUrls, null, $activeRules, null);
+
+	/* Test rule with custom functions */
+	$activeRules = array();
+	$activeRules['rewritehelpermock'][2] = 'php/%unit%';
+	$expectedActiveRules = $activeRules;
+	$expectedShortUrls = array('php.Unit' => array(
+		'pattern' => 'php/%unit%',
+		'functions' => array('unit' => array('bogus', 'BogusFile', 'BogusFunction1')),
+		'onLoad' => array('bogus', 'BogusFile', 'BogusFunction2')));
+	$expectedRegexRules = array(array('pattern' => 'php/(.*)',
+					  'queryString' => 'g2_view=php.Unit&g2_unit=$1',
+					  'settings' => array('flags' => '')));
+	$tests[] = array($activeRules, REWRITE_STATUS_OK, $expectedRegexRules,
+	    $expectedShortUrls, null, $activeRules, null);
+
+	/* Test multiple keywords */
+	$activeRules = array();
+	$activeRules['rewritehelpermock'][3] = 'p/%php%/%unit%';
+	$expectedActiveRules = $activeRules;
+	$expectedShortUrls = array();
+	$expectedRegexRules = array(array('pattern' => 'p/([2])/([1])',
+					  'queryString' => 'g2_php=$1&g2_unit=$2',
+					  'settings' => array('flags' => '')));
+	$tests[] = array($activeRules, REWRITE_STATUS_OK, $expectedRegexRules,
+	    $expectedShortUrls, null, $activeRules, null);
+
+	/* Test query string and match combination */
+	$activeRules = array();
+	$activeRules['rewritehelpermock'][4] = 'php/%unit%';
+	$expectedActiveRules = $activeRules;
+	$expectedShortUrls = array('php.Unit|php.Sub' => array('pattern' => 'php/%unit%'));
+	$expectedRegexRules = array(array('pattern' => 'php/(.*)',
+		'queryString' => 'g2_view=php.Unit&g2_subView=php.Sub&g2_static=value&g2_unit=$1',
+		'settings' => array('flags' => '')));
+	$tests[] = array($activeRules, REWRITE_STATUS_OK, $expectedRegexRules,
+	    $expectedShortUrls, null, $activeRules, null);
+
+	/* Test default flags */
+	$activeRules = array();
+	$activeRules['rewritehelpermock'][0] = 'phpunit';
+	$expectedActiveRules = $activeRules;
+	$expectedShortUrls = array();
+	$expectedRegexRules = array(array('pattern' => 'phpunit',
+					  'queryString' => '',
+					  'settings' => array('flags' => 'F1,F2')));
+	$tests[] = array($activeRules, REWRITE_STATUS_OK, $expectedRegexRules,
+	    $expectedShortUrls, null, $activeRules, array('default' => array('F1', 'F2')));
+
+	/* Test custom flags */
+	$activeRules = array();
+	$activeRules['rewritehelpermock'][5] = 'phpunit';
+	$expectedActiveRules = $activeRules;
+	$expectedShortUrls = array();
+	$expectedRegexRules = array(array('pattern' => 'phpunit',
+					  'queryString' => '',
+					  'settings' => array('flags' => 'C1,C2,F1')));
+	$tests[] = array($activeRules, REWRITE_STATUS_OK, $expectedRegexRules,
+	    $expectedShortUrls, null, $activeRules, array('default' => array('F1', 'F2'),
+							  'mandatory' => array('F1')));
+
+	/* Test restrict */
+	$activeRules = array();
+	$activeRules['rewritehelpermock'][6] = '.';
+	$expectedActiveRules = $activeRules;
+	$expectedShortUrls = array();
+	$expectedRegexRules = array(array('pattern' => '.',
+					  'queryString' => 'g2_static=value',
+					  'settings' => array('restrict' => array('param=bogus'),
+							      'exempt' => array('phpunit1',
+										'phpunit2',
+										$serverName),
+							      'flags' => 'L')));
+	$tests[] = array($activeRules, REWRITE_STATUS_OK, $expectedRegexRules,
+	    $expectedShortUrls, null, $activeRules, null);
+
+	/* Test parser */
+	$activeRules = array();
+	$activeRules['rewritehelpermock'][7] = 'phpunit';
+	$expectedActiveRules = $activeRules;
+	$expectedShortUrls = array();
+	$expectedRegexRules = array(array('pattern' => 'phpunit',
+					  'queryString' => '',
+					  'settings' => array('flags' => '')));
+	$tests[] = array($activeRules, REWRITE_STATUS_OK, $expectedRegexRules,
+	    $expectedShortUrls, null, $activeRules, null);
+
+	foreach (array_keys($tests) as $i) {
+	    list ($ret, $code, $regexRules, $shortUrls, $errno) = RewriteHelper::parseActiveRules(
+		$tests[$i][0], $this->_parser, null, $tests[$i][6]);
+	    if ($ret) {
+		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    $this->assertEquals($tests[$i][1], $code, 'code ' . $i);
+	    $this->assertEquals($tests[$i][2], $regexRules, 'regex rules ' . $i);
+	    $this->assertEquals($tests[$i][3], $shortUrls, 'short urls ' . $i);
+	    $this->assertEquals($tests[$i][4], $errno, 'errno ' . $i);
+	    $this->assertEquals($tests[$i][5], $tests[$i][0], 'active rules ' . $i);
 	}
-
-	$this->assertEquals(REWRITE_STATUS_OK, $code, 'status code');
-	$this->assertEquals($expected, $result, 'rules');
     }
 
-    function testParseActiveRulesBadKeyword() {
-	$activeRules = array('rewrite' => array(
-		array('pattern' => 'v/%badKeyword%',
-		      'match' => 'core.ShowItem')));
+    function testParseBadKeyword() {
+	$activeRules = array();
+	$activeRules['rewritehelpermock'][0] = 'p/%badKeyword%';
+	$expectedActiveRules = $activeRules;
 
-	list ($ret, $code, $result) = RewriteHelper::parseActiveRules($activeRules);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	list ($ret, $code, $regexRules, $shortUrls, $errno) = RewriteHelper::parseActiveRules(
+	    $activeRules, $this->_parser);
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals(REWRITE_STATUS_BAD_KEYWORD, $code, 'status code');
-	$this->assertEquals(null, $result, 'rules');
+	$this->assertEquals(REWRITE_STATUS_BAD_KEYWORD, $code, 'code ');
+	$this->assertEquals(null, $regexRules, 'regex rules ');
+	$this->assertEquals(null, $shortUrls, 'short urls ');
+	$this->assertEquals(array('rewritehelpermock', 0), $errno, 'errno ');
+	$this->assertEquals($expectedActiveRules, $activeRules, 'active rules ');
     }
 
-    function testParseActiveRulesNoKeyword() {
-	$activeRules = array('rewrite' => array(
-		array('pattern' => 'v/',
-		      'match' => 'core.ShowItem')));
-	$expected = array(
-		array('urlPattern' => 'v/',
-		      'queryString' => 'g2_view=core.ShowItem',
-		      'settings' => array('flags' => 'QSA,L')));
+    function testParseBadParser() {
+	$activeRules = array();
+	$activeRules['rewritehelpermock'][8] = 'phpunit';
+	$expectedActiveRules = $activeRules;
 
-	list ($ret, $code, $result) = RewriteHelper::parseActiveRules($activeRules);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	list ($ret, $code, $regexRules, $shortUrls, $errno) = RewriteHelper::parseActiveRules(
+	    $activeRules, $this->_parser);
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals(REWRITE_STATUS_OK, $code, 'status code');
-	$this->assertEquals($expected, $result, 'rules');
+	$this->assertEquals(REWRITE_STATUS_INVALID_PATTERN, $code, 'code ');
+	$this->assertEquals(null, $regexRules, 'regex rules ');
+	$this->assertEquals(null, $shortUrls, 'short urls ');
+	$this->assertEquals(array('rewritehelpermock', 8), $errno, 'errno ');
+	$this->assertEquals($expectedActiveRules, $activeRules, 'active rules ');
+    }
+
+    function testParseDupeShortUrl() {
+	$activeRules = array();
+	$activeRules['rewritehelpermock'][2] = 'phpunit1';
+	$activeRules['rewritehelpermock'][9] = 'phpunit2';
+	$expectedActiveRules = $activeRules;
+
+	list ($ret, $code, $regexRules, $shortUrls, $errno) = RewriteHelper::parseActiveRules(
+	    $activeRules, $this->_parser);
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(REWRITE_STATUS_DUPE_SHORT_URL, $code, 'code ');
+	$this->assertEquals(null, $regexRules, 'regex rules ');
+	$this->assertEquals(null, $shortUrls, 'short urls ');
+	$this->assertEquals(array('php.Unit'), $errno, 'errno ');
+	$this->assertEquals($expectedActiveRules, $activeRules, 'active rules ');
+    }
+}
+
+/**
+ * Mock rewrite parser for this test
+ *
+ * @package Rewrite
+ * @subpackage PHPUnit
+ */
+GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteParser.class');
+class RewriteHelperMockParser extends RewriteParser {
+    function RewriteHelperMockParser() {
+        $this->_setParserId('rewritehelpermock');
+        $this->_setParserType('mock');
+    }
+}
+
+/**
+ * Mock module for this test
+ *
+ * @package Rewrite
+ * @subpackage PHPUnit
+ */
+class RewriteHelperMockModule extends GalleryModule {
+    function RewriteHelperMockModule() {
+	global $gallery;
+
+	$this->setId('rewritehelpermock');
+	$this->setName('RewriteHelper Test Module');
+	$this->setDescription($gallery->i18n('Unit test module'));
+	$this->setVersion('1');
+	$this->setGroup('data', $gallery->i18n('Gallery'));
+	$this->setRequiredCoreApi(GalleryCoreApi::getApiVersion());
+	$this->setRequiredModuleApi(GalleryModule::getApiVersion());
+    }
+
+    function getRewriteRules() {
+	return array(
+	    array('pattern' => 'phpunit'),
+	    array('pattern' => 'php/%unit%',
+		  'keywords' => array('unit' => array('pattern' => '(.*)'))),
+	    array('pattern' => 'php/%unit%',
+		  'keywords' => array('unit' => array('pattern' => '(.*)',
+			'function' => array('bogus', 'BogusFile', 'BogusFunction1'))),
+		  'onLoad' => array('bogus', 'BogusFile', 'BogusFunction2'),
+		  'match' => array('view' => 'php.Unit')),
+	    array('pattern' => 'php/%unit%',
+		  'keywords' => array('unit' => array('pattern' => '([1])'),
+				      'php' => array('pattern' => '([2])'))),
+	    array('pattern' => 'php/%unit%',
+		  'keywords' => array('unit' => array('pattern' => '(.*)')),
+		  'match' => array('view' => 'php.Unit', 'subView' => 'php.Sub'),
+		  'queryString' => array('static' => 'value')),
+	    array('pattern' => 'phpunit',
+		  'flags' => array('C1', 'C2')),
+	    array('pattern' => '.',
+		  'queryString' => array('static' => 'value'),
+		  'restrict' => array('param' => 'bogus'),
+		  'exemptReferer' => 1),
+	    array('pattern' => 'phpunit',
+		  'parser' => 'mock'),
+	    array('pattern' => 'phpunit',
+		  'parser' => 'bogus'),
+	    array('pattern' => 'p',
+		  'match' => array('view' => 'php.Unit')));
     }
 }
 
@@ -355,122 +390,57 @@ class RewriteHelperTest extends GalleryTestCase {
  * @package Rewrite
  * @subpackage PHPUnit
  */
-class RewriteHelperTestPlatform extends GalleryPlatform{
-    var $_isWriteable;
-    var $_isReadable;
-    var $_fileExists;
-    var $_previousContent;
-    var $_embeddedFileContent;
-    var $_embeddedPreviousContent;
-
-    function init(&$test) {
-	$this->_test =& $test;
-	$this->_isWriteable = true;
-	$this->_isReadable = true;
-	$this->_fileExists = true;
-	$this->_previousContent = array();
-    }
-
-    function setIsWriteable($value) {
-	$this->_isWriteable = $value;
-    }
-
-    function setIsReadable($value) {
-	$this->_isReadable = $value;
-    }
-
-    function setFileExists($value) {
-	$this->_fileExists = $value;
-    }
-
-    function setPreviousContent($value) {
-	$this->_previousContent = $value;
-    }
-
-    function setEmbeddedPreviousContent($value) {
-	$this->_embeddedPreviousContent = $value;
-    }
-
-    function getFileContent() {
-	return $this->_test->_fileContent;
-    }
-
+class RewriteHelperMockPlatform extends GalleryPlatform {
     function file_exists($file) {
-	if (strpos($file, '/.htaccess') !== false) {
-	    return $this->_fileExists;
+	if (strpos($file, 'modules/rewritehelpermock/module.inc') !== false) {
+	    return true;
 	}
 
 	return parent::file_exists($file);
     }
 
-    function is_readable($file) {
-	if (strpos($file, '/.htaccess') !== false) {
-	    return $this->_isReadable;
-	}
-
-	return parent::is_readable($file);
-    }
-
-    function is_writeable($file) {
-	if (strpos($file, '/.htaccess') !== false ||
-		$file == dirname(dirname(dirname(dirname(dirname(__FILE__)))))) {
-	    return $this->_isWriteable;
-	}
-
-	return parent::is_writeable($file);
-    }
-
-    function file($file) {
-	if (strpos($file, 'embedded/.htaccess') !== false) {
-	    return $this->_embeddedPreviousContent;
-	} else if (strpos($file, '/.htaccess') !== false) {
-	    return $this->_previousContent;
-	}
-
-	return parent::file($file);
-    }
-
-    function fopen($file, $mode, $useIncludePath=null, $zcontext=null) {
-	if (strpos($file, 'embedded/.htaccess') !== false) {
-	    if ($this->_isWriteable) {
-		$this->_test->_fileContent = '';
-		return '.embedded';
-	    } else {
-		return null;
+    function opendir($path) {
+	if (strpos($path, '/modules/') !== false) {
+	    $this->_list = array();
+	    if ($dir = parent::opendir($path)) {
+		while(false !== ($file = parent::readdir($dir))) {
+		    array_push($this->_list, $file);
+		}
 	    }
-	} else if (strpos($file, '/.htaccess') !== false) {
-	    if ($this->_isWriteable) {
-		$this->_test->_fileContent = '';
-		return '.htaccess';
-	    } else {
-		return null;
-	    }
+	    array_push($this->_list, 'rewritehelpermock');
+	    return 'rewritehelpermock';
 	}
 
-	return parent::fopen($file, $mode, $useIncludePath, $zcontext);
+	return parent::opendir($path);
     }
 
-    function fwrite($handle, $string, $length=null) {
-	if ($handle == '.htaccess') {
-	    $this->_test->_fileContent .= $string;
-	    return strlen($string);
-	} else if ($handle == '.embedded') {
-	    $this->_embeddedFileContent .= $string;
-	    return strlen($string);
-	}
-
-	return fwrite($handle, $string, $length);
-    }
-
-    function fclose($handle) {
-	if ($handle == '.htaccess') {
-	    return true;
-	} else if ($handle == '.embedded') {
+    function is_dir($path) {
+	if (strpos($path, '/modules/rewritehelpermock') !== false) {
 	    return true;
 	}
 
-	return fclose($handle);
+	return parent::is_dir($path);
+    }
+
+    function readdir($handle) {
+	if ($handle == 'rewritehelpermock') {
+	    return array_shift($this->_list);
+	}
+
+	return parent::readdir($handle);
+    }
+
+    function closedir($handle) {
+	if ($handle == 'rewritehelpermock') {
+	    unset($this->_list);
+	    return true;
+	}
+
+	return parent::closedir($handle);
+    }
+
+    function recursiveRmdir($path) {
+	return true;
     }
 }
-
 ?>

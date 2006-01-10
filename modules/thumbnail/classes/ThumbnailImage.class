@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 /**
  * Load the parent class
  */
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryChildEntity.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryChildEntity.class');
 
 /**
  * Representation of an image used for thumbnails of non-image items.
@@ -44,13 +44,7 @@ GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryChildEntity.cla
  * @package Thumbnail
  * @subpackage Classes
  */
-class ThumbnailImage_core extends GalleryChildEntity {
-
-    /*
-     * ****************************************
-     *                 Members
-     * ****************************************
-     */
+class ThumbnailImage extends GalleryChildEntity {
 
     /**
      * The thumbnail image filename.
@@ -63,10 +57,10 @@ class ThumbnailImage_core extends GalleryChildEntity {
      * @g2   <required/>
      * @g2 </member>
      *
-     * @var string $_fileName
-     * @access private
+     * @var string $fileName
+     * @access public
      */
-    var $_fileName;
+    var $fileName;
 
     /**
      * The mime type of the image.
@@ -77,10 +71,10 @@ class ThumbnailImage_core extends GalleryChildEntity {
      * @g2   <member-size>MEDIUM</member-size>
      * @g2 </member>
      *
-     * @var string $_mimeType
-     * @access private
+     * @var string $mimeType
+     * @access public
      */
-    var $_mimeType;
+    var $mimeType;
 
     /**
      * The size of the image file.
@@ -90,10 +84,10 @@ class ThumbnailImage_core extends GalleryChildEntity {
      * @g2   <member-type>INTEGER</member-type>
      * @g2 </member>
      *
-     * @var int $_size
-     * @access private
+     * @var int $size
+     * @access public
      */
-    var $_size;
+    var $size;
 
     /**
      * The width of the image.
@@ -103,10 +97,10 @@ class ThumbnailImage_core extends GalleryChildEntity {
      * @g2   <member-type>INTEGER</member-type>
      * @g2 </member>
      *
-     * @var int $_width
-     * @access private
+     * @var int $width
+     * @access public
      */
-    var $_width;
+    var $width;
 
     /**
      * The height of the image.
@@ -116,10 +110,10 @@ class ThumbnailImage_core extends GalleryChildEntity {
      * @g2   <member-type>INTEGER</member-type>
      * @g2 </member>
      *
-     * @var int $_height
-     * @access private
+     * @var int $height
+     * @access public
      */
-    var $_height;
+    var $height;
 
     /**
      * The mime types for which this image is the default thumbnail.
@@ -129,14 +123,11 @@ class ThumbnailImage_core extends GalleryChildEntity {
      * @g2   <member-type>STRING</member-type>
      * @g2   <member-size>MEDIUM</member-size>
      * @g2 </member>
+     *
+     * @var string $itemMimeTypes
+     * @access public
      */
-    var $_itemMimeTypes;
-
-    /*
-     * ****************************************
-     *                 Methods
-     * ****************************************
-     */
+    var $itemMimeTypes;
 
     /**
      * Get array of item mime types.
@@ -166,16 +157,16 @@ class ThumbnailImage_core extends GalleryChildEntity {
      * @return object GalleryStatus a status code
      */
     function create($inputFileName, $mimeType, $targetName=null) {
-	GalleryCoreApi::relativeRequireOnce('modules/thumbnail/classes/ThumbnailHelper.class');
+	GalleryCoreApi::requireOnce('modules/thumbnail/classes/ThumbnailHelper.class');
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	/* Validate the input file */
 	if (empty($inputFileName)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 	if (!$platform->file_exists($inputFileName)) {
-	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__);
 	}
 
 	/* Uniquify name */
@@ -183,7 +174,7 @@ class ThumbnailImage_core extends GalleryChildEntity {
 	    $targetName = basename($inputFileName);
 	}
 	list ($ret, $list) = ThumbnailHelper::fetchThumbnails(true);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	while (in_array($targetName, $list)) {
@@ -192,7 +183,7 @@ class ThumbnailImage_core extends GalleryChildEntity {
 
 	/* No parent by default; create a root ChildEntity */
 	$ret = parent::createRoot();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -201,27 +192,27 @@ class ThumbnailImage_core extends GalleryChildEntity {
 	$this->setWidth(0);
 	$this->setHeight(0);
 
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$dir = $this->getThumbnailDir();
 	list ($success) = GalleryUtilities::guaranteeDirExists($dir);
 	if (!$success) {
-	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__);
 	}
 
 	$newFileName = $this->getThumbnailDir() . $targetName;
 	if (!$platform->copy($inputFileName, $newFileName)) {
-	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
 	}
 	$this->setSize($platform->filesize($newFileName));
 
 	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByProperty($mimeType, 'dimensions');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	if (isset($toolkit)) {
 	    list ($ret, $dimensions) = $toolkit->getProperty($mimeType, 'dimensions', $newFileName);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		$ret->addErrorCode(ERROR_BAD_DATA_TYPE);
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -229,7 +220,7 @@ class ThumbnailImage_core extends GalleryChildEntity {
 	    $this->setHeight($dimensions[1]);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -243,18 +234,19 @@ class ThumbnailImage_core extends GalleryChildEntity {
 
 	/* Delete myself */
 	$ret = parent::delete();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Delete our source file */
 	$path = $this->getThumbnailDir() . $this->getFileName();
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	if (!$platform->unlink($path)) {
-	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__, "Could not delete $path");
+	    return GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__,
+					 "Could not delete $path");
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -263,7 +255,7 @@ class ThumbnailImage_core extends GalleryChildEntity {
      * @return array(object GalleryStatus a status code, string path)
      */
     function fetchPath() {
-	return array(GalleryStatus::success(),
+	return array(null,
 		     $this->getThumbnailDir() . $this->getFileName());
     }
 
@@ -274,7 +266,7 @@ class ThumbnailImage_core extends GalleryChildEntity {
      */
     function getThumbnailDir() {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 	return $gallery->getConfig('data.gallery.plugins_data') .
 	    'modules' . $slash . 'thumbnail' . $slash;
@@ -291,10 +283,10 @@ class ThumbnailImage_core extends GalleryChildEntity {
 	switch($format) {
 	case 'HTML':
 	    $urlGenerator =& $gallery->getUrlGenerator();
-	    $src = $urlGenerator->generateUrl(array('view' => 'core.DownloadItem',
-						    'itemId' => $this->getId(),
-						    'serialNumber' => $this->getSerialNumber()),
-					      null, null, !empty($params['forceFullUrl']));
+	    $src = $urlGenerator->generateUrl(
+		array('view' => 'core.DownloadItem', 'itemId' => $this->getId(),
+		      'serialNumber' => $this->getSerialNumber()),
+		array('forceFullUrl' => !empty($params['forceFullUrl'])));
 
 	    list ($width, $height) = array($this->getWidth(), $this->getHeight());
 
@@ -325,7 +317,60 @@ class ThumbnailImage_core extends GalleryChildEntity {
 	    return null;
 	}
     }
-}
 
-include(dirname(__FILE__) . '/interfaces/ThumbnailImage.inc');
+    /**
+     * @see GalleryEntity::getClassName()
+     */
+    function getClassName() {
+	return 'ThumbnailImage';
+    }
+
+    function getFileName() {
+	return $this->fileName;
+    }
+
+    function setFileName($fileName) {
+	$this->fileName = $fileName;
+    }
+
+    function getMimeType() {
+	return $this->mimeType;
+    }
+
+    function setMimeType($mimeType) {
+	$this->mimeType = $mimeType;
+    }
+
+    function getSize() {
+	return $this->size;
+    }
+
+    function setSize($size) {
+	$this->size = $size;
+    }
+
+    function getWidth() {
+	return $this->width;
+    }
+
+    function setWidth($width) {
+	$this->width = $width;
+    }
+
+    function getHeight() {
+	return $this->height;
+    }
+
+    function setHeight($height) {
+	$this->height = $height;
+    }
+
+    function getItemMimeTypes() {
+	return $this->itemMimeTypes;;
+    }
+
+    function setItemMimeTypes($itemMimeTypes) {
+	$this->itemMimeTypes = $itemMimeTypes;
+    }
+}
 ?>

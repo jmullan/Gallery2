@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
 
 	/* Create a container album for all our test items */
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -55,12 +55,12 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
      */
     function testLinkItemSuccessful() {
 	list ($ret, $childAlbum) = $this->_createRandomAlbum($this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $childItem) = $this->_createRandomDataItem($childAlbum->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -85,12 +85,12 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
      */
     function testLinkAlbumUnsuccessful() {
 	list ($ret, $childAlbum) = $this->_createRandomAlbum($this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $grandChildAlbum) = $this->_createRandomAlbum($childAlbum->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -110,12 +110,12 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
     function testLinkItemWithoutViewFullPermissions() {
 	global $gallery;
 	list ($ret, $item) = $this->_createRandomDataItem($this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::removeItemPermissions($item->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -133,12 +133,12 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
      */
     function testLinkItemIntoBogusDestination() {
 	list ($ret, $childAlbum) = $this->_createRandomAlbum($this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $childItem) = $this->_createRandomDataItem($childAlbum->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -161,18 +161,18 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
      */
     function testLinkItemIntoAlbumWithNoAddPermissions() {
 	list ($ret, $childAlbum) = $this->_createRandomAlbum($this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $childItem) = $this->_createRandomDataItem($childAlbum->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Remove add permission in the destination */
 	$ret = GalleryCoreApi::removeItemPermissions($this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -193,7 +193,7 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
 	$items = array();
 	for ($i = 0; $i < 5; $i++) {
 	    list($ret, $items[$i]) = $this->_createRandomDataItem($this->_album->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
@@ -227,7 +227,7 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
 	$items = array();
 	for ($i = 0; $i < 5; $i++) {
 	    list($ret, $items[$i]) = $this->_createRandomDataItem($this->_album->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
@@ -259,12 +259,12 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
      */
     function testCreateLinkCancelButton() {
 	list ($ret, $childAlbum) = $this->_createRandomAlbum($this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $childItem) = $this->_createRandomDataItem($childAlbum->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -286,7 +286,7 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
      */
     function testLinkNoSelection() {
         list ($ret, $childAlbum) = $this->_createRandomAlbum($this->_album->getId());
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
 

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,11 +42,11 @@ class PanoramaModule extends GalleryModule {
 	$this->setId('panorama');
 	$this->setName($gallery->i18n('Panorama'));
 	$this->setDescription($gallery->i18n('View wide jpeg/gif images in a java applet viewer'));
-	$this->setVersion('1.0.1');
+	$this->setVersion('1.0.2');
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('getSiteAdminViews|getItemLinks');
-	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredModuleApi(array(2, 4));
+	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredModuleApi(array(3, 0));
     }
 
     /**
@@ -59,13 +59,13 @@ class PanoramaModule extends GalleryModule {
 			   'itemLink' => 1,
 			   'width' => 800) as $key => $value) {
 		$ret = $this->setParameter($key, $value);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -75,14 +75,14 @@ class PanoramaModule extends GalleryModule {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GalleryEntity', 'PanoramaDerivativeImage', 'PanoramaDerivativeImage',
 	    'modules/panorama/classes/PanoramaDerivativeImage.class', 'panorama', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GalleryEntity', 'PanoramaPhotoItem', 'PanoramaPhotoItem',
 	    'modules/panorama/classes/PanoramaPhotoItem.class', 'panorama', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -90,63 +90,48 @@ class PanoramaModule extends GalleryModule {
 	    'GalleryDerivative', 'PanoramaDerivativeImage', 'PanoramaDerivativeImage',
 	    'modules/panorama/classes/PanoramaDerivativeImage.class', 'panorama',
 	    array('PanoramaPhotoItem'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'ItemEditOption', 'PanoramaOption', 'PanoramaOption',
 	    'modules/panorama/PanoramaOption.inc', 'panorama', array('ItemEditPhoto'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
-    }
-
-    /**
-     * @see GalleryModule::isRecommendedDuringInstall()
-     */
-    function isRecommendedDuringInstall() {
-	return false;
-    }
-
-    /**
-     * @see GalleryModule::autoConfigure()
-     */
-    function autoConfigure() {
-	/* We don't require any special configuration */
-	return array(GalleryStatus::success(), true);
+	return null;
     }
 
     /**
      * @see GalleryModule::deactivate()
      */
     function deactivate($postDeactivationEvent=true) {
-	GalleryCoreApi::relativeRequireOnce('modules/panorama/classes/PanoramaHelper.class');
+	GalleryCoreApi::requireOnce('modules/panorama/classes/PanoramaHelper.class');
 	list ($ret, $count) = PanoramaHelper::fetchItemCount();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if ($count > 0) {
 	    /* Can't deactivate if panorama entities exist.. */
-	    return array(GalleryStatus::success(),
+	    return array(null,
 			 array('view' => 'core.SiteAdmin',
 			       'subView' => 'panorama.PanoramaSiteAdmin'));
 	}
 
 	list ($ret, $redirect) = parent::deactivate($postDeactivationEvent);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	return array(GalleryStatus::success(), $redirect);
+	return array(null, $redirect);
     }
 
     /**
      * @see GalleryModule::getSiteAdminViews()
      */
     function getSiteAdminViews() {
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array(array('name' => $this->translate('Panorama'),
 				 'view' => 'panorama.PanoramaSiteAdmin')));
     }
@@ -158,11 +143,11 @@ class PanoramaModule extends GalleryModule {
 	$links = array();
 
 	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'panorama');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if ($param['itemLink']) {
-	    GalleryCoreApi::relativeRequireOnce('modules/panorama/classes/PanoramaHelper.class');
+	    GalleryCoreApi::requireOnce('modules/panorama/classes/PanoramaHelper.class');
 
 	    /*
 	     * This won't obey the acting user id, but that's ok because it's only used to
@@ -170,7 +155,7 @@ class PanoramaModule extends GalleryModule {
 	     * user's permissions that we receive.
 	     */
 	    list ($ret, $images) = PanoramaHelper::fetchViewableImages($items);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    foreach ($items as $item) {
@@ -194,7 +179,7 @@ class PanoramaModule extends GalleryModule {
 		}
 	    }
 	}
-	return array(GalleryStatus::success(), $links);
+	return array(null, $links);
     }
 }
 ?>

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ class SimpleCallbackView extends GalleryView {
 	list ($command, $prefix) = GalleryUtilities::getRequestVariables('command', 'prefix');
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	if (!headers_sent()) {
@@ -64,7 +64,7 @@ class SimpleCallbackView extends GalleryView {
 	case 'lookupUsername':
 	    if ($gallery->getActiveUserId() != $anonymousUserId) {
 		list ($ret, $usernames) = GalleryCoreApi::fetchUsernames(10, null, $prefix);
-		if ($ret->isSuccess()) {
+		if (!$ret) {
 		    print implode("\n", $usernames);
 		}
 	    }
@@ -73,7 +73,7 @@ class SimpleCallbackView extends GalleryView {
 	case 'lookupGroupname':
 	    if ($gallery->getActiveUserId() != $anonymousUserId) {
 		list ($ret, $groupNames) = GalleryCoreApi::fetchGroupNames(10, null, $prefix);
-		if ($ret->isSuccess()) {
+		if (!$ret) {
 		    print implode("\n", $groupNames);
 		}
 	    }
@@ -81,7 +81,7 @@ class SimpleCallbackView extends GalleryView {
 
 	case 'lookupDirectories':
 	    list ($ret, $isSiteAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
-	    if ($ret->isSuccess() && $isSiteAdmin) {
+	    if (!$ret && $isSiteAdmin) {
 		$dirs = implode("\n",
 		    $this->_getAllImmediateSubdirs(GalleryUtilities::htmlEntityDecode($prefix)));
 		GalleryUtilities::sanitizeInputValues($dirs, false);
@@ -91,7 +91,7 @@ class SimpleCallbackView extends GalleryView {
 
 	case 'lookupFiles':
 	    list ($ret, $isSiteAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
-	    if ($ret->isSuccess() && $isSiteAdmin) {
+	    if (!$ret && $isSiteAdmin) {
 		$files = implode("\n",
 		    $this->_getAllFiles(GalleryUtilities::htmlEntityDecode($prefix)));
 		GalleryUtilities::sanitizeInputValues($files, false);
@@ -100,12 +100,12 @@ class SimpleCallbackView extends GalleryView {
 	    break;
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     function _getAllImmediateSubdirs($path) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	/* $path is UTF-8, we need it in the system charset for filesystem interactions */
 	$path = GalleryCoreApi::convertFromUtf8($path);
@@ -141,7 +141,7 @@ class SimpleCallbackView extends GalleryView {
 
     function _getAllFiles($path) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	/* $path is UTF-8, we need it in the system charset for filesystem interactions */
 	$path = GalleryCoreApi::convertFromUtf8($path);

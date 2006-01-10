@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,6 +109,14 @@ class GallerySession {
      */
     var $_remoteIdentifier;
 
+    /**
+     * Whether to force to resend the cookie
+     *
+     * @var bool $_forceResendCookie
+     * @access private
+     */
+    var $_forceResendCookie;
+
     /*
      * ****************************************
      *                 Methods
@@ -116,7 +124,7 @@ class GallerySession {
      */
 
     /**
-     * Either create a new session, or attach to an existing one.
+     * Initialize the session and load the session data 
      *
      * return object GalleryStatus a status code
      */
@@ -170,7 +178,7 @@ class GallerySession {
 	 * necessary
 	 */
 	list ($ret, $valid) = $this->_isSessionValid();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	if (!$valid) {
@@ -184,15 +192,15 @@ class GallerySession {
 
 	    /* Load session state */
 	    $ret = $this->_loadSessionData();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
-	$forceResendCookie = $forceSessionSave = false;
+	$this->_forceResendCookie = $forceSessionSave = false;
 
 	/* Verify the remote address to avoid casual session hijacking */
-	$currentRemoteIdentifier = $this->_getRemoteIdentifier();
+	$currentRemoteIdentifier = $this->getRemoteIdentifier();
 
 	if (!isset($this->_remoteIdentifier)) {
 	    /* Initialize remoteIdentifier if not yet set (via initEmpty(true)) */
@@ -215,7 +223,7 @@ class GallerySession {
 		 */
 		$this->_remoteIdentifier = $currentRemoteIdentifier;
 		$this->initEmpty();
-		$forceResendCookie = $forceSessionSave = true;
+		$this->_forceResendCookie = $forceSessionSave = true;
 	    }
 	}
 
@@ -225,142 +233,154 @@ class GallerySession {
 	    $this->_loadedSessionData = '';
 	}
 
-	/* Don't save session / send cookie for DownloadItem, CSS, migrate.Redirect requests .. */
-	if ($this->_shouldSaveSession()) {
-	    /* It's not one of the special cases; create session / send cookie if necessary */
+	return null;
+    }
 
-	    /*
-	     * As part of the cookie management, we are forced to append the SID to all DownloadItem
-	     * URLs in embedded G2 if cookie path / domain are not configured
-	     */
-	    list ($ret, $this->_cookieDomain) = GalleryCoreApi::getPluginParameter('module', 'core',
-										   'cookie.domain');
-	    if ($ret->isError()) {
+    /**
+     * Start the session by ensuring that we've got a valid, unique sessionId and send the cookie
+     * to the user agent if necessary
+     *
+     * @return object GalleryStatus a status code
+     */
+    function start() {
+	global $gallery;
+	
+	/*
+	 * Don't save session / send cookie for DownloadItem, CSS, migrate.Redirect requests ...
+	 * or if we're told to not send a cookie at all
+	 */
+	if (!$this->_shouldSaveSession() ||
+	        (isset($_COOKIE[SESSION_ID_PARAMETER]) &&
+	        $_COOKIE[SESSION_ID_PARAMETER] == $this->_sessionId && !$this->_forceResendCookie)) {
+	    return null;
+	}
+	
+	/*
+	 * Send back a cookie.
+	 *
+	 * TODO: Need to be able to decide for certain that the browser isn't
+	 * accepting cookies so that we can stop sending them.  We can do this
+	 * by recording how many times we've sent a cookie, and how many times
+	 * that we've received one back in return.  Leave that for later.
+	 */
+	$cookie = 'Set-Cookie: ' . SESSION_ID_PARAMETER . '=' . $this->_sessionId;
+	
+	/*
+	 * As part of the cookie management, we are forced to append the SID to all DownloadItem
+	 * URLs in embedded G2 if cookie path / domain are not configured
+	 */
+	list ($ret, $this->_cookieDomain) = $this->getCookieDomain();
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$urlGenerator =& $gallery->getUrlGenerator();
+	list ($ret, $this->_cookiePath) = $urlGenerator->getCookiePath();
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	list ($ret, $sessionLifetime) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'session.lifetime');
+	if ($ret) {
+	    if ($ret->getErrorCode() & ERROR_STORAGE_FAILURE) {
+		/*
+		 * During installation it's possible that the database isn't around yet.
+		 * Just keep going.
+		 */
+		$sessionLifetime = 0;
+	    } else {
 		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    $urlGenerator =& $gallery->getUrlGenerator();
-	    list ($ret, $this->_cookiePath) = $urlGenerator->getCookiePath();
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    if (!isset($_COOKIE[SESSION_ID_PARAMETER]) ||
-		$_COOKIE[SESSION_ID_PARAMETER] != $this->_sessionId ||
-		$forceResendCookie) {
-		/*
-		 * Send back a cookie.
-		 *
-		 * TODO: Need to be able to decide for certain that the browser isn't
-		 * accepting cookies so that we can stop sending them.  We can do this
-		 * by recording how many times we've sent a cookie, and how many times
-		 * that we've received one back in return.  Leave that for later.
-		 */
-		$cookie = 'Set-Cookie: ' . SESSION_ID_PARAMETER . '=' . $this->_sessionId;
-
-		list ($ret, $sessionLifetime) =
-		    GalleryCoreApi::getPluginParameter('module', 'core', 'session.lifetime');
-		if ($ret->isError()) {
-		    if ($ret->getErrorCode() & ERROR_STORAGE_FAILURE) {
-			/*
-			 * During installation it's possible that the database isn't around yet.
-			 * Just keep going.
-			 */
-			$sessionLifetime = 0;
-		    } else {
-			return $ret->wrap(__FILE__, __LINE__);
-		    }
-		}
-
-		if ($sessionLifetime > 0) {
-		    $expirationDate = GalleryUtilities::getHttpDate(time() + $sessionLifetime);
-		    $cookie .= '; expires=' . $expirationDate;
-		}
-
-		/* Because of short urls, the cookie path must always be set explicitly */
-		$cookie .= '; path=' . $this->_cookiePath;
-
-		/*
-		 * Set the cookie domain only if needed, i.e. embedded multi-subdomain installs
-		 * that is when G2 is installed on a different subdomain than the embedding
-		 * application
-		 *
-		 * Q: Why not set the cookie domain to .example.com (omitting the subdomains) and
-		 * and the cookie path to /?
-		 * A: This is actually a perfect fix (we had it in cvs between beta 3 and beta 4),
-		 * because the case where a browser sends back multiple cookies is completely avoided.
-		 * But it has a major flaw: security! When people share a common domain name, e.g.
-		 * by example.com/~accountName/ or by accountName.example.com, they will all have
-		 * cookies with .example.com and /. To differentiate the cookies, we introduced
-		 * the cookieId, i.e. each G2 install had its own unique cookie name.
-		 * But when a user accessed multiple accounts on this shared domain, the G2 cookie
-		 * is sent to all accounts which opens the door for session hijacking.
-		 * This single reason, security, made us not choose this approach.
-		 *
-		 * Q: Why not set the cookie domain to the actual host string (i.e. .www.example.com
-		 * when G2 is accessed like that or .example.com in other requests, ...)?
-		 * A: Because in RFC 2965, there is no rule in what order the browser should send back
-		 * the cookies. And thus, php/G2 wouldn't know which is the right cookie.
-		 *
-		 * Q: Why not just omit the cookie domain in the set cookie calls?
-		 * A: Actually, this is a good solution. Because if no cookie domain was set, the
-		 * browser sends only cookies back that match the requested domain exactly. So it
-		 * won't return a example.com cookie for www.example.com and the other way around.
-		 * But, and this is a big but, Internet Explorer doesn't conform to the RFC 2965.
-		 * IE sends back example.com and www.example.com cookies when it shouldn't.
-		 * Together with the php bug (least, most specific cookie match in HTTP_COOKIE),
-		 * this results in an unpredictable behavior for various php version / IE
-		 * scenarios.
-		 * Luckily we can fix this manually with fixCookieVars(). That's why we chose this
-		 * approach.
-		 *
-		 * Q: Why append the session id in embedded G2 to all DownloadItem URLs?
-		 * A: In embedded G2, all DownloadItem requests still go directly to G2 and not
-		 * through the emApp for performance reasons. If we set the cookie path in
-		 * embedded G2 to a path that matches embedded and standalone G2, then the
-		 * standalone G2 cookies always have precendence over the cookies from embedded
-		 * G2. This leads to cookie conflicts, if the two cookies correspond to different
-		 * sessions.
-		 * That's why we are forced to append the session id to embedded URLs that require
-		 * session management and go directly to standalone G2. DownloadItem is the only
-		 * request that falls into this category.
-		 *
-		 * Q: Why force the G2 base (standalone) path for java applet cookies?
-		 * A: Because the applets talk to G2 directly. If the cookie path was set to the
-		 * embedded G2 path, then it would not be selected for the HTTP requests of the
-		 * applet to G2, because it wouldn't path-match.
-		 *
-		 * Therefore we don't set the cookie domain by default and offer the option to set
-		 * it to a configured value if it is required (embedded multi-subdomain G2).
-		 * In embedded G2, we have to append the session id to all DownloadItem unless the
-		 * cookie path is configured such that standalone and embedded G2 set the same
-		 * cookie path.
-		 */
-		if (!empty($this->_cookieDomain)) {
-		    $cookie .= '; domain=' . $this->_cookieDomain;
-		}
-
-		/*
-		 * Tag on the HttpOnly modifier.  IE 6.0 SP1 will prevent any cookies
-		 * with this in it from being visible to JavaScript, which mitigates
-		 * XSS attacks.
-		 */
-		$cookie .= '; HttpOnly=1';
-
-		/*
-		 * Init may be called multiple times (from unit tests) but don't send the headers
-		 * more than once.
-		 */
-		$phpVm = $gallery->getPhpVm();
-		/*
-		 * Use our PhpVm for testability here
-		 */
-		if (!$phpVm->headers_sent()) {
-		    $phpVm->header($cookie);
-		}
 	    }
 	}
+	
+	if ($sessionLifetime > 0) {
+	    $expirationDate = GalleryUtilities::getHttpDate(time() + $sessionLifetime);
+	    $cookie .= '; expires=' . $expirationDate;
+	}
+	
+	/* Because of short urls, the cookie path must always be set explicitly */
+	$cookie .= '; path=' . $this->_cookiePath;
+	
+	/*
+	 * Set the cookie domain only if needed, i.e. embedded multi-subdomain installs
+	 * that is when G2 is installed on a different subdomain than the embedding
+	 * application
+	 *
+	 * Q: Why not set the cookie domain to .example.com (omitting the subdomains) and
+	 * and the cookie path to /?
+	 * A: This is actually a perfect fix (we had it in cvs between beta 3 and beta 4),
+	 * because the case where a browser sends back multiple cookies is completely avoided.
+	 * But it has a major flaw: security! When people share a common domain name, e.g.
+	 * by example.com/~accountName/ or by accountName.example.com, they will all have
+	 * cookies with .example.com and /. To differentiate the cookies, we introduced
+	 * the cookieId, i.e. each G2 install had its own unique cookie name.
+	 * But when a user accessed multiple accounts on this shared domain, the G2 cookie
+	 * is sent to all accounts which opens the door for session hijacking.
+	 * This single reason, security, made us not choose this approach.
+	 *
+	 * Q: Why not set the cookie domain to the actual host string (i.e. .www.example.com
+	 * when G2 is accessed like that or .example.com in other requests, ...)?
+	 * A: Because in RFC 2965, there is no rule in what order the browser should send back
+	 * the cookies. And thus, php/G2 wouldn't know which is the right cookie.
+	 *
+	 * Q: Why not just omit the cookie domain in the set cookie calls?
+	 * A: Actually, this is a good solution. Because if no cookie domain was set, the
+	 * browser sends only cookies back that match the requested domain exactly. So it
+	 * won't return a example.com cookie for www.example.com and the other way around.
+	 * But, and this is a big but, Internet Explorer doesn't conform to the RFC 2965.
+	 * IE sends back example.com and www.example.com cookies when it shouldn't.
+	 * Together with the php bug (least, most specific cookie match in HTTP_COOKIE),
+	 * this results in an unpredictable behavior for various php version / IE
+	 * scenarios.
+	 * Luckily we can fix this manually with fixCookieVars(). That's why we chose this
+	 * approach.
+	 *
+	 * Q: Why append the session id in embedded G2 to all DownloadItem URLs?
+	 * A: In embedded G2, all DownloadItem requests still go directly to G2 and not
+	 * through the emApp for performance reasons. If we set the cookie path in
+	 * embedded G2 to a path that matches embedded and standalone G2, then the
+	 * standalone G2 cookies always have precendence over the cookies from embedded
+	 * G2. This leads to cookie conflicts, if the two cookies correspond to different
+	 * sessions.
+	 * That's why we are forced to append the session id to embedded URLs that require
+	 * session management and go directly to standalone G2. DownloadItem is the only
+	 * request that falls into this category.
+	 *
+	 * Q: Why force the G2 base (standalone) path for java applet cookies?
+	 * A: Because the applets talk to G2 directly. If the cookie path was set to the
+	 * embedded G2 path, then it would not be selected for the HTTP requests of the
+	 * applet to G2, because it wouldn't path-match.
+	 *
+	 * Therefore we don't set the cookie domain by default and offer the option to set
+	 * it to a configured value if it is required (embedded multi-subdomain G2).
+	 * In embedded G2, we have to append the session id to all DownloadItem unless the
+	 * cookie path is configured such that standalone and embedded G2 set the same
+	 * cookie path.
+	 */
+	if (!empty($this->_cookieDomain)) {
+	    $cookie .= '; domain=' . $this->_cookieDomain;
+	}
+	
+	/*
+	 * Tag on the HttpOnly modifier.  IE 6.0 SP1 will prevent any cookies
+	 * with this in it from being visible to JavaScript, which mitigates
+	 * XSS attacks.
+	 */
+	$cookie .= '; HttpOnly=1';
+	
+	/*
+	 * Init may be called multiple times (from unit tests) but don't send the headers
+	 * more than once.
+	 */
+	$phpVm = $gallery->getPhpVm();
+	/*
+	 * Use our PhpVm for testability here
+	 */
+	if (!$phpVm->headers_sent()) {
+	    $phpVm->header($cookie);
+	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -372,7 +392,7 @@ class GallerySession {
 	    $this->_sessionId = md5(microtime() . rand(1, 32767));
 
 	    $ret = $this->_loadSessionData();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    /* Ensure we don't randomly pick an id already in use.. */
@@ -389,7 +409,7 @@ class GallerySession {
      */
     function save() {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$dieRoll = rand(1, 100);
 
 	if ($this->_shouldSaveSession()) {
@@ -415,13 +435,13 @@ class GallerySession {
 	    /* Perform garbage collection 1% of the time. */
 	    if ($dieRoll == 1) {
 		$ret = $this->_expireSessions();
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -431,7 +451,7 @@ class GallerySession {
      */
     function reset() {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$sessionFile = $gallery->getConfig('data.gallery.sessions') . $this->_sessionId;
 	if ($platform->file_exists($sessionFile)) {
 	    $platform->unlink($sessionFile);
@@ -446,13 +466,18 @@ class GallerySession {
 
 	/* Reset 'cached' variables */
 	$this->_cookieDomain = null;
+	$this->_forceResendCookie = null;
 
 	$ret = $this->init();
-	if ($ret->isError()) {
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$ret = $this->start();
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -496,7 +521,7 @@ class GallerySession {
 	    $this->put('core.navigation', $navigation);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -511,24 +536,24 @@ class GallerySession {
 
 	list ($ret, $sessionInactivityTimeout) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'session.inactivityTimeout');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	list ($ret, $lifetime) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'session.lifetime');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$inactiveCutoff = time() - $sessionInactivityTimeout;
 	$lifetimeCutoff = time() - $lifetime;
 
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$sessionsDir = $gallery->getConfig('data.gallery.sessions');
 	$dir = $platform->opendir($sessionsDir, 'r');
 	if (!$dir) {
-	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+	    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 					"Can't access session dir");
 	}
 
@@ -545,7 +570,7 @@ class GallerySession {
 	}
 	$platform->closedir($dir);
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -570,23 +595,23 @@ class GallerySession {
      * By default, don't set the cookie domain. Only set it, if G2 is configured to set it
      * (e.g. because it is a) embedded AND b) different subdomains are involved)
      *
-     * @return string the cookie domain, or '' if no cookie domain should be set
-     * @static
+     * @return array (object GalleryStatus a status code,
+     *                string the cookie domain, or '' if no cookie domain should be set)
+     * @access public
      */
     function getCookieDomain() {
-	return $this->_cookieDomain;
-    }
-
-    /**
-     * Get cookie path that will encompass G2 (and CMS app if embedded)
-     *
-     * The cookie path must be set because of short urls. The user agent would set the cookie path
-     * too restrictive with short urls enabled.
-     *
-     * @return array (object GalleryStatus a status code, string path)
-     */
-    function getCookiePath() {
-	return $this->_cookiePath;
+	if (!isset($this->_cookieDomain)) {
+	    list ($ret, $this->_cookieDomain) = GalleryCoreApi::getPluginParameter('module', 'core',
+										   'cookie.domain');
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if (!isset($this->_cookieDomain)) {
+		$this->_cookieDomain = '';
+	    }
+	}
+	
+	return array(null, $this->_cookieDomain);
     }
 
     /**
@@ -652,7 +677,7 @@ class GallerySession {
      */
     function _isSessionValid() {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	if (!empty($this->_sessionId)) {
 	    /* Check if the session has expired */
@@ -660,13 +685,13 @@ class GallerySession {
 	    if ($platform->file_exists($sessionFile)) {
 		list ($ret, $lifetime) =
 		    GalleryCoreApi::getPluginParameter('module', 'core', 'session.lifetime');
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		list ($ret, $inactivityTimeout) =
 		    GalleryCoreApi::getPluginParameter('module', 'core',
 						       'session.inactivityTimeout');
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		$lifetimeCutoff = time() - $lifetime;
@@ -676,14 +701,14 @@ class GallerySession {
 		    /* The session has timed out, remove it */
 		    $platform->unlink($sessionFile);
 		} else {
-		    return array(GalleryStatus::success(), true);
+		    return array(null, true);
 		}
 	    } else {
-		return array(GalleryStatus::success(), true);
+		return array(null, true);
 	    }
 	}
 
-	return array(GalleryStatus::success(), false);
+	return array(null, false);
     }
 
     /**
@@ -694,8 +719,7 @@ class GallerySession {
      */
     function _loadSessionData() {
 	global $gallery;
-
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$sessionFile = $gallery->getConfig('data.gallery.sessions') . $this->_sessionId;
 
 	$valid = false;
@@ -714,7 +738,7 @@ class GallerySession {
 	    $this->_emptySessionData();
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -726,7 +750,7 @@ class GallerySession {
 	$this->_sessionData = array();
 	$this->_loadedSessionData = '';
 	$this->_creationTime = time();
-	$this->_remoteIdentifier = $this->_getRemoteIdentifier();
+	$this->_remoteIdentifier = $this->getRemoteIdentifier();
     }
 
     /**
@@ -736,9 +760,8 @@ class GallerySession {
      * will cause all existing sessions to be discarded.
      *
      * @return array
-     * @access private
      */
-    function _getRemoteIdentifier() {
+    function getRemoteIdentifier() {
 	$httpUserAgent = GalleryUtilities::getServerVar('HTTP_USER_AGENT');
 	return array(GalleryUtilities::getRemoteHostAddress(),
 		     isset($httpUserAgent) ? md5($httpUserAgent) : null);
@@ -827,6 +850,28 @@ class GallerySession {
      */
     function getSessionId() {
 	return $this->_sessionId;
+    }
+
+    /**
+     * Return the user id of the active user of this sesison
+     *
+     * @return int the user id
+     */
+    function getUserId() {
+	if (isset($this->_sessionData['core.id.activeUser'])) {
+	    return $this->_sessionData['core.id.activeUser'];
+	}
+
+	return null;
+    }
+
+    /**
+     * Set the active user id for this session
+     *
+     * @param int user id
+     */
+    function setUserId($userId) {
+	$this->_sessionData['core.id.activeUser'] = $userId;
     }
 
     /**
@@ -960,35 +1005,21 @@ class GallerySession {
 	    GalleryDataCache::put($cacheKey, $forceValue);
 	} else if (!GalleryDataCache::containsKey($cacheKey)) {
 	    $flag = true; /* Default to true */
-	    list ($view, $controller) =
-		GalleryUtilities::getRequestVariables('view', 'controller');
+	    list ($view, $controller) = GalleryUtilities::getRequestVariables('view', 'controller');
 
-	    /* old code still in use for now: */
-	    /* Check if the current request's view or controller is in the exclude list */
-	    if (!empty($view) && in_array($view, array('core.DownloadItem',
-						       'core:DownloadItem', 'imageframe.CSS'))) {
-		$flag = false;
-	    } else if (!empty($controller) && in_array($controller, array('migrate.Redirect',
-									  'migrate:Redirect'))) {
-		$flag = false;
-	    }
-
-	    /* TODO: use this code instead with next major version bump of module api..
 	    if (!empty($controller)) {
-		GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryController.class');
+		GalleryCoreApi::requireOnce('modules/core/classes/GalleryController.class');
 		list ($ret, $controller) = GalleryController::loadController($controller);
-		if ($ret->isSuccess() && !$controller->shouldSaveSession()) {
+		if (!$ret && !$controller->shouldSaveSession()) {
 		    $flag = false;
 		}
-	    }
-	    if (!empty($view)) {
-		GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryView.class');
+	    } else if (!empty($view)) {
+		GalleryCoreApi::requireOnce('modules/core/classes/GalleryView.class');
 		list ($ret, $view) = GalleryView::loadView($view);
-		if ($ret->isSuccess() && !$view->shouldSaveSession()) {
+		if (!$ret && !$view->shouldSaveSession()) {
 		    $flag = false;
 		}
 	    }
-	     */
 
 	    GalleryDataCache::put($cacheKey, $flag);
 	}
@@ -996,5 +1027,4 @@ class GallerySession {
 	return GalleryDataCache::get($cacheKey);
     }
 }
-
 ?>

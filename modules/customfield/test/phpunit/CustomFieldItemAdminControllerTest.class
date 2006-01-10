@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 /**
  * Load required classes
  */
-GalleryCoreApi::relativeRequireOnce('modules/customfield/classes/CustomFieldHelper.class');
+GalleryCoreApi::requireOnce('modules/customfield/classes/CustomFieldHelper.class');
 
 /**
  * CustomFieldItemAdmin controller tests
@@ -46,7 +46,7 @@ class CustomFieldItemAdminControllerTest extends GalleryControllerTestCase {
 	parent::setUp();
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -55,13 +55,13 @@ class CustomFieldItemAdminControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(),
 		'image/test', array(), __FILE__, 'GalleryPhotoItem');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'customfield');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -79,14 +79,14 @@ class CustomFieldItemAdminControllerTest extends GalleryControllerTestCase {
 		      'summary' => false, 'detail' => false, 'choices' => array('A', 'B'))
 	    )
 	));
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = CustomFieldHelper::saveFieldValues($this->_item,
 				  array('Catalog Id' => 'A2', 'Category' => 'A'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -108,7 +108,7 @@ class CustomFieldItemAdminControllerTest extends GalleryControllerTestCase {
 	// Check values are retained..
 	list ($ret, $data, $tmp, $isContainer) =
 		CustomFieldHelper::fetchFieldValues(array($this->_item));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array('Catalog Id' => 'A2', 'Category' => 'A'),
@@ -143,7 +143,7 @@ class CustomFieldItemAdminControllerTest extends GalleryControllerTestCase {
 	// Set values..
 	$ret = CustomFieldHelper::saveFieldValues($this->_item,
 				  array('Catalog Id' => 'A3', 'Category' => 'B', 'Dummy' => 'X'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -159,7 +159,7 @@ class CustomFieldItemAdminControllerTest extends GalleryControllerTestCase {
 	// Check values..
 	list ($ret, $data, $tmp, $isContainer) =
 		CustomFieldHelper::fetchFieldValues(array($this->_item));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array('Catalog Id' => 'A3', 'Category' => 'B'),

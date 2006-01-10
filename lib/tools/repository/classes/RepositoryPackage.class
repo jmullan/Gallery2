@@ -1,7 +1,7 @@
 <?php
 /*
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,17 +54,17 @@ class RepositoryPackage extends RepositoryObject {
 	parent::init();
 
 	$ret = $this->setOutputDir($outputDir);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$this->_descriptor = $descriptor;
 
 	$this->setTemplateFile('package.tpl');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -80,7 +80,7 @@ class RepositoryPackage extends RepositoryObject {
 
 	foreach ($this->_descriptor->getPackages() as $packageType) {
 	    $ret = $this->writeSinglePackageToDisk($packageType, $overwritePackages);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    if ($this->_wasFileWritten) {
@@ -90,7 +90,7 @@ class RepositoryPackage extends RepositoryObject {
 	    }
 	}
 
-	return array(GalleryStatus::success(), array('packagesWritten' => $packagesWritten,
+	return array(null, array('packagesWritten' => $packagesWritten,
 						     'packagesSkipped' => $packagesSkipped));
     }
 
@@ -114,11 +114,11 @@ class RepositoryPackage extends RepositoryObject {
 	}
 
 	/* File creation code. */
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	foreach ($this->_descriptor->getFilesInPackage($packageType) as $file) {
 	    $pluginFilePath = $this->_descriptor->getPluginDir() . $file;
 	    if (false === ($fileContents = $platform->file_get_contents($pluginFilePath))) {
-		return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__, sprintf(
+		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__, sprintf(
 					    'Error reading path [%s]', $pluginFilePath));
 	    }
 	    $packageFiles[] = array('path' => $file,
@@ -132,10 +132,10 @@ class RepositoryPackage extends RepositoryObject {
 	$this->setOutputFile($this->getPackageFileName($packageType));
 
 	$ret = $this->writeToDisk($overwritePackage);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	return GalleryStatus::success();
+	return null;
     }
 
     /**

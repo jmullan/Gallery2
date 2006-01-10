@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
             'GalleryToolkit', 'ItemMoveSingleTestToolkit', 'ItemMoveSingleTestToolkit', $path,
             'coreTest', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -57,7 +57,7 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 		array(array('type' => 'int', 'description' => 'foo'),
 		      array('type' => 'int', 'description' => 'foo')),
 		'test-description');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -66,7 +66,7 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 		array(array('type' => 'int', 'description' => 'foo'),
 		      array('type' => 'int', 'description' => 'foo')),
 		'test-description');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -76,13 +76,13 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 		      array('type' => 'float', 'description' => 'foo'),
 		      array('type' => 'float', 'description' => 'foo'),
 		      array('type' => 'float', 'description' => 'foo')), 'test-description');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $this->_rootAlbum) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -91,7 +91,7 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 	$this->_setDerivativePreferences($this->_rootAlbum->getId(), 150, 300, 400);
 
 	list ($ret, $this->_destinationAlbum) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -102,7 +102,7 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 	/* Create a data item */
 	list ($ret, $this->_item) = $this->_createRandomDataItem(
 		$this->_rootAlbum->getId(), 'image/test', array('width' => 1000));
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -113,20 +113,20 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 	$itemId = array_shift($args);
 	$thumbSize = array_shift($args);
 	$ret = GalleryCoreApi::removeDerivativePreferencesForItem($itemId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::addDerivativePreference(0, $itemId,
 		   DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'thumbnail|' . $thumbSize);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	foreach ($args as $i => $resizeSize) {
 	    $ret = GalleryCoreApi::addDerivativePreference($i+1, $itemId,
 			DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|' . $resizeSize);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -139,7 +139,7 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 	}
 	$data = array();
 	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds($itemIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -148,7 +148,7 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 				 'op' => $deriv->getDerivativeOperations());
 	}
 	list ($ret, $resizes) = GalleryCoreApi::fetchResizesByItemIds($itemIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -168,7 +168,7 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 	/* Create derivatives according to prefs of original album */
 	$ret = GalleryCoreApi::addExistingItemToAlbum(
 				$this->_item, $this->_rootAlbum->getId(), true);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -194,7 +194,7 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 
 	/* Verify parent sequence */
 	list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($this->_item->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array($this->_getRootId(),
@@ -224,7 +224,7 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 
 	/* Verify parent sequence */
 	list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($this->_item->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array($this->_getRootId(),
@@ -276,7 +276,7 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
      */
     function testMoveItemIntoChild() {
 	list ($ret, $this->_childAlbum) = $this->_createRandomAlbum($this->_rootAlbum->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -302,7 +302,7 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[destination]', $this->_destinationAlbum->getId());
 
 	$ret = GalleryCoreApi::removeItemPermissions($this->_destinationAlbum->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -319,7 +319,7 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[destination]', $this->_destinationAlbum->getId());
 
 	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -334,28 +334,28 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 	/* Create derivatives according to prefs of original album */
 	$ret = GalleryCoreApi::addExistingItemToAlbum(
 				$this->_item, $this->_rootAlbum->getId(), true);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Add crop operation */
 	list ($ret, $thumbnails) =
 	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item->getId()));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$thumb = $thumbnails[$this->_item->getId()];
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($thumb->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$thumb->setDerivativeOperations('crop|0,0,50,50;' . $thumb->getDerivativeOperations());
 	$ret = $thumb->save();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::releaseLocks($lockId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 

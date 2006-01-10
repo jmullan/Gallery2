@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ class GalleryLockHelper_simple {
 	global $gallery;
 	$result =& $gallery->getLockSystem();
 	$ret = $result[0];
-	if ($ret->isError()) {
+	if ($ret) {
 	    /* Swallow this error; the API does not allow us to return one here */
 	    $result = array(); return $result;  /* Doing it this way keeps the Code Audit happy */
 	}
@@ -58,17 +58,17 @@ class GalleryLockHelper_simple {
 	global $gallery;
 	$result =& $gallery->getLockSystem();
 	$ret = $result[0];
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$lockSystem =& $result[1];
 
 	list ($ret, $lockId) = $lockSystem->acquireReadLock($ids, $timeout);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $lockId);
+	return array(null, $lockId);
     }
 
     /**
@@ -95,7 +95,7 @@ class GalleryLockHelper_simple {
 	$storage =& $gallery->getStorage();
 	$result =& $gallery->getLockSystem();
 	$ret = $result[0];
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$lockSystem =& $result[1];
@@ -114,13 +114,13 @@ class GalleryLockHelper_simple {
         ';
 
 	list ($ret, $searchResults) = $gallery->search($query, array($id));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	if ($searchResults->resultCount() == 0) {
 	    /* No parents; nothing to lock */
-	    return array(GalleryStatus::success(), null);
+	    return array(null, null);
 	}
 
 	/* Extract the parent ids */
@@ -141,16 +141,16 @@ class GalleryLockHelper_simple {
 
 	if (empty($parentIds)) {
 	    /* No locks required */
-	    return array(GalleryStatus::success(), null);
+	    return array(null, null);
 	}
 
 	/* Read lock the parents */
 	list ($ret, $lock) = $lockSystem->acquireReadLock($parentIds, $timeout);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $lock);
+	return array(null, $lock);
     }
 
     /**
@@ -160,7 +160,7 @@ class GalleryLockHelper_simple {
 	global $gallery;
 	$result =& $gallery->getLockSystem();
 	$ret = $result[0];
-	if ($ret->isError()) {
+	if ($ret) {
 	    /* This method doesn't return a status code.  What should we do? */
 	    print $ret->getAsHtml();
 	    return false;
@@ -177,17 +177,17 @@ class GalleryLockHelper_simple {
 	global $gallery;
 	$result =& $gallery->getLockSystem();
 	$ret = $result[0];
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$lockSystem =& $result[1];
 
 	list ($ret, $lockId) = $lockSystem->acquireWriteLock($ids, $timeout);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $lockId);
+	return array(null, $lockId);
     }
 
     /**
@@ -197,7 +197,7 @@ class GalleryLockHelper_simple {
 	global $gallery;
 	$result =& $gallery->getLockSystem();
 	$ret = $result[0];
-	if ($ret->isError()) {
+	if ($ret) {
 	    /* This method doesn't return a status code.  What should we do? */
 	    print $ret->getAsHtml();
 	    return false;
@@ -214,17 +214,17 @@ class GalleryLockHelper_simple {
 	global $gallery;
 	$result =& $gallery->getLockSystem();
 	$ret = $result[0];
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$lockSystem =& $result[1];
 
 	$ret = $lockSystem->releaseLocks($lockIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -234,17 +234,17 @@ class GalleryLockHelper_simple {
 	global $gallery;
 	$result =& $gallery->getLockSystem();
 	$ret = $result[0];
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$lockSystem =& $result[1];
 
 	$ret = $lockSystem->releaseAllLocks();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -254,17 +254,17 @@ class GalleryLockHelper_simple {
 	global $gallery;
 	$result =& $gallery->getLockSystem();
 	$ret = $result[0];
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$lockSystem =& $result[1];
 
 	$ret = $lockSystem->refreshLocks();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 }
 ?>

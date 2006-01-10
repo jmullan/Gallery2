@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,9 +43,9 @@ class PrintPhotoController extends GalleryController {
 
 	list ($itemId, $returnUrl) = GalleryUtilities::getRequestVariables('itemId', 'returnUrl');
 
-	GalleryCoreApi::relativeRequireOnce('modules/photoaccess/classes/PhotoAccessHelper.class');
+	GalleryCoreApi::requireOnce('modules/photoaccess/classes/PhotoAccessHelper.class');
 	list ($ret, $cartUrl) = PhotoAccessHelper::printPhotos(array($itemId => 1), $returnUrl);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -54,7 +54,7 @@ class PrintPhotoController extends GalleryController {
 	$results['status'] = array();
 	$results['error'] = array();
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 ?>

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,54 +47,54 @@ class SizeLimitHelper {
 
 	/* Get the path of the source */
 	list($ret, $sourcePath) = $item->fetchPath();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Get the appropriate toolkit */
 	list ($ret, $toolkit) =
 	    GalleryCoreApi::getToolkitByOperation($item->getMimeType(), $operation);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	if (!isset($toolkit)) {
-	    return GalleryStatus::error(ERROR_UNSUPPORTED_FILE_TYPE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_UNSUPPORTED_FILE_TYPE, __FILE__, __LINE__);
 	}
 
 	/* Perform the operation */
 	list ($ret, $outputMimeType) =
 	    $toolkit->performOperation($item->getMimeType(), $operation,
 	    $sourcePath, $sourcePath, $args);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$item->setMimeType($outputMimeType);
 
 	/* Get the item to rescan its data object */
 	$ret = $item->rescan();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($item->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Save the item */
 	$ret = $item->save();
-	if ($ret->isError()) {
+	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockId);
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$ret = GalleryCoreApi::releaseLocks($lockId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -112,18 +112,18 @@ class SizeLimitHelper {
 	/* Check to see if we have a preferred source */
 	list ($ret, $preferred) =
 	    GalleryCoreApi::fetchPreferredSource($item);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Make sure we support the given operation */
 	list ($ret, $toolkit) =
 	    GalleryCoreApi::getToolkitByOperation($item->getMimeType(), $operation);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	if (!isset($toolkit)) {
-	    return GalleryStatus::error(ERROR_UNSUPPORTED_FILE_TYPE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_UNSUPPORTED_FILE_TYPE, __FILE__, __LINE__);
 	}
 
 	/*
@@ -133,7 +133,7 @@ class SizeLimitHelper {
 	if ($preferred->getId() == $item->getId()) {
 	    list ($ret, $preferred) = GalleryCoreApi::newFactoryInstanceByHint(
 		'GalleryDerivative', $item->getEntityType());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
@@ -142,7 +142,7 @@ class SizeLimitHelper {
 	    }
 
 	    $ret = $preferred->create($item->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
@@ -150,7 +150,7 @@ class SizeLimitHelper {
 	    $preferred->setMimeType($item->getMimeType());
 
 	    $ret = GalleryCoreApi::remapSourceIds($item->getId(), $preferred->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
@@ -158,28 +158,28 @@ class SizeLimitHelper {
 	$operationString = $operation . '|' . join(',', $args);
 	list ($ret, $operations) = GalleryCoreApi::mergeDerivativeOperations(
 	    $preferred->getDerivativeOperations(), $operationString);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$preferred->setDerivativeOperations($operations);
 
 	list ($ret, $lockIds) = GalleryCoreApi::acquireWriteLock($preferred->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$ret = $preferred->save();
-	if ($ret->isError()) {
+	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockIds);
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	if (!empty($lockIds)) {
 	    $ret = GalleryCoreApi::releaseLocks($lockIds);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
-	return GalleryStatus::success();
+	return null;
     }
 }
 ?>

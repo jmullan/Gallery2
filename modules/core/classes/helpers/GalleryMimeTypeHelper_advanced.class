@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,7 @@
  * @package GalleryCore
  * @subpackage Classes
  */
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryMimeTypeMap.class');
-GalleryCoreApi::relativeRequireOnce(
+GalleryCoreApi::requireOnce(
     'modules/core/classes/helpers/GalleryMimeTypeHelper_simple.class');
 
 class GalleryMimeTypeHelper_advanced {
@@ -215,22 +214,22 @@ class GalleryMimeTypeHelper_advanced {
 	    'image/gif' => 1, 'image/png' => 1);
 
 	/* Start with a clean slate */
-	$ret = GalleryMimeTypeMap::removeAllMapEntries();
-	if ($ret->isError()) {
+	$ret = GalleryCoreApi::removeAllMapEntries('GalleryMimeTypeMap');
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	foreach ($mimeTypes as $ext => $mime) {
 	    $mimeTypeMap = array('extension' => $ext, 'mimeType' => $mime,
 		'viewable' => (int) isset($viewableMimeTypes[$mime]));
-	    $ret = GalleryMimeTypeMap::addMapEntry($mimeTypeMap);
-	    if ($ret->isError()) {
+	    $ret = GalleryCoreApi::addMapEntry('GalleryMimeTypeMap', $mimeTypeMap);
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
 	GalleryMimeTypeHelper_simple::_deleteCache();
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -241,12 +240,12 @@ class GalleryMimeTypeHelper_advanced {
      * @return object GalleryStatus a status code
      */
     function removeMimeType($mimeMatch) {
-	$ret = GalleryMimeTypeMap::removeMapEntry($mimeMatch);
-	if ($ret->isError()) {
+	$ret = GalleryCoreApi::removeMapEntry('GalleryMimeTypeMap', $mimeMatch);
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	GalleryMimeTypeHelper_simple::_deleteCache();
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -273,23 +272,25 @@ class GalleryMimeTypeHelper_advanced {
 	';
 	list ($ret, $results) =
 	    $gallery->search($query, array($extension), array('limit' => array('count' => 1)));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	if ($results->resultCount() > 0) {
-	    return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_COLLISION, __FILE__, __LINE__);
 	}
 
 	/* Insert the record */
-	$ret = GalleryMimeTypeMap::addMapEntry(array(
-	    'extension' => $extension, 'mimeType' => $mimeType, 'viewable' => $viewable ? 1 : 0));
-	if ($ret->isError()) {
+	$ret = GalleryCoreApi::addMapEntry(
+	    'GalleryMimeTypeMap',
+	    array('extension' => $extension, 'mimeType' => $mimeType,
+		  'viewable' => $viewable ? 1 : 0));
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	GalleryMimeTypeHelper_simple::_deleteCache();
-	return GalleryStatus::success();
+	return null;
     }
 }
 ?>

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ class ConfirmRegistrationController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	GalleryCoreApi::relativeRequireOnce(
+	GalleryCoreApi::requireOnce(
 	    'modules/register/classes/GalleryPendingUserHelper.class');
 	$results = array('status' => array(), 'error' => array());
 
@@ -48,14 +48,14 @@ class ConfirmRegistrationController extends GalleryController {
 	list ($username, $regKey) = GalleryUtilities::getRequestVariables('username', 'key');
 
 	list ($ret, $user) = GalleryPendingUserHelper::fetchPendingUserByUsername($username);
-	if ($ret->isError()) {
+	if ($ret) {
 	    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
 		/*
 		 * If the username is now a real user then maybe we got here via return-url
 		 * after login.. let's just return to previous url instead of showing error msg.
 		 */
 		list ($ret, $user) = GalleryCoreApi::fetchUserByUsername($username);
-		if ($ret->isSuccess()) {
+		if (!$ret) {
 		    $results['redirect'] = array('return' => true);
 		} else {
 		    $results['error'][] = 'form[error][unknownUser]';
@@ -69,7 +69,7 @@ class ConfirmRegistrationController extends GalleryController {
 		$results['error'][] = 'form[error][unknownUser]';
 	    } else {
 		$ret = GalleryPendingUserHelper::createGalleryUser($user);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
@@ -80,7 +80,7 @@ class ConfirmRegistrationController extends GalleryController {
 					 'subView' => 'register.ConfirmRegistration');
 	}
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -97,7 +97,7 @@ class ConfirmRegistrationView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	$template->setVariable('controller', 'register.ConfirmRegistration');
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/register/templates/ConfirmRegistration.tpl'));
     }
 }

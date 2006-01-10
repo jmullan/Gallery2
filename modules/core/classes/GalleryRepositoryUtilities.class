@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ class GalleryRepositoryUtilities {
      *
      * @param string to exract timestamp from
      * @return array object GalleryStatus a status code
-     * 		     string timestamp
+     *               string timestamp
      */
     function extractTimestamp($string) {
 	if (preg_match('/(\d{4})\/(\d{2})\/(\d{2}) (\d{2}):(\d{2}):(\d{2})/', $string, $date)) {
@@ -66,11 +66,11 @@ class GalleryRepositoryUtilities {
 	    }
 	    $date = date('YmdHis', $timestamp);
 	} else {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 					      "No timestamp found in [$string]"),
 			 null);
 	}
-	return array(GalleryStatus::success(), $date);
+	return array(null, $date);
     }
 
     /**
@@ -81,17 +81,17 @@ class GalleryRepositoryUtilities {
      *
      * @param string to exract revision from
      * @return array object GalleryStatus a status code
-     * 		     string revision
+     *               string revision
      */
     function extractRevision($string) {
 	if (preg_match('/.*,v ([\d.]+) \d.*/U', $string, $revision)) {
 	    $revision = $revision[1];
 	} else {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 					      "No revision found in [$string]"),
 			 null);
 	}
-	return array(GalleryStatus::success(), $revision);
+	return array(null, $revision);
     }
 
     /**
@@ -117,14 +117,14 @@ class GalleryRepositoryUtilities {
 	if (!empty($build1) && !empty($build2) && empty($relation)) {
 	    /* Get Unix timestamps for builds. */
 	    if (!preg_match('/(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/', $build1, $build1)) {
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 						  "Invalid build number [$build1]"),
 			     null);
 	    }
 	    $build1 =
 		mktime($build1[4], $build1[5], $build1[6], $build1[2], $build1[3], $build1[1]);
 	    if (!preg_match('/(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/', $build2, $build2)) {
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 						  "Invalid build number [$build2]"),
 			     null);
 	    }
@@ -141,7 +141,7 @@ class GalleryRepositoryUtilities {
 	    $relation = 'equal';
 	}
 
-	return array(GalleryStatus::success(), $relation);
+	return array(null, $relation);
     }
 
     /**
@@ -160,7 +160,7 @@ class GalleryRepositoryUtilities {
 	$revision2 = explode('.', $revision2);
 
 	$subRevisions = count($revision1) > count($revision2) ? count($revision1)
-				 			      : count($revision2);
+							      : count($revision2);
 	for ($i = 0; $i < $subRevisions; $i ++) {
 	    if (!isset($revision2[$i])) {
 		$relation = 'newer';
@@ -184,21 +184,21 @@ class GalleryRepositoryUtilities {
      * @param string file path
      * @param int bytes to read
      * @return array object GalleryStatus a status code
-     * 		     string first line from file
+     *               string first line from file
      */
     function getFirstBytesFromFile($path, $bytes) {
 	global $gallery;
+	$platform =& $gallery->getPlatform();
 
-	$platform = $gallery->getPlatform();
 	if ($file = $platform->fopen($path, 'r')) {
 	    $data = $platform->fread($file, $bytes);
 	    $platform->fclose($file);
 	} else {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 					      "Error reading file [$path]"),
 			 '');
 	}
-	return array(GalleryStatus::success(), $data);
+	return array(null, $data);
     }
 
     /**
@@ -213,28 +213,28 @@ class GalleryRepositoryUtilities {
 	global $gallery;
 
 	/* Make sure that strings.raw exists where we expect it. */
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$pluginBaseDir = GalleryCoreApi::getPluginBaseDir($pluginType, $pluginId, true);
 	$pluginLanguageBasePath =
 	    sprintf('%s%ss/%s/po/strings.raw', $pluginBaseDir, $pluginType, $pluginId);
 	if (!$platform->file_exists($pluginLanguageBasePath)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 					      "Strings.raw not found [$pluginLanguageBasePath]"),
 			 null);
 	}
 
 	/* Get the strings.raw file's first line which contains the timestamp. */
 	list ($ret, $line) = $this->getFirstBytesFromFile($pluginLanguageBasePath, 128);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $revision) = $this->extractRevision($line);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $revision);
+	return array(null, $revision);
     }
 
     /**
@@ -248,12 +248,12 @@ class GalleryRepositoryUtilities {
     function isPluginAvailable($pluginType, $pluginId) {
 	/* REVISIT: Cache plugin list/convert to hashtable for better performance? */
 	list ($ret, $plugins) = GalleryCoreApi::getAllPluginIds($pluginType);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$isAvailable = in_array($pluginId, $plugins);
-	return array(GalleryStatus::success(), $isAvailable);
+	return array(null, $isAvailable);
     }
 
     /**
@@ -328,8 +328,8 @@ class GalleryRepositoryUtilities {
 	global $gallery;
 
 	if (empty($pluginType) || empty($pluginId)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-			 		 "Missing plugin type [$pluginType] and/or ID [$pluginId]"),
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					 "Missing plugin type [$pluginType] and/or ID [$pluginId]"),
 			 null);
 	}
 
@@ -347,7 +347,7 @@ class GalleryRepositoryUtilities {
 	    ';
 
 	list ($ret, $searchResults) = $gallery->search($query, array($pluginType, $pluginId));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -356,7 +356,7 @@ class GalleryRepositoryUtilities {
 	    $data[$result[0]] = array('version' => $result[1], 'build' => $result[2]);
 	}
 
-	return array(GalleryStatus::success(), $data);
+	return array(null, $data);
     }
 
     /**
@@ -374,7 +374,7 @@ class GalleryRepositoryUtilities {
 	$supportedLanguages = $translator->getSupportedLanguages();
 
 	if (!preg_match('/^(..)_(..)$/', $languageCode, $parts)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 					      "Invalid language code specified [$languageCode]"),
 			 null);
 	}
@@ -382,12 +382,12 @@ class GalleryRepositoryUtilities {
 	$country = $parts[2];
 
 	if (!isset($supportedLanguages[$language][$country]['description'])) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 					      "Language not supported [{$language}_{$country}]"),
 			 null);
 	}
 
-	return array(GalleryStatus::success(),
+	return array(null,
 	$supportedLanguages[$language][$country]['description']);
     }
 
@@ -401,11 +401,11 @@ class GalleryRepositoryUtilities {
      */
     function getPluginVersion($pluginType, $pluginId) {
 	list ($ret, $plugin) = GalleryCoreApi::loadPlugin($pluginType, $pluginId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $plugin->getVersion());
+	return array(null, $plugin->getVersion());
     }
 
     /**
@@ -420,8 +420,9 @@ class GalleryRepositoryUtilities {
      *		     string file contents
      */
     function downloadFile($url) {
-	list ($contents, $response, $headers, $actualUrl) = GalleryCoreApi::fetchWebPage($url);
-	if (empty($contents) || strpos($response, '404 Not Found') !== false) {
+	list ($successful, $contents, $response, $headers, $actualUrl) = 
+	    GalleryCoreApi::fetchWebPage($url);
+	if (empty($contents) || !$successful) {
 	    return array(false, null);
 	}
 	return array(true, $contents);

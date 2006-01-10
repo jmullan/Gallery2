@@ -3,7 +3,7 @@
  * $RCSfile
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ function parsePoFiles($poFiles) {
     $seenPlugins = array();
     $maxMessageCount = array();
     foreach ($poFiles as $poFile) {
-	if (! preg_match("|((?:\w+/)+)po/(\w{2}_\w{2})\.po|", $poFile, $matches)) {
+	if (!preg_match("|((?:\w+/)+)po/(\w{2}(?:_\w{2})?)\.po|", $poFile, $matches)) {
 	    continue;
 	}
 	list ($plugin, $locale) = array($matches[1], $matches[2]);

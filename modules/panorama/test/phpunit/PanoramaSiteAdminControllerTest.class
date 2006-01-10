@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 /**
  * Load required classes
  */
-GalleryCoreApi::relativeRequireOnce('modules/panorama/classes/PanoramaHelper.class');
+GalleryCoreApi::requireOnce('modules/panorama/classes/PanoramaHelper.class');
 
 /**
  * PanoramaSiteAdmin controller tests
@@ -48,14 +48,14 @@ class PanoramaSiteAdminControllerTest extends GalleryControllerTestCase {
 	parent::setUp();
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'panorama');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_getRootId(), 'image/test',
 		array(), __FILE__, 'GalleryPhotoItem');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -64,7 +64,7 @@ class PanoramaSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	$this->_item->setMimeType('image/gif');
 	$ret = PanoramaHelper::assignEntityType($this->_item, true);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -72,12 +72,12 @@ class PanoramaSiteAdminControllerTest extends GalleryControllerTestCase {
 	list ($ret, $derivative) =
 	    $this->_createDerivative($this->_item, $this->_item->getId(),
 				     DERIVATIVE_TYPE_IMAGE_PREFERRED);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = PanoramaHelper::assignEntityType($derivative, true);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -137,13 +137,13 @@ class PanoramaSiteAdminControllerTest extends GalleryControllerTestCase {
     function testPanoramaSiteAdminControllerReset() {
 
 	$ret = $this->_savePanoramaItems();
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $count) = PanoramaHelper::fetchItemCount();
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -159,14 +159,14 @@ class PanoramaSiteAdminControllerTest extends GalleryControllerTestCase {
 			    $results);
 
 	list ($ret, $count) = PanoramaHelper::fetchItemCount();
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(0, $count, 'Should be no Panorama entities in db after reset');
 
 	$ret = $this->_restorePanoramaItems();
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -179,7 +179,7 @@ class PanoramaSiteAdminControllerTest extends GalleryControllerTestCase {
 	   OR [GalleryEntity::entityType] = \'PanoramaDerivativeImage\'';
 
 	list ($ret, $results) = $gallery->search($query, array(), array());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$ids = array();
@@ -187,24 +187,24 @@ class PanoramaSiteAdminControllerTest extends GalleryControllerTestCase {
 	    $ids[] = (int)$result[0];
 	}
 	$this->_panoramaIds = $ids;
-	return GalleryStatus::success();
+	return null;
     }
 
     function _restorePanoramaItems() {
 	if (empty($this->_panoramaIds)) {
-	    return GalleryStatus::success();
+	    return null;
 	}
 	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($this->_panoramaIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	foreach ($items as $item) {
 	    $ret = PanoramaHelper::assignEntityType($item, true);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
-	return GalleryStatus::success();
+	return null;
     }
 
 }

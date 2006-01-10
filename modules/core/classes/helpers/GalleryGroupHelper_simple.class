@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,7 +84,7 @@ class GalleryGroupHelper_simple {
 			     $data,
 			     array('limit' => array('count' => $count,
 						    'offset' => $offset)));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -93,7 +93,7 @@ class GalleryGroupHelper_simple {
 	    $groupnames[$result[0]] = $result[1];
 	}
 
-	return array(GalleryStatus::success(), $groupnames);
+	return array(null, $groupnames);
     }
 
     /**
@@ -124,13 +124,13 @@ class GalleryGroupHelper_simple {
 	}
 
 	list ($ret, $searchResults) = $gallery->search($query, $data);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$groupnames = array();
 	$result = $searchResults->nextResult();
-	return array(GalleryStatus::success(), (int)$result[0]);
+	return array(null, (int)$result[0]);
     }
 
     /**
@@ -153,21 +153,21 @@ class GalleryGroupHelper_simple {
           [GalleryGroup::groupName] = ?
         ';
 	list ($ret, $searchResults) = $gallery->search($query, array($groupName));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	if ($searchResults->resultCount() == 0) {
-	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
 	} else {
 	    $result = $searchResults->nextResult();
 	    $id = $result[0];
 	    list ($ret, $group) = GalleryCoreApi::loadEntitiesById($id);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    return array(GalleryStatus::success(), $group);
+	    return array(null, $group);
 	}
     }
 }

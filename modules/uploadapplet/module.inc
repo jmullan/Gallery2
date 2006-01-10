@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,28 +32,13 @@ class UploadAppletModule extends GalleryModule {
 	$this->setId('uploadapplet');
 	$this->setName($gallery->i18n('Upload Applet'));
 	$this->setDescription($gallery->i18n('Easy to use upload applet for media'));
-	$this->setVersion('1.0.1');
+	$this->setVersion('1.0.2');
 	$this->setGroup('import', $gallery->i18n('Import'));
 	$this->setCallbacks('getSiteAdminViews');
-	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredModuleApi(array(2, 0));
+	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredModuleApi(array(3, 0));
     }
 
-    /**
-     * @see GalleryModule::isRecommendedDuringInstall()
-     */
-    function isRecommendedDuringInstall() {
-	return false;
-    }
-
-    /**
-     * @see GalleryModule::autoConfigure()
-     */
-    function autoConfigure() {
-	/* We don't require any special configuration */
-	return array(GalleryStatus::success(), true);
-    }
-    
     /**
      * @see GalleryPlugin::upgrade()
      */
@@ -62,25 +47,25 @@ class UploadAppletModule extends GalleryModule {
 
 	list ($ret, $params) =
 	    GalleryCoreApi::fetchAllPluginParameters('module', 'uploadapplet');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	if (!isset($params['uploaddefaultVariables'])) {
 	    $ret = $this->setParameter('uploaddefaultVariables', '');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
 	if (!isset($params['uploadoverrideVariables'])) {
 	    $ret = $this->setParameter('uploadoverrideVariables', 'toSysOut=true');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -90,18 +75,18 @@ class UploadAppletModule extends GalleryModule {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'ItemAddPlugin', 'ItemAddUploadApplet', 'ItemAddUploadApplet',
 	    'modules/uploadapplet/ItemAddUploadApplet.inc', 'uploadapplet', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
      * @see GalleryModule::getSiteAdminViews()
      */
     function getSiteAdminViews() {
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array(array('name' => $this->translate('Upload Applet'),
 				 'view' => 'uploadapplet.UploadAppletSiteAdmin')));
     }

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 /**
  * Required classes
  */
-GalleryCoreApi::relativeRequireOnce('modules/cart/classes/CartHelper.class');
+GalleryCoreApi::requireOnce('modules/cart/classes/CartHelper.class');
 
 /**
  * This controller will handle the changing of item quantities in a cart
@@ -46,7 +46,7 @@ class ModifyCartController extends GalleryController {
      */
     function handleRequest($form) {
 	list ($ret, $cartItemIds) = CartHelper::fetchCartItemCounts();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -76,7 +76,7 @@ class ModifyCartController extends GalleryController {
 
 		/* Update the cart values */
 		$ret = CartHelper::setCartItemCounts($cartItemIds);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		$status['cartModified'] = 1;
@@ -85,7 +85,7 @@ class ModifyCartController extends GalleryController {
 	    case 'emptyCart':
 		/* Empty the cart */
 		$ret = CartHelper::setCartItemCounts(array());
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		$status['cartModified'] = 1;
@@ -93,12 +93,12 @@ class ModifyCartController extends GalleryController {
 
 	    default:
 		/* Expect it to be one of our plugins */
-		GalleryCoreApi::relativeRequireOnce(
+		GalleryCoreApi::requireOnce(
 		    'modules/cart/classes/CartPluginInterface_1_0.class');
 		list ($ret, $cartPlugin) =
 		    GalleryCoreApi::newFactoryInstanceById('CartPluginInterface_1_0',
 							   $form['pluginId']);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
@@ -108,7 +108,7 @@ class ModifyCartController extends GalleryController {
 
 		/* Pass in only the types the plugin supports */
 		list ($ret, $itemList) = GalleryCoreApi::loadEntitiesById(array_keys($cartItemIds));
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
@@ -124,7 +124,7 @@ class ModifyCartController extends GalleryController {
 		}
 
 		list ($ret, $redirect) = $cartPlugin->fulfillCart($fulfillmentCart);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
@@ -135,7 +135,7 @@ class ModifyCartController extends GalleryController {
 
 		/* Save the modified cart */
 		$ret = CartHelper::setCartItemCounts($cartItemIds);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
@@ -157,7 +157,7 @@ class ModifyCartController extends GalleryController {
 	$results['status'] = $status;
 	$results['error'] = $error;
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 ?>

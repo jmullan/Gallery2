@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,18 +37,18 @@ class ImageBlockModule extends GalleryModule {
 	$this->setId('imageblock');
 	$this->setName($gallery->i18n('Image Block'));
 	$this->setDescription($gallery->i18n('Random, Most Recent or Most Viewed Photo or Album'));
-	$this->setVersion('1.0.4');
+	$this->setVersion('1.0.5');
 	$this->setGroup('blocks', $gallery->i18n('Blocks'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews');
-	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredModuleApi(array(2, 4));
+	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredModuleApi(array(3, 0));
     }
 
     /**
      * @see GalleryModule::registerEventListeners()
      */
     function registerEventListeners() {
-	GalleryCoreApi::relativeRequireOnce('modules/imageblock/classes/ImageBlockHelper.class');
+	GalleryCoreApi::requireOnce('modules/imageblock/classes/ImageBlockHelper.class');
 	$listener = new ImageBlockHelper();
 	GalleryCoreApi::registerEventListener('Gallery::ViewableTreeChange', $listener);
 	GalleryCoreApi::registerEventListener('GalleryEntity::save', $listener, true);
@@ -59,15 +59,25 @@ class ImageBlockModule extends GalleryModule {
      * @see GalleryModule::upgrade()
      */
     function upgrade($currentVersion) {
+	global $gallery;
+
+	if (!empty($currentVersion) && version_compare($currentVersion, '1.0.1', '<')) {
+	    $storage =& $gallery->getStorage();
+	    $ret = $storage->configureStore($this->getId(), array('ImageBlockCacheMap:1.0'));
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'imageblock');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	foreach (array('show' => 'heading|title|date|views', 'albumFrame' => '', 'itemFrame' => '')
 		as $key => $value) {
 	    if (!isset($params[$key])) {
 		$ret = $this->setParameter($key, $value);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
@@ -76,12 +86,12 @@ class ImageBlockModule extends GalleryModule {
 	/* Remove the blocks parameter if necessary, we forgot to remove it in beta 4 */
 	if (isset($params['blocks'])) {
 	    $ret = GalleryCoreApi::removePluginParameter('module', 'imageblock', 'blocks');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -91,33 +101,18 @@ class ImageBlockModule extends GalleryModule {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	   'ItemEditOption', 'ImageBlockOption', 'ImageBlockOption',
 	   'modules/imageblock/ImageBlockOption.inc', 'imageblock', array('ItemEditAlbum'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
-    }
-
-    /**
-     * @see GalleryModule::isRecommendedDuringInstall()
-     */
-    function isRecommendedDuringInstall() {
-	return false;
-    }
-
-    /**
-     * @see GalleryModule::autoConfigure()
-     */
-    function autoConfigure() {
-	/* We don't require any special configuration */
-	return array(GalleryStatus::success(), true);
+	return null;
     }
 
     /**
      * @see GalleryModule::getSiteAdminViews()
      */
     function getSiteAdminViews() {
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array(array('name' => $this->translate('Image Block'),
 				 'view' => 'imageblock.ImageBlockSiteAdmin')));
     }

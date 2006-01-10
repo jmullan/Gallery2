@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,10 +45,10 @@ class ShutterflyCartPlugin extends CartPluginInterface_1_0 {
      */
     function getActionDisplayName() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'shutterfly');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	return array(GalleryStatus::success(), $module->translate('Print with Shutterfly'));
+	return array(null, $module->translate('Print with Shutterfly'));
     }
 
     /**
@@ -59,7 +59,7 @@ class ShutterflyCartPlugin extends CartPluginInterface_1_0 {
 	$session =& $gallery->getSession();
 	$session->put('shutterfly.cart', $cartItemIds);
 
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('view' => 'shutterfly.PrintPhotos', 'return' => 1));
     }
 }

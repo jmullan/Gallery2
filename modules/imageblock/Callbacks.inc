@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ class ImageBlockCallbacks {
     /**
      */
     function callback($params, &$smarty, $callback, $userId=null) {
-	GalleryCoreApi::relativeRequireOnce('modules/imageblock/classes/ImageBlockHelper.class');
+	GalleryCoreApi::requireOnce('modules/imageblock/classes/ImageBlockHelper.class');
 
 	switch($callback) {
 	case 'LoadImageBlock':
@@ -40,7 +40,7 @@ class ImageBlockCallbacks {
 		 */
 		list ($ret, $moduleParams) =
 		    GalleryCoreApi::fetchAllPluginParameters('module', 'imageblock');
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
@@ -80,14 +80,14 @@ class ImageBlockCallbacks {
 	    }
 
 	    $ret = ImageBlockHelper::loadImageBlocks($template, $params);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    return GalleryStatus::success();
+	    return null;
 	}
 
-	return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
     }
 }
 ?>

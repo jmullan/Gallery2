@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 /**
  * Required classes
  */
-GalleryCoreApi::relativeRequireOnce('modules/cart/classes/CartHelper.class');
+GalleryCoreApi::requireOnce('modules/cart/classes/CartHelper.class');
 
 /**
  * Test Cart functionality
@@ -49,7 +49,7 @@ class CartHelperTest extends GalleryTestCase {
 
 	/* Save the existing cart */
 	list($ret, $this->_saveCartItemCounts) = CartHelper::fetchCartItemCounts();
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -57,7 +57,7 @@ class CartHelperTest extends GalleryTestCase {
 	$cartItemCounts = array(1 => 3,
 				2 => 3);
 	$ret = CartHelper::setCartItemCounts($cartItemCounts);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -66,7 +66,7 @@ class CartHelperTest extends GalleryTestCase {
     function tearDown() {
 	/* Restore the existing cart */
 	$ret = CartHelper::setCartItemCounts($this->_saveCartItemCounts);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -78,38 +78,38 @@ class CartHelperTest extends GalleryTestCase {
 	/* Create test data */
 	global $gallery;
 	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($album);
 
 	$ret = GalleryCoreApi::removeItemPermissions($album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::addUserPermission(
 	    $album->getId(), $gallery->getActiveUserId(), 'core.all');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	list ($ret, $item) = $this->_createRandomDataItem($album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	list ($ret, $item2) = $this->_createRandomDataItem($album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Add items to cart */
 	$ret = CartHelper::addItemsToCart(array($item->getId(), $item2->getId()));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Verify */
 	list($ret, $newCartItemCounts) = CartHelper::fetchCartItemCounts();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -122,13 +122,13 @@ class CartHelperTest extends GalleryTestCase {
 
     function testEmptyCart() {
 	$ret = CartHelper::setCartItemCounts(array());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Verify */
 	list($ret, $newCartItemCounts) = CartHelper::fetchCartItemCounts();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -137,13 +137,13 @@ class CartHelperTest extends GalleryTestCase {
 
     function testSetCartItemCounts() {
 	$ret = CartHelper::setCartItemCounts(array(2 => 3, 4 => 5));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Verify */
 	list($ret, $newCartItemCounts) = CartHelper::fetchCartItemCounts();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -153,19 +153,19 @@ class CartHelperTest extends GalleryTestCase {
     function testSetCartItemCounts2() {
 	/* Empty it out */
 	$ret = CartHelper::setCartItemCounts(array());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Fill it again */
 	$ret = CartHelper::setCartItemCounts(array(2 => 3, 4 => 5));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Verify */
 	list($ret, $newCartItemCounts) = CartHelper::fetchCartItemCounts();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -174,35 +174,35 @@ class CartHelperTest extends GalleryTestCase {
 
     function testLoadCartItems() {
 	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($item);
 	list ($ret, $item2) = $this->_createRandomDataItem($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($item2);
 	$ret = GalleryCoreApi::removeItemPermissions($item2->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = CartHelper::setCartItemCounts(
 	    array($item2->getId() => 1, '1000000' => 3, $item->getId() => 2));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Load cart items and verify invalid id and no-permission item were removed from cart */
 	list ($ret, $cartItems) = CartHelper::loadCartItems();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array($item), $cartItems, 'cart items');
 
 	list($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array($item->getId() => 2), $cartItemCounts, 'deleted invalid');
@@ -212,19 +212,19 @@ class CartHelperTest extends GalleryTestCase {
     function testLoadEmptyCartItems() {
 	/* Set an empty cart */
 	$ret = CartHelper::setCartItemCounts(array());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	/* Just make sure it's really empty */
 	list($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array(), $cartItemCounts, 'preparation of test failed');
 	
 	/* Load the items */
 	list ($ret, $cartItems) = CartHelper::loadCartItems();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array(), $cartItems, 'cart items');

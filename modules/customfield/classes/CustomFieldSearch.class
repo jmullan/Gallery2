@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 /**
  * Required classes
  */
-GalleryCoreApi::relativeRequireOnce('modules/search/classes/GallerySearchInterface_1_0.class');
+GalleryCoreApi::requireOnce('modules/search/classes/GallerySearchInterface_1_0.class');
 
 /**
  * This is an implementation of the search module's SearchInterface_1_0
@@ -47,7 +47,7 @@ class CustomFieldSearch extends GallerySearchInterface_1_0 {
 	global $gallery;
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'customfield');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -57,7 +57,7 @@ class CustomFieldSearch extends GallerySearchInterface_1_0 {
 			  'customfield' => array(
 			      'description' => $module->translate('Search custom fields'),
 			      'enabled' => 1)));
-	return array(GalleryStatus::success(), $info);
+	return array(null, $info);
     }
 
     /**
@@ -68,11 +68,11 @@ class CustomFieldSearch extends GallerySearchInterface_1_0 {
 
 	list ($ret, $aclIds) =
 	    GalleryCoreApi::fetchAccessListIds('core.view', $gallery->getActiveUserId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if (empty($aclIds)) {
-	    return array(GalleryStatus::success(),
+	    return array(null,
 			 array('start' => 0, 'end' => '0',
 			       'count' => 0, 'results' => array()));
 	}
@@ -113,7 +113,7 @@ class CustomFieldSearch extends GallerySearchInterface_1_0 {
 
 	/* Find the total */
 	list ($ret, $results) = $gallery->search($countQuery, $data);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$result = $results->nextResult();
@@ -121,7 +121,7 @@ class CustomFieldSearch extends GallerySearchInterface_1_0 {
 
 	list ($ret, $results) = $gallery->search(
 	    $query, $data, array('limit' => array('offset' => $offset, 'count' => $count)));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -135,7 +135,7 @@ class CustomFieldSearch extends GallerySearchInterface_1_0 {
 		      'end' => $numRows == 0 ? 0 : $offset + sizeof($searchResults),
 		      'count' => $numRows,
 		      'results' => $searchResults);
-	return array(GalleryStatus::success(), $data);
+	return array(null, $data);
     }
 }
 ?>

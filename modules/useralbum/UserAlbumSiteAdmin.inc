@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ class UserAlbumSiteAdminController extends GalleryController {
     function handleRequest($form) {
 	/* Make sure we have adequate permissions */
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -45,14 +45,14 @@ class UserAlbumSiteAdminController extends GalleryController {
 	if (isset($form['action']['save'])) {
 	    foreach (array('create', 'view', 'fullSize', 'targetLocation') as $key) {
 		$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', $key, $form[$key]);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
 	    foreach (array('loginRedirect', 'homeLink') as $key) {
 		$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', $key,
 							  isset($form[$key]) ? 1 : 0);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
@@ -65,7 +65,7 @@ class UserAlbumSiteAdminController extends GalleryController {
 	$results['status'] = $status;
 	$results['error'] = array();
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -86,25 +86,25 @@ class UserAlbumSiteAdminView extends GalleryView {
 			   'loginRedirect', 'homeLink') as $key) {
 		list ($ret, $form[$key]) =
 		    GalleryCoreApi::getPluginParameter('module', 'useralbum', $key);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
 	}
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'useralbum');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	/* Get ids of all all albums where we can add new album items */
 	list ($ret, $albumIds) =
 	    GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.addAlbumItem');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Load all the album entities */
 	list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($albumIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$g2AlbumTree = GalleryUtilities::createAlbumTree($albums);
@@ -122,7 +122,7 @@ class UserAlbumSiteAdminView extends GalleryView {
 
 	$template->setVariable('UserAlbumSiteAdmin', $UserAlbumSiteAdmin);
 	$template->setVariable('controller', 'useralbum.UserAlbumSiteAdmin');
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/useralbum/templates/UserAlbumSiteAdmin.tpl'));
     }
 }

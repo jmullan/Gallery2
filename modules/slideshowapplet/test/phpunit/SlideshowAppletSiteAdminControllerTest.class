@@ -3,7 +3,7 @@
 * $RCSfile$
 *
 * Gallery - a web based photo album viewer and editor
-* Copyright (C) 2000-2005 Bharat Mediratta
+* Copyright (C) 2000-2006 Bharat Mediratta
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -33,47 +33,47 @@
  * @subpackage PHPUnit
  */
 class SlideshowAppletSiteAdminControllerTest extends GalleryControllerTestCase {
-    
+
     function SlideshowAppletSiteAdminControllerTest($methodName) {
 	$this->GalleryControllerTestCase($methodName, 'slideshowapplet.SlideshowAppletSiteAdmin');
     }
-    
+
     function setUp() {
 	parent::setUp();
-	
+
 	$ret = $this->_markPluginParametersForCleanup('module', 'slideshowapplet');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
-    
+
     function testSlideshowAppletSiteAdminControllerAddReplaceDefault() {
 	list ($ret, $orig) = GalleryCoreApi::getPluginParameter('module', 'slideshowapplet', 'slideshowdefaultVariables');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	GalleryUtilities::putRequestVariable('form[default][name]', 'name');
 	GalleryUtilities::putRequestVariable('form[default][value]', 'value');
 	GalleryUtilities::putRequestVariable('form[variable][type]', 'default');
 	GalleryUtilities::putRequestVariable('form[action][add]', '1');
-	
+
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
 	    'subView' => 'slideshowapplet.SlideshowAppletSiteAdmin'),
 	    'status' => array(),
 	    'error' => array()),
 	    $results);
-	
+
 	$target = empty($orig)?'name=value':$orig.'|name=value';
 	foreach (array('slideshowdefaultVariables' => $target) as $key => $expectedValue) {
 	    list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'slideshowapplet', $key);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $this->assertEquals($expectedValue, $value, $key);
 	}
-	
+
 	/* now test replacing */
 	GalleryUtilities::putRequestVariable('form[default][value]', 'value1');
 	$results = $this->handleRequest();
@@ -82,70 +82,70 @@ class SlideshowAppletSiteAdminControllerTest extends GalleryControllerTestCase {
 	    'status' => array(),
 	    'error' => array()),
 	    $results);
-	
+
 	$target = empty($orig)?'name=value1':$orig.'|name=value1';
 	foreach (array('slideshowdefaultVariables' => $target) as $key => $expectedValue) {
 	    list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'slideshowapplet', $key);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $this->assertEquals($expectedValue, $value, $key);
 	}
     }
-    
+
     function testSlideshowAppletSiteAdminControllerAddOverride() {
 	list ($ret, $orig) = GalleryCoreApi::getPluginParameter('module', 'slideshowapplet', 'slideshowoverrideVariables');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	GalleryUtilities::putRequestVariable('form[override][name]', 'name');
 	GalleryUtilities::putRequestVariable('form[override][value]', 'value');
 	GalleryUtilities::putRequestVariable('form[variable][type]', 'override');
 	GalleryUtilities::putRequestVariable('form[action][add]', '1');
-	
+
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
 	    'subView' => 'slideshowapplet.SlideshowAppletSiteAdmin'),
 	    'status' => array(),
 	    'error' => array()),
 	    $results);
-	
+
 	$target = empty($orig)?'name=value':$orig.'|name=value';
 	foreach (array('slideshowoverrideVariables' => $target) as $key => $expectedValue) {
 	    list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'slideshowapplet', $key);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $this->assertEquals($expectedValue, $value, $key);
 	}
     }
-    
+
     function testSlideshowAppletSiteAdminControllerDelete() {
 	list ($ret, $orig) = GalleryCoreApi::getPluginParameter('module', 'slideshowapplet', 'slideshowdefaultVariables');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	GalleryUtilities::putRequestVariable('form[default][name]', 'name');
 	GalleryUtilities::putRequestVariable('form[default][value]', 'value');
 	GalleryUtilities::putRequestVariable('form[variable][type]', 'default');
 	GalleryUtilities::putRequestVariable('form[action][add]', '1');
-	
+
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
 	    'subView' => 'slideshowapplet.SlideshowAppletSiteAdmin'),
 	    'status' => array(),
 	    'error' => array()),
 	    $results);
-	
+
 	$target = empty($orig)?'name=value':$orig.'|name=value';
 	foreach (array('slideshowdefaultVariables' => $target) as $key => $expectedValue) {
 	    list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'slideshowapplet', $key);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $this->assertEquals($expectedValue, $value, $key);
 	}
-	
+
 	/* now test deleting */
 	GalleryUtilities::removeRequestVariable('form[action][add]');
 	GalleryUtilities::removeRequestVariable('form[default][name]');
@@ -158,10 +158,10 @@ class SlideshowAppletSiteAdminControllerTest extends GalleryControllerTestCase {
 	    'status' => array(),
 	    'error' => array()),
 	    $results);
-	
+
 	foreach (array('slideshowdefaultVariables' => $orig) as $key => $expectedValue) {
 	    list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'slideshowapplet', $key);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $this->assertEquals($expectedValue, $value, $key);

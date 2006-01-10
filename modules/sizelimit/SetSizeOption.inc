@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@
  * @package SizeLimit
  * @subpackage UserInterface
  */
-GalleryCoreApi::relativeRequireOnce('modules/sizelimit/classes/SizeLimitHelper.class');
+GalleryCoreApi::requireOnce('modules/sizelimit/classes/SizeLimitHelper.class');
 
 class SetSizeOption extends ItemAddOption {
 
@@ -41,7 +41,7 @@ class SetSizeOption extends ItemAddOption {
      * @see ItemAddOption::isAppropriate
      */
     function isAppropriate() {
-	return array(GalleryStatus::success(), true);
+	return array(null, true);
     }
 
     /**
@@ -51,7 +51,7 @@ class SetSizeOption extends ItemAddOption {
 	$errors = array();
 	$warnings = array();
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'sizelimit');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	for ($i = 0; $i < count($items); $i++) {
@@ -62,7 +62,7 @@ class SetSizeOption extends ItemAddOption {
 
 	    list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters(
 		'module', 'sizelimit', $items[$i]->getParentId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    $param = array_merge(
@@ -78,7 +78,7 @@ class SetSizeOption extends ItemAddOption {
 		} else {
 		    $ret = SizeLimitHelper::applyLimits($items[$i], 'scale', $args);
 		}
-		if ($ret->isError()) {
+		if ($ret) {
 		    if ($ret->getErrorCode() & ERROR_UNSUPPORTED_FILE_TYPE) {
 			$warnings[$i][] = $module->translate(
 			    array('text' => 'WARNING: Cannot resize mime type %s',
@@ -98,7 +98,7 @@ class SetSizeOption extends ItemAddOption {
 		} else {
 		    $ret = SizeLimitHelper::applyLimits($items[$i], 'compress', $args);
 		}
-		if ($ret->isError()) {
+		if ($ret) {
 		    if ($ret->getErrorCode() & ERROR_UNSUPPORTED_FILE_TYPE) {
 			$warnings[$i][] = $module->translate(
 			    array('text' => 'WARNING: Cannot compress mime type %s',
@@ -109,7 +109,7 @@ class SetSizeOption extends ItemAddOption {
 		}
 	    }
 	}
-	return array(GalleryStatus::success(), $errors, $warnings);
+	return array(null, $errors, $warnings);
     }
 }
 ?>

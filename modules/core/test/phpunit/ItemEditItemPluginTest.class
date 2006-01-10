@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	for ($i = 0; $i < 2; $i++) {
 	    list ($ret, $this->_item[$i]) =
 		$this->_createRandomDataItem($this->_getRootId(), 'test/file');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -52,7 +52,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 
 	for ($i = 0; $i < 2; $i++) {
 	    list ($ret, $this->_album[$i]) = $this->_createRandomAlbum($this->_getRootId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -63,7 +63,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GalleryToolkit', 'ItemEditItemPluginTestToolkit', 'ItemEditItemPluginTestToolkit',
 	    'modules/core/test/phpunit/ItemEditItemPluginTest.class', 'coreTest', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -73,7 +73,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	$ret = GalleryCoreApi::registerToolkitOperation(
 	    'ItemEditItemPluginTestToolkit', array('test/file'), 'convert-to-image/jpeg',
 	    array(), 'test-description', 'image/jpeg');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -82,7 +82,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	    array(array('type' => 'int', 'description' => 'test'),
 		  array('type' => 'int', 'description' => 'test')),
 	    'test-description', '');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -90,7 +90,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	list ($ret, $this->_thumbnail) =
 	    $this->_createDerivative($this->_item[0], $this->_item[0]->getId(),
 				     DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'thumbnail|200');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -126,7 +126,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 				  $results);
 
 	list ($ret, $this->_item[0]) = $this->_item[0]->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -138,7 +138,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	/* Examine the thumbnail and make sure it lines up */
 	list ($ret, $thumbTable) =
 	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item[0]->getId()));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -193,30 +193,30 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 
 	/* Make sure the object has been renamed to something similar to the new path */
 	list ($ret, $this->_item[0]) = $this->_item[0]->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $newPath) = $this->_item[0]->fetchPath();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $comparePath) =  $this->_item[1]->fetchPath();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$this->assertEquals($comparePath . '_001', $newPath);
 
 	/* Make sure that the file was moved */
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$this->assert($platform->file_exists($newPath));
     }
 
     function testMissingRootTitle() {
 	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -238,7 +238,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 
 	/* Make sure the title was not changed */
 	list ($ret, $rootAlbum) = $rootAlbum->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -247,7 +247,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 
     function testRenameRoot() {
 	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -265,7 +265,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 
 	/* Verify that the path component is still the same */
 	list ($ret, $rootAlbum) = $rootAlbum->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -274,7 +274,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 
     function testMissingRootTitle2() {
 	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -298,7 +298,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 
 	/* Make sure the title was not changed */
 	list ($ret, $rootAlbum) = $rootAlbum->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -325,22 +325,22 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 
 	/* The object is in the new path, but with a trailing _001 in the name to disambiguate it */
 	list ($ret, $this->_album[0]) = $this->_album[0]->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $newPath) = $this->_album[0]->fetchPath();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $targetPath) = $this->_album[1]->fetchPath();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Verify that the new path is correct */
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 	$targetPath = sprintf(
 	    '%s%s%s_001%s', dirname($targetPath), $slash, basename($targetPath), $slash);
@@ -368,9 +368,9 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	global $gallery;
 
 	/* Get some stats on the file before we try moving */
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	list ($ret, $originalPath) = $this->_item[0]->fetchPath();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -387,12 +387,12 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 
 	/* Make sure the object is still in the original path */
 	list ($ret, $this->_item[0]) = $this->_item[0]->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $newPath) = $this->_item[0]->fetchPath();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals($originalPath, $newPath);
@@ -405,9 +405,9 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	global $gallery;
 
 	/* Get some stats on the file before we try moving */
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	list ($ret, $originalPath) = $this->_album[0]->fetchPath();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -424,12 +424,12 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 
 	/* Make sure the object is still in the original path */
 	list ($ret, $this->_album[0]) = $this->_album[0]->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $newPath) = $this->_album[0]->fetchPath();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals($originalPath, $newPath);
@@ -470,7 +470,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	/* Verify thumbnail */
 	list ($ret, $thumbTable) =
 	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item[1]->getId()));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -485,14 +485,14 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 
     function testCreateAlbumHighlight() {
 	list ($ret, $item) = $this->_createRandomDataItem($this->_album[0]->getId(), 'test/file');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Verify we don't have a highlight */
 	list ($ret, $thumbTable) =
 	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_album[0]->getId()));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(empty($thumbTable), 'We shouldn\'t have a thumbnail');
@@ -509,7 +509,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	/* Verify thumbnail */
 	list ($ret, $thumbTable) =
 	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_album[0]->getId()));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -525,7 +525,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	/* Verify we have a thumbnail */
 	list ($ret, $thumbTable) =
 	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item[0]->getId()));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(isset($thumbTable[$this->_item[0]->getId()]), 'We should have a thumbnail');
@@ -543,7 +543,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	/* Verify we have no more thumbnail */
 	list ($ret, $thumbTable) =
 	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item[0]->getId()));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(!isset($thumbTable[$this->_item[0]->getId()]),
@@ -554,7 +554,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	/* Size zero should remove thumbnail, just like empty value */
 	list ($ret, $thumbTable) =
 	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item[0]->getId()));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(isset($thumbTable[$this->_item[0]->getId()]), 'We should have a thumbnail');
@@ -572,7 +572,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	/* Verify we have no more thumbnail */
 	list ($ret, $thumbTable) =
 	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item[0]->getId()));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(!isset($thumbTable[$this->_item[0]->getId()]),
@@ -614,7 +614,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 /**
  * Required by our test toolkit
  */
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryToolkit.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryToolkit.class');
 
 /**
  * Test toolkit
@@ -629,7 +629,7 @@ class ItemEditItemPluginTestToolkit extends GalleryToolkit {
     function performOperation($mimeType, $operationName, $sourceFilename,
 			      $destFilename, $parameters, $context=array()) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	if ($sourceFilename != $destFilename) {
 	    $platform->copy($sourceFilename, $destFilename);
@@ -639,7 +639,7 @@ class ItemEditItemPluginTestToolkit extends GalleryToolkit {
 	$platform->fwrite($fd, $operationName);
 	$platform->fclose($fd);
 
-	return array(GalleryStatus::success(), $mimeType, $context);
+	return array(null, $mimeType, $context);
     }
 
     /**
@@ -648,7 +648,7 @@ class ItemEditItemPluginTestToolkit extends GalleryToolkit {
      */
     function mergeOperations($operation1, $args1, $operation2, $args2) {
 	/* Do something stupid, but predictable */
-	return array(GalleryStatus::success(),
+	return array(null,
 		     $operation1 . '+' . $operation2,
 		     array_merge($args1, array('+'), $args2));
     }

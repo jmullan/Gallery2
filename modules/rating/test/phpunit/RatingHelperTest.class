@@ -1,0 +1,219 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2006 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Rating
+ * @subpackage PHPUnit
+ * @author Don Seiler <don@seiler.us>
+ */
+
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplate.class');
+GalleryCoreApi::requireOnce('modules/rating/classes/RatingHelper.class');
+
+/**
+ * RatingHelper tests
+ *
+ * @package Rating
+ * @subpackage PHPUnit
+ */
+class RatingHelperTest extends GalleryTestCase {
+
+    function RatingHelperTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	parent::setUp();
+
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($this->_album);
+
+	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(),
+		'image/test', array(), __FILE__, 'GalleryPhotoItem');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$numUsers = rand(7, 17);
+	$this->_users = array();
+	for ($i=0; $i < $numUsers; $i++) {
+	    list ($ret, $this->_users[$i]) = $this->_createRandomUser();
+	    if ($ret) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    /* Clean up test users */
+	    $this->_markForCleanup($this->_users[$i]);
+	}
+
+    }
+
+    function testRateItem() {
+	$testRating = rand(1, 5);
+	list ($ret, $RatingData) = 
+	    RatingHelper::rateItem($this->_item->getId(), $testRating, $this->_users[0]->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Check our own rating */
+	$this->assertEquals($testRating, (int)$RatingData['userRating']);
+
+	/* Check our one and only vote */
+	$this->assertEquals(1, (int)$RatingData['votes']);
+
+	/* After only one vote, our rating should be the average */
+	$this->assertEquals($testRating, (int)$RatingData['rating']);
+    }
+
+    function testRateBogusItem() {
+	$testRating = rand(1, 5);
+	list ($ret, $RatingData) = 
+	    RatingHelper::rateItem(-1, $testRating, $this->_users[0]->getId());
+	/* This *should* fail. */
+	$this->assert($ret);
+	if ($ret) {
+	    $this->assert($ret->getErrorCode() & ERROR_MISSING_OBJECT, 'Wrong error status');
+	}
+    }
+
+    function testMultiUserRateItem() {
+	$totalRating = 0;
+	$votes = 0; 
+	foreach ($this->_users as $user) {
+	    $testRating = rand(1, 5);
+	    list ($ret, $RatingData) = 
+		RatingHelper::rateItem($this->_item->getId(), $testRating, $user->getId());
+	    if ($ret) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $totalRating += $testRating;
+	    $votes++;
+
+	    /* Check our own rating */
+	    $this->assertEquals($testRating, (int)$RatingData['userRating'],
+		    'User rating test failed.');
+
+	    /* Check our one and only vote */
+	    $this->assertEquals($votes, (int)$RatingData['votes'],
+		    'Running vote count test failed.');
+	}
+
+	/* Test average */
+	$average = round($totalRating / $votes, 3);
+	list ($ret, $RatingData) = RatingHelper::fetchRatings(array($this->_item->getId()),
+		$this->_users[0]->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($average, (double)$RatingData[$this->_item->getId()]['rating'],
+		'Average rating test failed.');
+    }
+
+
+    function testGetItemSummaries() {
+	/* Need to enable rating for our test album first */
+	$ret = GalleryCoreApi::setPluginParameter('module', 'rating', 'enabled', 1,
+		$this->_album->getId());
+
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'rating');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$itemId = $this->_item->getId();
+
+	/* Verify we get a non empty item summary for the item */
+	$permissions[$itemId]['rating.view'] = 1;
+	//$template = new RatingDummyGalleryTemplate();
+	$template = new GalleryTemplate(dirname(__FILE__) . '/../../../..');
+	list ($ret, $content) = $module->getItemSummaries(array($this->_item), $permissions,
+		$template);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(isset($content[$itemId]) && !empty($content[$itemId]),
+		'Did not get item summary');
+	/* Can't do this now that we're using real template
+	$this->assertEquals(array('modules/rating/rating.css'), $template->style,
+		'Style array does not match.');
+	$this->assertEquals(array('lib/javascript/XmlHttp.js', 'modules/rating/rating.js'),
+		$template->javascript,
+		'Javascript array does not match.');
+	*/
+
+	/* Get the item summary again, but without having the permissions */
+	unset($content);
+	unset($template);
+	//$template = new RatingDummyGalleryTemplate();
+	$template = new GalleryTemplate(dirname(__FILE__) . '/../../../..');
+	list ($ret, $content) = $module->getItemSummaries(array($this->_item),
+		array($itemId => array()), $template);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!isset($content[$itemId]), 'Got an item summary');
+
+	/* Do this again for kicks */
+	/* Can't do this now that we're using real template
+	$this->assertEquals(array('modules/rating/rating.css'), $template->style,
+		'Style array does not match.');
+	$this->assertEquals(array('lib/javascript/XmlHttp.js', 'modules/rating/rating.js'),
+		$template->javascript,
+		'Javascript array does not match.');
+	*/
+    }
+}
+
+
+/**
+ * @package Rating
+ * @subpackage PHPUnit
+ */
+class RatingDummyGalleryTemplate {
+    var $style = array();
+    var $javascript = array();
+    var $variables = array();
+
+    function style($tpl) {
+	$this->style[] = $tpl;
+    }
+
+    function javascript($tpl) {
+	$this->javascript[] = $tpl;
+    }
+
+    function setVariable($key, $value) {
+	$this->variables[$key] = $value;
+    }
+
+    function fetch($thing_to_fetch) {
+	return array(null, null);
+    }
+}
+?>

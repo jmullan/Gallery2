@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,44 +53,44 @@ class UserWatermarksController extends GalleryController {
 		$mimeType == 'application/unknown' || empty($mimeExtensions)) {
 		$extension = GalleryUtilities::getFileExtension($form['name'][1]);
 		list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
-		if ($ret->isError()) {
+		if ($ret) {
 		    $mimeType = 'application/unknown';
 		}
 	    }
 
 	    list ($ret, $item) =
 		GalleryCoreApi::newFactoryInstance('GalleryEntity', 'WatermarkImage');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    if (!isset($item)) {
-		return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
 	    }
 
 	    $ret = $item->create($form['tmp_name'][1], $mimeType, $form['name'][1]);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    $ret = $item->save();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    /* Give appropriate permissions */
 	    list ($ret, $id) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    $ret = GalleryCoreApi::addGroupPermission($item->getId(), $id, 'core.all');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    $ret = GalleryCoreApi::addUserPermission($item->getId(), $gallery->getActiveUserId(),
 						     'core.all');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -102,11 +102,11 @@ class UserWatermarksController extends GalleryController {
 	    $results['delegate']['view'] = 'core.UserAdmin';
 	    $results['delegate']['subView'] = 'watermark.UserWatermarks';
 	} else if (isset($form['action']['delete']) && isset($form['delete']['watermarkId'])) {
-	    GalleryCoreApi::relativeRequireOnce('modules/watermark/classes/WatermarkHelper.class');
+	    GalleryCoreApi::requireOnce('modules/watermark/classes/WatermarkHelper.class');
 
 	    list ($ret, $wasDeleted) =
 		WatermarkHelper::deleteWatermarkImageById($form['delete']['watermarkId']);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -125,7 +125,7 @@ class UserWatermarksController extends GalleryController {
 	$results['status'] = $status;
 	$results['error'] = $error;
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -140,20 +140,20 @@ class UserWatermarksView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
-	GalleryCoreApi::relativeRequireOnce('modules/watermark/classes/WatermarkHelper.class');
+	GalleryCoreApi::requireOnce('modules/watermark/classes/WatermarkHelper.class');
 
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	if ($gallery->getActiveUserId() == $anonymousUserId) {
-	    return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
 	}
 
 	list ($ret, $watermarks) = WatermarkHelper::fetchWatermarks();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	foreach ($watermarks as $id => $watermark) {
@@ -163,7 +163,7 @@ class UserWatermarksView extends GalleryView {
 		continue;
 	    }
 
-	    $watermarks[$id] = $watermark->getMemberData();
+	    $watermarks[$id] = (array)$watermark;
 	}
 
 	if ($form['formName'] != 'UserWatermarks') {
@@ -188,7 +188,7 @@ class UserWatermarksView extends GalleryView {
 
 	$template->setVariable('UserWatermarks', $UserWatermarks);
 	$template->setVariable('controller', 'watermark.UserWatermarks');
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/watermark/templates/UserWatermarks.tpl'));
     }
 
@@ -197,11 +197,11 @@ class UserWatermarksView extends GalleryView {
      */
     function getViewDescription() {
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'watermark');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $core->translate('user watermarks'));
+	return array(null, $core->translate('user watermarks'));
     }
 }
 ?>

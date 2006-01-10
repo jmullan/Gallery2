@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,10 +39,10 @@ class WatermarkOption extends ItemAddOption {
      * @see ItemAddOption::loadTemplate
      */
     function loadTemplate(&$template, &$form, $item) {
-	GalleryCoreApi::relativeRequireOnce('modules/watermark/classes/WatermarkHelper.class');
+	GalleryCoreApi::requireOnce('modules/watermark/classes/WatermarkHelper.class');
 
 	list ($ret, $watermarks) = WatermarkHelper::fetchWatermarks();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
@@ -51,14 +51,14 @@ class WatermarkOption extends ItemAddOption {
 	    if (!isset($currentId)) {
 		$currentId = $id;
 	    }
-	    $watermarks[$id] = $watermarks[$id]->getMemberData();
+	    $watermarks[$id] = (array)$watermarks[$id];
 	}
 
 	$WatermarkOption = array();
 	$WatermarkOption['watermarks'] = $watermarks;
 	$WatermarkOption['currentId'] = $currentId;
 	$template->setVariable('WatermarkOption', $WatermarkOption);
-	return array(GalleryStatus::success(),
+	return array(null,
 		     'modules/watermark/templates/WatermarkOption.tpl',
 		     'modules_watermark');
     }
@@ -67,15 +67,15 @@ class WatermarkOption extends ItemAddOption {
      * @see ItemAddOption::isAppropriate
      */
     function isAppropriate() {
-	GalleryCoreApi::relativeRequireOnce('modules/watermark/classes/WatermarkHelper.class');
+	GalleryCoreApi::requireOnce('modules/watermark/classes/WatermarkHelper.class');
 
 	/* Only appropriate if we've got some watermarks to show */
 	list ($ret, $watermarks) = WatermarkHelper::fetchWatermarks();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), !empty($watermarks));
+	return array(null, !empty($watermarks));
     }
 
     /**
@@ -90,10 +90,10 @@ class WatermarkOption extends ItemAddOption {
 		GalleryUtilities::isA($items[$i], 'GalleryPhotoItem')) {
 		list ($ret, $watermark) =
 		    GalleryCoreApi::loadEntitiesById($form['WatermarkOption']['watermarkId']);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
-		$watermarkArray = 
+		$watermarkArray =
 		    array(DERIVATIVE_TYPE_IMAGE_THUMBNAIL => $watermark->getApplyToThumbnail(),
 			  DERIVATIVE_TYPE_IMAGE_RESIZE => $watermark->getApplyToResizes(),
 			  DERIVATIVE_TYPE_IMAGE_PREFERRED => $watermark->getApplyToPreferred());
@@ -101,12 +101,12 @@ class WatermarkOption extends ItemAddOption {
 						      $watermark->getXPercentage(),
 						      $watermark->getYPercentage(),
 						      $watermarkArray);
-	    	if ($ret->isError()) {
+	    	if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 	    }
 	}
-	return array(GalleryStatus::success(), $errors, $warnings);
+	return array(null, $errors, $warnings);
     }
 }
 ?>

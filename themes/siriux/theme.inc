@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,8 +42,8 @@ class SiriuxTheme extends GalleryTheme {
 	$this->setId('siriux');
 	$this->setName($gallery->i18n('Siriux'));
 	$this->setDescription($gallery->i18n('Siriux.net Gallery theme'));
-	$this->setVersion('1.0.1');
-	$this->setRequiredCoreApi(array(6, 5));
+	$this->setVersion('1.0.2');
+	$this->setRequiredCoreApi(array(7, 0));
 	$this->setRequiredThemeApi(array(2, 2));
 	$this->setStandardSettings(
 	    array('perPage' => 9,
@@ -66,7 +66,7 @@ class SiriuxTheme extends GalleryTheme {
 		  'systemLinks', 'itemLinks', 'itemSummaries', 'permissions',
 		  'thumbnails', 'pageNavigator', 'jumpRange'),
 	     $childIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -84,7 +84,7 @@ class SiriuxTheme extends GalleryTheme {
 	$theme['params']['thumbnailSize'] = 150;
 	list ($ret, $preferences) =
 	    GalleryCoreApi::fetchDerivativePreferencesForItem($item->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	foreach ($preferences as $preference) {
@@ -95,7 +95,7 @@ class SiriuxTheme extends GalleryTheme {
 	    }
 	}
 
-	return array(GalleryStatus::success(), 'theme.tpl');
+	return array(null, 'theme.tpl');
     }
 
     /**
@@ -105,7 +105,7 @@ class SiriuxTheme extends GalleryTheme {
 	$ret = $this->loadCommonTemplateData($template, $item, $params,
 	    array('owner', 'parents', 'systemLinks', 'itemLinks', 'permissions',
 		  'itemLinksDetailed', 'itemNavigator', 'imageViews'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -118,7 +118,7 @@ class SiriuxTheme extends GalleryTheme {
 	    unset($theme['navigator']['last']);
 	}
 
-	return array(GalleryStatus::success(), 'theme.tpl');
+	return array(null, 'theme.tpl');
     }
 
     /**
@@ -127,7 +127,7 @@ class SiriuxTheme extends GalleryTheme {
     function showModulePage(&$template, $item, $params, $templateFile) {
 	$ret = $this->loadCommonTemplateData(
 	    $template, $item, $params, array('parents', 'systemLinks'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -136,7 +136,7 @@ class SiriuxTheme extends GalleryTheme {
 	$theme['moduleTemplate'] = $templateFile;
 
 	/* Add our header and styles */
-	return array(GalleryStatus::success(), 'theme.tpl');
+	return array(null, 'theme.tpl');
     }
 
     /**
@@ -145,7 +145,7 @@ class SiriuxTheme extends GalleryTheme {
     function showAdminPage(&$template, $item, $params, $templateFile) {
 	$ret = $this->loadCommonTemplateData(
 	    $template, $item, $params, array('parents', 'systemLinks'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -153,14 +153,14 @@ class SiriuxTheme extends GalleryTheme {
 	$theme =& $template->getVariableByReference('theme');
 	$theme['adminTemplate'] = $templateFile;
 
-	return array(GalleryStatus::success(), 'theme.tpl');
+	return array(null, 'theme.tpl');
     }
 
     /**
      * @see GalleryTheme::showErrorPage
      */
     function showErrorPage(&$template) {
-	return array(GalleryStatus::success(), 'error.tpl');
+	return array(null, 'error.tpl');
     }
 
     /**
@@ -169,11 +169,11 @@ class SiriuxTheme extends GalleryTheme {
     function showProgressBarPage(&$template, $item, $params) {
 	$ret = $this->loadCommonTemplateData(
 	    $template, $item, $params, array('parents', 'systemLinks'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), 'theme.tpl');
+	return array(null, 'theme.tpl');
     }
 
     /**
@@ -181,7 +181,7 @@ class SiriuxTheme extends GalleryTheme {
      */
     function getSettings($itemId=null) {
 	list ($ret, $settings, $params) = parent::getSettings($itemId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -192,7 +192,7 @@ class SiriuxTheme extends GalleryTheme {
 			    'typeParams' => array('size' => 2),
 			    'value' => $params['contentWidth']);
 
-	return array(GalleryStatus::success(), $settings);
+	return array(null, $settings);
     }
 
     /**

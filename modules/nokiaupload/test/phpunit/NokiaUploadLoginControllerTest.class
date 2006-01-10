@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ class NokiaUploadLoginControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -52,7 +52,7 @@ class NokiaUploadLoginControllerTest extends GalleryControllerTestCase {
 	$this->_markForCleanup($this->_album);
 
 	list ($ret, $this->_group) = $this->_createRandomGroup();
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -60,7 +60,7 @@ class NokiaUploadLoginControllerTest extends GalleryControllerTestCase {
 	$this->_markForCleanup($this->_group);
 
 	list ($ret, $this->_user) = $this->_createRandomUser();
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -74,20 +74,20 @@ class NokiaUploadLoginControllerTest extends GalleryControllerTestCase {
 	$this->_saveUser = $gallery->getActiveUser();
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'nokiaupload');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter(
 			  'module', 'nokiaupload', 'id.mobileGroup', $this->_group->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::setPluginParameter(
 			  'module', 'nokiaupload', 'id.uploadAlbum', $this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -131,7 +131,7 @@ class NokiaUploadLoginControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals($this->_user, $gallery->getActiveUser(), 'active user 3');
 	list($ret, $isMember) =
 	    GalleryCoreApi::isUserInGroup($this->_user->getId(), $this->_group->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(true, $isMember, 'user added to mobile users group');

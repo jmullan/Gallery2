@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
     function testEditFromText() {
 	/* Normal */
 	list ($ret, $group) = $this->_createGroup();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -103,7 +103,7 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
     function testDeleteFromText() {
 	/* Normal */
 	list ($ret, $group) = $this->_createGroup();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -145,12 +145,12 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
     function testDeleteSiteAdminGroupFromText() {
 	global $gallery;
 	list ($ret, $id) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($id);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -168,12 +168,12 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
     function testDeleteAllUsersGroupFromText() {
 	global $gallery;
 	list ($ret, $id) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($id);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -191,12 +191,12 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
     function testEditAllUsersGroupUsersFromText() {
 	global $gallery;
 	list ($ret, $id) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($id);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -214,12 +214,12 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
     function testDeleteEverybodyGroupFromText() {
 	global $gallery;
 	list ($ret, $id) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($id);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -237,7 +237,7 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
     function testEditUsersFromText() {
 	/* Normal */
 	list ($ret, $group) = $this->_createGroup();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -280,30 +280,30 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	list ($ret, $group) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryGroup');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	if (!isset($group)) {
-	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
 			 null);
 	}
 
 	$ret = $group->create('testgroup-'.rand());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$ret = $group->save();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	return array(GalleryStatus::success(), $group);
+	return array(null, $group);
     }
 
     function _deleteGroup($group) {
 	global $gallery;
 	$ret = GalleryCoreApi::deleteEntityById($group->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }

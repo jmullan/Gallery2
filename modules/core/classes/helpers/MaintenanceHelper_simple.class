@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,21 +42,21 @@ class MaintenanceHelper_simple {
     function fetchTasks() {
 	/* Get all the option plugins */
 	list ($ret, $allTaskIds) = GalleryCoreApi::getAllFactoryImplementationIds('MaintenanceTask');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$taskInstances = array();
 	foreach (array_keys($allTaskIds) as $taskId) {
 	    list ($ret, $task) = GalleryCoreApi::newFactoryInstanceById('MaintenanceTask', $taskId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    $taskInstances[$taskId] = $task;
 	}
 
-	return array(GalleryStatus::success(), $taskInstances);
+	return array(null, $taskInstances);
     }
 
     /**
@@ -89,7 +89,7 @@ class MaintenanceHelper_simple {
 
 	list ($ret, $searchResults) =
 	    $gallery->search($query, array($taskId), array('limit' => array('count' => 1)));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -102,7 +102,7 @@ class MaintenanceHelper_simple {
 			  'details' => unserialize($result[3]));
 	}
 
-	return array(GalleryStatus::success(), $info);
+	return array(null, $info);
     }
 
     /**
@@ -119,22 +119,22 @@ class MaintenanceHelper_simple {
 
 	$storage =& $gallery->getStorage();
 	list ($ret, $runId) = $storage->getUniqueId();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryMaintenanceMap.class');
-	$ret = GalleryMaintenanceMap::addMapEntry(
+	$ret = GalleryCoreApi::addMapEntry(
+	    'GalleryMaintenanceMap',
 	    array('runId' => $runId,
 		  'taskId' => $taskId,
 		  'timestamp' => $timestamp,
 		  'success' => (int)$success,
 		  'details' => serialize($details)));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 }
 ?>

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -158,4 +158,17 @@ $gallery->setConfig('allowSessionAccess', false);
  * URL of Gallery codebase; required only for multisite install.
  */
 $gallery->setConfig('galleryBaseUrl', '');
+
+/* 
+ * This setting can be used to override Gallery's auto-detection of the domain-name, 
+ * protocol (http/https), URL path, and of the file & query string.
+ * Most users can leave this empty. If the server is misconfigured or for very special
+ * setups, this setting can be quite handy.
+ * Examples (the positions of the slashes ('/') are important):
+ *   override the path: $gallery->setConfig('baseUri', '/another/path/');
+ *   override the host + path: $gallery->setConfig('baseUri', 'example.com/gallery2/');
+ *   override the protocol + host + path + file:
+ *           $gallery->setConfig('baseUri', 'https://example.com:8080/gallery2/index.php');
+ */
+$gallery->setConfig('baseUri', '');
 ?>

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 /**
  * Required classes
  */
-GalleryCoreApi::relativeRequireOnce('modules/imagemagick/classes/ImageMagickToolkitHelper.class');
+GalleryCoreApi::requireOnce('modules/imagemagick/classes/ImageMagickToolkitHelper.class');
 
 /**
  * @package ImageMagick
@@ -43,7 +43,7 @@ class AdminImageMagickController extends GalleryController {
 	global $gallery;
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -54,7 +54,7 @@ class AdminImageMagickController extends GalleryController {
 		$error[] = 'form[error][path][missing]';
 	    } else {
 		/* Set the path.  Guarantee that it's got a trailing slash. */
-		$platform = $gallery->getPlatform();
+		$platform =& $gallery->getPlatform();
 		$slash = $platform->getDirectorySeparator();
 		$form['path'] = trim($form['path']);
 		if (!empty($form['path'])) {
@@ -64,7 +64,7 @@ class AdminImageMagickController extends GalleryController {
 		}
 
 		list ($ret, $testResults) = ImageMagickToolkitHelper::testBinaries($form['path']);
-		if ($ret->isError()) {
+		if ($ret) {
 		    if ($ret->getErrorCode() & ERROR_BAD_PATH) {
 			$error[] = 'form[error][path][badPath]';
 		    } else {
@@ -88,7 +88,7 @@ class AdminImageMagickController extends GalleryController {
 	    if (empty($error)) {
 		list ($ret, $version, $vulnerable) =
 		    ImageMagickToolkitHelper::discoverVersion($form['path']);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		if (empty($form['forceSave']) && $vulnerable) {
@@ -99,46 +99,46 @@ class AdminImageMagickController extends GalleryController {
 	    if (empty($error)) {
 		list ($ret, $params) =
 		    GalleryCoreApi::fetchAllPluginParameters('module', 'imagemagick');
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		$ret = GalleryCoreApi::setPluginParameter(
 		    'module', 'imagemagick', 'path', $form['path']);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		$ret = GalleryCoreApi::setPluginParameter(
 		    'module', 'imagemagick', 'versionOk', '1');
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		/* Save some platform specific ImageMagick parameters */
 		$ret = ImageMagickToolkitHelper::savePlatformParameters();
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		$ret = GalleryCoreApi::setPluginParameter(
 		    'module', 'imagemagick', 'jpegQuality', $form['jpegQuality']);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		if ($params['cmykSupport'] != 'none') {
 		    $ret = GalleryCoreApi::setPluginParameter(
 			'module', 'imagemagick', 'cmykSupport', $form['cmykSupport']);
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		}
 
 		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imagemagick');
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		list ($ret, $isActive) = $module->isActive();
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		/*
@@ -148,7 +148,7 @@ class AdminImageMagickController extends GalleryController {
 		if ($isActive && ($params['path'] != $form['path'] ||
 				  $params['cmykSupport'] != $form['cmykSupport'])) {
 		    list ($ret) = $module->reactivate();
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		}
@@ -179,7 +179,7 @@ class AdminImageMagickController extends GalleryController {
 	$results['status'] = $status;
 	$results['error'] = $error;
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -194,13 +194,14 @@ class AdminImageMagickView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
+	$platform =& $gallery->getPlatform();
 
 	/* Load our default values if we didn't just come from this form. */
 	if ($form['formName'] != 'AdminImageMagick') {
 	    foreach (array('path', 'jpegQuality', 'cmykSupport') as $key) {
 		list ($ret, $form[$key]) =
 		    GalleryCoreApi::getPluginParameter('module', 'imagemagick', $key);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
@@ -208,7 +209,6 @@ class AdminImageMagickView extends GalleryView {
 	}
 
 	/* Guarantee that the path has a trailing slash. */
-	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 	$form['path'] = trim($form['path']);
 	if (!empty($form['path'])) {
@@ -222,7 +222,6 @@ class AdminImageMagickView extends GalleryView {
 	    $jpegQualityList[] = $i;
 	}
 
-	$platform = $gallery->getPlatform();
 	$tests = $mimeTypes = $version = array();
 	$debugSnippet = '';
 	$failCount = 0;
@@ -232,7 +231,7 @@ class AdminImageMagickView extends GalleryView {
 		list ($ret, $testResults) = ImageMagickToolkitHelper::testBinaries($form['path']);
 		$debugSnippet = $gallery->stopRecordingDebugSnippet();
 
-		if ($ret->isError()) {
+		if ($ret) {
 		    if ($ret->getErrorCode() & ERROR_BAD_PATH) {
 			$testResults = array();
 			$form['error']['path']['bad'] = 1;
@@ -251,13 +250,13 @@ class AdminImageMagickView extends GalleryView {
 		    if ($success) {
 			list ($ret, $mimeTypes) =
 			    ImageMagickToolkitHelper::discoverMimeTypes($form['path']);
-			if ($ret->isError()) {
+			if ($ret) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 
 			list ($ret, $version, $vulnerable) =
 			    ImageMagickToolkitHelper::discoverVersion($form['path']);
-			if ($ret->isError()) {
+			if ($ret) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 			if ($vulnerable) {
@@ -271,17 +270,17 @@ class AdminImageMagickView extends GalleryView {
 	}
 	if (!empty($form['error']['version']['vulnerable']) && empty($version)) {
 	    list ($ret, $version) = ImageMagickToolkitHelper::discoverVersion($form['path']);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imagemagick');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	list ($ret, $isActive) = $module->isActive();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -301,7 +300,7 @@ class AdminImageMagickView extends GalleryView {
 	$template->setVariable('AdminImageMagick', $AdminImageMagick);
 	$template->setVariable('controller', 'imagemagick.AdminImageMagick');
 
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/imagemagick/templates/AdminImageMagick.tpl'));
     }
 }

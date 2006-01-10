@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,11 +38,11 @@ class ZipCartModule extends GalleryModule {
 	$this->setId('zipcart');
 	$this->setName($gallery->i18n('Zip Download'));
 	$this->setDescription($gallery->i18n('Download cart items in a zip file'));
-	$this->setVersion('1.0.1');
+	$this->setVersion('1.0.2');
 	$this->setGroup('commerce', $gallery->i18n('Commerce'));
 	$this->setCallbacks('getSiteAdminViews');
-	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredModuleApi(array(2, 0));
+	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredModuleApi(array(3, 0));
     }
 
     /**
@@ -53,18 +53,11 @@ class ZipCartModule extends GalleryModule {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'CartPluginInterface_1_0', 'ZipCartPlugin', 'zipcart',
 	    'modules/zipcart/classes/ZipCartPlugin.class', 'zipcart', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
-    }
-
-    /**
-     * @see GalleryModule::isRecommendedDuringInstall
-     */
-    function isRecommendedDuringInstall() {
-	return false;
+	return null;
     }
 
     /**
@@ -72,11 +65,11 @@ class ZipCartModule extends GalleryModule {
      */
     function needsConfiguration() {
 	list ($ret, $value) = $this->getParameter('path');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), empty($value));
+	return array(null, empty($value));
     }
 
     /**
@@ -86,15 +79,15 @@ class ZipCartModule extends GalleryModule {
 	global $gallery;
 
 	list ($ret, $needsConfiguration) = $this->needsConfiguration();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), false);
 	}
 	if (!$needsConfiguration) {
-	    return array(GalleryStatus::success(), true);
+	    return array(null, true);
 	}
 
 	/* Try a bunch of likely seeming paths to see if any of them work. */
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 
 	/*
@@ -134,7 +127,7 @@ class ZipCartModule extends GalleryModule {
 	    $paths[] = '/bin/zip';
 	    $paths[] = '/sw/bin/zip';
 	} else {
-	    return array(GalleryStatus::success(), false);
+	    return array(null, false);
 	}
 
 	/* Now try each path in turn to see which ones work */
@@ -142,21 +135,21 @@ class ZipCartModule extends GalleryModule {
 	    if ($platform->is_executable($path)) {
 		/* We have a winner */
 		$ret = $this->setParameter('path', $path);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}
-		return array(GalleryStatus::success(), true);
+		return array(null, true);
 	    }
 	}
 
-	return array(GalleryStatus::success(), false);
+	return array(null, false);
     }
 
     /**
      * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array(array('name' => $this->translate('Zip Download'),
 				 'view' => 'zipcart.ZipCartAdmin')));
     }

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,17 +34,17 @@ class XmlParser {
     }
 
     function parse($path ){
-	if (!($fp = fopen($path, 'r'))) {
+	$data = file_get_contents($path);
+
+	if ($data === false) {
 	    die('Cannot open XML data file: ' . $path);
 	}
 
-	while ($data = fread($fp, 4096)) {
-	    if (!xml_parse($this->_xmlObject, $data, feof($fp))) {
-		die(sprintf('XML error: %s at line %d',
-			    xml_error_string(xml_get_error_code($this->_xmlObject)),
-			    xml_get_current_line_number($this->_xmlObject)));
-		xml_parser_free($this->_xmlObject);
-	    }
+	if (!xml_parse($this->_xmlObject, $data, 1)) {
+	    die(sprintf('XML error: %s at line %d',
+			xml_error_string(xml_get_error_code($this->_xmlObject)),
+			xml_get_current_line_number($this->_xmlObject)));
+	    xml_parser_free($this->_xmlObject);
 	}
 
 	return $this->_output;

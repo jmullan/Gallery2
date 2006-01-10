@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,52 +40,24 @@ class PublishXpModule extends GalleryModule {
 	$this->setId('publishxp');
 	$this->setName($gallery->i18n('Publish XP'));
 	$this->setDescription($gallery->i18n('Implementation for direct publishing from XP'));
-	$this->setVersion('1.0.1');
+	$this->setVersion('1.0.2');
 	$this->setGroup('import', $gallery->i18n('Import'));
 	$this->setCallbacks('');
-	$this->setRequiredCoreApi(array(6, 1));
-	$this->setRequiredModuleApi(array(2, 4));
+	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredModuleApi(array(3, 0));
     }
 
     /**
      * Registers the item add operation with Gallery.
      *
-     * @return GalleryStatus the status indicating if the registrations was done.
      * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
-	/* Register our item add plugins */
 	GalleryCoreApi::registerFactoryImplementation(
-	    'ItemAddPlugin',
-	    'ItemAddPublishXp',
-	    'ItemAddPublishXp',
-	    'modules/publishxp/ItemAddPublishXp.inc',
-	    'publishxp',
-	    null);
-	return GalleryStatus::success();
-    }
+	    'ItemAddPlugin', 'ItemAddPublishXp', 'ItemAddPublishXp',
+	    'modules/publishxp/ItemAddPublishXp.inc', 'publishxp', null);
 
-    /**
-     * Returns true that this is recommended during installation.
-     *
-     * @return GalleryStatus the status indicating recommended during installation.
-     * @see GalleryModule::isRecommendedDuringInstall()
-     */
-    function isRecommendedDuringInstall() {
-	return false;
-    }
-
-    /**
-     * Configures the module for use.
-     *
-     * There is no configuration needed for this module.
-     *
-     * @return array the status indicating that this was configured.
-     * @see GalleryModule::autoConfigure()
-     */
-    function autoConfigure() {
-	/* We don't require any special configuration */
-	return array(GalleryStatus::success(), true);
+	return null;
     }
 }
 ?>

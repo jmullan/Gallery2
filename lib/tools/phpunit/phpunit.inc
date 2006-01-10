@@ -56,7 +56,7 @@ if (phpversion() >= '4') {
 	     */
 	    return;
 	}
-
+	
 	/*
 	 * http://us4.php.net/file_exists#47860
 	 * Older php versions generate stat warnings whenever a file_exists or
@@ -73,7 +73,7 @@ if (phpversion() >= '4') {
 	    $traceSource = debug_backtrace();
 	    array_shift($traceSource);
 	    foreach ($traceSource as $traceEntry) {
-		$buf = '<B>in</B> ' . $traceEntry['file'];
+		$buf = ' <B>in</B> ' . $traceEntry['file'];
 		if (isset($traceEntry['class']) && isset($traceEntry['function'])) {
 		    $buf .= " ($traceEntry[class]::$traceEntry[function]) ";
 		} else if (isset($traceEntry['class'])) {
@@ -512,6 +512,7 @@ class TestResult {
   var $fFailures = array();
   var $fErrors = array();
   var $fRunTests = 0;
+  var $fUnskippedTests = 0;
   var $fStop = false;
 
   function TestResult() { }
@@ -548,6 +549,7 @@ class TestResult {
     $this->_startTest($test);
     
     if (!$test->wasSkipped()) {
+	$this->fUnskippedTests++;
 	$test->runBare();
     }
 
@@ -566,7 +568,7 @@ class TestResult {
   }
 
   function countTests() {
-    return $this->fRunTests;
+    return $this->fUnskippedTests;
   }
 
   function shouldStop() {

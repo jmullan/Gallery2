@@ -1,0 +1,101 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2006 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package LinkItem
+ * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * Additional LinkItem tests
+ * @package LinkItem
+ * @subpackage PHPUnit
+ */
+class LinkItemTest extends GalleryTestCase {
+
+    function setUp() {
+	parent::setUp();
+
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($this->_album);
+
+	list ($ret, $this->_targetAlbum) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($this->_targetAlbum);
+
+	list ($ret, $this->_lockId) = GalleryCoreApi::acquireReadLock(
+	    array($this->_album->getId(), $this->_targetAlbum->getId()));
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_link) =
+	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryLinkItem');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	if (empty($this->_link)) {
+	    return $this->failWithStatus(
+		GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__));
+	}
+	$ret = $this->_link->create($this->_album->getId(), 'http://test.com/test.html');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = $this->_link->save();
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function tearDown() {
+	$ret = GalleryCoreApi::releaseLocks($this->_lockId);
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	parent::tearDown();
+    }
+
+    function testMoveLink() {
+	/* We don't really have anything on the filesystem; make sure move() works ok */
+	$ret = $this->_link->move($this->_targetAlbum->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($this->_targetAlbum->getId(), $this->_link->getParentId());
+    }
+}
+?>

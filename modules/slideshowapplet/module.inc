@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package uploadapplet
+ * @package SlideshowApplet
  * @author Pierre-Luc Paour <paour@users.sourceforge.net>
  */
 
@@ -32,25 +32,11 @@ class SlideshowAppletModule extends GalleryModule {
 	$this->setId('slideshowapplet');
 	$this->setName($gallery->i18n('Slideshow Applet'));
 	$this->setDescription($gallery->i18n('Fullscreen slideshow using a Java applet'));
-	$this->setVersion('1.0.1');
+	$this->setVersion('1.0.2');
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('getItemLinks|getSiteAdminViews');
-	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredModuleApi(array(2, 0));
-    }
-
-    /**
-     * @see GalleryModule::isRecommendedDuringInstall()
-     */
-    function isRecommendedDuringInstall() {
-	return false;
-    }
-
-    /**
-     * @see GalleryModule::autoConfigure()
-     */
-    function autoConfigure() {
-	return array(GalleryStatus::success(), true);
+	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredModuleApi(array(3, 0));
     }
 
     /**
@@ -61,7 +47,7 @@ class SlideshowAppletModule extends GalleryModule {
 
 	list ($ret, $params) =
 	    GalleryCoreApi::fetchAllPluginParameters('module', 'slideshowapplet');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -74,12 +60,12 @@ class SlideshowAppletModule extends GalleryModule {
 
 		/* remove the old parameters */
 		$ret = $this->removeParameter('slideshowRecursive');
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
 		$ret = $this->removeParameter('slideshowMaxPictures');
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    } else {
@@ -87,19 +73,19 @@ class SlideshowAppletModule extends GalleryModule {
 		$newDefault = 'slideshowRecursive=false|slideshowMaxPictures=0';
 	    }
 	    $ret = $this->setParameter('slideshowdefaultVariables', $newDefault);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
 	if (!isset($params['slideshowoverrideVariables'])) {
 	    $ret = $this->setParameter('slideshowoverrideVariables', 'toSysOut=true');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -117,7 +103,7 @@ class SlideshowAppletModule extends GalleryModule {
 			  'itemId' => $itemId));
 	    }
 	}
-	return array(GalleryStatus::success(), $links);
+	return array(null, $links);
     }
 
     /**
@@ -129,10 +115,12 @@ class SlideshowAppletModule extends GalleryModule {
 	$rule = array();
 	$rule['comment'] = $this->translate('View Slideshow (Fullscreen)');
 	$rule['match'] = array('view' => 'slideshowapplet.SlideshowApplet');
+	$rule['onLoad'] = array('rewrite', 'RewriteSimpleHelper', 'loadItemIdFromPath');
 	$rule['pattern'] = 'v/%path%/slideshowapplet.html';
 	$rule['keywords'] = array(
-	    	'path' => array(
+	    'path' => array(
 		'pattern' => '([^?]+)',
+		'function' => array('rewrite', 'RewriteSimpleHelper', 'parsePath'),
 		'help' => $this->translate('Path to an item (eg, /album/image.jpg.html)')));
 	$rules[] = $rule;
 
@@ -143,9 +131,9 @@ class SlideshowAppletModule extends GalleryModule {
      * @see GalleryModule::getSiteAdminViews()
      */
     function getSiteAdminViews() {
-	return array(GalleryStatus::success(),
-	    array(array('name' => $this->translate('Slideshow Applet'),
-	    		'view' => 'slideshowapplet.SlideshowAppletSiteAdmin')));
+	return array(null,
+		     array(array('name' => $this->translate('Slideshow Applet'),
+				 'view' => 'slideshowapplet.SlideshowAppletSiteAdmin')));
     }
 }
 ?>

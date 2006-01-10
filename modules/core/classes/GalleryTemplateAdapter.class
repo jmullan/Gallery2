@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,37 +107,24 @@ class GalleryTemplateAdapter {
     function url($params, &$smarty) {
 	global $gallery;
 
-	if (isset($params['href'])) {
-	    $hrefParams = array('href' => $params['href']);
-	} else if (isset($params['params'])) {
+	if (isset($params['params'])) {
 	    /* Allow the user to pass in bulk params */
 	    $hrefParams = $params['params'];
 	} else {
-	    $hrefParams = array();
-
 	    /* Search for args and add them to the params */
-	    $i = 1;
-	    while (isset($params['arg' . $i])) {
-		list ($key, $value) = explode('=', $params['arg' . $i]);
+	    $hrefParams = array();
+	    for ($i = 1; ($arg = "arg$i") && isset($params[$arg]); $i++) {
+		list ($key, $value) = explode('=', $params[$arg], 2);
 		$hrefParams[$key] = $value;
-		$i++;
+		unset($params[$arg]);
 	    }
 	}
-
-	$forceSessionId = isset($params['forceSessionId']) ? $params['forceSessionId'] : null;
-	$forceFullUrl = isset($params['forceFullUrl']) ? true : false;
-	if (isset($params['forceDirect'])) {
-	    $hrefParams['forceDirect'] = $params['forceDirect'];
+	if (isset($params['href'])) {
+	    $hrefParams['href'] = $params['href'];
 	}
 
 	$urlGenerator =& $gallery->getUrlGenerator();
-	$url = $urlGenerator->generateUrl($hrefParams, $forceSessionId, null, $forceFullUrl);
-
-	if (!empty($params['forJavascript'])) {
-	    $url = str_replace('&amp;', '&', $url);
-	}
-
-	return $url;
+	return $urlGenerator->generateUrl($hrefParams, $params);
     }
 
     /**
@@ -162,11 +149,11 @@ class GalleryTemplateAdapter {
 	if (empty($vars['return'])) {
 	    $currentView = $gallery->getCurrentView();
 	    list ($ret, $view) = GalleryView::loadView($currentView);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		$viewDescription = '';
 	    } else {
 		list ($ret, $viewDescription) = $view->getViewDescription();
-		if ($ret->isError()) {
+		if ($ret) {
 		    $viewDescription = '';
 		}
 	    }
@@ -208,13 +195,13 @@ class GalleryTemplateAdapter {
     function date($params, &$smarty) {
 	global $gallery;
 	static $defaultFormat;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	if (empty($params['format'])) {
 	    if (!isset($defaultFormat)) {
 		$defaultFormat = array('date' => '%x', 'time' => '%X', 'datetime' => '%c');
 		list ($ret, $core) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
-		if ($ret->isSuccess()) {
+		if (!$ret) {
 		    $defaultFormat = array('date' => $core['format.date'],
 					   'time' => $core['format.time'],
 					   'datetime' => $core['format.datetime']);
@@ -243,7 +230,7 @@ class GalleryTemplateAdapter {
 	}
 	$translator =& $gallery->getTranslator();
 	list ($ret, $text) = $translator->translateDomain($domain, $params);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->getAsHtml();
 	    return "[Translation error]";
 	}
@@ -253,6 +240,35 @@ class GalleryTemplateAdapter {
 	}
 
 	return $text;
+    }
+
+    /**
+     * Return a checkbox asking whether to chenge the value in descendents
+     * Useful when we are trying to change a value recursively
+     *
+     * @param array key => value attributes
+     * @return HTML content
+     */
+    function changeInDescendents($params, &$smarty) {
+	global $gallery;
+
+	if (isset($params['l10Domain'])) {
+	    $domain = $params['l10Domain'];
+	} else {
+	    $domain = $smarty->_tpl_vars['l10Domain'];
+	}
+	$translator =& $gallery->getTranslator();
+	list ($ret, $text) = $translator->translateDomain($domain, $params);
+	if ($ret) {
+	    return '[Translation error]';
+	}
+        
+        return '<input type="checkbox" id="' . $params['module'] . 
+            '_ChangeInDescendents"	name="' .
+            GalleryUtilities::prefixFormVariable(
+                'form[changeInDescendents][' . $params['module'] . ']' ) .
+            '"/>  <label for="' . $params['module'] . '_ChangeInDescendents"> ' . 
+            $text . '</label>';
     }
 
     /**
@@ -276,13 +292,13 @@ class GalleryTemplateAdapter {
     function image($params, &$smarty) {
 	/* Ask the entity to render itself in HTML */
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($params['item']['id']);
-	if ($ret->isError()) {
+	if ($ret) {
 	    /* TODO: is there a more graceful way to handle this? */
 	    return '[Render error: missing item]';
 	}
 
 	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($params['image']['id']);
-	if ($ret->isError()) {
+	if ($ret) {
 	    /* TODO: is there a more graceful way to handle this? */
 	    return '[Render error: missing entity]';
 	}
@@ -451,7 +467,7 @@ class GalleryTemplateAdapter {
 		/* Append item type for a few subViews, with fallback class without type */
 		list ($ret, $item) =
 		    GalleryCoreApi::loadEntitiesById($params['urlParams']['itemId']);
-		if ($ret->isSuccess()) {
+		if (!$ret) {
 		    $type = $item->itemTypeName(false);
 		    $fallbackLinkId = $linkId;
 		    $linkId .= '-' . $type[1];
@@ -509,22 +525,22 @@ class GalleryTemplateAdapter {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core', true);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	if ($params['type'] == 'gallery2' || $params['type'] == 'donate') {
 	    list ($ret, $adminGroupId) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return;
 	    }
 	    list ($ret, $isAdmin) = GalleryCoreApi::isUserInGroup(
 		$smarty->_tpl_vars['theme']['actingUserId'], $adminGroupId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return;
 	    }
-	    GalleryCoreApi::relativeRequireOnce('modules/core/module.inc');
+	    GalleryCoreApi::requireOnce('modules/core/module.inc');
 	    $installedVersions = CoreModule::getInstalledVersions();
 	}
 
@@ -547,9 +563,9 @@ class GalleryTemplateAdapter {
 		    $core->translate(
 			'Validation disabled until you set allowSessionAccess in config.php'));
 	    }
-	    return '<a href="' . $validationUri . '"><img ' .
-		'src="' . $urlGenerator->generateUrl(array('href' => 'images/xhtml10.png')) . '" ' .
-		'alt="' . $core->translate('This page is valid XHTML 1.0') . '" ' .
+	    return '<a href="' . $validationUri . '"><img src="' .
+		$urlGenerator->generateUrl(array('href' => 'images/xhtml10.png')) .
+		'" alt="' . $core->translate('This page is valid XHTML 1.0') . '" ' .
 		'style="border-style: none" width="80" height="15"/></a>';
 
 	case 'gallery2':
@@ -560,10 +576,9 @@ class GalleryTemplateAdapter {
 	    }
 	    $version = $core->translate(
 		array('text' => "Gallery %s", 'arg1' => $installedVersions['gallery']));
-	    return '<a href="http://gallery.sourceforge.net">' .
-		'<img src="' . $urlGenerator->generateUrl(array('href' => 'images/gallery.gif')) .
-		'" ' .
-		'alt="' . $version . '" '.
+	    return '<a href="http://gallery.sourceforge.net"><img src="' .
+		$urlGenerator->generateUrl(array('href' => 'images/gallery.gif')) .
+		'" alt="' . $version . '" '.
 		'title="' . $version . '" ' .
 		'style="border-style: none" width="80" height="15"/></a>';
 
@@ -575,8 +590,7 @@ class GalleryTemplateAdapter {
 		    $urlGenerator->generateUrl(
 			array('href' => 'http://gallery.sourceforge.net/donate.php?donate_tag=' .
 			      $installedVersions['gallery'])),
-		    $urlGenerator->generateUrl(
-			array('href' => 'modules/core/data/donate.png')),
+		    $urlGenerator->generateUrl(array('href' => 'modules/core/data/donate.png')),
 		    $core->translate('Donate to the Gallery project'),
 		    $core->translate('Donate to the Gallery project'));
 	    }
@@ -616,7 +630,7 @@ class GalleryTemplateAdapter {
 	}
 	if ($debug) {
 	    /* Smarty debug console */
-	    GalleryCoreApi::relativeRequireOnce('lib/smarty/plugins/function.debug.php');
+	    GalleryCoreApi::requireOnce('lib/smarty/plugins/function.debug.php');
 	    $buf .= smarty_function_debug($params, $smarty);
 	}
 	return $buf;
@@ -661,7 +675,7 @@ class GalleryTemplateAdapter {
 	$class = empty($params['class']) ? '' : ' ' . $params['class'];
 
 	list ($ret, $pluginStatus) = GalleryCoreApi::fetchPluginStatus('module');
-	if ($ret->isError()) {
+	if ($ret) {
 	    /* What can we do here? */
 	    return '[error fetching blocks]';
 	}
@@ -721,13 +735,13 @@ class GalleryTemplateAdapter {
      */
     function callback($params, &$smarty) {
 	list ($module, $file) = explode('.', $params['type']);
-	GalleryCoreApi::relativeRequireOnce("modules/$module/Callbacks.inc");
+	GalleryCoreApi::requireOnce("modules/$module/Callbacks.inc");
 
 	$userId = $smarty->_tpl_vars['theme']['actingUserId'];
 	$className = "${module}Callbacks";
 	$class = new $className;
 	$ret = $class->callback($params, $smarty, $file, $userId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    /* What can we do with this error? */
 	    global $gallery;
 	    $gallery->debug("Error performing $params[type] callback");
@@ -794,7 +808,7 @@ class GalleryTemplateAdapter {
 	static $coreModule;
 	if (!isset($coreModule)) {
 	    list ($ret, $coreModule) = GalleryCoreApi::loadPlugin('module', 'core');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
@@ -843,7 +857,7 @@ class GalleryTemplateAdapter {
 	       'updateProgressBar("%s", "%s", "%s", "%s", "%s");</script>',
 	       $title, $description, $percentComplete, $timeRemaining, $memoryInfo);
 	flush();
-	return GalleryStatus::success();
+	return null;
     }
 
     function resetProgressBarStats() {

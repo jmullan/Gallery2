@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
  * @author Felix Rabinovich <felix@rabinovich.org>
  */
 
-GalleryCoreApi::relativeRequireOnce('lib/tools/phpunit/ItemAddOptionTestCase.class');
+GalleryCoreApi::requireOnce('lib/tools/phpunit/ItemAddOptionTestCase.class');
 
 /**
  * SizeLimitOption tests
@@ -51,7 +51,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GalleryToolkit', 'SetSizeOptionTestToolkit', 'SetSizeOptionTestToolkit',
 	    'modules/sizelimit/test/phpunit/SetSizeOptionTest.class', 'sizelimitTest', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -61,7 +61,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	$ret = GalleryCoreApi::registerToolkitOperation('SetSizeOptionTestToolkit',
 	    array('image/known'), 'compress',
 	    array(array('type' => 'int', 'description' => 'size')), 'desc');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -71,7 +71,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	    array('image/known'), 'scale',
 	    array(array('type' => 'int', 'description' => 'width'),
 	    array('type' => 'int', 'description' => 'height')), 'desc');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -79,13 +79,13 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	/* we will return dimensions to whoever asks */
 	$ret = GalleryCoreApi::registerToolkitProperty('SetSizeOptionTestToolkit',
 	    array('image/known', 'image/unknown'), 'dimensions', 'int,int', 'desc');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -97,7 +97,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	    $this->_createRandomDataItem($this->_album->getId(), 'image/known',
 					 array('summary' => 'original summary 0',
 					 'description' => 'original description 0'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -108,14 +108,14 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	    $this->_createRandomDataItem($this->_album->getId(), 'image/unknown',
 					 array('summary' => 'plagiarized summary',
 					       'description' => 'plagiarized description'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* For translation */
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'sizelimit');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -134,7 +134,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 
     function testAppropriate() {
 	list ($ret, $appropriate) = $this->_option->isAppropriate($this->_album, null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert($appropriate, 'appropriate');
@@ -143,12 +143,12 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
     /* change dimensions, don't keep original */
     function testChangeDimNoOriginal() {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	foreach (array('width' => 768, 'height' => 1024, 'keepOriginal' => 0) as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
 		$key, $value, $this->_album->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
@@ -157,7 +157,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	$this->assertEquals($this->_noWarnings, $warnings);
 
 	list ($ret, $this->_items[0]) = $this->_items[0]->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -168,7 +168,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	$this->assertEquals(2, $this->_items[0]->getSerialNumber(), 'Serial Number');
 	$platform->clearstatcache();
 	$ret = $this->_items[0]->rescan();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
@@ -176,11 +176,11 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
     /* change dimensions on multiple items, don't keep originals */
     function testMultipleChangeDimNoOriginal() {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	foreach (array('width' => 768, 'height' => 1024, 'keepOriginal' => 0) as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit', $key, $value,
 						      $this->_album->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
@@ -191,7 +191,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 		$this->_createRandomDataItem($this->_album->getId(), 'image/known',
 					     array('summary' => "original summary $j",
 					     'description' => "original description $j"));
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
@@ -205,7 +205,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 
 	for ($j = 0; $j < $totalTestItems; $j++) {
 	    list ($ret, $this->_items[$j]) = $this->_items[$j]->refresh();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $this->assertEquals(768, $this->_items[$j]->getWidth(), "Width $j");
@@ -213,7 +213,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	    $this->assertEquals(2, $this->_items[$j]->getSerialNumber(), "Serial Number $j");
 	    $platform->clearstatcache();
 	    $ret = $this->_items[$j]->rescan();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
@@ -228,7 +228,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	foreach (array('width' => 768, 'height' => 1024, 'keepOriginal' => 1) as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
 		$key, $value, $this->_album->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
@@ -239,14 +239,14 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	/* Check to see if we have a preferred source */
 	list ($ret, $resized) =
 	    GalleryCoreApi::fetchPreferredSource($this->_items[0]);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	if (!GalleryUtilities::isExactlyA($resized, 'GalleryDerivativeImage')) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = $resized->rebuildCache();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(768, $resized->getWidth(), 'Width');
@@ -262,7 +262,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	foreach (array('width' => 768, 'height' => 1024, 'keepOriginal' => 1) as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
 		$key, $value, $this->_album->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
@@ -273,7 +273,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 		$this->_createRandomDataItem($this->_album->getId(), 'image/known',
 					     array('summary' => "original summary $j",
 					     'description' => "original description $j"));
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
@@ -290,14 +290,14 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	    /* Check to see if we have a preferred source */
 	    list ($ret, $resized) =
 		GalleryCoreApi::fetchPreferredSource($this->_items[$j]);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    if (!GalleryUtilities::isExactlyA($resized, 'GalleryDerivativeImage')) {
 		return $this->assert(false, 'Not a derivative image');
 	    }
 	    $ret = $resized->rebuildCache();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $this->assertEquals(768, $resized->getWidth(), 'Width');
@@ -310,12 +310,12 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
     /* change size, don't keep original */
     function testChangeSizeNoOriginal() {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	foreach (array('size' => 1000, 'keepOriginal' => 0) as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
 		$key, $value, $this->_album->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
@@ -325,7 +325,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	$platform->clearstatcache();
 
 	list ($ret, $this->_items[0]) = $this->_items[0]->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -335,7 +335,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	$this->assertEquals($this->_expectCompress, $operation, 'operation');
 	list ($ret, $preferred) =
 	    GalleryCoreApi::fetchPreferredSource($this->_items[0]);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals($this->_items[0], $preferred, 'No preferred');
@@ -344,12 +344,12 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
     /* change size on multiple items, don't keep originals */
     function testMultipleChangeSizeNoOriginal() {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	foreach (array('size' => 1000, 'keepOriginal' => 0) as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
 		$key, $value, $this->_album->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
@@ -360,7 +360,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 		$this->_createRandomDataItem($this->_album->getId(), 'image/known',
 					     array('summary' => "original summary $j",
 					     'description' => "original description $j"));
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
@@ -376,7 +376,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	    $platform->clearstatcache();
 
 	    list ($ret, $this->_items[$j]) = $this->_items[$j]->refresh();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
@@ -384,7 +384,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	    $this->assertEquals(1000, $this->_items[$j]->getSize(), 'Size');
 	    list ($ret, $preferred) =
 		GalleryCoreApi::fetchPreferredSource($this->_items[$j]);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $this->assertEquals($this->_items[$j], $preferred, 'No preferred');
@@ -398,7 +398,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	foreach (array('size' => 1000, 'keepOriginal' => 1) as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
 		$key, $value, $this->_album->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
@@ -409,14 +409,14 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	/* Check to see if we have a preferred source */
 	list ($ret, $resized) =
 	    GalleryCoreApi::fetchPreferredSource($this->_items[0]);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	if (!GalleryUtilities::isExactlyA($resized, 'GalleryDerivativeImage')) {
 	    return $this->assert(false, 'Not a derivative');
 	}
 	$ret = $resized->rebuildCache();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -431,7 +431,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	foreach (array('size' => 1000, 'keepOriginal' => 1) as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
 		$key, $value, $this->_album->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
@@ -442,7 +442,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 		$this->_createRandomDataItem($this->_album->getId(), 'image/known',
 					     array('summary' => "original summary $j",
 					     'description' => "original description $j"));
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
@@ -458,14 +458,14 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	    /* Check to see if we have a preferred source */
 	    list ($ret, $resized) =
 		GalleryCoreApi::fetchPreferredSource($this->_items[$j]);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    if (!GalleryUtilities::isExactlyA($resized, 'GalleryDerivativeImage')) {
 		return $this->assert(false, 'Not a derivative');
 	    }
 	    $ret = $resized->rebuildCache();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
@@ -479,13 +479,13 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
     /* change dimensions AND size, keep original */
     function testChangeBothKeepOriginal() {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$this->_expectResizeCompress = array_merge($this->_expectResize, $this->_expectCompress);
 	foreach (array('width' => 768, 'height' => 1024, 'size' => 1000, 'keepOriginal' => 1)
 	    as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
 		$key, $value, $this->_album->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
@@ -495,14 +495,14 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 
 	/* Check to see if we have a preferred source */
 	list ($ret, $resized) = GalleryCoreApi::fetchPreferredSource($this->_items[0]);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	if (!GalleryUtilities::isExactlyA($resized, 'GalleryDerivativeImage')) {
 	    return $this->assert(false, 'Not a derivative');
 	}
 	$ret = $resized->rebuildCache();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('scale|768,1024;compress|1000', $resized->getDerivativeOperations(), 'Operations');
@@ -520,7 +520,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	    as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
 		$key, $value, $this->_album->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
@@ -531,7 +531,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 		$this->_createRandomDataItem($this->_album->getId(), 'image/known',
 					     array('summary' => "original summary $j",
 						   'description' => "original description $j"));
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
@@ -547,14 +547,14 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	for ($j = 0; $j < $totalTestItems; $j++) {
 	    /* Check to see if we have a preferred source */
 	    list ($ret, $resized) = GalleryCoreApi::fetchPreferredSource($this->_items[$j]);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    if (!GalleryUtilities::isExactlyA($resized, 'GalleryDerivativeImage')) {
 		return $this->assert(false, 'Not a derivative');
 	    }
 	    $ret = $resized->rebuildCache();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $this->assertEquals('scale|768,1024;compress|1000',
@@ -571,13 +571,13 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
     /* change dimensions AND size, don't keep original */
     function testChangeBothNoOriginal() {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$this->_expectResizeCompress = array_merge($this->_expectResize, $this->_expectCompress);
 	foreach (array('width' => 768, 'height' => 1024, 'size' => 1000, 'keepOriginal' => 0)
 		as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
 		$key, $value, $this->_album->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
@@ -586,7 +586,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	$this->assertEquals($this->_noWarnings, $warnings);
 
 	list ($ret, $this->_items[0]) = $this->_items[0]->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -596,7 +596,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	$this->assertEquals($this->_expectResizeCompress, $operation, 'operation');
 	$platform->clearstatcache();
 	$ret = $this->_items[0]->rescan();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(1000, $this->_items[0]->getSize(), 'Size');
@@ -605,13 +605,13 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
     /* change dimensions AND size on multiple items, don't keep originals */
     function testMultipleChangeBothNoOriginal() {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$this->_expectResizeCompress = array_merge($this->_expectResize, $this->_expectCompress);
 	foreach (array('width' => 768, 'height' => 1024, 'size' => 1000, 'keepOriginal' => 0)
 		as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
 		$key, $value, $this->_album->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
@@ -622,7 +622,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 		$this->_createRandomDataItem($this->_album->getId(), 'image/known',
 					     array('summary' => "original summary $j",
 						   'description' => "original description $j"));
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
@@ -637,14 +637,14 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 
 	for ($j = 0; $j < $totalTestItems; $j++) {
 	    list ($ret, $item) = $this->_items[$j]->refresh();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $this->assertEquals(768, $item->getWidth(), 'Width');
 	    $this->assertEquals(1024, $item->getHeight(), 'Height');
 	    $platform->clearstatcache();
 	    $ret = $item->rescan();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $this->assertEquals(1000, $item->getSize(), 'Size');
@@ -659,7 +659,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	    as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
 		$key, $value, $this->_album->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
@@ -674,7 +674,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	    as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
 		$key, $value, $this->_album->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
@@ -687,7 +687,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 		$this->_createRandomDataItem($this->_album->getId(), 'image/unknown',
 					     array('summary' => "plagiarized summary $j",
 						   'description' => "plagiarized description $j"));
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
@@ -705,7 +705,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 		as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
 		$key, $value, $this->_album->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
@@ -714,7 +714,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	$this->assertEquals($this->_noWarnings, $warnings);
 
 	list ($ret, $this->_items[0]) = $this->_items[0]->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -743,7 +743,7 @@ class SetSizeOptionTestPlatform extends GalleryPlatform {
     function filesize($file) {
 	$size = GalleryUtilities::getRequestVariables('size_' . basename($file));
 	if ($size) {
-	    return $size;
+	    return (int)$size;
 	}
 	return 26031966;
     }
@@ -803,7 +803,7 @@ class SetSizeOptionTestToolkit extends GalleryToolkit {
 	    break;
 
 	default:
-	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
+	    return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
 	}
 
 	$operations = array();
@@ -814,7 +814,7 @@ class SetSizeOptionTestToolkit extends GalleryToolkit {
 	$operations[] = $operationName;
 	GalleryUtilities::putRequestVariable('operation', $operations);
 
-	return array(GalleryStatus::success(), $mimeType, $context);
+	return array(null, $mimeType, $context);
     }
 
     /**
@@ -826,15 +826,16 @@ class SetSizeOptionTestToolkit extends GalleryToolkit {
 	/* Our 'mime type' has to support dimensions */
 	switch($propertyName) {
 	case 'dimensions':
-	    $platform = $gallery->getPlatform();
+	    $platform =& $gallery->getPlatform();
 	    $results = $platform->getimagesize($file);
+	    $results = array((int)$results[0], (int)$results[1]);
 	    break;
 
 	default:
-	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 

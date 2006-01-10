@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 			    empty($mimeExtensions)) {
 			$extension = GalleryUtilities::getFileExtension($file['name']);
 			list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
-			if ($ret->isError()) {
+			if ($ret) {
 			    $mimeType = 'application/unknown';
 			}
 		    }
@@ -87,7 +87,7 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 									   $description,
 									   $mimeType,
 									   $item->getId());
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 
@@ -98,7 +98,7 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 	    }
 	}
 
-	return array(GalleryStatus::success(), $error, $status);
+	return array(null, $error, $status);
     }
 
     /**
@@ -117,7 +117,7 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
@@ -162,7 +162,7 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 	    $template->setVariable('ItemAdmin', $ItemAdmin);
 	}
 
-	return array(GalleryStatus::success(),
+	return array(null,
 		     'modules/core/templates/ItemAddFromBrowser.tpl',
 		     'modules_core');
     }
@@ -172,11 +172,11 @@ class ItemAddFromBrowser extends ItemAddPlugin {
      */
     function getTitle() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $module->translate('From Web Browser'));
+	return array(null, $module->translate('From Web Browser'));
     }
 }
 ?>

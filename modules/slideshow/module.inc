@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,11 +37,11 @@ class SlideshowModule extends GalleryModule {
 	$this->setId('slideshow');
 	$this->setName($gallery->i18n('Slideshow'));
 	$this->setDescription($gallery->i18n('Slideshow'));
-	$this->setVersion('1.0.0');
+	$this->setVersion('1.0.1');
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('getItemLinks');
-	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredModuleApi(array(2, 0));
+	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredModuleApi(array(3, 0));
     }
 
     /**
@@ -51,26 +51,11 @@ class SlideshowModule extends GalleryModule {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'SlideshowInterface_1_0', 'SlideshowImpl', 'Slideshow',
 	    'modules/slideshow/classes/SlideshowImpl.class', 'slideshow', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
-    }
-
-    /**
-     * @see GalleryModule::isRecommendedDuringInstall()
-     */
-    function isRecommendedDuringInstall() {
-	return true;
-    }
-
-    /**
-     * @see GalleryModule::autoConfigure()
-     */
-    function autoConfigure() {
-	/* We don't require any special configuration */
-	return array(GalleryStatus::success(), true);
+	return null;
     }
 
     /**
@@ -88,7 +73,7 @@ class SlideshowModule extends GalleryModule {
 			      'itemId' => $itemId));
 	    }
 	}
-	return array(GalleryStatus::success(), $links);
+	return array(null, $links);
     }
 
     /**
@@ -100,10 +85,12 @@ class SlideshowModule extends GalleryModule {
 	$rule = array();
 	$rule['comment'] = $this->translate('View Slideshow');
 	$rule['match'] = array('view' => 'slideshow.Slideshow');
+	$rule['onLoad'] = array('rewrite', 'RewriteSimpleHelper', 'loadItemIdFromPath');
 	$rule['pattern'] = 'v/%path%/slideshow.html';
         $rule['keywords'] = array(
             'path' => array(
                 'pattern' => '([^?]+)',
+		'function' => array('rewrite', 'RewriteSimpleHelper', 'parsePath'),
                 'help' => $this->translate('Path to an item (eg, /album/image.jpg.html)')));
 	$rules[] = $rule;
 

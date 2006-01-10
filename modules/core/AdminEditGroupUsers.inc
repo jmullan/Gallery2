@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ class AdminEditGroupUsersController extends GalleryController {
 	global $gallery;
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -54,7 +54,7 @@ class AdminEditGroupUsersController extends GalleryController {
 	/* Load the group */
 	$groupId = GalleryUtilities::getRequestVariables('groupId');
 	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($groupId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -90,12 +90,12 @@ class AdminEditGroupUsersController extends GalleryController {
 		if (empty($error)) {
 		    foreach ($form['userIds'] as $userId => $dummy) {
 			list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
-			if ($ret->isError()) {
+			if ($ret) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 
 			$ret = GalleryCoreApi::removeUserFromGroup($user->getId(), $groupId);
-			if ($ret->isError()) {
+			if ($ret) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 			$removedUsers++;
@@ -118,14 +118,14 @@ class AdminEditGroupUsersController extends GalleryController {
 		} else {
 		    list ($ret, $user) =
 			GalleryCoreApi::fetchUserByUsername($form['text']['userName']);
-		    if ($ret->isError() && ($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+		    if ($ret && ($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 			$error[] = 'form[error][text][userName][invalid]';
-		    } else if ($ret->isError()) {
+		    } else if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    } else {
 			/* Is the user already in the group? */
 			list ($ret, $inGroup) = GalleryCoreApi::isUserInGroup($user->getId(), $groupId);
-			if ($ret->isError()) {
+			if ($ret) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 			if ($inGroup) {
@@ -136,7 +136,7 @@ class AdminEditGroupUsersController extends GalleryController {
 
 		if (empty($error)) {
 		    $ret = GalleryCoreApi::addUserToGroup($user->getId(), $groupId);
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
@@ -158,7 +158,7 @@ class AdminEditGroupUsersController extends GalleryController {
 	$results['status'] = $status;
 	$results['error'] = $error;
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -178,7 +178,7 @@ class AdminEditGroupUsersView extends GalleryView {
 	global $gallery;
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -193,7 +193,7 @@ class AdminEditGroupUsersView extends GalleryView {
 	/* Load the group */
 	$groupId = GalleryUtilities::getRequestVariables('groupId');
 	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($groupId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -205,7 +205,7 @@ class AdminEditGroupUsersView extends GalleryView {
 
 	/* Initialize the user list */
 	list ($ret, $totalUserCount) = GalleryCoreApi::fetchUserCount(null, $group->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -235,7 +235,7 @@ class AdminEditGroupUsersView extends GalleryView {
 					(($form['list']['page'] - 1) * $form['list']['pageSize']),
 					$form['list']['filter']
 			      );
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -255,13 +255,13 @@ class AdminEditGroupUsersView extends GalleryView {
 	$AdminEditGroupUsers = array();
 	$AdminEditGroupUsers['totalUserCount'] = $totalUserCount;
 	$AdminEditGroupUsers['canRemove'] = $canRemove;
-	$AdminEditGroupUsers['group'] = $group->getMemberData();
+	$AdminEditGroupUsers['group'] = (array)$group;
 
 	/* Render the HTML body */
 	$template->setVariable('AdminEditGroupUsers', $AdminEditGroupUsers);
 	$template->setVariable('controller', 'core.AdminEditGroupUsers');
 
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/core/templates/AdminEditGroupUsers.tpl'));
     }
 }

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ class ImageMagickToolkitHelper {
 	global $gallery;
 
 	list ($ret, $mimeTypes) = ImageMagickToolkitHelper::discoverMimeTypes();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -187,7 +187,7 @@ class ImageMagickToolkitHelper {
 		'mimeTypes' => $rgbTypes);
 	}
 
-	return array(GalleryStatus::success(), array('operations' => $operations,
+	return array(null, array('operations' => $operations,
 						     'properties' => $properties));
     }
 
@@ -201,31 +201,31 @@ class ImageMagickToolkitHelper {
      */
     function getCommand($cmd, $imageMagickPath=null) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	if ($imageMagickPath == null) {
 	    list ($ret, $imageMagickPath) =
 		GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'path');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    list ($ret, $binary) =
 		GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'binary');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	} else {
 	    list ($ret, $binary) = ImageMagickToolkitHelper::discoverBinary($imageMagickPath);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 
 	if (empty($binary)) {
-	    return array(GalleryStatus::success(), array($imageMagickPath . $cmd .
+	    return array(null, array($imageMagickPath . $cmd .
 			 (GalleryUtilities::isA($platform, 'WinNtPlatform') ? '.exe' : '')));
 	} else {
-	    return array(GalleryStatus::success(), array($imageMagickPath . $binary, $cmd));
+	    return array(null, array($imageMagickPath . $binary, $cmd));
 	}
     }
 
@@ -242,19 +242,19 @@ class ImageMagickToolkitHelper {
      */
     function discoverMimeTypes($imageMagickPath=null) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 	$dataPath = dirname(dirname(__FILE__)) . "${slash}data${slash}";
 
 	if (empty($imageMagickPath)) {
 	    list ($ret, $imageMagickPath) =
 		GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'path');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    if (empty($imageMagickPath)) {
-		return array(GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
 	    }
 	}
 
@@ -293,7 +293,7 @@ class ImageMagickToolkitHelper {
 	foreach ($tests as $test) {
 	    list ($ret, $command) =
 		ImageMagickToolkitHelper::getCommand('identify', $imageMagickPath);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $command = array_merge($command, array($dataPath . $test['file']));
@@ -314,12 +314,12 @@ class ImageMagickToolkitHelper {
 
 	$platform->chdir($oldPwd);
 	if ($successCount == 0) {
-	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
 	}
 
 	list ($ret, $cmykSupport) =
 	    ImageMagickToolkitHelper::discoverColorspaceSupport($imageMagickPath);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if ($cmykSupport) {
@@ -330,7 +330,7 @@ class ImageMagickToolkitHelper {
 	    }
 	}
 
-	return array(GalleryStatus::success(), array_keys($mimeTypes));
+	return array(null, array_keys($mimeTypes));
     }
 
     /**
@@ -349,7 +349,7 @@ class ImageMagickToolkitHelper {
      */
     function testBinaries($imageMagickPath) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 	$dataPath = dirname(dirname(__FILE__)) . "${slash}data${slash}";
 
@@ -359,12 +359,12 @@ class ImageMagickToolkitHelper {
 	 */
 	if (!$platform->isRestrictedByOpenBaseDir($imageMagickPath) &&
 		!@$platform->is_dir($imageMagickPath)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__), null);
 	}
 
 	/* We need to translate some strings */
 	list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imagemagick');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -385,7 +385,7 @@ class ImageMagickToolkitHelper {
 	    case 'identify':
 		list ($ret, $command) =
 		    ImageMagickToolkitHelper::getCommand('identify', $imageMagickPath);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
@@ -426,14 +426,14 @@ class ImageMagickToolkitHelper {
 		/* We will try to scale a gif using the 'convert' binary */
 		list ($ret, $command) =
 		    ImageMagickToolkitHelper::getCommand('convert', $imageMagickPath);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		$tmpDir = $gallery->getConfig('data.gallery.tmp');
 		$tmpFilename = $platform->tempnam($tmpDir, 'imgk_');
 		if (empty($tmpFilename)) {
 		    /* This can happen if the $tmpDir path is bad */
-		    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__,
+		    return array(GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__,
 						      "Could not create tmp file in '$tmpDir'"),
 				 null);
 		}
@@ -478,19 +478,19 @@ class ImageMagickToolkitHelper {
 	    case 'composite':
 		list ($ret, $compositeCmd) =
 		    ImageMagickToolkitHelper::discoverCompositeCmd($imageMagickPath);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		list ($ret, $command) =
 		    ImageMagickToolkitHelper::getCommand($compositeCmd, $imageMagickPath);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		$tmpDir = $gallery->getConfig('data.gallery.tmp');
 		$tmpFilename = $platform->tempnam($tmpDir, 'imgk_');
 		if (empty($tmpFilename)) {
 		    /* This can happen if the $tmpDir path is bad */
-		    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__,
+		    return array(GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__,
 						      "Could not create tmp file in '$tmpDir'"),
 				 null);
 		}
@@ -526,13 +526,13 @@ class ImageMagickToolkitHelper {
 		}
 		break;
 	    default:
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 		break;
 	    }
 	}
 	$platform->chdir($oldCwd);
 
-	return array(GalleryStatus::success(), $testArray);
+	return array(null, $testArray);
     }
 
     /**
@@ -547,25 +547,25 @@ class ImageMagickToolkitHelper {
      */
     function discoverBinary($imageMagickPath=null) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	if (empty($imageMagickPath)) {
 	    list ($ret, $imageMagickPath) =
 		GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'path');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    if (empty($imageMagickPath)) {
-		return array(GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
 	    }
 	}
 
 	$suffix = GalleryUtilities::isA($platform, 'WinNtPlatform') ? '.exe' : '';
 	$gmBinary = $imageMagickPath . 'gm' . $suffix;
 	if ($platform->file_exists($gmBinary) && $platform->is_executable($gmBinary)) {
-	    return array(GalleryStatus::success(), 'gm' . $suffix);
+	    return array(null, 'gm' . $suffix);
 	}
-	return array(GalleryStatus::success(), '');
+	return array(null, '');
     }
 
     /**
@@ -579,10 +579,10 @@ class ImageMagickToolkitHelper {
      */
     function discoverVersion($imageMagickPath=null) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	list ($ret, $command) = ImageMagickToolkitHelper::getCommand('identify', $imageMagickPath);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
@@ -594,10 +594,10 @@ class ImageMagickToolkitHelper {
 			       version_compare($version[1], '6.2.2.3', '<')) ||
 			      ($version[0] == 'GraphicsMagick' &&
 			       version_compare($version[1], '1.1.6-r1', '<'));
-		return array(GalleryStatus::success(), $version, $vulnerable);
+		return array(null, $version, $vulnerable);
 	    }
 	}
-	return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null, null);
+	return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null, null);
     }
 
     /**
@@ -612,25 +612,25 @@ class ImageMagickToolkitHelper {
      */
     function discoverCompositeCmd($imageMagickPath=null) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	list ($ret, $binary) = ImageMagickToolkitHelper::discoverBinary($imageMagickPath);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if ($binary != '') {
 	    /* GraphicsMagick is always 'composite' */
-	    return array(GalleryStatus::success(), 'composite');
+	    return array(null, 'composite');
 	}
 
 	if (empty($imageMagickPath)) {
 	    list ($ret, $imageMagickPath) =
 		GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'path');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    if (empty($imageMagickPath)) {
-		return array(GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
 	    }
 	}
 
@@ -639,10 +639,10 @@ class ImageMagickToolkitHelper {
 	    $binaryPath = $imageMagickPath . $binary .
 		(GalleryUtilities::isA($platform, 'WinNtPlatform') ? '.exe' : '');
 	    if ($platform->file_exists($binaryPath) && $platform->is_executable($binaryPath)) {
-		return array(GalleryStatus::success(), $binary);
+		return array(null, $binary);
 	    }
 	}
-	return array(GalleryStatus::success(), 'composite');
+	return array(null, 'composite');
     }
 
     /**
@@ -657,13 +657,13 @@ class ImageMagickToolkitHelper {
      */
     function discoverRemoveMetaDataSwitch($imageMagickPath=null) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 	$dataPath = dirname(dirname(__FILE__)) . "${slash}data${slash}";
 
 	list ($ret, $convertCmd) =
 	    ImageMagickToolkitHelper::getCommand('convert', $imageMagickPath);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -671,7 +671,7 @@ class ImageMagickToolkitHelper {
 	$tmpFilename = $platform->tempnam($tmpDir, 'imgk_');
 	if (empty($tmpFilename)) {
 	    /* This can happen if the $tmpDir path is bad */
-	    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__,
+	    return array(GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__,
 					      "Could not create tmp file in '$tmpDir'"), null);
 	}
 
@@ -684,11 +684,11 @@ class ImageMagickToolkitHelper {
 	    @$platform->unlink($tmpFilename);
 	    if ($success) {
 		if ($size > 0 && $size < $originalSize) {
-		    return array(GalleryStatus::success(), $param);
+		    return array(null, $param);
 		}
 	    }
 	}
-	return array(GalleryStatus::success(), array());
+	return array(null, array());
     }
 
     /**
@@ -699,18 +699,18 @@ class ImageMagickToolkitHelper {
      */
     function discoverColorspaceSupport($imageMagickPath=null) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 	$dataPath = dirname(dirname(__FILE__)) . "${slash}data${slash}";
 
 	list ($ret, $convertCmd) =
 	    ImageMagickToolkitHelper::getCommand('convert', $imageMagickPath);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	list ($ret, $identifyCmd) =
 	    ImageMagickToolkitHelper::getCommand('identify', $imageMagickPath);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -718,7 +718,7 @@ class ImageMagickToolkitHelper {
 	$tmpFilename = $platform->tempnam($tmpDir, 'imgk_');
 	if (empty($tmpFilename)) {
 	    /* This can happen if the $tmpDir path is bad */
-	    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__,
+	    return array(GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__,
 					      "Could not create tmp file in '$tmpDir'"), null);
 	}
 
@@ -739,7 +739,7 @@ class ImageMagickToolkitHelper {
 	    }
 	}
 	@$platform->unlink($tmpFilename);
-	return array(GalleryStatus::success(), $cmykSupport);
+	return array(null, $cmykSupport);
     }
 
     /**
@@ -751,39 +751,39 @@ class ImageMagickToolkitHelper {
     function savePlatformParameters($imageMagickPath=null) {
 	/* Find out if we are GraphicsMagick, using "gm" as a binary */
 	list ($ret, $binary) = ImageMagickToolkitHelper::discoverBinary($imageMagickPath);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', 'binary', $binary);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Find out what composite cmd to use */
 	list ($ret, $compositeCmd) =
 	    ImageMagickToolkitHelper::discoverCompositeCmd($imageMagickPath);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick',
 						  'compositeCmd', $compositeCmd);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Find out how to remove meta data from jpegs */
 	list ($ret, $removeMetaDataSwitch) =
 	    ImageMagickToolkitHelper::discoverRemoveMetaDataSwitch($imageMagickPath);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', 'removeMetaDataSwitch',
 						  implode('|', $removeMetaDataSwitch));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 }
 ?>

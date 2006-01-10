@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,24 +52,24 @@ class GalleryDerivativeHelper_simple {
 	global $gallery;
 
 	list ($ret, $derivative) = GalleryCoreApi::loadEntitiesById($derivativeId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	list ($ret, $current) = $derivative->isCacheCurrent();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	$isBroken = $derivative->getIsBroken();
 	if (!$current || ($fixBroken && !empty($isBroken))) {
 	    list ($ret, $derivative) =
 		GalleryCoreApi::rebuildDerivativeCache($derivativeId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	}
 
-	return array(GalleryStatus::success(), $derivative,
+	return array(null, $derivative,
 		     (!$current || ($fixBroken && !empty($isBroken))));
     }
 }

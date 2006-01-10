@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 /**
  * Load required classes
  */
-GalleryCoreApi::relativeRequireOnce('modules/watermark/classes/WatermarkHelper.class');
+GalleryCoreApi::requireOnce('modules/watermark/classes/WatermarkHelper.class');
 
 /**
  * WatermarkSiteAdmin controller tests
@@ -48,7 +48,7 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	parent::setUp();
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'watermark');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -59,7 +59,7 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	/* Get the list of watermarks before, then after delete any that we created */
 	list ($ret, $this->_beforeWatermarks) = WatermarkHelper::fetchWatermarks();
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -68,14 +68,14 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
     function tearDown() {
 	/* Get the list of watermarks before, then after delete any that we created */
 	list ($ret, $this->_afterWatermarks) = WatermarkHelper::fetchWatermarks();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	foreach (array_keys($this->_afterWatermarks) as $id) {
 	    if (!isset($this->_beforeWatermarks[$id])) {
 		$ret = GalleryCoreApi::deleteEntityById($id);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
 	    }
@@ -118,7 +118,7 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	/* Verify */
 	list ($ret, $map) = $this->_fetchWatermarkMapByFilename();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -149,7 +149,7 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	/* Verify */
 	list ($ret, $map) = $this->_fetchWatermarkMapByFilename();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -179,7 +179,7 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 			    $results, 'Add same name, bad mime');
 
 	list ($ret, $map) = $this->_fetchWatermarkMapByFilename();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -212,7 +212,7 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 			    $results, 'Add');
 
 	list ($ret, $map) = $this->_fetchWatermarkMapByFilename();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -233,7 +233,7 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	    /* Verify that it's gone */
 	    $ret = $this->_verifyMissing($map[$this->_expectedName]->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	} else {
@@ -262,22 +262,22 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	    $results, 'Add');
 
 	list ($ret, $map) = $this->_fetchWatermarkMapByFilename();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$watermark = $map[$this->_expectedName];
 
 	/* Use this watermark */
 	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($item);
 	list ($ret, $derivative) = $this->_createDerivative(
 	    $item, $item->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL, '', 'test/file',
-	    array('postfilterOperations' =>
+	    array('postFilterOperations' =>
 		      'composite|plugins_data/modules/watermark/' . $this->_expectedName . ',...'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -299,7 +299,7 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	    /* Verify that it's NOT gone */
 	    $ret = $this->_verifyEntity($watermark);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	} else {
@@ -343,7 +343,7 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 			    $results, 'Add');
 
 	list ($ret, $map) = $this->_fetchWatermarkMapByFilename();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(isset($map[$expectedName]), 'Watermark is missing');
@@ -353,7 +353,7 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 				'Watermark mime type incorrect');
 
 	    list ($ret, $path) = $map[$expectedName]->fetchPath();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
@@ -366,14 +366,14 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 
     function _fetchWatermarkMapByFilename() {
 	list ($ret, $watermarks) = WatermarkHelper::fetchWatermarks();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($this->wrap(__FILE__, __LINE__), null);
 	}
 	$results = array();
 	foreach ($watermarks as $id => $watermark) {
 	    $results[$watermark->getFileName()] = $watermark;
 	}
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 
     function testSaveMissingId() {

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,12 +44,12 @@ class EntityTest extends GalleryTestCase {
 
 	$this->_entity = new EntityTestEntity();
 	$ret = $this->_entity->create();
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = $this->_entity->save();
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -58,15 +58,20 @@ class EntityTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GalleryOnLoadHandler', 'EntityTestOnLoadHandler', 'EntityTestOnLoadHandler',
 	     'modules/core/test/phpunit/EntityTest.class', 'coreTest', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markFactoryModuleForCleanup('coreTest');
 	$this->_savedSession = $gallery->_session;
-	$gallery->_session = new GallerySession();
-	$ret = $gallery->_session->init();
-	if ($ret->isError()) {
+	$gallery->_session = null;
+	$ret = $gallery->initSession();
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$ret = $gallery->_session->start();
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -92,7 +97,7 @@ class EntityTest extends GalleryTestCase {
 	    array('type' => 'entity', 'itemId' => $this->_entity->getId()));
 
 	list ($ret, $newEntity) = GalleryCoreApi::loadEntitiesById($this->_entity->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('entitytestentity', strtolower(get_class($newEntity)), 'Entity class');
@@ -107,7 +112,7 @@ class EntityTest extends GalleryTestCase {
 	    $this->assert(!empty($data), 'Entity data should be in disk cache');
 
 	    list ($ret, $newEntity) = GalleryCoreApi::loadEntitiesById($this->_entity->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
@@ -119,14 +124,14 @@ class EntityTest extends GalleryTestCase {
 
 	/* Load back from memory cache */
 	list ($ret, $newEntity) = GalleryCoreApi::loadEntitiesById($this->_entity->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(!$newEntity->_wasOnLoadCalled(), 'onLoad for memory cache load');
 
 	/* Refresh from db */
 	list ($ret, $newEntity) = $this->_entity->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals($this->_entity, $newEntity, 'Entity check 3');
@@ -137,7 +142,7 @@ class EntityTest extends GalleryTestCase {
 	global $gallery;
 	$entity = new EntityTestEntity();
 	$ret = $entity->create();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -161,14 +166,14 @@ class EntityTest extends GalleryTestCase {
 	$this->assertEquals('|EntityTestOnLoadHandler|', $entity->getOnLoadHandlers(), 12);
 
 	$ret = $entity->save();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($entity);
 	$this->assert(!$entity->_wasOnLoadCalled(), 'onLoad for new entity');
 
 	list ($ret, $newEntity) = GalleryCoreApi::loadEntitiesById($entity->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -184,7 +189,7 @@ class EntityTest extends GalleryTestCase {
 	unset($newEntity);
 	$session->put('isUpgrade', true);
 	list ($ret, $newEntity) = GalleryCoreApi::loadEntitiesById($entity->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -228,18 +233,41 @@ class EntityTest extends GalleryTestCase {
 	 */
 
 	$entity = new EntityTestEntity();
+	$ret = $entity->create();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/*
+	 * clear the modified flags, else the create() call will cause the id to be
+	 * different
+	 */
+	$entity->resetOriginalValues();
 	$this->assert(!$entity->isModified(), 'not yet modified');
 	$entity->setIsLinkable(true);
 	$entity->setIsLinkable(false);
 	$entity->setIsLinkable(true);
+
 	$this->assert($entity->isModified(), 'is modified');
+    }
+
+    function testIsModifiedMember() {
+	$entity = new EntityTestEntity();
+	$ret = $entity->create();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(!$entity->isModified('onLoadHandlers'));
+	$entity->setOnLoadHandlers('foo');
+	$this->assert($entity->isModified('onLoadHandlers'));
     }
 
     function testSaveWithoutEvent() {
 	$listener = new EntityTestEventListener($this);
 	GalleryCoreApi::registerEventListener('GalleryEntity::save', $listener);
 
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryEntity.class');
+	GalleryCoreApi::requireOnce('modules/core/classes/GalleryEntity.class');
 	$entity = new GalleryEntity();
 	$entity->create();
 	$ret = $entity->save(false);
@@ -256,13 +284,81 @@ class EntityTest extends GalleryTestCase {
 	$entity->setPersistentFlag(STORAGE_FLAG_NEWLY_CREATED);
 	$event->setEntity($entity);
 	list ($ret, $result) = GalleryCoreApi::postEvent($event);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$event = $listener->getEvent();
 	$newEntity = $event->getEntity();
 	$this->assertEquals($entity->getId(), $newEntity->getId());
+    }
+
+    function _createLinkedPhotos() {
+	list ($ret, $photo1) = $this->_createRandomDataItem(
+	    $this->_getRootId(), 'application/unknown', array('width' => 100, 'height' => 200),
+	    __FILE__, 'GalleryPhotoItem');
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+	$this->_markForCleanup($photo1);
+	$this->assertEquals(100, $photo1->getWidth());
+
+	list ($ret, $photo2) = $this->_createRandomDataItem(
+	    $this->_getRootId(), 'application/unknown',
+	    array('width' => 300, 'height' => 400, 'linkId' => $photo1->getId()),
+	    __FILE__, 'GalleryPhotoItem');
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+	$this->_markForCleanup($photo2);
+
+	return array(null, $photo1, $photo2);
+    }
+
+    function testLinkedMembers() {
+	list ($ret, $photo1, $photo2) = $this->_createLinkedPhotos();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(300, $photo2->getWidth());
+
+	list ($ret, $photo2) = GalleryCoreApi::loadEntitiesById($photo2->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(100, $photo2->getWidth());
+    }
+
+    function testDetachLink() {
+	list ($ret, $photo1, $photo2) = $this->_createLinkedPhotos();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $photo2) = GalleryCoreApi::loadEntitiesById($photo2->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$photo2->setWidth(900);
+	$this->assertEquals(900, $photo2->getWidth(), 'width was changed after loading entity');
+
+	$ret = $photo2->detachLink();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(null, $photo2->getLinkId(), 'link id should be empty');
+	$this->assertEquals(null, $photo2->getLinkedEntity(), 'linked entity should be empty');
+	$this->assertEquals(100, $photo2->getWidth(), 'width was copied over from linked entity');
+
+	/*
+	 * Our cached $photo2 is detached but unsaved.  We can either save it, or just clear the
+	 * cache.  Clearing the cache is easier.
+	 */
+	GalleryDataCache::reset();
     }
 }
 
@@ -274,20 +370,20 @@ class EntityTestEntity extends GalleryEntity {
 
     function create() {
 	$ret = parent::create();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$this->setEntityType('EntityTestEntity');
-	return GalleryStatus::success();
+	return null;
     }
 
     function onLoad() {
 	$this->_wasOnLoadCalled(true);
 	$ret = parent::onLoad();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	return GalleryStatus::success();
+	return null;
     }
 
     function _wasOnLoadCalled($set=null) {
@@ -303,6 +399,17 @@ class EntityTestEntity extends GalleryEntity {
 	}
 	return $value;
     }
+
+    /**
+     * @see GalleryEntity::getClassName()
+     */
+    function getClassName() {
+	return 'EntityTestEntity';
+    }
+
+    function getClassFile() {
+	return array(null, 'modules/core/test/phpunit/EntityTest.class');
+    }
 }
 
 /**
@@ -316,12 +423,12 @@ class EntityTestOnLoadHandler {
 	} else {
 	    $entity->setLinkedEntity('onLoadHandler was called during upgrade');
 	}
-	return GalleryStatus::success();
+	return null;
     }
 }
 
 
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryEventListener.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryEventListener.class');
 
 /**
  * Dummy event listener
@@ -334,7 +441,7 @@ class EntityTestEventListener extends GalleryEventListener {
     function handleEvent($event) {
 	$this->_event = $event;
 	$data = $event->getData();
-	return array(GalleryStatus::success(), 'dummy');
+	return array(null, 'dummy');
     }
 
     function getEvent() {

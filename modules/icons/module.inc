@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,11 +37,11 @@ class IconsModule extends GalleryModule {
 	$this->setId('icons');
 	$this->setName($gallery->i18n('Icons'));
 	$this->setDescription($gallery->i18n('Display icons for links'));
-	$this->setVersion('1.0.0'); /* Update upgrade() function below too */
+	$this->setVersion('1.0.1'); /* Update upgrade() function below too */
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('getSiteAdminViews');
-	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredModuleApi(array(2, 0));
+	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredModuleApi(array(3, 0));
     }
 
     /**
@@ -49,13 +49,13 @@ class IconsModule extends GalleryModule {
      */
     function upgrade($currentVersion) {
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'icons');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	foreach (array('iconpack' => '') as $key => $value) {
 	    if (!isset($params[$key])) {
 		$ret = $this->setParameter($key, $value);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
@@ -68,7 +68,7 @@ class IconsModule extends GalleryModule {
 	switch ($currentVersion) {
 	case '0':
 	    $ret = $this->setParameter('iconpack', 'paularmstrongdesigns');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    break;
@@ -79,7 +79,7 @@ class IconsModule extends GalleryModule {
 	    if (isset($params['iconpack']) && $params['iconpack'] == 'paularmstrongdesigns.com') {
 		/* Removed ".com" from paularmstrongdesigns.com dir, IIS 5.1 didn't like it */
 		$ret = $this->setParameter('iconpack', 'paularmstrongdesigns');
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
@@ -87,16 +87,17 @@ class IconsModule extends GalleryModule {
 	case '0.9.3':
 	case '0.9.4':
 	case '0.9.5':
+	case '1.0.0':
 
 	case 'end of upgrade path':
 	    break;
 
 	default:
-	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
+	    return GalleryCoreApi::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
 					sprintf('Unknown module version %s', $currentVersion));
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -106,33 +107,18 @@ class IconsModule extends GalleryModule {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'IconsInterface_1_0', 'IconsImpl', 'Icons',
 	    'modules/icons/classes/IconsImpl.class', 'icons', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
-    }
-
-    /**
-     * @see GalleryModule::isRecommendedDuringInstall()
-     */
-    function isRecommendedDuringInstall() {
-	return true;
-    }
-
-    /**
-     * @see GalleryModule::autoConfigure()
-     */
-    function autoConfigure() {
-	/* We don't require any special configuration */
-	return array(GalleryStatus::success(), true);
+	return null;
     }
 
     /**
      * @see GalleryModule::getSiteAdminViews()
      */
     function getSiteAdminViews() {
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array(array('name' => $this->translate('Icons'),
 				 'view' => 'icons.IconsSiteAdmin')));
     }

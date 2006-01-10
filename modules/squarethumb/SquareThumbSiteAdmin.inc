@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ class SquareThumbSiteAdminController extends GalleryController {
     function handleRequest($form) {
 	/* Make sure we have adequate permissions */
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -51,7 +51,7 @@ class SquareThumbSiteAdminController extends GalleryController {
 		foreach (array('mode', 'color') as $key) {
 		    $ret = GalleryCoreApi::setPluginParameter('module', 'squarethumb',
 							      $key, $form[$key]);
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		}
@@ -65,7 +65,7 @@ class SquareThumbSiteAdminController extends GalleryController {
 			 'status' => $status,
 			 'error' => $error);
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -85,14 +85,14 @@ class SquareThumbSiteAdminView extends GalleryView {
 	    foreach (array('mode', 'color') as $key) {
 		list ($ret, $form[$key]) =
 		    GalleryCoreApi::getPluginParameter('module', 'squarethumb', $key);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
 	}
 
 	$template->setVariable('controller', 'squarethumb.SquareThumbSiteAdmin');
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/squarethumb/templates/SquareThumbSiteAdmin.tpl'));
     }
 }

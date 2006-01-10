@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,18 +43,22 @@ class NokiaUploadModule extends GalleryModule {
 	$this->setName($gallery->i18n('Nokia Image Upload'));
 	$this->setDescription(
 	    $gallery->i18n('Implementation of Nokia Image Upload Server API v1.1'));
-	$this->setVersion('1.0.0');
+	$this->setVersion('1.0.1');
 	$this->setGroup('import', $gallery->i18n('Import'));
 	$this->setCallbacks('');
-	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredModuleApi(array(2, 0));
+	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredModuleApi(array(3, 0));
     }
 
     /**
-     * @see GalleryModule::isRecommendedDuringInstall
+     * @see GalleryModule::autoConfigure
      */
-    function isRecommendedDuringInstall() {
-	return false;
+    function autoConfigure() {
+	list ($ret, $needsConfiguration) = $this->needsConfiguration();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	return array(null, !$needsConfiguration);
     }
 
     /**
@@ -62,15 +66,15 @@ class NokiaUploadModule extends GalleryModule {
      */
     function needsConfiguration() {
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'nokiaupload');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	foreach (array('id.mobileGroup', 'id.uploadAlbum') as $key) {
 	    if (empty($params[$key])) {
-		return array(GalleryStatus::success(), true);
+		return array(null, true);
 	    }
 	}
-	return array(GalleryStatus::success(), false);
+	return array(null, false);
     }
 
     /**

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ class MimeEditController extends GalleryController {
 	global $gallery;
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$error = array();
@@ -60,7 +60,7 @@ class MimeEditController extends GalleryController {
 			'viewable' => (int) isset($form['viewable']));
 
 		    list ($ret, $existingMimeType) = GalleryCoreApi::convertExtensionToMime($ext);
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
@@ -77,13 +77,13 @@ class MimeEditController extends GalleryController {
 
 	    if (empty($error)) {
 		$ret = GalleryCoreApi::removeMimeType(array('mimeType' => $form['mimeType']));
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		foreach ($mimeTypeMap as $mimeType) {
 		    $ret = GalleryCoreApi::addMimeType(
 			   $mimeType['extension'], $mimeType['mimeType'], $mimeType['viewable']);
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		}
@@ -106,7 +106,7 @@ class MimeEditController extends GalleryController {
 	$results['status'] = $status;
 	$results['error'] = $error;
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -131,12 +131,12 @@ class MimeEditView extends GalleryView {
 	    if ($mimeType) {
 		list ($ret, $form['extensions']) =
 		    GalleryCoreApi::convertMimeToExtensions($mimeType);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		list ($ret, $form['viewable']) = GalleryCoreApi::isViewableMimeType($mimeType);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    } else {
@@ -163,7 +163,7 @@ class MimeEditView extends GalleryView {
 	}
 
 	$template->setVariable('controller', 'mime.MimeEdit');
-	return array(GalleryStatus::success(),
+	return array(null,
 	     array('body' => 'modules/mime/templates/MimeEdit.tpl'));
     }
 }

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,12 +26,6 @@
  */
 
 /**
- * Required class
- */
-GalleryCoreApi::relativeRequireOnce('modules/rewrite/classes/RewriteHelper.class');
-GalleryCoreApi::relativeRequireOnce('modules/rewrite/classes/RewriteMap.class');
-
-/**
  * @package Rewrite
  * @subpackage UserInterface
  */
@@ -41,211 +35,130 @@ class AdminRewriteController extends GalleryController {
      * @see GalleryController::handleRequest()
      */
     function handleRequest(&$form) {
-	global $gallery;
-	$platform = $gallery->getPlatform();
+	$error = $status = $seen = array();
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$status = $error = $dupe = array();
+	GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
+	list ($ret, $rewriteParser) = RewriteHelper::getRewriteParser();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
-	if (isset($form['action']['saveRules'])) {
-	    $results['delegate']['mode'] = 'rules';
-
+	if (isset($form['action']['rules'])) {
 	    $activeRules = array();
-	    if (isset($form['shortUrls'])) {
-		foreach (array_keys($form['shortUrls']) as $moduleId) {
-		    $activeRules[$moduleId] = array();
-		    foreach (array_keys($form['shortUrls'][$moduleId]) as $ruleId) {
-			if (isset($form['shortUrls'][$moduleId][$ruleId]['active'])) {
-			    if (empty($form['shortUrls'][$moduleId][$ruleId]['pattern'])) {
+	    $mode = 'rules';
+
+	    /* Build the activeRules array and check for emtpy / seen patterns */
+	    if (isset($form['rules'])) {
+		foreach (array_keys($form['rules']) as $moduleId) {
+		    foreach (array_keys($form['rules'][$moduleId]) as $ruleId) {
+			if (isset($form['rules'][$moduleId][$ruleId]['active'])) {
+			    /* Empty or just '/' ? */
+			    if (empty($form['rules'][$moduleId][$ruleId]['pattern']) ||
+				    $form['rules'][$moduleId][$ruleId]['pattern'] == '/') {
 				$error[] = 'form[error][empty][' . $moduleId . '][' . $ruleId . ']';
 				break 2;
 			    }
 
-			    if (isset($dupe[$form['shortUrls'][$moduleId][$ruleId]['pattern']])) {
+			    /* Dupe? */
+			    if (isset($seen[$form['rules'][$moduleId][$ruleId]['pattern']])) {
 				$error[] = 'form[error][dupe][' .
-					$form['shortUrls'][$moduleId][$ruleId]['pattern'] . ']';
+				    $form['rules'][$moduleId][$ruleId]['pattern'] . ']';
 				break 2;
 			    }
 
-			    $activeRules[$moduleId][$ruleId] = array();
-			    $activeRules[$moduleId][$ruleId]['pattern'] =
-				    $form['shortUrls'][$moduleId][$ruleId]['pattern'];
-			    if (substr($activeRules[$moduleId][$ruleId]['pattern'], 0, 1) == '/') {
-				$activeRules[$moduleId][$ruleId]['pattern'] =
-					substr($activeRules[$moduleId][$ruleId]['pattern'], 1);
+			    /* Activate the rule */
+			    $pattern = $form['rules'][$moduleId][$ruleId]['pattern'];
+			    if (substr($pattern, 0, 1) == '/') {
+				$pattern = substr($pattern, 1);
 			    }
+			    $activeRules[$moduleId][$ruleId] = $pattern;
+			    $seen[$pattern] = 1;
+			}
+		    }
+		}
+	    }
 
-			    if (isset($form['shortUrls'][$moduleId][$ruleId]['match'])) {
-				$activeRules[$moduleId][$ruleId]['match'] =
-					$form['shortUrls'][$moduleId][$ruleId]['match'];
-			    }
+	    /* Save the active rules */
+	    if (empty($error)) {
+		list ($ret, $code, $errorId) = $rewriteParser->saveActiveRules($activeRules);
+		if ($ret) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 
-			    $dupe[$form['shortUrls'][$moduleId][$ruleId]['pattern']] = 1;
+		if ($code == REWRITE_STATUS_OK) {
+		    $status['saved'] = 1;
+		} else {
+		    $errorString = 'form[error][' . $code . ']';
+		    if (isset($errorId)) {
+			foreach ($errorId as $errno) {
+			    $errorString .= '[' . $errno. ']';
 			}
 		    }
 
-		    if (empty($activeRules[$moduleId])) {
-			unset($activeRules[$moduleId]);
-		    }
+		    $error[] = $errorString;
 		}
 	    }
+	} else if (isset($form['action']['accessList'])) {
+	    $mode = 'setup';
 
-	    if (empty($error)) {
-		list($ret, $code, $rewriteRules) = RewriteHelper::parseActiveRules($activeRules);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		if ($code != REWRITE_STATUS_OK) {
-		    $error[] = 'form[error][badKeyword]';
-		}
-
-		list($ret, $code) = RewriteHelper::writeFile($rewriteRules);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		if ($code != REWRITE_STATUS_OK) {
-		    $error[] = 'form[error][cantWrite][gallery]';
-		}
-
-		if (GalleryUtilities::isEmbedded()) {
-		    list($ret, $code) = RewriteHelper::writeFile($rewriteRules, true);
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-		    if ($code != REWRITE_STATUS_OK) {
-			$error[] = 'form[error][cantWrite][embedded]';
-		    }
-		}
-
-		if (empty($error)) {
-		    $ret = RewriteMap::setActiveRules($activeRules);
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-
-		    $redirect['view'] = 'core.SiteAdmin';
-		    $redirect['subView'] = 'rewrite.AdminRewrite';
-		    $redirect['mode'] = 'rules';
-		    $status['rulesSaved'] = 1;
-		}
-	    }
-	} else if (isset($form['action']['test'])) {
-	    $redirect['view'] = 'core.SiteAdmin';
-	    $redirect['subView'] = 'rewrite.AdminRewrite';
-	    $redirect['mode'] = 'test';
-	} else if (isset($form['action']['saveSetup'])) {
-	    $results['delegate']['mode'] = 'setup';
-
-	    if (isset($form['embedded']['save'])) {
-		if (!$platform->is_dir($form['embedded']['htaccessPath'])) {
-		    $error[] = 'form[error][invalidDir]';
-		}
-		if (empty($form['embedded']['publicPath'])) {
-		    $error[] = 'form[error][invalidPath]';
-		}
-
-		if (substr($form['embedded']['htaccessPath'], -1) == '/') {
-		    $form['embedded']['htaccessPath'] =
-			substr($form['embedded']['htaccessPath'], 0, -1);
-		}
-		if (substr($form['embedded']['publicPath'], 0, 1) != '/') {
-		    $form['embedded']['publicPath'] = '/' . $form['embedded']['publicPath'];
-		}
-		if (substr($form['embedded']['publicPath'], -1) != '/') {
-		    $form['embedded']['publicPath'] .= '/';
-		}
-	    }
-
-	    $allow = array();
-	    foreach ($form['allow'] as $host) {
+	    $accessList = array();
+	    foreach ($form['accessList'] as $host) {
 		if (!empty($host)) {
-		    $allow[] = $host;
+		    $accessList[] = $host;
 		}
 	    }
 
-	    list ($ret, $code) = RewriteHelper::checkFile();
-	    if ($ret->isError()) {
+	    $allowEmptyReferer = false;
+	    if (isset($form['allowEmptyReferer'])) {
+		$allowEmptyReferer = true;
+	    }
+
+	    list ($ret, $code) = $rewriteParser->saveAccessList($accessList,
+		$allowEmptyReferer);
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    if ($code != REWRITE_STATUS_HTACCESS_READY) {
-		$error[] = 'form[error][cantWrite][gallery]';
+
+	    if ($code == REWRITE_STATUS_OK) {
+		$status['saved'] = 1;
+	    } else {
+		$error[] = 'form[error][' . $code . ']';
 	    }
+	} else if (isset($form['action']['adminParser'])) {
+	    $mode = 'setup';
 
-	    if (empty($error)) {
-		if (isset($form['embedded']['save'])) {
-		    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
-			    'embeddedHtaccess', $form['embedded']['htaccessPath']);
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-
-		    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
-			    'embeddedLocation', $form['embedded']['publicPath']);
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-		}
-
-		$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
-			'accessList', serialize($allow));
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		list ($ret, $activeRules) = RewriteMap::getActiveRules();
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		list($ret, $code, $rewriteRules) = RewriteHelper::parseActiveRules($activeRules);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		if ($code != REWRITE_STATUS_OK) {
-		    return array(GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__), null);
-		}
-
-		list($ret, $code) = RewriteHelper::writeFile($rewriteRules);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		if ($code != REWRITE_STATUS_OK) {
-		    $error[] = 'form[error][cantWrite][gallery]';
-		}
-
-		if (GalleryUtilities::isEmbedded()) {
-		    list($ret, $code) = RewriteHelper::writeFile($rewriteRules, true);
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-		    if ($code != REWRITE_STATUS_OK) {
-			$error[] = 'form[error][cantWrite][embedded]';
-		    }
-		}
-
-		if (empty($error)) {
-		    $status['setupSaved'] = 1;
-		    $redirect['view'] = 'core.SiteAdmin';
-		    $redirect['subView'] = 'rewrite.AdminRewrite';
-		    $redirect['mode'] = 'setup';
-		}
+	    list ($ret, $error, $status) = $rewriteParser->handleAdminParserRequest($form);
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
+	} else if (isset($form['action']['testParser'])) {
+	    $mode = 'test';
+
+	    list ($ret, $error, $status) = $rewriteParser->handleTestResultsRequest($form);
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	} else if (isset($form['action']['refresh'])) {
+	    $mode = 'test';
 	}
 
-	if (!empty($redirect)) {
-	    $results['redirect'] = $redirect;
-	    unset($results['delegate']);
+	if (!empty($error)) {
+	    $results = array('delegate' => array('view' => 'core.SiteAdmin',
+						 'subView' => 'rewrite.AdminRewrite',
+						 'mode' => $mode));
 	} else {
-	    $results['delegate']['view'] = 'core.SiteAdmin';
-	    $results['delegate']['subView'] = 'rewrite.AdminRewrite';
+	    $results = array('redirect' => array('view' => 'core.SiteAdmin',
+						 'subView' => 'rewrite.AdminRewrite',
+						 'mode' => $mode));
 	}
-	$results['status'] = $status;
 	$results['error'] = $error;
-
-	return array(GalleryStatus::success(), $results);
+	$results['status'] = $status;
+	return array(null, $results);
     }
 }
 
@@ -263,186 +176,154 @@ class AdminRewriteView extends GalleryView {
 	$urlGenerator =& $gallery->getUrlGenerator();
 	$AdminRewrite = array();
 
-	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret->isError()) {
+	GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
+	list ($ret, $rewriteParser) = RewriteHelper::getRewriteParser();
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	$AdminRewrite['parserType'] = $rewriteParser->getParserType();
+	$AdminRewrite['parserId'] = $rewriteParser->getParserId();
 
-	$AdminRewrite['isEmbedded'] = GalleryUtilities::isEmbedded();
 	$AdminRewrite['mode'] = GalleryUtilities::getRequestVariables('mode');
 	if (empty($AdminRewrite['mode'])) {
-	    list ($ret, $embeddedLocation) =
-		    GalleryCoreApi::getPluginParameter('module', 'rewrite', 'embeddedLocation');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
+	    $AdminRewrite['mode'] = 'rules';
+	}
 
-	    list ($ret, $code) = RewriteHelper::checkFile();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+	/* Error handeling for defined (numeric) REWRITE_STATUS_* errors */
+	$errors = array();
+	if (isset($form['error'])) {
+	    foreach ($form['error'] as $errno => $tmp) {
+		if (is_numeric($errno)) {
+		    list ($ret, $errors[]) = $rewriteParser->getErrorMessage($errno);
+		    if ($ret) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		}
 	    }
-
-	    if (GalleryUtilities::isEmbedded() && empty($embeddedLocation)) {
-		$AdminRewrite['mode'] = 'setup';
-	    } else if ($code != REWRITE_STATUS_HTACCESS_READY) {
-		$AdminRewrite['mode'] = 'test';
-	    } else {
-		$AdminRewrite['mode'] = 'rules';
-	    }
+	}
+	if (!empty($errors)) {
+	    $AdminRewrite['errors'] = $errors;
 	}
 
 	switch ($AdminRewrite['mode']) {
 	case 'rules':
-	    list ($ret, $activeRules) = RewriteMap::getActiveRules();
-	    if ($ret->isError()) {
+	    list($ret, $activeRules) = GalleryCoreApi::getPluginParameter(
+		'module', 'rewrite', 'activeRules');
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
+	    $activeRules = unserialize($activeRules);
 
-	    $AdminRewrite['shortUrls'] = array();
-	    if ($form['formName'] != 'AdminRewrite') {
-		$form['shortUrls'] = array();
-	    }
-
+	    /* Get all modules to walk through and get any rules it provieds */
 	    list($ret, $modules) = GalleryCoreAPi::fetchPluginStatus('module');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    foreach ($modules as $moduleId => $status) {
 		if (isset($status['active']) && $status['active']) {
 		    list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
-		    if ($ret->isError()) {
+		    if ($ret) {
 			if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
 			    continue;
 			}
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
-		    $AdminRewrite['shortUrls'][$moduleId] = array(
-			'name' => $module->translate($module->getName()));
+		    $AdminRewrite['modules'][$moduleId] = $module->translate($module->getName());
 
+		    /* Walk through the rules this module provieds */
 		    $rules = $module->getRewriteRules();
-
 		    foreach ($rules as $ruleId => $rule) {
+			/* Make sure this parser supports this kind of rule */
+			if (!$rewriteParser->isValidRule($rule)) {
+			    continue;
+			}
+
+		    	/* If we dont have old form data, populate the array with db info */
 			if ($form['formName'] != 'AdminRewrite') {
-			    $form['shortUrls'][$moduleId][$ruleId] = array();
+			    $form['rules'][$moduleId][$ruleId]['pattern'] =
+				isset($activeRules[$moduleId][$ruleId])
+				    ? $activeRules[$moduleId][$ruleId]
+				    : $rule['pattern'];
 
 			    if (isset($activeRules[$moduleId][$ruleId])) {
-				$form['shortUrls'][$moduleId][$ruleId]['active'] = 1;
-				$form['shortUrls'][$moduleId][$ruleId]['pattern'] =
-					$activeRules[$moduleId][$ruleId]['pattern'];
-			    } else {
-				$form['shortUrls'][$moduleId][$ruleId]['pattern'] =
-					$rule['pattern'];
-			    }
-
-			    if (isset($rule['match'])) {
-				$form['shortUrls'][$moduleId][$ruleId]['match'] =
-					join('|', $rule['match']);
+				$form['rules'][$moduleId][$ruleId]['active'] = 1;
 			    }
 			}
 
+			/* If a dupe rule is detected we need to know it's 'match' */
+			$AdminRewrite['info'][$moduleId][$ruleId]['match'] = '';
+			if (isset($rule['match'])) {
+			    $AdminRewrite['info'][$moduleId][$ruleId]['match'] =
+				join('|', $rule['match']);
+			}
+
+			/* Should we display an input box for users to edit this pattern? */
 			if (isset($rule['locked'])) {
-			    $AdminRewrite['shortUrls'][$moduleId]['rules'][$ruleId]['locked'] = 1;
+			    $AdminRewrite['info'][$moduleId][$ruleId]['locked'] = 1;
 			}
 
+			/* Get the comment, or the technical view name if there's no comment */
 			if (isset($rule['comment'])) {
-			    $AdminRewrite['shortUrls'][$moduleId]['rules'][$ruleId]['name'] =
-				    $rule['comment'];
+			    $AdminRewrite['info'][$moduleId][$ruleId]['comment'] = $rule['comment'];
 			} else if (isset($rule['match'])) {
-			    $AdminRewrite['shortUrls'][$moduleId]['rules'][$ruleId]['name'] =
-				    (isset($rule['match']['subView'])) ? $rule['match']['subView']
-					    : $rule['match']['view'];
+			    $AdminRewrite['info'][$moduleId][$ruleId]['comment'] =
+				join('|', $rule['match']);
+			} else {
+			    $AdminRewrite['info'][$moduleId][$ruleId]['comment'] =
+				$moduleId . '.' . $ruleId;
 			}
 
-			if (isset($rule['keywords'])) {
-			    $AdminRewrite['shortUrls'][$moduleId]['rules'][$ruleId]['keywords'] =
-				    $rule['keywords'];
-			} else  {
-			    $AdminRewrite['shortUrls'][$moduleId]['rules'][$ruleId]['keywords'] =
-				    array();
-			}
+			/* This module may provide extra keywords */
+			$AdminRewrite['info'][$moduleId][$ruleId]['keywords'] =
+			    isset($rule['keywords']) ? $rule['keywords'] : array();
 
+			/* Get rule information */
 			if (isset($rule['help'])) {
-			    $AdminRewrite['shortUrls'][$moduleId]['rules'][$ruleId]['help'] =
-				    $rule['help'];
+			    $AdminRewrite['info'][$moduleId][$ruleId]['help'] = $rule['help'];
 			}
-		    }
-
-		    if (!sizeof($rules)) {
-			unset($AdminRewrite['shortUrls'][$moduleId]);
-			unset($form['shortUrls'][$moduleId]);
 		    }
 		}
+	    }
+
+	    $template->javascript('lib/javascript/BlockToggle.js');
+	    break;
+
+	case 'setup':
+	    $AdminRewrite['serverName'] = $urlGenerator->getHostName();
+
+	    if ($form['formName'] != 'AdminRewrite' &&
+		    $AdminRewrite['parserType'] == 'preGallery') {
+
+		list ($ret, $form['accessList']) = GalleryCoreApi::getPluginParameter(
+		    'module', 'rewrite', 'accessList');
+		if ($ret) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$form['accessList'] = unserialize($form['accessList']);
+
+		list ($ret, $allowEmptyReferer) = GalleryCoreApi::getPluginParameter(
+		    'module', 'rewrite', 'allowEmptyReferer');
+		if ($ret) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		if ($allowEmptyReferer) {
+		    $form['allowEmptyReferer'] = 1;
+		}
+	    }
+
+	    $ret = $rewriteParser->loadAdminParserTemplate($template, $form);
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    break;
 
 	case 'test':
-	    $baseUrl = parse_url($urlGenerator->generateUrl(
-		array('href' => 'modules/rewrite/data/'), false));
-	    $AdminRewrite['customFile'] = dirname(__FILE__) . '/data/mod_rewrite/custom/.htaccess';
-	    $AdminRewrite['customLine'] = 'RewriteBase ' . $baseUrl['path'] . 'mod_rewrite/custom/';
-	    $AdminRewrite['customFileNoOptions'] = dirname(__FILE__) .
-		'/data/mod_rewrite_no_options/custom/.htaccess';
-	    $AdminRewrite['customLineNoOptions'] = 'RewriteBase ' . $baseUrl['path'] .
-		'mod_rewrite_no_options/custom/';
-
-	    list ($ret, $AdminRewrite['htaccessPath']) = RewriteHelper::getHtaccessPath();
-	    if ($ret->isError()) {
+	    $ret = $rewriteParser->loadTestResultsTemplate($template, $form);
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    list ($ret, $AdminRewrite['htaccessCode']) = RewriteHelper::checkFile();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    list ($ret, $AdminRewrite['apacheCode']) = RewriteHelper::checkModRewrite();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    if ($AdminRewrite['isEmbedded']) {
-		list ($ret, $AdminRewrite['embeddedCode']) = RewriteHelper::checkFile(true);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		list ($ret, $AdminRewrite['embeddedPath']) = RewriteHelper::getHtaccessPath(true);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		list ($ret, $AdminRewrite['embeddedSync']) = RewriteHelper::checkSync();
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-	    }
-	    break;
-
-	case 'setup':
-	    if ($form['formName'] != 'AdminRewrite') {
-		list ($ret, $form['embedded']['publicPath']) =
-		    GalleryCoreApi::getPluginParameter('module', 'rewrite', 'embeddedLocation');
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		list ($ret, $form['embedded']['htaccessPath']) =
-		    GalleryCoreApi::getPluginParameter('module', 'rewrite', 'embeddedHtaccess');
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		list ($ret, $form['allow']) = GalleryCoreApi::getPluginParameter(
-			'module', 'rewrite', 'accessList');
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		$form['allow'] = unserialize($form['allow']);
-	    }
-
-	    $AdminRewrite['host'] = substr($urlGenerator->makeUrl('/'), 0, -1);
-	    $AdminRewrite['serverName'] = GalleryUtilities::getServerVar('SERVER_NAME');
-
 	    break;
 	}
 
@@ -454,8 +335,9 @@ class AdminRewriteView extends GalleryView {
 	$template->setVariable('controller', 'rewrite.AdminRewrite');
 
 	$template->javascript('lib/javascript/BlockToggle.js');
-	return array(GalleryStatus::success(),
-		array('body' => 'modules/rewrite/templates/AdminRewrite.tpl'));
+
+	return array(null,
+	    array('body' => 'modules/rewrite/templates/AdminRewrite.tpl'));
     }
 }
 ?>

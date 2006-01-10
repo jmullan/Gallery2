@@ -5,154 +5,97 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 <div class="gbBlock gcBackground1">
-  <h2> {g->text text="URL Rewrite System Checks"} </h2>
+  <h2> {g->text text="URL Rewrite Setup"} </h2>
 </div>
+
+{if !empty($status)}
+<div class="gbBlock"><h2 class="giSuccess">
+  {if isset($status.saved)}
+    {g->text text="Successfully saved settings"}
+  {/if}
+</h2></div>
+{/if}
+
+{if !empty($form.error)}
+<div class="gbBlock">
+   <h2 class="giError"> {g->text text="An error occured while trying to save your settings"} </h3>
+
+  {if isset($SetupRewrite.errors)}
+  <div class="giError">
+    {foreach from=$SetupRewrite.errors item=errstr}
+      {$errstr}<br/>
+    {/foreach}
+  </div>
+  {/if}
+</div>
+{/if}
+
+{if isset($SetupRewrite.bootstrap)}
+{if $SetupRewrite.server == 'APACHE'}
+<div class="gbBlock">
+  <h2> <a href="{g->url arg1="controller=rewrite.SetupRewrite" arg2="form[parser]=modrewrite" arg3="form[action][save]=1"}">{g->text text="Apache mod_rewrite"}</a> </h2>
+
+  <p class="giDescription">
+    {g->text text="The Apache mod_rewrite module is installed on most Apache servers by default. If you are unsure of what method you should choose then select this. Gallery will try to detect if your server supports mod_rewrite."}
+  </p>
+</div>
+{/if}
+
+{if $SetupRewrite.server == 'IIS'}
+<div class="gbBlock">
+  <h2> <a href="{g->url arg1="controller=rewrite.SetupRewrite" arg2="form[parser]=isapirewrite" arg3="form[action][save]=1"}">{g->text text="IIS ISAPI_Rewrite"}</a> </h2>
+
+  <p class="giDescription">
+    {g->text text="This method allows for short URLs on IIS servers with ISAPI Rewrite installed. Gallery will try to detect if your server supports this method before activating the module."}<br/>
+    <ul>
+      <li class="giDescription giWarning">{g->text text="A pattern may not begin with a keyword."}</li>
+    </ul>
+  </p>
+</div>
+{/if}
 
 <div class="gbBlock">
-  <table><tr>
-    <td>
-      <h3> {g->text text="Apache mod_rewrite"} </h3>
+  <h2> <a href="{g->url arg1="controller=rewrite.SetupRewrite" arg2="form[parser]=pathinfo" arg3="form[action][save]=1"}">{g->text text="PHP Path Info"}</a> </h2>
 
-      {capture name=mod_rewrite_anchor}
-      <a href="http://httpd.apache.org/docs/mod/mod_rewrite.html">mod_rewrite</a>
-      {/capture}
-      <p class="giDescription">
-        {g->text text="In order for this Gallery module to work you need %s enabled with your Apache server." arg1=$smarty.capture.mod_rewrite_anchor}
-      </p>
-    </td>
-    <td style="float: right; vertical-align: top;">
-      {if $SetupRewrite.apacheCode == REWRITE_STATUS_OK}
-        <h3 class="giSuccess"> {g->text text="Success"} </h3>
-      {else}
-        <h3 class="giWarning"> {g->text text="Warning"} </h3>
-      {/if}
-    </td>
-  {if $SetupRewrite.apacheCode != REWRITE_STATUS_OK}
-  </tr><tr>
-    <td colspan="2">
-      {if $SetupRewrite.apacheCode == REWRITE_STATUS_APACHE_UNABLE_TO_TEST}
-      <div class="gbBlock">
-        <h3> {g->text text="Custom Gallery directory test setup"} </h3>
-
-        <p class="giDescription">
-          {g->text text="Gallery tries to test mod_rewrite in action. For this to work you need to edit each of these two files accordingly:"}
-        </p>
-
-        <p class="giDescription">
-          <b>{$SetupRewrite.customFile}</b><br/>
-          {g->text text="Line 6:"} {$SetupRewrite.customLine}
-        </p>
-
-        <p class="giDescription">
-          <b>{$SetupRewrite.customFileNoOptions}</b><br/>
-          {g->text text="Line 6:"} {$SetupRewrite.customLineNoOptions}
-        </p>
-      </div>
-      {/if}
-
-      {if $SetupRewrite.apacheCode == REWRITE_STATUS_MULTISITE}
-        <h3 class="giWarning"> {g->text text="Multisite setup"} </h3>
-
-        <p class="giDescription">
-          {g->text text="Gallery tries to test mod_rewrite in action. This does not work with multisite since Gallery lacks the complete codebase."}
-        </p>
-
-	<p class="giDescription">
-	  <b>{g->text text="The tests below will only show if mod_rewrite works for your Gallery codebase. If you experience broken links chances are that mod_rewrite does not work."}</b>
-	</p>
-      </div>
-      {/if}
-
-      <div class="gbBlock">
-        <h3> {g->text text="Test mod_rewrite manually"} </h3>
-
-        <p class="giDescription">
-        {g->text text="For whatever reason, Gallery did not detect a working mod_rewrite setup. If you are confident that mod_rewrite does work you may override the automatic detection. Please, run these two tests to see for yourself."}
-        </p>
-
-        <table class="gbDataTable"><tr>
-          <th> {g->text text="Works"} </th>
-          <th> {g->text text="Test"} </th>
-        </tr><tr>
-          <td style="text-align: center;">
-            <input type="checkbox" name="{g->formVar var="form[force][test1]"}"/>
-          </td>
-          <td>
-            <a href="{$SetupRewrite.test1}">{g->text text="Test mod_rewrite"}</a>
-          </td>
-        </tr><tr>
-          <td style="text-align: center;">
-            <input type="checkbox" name="{g->formVar var="form[force][test2]"}"/>
-          </td>
-          <td>
-            <a href="{$SetupRewrite.test2}">{g->text text="Test mod_rewrite with Options directive"}</a>
-          </td>
-        </tr></table>
-
-        <p class="giDescription">
-          {g->text text="If one of the two tests gives you a page with the text PASS_REWRITE you are good to go."}
-        </p>
-
-        <input type="submit" class="inputTypeSubmit"
-          name="{g->formVar var="form[action][force]"}" value="{g->text text="Save"}"/>
-      </div>
-
-      {include file="gallery:modules/rewrite/templates/Troubleshooting.tpl"}
-
-      <div class="gbBlock">
-        <input type="submit" class="inputTypeSubmit"
-          name="{g->formVar var="form[action][test]"}" value="{g->text text="Test Webserver Again"}"/>
-      </div>
-    </td>
-  {/if}
-  </tr><tr>
-    <td>
-      <h3> {g->text text="Gallery .htaccess file"} </h3>
-
-      <p class="giDescription">
-        {g->text text="Gallery's URL rewriting works by creating a new file in your gallery directory called <b>.htaccess</b> which contains rules for how short urls should be interpreted."}
-      </p>
-    </td>
-    <td style="float: right; vertical-align: top;">
-      {if $SetupRewrite.htaccessCode == REWRITE_STATUS_HTACCESS_READY}
-        <h2 class="giSuccess"> {g->text text="Success"} </h2>
-      {else}
-        <h2 class="giError"> {g->text text="Error"} </h2>
-      {/if}
-    </td>
-  {if $SetupRewrite.htaccessCode != REWRITE_STATUS_HTACCESS_READY}
-  </tr><tr>
-    <td colspan="2">
-      <div class="gbBlock">
-        {if $SetupRewrite.htaccessCode == REWRITE_STATUS_HTACCESS_MISSING}
-        <h3> {g->text text="Please create a file in your Gallery directory named .htaccess"} </h3>
-
-        <pre class="giDescription">touch {$SetupRewrite.htaccessPath}<br/>chmod 666 {$SetupRewrite.htaccessPath}</pre>
-        {/if}
-
-        {if $SetupRewrite.htaccessCode == REWRITE_STATUS_HTACCESS_CANT_READ}
-        <h3> {g->text text="Please make sure Gallery can read the existing .htaccess file"} </h3>
-
-        <pre class="giDescription">chmod 666 {$SetupRewrite.htaccessPath}</pre>
-        {/if}
-
-        {if $SetupRewrite.htaccessCode == REWRITE_STATUS_HTACCESS_CANT_WRITE}
-        <h3> {g->text text="Please make sure Gallery can write to the existing .htaccess file"} </h3>
-
-        <pre class="giDescription">chmod 666 {$SetupRewrite.htaccessPath}</pre>
-        {/if}
-      </div>
-
-      <div class="gbBlock">
-        <input type="submit" class="inputTypeSubmit"
-          name="{g->formVar var="form[action][test]"}" value="{g->text text="Test .htaccess File Again"}"/>
-      </div>
-    </td>
-  {/if}
-  </tr></table>
+  <p class="giDescription">
+    {g->text text="Using Path Info is supported by most systems. With this method Gallery parses the URL itself during the request."}
+    <ul>
+      <li class="giDescription giWarning">{g->text text="It is recomended that you don't activate the 'Download Item' URL since it will slow down Gallery."}</li>
+      <li class="giDescription giWarning">{g->text text="Block hotlinking is not supported."}</li>
+    </ul>
+  </p>
 </div>
 
-<div class="gbBlock gcBackground1">
-  <input type="submit" class="inputTypeSubmit"
-   name="{g->formVar var="form[action][done]"}" value="{g->text text="Done"}"/>
-</div>
+{else}
+{if isset($AdminParser.template)}
+    {include file="gallery:`$AdminParser.template`"}
+
+    {if isset($AdminParser.action)}
+      <div class="gbBlock gcBackground1">
+        <input type="submit" class="inputTypeSubmit"
+         name="{g->formVar var="form[action][adminParser]"}" value="{g->text text="Save"}"/>
+      </div>
+    {/if}
+  {/if}
+  {if isset($TestResults.template)}
+    {include file="gallery:`$TestResults.template`"}
+
+    <div class="gbBlock gcBackground1">
+    <input type="submit" class="inputTypeSubmit"
+     name="{g->formVar var="form[action][back]"}" value="{g->text text="Back"}"/>
+
+    {if isset($TestResults.action)}
+      <input type="submit" class="inputTypeSubmit"
+       name="{g->formVar var="form[action][testParser]"}" value="{g->text text="Save"}"/>
+    {/if}
+    {if !$SetupRewrite.needsConfiguration}
+      <input type="submit" class="inputTypeSubmit"
+       name="{g->formVar var="form[action][done]"}" value="{g->text text="Done"}"/>
+    {/if}
+    {if isset($TestResults.refresh)}
+      <input type="submit" class="inputTypeSubmit"
+       name="{g->formVar var="form[action][refresh]"}" value="{g->text text="Test again"}"/>
+    {/if}
+    </div>
+  {/if}
+{/if}

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ class RandomHighlightOption extends ItemEditOption {
      * @see ItemEditOption::isAppropriate
      */
     function isAppropriate($item, $thumbnail) {
-	return array(GalleryStatus::success(), isset($thumbnail));
+	return array(null, isset($thumbnail));
     }
 
     /**
@@ -47,7 +47,7 @@ class RandomHighlightOption extends ItemEditOption {
     function loadTemplate(&$template, &$form, $item, $thumbnail) {
 	$form['RandomHighlightOption']['isRandomHighlight'] =
 	    $thumbnail->hasOnLoadHandler('RandomHighlight');
-	return array(GalleryStatus::success(),
+	return array(null,
 		     'modules/randomhighlight/templates/RandomHighlightOption.tpl',
 		     'modules_randomhighlight');
     }
@@ -57,7 +57,7 @@ class RandomHighlightOption extends ItemEditOption {
      */
     function handleRequestAfterEdit($form, &$item, &$preferred) {
 	list ($ret, $thumbnail) = GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	$thumbnail = array_shift($thumbnail);
@@ -67,7 +67,7 @@ class RandomHighlightOption extends ItemEditOption {
 	if (isset($thumbnail) &&
 	        $isRandomHighlight != $thumbnail->hasOnLoadHandler('RandomHighlight')) {
 	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($thumbnail->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    if ($isRandomHighlight) {
@@ -76,17 +76,17 @@ class RandomHighlightOption extends ItemEditOption {
 		$thumbnail->removeOnLoadHandler('RandomHighlight');
 	    }
 	    $ret = $thumbnail->save();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		GalleryCoreApi::releaseLocks($lockId);
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    $ret = GalleryCoreApi::releaseLocks($lockId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	}
 
-	return array(GalleryStatus::success(), array(), array());
+	return array(null, array(), array());
     }
 }
 ?>

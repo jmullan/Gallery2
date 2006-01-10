@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
  * @package GalleryCore
  * @author Bharat Mediratta <bharat@menalto.com>
  */
-GalleryCoreApi::relativeRequireOnce(
+GalleryCoreApi::requireOnce(
     'modules/core/classes/helpers/GalleryFactoryHelper_simple.class');
 
 /**
@@ -47,21 +47,21 @@ class GalleryFactoryHelper_medium {
      */
     function newInstanceById($classType, $id) {
 	list ($ret, $registry) = GalleryFactoryHelper_simple::_getFactoryData();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	if (empty($registry['ids'][$classType][$id])) {
-	    return array(GalleryStatus::success(), null);
+	    return array(null, null);
 	}
 
 	$className = $registry['ids'][$classType][$id];
 	list ($ret, $instance) = GalleryFactoryHelper_simple::newInstance($classType, $className);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $instance);
+	return array(null, $instance);
     }
 
     /**
@@ -73,7 +73,7 @@ class GalleryFactoryHelper_medium {
      */
     function getAllImplementationIds($classType) {
 	list ($ret, $registry) = GalleryFactoryHelper_simple::_getFactoryData();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -82,7 +82,7 @@ class GalleryFactoryHelper_medium {
 	} else {
 	    $result = array();
 	}
-	return array(GalleryStatus::success(), $result);
+	return array(null, $result);
     }
 
     /**
@@ -94,7 +94,7 @@ class GalleryFactoryHelper_medium {
      */
     function getAllImplementationIdsWithHint($classType, $hint) {
 	list ($ret, $registry) = GalleryFactoryHelper_simple::_getFactoryData();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -104,7 +104,7 @@ class GalleryFactoryHelper_medium {
 	} else {
 	    $result = array();
 	}
-	return array(GalleryStatus::success(), $result);
+	return array(null, $result);
     }
 
     /**
@@ -115,15 +115,15 @@ class GalleryFactoryHelper_medium {
      * @static
      */
     function unregisterImplementationsByModuleId($moduleId) {
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryFactoryMap.class');
-	$ret = GalleryFactoryMap::removeMapEntry(array('implModuleId' => $moduleId));
-	if ($ret->isError()) {
+	$ret = GalleryCoreApi::removeMapEntry(
+	    'GalleryFactoryMap', array('implModuleId' => $moduleId));
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	GalleryFactoryHelper_simple::deleteCache();
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -135,16 +135,16 @@ class GalleryFactoryHelper_medium {
      * @static
      */
     function unregisterImplementation($classType, $implId) {
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryFactoryMap.class');
-	$ret = GalleryFactoryMap::removeMapEntry(array('classType' => $classType,
-						       'implId' => $implId));
-	if ($ret->isError()) {
+	$ret = GalleryCoreApi::removeMapEntry(
+	    'GalleryFactoryMap',
+	    array('classType' => $classType, 'implId' => $implId));
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	GalleryFactoryHelper_simple::deleteCache();
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -163,11 +163,11 @@ class GalleryFactoryHelper_medium {
     function registerImplementation($classType, $className, $implId, $implPath,
 				    $implModuleId, $hints, $orderWeight) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	$baseDir = GalleryCoreApi::getPluginBaseDir('module', $implModuleId);
 	if (!$platform->file_exists($baseDir . $implPath)) {
-	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__,
+	    return GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__,
 					"Bad implementation path: $baseDir$implPath");
 	}
 
@@ -180,21 +180,22 @@ class GalleryFactoryHelper_medium {
 	    }
 	}
 
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryFactoryMap.class');
-	$ret = GalleryFactoryMap::addMapEntry(array('classType' => $classType,
-						    'className' => $className,
-						    'implId' => $implId,
-						    'implPath' => $implPath,
-						    'implModuleId' => $implModuleId,
-						    'orderWeight' => (string) $orderWeight,
-						    'hints' => serialize($hints)));
-	if ($ret->isError()) {
+	$ret = GalleryCoreApi::addMapEntry(
+	    'GalleryFactoryMap',
+	    array('classType' => $classType,
+		  'className' => $className,
+		  'implId' => $implId,
+		  'implPath' => $implPath,
+		  'implModuleId' => $implModuleId,
+		  'orderWeight' => (string)$orderWeight,
+		  'hints' => serialize($hints)));
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	GalleryFactoryHelper_simple::deleteCache();
 
-	return GalleryStatus::success();
+	return null;
     }
 }
 ?>

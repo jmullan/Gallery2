@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ class ErrorPageView extends GalleryView {
 	$ErrorPage = array();
 
 	list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
-	$ErrorPage['isAdmin'] = ($ret->isSuccess() && $isAdmin);
+	$ErrorPage['isAdmin'] = (!$ret && $isAdmin);
 	$ErrorPage['stackTrace'] = $this->_error->getAsHtml($isAdmin);
 
 	/* Landing page for errors.. */
@@ -62,6 +62,9 @@ class ErrorPageView extends GalleryView {
 	if ($errorCode & ERROR_STORAGE_FAILURE) {
 	    $ErrorPage['code']['storageFailure'] = true;
 	}
+	if ($errorCode & ERROR_PLATFORM_FAILURE) {
+	    $ErrorPage['code']['platformFailure'] = true;
+	}
 
 	if ($ErrorPage['isAdmin']) {
 	    $ErrorPage['phpversion'] = phpversion();
@@ -71,11 +74,11 @@ class ErrorPageView extends GalleryView {
 	    $ErrorPage['browser'] = GalleryUtilities::getServerVar('HTTP_USER_AGENT');
 	    if ($gallery->isStorageInitialized()) {
 		$storage =& $gallery->getStorage();
-		$ErrorPage['dbType'] = $storage->_impl->getAdoDbType();
-		$ErrorPage['dbVersion'] = @$storage->_impl->getVersion();
+		$ErrorPage['dbType'] = $storage->getAdoDbType();
+		$ErrorPage['dbVersion'] = @$storage->getVersion();
 
 		list ($ret, $list) = GalleryCoreApi::getToolkitOperationMimeTypes('thumbnail');
-		if ($ret->isSuccess()) {
+		if (!$ret) {
 		    $toolkitList = array();
 		    foreach ($list as $tmp) {
 			$toolkitList = array_merge($toolkitList, $tmp);
@@ -84,18 +87,15 @@ class ErrorPageView extends GalleryView {
 		}
 	    }
 
-	    GalleryCoreApi::relativeRequireOnce('modules/core/module.inc');
+	    GalleryCoreApi::requireOnce('modules/core/module.inc');
 	    $installedVersions = CoreModule::getInstalledVersions();
 	    $ErrorPage['version'] = $installedVersions['gallery'];
 	}
 
-	$urlGenerator =& $gallery->getUrlGenerator();
-	$template->javascript($urlGenerator->generateUrl(
-				  array('href' => 'lib/javascript/BlockToggle.js')));
+	$template->javascript('lib/javascript/BlockToggle.js');
 	$template->setVariable('ErrorPage', $ErrorPage);
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/core/templates/ErrorPage.tpl'));
     }
 }
-
 ?>

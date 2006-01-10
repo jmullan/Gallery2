@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,44 +35,44 @@ class ThumbnailSiteAdminController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	GalleryCoreApi::relativeRequireOnce('modules/thumbnail/classes/ThumbnailHelper.class');
+	GalleryCoreApi::requireOnce('modules/thumbnail/classes/ThumbnailHelper.class');
 
 	/* Make sure we have adequate permissions */
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$status = '';
 	if (isset($form['action']['add'])) {
 	    if (empty($form['mimeType'])) {
-		return array(GalleryStatus::success(), $this->_exitStatus('mime_error'));
+		return array(null, $this->_exitStatus('mime_error'));
 	    }
 	    list ($ret, $mimeMap) = ThumbnailHelper::fetchToolkitSupport();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    if (isset($mimeMap[$form['mimeType']])) {
-		return array(GalleryStatus::success(), $this->_exitStatus('mime_duplicate'));
+		return array(null, $this->_exitStatus('mime_duplicate'));
 	    }
 	}
 
 	if (isset($form['action']['add']) && $form['image']=='new') {
 	    if (empty($form['tmp_name'][1])) {
-		return array(GalleryStatus::success(), $this->_exitStatus('file_error'));
+		return array(null, $this->_exitStatus('file_error'));
 	    }
 	    list ($ret) = ThumbnailHelper::addItem(
 		$form['mimeType'], null, $form['name'][1], $form['tmp_name'][1], $form['type'][1]);
-	    if ($ret->isError() && ($ret->getErrorCode() & ERROR_UNSUPPORTED_FILE_TYPE)) {
+	    if ($ret && ($ret->getErrorCode() & ERROR_UNSUPPORTED_FILE_TYPE)) {
 		$status = 'imagemime_error';
-	    } else if ($ret->isError()) {
+	    } else if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    } else {
 		$status = 'add';
 	    }
 	} else if (isset($form['action']['add'])) { /* $form['image']=='old' */
 	    $ret = ThumbnailHelper::updateItem($form['oldimage'], $form['mimeType'], true);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $status = 'addMime';
@@ -80,30 +80,30 @@ class ThumbnailSiteAdminController extends GalleryController {
 	    if (isset($form['delete']['mimeType'])) {
 		$ret = ThumbnailHelper::updateItem(
 		    $form['delete']['itemId'], $form['delete']['mimeType'], false);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		$status = 'deleteMime';
 	    } else {
 		list ($ret, $item) = GalleryCoreApi::loadEntitiesById($form['delete']['itemId']);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		$itemMimeTypesList = $item->getItemMimeTypesList();
 		$ret = GalleryCoreApi::deleteEntityById($form['delete']['itemId']);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		$ret = GalleryCoreApi::unregisterToolkitOperation('Thumbnail',
 				       'convert-to-image/jpeg', $itemMimeTypesList);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		$status = 'delete';
 	    }
 	}
 
-	return array(GalleryStatus::success(), $this->_exitStatus($status));
+	return array(null, $this->_exitStatus($status));
     }
 
     function _exitStatus($status) {
@@ -125,36 +125,36 @@ class ThumbnailSiteAdminView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	GalleryCoreApi::relativeRequireOnce('modules/thumbnail/classes/ThumbnailHelper.class');
+	GalleryCoreApi::requireOnce('modules/thumbnail/classes/ThumbnailHelper.class');
 
 	if ($form['formName'] != 'ThumbnailSiteAdmin') {
 	    $form['formName'] = 'ThumbnailSiteAdmin';
 	}
 
 	list ($ret, $form['mimeMap']) = ThumbnailHelper::getMimeTypeMap();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $list) = ThumbnailHelper::fetchThumbnails();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$form['list'] = array();
 	if (!empty($list)) {
 	    list ($ret, $thumbs) = GalleryCoreApi::loadEntitiesById(array_keys($list));
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    foreach ($thumbs as $thumb) {
-		$data = $thumb->getMemberData();
+		$data = (array)$thumb;
 		$data['itemMimeTypesList'] = $thumb->getItemMimeTypesList();
 		$form['list'][] = $data;
 	    }
 	}
 
 	list ($ret, $toolkitMime, $form['badMime']) = ThumbnailHelper::fetchToolkitSupport(false);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	unset($toolkitMime['Thumbnail']);
@@ -170,7 +170,7 @@ class ThumbnailSiteAdminView extends GalleryView {
 	}
 
 	$template->setVariable('controller', 'thumbnail.ThumbnailSiteAdmin');
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/thumbnail/templates/ThumbnailSiteAdmin.tpl'));
     }
 }

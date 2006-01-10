@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ class UserRecoverPasswordDownloadView extends GalleryView {
         $authString = $session->get('core.UserRecoverPasswordAdminAuthKey');
 
 	if (empty($authString)) {
-	    return GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__, 
+	    return GalleryCoreApi::error(ERROR_MISSING_VALUE, __FILE__, __LINE__, 
 					'Authorization String Not Set');
 	}
 
@@ -63,7 +63,7 @@ class UserRecoverPasswordDownloadView extends GalleryView {
 	header('Content-Disposition: attachment; filename="login.txt"');
 	print $authString;
 
-	return GalleryStatus::success();
+	return null;
     }
 }
 ?>

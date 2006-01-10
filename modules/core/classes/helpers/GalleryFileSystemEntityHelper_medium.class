@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,14 +69,14 @@ class GalleryFileSystemEntityHelper_medium {
 	}
 
 	list ($ret, $searchResults) = $gallery->search($query, $data);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$result = $searchResults->nextResult();
 	$isCollision = ($result[0] > 0);
 
-	return array(GalleryStatus::success(), $isCollision);
+	return array(null, $isCollision);
     }
 
     /**
@@ -92,14 +92,14 @@ class GalleryFileSystemEntityHelper_medium {
      */
     function getLegalPathComponent($pathComponent, $parentId, $selfId=null) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	/* Make sure our path component uses legal characters */
 	$pathComponent = $platform->legalizePathComponent(trim($pathComponent));
 
 	/* Get the parent, just to verify id is valid */
 	list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($parentId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -134,7 +134,7 @@ class GalleryFileSystemEntityHelper_medium {
 	    /* Make sure that we don't have a collision in the db. */
 	    list ($ret, $isCollision) = GalleryFileSystemEntityHelper_medium::checkPathCollision(
 					$newPathComponent, $parentId, $selfId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -143,11 +143,11 @@ class GalleryFileSystemEntityHelper_medium {
 	    }
 
 	    if (++$retry > 100) {
-		return array(GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_COLLISION, __FILE__, __LINE__), null);
 	    }
 	}
 
-	return array(GalleryStatus::success(), $newPathComponent);
+	return array(null, $newPathComponent);
     }
 }
 ?>

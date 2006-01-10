@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package uploadapplet
+ * @package SlideshowApplet
  * @author Pierre-Luc Paour <gallery@paour.com>
  */
 
@@ -34,12 +34,12 @@ class SlideshowAppletView extends GalleryView {
 	global $gallery;
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'slideshowapplet');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $modules) = GalleryCoreApi::fetchPluginStatus('module');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -47,7 +47,7 @@ class SlideshowAppletView extends GalleryView {
 
 	/* Build slideshow for an album.. */
 	list ($ret, $item) = $this->_getItem();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -55,7 +55,7 @@ class SlideshowAppletView extends GalleryView {
 	    /* Photo: do slideshow of parent album, start at this photo */
 	    $startId = $item->getId();
 	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($item->getParentId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
@@ -74,13 +74,17 @@ class SlideshowAppletView extends GalleryView {
 	     */
 	    $SlideshowApplet['g2BaseUrl'] = $urlGenerator->getCurrentUrlDir(true);
 	    list ($ret, $cookiePath) = $urlGenerator->getCookiePath(true);
-	    if ($ret->isError()) {
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    list ($ret, $cookieDomain) = $session->getCookieDomain();
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $SlideshowApplet['NoProtocolError'] = 0;
 	    $SlideshowApplet['cookieName'] = $session->getKey();
 	    $SlideshowApplet['cookieValue'] = $session->getId();
-	    $SlideshowApplet['cookieDomain'] = $session->getCookieDomain();
+	    $SlideshowApplet['cookieDomain'] = $cookieDomain;
 	    $SlideshowApplet['cookiePath'] = $cookiePath;
 	    $SlideshowApplet['album'] = $item->getId();
 	    $SlideshowApplet['userAgent'] = GalleryUtilities::getServerVar('HTTP_USER_AGENT');
@@ -88,12 +92,13 @@ class SlideshowAppletView extends GalleryView {
 	    $SlideshowApplet['code'] = 'com.gallery.GalleryRemote.GRAppletSlideshow';
 
 	    if (isset($startId)) {
-	    	/* format the start_from as album_picture, that's what GR expects */
-	    	$SlideshowApplet['extra']['gr_slideshow_start_from'] = $item->getId().'_'.$startId;
+		/* format the start_from as album_picture, that's what GR expects */
+		$SlideshowApplet['extra']['gr_slideshow_start_from'] = $item->getId().'_'.$startId;
 	    }
 
-	    list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'slideshowapplet');
-	    if ($ret->isError()) {
+	    list ($ret, $params) =
+		GalleryCoreApi::fetchAllPluginParameters('module', 'slideshowapplet');
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    foreach (array('default', 'override') as $type) {
@@ -111,7 +116,7 @@ class SlideshowAppletView extends GalleryView {
 	$form['formName'] = '';
 	$template->setVariable('controller', '');
 	$template->setVariable('SlideshowApplet', $SlideshowApplet);
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/slideshowapplet/templates/SlideshowApplet.tpl'));
     }
 
@@ -120,11 +125,11 @@ class SlideshowAppletView extends GalleryView {
      */
     function getViewDescription() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'slideshowapplet');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $module->translate('slideshow (fullscreen)'));
+	return array(null, $module->translate('slideshow (fullscreen)'));
     }
 }
 ?>

@@ -1,7 +1,7 @@
 <?php
 /*
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,11 +77,11 @@ class RepositoryDescriptor extends RepositoryObject {
 
 	/* Set output path. */
 	$ret = $this->setOutputDir($outputDir);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     function generate($plugin) {
@@ -130,7 +130,7 @@ class RepositoryDescriptor extends RepositoryObject {
 		    list ($ret, $translatedString) = $translator->translateDomain(
 			sprintf('%ss_%s', $pluginType, $this->_pluginId),
 			array('text' => $originalString));
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
 		    $descriptions[$languageCode][$stringId] = $translatedString;
@@ -140,36 +140,36 @@ class RepositoryDescriptor extends RepositoryObject {
 	$this->_data['descriptions'] = $descriptions;
 
 	/* Get file meta data. */
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$pluginBaseDir = GalleryCoreApi::getPluginBaseDir($pluginType, $this->_pluginId);
 	$this->_pluginDir = $platform->realpath(
 	    sprintf('%s%ss/%s', $pluginBaseDir, $pluginType, $this->_pluginId)) . '/';
 	$ret = $this->getFileMetaData($this->_pluginDir, $this->_data, $this->_pluginDir);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Get build timestamp. */
 	list ($ret, $this->_data['header']['buildTimestamp']) =
 	    $this->calculateBuildTimestamp($this->getPluginDir());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Create available languages meta data. */
 	foreach ($this->_data['files'] as $fileName => $fileMetaData) {
 	    if (preg_match('/po\/(.._..)\.po$/U', $fileName, $languageCode)) {
-	    	$languageCode = $languageCode[1];
+		$languageCode = $languageCode[1];
 
 		/* Get revision number from po file. */
 		list ($ret, $tag) =
 		    $this->_utilities->getFirstBytesFromFile($this->_pluginDir . $fileName, 128);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
 		list ($ret, $revision) = $this->_utilities->extractRevision($tag);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
@@ -184,7 +184,7 @@ class RepositoryDescriptor extends RepositoryObject {
 	/* Put data into template. */
 	$this->_template->setVariable('contents', serialize($this->_data));
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -198,7 +198,7 @@ class RepositoryDescriptor extends RepositoryObject {
 	global $gallery;
 	$relativePath = substr($path, strlen($pluginDir));
 
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	if ($platform->is_dir($path) && $dir = $platform->opendir($path)) {
 	    /* Ignore plugin base directory */
 	    if (strlen($relativePath)) {
@@ -211,8 +211,8 @@ class RepositoryDescriptor extends RepositoryObject {
 		if (!preg_match('/^(\.|CVS)/', $file)) {
 		    $ret = $this->getFileMetaData(
 			$platform->realpath($path) . '/' . $file, $data, $pluginDir);
-		    if ($ret->isError()) {
-		        return $ret->wrap(__FILE__, __LINE__);
+		    if ($ret) {
+			return $ret->wrap(__FILE__, __LINE__);
 		    }
 
 		}
@@ -220,7 +220,7 @@ class RepositoryDescriptor extends RepositoryObject {
 	} else if ($platform->is_file($path)) {
 	    /* Get file contents for calculating hash. */
 	    if (false === ($fileContents = $platform->file_get_contents($path))) {
-		return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__, sprintf(
+		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__, sprintf(
 					    'Error reading [%s]', $path));
 	    }
 
@@ -232,22 +232,22 @@ class RepositoryDescriptor extends RepositoryObject {
 	    if (preg_match('/.*strings\.raw$/', $path)) {
 		/* Get strings.raw revision. */
 		list ($ret, $tag) = $this->_utilities->getFirstBytesFromFile($path, 128);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
 		list ($ret, $revision) = $this->_utilities->extractRevision($tag);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 		$data['header']['stringsRevision'] = $revision;
 	    }
 	} else {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 					"Error reading path: $path");
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -340,9 +340,9 @@ class RepositoryDescriptor extends RepositoryObject {
     function calculateBuildTimestamp($pluginDir) {
 	global $gallery;
 
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	if (!$platform->chdir($pluginDir)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 					      "Couldn't change to [$pluginDir]"),
 			 null);
 	}
@@ -350,11 +350,11 @@ class RepositoryDescriptor extends RepositoryObject {
 	$cvsOutput = "cvs log: Logging test/phpunit\n1970/04/11 13:13:00;";
 
 	list ($ret, $buildTimestamp) = $this->_utilities->extractTimestamp($cvsOutput);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $buildTimestamp);
+	return array(null, $buildTimestamp);
     }
 
     function getPluginVersion() {

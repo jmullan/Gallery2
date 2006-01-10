@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,12 +31,12 @@ class MockTemplateAdapter {
 	    if (is_array($ret)) {
 		$ret = $ret[0];
 	    }
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     function getCallbackCount() {
@@ -50,7 +50,7 @@ class MockTemplateAdapter {
     function updateProgressBar($title, $description, $percentComplete) {
 	/* Replace localized comma decimal separator with a dot */
 	$this->_progress[] = str_replace(',', '.', round($percentComplete, 2));
-	return GalleryStatus::success();
+	return null;
     }
 
     function resetProgressBarStats() {

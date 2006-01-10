@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,8 +42,8 @@ class MatrixTheme extends GalleryTheme {
 	$this->setId('matrix');
 	$this->setName($gallery->i18n('Matrix'));
 	$this->setDescription($gallery->i18n('Standard Gallery2 look and feel'));
-	$this->setVersion('1.0.0');
-	$this->setRequiredCoreApi(array(6, 5));
+	$this->setVersion('1.0.1');
+	$this->setRequiredCoreApi(array(7, 0));
 	$this->setRequiredThemeApi(array(2, 1));
 	$this->setStandardSettings(
 	    array('rows' => 3, 'columns' => 3,
@@ -73,7 +73,7 @@ class MatrixTheme extends GalleryTheme {
 		  'systemLinks', 'itemLinks', 'itemSummaries', 'permissions',
 		  'thumbnails', 'pageNavigator', 'jumpRange'),
 	     $childIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -82,7 +82,7 @@ class MatrixTheme extends GalleryTheme {
 	$theme['columnWidthPct'] = floor(100 / $params['columns']);
 
 	/* Add our header and styles */
-	return array(GalleryStatus::success(), 'theme.tpl');
+	return array(null, 'theme.tpl');
     }
 
     /**
@@ -95,11 +95,11 @@ class MatrixTheme extends GalleryTheme {
 	    $dataTypes[] = 'navThumbnails';
 	}
 	$ret = $this->loadCommonTemplateData($template, $item, $params, $dataTypes);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), 'theme.tpl');
+	return array(null, 'theme.tpl');
     }
 
     /**
@@ -108,11 +108,11 @@ class MatrixTheme extends GalleryTheme {
     function showModulePage(&$template, $item, $params, $templateFile) {
 	$ret = $this->loadCommonTemplateData(
 	    $template, $item, $params, array('parents', 'systemLinks'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), 'theme.tpl');
+	return array(null, 'theme.tpl');
     }
 
     /**
@@ -121,18 +121,18 @@ class MatrixTheme extends GalleryTheme {
     function showAdminPage(&$template, $item, $params, $templateFile) {
 	$ret = $this->loadCommonTemplateData(
 	    $template, $item, $params, array('parents', 'systemLinks'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), 'theme.tpl');
+	return array(null, 'theme.tpl');
     }
 
     /**
      * @see GalleryTheme::showErrorPage
      */
     function showErrorPage(&$template) {
-	return array(GalleryStatus::success(), 'error.tpl');
+	return array(null, 'error.tpl');
     }
 
     /**
@@ -141,11 +141,11 @@ class MatrixTheme extends GalleryTheme {
     function showProgressBarPage(&$template, $item, $params) {
 	$ret = $this->loadCommonTemplateData(
 	    $template, $item, $params, array('parents', 'systemLinks'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), 'theme.tpl');
+	return array(null, 'theme.tpl');
     }
 }
 ?>

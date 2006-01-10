@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 /**
  * Load required classes
  */
-GalleryCoreApi::relativeRequireOnce('modules/thumbnail/classes/ThumbnailHelper.class');
+GalleryCoreApi::requireOnce('modules/thumbnail/classes/ThumbnailHelper.class');
 
 /**
  * ThumbnailToolkit tests
@@ -47,18 +47,18 @@ class ThumbnailToolkitTest extends GalleryTestCase {
 	parent::setUp();
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'thumbnail');
-	if ($ret->isError() || !isset($module)) {
+	if ($ret || !isset($module)) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	list ($ret, $toolkit) =
 	    GalleryCoreApi::newFactoryInstance('GalleryToolkit', 'ThumbnailToolkit');
-	if ($ret->isError() || !isset($toolkit)) {
+	if ($ret || !isset($toolkit)) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $id) = ThumbnailHelper::addItem('test/fakemime', null, 'unittest.jpg',
 	    dirname(__FILE__) . '/../../images/G2video.jpg', 'image/jpeg');
-	if ($ret->isError() || !isset($id)) {
+	if ($ret || !isset($id)) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -69,10 +69,10 @@ class ThumbnailToolkitTest extends GalleryTestCase {
     function tearDown() {
 	global $gallery;
 	$ret = GalleryCoreApi::deleteEntityById($this->_itemId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$ret = $platform->unlink(
 	    $gallery->getConfig('data.gallery.base') . '/unittest.jpg');
 	if (!$ret) {
@@ -80,7 +80,7 @@ class ThumbnailToolkitTest extends GalleryTestCase {
 	}
 	$ret = GalleryCoreApi::unregisterToolkitOperation('Thumbnail',
 	    'convert-to-image/jpeg', array('test/fakemime'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	parent::tearDown();
@@ -101,8 +101,8 @@ class ThumbnailToolkitTest extends GalleryTestCase {
 	$this->assertEquals(GALLERY_ERROR | ERROR_UNSUPPORTED_OPERATION, $ret->getErrorCode(),
 			    'Error expected for bad operation');
 
-	$platform = $gallery->getPlatform();
-	$gallery->_platform = new DummyPlatform();
+	$platform =& $gallery->getPlatform();
+	$gallery->setPlatform(new ThumbnailToolkitTestDummyPlatform());
 
 	list ($ret, $outputMimeType) = $this->_toolkit->performOperation(
 	    'test/fakemime', 'convert-to-image/jpeg',
@@ -111,13 +111,13 @@ class ThumbnailToolkitTest extends GalleryTestCase {
 	$this->assertEquals(GALLERY_ERROR | ERROR_PLATFORM_FAILURE, $ret->getErrorCode(),
 			    'Error expected for bad destination file');
 
-	$gallery->_platform = $platform;
+	$gallery->setPlatform($platform);
 
 	list ($ret, $outputMimeType) = $this->_toolkit->performOperation(
 	    'test/fakemime', 'convert-to-image/jpeg',
 	    dirname(__FILE__) . '/x', $gallery->getConfig('data.gallery.base') . '/unittest.jpg',
 	    null);
-	$this->assertEquals(GALLERY_SUCCESS, $ret->getErrorCode(), 'Copy should succeed');
+	$this->assert(!isset($ret), 'Copy should succeed');
     }
 }
 
@@ -125,9 +125,9 @@ class ThumbnailToolkitTest extends GalleryTestCase {
  * @package Thumbnail
  * @subpackage PHPUnit
  */
-class DummyPlatform {
+class ThumbnailToolkitTestDummyPlatform {
     function copy($source, $dest) {
-	// Simulate copy failure..
+	/* Simulate copy failure.. */
 	return false;
     }
     function getDirectorySeparator() {

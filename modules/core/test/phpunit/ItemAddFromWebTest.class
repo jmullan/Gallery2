@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,9 +31,9 @@
  * a photo to an album and create a derivative, the factory won't try to go off
  * and load these classes (which lightens the load on our dummy toolkit)
  */
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPhotoItem.class');
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryAlbumItem.class');
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryDerivativeImage.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryPhotoItem.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryAlbumItem.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryDerivativeImage.class');
 
 /**
  * ItemAddFromWeb plugin test
@@ -51,7 +51,7 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 
 	list ($ret, $this->_album) =
 	    $this->_createRandomAlbum($this->_getRootId(), array('orderBy' => 'orderWeight'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -59,12 +59,12 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 	$this->_markForCleanup($this->_album);
 
 	list ($ret, $this->_lockIds) = GalleryCoreApi::acquireReadLock($this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	global $gallery;
-	$this->_savePlatform = $gallery->getPlatform();
+	$this->_savePlatform =& $gallery->getPlatform();
 	$gallery->setPlatform(new ItemAddFromWebTestPlatform($this));
     }
 
@@ -73,7 +73,7 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 	$gallery->setPlatform($this->_savePlatform);
 
 	$ret = GalleryCoreApi::releaseLocks($this->_lockIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -119,14 +119,14 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 	$this->assert(isset($results[1]['addedFiles'][4]['id']), 'id 5');
 
 	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($this->_album);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$i = 0;
 	foreach ($ids as $id) {
 	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($id);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $base = $basenames[$i];

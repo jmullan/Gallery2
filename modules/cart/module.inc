@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,11 +38,11 @@ class CartModule extends GalleryModule {
 	$this->setId('cart');
 	$this->setName($gallery->i18n('Cart'));
 	$this->setDescription($gallery->i18n('Shopping Cart Module'));
-	$this->setVersion('1.0.1'); /* Update upgrade() function below too */
+	$this->setVersion('1.0.2'); /* Update upgrade() function below too */
 	$this->setGroup('commerce', $gallery->i18n('Commerce'));
 	$this->setCallbacks('getItemLinks');
-	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredModuleApi(array(2, 0));
+	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredModuleApi(array(3, 0));
     }
 
     /**
@@ -55,7 +55,7 @@ class CartModule extends GalleryModule {
 	    $currentVersion = '0';
 	}
 	list ($ret, $coreParams) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -64,13 +64,13 @@ class CartModule extends GalleryModule {
 	    /* Register our permission */
 	    $ret = GalleryCoreApi::registerPermission($this->getId(), 'cart.add',
 						      $gallery->i18n('[cart] Add to cart'));
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    /* Give everybody cart permission by default */
 	    $ret = GalleryCoreApi::addGroupPermission(
 		$coreParams['id.rootAlbum'], $coreParams['id.everybodyGroup'], 'cart.add', true);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    break;
@@ -89,7 +89,7 @@ class CartModule extends GalleryModule {
 	      DROP TABLE [CartMap]
 	    ';
 	    $ret = $storage->execute($query);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $query = '
@@ -97,7 +97,7 @@ class CartModule extends GalleryModule {
 	      WHERE [Schema::name] = \'CartMap\'
 	    ';
 	    $ret = $storage->execute($query);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
@@ -113,40 +113,27 @@ class CartModule extends GalleryModule {
 	    /* Register our permission */
 	    $ret = GalleryCoreApi::registerPermission($this->getId(), 'cart.add',
 						      $gallery->i18n('[cart] Add to cart'));
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    /* Give everybody cart permission by default */
 	    $ret = GalleryCoreApi::addGroupPermission(
 		$coreParams['id.rootAlbum'], $coreParams['id.everybodyGroup'], 'cart.add', true);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+
+	case '1.0.1':
 
 	case 'end of upgrade path':
 	    break;
 
 	default:
-	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
+	    return GalleryCoreApi::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
 					sprintf('Unknown module version %s', $currentVersion));
 	}
 
-	return GalleryStatus::success();
-    }
-
-    /**
-     * @see GalleryModule::isRecommendedDuringInstall
-     */
-    function isRecommendedDuringInstall() {
-	return false;
-    }
-
-    /**
-     * @see GalleryModule::autoConfigure
-     */
-    function autoConfigure() {
-	/* We don't require any special configuration */
-	return array(GalleryStatus::success(), true);
+	return null;
     }
 
     /**
@@ -167,7 +154,7 @@ class CartModule extends GalleryModule {
 	    }
 	}
 
-	return array(GalleryStatus::success(), $links);
+	return array(null, $links);
     }
 }
 ?>

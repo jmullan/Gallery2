@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,27 +43,27 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
 
 	/* create an album to hold all of the test items */
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($this->_album);
 
 	$ret = GalleryCoreApi::removeItemPermissions($this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::addUserPermission(
 	    $this->_album->getId(), $this->_userId = $gallery->getActiveUserId(), 'core.all');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Save the existing cart */
 	list($ret, $this->_saveCartItemCounts) = CartHelper::fetchCartItemCounts();
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -71,7 +71,7 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
 	$cartItemCounts = array(1 => 3,
 				2 => 3);
 	$ret = CartHelper::setCartItemCounts($cartItemCounts);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -80,7 +80,7 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
     function tearDown() {
 	/* Restore the existing cart */
 	$ret = CartHelper::setCartItemCounts($this->_saveCartItemCounts);
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -90,7 +90,7 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
     function testAddItem() {
 	/* Create a test item */
 	list ($ret, $item) = $this->_createRandomDataItem($this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -104,7 +104,7 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
 
 	/* Verify our cart */
 	list($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -118,7 +118,7 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
 	/* Create two test items */
 	for ($i = 0; $i < 2; $i++) {
 	    list ($ret, $item[$i]) = $this->_createRandomDataItem($this->_album->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
@@ -133,7 +133,7 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
 
 	/* Verify our cart */
 	list($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -147,13 +147,13 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
     function testAddDuplicateItem() {
 	/* Create a test item */
 	list ($ret, $item) = $this->_createRandomDataItem($this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Put the item in the cart */
 	$ret = CartHelper::setCartItemCounts(array($item->getId() => 1));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -167,7 +167,7 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
 
 	/* Verify our cart */
 	list($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -178,14 +178,14 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
 	/* Create two test items */
 	for ($i = 0; $i < 2; $i++) {
 	    list ($ret, $item[$i]) = $this->_createRandomDataItem($this->_album->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
 
 	/* Put the items in the cart */
 	$ret = CartHelper::setCartItemCounts(array($item[0]->getId() => 1, $item[1]->getId() => 1));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -199,7 +199,7 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
 
 	/* Verify our cart */
 	list ($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -211,11 +211,11 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
     function testAddNoViewPermissionItem() {
 	/* Create a test item */
 	list ($ret, $item) = $this->_createRandomDataItem($this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::removeUserPermission($item->getId(), $this->_userId, 'core.viewAll');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -225,7 +225,7 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
 
 	/* Verify our cart */
 	list($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array(1 => 3, 2 => 3), $cartItemCounts);
@@ -234,11 +234,11 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
     function testAddNoCartPermissionItem() {
 	/* Create a test item */
 	list ($ret, $item) = $this->_createRandomDataItem($this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::removeUserPermission($item->getId(), $this->_userId, 'cart.add');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -251,7 +251,7 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
 
 	/* Verify our cart */
 	list($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array(1 => 3, 2 => 3), $cartItemCounts);
@@ -260,15 +260,15 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
     function testAddAlbumWithNoViewPermissionItem() {
 	/* Create test items */
 	list ($ret, $item) = $this->_createRandomDataItem($this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::removeUserPermission($item->getId(), $this->_userId, 'core.viewAll');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	list ($ret, $item2) = $this->_createRandomDataItem($this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -281,7 +281,7 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
 
 	/* Verify our cart - one item added, no permission item skipped */
 	list($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array(1 => 3, 2 => 3, $item2->getId() => 1), $cartItemCounts);
@@ -290,15 +290,15 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
     function testAddAlbumWithNoCartPermissionItem() {
 	/* Create test items */
 	list ($ret, $item) = $this->_createRandomDataItem($this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::removeUserPermission($item->getId(), $this->_userId, 'cart.add');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	list ($ret, $item2) = $this->_createRandomDataItem($this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -311,7 +311,7 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
 
 	/* Verify our cart - one item added, no permission item skipped */
 	list($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array(1 => 3, 2 => 3, $item2->getId() => 1), $cartItemCounts);

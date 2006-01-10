@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,20 +48,20 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 
 	/* Create some random photo items that we can print */
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($this->_album);
 
 	$ret = GalleryCoreApi::removeItemPermissions($this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::addUserPermission(
 	    $this->_album->getId(), $gallery->getActiveUserId(), 'core.all');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -75,7 +75,7 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	    list ($ret, $this->_items[$i]) =
 		$this->_createRandomDataItem($this->_album->getId(),
 					     'test/jpeg', array(), __FILE__, 'GalleryPhotoItem');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -84,13 +84,13 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	    /* Create a stub thumbnail */
 	    list ($ret, $derivative) = GalleryCoreApi::newFactoryInstanceByHint(
 		'GalleryDerivative', $this->_items[$i]->getEntityType());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
 	    $ret = $derivative->create($this->_items[$i]->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -100,7 +100,7 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	    $derivative->setMimeType('test/file');
 
 	    $ret = $derivative->save();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -116,13 +116,13 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	/* Create a least one preferred */
 	list ($ret, $derivative) = GalleryCoreApi::newFactoryInstanceByHint(
 	    'GalleryDerivative', $this->_items[2]->getEntityType());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = $derivative->create($this->_items[2]->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -133,7 +133,7 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	$derivative->setWidth(0);
 	$derivative->setHeight(0);
 	$ret = $derivative->save();
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -143,7 +143,7 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
         /* Print permission on all but one */
 	$ret = GalleryCoreApi::removeUserPermission(
 	    $this->_items[1]->getId(), $gallery->getActiveUserId(), 'photoaccess.print');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -155,7 +155,7 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 
 	/* Make sure translate calls during test won't generate any platform calls */
 	list ($ret) = GalleryCoreApi::getPermissionIds();
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -179,8 +179,8 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 
     function testFulfillCart() {
 	global $gallery;
-	GalleryCoreApi::relativeRequireOnce('modules/cart/classes/CartPluginInterface_1_0.class');
-	GalleryCoreApi::relativeRequireOnce(
+	GalleryCoreApi::requireOnce('modules/cart/classes/CartPluginInterface_1_0.class');
+	GalleryCoreApi::requireOnce(
 	    'modules/photoaccess/classes/PhotoAccessCartPlugin.class');
 
 	/* Create our cart */
@@ -210,7 +210,7 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 
 	$cartPlugin = new PhotoAccessCartPlugin();
 	list ($ret, $urlParams) = $cartPlugin->fulfillCart($cartItemIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -225,12 +225,12 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
  * @subpackage PHPUnit
  */
 class PhotoAccessCartPluginTestUrlGenerator {
-    function generateUrl($params) {
+    function generateUrl($params=array(), $options=array()) {
 	$lines = array();
 	foreach ($params as $key => $value) {
 	    $lines[] = "$key=$value";
 	}
-	return join("/", $lines);
+	return implode('/', $lines);
     }
 }
 ?>

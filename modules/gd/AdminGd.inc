@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 /**
  * Required classes
  */
-GalleryCoreApi::relativeRequireOnce('modules/gd/classes/GdToolkitHelper.class');
+GalleryCoreApi::requireOnce('modules/gd/classes/GdToolkitHelper.class');
 
 /**
  * @package Gd
@@ -43,7 +43,7 @@ class AdminGdController extends GalleryController {
 	global $gallery;
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -52,16 +52,16 @@ class AdminGdController extends GalleryController {
 	if (isset($form['action']['save'])) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'gd',
 						      'jpegQuality', $form['jpegQuality']);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'gd');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    list ($ret, $isActive) = $module->isActive();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -89,7 +89,7 @@ class AdminGdController extends GalleryController {
 	$results['status'] = $status;
 	$results['error'] = $error;
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -110,7 +110,7 @@ class AdminGdView extends GalleryView {
 	    foreach (array('path', 'jpegQuality') as $key) {
 		list ($ret, $form[$key]) =
 		    GalleryCoreApi::getPluginParameter('module', 'gd', $key);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
@@ -123,15 +123,15 @@ class AdminGdView extends GalleryView {
 	}
 
 	list ($ret, $gdVersion) = GdToolkitHelper::discoverGdVersion();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	list ($ret, $isGdBundled) = GdToolkitHelper::isBundled();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	list ($ret, $isGdVersionSupported) = GdToolkitHelper::isGdVersionSupported($gdVersion);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$minGdVersion = GdToolkitHelper::minGdVersion();
@@ -139,17 +139,17 @@ class AdminGdView extends GalleryView {
 	$mimeTypes = array();
 	if ($isGdVersionSupported) {
 	    list($ret, $mimeTypes) = GdToolkitHelper::discoverMimeTypes();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'gd');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	list ($ret, $isActive) = $module->isActive();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -165,7 +165,7 @@ class AdminGdView extends GalleryView {
 	$template->setVariable('AdminGd', $AdminGd);
 	$template->setVariable('controller', 'gd.AdminGd');
 
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/gd/templates/AdminGd.tpl'));
     }
 }

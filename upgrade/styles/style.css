@@ -2,7 +2,7 @@
  * $Id$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +80,9 @@ a:hover {
 }
 
 td.header img {
-  margin-left: 14px;
+  margin: 0 0 5px 14px;
+  float: left;
+  clear: none;
 }
 
 td.navbar {
@@ -105,16 +107,30 @@ td.navbar td.heading {
   padding: 3px;
 }
 
-td.navbar td {
+td.navbar td, #helpbar td {
   border-bottom: 1px solid #ecf2f8;
   padding: 8px 2px;
 }
 
-td.navbar tr.help td {
+#navbar a {
+  color: #000;
+}
+
+#navbar a.current {
+  color: #ae0000;
+}
+
+#helpbar {
+    float: right;
+    clear: none;
+    margin: 0 20px;
+}
+
+#helpbar tr.help td {
   padding-top: 22px;
 }
 
-td.navbar .helpBox {
+#helpbar .helpBox {
   font-weight: bold;
   color: #eee;
   background-color: #ae0000;
@@ -163,6 +179,9 @@ td.navbar .helpBox {
 .error {
   font-weight: bold;
   color: #ae0000;
+  padding: 5px 5px 5px 45px;
+  height: 50px;
+  background: url('../../upgrade/images/ico_error.gif') 5px 50% no-repeat;
 }
 
 .warning {
@@ -177,11 +196,14 @@ td.navbar .helpBox {
   margin-right: -0.15em;
 }
 
+div.success {
+  padding: 5px 5px 5px 45px;
+  background: url('../../upgrade/images/ico_success.gif') 5px 50% no-repeat;
+}
+
 .go {
   font-weight: bold;
   font-size: 1.2em;
-  background-color: #eee;
-  border: 1px solid #ddd;
   margin: 8px 0 8px -4px;
   padding: 4px;
 }
@@ -276,11 +298,14 @@ input, select {
   line-height: 1.2em;
 }
 
-.systemChecks td.notice {
+.systemChecks td.notice, div.warning {
   margin-left: 10px;
   border: 1px solid #999;
   padding: 5px;
   line-height: 1.3em;
+  padding: 5px 5px 5px 45px;
+  height: 50px;
+  background: url('../../upgrade/images/ico_warning.gif') 5px 5px no-repeat;
 }
 
 .showHideToggle {

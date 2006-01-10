@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -138,6 +138,9 @@ class SystemChecksStep extends UpgradeStep {
 	} else {
 	    $templateData['check'][] =
 		array('title' => _('set_time_limit() allowed'), 'success' => true);
+
+	    /* Set the time limit large enoguh for the remaining checks (slow systems) */
+	    set_time_limit(180);
 	}
 
 	/* Warning if memory_limit is set and is too low */
@@ -233,6 +236,37 @@ class SystemChecksStep extends UpgradeStep {
 		);
 	} /* skip showing 'success' for this one */
 
+	/* Warning if putenv is disabled */
+	if (in_array('putenv', split(',\s*', ini_get('disable_functions')))) {
+	    $templateData['check'][] =
+		array('title' => _('putenv() allowed'),
+		      'warning' => true,
+		      'notice' => sprintf(_('Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> parameter in php.ini.  Gallery can function with this setting, but on some rare systems Gallery will be unable to run in other languages than the system language and English.')),
+		);
+	} /* skip showing 'success' for this one */
+
+	/* Warning if output_buffering / handlers are enabled */
+	$outputBuffers = array();
+	foreach (array('output_buffering', 'zlib.output_compression') as $outputFunction) {
+	    if (GalleryUtilities::getPhpIniBool($outputFunction) ||
+		    (int) ini_get($outputFunction) > 0 ||
+		    (int) ini_get($outputFunction) > 0) {
+		$outputBuffers[] = $outputFunction;
+	    }
+	}
+	foreach (array('output_handler', 'zlib.output_handler') as $outputHandler) {
+	    if (($value = ini_get($outputHandler)) && !empty($value)) {
+		$outputBuffers[] = $outputHandler;
+	    }
+	}
+	if (!empty($outputBuffers)) {
+	    $templateData['check'][] =
+		array('title' => _('Output buffering disabled'),
+		      'warning' => true,
+		      'notice' => sprintf(_('Warning: Output buffering is enabled in your php by the <b>%s</b> parameter(s) in php.ini.  Gallery can function with this setting - downloading files is even faster - but Gallery might be unable to serve large files (e.g. large videos) and run into the  memory limit. Also, some features like the progress bars might not work correctly if output buffering is enabled unless ini_set() is allowed.'), implode(', ', $outputBuffers)),
+		);
+	} /* skip showing 'success' for this one */
+	
 	/* Check if the files and dirs in the storage dir are (still) writeable */
 	$title = _('Storage Directory Permissions');
 	if (!SystemChecksStep::CheckFileDirective()) {
@@ -305,7 +339,7 @@ class SystemChecksStep extends UpgradeStep {
 	global $gallery;
 
 	$storagePath = $gallery->getConfig('data.gallery.base');
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	if (empty($storagePath)) {
 	    return false;
 	} else if ($storagePath{strlen($storagePath)-1} != $platform->getDirectorySeparator()) {
@@ -338,8 +372,7 @@ class SystemChecksStep extends UpgradeStep {
      */
     function _checkStorageSubDirectory($dirname, &$tested, $max) {
 	global $gallery;
-
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	if (!($fd = $platform->opendir($dirname))) {
 	    return false;

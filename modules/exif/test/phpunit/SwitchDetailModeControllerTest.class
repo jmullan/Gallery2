@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +26,8 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GallerySmarty.class');
-GalleryCoreApi::relativeRequireOnce('modules/exif/Callbacks.inc');
+GalleryCoreApi::requireOnce('modules/core/classes/GallerySmarty.class');
+GalleryCoreApi::requireOnce('modules/exif/Callbacks.inc');
 
 /**
  * SwitchDetailMode controller tests
@@ -107,7 +107,7 @@ class SwitchDetailModeControllerTest extends GalleryControllerTestCase {
 	
 	/* Create a test photo with exif data */
 	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->_rootAlbumId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$title = '_test_exif_' . rand();
@@ -115,12 +115,12 @@ class SwitchDetailModeControllerTest extends GalleryControllerTestCase {
 	list ($ret, $item) =
 	    GalleryCoreApi::addItemToAlbum($path, $title, $title, '', '', 'image/jpeg',
 					   $this->_rootAlbumId, false);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($item);
 	$ret = GalleryCoreApi::releaseLocks($lockId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
@@ -138,7 +138,7 @@ class SwitchDetailModeControllerTest extends GalleryControllerTestCase {
 	    }
 	    $expModeSet = $expDataSet = true;
 	    list ($ret, $exifData) = ExifHelper::getExifData($path, $filter);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    if (empty($exifData)) {
@@ -147,7 +147,7 @@ class SwitchDetailModeControllerTest extends GalleryControllerTestCase {
 		} else {
 		    list ($ret, $exifData) = ExifHelper::getExifData($path, EXIF_SUMMARY);
 		}
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
 		$mode = null;
@@ -161,7 +161,7 @@ class SwitchDetailModeControllerTest extends GalleryControllerTestCase {
 	    /* Execute the method under test */
 	    $callback = new ExifCallbacks;
 	    $ret = $callback->callback(array('itemId' => $item->getId()), $smarty, 'LoadExifInfo');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	

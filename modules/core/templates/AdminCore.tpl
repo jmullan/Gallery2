@@ -39,7 +39,7 @@
   <h3> {g->text text="Language Settings"} </h3>
 
   <p class="giDescription">
-    {g->text text="Select language defaults for Gallery. Individual users can override this setting in their personal preferences or via the language selector block if available."}
+    {g->text text="Select language defaults for Gallery. Individual users can override this setting in their personal preferences or via the language selector block if available. Gallery will try to automatically detect the language preference of each user if the browser preference check is enabled."}
   </p>
 
   {if isset($AdminCore.can.translate)}
@@ -50,6 +50,13 @@
       <select name="{g->formVar var="form[default][language]"}">
 	{html_options options=$AdminCore.languageList selected=$form.default.language}
       </select>
+    </td>
+  </tr><tr>
+    <td>
+      {g->text text="Check Browser Preference"}
+    </td><td>
+      <input type="checkbox"{if $form.language.useBrowserPref} checked="checked"{/if}
+             name="{g->formVar var="form[language][useBrowserPref]"}"/>
     </td>
   </tr></table>
   {else}
@@ -164,7 +171,7 @@
        value="{$form.uploadLocalServer.newDir}"/>
       {g->autoComplete element="newDir"}
 	{g->url arg1="view=core.SimpleCallback" arg2="command=lookupDirectories"
-	 arg3="prefix=__VALUE__" forJavascript="true"}
+		arg3="prefix=__VALUE__" htmlEntities=false}
       {/g->autoComplete}
     </td><td>
       <input type="submit" class="inputTypeSubmit"

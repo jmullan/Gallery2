@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,39 +42,39 @@ class ShowItemTest extends GalleryTestCase {
 	parent::setUp();
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($this->_album);
 
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $this->_view) = GalleryView::loadView('core.ShowItem');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTemplate.class');
+	GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplate.class');
 	$this->_template =
 	    new GalleryTemplate(dirname(dirname(dirname(dirname(dirname(__FILE__))))));
     }
 
     function _testViewCount($itemId) {
 	list ($ret, $count) = GalleryCoreApi::fetchItemViewCount($itemId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(0, $count, 'count before');
 
 	GalleryUtilities::putRequestVariable('itemId', $itemId);
 	list ($ret, $result, $theme) = $this->_view->doLoadTemplate($this->_template);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -83,7 +83,7 @@ class ShowItemTest extends GalleryTestCase {
 			    'template should be inside a theme');
 
 	list ($ret, $count) = GalleryCoreApi::fetchItemViewCount($itemId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(1, $count, 'count after');
@@ -104,14 +104,14 @@ class ShowItemTest extends GalleryTestCase {
     function testGuestNoPermission() {
 	/* Verify guest is redirected to login page if no core.view permission */
 	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_becomeGuestUser();
 
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
 	list ($ret, $result, $theme) = $this->_view->doLoadTemplate($this->_template);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -123,13 +123,13 @@ class ShowItemTest extends GalleryTestCase {
     function testUserNoPermission() {
 	/* Verify registered user is redirected to root album if no core.view permission */
 	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
 	list ($ret, $result, $theme) = $this->_view->doLoadTemplate($this->_template);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -151,18 +151,18 @@ class ShowItemTest extends GalleryTestCase {
 	 */
 	global $gallery;
 	$ret = GalleryCoreApi::removeItemPermissions($this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::addUserPermission(
 	    $this->_album->getId(), $gallery->getActiveUserId(), 'core.view', false);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
 	list ($ret, $result, $theme) = $this->_view->doLoadTemplate($this->_template);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -179,18 +179,18 @@ class ShowItemTest extends GalleryTestCase {
 	/* Verify data item does not require core.viewSource permission */
 	global $gallery;
 	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::addUserPermission(
 	    $this->_item->getId(), $gallery->getActiveUserId(), 'core.view', false);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
 	list ($ret, $result, $theme) = $this->_view->doLoadTemplate($this->_template);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 

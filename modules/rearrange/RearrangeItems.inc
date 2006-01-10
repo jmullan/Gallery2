@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ class RearrangeItemsController extends GalleryController {
 
 	/* Check permissions */
 	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -55,20 +55,20 @@ class RearrangeItemsController extends GalleryController {
 	    $list = explode(',', $form['list']);
 
 	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    /* Verify valid input */
 	    if (count($list) != count($childIds)) {
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	    }
 
 	    list ($ret, $orderWeights) = GalleryCoreApi::fetchItemOrderWeights($childIds);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -79,7 +79,7 @@ class RearrangeItemsController extends GalleryController {
 
 		$ret = GalleryCoreApi::setItemOrderWeight($childIds[$oldIndex],
 							  $orderWeights[$childIds[$newIndex]]);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
@@ -87,7 +87,7 @@ class RearrangeItemsController extends GalleryController {
 	    $event = GalleryCoreApi::newEvent('Gallery::ItemOrder');
 	    $event->setData($itemId);
 	    list ($ret) = GalleryCoreApi::postEvent($event);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -100,7 +100,7 @@ class RearrangeItemsController extends GalleryController {
 	$results['status'] = $status;
 	$results['error'] = $error;
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -120,7 +120,7 @@ class RearrangeItemsView extends GalleryView {
 
 	/* Check permissions */
 	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -129,7 +129,7 @@ class RearrangeItemsView extends GalleryView {
 	}
 
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -138,7 +138,7 @@ class RearrangeItemsView extends GalleryView {
 	if (empty($orderBy)) {
 	    list ($ret, $orderBy) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderBy');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
@@ -146,15 +146,15 @@ class RearrangeItemsView extends GalleryView {
 	    $RearrangeItems['automaticOrderMessage'] = 1;
 	} else {
 	    list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    list ($ret, $childItems) = GalleryCoreApi::loadEntitiesById($childIds);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds($childIds);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -162,17 +162,17 @@ class RearrangeItemsView extends GalleryView {
 	    $maxWidth = $maxHeight = 0;
 	    foreach ($childItems as $child) {
 		$childId = $child->getId();
-		$child = $child->getMemberData();
+		$child = (array)$child;
 		if (isset($thumbnails[$childId])) {
 		    $thumb = $thumbnails[$childId];
 		    if (!($thumb->getWidth() && $thumb->getHeight())) {
 			list ($ret, $thumb) =
 			    GalleryCoreApi::rebuildDerivativeCache($thumb->getId());
-			if ($ret->isError()) {
+			if ($ret) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 		    }
-		    $child['thumbnail'] = $thumb->getMemberData();
+		    $child['thumbnail'] = (array)$thumb;
 		    list ($w, $h) = GalleryUtilities::shrinkDimensionsToFit(
 			$thumb->getWidth(), $thumb->getHeight(), 100);
 		    $maxWidth = max($w, $maxWidth);
@@ -187,15 +187,15 @@ class RearrangeItemsView extends GalleryView {
 
 	    /* See if the album's theme has "rows" and/or "columns" */
 	    list ($ret, $themeId) = GalleryCoreApi::fetchThemeId($item);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    list ($ret, $params) = $theme->fetchParameters($item->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $RearrangeItems['rows'] = empty($params['rows']) ? 0 : $params['rows'];
@@ -205,7 +205,7 @@ class RearrangeItemsView extends GalleryView {
 	$template->setVariable('RearrangeItems', $RearrangeItems);
 	$template->setVariable('controller', 'rearrange.RearrangeItems');
 	$template->head('modules/rearrange/templates/Header.tpl');
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/rearrange/templates/RearrangeItems.tpl'));
     }
 
@@ -214,10 +214,10 @@ class RearrangeItemsView extends GalleryView {
      */
     function getViewDescription() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'rearrange');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	return array(GalleryStatus::success(), $module->translate('rearrange items'));
+	return array(null, $module->translate('rearrange items'));
     }
 }
 ?>

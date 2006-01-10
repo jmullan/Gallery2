@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ class DeleteCommentControllerTest extends GalleryControllerTestCase {
 	/* Create two random items */
 	for ($i = 0; $i < 2; $i++) {
 	    list ($ret, $this->_item[$i]) = $this->_createRandomDataItem($this->_getRootId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
@@ -53,7 +53,7 @@ class DeleteCommentControllerTest extends GalleryControllerTestCase {
 	    /* Create a comment in it that we can delete */
 	    list ($ret, $this->_comment[$i]) =
 		GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryComment');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -65,7 +65,7 @@ class DeleteCommentControllerTest extends GalleryControllerTestCase {
 	    $this->_comment[$i]->setComment('this is a test comment');
 	    $this->_comment[$i]->setDate(time());
 	    $ret = $this->_comment[$i]->save();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }

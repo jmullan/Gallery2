@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,12 +45,12 @@ class MultiLangItemEdit extends ItemEditPlugin {
 	$error = array();
 
 	if (isset($form['action']['save'])) {
-	    GalleryCoreApi::relativeRequireOnce('modules/multilang/classes/MultiLangHelper.class');
+	    GalleryCoreApi::requireOnce('modules/multilang/classes/MultiLangHelper.class');
 
 	    list ($ret, $rootAlbumId) = GalleryCoreApi::getPluginParameter(
 		'module', 'core', 'id.rootAlbum');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 	    }
 
 	    if (($item->getId() == $rootAlbumId) && empty($form['title'])) {
@@ -58,13 +58,13 @@ class MultiLangItemEdit extends ItemEditPlugin {
 	    } else {
 		$ret = MultiLangHelper::setItemData($item, $form['language'],
 		$form['title'], $form['summary'], $form['description']);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		if ($ret) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 		}
 
 		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'multilang');
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		if ($ret) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 		}
 		$status = $module->translate('Changes saved successfully');
 
@@ -73,7 +73,7 @@ class MultiLangItemEdit extends ItemEditPlugin {
 	    }
 	}
 
-	return array(GalleryStatus::success(), $error, $status);
+	return array(null, $error, $status, false);
     }
 
     /**
@@ -83,7 +83,7 @@ class MultiLangItemEdit extends ItemEditPlugin {
 	global $gallery;
 	$session =& $gallery->getSession();
 	$translator =& $gallery->getTranslator();
-	GalleryCoreApi::relativeRequireOnce('modules/multilang/classes/MultiLangHelper.class');
+	GalleryCoreApi::requireOnce('modules/multilang/classes/MultiLangHelper.class');
 
 	if ($form['formName'] != 'MultiLangItemEdit') {
 	    $form['formName'] = 'MultiLangItemEdit';
@@ -92,7 +92,7 @@ class MultiLangItemEdit extends ItemEditPlugin {
 	$form['mainSummary'] = $item->getSummary();
 	$form['mainDescription'] = $item->getDescription();
 	list ($ret, $form['languageData']) = MultiLangHelper::getItemData($item->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	/*
@@ -114,7 +114,7 @@ class MultiLangItemEdit extends ItemEditPlugin {
 	}
 	list ($ret, $languages) =
 	    GalleryCoreApi::getPluginParameter('module', 'multilang', 'languages');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	$languages = empty($languages) ? array() : explode('|', $languages);
@@ -129,7 +129,7 @@ class MultiLangItemEdit extends ItemEditPlugin {
 	$selectedLanguage = $session->get('multilang.language');
 	if (empty($selectedLanguage)) {
 	    list ($ret, $selectedLanguage) = $gallery->getActiveLanguageCode();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	} else {
@@ -148,7 +148,7 @@ class MultiLangItemEdit extends ItemEditPlugin {
 	$form['selectedIndex'] = $selectedLanguageIndex;
 
 	$template->setVariable('controller', 'multilang.MultiLangItemEdit');
-	return array(GalleryStatus::success(),
+	return array(null,
 		     'modules/multilang/templates/MultiLangItemEdit.tpl', 'modules_multilang');
     }
 
@@ -161,7 +161,7 @@ class MultiLangItemEdit extends ItemEditPlugin {
 	}
 	list ($ret, $languages) =
 	    GalleryCoreApi::getPluginParameter('module', 'multilang', 'languages');
-	if ($ret->isError() || empty($languages)) {
+	if ($ret || empty($languages)) {
 	    return false;
 	}
 	return true;
@@ -172,10 +172,10 @@ class MultiLangItemEdit extends ItemEditPlugin {
      */
     function getTitle() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'multilang');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	return array(GalleryStatus::success(), $module->translate('MultiLanguage'));
+	return array(null, $module->translate('MultiLanguage'));
     }
 }
 ?>

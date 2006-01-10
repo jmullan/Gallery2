@@ -13,7 +13,7 @@
  * $Id$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -289,6 +289,17 @@ function populateDataDirectory($dataBase) {
     }
 
     return true;
+}
+
+/* Returns something like https://example.com */
+function getBaseUrl() {
+    /* Can't use GalleryUrlGenerator::makeUrl since it's an object method */
+    if (!($hostName = GalleryUtilities::getServerVar('HTTP_X_FORWARDED_SERVER'))) {
+	$hostName = GalleryUtilities::getServerVar('HTTP_HOST');
+    }
+    $protocol = (GalleryUtilities::getServerVar('HTTPS') == 'on') ? 'https' : 'http';
+    
+    return sprintf('%s://%s', $protocol, $hostName);
 }
 
 /*

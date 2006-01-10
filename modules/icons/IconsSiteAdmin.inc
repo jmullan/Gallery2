@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ class IconsSiteAdminController extends GalleryController {
     function handleRequest($form) {
 	/* Make sure we have adequate permissions */
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -49,7 +49,7 @@ class IconsSiteAdminController extends GalleryController {
 	    } else {
 		$ret = GalleryCoreApi::setPluginParameter(
 		    'module', 'icons', 'iconpack', $form['iconpack']);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		$status['saved'] = 1;
@@ -63,7 +63,7 @@ class IconsSiteAdminController extends GalleryController {
 	$results['status'] = $status;
 	$results['error'] = $error;
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -81,25 +81,25 @@ class IconsSiteAdminView extends GalleryView {
 	    $form['formName'] = 'IconsSiteAdmin';
 	    list ($ret, $form['iconpack']) =
 		GalleryCoreApi::getPluginParameter('module', 'icons', 'iconpack');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 
 	list ($ret, $icons) = GalleryCoreApi::newFactoryInstance('IconsInterface_1_0');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if (isset($icons)) {
 	    list ($ret, $list) = $icons->getIconPacks();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $template->setVariable('IconsSiteAdmin', array('iconpacks' => $list));
 	}
 
 	$template->setVariable('controller', 'icons.IconsSiteAdmin');
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/icons/templates/IconsSiteAdmin.tpl'));
     }
 }

@@ -37,7 +37,7 @@
    name="{g->formVar var="form[text][groupName]"}" value="{$form.text.groupName}"/>
   {g->autoComplete element="giFormGroupname"}
     {g->url arg1="view=core.SimpleCallback" arg2="command=lookupGroupname"
-	    arg3="prefix=__VALUE__" forJavascript="true"}
+	    arg3="prefix=__VALUE__" htmlEntities=false}
   {/g->autoComplete}
 
   <input type="submit" class="inputTypeSubmit"

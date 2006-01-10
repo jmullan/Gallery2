@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ class CommentSearchTest extends GalleryTestCase {
 	parent::setUp();
 
 	list ($ret, $moduleStatusList) = GalleryCoreApi::fetchPluginStatus('module');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -55,7 +55,7 @@ class CommentSearchTest extends GalleryTestCase {
 
 	list ($ret, $groupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -64,7 +64,7 @@ class CommentSearchTest extends GalleryTestCase {
 	$this->_item = array();
 	for ($j = 0; $j < 4; $j++) {
 	    list ($ret, $this->_item[$j]) = $this->_createRandomDataItem($this->_getRootId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
@@ -74,7 +74,7 @@ class CommentSearchTest extends GalleryTestCase {
 	    for ($i = 0; $i < 2; $i++) {
 		list ($ret, $this->_comment[$j][$i]) =
 		    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryComment');
-		if ($ret->isError()) {
+		if ($ret) {
 		    print $ret->getAsHtml();
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
@@ -87,14 +87,14 @@ class CommentSearchTest extends GalleryTestCase {
 		$this->_comment[$j][$i]->setComment($this->_randomKey . ": test comment($j,$i)");
 		$this->_comment[$j][$i]->setDate(time());
 		$ret = $this->_comment[$j][$i]->save();
-		if ($ret->isError()) {
+		if ($ret) {
 		    print $ret->getAsHtml();
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
 	    }
 
 	    $ret = GalleryCoreApi::removeItemPermissions($this->_item[$j]->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -104,7 +104,7 @@ class CommentSearchTest extends GalleryTestCase {
 		$ret = GalleryCoreApi::addUserPermission($this->_item[$j]->getId(),
 							       $gallery->getActiveUserId(),
 							       'core.view');
-		if ($ret->isError()) {
+		if ($ret) {
 		    print $ret->getAsHtml();
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
@@ -113,7 +113,7 @@ class CommentSearchTest extends GalleryTestCase {
 	    case 1:
 		$ret = GalleryCoreApi::addGroupPermission($this->_item[$j]->getId(),
 								$groupId, 'comment.view');
-		if ($ret->isError()) {
+		if ($ret) {
 		    print $ret->getAsHtml();
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
@@ -123,14 +123,14 @@ class CommentSearchTest extends GalleryTestCase {
 		$ret = GalleryCoreApi::addUserPermission($this->_item[$j]->getId(),
 							 $gallery->getActiveUserId(),
 							 'comment.view');
-		if ($ret->isError()) {
+		if ($ret) {
 		    print $ret->getAsHtml();
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
 		$ret = GalleryCoreApi::addUserPermission($this->_item[$j]->getId(),
 							 $gallery->getActiveUserId(),
 							 'core.view');
-		if ($ret->isError()) {
+		if ($ret) {
 		    print $ret->getAsHtml();
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
@@ -139,13 +139,13 @@ class CommentSearchTest extends GalleryTestCase {
 	    case 3:
 		$ret = GalleryCoreApi::addGroupPermission($this->_item[$j]->getId(),
 							  $groupId, 'comment.view');
-		if ($ret->isError()) {
+		if ($ret) {
 		    print $ret->getAsHtml();
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
 		$ret = GalleryCoreApi::addGroupPermission($this->_item[$j]->getId(),
 							  $groupId, 'core.view');
-		if ($ret->isError()) {
+		if ($ret) {
 		    print $ret->getAsHtml();
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
@@ -156,7 +156,7 @@ class CommentSearchTest extends GalleryTestCase {
 	list ($ret, $this->_commentSearch) =
 	    GalleryCoreApi::newFactoryInstance('GallerySearchInterface_1_0',
 	    				       'GalleryCommentSearch');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -164,7 +164,7 @@ class CommentSearchTest extends GalleryTestCase {
 	$this->assert(isset($this->_commentSearch), 'Missing GalleryCommentSearch instance');
 
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'comment');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -174,7 +174,7 @@ class CommentSearchTest extends GalleryTestCase {
 
     function testFetchSearchModuleInfo() {
 	list ($ret, $info) = $this->_commentSearch->getSearchModuleInfo();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -191,7 +191,7 @@ class CommentSearchTest extends GalleryTestCase {
     function testSearchAll() {
 	list ($ret, $results) =
 	    $this->_commentSearch->search(array('comments' => 1), $this->_randomKey);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -250,7 +250,7 @@ class CommentSearchTest extends GalleryTestCase {
 					  $this->_randomKey,
 					  1,
 					  2);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -291,7 +291,7 @@ class CommentSearchTest extends GalleryTestCase {
 	list ($ret, $results) =
 	    $this->_commentSearch->search(array('comments' => 1),
 					  'some string that will never show up');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 

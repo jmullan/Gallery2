@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryLockSystem.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryLockSystem.class');
 
 /**
  * Database backed locking.  This is less efficient than filesystem based
@@ -57,12 +57,12 @@ class DatabaseLockSystem extends GalleryLockSystem {
 	$storage =& $gallery->getStorage();
 
 	list ($ret, list($lockId, $lock)) = $storage->acquireReadLock($ids, $timeout);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$this->_locks[$lockId] = $lock;
-	return array(GalleryStatus::success(), $lockId);
+	return array(null, $lockId);
     }
 
     /**
@@ -86,12 +86,12 @@ class DatabaseLockSystem extends GalleryLockSystem {
 	$storage =& $gallery->getStorage();
 
 	list ($ret, list($lockId, $lock)) = $storage->acquireWriteLock($ids, $timeout);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$this->_locks[$lockId] = $lock;
-	return array(GalleryStatus::success(), $lockId);
+	return array(null, $lockId);
     }
 
     /**
@@ -120,7 +120,7 @@ class DatabaseLockSystem extends GalleryLockSystem {
 	    $storage =& $gallery->getStorage();
 
 	    $ret = $storage->releaseLocks($lockIds);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
@@ -129,7 +129,7 @@ class DatabaseLockSystem extends GalleryLockSystem {
 	    }
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -137,10 +137,10 @@ class DatabaseLockSystem extends GalleryLockSystem {
      */
     function releaseAllLocks() {
 	$ret = $this->releaseLocks(array_keys($this->_locks));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -152,12 +152,12 @@ class DatabaseLockSystem extends GalleryLockSystem {
 
 	if (!empty($this->_locks)) {
 	    $ret = $storage->refreshLocks(array_keys($this->_locks), $freshUntil);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**

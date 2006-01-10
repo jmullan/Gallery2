@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,7 +70,7 @@ class GalleryQuotasHelper {
 	}
 
         list ($ret, $searchResults) = $gallery->search($query, $data);
-        if ($ret->isError()) {
+        if ($ret) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
 
@@ -82,7 +82,7 @@ class GalleryQuotasHelper {
 	    $userDiskUsage = 0;
 	}
 
-	return array(GalleryStatus::success(), $userDiskUsage); 
+	return array(null, $userDiskUsage); 
     }
 
     /**
@@ -102,13 +102,13 @@ class GalleryQuotasHelper {
 	$userDiskQuota = null;
 	list ($ret, $userQuotaExists, $userQuotaInfo) = 
 	    GalleryQuotasHelper::fetchUserQuota($userId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	if (!$userQuotaExists) {
 	    list ($ret, $groupQuotaExists, $groupQuotaInfo) = 
 	        GalleryQuotasHelper::fetchHighestGroupQuota($userId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    if ($groupQuotaExists) {
@@ -119,7 +119,7 @@ class GalleryQuotasHelper {
 	    $groupQuotaExists = false;
 	}
 
-	return array(GalleryStatus::success(), $userQuotaExists | $groupQuotaExists, 
+	return array(null, $userQuotaExists | $groupQuotaExists, 
 		     $userDiskQuota);
     }
 
@@ -139,7 +139,7 @@ class GalleryQuotasHelper {
 	global $gallery;
 
 	list ($ret, $groupQuotaIds) = GalleryCoreApi::fetchGroupsForUser($userId);
-        if ($ret->isError()) {
+        if ($ret) {
             return array($ret->wrap(__FILE__, __LINE__), null, null);
         }
         $storage =& $gallery->getStorage();
@@ -164,7 +164,7 @@ class GalleryQuotasHelper {
         $options['limit'] = array('count' => 1);
 
         list ($ret, $searchResults) = $gallery->search($query, $data, $options);
-        if ($ret->isError()) {
+        if ($ret) {
             return array($ret->wrap(__FILE__, __LINE__), null, null);
         }
 
@@ -178,7 +178,7 @@ class GalleryQuotasHelper {
             $groupQuotaInfo = array();
         }
 
-	return array(GalleryStatus::success(), $groupQuotaExists, $groupQuotaInfo);
+	return array(null, $groupQuotaExists, $groupQuotaInfo);
     }
 
     /**
@@ -201,7 +201,7 @@ class GalleryQuotasHelper {
 	}
 	$humanReadable = (string)round($kilobytes, 2);
 	$unit = $suffixes[$useSuffix];
-	return array(GalleryStatus::success(), $humanReadable, $unit);
+	return array(null, $humanReadable, $unit);
     }
 
     /**
@@ -237,7 +237,7 @@ class GalleryQuotasHelper {
         $options['limit'] = array('count' => $count, 'offset' => $offset);
 
         list ($ret, $searchResults) = $gallery->search($query, $data, $options);
-        if ($ret->isError()) {
+        if ($ret) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
 
@@ -246,7 +246,7 @@ class GalleryQuotasHelper {
 	while($result = $searchResults->nextResult()) {
 	    $groupQuotasList[$result[0]] = array('quota' => $result[1], 'name' => $result[2]);
 	}
-        return array(GalleryStatus::success(), $groupQuotasList);
+        return array(null, $groupQuotasList);
     }
 
     /**
@@ -273,7 +273,7 @@ class GalleryQuotasHelper {
         ';
 
         list ($ret, $searchResults) = $gallery->search($query);
-        if ($ret->isError()) {
+        if ($ret) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
 
@@ -281,7 +281,7 @@ class GalleryQuotasHelper {
         $result = $searchResults->nextResult();
 	$groupCount = $result[0];
 
-        return array(GalleryStatus::success(), $groupCount);	
+        return array(null, $groupCount);	
     }
 
     /**
@@ -316,7 +316,7 @@ class GalleryQuotasHelper {
         $options['limit'] = array('count' => $count, 'offset' => $offset);
 
         list ($ret, $searchResults) = $gallery->search($query, $data, $options);
-        if ($ret->isError()) {
+        if ($ret) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
 
@@ -325,7 +325,7 @@ class GalleryQuotasHelper {
         while($result = $searchResults->nextResult()) {
             $userQuotasList[$result[0]] = array('quota' => $result[1], 'name' => $result[2]);
         }
-        return array(GalleryStatus::success(), $userQuotasList);
+        return array(null, $userQuotasList);
 
     }
 
@@ -352,7 +352,7 @@ class GalleryQuotasHelper {
         ';
 
         list ($ret, $searchResults) = $gallery->search($query);
-        if ($ret->isError()) {
+        if ($ret) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
 
@@ -360,7 +360,7 @@ class GalleryQuotasHelper {
         $result = $searchResults->nextResult();
         $userCount = $result[0];
 
-        return array(GalleryStatus::success(), $userCount);
+        return array(null, $userCount);
     }
     
     /**
@@ -393,7 +393,7 @@ class GalleryQuotasHelper {
         $data = array($groupId);
 
         list ($ret, $searchResults) = $gallery->search($query, $data);
-        if ($ret->isError()) {
+        if ($ret) {
             return array($ret->wrap(__FILE__, __LINE__), null, null);
         }
 
@@ -407,7 +407,7 @@ class GalleryQuotasHelper {
 	    $quotaExists = false;
 	    $groupQuotaInfo = array();
 	}
-	return array(GalleryStatus::success(), $quotaExists, $groupQuotaInfo);
+	return array(null, $quotaExists, $groupQuotaInfo);
 	
     }
 
@@ -442,7 +442,7 @@ class GalleryQuotasHelper {
         $data = array($userId);
 
         list ($ret, $searchResults) = $gallery->search($query, $data);
-        if ($ret->isError()) {
+        if ($ret) {
             return array($ret->wrap(__FILE__, __LINE__), null, null);
         }
 
@@ -456,7 +456,7 @@ class GalleryQuotasHelper {
 	    $quotaExists = false;
 	    $userQuotaInfo = array();
 	}
-        return array(GalleryStatus::success(), $quotaExists, $userQuotaInfo);
+        return array(null, $quotaExists, $userQuotaInfo);
     }
 }
 ?>

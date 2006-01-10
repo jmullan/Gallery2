@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ class DownloadView extends GalleryView {
      */
     function renderImmediate($status, $error) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$phpVm = $gallery->getPhpVm();
 
 	$file = GalleryUtilities::getRequestVariables('file');
@@ -103,11 +103,11 @@ class DownloadView extends GalleryView {
 	} else {
 	    /* On reload return to View Cart */
 	    $urlGenerator =& $gallery->getUrlGenerator();
-	    $url = $urlGenerator->generateUrl(array('view' => 'cart.ViewCart'));
-	    $phpVm->header('Location: ' . str_replace('&amp;', '&', $url));
+	    $phpVm->header('Location: ' . $urlGenerator->generateUrl(
+		array('view' => 'cart.ViewCart'), array('htmlEntities' => false)));
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 }
 ?>

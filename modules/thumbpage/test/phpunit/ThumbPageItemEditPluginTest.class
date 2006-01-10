@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ class ThumbPageItemEditPluginTest extends ItemEditPluginTestCase {
             'GalleryToolkit', 'ThumbPageTestToolkit', 'ThumbPageTestToolkit',
             'modules/thumbpage/test/phpunit/ThumbPageItemEditPluginTest.class',
 	    'thumbpageTest', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -53,14 +53,14 @@ class ThumbPageItemEditPluginTest extends ItemEditPluginTestCase {
 
 	$ret = GalleryCoreApi::registerToolkitProperty('ThumbPageTestToolkit',
 	    array('test/document'), 'page-count', 'int', 'desc');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $this->_item) = $this->_createRandomDataItem(
 	    $this->_getRootId(), 'test/document', array(), __FILE__, 'GalleryPhotoItem');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -69,7 +69,7 @@ class ThumbPageItemEditPluginTest extends ItemEditPluginTestCase {
 
 	list ($ret, $this->_thumbnail) = $this->_createDerivative(
 	    $this->_item, $this->_item->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -93,7 +93,7 @@ class ThumbPageItemEditPluginTest extends ItemEditPluginTestCase {
 			    $results, 'page two result');
 
 	list ($ret, $item) = $this->_thumbnail->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('select-page|2;test-operation|100', $item->getDerivativeOperations(),
@@ -107,7 +107,7 @@ class ThumbPageItemEditPluginTest extends ItemEditPluginTestCase {
 			    $results, 'page one result');
 
 	list ($ret, $item) = $this->_thumbnail->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('test-operation|100', $item->getDerivativeOperations(),
@@ -123,10 +123,10 @@ class ThumbPageItemEditPluginTest extends ItemEditPluginTestCase {
 class ThumbPageTestToolkit extends GalleryToolkit {
     function getProperty($mimeType, $propertyName, $sourceFilename) {
 	if ($propertyName != 'page-count') {
-	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
+	    return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
 					      "$propertyName $sourceFilename"), null);
 	}
-	return array(GalleryStatus::success(), array(5));
+	return array(null, array(5));
     }
 }
 ?>

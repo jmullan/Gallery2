@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,31 +64,36 @@ class DownloadItemView extends GalleryView {
 	/* Figure out which item we're talking about */
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 	if (empty($itemId)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
 	/* Load the item */
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Figure out the filename */
 	list ($ret, $pseudoFileName) = GalleryUtilities::getPseudoFileName($item);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	/* Don't allow malicious URLs */
+	$fileName = GalleryUtilities::getRequestVariables('fileName');
+	if (!empty($fileName) && $fileName != $pseudoFileName) {
+	    return GalleryCoreApi::error(GALLERY_ERROR, __FILE__, __LINE__, 'malicious url');
 	}
 
 	/* Get the path to the file */
 	list ($ret, $path) = $item->fetchPath();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Rebuild derivative cache, if necessary */
 	if (GalleryUtilities::isA($item, 'GalleryDerivative')) {
 	    list ($ret, $item) = GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($item->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $itemForPermission = $item->getParentId();
@@ -103,22 +108,19 @@ class DownloadItemView extends GalleryView {
 				      'mimeType' => $item->getMimeType(),
 				      'pseudoFileName' => $pseudoFileName,
 				      'parentId' => $itemForPermission));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Fast downloads only works for thumbs/resizes right now */
-	if (GalleryUtilities::isA($item, 'GalleryDerivative')) {
-	    $ret = $item->createFastDownloadFile();
+	$ret = GalleryCoreApi::createFastDownloadFile($item);
 	    /* Ignore failures since the file has already been sent */
-	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     function _sendFile($data) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	/* Make sure we have permission */
 	$permission = 'core.viewSource';
@@ -134,7 +136,7 @@ class DownloadItemView extends GalleryView {
 	    /* DERIVATIVE_TYPE_IMAGE_PREFERRED uses core.viewSource */
 	}
 	$ret = GalleryCoreApi::assertHasItemPermission($data['parentId'], $permission);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -165,7 +167,7 @@ class DownloadItemView extends GalleryView {
 	    $platform->fclose($fd);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 }
 ?>

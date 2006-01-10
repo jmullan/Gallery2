@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	$session =& $gallery->getSession();
 	$this->_currentLanguage = $session->get('core.language');
 	list ($ret, $this->_user) = $this->_createUser();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -101,7 +101,7 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 
 	/* Load back the user object and make sure the data got saved */
 	list ($ret, $this->_user) = $this->_user->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -125,7 +125,7 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 
 	/* Load back the user object and make sure the data got saved */
 	list ($ret, $this->_user) = $this->_user->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -216,12 +216,12 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	/* Make ourselves an admin */
 	list ($ret, $adminGroupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::addUserToGroup($this->_user->getId(), $adminGroupId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }

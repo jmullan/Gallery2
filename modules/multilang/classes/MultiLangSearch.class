@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 /**
  * Required classes
  */
-GalleryCoreApi::relativeRequireOnce('modules/search/classes/GallerySearchInterface_1_0.class');
+GalleryCoreApi::requireOnce('modules/search/classes/GallerySearchInterface_1_0.class');
 
 /**
  * This is an implementation of the search module's SearchInterface_1_0
@@ -46,7 +46,7 @@ class MultiLangSearch extends GallerySearchInterface_1_0 {
     function getSearchModuleInfo() {
 	global $gallery;
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'multilang');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -54,24 +54,24 @@ class MultiLangSearch extends GallerySearchInterface_1_0 {
 		      'description' => $module->translate('MultiLanguage Captions'));
 
 	list ($ret, $languageCode) = $gallery->getActiveLanguageCode();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	list ($ret, $defaultLanguage) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.language');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if ($languageCode == $defaultLanguage) {
 	    $info['options'] = array();
-	    return array(GalleryStatus::success(), $info);
+	    return array(null, $info);
 	}
 
 	/* Get name for current language */
 	$supportedLanguages = GalleryTranslator::getSupportedLanguages();
 	list ($language, $country) = preg_split('/[-_]/', "${languageCode}_");
 	if (empty($supportedLanguages[$language][$country]['description'])) {
-	    return array(GalleryStatus::success(), array('options' => array()));
+	    return array(null, array('options' => array()));
 	}
 	$languageName = $supportedLanguages[$language][$country]['description'];
 
@@ -89,7 +89,7 @@ class MultiLangSearch extends GallerySearchInterface_1_0 {
 		    array('text' => 'Search descriptions (%s)', 'arg1' => $languageName)),
 		'enabled' => 1));
 
-	return array(GalleryStatus::success(), $info);
+	return array(null, $info);
     }
 
     /**
@@ -99,21 +99,21 @@ class MultiLangSearch extends GallerySearchInterface_1_0 {
 	global $gallery;
 	if (empty($options)) {
 	    $data = array('start' => 0, 'end' => 0, 'count' => 0, 'results' => array());
-	    return array(GalleryStatus::success(), $data);
+	    return array(null, $data);
 	}
 
 	list ($ret, $languageCode) = $gallery->getActiveLanguageCode();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $aclIds) =
 	    GalleryCoreApi::fetchAccessListIds('core.view', $gallery->getActiveUserId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if (empty($aclIds)) {
-	    return array(GalleryStatus::success(),
+	    return array(null,
 			 array('start' => 0, 'end' => '0',
 			       'count' => 0, 'results' => array()));
 	}
@@ -174,7 +174,7 @@ class MultiLangSearch extends GallerySearchInterface_1_0 {
 
 	/* Find the total */
 	list ($ret, $results) = $gallery->search($countQuery, $data);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$result = $results->nextResult();
@@ -182,12 +182,12 @@ class MultiLangSearch extends GallerySearchInterface_1_0 {
 
 	list ($ret, $results) = $gallery->search(
 	    $query, $data, array('limit' => array('offset' => $offset, 'count' => $count)));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'multilang');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -207,7 +207,7 @@ class MultiLangSearch extends GallerySearchInterface_1_0 {
 		      'end' => $numRows == 0 ? 0 : $offset + sizeof($searchResults),
 		      'count' => $numRows,
 		      'results' => $searchResults);
-	return array(GalleryStatus::success(), $data);
+	return array(null, $data);
     }
 }
 ?>

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,13 +45,13 @@ class ZipCartPlugin extends CartPluginInterface_1_0 {
      */
     function getActionDisplayName() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'zipcart');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$action = $module->translate('Download in Zip');
 
-	return array(GalleryStatus::success(), $action);
+	return array(null, $action);
     }
 
     /**
@@ -59,39 +59,39 @@ class ZipCartPlugin extends CartPluginInterface_1_0 {
      */
     function fulfillCart($cartItemIds) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 	$zipBase = $platform->tempnam($gallery->getConfig('data.gallery.tmp'), 'zip_');
 	$zipDir = $zipBase . '.dir';
 	$zipFile = $zipBase . '.zip';
 	list ($success) = GalleryUtilities::guaranteeDirExists($zipDir);
 	if (!$success) {
-	    return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__), null);
 	}
 	list ($ret, $zip) = GalleryCoreApi::getPluginParameter('module', 'zipcart', 'path');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$itemIds = array_keys($cartItemIds);
 	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($itemIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	list ($ret, $preferreds) = GalleryCoreApi::fetchPreferredsByItemIds($itemIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	list ($ret, $resizes) = GalleryCoreApi::fetchResizesByItemIds($itemIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds($itemIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$ret = GalleryCoreApi::studyPermissions($itemIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -105,7 +105,7 @@ class ZipCartPlugin extends CartPluginInterface_1_0 {
 		$gallery->guaranteeTimeLimit(30);
 	    }
 	    list ($ret, $path) = $item->fetchPath();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $relativePath = (strpos($path, $albumDir) === 0) ?
@@ -113,7 +113,7 @@ class ZipCartPlugin extends CartPluginInterface_1_0 {
 
 	    $itemId = $item->getId();
 	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($itemId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -144,13 +144,13 @@ class ZipCartPlugin extends CartPluginInterface_1_0 {
 	    if (GalleryUtilities::isA($item, 'GalleryDerivative')) {
 		list ($ret, $item) =
 		    GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($item->getId());
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
 
 	    list ($ret, $path) = $item->fetchPath();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -158,12 +158,12 @@ class ZipCartPlugin extends CartPluginInterface_1_0 {
 	    $target = $zipDir . $slash . $relativePath;
 	    list ($success, $created) = GalleryUtilities::guaranteeDirExists(dirname($target));
 	    if (!$success) {
-		return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__),
+		return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__),
 			     null);
 	    }
 	    $tmpDirs = array_merge($tmpDirs, $created);
 	    if (!$platform->copy($path, $target)) {
-		return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__),
+		return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__),
 			     null);
 	    }
 	    $tmpFiles[] = $target;
@@ -172,7 +172,7 @@ class ZipCartPlugin extends CartPluginInterface_1_0 {
 
 	$cwd = $platform->getcwd();
 	if (!$platform->chdir($zipDir)) {
-	    return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__), null);
 	}
 	$gallery->guaranteeTimeLimit(60);
 	list ($success) = $platform->exec(array($cmd));
@@ -190,10 +190,10 @@ class ZipCartPlugin extends CartPluginInterface_1_0 {
 
 	if (!$success) {
 	    @$platform->unlink($zipBase);
-	    return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('view' => 'zipcart.Download', 'file' => basename($zipBase)));
     }
 }

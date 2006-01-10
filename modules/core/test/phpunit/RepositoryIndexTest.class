@@ -1,7 +1,7 @@
 <?php
 /*
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
  * @author Jozef Selesi <selesi at gmail dot com>
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/core/test/phpunit/RepositoryTestStorage.class');
+GalleryCoreApi::requireOnce('modules/core/test/phpunit/RepositoryTestStorage.class');
 
 /**
  * Test repository index functionality
@@ -66,6 +66,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 	global $gallery;
 	$gallery->_translator = $this->_galleryTranslator;
 	$gallery->_storage =& $this->_galleryStorage;
+	GalleryDataCache::reset();
 
 	parent::tearDown();
     }
@@ -83,7 +84,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 	foreach ($testcases as $case) {
 	    list ($ret, $url) =
 		$this->_index->getDescriptorUrl($case['pluginType'], $case['pluginId']);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		$this->failWithStatus($ret);
 	    }
 
@@ -128,7 +129,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 	foreach ($testcases as $case) {
 	    list ($ret, $url) = $this->_index->getPackageUrl(
 		$case['pluginType'], $case['pluginId'], $case['package']);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		$this->failWithStatus($ret);
 	    }
 
@@ -153,7 +154,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 	foreach ($testcases as $case) {
 	    list ($ret, $name) =
 		$this->_index->getPluginName($case['pluginType'], $case['pluginId']);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		$this->failWithStatus($ret);
 	    }
 
@@ -184,7 +185,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 
 	/* Perform update and verify that the sample index has been loaded. */
 	$ret = $this->_index->update();
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
 	$this->assertEquals($this->_sampleIndex, $this->_index->_index);
@@ -201,7 +202,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 	    $addedData = $this->_testStorage->_addedMapData['GalleryPluginParameterMap'];
 	    
 	    if (isset($addedData['parameterName'])
-		    && $addedData['parameterName'] == 'repository.updatetime') {
+		    && $addedData['parameterName'] == 'repository.updateTime') {
 		$timestampWritten = true;
 	    }
 
@@ -214,7 +215,8 @@ class RepositoryIndexTest extends GalleryTestCase {
     }
 
     function testGetMetaData() {
-	$this->_testStorage->setSearchResults(array(array('repository.updatetime', 'updatetime')));
+	$this->_testStorage->setSearchResults(
+	    array(array(0, 'repository.updateTime', 'updateTime')));
 
 	/*
 	 * Clear the database cache for fetchAllPluginParameters
@@ -223,10 +225,10 @@ class RepositoryIndexTest extends GalleryTestCase {
 	GalleryDataCache::remove('GalleryPluginHelper::fetchAllParameters(module, core, 0)');
 
 	list ($ret, $metaData) = $this->_index->getMetaData();
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
-	$this->assertEquals(array('timestamp' => 'updatetime',
+	$this->assertEquals(array('timestamp' => 'updateTime',
 				  'moduleCount' => 1,
 				  'themeCount' => 1),
 			    $metaData);
@@ -254,7 +256,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 	$gallery->setPlatform($platform);
 
 	$ret = $this->_index->load();
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
 	$this->assertEquals($this->_sampleIndex, $this->_index->_index);
@@ -266,7 +268,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 	$this->_index->_isLoaded = false;
 
 	$ret = $this->_index->unserializeIndex($serializedIndex = serialize($this->_sampleIndex));
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
 
@@ -283,7 +285,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 	    $pluginId = $case['pluginId'];
 
 	    list ($ret, $header) = $this->_index->getPluginHeader($pluginType, $pluginId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		$this->failWithStatus($ret);
 	    }
 	    $this->assertEquals($this->_sampleIndex[$pluginType . 's'][$pluginId]['header'],
@@ -304,7 +306,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 	foreach ($testCases as $case) {
 	    list ($ret, $languages) =
 		$this->_index->getAvailableLanguagesInPlugin($case['pluginType'], $case['pluginId']);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		$this->failWithStatus($ret);
 	    }
 	    $this->assertEquals($case['languages'], $languages);
@@ -347,7 +349,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 	foreach ($testCases as $case) {
 	    list ($ret, $version, $build) = $this->_index->getPackageVersionAndBuild(
 		$case['pluginType'], $case['pluginId'], $case['package']);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		$this->failWithStatus($ret);
 	    }
 	    $this->assertEquals($version, $case['expectedVersion']);
@@ -394,7 +396,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 
 	    list ($ret, $plugins) =
 		$this->_index->getPlugins($case['pluginType'], $case['showAll']);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		$this->failWithStatus($ret);
 	    }
 
@@ -435,15 +437,15 @@ class RepositoryIndexTestUtilities {
     }
 
     function getLanguageBaseRevision() {
-	return array(GalleryStatus::success(), '2.2');
+	return array(null, '2.2');
     }
 
     function isPluginAvailable($pluginType, $pluginId) {
-	return array(GalleryStatus::success(), $this->_isPluginAvailable);
+	return array(null, $this->_isPluginAvailable);
     }
 
     function getPluginVersion($pluginType, $pluginId) {
-    	return array(GalleryStatus::success(), 'someVersion');
+    	return array(null, 'someVersion');
     }
 
     function isPluginCompatible($pluginType, $requiredCoreApi, $requiredPluginApi, $apis = null) {

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,20 +42,20 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 	parent::setUp();
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'netpbm');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	foreach (array('jpegQuality' => 75, 'pnmcomp' => 'pamcomp') as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', $key, $value);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
 
-	$gallery->_platform = new AdminNetPbmControllerTestPlatform($gallery->getPlatform());
+	$gallery->setPlatform(new AdminNetPbmControllerTestPlatform($gallery->getPlatform()));
     }
 
     function testSaveGoodNetPbmPathNoJheadPath() {
@@ -72,9 +72,9 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 			    $results);
 
 	/* Verify the settings went in properly */
-	$this->assertEquals(array(GalleryStatus::success(), '/validPath/'),
+	$this->assertEquals(array(null, '/validPath/'),
 			    GalleryCoreApi::getPluginParameter('module', 'netpbm', 'path'));
-	$this->assertEquals(array(GalleryStatus::success(), '12'),
+	$this->assertEquals(array(null, '12'),
 			    GalleryCoreApi::getPluginParameter('module', 'netpbm', 'jpegQuality'));
     }
 
@@ -93,14 +93,14 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 			    $results);
 
 	/* Verify the settings went in properly */
-	$this->assertEquals(array(GalleryStatus::success(), '/validPath/'),
+	$this->assertEquals(array(null, '/validPath/'),
 			    GalleryCoreApi::getPluginParameter('module', 'netpbm', 'path'));
-	$this->assertEquals(array(GalleryStatus::success(), '/validPath/'),
+	$this->assertEquals(array(null, '/validPath/'),
 			    GalleryCoreApi::getPluginParameter('module', 'netpbm', 'jheadPath'));
-	$this->assertEquals(array(GalleryStatus::success(), '12'),
+	$this->assertEquals(array(null, '12'),
 			    GalleryCoreApi::getPluginParameter('module', 'netpbm', 'jpegQuality'));
 	/* Verify we detected which binaries to use: */
-	$this->assertEquals(array(GalleryStatus::success(), 'pnmcomp'),
+	$this->assertEquals(array(null, 'pnmcomp'),
 			    GalleryCoreApi::getPluginParameter('module', 'netpbm', 'pnmcomp'));
     }
 

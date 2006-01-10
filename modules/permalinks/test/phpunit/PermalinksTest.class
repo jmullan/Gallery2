@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +26,8 @@
  * @author Pierre-Luc Paour
  */
 
-GalleryCoreApi::relativeRequireOnce('lib/tools/phpunit/ItemEditOptionTestCase.class');
-GalleryCoreApi::relativeRequireOnce('modules/permalinks/classes/helpers/PermalinksMapHelper.class');
+GalleryCoreApi::requireOnce('lib/tools/phpunit/ItemEditOptionTestCase.class');
+GalleryCoreApi::requireOnce('modules/permalinks/classes/PermalinksMapHelper.class');
 
 /**
  * Test Permalinks functionality
@@ -37,7 +37,7 @@ GalleryCoreApi::relativeRequireOnce('modules/permalinks/classes/helpers/Permalin
  *
  */
 class PermalinksTest extends GalleryTestCase {
-    
+
     var $_aliasNamesToDelete;
 
     function PermalinksTest($methodName) {
@@ -49,15 +49,15 @@ class PermalinksTest extends GalleryTestCase {
 	parent::setUp();
 
 	$this->_aliasNamesToDelete = array();
-    
+
 	$ret = $this->_markPluginParametersForCleanup('module', 'permalinks');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -65,36 +65,38 @@ class PermalinksTest extends GalleryTestCase {
 
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(),
 		'image/test', array(), __FILE__, 'GalleryPhotoItem');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_item->setMimeType('image/gif');
-	
+
 	$ret =
 	    PermalinksMapHelper::createAlias('testAlias', $this->_item->getId());
-	if ($ret->isError()) {
+	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$this->_aliasNamesToDelete[] = 'testAlias';
 
 	$ret =
 	    PermalinksMapHelper::createAlias('testAlias1', $this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$this->_aliasNamesToDelete[] = 'testAlias1';
     }
-    
+
     function tearDown() {
 	parent::tearDown();
-	
+
 	foreach ($this->_aliasNamesToDelete as $name) {
-	    $ret =
-		PermalinksMapHelper::deleteAlias($name);
-	    if ($ret->isError()) {
+	    $ret = PermalinksMapHelper::deleteAlias($name);
+	    if ($ret) {
+		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
@@ -102,14 +104,14 @@ class PermalinksTest extends GalleryTestCase {
 
     function testFetchItemIdForAlias() {
 	list($ret, $destId) = PermalinksMapHelper::fetchItemIdForAlias('testAlias');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$this->assertEquals($this->_item->getId(), (int) $destId);
 
 	list($ret, $destId) = PermalinksMapHelper::fetchItemIdForAlias('testAlias1');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -118,14 +120,14 @@ class PermalinksTest extends GalleryTestCase {
 
     function testFetchAliasesForItem() {
 	list($ret, $aliases) = PermalinksMapHelper::fetchAliasesForItem($this->_item->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$this->assertEquals(array('testAlias'), $aliases);
 
 	list($ret, $aliases) = PermalinksMapHelper::fetchAliasesForItem($this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -135,25 +137,25 @@ class PermalinksTest extends GalleryTestCase {
     function testDeleteAlias() {
 	/* delete */
 	$ret = PermalinksMapHelper::deleteAlias('testAlias');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = PermalinksMapHelper::deleteAlias('testAlias1');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* test fetching by alias */
 	list($ret, $destId) = PermalinksMapHelper::fetchItemIdForAlias('testAlias');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$this->assert(empty($destId));
 
 	list($ret, $destId) = PermalinksMapHelper::fetchItemIdForAlias('testAlias1');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -161,75 +163,73 @@ class PermalinksTest extends GalleryTestCase {
 
 	/* test fetching by item */
 	list($ret, $aliases) = PermalinksMapHelper::fetchAliasesForItem($this->_item->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$this->assertEquals(array(), $aliases);
 
 	list($ret, $aliases) = PermalinksMapHelper::fetchAliasesForItem($this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$this->assertEquals(array(), $aliases);
     }
-    
+
     function testListener() {
 	/* The event listener is deactivated during unit tests, register it */
 	GalleryCoreApi::registerEventListener('GalleryEntity::delete', new PermalinksModule());
 	GalleryCoreApi::registerEventListener('GalleryEntity::save', new PermalinksModule());
 
 	GalleryCoreApi::setPluginParameter('module', 'permalinks', 'autoPermalink', 1);
-	
+
 	/* create album, this creates a permalink */
 	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $item) = $this->_createRandomDataItem($album->getId(),
-		'image/test', array(), __FILE__, 'GalleryPhotoItem');
-	if ($ret->isError()) {
+	list ($ret, $item) = $this->_createRandomDataItem(
+	    $album->getId(), 'image/test', array(), __FILE__, 'GalleryPhotoItem');
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$item->setMimeType('image/gif');
-	
-	$ret =
-	    PermalinksMapHelper::createAlias('testAlias2', $item->getId());
-	if ($ret->isError()) {
+
+	$ret = PermalinksMapHelper::createAlias('testAlias2', $item->getId());
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* test autogenerated alias for album */
 	list($ret, $aliasesAlbum) = PermalinksMapHelper::fetchAliasesForItem($album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals(array($album->getPathComponent()), $aliasesAlbum);
+	$this->assertEquals(array($album->pathComponent), $aliasesAlbum);
 
 	/* Delete album: deletes sub-item and aliases */
 	$ret = GalleryCoreApi::deleteEntityById($album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	/* test */
 	list($ret, $destId) = PermalinksMapHelper::fetchItemIdForAlias('testAlias2');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assert(empty($destId));
+	$this->assert(empty($destId), "1. Destid not empty ($destId)");
 
 	list($ret, $destId) = PermalinksMapHelper::fetchItemIdForAlias($aliasesAlbum[0]);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assert(empty($destId));
+	$this->assert(empty($destId), "2. Destid not empty ($destId)");
     }
 }
 ?>

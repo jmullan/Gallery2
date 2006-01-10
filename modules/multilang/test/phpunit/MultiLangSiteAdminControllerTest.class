@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ class MultiLangSiteAdminControllerTest extends GalleryControllerTestCase {
 	parent::setUp();
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'multilang');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -74,7 +74,7 @@ class MultiLangSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $languages) =
 	    GalleryCoreApi::getPluginParameter('module', 'multilang', 'languages');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('de_DE|he_IL|zh_CN', $languages, 'languages');
@@ -92,7 +92,7 @@ class MultiLangSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $languages) =
 	    GalleryCoreApi::getPluginParameter('module', 'multilang', 'languages');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('', $languages, 'languages');

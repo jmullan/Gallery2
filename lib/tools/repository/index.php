@@ -1,7 +1,7 @@
 <?php
 /*
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
  *
  * $Id$
  */
- 
+
  /**
  * @package RepositoryTools
  */
@@ -29,18 +29,18 @@ require_once('../../../init.inc');
 
 function RepositoryToolsMain() {
     $ret = GalleryInitFirstPass();
-    if ($ret->isError()) {
+    if ($ret) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
     $ret = GalleryInitSecondPass();
-    if ($ret->isError()) {
+    if ($ret) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
     global $gallery;
 
-    GalleryCoreApi::relativeRequireOnce(
+    GalleryCoreApi::requireOnce(
 	'lib/tools/repository/classes/RepositoryControllerAndView.class');
 
     /* Set repository configuration data. */
@@ -55,7 +55,7 @@ function RepositoryToolsMain() {
 		   $repositoryPath . '/themes') as $path) {
 	if (!$platform->file_exists($path)) {
 	    if (!$platform->mkdir($path)) {
-		return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+		return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 					    "Unable to create directory: $path");
 	    }
 	}
@@ -63,7 +63,10 @@ function RepositoryToolsMain() {
 
     /* Configure our url Generator for repository mode. */
     $urlGenerator = new GalleryUrlGenerator();
-    $urlGenerator->init('lib/tools/repository');
+    $ret = $urlGenerator->init('lib/tools/repository');
+    if ($ret) {
+	return $ret->wrap(__FILE__, __LINE__);
+    }
     $gallery->setUrlGenerator($urlGenerator);
 
     /* Load controller. */
@@ -71,7 +74,7 @@ function RepositoryToolsMain() {
     $methodName = GalleryUtilities::getRequestVariables('action');
     $controllerPath = sprintf('%s/%s.inc', dirname(__FILE__), $controllerName);
 
-    $platform = $gallery->getPlatform();
+    $platform =& $gallery->getPlatform();
     if (!$platform->file_exists($controllerPath)) {
 	/* Set default controller. */
 	$controllerName = 'MainPage';
@@ -86,20 +89,20 @@ function RepositoryToolsMain() {
 
     /* Call a controller method. */
     if (!method_exists($controller, $methodName)) {
-	return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+	return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 				    "Method [$methodName] does not exist in $controllerClassName");
     }
 
     $ret = $controller->$methodName();
-    if ($ret->isError()) {
+    if ($ret) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
-    return GalleryStatus::success();
+    return null;
 }
 
 $ret = RepositoryToolsMain();
-if ($ret->isError()) {
+if ($ret) {
     $ret = $ret->wrap(__FILE__, __LINE__);
     print $ret->getAsHtml();
     print $gallery->getDebugBuffer();
@@ -107,7 +110,7 @@ if ($ret->isError()) {
 }
 
 list ($ret, $isSiteAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
-if ($ret->isError()) {
+if ($ret) {
     $ret = $ret->wrap(__FILE__, __LINE__);
     print $ret->getAsHtml();
     return;

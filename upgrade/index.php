@@ -13,7 +13,7 @@
  * $Id$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,15 +88,15 @@ require_once(dirname(__FILE__) . '/../init.inc');
 /* Check if config.php is ok */
 $storageConfig = @$gallery->getConfig('storage.config');
 if (!empty($storageConfig)) {
-    $ret = GalleryInitFirstPass(array('debug' => 'buffered', 'noDatabase' => 1));
-    if ($ret->isError()) {
-	print $ret->getAsHtml();
-	return;
-    }
-
     /* We want to avoid using the cache */
     GalleryDataCache::setFileCachingEnabled(false);
     GalleryDataCache::setMemoryCachingEnabled(false);
+
+    $ret = GalleryInitFirstPass(array('debug' => 'buffered', 'noDatabase' => 1));
+    if ($ret) {
+	print $ret->getAsHtml();
+	return;
+    }
 
     $translator = $gallery->getTranslator();
     if (!$translator->canTranslate()) {
@@ -120,7 +120,7 @@ if (!empty($storageConfig)) {
     /* Check to see if we have a database.  If we don't, then go to the installer */
     $storage =& $gallery->getStorage();
     list ($ret, $isInstalled) = $storage->isInstalled();
-    if ($ret->isError() || !$isInstalled) {
+    if ($ret || !$isInstalled) {
 	$error = true;
     }
 } else {
@@ -205,26 +205,26 @@ function selectAdminUser() {
 
     list ($ret, $siteAdminGroupId) =
 	GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
-    if ($ret->isError()) {
+    if ($ret) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
     list ($ret, $adminUserInfo) = GalleryCoreApi::fetchUsersForGroup($siteAdminGroupId, 1);
-    if ($ret->isError()) {
+    if ($ret) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
     if (empty($adminUserInfo)) {
-	return GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__);
+	return GalleryCoreApi::error(ERROR_MISSING_VALUE, __FILE__, __LINE__);
     }
     $adminUserInfo = array_keys($adminUserInfo);
     list ($ret, $adminUser) = GalleryCoreApi::loadEntitiesById($adminUserInfo[0]);
-    if ($ret->isError()) {
+    if ($ret) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
     $gallery->setActiveUser($adminUser);
     $session =& $gallery->getSession();
     $session->put('isUpgrade', true);
-    return GalleryStatus::success();
+    return null;
 }
 
 /**
@@ -232,6 +232,7 @@ function selectAdminUser() {
  */
 function generateUrl($uri, $print=true) {
     if (strncmp($uri, 'index.php', 9) && strncmp($uri, '../' . GALLERY_MAIN_PHP, 11)) {
+	/* upgrade/images/*, upgrade/styles/*, ... URLs */
 	global $gallery;
 	/* Add @ here in case we haven't yet upgraded config.php to include galleryBaseUrl */
 	$baseUrl = @$gallery->getConfig('galleryBaseUrl');

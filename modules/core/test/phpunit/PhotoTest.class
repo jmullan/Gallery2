@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ class PhotoTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GalleryToolkit', 'PhotoTestToolkit', 'PhotoTestToolkit',
 	    $path, 'coreTest', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -55,7 +55,7 @@ class PhotoTest extends GalleryTestCase {
 
 	$ret = GalleryCoreApi::registerToolkitProperty(
 	    'PhotoTestToolkit', array('image/test'), 'colorspace', 'string', 'phototest property');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
@@ -67,29 +67,29 @@ class PhotoTest extends GalleryTestCase {
 	 * Create the photo
 	 */
 	list ($ret, $photo) = GalleryCoreApi::newItemByMimeType('image/jpeg');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = $photo->create($this->_getRootId(),
 			      dirname(__FILE__) . '/../data/test1.jpg',
 			      'image/jpeg');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = $photo->save();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::releaseLocks($lockId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -99,7 +99,7 @@ class PhotoTest extends GalleryTestCase {
 	GalleryDataCache::reset();
 
 	list ($ret, $newPhoto) = GalleryCoreApi::loadEntitiesById($photo->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -109,7 +109,7 @@ class PhotoTest extends GalleryTestCase {
 	 * Delete the photo
 	 */
 	$ret = GalleryCoreApi::deleteEntityById($photo->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
@@ -117,28 +117,28 @@ class PhotoTest extends GalleryTestCase {
     function testCMYKPhoto() {
 	/* Test that mime type gets -cmyk appended if toolkit says it uses CMYK colorspace */
 	list ($ret, $photo) = GalleryCoreApi::newItemByMimeType('image/test');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = $photo->create($this->_getRootId(), __FILE__, 'image/test');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = $photo->save();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($photo);
 
 	$ret = GalleryCoreApi::releaseLocks($lockId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -148,29 +148,29 @@ class PhotoTest extends GalleryTestCase {
     function testRGBPhoto() {
 	/* Test that mime type is not affected if toolkit says it uses RGB colorspace */
 	list ($ret, $photo) = GalleryCoreApi::newItemByMimeType('image/test');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = $photo->create($this->_getRootId(),
 			      dirname(__FILE__) . '/../data/test1.gif', 'image/test');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = $photo->save();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($photo);
 
 	$ret = GalleryCoreApi::releaseLocks($lockId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -189,9 +189,9 @@ class PhotoTestToolkit extends GalleryToolkit {
 	/* This will be called by GalleryPhotoItem::create */
 	if ($propertyName == 'colorspace' && $mimeType == 'image/test') {
 	    $colorspace = (basename($sourceFilename) == basename(__FILE__)) ? 'CMYK' : 'RGB';
-	    return array(GalleryStatus::success(), array($colorspace));
+	    return array(null, array($colorspace));
 	}
-	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
     }
 }
 ?>

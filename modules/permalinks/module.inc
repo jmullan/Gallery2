@@ -3,7 +3,7 @@
 * $RCSfile$
 *
 * Gallery - a web based photo album viewer and editor
-* Copyright (C) 2000-2005 Bharat Mediratta
+* Copyright (C) 2000-2006 Bharat Mediratta
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -34,54 +34,54 @@
  * @package Permalinks
  */
 class PermalinksModule extends GalleryModule /* and GalleryEventListener */ {
-    
+
     function PermalinksModule() {
 	global $gallery;
-	
+
 	$this->setId('permalinks');
 	$this->setName($gallery->i18n('Permalinks'));
 	$this->setDescription(
 		$gallery->i18n('Create simpler permanent aliases to your items space'));
-	$this->setVersion('1.0.3'); /* Update upgrade() too */
-	$this->setGroup('gallery', $this->translate('Gallery'));
+	$this->setVersion('1.0.4'); /* Update upgrade() too */
+	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews');
-	$this->setRequiredCoreApi(array(6, 7));
-	$this->setRequiredModuleApi(array(2, 4));
+	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredModuleApi(array(3, 0));
     }
-    
+
     /**
      * @see GalleryModule::upgrade()
      */
     function upgrade($currentVersion) {
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'permalinks');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	foreach (array('autoPermalink' => 0) as $key => $value) {
 	    if (!isset($params[$key])) {
 		$ret = $this->setParameter($key, $value);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
 	}
-	
-	return GalleryStatus::success();
+
+	return null;
     }
-    
+
     /**
      * @see GalleryModule::activate
      */
     function activate($postActivationEvent=true) {
 	list ($ret, $redirect) = parent::activate($postActivationEvent);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
-	return array(GalleryStatus::success(), array('view' => 'core.SiteAdmin',
+
+	return array(null, array('view' => 'core.SiteAdmin',
 						     'subView' => 'permalinks.ActivationWarning'));
     }
-    
+
     /**
      * @see GalleryModule::performFactoryRegistrations()
      */
@@ -89,13 +89,13 @@ class PermalinksModule extends GalleryModule /* and GalleryEventListener */ {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	   'ItemEditOption', 'PermalinksOption', 'PermalinksOption',
 	   'modules/permalinks/PermalinksOption.inc', 'permalinks', array('ItemEditItem'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
-    
+
     /**
      * @see GalleryModule::registerEventListeners();
      */
@@ -104,112 +104,93 @@ class PermalinksModule extends GalleryModule /* and GalleryEventListener */ {
 	GalleryCoreApi::registerEventListener('Gallery::DeactivatePlugin', new PermalinksModule());
 	GalleryCoreApi::registerEventListener('GalleryEntity::save', new PermalinksModule(), true);
     }
-    
-    /**
-     * @see GalleryModule::isRecommendedDuringInstall
-     */
-    function isRecommendedDuringInstall() {
-	return false;
-    }
-    
-    /**
-     * @see GalleryModule::autoConfigure
-     */
-    function autoConfigure() {
-	/* We don't require any special configuration */
-	return array(GalleryStatus::success(), true);
-    }
-    
+
     /**
      * @see GalleryModule::getSiteAdminViews()
      */
     function getSiteAdminViews() {
-	return array(GalleryStatus::success(),
-	array(array('name' => $this->translate('Permalinks'),
-	    'view' => 'permalinks.PermalinksSiteAdmin')));
+	return array(null,
+		     array(array('name' => $this->translate('Permalinks'),
+				 'view' => 'permalinks.PermalinksSiteAdmin')));
     }
-    
+
     /**
-     * Handler for GalleryEntity::delete event.  Get rid of any watermarks
-     * for users that are deleted.
+     * Event Handler: get rid of any permalinks for items that are deleted,
+     * deactivate if rewrite module is deactivated, and automatically create
+     * permalinks for new items if configured.
      *
      * @see GalleryEventListener::handleEvent
      */
     function handleEvent($event) {
-	global $gallery;
-
 	$data = $event->getData();
 
 	if ($event->getEventName() == 'GalleryEntity::delete') {
 	    $entity = $event->getEntity();
 	    if (GalleryUtilities::isA($entity, 'GalleryItem')) {
-		GalleryCoreApi::relativeRequireOnce(
-		    'modules/permalinks/classes/helpers/PermalinksMapHelper.class');
-		list ($ret, $results) =
-		    PermalinksMapHelper::fetchAliasesForItem($entity->getId());
-		if ($ret->isError()) {
+		GalleryCoreApi::requireOnce('modules/permalinks/classes/PermalinksMapHelper.class');
+		list ($ret, $results) = PermalinksMapHelper::fetchAliasesForItem($entity->getId());
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
-		foreach ($results as $id=>$name) {
-		    $ret = PermalinksMapHelper::deleteAlias($id);
-		    if ($ret->isError()) {
+
+		foreach ($results as $name) {
+		    $ret = PermalinksMapHelper::deleteAlias($name);
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		}
 	    }
 	} else if ($event->getEventName() == 'Gallery::DeactivatePlugin' &&
-	    $data['pluginId'] = 'rewrite' &&
-	    $data['pluginType'] == 'module') {
+		   $data['pluginId'] == 'rewrite' && $data['pluginType'] == 'module') {
 
 	    list ($ret, $isActive) = $this->isActive();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    if ($isActive) {
 		/* We can't run without the rewrite module, so we might as well deactivate. */
 		list ($ret, $redirect) = $this->deactivate();
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
 	} else if ($event->getEventName() == 'GalleryEntity::save') {
-	    list ($ret, $autoPermalink) = GalleryCoreApi::getPluginParameter('module', 'permalinks', 
-		    'autoPermalink');
-	    if ($ret->isError()) {
+	    list ($ret, $autoPermalink) =
+		GalleryCoreApi::getPluginParameter('module', 'permalinks', 'autoPermalink');
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
-	    if ($autoPermalink) {	
+
+	    if ($autoPermalink) {
 		$album = $event->getEntity();
 		if (GalleryUtilities::isA($album, 'GalleryAlbumItem') &&
 			$album->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
-		    GalleryCoreApi::relativeRequireOnce(
-		    	'modules/permalinks/classes/helpers/PermalinksMapHelper.class');
-		    
-		    $ret = PermalinksMapHelper::createAlias($album->getPathComponent(), 
-			    $album->getId());
-		    if ($ret->isError()) {
+		    GalleryCoreApi::requireOnce(
+			'modules/permalinks/classes/PermalinksMapHelper.class');
+
+		    $ret = PermalinksMapHelper::createAlias($album->getPathComponent(),
+							    $album->getId());
+		    if ($ret) {
 			if (!($ret->getErrorCode() & ERROR_COLLISION)) {
-			    return array($ret->wrap(__FILE__, __LINE__), null, null);
+			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
-			
+
 			/* We have a collision... not really a problem, just eat it */
 		    }
 		}
 	    }
 	}
-	
-	return array(GalleryStatus::success(), null);
+
+	return array(null, null);
     }
-    
+
     /**
      * @see GalleryModule::getRewriteRules
      */
     function getRewriteRules() {
 	return array(
-	    array( 'comment' => $this->translate('Permalinks'),
+	    array('comment' => $this->translate('Permalinks'),
 		'match' => array('controller' => 'permalinks.Redirect'),
 		'pattern' => 'f/%filename%',
 		'keywords' => array(

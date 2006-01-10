@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/MaintenanceHelper_simple.class');
+GalleryCoreApi::requireOnce('modules/core/classes/helpers/MaintenanceHelper_simple.class');
 
 /**
  * This controller will send the user to the chosen subView in the AdminMaintenance
@@ -45,7 +45,7 @@ class AdminMaintenanceController extends GalleryController {
 	global $gallery;
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -57,7 +57,7 @@ class AdminMaintenanceController extends GalleryController {
 	    $taskId = GalleryUtilities::getRequestVariables('taskId');
 
 	    list ($ret, $tasks) = MaintenanceHelper_simple::fetchTasks();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -71,7 +71,7 @@ class AdminMaintenanceController extends GalleryController {
 		    $results['delegate']['view'] = 'core.ProgressBar';
 		} else {
 		    list ($ret, $success)  = $this->runTask($taskId, $task, false);
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
@@ -92,7 +92,7 @@ class AdminMaintenanceController extends GalleryController {
 	$results['status'] = $status;
 	$results['error'] = $error;
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 
     function runTask($taskId, $task, $useProgressBar) {
@@ -102,13 +102,13 @@ class AdminMaintenanceController extends GalleryController {
 	$templateAdapter =& $gallery->getTemplateAdapter();
 
 	list ($ret1, $success, $details) = $task->run();
-	if ($ret1->isError()) {
+	if ($ret1) {
 	    $details = $ret1->getAsHtml();
 	}
 	$ret2 = MaintenanceHelper_simple::addRun($taskId, time(), $success, $details);
 
-	if ($ret1->isError() || $ret2->isError()) {
-	    $ret = $ret1->isError() ? $ret1 : $ret2;
+	if ($ret1 || $ret2) {
+	    $ret = $ret1 ? $ret1 : $ret2;
 
 	    if ($useProgressBar) {
 		$templateAdapter->errorProgressBar($ret);
@@ -128,7 +128,7 @@ class AdminMaintenanceController extends GalleryController {
 	    $templateAdapter->completeProgressBar($urlGenerator->generateUrl($redirect));
 	}
 
-	return array(GalleryStatus::success(), $success);
+	return array(null, $success);
     }
 }
 
@@ -145,7 +145,7 @@ class AdminMaintenanceView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -155,14 +155,14 @@ class AdminMaintenanceView extends GalleryView {
 	}
 
 	list ($ret, $tasks) = MaintenanceHelper_simple::fetchTasks();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$AdminMaintenance = array();
 	foreach ($tasks as $taskId => $task) {
 	    list ($ret, $info) = MaintenanceHelper_simple::fetchLastRun($taskId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -184,7 +184,7 @@ class AdminMaintenanceView extends GalleryView {
 	$template->setVariable('controller', 'core.AdminMaintenance');
 
 	$template->javascript('lib/javascript/BlockToggle.js');
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/core/templates/AdminMaintenance.tpl'));
     }
 }
@@ -206,7 +206,7 @@ class MaintenanceTask {
      *               array string output text
      */
     function run() {
-	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
     }
 
     /**

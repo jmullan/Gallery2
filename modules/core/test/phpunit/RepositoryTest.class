@@ -1,7 +1,7 @@
 <?php
 /*
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,10 +24,10 @@
  * @author Jozef Selesi <selesi at gmail dot com>
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryRepository.class');
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryRepositoryIndex.class');
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryRepositoryUtilities.class');
-GalleryCoreApi::relativeRequireOnce('modules/core/test/phpunit/RepositoryTestStorage.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryRepository.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryRepositoryIndex.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryRepositoryUtilities.class');
+GalleryCoreApi::requireOnce('modules/core/test/phpunit/RepositoryTestStorage.class');
 
 /**
  * Test repository functionality
@@ -148,7 +148,7 @@ class RepositoryTest extends GalleryTestCase {
 	    $repository->_index->_utilities = $utilities;
 
 	    list ($ret, $upgradeInfo) = $repository->getPluginUpgradeInfo('module', 'testModule');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		$this->failWithStatus($ret);
 	    }
 
@@ -182,7 +182,7 @@ class RepositoryTest extends GalleryTestCase {
 	    $gallery->setPlatform($platform);
 
 	    list ($ret, $packages) = $repository->getAllUpgradeablePackages();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		$this->failWithStatus($ret);
 	    }
 	    $this->assertEquals($case['expectedPackages'], $packages);
@@ -192,7 +192,7 @@ class RepositoryTest extends GalleryTestCase {
     function testIsCoreUpgradeAvailable() {
 	/* Get installed core version. */
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	$installedCoreVersion = $core->getVersion();
@@ -238,7 +238,7 @@ class RepositoryTest extends GalleryTestCase {
 	    $repository->_index->_utilities = $utilities;
 
 	    list ($ret, $isAvailable, $apiVersions) = $repository->isCoreUpgradeAvailable();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		$this->failWithStatus($ret);
 	    }
 	    $this->assertEquals($case['expectedRelation'] == 'newer', $isAvailable,
@@ -369,7 +369,7 @@ class RepositoryTest extends GalleryTestCase {
 	    list ($ret, $pluginList) =
 		$repository->getRepositoryPluginList($case['pluginData']['pluginType'],
 		$case['pluginData']['showAll'],	$case['pluginData']['coreApis']);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		$this->failWithStatus($ret);
 	    }
 
@@ -414,7 +414,7 @@ class RepositoryTest extends GalleryTestCase {
 	$repository = new GalleryRepository();
 	$ret = $repository->updatePackageMetaData(
 	    'module', 'testModule', 'package', 'version', 'build');
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
 	$this->assertEquals(array('GalleryPluginPackageMap' => array('pluginType' => 'module',
@@ -436,7 +436,7 @@ class RepositoryTest extends GalleryTestCase {
 	$repository = new GalleryRepository();
 	$ret = $repository->updatePackageMetaData(
 	    'module', 'testModule', 'package', 'version', 'build');
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
 	$this->assertEquals(array('GalleryPluginPackageMap' =>
@@ -529,7 +529,7 @@ class RepositoryTest extends GalleryTestCase {
 	$pluginData = array('module' => array('testModule' => array('package1' => 1,
 								    'package2' => 1)));
 	list ($ret, $files) = $repository->getDownloadFileList($pluginData);
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
 
@@ -565,13 +565,13 @@ class RepositoryTest extends GalleryTestCase {
 
 	/* Test case when the plugin index file doesn't contain the specified plugin ID. */ 
 	$ret = $repository->updatePluginIndexFile('module', 'testModule');
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
 	
 	/* Test case when the plugin index already contains the specified plugin ID. */ 
 	$ret = $repository->updatePluginIndexFile('module', 'testModule');
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
 	
@@ -608,7 +608,7 @@ class RepositoryTest extends GalleryTestCase {
 	/* Test downloading a package. */
 	list ($ret, $descriptor) = $repository->downloadAndUnpack(
 	    'module', 'testModule', 'testPackage', 'RepositoryTest.package');
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
 	$this->assert(empty($descriptor), 'Descriptor should be empty after package download.');
@@ -616,7 +616,7 @@ class RepositoryTest extends GalleryTestCase {
 	/* Test downloading a descriptor. */
 	list ($ret, $descriptor) = $repository->downloadAndUnpack(
 	    'module', 'testModule', 'testPackage', 'RepositoryTest.descriptor');
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
 	$this->assertEquals(array('pluginId' => 'testModule', 'pluginType' => 'module',
@@ -657,7 +657,7 @@ class RepositoryTest extends GalleryTestCase {
 
 	$repository = new GalleryRepository();
 	$ret = $repository->verifyPackageIntegrity('package1', $testDescriptor);
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
 
@@ -683,7 +683,7 @@ class RepositoryTestUtilities {
     }
 
     function getLanguageDescription($language) {
-	return array(GalleryStatus::success(), $language);
+	return array(null, $language);
     }
 
     function compareRevisions($revision1, $revision2) {
@@ -699,15 +699,15 @@ class RepositoryTestUtilities {
     }
 
     function getPluginPackages($pluginId, $plugin) {
-	return array(GalleryStatus::success(), $this->_packages);
+	return array(null, $this->_packages);
     }
 
     function getLanguageBaseRevision() {
-	return array(GalleryStatus::success(), '2.2');
+	return array(null, '2.2');
     }
 
     function isPluginAvailable($pluginType, $pluginId) {
-	return array(GalleryStatus::success(), !empty($this->_packages));
+	return array(null, !empty($this->_packages));
     }
 
     function isPluginCompatible($pluginType, $version1, $version2) {
@@ -736,11 +736,11 @@ class RepositoryTestIndex {
 	if ($this->_pluginData['pluginType'] != $pluginType
 		|| $this->_pluginData['showAll'] != $showAll
 		|| $this->_pluginData['coreApis'] != $coreApis) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 					      'Wrong arguments passed.'),
 			 null);
 	}
-	return array(GalleryStatus::success(), $this->_pluginData['plugins']);
+	return array(null, $this->_pluginData['plugins']);
     }
 
     function getPluginHeader($pluginType, $pluginId) {
@@ -753,35 +753,35 @@ class RepositoryTestIndex {
 
     function getPackageUrl($pluginType, $pluginId, $package) {
 	if (!isset($this->_pluginData[$pluginType][$pluginId][$package])) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 					      "[$pluginType] [$pluginId] [$package]: No url found"),
 			 null);
 	}
-	return array(GalleryStatus::success(),
+	return array(null,
 		     $this->_pluginData[$pluginType][$pluginId][$package]);
     }
 
     function getDescriptorUrl($pluginType, $pluginId) {
 	if (!isset($this->_pluginData[$pluginType][$pluginId]['descriptorUrl'])) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 					      "[$pluginType] [$pluginId]: Descriptor not found."),
 			 null);
 	}
-	return array(GalleryStatus::success(),
+	return array(null,
 		     $this->_pluginData[$pluginType][$pluginId]['descriptorUrl']);
     }
 
     function getPluginName($pluginType, $pluginId) {
 	if (!isset($this->_pluginData[$pluginType][$pluginId]['name'])) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 					      "[$pluginType] [$pluginId]: Name not found."),
 			 null);
 	}
-	return array(GalleryStatus::success(), $this->_pluginData[$pluginType][$pluginId]['name']);
+	return array(null, $this->_pluginData[$pluginType][$pluginId]['name']);
     }
 
     function getPackageVersionAndBuild($pluginType, $pluginId, $packageName) {
-	return array(GalleryStatus::success(), $pluginType, $pluginId);
+	return array(null, $pluginType, $pluginId);
     }
 }
 ?>

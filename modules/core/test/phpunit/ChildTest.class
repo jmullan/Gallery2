@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ class ChildTest extends GalleryTestCase {
 	/* Create a little tree of mixed items/entities */
 	list ($ret, $this->_root) =
 	    $this->_createRandomAlbum($this->_getRootId(), array('orderBy' => 'orderWeight'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -53,7 +53,7 @@ class ChildTest extends GalleryTestCase {
 
 	for ($i = 0; $i < 2; $i++) {
 	    list ($ret, $this->_child[$i]) = $this->_createRandomAlbum($this->_root->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -62,7 +62,7 @@ class ChildTest extends GalleryTestCase {
 		list ($ret, $this->_derivative[$i][$j]) =
 		    $this->_createDerivative($this->_child[$i], $this->_child[$i]->getId(),
 					     DERIVATIVE_TYPE_IMAGE_RESIZE);
-		if ($ret->isError()) {
+		if ($ret) {
 		    print $ret->getAsHtml();
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
@@ -72,7 +72,7 @@ class ChildTest extends GalleryTestCase {
 
     function testFetchChildItemIds() {
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_root);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -84,7 +84,7 @@ class ChildTest extends GalleryTestCase {
 
 	/* Make sure only items appear from fetchChildItemIds */
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_child[0]);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array(), $childIds, "child 0's children");
@@ -93,33 +93,33 @@ class ChildTest extends GalleryTestCase {
     function testFetchChildItemIdsDifferentUser() {
 	/* Create a new user and give him limited view permissions on our tree */
 	list ($ret, $user) = $this->_createRandomUser();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($user);
 
 	/* Create a new user and give him limited view permissions on our tree */
 	list ($ret, $user) = $this->_createRandomUser();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($user);
 
 	for ($i = 0; $i < 2; $i++) {
 	    $ret = GalleryCoreApi::removeItemPermissions($this->_child[$i]->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
 	$ret = GalleryCoreApi::addUserPermission(
 	    $this->_child[0]->getId(), $user->getId(), 'core.view', false);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $childIds) =
 	    GalleryCoreApi::fetchChildItemIds($this->_root, null, null, $user->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -128,12 +128,12 @@ class ChildTest extends GalleryTestCase {
 
     function testFetchChildDataItemIds() {
 	list ($ret, $item) = $this->_createRandomDataItem($this->_root->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildDataItemIds($this->_root);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -142,7 +142,7 @@ class ChildTest extends GalleryTestCase {
 
     function testFetchChildAlbumItemIds() {
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildAlbumItemIds($this->_root);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -156,13 +156,13 @@ class ChildTest extends GalleryTestCase {
 	$count = sizeof($this->_child);
 	for ($i = 0; $i < $count; $i++) {
 	    $ret = GalleryCoreApi::setItemOrderWeight($this->_child[$i]->getId(), $count-$i);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
 
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_root);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -178,7 +178,7 @@ class ChildTest extends GalleryTestCase {
 	list ($ret, $album) = $this->_createRandomAlbum($this->_root->getId(),
 				      array('orderBy' => 'albumsFirst|creationTimestamp',
 					    'orderDirection' => ORDER_DESCENDING));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$timestamp = time() - 1000;
@@ -186,13 +186,13 @@ class ChildTest extends GalleryTestCase {
 	    if ($i % 2) {
 		list ($ret, $child[$i]) = $this->_createRandomAlbum($album->getId(),
 						  array('creationTimestamp' => $timestamp));
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
 	    } else {
 		list ($ret, $child[$i]) = $this->_createRandomDataItem($album->getId(),
 					  'test/file', array('creationTimestamp' => $timestamp));
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
 	    }
@@ -200,7 +200,7 @@ class ChildTest extends GalleryTestCase {
 	}
 
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($album);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -216,15 +216,15 @@ class ChildTest extends GalleryTestCase {
 
     function testDescendentItemIds() {
         list ($ret, $items[]) = $this->_createRandomDataItem($this->_root->getId());
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
         list ($ret, $items[]) = $this->_createRandomDataItem($this->_child[0]->getId());
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
         list ($ret, $items[]) = $this->_createRandomDataItem($this->_child[1]->getId());
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
         $itemIds = array($this->_child[0]->getId(), $this->_child[1]->getId());
@@ -233,7 +233,7 @@ class ChildTest extends GalleryTestCase {
         }
 
         list ($ret, $childIds) = GalleryCoreApi::fetchDescendentItemIds($this->_root);
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
         sort($childIds);
@@ -242,15 +242,15 @@ class ChildTest extends GalleryTestCase {
 
     function testDescendentRoot() {
         list ($ret, $items[]) = $this->_createRandomDataItem($this->_root->getId());
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
         list ($ret, $items[]) = $this->_createRandomDataItem($this->_child[0]->getId());
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
         list ($ret, $items[]) = $this->_createRandomDataItem($this->_child[1]->getId());
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
         $itemIds = array($this->_child[0]->getId(), $this->_child[1]->getId());
@@ -258,12 +258,12 @@ class ChildTest extends GalleryTestCase {
             $itemIds[] = $item->getId();
         }
 	list ($ret, $albumRoot) = GalleryCoreApi::loadEntitiesById($this->_getRootID());
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
 
         list ($ret, $childIds) = GalleryCoreApi::fetchDescendentItemIds($albumRoot);
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
 	/*
@@ -277,7 +277,7 @@ class ChildTest extends GalleryTestCase {
 
     function testDescendentItemIdsNoItem() {
         list ($ret, $childIds) = GalleryCoreApi::fetchDescendentItemIds($this->_child[0]);
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
         $this->assertEquals(array(), $childIds, 'empty descendents');
@@ -287,20 +287,20 @@ class ChildTest extends GalleryTestCase {
         global $gallery;
 
         list ($ret, $items[]) = $this->_createRandomDataItem($this->_root->getId());
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
         list ($ret, $items[]) = $this->_createRandomDataItem($this->_child[0]->getId());
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
         list ($ret, $items[]) = $this->_createRandomDataItem($this->_child[1]->getId());
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
         /* Create a user that we can delete */
         list ($ret, $user) = $this->_createRandomUser();
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
         $this->_markForCleanup($user);
@@ -308,7 +308,7 @@ class ChildTest extends GalleryTestCase {
 
         list ($ret, $childIds) = GalleryCoreApi::fetchDescendentItemIds($this->_root, null,
             null, 'core.edit');
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
         $this->assertEquals(array(), $childIds, 'inadequate permissions');
@@ -318,20 +318,20 @@ class ChildTest extends GalleryTestCase {
         global $gallery;
 
         list ($ret, $items[]) = $this->_createRandomDataItem($this->_root->getId());
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
         list ($ret, $items[]) = $this->_createRandomDataItem($this->_child[0]->getId());
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
         list ($ret, $items[]) = $this->_createRandomDataItem($this->_child[1]->getId());
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
         /* Create a user that we can delete */
         list ($ret, $user) = $this->_createRandomUser();
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
 
@@ -341,10 +341,36 @@ class ChildTest extends GalleryTestCase {
         /* the goal here is to test for the permissions that "everyone" doesn't have */
         list ($ret, $childIds) = GalleryCoreApi::fetchDescendentItemIds($this->_root,
             null, null, 'core.all');
-        if ($ret->isError()) {
+        if ($ret) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
         $this->assertEquals(array(), $childIds, 'no permissions');
      }
+     
+    function testDescendentAlbumItemIds() {
+        list ($ret, $items['ignore1']) = $this->_createRandomDataItem($this->_root->getId());
+        if ($ret) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        list ($ret, $items['ignore2']) = $this->_createRandomDataItem($this->_child[0]->getId());
+        if ($ret) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+	list ($ret, $items['album']) = $this->_createRandomAlbum($this->_child[1]->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+        $itemIds = array($this->_child[0]->getId(), $this->_child[1]->getId(),
+	    $items['album']->getId());
+
+	/* this should bring back all sub albums and ignore non-albums */
+        list ($ret, $childIds) = GalleryCoreApi::fetchDescendentAlbumItemIds($this->_root);
+        if ($ret) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        sort($childIds);
+        $this->assertEquals($itemIds, $childIds, 'descendents');
+    }
+
 }
 ?>

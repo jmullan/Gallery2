@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ class ImportResultsView extends GalleryView {
 	$ImportResults['status'] = $status;
 	$template->setVariable('ImportResults', $ImportResults);
 	$template->setVariable('controller', 'migrate.ImportResults');
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/migrate/templates/ImportResults.tpl'));
     }
 }

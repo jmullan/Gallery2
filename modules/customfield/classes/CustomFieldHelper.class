@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
  */
 define('CUSTOM_FIELD_SESSION_KEY', 'customfield.adminMode.itemId');
 
-GalleryCoreApi::relativeRequireOnce('modules/customfield/classes/CustomFieldInterface_1_0.class');
+GalleryCoreApi::requireOnce('modules/customfield/classes/CustomFieldInterface_1_0.class');
 
 /**
  * A helper class for the Custom Field module.
@@ -56,12 +56,12 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
 	$isContainer = ($containerId > 0);
 	list ($ret, $param) =
 	    GalleryCoreApi::fetchAllPluginParameters('module', 'customfield', $containerId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	if (empty($param) && $containerId > 0 && $fallback) {
 	    list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'customfield');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    $isContainer = false;
@@ -75,7 +75,7 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
 					'choices' => array_splice($list, 3));
 	    }
 	}
-	return array(GalleryStatus::success(), $result, $isContainer);
+	return array(null, $result, $isContainer);
     }
 
     /**
@@ -99,11 +99,11 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
 	    }
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'customfield', $set,
 						      implode('|', $list), $containerId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -118,22 +118,22 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
      */
     function addField($newField, $set, $containerId=0) {
 	list ($ret, $param) = CustomFieldHelper::loadParameters($containerId, false);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	foreach ($param as $list) {
 	    $idx = CustomFieldHelper::findParameter($list, $newField);
 	    if ($idx >= 0) {
-		return array(GalleryStatus::success(), false);
+		return array(null, false);
 	    }
 	}
 	$param[$set][] = array('field' => $newField,
 			       'summary' => false, 'detail' => true, 'choices' => array());
 	$ret = CustomFieldHelper::saveParameters(array($set => $param[$set]), $containerId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	return array(GalleryStatus::success(), true);
+	return array(null, true);
     }
 
     /**
@@ -163,7 +163,6 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
      * @static
      */
     function deleteField($field, $containerId=0, $exceptType='') {
-	GalleryCoreApi::relativeRequireOnce('modules/customfield/classes/CustomFieldMap.class');
 	switch ($exceptType) {
 
 	case 'album':
@@ -172,22 +171,23 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
 	    if (!isset($setTypes)) {
 		$setTypes = array(0,1);
 	    }
-	    $ret = CustomFieldMap::removeMapEntry( array('field' => $field,
-							 'setId' => $containerId,
-							 'setType' => $setTypes) );
-	    if ($ret->isError()) {
+	    $ret = GalleryCoreApi::removeMapEntry(
+		'CustomFieldMap',
+		array('field' => $field, 'setId' => $containerId, 'setType' => $setTypes) );
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    break;
 
 	default:
-	    $ret = CustomFieldMap::removeMapEntry( array('field' => $field,
-							 'setId' => $containerId) );
-	    if ($ret->isError()) {
+	    $ret = GalleryCoreApi::removeMapEntry(
+		'CustomFieldMap',
+		array('field' => $field, 'setId' => $containerId) );
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -208,7 +208,7 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
 	$data = $result = array();
 
 	if (empty($items) || !is_array($items)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
 		    null, null, null);
 	}
 
@@ -221,7 +221,7 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
 
 	    list ($ret, $param[$itemId], $isContainer[$itemId]) =
 		CustomFieldHelper::loadParameters($containerId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 	    }
 	}
@@ -232,7 +232,7 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
 	WHERE [CustomFieldMap::itemId] IN (' . GalleryUtilities::makeMarkers($itemIds) . ')';
 
 	list ($ret, $searchResults) = $gallery->search($query, $itemIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 	}
 
@@ -257,7 +257,7 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
 	    }
 	}
 
-	return array(GalleryStatus::success(), $result, $param, $isContainer);
+	return array(null, $result, $param, $isContainer);
     }
 
     /**
@@ -274,26 +274,26 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
 	$containerId = ($set == 1) ? $item->getId() : $item->getParentId();
 	list ($ret, $param) =
 	    GalleryCoreApi::fetchAllPluginParameters('module', 'customfield', $containerId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$isContainer = !empty($param);
-	GalleryCoreApi::relativeRequireOnce('modules/customfield/classes/CustomFieldMap.class');
-	$ret = CustomFieldMap::removeMapEntry(array('itemId' => $item->getId()));
-	if ($ret->isError()) {
+	$ret = GalleryCoreApi::removeMapEntry('CustomFieldMap', array('itemId' => $item->getId()));
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	foreach ($fields as $field => $value) {
 	    if (!empty($value)) {
-		$ret = CustomFieldMap::addMapEntry(
+		$ret = GalleryCoreApi::addMapEntry(
+		    'CustomFieldMap',
 		    array('itemId' => $item->getId(), 'field' => $field, 'value' => $value,
 			  'setId' => $isContainer ? $containerId : 0, 'setType' => $set));
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
 	}
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -303,15 +303,15 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
      * @see GalleryEventListener::handleEvent
      */
     function handleEvent($event) {
-	GalleryCoreApi::relativeRequireOnce('modules/customfield/classes/CustomFieldMap.class');
 	if ($event->getEventName() == 'GalleryEntity::delete') {
 	    $item = $event->getEntity();
-	    $ret = CustomFieldMap::removeMapEntry(array('itemId' => $item->getId()));
-	    if ($ret->isError()) {
+	    $ret = GalleryCoreApi::removeMapEntry(
+		'CustomFieldMap', array('itemId' => $item->getId()));
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
-	return array(GalleryStatus::success(), null);
+	return array(null, null);
     }
 
     /**
@@ -328,7 +328,7 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
 
 	if (isset($form['action']['save'])) {
 	    list ($ret, $param) = CustomFieldHelper::loadParameters($containerId, false);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    foreach (array('common', 'album', 'photo') as $set) {
@@ -344,7 +344,7 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
 		}
 	    }
 	    $ret = CustomFieldHelper::saveParameters($newParam, $containerId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $status['saved'] = 1;
@@ -353,10 +353,10 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
 	    $newField = str_replace('|', ':', str_replace('`', "&#039;", $form[$set]['newField']));
             if (empty($newField)) {
 		$status['error']['empty'] = 1;
-                return array(GalleryStatus::success(), $status);
+                return array(null, $status);
             }
 	    list ($ret, $added) = CustomFieldHelper::addField($newField, $set, $containerId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    if ($added) {
@@ -368,12 +368,12 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
 	    foreach ($form['action']['go'] as $set => $tmp) {}
 	    list ($ret, $param, $isContainer) =
 		    CustomFieldHelper::loadParameters($containerId, false);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $idx = CustomFieldHelper::findParameter($param[$set], $form[$set]['goField']);
 	    if ($idx < 0) {
-		return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
 	    }
 	    switch ($form[$set]['goAction']) {
 
@@ -383,7 +383,7 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
 		unset($param[$set][$idx]);
 		$ret = CustomFieldHelper::saveParameters(
 		    array('common' => $param['common'], $set => $param[$set]), $containerId);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		break;
@@ -392,12 +392,12 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
 		// Remove from $set; delete from all items
 		unset($param[$set][$idx]);
 		$ret = CustomFieldHelper::saveParameters(array($set => $param[$set]), $containerId);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		$ret = CustomFieldHelper::deleteField($form[$set]['goField'],
 						      $isContainer ? $containerId : 0);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		$status['removed'] = 1;
@@ -412,18 +412,18 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
 		unset($param[$set][$idx]);
 		$ret = CustomFieldHelper::saveParameters(
 		    array('common' => $param['common'], $newSet => $param[$newSet]), $containerId);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		$ret = CustomFieldHelper::deleteField($form[$set]['goField'],
 						      $isContainer ? $containerId : 0, $newSet);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		break;
 
 	    default:
-		return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
 	    }
 	    if (empty($status)) {
 		$status['moved'] = 1;
@@ -436,7 +436,7 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
 		}
 	    }
 	    list ($ret, $param) = CustomFieldHelper::loadParameters($containerId, false);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    foreach ($param as $set => $list) {
@@ -445,7 +445,7 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
 		    $param[$set][$idx]['choices'] = $choices;
 		    $ret = CustomFieldHelper::saveParameters(
 					      array($set => $param[$set]), $containerId);
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		    $status['picklist'] = 1;
@@ -454,7 +454,7 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
 	    }
 	} /* else $form['action']['reset'] */
 
-	return array(GalleryStatus::success(), $status);
+	return array(null, $status);
     }
 
     /**
@@ -467,7 +467,7 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
      */
     function loadAdminForm(&$form, $containerId=0) {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'customfield');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -477,11 +477,11 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
 	$form['set'][] = array('key' => 'photo', 'name' => $module->translate('Photo Fields'));
 
 	list ($ret, $form['fields']) = CustomFieldHelper::loadParameters($containerId, false);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -491,14 +491,14 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
 	$duplicates = array();
 	foreach ($fieldNames as $fieldName) {
 	    list ($ret, $added) = CustomFieldHelper::addField($fieldName, 'common', $containerId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    if (!$added) {
 		$duplicates[] = $fieldName;
 	    }
 	}
-	return array(GalleryStatus::success(), $duplicates);
+	return array(null, $duplicates);
     }
 
     /**
@@ -506,14 +506,14 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
      */
     function setCustomFieldValues($itemId, $data) {
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$ret = CustomFieldHelper::saveFieldValues($item, $data);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	return GalleryStatus::success();
+	return null;
     }
 }
 ?>

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ class PrintPhotoControllerTest extends GalleryControllerTestCase {
 
 	/* Create some random photo items that we can print */
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -63,7 +63,7 @@ class PrintPhotoControllerTest extends GalleryControllerTestCase {
 	list ($ret, $this->_photo) =
 	    $this->_createRandomDataItem($this->_album->getId(),
 					 'test/jpeg', array(), __FILE__, 'GalleryPhotoItem');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -71,13 +71,13 @@ class PrintPhotoControllerTest extends GalleryControllerTestCase {
 	/* Create a stub thumbnail */
 	list ($ret, $derivative) = GalleryCoreApi::newFactoryInstanceByHint(
 					  'GalleryDerivative', $this->_photo->getEntityType());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$ret = $derivative->create($this->_photo->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -87,20 +87,20 @@ class PrintPhotoControllerTest extends GalleryControllerTestCase {
 	$derivative->setMimeType('test/file');
 
 	$ret = $derivative->save();
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Ensure we have print permission */
 	$ret = GalleryCoreApi::removeItemPermissions($this->_photo->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$ret = GalleryCoreApi::addUserPermission(
 	    $this->_photo->getId(), $gallery->getActiveUserId(), 'core.all');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -119,7 +119,7 @@ class PrintPhotoControllerTest extends GalleryControllerTestCase {
 
 	 /* Make sure translate calls during test won't generate any platform calls */
 	list ($ret) = GalleryCoreApi::getPermissionIds();
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -219,12 +219,12 @@ class PrintPhotoControllerTest extends GalleryControllerTestCase {
  * @subpackage PHPUnit
  */
 class PrintPhotoControllerTestUrlGenerator {
-    function generateUrl($params) {
+    function generateUrl($params=array(), $options=array()) {
 	$lines = array();
 	foreach ($params as $key => $value) {
 	    $lines[] = "$key=$value";
 	}
-	return join("/", $lines);
+	return implode('/', $lines);
     }
 }
 ?>

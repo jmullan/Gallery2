@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ class PanoramaSiteAdminController extends GalleryController {
     function handleRequest($form) {
 	/* Make sure we have adequate permissions */
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -51,21 +51,21 @@ class PanoramaSiteAdminController extends GalleryController {
 		    $ret = GalleryCoreApi::setPluginParameter(
 			'module', 'panorama', $key,
 			(isset($form[$key]) && $form[$key]) ? 1 : 0);
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		}
 		$ret = GalleryCoreApi::setPluginParameter(
 		    'module', 'panorama', 'width', (int)$form['width']);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		$status['saved'] = 1;
 	    }
 	} else if(isset($form['action']['reset'])) {
-	    GalleryCoreApi::relativeRequireOnce('modules/panorama/classes/PanoramaHelper.class');
+	    GalleryCoreApi::requireOnce('modules/panorama/classes/PanoramaHelper.class');
 	    $ret = PanoramaHelper::resetPanoramaItems();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $status['reset'] = 1;
@@ -78,7 +78,7 @@ class PanoramaSiteAdminController extends GalleryController {
 	$results['status'] = $status;
 	$results['error'] = $error;
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -92,7 +92,7 @@ class PanoramaSiteAdminView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	GalleryCoreApi::relativeRequireOnce('modules/panorama/classes/PanoramaHelper.class');
+	GalleryCoreApi::requireOnce('modules/panorama/classes/PanoramaHelper.class');
 	foreach (array('itemType', 'itemLink') as $key) {
 	    if (!isset($form[$key])) {
 		$form[$key] = false;
@@ -102,7 +102,7 @@ class PanoramaSiteAdminView extends GalleryView {
 	    $form['formName'] = 'PanoramaSiteAdmin';
 	    list ($ret, $param) =
 		GalleryCoreApi::fetchAllPluginParameters('module', 'panorama');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    foreach ($param as $key => $value) {
@@ -110,12 +110,12 @@ class PanoramaSiteAdminView extends GalleryView {
 	    }
 	}
 	list ($ret, $form['count']) = PanoramaHelper::fetchItemCount();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$template->setVariable('controller', 'panorama.PanoramaSiteAdmin');
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/panorama/templates/PanoramaSiteAdmin.tpl'));
     }
 }

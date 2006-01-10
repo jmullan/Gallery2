@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 /**
  * URL Rewrite Module
  *
- * This module provides mod_rewrite support
+ * This module provides URL rewriting support
  *
  * @package Rewrite
  */
@@ -38,72 +38,64 @@ class RewriteModule extends GalleryModule {
 	global $gallery;
 	$this->setId('rewrite');
 	$this->setName($gallery->i18n('URL Rewrite'));
-	$this->setDescription($gallery->i18n('Enables short URLs using mod_rewrite.'));
-	$this->setVersion('1.0.4'); /* Update RewriteModuleExtras::upgrade also! */
+	$this->setDescription($gallery->i18n('Enables short URLs using Apache mod_rewrite, ' .
+	    'ISAPI Rewrite, or PathInfo.'));
+	$this->setVersion('1.1.2'); /* Update RewriteModuleExtras::upgrade also! */
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
-	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredModuleApi(array(2, 4));
+	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredModuleApi(array(3, 0));
+    }
+
+    /**
+     * When rewrite is deactivated we need to restore the original URL generator for this request.
+     *
+     * @see GalleryModule::deactivate
+     */
+    function deactivate($postDeactivationEvent=true) {
+	global $gallery;
+	$urlGenerator =& $gallery->getUrlGenerator();
+	$urlGenerator->_error = true;
+
+    	return parent::deactivate($postDeactivationEvent);
     }
 
     /**
      * @see GalleryModule::upgrade
      */
     function upgrade($currentVersion) {
-	GalleryCoreApi::relativeRequireOnce('modules/rewrite/RewriteModuleExtras.inc');
+	GalleryCoreApi::requireOnce('modules/rewrite/RewriteModuleExtras.inc');
 	$ret = RewriteModuleExtras::upgrade($this, $currentVersion);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
      * @see GalleryModule::uninstall
      */
     function uninstall() {
-	GalleryCoreApi::relativeRequireOnce('modules/rewrite/classes/RewriteHelper.class');
-	list($ret, $code) = RewriteHelper::writeFile(null);
-	if ($ret->isError()) {
+    	GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
+	list ($ret, $rewriteParser) = RewriteHelper::getRewriteParser();
+	if ($ret && !($ret->getErrorCode() & ERROR_MISSING_VALUE)) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	if (GalleryUtilities::isEmbedded()) {
-	    list($ret, $code) = RewriteHelper::writeFile(null, true);
-	    if ($ret->isError()) {
+	if (!$ret) {
+	    list ($ret) = $rewriteParser->saveActiveRules(array());
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
-	/* Dont check $code, atleast we tried to remove the G2 content from the .htaccess file */
 	$ret = parent::uninstall();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
-    }
-
-    /**
-     * @see GalleryModule::performFactoryRegistrations
-     */
-    function performFactoryRegistrations() {
-	$ret = GalleryCoreApi::registerFactoryImplementation(
-		'GalleryUrlGenerator', 'RewriteUrlGenerator', 'RewriteUrlGenerator',
-		'modules/rewrite/classes/RewriteUrlGenerator.class', 'rewrite', null, 2);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	$ret = GalleryCoreApi::registerFactoryImplementation(
-		'MaintenanceTask', 'RewriteCheckConflictTask', 'RewriteCheckConflictTask',
-		'modules/rewrite/classes/RewriteCheckConflictTask.class', 'rewrite', null, 2);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -117,189 +109,74 @@ class RewriteModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::isRecommendedDuringInstall
+     * @see GalleryModule::needsConfiguration
      */
-    function isRecommendedDuringInstall() {
-	return true;
+    function needsConfiguration() {
+    	GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
+	list ($ret, $rewriteParser) = RewriteHelper::getRewriteParser();
+	if ($ret && !($ret->getErrorCode() & ERROR_MISSING_VALUE)) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	} else if ($ret && ($ret->getErrorCode() & ERROR_MISSING_VALUE)) {
+	    return array(null, true);
+	}
+
+	list ($ret, $status) = $rewriteParser->needsConfiguration($this);
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(null, $status);
     }
 
     /**
      * @see GalleryModule::autoConfigure
      */
     function autoConfigure() {
-	global $gallery;
-	$urlGenerator =& $gallery->getUrlGenerator();
-	GalleryCoreApi::relativeRequireOnce('modules/rewrite/classes/RewriteHelper.class');
-
-	if (strpos($urlGenerator->getCurrentUrlDir(true), 'install/index.php') !== false &&
-		$gallery->getConfig('galleryBaseUrl')) {
-	    /*
-	     * We can't autoconfigure from installer in a multisite install because
-	     * the current url is for the primary site, not the site being installed.
-	     */
-	    return array(GalleryStatus::success(), false);
-	}
-	$baseUrlComponents = parse_url(preg_replace('{(install|upgrade)/index\.php.*}', '',
-						    $urlGenerator->getCurrentUrlDir(true)));
-	$ret = $this->setParameter('galleryLocation', $baseUrlComponents['path']);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	list ($ret, $rewriteStatus) = RewriteHelper::checkModRewrite();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	list ($ret, $fileStatus) = RewriteHelper::checkFile();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	return array(GalleryStatus::success(), $rewriteStatus == REWRITE_STATUS_OK &&
-		$fileStatus == REWRITE_STATUS_HTACCESS_READY);
-    }
-
-    /**
-     * @see GalleryModule::needsConfiguration
-     */
-    function needsConfiguration() {
-	/* Just try to autoConfigure; if it succeeds then we don't need configuration */
-	list ($ret, $configured) = $this->autoConfigure();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	return array(GalleryStatus::success(), !$configured);
+	return array(null, false);
     }
 
     /**
      * @see GalleryModule::activate
      */
     function activate($postActivationEvent=true) {
-	list ($ret, $redirect) = parent::activate($postActivationEvent);
-	if ($ret->isError()) {
+	GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
+	list ($ret, $rewriteParser) = RewriteHelper::getRewriteParser();
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if (!empty($redirect)) {
-	    return array(GalleryStatus::success(), $redirect);
-	}
-
-	GalleryCoreApi::relativeRequireOnce('modules/rewrite/classes/RewriteHelper.class');
-	GalleryCoreApi::relativeRequireOnce('modules/rewrite/classes/RewriteMap.class');
-
-	list ($ret, $activeRules) = RewriteMap::getActiveRules();
-	if ($ret->isError()) {
+	list($ret, $activeRules) = GalleryCoreApi::getPluginParameter(
+	    'module', 'rewrite', 'activeRules');
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	$activeRules = unserialize($activeRules);
+
 	if (empty($activeRules)) {
-	    $activeRules = array('rewrite' => array(
-				  0 => array('pattern' => 'v/%path%',
-					     'match' => 'core.ShowItem'),
-				  1 => array('pattern' => 'd/%itemId%-%serialNumber%/%fileName%',
-				             'match' => 'core.DownloadItem'),
-				  4 => array('pattern' => 'admin/',
-				             'match' => 'core.SiteAdmin')
-				  ));
-
-	    $ret = RewriteMap::setActiveRules($activeRules);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+	    $activeRules = array('rewrite' => array(0 => 'v/%path%'));
+	    /*
+	     * We'll break fast download cache if we activate the short url for download items
+	     * with an inGallery parser
+	     */
+	    if ($rewriteParser->getParserType() != 'inGallery') {
+		$activeRules['rewrite'][1] = 'd/%itemId%-%serialNumber%/%fileName%';
 	    }
 	}
 
-	list($ret, $code, $rewriteRules) = RewriteHelper::parseActiveRules($activeRules, $this);
-	if ($ret->isError()) {
+	list ($ret, $code) = $rewriteParser->saveActiveRules($activeRules);
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if ($code != REWRITE_STATUS_OK) {
-	    return array(GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
 	}
 
-	list($ret, $code) = RewriteHelper::writeFile($rewriteRules);
-	if ($ret->isError()) {
+	list ($ret, $redirect) = parent::activate($postActivationEvent);
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	if ($code != REWRITE_STATUS_OK) {
-	    return array(GalleryStatus::error(ERROR_CONFIGURATION_REQUIRED, __FILE__, __LINE__),
-		    null);
-	}
 
-	return array(GalleryStatus::success(), array());
-    }
-
-    /**
-     * @see GalleryModule::getSiteAdminViews
-     */
-    function getSiteAdminViews() {
-	return array(GalleryStatus::success(),
-		    array(array('name' => $this->translate('URL Rewrite'),
-			    'view' => 'rewrite.AdminRewrite')));
-    }
-
-    /**
-     * @see GalleryModule::getConfigurationView
-     */
-    function getConfigurationView() {
-	return 'rewrite.SetupRewrite';
-    }
-
-    /**
-     * @see GalleryModule::getRewriteRules
-     */
-    function getRewriteRules() {
-	$rules = array();
-
-	$rule = array();
-	$rule['comment'] = $this->translate('Show Item');
-	$rule['match'] = array('view' => 'core.ShowItem');
-	$rule['pattern'] = 'v/%path%';
-	$rule['keywords'] = array(
-	    'path' => array(
-		'pattern' => '([^?]+)',
-		'help' => $this->translate('Path to an item (eg, /album/image.jpg.html)')));
-	$rules[0] = $rule;
-
-	$rule = array();
-	$rule['comment'] = $this->translate('Download Item');
-	$rule['match'] = array('view' => 'core.DownloadItem');
-	$rule['pattern'] = 'd/%itemId%-%serialNumber%/%fileName%';
-	$rule['keywords'] = array(
-	    'serialNumber' => array(
-		'pattern' => '([0-9]+)',
-		'help' => $this->translate('Ensures browsers do not use cached version when image has changed')),
-	    'fileName' => array(
-		'pattern' => '([^\/]+)',
-		'help' => $this->translate('Item file name (eg, image.jpg)'),
-		'ignore' => 1));
-	$rules[1] = $rule;
-
-	$rule = array();
-	$rule['comment'] = $this->translate('Site Admin');
-	$rule['match'] = array('view' => 'core.SiteAdmin');
-	$rule['pattern'] = 'admin/';
-	$rules[4] = $rule;
-
-	$rule = array();
-	$rule['comment'] = $this->translate('404 File Not Found');
-	$rule['pattern'] = '%path%';
-	$rule['queryString'] = array('view' => 'rewrite.FileNotFound');
-	$rule['keywords'] = array(
-	    'path' => array(
-		'pattern' => '([^?]+)',
-		'ignore' => 1));
-	$rule['locked'] = 1;
-	$rules[2] = $rule;
-
-	$rule = array();
-	$rule['comment'] = $this->translate('Block hotlinked items');
-	$rule['pattern'] = '.';
-	$rule['locked'] = 1;
-	$rule['flags'] = array('F');
-	$rule['restrict'] = array('view' => 'core.DownloadItem');
-	$rules[3] = $rule;
-
-	return $rules;
+	return array(null, array());
     }
 
     /**
@@ -308,9 +185,8 @@ class RewriteModule extends GalleryModule {
     function handleEvent($event) {
 	$data = $event->getData();
 	if ($data['pluginType'] == 'module' && $data['pluginId'] != 'rewrite') {
-	    GalleryCoreApi::relativeRequireOnce('modules/rewrite/classes/RewriteHelper.class');
-	    GalleryCoreApi::relativeRequireOnce('modules/rewrite/classes/RewriteMap.class');
-	    GalleryCoreApi::relativeRequireOnce('modules/rewrite/RewriteModuleExtras.inc');
+	    GalleryCoreApi::requireOnce('modules/rewrite/RewriteModuleExtras.inc');
+	    GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
 
 	    switch ($event->getEventName()) {
 	    case 'Gallery::ActivatePlugin':
@@ -327,8 +203,131 @@ class RewriteModule extends GalleryModule {
 	    }
 	}
 
-	return array(GalleryStatus::success(), null);
+	return array(null, null);
+    }
+
+    /**
+     * @see GalleryModule::getSiteAdminViews
+     */
+    function getSiteAdminViews() {
+	return array(null,
+		    array(array('name' => $this->translate('URL Rewrite'),
+			    'view' => 'rewrite.AdminRewrite')));
+    }
+
+    /**
+     * @see GalleryModule::performFactoryRegistrations
+     */
+    function performFactoryRegistrations() {
+	GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
+	list ($ret, $rewriteParser) = RewriteHelper::getRewriteParser();
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$rewriteUrlGenerator = $rewriteParser->getUrlGeneratorId();
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryUrlGenerator', $rewriteUrlGenerator, $rewriteUrlGenerator,
+	    'modules/rewrite/classes/parsers/' . $rewriteParser->getParserId() . '/' .
+	    $rewriteUrlGenerator . '.class', 'rewrite', null, 2);
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'MaintenanceTask', 'RewriteCheckConflictTask', 'RewriteCheckConflictTask',
+	    'modules/rewrite/classes/RewriteCheckConflictTask.class', 'rewrite', null);
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'RewriteApi', 'RewriteApi', 'RewriteApi',
+	    'modules/rewrite/classes/RewriteApi.class', 'rewrite', null);
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return null;
+    }
+
+    /**
+     * @see GalleryModule::getConfigurationView
+     */
+    function getConfigurationView() {
+	return 'rewrite.SetupRewrite';
+    }
+
+    /**
+     * @see GalleryModule::getRewriteRules
+     */
+    function getRewriteRules() {
+	$rules = array();
+
+	/* Rule 0: Show Item*/
+	$rules[0] = array(
+	    'comment' => $this->translate('Show Item'),
+	    'match' => array('view' => 'core.ShowItem'),
+	    'pattern' => 'v/%path%',
+	    'keywords' => array(
+		'path' => array(
+		    'pattern' => '([^?]+)',
+		    'help' => $this->translate('Path to an item (eg, /album/image.jpg.html)'),
+		    'function' => array('rewrite', 'RewriteSimpleHelper', 'parsePath')),
+		'language' => array(
+		    'pattern' => '([a-z]{2}|[a-z]{2}_[A-Z]{2})',
+		    'help' => $this->translate('Current language (eg, en or de)'),
+		    'function' => array('rewrite', 'RewriteSimpleHelper', 'parseLanguage'))),
+	    'onLoad' => array('rewrite', 'RewriteSimpleHelper', 'loadItemIdFromPath'),
+	    'help' => $this->translate('The general URL for viewing items.'));
+
+	/* Rule 1: Download Item */
+	$rules[1] = array(
+	    'comment' => $this->translate('Download Item'),
+	    'match' => array('view' => 'core.DownloadItem'),
+	    'pattern' => 'd/%itemId%-%serialNumber%/%fileName%',
+	    'keywords' => array(
+		'serialNumber' => array(
+		    'pattern' => '([0-9]+)',
+		    'help' => $this->translate('Ensures browsers do not use cached version ' .
+			'when image has changed'),
+		    'function' => array('rewrite', 'RewriteSimpleHelper', 'parseSerialNumber')),
+		'fileName' => array(
+		    'pattern' => '([^\/\?]+)',
+		    'help' => $this->translate('The item file name.'),
+		    'function' => array('rewrite', 'RewriteSimpleHelper', 'parseFileName'))),
+	    'help' => $this->translate('The general URL for downloading items.'));
+
+	/* Rule 4: Site Admin */
+	$rules[4] = array(
+	    'comment' => $this->translate('Site Admin'),
+	    'match' => array('view' => 'core.SiteAdmin'),
+	    'pattern' => 'admin/',
+	    'help' => $this->translate('Quick and easy way to access Site Admin.'));
+
+	/* Rule 2: File not found*/
+	$rules[2] = array(
+	    'comment' => $this->translate('404 File not found'),
+	    'pattern' => '%path%',
+	    'queryString' => array('view' => 'rewrite.FileNotFound'),
+	    'keywords' => array(
+		'path' => array(
+		    'pattern' => '([^?]+)',
+		    'ignore' => 1)),
+	    'locked' => 1,
+	    'parser' => 'preGallery');
+
+	/* Rule 3: Block hotlinked items */
+	$rules[3] = array(
+	    'comment' => $this->translate('Block hotlinked items'),
+	    'pattern' => '.',
+	    'locked' => 1,
+	    'flags' => array('F'),
+	    'restrict' => array('view' => 'core.DownloadItem'),
+	    'parser' => 'preGallery',
+	    'exemptReferer' => 1);
+
+	return $rules;
     }
 }
-
 ?>

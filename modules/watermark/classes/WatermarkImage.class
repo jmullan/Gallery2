@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 /**
  * Load the parent class
  */
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryEntity.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryEntity.class');
 
 /**
  * Representation of an image used for watermarking
@@ -44,13 +44,7 @@ GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryEntity.class');
  * @package Watermark
  * @subpackage Classes
  */
-class WatermarkImage_core extends GalleryEntity {
-
-    /*
-     * ****************************************
-     *                 Members
-     * ****************************************
-     */
+class WatermarkImage extends GalleryEntity {
 
     /**
      * Should this watermark be applied to the preferred derivative?
@@ -60,10 +54,10 @@ class WatermarkImage_core extends GalleryEntity {
      * @g2   <member-type>BOOLEAN</member-type>
      * @g2 </member>
      *
-     * @var bool $_applyToPreferred
-     * @access private
+     * @var bool $applyToPreferred
+     * @access public
      */
-    var $_applyToPreferred;
+    var $applyToPreferred;
 
     /**
      * Should this watermark be applied to resize derivatives?
@@ -73,10 +67,10 @@ class WatermarkImage_core extends GalleryEntity {
      * @g2   <member-type>BOOLEAN</member-type>
      * @g2 </member>
      *
-     * @var int $_applyToResizes
-     * @access private
+     * @var int $applyToResizes
+     * @access public
      */
-    var $_applyToResizes;
+    var $applyToResizes;
 
     /**
      * Should this watermark be applied to the thumbnail derivative?
@@ -86,10 +80,10 @@ class WatermarkImage_core extends GalleryEntity {
      * @g2   <member-type>BOOLEAN</member-type>
      * @g2 </member>
      *
-     * @var int $_applyToThumbnail
-     * @access private
+     * @var int $applyToThumbnail
+     * @access public
      */
-    var $_applyToThumbnail;
+    var $applyToThumbnail;
 
     /**
      * The symbolic name of this watermark, eg "My Watermark"
@@ -101,10 +95,10 @@ class WatermarkImage_core extends GalleryEntity {
      * @g2   <required/>
      * @g2 </member>
      *
-     * @var string $_name
-     * @access private
+     * @var string $name
+     * @access public
      */
-    var $_name;
+    var $name;
 
     /**
      * The watermark image filename, in the g2data/watermark directory
@@ -117,10 +111,10 @@ class WatermarkImage_core extends GalleryEntity {
      * @g2   <required/>
      * @g2 </member>
      *
-     * @var string $_fileName
-     * @access private
+     * @var string $fileName
+     * @access public
      */
-    var $_fileName;
+    var $fileName;
 
     /**
      * The mime type of the image.
@@ -131,10 +125,10 @@ class WatermarkImage_core extends GalleryEntity {
      * @g2   <member-size>MEDIUM</member-size>
      * @g2 </member>
      *
-     * @var string $_mimeType
-     * @access private
+     * @var string $mimeType
+     * @access public
      */
-    var $_mimeType;
+    var $mimeType;
 
     /**
      * The size of the image file.
@@ -144,10 +138,10 @@ class WatermarkImage_core extends GalleryEntity {
      * @g2   <member-type>INTEGER</member-type>
      * @g2 </member>
      *
-     * @var int $_size
-     * @access private
+     * @var int $size
+     * @access public
      */
-    var $_size;
+    var $size;
 
     /**
      * The width of the image.
@@ -157,10 +151,10 @@ class WatermarkImage_core extends GalleryEntity {
      * @g2   <member-type>INTEGER</member-type>
      * @g2 </member>
      *
-     * @var int $_width
-     * @access private
+     * @var int $width
+     * @access public
      */
-    var $_width;
+    var $width;
 
     /**
      * The height of the image.
@@ -170,10 +164,10 @@ class WatermarkImage_core extends GalleryEntity {
      * @g2   <member-type>INTEGER</member-type>
      * @g2 </member>
      *
-     * @var int $_height
-     * @access private
+     * @var int $height
+     * @access public
      */
-    var $_height;
+    var $height;
 
     /**
      * The owner of the image
@@ -183,10 +177,10 @@ class WatermarkImage_core extends GalleryEntity {
      * @g2   <member-type>INTEGER</member-type>
      * @g2 </member>
      *
-     * @var int $_ownerId
-     * @access private
+     * @var int $ownerId
+     * @access public
      */
-    var $_ownerId;
+    var $ownerId;
 
     /**
      * The desired location of this watermark on the target
@@ -199,10 +193,10 @@ class WatermarkImage_core extends GalleryEntity {
      * @g2   <member-size>SMALL</member-size>
      * @g2 </member>
      *
-     * @var string $_xPercentage
-     * @access private
+     * @var string $xPercentage
+     * @access public
      */
-    var $_xPercentage;
+    var $xPercentage;
 
     /**
      * The desired location of this watermark on the target
@@ -215,16 +209,10 @@ class WatermarkImage_core extends GalleryEntity {
      * @g2   <member-size>SMALL</member-size>
      * @g2 </member>
      *
-     * @var string $_yPercentage
-     * @access private
+     * @var string $yPercentage
+     * @access public
      */
-    var $_yPercentage;
-
-    /*
-     * ****************************************
-     *                 Methods
-     * ****************************************
-     */
+    var $yPercentage;
 
     /**
      * Create a new instance of this type in the persistent store.
@@ -236,9 +224,9 @@ class WatermarkImage_core extends GalleryEntity {
      * @return object GalleryStatus a status code
      */
     function create($inputFileName, $mimeType, $targetName=null) {
-	GalleryCoreApi::relativeRequireOnce('modules/watermark/classes/WatermarkHelper.class');
+	GalleryCoreApi::requireOnce('modules/watermark/classes/WatermarkHelper.class');
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$dir = $this->getWatermarkDir();
 	if (empty($targetName)) {
 	    $targetName = basename($inputFileName);
@@ -246,10 +234,10 @@ class WatermarkImage_core extends GalleryEntity {
 
 	/* Validate the input file */
 	if (empty($inputFileName)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 	if (!$platform->file_exists($inputFileName)) {
-	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__);
 	}
 
 	/*
@@ -264,7 +252,7 @@ class WatermarkImage_core extends GalleryEntity {
 	}
 
 	list ($ret, $watermarks) = WatermarkHelper::fetchWatermarks();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$nameMap = array();
@@ -278,7 +266,7 @@ class WatermarkImage_core extends GalleryEntity {
 	}
 
 	$ret = parent::create();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -296,18 +284,18 @@ class WatermarkImage_core extends GalleryEntity {
 
 	$newFileName = $dir . $targetFilename;
 	if (!$platform->copy($inputFileName, $newFileName)) {
-	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
 	}
 	$this->setSize($platform->filesize($newFileName));
 
 	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByProperty($mimeType, 'dimensions');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	if (isset($toolkit)) {
 	    list ($ret, $dimensions) = $toolkit->getProperty($mimeType, 'dimensions', $newFileName);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		$ret->addErrorCode(ERROR_BAD_DATA_TYPE);
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -315,7 +303,7 @@ class WatermarkImage_core extends GalleryEntity {
 	    $this->setHeight($dimensions[1]);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -329,18 +317,19 @@ class WatermarkImage_core extends GalleryEntity {
 
 	/* Delete myself */
 	$ret = parent::delete();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Delete our source file */
 	$path = $this->getWatermarkDir() . $this->getFileName();
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	if (!$platform->unlink($path)) {
-	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__, "Could not delete $path");
+	    return GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__,
+					 "Could not delete $path");
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -349,7 +338,7 @@ class WatermarkImage_core extends GalleryEntity {
      * @return array(object GalleryStatus a status code, string path)
      */
     function fetchPath() {
-	return array(GalleryStatus::success(),
+	return array(null,
 		     $this->getWatermarkDir() . $this->getFileName());
     }
 
@@ -360,7 +349,7 @@ class WatermarkImage_core extends GalleryEntity {
      */
     function getWatermarkDir() {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 	return $gallery->getConfig('data.gallery.plugins_data') . 'modules/watermark' . $slash;
     }
@@ -376,10 +365,10 @@ class WatermarkImage_core extends GalleryEntity {
 	switch($format) {
 	case 'HTML':
 	    $urlGenerator =& $gallery->getUrlGenerator();
-	    $src = $urlGenerator->generateUrl(array('view' => 'core.DownloadItem',
-						    'itemId' => $this->getId(),
-						    'serialNumber' => $this->getSerialNumber()),
-					      null, null, !empty($params['forceFullUrl']));
+	    $src = $urlGenerator->generateUrl(
+		array('view' => 'core.DownloadItem', 'itemId' => $this->getId(),
+		      'serialNumber' => $this->getSerialNumber()),
+		array('forceFullUrl' => !empty($params['forceFullUrl'])));
 
 	    list ($width, $height) = array($this->getWidth(), $this->getHeight());
 
@@ -410,7 +399,108 @@ class WatermarkImage_core extends GalleryEntity {
 	    return null;
 	}
     }
-}
 
-include(dirname(__FILE__) . '/interfaces/WatermarkImage.inc');
+    /**
+     * @see GalleryEntity::getClassName()
+     */
+    function getClassName() {
+	return 'WatermarkImage';
+    }
+
+    function getApplyToPreferred() {
+	return $this->applyToPreferred;
+    }
+
+    function setApplyToPreferred($applyToPreferred) {
+	$this->applyToPreferred = $applyToPreferred;
+    }
+
+    function getApplyToResizes() {
+	return $this->applyToResizes;
+    }
+
+    function setApplyToResizes($applyToResizes) {
+	$this->applyToResizes = $applyToResizes;
+    }
+
+    function getApplyToThumbnail() {
+	return $this->applyToThumbnail;
+    }
+
+    function setApplyToThumbnail($applyToThumbnail) {
+	$this->applyToThumbnail = $applyToThumbnail;
+    }
+
+    function getName() {
+	return $this->name;
+    }
+
+    function setName($name) {
+	$this->name = $name;
+    }
+
+    function getFileName() {
+	return $this->fileName;
+    }
+
+    function setFileName($fileName) {
+	$this->fileName = $fileName;
+    }
+
+    function getMimeType() {
+	return $this->mimeType;
+    }
+
+    function setMimeType($mimeType) {
+	$this->mimeType = $mimeType;
+    }
+
+    function getSize() {
+	return $this->size;
+    }
+
+    function setSize($size) {
+	$this->size = $size;
+    }
+
+    function getWidth() {
+	return $this->width;
+    }
+
+    function setWidth($width) {
+	$this->width = $width;
+    }
+
+    function getHeight() {
+	return $this->height;
+    }
+
+    function setHeight($height) {
+	$this->height = $height;
+    }
+
+    function getOwnerId() {
+	return $this->ownerId;
+    }
+
+    function setOwnerId($ownerId) {
+	$this->ownerId = $ownerId;
+    }
+
+    function getXPercentage() {
+	return $this->xPercentage;
+    }
+
+    function setXPercentage($xPercentage) {
+	$this->xPercentage = $xPercentage;
+    }
+
+    function getYPercentage() {
+	return $this->yPercentage;
+    }
+
+    function setYPercentage($yPercentage) {
+	$this->yPercentage = $yPercentage;
+    }
+}
 ?>

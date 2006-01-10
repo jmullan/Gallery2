@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ class SelfRegistrationSuccessController extends GalleryController {
 	$results['delegate']['view'] = 'core.UserAdmin';
 	$results['delegate']['subView'] = 'register.SelfRegistrationSuccess';
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -66,7 +66,7 @@ class SelfRegistrationSuccessView extends GalleryView {
 	$selfregistration = array('email' => 'e@mail.de');
 	$template->setVariable('selfregistration', $selfregistration);
 	$template->setVariable('controller', 'register.SelfRegistrationSuccess');
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/register/templates/SelfRegistrationSuccess.tpl'));
     }
 }

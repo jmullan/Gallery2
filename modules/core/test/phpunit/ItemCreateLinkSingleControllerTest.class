@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ class ItemCreateLinkSingleControllerTest extends GalleryControllerTestCase {
 	parent::setUp();
 
 	list ($ret, $this->_rootAlbum) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -49,7 +49,7 @@ class ItemCreateLinkSingleControllerTest extends GalleryControllerTestCase {
 	$this->_markForCleanup($this->_rootAlbum);
 
 	list ($ret, $this->_destinationAlbum) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -58,7 +58,7 @@ class ItemCreateLinkSingleControllerTest extends GalleryControllerTestCase {
 
 	/* Create a data item */
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_rootAlbum->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -99,7 +99,7 @@ class ItemCreateLinkSingleControllerTest extends GalleryControllerTestCase {
      */
     function testLinkItemWithNoViewPermissions() {
 	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -137,7 +137,7 @@ class ItemCreateLinkSingleControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[destination]', $this->_destinationAlbum->getId());
 
 	$ret = GalleryCoreApi::removeItemPermissions($this->_destinationAlbum->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 

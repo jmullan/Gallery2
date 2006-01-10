@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,11 +38,11 @@ class ShutterflyModule extends GalleryModule {
 	$this->setId('shutterfly');
 	$this->setName($gallery->i18n('Shutterfly'));
 	$this->setDescription($gallery->i18n('Shutterfly Photo Printing Module'));
-	$this->setVersion('1.0.1');
+	$this->setVersion('1.0.2'); /* Update upgrade() too */
 	$this->setGroup('commerce', $gallery->i18n('Commerce'));
 	$this->setCallbacks('getItemLinks');
-	$this->setRequiredCoreApi(array(6, 10));
-	$this->setRequiredModuleApi(array(2, 3));
+	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredModuleApi(array(3, 0));
     }
 
     /**
@@ -57,7 +57,7 @@ class ShutterflyModule extends GalleryModule {
 	    $currentVersion = '1.0.0';
 	}
 	list ($ret, $coreParams) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -66,14 +66,14 @@ class ShutterflyModule extends GalleryModule {
 	    /* Register our permission */
 	    $ret = GalleryCoreApi::registerPermission($this->getId(), 'shutterfly.print',
 						      $gallery->i18n('[shutterfly] Print'));
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    /* Give everybody print permission by default */
 	    $ret = GalleryCoreApi::addGroupPermission(
 		$coreParams['id.rootAlbum'], $coreParams['id.everybodyGroup'],
 		'shutterfly.print', true);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    break;
@@ -81,25 +81,27 @@ class ShutterflyModule extends GalleryModule {
 	case '1.0.0':
 	    $ret = GalleryCoreApi::registerPermission($this->getId(), 'shutterfly.print',
 						      $gallery->i18n('[shutterfly] Print'));
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $ret = GalleryCoreApi::addGroupPermission(
 		$coreParams['id.rootAlbum'], $coreParams['id.everybodyGroup'],
 		'shutterfly.print', true);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+
+	case '1.0.1':
 
 	case 'end of upgrade path':
 	    break;
 
 	default:
-	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
+	    return GalleryCoreApi::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
 					sprintf('Unknown module version %s', $currentVersion));
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -109,26 +111,11 @@ class ShutterflyModule extends GalleryModule {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'CartPluginInterface_1_0', 'ShutterflyCartPlugin', 'shutterfly',
 	    'modules/shutterfly/classes/ShutterflyCartPlugin.class', 'shutterfly', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
-    }
-
-    /**
-     * @see GalleryModule::isRecommendedDuringInstall
-     */
-    function isRecommendedDuringInstall() {
-	return true;
-    }
-
-    /**
-     * @see GalleryModule::autoConfigure
-     */
-    function autoConfigure() {
-	/* We don't require any special configuration */
-	return array(GalleryStatus::success(), true);
+	return null;
     }
 
     /**
@@ -149,7 +136,7 @@ class ShutterflyModule extends GalleryModule {
 	    }
 	}
 
-	return array(GalleryStatus::success(), $links);
+	return array(null, $links);
     }
 }
 ?>

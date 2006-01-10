@@ -5,7 +5,7 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 <a href="{g->url arg1="view=debug.ShowTree" arg2="entityId=$entityId"}">
-  {g->text text="%d: (%s)" arg1=$entityId arg2=$ShowTree.entityTable.$entityId._className}
+  {g->text text="%d: (%s)" arg1=$entityId arg2=$ShowTree.entityTable.$entityId.entityType}
 </a>
 
 {if !empty($ShowTree.isItem.$entityId)}

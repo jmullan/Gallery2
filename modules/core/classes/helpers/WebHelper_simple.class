@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +43,7 @@ class WebHelper_simple {
      * @param string the output file
      * @param int the redirect depth (pass in 0 or leave this empty to start)
      * @return array(boolean success, http response, headers, url)
+     *  the url is the final url retrieved after redirects
      */
     function fetchWebFile($url, $outputFile, $depth=0) {
 	global $gallery;
@@ -62,7 +63,7 @@ class WebHelper_simple {
 	    return array(false, null, null, null);
 	}
 
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$fd = @$platform->fsockopen($components['host'], $port, $errno, $errstr, 1);
 	if (empty($fd)) {
 	    $gallery->debug("Error $errno: '$errstr' retrieving $url");
@@ -173,6 +174,11 @@ class WebHelper_simple {
 	}
 	$platform->fclose($fd);
 
+        /* if the HTTP response code did not begin with a 2 this request was not successful */
+	if (!preg_match("/^HTTP\/\d+\.\d+\s2\d{2}/", $response)) {
+	    $success = false;
+	}	
+	
 	return array($success, $response, $headers, $url);
     }
 
@@ -184,7 +190,8 @@ class WebHelper_simple {
      * @param string the url
      * @param array (optional) extra headers to pass to the server
      * @param int the redirect depth (pass in 0 or leave this empty to start)
-     * @return array(body, http response, headers, url)
+     * @return array(boolean success, string body, http response, headers, url)
+     *  the url is  the final url retrieved after redirects
      */
     function fetchWebPage($url, $extraHeaders=array(), $depth=0) {
 	global $gallery;
@@ -201,14 +208,14 @@ class WebHelper_simple {
 	/* Don't redirect too far */
 	if ($depth > 5) {
 	    $gallery->debug('Too many levels of HTTP redirection!');
-	    return array(null, null, null, null);
+	    return array(false, null, null, null, null);
 	}
 
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$fd = @$platform->fsockopen($components['host'], $port, $errno, $errstr, 1);
 	if (empty($fd)) {
 	    $gallery->debug("Error $errno: '$errstr' retrieving $url");
-	    return array(null, null, null, null);
+	    return array(false, null, null, null, null);
 	}
 
 	$get = $components['path'];
@@ -224,14 +231,28 @@ class WebHelper_simple {
 	foreach ($extraHeaders as $headerKey => $headerValue) {
 	    $extraHeaderLines[] = "$headerKey: $headerValue";
 	}
-	$platform->fwrite($fd, sprintf("GET %s HTTP/1.0\r\n" .
-				       "Host: %s\r\n" .
-				       "%s" .
-				       "\r\n",
-				       $get,
-				       $components['host'],
-				       empty($extraHeaderLines) ? '' : join("\r\n", $extraHeaderLines) . "\r\n"));
-	$platform->fflush($fd);
+
+	$ok = $platform->fwrite($fd, sprintf("GET %s HTTP/1.0\r\n" .
+					     "Host: %s\r\n" .
+					     "%s" .
+					     "\r\n",
+					     $get,
+					     $components['host'],
+					     empty($extraHeaderLines) ? '' :
+					     join("\r\n", $extraHeaderLines) . "\r\n"));
+	if (!$ok) {
+	    /* Zero bytes written or false was returned */
+	    $gallery->debug("fwrite call failed in fetchWebPage($url)");
+	    if ($ok === false) {
+		$gallery->debug('return value was false');
+	    }
+	    return array(false, null, null, null, null);
+	}
+	$ok = $platform->fflush($fd);
+	if (!$ok) {
+	    $gallery->debug("fflush call failed in fetchWebPage($url)");
+	    return array(false, null, null, null, null);
+	}
 
 	/*
 	 * Read the response code. fgets stops after newlines.
@@ -239,7 +260,6 @@ class WebHelper_simple {
 	 */
 	$headers = array();
 	$response = trim($platform->fgets($fd, 4096));
-
 	/* Read the headers. */
 	while (!$platform->feof($fd)) {
 	    $line = trim($platform->fgets($fd, 4096));
@@ -299,7 +319,7 @@ class WebHelper_simple {
 
 	    /* Returning output directly from fetchWebPage() confuses the CodeAudit */
 	    $result = WebHelper_simple::fetchWebPage($redirectUrl, $extraHeaders, $depth+1);
-	    return array($result[0], $result[1], $result[2], $result[3]);
+	    return array($result[0], $result[1], $result[2], $result[3], $result[4]);
 	}
 
 	/* Read the body */
@@ -309,7 +329,14 @@ class WebHelper_simple {
 	}
 	$platform->fclose($fd);
 
-	return array($body, $response, $headers, $url);
+	$success = true;
+	
+	/* if the HTTP response code did not begin with a 2 this request was not successful */
+	if (!preg_match("/^HTTP\/\d+\.\d+\s2\d{2}/", $response)) {
+	    $success = false;
+	}
+	
+	return array($success, $body, $response, $headers, $url);
     }
 
     /**
@@ -329,7 +356,7 @@ class WebHelper_simple {
 	    $components['path'] = '/';
 	}
 
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$fd = @$platform->fsockopen($components['host'], $port, $errno, $errstr, 1);
 	if (empty($fd)) {
 	    $gallery->debug("Error $errno: '$errstr' retrieving $url");

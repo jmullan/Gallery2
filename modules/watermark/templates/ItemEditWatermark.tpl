@@ -12,7 +12,7 @@
   var watermarkUrlMap = new Array;
   {foreach from=$ItemEditWatermark.watermarks item=watermark}
   watermarkUrlMap[{$watermark.id}] = new Array;
-  watermarkUrlMap[{$watermark.id}]['url'] = '{g->url forJavascript="true"
+  watermarkUrlMap[{$watermark.id}]['url'] = '{g->url htmlEntities=false
     arg1="view=core.DownloadItem" arg2="itemId=`$watermark.id`"}';
   watermarkUrlMap[{$watermark.id}]['width'] = {$watermark.width};
   watermarkUrlMap[{$watermark.id}]['height'] = {$watermark.height};

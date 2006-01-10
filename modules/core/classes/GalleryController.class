@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,7 +108,7 @@ class GalleryController {
      *               return-array
      */
     function handleRequest($form) {
-	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
 		     null);
     }
 
@@ -130,27 +130,27 @@ class GalleryController {
 	    $module = $regs[1];
 	    $class = $regs[2];
 	} else {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 					      "$controllerName can't be parsed"), null);
 	}
 
 	/* If the module is not active, only let site admins use the config controller */
 	list ($ret, $plugin) = GalleryCoreApi::loadPlugin('module', $module);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	list ($ret, $isActive) = $plugin->isActive();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if (!$isActive) {
 	    if ($controllerName == $plugin->getConfigurationView()) {
 		$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    } else {
-		return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__),
+		return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__),
 			     null);
 	    }
 	}
@@ -160,20 +160,20 @@ class GalleryController {
 	    $moduleBaseDir = GalleryCoreApi::getPluginBaseDir('module', $module);
 	    $fileName = 'modules/' . $module . '/' . $class . '.inc';
 
-	    $platform = $gallery->getPlatform();
+	    $platform =& $gallery->getPlatform();
 	    if (!$platform->file_exists($moduleBaseDir . $fileName)) {
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	    }
 
-	    GalleryCoreApi::relativeRequireOnce($fileName);
+	    GalleryCoreApi::requireOnce($fileName);
 
 	    if (!class_exists($controllerClassName)) {
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 			     "Class $controllerClassName not defined in $controllerName"), null);
 	    }
 	}
 
-	return array(GalleryStatus::success(), new $controllerClassName);
+	return array(null, new $controllerClassName);
     }
 
     /**

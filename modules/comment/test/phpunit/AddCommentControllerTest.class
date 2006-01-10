@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 /**
  * Required classes
  */
-GalleryCoreApi::relativeRequireOnce('modules/comment/classes/GalleryCommentHelper.class');
+GalleryCoreApi::requireOnce('modules/comment/classes/GalleryCommentHelper.class');
 
 /**
  * AddComment controller tests
@@ -47,7 +47,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	parent::setUp();
 
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -79,7 +79,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 
 	/* Grab the comment and take a look at it */
 	list ($ret, $comments) = GalleryCommentHelper::fetchComments($this->_item->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -133,7 +133,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	/* Verify that there are no comments */
 	list ($ret, $counts) =
 	    GalleryCommentHelper::fetchCommentCounts(array($this->_item->getId()));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(empty($counts[$this->_item->getId()]));
@@ -159,7 +159,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	/* Verify that there are no comments */
 	list ($ret, $counts) =
 	    GalleryCommentHelper::fetchCommentCounts(array($this->_item->getId()));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(empty($counts[$this->_item->getId()]));
@@ -188,7 +188,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 
 	/* Grab the comment and take a look at it */
 	list ($ret, $comments) = GalleryCommentHelper::fetchComments($this->_item->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -227,18 +227,18 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 
     function testValidationPlugin() {
 	$ret = $this->_markPluginParametersForCleanup('module', 'comment');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'comment', 'comments.captcha', 1);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GalleryValidationPlugin', 'AddCommentTestValidation', 'AddCommentTestValidation',
 	    'modules/comment/test/phpunit/AddCommentControllerTest.class', 'commentTest', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markFactoryModuleForCleanup('commentTest');
@@ -247,7 +247,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	$this->_becomeGuestUser();
 	$ret = GalleryCoreApi::addUserPermission($this->_item->getId(),
 						 $gallery->getActiveUserId(), 'comment.add');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -265,10 +265,10 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
     }
 }
 
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryValidationPlugin.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryValidationPlugin.class');
 class AddCommentTestValidation extends GalleryValidationPlugin {
     function performValidation(&$form) {
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('form[error][AddCommentTestValidation]'), false);
     }
 }

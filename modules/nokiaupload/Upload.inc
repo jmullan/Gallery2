@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
  * @author Jerome Rannikko <jeromer@hotpop.com>
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/nokiaupload/classes/ImageUploadHelper.class');
+GalleryCoreApi::requireOnce('modules/nokiaupload/classes/ImageUploadHelper.class');
 
 /**
  * This controller implements the Nokia Image Uploader API's 'Upload' command.
@@ -45,7 +45,7 @@ class UploadController extends GalleryController {
 	$results['status'] = ImageUploadHelper::doUpload();
 	$results['error'] = array();
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -81,7 +81,7 @@ class UploadView extends GalleryView {
 	    $reply .= 'Free=' . $status['spaceleft'] . "\r\n";
 	} else {
 	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'nokiaupload');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		$reply .= "Upload failed.\r\n";
 	    } else {
 		$reply .= $module->translate('Upload failed.') . "\r\n";
@@ -93,7 +93,7 @@ class UploadView extends GalleryView {
 	header('Content-Length: ' . strlen($reply));
 	print $reply;
 
-	return GalleryStatus::success();
+	return null;
     }
 }
 ?>

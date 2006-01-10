@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 /**
  * require necessary classes
  */
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryValidationPlugin.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryValidationPlugin.class');
 
 /**
  * UserLogin controller tests
@@ -49,7 +49,7 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 
 	/* Create a new user */
 	list ($ret, $this->_user) = $this->_createRandomUser(null, 'password');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -58,7 +58,12 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	$this->_saveSession = $gallery->_session;
 	$gallery->_session = new GallerySession();
 	$ret = $gallery->_session->init();
-	if ($ret->isError()) {
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$ret = $gallery->_session->start();
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -100,7 +105,7 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
     function testEntityPassword() {
 	global $gallery;
 	list ($ret, $user) = $this->_createRandomUser(null, 'pass&word');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($user);
@@ -312,7 +317,7 @@ class UserLoginControllerTestPlugin extends GalleryValidationPlugin {
     }
 
     function performValidation(&$form) {
-	return array(GalleryStatus::success(), $this->_errors, $this->_continue);
+	return array(null, $this->_errors, $this->_continue);
     }
 }
 
@@ -340,6 +345,18 @@ class UserLoginControllerTestSession {
 
     function regenerateWasCalled() {
 	return $this->_regenerateWasCalled;
+    }
+
+    function getUserId() {
+	if (isset($this->_sessionData['core.id.activeUser'])) {
+	    return $this->_sessionData['core.id.activeUser'];
+	}
+
+	return null;
+    }
+
+    function setUserId($userId) {
+	$this->_sessionData['core.id.activeUser'] = $userId;
     }
 }
 ?>

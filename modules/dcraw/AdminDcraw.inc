@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 /**
  * Required classes
  */
-GalleryCoreApi::relativeRequireOnce('modules/dcraw/classes/DcrawToolkitHelper.class');
+GalleryCoreApi::requireOnce('modules/dcraw/classes/DcrawToolkitHelper.class');
 
 /**
  * @package Dcraw
@@ -41,7 +41,7 @@ class AdminDcrawController extends GalleryController {
      */
     function handleRequest($form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -54,7 +54,7 @@ class AdminDcrawController extends GalleryController {
 		$form['path'] = trim($form['path']);
 
 		list ($ret, $testResults, $version) = DcrawToolkitHelper::testBinary($form['path']);
-		if ($ret->isError()) {
+		if ($ret) {
 		    if ($ret->getErrorCode() & ERROR_BAD_PATH) {
 			$error[] = 'form[error][path][badPath]';
 		    } else {
@@ -80,17 +80,17 @@ class AdminDcrawController extends GalleryController {
 			       'version' => $version)
 			 as $key => $value) {
 		    $ret = GalleryCoreApi::setPluginParameter('module', 'dcraw', $key, $value);
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		}
 
 		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'dcraw');
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		list ($ret, $isActive) = $module->isActive();
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
@@ -120,7 +120,7 @@ class AdminDcrawController extends GalleryController {
 	$results['status'] = $status;
 	$results['error'] = $error;
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -142,7 +142,7 @@ class AdminDcrawView extends GalleryView {
 
 	    list ($ret, $form['path']) =
 		GalleryCoreApi::getPluginParameter('module', 'dcraw', 'path');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
@@ -159,7 +159,7 @@ class AdminDcrawView extends GalleryView {
 		$debugSnippet = $gallery->stopRecordingDebugSnippet();
 
 		$success = true;
-		if ($ret->isError()) {
+		if ($ret) {
 		    if ($ret->getErrorCode() & ERROR_BAD_PATH) {
 			$testResults = array();
 			$form['error']['path']['bad'] = 1;
@@ -184,11 +184,11 @@ class AdminDcrawView extends GalleryView {
 	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'dcraw');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	list ($ret, $isActive) = $module->isActive();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -205,7 +205,7 @@ class AdminDcrawView extends GalleryView {
 	$template->setVariable('AdminDcraw', $AdminDcraw);
 	$template->setVariable('controller', 'dcraw.AdminDcraw');
 
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/dcraw/templates/AdminDcraw.tpl'));
     }
 }

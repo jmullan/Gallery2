@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
  * @author Douglas Cau <douglas@cau.se>
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/core/AdminMaintenance.inc');
+GalleryCoreApi::requireOnce('modules/core/AdminMaintenance.inc');
 
 /**
  * This is a MaintenanceTask that will check the short style URL for a
@@ -57,24 +57,25 @@ class RewriteCheckConflictTask extends MaintenanceTask {
 	global $gallery;
 	$templateAdapter =& $gallery->getTemplateAdapter();
 	$urlGenerator =& $gallery->getUrlGenerator();
-	$platform = $gallery->getPlatform();
-	$baseDir = dirname(dirname(dirname(dirname(__FILE__))));
+	$platform =& $gallery->getPlatform();
+	$pluginBaseDirs = GalleryCoreApi::getPluginBaseDirs();
+	$baseDir = $pluginBaseDirs['base'];
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'rewrite');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	$message = $module->translate('Processing...');
 
 	$ret = $templateAdapter->updateProgressBar('', $message, '');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	list ($ret, $results) =
 	    $gallery->search('SELECT [Item::id] FROM [Item] ' .
 			     'ORDER BY [Item::id]');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
@@ -93,7 +94,7 @@ class RewriteCheckConflictTask extends MaintenanceTask {
 
 	    if ($platform->file_exists($baseDir . $path) && $path != ('/' . GALLERY_MAIN_PHP)) {
 		list ($ret, $item) = GalleryCoreApi::loadEntitiesById($result[0]);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 		$params = array('view' => 'core.ItemAdmin',
@@ -112,7 +113,7 @@ class RewriteCheckConflictTask extends MaintenanceTask {
 		$message = $module->translate(
 		    array('text' => 'Checking item %d of %d', 'arg1' => $i, 'arg2' => $total));
 		$ret = $templateAdapter->updateProgressBar($message, '', $i / $total);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 	    }
@@ -120,7 +121,7 @@ class RewriteCheckConflictTask extends MaintenanceTask {
 
 	$status[0] = $module->translate(array('text' => 'Checked %d items and found %d conflicts',
 					   'arg1' => $total, 'arg2' => $badPath));
-	return array(GalleryStatus::success(), true, $status);
+	return array(null, true, $status);
     }
 
 

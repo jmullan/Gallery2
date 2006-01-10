@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,19 +45,19 @@ class FastDownloadTest extends GalleryTestCase {
 
 	for ($i = 0; $i < 3; $i++) {
 	    list ($ret, $this->_item[$i]) = $this->_createRandomDataItem($this->_getRootId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $this->_markForCleanup($this->_item[$i]);
-	    
+
 	    foreach (array(DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
 			   DERIVATIVE_TYPE_IMAGE_RESIZE,
 			   DERIVATIVE_TYPE_IMAGE_PREFERRED) as $derivativeType) {
 		list ($ret, $this->_derivatives[$i][]) =
 		    $this->_createDerivative($this->_item[$i], $this->_item[$i]->getId(),
 					     $derivativeType);
-		if ($ret->isError()) {
+		if ($ret) {
 		    print $ret->getAsHtml();
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
@@ -70,7 +70,7 @@ class FastDownloadTest extends GalleryTestCase {
 	 * matters for permissions
 	 */
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -79,13 +79,13 @@ class FastDownloadTest extends GalleryTestCase {
 	list ($ret, $this->_derivatives[3][]) =
 	    $this->_createDerivative($this->_album, $this->_item[0]->getId(),
 				     DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
 
-    function testCreateFastDownloadFile() {
+    function testCreateFastDownloadFileForDerivative() {
 	global $gallery;
 	$bytesWritten = '';
 	$platform = new FastDownloadTestCreateFastDownloadPlatform($bytesWritten);
@@ -95,50 +95,103 @@ class FastDownloadTest extends GalleryTestCase {
 
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	
-	$ret = GalleryCoreApi::addUserPermission(
-            $this->_item[0]->getId(), $anonymousUserId, 'core.view', false);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = $this->_derivatives[0][0]->createFastDownloadFile(true);
-	if ($ret->isError()) {
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_item[0]->getId(), $anonymousUserId, 'core.view', false);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::createFastDownloadFile($this->_derivatives[0][0], true);
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$cachePath = GalleryDataCache::getCachePath(
-            array('type' => 'derivative-relative', 'itemId' => $this->_derivatives[0][0]->getId()));
+	    array('type' => 'derivative-relative', 'itemId' => $this->_derivatives[0][0]->getId()));
+	/* Use here another method to assemble the relative path to get a better test coverage */
+	$relativePath = 'cache' . $platform->getDirectorySeparator() . $cachePath;
 
 	$this->assertEquals(
-            sprintf('<?php function GalleryFastDownload() { ' .
+	    sprintf('<?php function GalleryFastDownload() { ' .
 		    'return $GLOBALS[\'gallery\']->fastDownload(\'%s\', \'%s\', ' .
 		    '\'Thu, 01 Jan 1970 00:00:01 GMT\', \'%s\', 50);} ?>',
-		    $cachePath,
+		    $relativePath,
 		    $this->_item[0]->getPathComponent(),
 		    $this->_derivatives[0][0]->getMimeType()),
-            $bytesWritten);
+	    $bytesWritten);
+    }
+
+    function testCreateFastDownloadFileForDataItem() {
+	global $gallery;
+	$bytesWritten = '';
+	$platform = new FastDownloadTestCreateFastDownloadPlatform($bytesWritten);
+	$platform->setStat(7, 50);	  /* content length */
+	$platform->setStat(9, 1);	  /* last mod date */
+	$gallery->setPlatform($platform);
+
+	list ($ret, $anonymousUserId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_item[0]->getId(), $anonymousUserId, 'core.viewSource', false);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::createFastDownloadFile($this->_item[0], true);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $path) = $this->_item[0]->fetchPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$relativePath = str_replace($gallery->getConfig('data.gallery.base'), '', $path);
+	
+	$this->assertEquals(
+	    sprintf('<?php function GalleryFastDownload() { ' .
+		    'return $GLOBALS[\'gallery\']->fastDownload(\'%s\', \'%s\', ' .
+		    '\'Thu, 01 Jan 1970 00:00:01 GMT\', \'%s\', 50);} ?>',
+		    $relativePath,
+		    $this->_item[0]->getPathComponent(),
+		    $this->_item[0]->getMimeType()),
+	    $bytesWritten);
+    }
+
+    function testMaliciousUrlComponent() {
+	global $gallery;
+
+	GalleryUtilities::putRequestVariable('fileName', 'bogus.jpg');
+	$ret = $gallery->fastDownload('/phpunit/cache', 'phpunit.jpg',
+	    'Thu, 01 Jan 1970 00:00:01 GMT', 'image/jpeg', 50);
+
+	$this->assert(!$ret, 'status');
     }
 
     /* Fake event that removes permissions that don't affect the guest user */
     function testRemoveIrrelevantPermission() {
 	global $gallery;
-	
+
 	list ($ret, $bits) = GalleryCoreApi::convertPermissionIdsToBits(
-            array('core.view', 'core.viewResizes', 'core.viewSource'));
-	if ($ret->isError()) {
+	    array('core.view', 'core.viewResizes', 'core.viewSource'));
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $adminGroupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$event = GalleryCoreApi::newEvent('Gallery::RemovePermission');
 	$event->setData(array('userId' => $gallery->getActiveUserId(),
 			      'groupId' => $adminGroupId,
@@ -147,9 +200,9 @@ class FastDownloadTest extends GalleryTestCase {
 	$buf = array();
 	$platform = new FastDownloadTestRemovePermissionPlatform($buf);
 	$gallery->setPlatform($platform);
-	
+
 	list ($ret, $response) = GalleryItemHelper_medium::handleEvent($event);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -162,19 +215,19 @@ class FastDownloadTest extends GalleryTestCase {
 
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$this->_testRemovePermission($anonymousUserId, null);
     }
 
     function testRemoveGroupPermission() {
 	global $gallery;
-	
+
 	list ($ret, $everybodyGroupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -202,10 +255,10 @@ class FastDownloadTest extends GalleryTestCase {
 
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$this->_testRemovePermission($anonymousUserId, null, 'newBits');
     }
 
@@ -219,16 +272,16 @@ class FastDownloadTest extends GalleryTestCase {
 	    $permissions  = array('core.view', 'core.viewResizes', 'core.viewSource');
 	    $permissions2 = array('core.view', 'core.viewResizes');
 	}
-	
+
 	list ($ret, $bits) = GalleryCoreApi::convertPermissionIdsToBits($permissions);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	list ($ret, $bits2) = GalleryCoreApi::convertPermissionIdsToBits($permissions2);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-		
+
 	$event = GalleryCoreApi::newEvent('Gallery::RemovePermission');
 	$event->setData(array('userId' => $userId,
 			      'groupId' => $groupId,
@@ -239,23 +292,27 @@ class FastDownloadTest extends GalleryTestCase {
 	$buf = array();
 	$platform = new FastDownloadTestRemovePermissionPlatform($buf);
 	$gallery->setPlatform($platform);
-	
+
 	list ($ret, $response) = GalleryItemHelper_medium::handleEvent($event);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals(5, count($buf['unlink']), '5 files should be deleted');
+	$this->assertEquals(6, count($buf['unlink']), '5 files should be deleted');
 
+	$ids = array();
 	for ($i = 0; $i < 2; $i++) {
 	    for ($j = 0; $j < 2; $j++) {
-		$expected[] = GalleryDataCache::getCachePath(
-		    array('type' => 'fast-download',
-			  'itemId' => $this->_derivatives[$j][$i]->getId()));
+		$ids[] = $this->_derivatives[$j][$i]->getId();
 	    }
 	}
+	$ids[] = $this->_derivatives[0][2]->getId();
+	$ids[] = $this->_item[0]->getId();
+	foreach ($ids as $id) {
 	$expected[] = GalleryDataCache::getCachePath(
-	    array('type' => 'fast-download', 'itemId' => $this->_derivatives[0][2]->getId()));
+		    array('type' => 'fast-download',
+			  'itemId' => $id));
+	}
 
 	$this->assertEquals($expected, $buf['unlink'], 'wrongfully deleted files');
     }
@@ -270,7 +327,7 @@ class FastDownloadTestCreateFastDownloadPlatform {
     function FastDownloadTestCreateFastDownloadPlatform(&$buf) {
 	$this->_buf =& $buf;
     }
-    
+
     function setStat($index, $value) {
 	$this->_stat[$index] = $value;
     }
@@ -299,6 +356,14 @@ class FastDownloadTestCreateFastDownloadPlatform {
 	$wouldblock = false;
 	return true;
     }
+
+    function realpath($path) {
+	return $path;
+    }
+
+    function getDirectorySeparator() {
+	return DIRECTORY_SEPARATOR;
+    }
 }
 
 /**
@@ -321,6 +386,10 @@ class FastDownloadTestRemovePermissionPlatform {
     function unlink($path) {
 	$this->_buf['unlink'][] = $path;
 	return true;
+    }
+
+    function getDirectorySeparator() {
+	return DIRECTORY_SEPARATOR;
     }
 }
 ?>

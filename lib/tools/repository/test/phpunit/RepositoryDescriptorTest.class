@@ -1,7 +1,7 @@
 <?php
 /*
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +24,9 @@
  * @author Jozef Selesi <selesi at gmail dot com>
  */
 
-GalleryCoreApi::relativeRequireOnce('lib/tools/repository/classes/RepositoryObject.class');
-GalleryCoreApi::relativeRequireOnce('lib/tools/repository/classes/RepositoryDescriptor.class');
-GalleryCoreApi::relativeRequireOnce(
+GalleryCoreApi::requireOnce('lib/tools/repository/classes/RepositoryObject.class');
+GalleryCoreApi::requireOnce('lib/tools/repository/classes/RepositoryDescriptor.class');
+GalleryCoreApi::requireOnce(
     'lib/tools/repository/test/phpunit/RepositoryTestTemplate.class');
 
 /**
@@ -111,7 +111,7 @@ class RepositoryDescriptorTest extends GalleryTestCase {
 	$descriptor->_outputDir = $this->_descriptorDir;
 
 	$ret = $descriptor->generate($this->_testModule);
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
 
@@ -126,7 +126,7 @@ class RepositoryDescriptorTest extends GalleryTestCase {
 	$descriptor->_outputDir = $this->_descriptorDir;
 
 	$ret = $descriptor->generate($this->_testModule);
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
 
@@ -154,7 +154,7 @@ class RepositoryDescriptorTest extends GalleryTestCase {
 	$descriptor->_outputDir = $this->_descriptorDir;
 
 	$ret = $descriptor->generate($this->_testModule);
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
 
@@ -186,7 +186,7 @@ class RepositoryDescriptorTest extends GalleryTestCase {
 	$descriptor->_outputDir = $this->_descriptorDir;
 
 	$ret = $descriptor->generate($this->_testModule);
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
 
@@ -250,7 +250,7 @@ class RepositoryDescriptorTestTranslator {
     }
 
     function translateDomain($domain, $string) {
-	return array(GalleryStatus::success(), sprintf(
+	return array(null, sprintf(
 	    '%s-%s-%s', $this->_languageCode, $domain, $string['text']));
     }
 }
@@ -271,18 +271,18 @@ class RepositoryDescriptorTestUtilities {
 
     function getFirstBytesFromFile($file, $bytes) {
 	return preg_match($this->_expectedFile, $file)
-	       ? array(GalleryStatus::success(), $this->_dateString)
-	       : array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+	       ? array(null, $this->_dateString)
+	       : array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 					    "Expected strings.raw in [$file]"),
 		       '');
     }
 
     function extractRevision($string) {
-	return array(GalleryStatus::success(), $this->_extractedRevision);
+	return array(null, $this->_extractedRevision);
     }
 
     function extractTimestamp($string) {
-	return array(GalleryStatus::success(), $this->_extractedTimestamp);
+	return array(null, $this->_extractedTimestamp);
     }
 }
 

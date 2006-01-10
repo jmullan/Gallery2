@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,27 +123,19 @@ fclose($fd);
  * Create our map
  */
 mkdir($modulePath . '/classes');
-mkdir($modulePath . '/classes/interfaces');
 mkdir($modulePath . '/classes/GalleryStorage');
-mkdir($modulePath . '/classes/GalleryStorage/DatabaseStorage');
-mkdir($modulePath . '/classes/GalleryStorage/DatabaseStorage/schema');
 
 $smarty->assign('makefileType', 'classes');
 $fd = safe_fopen("$modulePath/classes/GNUmakefile");
 fwrite($fd, $smarty->fetch(dirname(__FILE__) . '/GNUmakefile.tpl'));
 fclose($fd);
 
-$smarty->assign('makefileType', 'interfaces');
-$fd = safe_fopen("$modulePath/classes/interfaces/GNUmakefile");
+$smarty->assign('makefileType', 'GalleryStorage');
+$fd = safe_fopen("$modulePath/classes/GalleryStorage/GNUmakefile");
 fwrite($fd, $smarty->fetch(dirname(__FILE__) . '/GNUmakefile.tpl'));
 fclose($fd);
 
-$smarty->assign('makefileType', 'schema');
-$fd = safe_fopen("$modulePath/classes/GalleryStorage/DatabaseStorage/schema/GNUmakefile");
-fwrite($fd, $smarty->fetch(dirname(__FILE__) . '/GNUmakefile.tpl'));
-fclose($fd);
-
-$fd = safe_fopen("$modulePath/classes/${ucModuleId}Map.class");
+$fd = safe_fopen("$modulePath/classes/Maps.xml");
 fwrite($fd, $smarty->fetch(dirname(__FILE__) . '/map.tpl'));
 fclose($fd);
 
@@ -155,7 +147,7 @@ print "* * * * * * * * * * * * * * * * * * * * * * * * * *\n";
 print "Your module is ready!  You must build it by doing: \n";
 print "\n";
 print "  cd modules/$moduleId/classes \n";
-print "  make\n";
+print "  make && make clean\n";
 print "\n";
 print "Then you can go to the Site Admin -> Modules \n";
 print "page and install and activate your module!\n";

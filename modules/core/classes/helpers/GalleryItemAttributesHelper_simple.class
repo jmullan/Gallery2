@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,11 +24,6 @@
  * @package GalleryCore
  * @author Bharat Mediratta <bharat@menalto.com>
  */
-
-/**
- * Required classes
- */
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryItemAttributesMap.class');
 
 /**
  *
@@ -57,22 +52,24 @@ class GalleryItemAttributesHelper_simple {
 	    if (isset($lastViewed[$itemId])) {
 		if ($elapsed - $lastViewed[$itemId] < 86400) {
 		    /* They viewed it within the last day, so this doesn't count */
-		    return GalleryStatus::success();
+		    return null;
 		}
 	    }
 	    $lastViewed[$itemId] = $elapsed;
 	}
 
-	GalleryCoreApi::relativeRequireOnce(
-	    'modules/core/classes/GalleryStorage/DatabaseSqlFragment.class');
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/GalleryStorage/GallerySqlFragment.class');
 	$func = '= [GalleryItemAttributesMap::viewCount] + ?';
-	$ret = GalleryItemAttributesMap::updateMapEntry(array('itemId' => $itemId),
-		array('viewCount' => new DatabaseSqlFragment($func, $step)));
-	if ($ret->isError()) {
+	$ret = GalleryCoreApi::updateMapEntry(
+	    'GalleryItemAttributesMap',
+	    array('itemId' => $itemId),
+	    array('viewCount' => new GallerySqlFragment($func, $step)));
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 }
 ?>

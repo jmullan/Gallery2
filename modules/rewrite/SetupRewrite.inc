@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,11 +26,6 @@
  */
 
 /**
- * Required class
- */
-GalleryCoreApi::relativeRequireOnce('modules/rewrite/classes/RewriteHelper.class');
-
-/**
  * @package Rewrite
  * @subpackage UserInterface
  */
@@ -40,69 +35,77 @@ class SetupRewriteController extends GalleryController {
      * @see GalleryController::handleRequest()
      */
     function handleRequest(&$form) {
+	GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
 	global $gallery;
-	$platform = $gallery->getPlatform();
-
-	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
+	$platform =& $gallery->getPlatform();
 	$status = $error = array();
+	$results = array('redirect' => array('view' => 'core.SiteAdmin',
+					     'subView' => 'rewrite.SetupRewrite'));
 
-	if (isset($form['action']['test'])) {
-	    $redirect['view'] = 'core.SiteAdmin';
-	    $redirect['subView'] = 'rewrite.SetupRewrite';
-	} else if (isset($form['action']['force'])) {
-	    if (isset($form['force']['test1'])) {
-		$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
-		    'status', serialize(array('needOptions' => false, 'forced' => 1)));
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
+	if (isset($form['action']['testParser'])) {
+	    list ($ret, $rewriteParser) = RewriteHelper::getRewriteParser();
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    if (isset($form['force']['test2'])) {
-		$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
-		    'status', serialize(array('needOptions' => true, 'forced' => 1)));
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
+	    list ($ret, $error, $status) = $rewriteParser->handleTestResultsRequest($form);
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	} else if (isset($form['action']['adminParser'])) {
+	    list ($ret, $rewriteParser) = RewriteHelper::getRewriteParser();
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    $redirect['view'] = 'core.SiteAdmin';
-	    $redirect['subView'] = 'rewrite.SetupRewrite';
+	    list ($ret, $error, $status) = $rewriteParser->handleAdminParserRequest($form);
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	} else if (isset($form['action']['save']) && isset($form['parser'])) {
+	    if (empty($form['parser']) || !preg_match('/\w/', $form['parser'])) {
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    }
+	    
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
+	        'parserId', $form['parser']);
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    list ($ret, $rewriteParser) = RewriteHelper::getRewriteParser();
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    list ($ret, $code) = $rewriteParser->needsConfiguration();
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (!$code) {
+		$results['redirect']['subView'] = 'core.AdminModules';
+	    }
+
+	    $status['saved'] = 1;
 	} else if (isset($form['action']['done'])) {
-	    if (isset($form['force']['test1'])) {
-		$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
-		    'status', serialize(array('needOptions' => false, 'forced' => 1)));
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
+	    $results['redirect']['subView'] = 'core.AdminModules';
+	} else if (isset($form['action']['back'])) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'parserId', '');
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-
-	    if (isset($form['force']['test2'])) {
-		$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
-		    'status', serialize(array('needOptions' => true, 'forced' => 1)));
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-	    }
-
-	    $redirect['view'] = 'core.SiteAdmin';
-	    $redirect['subView'] = 'core.AdminModules';
 	}
 
-	if (!empty($redirect)) {
-	    $results['redirect'] = $redirect;
-	} else {
-	    $results['delegate']['view'] = 'core.SiteAdmin';
-	    $results['delegate']['subView'] = 'rewrite.SetupRewrite';
+	if (!empty($error)) {
+	    unset($results['redirect']);
+	    $results['delegate'] = array('view' => 'core.SiteAdmin',
+					 'subView' => 'rewrite.SetupRewrite');
 	}
-	$results['status'] = $status;
 	$results['error'] = $error;
+	$results['status'] = $status;
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -117,54 +120,75 @@ class SetupRewriteView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
-	$urlGenerator =& $gallery->getUrlGenerator();
+	$platform =& $gallery->getPlatform();
 	$SetupRewrite = array();
+
+	/* Make sure the module is not yet active */
+	list ($ret, $rewrite) = GalleryCoreApi::loadPlugin('module', 'rewrite');
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	list ($ret, $isActive) = $rewrite->isActive();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if ($isActive) {
+	    return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
+		'rewrite module is active'), null);
+	}
+
+    	GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
+	list ($ret, $rewriteParser) = RewriteHelper::getRewriteParser();
+	if ($ret && !($ret->getErrorCode() & ERROR_MISSING_VALUE)) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (isset($rewriteParser)) {
+	    /* Error handeling for defined (numeric) REWRITE_STATUS_* errors */
+	    $errors = array();
+	    if (isset($form['error'])) {
+		foreach ($form['error'] as $errno => $tmp) {
+		    if (is_numeric($errno)) {
+			list ($ret, $errors[]) = $rewriteParser->getErrorMessage($errno);
+		    }
+		}
+	    }
+	    if (!empty($errors)) {
+		$SetupRewrite['errors'] = $errors;
+	    }
+
+	    $ret = $rewriteParser->loadTestResultsTemplate($template, $form);
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    list ($ret, $SetupRewrite['needsConfiguration']) = $rewriteParser->needsConfiguration();
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    $ret = $rewriteParser->loadAdminParserTemplate($template, $form);
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	} else {
+	    $SetupRewrite['bootstrap'] = 1;
+	    $SetupRewrite['server'] = 'UNKNOWN';
+	    $serverTag = GalleryUtilities::getServerVar('SERVER_SOFTWARE');
+	    if (stristr($serverTag, 'apache') !== false) {
+		$SetupRewrite['server'] = 'APACHE';
+	    } else if (stristr($serverTag, 'iis') !== false) {
+		$SetupRewrite['server'] = 'IIS';
+	    }
+	}
 
 	if ($form['formName'] != 'SetupRewrite') {
 	    $form['formName'] = 'SetupRewrite';
 	}
 
-	$baseUrl = parse_url($urlGenerator->getCurrentUrlDir());
-	$SetupRewrite['customFile'] = dirname(__FILE__) . '/data/mod_rewrite/custom/.htaccess';
-	$SetupRewrite['customLine'] = 'RewriteBase ' . $baseUrl['path'] .
-	    'modules/rewrite/data/mod_rewrite/custom/';
-	$SetupRewrite['customFileNoOptions'] = dirname(__FILE__) .
-	    '/data/mod_rewrite_no_options/custom/.htaccess';
-	$SetupRewrite['customLineNoOptions'] = 'RewriteBase ' . $baseUrl['path'] .
-	    'modules/rewrite/data/mod_rewrite_no_options/custom/';
-
-	if ($baseUrl['path'] == '/gallery2') {
-	    $target = 'gallery2';
-	} else if ($baseUrl['path'] == '/gallery') {
-	    $target = 'gallery';
-	} else {
-	    $target = 'custom';
-	}
-	$SetupRewrite['test1'] = $urlGenerator->generateUrl(
-	    array('href' => 'modules/rewrite/data/mod_rewrite_no_options/'.
-		$target . '/Rewrite.txt'));
-	$SetupRewrite['test2'] = $urlGenerator->generateUrl(
-	    array('href' => 'modules/rewrite/data/mod_rewrite/'.
-		$target . '/Rewrite.txt'));
-
-	list ($ret, $SetupRewrite['htaccessPath']) = RewriteHelper::getHtaccessPath();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	list ($ret, $SetupRewrite['htaccessCode']) = RewriteHelper::checkFile();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	list ($ret, $SetupRewrite['apacheCode']) = RewriteHelper::checkModRewrite();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	$template->setVariable('SetupRewrite', $SetupRewrite);
 	$template->setVariable('controller', 'rewrite.SetupRewrite');
-
-	$template->javascript('lib/javascript/BlockToggle.js');
-	return array(GalleryStatus::success(),
+	return array(null,
 		array('body' => 'modules/rewrite/templates/SetupRewrite.tpl'));
     }
 }

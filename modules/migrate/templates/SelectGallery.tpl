@@ -32,8 +32,8 @@
      name="{g->formVar var="form[albumsPath]"}" value="{$form.albumsPath}"
       id='giFormPath' autocomplete="off"/>
     {g->autoComplete element="giFormPath"}
-      {g->url arg1="view=core.SimpleCallback" arg2="command=lookupDirectories" arg3="prefix=__VALUE__"
-        forJavascript="true"}
+      {g->url arg1="view=core.SimpleCallback" arg2="command=lookupDirectories"
+	      arg3="prefix=__VALUE__" htmlEntities=false}
     {/g->autoComplete}
 
     {if isset($form.error.albumsPath.missing)}

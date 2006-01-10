@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId(),
 							       array('orderBy' => 'orderWeight'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -52,7 +52,7 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'ItemAddPlugin', 'ItemAddControllerTestPluginSuccess',
 	    'ItemAddControllerTestPluginSuccess', $path, 'coreTest', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -60,7 +60,7 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'ItemAddPlugin', 'ItemAddControllerTestPluginContinue',
 	    'ItemAddControllerTestPluginContinue', $path, 'coreTest', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -68,7 +68,7 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'ItemAddPlugin', 'ItemAddControllerTestPluginFail', 'ItemAddControllerTestPluginFail',
 	    $path, 'coreTest', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -76,7 +76,7 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GalleryToolkit', 'ItemAddControllerTestToolkit', 'ItemAddControllerTestToolkit',
 	    $path, 'coreTest', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -86,7 +86,7 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::registerToolkitOperation(
 	    'ItemAddControllerTestToolkit', array('test/archive'), 'extract',
 	    array(), 'test-description');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -110,7 +110,7 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 
     function testHandleRequestDoneAdding() {
 	list ($ret, $item) = GalleryTestCase::_createRandomDataItem($this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -131,7 +131,7 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 
     function testHandleRequestWithOption() {
 	list ($ret, $item) = GalleryTestCase::_createRandomDataItem($this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -160,11 +160,11 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	list ($ret, $archive) = $this->_createRandomDataItem(
 	    $this->_album->getId(), 'test/archive',
 	    array('pathComponent' => 'foo.zip', 'title' => 'foo', 'summary' => 'hoho'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	list ($ret, $item) = GalleryTestCase::_createRandomDataItem($this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -199,13 +199,13 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('a warning'), $addedFiles[3]['warnings'], 'warning 4');
 
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_album);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(!in_array($archive->getId(), $childIds), 'archive item has been deleted');
 
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($addedFiles[1]['id']);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('blah', $item->getTitle(), 'title set with base filename');
@@ -236,10 +236,10 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 class ItemAddControllerTestPluginContinue {
     function handleRequest($form, &$item) {
 	if (!GalleryUtilities::isExactlyA($item, 'GalleryAlbumItem')) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
 	}
 
-	return array(GalleryStatus::success(), array(), array());
+	return array(null, array(), array());
     }
 }
 
@@ -251,12 +251,12 @@ class ItemAddControllerTestPluginContinue {
 class ItemAddControllerTestPluginSuccess {
     function handleRequest($form, &$item) {
 	if (!GalleryUtilities::isExactlyA($item, 'GalleryAlbumItem')) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
 	}
 
 	/* Pretend we just added item(s) that are already there */
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	$addedFiles = array();
@@ -264,7 +264,7 @@ class ItemAddControllerTestPluginSuccess {
 	    $addedFiles[] = array('fileName' => 'foo-' . $id, 'id' => $id, 'warnings' => array());
 	}
 
-	return array(GalleryStatus::success(), array(), array('addedFiles' => $addedFiles));
+	return array(null, array(), array('addedFiles' => $addedFiles));
     }
 }
 
@@ -276,9 +276,9 @@ class ItemAddControllerTestPluginSuccess {
 class ItemAddControllerTestPluginFail {
     function handleRequest($form, &$item) {
 	if (!GalleryUtilities::isExactlyA($item, 'GalleryAlbumItem')) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
 	}
-	return array(GalleryStatus::success(), array('failed'), array());
+	return array(null, array('failed'), array());
     }
 }
 
@@ -299,15 +299,15 @@ class ItemAddTestOption extends ItemAddOption {
 	    $warnings[$i] = array();
 	    $warnings[$i][] = 'a warning';
 	}
-	return array(GalleryStatus::success(), $errors, $warnings);
+	return array(null, $errors, $warnings);
     }
 
     function isAppropriate() {
-	return array(GalleryStatus::success(), true);
+	return array(null, true);
     }
 }
 
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryToolkit.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryToolkit.class');
 
 /**
  * Test toolkit
@@ -321,10 +321,11 @@ class ItemAddControllerTestToolkit extends GalleryToolkit {
     function performOperation($mimeType, $operationName, $sourceFilename,
 			      $destFilename, $parameters, $context=array()) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	if ($operationName != 'extract') {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+			 null, null);
 	}
 
 	$platform->copy(__FILE__, $destFilename . '/foo.ext');
@@ -332,7 +333,7 @@ class ItemAddControllerTestToolkit extends GalleryToolkit {
 	$platform->mkdir($destFilename . '/subdir');
 	$platform->copy(__FILE__, $destFilename . '/subdir/blah.ext');
 
-	return array(GalleryStatus::success(), $mimeType, $context);
+	return array(null, $mimeType, $context);
     }
 }
 

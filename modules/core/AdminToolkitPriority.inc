@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,23 +42,22 @@ class AdminToolkitPriorityController extends GalleryController {
 	global $gallery;
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$status = array();
 	if (isset($form['action']['save'])) {
-	    GalleryCoreApi::relativeRequireOnce(
-		'modules/core/classes/GalleryToolkitOperationMimeTypeMap.class');
 	    list ($ret, $list) = GalleryCoreApi::getRedundantToolkitPriorities();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    foreach ($form['priority'] as $priority => $toolkit) {
 		if ($priority != $list[$toolkit]) {
-		    $ret = GalleryToolkitOperationMimeTypeMap::updateMapEntry(
+		    $ret = GalleryCoreApi::updateMapEntry(
+			'GalleryToolkitOperationMimeTypeMap',
 			array('toolkitId' => $toolkit), array('priority' => $priority));
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		}
@@ -73,7 +72,7 @@ class AdminToolkitPriorityController extends GalleryController {
 	$results['status'] = $status;
 	$results['error'] = array();
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -92,7 +91,7 @@ class AdminToolkitPriorityView extends GalleryView {
 	global $gallery;
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -101,7 +100,7 @@ class AdminToolkitPriorityView extends GalleryView {
 	}
 
 	list ($ret, $list) = GalleryCoreApi::getRedundantToolkitPriorities();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	asort($list);
@@ -110,7 +109,7 @@ class AdminToolkitPriorityView extends GalleryView {
 	$template->setVariable('AdminToolkitPriority', $AdminToolkitPriority);
 	$template->setVariable('controller', 'core.AdminToolkitPriority');
 
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/core/templates/AdminToolkitPriority.tpl'));
     }
 }

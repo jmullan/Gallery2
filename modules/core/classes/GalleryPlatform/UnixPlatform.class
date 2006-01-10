@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 /**
  * Load required class
  */
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPlatform.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryPlatform.class', true);
 
 /**
  * An Unix version of the GalleryPlatform class
@@ -49,7 +49,7 @@ class UnixPlatform extends GalleryPlatform {
 	if (!isset($this->_beNice)) {
 	    list ($ret, $this->_beNice) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'exec.beNice');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		if ($gallery->getDebug()) {
 		    $gallery->debug('Unable to look up core.exec.beNice param');
 		}
@@ -88,7 +88,7 @@ class UnixPlatform extends GalleryPlatform {
 	    $gallery->debug("Executing: $command");
 	}
 	if (!isset($this->_umask)) {
-	    $this->_calculateUmaskAndFilePerms();
+	    $this->_loadPermissionPreferences();
 	}
 	$umask = umask($this->_umask);
 	$results = array();
@@ -98,7 +98,7 @@ class UnixPlatform extends GalleryPlatform {
 	if (!isset($this->_execExpectedStatus)) {
 	    list ($ret, $this->_execExpectedStatus) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'exec.expectedStatus');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		if ($gallery->getDebug()) {
 		    $gallery->debug('Unable to look up core.exec.expectedStatus param');
 		}

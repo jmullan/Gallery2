@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 /**
  * Load the parent class
  */
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryFileSystemEntity.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryFileSystemEntity.class');
 
 /**
  * Abstract base class for all objects in the Gallery
@@ -52,13 +52,7 @@ GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryFileSystemEntit
  * @package GalleryCore
  * @abstract
  */
-class GalleryItem_core extends GalleryFileSystemEntity {
-
-    /*
-     * ****************************************
-     *                 Members
-     * ****************************************
-     */
+class GalleryItem extends GalleryFileSystemEntity {
 
     /**
      * Can this item contain children?
@@ -69,10 +63,10 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * @g2   <required/>
      * @g2 </member>
      *
-     * @var int $_canContainChildren
-     * @access private
+     * @var int $canContainChildren
+     * @access public
      */
-    var $_canContainChildren;
+    var $canContainChildren;
 
     /**
      * The (long) description of this item
@@ -82,10 +76,10 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * @g2   <member-type>TEXT</member-type>
      * @g2 </member>
      *
-     * @var int $_description
-     * @access private
+     * @var int $description
+     * @access public
      */
-    var $_description;
+    var $description;
 
     /**
      * A set of keywords that describe this item
@@ -97,10 +91,10 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * @g2   <indexed/>
      * @g2 </member>
      *
-     * @var string $_keywords
-     * @access private
+     * @var string $keywords
+     * @access public
      */
-    var $_keywords;
+    var $keywords;
 
     /**
      * The id of the User who owns this item
@@ -112,10 +106,10 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * @g2   <required/>
      * @g2 </member>
      *
-     * @var int $_ownerId
-     * @access private
+     * @var int $ownerId
+     * @access public
      */
-    var $_ownerId;
+    var $ownerId;
 
     /**
      * The summary of this item
@@ -127,10 +121,10 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * @g2   <indexed/>
      * @g2 </member>
      *
-     * @var int $_summary
-     * @access private
+     * @var int $summary
+     * @access public
      */
-    var $_summary;
+    var $summary;
 
     /**
      * The (short) title of this item
@@ -142,10 +136,10 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * @g2   <indexed/>
      * @g2 </member>
      *
-     * @var int $_title
-     * @access private
+     * @var int $title
+     * @access public
      */
-    var $_title;
+    var $title;
 
     /**
      * Date and time marking the beginning of the view count
@@ -156,10 +150,10 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * @g2   <required/>
      * @g2 </member>
      *
-     * @var int $_viewedSinceTimestamp
-     * @access private
+     * @var int $viewedSinceTimestamp
+     * @access public
      */
-    var $_viewedSinceTimestamp;
+    var $viewedSinceTimestamp;
 
     /**
      * Date and time when this item was originally captured (i.e. photographed, filmed, etc)
@@ -170,16 +164,10 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * @g2   <required/>
      * @g2 </member>
      *
-     * @var int $_originationTimestamp
-     * @access private
+     * @var int $originationTimestamp
+     * @access public
      */
-    var $_originationTimestamp;
-
-    /*
-     * ****************************************
-     *                 Methods
-     * ****************************************
-     */
+    var $originationTimestamp;
 
     /**
      * Create a new instance of this GalleryEntity in the persistent store
@@ -196,20 +184,20 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	global $gallery;
 
 	if (!isset($path) || !isset($parentId)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
 	list($ret, $parent) = GalleryCoreApi::loadEntitiesById($parentId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	if (!$parent->getCanContainChildren()) {
-	    return GalleryStatus::error(ERROR_ILLEGAL_CHILD, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_ILLEGAL_CHILD, __FILE__, __LINE__);
 	}
 
 	$ret = parent::create($parentId, $path);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -225,7 +213,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	/* Origination timestamp defaults to now */
 	$this->setOriginationTimestamp(time());
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -241,7 +229,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	global $gallery;
 
 	$ret = parent::createRoot();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -254,7 +242,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	/* Origination timestamp defaults to now */
 	$this->setOriginationTimestamp(time());
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -264,17 +252,17 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	global $gallery;
 
 	$ret = parent::createLink($entity, $parentId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	list($ret, $parent) = GalleryCoreApi::loadEntitiesById($parentId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	if (!$parent->getCanContainChildren()) {
-	    return GalleryStatus::error(ERROR_ILLEGAL_CHILD, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_ILLEGAL_CHILD, __FILE__, __LINE__);
 	}
 
 	/* Record the owner */
@@ -293,7 +281,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	$this->setTitle($entity->getTitle());
 	$this->setOriginationTimestamp($entity->getOriginationTimestamp());
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -318,7 +306,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	';
 	list ($ret, $searchResults) =
 	    $gallery->search($query, array($this->getId()));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -331,20 +319,20 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	     * parent/child query each time.  Easier to just ignore the MISSING_OBJECT error
 	     * since we only care that it's gone.
 	     */
-	    if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+	    if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
 	/* Delete myself */
 	$ret = parent::delete();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Remove all my attributes */
 	$ret = GalleryCoreApi::removeItemAttributes($this->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret2->wrap(__FILE__, __LINE__);
 	}
 
@@ -352,7 +340,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	    $event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
 	    $event->setData(array('userId' => null, 'itemId' => $this->getParentId()));
 	    list ($ret) = GalleryCoreApi::postEvent($event);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
@@ -361,7 +349,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 					array($this->getParentId()));
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -374,7 +362,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
     function move($newParentId) {
 	$parentId = $this->getParentId();
 	$ret = parent::move($newParentId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -382,11 +370,11 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	$event->setData(array('userId' => null, 'itemId' =>
 	    empty($parentId) ? $this->getParentId() : array($parentId, $this->getParentId())));
 	list ($ret) = GalleryCoreApi::postEvent($event);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -400,27 +388,28 @@ class GalleryItem_core extends GalleryFileSystemEntity {
     function save() {
 	global $gallery;
 	$newItem = $this->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED);
-	$changedParent = $this->getModifiedFlag('parentId') != MEMBER_UNMODIFIED;
-	if ($changedParent && !empty($this->_persistentStatus->originalValue['parentId'])) {
-	    $oldParentId = $this->_persistentStatus->originalValue['parentId'];
+
+	$changedParent = $this->isModified('parentId');
+	if ($changedParent) {
+	    $oldParentId = $this->getOriginalValue('parentId');
 	}
 
 	/* Save myself */
 	$ret = parent::save();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	if ($newItem) {
 	    if ($this->getParentId()) {
 		$ret = GalleryCoreApi::copyPermissions($this->getId(), $this->getParentId());
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
 		list ($ret, $parentSequence) =
 		    GalleryCoreApi::fetchParentSequence($this->getParentId());
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 		$parentSequence[] = $this->getParentId();
@@ -430,7 +419,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 
 	    /* Create an empty attribute entry */
 	    $ret = GalleryCoreApi::createItemAttributes($this->getId(), $parentSequence);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
@@ -438,7 +427,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 		$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
 		$event->setData(array('userId' => null, 'itemId' => $this->getParentId()));
 		list ($ret) = GalleryCoreApi::postEvent($event);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
@@ -453,9 +442,78 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 					array($oldParentId));
 	}
 
-	return GalleryStatus::success();
+	return null;
+    }
+
+    /**
+     * @see GalleryEntity::getClassName()
+     */
+    function getClassName() {
+	return 'GalleryItem';
+    }
+
+    function getCanContainChildren() {
+	return $this->canContainChildren;
+    }
+
+    function setCanContainChildren($canContainChildren) {
+	$this->canContainChildren = $canContainChildren;
+    }
+
+    function getDescription() {
+	return $this->description;
+    }
+
+    function setDescription($description) {
+	$this->description = $description;
+    }
+
+    function getKeywords() {
+	return $this->keywords;
+    }
+
+    function setKeywords($keywords) {
+	$this->keywords = $keywords;
+    }
+
+    function getOwnerId() {
+	return $this->ownerId;
+    }
+
+    function setOwnerId($ownerId) {
+	$this->ownerId = $ownerId;
+    }
+
+    function getSummary() {
+	return $this->summary;
+    }
+
+    function setSummary($summary) {
+	$this->summary = $summary;
+    }
+
+    function getTitle() {
+	return $this->title;
+    }
+
+    function setTitle($title) {
+	$this->title = $title;
+    }
+
+    function getViewedSinceTimestamp() {
+	return $this->viewedSinceTimestamp;
+    }
+
+    function setViewedSinceTimestamp($viewedSinceTimestamp) {
+	$this->viewedSinceTimestamp = $viewedSinceTimestamp;
+    }
+
+    function getOriginationTimestamp() {
+	return $this->originationTimestamp;
+    }
+
+    function setOriginationTimestamp($originationTimestamp) {
+	$this->originationTimestamp = $originationTimestamp;
     }
 }
-
-include(dirname(__FILE__) . '/interfaces/GalleryItem.inc');
 ?>

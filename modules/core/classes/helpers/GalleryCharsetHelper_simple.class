@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,7 +130,7 @@ class GalleryCharsetHelper_simple {
 	} else if ($phpVm->function_exists('recode_string')) {
 	    return $phpVm->recode_string($sourceEncoding . '..UTF-8', $string);
 	} else {
-	    GalleryCoreApi::relativeRequireOnce(
+	    GalleryCoreApi::requireOnce(
 		'modules/core/classes/helpers/GalleryCharsetHelper_medium.class');
 	    $charset =& GalleryCharsetHelper_medium::getCharsetTable($sourceEncoding);
 	    if (isset($charset)) {
@@ -179,7 +179,7 @@ class GalleryCharsetHelper_simple {
 	} else if ($phpVm->function_exists('recode_string')) {
 	    return $phpVm->recode_string('UTF-8..' . $targetEncoding, $string);
 	}  else {
-	    GalleryCoreApi::relativeRequireOnce(
+	    GalleryCoreApi::requireOnce(
 		'modules/core/classes/helpers/GalleryCharsetHelper_medium.class');
 	    $sourceCharset =& GalleryCharsetHelper_medium::getCharsetTable($targetEncoding);
 	    if (isset($sourceCharset)) {

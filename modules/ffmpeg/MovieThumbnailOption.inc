@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,14 +40,14 @@ class MovieThumbnailOption extends ItemAddOption {
     function isAppropriate() {
 	list ($ret, $useWatermark) =
 	    GalleryCoreApi::getPluginParameter('module', 'ffmpeg', 'useWatermark');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation('image/jpeg', 'composite');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	return array(GalleryStatus::success(), $useWatermark && isset($toolkit));
+	return array(null, $useWatermark && isset($toolkit));
     }
 
     /**
@@ -63,7 +63,7 @@ class MovieThumbnailOption extends ItemAddOption {
 	}
 	if (!empty($movieIds)) {
 	    list ($ret, $thumbTable) = GalleryCoreApi::fetchThumbnailsByItemIds($movieIds);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    foreach ($thumbTable as $itemId => $thumbnail) {
@@ -71,10 +71,10 @@ class MovieThumbnailOption extends ItemAddOption {
 	    }
 	}
 	if (empty($thumbIds)) {
-	    return array(GalleryStatus::success(), $errors, $warnings);
+	    return array(null, $errors, $warnings);
 	}
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($thumbIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
@@ -89,18 +89,18 @@ class MovieThumbnailOption extends ItemAddOption {
 	    $thumbnail->setDerivativeOperations($operations);
 
 	    $ret = $thumbnail->save();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		GalleryCoreApi::releaseLocks($lockId);
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	}
 
 	$ret = GalleryCoreApi::releaseLocks($lockId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
-	return array(GalleryStatus::success(), $errors, $warnings);
+	return array(null, $errors, $warnings);
     }
 }
 ?>

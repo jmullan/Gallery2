@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,8 @@
 /**
  * Load required classes
  */
-GalleryCoreApi::relativeRequireOnce('modules/watermark/classes/WatermarkHelper.class');
-GalleryCoreApi::relativeRequireOnce('modules/watermark/classes/WatermarkImage.class');
+GalleryCoreApi::requireOnce('modules/watermark/classes/WatermarkHelper.class');
+GalleryCoreApi::requireOnce('modules/watermark/classes/WatermarkImage.class');
 
 /**
  * WatermarkSiteAdminEdit controller tests
@@ -49,7 +49,7 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 	parent::setUp();
 
 	list ($ret, $this->_user) = $this->_createUser();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -59,20 +59,20 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 	/* Create a watermark */
 	$watermark = new WatermarkImage();
 	$ret = $watermark->create(__FILE__, 'test/file', 'phpunit_' . rand() . '.gif');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus(__FILE__, __LINE__);
 	}
 
 	$ret = $watermark->save();
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus(__FILE__, __LINE__);
 	}
 
 	$ret = GalleryCoreApi::addUserPermission(
 	    $watermark->getId(), $this->_user->getId(), 'core.all');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus(__FILE__, __LINE__);
 	}
@@ -99,7 +99,7 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 
 	// Verify the watermark
 	list ($ret, $this->_watermark) = $this->_watermark->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -128,7 +128,7 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 
 	// Verify the watermark
 	list ($ret, $this->_watermark) = $this->_watermark->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -155,7 +155,7 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 
 	// Verify the watermark
 	list ($ret, $this->_watermark) = $this->_watermark->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -175,7 +175,7 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 
 	// Verify the watermark
 	list ($ret, $this->_watermark) = $this->_watermark->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -199,7 +199,7 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 
 	// Verify the watermark
 	list ($ret, $this->_watermark) = $this->_watermark->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 

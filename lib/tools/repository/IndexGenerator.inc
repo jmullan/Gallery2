@@ -1,7 +1,7 @@
 <?php
 /*
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +20,9 @@
  * $Id$
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryRepositoryUtilities.class');
-GalleryCoreApi::relativeRequireOnce('lib/tools/repository/classes/RepositoryObject.class');
-GalleryCoreApi::relativeRequireOnce('lib/tools/repository/classes/RepositoryIndex.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryRepositoryUtilities.class');
+GalleryCoreApi::requireOnce('lib/tools/repository/classes/RepositoryObject.class');
+GalleryCoreApi::requireOnce('lib/tools/repository/classes/RepositoryIndex.class');
 
 /**
  * Controller for the plugin packaging page.
@@ -49,27 +49,27 @@ class IndexGeneratorControllerAndView extends RepositoryControllerAndView {
 	$repositoryDir = $gallery->getConfig('repository.path');
 
 	$ret = $index->init($repositoryDir);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	list ($ret, $pluginCounts) = $index->generate();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$viewData = array('moduleCount' => $pluginCounts['modules'],
 			  'themeCount' => $pluginCounts['themes'],
 			  'outputDir' => $repositoryDir,
-			  'browseRepositoryLink' => $urlGenerator->generateUrl(array(
-			  'controller' => 'RepositoryManager', 'action' => 'browse')));
+			  'browseRepositoryLink' => $urlGenerator->generateUrl(
+			      array('controller' => 'RepositoryManager', 'action' => 'browse')));
 
 	$ret = $this->showView('IndexGenerationResults', $viewData);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 }
 ?>

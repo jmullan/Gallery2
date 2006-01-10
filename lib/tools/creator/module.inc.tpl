@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,14 +48,6 @@ class {$ucModuleId}Module extends GalleryModule {ldelim}
     {rdelim}
 
     /**
-     * @see GalleryModule::autoConfigure
-     */
-    function autoConfigure() {ldelim}
-	/* We don't require any special configuration */
-	return array(GalleryStatus::success(), true);
-    {rdelim}
-
-    /**
      * @see GalleryModule::getItemLinks()
      */
     function getItemLinks($items, $wantsDetailedLinks, $permissions) {ldelim}
@@ -67,7 +59,7 @@ class {$ucModuleId}Module extends GalleryModule {ldelim}
 		array('text' => $this->translate('{$moduleName}'), 'params' => $params);
 	{rdelim}
 
-	return array(GalleryStatus::success(), $links);
+	return array(null, $links);
     {rdelim}
 {rdelim}
 ?>

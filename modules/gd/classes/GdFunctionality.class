@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ class GdFunctionality {
 	phpinfo($section);
 	$phpinfo = ob_get_contents();
 	ob_end_clean();
-	return array(GalleryStatus::success(), $phpinfo);
+	return array(null, $phpinfo);
     }
 
     /**
@@ -58,7 +58,7 @@ class GdFunctionality {
      */
     function tempnam($tmpDir, $prefix) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	return $platform->tempnam($tmpDir, $prefix);
     }
 
@@ -70,7 +70,7 @@ class GdFunctionality {
      */
     function copy($src, $dest) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	return $platform->copy($src, $dest);
     }
 
@@ -82,7 +82,7 @@ class GdFunctionality {
      */
     function unlink($file) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	return $platform->unlink($file);
     }
 
@@ -94,7 +94,7 @@ class GdFunctionality {
      */
     function filesize($file) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	return $platform->filesize($file);
     }
 
@@ -103,10 +103,10 @@ class GdFunctionality {
      * @param string file path
      * @return boolean true on success
      */
-    function setFilePermissions($file) {
+    function chmod($file) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
-	return $platform->setFilePermissions($file);
+	$platform =& $gallery->getPlatform();
+	return $platform->chmod($file);
     }
 
     /**
@@ -141,10 +141,10 @@ class GdFunctionality {
      */
     function gd_info() {
 	if (!function_exists('gd_info')) {
-	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
 	}
 	$info = @gd_info();
-	return array(GalleryStatus::success(), $info);
+	return array(null, $info);
     }
 
     /**
@@ -154,7 +154,7 @@ class GdFunctionality {
      */
     function getImageSize($filename) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	return $platform->getImageSize($filename);
     }
 
@@ -170,10 +170,10 @@ class GdFunctionality {
     function imageCreate($width, $height) {
 	$res = @imageCreate($width, $height);
 	if (!$res) {
-	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
+	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
 					      __FILE__, __LINE__), null);
 	}
-	return array(GalleryStatus::success(), $res);
+	return array(null, $res);
     }
 
     /**
@@ -195,14 +195,14 @@ class GdFunctionality {
      */
     function imageCreateTruecolor($width, $height) {
 	if (!function_exists('imageCreateTruecolor')) {
-	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
+	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
 					      __FILE__, __LINE__), null);
 	}
 	$res = @imageCreateTruecolor($width, $height);
 	if (!$res) {
-	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
 	}
-	return array(GalleryStatus::success(), $res);
+	return array(null, $res);
     }
 
     /**
@@ -212,7 +212,7 @@ class GdFunctionality {
      */
     function isValidFile($filename) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	if (!$platform->file_exists($filename)
 	      || !$platform->is_file($filename)
 	      || !$platform->is_readable($filename)) {
@@ -230,13 +230,13 @@ class GdFunctionality {
     function checkResource($res, $filename, $file, $line) {
 	if (!$res) {
 	    if (!$this->isValidFile($filename)) {
-		return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_PLATFORM_FAILURE,
+		return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_PLATFORM_FAILURE,
 						  $file, $line), null);
 	    }
-	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_FILE_TYPE,
+	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_FILE_TYPE,
 					      $file, $line), null);
 	}
-	return array(GalleryStatus::success(), $res);
+	return array(null, $res);
     }
 
     /**
@@ -251,16 +251,16 @@ class GdFunctionality {
      */
     function imageCreateFromGif($filename) {
 	if (!function_exists('imageCreateFromGif')) {
-	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
+	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
 					      __FILE__, __LINE__), null);
 	}
 	$res = @imageCreateFromGif($filename);
 	list ($ret, $resource) = $this->checkResource($res, $filename, __FILE__, __LINE__);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $resource);
+	return array(null, $resource);
     }
 
     /**
@@ -349,14 +349,14 @@ class GdFunctionality {
      */
     function imageGif($res, $filename) {
 	if (!function_exists('imageGif')) {
-	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
 					__FILE__, __LINE__);
 	}
 	$result = @imageGif($res, $filename);
 	if ($result) {
-	    return GalleryStatus::success();
+	    return null;
 	} else {
-	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
 	}
     }
 
@@ -371,14 +371,14 @@ class GdFunctionality {
      */
     function imageJpeg($res, $filename, $quality) {
 	if (!function_exists('imageJpeg')) {
-	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
 					__FILE__, __LINE__);
 	}
 	$result = @imageJpeg($res, $filename, $quality);
 	if ($result) {
-	    return GalleryStatus::success();
+	    return null;
 	} else {
-	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
 	}
     }
 
@@ -393,14 +393,14 @@ class GdFunctionality {
      */
     function imagePng($res, $filename) {
 	if (!function_exists('imagePng')) {
-	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
 					__FILE__, __LINE__);
 	}
 	$result = @imagePng($res, $filename);
 	if ($result) {
-	    return GalleryStatus::success();
+	    return null;
 	} else {
-	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
 	}
     }
 
@@ -415,14 +415,14 @@ class GdFunctionality {
      */
     function imageWbmp($res, $filename) {
 	if (!function_exists('imageWbmp')) {
-	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
 					__FILE__, __LINE__);
 	}
 	$result = @imageWbmp($res, $filename);
 	if ($result) {
-	    return GalleryStatus::success();
+	    return null;
 	} else {
-	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
 	}
     }
 
@@ -436,14 +436,14 @@ class GdFunctionality {
      */
     function imageXbm($res, $filename) {
 	if (!function_exists('imageXbm')) {
-	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
 					__FILE__, __LINE__);
 	}
 	$result = @imageXbm($res, $filename);
 	if ($result) {
-	    return GalleryStatus::success();
+	    return null;
 	} else {
-	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
 	}
     }
 
@@ -459,14 +459,14 @@ class GdFunctionality {
     function imageCopyResampled(
 	    $dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH) {
 	if (!function_exists('imageCopyResampled')) {
-	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
 					__FILE__, __LINE__);
 	}
 	$result = @imageCopyResampled($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH);
 	if ($result) {
-	    return GalleryStatus::success();
+	    return null;
 	} else {
-	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
 	}
     }
 
@@ -481,9 +481,9 @@ class GdFunctionality {
     function imageCopyResized($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH) {
 	$result = @imageCopyResized($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH);
 	if ($result) {
-	    return GalleryStatus::success();
+	    return null;
 	} else {
-	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
 	}
     }
 
@@ -498,9 +498,9 @@ class GdFunctionality {
     function imageCopyMerge($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $srcW, $srcH, $pct) {
 	$result = @imageCopyMerge($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $srcW, $srcH, $pct);
 	if ($result) {
-	    return GalleryStatus::success();
+	    return null;
 	} else {
-	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
 	}
     }
 
@@ -515,9 +515,9 @@ class GdFunctionality {
     function imageCopy($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $srcW, $srcH) {
 	$result = @imageCopy($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $srcW, $srcH);
 	if ($result) {
-	    return GalleryStatus::success();
+	    return null;
 	} else {
-	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
 	}
     }
 
@@ -527,7 +527,7 @@ class GdFunctionality {
      * @return int the width of the image
      */
     function imageSx($res) {
-	return array(GalleryStatus::success(), @imageSx($res));
+	return array(null, @imageSx($res));
     }
 
     /**
@@ -536,7 +536,7 @@ class GdFunctionality {
      * @return int the height of the image
      */
     function imageSy($res) {
-	return array(GalleryStatus::success(), @imageSy($res));
+	return array(null, @imageSy($res));
     }
 
     /**
@@ -550,14 +550,14 @@ class GdFunctionality {
      */
     function imageRotate($srcRes, $angle, $bgdColor) {
 	if (!function_exists('imageRotate')) {
-	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
+	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
 					      __FILE__, __LINE__), null);
 	}
 	$res = @imageRotate($srcRes, $angle, $bgdColor);
 	if ($res) {
-	    return array(GalleryStatus::success(), $res);
+	    return array(null, $res);
 	} else {
-	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
 	}
     }
 }

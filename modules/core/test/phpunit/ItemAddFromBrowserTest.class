@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,14 +41,14 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 	parent::setUp();
 
 	list ($ret, $this->_rootAlbum) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($this->_rootAlbum);
 
 	list ($ret, $this->_lockIds) = GalleryCoreApi::acquireReadLock($this->_rootAlbum->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -56,7 +56,7 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 
     function tearDown() {
 	$ret = GalleryCoreApi::releaseLocks($this->_lockIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -65,7 +65,7 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 
     function testAddChildrenFromBrowser() {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][addFromBrowser]', 1);
@@ -83,7 +83,7 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 
 	    GalleryUtilities::putRequestVariable('form[name][' . $i . ']', $file);
 	    list ($ret, $mimeType) = GalleryCoreApi::getMimeType($fullPath);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    GalleryUtilities::putRequestVariable('form[type][' . $i . ']', $mimeType);
@@ -114,7 +114,7 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 
 	/* Verify item attributes (like order weight) */
 	list ($ret, $itemIds) = GalleryCoreApi::fetchChildItemIds($this->_rootAlbum);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(4, count($itemIds), 'child count');
@@ -122,13 +122,13 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 	$seenWeights = array();
 	foreach ($ids as $id) {
 	    list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCount($id);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $this->assertEquals(0, $viewCount);
 
 	    list ($ret, $orderWeight) = GalleryCoreApi::fetchItemOrderWeight($id);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $this->assert(!isset($seenWeights[$orderWeight]), 'Seen this weight before');
@@ -136,7 +136,7 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 	}
 
 	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($ids);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -155,7 +155,7 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 
     function testAddUnknownChildFromBrowser() {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][addFromBrowser]', 1);
@@ -178,19 +178,19 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 
 	/* Verify item attributes */
 	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($this->_rootAlbum);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(1, count($ids), 'child count');
 
 	list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCount($ids[0]);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(0, $viewCount);
 
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($ids[0]);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('a caption', $item->getTitle(), 'title');
@@ -200,7 +200,7 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 
     function testAddWithEmptyTitle() {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][addFromBrowser]', 1);
@@ -224,13 +224,13 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 
 	/* Verify item attributes */
 	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($this->_rootAlbum);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(1, count($ids), 'child count');
 
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($ids[0]);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(null, $item->getTitle(), 'title');
@@ -240,7 +240,7 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 
     function testAddWithSpaces() {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	$name = basename(__FILE__);
 	GalleryUtilities::putRequestVariable('form[action][addFromBrowser]', 1);
@@ -261,19 +261,19 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 	$this->assert(isset($results[1]['addedFiles'][0]['id']), 'Id is not set');
 
 	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($this->_rootAlbum);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(1, count($ids), 'child count');
 
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($ids[0]);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals($name, $item->getPathComponent(), 'path component');
 
 	list ($ret, $path) = $item->fetchPath();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert($platform->is_file($path), "file '$path'");

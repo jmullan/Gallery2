@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ class CommentSiteAdminController extends GalleryController {
      */
     function handleRequest($form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -50,13 +50,13 @@ class CommentSiteAdminController extends GalleryController {
 	    if (empty($error)) {
 		$ret = GalleryCoreApi::setPluginParameter('module', 'comment',
 							  'comments.show', $form['show']);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		foreach (array('captcha', 'latest') as $key) {
 		    $ret = GalleryCoreApi::setPluginParameter('module', 'comment',
 			'comments.' . $key, (isset($form[$key]) && $form[$key]) ? 1 : 0);
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		}
@@ -71,7 +71,7 @@ class CommentSiteAdminController extends GalleryController {
 	$results['status'] = $status;
 	$results['error'] = $error;
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -90,7 +90,7 @@ class CommentSiteAdminView extends GalleryView {
 	    foreach (array('latest', 'show', 'captcha') as $key) {
 		list ($ret, $value) =
 		    GalleryCoreApi::getPluginParameter('module', 'comment', 'comments.' . $key);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		$form[$key] = $value;
@@ -105,13 +105,13 @@ class CommentSiteAdminView extends GalleryView {
 
 	list ($ret, $pluginInstances) =
 	    GalleryCoreApi::getAllFactoryImplementationIds('GalleryValidationPlugin');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$form['canValidate'] = !empty($pluginInstances);
 
 	$template->setVariable('controller', 'comment.CommentSiteAdmin');
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/comment/templates/CommentSiteAdmin.tpl'));
     }
 }

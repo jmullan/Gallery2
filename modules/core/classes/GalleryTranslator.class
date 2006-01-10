@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,9 +47,17 @@ class GalleryTranslator {
     var $_boundDomains;
 
     /**
+     * Currently selected locale
+     *
+     * @var string $_languageCode
+     * @access private
+     */
+    var $_languageCode;
+
+    /**
      * Does the active language read right-to-left?
      *
-     * @var array $_isRightToLeft
+     * @var boolean $_isRightToLeft
      * @access private
      */
     var $_isRightToLeft;
@@ -126,10 +134,10 @@ class GalleryTranslator {
 	    $defaultCountry['de'] = 'DE';
 
 	    /* Spanish */
-	    $supportedLanguages['es']['ES']['description'] = 'Espa&#241;ol (ES)';
+	    $supportedLanguages['es']['ES']['description'] = 'Espa&#241;ol';
 	    $supportedLanguages['es']['MX']['description'] = 'Espa&#241;ol (MX)';
 	    $supportedLanguages['es']['AR']['description'] = 'Espa&#241;ol (AR)';
-	    $defaultCountry['es'] = 'MX';
+	    $defaultCountry['es'] = 'ES';
 
 	    /* Basque */
 	    $supportedLanguages['eu']['ES']['description'] = 'Euskara';
@@ -177,7 +185,7 @@ class GalleryTranslator {
 
 	    /* Portuguese */
 	    $supportedLanguages['pt']['BR']['description'] = 'Portugu&#234;s Brasileiro';
-	    $supportedLanguages['pt']['PT']['description'] = 'Portugu&#234;s (PT)';
+	    $supportedLanguages['pt']['PT']['description'] = 'Portugu&#234;s';
 	    $defaultCountry['pt'] = 'BR';
 
 	    /* Slovenian */
@@ -259,11 +267,31 @@ class GalleryTranslator {
      * Initialize the translator with the specified language code hint
      *
      * @param string the language code hint (eg. 'en_US' or 'zh_CN')
-     * @return object GalleryStatus a status code
+     * @param boolean [optional] true if we should not use the database
+     * @return array object GalleryStatus a status code
+     *               string language code
      */
-    function init($languageCode=null) {
-	if (empty($languageCode)) {
-	    $languageCode = GalleryTranslator::getLanguageCodeFromRequest();
+    function init($languageCode=null, $dontUseDatabase=false) {
+	if (empty($languageCode) && !$dontUseDatabase) {
+	    list ($ret, $useBrowserPref) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'language.useBrowserPref');
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if ($useBrowserPref) {
+		/* Check the user-agent's preferences */
+		$languageCode = GalleryTranslator::getLanguageCodeFromRequest();
+	    }
+
+	    if (empty($languageCode)) {
+		/* Use the site-wide default language */
+		list ($ret, $languageCode) =
+		    GalleryCoreApi::getPluginParameter('module', 'core', 'default.language');
+		if ($ret) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
 	}
 
 	list ($languageCode, $data) = GalleryTranslator::getSupportedLanguageCode($languageCode);
@@ -286,7 +314,8 @@ class GalleryTranslator {
 	    header('Content-Type: text/html; charset=UTF-8');
 	}
 
-	return GalleryStatus::success();
+	$this->_languageCode = $languageCode;
+	return array(null, $languageCode);
     }
 
     /**
@@ -381,8 +410,7 @@ class GalleryTranslator {
 	    }
 	}
 
-	/* Fall back to English (US) */
-	return 'en_US';
+	return null;
     }
 
     /**
@@ -415,18 +443,17 @@ class GalleryTranslator {
 	/* Validate our parameters */
 	if (!(isset($data['text']) ||
 	      (isset($data['one']) && isset($data['many']) && isset($data['count'])))) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
 			 null);
 	}
 
-	$platform = $gallery->getPlatform();
-	if (function_exists('dgettext')) {
+	if (function_exists('dgettext') && $this->_languageCode != 'en_US') {
 	    if (isset($domain) && !isset($this->_boundDomains[$domain])) {
+		$platform =& $gallery->getPlatform();
 		list ($componentType, $componentName) = split('_', $domain);
 		$basePath = sprintf('%s/%s/%s/locale',
 				    $platform->realpath(dirname(__FILE__) . '/../../..'),
-				    $componentType,
-				    $componentName);
+				    $componentType, $componentName);
 		if ($gallery->getDebug()) {
 		    $gallery->debug("Binding text domain: $domain -> $basePath");
 		}
@@ -473,16 +500,17 @@ class GalleryTranslator {
 		$localized = GalleryCoreApi::convertToUtf8($localized);
 	    }
 	} else {
-	    /*
-	     * The server doesn't have gettext, so fake it using the source of
-	     * the message (which is almost definitely in US English)
-	     */
+	    /* en_US is selected or the server doesn't have gettext */
 	    if (isset($data['text'])) {
 		$localized = $data['text'];
 	    } else if ($data['count'] == 1) {
 		$localized = $data['one'];
 	    } else {
 		$localized = $data['many'];
+	    }
+	    /* Strip out comment text used to assist translators */
+	    if (substr($localized, -3) == '-->' && $i = strpos($localized, ' <!--')) {
+		$localized = substr($localized, 0, $i);
 	    }
 	}
 
@@ -494,7 +522,7 @@ class GalleryTranslator {
 
 	    /* Catch runaways */
 	    if ($i > 100) {
-		return array(GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_UNKNOWN, __FILE__, __LINE__), null);
 	    }
 	}
 
@@ -513,7 +541,7 @@ class GalleryTranslator {
 	 */
 	//$localized = "<font size=1 color=#C33>$domain:</font>$localized";
 
-	return array(GalleryStatus::success(), $localized);
+	return array(null, $localized);
     }
 }
 ?>

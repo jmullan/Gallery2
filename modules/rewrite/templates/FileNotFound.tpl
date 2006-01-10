@@ -6,8 +6,5 @@
  *}
 <div class="gbBlock">
   <h2> {g->text text="Error: 404 File Not Found"} </h2>
-
-  <p class="giDescription">
-    {g->text text="The page you requested does not exist"}
-  </p>
+  {$FileNotFound}
 </div>

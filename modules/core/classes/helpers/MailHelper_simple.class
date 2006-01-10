@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ class MailHelper_simple {
     function sendTemplatedEmail($file, $data, $from, $to, $subject, $headers='') {
 	global $gallery;
 
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTemplate.class');
+	GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplate.class');
 	$template = new GalleryTemplate(dirname(__FILE__) . '/../../../..');
 
 	/* Set the smarty variables from the data array */
@@ -60,7 +60,7 @@ class MailHelper_simple {
 	$template->setVariable('l10Domain', 'modules_core');
 
 	list($ret, $emailText) = $template->fetch('gallery:' . $file);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -68,7 +68,7 @@ class MailHelper_simple {
 	if (empty($from)) {
 	    list ($ret, $smtpFrom) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'smtp.from');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
@@ -94,16 +94,16 @@ class MailHelper_simple {
 	    $headers = "Content-Type: text/plain; charset=\"utf-8\"\r\n" . $headers;
 	}
 
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	foreach(explode(',', $to) as $mailTo) {
 	    $success = $platform->mail($mailTo, $subject, $emailText, $headers);
 	    if (!$success) {
-		return GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__,
+		return GalleryCoreApi::error(ERROR_UNKNOWN, __FILE__, __LINE__,
 		    'Could not send mail to ' . $mailTo);
 	    }
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 }
 ?>

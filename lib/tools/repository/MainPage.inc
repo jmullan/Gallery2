@@ -1,7 +1,7 @@
 <?php
 /*
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ class MainPageControllerAndView extends RepositoryControllerAndView {
 
 	/* Make sure logged in user is an administrator. */
 	list ($ret, $data['isSiteAdmin']) = GalleryCoreApi::isUserInSiteAdminGroup();
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return;
 	}
@@ -60,10 +60,10 @@ class MainPageControllerAndView extends RepositoryControllerAndView {
 	    'controller' => 'RepositoryManager', 'action' => 'browse'));
 
 	$ret = $this->showView('MainPage', $data);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	return GalleryStatus::success();
+	return null;
     }
 }
 ?>

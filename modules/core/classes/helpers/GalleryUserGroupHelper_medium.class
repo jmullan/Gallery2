@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ class GalleryUserGroupHelper_medium {
     function addUserToGroup($userId, $groupId) {
 	global $gallery;
 	if (empty($userId) || empty($groupId)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
 	$userId = (int) $userId;
@@ -52,17 +52,17 @@ class GalleryUserGroupHelper_medium {
 
 	/* Is the user already in the group? */
 	list ($ret, $inGroup) = GalleryCoreApi::isUserInGroup($userId, $groupId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	if ($inGroup) {
-	    return GalleryStatus::success();
+	    return null;
 	}
 
 	/* Add a new entry in our groups table to represent this relationship. */
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryUserGroupMap.class');
-	$ret = GalleryUserGroupMap::addMapEntry(array('userId' => $userId, 'groupId' => $groupId));
-	if ($ret->isError()) {
+	$ret = GalleryCoreApi::addMapEntry(
+	    'GalleryUserGroupMap', array('userId' => $userId, 'groupId' => $groupId));
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	GalleryDataCache::remove("GalleryUserGroupHelper::isUserInGroup($userId,$groupId)");
@@ -70,11 +70,11 @@ class GalleryUserGroupHelper_medium {
 	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
 	$event->setData(array('userId' => $userId, 'itemId' => null));
 	list ($ret) = GalleryCoreApi::postEvent($event);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -87,16 +87,16 @@ class GalleryUserGroupHelper_medium {
     function removeUserFromGroup($userId, $groupId) {
 	global $gallery;
 	if (empty($userId) || empty($groupId)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
 	$userId = (int) $userId;
 	$groupId = (int) $groupId;
 
 	/* Remove this relationship from our groups table. */
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryUserGroupMap.class');
-	$ret = GalleryUserGroupMap::removeMapEntry(array('userId' => $userId, 'groupId' => $groupId));
-	if ($ret->isError()) {
+	$ret = GalleryCoreApi::removeMapEntry(
+	    'GalleryUserGroupMap', array('userId' => $userId, 'groupId' => $groupId));
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	GalleryDataCache::remove("GalleryUserGroupHelper::isUserInGroup($userId,$groupId)");
@@ -104,11 +104,11 @@ class GalleryUserGroupHelper_medium {
 	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
 	$event->setData(array('userId' => $userId, 'itemId' => null));
 	list ($ret) = GalleryCoreApi::postEvent($event);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -121,26 +121,25 @@ class GalleryUserGroupHelper_medium {
     function removeUserFromAllGroups($userId) {
 	global $gallery;
 	if (empty($userId)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
 	$userId = (int) $userId;
 
 	/* Remove this relationship from our groups table. */
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryUserGroupMap.class');
-	$ret = GalleryUserGroupMap::removeMapEntry(array('userId' => $userId));
-	if ($ret->isError()) {
+	$ret = GalleryCoreApi::removeMapEntry('GalleryUserGroupMap', array('userId' => $userId));
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
 	$event->setData(array('userId' => $userId, 'itemId' => null));
 	list ($ret) = GalleryCoreApi::postEvent($event);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -153,36 +152,35 @@ class GalleryUserGroupHelper_medium {
     function removeAllUsersFromGroup($groupId) {
 	global $gallery;
 	if (empty($groupId)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
 	$groupId = (int) $groupId;
 
 	/* Remove this relationship from our groups table. */
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryUserGroupMap.class');
-	$ret = GalleryUserGroupMap::removeMapEntry(array('groupId' => $groupId));
-	if ($ret->isError()) {
+	$ret = GalleryCoreApi::removeMapEntry('GalleryUserGroupMap', array('groupId' => $groupId));
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($groupId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	if ($group->getGroupType() != GROUP_ALL_USERS && $group->getGroupType() != GROUP_EVERYBODY) {
 	    list ($ret, $userData) = GalleryCoreApi::fetchUsersForGroup($groupId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
 	    $event->setData(array('userId' => array_keys($userData), 'itemId' => null));
 	    list ($ret) = GalleryCoreApi::postEvent($event);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -229,7 +227,7 @@ class GalleryUserGroupHelper_medium {
 
 	list ($ret, $searchResults) = $gallery->search(
 	    $query, $data, array('limit' => array('count' => $count, 'offset' => $offset)));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -237,7 +235,7 @@ class GalleryUserGroupHelper_medium {
 	while ($result = $searchResults->nextResult()) {
 	    $data[$result[0]] = $result[1];
 	}
-	return array(GalleryStatus::success(), $data);
+	return array(null, $data);
     }
 
     /**
@@ -278,7 +276,7 @@ class GalleryUserGroupHelper_medium {
 				  array((int) $userId),
 				  array('limit' => array('count' => $count,
 							 'offset' => $offset)));
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -290,7 +288,7 @@ class GalleryUserGroupHelper_medium {
 	    GalleryDataCache::put($cacheKey, $data);
 	}
 
-	return array(GalleryStatus::success(), $data);
+	return array(null, $data);
     }
 }
 ?>

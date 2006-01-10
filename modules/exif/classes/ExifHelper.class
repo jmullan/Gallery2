@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,16 +128,15 @@ class ExifHelper {
 	    break;
 
 	default:
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
-	GalleryCoreApi::relativeRequireOnce('modules/exif/classes/ExifPropertiesMap.class');
-	$ret = ExifPropertiesMap::setProperties($viewMode, $properties);
-	if ($ret->isError()) {
+	$ret = ExifHelper::setProperties($viewMode, $properties);
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -149,9 +148,8 @@ class ExifHelper {
      * @static
      */
     function addDefaultIptcProperties($viewMode) {
-	GalleryCoreApi::relativeRequireOnce('modules/exif/classes/ExifPropertiesMap.class');
-	list($ret, $properties) = ExifPropertiesMap::getProperties($viewMode);
-	if ($ret->isError()) {
+	list($ret, $properties) = ExifHelper::getProperties($viewMode);
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -168,15 +166,15 @@ class ExifHelper {
 	    break;
 
 	default:
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
-	$ret = ExifPropertiesMap::setProperties($viewMode, $properties);
-	if ($ret->isError()) {
+	$ret = ExifHelper::setProperties($viewMode, $properties);
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -188,9 +186,9 @@ class ExifHelper {
      */
     function _fetchRawExifData($path, &$rawExifData) {
 	global $gallery;
-	GalleryCoreApi::relativeRequireOnce('modules/exif/lib/exifer/exif.inc');
+	GalleryCoreApi::requireOnce('modules/exif/lib/exifer/exif.inc');
 
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	if (!$platform->file_exists($path)) {
 	    $rawExifData = null;
 	    return;
@@ -220,14 +218,14 @@ class ExifHelper {
      */
     function getIptcObject($path) {
 	global $gallery;
+	$platform =& $gallery->getPlatform();
 
-	$platform = $gallery->getPlatform();
 	if (!$platform->file_exists($path)) {
-	    return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+	    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 					      "Missing $path"),
 			 null);
 	}
-	GalleryCoreApi::relativeRequireOnce('modules/exif/lib/JPEG/JPEG.inc');
+	GalleryCoreApi::requireOnce('modules/exif/lib/JPEG/JPEG.inc');
 	$result = new JPEG($path);
 	if ($gallery->getDebug()) {
 	    /* Capture old-school print_r() to support older PHP */
@@ -237,7 +235,7 @@ class ExifHelper {
 	    ob_end_clean();
 	    $gallery->debug(str_replace("\0", '', $buf));
 	}
-	return array(GalleryStatus::success(), $result);
+	return array(null, $result);
     }
 
     /**
@@ -255,16 +253,15 @@ class ExifHelper {
 	$rawExifData = array();
 	ExifHelper::_fetchRawExifData($path, $rawExifData);
 	list ($ret, $iptcObj) = ExifHelper::getIptcObject($path);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$exifKeys = ExifHelper::getExifKeys();
 
 	$results = array();
-	GalleryCoreApi::relativeRequireOnce('modules/exif/classes/ExifPropertiesMap.class');
-	list ($ret, $properties) = ExifPropertiesMap::getProperties($viewMode);
-	if ($ret->isError()) {
+	list ($ret, $properties) = ExifHelper::getProperties($viewMode);
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	foreach ($properties as $property) {
@@ -284,7 +281,7 @@ class ExifHelper {
 	    }
 	}
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 
     /**
@@ -343,10 +340,10 @@ class ExifHelper {
 		}
 		list ($ret, $format) =
 		    GalleryCoreApi::getPluginParameter('module', 'core', 'format.datetime');
-		if ($ret->isError() || empty($format)) {
+		if ($ret || empty($format)) {
 		    $format = '$x $X';
 		}
-		$platform = $gallery->getPlatform();
+		$platform =& $gallery->getPlatform();
 		$value = $platform->strftime($format, $time);
 	    }
 	    break;
@@ -483,6 +480,70 @@ class ExifHelper {
 	}
 	$result = GalleryCoreApi::convertToUtf8($result, $sourceEncoding);
 	return $result;
+    }
+
+    /**
+     * Return the target properties for the given view mode
+     *
+     * @param int the view mode (EXIF_SUMMARY, etc)
+     * @return array object GalleryStatus a status code
+     *               array logical exif property names
+     * @static
+     */
+    function getProperties($viewMode) {
+	global $gallery;
+
+	$query = '
+        SELECT
+          [ExifPropertiesMap::property], [ExifPropertiesMap::viewMode], [ExifPropertiesMap::sequence]
+        FROM
+          [ExifPropertiesMap]
+        WHERE
+          [ExifPropertiesMap::viewMode] = ?
+        ORDER BY
+          [ExifPropertiesMap::sequence] ASC';
+	list ($ret, $searchResults) = $gallery->search($query, array($viewMode));
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$data = array();
+	while ($result = $searchResults->nextResult()) {
+	    $data[] = $result[0];
+	}
+
+	return array(null, $data);
+    }
+
+    /**
+     * Set the target properties for the given view mode
+     *
+     * @param int the view mode (EXIF_SUMMARY, etc)
+     * @param array logical property key/value pairs
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function setProperties($viewMode, $properties) {
+
+	/* Remove all old map entries */
+	$ret = GalleryCoreApi::removeMapEntry(
+	    'ExifPropertiesMap', array('viewMode' => $viewMode));
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	for ($i = 0; $i < sizeof($properties); $i++) {
+	    $ret = GalleryCoreApi::addMapEntry(
+		'ExifPropertiesMap',
+		array('property' => $properties[$i],
+		      'viewMode' => $viewMode,
+		      'sequence' => $i));
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	return null;
     }
 
     /**
@@ -909,7 +970,7 @@ class ExifHelper {
 	    array($gallery->i18n('GPS: Datestamp'), 'GPS.Datestamp');
 	$data['GPS/DifferentialCorrection'] =
 	    array($gallery->i18n('GPS: Differential Correction'), 'GPS.DifferentialCorrection');
-	
+
 	/* IPTC fields, see http://www.iptc.org/IIM/, if you have time to waste. */
 	$data['IPTC/SupplementalCategories'] =
 	    array($gallery->i18n('IPTC: Supplemental Categories'), 'IPTC.SupplementalCategories');

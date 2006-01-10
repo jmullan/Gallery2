@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,20 +43,20 @@ class ItemMakeHighlightController extends GalleryController {
 	if (isset($form['action']['makeHighlight'])) {
 	    $itemId = GalleryUtilities::getRequestVariables('itemId');
 	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    /* Make sure we have permission to edit this item */
 	    $ret = GalleryCoreApi::assertHasItemPermission($form['parentId'], 'core.edit');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    /* XXX: What should we do if this fails? */
 	    list ($ret, $success) =
 		GalleryCoreApi::setThumbnailFromItem($form['parentId'], $itemId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	} /* else $form['action']['cancel'] */
@@ -65,7 +65,7 @@ class ItemMakeHighlightController extends GalleryController {
 	$results['status'] = $status;
 	$results['error'] = $error;
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -84,14 +84,14 @@ class ItemMakeHighlightView extends GalleryView {
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$parentId = $item->getParentId();
 
 	/* Make sure we have permission do edit the parent of this item */
 	$ret = GalleryCoreApi::assertHasItemPermission($parentId, 'core.edit');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -100,20 +100,20 @@ class ItemMakeHighlightView extends GalleryView {
 	}
 
 	list ($ret, $parents) = GalleryCoreApi::fetchParents($item, 'core.edit');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$parentList = array();
 	foreach (array_reverse($parents) as $parent) {
-	    $parentList[] = $parent->getMemberData();
+	    $parentList[] = (array)$parent;
 	}
 
 	/* Render the HTML body */
 	$template->setVariable('ItemMakeHighlight', array('parentList' => $parentList));
 	$template->setVariable('controller', 'core.ItemMakeHighlight');
 
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/core/templates/ItemMakeHighlight.tpl'));
     }
 
@@ -122,11 +122,11 @@ class ItemMakeHighlightView extends GalleryView {
      */
     function getViewDescription() {
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $core->translate('make highlight'));
+	return array(null, $core->translate('make highlight'));
     }
 }
 ?>

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,14 +40,13 @@ class CodeAuditTest extends CodeAuditTestCase {
 
 	$this->CodeAuditTestCase($methodName);
 
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	$this->_exception['endphp'] = array();
 
 	$this->_exceptions['preamble'] =
 	    '{(:?/TestCase/|blocks/blocks.inc|(:?install|upgrade)/index.php|' .
-	    'DatabaseStorage/ErrorHandler.inc|Php41IllegalFunctions.inc|GdFunctionMatrix.inc|' .
-	    'frame.inc|iconpack.inc)}';
+	    'Php41IllegalFunctions.inc|GdFunctionMatrix.inc|frame.inc|iconpack.inc)}';
 
 	$this->_exception['superglobals'] = array(
 	    'FILES' => array(
@@ -68,6 +67,7 @@ class CodeAuditTest extends CodeAuditTestCase {
 		),
 	    'SERVER' => array(
 		'modules/core/classes/GalleryUtilities.class' => 1,
+		'modules/rewrite/data/path_info/index.php' => 1,
 		),
 	    );
 
@@ -200,8 +200,9 @@ class CodeAuditTest extends CodeAuditTestCase {
 		$returnTable[$currentFunction][] = preg_replace('/^return\s+/', '', $return);
 	    }
 
-	    /* Check that Session and UrlGenerator are always accessed by-reference */
-	    if (preg_match_all('/= *\$gallery->get(Session|UrlGenerator)/', $lines[$i], $matches)) {
+	    /* Check that Session, UrlGenerator and Platform are always accessed by-reference */
+	    if (preg_match_all('/= *\$gallery->get(Session|UrlGenerator|Platform)/',
+			       $lines[$i], $matches)) {
 		foreach (array_unique($matches[1]) as $item) {
 		    $this->_errorCount++;
 		    $this->assert(false,
@@ -392,11 +393,11 @@ class CodeAuditTest extends CodeAuditTestCase {
 
 	/* Check result of longLineCount */
 	if (!$this->_shouldHalt) {
-	    if ($this->_longLineCount > 1175) {
+	    if ($this->_longLineCount > 982) {
 		$this->assert(false, 'Found too many lines longer than 100 characters (' .
 			      $this->_longLineCount . ')');
 	    }
-	    if ($this->_longLineCount < 1075) {
+	    if ($this->_longLineCount < 900) {
 		$this->assert(false, 'Yay!  We are down to ' . $this->_longLineCount .
 			      ' lines longer than 100 characters; update the failure' .
 			      ' thresholds in this unit test.');

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -154,7 +154,7 @@ class DatabaseSetupStep extends InstallStep {
 		    /* Check the status and get the version of the Gallery database */
 		    $dbVersion = $this->_getDbVersion($result);
 		}
-		
+
 		$this->_captureEnd();
 
 		/* Check the status of the disk storage (g2data directory) */
@@ -221,7 +221,7 @@ class DatabaseSetupStep extends InstallStep {
 		/* Drop all Gallery database tables listed in the schema table */
 		$this->_captureStart();
 		$ret = $this->_cleanDatabase();
-		if ($ret->isError()) {
+		if ($ret) {
 		    $ret = $ret->wrap(__FILE__, __LINE__);
 		    global $gallery;
 		    $templateData['errors'][] =
@@ -268,7 +268,7 @@ class DatabaseSetupStep extends InstallStep {
 
 	    foreach (array('mysql'  => _('MySQL (all versions)'),
 			   'mysqlt' => _('MySQL with Transactions (v3.23.34a and newer)'),
-			   'postgres7' => _('PostgreSQL v7.x'),
+			   'postgres7' => _('PostgreSQL v7.x and newer'),
 			   'postgres' => _('PostgreSQL v6.x (not well tested)'),
 			   'oci8po' => _('Oracle (9i and newer)'),
 			   'db2' => _('(EXPERIMENTAL!) IBM DB2 (v8.2.2 and newer)'))
@@ -351,14 +351,13 @@ class DatabaseSetupStep extends InstallStep {
 
 	/* Load the Test SQL code */
 	require_once(dirname(__FILE__) .
-		     '/../../modules/core/classes/GalleryStorage/DatabaseStorageExtras.class');
+		     '/../../modules/core/classes/GalleryStorage/GalleryStorageExtras.class');
 	/* GalleryPlatform is not available at this point */
-	$schemaTpl = dirname(__FILE__) . '/../../modules/core/classes/GalleryStorage/' .
-	    'DatabaseStorage/schema/schema.tpl';
+	$schemaTpl = dirname(__FILE__) . '/../../modules/core/classes/GalleryStorage/schema.tpl';
 	if (!($sqlData = file($schemaTpl))) {
 	    return array(false, sprintf(_('Could not open schema file: "%s".'), $schemaTpl));
 	}
-	$moduleSql = DatabaseStorageExtras::parseSqlTemplate($sqlData, $dbType);
+	$moduleSql = GalleryStorageExtras::parseSqlTemplate($sqlData, $dbType);
 
 	for ($i = 1; $i <= 4; $i++) {
 	    list ($success, $errorMessage) =
@@ -446,7 +445,7 @@ class DatabaseSetupStep extends InstallStep {
 	$coreModule = new CoreModule();
 	$instVersions = $coreModule->getInstalledVersions();
 	if (isset($instVersions) && isset($instVersions['core']) &&
-	        !empty($instVersions['core'])) {
+		!empty($instVersions['core'])) {
 	    $versions['installed'] = $instVersions['core'];
 	}
 
@@ -479,7 +478,7 @@ class DatabaseSetupStep extends InstallStep {
 		if ($this->_loadG2Api(3)) {
 		    list ($ret, $version) =
 			GalleryCoreApi::getPluginParameter('module', 'core', '_version');
-		    if ($ret->isSuccess() && !empty($version)) {
+		    if (!$ret && !empty($version)) {
 			$dbVersion = $version;
 		    }
 		}
@@ -557,7 +556,7 @@ class DatabaseSetupStep extends InstallStep {
 	    /* Init paths etc., used for the clean DB function */
 	    require_once(dirname(__FILE__) . '/../../init.inc');
 	    $ret = GalleryInitFirstPass(array('noDatabase' => true));
-	    $success = $ret->isSuccess();
+	    $success = !$ret;
 
 	    GalleryDataCache::setFileCachingEnabled(false);
 	    GalleryDataCache::reset();
@@ -583,7 +582,7 @@ class DatabaseSetupStep extends InstallStep {
 
 	/* Make sure that all the required paths exist. */
 	$baseDir = $gallery->getConfig('data.gallery.base');
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	if ($baseDir{strlen($baseDir)-1} != $platform->getDirectorySeparator()) {
 	    $baseDir .= $platform->getDirectorySeparator();
@@ -624,19 +623,18 @@ class DatabaseSetupStep extends InstallStep {
 	global $gallery;
 
 	$storage =& $gallery->getStorage();
-	$storage->_db->debug = true;
 	$gallery->setDebug('immediate');
 	$ret = $storage->cleanStore();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$ret = $storage->commitTransaction();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**

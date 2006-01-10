@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 /**
  * Required classes
  */
-GalleryCoreApi::relativeRequireOnce('modules/cart/classes/CartHelper.class');
+GalleryCoreApi::requireOnce('modules/cart/classes/CartHelper.class');
 
 /**
  * This controller will handle adding an item to the cart.
@@ -49,26 +49,26 @@ class AddToCartController extends GalleryController {
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Figure out what ids we care about */
 	if ($item->getCanContainChildren()) {
 	    list ($ret, $ids) = GalleryCoreApi::fetchChildDataItemIds($item);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	} else {
 	    $ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.view');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $ids = array($item->getId());
 	}
 
 	$ret = CartHelper::addItemsToCart($ids);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -77,7 +77,7 @@ class AddToCartController extends GalleryController {
 	$results['status'] = array();
 	$results['error'] = array();
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 ?>

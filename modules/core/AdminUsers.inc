@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ class AdminUsersController extends GalleryController {
 	global $gallery;
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -55,7 +55,7 @@ class AdminUsersController extends GalleryController {
 	if (!empty($form['text']['userName'])) {
 	    list ($ret, $user) =
 		GalleryCoreApi::fetchUserByUserName($form['text']['userName']);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		if (!($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -100,7 +100,7 @@ class AdminUsersController extends GalleryController {
 		 */
 		list ($ret, $anonymousUserId) =
 		    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
@@ -130,7 +130,7 @@ class AdminUsersController extends GalleryController {
 	$results['status'] = $status;
 	$results['error'] = $error;
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -149,7 +149,7 @@ class AdminUsersView extends GalleryView {
 	global $gallery;
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -169,7 +169,7 @@ class AdminUsersView extends GalleryView {
 
 	/* Fetch the user count every time we reload */
 	list ($ret, $totalUserCount) = GalleryCoreApi::fetchUserCount();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -179,7 +179,7 @@ class AdminUsersView extends GalleryView {
 	/* If we have a filter, find out how many users match it */
 	if (!empty($form['list']['filter'])) {
 	    list ($ret, $form['list']['count']) = GalleryCoreApi::fetchUserCount($form['list']['filter']);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
@@ -198,13 +198,13 @@ class AdminUsersView extends GalleryView {
 	    GalleryCoreApi::fetchUserNames($form['list']['pageSize'],
 					      ($form['list']['page'] - 1) * $form['list']['pageSize'],
 					      $form['list']['filter']);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -227,7 +227,7 @@ class AdminUsersView extends GalleryView {
 	$template->setVariable('AdminUsers', $AdminUsers);
 	$template->setVariable('controller', 'core.AdminUsers');
 
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/core/templates/AdminUsers.tpl'));
     }
 }

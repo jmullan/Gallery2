@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,17 +44,17 @@ class GalleryUserGroupHelper_simple {
 	global $gallery;
 	list ($ret, $adminGroupId) =
 	  GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), false);
 	}
 
 	list ($ret, $result) = GalleryUserGroupHelper_simple::isUserInGroup(
 	    $gallery->getActiveUserId(), $adminGroupId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), false);
 	}
 
-	return array(GalleryStatus::success(), $result);
+	return array(null, $result);
     }
 
     /**
@@ -70,10 +70,10 @@ class GalleryUserGroupHelper_simple {
 
 	$userId = (int) $userId;
 	$groupId = (int) $groupId;
-	
+
 	$cacheKey = "GalleryUserGroupHelper::isUserInGroup($userId,$groupId)";
 	if (GalleryDataCache::containsKey($cacheKey)) {
-	    return array(GalleryStatus::success(), GalleryDataCache::get($cacheKey));
+	    return array(null, GalleryDataCache::get($cacheKey));
 	}
 
 	$query = '
@@ -91,13 +91,13 @@ class GalleryUserGroupHelper_simple {
 	    $gallery->search($query,
 			     array($userId, $groupId),
 			     array('limit' => array('count' => 1)));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$result = $searchResults->resultCount() ? true : false;
 	GalleryDataCache::put($cacheKey, $result);
-	return array(GalleryStatus::success(), $result);
+	return array(null, $result);
     }
 }
 ?>

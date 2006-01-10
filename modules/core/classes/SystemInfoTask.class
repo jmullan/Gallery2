@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
  * @author Alan Harder <alan.harder@sun.com>
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/core/AdminMaintenance.inc');
+GalleryCoreApi::requireOnce('modules/core/AdminMaintenance.inc');
 
 /**
  * This is a MaintenanceTask that will return system details
@@ -60,7 +60,7 @@ class SystemInfoTask extends MaintenanceTask {
 	$storage =& $gallery->getStorage();
 
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
@@ -70,7 +70,7 @@ class SystemInfoTask extends MaintenanceTask {
 	    : $core->translate('unknown');
 
 	list ($ret, $list) = GalleryCoreApi::getAllFactoryImplementationIds('GalleryToolkit');
-	if ($ret->isSuccess()) {
+	if (!$ret) {
 	    $toolkitList = implode(', ', array_keys($list));
 	} else {
 	    $toolkitList = $core->translate('unknown');
@@ -82,13 +82,13 @@ class SystemInfoTask extends MaintenanceTask {
 	    $core->translate('Webserver') . ' = ' .
 		GalleryUtilities::getServerVar('SERVER_SOFTWARE'),
 	    $core->translate('Database') . ' = ' .
-		$storage->_impl->getAdoDbType() . ' ' . @$storage->_impl->getVersion(),
+		$storage->getAdoDbType() . ' ' . @$storage->getVersion(),
 	    $core->translate('Toolkits') . ' = ' . $toolkitList,
 	    $core->translate('Operating system') . ' = ' . php_uname(),
 	    $core->translate('Browser') . ' = ' . GalleryUtilities::getServerVar('HTTP_USER_AGENT')
 	);
 
-	return array(GalleryStatus::success(), true, $info);
+	return array(null, true, $info);
     }
 }
 ?>

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
  * @author Alan Harder <alan.harder@sun.com>
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/customfield/classes/CustomFieldHelper.class');
+GalleryCoreApi::requireOnce('modules/customfield/classes/CustomFieldHelper.class');
 
 /**
  * This controller will handle assigning values to custom fields
@@ -45,35 +45,35 @@ class CustomFieldItemEdit extends ItemEditPlugin {
 	$status = null;
 	$error = array();
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'customfield');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 	}
 
 	if (isset($form['cfAdmin'])) {
 	    list ($ret, $adminStatus) = CustomFieldHelper::handleAdminAction($form, $item->getId());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 	    }
 	    foreach ($adminStatus as $key => $tmp) {
 		switch ($key) {
 		case 'saved':
-		    $status = $module->translate("Display settings saved successfully");
+		    $status = $module->translate('Display settings saved successfully');
 		    break;
 		case 'added':
-		    $status = $module->translate("New field added successfully");
+		    $status = $module->translate('New field added successfully');
 		    break;
 		case 'moved':
-		    $status = $module->translate("Field moved successfully");
+		    $status = $module->translate('Field moved successfully');
 		    break;
 		case 'removed':
-		    $status = $module->translate("Field removed successfully");
+		    $status = $module->translate('Field removed successfully');
 		    break;
 		case 'picklist':
-		    $status = $module->translate("Picklist updated successfully");
+		    $status = $module->translate('Picklist updated successfully');
 		    break;
 		case 'error':
 		    $status = '<div class="giError">' .
-			$module->translate("Field name already in use") . '</div>';
+			$module->translate('Field name already in use') . '</div>';
 		    break;
 		default:
 		    $status = $key;
@@ -81,17 +81,17 @@ class CustomFieldItemEdit extends ItemEditPlugin {
 	    }
 	} else if (isset($form['action']['save'])) {
 	    $ret = CustomFieldHelper::saveFieldValues($item, $form['fields']);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 	    }
 	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'customfield');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 	    }
 	    $status = $module->translate('Changes saved successfully');
 	}
 
-	return array(GalleryStatus::success(), $error, $status);
+	return array(null, $error, $status, false);
     }
 
     /**
@@ -111,7 +111,7 @@ class CustomFieldItemEdit extends ItemEditPlugin {
 	switch ($adminMode) {
 	case 1:
 	    $ret = CustomFieldHelper::loadAdminForm($form, $item->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    $tpl = 'modules/customfield/templates/CustomFieldItemAdmin.tpl';
@@ -121,7 +121,7 @@ class CustomFieldItemEdit extends ItemEditPlugin {
 		 : (GalleryUtilities::isA($item, 'GalleryPhotoItem') ? 'photo' : 'common');
 	    list ($ret, $tmp, $param, $isContainerSettings) =
 		CustomFieldHelper::fetchFieldValues(array($item), null, $set);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    $form['fields'] = $tmp[$item->getId()];
@@ -138,7 +138,7 @@ class CustomFieldItemEdit extends ItemEditPlugin {
 	    $tpl = 'modules/customfield/templates/CustomFieldItemEdit.tpl';
 	}
 	$template->setVariable('controller', 'customfield.CustomFieldItemEdit');
-	return array(GalleryStatus::success(), $tpl, 'modules_customfield');
+	return array(null, $tpl, 'modules_customfield');
     }
 
     /**
@@ -149,7 +149,7 @@ class CustomFieldItemEdit extends ItemEditPlugin {
 	    return true;
 	}
 	list ($ret, $param) = CustomFieldHelper::loadParameters($item->getParentId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return false;
 	}
 	if (!empty($param['common']) ||
@@ -164,10 +164,10 @@ class CustomFieldItemEdit extends ItemEditPlugin {
      */
     function getTitle() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'customfield');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	return array(GalleryStatus::success(), $module->translate('Custom Fields'));
+	return array(null, $module->translate('Custom Fields'));
     }
 }
 ?>

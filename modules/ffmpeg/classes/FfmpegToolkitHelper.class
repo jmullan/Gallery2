@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,19 +46,19 @@ class FfmpegToolkitHelper {
 	global $gallery;
 
 	list ($ret, $ffmpegPath) = GalleryCoreApi::getPluginParameter('module', 'ffmpeg', 'path');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	if (empty($ffmpegPath)) {
-	    return array(GalleryStatus::error(ERROR_MISSING_VALUE,
+	    return array(GalleryCoreApi::error(ERROR_MISSING_VALUE,
 					      __FILE__, __LINE__),
 			 null);
 	}
 
 	list ($ret, $tests, $mimeTypes, $supportsOffset) =
 	    FfmpegToolkitHelper::testBinary($ffmpegPath);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -96,7 +96,7 @@ class FfmpegToolkitHelper {
 	    $gallery->i18n('Get the width, height and duration of the movie');
 	$properties['dimensions-and-duration']['mimeTypes'] = $mimeTypes;
 
-	return array(GalleryStatus::success(), array('operations' => $operations,
+	return array(null, array('operations' => $operations,
 						     'properties' => $properties));
     }
 
@@ -119,7 +119,7 @@ class FfmpegToolkitHelper {
      */
     function testBinary($ffmpegPath) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	/*
 	 * If the path is not restricted by open_basedir, then verify that it's
@@ -127,7 +127,7 @@ class FfmpegToolkitHelper {
 	 */
 	if (!$platform->isRestrictedByOpenBaseDir($ffmpegPath)) {
 	    if (!$platform->file_exists($ffmpegPath) || !$platform->is_file($ffmpegPath)) {
-		return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__),
+		return array(GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__),
 			     null, null, null);
 	    }
 	}
@@ -186,7 +186,7 @@ class FfmpegToolkitHelper {
 		    if (isset($relevantTypes[$type])) {
 			list ($ret, $mime) =
 			    GalleryCoreApi::convertExtensionToMime($relevantTypes[$type]);
-			if ($ret->isError()) {
+			if ($ret) {
 			    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 			}
 			$mimeTypes[$mime] = 1;
@@ -199,7 +199,7 @@ class FfmpegToolkitHelper {
 			if (isset($relevantTypes[$type])) {
 			    list ($ret, $mime) = GalleryCoreApi::convertExtensionToMime(
 				$relevantTypes[$type]);
-			    if ($ret->isError()) {
+			    if ($ret) {
 				return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 			    }
 			    $mimeTypes[$mime] = 1;
@@ -222,7 +222,7 @@ class FfmpegToolkitHelper {
 			    if (preg_match('|D|', $capabilities)) {
 				list ($ret, $mime) = GalleryCoreApi::convertExtensionToMime(
 				    $relevantTypes[$type]);
-				if ($ret->isError()) {
+				if ($ret) {
 				    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 				}
 				$mimeTypes[$mime] = 1;
@@ -249,7 +249,7 @@ class FfmpegToolkitHelper {
 	    }
 	}
 
-	return array(GalleryStatus::success(), $tests, array_keys($mimeTypes), $supportsOffset);
+	return array(null, $tests, array_keys($mimeTypes), $supportsOffset);
     }
 }
 ?>

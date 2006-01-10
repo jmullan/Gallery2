@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,8 @@
 /**
  * Load required classes
  */
-GalleryCoreApi::relativeRequireOnce('modules/watermark/classes/WatermarkHelper.class');
-GalleryCoreApi::relativeRequireOnce('modules/watermark/classes/WatermarkImage.class');
+GalleryCoreApi::requireOnce('modules/watermark/classes/WatermarkHelper.class');
+GalleryCoreApi::requireOnce('modules/watermark/classes/WatermarkImage.class');
 
 /**
  * UserWatermarkEdit controller tests
@@ -49,7 +49,7 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 	parent::setUp();
 
 	list ($ret, $this->_user) = $this->_createUser();
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -61,7 +61,7 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 
 	/* Create a watermark */
 	list ($ret, $this->_watermark) = $this->_createWatermark();
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus(__FILE__, __LINE__);
 	}
@@ -72,28 +72,28 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 
 	$watermark = new WatermarkImage();
 	$ret = $watermark->create(__FILE__, 'test/file', 'phpunit_' . rand() . '.gif');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$ret = $watermark->save();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$ret = GalleryCoreApi::addUserPermission($watermark->getId(),
 						 $gallery->getActiveUserId(), 'core.all');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $watermark);
+	return array(null, $watermark);
     }
 
     function tearDown() {
 	if (isset($this->_idToDelete)) {
 	    $ret = GalleryCoreApi::deleteEntityById($this->_idToDelete);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		print $ret->getAsHtml();
 		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -120,7 +120,7 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 
 	// Verify the watermark
 	list ($ret, $this->_watermark) = $this->_watermark->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -149,7 +149,7 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 
 	// Verify the watermark
 	list ($ret, $this->_watermark) = $this->_watermark->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -175,7 +175,7 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 
 	// Verify the watermark
 	list ($ret, $this->_watermark) = $this->_watermark->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -184,7 +184,7 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 
     function testEditWatermarkDuplicateName() {
 	list ($ret, $watermark) = $this->_createWatermark();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -207,7 +207,7 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	$gallery->setActiveUser($this->_saveUser);
 	list ($ret, $watermark) = $this->_createWatermark();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_idToDelete = $watermark->getId();
@@ -229,7 +229,7 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 
 	// Verify the watermark
 	list ($ret, $this->_watermark) = $this->_watermark->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -254,7 +254,7 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 
 	// Verify the watermark
 	list ($ret, $this->_watermark) = $this->_watermark->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -278,7 +278,7 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 
 	// Verify the watermark
 	list ($ret, $this->_watermark) = $this->_watermark->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 

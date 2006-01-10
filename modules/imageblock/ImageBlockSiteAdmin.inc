@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ class ImageBlockSiteAdminController extends GalleryController {
     function handleRequest($form) {
 	/* Make sure we have adequate permissions */
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -51,14 +51,14 @@ class ImageBlockSiteAdminController extends GalleryController {
 	    }
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'imageblock',
 						      'show', implode('|', $param));
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    foreach (array('albumFrame', 'itemFrame') as $key) {
 		if (isset($form[$key])) {
 		    $ret = GalleryCoreApi::setPluginParameter('module', 'imageblock',
 							      $key, $form[$key]);
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		}
@@ -72,7 +72,7 @@ class ImageBlockSiteAdminController extends GalleryController {
 	$results['status'] = $status;
 	$results['error'] = array();
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -93,7 +93,7 @@ class ImageBlockSiteAdminView extends GalleryView {
 	    }
 	    list ($ret, $param) =
 		GalleryCoreApi::fetchAllPluginParameters('module', 'imageblock');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    foreach (explode('|', $param['show']) as $tmp) {
@@ -106,23 +106,23 @@ class ImageBlockSiteAdminView extends GalleryView {
 
 	/* ImageFrame settings, if available */
 	list ($ret, $imageframe) = GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if (isset($imageframe)) {
 	    list ($ret, $ImageBlockSiteAdmin['list']) = $imageframe->getImageFrameList();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    list ($ret, $ImageBlockSiteAdmin['sampleUrl']) = $imageframe->getSampleUrl();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 
 	$template->setVariable('ImageBlockSiteAdmin', $ImageBlockSiteAdmin);
 	$template->setVariable('controller', 'imageblock.ImageBlockSiteAdmin');
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/imageblock/templates/ImageBlockSiteAdmin.tpl'));
     }
 }

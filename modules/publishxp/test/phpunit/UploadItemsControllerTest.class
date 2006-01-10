@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	parent::setUp();
 
 	list ($ret, $this->_parent) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -50,7 +50,7 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	$this->_controller->setOptionInstances(array());
 
 	$ret = GalleryCoreApi::addMimeType('phpunit_ext', 'test/file', false);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -61,7 +61,7 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
     function tearDown() {
 	global $gallery;
 	$ret = GalleryCoreApi::removeMimeType(array('extension' => 'phpunit_ext'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -86,7 +86,7 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	$entityCounter =& GalleryTestCase::getEntityCounter();
 	$id = $entityCounter->getRecentEntityId('GalleryUnknownItem');
 	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($id);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -132,7 +132,7 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	$entityCounter =& GalleryTestCase::getEntityCounter();
 	$id = $entityCounter->getRecentEntityId('GalleryUnknownItem');
 	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($id);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -161,7 +161,7 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	$entityCounter =& GalleryTestCase::getEntityCounter();
 	$id = $entityCounter->getRecentEntityId('GalleryUnknownItem');
 	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($id);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -196,7 +196,7 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	$entityCounter =& GalleryTestCase::getEntityCounter();
 	$id = $entityCounter->getRecentEntityId('GalleryUnknownItem');
 	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($id);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -217,7 +217,7 @@ class UploadItemsControllerTestAddOption {
     function handleRequestAfterAdd($form, $items) {
 	GalleryUtilities::putRequestVariable(
 	    'requestData', array($items[0]->getId(), $form['optionValue']));
-	return array(GalleryStatus::success(), array(), array());
+	return array(null, array(), array());
     }
 
     function getRequestData() {

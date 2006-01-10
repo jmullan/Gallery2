@@ -44,7 +44,7 @@
 	 name="{g->formVar var="form[text][newOwner]"}" value="{$form.text.newOwner}"/>
 	{g->autoComplete element="giFormUsername"}
 	  {g->url arg1="view=core.SimpleCallback" arg2="command=lookupUsername"
-		  arg3="prefix=__VALUE__" forJavascript="true"}
+		  arg3="prefix=__VALUE__" htmlEntities=false}
 	{/g->autoComplete}
 
 	{if isset($form.error.text.noSuchUser)}

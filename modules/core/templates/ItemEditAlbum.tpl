@@ -20,7 +20,8 @@
   {g->text text="with"}
   <select name="{g->formVar var="form[presort]"}">
     {html_options options=$ItemEditAlbum.presortList selected=$form.presort}
-  </select>
+  </select><br/>
+  {g->changeInDescendents module="sort" text="Apply to all subalbums"}
   <script type="text/javascript">
     // <![CDATA[
     function pickOrder() {ldelim}
@@ -45,7 +46,8 @@
 
   <select name="{g->formVar var="form[theme]"}">
     {html_options options=$ItemEditAlbum.themeList selected=$form.theme}
-  </select>
+  </select><br/>
+  {g->changeInDescendents module="theme" text="Use this theme in all subalbums"}
 </div>
 
 <div class="gbBlock">
@@ -62,6 +64,8 @@
     {g->text text="You must enter a number (greater than zero)"}
   </div>
   {/if}
+  <br/>
+  {g->changeInDescendents module="thumbnail" text="Use this thumbnail size in all subalbums"}
 </div>
 
 <div class="gbBlock">
@@ -99,6 +103,7 @@
   {counter}
   {/foreach}
   </table>
+  {g->changeInDescendents module="resizes" text="Use these target sizes in all subalbums"}
 </div>
 
 <div class="gbBlock">

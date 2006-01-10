@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +26,9 @@
  * @author Ernesto Baschny <ernst@baschny.de>
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPluginHelper_medium.class');
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryView.class');
+GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryPluginHelper_medium.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryView.class');
+
 /**
  * Test GalleryView functionality
  *
@@ -46,16 +47,15 @@ class ViewTest extends GalleryTestCase {
     }
 
     function testLoadViewSuccess() {
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryView.class');
 	list ($ret, $view) = GalleryView::loadView('core.ShowItem');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
 
     function testLoadViewFail() {
 	list ($ret, $view) = GalleryView::loadView('viewtest.SomeRandomView');
-	if ($ret->isError() && $ret->getErrorCode() & ERROR_PERMISSION_DENIED) {
+	if ($ret && $ret->getErrorCode() & ERROR_PERMISSION_DENIED) {
 	    /* this is what we expect */
 	} else {
 	    $this->assert(false, 'The view of a deactivated module should not load.');
@@ -68,15 +68,59 @@ class ViewTest extends GalleryTestCase {
 	 * because we're an admin.
 	 */
 	list ($ret, $view) = GalleryView::loadView('viewtest.ViewTestConfig');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+    }
+
+    function testGetItem() {
+	list ($ret, $view) = GalleryView::loadView('core.ShowItemError');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($album);
+
+	GalleryUtilities::putRequestVariable('itemId', $album->getId());
+
+	list ($ret, $item, $wasSpecified) = $view->_getItem();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($wasSpecified, 'itemId specified');
+	$this->assertEquals($album->getId(), $item->getId(), 'itemId');
+
+	GalleryUtilities::removeRequestVariable('itemId');
+
+	list ($ret, $item, $wasSpecified) = $view->_getItem();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!$wasSpecified, 'not specified');
+	$this->assertEquals($this->_getRootId(), $item->getId(), 'root album by default');
+
+	/* ShowItem view returns wasSpecified==true even when root album selected by default */
+	list ($ret, $view) = GalleryView::loadView('core.ShowItem');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $item, $wasSpecified) = $view->_getItem();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($wasSpecified, 'ShowItem specified');
+	$this->assertEquals($this->_getRootId(), $item->getId(), 'ShowItem root album by default');
     }
 }
 
 class ViewTestModule {
     function isActive() {
-	return array(GalleryStatus::success(), false);
+	return array(null, false);
     }
 
     function getConfigurationView() {

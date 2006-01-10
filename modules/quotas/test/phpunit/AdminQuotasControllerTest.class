@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,11 +27,6 @@
  */
 
 /**
- * Map class
- */
-GalleryCoreApi::relativeRequireOnce('modules/quotas/classes/QuotasMap.class');
-
-/**
  * AdminQuotas controller tests
  * @package Quotas
  * @subpackage PHPUnit
@@ -44,7 +39,7 @@ class AdminQuotasControllerTest extends GalleryControllerTestCase {
 
     function testGroupQuotaCreate() {
 	list ($ret, $group) = $this->_createRandomGroup();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($group);
@@ -64,7 +59,7 @@ class AdminQuotasControllerTest extends GalleryControllerTestCase {
 
     function testUserQuotaCreate() {
 	list ($ret, $user) = $this->_createRandomUser();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($user);
@@ -85,7 +80,7 @@ class AdminQuotasControllerTest extends GalleryControllerTestCase {
     function testEditGroupQuotaFromText() {
 	/* Normal */
 	list ($ret, $group) = $this->_createRandomGroup();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($group);
@@ -131,7 +126,7 @@ class AdminQuotasControllerTest extends GalleryControllerTestCase {
     function testEditUserQuotaFromText() {
 	/* Normal */
 	list ($ret, $user) = $this->_createRandomUser();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($user);
@@ -177,7 +172,7 @@ class AdminQuotasControllerTest extends GalleryControllerTestCase {
     function testDeleteGroupFromText() {
 	/* Normal */
 	list ($ret, $group) = $this->_createRandomGroup();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($group);
@@ -223,7 +218,7 @@ class AdminQuotasControllerTest extends GalleryControllerTestCase {
     function testDeleteUserFromText() {
 	/* Normal */
 	list ($ret, $user) = $this->_createRandomUser();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($user);
@@ -267,16 +262,17 @@ class AdminQuotasControllerTest extends GalleryControllerTestCase {
     }
 
     function _createUserOrGroupQuota($userOrGroupId, $quota) {
-	$ret = QuotasMap::addMapEntry(array('userOrGroupId' => $userOrGroupId,
-					    'quotaSize' => $quota));
-	if ($ret->isError()) {
+	$ret = GalleryCoreApi::addMapEntry(
+	    'QuotasMap', array('userOrGroupId' => $userOrGroupId, 'quotaSize' => $quota));
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
 
     function _deleteUserOrGroupQuota($userOrGroupId) {
-	$ret = QuotasMap::removeMapEntry(array('userOrGroupId' => $userOrGroupId));
-	if ($ret->isError()) {
+	$ret = GalleryCoreApi::removeMapEntry(
+	    'QuotasMap', array('userOrGroupId' => $userOrGroupId));
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }

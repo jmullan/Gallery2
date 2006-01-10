@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,17 +88,9 @@ class GalleryToolkitHelper_medium {
 	list ($ret, $searchResults) = $gallery->search($query,
 						       array($operationName),
 						       array('limit' => array('count' => 1)));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
-	/* Require any classes that we're going to need */
-	GalleryCoreApi::relativeRequireOnce(
-	    'modules/core/classes/GalleryToolkitOperationMap.class');
-	GalleryCoreApi::relativeRequireOnce(
-	    'modules/core/classes/GalleryToolkitOperationParameterMap.class');
-	GalleryCoreApi::relativeRequireOnce(
-	    'modules/core/classes/GalleryToolkitOperationMimeTypeMap.class');
 
 	if ($searchResults->resultCount() > 0) {
 	    $result = $searchResults->nextResult();
@@ -109,7 +101,7 @@ class GalleryToolkitHelper_medium {
 		 * operation to be registered since it conflicts with an
 		 * existing one.  Bounce it.
 		 */
-		return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__,
+		return GalleryCoreApi::error(ERROR_COLLISION, __FILE__, __LINE__,
 					    sprintf("CRC mismatch: %s != %s, or Mime type " .
 						    "mismatch: %s != %s",
 						    $result[0],
@@ -122,24 +114,26 @@ class GalleryToolkitHelper_medium {
 	     * The operation doesn't already exist: create it.  First, add it
 	     * to the operation map
 	     */
-	    $ret = GalleryToolkitOperationMap::addMapEntry(
+	    $ret = GalleryCoreApi::addMapEntry(
+		'GalleryToolkitOperationMap',
 		array('name' => $operationName,
 		      'parametersCrc' => $crc,
 		      'outputMimeType' => $outputMimeType,
 		      'description' => $description));
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    /* Add all of its parameters also */
 	    for ($i = 0; $i < sizeof($parameterTypesArray); $i++) {
 		$parameterType = $parameterTypesArray[$i];
-		$ret = GalleryToolkitOperationParameterMap::addMapEntry(
+		$ret = GalleryCoreApi::addMapEntry(
+		    'GalleryToolkitOperationParameterMap',
 		    array('operationName' => $operationName,
 			  'position' => $i,
 			  'type' => $parameterType['type'],
 			  'description' => $parameterType['description']));
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
@@ -147,12 +141,13 @@ class GalleryToolkitHelper_medium {
 
 	/* Associate all the mime types */
 	foreach ($mimeTypes as $mimeType) {
-	    $ret = GalleryToolkitOperationMimeTypeMap::addMapEntry(
+	    $ret = GalleryCoreApi::addMapEntry(
+		'GalleryToolkitOperationMimeTypeMap',
 		array('operationName' => $operationName,
 		      'toolkitId' => $toolkitId,
 		      'mimeType' => $mimeType,
 		      'priority' => $priority));
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
@@ -160,7 +155,7 @@ class GalleryToolkitHelper_medium {
 	/* Invalidate our cache */
 	GalleryDataCache::removeByPattern('GalleryToolkitHelper::');
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -194,14 +189,9 @@ class GalleryToolkitHelper_medium {
 	';
 	list ($ret, $searchResults) =
 	    $gallery->search($query, array($propertyName), array('limit' => array('count' => 1)));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
-	/* Require any classes that we're going to need */
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryToolkitPropertyMap.class');
-	GalleryCoreApi::relativeRequireOnce(
-	    'modules/core/classes/GalleryToolkitPropertyMimeTypeMap.class');
 
 	if ($searchResults->resultCount() > 0) {
 	    $result = $searchResults->nextResult();
@@ -211,33 +201,36 @@ class GalleryToolkitHelper_medium {
 		 * We can't allow this property to be registered since it
 		 * conflicts with an existing one.  Bounce it.
 		 */
-		return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
+		return GalleryCoreApi::error(ERROR_COLLISION, __FILE__, __LINE__);
 	    }
 	} else {
 	    /*
 	     * The property doesn't already exist: create it.  First, add it
 	     * to the property map
 	     */
-	    $ret = GalleryToolkitPropertyMap::addMapEntry(array('name' => $propertyName,
-								'type' => $type,
-								'description' => $description));
-	    if ($ret->isError()) {
+	    $ret = GalleryCoreApi::addMapEntry(
+		'GalleryToolkitPropertyMap',
+		array('name' => $propertyName,
+		      'type' => $type,
+		      'description' => $description));
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
 	/* Associate our mime types */
 	foreach ($mimeTypes as $mimeType) {
-	    $ret = GalleryToolkitPropertyMimeTypeMap::addMapEntry(
+	    $ret = GalleryCoreApi::addMapEntry(
+		'GalleryToolkitPropertyMimeTypeMap',
 		array('propertyName' => $propertyName,
 		      'toolkitId' => $toolkitId,
 		      'mimeType' => $mimeType));
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -250,27 +243,19 @@ class GalleryToolkitHelper_medium {
      * @static
      */
     function unregisterOperation($toolkitId, $operationName, $mimeTypes=array()) {
-	/* Require any classes that we're going to need */
-	GalleryCoreApi::relativeRequireOnce(
-	    'modules/core/classes/GalleryToolkitOperationMap.class');
-	GalleryCoreApi::relativeRequireOnce(
-	    'modules/core/classes/GalleryToolkitOperationParameterMap.class');
-	GalleryCoreApi::relativeRequireOnce(
-	    'modules/core/classes/GalleryToolkitOperationMimeTypeMap.class');
-
 	$entry = array('toolkitId' => $toolkitId, 'operationName' => $operationName);
 	if (!empty($mimeTypes)) {
 	    $entry['mimeType'] = $mimeTypes;
 	}
-	$ret = GalleryToolkitOperationMimeTypeMap::removeMapEntry($entry);
-	if ($ret->isError()) {
+	$ret = GalleryCoreApi::removeMapEntry('GalleryToolkitOperationMimeTypeMap', $entry);
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Invalidate our cache */
 	GalleryDataCache::removeByPattern('GalleryToolkitHelper::');
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -285,20 +270,10 @@ class GalleryToolkitHelper_medium {
     function unregisterToolkit($toolkitId) {
 	global $gallery;
 
-	/* Require any classes that we're going to need */
-	GalleryCoreApi::relativeRequireOnce(
-	    'modules/core/classes/GalleryToolkitOperationMap.class');
-	GalleryCoreApi::relativeRequireOnce(
-	    'modules/core/classes/GalleryToolkitOperationParameterMap.class');
-	GalleryCoreApi::relativeRequireOnce(
-	    'modules/core/classes/GalleryToolkitOperationMimeTypeMap.class');
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryToolkitPropertyMap.class');
-	GalleryCoreApi::relativeRequireOnce(
-	    'modules/core/classes/GalleryToolkitPropertyMimeTypeMap.class');
-
 	/* Remove our toolkit/operation mappings */
-	$ret = GalleryToolkitOperationMimeTypeMap::removeMapEntry(array('toolkitId' => $toolkitId));
-	if ($ret->isError()) {
+	$ret = GalleryCoreApi::removeMapEntry(
+	    'GalleryToolkitOperationMimeTypeMap', array('toolkitId' => $toolkitId));
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -316,26 +291,28 @@ class GalleryToolkitHelper_medium {
 	  [GalleryToolkitOperationMimeTypeMap::toolkitId] IS NULL
 	';
 	list($ret, $searchResults) = $gallery->search($query);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	while ($result = $searchResults->nextResult()) {
-	    $ret = GalleryToolkitOperationMap::removeMapEntry(array('name' => $result[0]));
-	    if ($ret->isError()) {
+	    $ret = GalleryCoreApi::removeMapEntry(
+		'GalleryToolkitOperationMap', array('name' => $result[0]));
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    $ret = GalleryToolkitOperationParameterMap::removeMapEntry(
-		array('operationName' => $result[0]));
-	    if ($ret->isError()) {
+	    $ret = GalleryCoreApi::removeMapEntry(
+		'GalleryToolkitOperationParameterMap', array('operationName' => $result[0]));
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
 	/* Remove our toolkit/property mappings */
-	$ret = GalleryToolkitPropertyMimeTypeMap::removeMapEntry(array('toolkitId' => $toolkitId));
-	if ($ret->isError()) {
+	$ret = GalleryCoreApi::removeMapEntry(
+	    'GalleryToolkitPropertyMimeTypeMap', array('toolkitId' => $toolkitId));
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -353,26 +330,27 @@ class GalleryToolkitHelper_medium {
 	  [GalleryToolkitPropertyMimeTypeMap::toolkitId] IS NULL
 	';
 	list($ret, $searchResults) = $gallery->search($query);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	while ($result = $searchResults->nextResult()) {
-	    $ret = GalleryToolkitPropertyMap::removeMapEntry(array('name' => $result[0]));
-	    if ($ret->isError()) {
+	    $ret = GalleryCoreApi::removeMapEntry(
+		'GalleryToolkitPropertyMap', array('name' => $result[0]));
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
 	$ret = GalleryCoreApi::unregisterFactoryImplementation('GalleryToolkit', $toolkitId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Invalidate our cache */
 	GalleryDataCache::removeByPattern('GalleryToolkitHelper::');
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -420,7 +398,7 @@ class GalleryToolkitHelper_medium {
 	    ';
 
 	    list ($ret, $searchResults) = $gallery->search($query, array($mimeType));
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -444,7 +422,7 @@ class GalleryToolkitHelper_medium {
 	    $data = GalleryDataCache::get($cacheKey);
 	}
 
-	return array(GalleryStatus::success(), $data);
+	return array(null, $data);
     }
 
     /**
@@ -479,7 +457,7 @@ class GalleryToolkitHelper_medium {
 	    ';
 
 	    list ($ret, $searchResults) = $gallery->search($query, array($mimeType));
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -494,7 +472,7 @@ class GalleryToolkitHelper_medium {
 	    $data = GalleryDataCache::get($cacheKey);
 	}
 
-	return array(GalleryStatus::success(), $data);
+	return array(null, $data);
     }
 
     /**
@@ -525,7 +503,7 @@ class GalleryToolkitHelper_medium {
 	    ';
 
 	    list ($ret, $searchResults) = $gallery->search($query, array($operationName));
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -538,7 +516,7 @@ class GalleryToolkitHelper_medium {
 	    $data = GalleryDataCache::get($cacheKey);
 	}
 
-	return array(GalleryStatus::success(), $data);
+	return array(null, $data);
     }
 
     /**
@@ -568,7 +546,7 @@ class GalleryToolkitHelper_medium {
 	      AND [GalleryToolkitOperationMimeTypeMap::priority] <= 40
 	    ';
 	    list ($ret, $results) = $gallery->search($query);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -587,7 +565,7 @@ class GalleryToolkitHelper_medium {
 	} else {
 	    $priorityList = GalleryDataCache::get($cacheKey);
 	}
-	return array(GalleryStatus::success(), $priorityList);
+	return array(null, $priorityList);
     }
 
     /**
@@ -615,7 +593,7 @@ class GalleryToolkitHelper_medium {
 	    /* Get the appropriate toolkit */
 	    list ($ret, $toolkit, $mimeType) =
 		GalleryCoreApi::getToolkitByOperation($mimeType, $operationName);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
@@ -625,7 +603,7 @@ class GalleryToolkitHelper_medium {
 	    }
 	}
 
-	return array(GalleryStatus::success(), $isSupported, $mimeType);
+	return array(null, $isSupported, $mimeType);
     }
 
     /**
@@ -648,7 +626,7 @@ class GalleryToolkitHelper_medium {
 	} else {
 	    list ($ret, $isSupported, $outputMimeType) =
 		GalleryToolkitHelper_medium::isSupportedOperationSequence($mimeType, $operations);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	}
@@ -663,7 +641,7 @@ class GalleryToolkitHelper_medium {
 		list ($ret, $isSupported, $outputMimeType) =
 		    GalleryToolkitHelper_medium::isSupportedOperationSequence(
 			$mimeType, $tmpOperations);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 		if ($isSupported) {
@@ -673,12 +651,12 @@ class GalleryToolkitHelper_medium {
 	    }
 	}
  	if (!$isSupported) {
- 	    return array(GalleryStatus::success(), null, null);
+ 	    return array(null, null, null);
   	}
 
 	/* If the output type isn't viewable, then try to turn it into a form that *is* viewable. */
 	list ($ret, $isViewable) = GalleryCoreApi::isViewableMimeType($outputMimeType);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	if (!$isViewable) {
@@ -690,7 +668,7 @@ class GalleryToolkitHelper_medium {
 		list ($ret, $isSupported, $tmpOutputMimeType) =
 		    GalleryToolkitHelper_medium::isSupportedOperationSequence(
 			$mimeType, $tmpOperations);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 		if ($isSupported) {
@@ -703,7 +681,7 @@ class GalleryToolkitHelper_medium {
 	    }
 	}
 
-	return array(GalleryStatus::success(), $operations, $outputMimeType);
+	return array(null, $operations, $outputMimeType);
     }
 
     /**
@@ -721,7 +699,7 @@ class GalleryToolkitHelper_medium {
 	    if (!empty($matches[1])) {
 		list ($ret, $toolkit) =
 		    GalleryCoreApi::getToolkitByOperation($source->getMimeType(), $matches[1]);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
@@ -729,14 +707,14 @@ class GalleryToolkitHelper_medium {
 		    $toolkit->estimateDimensions($derivative, $source);
 		} else {
 		    /* Fall back on the best-guess behaviour */
-		    GalleryCoreApi::relativeRequireOnce(
+		    GalleryCoreApi::requireOnce(
 			'modules/core/classes/GalleryToolkit.class');
 		    GalleryToolkit::estimateDimensions($derivative, $source);
 		}
 	    }
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 }
 ?>

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ class UpgradeCoreModuleStep extends UpgradeStep {
 	$translator =& $gallery->getTranslator();
 	if (empty($translator)) {
 	    $ret = $gallery->initTranslator(true /* dontUseDatabase */ );
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
@@ -63,7 +63,7 @@ class UpgradeCoreModuleStep extends UpgradeStep {
 
 	$templateData['isConfigUpgradeRequired'] =
 	    CoreModuleExtras::isConfigUpgradeRequired($versions['core']);
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$configFilePath = GALLERY_CONFIG_DIR . '/config.php';
 	$templateData['isConfigWriteable'] = $platform->is_writeable($configFilePath);
 	$templateData['canChmod'] = strncasecmp(PHP_OS, 'win', 3);
@@ -73,26 +73,26 @@ class UpgradeCoreModuleStep extends UpgradeStep {
 	if (isset($_POST['confirm'])) {
 	    $template->renderHeader(true);
 	    $ret = selectAdminUser();
-	    if ($ret->isSuccess()) {
+	    if (!$ret) {
 		/*
 		* Do the upgrade in bootstrap mode so that we avoid going to the
 		* database for anything that's not vital.
 		*/
 		$ret = $core->installOrUpgrade(true, $template);
-		if ($ret->isSuccess()) {
+		if (!$ret) {
 		    list ($ret,  $ignored) = $core->activate();
-		    if ($ret->isSuccess()) {
+		    if (!$ret) {
 			$storage =& $gallery->getStorage();
 			$ret = $storage->commitTransaction();
 
-			if ($ret->isSuccess() && $templateData['isConfigUpgradeRequired']) {
+			if (!$ret && $templateData['isConfigUpgradeRequired']) {
 			    $ret = CoreModuleExtras::performConfigUpgrade($versions['core']);
 			}
 		    }
 		}
 	    }
 	    $this->resetL10Domain();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		$templateData['stackTrace'] = $ret->getAsHtml();
 		$templateData['debug'] = $gallery->getDebugBuffer();
 		$templateData['bodyFile'] = 'UpgradeCoreModuleError.html';

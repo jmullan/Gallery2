@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ class WebCamSiteAdminController extends GalleryController {
     function handleRequest($form) {
 	/* Make sure we have adequate permissions */
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -53,7 +53,7 @@ class WebCamSiteAdminController extends GalleryController {
 	    } else {
 		$ret = GalleryCoreApi::setPluginParameter(
 		    'module', 'webcam', 'duration', round($form['duration'] * 60));
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		$status['saved'] = 1;
@@ -66,7 +66,7 @@ class WebCamSiteAdminController extends GalleryController {
 	$results['status'] = $status;
 	$results['error'] = $error;
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -84,7 +84,7 @@ class WebCamSiteAdminView extends GalleryView {
 	    $form['formName'] = 'WebCamSiteAdmin';
 	    list ($ret, $duration) =
 		GalleryCoreApi::getPluginParameter('module', 'webcam', 'duration');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    /* String conversion here may use comma as fraction separator, based on locale */
@@ -92,7 +92,7 @@ class WebCamSiteAdminView extends GalleryView {
 	}
 
 	$template->setVariable('controller', 'webcam.WebCamSiteAdmin');
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/webcam/templates/WebCamSiteAdmin.tpl'));
     }
 }

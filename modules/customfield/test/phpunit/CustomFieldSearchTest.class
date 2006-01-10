@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ class CustomFieldSearchTest extends GalleryTestCase {
 
 	// Make sure search is active..
 	list ($ret, $moduleStatusList) = GalleryCoreApi::fetchPluginStatus('module');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -57,14 +57,14 @@ class CustomFieldSearchTest extends GalleryTestCase {
 	// Get search instance..
 	list ($ret, $this->_search) =
 	    GalleryCoreApi::newFactoryInstance('GallerySearchInterface_1_0', 'CustomFieldSearch');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(isset($this->_search), 'Missing CustomFieldSearch instance');
 
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'customfield');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -73,13 +73,13 @@ class CustomFieldSearchTest extends GalleryTestCase {
 
 	list ($ret, $groupId) = GalleryCoreApi::getPluginParameter('module', 'core',
 								   'id.everybodyGroup');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	// Create an album and define custom fields..
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -87,7 +87,7 @@ class CustomFieldSearchTest extends GalleryTestCase {
 	$this->_markForCleanup($this->_album);
 
 	$ret = GalleryCoreApi::addGroupPermission($this->_album->getId(), $groupId, 'core.view');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -105,7 +105,7 @@ class CustomFieldSearchTest extends GalleryTestCase {
 	              'summary' => false, 'detail' => false, 'choices' => array('A', 'B'))
 	    )
 	), $this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -117,12 +117,12 @@ class CustomFieldSearchTest extends GalleryTestCase {
 	for ($i = 0; $i < 3; $i++) {
 	    list ($ret, $this->_items[$i]) = $this->_createRandomDataItem(
 		$this->_album->getId(), 'image/test', array(), __FILE__, 'GalleryPhotoItem');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $ret = CustomFieldHelper::saveFieldValues($this->_items[$i], $values[$i]);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -131,7 +131,7 @@ class CustomFieldSearchTest extends GalleryTestCase {
 
     function testGetSearchModuleInfo() {
 	list ($ret, $info) = $this->_search->getSearchModuleInfo();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -147,7 +147,7 @@ class CustomFieldSearchTest extends GalleryTestCase {
     function testSearchAll() {
 	list ($ret, $results) =
 	    $this->_search->search(array('customfield' => 1), $this->_randomKey);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -169,7 +169,7 @@ class CustomFieldSearchTest extends GalleryTestCase {
     function testLimitedSearch() {
 	list ($ret, $results) =
 	    $this->_search->search(array('customfield' => 1), $this->_randomKey, 1, 2);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -189,7 +189,7 @@ class CustomFieldSearchTest extends GalleryTestCase {
 	list ($ret, $results) =
 	    $this->_search->search(array('customfield' => 1),
 				   'some string that will never show up');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ class CaptchaSiteAdminController extends GalleryController {
 	global $gallery;
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -50,7 +50,7 @@ class CaptchaSiteAdminController extends GalleryController {
 	    if (!isset($form['failedAttemptThreshold']) ||
 		    !is_numeric($form['failedAttemptThreshold'])) {
 		/* We don't allow free-form input in the HTML, so this should never happen. */
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	    }
 
 	    /* Make sure that we're between 0 and 5, then store the value */
@@ -58,7 +58,7 @@ class CaptchaSiteAdminController extends GalleryController {
 	    $form['failedAttemptThreshold'] = max($form['failedAttemptThreshold'], 0);
 	    $ret = GalleryCoreApi::setPluginParameter(
 		'module', 'captcha', 'failedAttemptThreshold', $form['failedAttemptThreshold']);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -79,7 +79,7 @@ class CaptchaSiteAdminController extends GalleryController {
 	$results['status'] = $status;
 	$results['error'] = $error;
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -100,7 +100,7 @@ class CaptchaSiteAdminView extends GalleryView {
 
 	    list ($ret, $form['failedAttemptThreshold']) =
 		GalleryCoreApi::getPluginParameter('module', 'captcha', 'failedAttemptThreshold');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
@@ -112,7 +112,7 @@ class CaptchaSiteAdminView extends GalleryView {
 	$template->setVariable('CaptchaSiteAdmin', $CaptchaSiteAdmin);
 	$template->setVariable('controller', 'captcha.CaptchaSiteAdmin');
 
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/captcha/templates/CaptchaSiteAdmin.tpl'));
     }
 }

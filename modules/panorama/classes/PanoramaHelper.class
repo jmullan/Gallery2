@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ class PanoramaHelper {
      */
     function assignEntityType(&$item, $isPanorama) {
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($item->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	if (GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
@@ -54,14 +54,14 @@ class PanoramaHelper {
 		$isPanorama ? 'PanoramaDerivativeImage' : 'GalleryDerivativeImage');
 	}
 	$ret = $item->save();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$ret = GalleryCoreApi::releaseLocks($lockId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -80,20 +80,20 @@ class PanoramaHelper {
 	    }
 	}
 	if (!isset($ids)) {
-	    return array(GalleryStatus::success(), array());
+	    return array(null, array());
 	}
 	list ($ret, $preferredFullImages) =
 	    GalleryCoreApi::fetchPreferredsByItemIds($ids);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	list ($ret, $resizedImages) =
 	    GalleryCoreApi::fetchResizesByItemIds($ids);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$ret = GalleryCoreApi::studyPermissions($ids);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -104,7 +104,7 @@ class PanoramaHelper {
 		continue;
 	    }
 	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($id);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -126,7 +126,7 @@ class PanoramaHelper {
 		}
 	    }
 	}
-	return array(GalleryStatus::success(), $data);
+	return array(null, $data);
     }
 
     /**
@@ -151,7 +151,7 @@ class PanoramaHelper {
 	';
 
 	list ($ret, $searchResults) = $gallery->search($query, array(), array());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -159,7 +159,7 @@ class PanoramaHelper {
 	if ($result = $searchResults->nextResult()) {
 	    $count = (int)$result[0];
 	}
-	return array(GalleryStatus::success(), $count);
+	return array(null, $count);
     }
 
     /**
@@ -183,7 +183,7 @@ class PanoramaHelper {
 	';
 
 	list ($ret, $searchResults) = $gallery->search($query, array(), array());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -193,15 +193,15 @@ class PanoramaHelper {
 	    }
 	    $id = (int)$result[0];
 	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($id);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $ret = PanoramaHelper::assignEntityType($item, false);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
-	return GalleryStatus::success();
+	return null;
     }
 }
 ?>

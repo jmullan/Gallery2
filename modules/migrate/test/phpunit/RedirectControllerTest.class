@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +26,6 @@
  * @author Alan Harder <alan.harder@sun.com>
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/migrate/classes/G1MigrateMap.class');
-
 /**
  * Redirect controller tests
  * @package Migrate
@@ -43,19 +41,19 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 	parent::setUp();
 
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($this->_item);
 
 	list ($ret, $this->_thumb) = $this->_createDerivative($this->_item, $this->_item->getId(),
 							      DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	list ($ret, $this->_sized) = $this->_createDerivative($this->_item, $this->_item->getId(),
 							      DERIVATIVE_TYPE_IMAGE_RESIZE);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -65,14 +63,16 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 	$this->_itemName = 'testitem-' . rand();
 
 	/* Add map entries.. */
-	$ret = G1MigrateMap::addMapEntry(
+	$ret = GalleryCoreApi::addMapEntry(
+	    'G1MigrateMap',
 	    array('itemId' => $this->_albumId, 'g1album' => $this->_albumName, 'g1item' => null));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$ret = G1MigrateMap::addMapEntry(array('itemId' => $this->_itemId,
+	$ret = GalleryCoreApi::addMapEntry(
+	    'G1MigrateMap', array('itemId' => $this->_itemId,
 	    'g1album' => $this->_albumName, 'g1item' => $this->_itemName));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -80,8 +80,9 @@ class RedirectControllerTest extends GalleryControllerTestCase {
     }
 
     function tearDown() {
-	$ret = G1MigrateMap::removeMapEntry(array('g1album' => $this->_albumName));
-	if ($ret->isError()) {
+	$ret = GalleryCoreApi::removeMapEntry(
+	    'G1MigrateMap', array('g1album' => $this->_albumName));
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -91,7 +92,8 @@ class RedirectControllerTest extends GalleryControllerTestCase {
     function testRedirect() {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
-	$href = $urlGenerator->generateUrl(array('href' => $_SERVER['PHP_SELF']));
+	$href = $urlGenerator->generateUrl(array('href' => $_SERVER['PHP_SELF']),
+					   array('forceFullUrl' => true));
 
 	/* Album */
 	GalleryUtilities::putRequestVariable('path', $this->_albumName);

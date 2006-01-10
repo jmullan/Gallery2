@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,11 +40,11 @@ class FfmpegModule extends GalleryModule {
 	$this->setId('ffmpeg');
 	$this->setName($gallery->i18n('Ffmpeg'));
 	$this->setDescription($gallery->i18n('A toolkit for processing movies'));
-	$this->setVersion('1.0.1');
+	$this->setVersion('1.0.2');
 	$this->setGroup('toolkits', $gallery->i18n('Graphics Toolkits'));
 	$this->setCallbacks('getSiteAdminViews');
-	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredModuleApi(array(2, 0));
+	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredModuleApi(array(3, 0));
     }
 
     /**
@@ -52,16 +52,16 @@ class FfmpegModule extends GalleryModule {
      */
     function upgrade($currentVersion) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'ffmpeg');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	foreach (array('path' => '', 'useWatermark' => 0) as $key => $value) {
 	    if (!isset($params[$key])) {
 		$ret = $this->setParameter($key, $value);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
@@ -71,7 +71,7 @@ class FfmpegModule extends GalleryModule {
 	$imageDir = $gallery->getConfig('data.gallery.plugins_data') . "modules${slash}ffmpeg";
 	list ($success) = GalleryUtilities::guaranteeDirExists($imageDir);
 	if (!$success) {
-	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+	    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 					"Unable to create directory: $imageDir");
 	}
 
@@ -79,11 +79,11 @@ class FfmpegModule extends GalleryModule {
 	if (!$platform->is_file($imageFile) &&
 	    !$platform->copy(dirname(__FILE__) . "${slash}images${slash}filmreel.png",
 			     $imageFile)) {
-	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+	    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 					"Unable to copy filmreel.png to $imageDir");
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -94,25 +94,18 @@ class FfmpegModule extends GalleryModule {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GalleryToolkit', 'FfmpegToolkit', 'Ffmpeg',
 	    'modules/ffmpeg/classes/FfmpegToolkit.class', 'ffmpeg', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation('ItemAddOption',
 	    'MovieThumbnailOption', 'MovieThumbnailOption',
 	    'modules/ffmpeg/MovieThumbnailOption.inc', 'ffmpeg', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
-    }
-
-    /**
-     * @see GalleryModule::isRecommendedDuringInstall
-     */
-    function isRecommendedDuringInstall() {
-	return true;
+	return null;
     }
 
     /**
@@ -122,16 +115,16 @@ class FfmpegModule extends GalleryModule {
 	global $gallery;
 
 	list ($ret, $needsConfiguration) = $this->needsConfiguration();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), false);
 	}
 
 	if (!$needsConfiguration) {
-	    return array(GalleryStatus::success(), true);
+	    return array(null, true);
 	}
 
 	/* Try a bunch of likely seeming paths to see if any of them work. */
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 
 	/*
@@ -170,16 +163,16 @@ class FfmpegModule extends GalleryModule {
 	    $paths[] = '/bin/ffmpeg';
 	    $paths[] = '/sw/bin/ffmpeg';
 	} else {
-	    return array(GalleryStatus::success(), false);
+	    return array(null, false);
 	}
 
 	/* Load any classes we require */
-	GalleryCoreApi::relativeRequireOnce('modules/ffmpeg/classes/FfmpegToolkitHelper.class');
+	GalleryCoreApi::requireOnce('modules/ffmpeg/classes/FfmpegToolkitHelper.class');
 
 	/* Now try each path in turn to see which ones work */
 	foreach ($paths as $path) {
 	    list ($ret, $testResults) = FfmpegToolkitHelper::testBinary($path);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		/* Something went wrong with this path -- try the next path */
 		continue;
 	    }
@@ -195,15 +188,15 @@ class FfmpegModule extends GalleryModule {
 	    if ($failCount == 0) {
 		/* We have a winner */
 		$ret = GalleryCoreApi::setPluginParameter('module', 'ffmpeg', 'path', $path);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}
 
-		return array(GalleryStatus::success(), true);
+		return array(null, true);
 	    }
 	}
 
-	return array(GalleryStatus::success(), false);
+	return array(null, false);
     }
 
     /**
@@ -211,23 +204,23 @@ class FfmpegModule extends GalleryModule {
      */
     function activate($postActivationEvent=true) {
 	/* Load any classes we require */
-	GalleryCoreApi::relativeRequireOnce('modules/ffmpeg/classes/FfmpegToolkitHelper.class');
+	GalleryCoreApi::requireOnce('modules/ffmpeg/classes/FfmpegToolkitHelper.class');
 
 	/* Find out what operations and properties we have available to us */
 	list ($ret, $results) =
 	    FfmpegToolkitHelper::getOperationsAndProperties();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $priority) = GalleryCoreApi::getToolkitPriorityById('Ffmpeg');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	if (!$priority) {
 	    list ($ret, $priority) = GalleryCoreApi::getMaximumManagedToolkitPriority();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $priority++;
@@ -240,7 +233,7 @@ class FfmpegModule extends GalleryModule {
 							   $info['params'],
 							   $info['description'],
 							   $info['outputMimeType'], $priority);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
@@ -251,17 +244,17 @@ class FfmpegModule extends GalleryModule {
 							  $property,
 							  $info['type'],
 							  $info['description']);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 
 	list ($ret, $redirect) = parent::activate($postActivationEvent);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $redirect);
+	return array(null, $redirect);
     }
 
     /**
@@ -269,17 +262,17 @@ class FfmpegModule extends GalleryModule {
      */
     function deactivate($postDeactivationEvent=true) {
 	list ($ret, $redirect) = parent::deactivate($postDeactivationEvent);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Unregister all of our properties and operations */
 	$ret = GalleryCoreApi::unregisterToolkit('Ffmpeg');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $redirect);
+	return array(null, $redirect);
     }
 
     /**
@@ -289,23 +282,23 @@ class FfmpegModule extends GalleryModule {
 	/* This module requires all fields to be filled out before it can be activated. */
 	foreach (array('path') as $key) {
 	    list ($ret, $value) = $this->getParameter($key);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    if (empty($value)) {
-		return array(GalleryStatus::success(), true);
+		return array(null, true);
 	    }
 	}
 
-	return array(GalleryStatus::success(), false);
+	return array(null, false);
     }
 
     /**
      * @see GalleryModule::getSiteAdminViews()
      */
     function getSiteAdminViews() {
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array(array('name' => $this->translate('Ffmpeg'),
 				 'view' => 'ffmpeg.AdminFfmpeg')));
     }

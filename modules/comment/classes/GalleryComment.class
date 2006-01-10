@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 /**
  * Load the parent class
  */
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryChildEntity.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryChildEntity.class');
 
 /**
  * A GalleryEntity for comments.
@@ -46,13 +46,7 @@ GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryChildEntity.cla
  * @package Comment
  * @subpackage Classes
  */
-class GalleryComment_core extends GalleryChildEntity {
-
-    /*
-     * ****************************************
-     *                 Members
-     * ****************************************
-     */
+class GalleryComment extends GalleryChildEntity {
 
     /**
      * Id of the commenter
@@ -64,10 +58,10 @@ class GalleryComment_core extends GalleryChildEntity {
      * @g2   <required/>
      * @g2 </member>
      *
-     * @var $_commenterId
-     * @access private
+     * @var int $commenterId
+     * @access public
      */
-    var $_commenterId;
+    var $commenterId;
 
     /**
      * Commenter's host name or address
@@ -79,10 +73,10 @@ class GalleryComment_core extends GalleryChildEntity {
      * @g2   <required/>
      * @g2 </member>
      *
-     * @var $_host
-     * @access private
+     * @var string $host
+     * @access public
      */
-    var $_host;
+    var $host;
 
     /**
      * Subject of the comment
@@ -93,10 +87,10 @@ class GalleryComment_core extends GalleryChildEntity {
      * @g2   <member-size>MEDIUM</member-size>
      * @g2 </member>
      *
-     * @var $_subject
-     * @access private
+     * @var string $subject
+     * @access public
      */
-    var $_subject;
+    var $subject;
 
     /**
      * Text of the comment
@@ -106,10 +100,10 @@ class GalleryComment_core extends GalleryChildEntity {
      * @g2   <member-type>TEXT</member-type>
      * @g2 </member>
      *
-     * @var $_comment
-     * @access private
+     * @var string $comment
+     * @access public
      */
-    var $_comment;
+    var $comment;
 
     /**
      * Date of the comment
@@ -121,18 +115,56 @@ class GalleryComment_core extends GalleryChildEntity {
      * @g2   <required/>
      * @g2 </member>
      *
-     * @var $_date
-     * @access private
+     * @var int $date
+     * @access public
      */
-    var $_date;
+    var $date;
 
-    /*
-     * ****************************************
-     *                 Methods
-     * ****************************************
+    /**
+     * @see GalleryEntity::getClassName()
      */
+    function getClassName() {
+	return 'GalleryComment';
+    }
 
+    function getCommenterId() {
+	return $this->commenterId;
+    }
+
+    function setCommenterId($commenterId) {
+	$this->commenterId = $commenterId;
+    }
+
+    function getHost() {
+	return $this->host;
+    }
+
+    function setHost($host) {
+	$this->host = $host;
+    }
+
+    function getSubject() {
+	return $this->subject;
+    }
+
+    function setSubject($subject) {
+	$this->subject = $subject;
+    }
+
+    function getComment() {
+	return $this->comment;
+    }
+
+    function setComment($comment) {
+	$this->comment = $comment;
+    }
+
+    function getDate() {
+	return $this->date;
+    }
+
+    function setDate($date) {
+	$this->date = $date;
+    }
 }
-
-include(dirname(__FILE__) . '/interfaces/GalleryComment.inc');
 ?>

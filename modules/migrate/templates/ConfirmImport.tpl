@@ -186,6 +186,15 @@
 </div>
 {/if}
 
+{if !$ConfirmImport.canHide}
+<div class="gbBlock">
+  <h3> {g->text text="Hidden Items"} </h3>
+  <p class="giDescription">
+    {g->text text="Any hidden albums or items will be imported with restricted view permissions. Activate the Hidden Items module before migration to import these as \"hidden\" which means they are invisible to guest users until accessed by the direct URL for those items."}
+  </p>
+</div>
+{/if}
+
 <div class="gbBlock gcBackground1">
   <input type="hidden" name="{g->formVar var="albumsPath"}" value="{$ConfirmImport.albumsPath}"/>
   <input type="submit" class="inputTypeSubmit"

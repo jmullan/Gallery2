@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
  * @author Bharat Mediratta <bharat@menalto.com>  
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryValidationPlugin.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryValidationPlugin.class');
 
 /**
  * Implement ValidationPlugin to present the HTML for the captcha image
@@ -58,7 +58,7 @@ class CaptchaValidationPlugin extends GalleryValidationPlugin {
 	    $success = true;
 	}
 
-	return array(GalleryStatus::success(), $error, $success);
+	return array(null, $error, $success);
     }
 
     /**
@@ -84,7 +84,7 @@ class CaptchaValidationPlugin extends GalleryValidationPlugin {
 		 */
 		list ($ret, $failedAttemptThreshold) =
 		    GalleryCoreApi::getPluginParameter('module', 'captcha', 'failedAttemptThreshold');
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 		
@@ -109,7 +109,7 @@ class CaptchaValidationPlugin extends GalleryValidationPlugin {
 		break;
 	default:
 		/* Bad Parameter */
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), 
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), 
 			     null, null);
 	}
 
@@ -124,12 +124,12 @@ class CaptchaValidationPlugin extends GalleryValidationPlugin {
 	    $code = substr($rcode, 2, 6);
 	    $session->put('captcha.key', $code);
 
-	    return array(GalleryStatus::success(),
+	    return array(null,
 			 'modules/captcha/templates/CaptchaValidationPlugin.tpl',
 			 'modules_captcha');
 	} else {
 	    /* They haven't failed enough to require the captcha yet */
-	    return array(GalleryStatus::success(), null, null);
+	    return array(null, null, null);
 	}
     }
 }

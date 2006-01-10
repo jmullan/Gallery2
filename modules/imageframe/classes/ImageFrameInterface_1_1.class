@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ class ImageFrameInterface_1_1 {
      *               array(frame_id=>localized_frame_name) )
      */
     function getImageFrameList() {
-	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
 		     null);
     }
 
@@ -60,7 +60,7 @@ class ImageFrameInterface_1_1 {
      * @return object GalleryStatus a status code
      */
     function init(&$template, $frameIds) {
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+	return GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
     }
 
     /**
@@ -72,7 +72,7 @@ class ImageFrameInterface_1_1 {
      *               string view url
      */
     function getSampleUrl($itemId=null) {
-	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
 		     null);
     }
 }

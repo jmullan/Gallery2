@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,13 +39,13 @@ class InstallOtherModulesStep extends InstallStep {
 	require(dirname(__FILE__) . '/../../init.inc');
 	$ret = GalleryInitFirstPass(array('debug' => 'buffered', 'noDatabase' => true,
 					  'activeLanguage' => $_SESSION['language']));
-	if ($ret->isError()) {
+	if ($ret) {
 	    $templateData['errors'][] = _('Unable to initialize our Gallery data');
 	    $templateData['stackTrace'] = $ret->getAsHtml();
 	}
 	if (empty($templateData['errors'])) {
 	    $ret = $this->_selectAdminUser();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		$templateData['errors'][] = _('Unable to initialize our Gallery session');
 		$templateData['stackTrace'] = $ret->getAsHtml();
 	    }
@@ -55,7 +55,7 @@ class InstallOtherModulesStep extends InstallStep {
 
 	if (empty($templateData['errors'])) {
 	    list ($ret, $moduleList) = GalleryCoreApi::fetchPluginStatus('module', true);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		$templateData['errors'][] = _('Unable to get the module list');
 		$templateData['stackTrace'] = $ret->getAsHtml();
 	    }
@@ -64,7 +64,7 @@ class InstallOtherModulesStep extends InstallStep {
 	if (empty($templateData['errors'])) {
 	    foreach (array_keys($moduleList) as $moduleId) {
 		list ($ret, $modulePlugin) = GalleryCoreApi::loadPlugin('module', $moduleId);
-		if ($ret->isError()) {
+		if ($ret) {
 		    $this->resetL10Domain();
 		    $templateData['warnings'][] =
 			sprintf(_('Unable to load the %s module'), $moduleId);
@@ -87,7 +87,7 @@ class InstallOtherModulesStep extends InstallStep {
 		      isset($_REQUEST['module'][$moduleId]) &&
 		      !$moduleInstalled[$moduleId]) {
 		    $ret = $module->installOrUpgrade();
-		    if ($ret->isError()) {
+		    if ($ret) {
 			$this->resetL10Domain();
 			$templateData['errors'][] =
 			    sprintf(_('Unable to install the %s module'), $module->getName());
@@ -97,7 +97,7 @@ class InstallOtherModulesStep extends InstallStep {
 		    $moduleInstalled[$moduleId] = true;
 
 		    list ($ret, $success) = $module->autoConfigure();
-		    if ($ret->isError()) {
+		    if ($ret) {
 			$this->resetL10Domain();
 			$templateData['errors'][] =
 			    sprintf(_('Unable to activate the %s module'), $module->getName());
@@ -114,7 +114,7 @@ class InstallOtherModulesStep extends InstallStep {
 
 		    list ($ret, $redirect) = $module->activate();
 		    $this->resetL10Domain();
-		    if ($ret->isError()) {
+		    if ($ret) {
 			$templateData['errors'][] =
 			    sprintf(_('Unable to activate the %s module'), $module->getName());
 			$templateData['stackTrace'] = $ret->getAsHtml();
@@ -138,7 +138,7 @@ class InstallOtherModulesStep extends InstallStep {
 	    global $gallery;
 	    $storage =& $gallery->getStorage();
 	    $ret = $storage->commitTransaction();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		$templateData['errors'][] = _('Unable to commit database transaction');
 		$templateData['stackTrace'] = $ret->getAsHtml();
 	    }
@@ -182,26 +182,26 @@ class InstallOtherModulesStep extends InstallStep {
 
 	list ($ret, $siteAdminGroupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	list ($ret, $adminUserInfo) = GalleryCoreApi::fetchUsersForGroup($siteAdminGroupId, 1);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	if (empty($adminUserInfo)) {
-	    return GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_MISSING_VALUE, __FILE__, __LINE__);
 	}
 	$adminUserInfo = array_keys($adminUserInfo);
 	list ($ret, $adminUser) = GalleryCoreApi::loadEntitiesById($adminUserInfo[0]);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$gallery->setActiveUser($adminUser);
 	$session =& $gallery->getSession();
 	$session->put('isInstall', true);
-	return GalleryStatus::success();
+	return null;
     }
 
     /**

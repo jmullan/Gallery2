@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,8 +43,8 @@ class TileTheme extends GalleryTheme {
 	$this->setId('tile');
 	$this->setName($gallery->i18n('Tile'));
 	$this->setDescription($gallery->i18n('Tile view of background image and image thumbnails; subalbums/other items not shown'));
-	$this->setVersion('1.0.0');
-	$this->setRequiredCoreApi(array(6, 0));
+	$this->setVersion('1.0.1');
+	$this->setRequiredCoreApi(array(7, 0));
 	$this->setRequiredThemeApi(array(2, 0));
 	$this->setStandardSettings(array('colorpack' => '',
 	    'sidebarBlocks' => serialize(array(
@@ -70,14 +70,14 @@ class TileTheme extends GalleryTheme {
 	$ret = $this->loadCommonTemplateData($template, $item, $params,
 	    array('parents', 'systemLinks', 'itemLinks'),
 	    $childIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$theme =& $template->getVariableByReference('theme');
 
 	if (!empty($params['backgroundId'])) {
 	    list ($ret, $bgImage) = GalleryCoreApi::loadEntitiesById($params['backgroundId']);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $params['bgSerialNumber'] = $bgImage->getSerialNumber();
@@ -104,7 +104,7 @@ class TileTheme extends GalleryTheme {
 
 	list ($ret, $imageWidths, $imageHeights) =
 	    $this->_buildItemList($childIds, $theme['children']);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$itemMap = array();
@@ -121,7 +121,7 @@ class TileTheme extends GalleryTheme {
 	if ($showHead) {
 	    $template->head('themes/tile/templates/header.tpl');
 	}
-	return array(GalleryStatus::success(), 'theme.tpl');
+	return array(null, 'theme.tpl');
     }
 
     /**
@@ -132,26 +132,26 @@ class TileTheme extends GalleryTheme {
 	if (!empty($renderId)) {
 	    /* Render this item */
 	    list ($ret, $image) = GalleryCoreApi::loadEntitiesById($renderId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    $template->setVariable('theme', array('item' => $item->getMemberData(),
-						  'image' => $image->getMemberData()));
-	    return array(GalleryStatus::success(), 'render.tpl');
+	    $template->setVariable('theme', array('item' => (array)$item,
+						  'image' => (array)$image));
+	    return array(null, 'render.tpl');
 	}
 
 	/* Otherwise, load the parent with initial view of this item  */
 	list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($item->getParentId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($parent);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $tplFile) = $this->showAlbumPage($template, $parent, $params, $childIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$theme =& $template->getVariableByReference('theme');
@@ -166,7 +166,7 @@ class TileTheme extends GalleryTheme {
 	    }
 	}
 
-	return array(GalleryStatus::success(), $tplFile);
+	return array(null, $tplFile);
     }
 
     /**
@@ -175,11 +175,11 @@ class TileTheme extends GalleryTheme {
     function showModulePage(&$template, $item, $params, $templateFile) {
 	$ret = $this->loadCommonTemplateData(
 	    $template, $item, $params, array('parents', 'systemLinks'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), 'theme.tpl');
+	return array(null, 'theme.tpl');
     }
 
     /**
@@ -188,18 +188,18 @@ class TileTheme extends GalleryTheme {
     function showAdminPage(&$template, $item, $params, $templateFile) {
 	$ret = $this->loadCommonTemplateData(
 	    $template, $item, $params, array('parents', 'systemLinks'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), 'theme.tpl');
+	return array(null, 'theme.tpl');
     }
 
     /**
      * @see GalleryTheme::showErrorPage
      */
     function showErrorPage(&$template) {
-	return array(GalleryStatus::success(), 'error.tpl');
+	return array(null, 'error.tpl');
     }
 
     /**
@@ -208,37 +208,37 @@ class TileTheme extends GalleryTheme {
     function showProgressBarPage(&$template, $item, $params) {
 	$ret = $this->loadCommonTemplateData(
 	    $template, $item, $params, array('parents', 'systemLinks'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), 'theme.tpl');
+	return array(null, 'theme.tpl');
     }
 
     function _buildItemList($childIds, &$children) {
 	$imageWidths = $imageHeights = $childItems = array();
 	if (!empty($childIds)) {
 	    $ret = GalleryCoreApi::studyPermissions($childIds);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    list ($ret, $childItems) = GalleryCoreApi::loadEntitiesById($childIds);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    list ($ret, $preferredFullImages) =
 		GalleryCoreApi::fetchPreferredsByItemIds($childIds);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    list ($ret, $resizedImages) =
 		GalleryCoreApi::fetchResizesByItemIds($childIds);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    list ($ret, $thumbnails) =
 		GalleryCoreApi::fetchThumbnailsByItemIds($childIds);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	}
@@ -249,11 +249,11 @@ class TileTheme extends GalleryTheme {
 		if (!($thumbnails[$childId]->getWidth() && $thumbnails[$childId]->getHeight())) {
 		    list ($ret, $thumbnails[$childId]) =
 			GalleryCoreApi::rebuildDerivativeCache($thumbnails[$childId]->getId());
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 		}
-		$children[$i]['thumbnail'] = $thumbnails[$childId]->getMemberData();
+		$children[$i]['thumbnail'] = (array)$thumbnails[$childId];
 	    }
 
 	    if (!GalleryUtilities::isA($child, 'GalleryDataItem') || !$child->canBeViewedInline()) {
@@ -261,7 +261,7 @@ class TileTheme extends GalleryTheme {
 	    }
 
 	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($childId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
@@ -290,11 +290,11 @@ class TileTheme extends GalleryTheme {
 		if (GalleryUtilities::isA($image, 'GalleryDerivativeImage')
 			&& !($image->getWidth() && $image->getHeight())) {
 		    list ($ret, $image) = GalleryCoreApi::rebuildDerivativeCache($image->getId());
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 		}
-		$image = $image->getMemberData();
+		$image = (array)$image;
 		$children[$i]['image'] = $image;
 		$children[$i]['imageIndex'] = count($imageWidths);
 		if (GalleryUtilities::isExactlyA($child, 'GalleryPhotoItem') &&
@@ -310,7 +310,7 @@ class TileTheme extends GalleryTheme {
 	    }
 	    $i++;
 	}
-	return array(GalleryStatus::success(), $imageWidths, $imageHeights);
+	return array(null, $imageWidths, $imageHeights);
     }
 
     /**
@@ -339,7 +339,7 @@ class TileTheme extends GalleryTheme {
 	global $gallery;
 	if (!isset($itemId)) {
 	    /* Site admin settings -- we have none. */
-	    return array(GalleryStatus::success(), null);
+	    return array(null, null);
 	}
 
 	/*
@@ -347,11 +347,11 @@ class TileTheme extends GalleryTheme {
 	 * so load enough information to call showAlbumPage.
 	 */
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	list ($ret, $params) = $this->fetchParameters($itemId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$this->_setDefaultParameters($params);
@@ -361,16 +361,16 @@ class TileTheme extends GalleryTheme {
 	$theme['actingUserId'] = $gallery->getActiveUserId();
 
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $tmp) = $this->showAlbumPage($template, $item, $params, $childIds, false);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), 'themes/tile/templates/edit.tpl');
+	return array(null, 'themes/tile/templates/edit.tpl');
     }
 
     /**
@@ -379,10 +379,10 @@ class TileTheme extends GalleryTheme {
     function handleSettingsRequest($form, $itemId=null) {
 	if (!isset($itemId)) {
 	    /* No site admin settings */
-	    return array(GalleryStatus::success(), array(), '');
+	    return array(null, array(), '');
 	}
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
@@ -393,7 +393,7 @@ class TileTheme extends GalleryTheme {
 		if (isset($form[$key])) {
 		    $ret = GalleryCoreApi::setPluginParameter('theme', 'tile', $key, $form[$key],
 							      $item->getId());
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 		}
@@ -410,13 +410,13 @@ class TileTheme extends GalleryTheme {
 	    }
 	    $ret = GalleryCoreApi::setPluginParameter('theme', 'tile', 'map', implode(';', $map),
 						      $item->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    $status = $this->translate('Successfully saved theme settings');
 	} /* else $form['action']['undo'] */
 
-	return array(GalleryStatus::success(), $error, $status);
+	return array(null, $error, $status);
     }
 }
 ?>

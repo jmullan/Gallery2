@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,16 +51,20 @@ class GalleryPlatform {
 	    $gallery->debug("copy($source, $dest)");
 	}
 
-	if (!isset($this->_umask)) {
-	    $this->_calculateUmaskAndFilePerms();
-	}
-	$umask = umask($this->_umask);
 	if (is_uploaded_file($source)) {
 	    $results = move_uploaded_file($source, $dest);
+	    if (!$results) {
+		return $results;
+	    }
+	    $results = $this->chmod($dest);
 	} else {
+	    if (!isset($this->_umask)) {
+		$this->_loadPermissionPreferences();
+	    }
+	    $umask = umask($this->_umask);
 	    $results = copy($source, $dest);
+	    umask($umask);
 	}
-	umask($umask);
 
 	return $results;
     }
@@ -80,7 +84,7 @@ class GalleryPlatform {
 	}
 
 	if (!isset($this->_umask)) {
-	    $this->_calculateUmaskAndFilePerms();
+	    $this->_loadPermissionPreferences();
 	}
 	$umask = umask($this->_umask);
 	$results = symlink($source, $dest);
@@ -88,8 +92,6 @@ class GalleryPlatform {
 
 	return $results;
     }
-
-
 
     /**
      * Move an uploaded file to a new location and return the new location.
@@ -402,7 +404,7 @@ class GalleryPlatform {
 	$success = false;
 	if ($fd) {
 	    if (!isset($this->_filePerms)) {
-		$this->_calculateUmaskAndFilePerms();
+		$this->_loadPermissionPreferences();
 	    }
 	    chmod($tempFile, $this->_filePerms);
 	    $bytesWritten = fwrite($fd, $data);
@@ -690,11 +692,11 @@ class GalleryPlatform {
 	 * webserver doesn't execute it.
 	 */
 	list ($ret, $tmp) = GalleryCoreApi::convertExtensionToMime($extension);
-	if ($ret->isError() && $gallery->getDebug()) {
+	if ($ret && $gallery->getDebug()) {
 	    $gallery->debug('Error: convertExtensionToMime in ' .
 	    'GalleryPlatform::legalizePathComponent');
 	}
-	if (($ret->isError() || $tmp == 'application/unknown') && !empty($extension)) {
+	if (($ret || $tmp == 'application/unknown') && !empty($extension)) {
 	    $fileBase = $fileBase . '_' . $extension;
 	    $extension = null;
 	}
@@ -1037,7 +1039,7 @@ class GalleryPlatform {
 
 	$config = array();
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
-	if ($ret->isSuccess()) {
+	if (!$ret) {
 	    foreach ($params as $key => $value) {
 		if (strncmp($key, 'smtp.', 5) == 0) {
 		    $config[$key] = $value;
@@ -1046,12 +1048,12 @@ class GalleryPlatform {
 	}
 
 	if (!empty($config['smtp.host'])) {
-	    GalleryCoreApi::relativeRequireOnce('lib/smtp/smtp.php');
+	    GalleryCoreApi::requireOnce('lib/smtp/smtp.php');
 	    $ret = smtpmail($config, $to, $subject, $body, $headers);
-	    if ($ret->isError() && $gallery->getDebug()) {
+	    if ($ret && $gallery->getDebug()) {
 		$gallery->debug("smtpmail error: " . $ret->getAsText());
 	    }
-	    return $ret->isSuccess();
+	    return !$ret;
 	} else if (isset($headers)) {
 	    return mail($to, $subject, $body, $headers);
 	} else {
@@ -1127,33 +1129,67 @@ class GalleryPlatform {
     }
 
     /**
-     * Set file permissions according to preferences
-     * @param string file path
-     * @return boolean true on success
+     * Load preferences for file/dir permissions and calculate umask
+     * @access private
      */
-    function setFilePermissions($file) {
-	if (!isset($this->_filePerms)) {
-	    $this->_calculateUmaskAndFilePerms();
+    function _loadPermissionPreferences() {
+	$this->_filePerms = 0644;
+	list ($ret, $filePerms) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'permissions.file');
+	if (!$ret && !empty($filePerms)) {
+	    $this->_filePerms = octdec($filePerms);
 	}
-	return chmod($file, $this->_filePerms);
+	$this->_umask = 0777 - $this->_filePerms;
+	$this->_dirPerms = 0755;
+	list ($ret, $dirPerms) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'permissions.directory');
+	if (!$ret && !empty($dirPerms)) {
+	    $this->_dirPerms = octdec($dirPerms);
+	}
     }
 
     /**
-     * Get umask preference
-     * @access private
+     * Set filesystem permissions; mode defaults to system preference for file/dir permissions.
+     * @param string path to file or directory
+     * @param int (optional) mode; defaults to system preference
+     * @return boolean true on success
      */
-    function _calculateUmaskAndFilePerms() {
-	if (!isset($this->_umask) || !isset($this->_filePerms)) {
-	    $this->_filePerms = 0644;
-	    list ($ret, $filePerms) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'permissions.file');
-	    if ($ret->isSuccess() && !empty($filePerms)) {
-		$this->_filePerms = octdec($filePerms);
+    function chmod($path, $mode=null) {
+	if (!isset($mode)) {
+	    if (!isset($this->_filePerms) || !isset($this->_dirPerms)) {
+		$this->_loadPermissionPreferences();
 	    }
-	    $this->_umask = 0777 - $this->_filePerms;
+	    $mode = $this->is_dir($path) ? $this->_dirPerms : $this->_filePerms;
 	}
+	return chmod($path, $mode);
+    }
 
-	return $this->_umask;
+    /**
+     * Fixes the directory permissions (as e.g. unzip creates them with file permissions
+     * because of the umask)
+     *
+     * @param string $path the directory which should be fixed
+     * @return boolean true if all went well, false if there was an error.
+     */
+    function recursiveFixDirPermissions($path) {
+	if (!$this->is_dir($path)) {
+	    return true;
+	} else if (!$this->chmod($path)) {
+	    return false;
+	}
+	$dir = $this->opendir($path);
+	if (!$dir) {
+	    return false;
+	}
+	$slash = $this->getDirectorySeparator();
+	while ($file = $this->readdir($dir)) {
+	    if ($file != '.' && $file != '..' &&
+		    !$this->recursiveFixDirPermissions($path . $slash . $file)) {
+		return false;
+	    }
+	}
+	$this->closedir($dir);
+	return true;
     }
 
     /**
@@ -1189,6 +1225,7 @@ class GalleryPlatform {
     function resetPlatform() {
 	unset($this->_umask);
 	unset($this->_filePerms);
+	unset($this->_dirPerms);
     }
 }
 ?>

@@ -3,7 +3,7 @@
  * $RCSfile
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ function smarty_modifier_markup($text) {
 	if (!GalleryDataCache::containsKey($cacheKey)) {
 	    list ($ret, $defaultMarkupType) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		/* This code is used by the UI -- we can't return an error. Choose something safe */
 		$defaultMarkupType = 'none';
 	    }
@@ -93,7 +93,7 @@ class GalleryBbcodeMarkupParser {
     var $_bbcode;
 
     function GalleryBbcodeMarkupParser() {
-	GalleryCoreApi::relativeRequireOnce('lib/bbcode/bbcode.class');
+	GalleryCoreApi::requireOnce('lib/bbcode/bbcode.class');
 
 	$this->_bbcode = new GalleryBbcode();
 

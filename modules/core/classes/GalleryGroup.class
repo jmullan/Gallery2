@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 /**
  * Load the parent class
  */
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryEntity.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryEntity.class');
 
 /**
  * Representation of a group of users
@@ -47,13 +47,7 @@ GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryEntity.class');
  * @package GalleryCore
  * @subpackage Classes
  */
-class GalleryGroup_core extends GalleryEntity {
-
-    /*
-     * ****************************************
-     *                 Members
-     * ****************************************
-     */
+class GalleryGroup extends GalleryEntity {
 
     /**
      * The group type
@@ -64,10 +58,10 @@ class GalleryGroup_core extends GalleryEntity {
      * @g2   <required/>
      * @g2 </member>
      *
-     * @var int $_groupType
-     * @access private
+     * @var int $groupType
+     * @access public
      */
-    var $_groupType;
+    var $groupType;
 
     /**
      * The group name
@@ -79,16 +73,10 @@ class GalleryGroup_core extends GalleryEntity {
      * @g2   <unique/>
      * @g2 </member>
      *
-     * @var string $_groupName
-     * @access private
+     * @var string $groupName
+     * @access public
      */
-    var $_groupName;
-
-    /*
-     * ****************************************
-     *                 Methods
-     * ****************************************
-     */
+    var $groupName;
 
     /**
      * Create a new instance of this GalleryGroup in the persistent store
@@ -112,24 +100,24 @@ class GalleryGroup_core extends GalleryEntity {
 	list($ret, $results) =
 	    $gallery->search($query, array($groupName),
 			     array('limit' => array('count' => 1)));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$result = $results->nextResult();
 	if ($result[0] > 0) {
-	    return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_COLLISION, __FILE__, __LINE__);
 	}
 
 	$ret = parent::create();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$this->setGroupName($groupName);
 	$this->setGroupType($groupType);
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -142,23 +130,23 @@ class GalleryGroup_core extends GalleryEntity {
      */
     function delete() {
 	$ret = GalleryCoreApi::removeAllUsersFromGroup($this->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Delete all permissions from the permissions map table */
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryAccessMap.class');
-	$ret = GalleryAccessMap::removeMapEntry(array('groupId' => $this->getId()));
-	if ($ret->isError()) {
+	$ret = GalleryCoreApi::removeMapEntry(
+	    'GalleryAccessMap', array('userOrGroupId' => $this->getId()));
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$ret = parent::delete();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -167,13 +155,34 @@ class GalleryGroup_core extends GalleryEntity {
     function itemTypeName($localized = true) {
 	if ($localized) {
 	    list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
-	    if (! $ret->isError()) {
+	    if (! $ret) {
 		return array($core->translate('Group'), $core->translate('group'));
 	    }
 	}
 	return array('Group', 'group');
     }
-}
 
-include(dirname(__FILE__) . '/interfaces/GalleryGroup.inc');
+    /**
+     * @see GalleryEntity::getClassName()
+     */
+    function getClassName() {
+	return 'GalleryGroup';
+    }
+
+    function getGroupType() {
+	return $this->groupType;
+    }
+
+    function setGroupType($groupType) {
+	$this->groupType = $groupType;
+    }
+
+    function getGroupName() {
+	return $this->groupName;
+    }
+
+    function setGroupName($groupName) {
+	$this->groupName = $groupName;
+    }
+}
 ?>

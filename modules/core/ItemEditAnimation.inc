@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,41 +61,41 @@ class ItemEditAnimation extends ItemEditPlugin {
 
 	    if (empty($error)) {
 		list ($ret, $lock) = GalleryCoreApi::acquireWriteLock($item->getId());
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		if ($ret) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 		}
 
 		list ($ret, $item) = $item->refresh();
-		if ($ret->isError()) {
+		if ($ret) {
 		    GalleryCoreApi::releaseLocks($lock);
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 		}
 
 		$item->setWidth($form['width']);
 		$item->setHeight($form['height']);
 		$item->setSerialNumber($form['serialNumber']);
 		$ret = $item->save();
-		if ($ret->isError()) {
+		if ($ret) {
 		    GalleryCoreApi::releaseLocks($lock);
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 		}
 
 		$ret = GalleryCoreApi::releaseLocks($lock);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		if ($ret) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 		}
 
 		/* Prepare our status message */
 		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		if ($ret) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 		}
 
 		$status = $module->translate('Changes saved successfully');
 	    }
 	}
 
-	return array(GalleryStatus::success(), $error, $status);
+	return array(null, $error, $status, false);
     }
 
     /**
@@ -114,7 +114,7 @@ class ItemEditAnimation extends ItemEditPlugin {
 	$ItemEditAnimation = array();
 	$template->setVariable('ItemEditAnimation', $ItemEditAnimation);
 	$template->setVariable('controller', 'core.ItemEditAnimation');
-	return array(GalleryStatus::success(),
+	return array(null,
 		     'modules/core/templates/ItemEditAnimation.tpl', 'modules_core');
     }
 
@@ -130,11 +130,11 @@ class ItemEditAnimation extends ItemEditPlugin {
      */
     function getTitle() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $module->translate('Animation Size'));
+	return array(null, $module->translate('Animation Size'));
     }
 }
 ?>

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,20 +42,21 @@ class ItemEditMoviePluginTest extends ItemEditPluginTestCase {
 
 	parent::setUp();
 
-	// Cache this data to lighten the load on our dummy toolkit
+	/* Cache this data to lighten the load on our dummy toolkit */
 	GalleryCoreApi::fetchPluginStatus('module');
 
-	$gallery->_platform = new ItemEditMoviePluginTestPlatform($gallery->getPlatform());
+	$gallery->setPlatform(new ItemEditMoviePluginTestPlatform($gallery->getPlatform()));
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$this->_markForCleanup($this->_album);
 
-	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(), 'video/x-msvideo');
-	if ($ret->isError()) {
+	list ($ret, $this->_item) =
+	    $this->_createRandomDataItem($this->_album->getId(), 'video/x-msvideo');
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -77,7 +78,7 @@ class ItemEditMoviePluginTest extends ItemEditPluginTestCase {
 
 	/* Verify that the preferred is gone */
 	list ($ret, $this->_item) = $this->_item->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -100,7 +101,7 @@ class ItemEditMoviePluginTest extends ItemEditPluginTestCase {
 
 	/* Reload the item */
 	list ($ret, $this->_item) = $this->_item->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -213,7 +214,7 @@ class ItemEditMoviePluginTestPlatform {
     }
 
     function fopen($filename, $modes) {
-	// Pass lock requests
+	/* Pass lock requests */
 	if (preg_match("|\blocks\b|", $filename)) {
 	    return fopen($filename, $modes);
 	}
@@ -274,7 +275,7 @@ class ItemEditMoviePluginTestPlatform {
     }
 
     function unlink($path) {
-	return unlink($path); // needed to release locks
+	return unlink($path); /* needed to release locks */
     }
 
     function realpath($file) {
@@ -282,7 +283,7 @@ class ItemEditMoviePluginTestPlatform {
     }
 
     function flock($handle, $operation, &$wouldblock) {
-	// Pass lock requests
+	/* Pass lock requests */
 	return flock($handle, $operation, $wouldblock);
     }
 

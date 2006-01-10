@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ class AdminModulesController extends GalleryController {
 	global $gallery;
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -53,12 +53,12 @@ class AdminModulesController extends GalleryController {
 	list($moduleId, $action) = GalleryUtilities::getRequestVariables('moduleId', 'action');
 	if (!empty($moduleId) && !empty($action)) {
 	    list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId, true);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    list ($ret, $isActive) = $module->isActive();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -66,12 +66,12 @@ class AdminModulesController extends GalleryController {
 
 	    case 'install':
 		$ret = $module->installOrUpgrade();
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		list($ret, $autoConfigured) = $module->autoConfigure();
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
@@ -83,7 +83,7 @@ class AdminModulesController extends GalleryController {
 
 	    case 'upgrade':
 		$ret = $module->installOrUpgrade();
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
@@ -96,18 +96,18 @@ class AdminModulesController extends GalleryController {
 		/* Can't activate if we're already active! */
 		if (!$isActive) {
 		    list ($ret, $needsConfiguration) = $module->needsConfiguration();
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
 		    /* Can't activate if we need to be configured! */
 		    if ($needsConfiguration) {
-			return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+			return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
 				     null);
 		    }
 
 		    list ($ret, $redirect) = $module->activate();
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
@@ -123,7 +123,7 @@ class AdminModulesController extends GalleryController {
 		/* Can't deactivate if we're not active! */
 		if ($isActive) {
 		    list ($ret, $redirect) = $module->deactivate();
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		    if (empty($redirect)) {
@@ -143,7 +143,7 @@ class AdminModulesController extends GalleryController {
 		break;
 
 	    default:
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
 			     null);
 	    }
 	}
@@ -161,7 +161,7 @@ class AdminModulesController extends GalleryController {
 	$results['status'] = $status;
 	$results['error'] = $error;
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -180,18 +180,18 @@ class AdminModulesView extends GalleryView {
 	global $gallery;
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $coreModule) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Load the module list */
 	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module', true);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -205,7 +205,7 @@ class AdminModulesView extends GalleryView {
 	foreach ($moduleStatus as $moduleId => $status) {
 	    if (!empty($status['active'])) {
 		list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
-		if ($ret->isError() && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+		if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
@@ -213,7 +213,7 @@ class AdminModulesView extends GalleryView {
 
 	/* Reload the module list, which may now be updated because of obsolete modules. */
 	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module', true);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -225,7 +225,7 @@ class AdminModulesView extends GalleryView {
 	foreach ($moduleStatus as $moduleId => $status) {
 	    /* Get the selected module's admin view (even if the module needs upgrading)  */
 	    list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId, true);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -265,7 +265,7 @@ class AdminModulesView extends GalleryView {
 			 * to be configured before being activated.
 			 */
 			list ($ret, $needsConfig) = $module->needsConfiguration();
-			if ($ret->isError()) {
+			if ($ret) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 
@@ -311,7 +311,7 @@ class AdminModulesView extends GalleryView {
 	$template->setVariable('AdminModules', array('modules' => $modules));
 	$template->setVariable('controller', 'core.AdminModules');
 
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/core/templates/AdminModules.tpl'));
     }
 

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 /**
  * @version $Revision$ $Date$
  * @package Permalinks
@@ -27,9 +26,7 @@
  * @author Pierre-Luc Paour <gallery@paour.com>
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/core/ShowItem.inc');
-GalleryCoreApi::relativeRequireOnce('modules/permalinks/classes/PermalinksMap.class');
-GalleryCoreApi::relativeRequireOnce('modules/permalinks/classes/helpers/PermalinksMapHelper.class');
+GalleryCoreApi::requireOnce('modules/permalinks/classes/PermalinksMapHelper.class');
 
 /**
  * Perform the redirection
@@ -44,25 +41,23 @@ class RedirectController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest(&$form) {
-	global $gallery;
-
 	$alias = GalleryUtilities::getRequestVariables('filename');
 	if (empty($alias)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
-	
-	list($ret, $itemId) = PermalinksMapHelper::fetchItemIdForAlias($alias);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+
+	list ($ret, $itemId) = PermalinksMapHelper::fetchItemIdForAlias($alias);
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	GalleryUtilities::putRequestVariable('itemId', $itemId);
-	
+
 	$results = array('delegate' => array('view' => 'core.ShowItem'),
-					 'status' => array(),
-					 'error' => array());
-	
-	return array(GalleryStatus::success(), $results);
+			 'status' => array(),
+			 'error' => array());
+
+	return array(null, $results);
     }
 }
 ?>

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,21 +43,21 @@ class ImageFrameTest extends GalleryTestCase {
 
 	list ($ret, $this->_imageframe) =
 	    GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1', 'ImageFrameImpl');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	if (!isset($this->_imageframe)) {
 	    print 'Missing ImageFrameImpl';
 	    return $this->failWithStatus(
-		GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__));
+		GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__));
 	}
     }
 
 
     function testImageFrameList() {
 	list ($ret, $list) = $this->_imageframe->getImageFrameList();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(isset($list['none']) && isset($list['dots']) && isset($list['wood']));
@@ -66,7 +66,7 @@ class ImageFrameTest extends GalleryTestCase {
     function testImageFrameInit() {
 	$template = new ImageFrameDummyGalleryTemplate();
 	$ret = $this->_imageframe->init($template, array('none', 'dots', 'wood'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(isset($template->data['ImageFrameData']), 'template data');
@@ -87,7 +87,7 @@ class ImageFrameTest extends GalleryTestCase {
 
 	/* Another init should add data, not overwrite */
 	$ret = $this->_imageframe->init($template, array('solid'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$data = $template->data['ImageFrameData'];
@@ -96,12 +96,12 @@ class ImageFrameTest extends GalleryTestCase {
 
     function testImageFrameSample() {
 	list ($ret, $url) = $this->_imageframe->getSampleUrl();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(strpos($url, 'imageframe.Sample'), 'sample url');
 	list ($ret, $url) = $this->_imageframe->getSampleUrl(12345);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(strpos($url, 'itemId=12345'), 'url2 id');
@@ -129,10 +129,10 @@ class ImageFrameTest extends GalleryTestCase {
 	/* Verify {counter} works across smarty instances */
 	$result = $smarty1->fetch('gallery:data/counter.tpl');
 	$result[1] = trim($result[1]);
-	$this->assertEquals(array(GalleryStatus::success(), '1'), $result);
+	$this->assertEquals(array(null, '1'), $result);
 	$result = $smarty2->fetch('gallery:data/counter.tpl');
 	$result[1] = trim($result[1]);
-	$this->assertEquals(array(GalleryStatus::success(), '2'), $result);
+	$this->assertEquals(array(null, '2'), $result);
     }
 }
 

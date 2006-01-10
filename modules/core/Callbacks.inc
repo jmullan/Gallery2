@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,13 +42,13 @@ class CoreCallbacks {
 	    }
 
 	    list ($ret, $language) = $gallery->getActiveLanguageCode();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    $block['core']['LanguageSelector'] =
 		array('list' => $languageList, 'language' => $language);
-	    return GalleryStatus::success();
+	    return null;
 
 	case 'ShouldShowEmergencyEditItemLink':
 	    $block['core']['ShouldShowEmergencyEditItemLink'] = false;
@@ -68,7 +68,7 @@ class CoreCallbacks {
 		    }
 		}
 	    }
-	    return GalleryStatus::success();
+	    return null;
 
 	case 'LoadPeers':
 	    $item = $params['item'];
@@ -76,18 +76,18 @@ class CoreCallbacks {
 	    if ($item['parentId'] > 0) {
 		list ($ret, $canViewParent) = GalleryCoreApi::hasItemPermission(
 		    $item['parentId'], 'core.view', $theme['actingUserId']);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
 	    if ($canViewParent) {
 		list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($item['parentId']);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 		list ($ret, $peerIds) =
 		    GalleryCoreApi::fetchChildItemIds($parent, null, null, $theme['actingUserId']);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 		foreach ($peerIds as $i => $id) {
@@ -98,14 +98,14 @@ class CoreCallbacks {
 		}
 	    }
 	    if (isset($peerItemIndex)) {
-		$windowSize = isset($params['windowSize']) ? $params['windowSize'] : 6;
+		$windowSize = isset($params['windowSize']) ? ($params['windowSize'] - 1) : 6;
 		$addEnds = isset($params['addEnds']) ? $params['addEnds'] : true;
 		$peerLast = count($peerIds) - 1;
 		$peerNeighborStart = max($peerItemIndex - (int)($windowSize/2), 0);
-		$peerNeighborEnd = min($peerItemIndex + (int)($windowSize/2), $peerLast);
+		$peerNeighborEnd = min($peerItemIndex + (int)(($windowSize+1)/2), $peerLast);
 		/* If the window is pinned to one end, expand it to the entire windowSize */
 		if ($peerNeighborStart == 0) {
-		    $peerNeighborEnd = min($peerLast, $windowSize-1);
+		    $peerNeighborEnd = min($peerLast, $windowSize);
 		} else if ($peerNeighborEnd == $peerLast) {
 		    $peerNeighborStart = max($peerLast - $windowSize, 0);
 		}
@@ -120,35 +120,35 @@ class CoreCallbacks {
 		}
 
 		list ($ret, $peerItems) = GalleryCoreApi::loadEntitiesById($peerMap);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 		if (!empty($params['loadThumbnails'])) {
 		    list ($ret, $thumbTable) = GalleryCoreApi::fetchThumbnailsByItemIds($peerMap);
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
 		}
 		$j = 0;
 		foreach ($peerMap as $i => $id) {
-		    $peer = $peerItems[$j++]->getMemberData();
+		    $peer = (array)$peerItems[$j++];
 		    $peer['peerIndex'] = $i + 1;
 		    if (isset($thumbTable[$id])) {
-			$peer['thumbnail'] = $thumbTable[$id]->getMemberData();
+			$peer['thumbnail'] = (array)$thumbTable[$id];
 		    }
 		    $peers[] = $peer;
 		}
 		$block['core']['LoadPeers'] = array('peers' => $peers,
 		    'peerCount' => count($peerIds), 'thisPeerIndex' => $peerItemIndex + 1,
-		    'parent' => $parent->getMemberData());
+                    'parent' => (array)$parent);
 	    } else {
 		$block['core']['LoadPeers'] =
 		    array('peers' => array(), 'peerCount' => 0);
 	    }
-	    return GalleryStatus::success();
+	    return null;
 	}
 
-	return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
     }
 }
 ?>

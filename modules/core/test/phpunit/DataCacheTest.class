@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -141,9 +141,9 @@ class DataCacheTest extends GalleryTestCase {
 	$cases['/data/cache/derivative/0/0/0-meta.inc'] =
 	    array('type' => 'derivative-meta', 'itemId' => '../EVIL');
 
-	$cases['/data/cache/derivative/1/2/123-fast.inc'] =
+	$cases['/data/cache/entity/1/2/123-fast.inc'] =
 	    array('type' => 'fast-download', 'itemId' => 123);
-	$cases['/data/cache/derivative/0/0/0-fast.inc'] =
+	$cases['/data/cache/entity/0/0/0-fast.inc'] =
 	    array('type' => 'fast-download', 'itemId' => '../EVIL');
 
 	$cases['/data/cache/module/foo/1/2/123.dat'] =
@@ -207,12 +207,12 @@ class DataCacheTest extends GalleryTestCase {
 	GalleryDataCache::setFileCachingEnabled(true);
 
 	list ($ret, $modulePluginStatus) = GalleryCoreApi::fetchPluginStatus('module');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $themePluginStatus) = GalleryCoreApi::fetchPluginStatus('theme');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 

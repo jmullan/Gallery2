@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ class DeleteCommentController extends GalleryController {
 
 	/* Make sure we have permission to delete a comment */
 	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'comment.delete');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -54,17 +54,17 @@ class DeleteCommentController extends GalleryController {
 	if (isset($form['action']['delete'])) {
 	    /* Delete the comment */
 	    list ($ret, $comment) = GalleryCoreApi::loadEntitiesById($commentId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    /* Make sure that the comment<->parent relationship is right */
 	    if ($comment->getParentId() != $itemId) {
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	    }
 
 	    $ret = GalleryCoreApi::deleteEntityById($comment->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -88,7 +88,7 @@ class DeleteCommentController extends GalleryController {
 	$results['status'] = $status;
 	$results['error'] = $error;
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -109,7 +109,7 @@ class DeleteCommentView extends GalleryView {
 
 	/* Load our item */
 	list ($ret, $item) = $this->_getItem();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -117,7 +117,7 @@ class DeleteCommentView extends GalleryView {
 
 	/* Make sure we have permission to delete a comment */
 	$ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'comment.delete');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -127,27 +127,27 @@ class DeleteCommentView extends GalleryView {
 
 	/* Load the specific comment */
 	list ($ret, $comment) = GalleryCoreApi::loadEntitiesById($commentId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Associate the commenter's info */
 	$commenterId = $comment->getCommenterId();
 	list ($ret, $commenter) = GalleryCoreApi::loadEntitiesById($commenterId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$DeleteComment = array();
-	$DeleteComment['comment'] = $comment->getMemberData();
-	$DeleteComment['commenter'] = $commenter->getMemberData();
-	$DeleteComment['item'] = $item->getMemberData();
+	$DeleteComment['comment'] = (array)$comment;
+	$DeleteComment['commenter'] = (array)$commenter;
+	$DeleteComment['item'] = (array)$item;
 	$DeleteComment['can'] = array('edit' => false, 'delete' => false);
 
 	$template->setVariable('DeleteComment', $DeleteComment);
 	$template->setVariable('controller', 'comment.DeleteComment');
 
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/comment/templates/DeleteComment.tpl'));
     }
 }

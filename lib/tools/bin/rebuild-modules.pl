@@ -7,10 +7,10 @@ if (!$MAKE) {
   die "Unable to locate 'make' or 'gmake'";
 }
 
-my @SCHEMAS = <modules/*/classes/GalleryStorage/DatabaseStorage/schema>;
-foreach my $schema (@SCHEMAS) {
-  (my $module = $schema) =~ s|(modules/.*?)/.*|$1|;
+my @MAKEFILES = <modules/*/classes/GNUmakefile>;
+foreach my $makefile (@MAKEFILES) {
+  (my $module = $makefile) =~ s|(modules/.*?)/.*|$1|;
   print STDERR "Building $module\n";
-  chdir("$CURDIR/$schema") || die;
+  chdir("$CURDIR/$module/classes") || die;
   system("$MAKE -s clean && $MAKE -s && $MAKE -s clean") and die;
 }

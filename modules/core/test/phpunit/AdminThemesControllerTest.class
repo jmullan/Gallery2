@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
  * @subpackage PHPUnit
  * @author Bharat Mediratta <bharat@menalto.com>
  */
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTheme.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryTheme.class');
 
 /**
  * AdminThemes controller tests
@@ -46,7 +46,7 @@ class AdminThemesControllerTest extends GalleryControllerTestCase {
 	$this->_testTheme->resetCalls();
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -189,7 +189,7 @@ class AdminThemesControllerTest extends GalleryControllerTestCase {
 
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'core', 'default.theme', 'AdminThemesControllerTest');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -304,7 +304,7 @@ class AdminThemesControllerTest extends GalleryControllerTestCase {
 			    $results);
 
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -343,7 +343,7 @@ class TestThemeId1Theme extends GalleryTheme {
 			    'type' => 'text-field',
 			    'typeParams' => array('size' => 2),
 			    'value' => 99);
-	return array(GalleryStatus::success(), $settings);
+	return array(null, $settings);
     }
 
     /**
@@ -362,7 +362,7 @@ class TestThemeId1Theme extends GalleryTheme {
     }
 
     function isActive() {
-	return array(GalleryStatus::success(), true);
+	return array(null, true);
     }
 }
 
@@ -385,7 +385,7 @@ class TestThemeId2Theme extends GalleryTheme {
     function setParameter($key, $value) {
 	$map =& $this->getMap();
 	$map[$key] = $value;
-	return GalleryStatus::success();
+	return null;
     }
 
     function TestThemeId2Theme() {
@@ -408,7 +408,7 @@ class TestThemeId2Theme extends GalleryTheme {
 			    'type' => 'text-field',
 			    'typeParams' => array('size' => 2),
 			    'value' => 3);
-	return array(GalleryStatus::success(), $settings);
+	return array(null, $settings);
     }
 
     /**
@@ -419,7 +419,7 @@ class TestThemeId2Theme extends GalleryTheme {
     }
 
     function isActive() {
-	return array(GalleryStatus::success(), true);
+	return array(null, true);
     }
 }
 
@@ -451,27 +451,27 @@ class AdminThemesControllerTestTheme {
 
     function init() {
 	$this->_setCalled('init');
-	return GalleryStatus::success();
+	return null;
     }
 
     function installOrUpgrade() {
 	$this->_setCalled('installOrUpgrade');
-	return GalleryStatus::success();
+	return null;
     }
 
     function activate() {
 	$this->_setCalled('activate');
-	return array(GalleryStatus::success(), array());
+	return array(null, array());
     }
 
     function uninstall() {
 	$this->_setCalled('uninstall');
-	return GalleryStatus::success();
+	return null;
     }
 
     function deactivate() {
 	$this->_setCalled('deactivate');
-	return array(GalleryStatus::success(), array());
+	return array(null, array());
     }
 
     function _setCalled($function) {
@@ -496,7 +496,7 @@ class AdminThemesControllerTestTheme {
 
     function isActive() {
 	$singleton = &$this->getSingleton();
-	return array(GalleryStatus::success(), $singleton->_isActive);
+	return array(null, $singleton->_isActive);
     }
 
     function isAdvancedSettings() {

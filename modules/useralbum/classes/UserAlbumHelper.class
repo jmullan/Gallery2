@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,11 +42,11 @@ class UserAlbumHelper {
      */
     function createUserAlbum($user) {
 	list ($ret, $core) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	list ($ret, $module) = GalleryCoreApi::fetchAllPluginParameters('module', 'useralbum');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -59,7 +59,7 @@ class UserAlbumHelper {
 	while (true) {
 	    list ($ret, $album) = GalleryCoreApi::createAlbum(
 		$module['targetLocation'], $albumName, $albumTitle, '', '', '');
-	    if ($ret->isSuccess()) {
+	    if (!$ret) {
 		break;
 	    }
 	    if ($ret->getErrorCode() & ERROR_COLLISION) {
@@ -70,14 +70,14 @@ class UserAlbumHelper {
 	}
 
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Set owner.. */
 	$album->setOwnerId($user->getId());
 	$ret = $album->save();
-	if ($ret->isError()) {
+	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockId);
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -85,17 +85,17 @@ class UserAlbumHelper {
 
 	/* Set permissions.. */
 	$ret = GalleryCoreApi::removeItemPermissions($albumId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockId);
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$ret = GalleryCoreApi::addGroupPermission($albumId, $core['id.adminGroup'], 'core.all');
-	if ($ret->isError()) {
+	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockId);
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$ret = GalleryCoreApi::addUserPermission($albumId, $user->getId(), 'core.all');
-	if ($ret->isError()) {
+	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockId);
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -113,7 +113,7 @@ class UserAlbumHelper {
 	if (isset($groupId)) {
 	    foreach ($viewPermissions as $permission) {
 		$ret = GalleryCoreApi::addGroupPermission($albumId, $groupId, $permission);
-		if ($ret->isError()) {
+		if ($ret) {
 		    GalleryCoreApi::releaseLocks($lockId);
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
@@ -121,18 +121,18 @@ class UserAlbumHelper {
 	}
 
 	$ret = GalleryCoreApi::releaseLocks($lockId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Record id of album */
 	$ret = GalleryCoreApi::setPluginParameter(
 			       'module', 'useralbum', 'albumId', $albumId, $user->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 }
 ?>

@@ -54,10 +54,8 @@
 	  <?php $isInvalid = $templateData['moduleInvalid'][$id]; ?>
 	  <tr<?php if ($counter % 2 == 0) print ' style="background-color: #eee"' ?>>
 	    <td>
-	      <input type="checkbox" id="module_<?php print $id ?>" name="module[<?php print $id ?>]"
-		<?php if ($module->isRecommendedDuringInstall() || $isInstalled): ?>
-		  checked="checked"
-		<?php endif; ?>
+	      <input type="checkbox" checked="checked"
+		id="module_<?php print $id ?>" name="module[<?php print $id ?>]"
 		<?php if ($isInstalled || $isInvalid): ?>
 		  disabled="disabled"
 		<?php endif; ?>

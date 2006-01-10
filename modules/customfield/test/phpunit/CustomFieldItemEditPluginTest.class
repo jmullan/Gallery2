@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 /**
  * Load required classes
  */
-GalleryCoreApi::relativeRequireOnce('modules/customfield/classes/CustomFieldHelper.class');
+GalleryCoreApi::requireOnce('modules/customfield/classes/CustomFieldHelper.class');
 
 /**
  * CustomFieldItemEdit controller tests
@@ -46,32 +46,32 @@ class CustomFieldItemEditPluginTest extends ItemEditPluginTestCase {
 	parent::setUp();
 
 	list ($ret, $this->_albumG) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($this->_albumG);
 	list ($ret, $this->_itemG) = $this->_createRandomDataItem($this->_albumG->getId(),
 				     'image/test', array(), __FILE__, 'GalleryPhotoItem');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	list ($ret, $this->_albumS) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($this->_albumS);
 	list ($ret, $this->_itemS) = $this->_createRandomDataItem($this->_albumS->getId(),
 				     'video/test', array(), __FILE__, 'GalleryMovieItem');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
 	$ret = $this->_markPluginParametersForCleanup('module', 'customfield');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -91,7 +91,7 @@ class CustomFieldItemEditPluginTest extends ItemEditPluginTestCase {
 		      'summary' => false, 'detail' => false, 'choices' => array('A', 'B'))
 	    )
 	));
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -111,7 +111,7 @@ class CustomFieldItemEditPluginTest extends ItemEditPluginTestCase {
 		      'summary' => true, 'detail' => true, 'choices' => array()),
 	    )
 	), $this->_albumS->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -136,14 +136,14 @@ class CustomFieldItemEditPluginTest extends ItemEditPluginTestCase {
 			    $results);
 
 	list ($ret, $data) = CustomFieldHelper::fetchFieldValues(array($this->_itemG), 'summary');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array('Location' => 'There'),
 		$data[$this->_itemG->getId()], 'Summary data');
 
 	list ($ret, $data) = CustomFieldHelper::fetchFieldValues(array($this->_itemG), 'detail');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array('Catalog Id' => '123', 'Location' => 'There'),
@@ -151,7 +151,7 @@ class CustomFieldItemEditPluginTest extends ItemEditPluginTestCase {
 
 	list ($ret, $data) =
 		CustomFieldHelper::fetchFieldValues(array($this->_itemG), null, 'photo');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array('Catalog Id' => '123', 'My Data' => '',
@@ -170,14 +170,14 @@ class CustomFieldItemEditPluginTest extends ItemEditPluginTestCase {
 			    $results);
 
 	list ($ret, $data) = CustomFieldHelper::fetchFieldValues(array($this->_albumS), 'summary');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array('Category' => 'C'),
 		$data[$this->_albumS->getId()], 'Summary data 2');
 
 	list ($ret, $data) = CustomFieldHelper::fetchFieldValues(array($this->_albumS), 'detail');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array('Catalog Id' => '456', 'Year' => '2004'),
@@ -185,7 +185,7 @@ class CustomFieldItemEditPluginTest extends ItemEditPluginTestCase {
 
 	list ($ret, $data) =
 		CustomFieldHelper::fetchFieldValues(array($this->_albumS), null, 'album');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array('Category' => 'C', 'Catalog Id' => '456', 'Year' => '2004'),
@@ -241,7 +241,7 @@ class CustomFieldItemEditPluginTest extends ItemEditPluginTestCase {
 	/* Check data so far */
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'customfield',
 									$this->_albumS->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	ksort($params);
@@ -271,7 +271,7 @@ class CustomFieldItemEditPluginTest extends ItemEditPluginTestCase {
 	/* Check data so far */
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'customfield',
 									$this->_albumS->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	ksort($params);
@@ -330,7 +330,7 @@ class CustomFieldItemEditPluginTest extends ItemEditPluginTestCase {
 	/* Check data so far */
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'customfield',
 									$this->_albumS->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	ksort($params);
@@ -352,7 +352,7 @@ class CustomFieldItemEditPluginTest extends ItemEditPluginTestCase {
 	/* Check data so far */
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'customfield',
 									$this->_albumS->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	ksort($params);
@@ -363,7 +363,7 @@ class CustomFieldItemEditPluginTest extends ItemEditPluginTestCase {
 
 	/* Check appropriate field values have been removed with settings changes */
 	list ($ret, $data) = CustomFieldHelper::fetchFieldValues(array($this->_albumS));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array('Category' => 'C'),

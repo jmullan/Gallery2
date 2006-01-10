@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,16 +37,16 @@ class ConfirmDeleteController extends GalleryController {
     function handleRequest($form) {
 	/* Make sure we have permission to edit this item */
 	$ret = GalleryCoreApi::assertHasItemPermission($form['watermarkId'], 'core.edit');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$status = array();
 	if (isset($form['action']['delete'])) {
-	    GalleryCoreApi::relativeRequireOnce('modules/watermark/classes/WatermarkHelper.class');
+	    GalleryCoreApi::requireOnce('modules/watermark/classes/WatermarkHelper.class');
 
 	    list ($ret) = WatermarkHelper::deleteWatermarkImageById($form['watermarkId'], true);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -59,7 +59,7 @@ class ConfirmDeleteController extends GalleryController {
 	$results['status'] = $status;
 	$results['error'] = array();
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -73,7 +73,7 @@ class ConfirmDeleteView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	GalleryCoreApi::relativeRequireOnce('modules/watermark/classes/WatermarkHelper.class');
+	GalleryCoreApi::requireOnce('modules/watermark/classes/WatermarkHelper.class');
 	if ($form['formName'] != 'ConfirmDelete') {
 	    $form['formName'] = 'ConfirmDelete';
 	    list ($form['watermarkId'], $form['fromAdmin']) =
@@ -81,21 +81,21 @@ class ConfirmDeleteView extends GalleryView {
 	}
 
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($form['watermarkId']);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $itemIds) = WatermarkHelper::fetchWatermarkedItemIds($item);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$template->setVariable('ConfirmDelete',
-			       array('item' => $item->getMemberData(),
+			       array('item' => (array)$item,
 				     'count' => count($itemIds)));
 	$template->setVariable('controller', 'watermark.ConfirmDelete');
 
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/watermark/templates/ConfirmDelete.tpl'));
     }
 }

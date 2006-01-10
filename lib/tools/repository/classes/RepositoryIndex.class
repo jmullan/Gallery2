@@ -1,7 +1,7 @@
 <?php
 /*
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
  * $Id$
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryModule.class');
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTheme.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryModule.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryTheme.class');
 
 /**
  * This class provides methods for generating the repository index.
@@ -60,12 +60,12 @@ class RepositoryIndex extends RepositoryObject {
 	parent::init();
 
 	$ret = $this->setOutputDir($repositoryDir);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$this->setOutputFile('index');
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -83,7 +83,7 @@ class RepositoryIndex extends RepositoryObject {
 	$index = array();
 	$buildLookupTable = array();
 
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	foreach ($pluginTypes as $pluginType) {
 	    if (false !== ($dir = $platform->opendir($this->_outputDir . $pluginType))) {
 		while (false !== ($file = $platform->readdir($dir))) {
@@ -95,14 +95,14 @@ class RepositoryIndex extends RepositoryObject {
 		    $descriptorPath = sprintf('%s%s/%s', $this->_outputDir, $pluginType, $file);
 		    if (false === ($descriptorContents =
 			    $platform->file_get_contents($descriptorPath))) {
-			return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
-					"Error reading descriptor [$descriptorPath]"),
+			return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__,
+					__LINE__, "Error reading descriptor [$descriptorPath]"),
 				     null);
 		    }
 
 		    /* Unserialize it. */
 		    if (false === ($descriptor = unserialize($descriptorContents))) {
-			return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
+			return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
 					"Error unserializing descriptor [$descriptorContents]"),
 				     null);
 		    }
@@ -133,7 +133,7 @@ class RepositoryIndex extends RepositoryObject {
 		    list ($ret, $relation) =
 			$this->_utilities->compareVersions($currentPluginVersion,
 			    $indexPluginVersion, $currentPluginBuild, $indexPluginBuild);
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
@@ -167,7 +167,7 @@ class RepositoryIndex extends RepositoryObject {
 		    }
 		}
 	    } else {
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 					"Couldn't open directory [$this->_outputDir$pluginType]"),
 			     null);
 	    }
@@ -180,7 +180,7 @@ class RepositoryIndex extends RepositoryObject {
 	/* Write index to disk. */
 	$this->_template->setVariable('contents', $serializedIndex);
 	$ret = $this->writeToDisk(true);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -189,12 +189,12 @@ class RepositoryIndex extends RepositoryObject {
 	$this->setOutputFile($indexFile . '.hash');
 	$this->_template->setVariable('contents', $this->_indexHash);
 	$ret = $this->writeToDisk(true);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$this->setOutputFile($indexFile);
 
-	return array(GalleryStatus::success(), $pluginCount);
+	return array(null, $pluginCount);
     }
 
     /**
@@ -208,17 +208,17 @@ class RepositoryIndex extends RepositoryObject {
 
 	/* Read index from disk if it's not in memory. */
 	if (!is_array($this->_index)) {
-	    $platform = $gallery->getPlatform();
+	    $platform =& $gallery->getPlatform();
 	    $indexPath = $this->_outputDir . $this->_fileName;
 	    if (false === ($index = $platform->file_get_contents($indexPath))) {
-		return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__, sprintf(
-						      'Error reading index [%s]', $indexPath)),
+		return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
+					     sprintf('Error reading index [%s]', $indexPath)),
 			     null);
 	    }
 
 	    if (false === ($this->_index = unserialize($index))) {
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-						  "Couldn't unserialize index [$index]"),
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+						   "Couldn't unserialize index [$index]"),
 			     null);
 	    }
 	}
@@ -236,7 +236,7 @@ class RepositoryIndex extends RepositoryObject {
 	    }
 	}
 
-	return array(GalleryStatus::success(), $pluginInfo);
+	return array(null, $pluginInfo);
     }
 }
 ?>

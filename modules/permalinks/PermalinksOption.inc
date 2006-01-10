@@ -3,7 +3,7 @@
 * $RCSfile$
 *
 * Gallery - a web based photo album viewer and editor
-* Copyright (C) 2000-2005 Bharat Mediratta
+* Copyright (C) 2000-2006 Bharat Mediratta
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -27,8 +27,7 @@
  * @author Pierre-Luc Paour <gallery@paour.com>
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/permalinks/classes/PermalinksMap.class');
-GalleryCoreApi::relativeRequireOnce('modules/permalinks/classes/helpers/PermalinksMapHelper.class');
+GalleryCoreApi::requireOnce('modules/permalinks/classes/PermalinksMapHelper.class');
 
 /**
  * This edit option allows you to create Permalinks for your item
@@ -38,81 +37,73 @@ GalleryCoreApi::relativeRequireOnce('modules/permalinks/classes/helpers/Permalin
  *
  */
 class PermalinksOption extends ItemEditOption {
-    
+
     /**
      * @see ItemEditOption::handleRequestAfterEdit
      */
     function handleRequestAfterEdit($form, &$item, &$preferred) {
-	global $gallery;
-	
-	$warning = array();
-	$error = array();
+	$warning = $error = array();
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'permalinks');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
-	
+
 	if (!empty($form['PermalinksOption']['aliasName'])) {
 	    $ret = PermalinksMapHelper::createAlias($form['PermalinksOption']['aliasName'],
-		    $item->getId());
-	    if ($ret->isError()) {
+						    $item->getId());
+	    if ($ret) {
 		if (!($ret->getErrorCode() & ERROR_STORAGE_FAILURE)) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
-		
+
 		/* Set our error status and fall back to the view. */
 		$error[] = 'form[error][PermalinksOption][exists]';
 	    } else {
 		/* don't do anything if we're successful */
 	    }
 	}
-	
+
 	if (isset($form['PermalinksOption']['delete'])) {
-	    foreach($form['PermalinksOption']['delete'] as $name => $status) {
+	    foreach ($form['PermalinksOption']['delete'] as $name => $status) {
 		$ret = PermalinksMapHelper::deleteAlias($name);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
-		
+
 		/* don't do anything if we're successful */
 	    }
+	    $warning[] = $module->translate('Permalink(s) deleted successfully');
 	}
-	
-	return array(GalleryStatus::success(), $error, $warning);
+
+	return array(null, $error, $warning);
     }
-    
+
     /**
      * @see ItemEditOption::loadTemplate
      */
     function loadTemplate(&$template, &$form, $item, $thumbnail) {
-	global $gallery;
-	
-	$ItemEditPermalinks = array();
-	
-	list($ret, $aliases) = PermalinksMapHelper::fetchAliasesForItem($item->getId());
-	if ($ret->isError()) {
+	list ($ret, $aliases) = PermalinksMapHelper::fetchAliasesForItem($item->getId());
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
-	
-	$PermalinksOption['aliases'] = $aliases;
-	
-	$template->setVariable('PermalinksOption', $PermalinksOption);
-	return array(GalleryStatus::success(),
-		'modules/permalinks/templates/PermalinksOption.tpl', 'modules_permalinks');
+
+	$template->setVariable('PermalinksOption', array('aliases' => $aliases));
+	return array(null,
+		     'modules/permalinks/templates/PermalinksOption.tpl', 'modules_permalinks');
     }
-    
+
     /**
      * @see ItemEditOption::isAppropriate
      */
     function isAppropriate($item, $thumbnail) {
 	list ($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), GalleryUtilities::isA($item, 'GalleryItem') &&
-		$item->getId() != $rootId);
+	return array(null,
+		     GalleryUtilities::isA($item, 'GalleryItem') && $item->getId() != $rootId);
     }
 }
 ?>

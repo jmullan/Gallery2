@@ -1,7 +1,7 @@
 <?php
 /*
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +20,9 @@
  * $Id$
  */
 
-GalleryCoreApi::relativeRequireOnce('lib/tools/repository/classes/RepositoryObject.class');
-GalleryCoreApi::relativeRequireOnce('lib/tools/repository/classes/RepositoryDescriptor.class');
-GalleryCoreApi::relativeRequireOnce('lib/tools/repository/classes/RepositoryPackage.class');
+GalleryCoreApi::requireOnce('lib/tools/repository/classes/RepositoryObject.class');
+GalleryCoreApi::requireOnce('lib/tools/repository/classes/RepositoryDescriptor.class');
+GalleryCoreApi::requireOnce('lib/tools/repository/classes/RepositoryPackage.class');
 
 /**
  * Controller for the plugin packaging page.
@@ -44,16 +44,16 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
     function showAvailablePlugins() {
 	list ($ret, $plugins) = $this->getAvailablePluginList(array(
 	    'package' => array('controller' => 'PackagePlugin', 'action' => 'packagePlugin')));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$ret = $this->showView('PackagePlugin', array('plugins' => $plugins));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -66,22 +66,22 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
 	    GalleryUtilities::getRequestVariables('pluginId', 'pluginType');
 
 	if (empty($pluginId) || empty($pluginType)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 	    				sprintf('pluginId [%s] and/or pluginType [%s] not set.',
 	    					$pluginId, $pluginType));
 	}
 
 	list ($ret, $pluginInfo) = $this->doPackagePlugin($pluginType, $pluginId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$ret = $this->showView('PackageResults', array('results' => array($pluginInfo)));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -99,21 +99,21 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
 	}
 
 	list ($ret, $plugins) = $this->getAvailablePluginList(array());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	foreach ($plugins as $pluginId => $plugin) {
 	    if (preg_match($filter, $pluginId)) {
 		list ($ret, $pluginInfo) = $this->doPackagePlugin($plugin['type'], $pluginId);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 		$packagedPluginList[] = $pluginInfo;
 	    }
 	}
 	$this->showView('PackageResults', array('results' => $packagedPluginList));
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -126,7 +126,7 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
 	$outputDir = $gallery->getConfig('repository.path');
 
 	list ($ret, $plugin) = GalleryCoreApi::loadPlugin($pluginType, $pluginId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -134,28 +134,28 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
 
 	$descriptor = new RepositoryDescriptor();
 	$ret = $descriptor->init($outputDir);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$ret = $descriptor->generate($plugin);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$ret = $descriptor->writeToDisk();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$package = new RepositoryPackage();
 	$ret = $package->init($descriptor, $descriptor->getOutputDir());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $packagesWritten) = $package->writeAllPackagesToDisk();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -163,7 +163,7 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
 			    'outputDir' => $descriptor->getOutputDir(),
 			    'packageInfo' => $packagesWritten);
 
-	return array(GalleryStatus::success(), $pluginInfo);
+	return array(null, $pluginInfo);
     }
 
     /**
@@ -181,7 +181,7 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
 
 	foreach ($pluginTypes as $pluginType) {
 	    list ($ret, $plugins) = GalleryCoreApi::fetchPluginStatus($pluginType, true);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -199,7 +199,7 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
 	    }
 	}
 
-	return array(GalleryStatus::success(), $data);
+	return array(null, $data);
     }
 }
 ?>

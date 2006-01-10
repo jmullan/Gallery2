@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/core/AdminMaintenance.inc');
+GalleryCoreApi::requireOnce('modules/core/AdminMaintenance.inc');
 
 /**
  * This is a MaintenanceTask that will delete all the cached Smarty templates.
@@ -55,11 +55,11 @@ class FlushDatabaseCacheTask extends MaintenanceTask {
      */
     function run() {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$cacheBaseDir = $gallery->getConfig('data.gallery.cache');
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
@@ -81,7 +81,7 @@ class FlushDatabaseCacheTask extends MaintenanceTask {
 	    }
 	}
 
-	return array(GalleryStatus::success(), $success, $details);
+	return array(null, $success, $details);
     }
 }
 ?>

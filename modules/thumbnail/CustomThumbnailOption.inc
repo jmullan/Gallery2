@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,22 +40,22 @@ class CustomThumbnailOption extends ItemEditOption {
      * @see ItemEditOption::isAppropriate
      */
     function isAppropriate($item, $thumbnail) {
-	return array(GalleryStatus::success(), GalleryUtilities::isA($item, 'GalleryItem'));
+	return array(null, GalleryUtilities::isA($item, 'GalleryItem'));
     }
 
     /**
      * @see ItemEditOption::loadTemplate
      */
     function loadTemplate(&$template, &$form, $item, $thumbnail) {
-	GalleryCoreApi::relativeRequireOnce('modules/thumbnail/classes/ThumbnailHelper.class');
+	GalleryCoreApi::requireOnce('modules/thumbnail/classes/ThumbnailHelper.class');
 
 	/* Is this item already using a custom thumbnail.. */
 	list ($ret, $thumbnailImage) = ThumbnailHelper::fetchThumbnail($item->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	if (isset($thumbnailImage)) {
-	    $thumbnailImage = $thumbnailImage->getMemberData();
+	    $thumbnailImage = (array)$thumbnailImage;
 	} else {
 	    /* Set the form's encoding type since we're uploading binary files */
 	    if ($template->hasVariable('ItemAdmin')) {
@@ -68,7 +68,7 @@ class CustomThumbnailOption extends ItemEditOption {
 	}
 	$template->setVariable('CustomThumbnailOption', array('thumbnail' => $thumbnailImage));
 
-	return array(GalleryStatus::success(),
+	return array(null,
 		    'modules/thumbnail/templates/CustomThumbnail.tpl',
 		    'modules_thumbnail');
     }
@@ -77,57 +77,57 @@ class CustomThumbnailOption extends ItemEditOption {
      * @see ItemEditOption::handleRequestAfterEdit
      */
     function handleRequestAfterEdit($form, &$item, &$preferred) {
-	GalleryCoreApi::relativeRequireOnce('modules/thumbnail/classes/ThumbnailHelper.class');
+	GalleryCoreApi::requireOnce('modules/thumbnail/classes/ThumbnailHelper.class');
 
 	$error = array();
 	$warning = array();
 	if (!empty($form['tmp_name'][1])) {
 	    list ($ret, $lockId) = GalleryCoreApi::acquireReadLock(array($item->getId()));
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
 	    list ($ret, $thumbnailId) = ThumbnailHelper::addItem(
 		null, $item->getId(), $form['name'][1], $form['tmp_name'][1], $form['type'][1]);
-	    if ($ret->isError() && ($ret->getErrorCode() & ERROR_UNSUPPORTED_FILE_TYPE)) {
+	    if ($ret && ($ret->getErrorCode() & ERROR_UNSUPPORTED_FILE_TYPE)) {
 		$error[] = 'form[CustomThumbnailOption][error][imageMime]';
-	    } else if ($ret->isError()) {
+	    } else if ($ret) {
 		GalleryCoreApi::releaseLocks($lockId);
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
 	    if (empty($error)) {
 		$ret = ThumbnailHelper::applyThumbnail($item, $thumbnailId);
-		if ($ret->isError()) {
+		if ($ret) {
 		    GalleryCoreApi::releaseLocks($lockId);
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 	    }
 
 	    $ret = GalleryCoreApi::releaseLocks($lockId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	} else if (isset($form['CustomThumbnailOption']['delete'])) {
 	    list ($ret, $thumbnailImage) = ThumbnailHelper::fetchThumbnail($item->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    if (!isset($thumbnailImage)) {
-		return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
+		return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
 			     null, null);
 	    }
 	    $ret = GalleryCoreApi::deleteEntityById($thumbnailImage->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    $ret = ThumbnailHelper::restoreThumbnail($item);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	}
 
-	return array(GalleryStatus::success(), $error, $warning);
+	return array(null, $error, $warning);
     }
 }
 ?>

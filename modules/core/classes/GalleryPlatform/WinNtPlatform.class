@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 /**
  * Load required class
  */
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPlatform.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryPlatform.class', true);
 
 /**
  * An WindowsNT based version of the GalleryPlatform class
@@ -107,7 +107,7 @@ class WinNtPlatform extends GalleryPlatform {
 
 	list ($ret, $expected) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'exec.expectedStatus');
-	if ($ret->isError()) {
+	if ($ret) {
 	    if ($gallery->getDebug()) {
 		$gallery->debug('Unable to look up core.exec.expectedStatus param');
 	    }

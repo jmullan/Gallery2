@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ class RearrangeItemsControllerTest extends GalleryControllerTestCase {
 	// Create a test album with 4 child items (1 with no permission) and 1 subalbum..
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId(),
 							       array('orderBy' => 'orderWeight'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -53,19 +53,19 @@ class RearrangeItemsControllerTest extends GalleryControllerTestCase {
 	for ($i = 0; $i < 5; $i++) {
 	    if ($i == 3) {
 		list ($ret, $this->_child[$i]) = $this->_createRandomAlbum($this->_album->getId());
-		if ($ret->isError()) {
+		if ($ret) {
 		    print $ret->getAsHtml();
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
 	    } else {
 		list ($ret, $this->_child[$i]) = $this->_createRandomDataItem($this->_album->getId());
-		if ($ret->isError()) {
+		if ($ret) {
 		    print $ret->getAsHtml();
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
 		if ($i == 1) {
 		    $ret = GalleryCoreApi::removeItemPermissions($this->_child[$i]->getId());
-		    if ($ret->isError()) {
+		    if ($ret) {
 			print $ret->getAsHtml();
 			return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		    }
@@ -73,7 +73,7 @@ class RearrangeItemsControllerTest extends GalleryControllerTestCase {
 	    }
 
 	    $ret = GalleryCoreApi::setItemOrderWeight($this->_child[$i]->getId(), $i * 1000);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -108,7 +108,7 @@ class RearrangeItemsControllerTest extends GalleryControllerTestCase {
 			    $results);
 
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_album);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -119,7 +119,7 @@ class RearrangeItemsControllerTest extends GalleryControllerTestCase {
 			    $childIds, 'childIds');
 
 	list ($ret, $orderWeights) = GalleryCoreApi::fetchItemOrderWeights($this->_childIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	foreach ($this->_childIds as $id) {
@@ -138,7 +138,7 @@ class RearrangeItemsControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest(ERROR_BAD_PARAMETER);
 
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_album);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 

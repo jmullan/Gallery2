@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 /**
  * Required classes
  */
-GalleryCoreApi::relativeRequireOnce('modules/migrate/classes/Gallery1DataParser.class');
+GalleryCoreApi::requireOnce('modules/migrate/classes/Gallery1DataParser.class');
 
 /**
  * @package Migrate
@@ -44,7 +44,7 @@ class ChooseObjectsController extends GalleryController {
 
 	/* Verify that active user is an admin */
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -76,7 +76,7 @@ class ChooseObjectsController extends GalleryController {
 	$results['status'] = $status;
 	$results['error'] = $error;
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -164,24 +164,24 @@ class ChooseObjectsView extends GalleryView {
 		$possibleEncodingMatch = $encodingName;
 	    }
 	}
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 
 	$albumsPath = GalleryUtilities::getRequestVariables('albumsPath');
 	if ($albumsPath == null) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
 
 	$existingUsers = array();
 	$newUsers = array();
 	list($ret, $allUsers) = Gallery1DataParser::getUserUids($albumsPath);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	foreach($allUsers as $uid => $userName) {
 	    list($ret, $testUser) = GalleryCoreApi::fetchUserByUsername($userName);
-	    if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+	    if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 		return array($ret->wrap(__FILE__, __LINE__), 'Your userdb.dat includes '
 			     . $userName . ' but doesn\'t include the associated file: ' . $uid);
 	    }
@@ -215,26 +215,26 @@ class ChooseObjectsView extends GalleryView {
 	    $form['customFields'] = $form['skipCustomItemFields'] = 1;
 	}
 	list ($ret, $g1AlbumTree) = $this->_createG1AlbumTree($albumsPath);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Get all possible destinations (where user has write permission) */
 	list ($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Get ids of all all albums where we can add new album items */
 	list ($ret, $albumIds) =
 	    GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.addAlbumItem');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Load all the album entities */
 	list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($albumIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$g2AlbumTree = GalleryUtilities::createAlbumTree($albums);
@@ -242,7 +242,7 @@ class ChooseObjectsView extends GalleryView {
 	/* See if customfield module is available */
 	list ($ret, $customFieldInterface) =
 	    GalleryCoreApi::newFactoryInstance('CustomFieldInterface_1_0');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -257,7 +257,7 @@ class ChooseObjectsView extends GalleryView {
 	$template->setVariable('ChooseObjects', $ChooseObjects);
 	$template->setVariable('controller', 'migrate.ChooseObjects');
 
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/migrate/templates/ChooseObjects.tpl'));
     }
 
@@ -268,12 +268,12 @@ class ChooseObjectsView extends GalleryView {
     function _createG1AlbumTree($albumsPath) {
 
 	list($ret, $albumList) = Gallery1DataParser::getAlbumList($albumsPath);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list($ret, $hierarchy) = Gallery1DataParser::getAlbumHierarchy($albumsPath);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -283,7 +283,7 @@ class ChooseObjectsView extends GalleryView {
 		$tree, $this->_createG1DepthTree($albumList, $albumName, $subHierarchy));
 	}
 
-	return array(GalleryStatus::success(), $tree);
+	return array(null, $tree);
     }
 
     /**

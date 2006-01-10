@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,26 +37,11 @@ class RearrangeModule extends GalleryModule {
 	$this->setId('rearrange');
 	$this->setName($gallery->i18n('Rearrange'));
 	$this->setDescription($gallery->i18n('Rearrange the order of album items all at once'));
-	$this->setVersion('1.0.0');
+	$this->setVersion('1.0.1');
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks('getItemLinks|getItemAdminViews');
-	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredModuleApi(array(2, 0));
-    }
-
-    /**
-     * @see GalleryModule::isRecommendedDuringInstall()
-     */
-    function isRecommendedDuringInstall() {
-	return true;
-    }
-
-    /**
-     * @see GalleryModule::autoConfigure()
-     */
-    function autoConfigure() {
-	/* We don't require any special configuration */
-	return array(GalleryStatus::success(), true);
+	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredModuleApi(array(3, 0));
     }
 
     /**
@@ -78,7 +63,7 @@ class RearrangeModule extends GalleryModule {
 	     * permissions.
 	     */
 	    list ($ret, $childCounts) = GalleryCoreApi::fetchChildCounts($itemIds);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -96,7 +81,7 @@ class RearrangeModule extends GalleryModule {
 	    }
 	}
 
-	return array(GalleryStatus::success(), $links);
+	return array(null, $links);
     }
 
     /**
@@ -105,15 +90,15 @@ class RearrangeModule extends GalleryModule {
     function getItemAdminViews($item) {
 	$views = array();
 	if (!$item->getCanContainChildren()) {
-	    return array(GalleryStatus::success(), $views);
+	    return array(null, $views);
 	}
 
 	list ($ret, $permissions) = GalleryCoreApi::getPermissions($item->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	list ($ret, $childCounts) = GalleryCoreApi::fetchChildCounts(array($item->getId()));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$childCount = empty($childCounts[$item->getId()]) ? 0 : $childCounts[$item->getId()];
@@ -123,7 +108,7 @@ class RearrangeModule extends GalleryModule {
 			     'view' => 'rearrange.RearrangeItems');
 	}
 
-	return array(GalleryStatus::success(), $views);
+	return array(null, $views);
     }
 }
 ?>

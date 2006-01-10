@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,21 +49,21 @@ class GalleryChildEntityHelper_simple {
      */
     function fetchChildItemIdsWithPermission($itemId, $permissionId) {
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	if ($item->getCanContainChildren()) {
 	    list ($ret, $ids) = GalleryChildEntityHelper_simple::_fetchChildItemIds(
 		$item, null, null, 'GalleryItem', $permissionId, false, null);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	} else {
 	    $ids = array();
 	}
 
-	return array(GalleryStatus::success(), $ids);
+	return array(null, $ids);
     }
 
     /**
@@ -81,21 +81,21 @@ class GalleryChildEntityHelper_simple {
      */
     function fetchLinkableChildItemIdsWithPermission($itemId, $permissionId) {
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	if ($item->getCanContainChildren()) {
 	    list ($ret, $ids) = GalleryChildEntityHelper_simple::_fetchChildItemIds(
 		$item, null, null, 'GalleryItem', $permissionId, true, null);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	} else {
 	    $ids = array();
 	}
 
-	return array(GalleryStatus::success(), $ids);
+	return array(null, $ids);
     }
 
     /**
@@ -115,10 +115,10 @@ class GalleryChildEntityHelper_simple {
     function fetchChildItemIds($item, $offset=null, $count=null, $userId=null) {
 	list ($ret, $ids) = GalleryChildEntityHelper_simple::_fetchChildItemIds(
 	    $item, $offset, $count, 'GalleryItem', null, false, $userId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	return array(GalleryStatus::success(), $ids);
+	return array(null, $ids);
     }
 
     /**
@@ -138,10 +138,10 @@ class GalleryChildEntityHelper_simple {
     function fetchChildDataItemIds($item, $offset=null, $count=null, $userId=null) {
 	list ($ret, $ids) = GalleryChildEntityHelper_simple::_fetchChildItemIds(
 	    $item, $offset, $count, 'GalleryDataItem', null, false, $userId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	return array(GalleryStatus::success(), $ids);
+	return array(null, $ids);
     }
 
     /**
@@ -161,10 +161,10 @@ class GalleryChildEntityHelper_simple {
     function fetchChildAlbumItemIds($item, $offset=null, $count=null, $userId=null) {
 	list ($ret, $ids) = GalleryChildEntityHelper_simple::_fetchChildItemIds(
 	    $item, $offset, $count, 'GalleryAlbumItem', null, false, $userId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	return array(GalleryStatus::success(), $ids);
+	return array(null, $ids);
     }
 
     /**
@@ -183,10 +183,10 @@ class GalleryChildEntityHelper_simple {
     function fetchChildItemIdsIgnorePermissions($item, $offset=null, $count=null) {
 	list ($ret, $ids) = GalleryChildEntityHelper_simple::_fetchChildItemIds(
 	    $item, $offset, $count, 'GalleryItem', null, false, null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	return array(GalleryStatus::success(), $ids);
+	return array(null, $ids);
     }
 
     /**
@@ -216,7 +216,7 @@ class GalleryChildEntityHelper_simple {
 	}
 
 	if (!GalleryUtilities::isA($item, 'GalleryItem')) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
 
 	/* List of classes that we will need */
@@ -225,14 +225,14 @@ class GalleryChildEntityHelper_simple {
 	if ($requiredPermission) {
 	    list ($ret, $aclIds) =
 		GalleryCoreApi::fetchAccessListIds($requiredPermission, $userId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
 	    $classes[] = '[GalleryAccessSubscriberMap]';
 
 	    if (empty($aclIds)) {
-		return array(GalleryStatus::success(), array());
+		return array(null, array());
 	    }
 	}
 
@@ -243,7 +243,7 @@ class GalleryChildEntityHelper_simple {
 	list ($ret, $orderBy, $orderColumn, $extraWhere, $extraJoin) =
 	    GalleryChildEntityHelper_simple::_getOrderInfo(
 		$item->getOrderBy(), $item->getOrderDirection());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$extraIds = 0;
@@ -253,7 +253,7 @@ class GalleryChildEntityHelper_simple {
 	    $extraWhere = 'AND ' . $extraWhere;
 
 	    list ($ret, $orderClasses) = $storage->extractClasses($extraWhere);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $classes = array_unique(array_merge($classes, $orderClasses));
@@ -332,7 +332,7 @@ class GalleryChildEntityHelper_simple {
 	}
 
 	list ($ret, $searchResults) = $gallery->search($query, $data, $options);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -341,7 +341,7 @@ class GalleryChildEntityHelper_simple {
 	    $ids[] = (int)$result[0];
 	}
 
-	return array(GalleryStatus::success(), $ids);
+	return array(null, $ids);
     }
 
     /**
@@ -358,28 +358,28 @@ class GalleryChildEntityHelper_simple {
 
 	if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
 	    list ($ret, $parentIds) = GalleryCoreApi::fetchParentSequence($item->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	} else {
 	    list ($ret, $parentIds) = GalleryCoreApi::fetchParentSequence($item->getParentId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    array_push($parentIds, $item->getParentId());
 	}
 	if (empty($parentIds)) {
-	    return array(GalleryStatus::success(), array());
+	    return array(null, array());
 	}
 
 	if (isset($permission)) {
 	    $ret = GalleryCoreApi::studyPermissions($parentIds);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    foreach ($parentIds as $i => $id) {
 		list ($ret, $hasPermission) = GalleryCoreApi::hasItemPermission($id, $permission);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		if (!$hasPermission) {
@@ -387,16 +387,105 @@ class GalleryChildEntityHelper_simple {
 		}
 	    }
 	    if (empty($parentIds)) {
-		return array(GalleryStatus::success(), array());
+		return array(null, array());
 	    }
 	}
 
 	list ($ret, $parents) = GalleryCoreApi::loadEntitiesById($parentIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $parents);
+	return array(null, $parents);
+    }
+
+    /**
+     * Helper function for getting descendent ids.
+     *
+     * @param object GalleryItem an item
+     * @param int an offset into the child item list (null for no offset)
+     * @param int a count of how many child items to return (null for unlimited)
+     * @param string a class to restrict children to (eg 'GalleryAlbumItem')
+     * @param string a required permission (defaults to 'core.view')
+     *
+     * @access private
+     */
+    function _fetchDescendentItemIds($item, $offset, $count, $class, $requiredPermission) {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	if (!GalleryUtilities::isA($item, 'GalleryItem')) {
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	}
+
+	list ($ret, $sequence) = GalleryCoreApi::fetchParentSequence($item->getId());
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$sequence = join('/', $sequence);
+	if (!empty($sequence)) {
+	    $sequence .= '/';
+	}
+	$sequence .= $item->getId() . '/%';
+
+	if ($requiredPermission) {
+	    list ($ret, $aclIds) = GalleryCoreApi::fetchAccessListIds($requiredPermission,
+								      $gallery->getActiveUserId());
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
+
+	    if (empty($aclIds)) {
+		return array(null, array());
+	    }
+	}
+
+	$data[] = $sequence;
+	/* Prepare the query */
+	if ($requiredPermission) {
+	    $query = '
+	    SELECT
+	      [GalleryItemAttributesMap::itemId]
+	    FROM
+	      [GalleryItemAttributesMap], [GalleryAccessSubscriberMap], [' . $class . ']
+	    WHERE
+	      [GalleryItemAttributesMap::parentSequence] LIKE ?
+	     AND
+              [GalleryItemAttributesMap::itemId] = [' . $class . '::id]
+	     AND
+	     [GalleryAccessSubscriberMap::itemId] = [GalleryItemAttributesMap::itemId]
+	     AND
+	     [GalleryAccessSubscriberMap::accessListId] IN (' . $aclMarkers . ')
+	    ';
+	    $data = array_merge($data, $aclIds);
+	} else {
+	    $query = '
+	    SELECT
+	      [GalleryItemAttributesMap::itemId]
+	    FROM
+	      [GalleryItemAttributesMap], [' . $class . ']
+	    WHERE
+	      [GalleryItemAttributesMap::parentSequence] LIKE ?
+             AND
+              [GalleryItemAttributesMap::itemId] = [' . $class . '::id]
+	    ';
+	}
+
+	$options = array();
+	$options['limit'] = array('count' => $count, 'offset' => $offset);
+
+	list ($ret, $searchResults) = $gallery->search($query, $data, $options);
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$ids = array();
+	while ($result = $searchResults->nextResult()) {
+	    $ids[] = (int)$result[0];
+	}
+
+	return array(null, $ids);
     }
 
     /**
@@ -412,79 +501,35 @@ class GalleryChildEntityHelper_simple {
      * @static
      */
     function fetchDescendentItemIds($item, $offset, $count, $requiredPermission) {
-	global $gallery;
-	$storage =& $gallery->getStorage();
-
-	if (!GalleryUtilities::isA($item, 'GalleryItem')) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
-	}
-
-	list ($ret, $sequence) = GalleryCoreApi::fetchParentSequence($item->getId());
-	if ($ret->isError()) {
+	list ($ret, $ids) = GalleryChildEntityHelper_simple::_fetchDescendentItemIds(
+	    $item, $offset, $count, 'GalleryItem', $requiredPermission);
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$sequence = join('/', $sequence);
-	if (!empty($sequence)) {
-	    $sequence .= '/';
-	}
-	$sequence .= $item->getId() . '/%';
-
-	if ($requiredPermission) {
-	    list ($ret, $aclIds) = GalleryCoreApi::fetchAccessListIds($requiredPermission,
-								      $gallery->getActiveUserId());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    $aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
-
-	    if (empty($aclIds)) {
-		return array(GalleryStatus::success(), array());
-	    }
-	}
-
-	$data[] = $sequence;
-	/* Prepare the query */
-	if ($requiredPermission) {
-	    $query = '
-	    SELECT
-	      [GalleryItemAttributesMap::itemId]
-	    FROM
-	      [GalleryItemAttributesMap], [GalleryAccessSubscriberMap]
-	    WHERE
-	      [GalleryItemAttributesMap::parentSequence] LIKE ?
-	     AND
-	     [GalleryAccessSubscriberMap::itemId] = [GalleryItemAttributesMap::itemId]
-	     AND
-	     [GalleryAccessSubscriberMap::accessListId] IN (' . $aclMarkers . ')
-	    ';
-	    $data = array_merge($data, $aclIds);
-	} else {
-	    $query = '
-	    SELECT
-	      [GalleryItemAttributesMap::itemId]
-	    FROM
-	      [GalleryItemAttributesMap]
-	    WHERE
-	      [GalleryItemAttributesMap::parentSequence] LIKE ?
-	    ';
-	}
-
-	$options = array();
-	$options['limit'] = array('count' => $count, 'offset' => $offset);
-
-	list ($ret, $searchResults) = $gallery->search($query, $data, $options);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$ids = array();
-	while ($result = $searchResults->nextResult()) {
-	    $ids[] = (int)$result[0];
-	}
-
-	return array(GalleryStatus::success(), $ids);
+	return array(null, $ids);
     }
 
+    /**
+     * Return the ids of the album descendents of this entity that are visible to the given user.
+     *
+     * @param object GalleryItem an item
+     * @param int where to start
+     * @param int how many to return
+     * @param string what permission is required for the item
+     * @return array object GalleryStatus a status code
+     *               array integer ids
+     * @access public
+     * @static
+     */
+    function fetchDescendentAlbumItemIds($item, $offset, $count, $requiredPermission) {
+	list ($ret, $ids) = GalleryChildEntityHelper_simple::_fetchDescendentItemIds(
+	    $item, $offset, $count, 'GalleryAlbumItem', $requiredPermission);
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	return array(null, $ids);
+    }
+    
     /**
      * If we want to sort, which storage info we need?
      *
@@ -515,12 +560,12 @@ class GalleryChildEntityHelper_simple {
 	if (empty($orderBy)) {
 	    list ($ret, $orderBy) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderBy');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null, null, null);
 	    }
 	    list ($ret, $orderDirection) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderDirection');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null, null, null);
 	    }
 	}
@@ -598,7 +643,7 @@ class GalleryChildEntityHelper_simple {
 
 	    case 'random':
 		list($ret, $order[]) = $storage->getFunctionSql('RAND', array());
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null, null, null);
 		}
 		break;
@@ -606,7 +651,7 @@ class GalleryChildEntityHelper_simple {
 	    case 'albumsFirst':
 		list ($ret, $case) = $storage->getFunctionSql('CASE',
 		    array('[GalleryAlbumItem::id] IS NULL', '1', '0'));
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null, null, null);
 		}
 		$join[] = '[GalleryChildEntity] LEFT JOIN [GalleryAlbumItem] ON [GalleryChildEntity::id] = [GalleryAlbumItem::id]';
@@ -617,16 +662,16 @@ class GalleryChildEntityHelper_simple {
 	    default:
 		list ($ret, $sort) =
 		    GalleryCoreApi::newFactoryInstanceById('GallerySortInterface_1_1', $orderType);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null, null, null);
 		}
 		if (!isset($sort)) {
-		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__,
+		    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__,
 						      $orderType), null, null, null, null);
 		}
 		list ($ret, $orderClause, $select[], $conditionClause, $joinClause) =
 		    $sort->getSortOrder($direction);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null, null, null);
 		}
 
@@ -647,7 +692,7 @@ class GalleryChildEntityHelper_simple {
 	    }
 	}
 
-	return array(GalleryStatus::success(), implode(', ', $order),
+	return array(null, implode(', ', $order),
 		     implode(', ', $select), implode(' AND ', $condition), implode(' ', $join));
     }
 }

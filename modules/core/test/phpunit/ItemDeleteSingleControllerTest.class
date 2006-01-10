@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ class ItemDeleteSingleControllerTest extends GalleryControllerTestCase {
 
 	/* create an album to hold all of the test items */
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -57,7 +57,7 @@ class ItemDeleteSingleControllerTest extends GalleryControllerTestCase {
 
         /* Create a random sub album */
 	list ($ret, $album) = $this->_createRandomAlbum($this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -76,7 +76,7 @@ class ItemDeleteSingleControllerTest extends GalleryControllerTestCase {
 
 	/* Make sure the album is actually gone */
 	$this->_verifyMissing($album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
@@ -88,12 +88,12 @@ class ItemDeleteSingleControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	list($ret, $item) = $this->_createRandomDataItem($this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::removeItemPermissions($item->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -105,7 +105,7 @@ class ItemDeleteSingleControllerTest extends GalleryControllerTestCase {
 
 	/* make sure it's still there */
 	list ($ret, $item) = $item->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }

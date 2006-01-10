@@ -23,15 +23,15 @@
 function server_parse(&$socket, $response) {
     for ($server_response = ''; substr($server_response, 3, 1) != ' ';) {
 	if (!($server_response = fgets($socket, 256))) {
-	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+	    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 					"Couldn't get mail server response code");
 	}
     }
     if (!(substr($server_response, 0, 3) == $response)) {
-	return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+	return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 				    "Problem sending mail. Server response: $server_response");
     }
-    return GalleryStatus::success();
+    return null;
 }
 
 function smtpmail($config, $to, $subject, $body, $headers=null) {
@@ -55,25 +55,25 @@ function smtpmail($config, $to, $subject, $body, $headers=null) {
     }
 
     if (trim($subject) == '') {
-	return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+	return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 				    "No email Subject specified");
     }
 
     if (trim($body) == '') {
-	return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+	return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 				    "Email message was blank");
     }
 
     // Connect
     list ($config['smtp.host'], $port) = array_merge(explode(':', $config['smtp.host']), array(25));
     if (!($socket = fsockopen($config['smtp.host'], $port, $errno, $errstr, 20))) {
-	return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+	return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 				    "Could not connect to smtp host : $errno : $errstr");
     }
 
     // Wait for reply
     $ret = server_parse($socket, "220");
-    if ($ret->isError()) {
+    if ($ret) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
@@ -81,31 +81,31 @@ function smtpmail($config, $to, $subject, $body, $headers=null) {
     if (!empty($config['smtp.username']) && !empty($config['smtp.password'])) {
 	fputs($socket, "EHLO " . $config['smtp.host'] . "\r\n");
 	$ret = server_parse($socket, "250");
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	fputs($socket, "AUTH LOGIN\r\n");
 	$ret = server_parse($socket, "334");
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	fputs($socket, base64_encode($config['smtp.username']) . "\r\n");
 	$ret = server_parse($socket, "334");
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	fputs($socket, $config['smtp.password'] . "\r\n"); // Already encoded
 	$ret = server_parse($socket, "235");
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
     } else {
 	fputs($socket, "HELO " . $config['smtp.host'] . "\r\n");
 	$ret = server_parse($socket, "250");
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
     }
@@ -114,7 +114,7 @@ function smtpmail($config, $to, $subject, $body, $headers=null) {
     // Specify who the mail is from....
     fputs($socket, "MAIL FROM: <" . $config['smtp.from'] . ">\r\n");
     $ret = server_parse($socket, "250");
-    if ($ret->isError()) {
+    if ($ret) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
@@ -123,7 +123,7 @@ function smtpmail($config, $to, $subject, $body, $headers=null) {
     if (preg_match('#[^ ]+\@[^ ]+#', $to)) {
 	fputs($socket, "RCPT TO: <$to>\r\n");
 	$ret = server_parse($socket, "250");
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
     }
@@ -134,7 +134,7 @@ function smtpmail($config, $to, $subject, $body, $headers=null) {
 	if (preg_match('#[^ ]+\@[^ ]+#', $address)) {
 	    fputs($socket, "RCPT TO: <$address>\r\n");
 	    $ret = server_parse($socket, "250");
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
@@ -145,7 +145,7 @@ function smtpmail($config, $to, $subject, $body, $headers=null) {
 
     // This is the last response code we look for until the end of the message.
     $ret = server_parse($socket, "354");
-    if ($ret->isError()) {
+    if ($ret) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
@@ -166,7 +166,7 @@ function smtpmail($config, $to, $subject, $body, $headers=null) {
     // Ok the all the ingredients are mixed in let's cook this puppy...
     fputs($socket, ".\r\n");
     $ret = server_parse($socket, "250");
-    if ($ret->isError()) {
+    if ($ret) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
@@ -174,6 +174,6 @@ function smtpmail($config, $to, $subject, $body, $headers=null) {
     fputs($socket, "QUIT\r\n");
     fclose($socket);
 
-    return GalleryStatus::success();
+    return null;
 }
 ?>

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ class CartHelper {
 	    $cartItemIds = array();
 	}
 
-	return array(GalleryStatus::success(), $cartItemIds);
+	return array(null, $cartItemIds);
     }
 
     /**
@@ -66,20 +66,20 @@ class CartHelper {
      */
     function addItemsToCart($ids) {
 	list ($ret, $cartItemIds) = CartHelper::fetchCartItemCounts();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	if (!empty($ids)) {
 	    $ret = GalleryCoreApi::studyPermissions($ids);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
 	foreach ($ids as $id) {
 	    list ($ret, $canAdd) = GalleryCoreApi::hasItemPermission($id, 'cart.add');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    if ($canAdd) {
@@ -92,11 +92,11 @@ class CartHelper {
 	}
 
 	$ret = CartHelper::setCartItemCounts($cartItemIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -116,7 +116,7 @@ class CartHelper {
 	    $session->put('cart.itemIds', $cartItemIds);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -129,13 +129,13 @@ class CartHelper {
      */
     function loadCartItems() {
 	list ($ret, $cartItemIds) = CartHelper::fetchCartItemCounts();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$idList = array_keys($cartItemIds);
 	if (!empty($cartItemIds)) {
 	    $ret = GalleryCoreApi::studyPermissions($idList);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
@@ -143,7 +143,7 @@ class CartHelper {
 	$items = array();
 	foreach ($idList as $itemId) {
 	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
 		    /* Item deleted from the gallery; remove it from the cart */
 		    unset($cartItemIds[$itemId]);
@@ -154,7 +154,7 @@ class CartHelper {
 		}
 	    }
 	    list ($ret, $canView) = GalleryCoreApi::hasItemPermission($itemId, 'core.view');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    if ($canView) {
@@ -166,12 +166,12 @@ class CartHelper {
 	}
 	if ($changed) {
 	    $ret = CartHelper::setCartItemCounts($cartItemIds);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
     
-	return array(GalleryStatus::success(), $items);
+	return array(null, $items);
     }
 }
 ?>

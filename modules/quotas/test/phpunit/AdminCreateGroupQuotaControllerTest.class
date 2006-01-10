@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,11 +27,6 @@
  */
 
 /**
- * Map class
- */
-GalleryCoreApi::relativeRequireOnce('modules/quotas/classes/QuotasMap.class');
-
-/**
  * AdminCreateGroupQuota controller tests
  * @package Quotas
  * @subpackage PHPUnit
@@ -45,7 +40,7 @@ class AdminCreateGroupQuotaControllerTest extends GalleryControllerTestCase {
     function testCancel() {
 	/* Create a group to add a quota to */
 	list ($ret, $group) = $this->_createRandomGroup();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -66,7 +61,7 @@ class AdminCreateGroupQuotaControllerTest extends GalleryControllerTestCase {
     function testCreateGroupQuota() {
 	/* Create a group to add a quota to */
 	list ($ret, $group) = $this->_createRandomGroup();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	GalleryUtilities::putRequestVariable('form[action][create]', 1);
@@ -88,7 +83,7 @@ class AdminCreateGroupQuotaControllerTest extends GalleryControllerTestCase {
     function testCreateGroupQuotaMissingValues() {
 	/* Create a group for our tests */
 	list ($ret, $group) = $this->_createRandomGroup();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -136,7 +131,7 @@ class AdminCreateGroupQuotaControllerTest extends GalleryControllerTestCase {
     function testCreateGroupQuotaDuplicateQuota() {
 	/* Create a group to add a quota to */
 	list ($ret, $group) = $this->_createRandomGroup();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	GalleryUtilities::putRequestVariable('form[action][create]', 1);
@@ -167,22 +162,23 @@ class AdminCreateGroupQuotaControllerTest extends GalleryControllerTestCase {
     function _deleteEntity($entity) {
 	global $gallery;
 	$ret = GalleryCoreApi::deleteEntityById($entity->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
 
     function _createGroupQuota($groupId, $quota) {
-	$ret = QuotasMap::addMapEntry(array('userOrGroupId' => $groupId,
-					    'quotaSize' => $quota));
-	if ($ret->isError()) {
+	$ret = GalleryCoreApi::addMapEntry(
+	    'QuotasMap',
+	    array('userOrGroupId' => $groupId, 'quotaSize' => $quota));
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
 
     function _deleteGroupQuota($groupId) {
-	$ret = QuotasMap::removeMapEntry(array('userOrGroupId' => $groupId));
-	if ($ret->isError()) {
+	$ret = GalleryCoreApi::removeMapEntry('QuotasMap', array('userOrGroupId' => $groupId));
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }

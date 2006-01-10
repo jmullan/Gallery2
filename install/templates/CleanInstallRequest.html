@@ -5,9 +5,11 @@
       <?php print _("Are you really sure you want to delete all your data in your Gallery storage directory and all your data in your Gallery database?") ?>
     </p>
     <?php else: ?>
-    <h2 class="error">
+    <div class="error">
+      <h2>
       <?php print _("There was an error erasing the db and storage directory data. Here's the error:") ?>
-    </h2>
+      </h2>
+    </div>
     <div>
       <?php print $templateData['errors'] ?>
     </div>

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 /**
  * Load the parent class
  */
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryItem.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryItem.class');
 
 /**
  * A subclass of GalleryItem for containing groups of GalleryItems
@@ -48,12 +48,7 @@ GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryItem.class');
  * @package GalleryCore
  * @subpackage Classes
  */
-class GalleryAlbumItem_core extends GalleryItem {
-    /*
-     * ****************************************
-     *                 Members
-     * ****************************************
-     */
+class GalleryAlbumItem extends GalleryItem {
 
     /**
      * The theme to use for this item
@@ -64,10 +59,10 @@ class GalleryAlbumItem_core extends GalleryItem {
      * @g2   <member-size>SMALL</member-size>
      * @g2 </member>
      *
-     * @var string $_theme
-     * @access private
+     * @var string $theme
+     * @access public
      */
-    var $_theme;
+    var $theme;
 
     /**
      * Specify the name of the field that we're using to order children
@@ -78,10 +73,10 @@ class GalleryAlbumItem_core extends GalleryItem {
      * @g2   <member-size>MEDIUM</member-size>
      * @g2 </member>
      *
-     * @var int $_orderBy
-     * @access private
+     * @var int $orderBy
+     * @access public
      */
-    var $_orderBy;
+    var $orderBy;
 
     /**
      * Specify the order direction that we're applying to the orderBy field
@@ -92,16 +87,10 @@ class GalleryAlbumItem_core extends GalleryItem {
      * @g2   <member-size>SMALL</member-size>
      * @g2 </member>
      *
-     * @var int $_orderDirection
-     * @access private
+     * @var int $orderDirection
+     * @access public
      */
-    var $_orderDirection;
-
-    /*
-     * ****************************************
-     *                 Methods
-     * ****************************************
-     */
+    var $orderDirection;
 
     /**
      * Create a new instance of this AlbumItem in the persistent store
@@ -115,12 +104,12 @@ class GalleryAlbumItem_core extends GalleryItem {
 	global $gallery;
 
 	if (empty($albumName) || empty($parentId)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
 	/* Let our superclass take care of creation in the persistent store */
 	$ret = parent::create($parentId, $albumName);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -130,24 +119,24 @@ class GalleryAlbumItem_core extends GalleryItem {
 	$this->setCanContainChildren(true);
 
 	list($ret, $parent) = GalleryCoreApi::loadEntitiesById($parentId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	list($ret, $parentPath) = $parent->fetchPath();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Copy over derivative preferences from the parent */
 	$ret = GalleryCoreApi::copyDerivativePreferences($parentId, $this->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	list ($ret, $useDefaults) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.newAlbumsUseDefaults');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -159,11 +148,11 @@ class GalleryAlbumItem_core extends GalleryItem {
 	}
 
 	$ret = $this->_createDir($parentPath . $albumName);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -176,17 +165,17 @@ class GalleryAlbumItem_core extends GalleryItem {
 
 	/* See if we already have a root */
 	list ($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	if (!empty($rootId)) {
-	    return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_COLLISION, __FILE__, __LINE__);
 	}
 
 	/* Let our superclass take care of creation in the persistent store */
 	$ret = parent::createRoot();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -197,13 +186,13 @@ class GalleryAlbumItem_core extends GalleryItem {
 	/* XXX: parameterize this */
 	$ret = GalleryCoreApi::addDerivativePreference(
 	    0, $this->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'thumbnail|150');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$ret = GalleryCoreApi::addDerivativePreference(
 	    0, $this->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|640');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -212,7 +201,7 @@ class GalleryAlbumItem_core extends GalleryItem {
 	$this->setOrderBy('');
 	$this->setOrderDirection(ORDER_ASCENDING);
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -222,26 +211,25 @@ class GalleryAlbumItem_core extends GalleryItem {
      */
     function _createDir($albumDir) {
 	global $gallery;
-
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	list($ret, $perm) = GalleryCoreApi::getPluginParameter(
 	    'module', 'core', 'permissions.directory');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	if ($platform->file_exists($albumDir)) {
-	    return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__,
+	    return GalleryCoreApi::error(ERROR_COLLISION, __FILE__, __LINE__,
 					$albumDir . ' already exists');
 	}
 
 	if (!$platform->mkdir($albumDir, $perm)) {
-	    return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__,
+	    return GalleryCoreApi::error(ERROR_COLLISION, __FILE__, __LINE__,
 					'mkdir failed for ' . $albumDir);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -268,32 +256,32 @@ class GalleryAlbumItem_core extends GalleryItem {
 
 	/* Delete myself from the store */
 	$ret = parent::delete();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Delete derivative preferences */
 	$ret = GalleryCoreApi::removeDerivativePreferencesForItem($this->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Get my path */
 	list($ret, $path) = $this->fetchPath();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Remove my directory and everything in it */
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	if ($platform->file_exists($path)) {
 	    if (!$platform->recursiveRmdir($path)) {
-		return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+		return GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__);
 	    }
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -307,7 +295,7 @@ class GalleryAlbumItem_core extends GalleryItem {
 	global $gallery;
 
 	if ($newName == $this->getPathComponent()) {
-	    return GalleryStatus::success();
+	    return null;
 	}
 
 	/*
@@ -318,18 +306,18 @@ class GalleryAlbumItem_core extends GalleryItem {
 	    $lockId = null;
 	} else {
 	    list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->getParentId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	/*
 	 * Get the current path
 	 */
 	list($ret, $currentPath) = $this->fetchPath();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -340,7 +328,7 @@ class GalleryAlbumItem_core extends GalleryItem {
 	 */
 	$error = null;
 	$ret = parent::rename($newName);
-	if ($ret->isError()) {
+	if ($ret) {
 	    $error = $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -351,19 +339,19 @@ class GalleryAlbumItem_core extends GalleryItem {
 	    /* Check to see if the desired path exists. */
 	    $newPath = dirname($currentPath) . '/' . $newName;
 	    if ($platform->file_exists($newPath)) {
-		$error = GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
+		$error = GalleryCoreApi::error(ERROR_COLLISION, __FILE__, __LINE__);
 	    }
 	}
 
 	if (!isset($error)) {
 	    if (!$platform->rename($currentPath, $newPath)) {
-		$error = GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+		$error = GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__);
 	    }
 	}
 
 	/* Release locks */
 	$ret = GalleryCoreApi::releaseLocks($lockId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -371,7 +359,7 @@ class GalleryAlbumItem_core extends GalleryItem {
 	    return $error;
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -383,7 +371,7 @@ class GalleryAlbumItem_core extends GalleryItem {
     function move($newParentId) {
 	/* Get the current parent sequence */
 	list ($ret, $oldParentSequence) = GalleryCoreApi::fetchParentSequence($this->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$oldChildParentSequence = array_merge($oldParentSequence, array($this->getId()));
@@ -393,13 +381,13 @@ class GalleryAlbumItem_core extends GalleryItem {
 	 * the getParentId() calls are going to return $newParentId
 	 */
 	$ret = parent::move($newParentId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Figure out the new one */
 	list ($ret, $newParentSequence) = GalleryCoreApi::fetchParentSequence($this->getParentId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$newParentSequence[] = $this->getParentId();
@@ -407,18 +395,18 @@ class GalleryAlbumItem_core extends GalleryItem {
 
 	/* Convert my parent sequence */
 	$ret = GalleryCoreApi::setParentSequence($this->getId(), $newParentSequence);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Convert my children's parent sequences */
 	$ret = GalleryCoreApi::updateParentSequence(
 	    $oldChildParentSequence, $newChildParentSequence);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -428,13 +416,42 @@ class GalleryAlbumItem_core extends GalleryItem {
 	global $gallery;
 	if ($localized) {
 	    list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
-	    if (! $ret->isError()) {
+	    if (! $ret) {
 		return array($core->translate('Album'), $core->translate('album'));
 	    }
 	}
 	return array('Album', 'album');
     }
-}
 
-include(dirname(__FILE__) . '/interfaces/GalleryAlbumItem.inc');
+    /**
+     * @see GalleryEntity::getClassName()
+     */
+    function getClassName() {
+	return 'GalleryAlbumItem';
+    }
+
+    function getTheme() {
+	return $this->theme;
+    }
+
+    function setTheme($theme) {
+	$this->theme = $theme;
+    }
+
+    function getOrderBy() {
+	return $this->orderBy;
+    }
+
+    function setOrderBy($orderBy) {
+	$this->orderBy = $orderBy;
+    }
+
+    function getOrderDirection() {
+	return $this->orderDirection;
+    }
+
+    function setOrderDirection($orderDirection) {
+	$this->orderDirection = $orderDirection;
+    }
+}
 ?>

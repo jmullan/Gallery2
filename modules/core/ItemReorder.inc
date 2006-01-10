@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ class ItemReorderController extends GalleryController {
 
 	/* Check permissions */
 	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -77,13 +77,13 @@ class ItemReorderController extends GalleryController {
 		$selectedId = $form['selectedId'];
 		$targetId = $form['targetId'];
 		list ($ret, $entities) = GalleryCoreApi::loadEntitiesById(array($selectedId, $targetId));
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		if ($entities[0]->getParentId() != $itemId ||
 		    $entities[1]->getParentId() != $itemId) {
-		    return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
+		    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
 		}
 	    }
 
@@ -96,13 +96,13 @@ class ItemReorderController extends GalleryController {
 		     */
 		    list ($ret, $orderWeights) =
 			GalleryCoreApi::fetchItemOrderWeights(array($selectedId, $targetId));
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
 		    list ($ret, $next) = GalleryCoreApi::fetchNextItemWeight($targetId,
 			$before ? LOWER_WEIGHT : HIGHER_WEIGHT);
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
@@ -125,26 +125,26 @@ class ItemReorderController extends GalleryController {
 			/*
 			 * If we have to rebalance more than once then something went wrong!
 			 */
-			return array(GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__), null);
+			return array(GalleryCoreApi::error(ERROR_UNKNOWN, __FILE__, __LINE__), null);
 		    }
 
 		    /* A delta of 0 means that we don't have room, so rebalance */
 		    $ret = GalleryCoreApi::rebalanceChildOrderWeights($itemId);
-		    if ($ret->isError()) {
+		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		}
 		$newWeight = $orderWeights[$targetId] + $delta;
 
 		$ret = GalleryCoreApi::setItemOrderWeight($selectedId, $newWeight);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		$event = GalleryCoreApi::newEvent('Gallery::ItemOrder');
 		$event->setData($itemId);
 		list ($ret) = GalleryCoreApi::postEvent($event);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
@@ -166,7 +166,7 @@ class ItemReorderController extends GalleryController {
 	$results['status'] = $status;
 	$results['error'] = $error;
 
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -196,7 +196,7 @@ class ItemReorderView extends GalleryView {
 	}
 
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -206,7 +206,7 @@ class ItemReorderView extends GalleryView {
 	if (empty($orderBy)) {
 	    list ($ret, $orderBy) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderBy');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
@@ -216,20 +216,20 @@ class ItemReorderView extends GalleryView {
 
 	    /* Get all peers that we can see */
 	    list ($ret, $peerIds) = GalleryCoreApi::fetchChildItemIds($item);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    /* Load all the peers */
 	    list ($ret, $peerItems) = GalleryCoreApi::loadEntitiesById($peerIds);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    /* Build our peers table */
 	    $peers = array();
 	    foreach ($peerItems as $peerItem) {
-		$peers[$peerItem->getId()] = $peerItem->getMemberData();
+		$peers[$peerItem->getId()] = (array)$peerItem;
 		if (GalleryUtilities::isA($peerItem, 'GalleryAlbumItem')) {
 		    $peerTypes['album'][$peerItem->getId()] = 1;
 		} else {
@@ -245,7 +245,7 @@ class ItemReorderView extends GalleryView {
 
 	$template->setVariable('ItemReorder', $ItemReorder);
 	$template->setVariable('controller', 'core.ItemReorder');
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/core/templates/ItemReorder.tpl'));
     }
 
@@ -254,11 +254,11 @@ class ItemReorderView extends GalleryView {
      */
     function getViewDescription() {
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $core->translate('reorder items'));
+	return array(null, $core->translate('reorder items'));
     }
 }
 ?>

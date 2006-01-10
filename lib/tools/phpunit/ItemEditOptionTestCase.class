@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,16 +57,16 @@ class ItemEditOptionTestCase extends GalleryTestCase {
 
 	list ($ret, $this->_option) =
 	    GalleryCoreApi::newFactoryInstanceById('ItemEditOption', $optionName);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	if (!isset($this->_option)) {
 	    return $this->failWithStatus(
-			  GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__));
+			  GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__));
 	}
 
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', $moduleName);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
         $this->_statusMonitor = new ItemEditOptionTestImmediateStatusView();
@@ -82,7 +82,7 @@ class ItemEditOptionTestCase extends GalleryTestCase {
 
     function _handleRequestAfterEdit($form, &$item, $errorCode=null) {
 	list ($ret, $preferred) = GalleryCoreApi::fetchPreferredsByItemIds(array($item->getId()));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$preferred = empty($preferred) ? null : array_shift($preferred);
@@ -96,7 +96,7 @@ class ItemEditOptionTestCase extends GalleryTestCase {
 				      join(' | ', GalleryStatus::getErrorCodeConstants($errorCode)),
 				      join(' | ', GalleryStatus::getErrorCodeConstants($ret->getErrorCode()))));
 	    }
-	} else if ($ret->isError()) {
+	} else if ($ret) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	} else {
 	    /* Check to make sure we got back everything we want */
@@ -125,27 +125,27 @@ class ItemEditOptionTestImmediateStatusView extends GalleryView {
     function doLoadImmediateTemplate() {
 	$this->_l10Domain = 'test';
 	$this->_template = 'test';
-	return GalleryStatus::success();
+	return null;
     }
 
     function renderHeader() {
-	return GalleryStatus::success();
+	return null;
     }
 
     function renderStatusMessage($statusMessage) {
-	return GalleryStatus::success();
+	return null;
     }
 
     function renderRedirect($redirectUrl) {
-	return GalleryStatus::success();
+	return null;
     }
 
     function renderFooter() {
-	return GalleryStatus::success();
+	return null;
     }
 
     function setMain($main) {
-	return GalleryStatus::success();
+	return null;
     }
 }
 

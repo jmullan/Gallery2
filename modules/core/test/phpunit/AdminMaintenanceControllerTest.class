@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +26,7 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryMaintenanceMap.class');
-GalleryCoreApi::relativeRequireOnce('modules/core/AdminMaintenance.inc');
+GalleryCoreApi::requireOnce('modules/core/AdminMaintenance.inc');
 
 /**
  * AdminMaintenance controller tests
@@ -47,7 +46,7 @@ class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'MaintenanceTask', 'AdminMaintenanceControllerTestTaskSuccess',
 	    'AdminMaintenanceControllerTestTaskSuccess', $path, 'coreTest', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -55,7 +54,7 @@ class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'MaintenanceTask', 'AdminMaintenanceControllerTestTaskProgressBar',
 	    'AdminMaintenanceControllerTestTaskProgressBar', $path, 'coreTest', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -63,7 +62,7 @@ class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'MaintenanceTask', 'AdminMaintenanceControllerTestTaskFail',
 	    'AdminMaintenanceControllerTestTaskFail', $path, 'coreTest', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -76,8 +75,9 @@ class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
 	foreach (array('AdminMaintenanceControllerTestTaskFail',
 		       'AdminMaintenanceControllerTestTaskSuccess',
 		       'AdminMaintenanceControllerTestTaskProgressBar') as $taskId) {
-	    $ret = GalleryMaintenanceMap::removeMapEntry(array('taskId' => $taskId));
-	    if ($ret->isError()) {
+	    $ret = GalleryCoreApi::removeMapEntry(
+		'GalleryMaintenanceMap', array('taskId' => $taskId));
+	    if ($ret) {
 		/* Don't return early here, give the loop a chance to try to clear all tasks */
 		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -100,7 +100,7 @@ class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $info) =
 	    MaintenanceHelper_simple::fetchLastRun('AdminMaintenanceControllerTestTaskSuccess');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -134,7 +134,7 @@ class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
 
 	/* Run the tasks */
 	$ret = $mockAdapter->runCallbacks();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -146,7 +146,7 @@ class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $info) =
 	    MaintenanceHelper_simple::fetchLastRun('AdminMaintenanceControllerTestTaskProgressBar');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -181,7 +181,7 @@ class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
 
 	/* Run the tasks */
 	$ret = $mockAdapter->runCallbacks();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -193,7 +193,7 @@ class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $info) =
 	    MaintenanceHelper_simple::fetchLastRun('AdminMaintenanceControllerTestTaskProgressBar');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -228,7 +228,7 @@ class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
 
 	/* Run the tasks */
 	$ret = $mockAdapter->runCallbacks();
-	if ($ret->isError()) {
+	if ($ret) {
 	    if ($ret->getErrorCode() & ERROR_UNKNOWN) {
 		/* This is what we expected */
 	    } else {
@@ -243,7 +243,7 @@ class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $info) =
 	    MaintenanceHelper_simple::fetchLastRun('AdminMaintenanceControllerTestTaskProgressBar');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -269,7 +269,7 @@ class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $info) =
 	    MaintenanceHelper_simple::fetchLastRun('AdminMaintenanceControllerTestTaskFail');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -288,7 +288,7 @@ class AdminMaintenanceControllerTestTaskSuccess extends MaintenanceTask {
     }
 
     function run() {
-	return array(GalleryStatus::success(), true, array('success details'));
+	return array(null, true, array('success details'));
     }
 }
 
@@ -306,25 +306,25 @@ class AdminMaintenanceControllerTestTaskProgressBar extends MaintenanceTask {
 	$success = !GalleryUtilities::getRequestVariables('forceTaskToFail');
 
 	$ret = $templateAdapter->updateProgressBar('ignored', 'ignored', 0);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	$ret = $templateAdapter->updateProgressBar('ignored', 'ignored', 50);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	if (GalleryUtilities::getRequestVariables('forceTaskToError')) {
-	    return array(GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__),
+	    return array(GalleryCoreApi::error(ERROR_UNKNOWN, __FILE__, __LINE__),
 			 null, null);
 	}
 
 	$ret = $templateAdapter->updateProgressBar('ignored', 'ignored', 100);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__),  null, null);
 	}
 
-	return array(GalleryStatus::success(), $success,
+	return array(null, $success,
 		     array(($success ? 'success' : 'fail') . ' details'));
     }
 
@@ -341,20 +341,20 @@ class AdminMaintenanceControllerTestTaskFail extends MaintenanceTask {
     }
 
     function run() {
-	return array(GalleryStatus::success(), false, array('fail details'));
+	return array(null, false, array('fail details'));
     }
 }
 
 class AdminMaintenanceControllerTestUrlGenerator {
-    function generateUrl($args) {
+    function generateUrl($params=array(), $options=array()) {
 	$buf = array();
-	foreach ($args as $key => $value) {
+	foreach ($params as $key => $value) {
 	    if ($key == 'statusId') {
 		$value = 'STATUSID';
 	    }
 	    $buf[] = "$key=$value";
 	}
-	return join(',', $buf);
+	return implode(',', $buf);
     }
 }
 ?>

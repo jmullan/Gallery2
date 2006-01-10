@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
 /**
  * Load the parent class
  */
-GalleryCoreApi::relativeRequireOnce('modules/exif/classes/ExifInterface_1_0.class');
+GalleryCoreApi::requireOnce('modules/exif/classes/ExifInterface_1_0.class');
 
 /**
  * Implementation of the ExifInterface for pulling EXIF data from a set of target items
@@ -46,7 +46,7 @@ class ExifExtractor extends ExifInterface_1_0 {
      */
     function getMetaData($itemIds, $properties=array()) {
 	global $gallery;
-	GalleryCoreApi::relativeRequireOnce('modules/exif/lib/exifer/exif.inc');
+	GalleryCoreApi::requireOnce('modules/exif/lib/exifer/exif.inc');
 
 	if (!is_array($itemIds)) {
 	    $itemIds = array($itemIds);
@@ -58,7 +58,7 @@ class ExifExtractor extends ExifInterface_1_0 {
 	$data = array();
 	foreach ($itemIds as $itemId) {
 	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    /* Only look at JPEG/raw DataItems.. */
@@ -67,14 +67,14 @@ class ExifExtractor extends ExifInterface_1_0 {
 		continue;
 	    }
 	    list($ret, $path) = $item->fetchPath();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $data[$itemId] = array();
 	    $rawExifData = read_exif_data_raw($path, false);
-	    GalleryCoreApi::relativeRequireOnce('modules/exif/classes/ExifHelper.class');
+	    GalleryCoreApi::requireOnce('modules/exif/classes/ExifHelper.class');
 	    list ($ret, $iptcObj) = ExifHelper::getIptcObject($path);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    foreach (ExifHelper::getExifKeys() as $property => $keyData) {
@@ -96,7 +96,7 @@ class ExifExtractor extends ExifInterface_1_0 {
 	    }
 	}
 
-	return array(GalleryStatus::success(), $data);
+	return array(null, $data);
     }
 }
 ?>

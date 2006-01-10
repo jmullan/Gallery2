@@ -36,7 +36,7 @@
     id='giFormPath' autocomplete="off"/>
   {g->autoComplete element="giFormPath"}
     {g->url arg1="view=core.SimpleCallback" arg2="command=lookupFiles" arg3="prefix=__VALUE__"
-      forJavascript="true"}
+	    htmlEntities=false}
   {/g->autoComplete}
 
   {if isset($form.error.path.missing)}

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -189,27 +189,27 @@ class AdminModulesControllerTestModule {
 
     function init() {
 	$this->_setCalled('init');
-	return GalleryStatus::success();
+	return null;
     }
 
     function installOrUpgrade() {
 	$this->_setCalled('installOrUpgrade');
-	return GalleryStatus::success();
+	return null;
     }
 
     function autoConfigure() {
 	$this->_setCalled('autoConfigure');
-	return array(GalleryStatus::success(), true);
+	return array(null, true);
     }
 
     function activate() {
 	$this->_setCalled('activate');
-	return array(GalleryStatus::success(), array());
+	return array(null, array());
     }
 
     function deactivate() {
 	$this->_setCalled('deactivate');
-	return array(GalleryStatus::success(), array());
+	return array(null, array());
     }
 
     function _setCalled($function) {
@@ -229,12 +229,12 @@ class AdminModulesControllerTestModule {
 
     function isActive() {
 	$singleton = &$this->getSingleton();
-	return array(GalleryStatus::success(), $singleton->_isActive);
+	return array(null, $singleton->_isActive);
     }
 
     function needsConfiguration() {
 	$singleton = &$this->getSingleton();
-	return array(GalleryStatus::success(), $singleton->_needsConfiguration);
+	return array(null, $singleton->_needsConfiguration);
     }
 
     function translate($string) {

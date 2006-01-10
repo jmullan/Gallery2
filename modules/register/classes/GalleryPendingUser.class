@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 /**
  * Load the parent class
  */
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryEntity.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryEntity.class');
 
 /**
  * Representation of a single pending self-registered user
@@ -50,13 +50,7 @@ GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryEntity.class');
  * @package SelfRegistration
  * @subpackage Classes
  */
-class GalleryPendingUser_core extends GalleryEntity {
-
-    /*
-     * ****************************************
-     *                 Members
-     * ****************************************
-     */
+class GalleryPendingUser extends GalleryEntity {
 
     /**
      * The User's username
@@ -69,10 +63,10 @@ class GalleryPendingUser_core extends GalleryEntity {
      * @g2   <required/>
      * @g2 </member>
      *
-     * @var string $_userName
-     * @access private
+     * @var string $userName
+     * @access public
      */
-    var $_userName;
+    var $userName;
 
     /**
      * The User's full name
@@ -83,10 +77,10 @@ class GalleryPendingUser_core extends GalleryEntity {
      * @g2   <member-size>MEDIUM</member-size>
      * @g2 </member>
      *
-     * @var string $_fullName
-     * @access private
+     * @var string $fullName
+     * @access public
      */
-    var $_fullName;
+    var $fullName;
 
     /**
      * The User's password in a hashed form.
@@ -97,10 +91,10 @@ class GalleryPendingUser_core extends GalleryEntity {
      * @g2   <member-size>MEDIUM</member-size>
      * @g2 </member>
      *
-     * @var string $_hashedPassword
-     * @access private
+     * @var string $hashedPassword
+     * @access public
      */
-    var $_hashedPassword;
+    var $hashedPassword;
 
     /**
      * The User's email address.
@@ -111,10 +105,10 @@ class GalleryPendingUser_core extends GalleryEntity {
      * @g2   <member-size>MEDIUM</member-size>
      * @g2 </member>
      *
-     * @var string $_email
-     * @access private
+     * @var string $email
+     * @access public
      */
-    var $_email;
+    var $email;
 
     /**
      * The User's language preference
@@ -125,10 +119,10 @@ class GalleryPendingUser_core extends GalleryEntity {
      * @g2   <member-size>MEDIUM</member-size>
      * @g2 </member>
      *
-     * @var string $_language
-     * @access private
+     * @var string $language
+     * @access public
      */
-    var $_language;
+    var $language;
 
     /**
      * The registration key (used in confirmation url)
@@ -139,16 +133,10 @@ class GalleryPendingUser_core extends GalleryEntity {
      * @g2   <member-size>SMALL</member-size>
      * @g2 </member>
      *
-     * @var string $_registrationKey
-     * @access private
+     * @var string $registrationKey
+     * @access public
      */
-    var $_registrationKey;
-
-    /*
-     * ****************************************
-     *                 Methods
-     * ****************************************
-     */
+    var $registrationKey;
 
     /**
      * Create a new instance of this user in the persistent store
@@ -172,13 +160,13 @@ class GalleryPendingUser_core extends GalleryEntity {
 	list($ret, $results) =
 	    $gallery->search($query, array($userName),
 			     array('limit' => array('count' => 1)));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$result = $results->nextResult();
 	if ($result[0] > 0) {
-	    return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_COLLISION, __FILE__, __LINE__);
 	}
 
 	/* then check for a collision in the real user table */
@@ -195,24 +183,24 @@ class GalleryPendingUser_core extends GalleryEntity {
 	list($ret, $results) =
 	    $gallery->search($query, array($userName),
 			     array('limit' => array('count' => 1)));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$result = $results->nextResult();
 	if ($result[0] > 0) {
-	    return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_COLLISION, __FILE__, __LINE__);
 	}
 
 	/* okay, we don't have any collisions, so go on */
 	$ret = parent::create();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$this->setUserName($userName);
 	$this->setRegistrationKey('G' . rand(100000,999999) . '2');
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -226,10 +214,63 @@ class GalleryPendingUser_core extends GalleryEntity {
 	    $char = mt_rand(48, 109);
 	    $char += ($char > 90) ? 13 : ($char > 57) ? 7 : 0;
 	    $salt .= chr($char);
-	}   
+	}
 	$this->setHashedPassword($salt . md5($salt . $newPassword));
-    }   
-}
+    }
 
-include(dirname(__FILE__) . '/interfaces/GalleryPendingUser.inc');
+    /**
+     * @see GalleryEntity::getClassName()
+     */
+    function getClassName() {
+	return 'GalleryPendingUser';
+    }
+
+    function getUserName() {
+	return $this->userName;
+    }
+
+    function setUserName($userName) {
+	$this->userName = $userName;
+    }
+
+    function getFullName() {
+	return $this->fullName;
+    }
+
+    function setFullName($fullName) {
+	$this->fullName = $fullName;
+    }
+
+    function getHashedPassword() {
+	return $this->hashedPassword;
+    }
+
+    function setHashedPassword($hashedPassword) {
+	$this->hashedPassword = $hashedPassword;
+    }
+
+    function getEmail() {
+	return $this->email;
+    }
+
+    function setEmail($email) {
+	$this->email = $email;
+    }
+
+    function getLanguage() {
+	return $this->language;
+    }
+
+    function setLanguage($language) {
+	$this->language = $language;
+    }
+
+    function getRegistrationKey() {
+	return $this->registrationKey;
+    }
+
+    function setRegistrationKey($registrationKey) {
+	$this->registrationKey = $registrationKey;
+    }
+}
 ?>

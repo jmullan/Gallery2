@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +25,8 @@
  * @author Jozef Selesi <selesi at gmail dot com>
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPluginPackageMap.class');
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryRepositoryIndex.class');
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryRepositoryUtilities.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryRepositoryIndex.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryRepositoryUtilities.class');
 
 /**
  * Provides all repository-related functionality.
@@ -64,11 +63,11 @@ class GalleryRepository {
 
 	if ($this->_index->existsInCache()) {
 	    $ret = $this->_index->load();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -80,12 +79,12 @@ class GalleryRepository {
      */
     function isCoreUpgradeAvailable() {
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	list ($ret, $header) = $this->_index->getPluginHeader('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	$repositoryVersion = $header['version'];
@@ -96,7 +95,7 @@ class GalleryRepository {
 	 */
 	list ($ret, $relation) =
 	    $this->_utilities->compareVersions($repositoryVersion, $core->getVersion());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
@@ -111,7 +110,7 @@ class GalleryRepository {
 	    $isAvailable = false;
 	}
 
-	return array(GalleryStatus::success(), $isAvailable, $apiVersions);
+	return array(null, $isAvailable, $apiVersions);
     }
 
     /**
@@ -127,7 +126,7 @@ class GalleryRepository {
 	/* Get installed packages meta data. */
 	list ($ret, $installedPackages) =
 	    $this->_utilities->getPluginPackages($pluginType, $pluginId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -138,7 +137,7 @@ class GalleryRepository {
 
 	    /* Get version info from repository index for base files. */
 	    list ($ret, $header) = $this->_index->getPluginHeader($pluginType, $pluginId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $repositoryDataVersion = $header['version'];
@@ -147,7 +146,7 @@ class GalleryRepository {
 	    /* Compare local base version with the one in the repository. */
 	    list ($ret, $relation) = $this->_utilities->compareVersions(
 		$dataVersion, $repositoryDataVersion, $dataBuild, $repositoryDataBuild);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    if ($relation == 'older') {
@@ -168,14 +167,14 @@ class GalleryRepository {
 	/* Check if any languages have been updated. */
 	list ($ret, $languages) =
 	    $this->_index->getAvailableLanguagesInPlugin($pluginType, $pluginId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	foreach ($languages as $language => $revision) {
 	    list ($ret, $languageDescription) =
 		$this->_utilities->getLanguageDescription($language);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -191,11 +190,11 @@ class GalleryRepository {
 		if ($relation == 'older') {
 		    $upgradeInfo['upgradeableLanguages']['codes'][] = $language;
 		    $upgradeInfo['upgradeableLanguages']['names'][] = $languageDescription;
-	        }
+		}
 	    }
 	}
 
-	return array(GalleryStatus::success(), $upgradeInfo);
+	return array(null, $upgradeInfo);
     }
 
     /**
@@ -218,7 +217,7 @@ class GalleryRepository {
 
 	list ($ret, $repositoryPluginList) =
 	    $this->_index->getPlugins($pluginType, $showAllPlugins, $coreApis);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	foreach ($repositoryPluginList[$pluginType] as $pluginId => $plugin) {
@@ -227,7 +226,7 @@ class GalleryRepository {
 
 	    /* Get active language. */
 	    list ($ret, $language) = $gallery->getActiveLanguageCode();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -245,7 +244,7 @@ class GalleryRepository {
 		 */
 		list ($ret, $upgradeInfo) =
 		$this->getPluginUpgradeInfo($pluginType, $pluginId);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		if (!empty($upgradeInfo)) {
@@ -286,12 +285,12 @@ class GalleryRepository {
 
 	/* Sort plugins by name. */
 	if (!uasort($pluginList, array('GalleryRepository', 'comparePluginListEntries'))) {
-	    return array(GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__,
+	    return array(GalleryCoreApi::error(ERROR_UNKNOWN, __FILE__, __LINE__,
 					      'Error sorting plugin list.'),
 			 null);
 	}
 
-	return array(GalleryStatus::success(), $pluginList);
+	return array(null, $pluginList);
     }
 
     /**
@@ -333,7 +332,7 @@ class GalleryRepository {
 	$packages = array();
 	foreach (array('module', 'theme') as $pluginType) {
 	    list ($ret, $plugins) = GalleryCoreApi::getAllPluginIds($pluginType);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -343,7 +342,7 @@ class GalleryRepository {
 		}
 
 		list ($ret, $upgradeInfo) = $this->getPluginUpgradeInfo($pluginType, $pluginId);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
@@ -365,7 +364,7 @@ class GalleryRepository {
 	    }
 	}
 
-	return array(GalleryStatus::success(), $packages);
+	return array(null, $packages);
     }
 
     /**
@@ -399,33 +398,36 @@ class GalleryRepository {
 
 	list ($ret, $searchResults) =
 	    $gallery->search($query, array($pluginType, $pluginId, $packageName));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	if ($searchResults->resultCount() > 1) {
-	    return GalleryStatus::error(
+	    return GalleryCoreApi::error(
 		ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
 		"Multiple records found [$pluginType] [$pluginId] [$package]");
 	}
 	$existsInDatabase = $searchResults->resultCount() > 0;
 
 	/* Add or update package data. */
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPluginPackageMap.class');
 	if ($existsInDatabase) {
-	    $ret = GalleryPluginPackageMap::updateMapEntry(array('pluginType' => $pluginType,
-		'pluginId' => $pluginId, 'packageName' => $packageName),
+	    $ret = GalleryCoreApi::updateMapEntry(
+		'GalleryPluginPackageMap',
+		array('pluginType' => $pluginType,
+		      'pluginId' => $pluginId, 'packageName' => $packageName),
 		array('packageVersion' => $packageVersion, 'packageBuild' => $packageBuild));
 	} else {
-	    $ret = GalleryPluginPackageMap::addMapEntry(array('pluginType' => $pluginType,
-		'pluginId' => $pluginId, 'packageName' => $packageName,
-		'packageVersion' => $packageVersion, 'packageBuild' => $packageBuild));
+	    $ret = GalleryCoreApi::addMapEntry(
+		'GalleryPluginPackageMap',
+		array('pluginType' => $pluginType,
+		      'pluginId' => $pluginId, 'packageName' => $packageName,
+		      'packageVersion' => $packageVersion, 'packageBuild' => $packageBuild));
 	}
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -438,7 +440,7 @@ class GalleryRepository {
 	global $gallery;
 
 	/* Check if plugins directory exists. */
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$pluginsDirectory = $platform->realpath(
 	    dirname(__FILE__) . '/../../../' . $gallery->getConfig('plugins.dirname'));
 	if (!@$platform->is_dir($pluginsDirectory)) {
@@ -499,13 +501,13 @@ class GalleryRepository {
 	foreach ($pluginData as $pluginType => $plugin) {
 	    foreach ($plugin as $pluginId => $packages) {
 		list ($ret, $pluginName) = $this->_index->getPluginName($pluginType, $pluginId);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		list ($ret, $descriptorUrl) =
 		    $this->_index->getDescriptorUrl($pluginType, $pluginId);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
@@ -514,7 +516,7 @@ class GalleryRepository {
 		foreach ($packages as $package => $value) {
 		    list ($ret, $packageUrl) =
 			$this->_index->getPackageUrl($pluginType, $pluginId, $package);
-		    if ($ret->isError()) {
+		    if ($ret) {
 			print($ret->getAsHtml());
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -524,7 +526,7 @@ class GalleryRepository {
 	    }
 	}
 
-	return array(GalleryStatus::success(), $files);
+	return array(null, $files);
     }
 
     /**
@@ -543,10 +545,10 @@ class GalleryRepository {
 	$pluginIndexPath = sprintf(
 	    '%sindex.%ss', $gallery->getConfig('data.gallery.plugins'), $pluginType);
 
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	if ($platform->file_exists($pluginIndexPath)) {
 	    if (false === ($indexContents = $platform->file_get_contents($pluginIndexPath))) {
-		return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__, sprintf(
+		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__, sprintf(
 					   'Error reading plugin index [%s]', $pluginIndexPath));
 	    }
 	} else {
@@ -555,12 +557,12 @@ class GalleryRepository {
 	if (false === strpos($indexContents, "$pluginId\n")) {
 	    $indexContents .= "$pluginId\n";
 	    if (false === $platform->file_put_contents($pluginIndexPath, $indexContents)) {
-		return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__, sprintf(
+		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__, sprintf(
 					    'Write error [%s]', $pluginIndexPath));
 	    }
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -576,6 +578,7 @@ class GalleryRepository {
      */
     function downloadAndUnpack($pluginType, $pluginId, $packageName, $relativePackageUrl) {
 	global $gallery;
+	$platform =& $gallery->getPlatform();
 
 	/* Download package from the Gallery server. */
 	$packageUrl = $gallery->getConfig('repository.url') . $relativePackageUrl;
@@ -583,7 +586,7 @@ class GalleryRepository {
 	    $this->_utilities->downloadFile($packageUrl);
 	if (!$wasDownloaded) {
 	    $errorMessage = $gallery->i18n('Error downloading package from \'%s\'.');
-	    return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
+	    return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
 					      sprintf($errorMessage, $packageUrl)),
 			 null);
 	}
@@ -591,10 +594,9 @@ class GalleryRepository {
 	/* Make sure output directory exists. */
 	$pluginOutputDir = sprintf('%s%ss/%s/',
 	    $gallery->getConfig('data.gallery.plugins'), $pluginType, $pluginId);
-	$platform = $gallery->getPlatform();
 	if (!$platform->file_exists($pluginOutputDir)
 		&& !$platform->mkdir($pluginOutputDir)) {
-	    $ret = GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
+	    $ret = GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
 					"Couldn't create directory [$pluginOutputDir]");
 	    $templateAdapter->errorProgressBar($ret);
 	    return array($ret, null);
@@ -602,9 +604,8 @@ class GalleryRepository {
 
 	/* Write package to the local repository cache directory. */
 	$absolutePackagePath = $gallery->getConfig('repository.cache') . $relativePackageUrl;
-	$platform = $gallery->getPlatform();
 	if (false === $platform->file_put_contents($absolutePackagePath, $packageContents)) {
-	    return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__, sprintf(
+	    return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__, sprintf(
 					      'Error writing package [%s]', $absolutePackagePath)),
 			 null);
 	}
@@ -620,7 +621,7 @@ class GalleryRepository {
 				'contents' => unserialize($packageContents));
 	}
 
-	return array(GalleryStatus::success(), $descriptor);
+	return array(null, $descriptor);
     }
 
     /**
@@ -639,7 +640,7 @@ class GalleryRepository {
 	$pluginOutputDir = sprintf('%s%ss/%s/',
 	    $gallery->getConfig('data.gallery.plugins'), $pluginType, $pluginId);
 
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	foreach ($descriptor['contents']['files'] as $filePath => $metaData) {
 	    foreach ($metaData['packages'] as $descriptorPackage) {
 		if ($descriptorPackage == $packageName) {
@@ -662,14 +663,14 @@ class GalleryRepository {
 		    }
 
 		    if (!empty($errorMessage)) {
-			return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
+			return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
 						    $errorMessage);
 		    }
 		}
 	    }
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**

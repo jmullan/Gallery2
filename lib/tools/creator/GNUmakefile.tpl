@@ -1,16 +1,7 @@
 {if $makefileType == 'classes'}
-all:
-	cd interfaces && $(MAKE) -$(MAKEFLAGS)
-	cd GalleryStorage/DatabaseStorage/schema && $(MAKE) -$(MAKEFLAGS)
-
-%:
-	cd interfaces && $(MAKE) -$(MAKEFLAGS) $@
-	cd GalleryStorage/DatabaseStorage/schema && $(MAKE) -$(MAKEFLAGS) $@
-{elseif $makefileType == 'interfaces'}
-PACKAGE={$ucModuleId}
-include ../../../../modules/core/classes/interfaces/GNUmakefile
+include ../../../lib/tools/bin/GNUmakefile.classes
 {else}
-include ../../../../../../modules/core/classes/GalleryStorage/DatabaseStorage/schema/GNUmakefile
+include ../../../../lib/tools/bin/GNUmakefile.GalleryStorage
 {/if}
 
 

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
  * @author Alan Harder <alan.harder@sun.com>
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/FlushDatabaseCacheTask.class');
+GalleryCoreApi::requireOnce('modules/core/classes/FlushDatabaseCacheTask.class');
 
 /**
  * This is a MaintenanceTask that will reset the view counts for all albums/items.
@@ -67,17 +67,17 @@ class ResetViewCountsTask extends FlushDatabaseCacheTask {
 	';
 
 	$ret = $storage->execute($resetCount);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	$ret = $storage->execute($resetDate, array(time()));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
@@ -85,11 +85,11 @@ class ResetViewCountsTask extends FlushDatabaseCacheTask {
 
 	/* Call parent::run() to flush cache */
 	list ($ret, $success, $subDetails) = parent::run();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
-	return array(GalleryStatus::success(), $success, array_merge($details, $subDetails));
+	return array(null, $success, array_merge($details, $subDetails));
     }
 }
 ?>

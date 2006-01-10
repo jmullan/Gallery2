@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ class AlbumSelectSiteAdminControllerTest extends GalleryControllerTestCase {
 	parent::setUp();
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'albumselect');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -77,7 +77,7 @@ class AlbumSelectSiteAdminControllerTest extends GalleryControllerTestCase {
 		       'treeIcons' => '1', 'treeCookies' => '0', 'treeExpandCollapse' => '0',
 		       'treeCloseSameLevel' => '1') as $key => $expectedValue) {
 	    list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'albumselect', $key);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $this->assertEquals($expectedValue, $value, $key);

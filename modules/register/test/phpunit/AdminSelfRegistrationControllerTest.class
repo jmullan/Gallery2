@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	parent::setUp();
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'register');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -53,17 +53,17 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	// Create a pending user..
 	list ($ret, $pendingUser) =
 	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryPendingUser');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = $pendingUser->create('testuser_' . rand(1000, 1000000));
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = $pendingUser->save();
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -74,7 +74,7 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
     function tearDown() {
 	if (isset($this->_pendingUser)) {
 	    $ret = GalleryCoreApi::deleteEntityById($this->_pendingUser->getId());
-	    if ($ret->isError()) {
+	    if ($ret) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -108,7 +108,7 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	);
 	foreach ($valueMap as $key => $expectedValue) {
 	    list ($ret, $realValue) = GalleryCoreApi::getPluginParameter('module', 'register', $key);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $this->assertEquals($expectedValue, $realValue, "value mismatch for $key");
@@ -129,14 +129,14 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
 		$results);
 
 	$ret = $this->_verifyMissing($this->_pendingUser->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$username = $this->_pendingUser->getUserName();
 	$this->_pendingUser = null;
 
 	list ($ret, $user) = GalleryCoreApi::fetchUserByUsername($username);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_pendingUser = $user;
@@ -156,34 +156,34 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
 		$results);
 
 	$ret = $this->_verifyMissing($this->_pendingUser->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_pendingUser = null;
     }
 
     function testHelperMethods() {
-	GalleryCoreApi::relativeRequireOnce(
+	GalleryCoreApi::requireOnce(
 	    'modules/register/classes/GalleryPendingUserHelper.class');
 	list ($ret, $count) = GalleryPendingUserHelper::fetchUserCount();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert($count > 0, 'User count');
 	list ($ret, $count) = GalleryPendingUserHelper::fetchUserCount('testuser');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert($count > 0, 'User count with filter');
 
 	list ($ret, $data) = GalleryPendingUserHelper::fetchUserData(3, 0);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(!empty($data), 'User data');
 
 	list ($ret, $data) = GalleryPendingUserHelper::fetchUserData(3, 0, 'testuser');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(!empty($data), 'User data with filter');

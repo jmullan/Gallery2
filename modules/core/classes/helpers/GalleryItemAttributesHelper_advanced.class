@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,12 +46,12 @@ class GalleryItemAttributesHelper_advanced {
 	global $gallery;
 
 	list ($ret, $parentItem) = GalleryCoreApi::loadEntitiesById($parentItemId);
-	if ($ret->isError()) {
+	if ($ret) {
  	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIdsIgnorePermissions($parentItem);
-	if ($ret->isError()) {
+	if ($ret) {
  	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -59,13 +59,13 @@ class GalleryItemAttributesHelper_advanced {
 	foreach ($ids as $id) {
 	    $gallery->guaranteeTimeLimit(5);
 	    $ret = GalleryItemAttributesHelper_advanced::setOrderWeight($id, $current);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $current += $spacing;
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -96,7 +96,7 @@ class GalleryItemAttributesHelper_advanced {
           [GalleryChildEntity::parentId] = ?
         ';
 	list ($ret, $searchResults) = $gallery->search($query, array($itemId));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -107,7 +107,7 @@ class GalleryItemAttributesHelper_advanced {
 	    $weight = 0;
 	}
 
-	return array(GalleryStatus::success(), $weight);
+	return array(null, $weight);
     }
 
     /**
@@ -149,7 +149,7 @@ class GalleryItemAttributesHelper_advanced {
 		$comparison . ' [GalleryItemAttributesMap=1::orderWeight]
         ';
 	list ($ret, $searchResults) = $gallery->search($query, array($itemId));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -160,7 +160,7 @@ class GalleryItemAttributesHelper_advanced {
 	    $weight = null;
 	}
 
-	return array(GalleryStatus::success(), $weight);
+	return array(null, $weight);
     }
 
     /**
@@ -171,14 +171,15 @@ class GalleryItemAttributesHelper_advanced {
      * @static
      */
     function setViewCount($itemId, $count) {
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryItemAttributesMap.class');
-	$ret = GalleryItemAttributesMap::updateMapEntry(array('itemId' => $itemId),
-							array('viewCount' => $count));
-	if ($ret->isError()) {
+	$ret = GalleryCoreApi::updateMapEntry(
+	    'GalleryItemAttributesMap',
+	    array('itemId' => $itemId),
+	    array('viewCount' => $count));
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -196,14 +197,15 @@ class GalleryItemAttributesHelper_advanced {
 	    $parentSequence = join('/', $parentSequence) . '/';
 	}
 
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryItemAttributesMap.class');
-	$ret = GalleryItemAttributesMap::updateMapEntry(array('itemId' => $itemId),
-							array('parentSequence' => $parentSequence));
-	if ($ret->isError()) {
+	$ret = GalleryCoreApi::updateMapEntry(
+	    'GalleryItemAttributesMap',
+	    array('itemId' => $itemId),
+	    array('parentSequence' => $parentSequence));
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -219,16 +221,17 @@ class GalleryItemAttributesHelper_advanced {
 	} else {
 	    $parentSequence = join('/', $parentSequence) . '/';
 	}
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryItemAttributesMap.class');
-	$ret = GalleryItemAttributesMap::addMapEntry(array('itemId' => $itemId,
-							   'viewCount' => 0,
-							   'orderWeight' => 0,
-							   'parentSequence' => $parentSequence));
-	if ($ret->isError()) {
+	$ret = GalleryCoreApi::addMapEntry(
+	    'GalleryItemAttributesMap',
+	    array('itemId' => $itemId,
+		  'viewCount' => 0,
+		  'orderWeight' => 0,
+		  'parentSequence' => $parentSequence));
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -238,13 +241,13 @@ class GalleryItemAttributesHelper_advanced {
      * @static
      */
     function removeItemAttributes($itemId) {
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryItemAttributesMap.class');
-	$ret = GalleryItemAttributesMap::removeMapEntry(array('itemId' => $itemId));
-	if ($ret->isError()) {
+	$ret = GalleryCoreApi::removeMapEntry(
+	    'GalleryItemAttributesMap', array('itemId' => $itemId));
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -255,14 +258,15 @@ class GalleryItemAttributesHelper_advanced {
      * @static
      */
     function setOrderWeight($itemId, $orderWeight) {
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryItemAttributesMap.class');
-	$ret = GalleryItemAttributesMap::updateMapEntry(array('itemId' => $itemId),
-							array('orderWeight' => $orderWeight));
-	if ($ret->isError()) {
+	$ret = GalleryCoreApi::updateMapEntry(
+	    'GalleryItemAttributesMap',
+	    array('itemId' => $itemId),
+	    array('orderWeight' => $orderWeight));
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     /**
@@ -273,15 +277,15 @@ class GalleryItemAttributesHelper_advanced {
      * @static
      */
     function fetchViewCount($itemId) {
-	GalleryCoreApi::relativeRequireOnce(
+	GalleryCoreApi::requireOnce(
 	    'modules/core/classes/helpers/GalleryItemAttributesHelper_medium.class');
 	list ($ret, $viewCounts) =
 	    GalleryItemAttributesHelper_medium::fetchViewCounts(array($itemId));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $viewCounts[$itemId]);
+	return array(null, $viewCounts[$itemId]);
     }
 
     /**
@@ -293,8 +297,8 @@ class GalleryItemAttributesHelper_advanced {
      * @static
      */
     function updateParentSequence($oldParentSequence, $newParentSequence) {
-	GalleryCoreApi::relativeRequireOnce(
-	    'modules/core/classes/GalleryStorage/DatabaseSqlFragment.class');
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/GalleryStorage/GallerySqlFragment.class');
 	global $gallery;
 
 	$oldParentSequence = join('/', $oldParentSequence) . '/';
@@ -303,25 +307,25 @@ class GalleryItemAttributesHelper_advanced {
 	$storage =& $gallery->getStorage();
 	list ($ret, $substring) = $storage->getFunctionSql('SUBSTRING', array(
 		  '[GalleryItemAttributesMap::parentSequence]', strlen($oldParentSequence) + 1));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	list ($ret, $newSequenceSql) = $storage->getFunctionSql('CONCAT', array('?', $substring));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryItemAttributesMap.class');
-	$ret = GalleryItemAttributesMap::updateMapEntry(
-	     array('parentSequence' =>
-			new DatabaseSqlFragment('LIKE ?', $oldParentSequence . '%')),
-	     array('parentSequence' =>
-			new DatabaseSqlFragment('=' . $newSequenceSql, $newParentSequence)));
-	if ($ret->isError()) {
+	$ret = GalleryCoreApi::updateMapEntry(
+	    'GalleryItemAttributesMap',
+	    array('parentSequence' =>
+		  new GallerySqlFragment('LIKE ?', $oldParentSequence . '%')),
+	    array('parentSequence' =>
+		  new GallerySqlFragment('=' . $newSequenceSql, $newParentSequence)));
+	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 }
 ?>

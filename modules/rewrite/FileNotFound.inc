@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,20 +36,29 @@ class FileNotFoundView extends GalleryView {
      */
     function getViewDescription() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'rewrite');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $module->translate('404 File Not Found'));
+	return array(null, $module->translate('404 File Not Found'));
     }
     
     /**
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	header('HTTP/1.0 404 Not Found');
+	global $gallery;
+	$phpVm = $gallery->getPhpVm();
+	$urlGenerator =& $gallery->getUrlGenerator();
 
-    	return array(GalleryStatus::success(),
+	/* Don't use getCurrentUrl, it migh be staged by the url generator */
+	$path = GalleryUtilities::getServerVar('REQUEST_URI');
+	$path = $urlGenerator->makeUrl($path);
+	
+	$phpVm->header('HTTP/1.0 404 Not Found');
+	$template->setVariable('FileNotFound', $path);
+
+    	return array(null,
 		array('body' => 'modules/rewrite/templates/FileNotFound.tpl'));
     }
 }

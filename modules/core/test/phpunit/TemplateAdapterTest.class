@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 /**
  * Required classes
  */
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTemplateAdapter.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplateAdapter.class');
 
 /**
  * Test Gallery Template Adapter functionality
@@ -115,7 +115,7 @@ class TemplateAdapterTest extends GalleryTestCase {
 	$this->_templateAdapter->url(array('arg1' => 'foo=bar',
 				    'forceFullUrl' => 'anything'), $this->_mockSmarty);
 
-	$this->assertEquals(array(array('foo' => 'bar'), null, null, true),
+	$this->assertEquals(array(array('foo' => 'bar'), array('forceFullUrl' => true)),
 			    $this->_mockUrlGenerator->_calls[0]);
     }
 
@@ -123,8 +123,17 @@ class TemplateAdapterTest extends GalleryTestCase {
 	$this->_setupMockAdapter();
 	$this->_templateAdapter->url(array('arg1' => 'foo=bar'), $this->_mockSmarty);
 
-	$this->assertEquals(array(array('foo' => 'bar'), null, null, false),
+	$this->assertEquals(array(array('foo' => 'bar'), array()),
 			    $this->_mockUrlGenerator->_calls[0]);
+    }
+    
+    function testChangeInDescendents() {
+	$test = array('module' => 'pirate', 'text' => 'ninja', 'l10Domain' => 'en_US');
+	$this->_setupMockAdapter();
+	$result = GalleryTemplateAdapter::changeInDescendents($test, $this->_mockSmarty);
+	$this->assertEquals('<input type="checkbox" id="pirate_ChangeInDescendents"	' .
+	    'name="g2_form[changeInDescendents][pirate]"/>  <label ' .
+	    'for="pirate_ChangeInDescendents"> ninja</label>', $result);
     }
 }
 
@@ -132,8 +141,8 @@ class TemplateAdapterMockSmarty {
 }
 
 class TemplateAdapterMockUrlGenerator {
-    function generateUrl($hrefParams, $forceSessionId, $baseUrl, $forceFullUrl) {
-	$this->_calls[] = array($hrefParams, $forceSessionId, $baseUrl, $forceFullUrl);
+    function generateUrl($params=array(), $options=array()) {
+	$this->_calls[] = array($params, $options);
     }
 }
 ?>

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,30 +44,48 @@ class ItemEditThemePluginTest extends ItemEditPluginTestCase {
 
 	/* Create a random album */
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+        /* Create child album here, since test theme is too rudimentary */
+	list ($ret, $this->_childAlbum) = $this->_createRandomAlbum($this->_album->getId());
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+        
+        /* 
+         * Also check the grandchild album - to make sure that descendents don't 
+         * just return children
+         */
+	list ($ret, $this->_grandchildAlbum) = $this->_createRandomAlbum(
+            $this->_childAlbum->getId());
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+        
 	$this->_markForCleanup($this->_album);
 
 	/* Assign our test theme */
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_album->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$this->_album->setTheme('ItemEditThemeControllerTest');
 	$ret = $this->_album->save();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::releaseLocks($lockId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$gallery->setPlatform(new ItemEditThemeTestPlatform());
+	$gallery->setPlatform(new ItemEditThemeTestPlatform($gallery->getPlatform()));
 
 	$this->_preferred = null;
 
@@ -133,6 +151,64 @@ class ItemEditThemePluginTest extends ItemEditPluginTestCase {
 				  sprintf('removeParameter(columns, %d)', $this->_album->getId())),
 			    ItemEditThemeControllerTestTheme::getMap());
     }
+    
+    /**
+     * Test applying options from 'Theme' tab to sub-albums
+     */
+    function testChangeInDescendents() {
+	GalleryUtilities::putRequestVariable('form[key][rows]', 3);
+	GalleryUtilities::putRequestVariable('form[key][columns]', 4);
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[changeInDescendents][theme]', 1);
+        
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_album, $this->_preferred);
+	$this->assertEquals(array(array(), $this->_translate('Successfully saved theme settings')),
+			    $results);
+	/* Verify - 3 albums should be set */
+	$this->assertEquals(array('setParameter(rows, 3)',
+                                  'setParameter(rows, 3)',
+                                  'setParameter(rows, 3)',
+				  'setParameter(columns, 4)',
+				  'setParameter(columns, 4)',
+				  'setParameter(columns, 4)'),
+			    ItemEditThemeControllerTestTheme::getMap());
+    }
+    
+    /**
+     * Test applying options from 'Theme' tab to sub-albums with no subalbum
+     */
+    function testChangeInDescendentsLeaf() {
+	GalleryUtilities::putRequestVariable('form[key][rows]', 3);
+	GalleryUtilities::putRequestVariable('form[key][columns]', 4);
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[changeInDescendents][theme]', 1);
+        
+	/* Assign our test theme */
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_grandchildAlbum->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->_grandchildAlbum->setTheme('ItemEditThemeControllerTest');
+	$ret = $this->_grandchildAlbum->save();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_grandchildAlbum, $this->_preferred);
+	$this->assertEquals(array(array(), $this->_translate('Successfully saved theme settings')),
+			    $results);
+	$this->assertEquals(array('setParameter(rows, 3)',
+				  'setParameter(columns, 4)'),
+			    ItemEditThemeControllerTestTheme::getMap());
+    }
 }
 
 /**
@@ -158,7 +234,7 @@ class ItemEditThemeControllerTestTheme {
 			    'type' => 'text-field',
 			    'typeParams' => array('size' => 2),
 			    'value' => 3);
-	return array(GalleryStatus::success(), $settings);
+	return array(null, $settings);
     }
 
     /**
@@ -185,23 +261,27 @@ class ItemEditThemeControllerTestTheme {
     }
 
     function isActive() {
-	return array(GalleryStatus::success(), true);
+	return array(null, true);
     }
 
     function translate($text) {
 	return $text;
     }
 
-    function removeParameter($key, $itemId) {
+    function removeParameter($key, $itemIds) {
 	$map =& $this->getMap();
-	$map[] = "removeParameter($key, $itemId)";
-	return GalleryStatus::success();
+	foreach ($itemIds as $id) {
+	    $map[] = "removeParameter($key, $id)";
+	}
+	return null;
     }
 
-    function setParameter($key, $value) {
+    function setParameter($key, $value, $itemIds) {
 	$map =& $this->getMap();
-	$map[] = "setParameter($key, $value)";
-	return GalleryStatus::success();
+	foreach ($itemIds as $id) {
+	    $map[] = "setParameter($key, $value)";
+	}
+	return null;
     }
 
     function &getMap() {
@@ -213,7 +293,7 @@ class ItemEditThemeControllerTestTheme {
     }
 
     function init() {
-	return GalleryStatus::success();
+	return null;
     }
 
     function reset() {
@@ -234,6 +314,10 @@ class ItemEditThemeControllerTestTheme {
  */
 class ItemEditThemeTestPlatform {
 
+    function ItemEditThemeTestPlatform($originalPlatform) {
+        $this->_savedPlatform = $originalPlatform;
+    }
+    
     function opendir($path) {
 	if ($path == dirname(__FILE__) . '/../../../../themes/') {
 	    return 'TEST_VALID_RESOURCE';
@@ -310,6 +394,10 @@ class ItemEditThemeTestPlatform {
 	    return 0;
 	}
     }
+    
+    function flock($fd, $lockType, $flag) {
+        return $this->_savedPlatform->flock($fd, $lockType, $flag);
+    }    
 }
 
 ?>

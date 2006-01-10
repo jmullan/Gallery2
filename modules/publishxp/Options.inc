@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ class OptionsController extends GalleryController {
 	}
 	$results['status'] = array();
 	$results['error'] = array();
-	return array(GalleryStatus::success(), $results);
+	return array(null, $results);
     }
 }
 
@@ -89,24 +89,24 @@ class OptionsView extends GalleryView {
 	    }
 
 	    if (empty($form['albumId'])) {
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	    }
 	}
 
 	/* Get all the add options */
-	GalleryCoreApi::relativeRequireOnce('modules/core/ItemAdd.inc');
+	GalleryCoreApi::requireOnce('modules/core/ItemAdd.inc');
 	if (isset($this->_optionInstances)) {
 	    $optionInstances = $this->_optionInstances;
 	} else {
 	    list ($ret, $optionInstances) = ItemAddOption::getAllAddOptions();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 
 	/* Now let all options load their template data */
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($form['albumId']);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -114,7 +114,7 @@ class OptionsView extends GalleryView {
 	foreach ($optionInstances as $option) {
 	    list ($ret, $entry['file'], $entry['l10Domain']) =
 		$option->loadTemplate($template, $form, $item);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    if (!empty($entry['file'])) {
@@ -125,12 +125,9 @@ class OptionsView extends GalleryView {
 	$template->setVariable('Options', $Options);
 	$template->head('modules/publishxp/templates/Head.tpl');
 
-	/* Tell the theme that we want the full screen */
-	$theme =& $template->getVariableByReference('theme');
-	$theme['useFullScreen'] = true;
-
-	return array(GalleryStatus::success(),
-		     array('body' => 'modules/publishxp/templates/Options.tpl'));
+	return array(null,
+		     array('body' => 'modules/publishxp/templates/Options.tpl',
+			   'useFullScreen' => true));
     }
 }
 ?>

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ class ModuleTest extends GalleryTestCase {
 	/* Register a new module */
 	GalleryDataCache::reset();
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -54,7 +54,7 @@ class ModuleTest extends GalleryTestCase {
 
 	list ($ret, $this->_rootAlbum) = $this->_createRandomAlbum($this->_getRootId(),
 	    array('onLoadHandlers' => '|ModuleTestOnLoadHandler|'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -62,7 +62,7 @@ class ModuleTest extends GalleryTestCase {
 
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_rootAlbum->getId(),
 	    'test/file', array('onLoadHandlers' => '|ModuleTestOnLoadHandler|OtherHandler|'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -71,28 +71,28 @@ class ModuleTest extends GalleryTestCase {
     function tearDown() {
 	/* If a unittest fails it might not deactivate/uninstall the mock module properly */
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $isActive) = $module->isActive();
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	if ($isActive) {
 	    list ($ret, $redirect) = $module->deactivate();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
 
 	$ret = $module->uninstall();
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::removePlugin('module', 'ModuleTest');
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -102,26 +102,26 @@ class ModuleTest extends GalleryTestCase {
     function testModuleCycle() {
 	global $gallery;
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Install the module */
 	$ret = $module->installOrUpgrade();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Verify that the first permission was added*/
 	list ($ret, $ids) = GalleryCoreApi::getPermissionIds();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(array_key_exists('moduletest.one', $ids), 'Permission was not added');
 
 	/* Remove all permissions */
 	$ret = GalleryCoreApi::removeItemPermissions($this->_rootAlbum->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -129,7 +129,7 @@ class ModuleTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::addUserPermission($this->_rootAlbum->getId(),
 						 $gallery->getActiveUserId(),
 						 'core.view');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -137,7 +137,7 @@ class ModuleTest extends GalleryTestCase {
 	    $this->_fetchPermissionBitsForItem($this->_rootAlbum->getId(),
 					       $gallery->getActiveUserId(),
 					       null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -145,18 +145,18 @@ class ModuleTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::addUserPermission($this->_rootAlbum->getId(),
 						 $gallery->getActiveUserId(),
 						 'moduletest.one');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Activate the module */
 	list ($ret, $redirect) = $module->activate();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array(), $redirect, 'activate redirect');
 	list ($ret, $isActive) = $module->isActive();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert($isActive, 'Is active');
@@ -164,17 +164,17 @@ class ModuleTest extends GalleryTestCase {
 	/* Create an entity */
 	$entity = new ModuleTestEntity();
 	$ret = $entity->create();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = $entity->save();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Deactivate the module */
 	list ($ret, $redirect) = $module->deactivate();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array(), $redirect, 'deactivate redirect');
@@ -182,20 +182,20 @@ class ModuleTest extends GalleryTestCase {
 	/* Upgrade the module */
 	$module->setVersion('1.0.1');
 	$ret = $module->installOrUpgrade();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Verify that the second permission was added*/
 	list ($ret, $ids) = GalleryCoreApi::getPermissionIds();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(array_key_exists('moduletest.two', $ids), 'Permission was not added');
 
 	/* Uninstall the module */
 	$ret = $module->uninstall();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(!empty($this->_removedDir),
@@ -214,7 +214,7 @@ class ModuleTest extends GalleryTestCase {
 
 	/* Verify that the permission itself is gone */
 	list ($ret, $ids) = GalleryCoreApi::getPermissionIds();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -225,13 +225,13 @@ class ModuleTest extends GalleryTestCase {
 
 	/* Verify our OnLoadHandler was removed from all entities */
 	list ($ret, $album) = $this->_rootAlbum->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(null, $album->getOnLoadHandlers(), 'album onLoadHandlers');
 
 	list ($ret, $item) = $this->_item->refresh();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('|OtherHandler|', $item->getOnLoadHandlers(), 'item onLoadHandlers');
@@ -246,7 +246,7 @@ class ModuleTest extends GalleryTestCase {
     function testInstallBadModuleApi() {
 	global $gallery;
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -254,22 +254,22 @@ class ModuleTest extends GalleryTestCase {
 	$module->setRequiredModuleApi(array($major - 1, $minor));
 
 	$ret = $module->installOrUpgrade();
-	if ($ret->isError() && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+	if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assert($ret->isError() && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
+	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
 	    'success?');
     }
 
     function testActivateBadModuleApiActivate() {
 	global $gallery;
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = $module->installOrUpgrade();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -277,14 +277,14 @@ class ModuleTest extends GalleryTestCase {
 	$module->setRequiredModuleApi(array($major - 1, $minor));
 
 	list ($ret, $redirect) = $module->activate();
-	if ($ret->isError() && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+	if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assert($ret->isError() && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
+	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
 	    'success?');
 
 	list ($ret, $isActive) = $module->isActive();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(!$isActive, 'is active');
@@ -293,7 +293,7 @@ class ModuleTest extends GalleryTestCase {
     function testInstallBadCoreApi() {
 	global $gallery;
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -301,22 +301,22 @@ class ModuleTest extends GalleryTestCase {
 	$module->setRequiredCoreApi(array($major - 1, $minor));
 
 	$ret = $module->installOrUpgrade();
-	if ($ret->isError() && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+	if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assert($ret->isError() && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
+	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
 	    'success?');
     }
 
     function testActivateBadCoreApiActivate() {
 	global $gallery;
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = $module->installOrUpgrade();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -324,14 +324,14 @@ class ModuleTest extends GalleryTestCase {
 	$module->setRequiredCoreApi(array($major - 1, $minor));
 
 	list ($ret, $redirect) = $module->activate();
-	if ($ret->isError() && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+	if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assert($ret->isError() && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
+	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
 	    'success?');
 
 	list ($ret, $isActive) = $module->isActive();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(!$isActive, 'is active');
@@ -341,30 +341,30 @@ class ModuleTest extends GalleryTestCase {
 	/* Test against bug where module uninstall can leave AccessMap rows with g_permission=0 */
 	global $gallery;
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = $module->installOrUpgrade();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::removeItemPermissions($this->_rootAlbum->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::addUserPermission($this->_rootAlbum->getId(),
 						 $gallery->getActiveUserId(),
 						 'moduletest.one');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = $module->uninstall();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	list ($ret, $bits) = $this->_fetchPermissionBitsForItem($this->_rootAlbum->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert($bits == 0, 'no bits');
@@ -373,11 +373,11 @@ class ModuleTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::addUserPermission($this->_rootAlbum->getId(),
 						 $gallery->getActiveUserId(),
 						 'core.viewAll');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	list ($ret, $bits) = $this->_fetchPermissionBitsForItem($this->_rootAlbum->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert($bits > 0, 'bits');
@@ -388,47 +388,45 @@ class ModuleTest extends GalleryTestCase {
 
 	$userId = $gallery->getActiveUserId();
 	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($userId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$groupIds = array_keys($groupIds);
-	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
+	$userOrGroupIdMarkers = GalleryUtilities::makeMarkers(count($groupIds) + 1);
 
 	$storage =& $gallery->getStorage();
 	list ($ret, $bitOr) = $storage->getFunctionSql('BIT_OR',
 						       array('[GalleryAccessMap::permission]'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	$query = '
 	SELECT
 	  ' . $bitOr . '
 	FROM
-	  [GalleryAccessMap],[GalleryAccessSubscriberMap]
+	  [GalleryAccessMap], [GalleryAccessSubscriberMap]
 	WHERE
 	  [GalleryAccessSubscriberMap::itemId] = ?
-	AND
-	[GalleryAccessSubscriberMap::accessListId] = [GalleryAccessMap::accessListId]
 	  AND
-	  ([GalleryAccessMap::userId] = ?
-	    OR
-	   [GalleryAccessMap::groupId] IN (' . $groupIdMarkers . '))
+	  [GalleryAccessSubscriberMap::accessListId] = [GalleryAccessMap::accessListId]
+	  AND
+	  [GalleryAccessMap::userOrGroupId] IN (' . $userOrGroupIdMarkers . ')
 	';
 
 	$data = array($itemId, $userId);
-	array_splice($data, sizeof($data), 0, $groupIds);
+	array_splice($data, count($data), 0, $groupIds);
 
 	list($ret, $searchResults) = $gallery->search($query, $data);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$permTable = array();
 	$result = $searchResults->nextResult();
 	$bits = $storage->convertBitsToInt($result[0]);
-	return array(GalleryStatus::success(), $bits);
+	return array(null, $bits);
     }
 }
 
@@ -456,28 +454,28 @@ class ModuleTestModule extends GalleryModule {
 	if (!isset($currentVersion)) {
 	    $ret = GalleryCoreApi::registerPermission($this->getId(),
 		'moduletest.one', $gallery->i18n('[test] A permission'));
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	} else {
 	    $ret = GalleryCoreApi::registerPermission($this->getId(),
 		'moduletest.two', $gallery->i18n('[test] A second permission'));
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
-	return GalleryStatus::success();
+	return null;
     }
 
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GalleryOnLoadHandler', 'ModuleTestOnLoadHandler', 'ModuleTestOnLoadHandler',
 	     'modules/core/test/phpunit/ModuleTest.class', 'moduletest', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	return GalleryStatus::success();
+	return null;
     }
 
     function getOnLoadHandlerIds() {
@@ -495,7 +493,7 @@ class ModuleTestModule extends GalleryModule {
  */
 class ModuleTestOnLoadHandler {
     function onLoad(&$entity, $duringUpgrade) {
-	return GalleryStatus::success();
+	return null;
     }
 }
 

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	parent::setUp();
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -72,7 +72,8 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 			  'smtp.from' => 'gallery@example.com',
 			  'format.date' => 'x16',
 			  'format.time' => 'x17',
-			  'format.datetime' => 'x18');
+			  'format.datetime' => 'x18',
+			  'language.useBrowserPref' => '1');
 
 	/* Change the defaults to something meaningless */
 	foreach ($valueMap as $key => $value) {
@@ -94,7 +95,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	$valueMap['smtp.password'] = base64_encode($valueMap['smtp.password']);
 	foreach ($valueMap as $key => $expectedValue) {
 	    list ($ret, $realValue) = GalleryCoreApi::getPluginParameter('module', 'core', $key);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
@@ -115,6 +116,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 			  'default.orderDirection' => 'IGNORED',
 			  'default.theme' => 'IGNORED',
 			  'default.language' => 'IGNORED',
+			  'language.useBrowserPref' => 'IGNORED',
 			  'session.lifetime' => 'IGNORED',
 			  'session.inactivityTimeout' => 'IGNORED',
 			  'misc.markup' => 'IGNORED',
@@ -135,7 +137,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	foreach ($tests as $testCase) {
 	    /* Set the cookie path manually to a known value to check later if it was changed */
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', 'cookie.path', '/bad/');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
@@ -165,7 +167,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	    /* Check if the correct value was stored */
 	    list ($ret, $realValue) = GalleryCoreApi::getPluginParameter('module', 'core',
 									 'cookie.path');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $expPath = $testCase['saved'] ? $testCase['ep'] : '/bad/';
@@ -187,6 +189,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 			  'default.orderDirection' => 'IGNORED',
 			  'default.theme' => 'IGNORED',
 			  'default.language' => 'IGNORED',
+			  'language.useBrowserPref' => 'IGNORED',
 			  'session.lifetime' => 'IGNORED',
 			  'session.inactivityTimeout' => 'IGNORED',
 			  'misc.markup' => 'IGNORED',
@@ -207,7 +210,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	foreach ($tests as $testCase) {
 	    /* Set the cookie domain manually to a known value to check later if it was changed */
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', 'cookie.domain', 'bad');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
@@ -238,7 +241,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	    /* Check if the correct value was stored */
 	    list ($ret, $realValue) = GalleryCoreApi::getPluginParameter('module', 'core',
 									 'cookie.domain');
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $expPath = $testCase['saved'] ? $testCase['ep'] : 'bad';
@@ -272,7 +275,8 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 			  'default.language' => 'x8',
 			  'session.lifetime' => 'x9',
 			  'session.inactivityTimeout' => 'x10',
-			  'misc.markup' => 'x11');
+			  'misc.markup' => 'x11',
+			  'language.useBrowserPref' => '0');
 	foreach ($valueMap as $key => $value) {
 	    list ($outer, $inner) = explode('.', $key);
 	    GalleryUtilities::putRequestVariable('form[' . $outer . '][' . $inner . ']', $value);
@@ -282,19 +286,19 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][addUploadLocalServerDir]', 1);
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dir.1', 'a');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dir.2', 'b');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::removePluginParameter('module', 'core', 'uploadLocalServer.dir.3');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::removePluginParameter('module', 'core', 'uploadLocalServer.dir.4');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -309,7 +313,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	GalleryDataCache::reset();
 
 	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(dirname(__FILE__), $param['uploadLocalServer.dir.3'], 'new dir');
@@ -457,15 +461,15 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
     function testAddUploadLocalServerDirRelativePath() {
 	/* Relative path should be converted to absolute (with realpath) */
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$saveDir = $platform->getcwd();
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dir.1', 'a');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::removePluginParameter('module', 'core', 'uploadLocalServer.dir.2');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -485,7 +489,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	$platform->chdir($saveDir);
 
 	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('a', $param['uploadLocalServer.dir.1']);
@@ -552,11 +556,11 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dir.1', 'a');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::removePluginParameter('module', 'core', 'uploadLocalServer.dir.2');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -581,7 +585,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	    $results);
 
 	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('a', $param['uploadLocalServer.dir.1']);
@@ -593,23 +597,23 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][removeUploadLocalServerDir]', 1);
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dir.1', 'a');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dir.2', 'x');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dir.3', 'b');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dir.4', 'c');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::removePluginParameter('module', 'core', 'uploadLocalServer.dir.5');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -624,7 +628,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	GalleryDataCache::reset();
 
 	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('a', $param['uploadLocalServer.dir.1']);
@@ -673,7 +677,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 
     function testEmailTestSuccess() {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
 	    $gallery->setPlatform(new AdminCoreControllerTestWinNtPlatform(true));
 	} else {
@@ -693,7 +697,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 
     function testEmailTestFailure() {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
 	    $gallery->setPlatform(new AdminCoreControllerTestWinNtPlatform(false));
 	} else {
@@ -718,8 +722,8 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
     }
 }
 
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPlatform/UnixPlatform.class');
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPlatform/WinNtPlatform.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryPlatform/UnixPlatform.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryPlatform/WinNtPlatform.class');
 class AdminCoreControllerTestUnixPlatform extends UnixPlatform {
     function AdminCoreControllerTestUnixPlatform($succeed) {
 	$this->_succeed = $succeed;

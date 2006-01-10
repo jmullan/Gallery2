@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 /**
  * Required classes
  */
-GalleryCoreApi::relativeRequireOnce('modules/cart/classes/CartHelper.class');
+GalleryCoreApi::requireOnce('modules/cart/classes/CartHelper.class');
 
 /**
  * This view will allow users to view their individual carts
@@ -46,11 +46,11 @@ class ViewCartView extends GalleryView {
 	global $gallery;
 
 	list ($ret, $itemList) = CartHelper::loadCartItems();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	list ($ret, $cartItemIds) = CartHelper::fetchCartItemCounts();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -66,27 +66,27 @@ class ViewCartView extends GalleryView {
 	/* Bring in the root album information for the breadcrumb */
 	list ($ret, $rootAlbumId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($rootAlbumId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$ViewCart['rootAlbum'] = $rootAlbum->getMemberData();
+	$ViewCart['rootAlbum'] = (array)$rootAlbum;
 
 	/* Find all our cart plugins */
-	GalleryCoreApi::relativeRequireOnce('modules/cart/classes/CartPluginInterface_1_0.class');
+	GalleryCoreApi::requireOnce('modules/cart/classes/CartPluginInterface_1_0.class');
 	list ($ret, $ids) =
 	    GalleryCoreApi::getAllFactoryImplementationIds('CartPluginInterface_1_0');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$plugins = array();
 	foreach ($ids as $id => $className) {
 	    list ($ret, $instances[$id]) =
 		GalleryCoreApi::newFactoryInstance('CartPluginInterface_1_0', $className);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -97,7 +97,7 @@ class ViewCartView extends GalleryView {
 	    $plugins[$id]['supportedItemTypes'] = $instances[$id]->getSupportedItemTypes();
 	    list ($ret, $plugins[$id]['actionDisplayName']) =
 		$instances[$id]->getActionDisplayName();
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
@@ -107,7 +107,7 @@ class ViewCartView extends GalleryView {
 	$itemTypeNames = array();
 	if (!empty($cartItemIds)) {
 	    foreach ($itemList as $item) {
-		$items[$item->getId()] = $item->getMemberData();
+		$items[$item->getId()] = (array)$item;
 
 		/* TODO: This is a O(N^3) operation -- probably should be optimized */
 		foreach ($plugins as $pluginId => $pluginData) {
@@ -130,11 +130,11 @@ class ViewCartView extends GalleryView {
 	    /* Fetch thumbnails */
 	    list ($ret, $thumbnailList) =
 		GalleryCoreApi::fetchThumbnailsByItemIds(array_keys($cartItemIds));
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    foreach ($thumbnailList as $thumbnail) {
-		$thumbnails[$thumbnail->getParentId()] = $thumbnail->getMemberData();
+		$thumbnails[$thumbnail->getParentId()] = (array)$thumbnail;
 	    }
 	}
 
@@ -147,18 +147,18 @@ class ViewCartView extends GalleryView {
 
 	$urlGenerator =& $gallery->getUrlGenerator();
 	list ($ret, $navigationLinks) = $urlGenerator->getNavigationLinks();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$template->setVariable('navigationLinks', $navigationLinks);
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'cart');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$template->title($module->translate('View Your Cart'));
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/cart/templates/ViewCart.tpl'));
     }
 
@@ -167,11 +167,11 @@ class ViewCartView extends GalleryView {
      */
     function getViewDescription() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'cart');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $module->translate('view cart'));
+	return array(null, $module->translate('view cart'));
     }
 }
 ?>

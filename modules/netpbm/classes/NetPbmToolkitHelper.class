@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,22 +48,22 @@ class NetPbmToolkitHelper {
 
 	list ($ret, $netPbmPath) =
 	    GalleryCoreApi::getPluginParameter('module', 'netpbm', 'path');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	if (empty($netPbmPath)) {
-	    return array(GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
 	}
 
 	list ($ret, $tests, $mimeTypes) = NetPbmToolkitHelper::testBinaries($netPbmPath);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	if ($saveParameters) {
 	    $ret = NetPbmToolkitHelper::saveParameters($tests);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
@@ -160,7 +160,7 @@ class NetPbmToolkitHelper {
 	$properties['dimensions']['mimeTypes'] =
 	    array_merge($mimeTypes, array('image/x-portable-pixmap'));
 
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('operations' => $operations, 'properties' => $properties));
     }
 
@@ -181,13 +181,13 @@ class NetPbmToolkitHelper {
      */
     function testJhead($jheadPath) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	/*
 	 * If the path is restricted by open_basedir, then verify that it's legal.
 	 * Else just hope that it's valid and use it.
 	 */
 	if (!$platform->isRestrictedByOpenBaseDir($jheadPath) && !@$platform->is_dir($jheadPath)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null, null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__), null, null);
 	}
 	$tests = array();
 	$fullPath = $jheadPath . 'jhead';
@@ -206,7 +206,7 @@ class NetPbmToolkitHelper {
 			 'success' => $success,
 			 'message' => $results);
 
-	return array(GalleryStatus::success(), $tests, array());
+	return array(null, $tests, array());
     }
 
     /**
@@ -227,14 +227,14 @@ class NetPbmToolkitHelper {
      */
     function testBinaries($netPbmPath) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$isRestrictedPath = $platform->isRestrictedByOpenBaseDir($netPbmPath);
 	/*
 	 * If the path is not restricted by open_basedir, then verify that it's legal.
 	 * Else just hope that it's valid and use it.
 	 */
 	if (!$isRestrictedPath && !@$platform->is_dir($netPbmPath)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null, null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__), null, null);
 	}
 
 	$binaryData = array(
@@ -277,7 +277,7 @@ class NetPbmToolkitHelper {
 		    if (!isset($module)) {
 			/* Only used for translation, so ignore version mismatch during upgrade */
 			list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'netpbm', true);
-			if ($ret->isError()) {
+			if ($ret) {
 			    return array($ret->wrap(__FILE__, __LINE__), null, null);
 			}
 		    }
@@ -296,7 +296,7 @@ class NetPbmToolkitHelper {
 	    }
 	}
 
-	return array(GalleryStatus::success(), $tests, $mimeTypes);
+	return array(null, $tests, $mimeTypes);
     }
 
     /**
@@ -321,11 +321,11 @@ class NetPbmToolkitHelper {
 	foreach (array_keys($paramList) as $key) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', $key,
 						      isset($binary[$key]) ? $binary[$key] : $key);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
-	return GalleryStatus::success();
+	return null;
     }
 }
 ?>

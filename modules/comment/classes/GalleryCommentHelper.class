@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	    break;
 
 	default:
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
 
 	$query = '
@@ -84,7 +84,7 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 						       array($itemId),
 						       array('limit' => array('count' => $count)));
 
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -98,12 +98,12 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	$comments = array();
 	if (!empty($allIds)) {
 	    list ($ret, $comments) = GalleryCoreApi::loadEntitiesById($allIds);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 
-	return array(GalleryStatus::success(), $comments);
+	return array(null, $comments);
     }
 
     /**
@@ -131,11 +131,11 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	    break;
 
 	default:
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
 	}
 
 	list ($ret, $sequence) = GalleryCoreApi::fetchParentSequence($itemId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	$sequence = implode('/', $sequence);
@@ -146,13 +146,13 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 
 	list ($ret, $aclIds) =
 	    GalleryCoreApi::fetchAccessListIds('comment.view', $gallery->getActiveUserId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	$aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
 
 	if (empty($aclIds)) {
-	    return array(GalleryStatus::success(), array(), 0);
+	    return array(null, array(), 0);
 	}
 
 	$queryBase = '
@@ -183,7 +183,7 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	list ($ret, $searchResults) =
 	    $gallery->search($query, $data,
 			     array('limit' => array('count' => $count, 'offset' => $offset)));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
@@ -197,7 +197,7 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	$comments = array();
 	if (!empty($allIds)) {
 	    list ($ret, $comments) = GalleryCoreApi::loadEntitiesById($allIds);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	}
@@ -210,7 +210,7 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	    SELECT
 	      COUNT([GalleryComment::id]) ' . $queryBase;
 	    list ($ret, $searchResults) = $gallery->search($query, $data);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    if ($result = $searchResults->nextResult()) {
@@ -220,7 +220,7 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	    }
 	}
 
-	return array(GalleryStatus::success(), $comments, $totalCount);
+	return array(null, $comments, $totalCount);
     }
 
     /**
@@ -250,7 +250,7 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	';
 
 	list($ret, $searchResults) = $gallery->search($query, $itemIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -259,7 +259,7 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	    $data[$result[0]] = (int)$result[1];
 	}
 
-	return array(GalleryStatus::success(), $data);
+	return array(null, $data);
     }
 
     /**
@@ -274,20 +274,20 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 
 	list ($ret, $on) =
 	    GalleryCoreApi::getPluginParameter('module', 'comment', 'comments.captcha');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if (!$on) {
-	    return array(GalleryStatus::success(), false);
+	    return array(null, false);
 	}
 
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $anonymousUserId == $gallery->getActiveUserId());
+	return array(null, $anonymousUserId == $gallery->getActiveUserId());
     }
 
      /**
@@ -305,7 +305,7 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	case 'GalleryEntity::delete':
 	    $entity = $event->getEntity();
 	    if (!GalleryUtilities::isA($entity, 'GalleryUser')) {
-		return array(GalleryStatus::success(), null);
+		return array(null, null);
 	    }
 
 	    /* Delete all comments owned by this user */
@@ -319,19 +319,19 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	    ';
 
 	    list($ret, $searchResults) = $gallery->search($query, array($entity->getId()));
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    while ($result = $searchResults->nextResult()) {
 		$ret = GalleryCoreApi::deleteEntityById($result[0]);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
 	}
 
-	return array(GalleryStatus::success(), null);
+	return array(null, null);
     }
 }
 ?>

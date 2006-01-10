@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,12 +29,7 @@
 /**
  * Helper class
  */
-GalleryCoreApi::relativeRequireOnce('modules/quotas/classes/GalleryQuotasHelper.class');
-
-/**
- * Map class
- */
-GalleryCoreApi::relativeRequireOnce('modules/quotas/classes/QuotasMap.class');
+GalleryCoreApi::requireOnce('modules/quotas/classes/GalleryQuotasHelper.class');
 
 /**
  * AdminDeleteUserQuota controller tests
@@ -52,7 +47,7 @@ class AdminDeleteUserQuotaControllerTest extends GalleryControllerTestCase {
 
 	/* Create a user that we can delete */
 	list ($ret, $this->_user) = $this->_createRandomUser();
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($this->_user);
@@ -118,16 +113,16 @@ class AdminDeleteUserQuotaControllerTest extends GalleryControllerTestCase {
     }
 
     function _createUserQuota($userId, $quota) {
-	$ret = QuotasMap::addMapEntry(array('userOrGroupId' => $userId,
-					    'quotaSize' => $quota));
-	if ($ret->isError()) {
+	$ret = GalleryCoreApi::addMapEntry(
+	    'QuotasMap', array('userOrGroupId' => $userId, 'quotaSize' => $quota));
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
     }
 
     function _deleteUserQuota($userId) {
-	$ret = QuotasMap::removeMapEntry(array('userOrGroupId' => $userId));
-	if ($ret->isError()) {
+	$ret = GalleryCoreApi::removeMapEntry('QuotasMap', array('userOrGroupId' => $userId));
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
     }

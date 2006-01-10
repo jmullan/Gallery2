@@ -162,7 +162,7 @@
 	    {/if}
 	    </a>
 	  {/if}
-	{elseif ($it.canContainChildren)}
+	{elseif ($it.canContainChildren || $it.entityType == 'GalleryLinkItem')}
 	  {capture name="link"}
 	    <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$it.id`"}">
 	  {/capture}

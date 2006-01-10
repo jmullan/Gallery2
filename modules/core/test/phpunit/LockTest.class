@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +26,8 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/DatabaseLockSystem.class');
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/FlockLockSystem.class');
+GalleryCoreApi::requireOnce('modules/core/classes/DatabaseLockSystem.class');
+GalleryCoreApi::requireOnce('modules/core/classes/FlockLockSystem.class');
 
 /**
  * Test Lock functionality
@@ -45,14 +45,14 @@ class LockTest extends GalleryTestCase {
 	parent::setUp();
 
 	list ($ret, $this->_parentAlbum) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($this->_parentAlbum);
 
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_parentAlbum->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -79,14 +79,14 @@ class LockTest extends GalleryTestCase {
 	$targetId = $this->_item->getId();
 
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($targetId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$this->assert(GalleryCoreApi::isWriteLocked($targetId), $lockSystem);
 
 	$ret = GalleryCoreApi::releaseLocks($lockId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
@@ -101,7 +101,7 @@ class LockTest extends GalleryTestCase {
 	$ids = array($gallery->getActiveUserId(), $this->_getRootId(), $this->_item->getId());
 
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($ids);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -110,7 +110,7 @@ class LockTest extends GalleryTestCase {
 	}
 
 	$ret = GalleryCoreApi::releaseLocks($lockId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
@@ -123,14 +123,14 @@ class LockTest extends GalleryTestCase {
 	$targetId = $this->_parentAlbum->getId();
 
 	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($targetId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$this->assert(GalleryCoreApi::isReadLocked($targetId), $lockSystem);
 
 	$ret = GalleryCoreApi::releaseLocks($lockId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
@@ -145,7 +145,7 @@ class LockTest extends GalleryTestCase {
 	$ids = array($gallery->getActiveUserId(), $this->_getRootId(), $this->_item->getId());
 
 	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($ids);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -154,7 +154,7 @@ class LockTest extends GalleryTestCase {
 	}
 
 	$ret = GalleryCoreApi::releaseLocks($lockId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
@@ -170,14 +170,14 @@ class LockTest extends GalleryTestCase {
 	$parentId = $this->_parentAlbum->getId();
 	for ($i = 0; $i < 3; $i++) {
 	    list ($ret, $this->_album[$i]) = $this->_createRandomAlbum($parentId);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $parentId = $this->_album[$i]->getId();
 	}
 
 	list ($ret, $lockId) = GalleryCoreApi::acquireReadLockParents($this->_album[2]->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -190,7 +190,7 @@ class LockTest extends GalleryTestCase {
 
 	/* Release locks */
 	$ret = GalleryCoreApi::releaseLocks($lockId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
@@ -203,7 +203,7 @@ class LockTest extends GalleryTestCase {
 	global $gallery;
 
 	list ($ret, $lockId) = GalleryCoreApi::acquireReadLockParents($this->_getRootId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -213,7 +213,7 @@ class LockTest extends GalleryTestCase {
 
 	/* Release locks */
 	$ret = GalleryCoreApi::releaseLocks($lockId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
@@ -235,7 +235,7 @@ class LockTest extends GalleryTestCase {
     function _testReadLockToWriteLock($lockSystem) {
 	/* Read lock parents, then attempt to write lock direct parent */
 	list ($ret, $lockId) = GalleryCoreApi::acquireReadLockParents($this->_item->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -244,7 +244,7 @@ class LockTest extends GalleryTestCase {
 	}
 
 	list ($ret, $writeLockId) = GalleryCoreApi::acquireWriteLock($this->_parentAlbum->getId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -254,7 +254,7 @@ class LockTest extends GalleryTestCase {
 
 	/* Release locks */
 	$ret = GalleryCoreApi::releaseLocks(array($lockId, $writeLockId));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
@@ -273,7 +273,7 @@ class LockTest extends GalleryTestCase {
 	$lockIds = array();
 
 	list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($targetId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -281,7 +281,7 @@ class LockTest extends GalleryTestCase {
 
 	$lockIds[] = null;
 	$ret = GalleryCoreApi::releaseLocks($lockIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->assert(false, $lockSystem);
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -296,7 +296,7 @@ class LockTest extends GalleryTestCase {
 
     function _testReleaseEmpty($lockSystem) {
 	$ret = GalleryCoreApi::releaseLocks(array());
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->assert(false, $lockSystem);
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

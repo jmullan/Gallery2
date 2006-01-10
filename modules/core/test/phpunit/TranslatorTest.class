@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,16 +46,37 @@ class TranslatorTest extends GalleryTestCase {
 	parent::setUp();
 
 	list ($ret, $this->_languageCode) = $gallery->getActiveLanguageCode();
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = $this->_markPluginParametersForCleanup('module', 'core');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Disable browser check and set default lang != hardcoded lang */
+	foreach (array('default.language' => 'fr_FR', 'language.useBrowserPref' => '0')
+		 as $param => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', $param, $value);
+	    if ($ret) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    list ($ret, $actual) =
+		GalleryCoreApi::getPluginParameter('module', 'core', $param);
+	    if ($ret) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assertEquals($value, $actual, $param);
 	}
     }
 
     function tearDown() {
 	global $gallery;
 	$ret = $gallery->setActiveLanguageCode($this->_languageCode);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -71,15 +92,33 @@ class TranslatorTest extends GalleryTestCase {
 	global $gallery;
 	$origLang = getenv('LANG');
 
+	foreach (array('language.useBrowserPref' => '1')
+		 as $param => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', $param, $value);
+	    if ($ret) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    list ($ret, $actual) =
+		GalleryCoreApi::getPluginParameter('module', 'core', $param);
+	    if ($ret) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assertEquals($value, $actual, $param);
+	}
+
 	/* Init with a null language code and a valid accept language */
-	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'de';
+	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'de_DE';
 	$translator = new GalleryTranslator();
-	$translator->init();
+	list ($ret, $languageCode) = $translator->init();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 	if (function_exists('dgettext')) {
 	    $this->assertEquals('de_DE', getenv('LANG'), 'null init, valid language');
 	} else {
 	    $this->assertEquals($origLang, getenv('LANG'), 'null init, lang unchanged');
 	}
+	$this->assertEquals('de_DE', $languageCode, 'returned language code');
 
 	/* Init with a null language code and a valid accept language/country */
 	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'pt_BR';
@@ -91,16 +130,17 @@ class TranslatorTest extends GalleryTestCase {
 	    $this->assertEquals($origLang, getenv('LANG'), 'null init, lang unchanged 2');
 	}
 
-	/* Invalid accept language/country */
+	/* Invalid accept language/country, fall back to default */
 	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'xx_YY';
-	$this->assertEquals('en_US', $translator->getLanguageCodeFromRequest(), 'invalid locale');
+	$this->assertEquals(null, $translator->getLanguageCodeFromRequest(), 'invalid locale');
 
 	/* Invalid,valid accept language */
 	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'xx,no';
 	$this->assertEquals('no_NO', $translator->getLanguageCodeFromRequest(),
 			    'invalid, valid language');
 
-	/* Init with a real language code */
+	/* Init with a real language code, thus browser pref has no meaning */
+	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en_US';
 	$translator = new GalleryTranslator();
 	$translator->init('no_NO');
 	if (function_exists('dgettext')) {
@@ -108,6 +148,136 @@ class TranslatorTest extends GalleryTestCase {
 	} else {
 	    $this->assertEquals($origLang, getenv('LANG'), 'valid init, lang unchanged');
 	}
+    }
+
+    /* Use the Gallery::initTranslator method and make sure the activeLanguageCode has changed  */
+    function testGetLanguageCodeFromRequest2() {
+	global $gallery;
+	$origLang = getenv('LANG');
+
+	/*
+	 * Remove the active language from the session, since it has precedence over the browser's
+	 * accepted languages header
+	 */
+	$session =& $gallery->getSession();
+	$session->remove('core.language');
+
+	foreach (array('language.useBrowserPref' => '1')
+		 as $param => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', $param, $value);
+	    if ($ret) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    list ($ret, $actual) =
+		GalleryCoreApi::getPluginParameter('module', 'core', $param);
+	    if ($ret) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assertEquals($value, $actual, $param);
+	}
+
+	/* Init with a null language code and a valid accept language */
+	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'de';
+	$gallery->_translator = null;
+	$ret = $gallery->initTranslator();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	if (function_exists('dgettext')) {
+	    $this->assertEquals('de_DE', getenv('LANG'), 'null init, valid language');
+	} else {
+	    $this->assertEquals($origLang, getenv('LANG'), 'null init, lang unchanged');
+	}
+	/* Verify that the activeLanguageCode was changed */
+	list ($ret, $langCode) = $gallery->getActiveLanguageCode();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('de_DE', $langCode, 'active language code');
+    }
+
+    /*
+     * The translator should init to the site-wide default language if session/request defines no
+     * preference
+     */
+    function testInitToDefaultLanguage() {
+	global $gallery;
+	$session =& $gallery->getSession();
+	$session->remove('core.language');
+
+	/* Default language is set to fr_FR, browser check is off */
+	$gallery->_translator = null;
+	$ret = $gallery->initTranslator();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $langCode) = $gallery->getActiveLanguageCode();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('fr_FR', $langCode);
+    }
+
+    /* If we init without database support, fallback to en_US */
+    function testInitToHardcodedDefaultLanguage() {
+	global $gallery;
+	$session =& $gallery->getSession();
+	$session->remove('core.language');
+	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'de';
+
+	$gallery->_translator = null;
+	$ret = $gallery->initTranslator(true);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $langCode) = $gallery->getActiveLanguageCode();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('en_US', $langCode);
+    }
+
+    /* If the session defines an active language, use it */
+    function testInitToActiveLanguage() {
+	global $gallery;
+
+	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'de_DE';
+	$ret = $gallery->setActiveLanguageCode('fr_FR');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$gallery->_translator = null;
+	$ret = $gallery->initTranslator();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $langCode) = $gallery->getActiveLanguageCode();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('fr_FR', $langCode);
+    }
+
+    function testInitWithoutDatabaseWithActiveLanguage() {
+	global $gallery;
+
+	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'de_DE';
+	$ret = $gallery->setActiveLanguageCode('fr_FR');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$gallery->_translator = null;
+	$ret = $gallery->initTranslator(true);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $langCode) = $gallery->getActiveLanguageCode();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('fr_FR', $langCode);
     }
 
     function testTranslateSingular() {
@@ -120,7 +290,7 @@ class TranslatorTest extends GalleryTestCase {
 	/* Singular text data */
 	list ($ret, $results) =
 	    $translator->translateDomain($domain, array('text' => 'Description'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	if ($translator->canTranslate()) {
@@ -133,7 +303,7 @@ class TranslatorTest extends GalleryTestCase {
 	$translator->init('fr_FR');
 	list ($ret, $results) =
 	    $translator->translateDomain($domain, array('text' => 'Create'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	if ($translator->canTranslate()) {
@@ -157,7 +327,7 @@ class TranslatorTest extends GalleryTestCase {
 					       'many' => '%d users match your filter',
 					       'count' => 1,
 					       'arg1' => 1));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	if ($translator->canTranslate()) {
@@ -173,7 +343,7 @@ class TranslatorTest extends GalleryTestCase {
 					       'many' => '%d users match your filter',
 					       'count' => 2,
 					       'arg1' => 2));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	if ($translator->canTranslate()) {
@@ -198,7 +368,7 @@ class TranslatorTest extends GalleryTestCase {
 	/* Singular text data */
 	list ($ret, $results) =
 	    $translator->translateDomain($domain, array('text' => 'Album'));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	if ($translator->canTranslate()) {
@@ -206,6 +376,21 @@ class TranslatorTest extends GalleryTestCase {
 	} else {
 	    $this->assertEquals('Album', $results);
 	}
+    }
+
+    function testComment() {
+	$translator = new GalleryTranslator();
+	list ($ret, $languageCode) = $translator->init('en_US');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $text) = $translator->translateDomain('modules_core',
+	    array('text' => 'test <!-- this is a comment to assist translators -->'));
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('test', $text);
     }
 }
 ?>

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ class MimeAdminController extends GalleryController {
         global $gallery;
 
         $ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-        if ($ret->isError()) {
+        if ($ret) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
 
@@ -47,7 +47,7 @@ class MimeAdminController extends GalleryController {
 	    $mimeType = $form['action']['delete'];
             $ret = GalleryCoreApi::removeMimeType(
                 array('mimeType' => $mimeType));
-            if ($ret->isError()) {
+            if ($ret) {
                 return array($ret->wrap(__FILE__, __LINE__), null);
             }
 	    $status['deleted'] = $mimeType;
@@ -62,7 +62,7 @@ class MimeAdminController extends GalleryController {
         $results['status'] = $status;
         $results['error'] = array();
 
-        return array(GalleryStatus::success(), $results);
+        return array(null, $results);
     }
 }
 
@@ -81,9 +81,9 @@ class MimeAdminView extends GalleryView {
 	if ($form['formName'] != 'MimeAdmin') {
 	    $form['formName'] = 'MimeAdmin';
 	}
-        GalleryCoreApi::relativeRequireOnce('modules/mime/classes/MimeHelper.class');
+        GalleryCoreApi::requireOnce('modules/mime/classes/MimeHelper.class');
         list ($ret, $typeMap) = MimeHelper::getMimeTypeMap();
-        if ($ret->isError()) {
+        if ($ret) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
 
@@ -96,7 +96,7 @@ class MimeAdminView extends GalleryView {
 
         $template->setVariable('controller', 'mime.MimeAdmin');
         $template->setVariable('MimeAdmin', $MimeAdmin);
-        return array(GalleryStatus::success(),
+        return array(null,
              array('body' => 'modules/mime/templates/MimeAdmin.tpl'));
     }
 }

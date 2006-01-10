@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,14 +55,14 @@ class MimeHelper {
             ORDER BY [GalleryMimeTypeMap::mimeType]
         ';
         list ($ret, $searchResults) = $gallery->search($query);
-        if ($ret->isError()) {
+        if ($ret) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
         while ($result = $searchResults->nextResult()) {
             $MimeTypeMap['ext'][$result[0]][] = $result[1];
             $MimeTypeMap['viewable'][$result[0]] = $result[2];
         }
-        return array(GalleryStatus::success(), $MimeTypeMap);
+        return array(null, $MimeTypeMap);
     }
 }
 

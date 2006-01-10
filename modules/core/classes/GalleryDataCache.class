@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -309,7 +309,7 @@ class GalleryDataCache {
 	}
 
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$cacheFile = GalleryDataCache::getCachePath($pathInfo);
 	if ($platform->file_exists($cacheFile) &&
 		$buf = $platform->file_get_contents($cacheFile)) {
@@ -317,7 +317,7 @@ class GalleryDataCache {
 	    $marker = strcspn($buf, '|');
 	    foreach (explode(',', substr($buf, 0, $marker)) as $classFile) {
 		if ($classFile) {
-		    GalleryCoreApi::relativeRequireOnce($classFile);
+		    GalleryCoreApi::requireOnce($classFile);
 		}
 	    }
 	    $data = unserialize(substr($buf, $marker+1));
@@ -334,11 +334,11 @@ class GalleryDataCache {
      */
     function removeFromDisk($pathInfo) {
 	if (!GalleryDataCache::isFileCachingEnabled()) {
-	    return GalleryStatus::success();
+	    return null;
 	}
 
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	if ($pathInfo['type'] == 'entity' ||
 		$pathInfo['type'] == 'derivative-meta' ||
 		$pathInfo['type'] == 'module-data' ||
@@ -354,7 +354,7 @@ class GalleryDataCache {
 	} else {
 	    if ($pathInfo['type'] == 'module' || $pathInfo['type'] == 'theme') {
 		list ($ret, $pluginStatus) = GalleryCoreApi::fetchPluginStatus($pathInfo['type']);
-		if ($ret->isError()) {
+		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
@@ -383,7 +383,7 @@ class GalleryDataCache {
 
 	global $gallery;
 	$cacheFile = GalleryDataCache::getCachePath($pathInfo);
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	GalleryUtilities::guaranteeDirExists(dirname($cacheFile));
 
 	/* This will either succeed, or leave no trace of its attempt. */
@@ -461,7 +461,7 @@ class GalleryDataCache {
 
 	case 'fast-download':
 	    list ($first, $second) = GalleryDataCache::getCacheTuple($pathInfo['itemId']);
-	    $cacheFile = sprintf('%sderivative/%s/%s/%d-fast.inc',
+	    $cacheFile = sprintf('%sentity/%s/%s/%d-fast.inc',
 				 $base, $first, $second, $pathInfo['itemId']);
 	    break;
 

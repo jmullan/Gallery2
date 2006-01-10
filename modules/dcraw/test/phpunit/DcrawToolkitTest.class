@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/dcraw/classes/DcrawToolkit.class');
+GalleryCoreApi::requireOnce('modules/dcraw/classes/DcrawToolkit.class');
 
 /**
  * Dcraw toolkit tests
@@ -46,7 +46,7 @@ class DcrawToolkitTest extends GalleryTestCase {
 	parent::setUp();
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'dcraw');
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -69,7 +69,7 @@ class DcrawToolkitTest extends GalleryTestCase {
 
     function _setParam($key, $value) {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'dcraw', $key, $value);
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
@@ -89,7 +89,7 @@ class DcrawToolkitTest extends GalleryTestCase {
 	list ($ret, $outputMimeType, $context) = $this->_toolkit->performOperation(
 	    'image/x-dcraw', 'convert-to-image/x-portable-pixmap',
 	    'INPUTFILE', 'OUTPUTFILE', array(), array());
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
@@ -107,7 +107,7 @@ class DcrawToolkitTest extends GalleryTestCase {
 	list ($ret, $outputMimeType, $context) = $this->_toolkit->performOperation(
 	    'image/x-dcraw', 'convert-to-image/x-portable-pixmap',
 	    'INPUTFILE', 'OUTPUTFILE', array(), array());
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
@@ -125,7 +125,7 @@ class DcrawToolkitTest extends GalleryTestCase {
 	list ($ret, $outputMimeType, $context) = $this->_toolkit->performOperation(
 	    'image/x-dcraw', 'convert-to-image/x-portable-pixmap',
 	    'INPUTFILE', 'OUTPUTFILE', array(), array());
-	$this->assert($ret->isError() && $ret->getErrorCode() & ERROR_TOOLKIT_FAILURE);
+	$this->assert($ret && $ret->getErrorCode() & ERROR_TOOLKIT_FAILURE);
     }
 
     function testConvertDcrawToPpmBadMimetype() {
@@ -134,7 +134,7 @@ class DcrawToolkitTest extends GalleryTestCase {
 	list ($ret, $outputMimeType, $context) = $this->_toolkit->performOperation(
 	    'bogus/bogus', 'convert-to-image/x-portable-pixmap',
 	    'INPUTFILE', 'OUTPUTFILE', array(), array());
-	$this->assert($ret->isError() && $ret->getErrorCode() & ERROR_UNSUPPORTED_OPERATION);
+	$this->assert($ret && $ret->getErrorCode() & ERROR_UNSUPPORTED_OPERATION);
     }
 
     function testConvertDcrawToPpmBadTempFile() {
@@ -145,7 +145,7 @@ class DcrawToolkitTest extends GalleryTestCase {
 	list ($ret, $outputMimeType, $context) = $this->_toolkit->performOperation(
 	    'image/x-dcraw', 'convert-to-image/x-portable-pixmap',
 	    'INPUTFILE', 'OUTPUTFILE', array(), array());
-	$this->assert($ret->isError() && $ret->getErrorCode() & ERROR_BAD_PATH);
+	$this->assert($ret && $ret->getErrorCode() & ERROR_BAD_PATH);
     }
 
     function testConvertDcrawToPpmFailedExec() {
@@ -161,7 +161,7 @@ class DcrawToolkitTest extends GalleryTestCase {
 	list ($ret, $outputMimeType, $context) = $this->_toolkit->performOperation(
 	    'image/x-dcraw', 'convert-to-image/x-portable-pixmap',
 	    'INPUTFILE', 'OUTPUTFILE', array(), array());
-	$this->assert($ret->isError() && $ret->getErrorCode() & ERROR_TOOLKIT_FAILURE);
+	$this->assert($ret && $ret->getErrorCode() & ERROR_TOOLKIT_FAILURE);
     }
 
     function testConvertDcrawToPpmFailedRename() {
@@ -178,14 +178,14 @@ class DcrawToolkitTest extends GalleryTestCase {
 	list ($ret, $outputMimeType, $context) = $this->_toolkit->performOperation(
 	    'image/x-dcraw', 'convert-to-image/x-portable-pixmap',
 	    'INPUTFILE', 'OUTPUTFILE', array(), array());
-	$this->assert($ret->isError() && $ret->getErrorCode() & ERROR_PLATFORM_FAILURE);
+	$this->assert($ret && $ret->getErrorCode() & ERROR_PLATFORM_FAILURE);
     }
 
     function testBadOperationName() {
 	list ($ret, $outputMimeType, $context) = $this->_toolkit->performOperation(
 	    'image/x-dcraw', 'BOGUS OPERATION',
 	    'INPUTFILE', 'OUTPUTFILE', array(), array());
-	$this->assert($ret->isError() && $ret->getErrorCode() & ERROR_UNSUPPORTED_OPERATION);
+	$this->assert($ret && $ret->getErrorCode() & ERROR_UNSUPPORTED_OPERATION);
     }
 
     /*
@@ -199,7 +199,7 @@ class DcrawToolkitTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GalleryToolkit', 'DcrawTestToolkit', 'DcrawTestToolkit',
 	    'modules/dcraw/test/phpunit/DcrawToolkitTest.class', 'dcrawTest', null);
-	if ($ret->isError()) {
+	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -208,13 +208,13 @@ class DcrawToolkitTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::registerToolkitProperty(
 	    'DcrawTestToolkit', array('image/x-portable-pixmap'),
 	    'dimensions', 'int,int', 'test-description');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $results) = $this->_toolkit->getProperty(
 	    'image/x-dcraw', 'dimensions', 'INPUTFILE');
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array(1, 2), $results);
@@ -224,13 +224,13 @@ class DcrawToolkitTest extends GalleryTestCase {
     function testGetDimensionsBadMimeType() {
 	list ($ret, $outputMimeType) = $this->_toolkit->getProperty(
 	    'BAD/MIMETYPE', 'dimensions', 'INPUTFILE');
-	$this->assert($ret->isError() && $ret->getErrorCode() & ERROR_UNSUPPORTED_OPERATION);
+	$this->assert($ret && $ret->getErrorCode() & ERROR_UNSUPPORTED_OPERATION);
     }
 
     function testGetBadPropertyName() {
 	list ($ret, $results) = $this->_toolkit->getProperty(
 	    'image/x-dcraw', 'BAD PROPERTY', 'INPUTFILE');
-	$this->assert($ret->isError() && $ret->getErrorCode() & ERROR_UNSUPPORTED_OPERATION);
+	$this->assert($ret && $ret->getErrorCode() & ERROR_UNSUPPORTED_OPERATION);
     }
 }
 ?>

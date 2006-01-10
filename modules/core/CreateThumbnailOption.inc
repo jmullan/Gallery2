@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ class CreateThumbnailOption extends ItemAddOption {
      * @see ItemAddOption::loadTemplate
      */
     function loadTemplate(&$template, &$form, $item) {
-	return array(GalleryStatus::success(),
+	return array(null,
 		     'modules/core/templates/CreateThumbnailOption.tpl',
 		     'modules_core');
     }
@@ -48,7 +48,7 @@ class CreateThumbnailOption extends ItemAddOption {
      * @see ItemAddOption::isAppropriate
      */
     function isAppropriate() {
-	return array(GalleryStatus::success(), true);
+	return array(null, true);
     }
 
     /**
@@ -61,11 +61,11 @@ class CreateThumbnailOption extends ItemAddOption {
 	    $warnings[] = array();
 	}
 	if (empty($form['CreateThumbnailOption']['createThumbnail'])) {
-	    return array(GalleryStatus::success(), $errors, $warnings);
+	    return array(null, $errors, $warnings);
 	}
 
 	list ($ret, $thumbTable) = GalleryCoreApi::fetchThumbnailsByItemIds($itemIds);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
@@ -74,12 +74,12 @@ class CreateThumbnailOption extends ItemAddOption {
 	    if (!empty($thumbTable[$itemId])) {
 		$thumbnail = $thumbTable[$item->getId()];
 		list ($ret) = GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($thumbnail->getId());
-		if ($ret->isError()) {
+		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 	    }
 	}
-	return array(GalleryStatus::success(), $errors, $warnings);
+	return array(null, $errors, $warnings);
     }
 }
 ?>

@@ -1,7 +1,7 @@
 <?php
 /*
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +24,8 @@
  * @author Jozef Selesi <selesi at gmail dot com>
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/core/test/phpunit/RepositoryTestStorage.class');
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryRepositoryUtilities.class');
+GalleryCoreApi::requireOnce('modules/core/test/phpunit/RepositoryTestStorage.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryRepositoryUtilities.class');
 
 /**
  * Test repository utilities functionality
@@ -84,8 +84,8 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 
 	foreach ($testCases as $case) {
 	    list ($ret, $relation) = $utilities->compareVersions($case['version1'],
-	        $case['version2'], $case['build1'], $case['build2']);
-	    if ($ret->isError()) {
+		$case['version2'], $case['build1'], $case['build2']);
+	    if ($ret) {
 		$this->failWithStatus($ret);
 	    }
 	    $this->assert($relation == $case['relation'], sprintf(
@@ -122,7 +122,7 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 
 	foreach ($testCases as $case => $result) {
 	    list ($ret, $timestamp) = $utilities->extractTimestamp($case);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		$this->failWithStatus($ret);
 	    }
 	    $this->assertEquals($result, $timestamp, "Testcase: $case");
@@ -138,7 +138,7 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 
 	foreach ($testCases as $case => $result) {
 	    list ($ret, $revision) = $utilities->extractRevision($case);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		$this->failWithStatus($ret);
 	    }
 	    $this->assertEquals($result, $revision, "Testcase: $case");
@@ -163,7 +163,7 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	    $platform->setReply('fclose', array($fileName), true);
 
 	    list ($ret, $bytes) = $utilities->getFirstBytesFromFile($fileName, $bytes);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		$this->failWithStatus($ret);
 	    }
 	    $this->assertEquals($bytes, $result, "Unexpected file data returned for $bytes bytes.");
@@ -180,7 +180,7 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 
 	foreach ($testCases as $case => $result) {
 	    list ($ret, $description) = $utilities->getLanguageDescription($case);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		$this->failWithStatus($ret);
 	    }
 	    $this->assertEquals($result, $description, "Testcase: $case");
@@ -190,11 +190,14 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
     function testGetLanguageBaseRevision() {
 	global $gallery;
 
-	$stringsPath = sprintf('%smodules/testModule/po/strings.raw',
-		GalleryCoreApi::getPluginBaseDir('module', 'testModule'));
+	$stringsPath = sprintf('%stestPlugins/testModule/po/strings.raw',
+		GalleryCoreApi::getPluginBaseDir('testPlugin', 'testModule'));
 	$stringsContents = ',v 1.23 2005';
 
 	$platform = new UnitTestPlatform();
+	$platform->setReply('file_exists', array('fuzzy' => '{config.php$}'), true);
+	$platform->setReply('file_exists', array('fuzzy' => '{index.testPlugins$}'), true);
+	$platform->setReply('file', array('fuzzy' => '{index.testPlugins$}', false), array());
 	$platform->setReply('file_exists', array($stringsPath), true);
 	$platform->setReply('fopen', array($stringsPath, 'r', 0), 'handle');
 	$platform->setReply('fread', array('handle', 128), $stringsContents);
@@ -202,8 +205,8 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	$gallery->setPlatform($platform);
 
 	$utilities = new GalleryRepositoryUtilities();
-	list ($ret, $revision) = $utilities->getLanguageBaseRevision('module', 'testModule');
-	if ($ret->isError()) {
+	list ($ret, $revision) = $utilities->getLanguageBaseRevision('testPlugin', 'testModule');
+	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
 	$this->assertEquals('1.23', $revision, 'Incorrect revision returned.');
@@ -233,7 +236,7 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	    $utilities = new GalleryRepositoryUtilities();
 	    list ($ret, $isAvailable) =
 		$utilities->isPluginAvailable($case['pluginType'], $case['pluginId']);
-	    if ($ret->isError()) {
+	    if ($ret) {
 		$this->failWithStatus($ret);
 	    }
 	    $this->assertEquals($case['isAvailable'], $isAvailable);
@@ -280,8 +283,8 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	    $providedApis = is_null($case['providedApis'])
 			     ? null
 			     : array('core' => explode('.', $case['providedApis']['core']),
-			     	     'module' => explode('.', $case['providedApis']['module']),
-			     	     'theme' => explode('.', $case['providedApis']['theme']));
+				     'module' => explode('.', $case['providedApis']['module']),
+				     'theme' => explode('.', $case['providedApis']['theme']));
 
 	    $isCompatible = $utilities->isPluginCompatible($case['pluginType'],
 		explode('.', $case['requiredCoreApi']), explode('.', $case['requiredPluginApi']),
@@ -323,10 +326,10 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 
 	foreach ($testCases as $case) {
 	    $providedApis = is_null($case['providedApis'])
-	    		     ? null
-	    		     : array('core' => explode('.', $case['providedApis']['core']),
-	    		     	     'module' => explode('.', $case['providedApis']['module']),
-	    		     	     'theme' => explode('.', $case['providedApis']['theme']));
+			     ? null
+			     : array('core' => explode('.', $case['providedApis']['core']),
+				     'module' => explode('.', $case['providedApis']['module']),
+				     'theme' => explode('.', $case['providedApis']['theme']));
 
 	    list ($providedCoreApi, $providedPluginApi) =
 		$utilities->getProvidedApis($case['pluginType'], $providedApis);
@@ -344,7 +347,7 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 
 	$utilities = new GalleryRepositoryUtilities();
 	list ($ret, $packages) = $utilities->getPluginPackages('module', 'testModule');
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
 	$this->assertEquals(array('package1' => array('version' => '1.23',
@@ -381,7 +384,7 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 
 	$utilities = new GalleryRepositoryUtilities();
 	list ($ret, $version) = $utilities->getPluginVersion('module', 'testModule');
-	if ($ret->isError()) {
+	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
 	$this->assertEquals('someVersion', $version);

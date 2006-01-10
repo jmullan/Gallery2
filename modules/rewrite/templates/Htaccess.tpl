@@ -15,20 +15,26 @@
     RewriteBase {$Htaccess.rewriteBase}
 
     RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} -f [OR]
-    RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} -d [OR] 
+    RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} -d [OR]
     RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} gallery\_remote2\.php
-    RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} !{$Htaccess.matchBaseFile}
+    RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} !{$Htaccess.matchBaseFile}$
     RewriteRule .   -   [L]
 
-    
+
 {foreach from=$Htaccess.rules item=rule}
-{if isset($rule.settings.condition)}
-  {foreach from=$rule.settings.condition item=condition}
-    RewriteCond {$condition}
+{if isset($rule.settings.restrict)}
+  {foreach from=$rule.settings.restrict item=condition}
+    RewriteCond %{ldelim}QUERY_STRING{rdelim} {$condition}
   {/foreach}
+  {foreach from=$rule.settings.exempt item=host}
+    RewriteCond %{ldelim}HTTP_REFERER{rdelim} !://{$host}/ [NC]
+  {/foreach}
+  {if $Htaccess.allowEmptyReferer}
+    RewriteCond %{ldelim}HTTP_REFERER{rdelim} !^$
+  {/if}
 {else}
-    RewriteCond %{ldelim}THE_REQUEST{rdelim} \ {$Htaccess.rewriteBase}{$rule.urlPattern}(\?.|\ .)
-    RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} !{$Htaccess.matchBaseFile}
+    RewriteCond %{ldelim}THE_REQUEST{rdelim} \ {$Htaccess.rewriteBase}{$rule.pattern}(\?.|\ .)
+    RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} !{$Htaccess.matchBaseFile}$
 {/if}
 {if strpos($rule.queryString, 'view=core.DownloadItem') !== false}
     RewriteRule .   {$Htaccess.galleryDirectory}{$Htaccess.mainPhp}?{$rule.queryString}   [{$rule.settings.flags}]

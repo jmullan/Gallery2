@@ -15,7 +15,15 @@
     {capture name="themeId"}
       <b>{$ShowItemError.themeId}</b>
     {/capture}
-    {g->text text="This album is configured to use the %s theme, but it is either inactive or not installed." arg1=$smarty.capture.themeId}
+    {if empty($ShowItemError.itemId)}
+      {g->text text="This page is configured to use the %s theme, but it is either inactive or not installed." arg1=$smarty.capture.themeId}
+    {else}
+      {g->text text="This album is configured to use the %s theme, but it is either inactive or not installed." arg1=$smarty.capture.themeId}
+      {capture name="editLink"}
+	<a href="{g->url arg1="view=core.ItemAdmin" arg2="subView=core.ItemEdit"
+	   arg3="editPlugin=ItemEditAlbum" arg4="itemId=`$ShowItemError.itemId`" arg5="return=1"}">
+      {/capture}
+    {/if}
 
     {capture name="loginLink"}
       <a href="{g->url arg1="view=core.UserAdmin" arg2="subView=core.UserLogin" arg3="return=1"}">
@@ -24,12 +32,8 @@
       <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminThemes"
 	 arg3="mode=config" arg4="return=1"}">
     {/capture}
-    {capture name="editLink"}
-      <a href="{g->url arg1="view=core.ItemAdmin" arg2="subView=core.ItemEdit"
-	 arg3="editPlugin=ItemEditAlbum" arg4="itemId=`$ShowItemError.itemId`" arg5="return=1"}">
-    {/capture}
 
-    {if isset($theme.isFallback)}
+    {if isset($theme.isFallback) || empty($ShowItemError.itemId)}
       {if $ShowItemError.isAdmin}
 	{g->text text="To fix this problem you can %sinstall or activate this theme%s or select another default theme." arg1=$smarty.capture.adminLink arg2="</a>"}
       {else}

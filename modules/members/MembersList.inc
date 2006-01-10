@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2005 Bharat Mediratta
+ * Copyright (C) 2000-2006 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,14 +40,14 @@ class MembersListView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
     	global $gallery;
-	GalleryCoreApi::relativeRequireOnce('modules/members/classes/GalleryMembersHelper.class');
+	GalleryCoreApi::requireOnce('modules/members/classes/GalleryMembersHelper.class');
 	list ($ret, $result) =
 	    GalleryMembersHelper::canViewMembersModule($gallery->getActiveUserId());
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if (!$result) {
-	    return array(GalleryStatus::success(),
+	    return array(null,
 			 array('redirect' => array('view' => 'core.ShowItem')));
 	}
 
@@ -62,14 +62,14 @@ class MembersListView extends GalleryView {
 	/* Bring in the root album information for the breadcrumb */
 	list ($ret, $rootAlbumId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($rootAlbumId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$MembersList['rootAlbum'] = $rootAlbum->getMemberData();
+	$MembersList['rootAlbum'] = (array)$rootAlbum;
 
 	if (!isset($form['list']['page']) || $form['list']['page'] < 1) {
 	    $form['list']['page'] = 1;
@@ -77,13 +77,13 @@ class MembersListView extends GalleryView {
 
 	list ($ret, $groupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Fetch the user count every time we reload */
 	list ($ret, $totalUserCount) = GalleryCoreApi::fetchUserCount(null, $groupId);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -104,18 +104,18 @@ class MembersListView extends GalleryView {
 	list ($ret, $userNames) = GalleryCoreApi::fetchUsersForGroup($groupId,
 								     $form['list']['pageSize'],
 								     $form['list']['startingUser']);
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $users) = GalleryCoreApi::loadEntitiesById(array_keys($userNames));
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$MembersList['users'] = array();
 	foreach ($users as $user) {
-	    $MembersList['users'][$user->getId()] = $user->getMemberData();
+	    $MembersList['users'][$user->getId()] = (array)$user;
 	}
 
 	$form['list']['totalUserCount'] = $totalUserCount;
@@ -124,12 +124,12 @@ class MembersListView extends GalleryView {
 	$template->setVariable('MembersList', $MembersList);
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'members');
-	if ($ret->isError()) {
+	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$template->title($module->translate('Members List'));
-	return array(GalleryStatus::success(),
+	return array(null,
 		     array('body' => 'modules/members/templates/MembersList.tpl'));
     }
 }
