@@ -39,12 +39,15 @@ class GalleryPluginHelper_simple {
      * @param string the plugin type (eg, module, theme, etc)
      * @param string the plugin id
      * @param bool should we ignore version mismatches (default: no)
+     * @param bool should we return an error on version mismatches instead of redirecting
+     *             to the upgrader?  (default: false)
      * @param int the depth of recursion (don't set this- it's used internally)
      * @return array object GalleryStatus a status code
      *               object the plugin
      * @static
      */
-    function loadPlugin($pluginType, $pluginId, $ignoreVersionMismatch=false, $depth=0) {
+    function loadPlugin($pluginType, $pluginId, $ignoreVersionMismatch=false,
+			$errorOnVersionMismatch=false, $depth=0) {
 	global $gallery;
 
 	if ($gallery->getDebug()) {
@@ -94,15 +97,15 @@ class GalleryPluginHelper_simple {
 			    array('type' => $pluginType,
 				  'itemId' => 'GalleryPluginHelper_fetchPluginStatus',
 				  'id' => '_all'));
-			list ($ret, $plugin) =
-			    GalleryPluginHelper_simple::loadPlugin($pluginType, $pluginId,
-								   $ignoreVersionMismatch, $depth + 1);
+			list ($ret, $plugin) = GalleryPluginHelper_simple::loadPlugin(
+			    $pluginType, $pluginId, $ignoreVersionMismatch,
+			    $errorOnVersionMismatch, $depth + 1);
 			if ($ret) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 		    } else {
 			return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-						      $pluginBaseDir . $pluginFile), null);
+							   $pluginBaseDir . $pluginFile), null);
 		    }
 		}
 
@@ -151,7 +154,7 @@ class GalleryPluginHelper_simple {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
-		    if (!empty($redirectInfo)) {
+		    if (!empty($redirectInfo) && !$errorOnVersionMismatch) {
 			/*
 			 * We were unable to automatically deactivate the plugin!
 			 * Forcibly abort this request and jump to the upgrader so this

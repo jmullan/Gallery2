@@ -285,7 +285,7 @@ class AdminThemesView extends GalleryView {
 	 */
 	foreach ($themes as $id => $status) {
 	    if (!empty($status['active'])) {
-		list($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $id);
+		list($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $id, false, true);
 		if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}

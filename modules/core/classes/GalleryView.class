@@ -417,10 +417,11 @@ class GalleryView {
 	}
 
 	$validTheme = false;
-	list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId);
+	list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId, false, true);
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+
 	if (isset($theme)) {
 	    list ($ret, $validTheme) = $theme->isActive();
 	    if ($ret) {

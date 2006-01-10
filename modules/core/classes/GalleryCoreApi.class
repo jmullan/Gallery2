@@ -54,7 +54,7 @@ class GalleryCoreApi {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(7, 0);
+	return array(7, 1);
     }
 
     /**
@@ -75,9 +75,8 @@ class GalleryCoreApi {
 					   $implModuleId, $hints, $orderWeight=5) {
 	GalleryCoreApi::requireOnce(
 	    'modules/core/classes/helpers/GalleryFactoryHelper_medium.class');
-	return GalleryFactoryHelper_medium::registerImplementation($classType, $className, $implId,
-								   $implPath, $implModuleId, $hints,
-								   $orderWeight);
+	return GalleryFactoryHelper_medium::registerImplementation(
+	    $classType, $className, $implId, $implPath, $implModuleId, $hints, $orderWeight);
     }
 
     /**
@@ -185,14 +184,17 @@ class GalleryCoreApi {
      * @param string the plugin type (eg, module, theme, etc)
      * @param string the plugin id
      * @param bool should we ignore version mismatches (default: no)
+     * @param bool should we return an error on version mismatches instead of redirecting
+     *             to the upgrader?  (default: false)
      * @return array object GalleryStatus a status code
      *               object the plugin
      * @static
      */
-    function loadPlugin($pluginType, $pluginId, $ignoreVersionMismatch=false) {
+    function loadPlugin($pluginType, $pluginId, $ignoreVersionMismatch=false,
+			$errorOnVersionMismatch=false) {
 	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryPluginHelper_simple.class');
-	return GalleryPluginHelper_simple::loadPlugin($pluginType, $pluginId,
-						      $ignoreVersionMismatch);
+	return GalleryPluginHelper_simple::loadPlugin(
+	    $pluginType, $pluginId, $ignoreVersionMismatch, $errorOnVersionMismatch);
     }
 
     /**
@@ -844,9 +846,8 @@ class GalleryCoreApi {
 				$flags=0, $composites=array()) {
 	GalleryCoreApi::requireOnce(
 	    'modules/core/classes/helpers/GalleryPermissionHelper_advanced.class');
-	return GalleryPermissionHelper_advanced::registerPermission($module, $permissionId,
-								    $description, $flags,
-								    $composites);
+	return GalleryPermissionHelper_advanced::registerPermission(
+	    $module, $permissionId, $description, $flags, $composites);
     }
 
     /**
@@ -1603,7 +1604,7 @@ class GalleryCoreApi {
     function createAlbum($parentAlbumId, $name, $title, $summary, $description, $keywords) {
 	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryItemHelper_advanced.class');
 	return GalleryItemHelper_advanced::createAlbum($parentAlbumId, $name, $title, $summary,
-							$description, $keywords);
+						       $description, $keywords);
     }
 
     /**
@@ -1625,9 +1626,8 @@ class GalleryCoreApi {
     function addItemToAlbum($fileName, $itemName, $title, $summary,
 			    $description, $mimeType, $albumId, $symlink=false) {
 	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryItemHelper_medium.class');
-	return GalleryItemHelper_medium::addItemToAlbum($fileName, $itemName, $title, $summary,
-							$description, $mimeType, $albumId,
-							$symlink);
+	return GalleryItemHelper_medium::addItemToAlbum(
+	    $fileName, $itemName, $title, $summary, $description, $mimeType, $albumId, $symlink);
     }
 
     /**
@@ -1929,10 +1929,9 @@ class GalleryCoreApi {
 				      $outputMimeType='', $priority=5) {
 	GalleryCoreApi::requireOnce(
 	    'modules/core/classes/helpers/GalleryToolkitHelper_medium.class');
-	return GalleryToolkitHelper_medium::registerOperation($toolkitId, $mimeTypes,
-							      $operationName, $parameterTypesArray,
-							      $description, $outputMimeType,
-							      $priority);
+	return GalleryToolkitHelper_medium::registerOperation(
+	    $toolkitId, $mimeTypes, $operationName, $parameterTypesArray, $description,
+	    $outputMimeType, $priority);
     }
 
     /**
