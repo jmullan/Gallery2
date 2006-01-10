@@ -305,14 +305,136 @@
     </h3>
     <ol id="list-2-1">
       <li>
+	New Ratings module allows users to vote for their favorite photos.
+      </li>
+      <li>
+	New module to support hidden items and albums.  Hidden items are restricted
+	from guest users until accessed by the direct URL.  Migrate module now imports
+	hidden items from G1 as hidden in G2 if this module is active.
+      </li>
+      <li>
+	New Permalinks module works with the URL Rewrite module to create short URLs
+	using just the album name, as in Gallery 1.x.
+      </li>
+      <li>
+	New Linkitem module creates links to other albums or external URLs.
+      </li>
+      <li>
+	New module to import albums from <a href="http://www.picasa.com/">Picasa</a>.
+      </li>
+      <li>
+	New module to support
+	<a href="http://www.google.com/webmasters/sitemaps/login">Google Sitemaps</a>.
+      </li>
+      <li>
+	New link in comments module to view all recent comments.  Also an option to
+	require captcha for posting anonymous comments.
+      </li>
+      <li>
+	New option to apply album and theme settings recursively to all subalbums.
+      </li>
+      <li>
+	URL Rewrite module now supports IIS (isapi rewrite) and pathinfo.
+      </li>
+      <li>
+	Print modules
+	<ul>
+	  <li>
+	    Permissions support to control which users can print and which photos
+	    may be printed.
+	  </li>
+	  <li>
+	    Support for printing non-public photos.
+	  </li>
+	  <li>
+	    New Fotokasten module for prints from
+	    <a href="http://fotokasten.de/">fotokasten.de</a>.
+	  </li>
+	  <li>
+	    Renamed PhotoAccess to PhotoWorks.
+	</ul>
+      </li>
+      <li>
+	Permission support in cart module to control which users and which items
+	may be used with the cart.
+      </li>
+      <li>
+	PublishXP module now supports add-options such as watermarks and
+	applying size limits or quotas.
+      </li>
+      <li>
+	Upgraded bundled EXIF library to Exifixer 1.5 which fixes reading
+	of EXIF data from many cameras and image processing tools.
+	Also updated the module to make GPS fields available and to read
+	EXIF data from raw image files.
+      </li>
+      <li>
 	New option in ffmpeg module to watermark thumbnails for movie items with
 	a film reel image on each side, to better distingish movies from photos.
+	Support for recent versions of ffmpeg binary.
+      </li>
+      <li>
+	Support for recent versions of dcraw binary.
       </li>
       <li>
 	Added WMF image format support in ImageMagick module.
       </li>
       <li>
+	Don't increment the view count for an item multiple times in the same day
+	from the same session.
+      </li>
+      <li>
+	Improved cross-browser support in ImageFrame module.
+      </li>
+      <li>
 	Several updates and new options for Hybrid theme.
+      </li>
+      <li>
+	Localization updates
+	<ul>
+	  <li>
+	    Added support for hints in translatable strings to aid translators,
+	    or to distinguish identical English strings that may need different
+	    translations in another language.
+	  </li>
+	  <li>
+	    Localizations now generally specify only a language rather than
+	    language+country for better sharing of translations.
+	    Country specific translations can still override the base translation.
+	  </li>
+	  <li>
+	    New option to specify whether Gallery checks the browser language
+	    preference to select the language for new sessions.
+	  </li>
+      </li>
+      <li>
+	New maintenance mode to redirect visitors while upgrading
+	or configuring the site.
+      </li>
+      <li>
+	Multisite installs can now use the tools in lib/support.
+      </li>
+      <li>
+	New development tool: sample module creator in lib/tools/creator.
+      </li>
+      <li>
+	New option to run external programs at lower priority to reduce load
+	on shared webhosting servers.
+      </li>
+      <li>
+	Preliminary support for
+	<a href="http://www.ibm.com/software/data/db2/">DB2</a> database.
+      </li>
+      <li>
+	Minor updates to support PHP 5.1.
+      </li>
+      <li>
+	Embed API is now versioned (for compatibility checks) and
+	initialization parameters have been simplified.
+      </li>
+      <li>
+	Many code updates, restructuring and API changes with the goals of
+	improving performance and making smaller/simpler/cleaner code.
       </li>
     </ol>
 
