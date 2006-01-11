@@ -93,5 +93,23 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
 			    $urlGenerator->_shortUrls);
     }
 
+    function testParseShortUrl1() {
+	$params = $functions = array();
+	$url = 't/%phpunit%';
+	$params['phpunit'] = 'test';
+
+	$ret = $this->_urlGenerator->_parseShortUrl($url, $params, $functions);
+	$this->assert($ret, 'status');
+	$this->assertEquals('t/test', $url, 'url');
+	$this->assertEquals(array(), $params, 'params');
+    }
+
+    function testParseShortUrl2() {
+	$params = $functions = array();
+	$url = 't/%phpunit%';
+
+	$ret = $this->_urlGenerator->_parseShortUrl($url, $params, $functions);
+	$this->assert(!$ret, 'status');
+    }
 }
 ?>
