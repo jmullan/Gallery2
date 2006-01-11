@@ -58,7 +58,8 @@ class DownloadView extends GalleryView {
 	    /* Disable output compression (if necessary) since IE seems to have problems with it */
 	    @$phpVm->ini_set('zlib.output_compression', 0);
 
-	    $sendMultipart = !preg_match('{msie |safari}i',
+	    /* preg i modifier is affected by locale */
+	    $sendMultipart = !preg_match('{[Mm][Ss][Ii][Ee] |[Ss][Aa][Ff][Aa][Rr][Ii]}',
 					 GalleryUtilities::getServerVar('HTTP_USER_AGENT'));
 	    if ($sendMultipart) {
 		/* Send multipart reply: zip + html-to-reload */
