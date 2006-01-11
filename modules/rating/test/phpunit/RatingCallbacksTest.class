@@ -78,7 +78,6 @@ class RatingCallbacksTest extends GalleryTestCase {
 
 
     function testRatingBlocks() {
-
 	$smarty = new GallerySmarty();
 	$callbacks = new RatingCallbacks();
 	$ret = $callbacks->callback(array('itemId' => $this->_item->getId()),
@@ -88,8 +87,9 @@ class RatingCallbacksTest extends GalleryTestCase {
 	}
 
 	$data = $smarty->_tpl_vars['block']['rating']['RatingData'];
-	$values = $smarty->_tpl_vars['block']['rating']['RatingValues'];
-	$this->assertEquals(array(1,2,3,4,5), $values, 'Rating values array does not match.');
+	$summary = $smarty->_tpl_vars['block']['rating']['RatingSummary'];
+	$this->assertEquals(array('ratingValues' => array(1,2,3,4,5), 'firstCall' => true),
+			    $summary, 'Rating summary array does not match.');
 	$this->assert(isset($data['rating']), 'Missing rating');
 	$this->assert(isset($data['userRating']), 'Missing userRating');
 	$this->assert(isset($data['stars']), 'Missing stars');
@@ -115,8 +115,9 @@ class RatingCallbacksTest extends GalleryTestCase {
 	}
 
 	$data = $smarty->_tpl_vars['block']['rating']['RatingData'];
-	$values = $smarty->_tpl_vars['block']['rating']['RatingValues'];
-	$this->assertEquals(array(1,2,3,4,5), $values, 'Rating values array does not match.');
+	$summary = $smarty->_tpl_vars['block']['rating']['RatingSummary'];
+	$this->assertEquals(array('ratingValues' => array(1,2,3,4,5), 'firstCall' => true),
+			    $summary, 'Rating summary array does not match.');
 	$this->assert(isset($data['rating']), 'Missing rating');
 	$this->assert(isset($data['userRating']), 'Missing userRating');
 	$this->assert(isset($data['stars']), 'Missing stars');
@@ -177,8 +178,9 @@ class RatingCallbacksTest extends GalleryTestCase {
 	}
 
 	$data = $smarty->_tpl_vars['block']['rating']['RatingData'];
-	$values = $smarty->_tpl_vars['block']['rating']['RatingValues'];
-	$this->assertEquals(array(1,2,3,4,5), $values, 'Rating values array does not match.');
+	$summary = $smarty->_tpl_vars['block']['rating']['RatingSummary'];
+	$this->assertEquals(array('ratingValues' => array(1,2,3,4,5), 'firstCall' => true),
+			    $summary, 'Rating summary array does not match.');
 	$this->assert(isset($data['rating']), 'Missing rating');
 	$this->assert(isset($data['userRating']), 'Missing userRating');
 	$this->assert(isset($data['stars']), 'Missing stars');
@@ -212,8 +214,9 @@ class RatingCallbacksTest extends GalleryTestCase {
 	}
 
 	$data = $smarty->_tpl_vars['block']['rating']['RatingData'];
-	$values = $smarty->_tpl_vars['block']['rating']['RatingValues'];
-	$this->assertEquals(array(1,2,3,4,5), $values, 'Rating values array does not match.');
+	$summary = $smarty->_tpl_vars['block']['rating']['RatingSummary'];
+	$this->assertEquals(array('ratingValues' => array(1,2,3,4,5), 'firstCall' => true),
+			    $summary, 'Rating summary array does not match.');
 	$this->assert(isset($data['rating']), 'Missing rating');
 	$this->assert(isset($data['userRating']), 'Missing userRating');
 	$this->assert(isset($data['stars']), 'Missing stars');
