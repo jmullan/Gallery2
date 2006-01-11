@@ -104,10 +104,7 @@ class AdminDeleteGroupControllerTest extends GalleryControllerTestCase {
 	}
     }
 
-    /**
-     * Try to delete the all users group (this will fail but with no error message since the
-     * view should never allow this)
-     */
+    /* Try to delete the all users group (this will fail) */
     function testDeleteAllUsersGroup() {
 	list ($ret, $groupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
@@ -118,18 +115,11 @@ class AdminDeleteGroupControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('groupId', $groupId);
 	GalleryUtilities::putRequestVariable('form[action][delete]', 1);
 
-	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
-						      'subView' => 'core.AdminDeleteGroup'),
-				  'status' => array(),
-				  'error' => array()),
-			    $results);
+	$results = $this->handleRequest(ERROR_BAD_PARAMETER);
+	$this->assertEquals(null, $results);
     }
 
-    /**
-     * Try to delete the everybody group (this will fail but with no error message since the
-     * view should never allow this)
-     */
+    /* Try to delete the everybody group (this will fail) */
     function testDeleteEverybodyGroup() {
 	list ($ret, $groupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
@@ -140,18 +130,11 @@ class AdminDeleteGroupControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('groupId', $groupId);
 	GalleryUtilities::putRequestVariable('form[action][delete]', 1);
 
-	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
-						      'subView' => 'core.AdminDeleteGroup'),
-				  'status' => array(),
-				  'error' => array()),
-			    $results);
+	$results = $this->handleRequest(ERROR_BAD_PARAMETER);
+	$this->assertEquals(null, $results);
     }
 
-    /**
-     * Try to delete the site admin group (this will fail but with no error message since the
-     * view should never allow this)
-     */
+    /* Try to delete the site admin group (this will fail) */
     function testDeleteSiteAdminsGroup() {
 	list ($ret, $groupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
@@ -162,12 +145,8 @@ class AdminDeleteGroupControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('groupId', $groupId);
 	GalleryUtilities::putRequestVariable('form[action][delete]', 1);
 
-	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
-						      'subView' => 'core.AdminDeleteGroup'),
-				  'status' => array(),
-				  'error' => array()),
-			    $results);
+	$results = $this->handleRequest(ERROR_BAD_PARAMETER);
+	$this->assertEquals(null, $results);
     }
 
     function _createGroup() {

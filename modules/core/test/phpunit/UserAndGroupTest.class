@@ -228,9 +228,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	}
     }
 
-    /**
-     * Verify we can't delete the active user.
-     */
+    /* Verify we can't delete the active user */
     function testDeleteSelf() {
 	global $gallery;
 
@@ -242,6 +240,15 @@ class UserAndGroupTest extends GalleryTestCase {
 	$gallery->setActiveUser($user);
 
 	$ret = GalleryCoreApi::deleteEntityById($user->getId());
+	$this->assertEquals(ERROR_BAD_PARAMETER | GALLERY_ERROR, $ret->getErrorCode());
+    }
+
+     /* Verify we can't delete the anonymous user */
+    function testDeleteAnonymousUser() {
+	list ($ret, $anonymousUserId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	
+	$ret = GalleryCoreApi::deleteEntityById($anonymousUserId);
 	$this->assertEquals(ERROR_BAD_PARAMETER | GALLERY_ERROR, $ret->getErrorCode());
     }
 
@@ -355,6 +362,32 @@ class UserAndGroupTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals($otherUserId, $item->getOwnerId(), 'item owner');
+    }
+
+    /* Try to delete the all users group (this will fail) */
+    function testDeleteSpecialGroups() {
+	foreach (array('id.allUserGroup', 'id.everybodyGroup', 'id.adminGroup') as $paramName) {
+	    list ($ret, $groupId) = GalleryCoreApi::getPluginParameter('module', 'core', $paramName);
+	    if ($ret) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    
+	    $ret = GalleryCoreApi::deleteEntityById($groupId);
+	    if ($ret && !($ret->getErrorCode() & ERROR_BAD_PARAMETER)) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    
+	    $this->assert($ret && ($ret->getErrorCode() & ERROR_BAD_PARAMETER),
+			  "$paramName: expect an error");
+	    
+	    /* Make sure the entity still exists */
+	    list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($groupId);
+	    if ($ret) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $groupName = $entity->getGroupName();
+	    $this->assert(!empty($groupName), "$paramName: group name should not be empty");
+	}
     }
 
     /**

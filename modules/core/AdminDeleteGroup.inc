@@ -66,22 +66,15 @@ class AdminDeleteGroupController extends GalleryController {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    /*
-	     * In theory we should never get to this point unless we're
-	     * operating on a valid group, so don't bother sending errors back
-	     * in case we can't delete.
-	     */
-	    if ($group->getGroupType() == GROUP_NORMAL) {
-		$ret = GalleryCoreApi::deleteEntityById($group->getId());
-		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		/* Request a redirect to the confirmation screen */
-		$redirect['view'] = 'core.SiteAdmin';
-		$redirect['subView'] = 'core.AdminGroups';
-		$status['deletedGroup'] = $group->getGroupName();
+	    $ret = GalleryCoreApi::deleteEntityById($group->getId());
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
+	    
+	    /* Request a redirect to the confirmation screen */
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'core.AdminGroups';
+	    $status['deletedGroup'] = $group->getGroupName();
 	}
 
 	if (!empty($redirect)) {

@@ -254,9 +254,21 @@ class GalleryUser extends GalleryEntity {
 	global $gallery;
 	$activeUserId = $gallery->getActiveUserId();
 	if ($activeUserId == $this->getId()) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					 'You cannot delete the active user!');
 	}
 
+	/* Don't allow deleting the guest user */
+	list ($ret, $anonymousUserId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	if ($anonymousUserId == $this->getId()) {
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					 'You cannot delete the anonymous user!');
+	}
+	
 	/*
 	 * First assign all items of this user to another owner.
 	 * You should call remapOwner() before calling $user->delete()
