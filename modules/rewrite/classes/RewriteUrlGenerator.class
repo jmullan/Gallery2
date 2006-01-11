@@ -177,7 +177,7 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 		if (!$ret) {
 		    return $ret;
 		}
-	    } else if (isset($params[$arg])) {
+	    } else if (!empty($params[$arg])) {
 		$url = str_replace('%' . $arg . '%', urlencode($params[$arg]), $url);
 
 		/* We cant unset the itemId until we have replaced all keywords. a keyword */
