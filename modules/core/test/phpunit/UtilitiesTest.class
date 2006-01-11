@@ -322,9 +322,20 @@ class UtilitiesTest extends GalleryTestCase {
     }
 
     function testIsExactlyA() {
-	$this->assert(GalleryUtilities::isExactlyA(new UtilitiesTest("x"), 'UtilitiesTest'));
-	$this->assert(!GalleryUtilities::isExactlyA(new UtilitiesTest("x"), 'GalleryTestCase'));
-	$this->assert(!GalleryUtilities::isExactlyA(new UtilitiesTest("x"), 'GalleryEntity'));
+	$this->assert(GalleryUtilities::isExactlyA(new UtilitiesTest("x"),
+		      'UtilitiesTest'), 'exact');
+	$this->assert(!GalleryUtilities::isExactlyA(new UtilitiesTest("x"),
+		      'GalleryTestCase'), 'parent class');
+	$this->assert(!GalleryUtilities::isExactlyA(new UtilitiesTest("x"),
+		      'GalleryEntity'), 'other class');
+	/* Test a class name with I in it; as strcasecmp is affected by locale */
+	list ($ret, $album) =
+	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryAlbumItem');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(GalleryUtilities::isExactlyA($album, 'GalleryAlbumItem'), 'album');
+	$this->assert(!GalleryUtilities::isExactlyA($album, 'GalleryItem'), 'item');
     }
 
     function testHasRequestVariable() {
@@ -498,6 +509,9 @@ class UtilitiesTest extends GalleryTestCase {
 	for ($i = 0; $i < 7; $i++) {
 	    list ($ret, $albums[$i]) =
 		GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryAlbumItem');
+	    if ($ret) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
 	    $albums[$i]->setId($i);
 	}
 

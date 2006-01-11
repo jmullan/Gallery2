@@ -588,7 +588,8 @@ class GalleryUtilities {
      * @static
      */
     function isExactlyA($instance, $className) {
-	return (!strcasecmp(get_class($instance), $className));
+	return (($instanceClass = get_class($instance)) == $className || $instanceClass ==
+		strtr($className, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'));
     }
 
     /**
