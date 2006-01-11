@@ -370,6 +370,16 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	}
 
 	for ($i = 0; $i < 3; $i++) {
+	    $childId = $child[$i]->getId();
+	    if (!isset($resizes[$childId])) {
+		$this->assert(false, "Missing resizes for child $i");
+		continue;
+	    }
+	    if (count($resizes[$childId]) < 3) {
+		$this->assert(false,
+			      "Only " . count($resizes[$childId]) . " resizes for child $i");
+		continue;
+	    }
 	    $this->assertEquals('scale|234,234',
 		$resizes[$child[$i]->getId()][0]->getDerivativeOperations(), "$i 0");
 	    $this->assertEquals('scale|345,543',
