@@ -760,6 +760,16 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
 	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
+	    list ($ret, $isHidden) = $interface->isHidden($this->_topItems[1]);
+	    if ($ret) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assert($isHidden, 'isHidden item');
+	    list ($ret, $isHidden) = $interface->isHidden($this->_topItems[2]);
+	    if ($ret) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assert(!$isHidden, 'isHidden other item');
 	    $ret = $interface->hideItem($this->_subAlbum);
 	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -768,6 +778,11 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
 	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
+	    list ($ret, $isHidden) = $interface->isHidden($this->_subAlbum);
+	    if ($ret) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assert($isHidden, 'isHidden album');
 	} else {
 	    $this->assert(false, 'failed to create factory instance');
 	}

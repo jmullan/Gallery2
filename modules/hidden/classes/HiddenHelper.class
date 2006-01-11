@@ -23,7 +23,6 @@
  * @version $Revision$ $Date$
  * @package Hidden
  * @author Alan Harder <alan.harder@sun.com>
- * @author Jess Martin <jmartin@cs.unc.edu>
  */
 
 GalleryCoreApi::requireOnce('modules/hidden/classes/HiddenInterface_1_0.class');
@@ -339,6 +338,13 @@ class HiddenHelper extends HiddenInterface_1_0 {
 	    }
 	}
 	return null;
+    }
+
+    /**
+     * See HiddenInterface_1_0::isHidden
+     */
+    function isHidden($item) {
+	return (null, $item->hasOnLoadHandler('Hidden'));
     }
 }
 ?>

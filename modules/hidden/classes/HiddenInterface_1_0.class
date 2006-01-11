@@ -43,5 +43,16 @@ class HiddenInterface_1_0 {
     function hideItem(&$item) {
 	return GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
     }
+
+    /**
+     * Is item hidden?
+     *
+     * @param object GalleryItem item
+     * @return array object GalleryStatus a status code
+     *               boolean true if hidden
+     */
+    function isHidden($item) {
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+    }
 }
 ?>
