@@ -195,18 +195,20 @@ class GalleryEntity extends GalleryPersistent {
 	$this->setCreationTimestamp(time());
 
 	/* Set the object type */
-	$this->setEntityType($this->getClassName());
+	$this->setEntityType($className = $this->getClassName());
 
 	/*
 	 * Make sure the entity defined its own class name.  This is a little draconian;
 	 * it requires that your entity name is the same as the get_class() version.  We'd
 	 * just use get_class for getClassName() except that it's always lowercase in PHP4.
 	 * If this causes problems we could relax the check to just make sure that
-	 *   strtolower(get_class($this)) != 'galleryentity'
+	 *   $this->getClassName() != 'GalleryEntity'
 	 * but that wouldn't catch the case where one entity extends another one and forgets
 	 * to override getClassName()
+	 * Don't use strcasecmp or strtolower because they are affected by locale.
 	 */
-	if (strcasecmp($this->getEntityType(), get_class($this))) {
+	if (($thisClass = get_class($this)) != $className && $thisClass
+		!= strtr($className, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')) {
 	    return GalleryCoreApi::error(ERROR_MISSING_VALUE, __FILE__, __LINE__,
 					 sprintf('Entity %s did not override getClassName()',
 						 get_class($this)));

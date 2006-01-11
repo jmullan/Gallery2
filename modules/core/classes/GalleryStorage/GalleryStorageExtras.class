@@ -1876,11 +1876,13 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	 * Fall back on the parent class for any entities we don't recognize.  This is mainly so
 	 * that tests can create lightweight subclasses.  Because PHP4 doesn't have case sensitive
 	 * class names we have to do a linear time lookup.
+	 * Don't use strcasecmp or strtolower because they are affected by locale.
 	 */
 	if (!isset($entityInfo[$entityName])) {
 	    $parentClass = get_parent_class($entityName);
 	    foreach (array_keys($entityInfo) as $candidate) {
-		if ($parentClass == strtolower($candidate)) {
+		if ($parentClass == $candidate || $parentClass == strtr($candidate,
+			    'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijlkmnopqrstuvwxyz')) {
 		    $entityInfo[$entityName] = array(
 			'members' => array(),
 			'parent' => $candidate,
