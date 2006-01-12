@@ -17,6 +17,7 @@ function search_SearchBlock_checkForm() {
 	return false;
     } else {
 	document.getElementById('search_SearchBlock').submit();
+	return true;
     }
 }
 
