@@ -134,8 +134,8 @@ class CodeAuditTest extends CodeAuditTestCase {
 	$dir2 = dirname($dir1);
 	$base3 = basename($dir2);
 
-	/* Skip generated interfaces files */
-	if ($base3 == 'classes' && $base2 == 'interfaces') {
+	/* Skip generated Maps / Entities files */
+	if ($base2 == 'classes' && in_array($base1, array('Entities.inc', 'Maps.inc'))) {
 	    return false;
 	}
 

@@ -54,6 +54,7 @@ class OracleStorage extends GalleryStorage {
 	$this->GalleryStorage($config);
 	$this->_oracleDbType = $config['type'];
 	$this->_isTransactional = true;
+	$this->_isEmptyAllowedForNotNullColumn = false;
     }
 
     /**

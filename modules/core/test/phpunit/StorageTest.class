@@ -47,6 +47,7 @@ class StorageTest extends GalleryTestCase {
 
 	$storage =& $gallery->getStorage();
 	$this->_db = $storage->_db;
+	$this->_isEmptyAllowedForNotNullColumn = $storage->_isEmptyAllowedForNotNullColumn;
 	$storage->_db = new StorageTestDB($this);
     }
 
@@ -55,6 +56,7 @@ class StorageTest extends GalleryTestCase {
 
 	$storage =& $gallery->getStorage();
 	$storage->_db = $this->_db;
+	$storage->_isEmptyAllowedForNotNullColumn = $this->_isEmptyAllowedForNotNullColumn;
 
 	parent::tearDown();
     }
@@ -316,6 +318,173 @@ class StorageTest extends GalleryTestCase {
 		),
 	    $this->_results);
     }
+
+    function testNormalizeValueToTimeStamp() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+	
+	$memberData['type'] = STORAGE_TYPE_TIMESTAMP;
+	$this->assertEquals('foofoo', $storage->_normalizeValue('foo', $memberData), 'normal');
+	$this->assertEquals(null, $storage->_normalizeValue('', $memberData), 'empty string');
+	$this->assertEquals(null, $storage->_normalizeValue(false, $memberData), 'boolean false');
+	$this->assertEquals('00', $storage->_normalizeValue('0', $memberData), 'numeric empty');
+    }
+
+    function testNormalizeValueNotNull() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	$memberData['notNull'] = true;
+	foreach (array(STORAGE_TYPE_TIMESTAMP, STORAGE_TYPE_INTEGER,
+		       STORAGE_TYPE_STRING, STORAGE_TYPE_TEXT, STORAGE_TYPE_BIT) as $type) {
+	    $memberData['type'] = $type;
+	    $memberData['size'] = $type & STORAGE_TYPE_STRING ? STORAGE_SIZE_MEDIUM : null;
+	    $this->assert(!is_null($storage->_normalizeValue('', $memberData)),
+			  "empty string for $type");
+	    $this->assert(!is_null($storage->_normalizeValue('0', $memberData)),
+			  "0 string for $type");
+	    $this->assert(!is_null($storage->_normalizeValue(null, $memberData)), "null for $type");
+	    $this->assert(!is_null($storage->_normalizeValue(false, $memberData)),
+			  "boolean false for $type");
+	}
+    }
+
+    function testNormalizeValueBitNotNull() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+	
+	$memberData['notNull'] = true;
+	$memberData['type'] = STORAGE_TYPE_BOOLEAN;
+	$this->assertEquals(0, $storage->_normalizeValue(false, $memberData), 'boolean false');
+	$this->assertEquals(1, $storage->_normalizeValue('foo', $memberData), 'string');
+	$this->assertEquals(1, $storage->_normalizeValue(1, $memberData), 'int 1');
+	$this->assertEquals(0, $storage->_normalizeValue('', $memberData), 'empty string');
+	$this->assertEquals(0, $storage->_normalizeValue('0', $memberData), '0 string');
+	$this->assertEquals(0, $storage->_normalizeValue(null, $memberData), 'null');
+    }
+
+    function testNormalizeValueNotNullEmptyAllowed() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+	$storage->_isEmptyAllowedForNotNullColumn = true;
+	
+	$memberData['notNullEmptyAllowed'] = true;
+	foreach (array(STORAGE_TYPE_TIMESTAMP, STORAGE_TYPE_INTEGER,
+		       STORAGE_TYPE_STRING, STORAGE_TYPE_TEXT, STORAGE_TYPE_BIT) as $type) {
+	    $memberData['type'] = $type;
+	    $memberData['size'] = $type & STORAGE_TYPE_STRING ? STORAGE_SIZE_MEDIUM : null;
+	    $this->assert(!is_null($storage->_normalizeValue('', $memberData)),
+			  "empty string for $type");
+	    $this->assert(!is_null($storage->_normalizeValue('0', $memberData)),
+			  "0 string for $type");
+	    $this->assert(!is_null($storage->_normalizeValue(null, $memberData)), "null for $type");
+	}
+    }
+
+    function testNormalizeValueNotNullEmptyNotAllowed() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+	$storage->_isEmptyAllowedForNotNullColumn = false;
+	
+	$memberData['notNullEmptyAllowed'] = true;
+	foreach (array(STORAGE_TYPE_TIMESTAMP, STORAGE_TYPE_INTEGER,
+		       STORAGE_TYPE_STRING, STORAGE_TYPE_TEXT, STORAGE_TYPE_BIT) as $type) {
+	    $memberData['type'] = $type;
+	    $memberData['size'] = $type & STORAGE_TYPE_STRING ? STORAGE_SIZE_MEDIUM : null;
+	    $this->assertEquals(null, $storage->_normalizeValue('', $memberData),
+				"empty string for $type");
+	    $this->assert(!is_null($storage->_normalizeValue('0', $memberData)),
+			  "0 string for $type");
+	    $this->assertEquals(null, $storage->_normalizeValue(null, $memberData),
+				"null for $type");
+	}
+    }
+
+    function testNormalizeValueToBoolean() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	/* We use integers in the DB, thus cast to integer, 3rd param doesn't matter */
+	$memberData['type'] = STORAGE_TYPE_BOOLEAN;
+	$this->assertEquals(1, $storage->_normalizeValue('foo', $memberData), 'from string');
+	$this->assertEquals(null, $storage->_normalizeValue('', $memberData, false),
+			    'from string 2');
+	$this->assertEquals(null, $storage->_normalizeValue(null, $memberData), 'from null');
+	$this->assertEquals(0, $storage->_normalizeValue(false, $memberData, true)
+			    , 'from false');
+	$this->assertEquals(1, $storage->_normalizeValue(true, $memberData), 'from true');
+	$this->assertEquals(1, $storage->_normalizeValue(1, $memberData, true), 'from 1');
+    }
+
+    function testNormalizeValueToInteger() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+	
+	$memberData['type'] = STORAGE_TYPE_INTEGER;
+	$this->assertEquals(1, $storage->_normalizeValue('1', $memberData, true),
+			    'from string');
+	$this->assertEquals(0, $storage->_normalizeValue('0', $memberData), 'from string 2');
+	$this->assertEquals(7, $storage->_normalizeValue('007', $memberData), 'from string 3');
+	$this->assertEquals(null, $storage->_normalizeValue('', $memberData), 'from empty string');
+	$this->assertEquals(15, $storage->_normalizeValue(15, $memberData), 'from integer');
+    }
+
+    function testNormalizeValueToString() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+	
+	$memberData['type'] = STORAGE_TYPE_STRING;
+	$this->assertEquals('1', $storage->_normalizeValue('1', $memberData, true), 'from string');
+	$this->assertEquals(null, $storage->_normalizeValue('', $memberData, true),
+			    'from string 2');
+	
+	$value = str_repeat('x', 135);
+	$memberData['size'] = STORAGE_SIZE_MEDIUM;
+	$this->assertEquals($value, $storage->_normalizeValue($value, $memberData, true),
+			    'from string 3');
+	$this->assertEquals(str_repeat('x', 128), $storage->_normalizeValue($value, $memberData),
+			    'from string with truncate');
+	$this->assertEquals('15', $storage->_normalizeValue(15, $memberData), 'from integer');
+	$this->assertEquals('0', $storage->_normalizeValue(0, $memberData, true),
+			    'from integer 2');
+	$this->assertEquals('1', $storage->_normalizeValue(true, $memberData, true),
+			    'from boolean');
+	$this->assertEquals(null, $storage->_normalizeValue(false, $memberData), 'from boolean 2');
+	$this->assertEquals(null, $storage->_normalizeValue(null, $memberData), 'from null');
+    }
+
+    function testNormalizeValueToOtherType() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+	
+	$memberData['type'] = 0x00000080;
+	$this->assertEquals(array(1, 'foo'),
+			    $storage->_normalizeValue(array(1, 'foo'), $memberData));
+    }
+    
+    function testNormalizeValueToBit() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+	
+	$memberData['type'] = STORAGE_TYPE_BIT;
+	$expected = $storage->convertIntToBits(5);
+	$this->assertEquals($expected, $storage->_normalizeValue(5, $memberData), 'to DB');
+	$this->assertEquals(5, $storage->_normalizeValue(5, $memberData, true), 'from DB');
+	$this->assertEquals(5, $storage->_normalizeValue('5', $memberData, true),
+			    'from DB 2');
+	$this->assertEquals(null, $storage->_normalizeValue(null, $memberData, true), 'null');
+	$this->assertEquals(null, $storage->_normalizeValue('', $memberData), 'empty string');
+    }
+    
+    function testNormalizeValueFromTextToString() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+	
+	$memberData['type'] = STORAGE_TYPE_TEXT;
+	$this->assertEquals(str_repeat('1', 10),
+			    $storage->_normalizeValue((int)str_repeat('1', 10), $memberData));
+	$this->assertEquals(null, $storage->_normalizeValue(null, $memberData));
+    }
 }
 
 class StorageTestDB {
@@ -333,6 +502,10 @@ class StorageTestDB {
 
     function GenID($val) {
 	return $this->_testCase->_db->GenID($val);
+    }
+
+    function DBTimeStamp($val) {
+	return (string)($val . $val);
     }
 }
 ?>

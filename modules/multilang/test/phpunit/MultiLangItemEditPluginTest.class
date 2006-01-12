@@ -127,7 +127,7 @@ class MultiLangItemEditPluginTest extends ItemEditPluginTestCase {
 	}
 	$this->assertEquals('cn title', $album->getTitle());
 	$this->assertEquals('cn summary', $album->getSummary());
-	$this->assertEquals('', $album->getDescription(), 'cn description');
+	$this->assertEquals(null, $album->getDescription(), 'cn description');
 
 	$ret = GalleryCoreApi::deleteEntityById($this->_subAlbum->getId());
 	if ($ret) {

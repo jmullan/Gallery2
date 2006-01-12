@@ -1422,6 +1422,10 @@ class CoreModuleExtras {
 		    }
 		}
 	    }
+	case '1.0.16':
+	    /* Added 'not-null' to Entities.inc and Map.inc */
+	    $storageExtras =& $storage->_getExtras();
+	    $storageExtras->_clearEntityAndMapCache();
 
 	case 'end of upgrade path':
 	    /*
@@ -1649,6 +1653,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	    $edit['regexp'] = '{\$gallery->setConfig\(\'data\.gallery\.base\',.*?;}s';
 	    $edit['replacement'] = '$gallery->setConfig(\'data.gallery.base\', \'' . $tmp . '\');';
 	    $configChanges[] = array('remove' => array(), 'add' => array(), 'edit' => array($edit));
+	case '1.0.16':
 
 	case 'end of upgrade path':
 	    /*

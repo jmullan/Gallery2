@@ -162,6 +162,16 @@ class GalleryStorage {
     var $_usePersistentConnections;
 
     /**
+     * Whether this storage accepts empty (string) values are allowed for NOT NULL columns
+     * Some DBMS implicitely converts empty values to NULL on INSERT/UPDATE and then the value
+     * would violate a NOT NULL condition
+     *
+     * @var array $_isEmptyAllowedForNotNullColumn
+     * @access private
+     */
+    var $_isEmptyAllowedForNotNullColumn;
+    
+    /**
      * Constructor
      *
      * @param array database configuration values
@@ -172,6 +182,7 @@ class GalleryStorage {
 	$this->_hostname = $config['hostname'];
 	$this->_database = $config['database'];
 	$this->_isTransactional = false;
+	$this->_isEmptyAllowedForNotNullColumn = true;
 	$this->_entityInfoCache = array();
 
 	/* We use persistent connections if the value is left out, or if it's non empty. */
@@ -490,15 +501,7 @@ class GalleryStorage {
 		    $qs = array();
 		    foreach ($match[$memberName] as $value) {
 			$qs[] = '?';
-			if ($memberData['type'] & STORAGE_TYPE_BIT) {
-			    $value = $this->convertIntToBits($value);
-			} else if ($memberData['type'] & STORAGE_TYPE_STRING) {
-			    if (isset($value)) {
-				$entity->$memberName = $value =
-				    $this->_truncateString($value, $memberData['size']);
-			    }
-			}
-			$wheredata[] = $value;
+			$wheredata[] = $this->_normalizeValue($value, $memberData);
 		    }
 		    $where[] = $this->_translateColumnName($memberName) . ' IN ('
 			     . implode(',', $qs) . ')';
@@ -506,16 +509,7 @@ class GalleryStorage {
 		    $where[] = $this->_translateColumnName($memberName) . ' IS NULL';
 		} else {
 		    $where[] = $this->_translateColumnName($memberName) . '=?';
-		    $value = $match[$memberName];
-		    if ($memberData['type'] & STORAGE_TYPE_BIT) {
-			$value = $this->convertIntToBits($value);
-		    } else if ($memberData['type'] & STORAGE_TYPE_STRING) {
-			if (isset($value)) {
-			    $entity->$memberName = $value =
-				$this->_truncateString($value, $memberData['size']);
-			}
-		    }
-		    $wheredata[] = $value;
+		    $wheredata[] = $this->_normalizeValue($match[$memberName], $memberData);
 		}
 	    }
 
@@ -528,16 +522,7 @@ class GalleryStorage {
 		    }
 		} else {
 		    $set[] = $this->_translateColumnName($memberName) . '=?';
-		    $value = $change[$memberName];
-		    if ($memberData['type'] & STORAGE_TYPE_BIT) {
-			$value = $this->convertIntToBits($value);
-		    } else if ($memberData['type'] & STORAGE_TYPE_STRING) {
-			if (isset($value)) {
-			    $entity->$memberName = $value =
-				$this->_truncateString($value, $memberData['size']);
-			}
-		    }
-		    $setdata[] = $value;
+		    $setdata[] = $this->_normalizeValue($change[$memberName], $memberData);
 		}
 	    }
 	}
@@ -1060,6 +1045,58 @@ class GalleryStorage {
 	}
     }
 
+    /**
+     * Cast the value to the proper member type when interacting with the database
+     * Optionally also perform a UTF8-safe truncation for strings
+     *
+     * TODO: CAST empty to NULL ? values from DB too?
+     *
+     * @param mixed the value
+     * @param array ('type' => STORAGE_TYPE_XXX constant,
+     *               'size' => STORAGE_SIZE_XXX constant)
+     * @param bool (optional) false if value is for SQL, true if value is from the DB
+     * @return mixed correctly typed value
+     */
+    function _normalizeValue($value, $memberData, $fromDb=false) {
+	$notNull = !empty($memberData['notNull']) ||
+	    ( !empty($memberData['notNullEmptyAllowed']) && $this->_isEmptyAllowedForNotNullColumn);
+
+	if (is_null($value) && !$notNull) {
+	    return $value;
+	}
+	
+	$type = $memberData['type'];	
+	if ( !$notNull && empty($value) && !is_numeric($value) &&
+	        ( !($type & STORAGE_TYPE_BOOLEAN) || $value !== false)) {
+	    return null;
+	}
+	
+	if ($type & STORAGE_TYPE_BOOLEAN) {
+	    /* Convert booleans to 1 : 0 */
+	    return (int)!empty($value);
+	} else if ($type & STORAGE_TYPE_TIMESTAMP) {
+	    /* Convert timestamps to the database representation */
+	    return $this->_db->DBTimeStamp($value);
+	} else if ($type & STORAGE_TYPE_INTEGER) {
+	    return (int)$value;
+	} else if ($type & STORAGE_TYPE_STRING) {
+	    if (isset($value) && !$fromDb) {
+		$value = $this->_truncateString($value, $memberData['size']);
+	    }
+	    return (string)$value;
+	} else if ($type & STORAGE_TYPE_TEXT) {
+	    return (string)$value;
+	} else if ($type & STORAGE_TYPE_BIT) {
+	    if ($fromDb) {
+		return (int)$value;
+	    } else {
+		return $this->convertIntToBits((int)$value);
+	    }
+	} else {
+	    return $value;
+	}
+    }
+    
     /**
      * Perform a UT8-safe truncation of the string to a size
      *

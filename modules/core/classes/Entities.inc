@@ -19,7 +19,7 @@ $entityInfo['GalleryAnimationItem'] = array(
     'linked' => array('width','height'));
 $entityInfo['GalleryChildEntity'] = array(
     'members' => array(
-	'parentId' => array('type' => STORAGE_TYPE_INTEGER)
+	'parentId' => array('type' => STORAGE_TYPE_INTEGER, 'notNull' => 1)
 ),
     'parent' => 'GalleryEntity',
     'module' => 'core',
@@ -34,12 +34,12 @@ $entityInfo['GalleryDataItem'] = array(
     'linked' => array('mimeType','size'));
 $entityInfo['GalleryDerivative'] = array(
     'members' => array(
-	'derivativeSourceId' => array('type' => STORAGE_TYPE_INTEGER),
+	'derivativeSourceId' => array('type' => STORAGE_TYPE_INTEGER, 'notNull' => 1),
 	'derivativeOperations' => array('type' => STORAGE_TYPE_STRING, 'size' => STORAGE_SIZE_LARGE),
-	'derivativeOrder' => array('type' => STORAGE_TYPE_INTEGER),
+	'derivativeOrder' => array('type' => STORAGE_TYPE_INTEGER, 'notNull' => 1),
 	'derivativeSize' => array('type' => STORAGE_TYPE_INTEGER),
-	'derivativeType' => array('type' => STORAGE_TYPE_INTEGER),
-	'mimeType' => array('type' => STORAGE_TYPE_STRING, 'size' => STORAGE_SIZE_MEDIUM),
+	'derivativeType' => array('type' => STORAGE_TYPE_INTEGER, 'notNull' => 1),
+	'mimeType' => array('type' => STORAGE_TYPE_STRING, 'size' => STORAGE_SIZE_MEDIUM, 'notNull' => 1),
 	'postFilterOperations' => array('type' => STORAGE_TYPE_STRING, 'size' => STORAGE_SIZE_LARGE),
 	'isBroken' => array('type' => STORAGE_TYPE_BOOLEAN)
 ),
@@ -56,13 +56,13 @@ $entityInfo['GalleryDerivativeImage'] = array(
     'linked' => array());
 $entityInfo['GalleryEntity'] = array(
     'members' => array(
-	'id' => array('type' => STORAGE_TYPE_INTEGER| STORAGE_TYPE_ID),
-	'creationTimestamp' => array('type' => STORAGE_TYPE_INTEGER),
-	'isLinkable' => array('type' => STORAGE_TYPE_BOOLEAN),
+	'id' => array('type' => STORAGE_TYPE_INTEGER| STORAGE_TYPE_ID, 'notNull' => 1),
+	'creationTimestamp' => array('type' => STORAGE_TYPE_INTEGER, 'notNull' => 1),
+	'isLinkable' => array('type' => STORAGE_TYPE_BOOLEAN, 'notNull' => 1),
 	'linkId' => array('type' => STORAGE_TYPE_INTEGER),
-	'modificationTimestamp' => array('type' => STORAGE_TYPE_INTEGER),
-	'serialNumber' => array('type' => STORAGE_TYPE_INTEGER),
-	'entityType' => array('type' => STORAGE_TYPE_STRING, 'size' => STORAGE_SIZE_SMALL),
+	'modificationTimestamp' => array('type' => STORAGE_TYPE_INTEGER, 'notNull' => 1),
+	'serialNumber' => array('type' => STORAGE_TYPE_INTEGER, 'notNull' => 1),
+	'entityType' => array('type' => STORAGE_TYPE_STRING, 'size' => STORAGE_SIZE_SMALL, 'notNull' => 1),
 	'onLoadHandlers' => array('type' => STORAGE_TYPE_STRING, 'size' => STORAGE_SIZE_MEDIUM)
 ),
     'parent' => null,
@@ -77,7 +77,7 @@ $entityInfo['GalleryFileSystemEntity'] = array(
     'linked' => array());
 $entityInfo['GalleryGroup'] = array(
     'members' => array(
-	'groupType' => array('type' => STORAGE_TYPE_INTEGER),
+	'groupType' => array('type' => STORAGE_TYPE_INTEGER, 'notNull' => 1),
 	'groupName' => array('type' => STORAGE_TYPE_STRING, 'size' => STORAGE_SIZE_MEDIUM)
 ),
     'parent' => 'GalleryEntity',
@@ -85,14 +85,14 @@ $entityInfo['GalleryGroup'] = array(
     'linked' => array());
 $entityInfo['GalleryItem'] = array(
     'members' => array(
-	'canContainChildren' => array('type' => STORAGE_TYPE_BOOLEAN),
+	'canContainChildren' => array('type' => STORAGE_TYPE_BOOLEAN, 'notNull' => 1),
 	'description' => array('type' => STORAGE_TYPE_TEXT),
 	'keywords' => array('type' => STORAGE_TYPE_STRING, 'size' => STORAGE_SIZE_LARGE),
-	'ownerId' => array('type' => STORAGE_TYPE_INTEGER),
+	'ownerId' => array('type' => STORAGE_TYPE_INTEGER, 'notNull' => 1),
 	'summary' => array('type' => STORAGE_TYPE_STRING, 'size' => STORAGE_SIZE_LARGE),
 	'title' => array('type' => STORAGE_TYPE_STRING, 'size' => STORAGE_SIZE_MEDIUM),
-	'viewedSinceTimestamp' => array('type' => STORAGE_TYPE_INTEGER),
-	'originationTimestamp' => array('type' => STORAGE_TYPE_INTEGER)
+	'viewedSinceTimestamp' => array('type' => STORAGE_TYPE_INTEGER, 'notNull' => 1),
+	'originationTimestamp' => array('type' => STORAGE_TYPE_INTEGER, 'notNull' => 1)
 ),
     'parent' => 'GalleryFileSystemEntity',
     'module' => 'core',
@@ -122,7 +122,7 @@ $entityInfo['GalleryUnknownItem'] = array(
     'linked' => array());
 $entityInfo['GalleryUser'] = array(
     'members' => array(
-	'userName' => array('type' => STORAGE_TYPE_STRING, 'size' => STORAGE_SIZE_SMALL),
+	'userName' => array('type' => STORAGE_TYPE_STRING, 'size' => STORAGE_SIZE_SMALL, 'notNull' => 1),
 	'fullName' => array('type' => STORAGE_TYPE_STRING, 'size' => STORAGE_SIZE_MEDIUM),
 	'hashedPassword' => array('type' => STORAGE_TYPE_STRING, 'size' => STORAGE_SIZE_MEDIUM),
 	'email' => array('type' => STORAGE_TYPE_STRING, 'size' => STORAGE_SIZE_LARGE),

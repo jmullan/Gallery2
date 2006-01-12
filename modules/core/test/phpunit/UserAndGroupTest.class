@@ -222,7 +222,8 @@ class UserAndGroupTest extends GalleryTestCase {
 			    'Not all permissions of the deleted user were removed');
 
 	/* Make sure there are no mappings left (garbage) */
-	$ret = GalleryCoreApi::removeMapEntry('GalleryAccessMap', array('userOrGroupId' => $userId));
+	$ret = GalleryCoreApi::removeMapEntry('GalleryAccessMap',
+					      array('userOrGroupId' => $userId));
 	if ($ret) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -367,7 +368,8 @@ class UserAndGroupTest extends GalleryTestCase {
     /* Try to delete the all users group (this will fail) */
     function testDeleteSpecialGroups() {
 	foreach (array('id.allUserGroup', 'id.everybodyGroup', 'id.adminGroup') as $paramName) {
-	    list ($ret, $groupId) = GalleryCoreApi::getPluginParameter('module', 'core', $paramName);
+	    list ($ret, $groupId) =
+		GalleryCoreApi::getPluginParameter('module', 'core', $paramName);
 	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -608,7 +610,10 @@ class UserAndGroupTest extends GalleryTestCase {
 	}
 	$remainingItems[] = $subSubAlbumWithDeletePermission2;
 	$deletePermissionItems[] = $subSubAlbumWithDeletePermission2;
-	/* A subSubSubItem with delete permission (but is in a subSubalbum without delete permission) */
+	/*
+	 * A subSubSubItem with delete permission
+	 * (but is in a subSubalbum without delete permission)
+	 */
 	list ($ret, $subSubSubItemWithDeletePermission2) =
 	    $this->_createRandomDataItem($subSubAlbumWithoutDeletePermission2->getId());
 	if ($ret) {
@@ -628,7 +633,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	 * Add another subalbum tree, with some items of another user (user2) in it
 	 * Also check for a new thumbnail here
 	 * subAlbumWithDeletePermission3			  | with delete permission
-	 *	|- subSubItemWithDeletePermission		  | with delete permission -> deleted
+	 *	|- subSubItemWithDeletePermission		  | with delete permission > deleted
 	 *	|- subSubItemWithDeletePermissionDifferentOwner3  | with delete permission
 	 */
 	list ($ret, $subAlbumWithDeletePermission3) =
@@ -661,7 +666,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Restore the activeUser, should be a Site Admin(the user who runs the test) */
 	$gallery->setActiveUser($this->_activeUserBackup);
 
-	/* Add delete permissions to all items/albums that should have delete permission for user1 */
+	/* Add delete perm. to all items/albums that should have delete permission for user1 */
 	foreach ($deletePermissionItems as $item) {
 	    $ret = GalleryCoreApi::addUserPermission(
 		$item->getId(), $user1->getId(), array('core.delete'), false);

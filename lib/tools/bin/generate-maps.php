@@ -77,6 +77,21 @@ foreach ($root[0]['child'] as $map) {
 		$member['size'] = 'STORAGE_SIZE_MEDIUM';
 	    }
 
+	    for ($k = 2; $k < count($child['child']); $k++) {
+		if (!empty($child['child'][$k]['name'])) {
+		    $elem = $child['child'][$k];
+		    if ($elem['name'] == 'PRIMARY' || $elem['name'] == 'REQUIRED') {
+			if ($elem['name'] != 'REQUIRED' || empty($elem['attrs']['EMPTY']) ||
+			        $elem['attrs']['EMPTY'] != 'allowed') {
+			    $member['notNull'] = true;
+			} else {
+			    $member['notNullEmptyAllowed'] = true;
+			}
+			break;
+		    }
+		}
+	    }
+
 	    $maps[$mapName][] = $member;
 	}
     }

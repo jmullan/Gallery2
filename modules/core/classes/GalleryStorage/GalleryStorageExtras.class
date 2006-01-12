@@ -101,6 +101,10 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	foreach ($ids as $idx => $id) {
+	    $ids[$idx] = (int)$id;
+	}
+	
 	/* Identify all the ids at once */
 	list ($ret, $types) = $this->_identifyEntities($ids);
 	if ($ret) {
@@ -134,13 +138,13 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    $idCol = $this->_gs->_translateColumnName('id');
 
 	    /* Build up our query */
-	    $columns = $tables = $where = $types = $callbacks = array();
+	    $columns = $tables = $where = $memberData = $callbacks = array();
 	    $markers = GalleryUtilities::makeMarkers(count($targetIds));
 	    $target = $className;
 	    while ($target) {
 		foreach ($memberInfo[$target]['members'] as $columnName => $columnInfo) {
 		    list ($tableName, $unused) = $this->_gs->_translateTableName($target);
-		    $types[] = $columnInfo['type'];
+		    $memberData[] = $columnInfo;
 		    $callbacks[] = $columnName;
 		    $columns[$tableName . '.' . $this->_gs->_translateColumnName($columnName)] = 1;
 		    $tables[$tableName] = 1;
@@ -196,15 +200,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 		    }
 
 		    for ($i = 0; $i < count($callbacks); $i++) {
-			$value = $row[$i];
-
-			if ($types[$i] & STORAGE_TYPE_TIMESTAMP) {
-			    $value = $this->_gs->_db->UnixTimeStamp($value);
-			} else if ($types[$i] & STORAGE_TYPE_INTEGER) {
-			    $value = (int)$value;
-			} else if ($types[$i] & STORAGE_TYPE_BOOLEAN) {
-			    $value = (int)!empty($value);
-			}
+			$value = $this->_gs->_normalizeValue($row[$i], $memberData[$i], true);
 
 			/* Store the value in the object */
 			$entity->$callbacks[$i] = $value;
@@ -256,7 +252,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	 */
 	$dataTable = array();
 	$id = array();
-	$target = $entity->entityType;
+	$target = $entity->getEntityType();
 
 	while ($target) {
 	    foreach ($memberInfo[$target]['members'] as $memberName => $memberData) {
@@ -267,26 +263,9 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 		if ($entity->isModified($memberName)) {
 		    $value = $entity->$memberName;
 
-		    /* Convert empty values to null */
-		    if (!is_numeric($value) && empty($value)) {
-			$value = null;
-		    }
-
-		    if ($type & STORAGE_TYPE_BOOLEAN) {
-			/* Convert booleans to 1 : 0 */
-			$entity->$memberName = $value = (int)!empty($value);
-		    } else if ($type & STORAGE_TYPE_TIMESTAMP) {
-			/* Convert timestamps to the database representation */
-			$entity->$memberName = $value = $this->_gs->_db->DBTimeStamp($value);
-		    } else if ($type & STORAGE_TYPE_INTEGER) {
-			$entity->$memberName = $value = (int)$value;
-		    } else if ($type & STORAGE_TYPE_STRING) {
-			if (isset($value)) {
-			    $entity->$memberName = $value =
-				$this->_gs->_truncateString($value, $memberData['size']);
-			}
-		    }
-
+		    $entity->$memberName = $value =
+			$this->_gs->_normalizeValue($value, $memberData);
+			
 		    $columnName = $this->_gs->_translateColumnName($memberName);
 		    $dataTable[$tableName][$columnName] = $value;
 		} else {
@@ -452,7 +431,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	 */
 	foreach ($tables as $tableName => $junk) {
 	    $query = 'DELETE FROM ' . $tableName . ' WHERE ' . $idCol . '=?';
-	    $data = array($entity->id);
+	    $data = array((int)$entity->getId());
 
 	    $this->_gs->_traceStart();
 	    $recordSet = $this->_gs->_db->Execute($query, $data);
@@ -546,6 +525,10 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	/* It's ok to pass in a single id */
 	if (!is_array($entityIds)) {
 	    $entityIds = array($entityIds);
+	}
+
+	foreach ($entityIds as $idx => $id) {
+	    $entityIds[$idx] = (int)$id;
 	}
 
 	/* Acquire a non-transactional connection to use for this request */
@@ -665,6 +648,10 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    $entityIds = array($entityIds);
 	}
 
+	foreach ($entityIds as $idx => $id) {
+	    $entityIds[$idx] = (int)$id;
+	}
+
 	/* Acquire a non-transactional connection to use for this request */
 	list ($ret, $db) = $this->_getNonTransactionalDatabaseConnection();
 	if ($ret) {
@@ -778,6 +765,10 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
      */
     function refreshLocks($lockIds, $freshUntil) {
 	if (!empty($lockIds)) {
+	    foreach ($lockIds as $idx => $id) {
+		$lockIds[$idx] = (int)$id;
+	    }
+	    
 	    /* Acquire a non-transactional connection to use for this request */
 	    list ($ret, $db) = $this->_getNonTransactionalDatabaseConnection();
 	    if ($ret) {
@@ -839,6 +830,10 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
     function releaseLocks($lockIds) {
 	if (!is_array($lockIds)) {
 	    $lockIds = array($lockIds);
+	}
+
+	foreach ($lockIds as $idx => $id) {
+	    $lockIds[$idx] = (int)$id;
 	}
 
 	/* Acquire a non-transactional connection to use for this request */
@@ -911,19 +906,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 		return $this->_addMapEntries($mapInfo, $tableName, $entry);
 	    }
 	    $columns[] = $this->_gs->_translateColumnName($memberName);
-	    $value = $entry[$memberName];
-
-	    if ($memberData['type'] & STORAGE_TYPE_BIT) {
-		$value = $this->_gs->convertIntToBits($value);
-	    } else if ($memberData['type'] & STORAGE_TYPE_TIMESTAMP) {
-		$value = $this->_gs->_db->DBTimeStamp($value);
-	    } else if ($memberData['type'] & STORAGE_TYPE_STRING) {
-		if (isset($value)) {
-		    $value = $this->_gs->_truncateString($value, $memberData['size']);
-		}
-	    }
-
-	    $data[] = $value;
+	    $data[] = $this->_gs->_normalizeValue($entry[$memberName], $memberData);
 	}
 
 	$markers = GalleryUtilities::makeMarkers(count($columns));
@@ -964,18 +947,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	$data = array();
 	for ($ind = 0; $ind < $rows; $ind++) {
 	    foreach ($mapInfo as $memberName => $memberData) {
-		$value = $entry[$memberName][$ind];
-
-		if ($memberData['type'] & STORAGE_TYPE_BIT) {
-		    $value = $this->_gs->convertIntToBits($value);
-		} else if ($memberData['type'] & STORAGE_TYPE_TIMESTAMP) {
-		    $value = $this->_gs->_db->DBTimeStamp($value);
-		} else if ($memberData['type'] & STORAGE_TYPE_STRING) {
-		    if (isset($value)) {
-			$value = $this->_gs->_truncateString($value, $memberData['size']);
-		    }
-		}
-		$data[] = $value;
+		$data[] =$this->_gs->_normalizeValue($entry[$memberName][$ind], $memberData);
 	    }
 	}
 
@@ -1023,10 +995,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 		    $qs = array();
 		    foreach ($match[$memberName] as $value) {
 			$qs[] = '?';
-			if ($memberData['type'] & STORAGE_TYPE_BIT) {
-			    $value = $this->_gs->convertIntToBits($value);
-			}
-			$data[] = $value;
+			$data[] = $this->_gs->_normalizeValue($value, $memberData);
 		    }
 		    $where[] = $this->_gs->_translateColumnName($memberName) . ' IN ('
 			     . implode(',', $qs) . ')';
@@ -1034,11 +1003,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 		    $where[] = $this->_gs->_translateColumnName($memberName) . ' IS NULL';
 		} else {
 		    $where[] = $this->_gs->_translateColumnName($memberName) . '=?';
-		    $value = $match[$memberName];
-		    if ($memberData['type'] & STORAGE_TYPE_BIT) {
-			$value = $this->_gs->convertIntToBits($value);
-		    }
-		    $data[] = $value;
+		    $data[] = $this->_gs->_normalizeValue($match[$memberName], $memberData);
 		}
 	    }
 	}

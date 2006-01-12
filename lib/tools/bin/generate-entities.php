@@ -132,6 +132,16 @@ foreach ($root[0]['child'] as $entity) {
 		case 'LINKED':
 		    $entities[$entityName]['linked'][] = $name;
 		    break;
+		case 'REQUIRED':
+		case 'PRIMARY':
+		    $elem = $member['child'][$k];
+		    if ($elem['name'] != 'REQUIRED' || empty($elem['attrs']['EMPTY']) ||
+			    $elem['attrs']['EMPTY'] != 'allowed') {
+			$entities[$entityName]['members'][$name]['notNull'] = true;
+		    } else {
+			$entities[$entityName]['members'][$name]['notNullEmptyAllowed'] = true;
+		    }
+		    break;
 		}
 	    }
 	}
