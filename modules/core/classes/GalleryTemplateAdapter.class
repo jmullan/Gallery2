@@ -526,26 +526,35 @@ class GalleryTemplateAdapter {
 	$urlGenerator =& $gallery->getUrlGenerator();
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core', true);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return;
 	}
 
-	if ($params['type'] == 'gallery2' || $params['type'] == 'donate') {
-	    list ($ret, $adminGroupId) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
-	    if ($ret) {
-		return;
-	    }
-	    list ($ret, $isAdmin) = GalleryCoreApi::isUserInGroup(
-		$smarty->_tpl_vars['theme']['actingUserId'], $adminGroupId);
-	    if ($ret) {
-		return;
-	    }
-	    GalleryCoreApi::requireOnce('modules/core/module.inc');
-	    $installedVersions = CoreModule::getInstalledVersions();
+	list ($ret, $isAdmin) =
+	    GalleryCoreApi::isUserInSiteAdminGroup($smarty->_tpl_vars['theme']['actingUserId']);
+	if ($ret) {
+	    return;
 	}
 
 	switch($params['type']) {
+	case 'gallery2':
+	    $installedVersions = $core->getInstalledVersions();
+	    if (!$isAdmin) {
+		/* Don't show exact patch release to non-admins */
+		$installedVersions['gallery'] =
+		    preg_replace('/^(.*?\..*?)(\.\d+)+/', '$1', $installedVersions['gallery']);
+	    }
+	    $version = $core->translate(
+		    array('text' => "Gallery %s", 'arg1' => $installedVersions['gallery']));
+	    return '<a href="http://gallery.sourceforge.net"><img src="' .
+		$urlGenerator->generateUrl(array('href' => 'images/gallery.gif')) .
+		'" alt="' . $version . '" '.
+		'title="' . $version . '" ' .
+		'style="border-style: none" width="80" height="15"/></a>';
+
 	case 'validation':
+	    if (!$isAdmin) {
+		return;
+	    }
 	    if ($gallery->getConfig('allowSessionAccess')) {
 		/* Calculate a URI that we can use for the validation link */
 		$validationUri = $urlGenerator->getCurrentUrl();
@@ -566,25 +575,15 @@ class GalleryTemplateAdapter {
 	    return '<a href="' . $validationUri . '"><img src="' .
 		$urlGenerator->generateUrl(array('href' => 'images/xhtml10.png')) .
 		'" alt="' . $core->translate('This page is valid XHTML 1.0') . '" ' .
-		'style="border-style: none" width="80" height="15"/></a>';
-
-	case 'gallery2':
-	    if (!$isAdmin) {
-		/* Don't show exact patch release to non-admins */
-		$installedVersions['gallery'] =
-		    preg_replace('/^(.*?\..*?)(\.\d+)+/', '$1', $installedVersions['gallery']);
-	    }
-	    $version = $core->translate(
-		array('text' => "Gallery %s", 'arg1' => $installedVersions['gallery']));
-	    return '<a href="http://gallery.sourceforge.net"><img src="' .
-		$urlGenerator->generateUrl(array('href' => 'images/gallery.gif')) .
-		'" alt="' . $version . '" '.
-		'title="' . $version . '" ' .
+		'" title="' . $core->translate('This page is valid XHTML 1.0') . '" ' .
 		'style="border-style: none" width="80" height="15"/></a>';
 
 	case 'donate':
-	    if ($isAdmin) {
-		return sprintf(
+	    if (!$isAdmin) {
+		return;
+	    }
+	    $installedVersions = $core->getInstalledVersions();
+	    return sprintf(
 		    '<a href="%s"><img src="%s" alt="%s" title="%s" ' .
 		    'style="border-style: none" width="80" height="15"/></a>',
 		    $urlGenerator->generateUrl(
@@ -593,19 +592,20 @@ class GalleryTemplateAdapter {
 		    $urlGenerator->generateUrl(array('href' => 'modules/core/data/donate.png')),
 		    $core->translate('Donate to the Gallery project'),
 		    $core->translate('Donate to the Gallery project'));
-	    }
-	    break;
 
 	case 'gallery2-version':
+	    if (!$isAdmin) {
+		return;
+	    }
 	    return ''; /* sprintf(
 		'<a href="%s"><img src="%s" alt="%s" title="%s" ' .
 		'style="border-style: none" width="80" height="15"/></a>',
 		$urlGenerator->generateUrl(
 		    array('href' => 'modules/core/data/g2-unpossible.mp3')),
 		$urlGenerator->generateUrl(
-		    array('href' => 'modules/core/data/g2-unpossible.png')),
-		$core->translate('G2.0: Unpossible!'),
-		$core->translate('G2.0: Unpossible!')); */
+		    array('href' => 'modules/core/data/g21-blackjack.png')),
+		$core->translate('G2.1: Blackjack'),
+		$core->translate('G2.1: Blackjack')); */
 	}
     }
 
