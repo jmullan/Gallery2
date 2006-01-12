@@ -311,18 +311,33 @@ class Db2Storage extends GalleryStorage {
      * @return string version
      */
     function getVersion() {
-	if (function_exists('db2_version')) {
-	    return implode(' ', db2_version());
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+	
+	list ($success, $results) = $platform->exec(array(array('db2level')));
+	if ($success && is_array($results)) {
+	    return implode("\n", $results);
+	} else {
+	    return '';
 	}
-	return null;
     }
-
-
+    
     /**
      * @see GalleryStorage::_getOptimizeStatement
      */
     function _getOptimizeStatement() {
-	return 'VACUUM ANALYZE VERBOSE %s';
-    }
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+	/*
+	 * This requires SYSCTL (therefore, groups), so won't work on single-user 
+	 * Windows (9*, ME, XP). getmygid() returns "0" on my XP system. We presume it will not
+	 * return "0" on OSes that support groups.  Need to confirm that.
+	 */
+	if (GalleryUtilities::isA($platform, 'WinNtPlatform') && getmygid() == 0) {
+	    return null;
+	} else {
+	    return "CALL REORGCHK_TB_STATS ('S', '" . $this->_username . "')";
+        }
+     }
 }
 ?>
