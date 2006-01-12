@@ -284,6 +284,8 @@ class ImageMagickToolkitHelper {
 			 'expected' => '(PCD.*(Pseudo|Direct)Class|PseudoClass.*PCD)');
 	$tests[] = array('mime' => array('image/wmf'), 'file' => 'test.wmf',
 			 'expected' => '(WMF.*(Pseudo|Direct)Class|(Pseudo|Direct)Class.*WMF)');
+	$tests[] = array('mime' => array('image/tga'), 'file' => 'test.tga',
+			 'expected' => '(TGA.*(Pseudo|Direct)Class|(Pseudo|Direct)Class.*TGA)');
 
 	$oldPwd = $platform->getcwd();
 	$platform->chdir($gallery->getConfig('data.gallery.tmp'));

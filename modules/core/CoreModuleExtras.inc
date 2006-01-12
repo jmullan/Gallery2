@@ -1426,6 +1426,15 @@ class CoreModuleExtras {
 	    /* Added 'not-null' to Entities.inc and Map.inc */
 	    $storageExtras =& $storage->_getExtras();
 	    $storageExtras->_clearEntityAndMapCache();
+	case '1.0.17':
+	    /* And image/tga mime type */
+	    list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime('tga');
+	    if (!$ret && $mimeType == 'application/unknown') {
+		$ret = GalleryCoreApi::addMimeType('tga', 'image/tga', false);
+		if ($ret) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
 
 	case 'end of upgrade path':
 	    /*
