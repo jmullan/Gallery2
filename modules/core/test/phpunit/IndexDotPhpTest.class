@@ -63,7 +63,7 @@ class IndexDotPhpTest extends GalleryTestCase {
 		/* Check if the G2 cookie is present */
 		$this->assert(strstr($headers['Set-Cookie'], SESSION_ID_PARAMETER) !== false,
 			      "G2 cookie not present in HTTP headers: $url." .
-			      'The complete headers are: ' . $headers);
+			      'The complete cookie headers are: ' . $headers['Set-Cookie']);
 	    }
 	}
     }
