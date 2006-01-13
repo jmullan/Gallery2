@@ -928,6 +928,21 @@ class GalleryUtilities {
     }
 
     /**
+     * Strip out all potentially dangerous content within HTML.
+     *
+     * @param string html
+     * @return string safe html
+     */
+    function htmlSafe($html) {
+	GalleryCoreApi::requireOnce('lib/pear/Safe.php');
+	static $parser;
+	if (!isset($parser)) {
+	    $parser =& new HTML_Safe();
+	}
+	return $parser->parse($html);
+    }
+
+    /**
      * Return a specified request variable from the GET or POST vars.
      *
      * @param string a single key

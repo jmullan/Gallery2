@@ -1307,6 +1307,38 @@ class UtilitiesTest extends GalleryTestCase {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
+
+    function testHtmlSafe() {
+	$this->assertEquals('script src ', GalleryUtilities::htmlSafe(
+		'script src <script src="http://evil.com/bad.js">'));
+	$this->assertEquals('script type ', GalleryUtilities::htmlSafe(
+		'script type <script type="text/javascript">alert("bad");</script>'));
+	$this->assertEquals('applet ', GalleryUtilities::htmlSafe(
+		'applet <applet code="http://evil.com/bad.class"></applet>'));
+	$this->assertEquals('object ', GalleryUtilities::htmlSafe(
+		'object <object codetype="application/java" classid="java:bad.class"></object>'));
+	$this->assertEquals('embed ', GalleryUtilities::htmlSafe(
+		'embed <embed src="http://evil.com/bad.mov" width=400 height=300>'));
+	$this->assertEquals('base ', GalleryUtilities::htmlSafe(
+		'base <base href="http://evil.com/bad.html">'));
+	$this->assertEquals('title ', GalleryUtilities::htmlSafe(
+		'title <title>bad title</title>'));
+	$this->assertEquals('link ', GalleryUtilities::htmlSafe(
+		'link <link rel="Next" href="http://evil.com/bad.php">'));
+	$this->assertEquals('meta ', GalleryUtilities::htmlSafe(
+		'meta <meta http-equiv="refresh" content="2; url=http://evil.com/">'));
+	$this->assertEquals('style ', GalleryUtilities::htmlSafe(
+		'style <style type="test/css">body { color: red; }</style>'));
+
+	/* HTML_Safe does some normalizing of other tags */
+	$this->assertEquals('br<br />is<br />ok', GalleryUtilities::htmlSafe('br<br>is<br/>ok'));
+	$this->assertEquals('img <img src="a.png" />', GalleryUtilities::htmlSafe(
+		'img <img src="a.png">'));
+
+	/* Unclosed tags are closed, unmatched close is stripped */
+	$this->assertEquals('<tt><b>closed</b>  <i>open</i></tt>', GalleryUtilities::htmlSafe(
+		'<tt><b>closed</b> </td> <i>open'));
+    }
 }
 
 /**
