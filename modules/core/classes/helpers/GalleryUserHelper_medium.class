@@ -140,7 +140,7 @@ class GalleryUserHelper_medium {
               [GalleryUserGroupMap::groupId] = ?
             ';
         }
-        $data[] = $groupId;
+        $data[] = (int)$groupId;
 
         list ($ret, $searchResults) = $gallery->search($query, $data);
         if ($ret) {

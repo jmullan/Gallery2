@@ -52,7 +52,8 @@ class GalleryFileSystemEntityHelper_simple {
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
+	$rootId = (int)$rootId;
+	
 	if ($path == '/') {
 	    return array(null, $rootId);
 	}
@@ -105,7 +106,7 @@ class GalleryFileSystemEntityHelper_simple {
 	  [GalleryFileSystemEntity::pathComponent] = ?
 	';
 	$data = array();
-	$data[] = $parentId;
+	$data[] = (int)$parentId;
 	$data[] = $pathComponent;
 
 	list ($ret, $searchResults) = $gallery->search($query, $data);
