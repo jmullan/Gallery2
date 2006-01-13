@@ -26,7 +26,7 @@
  * within Gallery.  The two options supported are for whether the file extension
  * should be used in the title and if the captions should be set automatically.
  *
- * @version $Id$
+ * @version $Revision$ $Date$
  * @package PublishXp
  * @author Timothy Webb <tiwebb@cisco.com>
  */
@@ -67,9 +67,8 @@ class OptionsController extends GalleryController {
  * within Gallery.  The two options supported are for whether the file extension
  * should be used in the title and if the captions should be set automatically.
  *
- * @version $Id$
  * @package PublishXp
- * @author Timothy Webb <tiwebb@cisco.com>
+ * @subpackage UserInterface
  */
 class OptionsView extends GalleryView {
     /**

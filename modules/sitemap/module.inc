@@ -22,7 +22,7 @@
 /**
  * Module that creates a Google Sitemap for your Gallery2 install.
  *
- * @version $Id$
+ * @version $Revision$ $Date$
  * @package Sitemap
  * @author Bharat Mediratta <bharat@menalto.com>
  */

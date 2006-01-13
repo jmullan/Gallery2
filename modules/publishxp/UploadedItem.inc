@@ -27,7 +27,7 @@
  * the photos.  Subsequent requests from Windows include the photo data and text.
  * This page processes the data and applies the options to be used while uploading.
  *
- * @version $Id$
+ * @version $Revision$ $Date$
  * @package PublishXp
  * @author Timothy Webb <tiwebb@cisco.com>
  */

@@ -25,7 +25,7 @@
  * Allows the user to log in to Gallery to begin the process of uploading
  * photos through Windows XP's publishing mechanism.
  *
- * @version $Id$
+ * @version $Revision$ $Date$
  * @package PublishXp
  * @author Timothy Webb <tiwebb@cisco.com>
  */
@@ -85,9 +85,8 @@ class LoginController extends GalleryController {
  * Allows the user to log in to Gallery to begin the process of uploading
  * photos through Windows XP's publishing mechanism.
  *
- * @version $Id$
  * @package PublishXp
- * @author Timothy Webb <tiwebb@cisco.com>
+ * @subpackage UserInterface
  */
 class LoginView extends GalleryView {
     /**

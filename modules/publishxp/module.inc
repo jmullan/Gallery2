@@ -27,7 +27,7 @@
  * has to download a registry file and install it.  Once installed, the user can use
  * the Publish option.
  *
- * @version $Id$
+ * @version $Revision$ $Date$
  * @package PublishXp
  * @author Timothy Webb <tiwebb@cisco.com>
  */

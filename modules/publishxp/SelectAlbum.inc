@@ -26,7 +26,7 @@
  * Also lets the user select a parent album and go to the new album page should the
  * user wish to first create a new album.
  *
- * @version $Id$
+ * @version $Revision$ $Date$
  * @package PublishXp
  * @author Timothy Webb <tiwebb@cisco.com>
  */
@@ -79,9 +79,8 @@ class SelectAlbumController extends GalleryController {
  * Also lets the user select a parent album and go to the new album page should the
  * user wish to first create a new album.
  *
- * @version $Id$
  * @package PublishXp
- * @author Timothy Webb <tiwebb@cisco.com>
+ * @subpackage UserInterface
  */
 class SelectAlbumView extends GalleryView {
     /**
