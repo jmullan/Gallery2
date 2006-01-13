@@ -47,10 +47,6 @@ class GalleryUserHelper_simple {
     function assertHasItemPermission($itemId, $permission) {
 	global $gallery;
 
-	if (GalleryDataCache::hasPermission($itemId, $permission)) {
-	    return null;
-	}
-
 	list ($ret, $hasPermission) =
 	    GalleryUserHelper_simple::hasItemPermission($itemId, $permission);
 	if ($ret) {
@@ -113,7 +109,7 @@ class GalleryUserHelper_simple {
 	  [GalleryAccessSubscriberMap::accessListId] IN (%s)
 	', $aclMarkers);
 
-	$data = array($itemId);
+	$data = array((int)$itemId);
 	$data = array_merge($data, $aclIds);
 
 	list($ret, $searchResults) =
