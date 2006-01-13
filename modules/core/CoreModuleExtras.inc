@@ -1656,9 +1656,12 @@ $gallery->setConfig(\'baseUri\', \'\');';
 
 	case '1.0.14':
 	case '1.0.15':
-	    /* Normalize the config path 'data.gallery.base' (add a traling slash if necessary) */
+	    /*
+	     * Normalize the config path 'data.gallery.base' (add a traling slash if necessary)
+	     * Escape the backslashes and quotes two times since we feed preg_replace with this it
+	     */
 	    $tmp = strtr($gallery->getConfig('data.gallery.base'),
-			 array('\\' => '\\\\', "'" => "\\'"));
+			 array('\\' => '\\\\\\\\', "'" => "\\\\'"));
 	    $edit['regexp'] = '{\$gallery->setConfig\(\'data\.gallery\.base\',.*?;}s';
 	    $edit['replacement'] = '$gallery->setConfig(\'data.gallery.base\', \'' . $tmp . '\');';
 	    $configChanges[] = array('remove' => array(), 'add' => array(), 'edit' => array($edit));
