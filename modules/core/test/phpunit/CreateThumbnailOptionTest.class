@@ -52,7 +52,8 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 	/* Register a dummy toolkit */
 	$path = 'modules/core/test/phpunit/CreateThumbnailOptionTest.class';
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-	    'GalleryToolkit', 'CreateThumbnailOptionTestToolkit', 'CreateThumbnailOptionTestToolkit',
+	    'GalleryToolkit', 'CreateThumbnailOptionTestToolkit',
+	    'CreateThumbnailOptionTestToolkit',
 	    $path, 'coreTest', null);
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

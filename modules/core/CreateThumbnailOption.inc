@@ -73,7 +73,8 @@ class CreateThumbnailOption extends ItemAddOption {
 	    $itemId = $item->getId();
 	    if (!empty($thumbTable[$itemId])) {
 		$thumbnail = $thumbTable[$item->getId()];
-		list ($ret) = GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($thumbnail->getId());
+		list ($ret) =
+		    GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($thumbnail->getId());
 		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}

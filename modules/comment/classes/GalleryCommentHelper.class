@@ -131,7 +131,8 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	    break;
 
 	default:
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+			 null, null);
 	}
 
 	list ($ret, $sequence) = GalleryCoreApi::fetchParentSequence($itemId);

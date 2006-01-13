@@ -145,7 +145,8 @@ class CustomFieldInterfaceTest extends GalleryTestCase {
 	}
 	$this->assertEquals(array(), $duplicates, 'Add album');
 
-	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'customfield', $this->_album->getId());
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'customfield',
+									$this->_album->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

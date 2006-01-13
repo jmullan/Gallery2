@@ -47,7 +47,9 @@ class PanoramaOptionTest extends ItemEditOptionTestCase {
     function setUp() {
 	parent::setUp();
 
-	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId(), 'image/test', array(), __FILE__, 'GalleryPhotoItem');
+	list ($ret, $item) =
+	    $this->_createRandomDataItem($this->_getRootId(), 'image/test',
+					 array(), __FILE__, 'GalleryPhotoItem');
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

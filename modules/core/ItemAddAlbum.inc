@@ -72,7 +72,8 @@ class ItemAddAlbumController extends GalleryController {
 	    if (empty($error)) {
 		list ($ret, $instance) =
 		    GalleryCoreApi::createAlbum($itemId, $form['pathComponent'], $form['title'],
-		    				$form['summary'], $form['description'], $form['keywords']);
+		    				$form['summary'], $form['description'],
+						$form['keywords']);
 		if ($ret) {
 		    if ($ret->getErrorCode() & ERROR_COLLISION) {
 			$error[] = 'form[error][pathComponent][collision]';

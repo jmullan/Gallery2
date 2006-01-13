@@ -42,8 +42,8 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 
 	parent::setUp();
 
-	list ($ret, $this->_parentAlbum) = $this->_createRandomAlbum($this->_getRootId(),
-								     array('orderBy' => 'orderWeight'));
+	list ($ret, $this->_parentAlbum) =
+	    $this->_createRandomAlbum($this->_getRootId(), array('orderBy' => 'orderWeight'));
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -59,7 +59,8 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 	}
 
 	for ($i = 0; $i < 5; $i++) {
-	    list ($ret, $this->_child[$i]) = $this->_createRandomDataItem($this->_parentAlbum->getId());
+	    list ($ret, $this->_child[$i]) =
+		$this->_createRandomDataItem($this->_parentAlbum->getId());
 	    if ($ret) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

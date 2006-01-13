@@ -443,7 +443,8 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	list ($ret, $siteAdminGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
+	list ($ret, $siteAdminGroupId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -518,10 +519,12 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	/* Verify the new owner of the item */
-	$this->assert($item->getOwnerId() == $newOwner->getId(), 'The new owner of the item is wrong.');
+	$this->assert($item->getOwnerId() == $newOwner->getId(),
+		      'The new owner of the item is wrong.');
 	/* Verify the permissions were transfered correctly */
 	list($ret, $userPermissions) =
-			GalleryCoreApi::fetchPermissionsForItems(array($item->getId()), $newOwner->getId());
+			GalleryCoreApi::fetchPermissionsForItems(array($item->getId()),
+								 $newOwner->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

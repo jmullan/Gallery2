@@ -95,6 +95,11 @@ class CodeAuditTest extends CodeAuditTestCase {
 		),
 	    );
 
+	$this->_exception['longLineCount'] = array(
+	    'modules/core/test/phpunit/Php41IllegalFunctions.inc' => 1,
+	    'modules/gd/test/phpunit/GdFunctionMatrix.inc' => 1
+	    );
+
 	$this->_longLineCount = 0;
 	$this->_errorCount = 0;
 
@@ -237,11 +242,14 @@ class CodeAuditTest extends CodeAuditTestCase {
 	    }
 
 	    /* Check for lines wider than 100 characters */
-	    /* Do a simple tab->8spaces conversion.. good enough for this check */
-	    $line = str_replace("\t", '        ', $lines[$i]);
-	    if (strlen($line) > 100) {
-		$this->_longLineCount++;
-		$longLineCount++;
+	    if (!isset($this->_exception['longLineCount'][$fileName])) {
+		/* Do a simple tab->8spaces conversion.. good enough for this check */
+		$line = str_replace("\t", '        ', $lines[$i]);
+		if (strlen($line) > 100) {
+		    $this->_longLineFiles[$fileName] = $i;
+		    $this->_longLineCount++;
+		    $longLineCount++;
+		}
 	    }
 	}
 
@@ -393,14 +401,14 @@ class CodeAuditTest extends CodeAuditTestCase {
 
 	/* Check result of longLineCount */
 	if (!$this->_shouldHalt) {
-	    if ($this->_longLineCount > 982) {
+	    if ($this->_longLineCount > 0) {
 		$this->assert(false, 'Found too many lines longer than 100 characters (' .
 			      $this->_longLineCount . ')');
-	    }
-	    if ($this->_longLineCount < 900) {
-		$this->assert(false, 'Yay!  We are down to ' . $this->_longLineCount .
-			      ' lines longer than 100 characters; update the failure' .
-			      ' thresholds in this unit test.');
+		if (!empty($this->_longLineFiles)) {
+		    foreach ($this->_longLineFiles as $fileName => $lineNr) {
+			print "File: $fileName , line number: $lineNr<br>\n";
+		    }
+		}
 	    }
 	}
     }

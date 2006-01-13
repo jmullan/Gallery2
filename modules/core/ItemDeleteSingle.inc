@@ -47,7 +47,8 @@ class ItemDeleteSingleController extends GalleryController {
 	$error = array();
 	if (isset($form['action']['delete'])) {
 	    /* Get the root album id, so we don't try to delete it */
-	    list ($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	    list ($ret, $rootId) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -74,7 +75,8 @@ class ItemDeleteSingleController extends GalleryController {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    list ($ret, $success) = GalleryCoreApi::guaranteeAlbumHasThumbnail($item->getParentId());
+	    list ($ret, $success) =
+		GalleryCoreApi::guaranteeAlbumHasThumbnail($item->getParentId());
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -163,7 +165,7 @@ class ItemDeleteSingleView extends GalleryView {
 	$itemTypeNames = $item->itemTypeName(true);
 
 	return array(null, $core->translate(array('text' => 'delete %s',
-								      'arg1' => $itemTypeNames[1])));
+						  'arg1' => $itemTypeNames[1])));
     }
 }
 ?>

@@ -204,7 +204,8 @@ class ImageUploadHelper {
 	    list($ret, $parentId) =
 		GalleryCoreApi::getPluginParameter('module', 'nokiaupload', 'id.uploadAlbum');
 	    if ($ret) {
-		$gallery->debug("ERROR: Couldn't get id.uploadAlbum parameter.\n" . $ret->getAsText());
+		$gallery->debug("ERROR: Couldn't get id.uploadAlbum parameter.\n" .
+				$ret->getAsText());
 		return $status;
 	    }
 	}
@@ -273,7 +274,8 @@ class ImageUploadHelper {
 						 'core.all',
 						 false);
 	if ($ret) {
-	    $gallery->debug('ERROR: GalleryCoreApi::addUserPermission failed, but album was created.');
+	    $gallery->debug(
+		'ERROR: GalleryCoreApi::addUserPermission failed, but album was created.');
 	}
 
 	/* We don't allow other (mobile) users to add anything to our personal album.
@@ -366,7 +368,8 @@ class ImageUploadHelper {
 							     'core.all',
 							     false);
 		    if ($ret) {
-			$gallery->debug('ERROR: CoreApi::addUserPermission failed, but item was added.');
+			$gallery->debug(
+			    'ERROR: CoreApi::addUserPermission failed, but item was added.');
 		    }
 
 		    GalleryCoreApi::releaseLocks($lockId);
@@ -410,7 +413,8 @@ class ImageUploadHelper {
 	/* Load albums and get their names. */
 	list($ret, $albums) = GalleryCoreApi::loadEntitiesById($albumIds);
 	if ($ret) {
-	    $gallery->debug("ERROR: GalleryCoreApi::loadEntitiesById failed.\n" . $ret->getAsText());
+	    $gallery->debug(
+		"ERROR: GalleryCoreApi::loadEntitiesById failed.\n" . $ret->getAsText());
 	    return $status;
 	}
 	foreach ($albums as $album) {

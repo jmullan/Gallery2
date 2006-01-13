@@ -489,7 +489,8 @@ class AlbumTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = $derivative->create($subAlbum->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'test/file');
+	$ret = $derivative->create($subAlbum->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+				   'test/file');
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

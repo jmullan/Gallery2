@@ -167,9 +167,11 @@ class ItemMoveController extends GalleryController {
 
 			if (GalleryUtilities::isA($selectedItem, 'GalleryDataItem')) {
 			    /* Update for derivative preferences of new parent */
-			    $ret = GalleryCoreApi::addExistingItemToAlbum($selectedItem, $newParentId);
+			    $ret =
+				GalleryCoreApi::addExistingItemToAlbum($selectedItem, $newParentId);
 			    if ($ret) {
-				GalleryCoreApi::releaseLocks(array_merge($lockIds, $currentLockIds));
+				GalleryCoreApi::releaseLocks(
+				    array_merge($lockIds, $currentLockIds));
 				return array($ret->wrap(__FILE__, __LINE__), null);
 			    }
 			}
@@ -332,7 +334,8 @@ class ItemMoveView extends GalleryView {
 		} else {
 		    $peerTypes['data'][$peerItem->getId()] = 1;
 		}
-		$peers[$peerItem->getId()]['selected'] = isset($form['selectedIds'][$peerItem->getId()]);
+		$peers[$peerItem->getId()]['selected'] =
+		    isset($form['selectedIds'][$peerItem->getId()]);
 
 		/* While we're at it, attach the thumbnails */
 		if (isset($thumbnails[$peerItem->getId()])) {
@@ -356,7 +359,8 @@ class ItemMoveView extends GalleryView {
 	    }
 
 	    /* Get all possible destinations (where user has write permission) */
-	    list ($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	    list ($ret, $rootId) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

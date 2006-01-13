@@ -73,7 +73,8 @@ class MembersItemsView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list($ret, $form['list']['count']) = GalleryMembersHelper::fetchUserItemCount($user->getId());
+	list($ret, $form['list']['count']) =
+	    GalleryMembersHelper::fetchUserItemCount($user->getId());
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

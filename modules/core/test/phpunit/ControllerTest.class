@@ -40,8 +40,10 @@ class ControllerTest extends GalleryTestCase {
 
     function setUp() {
 	parent::setUp();
-	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryPluginHelper_medium.class');
-	GalleryPluginHelper_medium::setPluginInstance('module', 'controllertest', new ControllerTestModule());
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryPluginHelper_medium.class');
+	GalleryPluginHelper_medium::setPluginInstance('module', 'controllertest',
+						      new ControllerTestModule());
     }
 
     function testLoadControllerSuccess() {

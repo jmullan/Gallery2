@@ -114,7 +114,8 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
     function testEditRequiredOnly() {
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[fullName]', 'full name');
-	GalleryUtilities::putRequestVariable('form[email]', '  email_with-leading@space.test-o.com');
+	GalleryUtilities::putRequestVariable('form[email]',
+					     '  email_with-leading@space.test-o.com');
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.UserAdmin',

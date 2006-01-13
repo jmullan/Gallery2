@@ -88,7 +88,8 @@ class UserAlbumSiteAdminControllerTest extends GalleryControllerTestCase {
 			    $results);
 
 	/* Verify the information in the DB */
-	list ($ret, $verifyParams) = GalleryCoreApi::fetchAllPluginParameters('module', 'useralbum');
+	list ($ret, $verifyParams) =
+	    GalleryCoreApi::fetchAllPluginParameters('module', 'useralbum');
 	foreach ($verifyParams as $key => $value) {
 	    if ($key[0] == '_') {
 		unset($verifyParams[$key]);

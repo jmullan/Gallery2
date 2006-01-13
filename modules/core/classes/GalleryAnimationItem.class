@@ -223,9 +223,12 @@ class GalleryAnimationItem extends GalleryDataItem {
 			document.write(\'        width="%s"\');
 			document.write(\'        height="%s"\');
 			document.write(\'        autoplay="true"\');
-			document.write(\'        pluginspage="http://www.apple.com/quicktime/download/"\');
-			document.write(\'        codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=5,0,30,0"\');
-			document.write(\'        classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000">\');
+			document.write(\'        ' .
+			       'pluginspage="http://www.apple.com/quicktime/download/"\');
+			document.write(\'        codebase="http://download.macromedia.com' .
+			       '/pub/shockwave/cabs/flash/swflash.cab#version=5,0,30,0"\');
+			document.write(\'        ' .
+			       'classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000">\');
 			document.write(\'  <param name="movie" value="%s" />\');
 			document.write(\'  <param name="quality" value="high" />\');
 			document.write(\'  <param name="salign" value="TL" />\');
@@ -274,12 +277,17 @@ class GalleryAnimationItem extends GalleryDataItem {
 			document.write(\'        width="%s"\');
 			document.write(\'        height="%s"\');
 			document.write(\'        autoplay="true"\');
-			document.write(\'        pluginspage="http://www.apple.com/quicktime/download/"\');
-			document.write(\'        codebase="http://download.macromedia.com/pub/shockwave/cabs/director/sw.cab#version=8,0,0,0"\');
-			document.write(\'        classid="clsid:166B1BCA-3F9C-11CF-8075-444553540000">\');
+			document.write(\'        ' .
+			       'pluginspage="http://www.apple.com/quicktime/download/"\');
+			document.write(\'        codebase="http://download.macromedia.com' .
+			       '/pub/shockwave/cabs/director/sw.cab#version=8,0,0,0"\');
+			document.write(\'        ' .
+			       'classid="clsid:166B1BCA-3F9C-11CF-8075-444553540000">\');
 
 			document.write(\'  <param name="src" value="%s" />\');
-			document.write(\'  <param name="swRemote" value="swTarget=false swVolume=false swRestart=false swPausePlay=false swFastForward=false swContextMenu=true swSend=false" />\');
+			document.write(\'  <param name="swRemote" value="swTarget=false ' .
+			       'swVolume=false swRestart=false swPausePlay=false ' .
+			       'swFastForward=false swContextMenu=true swSend=false" />\');
 			document.write(\'  <param name="sw3" value="2" />\');
 			document.write(\'  <param name="swStretchStyle" value="none" />\');
 			document.write(\'  <param name="bgColor" value="#000000" />\');

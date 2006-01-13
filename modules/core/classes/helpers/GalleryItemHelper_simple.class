@@ -144,7 +144,8 @@ class GalleryItemHelper_simple {
 
 	    while ($result = $searchResults->nextResult()) {
 		$counts[$result[0]] = $result[1];
-		GalleryDataCache::put("GalleryItemHelper::fetchChildCounts($result[0])", $result[1]);
+		GalleryDataCache::put("GalleryItemHelper::fetchChildCounts($result[0])",
+				      $result[1]);
 	    }
 	}
 

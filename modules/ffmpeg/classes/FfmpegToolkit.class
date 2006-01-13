@@ -61,7 +61,8 @@ class FfmpegToolkit extends GalleryToolkit {
 	    break;
 
 	case 'dimensions-and-duration':
-	    list ($ret, $width, $height, $duration) = $this->_getMovieDimensions($mimeType, $sourceFilename);
+	    list ($ret, $width, $height, $duration) =
+		$this->_getMovieDimensions($mimeType, $sourceFilename);
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__),
 			     null);
@@ -141,8 +142,9 @@ class FfmpegToolkit extends GalleryToolkit {
 	list ($ret, $results, $stderr) = $this->_ffmpeg($sourceFilename, array('-vstats'));
 
 	/*
-	 * Ffmpeg 0.4.6 demands an output file and we're not providing one, so we'll always get a toolkit
-	 * failure here.  :-/  Ignore it for now, but fail if we don't get the output we want.
+	 * Ffmpeg 0.4.6 demands an output file and we're not providing one, so we'll always
+	 * get a toolkit failure here.  :-/  Ignore it for now, but fail if we don't get
+	 * the output we want.
 	 */
 	if ($ret && !($ret->getErrorCode() & ERROR_TOOLKIT_FAILURE)) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null, null);

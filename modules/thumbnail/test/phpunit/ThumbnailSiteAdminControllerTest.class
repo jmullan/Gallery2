@@ -78,7 +78,8 @@ class ThumbnailSiteAdminControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	if (!isset($toolkit)) {
-	    echo "<b>Warning</b>: testThumbnailSiteAdminControllerAddBadMime requires an active graphics toolkit.. test skipped.<br/>";
+	    echo "<b>Warning</b>: testThumbnailSiteAdminControllerAddBadMime requires an active " .
+		"graphics toolkit.. test skipped.<br/>";
 	    return;
 	}
 

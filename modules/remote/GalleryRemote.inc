@@ -270,13 +270,15 @@ class GalleryRemoteController extends GalleryController {
 
 	if ($prune) {
 	    /* find and load the list of albums we can add items to */
-	    list ($ret, $albumIds1) = GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.addDataItem');
+	    list ($ret, $albumIds1) =
+		GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.addDataItem');
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    /* find and load the list of albums we can add albums to */
-	    list ($ret, $albumIds2) = GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.addAlbumItem');
+	    list ($ret, $albumIds2) =
+		GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.addAlbumItem');
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -305,7 +307,8 @@ class GalleryRemoteController extends GalleryController {
 
 	if ($prune) {
 	    /* Recursively load parents */
-	    list ($ret, $albums, $albumIds) = $this->loadParentsToRoot($rootId, $albumIds, $albums, $albums);
+	    list ($ret, $albums, $albumIds) =
+		$this->loadParentsToRoot($rootId, $albumIds, $albums, $albums);
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

@@ -167,7 +167,8 @@ class GalleryUserGroupHelper_medium {
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	if ($group->getGroupType() != GROUP_ALL_USERS && $group->getGroupType() != GROUP_EVERYBODY) {
+	if ($group->getGroupType() != GROUP_ALL_USERS &&
+	        $group->getGroupType() != GROUP_EVERYBODY) {
 	    list ($ret, $userData) = GalleryCoreApi::fetchUsersForGroup($groupId);
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);

@@ -82,7 +82,8 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
 
-	$this->assert($this->_testModule->wasCalled('installOrUpgrade'), 'installOrUpgrade not called');
+	$this->assert($this->_testModule->wasCalled('installOrUpgrade'),
+		      'installOrUpgrade not called');
     }
 
     /**
@@ -125,7 +126,8 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
 						      'subView' => 'core.AdminModules'),
-				  'status' => array('deactivated' => 'AdminModules Controller Test'),
+				  'status' =>
+				  array('deactivated' => 'AdminModules Controller Test'),
 				  'error' => array()),
 			    $results);
 	$this->assert($this->_testModule->wasCalled('deactivate'), 'deactivate not called');
@@ -153,10 +155,12 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
 	$this->_testModule->_isActive = true;
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
-						      'subView' => 'core.AdminModulesVerifyUninstall',
-						      'moduleId' => 'AdminModulesControllerTest'),
-				  'status' => array('uninstalled' => 'AdminModules Controller Test'),
+	$this->assertEquals(array('redirect' =>
+				  array('view' => 'core.SiteAdmin',
+					'subView' => 'core.AdminModulesVerifyUninstall',
+					'moduleId' => 'AdminModulesControllerTest'),
+				  'status' =>
+				  array('uninstalled' => 'AdminModules Controller Test'),
 				  'error' => array()),
 			    $results);
     }

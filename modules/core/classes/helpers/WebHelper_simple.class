@@ -389,7 +389,8 @@ class WebHelper_simple {
 			       "%s\r\n",
 			       $post,
 			       $components['host'],
-			       empty($extraHeaderLines) ? '' : join("\r\n", $extraHeaderLines) . "\r\n",
+			       empty($extraHeaderLines) ? '' :
+			       join("\r\n", $extraHeaderLines) . "\r\n",
 			       strlen($postDataRaw),
 			       $postDataRaw);
 	$platform->fwrite($fd, $postRequest);

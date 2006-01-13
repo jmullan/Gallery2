@@ -54,7 +54,8 @@ class NewItemsSortOrder extends GallerySortInterface_1_1 {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
-	list ($ret, $newTime) = GalleryCoreApi::getPluginParameter('module', 'newitems', 'days.new');
+	list ($ret, $newTime) =
+	    GalleryCoreApi::getPluginParameter('module', 'newitems', 'days.new');
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null, null, null);
 	}

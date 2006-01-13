@@ -75,7 +75,8 @@ class RatingSiteAdminView extends GalleryView {
 	if ($form['formName'] != 'RatingSiteAdmin') {
 	    $form['formName'] = 'RatingSiteAdmin';
 	}
-	list ($ret, $form['allowAlbumRating']) = GalleryCoreApi::getPluginParameter('module', 'rating',
+	list ($ret, $form['allowAlbumRating']) =
+	    GalleryCoreApi::getPluginParameter('module', 'rating',
 		'allowAlbumRating');
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);

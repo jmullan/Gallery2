@@ -523,7 +523,8 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				  1056015077,                            // album creation
 				  1056015077,                            // clicks counted since
 				  21,                                    // count of clicks
-				  array(array(                           // thumb and resized sizing preferences
+				  array(array(                           // thumb and resized
+					                                 // sizing preferences
 					      'order' => 0,
 					      'derivativeType' => 1,
 					      'derivativeOperations' => 'thumbnail|150'
@@ -545,7 +546,8 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				  $testAlbum->getcreationTimestamp(),    // album creation
 				  $testAlbum->getviewedSinceTimestamp(), // clicks counted since
 				  $viewCount,                            // count of clicks
-				  $derivativePreferences,                // thumb and resized sizing preferences
+				  $derivativePreferences,                // thumb and resized
+				                                         // sizing preferences
 				  $rows,                                 // rows
 				  $cols                                  // cols
 
@@ -1861,7 +1863,8 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(
 	  '[url=http://www.topozone.com/map.asp?z=11&n=4163644&e=275692&s=25&size=m&u=1]Topo[/url]',
 	  ConfirmImportController::convertHtmlToBbcode(
-	    '<a href="http://www.topozone.com/map.asp?z=11&n=4163644&e=275692&s=25&size=m&u=1">Topo</a>'));
+	    '<a href="http://www.topozone.com/map.asp?z=11&n=4163644&e=275692&s=25&size=m&u=1">' .
+	    'Topo</a>'));
 
 
        /* Mixed HTML */

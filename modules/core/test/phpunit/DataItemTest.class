@@ -204,7 +204,8 @@ class DataItemTest extends GalleryTestCase {
 				   'valid_path.txt', true);
 	if ($ret) {
 	    /* On not supported platforms, this should return an ERROR_UNSUPPORTED_OPERATION */
-	    if ($canSymlink || (!$canSymlink && !($ret->getErrorCode() & ERROR_UNSUPPORTED_OPERATION))) {
+	    if ($canSymlink || (!$canSymlink &&
+				!($ret->getErrorCode() & ERROR_UNSUPPORTED_OPERATION))) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $ret = GalleryCoreApi::releaseLocks($lockId);

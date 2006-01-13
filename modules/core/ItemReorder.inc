@@ -76,14 +76,16 @@ class ItemReorderController extends GalleryController {
 	    if (empty($error)) {
 		$selectedId = $form['selectedId'];
 		$targetId = $form['targetId'];
-		list ($ret, $entities) = GalleryCoreApi::loadEntitiesById(array($selectedId, $targetId));
+		list ($ret, $entities) =
+		    GalleryCoreApi::loadEntitiesById(array($selectedId, $targetId));
 		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		if ($entities[0]->getParentId() != $itemId ||
 		    $entities[1]->getParentId() != $itemId) {
-		    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
+		    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__),
+				 null);
 		}
 	    }
 
@@ -125,7 +127,8 @@ class ItemReorderController extends GalleryController {
 			/*
 			 * If we have to rebalance more than once then something went wrong!
 			 */
-			return array(GalleryCoreApi::error(ERROR_UNKNOWN, __FILE__, __LINE__), null);
+			return array(GalleryCoreApi::error(ERROR_UNKNOWN, __FILE__, __LINE__),
+				     null);
 		    }
 
 		    /* A delta of 0 means that we don't have room, so rebalance */
@@ -235,7 +238,8 @@ class ItemReorderView extends GalleryView {
 		} else {
 		    $peerTypes['data'][$peerItem->getId()] = 1;
 		}
-		$peers[$peerItem->getId()]['selected'] = isset($form['selectedIds'][$peerItem->getId()]);
+		$peers[$peerItem->getId()]['selected'] =
+		    isset($form['selectedIds'][$peerItem->getId()]);
 	    }
 	    $ItemReorder['peers'] = $peers;
 	    $ItemReorder['peerTypes'] = $peerTypes;

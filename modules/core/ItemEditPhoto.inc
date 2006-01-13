@@ -111,7 +111,8 @@ class ItemEditPhoto extends ItemEditPlugin {
 
 			if (!isset($derivative)) {
 			    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT,
-							      __FILE__, __LINE__), null, null, null);
+							      __FILE__, __LINE__),
+					 null, null, null);
 			}
 
 			$ret = $derivative->create($item->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE);

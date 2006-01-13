@@ -284,8 +284,9 @@ class AdminRepositoryController extends GalleryController {
 			}
 
 			/* Update plugin package map. */
-			list ($ret, $version, $build) =	$repository->getPackageVersionAndBuild(
-			    $pluginType, $pluginId, $packageName);
+			list ($ret, $version, $build) =
+			    $repository->getPackageVersionAndBuild($pluginType, $pluginId,
+								   $packageName);
 			if ($ret) {
 			    $templateAdapter->errorProgressBar($ret);
 			    return $ret->wrap(__FILE__, __LINE__);

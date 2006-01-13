@@ -172,7 +172,8 @@ class SwitchDetailModeControllerTest extends GalleryControllerTestCase {
 		$this->assertEquals($mode, $data['mode'],
 				    "mode $mode was not set correctly in the template");
 	    }
-	    $this->assertEquals($expDataSet, isset($data['exifData']), "data not set for mode $mode");
+	    $this->assertEquals($expDataSet, isset($data['exifData']),
+				"data not set for mode $mode");
 	    if (isset($data['exifData'])) {
 		$this->assertEquals($exifData, $data['exifData'], "data for mode $mode");
 	    }

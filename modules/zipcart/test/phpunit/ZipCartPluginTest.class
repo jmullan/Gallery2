@@ -112,8 +112,9 @@ class ZipCartPluginTest extends GalleryTestCase {
 	}
 
 	/* Data item with core.viewSource */
-	list ($ret, $this->_items[3]) = $this->_addItem($this->_album->getId(), 'GalleryUnknownItem',
-					'test/data', 'core.viewSource');
+	list ($ret, $this->_items[3]) =
+	    $this->_addItem($this->_album->getId(), 'GalleryUnknownItem',
+			    'test/data', 'core.viewSource');
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -138,7 +139,8 @@ class ZipCartPluginTest extends GalleryTestCase {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if (isset($permission)) {
-	    $ret = GalleryCoreApi::addGroupPermission($item->getId(), $this->_everybodyId, $permission);
+	    $ret = GalleryCoreApi::addGroupPermission($item->getId(),
+						      $this->_everybodyId, $permission);
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

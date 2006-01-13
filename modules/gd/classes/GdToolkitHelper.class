@@ -74,7 +74,8 @@ class GdToolkitHelper {
 		      'image/x-xbitmap', 'image/x-xpixmap'), $mimeTypes);
 	    if (!empty($convertToJpegMimeTypes)) {
 		$operations['convert-to-image/jpeg']['params'] = array();
-		$operations['convert-to-image/jpeg']['description'] = $gallery->i18n('Convert to a JPEG');
+		$operations['convert-to-image/jpeg']['description'] =
+		    $gallery->i18n('Convert to a JPEG');
 		$operations['convert-to-image/jpeg']['mimeTypes'] = $mimeTypes;
 		$operations['convert-to-image/jpeg']['outputMimeType'] = 'image/jpeg';
 	    }
@@ -82,34 +83,42 @@ class GdToolkitHelper {
 
 	if (GdToolkitHelper::isOperationSupported('scale', $gd)) {
 	    /* Scale */
-	    $operations['scale']['params'][] = array('type' => 'int',
-						     'description' => $gallery->i18n('target width'));
-	    $operations['scale']['params'][] = array('type' => 'int',
-	      'description' => $gallery->i18n('(optional) target height, defaults to same as width'));
+	    $operations['scale']['params'][] =
+		array('type' => 'int',
+		      'description' => $gallery->i18n('target width'));
+	    $operations['scale']['params'][] =
+		array('type' => 'int',
+		      'description' =>
+		      $gallery->i18n('(optional) target height, defaults to same as width'));
 	    $operations['scale']['description'] = $gallery->i18n(
 		'Scale the image to the target size, maintain aspect ratio');
 	    $operations['scale']['mimeTypes'] = $mimeTypes;
 	}
 
-	if (GdToolkitHelper::isOperationSupported('thumbnail', $gd) && isset($operations['scale'])) {
+	if (GdToolkitHelper::isOperationSupported('thumbnail', $gd) &&
+	        isset($operations['scale'])) {
 	    /* Thumbnail is an alias for scale */
 	    $operations['thumbnail'] = $operations['scale'];
 	}
 
 	if (GdToolkitHelper::isOperationSupported('resize', $gd)) {
 	    /* Resize */
-	    $operations['resize']['params'][] = array('type' => 'int',
-						      'description' => $gallery->i18n('target width'));
-	    $operations['resize']['params'][] = array('type' => 'int',
-						      'description' => $gallery->i18n('target height'));
-	    $operations['resize']['description'] = $gallery->i18n('Resize the image to the target dimensions');
+	    $operations['resize']['params'][] =
+		array('type' => 'int',
+		      'description' => $gallery->i18n('target width'));
+	    $operations['resize']['params'][] =
+		array('type' => 'int',
+		      'description' => $gallery->i18n('target height'));
+	    $operations['resize']['description'] =
+		$gallery->i18n('Resize the image to the target dimensions');
 	    $operations['resize']['mimeTypes'] = $mimeTypes;
 	}
 
 	if (GdToolkitHelper::isOperationSupported('rotate', $gd)) {
 	    /* Rotate */
-	    $operations['rotate']['params'][] = array('type' => 'int',
-						      'description' => $gallery->i18n('rotation degrees'));
+	    $operations['rotate']['params'][] =
+		array('type' => 'int',
+		      'description' => $gallery->i18n('rotation degrees'));
 	    $operations['rotate']['description'] = $gallery->i18n('Rotate the image');
 	    $operations['rotate']['mimeTypes'] = $mimeTypes;
 	}
@@ -130,21 +139,29 @@ class GdToolkitHelper {
 
 	if (GdToolkitHelper::isOperationSupported('composite', $gd)) {
 	    /* Composite */
-	    $operations['composite']['params'][] = array('type' => 'string',
-							 'description' => $gallery->i18n('overlay path'));
-	    $operations['composite']['params'][] = array('type' => 'string',
-							 'description' => $gallery->i18n('overlay mime type'));
-	    $operations['composite']['params'][] = array('type' => 'int',
-							 'description' => $gallery->i18n('overlay width'));
-	    $operations['composite']['params'][] = array('type' => 'int',
-							 'description' => $gallery->i18n('overlay height'));
-	    $operations['composite']['params'][] = array('type' => 'string',
-							 'description' => $gallery->i18n('alignment type'));
-	    $operations['composite']['params'][] = array('type' => 'int',
-							 'description' => $gallery->i18n('alignment x %'));
-	    $operations['composite']['params'][] = array('type' => 'int',
-							 'description' => $gallery->i18n('alignment y %'));
-	    $operations['composite']['description'] = $gallery->i18n('Overlay source image with a second one');
+	    $operations['composite']['params'][] =
+		array('type' => 'string',
+		      'description' => $gallery->i18n('overlay path'));
+	    $operations['composite']['params'][] =
+		array('type' => 'string',
+		      'description' => $gallery->i18n('overlay mime type'));
+	    $operations['composite']['params'][] =
+		array('type' => 'int',
+		      'description' => $gallery->i18n('overlay width'));
+	    $operations['composite']['params'][] =
+		array('type' => 'int',
+		      'description' => $gallery->i18n('overlay height'));
+	    $operations['composite']['params'][] =
+		array('type' => 'string',
+		      'description' => $gallery->i18n('alignment type'));
+	    $operations['composite']['params'][] =
+		array('type' => 'int',
+		      'description' => $gallery->i18n('alignment x %'));
+	    $operations['composite']['params'][] =
+		array('type' => 'int',
+		      'description' => $gallery->i18n('alignment y %'));
+	    $operations['composite']['description'] =
+		$gallery->i18n('Overlay source image with a second one');
 	    $operations['composite']['mimeTypes'] = $mimeTypes;
 	}
 
@@ -164,7 +181,8 @@ class GdToolkitHelper {
 
 	/* Dimensions */
 	$properties['dimensions']['type'] = 'int,int';
-	$properties['dimensions']['description'] = $gallery->i18n('Get the width and height of the image');
+	$properties['dimensions']['description'] =
+	    $gallery->i18n('Get the width and height of the image');
 	$properties['dimensions']['mimeTypes'] = $mimeTypes;
 
 	return array(null, array('operations' => $operations,

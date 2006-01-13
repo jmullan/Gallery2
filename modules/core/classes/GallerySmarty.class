@@ -105,7 +105,8 @@ class GallerySmarty extends Smarty {
 	    $this->_firstGalleryStatus = GalleryCoreApi::error(ERROR_BAD_PARAMETER,
 							      $this->_firstFileLine[0],
 							      $this->_firstFileLine[1],
-							      sprintf('Smarty error: %s', $error_msg, $error_type));
+							      sprintf('Smarty error: %s',
+								      $error_msg, $error_type));
 	}
     }
 

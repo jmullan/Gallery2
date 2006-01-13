@@ -100,7 +100,8 @@ class GdToolkit extends GalleryToolkit {
 	if (! isset($this->_hasImageCreateTrueColor)) {
 	    $gd =& $this->_getGdFunctionality();
 	    /* Remember the info for later calls */
-	    list ($ret, $this->_hasImageCreateTrueColor) = GdToolkitHelper::hasImageCreateTrueColor($gd);
+	    list ($ret, $this->_hasImageCreateTrueColor) =
+		GdToolkitHelper::hasImageCreateTrueColor($gd);
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -652,13 +653,16 @@ class GdToolkit extends GalleryToolkit {
      * @return object GalleryStatus
      * @access private
      */
-    function _imageCopyResampled($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH) {
+    function _imageCopyResampled($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY,
+				 $dstW, $dstH, $srcW, $srcH) {
 	$gd =& $this->_getGdFunctionality();
 	if ($gd->functionExists('imageCopyResampled')) {
-	    $ret = $gd->imageCopyResampled($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH);
+	    $ret = $gd->imageCopyResampled($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY,
+					   $dstW, $dstH, $srcW, $srcH);
 	} else {
 	    /* Fallback */
-	    $ret = $gd->imageCopyResized($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH);
+	    $ret = $gd->imageCopyResized($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY,
+					 $dstW, $dstH, $srcW, $srcH);
 	}
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);

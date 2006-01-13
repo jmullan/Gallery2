@@ -108,7 +108,8 @@ class NewItemsSiteAdminView extends GalleryView {
 	if ($form['formName'] != 'NewItemsSiteAdmin') {
 	    $form['formName'] = 'NewItemsSiteAdmin';
 	    foreach (array('days.new', 'days.updated') as $key) {
-		list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'newitems', $key);
+		list ($ret, $value) =
+		    GalleryCoreApi::getPluginParameter('module', 'newitems', $key);
 		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -120,7 +121,8 @@ class NewItemsSiteAdminView extends GalleryView {
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	list ($ret, $default) = GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderBy');
+	list ($ret, $default) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderBy');
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

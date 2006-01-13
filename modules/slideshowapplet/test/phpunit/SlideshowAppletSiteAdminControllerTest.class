@@ -49,7 +49,8 @@ class SlideshowAppletSiteAdminControllerTest extends GalleryControllerTestCase {
     }
 
     function testSlideshowAppletSiteAdminControllerAddReplaceDefault() {
-	list ($ret, $orig) = GalleryCoreApi::getPluginParameter('module', 'slideshowapplet', 'slideshowdefaultVariables');
+	list ($ret, $orig) = GalleryCoreApi::getPluginParameter('module', 'slideshowapplet',
+								'slideshowdefaultVariables');
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -67,7 +68,8 @@ class SlideshowAppletSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	$target = empty($orig)?'name=value':$orig.'|name=value';
 	foreach (array('slideshowdefaultVariables' => $target) as $key => $expectedValue) {
-	    list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'slideshowapplet', $key);
+	    list ($ret, $value) =
+		GalleryCoreApi::getPluginParameter('module', 'slideshowapplet', $key);
 	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -85,7 +87,8 @@ class SlideshowAppletSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	$target = empty($orig)?'name=value1':$orig.'|name=value1';
 	foreach (array('slideshowdefaultVariables' => $target) as $key => $expectedValue) {
-	    list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'slideshowapplet', $key);
+	    list ($ret, $value) =
+		GalleryCoreApi::getPluginParameter('module', 'slideshowapplet', $key);
 	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -94,7 +97,8 @@ class SlideshowAppletSiteAdminControllerTest extends GalleryControllerTestCase {
     }
 
     function testSlideshowAppletSiteAdminControllerAddOverride() {
-	list ($ret, $orig) = GalleryCoreApi::getPluginParameter('module', 'slideshowapplet', 'slideshowoverrideVariables');
+	list ($ret, $orig) = GalleryCoreApi::getPluginParameter('module', 'slideshowapplet',
+								'slideshowoverrideVariables');
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -112,7 +116,8 @@ class SlideshowAppletSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	$target = empty($orig)?'name=value':$orig.'|name=value';
 	foreach (array('slideshowoverrideVariables' => $target) as $key => $expectedValue) {
-	    list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'slideshowapplet', $key);
+	    list ($ret, $value) =
+		GalleryCoreApi::getPluginParameter('module', 'slideshowapplet', $key);
 	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -121,7 +126,8 @@ class SlideshowAppletSiteAdminControllerTest extends GalleryControllerTestCase {
     }
 
     function testSlideshowAppletSiteAdminControllerDelete() {
-	list ($ret, $orig) = GalleryCoreApi::getPluginParameter('module', 'slideshowapplet', 'slideshowdefaultVariables');
+	list ($ret, $orig) = GalleryCoreApi::getPluginParameter('module', 'slideshowapplet',
+								'slideshowdefaultVariables');
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -139,7 +145,8 @@ class SlideshowAppletSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	$target = empty($orig)?'name=value':$orig.'|name=value';
 	foreach (array('slideshowdefaultVariables' => $target) as $key => $expectedValue) {
-	    list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'slideshowapplet', $key);
+	    list ($ret, $value) =
+		GalleryCoreApi::getPluginParameter('module', 'slideshowapplet', $key);
 	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -160,7 +167,8 @@ class SlideshowAppletSiteAdminControllerTest extends GalleryControllerTestCase {
 	    $results);
 
 	foreach (array('slideshowdefaultVariables' => $orig) as $key => $expectedValue) {
-	    list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'slideshowapplet', $key);
+	    list ($ret, $value) =
+		GalleryCoreApi::getPluginParameter('module', 'slideshowapplet', $key);
 	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }

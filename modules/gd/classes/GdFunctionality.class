@@ -462,7 +462,8 @@ class GdFunctionality {
 	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
 					__FILE__, __LINE__);
 	}
-	$result = @imageCopyResampled($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH);
+	$result = @imageCopyResampled($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY,
+				      $dstW, $dstH, $srcW, $srcH);
 	if ($result) {
 	    return null;
 	} else {
@@ -478,8 +479,10 @@ class GdFunctionality {
      *
      * @return object GalleryStatus
      */
-    function imageCopyResized($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH) {
-	$result = @imageCopyResized($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH);
+    function imageCopyResized($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY,
+			      $dstW, $dstH, $srcW, $srcH) {
+	$result = @imageCopyResized($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY,
+				    $dstW, $dstH, $srcW, $srcH);
 	if ($result) {
 	    return null;
 	} else {

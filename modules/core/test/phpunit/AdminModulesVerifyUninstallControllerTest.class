@@ -51,14 +51,16 @@ class AdminModulesVerifyUninstallControllerTest extends GalleryControllerTestCas
 
     /* Uninstall a module that is inactive (should succeed) */
     function testUninstall() {
-	GalleryUtilities::putRequestVariable('moduleId', 'AdminModulesVerifyUninstallControllerTest');
+	GalleryUtilities::putRequestVariable('moduleId',
+					     'AdminModulesVerifyUninstallControllerTest');
 	GalleryUtilities::putRequestVariable('form[action][uninstall]', '1');
 	$this->_testModule->_isActive = false;
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
 						      'subView' => 'core.AdminModules'),
-				  'status' => array('uninstalled' => 'AdminModulesVerifyUninstall Controller Test'),
+				  'status' => array('uninstalled' =>
+						    'AdminModulesVerifyUninstall Controller Test'),
 				  'error' => array()),
 			    $results);
 	$this->assert($this->_testModule->wasCalled('uninstall'), 'uninstall not called');
@@ -66,7 +68,8 @@ class AdminModulesVerifyUninstallControllerTest extends GalleryControllerTestCas
 
     /* Uninstall a module that is active (should fail silently) */
     function testUninstallActiveModule() {
-	GalleryUtilities::putRequestVariable('moduleId', 'AdminModulesVerifyUninstallControllerTest');
+	GalleryUtilities::putRequestVariable('moduleId',
+					     'AdminModulesVerifyUninstallControllerTest');
 	GalleryUtilities::putRequestVariable('form[action][uninstall]', '1');
 	$this->_testModule->_isActive = true;
 

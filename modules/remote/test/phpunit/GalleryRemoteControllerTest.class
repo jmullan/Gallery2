@@ -361,7 +361,8 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[set_albumName]', $this->_rootAlbum->getId());
 	GalleryUtilities::putRequestVariable('form[caption]', 'this is a caption');
 	GalleryUtilities::putRequestVariable('form[extrafield.Summary]', 'this is a summary');
-	GalleryUtilities::putRequestVariable('form[extrafield.Description]', 'this is a description');
+	GalleryUtilities::putRequestVariable('form[extrafield.Description]',
+					     'this is a description');
 	GalleryUtilities::putRequestVariable('form[caption]', 'this is a caption');
 
 	$this->_controller->setOptionInstances(

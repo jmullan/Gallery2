@@ -78,7 +78,8 @@ class UserWatermarksController extends GalleryController {
 	    }
 
 	    /* Give appropriate permissions */
-	    list ($ret, $id) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
+	    list ($ret, $id) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

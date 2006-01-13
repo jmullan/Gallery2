@@ -136,9 +136,11 @@ class RepositoryTest extends GalleryTestCase {
 		'downloadableLanguages' => array(
 		    'codes' => array('pt_BR'),
 		    'names' => array('pt_BR'))),
-	    'expectedPackages' => array('module' => array('testModule' => array(
-		'lang-en_US' => 1, 'lang-en_GB' => 1)),	'theme' => array('testTheme' => array(
-		'lang-en_US' => 1)))));
+	    'expectedPackages' => array('module' => array(
+					    'testModule' => array(
+						'lang-en_US' => 1, 'lang-en_GB' => 1)),
+					'theme' => array(
+					    'testTheme' => array('lang-en_US' => 1)))));
 
 	foreach ($testcases as $case) {
 	    $utilities = new RepositoryTestUtilities($case['installedPackages']);
@@ -387,7 +389,7 @@ class RepositoryTest extends GalleryTestCase {
 	uasort($testCase, array('GalleryRepository', 'comparePluginListEntries'));
 	$this->assertEquals(array('plugin3Id' => array('groupLabel' => 'bar', 'name' => 'moo'),
 				  'plugin2Id' => array('groupLabel' => 'bar', 'name' => 'zoo'),
-				  'plugin1Id' => array('groupLabel' => 'foo', 'name' => 'bar')),	
+				  'plugin1Id' => array('groupLabel' => 'foo', 'name' => 'bar')),
 			    $testCase, 'List not sorted properly.');
     }
 

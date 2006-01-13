@@ -36,7 +36,8 @@ $gdEnvironments[] = array(
 		'image/png',
 		'image/vnd.wap.wbmp',
 	),
-	'phpinfo(8)' => '&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.01 Transitional//EN&quot;&gt;
+	'phpinfo(8)' =>
+	'&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.01 Transitional//EN&quot;&gt;
 &lt;html&gt;
 &lt;h2 align=&quot;center&quot;&gt;&lt;a name=&quot;module_yp&quot;&gt;yp&lt;/a&gt;&lt;/h2&gt;
 &lt;table border=&quot;0&quot; cellpadding=&quot;3&quot; cellspacing=&quot;1&quot; width=&quot;600&quot; bgcolor=&quot;#000000&quot; align=&quot;center&quot;&gt;
@@ -474,7 +475,8 @@ $gdEnvironments[] = array(
 		'image/png',
 		'image/vnd.wap.wbmp',
 	),
-	'phpinfo(8)' => '&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional//EN&quot; &quot;DTD/xhtml1-transitional.dtd&quot;&gt;
+	'phpinfo(8)' =>
+	'&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional//EN&quot; &quot;DTD/xhtml1-transitional.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;
 &lt;style type=&quot;text/css&quot;&gt;&lt;!--
 body {background-color: #ffffff; color: #000000;}

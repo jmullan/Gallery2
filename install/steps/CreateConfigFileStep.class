@@ -38,7 +38,11 @@ class CreateConfigFileStep extends InstallStep {
 	$configFilePath = $configDir . '/config.php';
 	if (file_exists($configFilePath) && !is_writeable($configFilePath)) {
 	    /* The file exists but we can't write to it */
-	    $templateData['error'] = sprintf(_('Unable to write to the <b>config.php</b> configuration file in your <tt>%s</tt> directory.  Please change its permissions.  If you\'re on Unix you can do <i>chmod 666 config.php</i> to fix this.'), basename($configDir));
+	    $templateData['error'] = sprintf(
+		_('Unable to write to the <b>config.php</b> configuration file in your %s ' .
+			  'directory.  Please change its permissions.  If you\'re on' .
+			  'Unix you can do <i>chmod 666 config.php</i> to fix this.'),
+			'<tt>' . basename($configDir) . '</tt>');
 	    $this->setInError(true);
 	    $templateData['bodyFile'] = 'CreateConfigFileInstructions.html';
 	    $templateData['galleryDir'] = basename($configDir);
@@ -82,7 +86,9 @@ class CreateConfigFileStep extends InstallStep {
 			    $configDir);
 		    } else {
 			$templateData['error'] = sprintf(
-			    _('The config.php file exists but is not writeable.  If your server is Windows, you may have to disable file sharing for config.php and set its permissions manually.'),
+			    _('The config.php file exists but is not writeable.  If your server ' .
+			      'is Windows, you may have to disable file sharing for config.php ' .
+			      'and set its permissions manually.'),
 			    $configDir);
 		    }
 		}

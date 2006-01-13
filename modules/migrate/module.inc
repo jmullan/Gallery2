@@ -59,7 +59,8 @@ class MigrateModule extends GalleryModule /* and GalleryEventListener */ {
     function handleEvent($event) {
 	$item = $event->getEntity();
 	if (GalleryUtilities::isA($item, 'GalleryItem')) {
-	    $ret = GalleryCoreApi::removeMapEntry('G1MigrateMap', array('itemId' => $item->getId()));
+	    $ret = GalleryCoreApi::removeMapEntry('G1MigrateMap',
+						  array('itemId' => $item->getId()));
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -93,7 +94,11 @@ class MigrateModule extends GalleryModule /* and GalleryEventListener */ {
 						      'help' => $this->translate('G1 path'))),
 		  'queryString' => array('controller' => 'migrate.Redirect'),
 		  'locked' => 1,
-		  'help' => $this->translate(array('text' => 'G1 URL redirect. Use only if G2 is installed where G1 used to be and you have run a G1 import with the URL redirect option selected. Otherwise follow instructions in %sMigrate Site Admin%s.', 'arg1' => '<a href="' . $url . '">', 'arg2' => '</a>'))
+		  'help' =>$this->translate(
+		      array('text' => 'G1 URL redirect. Use only if G2 is installed where G1 used' .
+			    ' to be and you have run a G1 import with the URL redirect option ' .
+			    'selected. Otherwise follow instructions in %sMigrate Site Admin%s.',
+			    'arg1' => '<a href="' . $url . '">', 'arg2' => '</a>'))
 	    )
 	);
     }

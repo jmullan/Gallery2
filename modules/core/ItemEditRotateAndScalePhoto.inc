@@ -246,8 +246,8 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 		    }
 
 		    if (!isset($preferred)) {
-			return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
-				     null, null, null);
+			return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT,
+							   __FILE__, __LINE__), null, null, null);
 		    }
 
 		    $ret = $preferred->create($item->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED);

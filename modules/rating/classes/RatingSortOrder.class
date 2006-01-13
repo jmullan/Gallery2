@@ -53,7 +53,8 @@ class RatingSortOrder extends GallerySortInterface_1_1 {
     function getSortOrder($direction) {
 	return array(null, '[RatingCacheMap::averageRating] ' . $direction, 
 		'[RatingCacheMap::averageRating]', null,
-		'[GalleryChildEntity] LEFT JOIN [RatingCacheMap] ON [GalleryChildEntity::id] = [RatingCacheMap::itemId]');
+		'[GalleryChildEntity] LEFT JOIN [RatingCacheMap] ON ' .
+		     '[GalleryChildEntity::id] = [RatingCacheMap::itemId]');
     }
 }
 ?>

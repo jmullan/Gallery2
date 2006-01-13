@@ -47,8 +47,9 @@ class SitemapView extends GalleryView {
      */
     function renderImmediate($status, $error) {
 
- 	list ($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
- 	if ($ret) {
+ 	list ($ret, $rootId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	if ($ret) {
  	    return $ret->wrap(__FILE__, __LINE__);
  	}
 

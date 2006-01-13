@@ -192,7 +192,8 @@ class GalleryCoreApi {
      */
     function loadPlugin($pluginType, $pluginId, $ignoreVersionMismatch=false,
 			$errorOnVersionMismatch=false) {
-	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryPluginHelper_simple.class');
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryPluginHelper_simple.class');
 	return GalleryPluginHelper_simple::loadPlugin(
 	    $pluginType, $pluginId, $ignoreVersionMismatch, $errorOnVersionMismatch);
     }
@@ -205,7 +206,8 @@ class GalleryCoreApi {
      * @static
      */
     function isPluginCompatibleWithApis($plugin) {
-	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryPluginHelper_simple.class');
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryPluginHelper_simple.class');
 	return GalleryPluginHelper_simple::isPluginCompatibleWithApis($plugin);
     }
 
@@ -221,7 +223,8 @@ class GalleryCoreApi {
      * @static
      */
     function getPluginParameter($pluginType, $pluginId, $parameterName, $itemId=0) {
-	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryPluginHelper_simple.class');
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryPluginHelper_simple.class');
 	return GalleryPluginHelper_simple::getParameter($pluginType, $pluginId,
 							$parameterName, $itemId);
     }
@@ -237,7 +240,8 @@ class GalleryCoreApi {
      * @static
      */
     function fetchAllPluginParameters($pluginType, $pluginId, $itemId=0) {
-	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryPluginHelper_simple.class');
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryPluginHelper_simple.class');
 	return GalleryPluginHelper_simple::fetchAllParameters($pluginType, $pluginId, $itemId);
     }
 
@@ -249,7 +253,8 @@ class GalleryCoreApi {
      * @static
      */
     function removePluginParametersForItemId($itemId) {
-	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryPluginHelper_medium.class');
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryPluginHelper_medium.class');
 	return GalleryPluginHelper_medium::removeParametersForItemId($itemId);
     }
 
@@ -264,7 +269,8 @@ class GalleryCoreApi {
      * @static
      */
     function removePluginParameterByValue($pluginType, $pluginId, $parameterName, $parameterValue) {
-	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryPluginHelper_medium.class');
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryPluginHelper_medium.class');
 	return GalleryPluginHelper_medium::removeParameterByValue($pluginType, $pluginId,
 								  $parameterName, $parameterValue);
     }
@@ -281,7 +287,8 @@ class GalleryCoreApi {
      * @static
      */
     function fetchPluginStatus($pluginType, $ignoreCache=false) {
-	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryPluginHelper_simple.class');
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryPluginHelper_simple.class');
 	return GalleryPluginHelper_simple::fetchPluginStatus($pluginType, $ignoreCache);
     }
 
@@ -294,7 +301,8 @@ class GalleryCoreApi {
      * @static
      */
     function fetchPluginList($pluginType) {
-	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryPluginHelper_simple.class');
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryPluginHelper_simple.class');
 	return GalleryPluginHelper_simple::fetchPluginList($pluginType);
     }
 
@@ -308,7 +316,8 @@ class GalleryCoreApi {
      * @static
      */
     function activatePlugin($pluginType, $pluginId) {
-	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryPluginHelper_medium.class');
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryPluginHelper_medium.class');
 	return GalleryPluginHelper_medium::activate($pluginType, $pluginId);
     }
 
@@ -322,7 +331,8 @@ class GalleryCoreApi {
      * @static
      */
     function deactivatePlugin($pluginType, $pluginId) {
-	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryPluginHelper_medium.class');
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryPluginHelper_medium.class');
 	return GalleryPluginHelper_medium::deactivate($pluginType, $pluginId);
     }
 
@@ -335,7 +345,8 @@ class GalleryCoreApi {
      * @static
      */
     function removePlugin($pluginType, $pluginId) {
-	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryPluginHelper_medium.class');
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryPluginHelper_medium.class');
 	return GalleryPluginHelper_medium::removePlugin($pluginType, $pluginId);
     }
 
@@ -348,7 +359,8 @@ class GalleryCoreApi {
      * @static
      */
     function getAllPluginIds($pluginType) {
-	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryPluginHelper_medium.class');
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryPluginHelper_medium.class');
 	return GalleryPluginHelper_medium::getAllPluginIds($pluginType);
     }
 
@@ -363,7 +375,8 @@ class GalleryCoreApi {
      * @static
      */
     function removePluginParameter($pluginType, $pluginId, $parameterName, $itemId=0) {
-	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryPluginHelper_medium.class');
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryPluginHelper_medium.class');
 	return GalleryPluginHelper_medium::removeParameter($pluginType, $pluginId,
 							   $parameterName, $itemId);
     }
@@ -377,7 +390,8 @@ class GalleryCoreApi {
      * @static
      */
     function removeAllPluginParameters($pluginType, $pluginId) {
-	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryPluginHelper_medium.class');
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryPluginHelper_medium.class');
 	return GalleryPluginHelper_medium::removeAllParameters($pluginType, $pluginId);
     }
 
@@ -394,7 +408,8 @@ class GalleryCoreApi {
      */
     function setPluginParameter($pluginType, $pluginId, $parameterName,
 				$parameterValue, $itemId=0) {
-	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryPluginHelper_medium.class');
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryPluginHelper_medium.class');
 	return GalleryPluginHelper_medium::setParameter($pluginType, $pluginId,
 							$parameterName, $parameterValue, $itemId);
     }
@@ -406,7 +421,8 @@ class GalleryCoreApi {
      * @static
      */
     function getThemeList() {
-	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryPluginHelper_medium.class');
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryPluginHelper_medium.class');
 	return GalleryPluginHelper_medium::getThemeList();
     }
 
@@ -1218,7 +1234,8 @@ class GalleryCoreApi {
      * @static
      */
     function updateModificationTimestamp($entityId) {
-	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryEntityHelper_medium.class');
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryEntityHelper_medium.class');
 	return GalleryEntityHelper_medium::updateModificationTimestamp($entityId);
     }
 
@@ -1483,7 +1500,8 @@ class GalleryCoreApi {
      * @static
      */
     function fetchItemizedDescendentCounts($itemIds) {
-	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryItemHelper_advanced.class');
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryItemHelper_advanced.class');
 	return GalleryItemHelper_advanced::fetchItemizedDescendentCounts($itemIds);
     }
 
@@ -1602,7 +1620,8 @@ class GalleryCoreApi {
      * @static
      */
     function createAlbum($parentAlbumId, $name, $title, $summary, $description, $keywords) {
-	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryItemHelper_advanced.class');
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryItemHelper_advanced.class');
 	return GalleryItemHelper_advanced::createAlbum($parentAlbumId, $name, $title, $summary,
 						       $description, $keywords);
     }
@@ -1682,7 +1701,8 @@ class GalleryCoreApi {
      * @static
      */
     function guaranteeAlbumHasThumbnail($itemId) {
-	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryItemHelper_advanced.class');
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryItemHelper_advanced.class');
 	return GalleryItemHelper_advanced::guaranteeAlbumHasThumbnail($itemId);
     }
 
@@ -1697,7 +1717,8 @@ class GalleryCoreApi {
      *               array (albumId => array(albumId => array, ..), ..)
      */
     function fetchAlbumTree($itemId=null, $depth=null, $userId=null) {
-	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryItemHelper_advanced.class');
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryItemHelper_advanced.class');
 	return GalleryItemHelper_advanced::fetchAlbumTree($itemId, $depth, $userId);
     }
 
@@ -1710,7 +1731,8 @@ class GalleryCoreApi {
      * @static
      */
     function remapOwnerId($oldUserId, $newUserId) {
-	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryItemHelper_advanced.class');
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryItemHelper_advanced.class');
 	return GalleryItemHelper_advanced::remapOwnerId($oldUserId, $newUserId);
     }
 
@@ -2340,7 +2362,8 @@ class GalleryCoreApi {
      * @static
      */
     function loadEntitiesById($ids) {
-	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryEntityHelper_simple.class');
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryEntityHelper_simple.class');
 	return GalleryEntityHelper_simple::loadEntitiesById($ids);
     }
 
@@ -2352,7 +2375,8 @@ class GalleryCoreApi {
      * @static
      */
     function deleteEntityById($id) {
-	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryEntityHelper_medium.class');
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryEntityHelper_medium.class');
 	return GalleryEntityHelper_medium::deleteEntityById($id);
     }
 
@@ -2365,7 +2389,8 @@ class GalleryCoreApi {
      * @static
      */
     function fetchEntitiesLinkedTo($targetId) {
-	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryEntityHelper_medium.class');
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryEntityHelper_medium.class');
 	return GalleryEntityHelper_medium::fetchEntitiesLinkedTo($targetId);
     }
 
@@ -2379,7 +2404,8 @@ class GalleryCoreApi {
      * @static
      */
     function loadEntityByExternalId($externalId, $entityType) {
-	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryEntityHelper_simple.class');
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryEntityHelper_simple.class');
 	return GalleryEntityHelper_simple::loadEntityByExternalId($externalId, $entityType);
     }
 
@@ -2390,7 +2416,8 @@ class GalleryCoreApi {
      * @return object GalleryStatus a status code
      */
     function removeOnLoadHandlers($handlerIds) {
-	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryEntityHelper_medium.class');
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryEntityHelper_medium.class');
 	return GalleryEntityHelper_medium::removeOnLoadHandlers($handlerIds);
     }
 
@@ -2448,7 +2475,8 @@ class GalleryCoreApi {
      *               array integer ids
      * @static
      */
-    function fetchDescendentAlbumItemIds($item, $offset=null, $count=null, $permission='core.view') {
+    function fetchDescendentAlbumItemIds($item, $offset=null, $count=null,
+					 $permission='core.view') {
 	GalleryCoreApi::requireOnce(
 	    'modules/core/classes/helpers/GalleryChildEntityHelper_simple.class');
 	return GalleryChildEntityHelper_simple::fetchDescendentAlbumItemIds($item, $offset,
@@ -2947,7 +2975,8 @@ class GalleryCoreApi {
      * @param int id of a GalleryEntity
      */
     function deleteFastDownloadFileById($entityId) {
-	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryEntityHelper_medium.class');
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryEntityHelper_medium.class');
 	return GalleryEntityHelper_medium::deleteFastDownloadFileById($entityId);
     }
 
@@ -2962,7 +2991,8 @@ class GalleryCoreApi {
      * @return object GalleryStatus a status code
      */
     function createFastDownloadFile($entity, $runEvenInUnitTest=false) {
-	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryEntityHelper_medium.class');
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryEntityHelper_medium.class');
 	return GalleryEntityHelper_medium::createFastDownloadFile($entity, $runEvenInUnitTest);
     }
 }

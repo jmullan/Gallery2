@@ -244,7 +244,8 @@ class SizeLimitHelperTestToolkit extends GalleryToolkit {
 	    break;
 
 	default:
-	    return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
+	    return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
+			 null, null);
 	}
 	GalleryUtilities::putRequestVariable('operation', $operationName);
 

@@ -271,7 +271,8 @@ class AdminModulesView extends GalleryView {
 
 			if ($needsConfig) {
 			    $configView = $module->getConfigurationView();
-			    $entry['action'][] = array('text' => $coreModule->translate('configure'),
+			    $entry['action'][] = array('text' =>
+						       $coreModule->translate('configure'),
 						       'view' => $configView);
 			} else {
 			    $entry['action'][] = array('text' => $coreModule->translate('activate'),

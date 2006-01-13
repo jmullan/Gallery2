@@ -315,7 +315,8 @@ class GalleryUrlGenerator {
 
 	/* Check if the cookie path is configured */
 	if (GalleryUtilities::isEmbedded()) {
-	    list ($ret, $path) = GalleryCoreApi::getPluginParameter('module', 'core', 'cookie.path');
+	    list ($ret, $path) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'cookie.path');
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

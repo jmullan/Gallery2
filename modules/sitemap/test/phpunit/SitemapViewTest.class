@@ -91,14 +91,18 @@ class SitemapViewTest extends GalleryTestCase {
 		   'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' .
 		   'xsi:schemaLocation="http://www.google.com/schemas/sitemap/0.84 ' .
 		   'http://www.google.com/schemas/sitemap/0.84/sitemap.xsd">'),
-		  sprintf('<url><loc>url:%d</loc><lastmod>2009-02-13T23:31:30+00:00</lastmod></url>',
-			  $this->_root->getId()),
-		  sprintf('<url><loc>url:%d</loc><lastmod>2009-02-13T23:31:30+00:00</lastmod></url>',
-			  $this->_item[0]->getId()),
-		  sprintf('<url><loc>url:%d</loc><lastmod>2009-02-13T23:31:30+00:00</lastmod></url>',
-			  $this->_item[1]->getId()),
-		  sprintf('<url><loc>url:%d</loc><lastmod>2009-02-13T23:31:30+00:00</lastmod></url>',
-			  $this->_item[2]->getId()),
+		  sprintf(
+		      '<url><loc>url:%d</loc><lastmod>2009-02-13T23:31:30+00:00</lastmod></url>',
+		      $this->_root->getId()),
+		  sprintf(
+		      '<url><loc>url:%d</loc><lastmod>2009-02-13T23:31:30+00:00</lastmod></url>',
+		      $this->_item[0]->getId()),
+		  sprintf(
+		      '<url><loc>url:%d</loc><lastmod>2009-02-13T23:31:30+00:00</lastmod></url>',
+		      $this->_item[1]->getId()),
+		  sprintf(
+		      '<url><loc>url:%d</loc><lastmod>2009-02-13T23:31:30+00:00</lastmod></url>',
+		      $this->_item[2]->getId()),
 		  '</urlset>'),
 	    split("\n", $results));
     }

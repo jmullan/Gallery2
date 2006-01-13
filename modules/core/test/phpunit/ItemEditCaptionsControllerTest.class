@@ -66,7 +66,8 @@ class ItemEditCaptionsControllerTest extends GalleryControllerTestCase {
 	    GalleryUtilities::putRequestVariable("form[items][$id][title]", "title $id");
 	    GalleryUtilities::putRequestVariable("form[items][$id][summary]", "summary $id");
 	    GalleryUtilities::putRequestVariable("form[items][$id][keywords]", "keywords $id");
-	    GalleryUtilities::putRequestVariable("form[items][$id][description]", "description $id");
+	    GalleryUtilities::putRequestVariable("form[items][$id][description]",
+						 "description $id");
 	    GalleryUtilities::putRequestVariable("form[items][$id][serialNumber]",
 						 $item->getSerialNumber());
 	}
@@ -111,24 +112,27 @@ class ItemEditCaptionsControllerTest extends GalleryControllerTestCase {
 	    GalleryUtilities::putRequestVariable("form[items][$id][title]", "title $id");
 	    GalleryUtilities::putRequestVariable("form[items][$id][summary]", "summary $id");
 	    GalleryUtilities::putRequestVariable("form[items][$id][keywords]", "keywords $id");
-	    GalleryUtilities::putRequestVariable("form[items][$id][description]", "description $id");
-	    GalleryUtilities::putRequestVariable("form[items][$id][serialNumber]", $item->getSerialNumber());
+	    GalleryUtilities::putRequestVariable("form[items][$id][description]",
+						 "description $id");
+	    GalleryUtilities::putRequestVariable("form[items][$id][serialNumber]",
+						 $item->getSerialNumber());
 	}
 	GalleryUtilities::putRequestVariable('form[action][save][next]', 1);
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core.ItemAdmin',
-						      'subView' => 'core.ItemEditCaptions',
-						      'itemId' => $this->_album->getId(),
-						      'page' => 3),
-				  'status' => array('successCount' => 3,
-						    'errorCount' => 0,
-						    $this->_items[0]->getId() => array('saved' => 1),
-						    $this->_items[1]->getId() => array('saved' => 1),
-						    $this->_items[2]->getId() => array('saved' => 1)),
-				  'error' => array()),
-			    $results);
+	$this->assertEquals(
+	    array('redirect' => array('view' => 'core.ItemAdmin',
+				      'subView' => 'core.ItemEditCaptions',
+				      'itemId' => $this->_album->getId(),
+				      'page' => 3),
+		  'status' => array('successCount' => 3,
+				    'errorCount' => 0,
+				    $this->_items[0]->getId() => array('saved' => 1),
+				    $this->_items[1]->getId() => array('saved' => 1),
+				    $this->_items[2]->getId() => array('saved' => 1)),
+		  'error' => array()),
+	    $results);
 
 	/* Verify that the changes happened */
 	foreach ($this->_items as $item) {
@@ -153,24 +157,27 @@ class ItemEditCaptionsControllerTest extends GalleryControllerTestCase {
 	    GalleryUtilities::putRequestVariable("form[items][$id][title]", "title $id");
 	    GalleryUtilities::putRequestVariable("form[items][$id][summary]", "summary $id");
 	    GalleryUtilities::putRequestVariable("form[items][$id][keywords]", "keywords $id");
-	    GalleryUtilities::putRequestVariable("form[items][$id][description]", "description $id");
-	    GalleryUtilities::putRequestVariable("form[items][$id][serialNumber]", $item->getSerialNumber());
+	    GalleryUtilities::putRequestVariable("form[items][$id][description]",
+						 "description $id");
+	    GalleryUtilities::putRequestVariable("form[items][$id][serialNumber]",
+						 $item->getSerialNumber());
 	}
 	GalleryUtilities::putRequestVariable('form[action][save][previous]', 1);
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core.ItemAdmin',
-						      'subView' => 'core.ItemEditCaptions',
-						      'itemId' => $this->_album->getId(),
-						      'page' => 1),
-				  'status' => array('successCount' => 3,
-						    'errorCount' => 0,
-						    $this->_items[0]->getId() => array('saved' => 1),
-						    $this->_items[1]->getId() => array('saved' => 1),
-						    $this->_items[2]->getId() => array('saved' => 1)),
-				  'error' => array()),
-			    $results);
+	$this->assertEquals(
+	    array('redirect' => array('view' => 'core.ItemAdmin',
+				      'subView' => 'core.ItemEditCaptions',
+				      'itemId' => $this->_album->getId(),
+				      'page' => 1),
+		  'status' => array('successCount' => 3,
+				    'errorCount' => 0,
+				    $this->_items[0]->getId() => array('saved' => 1),
+				    $this->_items[1]->getId() => array('saved' => 1),
+				    $this->_items[2]->getId() => array('saved' => 1)),
+		  'error' => array()),
+	    $results);
 
 	/* Verify that the changes happened */
 	foreach ($this->_items as $item) {
@@ -223,8 +230,10 @@ class ItemEditCaptionsControllerTest extends GalleryControllerTestCase {
 	    GalleryUtilities::putRequestVariable("form[items][$id][title]", "title $id");
 	    GalleryUtilities::putRequestVariable("form[items][$id][summary]", "summary $id");
 	    GalleryUtilities::putRequestVariable("form[items][$id][keywords]", "keywords $id");
-	    GalleryUtilities::putRequestVariable("form[items][$id][description]", "description $id");
-	    GalleryUtilities::putRequestVariable("form[items][$id][serialNumber]", $item->getSerialNumber());
+	    GalleryUtilities::putRequestVariable("form[items][$id][description]",
+						 "description $id");
+	    GalleryUtilities::putRequestVariable("form[items][$id][serialNumber]",
+						 $item->getSerialNumber());
 	}
 	GalleryUtilities::putRequestVariable('form[action][save][done]', 1);
 
@@ -235,21 +244,23 @@ class ItemEditCaptionsControllerTest extends GalleryControllerTestCase {
 	}
 
 	/* Screw up one serial number */
-	GalleryUtilities::putRequestVariable("form[items][" . $this->_items[2]->getId() . "][serialNumber]", 99);
+	GalleryUtilities::putRequestVariable("form[items][" .
+					     $this->_items[2]->getId() . "][serialNumber]", 99);
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core.ItemAdmin',
-						      'subView' => 'core.ItemEditCaptions',
-						      'itemId' => $this->_album->getId(),
-						      'page' => 2),
-				  'status' => array('successCount' => 1,
-						    'errorCount' => 2,
-						    $this->_items[0]->getId() => array('permissionDenied' => 1),
-						    $this->_items[1]->getId() => array('saved' => 1),
-						    $this->_items[2]->getId() => array('obsolete' => 1)),
-				  'error' => array()),
-			    $results);
+	$this->assertEquals(
+	    array('redirect' => array('view' => 'core.ItemAdmin',
+				      'subView' => 'core.ItemEditCaptions',
+				      'itemId' => $this->_album->getId(),
+				      'page' => 2),
+		  'status' => array('successCount' => 1,
+				    'errorCount' => 2,
+				    $this->_items[0]->getId() => array('permissionDenied' => 1),
+				    $this->_items[1]->getId() => array('saved' => 1),
+				    $this->_items[2]->getId() => array('obsolete' => 1)),
+		  'error' => array()),
+	    $results);
 
 	/* Verify that the appropriate changes happened */
 	for ($i = 0; $i < count($this->_items); $i++) {

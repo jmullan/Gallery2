@@ -582,7 +582,8 @@ class GalleryDerivativeHelper_advanced {
 	    }
 
 	    /* Repeat the process on the next set of derivatives */
-	    $ret = GalleryDerivativeHelper_advanced::expireDerivativeTreeBySourceIds($derivativeIds);
+	    $ret =
+		GalleryDerivativeHelper_advanced::expireDerivativeTreeBySourceIds($derivativeIds);
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

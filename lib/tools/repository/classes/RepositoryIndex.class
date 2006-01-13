@@ -102,9 +102,10 @@ class RepositoryIndex extends RepositoryObject {
 
 		    /* Unserialize it. */
 		    if (false === ($descriptor = unserialize($descriptorContents))) {
-			return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
+			return
+			    array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
 					"Error unserializing descriptor [$descriptorContents]"),
-				     null);
+				  null);
 		    }
 		    $currentPluginId = $descriptor['header']['id'];
 		    $indexPluginData = isset($index[$pluginType][$currentPluginId])

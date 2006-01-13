@@ -69,10 +69,11 @@ class PanoramaPhotoItem extends GalleryPhotoItem {
 	    $baseUrl = GalleryUtilities::convertPathToUrl(dirname(dirname(__FILE__)));
 
 	    return sprintf(
-		'<applet archive="%s/java/Metamorphose.jar" code="Metamorphose" width="%d" height="%d">' .
-		'<param name=BackgroundColor value="#666666"><param name=PanoramaRect value="0,0,%d,%d">' .
-		'<param name=ScrollerRect value="0,%d,%d,17"><param name=ScrollerThumb value="%s/images/slider.png">' .
-		'<param name="PanoramaTile" value="%s"><param name=PanoramaSize value="%d,%d"></applet>',
+		'<applet archive="%s/java/Metamorphose.jar" code="Metamorphose" width="%d" ' .
+		'height="%d"><param name=BackgroundColor value="#666666"><param name=PanoramaRect' .
+		'value="0,0,%d,%d"><param name=ScrollerRect value="0,%d,%d,17"><param name=' .
+		'ScrollerThumb value="%s/images/slider.png"><param name="PanoramaTile" ' .
+		'value="%s"><param name=PanoramaSize value="%d,%d"></applet>',
 			   $baseUrl,
 			   $viewWidth, $height + 17,
 			   $viewWidth, $height,

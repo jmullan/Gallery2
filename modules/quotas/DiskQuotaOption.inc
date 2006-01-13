@@ -95,7 +95,8 @@ class DiskQuotaOption extends ItemAddOption {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 		    $warnings[$i][] = $module->translate(
-			array('text' => 'Warning: You have reached your disk quota (%s %s), this item will not be added.',
+			array('text' => 'Warning: You have reached your disk quota (%s %s), ' .
+			      'this item will not be added.',
 			      'arg1' => $userDiskQuotaHumanReadable,
 			      'arg2' => $userDiskQuotaHumanReadableUnit));
 

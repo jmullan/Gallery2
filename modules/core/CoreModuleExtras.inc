@@ -1712,7 +1712,8 @@ $gallery->setConfig(\'baseUri\', \'\');';
 		$configContents = preg_replace($regexp, '', $configContents);
 	    }
 	    foreach ($change['edit'] as $edit) {
-		$configContents = preg_replace($edit['regexp'], $edit['replacement'], $configContents);
+		$configContents =
+		    preg_replace($edit['regexp'], $edit['replacement'], $configContents);
 	    }
 	    foreach ($change['add'] as $content) {
 		$configContents = preg_replace('{\?>\s*\z}', $content . "\n?>\n", $configContents);

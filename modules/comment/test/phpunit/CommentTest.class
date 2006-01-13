@@ -195,7 +195,8 @@ class CommentTest extends GalleryTestCase {
 	global $gallery;
 
 	/* Create a comment */
-	list ($ret, $comment) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryComment');
+	list ($ret, $comment) =
+	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryComment');
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

@@ -438,7 +438,8 @@ class GalleryItemHelper_advanced {
 	}
 
 	/* create the album object */
-	list ($ret, $album) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryAlbumItem');
+	list ($ret, $album) =
+	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryAlbumItem');
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

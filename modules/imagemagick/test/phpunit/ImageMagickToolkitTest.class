@@ -422,7 +422,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 		array_merge(
 		    array('-quality', 75, '-crop', '329x250+158+113'),
 		    array('test[640x480].png', 'output1.png')),
-		$this->_files['output1.png']['operation']['convert'], 'output ' . $this->_envName());
+		$this->_files['output1.png']['operation']['convert'], 'output ' .
+		$this->_envName());
 	    $this->assertEquals(array('next.toolkit' => $this->_toolkit,
 				      'next.operation' => 'thumbnail',
 				      'width' => 329, 'height' => 250),

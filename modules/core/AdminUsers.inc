@@ -178,7 +178,8 @@ class AdminUsersView extends GalleryView {
 
 	/* If we have a filter, find out how many users match it */
 	if (!empty($form['list']['filter'])) {
-	    list ($ret, $form['list']['count']) = GalleryCoreApi::fetchUserCount($form['list']['filter']);
+	    list ($ret, $form['list']['count']) =
+		GalleryCoreApi::fetchUserCount($form['list']['filter']);
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -196,8 +197,8 @@ class AdminUsersView extends GalleryView {
 
 	list ($ret, $userNames) =
 	    GalleryCoreApi::fetchUserNames($form['list']['pageSize'],
-					      ($form['list']['page'] - 1) * $form['list']['pageSize'],
-					      $form['list']['filter']);
+					   ($form['list']['page'] - 1) * $form['list']['pageSize'],
+					   $form['list']['filter']);
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

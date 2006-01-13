@@ -196,7 +196,8 @@ class AdminGroupsView extends GalleryView {
 
 	/* If we have a filter, find out how many groups match it */
 	if (!empty($form['list']['filter'])) {
-	    list ($ret, $form['list']['count']) = GalleryCoreApi::fetchGroupCount($form['list']['filter']);
+	    list ($ret, $form['list']['count']) =
+		GalleryCoreApi::fetchGroupCount($form['list']['filter']);
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -221,17 +222,20 @@ class AdminGroupsView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $allUserGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
+	list ($ret, $allUserGroupId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $everybodyGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
+	list ($ret, $everybodyGroupId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $adminGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
+	list ($ret, $adminGroupId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

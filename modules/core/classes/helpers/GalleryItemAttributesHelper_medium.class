@@ -74,7 +74,8 @@ class GalleryItemAttributesHelper_medium {
      * @static
      */
     function fetchOrderWeight($itemId) {
-	list ($ret, $orderWeights) = GalleryItemAttributesHelper_medium::fetchOrderWeights(array($itemId));
+	list ($ret, $orderWeights) =
+	    GalleryItemAttributesHelper_medium::fetchOrderWeights(array($itemId));
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -103,7 +104,8 @@ class GalleryItemAttributesHelper_medium {
         FROM
           [GalleryItemAttributesMap]
         WHERE
-          [GalleryItemAttributesMap::itemId] IN (' . GalleryUtilities::makeMarkers(sizeof($itemIds)) . ')
+          [GalleryItemAttributesMap::itemId] IN (' .
+	    GalleryUtilities::makeMarkers(sizeof($itemIds)) . ')
         ';
 	list ($ret, $searchResults) = $gallery->search($query, $itemIds);
 	if ($ret) {

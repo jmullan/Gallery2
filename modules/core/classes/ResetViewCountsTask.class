@@ -47,7 +47,9 @@ class ResetViewCountsTask extends FlushDatabaseCacheTask {
 
 	$info['l10Domain'] = 'modules_core';
 	$info['title'] = $gallery->i18n('Reset view counts');
-	$info['description'] = $gallery->i18n('Reset number of views to zero for all albums and items.  This task flushes the database cache as well.');
+	$info['description'] = $gallery->i18n(
+	    'Reset number of views to zero for all albums and items.  This task flushes the ' .
+	    'database cache as well.');
 	$info['confirmRun'] = true;
 	return $info;
     }

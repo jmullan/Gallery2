@@ -58,7 +58,8 @@ class RearrangeItemsControllerTest extends GalleryControllerTestCase {
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
 	    } else {
-		list ($ret, $this->_child[$i]) = $this->_createRandomDataItem($this->_album->getId());
+		list ($ret, $this->_child[$i]) =
+		    $this->_createRandomDataItem($this->_album->getId());
 		if ($ret) {
 		    print $ret->getAsHtml();
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

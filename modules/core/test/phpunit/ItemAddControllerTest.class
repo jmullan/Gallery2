@@ -236,7 +236,8 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 class ItemAddControllerTestPluginContinue {
     function handleRequest($form, &$item) {
 	if (!GalleryUtilities::isExactlyA($item, 'GalleryAlbumItem')) {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
+	    return
+		array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
 	}
 
 	return array(null, array(), array());
@@ -251,7 +252,8 @@ class ItemAddControllerTestPluginContinue {
 class ItemAddControllerTestPluginSuccess {
     function handleRequest($form, &$item) {
 	if (!GalleryUtilities::isExactlyA($item, 'GalleryAlbumItem')) {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
+	    return
+		array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
 	}
 
 	/* Pretend we just added item(s) that are already there */
@@ -276,7 +278,8 @@ class ItemAddControllerTestPluginSuccess {
 class ItemAddControllerTestPluginFail {
     function handleRequest($form, &$item) {
 	if (!GalleryUtilities::isExactlyA($item, 'GalleryAlbumItem')) {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
+	    return
+		array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
 	}
 	return array(null, array('failed'), array());
     }

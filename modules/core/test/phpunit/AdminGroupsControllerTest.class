@@ -90,7 +90,8 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 
 	/* Invalid group name */
 	GalleryUtilities::putRequestVariable('form[action][editFromText]', 1);
-	GalleryUtilities::putRequestVariable('form[text][groupName]', 'some-invalid-group-name-'.rand());
+	GalleryUtilities::putRequestVariable('form[text][groupName]',
+					     'some-invalid-group-name-'.rand());
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
@@ -132,7 +133,8 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 
 	/* Invalid group name */
 	GalleryUtilities::putRequestVariable('form[action][deleteFromText]', 1);
-	GalleryUtilities::putRequestVariable('form[text][groupName]', 'some-invalid-group-name-'.rand());
+	GalleryUtilities::putRequestVariable('form[text][groupName]',
+					     'some-invalid-group-name-'.rand());
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
@@ -213,7 +215,8 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 
     function testDeleteEverybodyGroupFromText() {
 	global $gallery;
-	list ($ret, $id) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
+	list ($ret, $id) = GalleryCoreApi::getPluginParameter('module', 'core',
+							      'id.everybodyGroup');
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -266,7 +269,8 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 
 	/* Invalid group name */
 	GalleryUtilities::putRequestVariable('form[action][addRemoveUsersFromText]', 1);
-	GalleryUtilities::putRequestVariable('form[text][groupName]', 'some-invalid-group-name-'.rand());
+	GalleryUtilities::putRequestVariable('form[text][groupName]',
+					     'some-invalid-group-name-'.rand());
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',

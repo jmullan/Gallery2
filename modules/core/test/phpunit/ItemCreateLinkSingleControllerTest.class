@@ -71,7 +71,8 @@ class ItemCreateLinkSingleControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
 	GalleryUtilities::putRequestVariable('form[action][link]', 1);
-	GalleryUtilities::putRequestVariable('form[destination]', $this->_destinationAlbum->getId());
+	GalleryUtilities::putRequestVariable('form[destination]',
+					     $this->_destinationAlbum->getId());
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.ItemAdmin',
@@ -89,7 +90,8 @@ class ItemCreateLinkSingleControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	GalleryUtilities::putRequestVariable('itemId', $this->_rootAlbum->getId());
 	GalleryUtilities::putRequestVariable('form[action][link]', 1);
-	GalleryUtilities::putRequestVariable('form[destination]', $this->_destinationAlbum->getId());
+	GalleryUtilities::putRequestVariable('form[destination]',
+					     $this->_destinationAlbum->getId());
 
 	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
     }
@@ -106,7 +108,8 @@ class ItemCreateLinkSingleControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
 	GalleryUtilities::putRequestVariable('form[action][link]', 1);
-	GalleryUtilities::putRequestVariable('form[destination]', $this->_destinationAlbum->getId());
+	GalleryUtilities::putRequestVariable('form[destination]',
+					     $this->_destinationAlbum->getId());
 
 	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
     }
@@ -134,7 +137,8 @@ class ItemCreateLinkSingleControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
 	GalleryUtilities::putRequestVariable('form[action][link]', 1);
-	GalleryUtilities::putRequestVariable('form[destination]', $this->_destinationAlbum->getId());
+	GalleryUtilities::putRequestVariable('form[destination]',
+					     $this->_destinationAlbum->getId());
 
 	$ret = GalleryCoreApi::removeItemPermissions($this->_destinationAlbum->getId());
 	if ($ret) {

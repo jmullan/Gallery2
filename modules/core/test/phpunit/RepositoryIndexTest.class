@@ -305,7 +305,8 @@ class RepositoryIndexTest extends GalleryTestCase {
 
 	foreach ($testCases as $case) {
 	    list ($ret, $languages) =
-		$this->_index->getAvailableLanguagesInPlugin($case['pluginType'], $case['pluginId']);
+		$this->_index->getAvailableLanguagesInPlugin($case['pluginType'],
+							     $case['pluginId']);
 	    if ($ret) {
 		$this->failWithStatus($ret);
 	    }

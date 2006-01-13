@@ -35,14 +35,12 @@
         <h3> {g->text text="How to setup ISAP Rewrite"} </h3>
 
         <p class="giDescription">
-          {g->text text="In order to make the test pass you need to add the test rewrite rule in your 
-httpd.ini:"}
+          {g->text text="In order to make the test pass you need to add the test rewrite rule in your httpd.ini:"}
         </p>
 
         <pre class="giDescription">{$TestResults.contents}</pre>
 
-        <p class="giDescription"><b>{g->text text="If you add this at the bottom, please make sure that there's 
-atleast one empty line below the section"}</b></p>
+        <p class="giDescription"><b>{g->text text="If you add this at the bottom, please make sure that there's atleast one empty line below the section"}</b></p>
       </div>
 
       <div class="gbBlock">

@@ -41,7 +41,8 @@ class MaintenanceHelper_simple {
      */
     function fetchTasks() {
 	/* Get all the option plugins */
-	list ($ret, $allTaskIds) = GalleryCoreApi::getAllFactoryImplementationIds('MaintenanceTask');
+	list ($ret, $allTaskIds) =
+	    GalleryCoreApi::getAllFactoryImplementationIds('MaintenanceTask');
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

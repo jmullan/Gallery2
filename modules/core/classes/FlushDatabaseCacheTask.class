@@ -46,7 +46,10 @@ class FlushDatabaseCacheTask extends MaintenanceTask {
 
 	$info['l10Domain'] = 'modules_core';
 	$info['title'] = $gallery->i18n('Delete database cache');
-	$info['description'] = $gallery->i18n('Gallery stores commonly used database information on disk for increased performance.  If you modify the database directly, you should run this task to clean out the cache and force Gallery to reload the information from the database.');
+	$info['description'] = $gallery->i18n(
+	    'Gallery stores commonly used database information on disk for increased performance.' .
+	    ' If you modify the database directly, you should run this task to clean out the ' .
+	    'cache and force Gallery to reload the information from the database.');
 	return $info;
     }
 

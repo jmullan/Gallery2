@@ -62,7 +62,8 @@ class GalleryToolkitHelper_simple {
               [GalleryToolkitOperationMap],
               [GalleryToolkitOperationMimeTypeMap]
             WHERE
-              [GalleryToolkitOperationMap::name] = [GalleryToolkitOperationMimeTypeMap::operationName]
+              [GalleryToolkitOperationMap::name] = ' .
+		'[GalleryToolkitOperationMimeTypeMap::operationName]
               AND
               [GalleryToolkitOperationMimeTypeMap::mimeType] = ?
               AND

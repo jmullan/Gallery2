@@ -124,7 +124,8 @@ class AdminEditGroupUsersController extends GalleryController {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    } else {
 			/* Is the user already in the group? */
-			list ($ret, $inGroup) = GalleryCoreApi::isUserInGroup($user->getId(), $groupId);
+			list ($ret, $inGroup) =
+			    GalleryCoreApi::isUserInGroup($user->getId(), $groupId);
 			if ($ret) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}

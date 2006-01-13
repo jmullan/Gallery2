@@ -534,11 +534,11 @@ class UserAndGroupTest extends GalleryTestCase {
 
 	/*
 	 * Add a test subalbum with user1 as the owner and delete permissions (assigned later)
-	 * subAlbumWithDeletePermission				| with delete permission -> deleted
-	 *	|- subSubItemWithDeletePermission		| with delete permission -> deleted
-	 *	|- subSubAlbumWithDeletePermission		| with delete permission -> deleted
-	 *		|- subSubSubItemWithDeletePermission	| with delete permission -> deleted
-	 * subItemWithDeletePermission				| with delete permission -> deleted
+	 * subAlbumWithDeletePermission			      | with delete perm. -> deleted
+	 *	|- subSubItemWithDeletePermission	      | with delete perm. -> deleted
+	 *	|- subSubAlbumWithDeletePermission	      | with delete perm. -> deleted
+	 *		|- subSubSubItemWithDeletePermission  | with delete perm. -> deleted
+	 * subItemWithDeletePermission			      | with delete perm. -> deleted
 	 */
 	list ($ret, $subAlbumWithDeletePermission) =
 	    $this->_createRandomAlbum($albumWithDeletePermission->getId());
@@ -582,8 +582,8 @@ class UserAndGroupTest extends GalleryTestCase {
 	 * Now add another subalbum tree, this time with some items without delete permission
 	 * subAlbumWithDeletePermission2			| with delete permission
 	 *    |- subSubAlbumWithoutDeletePermission2		| no delete permission
-	 *		|- subSubSubItemWithDeletePermission2	| with delete permission -> deleted
-	 *	  |- subSubAlbumWithDeletePermission2		| with delete permission
+	 *		|- subSubSubItemWithDeletePermission2	| with delete perm -> deleted
+	 *         |- subSubAlbumWithDeletePermission2		| with delete permission
 	 *		|- subSubSubItemWithoutDeletePermission2| no delete permission
 	 */
 	list ($ret, $subAlbumWithDeletePermission2) =
@@ -632,9 +632,9 @@ class UserAndGroupTest extends GalleryTestCase {
 	/*
 	 * Add another subalbum tree, with some items of another user (user2) in it
 	 * Also check for a new thumbnail here
-	 * subAlbumWithDeletePermission3			  | with delete permission
-	 *	|- subSubItemWithDeletePermission		  | with delete permission > deleted
-	 *	|- subSubItemWithDeletePermissionDifferentOwner3  | with delete permission
+	 * subAlbumWithDeletePermission3			 | with delete permission
+	 *	|- subSubItemWithDeletePermission		 | with delete perm.-> deleted
+	 *	|- subSubItemWithDeletePermissionDifferentOwner3 | with delete permission
 	 */
 	list ($ret, $subAlbumWithDeletePermission3) =
 	    $this->_createRandomAlbum($albumWithDeletePermission->getId());

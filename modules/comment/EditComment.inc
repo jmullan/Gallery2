@@ -67,7 +67,8 @@ class EditCommentController extends GalleryController {
 	    if (empty($form['commenterName'])) {
 		$error[] = 'form[error][commenterName][missing]';
 	    } else {
-		list ($ret, $commenter) = GalleryCoreApi::fetchUserByUsername($form['commenterName']);
+		list ($ret, $commenter) =
+		    GalleryCoreApi::fetchUserByUsername($form['commenterName']);
 		if ($ret) {
 		    $error[] = 'form[error][commenterName][invalid]';
 		}
@@ -136,7 +137,8 @@ class EditCommentController extends GalleryController {
 	    if (empty($form['commenterName'])) {
 		$error[] = 'form[error][commenterName][missing]';
 	    } else {
-		list ($ret, $commenter) = GalleryCoreApi::fetchUserByUsername($form['commenterName']);
+		list ($ret, $commenter) =
+		    GalleryCoreApi::fetchUserByUsername($form['commenterName']);
 		if ($ret) {
 		    $error[] = 'form[error][commenterName][invalid]';
 		}

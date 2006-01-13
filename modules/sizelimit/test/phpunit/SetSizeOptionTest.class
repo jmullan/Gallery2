@@ -505,7 +505,8 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals('scale|768,1024;compress|1000', $resized->getDerivativeOperations(), 'Operations');
+	$this->assertEquals('scale|768,1024;compress|1000',
+			    $resized->getDerivativeOperations(), 'Operations');
 	$this->assertEquals(768, $resized->getWidth(), 'Width');
 	$this->assertEquals(1024, $resized->getHeight(), 'Height');
 	$this->assertEquals(1000, $resized->getDerivativeSize(), 'Size');
@@ -751,7 +752,8 @@ class SetSizeOptionTestPlatform extends GalleryPlatform {
     function getimagesize($file) {
 	$imagesize = GalleryUtilities::getRequestVariables('imagesize_' . basename($file));
 	if ($imagesize) {
-  	    return array($imagesize[0], $imagesize[1]); /* doing it this way keeps CodeAudit happy */
+	    /* doing it this way keeps CodeAudit happy */
+  	    return array($imagesize[0], $imagesize[1]);
 	}
 	return array(1728, 2304);
     }
@@ -803,7 +805,8 @@ class SetSizeOptionTestToolkit extends GalleryToolkit {
 	    break;
 
 	default:
-	    return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
+	    return
+		array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
 	}
 
 	$operations = array();

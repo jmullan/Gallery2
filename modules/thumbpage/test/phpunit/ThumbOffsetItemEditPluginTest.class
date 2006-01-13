@@ -96,7 +96,8 @@ class ThumbOffsetItemEditPluginTest extends ItemEditPluginTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals('select-offset|4.8;test-operation|100', $item->getDerivativeOperations(),
+	$this->assertEquals('select-offset|4.8;test-operation|100',
+			    $item->getDerivativeOperations(),
 			    'offset');
 
 	// Set back to zero, which removes select-offset operation..

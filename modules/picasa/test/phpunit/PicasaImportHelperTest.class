@@ -107,10 +107,11 @@ class PicasaImportHelperTest extends GalleryControllerTestCase {
         $this->assertEquals('[url=http://google.com]Google[/url]',
             PicasaImportHelper::convertHtmlToBbcode(
                 '<a title=foo href=http://google.com>Google</a>'));
-        $this->assertEquals(
-            '[url=http://www.topozone.com/map.asp?z=11&n=4163644&e=275692&s=25&size=m&u=1]Topo[/url]',
-                PicasaImportHelper::convertHtmlToBbcode(
-                    '<a href="http://www.topozone.com/map.asp?z=11&n=4163644&e=275692&s=25&size=m&u=1">Topo</a>'));
+        $this->assertEquals('[url=http://www.topozone.com/map.asp?z=11&n=' .
+			    '4163644&e=275692&s=25&size=m&u=1]Topo[/url]',
+			    PicasaImportHelper::convertHtmlToBbcode(
+				'<a href="http://www.topozone.com/' .
+				'map.asp?z=11&n=4163644&e=275692&s=25&size=m&u=1">Topo</a>'));
     
     
         /* Mixed HTML */

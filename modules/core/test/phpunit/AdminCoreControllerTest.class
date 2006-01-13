@@ -147,7 +147,8 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	    /* Just add the other form vars to the request such that it accepts the save request */
 	    foreach ($valueMap as $key => $value) {
 		list ($outer, $inner) = explode('.', $key);
-		GalleryUtilities::putRequestVariable('form[' . $outer . '][' . $inner . ']', $value);
+		GalleryUtilities::putRequestVariable('form[' . $outer . '][' . $inner . ']',
+						     $value);
 	    }
 
 	    /* Perform the request and verify that we succeeded */
@@ -221,7 +222,8 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	    /* Just add the other form vars to the request such that it accepts the save request */
 	    foreach ($valueMap as $key => $value) {
 		list ($outer, $inner) = explode('.', $key);
-		GalleryUtilities::putRequestVariable('form[' . $outer . '][' . $inner . ']', $value);
+		GalleryUtilities::putRequestVariable('form[' . $outer . '][' . $inner . ']',
+						     $value);
 	    }
 
 	    /* Perform the request and verify that we succeeded */

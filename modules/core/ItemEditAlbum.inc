@@ -47,8 +47,10 @@ class ItemEditAlbum extends ItemEditPlugin {
 	$requiresProgressBar = false;
 	if (isset($form['action']['undo'])) {
 
-	    /* Take no action and we'll be redirected back to the same page which will reset the form */
-
+	    /*
+	     * Take no action and we'll be redirected back to the same page
+	     * which will reset the form
+	     */
 	} else if (isset($form['action']['save'])) {
 	    /* Validate the input data. */
 	    if (!is_numeric($form['thumbnail']['size']) || $form['thumbnail']['size'] < 1) {
@@ -57,7 +59,8 @@ class ItemEditAlbum extends ItemEditPlugin {
 
 	    for ($i = 0; $i < sizeof($form['resizes']); $i++) {
 		if (!empty($form['resizes'][$i]['active'])) {
-		    if (empty($form['resizes'][$i]['width']) || empty($form['resizes'][$i]['height'])) {
+		    if (empty($form['resizes'][$i]['width']) ||
+			    empty($form['resizes'][$i]['height'])) {
 			$error[] = 'form[error][resizes][' . $i . '][size][missing]';
 		    } else if (!is_numeric($form['resizes'][$i]['width'])
 			      || $form['resizes'][$i]['width'] < 1
@@ -265,7 +268,8 @@ class ItemEditAlbum extends ItemEditPlugin {
 	    $form['formName'] = 'ItemEditAlbum';
 
 	    /* Load up the data for the resizes table */
-	    list ($ret, $preferences) = GalleryCoreApi::fetchDerivativePreferencesForItem($item->getId());
+	    list ($ret, $preferences) =
+		GalleryCoreApi::fetchDerivativePreferencesForItem($item->getId());
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
@@ -287,7 +291,8 @@ class ItemEditAlbum extends ItemEditPlugin {
 		    if (empty($size)) {
 			$form['resizes'][] = array('active' => 0, 'width' => '', 'height' => '');
 		    } else {
-			$form['resizes'][] = array('active' => 1, 'width' => $size, 'height' => $height);
+			$form['resizes'][] = array('active' => 1, 'width' => $size,
+						   'height' => $height);
 		    }
 		    break;
 		}
@@ -402,9 +407,10 @@ class ItemEditAlbum extends ItemEditPlugin {
 
 	    foreach ($resizesTable as $resizes) {
 		if (!(++$ind % $step)) {
-		    $message = $module->translate(
-			array('text' => 'Processing image %d of %d', 'arg1' => $ind, 'arg2' => $total));
-		    $ret = $templateAdapter->updateProgressBar($message, 'rebuilding resized images...',
+		    $message = $module->translate(array('text' => 'Processing image %d of %d',
+							'arg1' => $ind, 'arg2' => $total));
+		    $ret = $templateAdapter->updateProgressBar($message,
+							       'rebuilding resized images...',
 							       $ind / $total);
 		    if ($ret) {
 			return $ret->wrap(__FILE__, __LINE__);
@@ -418,9 +424,10 @@ class ItemEditAlbum extends ItemEditPlugin {
 	    /* Add the new resizes */
 	    foreach ($childItems as $child) {
 		if (!(++$ind % $step)) {
-		    $message = $module->translate(
-			array('text' => 'Processing image %d of %d', 'arg1' => $ind, 'arg2' => $total));
-		    $ret = $templateAdapter->updateProgressBar($message, 'rebuilding resized images...',
+		    $message = $module->translate(array('text' => 'Processing image %d of %d',
+							'arg1' => $ind, 'arg2' => $total));
+		    $ret = $templateAdapter->updateProgressBar($message,
+							       'rebuilding resized images...',
 							       $ind / $total);
 		    if ($ret) {
 			return $ret->wrap(__FILE__, __LINE__);
@@ -546,8 +553,8 @@ class ItemEditAlbum extends ItemEditPlugin {
 	    $lockIds = array();
 	    foreach ($childItems as $child) {
 		if (!(++$ind % $step) || $ind == $total) {
-		    $message = $module->translate(
-			array('text' => 'Processing image %d of %d', 'arg1' => $ind, 'arg2' => $total));
+		    $message = $module->translate(array('text' => 'Processing image %d of %d',
+							'arg1' => $ind, 'arg2' => $total));
 		    $ret = $templateAdapter->updateProgressBar($message, 'rebuilding thumbnails...',
 							       $ind / $total);
 		    if ($ret) {
@@ -569,7 +576,8 @@ class ItemEditAlbum extends ItemEditPlugin {
 			 * Someone deleted the source image, we can do
 			 * nothing but delete the thumbnail
 			 */
-			list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($thumbnail->getId());
+			list ($ret, $lockIds[]) =
+			    GalleryCoreApi::acquireWriteLock($thumbnail->getId());
 			if ($ret) {
 			    return $ret->wrap(__FILE__, __LINE__);
 			}
@@ -635,7 +643,8 @@ class ItemEditAlbum extends ItemEditPlugin {
 		    $thumbnail->expireCache();
 
 		    if ($thumbnail->isModified()) {
-			list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($thumbnail->getId());
+			list ($ret, $lockIds[]) =
+			    GalleryCoreApi::acquireWriteLock($thumbnail->getId());
 			if ($ret) {
 			    return $ret->wrap(__FILE__, __LINE__);
 			}

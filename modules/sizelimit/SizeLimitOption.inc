@@ -208,7 +208,8 @@ class SizeLimitOption extends ItemEditOption {
 	    }
 
 	    $templateAdapter =& $gallery->getTemplateAdapter();
-	    $ret = $templateAdapter->updateProgressBar($module->translate('Resize complete'), '', 1);
+	    $ret =
+		$templateAdapter->updateProgressBar($module->translate('Resize complete'), '', 1);
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }

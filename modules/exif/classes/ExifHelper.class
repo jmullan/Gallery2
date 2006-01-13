@@ -495,7 +495,8 @@ class ExifHelper {
 
 	$query = '
         SELECT
-          [ExifPropertiesMap::property], [ExifPropertiesMap::viewMode], [ExifPropertiesMap::sequence]
+          [ExifPropertiesMap::property], [ExifPropertiesMap::viewMode], ' .
+	    '[ExifPropertiesMap::sequence]
         FROM
           [ExifPropertiesMap]
         WHERE

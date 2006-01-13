@@ -38,7 +38,8 @@ class CaptchaModule extends GalleryModule {
 	global $gallery;
 	$this->setId('captcha');
 	$this->setName($gallery->i18n('Captcha'));
-	$this->setDescription($gallery->i18n('Prevents abuse by deterring automated bots with input that requires visual comprehension'));
+	$this->setDescription($gallery->i18n('Prevents abuse by deterring automated bots with ' .
+					     'input that requires visual comprehension'));
 	$this->setVersion('1.0.2'); /* Update upgrade() function below too */
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks('getSiteAdminViews');

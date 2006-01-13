@@ -155,7 +155,8 @@ class SlideshowAppletSiteAdminView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'slideshowapplet');
+	list ($ret, $params) =
+	    GalleryCoreApi::fetchAllPluginParameters('module', 'slideshowapplet');
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

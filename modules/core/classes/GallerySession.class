@@ -250,8 +250,8 @@ class GallerySession {
 	 * or if we're told to not send a cookie at all
 	 */
 	if (!$this->_shouldSaveSession() ||
-	        (isset($_COOKIE[SESSION_ID_PARAMETER]) &&
-	        $_COOKIE[SESSION_ID_PARAMETER] == $this->_sessionId && !$this->_forceResendCookie)) {
+	        (isset($_COOKIE[SESSION_ID_PARAMETER]) && !$this->_forceResendCookie &&
+	         $_COOKIE[SESSION_ID_PARAMETER] == $this->_sessionId)) {
 	    return null;
 	}
 	

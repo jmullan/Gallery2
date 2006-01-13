@@ -107,18 +107,22 @@ class MigrateEventHandlerTest extends GalleryControllerTestCase {
 	}
 
 	// Verify album mapping
-	list ($ret, $mapping) = G1MigrateHelper::fetchMapping($g1MapHandlerAlbum->getPathComponent());
+	list ($ret, $mapping) =
+	    G1MigrateHelper::fetchMapping($g1MapHandlerAlbum->getPathComponent());
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals($g1MapHandlerAlbum->getId(), $mapping, 'G1MigrateMap does not match Album Id');
+	$this->assertEquals($g1MapHandlerAlbum->getId(),
+			    $mapping, 'G1MigrateMap does not match Album Id');
 
 	// Verify item mapping
-	list ($ret, $mapping) = G1MigrateHelper::fetchMapping($g1MapHandlerAlbum->getPathComponent(), $g1MapHandlerItem->getPathComponent());
+	list ($ret, $mapping) = G1MigrateHelper::fetchMapping(
+	    $g1MapHandlerAlbum->getPathComponent(), $g1MapHandlerItem->getPathComponent());
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals($g1MapHandlerItem->getId(), $mapping, 'G1MigrateMap does not match Item Id');
+	$this->assertEquals($g1MapHandlerItem->getId(), $mapping,
+			    'G1MigrateMap does not match Item Id');
 
 	$event = GalleryCoreApi::newEvent('GalleryEntity::delete');
 	$event->setEntity($g1MapHandlerItem);
@@ -135,14 +139,16 @@ class MigrateEventHandlerTest extends GalleryControllerTestCase {
 	}
 
 	// Verify album mapping deleted
-	list ($ret, $mapping) = G1MigrateHelper::fetchMapping($g1MapHandlerAlbum->getPathComponent());
+	list ($ret, $mapping) =
+	    G1MigrateHelper::fetchMapping($g1MapHandlerAlbum->getPathComponent());
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(NULL, $mapping, 'G1MigrateMap does not match Album Id');
 
 	// Verify item mapping
-	list ($ret, $mapping) = G1MigrateHelper::fetchMapping($g1MapHandlerAlbum->getPathComponent(), $g1MapHandlerItem->getPathComponent());
+	list ($ret, $mapping) = G1MigrateHelper::fetchMapping(
+	    $g1MapHandlerAlbum->getPathComponent(), $g1MapHandlerItem->getPathComponent());
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

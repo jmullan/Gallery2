@@ -304,28 +304,31 @@ class NetPbmToolkitTest extends GalleryTestCase {
 		  'netpbm.mime' => 'image/png',
 		  'netpbm.metadata' => true),
 	    array('netpbm.tmp' => array('TEMPFILE', 'TEMPFILE'), 'width' => 300, 'height' => 200,
-		  'netpbm.transform' => array(array($netPbmPath . 'pnmcomp', '-align=center',
-						    '-valign=bottom', '-alpha=TEMPFILE', 'TEMPFILE'),
-					      array($netPbmPath . 'pnmflip', '-ccw')),
+		  'netpbm.transform' =>
+		  array(array($netPbmPath . 'pnmcomp', '-align=center',
+			      '-valign=bottom', '-alpha=TEMPFILE', 'TEMPFILE'),
+			array($netPbmPath . 'pnmflip', '-ccw')),
 		  'netpbm.mime' => 'image/png',
 		  'netpbm.metadata' => true),
 	    array('netpbm.tmp' => array('TEMPFILE', 'TEMPFILE'), 'width' => 640, 'height' => 427,
-		  'netpbm.transform' => array(array($netPbmPath . 'pnmcomp', '-align=center',
-						    '-valign=bottom', '-alpha=TEMPFILE', 'TEMPFILE'),
-					      array($netPbmPath . 'pnmflip', '-ccw'),
-					      array($netPbmPath . 'pnmscale', '--quiet',
-						    '-xsize', 640, '-ysize', 480)),
+		  'netpbm.transform' =>
+		  array(array($netPbmPath . 'pnmcomp', '-align=center',
+			      '-valign=bottom', '-alpha=TEMPFILE', 'TEMPFILE'),
+			array($netPbmPath . 'pnmflip', '-ccw'),
+			array($netPbmPath . 'pnmscale', '--quiet',
+			      '-xsize', 640, '-ysize', 480)),
 		  'netpbm.mime' => 'image/png',
 		  'netpbm.metadata' => true),
 	    array('netpbm.tmp' => array('TEMPFILE', 'TEMPFILE', 'TEMPFILE', 'TEMPFILE'),
 		  'width' => 640, 'height' => 427,
-		  'netpbm.transform' => array(array($netPbmPath . 'pnmcomp', '-align=center',
-						    '-valign=bottom', '-alpha=TEMPFILE', 'TEMPFILE'),
-					      array($netPbmPath . 'pnmflip', '-ccw'),
-					      array($netPbmPath . 'pnmscale', '--quiet',
-						    '-xsize', 640, '-ysize', 480),
-					      array($netPbmPath . 'pnmcomp', '-xoff=144',
-						    '-yoff=196', '-alpha=TEMPFILE', 'TEMPFILE')),
+		  'netpbm.transform' =>
+		  array(array($netPbmPath . 'pnmcomp', '-align=center',
+			      '-valign=bottom', '-alpha=TEMPFILE', 'TEMPFILE'),
+			array($netPbmPath . 'pnmflip', '-ccw'),
+			array($netPbmPath . 'pnmscale', '--quiet',
+			      '-xsize', 640, '-ysize', 480),
+			array($netPbmPath . 'pnmcomp', '-xoff=144',
+			      '-yoff=196', '-alpha=TEMPFILE', 'TEMPFILE')),
 		  'netpbm.mime' => 'image/png',
 		  'netpbm.metadata' => true),
 	    array('width' => 150, 'height' => 100)
@@ -622,12 +625,14 @@ class NetPbmToolkitTestPlatform {
 	if (serialize($cmd) == serialize(array(
 		array($this->_netPbmPath . 'giftopnm', '--quiet', 'testGetProperties2.gif'),
 		array($this->_netPbmPath . 'pnmfile', '--allimages')))) {
-	    return array(1, array('stdin:  Image 0:        PGM raw, 30 by 40  maxval 255'), array());
+	    return array(1,
+			 array('stdin:  Image 0:        PGM raw, 30 by 40  maxval 255'), array());
 	}
 
 	if (serialize($cmd) == serialize(array(
 		array($this->_netPbmPath . 'pnmfile', '--allimages', 'testGetProperties3.ppm')))) {
-	    return array(1, array('stdin:  Image 0:        PGM raw, 50 by 60  maxval 255'), array());
+	    return array(1,
+			 array('stdin:  Image 0:        PGM raw, 50 by 60  maxval 255'), array());
 	}
 
 	/** Operation 1: Resize a GIF */
@@ -748,7 +753,7 @@ class NetPbmToolkitTestPlatform {
 	}
 
 	if (serialize($cmd) == serialize(array(
-		array('/validJheadPath/jhead', '-te', 'testPerformOperations13.jpg', 'TEMPFILE')))) {
+	       array('/validJheadPath/jhead', '-te', 'testPerformOperations13.jpg', 'TEMPFILE')))) {
 	    return array(1, array(), array());
 	}
 

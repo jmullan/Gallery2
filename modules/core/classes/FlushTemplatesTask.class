@@ -46,7 +46,11 @@ class FlushTemplatesTask extends MaintenanceTask {
 
 	$info['l10Domain'] = 'modules_core';
 	$info['title'] = $gallery->i18n('Delete template cache');
-	$info['description'] = $gallery->i18n('Gallery compiles template files and saves them for increased performance.  If you\'re experiencing problems that say <i>Smarty error</i> then you might try running this task.  Also run this if you remove a local/*.tpl file so Smarty will switch back to the default tpl file.');
+	$info['description'] = $gallery->i18n(
+	    'Gallery compiles template files and saves them for increased performance.  If you\'' .
+	    're experiencing problems that say <i>Smarty error</i> then you might try running ' .
+	    'this task.  Also run this if you remove a local/*.tpl file so Smarty will switch ' .
+	    'back to the default tpl file.');
 	return $info;
     }
 

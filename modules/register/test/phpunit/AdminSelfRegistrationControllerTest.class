@@ -107,7 +107,8 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
 		'emailadmins' => '0',
 	);
 	foreach ($valueMap as $key => $expectedValue) {
-	    list ($ret, $realValue) = GalleryCoreApi::getPluginParameter('module', 'register', $key);
+	    list ($ret, $realValue) =
+		GalleryCoreApi::getPluginParameter('module', 'register', $key);
 	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }

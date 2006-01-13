@@ -79,11 +79,11 @@ class CaptchaValidationPlugin extends GalleryValidationPlugin {
 	case 'MEDIUM':
 		/*
 		 * Use the module's failedAttemptThreshold parameter to match against the
-		 * captcha.failedAttempts stored in the session to figure out whether or not we need to
-		 * show the captcha.
+		 * captcha.failedAttempts stored in the session to figure out whether or not we
+		 * need to show the captcha.
 		 */
-		list ($ret, $failedAttemptThreshold) =
-		    GalleryCoreApi::getPluginParameter('module', 'captcha', 'failedAttemptThreshold');
+		list ($ret, $failedAttemptThreshold) = GalleryCoreApi::getPluginParameter(
+		    'module', 'captcha', 'failedAttemptThreshold');
 		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}

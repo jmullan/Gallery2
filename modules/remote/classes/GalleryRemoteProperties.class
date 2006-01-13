@@ -97,9 +97,9 @@ class GalleryRemoteProperties {
 	    $value = str_replace('\\', '\\\\', $value);
 	    $value = str_replace("\r\n", '\n', $value);
 	    $value = str_replace(array("\r", "\n", "\t"), array('\n', '\n', '\t'), $value);
-		
-		$key = str_replace(array('#', '!', '=', ':'), array('\\#', '\\!', '\\=', '\\:'), $key);
-		$value = str_replace(array('#', '!', '=', ':'), array('\\#', '\\!', '\\=', '\\:'), $value);
+	    $key = str_replace(array('#', '!', '=', ':'), array('\\#', '\\!', '\\=', '\\:'), $key);
+	    $value = str_replace(array('#', '!', '=', ':'),
+				 array('\\#', '\\!', '\\=', '\\:'), $value);
 
 	    $this->_map[$key] = $value;
 	}
