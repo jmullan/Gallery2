@@ -113,7 +113,7 @@ class ItemEditWatermark extends ItemEditPlugin {
 			$preferred = $derivative;
 		    }
 
-		    $ret = $derivative->save(true);
+		    $ret = $derivative->save();
 		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 		    }

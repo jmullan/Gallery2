@@ -467,6 +467,19 @@ class GalleryCoreApi {
     }
 
     /**
+     * Look up an item's access list.
+     *
+     * @param int the id of the source item
+     * @return array object GalleryStatus a status code,
+     *               int accessListId the associated item's list
+     */
+    function fetchAccessListId($itemId) {
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryPermissionHelper_advanced.class');
+	return GalleryPermissionHelper_advanced::fetchAccessListId($itemId);
+    }
+
+    /**
      * Assert that the current user has the specific permission for the target item
      *
      * @param int item id

@@ -631,10 +631,9 @@ class GalleryPermissionHelper_advanced {
      * @param int the id of the source item
      * @return array object GalleryStatus a status code,
      *               int accessListId the associated item's list
-     * @access private
      * @static
      */
-    function _lookupAccessListId($itemId) {
+    function fetchAccessListId($itemId) {
 	global $gallery;
 
 	if(empty($itemId)) {
@@ -739,7 +738,7 @@ class GalleryPermissionHelper_advanced {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	list ($ret, $accessListId) = GalleryPermissionHelper_advanced::_lookupAccessListId($fromId);
+	list ($ret, $accessListId) = GalleryPermissionHelper_advanced::fetchAccessListId($fromId);
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockId);
 	    return $ret->wrap(__FILE__, __LINE__);

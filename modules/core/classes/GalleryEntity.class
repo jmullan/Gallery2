@@ -268,32 +268,28 @@ class GalleryEntity extends GalleryPersistent {
     }
 
     /**
-     * Save the changes to this GalleryEntity
-     *
      * Save the changes to this GalleryEntity.
      *
      * @param bool post a save event; only disable this during core upgrades
+     * @param integer (optional) ACL id to assign for new entity (used by subclasses)
      * @return object GalleryStatus a status code
-     * @access public
      */
-    function save($postEvent=true) {
+    function save($postEvent=true, $setAclId=0) {
 	global $gallery;
 
 	/*
 	 * Newly created objects don't need to be locked 'cause they're not in
 	 * the database yet.  Everything else does.
 	 */
-	if (!GalleryCoreApi::isWriteLocked($this->getId())) {
-	    if (!$this->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
-		return GalleryCoreApi::error(ERROR_LOCK_REQUIRED,
-					    __FILE__, __LINE__);
-	    }
+	if (!GalleryCoreApi::isWriteLocked($this->getId())
+		&& !$this->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
+	    return GalleryCoreApi::error(ERROR_LOCK_REQUIRED, __FILE__, __LINE__);
 	}
 
 	if ($this->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
 	    $ret = GalleryCoreApi::addMapEntry(
 		'GalleryAccessSubscriberMap',
-		array('itemId' => $this->getId(), 'accessListId' => 0));
+		array('itemId' => $this->getId(), 'accessListId' => $setAclId));
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -350,7 +346,6 @@ class GalleryEntity extends GalleryPersistent {
     /**
      * Refresh this item from the persistent store
      *
-     * @access public
      * @return array object GalleryStatus a status code,
      *               object the refreshed GalleryEntity
      */
@@ -377,7 +372,6 @@ class GalleryEntity extends GalleryPersistent {
     /**
      * Delete this GalleryEntity
      *
-     * @access public
      * @return object GalleryStatus a status code
      */
     function delete() {

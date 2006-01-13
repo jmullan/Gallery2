@@ -259,20 +259,16 @@ class GalleryDerivative extends GalleryChildEntity {
     /**
      * @see GalleryEntity::save()
      */
-    function save($expire=true) {
-	if ($this->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
-	    $newItem = true;
-	} else {
-	    $newItem = false;
-	}
+    function save($expire=true, $postEvent=true) {
+	$isNew = $this->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED);
 
 	/* Save myself */
-	$ret = parent::save();
+	$ret = parent::save($postEvent);
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	if (!$newItem) {
+	if (!$isNew) {
 	    /* Expire myself */
 	    if ($expire) {
 		$ret = $this->expireCache();

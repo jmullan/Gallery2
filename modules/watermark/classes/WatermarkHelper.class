@@ -360,7 +360,7 @@ class WatermarkHelper {
 		    $preferred = $derivative;
 		}
 
-		$ret = $derivative->save(true);
+		$ret = $derivative->save();
 		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}

@@ -207,21 +207,15 @@ class GalleryUser extends GalleryEntity {
      * @access public
      * @return object GalleryStatus a status code
      */
-    function save() {
-	global $gallery;
+    function save($postEvent=true) {
+	$isNew = $this->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED);
 
-	if ($this->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
-	    $newlyCreated = 1;
-	} else {
-	    $newlyCreated = 0;
-	}
-
-	$ret = parent::save();
+	$ret = parent::save($postEvent);
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	if ($newlyCreated) {
+	if ($isNew) {
 	    /* Add her to the various groups */
 	    foreach (array('id.allUserGroup', 'id.everybodyGroup') as $groupKey) {
 		list($ret, $groupId) =
@@ -337,10 +331,9 @@ class GalleryUser extends GalleryEntity {
      * @see GalleryEntity::itemTypeName
      */
     function itemTypeName($localized = true) {
-	global $gallery;
 	if ($localized) {
 	    list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
-	    if (! $ret) {
+	    if (!$ret) {
 		return array($core->translate('User'), $core->translate('user'));
 	    }
 	}

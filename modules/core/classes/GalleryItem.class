@@ -378,35 +378,35 @@ class GalleryItem extends GalleryFileSystemEntity {
     }
 
     /**
-     * Save the changes to this GalleryItem
-     *
      * Save the changes to this GalleryItem.
      *
-     * @access public
      * @return object GalleryStatus a status code
      */
-    function save() {
+    function save($postEvent=true) {
 	global $gallery;
-	$newItem = $this->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED);
+	$isNew = $this->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED);
 
 	$changedParent = $this->isModified('parentId');
 	if ($changedParent) {
 	    $oldParentId = $this->getOriginalValue('parentId');
 	}
 
+	$setAclId = 0;
+	if ($isNew && $this->getParentId()) {
+	    list ($ret, $setAclId) = GalleryCoreApi::fetchAccessListId($this->getParentId());
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
 	/* Save myself */
-	$ret = parent::save();
+	$ret = parent::save($postEvent, $setAclId);
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	if ($newItem) {
+	if ($isNew) {
 	    if ($this->getParentId()) {
-		$ret = GalleryCoreApi::copyPermissions($this->getId(), $this->getParentId());
-		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-
 		list ($ret, $parentSequence) =
 		    GalleryCoreApi::fetchParentSequence($this->getParentId());
 		if ($ret) {
@@ -432,7 +432,7 @@ class GalleryItem extends GalleryFileSystemEntity {
 		}
 	    }
 	}
-	if (($newItem || $changedParent) && $this->getParentId()) {
+	if (($isNew || $changedParent) && $this->getParentId()) {
 	    /* Instruct G2 to "touch" modification timestamp of parent album at end of request */
 	    $gallery->addShutdownAction(array('GalleryCoreApi', 'updateModificationTimestamp'),
 					array($this->getParentId()));

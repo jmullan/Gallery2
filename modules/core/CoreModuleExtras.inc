@@ -1001,7 +1001,7 @@ class CoreModuleExtras {
 			    }
 
 			    $brokenDerivative->setIsBroken(true);
-			    $ret = $brokenDerivative->save(false);
+			    $ret = $brokenDerivative->save(true, false);
 			    if ($ret) {
 				GalleryCoreApi::releaseLocks($lockId);
 				return $ret->wrap(__FILE__, __LINE__);
