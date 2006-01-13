@@ -19,7 +19,7 @@
 /**
  * This package requires HTMLSax3 package
  */
-require_once 'XML/HTMLSax3.php';
+require_once(dirname(__FILE__) . '/HTMLSax3.php');
 
  
 /**
