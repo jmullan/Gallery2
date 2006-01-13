@@ -1329,6 +1329,10 @@ class UtilitiesTest extends GalleryTestCase {
 		'meta <meta http-equiv="refresh" content="2; url=http://evil.com/">'));
 	$this->assertEquals('style ', GalleryUtilities::htmlSafe(
 		'style <style type="test/css">body { color: red; }</style>'));
+	$this->assertEquals('<a href="test">12</a>8 <br />', GalleryUtilities::htmlSafe(
+		'<a href="test" onmouseover="alert(1)">12</a>8 <br />'));
+	$this->assertEquals('<a>12</a>b<br />', GalleryUtilities::htmlSafe(
+		'<a href="javascript:alert(1)">12</a>b<br/>'));
 
 	/* HTML_Safe does some normalizing of other tags */
 	$this->assertEquals('br<br />is<br />ok', GalleryUtilities::htmlSafe('br<br>is<br/>ok'));
