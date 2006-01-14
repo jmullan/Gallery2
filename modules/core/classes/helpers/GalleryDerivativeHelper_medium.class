@@ -173,6 +173,9 @@ class GalleryDerivativeHelper_medium {
               [GalleryDerivative::derivativeSourceId] IN (' . $idMarkers . ')
             ';
 	}
+	foreach ($data as $idx => $id) {
+	    $data[$idx] = (int)$id;
+	}
 
 	if (!empty($types)) {
 	    $typeMarkers = GalleryUtilities::makeMarkers(sizeof($types));
