@@ -103,6 +103,12 @@ class EditCommentController extends GalleryController {
 	    }
 
 	    if (empty($error)) {
+		list ($ret, $markup) =
+		    GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
+		if ($ret) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
 		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock(array($comment->getId()));
 		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -111,6 +117,12 @@ class EditCommentController extends GalleryController {
 		list ($ret, $comment) = $comment->refresh();
 		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		if ($markup == 'html') {
+		    /* Strip malicious content if html markup allowed */
+		    $form['subject'] = GalleryUtilities::htmlSafe($form['subject'], true);
+		    $form['comment'] = GalleryUtilities::htmlSafe($form['comment'], true);
 		}
 
 		$comment->setCommenterId($commenter->getId());

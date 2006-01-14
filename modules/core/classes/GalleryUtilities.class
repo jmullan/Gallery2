@@ -931,15 +931,23 @@ class GalleryUtilities {
      * Strip out all potentially dangerous content within HTML.
      *
      * @param string html
+     * @param boolean (optional) true to decode entities, process, then recode
      * @return string safe html
      */
-    function htmlSafe($html) {
+    function htmlSafe($html, $decode=false) {
 	GalleryCoreApi::requireOnce('lib/pear/Safe.php');
 	static $parser;
 	if (!isset($parser)) {
 	    $parser =& new HTML_Safe();
 	}
-	return $parser->parse($html);
+	if ($decode) {
+	    $html = GalleryUtilities::htmlEntityDecode($html);
+	}
+	$html = $parser->parse($html);
+	if ($decode) {
+	    GalleryUtilities::sanitizeInputValues($html, false);
+	}
+	return $html;
     }
 
     /**

@@ -85,6 +85,23 @@ class EditCommentControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	list ($ret, $this->_saveMarkup) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function tearDown() {
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core',
+						  'misc.markup', $this->_saveMarkup);
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	parent::tearDown();
     }
 
     function testEditComment() {
@@ -107,18 +124,16 @@ class EditCommentControllerTest extends GalleryControllerTestCase {
 			    $results);
 
 	/* Grab the comment and verify it */
-	GalleryDataCache::reset();
-
 	list ($ret, $comment) = $this->_comment[0]->refresh();
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals($comment->getHost(), 'hosty.host.host');
-	$this->assertEquals($comment->getDate(), strtotime('6-Jun-2003 12:01:02'));
-	$this->assertEquals($comment->getCommenterId(), (int)$this->_anonymousUserId);
-	$this->assertEquals($comment->getComment(), 'This is a new comment');
-	$this->assertEquals($comment->getSubject(), 'This is a new subject');
+	$this->assertEquals('hosty.host.host', $comment->getHost());
+	$this->assertEquals(strtotime('6-Jun-2003 12:01:02'), $comment->getDate());
+	$this->assertEquals((int)$this->_anonymousUserId, $comment->getCommenterId());
+	$this->assertEquals('This is a new comment', $comment->getComment());
+	$this->assertEquals('This is a new subject', $comment->getSubject());
     }
 
     function testPreviewComment() {
@@ -311,6 +326,49 @@ class EditCommentControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 
 	$results = $this->handleRequest(ERROR_BAD_PARAMETER);
+    }
+
+    /**
+     * Use malicious content
+     */
+    function testMaliciousEditComment3() {
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'misc.markup', 'html');
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+//	GalleryDataCache::reset();
+
+	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
+	GalleryUtilities::putRequestVariable('commentId', $this->_comment[0]->getId());
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[host]', 'hosty.host.host');
+	GalleryUtilities::putRequestVariable('form[subject]',
+		'<a href="javascript:alert(1)">a</a>');
+	GalleryUtilities::putRequestVariable('form[comment]',
+		'comment <applet code="bad.class"> test');
+	GalleryUtilities::putRequestVariable('form[commenterName]',
+					     $this->_anonymousUser->getUserName());
+	GalleryUtilities::putRequestVariable('form[date]', '6-Jun-2005 12:01:02');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('return' => 1,
+				  'redirect' => array('view' => 'comment.CommentChangeConfirmation',
+						      'itemId' => $this->_item[0]->getId()),
+				  'status' => array('changed' => 1),
+				  'error' => array()),
+			    $results);
+
+	/* Grab the comment and verify it */
+	list ($ret, $comment) = $this->_comment[0]->refresh();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('&lt;a&gt;a&lt;/a&gt;', $comment->getSubject());
+	$this->assertEquals('comment  test', $comment->getComment());
+	$this->assertEquals('hosty.host.host', $comment->getHost());
+	$this->assertEquals(strtotime('6-Jun-2005 12:01:02'), $comment->getDate());
+	$this->assertEquals((int)$this->_anonymousUserId, $comment->getCommenterId());
     }
 
     function testCancelEdit() {

@@ -51,10 +51,26 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
 	$this->_markForCleanup($this->_item);
 
+	list ($ret, $this->_saveMarkup) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	$this->_startTime = time();
+    }
+
+    function tearDown() {
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core',
+						  'misc.markup', $this->_saveMarkup);
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	parent::tearDown();
     }
 
     function testAddComment() {
@@ -83,8 +99,8 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals(1, sizeof($comments));
-	if (sizeof($comments) == 1) {
+	$this->assertEquals(1, count($comments));
+	if (count($comments) == 1) {
 	    $this->assert(GalleryUtilities::isA($comments[0], 'GalleryComment'));
 	    $this->assertEquals('this is a comment', $comments[0]->getComment());
 	    $this->assertEquals('this is a subject', $comments[0]->getSubject());
@@ -167,16 +183,35 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 
     function testAddMaliciousComment() {
 	global $gallery;
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'misc.markup', 'bbcode');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
 	GalleryUtilities::putRequestVariable('form[action][add]', 1);
 	GalleryUtilities::putRequestVariable('form[subject]',
-	    'this is a subject with <javascript>evilness</javascript> in it.');
+	    'this is a subject with <script>evilness</script> in it.');
 	GalleryUtilities::putRequestVariable('form[comment]',
-	    'this is a comment with <javascript>evilness</javascript> in it.');
+	    'this is a comment with <div onmouseover="alert(1)">evilness</div> in it.');
 
 	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('return' => 1,
+		  'redirect' => array('view' => 'comment.CommentChangeConfirmation',
+				      'itemId' => $this->_item->getId()),
+		  'status' => array('added' => 1),
+		  'error' => array()),
+	    $results);
+
+	/* Post the same comment but with html markup mode active */
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'misc.markup', 'html');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	sleep(1);
 	$results = $this->handleRequest();
 	$this->assertEquals(
 	    array('return' => 1,
@@ -192,21 +227,32 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals(1, sizeof($comments));
+	$this->assertEquals(2, count($comments));
 	if (!GalleryUtilities::isA($comments[0], 'GalleryComment')) {
 	    return $this->fail('result is not a GalleryComment!');
 	}
 
 	$this->assertEquals(
-	    'this is a comment with &lt;javascript&gt;evilness&lt;/javascript&gt; in it.',
-	    $comments[0]->getComment());
-	$this->assertEquals(
-	    'this is a subject with &lt;javascript&gt;evilness&lt;/javascript&gt; in it.',
-	    $comments[0]->getSubject());
-	$this->assertEquals($gallery->getActiveUserId(), $comments[0]->getCommenterId());
-	$this->assertEquals($_SERVER['REMOTE_ADDR'], $comments[0]->getHost());
+	    'this is a subject with &lt;script&gt;evilness&lt;/script&gt; in it.',
+	    $comments[0]->getSubject(), 'subject');
+	$this->assertEquals('this is a comment with '
+		. '&lt;div onmouseover=&quot;alert(1)&quot;&gt;evilness&lt;/div&gt; in it.',
+	    $comments[0]->getComment(), 'comment');
+	$this->assertEquals($gallery->getActiveUserId(), $comments[0]->getCommenterId(), 'user 1');
+	$this->assertEquals($_SERVER['REMOTE_ADDR'], $comments[0]->getHost(), 'host 1');
 	$this->assert($comments[0]->getDate() >= $this->_startTime &&
-		      $comments[0]->getDate() <= time());
+		      $comments[0]->getDate() <= time(), 'time 1');
+
+	$this->assertEquals(
+	    'this is a subject with  in it.',
+	    $comments[1]->getSubject(), 'html subject');
+	$this->assertEquals(
+	    'this is a comment with &lt;div&gt;evilness&lt;/div&gt; in it.',
+	    $comments[1]->getComment(), 'html comment');
+	$this->assertEquals($gallery->getActiveUserId(), $comments[1]->getCommenterId(), 'user 2');
+	$this->assertEquals($_SERVER['REMOTE_ADDR'], $comments[1]->getHost(), 'host 2');
+	$this->assert($comments[1]->getDate() >= $this->_startTime &&
+		      $comments[1]->getDate() <= time(), 'time 2');
     }
 
     function testCancelComment() {
