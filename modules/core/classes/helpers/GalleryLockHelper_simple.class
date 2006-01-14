@@ -113,7 +113,7 @@ class GalleryLockHelper_simple {
           [GalleryChildEntity::parentId] = [GalleryItemAttributesMap::itemId]
         ';
 
-	list ($ret, $searchResults) = $gallery->search($query, array($id));
+	list ($ret, $searchResults) = $gallery->search($query, array((int)$id));
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

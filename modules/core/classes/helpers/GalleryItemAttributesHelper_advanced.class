@@ -95,7 +95,7 @@ class GalleryItemAttributesHelper_advanced {
           AND
           [GalleryChildEntity::parentId] = ?
         ';
-	list ($ret, $searchResults) = $gallery->search($query, array($itemId));
+	list ($ret, $searchResults) = $gallery->search($query, array((int)$itemId));
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -148,7 +148,7 @@ class GalleryItemAttributesHelper_advanced {
           [GalleryItemAttributesMap=2::orderWeight] ' .
 		$comparison . ' [GalleryItemAttributesMap=1::orderWeight]
         ';
-	list ($ret, $searchResults) = $gallery->search($query, array($itemId));
+	list ($ret, $searchResults) = $gallery->search($query, array((int)$itemId));
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

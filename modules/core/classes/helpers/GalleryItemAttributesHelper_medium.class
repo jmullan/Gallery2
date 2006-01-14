@@ -41,6 +41,9 @@ class GalleryItemAttributesHelper_medium {
     function fetchViewCounts($itemIds) {
 	global $gallery;
 
+	foreach ($itemIds as $idx => $id) {
+	    $itemIds[$idx] = (int)$id;
+	}
 	$query = sprintf('
         SELECT
           [GalleryItemAttributesMap::itemId], [GalleryItemAttributesMap::viewCount]
@@ -98,6 +101,9 @@ class GalleryItemAttributesHelper_medium {
     function fetchOrderWeights($itemIds) {
 	global $gallery;
 
+	foreach ($itemIds as $idx => $id) {
+	    $itemIds[$idx] = (int)$id;
+	}
 	$query = '
         SELECT
           [GalleryItemAttributesMap::itemId], [GalleryItemAttributesMap::orderWeight]
@@ -137,7 +143,7 @@ class GalleryItemAttributesHelper_medium {
         WHERE
           [GalleryItemAttributesMap::itemId] = ?
         ';
-	list ($ret, $searchResults) = $gallery->search($query, array($itemId));
+	list ($ret, $searchResults) = $gallery->search($query, array((int)$itemId));
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -149,6 +155,12 @@ class GalleryItemAttributesHelper_medium {
 
 	$result = $searchResults->nextResult();
 	$parentSequence = preg_split('/\//', $result[0], -1, PREG_SPLIT_NO_EMPTY);
+
+	if (is_array($parentSequence)) {
+	    foreach ($parentSequence as $idx => $id) {
+		$parentSequence[$idx] = (int)$id;
+	    }
+	}
 
 	return array(null, $parentSequence);
     }

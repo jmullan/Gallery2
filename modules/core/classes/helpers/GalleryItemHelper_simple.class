@@ -168,6 +168,9 @@ class GalleryItemHelper_simple {
 	    $userId = $gallery->getActiveUserId();
 	}
 
+	foreach ($itemIds as $idx => $id) {
+	    $itemIds[$idx] = (int)$id;
+	}
 	$query = sprintf('
          SELECT
            [GalleryDescendentCountsMap::itemId], [GalleryDescendentCountsMap::descendentCount]
@@ -180,7 +183,7 @@ class GalleryItemHelper_simple {
         ', GalleryUtilities::makeMarkers(sizeof($itemIds)));
 
 	$data = array();
-	$data[] = $userId;
+	$data[] = (int)$userId;
 	array_splice($data, sizeof($data), 0, $itemIds);
 
 	list ($ret, $searchResults) = $gallery->search($query, $data);
@@ -246,6 +249,9 @@ class GalleryItemHelper_simple {
 	    $userId = $gallery->getActiveUserId();
 	}
 
+	foreach ($itemIds as $idx => $id) {
+	    $itemIds[$idx] = (int)$id;
+	}
 	list ($ret, $aclIds) = GalleryCoreApi::fetchAccessListIds('core.view', $userId, false);
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);

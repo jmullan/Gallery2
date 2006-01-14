@@ -554,7 +554,7 @@ class GalleryPermissionHelper_advanced {
 	    [GalleryAccessMap::permission] ASC
 	';
 
-	list ($ret, $searchResults) = $gallery->search($query, array($itemId));
+	list ($ret, $searchResults) = $gallery->search($query, array((int)$itemId));
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -611,7 +611,7 @@ class GalleryPermissionHelper_advanced {
 	    [GalleryAccessMap::userOrGroupId] = ?
 	';
 
-	list ($ret, $searchResults) = $gallery->search($query, array($itemId, $userOrGroupId));
+	list ($ret, $searchResults) = $gallery->search($query, array((int)$itemId, $userOrGroupId));
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -649,7 +649,7 @@ class GalleryPermissionHelper_advanced {
 	    [GalleryAccessSubscriberMap::itemId] = ?
 	';
 
-	$data = array($itemId);
+	$data = array((int)$itemId);
 
 	list ($ret, $searchResults) =
 	    $gallery->search($query, $data, array('limit' => array('count' => 1)));
@@ -793,7 +793,10 @@ class GalleryPermissionHelper_advanced {
 	    $entityIds = array($entityIds);
 	}
 	$entityIdMarkers = GalleryUtilities::makeMarkers(count($entityIds));
-
+	foreach ($entityIds as $idx => $id) {
+	    $entityIds[$idx] = (int)$id;
+	}
+	
 	$query = '
 	SELECT
 	  [GalleryAccessSubscriberMap::itemId]
@@ -805,7 +808,7 @@ class GalleryPermissionHelper_advanced {
 	  AND [GalleryAccessMap::userOrGroupId] IN (' . $entityIdMarkers . ')
 	  AND (' . $andPermission . ' = ?)
 	';
-	$data = array_merge(array($itemId), $entityIds);
+	$data = array_merge(array((int)$itemId), $entityIds);
 	$data[] = $storage->convertIntToBits($bits);
 	$data[] = $storage->convertIntToBits($bits);
 

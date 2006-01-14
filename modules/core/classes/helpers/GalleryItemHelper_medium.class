@@ -122,7 +122,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	WHERE
 	  [GalleryItem::ownerId] = ?
 	';
-	list ($ret, $queryResults) = $gallery->search($query, array($ownerId));
+	list ($ret, $queryResults) = $gallery->search($query, array((int)$ownerId));
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

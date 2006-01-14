@@ -89,7 +89,7 @@ class GalleryPermissionHelper_simple {
 
 	    $storage =& $gallery->getStorage();
 
-	    $data = array($userId);
+	    $data = array((int)$userId);
 	    $data = array_merge($data, $groupIds);
 	    $data[] = $storage->convertIntToBits($bits);
 	    $data[] = $storage->convertIntToBits($bits);

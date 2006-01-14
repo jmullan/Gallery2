@@ -48,6 +48,9 @@ class GalleryPermissionHelper_medium {
 	if (!is_array($itemIds) || empty($itemIds)) {
 	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
+	foreach ($itemIds as $idx => $id) {
+	    $itemIds[$idx] = (int)$id;
+	}
 
 	if (is_null($userId)) {
 	    $userId = $gallery->getActiveUserId(); /* default user id */
@@ -94,7 +97,7 @@ class GalleryPermissionHelper_medium {
 	';
 
 	$data = $itemIds;
-	$data[] = $userId;
+	$data[] = (int)$userId;
 	array_splice($data, count($data), 0, $groupIds);
 
 	list($ret, $searchResults) = $gallery->search($query, $data);

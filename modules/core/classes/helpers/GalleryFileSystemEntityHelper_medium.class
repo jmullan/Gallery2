@@ -60,12 +60,12 @@ class GalleryFileSystemEntityHelper_medium {
 	  AND
 	    [GalleryChildEntity::id] = [GalleryFileSystemEntity::id]
 	';
-	$data = array($parentId, $pathComponent);
+	$data = array((int)$parentId, $pathComponent);
 	if (isset($selfId)) {
 	    $query .= '
 	      AND [GalleryChildEntity::id] <> ?
 	    ';
-	    $data[] = $selfId;
+	    $data[] = (int)$selfId;
 	}
 
 	list ($ret, $searchResults) = $gallery->search($query, $data);

@@ -96,7 +96,7 @@ class GalleryDerivativeHelper_advanced {
     function adjustDependentDerivatives($id, $operation, $reverse=false) {
 	global $gallery;
 
-	$ids = array($id => 1);
+	$ids = array((int)$id => 1);
 	$lastCount = 0;
 
 	/* Discover the entire derivative dependency tree */
@@ -201,6 +201,8 @@ class GalleryDerivativeHelper_advanced {
 	if ($originalSourceId == $newSourceId) {
 	    return null;
 	}
+	$originalSourceId = (int)$originalSourceId;
+	$newSourceId = (int)$newSourceId;
 
 	$query = '
 	SELECT
@@ -387,7 +389,7 @@ class GalleryDerivativeHelper_advanced {
 	  [GalleryDerivativePreferencesMap::order] ASC
 	';
 
-	list ($ret, $searchResults) = $gallery->search($query, array($targetId));
+	list ($ret, $searchResults) = $gallery->search($query, array((int)$targetId));
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -544,6 +546,12 @@ class GalleryDerivativeHelper_advanced {
     function expireDerivativeTreeBySourceIds($ids) {
 	global $gallery;
 
+	if (!is_array($ids)) {
+	    $ids = array($ids);
+	}
+	foreach ($ids as $idx => $id) {
+	    $ids[$idx] = (int)$id;
+	}
 	$idMarkers = GalleryUtilities::makeMarkers($ids);
 
 	$query = '
@@ -605,6 +613,9 @@ class GalleryDerivativeHelper_advanced {
 
 	if (!is_array($ids)) {
 	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+	foreach ($ids as $idx => $id) {
+	    $ids[$idx] = (int)$id;
 	}
 
 	$idMarkers = GalleryUtilities::makeMarkers($ids);

@@ -138,7 +138,7 @@ class GalleryItemHelper_advanced {
           [GalleryItemPropertiesMap::itemId] = ?
         ';
 
-	list ($ret, $searchResults) = $gallery->search($query, array($itemId));
+	list ($ret, $searchResults) = $gallery->search($query, array((int)$itemId));
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -178,7 +178,7 @@ class GalleryItemHelper_advanced {
         ';
 
 	list ($ret, $searchResults) =
-	    $gallery->search($query, array($itemId, $key));
+	    $gallery->search($query, array((int)$itemId, $key));
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -218,7 +218,7 @@ class GalleryItemHelper_advanced {
           [GalleryItemPropertiesMap::itemId] = ?
         ';
 
-	list ($ret, $searchResults) = $gallery->search($query, array($itemId));
+	list ($ret, $searchResults) = $gallery->search($query, array((int)$itemId));
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -246,6 +246,9 @@ class GalleryItemHelper_advanced {
     function fetchItemizedDescendentCounts($itemIds) {
 	global $gallery;
 
+	foreach ($itemIds as $idx => $id) {
+	    $itemIds[$idx] = (int)$id;
+	}
 	$storage =& $gallery->getStorage();
 	$itemIdMarkers = GalleryUtilities::makeMarkers($itemIds);
 
