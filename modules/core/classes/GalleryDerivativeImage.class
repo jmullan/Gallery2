@@ -91,7 +91,8 @@ class GalleryDerivativeImage extends GalleryDerivative {
      */
     function create($parentId, $derivativeType) {
 	global $gallery;
-
+	$parentId = (int)$parentId;
+	
 	if ($derivativeType != DERIVATIVE_TYPE_IMAGE_THUMBNAIL &&
 		$derivativeType != DERIVATIVE_TYPE_IMAGE_RESIZE &&
 		$derivativeType != DERIVATIVE_TYPE_IMAGE_PREFERRED) {
