@@ -460,7 +460,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 
 	/* Load the thumb and resized image sizes for later comparison */
 	list ($ret, $derivativePreferences) =
-	    GalleryCoreApi::fetchDerivativePreferencesForItem(array($testAlbumId));
+	    GalleryCoreApi::fetchDerivativePreferencesForItem($testAlbumId);
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
