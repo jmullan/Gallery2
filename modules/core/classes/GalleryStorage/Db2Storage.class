@@ -261,7 +261,7 @@ class Db2Storage extends GalleryStorage {
 	    break;
 
 	case 'SUBSTRING':
-	    $sql = sprintf('SUBSTRING(%s)', implode(', ', $args));
+	    $sql = sprintf('SUBSTR(%s)', implode(', ', $args));
 	    break;
 
 	case 'RAND':
