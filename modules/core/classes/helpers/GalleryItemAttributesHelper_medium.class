@@ -154,7 +154,8 @@ class GalleryItemAttributesHelper_medium {
 	}
 
 	$result = $searchResults->nextResult();
-	$parentSequence = preg_split('/\//', $result[0], -1, PREG_SPLIT_NO_EMPTY);
+	/* DB2 doesn't trim when storing data in a varchar column */
+	$parentSequence = preg_split('/\//', trim($result[0]), -1, PREG_SPLIT_NO_EMPTY);
 
 	if (is_array($parentSequence)) {
 	    foreach ($parentSequence as $idx => $id) {
