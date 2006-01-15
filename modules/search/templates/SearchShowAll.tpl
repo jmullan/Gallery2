@@ -4,7 +4,7 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-<form action="{g->url}" method="post">
+<form id="SearchShowAll" action="{g->url}" method="post">
   <div id="gsContent" class="gcBorder1">
     <div class="gbBlock gcBackground1">
       <h2>
@@ -40,6 +40,9 @@
     <div class="gbBlock">
       <input type="text" size="50"
        name="{g->formVar var="form[searchCriteria]"}" value="{$form.searchCriteria}"/>
+      <script type="text/javascript">
+        document.getElementById('SearchShowAll')['{g->formVar var="form[searchCriteria]"}'].focus();
+      </script>
       <input type="hidden"
        name="{g->formVar var="form[lastSearchCriteria]"}" value="{$form.searchCriteria}"/>
       <input type="submit" class="inputTypeSubmit"
