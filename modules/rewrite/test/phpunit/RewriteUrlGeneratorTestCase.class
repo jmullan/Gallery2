@@ -496,13 +496,12 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 	$expectedUrl[3] = '/gallery2/' . GALLERY_MAIN_PHP . '?g2_controller=core.ShowItem&amp;' .
 	    'g2_itemId=' . $this->_testItem->getId();
 	$expectedUrl[4] = '/gallery2/themes/foo/images/bar.jpg';
-	$expectedUrl[5] = '/gallery2/' . GALLERY_MAIN_PHP . '?g2_view=core.ShowItem';
+	$expectedUrl[5] = '/gallery2/' . GALLERY_MAIN_PHP;
 	$expectedUrl[6] = '/gallery2/v' . $this->_testAlbumPath;
 	$expectedUrl[7] = '/gallery2/v' . $this->_testItemPath . '.html';
-	$expectedUrl[8] = '/gallery2/' . GALLERY_MAIN_PHP . '?g2_view=core.ShowItem&amp;' .
-	    'g2_itemId=-5759';
-	$expectedUrl[9] = '/gallery2/' . GALLERY_MAIN_PHP . '?g2_view=core.ShowItem&amp;' .
-	    'g2_itemId=' . $this->_derivative->getId();
+	$expectedUrl[8] = '/gallery2/' . GALLERY_MAIN_PHP . '?g2_itemId=-5759';
+	$expectedUrl[9] = '/gallery2/' . GALLERY_MAIN_PHP . '?g2_itemId=' .
+	    $this->_derivative->getId();
 	$expectedUrl[10] = '/gallery2/' . ltrim($this->_testAlbumPath, '/') . 'test.html';
 	$expectedUrl[11] = '/gallery2/' . ltrim($this->_testItemPath, '/') . '/test.html';
 	$expectedUrl[12] = '/gallery2/t' . rtrim($this->_testAlbumPath, '/') . '.test';
@@ -530,14 +529,12 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 	$expectedUrl[3] = 'http://example.com/gallery2/' . GALLERY_MAIN_PHP .
 	    '?g2_controller=core.ShowItem&amp;g2_itemId=' . $this->_testItem->getId();
 	$expectedUrl[4] = 'http://example.com/gallery2/themes/foo/images/bar.jpg';
-	$expectedUrl[5] = 'http://example.com/gallery2/' . GALLERY_MAIN_PHP .
-	    '?g2_view=core.ShowItem';
+	$expectedUrl[5] = 'http://example.com/gallery2/' . GALLERY_MAIN_PHP;
 	$expectedUrl[6] = 'http://example.com/gallery2/v' . $this->_testAlbumPath;
 	$expectedUrl[7] = 'http://example.com/gallery2/v' . $this->_testItemPath . '.html';
-	$expectedUrl[8] = 'http://example.com/gallery2/' . GALLERY_MAIN_PHP .
-	    '?g2_view=core.ShowItem&amp;g2_itemId=-5759';
-	$expectedUrl[9] = 'http://example.com/gallery2/' . GALLERY_MAIN_PHP .
-	    '?g2_view=core.ShowItem&amp;g2_itemId=' . $this->_derivative->getId();
+	$expectedUrl[8] = 'http://example.com/gallery2/' . GALLERY_MAIN_PHP . '?g2_itemId=-5759';
+	$expectedUrl[9] = 'http://example.com/gallery2/' . GALLERY_MAIN_PHP . '?g2_itemId=' .
+	    $this->_derivative->getId();
 	$expectedUrl[10] = 'http://example.com/gallery2/' . ltrim($this->_testAlbumPath, '/') .
 	    'test.html';
 	$expectedUrl[11] = 'http://example.com/gallery2/' . ltrim($this->_testItemPath, '/') .
@@ -571,14 +568,13 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 	$expectedUrl[3] = '/gallery2/' . GALLERY_MAIN_PHP . '?g2_controller=core.ShowItem&amp;' .
 	    'g2_itemId=' . $this->_testItem->getId() . '&amp;' . $sessionString;
 	$expectedUrl[4] = '/gallery2/themes/foo/images/bar.jpg?' . $sessionString;
-	$expectedUrl[5] = '/gallery2/' . GALLERY_MAIN_PHP . '?g2_view=core.ShowItem&amp;' .
-	    $sessionString;
+	$expectedUrl[5] = '/gallery2/' . GALLERY_MAIN_PHP . '?' . $sessionString;
 	$expectedUrl[6] = '/gallery2/v' . $this->_testAlbumPath . '?' . $sessionString;
 	$expectedUrl[7] = '/gallery2/v' . $this->_testItemPath . '.html?' . $sessionString;
-	$expectedUrl[8] = '/gallery2/' . GALLERY_MAIN_PHP . '?g2_view=core.ShowItem&amp;' .
-	    'g2_itemId=-5759&amp;' . $sessionString;
-	$expectedUrl[9] = '/gallery2/' . GALLERY_MAIN_PHP . '?g2_view=core.ShowItem&amp;' .
-	    'g2_itemId=' . $this->_derivative->getId() . '&amp;' . $sessionString;
+	$expectedUrl[8] = '/gallery2/' . GALLERY_MAIN_PHP . '?g2_itemId=-5759&amp;' .
+	    $sessionString;
+	$expectedUrl[9] = '/gallery2/' . GALLERY_MAIN_PHP . '?g2_itemId=' .
+	    $this->_derivative->getId() . '&amp;' . $sessionString;
 	$expectedUrl[10] = '/gallery2/' . ltrim($this->_testAlbumPath, '/') . 'test.html?' .
 	    $sessionString;
 	$expectedUrl[11] = '/gallery2/' . ltrim($this->_testItemPath, '/') . '/test.html?' .
@@ -607,13 +603,12 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 	$expectedUrl[3] = '/gallery2/' . GALLERY_MAIN_PHP . '?g2_controller=core.ShowItem&' .
 	    'g2_itemId=' . $this->_testItem->getId();
 	$expectedUrl[4] = '/gallery2/themes/foo/images/bar.jpg';
-	$expectedUrl[5] = '/gallery2/' . GALLERY_MAIN_PHP . '?g2_view=core.ShowItem';
+	$expectedUrl[5] = '/gallery2/' . GALLERY_MAIN_PHP;
 	$expectedUrl[6] = '/gallery2/v' . $this->_testAlbumPath;
 	$expectedUrl[7] = '/gallery2/v' . $this->_testItemPath . '.html';
-	$expectedUrl[8] = '/gallery2/' . GALLERY_MAIN_PHP . '?g2_view=core.ShowItem&' .
-	    'g2_itemId=-5759';
-	$expectedUrl[9] = '/gallery2/' . GALLERY_MAIN_PHP . '?g2_view=core.ShowItem&' .
-	    'g2_itemId=' . $this->_derivative->getId();
+	$expectedUrl[8] = '/gallery2/' . GALLERY_MAIN_PHP . '?g2_itemId=-5759';
+	$expectedUrl[9] = '/gallery2/' . GALLERY_MAIN_PHP . '?g2_itemId=' .
+	    $this->_derivative->getId();
 	$expectedUrl[10] = '/gallery2/' . ltrim($this->_testAlbumPath, '/') . 'test.html';
 	$expectedUrl[11] = '/gallery2/' . ltrim($this->_testItemPath, '/') . '/test.html';
 	$expectedUrl[12] = '/gallery2/t' . rtrim($this->_testAlbumPath, '/') . '.test';
@@ -647,19 +642,19 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 	$expectedUrl[3] = '/cms/index.php?mod=gallery2&amp;g2_controller=core.ShowItem&amp;' .
 	    'g2_itemId=' . $this->_testItem->getId() . '&amp;' . $sessionString;
 	$expectedUrl[4] = '/gallery2/themes/foo/images/bar.jpg';
-	$expectedUrl[5] = '/cms/index.php?mod=gallery2&amp;g2_view=core.ShowItem&amp;' .
-	    $sessionString;
+	$expectedUrl[5] = '/cms/index.php?mod=gallery2&amp;' . $sessionString;
 	$expectedUrl[6] = '/cms/v' . $this->_testAlbumPath . '?' . $sessionString;
 	$expectedUrl[7] = '/cms/v' . $this->_testItemPath . '.html?' . $sessionString;
-	$expectedUrl[8] = '/cms/index.php?mod=gallery2&amp;g2_view=core.ShowItem&amp;' .
-	    'g2_itemId=-5759&amp;' . $sessionString;
-	$expectedUrl[9] = '/cms/index.php?mod=gallery2&amp;g2_view=core.ShowItem&amp;g2_itemId=' .
+	$expectedUrl[8] = '/cms/index.php?mod=gallery2&amp;' . 'g2_itemId=-5759&amp;' .
+	    $sessionString;
+	$expectedUrl[9] = '/cms/index.php?mod=gallery2&amp;g2_itemId=' .
 	    $this->_derivative->getId() . '&amp;' . $sessionString;
 	$expectedUrl[10] = '/cms/' . ltrim($this->_testAlbumPath, '/') . 'test.html?' .
 	    $sessionString;
 	$expectedUrl[11] = '/cms/' . ltrim($this->_testItemPath, '/') . '/test.html?' .
 	    $sessionString;
-	$expectedUrl[12] = '/cms/t' . rtrim($this->_testAlbumPath, '/') . '.test?' . $sessionString;
+	$expectedUrl[12] = '/cms/t' . rtrim($this->_testAlbumPath, '/') . '.test?' .
+	    $sessionString;
 	$expectedUrl[13] = '/cms/t' . $this->_testItemPath . '.test?' . $sessionString;
 	$expectedUrl[14] = '/cms/phpunit/?' . $sessionString;
 	
@@ -687,12 +682,11 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 	$expectedUrl[3] = '/cms/index.php?mod=gallery2&amp;g2_controller=core.ShowItem&amp;' .
 	    'g2_itemId=' . $this->_testItem->getId();
 	$expectedUrl[4] = '/gallery2/themes/foo/images/bar.jpg';
-	$expectedUrl[5] = '/cms/index.php?mod=gallery2&amp;g2_view=core.ShowItem';
+	$expectedUrl[5] = '/cms/index.php?mod=gallery2';
 	$expectedUrl[6] = '/cms/v' . $this->_testAlbumPath;
 	$expectedUrl[7] = '/cms/v' . $this->_testItemPath . '.html';
-	$expectedUrl[8] = '/cms/index.php?mod=gallery2&amp;g2_view=core.ShowItem&amp;' .
-	    'g2_itemId=-5759';
-	$expectedUrl[9] = '/cms/index.php?mod=gallery2&amp;g2_view=core.ShowItem&amp;g2_itemId=' .
+	$expectedUrl[8] = '/cms/index.php?mod=gallery2&amp;g2_itemId=-5759';
+	$expectedUrl[9] = '/cms/index.php?mod=gallery2&amp;g2_itemId=' .
 	    $this->_derivative->getId();
 	$expectedUrl[10] = '/cms/' . ltrim($this->_testAlbumPath, '/') . 'test.html';
 	$expectedUrl[11] = '/cms/' . ltrim($this->_testItemPath, '/') . '/test.html';
@@ -718,11 +712,11 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 	$expectedUrl[3] = '/gallery2/main.php?g2_controller=core.ShowItem&amp;' .
 	    'g2_itemId=' . $this->_testItem->getId();
 	$expectedUrl[4] = 'codebase/rep/themes/foo/images/bar.jpg';
-	$expectedUrl[5] = '/gallery2/main.php?g2_view=core.ShowItem';
+	$expectedUrl[5] = '/gallery2/main.php';
 	$expectedUrl[6] = '/gallery2/v' . $this->_testAlbumPath;
 	$expectedUrl[7] = '/gallery2/v' . $this->_testItemPath . '.html';
-	$expectedUrl[8] = '/gallery2/main.php?g2_view=core.ShowItem&amp;g2_itemId=-5759';
-	$expectedUrl[9] = '/gallery2/main.php?g2_view=core.ShowItem&amp;g2_itemId=' .
+	$expectedUrl[8] = '/gallery2/main.php?g2_itemId=-5759';
+	$expectedUrl[9] = '/gallery2/main.php?g2_itemId=' .
 	    $this->_derivative->getId();
 	$expectedUrl[10] = '/gallery2/' . ltrim($this->_testAlbumPath, '/') . 'test.html';
 	$expectedUrl[11] = '/gallery2/' . ltrim($this->_testItemPath, '/') . '/test.html';
@@ -754,12 +748,11 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 	$expectedUrl[3] = '/cms/index.php?mod=gallery2&amp;g2_controller=core.ShowItem&amp;' .
 	    'g2_itemId=' . $this->_testItem->getId();
 	$expectedUrl[4] = 'codebase/rep/themes/foo/images/bar.jpg';
-	$expectedUrl[5] = '/cms/index.php?mod=gallery2&amp;g2_view=core.ShowItem';
+	$expectedUrl[5] = '/cms/index.php?mod=gallery2';
 	$expectedUrl[6] = '/cms/v' . $this->_testAlbumPath;
 	$expectedUrl[7] = '/cms/v' . $this->_testItemPath . '.html';
-	$expectedUrl[8] = '/cms/index.php?mod=gallery2&amp;g2_view=core.ShowItem&amp;' .
-	    'g2_itemId=-5759';
-	$expectedUrl[9] = '/cms/index.php?mod=gallery2&amp;g2_view=core.ShowItem&amp;g2_itemId=' .
+	$expectedUrl[8] = '/cms/index.php?mod=gallery2&amp;g2_itemId=-5759';
+	$expectedUrl[9] = '/cms/index.php?mod=gallery2&amp;g2_itemId=' .
 	    $this->_derivative->getId();
 	$expectedUrl[10] = '/cms/' . ltrim($this->_testAlbumPath, '/') . 'test.html';
 	$expectedUrl[11] = '/cms/' . ltrim($this->_testItemPath, '/') . '/test.html';
@@ -794,12 +787,11 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 	$expectedUrl[3] = '/cms/index.php?mod=gallery2&amp;g2_controller=core.ShowItem&amp;' .
 	    'g2_itemId=' . $this->_testItem->getId();
 	$expectedUrl[4] = '/gallery2/themes/foo/images/bar.jpg';
-	$expectedUrl[5] = '/cms/index.php?mod=gallery2&amp;g2_view=core.ShowItem';
+	$expectedUrl[5] = '/cms/index.php?mod=gallery2';
 	$expectedUrl[6] = '/cms/v' . $this->_testAlbumPath;
 	$expectedUrl[7] = '/cms/v' . $this->_testItemPath . '.html';
-	$expectedUrl[8] = '/cms/index.php?mod=gallery2&amp;g2_view=core.ShowItem&amp;' .
-	    'g2_itemId=-5759';
-	$expectedUrl[9] = '/cms/index.php?mod=gallery2&amp;g2_view=core.ShowItem&amp;g2_itemId=' .
+	$expectedUrl[8] = '/cms/index.php?mod=gallery2&amp;g2_itemId=-5759';
+	$expectedUrl[9] = '/cms/index.php?mod=gallery2&amp;g2_itemId=' .
 	    $this->_derivative->getId();
 	$expectedUrl[10] = '/cms/' . ltrim($this->_testAlbumPath, '/') . 'test.html';
 	$expectedUrl[11] = '/cms/' . ltrim($this->_testItemPath, '/') . '/test.html';
@@ -832,13 +824,12 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 	$expectedUrl[3] = 'https://cms.com/cms/index.php?mod=gallery2&amp;' .
 	    'g2_controller=core.ShowItem&amp;g2_itemId=' . $this->_testItem->getId();
 	$expectedUrl[4] = 'http://photos.com:81/gallery2/themes/foo/images/bar.jpg';
-	$expectedUrl[5] = 'https://cms.com/cms/index.php?mod=gallery2&amp;g2_view=core.ShowItem';
+	$expectedUrl[5] = 'https://cms.com/cms/index.php?mod=gallery2';
 	$expectedUrl[6] = 'https://cms.com/cms/v' . $this->_testAlbumPath;
 	$expectedUrl[7] = 'https://cms.com/cms/v' . $this->_testItemPath . '.html';
-	$expectedUrl[8] = 'https://cms.com/cms/index.php?mod=gallery2&amp;' . 
-	    'g2_view=core.ShowItem&amp;g2_itemId=-5759';
-	$expectedUrl[9] = 'https://cms.com/cms/index.php?mod=gallery2&amp;' .
-	    'g2_view=core.ShowItem&amp;g2_itemId=' . $this->_derivative->getId();
+	$expectedUrl[8] = 'https://cms.com/cms/index.php?mod=gallery2&amp;g2_itemId=-5759';
+	$expectedUrl[9] = 'https://cms.com/cms/index.php?mod=gallery2&amp;g2_itemId=' .
+	    $this->_derivative->getId();
 	$expectedUrl[10] = 'https://cms.com/cms/' . ltrim($this->_testAlbumPath, '/') . 'test.html';
 	$expectedUrl[11] = 'https://cms.com/cms/' . ltrim($this->_testItemPath, '/') . '/test.html';
 	$expectedUrl[12] = 'https://cms.com/cms/t' . rtrim($this->_testAlbumPath, '/') . '.test';
@@ -865,13 +856,12 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 	$expectedUrl[3] = '/gallery2/index.php?page=photos&amp;g2_controller=core.ShowItem&amp;' .
 	    'g2_itemId=' . $this->_testItem->getId();
 	$expectedUrl[4] = '/gallery2/themes/foo/images/bar.jpg';
-	$expectedUrl[5] = '/gallery2/index.php?page=photos&amp;g2_view=core.ShowItem';
+	$expectedUrl[5] = '/gallery2/index.php?page=photos';
 	$expectedUrl[6] = '/gallery2/v' . $this->_testAlbumPath;
 	$expectedUrl[7] = '/gallery2/v' . $this->_testItemPath . '.html';
-	$expectedUrl[8] = '/gallery2/index.php?page=photos&amp;g2_view=core.ShowItem&amp;' .
-	    'g2_itemId=-5759';
-	$expectedUrl[9] = '/gallery2/index.php?page=photos&amp;g2_view=core.ShowItem&amp;' .
-	    'g2_itemId=' . $this->_derivative->getId();
+	$expectedUrl[8] = '/gallery2/index.php?page=photos&amp;g2_itemId=-5759';
+	$expectedUrl[9] = '/gallery2/index.php?page=photos&amp;g2_itemId=' .
+	    $this->_derivative->getId();
 	$expectedUrl[10] = '/gallery2/' . ltrim($this->_testAlbumPath, '/') . 'test.html';
 	$expectedUrl[11] = '/gallery2/' . ltrim($this->_testItemPath, '/') . '/test.html';
 	$expectedUrl[12] = '/gallery2/t' . rtrim($this->_testAlbumPath, '/') . '.test';
@@ -902,15 +892,11 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 	$expectedUrl[3] = GALLERY_MAIN_PHP . '?g2_controller=core.ShowItem&amp;' .
 	    'g2_itemId=' . $this->_testItem->getId();
 	$expectedUrl[4] = 'themes/foo/images/bar.jpg';
-	$expectedUrl[5] = GALLERY_MAIN_PHP . '?g2_view=core.ShowItem';
-	$expectedUrl[6] = GALLERY_MAIN_PHP . '?g2_view=core.ShowItem&amp;' .
-	    'g2_itemId=' . $this->_testAlbum->getId();
-	$expectedUrl[7] = GALLERY_MAIN_PHP . '?g2_view=core.ShowItem&amp;' .
-	    'g2_itemId=' . $this->_testItem->getId();
-	$expectedUrl[8] = GALLERY_MAIN_PHP . '?g2_view=core.ShowItem&amp;' .
-	    'g2_itemId=-5759';
-	$expectedUrl[9] = GALLERY_MAIN_PHP . '?g2_view=core.ShowItem&amp;' .
-	    'g2_itemId=' . $this->_derivative->getId();
+	$expectedUrl[5] = GALLERY_MAIN_PHP;
+	$expectedUrl[6] = GALLERY_MAIN_PHP . '?g2_itemId=' . $this->_testAlbum->getId();
+	$expectedUrl[7] = GALLERY_MAIN_PHP . '?g2_itemId=' . $this->_testItem->getId();
+	$expectedUrl[8] = GALLERY_MAIN_PHP . '?g2_itemId=-5759';
+	$expectedUrl[9] = GALLERY_MAIN_PHP . '?g2_itemId=' . $this->_derivative->getId();
 	$expectedUrl[10] = GALLERY_MAIN_PHP . '?g2_view=php.Unit&amp;g2_subView' .
 	    '=test.suffixPath&amp;g2_itemId=' . $this->_testAlbum->getId();
 	$expectedUrl[11] = GALLERY_MAIN_PHP . '?g2_view=php.Unit&amp;g2_subView' .

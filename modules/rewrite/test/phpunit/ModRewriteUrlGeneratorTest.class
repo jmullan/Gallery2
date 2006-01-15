@@ -79,13 +79,12 @@ class ModRewriteUrlGeneratorTest extends RewriteUrlGeneratorTestCase {
 	$this->_expectedUrl[3] = 'index.php?page=photos&amp;g2_controller=core.ShowItem&amp;' .
 	    'g2_itemId=' . $this->_testItem->getId();
 	$this->_expectedUrl[4] = 'themes/foo/images/bar.jpg';
-	$this->_expectedUrl[5] = 'index.php?page=photos&amp;g2_view=core.ShowItem';
+	$this->_expectedUrl[5] = 'index.php?page=photos';
 	$this->_expectedUrl[6] = 'v' . $this->_testAlbumPath;
 	$this->_expectedUrl[7] = 'v' . $this->_testItemPath . '.html';
-	$this->_expectedUrl[8] = 'index.php?page=photos&amp;g2_view=core.ShowItem&amp;' .
-	    'g2_itemId=-5759';
-	$this->_expectedUrl[9] = 'index.php?page=photos&amp;g2_view=core.ShowItem&amp;' .
-	    'g2_itemId=' . $this->_derivative->getId();
+	$this->_expectedUrl[8] = 'index.php?page=photos&amp;g2_itemId=-5759';
+	$this->_expectedUrl[9] = 'index.php?page=photos&amp;g2_itemId=' .
+	    $this->_derivative->getId();
 	$this->_expectedUrl[10] = ltrim($this->_testAlbumPath, '/') . 'test.html';
 	$this->_expectedUrl[11] = ltrim($this->_testItemPath, '/') . '/test.html';
 	$this->_expectedUrl[12] = 't' . rtrim($this->_testAlbumPath, '/') . '.test';
