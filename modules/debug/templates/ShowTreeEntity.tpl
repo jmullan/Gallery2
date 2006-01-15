@@ -32,6 +32,7 @@
       </table>
 
       {* Show my children *}
+      {if !empty($ShowTree.childIds)}
       <ul>
 	{foreach from=$ShowTree.childIds item=childId}
 	  <li>
@@ -40,6 +41,7 @@
 	  </li>
 	{/foreach}
       </ul>
+      {/if}
     {/if}
   </li>
 </ul>

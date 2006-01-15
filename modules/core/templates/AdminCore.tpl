@@ -56,7 +56,7 @@
       {g->text text="Check Browser Preference"}
     </td><td>
       <input type="checkbox"{if $form.language.useBrowserPref} checked="checked"{/if}
-             name="{g->formVar var="form[language][useBrowserPref]"}"/>
+	     name="{g->formVar var="form[language][useBrowserPref]"}"/>
     </td>
   </tr></table>
   {else}
@@ -388,9 +388,9 @@
     <tr>
       <td> {g->text text="Priority"} </td>
       <td>
-        <select name="{g->formVar var="form[exec][beNice]"}"
-          {html_options options=$AdminCore.beNiceList selected=$form.exec.beNice}
-        </select>
+	<select name="{g->formVar var="form[exec][beNice]"}">
+	  {html_options options=$AdminCore.beNiceList selected=$form.exec.beNice}
+	</select>
       </td>
     </tr>
   </table>
