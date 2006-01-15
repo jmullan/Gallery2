@@ -433,10 +433,14 @@ class GalleryEntity extends GalleryPersistent {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    foreach ($data[$this->entityType]['linked'] as $memberName) {
-		$setFunc = "set$memberName";
-		$getFunc = "get$memberName";
-		$this->$setFunc($this->linkedEntity->$getFunc());
+	    $target = $this->entityType;
+	    while ($target) {
+		foreach ($data[$target]['linked'] as $memberName) {
+		    $setFunc = "set$memberName";
+		    $getFunc = "get$memberName";
+		    $this->$setFunc($this->linkedEntity->$getFunc());
+		}
+		$target = $data[$target]['parent'];
 	    }
 	}
 

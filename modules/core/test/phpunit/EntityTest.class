@@ -303,10 +303,7 @@ class EntityTest extends GalleryTestCase {
 	$this->_markForCleanup($photo1);
 	$this->assertEquals(100, $photo1->getWidth());
 
-	list ($ret, $photo2) = $this->_createRandomDataItem(
-	    $this->_getRootId(), 'application/unknown',
-	    array('width' => 300, 'height' => 400, 'linkId' => $photo1->getId()),
-	    __FILE__, 'GalleryPhotoItem');
+	list ($ret, $photo2) = $this->_createLinkedItem($this->_rootAlbumId, $photo1);
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
@@ -321,14 +318,21 @@ class EntityTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals(300, $photo2->getWidth());
+	/*
+	 * width is null, because photo2 hasn't yet been loaded from the database (or refreshed)
+	 * so its onLoad hasn't been called yet, which means that it still has its original
+	 * value.
+	 */
+	$this->assertEquals(null, $photo2->getWidth());
 
 	list ($ret, $photo2) = GalleryCoreApi::loadEntitiesById($photo2->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	/* Now that we've reloaded photo2, it has linked values */
 	$this->assertEquals(100, $photo2->getWidth());
+	$this->assertEquals('application/unknown', $photo2->getMimeType());
     }
 
     function testDetachLink() {
