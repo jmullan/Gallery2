@@ -2291,7 +2291,7 @@
 		
 			if ($this->replaceQuote[0] == '\\'){
 				// only since php 4.0.5
-				$s = adodb_str_replace(array('\\',"\0"),array('\\\\',"\\\0"),$s);
+				$s = adodb_str_replace(array('\\',"\0"),array('\\\\',"\\000"),$s);
 				//$s = str_replace("\0","\\\0", str_replace('\\','\\\\',$s));
 			}
 			return  str_replace("'",$this->replaceQuote,$s);
@@ -2325,7 +2325,7 @@
 		
 			if ($this->replaceQuote[0] == '\\'){
 				// only since php 4.0.5
-				$s = adodb_str_replace(array('\\',"\0"),array('\\\\',"\\\0"),$s);
+				$s = adodb_str_replace(array('\\',"\0"),array('\\\\',"\\000"),$s);
 				//$s = str_replace("\0","\\\0", str_replace('\\','\\\\',$s));
 			}
 			return  "'".str_replace("'",$this->replaceQuote,$s)."'";
