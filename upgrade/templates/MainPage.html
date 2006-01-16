@@ -181,20 +181,20 @@
 	    <?php if ($currentStep->isComplete() && !$currentStep->isLastStep()): ?>
 	    <div class="go">
 	      <?php if ($currentStep->isRedoable()): ?>
-	      <span class="goToNextL">
+	      <!--span class="goToNextL"-->
+	      <div class="btn btn-redo"><span><span><span><span>
 		<a href="<?php generateUrl('index.php?step=' . $stepNumber . '&amp;doOver=1') ?>">
 		  <?php print _('Redo this step'); ?>
 		</a>
-	      </span>
+		  </span></span></span></span></div>
+	      <!--/span-->
 	      <?php endif; ?>
 
 	      <?php $nextStep = $stepNumber + 1 ?>
-	      <span class="goToNext">
-		<a href="<?php generateUrl('index.php?step=' . $nextStep) ?>">
-		  <?php printf(_('Continue to Step %d&raquo;'), $nextStep); ?>
-		</a>
-	      </span>
-	    </div>
+		<div class="btn btn-continue"><span><span><span><span>
+		  <a href="<?php generateUrl('index.php?step=' . $nextStep) ?>"><?php printf(_('Continue to Step %d&raquo;'), $nextStep); ?></a>
+		</span></span></span></span></div>
+	      </div>
 	    <?php endif; ?>
 	  </td>
 	</tr>

@@ -108,7 +108,7 @@ td.navbar td.heading {
 }
 
 td.navbar td, #helpbar td {
-  border-bottom: 1px solid #ecf2f8;
+  border-top: 1px solid #ecf2f8;
   padding: 8px 2px;
 }
 
@@ -206,18 +206,46 @@ div.success {
   font-size: 1.2em;
   margin: 8px 0 8px -4px;
   padding: 4px;
-}
-
-.goToNext {
-  white-space: nowrap;
-}
-
-.goToNextL {
-  white-space: nowrap;
-  display: block;
   float: left;
-  margin-right: 3.0em;
+  clear: none;
 }
+
+.btn {
+	margin: 0 10px 0 0;
+    float: left;
+    clear: none; 
+}
+.btn a {
+    display: block; 
+    margin: 0 9px; 
+    padding: 6px 0; 
+    font: 12px Verdana, Arial, sans-serif; 
+    text-decoration: none; 
+    white-space: nowrap;
+    text-shadow: #999 0.2em 0.2em 0.2em;
+}
+.btn a:hover { color: red; }
+.btn-redo {
+    text-align: center; 
+    background: #fc6 url('../images/btnBGbl.gif') repeat-x top;
+    border: 1px solid #339; 
+}
+.btn-redo a { color: #339; }
+.btn-redo span { margin: -1px 0 0 -1px; z-index: 100; display: block; background: url('../images/btnTLbl.gif') no-repeat top left; }
+.btn-redo span span { margin: 0 0 -1px 0; z-index: 100; background: url('../images/btnBLbl.gif') no-repeat bottom left; }
+.btn-redo span span span { margin: -1px -1px 0 0; z-index: 100; background: url('../images/btnTRbl.gif') no-repeat top right; }
+.btn-redo span span span span { margin: 0 0 -1px 0; z-index: 100; background: url('../images/btnBRbl.gif') no-repeat bottom right; }
+
+.btn-continue {
+    text-align: center; 
+    background: #6A9D6A url('../images/btnBGgrn.gif') repeat-x top;
+    border: 1px solid #060;
+}
+.btn-continue a { color: #060; }
+.btn-continue span { margin: -1px 0 0 -1px; z-index: 100; display: block; background: url('../images/btnTLgrn.gif') no-repeat top left; }
+.btn-continue span span { margin: 0 0 -1px 0; z-index: 100; background: url('../images/btnBLgrn.gif') no-repeat bottom left; }
+.btn-continue span span span { margin: -1px -1px 0 0; z-index: 100; background: url('../images/btnTRgrn.gif') no-repeat top right; }
+.btn-continue span span span span { margin: 0 0 -1px 0; z-index: 100; background: url('../images/btnBRgrn.gif') no-repeat bottom right; }
 
 .small {
   font-size: 69%;
@@ -269,7 +297,7 @@ input, select {
 .example {
   background-color: #eee;
   border: 1px solid #999;
-  margin: 15px 15px 0 15px;
+  margin: 15px 0;
   padding: 5px;
 }
 
@@ -325,7 +353,7 @@ input, select {
 }
 
 .progressMade {
-  background-color: #fd6704;
+  background: #fd6704 url('../images/btnBGor.gif') bottom;
   border: 1px solid #ddd;
 }
 

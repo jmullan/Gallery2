@@ -80,17 +80,13 @@
     </p>
 
     <div class="go">
-      <span class="goToNext">
+	  <div class="btn btn-continue"><span><span><span><span>
 	<?php if (!$templateData['isConfigUpgradeRequired']
 		  || $templateData['isConfigWriteable']): ?>
-	  <a href="javascript:document.forms[0].submit()">
-	    <?php print _('Begin Upgrade') ?>
-	  </a>
+	  <a href="javascript:document.forms[0].submit()"><?php print _('Begin Upgrade') ?></a>
 	<?php else: ?>
-	  <a href="<?php generateUrl('index.php?step=' . $stepNumber) ?>">
-	    <?php print _('Recheck config.php') ?>
-	  </a>
+	  <a href="<?php generateUrl('index.php?step=' . $stepNumber) ?>"><?php print _('Recheck config.php') ?></a>
 	<?php endif; ?>
-      </span>
+	  </span></span></span></span></div>
     </div>
     <?php endif; ?>
