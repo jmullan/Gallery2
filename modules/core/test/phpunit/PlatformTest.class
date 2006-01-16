@@ -351,14 +351,19 @@ class PlatformTest extends GalleryTestCase {
 
 	$this->assert($this->_platform->recursiveFixDirPermissions($this->_destFile), 'fix perms');
 	$this->_platform->clearstatcache();
+	if (GalleryUtilities::isA($this->_platform, 'WinNtPlatform')) {
+	    $expected = '777';
+	} else {
+	    $expected = '734';
+	}
 	$stat = $this->_platform->stat($this->_destFile);
-	$this->assertEquals('734', decoct($stat[2] & 0777), 'perm1');
+	$this->assertEquals($expected, decoct($stat[2] & 0777), 'perm1');
 	$stat = $this->_platform->stat($this->_destFile . '/1');
-	$this->assertEquals('734', decoct($stat[2] & 0777), 'perm2');
+	$this->assertEquals($expected, decoct($stat[2] & 0777), 'perm2');
 	$stat = $this->_platform->stat($this->_destFile . '/1/2');
 	$this->assertEquals(decoct($fileStat[2]), decoct($stat[2]), 'file should be unchanged');
 	$stat = $this->_platform->stat($this->_destFile . '/1/3');
-	$this->assertEquals('734', decoct($stat[2] & 0777), 'perm4');
+	$this->assertEquals($expected, decoct($stat[2] & 0777), 'perm4');
 
 	$this->assert($this->_platform->recursiveRmdir($this->_destFile), 'remove');
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core',
