@@ -100,7 +100,7 @@ class CodeAuditTest extends CodeAuditTestCase {
 	    'modules/gd/test/phpunit/GdFunctionMatrix.inc' => 1
 	    );
 
-	$this->_longLineCount = 0;
+	$this->_longLineFiles = array();
 	$this->_errorCount = 0;
 
 	$this->_lineEnding = $platform->getLineEnding();
@@ -247,7 +247,6 @@ class CodeAuditTest extends CodeAuditTestCase {
 		$line = str_replace("\t", '        ', $lines[$i]);
 		if (strlen($line) > 100) {
 		    $this->_longLineFiles[$fileName] = $i;
-		    $this->_longLineCount++;
 		    $longLineCount++;
 		}
 	    }
@@ -401,13 +400,11 @@ class CodeAuditTest extends CodeAuditTestCase {
 
 	/* Check result of longLineCount */
 	if (!$this->_shouldHalt) {
-	    if ($this->_longLineCount > 0) {
+	    if (count($this->_longLineFiles)) {
 		$this->assert(false, 'Found too many lines longer than 100 characters (' .
-			      $this->_longLineCount . ')');
-		if (!empty($this->_longLineFiles)) {
-		    foreach ($this->_longLineFiles as $fileName => $lineNr) {
-			print "File: $fileName , line number: $lineNr<br>\n";
-		    }
+			      count($this->_longLineFiles) . ')');
+		foreach ($this->_longLineFiles as $fileName => $lineNr) {
+		    $this->assert(false, "File: $fileName , line number: $lineNr");
 		}
 	    }
 	}
