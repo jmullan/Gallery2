@@ -485,6 +485,47 @@ class StorageTest extends GalleryTestCase {
 			    $storage->_normalizeValue((int)str_repeat('1', 10), $memberData));
 	$this->assertEquals(null, $storage->_normalizeValue(null, $memberData));
     }
+
+    function testSqlInjectionWithNullCharacter() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+	/* Use a real SQL connection for this test */
+	$storage->_db = null;
+
+	/* \0 -> \\000 special escape, see http://pgsqld.active-venture.com/datatype-binary.html */
+	$testString = "The NULL character should be escaped \0 !";
+	$key = 'test' . rand();
+	$ret = $storage->addMapEntry('GalleryPluginParameterMap',
+				     array('pluginType' => 'module',
+					   'pluginId' => 'unitTestModule',
+					   'itemId' => -1,
+					   'parameterName' => $key,
+					   'parameterValue' => $testString));
+	/* If the \0 character wasn't properly escaped, PG would throw an error here */
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	list ($ret, $value) =
+	    GalleryCoreApi::getPluginParameter('module', 'unitTestModule', $key, -1);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/*
+	 * Different DBMS handle the \0 differently. PG interprets it as string termination and
+	 * only inserts the string up to \0. MySQL inserts the whole string.
+	 * Just compare the string up to the \0 character
+	 */
+	$expected = "The NULL character should be escaped ";
+	$this->assertEquals($expected, substr($value, 0, strlen($expected)));
+
+	/* Cleanup */
+	$ret = GalleryCoreApi::removeAllPluginParameters('module', 'unitTestModule');
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+    }
 }
 
 class StorageTestDB {
