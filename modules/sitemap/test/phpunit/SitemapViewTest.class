@@ -74,6 +74,9 @@ class SitemapViewTest extends GalleryTestCase {
     }
 
     function testRenderSitemap() {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+	
 	ob_start();
 	$ret = $this->_view->renderSitemap($this->_root->getId());
 	if ($ret) {
@@ -84,6 +87,12 @@ class SitemapViewTest extends GalleryTestCase {
 	$results = ob_get_contents();
 	ob_end_clean();
 
+	if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
+	    $timeZone = 'W. Europe Standard Ti:me';
+	} else {
+	    $timeZone = '+00:00';
+	}
+	
 	$this->assertEquals(
 	    array('Header: Content-type: application/xhtml+xml',
 		  '<?xml version=\'1.0\' encoding=\'UTF-8\'?>',
@@ -92,17 +101,17 @@ class SitemapViewTest extends GalleryTestCase {
 		   'xsi:schemaLocation="http://www.google.com/schemas/sitemap/0.84 ' .
 		   'http://www.google.com/schemas/sitemap/0.84/sitemap.xsd">'),
 		  sprintf(
-		      '<url><loc>url:%d</loc><lastmod>2009-02-13T23:31:30+00:00</lastmod></url>',
-		      $this->_root->getId()),
+		      '<url><loc>url:%d</loc><lastmod>2009-02-13T23:31:30%s</lastmod></url>',
+		      $this->_root->getId(), $timeZone),
 		  sprintf(
-		      '<url><loc>url:%d</loc><lastmod>2009-02-13T23:31:30+00:00</lastmod></url>',
-		      $this->_item[0]->getId()),
+		      '<url><loc>url:%d</loc><lastmod>2009-02-13T23:31:30%s</lastmod></url>',
+		      $this->_item[0]->getId(), $timeZone),
 		  sprintf(
-		      '<url><loc>url:%d</loc><lastmod>2009-02-13T23:31:30+00:00</lastmod></url>',
-		      $this->_item[1]->getId()),
+		      '<url><loc>url:%d</loc><lastmod>2009-02-13T23:31:30%s</lastmod></url>',
+		      $this->_item[1]->getId(), $timeZone),
 		  sprintf(
-		      '<url><loc>url:%d</loc><lastmod>2009-02-13T23:31:30+00:00</lastmod></url>',
-		      $this->_item[2]->getId()),
+		      '<url><loc>url:%d</loc><lastmod>2009-02-13T23:31:30%s</lastmod></url>',
+		      $this->_item[2]->getId(), $timeZone),
 		  '</urlset>'),
 	    split("\n", $results));
     }
