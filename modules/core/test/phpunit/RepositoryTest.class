@@ -463,8 +463,8 @@ class RepositoryTest extends GalleryTestCase {
 
 	$repositoryCachePath = 'modules/core/cache';
 	$gallery->setConfig('repository.cache', $repositoryCachePath);
-	$expectedPluginsDirectory = realpath(dirname(__FILE__) . '/../../../../')
-	    . '/modules/core/classes/../../../' . $gallery->getConfig('plugins.dirname');
+	$expectedPluginsDirectory = realpath(dirname(dirname(dirname(__FILE__))) . '/classes/') .
+	    '/../../../' . $gallery->getConfig('plugins.dirname');
 	$pluginsDirectory = 'plugins';
 
 	/* Test when all of the directories are set up properly. */
