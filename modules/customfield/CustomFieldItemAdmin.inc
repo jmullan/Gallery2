@@ -19,7 +19,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 /**
  * @version $Revision$ $Date$
  * @package CustomField
@@ -49,6 +48,10 @@ class CustomFieldItemAdminController extends GalleryController {
 
 	list ($adminMode, $itemId) = GalleryUtilities::getRequestVariables('cfAdmin', 'itemId');
 	if (!empty($adminMode) && !empty($itemId)) {
+	    $ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 
 	    /* Activate album-specific settings: */
 	    if ($adminMode == 2) {
@@ -133,6 +136,5 @@ class CustomFieldItemAdminController extends GalleryController {
 
 	return array(null, $results);
     }
-
 }
 ?>
