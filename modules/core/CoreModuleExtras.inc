@@ -1666,6 +1666,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	    $edit['replacement'] = '$gallery->setConfig(\'data.gallery.base\', \'' . $tmp . '\');';
 	    $configChanges[] = array('remove' => array(), 'add' => array(), 'edit' => array($edit));
 	case '1.0.16':
+	case '1.0.17':
 
 	case 'end of upgrade path':
 	    /*
