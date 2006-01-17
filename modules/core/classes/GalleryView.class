@@ -372,6 +372,7 @@ class GalleryView {
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
+	    GalleryUtilities::putRequestVariable('itemId', $itemId);
 	}
 
 	/* Load the item */

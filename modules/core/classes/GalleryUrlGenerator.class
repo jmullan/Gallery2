@@ -614,7 +614,7 @@ class GalleryUrlGenerator {
 	}
 
 	/* Shorten URLs by removing default values */
-	if (isset($params['view']) && $params['view'] == 'core.ShowItem') {
+	if (isset($params['view']) && $params['view'] == GALLERY_DEFAULT_VIEW) {
 	    unset($params['view']);
 
 	    if (empty($this->_rootItemId)) {

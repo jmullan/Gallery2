@@ -285,7 +285,8 @@ function _GalleryMain($embedded=false) {
 
     /* Load and run the appropriate view */
     if (empty($viewName)) {
-	$viewName = 'core.ShowItem';
+	$viewName = GALLERY_DEFAULT_VIEW;
+	GalleryUtilities::putRequestVariable('view', $viewName);
     }
 
     list ($ret, $view) = GalleryView::loadView($viewName);
