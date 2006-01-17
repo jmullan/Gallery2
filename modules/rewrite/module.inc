@@ -168,7 +168,8 @@ class RewriteModule extends GalleryModule {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if ($code != REWRITE_STATUS_OK) {
-	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED, __FILE__, __LINE__),
+			 null);
 	}
 
 	list ($ret, $redirect) = parent::activate($postActivationEvent);
