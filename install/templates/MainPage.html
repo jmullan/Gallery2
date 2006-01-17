@@ -45,7 +45,7 @@
 			($steps[$i-1]->isComplete() || $steps[$i-1]->isOptional())));
 	    ?>
 	    <?php if ($linkable): ?>
-	      <a href="<?php printf('%s?step=%s', INDEX_PHP, $i) ?>" 
+	      <a href="<?php printf('%s?step=%s', INDEX_PHP, $i) ?>"
 	    	<?php if ($i == $currentStep->getStepNumber()): ?>
 	    	class="current"
 	      	<?php endif; ?>
@@ -64,18 +64,17 @@
 	<table id="statusTable" cellspacing="0">
 	  <tr>
 	    <?php if ($templateData['percentComplete'] != 0): ?>
-	    <td class="progressMade"
+	    <td id="progressMade"
 		style="width:<?php print $templateData['percentComplete'] ?>%">&nbsp;</td>
 	    <?php endif; ?>
 	    <?php if ($templateData['percentComplete'] != 100): ?>
-	    <td class="progressToGo"
+	    <td id="progressToGo"
 		style="width:<?php print (100 - $templateData['percentComplete']) . '%' .
-		  (($templateData['percentComplete'] == 0) ? '' : ';border-left:none')
-		?>">&nbsp;</td>
+		  (($templateData['percentComplete'] == 0) ? '' : ';') ?>">&nbsp;</td>
 	    <?php endif; ?>
 	  </tr>
 	</table>
-      <p style="text-align: right; margin-bottom: 1.0em;"><?php printf(_('Install %d%% complete'), $templateData['percentComplete']); ?></p>
+    <p id="progressStatus"><?php printf(_('Install %d%% complete'), $templateData['percentComplete']); ?></p>
 
 	<?php if (!empty($templateData['errors'])): ?>
 	<div class="error">

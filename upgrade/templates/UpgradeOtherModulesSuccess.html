@@ -1,27 +1,27 @@
     <h1><?php print _("Upgrade Other Modules") ?></h1>
 
     <?php if (isset($templateData['upgradedModule'])): ?>
+    <ul class="success">
     <?php foreach ($templateData['upgradedModule'] as $moduleId => $moduleName): ?>
-    <h2 class="success">
-      <?php printf(_("Upgraded the %s module successfully"), "<i>$moduleName</i>") ?>
-    </h2>
+      <li><?php printf(_("Upgraded the %s module successfully"), "<i>$moduleName</i>") ?></li>
     <?php endforeach; ?>
+    </ul>
     <?php endif; ?>
 
     <?php if (isset($templateData['upgradedTheme'])): ?>
+    <ul class="success">
     <?php foreach ($templateData['upgradedTheme'] as $themeId => $themeName): ?>
-    <h2 class="success">
-      <?php printf(_("Upgraded the %s theme successfully"), "<i>$themeName</i>") ?>
-    </h2>
+      <li><?php printf(_("Upgraded the %s theme successfully"), "<i>$themeName</i>") ?></li>
     <?php endforeach; ?>
+    </ul>
     <?php endif; ?>
 
     <?php if (!empty($templateData['needsConfig'])): ?>
+    <ul class="warning">
     <?php foreach ($templateData['needsConfig'] as $warning): ?>
-    <h3 class="warning">
-      <?php print $warning; ?>
-    </h3>
+      <li><?php print $warning; ?></li>
     <?php endforeach; ?>
+    </ul>
     <?php endif; ?>
 
     <?php if (!empty($templateData['stackTrace'])): ?>

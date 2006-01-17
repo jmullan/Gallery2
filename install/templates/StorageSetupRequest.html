@@ -1,6 +1,12 @@
     <script type="text/javascript" src="../lib/javascript/AutoComplete.js"></script>
     <script type="text/javascript" src="../lib/javascript/XmlHttp.js"></script>
 
+    <?php if (isset($templateData['error'])): ?>
+	<div class="error">
+      <h2><?php print _('Errors occurred. Please see messages below.') ?></h2>
+    </div>
+    <?php endif; ?>
+
     <h1><?php print _("Storage Setup") ?></h1>
 
     <p>
@@ -18,10 +24,9 @@
     </p>
 
     <form method="post" action="<?php printf('%s?step=%s', INDEX_PHP, $stepNumber) ?>">
-      <table>
+
 	<?php if (isset($templateData['error'])): ?>
-	<tr>
-	  <td colspan="2" class="error">
+	  <div class="error">
 	    <?php if (isset($templateData['error']['missing_value'])): ?>
 	    <?php print _('You must enter a directory'); ?>
 	    <?php endif; ?>
@@ -37,15 +42,10 @@
 	    <?php if (isset($templateData['error']['creation_error'])): ?>
 	    <?php print _('There was an error creating the directory structure within the storage directory.'); ?>
 	    <?php endif; ?>
-	  </td>
-	</tr>
+      </div>
 	<?php endif; ?>
-	<tr>
-	  <td class="label">
-	    <?php print _('Directory path:') ?>
-	  </td>
 
-	  <td>
+	  <span class="label"><?php print _('Directory path:') ?></span>
 	    <input id="dir" name="dir" type="text" size="50"
 	     value="<?php print $templateData['dir'] ?>" autocomplete="off"/>
 	    <input type="hidden" name="action" value="save" />
@@ -55,10 +55,7 @@
 		  $currentStep->getStepNumber()) ?>&doAutoComplete=1&path=__VALUE__');
 	      // ]]>
 	    </script>
-	  </td>
-	</tr>
 
-      </table>
     </form>
 
     <?php if (isset($templateData['error']['missing_dir'])): ?>
@@ -108,15 +105,12 @@
     <?php endif; ?>
     <?php endif; ?>
 
+    <p>
+      <strong><a name="footnote_firewall">*</a></strong> <?php print _("This is sometimes known as an <b>image firewall</b>.") ?>
+    </p>
+
     <div class="go">
 	  <div class="btn btn-continue"><span><span><span><span>
 	  <a href="javascript:document.forms[0].submit()"><?php print _('Save') ?></a>
 	  </span></span></span></span></div>
     </div>
-
-    <hr/>
-
-    <p style="text-align: left;">
-      <strong><a name="footnote_firewall">*</a></strong> <?php print _("This is sometimes known as an <b>image firewall</b>.") ?>
-    </p>
-

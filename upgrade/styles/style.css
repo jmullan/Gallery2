@@ -178,28 +178,31 @@ td.navbar td, #helpbar td {
 
 .error {
   font-weight: bold;
-  color: #ae0000;
   padding: 5px 5px 5px 45px;
   height: 50px;
-  background: url('../../upgrade/images/ico_error.gif') 5px 50% no-repeat;
+  border: 1px solid #999;
+  background: #ffc url('../../install/images/ico_warning.gif') 5px 5px no-repeat;
 }
 
 .warning {
   font-weight: bold;
-  color: #fd6704;
 }
 
 .success {
   font-size: 1.2em;
   font-weight: 900;
-  color: #00ae00;
   margin-right: -0.15em;
 }
 
 div.success {
   padding: 5px 5px 5px 45px;
-  background: url('../../upgrade/images/ico_success.gif') 5px 50% no-repeat;
+  border: 1px solid #999;
+  background: #cfc url('../../install/images/ico_success.gif') 5px 50% no-repeat;
 }
+
+h2.succsss { color: green; }
+h2.warning { color: orange; }
+h2.error { color: red; }
 
 .go {
   font-weight: bold;
@@ -213,39 +216,38 @@ div.success {
 .btn {
 	margin: 0 10px 0 0;
     float: left;
-    clear: none; 
+    clear: none;
+    text-align: center;
 }
-.btn a {
-    display: block; 
-    margin: 0 9px; 
-    padding: 6px 0; 
-    font: 12px Verdana, Arial, sans-serif; 
-    text-decoration: none; 
+.btn a, .btn a:visited {
+    display: block;
+    margin: 0 9px;
+    padding: 6px 0;
+    color: #000;
+    text-decoration: none;
     white-space: nowrap;
     text-shadow: #999 0.2em 0.2em 0.2em;
-}
+ }
 .btn a:hover { color: red; }
-.btn-redo {
-    text-align: center; 
-    background: #fc6 url('../images/btnBGbl.gif') repeat-x top;
-    border: 1px solid #339; 
-}
-.btn-redo a { color: #339; }
-.btn-redo span { margin: -1px 0 0 -1px; z-index: 100; display: block; background: url('../images/btnTLbl.gif') no-repeat top left; }
-.btn-redo span span { margin: 0 0 -1px 0; z-index: 100; background: url('../images/btnBLbl.gif') no-repeat bottom left; }
-.btn-redo span span span { margin: -1px -1px 0 0; z-index: 100; background: url('../images/btnTRbl.gif') no-repeat top right; }
-.btn-redo span span span span { margin: 0 0 -1px 0; z-index: 100; background: url('../images/btnBRbl.gif') no-repeat bottom right; }
 
-.btn-continue {
-    text-align: center; 
-    background: #6A9D6A url('../images/btnBGgrn.gif') repeat-x top;
-    border: 1px solid #060;
-}
-.btn-continue a { color: #060; }
-.btn-continue span { margin: -1px 0 0 -1px; z-index: 100; display: block; background: url('../images/btnTLgrn.gif') no-repeat top left; }
-.btn-continue span span { margin: 0 0 -1px 0; z-index: 100; background: url('../images/btnBLgrn.gif') no-repeat bottom left; }
-.btn-continue span span span { margin: -1px -1px 0 0; z-index: 100; background: url('../images/btnTRgrn.gif') no-repeat top right; }
-.btn-continue span span span span { margin: 0 0 -1px 0; z-index: 100; background: url('../images/btnBRgrn.gif') no-repeat bottom right; }
+.btn-redo { display: block; position: relative; z-index: 1; background: #fc6 url('../images/btnBGbl.gif') repeat-x top;  border: 1px solid #339; }
+.btn-redo span { display: block; z-index: 10; margin: -1px 0 0 -1px; background: url('../images/btnTLbl.gif') no-repeat top left; }
+.btn-redo span span { margin: 0 0 -1px 0; background: url('../images/btnBLbl.gif') no-repeat bottom left; }
+.btn-redo span span span { margin: -1px -1px 0 0; background: url('../images/btnTRbl.gif') no-repeat top right; }
+.btn-redo span span span span { margin: 0 0 -1px 0; background: url('../images/btnBRbl.gif') no-repeat bottom right; }
+
+.btn-continue { display: block; position: relative; z-index: 1; background: #6A9D6A url('../images/btnBGgrn.gif') repeat-x top; border: 1px solid #060; }
+.btn-continue span { display: block; z-index: 10; margin: -1px 0 0 -1px; background: url('../images/btnTLgrn.gif') no-repeat top left; }
+.btn-continue span span { margin: 0 0 -1px 0; background: url('../images/btnBLgrn.gif') no-repeat bottom left; }
+.btn-continue span span span { margin: -1px -1px 0 0; background: url('../images/btnTRgrn.gif') no-repeat top right; }
+.btn-continue span span span span { margin: 0 0 -1px 0; background: url('../images/btnBRgrn.gif') no-repeat bottom right; }
+.btn-continue span span span span span { background: none; }
+
+.btn-warn { display: block; position: relative; z-index: 1; background: #fc6 url('../images/btnBGor.gif') repeat-x top; border: 1px solid #960; }
+.btn-warn span { display: block; z-index: 10; margin: -1px 0 0 -1px; background: url('../images/btnTLor.gif') no-repeat top left; }
+.btn-warn span span { margin: 0 0 -1px 0; background: url('../images/btnBLor.gif') no-repeat bottom left; }
+.btn-warn span span span { margin: -1px -1px 0 0; background: url('../images/btnTRor.gif') no-repeat top right; }
+.btn-warn span span span span { margin: 0 0 -1px 0; background: url('../images/btnBRor.gif') no-repeat bottom right; }
 
 .small {
   font-size: 69%;
@@ -333,7 +335,7 @@ input, select {
   line-height: 1.3em;
   padding: 5px 5px 5px 45px;
   height: 50px;
-  background: url('../../upgrade/images/ico_warning.gif') 5px 5px no-repeat;
+  background: #ffc url('../../upgrade/images/ico_warning.gif') 5px 5px no-repeat;
 }
 
 .showHideToggle {

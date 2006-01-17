@@ -23,6 +23,13 @@
 	</tr>
 	<?php endif; ?>
 	<?php endif; ?>
+	<?php if (isset($templateData['error']['passwordA_missing'])): ?>
+	<tr>
+	  <td colspan="2" class="error">
+	    <?php print _('Please enter a password') ?>
+	  </td>
+	</tr>
+	<?php endif; ?>
 	<tr>
 	  <td class="label">
 	    <?php if ($templateData['freshInstall']): ?>
@@ -37,13 +44,6 @@
 	    <input type="hidden" name="action" value="create"/>
 	  </td>
 	</tr>
-	<?php if (isset($templateData['error']['passwordA_missing'])): ?>
-	<tr>
-	  <td colspan="2" class="error">
-	    <?php print _('Please enter a password') ?>
-	  </td>
-	</tr>
-	<?php endif; ?>
 	<tr>
 	  <td class="label">
 	    <?php print _('(type again)') ?>
