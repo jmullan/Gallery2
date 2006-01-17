@@ -189,8 +189,6 @@ class SiteAdminView extends GalleryView {
      * @see GalleryView::getViewDescription()
      */
     function getViewDescription() {
-	global $gallery;
-
 	/* Get the description from the current subView */
 	$subViewName = GalleryUtilities::getRequestVariables('subView');
 	if (empty($subViewName)) {

@@ -42,8 +42,7 @@ class ZipCartAdminController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$error = array();
-	$status = array();
+	$error = $status = array();
 	if (isset($form['action']['save']) || isset($form['action']['test'])) {
 	    $form['path'] = trim($form['path']);
 	    if (empty($form['path'])) {
@@ -131,6 +130,11 @@ class ZipCartAdminView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	if ($form['formName'] != 'ZipCartAdmin') {
 	    $form['formName'] = 'ZipCartAdmin';
 	    list ($ret, $form['path']) =

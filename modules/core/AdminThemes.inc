@@ -19,7 +19,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 /**
  * @version $Revision$ $Date$
  * @package GalleryCore
@@ -40,16 +39,12 @@ class AdminThemesController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	global $gallery;
-
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$status = array();
-	$error = array();
-	$errorMessage = array();
+	$status = $error = $errorMessage = array();
 
 	$themeId = GalleryUtilities::getRequestVariables('themeId');
 	$theme = null;
@@ -253,8 +248,6 @@ class AdminThemesView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	global $gallery;
-
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -514,10 +507,8 @@ class AdminThemesView extends GalleryView {
 	$AdminThemes['themes'] = $themes;
 	$AdminThemes['themeId'] = $themeId;
 
-	/* Render the HTML body */
 	$template->setVariable('AdminThemes', $AdminThemes);
 	$template->setVariable('controller', 'core.AdminThemes');
-
 	return array(null,
 		     array('body' => 'modules/core/templates/AdminThemes.tpl'));
     }

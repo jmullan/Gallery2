@@ -35,14 +35,12 @@ class PanoramaSiteAdminController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	/* Make sure we have adequate permissions */
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$status = array();
-	$error = array();
+	$status = $error = array();
 	if (isset($form['action']['save'])) {
 	    if (!isset($form['width']) || ((int)$form['width']) < 100) {
 		$error[] = 'form[error][width]';
@@ -93,6 +91,12 @@ class PanoramaSiteAdminView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	GalleryCoreApi::requireOnce('modules/panorama/classes/PanoramaHelper.class');
+
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	foreach (array('itemType', 'itemLink') as $key) {
 	    if (!isset($form[$key])) {
 		$form[$key] = false;

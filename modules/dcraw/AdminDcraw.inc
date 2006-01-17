@@ -25,9 +25,6 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
-/**
- * Required classes
- */
 GalleryCoreApi::requireOnce('modules/dcraw/classes/DcrawToolkitHelper.class');
 
 /**
@@ -45,8 +42,7 @@ class AdminDcrawController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$error = array();
-	$status = array();
+	$error = $status = array();
 	if (isset($form['action']['save'])) {
 	    if (empty($form['path'])) {
 		$error[] = 'form[error][path][missing]';
@@ -135,6 +131,11 @@ class AdminDcrawView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
+
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
 	/* Load our default values if we didn't just come from this form. */
 	if ($form['formName'] != 'AdminDcraw') {

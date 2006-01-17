@@ -68,6 +68,11 @@ class CustomFieldSiteAdminView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	if ($form['formName'] != 'CustomFieldSiteAdmin') {
 	    $form['formName'] = 'CustomFieldSiteAdmin';
 

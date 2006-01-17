@@ -25,9 +25,6 @@
  * @author Ernesto Baschny <ernst@baschny.de>
  */
 
-/**
- * Required classes
- */
 GalleryCoreApi::requireOnce('modules/gd/classes/GdToolkitHelper.class');
 
 /**
@@ -40,15 +37,12 @@ class AdminGdController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	global $gallery;
-
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$error = array();
-	$status = array();
+	$error = $status = array();
 	if (isset($form['action']['save'])) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'gd',
 						      'jpegQuality', $form['jpegQuality']);
@@ -103,7 +97,10 @@ class AdminGdView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	global $gallery;
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
 	/* Load our default values if we didn't just come from this form. */
 	if ($form['formName'] != 'AdminGd') {
@@ -164,7 +161,6 @@ class AdminGdView extends GalleryView {
 
 	$template->setVariable('AdminGd', $AdminGd);
 	$template->setVariable('controller', 'gd.AdminGd');
-
 	return array(null,
 		     array('body' => 'modules/gd/templates/AdminGd.tpl'));
     }

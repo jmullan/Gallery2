@@ -35,7 +35,6 @@ class UserAlbumSiteAdminController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	/* Make sure we have adequate permissions */
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -79,7 +78,11 @@ class UserAlbumSiteAdminView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	global $gallery;
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	if ($form['formName'] != 'UserAlbumSiteAdmin') {
 	    $form['formName'] = 'UserAlbumSiteAdmin';
 	    foreach (array('create', 'view', 'fullSize', 'targetLocation',

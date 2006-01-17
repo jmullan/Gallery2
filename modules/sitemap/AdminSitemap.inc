@@ -21,12 +21,12 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package Icons
+ * @package Sitemap
  * @author Alan Harder <alan.harder@sun.com>
  */
 
 /**
- * @package Icons
+ * @package Sitemap
  * @subpackage UserInterface
  */
 class AdminSitemapView extends GalleryView {
@@ -35,6 +35,11 @@ class AdminSitemapView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);

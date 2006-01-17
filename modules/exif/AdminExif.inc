@@ -19,7 +19,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 /**
  * @version $Revision$ $Date$
  * @package Exif
@@ -28,9 +27,6 @@
  * @author Georg Rehfeld <rehfeld@georg-rehfeld.de>
  */
 
-/**
- * Required classes
- */
 GalleryCoreApi::requireOnce('modules/exif/classes/ExifHelper.class');
 
 /**
@@ -45,15 +41,12 @@ class AdminExifController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	global $gallery;
-
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$error = array();
-	$status = array();
+	$error = $status = array();
 	if (isset($form['action']['availableToSummary'])) {
 	    list ($ret, $properties) = ExifHelper::getProperties(EXIF_SUMMARY);
 	    if ($ret) {
@@ -358,14 +351,12 @@ class AdminExifView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	global $gallery;
-
-	$mode = GalleryUtilities::getRequestVariables('mode');
-
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+
+	$mode = GalleryUtilities::getRequestVariables('mode');
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'exif');
 	if ($ret) {

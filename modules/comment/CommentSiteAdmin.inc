@@ -85,6 +85,11 @@ class CommentSiteAdminView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	if ($form['formName'] != 'CommentSiteAdmin') {
 	    $form['formName'] = 'CommentSiteAdmin';
 	    foreach (array('latest', 'show', 'captcha') as $key) {

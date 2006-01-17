@@ -35,14 +35,12 @@ class RemoteSiteAdminController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	/* Make sure we have adequate permissions */
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$status = array();
-	$error = array();
+	$status = $error = array();
 	if (isset($form['action']['save'])) {
 	    foreach (array('showItemAdd') as $key) {
 		$ret = GalleryCoreApi::setPluginParameter('module', 'remote', $key,
@@ -73,6 +71,11 @@ class RemoteSiteAdminView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	if (!isset($form['showItemAdd'])) {
 	    $form['showItemAdd'] = false;
 	}

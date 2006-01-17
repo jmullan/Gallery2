@@ -35,14 +35,12 @@ class RatingSiteAdminController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	/* Make sure we have adequate permissions */
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$status = array();
-	$error = array();
+	$status = $error = array();
 	if (isset($form['action']['save'])) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'rating', 'allowAlbumRating',
 		    (empty($form['allowAlbumRating']) ? 0 : 1));
@@ -72,6 +70,12 @@ class RatingSiteAdminView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	GalleryCoreApi::requireOnce('modules/rating/classes/RatingHelper.class');
+
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	if ($form['formName'] != 'RatingSiteAdmin') {
 	    $form['formName'] = 'RatingSiteAdmin';
 	}

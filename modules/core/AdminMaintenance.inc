@@ -49,10 +49,7 @@ class AdminMaintenanceController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$results = array();
-	$status = array();
-	$error = array();
-
+	$results = $status = $error = array();
 	if (isset($form['action']['runTask'])) {
 	    $taskId = GalleryUtilities::getRequestVariables('taskId');
 
@@ -97,7 +94,6 @@ class AdminMaintenanceController extends GalleryController {
 
     function runTask($taskId, $task, $useProgressBar) {
 	global $gallery;
-
 	$urlGenerator =& $gallery->getUrlGenerator();
 	$templateAdapter =& $gallery->getTemplateAdapter();
 

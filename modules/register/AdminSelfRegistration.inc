@@ -35,15 +35,12 @@ class AdminSelfRegistrationController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	global $gallery;
-
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$error = array();
-	$status = array();
+	$error = $status = array();
 	if (isset($form['action']['save'])) {
 
 	    $form['emailadmins'] = isset($form['emailadmins']) ? 1 : 0;
@@ -117,9 +114,12 @@ class AdminSelfRegistrationView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	GalleryCoreApi::requireOnce(
-	    'modules/register/classes/GalleryPendingUserHelper.class');
-	global $gallery;
+	GalleryCoreApi::requireOnce('modules/register/classes/GalleryPendingUserHelper.class');
+
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
 	list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'register');
 	if ($ret)

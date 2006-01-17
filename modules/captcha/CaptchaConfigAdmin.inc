@@ -30,14 +30,11 @@
  * @package Captcha
  * @subpackage UserInterface
  */
-
 class CaptchaConfigAdminController extends GalleryController {
     /**
      * @see GalleryController::handleRequest()
      */
     function handleRequest($form) {
-	global $gallery;
-
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -61,7 +58,10 @@ class CaptchaConfigAdminView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	global $gallery;
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
 	if ($form['formName'] != 'CaptchaConfigAdmin') {
 	    $form['formName'] = 'CaptchaConfigAdmin';

@@ -35,14 +35,12 @@ class NewItemsSiteAdminController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	/* Make sure we have adequate permissions */
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$status = array();
-	$error = array();
+	$status = $error = array();
 	if (isset($form['action']['save'])) {
 	    if (!isset($form['days']['new']) || !is_numeric($form['days']['new'])) {
 		$error[] = 'form[error][new]';
@@ -105,6 +103,12 @@ class NewItemsSiteAdminView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	GalleryCoreApi::requireOnce('modules/newitems/classes/NewItemsHelper.class');
+
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	if ($form['formName'] != 'NewItemsSiteAdmin') {
 	    $form['formName'] = 'NewItemsSiteAdmin';
 	    foreach (array('days.new', 'days.updated') as $key) {

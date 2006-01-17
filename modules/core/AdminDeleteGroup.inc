@@ -40,16 +40,12 @@ class AdminDeleteGroupController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	global $gallery;
-
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$results = array();
-	$status = array();
-	$error = array();
+	$results = $status = $error = array();
 	$groupId = GalleryUtilities::getRequestVariables('groupId');
 
 	if (isset($form['action']['cancel'])) {
@@ -102,8 +98,6 @@ class AdminDeleteGroupView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	global $gallery;
-
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);

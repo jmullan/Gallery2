@@ -36,16 +36,12 @@ class CaptchaSiteAdminController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	global $gallery;
-
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$error = array();
-	$status = array();
-
+	$error = $status = array();
 	if (isset($form['action']['save'])) {
 	    if (!isset($form['failedAttemptThreshold']) ||
 		    !is_numeric($form['failedAttemptThreshold'])) {
@@ -92,7 +88,10 @@ class CaptchaSiteAdminView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	global $gallery;
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
 	/* Load our default values if we didn't just come from this form. */
 	if ($form['formName'] != 'CaptchaSiteAdmin') {

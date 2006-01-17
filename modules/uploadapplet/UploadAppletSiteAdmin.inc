@@ -35,16 +35,12 @@ class UploadAppletSiteAdminController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	global $gallery;
-
-	/* Make sure we have adequate permissions */
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$status = array();
-	$error = array();
+	$status = $error = array();
 	if (isset($form['action']['add'])) {
 	    $type = $form['variable']['type'];
 
@@ -148,7 +144,6 @@ class UploadAppletSiteAdminView extends GalleryView {
     * @see GalleryView::loadTemplate
     */
     function loadTemplate(&$template, &$form) {
-	global $gallery;
 	$AdminUploadApplet = array();
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();

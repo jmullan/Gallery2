@@ -37,7 +37,6 @@ class PermalinksSiteAdminController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	/* Make sure we have adequate permissions */
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -99,8 +98,12 @@ class PermalinksSiteAdminView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	$PermalinksSiteAdmin = array();
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
+	$PermalinksSiteAdmin = array();
 	list ($ret, $PermalinksSiteAdmin['aliases']) = PermalinksMapHelper::fetchAliasesForItem();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);

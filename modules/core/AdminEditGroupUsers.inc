@@ -19,7 +19,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 /**
  * @version $Revision$ $Date$
  * @package GalleryCore
@@ -47,9 +46,7 @@ class AdminEditGroupUsersController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$results = array();
-	$error = array();
-	$status = array();
+	$results = $error = $status = array();
 
 	/* Load the group */
 	$groupId = GalleryUtilities::getRequestVariables('groupId');
@@ -258,10 +255,8 @@ class AdminEditGroupUsersView extends GalleryView {
 	$AdminEditGroupUsers['canRemove'] = $canRemove;
 	$AdminEditGroupUsers['group'] = (array)$group;
 
-	/* Render the HTML body */
 	$template->setVariable('AdminEditGroupUsers', $AdminEditGroupUsers);
 	$template->setVariable('controller', 'core.AdminEditGroupUsers');
-
 	return array(null,
 		     array('body' => 'modules/core/templates/AdminEditGroupUsers.tpl'));
     }

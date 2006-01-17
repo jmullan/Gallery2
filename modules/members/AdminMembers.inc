@@ -35,15 +35,12 @@ class AdminMembersController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-    	global $gallery;
-
     	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
     	if ($ret) {
     	    return array($ret->wrap(__FILE__, __LINE__), null);
     	}
 
-    	$error = array();
-    	$status = array();
+    	$error = $status = array();
     	if (isset($form['action']['save'])) {
     	    foreach (array('canViewMembersModule', 'canViewEmailAddress') as $key) {
     	        if (isset($form[$key])) {
@@ -84,7 +81,10 @@ class AdminMembersView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-    	global $gallery;
+    	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+    	if ($ret) {
+    	    return array($ret->wrap(__FILE__, __LINE__), null);
+    	}
 
     	list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'members');
     	if ($ret) {

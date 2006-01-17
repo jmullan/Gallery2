@@ -19,7 +19,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 /**
  * @version $Revision$ $Date$
  * @package GalleryCore
@@ -40,16 +39,12 @@ class AdminModulesVerifyUninstallController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	global $gallery;
-
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$status = array();
-	$error = array();
-
+	$status = $error = array();
 	$moduleId = GalleryUtilities::getRequestVariables('moduleId');
 
 	if (!empty($moduleId) && isset($form['action']['uninstall'])) {
@@ -101,10 +96,12 @@ class AdminModulesVerifyUninstallView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	global $gallery;
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
 	$moduleId = GalleryUtilities::getRequestVariables('moduleId');
-
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);

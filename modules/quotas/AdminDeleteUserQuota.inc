@@ -19,7 +19,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 /**
  * @version $Revision$ $Date$
  * @package Quotas
@@ -40,16 +39,12 @@ class AdminDeleteUserQuotaController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	global $gallery;
-
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$results = array();
-	$status = array();
-	$error = array();
+	$results = $status = $error = array();
 	$userId = GalleryUtilities::getRequestVariables('userId');
 	list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
 	if ($ret) {
@@ -110,8 +105,6 @@ class AdminDeleteUserQuotaView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	global $gallery;
-
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -143,10 +136,8 @@ class AdminDeleteUserQuotaView extends GalleryView {
 	}
 	$AdminDeleteUserQuota['user'] = (array)$user;
 
-	/* Render the HTML body */
 	$template->setVariable('AdminDeleteUserQuota', $AdminDeleteUserQuota);
 	$template->setVariable('controller', 'quotas.AdminDeleteUserQuota');
-
 	return array(null,
 		     array('body' => 'modules/quotas/templates/AdminDeleteUserQuota.tpl'));
     }

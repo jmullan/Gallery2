@@ -19,7 +19,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 /**
  * @version $Revision$ $Date$
  * @package GalleryCore
@@ -59,6 +58,11 @@ class AdminRepositoryController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	/* Init repository. */
 	$repository = $this->_getRepository();
 	$ret = $repository->init();
@@ -66,13 +70,7 @@ class AdminRepositoryController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$status = array();
-	$error = array();
+	$status = $error = array();
 
 	$mode = GalleryUtilities::getRequestVariables('mode');
 	switch($mode) {
@@ -349,14 +347,14 @@ class AdminRepositoryView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	/* Init repository. */
-	$repository = $this->_getRepository();
-	$ret = $repository->init();
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	/* Init repository. */
+	$repository = $this->_getRepository();
+	$ret = $repository->init();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -434,9 +432,8 @@ class AdminRepositoryView extends GalleryView {
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    $actionText = isset($upgradeData['upgradeablePackages'])
-			? $gallery->i18n('Upgrade')
-			: $gallery->i18n('Download');
+	    $actionText = isset($upgradeData['upgradeablePackages']) ? $gallery->i18n('Upgrade')
+								     : $gallery->i18n('Download');
 
 	    list ($ret, $pluginName) = $repository->getPluginName($pluginType, $pluginId);
 	    if ($ret) {

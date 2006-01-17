@@ -176,6 +176,11 @@ class AdminRewriteView extends GalleryView {
 	$urlGenerator =& $gallery->getUrlGenerator();
 	$AdminRewrite = array();
 
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
 	list ($ret, $rewriteParser) = RewriteHelper::getRewriteParser();
 	if ($ret) {
@@ -189,7 +194,7 @@ class AdminRewriteView extends GalleryView {
 	    $AdminRewrite['mode'] = 'rules';
 	}
 
-	/* Error handeling for defined (numeric) REWRITE_STATUS_* errors */
+	/* Error handling for defined (numeric) REWRITE_STATUS_* errors */
 	$errors = array();
 	if (isset($form['error'])) {
 	    foreach ($form['error'] as $errno => $tmp) {

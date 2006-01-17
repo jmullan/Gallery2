@@ -35,14 +35,12 @@ class RandomHighlightSiteAdminController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	/* Make sure we have adequate permissions */
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$status = array();
-	$error = array();
+	$status = $error = array();
 	if (isset($form['action']['save'])) {
 	    if (isset($form['duration'])) {
 		/* Accept input for locales that use comma as fraction separator */
@@ -81,6 +79,11 @@ class RandomHighlightSiteAdminView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	if ($form['formName'] != 'RandomHighlightSiteAdmin') {
 	    $form['formName'] = 'RandomHighlightSiteAdmin';
 	    list ($ret, $duration) =

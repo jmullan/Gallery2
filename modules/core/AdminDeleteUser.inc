@@ -19,7 +19,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 /**
  * @version $Revision$ $Date$
  * @package GalleryCore
@@ -67,9 +66,7 @@ class AdminDeleteUserController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$results = array();
-	$status = array();
-	$error = array();
+	$results = $status = $error = array();
 	$userId = GalleryUtilities::getRequestVariables('userId');
 
 	if (isset($form['action']['cancel'])) {
@@ -188,7 +185,7 @@ class AdminDeleteUserController extends GalleryController {
 }
 
 /**
- * This view will prompt for confirmation ot delete an user
+ * This view will prompt for confirmation to delete a user
  *
  * @package GalleryCore
  * @subpackage UserInterface
@@ -225,10 +222,8 @@ class AdminDeleteUserView extends GalleryView {
 	}
 	$AdminDeleteUser['numberOfItems'] = count($itemIds);
 
-	/* Render the HTML body */
 	$template->setVariable('AdminDeleteUser', $AdminDeleteUser);
 	$template->setVariable('controller', 'core.AdminDeleteUser');
-
 	return array(null,
 		     array('body' => 'modules/core/templates/AdminDeleteUser.tpl'));
     }

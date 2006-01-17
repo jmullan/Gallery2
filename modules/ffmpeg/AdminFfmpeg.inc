@@ -25,9 +25,6 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
-/**
- * Required class
- */
 GalleryCoreApi::requireOnce('modules/ffmpeg/classes/FfmpegToolkitHelper.class');
 
 /**
@@ -251,6 +248,11 @@ class AdminFfmpegView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
+
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
 	/* Load our default values if we didn't just come from this form. */
 	if ($form['formName'] != 'AdminFfmpeg') {

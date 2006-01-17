@@ -40,16 +40,12 @@ class AdminCreateGroupController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	global $gallery;
-
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$results = array();
-	$status = array();
-	$error = array();
+	$results = $status = $error = array();
 	if (isset($form['action']['cancel'])) {
 
 	    /* Go back to the AdminGroups view */
@@ -123,24 +119,18 @@ class AdminCreateGroupView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	global $gallery;
-
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-
 	if ($form['formName'] != 'AdminCreateGroup') {
-	    // Set the form defaults
 	    $form['groupName'] = '';
 	    $form['formName'] = 'AdminCreateGroup';
 	}
 
-	$AdminCreateGroup = array();
-	$template->setVariable('AdminCreateGroup', $AdminCreateGroup);
+	$template->setVariable('AdminCreateGroup', array());
 	$template->setVariable('controller', 'core.AdminCreateGroup');
-
 	return array(null,
 		     array('body' => 'modules/core/templates/AdminCreateGroup.tpl'));
     }

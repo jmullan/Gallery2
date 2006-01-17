@@ -19,7 +19,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 /**
  * @version $Revision$ $Date$
  * @package GalleryCore
@@ -40,15 +39,12 @@ class AdminModulesController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest() {
-	global $gallery;
-
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$status = array();
-	$error = array();
+	$status = $error = array();
 
 	list($moduleId, $action) = GalleryUtilities::getRequestVariables('moduleId', 'action');
 	if (!empty($moduleId) && !empty($action)) {
@@ -177,8 +173,6 @@ class AdminModulesView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	global $gallery;
-
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);

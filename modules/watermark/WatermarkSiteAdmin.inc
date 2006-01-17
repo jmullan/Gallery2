@@ -35,7 +35,6 @@ class WatermarkSiteAdminController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	/* Make sure we have adequate permissions */
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -156,6 +155,11 @@ class WatermarkSiteAdminView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	GalleryCoreApi::requireOnce('modules/watermark/classes/WatermarkHelper.class');
+
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
 	if ($form['formName'] != 'WatermarkSiteAdmin') {
 	    $form['formName'] = 'WatermarkSiteAdmin';

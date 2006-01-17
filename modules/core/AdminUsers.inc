@@ -19,7 +19,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 /**
  * @version $Revision$ $Date$
  * @package GalleryCore
@@ -28,12 +27,10 @@
  */
 
 /**
- * This controller will send the user to the chosen subView in the AdminUsers
-*  View
+ * This controller will send the user to the chosen subView in the AdminUsers View
  *
  * @package GalleryCore
  * @subpackage UserInterface
- *
  */
 class AdminUsersController extends GalleryController {
 
@@ -224,10 +221,8 @@ class AdminUsersView extends GalleryView {
 	$AdminUsers = array();
 	$AdminUsers['totalUserCount'] = $totalUserCount;
 
-	/* Render the HTML body */
 	$template->setVariable('AdminUsers', $AdminUsers);
 	$template->setVariable('controller', 'core.AdminUsers');
-
 	return array(null,
 		     array('body' => 'modules/core/templates/AdminUsers.tpl'));
     }

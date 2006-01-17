@@ -25,9 +25,6 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
-/**
- * Required class
- */
 GalleryCoreApi::requireOnce('modules/netpbm/classes/NetPbmToolkitHelper.class');
 
 /**
@@ -177,6 +174,11 @@ class AdminNetPbmView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
+
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
 	/* Load our default values if we didn't just come from this form. */
 	if ($form['formName'] != 'AdminNetPbm') {

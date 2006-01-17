@@ -35,16 +35,12 @@ class SlideshowAppletSiteAdminController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	global $gallery;
-
-	/* Make sure we have adequate permissions */
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$status = array();
-	$error = array();
+	$status = $error = array();
 	if (isset($form['action']['add'])) {
 	    $type = $form['variable']['type'];
 
@@ -147,9 +143,6 @@ class SlideshowAppletSiteAdminView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	global $gallery;
-	$AdminSlideshowApplet = array();
-
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -176,7 +169,7 @@ class SlideshowAppletSiteAdminView extends GalleryView {
 	}
 
 	$template->javascript('lib/javascript/BlockToggle.js');
-	$template->setVariable('AdminSlideshowApplet', $AdminSlideshowApplet);
+	$template->setVariable('AdminSlideshowApplet', array());
 	$template->setVariable('controller', 'slideshowapplet.SlideshowAppletSiteAdmin');
 	return array(null,
 	     array('body' => 'modules/slideshowapplet/templates/SlideshowAppletSiteAdmin.tpl'));
