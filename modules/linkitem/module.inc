@@ -25,16 +25,16 @@
  * @package LinkItem
  * @author Alan Harder <alan.harder@sun.com>
  */
-class LinkItemModule extends GalleryModule {
+class LinkItemModule extends GalleryModule /* and GalleryEventListener */ {
 
     function LinkItemModule() {
 	global $gallery;
 	$this->setId('linkitem');
 	$this->setName('Link Items');
 	$this->setDescription($gallery->i18n('Create links to other albums or external urls'));
-	$this->setVersion('1.0.0');
+	$this->setVersion('1.0.1');
 	$this->setGroup('display', $gallery->i18n('Display'));
-	$this->setCallbacks('');
+	$this->setCallbacks('registerEventListeners');
 	$this->setRequiredCoreApi(array(7, 0));
 	$this->setRequiredModuleApi(array(3, 0));
     }
@@ -93,10 +93,47 @@ class LinkItemModule extends GalleryModule {
     }
 
     /**
+     * @see GalleryModule::registerEventListeners()
+     */
+    function registerEventListeners() {
+	GalleryCoreApi::registerEventListener('GalleryEntity::delete', new LinkItemModule());
+    }
+
+    /**
      * @see GalleryModule::getModuleEntityTypes()
      */
     function getModuleEntityTypes() {
 	return array('GalleryLinkItem');
+    }
+
+    /**
+     * Delete links to an album if the album is deleted.
+     * @see GalleryEventListener::handleEvent
+     */
+    function handleEvent($event) {
+	$entity = $event->getEntity();
+	if (GalleryUtilities::isA($entity, 'GalleryAlbumItem')) {
+	    global $gallery;
+	    $query = '
+	      SELECT
+		[GalleryLinkItem::id]
+	      FROM
+		[GalleryLinkItem]
+	      WHERE
+		[GalleryLinkItem::link] = ?
+	    ';
+	    list ($ret, $searchResults) = $gallery->search($query, array($entity->getId()));
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    while ($result = $searchResults->nextResult()) {
+		$ret = GalleryCoreApi::deleteEntityById($result[0]);
+		if ($ret) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+	}
+	return array(null, null);
     }
 }
 ?>

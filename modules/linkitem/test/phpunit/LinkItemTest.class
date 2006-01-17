@@ -48,7 +48,6 @@ class LinkItemTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->_markForCleanup($this->_targetAlbum);
 
 	list ($ret, $this->_lockId) = GalleryCoreApi::acquireReadLock(
 	    array($this->_album->getId(), $this->_targetAlbum->getId()));
@@ -58,31 +57,39 @@ class LinkItemTest extends GalleryTestCase {
 	}
 
 	list ($ret, $this->_link) =
-	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryLinkItem');
-	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	if (empty($this->_link)) {
-	    return $this->failWithStatus(
-		GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__));
-	}
-	$ret = $this->_link->create($this->_album->getId(), 'http://test.com/test.html');
-	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$ret = $this->_link->save();
+	    $this->_createLinkItem($this->_album->getId(), 'http://test.com/test.html');
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
 
-    function tearDown() {
-	$ret = GalleryCoreApi::releaseLocks($this->_lockId);
+    function _createLinkItem($parentId, $target) {
+	list ($ret, $link) =
+	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryLinkItem');
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (empty($link)) {
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	}
+	$ret = $link->create($parentId, $target);
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$ret = $link->save();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	return array(null, $link);
+    }
+
+    function tearDown() {
+	if (isset($this->_lockId)) {
+	    $ret = GalleryCoreApi::releaseLocks($this->_lockId);
+	    if ($ret) {
+		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
 	}
 
 	parent::tearDown();
@@ -90,12 +97,74 @@ class LinkItemTest extends GalleryTestCase {
 
     function testMoveLink() {
 	/* We don't really have anything on the filesystem; make sure move() works ok */
+	$this->_markForCleanup($this->_targetAlbum);
+
 	$ret = $this->_link->move($this->_targetAlbum->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$this->assertEquals($this->_targetAlbum->getId(), $this->_link->getParentId());
+    }
+
+    function testDeleteAlbum() {
+	/* Verify delete of an album also deletes links that point to it */
+	list ($ret, $link) =
+	    $this->_createLinkItem($this->_album->getId(), $this->_targetAlbum->getId());
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::releaseLocks($this->_lockId);
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	unset($this->_lockId);
+
+	$ret = GalleryCoreApi::deleteEntityById($this->_targetAlbum->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $gone) = $link->refresh();
+	$this->assert(!isset($gone), 'link should be gone');
+	if ($ret) {
+	    $this->assertEquals(GALLERY_ERROR | ERROR_MISSING_OBJECT,
+				$ret->getErrorCode(), 'expected error code');
+	} else {
+	    $this->assert(false, 'expected error');
+	}
+    }
+
+    function testDeleteSubalbum() {
+	/* Verify delete of an album also deletes links that point to its subalbums */
+	list ($ret, $subalbum) = $this->_createRandomAlbum($this->_targetAlbum->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $link) =
+	    $this->_createLinkItem($this->_album->getId(), $subalbum->getId());
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::releaseLocks($this->_lockId);
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	unset($this->_lockId);
+
+	$ret = GalleryCoreApi::deleteEntityById($this->_targetAlbum->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $gone) = $link->refresh();
+	$this->assert(!isset($gone), 'link should be gone');
+	if ($ret) {
+	    $this->assertEquals(GALLERY_ERROR | ERROR_MISSING_OBJECT,
+				$ret->getErrorCode(), 'expected error code');
+	} else {
+	    $this->assert(false, 'expected error');
+	}
     }
 }
 ?>
