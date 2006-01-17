@@ -135,6 +135,19 @@ class TemplateAdapterTest extends GalleryTestCase {
 	    'name="g2_form[changeInDescendents][pirate]"/>  <label ' .
 	    'for="pirate_ChangeInDescendents"> ninja</label>', $result);
     }
+
+    /* Make sure viewL10domain doesn't get ignored */
+    function testTextViewL10domain() {
+	global $gallery;
+	$gallery->_translator = new TemplateAdapterMockTranslator();
+	$this->_setupMockAdapter();
+	$this->_mockSmarty->_tpl_vars['l10Domain'] = 'en_US';
+	$this->_mockSmarty->_tpl_vars['viewL10domain'] = 'te_TE';
+	$translated = $this->_templateAdapter->text(array('text' => 'Test failed'),
+						    $this->_mockSmarty);
+
+	$this->assertEquals('Test passed', $translated);
+    }
 }
 
 class TemplateAdapterMockSmarty {
@@ -143,6 +156,15 @@ class TemplateAdapterMockSmarty {
 class TemplateAdapterMockUrlGenerator {
     function generateUrl($params=array(), $options=array()) {
 	$this->_calls[] = array($params, $options);
+    }
+}
+
+class TemplateAdapterMockTranslator {
+    function translateDomain($domain, $params) {
+	if ($domain == 'te_TE' && $params['text'] == 'Test failed') {
+	    return array(null, 'Test passed');
+	}
+	return array(null, null);
     }
 }
 ?>

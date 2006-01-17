@@ -195,6 +195,7 @@ class GalleryTestCase extends TestCase {
 	$this->_saveVars[] = $gallery->getPlatform();
 	$this->_saveVars[] = $gallery->getActiveUser();
 	$this->_saveVars[] = $gallery->getUrlGenerator();
+	$this->_saveVars[] = $gallery->getTranslator();
 	$this->_saveVars[] = $gallery->_config;
 	$this->_saveVars[] = $gallery->_phpVm;
 	$this->_saveVars[] = isset($gallery->_lockSystem) ? $gallery->_lockSystem : null;
@@ -254,6 +255,7 @@ class GalleryTestCase extends TestCase {
 	$gallery->setActiveUser(array_shift($this->_saveVars));
 	$urlGenerator = array_shift($this->_saveVars);
 	$gallery->setUrlGenerator($urlGenerator);
+	$gallery->_translator = array_shift($this->_saveVars);
 	$gallery->_config = array_shift($this->_saveVars);
 	$gallery->_phpVm = array_shift($this->_saveVars);
 

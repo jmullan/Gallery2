@@ -225,6 +225,8 @@ class GalleryTemplateAdapter {
 
 	if (isset($params['l10Domain'])) {
 	    $domain = $params['l10Domain'];
+	} else if (isset($smarty->_tpl_vars['viewL10domain'])) {
+	    $domain = $smarty->_tpl_vars['viewL10domain'];
 	} else {
 	    $domain = $smarty->_tpl_vars['l10Domain'];
 	}
