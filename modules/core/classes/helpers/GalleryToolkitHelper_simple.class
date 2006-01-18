@@ -206,7 +206,7 @@ class GalleryToolkitHelper_simple {
 	}
 
 	if ($result = $results->nextResult()) {
-	    $priority = $result[0];
+	    $priority = (int)$result[0];
 	}
 	if (empty($priority)) {
 	    $priority = 20;
