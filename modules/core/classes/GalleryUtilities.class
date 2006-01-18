@@ -460,10 +460,11 @@ class GalleryUtilities {
      *     http://example.com/gallery/themes/classic/styles/style.css
      *
      * @param string path to a file in the gallery directory tree
+     * @param array (optional) options to pass to UrlGenerator
      * @return string a url
      * @static
      */
-    function convertPathToUrl($path) {
+    function convertPathToUrl($path, $options=array()) {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 	$dirbase = $platform->realpath(dirname(__FILE__) . '/../../..') . '/';
@@ -481,7 +482,7 @@ class GalleryUtilities {
 
 	/* Prepend the G2 base URL */
 	$urlGenerator =& $gallery->getUrlGenerator();
-	return $urlGenerator->generateUrl(array('href' => $relativePath));
+	return $urlGenerator->generateUrl(array('href' => $relativePath), $options);
     }
 
     /**
