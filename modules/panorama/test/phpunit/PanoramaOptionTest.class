@@ -26,9 +26,6 @@
  * @author Alan Harder <alan.harder@sun.com>
  */
 
-/**
- * Load required classes
- */
 GalleryCoreApi::requireOnce('lib/tools/phpunit/ItemEditOptionTestCase.class');
 GalleryCoreApi::requireOnce('modules/panorama/classes/PanoramaHelper.class');
 
@@ -47,53 +44,42 @@ class PanoramaOptionTest extends ItemEditOptionTestCase {
     function setUp() {
 	parent::setUp();
 
-	list ($ret, $item) =
+	list ($ret, $this->_item) =
 	    $this->_createRandomDataItem($this->_getRootId(), 'image/test',
-					 array(), __FILE__, 'GalleryPhotoItem');
+		    array('width' => 10000, 'height' => 100), __FILE__, 'GalleryPhotoItem');
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$item->setMimeType('image/gif');
-	$ret = PanoramaHelper::assignEntityType($item, true);
-	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->_item = $item;
 	$this->_markForCleanup($this->_item);
 
-	list ($ret, $derivative) =
-	    $this->_createDerivative($item, $item->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED);
+	list ($ret, $this->_derivative) = $this->_createDerivative(
+		$this->_item, $this->_item->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED,
+		'test-operation|80', 'image/test', array('width' => 8000, 'height' => 80));
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$ret = PanoramaHelper::assignEntityType($derivative, true);
-	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->_derivative = $derivative;
     }
 
-    function testPanoramaOff() {
-	$result = $this->_handleRequestAfterEdit(array(), $this->_item);
-	$this->assertEquals(array(array(), array()), $result);
-
-	list ($ret, $item) = $this->_item->refresh();
+    function _makePanoramas() {
+	$ret = PanoramaHelper::assignEntityType($this->_item, true);
 	if ($ret) {
-	    print $ret->getAsHtml();
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	list ($ret, $this->_item) = $this->_item->refresh();
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals('GalleryPhotoItem', $item->getEntityType());
-
-	list ($ret, $item) = $this->_derivative->refresh();
+	$ret = PanoramaHelper::assignEntityType($this->_derivative, true);
 	if ($ret) {
-	    print $ret->getAsHtml();
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	list ($ret, $this->_derivative) = $this->_derivative->refresh();
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals('GalleryDerivativeImage', $item->getEntityType());
+	return null;
     }
 
     function testPanoramaOn() {
@@ -115,6 +101,29 @@ class PanoramaOptionTest extends ItemEditOptionTestCase {
 	$this->assertEquals('PanoramaDerivativeImage', $item->getEntityType());
     }
 
+    function testPanoramaOff() {
+	$ret = $this->_makePanoramas();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$result = $this->_handleRequestAfterEdit(array(), $this->_item);
+	$this->assertEquals(array(array(), array()), $result);
+
+	list ($ret, $item) = $this->_item->refresh();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('GalleryPhotoItem', $item->getEntityType());
+
+	list ($ret, $item) = $this->_derivative->refresh();
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('GalleryDerivativeImage', $item->getEntityType());
+    }
+
     function testHelper() {
 	list ($ret, $images) = PanoramaHelper::fetchViewableImages(array($this->_item));
 	if ($ret) {
@@ -123,6 +132,32 @@ class PanoramaOptionTest extends ItemEditOptionTestCase {
 	$this->assert(isset($images[$this->_item->getId()]), 'Missing result');
 	$this->assertEquals($this->_derivative->getId(),
 			    $images[$this->_item->getId()]->getId(), 'Id');
+    }
+
+    function testRender() {
+	/* Make sure we use full urls in applet parameters, and sessionid in image url */
+	$ret = $this->_makePanoramas();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$html = $this->_item->render('HTML', array());
+	$this->assert(preg_match('{<object[^>]*archive="http}', $html),
+		      'item: jar full url: ' . htmlentities($html));
+	$this->assert(preg_match('{<param[^>]*name="ScrollerThumb"[^>]*value="http}', $html),
+		      'item: slider full url: ' . htmlentities($html));
+	$this->assert(preg_match('{<param[^>]*name="PanoramaTile"[^>]*value="http[^"]*'
+				 . SESSION_ID_PARAMETER . '}', $html),
+		      'item: image full url: ' . htmlentities($html));
+
+	$html = $this->_derivative->render('HTML', $this->_item, array());
+	$this->assert(preg_match('{<object[^>]*archive="http}', $html),
+		      'deriv: jar full url: ' . htmlentities($html));
+	$this->assert(preg_match('{<param[^>]*name="ScrollerThumb"[^>]*value="http}', $html),
+		      'deriv: slider full url: ' . htmlentities($html));
+	$this->assert(preg_match('{<param[^>]*name="PanoramaTile"[^>]*value="http[^"]*'
+				 . SESSION_ID_PARAMETER . '}', $html),
+		      'deriv: image full url: ' . htmlentities($html));
     }
 }
 ?>

@@ -71,7 +71,8 @@ class PanoramaView extends GalleryView {
 	$Panorama['image'] = (array)$image;
 	$Panorama['imageUrl'] = $src;
 	$Panorama['width'] = $viewWidth;
-	$Panorama['moduleUrl'] = GalleryUtilities::convertPathToUrl(dirname(__FILE__));
+	$Panorama['moduleUrl'] =
+	    GalleryUtilities::convertPathToUrl(dirname(__FILE__), array('forceFullUrl' => true));
 
 	$template->setVariable('Panorama', $Panorama);
 	$template->title($module->translate('Panorama'));

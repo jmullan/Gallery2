@@ -25,9 +25,6 @@
  * @author Alan Harder <alan.harder@sun.com>
  */
 
-/**
- * Load the parent class
- */
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryDerivativeImage.class');
 
 /**
@@ -63,26 +60,37 @@ class PanoramaDerivativeImage extends GalleryDerivativeImage {
 	    $src = $urlGenerator->generateUrl(
 		array('view' => 'core.DownloadItem', 'itemId' => $this->getId(),
 		      'serialNumber' => $this->getSerialNumber()),
-		array('forceFullUrl' => !empty($params['forceFullUrl'])));
+		array('forceFullUrl' => true, 'forceSessionId' => true));
 
 	    list ($width, $height) = array($this->getWidth(), $this->getHeight());
-	    $baseUrl = GalleryUtilities::convertPathToUrl(dirname(dirname(__FILE__)));
+	    $baseUrl = GalleryUtilities::convertPathToUrl(dirname(dirname(__FILE__)),
+							  array('forceFullUrl' => true));
 
-	    return sprintf(
-		'<applet archive="%s/java/Metamorphose.jar" code="Metamorphose" width="%d" ' .
-		'height="%d">' .
-		'<param name=BackgroundColor value="#666666"><param name=PanoramaRect ' .
-		'value="0,0,%d,%d">' .
-		'<param name=ScrollerRect value="0,%d,%d,17"><param name=ScrollerThumb ' .
-		'value="%s/images/slider.png">' .
-		'<param name="PanoramaTile" value="%s"><param name=PanoramaSize ' .
-		'value="%d,%d"></applet>',
-			   $baseUrl,
-			   $viewWidth, $height + 17,
-			   $viewWidth, $height,
-			   $height, $viewWidth,
-			   $baseUrl,
-			   $src, $width, $height);
+	    return sprintf('
+		    <object width="%d" height="%d"
+			    classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93">
+		    <!--[if !IE]>-->
+		    <object width="%d" height="%d"
+			    archive="%s/java/Metamorphose.jar" classid="java:Metamorphose">
+		    <!--<![endif]-->
+			<param name="code" value="Metamorphose"/>
+			<param name="archive" value="%s/java/Metamorphose.jar"/>
+			<param name="BackgroundColor" value="#666666"/>
+			<param name="PanoramaRect" value="0,0,%d,%d"/>
+			<param name="ScrollerRect" value="0,%d,%d,17"/>
+			<param name="ScrollerThumb" value="%s/images/slider.png"/>
+			<param name="PanoramaTile" value="%s"/>
+			<param name="PanoramaSize" value="%d,%d"/>
+		    <!--[if !IE]>-->
+		    </object>
+		    <!--<![endif]-->
+		    </object>
+		    ',
+		    $viewWidth, $height + 17,
+		    $viewWidth, $height + 17, $baseUrl, $baseUrl,
+		    $viewWidth, $height,
+		    $height, $viewWidth,
+		    $baseUrl, $src, $width, $height);
 
 	default:
 	    return null;
