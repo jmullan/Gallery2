@@ -63,15 +63,15 @@
 	      </p>
 
 	      <p>
-		<h4> <span id="MainPageStatus_description">&nbsp;</span> </h4>
+		<h4><span id="MainPageStatus_description">&nbsp;</span></h4>
 	      </p>
 
-	      <table width="100%">
+	    <table id="statusTable" cellspacing="0">
 		<tr>
-		  <td id="MainPageStatus_progressMade" class="progressMade" style="display: inline-block; width:0%">&nbsp;</td>
-		  <td id="MainPageStatus_progressToGo" class="progressToGo" style="display: inline-block; width:100%; border-left: none">&nbsp;</td>
+		  <td id="MainPageStatus_progressMade" class="progressMade">&nbsp;</td>
+		  <td id="MainPageStatus_progressToGo" class="progressToGo">&nbsp;</td>
 		</tr>
-	      </table>
+	    </table>
 	    </div>
 
 	    <script type="text/javascript">
@@ -159,7 +159,7 @@
 	      </tr>
 	    </table>
       <p style="text-align: right; margin-bottom: 1.0em;"><?php printf(_('Upgrade %d%% complete'), $templateData['percentComplete']); ?></p>
-      	  
+
 	    <?php if (!empty($templateData['errors'])): ?>
 	    <h2 class="error">
 	      <?php foreach ($templateData['errors'] as $error): ?>
