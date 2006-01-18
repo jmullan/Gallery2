@@ -600,6 +600,59 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 		      $preferences, 'grandchild');
 
     }
+    
+    /**
+     * Test applying options from 'Album' tab to sub-albums with no subalbums
+     */
+    function testChangeInDescendentsLeaf() {
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[thumbnail][size]', 123);
+	GalleryUtilities::putRequestVariable('form[orderBy]', 'baz');
+	GalleryUtilities::putRequestVariable('form[orderDirection]', 'bletch');
+	GalleryUtilities::putRequestVariable('form[resizes][0][active]', 1);
+	GalleryUtilities::putRequestVariable('form[resizes][0][width]', 50);
+	GalleryUtilities::putRequestVariable('form[resizes][0][height]', 50);
+	GalleryUtilities::putRequestVariable('form[theme]', 'bar');
+	GalleryUtilities::putRequestVariable('form[serialNumber]',
+					     $this->_album->getSerialNumber());
+
+	GalleryUtilities::putRequestVariable('form[changeInDescendents][theme]', 1);
+	GalleryUtilities::putRequestVariable('form[changeInDescendents][sort]', 1);
+	GalleryUtilities::putRequestVariable('form[changeInDescendents][thumbnail]', 1);
+	GalleryUtilities::putRequestVariable('form[changeInDescendents][resizes]', 1);
+	GalleryUtilities::putRequestVariable('form[changeInDescendents][orderBy]', 1);
+	GalleryUtilities::putRequestVariable('form[changeInDescendents][orderDirection]', 1);
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_album, $this->_preferred);
+	$this->assertEquals(array(array(),
+				  $this->_translate('Settings saved successfully.')),
+			    $results);
+        /* On the album itself */
+	list ($ret, $this->_album) = $this->_album->refresh();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('bar', $this->_album->getTheme(), 'Album');
+	$this->assertEquals('baz', $this->_album->getOrderBy(), 'Album');
+	$this->assertEquals('bletch', $this->_album->getOrderDirection(), 'Album');
+
+	list ($ret, $preferences) = GalleryCoreApi::fetchDerivativePreferencesForItem(
+	    $this->_album->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+        usort ($preferences, "ItemEditAlbumPluginTestCmp");
+	$this->assertEquals(array(
+			    array('order' => 0,
+				  'derivativeType' => 1,
+				  'derivativeOperations' => 'thumbnail|123'),
+                            array('order' => 0,
+				  'derivativeType' => 2,
+				  'derivativeOperations' => 'scale|50,50')),
+		      $preferences);
+    }
+
 }
 
 function ItemEditAlbumPluginTestCmp($a, $b) {

@@ -115,7 +115,7 @@ class ItemEditAlbum extends ItemEditPlugin {
                 }
 
                 /* Use appropriate settings in descendent albums */
-                if (!empty($changeTypes)) {
+                if (!empty($changeTypes) && !empty($subAlbumIds)) {
                    $ret = GalleryCoreApi::removeDerivativePreferenceForItemType(
                         $subAlbumIds, $changeTypes);
                     if ($ret) {
