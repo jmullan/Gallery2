@@ -158,8 +158,15 @@ td.navbar td, #helpbar td {
 
 #statusTable {
   width: 100%;
-  margin: 2px 0;
+  height: 20px;
+  margin: 0;
+  padding: 0;
+  border-spacing: 0;
+  border-collapse: collapse;
 }
+#progressMade { background: #fd6704 url('../images/btnBGor.gif') bottom; border: thin solid #ddd; }
+#progressToGo { background-color: #eee; border-left: none; border: thin solid #ddd; }
+#progressStatus { text-align: right; margin-bottom: 1.0em; }
 
 #footer {
   width: 720px;
@@ -176,33 +183,24 @@ td.navbar td, #helpbar td {
   font-size: 1.4em;
 }
 
-.error {
-  font-weight: bold;
-  padding: 5px 5px 5px 45px;
-  height: 50px;
-  border: 1px solid #999;
-  background: #ffc url('../../install/images/ico_warning.gif') 5px 5px no-repeat;
-}
-
-.warning {
-  font-weight: bold;
-}
-
-.success {
+.error, .warning, .success {
   font-size: 1.2em;
-  font-weight: 900;
-  margin-right: -0.15em;
+  font-weight: bold;
 }
+.error { color: red; }
+.warning { color: #f63; }
+.success { color: green; }
 
-div.success {
-  padding: 5px 5px 5px 45px;
+div.error, div.warning, div.success {
+  color: #000;
+  padding: 5px 10px 5px 45px;
   border: 1px solid #999;
-  background: #cfc url('../../install/images/ico_success.gif') 5px 50% no-repeat;
+  vertical-align: middle;
 }
+div.error { background: #fcc url('../../install/images/ico_error.gif') 5px 50% no-repeat; }
+div.warning { background: #ffc url('../../install/images/ico_warning.gif') 5px 50% no-repeat; }
+div.success { background: #cfc url('../../install/images/ico_success.gif') 5px 5px no-repeat; }
 
-h2.succsss { color: green; }
-h2.warning { color: orange; }
-h2.error { color: red; }
 
 .go {
   font-weight: bold;
@@ -352,16 +350,6 @@ input, select {
   padding: 4px;
   margin: 4px 8px 0px 8px;
   border: 1px solid #999;
-}
-
-.progressMade {
-  background: #fd6704 url('../images/btnBGor.gif') bottom;
-  border: 1px solid #ddd;
-}
-
-.progressToGo {
-  background-color: #eee;
-  border: 1px solid #ddd;
 }
 
 #MainPageStatus_statusBlock table {
