@@ -61,9 +61,9 @@ class DatabaseSetupStep extends InstallStep {
 		$dbPlatformType = 'mysql';
 		break;
 	    case 'db2':
-		if (!$firstConfig && !function_exists('odbc_connect')) {
+		if (!$firstConfig && !function_exists('db2_connect')) {
 		    $templateData['error']['phpDbMissing'] =
-			_('You must have the ODBC module installed');
+			_('You must have the ibm_db2 PHP module installed');
 		}
 		$dbPlatformType = 'db2';
 		break;
