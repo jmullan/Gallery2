@@ -265,7 +265,7 @@ class Db2Storage extends GalleryStorage {
 	    break;
 
 	case 'RAND':
-	    $sql = sprintf('RANDOM(%s)', empty($args) ? '' : $args[0]);
+	    $sql = sprintf('RAND(%s)', empty($args) ? '' : $args[0]);
 	    break;
 
 	case 'LIMIT':
