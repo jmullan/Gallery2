@@ -397,11 +397,13 @@ class CoreModule extends GalleryModule {
 
 	$itemTypeNames = array_merge($item->itemTypeName(), $item->itemTypeName(false));
 	if (isset($permissions['core.edit'])) {
-	    if ($isAlbum) {
-		if ($childCount > 1) {
-		    $views[] = array('name' => $this->_translate('Reorder Items'),
-				     'view' => 'core.ItemReorder');
-		}
+	    if ($isAlbum && $childCount > 1) {
+		$views[] = array('name' => $this->_translate('Reorder Items'),
+				 'view' => 'core.ItemReorder');
+	    }
+	    if ($isAlbum && $childCount > 0) {
+		$views[] = array('name' => $this->_translate('Edit Captions'),
+				 'view' => 'core.ItemEditCaptions');
 	    }
 
 	    /* Edit view for all item types */
@@ -409,6 +411,10 @@ class CoreModule extends GalleryModule {
 				  array('text' => 'Edit %s', 'arg1' => $itemTypeNames[0]),
 				  $itemTypeNames[2]),
 			     'view' => 'core.ItemEdit');
+	    $views[] = array('name' => isset($permissions['core.changePermissions'])
+				 ? $this->_translate('Edit Permissions')
+				 : $this->_translate('View Permissions'),
+			     'view' => 'core.ItemPermissions');
 
 	    if (!empty($parentId) && $hasThumb && $parentId != $rootId
 		    && isset($parentPermissions['core.edit'])) {
@@ -457,25 +463,14 @@ class CoreModule extends GalleryModule {
 	    }
 	}
 
-	if (isset($permissions['core.edit'])) {
-	    $views[] = array('name' => isset($permissions['core.changePermissions'])
-				 ? $this->_translate('Edit Permissions')
-				 : $this->_translate('View Permissions'),
-			     'view' => 'core.ItemPermissions');
+	if (isset($permissions['core.addDataItem']) && $isAlbum) {
+	    $views[] = array('name' => $this->_translate('Add Items'),
+			     'view' => 'core.ItemAdd');
 	}
 
-	if (isset($permissions['core.addDataItem'])) {
-	    if ($item->getCanContainChildren()) {
-		$views[] = array('name' => $this->_translate('Add Items'),
-				 'view' => 'core.ItemAdd');
-	    }
-	}
-
-	if (isset($permissions['core.addAlbumItem'])) {
-	    if ($item->getCanContainChildren()) {
-		$views[] = array('name' => $this->_translate('Add Album'),
-				 'view' => 'core.ItemAddAlbum');
-	    }
+	if (isset($permissions['core.addAlbumItem']) && $isAlbum) {
+	    $views[] = array('name' => $this->_translate('Add Album'),
+			     'view' => 'core.ItemAddAlbum');
 	}
 
 	return array(null, $views);
