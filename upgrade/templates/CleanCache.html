@@ -1,4 +1,10 @@
-    <h1 class="success"><?php print _("Delete Cache Directories") ?></h1>
+    <?php if (empty($templateData['unclean'])): ?>
+    <div class="success">
+      <h1><?php print _("Successfully cleaned cache directories.") ?></h1>
+    </div>
+    <?php endif; ?>
+
+    <h1><?php print _("Delete Cache Directories") ?></h1>
 
     <p>
       <?php print _("Gallery creates temporary copies of some of your data on your hard drive.  This helps it to run faster.  But when you upgrade, some of these files might be out of date so it's a good idea to get rid of them now.  Gallery will create them again as it needs them."); ?>
@@ -22,8 +28,4 @@
 	    <a href="<?php generateUrl('index.php?step=' . $currentStep->getStepNumber()) ?>"><?php print _('Try Again') ?></a>
 	  </span></span></span></span></div>
     </div>
-    <?php else: ?>
-    <p>
-      <?php print _("We have successfully cleaned out your cache directories.") ?>
-    </p>
     <?php endif; ?>

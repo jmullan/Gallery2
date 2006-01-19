@@ -85,21 +85,21 @@ td.header img {
   clear: none;
 }
 
-td.navbar {
+td#navbar {
   font-family: Verdana, "Lucida Grande", Arial, sans-serif;
-  width: 143px;
+  width: 160px;
   vertical-align: top;
   margin: auto;
 }
 
-td.navbar div {
+td#navbar div {
   background-color: #d1e0ee;
   border-right: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
   padding: 10px 0 10px 10px;
 }
 
-td.navbar td.heading {
+td#navbar td.heading {
   font-size: 1.4em;
   font-weight: bold;
   font-family: "Gill Sans", Verdana, Arial, sans-serif;
@@ -107,23 +107,23 @@ td.navbar td.heading {
   padding: 3px;
 }
 
-td.navbar td, #helpbar td {
+td#navbar td, #helpbar td {
   border-top: 1px solid #ecf2f8;
   padding: 8px 2px;
 }
 
-#navbar a {
+#navbar a, #navbar a:visited {
   color: #000;
 }
 
-#navbar a.current {
+#navbar a.current, #navbar a.current:visited {
   color: #ae0000;
 }
 
 #helpbar {
-    float: right;
-    clear: none;
-    margin: 0 20px;
+  float: right;
+  clear: none;
+  margin: 0 20px;
 }
 
 #helpbar tr.help td {
@@ -183,7 +183,7 @@ td.navbar td, #helpbar td {
   font-size: 1.4em;
 }
 
-.error, .warning, .success {
+.error, .warning, .success, h1.success {
   font-size: 1.2em;
   font-weight: bold;
 }
@@ -195,12 +195,19 @@ div.error, div.warning, div.success {
   color: #000;
   padding: 5px 10px 5px 45px;
   border: 1px solid #999;
+  height: 42px;
+  min-height: 42px;
   vertical-align: middle;
 }
-div.error { background: #fcc url('../../install/images/ico_error.gif') 5px 50% no-repeat; }
+div.error   { margin-bottom: 10px; background: #fcc url('../../install/images/ico_error.gif') 5px 50% no-repeat; }
 div.warning { background: #ffc url('../../install/images/ico_warning.gif') 5px 50% no-repeat; }
-div.success { background: #cfc url('../../install/images/ico_success.gif') 5px 5px no-repeat; }
+div.success { margin-bottom: 10px; background: #cfc url('../../install/images/ico_success.gif') 5px 50% no-repeat; }
 
+div.success h1, div.error h2 {
+    position: relative;
+    top: 10px;
+    padding: 0;
+}
 
 .go {
   font-weight: bold;
@@ -221,12 +228,12 @@ div.success { background: #cfc url('../../install/images/ico_success.gif') 5px 5
     display: block;
     margin: 0 9px;
     padding: 6px 0;
-    color: #000;
+    color: #333;
     text-decoration: none;
     white-space: nowrap;
     text-shadow: #999 0.2em 0.2em 0.2em;
  }
-.btn a:hover { color: red; }
+.btn a:hover { color: #000; }
 
 .btn-redo { display: block; position: relative; z-index: 1; background: #fc6 url('../images/btnBGbl.gif') repeat-x top;  border: 1px solid #339; }
 .btn-redo span { display: block; z-index: 10; margin: -1px 0 0 -1px; background: url('../images/btnTLbl.gif') no-repeat top left; }
@@ -272,6 +279,7 @@ input, select {
 
 .navtext {
   padding-right: 4px !important;
+  color: #999;
 }
 
 .stack_trace {

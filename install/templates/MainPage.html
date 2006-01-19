@@ -64,11 +64,11 @@
 	<table id="statusTable" cellspacing="0">
 	  <tr>
 	    <?php if ($templateData['percentComplete'] != 0): ?>
-	    <td id="progressMade"
+	    <td class="progressMade"
 		style="width:<?php print $templateData['percentComplete'] ?>%">&nbsp;</td>
 	    <?php endif; ?>
 	    <?php if ($templateData['percentComplete'] != 100): ?>
-	    <td id="progressToGo"
+	    <td class="progressToGo"
 		style="width:<?php print (100 - $templateData['percentComplete']) . '%' .
 		  (($templateData['percentComplete'] == 0) ? '' : ';') ?>">&nbsp;</td>
 	    <?php endif; ?>
@@ -78,9 +78,12 @@
 
 	<?php if (!empty($templateData['errors'])): ?>
 	<div class="error">
+	  <h2>
 	  <?php foreach ($templateData['errors'] as $error): ?>
-	  <?php print $error ?> <br/>
+	  <?php print $error ?>
+	  <?php if (count($templateData['errors']) > 2) print "<br/>\n" ?>
 	  <?php endforeach; ?>
+	  </h2>
     </div>
 	<?php endif; ?>
 

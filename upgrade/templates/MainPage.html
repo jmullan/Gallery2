@@ -26,7 +26,7 @@
  */
  ?>
 <?php if (isset($templateData['MainPage']['showStatusBlock'])): ?>
-      <table id="progressBarTable" class="boxTable" cellspacing="0">
+  <table id="progressBarTable" class="boxTable" cellspacing="0">
 	<tr>
 	  <td class="header" colspan="2">
 	    <img src="<?php generateUrl('images/g2Logo_upgrade_head.png') ?>" alt="Gallery Upgrader"/>
@@ -53,7 +53,7 @@
 	  </td>
 	</tr>
 	<tr>
-	  <td class="navbar">
+	  <td id="navbar">
 	    <?php include(dirname(__FILE__) . '/NavBar.html'); ?>
 	  </td>
 	  <td class="main">
@@ -137,7 +137,7 @@
 	</tr>
 
 	<tr>
-	  <td class="navbar">
+	  <td id="navbar">
 	    <?php include(dirname(__FILE__) . '/NavBar.html'); ?>
 	  </td>
 
@@ -158,14 +158,17 @@
 		<?php endif; ?>
 	      </tr>
 	    </table>
-      <p style="text-align: right; margin-bottom: 1.0em;"><?php printf(_('Upgrade %d%% complete'), $templateData['percentComplete']); ?></p>
+      <p id="progressStatus"><?php printf(_('Upgrade %d%% complete'), $templateData['percentComplete']); ?></p>
 
 	    <?php if (!empty($templateData['errors'])): ?>
-	    <h2 class="error">
-	      <?php foreach ($templateData['errors'] as $error): ?>
-	      <?php print $error ?> <br/>
-	      <?php endforeach; ?>
-	    </h2>
+        <div class="error">
+          <h2>
+          <?php foreach ($templateData['errors'] as $error): ?>
+          <?php print $error ?>
+          <?php if (count($templateData['errors']) > 2) print "<br/>\n" ?>
+          <?php endforeach; ?>
+          </h2>
+        </div>
 	    <?php endif; ?>
 
 	    <?php if (!empty($templateData['warnings'])): ?>

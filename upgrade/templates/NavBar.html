@@ -23,7 +23,11 @@
                ($steps[$i-1]->isComplete() || $steps[$i-1]->isOptional())));
         ?>
         <?php if ($linkable): ?>
-          <a href="<?php generateUrl('index.php?step=' . $i) ?>">
+          <a href="<?php generateUrl('index.php?step=' . $i) ?>"
+	    	<?php if ($i == $currentStep->getStepNumber()): ?>
+	    	class="current"
+	      	<?php endif; ?>
+	      >
         <?php endif; ?>
         <?php print $steps[$i]->stepName(); ?>
         <?php if ($linkable): ?>
