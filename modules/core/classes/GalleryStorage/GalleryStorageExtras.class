@@ -999,11 +999,14 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 		    }
 		    $where[] = $this->_gs->_translateColumnName($memberName) . ' IN ('
 			     . implode(',', $qs) . ')';
-		} else if (is_null($match[$memberName])) {
-		    $where[] = $this->_gs->_translateColumnName($memberName) . ' IS NULL';
 		} else {
-		    $where[] = $this->_gs->_translateColumnName($memberName) . '=?';
-		    $data[] = $this->_gs->_normalizeValue($match[$memberName], $memberData);
+		    $value = $this->_gs->_normalizeValue($match[$memberName], $memberData);
+		    if (is_null($value)) {
+			$where[] = $this->_gs->_translateColumnName($memberName) . ' IS NULL';
+		    } else {
+			$where[] = $this->_gs->_translateColumnName($memberName) . '=?';
+			$data[] = $value;
+		    }
 		}
 	    }
 	}

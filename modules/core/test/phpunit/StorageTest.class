@@ -199,6 +199,48 @@ class StorageTest extends GalleryTestCase {
 	    $this->_results);
     }
 
+    function testUpdateMapValueNormalizedToNull() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	/*
+	 * Make sure that when a value is normalized to NULL that we use IS NULL and not = ? in
+	 * the generated SQL
+	 */
+	$ret = $storage->updateMapEntry('GalleryFactoryMap', array('classType' => ''),
+					array('classType' => 'testType'));
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(
+	    array(array(sprintf('UPDATE %1$sFactoryMap SET %2$sclassType=? WHERE ' .
+				'%2$sclassType IS NULL',
+				$storage->_tablePrefix, $storage->_columnPrefix),
+			array('testType'))),
+	    $this->_results);
+    }
+
+    function testRemoveMapValueNormalizedToNull() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	/*
+	 * Make sure that when a value is normalized to NULL that we use IS NULL and not = ? in
+	 * the generated SQL
+	 */
+	$ret = $storage->removeMapEntry('GalleryFactoryMap', array('classType' => ''));
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(
+	    array(array(sprintf('DELETE FROM %1$sFactoryMap WHERE %2$sclassType IS NULL',
+				$storage->_tablePrefix, $storage->_columnPrefix),
+			array())),
+	    $this->_results);
+    }
+
     function testAddMapArray() {
 	global $gallery;
 	$storage =& $gallery->getStorage();

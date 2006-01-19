@@ -505,11 +505,14 @@ class GalleryStorage {
 		    }
 		    $where[] = $this->_translateColumnName($memberName) . ' IN ('
 			     . implode(',', $qs) . ')';
-		} else if (is_null($match[$memberName])) {
-		    $where[] = $this->_translateColumnName($memberName) . ' IS NULL';
 		} else {
-		    $where[] = $this->_translateColumnName($memberName) . '=?';
-		    $wheredata[] = $this->_normalizeValue($match[$memberName], $memberData);
+		    $value = $this->_normalizeValue($match[$memberName], $memberData);
+		    if (is_null($value)) {
+			$where[] = $this->_translateColumnName($memberName) . ' IS NULL';
+		    } else {
+			$where[] = $this->_translateColumnName($memberName) . '=?';
+			$wheredata[] = $value;
+		    }
 		}
 	    }
 
