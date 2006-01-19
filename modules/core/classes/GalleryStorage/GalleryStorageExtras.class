@@ -237,7 +237,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	}
 
 	/* Update the serial number, but remember the original one */
-	$originalSerialNumber = $entity->serialNumber++;
+	$originalSerialNumber = (int)$entity->serialNumber++;
 
 	/* Get our member info for this class */
 	list ($ret, $memberInfo) = $this->describeEntity($entity->entityType);
