@@ -35,7 +35,8 @@ function smarty_modifier_markup($text) {
     static $cacheKey = 'smarty_modifier_markup';
 
     $stripTags = false;
-    array_shift($args = func_get_args());
+    $args = func_get_args();
+    array_shift($args);
     foreach ($args as $arg) {
 	if ($arg == 'strip') {
 	    $stripTags = true;
