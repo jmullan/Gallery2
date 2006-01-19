@@ -372,7 +372,9 @@ class GalleryToolkitHelper_medium {
 	global $gallery;
 
 	$cacheKey = "GalleryToolkitHelper::getOperations($mimeType)";
-	if (!GalleryDataCache::containsKey($cacheKey)) {
+	if (empty($mimeType)) {
+	    $data = array();
+	} else if (!GalleryDataCache::containsKey($cacheKey)) {
 	    $query = '
 	    SELECT DISTINCT
 	      [GalleryToolkitOperationMap::name],
@@ -442,7 +444,9 @@ class GalleryToolkitHelper_medium {
 	global $gallery;
 
 	$cacheKey = "GalleryToolkitHelper::getProperties($mimeType)";
-	if (!GalleryDataCache::containsKey($cacheKey)) {
+	if (empty($mimeType)) {
+	    $data = array();
+	} else if (!GalleryDataCache::containsKey($cacheKey)) {
 	    $query = '
 	    SELECT
 	      [GalleryToolkitPropertyMap::name],
@@ -488,7 +492,9 @@ class GalleryToolkitHelper_medium {
 	global $gallery;
 
 	$cacheKey = "GalleryToolkitHelper::getOperationMimeTypes($operationName)";
-	if (!GalleryDataCache::containsKey($cacheKey)) {
+	if (empty($operationName)) {
+	    $data = array();
+	} else if (!GalleryDataCache::containsKey($cacheKey)) {
 	    $query = '
 	    SELECT
 	      [GalleryToolkitOperationMimeTypeMap::mimeType],

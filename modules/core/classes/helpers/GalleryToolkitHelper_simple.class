@@ -53,7 +53,9 @@ class GalleryToolkitHelper_simple {
 	global $gallery;
 
 	$cacheKey = "GalleryToolkitHelper::getToolkitByOperation($mimeType, $operationName)";
-	if (!GalleryDataCache::containsKey($cacheKey)) {
+	if (empty($mimeType) || empty($operationName)) {
+	    $toolkit = $outputMimeType = null;
+	} else if (!GalleryDataCache::containsKey($cacheKey)) {
 	    $query = '
             SELECT
               [GalleryToolkitOperationMimeTypeMap::toolkitId],
@@ -73,7 +75,7 @@ class GalleryToolkitHelper_simple {
             ';
 
 	    list ($ret, $searchResults) = 
-		$gallery->search($query, array($mimeType, $operationName));
+		$gallery->search($query, array((string)$mimeType, (string)$operationName));
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
@@ -142,7 +144,9 @@ class GalleryToolkitHelper_simple {
 	global $gallery;
 
 	$cacheKey = "GalleryToolkitHelper::getToolkitsByProperty($mimeType, $propertyName)";
-	if (!GalleryDataCache::containsKey($cacheKey)) {
+	if (empty($mimeType) || empty($propertyName)) {
+	    $toolkits = null;
+	} else if (!GalleryDataCache::containsKey($cacheKey)) {
 	    $query = '
             SELECT
               [GalleryToolkitPropertyMimeTypeMap::toolkitId]
@@ -158,7 +162,7 @@ class GalleryToolkitHelper_simple {
             ';
 
 	    list ($ret, $searchResults) =
-		$gallery->search($query, array($mimeType, $propertyName));
+		$gallery->search($query, array((string)$mimeType, (string)$propertyName));
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -234,7 +238,7 @@ class GalleryToolkitHelper_simple {
 	     WHERE 
 		[GalleryToolkitOperationMimeTypeMap::toolkitId] = ?';
 
-	list ($ret, $results) = $gallery->search($query, array($toolkitId));
+	list ($ret, $results) = $gallery->search($query, array((string)$toolkitId));
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
