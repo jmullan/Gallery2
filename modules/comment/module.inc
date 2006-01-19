@@ -267,7 +267,7 @@ class CommentModule extends GalleryModule {
      */
     function getSiteAdminViews() {
 	return array(null,
-		     array(array('name' => 'Comments',
+		     array(array('name' => $this->translate('Comments'),
 				 'view' => 'comment.CommentSiteAdmin')));
     }
 
