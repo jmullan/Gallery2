@@ -72,6 +72,17 @@ class SlideshowView extends GalleryView {
 	$template->setVariable('SlideShow', $SlideShow);
 	$template->head('modules/slideshow/templates/Header.tpl');
 
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'slideshow');
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (!empty($SlideShow['item']['title'])) {
+	    $template->title($module->translate(array('text' => 'Slideshow for %s',
+						      'arg1' => $SlideShow['item']['title'])));
+	} else {
+	    $template->title($module->translate('Slideshow'));
+	}
+
 	return array(null,
 		     array('body' => 'modules/slideshow/templates/Slideshow.tpl',
 			   'useFullScreen' => true));

@@ -14,7 +14,7 @@
 {else}
 
 {foreach from=$SlideShow.itemList key=i item=it}
-<div style="visibility:hidden;position:absolute">
+<div style="display:none">
   {foreach from=$it.sources key=j item=source}
     <a id="item_{$i}_{$j}"
      href="{g->url arg1="view=core.DownloadItem" arg2="itemId=`$source.id`"
@@ -95,8 +95,7 @@
     spanTitle.innerHTML = document.getElementById('title_'+index).innerHTML;
     spanSummary.innerHTML = document.getElementById('summary_'+index).innerHTML;
     spanDate.innerHTML = document.getElementById('date_'+index).innerHTML;
-    spanDescription.innerHTML =
-      document.getElementById('description_'+index).innerHTML;
+    spanDescription.innerHTML = document.getElementById('description_'+index).innerHTML;
   }
   function text_onoff() {
     bShowText = bShowText ? 0 : 1;
@@ -104,7 +103,7 @@
       spanTitle.innerHTML = spanSummary.innerHTML =
       spanDate.innerHTML = spanDescription.innerHTML = '';
     }
-    textBanner.style.visibility = bShowText ? 'visible' : 'hidden';
+    textBanner.style.display = bShowText ? 'block' : 'none';
     spanText.innerHTML = bShowText ? {/literal}'{g->text text="Hide More Info" forJavascript="1"}'
 				   : '{g->text text="Show More Info" forJavascript="1"}'; {literal}
   }
@@ -139,8 +138,7 @@
   }
   function tools_onoff() {
     bShowTools = bShowTools ? 0 : 1;
-    toolBar.style.visibility = bShowTools ? 'visible' : 'hidden';
-    toolBar.style.position = bShowTools ? 'static' : 'absolute';
+    toolBar.style.display = bShowTools ? 'block' : 'none';
     toolText.innerHTML = bShowTools ? {/literal}'{g->text text="[-]" forJavascript="1"}'
 				    : '{g->text text="[+]" forJavascript="1"}'; {literal}
   }
@@ -214,7 +212,7 @@
 	for (i = 0; i < filterNames.length; i++) {
 	  document.write('<option>'+filterNames[i]);
 	}
-	document.write('<'+'/select>'); // in 2 pieces for valid HTML4.01
+	document.write('</select>');
       }
       {/literal}
       // ]]>
@@ -225,17 +223,11 @@
     <img id="slide" alt="" src=""/>
   </div>
 
-  <div id="textBanner" class="gbBlock gcBackground1" style="visibility:hidden">
-    <div class="giTitle"><span id="title"></span></div>
-    <div class="giDescription"><span id="summary"></span></div>
-    <div class="giInfo">
-      <span class="summary">
-	<span id="date"></span>
-      </span>
-      <span class="summary">
-	<span id="description"></span>
-      </span>
-    </div>
+  <div id="textBanner" class="gbBlock gcBackground1" style="display:none">
+    <div class="giTitle" id="title"></div>
+    <div class="giDescription" id="summary"></div>
+    <div class="giInfo summary" id="date"></div>
+    <div class="giInfo summary" id="description"></div>
   </div>
 </div>
 

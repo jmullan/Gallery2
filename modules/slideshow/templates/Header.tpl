@@ -4,13 +4,6 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-<title>
-  {if isset($SlideShow.item.title)}
-    {g->text text="Slideshow for %s" arg1=$SlideShow.item.title}
-  {else}
-    {g->text text="Slideshow"}
-  {/if}
-</title>
 <script type="text/JavaScript">
     //<![CDATA[
     var agent = navigator.userAgent.toLowerCase();
