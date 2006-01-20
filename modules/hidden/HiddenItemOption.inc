@@ -53,7 +53,17 @@ class HiddenItemOption extends ItemEditOption {
     function loadTemplate(&$template, &$form, $item, $thumbnail) {
 	$form['HiddenItemOption']['isHidden'] = $item->hasOnLoadHandler('Hidden');
 	$form['HiddenItemOption']['isAlbum'] = $item->getCanContainChildren();
-	$form['HiddenItemOption']['typeName'] = $item->itemTypeName();
+
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'hidden');
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	/* Specific translations: _('Hide Album') _('Hide Photo') _('Hide Movie') */
+	$itemTypeNames = array_merge($item->itemTypeName(), $item->itemTypeName(false));
+	$form['HiddenItemOption']['heading'] = $module->_translate(
+		array('text' => 'Hide %s', 'arg1' => $itemTypeNames[0]), $itemTypeNames[2]);
+
 	return array(null, 'modules/hidden/templates/HiddenItemOption.tpl', 'modules_hidden');
     }
 

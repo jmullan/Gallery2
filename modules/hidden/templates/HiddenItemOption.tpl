@@ -5,7 +5,7 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 <div class="gbBlock">
-  <h3> {g->text text="Hide %s" arg1=$form.HiddenItemOption.typeName.0} </h3>
+  <h3> {$form.HiddenItemOption.heading} </h3>
 
   <p class="giDescription">
     {g->text text="Hidden items are not visible to guest users until the page for the item is accessed directly."}
