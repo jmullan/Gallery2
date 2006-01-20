@@ -1,6 +1,6 @@
     <h1><?php print _('Database Setup') ?></h1>
 
-    <p> <?php print _('Please select your database type and enter your database authentication information.  The installer will not create the database for you, so you must create one yourself and enter the database name here.  If you are installing Gallery into a database that already has tables in it, the table and column prefixes will keep Gallery data from conflicting with what you already have.') ?> </p>
+    <p><?php print _('Please select your database type and enter your database authentication information.  The installer will not create the database for you, so you must create one yourself and enter the database name here.  If you are installing Gallery into a database that already has tables in it, the table and column prefixes will keep Gallery data from conflicting with what you already have.') ?> </p>
 
     <?php if (isset($templateData['isMultisite']) && $templateData['isMultisite']): ?>
     <div class="warning">
@@ -29,8 +29,10 @@
 	</tr>
 	<?php if (!empty($templateData['error']['phpDbMissing'])): ?>
 	<tr>
-	  <td colspan="2" class="error">
-	    <?php print $templateData['error']['phpDbMissing'] ?>
+	  <td colspan="2">
+	    <div class="error">
+	      <?php print $templateData['error']['phpDbMissing'] ?>
+	    </div>
 	  </td>
 	</tr>
 	<?php endif; ?>
@@ -75,8 +77,10 @@
 	</tr>
 	<?php if (!empty($templateData['error']['tablePrefix'])): ?>
 	<tr>
-	  <td colspan="2" class="error">
-	    <?php print $templateData['error']['tablePrefix'] ?>
+	  <td colspan="2">
+	    <div  class="error">
+	      <?php print $templateData['error']['tablePrefix'] ?>
+	    </div>
 	  </td>
 	</tr>
 	<?php endif; ?>
@@ -89,8 +93,10 @@
 	</tr>
 	<?php if (!empty($templateData['error']['columnPrefix'])): ?>
 	<tr>
-	  <td colspan="2" class="error">
-	    <?php print $templateData['error']['columnPrefix'] ?>
+	  <td colspan="2">
+	    <div class="error">
+	      <?php print $templateData['error']['columnPrefix'] ?>
+	    </div>
 	  </td>
 	</tr>
 	<?php endif; ?>
@@ -98,9 +104,11 @@
     </form>
 
     <?php if (!empty($templateData['errors'])): ?>
-    <h2 class="error">
-      <?php print _('We received the following database related errors:') ?>
-    </h2>
+    <div class="error">
+      <h2>
+        <?php print _('We received the following database related errors:') ?>
+      </h2>
+    </div>
     <div class="debug">
       <?php print $templateData['databaseErrors'] ?>
     </div>

@@ -1,13 +1,17 @@
     <h1><?php print _("Version Check") ?></h1>
 
     <?php if ($templateData['configFileWritten']): ?>
-    <p class="success">
+    <div class="success">
+      <h2>
       <?php print _("Config file created successfully.") ?>
-    </p>
+      </h2>
+    </div>
     <?php endif; ?>
-    <p class="error">
+    <div class="error">
+      <h2>
       <?php print _("This is not a fresh install and the installed version does not match the new version.") ?>
-    </p>
+      </h2>
+    </div>
 
     <?php if (!$templateData['recommendUpgrade']): ?>
     <p class="error">
@@ -18,7 +22,7 @@
       <?php print _("The installed version is older than the new version. You should run the upgrader and not the installer!") ?>
     </p>
     <?php endif; ?>
-    
+
     <table>
       <tr>
 	<td width="175">

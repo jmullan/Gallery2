@@ -1,4 +1,13 @@
     <h1><?php print _('Admin User Setup') ?></h1>
+    
+    <?php if (isset($templateData['error'])): ?>
+    <div class="error">
+      <h2>
+      <?php print _("Please correct the following errors") ?>
+      </h2>
+    </div>
+	<?php endif; ?>
+
     <p>
       <?php print _("Every Gallery will have at least one administrator user who has full access to view/modify everything. Please choose a username and password for your main administrator account. You can add additional users later.") ?>
     </p>

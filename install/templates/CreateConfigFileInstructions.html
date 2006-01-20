@@ -1,7 +1,9 @@
     <h1><?php print _('Create a config file') ?></h1>
 
     <div class="error">
+      <h2>
       <?php if (!empty($templateData['error'])) print $templateData['error'] ?>
+      </h2>
     </div>
 
     <p>
@@ -12,8 +14,8 @@
       <?php printf(_("Before we can proceed, you should create a file in your <b>%s</b> directory called <i>config.php</i>.  You must make sure that the webserver will be able to write to it.  If you're on unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have to do anything special.  When you've created this file and set the permissions properly, you can proceed.  If there's a problem, we'll tell you what to fix."), $templateData['galleryDir']) ?>
     </p>
 
-  <div class="go">
+    <div class="go">
 	  <div class="btn btn-continue"><span><span><span><span>
       <a href="<?php printf('%s?step=%s', INDEX_PHP, $currentStep->getStepNumber()) ?>"><?php print _('Create config file') ?></a>
 	  </span></span></span></span></div>
-  </div>
+    </div>
