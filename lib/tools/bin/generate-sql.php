@@ -939,8 +939,8 @@ class Db2Generator extends BaseGenerator {
 		'STRING-SMALL' => 'VARCHAR(32)',
 		'STRING-MEDIUM' => 'VARCHAR(128)',
 		'STRING-LARGE' => 'VARCHAR(255)',
-		'TEXT-' => 'LONG VARCHAR',
-		'TEXT-MEDIUM' => 'LONG VARCHAR',
+		'TEXT-' => 'VARCHAR(8000)',
+		'TEXT-MEDIUM' => 'VARCHAR(8000)',
 		'BOOLEAN-' => 'SMALLINT',
 		'BOOLEAN-MEDIUM' => 'SMALLINT',
 		'TIMESTAMP-' => 'datestamp'));
