@@ -452,9 +452,8 @@ class GalleryRepository {
 	    $pluginDirectory = sprintf('%s/%s', $pluginsDirectory, $pluginType);
 
 	    if (!@$platform->is_dir($pluginDirectory) && !@$platform->mkdir($pluginDirectory)) {
-		$errorText = $gallery->i18n('Couldn\'t create plugin directory \'%s\' in \'%s\', '
-		    . 'make sure the web server has write permissions in it.');
-		return array(false, sprintf($errorText, $pluginType, $pluginsDirectory));
+		return array(false, $gallery->i18n('Couldn\'t create plugins subdirectory. '
+			     . 'Make sure the webserver has write permissions in it.'));
 	    }
 	}
 
@@ -471,8 +470,7 @@ class GalleryRepository {
 		$repositoryCachePath .= $dirStack[$i-1];
 	    }
 	    if (!@$platform->file_exists($gallery->getConfig('repository.cache'))) {
-		$errorMessage = $gallery->i18n('Couldn\'t create repository cache path \'%s\'.');
-		return array(false, sprintf($errorMessage, $repositoryCachePath));
+		return array(false, $gallery->i18n('Couldn\'t create repository cache path.'));
 	    }
 	}
 
@@ -480,9 +478,8 @@ class GalleryRepository {
 	foreach (array('modules', 'themes') as $cacheDir) {
 	    $cacheDirectory = $repositoryCachePath . $cacheDir;
 	    if (!@$platform->is_dir($cacheDirectory) && !@$platform->mkdir($cacheDirectory)) {
-		$errorText = $gallery->i18n('Couldn\'t create cache directory \'%s\' in \'%s\', '
-		    . 'make sure the web server has write permissions in it.');
-		return array(false, sprintf($errorText, $cacheDir, $repositoryCachePath));
+		return array(false, $gallery->i18n('Couldn\'t create cache subdirectory. '
+			     . 'Make sure the web server has write permissions in it.');
 	    }
 	}
 
@@ -585,9 +582,8 @@ class GalleryRepository {
 	list ($wasDownloaded, $packageContents) =
 	    $this->_utilities->downloadFile($packageUrl);
 	if (!$wasDownloaded) {
-	    $errorMessage = $gallery->i18n('Error downloading package from \'%s\'.');
 	    return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
-					      sprintf($errorMessage, $packageUrl)),
+					       "Error downloading package from '$packageUrl'."),
 			 null);
 	}
 
@@ -597,7 +593,7 @@ class GalleryRepository {
 	if (!$platform->file_exists($pluginOutputDir)
 		&& !$platform->mkdir($pluginOutputDir)) {
 	    $ret = GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
-					"Couldn't create directory [$pluginOutputDir]");
+					 "Couldn't create directory [$pluginOutputDir]");
 	    $templateAdapter->errorProgressBar($ret);
 	    return array($ret, null);
 	}
@@ -605,8 +601,8 @@ class GalleryRepository {
 	/* Write package to the local repository cache directory. */
 	$absolutePackagePath = $gallery->getConfig('repository.cache') . $relativePackageUrl;
 	if (false === $platform->file_put_contents($absolutePackagePath, $packageContents)) {
-	    return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__, sprintf(
-					      'Error writing package [%s]', $absolutePackagePath)),
+	    return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
+					       "Error writing package [$absolutePackagePath]"),
 			 null);
 	}
 

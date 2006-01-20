@@ -72,8 +72,8 @@
   </p>
   {if isset($indexMetaData)}
   <p class="giDescription">
-    {g->text text="As of the last update on"}
-    {g->date format="%c" timestamp=$indexMetaData.timestamp}{g->text text=", the repository contains %s modules and %s themes. Its contents can be viewed on the Modules and Themes tabs." arg1=$indexMetaData.moduleCount arg2=$indexMetaData.themeCount}
+    {capture assign="updateDate"}{g->date style="datetime" timestamp=$indexMetaData.timestamp}{/capture}
+    {g->text text="As of the last update on %s, the repository contains %s modules and %s themes. Its contents can be viewed on the Modules and Themes tabs." arg1=$updateDate arg2=$indexMetaData.moduleCount arg3=$indexMetaData.themeCount}
   </p>
   {else}
   <p class="giDescription">
@@ -96,8 +96,8 @@
   <p>
     <ol>
       <li>{g->text text="Review plugin compatibility (on the Themes and Modules tabs)"}</a></li>
-      <li>{g->text text="<a href=\"%s\">Download</a> Gallery core" arg1="http://codex.gallery2.org/index.php/Download"}</li>
-      <li>{g->text text="Read the <a href=\"%s\">upgrade instructions</a> and perform the upgrade" arg1="http://codex.gallery2.org/index.php/CoreUpgradeInstructions"}</li>
+      <li>{g->text text="%sDownload%s Gallery core" arg1="<a href=\"http://codex.gallery2.org/index.php/Download\">" arg2="</a>"}</li>
+      <li>{g->text text="Read the %supgrade instructions%s and perform the upgrade" arg1="<a href=\"http://codex.gallery2.org/index.php/CoreUpgradeInstructions\">" arg2="</a>"}</li>
     </ol>
   </p>
 </div>
