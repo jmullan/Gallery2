@@ -479,7 +479,7 @@ class GalleryRepository {
 	    $cacheDirectory = $repositoryCachePath . $cacheDir;
 	    if (!@$platform->is_dir($cacheDirectory) && !@$platform->mkdir($cacheDirectory)) {
 		return array(false, $gallery->i18n('Couldn\'t create cache subdirectory. '
-			     . 'Make sure the web server has write permissions in it.');
+			     . 'Make sure the web server has write permissions in it.'));
 	    }
 	}
 
