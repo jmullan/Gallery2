@@ -35,6 +35,7 @@ foreach (array('mysql', 'postgres', 'oracle', 'db2') as $db) {
 	continue;
     }
 
+    sort($xmlFiles);
     foreach ($xmlFiles as $xmlFile) {
 	$p =& new XmlParser();
 	$root = $p->parse($xmlFile);
@@ -146,7 +147,7 @@ class BaseGenerator {
 		$output .= " DEFAULT '$defaultValue'";
 	    }
 	}
-	
+
 	if ($includeNotNull) {
 	    if ($this->getNotNullElement($child)) {
 		$output .= ' NOT NULL';
@@ -1000,7 +1001,7 @@ class Db2Generator extends BaseGenerator {
 			    $output .= 'DB_TABLE_PREFIX' .
 				substr($parent['child'][0]['content'], 0, 5) .
 				substr(md5($child[0]['content']), -2) .
-			        '_' . $this->getIndexCrc($c['child']);
+				'_' . $this->getIndexCrc($c['child']);
 			}
 			$output .= ";\n\n";
 			break;
