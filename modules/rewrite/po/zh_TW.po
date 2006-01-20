@@ -32,6 +32,51 @@ msgstr ""
 msgid "404 File Not Found"
 msgstr "404 找不到檔案"
 
+msgid "URL Rewrite"
+msgstr "網址改寫"
+
+msgid "Enables short URLs using Apache mod_rewrite, ISAPI Rewrite, or PathInfo."
+msgstr "啟動利用 Apache mod_rewrite、ISAPI Rewrite、或 PathInfo 的短式網址。"
+
+msgid "Gallery"
+msgstr "Gallery"
+
+msgid "Show Item"
+msgstr "顯示項目"
+
+msgid "Path to an item (eg, /album/image.jpg.html)"
+msgstr "到項目的路徑（如 /album/image.jpg.html）"
+
+msgid "Current language (eg, en or de)"
+msgstr "目前語言（如 en 或 de）"
+
+msgid "The general URL for viewing items."
+msgstr "用來觀看項目的一般網址。"
+
+msgid "Download Item"
+msgstr "下載項目"
+
+msgid "Ensures browsers do not use cached version when image has changed"
+msgstr "確保網頁瀏覽程式不會在圖像改變後仍然使用先前儲存的快取版本。"
+
+msgid "The item file name."
+msgstr "項目檔案名稱。"
+
+msgid "The general URL for downloading items."
+msgstr "用來下載項目的一般網址"
+
+msgid "Site Admin"
+msgstr "網站管理員"
+
+msgid "Quick and easy way to access Site Admin."
+msgstr "進入網站管理頁的捷徑。"
+
+msgid "404 File not found"
+msgstr "404 找不到檔案"
+
+msgid "Block hotlinked items"
+msgstr "限制熱鏈接項目"
+
 msgid "Check short style URLs for filesystem conflicts"
 msgstr "檢查短式網址是否與檔案系統衝突。"
 
@@ -56,62 +101,59 @@ msgstr "檢查 %2$d 之 %1$d 的項目"
 msgid "Checked %d items and found %d conflicts"
 msgstr "檢查了 %d 個項目，發現 %d 個衝突"
 
-msgid "URL Rewrite"
-msgstr "網址改寫"
+msgid "Bad keyword."
+msgstr "錯誤的關鍵字。"
 
-msgid "Enables short URLs using mod_rewrite."
-msgstr "啟動利用 mod_rewrite 的短式網址。"
+msgid "Duplicate short url rule."
+msgstr "重覆的短式網址規則。"
 
-msgid "Gallery"
-msgstr "Gallery"
+msgid "Ivalid pattern."
+msgstr "不正確的樣式。"
 
-msgid "Show Item"
-msgstr "顯示項目"
+msgid "Empty configuration value."
+msgstr "設定值是空的。"
 
-msgid "Path to an item (eg, /album/image.jpg.html)"
-msgstr "到項目的路徑（如 /album/image.jpg.html）"
+msgid "Cannot read the httpd.ini file"
+msgstr "無法讀取 httpd.ini 檔案"
 
-msgid "Download Item"
-msgstr "下載項目"
+msgid "Cannot write to httpd.ini file"
+msgstr "無法寫入 httpd.ini 檔案"
 
-msgid "Ensures browsers do not use cached version when image has changed"
-msgstr "確保網頁瀏覽程式不會在圖像改變後仍然使用先前儲存的快取版本。"
+msgid "Cannot write to httpd.ini file, please create it."
+msgstr "無法寫入 httpd.ini 檔案，請產生一個新的。"
 
-msgid "Item file name (eg, image.jpg)"
-msgstr "項目檔案名稱（如 image.jpg）"
+msgid "Cannot read the .htaccess file"
+msgstr "無法讀取 .htaccess 檔案"
 
-msgid "Site Admin"
-msgstr "網站管理員"
+msgid "Cannot write to the .htaccess file"
+msgstr "無法寫入 .htaccess 檔案"
 
-msgid "Block hotlinked items"
-msgstr "限制熱鏈接項目"
+msgid "Cannot write to the .htaccess file, please create it."
+msgstr "無法寫入 .htaccess 檔案，請產生一個新的。"
+
+msgid "Cannot read the embedded .htaccess file"
+msgstr "無法讀取內嵌的 .htaccess 檔案"
+
+msgid "Cannot write to the embedded .htaccess file"
+msgstr "無法寫入內嵌的 .htaccess 檔案"
+
+msgid "Cannot write to the embedded .htaccess file, please create it."
+msgstr "無法寫入內嵌的 .htaccess 檔，請產生一個新的。"
 
 msgid "URL Rewrite Administration"
 msgstr "網址改寫管理"
 
-msgid "Successfully saved URL styles"
-msgstr "網址樣式儲存成功"
-
-msgid "Successfully saved the configuration"
+msgid "Successfully saved settings"
 msgstr "設定儲存成功"
 
-msgid "An error occured while trying to save your settings:"
-msgstr "在儲存你的設定時發生錯誤："
-
-msgid "Cannot write to the Gallery .htaccess file"
-msgstr "無法寫入 Gallery 的 .htaccess 檔"
-
-msgid "Cannot write to the embedded .htaccess file"
-msgstr "無法寫入內嵌的 .htaccess 檔"
+msgid "An error occured while trying to save your settings"
+msgstr "在儲存你的設定時發生錯誤"
 
 msgid "Duplicate URL patterns."
 msgstr "重覆的網址樣式。"
 
 msgid "Empty URL pattern."
 msgstr "空的網址樣式。"
-
-msgid "Bad keyword."
-msgstr "錯誤的關鍵字。"
 
 msgid "Rules"
 msgstr "規則"
@@ -128,6 +170,15 @@ msgid ""
 msgstr ""
 "短式網址是由預設的關鍵字構成的。其他的模組可能會提供額外的關鍵字。關鍵字是用 % 字元脫出（如 %"
 "itemID%）。"
+
+msgid ""
+"It is recomended that you don't activate the 'Download Item' URL since it will slow down "
+"Gallery."
+msgstr ""
+"建議你不要啟用「下載項目」網址，因為會使 Gallery 變慢。"
+
+msgid "A pattern may not begin with a keyword."
+msgstr "樣式不能用關鍵字開頭。"
 
 msgid "Active"
 msgstr "啟用"
@@ -175,8 +226,109 @@ msgstr ""
 "有些規則只有在查詢源（鏈接到該項目的網路）不是 Gallery 時有效。下列的網路將被視為友善的查詢"
 "源。"
 
+msgid ""
+"Warning: If you don't allow empty referer users won't be able to download nor play movies."
+msgstr ""
+"警告：如果不允許空的查詢源，使用者將無法下載或播放影片檔案。"
+
+msgid "Allow empty referer?"
+msgstr "允許空的查詢源？"
+
+msgid "The parser you have selected does not support a referer check."
+msgstr "你選用的語法分析器不支援查詢源查驗。"
+
+msgid "Test the Rewrite Parser Configuration"
+msgstr "測試改寫語法分析器設定"
+
+msgid "Test again"
+msgstr "再測試一次"
+
+msgid "The selected URL Rewrite Parser does not provide any tests."
+msgstr "選用的網址改寫語法分析器未提供任何測試。"
+
+msgid "Error: 404 File Not Found"
+msgstr "錯誤：404 找不到檔案"
+
+msgid "Configuration"
+msgstr "設定"
+
+msgid "For ISAPI Rewrite to work Gallery needs write access to the httpd.ini file."
+msgstr "Gallery 需要有寫入 httpd.ini 檔案的權限才能使用 ISAPI Rewrite"
+
+msgid "Httpd.ini path:"
+msgstr "Httpd.ini 路徑："
+
+msgid "Invalid directory."
+msgstr "不正確的目錄。"
+
+msgid "Cant write to the httpd.ini file in that directory."
+msgstr "無法寫入在那個目錄中的 httpd.ini 檔案。"
+
 msgid "Embedded Setup"
 msgstr "內嵌設定"
+
+msgid "Public path:"
+msgstr "公開路徑："
+
+msgid "Invalid path."
+msgstr "不正確的路徑。"
+
+msgid "IIS ISAPI_Rewrite Support"
+msgstr "IIS ISAPI_Rewrite 支援"
+
+msgid "Testing if the server supports IIS ISAPI_Rewrite."
+msgstr "正在測試伺服器是否支援 IIS ISAPI_Rewrite。"
+
+msgid "Success"
+msgstr "成功"
+
+msgid "Error"
+msgstr "錯誤"
+
+msgid "The current status may not be accurate, you have forced the test to pass."
+msgstr "目前的狀況可能有誤，因為你迫使測試通過。"
+
+msgid "How to setup ISAP Rewrite"
+msgstr "如何設定 ISAP Rewrite"
+
+msgid "In order to make the test pass you need to add the test rewrite rule in your httpd.ini:"
+msgstr "要通過這個測試，你必需在你的 httpd.ini 中加上這個重寫規則："
+
+msgid ""
+"If you add this at the bottom, please make sure that there's atleast one empty line below "
+"the section"
+msgstr ""
+"如果你加在檔案的最後，請確定它後面至少接有一個空行。"
+
+msgid "Test ISAPI Rewrite Manually"
+msgstr "手動測試 ISAPI Rewrite"
+
+msgid "Gallery did not detect ISAPI Rewrite, please run this test yourself to verify."
+msgstr "Gallery 並未偵測到 ISAPI，請自行執行這個測試。"
+
+msgid "Force"
+msgstr "強迫使用"
+
+msgid "ISAPI Rewrite Test"
+msgstr "ISAPI Rewrite 測試"
+
+msgid "If the test gives you a page that says PASS_ISAPI_REWRITE you are good to go."
+msgstr "如果這個測試給你一個寫有 PASS_ISAPI_REWRITE 的頁面，就沒有問題了。"
+
+msgid "ISAPI_Rewrite httpd.ini file"
+msgstr "ISAPI_Rewrite httpd.ini 檔案"
+
+msgid "Testing if Gallery can write to the httpd.ini file."
+msgstr "正在測試 Gallery 是否可以寫入 httpd.ini 檔案"
+
+msgid "Please configure the correct location of ISAPI_Rewrite httpd.ini."
+msgstr "請設定正確的 ISAPI_Rewrite httpd.ini 位置。"
+
+msgid "Please make sure Gallery can read the httpd.ini file"
+msgstr "請確定 Gallery 可以讀取 httpd.ini 檔案"
+
+msgid "Please make sure Gallery can write to the httpd.ini file"
+msgstr "請確定 Gallery 可以寫入 httpd.ini 檔案"
 
 msgid ""
 "For URL Rewrite to work in an embedded environment you need to set up an extra htaccess file "
@@ -187,93 +339,15 @@ msgstr ""
 msgid "Htaccess path:"
 msgstr "Htaccess 的路徑："
 
-msgid "Invalid directory."
-msgstr "不正確的目錄。"
-
-msgid "Public path:"
-msgstr "公開路徑："
-
-msgid "Invalid path."
-msgstr "不正確的路徑。"
-
 msgid "Apache mod_rewrite"
 msgstr "Apache mod_rewrite"
 
 #, c-format
-msgid "In order for this Gallery module to work you need %s enabled with your Apache server."
-msgstr "要使用這個 Gallery 模組，你必需在你的 Apache 伺服器上啟用 %s 功能。"
-
-msgid "Success"
-msgstr "成功"
+msgid "Testing if %s is supported by the server."
+msgstr "正在測試伺服器是否支援 %s。"
 
 msgid "Warning"
 msgstr "警告"
-
-msgid "Test mod_rewrite manually"
-msgstr "手動測試 mod_rewrite"
-
-#, c-format
-msgid ""
-"Go to the <a href=%s>Setup</a> page where you will be able to further probe mod_rewrite."
-msgstr "前往<a href=%s>設定</a>頁面，在那裡你可以進一步瞭解 mod_rewrite。"
-
-msgid "Test Webserver Again"
-msgstr "再測試網路伺服器"
-
-msgid "Gallery .htaccess file"
-msgstr "Gallery .htaccess 檔案"
-
-msgid ""
-"Gallery's URL rewriting works by creating a new file in your gallery directory called <b>."
-"htaccess</b> which contains rules for how short urls should be interpreted."
-msgstr ""
-"Gallery 的網址改寫功能是利用在你的 Gallery 目錄中產生一個叫<b>.htaccess</b>的檔案，其中寫有短"
-"式網址應如何解譯的規則。"
-
-msgid "Error"
-msgstr "錯誤"
-
-msgid "Please create a file in your Gallery directory named .htaccess"
-msgstr "請在你的 Gallery 目錄中產生一個叫做 .htaccess 的檔案"
-
-msgid "Please make sure Gallery can read the existing .htaccess file"
-msgstr "請確定 Gallery 可以讀取現存的 .htaccess 檔案"
-
-msgid "Please make sure Gallery can write to the existing .htaccess file"
-msgstr "請確定 Gallery 可以寫入現存的 .htaccess 檔案"
-
-msgid "Test .htaccess File Again"
-msgstr "再測試 .htaccess 檔案"
-
-msgid "Embedded .htaccess file"
-msgstr "內嵌的 .htaccess 檔案"
-
-msgid "You need a <b>.htaccess</b> file in the embedded access point directory."
-msgstr "你需要一個在內嵌存取點目錄中的 <b>.htaccess</b> 檔案。"
-
-msgid "Embedded .htaccess file is up to date"
-msgstr "內嵌的 .htaccess 檔案是最新的"
-
-msgid ""
-"This checks if the content in your embedded .htaccess file is equal to the standalone "
-"version."
-msgstr "這會檢查你的內嵌式 .htaccess 的內容是否和獨立版本的相同。"
-
-msgid ""
-"Please update your rules while in embedded mode. Hit the Save button should be sufficient."
-msgstr "請在內嵌模式下更新的的規則。按儲存鈕就可以了。"
-
-msgid "Test .htaccess Files Again"
-msgstr "再測試 .htaccess 檔案"
-
-msgid "Error: 404 File Not Found"
-msgstr "錯誤：404 找不到檔案"
-
-msgid "The page you requested does not exist"
-msgstr ""
-
-msgid "URL Rewrite System Checks"
-msgstr "網址改寫系統檢查"
 
 msgid "Custom Gallery directory test setup"
 msgstr "自定 Gallery 目錄測試設定"
@@ -286,20 +360,8 @@ msgstr "要讓 Gallery 能夠測試 mod_rewrite 的功能，你必需按照下�
 msgid "Line 6:"
 msgstr "第 6 行："
 
-msgid "Multisite setup"
-msgstr "多站台設定"
-
-msgid ""
-"Gallery tries to test mod_rewrite in action. This does not work with multisite since Gallery "
-"lacks the complete codebase."
-msgstr "Gallery 無法在多站台安裝上測試 mod_rewrite 的功能，因為 Gallery 沒有完整的基礎程式。"
-
-msgid ""
-"The tests below will only show if mod_rewrite works for your Gallery codebase. If you "
-"experience broken links chances are that mod_rewrite does not work."
-msgstr ""
-"下面的測試只會顯示 mod_rewrite 可否用於你的 Gallery 基礎程式。如果你發現損壞的鏈接，表示無法"
-"使用 mod_rewrite。"
+msgid "Test mod_rewrite manually"
+msgstr "手動測試 mod_rewrite"
 
 msgid ""
 "For whatever reason, Gallery did not detect a working mod_rewrite setup. If you are "
@@ -312,58 +374,103 @@ msgstr ""
 msgid "Works"
 msgstr "動作正常"
 
-msgid "Test mod_rewrite"
-msgstr "測試 mod_rewrite"
+msgid "mod_rewrite configuration 1 (with global Options +FollowSymlinks)"
+msgstr "mod_rewrite 設定一（使用全面選項 +FollowSymlinks）"
 
-msgid "Test mod_rewrite with Options directive"
-msgstr "測試 帶有 Options 指令的 mod_rewrite"
+msgid "mod_rewrite configuration 2 (with local Options +FollowSymlinks)"
+msgstr "mod_rewrite 設定二（使用本地選項 +FollowSymlinks）"
 
 msgid "If one of the two tests gives you a page with the text PASS_REWRITE you are good to go."
 msgstr "如果這兩個測試中的任何一個給你一個寫有 PASS_REWRITE 的頁面，就沒有問題了。"
 
+msgid "Apache mod_rewrite and Gallery multisite"
+msgstr "Apache mod_rewrite 和 Gallery 多站台"
+
+msgid ""
+"Gallery tries to test mod_rewrite in action. This does not work with multisite since Gallery "
+"lacks the complete codebase."
+msgstr "Gallery 無法在多站台安裝上測試 mod_rewrite 的功能，因為 Gallery 沒有完整的基礎程式。"
+
+msgid "Gallery .htaccess file"
+msgstr "Gallery .htaccess 檔案"
+
+msgid "Testing if Gallery can write to the .htaccess file."
+msgstr "正在測試 Gallery 是否可以寫入 .htaccess 檔案"
+
+msgid "Please create a file in your Gallery directory named .htaccess"
+msgstr "請在你的 Gallery 目錄中產生一個叫做 .htaccess 的檔案"
+
+msgid "Please make sure Gallery can read the existing .htaccess file"
+msgstr "請確定 Gallery 可以讀取現存的 .htaccess 檔案"
+
+msgid "Please make sure Gallery can write to the existing .htaccess file"
+msgstr "請確定 Gallery 可以寫入現存的 .htaccess 檔案"
+
+msgid "Embedded .htaccess file"
+msgstr "內嵌的 .htaccess 檔案"
+
+msgid "Testing if Gallery can write to the embedded .htaccess file."
+msgstr "正在測試 Gallery 是否可以寫入內嵌的 .htaccess 檔案"
+
+msgid "Please configure the embedded htaccess path."
+msgstr "請設定入內嵌的 .htaccess 路徑。"
+
+msgid "PHP Path Info Support"
+msgstr "PHP Path Info 支援"
+
+msgid "Testing if the server supports PHP Path Info."
+msgstr "正在測試伺服器是否支援 PHP Path Info。"
+
+msgid "Test Path Info Manually"
+msgstr "手動測試 Path Info"
+
+msgid "Gallery did not detect Path Info, please run this thest yourself to verify."
+msgstr "Gallery 並未偵測到 Path Info，請自行執行這個測試。"
+
+msgid "PHP Path Info Test"
+msgstr "PHP Path Info 測試"
+
+msgid "If the test gives you a page that says PASS_PATH_INFO you are good to go."
+msgstr "如果這個測試給你一個寫有 PASS_PATH_INFO 的頁面，就沒有問題了。"
+
+msgid "URL Rewrite Setup"
+msgstr "網址改寫設定"
+
+msgid ""
+"The Apache mod_rewrite module is installed on most Apache servers by default. If you are "
+"unsure of what method you should choose then select this. Gallery will try to detect if your "
+"server supports mod_rewrite."
+msgstr ""
+"大多數的 Apache 伺服器都有預設安裝 Apache mod_rewrite 模組。如果你不確定你該用那一種方法，就選這個。"
+"Gallery 會試著偵測你的伺服器是否支援 mod_rewrite。"
+
+msgid "IIS ISAPI_Rewrite"
+msgstr "IIS ISAPI_Rewrite"
+
+msgid ""
+"This method allows for short URLs on IIS servers with ISAPI Rewrite installed. Gallery will "
+"try to detect if your server supports this method before activating the module."
+msgstr ""
+"這個方法讓裝有 ISAPI Rewrite 的 IIS 伺服器可以使用短式網址。Gallery 會在啟用這個模組之前試著偵測你的"
+"伺服器是否支援這個方法。"
+
+msgid "PHP Path Info"
+msgstr "PHP Path Info"
+
+msgid ""
+"Using Path Info is supported by most systems. With this method Gallery parses the URL itself "
+"during the request."
+msgstr ""
+"大多數的系統都支援 Path Info。使用這個方法時，Gallery 在回應要求時自己分析網址。"
+
+msgid "Block hotlinking is not supported."
+msgstr "不支援限制熱鏈接項目。"
+
+msgid "Back"
+msgstr "返回"
+
 msgid "Done"
 msgstr "結束"
-
-msgid "Troubleshooting"
-msgstr "疑難排解"
-
-msgid "How can I check if mod_rewrite is loaded?"
-msgstr "我怎麼知道 mod_rewrite 是不是已經載入了？"
-
-#, c-format
-msgid ""
-"Go to the <a href=\"%s\">Gallery phpinfo page</a> and look for Loaded Modules. You should "
-"see mod_rewrite in the list if it's loaded."
-msgstr ""
-"前往<a href=\"%s\">Gallery phpinfo 頁面</a>，找 Loaded Modules。你應該會看到 mod_rewrite 如果"
-"它有被載入的話。"
-
-msgid "I know mod_rewrite is loaded, why is Gallery telling me it's not working?"
-msgstr "我知道 mod_rewrite 有載入，為什麼 Gallery 說它沒有呢？"
-
-msgid ""
-"If you are the server admin make sure the Gallery directory has the proper AllowOverride "
-"rights. Gallery needs to be able to override FileInfo and Options. Put this at the end of "
-"your Apache configuration:"
-msgstr ""
-"如果你是伺服器的系統管理員請確定 Gallery 目錄有適當的 AllowOverride 權力。Gallery 需要能夠蓋"
-"過 FileInfo 和 Options 的設定。請把這個加在你的 Apache 設定的最後："
-
-msgid ""
-"My Gallery is password protected using Apache mod_auth. I know mod_rewrite works, why doesnt "
-"Gallery detect this?"
-msgstr ""
-"我的 Gallery 有用 Apache mod_auth 密碼保護。我知道 mod_rewrite 有正常動作，為什麼 Gallery 沒"
-"有偵測到呢？"
-
-msgid ""
-"Gallery tries to fetch a page from your server and most likely Gallery gets an unauthorized "
-"access error. In order to fix this you need to allow requests from the server IP. If you are "
-"paranoid you could narrow it down to requests to the gallery2/modules/rewrite/data directory."
-msgstr ""
-"Gallery 試著從你的伺服器取得一個頁面但可能 Gallery 得到了一個未授權存取的錯誤。要修正這個問題"
-"你必需允許從伺服器 IP 的存取要求。如果你真的非常的謹慎，你可以把範圍縮小到從 gallery/modules/"
-"rewrite/data 目錄來的要求。"
 
 msgid "Unit test module"
 msgstr "單元測試模組"

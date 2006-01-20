@@ -51,8 +51,9 @@ msgstr "<b>Hata:</b> geçersiz şifre."
 msgid "Empty Cache"
 msgstr "Boş Önbellek"
 
-msgid "Finished"
-msgstr "Bitti"
+#, fuzzy
+msgid "Finish Upgrade"
+msgstr "Güncellemeye Başla"
 
 msgid "System Checks"
 msgstr "Sistem Kontrolü"
@@ -231,6 +232,33 @@ msgstr ""
 "\"BAŞARILI\" görüyorsanız PHP'nizde sorun yok. Eğer hatayla karşılaşıyorsanız, işlem "
 "yapmadan önce  ze1_compatibility_mode'u kapatmalısınız."
 
+#, fuzzy
+msgid "putenv() allowed"
+msgstr "exec() allowed"
+
+#, fuzzy
+msgid ""
+"Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> "
+"parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
+"Gallery will be unable to run in other languages than the system language and English."
+msgstr ""
+"Uyarı: set_time_limit() fonksiyonu php.ini de bulunan <b>disabled_functions</b> parametresi "
+"kullanılarak kapalı konuma getirilmiş. Galeri bu durumda çalışmasını sürdürebilir, ancak "
+"operasyonları güvenilir olarak gerçekleştiremez. %d saniyeden fazla süren her işlem "
+"başarısızlıkla sonuçlanır (bazen boş sayfala sonuçlanır) ve veri bozulmasına yol açabilir."
+
+msgid "Output buffering disabled"
+msgstr ""
+
+#, c-format
+msgid ""
+"Warning: Output buffering is enabled in your php by the <b>%s</b> parameter(s) in php.ini.  "
+"Gallery can function with this setting - downloading files is even faster - but Gallery "
+"might be unable to serve large files (e.g. large videos) and run into the  memory limit. "
+"Also, some features like the progress bars might not work correctly if output buffering is "
+"enabled unless ini_set() is allowed."
+msgstr ""
+
 msgid "Storage Directory Permissions"
 msgstr "Depolama Klasör İzinleri"
 
@@ -276,6 +304,9 @@ msgstr "%s modülünün yapılandırmaya ihtiyacı var"
 msgid "Unable to upgrade the %s module"
 msgstr "Modül %s güncellenemiyor"
 
+msgid "Unable to commit database transaction"
+msgstr "Veritabanı işlemi gerçekleştirilemiyor"
+
 #, c-format
 msgid "Unable to load the %s theme"
 msgstr "%s Teması yüklenemiyor"
@@ -286,9 +317,6 @@ msgstr "Temalar güncelleniyor"
 #, c-format
 msgid "Unable to upgrade the %s theme"
 msgstr "%s Teması güncellenemiyor"
-
-msgid "Unable to commit database transaction"
-msgstr "Veritabanı işlemi gerçekleştirilemiyor"
 
 msgid "Unable to get the module list"
 msgstr "Modül listesi alınamıyor"
@@ -323,6 +351,10 @@ msgstr "Beni Doğrula"
 msgid "Authentication successful!"
 msgstr "Doğrulama başarılı!"
 
+#, fuzzy
+msgid "Successfully cleaned cache directories."
+msgstr "Önbellek klasörleriniz başarılı olarak temizlendi."
+
 msgid "Delete Cache Directories"
 msgstr "Önbellek Klasörlerini Sil"
 
@@ -355,9 +387,6 @@ msgstr ""
 msgid "Try Again"
 msgstr "Tekrar Dene"
 
-msgid "We have successfully cleaned out your cache directories."
-msgstr "Önbellek klasörleriniz başarılı olarak temizlendi."
-
 msgid "Finished!"
 msgstr "Bitti!"
 
@@ -386,20 +415,23 @@ msgstr ""
 msgid "Welcome to the Gallery Upgrader"
 msgstr "Galeri Güncelleyicisine Hoşgeldiniz"
 
+msgid "Upgrader Help"
+msgstr "Güncelleme Yardım"
+
+msgid "Start Over"
+msgstr "Baştan Başla"
+
+# param0 = integer percentage
+#, c-format
+msgid "Upgrade %d%% complete"
+msgstr "Güncelleme %d%% tamamlandı"
+
 msgid "Redo this step"
 msgstr "Bu adımı geri al"
 
 #, c-format
 msgid "Continue to Step %d&raquo;"
 msgstr "Devam et Adım %d&raquo;"
-
-msgid "Upgrade Status"
-msgstr "Güncelleme Durumu"
-
-# param0 = integer percentage
-#, c-format
-msgid "Upgrade %d%% complete"
-msgstr "Güncelleme %d%% tamamlandı"
 
 msgid "Gallery: <strong>your photos</strong> on <strong>your website</strong>"
 msgstr "Galeri: <strong>sizin resimleriniz</strong> - <strong>sizin sitenizde/strong>"
@@ -441,12 +473,6 @@ msgstr ""
 
 msgid "Upgrade Steps"
 msgstr "Güncelleme Adımları"
-
-msgid "Upgrader Help"
-msgstr "Güncelleme Yardım"
-
-msgid "Start Over"
-msgstr "Baştan Başla"
 
 msgid "Missing or invalid config.php"
 msgstr "Kayıp ya da geçersiz config.php"
@@ -561,15 +587,15 @@ msgstr ""
 msgid "MySQL"
 msgstr "MySQL"
 
-#, c-format
-msgid "mysqldump -u%s -p<i>YourPassword</i> --opt %s > %s.sql"
+#, fuzzy, c-format
+msgid "mysqldump -u%s -p -h %s --opt %s > %s.sql"
 msgstr "mysqldump -u%s -p<i>Şifreniz</i> --opt %s > %s.sql"
 
 msgid "PostgreSQL"
 msgstr "PostgreSQL"
 
-#, c-format
-msgid "pg_dump --format=t %s > %s.sql"
+#, fuzzy, c-format
+msgid "pg_dump -h %s --format=t %s > %s.sql"
 msgstr "pg_dump --format=t %s > %s.sql"
 
 msgid ""
@@ -681,3 +707,9 @@ msgstr "Dil Seç:"
 
 msgid "Go"
 msgstr "Git"
+
+#~ msgid "Finished"
+#~ msgstr "Bitti"
+
+#~ msgid "Upgrade Status"
+#~ msgstr "Güncelleme Durumu"

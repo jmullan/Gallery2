@@ -178,6 +178,10 @@ msgstr ""
 msgid "Clearing fast-download cache"
 msgstr ""
 
+#, fuzzy
+msgid "Deleting old fast-download cache"
+msgstr "حذف جداول الصلاحيات القديمة"
+
 msgid "Site Admins"
 msgstr "مدراء الموقع"
 
@@ -279,8 +283,20 @@ msgstr "تم حفظ الخيارات بنجاح."
 msgid "&laquo; default theme &raquo;"
 msgstr "&laquo; القالب الافتراضي &raquo;"
 
+#, fuzzy
+msgid "Recreating resized images"
+msgstr "إعادة تغيير حجم الصورة"
+
+#, fuzzy
+msgid "Rebuilding thumbnails..."
+msgstr "إعادة إنشاء الصور المصغرة"
+
 msgid "Album"
 msgstr "ألبوم"
+
+#, c-format
+msgid "Processing image %d of %d"
+msgstr "معالجة الصورة %d  من %d"
 
 msgid "Changes saved successfully"
 msgstr "التغييرات تم حفظها بنجاح"
@@ -534,10 +550,6 @@ msgid "Debug output for failed items:"
 msgstr ""
 
 #, c-format
-msgid "Processing image %d of %d"
-msgstr "معالجة الصورة %d  من %d"
-
-#, c-format
 msgid "Checked %d items"
 msgstr "تم إختيار %d مادة"
 
@@ -552,8 +564,9 @@ msgstr "%d مادة فشلت"
 msgid "Delete database cache"
 msgstr "حذف الكاش لقاعدة البينات"
 
+#, fuzzy
 msgid ""
-"Gallery stores commonly used database information on disk for increased performance.  If you "
+"Gallery stores commonly used database information on disk for increased performance. If you "
 "modify the database directly, you should run this task to clean out the cache and force "
 "Gallery to reload the information from the database."
 msgstr ""
@@ -653,24 +666,15 @@ msgstr "أسفل"
 msgid "Plugins directory does not exist."
 msgstr "المستخدم '%s' غير موجود."
 
-#, c-format
 msgid ""
-"Couldn't create plugin directory '%s' in '%s', make sure the web server has write "
-"permissions in it."
+"Couldn't create plugins subdirectory. Make sure the webserver has write permissions in it."
 msgstr ""
 
-#, c-format
-msgid "Couldn't create repository cache path '%s'."
+msgid "Couldn't create repository cache path."
 msgstr ""
 
-#, c-format
 msgid ""
-"Couldn't create cache directory '%s' in '%s', make sure the web server has write permissions "
-"in it."
-msgstr ""
-
-#, c-format
-msgid "Error downloading package from '%s'."
+"Couldn't create cache subdirectory. Make sure the web server has write permissions in it."
 msgstr ""
 
 #, c-format
@@ -733,7 +737,7 @@ msgstr "هذه الصفحة مطابقة لـ XHTML 1.0"
 msgid "Donate to the Gallery project"
 msgstr "العودة إلى الجاليري"
 
-msgid "G2.0: Unpossible!"
+msgid "G2.1: Blackjack"
 msgstr ""
 
 #, c-format
@@ -1646,13 +1650,10 @@ msgid ""
 "the process might take a minute or two."
 msgstr ""
 
-msgid "As of the last update on"
-msgstr ""
-
 #, c-format
 msgid ""
-", the repository contains %s modules and %s themes. Its contents can be viewed on the "
-"Modules and Themes tabs."
+"As of the last update on %s, the repository contains %s modules and %s themes. Its contents "
+"can be viewed on the Modules and Themes tabs."
 msgstr ""
 
 msgid ""
@@ -1679,11 +1680,11 @@ msgid "Review plugin compatibility (on the Themes and Modules tabs)"
 msgstr ""
 
 #, c-format
-msgid "<a href=\"%s\">Download</a> Gallery core"
+msgid "%sDownload%s Gallery core"
 msgstr ""
 
 #, c-format
-msgid "Read the <a href=\"%s\">upgrade instructions</a> and perform the upgrade"
+msgid "Read the %supgrade instructions%s and perform the upgrade"
 msgstr ""
 
 #, fuzzy
@@ -1804,33 +1805,18 @@ msgstr ""
 msgid "Gallery Repository Setup"
 msgstr "نسخة الجاليري"
 
-msgid "Warning: `$errorMessage`"
-msgstr ""
-
-msgid ""
-"In order to download plugins from the Gallery repository, a special directory needs to be "
-"created where Gallery will store the data."
+msgid "Warning:"
 msgstr ""
 
 #, c-format
 msgid ""
-"Under your Gallery base directory, create a directory called '%s' and allow the web server "
-"to write into it by appropriately setting the permissions."
+"In order to download plugins from the Gallery repository, a special directory needs to be "
+"created where Gallery will store the data. Under your Gallery base directory, create a "
+"directory called '%s' and allow the web server to write into it by appropriately setting the "
+"permissions."
 msgstr ""
 
 msgid "Instructions for Unix-type platforms:"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "$ cd %s"
-msgstr "%d. %s"
-
-#, c-format
-msgid "$ mkdir %s"
-msgstr ""
-
-#, c-format
-msgid "$ chmod 777 %s"
 msgstr ""
 
 msgid ""
@@ -2019,6 +2005,9 @@ msgstr "إنتهاك أمني"
 msgid "Database Error"
 msgstr "خطأ في قاعدة البيانات"
 
+msgid "Platform Error"
+msgstr ""
+
 msgid "Error"
 msgstr "خطأ"
 
@@ -2050,6 +2039,16 @@ msgstr ""
 "لا يمكن الحصول على أخطاء قاعدة البينات بالتحديد إلا إذا كانت حالة تصحيح أخطاء الجاليري مفعلة "
 "داخل ملف config.php . قبل البحث عن مساعدة لحل هذه المشكلة قم بتفعيل (buffered debug output) "
 "و قم بإعداة هذه العملية. قم بالبحث قرب نهاية تقرير الأخطاء الطويل لإيجاد تفاصيل الخطأ."
+
+#, fuzzy
+msgid "An error has occurred while interacting with the platform."
+msgstr "حصل خطاء أثناء محاولة الإتصال بقاعدة البيانات"
+
+msgid ""
+"The exact nature of the platform error is unknown. A common cause are insufficient file "
+"system permissions. This can happen if you or your webhost changed something in the file "
+"system, e.g. by restoring data from a backup."
+msgstr ""
 
 msgid "An error has occurred."
 msgstr "حصل خطأ"
@@ -3008,15 +3007,19 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid ""
-"This page is configured to use the %s theme, but it is either inactive or not installed."
+"This page is configured to use the %s theme, but it is either inactive, not installed, or "
+"incompatible."
 msgstr ""
 "تم إعداد هذا الألبوم ليستخدم الواجهة <b>%s</b>.هذه الإعدادات يتم فقط إستخدامها للواجهة لهذا "
 "الألبوم."
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"This album is configured to use the %s theme, but it is either inactive or not installed."
+"This album is configured to use the %s theme, but it is either inactive, not installed, or "
+"incompatible."
 msgstr ""
+"تم إعداد هذا الألبوم ليستخدم الواجهة <b>%s</b>.هذه الإعدادات يتم فقط إستخدامها للواجهة لهذا "
+"الألبوم."
 
 #, c-format
 msgid ""
@@ -3369,6 +3372,10 @@ msgstr ""
 
 msgid "Unit test theme"
 msgstr ""
+
+#, fuzzy
+#~ msgid "$ cd %s"
+#~ msgstr "%d. %s"
 
 #~ msgid "&laquo; None &raquo;"
 #~ msgstr "&laquo; لا يوجد &raquo;"

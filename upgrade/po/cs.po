@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Upgrader 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-06-11 11:57+0200\n"
-"PO-Revision-Date: 2005-09-11 16:16+0200\n"
+"PO-Revision-Date: 2006-01-15 15:01+0100\n"
 "Last-Translator: Jan Korbel <jackc@teptin.net>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -46,8 +46,8 @@ msgstr "<b>Chyba:</b> špatné heslo."
 msgid "Empty Cache"
 msgstr "Výmaz cache"
 
-msgid "Finished"
-msgstr "Hotovo"
+msgid "Finish Upgrade"
+msgstr "Dokončit aktualizaci"
 
 msgid "System Checks"
 msgstr "Kontrola systému"
@@ -94,15 +94,15 @@ msgid "Safe Mode"
 msgstr "Safe mód"
 
 msgid "Regular expressions"
-msgstr ""
+msgstr "Regulární výrazy"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error: Your PHP is configured without support for %sPerl Compatible Regular Expressions%s. "
 "You must enable these functions before Gallery will run."
 msgstr ""
-"Chyba: Vaše PHP je nakonfigurováno se zapnutým Safe módem. Pokud chcete používat Galerii, "
-"musíte ho vypnout."
+"Chyba: Vaše PHP je nakonfigurováno bez podpory %sRegulárních výrazů kompatibilních s Perlem%"
+"s. Než Galerie poběží, musíte tyto funkce zapnout."
 
 msgid "exec() allowed"
 msgstr "Funkce exec() povolena"
@@ -185,7 +185,7 @@ msgstr ""
 "<b>post_max_size</b> v php.ini). Pro upload větších souborů byste měli tento limit zvýšit."
 
 msgid "Translation support"
-msgstr ""
+msgstr "Podpora překladu"
 
 #, c-format
 msgid ""
@@ -193,18 +193,24 @@ msgid ""
 "please instruct your system administrator to reconfigure PHP with the %sgettext%s option "
 "enabled."
 msgstr ""
+"Váš webový server nepodporuje lokalizace. Pro přidání podpory dalších jazyků požádejte "
+"prosím Vašeho systémového správce o změnu konfigurace PHP se zapnutou volbou %sgettext%s."
 
 #, c-format
 msgid ""
 "Your PHP is missing the function %sbind_textdomain_codeset%s. This means Gallery may display "
 "extended characters for some languages incorrectly."
 msgstr ""
+"Ve vašem PHP chybí funkce %sbind_textdomain_codeset%s. To znamená, že Galerie může špatně "
+"zobrazovat rozšířené znaky některých jazyků."
 
 #, c-format
 msgid ""
 "Your PHP is missing the function %sdngettext%s. This means Gallery will be unable to "
 "translate plural forms."
 msgstr ""
+"Ve vašem PHP chybí funkce %sdngettext%s. To znamená, že Galerie nebude moci přeložit tvary "
+"množného čísla."
 
 msgid "Zend compatibility mode"
 msgstr "Kompatibilní mód Zendu"
@@ -220,6 +226,35 @@ msgstr ""
 "padání PHP. Pro otestování Vašeho PHP klikněte <a href=\"%s\">zde</a>. Pokud uvidíte úspěšný "
 "výsledek, Vaše PHP je v pořádku. Pokud uvidíte chybu nebo nedostanete odpověď, budete muset "
 "vypnout ze1_compatibility_mode."
+
+msgid "putenv() allowed"
+msgstr "funkce putenv() povolena"
+
+msgid ""
+"Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> "
+"parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
+"Gallery will be unable to run in other languages than the system language and English."
+msgstr ""
+"Varování: funkce putenv() je ve vašem PHP vypnutá pomocí parametru <b>disabled_functions</b> "
+"v php.ini. Galerie může s tímto nastavením fungovat, ale na některých unikátních systémech "
+"nebude Galerie schopna fungovat v jiných jazycích než je systémový jazyk a Angličtina."
+
+msgid "Output buffering disabled"
+msgstr "Vyrovnávací paměť výstupu vypnuta"
+
+#, c-format
+msgid ""
+"Warning: Output buffering is enabled in your php by the <b>%s</b> parameter(s) in php.ini.  "
+"Gallery can function with this setting - downloading files is even faster - but Gallery "
+"might be unable to serve large files (e.g. large videos) and run into the  memory limit. "
+"Also, some features like the progress bars might not work correctly if output buffering is "
+"enabled unless ini_set() is allowed."
+msgstr ""
+"Varování: Vyrovnávací paměť výstupu ve Vašem PHP je zapnuta parametrem(y) <b>%s</b> v php."
+"ini. Galerie s tímto nastavením může fungovat, stahování souborů může být dokonce rychlejší, "
+"ale Galerie může mít problémy s poskytováním velkých souborů (např. videí) a může narazit na "
+"omezení paměti. Také nemusí správně fungovat některé další funkce, například progress bary, "
+"pokud není povoleno ini_set()."
 
 msgid "Storage Directory Permissions"
 msgstr "Oprávnění pro adresář úložište"
@@ -248,7 +283,7 @@ msgid "Upgrade Modules"
 msgstr "Aktualizace modulů"
 
 msgid "Unable to initialize Gallery session"
-msgstr ""
+msgstr "Nelze zinicializovat sezení (session) Galerie"
 
 #, c-format
 msgid "Unable to load the %s module"
@@ -265,6 +300,9 @@ msgstr "Modul %s potřebuje nakonfigurovat"
 msgid "Unable to upgrade the %s module"
 msgstr "Nelze zaktualizovat modul %s"
 
+msgid "Unable to commit database transaction"
+msgstr "Nelze commitnout transakce databáze"
+
 #, c-format
 msgid "Unable to load the %s theme"
 msgstr "Nelze nahrát téma %s"
@@ -275,9 +313,6 @@ msgstr "Aktualizuji témata"
 #, c-format
 msgid "Unable to upgrade the %s theme"
 msgstr "Nelze zaktualizovat téma %s"
-
-msgid "Unable to commit database transaction"
-msgstr "Nelze commitnout transakce databáze"
 
 msgid "Unable to get the module list"
 msgstr "Nelze získat seznam modulů"
@@ -312,6 +347,10 @@ msgstr "Autentizovat"
 msgid "Authentication successful!"
 msgstr "Autentizace úspěšná!"
 
+#, fuzzy
+msgid "Successfully cleaned cache directories."
+msgstr "Úspěšně jsme vymazali cache adresáře."
+
 msgid "Delete Cache Directories"
 msgstr "Výmaz cache adresářů"
 
@@ -342,9 +381,6 @@ msgstr ""
 msgid "Try Again"
 msgstr "Zkusit znovu"
 
-msgid "We have successfully cleaned out your cache directories."
-msgstr "Úspěšně jsme vymazali cache adresáře."
-
 msgid "Finished!"
 msgstr "Hotovo!"
 
@@ -372,19 +408,22 @@ msgstr ""
 msgid "Welcome to the Gallery Upgrader"
 msgstr "Vítejte v aktualizaci Galerie"
 
+msgid "Upgrader Help"
+msgstr "README"
+
+msgid "Start Over"
+msgstr "Začít znovu"
+
+#, c-format
+msgid "Upgrade %d%% complete"
+msgstr "Aktualizace z %d%% kompletní"
+
 msgid "Redo this step"
 msgstr "Opakovat tento krok"
 
 #, c-format
 msgid "Continue to Step %d&raquo;"
 msgstr "Pokračovat krokem %d&raquo;"
-
-msgid "Upgrade Status"
-msgstr "Stav aktualizace"
-
-#, c-format
-msgid "Upgrade %d%% complete"
-msgstr "Aktualizace z %d%% kompletní"
 
 msgid "Gallery: <strong>your photos</strong> on <strong>your website</strong>"
 msgstr "Galerie: <strong>Vaše fotografie</strong> na <strong>Vašem webu</strong>"
@@ -426,12 +465,6 @@ msgstr ""
 
 msgid "Upgrade Steps"
 msgstr "Kroky aktualizace"
-
-msgid "Upgrader Help"
-msgstr "README"
-
-msgid "Start Over"
-msgstr "Začít znovu"
 
 msgid "Missing or invalid config.php"
 msgstr "Chybějící nebo špatný config.php"
@@ -544,15 +577,15 @@ msgid "MySQL"
 msgstr "MySQL"
 
 #, c-format
-msgid "mysqldump -u%s -p<i>YourPassword</i> --opt %s > %s.sql"
-msgstr "mysqldump -u%s -p<i>VašeHeslo</i> --opt %s > %s.sql"
+msgid "mysqldump -u%s -p -h %s --opt %s > %s.sql"
+msgstr "mysqldump -u%s -p -h %s --opt %s > %s.sql"
 
 msgid "PostgreSQL"
 msgstr "PostgreSQL"
 
 #, c-format
-msgid "pg_dump --format=t %s > %s.sql"
-msgstr "pg_dump --format=t %s > %s.sql"
+msgid "pg_dump -h %s --format=t %s > %s.sql"
+msgstr "pg_dump -h %s --format=t %s > %s.sql"
 
 msgid ""
 "Once the upgrade has begun, please be patient.  If you cancel or reload the page, you may "
@@ -663,3 +696,9 @@ msgstr "Vyberte jazyk:"
 
 msgid "Go"
 msgstr "Go"
+
+#~ msgid "Finished"
+#~ msgstr "Hotovo"
+
+#~ msgid "Upgrade Status"
+#~ msgstr "Stav aktualizace"

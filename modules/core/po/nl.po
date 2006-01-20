@@ -20,13 +20,13 @@
 # Previous translators:
 # Marcel van Groenigen <marcel@emenems.net>, 2002
 # Kees van den Broek <kvdb@NOSPAMkvdb.net>, 2003
-# Arjen Gideonse <ArjenGideonse at xs4all REMOVE THIS dot nl>, 2005
+# Gidie <gidie at users.sourceforge REMOVE THIS dot net>, 2005
 msgid ""
 msgstr ""
 "Project-Id-Version: Gallery: Core 1.0\n"
 "POT-Creation-Date: 2003-02-11 03:09-0800\n"
 "PO-Revision-Date: 2005-02-21 19:39+0100\n"
-"Last-Translator: Arjen Gideonse <ArjenGideonse at xs4all REMOVE THIS dot nl>\n"
+"Last-Translator: Gidie <gidie at users.sourceforge. REMOVE THIS dot net>\n"
 "Language-Team: Dutch <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -40,10 +40,10 @@ msgid "forever"
 msgstr "altijd"
 
 msgid "High Priority (Me first!)"
-msgstr ""
+msgstr "Hoge Prioriteit (Ik eerst!)"
 
 msgid "Low Priority (I want to share!)"
-msgstr ""
+msgstr "Lage Prioriteir (I wil delen!)"
 
 msgid "No Markup"
 msgstr "Geen Inhoudsbeschrijving"
@@ -178,6 +178,9 @@ msgstr "Detecteren foute afgeleiden"
 msgid "Clearing fast-download cache"
 msgstr "Fast-download cache leegmaken"
 
+msgid "Deleting old fast-download cache"
+msgstr "Oude fast-download cache verwijderen"
+
 msgid "Site Admins"
 msgstr "Site Beheer"
 
@@ -279,8 +282,18 @@ msgstr "Instellingen succesvol opgeslagen."
 msgid "&laquo; default theme &raquo;"
 msgstr "&laquo; standaard thema &raquo;"
 
+msgid "Recreating resized images"
+msgstr "Geschaalde afbeeldingen opnieuw aanmaken"
+
+msgid "Rebuilding thumbnails..."
+msgstr "Creëer miniaturen opnieuw..."
+
 msgid "Album"
 msgstr "Album"
+
+#, c-format
+msgid "Processing image %d of %d"
+msgstr "Verwerken afbeelding %d van %d"
 
 msgid "Changes saved successfully"
 msgstr "Verandering succesvol opgeslagen"
@@ -536,10 +549,6 @@ msgid "Debug output for failed items:"
 msgstr "Debug uitvoer voor alle mislukte items:"
 
 #, c-format
-msgid "Processing image %d of %d"
-msgstr "Verwerken afbeelding %d van %d"
-
-#, c-format
 msgid "Checked %d items"
 msgstr "%d items gecontroleerd"
 
@@ -554,8 +563,9 @@ msgstr "%d items mislukt"
 msgid "Delete database cache"
 msgstr "Verwijder database cache"
 
+#, fuzzy
 msgid ""
-"Gallery stores commonly used database information on disk for increased performance.  If you "
+"Gallery stores commonly used database information on disk for increased performance. If you "
 "modify the database directly, you should run this task to clean out the cache and force "
 "Gallery to reload the information from the database."
 msgstr ""
@@ -654,29 +664,23 @@ msgstr "download"
 msgid "Plugins directory does not exist."
 msgstr "Plugins directory bestaat niet."
 
-#, c-format
+#, fuzzy
 msgid ""
-"Couldn't create plugin directory '%s' in '%s', make sure the web server has write "
-"permissions in it."
+"Couldn't create plugins subdirectory. Make sure the webserver has write permissions in it."
 msgstr ""
 "Kan de plugin directory '%s' in '%s' niet aanmaken, zorg dat de web server hier de juiste "
 "rechten heeft."
 
-#, c-format
-msgid "Couldn't create repository cache path '%s'."
+#, fuzzy
+msgid "Couldn't create repository cache path."
 msgstr "Kan het repository cache pad '%s' niet aanmaken."
 
-#, c-format
+#, fuzzy
 msgid ""
-"Couldn't create cache directory '%s' in '%s', make sure the web server has write permissions "
-"in it."
+"Couldn't create cache subdirectory. Make sure the web server has write permissions in it."
 msgstr ""
 "Kan de cache directory '%s' in '%s' niet aanmaken, zorg dat de web server hier de juiste "
 "rechten heeft. "
-
-#, c-format
-msgid "Error downloading package from '%s'."
-msgstr "Fout bij het downloaden van pakket van '%s'."
 
 #, c-format
 msgid "Error downloading index from '%s'."
@@ -737,8 +741,8 @@ msgstr "Deze pagina is geldig XHTML 1.0"
 msgid "Donate to the Gallery project"
 msgstr "Terug naar de gallery"
 
-msgid "G2.0: Unpossible!"
-msgstr "G2.0: Unpossible!"
+msgid "G2.1: Blackjack"
+msgstr ""
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -956,7 +960,6 @@ msgstr "Fout bij het verzenden van test email, zie hieronder voor details."
 msgid "Language Settings"
 msgstr "Taal Instellingen"
 
-#, fuzzy
 msgid ""
 "Select language defaults for Gallery. Individual users can override this setting in their "
 "personal preferences or via the language selector block if available. Gallery will try to "
@@ -965,12 +968,14 @@ msgid ""
 msgstr ""
 "Selecteer de standaard taal instellingen voor Gallery. Gebruikers kunnen dit individueel "
 "aanpassen in hun persoonlijke instellingen of indien beschikbaar in het taalkiezer blok."
+"Gallery zal proberen om van elke gebruiker de taalvoorkeur automatisch vast te stellen, als "
+"de controle voor bowser voorkeur aan staat."
 
 msgid "Default language"
 msgstr "Standaard taal"
 
 msgid "Check Browser Preference"
-msgstr ""
+msgstr "Controleer Browser Voorkeur"
 
 msgid "gettext"
 msgstr "gettext"
@@ -984,7 +989,7 @@ msgstr ""
 "functionaliteit aan te zetten."
 
 msgid "Date Formats"
-msgstr "Datum Opmaken"
+msgstr "Datum Opmaak"
 
 #, c-format
 msgid ""
@@ -1706,13 +1711,10 @@ msgstr ""
 "Er wordt tijdens het bijwerken geen persoonlijke informatie naar de Gallery server "
 "verzonden. Bij langzame verbinding kan dit process een paar minuten duren."
 
-msgid "As of the last update on"
-msgstr "Zoals bij de laatste update op"
-
-#, c-format
+#, fuzzy, c-format
 msgid ""
-", the repository contains %s modules and %s themes. Its contents can be viewed on the "
-"Modules and Themes tabs."
+"As of the last update on %s, the repository contains %s modules and %s themes. Its contents "
+"can be viewed on the Modules and Themes tabs."
 msgstr ""
 ", de repositort bevat %s modules en %s thema's. De inhoud kan bekeken worden op de tabbladen "
 "Modules en Thema's."
@@ -1744,12 +1746,12 @@ msgstr ""
 msgid "Review plugin compatibility (on the Themes and Modules tabs)"
 msgstr "Inspecteer plugin combabiliteit (op de tabbladen Thema's en Modules)"
 
-#, c-format
-msgid "<a href=\"%s\">Download</a> Gallery core"
+#, fuzzy, c-format
+msgid "%sDownload%s Gallery core"
 msgstr "<a href=\"%s\">Download</a> Gallery core"
 
-#, c-format
-msgid "Read the <a href=\"%s\">upgrade instructions</a> and perform the upgrade"
+#, fuzzy, c-format
+msgid "Read the %supgrade instructions%s and perform the upgrade"
 msgstr "Lees de <a href=\"%s\"upgrade instructies</a> en voer de upgrade uit"
 
 msgid "Gallery Up-To-Date"
@@ -1793,14 +1795,16 @@ msgstr ""
 msgid "Incompatible plugins are marked with an exclamation icon."
 msgstr "Niet compatibele plugins zijn gemarkeerd met een uitroepteken icoon."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "A new core module version is available. There may be plugins that are incompatible with the "
 "installed core module, which are not shown here. You can view a %scomplete list%s of "
 "plugins, including incompatible ones, which are marked with a red icon."
 msgstr ""
 "Er is een nieuwe core module vesie beschikbaar. Er kunnen plugins zijn die niet compatibel "
-"zijn met de geïnstaleerde core module, deze zijn hier niet weergegeven."
+"zijn met de geïnstaleerde core module, deze zijn hier niet weergegeven. U kunt een %"
+"scomplete lijst%s van alle plugins opvragen, inclusief degene die niet compatibel zijn. Deze "
+"zijn gemarkeerd met een rood icoon."
 
 msgid "Theme Name"
 msgstr "Thema Naam"
@@ -1882,38 +1886,21 @@ msgstr "Download eenhid testen"
 msgid "Gallery Repository Setup"
 msgstr "Gallery Repository Setup"
 
-msgid "Warning: `$errorMessage`"
-msgstr "Waarschuwing: `$errorMessage`"
+msgid "Warning:"
+msgstr ""
 
+#, fuzzy, c-format
 msgid ""
 "In order to download plugins from the Gallery repository, a special directory needs to be "
-"created where Gallery will store the data."
-msgstr ""
-"Om de plugins van de Gallery repository te downloaden dient een speciale directory "
-"aangemaakt te worden waarin Galery de data zal opslaan."
-
-#, c-format
-msgid ""
-"Under your Gallery base directory, create a directory called '%s' and allow the web server "
-"to write into it by appropriately setting the permissions."
+"created where Gallery will store the data. Under your Gallery base directory, create a "
+"directory called '%s' and allow the web server to write into it by appropriately setting the "
+"permissions."
 msgstr ""
 "Maak een directory aan onder uw Gallery basis directory, genaamd '%s' and sta de web server "
 "toe om hiernaar te schrijven door de juiste rechten in te stellen."
 
 msgid "Instructions for Unix-type platforms:"
 msgstr "Instructies voor platforms van het Unix type:"
-
-#, c-format
-msgid "$ cd %s"
-msgstr " cd %s"
-
-#, c-format
-msgid "$ mkdir %s"
-msgstr "$ mkdir %s"
-
-#, c-format
-msgid "$ chmod 777 %s"
-msgstr "$ chmod 777 %s"
 
 msgid ""
 "Refreshing this page will take you to the Repository if the directory has been successfully "
@@ -2106,6 +2093,9 @@ msgstr "Beveiligingsovertreding"
 msgid "Database Error"
 msgstr "Database Fout"
 
+msgid "Platform Error"
+msgstr "Platform Fout"
+
 msgid "Error"
 msgstr "Fout"
 
@@ -2141,6 +2131,18 @@ msgstr ""
 "mode in config.php aanstaan. Voordat u hulp zoekt voor de fout, zet u alstublieft de "
 "gebufferde debug uitvoer aan en herhaal de handeling. Bekijk vervolgens het onderste "
 "gedeelte van de lange debug uitvoer voor de fouten details."
+
+msgid "An error has occurred while interacting with the platform."
+msgstr "Er is een fout opgetreden bij de interactie met het platform."
+
+msgid ""
+"The exact nature of the platform error is unknown. A common cause are insufficient file "
+"system permissions. This can happen if you or your webhost changed something in the file "
+"system, e.g. by restoring data from a backup."
+msgstr ""
+"De exacte aard van de platform fout is onbekend. Een vaak voorkomende oorzaak is onvoldoene "
+"rechten op het bestandsysteem. Dat kan gebeuren als u of uw webhost iets veranderd heeft in "
+"het bestandsysteem, bijv. terugzetten van data van een backup."
 
 msgid "An error has occurred."
 msgstr "Er is een fout opgetreden."
@@ -2876,6 +2878,8 @@ msgstr "Gebruik algemene instelling"
 msgid ""
 "Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
 msgstr ""
+"Let op: om hetzelfde thema op alle sub-albums toe te passen, zet de juist parameter aan in "
+"het <b>Album</b> tabblad"
 
 msgid "Album Highlight"
 msgstr "Albumafbeelding"
@@ -3121,19 +3125,21 @@ msgstr "Configuratie Fout: Missend Thema"
 msgid "Missing Theme"
 msgstr "Missend Thema"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
-"This page is configured to use the %s theme, but it is either inactive or not installed."
+"This page is configured to use the %s theme, but it is either inactive, not installed, or "
+"incompatible."
 msgstr ""
-"Dit album is ingesteld om gebruik te maken van het %s thema, maar deze is ofwel niet actief "
-"of is niet geïnstalleerd."
+"Dit album is ingesteld om gebruik te maken van het %s thema, maar deze is ofwel niet actief, "
+"of is niet geïnstalleerd, of niet compatibel."
 
 #, c-format
 msgid ""
-"This album is configured to use the %s theme, but it is either inactive or not installed."
+"This album is configured to use the %s theme, but it is either inactive, not installed, or "
+"incompatible."
 msgstr ""
-"Dit album is ingesteld om gebruik te maken van het %s thema, maar deze is ofwel niet actief "
-"of is niet geïnstalleerd."
+"Dit album is ingesteld om gebruik te maken van het %s thema, maar deze is ofwel niet actief, "
+"of is niet geïnstalleerd, oof niet compatibel."
 
 #, c-format
 msgid ""
@@ -3518,15 +3524,30 @@ msgstr "[test] Een tweede recht"
 msgid "Unit test theme"
 msgstr "Eenheids test thema"
 
-#~ msgid "You can view a"
-#~ msgstr "U kunt een weergeven"
+#~ msgid "Error downloading package from '%s'."
+#~ msgstr "Fout bij het downloaden van pakket van '%s'."
 
-#~ msgid "of plugins, including incompatible ones, which are marked with a red icon."
+#~ msgid "G2.0: Unpossible!"
+#~ msgstr "G2.0: Unpossible!"
+
+#~ msgid "As of the last update on"
+#~ msgstr "Zoals bij de laatste update op"
+
+#~ msgid "Warning: `$errorMessage`"
+#~ msgstr "Waarschuwing: `$errorMessage`"
+
+#~ msgid ""
+#~ "In order to download plugins from the Gallery repository, a special directory needs to be "
+#~ "created where Gallery will store the data."
 #~ msgstr ""
-#~ "van plugin, inclusief de niet compatibele, welke zijn gemarkeerd met een rood icoon."
+#~ "Om de plugins van de Gallery repository te downloaden dient een speciale directory "
+#~ "aangemaakt te worden waarin Galery de data zal opslaan."
 
-#~ msgid "&laquo; None &raquo;"
-#~ msgstr "&laquo; Geen &raquo;"
+#~ msgid "$ cd %s"
+#~ msgstr " cd %s"
 
-#~ msgid "Unable to delete directory: /templates_c"
-#~ msgstr "Kan directory niet verwijderen: /templates_c"
+#~ msgid "$ mkdir %s"
+#~ msgstr "$ mkdir %s"
+
+#~ msgid "$ chmod 777 %s"
+#~ msgstr "$ chmod 777 %s"

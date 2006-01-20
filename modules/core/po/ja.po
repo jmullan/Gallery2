@@ -171,6 +171,10 @@ msgstr "壊れた派生物を検出"
 msgid "Clearing fast-download cache"
 msgstr "高速ダウンロードキャッシュをクリアしています"
 
+#, fuzzy
+msgid "Deleting old fast-download cache"
+msgstr "高速ダウンロードキャッシュをクリアしています"
+
 msgid "Site Admins"
 msgstr "サイト管理者"
 
@@ -270,8 +274,20 @@ msgstr "設定の保存に成功しました。"
 msgid "&laquo; default theme &raquo;"
 msgstr "&laquo; デフォルトテーマ &raquo;"
 
+#, fuzzy
+msgid "Recreating resized images"
+msgstr "リサイズ済画像を再生成"
+
+#, fuzzy
+msgid "Rebuilding thumbnails..."
+msgstr "サムネイルを再生成"
+
 msgid "Album"
 msgstr "アルバム"
+
+#, c-format
+msgid "Processing image %d of %d"
+msgstr "画像処理 %d / %d"
 
 msgid "Changes saved successfully"
 msgstr "変更の保存に成功しました。"
@@ -529,10 +545,6 @@ msgid "Debug output for failed items:"
 msgstr "失敗したアイテムのデバッグ出力:"
 
 #, c-format
-msgid "Processing image %d of %d"
-msgstr "画像処理 %d / %d"
-
-#, c-format
 msgid "Checked %d items"
 msgstr "%d アイテムをチェック"
 
@@ -547,8 +559,9 @@ msgstr "%d アイテムが失敗しました"
 msgid "Delete database cache"
 msgstr "データベースキャッシュ削除"
 
+#, fuzzy
 msgid ""
-"Gallery stores commonly used database information on disk for increased performance.  If you "
+"Gallery stores commonly used database information on disk for increased performance. If you "
 "modify the database directly, you should run this task to clean out the cache and force "
 "Gallery to reload the information from the database."
 msgstr ""
@@ -650,27 +663,22 @@ msgstr "ダウンロード"
 msgid "Plugins directory does not exist."
 msgstr "プラグインディレクトリは存在しません"
 
-#, c-format
+#, fuzzy
 msgid ""
-"Couldn't create plugin directory '%s' in '%s', make sure the web server has write "
-"permissions in it."
+"Couldn't create plugins subdirectory. Make sure the webserver has write permissions in it."
 msgstr ""
 "'%2$s' にプラグインディレクトリ '%1$s' を作成できませんでした。ウェブサーバがそれに書き込み権"
 "限があることを確認してください。"
 
-#, c-format
-msgid "Couldn't create repository cache path '%s'."
+msgid "Couldn't create repository cache path."
 msgstr ""
 
-#, c-format
+#, fuzzy
 msgid ""
-"Couldn't create cache directory '%s' in '%s', make sure the web server has write permissions "
-"in it."
+"Couldn't create cache subdirectory. Make sure the web server has write permissions in it."
 msgstr ""
-
-#, c-format
-msgid "Error downloading package from '%s'."
-msgstr "'%s' からパッケージのダウンロード中にエラーが発生しました。"
+"'%2$s' にプラグインディレクトリ '%1$s' を作成できませんでした。ウェブサーバがそれに書き込み権"
+"限があることを確認してください。"
 
 #, c-format
 msgid "Error downloading index from '%s'."
@@ -732,8 +740,8 @@ msgstr "このページは XHTML 1.0 に準拠しています。"
 msgid "Donate to the Gallery project"
 msgstr "Galleryプロジェクトに寄付をする"
 
-msgid "G2.0: Unpossible!"
-msgstr "G2.0: Unpossible!"
+msgid "G2.1: Blackjack"
+msgstr ""
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -1642,13 +1650,10 @@ msgid ""
 "the process might take a minute or two."
 msgstr ""
 
-msgid "As of the last update on"
-msgstr ""
-
 #, c-format
 msgid ""
-", the repository contains %s modules and %s themes. Its contents can be viewed on the "
-"Modules and Themes tabs."
+"As of the last update on %s, the repository contains %s modules and %s themes. Its contents "
+"can be viewed on the Modules and Themes tabs."
 msgstr ""
 
 msgid ""
@@ -1672,12 +1677,12 @@ msgstr ""
 msgid "Review plugin compatibility (on the Themes and Modules tabs)"
 msgstr ""
 
-#, c-format
-msgid "<a href=\"%s\">Download</a> Gallery core"
+#, fuzzy, c-format
+msgid "%sDownload%s Gallery core"
 msgstr "Gallery core を <a href=\"%s\">ダウンロード</a>"
 
 #, c-format
-msgid "Read the <a href=\"%s\">upgrade instructions</a> and perform the upgrade"
+msgid "Read the %supgrade instructions%s and perform the upgrade"
 msgstr ""
 
 msgid "Gallery Up-To-Date"
@@ -1793,34 +1798,19 @@ msgstr ""
 msgid "Gallery Repository Setup"
 msgstr "Gallery リポジトリセットアップ"
 
-msgid "Warning: `$errorMessage`"
-msgstr ""
-
-msgid ""
-"In order to download plugins from the Gallery repository, a special directory needs to be "
-"created where Gallery will store the data."
+msgid "Warning:"
 msgstr ""
 
 #, c-format
 msgid ""
-"Under your Gallery base directory, create a directory called '%s' and allow the web server "
-"to write into it by appropriately setting the permissions."
+"In order to download plugins from the Gallery repository, a special directory needs to be "
+"created where Gallery will store the data. Under your Gallery base directory, create a "
+"directory called '%s' and allow the web server to write into it by appropriately setting the "
+"permissions."
 msgstr ""
 
 msgid "Instructions for Unix-type platforms:"
 msgstr ""
-
-#, c-format
-msgid "$ cd %s"
-msgstr "$ cd %s"
-
-#, c-format
-msgid "$ mkdir %s"
-msgstr "$ mkdir %s"
-
-#, c-format
-msgid "$ chmod 777 %s"
-msgstr "$ chmod 777 %s"
 
 msgid ""
 "Refreshing this page will take you to the Repository if the directory has been successfully "
@@ -2004,6 +1994,9 @@ msgstr "セキュリティ侵害"
 msgid "Database Error"
 msgstr "データベースエラー"
 
+msgid "Platform Error"
+msgstr ""
+
 msgid "Error"
 msgstr "エラー"
 
@@ -2029,6 +2022,16 @@ msgid ""
 "The exact nature of database errors is not captured unless Gallery debug mode is enabled in "
 "config.php.  Before seeking support for this error please enable buffered debug output and "
 "retry the operation.  Look near the bottom of the lengthy debug output to find error details."
+msgstr ""
+
+#, fuzzy
+msgid "An error has occurred while interacting with the platform."
+msgstr "データベースと通信中にエラーが発生しました。"
+
+msgid ""
+"The exact nature of the platform error is unknown. A common cause are insufficient file "
+"system permissions. This can happen if you or your webhost changed something in the file "
+"system, e.g. by restoring data from a backup."
 msgstr ""
 
 msgid "An error has occurred."
@@ -2979,12 +2982,14 @@ msgstr "テーマ欠落"
 
 #, c-format
 msgid ""
-"This page is configured to use the %s theme, but it is either inactive or not installed."
+"This page is configured to use the %s theme, but it is either inactive, not installed, or "
+"incompatible."
 msgstr ""
 
 #, c-format
 msgid ""
-"This album is configured to use the %s theme, but it is either inactive or not installed."
+"This album is configured to use the %s theme, but it is either inactive, not installed, or "
+"incompatible."
 msgstr ""
 
 #, c-format
@@ -3320,6 +3325,21 @@ msgstr "[test] 二番目のパーミッション"
 
 msgid "Unit test theme"
 msgstr ""
+
+#~ msgid "Error downloading package from '%s'."
+#~ msgstr "'%s' からパッケージのダウンロード中にエラーが発生しました。"
+
+#~ msgid "G2.0: Unpossible!"
+#~ msgstr "G2.0: Unpossible!"
+
+#~ msgid "$ cd %s"
+#~ msgstr "$ cd %s"
+
+#~ msgid "$ mkdir %s"
+#~ msgstr "$ mkdir %s"
+
+#~ msgid "$ chmod 777 %s"
+#~ msgstr "$ chmod 777 %s"
 
 #~ msgid "&laquo; None &raquo;"
 #~ msgstr "&laquo; なし &raquo;"

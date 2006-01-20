@@ -46,8 +46,9 @@ msgstr "<b>エラー:</b> 無効なパスワード"
 msgid "Empty Cache"
 msgstr "キャッシュを空に"
 
-msgid "Finished"
-msgstr "完了"
+#, fuzzy
+msgid "Finish Upgrade"
+msgstr "アップグレード開始"
 
 msgid "System Checks"
 msgstr "システムチェック"
@@ -223,6 +224,33 @@ msgstr ""
 "\"SUCCESS\" と表示されれば、問題はありません。もしエラー表示が出た場合、まず"
 "ze1_compatibility_mode の設定を解除してください。"
 
+#, fuzzy
+msgid "putenv() allowed"
+msgstr "exec() 許可"
+
+#, fuzzy
+msgid ""
+"Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> "
+"parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
+"Gallery will be unable to run in other languages than the system language and English."
+msgstr ""
+"警告: set_time_limit() 機能はphp.iniファイルの<b>disabled_functions</b> パラメータによって無"
+"効にされています。Galleryはこの設定でも機能しますが、安定性に問題があるかもしれません。%d 秒"
+"以上の作業はデータの衝突を引き起こす可能性があります。（場合によっては空白のページが表示され"
+"ます）"
+
+msgid "Output buffering disabled"
+msgstr ""
+
+#, c-format
+msgid ""
+"Warning: Output buffering is enabled in your php by the <b>%s</b> parameter(s) in php.ini.  "
+"Gallery can function with this setting - downloading files is even faster - but Gallery "
+"might be unable to serve large files (e.g. large videos) and run into the  memory limit. "
+"Also, some features like the progress bars might not work correctly if output buffering is "
+"enabled unless ini_set() is allowed."
+msgstr ""
+
 msgid "Storage Directory Permissions"
 msgstr "ストレージディレクトリのパーミッション"
 
@@ -268,6 +296,9 @@ msgstr "%s モジュールは設定が必要です"
 msgid "Unable to upgrade the %s module"
 msgstr "%s モジュールをアップグレードできません"
 
+msgid "Unable to commit database transaction"
+msgstr "データベーストランザクションをコミットできません"
+
 #, c-format
 msgid "Unable to load the %s theme"
 msgstr "テーマ %s を読み込むことができません"
@@ -278,9 +309,6 @@ msgstr "テーマをアップグレード中"
 #, c-format
 msgid "Unable to upgrade the %s theme"
 msgstr "テーマ %s をアップグレードできません"
-
-msgid "Unable to commit database transaction"
-msgstr "データベーストランザクションをコミットできません"
 
 msgid "Unable to get the module list"
 msgstr "モジュールリストを取得できません"
@@ -315,6 +343,10 @@ msgstr "認証する"
 msgid "Authentication successful!"
 msgstr "認証に成功しました"
 
+#, fuzzy
+msgid "Successfully cleaned cache directories."
+msgstr "キャッシュディレクトリの中身の削除が完了しました"
+
 msgid "Delete Cache Directories"
 msgstr "キャッシュディレクトリを削除する"
 
@@ -346,9 +378,6 @@ msgstr ""
 msgid "Try Again"
 msgstr "もう一度実行する"
 
-msgid "We have successfully cleaned out your cache directories."
-msgstr "キャッシュディレクトリの中身の削除が完了しました"
-
 msgid "Finished!"
 msgstr "完了！"
 
@@ -376,19 +405,22 @@ msgstr ""
 msgid "Welcome to the Gallery Upgrader"
 msgstr "ようこそ Gallery アップグレードページへ"
 
+msgid "Upgrader Help"
+msgstr "アップグレーダーのヘルプ"
+
+msgid "Start Over"
+msgstr "やり直してください"
+
+#, c-format
+msgid "Upgrade %d%% complete"
+msgstr "アップグレード進行率 %d%%"
+
 msgid "Redo this step"
 msgstr "このステップをもう一度"
 
 #, c-format
 msgid "Continue to Step %d&raquo;"
 msgstr "続けてステップ %d へ&raquo;"
-
-msgid "Upgrade Status"
-msgstr "アップグレードの状況"
-
-#, c-format
-msgid "Upgrade %d%% complete"
-msgstr "アップグレード進行率 %d%%"
 
 msgid "Gallery: <strong>your photos</strong> on <strong>your website</strong>"
 msgstr "Gallery: <strong>your photos</strong> on <strong>your website</strong>"
@@ -430,12 +462,6 @@ msgstr ""
 
 msgid "Upgrade Steps"
 msgstr "アップグレードのステップ"
-
-msgid "Upgrader Help"
-msgstr "アップグレーダーのヘルプ"
-
-msgid "Start Over"
-msgstr "やり直してください"
 
 msgid "Missing or invalid config.php"
 msgstr "config.php ファイルがないか、正しい状態ではありません"
@@ -550,15 +576,15 @@ msgstr ""
 msgid "MySQL"
 msgstr "MySQL"
 
-#, c-format
-msgid "mysqldump -u%s -p<i>YourPassword</i> --opt %s > %s.sql"
+#, fuzzy, c-format
+msgid "mysqldump -u%s -p -h %s --opt %s > %s.sql"
 msgstr "mysqldump -u%s -p<i>YourPassword</i> --opt %s > %s.sql"
 
 msgid "PostgreSQL"
 msgstr "PostgreSQL"
 
-#, c-format
-msgid "pg_dump --format=t %s > %s.sql"
+#, fuzzy, c-format
+msgid "pg_dump -h %s --format=t %s > %s.sql"
 msgstr "pg_dump --format=t %s > %s.sql"
 
 msgid ""
@@ -669,3 +695,9 @@ msgstr "言語選択:"
 
 msgid "Go"
 msgstr "進む"
+
+#~ msgid "Finished"
+#~ msgstr "完了"
+
+#~ msgid "Upgrade Status"
+#~ msgstr "アップグレードの状況"

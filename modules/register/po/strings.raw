@@ -1,20 +1,27 @@
 # $Id$
 
+/* AdminSelfRegistration.inc */
 gettext("Activation by administrator")
 gettext("Use confirmation emails")
 gettext("Accept without confirmation")
 gettext("Yes")
 gettext("No")
+
+/* module.inc */
 gettext("Registration")
 gettext("New User Registration")
 gettext("Gallery")
 gettext("Account activation")
 gettext("New user registration")
-gettext("Register")
+gettext("Register") /* also in: templates/UserSelfRegistration.tpl */
+
+/* templates/AdminEmail.tpl */
 gettext("New user registration:")
 gettext("    Username: %s")
 gettext("   Full name: %s")
 gettext("       Email: %s")
+
+/* templates/AdminSelfRegistration.tpl */
 gettext("Registration Settings")
 gettext("Settings saved successfully")
 gettext("Activated user %s")
@@ -35,24 +42,30 @@ gettext("&laquo; back")
 gettext("Viewing page %d of %d")
 gettext("next &raquo;")
 gettext("last &raquo;")
-gettext("Username")
-gettext("Full Name")
+gettext("Username") /* also in: templates/UserSelfRegistration.tpl */
+gettext("Full Name") /* also in: templates/UserSelfRegistration.tpl */
 gettext("Email")
 gettext("Date")
 gettext("Action")
 gettext("activate")
 gettext("delete")
+
+/* templates/ConfirmRegistration.tpl */
 gettext("Account Activation")
 gettext("This user cannot be activated.")
 gettext("This can happen if the URL you entered is not correct or you already activated this account. Please check if your mailclient broke the link into several lines and append them without spaces.")
 gettext("Your account has been activated.")
 gettext("You can now login to your account with your username and password.")
+
+/* templates/ConfirmationEmail.tpl */
 gettext("Hello %s,")
 gettext("You receive this email because you have registered at %s")
 gettext("Your username is: %s")
 gettext("To finish the registration process please click the following link:")
 gettext("If you did not register at this site then please ignore this email.  The registration will not become valid and you will not receive any further emails.  Sorry for the inconvenience.")
 gettext("Thank you!")
+
+/* templates/SelfRegistrationSuccess.tpl */
 gettext("Registration successful")
 gettext("Your registration was successful.")
 gettext("Your registration will be processed and your account activated soon.")
@@ -64,6 +77,8 @@ gettext("login")
 gettext("to your account with your username and password.")
 gettext("This page can only be called once.")
 gettext("This page has been requested before and can only be called once. Probable you have hit the Reload button. Please proceed to %s.")
+
+/* templates/UserSelfRegistration.tpl */
 gettext("Register As New User")
 gettext("(required)")
 gettext("You must enter a username")

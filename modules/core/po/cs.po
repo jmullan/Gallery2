@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Core 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-01-28 21:40+0100\n"
-"PO-Revision-Date: 2005-09-11 16:18+0200\n"
+"PO-Revision-Date: 2006-01-15 14:02+0100\n"
 "Last-Translator: Jan Korbel <jackc@teptin.net>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -38,10 +38,10 @@ msgid "forever"
 msgstr "navždy"
 
 msgid "High Priority (Me first!)"
-msgstr ""
+msgstr "Velká priorita (Mě nejdřív!)"
 
 msgid "Low Priority (I want to share!)"
-msgstr ""
+msgstr "Nízká priorita (Chci sdílet!)"
 
 msgid "No Markup"
 msgstr "Neznačkovat"
@@ -107,24 +107,21 @@ msgstr "odinstalovat"
 msgid "deactivate"
 msgstr "deaktivovat"
 
-#, fuzzy
 msgid "Performing Maintenance Tasks"
-msgstr "Údržba systému"
+msgstr "Provádím údržbu systému"
 
 #, c-format
 msgid "Downloading %s"
-msgstr ""
+msgstr "Stahuji %s"
 
-#, fuzzy
 msgid "Done."
-msgstr "Hotovo"
+msgstr "Hotovo."
 
-#, fuzzy
 msgid "Upgrade"
-msgstr "aktualizovat"
+msgstr "Aktualizovat"
 
 msgid "Download"
-msgstr ""
+msgstr "Stáhnout"
 
 msgid "Inherit settings from parent album"
 msgstr "Zdědit nastavení z nadřazeného alba"
@@ -182,6 +179,9 @@ msgstr "Detekuji chybné zmenšeniny"
 
 msgid "Clearing fast-download cache"
 msgstr "Mažu cache rychlých downloadů"
+
+msgid "Deleting old fast-download cache"
+msgstr "Mažu starou cache rychlých downloadů"
 
 msgid "Site Admins"
 msgstr "Správci"
@@ -286,8 +286,18 @@ msgstr "Nastavení úspěšně uloženo."
 msgid "&laquo; default theme &raquo;"
 msgstr "&laquo; výchozí téma &raquo;"
 
+msgid "Recreating resized images"
+msgstr "Znovu vytvářím zmenšeniny"
+
+msgid "Rebuilding thumbnails..."
+msgstr "Znovu vytvářím náhledy..."
+
 msgid "Album"
 msgstr "album"
+
+#, c-format
+msgid "Processing image %d of %d"
+msgstr "Zpracovávám obrázek %d z %d"
 
 msgid "Changes saved successfully"
 msgstr "Změny úspěšně uloženy"
@@ -475,7 +485,7 @@ msgid "Modules"
 msgstr "Moduly"
 
 msgid "Repository"
-msgstr ""
+msgstr "Zdroj"
 
 msgid "Themes"
 msgstr "Témata"
@@ -543,10 +553,6 @@ msgid "Debug output for failed items:"
 msgstr "Ladící výstup pro selhané položky:"
 
 #, c-format
-msgid "Processing image %d of %d"
-msgstr "Zpracovávám obrázek %d z %d"
-
-#, c-format
 msgid "Checked %d items"
 msgstr "Zkontrolováno %d položek"
 
@@ -562,12 +568,12 @@ msgid "Delete database cache"
 msgstr "Výmaz cache databáze"
 
 msgid ""
-"Gallery stores commonly used database information on disk for increased performance.  If you "
+"Gallery stores commonly used database information on disk for increased performance. If you "
 "modify the database directly, you should run this task to clean out the cache and force "
 "Gallery to reload the information from the database."
 msgstr ""
 "Galerie pro zvýšený výkon ukládá často používané informace databáze na disk. Pokud změníte "
-"databázi ručně, měli byste vymazat cache a vynutit si obnovení informací z databáze."
+"databázi přímo, měli byste vymazat cache a vynutit si tak obnovení informací z databáze."
 
 #, c-format
 msgid "Successfully deleted directory: %s"
@@ -653,44 +659,40 @@ msgstr "video"
 msgid "photo"
 msgstr "fotografie"
 
-#, fuzzy
 msgid "download"
-msgstr "dolu"
+msgstr "stáhnout"
+
+msgid "Plugins directory does not exist."
+msgstr "Adresář pluginů neexistuje."
 
 #, fuzzy
-msgid "Plugins directory does not exist."
-msgstr "Uživatel '%s' neexistuje."
-
-#, c-format
 msgid ""
-"Couldn't create plugin directory '%s' in '%s', make sure the web server has write "
-"permissions in it."
+"Couldn't create plugins subdirectory. Make sure the webserver has write permissions in it."
 msgstr ""
+"Nelze vytvořit adresář pluginů '%s' v '%s'. Zkontrolujte zda webový server může do tohoto "
+"adresáře zapisovat."
 
-#, c-format
-msgid "Couldn't create repository cache path '%s'."
-msgstr ""
+#, fuzzy
+msgid "Couldn't create repository cache path."
+msgstr "Nelze vytvořit cache zdroje '%s'."
 
-#, c-format
+#, fuzzy
 msgid ""
-"Couldn't create cache directory '%s' in '%s', make sure the web server has write permissions "
-"in it."
+"Couldn't create cache subdirectory. Make sure the web server has write permissions in it."
 msgstr ""
-
-#, c-format
-msgid "Error downloading package from '%s'."
-msgstr ""
+"Nelze vytvořit adresář cache '%s' v '%s'. Zkontrolujte zda webový server může do tohoto "
+"adresáře zapisovat."
 
 #, c-format
 msgid "Error downloading index from '%s'."
-msgstr ""
+msgstr "Chyba při stahování indexu z '%s'."
 
 #, c-format
 msgid "Error downloading index hash from '%s'."
-msgstr ""
+msgstr "Chyba při stahování hashe indexu z '%s'."
 
 msgid "Index integrity check failed."
-msgstr ""
+msgstr "Chyba při kontrole integrity indexu."
 
 msgid "&laquo; default sort order &raquo;"
 msgstr "&laquo; výchozí třídění &raquo;"
@@ -740,9 +742,8 @@ msgstr "Tato stránka je validní XHTML 1.0"
 msgid "Donate to the Gallery project"
 msgstr "Finanční podpora projektu Galerie"
 
-#, fuzzy
-msgid "G2.0: Unpossible!"
-msgstr "G2.0: Unpossible"
+msgid "G2.1: Blackjack"
+msgstr "G2.1: Blackjack"
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -839,6 +840,8 @@ msgid ""
 "Invalid return URL! The requested URL %s tried to insert a redirection to %s which is not a "
 "part of this Gallery."
 msgstr ""
+"Neplatná návratová URL! Požadovaná adresa %s se snaží o přesměrování na %s, což není součást "
+"této Galerie."
 
 msgid "Back"
 msgstr "Zpět"
@@ -954,7 +957,6 @@ msgstr "Chyba při odesílání testovacího emailu, další informace níže"
 msgid "Language Settings"
 msgstr "Nastavení jazyka"
 
-#, fuzzy
 msgid ""
 "Select language defaults for Gallery. Individual users can override this setting in their "
 "personal preferences or via the language selector block if available. Gallery will try to "
@@ -963,12 +965,14 @@ msgid ""
 msgstr ""
 "Vyberte výchozí jazykové nastavení Galerie. Každý uživatel si jinak může vybrat vlastní "
 "nastavení v uživatelském profilu a také použít přepínač jazyka (pokud je aktivován níže)."
+"Pokud zvolíte kontrolu preference prohlížeče, Galerie se pokusí automaticky detekovat "
+"preferovaný jazyk každého uživatele."
 
 msgid "Default language"
 msgstr "Výchozí jazyk"
 
 msgid "Check Browser Preference"
-msgstr ""
+msgstr "Kontrolovat preference prohlížeče"
 
 msgid "gettext"
 msgstr "gettext"
@@ -1230,7 +1234,7 @@ msgid "Lock system"
 msgstr "Systém zamykání"
 
 msgid "Helper Processes"
-msgstr ""
+msgstr "Helper proces"
 
 msgid ""
 "Some Gallery modules will use programs on your server to do image processing, archiving and "
@@ -1239,10 +1243,14 @@ msgid ""
 "that they play nice.  If you're in a shared hosting environment and your web host is "
 "complaining, try setting your priority low."
 msgstr ""
+"Některé moduly Galerie budou používat programy na Vašem serveru ke zpracování obrázků, "
+"archivaci a dalším operacím. Tyto programy mohou být velmi náročné na výkon a mohou ovlivnit "
+"celkové zatížení sdíleného serveru. Tyto programy můžete spouštět s nižší prioritou. Pokud "
+"používáte sdílený server a někomu nebo něčemu by se vyšší zatížení nemuselo líbit, zkuste "
+"nastavit nižší prioritu."
 
-#, fuzzy
 msgid "Priority"
-msgstr "Priorita nástrojů"
+msgstr "Priorita"
 
 msgid "Save"
 msgstr "Uložit"
@@ -1337,11 +1345,13 @@ msgstr "Smazat uživatele <strong>%s</strong> a..."
 msgid "Assign a new owner for all items of %s"
 msgstr "Určit nového vlastníka pro všechny položky %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Delete all items of %s and assign a new owner for all remaining non empty albums. Items that "
 "%s doesn't have permission to delete will also be reassigned to a new owner."
-msgstr "Smazat všechny položky %s a přiřadit nového vlastníka všem zbývajícím neprázdným albám"
+msgstr ""
+"Smazat všechny položky %s a přiřadit nového vlastníka všem zbývajícím neprázdným albům. "
+"Položky %s bez oprávnění ke smazání budou také přiřazeny novému vlastníkovi."
 
 msgid "New owner (leaving blank means one of the Site Admins):"
 msgstr "Nový vlastník (při nevyplnění se vybere jeden ze správců):"
@@ -1639,37 +1649,38 @@ msgstr "Potvrdit odinstalování modulu"
 msgid "Do you really want to uninstall the %s module?"
 msgstr "Opravdu chcete odinstalovat modul %s?"
 
-#, fuzzy
 msgid "This will also remove any permissions and clean up any data created by this module."
-msgstr ""
-"Dojde také k odstranění všech oprávnění a smazání všech dočasných dat vytvořených tímto "
-"modulem."
+msgstr "Dojde také k odstranění všech oprávnění a smazání všech dat vytvořených tímto modulem."
 
 msgid "Uninstall"
 msgstr "Odinstalovat"
 
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr ""
+"Prosím ujistěte se, že Vaše internetové připojení je správně nakonfigurováno a zkuste to "
+"znovu."
 
 msgid "The repository index has been successfully updated."
-msgstr ""
+msgstr "Index zdroje byl úspěšně aktualizován."
 
 msgid "All plugins are already up-to-date."
-msgstr ""
+msgstr "Všechny pluginy již jsou aktuální."
 
 msgid "Common Tasks"
-msgstr ""
+msgstr "Společné úlohy"
 
 msgid "Warning: Experimental feature!"
-msgstr ""
+msgstr "Varování: Experimentální funkce!"
 
 msgid ""
 "The repository features are currently experimental, and no actual repository has been set up "
 "yet, so none of these features will work at this time."
 msgstr ""
+"Funkce aktualizace ze zdroje jsou momentálně experimentální a v současné době není k "
+"dispozici žádný zdroj, takže žádná z těchto funkcí nebude v tuto chvíli fungovat."
 
 msgid "Update Index"
-msgstr ""
+msgstr "Aktualizovat index"
 
 msgid ""
 "The Gallery repository contains the latest modules and themes extensively tested by the "
@@ -1679,28 +1690,32 @@ msgid ""
 "personal information is sent to the Gallery server during updating. On slower connections "
 "the process might take a minute or two."
 msgstr ""
+"Zdroje Galerie obsahují nejnovější moduly a témata dobře otestované Gallery týmem. Index "
+"zdroje obsahuje informace o dostupných pluginech, verzích, jazycích a kompatibilitě.Index "
+"musí být periodicky synchronizovaný s Galerií, abyste mohli být informováni o dostupných "
+"aktualizacích. Během aktualizace nejsou odesílány žádné osobní informace. Na slabším "
+"připojení může tento proces trvat minutu nebo dvě."
 
-msgid "As of the last update on"
-msgstr ""
-
-#, c-format
+#, fuzzy, c-format
 msgid ""
-", the repository contains %s modules and %s themes. Its contents can be viewed on the "
-"Modules and Themes tabs."
+"As of the last update on %s, the repository contains %s modules and %s themes. Its contents "
+"can be viewed on the Modules and Themes tabs."
 msgstr ""
+", zdroj obsahuje %s moduly a %s témata. Obsah aktualizace si můžete prohlédnout v záložkách "
+"Modulů a Témat."
 
 msgid ""
 "The index has never been updated. Click on the Update button to see what updates are "
 "available."
 msgstr ""
+"Index nikdy nebyl aktualizován. Klikněte na tlačítko Aktualizovat, pokud chcete zjistit "
+"dostupné aktualizace."
 
-#, fuzzy
 msgid "Update"
-msgstr "Datum"
+msgstr "Aktualizovat"
 
-#, fuzzy
 msgid "Upgrade Gallery"
-msgstr "Galerie"
+msgstr "Aktualizovat Galerii"
 
 msgid ""
 "A new version of Gallery is available, but it cannot be upgraded through this interface. "
@@ -1708,51 +1723,60 @@ msgid ""
 "the features of the new version may become available. Here are the recommended steps for "
 "upgrading:"
 msgstr ""
+"Je k dispozici novější verze Galerie, ale nemůže být aktualizována v tomto rozhraní. "
+"Aktualizace může způsobit nefunkčnost některých Vašich pluginů, ale některé další pluginy se "
+"mohou stát s novou verzí Galerie dostupnými. Zde jsou doporučené kroky k aktualizaci:"
 
 msgid "Review plugin compatibility (on the Themes and Modules tabs)"
-msgstr ""
+msgstr "Posoudit kompatibilitu pluginu (na záložkách Témat a Modulů)"
 
-#, c-format
-msgid "<a href=\"%s\">Download</a> Gallery core"
-msgstr ""
+#, fuzzy, c-format
+msgid "%sDownload%s Gallery core"
+msgstr "<a href=\"%s\">Stáhnout</a> Jádto Galerie"
 
-#, c-format
-msgid "Read the <a href=\"%s\">upgrade instructions</a> and perform the upgrade"
-msgstr ""
+#, fuzzy, c-format
+msgid "Read the %supgrade instructions%s and perform the upgrade"
+msgstr "Přečíst <a href=\"%s\">instrukce k aktualizaci</a> a provést aktualizaci"
 
-#, fuzzy
 msgid "Gallery Up-To-Date"
-msgstr "Jádro Galerie"
+msgstr "Galerie aktuální"
 
 msgid ""
 "Gallery cannot be upgraded through this interface. When a new version becomes available, "
 "upgrade instructions will be presented here."
 msgstr ""
+"Galerie nemůže být v tomto rozhraní aktualizována. Pokud se objeví nová verze, zde budou "
+"zobrazeny instrukce k aktualizaci."
 
 msgid "Upgrade All Plugins"
-msgstr ""
+msgstr "Aktualizovat všechny pluginy"
 
 msgid ""
 "Gallery can automatically upgrade your themes and modules to the latest available versions. "
 "No new plugins will be downloaded."
 msgstr ""
+"Galerie může automaticky zaktualizovat Vaše témata a moduly na nejnovější dostupné verze. "
+"Žádné nové pluginy nebudou stahovány."
 
-#, fuzzy
 msgid "Upgrade All"
-msgstr "aktualizovat"
+msgstr "Aktualizovat vše"
 
 msgid ""
 "Once the repository index has been downloaded, a list of available plugins will be "
 "presented. It can be downloaded by clicking on the Update button on the Common Tasks tab."
 msgstr ""
+"Jakmile bude stáhnut index zdroje, bude zobrazen seznam dostupných pluginů. Index může být "
+"stáhnut kliknutím na tlačítko Aktualizovat v záložce Společné úlohy."
 
 msgid ""
 "The following plugins are available. Click on the action beside the plugin you're interested "
 "in to see what's available in the repository."
 msgstr ""
+"Jsou dostupné následující pluginy. Pro zjištění, co je dostupné ve zdroji, klikněte na akci "
+"vedle konkrétního modulu."
 
 msgid "Incompatible plugins are marked with an exclamation icon."
-msgstr ""
+msgstr "Nekompatibilní pluginy budou označeny ikonou s vykřičníkem."
 
 #, c-format
 msgid ""
@@ -1760,118 +1784,109 @@ msgid ""
 "installed core module, which are not shown here. You can view a %scomplete list%s of "
 "plugins, including incompatible ones, which are marked with a red icon."
 msgstr ""
+"Je k dispozici nová verze modulu jádra. Některé pluginy mohou být nekompatibilní s "
+"nainstalovanou verzí modulu jádra. Můžete zobrazit %skompletní seznam%s pluginů včetně těch "
+"nekompatibilních - ty budou zobrazeny s červenou ikonou."
 
 msgid "Theme Name"
 msgstr "Jméno tématu"
 
-#, fuzzy
 msgid "Latest"
-msgstr "poslední"
+msgstr "Nejnovější"
 
-#, fuzzy
 msgid "Incompatible Plugin"
-msgstr "Nekompatibilní modul!"
+msgstr "Nekompatibilní plugin"
 
-#, fuzzy
 msgid "Incompatible plugin!"
-msgstr "Nekompatibilní modul!"
+msgstr "Nekompatibilní plugin!"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Plugin API Required: %s (available: %s)"
-msgstr "Vyžadované API modulu: %s (dostupné: %s)"
+msgstr "Vyžadované API pluginu: %s (dostupné: %s)"
 
 msgid "No packages have been selected."
-msgstr ""
+msgstr "Nebyly vybrány žádné balíčky."
 
-#, fuzzy
 msgid "Base Files"
-msgstr "jména souboru"
+msgstr "Základní soubory"
 
 msgid ""
 "The base files required for the theme to work and the English (US) translation will be "
 "downloaded."
-msgstr ""
+msgstr "Budou staženy základní soubory potřebné k funkci tématu a Anglický (US) překlad."
 
 msgid "Upgrade Base Files"
-msgstr ""
+msgstr "Aktualizovat základní soubory"
 
 msgid "You can upgrade the base module files."
-msgstr ""
+msgstr "Můžete zaktualizovat základní soubory modulu."
 
 msgid "Upgrade base files"
-msgstr ""
+msgstr "Aktualizovat základní soubory"
 
 msgid "Base Files Up-To-Date"
-msgstr ""
+msgstr "Základní soubory aktuální"
 
 msgid "This plugin's base files are up-to-date."
-msgstr ""
+msgstr "Tyto základní soubory pluginů jsou aktuální."
 
 msgid "Updated Translations"
-msgstr ""
+msgstr "Zaktualizované překlady"
 
 msgid ""
 "Below is a list of translations that have been updated since they were last downloaded. "
 "Select the ones you want to download."
 msgstr ""
+"Níže je seznam překladů, které se od posledního stažení změnily. Vyberte ty, které chcete "
+"stáhnout."
 
 msgid "Additional Languages"
-msgstr ""
+msgstr "Dodatečné jazyky"
 
 msgid ""
 "Below is a list of languages this plugin has been translated to. Select the ones you want "
 "included in addition to the ones already downloaded."
 msgstr ""
+"Níže je seznam jazyků, do kterých byl tento plugin přeložen. Vyberte ty, které chcete přidat "
+"k již staženým jazykům."
 
-#, fuzzy
 msgid "Unit Tests"
-msgstr "Téma testovací jednotky"
+msgstr "Testy jednotky"
 
 msgid ""
 "This plugin has unit tests available for download, which are useful for Gallery developers. "
 "All of the module's features are available without the tests."
 msgstr ""
+"Jsou k dispozici testy jednotky pro tento plugin, které jsou užitečné pro vývojáře Galerie. "
+"Žádné funkce modulu nejsou na těchto testech závislé."
 
 msgid "Download unit tests"
-msgstr ""
+msgstr "Stáhnout testy jednotky"
 
-#, fuzzy
 msgid "Gallery Repository Setup"
-msgstr "Verze Galerie"
+msgstr "Nastavení zdroje Galerie"
 
-msgid "Warning: `$errorMessage`"
-msgstr ""
-
-msgid ""
-"In order to download plugins from the Gallery repository, a special directory needs to be "
-"created where Gallery will store the data."
-msgstr ""
-
-#, c-format
-msgid ""
-"Under your Gallery base directory, create a directory called '%s' and allow the web server "
-"to write into it by appropriately setting the permissions."
-msgstr ""
-
-msgid "Instructions for Unix-type platforms:"
+msgid "Warning:"
 msgstr ""
 
 #, fuzzy, c-format
-msgid "$ cd %s"
-msgstr "%d. %s"
-
-#, c-format
-msgid "$ mkdir %s"
+msgid ""
+"In order to download plugins from the Gallery repository, a special directory needs to be "
+"created where Gallery will store the data. Under your Gallery base directory, create a "
+"directory called '%s' and allow the web server to write into it by appropriately setting the "
+"permissions."
 msgstr ""
+"V základním adresáři Vaší Galerie vytvořte adresář '%s' a povolte webserveru zápis do tohoto "
+"adresáře nastavením správných oprávnění."
 
-#, c-format
-msgid "$ chmod 777 %s"
-msgstr ""
+msgid "Instructions for Unix-type platforms:"
+msgstr "Instrukce pro systémy typu Unix:"
 
 msgid ""
 "Refreshing this page will take you to the Repository if the directory has been successfully "
 "created."
 msgstr ""
+"Po obnovení této stránky se dostanete ke zdroji, pokud byl ovšem adresář správně vytvořen."
 
 msgid "Gallery Themes"
 msgstr "Témata Galerie"
@@ -2056,6 +2071,9 @@ msgstr "Nepovolená operace"
 msgid "Database Error"
 msgstr "Chyba databáze"
 
+msgid "Platform Error"
+msgstr "Chyba platformy"
+
 msgid "Error"
 msgstr "Chyba"
 
@@ -2088,6 +2106,17 @@ msgstr ""
 "Přesná podstata chyby databáze není dostupná, pokud není povolen ladící mód v config.php.  "
 "Než začnete hledat pomoc kvůli této chybě, zapněte prosím \"buffered debug output\" a zkuste "
 "tuto operaci znovu.  Detaily chyb hledejte na konci dlouhého výstupu."
+
+msgid "An error has occurred while interacting with the platform."
+msgstr "Nastala chyba při operaci s platformou."
+
+msgid ""
+"The exact nature of the platform error is unknown. A common cause are insufficient file "
+"system permissions. This can happen if you or your webhost changed something in the file "
+"system, e.g. by restoring data from a backup."
+msgstr ""
+"Přesná povaha chyby není známá. Častou příčinou mohou být nedostatečná práva na souborovém "
+"systému. K tomu může dojít změnou na souborovém systému, například obnovou dat ze záloh."
 
 msgid "An error has occurred."
 msgstr "Nastala chyba."
@@ -2821,6 +2850,8 @@ msgstr "Použít globálně"
 msgid ""
 "Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
 msgstr ""
+"Poznámka: Pro nastavení stejného tématu pro všechna podalba zaškrtněte odpovídající políčko "
+"v záložce <b>Alba</b>"
 
 msgid "Album Highlight"
 msgstr "Zvýraznit"
@@ -3025,11 +3056,10 @@ msgid "Continue..."
 msgstr "Pokračovat..."
 
 msgid "Site is temporarily down for maintenance."
-msgstr ""
+msgstr "Stránky jsou dočasně nedostupné z důvodu údržby."
 
-#, fuzzy
 msgid "Admin Login"
-msgstr "Administrace"
+msgstr "Přihlášení správce"
 
 msgid "Enter a URL"
 msgstr "Zadejte URL"
@@ -3064,15 +3094,21 @@ msgstr "Chyba konfigurace: Chybějící téma"
 msgid "Missing Theme"
 msgstr "Chybějící téma"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
-"This page is configured to use the %s theme, but it is either inactive or not installed."
-msgstr "Pro toto album je nastavené téma %s, ale to je buď neaktivní nebo není nainstalované."
+"This page is configured to use the %s theme, but it is either inactive, not installed, or "
+"incompatible."
+msgstr ""
+"Pro tuto stránku je nastaveno téma %s, ale to je buď neaktivní, není nainstalované nebo není "
+"kompatibilní."
 
 #, c-format
 msgid ""
-"This album is configured to use the %s theme, but it is either inactive or not installed."
-msgstr "Pro toto album je nastavené téma %s, ale to je buď neaktivní nebo není nainstalované."
+"This album is configured to use the %s theme, but it is either inactive, not installed, or "
+"incompatible."
+msgstr ""
+"Pro toto album je nastaveno téma %s, ale to je buď neaktivníi, není nainstalované nebo není "
+"kompatibilní."
 
 #, c-format
 msgid ""
@@ -3152,7 +3188,7 @@ msgid "You must enter your new password again!"
 msgstr "Musíte zadat Vaše nové heslo ještě jednou!"
 
 msgid "Login to your account"
-msgstr "Přihlásit k Vašemu účtu"
+msgstr "Přihlášení k Vašemu účtu"
 
 msgid "Your password has been recovered, please login."
 msgstr "Vaše heslo bylo obnoveno, prosím přihlašte se."
@@ -3170,7 +3206,7 @@ msgstr ""
 
 #, c-format
 msgid "Welcome, %s!"
-msgstr ""
+msgstr "Vítejte, %s!"
 
 msgid "Account settings saved successfully"
 msgstr "Nastavení účtu úspěšně uloženo"
@@ -3445,6 +3481,34 @@ msgstr "[test] Druhá oprávnění"
 
 msgid "Unit test theme"
 msgstr "Téma testovací jednotky"
+
+#~ msgid "Error downloading package from '%s'."
+#~ msgstr "Chyba při stahování balíku z '%s'."
+
+#~ msgid "As of the last update on"
+#~ msgstr "Jako při poslední aktualizaci"
+
+#~ msgid "Warning: `$errorMessage`"
+#~ msgstr "Varování: `$errorMessage`"
+
+#~ msgid ""
+#~ "In order to download plugins from the Gallery repository, a special directory needs to be "
+#~ "created where Gallery will store the data."
+#~ msgstr ""
+#~ "Pro potřeby stahování pluginů ze zdroje Galerie je potřeba vytvořit speciální adresář, do "
+#~ "kterého Galerie uloží data."
+
+#~ msgid "$ cd %s"
+#~ msgstr "$ cd %s"
+
+#~ msgid "$ mkdir %s"
+#~ msgstr "$ mkdir %s"
+
+#~ msgid "$ chmod 777 %s"
+#~ msgstr "$ chmod 777 %s"
+
+#~ msgid "G2.0: Unpossible!"
+#~ msgstr "G2.0: Unpossible!"
 
 #~ msgid "&laquo; None &raquo;"
 #~ msgstr "&laquo; Žádná &raquo;"

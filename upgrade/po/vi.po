@@ -43,8 +43,9 @@ msgstr "<b>Lỗi:</b> sai mật khẩu."
 msgid "Empty Cache"
 msgstr "Xóa cache"
 
-msgid "Finished"
-msgstr "Hoàn tất"
+#, fuzzy
+msgid "Finish Upgrade"
+msgstr "Bắt đầu nâng cấp"
 
 msgid "System Checks"
 msgstr "Các kiểm tra hệ thống"
@@ -221,6 +222,33 @@ msgstr ""
 "kiểm tra thử. Nếu kết quả là \"SUCCESS\" thì chương trình PHP của bạn không bị ảnh hưởng. "
 "Nếu bạn gặp lỗi thì bạn phải tắt chế độ ze1_compatibility_mode trước khi tiếp tục."
 
+#, fuzzy
+msgid "putenv() allowed"
+msgstr "cho phép dùng exec()"
+
+#, fuzzy
+msgid ""
+"Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> "
+"parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
+"Gallery will be unable to run in other languages than the system language and English."
+msgstr ""
+"Cảnh báo: Hàm set_time_limit() đang bị tắt trong chương trình PHP bằng thông số "
+"<b>disabled_functions</b> trong tập tin php.ini. Gallery tuy vẫn có thể hoạt động nhưng có "
+"thể sẽ không ổn định. Bất kỳ thao tác nào cần chạy lâu hơn %d giây sẽ thất bại (trong một số "
+"trường hợp chỉ hiển thị một trang trắng) và có khả năng dẫn đến hỏng dữ liệu."
+
+msgid "Output buffering disabled"
+msgstr ""
+
+#, c-format
+msgid ""
+"Warning: Output buffering is enabled in your php by the <b>%s</b> parameter(s) in php.ini.  "
+"Gallery can function with this setting - downloading files is even faster - but Gallery "
+"might be unable to serve large files (e.g. large videos) and run into the  memory limit. "
+"Also, some features like the progress bars might not work correctly if output buffering is "
+"enabled unless ini_set() is allowed."
+msgstr ""
+
 msgid "Storage Directory Permissions"
 msgstr "Quyền hạn trong thư mục lưu trữ"
 
@@ -265,6 +293,9 @@ msgstr "Module %s cần được chỉnh cấu hình"
 msgid "Unable to upgrade the %s module"
 msgstr "Không thể nâng cấp module %s"
 
+msgid "Unable to commit database transaction"
+msgstr "Không thể thực hiện thao tác cơ sở dữ liệu"
+
 #, c-format
 msgid "Unable to load the %s theme"
 msgstr "Không thể nạp kiểu trình bày %s"
@@ -275,9 +306,6 @@ msgstr "Đang nâng cấp các kiểu trình bày"
 #, c-format
 msgid "Unable to upgrade the %s theme"
 msgstr "Không thể nâng cấp kiểu trình bày %s"
-
-msgid "Unable to commit database transaction"
-msgstr "Không thể thực hiện thao tác cơ sở dữ liệu"
 
 msgid "Unable to get the module list"
 msgstr "Không thể nạp danh sách các module"
@@ -312,6 +340,10 @@ msgstr "Xác nhận tôi"
 msgid "Authentication successful!"
 msgstr "Đã xác nhận người dùng!"
 
+#, fuzzy
+msgid "Successfully cleaned cache directories."
+msgstr "Các thư mục cache đã được xóa thành công."
+
 msgid "Delete Cache Directories"
 msgstr "Xóa các thư mục cache"
 
@@ -343,9 +375,6 @@ msgstr ""
 msgid "Try Again"
 msgstr "Thử lại"
 
-msgid "We have successfully cleaned out your cache directories."
-msgstr "Các thư mục cache đã được xóa thành công."
-
 msgid "Finished!"
 msgstr "Đã hoàn tất!"
 
@@ -373,19 +402,22 @@ msgstr ""
 msgid "Welcome to the Gallery Upgrader"
 msgstr "Chào mừng bạn đến Công cụ cập nhật Gallery"
 
+msgid "Upgrader Help"
+msgstr "Trợ giúp chương trình nâng cấp"
+
+msgid "Start Over"
+msgstr "Bắt đầu lại từ đầu"
+
+#, c-format
+msgid "Upgrade %d%% complete"
+msgstr "Nâng cấp hoàn tất %d%%"
+
 msgid "Redo this step"
 msgstr "Thực hiện lại bước này"
 
 #, c-format
 msgid "Continue to Step %d&raquo;"
 msgstr "Tiếp tục sang Bước %d&raquo;"
-
-msgid "Upgrade Status"
-msgstr "Tình trạng nâng cấp"
-
-#, c-format
-msgid "Upgrade %d%% complete"
-msgstr "Nâng cấp hoàn tất %d%%"
 
 msgid "Gallery: <strong>your photos</strong> on <strong>your website</strong>"
 msgstr "Gallery: <strong>ảnh của bạn</strong> trên chính <strong>trang web của bạn</strong>"
@@ -427,12 +459,6 @@ msgstr ""
 
 msgid "Upgrade Steps"
 msgstr "Các bước nâng cấp"
-
-msgid "Upgrader Help"
-msgstr "Trợ giúp chương trình nâng cấp"
-
-msgid "Start Over"
-msgstr "Bắt đầu lại từ đầu"
 
 msgid "Missing or invalid config.php"
 msgstr "Tập tin config.php bị thiếu hoặc không hợp lệ"
@@ -548,15 +574,15 @@ msgstr ""
 msgid "MySQL"
 msgstr "MySQL"
 
-#, c-format
-msgid "mysqldump -u%s -p<i>YourPassword</i> --opt %s > %s.sql"
+#, fuzzy, c-format
+msgid "mysqldump -u%s -p -h %s --opt %s > %s.sql"
 msgstr "mysqldump -u%s -p<i>MậtKhẩuCủaBạn</i> --opt %s > %s.sql"
 
 msgid "PostgreSQL"
 msgstr "PostgreSQL"
 
-#, c-format
-msgid "pg_dump --format=t %s > %s.sql"
+#, fuzzy, c-format
+msgid "pg_dump -h %s --format=t %s > %s.sql"
 msgstr "pg_dump --format=t %s > %s.sql"
 
 msgid ""
@@ -667,3 +693,9 @@ msgstr "Chọn ngôn ngữ:"
 
 msgid "Go"
 msgstr "Đi tiếp"
+
+#~ msgid "Finished"
+#~ msgstr "Hoàn tất"
+
+#~ msgid "Upgrade Status"
+#~ msgstr "Tình trạng nâng cấp"

@@ -189,6 +189,10 @@ msgstr "Upptäcker brutna länkar"
 msgid "Clearing fast-download cache"
 msgstr "Tömmer cache för snabb-nerladdning"
 
+#, fuzzy
+msgid "Deleting old fast-download cache"
+msgstr "Tömmer cache för snabb-nerladdning"
+
 msgid "Site Admins"
 msgstr "Siteadministratörer"
 
@@ -290,8 +294,20 @@ msgstr "Inställningar sparades framgångsrikt."
 msgid "&laquo; default theme &raquo;"
 msgstr "&laquo; förvalt tema &raquo;"
 
+#, fuzzy
+msgid "Recreating resized images"
+msgstr "Återskapa storleksändrade bilder"
+
+#, fuzzy
+msgid "Rebuilding thumbnails..."
+msgstr "Återskapa miniatyrbilder"
+
 msgid "Album"
 msgstr "Album"
+
+#, c-format
+msgid "Processing image %d of %d"
+msgstr "Bearbetar bild %d av %d"
 
 msgid "Changes saved successfully"
 msgstr "Ändringar sparades framgångsrikt"
@@ -547,10 +563,6 @@ msgid "Debug output for failed items:"
 msgstr "Debugutskrift för misslyckade objekt:"
 
 #, c-format
-msgid "Processing image %d of %d"
-msgstr "Bearbetar bild %d av %d"
-
-#, c-format
 msgid "Checked %d items"
 msgstr "Markerade %d filer"
 
@@ -565,8 +577,9 @@ msgstr "%d objekt misslyckade"
 msgid "Delete database cache"
 msgstr "Töm databascache"
 
+#, fuzzy
 msgid ""
-"Gallery stores commonly used database information on disk for increased performance.  If you "
+"Gallery stores commonly used database information on disk for increased performance. If you "
 "modify the database directly, you should run this task to clean out the cache and force "
 "Gallery to reload the information from the database."
 msgstr ""
@@ -664,29 +677,23 @@ msgstr "nedladdning"
 msgid "Plugins directory does not exist."
 msgstr "Plugins katalogen finns inte."
 
-#, c-format
+#, fuzzy
 msgid ""
-"Couldn't create plugin directory '%s' in '%s', make sure the web server has write "
-"permissions in it."
+"Couldn't create plugins subdirectory. Make sure the webserver has write permissions in it."
 msgstr ""
 "Kunde inte skapa plugin katalogen '%s' i '%s', kontrollera att web servern har skriv "
 "rättigheter i katalogen."
 
-#, c-format
-msgid "Couldn't create repository cache path '%s'."
+#, fuzzy
+msgid "Couldn't create repository cache path."
 msgstr "Kunde inte skapa katalog för cache '%s'."
 
-#, c-format
+#, fuzzy
 msgid ""
-"Couldn't create cache directory '%s' in '%s', make sure the web server has write permissions "
-"in it."
+"Couldn't create cache subdirectory. Make sure the web server has write permissions in it."
 msgstr ""
 "Kunde inte skapa cache katalog '%s' i '%s', kontrollera att web servern har skrivrättigheter "
 "i katalogen."
-
-#, c-format
-msgid "Error downloading package from '%s'."
-msgstr "Fel vid nedladdning av paket från '%s'."
 
 #, c-format
 msgid "Error downloading index from '%s'."
@@ -747,8 +754,8 @@ msgstr "Denna sida är validerad XHTML 1.0"
 msgid "Donate to the Gallery project"
 msgstr "Donera till Galleryprojektet"
 
-msgid "G2.0: Unpossible!"
-msgstr "G2.0: Unpossible!"
+msgid "G2.1: Blackjack"
+msgstr ""
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -1699,13 +1706,10 @@ msgstr ""
 "Ingen personlig information skickas till Gallery servern under uppdateringen. Vid långsam "
 "förbindelse kan uppdateringen ta en minut eller två."
 
-msgid "As of the last update on"
-msgstr "Vid den sista uppdateringen"
-
-#, c-format
+#, fuzzy, c-format
 msgid ""
-", the repository contains %s modules and %s themes. Its contents can be viewed on the "
-"Modules and Themes tabs."
+"As of the last update on %s, the repository contains %s modules and %s themes. Its contents "
+"can be viewed on the Modules and Themes tabs."
 msgstr ""
 ", repository't innehåller %s moduler och %s teman. Innehållet kan ses under Moduler och Tema "
 "flikarna."
@@ -1737,12 +1741,12 @@ msgstr ""
 msgid "Review plugin compatibility (on the Themes and Modules tabs)"
 msgstr "Undersök plugin kompabiliteten (under Tema och Module fliken)"
 
-#, c-format
-msgid "<a href=\"%s\">Download</a> Gallery core"
+#, fuzzy, c-format
+msgid "%sDownload%s Gallery core"
 msgstr "<a href=\"%s\">Ladda ner</a> Gallery core"
 
-#, c-format
-msgid "Read the <a href=\"%s\">upgrade instructions</a> and perform the upgrade"
+#, fuzzy, c-format
+msgid "Read the %supgrade instructions%s and perform the upgrade"
 msgstr "Läs <a href=\"%s\">upgraderings instruktioner</a> och utför upgraderingen"
 
 msgid "Gallery Up-To-Date"
@@ -1865,33 +1869,18 @@ msgstr ""
 msgid "Gallery Repository Setup"
 msgstr "Gallery version"
 
-msgid "Warning: `$errorMessage`"
-msgstr ""
-
-msgid ""
-"In order to download plugins from the Gallery repository, a special directory needs to be "
-"created where Gallery will store the data."
+msgid "Warning:"
 msgstr ""
 
 #, c-format
 msgid ""
-"Under your Gallery base directory, create a directory called '%s' and allow the web server "
-"to write into it by appropriately setting the permissions."
+"In order to download plugins from the Gallery repository, a special directory needs to be "
+"created where Gallery will store the data. Under your Gallery base directory, create a "
+"directory called '%s' and allow the web server to write into it by appropriately setting the "
+"permissions."
 msgstr ""
 
 msgid "Instructions for Unix-type platforms:"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "$ cd %s"
-msgstr "%d. %s"
-
-#, c-format
-msgid "$ mkdir %s"
-msgstr ""
-
-#, c-format
-msgid "$ chmod 777 %s"
 msgstr ""
 
 msgid ""
@@ -2081,6 +2070,9 @@ msgstr "Säkerhetsintrång"
 msgid "Database Error"
 msgstr "Databasfel"
 
+msgid "Platform Error"
+msgstr ""
+
 msgid "Error"
 msgstr "Fel"
 
@@ -2113,6 +2105,16 @@ msgstr ""
 "De exakta databasfelen fångas inte om inte debug är aktiverat i config.php. Innan du söker "
 "hjälp för detta felet vänligen aktivera Buffered Debug Output och försök igen. Se nära "
 "slutet på; felsökningsutskriften för att finna feldetaljerna."
+
+#, fuzzy
+msgid "An error has occurred while interacting with the platform."
+msgstr "Ett fel har uppstått vid databaskommunikation"
+
+msgid ""
+"The exact nature of the platform error is unknown. A common cause are insufficient file "
+"system permissions. This can happen if you or your webhost changed something in the file "
+"system, e.g. by restoring data from a backup."
+msgstr ""
 
 msgid "An error has occurred."
 msgstr "Ett fel har uppstått"
@@ -3088,14 +3090,16 @@ msgstr "Tema Saknas"
 
 #, fuzzy, c-format
 msgid ""
-"This page is configured to use the %s theme, but it is either inactive or not installed."
+"This page is configured to use the %s theme, but it is either inactive, not installed, or "
+"incompatible."
 msgstr ""
 "Detta album är konfigurerat för att använda temat %s, men det är antingen inaktivt eller "
 "inte installerat"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"This album is configured to use the %s theme, but it is either inactive or not installed."
+"This album is configured to use the %s theme, but it is either inactive, not installed, or "
+"incompatible."
 msgstr ""
 "Detta album är konfigurerat för att använda temat %s, men det är antingen inaktivt eller "
 "inte installerat"
@@ -3453,6 +3457,19 @@ msgstr "[test] En andra rättighet"
 
 msgid "Unit test theme"
 msgstr "Tema för unittest"
+
+#~ msgid "Error downloading package from '%s'."
+#~ msgstr "Fel vid nedladdning av paket från '%s'."
+
+#~ msgid "G2.0: Unpossible!"
+#~ msgstr "G2.0: Unpossible!"
+
+#~ msgid "As of the last update on"
+#~ msgstr "Vid den sista uppdateringen"
+
+#, fuzzy
+#~ msgid "$ cd %s"
+#~ msgstr "%d. %s"
 
 #~ msgid "&laquo; None &raquo;"
 #~ msgstr "&laquo; Ingen &raquo;"

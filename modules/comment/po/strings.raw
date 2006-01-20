@@ -1,14 +1,14 @@
 # $Id$
 
-gettext("Add Comment")
+/* AddComment.inc */
+gettext("Add Comment") /* also in: module.inc templates/AddComment.tpl */
 gettext("add comment")
-gettext("show comments")
-gettext("Comments")
-gettext("Comment Module")
-gettext("Search comments")
-gettext("Subject")
-gettext("Comment")
-gettext("Commenter")
+
+/* ShowAllComments.inc */
+gettext("show comments") /* also in: ShowComments.inc */
+
+/* module.inc */
+gettext("Comments") /* also in: classes/GalleryCommentSearch.class */
 gettext("User commenting system")
 gettext("Extra Data")
 gettext("[comment] Add comments")
@@ -17,27 +17,42 @@ gettext("[comment] Delete comments")
 gettext("[comment] View comments")
 gettext("[comment] All access")
 gettext("View Latest Comments")
-gettext("View Comments")
+gettext("View Comments") /* also in: templates/ShowComments.tpl */
 gettext("Comments: %d")
-gettext("Comment Preview")
+
+/* classes/GalleryCommentSearch.class */
+gettext("Comment Module")
+gettext("Search comments")
+gettext("Subject") /* also in: templates/AddComment.tpl templates/EditComment.tpl test/phpunit/CommentSearchTest.class */
+gettext("Comment") /* also in: templates/AddComment.tpl templates/EditComment.tpl test/phpunit/CommentSearchTest.class */
+gettext("Commenter") /* also in: templates/EditComment.tpl test/phpunit/CommentSearchTest.class */
+
+/* templates/AddComment.tpl */
+gettext("Comment Preview") /* also in: templates/EditComment.tpl */
 gettext("Posted by")
 gettext("%s (%s)")
-gettext("(required)")
+gettext("(required)") /* also in: templates/EditComment.tpl */
 gettext("You must enter a subject!")
 gettext("You must enter a comment!")
-gettext("Preview")
-gettext("Save")
-gettext("Cancel")
+gettext("Preview") /* also in: templates/EditComment.tpl */
+gettext("Save") /* also in: templates/CommentSiteAdmin.tpl templates/EditComment.tpl */
+gettext("Cancel") /* also in: templates/DeleteComment.tpl templates/EditComment.tpl */
+
+/* templates/Comment.tpl */
 gettext("edit")
 gettext("delete")
 gettext("show full")
 gettext("show summary")
 gettext("Posted by %s on %s (%s)")
 gettext("Posted by %s on %s")
+
+/* templates/CommentChangeConfirmation.tpl */
 gettext("Comment change confirmation")
 gettext("Comment added successfully")
 gettext("Comment deleted successfully")
 gettext("Comment modified successfully")
+
+/* templates/CommentSiteAdmin.tpl */
 gettext("Comments Settings")
 gettext("Settings saved successfully")
 gettext("Show link for Latest Comments:")
@@ -46,10 +61,14 @@ gettext("Invalid value")
 gettext("Use Captcha for guest comments:")
 gettext("Activate Captcha module to enable this feature")
 gettext("Reset")
+
+/* templates/DeleteComment.tpl */
 gettext("Delete this comment?")
 gettext("Are you sure?")
 gettext("Delete this comment?  There is no undo!")
 gettext("Delete")
+
+/* templates/EditComment.tpl */
 gettext("Edit comment")
 gettext("You must enter a username.")
 gettext("The username you entered is invalid.")
@@ -59,11 +78,17 @@ gettext("The date you entered is invalid.")
 gettext("You must enter a date")
 gettext("You must enter a subject")
 gettext("You must enter a comment")
+
+/* templates/ShowAllComments.tpl */
 gettext("Latest Comments")
-gettext("Comment changed successfully")
-gettext("There are no comments for this item")
+gettext("Comment changed successfully") /* also in: templates/ShowComments.tpl */
+gettext("There are no comments for this item") /* also in: templates/ShowComments.tpl */
+
+/* templates/blocks/ViewComments.tpl */
 gettext("Recent comments")
 gettext("(view all %d comments)")
+
+/* templates/blocks/blocks.inc */
 gettext("Show comments")
 gettext("Number of comments")
 gettext("1")

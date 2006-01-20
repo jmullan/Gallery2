@@ -1,37 +1,56 @@
 # $Id$
 
-gettext("KB")
-gettext("MB")
-gettext("GB")
-gettext("Warning: You have reached your disk quota (%s %s), this item will not be added.")
-gettext("You are using %s %s of your allotted %s %s.")
+/* AdminCreateGroupQuota.inc */
+gettext("KB") /* also in: AdminCreateUserQuota.inc AdminEditGroupQuota.inc AdminEditUserQuota.inc test/phpunit/DiskQuotasOptionTest.class */
+gettext("MB") /* also in: AdminCreateUserQuota.inc AdminEditGroupQuota.inc AdminEditUserQuota.inc test/phpunit/DiskQuotasOptionTest.class */
+gettext("GB") /* also in: AdminCreateUserQuota.inc AdminEditGroupQuota.inc AdminEditUserQuota.inc test/phpunit/DiskQuotasOptionTest.class */
+
+/* DiskQuotaOption.inc */
+gettext("Warning: You have reached your disk quota (%s %s), ")
+gettext("You are using %s %s of your allotted %s %s.") /* also in: test/phpunit/DiskQuotasOptionTest.class */
+
+/* module.inc */
 gettext("Quotas")
 gettext("User/Group Disk Quotas")
 gettext("Gallery")
+
+/* templates/AdminCreateGroupQuota.tpl */
 gettext("Create A New Group Quota")
-gettext("Group Name")
-gettext("(required)")
+gettext("Group Name") /* also in: templates/AdminEditGroupQuota.tpl templates/AdminQuotas.tpl */
+gettext("(required)") /* also in: templates/AdminCreateUserQuota.tpl templates/AdminEditGroupQuota.tpl templates/AdminEditUserQuota.tpl */
 gettext("Group quota for '%s' already exists")
-gettext("Quota Size")
-gettext("You must enter a quota size.")
-gettext("Quota size must be less than 2097152 MB (2048 GB).")
-gettext("Invalid quota size, positive numbers and decimals only.")
+gettext("Quota Size") /* also in: templates/AdminCreateUserQuota.tpl templates/AdminEditGroupQuota.tpl templates/AdminEditUserQuota.tpl */
+gettext("You must enter a quota size.") /* also in: templates/AdminCreateUserQuota.tpl templates/AdminEditGroupQuota.tpl templates/AdminEditUserQuota.tpl */
+gettext("Quota size must be less than 2097152 MB (2048 GB).") /* also in: templates/AdminCreateUserQuota.tpl templates/AdminEditGroupQuota.tpl templates/AdminEditUserQuota.tpl */
+gettext("Invalid quota size, positive numbers and decimals only.") /* also in: templates/AdminCreateUserQuota.tpl templates/AdminEditGroupQuota.tpl templates/AdminEditUserQuota.tpl */
 gettext("Create Group Quota")
-gettext("Cancel")
+gettext("Cancel") /* also in: templates/AdminCreateUserQuota.tpl templates/AdminDeleteGroupQuota.tpl templates/AdminDeleteUserQuota.tpl templates/AdminEditGroupQuota.tpl templates/AdminEditUserQuota.tpl */
+
+/* templates/AdminCreateUserQuota.tpl */
 gettext("Create A New User Quota")
-gettext("User Name")
+gettext("User Name") /* also in: templates/AdminEditUserQuota.tpl */
 gettext("User quota for '%s' already exists")
 gettext("Create User Quota")
+
+/* templates/AdminDeleteGroupQuota.tpl */
 gettext("Delete A Group Quota")
-gettext("Are you sure?")
+gettext("Are you sure?") /* also in: templates/AdminDeleteUserQuota.tpl */
 gettext("This will completely remove the %s (%s %s) group quota from Gallery.  There is no undo!")
-gettext("Delete")
+gettext("Delete") /* also in: templates/AdminDeleteUserQuota.tpl */
+
+/* templates/AdminDeleteUserQuota.tpl */
 gettext("Delete A User Quota")
 gettext("This will completely remove the %s (%s %s) user quota from Gallery. There is no undo!")
+
+/* templates/AdminEditGroupQuota.tpl */
 gettext("Edit A Group Quota")
-gettext("Save")
-gettext("Undo")
+gettext("Save") /* also in: templates/AdminEditUserQuota.tpl */
+gettext("Undo") /* also in: templates/AdminEditUserQuota.tpl */
+
+/* templates/AdminEditUserQuota.tpl */
 gettext("Edit A User Quota")
+
+/* templates/AdminQuotas.tpl */
 gettext("Quotas Administration")
 gettext("Removed group quota for '%s'")
 gettext("Created group quota for '%s'")
@@ -67,3 +86,6 @@ gettext("User '%s' does not exist.")
 gettext("You must enter a username")
 gettext("Edit User Quotas (by list)")
 gettext("Username")
+
+/* test/phpunit/DiskQuotasOptionTest.class */
+gettext("Warning: You have reached your disk quota (%s %s), this item will not be added.")

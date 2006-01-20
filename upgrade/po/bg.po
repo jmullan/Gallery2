@@ -51,8 +51,9 @@ msgstr "<b>Грешка</b>: Невалидна парола."
 msgid "Empty Cache"
 msgstr "Изчистване на Временните Файлове"
 
-msgid "Finished"
-msgstr "Завършване"
+#, fuzzy
+msgid "Finish Upgrade"
+msgstr "Започнете Обновяването"
 
 msgid "System Checks"
 msgstr "Проверка на Системата"
@@ -215,6 +216,34 @@ msgid ""
 "proceeding."
 msgstr ""
 
+#, fuzzy
+msgid "putenv() allowed"
+msgstr "Функцията exec() е позволена"
+
+#, fuzzy
+msgid ""
+"Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> "
+"parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
+"Gallery will be unable to run in other languages than the system language and English."
+msgstr ""
+"Внимание: Функцията set_time_limit() e е изключена чрез параметъра <b>disabled_functions</b> "
+"в конфигурационния файл 'php.ini'. Галерията може да функционира и без тази настройки, но "
+"няма да е стабилна. Всяка операция която отнеме повече от %d секунди за изпълнение, ще даде "
+"грешка (и в някои от случаите ще върне празна страница) и може да доведе до повреда на "
+"данните."
+
+msgid "Output buffering disabled"
+msgstr ""
+
+#, c-format
+msgid ""
+"Warning: Output buffering is enabled in your php by the <b>%s</b> parameter(s) in php.ini.  "
+"Gallery can function with this setting - downloading files is even faster - but Gallery "
+"might be unable to serve large files (e.g. large videos) and run into the  memory limit. "
+"Also, some features like the progress bars might not work correctly if output buffering is "
+"enabled unless ini_set() is allowed."
+msgstr ""
+
 msgid "Storage Directory Permissions"
 msgstr ""
 
@@ -257,6 +286,9 @@ msgstr "Модула %s трябва да се конфигурира"
 msgid "Unable to upgrade the %s module"
 msgstr "Модула %s не можа да бъде обновен"
 
+msgid "Unable to commit database transaction"
+msgstr "Не можа да бъде извършена транзакция с Базата Данни"
+
 #, c-format
 msgid "Unable to load the %s theme"
 msgstr "Стила %s не можа да бъде зареден"
@@ -267,9 +299,6 @@ msgstr "Обновяване на стиловете"
 #, c-format
 msgid "Unable to upgrade the %s theme"
 msgstr "Стила %s не можа да бъде обновяван"
-
-msgid "Unable to commit database transaction"
-msgstr "Не можа да бъде извършена транзакция с Базата Данни"
 
 msgid "Unable to get the module list"
 msgstr "Списъка с модули не можа да се бъде зареден"
@@ -305,6 +334,10 @@ msgstr "Поискайте Достъп"
 msgid "Authentication successful!"
 msgstr "Достъпа ви е успешен!"
 
+#, fuzzy
+msgid "Successfully cleaned cache directories."
+msgstr "Директориите с временни файлове са успешно изчистени."
+
 msgid "Delete Cache Directories"
 msgstr "Изтриване на Директориите с Временни Файлове"
 
@@ -330,9 +363,6 @@ msgstr ""
 
 msgid "Try Again"
 msgstr "Опитайте Отново"
-
-msgid "We have successfully cleaned out your cache directories."
-msgstr "Директориите с временни файлове са успешно изчистени."
 
 msgid "Finished!"
 msgstr "Готово!"
@@ -360,20 +390,23 @@ msgstr ""
 msgid "Welcome to the Gallery Upgrader"
 msgstr "Добре дошли в обновяването на Галерията"
 
+msgid "Upgrader Help"
+msgstr "Помощ за обновяване"
+
+msgid "Start Over"
+msgstr "Започнете Отначало"
+
+# param0 = integer percentage
+#, c-format
+msgid "Upgrade %d%% complete"
+msgstr "В момента обновяването е на %d%%"
+
 msgid "Redo this step"
 msgstr "Направете промяна в тази фаза"
 
 #, c-format
 msgid "Continue to Step %d&raquo;"
 msgstr "Продължете към Фаза %d&raquo;"
-
-msgid "Upgrade Status"
-msgstr "Развитие на Обновяването"
-
-# param0 = integer percentage
-#, c-format
-msgid "Upgrade %d%% complete"
-msgstr "В момента обновяването е на %d%%"
 
 msgid "Gallery: <strong>your photos</strong> on <strong>your website</strong>"
 msgstr "Галерия: <strong>вашите снимки</strong> на <strong>вашата web-страница</strong>"
@@ -410,12 +443,6 @@ msgstr ""
 
 msgid "Upgrade Steps"
 msgstr "Фази на обновяване"
-
-msgid "Upgrader Help"
-msgstr "Помощ за обновяване"
-
-msgid "Start Over"
-msgstr "Започнете Отначало"
 
 msgid "Missing or invalid config.php"
 msgstr ""
@@ -525,15 +552,15 @@ msgstr ""
 msgid "MySQL"
 msgstr "MySQL"
 
-#, c-format
-msgid "mysqldump -u%s -p<i>YourPassword</i> --opt %s > %s.sql"
+#, fuzzy, c-format
+msgid "mysqldump -u%s -p -h %s --opt %s > %s.sql"
 msgstr "mysqldump -u%s -p<i>Вашата Парола</i> --opt %s > %s.sql"
 
 msgid "PostgreSQL"
 msgstr "PostgreSQL"
 
-#, c-format
-msgid "pg_dump --format=t %s > %s.sql"
+#, fuzzy, c-format
+msgid "pg_dump -h %s --format=t %s > %s.sql"
 msgstr "pg_dump --format=t %s > %s.sql"
 
 msgid ""
@@ -645,6 +672,12 @@ msgstr "Изберете Език:"
 # Badly chosen mgsid: means: switch to selected language
 msgid "Go"
 msgstr ""
+
+#~ msgid "Finished"
+#~ msgstr "Завършване"
+
+#~ msgid "Upgrade Status"
+#~ msgstr "Развитие на Обновяването"
 
 #~ msgid "Upgraded the %s layout successfully"
 #~ msgstr "Layout '%s' erfolgreich aktualisiert"

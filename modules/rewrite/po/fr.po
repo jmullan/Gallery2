@@ -32,16 +32,64 @@ msgstr ""
 msgid "404 File Not Found"
 msgstr "Erreur 404 File Not Found"
 
-msgid "Check short style URLs for filesystem conflicts"
+msgid "URL Rewrite"
+msgstr "Réécriture d'URL"
+
+#, fuzzy
+msgid "Enables short URLs using Apache mod_rewrite, ISAPI Rewrite, or PathInfo."
+msgstr "Activer les URL courtes en utilisant mod_rewrite"
+
+msgid "Gallery"
+msgstr "Gallery"
+
+msgid "Show Item"
+msgstr "Afficher l'élément"
+
+msgid "Path to an item (eg, /album/image.jpg.html)"
+msgstr "Chemin vers un élément (exemple&nbsp;: /album/image.jpg.html)"
+
+msgid "Current language (eg, en or de)"
 msgstr ""
-"Vérifier si les URL courtes entraînent des conflits au niveau du filesystem"
+
+msgid "The general URL for viewing items."
+msgstr ""
+
+msgid "Download Item"
+msgstr "Télécharger l'élément"
+
+msgid "Ensures browsers do not use cached version when image has changed"
+msgstr ""
+"S'assure que les navigateurs n'utilisent des images issues de leur cache alors qu'elles ont "
+"été modifiées"
+
+msgid "The item file name."
+msgstr ""
+
+msgid "The general URL for downloading items."
+msgstr ""
+
+msgid "Site Admin"
+msgstr "Administration du site"
+
+msgid "Quick and easy way to access Site Admin."
+msgstr ""
+
+#, fuzzy
+msgid "404 File not found"
+msgstr "Erreur 404 File Not Found"
+
+msgid "Block hotlinked items"
+msgstr "Bloquer les éléments liés de l'extérieur"
+
+msgid "Check short style URLs for filesystem conflicts"
+msgstr "Vérifier si les URL courtes entraînent des conflits au niveau du filesystem"
 
 msgid ""
-"This will go through all your Gallery items and check if the short style URL "
-"links to an existing file or directory on your webserver."
+"This will go through all your Gallery items and check if the short style URL links to an "
+"existing file or directory on your webserver."
 msgstr ""
-"Ce test va parcourir tous les éléments de Gallery et vérifier si l'URL "
-"courte correspond à un fichier ou répertoire existant sur votre serveur Web."
+"Ce test va parcourir tous les éléments de Gallery et vérifier si l'URL courte correspond à "
+"un fichier ou répertoire existant sur votre serveur Web."
 
 msgid "Processing..."
 msgstr "En cours de traitement..."
@@ -57,65 +105,68 @@ msgstr "Vérification de l'élément %d de %d"
 msgid "Checked %d items and found %d conflicts"
 msgstr "%d ont été vérifiés et %d conflits ont été découverts"
 
-msgid "URL Rewrite"
-msgstr "Réécriture d'URL"
+msgid "Bad keyword."
+msgstr "Mauvais mot clé."
 
-msgid "Enables short URLs using mod_rewrite."
-msgstr "Activer les URL courtes en utilisant mod_rewrite"
-
-msgid "Gallery"
-msgstr "Gallery"
-
-msgid "Show Item"
-msgstr "Afficher l'élément"
-
-msgid "Path to an item (eg, /album/image.jpg.html)"
-msgstr "Chemin vers un élément (exemple&nbsp;: /album/image.jpg.html)"
-
-msgid "Download Item"
-msgstr "Télécharger l'élément"
-
-msgid "Ensures browsers do not use cached version when image has changed"
+msgid "Duplicate short url rule."
 msgstr ""
-"S'assure que les navigateurs n'utilisent des images issues de leur cache "
-"alors qu'elles ont été modifiées"
 
-msgid "Item file name (eg, image.jpg)"
-msgstr "Nom du fichier de l'élément (exemple&nbsp;: image.jpg)"
+#, fuzzy
+msgid "Ivalid pattern."
+msgstr "Chemin invalide."
 
-msgid "Site Admin"
-msgstr "Administration du site"
+msgid "Empty configuration value."
+msgstr ""
 
-msgid "Block hotlinked items"
-msgstr "Bloquer les éléments liés de l'extérieur"
+msgid "Cannot read the httpd.ini file"
+msgstr ""
+
+#, fuzzy
+msgid "Cannot write to httpd.ini file"
+msgstr "Impossible d'écrire le fichier .htaccess imbriqué"
+
+msgid "Cannot write to httpd.ini file, please create it."
+msgstr ""
+
+#, fuzzy
+msgid "Cannot read the .htaccess file"
+msgstr "Impossible d'écrire le fichier .htaccess de Gallery"
+
+#, fuzzy
+msgid "Cannot write to the .htaccess file"
+msgstr "Impossible d'écrire le fichier .htaccess de Gallery"
+
+#, fuzzy
+msgid "Cannot write to the .htaccess file, please create it."
+msgstr "Impossible d'écrire le fichier .htaccess de Gallery"
+
+#, fuzzy
+msgid "Cannot read the embedded .htaccess file"
+msgstr "Impossible d'écrire le fichier .htaccess imbriqué"
+
+msgid "Cannot write to the embedded .htaccess file"
+msgstr "Impossible d'écrire le fichier .htaccess imbriqué"
+
+#, fuzzy
+msgid "Cannot write to the embedded .htaccess file, please create it."
+msgstr "Impossible d'écrire le fichier .htaccess imbriqué"
 
 msgid "URL Rewrite Administration"
 msgstr "Administration de la réécriture des URL"
 
-msgid "Successfully saved URL styles"
+#, fuzzy
+msgid "Successfully saved settings"
 msgstr "Styles d'URL sauvegardés avec succès"
 
-msgid "Successfully saved the configuration"
-msgstr "Configuration sauvegardée avec succés"
-
-msgid "An error occured while trying to save your settings:"
-msgstr ""
-"Une erreur est survenue en essayant de sauvegarder vos paramètres&nbsp;:"
-
-msgid "Cannot write to the Gallery .htaccess file"
-msgstr "Impossible d'écrire le fichier .htaccess de Gallery"
-
-msgid "Cannot write to the embedded .htaccess file"
-msgstr "Impossible d'écrire le fichier .htaccess imbriqué"
+#, fuzzy
+msgid "An error occured while trying to save your settings"
+msgstr "Une erreur est survenue en essayant de sauvegarder vos paramètres&nbsp;:"
 
 msgid "Duplicate URL patterns."
 msgstr "Dupliquer les motifs d'URL"
 
 msgid "Empty URL pattern."
 msgstr "Motif d'URL vide."
-
-msgid "Bad keyword."
-msgstr "Mauvais mot clé."
 
 msgid "Rules"
 msgstr "Règles"
@@ -127,12 +178,20 @@ msgid "Test"
 msgstr "Test"
 
 msgid ""
-"Short URLs are compiled out of predefined keywords. Modules may provide "
-"additional keywords. Keywords are escaped with % (eg: %itemId%)."
+"Short URLs are compiled out of predefined keywords. Modules may provide additional keywords. "
+"Keywords are escaped with % (eg: %itemId%)."
 msgstr ""
-"Les URL courtes sont compilées à partir de mots clés prédéfinis. Certains "
-"modules peuvent fournir des mots clés supplémentaires. Les mots clés sont "
-"protégés par des caractères % (exemple&nbsp;: %itemId%)."
+"Les URL courtes sont compilées à partir de mots clés prédéfinis. Certains modules peuvent "
+"fournir des mots clés supplémentaires. Les mots clés sont protégés par des caractères % "
+"(exemple&nbsp;: %itemId%)."
+
+msgid ""
+"It is recomended that you don't activate the 'Download Item' URL since it will slow down "
+"Gallery."
+msgstr ""
+
+msgid "A pattern may not begin with a keyword."
+msgstr ""
 
 msgid "Active"
 msgstr "Activer"
@@ -174,30 +233,53 @@ msgid "Approved referers"
 msgstr "Referers approuvés"
 
 msgid ""
-"Some rules only apply if the referer (the site that linked to the item) is "
-"something other than Gallery itself. Hosts in the list below will be treated "
-"as friendly referers."
+"Some rules only apply if the referer (the site that linked to the item) is something other "
+"than Gallery itself. Hosts in the list below will be treated as friendly referers."
 msgstr ""
-"Certaines règles ne s'appliquent que si le referer (le site qui a lié "
-"l'élément de Gallery) est autre chose que Gallery. Les referers ci-dessous "
-"seront traités comme des referers amicaux et donc approuvés."
-
-msgid "Embedded Setup"
-msgstr "Paramètres pour Gallery imbriqué"
+"Certaines règles ne s'appliquent que si le referer (le site qui a lié l'élément de Gallery) "
+"est autre chose que Gallery. Les referers ci-dessous seront traités comme des referers "
+"amicaux et donc approuvés."
 
 msgid ""
-"For URL Rewrite to work in an embedded environment you need to set up an "
-"extra htaccess file to hold the mod_rewrite rules."
+"Warning: If you don't allow empty referer users won't be able to download nor play movies."
 msgstr ""
-"Pour que la réécriture d'URL fonctionne en environnement imbriqué, vous "
-"devez configurer un autre fichier htaccess pour contenir les règles de "
-"mod_rewrite."
 
-msgid "Htaccess path:"
-msgstr "Chemin vers Htaccess&nbsp;:"
+msgid "Allow empty referer?"
+msgstr ""
+
+msgid "The parser you have selected does not support a referer check."
+msgstr ""
+
+msgid "Test the Rewrite Parser Configuration"
+msgstr ""
+
+#, fuzzy
+msgid "Test again"
+msgstr "Tester de nouveau le serveur Web"
+
+msgid "The selected URL Rewrite Parser does not provide any tests."
+msgstr ""
+
+msgid "Error: 404 File Not Found"
+msgstr "Erreur&nbsp;: 404 File Not Found"
+
+msgid "Configuration"
+msgstr ""
+
+msgid "For ISAPI Rewrite to work Gallery needs write access to the httpd.ini file."
+msgstr ""
+
+msgid "Httpd.ini path:"
+msgstr ""
 
 msgid "Invalid directory."
 msgstr "Répertoire invalide."
+
+msgid "Cant write to the httpd.ini file in that directory."
+msgstr ""
+
+msgid "Embedded Setup"
+msgstr "Paramètres pour Gallery imbriqué"
 
 msgid "Public path:"
 msgstr "Chemin public&nbsp;:"
@@ -205,218 +287,344 @@ msgstr "Chemin public&nbsp;:"
 msgid "Invalid path."
 msgstr "Chemin invalide."
 
-msgid "Apache mod_rewrite"
-msgstr "Apache mod_rewrite"
-
-#, c-format
-msgid ""
-"In order for this Gallery module to work you need %s enabled with your "
-"Apache server."
+msgid "IIS ISAPI_Rewrite Support"
 msgstr ""
-"Pour que ce module de Gallery puisse fonctionner, vous avez besoin de %s "
-"activé sur votre serveur Apache."
+
+msgid "Testing if the server supports IIS ISAPI_Rewrite."
+msgstr ""
 
 msgid "Success"
 msgstr "Succés"
 
-msgid "Warning"
-msgstr "Attention"
-
-msgid "Test mod_rewrite manually"
-msgstr "Tester mod_rewrite manuellement"
-
-#, c-format
-msgid ""
-"Go to the <a href=%s>Setup</a> page where you will be able to further probe "
-"mod_rewrite."
-msgstr ""
-"Rendez-vous sur la page <a href=%s>Paramétrage</a> où vous pourrez mieux "
-"tester mod_rewrite."
-
-msgid "Test Webserver Again"
-msgstr "Tester de nouveau le serveur Web"
-
-msgid "Gallery .htaccess file"
-msgstr "Fichier .htaccess de Gallery"
-
-msgid ""
-"Gallery's URL rewriting works by creating a new file in your gallery "
-"directory called <b>.htaccess</b> which contains rules for how short urls "
-"should be interpreted."
-msgstr ""
-"La réécriture d'URL de Gallery fonctionne en créant un nouveau fichier nommé "
-"<b>.htaccess</b> dans le répertoire de Gallery. Ce fichier contient les "
-"règles pour interpréter les URL courtes."
-
 msgid "Error"
 msgstr "Erreur"
 
-msgid "Please create a file in your Gallery directory named .htaccess"
+msgid "The current status may not be accurate, you have forced the test to pass."
 msgstr ""
-"Veuillez créer un fichier nommé .htaccess dans votre répertoire de Gallery"
 
-msgid "Please make sure Gallery can read the existing .htaccess file"
+msgid "How to setup ISAP Rewrite"
 msgstr ""
-"Veuillez vous assurer que Gallery peut lire le fichier .htaccess existant"
 
-msgid "Please make sure Gallery can write to the existing .htaccess file"
+msgid "In order to make the test pass you need to add the test rewrite rule in your httpd.ini:"
 msgstr ""
-"Veuillez vous assurer que Gallery peut écrire le fichier .htaccess existant"
-
-msgid "Test .htaccess File Again"
-msgstr "Tester de nouveau le fichier .htaccess"
-
-msgid "Embedded .htaccess file"
-msgstr "Fichier .htaccess imbriqué"
 
 msgid ""
-"You need a <b>.htaccess</b> file in the embedded access point directory."
+"If you add this at the bottom, please make sure that there's atleast one empty line below "
+"the section"
 msgstr ""
-"Vous avez besoin d'un fichier <b>.htaccess</b> dans le répertoire "
-"d'imbrication de Gallery."
 
-msgid "Embedded .htaccess file is up to date"
-msgstr "Le fichier .htaccess imbriqué est à jour"
+#, fuzzy
+msgid "Test ISAPI Rewrite Manually"
+msgstr "Tester mod_rewrite manuellement"
+
+msgid "Gallery did not detect ISAPI Rewrite, please run this test yourself to verify."
+msgstr ""
+
+msgid "Force"
+msgstr ""
+
+msgid "ISAPI Rewrite Test"
+msgstr ""
+
+#, fuzzy
+msgid "If the test gives you a page that says PASS_ISAPI_REWRITE you are good to go."
+msgstr ""
+"Si un des deux tests vous retourne une page contenant le texte PASS_REWRITE, alors vous "
+"pouvez continuer."
+
+msgid "ISAPI_Rewrite httpd.ini file"
+msgstr ""
+
+#, fuzzy
+msgid "Testing if Gallery can write to the httpd.ini file."
+msgstr "Veuillez vous assurer que Gallery peut écrire le fichier .htaccess existant"
+
+msgid "Please configure the correct location of ISAPI_Rewrite httpd.ini."
+msgstr ""
+
+#, fuzzy
+msgid "Please make sure Gallery can read the httpd.ini file"
+msgstr "Veuillez vous assurer que Gallery peut lire le fichier .htaccess existant"
+
+#, fuzzy
+msgid "Please make sure Gallery can write to the httpd.ini file"
+msgstr "Veuillez vous assurer que Gallery peut écrire le fichier .htaccess existant"
 
 msgid ""
-"This checks if the content in your embedded .htaccess file is equal to the "
-"standalone version."
+"For URL Rewrite to work in an embedded environment you need to set up an extra htaccess file "
+"to hold the mod_rewrite rules."
 msgstr ""
-"Ceci vérifie que le contenu du fichier .htaccess imbriqué est identique au "
-"contenu du fichier de la version standard."
+"Pour que la réécriture d'URL fonctionne en environnement imbriqué, vous devez configurer un "
+"autre fichier htaccess pour contenir les règles de mod_rewrite."
 
-msgid ""
-"Please update your rules while in embedded mode. Hit the Save button should "
-"be sufficient."
+msgid "Htaccess path:"
+msgstr "Chemin vers Htaccess&nbsp;:"
+
+msgid "Apache mod_rewrite"
+msgstr "Apache mod_rewrite"
+
+#, c-format
+msgid "Testing if %s is supported by the server."
 msgstr ""
-"Veuillez mettre à jour vos règles car vous êtes en mode imbriqué. Le bouton "
-"Sauver devrait suffire à réaliser l'opération."
 
-msgid "Test .htaccess Files Again"
-msgstr "Tester de nouveau les fichiers .htaccess"
-
-msgid "Error: 404 File Not Found"
-msgstr "Erreur&nbsp;: 404 File Not Found"
-
-msgid "The page you requested does not exist"
-msgstr "La page que vous avez demandée n'existe pas"
-
-msgid "URL Rewrite System Checks"
-msgstr "Vérifications du système pour la réécriture d'URL"
+msgid "Warning"
+msgstr "Attention"
 
 msgid "Custom Gallery directory test setup"
 msgstr "Paramètrage du test d'un répertoire personnalisé de Gallery"
 
 msgid ""
-"Gallery tries to test mod_rewrite in action. For this to work you need to "
-"edit each of these two files accordingly:"
+"Gallery tries to test mod_rewrite in action. For this to work you need to edit each of these "
+"two files accordingly:"
 msgstr ""
-"Gallery essaie de tester le module mod_rewrite en situation. Pour que celà "
-"fonctionne, vous devez éditer deux fichiers et y apporter les modifications "
-"suivantes&nbsp;:"
+"Gallery essaie de tester le module mod_rewrite en situation. Pour que celà fonctionne, vous "
+"devez éditer deux fichiers et y apporter les modifications suivantes&nbsp;:"
 
 msgid "Line 6:"
 msgstr "Ligne 6&nbsp;:"
 
-msgid "Multisite setup"
-msgstr "Paramétrage du multi-site"
+msgid "Test mod_rewrite manually"
+msgstr "Tester mod_rewrite manuellement"
 
 msgid ""
-"Gallery tries to test mod_rewrite in action. This does not work with "
-"multisite since Gallery lacks the complete codebase."
+"For whatever reason, Gallery did not detect a working mod_rewrite setup. If you are "
+"confident that mod_rewrite does work you may override the automatic detection. Please, run "
+"these two tests to see for yourself."
 msgstr ""
-"Gallery essaie de tester le module mod_rewrite en situation. Celà ne "
-"fonctionne pas avec le multi-site puisque Gallery ne dispose pas de "
-"l'intégralité du code."
-
-msgid ""
-"The tests below will only show if mod_rewrite works for your Gallery "
-"codebase. If you experience broken links chances are that mod_rewrite does "
-"not work."
-msgstr ""
-"Les tests ci-dessous ne montreront que si le module mod_rewrite fonctionne "
-"avec votre installation de Gallery. Si vous rencontrez des erreurs avec ces "
-"liens, il est probable que mod_rewrite ne fonctionne pas."
-
-msgid ""
-"For whatever reason, Gallery did not detect a working mod_rewrite setup. If "
-"you are confident that mod_rewrite does work you may override the automatic "
-"detection. Please, run these two tests to see for yourself."
-msgstr ""
-"Pour une raison quelconque, Gallery n'a pas pu détecter une configuration "
-"opérationnelle de mod_rewrite. Si vous êtes confiants que mod_rewrite "
-"fonctionne, vous pouvez passer outre la détection automatique. Merci "
-"d'effectuer les deux tests suivants pour vous en rendre compte par vous-même."
+"Pour une raison quelconque, Gallery n'a pas pu détecter une configuration opérationnelle de "
+"mod_rewrite. Si vous êtes confiants que mod_rewrite fonctionne, vous pouvez passer outre la "
+"détection automatique. Merci d'effectuer les deux tests suivants pour vous en rendre compte "
+"par vous-même."
 
 msgid "Works"
 msgstr "OK&nbsp;?"
 
-msgid "Test mod_rewrite"
-msgstr "Tester mod_rewrite"
+msgid "mod_rewrite configuration 1 (with global Options +FollowSymlinks)"
+msgstr ""
 
-msgid "Test mod_rewrite with Options directive"
-msgstr "Tester mod_rewrite avec la directive Options"
+msgid "mod_rewrite configuration 2 (with local Options +FollowSymlinks)"
+msgstr ""
+
+msgid "If one of the two tests gives you a page with the text PASS_REWRITE you are good to go."
+msgstr ""
+"Si un des deux tests vous retourne une page contenant le texte PASS_REWRITE, alors vous "
+"pouvez continuer."
+
+#, fuzzy
+msgid "Apache mod_rewrite and Gallery multisite"
+msgstr "Apache mod_rewrite"
 
 msgid ""
-"If one of the two tests gives you a page with the text PASS_REWRITE you are "
-"good to go."
+"Gallery tries to test mod_rewrite in action. This does not work with multisite since Gallery "
+"lacks the complete codebase."
 msgstr ""
-"Si un des deux tests vous retourne une page contenant le texte PASS_REWRITE, "
-"alors vous pouvez continuer."
+"Gallery essaie de tester le module mod_rewrite en situation. Celà ne fonctionne pas avec le "
+"multi-site puisque Gallery ne dispose pas de l'intégralité du code."
+
+msgid "Gallery .htaccess file"
+msgstr "Fichier .htaccess de Gallery"
+
+#, fuzzy
+msgid "Testing if Gallery can write to the .htaccess file."
+msgstr "Veuillez vous assurer que Gallery peut écrire le fichier .htaccess existant"
+
+msgid "Please create a file in your Gallery directory named .htaccess"
+msgstr "Veuillez créer un fichier nommé .htaccess dans votre répertoire de Gallery"
+
+msgid "Please make sure Gallery can read the existing .htaccess file"
+msgstr "Veuillez vous assurer que Gallery peut lire le fichier .htaccess existant"
+
+msgid "Please make sure Gallery can write to the existing .htaccess file"
+msgstr "Veuillez vous assurer que Gallery peut écrire le fichier .htaccess existant"
+
+msgid "Embedded .htaccess file"
+msgstr "Fichier .htaccess imbriqué"
+
+#, fuzzy
+msgid "Testing if Gallery can write to the embedded .htaccess file."
+msgstr "Impossible d'écrire le fichier .htaccess imbriqué"
+
+#, fuzzy
+msgid "Please configure the embedded htaccess path."
+msgstr "Impossible d'écrire le fichier .htaccess imbriqué"
+
+msgid "PHP Path Info Support"
+msgstr ""
+
+msgid "Testing if the server supports PHP Path Info."
+msgstr ""
+
+msgid "Test Path Info Manually"
+msgstr ""
+
+msgid "Gallery did not detect Path Info, please run this thest yourself to verify."
+msgstr ""
+
+msgid "PHP Path Info Test"
+msgstr ""
+
+#, fuzzy
+msgid "If the test gives you a page that says PASS_PATH_INFO you are good to go."
+msgstr ""
+"Si un des deux tests vous retourne une page contenant le texte PASS_REWRITE, alors vous "
+"pouvez continuer."
+
+#, fuzzy
+msgid "URL Rewrite Setup"
+msgstr "Réécriture d'URL"
+
+msgid ""
+"The Apache mod_rewrite module is installed on most Apache servers by default. If you are "
+"unsure of what method you should choose then select this. Gallery will try to detect if your "
+"server supports mod_rewrite."
+msgstr ""
+
+msgid "IIS ISAPI_Rewrite"
+msgstr ""
+
+msgid ""
+"This method allows for short URLs on IIS servers with ISAPI Rewrite installed. Gallery will "
+"try to detect if your server supports this method before activating the module."
+msgstr ""
+
+msgid "PHP Path Info"
+msgstr ""
+
+msgid ""
+"Using Path Info is supported by most systems. With this method Gallery parses the URL itself "
+"during the request."
+msgstr ""
+
+#, fuzzy
+msgid "Block hotlinking is not supported."
+msgstr "Bloquer les éléments liés de l'extérieur"
+
+msgid "Back"
+msgstr ""
 
 msgid "Done"
 msgstr "Fait"
 
-msgid "Troubleshooting"
-msgstr "Dépannage"
-
-msgid "How can I check if mod_rewrite is loaded?"
-msgstr "Comment puis-je vérifier si mod_rewrite est chargé&nbsp;?"
-
-#, c-format
-msgid ""
-"Go to the <a href=\"%s\">Gallery phpinfo page</a> and look for Loaded "
-"Modules. You should see mod_rewrite in the list if it's loaded."
-msgstr ""
-"Allez dans la page <a href=\"%s\">Gallery phpinfo</a> et recherchez la "
-"section 'Loaded Modules'. Vous devriez trouver mod_rewrite dans la liste si "
-"il est chargé."
-
-msgid ""
-"I know mod_rewrite is loaded, why is Gallery telling me it's not working?"
-msgstr ""
-"Je sais que mod_rewrite est chargé, pourquoi Gallery me dit-il que celà ne "
-"fonctionne pas&nbsp;?"
-
-msgid ""
-"If you are the server admin make sure the Gallery directory has the proper "
-"AllowOverride rights. Gallery needs to be able to override FileInfo and "
-"Options. Put this at the end of your Apache configuration:"
-msgstr ""
-"Si vous êtes l'administrateur du serveur Web, assurez vous que le répertoire "
-"de Gallery dispose bien du droit AllowOverride. Gallery doit pouvoir "
-"remplacer FileInfo et Options. Mettez ceci à la fin du fichier de "
-"configuration d'Apache&nbsp;:"
-
-msgid ""
-"My Gallery is password protected using Apache mod_auth. I know mod_rewrite "
-"works, why doesnt Gallery detect this?"
-msgstr ""
-"Mon installation de Gallery est protégée par mot de passe grâce au module "
-"Apache mod_auth. Je sais que mod_rewrite fonctionne, pourquoi Gallery ne le "
-"détecte pas&nbsp;?"
-
-msgid ""
-"Gallery tries to fetch a page from your server and most likely Gallery gets "
-"an unauthorized access error. In order to fix this you need to allow "
-"requests from the server IP. If you are paranoid you could narrow it down to "
-"requests to the gallery2/modules/rewrite/data directory."
-msgstr ""
-"Gallery essaye de récupérer une page de votre serveur et très probablement "
-"Gallery a reçu une erreur d'accès non autorisé. Pour corriger celà, vous "
-"devez autoriser les requêtes en provenance de l'adresse IP du serveur. Si "
-"vous être paranoïaques, vous pouvez limiter cette autorisation au répertoire "
-"gallery2/modules/rewrite/data."
-
 msgid "Unit test module"
 msgstr "Module de tests unitaires"
+
+#~ msgid "Item file name (eg, image.jpg)"
+#~ msgstr "Nom du fichier de l'élément (exemple&nbsp;: image.jpg)"
+
+#~ msgid "Successfully saved the configuration"
+#~ msgstr "Configuration sauvegardée avec succés"
+
+#~ msgid ""
+#~ "In order for this Gallery module to work you need %s enabled with your Apache server."
+#~ msgstr ""
+#~ "Pour que ce module de Gallery puisse fonctionner, vous avez besoin de %s activé sur votre "
+#~ "serveur Apache."
+
+#~ msgid ""
+#~ "Go to the <a href=%s>Setup</a> page where you will be able to further probe mod_rewrite."
+#~ msgstr ""
+#~ "Rendez-vous sur la page <a href=%s>Paramétrage</a> où vous pourrez mieux tester "
+#~ "mod_rewrite."
+
+#~ msgid ""
+#~ "Gallery's URL rewriting works by creating a new file in your gallery directory called <b>."
+#~ "htaccess</b> which contains rules for how short urls should be interpreted."
+#~ msgstr ""
+#~ "La réécriture d'URL de Gallery fonctionne en créant un nouveau fichier nommé <b>."
+#~ "htaccess</b> dans le répertoire de Gallery. Ce fichier contient les règles pour "
+#~ "interpréter les URL courtes."
+
+#~ msgid "Test .htaccess File Again"
+#~ msgstr "Tester de nouveau le fichier .htaccess"
+
+#~ msgid "You need a <b>.htaccess</b> file in the embedded access point directory."
+#~ msgstr ""
+#~ "Vous avez besoin d'un fichier <b>.htaccess</b> dans le répertoire d'imbrication de "
+#~ "Gallery."
+
+#~ msgid "Embedded .htaccess file is up to date"
+#~ msgstr "Le fichier .htaccess imbriqué est à jour"
+
+#~ msgid ""
+#~ "This checks if the content in your embedded .htaccess file is equal to the standalone "
+#~ "version."
+#~ msgstr ""
+#~ "Ceci vérifie que le contenu du fichier .htaccess imbriqué est identique au contenu du "
+#~ "fichier de la version standard."
+
+#~ msgid ""
+#~ "Please update your rules while in embedded mode. Hit the Save button should be sufficient."
+#~ msgstr ""
+#~ "Veuillez mettre à jour vos règles car vous êtes en mode imbriqué. Le bouton Sauver "
+#~ "devrait suffire à réaliser l'opération."
+
+#~ msgid "Test .htaccess Files Again"
+#~ msgstr "Tester de nouveau les fichiers .htaccess"
+
+#~ msgid "The page you requested does not exist"
+#~ msgstr "La page que vous avez demandée n'existe pas"
+
+#~ msgid "URL Rewrite System Checks"
+#~ msgstr "Vérifications du système pour la réécriture d'URL"
+
+#~ msgid "Multisite setup"
+#~ msgstr "Paramétrage du multi-site"
+
+#~ msgid ""
+#~ "The tests below will only show if mod_rewrite works for your Gallery codebase. If you "
+#~ "experience broken links chances are that mod_rewrite does not work."
+#~ msgstr ""
+#~ "Les tests ci-dessous ne montreront que si le module mod_rewrite fonctionne avec votre "
+#~ "installation de Gallery. Si vous rencontrez des erreurs avec ces liens, il est probable "
+#~ "que mod_rewrite ne fonctionne pas."
+
+#~ msgid "Test mod_rewrite"
+#~ msgstr "Tester mod_rewrite"
+
+#~ msgid "Test mod_rewrite with Options directive"
+#~ msgstr "Tester mod_rewrite avec la directive Options"
+
+#~ msgid "Troubleshooting"
+#~ msgstr "Dépannage"
+
+#~ msgid "How can I check if mod_rewrite is loaded?"
+#~ msgstr "Comment puis-je vérifier si mod_rewrite est chargé&nbsp;?"
+
+#~ msgid ""
+#~ "Go to the <a href=\"%s\">Gallery phpinfo page</a> and look for Loaded Modules. You should "
+#~ "see mod_rewrite in the list if it's loaded."
+#~ msgstr ""
+#~ "Allez dans la page <a href=\"%s\">Gallery phpinfo</a> et recherchez la section 'Loaded "
+#~ "Modules'. Vous devriez trouver mod_rewrite dans la liste si il est chargé."
+
+#~ msgid "I know mod_rewrite is loaded, why is Gallery telling me it's not working?"
+#~ msgstr ""
+#~ "Je sais que mod_rewrite est chargé, pourquoi Gallery me dit-il que celà ne fonctionne "
+#~ "pas&nbsp;?"
+
+#~ msgid ""
+#~ "If you are the server admin make sure the Gallery directory has the proper AllowOverride "
+#~ "rights. Gallery needs to be able to override FileInfo and Options. Put this at the end of "
+#~ "your Apache configuration:"
+#~ msgstr ""
+#~ "Si vous êtes l'administrateur du serveur Web, assurez vous que le répertoire de Gallery "
+#~ "dispose bien du droit AllowOverride. Gallery doit pouvoir remplacer FileInfo et Options. "
+#~ "Mettez ceci à la fin du fichier de configuration d'Apache&nbsp;:"
+
+#~ msgid ""
+#~ "My Gallery is password protected using Apache mod_auth. I know mod_rewrite works, why "
+#~ "doesnt Gallery detect this?"
+#~ msgstr ""
+#~ "Mon installation de Gallery est protégée par mot de passe grâce au module Apache "
+#~ "mod_auth. Je sais que mod_rewrite fonctionne, pourquoi Gallery ne le détecte pas&nbsp;?"
+
+#~ msgid ""
+#~ "Gallery tries to fetch a page from your server and most likely Gallery gets an "
+#~ "unauthorized access error. In order to fix this you need to allow requests from the "
+#~ "server IP. If you are paranoid you could narrow it down to requests to the gallery2/"
+#~ "modules/rewrite/data directory."
+#~ msgstr ""
+#~ "Gallery essaye de récupérer une page de votre serveur et très probablement Gallery a reçu "
+#~ "une erreur d'accès non autorisé. Pour corriger celà, vous devez autoriser les requêtes en "
+#~ "provenance de l'adresse IP du serveur. Si vous être paranoïaques, vous pouvez limiter "
+#~ "cette autorisation au répertoire gallery2/modules/rewrite/data."

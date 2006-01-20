@@ -1,5 +1,6 @@
 # $Id$
 
+/* ConfirmImport.inc */
 gettext("Importing Users")
 gettext("Importing Photos")
 gettext("Creating thumbnails")
@@ -8,13 +9,17 @@ gettext("%sSummary%s was truncated for %sitem %d%s.")
 gettext("Set:")
 gettext("Truncated:")
 gettext("Thumbnail %d of %d")
+
+/* module.inc */
 gettext("Migration")
 gettext("Migrate your Gallery 1 albums to Gallery 2")
-gettext("Import")
+gettext("Import") /* also in: templates/ConfirmImport.tpl */
 gettext("Gallery 1")
 gettext("G1-&gt;G2 Mapping")
 gettext("G1 path")
-gettext("G1 URL redirect. Use only if G2 is installed where G1 used to be and you have run a G1 import with the URL redirect option selected. Otherwise follow instructions in %sMigrate Site Admin%s.")
+gettext("G1 URL redirect. Use only if G2 is installed where G1 used")
+
+/* templates/ChooseObjects.tpl */
 gettext("Select Albums and Users")
 gettext("You must choose something to import!")
 gettext("You must specify a custom field name")
@@ -23,7 +28,7 @@ gettext("Select the users to migrate")
 gettext("Check All")
 gettext("Clear All")
 gettext("Invert Selection")
-gettext("Select")
+gettext("Select") /* also in: templates/SelectGallery.tpl */
 gettext("Username")
 gettext("No available users")
 gettext("These users are already in your gallery, and will not be imported:")
@@ -33,18 +38,18 @@ gettext("Source:")
 gettext("%s (%s)")
 gettext("Destination:")
 gettext("Character Encoding of Source Text:")
-gettext("URL Redirection")
+gettext("URL Redirection") /* also in: templates/ImportResults.tpl templates/SelectGallery.tpl */
 gettext("Record G1->G2 mappings during import")
 gettext("Thumbnail generation")
 gettext("Normally Gallery will generate thumbnails the first time you look at them, then save them for subsequent views.  If you check this box, we'll create the thumbnails at migration time.  Migration will take longer but the first time you view an album will go much faster.")
 gettext("Item captions")
 gettext("Gallery 2 has the following fields for all items and albums: title, summary text shown with thumbnails and description text shown in item or album view. G1 albums already have these three items (though the names of summary and description are reversed). G1 items have only a filename and caption. For items imported into G2:")
 gettext("Set title from:")
-gettext("Base filename")
-gettext("Caption")
+gettext("Base filename") /* also in: templates/ConfirmImport.tpl */
+gettext("Caption") /* also in: templates/ConfirmImport.tpl */
 gettext("Custom Field:")
 gettext("Enter a custom field name")
-gettext("Blank")
+gettext("Blank") /* also in: templates/ConfirmImport.tpl */
 gettext("Set summary from:")
 gettext("Set description from:")
 gettext("Default to same as summary if custom field not set")
@@ -53,6 +58,8 @@ gettext("Custom fields will not be imported.  Activate Custom Fields module to e
 gettext("Import custom fields")
 gettext("Do not create Gallery 2 custom fields for fields selected above for title, summary or description")
 gettext("Prepare Import")
+
+/* templates/ConfirmImport.tpl */
 gettext("Confirm Migration")
 gettext("Users to import:")
 gettext("Albums to import:")
@@ -78,7 +85,11 @@ gettext("Description")
 gettext("(Default to summary value if not set)")
 gettext("Custom fields will be imported")
 gettext("Custom fields imported into item fields above will not be duplicated as custom fields")
+gettext("Hidden Items")
+gettext("Any hidden albums or items will be imported with restricted view permissions. Activate the Hidden Items module before migration to import these as \"hidden\" which means they are invisible to guest users until accessed by the direct URL for those items.")
 gettext("Cancel")
+
+/* templates/ImportResults.tpl */
 gettext("Import Complete")
 ngettext("Successfully imported %d user.", "Successfully imported %d users.")
 gettext("No users imported.")
@@ -89,12 +100,16 @@ ngettext("Successfully imported %d album.", "Successfully imported %d albums.")
 gettext("No albums imported.")
 ngettext("Error while importing %d album.", "Errors while importing %d albums.")
 gettext("Import more data")
+
+/* templates/Redirect.tpl */
 gettext("To enable URL Redirection under Apache webserver:")
 gettext("Ensure the %s Apache module is enabled.")
 gettext("Edit or create a file called <tt>.htaccess</tt> in your Gallery1 directory and add the text shown below to the file. Remove G1 rewrite rules from an existing file. Redirects will also work in your Gallery2 directory if G2 is installed in the path where G1 used to be. However, if you also use the G2 URL Rewrite module then activate the G1 redirect rule in that module instead of using the block shown below.")
 gettext("Add the same <tt>.htaccess</tt> block in the Gallery1 albums directory if you also wish to redirect links to image files and album directories. Note that these redirects are not active until the G1 images are actually removed or moved. Omit the !-f line shown below to redirect anyway.")
 gettext("If G2 is installed in the path where G1 used to exist, you will need to remove the G1 file \"gallery_remote2.php\" file before you can use Gallery Remote to upload images to G2.")
 gettext("Download .htaccess file")
+
+/* templates/SelectGallery.tpl */
 gettext("Import from Gallery 1")
 gettext("Copy all or part of an existing Gallery 1 installation into your Gallery 2.  It won't modify your Gallery 1 data in any way.")
 gettext("You don't have any Graphics Toolkit activated to handle JPEG images.  If you import now, you will not have any thumbnails.  Visit the <a href=\"%s\">Modules</a> page to activate a Graphics Toolkit.")

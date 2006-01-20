@@ -46,8 +46,9 @@ msgstr "<b>Greška:</b> netačna lozinka."
 msgid "Empty Cache"
 msgstr "Isprazni keš"
 
-msgid "Finished"
-msgstr "Završeno"
+#, fuzzy
+msgid "Finish Upgrade"
+msgstr "Počni nadogradnju"
 
 msgid "System Checks"
 msgstr "Provera sistema"
@@ -227,6 +228,34 @@ msgstr ""
 "ili se ništa ne prikaže, onda morate isključiti ze1_compatibility_mode pre nego što "
 "nastavite."
 
+#, fuzzy
+msgid "putenv() allowed"
+msgstr "exec() je dozvoljen"
+
+#, fuzzy
+msgid ""
+"Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> "
+"parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
+"Gallery will be unable to run in other languages than the system language and English."
+msgstr ""
+"Upozorenje: Funkcija set_time_limit() je onemogućena u vašoj verziji PHP-a parametrom "
+"<b>disabled_functions</b> u php.ini datoteci. Galerija može da radi sa ovakvim "
+"podešavanjima, ali ne pouzdano. Bilo koja radnja koja traje duže od %d sekundi će biti "
+"neuspešna (a u nekim slučajevima samo prikazati praznu stranu), uz mogućnost oštećenja "
+"podataka."
+
+msgid "Output buffering disabled"
+msgstr ""
+
+#, c-format
+msgid ""
+"Warning: Output buffering is enabled in your php by the <b>%s</b> parameter(s) in php.ini.  "
+"Gallery can function with this setting - downloading files is even faster - but Gallery "
+"might be unable to serve large files (e.g. large videos) and run into the  memory limit. "
+"Also, some features like the progress bars might not work correctly if output buffering is "
+"enabled unless ini_set() is allowed."
+msgstr ""
+
 msgid "Storage Directory Permissions"
 msgstr "Prava direktorijuma za skladištenje"
 
@@ -272,6 +301,9 @@ msgstr "Modul %s mora da se podesi"
 msgid "Unable to upgrade the %s module"
 msgstr "Modul %s nije moguće nadograditi"
 
+msgid "Unable to commit database transaction"
+msgstr "Nije moguće potvrditi transakciju u bazi podataka"
+
 #, c-format
 msgid "Unable to load the %s theme"
 msgstr "Izgled %s nije moguće učitati"
@@ -282,9 +314,6 @@ msgstr "Nadogradnja izgleda"
 #, c-format
 msgid "Unable to upgrade the %s theme"
 msgstr "Izgled %s nije moguće nadograditi"
-
-msgid "Unable to commit database transaction"
-msgstr "Nije moguće potvrditi transakciju u bazi podataka"
 
 msgid "Unable to get the module list"
 msgstr "Nije moguće preuzeti spisak modula"
@@ -319,6 +348,10 @@ msgstr "Proverite moj identitet"
 msgid "Authentication successful!"
 msgstr "Provera identiteta uspešna!"
 
+#, fuzzy
+msgid "Successfully cleaned cache directories."
+msgstr "Uspešno smo ispraznili Galerijin keš"
+
 msgid "Delete Cache Directories"
 msgstr "Brisanje keš direktorijuma"
 
@@ -351,9 +384,6 @@ msgstr ""
 msgid "Try Again"
 msgstr "Pokušaj ponovo"
 
-msgid "We have successfully cleaned out your cache directories."
-msgstr "Uspešno smo ispraznili Galerijin keš"
-
 msgid "Finished!"
 msgstr "Završeno!"
 
@@ -381,19 +411,22 @@ msgstr ""
 msgid "Welcome to the Gallery Upgrader"
 msgstr "Dobro došli u nadogradnju Galeriju"
 
+msgid "Upgrader Help"
+msgstr "Pomoć u vezi sa nadogradnjom"
+
+msgid "Start Over"
+msgstr "Kreni ispočetka"
+
+#, c-format
+msgid "Upgrade %d%% complete"
+msgstr "Nadogradnja je %d%% završena"
+
 msgid "Redo this step"
 msgstr "Ponovi ovaj korak"
 
 #, c-format
 msgid "Continue to Step %d&raquo;"
 msgstr "Pređi na %d. korak&raquo;"
-
-msgid "Upgrade Status"
-msgstr "Stanje nadogradnje"
-
-#, c-format
-msgid "Upgrade %d%% complete"
-msgstr "Nadogradnja je %d%% završena"
 
 msgid "Gallery: <strong>your photos</strong> on <strong>your website</strong>"
 msgstr "Galerija: <strong>vaše fotografije</strong> na <strong>vašem web sajtu</strong>"
@@ -435,12 +468,6 @@ msgstr ""
 
 msgid "Upgrade Steps"
 msgstr "Koraci nadogradnje"
-
-msgid "Upgrader Help"
-msgstr "Pomoć u vezi sa nadogradnjom"
-
-msgid "Start Over"
-msgstr "Kreni ispočetka"
 
 msgid "Missing or invalid config.php"
 msgstr "Nedostaje config.php ili je neipravan"
@@ -559,15 +586,15 @@ msgstr ""
 msgid "MySQL"
 msgstr "MySQL"
 
-#, c-format
-msgid "mysqldump -u%s -p<i>YourPassword</i> --opt %s > %s.sql"
+#, fuzzy, c-format
+msgid "mysqldump -u%s -p -h %s --opt %s > %s.sql"
 msgstr "mysqldump -u%s -p<i>VašaLozinka</i> --opt %s > %s.sql"
 
 msgid "PostgreSQL"
 msgstr "PostgreSQL"
 
-#, c-format
-msgid "pg_dump --format=t %s > %s.sql"
+#, fuzzy, c-format
+msgid "pg_dump -h %s --format=t %s > %s.sql"
 msgstr "pg_dump --format=t %s > %s.sql"
 
 msgid ""
@@ -679,3 +706,9 @@ msgstr "Izaberite jezik:"
 
 msgid "Go"
 msgstr "Kreni"
+
+#~ msgid "Finished"
+#~ msgstr "Završeno"
+
+#~ msgid "Upgrade Status"
+#~ msgstr "Stanje nadogradnje"

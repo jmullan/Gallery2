@@ -177,6 +177,10 @@ msgstr "Kiểm tra các hình dẫn xuất bị mất"
 msgid "Clearing fast-download cache"
 msgstr ""
 
+#, fuzzy
+msgid "Deleting old fast-download cache"
+msgstr "Đang xóa bảng quyền hạn cũ"
+
 msgid "Site Admins"
 msgstr "Quản trị trang"
 
@@ -278,8 +282,20 @@ msgstr "Các thông số đã được lưu lại."
 msgid "&laquo; default theme &raquo;"
 msgstr "&laquo; kiểu trình bày mặc định &raquo;"
 
+#, fuzzy
+msgid "Recreating resized images"
+msgstr "Tạo lại các ảnh trung gian"
+
+#, fuzzy
+msgid "Rebuilding thumbnails..."
+msgstr "Tạo lại các ảnh con"
+
 msgid "Album"
 msgstr "Album"
+
+#, c-format
+msgid "Processing image %d of %d"
+msgstr "Đang xử lý ảnh %d trên %d"
 
 msgid "Changes saved successfully"
 msgstr "Thay đổi đã được lưu"
@@ -535,10 +551,6 @@ msgid "Debug output for failed items:"
 msgstr "Kết xuất debug cho các đối tượng bị thất bại:"
 
 #, c-format
-msgid "Processing image %d of %d"
-msgstr "Đang xử lý ảnh %d trên %d"
-
-#, c-format
 msgid "Checked %d items"
 msgstr "Đã kiểm tra %d đối tượng"
 
@@ -553,8 +565,9 @@ msgstr "%d đối tượng bị thất bại"
 msgid "Delete database cache"
 msgstr "Xóa cache cơ sở dữ liệu"
 
+#, fuzzy
 msgid ""
-"Gallery stores commonly used database information on disk for increased performance.  If you "
+"Gallery stores commonly used database information on disk for increased performance. If you "
 "modify the database directly, you should run this task to clean out the cache and force "
 "Gallery to reload the information from the database."
 msgstr ""
@@ -654,24 +667,15 @@ msgstr "xuống"
 msgid "Plugins directory does not exist."
 msgstr "Thành viên '%s' không tồn tại."
 
-#, c-format
 msgid ""
-"Couldn't create plugin directory '%s' in '%s', make sure the web server has write "
-"permissions in it."
+"Couldn't create plugins subdirectory. Make sure the webserver has write permissions in it."
 msgstr ""
 
-#, c-format
-msgid "Couldn't create repository cache path '%s'."
+msgid "Couldn't create repository cache path."
 msgstr ""
 
-#, c-format
 msgid ""
-"Couldn't create cache directory '%s' in '%s', make sure the web server has write permissions "
-"in it."
-msgstr ""
-
-#, c-format
-msgid "Error downloading package from '%s'."
+"Couldn't create cache subdirectory. Make sure the web server has write permissions in it."
 msgstr ""
 
 #, c-format
@@ -734,7 +738,7 @@ msgstr "Trang web này phù hợp với chuẩn XHTML 1.0"
 msgid "Donate to the Gallery project"
 msgstr "Quay lại Gallery"
 
-msgid "G2.0: Unpossible!"
+msgid "G2.1: Blackjack"
 msgstr ""
 
 #, c-format
@@ -1681,13 +1685,10 @@ msgid ""
 "the process might take a minute or two."
 msgstr ""
 
-msgid "As of the last update on"
-msgstr ""
-
 #, c-format
 msgid ""
-", the repository contains %s modules and %s themes. Its contents can be viewed on the "
-"Modules and Themes tabs."
+"As of the last update on %s, the repository contains %s modules and %s themes. Its contents "
+"can be viewed on the Modules and Themes tabs."
 msgstr ""
 
 msgid ""
@@ -1714,11 +1715,11 @@ msgid "Review plugin compatibility (on the Themes and Modules tabs)"
 msgstr ""
 
 #, c-format
-msgid "<a href=\"%s\">Download</a> Gallery core"
+msgid "%sDownload%s Gallery core"
 msgstr ""
 
 #, c-format
-msgid "Read the <a href=\"%s\">upgrade instructions</a> and perform the upgrade"
+msgid "Read the %supgrade instructions%s and perform the upgrade"
 msgstr ""
 
 #, fuzzy
@@ -1840,33 +1841,18 @@ msgstr ""
 msgid "Gallery Repository Setup"
 msgstr "Phiên bản Gallery"
 
-msgid "Warning: `$errorMessage`"
-msgstr ""
-
-msgid ""
-"In order to download plugins from the Gallery repository, a special directory needs to be "
-"created where Gallery will store the data."
+msgid "Warning:"
 msgstr ""
 
 #, c-format
 msgid ""
-"Under your Gallery base directory, create a directory called '%s' and allow the web server "
-"to write into it by appropriately setting the permissions."
+"In order to download plugins from the Gallery repository, a special directory needs to be "
+"created where Gallery will store the data. Under your Gallery base directory, create a "
+"directory called '%s' and allow the web server to write into it by appropriately setting the "
+"permissions."
 msgstr ""
 
 msgid "Instructions for Unix-type platforms:"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "$ cd %s"
-msgstr "%d. %s"
-
-#, c-format
-msgid "$ mkdir %s"
-msgstr ""
-
-#, c-format
-msgid "$ chmod 777 %s"
 msgstr ""
 
 msgid ""
@@ -2059,6 +2045,9 @@ msgstr "Xâm phạm an ninh"
 msgid "Database Error"
 msgstr "Lỗi cơ sở dữ liệu"
 
+msgid "Platform Error"
+msgstr ""
+
 msgid "Error"
 msgstr "Lỗi"
 
@@ -2091,6 +2080,16 @@ msgstr ""
 "Bản chất của lỗi cơ sở dữ liệu không được ghi nhận trừ phi Gallery được đặt trong chế độ "
 "debug trong tập tin config.php. Trước khi tìm hỗ trợ cho lỗi này bạn hãy bật chế độ debug và "
 "thử lại thao tác gây lỗi. Chi tiết về lỗi được hiển thị ở cuối kết xuất debug."
+
+#, fuzzy
+msgid "An error has occurred while interacting with the platform."
+msgstr "Có lỗi khi truy xuất cơ sở dữ liệu"
+
+msgid ""
+"The exact nature of the platform error is unknown. A common cause are insufficient file "
+"system permissions. This can happen if you or your webhost changed something in the file "
+"system, e.g. by restoring data from a backup."
+msgstr ""
 
 msgid "An error has occurred."
 msgstr "Có lỗi."
@@ -3070,14 +3069,16 @@ msgstr "Thiếu mất kiểu trình bày"
 
 #, fuzzy, c-format
 msgid ""
-"This page is configured to use the %s theme, but it is either inactive or not installed."
+"This page is configured to use the %s theme, but it is either inactive, not installed, or "
+"incompatible."
 msgstr ""
 "Album này được cài đặt để dùng kiểu trình bày %s nhưng nó hoặc không được kích hoạt hoặc "
 "chưa được cài."
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"This album is configured to use the %s theme, but it is either inactive or not installed."
+"This album is configured to use the %s theme, but it is either inactive, not installed, or "
+"incompatible."
 msgstr ""
 "Album này được cài đặt để dùng kiểu trình bày %s nhưng nó hoặc không được kích hoạt hoặc "
 "chưa được cài."
@@ -3458,6 +3459,10 @@ msgstr "[kiểm tra] Một quyền hạn thứ hai"
 
 msgid "Unit test theme"
 msgstr "Kiểu trình bày thử"
+
+#, fuzzy
+#~ msgid "$ cd %s"
+#~ msgstr "%d. %s"
 
 #~ msgid "&laquo; None &raquo;"
 #~ msgstr "&laquo; Không có &raquo;"

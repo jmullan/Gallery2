@@ -54,8 +54,9 @@ msgstr "<b>Fehler:</b> falsches Passwort."
 msgid "Empty Cache"
 msgstr "Cache leeren"
 
-msgid "Finished"
-msgstr "Abgeschlossen"
+#, fuzzy
+msgid "Finish Upgrade"
+msgstr "Aktualisierung beginnen"
 
 msgid "System Checks"
 msgstr "Systemprüfungen"
@@ -236,6 +237,34 @@ msgstr ""
 "keine Antwort, dann müssen Sie den <tt>ze1_compatibility_mode</tt> abschalten, bevor Sie "
 "fortfahren."
 
+#, fuzzy
+msgid "putenv() allowed"
+msgstr "exec() erlaubt"
+
+#, fuzzy
+msgid ""
+"Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> "
+"parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
+"Gallery will be unable to run in other languages than the system language and English."
+msgstr ""
+"Warnung: die Funktion set_time_limit() in Ihrem PHP ist deaktiviert (<b>disabled_functions</"
+"b> parameter in php.ini).  Gallery kann zwar im Prinzip mit dieser Einstellung arbeiten, "
+"aber nicht zuverlässig.  Jede Operation, die länger als %d Sekunden dauert, wird "
+"fehlschlagen (und in einigen Fällen eine leere Seite anzeigen), möglicherweise führt das "
+"auch zu Datenverlust."
+
+msgid "Output buffering disabled"
+msgstr ""
+
+#, c-format
+msgid ""
+"Warning: Output buffering is enabled in your php by the <b>%s</b> parameter(s) in php.ini.  "
+"Gallery can function with this setting - downloading files is even faster - but Gallery "
+"might be unable to serve large files (e.g. large videos) and run into the  memory limit. "
+"Also, some features like the progress bars might not work correctly if output buffering is "
+"enabled unless ini_set() is allowed."
+msgstr ""
+
 msgid "Storage Directory Permissions"
 msgstr "Speicherordner-Zugriffsrechte"
 
@@ -280,6 +309,9 @@ msgstr "Das Modul '%s' muss konfiguriert werden"
 msgid "Unable to upgrade the %s module"
 msgstr "Das Modul '%s' kann nicht aktualisiert werden"
 
+msgid "Unable to commit database transaction"
+msgstr "Die Datenbank-Transaktion konnte nicht abgeschlossen werden (commit)"
+
 #, c-format
 msgid "Unable to load the %s theme"
 msgstr "Das Motiv '%s' kann nicht geladen werden"
@@ -290,9 +322,6 @@ msgstr "Aktualisiere Motive"
 #, c-format
 msgid "Unable to upgrade the %s theme"
 msgstr "Das Motiv '%s' kann nicht aktualisiert werden"
-
-msgid "Unable to commit database transaction"
-msgstr "Die Datenbank-Transaktion konnte nicht abgeschlossen werden (commit)"
 
 msgid "Unable to get the module list"
 msgstr "Die Modulliste ist nicht abrufbar"
@@ -328,6 +357,10 @@ msgstr "Authentifiziere mich"
 msgid "Authentication successful!"
 msgstr "Authentifizierung erfolgreich!"
 
+#, fuzzy
+msgid "Successfully cleaned cache directories."
+msgstr "Wir haben erfolgreich Ihre Cache-Ordner gesäubert."
+
 msgid "Delete Cache Directories"
 msgstr "Lösche Cache-Ordner"
 
@@ -360,9 +393,6 @@ msgstr ""
 msgid "Try Again"
 msgstr "Erneut versuchen"
 
-msgid "We have successfully cleaned out your cache directories."
-msgstr "Wir haben erfolgreich Ihre Cache-Ordner gesäubert."
-
 msgid "Finished!"
 msgstr "Abgeschlossen!"
 
@@ -391,20 +421,23 @@ msgstr ""
 msgid "Welcome to the Gallery Upgrader"
 msgstr "Willkommen zur Gallery-Aktualisierung"
 
+msgid "Upgrader Help"
+msgstr "Aktualisierungshilfe"
+
+msgid "Start Over"
+msgstr "Neu anfangen"
+
+# param0 = integer percentage
+#, c-format
+msgid "Upgrade %d%% complete"
+msgstr "Aktualisierung zu %d%% abgeschlossen"
+
 msgid "Redo this step"
 msgstr "Diesen Schritt wiederholen"
 
 #, c-format
 msgid "Continue to Step %d&raquo;"
 msgstr "Weiter zum Schritt %d&raquo;"
-
-msgid "Upgrade Status"
-msgstr "Aktualisierungs-Status"
-
-# param0 = integer percentage
-#, c-format
-msgid "Upgrade %d%% complete"
-msgstr "Aktualisierung zu %d%% abgeschlossen"
 
 msgid "Gallery: <strong>your photos</strong> on <strong>your website</strong>"
 msgstr "Gallery: <strong>Ihre Photos</strong> auf <strong>Ihrer Webseite</strong>"
@@ -446,12 +479,6 @@ msgstr ""
 
 msgid "Upgrade Steps"
 msgstr "Aktualisierung"
-
-msgid "Upgrader Help"
-msgstr "Aktualisierungshilfe"
-
-msgid "Start Over"
-msgstr "Neu anfangen"
 
 msgid "Missing or invalid config.php"
 msgstr "Fehlende oder fehlerhafte config.php"
@@ -572,15 +599,15 @@ msgstr ""
 msgid "MySQL"
 msgstr "MySQL"
 
-#, c-format
-msgid "mysqldump -u%s -p<i>YourPassword</i> --opt %s > %s.sql"
+#, fuzzy, c-format
+msgid "mysqldump -u%s -p -h %s --opt %s > %s.sql"
 msgstr "mysqldump -u%s -p<i>IhrPasswort</i> --opt %s > %s.sql"
 
 msgid "PostgreSQL"
 msgstr "PostgreSQL"
 
-#, c-format
-msgid "pg_dump --format=t %s > %s.sql"
+#, fuzzy, c-format
+msgid "pg_dump -h %s --format=t %s > %s.sql"
 msgstr "pg_dump --format=t %s > %s.sql"
 
 msgid ""
@@ -695,3 +722,9 @@ msgstr "Sprache auswählen:"
 # Badly chosen mgsid: means: switch to selected language
 msgid "Go"
 msgstr "Sprache einstellen"
+
+#~ msgid "Finished"
+#~ msgstr "Abgeschlossen"
+
+#~ msgid "Upgrade Status"
+#~ msgstr "Aktualisierungs-Status"

@@ -188,6 +188,10 @@ msgstr "Defekte Bildderivate werden ermittelt"
 msgid "Clearing fast-download cache"
 msgstr "Leere Schnell-Download-Cache"
 
+#, fuzzy
+msgid "Deleting old fast-download cache"
+msgstr "Leere Schnell-Download-Cache"
+
 msgid "Site Admins"
 msgstr "Site-Administratoren"
 
@@ -289,8 +293,20 @@ msgstr "Die Einstellungen wurden erfolgreich gespeichert."
 msgid "&laquo; default theme &raquo;"
 msgstr "&laquo; Standard-Motiv &raquo;"
 
+#, fuzzy
+msgid "Recreating resized images"
+msgstr "Erstelle Zwischengrößen erneut"
+
+#, fuzzy
+msgid "Rebuilding thumbnails..."
+msgstr "Erstelle Vorschaubilder erneut"
+
 msgid "Album"
 msgstr "Album"
+
+#, c-format
+msgid "Processing image %d of %d"
+msgstr "Verarbeite Bild %d von %d"
 
 msgid "Changes saved successfully"
 msgstr "Änderungen erfolgreich gespeichert."
@@ -546,10 +562,6 @@ msgid "Debug output for failed items:"
 msgstr "Fehlerausgabe für fehlgeschlagene Elemente:"
 
 #, c-format
-msgid "Processing image %d of %d"
-msgstr "Verarbeite Bild %d von %d"
-
-#, c-format
 msgid "Checked %d items"
 msgstr "%d Elemente geprüft"
 
@@ -564,8 +576,9 @@ msgstr "%d elemente fehlgeschlagen"
 msgid "Delete database cache"
 msgstr "Datenbankpuffer leeren"
 
+#, fuzzy
 msgid ""
-"Gallery stores commonly used database information on disk for increased performance.  If you "
+"Gallery stores commonly used database information on disk for increased performance. If you "
 "modify the database directly, you should run this task to clean out the cache and force "
 "Gallery to reload the information from the database."
 msgstr ""
@@ -666,29 +679,22 @@ msgstr "downloaden"
 msgid "Plugins directory does not exist."
 msgstr "Das Verzeichnis für Erweiterungen existiert nicht."
 
-#, c-format
+#, fuzzy
 msgid ""
-"Couldn't create plugin directory '%s' in '%s', make sure the web server has write "
-"permissions in it."
+"Couldn't create plugins subdirectory. Make sure the webserver has write permissions in it."
 msgstr ""
 "Konnte das Verzeichnis für Erweiterungen '%s' nicht in '%s' anlegen. Stellen Sie sicher, "
 "dass der Webserver die nötigen Schreibrechte dafür hat."
 
-#, c-format
-msgid "Couldn't create repository cache path '%s'."
+msgid "Couldn't create repository cache path."
 msgstr ""
 
-#, c-format
+#, fuzzy
 msgid ""
-"Couldn't create cache directory '%s' in '%s', make sure the web server has write permissions "
-"in it."
+"Couldn't create cache subdirectory. Make sure the web server has write permissions in it."
 msgstr ""
 "Konnte das Cache-Verzeichnis '%s' nicht in '%s' anlegen. Stellen Sie sicher, dass der "
 "Webserver die nötigen Schreibrechte dafür hat."
-
-#, c-format
-msgid "Error downloading package from '%s'."
-msgstr ""
 
 #, c-format
 msgid "Error downloading index from '%s'."
@@ -751,7 +757,7 @@ msgstr "Diese Seite ist gültiges XHTML 1.0"
 msgid "Donate to the Gallery project"
 msgstr "Spenden Sie für das Gallery-Projekt"
 
-msgid "G2.0: Unpossible!"
+msgid "G2.1: Blackjack"
 msgstr ""
 
 #, c-format
@@ -1723,13 +1729,10 @@ msgid ""
 "the process might take a minute or two."
 msgstr ""
 
-msgid "As of the last update on"
-msgstr ""
-
 #, c-format
 msgid ""
-", the repository contains %s modules and %s themes. Its contents can be viewed on the "
-"Modules and Themes tabs."
+"As of the last update on %s, the repository contains %s modules and %s themes. Its contents "
+"can be viewed on the Modules and Themes tabs."
 msgstr ""
 
 msgid ""
@@ -1753,12 +1756,12 @@ msgstr ""
 msgid "Review plugin compatibility (on the Themes and Modules tabs)"
 msgstr ""
 
-#, c-format
-msgid "<a href=\"%s\">Download</a> Gallery core"
+#, fuzzy, c-format
+msgid "%sDownload%s Gallery core"
 msgstr "Gallery-Kern <a href=\"%s\">herunterladen</a>"
 
 #, c-format
-msgid "Read the <a href=\"%s\">upgrade instructions</a> and perform the upgrade"
+msgid "Read the %supgrade instructions%s and perform the upgrade"
 msgstr ""
 
 #, fuzzy
@@ -1877,34 +1880,18 @@ msgstr ""
 msgid "Gallery Repository Setup"
 msgstr "Gallery-Version"
 
-msgid "Warning: `$errorMessage`"
-msgstr ""
-
-msgid ""
-"In order to download plugins from the Gallery repository, a special directory needs to be "
-"created where Gallery will store the data."
+msgid "Warning:"
 msgstr ""
 
 #, c-format
 msgid ""
-"Under your Gallery base directory, create a directory called '%s' and allow the web server "
-"to write into it by appropriately setting the permissions."
+"In order to download plugins from the Gallery repository, a special directory needs to be "
+"created where Gallery will store the data. Under your Gallery base directory, create a "
+"directory called '%s' and allow the web server to write into it by appropriately setting the "
+"permissions."
 msgstr ""
 
 msgid "Instructions for Unix-type platforms:"
-msgstr ""
-
-# sidebar.tpl: %d is number of item, %s is truncated title
-#, fuzzy, c-format
-msgid "$ cd %s"
-msgstr "%d. %s"
-
-#, c-format
-msgid "$ mkdir %s"
-msgstr ""
-
-#, c-format
-msgid "$ chmod 777 %s"
 msgstr ""
 
 msgid ""
@@ -2097,6 +2084,9 @@ msgstr "Sicherheitsverstoß"
 msgid "Database Error"
 msgstr "Datenbankfehler"
 
+msgid "Platform Error"
+msgstr ""
+
 msgid "Error"
 msgstr "Fehler"
 
@@ -2132,6 +2122,16 @@ msgstr ""
 "versuchen Sie die Aktion erneut, bevor sie um Unterstützung hinsichtlich dieses Fehlers "
 "bitten. Die Fehlerdetails können dann relativ nah am Ende der langen Debug-Ausgabe gefunden "
 "werden."
+
+#, fuzzy
+msgid "An error has occurred while interacting with the platform."
+msgstr "Es ist ein Fehler beim Zugriff auf die Datenbank aufgetreten."
+
+msgid ""
+"The exact nature of the platform error is unknown. A common cause are insufficient file "
+"system permissions. This can happen if you or your webhost changed something in the file "
+"system, e.g. by restoring data from a backup."
+msgstr ""
 
 msgid "An error has occurred."
 msgstr "Es ist ein Fehler aufgetreten."
@@ -3134,14 +3134,16 @@ msgstr "Fehlendes Motiv"
 
 #, fuzzy, c-format
 msgid ""
-"This page is configured to use the %s theme, but it is either inactive or not installed."
+"This page is configured to use the %s theme, but it is either inactive, not installed, or "
+"incompatible."
 msgstr ""
 "Dieses Album wurde so konfiguriert, dass es das %s-Motiv benutzt, das aber deaktiviert oder "
 "nicht installiert ist."
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"This album is configured to use the %s theme, but it is either inactive or not installed."
+"This album is configured to use the %s theme, but it is either inactive, not installed, or "
+"incompatible."
 msgstr ""
 "Dieses Album wurde so konfiguriert, dass es das %s-Motiv benutzt, das aber deaktiviert oder "
 "nicht installiert ist."
@@ -3536,6 +3538,11 @@ msgstr "[test] eine zweite Zugriffsberechtigung"
 
 msgid "Unit test theme"
 msgstr "Unit Test Motiv"
+
+# sidebar.tpl: %d is number of item, %s is truncated title
+#, fuzzy
+#~ msgid "$ cd %s"
+#~ msgstr "%d. %s"
 
 #~ msgid "&laquo; None &raquo;"
 #~ msgstr "&laquo; keine &raquo;"

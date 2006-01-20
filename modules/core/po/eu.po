@@ -180,6 +180,10 @@ msgstr "Hautsitako eratorriak atzematen"
 msgid "Clearing fast-download cache"
 msgstr "Deskarga-azkar katxea garbitzen"
 
+#, fuzzy
+msgid "Deleting old fast-download cache"
+msgstr "Deskarga-azkar katxea garbitzen"
+
 msgid "Site Admins"
 msgstr "Gune Kudeatzaileak"
 
@@ -281,8 +285,20 @@ msgstr "Ezarpenak behar bezala gorde dira."
 msgid "&laquo; default theme &raquo;"
 msgstr "&laquo; lehenetsitako gaia &raquo;"
 
+#, fuzzy
+msgid "Recreating resized images"
+msgstr "Taimanaz aldaturiko irudiak berriz sortu"
+
+#, fuzzy
+msgid "Rebuilding thumbnails..."
+msgstr "Argazkitxoa berriz sortu"
+
 msgid "Album"
 msgstr "Albuma"
+
+#, c-format
+msgid "Processing image %d of %d"
+msgstr "%d irudia prozesatzen %d iruditik"
 
 msgid "Changes saved successfully"
 msgstr "Aldaketak behar bezala gorde dira"
@@ -538,10 +554,6 @@ msgid "Debug output for failed items:"
 msgstr "Huts egin duten elementuen arazpen irteera:"
 
 #, c-format
-msgid "Processing image %d of %d"
-msgstr "%d irudia prozesatzen %d iruditik"
-
-#, c-format
 msgid "Checked %d items"
 msgstr "%d elementu egiazturik"
 
@@ -556,8 +568,9 @@ msgstr "%d elementuk huts egin dute"
 msgid "Delete database cache"
 msgstr "Datu-base katxea ezabatu"
 
+#, fuzzy
 msgid ""
-"Gallery stores commonly used database information on disk for increased performance.  If you "
+"Gallery stores commonly used database information on disk for increased performance. If you "
 "modify the database directly, you should run this task to clean out the cache and force "
 "Gallery to reload the information from the database."
 msgstr ""
@@ -658,24 +671,15 @@ msgstr "behera"
 msgid "Plugins directory does not exist."
 msgstr "%s erabiltzailerik ez dago."
 
-#, c-format
 msgid ""
-"Couldn't create plugin directory '%s' in '%s', make sure the web server has write "
-"permissions in it."
+"Couldn't create plugins subdirectory. Make sure the webserver has write permissions in it."
 msgstr ""
 
-#, c-format
-msgid "Couldn't create repository cache path '%s'."
+msgid "Couldn't create repository cache path."
 msgstr ""
 
-#, c-format
 msgid ""
-"Couldn't create cache directory '%s' in '%s', make sure the web server has write permissions "
-"in it."
-msgstr ""
-
-#, c-format
-msgid "Error downloading package from '%s'."
+"Couldn't create cache subdirectory. Make sure the web server has write permissions in it."
 msgstr ""
 
 #, c-format
@@ -737,8 +741,8 @@ msgstr "Orrialde hau XHTML 1.0 baliozkoa da"
 msgid "Donate to the Gallery project"
 msgstr "Gallery proiektuari dohaintza egin"
 
-msgid "G2.0: Unpossible!"
-msgstr "G2.0: Ezinezkoa!"
+msgid "G2.1: Blackjack"
+msgstr ""
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -1684,13 +1688,10 @@ msgid ""
 "the process might take a minute or two."
 msgstr ""
 
-msgid "As of the last update on"
-msgstr ""
-
 #, c-format
 msgid ""
-", the repository contains %s modules and %s themes. Its contents can be viewed on the "
-"Modules and Themes tabs."
+"As of the last update on %s, the repository contains %s modules and %s themes. Its contents "
+"can be viewed on the Modules and Themes tabs."
 msgstr ""
 
 msgid ""
@@ -1717,11 +1718,11 @@ msgid "Review plugin compatibility (on the Themes and Modules tabs)"
 msgstr ""
 
 #, c-format
-msgid "<a href=\"%s\">Download</a> Gallery core"
+msgid "%sDownload%s Gallery core"
 msgstr ""
 
 #, c-format
-msgid "Read the <a href=\"%s\">upgrade instructions</a> and perform the upgrade"
+msgid "Read the %supgrade instructions%s and perform the upgrade"
 msgstr ""
 
 #, fuzzy
@@ -1843,33 +1844,18 @@ msgstr ""
 msgid "Gallery Repository Setup"
 msgstr "Gallery bertsioa"
 
-msgid "Warning: `$errorMessage`"
-msgstr ""
-
-msgid ""
-"In order to download plugins from the Gallery repository, a special directory needs to be "
-"created where Gallery will store the data."
+msgid "Warning:"
 msgstr ""
 
 #, c-format
 msgid ""
-"Under your Gallery base directory, create a directory called '%s' and allow the web server "
-"to write into it by appropriately setting the permissions."
+"In order to download plugins from the Gallery repository, a special directory needs to be "
+"created where Gallery will store the data. Under your Gallery base directory, create a "
+"directory called '%s' and allow the web server to write into it by appropriately setting the "
+"permissions."
 msgstr ""
 
 msgid "Instructions for Unix-type platforms:"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "$ cd %s"
-msgstr "%d. %s"
-
-#, c-format
-msgid "$ mkdir %s"
-msgstr ""
-
-#, c-format
-msgid "$ chmod 777 %s"
 msgstr ""
 
 msgid ""
@@ -2060,6 +2046,9 @@ msgstr "Segurtasun Haustura"
 msgid "Database Error"
 msgstr "Datu-basearen errorea"
 
+msgid "Platform Error"
+msgstr ""
+
 msgid "Error"
 msgstr "Errorea"
 
@@ -2093,6 +2082,16 @@ msgstr ""
 "badago.  Errore honentzat laguntza bilatu aurretik, mesedez hilaraturiko arazpen irteera "
 "gaitu eta ekinzta egiten berriz saiatu. Arazpen irteeraren amaiera aldera ebgiratu "
 "errorearen xehetasunak aurkitzeko."
+
+#, fuzzy
+msgid "An error has occurred while interacting with the platform."
+msgstr "Errore bat gertatu da datu-basearekin erlazionatzerakoan"
+
+msgid ""
+"The exact nature of the platform error is unknown. A common cause are insufficient file "
+"system permissions. This can happen if you or your webhost changed something in the file "
+"system, e.g. by restoring data from a backup."
+msgstr ""
 
 msgid "An error has occurred."
 msgstr "Errore bat gertatu da."
@@ -3071,13 +3070,15 @@ msgstr "Gaia falta da"
 
 #, fuzzy, c-format
 msgid ""
-"This page is configured to use the %s theme, but it is either inactive or not installed."
+"This page is configured to use the %s theme, but it is either inactive, not installed, or "
+"incompatible."
 msgstr ""
 "Album hau %s gaia erabiltzeko konfiguraturik dago, baina instalatu gabe edo ezgaiturik dago."
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"This album is configured to use the %s theme, but it is either inactive or not installed."
+"This album is configured to use the %s theme, but it is either inactive, not installed, or "
+"incompatible."
 msgstr ""
 "Album hau %s gaia erabiltzeko konfiguraturik dago, baina instalatu gabe edo ezgaiturik dago."
 
@@ -3452,6 +3453,13 @@ msgstr "[Proba] A bigarren baimena"
 
 msgid "Unit test theme"
 msgstr "Unitate prba gaia"
+
+#~ msgid "G2.0: Unpossible!"
+#~ msgstr "G2.0: Ezinezkoa!"
+
+#, fuzzy
+#~ msgid "$ cd %s"
+#~ msgstr "%d. %s"
 
 #~ msgid "&laquo; None &raquo;"
 #~ msgstr "&laquo; Bat ere ez&raquo;"

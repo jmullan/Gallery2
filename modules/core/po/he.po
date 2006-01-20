@@ -177,6 +177,10 @@ msgstr "מזהה נגזרות שבורות"
 msgid "Clearing fast-download cache"
 msgstr ""
 
+#, fuzzy
+msgid "Deleting old fast-download cache"
+msgstr "מוחק טבלת הרשאות ישנה"
+
 msgid "Site Admins"
 msgstr "מנהלי מערכת"
 
@@ -278,8 +282,20 @@ msgstr "הגדרות נשמרו בהצלחה."
 msgid "&laquo; default theme &raquo;"
 msgstr "&laquo; עיצוב ברירת המחדל &raquo;"
 
+#, fuzzy
+msgid "Recreating resized images"
+msgstr "צור מחדש תמונות בגודל שונה"
+
+#, fuzzy
+msgid "Rebuilding thumbnails..."
+msgstr "צור מחדש תמונות מוקטנות"
+
 msgid "Album"
 msgstr "אלבום"
+
+#, fuzzy, c-format
+msgid "Processing image %d of %d"
+msgstr "מציג עמוד %d מתוך %d"
 
 msgid "Changes saved successfully"
 msgstr "שינויים נשמרו בהצלחה"
@@ -534,10 +550,6 @@ msgid "Debug output for failed items:"
 msgstr ""
 
 #, fuzzy, c-format
-msgid "Processing image %d of %d"
-msgstr "מציג עמוד %d מתוך %d"
-
-#, fuzzy, c-format
 msgid "Checked %d items"
 msgstr "הוסף פריטים"
 
@@ -553,7 +565,7 @@ msgid "Delete database cache"
 msgstr ""
 
 msgid ""
-"Gallery stores commonly used database information on disk for increased performance.  If you "
+"Gallery stores commonly used database information on disk for increased performance. If you "
 "modify the database directly, you should run this task to clean out the cache and force "
 "Gallery to reload the information from the database."
 msgstr ""
@@ -649,24 +661,15 @@ msgstr "למטה"
 msgid "Plugins directory does not exist."
 msgstr "המשתמש '%s' לא קיים."
 
-#, c-format
 msgid ""
-"Couldn't create plugin directory '%s' in '%s', make sure the web server has write "
-"permissions in it."
+"Couldn't create plugins subdirectory. Make sure the webserver has write permissions in it."
 msgstr ""
 
-#, c-format
-msgid "Couldn't create repository cache path '%s'."
+msgid "Couldn't create repository cache path."
 msgstr ""
 
-#, c-format
 msgid ""
-"Couldn't create cache directory '%s' in '%s', make sure the web server has write permissions "
-"in it."
-msgstr ""
-
-#, c-format
-msgid "Error downloading package from '%s'."
+"Couldn't create cache subdirectory. Make sure the web server has write permissions in it."
 msgstr ""
 
 #, c-format
@@ -730,7 +733,7 @@ msgstr "עמוד זה הוא עמוד XHTML 1.0 תקני"
 msgid "Donate to the Gallery project"
 msgstr "חזרה לגלרייה"
 
-msgid "G2.0: Unpossible!"
+msgid "G2.1: Blackjack"
 msgstr ""
 
 #, c-format
@@ -1645,13 +1648,10 @@ msgid ""
 "the process might take a minute or two."
 msgstr ""
 
-msgid "As of the last update on"
-msgstr ""
-
 #, c-format
 msgid ""
-", the repository contains %s modules and %s themes. Its contents can be viewed on the "
-"Modules and Themes tabs."
+"As of the last update on %s, the repository contains %s modules and %s themes. Its contents "
+"can be viewed on the Modules and Themes tabs."
 msgstr ""
 
 msgid ""
@@ -1678,11 +1678,11 @@ msgid "Review plugin compatibility (on the Themes and Modules tabs)"
 msgstr ""
 
 #, c-format
-msgid "<a href=\"%s\">Download</a> Gallery core"
+msgid "%sDownload%s Gallery core"
 msgstr ""
 
 #, c-format
-msgid "Read the <a href=\"%s\">upgrade instructions</a> and perform the upgrade"
+msgid "Read the %supgrade instructions%s and perform the upgrade"
 msgstr ""
 
 #, fuzzy
@@ -1805,33 +1805,18 @@ msgstr ""
 msgid "Gallery Repository Setup"
 msgstr "Gallery %s"
 
-msgid "Warning: `$errorMessage`"
-msgstr ""
-
-msgid ""
-"In order to download plugins from the Gallery repository, a special directory needs to be "
-"created where Gallery will store the data."
+msgid "Warning:"
 msgstr ""
 
 #, c-format
 msgid ""
-"Under your Gallery base directory, create a directory called '%s' and allow the web server "
-"to write into it by appropriately setting the permissions."
+"In order to download plugins from the Gallery repository, a special directory needs to be "
+"created where Gallery will store the data. Under your Gallery base directory, create a "
+"directory called '%s' and allow the web server to write into it by appropriately setting the "
+"permissions."
 msgstr ""
 
 msgid "Instructions for Unix-type platforms:"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "$ cd %s"
-msgstr "%d. %s"
-
-#, c-format
-msgid "$ mkdir %s"
-msgstr ""
-
-#, c-format
-msgid "$ chmod 777 %s"
 msgstr ""
 
 msgid ""
@@ -2028,6 +2013,9 @@ msgstr "פגיעה באבטחה"
 msgid "Database Error"
 msgstr ""
 
+msgid "Platform Error"
+msgstr ""
+
 msgid "Error"
 msgstr "שגיאה"
 
@@ -2055,6 +2043,15 @@ msgid ""
 "The exact nature of database errors is not captured unless Gallery debug mode is enabled in "
 "config.php.  Before seeking support for this error please enable buffered debug output and "
 "retry the operation.  Look near the bottom of the lengthy debug output to find error details."
+msgstr ""
+
+msgid "An error has occurred while interacting with the platform."
+msgstr ""
+
+msgid ""
+"The exact nature of the platform error is unknown. A common cause are insufficient file "
+"system permissions. This can happen if you or your webhost changed something in the file "
+"system, e.g. by restoring data from a backup."
 msgstr ""
 
 msgid "An error has occurred."
@@ -3022,14 +3019,16 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid ""
-"This page is configured to use the %s theme, but it is either inactive or not installed."
+"This page is configured to use the %s theme, but it is either inactive, not installed, or "
+"incompatible."
 msgstr ""
 "אלבום זה מוגדר לשימוש בערכת הצבעים <b>%s</b>. הגדרות אלו ישפיעו על ערכת הצבעים של אלבום זה "
 "בלבד."
 
 #, fuzzy, c-format
 msgid ""
-"This album is configured to use the %s theme, but it is either inactive or not installed."
+"This album is configured to use the %s theme, but it is either inactive, not installed, or "
+"incompatible."
 msgstr ""
 "אלבום זה מוגדר לשימוש בערכת הצבעים <b>%s</b>. הגדרות אלו ישפיעו על ערכת הצבעים של אלבום זה "
 "בלבד."
@@ -3377,6 +3376,10 @@ msgstr "[בדיקה] הרשאה"
 #, fuzzy
 msgid "Unit test theme"
 msgstr "מודול בדיקת יחידה"
+
+#, fuzzy
+#~ msgid "$ cd %s"
+#~ msgstr "%d. %s"
 
 #~ msgid "&laquo; None &raquo;"
 #~ msgstr "&laquo; לא קיים &raquo;"

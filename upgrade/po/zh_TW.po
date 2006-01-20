@@ -44,8 +44,8 @@ msgstr "<b>錯誤：<b>無效的密碼。"
 msgid "Empty Cache"
 msgstr "清除快取"
 
-msgid "Finished"
-msgstr "完成"
+msgid "Finish Upgrade"
+msgstr "昇級完畢"
 
 msgid "System Checks"
 msgstr "系統檢查"
@@ -91,14 +91,15 @@ msgid "Safe Mode"
 msgstr "安全模式"
 
 msgid "Regular expressions"
-msgstr ""
+msgstr "常規表示式（Regular expressions）"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error: Your PHP is configured without support for %sPerl Compatible Regular Expressions%s. "
 "You must enable these functions before Gallery will run."
 msgstr ""
-"錯誤：你的 PHP 版本設定為使用安全模式（Safe Mode）。你必需關閉安全模式才能繼續執行 Gallery。"
+"錯誤：你的 PHP 設定並不支援 %sPerl Compatible Regular Expressions%s。你必需開啟這些功能才能繼"
+"續執行 Gallery。"
 
 msgid "exec() allowed"
 msgstr "允許 exec()"
@@ -177,7 +178,7 @@ msgstr ""
 "該提高這個限制以允許上傳更大的檔案。"
 
 msgid "Translation support"
-msgstr ""
+msgstr "翻譯支援"
 
 #, c-format
 msgid ""
@@ -185,18 +186,22 @@ msgid ""
 "please instruct your system administrator to reconfigure PHP with the %sgettext%s option "
 "enabled."
 msgstr ""
+"你的網頁伺服器不支援多語文環境。請指示你的系統管理員重新設定 PHP，啟動 %sgettext%s 選項，才能"
+"使用其他語文。"
 
 #, c-format
 msgid ""
 "Your PHP is missing the function %sbind_textdomain_codeset%s. This means Gallery may display "
 "extended characters for some languages incorrectly."
 msgstr ""
+"你的 PHP 沒有 %sbind_textdomain_codeset%s 函式。這表示 Gallery 可能無法正確顯示某些語文中的字"
+"元。"
 
 #, c-format
 msgid ""
 "Your PHP is missing the function %sdngettext%s. This means Gallery will be unable to "
 "translate plural forms."
-msgstr ""
+msgstr "你的 PHP 沒有 %sdngettext%s 函式。這表示 Gallery 將無法翻譯複數名詞。"
 
 msgid "Zend compatibility mode"
 msgstr "Zend 相容模式"
@@ -211,6 +216,34 @@ msgstr ""
 "警告：你的 PHP 設定使用可能使 PHP 當機的 Zend ze1_compatibility_mode 選項。請按<a href=\"%s"
 "\">這裡</a>測試 PHP。如果你看到「SUCCESS」表示你的 PHP 正常。如果你得到一個錯誤訊息，你需要"
 "把 ze1_compatibility_mode關掉才能繼續。"
+
+msgid "putenv() allowed"
+msgstr "允許 putenv()"
+
+msgid ""
+"Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> "
+"parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
+"Gallery will be unable to run in other languages than the system language and English."
+msgstr ""
+"警告：你的 PHP 中的 putenv() 函式被 php.ini 中的 <b>disabled_functions</b> 參數關閉了。"
+"Gallery 仍然可以在這個設定下執行，可是在極少數的系統上 Gallery 將無法在除了系統和英文以外的語"
+"文下執行。"
+
+msgid "Output buffering disabled"
+msgstr "輸出緩衝已關閉"
+
+#, c-format
+msgid ""
+"Warning: Output buffering is enabled in your php by the <b>%s</b> parameter(s) in php.ini.  "
+"Gallery can function with this setting - downloading files is even faster - but Gallery "
+"might be unable to serve large files (e.g. large videos) and run into the  memory limit. "
+"Also, some features like the progress bars might not work correctly if output buffering is "
+"enabled unless ini_set() is allowed."
+msgstr ""
+"警告：你的 PHP 中的輸出緩衝功能被 php.ini 中的 <b>%s</b> 參數打開了。Gallery 仍然可以在這個設"
+"定下執行，下載檔案可能還會變快，可是 Gallery 可能會無法傳送太大的檔案（如影片）而且可能會耗盡"
+"記憶空間。此外，除非 ini_set() 可以被使用，打開輸出緩衝會使有些如處理進度等的功能無法正確工"
+"作。"
 
 msgid "Storage Directory Permissions"
 msgstr "儲存目錄存取權限"
@@ -233,20 +266,20 @@ msgid "Manifest missing or inaccessible."
 msgstr "找不到或無法存取檔案清單"
 
 msgid "Upgrade Core"
-msgstr "升級核心"
+msgstr "昇級核心"
 
 msgid "Upgrade Modules"
-msgstr "升級模組"
+msgstr "昇級模組"
 
 msgid "Unable to initialize Gallery session"
-msgstr ""
+msgstr "無法初始化 Gallery 連線資料"
 
 #, c-format
 msgid "Unable to load the %s module"
 msgstr "無法載入%s模組"
 
 msgid "Upgrading modules"
-msgstr "正在升級模組"
+msgstr "正在昇級模組"
 
 #, c-format
 msgid "%s module needs configuration"
@@ -256,19 +289,19 @@ msgstr "%s模組需要設定"
 msgid "Unable to upgrade the %s module"
 msgstr "無法昇級%s模組"
 
+msgid "Unable to commit database transaction"
+msgstr "無法送出資料庫異動"
+
 #, c-format
 msgid "Unable to load the %s theme"
 msgstr "無法載入%s佈景主題"
 
 msgid "Upgrading themes"
-msgstr "正在升級佈景主題"
+msgstr "正在昇級佈景主題"
 
 #, c-format
 msgid "Unable to upgrade the %s theme"
 msgstr "無法昇級%s佈景主題"
-
-msgid "Unable to commit database transaction"
-msgstr "無法送出資料庫異動"
 
 msgid "Unable to get the module list"
 msgstr "無法取得模組列表"
@@ -302,6 +335,10 @@ msgstr "確認我的身分"
 msgid "Authentication successful!"
 msgstr "認證成功"
 
+#, fuzzy
+msgid "Successfully cleaned cache directories."
+msgstr "我們成功地清除了你的快取目錄。"
+
 msgid "Delete Cache Directories"
 msgstr "刪除快取目錄"
 
@@ -330,9 +367,6 @@ msgstr ""
 msgid "Try Again"
 msgstr "再試一次"
 
-msgid "We have successfully cleaned out your cache directories."
-msgstr "我們成功地清除了你的快取目錄。"
-
 msgid "Finished!"
 msgstr "完成了！"
 
@@ -357,19 +391,22 @@ msgstr ""
 msgid "Welcome to the Gallery Upgrader"
 msgstr "歡迎使用 Gallery 昇級程式"
 
+msgid "Upgrader Help"
+msgstr "昇級程式說明"
+
+msgid "Start Over"
+msgstr "重新開始"
+
+#, c-format
+msgid "Upgrade %d%% complete"
+msgstr "昇級進度 %d%%"
+
 msgid "Redo this step"
 msgstr "重覆這個步驟"
 
 #, c-format
 msgid "Continue to Step %d&raquo;"
 msgstr "繼續到步驟 %d&raquo;"
-
-msgid "Upgrade Status"
-msgstr "昇級狀況"
-
-#, c-format
-msgid "Upgrade %d%% complete"
-msgstr "昇級進度 %d%%"
 
 msgid "Gallery: <strong>your photos</strong> on <strong>your website</strong>"
 msgstr "Gallery：<strong>你的照片</strong>、<strong>你的網站</strong>"
@@ -408,12 +445,6 @@ msgstr "Gallery 已經不再使用這些檔案。它們大概不會造成任何�
 
 msgid "Upgrade Steps"
 msgstr "昇級步驟"
-
-msgid "Upgrader Help"
-msgstr "昇級程式說明"
-
-msgid "Start Over"
-msgstr "重新開始"
 
 msgid "Missing or invalid config.php"
 msgstr "找不到或無效的 config.php"
@@ -520,15 +551,15 @@ msgid "MySQL"
 msgstr "MySQL"
 
 #, c-format
-msgid "mysqldump -u%s -p<i>YourPassword</i> --opt %s > %s.sql"
-msgstr "mysqldump -u%s -p<i>你的密碼</i> --opt %s > %s.sql"
+msgid "mysqldump -u%s -p -h %s --opt %s > %s.sql"
+msgstr "mysqldump -u%s -p -h %s --opt %s > %s.sql"
 
 msgid "PostgreSQL"
 msgstr "PostgreSQL"
 
 #, c-format
-msgid "pg_dump --format=t %s > %s.sql"
-msgstr "pg_dump --format=t %s > %s.sql"
+msgid "pg_dump -h %s --format=t %s > %s.sql"
+msgstr "pg_dump -h %s --format=t %s > %s.sql"
 
 msgid ""
 "Once the upgrade has begun, please be patient.  If you cancel or reload the page, you may "
@@ -633,3 +664,9 @@ msgstr "選擇語言："
 
 msgid "Go"
 msgstr "開始"
+
+#~ msgid "Finished"
+#~ msgstr "完成"
+
+#~ msgid "Upgrade Status"
+#~ msgstr "昇級狀況"

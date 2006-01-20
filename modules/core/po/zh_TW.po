@@ -36,10 +36,10 @@ msgid "forever"
 msgstr "永久"
 
 msgid "High Priority (Me first!)"
-msgstr ""
+msgstr "高優先權（我先！）"
 
 msgid "Low Priority (I want to share!)"
-msgstr ""
+msgstr "低優先權（我願意分享）"
 
 msgid "No Markup"
 msgstr "無標簽"
@@ -83,7 +83,7 @@ msgid "install"
 msgstr "安裝"
 
 msgid "upgrade"
-msgstr "升級"
+msgstr "昇級"
 
 msgid "configure"
 msgstr "設定"
@@ -97,24 +97,21 @@ msgstr "卸載"
 msgid "deactivate"
 msgstr "關閉"
 
-#, fuzzy
 msgid "Performing Maintenance Tasks"
-msgstr "系統維護"
+msgstr "系統維護中"
 
 #, c-format
 msgid "Downloading %s"
-msgstr ""
+msgstr "下載 %s 中"
 
-#, fuzzy
 msgid "Done."
-msgstr "完成"
+msgstr "完成。"
 
-#, fuzzy
 msgid "Upgrade"
-msgstr "升級"
+msgstr "昇級"
 
 msgid "Download"
-msgstr ""
+msgstr "下載"
 
 msgid "Inherit settings from parent album"
 msgstr "從上層相簿中繼承設定值"
@@ -156,7 +153,7 @@ msgid "[core] Delete item"
 msgstr "[核心] 刪除項目"
 
 msgid "Upgrading permissions"
-msgstr "正在升級權限"
+msgstr "正在昇級權限"
 
 msgid "Deleting old permission tables"
 msgstr "正在刪除舊的權限表格"
@@ -172,6 +169,9 @@ msgstr "偵測壞掉的衍生檔案"
 
 msgid "Clearing fast-download cache"
 msgstr "正在清除快速下載快取"
+
+msgid "Deleting old fast-download cache"
+msgstr "正在清除舊的快速下載快取"
 
 msgid "Site Admins"
 msgstr "網站管理員"
@@ -272,8 +272,18 @@ msgstr "設定儲存成功。"
 msgid "&laquo; default theme &raquo;"
 msgstr "&laquo; 預設佈景主題 &raquo;"
 
+msgid "Recreating resized images"
+msgstr "重新產生縮放圖片中"
+
+msgid "Rebuilding thumbnails..."
+msgstr "重新產生縮略圖中..."
+
 msgid "Album"
 msgstr "相簿"
+
+#, c-format
+msgid "Processing image %d of %d"
+msgstr "正在處理 %2$d 個圖片中的 %1$d 個"
 
 msgid "Changes saved successfully"
 msgstr "變更已儲存成功"
@@ -461,7 +471,7 @@ msgid "Modules"
 msgstr "模組"
 
 msgid "Repository"
-msgstr ""
+msgstr "軟體庫"
 
 msgid "Themes"
 msgstr "佈景主題"
@@ -527,10 +537,6 @@ msgid "Debug output for failed items:"
 msgstr "失敗項目的除蟲輸出："
 
 #, c-format
-msgid "Processing image %d of %d"
-msgstr "正在處理 %2$d 個圖片中的 %1$d 個"
-
-#, c-format
 msgid "Checked %d items"
 msgstr "檢查了 %d 個項目"
 
@@ -546,12 +552,12 @@ msgid "Delete database cache"
 msgstr "刪除資料庫快取"
 
 msgid ""
-"Gallery stores commonly used database information on disk for increased performance.  If you "
+"Gallery stores commonly used database information on disk for increased performance. If you "
 "modify the database directly, you should run this task to clean out the cache and force "
 "Gallery to reload the information from the database."
 msgstr ""
 "Gallery 把常用的資料庫資訊儲存在硬碟上以增加效率。如果你直接修改資料庫本身，你必需執行這個工"
-"作來清除快取資料並迫使 Gallery 從資料庫重新讀取資。"
+"作來清除快取資料並迫使 Gallery 從資料庫重新讀取資料。"
 
 #, c-format
 msgid "Successfully deleted directory: %s"
@@ -636,44 +642,36 @@ msgstr "影片"
 msgid "photo"
 msgstr "照片"
 
-#, fuzzy
 msgid "download"
-msgstr "向下"
+msgstr "下載"
+
+msgid "Plugins directory does not exist."
+msgstr "模組目錄不存在。"
 
 #, fuzzy
-msgid "Plugins directory does not exist."
-msgstr "用戶「%s」不存在。"
-
-#, c-format
 msgid ""
-"Couldn't create plugin directory '%s' in '%s', make sure the web server has write "
-"permissions in it."
-msgstr ""
+"Couldn't create plugins subdirectory. Make sure the webserver has write permissions in it."
+msgstr "無法在「%2$s」中產生模組目錄「%1$s」，請確定網頁伺服器有寫入的權限。"
 
-#, c-format
-msgid "Couldn't create repository cache path '%s'."
-msgstr ""
+#, fuzzy
+msgid "Couldn't create repository cache path."
+msgstr "無法產生軟體庫快取路徑「%s」。"
 
-#, c-format
+#, fuzzy
 msgid ""
-"Couldn't create cache directory '%s' in '%s', make sure the web server has write permissions "
-"in it."
-msgstr ""
-
-#, c-format
-msgid "Error downloading package from '%s'."
-msgstr ""
+"Couldn't create cache subdirectory. Make sure the web server has write permissions in it."
+msgstr "無法在「%2$s」中產生快取目錄「%1$s」，請確定網頁伺服器有寫入的權限。"
 
 #, c-format
 msgid "Error downloading index from '%s'."
-msgstr ""
+msgstr "從「%s」下載索引時發生錯誤。"
 
 #, c-format
 msgid "Error downloading index hash from '%s'."
-msgstr ""
+msgstr "從「%s」下載索引雜湊表時發生錯誤。"
 
 msgid "Index integrity check failed."
-msgstr ""
+msgstr "索引完整性驗証失敗。"
 
 msgid "&laquo; default sort order &raquo;"
 msgstr "&laquo; 預設排序 &raquo;"
@@ -723,8 +721,8 @@ msgstr "這個頁面符合 XHTML 1.0 標準"
 msgid "Donate to the Gallery project"
 msgstr "捐款給 Gallery 專案"
 
-msgid "G2.0: Unpossible!"
-msgstr "G2.0: Unpossible!"
+msgid "G2.1: Blackjack"
+msgstr "G2.1: Blackjack"
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -933,20 +931,20 @@ msgstr "發送測試電子郵件時發生錯誤，詳情如下。"
 msgid "Language Settings"
 msgstr "語言設定"
 
-#, fuzzy
 msgid ""
 "Select language defaults for Gallery. Individual users can override this setting in their "
 "personal preferences or via the language selector block if available. Gallery will try to "
 "automatically detect the language preference of each user if the browser preference check is "
 "enabled."
 msgstr ""
-"選擇 Gallery 的預設語言。個別用戶可以在他們的個人偏好設定或語言選單區塊中改變這個設定。"
+"選擇 Gallery 的預設語言。個別用戶可以在他們的個人偏好設定或語言選單區塊中改變這個設定。如果檢"
+"查瀏覽程式偏好的選項是打開的，Gallery 會試著自動偵測個別用戶的語言偏好。"
 
 msgid "Default language"
 msgstr "預設語言"
 
 msgid "Check Browser Preference"
-msgstr ""
+msgstr "檢查瀏覽程式偏好"
 
 msgid "gettext"
 msgstr "gettext"
@@ -1194,7 +1192,7 @@ msgid "Lock system"
 msgstr "鎖定系統"
 
 msgid "Helper Processes"
-msgstr ""
+msgstr "輔助程式"
 
 msgid ""
 "Some Gallery modules will use programs on your server to do image processing, archiving and "
@@ -1203,10 +1201,12 @@ msgid ""
 "that they play nice.  If you're in a shared hosting environment and your web host is "
 "complaining, try setting your priority low."
 msgstr ""
+"有些 Gallery 模組會用到在你的伺服器上程式來做影像處理、備份和其他工作。這些程式可能會很使用很"
+"大的計算能力並可能會降低共用網頁伺服器的速度。你可以降低這些程式的執行優先權限以避免影響其他"
+"網站。如果你使用共用的網頁伺服器，而且你的主機供應商向你抱怨，試著降低優先權限。"
 
-#, fuzzy
 msgid "Priority"
-msgstr "工具優先次序"
+msgstr "優先權限"
 
 msgid "Save"
 msgstr "儲存"
@@ -1301,11 +1301,13 @@ msgstr "刪除用戶 <strong>%s</strong> 並..."
 msgid "Assign a new owner for all items of %s"
 msgstr "對%s的所有項目指定一位新的所有人"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Delete all items of %s and assign a new owner for all remaining non empty albums. Items that "
 "%s doesn't have permission to delete will also be reassigned to a new owner."
-msgstr "刪除%s中的所有項目，並為所有存在的非空相簿指定一個新所有人"
+msgstr ""
+"刪除%s的所有項目，並為所有剩下的非空白相簿指定一個新所有人。%s沒有刪除權限的項目也會指定給一"
+"個新的所有人。"
 
 msgid "New owner (leaving blank means one of the Site Admins):"
 msgstr "新所有人 (留空為網站管理員之一)："
@@ -1523,7 +1525,7 @@ msgstr "「%s」模組昇級成功"
 
 #, c-format
 msgid "Successfully upgraded module %s"
-msgstr "「%s」模組升級成功"
+msgstr "「%s」模組昇級成功"
 
 #, c-format
 msgid "Successfully activated module %s"
@@ -1569,7 +1571,7 @@ msgid "Status: Inactive"
 msgstr "狀態：關閉"
 
 msgid "Status: Upgrade Required (Inactive)"
-msgstr "狀態：需要升級 (關閉)"
+msgstr "狀態：需要昇級 (關閉)"
 
 msgid "Status: Incompatible Module (Inactive)"
 msgstr "狀態：模組不相容 (關閉)"
@@ -1592,35 +1594,34 @@ msgstr "確認模組卸載"
 msgid "Do you really want to uninstall the %s module?"
 msgstr "你確定要卸載%s模組嗎？"
 
-#, fuzzy
 msgid "This will also remove any permissions and clean up any data created by this module."
-msgstr "這也會清除這個模組建立的所有權限設定和暫存資料。"
+msgstr "這也會清除這個模組建立的所有權限設定和資料。"
 
 msgid "Uninstall"
 msgstr "卸載"
 
 msgid "Please make sure that your internet connection is set up properly or try again later."
-msgstr ""
+msgstr "請確定你的網路連線的設定是正確的或稍後再試。"
 
 msgid "The repository index has been successfully updated."
-msgstr ""
+msgstr "成功更新軟體庫索引。"
 
 msgid "All plugins are already up-to-date."
-msgstr ""
+msgstr "所有插入組件都已經是最新版。"
 
 msgid "Common Tasks"
-msgstr ""
+msgstr "共通作業"
 
 msgid "Warning: Experimental feature!"
-msgstr ""
+msgstr "警告：實驗中的功能！"
 
 msgid ""
 "The repository features are currently experimental, and no actual repository has been set up "
 "yet, so none of these features will work at this time."
-msgstr ""
+msgstr "軟體庫功能目前還是實驗性質，並沒有真的軟體庫存在，所以這些功能都不真的可用。"
 
 msgid "Update Index"
-msgstr ""
+msgstr "更新索引"
 
 msgid ""
 "The Gallery repository contains the latest modules and themes extensively tested by the "
@@ -1630,28 +1631,27 @@ msgid ""
 "personal information is sent to the Gallery server during updating. On slower connections "
 "the process might take a minute or two."
 msgstr ""
+"Gallery 軟體庫含有最新且經由 Gallery 團隊嚴格測試的模組和佈景主題。軟體庫索引含有可下載的插入"
+"組件的資訊，如最新版本、可用語言和相容性。索引必需定期和 Gallery 伺服器同步，才能通知你是否有"
+"新的更新。在更新時不會傳送任何私人的資料回 Gallery 伺服器。使用較慢的連線時，這個過程可能會用"
+"到一到兩分鐘的時間。"
 
-msgid "As of the last update on"
-msgstr ""
-
-#, c-format
+#, fuzzy, c-format
 msgid ""
-", the repository contains %s modules and %s themes. Its contents can be viewed on the "
-"Modules and Themes tabs."
-msgstr ""
+"As of the last update on %s, the repository contains %s modules and %s themes. Its contents "
+"can be viewed on the Modules and Themes tabs."
+msgstr "，軟體庫中有 %s 個模組和 %s 個佈景主題。它的內容可以在模組和佈景主題面板中看到。"
 
 msgid ""
 "The index has never been updated. Click on the Update button to see what updates are "
 "available."
-msgstr ""
+msgstr "索引從未更新過。請按更新按鈕以查看可用的更新。"
 
-#, fuzzy
 msgid "Update"
-msgstr "日期"
+msgstr "更新"
 
-#, fuzzy
 msgid "Upgrade Gallery"
-msgstr "Gallery"
+msgstr "昇級 Gallery"
 
 msgid ""
 "A new version of Gallery is available, but it cannot be upgraded through this interface. "
@@ -1659,51 +1659,53 @@ msgid ""
 "the features of the new version may become available. Here are the recommended steps for "
 "upgrading:"
 msgstr ""
+"Gallery 的有新的版本，可是無法經由這個界面昇級。昇級可能會造成某些你的插入組件無法使用，可是"
+"可能有其他新的組件需要這個新的版本的功能。下面是建議的昇級步驟："
 
 msgid "Review plugin compatibility (on the Themes and Modules tabs)"
-msgstr ""
+msgstr "檢查插入組件的相容性（在模組和佈景主題面板中）"
 
-#, c-format
-msgid "<a href=\"%s\">Download</a> Gallery core"
-msgstr ""
+#, fuzzy, c-format
+msgid "%sDownload%s Gallery core"
+msgstr "<a href=\"%s\">下載</a> Gallery 核心"
 
-#, c-format
-msgid "Read the <a href=\"%s\">upgrade instructions</a> and perform the upgrade"
-msgstr ""
+#, fuzzy, c-format
+msgid "Read the %supgrade instructions%s and perform the upgrade"
+msgstr "閱讀<a href=\"%s\">昇級指引</a>並開始昇級"
 
-#, fuzzy
 msgid "Gallery Up-To-Date"
-msgstr "Gallery 核心"
+msgstr "Gallery 軟體更新"
 
 msgid ""
 "Gallery cannot be upgraded through this interface. When a new version becomes available, "
 "upgrade instructions will be presented here."
-msgstr ""
+msgstr "Gallery 無法透過這個界面更新。當有新的版本時，昇級的說明會在這裡出現。"
 
 msgid "Upgrade All Plugins"
-msgstr ""
+msgstr "更新所有模組"
 
 msgid ""
 "Gallery can automatically upgrade your themes and modules to the latest available versions. "
 "No new plugins will be downloaded."
-msgstr ""
+msgstr "Gallery 可以自動更新你的佈景主題和模組到最新的版本。不會下載全新的插入組件。"
 
-#, fuzzy
 msgid "Upgrade All"
-msgstr "升級"
+msgstr "昇級全部"
 
 msgid ""
 "Once the repository index has been downloaded, a list of available plugins will be "
 "presented. It can be downloaded by clicking on the Update button on the Common Tasks tab."
 msgstr ""
+"在下載完軟體庫的索引後，會顯示一份可供下載的插入組件列表。索引可以用共通作業面板下的更新按鈕"
+"下載。"
 
 msgid ""
 "The following plugins are available. Click on the action beside the plugin you're interested "
 "in to see what's available in the repository."
-msgstr ""
+msgstr "下列插入組件可供下載。按你有興趣的組件旁的動作選單看軟體庫中的內容。"
 
 msgid "Incompatible plugins are marked with an exclamation icon."
-msgstr ""
+msgstr "不相容的插入組件會有驚嘆號標記。"
 
 #, c-format
 msgid ""
@@ -1711,118 +1713,103 @@ msgid ""
 "installed core module, which are not shown here. You can view a %scomplete list%s of "
 "plugins, including incompatible ones, which are marked with a red icon."
 msgstr ""
+"核心模組有新的版本。有些插入組件可能和安裝的核心模組不相容，它們沒有在這裡列出來。你可以看所"
+"有插入組件的%s完整列表%s，包括不相容的組件，它們會有一個紅色的標記。"
 
 msgid "Theme Name"
 msgstr "佈景主題名稱"
 
-#, fuzzy
 msgid "Latest"
-msgstr "最後一頁"
+msgstr "最新"
 
-#, fuzzy
 msgid "Incompatible Plugin"
-msgstr "模組不相容！"
+msgstr "不相容的模組"
 
-#, fuzzy
 msgid "Incompatible plugin!"
-msgstr "模組不相容！"
+msgstr "不相容的模組！"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Plugin API Required: %s (available: %s)"
 msgstr "模組API需要：%s (%s 可用)"
 
 msgid "No packages have been selected."
-msgstr ""
+msgstr "沒有選取任何軟體包。"
 
-#, fuzzy
 msgid "Base Files"
-msgstr "檔案名稱"
+msgstr "基礎檔案"
 
 msgid ""
 "The base files required for the theme to work and the English (US) translation will be "
 "downloaded."
-msgstr ""
+msgstr "將會下載佈景主題和英文翻譯所需的基礎檔案。"
 
 msgid "Upgrade Base Files"
-msgstr ""
+msgstr "昇級基礎檔案"
 
 msgid "You can upgrade the base module files."
-msgstr ""
+msgstr "你可以昇級基礎模組檔案。"
 
 msgid "Upgrade base files"
-msgstr ""
+msgstr "昇級基礎檔案"
 
 msgid "Base Files Up-To-Date"
-msgstr ""
+msgstr "基礎檔案更新"
 
 msgid "This plugin's base files are up-to-date."
-msgstr ""
+msgstr "這個插入組件的基礎檔案已經是最新版。"
 
 msgid "Updated Translations"
-msgstr ""
+msgstr "更新的翻譯"
 
 msgid ""
 "Below is a list of translations that have been updated since they were last downloaded. "
 "Select the ones you want to download."
-msgstr ""
+msgstr "下面是自上次下載以來有被更新的語言。請選擇你要下載的語言。"
 
 msgid "Additional Languages"
-msgstr ""
+msgstr "額外語言"
 
 msgid ""
 "Below is a list of languages this plugin has been translated to. Select the ones you want "
 "included in addition to the ones already downloaded."
-msgstr ""
+msgstr "下面是這個插入組件翻譯成的語言。請選擇你要包含在下載中的語言。"
 
-#, fuzzy
 msgid "Unit Tests"
-msgstr "單元測試佈景主題"
+msgstr "單元測試"
 
 msgid ""
 "This plugin has unit tests available for download, which are useful for Gallery developers. "
 "All of the module's features are available without the tests."
 msgstr ""
+"這個插入組件有可下載的單元測試，這對 Gallery 的程式開發人員很有幫助。沒有這些測試，你仍然可以"
+"使用模組的所有功能。"
 
 msgid "Download unit tests"
-msgstr ""
+msgstr "下載單元測試"
 
-#, fuzzy
 msgid "Gallery Repository Setup"
-msgstr "Gallery 版本"
+msgstr "Gallery 軟體庫設定"
 
-msgid "Warning: `$errorMessage`"
-msgstr ""
-
-msgid ""
-"In order to download plugins from the Gallery repository, a special directory needs to be "
-"created where Gallery will store the data."
-msgstr ""
-
-#, c-format
-msgid ""
-"Under your Gallery base directory, create a directory called '%s' and allow the web server "
-"to write into it by appropriately setting the permissions."
-msgstr ""
-
-msgid "Instructions for Unix-type platforms:"
+msgid "Warning:"
 msgstr ""
 
 #, fuzzy, c-format
-msgid "$ cd %s"
-msgstr "%d. %s"
-
-#, c-format
-msgid "$ mkdir %s"
+msgid ""
+"In order to download plugins from the Gallery repository, a special directory needs to be "
+"created where Gallery will store the data. Under your Gallery base directory, create a "
+"directory called '%s' and allow the web server to write into it by appropriately setting the "
+"permissions."
 msgstr ""
+"在你的 Gallery 目錄中，產生一個叫「%s」的目錄並設定適當的存取權限以允許網頁伺服器寫入這個目"
+"錄。"
 
-#, c-format
-msgid "$ chmod 777 %s"
-msgstr ""
+msgid "Instructions for Unix-type platforms:"
+msgstr "Unix 類平台的指令："
 
 msgid ""
 "Refreshing this page will take you to the Repository if the directory has been successfully "
 "created."
-msgstr ""
+msgstr "如果目錄已經成功產生的話，重新載入這個頁面會帶你到軟體庫的畫面。"
 
 msgid "Gallery Themes"
 msgstr "Gallery 佈景主題"
@@ -1845,7 +1832,7 @@ msgstr "佈景主題 %s 卸載成功"
 
 #, c-format
 msgid "Successfully upgraded theme %s"
-msgstr "佈景主題 %s 升級成功"
+msgstr "佈景主題 %s 昇級成功"
 
 msgid "Successfully saved default album settings"
 msgstr "預設相簿設定儲存成功"
@@ -2002,6 +1989,9 @@ msgstr "違反安全規定"
 msgid "Database Error"
 msgstr "資料庫錯誤"
 
+msgid "Platform Error"
+msgstr "系統錯誤"
+
 msgid "Error"
 msgstr "錯誤"
 
@@ -2032,6 +2022,17 @@ msgid ""
 msgstr ""
 "除非在 config.php 中啟動 Gallery 除錯模式，確切的資料庫錯誤內容不會被記錄。在尋求有關這個錯誤"
 "的協助前，請打開緩衝式除錯輸出並再試一次。在除錯輸出最後可以找到錯誤細節。"
+
+msgid "An error has occurred while interacting with the platform."
+msgstr "與系統交換資料時發生錯誤。"
+
+msgid ""
+"The exact nature of the platform error is unknown. A common cause are insufficient file "
+"system permissions. This can happen if you or your webhost changed something in the file "
+"system, e.g. by restoring data from a backup."
+msgstr ""
+"平台錯誤的確切原因不明。最常見的原因是檔案系統的存取權限問題。這在你的網站主機改變了檔案系"
+"統，如從備份復原某些檔案時發生。"
 
 msgid "An error has occurred."
 msgstr "發生一個錯誤。"
@@ -2709,7 +2710,7 @@ msgstr "使用全局設定"
 
 msgid ""
 "Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
-msgstr ""
+msgstr "注意：要把所有子相簿設成同一個佈景主題，在<b>相簿</b>面板中選用適當的選項"
 
 msgid "Album Highlight"
 msgstr "相簿封面"
@@ -2905,11 +2906,10 @@ msgid "Continue..."
 msgstr "繼續..."
 
 msgid "Site is temporarily down for maintenance."
-msgstr ""
+msgstr "網站維護中，暫時離線。"
 
-#, fuzzy
 msgid "Admin Login"
-msgstr "管理選項"
+msgstr "管理員登入"
 
 msgid "Enter a URL"
 msgstr "輸入網址"
@@ -2944,15 +2944,17 @@ msgstr "設定錯誤：沒有佈景主題"
 msgid "Missing Theme"
 msgstr "沒有佈景主題"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
-"This page is configured to use the %s theme, but it is either inactive or not installed."
-msgstr "此相簿已設定使用 %s 佈景主題，但是這個佈景主題沒有啟動或沒有安裝。"
+"This page is configured to use the %s theme, but it is either inactive, not installed, or "
+"incompatible."
+msgstr "此頁面已設定使用 %s 佈景主題，但是這個佈景主題沒有啟動，沒有安裝或不相容。"
 
 #, c-format
 msgid ""
-"This album is configured to use the %s theme, but it is either inactive or not installed."
-msgstr "此相簿已設定使用 %s 佈景主題，但是這個佈景主題沒有啟動或沒有安裝。"
+"This album is configured to use the %s theme, but it is either inactive, not installed, or "
+"incompatible."
+msgstr "此相簿已設定使用 %s 佈景主題，但是這個佈景主題沒有啟動，沒有安裝或不相容。"
 
 #, c-format
 msgid ""
@@ -3043,7 +3045,7 @@ msgstr "遺失或忘記的密碼可以用<a href=\"%s\">密碼重獲</a>頁面�
 
 #, c-format
 msgid "Welcome, %s!"
-msgstr ""
+msgstr "%s，歡迎光臨！"
 
 msgid "Account settings saved successfully"
 msgstr "帳戶設定儲存成功"
@@ -3304,8 +3306,26 @@ msgstr "[測試] 第二個權限"
 msgid "Unit test theme"
 msgstr "單元測試佈景主題"
 
-#~ msgid "&laquo; None &raquo;"
-#~ msgstr "&laquo; 無 &raquo;"
+#~ msgid "Error downloading package from '%s'."
+#~ msgstr "從「%s」下載軟體包時發生錯誤。"
 
-#~ msgid "Unable to delete directory: /templates_c"
-#~ msgstr "無法刪除目錄：/templates_c"
+#~ msgid "As of the last update on"
+#~ msgstr "上次更新於"
+
+#~ msgid "Warning: `$errorMessage`"
+#~ msgstr "警告：`$errorMessage`"
+
+#~ msgid ""
+#~ "In order to download plugins from the Gallery repository, a special directory needs to be "
+#~ "created where Gallery will store the data."
+#~ msgstr ""
+#~ "為了能從 Gallery 軟體庫下載插入組件，在 Gallery 中必需要有一個特別的目錄來存放這些資料。"
+
+#~ msgid "$ cd %s"
+#~ msgstr "$ cd %s"
+
+#~ msgid "$ mkdir %s"
+#~ msgstr "$ mkdir %s"
+
+#~ msgid "$ chmod 777 %s"
+#~ msgstr "$ chmod 777 %s"
