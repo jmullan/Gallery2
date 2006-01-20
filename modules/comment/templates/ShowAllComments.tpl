@@ -39,9 +39,11 @@
     {/if}
   </a>
 </td><td>
+  <div class="one-comment gcBorder2">
   {include file="gallery:modules/comment/templates/Comment.tpl"
 	   comment=$comment can=$ShowAllComments.can[$comment.id]
 	   item=$item user=$ShowAllComments.commenters[$comment.commenterId]}
+  </div>
 </td></tr>
 {/foreach}
 </table>

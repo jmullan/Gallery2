@@ -33,6 +33,8 @@
   </div>
 </form>
 
+<div class="one-comment gbBlock gcBorder2">
 {include file="gallery:modules/comment/templates/Comment.tpl"
 	 item=$DeleteComment.item comment=$DeleteComment.comment
          user=$DeleteComment.commenter can=$DeleteComment.can}
+</div>

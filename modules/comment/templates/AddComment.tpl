@@ -12,9 +12,12 @@
 <div class="gbBlock">
   <h3> {g->text text="Comment Preview"} </h3>
 
-  <h4> {$form.subject|markup} </h4>
-
-  {$form.comment|markup}
+  <div class="one-comment gcBorder2">
+    <h3> {$form.subject|markup} </h3>
+    <p class="comment">
+      {$form.comment|markup}
+    </p>
+  </div>
 </div>
 {/if}
 
