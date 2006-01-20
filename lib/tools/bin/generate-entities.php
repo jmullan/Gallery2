@@ -61,16 +61,21 @@ if (!$dh = opendir('.')) {
     exit(1);
 }
 
-$classXml = '';
+$files = array();
 while (($file = readdir($dh)) !== false) {
     if (preg_match('/\.class$/', $file)) {
-	$snippet = getXml($file);
-	if ($snippet) {
-	    $classXml .= "<class>\n" . join("\n", $snippet) . "\n</class>\n";
-	}
+	$files[] = $file;
     }
 }
 closedir($dh);
+sort($files);
+$classXml = '';
+foreach ($files as $file) {
+    $snippet = getXml($file);
+    if ($snippet) {
+	$classXml .= "<class>\n" . join("\n", $snippet) . "\n</class>\n";
+    }
+}
 
 if (empty($classXml)) {
     /* Nothing to do */
