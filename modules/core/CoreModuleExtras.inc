@@ -1436,6 +1436,13 @@ class CoreModuleExtras {
 		}
 	    }
 
+	case '1.0.18':
+	    /* Add index to GalleryEntity::linkId */
+	    $ret = $storage->configureStore($module->getId(), array('GalleryEntity:1.1'));
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
@@ -1640,7 +1647,7 @@ $gallery->setConfig(\'mode.maintenance\', false);
 	    $add[] =
 '
 /*
- * This setting can be used to override Gallery\'s auto-detection of the domain-name, 
+ * This setting can be used to override Gallery\'s auto-detection of the domain-name,
  * protocol (http/https), URL path, and of the file & query string.
  * Most users can leave this empty. If the server is misconfigured or for very special
  * setups, this setting can be quite handy.
@@ -1651,14 +1658,14 @@ $gallery->setConfig(\'mode.maintenance\', false);
  *           $gallery->setConfig(\'baseUri\', \'https://example.com:8080/gallery2/index.php\');
  */
 $gallery->setConfig(\'baseUri\', \'\');';
-	    
+
 	    $configChanges[] = array('remove' => array(), 'add' => $add, 'edit' => array());
 
 	case '1.0.14':
 	case '1.0.15':
 	    /*
-	     * Normalize the config path 'data.gallery.base' (add a traling slash if necessary)
-	     * Escape the backslashes and quotes two times since we feed preg_replace with this it
+	     * Normalize the config path 'data.gallery.base' (add a trailing slash if necessary)
+	     * Escape the backslashes and quotes two times since we feed preg_replace with it
 	     */
 	    $tmp = strtr($gallery->getConfig('data.gallery.base'),
 			 array('\\' => '\\\\\\\\', "'" => "\\\\'"));
@@ -1667,6 +1674,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	    $configChanges[] = array('remove' => array(), 'add' => array(), 'edit' => array($edit));
 	case '1.0.16':
 	case '1.0.17':
+	case '1.0.18':
 
 	case 'end of upgrade path':
 	    /*

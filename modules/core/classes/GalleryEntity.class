@@ -40,7 +40,7 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryPersistent.class');
  * @g2 <parent-class-name>GalleryPersistent</parent-class-name>
  * @g2 <schema>
  * @g2   <schema-major>1</schema-major>
- * @g2   <schema-minor>1</schema-minor>
+ * @g2   <schema-minor>2</schema-minor>
  * @g2 </schema>
  *
  * @package GalleryCore
@@ -79,8 +79,7 @@ class GalleryEntity extends GalleryPersistent {
     var $creationTimestamp;
 
     /**
-     * Does this entity type support linking?  Subclasses should override this method and
-     * return true if they support linking
+     * Does this entity type support linking?
      *
      * @g2 <member>
      * @g2   <member-name>isLinkable</member-name>
@@ -100,6 +99,7 @@ class GalleryEntity extends GalleryPersistent {
      * @g2 <member>
      * @g2   <member-name>linkId</member-name>
      * @g2   <member-type>INTEGER</member-type>
+     * @g2   <indexed/>
      * @g2 </member>
      *
      * @var int $linkId
