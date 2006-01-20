@@ -40,13 +40,12 @@
   {/if} 
   {if isset($form.error.picasaZipPath.notsupported)}
     <div class="giError">
-      {g->text text="The filetype you entered is not supported. Maybe you did not activate the 
-        corresponding toolkit. (E.g. Archive Upload for ZIP files)"}
+      {g->text text="The filetype you entered is not supported. Maybe you did not activate the corresponding toolkit. (E.g. Archive Upload for ZIP files)"}
     </div>
   {/if}
   {if isset($form.error.picasaZipPath.invalid)}
     <div class="giError">
-      {g->text text="Thea archive you uploaded is not a valid Picasa export."}
+      {g->text text="The archive you uploaded is not a valid Picasa export."}
     </div>
   {/if}
 </div>
