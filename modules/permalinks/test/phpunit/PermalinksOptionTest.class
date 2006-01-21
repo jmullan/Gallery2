@@ -96,7 +96,7 @@ class PermalinksOptionTest extends ItemEditOptionTestCase {
 	$this->_aliasNamesToDelete[] = 'newAlias';
 
 	list ($ret, $destId) = PermalinksMapHelper::fetchItemIdForAlias('newAlias');
-	$this->assertEquals($destId, ''.$this->_item->getId());
+	$this->assertEquals($this->_item->getId(), $destId);
     }
 
     function testPermalinksOptionCollision() {
@@ -119,7 +119,7 @@ class PermalinksOptionTest extends ItemEditOptionTestCase {
 	$this->_aliasNamesToDelete[] = 'newAlias';
 
 	list ($ret, $destId) = PermalinksMapHelper::fetchItemIdForAlias('newAlias');
-	$this->assertEquals($destId, ''.$this->_item1->getId());
+	$this->assertEquals($this->_item1->getId(), $destId);
 
 	/* now test a collision, this generates an error with some DB drivers, that's OK */
 	$result = $this->_handleRequestAfterEdit($form, $this->_item);
@@ -127,7 +127,7 @@ class PermalinksOptionTest extends ItemEditOptionTestCase {
 		$result);
 
 	list ($ret, $destId) = PermalinksMapHelper::fetchItemIdForAlias('newAlias');
-	$this->assertEquals($destId, ''.$this->_item1->getId());
+	$this->assertEquals($this->_item1->getId(), $destId);
     }
 
     function testPermalinksOptionDelete() {
@@ -136,7 +136,7 @@ class PermalinksOptionTest extends ItemEditOptionTestCase {
 	$result = $this->_handleRequestAfterEdit($form, $this->_item);
 
 	list ($ret, $destId) = PermalinksMapHelper::fetchItemIdForAlias('newAlias');
-	$this->assertEquals($destId, ''.$this->_item->getId());
+	$this->assertEquals($this->_item->getId(), $destId);
 
 	/* now delete it */
 	unset($form['PermalinksOption']['aliasName']);

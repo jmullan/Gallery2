@@ -56,7 +56,7 @@ class PermalinksMapHelper {
 	    [PermalinksMap::destId] = ?
 	    ';
 
-	    $data = array($itemId);
+	    $data = array((int)$itemId);
 
 	    list ($ret, $searchResults) = $gallery->search($query, $data);
 	    if ($ret) {
@@ -111,7 +111,7 @@ class PermalinksMapHelper {
 	}
 
 	if ($result = $searchResults->nextResult()) {
-	    $destId = $result[0];
+	    $destId = (int)$result[0];
 	} else {
 	    $destId = null;
 	}
