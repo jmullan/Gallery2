@@ -122,7 +122,7 @@ class LinkItemModule extends GalleryModule /* and GalleryEventListener */ {
 	      WHERE
 		[GalleryLinkItem::link] = ?
 	    ';
-	    list ($ret, $searchResults) = $gallery->search($query, array((int)$entity->getId()));
+	    list ($ret, $searchResults) = $gallery->search($query, array((string)$entity->getId()));
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
