@@ -64,6 +64,24 @@ class MatrixTheme extends GalleryTheme {
     }
 
     /**
+     * @see GalleryTheme::getSettings()
+     */
+    function getSettings($itemId=null) {
+	list ($ret, $settings, $params) = parent::getSettings($itemId);
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Add in our custom settings */
+	$settings[] = array('key' => 'useFloatingDivs',
+		'name' => $this->translate('Use floating divs instead of a table to 
+		    display thumbnails'),
+		'type' => 'checkbox',
+		'value' => $params['useFloatingDivs']);
+	return array(null, $settings);
+    }    
+
+    /**
      * @see GalleryTheme::showAlbumPage
      */
     function showAlbumPage(&$template, $item, $params, $childIds) {
@@ -80,6 +98,7 @@ class MatrixTheme extends GalleryTheme {
 	/* Add in our extra stuff */
 	$theme =& $template->getVariableByReference('theme');
 	$theme['columnWidthPct'] = floor(100 / $params['columns']);
+	$theme['useFloatingDivs'] = $params['useFloatingDivs'];
 
 	/* Add our header and styles */
 	return array(null, 'theme.tpl');
