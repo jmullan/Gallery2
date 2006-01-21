@@ -106,9 +106,9 @@ class ImageBlockHelperTest extends GalleryTestCase {
 
         $itemIds = array();
     	foreach ($this->_topItems as $item) {
-    	    $itemIds[] = $item->getId();
+    	    $itemIds[] = (int)$item->getId();
 	}
-	$itemIds[] = $this->_topAlbum->getId();
+	$itemIds[] = (int)$this->_topAlbum->getId();
 	sort($itemIds);
 
         $query = 'SELECT [ImageBlockDisabledMap::itemId] ' .
@@ -157,10 +157,10 @@ class ImageBlockHelperTest extends GalleryTestCase {
 
         $itemIds = array();
     	foreach (array_merge($this->_topItems, $this->_subItems) as $item) {
-    	    $itemIds[] = $item->getId();
+    	    $itemIds[] = (int)$item->getId();
 	}
-	$itemIds[] = $this->_topAlbum->getId();
-	$itemIds[] = $this->_subAlbum->getId();
+	$itemIds[] = (int)$this->_topAlbum->getId();
+	$itemIds[] = (int)$this->_subAlbum->getId();
 	sort($itemIds);
 
         $query = 'SELECT [ImageBlockDisabledMap::itemId] ' .

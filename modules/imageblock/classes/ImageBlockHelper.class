@@ -343,7 +343,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	$where[] = '[ImageBlockCacheMap::userId] = ?';
 	$where[] = '[ImageBlockCacheMap::itemType] = ?';
 	$where[] = '[ImageBlockDisabledMap::itemId] IS NULL';
-	$data[] = $userId;
+	$data[] = (int)$userId;
 	$data[] = $typeMap[$itemType];
 
 	list ($ret, $orderBy) = ImageBlockHelper::_buildOrderBy($order);
@@ -473,7 +473,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	global $gallery;
 	list ($ret, $searchResults) = $gallery->search(
 	    'SELECT COUNT(*) FROM [ImageBlockCacheMap] WHERE [ImageBlockCacheMap::userId] = ?',
-	    array($userId));
+	    array((int)$userId));
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -701,7 +701,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    }
 
 	    $data[] = $sequence . $parentAlbumId . '/%';
-	    $data[] = $parentAlbum->getId();
+	    $data[] = (int)$parentAlbum->getId();
 
 	    /* Build the query */
 	    $query = 'SELECT ' . implode(', ', $select) .
@@ -714,11 +714,11 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    }
 
 	    while ($result = $searchResult->nextResult()) {
-		$childIds[] = $result[0];
+		$childIds[] = (int)$result[0];
 	    }
 	} else {
 	    list($ret, $childIds) = GalleryCoreApi::fetchChildDataItemIds($parentAlbum);
-	    $childIds[] = $parentAlbum->getId();
+	    $childIds[] = (int)$parentAlbum->getId();
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -760,7 +760,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 		WHERE
 		    [ImageBlockDisabledMap::itemId] = ?
 		  ';
-	list ($ret, $searchResults) = $gallery->search($query, array($itemId));
+	list ($ret, $searchResults) = $gallery->search($query, array((int)$itemId));
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
