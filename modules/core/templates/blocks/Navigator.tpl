@@ -21,8 +21,8 @@
   <div class="next-and-last{if !isset($navigator.first) &&
 			       !isset($navigator.back)} no-previous{/if}">
     {strip}
-    {if isset($navigator.next) &&
-	(!isset($navigator.last) || $navigator.next.urlParams != $navigator.last.urlParams)}
+    {if isset($navigator.next)}    {* Uncomment to omit next when same as last:
+	&& (!isset($navigator.last) || $navigator.next.urlParams != $navigator.last.urlParams)} *}
     <a href="{g->url params=$navigator.next.urlParams}" class="next">
       {g->text text="next"}{$suffix}
       {if isset($navigator.next.thumbnail)}
@@ -68,8 +68,8 @@
     </a>
     {/if}
 
-    {if isset($navigator.back) &&
-	(!isset($navigator.first) || $navigator.back.urlParams != $navigator.first.urlParams)}
+    {if isset($navigator.back)}    {* Uncomment to omit previous when same as first:
+	&& (!isset($navigator.first) || $navigator.back.urlParams != $navigator.first.urlParams)} *}
     <a href="{g->url params=$navigator.back.urlParams}" class="previous">
       {if isset($navigator.back.thumbnail)}
 	{g->image item=$navigator.back.item image=$navigator.back.thumbnail
