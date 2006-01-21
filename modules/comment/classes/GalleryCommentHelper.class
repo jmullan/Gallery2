@@ -80,9 +80,9 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	ORDER BY
 	  [GalleryComment::date] ' . $direction . '
 	';
-	list($ret, $searchResults) = $gallery->search($query,
-						       array($itemId),
-						       array('limit' => array('count' => $count)));
+	list($ret, $searchResults) = 
+		$gallery->search($query, array((int)$itemId),
+					       array('limit' => array('count' => (int)$count)));
 
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -91,7 +91,7 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	/* Get all of our ids */
 	$allIds = array();
 	while ($result = $searchResults->nextResult()) {
-	    $allIds[] = $result[0];
+	    $allIds[] = (int)$result[0];
 	}
 
 	/* Load all the comments at once */
@@ -179,11 +179,11 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	ORDER BY
 	  [GalleryComment::date] ' . $direction . '
 	';
-	$data = array_merge(array($itemId, $sequence), $aclIds);
+	$data = array_merge(array((int)$itemId, $sequence), $aclIds);
 
 	list ($ret, $searchResults) =
-	    $gallery->search($query, $data,
-			     array('limit' => array('count' => $count, 'offset' => $offset)));
+	    $gallery->search($query, $data, array('limit' => array('count' => (int)$count,
+								   'offset' => (int)$offset)));
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
@@ -191,7 +191,7 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	/* Get all of our ids */
 	$allIds = array();
 	while ($result = $searchResults->nextResult()) {
-	    $allIds[] = $result[0];
+	    $allIds[] = (int)$result[0];
 	}
 
 	/* Load all the comments at once */
@@ -215,7 +215,7 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    if ($result = $searchResults->nextResult()) {
-		$totalCount = $result[0];
+		$totalCount = (int)$result[0];
 	    } else {
 		$totalCount = count($allIds);
 	    }
@@ -319,13 +319,13 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	      [GalleryComment::commenterId] = ?
 	    ';
 
-	    list($ret, $searchResults) = $gallery->search($query, array($entity->getId()));
+	    list($ret, $searchResults) = $gallery->search($query, array((int)$entity->getId()));
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    while ($result = $searchResults->nextResult()) {
-		$ret = GalleryCoreApi::deleteEntityById($result[0]);
+		$ret = GalleryCoreApi::deleteEntityById((int)$result[0]);
 		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
