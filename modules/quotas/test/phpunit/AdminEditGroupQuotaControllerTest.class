@@ -107,8 +107,8 @@ class AdminEditGroupQuotaControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert($quotaExists, 'Quota does not exist');
-	$this->assertEquals(''.$group->getId(), $groupQuota['id'], 'Group Ids do not match');
-	$this->assertEquals('6144', $groupQuota['quota'], 'Group quota does not match');
+	$this->assertEquals($group->getId(), $groupQuota['id'], 'Group Ids do not match');
+	$this->assertEquals(6144, $groupQuota['quota'], 'Group quota does not match');
 
 	$this->_deleteGroupQuota($group->getId());
 	$this->_deleteEntity($group);
