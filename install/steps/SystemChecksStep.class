@@ -48,6 +48,7 @@ class SystemChecksStep extends InstallStep {
     }
 
     function processRequest() {
+	/* Zend test */
 	if (!empty($_GET['zendtest'])) {
 	    header("Content-Type: text/plain");
 	    header("Content-Length: 8");
@@ -57,11 +58,8 @@ class SystemChecksStep extends InstallStep {
 	    print "SUCCESS\n";
 	    return false;
 	}
+	/* Normal request */
 
-	return true;
-    }
-
-    function loadTemplateData(&$templateData) {
 	/* Create GalleryStub to store information for the install core step / install log */
 	global $galleryStub;
 	$galleryStub = new GalleryStub();
@@ -69,6 +67,11 @@ class SystemChecksStep extends InstallStep {
 	$failCount = 0;
 
 	$suggestedHtaccess = array();
+	$setTimeLimitAvailable = false;
+
+	$template = new StatusTemplate();
+	$template->renderHeader(true);
+	$template->renderStatusMessage(_('Performing system checks'), '', 0);
 
 	/* assert compatible version of PHP, we accept 4.1.0+ / 5.0.4+ */
 	if (!function_exists('version_compare') || version_compare(phpversion(), '4.1.0', '<') ||
@@ -164,7 +167,10 @@ class SystemChecksStep extends InstallStep {
 
 	    /* Set the time limit large enoguh for the remaining checks (slow systems) */
 	    set_time_limit(180);
+	    $setTimeLimitAvailable = true;
 	}
+
+	$template->renderStatusMessage(_('Performing system checks'), '', 0.02);
 
 	/* Warning if memory_limit is set and is too low */
 	$memoryLimit = ini_get('memory_limit');
@@ -331,6 +337,8 @@ class SystemChecksStep extends InstallStep {
 			  implode(', ', $outputBuffers)),
 		);
 	} /* skip showing 'success' for this one */
+
+	$template->renderStatusMessage(_('Performing system checks'), '', 0.07);
 	
 	/* Check all files against MANIFEST */
 	$title = _('Gallery file integrity');
@@ -341,7 +349,7 @@ class SystemChecksStep extends InstallStep {
 		      'notice' => _('Test skipped due to other errors.'));
 	} else {
 	    $isCvsInstall = file_exists(dirname(__FILE__) . '/CVS');
-	    $manifest = SystemChecksStep::CheckManifest();
+	    $manifest = SystemChecksStep::CheckManifest($template, $setTimeLimitAvailable);
 	    if (!isset($manifest)) {
 		$templateData['check'][] =
 		    array('title' => $title,
@@ -378,10 +386,14 @@ class SystemChecksStep extends InstallStep {
 	    $galleryStub->setConfig('systemchecks.iscvsinstall', $isCvsInstall);
 	}
 
+	$template->renderStatusMessage(_('Performing system checks'), '', 1);
+	$template->hideStatusBlock();
+
 	$templateData['suggestedHtaccess'] = join("\n", $suggestedHtaccess);
 	$templateData['bodyFile'] = 'SystemChecks.html';
 	$this->setComplete($failCount == 0);
 	$this->setInError($failCount > 0);
+	$template->renderBodyAndFooter($templateData);
     }
 
     function CheckFileDirective() {
@@ -393,20 +405,40 @@ class SystemChecksStep extends InstallStep {
 	}
     }
 
-    function CheckManifest() {
+    function CheckManifest(&$statusMonitor, $useSetTimeLimit) {
 	$base = realpath(dirname(__FILE__) . '/../..') . '/';
 
+	if ($useSetTimeLimit) {
+	    set_time_limit(180);
+	}
 	$manifest = GalleryUtilities::readManifest();
 	if (empty($manifest)) {
 	    return null;
 	}
 
+	$statusMonitor->renderStatusMessage(_('Performing system checks'), '', 0.1);
+	if ($useSetTimeLimit) {
+	    set_time_limit(180);
+	}
+
 	$missing = $modified = $shouldRemove = array();
+	$totalCount = count($manifest);
+	$stepSize = (int)($totalCount/22);
+	$i = 0;
 	foreach ($manifest as $file => $info) {
+	    $i++;
 	    if ($file == 'MANIFEST') {
 		continue;
 	    }
 	    $path = $base . $file;
+
+	    if ($i % $stepSize == 0) {
+		$statusMonitor->renderStatusMessage(_('Performing system checks'), '', 
+				0.15 + $i / $stepSize * 0.04);
+		if ($useSetTimeLimit) {
+	    	    set_time_limit(180);
+		}
+	    }
 
 	    if (!empty($info['removed'])) {
 		if (file_exists($path)) {

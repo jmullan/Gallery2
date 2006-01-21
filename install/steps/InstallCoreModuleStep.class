@@ -25,11 +25,15 @@ class InstallCoreModuleStep extends InstallStep {
 	return _('Install Gallery Core');
     }
 
-    function loadTemplateData(&$templateData) {
+    function processRequest() {
 	global $galleryStub;
 	define('GALLERY_CONFIG_DIR', $_SESSION['configPath']);
 	require(dirname(__FILE__) . '/../../bootstrap.inc');
 	require(dirname(__FILE__) . '/../../init.inc');
+
+	$template = new StatusTemplate();
+	$template->renderHeader(true);
+	$template->renderStatusMessage(_('Installing the core module'), null, 0);
 
 	/* We want to log all debug output in our install log */
 	global $gallery;
@@ -40,6 +44,7 @@ class InstallCoreModuleStep extends InstallStep {
 	$gallery->setDebugLogFile($installLogPath);
 	$templateData['installLogPath'] = $installLogPath;
 	$this->_createDebugLogHeader();
+	$gallery->guaranteeTimeLimit(120);
 
 	$gallery->debug('Init first pass');
 	$ret = GalleryInitFirstPass(array('noDatabase' => true,
@@ -72,6 +77,9 @@ class InstallCoreModuleStep extends InstallStep {
 	    }
 	}
 
+	$template->renderStatusMessage(_('Installing the core module'), null, 0.05);
+	$gallery->guaranteeTimeLimit(180);
+
 	if (empty($templateData['errors'])) {
 	    $gallery->debug('Check if the persistent storage is installed');
 	    /*
@@ -102,6 +110,9 @@ class InstallCoreModuleStep extends InstallStep {
 	    }
 	}
 
+	$template->renderStatusMessage(_('Installing the core module'), null, 0.1);
+	$gallery->guaranteeTimeLimit(180);
+
 	$freshInstall = $galleryStub->getConfig('freshInstall');
 	if ($freshInstall) {
 	    $gallery->debug('Hand over admin user parameters');
@@ -117,7 +128,7 @@ class InstallCoreModuleStep extends InstallStep {
 	if (empty($templateData['errors'])) {
 	    if (!$isInstalled) {
 		$gallery->debug('Install core module now!');
-		$ret = $core->installOrUpgrade(true);
+		$ret = $core->installOrUpgrade(true, $template);
 		if ($ret) {
 		    $this->resetL10Domain();
 		    $gallery->debug(sprintf('Error: Unable to install the core module, this ' .
@@ -127,6 +138,9 @@ class InstallCoreModuleStep extends InstallStep {
 		} else {
 		    $gallery->debug('Core module installed successfully');
 		}
+
+	    	$template->renderStatusMessage(_('Installing the core module'), '', 0.8);
+		$gallery->guaranteeTimeLimit(180);
 
 		$gallery->debug('Activate core module');
 		list ($ret, $ignored) = $core->activate(false);
@@ -139,6 +153,9 @@ class InstallCoreModuleStep extends InstallStep {
 		} else {
 		    $gallery->debug('Core module activated successfully');
 		}
+
+		$template->renderStatusMessage(_('Installing the core module'), '', 0.9);
+		$gallery->guaranteeTimeLimit(180);
 
 		$gallery->debug('Commit transaction');
 		$ret = $storage->commitTransaction();
@@ -168,6 +185,10 @@ class InstallCoreModuleStep extends InstallStep {
 	    }
 	}
 
+	$this->resetL10Domain();
+	$template->renderStatusMessage(_('Installing the core module'), '', 1.0);
+	$gallery->guaranteeTimeLimit(120);
+
 	$gallery->debug('Finish install core module step');
 	if (empty($templateData['errors'])) {
 	    $gallery->debug('Install core module step completed successfully');
@@ -177,6 +198,8 @@ class InstallCoreModuleStep extends InstallStep {
 	    $gallery->debug('Error: Failure during install core module step');
 	    $templateData['bodyFile'] = 'InstallCoreModuleError.html';
 	}
+	$template->hideStatusBlock();
+	$template->renderBodyAndFooter($templateData);
     }
 
     /* Adds a header to the debug log */

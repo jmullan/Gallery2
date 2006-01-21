@@ -44,7 +44,8 @@
 	    <?php print _("Description") ?>
 	  </th>
 	</tr>
-	<?php foreach ($templateData['groupedModules'] as $group => $modules): ?>
+	<?php $installableCount = 0; 
+          foreach ($templateData['groupedModules'] as $group => $modules): ?>
 	  <tr style="background-color: #fff">
 	    <td colspan="4"><h3><?php print $templateData['groupLabel'][$group] ?></h3></td>
 	  </tr>
@@ -58,7 +59,7 @@
 		id="module_<?php print $id ?>" name="module[<?php print $id ?>]"
 		<?php if ($isInstalled || $isInvalid): ?>
 		  disabled="disabled"
-		<?php endif; ?>
+		<?php else: $installableCount++; endif; ?>
 	      />
 	    </td>
 	    <td>
@@ -91,6 +92,7 @@
 	  <td colspan="3">
 	    <?php print _("(un)check all") ?>
 	    <input type="hidden" name="step" value="<?php print $currentStep->getStepNumber() ?>"/>
+	    <input type="hidden" name="install" value="<?php print $installableCount ?>"/>
 	    <input type="hidden" name="activate" value="1"/>
 	  </td>
 	</tr>

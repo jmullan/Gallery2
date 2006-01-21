@@ -25,32 +25,126 @@ class InstallOtherModulesStep extends InstallStep {
 	return _('Install More Modules');
     }
 
-    function loadTemplateData(&$templateData) {
-	/*
-	 * Disable the data cache before initializing.  If we don't do this
-	 * *first* then some data (like factory registrations) will get cached
-	 * now, and then the modules won't be able to update it later on.
-	 */
-	require(dirname(__FILE__) . '/../../modules/core/classes/GalleryDataCache.class');
-	GalleryDataCache::setFileCachingEnabled(false);
+    function processRequest() {
+	$templateData = array();
+	$this->_init($templateData);
 
-	define('GALLERY_CONFIG_DIR', $_SESSION['configPath']);
-	require(dirname(__FILE__) . '/../../bootstrap.inc');
-	require(dirname(__FILE__) . '/../../init.inc');
-	$ret = GalleryInitFirstPass(array('debug' => 'buffered', 'noDatabase' => true,
-					  'activeLanguage' => $_SESSION['language']));
-	if ($ret) {
-	    $templateData['errors'][] = _('Unable to initialize our Gallery data');
-	    $templateData['stackTrace'] = $ret->getAsHtml();
+	if (!isset($_REQUEST['activate'])) {
+	    return true;
 	}
-	if (empty($templateData['errors'])) {
-	    $ret = $this->_selectAdminUser();
+
+	global $gallery;
+	$currentModule = $totalModules = 0;
+	$templateData['stackTrace'] = '';
+	$template = new StatusTemplate();
+
+	$ret = $this->_selectAdminUser();
+	if ($ret) {
+	    $templateData['errors'][] = _('Unable to initialize our Gallery session');
+	    $templateData['stackTrace'] .= $ret->getAsHtml();
+	    unset($_REQUEST['module']);
+	}
+	if (isset($_REQUEST['module'])) {
+	    $storage =& $gallery->getStorage();
+	}
+
+	if ( !empty($_REQUEST['module']) && is_array($_REQUEST['module']) ) {
+	    $template->renderHeader(true);
+	    $totalModules = count($_REQUEST['module']);
+	    foreach (array_keys($_REQUEST['module']) as $moduleId) {
+		$currentModule++;
+		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
+		if ($ret) {
+		    $this->resetL10Domain();
+		    $templateData['errors'][] =
+			sprintf(_('Unable to load the %s module'), $moduleId);
+		    $templateData['stackTrace'] .= $ret->getAsHtml();
+		    continue;
+		}
+		$module->setName($module->translate($module->getName()));
+		$module->setDescription($module->translate($module->getDescription()));
+		$this->resetL10Domain();
+		$gallery->guaranteeTimeLimit(120);
+
+		$ret = $template->renderStatusMessage(_('Installing modules'),
+		    $module->getName(), $currentModule / $totalModules);
+		if ($ret) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		$ret = $module->installOrUpgrade();
+		if ($ret) {
+		    $this->resetL10Domain();
+		    $templateData['errors'][] =
+			sprintf(_('Unable to install the %s module'), $module->getName());
+		    $templateData['stackTrace'] = $ret->getAsHtml();
+		    continue;
+		}
+		$moduleInstalled[$moduleId] = true;
+
+		$templateData['installedModule'][$moduleId] = $module->getName();
+		$ret = $storage->checkPoint();
+		if ($ret) {
+		    $this->resetL10Domain();
+		    $templateData['errors'][] = _('Unable to commit database transaction');
+		    $templateData['stackTrace'] .= $ret->getAsHtml();
+		}
+
+	 	list ($ret, $success) = $module->autoConfigure();
+		if ($ret) {
+		    $this->resetL10Domain();
+		    $templateData['errors'][] =
+			    sprintf(_('Unable to activate the %s module'), $module->getName());
+		    $templateData['stackTrace'] .= $ret->getAsHtml();
+		    continue;
+		}
+
+		if (!$success) {
+		    /* This is not really an error, just a warning */
+		    $templateData['needsConfiguration'][$moduleId] = $module->getName();
+		    $this->resetL10Domain();
+		    continue;
+		}
+
+		list ($ret, $redirect) = $module->activate();
+		$this->resetL10Domain();
+		if ($ret) {
+		    $templateData['errors'][] =
+			    sprintf(_('Unable to activate the %s module'), $module->getName());
+		    $templateData['stackTrace'] .= $ret->getAsHtml();
+		    continue;
+		}
+		$templateData['activated'][$moduleId] = $module->getName();
+		continue;
+	    }
+	    $template->hideStatusBlock();
+	} else {
+	    $template->renderHeader();
+	}
+
+	if (!empty($_REQUEST['module'])) {
+	    $ret = $storage->commitTransaction();
 	    if ($ret) {
-		$templateData['errors'][] = _('Unable to initialize our Gallery session');
-		$templateData['stackTrace'] = $ret->getAsHtml();
+		$templateData['errors'][] = _('Unable to commit database transaction');
+		$templateData['stackTrace'] .= $ret->getAsHtml();
 	    }
 	}
+	$templateData['bodyFile'] = 'InstallOtherModulesSuccess.html';
+	$templateData['anyInstallable'] = false;
+	if (!empty($templateData['errors'])) {
+	    $templateData['debug'] = $gallery->getDebugBuffer();
+	} else {
+	    if ($totalModules < $_REQUEST['install']) {
+		$templateData['anyInstallable'] = true;
+	    } else {
+		$this->setComplete(true);
+	    }
+	}
+	$template->renderBodyAndFooter($templateData);
+    }
 
+    function loadTemplateData(&$templateData) {
+	$this->_init($templateData);
 	$groupedModules = $groupLabel = $moduleInstalled = $moduleInvalid = array();
 
 	if (empty($templateData['errors'])) {
@@ -83,47 +177,6 @@ class InstallOtherModulesStep extends InstallStep {
 		$moduleInstalled[$moduleId] = !empty($moduleList[$moduleId]['version']);
 		$module =& $modules[$moduleId];
 		$moduleInvalid[$moduleId] = !GalleryCoreApi::isPluginCompatibleWithApis($module);
-		if (isset($_REQUEST['activate']) &&
-		      isset($_REQUEST['module'][$moduleId]) &&
-		      !$moduleInstalled[$moduleId]) {
-		    $ret = $module->installOrUpgrade();
-		    if ($ret) {
-			$this->resetL10Domain();
-			$templateData['errors'][] =
-			    sprintf(_('Unable to install the %s module'), $module->getName());
-			$templateData['stackTrace'] = $ret->getAsHtml();
-			continue;
-		    }
-		    $moduleInstalled[$moduleId] = true;
-
-		    list ($ret, $success) = $module->autoConfigure();
-		    if ($ret) {
-			$this->resetL10Domain();
-			$templateData['errors'][] =
-			    sprintf(_('Unable to activate the %s module'), $module->getName());
-			$templateData['stackTrace'] = $ret->getAsHtml();
-			continue;
-		    }
-
-		    if (!$success) {
-			/* This is not really an error, just a warning */
-			$templateData['needsConfiguration'][$moduleId] = $module->getName();
-			$this->resetL10Domain();
-			continue;
-		    }
-
-		    list ($ret, $redirect) = $module->activate();
-		    $this->resetL10Domain();
-		    if ($ret) {
-			$templateData['errors'][] =
-			    sprintf(_('Unable to activate the %s module'), $module->getName());
-			$templateData['stackTrace'] = $ret->getAsHtml();
-			continue;
-		    }
-		    unset($modules[$moduleId]);
-		    $templateData['activated'][$moduleId] = $module->getName();
-		    continue;
-		}
 
 		$group = $module->getGroup();
 		if (empty($group)) {
@@ -134,25 +187,12 @@ class InstallOtherModulesStep extends InstallStep {
 	    }
 	}
 
-	if (isset($_REQUEST['activate'])) {
-	    global $gallery;
-	    $storage =& $gallery->getStorage();
-	    $ret = $storage->commitTransaction();
-	    if ($ret) {
-		$templateData['errors'][] = _('Unable to commit database transaction');
-		$templateData['stackTrace'] = $ret->getAsHtml();
-	    }
-	    if (!empty($templateData['stackTrace'])) {
-		$templateData['debug'] = $gallery->getDebugBuffer();
-	    }
-	    $templateData['bodyFile'] = 'InstallOtherModulesSuccess.html';
-	} else {
-	    $templateData['groupedModules'] =& $groupedModules;
-	    $templateData['groupLabel'] = $groupLabel;
-	    $templateData['moduleInstalled'] = $moduleInstalled;
-	    $templateData['moduleInvalid'] = $moduleInvalid;
-	    $templateData['bodyFile'] = 'InstallOtherModulesRequest.html';
-	}
+	$templateData['groupedModules'] =& $groupedModules;
+	$templateData['groupLabel'] = $groupLabel;
+	$templateData['moduleInstalled'] = $moduleInstalled;
+	$templateData['moduleInvalid'] = $moduleInvalid;
+	$templateData['bodyFile'] = 'InstallOtherModulesRequest.html';
+
 	$templateData['anyInstallable'] = false;
 	foreach ($moduleInstalled as $moduleId => $tmp) {
 	    if (!$tmp) {
@@ -162,6 +202,39 @@ class InstallOtherModulesStep extends InstallStep {
 	}
 	if (!$templateData['anyInstallable']) {
 	    $this->setComplete(true);
+	}
+    }
+
+    function _init(&$templateData) {
+	require_once(dirname(__FILE__) . '/../../modules/core/classes/GalleryDataCache.class');
+	$cacheKey = 'Installer::installOtherModulesStepInitialized';
+	if (!GalleryDataCache::containsKey($cacheKey)) {
+	    /*
+	     * Disable the data cache before initializing.  If we don't do this
+	     * *first* then some data (like factory registrations) will get cached
+	     * now, and then the modules won't be able to update it later on.
+	     */
+	    GalleryDataCache::setFileCachingEnabled(false);
+
+	    if (!defined('GALLERY_CONFIG_DIR')) {
+	        define('GALLERY_CONFIG_DIR', $_SESSION['configPath']);
+	    }
+	    require_once(dirname(__FILE__) . '/../../bootstrap.inc');
+	    require_once(dirname(__FILE__) . '/../../init.inc');
+	    $ret = GalleryInitFirstPass(array('debug' => 'buffered', 'noDatabase' => true,
+					  'activeLanguage' => $_SESSION['language']));
+	    if ($ret) {
+	        $templateData['errors'][] = _('Unable to initialize our Gallery data');
+	        $templateData['stackTrace'] = $ret->getAsHtml();
+	    }
+	    if (empty($templateData['errors'])) {
+	        $ret = $this->_selectAdminUser();
+	        if ($ret) {
+		    $templateData['errors'][] = _('Unable to initialize our Gallery session');
+		    $templateData['stackTrace'] .= $ret->getAsHtml();
+	        }
+	    }
+	    GalleryDataCache::put($cacheKey, true);
 	}
     }
 
