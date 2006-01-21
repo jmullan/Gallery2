@@ -283,7 +283,7 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 	}
 	$this->_thumbnailOps = array();
 	while ($result = $searchResults->nextResult()) {
-	    $this->_thumbnailOps[$result[0]] = $result[1];
+	    $this->_thumbnailOps[(int)$result[0]] = $result[1];
 	}
 	return null;
     }
