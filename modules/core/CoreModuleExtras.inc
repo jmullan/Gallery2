@@ -97,6 +97,13 @@ class CoreModuleExtras {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
+	    $ret = $statusMonitor->renderStatusMessage(
+		    $module->translate('Installing the core module'), '', 0.15);
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $gallery->guaranteeTimeLimit(180);
+
 	    if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
 		$flockType = 'database';
 	    } else {
@@ -143,6 +150,13 @@ class CoreModuleExtras {
 		}
 	    }
 
+	    $ret = $statusMonitor->renderStatusMessage(
+		    $module->translate('Installing the core module'), '', 0.2);
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $gallery->guaranteeTimeLimit(180);
+
 	    /* Activate the Matrix theme */
 	    $gallery->debug('Load Matrix theme');
 	    list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', 'matrix');
@@ -152,6 +166,13 @@ class CoreModuleExtras {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
+	    $ret = $statusMonitor->renderStatusMessage(
+		    $module->translate('Installing the core module'), '', 0.25);
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $gallery->guaranteeTimeLimit(180);
+
 	    $gallery->debug('InstallOrUpgrade Matrix theme');
 	    $ret = $theme->installOrUpgrade();
 	    if ($ret) {
@@ -160,6 +181,13 @@ class CoreModuleExtras {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
+	    $ret = $statusMonitor->renderStatusMessage(
+		    $module->translate('Installing the core module'), '', 0.3);
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $gallery->guaranteeTimeLimit(180);
+
 	    $gallery->debug('Activate Matrix theme');
 	    list ($ret, $ignored) = $theme->activate(false);
 	    if ($ret) {
@@ -167,6 +195,13 @@ class CoreModuleExtras {
 				'the error stack trace; %s', $ret->getAsText()));
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+
+	    $ret = $statusMonitor->renderStatusMessage(
+		    $module->translate('Installing the core module'), '', 0.4);
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $gallery->guaranteeTimeLimit(180);
 
 	    /*
 	     * Register our permissions.  Since we're storing internationalized
@@ -205,6 +240,13 @@ class CoreModuleExtras {
 		}
 	    }
 
+	    $ret = $statusMonitor->renderStatusMessage(
+		    $module->translate('Installing the core module'), '', 0.5);
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $gallery->guaranteeTimeLimit(180);
+
 	    foreach (array('_createAccessListCompacterLock',
 			   '_createAllUsersGroup',
 			   '_createSiteAdminsGroup',
@@ -223,6 +265,13 @@ class CoreModuleExtras {
 		}
 	    }
 
+	    $ret = $statusMonitor->renderStatusMessage(
+		    $module->translate('Installing the core module'), '', 0.6);
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $gallery->guaranteeTimeLimit(180);
+
 	    $gallery->debug('Initialize MIME types');
 	    GalleryCoreApi::requireOnce(
 		'modules/core/classes/helpers/GalleryMimeTypeHelper_advanced.class');
@@ -233,6 +282,13 @@ class CoreModuleExtras {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $gallery->debug('CoreModulesExtra::upgrade: successfully installed core');
+
+	    $ret = $statusMonitor->renderStatusMessage(
+		    $module->translate('Installing the core module'), '', 0.7);
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $gallery->guaranteeTimeLimit(180);
 	    break;
 
 	case '0.8':
