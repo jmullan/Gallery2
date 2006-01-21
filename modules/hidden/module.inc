@@ -110,7 +110,7 @@ class HiddenModule extends GalleryModule /* and GalleryEventListener */ {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	while ($result = $searchResults->nextResult()) {
-	    $itemIds[] = $result[0];
+	    $itemIds[] = (int)$result[0];
 	}
 
 	while (!empty($itemIds)) {
