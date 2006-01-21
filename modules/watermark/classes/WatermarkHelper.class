@@ -86,7 +86,7 @@ class WatermarkHelper {
 	';
 
 	list ($ret, $searchResults) = $gallery->search(
-	    $query, $data, array('limit' => array('count' => $count, 'offset' => $offset)));
+	    $query, $data, array('limit' => array('count' => (int)$count, 'offset' => (int)$offset)));
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -94,7 +94,7 @@ class WatermarkHelper {
 	/* Get all ids */
 	$ids = array();
 	while ($result = $searchResults->nextResult()) {
-	    $ids[] = $result[0];
+	    $ids[] = (int)$result[0];
 	}
 
 	/* Convert them to entities */
@@ -134,14 +134,14 @@ class WatermarkHelper {
 	  [WatermarkImage::ownerId] = ?
 	';
 
-	list ($ret, $searchResults) = $gallery->search($query, array($ownerId));
+	list ($ret, $searchResults) = $gallery->search($query, array((int)$ownerId));
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$ids = array();
 	while ($result = $searchResults->nextResult()) {
-	    $ids[] = $result[0];
+	    $ids[] = (int)$result[0];
 	}
 
 	return array(null, $ids);
@@ -177,7 +177,7 @@ class WatermarkHelper {
 
 	$ids = array();
 	while ($result = $searchResults->nextResult()) {
-	    $ids[] = $result[0];
+	    $ids[] = (int)$result[0];
 	}
 
 	return array(null, $ids);

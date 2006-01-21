@@ -128,7 +128,7 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 		}
 
 		while ($result = $searchResults->nextResult()) {
-		    $ids[] = $result[0];
+		    $ids[] = (int)$result[0];
 		}
 
 		list ($ret, $lock) = GalleryCoreApi::acquireWriteLock($ids);
@@ -203,7 +203,7 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	while ($result = $searchResults->nextResult()) {
-	    list ($ret) = WatermarkHelper::deleteWatermarkImageById($result[0], true);
+	    list ($ret) = WatermarkHelper::deleteWatermarkImageById((int)$result[0], true);
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
