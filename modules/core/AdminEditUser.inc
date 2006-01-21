@@ -129,8 +129,8 @@ class AdminEditUserController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		$user->setUserName($form['userName']);
-		$user->setFullname($form['fullName']);
+		$user->setUserName(trim($form['userName']));
+		$user->setFullname(trim($form['fullName']));
 		if (!$isAnonymous) {
 		    $user->setEmail($form['email']);
 		    $user->setLanguage($form['language']);

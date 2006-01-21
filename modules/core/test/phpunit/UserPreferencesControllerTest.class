@@ -105,10 +105,10 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals($this->_user->getFullName(), 'full name');
-	$this->assertEquals($this->_user->getEmail(), 'email@test.me');
-	$this->assertEquals($this->_user->getLanguage(), 'language');
-    $this->assertEquals('language', $session->get('core.language'), 'Language');
+	$this->assertEquals('full name', $this->_user->getFullName());
+	$this->assertEquals('email@test.me', $this->_user->getEmail());
+	$this->assertEquals('language', $this->_user->getLanguage());
+	$this->assertEquals('language', $session->get('core.language'), 'Language');
     }
 
     function testEditRequiredOnly() {
@@ -130,8 +130,8 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals($this->_user->getFullName(), 'full name');
-	$this->assertEquals($this->_user->getEmail(), 'email_with-leading@space.test-o.com');
+	$this->assertEquals('full name', $this->_user->getFullName());
+	$this->assertEquals('email_with-leading@space.test-o.com', $this->_user->getEmail());
     }
 
     function testEditMissingEmail() {

@@ -105,7 +105,7 @@ class UserPreferencesController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		$user->setFullname($form['fullName']);
+		$user->setFullname(trim($form['fullName']));
 		$user->setEmail($form['email']);
 
 		if (isset($form['language'])) {

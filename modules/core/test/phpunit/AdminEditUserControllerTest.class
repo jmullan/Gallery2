@@ -40,18 +40,16 @@ class AdminEditUserControllerTest extends GalleryControllerTestCase {
     function setUp() {
 	parent::setUp();
 
-	list ($ret, $this->_user[0]) = $this->_createUser();
+	list ($ret, $this->_user[0]) = $this->_createUser(array('fullName' => 'full name'));
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
 	$this->_markForCleanup($this->_user[0]);
 
 	list ($ret, $this->_user[1]) = $this->_createUser();
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
 	$this->_markForCleanup($this->_user[1]);
     }
 
@@ -196,6 +194,35 @@ class AdminEditUserControllerTest extends GalleryControllerTestCase {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert($user->isCorrectPassword($password), 'check password');
+    }
+
+    function testTrailingSpace() {
+	/* Trailing space on full/username with no other changes used to give db error on mysql */
+	GalleryUtilities::putRequestVariable('userId', $this->_user[0]->getId());
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	$userName = $this->_user[0]->getUserName();
+	$fullName = $this->_user[0]->getFullName();
+	GalleryUtilities::putRequestVariable('form[userName]', "$userName  ");
+	GalleryUtilities::putRequestVariable('form[fullName]', "$fullName   ");
+	GalleryUtilities::putRequestVariable('form[email]', $this->_user[0]->getEmail());
+	GalleryUtilities::putRequestVariable('form[language]', $this->_user[0]->getLanguage());
+	GalleryUtilities::putRequestVariable('form[password1]', '');
+	GalleryUtilities::putRequestVariable('form[password2]', '');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('redirect' => array('view' => 'core.SiteAdmin', 'subView' => 'core.AdminUsers'),
+		  'status' => array('modifiedUser' => $userName),
+		  'error' => array()),
+	    $results);
+
+	list ($ret, $user) = $this->_user[0]->refresh();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($userName, $user->getUserName());
+	$this->assertEquals($fullName, $user->getFullName());
     }
 }
 ?>
