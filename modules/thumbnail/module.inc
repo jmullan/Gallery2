@@ -88,7 +88,7 @@ class ThumbnailModule extends GalleryModule {
 	    }
 
 	    $query = '
-	    INSERT INTO [GalleryChildEntity] SELECT [ThumbnailImage::id], ' . $rootId . '
+	    INSERT INTO [GalleryChildEntity] SELECT [ThumbnailImage::id], ' . (int)$rootId . '
 	    FROM [ThumbnailImage]
 	    ';
 	    $ret = $storage->execute($query);
@@ -136,13 +136,13 @@ class ThumbnailModule extends GalleryModule {
 	      AND
 	      [GalleryChildEntity::parentId] = ?
 	    ';
-	    list ($ret, $results) = $gallery->search($query, array($rootId));
+	    list ($ret, $results) = $gallery->search($query, array((int)$rootId));
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $ids = array();
 	    while ($result = $results->nextResult()) {
-		$ids[] = $result[0];
+		$ids[] = (int)$result[0];
 	    }
 
 	    GalleryCoreApi::requireOnce('modules/thumbnail/classes/ThumbnailImage.class');
@@ -340,7 +340,7 @@ class ThumbnailModule extends GalleryModule {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	while ($result = $searchResults->nextResult()) {
-	    $itemIds[] = $result[0];
+	    $itemIds[] = (int)$result[0];
 	}
 	while (!empty($itemIds)) {
 	    list ($ret, $items) = GalleryCoreApi::loadEntitiesById(array_splice($itemIds, 0, 100));

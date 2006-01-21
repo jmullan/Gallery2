@@ -68,15 +68,15 @@ class ThumbnailHelper {
 
 	list ($ret, $searchResults) =
 	    $gallery->search($query, $data,
-			     array('limit' => array('count' => $count,
-						    'offset' => $offset)));
+			     array('limit' => array('count' => (int)$count,
+						    'offset' => (int)$offset)));
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$items = array();
 	while ($result = $searchResults->nextResult()) {
-	    $items[$result[0]] = $result[1];
+	    $items[(int)$result[0]] = $result[1];
 	}
 
 	return array(null, $items);
@@ -96,7 +96,7 @@ class ThumbnailHelper {
 	list ($ret, $searchResults) = $gallery->search(
 	    'SELECT [ThumbnailImage::id] FROM [ThumbnailImage], [ChildEntity]
 	     WHERE [ThumbnailImage::id] = [ChildEntity::id] AND [ChildEntity::parentId] = ?',
-	    array($itemId));
+	    array((int)$itemId));
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -130,7 +130,7 @@ class ThumbnailHelper {
 	$data = array();
 	while ($result = $searchResults->nextResult()) {
 	    foreach (explode('|', $result[1]) as $mimeType) {
-		$data[$mimeType] = $result[0];
+		$data[$mimeType] = (int)$result[0];
 	    }
 	}
 	return array(null, $data);
