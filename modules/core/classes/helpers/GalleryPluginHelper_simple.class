@@ -320,7 +320,7 @@ class GalleryPluginHelper_simple {
 		GalleryDataCache::put($cacheKey, $cacheData);
 		continue;
 	    }
-	    $queryIds[] = $itemId;
+	    $queryIds[] = (int)$itemId;
 	}
 	if (empty($queryIds)) {
 	    return array(null, $data);
