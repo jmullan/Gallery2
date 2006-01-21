@@ -28,11 +28,11 @@
     <?php if ($templateData['anyInstallable']): ?>
     <div class="go">
 	  <div class="btn btn-continue"><span><span><span><span>
-	  <a href="<?php printf('%s?step=%s', INDEX_PHP, $currentStep->getStepNumber()) ?>"><?php print _('Activate More Modules'); ?></a>
+	  <a href="<?php generateUrl(sprintf('%s?step=%s', INDEX_PHP, $currentStep->getStepNumber())) ?>"><?php print _('Activate More Modules'); ?></a>
 	  </span></span></span></span></div>
       <?php $nextStep = $stepNumber + 1 ?>
 	  <div class="btn btn-continue"><span><span><span><span>
-	  <a href="<?php printf('%s?step=%s', INDEX_PHP, $nextStep) ?>"><?php printf(_('Continue to Step %d&raquo;'), $nextStep); ?></a>
+	  <a href="<?php generateUrl(sprintf('%s?step=%s', INDEX_PHP, $nextStep)) ?>"><?php printf(_('Continue to Step %d&raquo;'), $nextStep); ?></a>
 	  </span></span></span></span></div>
     </div>
     <?php endif; ?>

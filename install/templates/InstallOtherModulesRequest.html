@@ -28,7 +28,7 @@
   </p>
 
   <?php if (!empty($templateData['groupedModules'])): ?>
-    <form method="post" action="<?php printf('%s?step=%s', INDEX_PHP, $stepNumber) ?>">
+    <form method="post" action="<?php generateUrl(sprintf('%s?step=%s', INDEX_PHP, $stepNumber)) ?>">
       <table class="modules">
 	<tr style="background-color: #ccc">
 	  <th>
@@ -102,7 +102,7 @@
     <div class="go">
       <?php $nextStep = $stepNumber + 1 ?>
 	  <div class="btn btn-continue"><span><span><span><span>
-	  <a href="<?php printf('%s?step=%s', INDEX_PHP, $nextStep) ?>"><?php printf(_('Continue to Step %d Without Activating&raquo;'), $nextStep); ?></a>
+	  <a href="<?php generateUrl(sprintf('%s?step=%s', INDEX_PHP, $nextStep)) ?>"><?php printf(_('Continue to Step %d Without Activating&raquo;'), $nextStep); ?></a>
 	  </span></span></span></span></div>
 	  <div class="btn btn-continue"><span><span><span><span>
 	  <a href="javascript:document.forms[0].submit();"><?php print _('Activate Selected Modules') ?></a>

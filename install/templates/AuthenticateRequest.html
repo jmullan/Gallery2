@@ -8,7 +8,7 @@
 
     <p>
       <?php printf(_("As a convenience to you, we've prepared a %scorrect version of login.txt%s for you.  Download that and copy it into your <tt>%s</tt> directory and you're all set."),
-	'<a href="' . INDEX_PHP . '?step=' . $currentStep->getStepNumber() . '&amp;downloadLogin=1">',
+	'<a href="' . generateUrl(INDEX_PHP . '?step=' . $currentStep->getStepNumber() . '&amp;downloadLogin=1', false) . '">',
 	'</a>', $templateData['authenticationDir']) ?>
     </p>
 
@@ -18,6 +18,6 @@
 
     <div class="go">
 	  <div class="btn btn-continue"><span><span><span><span>
-	  <a href="<?php printf('%s?step=%s', INDEX_PHP, $currentStep->getStepNumber()) ?>"><?php print _('Authenticate Me') ?></a>
+	  <a href="<?php generateUrl(sprintf('%s?step=%s', INDEX_PHP, $currentStep->getStepNumber())) ?>"><?php print _('Authenticate Me') ?></a>
 	  </span></span></span></span></div>
     </div>

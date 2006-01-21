@@ -25,7 +25,7 @@
       <?php print _("If you're using a modern browser, we'll try to autocomplete any path you enter here.  So if you're having trouble finding the right path to your g2data directory, try experimenting with paths in the text box below and see what completions it provides for you."); ?>
     </p>
 
-    <form method="post" action="<?php printf('%s?step=%s', INDEX_PHP, $stepNumber) ?>">
+    <form method="post" action="<?php generateUrl(sprintf('%s?step=%s', INDEX_PHP, $stepNumber)) ?>">
 
 	<?php if (isset($templateData['error'])): ?>
 	  <div class="error">
@@ -53,8 +53,8 @@
 	    <input type="hidden" name="action" value="save" />
 	    <script type="text/javascript">
 	      // <![CDATA[
-	      autoCompleteAttach('dir', '<?php printf('%s?step=%s', INDEX_PHP,
-		  $currentStep->getStepNumber()) ?>&doAutoComplete=1&path=__VALUE__');
+	      autoCompleteAttach('dir', '<?php generateUrl(sprintf('%s?step=%s&%s=%s', INDEX_PHP,
+		  $currentStep->getStepNumber(), session_name(), session_id())) ?>&doAutoComplete=1&path=__VALUE__');
 	      // ]]>
 	    </script>
 

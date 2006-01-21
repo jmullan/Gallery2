@@ -30,6 +30,8 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: "Gill Sans", Verdana, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
 p {
@@ -65,34 +67,40 @@ a:hover {
 
 #box {
   width: 760px;
-  text-align: left;
   border: 1px solid #999;
-  background-color: #fff;
   margin: 0 auto;
 }
 
-#header img {
+.boxTable {
+  width: 760px;
+  margin: 0 auto;
+  text-align: left;
+  background-color: #fff;
+  border-style: none;
+  border: 0px;
+}
+
+td.header img {
   margin: 0 0 5px 14px;
   float: left;
   clear: none;
 }
 
-#navbar {
+td#navbar {
   font-family: Verdana, "Lucida Grande", Arial, sans-serif;
   width: 160px;
-  margin: 0;
-  padding: 0;
   vertical-align: top;
+  margin: auto;
 }
 
-#navbar div {
+td#navbar div {
   background-color: #d1e0ee;
   border-right: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
   padding: 10px 0 10px 10px;
 }
 
-#navbar td.heading {
+td#navbar td.heading {
   font-size: 1.4em;
   font-weight: bold;
   font-family: "Gill Sans", Verdana, Arial, sans-serif;
@@ -100,7 +108,7 @@ a:hover {
   padding: 3px;
 }
 
-#navbar td, #helpbar td {
+td#navbar td, #helpbar td {
   border-top: 1px solid #ecf2f8;
   padding: 8px 2px;
 }
@@ -114,9 +122,9 @@ a:hover {
 }
 
 #helpbar {
-    float: right;
-    clear: none;
-    margin: 0 20px;
+  float: right;
+  clear: none;
+  margin: 0 20px;
 }
 
 #helpbar tr.help td {
@@ -132,18 +140,18 @@ a:hover {
   padding: 2px 3px;
 }
 
-#main {
+.main {
   vertical-align: top;
   padding: 14px 22px 8px 14px;
   margin: 0;
-  width: 500px;
+  width: 620px;
 }
 
-#main h1 { font-size: 1.4em; }
-#main h2 { font-size: 1.2em; margin: 0 0 0.8em 0; }
-#main h3, #bottom h3 { font-size: 1.2em; }
-#main td { font-size: small; }
-#main table { border-spacing: 4px; }
+.main h1 { font-size: 1.4em; }
+.main h2 { font-size: 1.2em; margin: 0 0 0.8em 0; }
+.main h3, #bottom h3 { font-size: 1.2em; }
+.main td { font-size: small; }
+.main table { border-spacing: 4px; }
 
 #bottom {
   border-top: 1px solid #ddd;
@@ -196,11 +204,10 @@ div.error   { background: #fcc url('../../install/images/ico_error.gif') 5px 50%
 div.warning { background: #ffc url('../../install/images/ico_warning.gif') 5px 50% no-repeat; }
 div.success { background: #cfc url('../../install/images/ico_success.gif') 5px 50% no-repeat; }
 
-div.success h1, div.error h2 {
+div.success h1, div.error h2, div.warning h2 {
     position: relative;
     top: 10px;
     padding: 0;
-    margin: 0;
 }
 
 .go {
@@ -222,7 +229,7 @@ div.success h1, div.error h2 {
     display: block;
     margin: 0 9px;
     padding: 6px 0;
-    color: #666;
+    color: #333;
     text-decoration: none;
     white-space: nowrap;
     text-shadow: #999 0.2em 0.2em 0.2em;
@@ -252,7 +259,7 @@ div.success h1, div.error h2 {
   font-size: 69%;
 }
 
-.label {
+td.label {
   font-weight: bold;
   text-align: right;
   padding-right: 8px;
@@ -294,16 +301,13 @@ input, select {
   font-size: 1.1em;
   line-height: 1.4em;
   margin: 1.0em 0;
-  width: 100%;
-  height: 500px;
-  overflow: auto;
 }
 
 .example {
   background-color: #eee;
   border: 1px solid #999;
   margin: 15px 0;
-  padding: 10px;
+  padding: 5px;
 }
 
 .example pre {
@@ -343,10 +347,13 @@ input, select {
   line-height: 1.2em;
 }
 
-.systemChecks td.notice {
+.systemChecks td.notice, .systemChecks div.warning {
+  margin-left: 10px;
+  border: 1px solid #999;
+  padding: 5px;
   line-height: 1.3em;
   padding: 5px 5px 5px 45px;
-  border: 1px solid #999;
+  height: 50px;
   background: #ffc url('../../install/images/ico_warning.gif') 5px 5px no-repeat;
 }
 
@@ -400,4 +407,12 @@ label.radio {
 ol {
     font-size: 1.1em;
     line-height: 1.4em;
+}
+
+#MainPageStatus_statusBlock table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0px;
+  padding: 0px;
+  margin: 0px;
 }

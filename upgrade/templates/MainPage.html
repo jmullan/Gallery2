@@ -17,8 +17,9 @@
  * This page is the main upgrade template. It shows a header, the navigation menu (overview over all upgrade
  * steps with links), the body of the current step by including the corresponding template, a "Continue to
  * step x" link, and an upgrade status bar.
- * In the UpgradeCoreModule / UpgradeOtherModule steps, it shows a progress bar instead of the navigation
- * menu.
+ * In the UpgradeCoreModule / UpgradeOtherModule steps, it shows a active progress bar for the progress 
+ * within the step. Once the step is finished, it shows the overall progress bar and the redo/continue links
+ * again.
  * Note: The page is divided into two <table>s because Internet Explorer doesn't start rendering a table
  * before it receives the closing </table> tag. If the whole page was in a single <table>, IE would not
  * display the progress bar at all (because as soon as the progress bar reaches 100%, we hide it and display
@@ -27,31 +28,7 @@
  ?>
 <?php if (isset($templateData['MainPage']['showStatusBlock'])): ?>
   <table id="progressBarTable" class="boxTable" cellspacing="0">
-	<tr>
-	  <td class="header" colspan="2">
-	    <img src="<?php generateUrl('images/g2Logo_upgrade_head.png') ?>" alt="Gallery Upgrader"/>
-	      <table id="helpbar" cellspacing="0">
-		    <tr class="help">
-		      <td>
-		        <span class="helpBox">?</span>
-		      </td>
-		      <td>
-		        <a href="<?php generateUrl('../README.html') ?>" target="_blank"><?php
-		           print _('Upgrader Help'); ?></a>
-		      </td>
-		    </tr>
-		    <tr>
-		      <td>
-		        <span class="helpBox">X</span>
-		      </td>
-		      <td>
-		        <a href="<?php generateUrl('index.php?startOver=1') ?>"><?php
-		           print _('Start Over'); ?></a>
-		      </td>
-		    </tr>
-		  </table>
-	  </td>
-	</tr>
+    <?php include(dirname(__FILE__) . '/Header.html'); ?>
 	<tr>
 	  <td id="navbar">
 	    <?php include(dirname(__FILE__) . '/NavBar.html'); ?>
@@ -110,32 +87,7 @@
 
 <?php if (isset($templateData['MainPage']['showBodyAndFooter'])): ?>
       <table id="regularTable" class="boxTable" cellspacing="0">
-	<tr>
-	  <td class="header" colspan="2">
-	    <img src="<?php generateUrl('images/g2Logo_upgrade_head.png') ?>" alt="Gallery Upgrader"/>
-	      <table id="helpbar" cellspacing="0">
-		    <tr class="help">
-		      <td>
-		        <span class="helpBox">?</span>
-		      </td>
-		      <td>
-		        <a href="<?php generateUrl('../README.html') ?>" target="_blank"><?php
-		           print _('Upgrader Help'); ?></a>
-		      </td>
-		    </tr>
-		    <tr>
-		      <td>
-		        <span class="helpBox">X</span>
-		      </td>
-		      <td>
-		        <a href="<?php generateUrl('index.php?startOver=1') ?>"><?php
-		           print _('Start Over'); ?></a>
-		      </td>
-		    </tr>
-		  </table>
-	  </td>
-	</tr>
-
+        <?php include(dirname(__FILE__) . '/Header.html'); ?>
 	<tr>
 	  <td id="navbar">
 	    <?php include(dirname(__FILE__) . '/NavBar.html'); ?>

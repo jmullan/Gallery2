@@ -28,7 +28,7 @@
 
     <div class="go">
 	  <div class="btn btn-redo"><span><span><span><span>
-	<a href="<?php printf('%s?step=%s', INDEX_PHP, $currentStep->getStepNumber()) ?>">
+	<a href="<?php generateUrl(sprintf('%s?step=%s', INDEX_PHP, $currentStep->getStepNumber())) ?>">
 	  <?php echo _('Check Again') ?>
 	</a>
 	  </span></span></span></span></div>

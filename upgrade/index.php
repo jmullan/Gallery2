@@ -250,8 +250,6 @@ function generateUrl($uri, $print=true) {
 	}
     }
 
-
-
     if ($print) {
 	print $uri;
     }

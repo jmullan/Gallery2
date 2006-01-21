@@ -41,6 +41,7 @@
 
 require_once(dirname(__FILE__) . '/GalleryStub.class');
 require_once(dirname(__FILE__) . '/InstallStep.class');
+require_once(dirname(__FILE__) . '/StatusTemplate.class');
 require_once(dirname(dirname(__FILE__)) . '/modules/core/classes/GalleryUtilities.class');
 define('INDEX_PHP', basename(__FILE__));
 
@@ -168,33 +169,10 @@ if ($currentStep->processRequest()) {
     /* Round percentage to the nearest 5 */
     $templateData['errors'] = array();
     $currentStep->loadTemplateData($templateData);
-    $stepsComplete = max($stepNumber - ($currentStep->isComplete() ? 0 : 1), 0);
-    $templateData['percentComplete'] = (int)((100 * ($stepsComplete / (count($steps)-1))) / 5) * 5;
 
-    /* Fetch our page into a variable */
-    ob_start();
-    include(dirname(__FILE__) . '/templates/MainPage.html');
-    $html = ob_get_contents();
-    ob_end_clean();
-
-    /* Add session ids if we don't have cookies */
-    $html = addSessionIdToUrls($html);
-    print $html;
-}
-
-/**
- * Add the session id to our url, if necessary
- */
-function addSessionIdToUrls($html) {
-    /*
-     * SID is empty if we have a session cookie.
-     * If session.use_trans_sid is on then it will add the session id.
-     */
-    $sid = SID;
-    if (!empty($sid) && !ini_get('session.use_trans_sid')) {
-	$html = preg_replace('/(href|action)="(.*\?.*)"/', '$1="$2&amp;' . $sid . '"', $html);
-    }
-    return $html;
+    /* Render the output */
+    $template = new StatusTemplate();
+    $template->renderHeaderBodyAndFooter($templateData);
 }
 
 function processAutoCompleteRequest() {
@@ -300,6 +278,28 @@ function getBaseUrl() {
     $protocol = (GalleryUtilities::getServerVar('HTTPS') == 'on') ? 'https' : 'http';
     
     return sprintf('%s://%s', $protocol, $hostName);
+}
+
+/**
+ * Mini url generator for the installer
+ */
+function generateUrl($uri, $print=true) {
+    if (!strncmp($uri, 'index.php', 9)) {
+	/*
+	 * Cookieless browsing: SID is empty if we have a session cookie.
+	 * If session.use_trans_sid is on then it will add the session id.
+	 */
+	$sid = SID;
+	if (!empty($sid) && !ini_get('session.use_trans_sid')) {
+	    $uri .= !strpos($uri, '?') ? '?' : '&amp;';
+	    $uri .= $sid;
+	}
+    }
+
+    if ($print) {
+	print $uri;
+    }
+    return $uri;
 }
 
 /*

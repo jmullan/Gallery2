@@ -4,8 +4,8 @@
 	$templateData['totalSteps'],
 	'<a href="../README.html" target="_blank">', '</a>') ?>
     </p>
-    <?php if (isset($translator)): ?>
-    <form method="post" action="<?php printf('%s?step=%s', INDEX_PHP, $stepNumber) ?>"><p>
+    <?php global $translator; if (isset($translator)): ?>
+    <form method="post" action="<?php generateUrl(sprintf('%s?step=%s', INDEX_PHP, $stepNumber)) ?>"><p>
       <input type="hidden" name="step" value="<?php print $stepNumber ?>"/>
       <?php print _("Select Language:") ?>
       <select name="language" onchange="this.form.submit()" style="direction:ltr">
@@ -27,6 +27,6 @@
 
     <div class="go">
 	  <div class="btn btn-continue"><span><span><span><span>
-	  <a href="<?php printf('%s?step=%s', INDEX_PHP, $stepNumber + 1) ?>"><?php print _('Begin Installation&raquo;') ?></a>
+	  <a href="<?php generateUrl(sprintf('%s?step=%s', INDEX_PHP, $stepNumber + 1)) ?>"><?php print _('Begin Installation&raquo;') ?></a>
 	  </span></span></span></span></div>
     </div>
