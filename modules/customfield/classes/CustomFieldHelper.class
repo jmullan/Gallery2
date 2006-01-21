@@ -213,12 +213,11 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
 	}
 
 	foreach ($items as $item) {
-	    $itemId = $item->getId();
+	    $itemId = (int)$item->getId();
 	    $itemIds[] = $itemId;
 	    $result[$itemId] = array();
-	    $containerId =
-		GalleryUtilities::isA($item, 'GalleryAlbumItem') ? $itemId : $item->getParentId();
-
+	    $containerId = GalleryUtilities::isA($item, 'GalleryAlbumItem') ? 
+								$itemId : (int)$item->getParentId();
 	    list ($ret, $param[$itemId], $isContainer[$itemId]) =
 		CustomFieldHelper::loadParameters($containerId);
 	    if ($ret) {
@@ -237,7 +236,7 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
 	}
 
 	while ($rec = $searchResults->nextResult()) {
-	    $data[$rec[0]][$rec[1]] = $rec[2];
+	    $data[(int)$rec[0]][$rec[1]] = $rec[2];
 	}
 
 	foreach ($itemIds as $itemId) {

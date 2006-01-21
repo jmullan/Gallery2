@@ -503,7 +503,7 @@ class ExifHelper {
           [ExifPropertiesMap::viewMode] = ?
         ORDER BY
           [ExifPropertiesMap::sequence] ASC';
-	list ($ret, $searchResults) = $gallery->search($query, array($viewMode));
+	list ($ret, $searchResults) = $gallery->search($query, array((int)$viewMode));
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
