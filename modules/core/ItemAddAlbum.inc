@@ -75,12 +75,8 @@ class ItemAddAlbumController extends GalleryController {
 		    				$form['summary'], $form['description'],
 						$form['keywords']);
 		if ($ret) {
-		    if ($ret->getErrorCode() & ERROR_COLLISION) {
-			$error[] = 'form[error][pathComponent][collision]';
-		    } else {
-			GalleryCoreApi::releaseLocks($lockIds);
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
+		    GalleryCoreApi::releaseLocks($lockIds);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		if (!isset($instance)) {
