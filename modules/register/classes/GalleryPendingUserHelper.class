@@ -59,7 +59,7 @@ class GalleryPendingUserHelper {
 	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
 	} else {
 	    $result = $searchResults->nextResult();
-	    $id = $result[0];
+	    $id = (int)$result[0];
 	    list ($ret, $user) = GalleryCoreApi::loadEntitiesById($id);
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -129,7 +129,7 @@ class GalleryPendingUserHelper {
 	$query .= ' ORDER BY [GalleryPendingUser::userName] ASC';
 
 	list ($ret, $searchResults) = $gallery->search($query, $data,
-	     array('limit' => array('count' => $count, 'offset' => $offset)));
+	     array('limit' => array('count' => (int)$count, 'offset' => (int)$offset)));
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
