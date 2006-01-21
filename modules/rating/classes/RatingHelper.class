@@ -69,8 +69,8 @@ class RatingHelper {
 
 	$data = array();
 	while ($result = $searchResults->nextResult()) {
-	    $data[$result[0]] = array('itemId' => $result[0], 'rating' => $result[1]/1000,
-		    'votes' => $result[2]);
+	    $data[(int)$result[0]] = array('itemId' => (int)$result[0], 'rating' => $result[1]/1000,
+		    'votes' => (int)$result[2]);
 	}
 
 	/* Check for existing votes from this user! */
@@ -86,7 +86,7 @@ class RatingHelper {
 	    ';
 
 	$searchParams = $itemIds;
-	$searchParams[] = $userId;
+	$searchParams[] = (int)$userId;
 
 	/* Handle extra checks for anonymous users */
 	list ($ret, $anonymousUserId) = GalleryCoreApi::getPluginParameter( 'module', 'core',
@@ -122,7 +122,7 @@ class RatingHelper {
 
 	while ($result = $searchResults->nextResult()) {
 	    if (isset($data[$result[0]])) {
-		$data[$result[0]]['userRating'] = $result[1];
+		$data[(int)$result[0]]['userRating'] = (int)$result[1];
 	    }
 	}
 
@@ -166,8 +166,8 @@ class RatingHelper {
 	}
 
 	/* Update existing user vote for this item */
-	$matchParams = array(	'itemId' => $itemId,
-				'userId' => $userId );
+	$matchParams = array(	'itemId' => (int)$itemId,
+				'userId' => (int)$userId );
 	if ($userId == $anonymousUserId) {
 	    $matchParams['sessionId'] = $sessionId;
 	    $matchParams['remoteIdentifier'] = implode(":", $remoteId);
@@ -205,7 +205,7 @@ class RatingHelper {
 		WHERE
 		[RatingMap::itemId] = ?
 	';
-	list ($ret, $searchResults) = $gallery->search($query, array($itemId));
+	list ($ret, $searchResults) = $gallery->search($query, array((int)$itemId));
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -230,10 +230,10 @@ class RatingHelper {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    $data['itemId'] = $itemId;
+	    $data['itemId'] = (int)$itemId;
 	    $data['rating'] = $averageRating/1000;
-	    $data['votes'] = $voteCount;
-	    $data['userRating'] = $rating;
+	    $data['votes'] = (int)$voteCount;
+	    $data['userRating'] = (int)$rating;
 	}
 
 	return array(null, $data);
