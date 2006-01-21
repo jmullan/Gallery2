@@ -71,7 +71,7 @@ class GalleryMembersHelper {
 	', $aclMarkers);
 
 	$data = array();
-        $data[] = $userId;
+        $data[] = (int)$userId;
 	$data = array_merge($data, $aclIds);
 
 	list ($ret, $searchResults) = $gallery->search($query, $data);
@@ -138,11 +138,11 @@ class GalleryMembersHelper {
         ', $aclMarkers);
 
 	$data = array();
-	$data[] = $userId;
+	$data[] = (int)$userId;
 	$data = array_merge($data, $aclIds);
 
 	$options = array();
-	$options['limit'] = array('count' => $count, 'offset' => $offset);
+	$options['limit'] = array('count' => (int)$count, 'offset' => (int)$offset);
 
 	list ($ret, $searchResults) = $gallery->search($query, $data, $options);
 	if ($ret) {
@@ -152,7 +152,7 @@ class GalleryMembersHelper {
 	/* Get all of our item ids */
 	$itemIds = array();
 	while ($result = $searchResults->nextResult()) {
-	    $itemIds[] = $result[0];
+	    $itemIds[] = (int)$result[0];
 	}
 
 	/* Convert them to entities */
