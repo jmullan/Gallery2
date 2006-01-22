@@ -52,8 +52,7 @@ class ItemReorderController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$status = array();
-	$error = array();
+	$status = $error = array();
 	if (isset($form['action']['reorder'])) {
 
 	    /* Verify that we've got what we need */
@@ -155,6 +154,7 @@ class ItemReorderController extends GalleryController {
 		$redirect['view'] = 'core.ItemAdmin';
 		$redirect['subView'] = 'core.ItemReorder';
 		$redirect['itemId'] = $itemId;
+		$status['saved'] = 1;
 	    }
 	} else if (isset($form['action']['cancel'])) {
 	    $redirect['return'] = true;

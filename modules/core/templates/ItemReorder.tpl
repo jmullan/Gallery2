@@ -8,6 +8,12 @@
   <h2> {g->text text="Reorder Album"} </h2>
 </div>
 
+{if isset($status.saved)}
+<div class="gbBlock"><h2 class="giSuccess">
+  {g->text text="Order saved successfully"}
+</h2></div>
+{/if}
+
 {if isset($ItemReorder.show.automaticOrderMessage)}
 <div class="gbBlock">
   <p class="giDescription">
