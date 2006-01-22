@@ -172,14 +172,12 @@ function extractStrings($filename) {
 	}
     }
 
-    /* grab phrases of this format: {g->text ..... } */
-    if (preg_match_all("/(\{\s*g->text\s+.*?[^\\\]\})/s",
+    /* grab phrases of this format: {g->text ..... } or {g->changeInDescendents ... } */
+    if (preg_match_all("/(\{\s*g->(?:text|changeInDescendents)\s+.*?[^\\\]\})/s",
 		       $data, $matches, PREG_SET_ORDER)) {
 	foreach ($matches as $match) {
 	    $string = $match[1];
-	    $text = null;
-	    $one = null;
-	    $many = null;
+	    $text = $one = $many = null;
 
 	    /*
 	     * Ignore translations of the form:
