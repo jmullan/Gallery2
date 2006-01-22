@@ -98,8 +98,8 @@
     {g->text text="Checking this option will rebuild pictures according to appropriate limits"}
   </blockquote>
   <br/>
-  { g->changeInDescendents module="sizelimit" text="Use these size limits in all subalbums"}
-  <blockquote>  
+  {g->changeInDescendents module="sizelimit" text="Use these size limits in all subalbums"}
+  <blockquote>
     {g->text text="Checking this option will set same picture size limits in all subalbums"}
-  </blockquote>  
+  </blockquote>
 </div>
