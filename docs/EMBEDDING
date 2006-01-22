@@ -31,38 +31,51 @@ ___ Embedding G2 in another application using existing integration code ___
 ___ Writing the integration code to embed G2 in another PHP application ___
    \___________________________________________________________________/
 
-First install (separately) G2 and the app in which G2 will be embedded.
 
-Next you need an entry point in the emApp for all G2 requests, (similar to
-main.php in G2 standalone).  This may be a module or plugin if the application
-supports these, or a plain php file.  Determine the URI/path for your access
-point and the G2 base directory, relative to your webserver document root.
-Examples: __ access point __                   __ G2 base dir __
-   a)     appdir/gallery2.php                  appdir/gallery2
-   b)     appdir/plugins/gallery2.php          appdir/lib/gallery2
-   c)     appdir/index.php?module=gallery2     gallery2
-   d)     index.php?page=gallery               albums
-Use these to determine the following values:
-        embedUri = Filename (and any query parameters, but NO path) for access point
-       embedPath = URL path from document root to embedUri
-  relativeG2Path = Path from directory for access point to G2 base directory
-For the above examples these settings are:
-        __ embedUri __              __ embedPath __     __ relativeG2Path __
-   a)   gallery2.php                /appdir             gallery2
-   b)   gallery2.php                /appdir             lib/gallery2
-   c)   index.php?module=gallery2   /appdir             ../gallery2
-   d)   index.php?page=gallery      /                   albums
-You'll also need a URI for a login page or main page of the app; G2 will
-redirect here for access attempts without proper permissions.
-Examples:  /  or  /appdir/login.php
+First install (separately) Gallery 2 and the app in which Gallery 2 will be embedded.
+
+Next you need an entry point in the emApp for all Gallery 2 requests, (similar to main.php
+in Gallery 2 standalone). This may be a module or plugin if the application supports these,
+or a plain php file. Determine the URI/path for your access point and the Gallery 2 base 
+directory, relative to your webserver document root. Examples:
+
+   Access Point ( = embedUri )          Gallery 2 Base Directory ( = g2Uri )
+----------------------------------------------------------------------------
+a) /appdir/gallery2.php                 /appdir/gallery2
+b) /appdir/plugins/gallery2.php         /appdir/lib/gallery2/
+c) /appdir/index.php?module=gallery2    /gallery2/
+d) /index.php?page=gallery              /albums/
+
+You can simply use these paths as the parameters to GalleryEmbed::init($embedUri, $g2Uri);
+  * embedUri = absolute URL path from document root + filename 
+               (and any query parameters, but NO path) for access point..
+  * g2Uri = absolute URL path from document root to the Gallery 2 directory 
+
+Never forget the leading '/'! Complete URLs are also allowed, e.g.
+
+   Access Point ( = embedUri )                        Gallery 2 Base Directory ( = g2Uri )
+------------------------------------------------------------------------------------------
+a) http://www.example.com/appdir/gallery2.php 	      http://www.example.com/appdir/gallery2/
+b) http://example.com/appdir/plugins/gallery2.php     http://example.com/appdir/lib/gallery2/
+c) http://example.com/index.php?module=gallery2       http://photos.example.com/
+
+As you see, Gallery 2 and your the location where Gallery 2 is integrated in your website
+can be on two different subdomains! You shouldn't use two completely different domains 
+because cookies (whether you are logged in or not) cannot be shared between different 
+domains. But different subdomains is no problem, as long as you change the Gallery 2 
+cookie.path in site admin -> General appropriately.
+
+You'll also need a URI for a login page or main page of the app; Gallery 2 will redirect 
+here for access attempts without proper permissions.
+Examples:   /   or   /appdir/login.php
 
 The code in the access point to handle a G2 request looks something like this:
 
   require_once(dirname(__FILE__) . 'relative/path/to/gallery2/embed.php');
   $ret = GalleryEmbed::init(array(
-           'embedUri' => {value}, embedPath => {value}, 'relativeG2Path' => {value},
-           'loginRedirect' => {value}, 'activeUserId' => {value}));
-  if ($ret->isError()) {
+           'embedUri' => {value}, 'g2Uri' => {value}, 
+           'loginRedirect' => {value}, 'activeUserId' => {value});
+  if ($ret) {
     // $ret->getAsHtml() has error details..
     exit;
   }
@@ -118,13 +131,13 @@ Next add hooks to keep users in sync between G2 and the emApp.
 The code in each case will look like this:
   require_once(dirname(__FILE__) . 'relative/path/to/gallery2/embed.php');
   $ret = GalleryEmbed::init();
-  if ($ret->isError()) {
+  if ($ret) {
     // $ret->getAsHtml() has error details..
   }
   // Call GalleryEmbed as required..
   // ..
   $ret = GalleryEmbed::done();
-  if ($ret->isError()) {
+  if ($ret) {
     // $ret->getAsHtml() has error details..
   }
 You'll need hooks to call GalleryEmbed::createUser(), ::updateUser() and ::deleteUser()
