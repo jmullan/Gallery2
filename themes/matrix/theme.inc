@@ -42,7 +42,7 @@ class MatrixTheme extends GalleryTheme {
 	$this->setId('matrix');
 	$this->setName($gallery->i18n('Matrix'));
 	$this->setDescription($gallery->i18n('Standard Gallery2 look and feel'));
-	$this->setVersion('1.0.1');
+	$this->setVersion('1.0.2');
 	$this->setRequiredCoreApi(array(7, 0));
 	$this->setRequiredThemeApi(array(2, 1));
 	$this->setStandardSettings(
@@ -73,13 +73,13 @@ class MatrixTheme extends GalleryTheme {
 	}
 
 	/* Add in our custom settings */
-	$settings[] = array('key' => 'useFloatingDivs',
-		'name' => $this->translate('Use floating divs instead of a table to 
-		    display thumbnails'),
-		'type' => 'checkbox',
-		'value' => $params['useFloatingDivs']);
+	$settings[] = array(
+	    'key' => 'useFloatingDivs',
+	    'name' => $this->translate('Use floating divs instead of a table to display thumbnails'),
+	    'type' => 'checkbox',
+	    'value' => isset($params['useFloatingDivs']) ? $params['useFloatingDivs'] : false);
 	return array(null, $settings);
-    }    
+    }
 
     /**
      * @see GalleryTheme::showAlbumPage

@@ -49,7 +49,7 @@ class AdminThemesController extends GalleryController {
 	$themeId = GalleryUtilities::getRequestVariables('themeId');
 	$theme = null;
 	if (!empty($themeId) && !empty($form['action'])) {
-	    list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId);
+	    list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId, false, true);
 	    if ($ret) {
 		if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH &&
 		    isset($form['action']['upgrade'])) {
@@ -309,6 +309,7 @@ class AdminThemesView extends GalleryView {
 	/* Transform it to include all the theme data that we want to display */
 	$themeList = array();
 	foreach ($themes as $id => $status) {
+
 	    list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $id, true);
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -374,6 +375,14 @@ class AdminThemesView extends GalleryView {
 				  'params' => array('controller' => 'core.AdminThemes',
 						    'themeId' => $id,
 						    'form[action][deactivate]' => 1));
+		    }
+		    if ($status['version'] != $theme->getVersion()) {
+			$entry['action'][] =
+			    array('text' => $module->translate('upgrade'),
+				  'params' => array('controller' => 'core.AdminThemes',
+						    'themeId' => $id,
+						    'form[action][upgrade]' => 1));
+			$entry['state'] = 'upgrade';
 		    }
 		}
 	    } else {
