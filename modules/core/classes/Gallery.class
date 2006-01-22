@@ -882,7 +882,7 @@ class Gallery {
 	    header('Last-Modified: ' . $lastModified);
 	    header('Content-type: ' . $mimeType);
 	    header('Content-length: ' . $contentLength);
-	    header('Expires: Sun, 17 Jan 2038 12:00:00 GMT');
+	    header('Expires: ' . GalleryUtilities::getHttpDate(time() + 31536000));
 	    set_magic_quotes_runtime(0);
 	    set_time_limit(0);
 	    while (!feof($fd)) {

@@ -147,7 +147,7 @@ class DownloadItemView extends GalleryView {
 	    header('Content-length: ' . $stats[7]);
 	}
 	header('Last-Modified: ' . GalleryUtilities::getHttpDate($stats[9]));
-	header('Expires: Sun, 17 Jan 2038 12:00:00 GMT');
+	header('Expires: ' . GalleryUtilities::getHttpDate(time() + 31536000));
 
 	/*
 	 * Don't use readfile() because it buffers the entire file in memory
