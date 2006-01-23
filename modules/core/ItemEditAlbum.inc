@@ -457,7 +457,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 			list ($ret, $preferences) =
 			    GalleryCoreApi::fetchDerivativePreferencesForItem($albumId);
 			if ($ret) {
-			    return array($ret->wrap(__FILE__, __LINE__), null, null);
+			    return $ret->wrap(__FILE__, __LINE__);
 			}
 	    
 			foreach ($preferences as $preference) {
@@ -470,7 +470,8 @@ class ItemEditAlbum extends ItemEditPlugin {
 	    
 			    if ($preference['derivativeType'] == DERIVATIVE_TYPE_IMAGE_RESIZE
 				&& !empty($width)) {
-				$resizes[$albumId][] = array('width' => $width, 'height' => $height);
+				$resizes[$albumId][] = 
+                                    array('width' => $width, 'height' => $height);
 				}
 			    }
 			}
@@ -594,7 +595,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 		    list ($ret, $preferences) =
 			GalleryCoreApi::fetchDerivativePreferencesForItem($albumId);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return $ret->wrap(__FILE__, __LINE__);
 		    }
 	
 		    foreach ($preferences as $preference) {
