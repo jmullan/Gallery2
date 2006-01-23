@@ -304,6 +304,28 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	/* 
+	 * Test that during rebuild thumbnails and rebuild resizes
+	 * we are using album-specific settings for each derivative
+	 * http://sourceforge.net/tracker/?func=detail&aid=1401336&group_id=7130&atid=107130
+	 */
+       $ret = GalleryCoreApi::removeDerivativePreferenceForItemType(
+	    $this->_childAlbum->getId(), 
+	    array(DERIVATIVE_TYPE_IMAGE_THUMBNAIL, DERIVATIVE_TYPE_IMAGE_RESIZE));
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+	}
+	$ret = GalleryCoreApi::addDerivativePreference(0, $this->_childAlbum->getId(),
+	    DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'thumbnail|246');
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+	}
+	$ret = GalleryCoreApi::addDerivativePreference(0, $this->_childAlbum->getId(),
+	    DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|987');
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+	}
+	 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[theme]', 'bar');
@@ -356,11 +378,11 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	}
 
 	$this->assertEquals('thumbnail|123',
-	    $thumbnails[$child[0]->getId()]->getDerivativeOperations());
+	    $thumbnails[$child[0]->getId()]->getDerivativeOperations(), 'child 0');
 	$this->assertEquals('crop|0,0,50,50;thumbnail|123',
-	    $thumbnails[$child[1]->getId()]->getDerivativeOperations());
-	$this->assertEquals('crop|0,0,80,80;thumbnail|123',
-	    $thumbnails[$child[2]->getId()]->getDerivativeOperations());
+	    $thumbnails[$child[1]->getId()]->getDerivativeOperations(), 'child 1');
+	$this->assertEquals('crop|0,0,80,80;thumbnail|246',
+	    $thumbnails[$child[2]->getId()]->getDerivativeOperations(), 'child 2');
 
 	list ($ret, $resizes) =
 	    GalleryCoreApi::fetchResizesByItemIds(array($child[0]->getId(),
@@ -369,7 +391,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	for ($i = 0; $i < 3; $i++) {
+	for ($i = 0; $i < 2; $i++) {
 	    $childId = $child[$i]->getId();
 	    if (!isset($resizes[$childId])) {
 		$this->assert(false, "Missing resizes for child $i");
@@ -387,6 +409,8 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	    $this->assertEquals('scale|456,456',
 		$resizes[$child[$i]->getId()][2]->getDerivativeOperations(), "$i 2");
 	}
+	$this->assertEquals('scale|987,987',
+	    $resizes[$child[2]->getId()][0]->getDerivativeOperations(), "child album");
     }
 
     /**

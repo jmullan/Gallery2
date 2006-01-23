@@ -390,6 +390,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 	$runningTotal = 0;
 	$step = min(200, intval($total/20));
 	$batchSize = 300;
+	$resizes = array();
 	while (!empty($childIds)) {
 	    $ind = $runningTotal;	/* little true-up */
 	    $currentChildIds = array_splice($childIds, 0, $batchSize);
@@ -450,15 +451,38 @@ class ItemEditAlbum extends ItemEditPlugin {
 		}
 
 		if (isset($toolkit)) {
-		    for ($i = 0; $i < sizeof($form['resizes']); $i++) {
-			if (empty($form['resizes'][$i]['active'])) {
-			    continue;
+		    $albumId = $child->getParentId();
+		    if (empty($resizes[$albumId])) {
+			/* Keep resizes for albums in memory */
+			list ($ret, $preferences) =
+			    GalleryCoreApi::fetchDerivativePreferencesForItem($albumId);
+			if ($ret) {
+			    return array($ret->wrap(__FILE__, __LINE__), null, null);
 			}
-
+	    
+			foreach ($preferences as $preference) {
+			    if (preg_match('/(?:resize|scale)\|(\d+)(?:,(\d+))?/',
+					   $preference['derivativeOperations'],
+					   $matches)) {
+				$width = $matches[1];
+				$height = empty($matches[2]) ? $width : $matches[2];
+			    }
+	    
+			    if ($preference['derivativeType'] == DERIVATIVE_TYPE_IMAGE_RESIZE
+				&& !empty($width)) {
+				$resizes[$albumId][] = array('width' => $width, 'height' => $height);
+				}
+			    }
+			}
+			if (empty($resizes[$albumId])) {
+			    return GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+			}
+		    $resize = $resizes[$albumId];
+		    for ($i = 0; $i < sizeof($resize); $i++) {
 			/* Special case to make sure that we don't upsample photos */
 			if (GalleryUtilities::isA($child, 'GalleryPhotoItem')) {
-			    if ($child->getWidth() <= $form['resizes'][$i]['width']
-				  && $child->getHeight() <= $form['resizes'][$i]['height']) {
+			    if ($child->getWidth() <= $resize[$i]['width']
+				  && $child->getHeight() <= $resize[$i]['height']) {
 				continue;
 			    }
 			}
@@ -482,7 +506,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 			$derivative->setMimeType($outputMimeType);
 			$derivative->setDerivativeSourceId($source->getId());
 			$derivative->setDerivativeOperations('scale|' .
-			    $form['resizes'][$i]['width'] . ',' . $form['resizes'][$i]['height']);
+			    $resize[$i]['width'] . ',' . $resize[$i]['height']);
 
 			$ret = GalleryCoreApi::estimateDerivativeDimensions($derivative, $source);
 			if ($ret) {
@@ -537,6 +561,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 	$total = sizeof($childIds);
 	$ind = 0;
 	$step = min(500, intval($total/20));
+	$thumbnailSizes = array();
 	while (!empty($childIds)) {
 	    $currentChildIds = array_splice($childIds, 0, $batchSize);
 	    /* Load the children */
@@ -563,6 +588,27 @@ class ItemEditAlbum extends ItemEditPlugin {
 		}
 
 		$childId = $child->getId();
+		$albumId = $child->getParentId();
+		if (empty($thumbnailSizes[$albumId])) {
+		    /* Keep thumbnail sizes for albums in memory */
+		    list ($ret, $preferences) =
+			GalleryCoreApi::fetchDerivativePreferencesForItem($albumId);
+		    if ($ret) {
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    }
+	
+		    foreach ($preferences as $preference) {
+			if (preg_match('/thumbnail\|(\d+)/', 
+			    $preference['derivativeOperations'], $matches)) {
+			    $thumbnailSizes[$albumId] = $matches[1];
+			    break;
+			}
+		    }
+		    if (empty($thumbnailSizes[$albumId])) {
+			return GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+		    }
+		}
+		$thumbnailSize = $thumbnailSizes[$albumId];
 		$thumbnail = null;
 		if (isset($thumbTable[$childId])) {
 		    /* We already have a thumbnail */
@@ -591,7 +637,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 		    }
 
 		    $operation = preg_replace('/((^|;)thumbnail)\|\d+/',
-					      '$1|' . $form['thumbnail']['size'],
+					      '$1|' . $thumbnailSize,
 					      $thumbnail->getDerivativeOperations());
 		} else {
 		    /*
@@ -621,7 +667,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
 
-		    $operation = 'thumbnail|' . $form['thumbnail']['size'];
+		    $operation = 'thumbnail|' . $thumbnailSize;
 		}
 
 		if ($thumbnail == null) {
