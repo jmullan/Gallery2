@@ -32,7 +32,7 @@ END WHILE;
 RETURN retval;
 END;
 
-CREATE FUNCTION G2_LIKE (subject VARCHAR(4000), pattern VARCHAR(4000)) RETURNS INTEGER
+CREATE FUNCTION G2_LIKE (subject VARCHAR(8000), pattern VARCHAR(8000)) RETURNS INTEGER
 BEGIN ATOMIC
 --
 -- Author: Larry Menard, 11/2005
@@ -57,7 +57,7 @@ BEGIN ATOMIC
 DECLARE subject_position, pattern_position,
         percent_position, underscore_position,
         pattern_chunk_end, rc, character_required INTEGER;
-DECLARE next_chunk VARCHAR(4000);
+DECLARE next_chunk VARCHAR(8000);
 -- Get rid of a few oddball cases (when no subject string provided) right off the bat
 IF LENGTH(subject) = 0 AND LENGTH(pattern) = 0  -- ('', '')
 THEN

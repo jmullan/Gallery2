@@ -94,7 +94,7 @@ class Db2Storage extends GalleryStorage {
 	$statements = array();
 	$statements[] = 'DROP FUNCTION G2_BIT_AND(CHAR(32), CHAR(32))';
 	$statements[] = 'DROP FUNCTION BIT_AND(SMALLINT, SMALLINT)';
-	$statements[] = 'DROP FUNCTION G2_LIKE(VARCHAR(4000), VARCHAR(4000))';
+	$statements[] = 'DROP FUNCTION G2_LIKE(VARCHAR(8000), VARCHAR(8000))';
 	$statements[] = 'DROP FUNCTION G2_BIT_OR(CHAR(32))';
 	/*
 	 * These SQLJ.*_JAR() calls blow up, looks like CLI can't handle it
