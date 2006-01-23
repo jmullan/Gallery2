@@ -475,8 +475,15 @@ class PostgresGenerator extends BaseGenerator {
 		    /* column-name */
 		    $output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'];
 		    $output .= ' ADD COLUMN DB_COLUMN_PREFIX' . $c['child'][0]['content'];
-		    $output .= ' ' . $this->columnDefinition($c['child']);
+		    $output .= ' ' . $this->columnDefinition($c['child'], false, false);
 		    $output .= ";\n\n";
+
+		    $defaultValue = $this->getDefaultElement($c['child']);
+		    if (isset($defaultValue)) {
+			$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'];
+			$output .= ' ALTER COLUMN DB_COLUMN_PREFIX' . $c['child'][0]['content'];
+			$output .= " SET DEFAULT '$defaultValue';\n\n";
+		    }
 		    break;
 
 		case 'KEY':
