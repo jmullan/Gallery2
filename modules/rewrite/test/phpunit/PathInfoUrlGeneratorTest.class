@@ -118,10 +118,10 @@ class PathInfoUrlGeneratorTest extends RewriteUrlGeneratorTestCase {
 	$tests[] = array('/static',
 			 array('view' => 'php.Static'));
 	/* Test dynamic path */
-	$tests[] = array('/p/en/bogus/file.jpg.html',
+	$tests[] = array('/p/en/bogus/test+file.jpg.html',
 			 array('view' => 'php.Dynamic',
 			       'language' => 'en',
-			       'path' => 'bogus/file.jpg.html'));
+			       'path' => 'bogus/test file.jpg.html'));
 
 	/* Test dynamic2 path */
 	$tests[] = array('/p/911.html',

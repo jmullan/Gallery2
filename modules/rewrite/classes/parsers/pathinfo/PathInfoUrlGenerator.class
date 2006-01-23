@@ -107,6 +107,7 @@ class PathInfoUrlGenerator extends RewriteUrlGenerator {
 	    }
 
 	    /* Do the parsing (add params to REQUEST/GET params */
+	    $pathInfo = str_replace('+', ' ', $pathInfo);
 	    if (isset($parser['static'][$pathInfo])) {
 		$queryString = $parser['static'][$pathInfo];
 	    } else {
