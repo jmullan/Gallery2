@@ -313,17 +313,17 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	    $this->_childAlbum->getId(), 
 	    array(DERIVATIVE_TYPE_IMAGE_THUMBNAIL, DERIVATIVE_TYPE_IMAGE_RESIZE));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::addDerivativePreference(0, $this->_childAlbum->getId(),
 	    DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'thumbnail|246');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::addDerivativePreference(0, $this->_childAlbum->getId(),
 	    DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|987');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	 
 	/* Use valid inputs */
