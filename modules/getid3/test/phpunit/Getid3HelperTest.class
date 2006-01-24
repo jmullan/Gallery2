@@ -270,7 +270,7 @@ class Getid3HelperTest extends GalleryTestCase {
         for ($i = 0; $i < sizeof($id3Data); $i++) {
             switch ($id3Data[$i]['title']) {
 	    case 'Audio Bit Rate':
-                $this->assertEquals('488992.74486094', $id3Data[$i]['value']);
+                $this->assert(abs(488992.7448 - $id3Data[$i]['value']) < 0.01);
                 $verifiedCount++;
 	        break;
 	    case 'Audio Bit Rate Mode':
@@ -403,7 +403,7 @@ class Getid3HelperTest extends GalleryTestCase {
 	$verifiedCount = 0;
 	for ($i = 0; $i < sizeof($id3Data); $i++) {
 	    if ($id3Data[$i]['title'] == 'Audio Bit Rate') {
-	        $this->assertEquals('205.34663953391', $id3Data[$i]['value']);
+	        $this->assert(abs(205.3466 - $id3Data[$i]['value']) < 0.01);
 	        $verifiedCount++;
 	    }
 	}
