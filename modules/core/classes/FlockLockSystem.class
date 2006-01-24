@@ -39,24 +39,12 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryLockSystem.class');
 class FlockLockSystem extends GalleryLockSystem {
 
     /**
-     * Information about all the locks we currently hold
-     */
-    var $_locks;
-
-    /**
      * Reference counts for every lock we're holding so that if we've got a file doubly read locked
      * we don't try to delete it until all read locks are released.
      *
      * TODO: When we get rid of double read locks, we can delete this.
      */
     var $_references;
-
-    /**
-     * Constructor
-     */
-    function FlockLockSystem() {
-	$this->_locks = array();
-    }
 
     /**
      * @see GalleryLockSystem::acquireReadLock()
@@ -75,19 +63,6 @@ class FlockLockSystem extends GalleryLockSystem {
     }
 
     /**
-     * @see GalleryLockSystem::isReadLocked()
-     */
-    function isReadLocked($id) {
-	foreach ($this->_locks as $lockId => $lock) {
-	    if (in_array($id, $lock['ids'])) {
-		return true;
-	    }
-	}
-
-	return false;
-    }
-
-    /**
      * @see GalleryLockSystem::acquireWriteLock()
      */
     function acquireWriteLock($ids, $timeout=10) {
@@ -101,19 +76,6 @@ class FlockLockSystem extends GalleryLockSystem {
 	}
 
 	return array(null, $lockId);
-    }
-
-    /**
-     * @see GalleryLockSystem::isWriteLocked()
-     */
-    function isWriteLocked($id) {
-	foreach ($this->_locks as $lockId => $lock) {
-	    if ($lock['type'] == LOCK_WRITE && in_array($id, $lock['ids'])) {
-		return true;
-	    }
-	}
-
-	return false;
     }
 
     /**
@@ -135,31 +97,6 @@ class FlockLockSystem extends GalleryLockSystem {
 	    }
 
 	    foreach ($this->_locks[$lockId]['lockInfo'] as $lockInfo) {
-		list ($fd, $lockFile) = $lockInfo;
-		$platform->fclose($fd);
-		if ($platform->file_exists($lockFile)) {
-		    $this->_references[$lockFile]--;
-		    if ($this->_references[$lockFile] == 0) {
-			$platform->unlink($lockFile);
-		    }
-		}
-	    }
-	    unset($this->_locks[$lockId]);
-	}
-
-	return null;
-    }
-
-    /**
-     * @see GalleryLockSystem::refreshAllLocks()
-     */
-    function releaseAllLocks() {
-	global $gallery;
-
-	$platform =& $gallery->getPlatform();
-	$gallery->guaranteeTimeLimit(count($this->_locks));
-	foreach ($this->_locks as $lockId => $lock) {
-	    foreach ($lock['lockInfo'] as $lockInfo) {
 		list ($fd, $lockFile) = $lockInfo;
 		$platform->fclose($fd);
 		if ($platform->file_exists($lockFile)) {
@@ -321,16 +258,6 @@ class FlockLockSystem extends GalleryLockSystem {
 				       'ids' => $ids,
 				       'lockInfo' => $locked);
 	return array(null, $lockId);
-    }
-
-
-    /**
-     * Return the ids of all the locks we hold
-     *
-     * @return array lock ids
-     */
-    function getLockIds() {
-	return array_keys($this->_locks);
     }
 }
 ?>

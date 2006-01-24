@@ -36,6 +36,18 @@
 class GalleryLockSystem {
 
     /**
+     * Information about all the locks we currently hold
+     */
+    var $_locks;
+
+    /**
+     * Constructor
+     */
+    function GalleryLockSystem() {
+	$this->_locks = array();
+    }
+
+    /**
      * Read Lock one or more objects
      *
      * @access public
@@ -58,6 +70,12 @@ class GalleryLockSystem {
      * @static
      */
     function isReadLocked($id) {
+	foreach ($this->_locks as $lockId => $lock) {
+	    if (in_array($id, $lock['ids'])) {
+		return true;
+	    }
+	}
+
 	return false;
     }
 
@@ -81,9 +99,14 @@ class GalleryLockSystem {
      * @access public
      * @param int an entity id
      * @return boolean true if the entity is write locked
-     * @abstract
      */
     function isWriteLocked($id) {
+	foreach ($this->_locks as $lockId => $lock) {
+	    if ($lock['type'] == LOCK_WRITE && in_array($id, $lock['ids'])) {
+		return true;
+	    }
+	}
+
 	return false;
     }
 
@@ -101,10 +124,14 @@ class GalleryLockSystem {
     /**
      * Release any locks that we're holding.
      * @return object GalleryStatus a status code
-     * @abstract
      */
     function releaseAllLocks() {
-	return GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+	$ret = $this->releaseLocks(array_keys($this->_locks));
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return null;
     }
 
     /**
@@ -124,7 +151,7 @@ class GalleryLockSystem {
      * @return array lock ids
      */
     function getLockIds() {
-	return null;
+	return array_keys($this->_locks);
     }
 }
 ?>

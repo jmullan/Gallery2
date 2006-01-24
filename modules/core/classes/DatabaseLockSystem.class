@@ -38,18 +38,6 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryLockSystem.class');
 class DatabaseLockSystem extends GalleryLockSystem {
 
     /**
-     * Information about all the locks we currently hold
-     */
-    var $_locks;
-
-    /**
-     * Constructor
-     */
-    function DatabaseLockSystem() {
-	$this->_locks = array();
-    }
-
-    /**
      * @see GalleryLockSystem::acquireReadLock()
      */
     function acquireReadLock($ids, $timeout=10) {
@@ -66,19 +54,6 @@ class DatabaseLockSystem extends GalleryLockSystem {
     }
 
     /**
-     * @see GalleryLockSystem::isReadLocked()
-     */
-    function isReadLocked($id) {
-	foreach ($this->_locks as $lockId => $lock) {
-	    if (in_array($id, $lock['ids'])) {
-		return true;
-	    }
-	}
-
-	return false;
-    }
-
-    /**
      * @see GalleryLockSystem::acquireWriteLock()
      */
     function acquireWriteLock($ids, $timeout=10) {
@@ -92,19 +67,6 @@ class DatabaseLockSystem extends GalleryLockSystem {
 
 	$this->_locks[$lockId] = $lock;
 	return array(null, $lockId);
-    }
-
-    /**
-     * @see GalleryLockSystem::isWriteLocked()
-     */
-    function isWriteLocked($id) {
-	foreach ($this->_locks as $lockId => $lock) {
-	    if ($lock['type'] == LOCK_WRITE && in_array($id, $lock['ids'])) {
-		return true;
-	    }
-	}
-
-	return false;
     }
 
     /**
@@ -133,17 +95,6 @@ class DatabaseLockSystem extends GalleryLockSystem {
     }
 
     /**
-     * @see GalleryLockSystem::refreshAllLocks()
-     */
-    function releaseAllLocks() {
-	$ret = $this->releaseLocks(array_keys($this->_locks));
-	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	return null;
-    }
-
-    /**
      * @see GalleryLockSystem::refreshLocks()
      */
     function refreshLocks($freshUntil) {
@@ -158,15 +109,6 @@ class DatabaseLockSystem extends GalleryLockSystem {
 	}
 
 	return null;
-    }
-
-    /**
-     * Return the ids of all the locks we hold
-     *
-     * @return array lock ids
-     */
-    function getLockIds() {
-	return array_keys($this->_locks);
     }
 }
 ?>
