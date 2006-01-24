@@ -592,7 +592,7 @@ class ItemAddOption {
      *               array localized warning messages
      */
     function handleRequestAfterAdd($form, $items) {
-	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
     }
 
     /**
