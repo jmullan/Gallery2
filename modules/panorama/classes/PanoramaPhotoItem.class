@@ -50,7 +50,7 @@ class PanoramaPhotoItem extends GalleryPhotoItem {
 	global $gallery;
 
 	list ($ret, $viewWidth) = GalleryCoreApi::getPluginParameter('module', 'panorama', 'width');
-	if ($ret || $this->getWidth() < $viewWidth) {
+	if ($ret || !empty($params['forceRawImage']) || $this->getWidth() < $viewWidth) {
 	    return parent::render($format, $params);
 	}
 

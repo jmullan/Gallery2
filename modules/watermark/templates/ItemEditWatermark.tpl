@@ -114,7 +114,7 @@
   <h3> {g->text text="Step 2.  Place the watermark on your image."} </h3>
 
   {g->image name="watermark_original" maxSize=400 style="display: block"
-	    item=$ItemEditWatermark.item
+	    item=$ItemEditWatermark.item forceRawImage=true
 	    image=$ItemEditWatermark.derivative|default:$ItemEditWatermark.item}
   <img name="watermark_floater"
    src="{g->url arg1="view=core.DownloadItem" arg2="itemId=`$form.watermarkId`"}"

@@ -158,6 +158,14 @@ class PanoramaOptionTest extends ItemEditOptionTestCase {
 	$this->assert(preg_match('{<param[^>]*name="PanoramaTile"[^>]*value="http[^"]*'
 				 . SESSION_ID_PARAMETER . '}', $html),
 		      'deriv: image full url: ' . htmlentities($html));
+    
+	/* Accept forceRawImage parameter to bypass applet display */
+	$html = $this->_item->render('HTML', array('forceRawImage' => true));
+	$this->assert(strpos($html, '<img') !== false && strpos($html, '<object') === false,
+		      'item: raw image');
+	$html = $this->_derivative->render('HTML', $this->_item, array('forceRawImage' => true));
+	$this->assert(strpos($html, '<img') !== false && strpos($html, '<object') === false,
+		      'deriv: raw image');
     }
 }
 ?>
