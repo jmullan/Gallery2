@@ -44,5 +44,7 @@ if (!defined('GALLERY_CONFIG_DIR')) {
  * Disable session.use_trans_sid to mitigate performance-penalty
  * (do it before any output is started)
  */
-@ini_set('session.use_trans_sid', 0);
+if (!defined('SID')) {
+    @ini_set('session.use_trans_sid', 0);
+}
 ?>
