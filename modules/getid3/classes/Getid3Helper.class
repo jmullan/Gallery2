@@ -110,9 +110,8 @@ class Getid3Helper {
 	global $gallery;
 	GalleryCoreApi::requireOnce('modules/getid3/lib/getid3/getid3.inc');
 
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	if (!$platform->file_exists($path)) {
-print "<!-- file doesn't exist -->\n";
 	    $rawGetid3Data = null;
 	    return;
 	}
@@ -143,7 +142,6 @@ print "<!-- file doesn't exist -->\n";
     function getId3ArchiveTar($fileDetails) {
 	$results = array();
 	foreach (array_keys($fileDetails) as $filename) {
-print "<!-- filename = $filename -->\n";
 	    if (is_array($fileDetails[$filename])) {
 	        $results[] = array('name' => $filename,
 	                           'size' => $fileDetails[$filename]['size']);
@@ -165,10 +163,8 @@ print "<!-- filename = $filename -->\n";
 	    return(array(null,
 	        Getid3Helper::getId3ArchiveRecurse(array(), $rawGetid3Data['iso']['files'])));
 	}
-print "<!-- check filedetails is set -->\n";
 	if (isset($rawGetid3Data['tar']['file_details'])) {
 	    /* getid3's tar output allows us to simply look, and not have to recurse */
-print "<!-- filedetails is set -->\n";
 	    return(array(null,
 	         Getid3Helper::getId3ArchiveTar($rawGetid3Data['tar']['file_details'])));
 	}

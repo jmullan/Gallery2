@@ -42,7 +42,7 @@ class Getid3DescriptionOption extends ItemAddOption {
 	list ($ret, $addOption) =
 	     GalleryCoreApi::getPluginParameter('module', 'getid3', 'addOption');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), false);
 	}
 	return array(null, $addOption > 0);
     }
