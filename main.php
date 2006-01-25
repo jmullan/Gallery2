@@ -43,7 +43,7 @@ if (GalleryUtilities::isEmbedded()) {
 	 * the latest version of the file already.
 	 */
 	if (isset($_ENV['HTTP_IF_MODIFIED_SINCE']) ||
-	        (function_exists('getallheaders') && $headers = GetAllHeaders() && 
+	        (function_exists('getallheaders') && ($headers = GetAllHeaders()) && 
 		 (isset($headers['If-Modified-Since']) || isset($headers['If-modified-since'])))) {
 	    header('HTTP/1.x 304 Not Modified');
 	    return;
