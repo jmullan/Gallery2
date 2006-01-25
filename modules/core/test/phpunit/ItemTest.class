@@ -1379,6 +1379,7 @@ class ItemTest extends GalleryTestCase {
     }
 
     function testAddNonViewableImage() {
+	/* TODO: update test so it doesn't depend on an active toolkit to convert ppm to jpeg */
 	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->_album->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
