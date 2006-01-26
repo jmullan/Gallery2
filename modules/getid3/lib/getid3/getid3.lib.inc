@@ -1217,7 +1217,8 @@ class getid3_lib
 		if ($fd = @fopen($urlpic, 'rb')){
 			$imgData = fread($fd, filesize($urlpic));
 			fclose($fd);
-			return getid3_lib::GetDataImageSize($imgData);
+			list($height, $width, $type) = getid3_lib::GetDataImageSize($imgData);
+			return array($height, $width, $type);
 		}
 		return array('', '', '');
 	}
@@ -1271,7 +1272,8 @@ class getid3_lib
 						break 2; // found it so exit
 					case GETID3_JPG_EOI:
 					case GETID3_JPG_SOS:
-						return false;       // End loop in case we find one of these markers
+						// End loop in case we find one of these markers
+						return array($width, $height, $type);
 					default:            // We're not interested in other markers
 						$skiplen = (ord($imgData[$imgPos++]) << 8) + ord($imgData[$imgPos++]) - 2;
 						// if the skip is more than what we've read in, read more
@@ -1279,7 +1281,8 @@ class getid3_lib
 						if ($buffer < 512) { // if the buffer of data is too low, read more file.
 							// $imgData .= fread($fd, $skiplen + 1024);
 							// $buffer += $skiplen + 1024;
-							return false; // End loop in case we find run out of data
+							// End loop in case we find run out of data
+							return array($width, $height, $type);
 						}
 						$imgPos += $skiplen;
 						break;
