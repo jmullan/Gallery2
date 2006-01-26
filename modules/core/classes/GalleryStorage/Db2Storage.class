@@ -234,7 +234,15 @@ class Db2Storage extends GalleryStorage {
     function getFunctionSql($functionName, $args) {
 	switch($functionName) {
 	case 'CONCAT':
-	    $sql = 'char(' . implode(') || char(', $args) . ')';
+	    /*
+	     * CHAR($value) creates a string of length 11 for large and a string of length 4 for
+	     * smaller integer values. Thus we need to trim the string to the actual length of the
+	     * string representation of the integer
+	     */
+	    foreach ($args as $key => $value) {
+		$args[$key] = 'RTRIM(CHAR(' . $value . '))';
+	    }
+	    $sql = implode(' || ', $args);
 	    break;
 
 	case 'BITAND':
