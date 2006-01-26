@@ -104,7 +104,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	foreach ($ids as $idx => $id) {
 	    $ids[$idx] = (int)$id;
 	}
-	
+
 	/* Identify all the ids at once */
 	list ($ret, $types) = $this->_identifyEntities($ids);
 	if ($ret) {
@@ -265,7 +265,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 
 		    $entity->$memberName = $value =
 			$this->_gs->_normalizeValue($value, $memberData);
-			
+
 		    $columnName = $this->_gs->_translateColumnName($memberName);
 		    $dataTable[$tableName][$columnName] = $value;
 		} else {
@@ -768,7 +768,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    foreach ($lockIds as $idx => $id) {
 		$lockIds[$idx] = (int)$id;
 	    }
-	    
+
 	    /* Acquire a non-transactional connection to use for this request */
 	    list ($ret, $db) = $this->_getNonTransactionalDatabaseConnection();
 	    if ($ret) {
@@ -1613,6 +1613,18 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	}
 
 	return null;
+    }
+
+    /**
+     * @see GalleryStorage::getAffectedRows
+     */
+    function getAffectedRows() {
+	$ret = $this->_dbInit(true);
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(null, $this->_gs->_db->Affected_Rows());
     }
 
     /**

@@ -38,6 +38,34 @@ class DataCacheTest extends GalleryTestCase {
 	$this->GalleryTestCase($methodName);
     }
 
+    function setUp() {
+	parent::setUp();
+
+	$ret = $this->_markPluginParametersForCleanup('module', 'core');
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$acceleration['user']['expiration'] = 30;
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'core', 'acceleration', serialize($acceleration));
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	unset($_SERVER['HTTP_PRAGMA']);
+	unset($_SERVER['HTTP_CACHE_CONTROL']);
+    }
+
+    function tearDown() {
+	$ret = GalleryCoreApi::removeMapEntry('GalleryCache', array('itemId' => 0));
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	parent::tearDown();
+    }
+
     function testPutAndGet() {
 	$key = 'test-key';
 	$value = 'test-value';
@@ -318,6 +346,200 @@ class DataCacheTest extends GalleryTestCase {
 			'3 should now have permission test.OtherPermission');
 	$this->assert(! GalleryDataCache::hasPermission('3', 'test.TestPermission'),
 			'3 shouldn\'t have permission test.TestPermission');
+    }
+
+    function testPutAndGetPageData() {
+	$ret = GalleryDataCache::putPageData('test', 0, array('key'), 'test');
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $result) = GalleryDataCache::getPageData('test', array('key'));
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('test', $result);
+    }
+
+    function testRemovePageData() {
+	$ret = GalleryDataCache::putPageData('test', 0, array('key'), 'test');
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $result) = GalleryDataCache::getPageData('test', array('key'));
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('test', $result);
+
+	$ret = GalleryDataCache::removePageData(0);
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $result) = GalleryDataCache::getPageData('test', array('key'));
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(NULL, $result);
+    }
+
+    function testGetPageDataExpiredData() {
+	global $gallery;
+	$phpVm = new DataCacheTestMockVm();
+	$gallery->_phpVm =& $phpVm;
+
+	$phpVm->setTime(0);
+	$ret = GalleryDataCache::putPageData('test', 0, array('key'), 'test');
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$phpVm->setTime(time());
+	list ($ret, $result) = GalleryDataCache::getPageData('test', array('key'));
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(NULL, $result);
+    }
+
+    function testShouldCachePostRequest() {
+	$_SERVER['REQUEST_METHOD'] = 'POST';
+	list ($ret, $shouldCache) = GalleryDataCache::shouldCache('read', 'page');
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(false, $shouldCache);
+    }
+
+    function testShouldCacheReadNoCache1() {
+	global $gallery;
+
+	$_SERVER['HTTP_PRAGMA'] = 'no-cache';
+	$_SERVER['REQUEST_METHOD'] = 'POST';
+	list ($ret, $shouldCache) = GalleryDataCache::shouldCache('read', 'page');
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(false, $shouldCache);
+    }
+
+    function testShouldCacheReadNoCache2() {
+	global $gallery;
+
+	$_SERVER['HTTP_CACHE_CONTROL'] = 'no-cache';
+	$_SERVER['REQUEST_METHOD'] = 'POST';
+	list ($ret, $shouldCache) = GalleryDataCache::shouldCache('read', 'page');
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(false, $shouldCache);
+    }
+
+    function testShouldCacheReadUserOk() {
+	global $gallery;
+
+	$acceleration['user']['type'] = 'full';
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'core', 'acceleration', serialize($acceleration));
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $shouldCache) = GalleryDataCache::shouldCache('read', 'full');
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(true, $shouldCache);
+    }
+
+    function testShouldCacheReadGuestOk() {
+	global $gallery;
+
+	$acceleration['user']['type'] = 'full';
+	$acceleration['guest']['type'] = 'full';
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'core', 'acceleration', serialize($acceleration));
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $shouldCache) = GalleryDataCache::shouldCache('read', 'full');
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(true, $shouldCache);
+    }
+
+    function testShouldCacheReadUserNotOk() {
+	global $gallery;
+
+	/* Make myself the anon user temporarily */
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'core', 'id.anonymousUser', $gallery->getActiveUserId());
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$acceleration['user']['type'] = 'none';
+	$acceleration['guest']['type'] = 'none';
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'core', 'acceleration', serialize($acceleration));
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $shouldCache) = GalleryDataCache::shouldCache('read', 'full');
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(false, $shouldCache);
+    }
+
+    function testShouldCacheNone() {
+	global $gallery;
+
+	$acceleration['user']['type'] = 'none';
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'core', 'acceleration', serialize($acceleration));
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Use mock VM to enforce valid headers, so that the active browser doesn't interfere */
+	$phpVm = new DataCacheTestMockVm();
+	$gallery->_phpVm =& $phpVm;
+
+	list ($ret, $shouldCache) = GalleryDataCache::shouldCache('read', 'partial');
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(false, $shouldCache);
+    }
+}
+
+/**
+ * Mock VM
+ */
+class DataCacheTestMockVm {
+
+    function setTime($time) {
+	$this->_time = $time;
+    }
+    function time() {
+	return $this->_time;
     }
 }
 

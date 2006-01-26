@@ -53,6 +53,11 @@ class GalleryTheme extends GalleryPlugin {
     var $_standardSettings = array();
 
     /**
+     * Is the page we're rendering cacheable?
+     */
+    var $_cacheablePage = false;
+
+    /**
      * Constructor
      *
      * Constructor to prevent PHP Notices in upgrader and AdminThemes.inc when
@@ -799,6 +804,7 @@ class GalleryTheme extends GalleryPlugin {
 	    break;
 
 	case VIEW_TYPE_SHOW_ITEM:
+	    $this->_cacheablePage = true;
 	    $session =& $gallery->getSession();
 
 	    if ($session->get('theme.guestPreviewMode')) {
@@ -871,7 +877,7 @@ class GalleryTheme extends GalleryPlugin {
 		     * gets the child counts for the child albums.
 		     */
 		    $ret = $this->loadCommonTemplateData(
-			$template, $item, $params, array('childCount'), $childIds);
+			$template, $item, $params, array('childCount'), $childIds, false);
 		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -967,7 +973,8 @@ class GalleryTheme extends GalleryPlugin {
 	}
 
 	if (!is_array($result)) {
-	    $result = array('body' => sprintf('themes/%s/templates/%s', $this->getId(), $result));
+	    $result = array('body' => sprintf('themes/%s/templates/%s', $this->getId(), $result),
+			    'cacheable' => $this->_cacheablePage ? $item->getId() : false);
 	}
 
 	if (isset($extractedSidebarBlocks)) {
@@ -1040,8 +1047,28 @@ class GalleryTheme extends GalleryPlugin {
      * @static
      */
     function loadCommonTemplateData(&$template, $item, $params, $dataToLoad,
-				    $childIds=array()) {
+				    $childIds=array(), $useCache=true) {
 	global $gallery;
+
+	if ($useCache && $this->_cacheablePage) {
+	    list ($ret, $shouldCache) = GalleryDataCache::shouldCache('read', 'partial');
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    if ($shouldCache) {
+		list ($ret, $serializedData) = GalleryDataCache::getPageData(
+		    'template', array($item->getId(), $params, $dataToLoad, $childIds));
+		if ($ret) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+
+	    if (!empty($serializedData)) {
+		$template->_smarty->_tpl_vars = unserialize($serializedData);
+		return null;
+	    }
+	}
 
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
@@ -1639,6 +1666,23 @@ class GalleryTheme extends GalleryPlugin {
 	}
 
 	$template->setVariable('theme', $theme);
+
+	if ($useCache && $this->_cacheablePage) {
+	    list ($ret, $shouldCache) = GalleryDataCache::shouldCache('write', 'partial');
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    if ($shouldCache) {
+		$ret = GalleryDataCache::putPageData(
+		    'template', $item->getId(),
+		    array($item->getId(), $params, $dataToLoad, $childIds),
+		    serialize($template->_smarty->_tpl_vars));
+		if ($ret) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	}
 
 	return null;
     }

@@ -36,7 +36,7 @@ if (!defined('GALLERY_MAIN_PHP')) {
 /**
  * Url Generator
  *
- * Generates all URLs for Gallery based on the auto-detected protocol, hostname, URL path and the 
+ * Generates all URLs for Gallery based on the auto-detected protocol, hostname, URL path and the
  * given GALLERY_MAIN_PHP.
  * Handles normal standalone as well as embedded and multisite operation when some URLs need
  * to go to the Gallery codebase directly.
@@ -63,7 +63,7 @@ class GalleryUrlGenerator {
      * @access private
      */
     var $_file;
-    
+
     /**
      * URL path to G2, e.g. '/gallery2/' of http://example.com/gallery2/main.php
      * Index of array = $forceDirect (true/false) only relevant for embedded G2
@@ -72,7 +72,7 @@ class GalleryUrlGenerator {
      * @access private
      */
     var $_path;
-    
+
     /**
      * The host string of generated URLs (including optional port)
      * e.g. 'www.example.com'
@@ -82,7 +82,7 @@ class GalleryUrlGenerator {
      * @access private
      */
     var $_host;
-    
+
     /**
      * The protocol of generated URLs, 'http' or 'https'
      * Index of array = $forceDirect (true/false) only relevant for embedded G2
@@ -91,7 +91,7 @@ class GalleryUrlGenerator {
      * @access private
      */
     var $_protocol;
-    
+
     /**
      * The session key=value for the CMS application in which G2 is embedded.
      * Should only be nonempty when cookieless browsing is supported by CMS.
@@ -103,14 +103,14 @@ class GalleryUrlGenerator {
     var $_embedSessionString;
 
     /**
-     * The base host (protocol + host name) of all URLs generated with function makeUrl 
+     * The base host (protocol + host name) of all URLs generated with function makeUrl
      * Index of array = $forceDirect (true/false), e.g. 'http://example.com/'
      *
      * @var array (0 => string base host, 1 => string forceDirect base host)
      * @access private
      */
     var $_currentBaseHost;
-    
+
     /**
      * The complete URL (protocol + host name + path + file + query string) of the current request
      * e.g. 'http://example.com/gallery2/main.php?g2_view=core.ShowItem&g2_itemId=15'
@@ -122,7 +122,7 @@ class GalleryUrlGenerator {
     var $_currentUrl;
 
     /**
-     * The complete URL dir (protocol + host name + path) of all URLs to be generated 
+     * The complete URL dir (protocol + host name + path) of all URLs to be generated
      * e.g. 'http://example.com/gallery2/
      * Index of array = $forceDirect (true/false) only relevant for embedded G2
      *
@@ -131,7 +131,7 @@ class GalleryUrlGenerator {
      */
     var $_currentUrlBaseDir;
 
-    
+
     /**
      * The navigation id of the current URL.
      *
@@ -255,7 +255,7 @@ class GalleryUrlGenerator {
      */
     function init($baseUri=null, $g2Uri=null, $embedSessionString=null) {
 	$this->_embedSessionString = $embedSessionString;
-	
+
 	if (isset($baseUri)) {
 	    list ($this->_protocol[0], $this->_host[0], $this->_path[0], $this->_file[0]) =
 		$this->_parseUri($baseUri);
@@ -285,7 +285,7 @@ class GalleryUrlGenerator {
 	    $this->_host[1] = $this->_host[0];
 	    $this->_protocol[1] = $this->_protocol[0];
 	}
-	
+
 	/* Set the default value for the host part, if necessary */
 	foreach (array(false, true) as $forceDirect) {
 	    if (empty($this->_host[$forceDirect])) {
@@ -293,11 +293,11 @@ class GalleryUrlGenerator {
 		    !($defaultHost = GalleryUtilities::getServerVar('HTTP_X_FORWARDED_SERVER'))) {
 		    $defaultHost = GalleryUtilities::getServerVar('HTTP_HOST');
 		}
-		
+
 		$this->_host[$forceDirect] = $defaultHost;
 	    }
 	}
-	
+
 	/* Set the default value for the protocol part, if necessary */
 	foreach (array(false, true) as $forceDirect) {
 	    if (empty($this->_protocol[$forceDirect])) {
@@ -326,7 +326,7 @@ class GalleryUrlGenerator {
 		$this->_isCookiePathConfigured = false;
 	    }
 	}
-	
+
 	return null;
     }
 
@@ -334,7 +334,7 @@ class GalleryUrlGenerator {
      * Split a URI string into file, path, host and protocol substrings and normalize them
      *
      * Used to allow overriding auto-detected protocol, host, path and default base file
-     * Also used to accept various embedUri formats 
+     * Also used to accept various embedUri formats
      *
      * @param string URI
      * @return array $protocol, $host, $path, $file (incl. query string)
@@ -356,7 +356,7 @@ class GalleryUrlGenerator {
 	 *    https://127.0.0.1/gallery2/main.php
 	 *    www.example.com/main.php
 	 *    /gallery2/
-	 *    /gallery2/main.php 
+	 *    /gallery2/main.php
 	 *    /main.php
 	 *    main.php
 	 * Note:
@@ -378,10 +378,10 @@ class GalleryUrlGenerator {
 		$file = $matches[2];
 	    }
  	}
-	
+
 	return array($protocol, $host, $path, $file);
     }
-    
+
     /**
      * Return the host name for the current request
      *
@@ -429,20 +429,51 @@ class GalleryUrlGenerator {
     }
 
     /**
+     * Return a url that is stripped of all parameters that don't directly affect the output of
+     * the page, like navigation parameters.  This url can be used as the cache key for this page.
+     *
+     * @return string
+     */
+    function getCacheableUrl() {
+	$url = $this->getCurrentUrl();
+	$parsed = parse_url($url);
+	$url = !empty($parsed['scheme']) ? $parsed['scheme'] . ':' . '//' : '';
+	$url .= !empty($parsed['user']) ? $parsed['user'] .
+	    ($parsed['pass'] ? ':'.$parsed['pass'] : '') . '@' : '';
+	$url .= !empty($parsed['host']) ? $parsed['host'] : '';
+	$url .= !empty($parsed['port']) ? ':' . $parsed['port'] : '';
+	$url .= !empty($parsed['path']) ? $parsed['path'] : '';
+	if (!empty($parsed['query'])) {
+	    parse_str($parsed['query'], $components);
+	    foreach (array('statusId', 'return', 'returnName', 'navId', 'fromNavId') as $special) {
+		unset($components[GALLERY_FORM_VARIABLE_PREFIX . $special]);
+	    }
+	    $first = true;
+	    foreach ($components as $key => $value) {
+		$url .= $first ? '?' : '&';
+		$url .= "$key=$value";
+		$first = false;
+	    }
+	}
+	$url .= !empty($parsed['fragment']) ? '#' . $parsed['fragment'] : '';
+	return $url;
+    }
+
+    /**
      * Return the base directory of all generated URLs.  Eg, if the url is:
      *   http://example.com/gallery2/main.php
      * Then we return:
      *   http://example.com/gallery2/
      *
-     * Usually, it's the same as the URL directory of the current request URL, unless we're using 
-     * short URLs. Also, the base URL can be overridden. 
+     * Usually, it's the same as the URL directory of the current request URL, unless we're using
+     * short URLs. Also, the base URL can be overridden.
      *
      * @param boolean (optional) if true, ensure G2 base url is returned (different when embedded)
      * @return string thebase URL directory
      */
     function getCurrentUrlDir($forceDirect=false) {
 	if (!isset($this->_currentUrlBaseDir[$forceDirect])) {
-	    
+
 	    if (!empty($this->_path[$forceDirect])) {
 		/*
 		 * An override for the path was defined (most likely an embedded G2 request)
@@ -454,7 +485,7 @@ class GalleryUrlGenerator {
 		 * Auto-detect the path in the current URL
 		 */
 		$url = $this->getCurrentUrl($forceDirect);
-		
+
 		/*
 		 * Remove the base file and any query string after it
 		 *    http://example.com/gallery2/main.php?g2_foo=foo/bar
@@ -472,13 +503,13 @@ class GalleryUrlGenerator {
 		}
 	    }
 	    $url .= substr($url, -1) != '/' ? '/' : '';
-	    
+
 	    $this->_currentUrlBaseDir[$forceDirect] = $url;
 	}
-	
+
 	return $this->_currentUrlBaseDir[$forceDirect];
     }
-    
+
     /**
      * Return a valid Gallery URL.
      *
@@ -652,14 +683,14 @@ class GalleryUrlGenerator {
 	if (isset($options['htmlEntities']) && !$options['htmlEntities']) {
 	    $url = str_replace('&amp;', '&', $url);
 	}
-	
+
 	return $url;
     }
-    
+
     /**
      * Translate the given absolute URL to a relative URL
      *
-     * The result will be either a server relative URL /..., 
+     * The result will be either a server relative URL /...,
      * a URL relative to the current URL directory or an unchanged absolute URL (some URLs in
      * multisite go to the codebase, embedded G2 could be on a different subdomain, ..)
      *
@@ -667,7 +698,7 @@ class GalleryUrlGenerator {
      *
      * @param string absolute URL
      * @return string relative URL (or unchanged absolute URL)
-     */    
+     */
     function makeRelativeUrl($url, $forceServerRelativeUrl=false) {
 	$requestUri = $this->getCurrentRequestUri();
 	/* When embedded, file can be empty */
@@ -680,7 +711,7 @@ class GalleryUrlGenerator {
 	} else {
 	    $url = str_replace($this->getCurrentUrlDir(), '', $url);
 	}
-	
+
  	return $url;
      }
 
@@ -759,7 +790,7 @@ class GalleryUrlGenerator {
 	     */
 	    $validPath =  '/' . str_replace($this->makeUrl(''), '', $this->getCurrentUrlDir());
 	    /*
-	     * We check for ../ and /../ patterns and on windows \../ would also break out, 
+	     * We check for ../ and /../ patterns and on windows \../ would also break out,
 	     * normalize to URL / *nix style paths to check fewer cases
 	     */
 	    $normReturnUrl = str_replace("\\", '/', $returnUrl);
@@ -841,7 +872,7 @@ class GalleryUrlGenerator {
 	foreach ($urlVariables as $key => $value) {
 	    $params[substr($key, strlen(GALLERY_FORM_VARIABLE_PREFIX))] = $value;
 	}
-	
+
 	return $this->generateUrl($params);
     }
 

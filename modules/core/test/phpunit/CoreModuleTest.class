@@ -86,6 +86,8 @@ class CoreModuleTest extends GalleryTestCase {
 				'view' => 'core.AdminGroups'),
 			  array('name' => $this->_module->translate('Maintenance'),
 				'view' => 'core.AdminMaintenance'),
+			  array('name' => $this->_module->translate('Performance'),
+				'view' => 'core.AdminPerformance'),
 			  );
 	list ($ret, $list) = GalleryCoreApi::getRedundantToolkitPriorities();
 	if ($ret) {

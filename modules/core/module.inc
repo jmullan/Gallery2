@@ -40,7 +40,7 @@ class CoreModule extends GalleryModule {
 	$this->setGalleryVersion('2.1.0-');
 
 	/* Don't forget to update CoreModuleExtras::upgrade and _prepareConfigUpgrade too! */
-	$this->setVersion('1.0.19');
+	$this->setVersion('1.0.20');
 
 	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
@@ -55,12 +55,12 @@ class CoreModule extends GalleryModule {
      * @see GalleryModule::registerEventListeners();
      */
     function registerEventListeners() {
-	GalleryCoreApi::requireOnce(
-	    'modules/core/classes/helpers/GalleryItemHelper_medium.class');
-	GalleryCoreApi::registerEventListener('Gallery::ViewableTreeChange',
-					      new GalleryItemHelper_medium());
-	GalleryCoreApi::registerEventListener('Gallery::RemovePermission',
-					      new GalleryItemHelper_medium());
+	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryItemHelper_medium.class');
+	$handler = new GalleryItemHelper_medium();
+	GalleryCoreApi::registerEventListener('Gallery::ViewableTreeChange', $handler);
+	GalleryCoreApi::registerEventListener('Gallery::RemovePermission', $handler);
+	GalleryCoreApi::registerEventListener('GalleryEntity::save', $handler);
+	GalleryCoreApi::registerEventListener('GalleryEntity::delete', $handler);
     }
 
     /**
@@ -314,6 +314,8 @@ class CoreModule extends GalleryModule {
 			    'view' => 'core.AdminGroups'),
 		      array('name' => $this->translate('Maintenance'),
 			    'view' => 'core.AdminMaintenance'),
+		      array('name' => $this->translate('Performance'),
+			    'view' => 'core.AdminPerformance'),
 		      );
 	list ($ret, $list) = GalleryCoreApi::getRedundantToolkitPriorities();
 	if ($ret) {

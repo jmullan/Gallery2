@@ -908,7 +908,8 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
     function handleEvent($event) {
 	$param = $event->getData();
 	if ($event->getEventName() == 'Gallery::ViewableTreeChange') {
-	    $ret = $this->invalidateDescendentCountCaches($param['userId'], $param['itemId']);
+	    $ret = GalleryItemHelper_medium::invalidateDescendentCountCaches(
+		$param['userId'], $param['itemId']);
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -1030,7 +1031,21 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		    GalleryCoreApi::deleteFastDownloadFileById($id);
 		}
 	    }
+	} else if ($event->getEventName() == 'GalleryEntity::save' ||
+		   $event->getEventName() == 'GalleryEntity::delete') {
+	    $entity = $event->getEntity();
+
+	    $expireItemIds = array($entity->getId());
+	    if (GalleryUtilities::isA($entity, 'GalleryChildEntity') && $entity->getParentId()) {
+		$expireItemIds[] = $entity->getParentId();
+	    }
+
+	    $ret = GalleryDataCache::removePageData($expireItemIds);
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	}
+
 	return array(null, null);
     }
 }

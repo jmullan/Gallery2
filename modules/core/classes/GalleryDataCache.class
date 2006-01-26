@@ -596,5 +596,186 @@ class GalleryDataCache {
 	    $session->remove('permissionCache');
 	}
     }
+
+    /**
+     * Get page data from the cache.
+     *
+     * @param string the page type
+     * @param mixed data to use to generate the unique key for this cache entry
+     * @return array object GalleryStatus a status code
+     *               string the page data
+     */
+    function getPageData($type, $keyData) {
+	global $gallery;
+
+	list ($ret, $acceleration) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'acceleration');
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$acceleration = unserialize($acceleration);
+
+	list ($ret, $anonymousUserId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if ($gallery->getActiveUserId() == $anonymousUserId) {
+	    $expiration = $acceleration['guest']['expiration'];
+	} else {
+	    $expiration = $acceleration['user']['expiration'];
+	}
+	$phpVm = $gallery->getPhpVm();
+	$cutoff = $phpVm->time() - $expiration;
+
+	list ($ret, $aclIds) =
+	    GalleryCoreApi::fetchAccessListIds('core.view', $gallery->getActiveUserId());
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$key = md5(serialize($keyData) . '|' . join(",", $aclIds));
+	$userId = $gallery->getActiveUserId();
+
+	$storage =& $gallery->getStorage();
+	$query = '
+        SELECT
+          [GalleryCache::value]
+        FROM
+          [GalleryCache]
+        WHERE
+          [GalleryCache::key] = ?
+          AND
+          [GalleryCache::type] = ?
+          AND
+          [GalleryCache::userId] = ?
+          AND
+          [GalleryCache::timestamp] > ?
+        ';
+	list ($ret, $results) = $storage->search($query, array($key, $type, $userId, $cutoff));
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if ($results->resultCount() > 0) {
+	    $result = $results->nextResult();
+	    $chunk = $result[0];
+ 	    if (function_exists('gzinflate')) {
+ 		$chunk = gzinflate($chunk);
+ 	    }
+	} else {
+	    $chunk = null;
+	}
+
+	return array(null, $chunk);
+    }
+
+    /**
+     * Store page data from the cache.
+     *
+     * @param string the page type
+     * @param int the itemId of the item this page is rendering
+     * @param mixed data to use to generate the unique key for this cache entry
+     * @param string the page data
+     * @return object GalleryStatus a status code
+     */
+    function putPageData($type, $itemId, $keyData, $value) {
+	global $gallery;
+
+	$userId = $gallery->getActiveUserId();
+	list ($ret, $aclIds) = GalleryCoreApi::fetchAccessListIds('core.view', $userId);
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$key = md5(serialize($keyData) . '|' . join(",", $aclIds));
+
+ 	if (function_exists('gzdeflate')) {
+	    $value = gzdeflate($value);
+ 	}
+
+	$phpVm = $gallery->getPhpVm();
+	$now = $phpVm->time();
+	$ret = GalleryCoreApi::updateMapEntry(
+	    'GalleryCache',
+	    array('key' => $key, 'userId' => $userId, 'itemId' => $itemId, 'type' => $type),
+	    array('value' => $value, 'timestamp' => $now));
+
+	$storage =& $gallery->getStorage();
+	list ($ret, $affectedRows) = $storage->getAffectedRows();
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (!$affectedRows) {
+	    $ret = GalleryCoreApi::addMapEntry(
+		'GalleryCache',
+		array('key' => $key, 'value' => $value, 'userId' => $userId,
+		      'itemId' => $itemId, 'type' => $type, 'timestamp' => $now));
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	return null;
+    }
+
+    /**
+     * Remove all cached page data for the given item ids
+     *
+     * @param mixed one item id, or an array of item ids
+     * @return object GalleryStatus a status code
+     */
+    function removePageData($itemIds) {
+	$ret = GalleryCoreApi::removeMapEntry('GalleryCache', array('itemId' => $itemIds));
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return null;
+    }
+
+    /**
+     * Should we use the cache for this page or not?  Right now we cache a page if it's a GET
+     * request, the browser hasn't specified that it wants' uncached data, and the caching policy
+     * for the given user class is appropriate.
+     *
+     * @param mixed one item id, or an array of item ids
+     * @return object GalleryStatus a status code
+     */
+    function shouldCache($action, $type) {
+	global $gallery;
+
+	if (GalleryUtilities::getServerVar('REQUEST_METHOD') != 'GET') {
+	    return array(null, false);
+	}
+
+	$phpVm = $gallery->getPhpVm();
+	if ($action == 'read') {
+	    $noCache = (GalleryUtilities::getServerVar('HTTP_PRAGMA') == 'no-cache' ||
+			GalleryUtilities::getServerVar('HTTP_CACHE_CONTROL') == 'no-cache');
+	    if ($noCache) {
+		return array(null, false);
+	    }
+	}
+
+	list ($ret, $acceleration) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'acceleration');
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$acceleration = unserialize($acceleration);
+	$userId = $gallery->getActiveUserId();
+	list ($ret, $anonymousUserId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(
+	    null,
+	    (($userId == $anonymousUserId && $acceleration['guest']['type'] == $type) ||
+	     ($userId != $anonymousUserId && $acceleration['user']['type'] == $type)));
+    }
 }
 ?>

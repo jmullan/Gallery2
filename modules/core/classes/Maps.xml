@@ -591,5 +591,53 @@
       <required/>
     </member>
   </map>
+  <map>
+    <map-name>GalleryCache</map-name>
+    <schema>
+      <schema-major>1</schema-major>
+      <schema-minor>0</schema-minor>
+    </schema>
+    <member>
+      <member-name>key</member-name>
+      <member-type>STRING</member-type>
+      <member-size>SMALL</member-size>
+      <required/>
+    </member>
+    <member>
+      <member-name>value</member-name>
+      <member-type>TEXT</member-type>
+    </member>
+    <member>
+      <member-name>userId</member-name>
+      <member-type>INTEGER</member-type>
+      <indexed/>
+      <required/>
+    </member>
+    <member>
+      <member-name>itemId</member-name>
+      <member-type>INTEGER</member-type>
+      <indexed/>
+      <required/>
+    </member>
+    <member>
+      <member-name>type</member-name>
+      <member-type>STRING</member-type>
+      <member-size>SMALL</member-size>
+      <indexed/>
+      <required/>
+    </member>
+    <member>
+      <member-name>timestamp</member-name>
+      <member-type>INTEGER</member-type>
+      <indexed/>
+      <required/>
+    </member>
+    <key primary="true">
+      <member-name>key</member-name>
+      <member-name>userId</member-name>
+      <member-name>itemId</member-name>
+      <member-name>type</member-name>
+    </key>
+  </map>
 </maps>
 

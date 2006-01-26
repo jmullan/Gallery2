@@ -282,6 +282,18 @@ function _GalleryMain($embedded=false) {
 	}
     }
 
+    list ($ret, $shouldCache) = GalleryDataCache::shouldCache('read', 'full');
+    if ($ret) {
+	return array($ret->wrap(__FILE__, __LINE__), null);
+    }
+
+    if ($shouldCache) {
+	list ($ret, $html) = GalleryDataCache::getPageData('page', $urlGenerator->getCacheableUrl());
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+    }
+
     /* Load and run the appropriate view */
     if (empty($viewName)) {
 	$viewName = GALLERY_DEFAULT_VIEW;
@@ -298,86 +310,129 @@ function _GalleryMain($embedded=false) {
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	if (!$isAdmin) {
-	    if (($redirectUrl = $gallery->getConfig('mode.maintenance')) !== true) {
-		return array(null, _GalleryMain_doRedirect($redirectUrl));
-	    }
-	    $viewName = 'core.MaintenanceMode';
-	    list ($ret, $view) = GalleryView::loadView($viewName);
+    }
+
+    if (!empty($html)) {
+	/*
+	 * TODO: If we cache all the headers and replay them here, we could send a 304 not
+	 * modified back
+	 */
+	$session =& $gallery->getSession();
+	$html = str_replace('%%SESSION_ID%%', $session->getId(), $html);
+	print $html;
+	$data['isDone'] = true;
+    } else {
+	/* Load and run the appropriate view */
+	if (empty($viewName)) {
+	    $viewName = 'core.ShowItem';
+	}
+
+	list ($ret, $view) = GalleryView::loadView($viewName);
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if ($gallery->getConfig('mode.maintenance') && !$view->isAllowedInMaintenance()) {
+	    /* Maintenance mode - allow admins, else redirect to given url or show standard view */
+	    list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	}
-    }
-    if (!$embedded && $gallery->getConfig('mode.embed.only') && !$view->isAllowedInEmbedOnly()) {
-	/* Lock out direct access when embed-only is set */
-	return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
-    }
-
-    /* Initialize our container for template data */
-    $gallery->setCurrentView($viewName);
-
-    /*
-     * If this is an immediate view, it will send its own output directly.  This is
-     * used in the situation where we want to send back data that's not controlled by the
-     * layout.  That's usually something that's not user-visible like a binary file.
-     */
-    $data = array();
-    if ($view->isImmediate()) {
-	$status = isset($results['status']) ? $results['status'] : array();
-	$error = isset($results['error']) ? $results['error'] : array();
-	$ret = $view->renderImmediate($status, $error);
-	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$data['isDone'] = true;
-    } else {
-	GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplate.class');
-	$template = new GalleryTemplate(dirname(__FILE__));
-	list ($ret, $results, $theme) = $view->doLoadTemplate($template);
-	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	if (isset($results['redirect']) || isset($results['redirectUrl'])) {
-	    if (isset($results['redirectUrl'])) {
-		$redirectUrl = $results['redirectUrl'];
-	    } else {
-		$redirectUrl = $urlGenerator->generateUrl($results['redirect']);
+	    if (!$isAdmin) {
+		if (($redirectUrl = $gallery->getConfig('mode.maintenance')) !== true) {
+		    return array(null, _GalleryMain_doRedirect($redirectUrl));
+		}
+		$viewName = 'core.MaintenanceMode';
+		list ($ret, $view) = GalleryView::loadView($viewName);
+		if ($ret) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 	    }
-	    return array(null,
-			 _GalleryMain_doRedirect($redirectUrl, $template));
+	}
+	if (!$embedded && $gallery->getConfig('mode.embed.only') && !$view->isAllowedInEmbedOnly()) {
+	    /* Lock out direct access when embed-only is set */
+	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
 	}
 
-	if (empty($results['body'])) {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-					      'View results are missing body file'), null);
-	}
+	/* Initialize our container for template data */
+	$gallery->setCurrentView($viewName);
 
-	$templatePath = 'gallery:' . $results['body'];
-	$template->setVariable('l10Domain', $theme->getL10Domain());
-	$template->setVariable('isEmbedded', $embedded);
-
-	if ($viewName == 'core.ProgressBar') {
-	    /* Render progress bar pages immediately so that the user sees the bar moving */
-	    $ret = $template->display($templatePath);
+	/*
+	 * If this is an immediate view, it will send its own output directly.  This is
+	 * used in the situation where we want to send back data that's not controlled by the
+	 * layout.  That's usually something that's not user-visible like a binary file.
+	 */
+	$data = array();
+	if ($view->isImmediate()) {
+	    $status = isset($results['status']) ? $results['status'] : array();
+	    $error = isset($results['error']) ? $results['error'] : array();
+	    $ret = $view->renderImmediate($status, $error);
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $data['isDone'] = true;
 	} else {
-	    list ($ret, $html) = $template->fetch($templatePath);
+	    GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplate.class');
+	    $template = new GalleryTemplate(dirname(__FILE__));
+	    list ($ret, $results, $theme) = $view->doLoadTemplate($template);
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    $html = preg_replace('/^\s+/m', '', $html);
+	    if (isset($results['redirect']) || isset($results['redirectUrl'])) {
+		if (isset($results['redirectUrl'])) {
+		    $redirectUrl = $results['redirectUrl'];
+		} else {
+		    $redirectUrl = $urlGenerator->generateUrl($results['redirect']);
+		}
+		return array(null,
+			     _GalleryMain_doRedirect($redirectUrl, $template));
+	    }
 
-	    if ($embedded) {
-		$data = $theme->splitHtml($html, $results);
-		$data['themeData'] =& $template->getVariableByReference('theme');
-		$data['isDone'] = false;
-	    } else {
-		print $html;
+	    if (empty($results['body'])) {
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+						   'View results are missing body file'), null);
+	    }
+
+	    $templatePath = 'gallery:' . $results['body'];
+	    $template->setVariable('l10Domain', $theme->getL10Domain());
+	    $template->setVariable('isEmbedded', $embedded);
+
+	    if ($viewName == 'core.ProgressBar') {
+		/* Render progress bar pages immediately so that the user sees the bar moving */
+		$ret = $template->display($templatePath);
+		if ($ret) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 		$data['isDone'] = true;
+	    } else {
+		list ($ret, $html) = $template->fetch($templatePath);
+		if ($ret) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$html = preg_replace('/^\s+/m', '', $html);
+
+		if ($embedded) {
+		    $data = $theme->splitHtml($html, $results);
+		    $data['themeData'] =& $template->getVariableByReference('theme');
+		    $data['isDone'] = false;
+		} else {
+		    print $html;
+
+		    list ($ret, $shouldCache) = GalleryDataCache::shouldCache('write', 'full');
+		    if ($ret) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+
+		    if ($shouldCache && $results['cacheable']) {
+			$session =& $gallery->getSession();
+			$ret = GalleryDataCache::putPageData(
+			    'page', $results['cacheable'], $urlGenerator->getCacheableUrl(),
+			    str_replace($session->getId(), '%%SESSION_ID%%', $html));
+			if ($ret) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+		    }
+		    $data['isDone'] = true;
+		}
 	    }
 	}
     }

@@ -170,7 +170,7 @@ class GalleryStorage {
      * @access private
      */
     var $_isEmptyAllowedForNotNullColumn;
-    
+
     /**
      * Constructor
      *
@@ -805,6 +805,20 @@ class GalleryStorage {
     }
 
     /**
+     * Return the number of rows that were affected by the last UPDATE/DELETE.  Note that MySQL
+     * treats this a little differently than other databases; if you do an UPDATE operation and
+     * nothing is actually changed (eg, in the situation where the SET clauses in your UPDATE
+     * match the existing values) then mysql will return 0 affected rows.
+     *
+     * return array object GalleryStatus a status code
+     *              int the number of affected rows
+     */
+    function getAffectedRows() {
+	$extras =& $this->_getExtras();
+	return $extras->getAffectedRows();
+    }
+
+    /**
      * Describe the members, modules and parent of an entity
      *
      * @param string a class name
@@ -1067,13 +1081,13 @@ class GalleryStorage {
 	if (is_null($value) && !$notNull) {
 	    return $value;
 	}
-	
-	$type = $memberData['type'];	
+
+	$type = $memberData['type'];
 	if ( !$notNull && empty($value) && !is_numeric($value) &&
 	        ( !($type & STORAGE_TYPE_BOOLEAN) || $value !== false)) {
 	    return null;
 	}
-	
+
 	if ($type & STORAGE_TYPE_BOOLEAN) {
 	    /* Convert booleans to 1 : 0 */
 	    return (int)!empty($value);
@@ -1099,7 +1113,7 @@ class GalleryStorage {
 	    return $value;
 	}
     }
-    
+
     /**
      * Perform a UT8-safe truncation of the string to a size
      *
