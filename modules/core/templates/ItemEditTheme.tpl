@@ -163,9 +163,9 @@
   </table>
   {g->changeInDescendents module="theme" text="Use these settings in all subalbums that use %s theme" 
     arg1=$ItemEditTheme.theme.name}
-  <blockquote>
+  <blockquote><p>
     {g->text text="Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"}
-  </blockquote>
+  </p></blockquote>
 {elseif !isset($ItemEditTheme.customTemplate)}
   <b> {g->text text="There are no settings for this theme"} </b>
 {/if}

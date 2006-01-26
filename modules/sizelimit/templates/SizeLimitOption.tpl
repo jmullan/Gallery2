@@ -94,12 +94,11 @@
   <label for="SizeLimit_ApplyToDescendents">
     {g->text text="Check here to apply size limits to the pictures in this album and all subalbums"}
   </label>
-  <blockquote>
+  <blockquote><p>
     {g->text text="Checking this option will rebuild pictures according to appropriate limits"}
-  </blockquote>
-  <br/>
+  </p></blockquote>
   {g->changeInDescendents module="sizelimit" text="Use these size limits in all subalbums"}
-  <blockquote>
+  <blockquote><p>
     {g->text text="Checking this option will set same picture size limits in all subalbums"}
-  </blockquote>
+  </p></blockquote>
 </div>
