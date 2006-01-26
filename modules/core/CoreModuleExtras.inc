@@ -138,6 +138,8 @@ class CoreModuleExtras {
 			   'format.time' => '%X',
 			   'format.datetime' => '%c',
 			   'repository.updateTime' => '0',
+			   'acceleration' => serialize(array('guest' => array('type' => 'none'),
+							     'user' => array('type' => 'none'))),
 			   ) as $key => $value) {
 		if (!isset($param[$key])) {
 		    $ret = $module->setParameter($key, (string)$value);
@@ -1500,7 +1502,14 @@ class CoreModuleExtras {
 	    }
 
 	case '1.0.19':
-	    /* Add GalleryCache map */
+	    /* Add page level caching and the GalleryCache map */
+	    $acceleration = serialize(array('guest' => array('type' => 'none'),
+					    'user' => array('type' => 'none')));
+	    $ret = GalleryCoreApi::setPluginParameter(
+		'module', 'core', 'acceleration', $acceleration);
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 
 	case 'end of upgrade path':
 	    /*
