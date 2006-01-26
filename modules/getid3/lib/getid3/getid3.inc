@@ -322,8 +322,10 @@ class getID3
 		}
 
 		// module requires iconv support
-        if (!function_exists('iconv') && @$determined_format['iconv_req']) {
-		    return $this->error('iconv support is required for this module ('.$determined_format['include'].').');
+	        if (!function_exists('iconv') &&
+	           isset($determined_format['iconv_req']) &&
+	           $determined_format['iconv_req']) {
+	               return $this->error('iconv support is required for this module ('.$determined_format['include'].').');
 		}
 
 		// include module
