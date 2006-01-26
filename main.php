@@ -42,7 +42,7 @@ if (GalleryUtilities::isEmbedded()) {
 	 * So if the browser presents us with an If-Modified-Since then it has
 	 * the latest version of the file already.
 	 */
-	if (isset($_ENV['HTTP_IF_MODIFIED_SINCE']) ||
+	if (GalleryUtilities::getServerVar('HTTP_IF_MODIFIED_SINCE') ||
 	        (function_exists('getallheaders') && ($headers = GetAllHeaders()) && 
 		 (isset($headers['If-Modified-Since']) || isset($headers['If-modified-since'])))) {
 	    header('HTTP/1.x 304 Not Modified');
