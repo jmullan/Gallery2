@@ -172,7 +172,7 @@ class GalleryUtilities {
 	     */
 	    $postForm = $_FILES[$key];
 	    if (get_magic_quotes_gpc()) {
-		for ($i = 1; $i <= sizeof($postForm['tmp_name']); $i++) {
+		foreach ($postForm['tmp_name'] as $i => $unused) {
 		    $postForm['tmp_name'][$i] = addslashes($postForm['tmp_name'][$i]);
 		}
 	    }

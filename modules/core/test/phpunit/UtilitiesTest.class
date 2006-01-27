@@ -122,20 +122,20 @@ class UtilitiesTest extends GalleryTestCase {
     function testGetFormVariables2() {
 	/* Test windows and unix style tmp names */
 	$_FILES[GalleryUtilities::prefixFormVariable('utilitiestest')] =
-		array('name' => array('1' => 'DSCF0001.JPG', 'DSCF0002.GIF', null, null),
-		      'type' => array('1' => 'image/pjpeg', 'image/gif', null, null),
-		      'tmp_name' => array('1' => 'c:\apache\tmp\php195.tmp', '/tmp/php195.tmp',
+		array('name' => array('test' => 'DSCF0001.JPG', 'DSCF0002.GIF', null, null),
+		      'type' => array('test' => 'image/pjpeg', 'image/gif', null, null),
+		      'tmp_name' => array('test' => 'c:\apache\tmp\php195.tmp', '/tmp/php195.tmp',
 					  null, null),
-		      'error' => array('1' => 0, 0, 4, 4),
-		      'size' => array('1' => 1779802, 102323, 0, 0));
+		      'error' => array('test' => 0, 0, 4, 4),
+		      'size' => array('test' => 1779802, 102323, 0, 0));
 
-	$this->assertEquals(array('name' => array('1' => 'DSCF0001.JPG', 'DSCF0002.GIF',
+	$this->assertEquals(array('name' => array('test' => 'DSCF0001.JPG', 'DSCF0002.GIF',
 						  null, null),
-				  'type' => array('1' => 'image/pjpeg', 'image/gif', null, null),
-				  'tmp_name' => array('1' => 'c:\apache\tmp\php195.tmp',
+				  'type' => array('test' => 'image/pjpeg', 'image/gif', null, null),
+				  'tmp_name' => array('test' => 'c:\apache\tmp\php195.tmp',
 						      '/tmp/php195.tmp', null, null),
-				  'error' => array('1' => 0, 0, 4, 4),
-				  'size' => array('1' => 1779802, 102323, 0, 0)),
+				  'error' => array('test' => 0, 0, 4, 4),
+				  'size' => array('test' => 1779802, 102323, 0, 0)),
 			    GalleryUtilities::getFormVariables('utilitiestest'));
     }
 
