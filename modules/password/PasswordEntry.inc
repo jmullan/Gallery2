@@ -77,7 +77,7 @@ class PasswordEntryController extends GalleryController {
 	    list($ret, $hashedPassword) = GalleryCoreApi::getPluginParameter(
 		    'module', 'password', 'password', $itemId);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    /* Use captcha if available */
