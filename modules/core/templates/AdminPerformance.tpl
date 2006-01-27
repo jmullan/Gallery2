@@ -33,13 +33,13 @@
     <dt style="font-weight: bold"> {g->text text="Partial Acceleration"} </dt>
     <dd>
       <p>
-        {g->text text="Partial acceleration gives you roughly 10-25% performance increase, but some forms of dynamic data (like view counts) will not get updated right away.  All content that appears in blocks (like the random image block, any sidebar blocks, etc) will always be updated."}
+	{g->text text="Partial acceleration gives you roughly 10-25% performance increase, but some forms of dynamic data (like view counts) will not get updated right away.  All content that appears in blocks (like the random image block, any sidebar blocks, etc) will always be updated."}
       </p>
     </dd>
     <dt style="font-weight: bold"> {g->text text="Full Acceleration"} </dt>
     <dd>
       <p>
-        {g->text text="Full acceleration gives roughly a 90% performance increase, but no dynamic data (random image block, other sidebar blocks, number of items in your shopping cart, view counts, etc) will not get updated until the saved page expires."}
+	{g->text text="Full acceleration gives roughly a 90% performance increase, but no dynamic data (random image block, other sidebar blocks, number of items in your shopping cart, view counts, etc) will get updated until the saved page expires."}
       </p>
     </dd>
   </dl>
@@ -59,34 +59,34 @@
   <table class="gbDataTable">
     <tr>
       <td>
-        <b> {g->text text="Guest Users"} </b>
+	<b> {g->text text="Guest Users"} </b>
       </td>
       <td>
-        <select id="guestType" name="{g->formVar var="form[acceleration][guest][type]"}" onchange="toggleEnabled()">
+	<select id="guestType" name="{g->formVar var="form[acceleration][guest][type]"}" onchange="toggleEnabled()">
 	  {html_options options=$AdminPerformance.typeList selected=$form.acceleration.guest.type}
-        </select>
+	</select>
       </td>
       <td>
-        <b>{g->text text="Expires after:"}</b>
-        <select id="guestExpire" name="{g->formVar var="form[acceleration][guest][expiration]"}">
+	<b>{g->text text="Expires after:"}</b>
+	<select id="guestExpire" name="{g->formVar var="form[acceleration][guest][expiration]"}">
 	  {html_options options=$AdminPerformance.expirationTimeList selected=$form.acceleration.guest.expiration}
-        </select>
+	</select>
       </td>
     </tr>
     <tr class="gbOdd">
       <td>
-        <b> {g->text text="Registered Users"} </b>
+	<b> {g->text text="Registered Users"} </b>
       </td>
       <td>
-        <select id="userType" name="{g->formVar var="form[acceleration][user][type]"}" onchange="toggleEnabled()">
+	<select id="userType" name="{g->formVar var="form[acceleration][user][type]"}" onchange="toggleEnabled()">
 	  {html_options options=$AdminPerformance.typeList selected=$form.acceleration.user.type}
-        </select>
+	</select>
       </td>
       <td>
-        <b>{g->text text="Expires after:"}</b>
-        <select id="userExpire" name="{g->formVar var="form[acceleration][user][expiration]"}">
+	<b>{g->text text="Expires after:"}</b>
+	<select id="userExpire" name="{g->formVar var="form[acceleration][user][expiration]"}">
 	  {html_options options=$AdminPerformance.expirationTimeList selected=$form.acceleration.user.expiration}
-        </select>
+	</select>
       </td>
     </tr>
   </table>
