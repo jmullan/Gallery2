@@ -139,14 +139,21 @@ class HiddenModule extends GalleryModule /* and GalleryEventListener */ {
     function onLoad(&$item, $duringUpgrade) {
 	list ($view, $itemId) = GalleryUtilities::getRequestVariables('view', 'itemId');
 	if ($view == 'core.ShowItem' && $itemId == $item->getId()) {
-	    global $gallery;
-	    $session =& $gallery->getSession();
-	    if (!$session->exists(GALLERY_PERMISSION_SESSION_KEY)) {
-		$session->put(GALLERY_PERMISSION_SESSION_KEY, array());
+	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($itemId);
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    $sessionPerms =& $session->get(GALLERY_PERMISSION_SESSION_KEY);
-	    if (!in_array($itemId, $sessionPerms)) {
-		$sessionPerms[] = (int)$itemId;
+	    if (!isset($permissions['core.view']) && (isset($permissions['core.viewResizes'])
+		    || isset($permissions['core.viewSource']))) {
+		global $gallery;
+		$session =& $gallery->getSession();
+		if (!$session->exists(GALLERY_PERMISSION_SESSION_KEY)) {
+		    $session->put(GALLERY_PERMISSION_SESSION_KEY, array());
+		}
+		$sessionPerms =& $session->get(GALLERY_PERMISSION_SESSION_KEY);
+		if (!in_array($itemId, $sessionPerms)) {
+		    $sessionPerms[] = (int)$itemId;
+		}
 	    }
 	}
 	return null;

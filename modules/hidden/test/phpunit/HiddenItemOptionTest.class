@@ -32,7 +32,7 @@ GalleryCoreApi::requireOnce('modules/hidden/classes/HiddenHelper.class');
 
 /**
  * HiddenItemOption tests - hiding an unhiding items and albums.
- * Also tests hiding via HiddenInterface.
+ * Also tests onLoad handler and hiding via HiddenInterface.
  *
  * @package Hidden
  * @subpackage PHPUnit
@@ -785,6 +785,68 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
 	    $this->assert($isHidden, 'isHidden album');
 	} else {
 	    $this->assert(false, 'failed to create factory instance');
+	}
+    }
+
+    function testOnLoad() {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'hidden');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = HiddenHelper::hideItem($this->_topItems[1]);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$saveSessionPerms = $session->get(GALLERY_PERMISSION_SESSION_KEY);
+	$session->put(GALLERY_PERMISSION_SESSION_KEY, array());
+	GalleryUtilities::putRequestVariable('view', 'core.ShowItem');
+	GalleryUtilities::putRequestVariable('itemId', $this->_topItems[1]->getId());
+
+	/* No action if we already have core.view, like admin */
+	$ret = $module->onLoad($this->_topItems[1], false);
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(), $session->get(GALLERY_PERMISSION_SESSION_KEY), 'admin');
+
+	$this->_becomeGuestUser();
+	GalleryDataCache::reset();
+	$session->put(GALLERY_PERMISSION_SESSION_KEY, array());
+
+	/* Session permission is granted if we have viewResizes or viewSource */
+	$ret = $module->onLoad($this->_topItems[1], false);
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array($this->_topItems[1]->getId()),
+			    $session->get(GALLERY_PERMISSION_SESSION_KEY), 'guest');
+
+	$ret = GalleryCoreApi::removeGroupPermission($this->_topItems[1]->getId(),
+		$this->_coreParams['id.everybodyGroup'], 'core.viewAll');
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	GalleryDataCache::reset();
+	$session->put(GALLERY_PERMISSION_SESSION_KEY, array());
+
+	/*
+	 * No action if don't have any view permissions, as with a password protected item
+	 * for which we haven't yet entered the password.
+	 */
+	$ret = $module->onLoad($this->_topItems[1], false);
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(), $session->get(GALLERY_PERMISSION_SESSION_KEY), 'no view');
+
+	if (isset($saveSessionPerms)) {
+	    $session->put(GALLERY_PERMISSION_SESSION_KEY, $saveSessionPerms);
+	} else {
+	    $session->remove(GALLERY_PERMISSION_SESSION_KEY);
 	}
     }
 }
