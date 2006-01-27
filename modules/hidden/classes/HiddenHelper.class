@@ -350,6 +350,16 @@ class HiddenHelper extends HiddenInterface_1_0 {
 	return null;
     }
 
+    /**
+     * Check for nearest hidden/password ancestor of given item
+     *
+     * @param object GalleryItem item
+     * @param mixed instance of PasswordInterface or false
+     * @return array object GalleryStatus a status code
+     *               mixed id of nearest hidden ancestor or false
+     *               mixed id of nearest password protected ancestor or false
+     * @access private
+     */
     function _checkAncestors($item, $passwordInterface) {
 	list ($ret, $ancestors) = GalleryCoreApi::fetchParents($item);
 	if ($ret) {
