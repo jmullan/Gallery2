@@ -52,6 +52,12 @@ class Php41CompatibilityTest extends CodeAuditTestCase {
 	$this->_exceptions['gd_info']['TestGdFunctionality.class'] = 1;
 	$this->_exceptions['memory_get_usage']['GalleryTemplateAdapter.class'] = 1;
 	$this->_exceptions['file_get_contents']['GalleryPlatform.class'] = 1;
+	$this->_exceptions['md5_file']['getid3.inc'] = 1;
+	$this->_exceptions['sha1_file']['getid3.inc'] = 1;
+	$this->_exceptions['md5_file']['getid3.lib.inc'] = 1;
+	$this->_exceptions['sha1_file']['getid3.lib.inc'] = 1;
+	$this->_exceptions['image_type_to_mime_type']['getid3.lib.inc'] = 1;
+	$this->_exceptions['image_type_to_mime_type']['module.audio.ogg.inc'] = 1;
     }
 
     /**
