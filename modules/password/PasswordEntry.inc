@@ -111,9 +111,8 @@ class PasswordEntryController extends GalleryController {
 	    }
 
 	    $guess = GalleryUtilities::htmlEntityDecode($form['password']);
-	    $salt = substr($hashedPassword, 0, 4);
 	    if (empty($error) && $canSee && $hashedPassword
-		    && ($salt . md5($salt . $guess) == $hashedPassword)) {
+		    && GalleryUtilities::isCorrectPassword($guess, $hashedPassword)) {
 		$session =& $gallery->getSession();
 		if (!$session->exists(GALLERY_PERMISSION_SESSION_KEY)) {
 		    $session->put(GALLERY_PERMISSION_SESSION_KEY, array());

@@ -209,13 +209,7 @@ class GalleryPendingUser extends GalleryEntity {
      * @param string a plaintext password
      */
     function changePassword($newPassword) {
-	$salt = '';
-	for ($i = 0; $i < 4; $i++) {
-	    $char = mt_rand(48, 109);
-	    $char += ($char > 90) ? 13 : ($char > 57) ? 7 : 0;
-	    $salt .= chr($char);
-	}
-	$this->setHashedPassword($salt . md5($salt . $newPassword));
+	$this->setHashedPassword(GalleryUtilities::md5Salt($newPassword));
     }
 
     /**

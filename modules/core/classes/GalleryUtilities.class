@@ -1300,6 +1300,37 @@ class GalleryUtilities {
     }
 
     /**
+     * Create a hashed password using md5 plus salt
+     *
+     * @param string plaintext password
+     * @param string (optional) salt or hash containing salt (randomly generated if omitted)
+     * @return string hashed password
+     */
+    function md5Salt($password, $salt='') {
+	if (empty($salt)) {
+	    for ($i = 0; $i < 4; $i++) {
+		$char = mt_rand(48, 109);
+		$char += ($char > 90) ? 13 : ($char > 57) ? 7 : 0;
+		$salt .= chr($char);
+	    }
+	} else {
+	    $salt = substr($salt, 0, 4);
+	}
+	return $salt . md5($salt . $password);
+    }
+
+    /**
+     * Verify given password is correct
+     *
+     * @param string password guess
+     * @param string hashed password
+     * @return boolean true if correct
+     */
+    function isCorrectPassword($guess, $hashedPassword) {
+	return (GalleryUtilities::md5Salt($guess, $hashedPassword) === $hashedPassword);
+    }
+
+    /**
      * Verify that the API provided is compatible with the API that we require.
      *
      * We're only compatible if the major numbers are the same, and the required
