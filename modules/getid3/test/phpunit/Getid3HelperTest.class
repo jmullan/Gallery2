@@ -119,7 +119,7 @@ class Getid3HelperTest extends GalleryTestCase {
 	list ($ret, $id3ArchiveData) = Getid3Helper::getId3ArchiveData(
 	    dirname(__FILE__) . '/../data/isotest.iso', GETID3_SUMMARY);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(4, sizeof($id3ArchiveData), 'iso test number of files');
 	$this->assertEquals($id3ArchiveData[0]['name'], 'FILE1.TXT', 'file1.txt');
@@ -139,7 +139,7 @@ class Getid3HelperTest extends GalleryTestCase {
 	list ($ret, $id3ArchiveData) = Getid3Helper::getId3ArchiveData(
 	    dirname(__FILE__) . '/../data/tartest.tar', GETID3_SUMMARY);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals($this->_expectedTarResults, $id3ArchiveData);
     }
@@ -151,7 +151,7 @@ class Getid3HelperTest extends GalleryTestCase {
         list ($ret, $id3ArchiveData) = Getid3Helper::getId3ArchiveData(
 	    dirname(__FILE__) . '/../data/tgztest.tgz', GETID3_SUMMARY);
         if ($ret) {
-            $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
 	$this->assertEquals($this->_expectedTarResults, $id3ArchiveData);
     }
@@ -164,7 +164,7 @@ class Getid3HelperTest extends GalleryTestCase {
 	list ($ret, $id3ArchiveData) = Getid3Helper::getId3ArchiveData(
 	    dirname(__FILE__) . '/../data/ziptest.zip', GETID3_SUMMARY);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals($this->_expectedZipResults, $id3ArchiveData);
     }
@@ -177,7 +177,7 @@ class Getid3HelperTest extends GalleryTestCase {
 	    Getid3Helper::getId3Data(
 	        dirname(__FILE__) . '/../data/test_small.avi', GETID3_DETAILED);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/*
@@ -256,7 +256,7 @@ class Getid3HelperTest extends GalleryTestCase {
                 dirname(__FILE__) . '/../data/sine_12000_22050.flac',
                 GETID3_DETAILED);
         if ($ret) {
-            $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
 
         /*
@@ -270,27 +270,28 @@ class Getid3HelperTest extends GalleryTestCase {
         for ($i = 0; $i < sizeof($id3Data); $i++) {
             switch ($id3Data[$i]['title']) {
 	    case 'Audio Bit Rate':
-                $this->assert(abs(488992.7448 - $id3Data[$i]['value']) < 0.01);
+		$value = abs(488992.7448 - $id3Data[$i]['value']);
+                $this->assert($value < 0.01, 'value is ' . $value);
                 $verifiedCount++;
 	        break;
 	    case 'Audio Bit Rate Mode':
-                $this->assertEquals('vbr', $id3Data[$i]['value']);
+                $this->assertEquals('vbr', $id3Data[$i]['value'], 'audio bit rate mode');
                 $verifiedCount++;
 	        break;
 	    case 'Audio Channels':
-                $this->assertEquals('1', $id3Data[$i]['value']);
+                $this->assertEquals('1', $id3Data[$i]['value'], 'audio channels');
                 $verifiedCount++;
 	        break;
             case 'Channel Mode':
-                $this->assertEquals('mono', $id3Data[$i]['value']);
+                $this->assertEquals('mono', $id3Data[$i]['value'], 'channel mode');
                 $verifiedCount++;
 	        break;
 	    default:
 	        $this->assertEquals('', $id3Data[$i]['title'], "Unknown flac data");
-	        break;
+		break;
             }
         }
-        $this->assertEquals(4, $verifiedCount);
+        $this->assertEquals(4, $verifiedCount, 'verified count');
 
         /* Make sure there are no duplicates in the list */
         $seen = array();
@@ -311,7 +312,7 @@ class Getid3HelperTest extends GalleryTestCase {
 	        dirname(__FILE__) . '/../data/sine_8000_11025_64.mp3',
 	        GETID3_SUMMARY);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/*
@@ -351,7 +352,7 @@ class Getid3HelperTest extends GalleryTestCase {
                 dirname(__FILE__) . '/../data/sine_12000_22050_64.ogg',
                 GETID3_DETAILED);
         if ($ret) {
-            $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
 
         /*
@@ -391,7 +392,7 @@ class Getid3HelperTest extends GalleryTestCase {
 	list ($ret, $id3Data) =
 	    Getid3Helper::getId3Data(dirname(__FILE__) . '/../data/newday.mov', GETID3_DETAILED);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/*
@@ -403,11 +404,11 @@ class Getid3HelperTest extends GalleryTestCase {
 	$verifiedCount = 0;
 	for ($i = 0; $i < sizeof($id3Data); $i++) {
 	    if ($id3Data[$i]['title'] == 'Audio Bit Rate') {
-	        $this->assert(abs(205.3466 - $id3Data[$i]['value']) < 0.01);
+	        $this->assert(abs(205.3466 - $id3Data[$i]['value']) < 0.01, "value $i");
 	        $verifiedCount++;
 	    }
 	}
-	$this->assertEquals(1, $verifiedCount);
+	$this->assertEquals(1, $verifiedCount, 'verified count');
 
 	/* Make sure there are no duplicates in the list */
 	$seen = array();
@@ -426,7 +427,7 @@ class Getid3HelperTest extends GalleryTestCase {
             Getid3Helper::getId3Data(
 	        dirname(__FILE__) . '/../data/sine_20_11025.wav', GETID3_DETAILED);
         if ($ret) {
-            $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
 
         /*
