@@ -433,5 +433,12 @@ class HiddenHelper extends HiddenInterface_1_0 {
     function isHidden($item) {
 	return array(null, $item->hasOnLoadHandler('Hidden'));
     }
+
+    /**
+     * Constructor
+     */
+    function HiddenHelper() {
+	$this->_notEmpty = true;
+    }
 }
 ?>
