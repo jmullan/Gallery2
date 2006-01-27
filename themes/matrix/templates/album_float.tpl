@@ -4,6 +4,7 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
+
 <table width="100%" cellspacing="0" cellpadding="0">
   <tr valign="top">
     {if !empty($theme.params.sidebarBlocks)}
@@ -12,7 +13,7 @@
     </td>
     {/if}
     <td>
-      <div id="gsContent" class="gcBorder1">
+      <div id="gsContent">
         <div class="gbBlock gcBackground1">
           <table style="width: 100%">
             <tr>
@@ -58,76 +59,71 @@
         {else}
 		
         <div class="gbBlock">
-		
-			<div id="gsThumbMatrix" style="width: 100%;">
-			
-			{foreach from=$theme.children item=child}
+            <div id="gsThumbMatrix">	
+                {foreach from=$theme.children item=child}
+                <div class="{if $child.canContainChildren}giAlbumCell gcBackground1{else}giItemCell{/if}" style="width: {$theme.params.floatWidth}px; height: {$theme.params.floatHeight}px;">
 
-	      		<div class="{if $child.canContainChildren}giAlbumCell gcBackground1{else}giItemCell{/if}" style="width: {$child.thumbnail.width}; float: left; clear: none; text-align: center;">
-	
-					{if ($child.canContainChildren || $child.entityType == 'GalleryLinkItem')}
-						{assign var=frameType value="albumFrame"}
-					{else}
-						{assign var=frameType value="itemFrame"}
-					{/if}
-					
-					{if isset($theme.params.$frameType) && isset($child.thumbnail)}
-						{g->container type="imageframe.ImageFrame" frame=$theme.params.$frameType width=$child.thumbnail.width height=$child.thumbnail.height}
-						<a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$child.id`"}">{g->image id="%ID%" item=$child image=$child.thumbnail class="%CLASS% giThumbnail"}</a>
-						{/g->container}
-					{elseif isset($child.thumbnail)}
-						<a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$child.id`"}">{g->image item=$child image=$child.thumbnail class="giThumbnail"}</a>
-					{else}
-						<a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$child.id`"}" class="giMissingThumbnail">{g->text text="no thumbnail"}</a>
-					{/if}
+                {if ($child.canContainChildren || $child.entityType == 'GalleryLinkItem')}
+                    {assign var=frameType value="albumFrame"}
+                {else}
+                    {assign var=frameType value="itemFrame"}
+                {/if}
+                
+                {if isset($theme.params.$frameType) && isset($child.thumbnail)}
+                    {g->container type="imageframe.ImageFrame" frame=$theme.params.$frameType width=$child.thumbnail.width height=$child.thumbnail.height}
+                    <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$child.id`"}">{g->image id="%ID%" item=$child image=$child.thumbnail class="%CLASS% giThumbnail"}</a>
+                    {/g->container}
+                {elseif isset($child.thumbnail)}
+                    <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$child.id`"}">{g->image item=$child image=$child.thumbnail class="giThumbnail"}</a>
+                {else}
+                    <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$child.id`"}" class="giMissingThumbnail">{g->text text="no thumbnail"}</a>
+                {/if}
 
-					{g->block type="core.ItemLinks" item=$child links=$child.itemLinks}
+                {g->block type="core.ItemLinks" item=$child links=$child.itemLinks}
 
-					{if !empty($child.title)}
-					<p class="giTitle">
-						{if $child.canContainChildren}
-							{g->text text="Album: %s" arg1=$child.title|markup}
-						{else}
-							{$child.title|markup}
-						{/if}
-					</p>
-					{/if}
+                {if !empty($child.title)}
+                <p class="giTitle">
+                    {if $child.canContainChildren}
+                    {g->text text="Album: %s" arg1=$child.title|markup}
+                    {else}
+                    {$child.title|markup}
+                    {/if}
+                </p>
+                {/if}
 
-					{if !empty($child.summary)}
-					<p class="giDescription">{$child.summary|markup|entitytruncate:256}</p>
-					{/if}
+                {if !empty($child.summary)}
+                <p class="giDescription">{$child.summary|markup|entitytruncate:256}</p>
+                {/if}
 
-					{if ($child.canContainChildren && $theme.params.showAlbumOwner) || (!$child.canContainChildren && $theme.params.showImageOwner)}
-						{assign var="showOwner" value=true}
-					{else}
-						{assign var="showOwner" value=false}
-					{/if}
-					
-					{g->block type="core.ItemInfo"
-							item=$child
-							showDate=true
-							showOwner=$showOwner
-							showSize=true
-							showViewCount=true
-							showSummaries=true
-							class="giInfo"}
-              	</div>
-				{/foreach}
-
-			</div>
-			
+                {if ($child.canContainChildren && $theme.params.showAlbumOwner) || (!$child.canContainChildren && $theme.params.showImageOwner)}
+                    {assign var="showOwner" value=true}
+                {else}
+                    {assign var="showOwner" value=false}
+                {/if}
+                
+                {g->block type="core.ItemInfo"
+                                item=$child
+                                showDate=true
+                                showOwner=$showOwner
+                                showSize=true
+                                showViewCount=true
+                                showSummaries=true
+                                class="giInfo"}
+                </div>
+                {/foreach}
+            </div>
         </div>
 		
         {/if}
 
         {if !empty($theme.navigator)}
-        <div class="gbBlock gcBackground2 gbNavigator" style="position: relative; float: none; clear: both;">
+        <div class="gbBlock gcBackground2 gbNavigator">
           {g->block type="core.Navigator" navigator=$theme.navigator reverseOrder=true}
         </div>
         {/if}
 
         {if !empty($theme.jumpRange)}
-        <div id="gsPages" class="gbBlock gcBackground1" style="position: relative; float: none; clear: both;">
+        <div id="gsPages" class="gbBlock gcBackground1">
           {g->block type="core.Pager"}
         </div>
         {/if}

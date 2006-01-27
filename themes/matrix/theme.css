@@ -125,12 +125,18 @@ body.gallery {
     width: 1%; /* Expand to fit content ("0" bad4 firefox, "1px" bad4 opera) */
 }
 
-td.giAlbumCell, td.giItemCell {
+.giAlbumCell, .giItemCell {
     padding: 1em;
     text-align: center;
 }
 
-#gallery td.giAlbumCell select, #gallery td.giItemCell select {
+div.giAlbumCell, div.giItemCell {
+    float: left;
+    clear: none;
+    margin: 0.2em;
+}
+
+#gallery .giAlbumCell select, #gallery .giItemCell select {
     margin-top: 0.8em;
 }
 
@@ -139,6 +145,10 @@ td.giAlbumCell table, td.giItemCell table {
     margin: auto;
 }
 
+#gsPages {
+    clear: both;
+}
+    
 #gsPages span {
     padding: 0 0.3em;
 }
@@ -301,6 +311,11 @@ body.gallery {
     background-image: none;
     white-space: nowrap;
 }
+
+#gsThumbMatrix {
+    width: 100%;
+}
+
 #gallery.IE div.gbBreadCrumb span {
     display: inline-block;   /* IE loses padding-left on wrapped inline nowrap element */
     padding-right: 4px;      /* IE has less space at right of each span */
@@ -465,6 +480,12 @@ div.gbTabBar span.o {
 
 div.gbNavigator div.next-and-last {
   float: right;
+}
+div.gbNavigator {
+  border: none;
+  position: relative;
+  float: none;
+  clear: both;
 }
 div.gbNavigator div.next-and-last.no-previous {
   float: none;

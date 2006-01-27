@@ -58,7 +58,7 @@
 
         {assign var="childrenInColumnCount" value=0}
         <div class="gbBlock">
-          <table id="gsThumbMatrix" width="100%">
+          <table id="gsThumbMatrix">
             <tr valign="top">
               {foreach from=$theme.children item=child}
 

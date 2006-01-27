@@ -78,7 +78,57 @@ class MatrixTheme extends GalleryTheme {
 	    'name' => $this->translate('Use floating divs instead of a table to display thumbnails'),
 	    'type' => 'checkbox',
 	    'value' => isset($params['useFloatingDivs']) ? $params['useFloatingDivs'] : false);
+	$settings[] = array(
+	    'key' => 'floatCount',
+	    'name' => $this->translate('Items per page'),
+	    'type' => 'text-field',
+	    'typeParams' => array('size' => 3),
+	    'value' => isset($params['floatCount']) ? $params['floatCount'] : 12);
+	$settings[] = array(
+	    'key' => 'floatWidth',
+	    'name' => $this->translate('Width of floating items'),
+	    'type' => 'text-field',
+	    'typeParams' => array('size' => 3),
+	    'value' => isset($params['floatWidth']) ? $params['floatWidth'] : 200);
+	$settings[] = array(
+	    'key' => 'floatHeight',
+	    'name' => $this->translate('Height of floating items'),
+	    'type' => 'text-field',
+	    'typeParams' => array('size' => 3),
+	    'value' => isset($params['floatHeight']) ? $params['floatHeight'] : 250);
+
 	return array(null, $settings);
+    }
+
+    /**
+     * If floating divs, override getPageSize to use floatCount
+     */
+    function getPageSize($params) {
+	if (empty($params['useFloatingDivs'])) {
+	    return parent::getPageSize($params);
+	} elseif (!empty($params['floatCount'])) {
+	    return $params['floatCount'];
+	}
+	return 0;
+    }
+
+    /**
+     * @see GalleryTheme::validateSettings
+     */
+    function validateSettings($settings) {
+	$error = parent::validateSettings($settings);
+	if ($settings['useFloatingDivs']) {
+	    if (!is_numeric($settings['floatCount'])) {
+		$error['floatCount'] = $this->translate('You must enter a number');
+	    }
+	    if (!is_numeric($settings['floatWidth'])) {
+		$error['floatWidth'] = $this->translate('You must enter a number');
+	    }
+	    if (!is_numeric($settings['floatHeight'])) {
+		$error['floatHeight'] = $this->translate('You must enter a number');
+	    }
+	}
+	return $error;
     }
 
     /**
@@ -94,11 +144,6 @@ class MatrixTheme extends GalleryTheme {
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
-	/* Add in our extra stuff */
-	$theme =& $template->getVariableByReference('theme');
-	$theme['columnWidthPct'] = floor(100 / $params['columns']);
-	$theme['useFloatingDivs'] = $params['useFloatingDivs'];
 
 	/* Add our header and styles */
 	return array(null, 'theme.tpl');
