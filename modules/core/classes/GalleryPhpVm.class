@@ -174,5 +174,18 @@ class GalleryPhpVm {
     function time() {
 	return time();
     }
+
+    /**
+     * Output a message and terminate the current script
+     *
+     * @param mixed (optional) status
+     */
+    function exit_($status=null) {
+	if (isset($status)) {
+	    exit($status);
+	} else {
+	    exit;
+	}
+    }
 }
 ?>
