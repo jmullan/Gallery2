@@ -86,7 +86,8 @@ class WatermarkHelper {
 	';
 
 	list ($ret, $searchResults) = $gallery->search(
-	    $query, $data, array('limit' => array('count' => (int)$count, 'offset' => (int)$offset)));
+	    $query, $data, array('limit' => array('count' => (int)$count,
+						  'offset' => (int)$offset)));
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

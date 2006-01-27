@@ -288,7 +288,8 @@ function _GalleryMain($embedded=false) {
     }
 
     if ($shouldCache) {
-	list ($ret, $html) = GalleryDataCache::getPageData('page', $urlGenerator->getCacheableUrl());
+	list ($ret, $html) =
+	    GalleryDataCache::getPageData('page', $urlGenerator->getCacheableUrl());
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -348,7 +349,8 @@ function _GalleryMain($embedded=false) {
 		}
 	    }
 	}
-	if (!$embedded && $gallery->getConfig('mode.embed.only') && !$view->isAllowedInEmbedOnly()) {
+	if (!$embedded && $gallery->getConfig('mode.embed.only') &&
+	        !$view->isAllowedInEmbedOnly()) {
 	    /* Lock out direct access when embed-only is set */
 	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
 	}

@@ -75,7 +75,8 @@ class MatrixTheme extends GalleryTheme {
 	/* Add in our custom settings */
 	$settings[] = array(
 	    'key' => 'useFloatingDivs',
-	    'name' => $this->translate('Use floating divs instead of a table to display thumbnails'),
+	    'name' => $this->translate(
+		'Use floating divs instead of a table to display thumbnails'),
 	    'type' => 'checkbox',
 	    'value' => isset($params['useFloatingDivs']) ? $params['useFloatingDivs'] : false);
 	$settings[] = array(
