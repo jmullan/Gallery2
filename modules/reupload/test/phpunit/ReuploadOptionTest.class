@@ -78,8 +78,8 @@ class ReuploadOptionTest extends ItemEditOptionTestCase {
     }
 
     function testReupload() {
-	$form['tmp_name'][1] = 'bogus.tmp';
-	$form['size'][1] = 800;
+	$form['tmp_name']['reupload'] = 'bogus.tmp';
+	$form['size']['reupload'] = 800;
 	$form['serialNumber'] = $this->_item->getSerialNumber();
 
 	/* Perform the request and verify that we succeeded */
@@ -96,9 +96,9 @@ class ReuploadOptionTest extends ItemEditOptionTestCase {
      * which is most common case.
      */
     function testReuploadFailure() {
-	$form['tmp_name'][1] = '';
-	$form['name'][1] = 'itried.jpg';
-	$form['size'][1] = 0;
+	$form['tmp_name']['reupload'] = '';
+	$form['name']['reupload'] = 'itried.jpg';
+	$form['size']['reupload'] = 0;
 	$form['serialNumber'] = $this->_item->getSerialNumber();
 
 	/* Perform the request and verify that we failed and filesize didn't change */
@@ -110,8 +110,8 @@ class ReuploadOptionTest extends ItemEditOptionTestCase {
     
     /* This imitates the case when the new file has different mime type than the old one */
     function testReuploadToolkitFailure() {
-	$form['tmp_name'][1] = 'bogus.mpeg';
-	$form['size'][1] = 1500;
+	$form['tmp_name']['reupload'] = 'bogus.mpeg';
+	$form['size']['reupload'] = 1500;
 	$form['serialNumber'] = $this->_item->getSerialNumber();
 	GalleryUtilities::putRequestVariable('dimensions', 'bad_data');
 
@@ -133,9 +133,9 @@ class ReuploadOptionTest extends ItemEditOptionTestCase {
      * Shouldn't be any errors!
      */
     function testReuploadNothing() {
-	$form['tmp_name'][1] = '';
-	$form['name'][1] = '';
-	$form['size'][1] = 0;
+	$form['tmp_name']['reupload'] = '';
+	$form['name']['reupload'] = '';
+	$form['size']['reupload'] = 0;
 	$form['serialNumber'] = $this->_item->getSerialNumber();
 
 	/* Perform the request and verify that we failed and filesize didn't change */
