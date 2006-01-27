@@ -86,6 +86,7 @@ class BuildDerivativesTask extends MaintenanceTask {
 
 	$i = $broken = $built = 0;
 	$total = $results->resultCount();
+	$gallery->guaranteeTimeLimit(120);
 	while ($result = $results->nextResult()) {
 	    $gallery->startRecordingDebugSnippet();
 	    list ($ret, $derivative, $wasBuilt) =
@@ -112,6 +113,7 @@ class BuildDerivativesTask extends MaintenanceTask {
 		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
+		$gallery->guaranteeTimeLimit(120);
 	    }
 	}
 
