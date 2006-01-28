@@ -117,7 +117,7 @@ class StorageTest extends GalleryTestCase {
 
 	$this->assertEquals(
 	    array(array(
-	        sprintf('INSERT INTO %sUserGroupMap (%suserId, %sgroupId) VALUES (?,?)',
+		sprintf('INSERT INTO %sUserGroupMap (%suserId, %sgroupId) VALUES (?,?)',
 			$storage->_tablePrefix, $storage->_columnPrefix,
 			$storage->_columnPrefix),
 		array(0, 1))),
@@ -143,7 +143,7 @@ class StorageTest extends GalleryTestCase {
 
 	$this->assertEquals(
 	    array(array(
-	        sprintf('INSERT INTO %1$sExternalIdMap (%2$sexternalId, %2$sentityType, ' .
+		sprintf('INSERT INTO %1$sExternalIdMap (%2$sexternalId, %2$sentityType, ' .
 			'%2$sentityId) VALUES (?,?,?)',
 			$storage->_tablePrefix, $storage->_columnPrefix),
 		array(str_repeat('x', 128), 'test', 1))),
@@ -168,7 +168,7 @@ class StorageTest extends GalleryTestCase {
 
 	$this->assertEquals(
 	    array(array(
-	        sprintf('UPDATE %1$sExternalIdMap SET %2$sexternalId=? WHERE %2$sexternalId=?',
+		sprintf('UPDATE %1$sExternalIdMap SET %2$sexternalId=? WHERE %2$sexternalId=?',
 			$storage->_tablePrefix, $storage->_columnPrefix),
 		array(str_repeat('x', 128), str_repeat('y', 128)))),
 	    $this->_results);
@@ -192,7 +192,7 @@ class StorageTest extends GalleryTestCase {
 
 	$this->assertEquals(
 	    array(array(
-	        sprintf('UPDATE %1$sExternalIdMap SET %2$sexternalId=? WHERE ' .
+		sprintf('UPDATE %1$sExternalIdMap SET %2$sexternalId=? WHERE ' .
 			'%2$sexternalId IN (?,?)',
 			$storage->_tablePrefix, $storage->_columnPrefix),
 		array(str_repeat('x', 128), str_repeat('y', 128), str_repeat('z', 128)))),
@@ -364,7 +364,7 @@ class StorageTest extends GalleryTestCase {
     function testNormalizeValueToTimeStamp() {
 	global $gallery;
 	$storage =& $gallery->getStorage();
-	
+
 	$memberData['type'] = STORAGE_TYPE_TIMESTAMP;
 	$this->assertEquals('foofoo', $storage->_normalizeValue('foo', $memberData), 'normal');
 	$this->assertEquals(null, $storage->_normalizeValue('', $memberData), 'empty string');
@@ -394,7 +394,7 @@ class StorageTest extends GalleryTestCase {
     function testNormalizeValueBitNotNull() {
 	global $gallery;
 	$storage =& $gallery->getStorage();
-	
+
 	$memberData['notNull'] = true;
 	$memberData['type'] = STORAGE_TYPE_BOOLEAN;
 	$this->assertEquals(0, $storage->_normalizeValue(false, $memberData), 'boolean false');
@@ -409,7 +409,7 @@ class StorageTest extends GalleryTestCase {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 	$storage->_isEmptyAllowedForNotNullColumn = true;
-	
+
 	$memberData['notNullEmptyAllowed'] = true;
 	foreach (array(STORAGE_TYPE_TIMESTAMP, STORAGE_TYPE_INTEGER,
 		       STORAGE_TYPE_STRING, STORAGE_TYPE_TEXT, STORAGE_TYPE_BIT) as $type) {
@@ -427,7 +427,7 @@ class StorageTest extends GalleryTestCase {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 	$storage->_isEmptyAllowedForNotNullColumn = false;
-	
+
 	$memberData['notNullEmptyAllowed'] = true;
 	foreach (array(STORAGE_TYPE_TIMESTAMP, STORAGE_TYPE_INTEGER,
 		       STORAGE_TYPE_STRING, STORAGE_TYPE_TEXT, STORAGE_TYPE_BIT) as $type) {
@@ -461,7 +461,7 @@ class StorageTest extends GalleryTestCase {
     function testNormalizeValueToInteger() {
 	global $gallery;
 	$storage =& $gallery->getStorage();
-	
+
 	$memberData['type'] = STORAGE_TYPE_INTEGER;
 	$this->assertEquals(1, $storage->_normalizeValue('1', $memberData, true),
 			    'from string');
@@ -474,12 +474,12 @@ class StorageTest extends GalleryTestCase {
     function testNormalizeValueToString() {
 	global $gallery;
 	$storage =& $gallery->getStorage();
-	
+
 	$memberData['type'] = STORAGE_TYPE_STRING;
 	$this->assertEquals('1', $storage->_normalizeValue('1', $memberData, true), 'from string');
 	$this->assertEquals(null, $storage->_normalizeValue('', $memberData, true),
 			    'from string 2');
-	
+
 	$value = str_repeat('x', 135);
 	$memberData['size'] = STORAGE_SIZE_MEDIUM;
 	$this->assertEquals($value, $storage->_normalizeValue($value, $memberData, true),
@@ -498,16 +498,16 @@ class StorageTest extends GalleryTestCase {
     function testNormalizeValueToOtherType() {
 	global $gallery;
 	$storage =& $gallery->getStorage();
-	
+
 	$memberData['type'] = 0x00000080;
 	$this->assertEquals(array(1, 'foo'),
 			    $storage->_normalizeValue(array(1, 'foo'), $memberData));
     }
-    
+
     function testNormalizeValueToBit() {
 	global $gallery;
 	$storage =& $gallery->getStorage();
-	
+
 	$memberData['type'] = STORAGE_TYPE_BIT;
 	$expected = $storage->convertIntToBits(5);
 	$this->assertEquals($expected, $storage->_normalizeValue(5, $memberData), 'to DB');
@@ -517,11 +517,11 @@ class StorageTest extends GalleryTestCase {
 	$this->assertEquals(null, $storage->_normalizeValue(null, $memberData, true), 'null');
 	$this->assertEquals(null, $storage->_normalizeValue('', $memberData), 'empty string');
     }
-    
+
     function testNormalizeValueFromTextToString() {
 	global $gallery;
 	$storage =& $gallery->getStorage();
-	
+
 	$memberData['type'] = STORAGE_TYPE_TEXT;
 	$this->assertEquals(str_repeat('1', 10),
 			    $storage->_normalizeValue((int)str_repeat('1', 10), $memberData));
@@ -540,16 +540,16 @@ class StorageTest extends GalleryTestCase {
 	$ret = $storage->addMapEntry('GalleryPluginParameterMap',
 				     array('pluginType' => 'module',
 					   'pluginId' => 'unitTestModule',
-					   'itemId' => -1,
+					   'itemId' => 1,
 					   'parameterName' => $key,
 					   'parameterValue' => $testString));
 	/* If the \0 character wasn't properly escaped, PG would throw an error here */
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	list ($ret, $value) =
-	    GalleryCoreApi::getPluginParameter('module', 'unitTestModule', $key, -1);
+	    GalleryCoreApi::getPluginParameter('module', 'unitTestModule', $key, 1);
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
