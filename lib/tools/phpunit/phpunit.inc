@@ -64,7 +64,13 @@ if (phpversion() >= '4') {
 	 * still work correctly.  Allow unit tests to ignore these warnings.
 	 */
 	if (version_compare(phpversion(), '4.3.3') <= 0 &&
-		preg_match('{stat failed for.*\(errno=0 - Success\)}', $errstr)) {
+		preg_match('{stat failed for.*\(errno=0 -}', $errstr)) {
+	    return;
+	}
+
+	/* Allow php 4.1 warnings for undefined $this->$member access in GalleryPersistent */
+	if (version_compare(phpversion(), '4.2.0') <= 0
+		&& strpos($errstr, 'Undefined property:') !== false) {
 	    return;
 	}
 
