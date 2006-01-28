@@ -314,16 +314,29 @@ class MySqlGenerator extends BaseGenerator {
 		}
 	    } else if ($parent['name'] == 'CHANGE') {
 		/* (column-name, key, index)+ */
+		$i = 0;
 		foreach ($child as $c) {
+		    if ($i++ > 0) {
+			$output .= ",\n";
+		    }
 		    switch($c['name']) {
 		    case 'COLUMN-NAME':
 			$output .= '  DROP COLUMN DB_COLUMN_PREFIX' . $c['content'];
 			break;
 
 		    case 'KEY':
-			$output .= '  DROP KEY DB_COLUMN_PREFIX' . $c['child'][0]['content'];
+			if (!empty($child[0]['attrs']['PRIMARY'])) {
+			    $output .= '  DROP PRIMARY KEY';
+			} else {
+			    /*
+			     * For MySQL, our UNIQUE index names are the name of the first 
+			     * column that is part of the index (MySQL sets the name that way
+			     * for unnamed indices (they only need to be unique in each table)
+			     */
+			    $output .= '  DROP INDEX DB_COLUMN_PREFIX' . $c['child'][0]['content'];
+			}
 			break;
-
+			
 		    case 'INDEX':
 			/* column-name */
 			$output .= '  DROP INDEX ';
@@ -332,7 +345,7 @@ class MySqlGenerator extends BaseGenerator {
 			    $output .= $child[0]['attrs'][$nameKey];
 			} else {
 			    $output .= 'DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
-				'_' . $this->getIndexCrc($child[0]['child']);
+				'_' . $this->getIndexCrc($c['child']);
 			}
 			break;
 
@@ -348,7 +361,12 @@ class MySqlGenerator extends BaseGenerator {
 	    if (!empty($node['attrs']['PRIMARY'])) {
 		$output .= ' PRIMARY KEY(';
 	    } else {
-		$output .= ' UNIQUE KEY(';
+		/*
+		 * In MySQL, it would be UNIQUE [INDEX] so INDEX is optional, since UNIQUE is
+		 * often called a KEY and we use <key> in our XML for UNIQUE, we just use UNIQUE
+		 * without INDEX here. Don't add an index name, see our REMOVE code.
+		 */
+		$output .= ' UNIQUE (';
 	    }
 	    for ($i = 0; $i < count($child); $i++) {
 		$output .= 'DB_COLUMN_PREFIX' . $child[$i]['content'];
@@ -441,9 +459,9 @@ class PostgresGenerator extends BaseGenerator {
 			    $output .= 'DROP INDEX DB_TABLE_PREFIX' .
 				$parent['child'][0]['content'] . '_' . $crc . ";\n\n";
 			} else {
-			    /* Constraint name unknown -- unable to drop */
-			    $output .= '11. UNIMPLEMENTED: DROP PRIMARY KEY ' .
-				$parent['child'][0]['content'] . "\n";
+			    $output .= 'ALTER TABLE DB_TABLE_PREFIX' .
+				$parent['child'][0]['content'] . ' DROP CONSTRAINT DB_TABLE_PREFIX'
+				. $parent['child'][0]['content'] . "_pkey;\n\n";
 			}
 			break;
 
@@ -679,30 +697,38 @@ class OracleGenerator extends BaseGenerator {
 		    $node['child'][0]['content'] . "';\n\n";
 	    } else if ($parent['name'] == 'CHANGE') {
 		/* (column-name, key, index)+ */
+		$i = 0;
 		foreach ($child as $c) {
+		    if ($i++ > 0) {
+			$output .= ",\n";
+		    }
 		    switch($c['name']) {
 		    case 'COLUMN-NAME':
 			/* column-name */
-			$output .= ' DROP (DB_COLUMN_PREFIX' . $c['content'] . ')';
+			$output .= '  DROP (DB_COLUMN_PREFIX' . $c['content'] . ')';
 			break;
 
 		    case 'KEY':
-			$keyColumns = array();
-			foreach ($c['child'] as $keyColumn) {
-			    $keyColumns[] = 'DB_COLUMN_PREFIX' . $keyColumn['content'];
+			if (isset($child[0]['attrs']['PRIMARY'])) {
+			    $output .= "  DROP PRIMARY KEY";
+			} else {
+			    $keyColumns = array();
+			    foreach ($c['child'] as $keyColumn) {
+				$keyColumns[] = 'DB_COLUMN_PREFIX' . $keyColumn['content'];
+			    }
+			    $output .= '  DROP UNIQUE (' . implode(', ', $keyColumns) . ')';
 			}
-			$output .= '  DROP UNIQUE (' . implode(', ', $keyColumns) . ')';
 			break;
 
 		    case 'INDEX':
 			/* column-name */
-			$output .= 'DROP INDEX ';
+			$output .= '  DROP INDEX ';
 			$nameKey = strtoupper('name_' . $this->getDbType());
 			if (isset($child[0]['attrs'][$nameKey])) {
 			    $output .= $child[0]['attrs'][$nameKey];
 			} else {
 			    $output .= 'DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
-				'_' . $this->getIndexCrc($child[0]['child']);
+				'_' . $this->getIndexCrc($c['child']);
 			}
 			break;
 
@@ -992,9 +1018,8 @@ class Db2Generator extends BaseGenerator {
 			    $output .= 'DROP INDEX DB_TABLE_PREFIX' .
 				$parent['child'][0]['content'] . '_' . $crc . ";\n\n";
 			} else {
-			    /* Constraint name unknown -- unable to drop */
-			    $output .= '11. UNIMPLEMENTED: DROP PRIMARY KEY ' .
-				$parent['child'][0]['content'] . "\n";
+			    $output .= 'ALTER TABLE DB_TABLE_PREFIX' .
+				$parent['child'][0]['content'] . " DROP PRIMARY KEY;\n\n";
 			}
 			break;
 
