@@ -530,10 +530,12 @@ class DataCacheTest extends GalleryTestCase {
     }
 }
 
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryPhpVm.class');
+
 /**
  * Mock VM
  */
-class DataCacheTestMockVm {
+class DataCacheTestMockVm extends GalleryPhpVm {
 
     function setTime($time) {
 	$this->_time = $time;
