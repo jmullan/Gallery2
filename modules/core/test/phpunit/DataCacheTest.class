@@ -46,7 +46,9 @@ class DataCacheTest extends GalleryTestCase {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$acceleration['user']['type'] = 'full';
 	$acceleration['user']['expiration'] = 30;
+	$acceleration['guest']['type'] = 'none';
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'core', 'acceleration', serialize($acceleration));
 	if ($ret) {
