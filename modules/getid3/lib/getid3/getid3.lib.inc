@@ -1051,6 +1051,8 @@ class getid3_lib
 			die('PHP does not have iconv() support - cannot convert from '.$in_charset.' to '.$out_charset);
 		}
 
+		if (function_exists('iconv')) {
+
 		if ($converted_string = @iconv($in_charset, $out_charset.'//TRANSLIT', $string)) {
 			switch ($out_charset) {
 				case 'ISO-8859-1':
@@ -1058,6 +1060,8 @@ class getid3_lib
 					break;
 			}
 			return $converted_string;
+		}
+
 		}
 
 		// iconv() may sometimes fail with "illegal character in input string" error message
