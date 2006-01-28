@@ -118,7 +118,7 @@ class MatrixTheme extends GalleryTheme {
      */
     function validateSettings($settings) {
 	$error = parent::validateSettings($settings);
-	if ($settings['useFloatingDivs']) {
+	if (!empty($settings['useFloatingDivs'])) {
 	    if (!is_numeric($settings['floatCount'])) {
 		$error['floatCount'] = $this->translate('You must enter a number');
 	    }
