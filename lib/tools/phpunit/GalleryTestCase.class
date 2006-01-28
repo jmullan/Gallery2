@@ -890,6 +890,10 @@ class GalleryTestCase extends TestCase {
     }
 
     function _verifyFields($entity, $fields) {
+	if (version_compare(phpversion(), '4.2.0', '<')) {
+	    /* Before 4.2.0, uninitialized class variables are not reported by get_class_vars() */
+	    return null;
+	}
 	$vars = get_class_vars(get_class($entity));
 	foreach ($fields as $field) {
 	    if (!array_key_exists($field, $vars)) {
