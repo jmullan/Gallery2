@@ -261,7 +261,7 @@ class CodeAuditTest extends CodeAuditTestCase {
 		/* Do a simple tab->8spaces conversion.. good enough for this check */
 		$line = str_replace("\t", '        ', $lines[$i]);
 		if (strlen($line) > 100) {
-		    $this->_longLineFiles[$fileName] = $i;
+		    $this->_longLineFiles[] = array($fileName, $i);
 		    $longLineCount++;
 		}
 	    }
@@ -418,7 +418,8 @@ class CodeAuditTest extends CodeAuditTestCase {
 	    if (count($this->_longLineFiles)) {
 		$this->assert(false, 'Found too many lines longer than 100 characters (' .
 			      count($this->_longLineFiles) . ')');
-		foreach ($this->_longLineFiles as $fileName => $lineNr) {
+		foreach ($this->_longLineFiles as $entry) {
+		    list ($fileName, $lineNr) = $entry;
 		    $this->assert(false, "File: $fileName , line number: $lineNr");
 		}
 	    }
