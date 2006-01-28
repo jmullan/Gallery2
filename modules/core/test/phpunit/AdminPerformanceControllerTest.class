@@ -52,7 +52,7 @@ class AdminPerformanceControllerTest extends GalleryControllerTestCase {
 	$acceleration['guest']['type'] = 'none';
 	$acceleration['guest']['expiration'] = 0;
 	$ret = GalleryCoreApi::setPluginParameter(
-	    'module', 'core', 'acceleration', serialize(array()));
+	    'module', 'core', 'acceleration', serialize($acceleration));
 	if ($ret) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
