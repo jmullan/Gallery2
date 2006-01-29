@@ -145,6 +145,10 @@ class GalleryAlbumItem extends GalleryItem {
 	    $this->setTheme($parent->getTheme());
 	    $this->setOrderBy($parent->getOrderBy());
 	    $this->setOrderDirection($parent->getOrderDirection());
+	} else {
+	    $this->setTheme(null);
+	    $this->setOrderBy(null);
+	    $this->setOrderDirection(null);
 	}
 
 	$ret = $this->_createDir($parentPath . $albumName);

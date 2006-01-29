@@ -214,8 +214,10 @@ class GalleryEntity extends GalleryPersistent {
 						 get_class($this)));
 	}
 
-	/* By default, entities are not linkable */
+	/* By default, entities are not linkable; init other fields */
 	$this->setIsLinkable(false);
+	$this->setLinkId(null);
+	$this->setLinkedEntity(null);
 	$this->setOnLoadHandlers(null);
 
 	$ret = $this->resetOriginalValues(true);
@@ -442,6 +444,8 @@ class GalleryEntity extends GalleryPersistent {
 		}
 		$target = $data[$target]['parent'];
 	    }
+	} else {
+	    $this->setLinkedEntity(null);
 	}
 
 	/*
