@@ -41,11 +41,12 @@ class WebHelper_simple {
      *
      * @param string the url
      * @param string the output file
+     * @param array (optional) extra headers to pass to the server
      * @param int the redirect depth (pass in 0 or leave this empty to start)
      * @return array(boolean success, http response, headers, url)
      *  the url is the final url retrieved after redirects
      */
-    function fetchWebFile($url, $outputFile, $depth=0) {
+    function fetchWebFile($url, $outputFile, $extraHeaders=array(), $depth=0) {
 	global $gallery;
 
 	/* Convert illegal characters */
@@ -79,11 +80,19 @@ class WebHelper_simple {
 	$get = str_replace('&amp;', '&', $get);
 
 	/* Read the web page into a buffer */
+	$extraHeaderLines = array();
+	foreach ($extraHeaders as $headerKey => $headerValue) {
+	    $extraHeaderLines[] = "$headerKey: $headerValue";
+	}
+	
 	$platform->fwrite($fd, sprintf("GET %s HTTP/1.0\r\n" .
 				       "Host: %s\r\n" .
+				       "%s" .
 				       "\r\n",
 				       $get,
-				       $components['host']));
+				       $components['host'],
+				       empty($extraHeaderLines) ? '' :
+				       join("\r\n", $extraHeaderLines) . "\r\n"));
 	$platform->fflush($fd);
 
 	/*
@@ -151,7 +160,8 @@ class WebHelper_simple {
 				   $query);
 
 	    /* Returning output directly from fetchWebFile() confuses the CodeAudit */
-	    $result = WebHelper_simple::fetchWebFile($redirectUrl, $outputFile, $depth+1);
+	    $result =
+		WebHelper_simple::fetchWebFile($redirectUrl, $outputFile, $extraHeaders, $depth+1);
 	    return array($result[0], $result[1], $result[2], $result[3]);
 	}
 

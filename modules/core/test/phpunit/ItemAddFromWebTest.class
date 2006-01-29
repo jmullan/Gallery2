@@ -85,6 +85,8 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][addFromWebPage]', 1);
+	GalleryUtilities::putRequestVariable('form[webPage]',
+					     'http://www.test.com/index.php?foo=bar&amp;a=b');
 	GalleryUtilities::putRequestVariable('form[webPageUrls][http://www.test.com/test1.gif]', 1);
 	GalleryUtilities::putRequestVariable('form[webPageUrls][http://www.test.com/test2.jpg]', 1);
 	GalleryUtilities::putRequestVariable('form[webPageUrls][http://www.test.com/404.jpg]', 1);
@@ -183,11 +185,16 @@ class ItemAddFromWebTestPlatform  {
     function fwrite($handle, $string, $length=0) {
 	if ($handle == 'test-resource-1') {
 	    switch($string) {
-	    case "GET /test1.gif HTTP/1.0\r\nHost: www.test.com\r\n\r\n":
-	    case "GET /test2.jpg HTTP/1.0\r\nHost: www.test.com\r\n\r\n":
-	    case "GET /test3.jpg?foo=bar HTTP/1.0\r\nHost: www.test.com\r\n\r\n":
-	    case "GET /apo'strophe.jpg HTTP/1.0\r\nHost: www.test.com\r\n\r\n":
-	    case "GET /main.php?g2_itemId=123 HTTP/1.0\r\nHost: www.test.com\r\n\r\n":
+	    case "GET /test1.gif HTTP/1.0\r\nHost: www.test.com\r\n" .
+		"Referer: http://www.test.com/index.php?foo=bar&a=b\r\n\r\n":
+	    case "GET /test2.jpg HTTP/1.0\r\nHost: www.test.com\r\n" .
+		"Referer: http://www.test.com/index.php?foo=bar&a=b\r\n\r\n":
+	    case "GET /test3.jpg?foo=bar HTTP/1.0\r\nHost: www.test.com\r\n" .
+		"Referer: http://www.test.com/index.php?foo=bar&a=b\r\n\r\n":
+	    case "GET /apo'strophe.jpg HTTP/1.0\r\nHost: www.test.com\r\n" .
+		"Referer: http://www.test.com/index.php?foo=bar&a=b\r\n\r\n":
+	    case "GET /main.php?g2_itemId=123 HTTP/1.0\r\nHost: www.test.com\r\n" .
+		"Referer: http://www.test.com/index.php?foo=bar&a=b\r\n\r\n":
 		$buffer = array();
 		$buffer[] = 'HTTP/1.1 200 OK';
 		$buffer[] = 'Connection: close';
@@ -198,7 +205,8 @@ class ItemAddFromWebTestPlatform  {
 		$buffer[] = 'Content-Length: 5';
 		$buffer[] = 'Content-Type: text/html';
 		if ($string ==
-			"GET /main.php?g2_itemId=123 HTTP/1.0\r\nHost: www.test.com\r\n\r\n") {
+		    "GET /main.php?g2_itemId=123 HTTP/1.0\r\nHost: www.test.com\r\n" .
+		    "Referer: http://www.test.com/index.php?foo=bar&a=b\r\n\r\n") {
 		    $buffer[] = 'Content-Disposition: inline; filename="test4.jpg"';
 		}
 		$buffer[] = 'Last-Modified: Mon, 24 Nov 2003 05:40:00 GMT';
@@ -213,7 +221,7 @@ class ItemAddFromWebTestPlatform  {
 
 	    case "GET /404.jpg HTTP/1.0\r\n" .
 		"Host: www.test.com\r\n" .
-		"\r\n":
+		"Referer: http://www.test.com/index.php?foo=bar&a=b\r\n\r\n":
 		$buffer = array();
 		$buffer[] = 'HTTP/1.1 404 Not Found';
 		$buffer[] = 'Connection: close';

@@ -43,13 +43,18 @@ class ItemAddFromWeb extends ItemAddPlugin {
 
 	$status = array();
 	$error = array();
-
+	
 	if (isset($form['action']['findFilesFromWebPage'])) {
 	    /* Delegate back to the same view */
 	} else if (isset($form['action']['addFromWebPage']) && empty($form['webPageUrls'])) {
 	    GalleryUtilities::putRequestVariable('form[error][webPage][nothingSelected]', 1);
 	} else if (isset($form['action']['addFromWebPage'])) {
 	    $platform =& $gallery->getPlatform();
+	    /* Pass referer checking */
+	    if (!empty($form['webPage'])) {
+		$extraHeaders =
+		    array('Referer' => str_replace('&amp;', '&', $form['webPage']));
+	    }
 	    foreach (array_keys($form['webPageUrls']) as $url) {
 		/* Copy the file locally */
 		$tmpDir = $gallery->getConfig('data.gallery.tmp');
@@ -57,8 +62,11 @@ class ItemAddFromWeb extends ItemAddPlugin {
 
 		$successfullyCopied = false;
 		$url = GalleryUtilities::htmlEntityDecode($url);
+		if (empty($extraHeaders)) {
+		    $extraHeaders = array('Referer' => str_replace('&amp;', '&', $url));
+		}
 		list ($successfullyCopied, $response, $headers) =
-		    GalleryCoreApi::fetchWebFile($url, $tmpFile);
+		    GalleryCoreApi::fetchWebFile($url, $tmpFile, $extraHeaders);
 		if ($successfullyCopied) {
 		    /* Add it */
 		    list ($ret, $mimeType, $fileName) = $this->_getMimeType($url, $headers, true);

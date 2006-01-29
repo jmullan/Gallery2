@@ -2664,12 +2664,13 @@ class GalleryCoreApi {
      *
      * @param string the url
      * @param string the output file
+     * @param array (optional) extra headers to pass to the server
      * @return array(boolean success, http response, headers, url)
      *  the url is the final url retrieved after redirects
      */
-    function fetchWebFile($url, $outputFile) {
+    function fetchWebFile($url, $outputFile, $extraHeaders=array()) {
 	GalleryCoreApi::requireOnce('modules/core/classes/helpers/WebHelper_simple.class');
-	return WebHelper_simple::fetchWebFile($url, $outputFile);
+	return WebHelper_simple::fetchWebFile($url, $outputFile, $extraHeaders);
     }
 
     /**
