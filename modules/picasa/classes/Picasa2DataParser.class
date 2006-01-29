@@ -84,21 +84,26 @@ class Picasa2DataParser {
      *  http://www.php.net/manual/en/function.xml-parse-into-struct.php#49154
      *
      *  @param $xmlFileName - xml file which will be fed into xml_parse_into_struct()
-     *  @return array a nested php array containing xml data.
+     *  @return array object GalleryStatus a status code
+     *                array a nested php array containing xml data.
      */
     function getXmlArray($rawXml) {
+	if (!function_exists('xml_parser_create')) {
+	    return array(GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED, __FILE__, __LINE__,
+					       'Need xml support in PHP'), null);
+	}
 
-        /* Workaround earlier Picasa versions */
-        if (substr(trim($rawXml),0,5) != '<?xml') {
-            $rawXml = '<?xml version="1.0" encoding="iso-8859-1"?>' . $rawXml;
-        }
-        $xmlParser = xml_parser_create();
-        xml_parser_set_option($xmlParser, XML_OPTION_CASE_FOLDING, 0);
-        xml_parser_set_option($xmlParser, XML_OPTION_SKIP_WHITE, 1);
-        $vals = array();
-        xml_parse_into_struct($xmlParser, $rawXml, $vals);
-        xml_parser_free($xmlParser);
-        $_tmp = '';
+	/* Workaround earlier Picasa versions */
+	if (substr(trim($rawXml),0,5) != '<?xml') {
+	    $rawXml = '<?xml version="1.0" encoding="iso-8859-1"?>' . $rawXml;
+	}
+	$xmlParser = xml_parser_create();
+	xml_parser_set_option($xmlParser, XML_OPTION_CASE_FOLDING, 0);
+	xml_parser_set_option($xmlParser, XML_OPTION_SKIP_WHITE, 1);
+	$vals = array();
+	xml_parse_into_struct($xmlParser, $rawXml, $vals);
+	xml_parser_free($xmlParser);
+	$_tmp = '';
         foreach ($vals as $xmlElem) {
             $xTag = $xmlElem['tag'];
             $xLevel = $xmlElem['level'];

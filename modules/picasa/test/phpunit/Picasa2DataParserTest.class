@@ -34,34 +34,36 @@
 class Picasa2DataParserTest extends GalleryControllerTestCase {
 
     function Picasa2DataParserTest($methodName) {
-        $this->GalleryTestCase($methodName);
+	$this->GalleryTestCase($methodName);
     }
 
     /**
      * Test whether a wrong XML without a version gives the right error
      */
     function testGetBadXmlArray_noversion() {
-        /*No XML version*/
-        $testRawXml = '<?xml encoding="utf-8" ?>';
-        list ($ret, $picasaXmlArray) = Picasa2DataParser::getXmlArray($testRawXml);
-        /*if ($ret) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }*/
-        $this->assertEquals ($ret->_errorMessage, 'Error parsing XML.');
+	/*No XML version*/
+	$testRawXml = '<?xml encoding="utf-8" ?>';
+	list ($ret, $picasaXmlArray) = Picasa2DataParser::getXmlArray($testRawXml);
+	/*if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}*/
+	$this->assertEquals($ret->_errorMessage, 'Error parsing XML.');
     }
 
     /**
      * Test an XML without a closing tag
      */
     function testGetBadXmlArray_notag() {
-        /*No XML version*/
-        $testRawXml = '<?xml version="1.0" encoding="utf-8" ?>'.
-            '<album><albumName>GalleryTest'.
-            '<albumItemCount>2</albumItemCount></album></albumName>';
-        list ($ret, $picasaXmlArray) = Picasa2DataParser::getXmlArray($testRawXml);
-        $expected = array ('album' => array ('open' => array ('content' => 'GalleryTest'),
-            'albumName' => array ('albumItemCount' => '2')));
-        $this->assertEquals ($expected, $picasaXmlArray);
+	$testRawXml = '<?xml version="1.0" encoding="utf-8" ?>'.
+	    '<album><albumName>GalleryTest'.
+	    '<albumItemCount>2</albumItemCount></album></albumName>';
+	list ($ret, $picasaXmlArray) = Picasa2DataParser::getXmlArray($testRawXml);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$expected = array('album' => array ('open' => array ('content' => 'GalleryTest'),
+	    'albumName' => array ('albumItemCount' => '2')));
+	$this->assertEquals($expected, $picasaXmlArray);
     }
 
     /**
@@ -135,7 +137,7 @@ class Picasa2DataParserTest extends GalleryControllerTestCase {
                 )
             )
         );
-        $this->assertEquals ($expected, $picasaXmlArray);
+        $this->assertEquals($expected, $picasaXmlArray);
     }
 
     /**
@@ -195,7 +197,7 @@ class Picasa2DataParserTest extends GalleryControllerTestCase {
                     ),
                 ),
             );
-        $this->assertEquals ($expected, $albumArray);
+        $this->assertEquals($expected, $albumArray);
     }
 }
 ?>
