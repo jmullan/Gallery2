@@ -227,7 +227,7 @@ class CoreModule extends GalleryModule {
 	    }
 
 	    if (!$isRoot && isset($thumbTable[$itemId]) &&
-		    isset($permissions[$itemId]['core.edit'])) {
+		    isset($parentPermissions['core.edit'])) {
 		$links[$itemId][] =
 		    array('text' => $this->_translate('Make Highlight'),
 			  'params' => array('view' => 'core.ItemAdmin',
