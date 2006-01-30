@@ -82,6 +82,7 @@ class CaptchaSiteAdminControllerTest extends GalleryControllerTestCase {
 
     function testSaveWithNonNumericThreshold() {
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[failedAttemptThreshold]', 'two');
 	$results = $this->handleRequest(ERROR_BAD_PARAMETER);
     }
 
@@ -127,8 +128,8 @@ class CaptchaSiteAdminControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(5, (int)$threshold);
     }
 
-    function testCancel() {
-	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
+    function testReset() {
+	GalleryUtilities::putRequestVariable('form[action][reset]', 1);
 	GalleryUtilities::putRequestVariable('form[failedAttemptThreshold]', 3);
 
 	$results = $this->handleRequest();

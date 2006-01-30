@@ -61,7 +61,7 @@ class CaptchaSiteAdminController extends GalleryController {
 	    $redirect['view'] = 'core.SiteAdmin';
 	    $redirect['subView'] = 'captcha.CaptchaSiteAdmin';
 	    $status['saved'] = 1;
-	} else if (isset($form['action']['cancel'])) {
+	} else if (isset($form['action']['reset'])) {
 	    $redirect['view'] = 'core.SiteAdmin';
 	    $redirect['subView'] = 'captcha.CaptchaSiteAdmin';
 	}
@@ -105,10 +105,8 @@ class CaptchaSiteAdminView extends GalleryView {
 	}
 
 	/* Set up our failed attempts selection list */
-	$CaptchaSiteAdmin = array();
-	$CaptchaSiteAdmin['failedAttemptThresholdList'] = range(0, 5);
-
-	$template->setVariable('CaptchaSiteAdmin', $CaptchaSiteAdmin);
+	$template->setVariable('CaptchaSiteAdmin',
+			       array('failedAttemptThresholdList' => range(0, 5)));
 	$template->setVariable('controller', 'captcha.CaptchaSiteAdmin');
 
 	return array(null,

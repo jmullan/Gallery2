@@ -35,6 +35,13 @@
  *
  */
 class AddCommentController extends GalleryController {
+    /**
+     * ValidationPlugin instances to use when handling this request.  Only used by test code.
+     *
+     * @var array $_plugins (array of GalleryValidationPlugin)
+     * @access private
+     */
+    var $_pluginInstances;
 
     /**
      * @see GalleryController::handleRequest()
@@ -67,23 +74,27 @@ class AddCommentController extends GalleryController {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    if (empty($error) && $useValidationPlugins) {
-		list ($ret, $pluginInstances) =
-		    GalleryCoreApi::getAllFactoryImplementationIds('GalleryValidationPlugin');
-		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		foreach (array_keys($pluginInstances) as $pluginId) {
-		    list ($ret, $pluginInstances[$pluginId]) =
-			GalleryCoreApi::newFactoryInstanceById('GalleryValidationPlugin',
-							       $pluginId);
+		if (isset($this->_pluginInstances)) {
+		    $pluginInstances = $this->_pluginInstances;
+		} else {
+		    list ($ret, $pluginInstances) =
+			GalleryCoreApi::getAllFactoryImplementationIds('GalleryValidationPlugin');
 		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+
+		    foreach (array_keys($pluginInstances) as $pluginId) {
+			list ($ret, $pluginInstances[$pluginId]) =
+			    GalleryCoreApi::newFactoryInstanceById('GalleryValidationPlugin',
+								   $pluginId);
+			if ($ret) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
 		    }
 		}
 
 		/* Let each plugin do its verification */
-		foreach ($pluginInstances as $pluginId => $plugin) {
+		foreach ($pluginInstances as $plugin) {
 		    list ($ret, $pluginErrors, $continue) = $plugin->performValidation($form);
 		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
@@ -229,9 +240,8 @@ class AddCommentView extends GalleryView {
 		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		/* HIGH security so validation form always shows */
 		list ($ret, $data['file'], $data['l10Domain']) =
-		    $plugin->loadTemplate($template, $form, 'HIGH');
+		    $plugin->loadTemplate($template, $form);
 		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}

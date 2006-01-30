@@ -45,6 +45,8 @@
 </div>
 
 <div class="gbBlock gcBackground1">
-  <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save Settings"}"/>
-  <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+  <input type="submit" class="inputTypeSubmit"
+   name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
+  <input type="submit" class="inputTypeSubmit"
+   name="{g->formVar var="form[action][reset]"}" value="{g->text text="Reset"}"/>
 </div>

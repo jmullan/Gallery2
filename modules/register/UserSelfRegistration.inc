@@ -28,11 +28,6 @@
  */
 
 /**
- * require necessary classes
- */
-GalleryCoreApi::requireOnce('modules/core/classes/GalleryValidationPlugin.class');
-
-/**
  * This controller will handle the selfcreation of an user
  *
  * @package SelfRegistration
@@ -99,7 +94,6 @@ class UserSelfRegistrationController extends GalleryController {
 		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-
 		$error = array_merge($error, $pluginErrors);
 
 		if (!$continue) {
@@ -107,10 +101,7 @@ class UserSelfRegistrationController extends GalleryController {
 		}
 	    }
 
-	    /*
-	     * If all the right fields are in place then go ahead and
-	     * create the user.
-	     */
+	    /* If all the right fields are in place then go ahead and create the user */
 	    if (empty($error)) {
 		list ($ret, $user) =
 		    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryPendingUser');
@@ -248,7 +239,7 @@ class UserSelfRegistrationView extends GalleryView {
 	    }
 
 	    list ($ret, $data['file'], $data['l10Domain']) =
-		$plugin->loadTemplate($template, $form, 'HIGH');
+		$plugin->loadTemplate($template, $form);
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

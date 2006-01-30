@@ -284,7 +284,7 @@ class UserRecoverPasswordView extends GalleryView {
 	    }
 
 	    list ($ret, $data['file'], $data['l10Domain']) =
-		$plugin->loadTemplate($template, $form, 'HIGH');
+		$plugin->loadTemplate($template, $form);
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

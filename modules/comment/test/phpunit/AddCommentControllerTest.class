@@ -281,13 +281,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryCoreApi::registerFactoryImplementation(
-	    'GalleryValidationPlugin', 'AddCommentTestValidation', 'AddCommentTestValidation',
-	    'modules/comment/test/phpunit/AddCommentControllerTest.class', 'commentTest', null);
-	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->_markFactoryModuleForCleanup('commentTest');
+	$this->_controller->_pluginInstances = array(new AddCommentTestValidation());
 
 	global $gallery;
 	$this->_becomeGuestUser();
@@ -313,7 +307,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryValidationPlugin.class');
 class AddCommentTestValidation extends GalleryValidationPlugin {
-    function performValidation(&$form) {
+    function performValidation(&$form, $options=array()) {
 	return array(null,
 		     array('form[error][AddCommentTestValidation]'), false);
     }

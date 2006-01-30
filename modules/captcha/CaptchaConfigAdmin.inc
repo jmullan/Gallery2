@@ -40,8 +40,7 @@ class CaptchaConfigAdminController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$results['status'] = array();
-	$results['error'] = array();
+	$results['status'] = $results['error'] = array();
 	$results['redirect'] = array('view' => 'core.SiteAdmin', 'subView' => 'core.AdminModules');
 	return array(null, $results);
     }
@@ -70,9 +69,7 @@ class CaptchaConfigAdminView extends GalleryView {
 	GalleryCoreApi::requireOnce('modules/captcha/classes/CaptchaHelper.class');
 	$gdReport = CaptchaHelper::testRequiredGdFunctions();
 
-	$CaptchaConfigAdmin = array();
-	$CaptchaConfigAdmin['gdReport'] = $gdReport;
-	$template->setVariable('CaptchaConfigAdmin', $CaptchaConfigAdmin);
+	$template->setVariable('CaptchaConfigAdmin', array('gdReport' => $gdReport));
 	$template->setVariable('controller', 'captcha.CaptchaConfigAdmin');
 	return array(null,
 		     array('body' => 'modules/captcha/templates/CaptchaConfigAdmin.tpl'));

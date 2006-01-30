@@ -19,7 +19,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 /**
  * @version $Revision$ $Date$
  * @package Captcha
@@ -29,7 +28,7 @@
  */
 
 /**
- * Display the given captcha image
+ * Display the current captcha image for this session
  *
  * @package Captcha
  * @subpackage UserInterface
@@ -48,12 +47,11 @@ class CaptchaImageView extends GalleryView {
      */
     function renderImmediate($status, $error) {
 	global $gallery;
+	$session =& $gallery->getSession();
+	$code = $session->get('captcha.key');
 
 	header('Content-type: image/jpeg');
 	header('Pragma: No-cache');
-
-	$session =& $gallery->getSession();
-	$code = $session->get('captcha.key');
 
 	$image = @ImageCreateFromJPEG(dirname(__FILE__) . '/data/code_bg.jpg');
 	$textColor = ImageColorAllocate($image, 80, 80, 80);

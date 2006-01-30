@@ -31,7 +31,6 @@
  *
  * @package Captcha
  */
-
 class CaptchaModule extends GalleryModule {
 
     function CaptchaModule() {
@@ -40,10 +39,10 @@ class CaptchaModule extends GalleryModule {
 	$this->setName($gallery->i18n('Captcha'));
 	$this->setDescription($gallery->i18n('Prevents abuse by deterring automated bots with ' .
 					     'input that requires visual comprehension'));
-	$this->setVersion('1.0.2'); /* Update upgrade() function below too */
+	$this->setVersion('1.1.0'); /* Update upgrade() function below too */
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks('getSiteAdminViews');
-	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredCoreApi(array(7, 1));
 	$this->setRequiredModuleApi(array(3, 0));
     }
 
@@ -53,7 +52,7 @@ class CaptchaModule extends GalleryModule {
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GalleryValidationPlugin', 'CaptchaValidationPlugin', 'CaptchaValidationPlugin',
-	    'modules/captcha/CaptchaValidationPlugin.inc', 'captcha', null);
+	    'modules/captcha/classes/CaptchaValidationPlugin.inc', 'captcha', null);
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -68,6 +67,11 @@ class CaptchaModule extends GalleryModule {
 
 	switch ($currentVersion) {
 	case '':
+	    /* Set some reasonable defaults */
+	    $ret = $this->setParameter('failedAttemptThreshold', 3);
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	    break;
 
 	case '0.9.0':
@@ -75,10 +79,7 @@ class CaptchaModule extends GalleryModule {
 	case '0.9.1':
 	    /* Updated GalleryCoreApi requirement to 5.3 to use Gallery::getPhpVm() */
 	case '0.9.2':
-	    /*
-	     * Updated GalleryCoreApi requirement to 6.0 because we removed
-	     * GalleryUrlGenerator::getCookiePath()
-	     */
+	    /* Updated GalleryCoreApi requirement to 6.0 */
 	case '0.9.3':
 	case '0.9.4':
 	    /* Upgraded GalleryModule requirement to 1.0 */
@@ -89,6 +90,8 @@ class CaptchaModule extends GalleryModule {
 	    /* Renamed ValidationPlugin to GalleryValidationPlugin */
 	case '1.0.1':
 	    /* GalleryCoreApi 7.0 and GalleryModule 3.0 */
+	case '1.0.2':
+	    /* Updated GalleryValidationPlugin API */
 
 	case 'end of upgrade path':
 	    break;
@@ -120,29 +123,7 @@ class CaptchaModule extends GalleryModule {
 	GalleryCoreApi::requireOnce('modules/captcha/classes/CaptchaHelper.class');
 	$gdReport = CaptchaHelper::testRequiredGdFunctions();
 
-	if (count($gdReport['fail']) > 0) {
-	    return array(null, true);
-	} else {
-	    return array(null, false);
-	}
-    }
-
-    /**
-     * @see GalleryModule::activate()
-     */
-    function activate($postActivationEvent=true) {
-	/* Set some reasonable defaults */
-	$ret = $this->setParameter('failedAttemptThreshold', 3);
-	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), false);
-	}
-
-	list ($ret, $redirect) = parent::activate($postActivationEvent);
-	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	return array(null, $redirect);
+	return array(null, count($gdReport['fail']) > 0);
     }
 
     /**

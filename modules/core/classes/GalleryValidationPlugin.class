@@ -19,11 +19,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
  /**
  * @version $Revision$ $Date$
  * @package GalleryCore
  * @author Jay Rossiter <cryptographite@users.sf.net>
+ * @author Alan Harder <alan.harder@sun.com>
  */
 
  /**
@@ -35,28 +35,36 @@
  * @subpackage Classes
  */
 class GalleryValidationPlugin {
+
     /**
-     * Perform any special actions on the login request before we actually
-     * try to log in.
+     * Perform validation for this request.
      *
      * @param array the form values
+     * @param array (optional) validation options
+     *        'level' => HIGH or MEDIUM or LOW (defaults to HIGH)
+     *        'key' => (string) unique identifier for this validation request (for MEDIUM)
+     *        'pass' => (boolean) false to increment failure count (for MEDIUM/LOW)
      * @return array object GalleryStatus a status code
      *               array of error keys
-     *               boolean true/false should we continue trying to log in?
+     *               boolean true/false should we continue processing this request?
      */
-    function performValidation(&$form) {
+    function performValidation(&$form, $options=array()) {
 	return array(null, array(), true);
     }
 
     /**
+     * Prepare template for validation.
+     *
      * @param object GalleryTemplate the template instance
      * @param array the form values
-     * @param string ('HIGH', 'MEDIUM', 'LOW') The security level to apply to the plugin
+     * @param array (optional) validation options
+     *        'level' => HIGH or MEDIUM or LOW (defaults to HIGH)
+     *        'key' => (string) unique identifier for this validation request (for MEDIUM)
      * @return array object GalleryStatus a status code
-     *               string the path to a template file to include
-     *               string localization domain for the template file
+     *               string the path to a template file to include or null
+     *               string localization domain for the template file or null
      */
-    function loadTemplate(&$template, &$form, $securityLevel) {
+    function loadTemplate(&$template, &$form, $options=array()) {
 	return array(null, null, null);
     }
 }

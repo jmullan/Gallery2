@@ -316,7 +316,7 @@ class UserLoginControllerTestPlugin extends GalleryValidationPlugin {
 	$this->_errors = $errors;
     }
 
-    function performValidation(&$form) {
+    function performValidation(&$form, $options=array()) {
 	return array(null, $this->_errors, $this->_continue);
     }
 }

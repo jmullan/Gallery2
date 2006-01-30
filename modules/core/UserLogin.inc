@@ -102,7 +102,8 @@ class UserLoginController extends GalleryController {
 
 		/* Let each plugin do its verification */
 		foreach ($pluginInstances as $pluginId => $plugin) {
-		    list ($ret, $pluginErrors, $continue) = $plugin->performValidation($form);
+		    list ($ret, $pluginErrors, $continue) =
+			$plugin->performValidation($form, array('level' => 'HIGH'));
 		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -201,7 +202,7 @@ class UserLoginView extends GalleryView {
 	    }
 
 	    list ($ret, $data['file'], $data['l10Domain']) =
-		$plugin->loadTemplate($template, $form, 'MEDIUM');
+		$plugin->loadTemplate($template, $form, array('level' => 'HIGH'));
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

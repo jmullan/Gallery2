@@ -55,6 +55,8 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	$this->_controller->setPluginInstances(array());
     }
 
     function testCancel() {
@@ -512,9 +514,8 @@ class UserSelfRegistrationControllerTestPlugin extends GalleryValidationPlugin {
 	$this->_errors = $errors;
     }
 
-    function performValidation(&$form) {
+    function performValidation(&$form, $options=array()) {
 	return array(null, $this->_errors, $this->_continue);
     }
 }
-
 ?>
