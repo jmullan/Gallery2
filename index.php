@@ -34,10 +34,16 @@ require_once(dirname(__FILE__) . '/bootstrap.inc');
 require_once(dirname(__FILE__) . '/modules/core/classes/GalleryUrlGenerator.class');
 
 /* The REQUEST_URI can either be /path/index.php or just /path/. Get rid of index.php.* */
-$path = preg_replace('|^(/(?:[^?#/]+/)*).*|', '$1', GalleryUrlGenerator::getCurrentRequestUri());
+$path = GalleryUrlGenerator::getCurrentRequestUri();
+if (preg_match('|^(/(?:[^?#/]+/)*)(.*)|', $path, $matches)) {
+    $path = $matches[1] . GALLERY_MAIN_PHP;
+    if (!empty($matches[2]) && ($pos = strpos($matches[2], '?')) !== false) {
+	$path .= substr($matches[2], $pos);
+    }
+}
 
 $urlGenerator =& new GalleryUrlGenerator();
 $urlGenerator->init();
 
-header('Location: ' . $urlGenerator->makeUrl($path) . GALLERY_MAIN_PHP);
+header('Location: ' . $urlGenerator->makeUrl($path));
 ?>

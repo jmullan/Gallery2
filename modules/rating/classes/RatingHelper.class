@@ -74,7 +74,14 @@ class RatingHelper {
 	}
 
 	/* Check for existing votes from this user! */
-	$query = '
+	$session =& $gallery->getSession();
+	/*
+	 * If the user doesn't have a persistent session yet, it's a guest user without a session
+	 * and since we create a persistent session when a guest rates, we know that this guest
+	 * user hasn't rated any item yet
+	 */
+	if ($session->isPersistent()) {
+	    $query = '
 	    SELECT
 	    [RatingMap::itemId], [RatingMap::rating]
 	    FROM
@@ -85,23 +92,21 @@ class RatingHelper {
 	    [RatingMap::userId] = ?
 	    ';
 
-	$searchParams = $itemIds;
-	$searchParams[] = (int)$userId;
+	    $searchParams = $itemIds;
+	    $searchParams[] = (int)$userId;
 
-	/* Handle extra checks for anonymous users */
-	list ($ret, $anonymousUserId) = GalleryCoreApi::getPluginParameter( 'module', 'core',
-		'id.anonymousUser');
-	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	    /* Handle extra checks for anonymous users */
+	    list ($ret, $anonymousUserId) =
+		GalleryCoreApi::getPluginParameter( 'module', 'core', 'id.anonymousUser');
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 
-	if ($userId == $anonymousUserId) {
-	    /* Get remoteIdentifier for anonymous users */
-	    $session =& $gallery->getSession();
-	    $sessionId = $session->getId();
-	    $remoteId = $session->getRemoteIdentifier();
-
-	    $query .= '
+	    if ($userId == $anonymousUserId) {
+		$sessionId = $session->getId();
+		$remoteId = $session->getRemoteIdentifier();
+	    
+		$query .= '
 		AND
 		(
 		[RatingMap::sessionId] = ?
@@ -110,25 +115,25 @@ class RatingHelper {
 		)
 		';
 
-	    $searchParams[] = $sessionId;
-	    $searchParams[] = implode(":", $remoteId);
-	}
+		$searchParams[] = $sessionId;
+		$searchParams[] = implode(":", $remoteId);
+	    }
 
 
-	list ($ret, $searchResults) = $gallery->search($query, $searchParams);
-	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	    list ($ret, $searchResults) = $gallery->search($query, $searchParams);
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 
-	while ($result = $searchResults->nextResult()) {
-	    if (isset($data[$result[0]])) {
-		$data[(int)$result[0]]['userRating'] = (int)$result[1];
+	    while ($result = $searchResults->nextResult()) {
+		if (isset($data[$result[0]])) {
+		    $data[(int)$result[0]]['userRating'] = (int)$result[1];
+		}
 	    }
 	}
 
 	return array(null, $data);
     }
-
 
     /**
      * Sets rating in database, returns new ratings.
@@ -155,6 +160,18 @@ class RatingHelper {
 	$storage = $gallery->getStorage();
 
 	$session =& $gallery->getSession();
+	if (!$session->isPersistent()) {
+	    /*
+	     * To show what this user has rated we need a persistent session
+	     * Add some session data to force the creation of a persistent session (sends a cookie)
+	     */
+	    $session->put('rating', 1);
+	    $ret = $session->start();
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+	
 	$sessionId = $session->getId();
 	$remoteId = $session->getRemoteIdentifier();
 

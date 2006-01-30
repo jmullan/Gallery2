@@ -430,6 +430,49 @@
     </key>
   </map>
   <map>
+    <map-name>GallerySessionMap</map-name>
+    <schema>
+      <schema-major>1</schema-major>
+      <schema-minor>0</schema-minor>
+    </schema>
+    <member>
+      <member-name>id</member-name>
+      <member-type>STRING</member-type>
+      <member-size>SMALL</member-size>
+      <primary/>
+    </member>
+    <member>
+      <member-name>userId</member-name>
+      <member-type>INTEGER</member-type>
+      <required/>
+    </member>
+    <member>
+      <member-name>remoteIdentifier</member-name>
+      <member-type>STRING</member-type>
+      <member-size>MEDIUM</member-size>
+      <required/>
+    </member>
+    <member>
+      <member-name>creationTimestamp</member-name>
+      <member-type>INTEGER</member-type>
+      <required/>
+    </member>
+    <member>
+      <member-name>modificationTimestamp</member-name>
+      <member-type>INTEGER</member-type>
+      <required/>
+    </member>
+   <member>
+      <member-name>data</member-name>
+      <member-type>TEXT</member-type>
+    </member>
+    <index>
+      <member-name>userId</member-name>
+      <member-name>creationTimestamp</member-name>
+      <member-name>modificationTimestamp</member-name>
+    </index>
+  </map>
+  <map>
     <map-name>GalleryToolkitOperationMap</map-name>
     <schema>
       <schema-major>1</schema-major>

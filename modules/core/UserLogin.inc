@@ -141,7 +141,10 @@ class UserLoginController extends GalleryController {
 		    }
 
 		    $session =& $gallery->getSession();
-		    $session->regenerate();
+		    $ret = $session->regenerate();
+		    if ($ret) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
 
 		    /* Redirect if requested by event listener, otherwise return */
 		    if (!empty($redirect)) {
@@ -188,6 +191,10 @@ class UserLoginView extends GalleryView {
 	if ($form['formName'] != 'UserLogin') {
 	    $form['formName'] = 'UserLogin';
 	    $form['username'] = '';
+	    $returnUrl = GalleryUtilities::getRequestVariables('return');
+	    if (!empty($returnUrl)) {
+		$form['returnUrl'] = $returnUrl;
+	    }
 	}
 
 	$template->setVariable('controller', 'core.UserLogin');

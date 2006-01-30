@@ -45,6 +45,33 @@ class GalleryItemAttributesHelper_simple {
 
 	$elapsed = time() - $session->getCreationTime();
 	if (!$session->exists('core.lastViewed')) {
+	    if (!$session->isPersistent()) {
+		/*
+		 * For guests, we don't create a session. So the lastViewed data is not available 
+		 * for guests. Thus, rely on HTTP if-modified-since for guests which is admittedly
+		 * quite unreliable. Alternatively we could store this data on the client with a
+		 * non-session cookie but sending lastViewed data on each request could take a lot
+		 * of bandwidth.
+		 */
+		$phpVm = $gallery->getPhpVm();
+		if (GalleryUtilities::getServerVar('HTTP_IF_MODIFIED_SINCE') ||
+		        ($phpVm->function_exists('getallheaders') &&
+		         ($headers = $phpVm->getAllHeaders()) &&
+			 (isset($headers['If-Modified-Since']) ||
+			  isset($headers['If-modified-since'])))) {
+		    return null;
+		}
+		
+		/* Only increment in 50% of all cases since our check is very unreliable */
+		if ($phpVm->rand(0, 1) == 0) {
+		    return null;
+		}
+		if (!$phpVm->headers_sent()) {
+		    $phpVm->header('Last-Modified: ' .
+				   GalleryUtilities::getHttpDate($phpVm->time()));
+		}
+	    }
+		
 	    $lastViewed = array($itemId => $elapsed);
 	    $session->put('core.lastViewed', $lastViewed);
 	} else {

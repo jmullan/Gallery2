@@ -62,6 +62,18 @@ class LogoutController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	list ($ret, $anonymousUserId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	list ($ret, $guestUser) = GalleryCoreApi::loadEntitiesById($anonymousUserId);
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	$gallery->setActiveUser($guestUser);
+
 	/* Force return to core.ShowItem, as we don't know if the guest user
 	 * has necessary permissions for the return page
 	 */

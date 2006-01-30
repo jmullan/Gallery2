@@ -79,7 +79,9 @@ class LoginView extends GalleryView {
 	$reply[] = 'Version=' . NOKIAUPLOAD_PROTOCOLVERSION . "\r\n";
 
 	if ($status['success'] == NOKIAUPLOAD_ERR_NOERR) {
-	    $reply[] = 'SId=' . $status['sessionidparam'] . '=' . $status['sessionid'] . "\r\n";
+	    $session =& $gallery->getSession();
+	    $reply[] = 'SId=' . GalleryUtilities::prefixFormVariable($session->getKey()) .
+		'=' . $session->getId() . "\r\n";
 	    $reply[] = 'RSURL=' . $status['rsurl'] . "\r\n";
 
 	    /* Send RS Capabilities as well if we have them. */

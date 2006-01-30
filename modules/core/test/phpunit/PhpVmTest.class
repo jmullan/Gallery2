@@ -87,26 +87,37 @@ class PhpVmTest extends GalleryTestCase {
      */
     function testHeader() {
 	global $gallery;
-
+	
 	/*
 	 * This test also depends on the G2 Session code as we do an actual HTTP request and
 	 * verify that we received a cookie header. GallerySession uses the $phpVm->header()
 	 * function, thus this covers what we'd like to test (and a little more)
 	 */
-	$session =& $gallery->getSession();
 	$urlGenerator =& $gallery->getUrlGenerator();
-	$url = $urlGenerator->getCurrentUrl();
-	/* Strip of the /lib/tools/test/ part to get a valid G2 request uri */
-	$url = preg_replace('|^(.*/)lib/tools/.*$|', '$1', $url);
+	$url = $urlGenerator->generateUrl(array('href' => 'main.php'),
+					  array('forceFullUrl' => true));
+
+	/* For guests, we don't send cookies, thus prepare an existing session */
+	GalleryCoreApi::requireOnce('modules/core/classes/GallerySession.class');
+	$session = new GallerySession();
+	$ret = $session->initEmpty(true);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!empty($session->_sessionId), 'persistent session preparation failed');
+	$url = GalleryUrlGenerator::appendParamsToUrl(
+	    $url, array($session->getKey() => $session->getId()));
+	
 	list ($success, $body, $response, $headers) = GalleryCoreApi::fetchWebPage($url);
 	$this->assert($success, 'Could not retrieve G2 page');
 	$this->assertEquals($response, 'HTTP/1.1 200 OK', 'Could not retrieve G2 page');
 	$this->assertEquals(true, isset($headers['Set-Cookie']), 'Set-Cookie header not set');
 	if (isset($headers['Set-Cookie'])) {
-	    $this->assert(strpos($headers['Set-Cookie'], SESSION_ID_PARAMETER) !== false,
-			  'no G2 SessionId found in the cookie header');
+	    $this->assert(strpos($headers['Set-Cookie'],
+				 SESSION_ID_PARAMETER . '=' . $session->getId()) !== false,
+			  'no G2 SessionId with a correct SID found in the cookie header');
 	} else {
-	    $this->assert(false, 'no cookie header found in http response');
+	    $this->assert(false, 'no cookie header found in http response for url: ' . $url);
 	}
     }
 
@@ -133,6 +144,15 @@ class PhpVmTest extends GalleryTestCase {
 	 * this test.
 	 */
 	$this->assertEquals(time(), $this->_phpVm->time());
+    }
+
+    function testRand() {
+	$this->assert(is_int(rand()), 'is int');
+	$this->assert(rand() > 0, 'is positive');
+	for ($i = 0; $i < 50; $i++) {
+	    $rand = rand(1000, 1010);
+	    $this->assert($rand >= 1000 && $rand <= 1010, 'with minimum and maximum');
+	}
     }
 }
 ?>

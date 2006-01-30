@@ -121,16 +121,13 @@ class ImageUploadHelper {
 	/* Generate URL for Remote Storage Capabilities query. */
 	$generator =& $gallery->getUrlGenerator();
 	$rsurl = $generator->generateUrl(array('view' => 'nokiaupload.RemoteStorageCapabilities'),
-					 array('forceFullUrl' => true, 'htmlEntities' => false));
+					 array('forceFullUrl' => true, 'htmlEntities' => false,
+					       'forceSessionId' => false));
 	$rsurl .= '&';  /* API specification requires URL to end with '&' (or '?'). */
-
-	$session =& $gallery->getSession();
 
 	/* Prepare our results. */
 	$status['success'] = NOKIAUPLOAD_ERR_NOERR;
 	$status['rsurl'] = $rsurl;
-	$status['sessionidparam'] = GalleryUtilities::prefixFormVariable($session->getKey());
-	$status['sessionid'] = $session->getId();
 
 	/* Send also RS Capabilites if available. */
 	$capabilities = ImageUploadHelper::getRSCapabilities();

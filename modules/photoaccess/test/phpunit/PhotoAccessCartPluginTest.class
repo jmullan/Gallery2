@@ -190,8 +190,6 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	}
 
 	$platform = new UnitTestPlatform();
-	$platform->setReply('file_exists', array('fuzzy' => '{.*}'), false);
-	$platform->setReply('atomicWrite', array('fuzzy' => '{.*}', 'fuzzy2' => '{a.*}'), true);
 	$platform->setReply('fsockopen', array('www.photoworks.com', 80, '', '', 1), 'testFd');
 	$postPattern = str_repeat('.*image\+id', count($this->_items) - 1) . '(?!.*image\+id)';
 	$platform->setReply('fwrite', array('testFd',

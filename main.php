@@ -133,10 +133,6 @@ function _GalleryMain($embedded=false) {
 
     $main = array();
     $urlGenerator =& $gallery->getUrlGenerator();
-    $ret = $urlGenerator->initNavigation();
-    if ($ret) {
-	return array($ret->wrap(__FILE__, __LINE__), null);
-    }
 
     /* Figure out the target view/controller */
     list($viewName, $controllerName) = GalleryUtilities::getRequestVariables('view', 'controller');
@@ -359,6 +355,25 @@ function _GalleryMain($embedded=false) {
 	$gallery->setCurrentView($viewName);
 
 	/*
+	 * If we render directly to the browser, we need get a session before,
+	 * or no session at all
+	 */
+	if ($view->isImmediate() || $viewName == 'core.ProgressBar') {
+	    /*
+	     * Session: Find out whether we need to send a cookie & get a new sessionId and save it
+	     * (make sure there's a sessionId before starting to render, but only if we need a
+	     * session)
+	     */
+	    $session =& $gallery->getSession();
+	    $ret = $session->start();
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    /* From now on, don't add navid / sessionId to URLs if there's no persistent session */
+	    $session->doNotUseTempId();
+	}
+	
+	/*
 	 * If this is an immediate view, it will send its own output directly.  This is
 	 * used in the situation where we want to send back data that's not controlled by the
 	 * layout.  That's usually something that's not user-visible like a binary file.
@@ -412,6 +427,17 @@ function _GalleryMain($embedded=false) {
 		}
 		$html = preg_replace('/^\s+/m', '', $html);
 
+		/*
+		 * Session: Find out whether we need to send a cookie & need a new session 
+		 * (only if we don't have one yet)
+		 */
+		$session =& $gallery->getSession();
+		$ret = $session->start();
+		if ($ret) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$html = $session->replaceTempSessionIdIfNecessary($html);
+
 		if ($embedded) {
 		    $data = $theme->splitHtml($html, $results);
 		    $data['themeData'] =& $template->getVariableByReference('theme');
@@ -444,6 +470,15 @@ function _GalleryMain($embedded=false) {
 
 function _GalleryMain_doRedirect($redirectUrl, $template=null, $controller=null) {
     global $gallery;
+    
+    /* Create a valid sessionId for guests, if required */
+    $session =& $gallery->getSession();
+    $ret = $session->start();
+    if ($ret) {
+	return array($ret->wrap(__FILE__, __LINE__), null);
+    }
+    $redirectUrl = $session->replaceTempSessionIdIfNecessary($redirectUrl);
+    
     if ($gallery->getDebug() == false || $gallery->getDebug() == 'logged') {
 	/*
 	 * The URL generator makes HTML 4.01 compliant URLs using

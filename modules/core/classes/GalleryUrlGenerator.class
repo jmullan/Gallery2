@@ -661,6 +661,20 @@ class GalleryUrlGenerator {
 	    }
 	}
 
+	/*
+	 * Remove session related params if requested (we're already outputting or output without
+	 * fetching the html (immediate view / progressbar)
+	 */
+	if ($session =& $gallery->getSession()) {
+	    $sessionId = $session->getId();
+	    if (empty($sessionId)) {
+		unset($params[$session->getKey()]);
+		unset($params['navId']);
+	    } else if (!$session->isPersistent()) {
+		unset($params['navId']);
+	    }
+	} 
+
 	/* Add parameters to url */
 	$url = GalleryUrlGenerator::appendParamsToUrl($url, $params);
 

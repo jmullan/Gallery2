@@ -187,5 +187,19 @@ class GalleryPhpVm {
 	    exit;
 	}
     }
+
+    /**
+     * Generate random integer
+
+     * @param integer (optional) min
+     * @param integer (optional) maxo
+     */
+    function rand($min=null, $max=null) {
+	if (isset($min) && isset($max)) {
+	    rand($min, $max);
+	} else {
+	    rand();
+	}
+    }
 }
 ?>

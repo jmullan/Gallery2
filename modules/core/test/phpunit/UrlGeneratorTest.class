@@ -127,6 +127,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
+	$session->put('foo', 1);
 	$ret = $session->start();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
@@ -1424,6 +1425,59 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php';
 	$this->assertEquals('http://example.com/gallery2/phpunit_test.php',
 			    $this->_urlGenerator->getCacheableUrl());
+    }
+
+    function testGenerateUrlWithNavIdAndSessionString() {
+	global $gallery;
+	list ($ret) = $this->_prepareGenerateUrl('', 'phpunit_test.php', null);
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$session =& $gallery->getSession();
+	$this->assertEquals(true, $session->isPersistent(), 'persistent session');
+	$this->assert(!empty($session->_sessionId), 'session id');
+
+	$actual = $this->_urlGenerator->generateUrl(array('view' => 'foo.Bar', 'navId' => '1234'),
+						    array('forceSessionId' => true));
+	$expected = 'phpunit_test.php?g2_view=foo.Bar&amp;g2_navId=1234&amp;g2_' .
+	    $session->getKey() . '=' . $session->getId();
+
+	$this->assertEquals($expected, $actual, 'url');
+    }
+
+    function testGenerateUrlWithoutPersistentSession() {
+	global $gallery;
+	GalleryUtilities::removeRequestVariable(SESSION_ID_PARAMETER);
+	unset($_COOKIE[SESSION_ID_PARAMETER]);
+	unset($_SERVER['HTTP_COOKIE']);
+	
+	$session = new GallerySession();
+	$ret = $session->init();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$backup = $gallery->_session;
+	$gallery->_session =& $session;
+	$this->assertEquals(false, $session->isPersistent(), 'not persistent');
+	$this->assert(empty($session->_sessionId), 'session id');
+	$this->assertEquals(SESSION_TEMP_ID, $session->getId(), 'temp id');
+
+	$actual = $this->_urlGenerator->generateUrl(array('view' => 'foo.Bar', 'navId' => '1234'),
+						    array('forceSessionId' => true));
+	/* No navId since there's no persistent session to store the nav history */
+	$expected = 'phpunit_test.php?g2_view=foo.Bar&amp;g2_' . $session->getKey() .
+	    '=' . $session->getId();
+
+	$this->assertEquals($expected, $actual, 'url');
+
+	/* And now force to not use the temp id */
+	$gallery->_session->doNotUseTempId();
+	$actual = $this->_urlGenerator->generateUrl(array('view' => 'foo.Bar', 'navId' => '1234'),
+						    array('forceSessionId' => true));
+	$expected = 'phpunit_test.php?g2_view=foo.Bar';
+	$this->assertEquals($expected, $actual, 'url without temp session id');
+	
+	$gallery->_session = $backup;
     }
 }
 

@@ -1515,6 +1515,60 @@ class CoreModuleExtras {
 	case '1.0.20':
 	    /* Add configurable captcha security level */
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', 'captcha.level', 'HIGH');
+
+	case '1.0.21':
+	    /* GallerySession change: Store sessions in the database and no longer on disk */
+	    $sessionsDir = $gallery->getConfig('data.gallery.base') . 'sessions' .
+		$platform->getDirectorySeparator();
+	    $stepSize = 100;
+	    $count = 0;
+	    $iterationSize = 5000;
+	    $iteration = 1;
+	    /* Show a progress bar while removing the files  */
+	    $ret = $statusMonitor->renderStatusMessage(
+		$module->translate(array('text' => 'Deleting old session files (iteration %d)',
+					 'arg1' => $iteration)),
+		'', 0);
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $dir = $platform->opendir($sessionsDir, 'r');
+	    if (!$dir) {
+		return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+					     "Can't access session dir");
+	    }
+	    $gallery->guaranteeTimeLimit(60);
+	    while (($filename = $platform->readdir($dir)) !== false) {
+		if ($filename == '.' || $filename == '..') {
+		    continue;
+		}
+		$count++;
+		$platform->unlink($sessionsDir . $filename);
+
+		/* Update the progress bar / prevent timouts */
+		if ($count % $stepSize == 0) {
+		    $gallery->guaranteeTimeLimit(60);
+		    $ret = $statusMonitor->renderStatusMessage(
+			$module->translate(
+			    array('text' => 'Deleting old session files (iteration %d)',
+				  'arg1' => $iteration)),
+			'', $count / $iterationSize);
+		    if ($ret) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		}
+
+		if ($count > $iterationSize) {
+		    $iteration++;
+		    $count = 0;
+		}
+	    }
+	    $platform->closedir($dir);
+	    $platform->rmdir($sessionsDir);
+	    $ret = $statusMonitor->renderStatusMessage(
+		$module->translate(array('text' => 'Deleting old session files (iteration %d)',
+					 'arg1' => $iteration)),
+		'', 1);
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -1753,6 +1807,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	case '1.0.18':
 	case '1.0.19':
 	case '1.0.20':
+	case '1.0.21':
 
 	case 'end of upgrade path':
 	    /*
@@ -2201,6 +2256,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	$regs[] = array('MaintenanceTask', 'ResetViewCountsTask', 'class', null);
 	$regs[] = array('MaintenanceTask', 'SystemInfoTask', 'class', null);
 	$regs[] = array('MaintenanceTask', 'SetOriginationTimestampTask', 'class', null);
+	$regs[] = array('MaintenanceTask', 'DeleteSessionsTask', 'class', null);
 
 	/*
 	 * Unlike other modules, the core module doesn't get deactivated so its

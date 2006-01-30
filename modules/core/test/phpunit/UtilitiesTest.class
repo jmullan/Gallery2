@@ -1348,6 +1348,20 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->assertEquals('<tt><b>closed</b>  <i>open</i></tt>', GalleryUtilities::htmlSafe(
 		'<tt><b>closed</b> </td> <i>open'));
     }
+
+    function testStrToLower() {
+	/* For tr_TR as locale, I translates to y with an accent when using PHP's strtolower */
+	$this->assertEquals(
+	    'abcdefghijklmnopqrstuvwxyz0123456789=)(/&%',
+	    GalleryUtilities::strToLower('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789=)(/&%'));
+    }
+
+    function testStrToUpper() {
+	/* For tr_TR as locale, i translates to Y with an accent when using PHP's strtoupper */
+	$this->assertEquals(
+	    'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789=)(/&%',
+	    GalleryUtilities::strToUpper('abcdefghijklmnopqrstuvwxyz0123456789=)(/&%'));
+    }   
 }
 
 /**

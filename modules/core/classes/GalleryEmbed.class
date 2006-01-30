@@ -209,12 +209,14 @@ class GalleryEmbed {
 
 	$language = $session->get('core.language');
 	if (empty($activeUserId)) {
-	    /* Logout */
-	    $ret = $session->reset();
-	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+	    if ($session->isPersistent()) {
+		/* Logout */
+		$ret = $session->reset();
+		if ($ret) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 	    }
-	    $session->put('embed.id.externalUser', '');
+	    $session->put('embed.id.externalUser', $activeUserId);
 	} else {
 	    /* Set G2 active user */
 	    list ($ret, $user) =

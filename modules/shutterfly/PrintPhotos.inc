@@ -146,8 +146,10 @@ class PrintPhotosView extends GalleryView {
 		 * Create a new session with the rights of current user for shutterfly to use.
 		 */
 		$sfSession = new GallerySession();
-		$sfSession->initEmpty(true);
-		$sfSession->setUserId($gallery->getActiveUserId());
+		$ret = $sfSession->initEmpty(true, $gallery->getActiveUserId());
+		if ($ret) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 		/*
 		 * TODO: Would like to enforce a particular session timeout to ensure this
 		 * session lasts long enough for shutterfly to retrieve the images.  With

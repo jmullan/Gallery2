@@ -26,6 +26,8 @@
  * @author Andy Staudacher <ast@gmx.ch>
  */
 
+GalleryCoreApi::requireOnce('modules/core/classes/GallerySession.class');
+
 /**
  * Test index.php functionality
  *
@@ -49,11 +51,21 @@ class IndexDotPhpTest extends GalleryTestCase {
 	/* Strip off the /lib/tools/test/ part to get a valid G2 request uri */
 	$baseUrl = preg_replace('|^(.*/)lib/tools/.*$|', '$1', $url);
 	/* Request http://domain.com/path/  and for http://domain.com/path/index.php */
+	$i = 0;
 	foreach(array($baseUrl,
 		      $baseUrl . 'index.php',
 		      $baseUrl . 'index.php?some=value&something=else',
-		      $baseUrl . '?somepath#',
+		      $baseUrl . '?somepath',
 		      $baseUrl . '//') as $url) {
+	    /* Trigger a set-cookie header by offering a session for pickup */
+	    $session = new GallerySession();
+	    $ret = $session->initEmpty(true);
+	    if ($ret) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $url = GalleryUrlGenerator::appendParamsToUrl(
+		$url, array($session->getKey() => $session->getId()));
+	    $url .= ($i++ == 3) ? '#foo' : '';
 	    /* Make the HTTP request */
 	    list ($success, $body, $response, $headers) = GalleryCoreApi::fetchWebPage($url);
 	    $this->assert($success, "Could not retrieve G2 page: $url");

@@ -168,8 +168,10 @@ class PrintPhotosController extends GalleryController {
 		 * Create a new session with the rights of current user for fotokasten to use.
 		 */
 		$foSession = new GallerySession();
-		$foSession->initEmpty(true);
-		$foSession->setUserId($gallery->getActiveUserId());
+		$ret = $foSession->initEmpty(true, $gallery->getActiveUserId());
+		if ($ret) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 		/*
 		 * TODO: Would like to enforce a particular session timeout to ensure this
 		 * session lasts long enough for fotokasten to retrieve the images.  With

@@ -1645,5 +1645,25 @@ class GalleryUtilities {
 	    $fixedCookies[$key] = true;
 	}
     }
+
+    /**
+     * ASCII version of PHP's strtolower()
+     * PHP's strtolower doesn't work in all locales as expected, e.g. in Turkish, we get
+     * non-ASCII characters for an ASCII input string
+     *
+     * @return string lower-case version of the string
+     */
+    function strToLower($string) {
+	return strtr($string, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz');
+    }
+
+    /**
+     * ASCII version of PHP's strtolower()
+     * 
+     * @return string upper-case version of the string
+     */
+    function strToUpper($string) {
+	return strtr($string, 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+    }
 }
 ?>

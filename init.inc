@@ -81,7 +81,6 @@ function GalleryInitFirstPass($params=array()) {
     $gallery->setConfig('data.gallery.cache', $dataBase . 'cache' . $slash);
     $gallery->setConfig('data.gallery.albums', $dataBase . 'albums' . $slash);
     $gallery->setConfig('data.gallery.locks', $dataBase . 'locks'. $slash);
-    $gallery->setConfig('data.gallery.sessions', $dataBase . 'sessions' . $slash);
     $gallery->setConfig('data.gallery.tmp', $dataBase . 'tmp' . $slash);
     $gallery->setConfig('data.smarty.base', $dataBase . 'smarty' . $slash);
     $gallery->setConfig('data.smarty.templates_c',
@@ -149,8 +148,14 @@ function GalleryInitFirstPass($params=array()) {
 
 function GalleryInitSecondPass() {
     global $gallery;
-
     $session =& $gallery->getSession();
+    $urlGenerator =& $gallery->getUrlGenerator();
+
+    $ret = $urlGenerator->initNavigation();
+    if ($ret) {
+	return $ret->wrap(__FILE__, __LINE__);
+    }
+    
     /*
      * Set our active user id.  Check to see if we have one in our session.  If
      * not, make us the anonymous user.  If we don't have a session, this will
@@ -186,11 +191,6 @@ function GalleryInitSecondPass() {
     }
 
     $gallery->setActiveUser($activeUser);
-
-    $ret = $session->start();
-    if ($ret) {
-	return $ret->wrap(__FILE__, __LINE__);
-    }
 
     return null;
 }

@@ -224,7 +224,6 @@ function populateDataDirectory($dataBase) {
     foreach (array('albums',
 		   'cache',
 		   'locks',
-		   'sessions',
 		   'tmp',
 		   'plugins_data',
 		   'plugins_data/modules',
