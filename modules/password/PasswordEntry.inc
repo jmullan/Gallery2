@@ -79,6 +79,9 @@ class PasswordEntryController extends GalleryController {
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
+	    $guess = GalleryUtilities::htmlEntityDecode($form['password']);
+	    $isCorrect = $canSee && $hashedPassword
+		&& GalleryUtilities::isCorrectPassword($guess, $hashedPassword);
 
 	    /* Use captcha if available */
 	    if (isset($this->_pluginInstances)) {
@@ -97,11 +100,20 @@ class PasswordEntryController extends GalleryController {
 		    }
 		}
 	    }
+	    list ($ret, $options['level']) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'captcha.level');
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $options['pass'] = $isCorrect;
+	    if ($options['level'] == 'MEDIUM') {
+		$options['key'] = 'password.PasswordEntry.' . $itemId;
+	    }
 
 	    /* Let each plugin do its verification */
 	    foreach ($plugins as $plugin) {
 		list ($ret, $pluginErrors, $continue) =
-		    $plugin->performValidation($form, array('level' => 'HIGH'));
+		    $plugin->performValidation($form, $options);
 		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -111,9 +123,7 @@ class PasswordEntryController extends GalleryController {
 		}
 	    }
 
-	    $guess = GalleryUtilities::htmlEntityDecode($form['password']);
-	    if (empty($error) && $canSee && $hashedPassword
-		    && GalleryUtilities::isCorrectPassword($guess, $hashedPassword)) {
+	    if (empty($error) && $isCorrect) {
 		$session =& $gallery->getSession();
 		if (!$session->exists(GALLERY_PERMISSION_SESSION_KEY)) {
 		    $session->put(GALLERY_PERMISSION_SESSION_KEY, array());
@@ -154,32 +164,6 @@ class PasswordEntryView extends GalleryView {
 	    $form['itemId'] = GalleryUtilities::getRequestVariables('itemId');
 	}
 
-	/* Use captcha if available */
-	list ($ret, $pluginIds) =
-	    GalleryCoreApi::getAllFactoryImplementationIds('GalleryValidationPlugin');
-	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$PasswordEntry = array('plugins' => array());
-	foreach (array_keys($pluginIds) as $pluginId) {
-	    list ($ret, $plugin) =
-		GalleryCoreApi::newFactoryInstanceById('GalleryValidationPlugin', $pluginId);
-	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    list ($ret, $data['file'], $data['l10Domain']) =
-		$plugin->loadTemplate($template, $form, array('level' => 'HIGH'));
-	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    if (!empty($data['file'])) {
-		$PasswordEntry['plugins'][] = $data;
-	    }
-	}
-
-	$template->setVariable('PasswordEntry', $PasswordEntry);
 	$template->setVariable('controller', 'password.PasswordEntry');
 	return array(null, array('body' => 'modules/password/templates/PasswordEntry.tpl'));
     }
