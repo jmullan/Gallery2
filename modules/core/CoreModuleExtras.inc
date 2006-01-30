@@ -140,6 +140,7 @@ class CoreModuleExtras {
 			   'repository.updateTime' => '0',
 			   'acceleration' => serialize(array('guest' => array('type' => 'none'),
 							     'user' => array('type' => 'none'))),
+			   'captcha.level' => 'HIGH',
 			   ) as $key => $value) {
 		if (!isset($param[$key])) {
 		    $ret = $module->setParameter($key, (string)$value);
@@ -1511,6 +1512,13 @@ class CoreModuleExtras {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
+	case '1.0.20':
+	    /* Add configurable captcha security level */
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', 'captcha.level', 'HIGH');
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
@@ -1743,6 +1751,8 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	case '1.0.16':
 	case '1.0.17':
 	case '1.0.18':
+	case '1.0.19':
+	case '1.0.20':
 
 	case 'end of upgrade path':
 	    /*

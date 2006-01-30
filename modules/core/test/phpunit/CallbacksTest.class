@@ -269,5 +269,14 @@ class CallbacksTest extends GalleryTestCase {
 	}
 	$this->_assertPeers(9, 11, 9, array(1, 4, 5, 6, 7, 8, 9, 10, 11), 'unbalanced end');
     }
+
+    function testLoadValidationPlugins() {
+	$ret = $this->_callback->callback(array(), $this->_smarty, 'LoadValidationPlugins');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(is_array($this->_smarty->_tpl_vars['block']['core']['ValidationPlugins']));
+    }
 }
 ?>

@@ -16,8 +16,15 @@
 	     name="{g->formVar var="form[username]"}" value="{g->text text="Username"}"
 	     onfocus="var f=document.getElementById('giFormUsername'); if (f.value == '{g->text text="Username" forJavascript=1}') {ldelim} f.value = '' {rdelim}"
 	     onblur="var f=document.getElementById('giFormUsername'); if (f.value == '') {ldelim} f.value = '{g->text text="Username" forJavascript=1}' {rdelim}"/>
+      <input type="password" id="giFormPassword" size="10"
+	    name="{g->formVar var="form[password]"}"/>
 
-      <input type="password" id="giFormPassword" size="10" name="{g->formVar var="form[password]"}"/>
+      {* Include our ValidationPlugins *}
+      {g->callback type="core.LoadValidationPlugins"}
+      {foreach from=$block.core.ValidationPlugins item=plugin}
+	{include file="gallery:`$plugin.file`" l10Domain=$plugin.l10Domain}
+      {/foreach}
+
       <input type="submit" class="inputTypeSubmit"
 	     name="{g->formVar var="form[action][login]"}" value="{g->text text="Login"}"/>
     </div>

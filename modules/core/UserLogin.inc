@@ -80,6 +80,13 @@ class UserLoginController extends GalleryController {
 	    }
 
 	    if (empty($error)) {
+		list ($ret, $user) = GalleryCoreApi::fetchUserByUsername($form['username']);
+		if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$isCorrect = ($user != null && $user->isCorrectPassword(
+			    GalleryUtilities::htmlEntityDecode($form['password'])));
+
 		if (isset($this->_pluginInstances)) {
 		    $pluginInstances = $this->_pluginInstances;
 		} else {
@@ -99,17 +106,25 @@ class UserLoginController extends GalleryController {
 			}
 		    }
 		}
+		list ($ret, $options['level']) =
+		    GalleryCoreApi::getPluginParameter('module', 'core', 'captcha.level');
+		if ($ret) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$options['pass'] = $isCorrect;
+		if ($options['level'] == 'MEDIUM') {
+		    $options['key'] = 'core.UserLogin.' . $form['username'];
+		}
 
 		/* Let each plugin do its verification */
 		foreach ($pluginInstances as $pluginId => $plugin) {
 		    list ($ret, $pluginErrors, $continue) =
-			$plugin->performValidation($form, array('level' => 'HIGH'));
+			$plugin->performValidation($form, $options);
 		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
 		    $error = array_merge($error, $pluginErrors);
-
 		    if (!$continue) {
 			break;
 		    }
@@ -117,13 +132,7 @@ class UserLoginController extends GalleryController {
 	    }
 
 	    if (empty($error)) {
-		list ($ret, $user) = GalleryCoreApi::fetchUserByUsername($form['username']);
-		if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		if ($user != null && $user->isCorrectPassword(
-				      GalleryUtilities::htmlEntityDecode($form['password']))) {
+		if ($isCorrect) {
 		    $gallery->setActiveUser($user);
 
 		    $event = GalleryCoreApi::newEvent('Gallery::Login');
@@ -183,39 +192,8 @@ class UserLoginView extends GalleryView {
 	    $form['username'] = '';
 	}
 
-	$UserLogin = array();
-
-	/* Get all the login plugins */
-	list ($ret, $allPluginIds) =
-	    GalleryCoreApi::getAllFactoryImplementationIds('GalleryValidationPlugin');
-	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Let each plugin load its template data */
-	$UserLogin['plugins'] = array();
-	foreach (array_keys($allPluginIds) as $pluginId) {
-	    list ($ret, $plugin) =
-		GalleryCoreApi::newFactoryInstanceById('GalleryValidationPlugin', $pluginId);
-	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    list ($ret, $data['file'], $data['l10Domain']) =
-		$plugin->loadTemplate($template, $form, array('level' => 'HIGH'));
-	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    if (isset($data['file'])) {
-		$UserLogin['plugins'][] = $data;
-	    }
-	}
-
-	$template->setVariable('UserLogin', $UserLogin);
 	$template->setVariable('controller', 'core.UserLogin');
-	return array(null,
-		     array('body' => 'modules/core/templates/UserLogin.tpl'));
+	return array(null, array('body' => 'modules/core/templates/UserLogin.tpl'));
     }
 }
 ?>
