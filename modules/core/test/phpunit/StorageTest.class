@@ -567,6 +567,11 @@ class StorageTest extends GalleryTestCase {
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
+	/* Commit our DB transaction to release locks from the PluginParameterMap table */
+	$ret = $storage->checkPoint();
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
     }
 }
 
