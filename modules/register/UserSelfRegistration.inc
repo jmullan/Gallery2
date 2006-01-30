@@ -19,7 +19,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 /**
  * @version $Revision$ $Date$
  * @package SelfRegistration
@@ -28,11 +27,10 @@
  */
 
 /**
- * This controller will handle the selfcreation of an user
+ * This controller will handle the registration of a user
  *
  * @package SelfRegistration
  * @subpackage UserInterface
- *
  */
 class UserSelfRegistrationController extends GalleryController {
 
@@ -44,9 +42,7 @@ class UserSelfRegistrationController extends GalleryController {
 	    'modules/register/classes/GalleryPendingUserHelper.class');
 	global $gallery;
 
-	$results = array();
-	$status = array();
-	$error = array();
+	$results = $status = $error = array();
 	if (isset($form['action']['cancel'])) {
 
 	    /* Go back to the AdminUsers view */
@@ -89,13 +85,13 @@ class UserSelfRegistrationController extends GalleryController {
 	    }
 
 	    /* Let each plugin do its verification */
-	    foreach ($pluginInstances as $pluginId => $plugin) {
+	    foreach ($pluginInstances as $plugin) {
 		list ($ret, $pluginErrors, $continue) = $plugin->performValidation($form);
 		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		$error = array_merge($error, $pluginErrors);
 
+		$error = array_merge($error, $pluginErrors);
 		if (!$continue) {
 		    break;
 		}
@@ -190,7 +186,7 @@ class UserSelfRegistrationController extends GalleryController {
      * This avoids situations where some of the option instances will do unpredictable
      * things and derail the tests.
      *
-     * @param array (pluginId => ValidationPlugin, ...)
+     * @param array of GalleryValidationPlugin
      */
     function setPluginInstances($pluginInstances) {
 	$this->_pluginInstances = $pluginInstances;
@@ -238,8 +234,7 @@ class UserSelfRegistrationView extends GalleryView {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    list ($ret, $data['file'], $data['l10Domain']) =
-		$plugin->loadTemplate($template, $form);
+	    list ($ret, $data['file'], $data['l10Domain']) = $plugin->loadTemplate($form);
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

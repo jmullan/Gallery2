@@ -55,7 +55,6 @@ class GalleryValidationPlugin {
     /**
      * Prepare template for validation.
      *
-     * @param object GalleryTemplate the template instance
      * @param array the form values
      * @param array (optional) validation options
      *        'level' => HIGH or MEDIUM or LOW (defaults to HIGH)
@@ -64,7 +63,7 @@ class GalleryValidationPlugin {
      *               string the path to a template file to include or null
      *               string localization domain for the template file or null
      */
-    function loadTemplate(&$template, &$form, $options=array()) {
+    function loadTemplate(&$form, $options=array()) {
 	return array(null, null, null);
     }
 }

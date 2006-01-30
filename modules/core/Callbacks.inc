@@ -172,7 +172,7 @@ class CoreCallbacks {
 		}
 
 		list ($ret, $data['file'], $data['l10Domain']) =
-		    $plugin->loadTemplate($template, $form, $options);
+		    $plugin->loadTemplate($smarty->_tpl_vars['form'], $options);
 		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}

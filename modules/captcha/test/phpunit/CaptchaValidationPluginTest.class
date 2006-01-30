@@ -65,7 +65,7 @@ class CaptchaValidationPluginTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->_template = $this->_form = array();
+	$this->_form = array();
     }
 
     function tearDown() {
@@ -86,7 +86,7 @@ class CaptchaValidationPluginTest extends GalleryTestCase {
 
     function testLoadTemplateDefault() {
 	/* With no options, level defaults to HIGH */
-	$result = $this->_plugin->loadTemplate($this->_template, $this->_form);
+	$result = $this->_plugin->loadTemplate($this->_form);
 	$this->assertEquals(
 		array(null, 'modules/captcha/templates/CaptchaValidationPlugin.tpl',
 			    'modules_captcha'),
@@ -94,8 +94,7 @@ class CaptchaValidationPluginTest extends GalleryTestCase {
     }
 
     function testLoadTemplateHigh() {
-	$result = $this->_plugin->loadTemplate($this->_template, $this->_form,
-					       array('level' => 'HIGH'));
+	$result = $this->_plugin->loadTemplate($this->_form, array('level' => 'HIGH'));
 	$this->assertEquals(
 		array(null, 'modules/captcha/templates/CaptchaValidationPlugin.tpl',
 			    'modules_captcha'),
@@ -104,7 +103,7 @@ class CaptchaValidationPluginTest extends GalleryTestCase {
     }
 
     function testLoadTemplateMedium() {
-	$result = $this->_plugin->loadTemplate($this->_template, $this->_form,
+	$result = $this->_plugin->loadTemplate($this->_form,
 		array('level' => 'MEDIUM', 'key' => 'captcha.UnitTest'));
 	$this->assertEquals(array(null, null, null), $result);
 
@@ -114,7 +113,7 @@ class CaptchaValidationPluginTest extends GalleryTestCase {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$result = $this->_plugin->loadTemplate($this->_template, $this->_form,
+	$result = $this->_plugin->loadTemplate($this->_form,
 		array('level' => 'MEDIUM', 'key' => 'captcha.UnitTest'));
 	$this->assertEquals(
 		array(null, 'modules/captcha/templates/CaptchaValidationPlugin.tpl',
@@ -125,15 +124,13 @@ class CaptchaValidationPluginTest extends GalleryTestCase {
 
     function testLoadTemplateLow() {
 	global $gallery;
-	$result = $this->_plugin->loadTemplate($this->_template, $this->_form,
-					       array('level' => 'LOW'));
+	$result = $this->_plugin->loadTemplate($this->_form, array('level' => 'LOW'));
 	$this->assertEquals(array(null, null, null), $result);
 
 	$session =& $gallery->getSession();
 	$session->put('captcha.failedAttempts', 3);
 
-	$result = $this->_plugin->loadTemplate($this->_template, $this->_form,
-					       array('level' => 'LOW'));
+	$result = $this->_plugin->loadTemplate($this->_form, array('level' => 'LOW'));
 	$this->assertEquals(
 		array(null, 'modules/captcha/templates/CaptchaValidationPlugin.tpl',
 			    'modules_captcha'),

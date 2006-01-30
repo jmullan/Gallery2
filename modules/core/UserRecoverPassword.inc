@@ -19,7 +19,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 /**
  * @version $Revision$ $Date$
  * @package GalleryCore
@@ -39,8 +38,7 @@ GalleryCoreApi::requireOnce(
  */
 class UserRecoverPasswordController extends GalleryController {
     /**
-     * ValidationPlugin instances to use when handling this request.  Only used by
-     * test code.
+     * ValidationPlugin instances to use when handling this request.  Only used by test code.
      *
      * @var array (pluginId => object ValidationPlugin) $_pluginInstances
      * @access private
@@ -52,7 +50,7 @@ class UserRecoverPasswordController extends GalleryController {
      * This avoids situations where some of the option instances will do unpredictable
      * things and derail the tests.
      *
-     * @param array (pluginId => ValidationPlugin, ...)
+     * @param array of GalleryValidationPlugin
      */
     function setPluginInstances($pluginInstances) {
 	$this->_pluginInstances = $pluginInstances;
@@ -64,9 +62,7 @@ class UserRecoverPasswordController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-	$status = array();
-	$results = array();
-	$error = array();
+	$status = $error = $results = array();
 
 	$phpVm = $gallery->getPhpVm();
 	if (isset($form['action']['recover'])) {
@@ -97,14 +93,13 @@ class UserRecoverPasswordController extends GalleryController {
 		}
 
 		/* Let each plugin do its verification */
-		foreach ($pluginInstances as $pluginId => $plugin) {
+		foreach ($pluginInstances as $plugin) {
 		    list ($ret, $pluginErrors, $continue) = $plugin->performValidation($form);
 		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
 		    $error = array_merge($error, $pluginErrors);
-
 		    if (!$continue) {
 			break;
 		    }
@@ -283,8 +278,7 @@ class UserRecoverPasswordView extends GalleryView {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    list ($ret, $data['file'], $data['l10Domain']) =
-		$plugin->loadTemplate($template, $form);
+	    list ($ret, $data['file'], $data['l10Domain']) = $plugin->loadTemplate($form);
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

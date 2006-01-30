@@ -19,7 +19,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 /**
  * @version $Revision$ $Date$
  * @package Comment
@@ -240,8 +239,7 @@ class AddCommentView extends GalleryView {
 		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		list ($ret, $data['file'], $data['l10Domain']) =
-		    $plugin->loadTemplate($template, $form);
+		list ($ret, $data['file'], $data['l10Domain']) = $plugin->loadTemplate($form);
 		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}

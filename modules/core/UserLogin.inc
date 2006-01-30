@@ -19,7 +19,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 /**
  * @version $Revision$ $Date$
  * @package GalleryCore
@@ -36,10 +35,9 @@
 class UserLoginController extends GalleryController {
 
     /**
-     * ValidationPlugin instances to use when handling this request.  Only used by
-     * test code.
+     * ValidationPlugin instances to use when handling this request.  Only used by test code.
      *
-     * @var array (pluginId => object ValidationPlugin) $_plugins
+     * @var array $_plugins (array of GalleryValidationPlugin)
      * @access private
      */
     var $_pluginInstances;
@@ -49,7 +47,7 @@ class UserLoginController extends GalleryController {
      * This avoids situations where some of the option instances will do unpredictable
      * things and derail the tests.
      *
-     * @param array (pluginId => ValidationPlugin, ...)
+     * @param array of GalleryValidationPlugin
      */
     function setPluginInstances($pluginInstances) {
 	$this->_pluginInstances = $pluginInstances;
@@ -117,7 +115,7 @@ class UserLoginController extends GalleryController {
 		}
 
 		/* Let each plugin do its verification */
-		foreach ($pluginInstances as $pluginId => $plugin) {
+		foreach ($pluginInstances as $plugin) {
 		    list ($ret, $pluginErrors, $continue) =
 			$plugin->performValidation($form, $options);
 		    if ($ret) {
