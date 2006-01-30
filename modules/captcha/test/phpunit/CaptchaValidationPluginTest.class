@@ -167,21 +167,54 @@ class CaptchaValidationPluginTest extends GalleryTestCase {
 	$this->_form['CaptchaValidationPlugin']['word'] = '4321';
 	$result = $this->_plugin->performValidation($this->_form,
 		array('level' => 'MEDIUM', 'key' => 'captcha.UnitTest', 'pass' => false));
-	$this->assertEquals(array(null, array(), true), $result);
+	$this->assertEquals(array(null, array(), true), $result, 1);
 
 	list ($ret, $count) =
 	    GalleryCoreApi::getPluginParameter('module', 'captcha', 'failCount-captcha.UnitTest');
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals(1, (int)$count, 'failure count');
+	$this->assertEquals(1, (int)$count, 'failure count 1');
 
 	/* Now we've exceeded the failure threshold and code is checked */
 	$result = $this->_plugin->performValidation($this->_form,
 		array('level' => 'MEDIUM', 'key' => 'captcha.UnitTest', 'pass' => true));
 	$this->assertEquals(array(null, array('form[error][CaptchaValidationPlugin][invalid]'),
 					false),
-			    $result);
+			    $result, 2);
+
+	/* Failure count not reset when captcha validation failed */
+	list ($ret, $count) =
+	    GalleryCoreApi::getPluginParameter('module', 'captcha', 'failCount-captcha.UnitTest');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(1, (int)$count, 'failure count 2');
+
+	/* Successful validation but invalid entry */
+	$this->_form['CaptchaValidationPlugin']['word'] = '1234';
+	$result = $this->_plugin->performValidation($this->_form,
+		array('level' => 'MEDIUM', 'key' => 'captcha.UnitTest', 'pass' => false));
+	$this->assertEquals(array(null, array(), true), $result, 3);
+
+	list ($ret, $count) =
+	    GalleryCoreApi::getPluginParameter('module', 'captcha', 'failCount-captcha.UnitTest');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(2, (int)$count, 'failure count 3');
+
+	/* Now success, failure count is cleared */
+	$result = $this->_plugin->performValidation($this->_form,
+		array('level' => 'MEDIUM', 'key' => 'captcha.UnitTest', 'pass' => true));
+	$this->assertEquals(array(null, array(), true), $result, 4);
+
+	list ($ret, $count) =
+	    GalleryCoreApi::getPluginParameter('module', 'captcha', 'failCount-captcha.UnitTest');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(null, $count, 'failure count 4');
     }
 
     function testValidateLow() {

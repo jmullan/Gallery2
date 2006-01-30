@@ -76,6 +76,13 @@ class CaptchaValidationPlugin extends GalleryValidationPlugin {
 	    } else {
 		$session->put('captcha.failedAttempts', $failedAttempts + 1);
 	    }
+	} else if (isset($options['pass']) && $options['pass']
+		&& $success && $failedAttempts > 0 && !empty($options['key'])) {
+	    $ret = GalleryCoreApi::removePluginParameter(
+		    'module', 'captcha', 'failCount-' . $options['key']);
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
 	}
 
 	return array(null, $error, $success);
@@ -148,7 +155,7 @@ class CaptchaValidationPlugin extends GalleryValidationPlugin {
 		global $gallery;
 		$session =& $gallery->getSession();
 		$failedAttempts = $session->get('captcha.failedAttempts');
-	    } else {
+	    } else if (!empty($options['key'])) {
 		list ($ret, $failedAttempts) = GalleryCoreApi::getPluginParameter(
 			'module', 'captcha', 'failCount-' . $options['key']);
 		if ($ret) {

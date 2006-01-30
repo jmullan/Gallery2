@@ -56,6 +56,12 @@ class CaptchaModule extends GalleryModule {
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'MaintenanceTask', 'ResetFailureCountsTask', 'ResetFailureCountsTask',
+	    'modules/captcha/classes/ResetFailureCountsTask.class', 'captcha', null);
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
 	return null;
     }
