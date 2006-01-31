@@ -484,8 +484,13 @@ class IsapiRewriteHelper {
 	}
 
 	if ($code == REWRITE_STATUS_OK) {
+	    $embeddedLocation = '/' . trim($param['embeddedLocation'], '/');
+	    if ($embeddedLocation{strlen($embeddedLocation)-1} != '/') {
+		$embeddedLocation .= '/';
+	    }
+			    
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
-		'isapirewrite.embeddedLocation', '/' . trim($param['embeddedLocation'], '/') . '/');
+		'isapirewrite.embeddedLocation', $embeddedLocation);
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

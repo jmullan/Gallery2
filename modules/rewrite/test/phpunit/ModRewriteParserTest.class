@@ -332,6 +332,38 @@ class ModRewriteParserTest extends RewriteParserTestCase {
 
     function testHandleAdminParserRequest2() {
 	$form = array();
+	GalleryDataCache::put('G2_EMBED', 1 ,true);
+
+	$form['embeddedLocation'] = '/';
+	$form['embeddedHtaccess'] = '/phpunit/test';
+	list ($ret, $error, $status) = $this->_parser->handleAdminParserRequest($form);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $embeddedLocation) = GalleryCoreApi::getPluginParameter(
+	    'module', 'rewrite', 'modrewrite.embeddedLocation');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $embeddedHtaccess) = GalleryCoreApi::getPluginParameter(
+	    'module', 'rewrite', 'modrewrite.embeddedHtaccess');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('/phpunit/test', $embeddedHtaccess);
+	$this->assertEquals('/', $embeddedLocation);
+	$this->assertEquals(array('saved' => 1), $status);
+	$this->assertEquals(array(), $error);
+	$this->assert(!empty($this->_fileContent), 'file');
+
+	GalleryDataCache::remove('G2_EMBED');
+    }
+
+    function testHandleAdminParserRequest3() {
+	$form = array();
 	GalleryDataCache::put('G2_EMBED', 1, true);
 	$this->_platform->_isWriteable = false;
 
@@ -364,7 +396,7 @@ class ModRewriteParserTest extends RewriteParserTestCase {
 	$this->_platform->_isWriteable = true;
     }
 
-    function testHandleAdminParserRequest3() {
+    function testHandleAdminParserRequest4() {
 	$form = array();
 	GalleryDataCache::put('G2_EMBED', 1, true);
 

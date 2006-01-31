@@ -640,7 +640,10 @@ class ModRewriteHelper {
 	    return array(null, REWRITE_STATUS_EMPTY_VALUE);
 	}
 
-	$embeddedLocation = trim($param['embeddedLocation'], '/');
+	$embeddedLocation = '/' . trim($param['embeddedLocation'], '/');
+	if ($embeddedLocation{strlen($embeddedLocation)-1} != '/') {
+	    $embeddedLocation .= '/';
+	}
 	$embeddedHtaccess = rtrim($param['embeddedHtaccess'], '/');
 
 	if (!$platform->is_dir($embeddedHtaccess) ||
@@ -655,7 +658,7 @@ class ModRewriteHelper {
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
-	    'modrewrite.embeddedLocation', '/' . $embeddedLocation . '/');
+	    'modrewrite.embeddedLocation', $embeddedLocation);
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
