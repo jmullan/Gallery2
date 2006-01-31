@@ -10,6 +10,7 @@
 
 {if $user.isGuest}
 <input type="hidden" name="{g->formVar var="return"}" value="{$form.returnUrl}"/>
+<input type="hidden" name="{g->formVar var="form[returnUrl]"}" value="{$form.returnUrl}"/>
 <div class="gbBlock">
   {if isset($status.passwordRecovered)}
   <div class="gbBlock"><h2 class="giSuccess">
