@@ -190,16 +190,25 @@ class GalleryPhpVm {
 
     /**
      * Generate random integer
-
+     *
      * @param integer (optional) min
-     * @param integer (optional) maxo
+     * @param integer (optional) max
      */
     function rand($min=null, $max=null) {
 	if (isset($min) && isset($max)) {
-	    rand($min, $max);
+	    return rand($min, $max);
 	} else {
-	    rand();
+	    return rand();
 	}
+    }
+
+    /**
+     * Fetch all HTTP request headers
+     *
+     * @return array
+     */
+    function getAllHeaders() {
+	return getallheaders();
     }
 }
 ?>
