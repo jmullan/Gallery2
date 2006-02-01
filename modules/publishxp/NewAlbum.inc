@@ -131,7 +131,7 @@ class NewAlbumView extends GalleryView {
 	for ($i = 0; $i < sizeof($parents); $i ++) {
 	    $parents[$i] = (array)$parents[$i];
 	}
-	$parents[] = $parent->getMemberData();
+	$parents[] = (array)$parent;
 
 	$NewAlbum = array();
 	$NewAlbum['parents'] = $parents;
