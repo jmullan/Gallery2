@@ -47,6 +47,7 @@ class RedirectController extends GalleryController {
     */
     function handleRequest($form) {
 	global $gallery;
+	$phpVm = $gallery->getPhpVm();
 	GalleryCoreApi::requireOnce('modules/migrate/classes/G1MigrateHelper.class');
 
 	$path = GalleryUtilities::getRequestVariables('path');
@@ -113,11 +114,12 @@ class RedirectController extends GalleryController {
 	}
 
 	if (!isset($id)) {
-	    header('HTTP/1.0 404 Not Found');
+	    $phpVm->header('HTTP/1.0 404 Not Found');
 	    exit;
 	}
 
 	/* Redirect browser */
+	$phpVm->header('HTTP/1.0 301 Moved Permanently');
 	$results = array('redirect' => array('view' => $view, 'itemId' => $id),
 			 'status' => array(), 'error' => array());
 
@@ -126,6 +128,7 @@ class RedirectController extends GalleryController {
 	    /* PHP as CGI needs to use PHP_SELF; fallback to SCRIPT_NAME just in case */
 	    $scriptName = GalleryUtilities::getServerVar('SCRIPT_NAME');
 	}
+
 	if (strpos($scriptName, GALLERY_MAIN_PHP) !== false) {
 	    /*
 	     * $scriptName may not be the right path.. see http://bugs.php.net/bug.php?id=31843

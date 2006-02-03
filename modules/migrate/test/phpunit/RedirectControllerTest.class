@@ -38,6 +38,7 @@ class RedirectControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
+	global $gallery;
 	parent::setUp();
 
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_getRootId());
@@ -77,6 +78,10 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 	}
 
 	$_SERVER['PHP_SELF'] = '/gallery2/' . GALLERY_MAIN_PHP;
+
+	$this->_phpVm = new MockPhpVm($this);
+	$gallery->_phpVm = $this->_phpVm;
+	$this->_headers = array();
     }
 
     function tearDown() {
@@ -105,6 +110,8 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array()),
 			    $results, 'album');
+	$this->assertEquals(array('HTTP/1.0 301 Moved Permanently'), $this->_headers);
+	$this->_headers = array();
 
 	/* Album with trailing slash */
 	GalleryUtilities::putRequestVariable('path', $this->_albumName . '/');
@@ -116,6 +123,8 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array()),
 			    $results, 'album trailing slash');
+	$this->assertEquals(array('HTTP/1.0 301 Moved Permanently'), $this->_headers);
+	$this->_headers = array();
 
 	/* Album page 2 */
 	GalleryUtilities::putRequestVariable('path', $this->_albumName);
@@ -129,6 +138,8 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array()),
 			    $results, 'album page 2');
+	$this->assertEquals(array('HTTP/1.0 301 Moved Permanently'), $this->_headers);
+	$this->_headers = array();
 
 	/* Item */
 	GalleryUtilities::removeRequestVariable('page', false);
@@ -141,6 +152,8 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array()),
 			    $results, 'item');
+	$this->assertEquals(array('HTTP/1.0 301 Moved Permanently'), $this->_headers);
+	$this->_headers = array();
 
 	/* Item full size */
 	GalleryUtilities::putRequestVariable('path', $this->_albumName . '/' . $this->_itemName);
@@ -154,6 +167,8 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array()),
 			    $results, 'item full size');
+	$this->assertEquals(array('HTTP/1.0 301 Moved Permanently'), $this->_headers);
+	$this->_headers = array();
 
 	/* Invalid item */
 	GalleryUtilities::removeRequestVariable('full', false);
@@ -174,6 +189,8 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array()),
 			    $results, 'item image file');
+	$this->assertEquals(array('HTTP/1.0 301 Moved Permanently'), $this->_headers);
+	$this->_headers = array();
 
 	/* Direct link to resized image */
 	GalleryUtilities::putRequestVariable('path',
@@ -186,6 +203,8 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array()),
 			    $results, 'item resized file');
+	$this->assertEquals(array('HTTP/1.0 301 Moved Permanently'), $this->_headers);
+	$this->_headers = array();
 
 	/* Direct link to thumbnail image */
 	GalleryUtilities::putRequestVariable('path',
@@ -198,6 +217,8 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array()),
 			    $results, 'item thumbnail file');
+	$this->assertEquals(array('HTTP/1.0 301 Moved Permanently'), $this->_headers);
+	$this->_headers = array();
 
 	/* Fallback to SCRIPT_NAME if PHP_SELF isn't set */
 	$_SERVER['SCRIPT_NAME'] = $_SERVER['PHP_SELF'];
@@ -211,7 +232,8 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array()),
 			    $results, 'item, no PHP_SELF');
-
+	$this->assertEquals(array('HTTP/1.0 301 Moved Permanently'), $this->_headers);
+	$this->_headers = array();
 	/*
 	 * Bad PHP_SELF, see http://bugs.php.net/bug.php?id=31843
 	 * In this case we currently rely on REQUEST_URI being rewritten to a valid value.
@@ -224,6 +246,22 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array()),
 			    $results, 'item, bad PHP_SELF');
+	$this->assertEquals(array('HTTP/1.0 301 Moved Permanently'), $this->_headers);
+    }
+}
+
+/**
+ * Mock PhpVm test class
+ * @package Migrate
+ * @subpackage PHPUnit
+ */
+class MockPhpVm extends GalleryPhpVm {
+    function MockPhpVm(&$test) {
+	$this->_test =& $test;
+    }
+
+    function header($header) {
+	$this->_test->_headers[] = $header;
     }
 }
 ?>
