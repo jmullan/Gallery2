@@ -109,6 +109,30 @@ class RatingHelperTest extends GalleryTestCase {
 	$this->assertEquals($testRating, (int)$RatingData['rating']);
     }
 
+    function testRateItemAsGoogleBot() {
+	global $gallery;
+	$session =& $gallery->getSession();
+	$this->assertEquals(true, $session->isPersistent(), 'is persistent');
+	$this->assert(!empty($session->_sessionId), 'session id');
+	$testRating = rand(1, 5);
+
+	$_SERVER['HTTP_USER_AGENT'] = 'Googlebot/2.1 (+http://www.googlebot.com/bot.html)';
+	list ($ret, $RatingData) = 
+	    RatingHelper::rateItem($this->_item->getId(), $testRating, $this->_users[0]->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* There should be no rating */
+	$this->assertEquals(0, (int)$RatingData['userRating'], 'GoogleBot vote was counted.');
+
+	/* Vote should note have counted */
+	$this->assertEquals(0, (int)$RatingData['votes'], 'GoogleBot vote was counted.');
+
+	/* There should be no average */
+	$this->assertEquals(0, (int)$RatingData['rating'], 'GoogleBot vote was counted.');
+    }
+
     function testRateAsGuestWithoutPersistentCookie() {
 	global $gallery;
 	$gallery->_session = null;

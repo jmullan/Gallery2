@@ -150,6 +150,12 @@ class RatingHelper {
     function rateItem($itemId, $rating, $userId) {
 	global $gallery;
 
+	/* Make sure the user isn't a search engine crawler */
+	$botId = GalleryUtilities::identifySearchEngine();
+	if (isset($botId)) {
+	    return array(null, null);
+	}
+
 	/* Make sure the item really exists */
 	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret) {
