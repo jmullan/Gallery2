@@ -121,14 +121,21 @@ class MarkupTest extends GalleryTestCase {
 			    "\n<li>four<br /></li>\n</ul>", $results);
     }
 
-    function testImage() {
+    function testImageUrl() {
 	$results = $this->_bbcode->parse('[img]http://example.com/foo.gif[/img]');
 	$this->assertEquals('<img src="http://example.com/foo.gif" alt=""/>', $results);
     }
 
-    function testImage2() {
+    function testImagePath() {
 	$results = $this->_bbcode->parse('[img]/path/foo.gif[/img]');
 	$this->assertEquals('<img src="/path/foo.gif" alt=""/>', $results);
+    }
+
+    function testImageEntity() {
+	/* Our input should be properly escaped, so bbcode doesn't need to entitize things */
+	$results = $this->_bbcode->parse('[img]http://image.com/get?id=123&amp;size=small[/img]');
+	$this->assertEquals('<img src="http://image.com/get?id=123&amp;size=small" alt=""/>',
+			    $results);
     }
 
     function testJavascriptInImage() {

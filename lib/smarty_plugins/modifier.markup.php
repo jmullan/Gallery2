@@ -178,7 +178,8 @@ class GalleryBbcodeMarkupParser {
 	}
 
 	if ($openClose == 'all') {
-	    return sprintf('<img src="%s" alt=""/>', htmlspecialchars($elementContents));
+	    /* Input should have entities already, so no htmlspecialchars here */
+	    return sprintf('<img src="%s" alt=""/>', $elementContents);
 	} else {
 	    return false;
 	}
