@@ -53,7 +53,7 @@ class MatrixTheme extends GalleryTheme {
 		  'showImageOwner' => 0, 'showAlbumOwner' => 1,
 		  'albumFrame' => '', 'itemFrame' => '', 'photoFrame' => '',
 		  'colorpack' => '',
-		  'showMicroThumbs' => 0, 
+		  'showMicroThumbs' => 0,
 		  'sidebarBlocks' => serialize(array(
 			array('search.SearchBlock', array('showAdvancedLink' => true)),
 			array('core.ItemLinks', array('useDropdown' => false)),
