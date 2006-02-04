@@ -61,7 +61,7 @@
         <div class="gbBlock">
             <div id="gsThumbMatrix">	
                 {foreach from=$theme.children item=child}
-                <div class="{if $child.canContainChildren}giAlbumCell gcBackground1{else}giItemCell{/if}" style="width: {$theme.params.floatWidth}px; height: {$theme.params.floatHeight}px;">
+                <div class="{if $child.canContainChildren}giAlbumCell gcBackground1{else}giItemCell{/if}" style="width: {$theme.params.columnWidth}px; height: {$theme.params.rowHeight}px;">
 
                 {if ($child.canContainChildren || $child.entityType == 'GalleryLinkItem')}
                     {assign var=frameType value="albumFrame"}

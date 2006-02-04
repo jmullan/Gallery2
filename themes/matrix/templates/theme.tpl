@@ -46,7 +46,7 @@
 
       {* Include the appropriate content type for the page we want to draw. *}
       {if $theme.pageType == 'album'}
-      	{if $theme.params.useFloatingDivs} 
+      	{if $theme.params.useVariableColumns} 
 	  {g->theme include="album_float.tpl"}
 	{else}
           {g->theme include="album.tpl"}

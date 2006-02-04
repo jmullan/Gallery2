@@ -42,15 +42,18 @@ class MatrixTheme extends GalleryTheme {
 	$this->setId('matrix');
 	$this->setName($gallery->i18n('Matrix'));
 	$this->setDescription($gallery->i18n('Standard Gallery2 look and feel'));
-	$this->setVersion('1.0.2');
+	$this->setVersion('1.0.3');
 	$this->setRequiredCoreApi(array(7, 0));
 	$this->setRequiredThemeApi(array(2, 1));
 	$this->setStandardSettings(
 	    array('rows' => 3, 'columns' => 3,
+		  'useVariableColumns' => 0,
+		  'perPage' => 12,
+		  'columnWidth' => 200, 'rowHeight' => 300,
 		  'showImageOwner' => 0, 'showAlbumOwner' => 1,
 		  'albumFrame' => '', 'itemFrame' => '', 'photoFrame' => '',
 		  'colorpack' => '',
-		  'showMicroThumbs' => 0, 'useFloatingDivs' => 0,
+		  'showMicroThumbs' => 0, 
 		  'sidebarBlocks' => serialize(array(
 			array('search.SearchBlock', array('showAdvancedLink' => true)),
 			array('core.ItemLinks', array('useDropdown' => false)),
@@ -64,69 +67,16 @@ class MatrixTheme extends GalleryTheme {
     }
 
     /**
-     * @see GalleryTheme::getSettings()
-     */
-    function getSettings($itemId=null) {
-	list ($ret, $settings, $params) = parent::getSettings($itemId);
-	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Add in our custom settings */
-	$settings[] = array(
-	    'key' => 'useFloatingDivs',
-	    'name' => $this->translate(
-		'Use floating divs instead of a table to display thumbnails'),
-	    'type' => 'checkbox',
-	    'value' => isset($params['useFloatingDivs']) ? $params['useFloatingDivs'] : false);
-	$settings[] = array(
-	    'key' => 'floatCount',
-	    'name' => $this->translate('Items per page'),
-	    'type' => 'text-field',
-	    'typeParams' => array('size' => 3),
-	    'value' => isset($params['floatCount']) ? $params['floatCount'] : 12);
-	$settings[] = array(
-	    'key' => 'floatWidth',
-	    'name' => $this->translate('Width of floating items'),
-	    'type' => 'text-field',
-	    'typeParams' => array('size' => 3),
-	    'value' => isset($params['floatWidth']) ? $params['floatWidth'] : 200);
-	$settings[] = array(
-	    'key' => 'floatHeight',
-	    'name' => $this->translate('Height of floating items'),
-	    'type' => 'text-field',
-	    'typeParams' => array('size' => 3),
-	    'value' => isset($params['floatHeight']) ? $params['floatHeight'] : 250);
-
-	return array(null, $settings);
-    }
-
-    /**
-     * If floating divs, override getPageSize to use floatCount
-     */
-    function getPageSize($params) {
-	if (empty($params['useFloatingDivs'])) {
-	    return parent::getPageSize($params);
-	} elseif (!empty($params['floatCount'])) {
-	    return $params['floatCount'];
-	}
-	return 0;
-    }
-
-    /**
      * @see GalleryTheme::validateSettings
      */
     function validateSettings($settings) {
 	$error = parent::validateSettings($settings);
-	if (!empty($settings['useFloatingDivs'])) {
-	    if (!is_numeric($settings['floatCount'])) {
-		$error['floatCount'] = $this->translate('You must enter a number');
+	if (!empty($settings['useVariableColumns'])) {
+	    if (empty($settings['columnWidth'])) {
+		$error['columnWidth'] = $this->translate('You must enter a number');
 	    }
-	    if (!is_numeric($settings['floatWidth'])) {
-		$error['floatWidth'] = $this->translate('You must enter a number');
-	    }
-	    if (!is_numeric($settings['floatHeight'])) {
-		$error['floatHeight'] = $this->translate('You must enter a number');
+	    if (empty($settings['rowHeight'])) {
+		$error['rowHeight'] = $this->translate('You must enter a number');
 	    }
 	}
 	return $error;
