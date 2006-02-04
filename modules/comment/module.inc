@@ -103,6 +103,7 @@ class CommentModule extends GalleryModule {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
+	case '0.9.7':
 	case '1.0.0':
 	    $storage =& $gallery->getStorage();
 	    $ret = $storage->configureStore($this->getId(), array('GalleryComment:1.0'));
