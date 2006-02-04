@@ -102,7 +102,7 @@
 
 	{if (sizeof($SearchShowAll.results.results) > 0)}
 	  {assign var="childrenInColumnCount" value=0}
-	  <table id="gbThumbMatrix"><tr>
+	  <table><tr>
 	    {foreach from=$SearchShowAll.results.results item=result}
 	      {* Move to a new row *}
 	      {if ($childrenInColumnCount == 4)}
@@ -126,8 +126,8 @@
 		<ul class="giInfo">
 		  {foreach from=$result.fields item=field}
 		  <li>
-		    {$field.key}:
-		    {$field.value|default:"&nbsp;"|ireplace:$form.searchCriteria:"<span class=\"giSearchHighlight\">\\1</span>"|markup}
+		    <span class="ResultKey">{$field.key}:</span>
+		    <span class="ResultData">{$field.value|default:"&nbsp;"|markup}</span>
 		  </li>
 		  {/foreach}
 		</ul>
@@ -139,6 +139,9 @@
 	      <td>&nbsp;</td>
 	    {/section}
 	  </tr></table>
+	  <script type="text/javascript">
+	    search_HighlightResults('{$form.searchCriteria}');
+	  </script>
 	{else}
 	  <p class="giDescription">
 	    {g->text text="No results found for"} '{$form.searchCriteria}'

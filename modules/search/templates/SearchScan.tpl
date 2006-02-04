@@ -94,7 +94,7 @@
 
 	{assign var="searchCriteria" value=$form.searchCriteria}
 	{if (sizeof($results.results) > 0)}
-	  <table id="gbThumbMatrix"><tr>
+	  <table><tr>
 	    {foreach from=$results.results item=result}
 	      {assign var=itemId value=$result.itemId}
 	      <td class="{if
@@ -112,8 +112,8 @@
 		  {foreach from=$result.fields item=field}
 		    {if isset($field.value)}
 		    <li>
-		      {$field.key}:
-		      {$field.value|default:"&nbsp;"|ireplace:$searchCriteria:"<span class=\"giSearchHighlight\">\\1</span>"|markup}
+		      <span class="ResultKey">{$field.key}:</span>
+		      <span class="ResultData">{$field.value|default:"&nbsp;"|markup}</span>
 		    </li>
 		    {/if}
 		  {/foreach}
@@ -121,6 +121,9 @@
 	      </td>
 	    {/foreach}
 	  </tr></table>
+	  <script type="text/javascript">
+	    search_HighlightResults('{$searchCriteria}');
+	  </script>
 	{else}
 	  <p class="giDescription">
 	    {g->text text="No results found for"} '{$form.searchCriteria}'
