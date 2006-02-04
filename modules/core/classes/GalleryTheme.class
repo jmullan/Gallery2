@@ -148,6 +148,37 @@ class GalleryTheme extends GalleryPlugin {
 				'value' => $params['columns']);
 	}
 
+	if (isset($params['useVariableColumns']) && isset($standard['useVariableColumns'])) {
+	    $settings[] = array('key' => 'useVariableColumns',
+				'name' => $core->translate('Allow browser window width to set columns per album page'),
+				'type' => 'checkbox',
+				'value' => $params['useVariableColumns']);
+	}
+
+	if (isset($params['perPage']) && isset($standard['perPage'])) {
+	    $settings[] = array('key' => 'perPage',
+				'name' => $core->translate('Number of items to show per page'),
+				'type' => 'text-field',
+				'typeParams' => array('size' => 2),
+				'value' => $params['perPage']);
+	}
+
+	if (isset($params['rowHeight']) && isset($standard['rowHeight'])) {
+            $settings[] = array('key' => 'rowHeight',
+                                'name' => $this->translate('Row height (pixels)'),
+                                'type' => 'text-field',
+                                'typeParams' => array('size' => 3),
+                                'value' => $params['rowHeight']);
+        }
+        
+	if (isset($params['columnWidth']) && isset($standard['columnWidth'])) {
+            $settings[] = array('key' => 'columnWidth',
+                                'name' => $this->translate('Column width (pixels)'),
+                                'type' => 'text-field',
+                                'typeParams' => array('size' => 3),
+                                'value' => $params['columnWidth']);
+        }
+        
 	if (isset($params['showImageOwner']) && isset($standard['showImageOwner'])) {
 	    $settings[] = array('key' => 'showImageOwner',
 				'name' => $core->translate('Show image owners'),
@@ -167,14 +198,6 @@ class GalleryTheme extends GalleryPlugin {
 				'name' => $core->translate('Show micro navigation thumbnails'),
 				'type' => 'checkbox',
 				'value' => $params['showMicroThumbs']);
-	}
-
-	if (isset($params['perPage']) && isset($standard['perPage'])) {
-	    $settings[] = array('key' => 'perPage',
-				'name' => $core->translate('Number of items to show per page'),
-				'type' => 'text-field',
-				'typeParams' => array('size' => 2),
-				'value' => $params['perPage']);
 	}
 
 	if (isset($params['sidebarBlocks']) && isset($standard['sidebarBlocks'])) {
@@ -280,17 +303,33 @@ class GalleryTheme extends GalleryPlugin {
 	$error = array();
 	$standard = $this->getStandardSettings();
 
-	if (isset($standard['rows'])) {
-	    if (empty($settings['rows']) || !is_numeric($settings['rows'])) {
-		$error['rows'] = $this->translate('You must enter a number greater than 0');
-	    }
-	}
+        if (isset($standard['rows'])) {
+            if ( (!empty($settings['rows']) && !is_numeric($settings['rows']))
+                        || (empty($settings['rows']) && empty($settings['useVariableColumns'])) ) {
+                $error['rows'] = $this->translate('You must enter a number greater than 0');
+            }
+        }
+        if (isset($standard['columns'])) {
+            if ( (!empty($settings['columns']) && !is_numeric($settings['columns']))
+                        || (empty($settings['columns']) && empty($settings['useVariableColumns'])) ) {
+                $error['columns'] = $this->translate('You must enter a number greater than 0');
+            }
+        }
+        if (isset($standard['perPage'])) {
+            $isRequired = !isset($standard['useVariableColumns']) || !empty($settings['useVariableColumns']);
+            if ( (!empty($settings['perPage']) && !is_numeric($settings['perPage']))
+                        || (empty($settings['perPage']) && $isRequired) ) {
+                $error['perPage'] = $this->translate('You must enter a number greater than 0');
+            }
+        }
 
-	if (isset($standard['columns'])) {
-	    if (empty($settings['columns']) || !is_numeric($settings['columns'])) {
-		$error['columns'] = $this->translate('You must enter a number greater than 0');
-	    }
-	}
+        if (!empty($settings['rowHeight']) && !is_numeric($settings['rowHeight'])) {
+            $error['rowHeight'] = $this->translate('You must enter a number greater than 0');
+        }
+
+        if (!empty($settings['columnWidth']) && !is_numeric($settings['columnWidth'])) {
+            $error['columnWidth'] = $this->translate('You must enter a number greater than 0');
+        }
 
 	foreach (array('sidebarBlocks', 'albumBlocks', 'photoBlocks') as $blockKey) {
 	    if (isset($standard[$blockKey])) {
@@ -1702,13 +1741,17 @@ class GalleryTheme extends GalleryPlugin {
      * @return int
      */
     function getPageSize($params) {
-	if (!empty($params['rows']) && !empty($params['columns'])) {
-	    return $params['rows'] * $params['columns'];
-	}
-
-	if (!empty($params['perPage'])) {
+	if (!empty($params['useVariableColumns']) && !empty($params['perPage'])) {
 	    return $params['perPage'];
 	}
+
+	if (!empty($params['rows']) && !empty($params['columns'])) {
+	    return $params['rows'] * $params['columns'];
+ 	}
+ 
+	if (!empty($params['perPage'])) {
+	    return $params['perPage'];
+ 	}
 
 	return 0;
     }
