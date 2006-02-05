@@ -100,13 +100,6 @@ class GalleryEmbed {
 	static $firstCacheKey = 'GalleryEmbed::initFirstPass';
 	static $secondCacheKey = 'GalleryEmbed::initSecondPass';
 
-	if (isset($initParams['apiVersion'])) {
-	    if (!GalleryEmbed::isCompatibleWithEmbedApi($initParams['apiVersion'])) {
-		return GalleryCoreApi::error(ERROR_PLUGIN_VERSION_MISMATCH, __FILE__, __LINE__,
-					     'Embedding API version is incompatible');
-	    }
-	}
-	
 	/* Only InitFirstPass if not already done so in a prior call */
 	if (!GalleryDataCache::containsKey($firstCacheKey)) {
 	    if (isset($initParams['embedUri'])) {
@@ -117,6 +110,13 @@ class GalleryEmbed {
 	    GalleryDataCache::put($firstCacheKey, true);
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+	
+	if (isset($initParams['apiVersion'])) {
+	    if (!GalleryEmbed::isCompatibleWithEmbedApi($initParams['apiVersion'])) {
+		return GalleryCoreApi::error(ERROR_PLUGIN_VERSION_MISMATCH, __FILE__, __LINE__,
+					     'Embedding API version is incompatible');
 	    }
 	}
 
