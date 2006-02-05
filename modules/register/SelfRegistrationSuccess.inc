@@ -28,29 +28,7 @@
  */
 
 /**
- * This controller will handle the success-confirmation for the selfregistration of an user
- *
- * @package SelfRegistration
- * @subpackage UserInterface
- *
- */
-class SelfRegistrationSuccessController extends GalleryController {
-
-    /**
-     * @see GalleryController::handleRequest
-     */
-    function handleRequest($form) {
-	global $gallery;
-	$results = array();
-	$results['delegate']['view'] = 'core.UserAdmin';
-	$results['delegate']['subView'] = 'register.SelfRegistrationSuccess';
-
-	return array(null, $results);
-    }
-}
-
-/**
- * This view will show a confirmation for the user
+ * This view will show a registration confirmation for the user
  *
  * @package SelfRegistration
  * @subpackage UserInterface
@@ -61,11 +39,13 @@ class SelfRegistrationSuccessView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	global $gallery;
+	list ($pending, $sentConfirmationEmail) =
+	    GalleryUtilities::getRequestVariables('pending', 'sentConfirmationEmail');
 
-	$selfregistration = array('email' => 'e@mail.de');
-	$template->setVariable('selfregistration', $selfregistration);
-	$template->setVariable('controller', 'register.SelfRegistrationSuccess');
+	$SelfRegistrationSuccess = array();
+	$SelfRegistrationSuccess['pending'] = $pending;
+	$SelfRegistrationSuccess['sentConfirmationEmail'] = $sentConfirmationEmail;
+	$template->setVariable('SelfRegistrationSuccess', $SelfRegistrationSuccess);
 	return array(null,
 		     array('body' => 'modules/register/templates/SelfRegistrationSuccess.tpl'));
     }

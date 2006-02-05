@@ -14,7 +14,7 @@
     {g->text text="This user cannot be activated."}
   </div>
   <p class="giDescription"}>
-    {g->text text="This can happen if the URL you entered is not correct or you already activated this account. Please check if your mailclient broke the link into several lines and append them without spaces."}
+    {g->text text="This can happen if the URL you entered is not correct or you already activated this account. Please check if your mail client broke the link into several lines and append them without spaces."}
   </p>
 {else}
 

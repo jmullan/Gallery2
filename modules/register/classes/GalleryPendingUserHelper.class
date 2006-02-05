@@ -171,8 +171,8 @@ class GalleryPendingUserHelper {
 		  'username' => GalleryUtilities::htmlEntityDecode($pendingUser->getUserName()),
 		  'key' => $pendingUser->getRegistrationKey()),
 	    array('forceFullUrl' => true, 'htmlEntities' => false));
-	$baseUrl = $generator->generateUrl(array(),
-					   array('forceFullUrl' => true, 'htmlEntities' => false));
+	$baseUrl = $generator->generateUrl(
+	    array(), array('forceFullUrl' => true, 'htmlEntities' => false));
 
 	$ret = GalleryCoreApi::sendTemplatedEmail(
 		'modules/register/templates/ConfirmationEmail.tpl',
