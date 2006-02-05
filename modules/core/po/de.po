@@ -29,8 +29,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gallery: Core 1.0\n"
 "POT-Creation-Date: 2003-02-11 03:09-0800\n"
-"PO-Revision-Date: 2005-11-23 01:22+0000\n"
-"Last-Translator: Moritz Stoltenburg <moritz.stoltenburg@web.de>\n"
+"PO-Revision-Date: 2006-02-05 02:02+0000\n"
+"Last-Translator: Frederik Kunz <frederik.kunz@web.de>\n"
 "Language-Team: German <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -113,9 +113,8 @@ msgstr "deinstallieren"
 msgid "deactivate"
 msgstr "deaktivieren"
 
-#, fuzzy
 msgid "Performing Maintenance Tasks"
-msgstr "System-Wartungsaufgaben ausführen"
+msgstr "System-Wartungsaufgaben werden ausgeführt"
 
 #, c-format
 msgid "Downloading %s"
@@ -124,7 +123,6 @@ msgstr "%s herunterladen"
 msgid "Done."
 msgstr "Fertig."
 
-#, fuzzy
 msgid "Upgrade"
 msgstr "Aktualisieren"
 
@@ -188,9 +186,8 @@ msgstr "Defekte Bildderivate werden ermittelt"
 msgid "Clearing fast-download cache"
 msgstr "Leere Schnell-Download-Cache"
 
-#, fuzzy
 msgid "Deleting old fast-download cache"
-msgstr "Leere Schnell-Download-Cache"
+msgstr "Leere alten Schnell-Download-Cache"
 
 msgid "Site Admins"
 msgstr "Site-Administratoren"
@@ -293,13 +290,11 @@ msgstr "Die Einstellungen wurden erfolgreich gespeichert."
 msgid "&laquo; default theme &raquo;"
 msgstr "&laquo; Standard-Motiv &raquo;"
 
-#, fuzzy
 msgid "Recreating resized images"
-msgstr "Erstelle Zwischengrößen erneut"
+msgstr "Erstelle skalierte Bilder erneut"
 
-#, fuzzy
 msgid "Rebuilding thumbnails..."
-msgstr "Erstelle Vorschaubilder erneut"
+msgstr "Erstelle Vorschaubilder erneut..."
 
 msgid "Album"
 msgstr "Album"
@@ -494,7 +489,7 @@ msgid "Modules"
 msgstr "Module"
 
 msgid "Repository"
-msgstr ""
+msgstr "Erweiterungen"
 
 msgid "Themes"
 msgstr "Motive"
@@ -574,18 +569,17 @@ msgid "%d items failed"
 msgstr "%d elemente fehlgeschlagen"
 
 msgid "Delete database cache"
-msgstr "Datenbankpuffer leeren"
+msgstr "Datenbankzwischenspeicher leeren"
 
-#, fuzzy
 msgid ""
 "Gallery stores commonly used database information on disk for increased performance. If you "
 "modify the database directly, you should run this task to clean out the cache and force "
 "Gallery to reload the information from the database."
 msgstr ""
-"Gallery speichert häufig benötigte Datenbank-Informationen zur Beschleunigung in einem "
-"Puffer. Falls Sie die Datenbank direkt geändert haben, sollten Sie diese Aufgabe ausführen, "
-"um den Puffer zu löschen und Gallery dazu zu zwingen, die Informationen aus der Datenbank "
-"neu zu laden."
+"Gallery speichert häufig benötigte Datenbank-Informationen zur Beschleunigung auf der "
+"Festplatte. Falls Sie die Datenbank direkt geändert haben, sollten Sie diese Aufgabe ausführen, "
+"um den Zwischenspeicher zu löschen und Gallery dazu zu zwingen, die Informationen aus der "
+"Datenbank neu zu laden."
 
 #, c-format
 msgid "Successfully deleted directory: %s"
@@ -677,35 +671,31 @@ msgid "download"
 msgstr "downloaden"
 
 msgid "Plugins directory does not exist."
-msgstr "Das Verzeichnis für Erweiterungen existiert nicht."
+msgstr "Der Ordner für Erweiterungen existiert nicht."
 
-#, fuzzy
-msgid ""
-"Couldn't create plugins subdirectory. Make sure the webserver has write permissions in it."
+msgid "Couldn't create plugins subdirectory. Make sure the webserver has write permissions in it."
 msgstr ""
-"Konnte das Verzeichnis für Erweiterungen '%s' nicht in '%s' anlegen. Stellen Sie sicher, "
-"dass der Webserver die nötigen Schreibrechte dafür hat."
+"Konnte den Ordner für Erweiterungen nicht anlegen. Stellen Sie sicher, dass der Webserver "
+"die nötigen Schreibrechte dafür hat."
 
 msgid "Couldn't create repository cache path."
-msgstr ""
+msgstr "Pfad für den Plugin-Katalog-Cache konnte nicht erstellt werden."
 
-#, fuzzy
-msgid ""
-"Couldn't create cache subdirectory. Make sure the web server has write permissions in it."
+msgid "Couldn't create cache subdirectory. Make sure the web server has write permissions in it."
 msgstr ""
-"Konnte das Cache-Verzeichnis '%s' nicht in '%s' anlegen. Stellen Sie sicher, dass der "
-"Webserver die nötigen Schreibrechte dafür hat."
+"Konnte den Cache-Unterordner nicht anlegen. Stellen Sie sicher, dass der Webserver "
+"die nötigen Schreibrechte dafür hat."
 
 #, c-format
 msgid "Error downloading index from '%s'."
-msgstr ""
+msgstr "Fehler beim Herunterladen des Index von '%s'."
 
 #, c-format
 msgid "Error downloading index hash from '%s'."
-msgstr ""
+msgstr "Fehler beim Herunterladen der Index-Hash-Tabelle von '%s'."
 
 msgid "Index integrity check failed."
-msgstr ""
+msgstr "Integritätsprüfung des Index fehlgeschlagen."
 
 msgid "&laquo; default sort order &raquo;"
 msgstr "&laquo; Standard-Sortierreihenfolge &raquo;"
@@ -758,7 +748,7 @@ msgid "Donate to the Gallery project"
 msgstr "Spenden Sie für das Gallery-Projekt"
 
 msgid "G2.1: Blackjack"
-msgstr ""
+msgstr "G2.1: Blackjack"
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -855,6 +845,8 @@ msgid ""
 "Invalid return URL! The requested URL %s tried to insert a redirection to %s which is not a "
 "part of this Gallery."
 msgstr ""
+"Ungültige Antwort-URL! Die angeforderte URL %s versuchte, eine Weiterleitung zu %s "
+"einzufügen, was nicht innerhalb dieser Gallery liegt."
 
 msgid "Back"
 msgstr "Zurück"
@@ -975,7 +967,6 @@ msgstr "Fehler beim Senden der Test E-Mail, siehe unten für Einzelheiten."
 msgid "Language Settings"
 msgstr "Spracheinstellungen"
 
-#, fuzzy
 msgid ""
 "Select language defaults for Gallery. Individual users can override this setting in their "
 "personal preferences or via the language selector block if available. Gallery will try to "
@@ -984,13 +975,14 @@ msgid ""
 msgstr ""
 "Wählen Sie die Standard-Sprache für Gallery. Einzelne Benutzer können diese Auswahl in ihren "
 "persönlichen Einstellungen oder - falls vorhanden - über die Sprachauswahlbox außer Kraft "
-"setzen."
+"setzen. Gallery wird bei jedem Nutzer versuchen, die passende Sprache zu erkennen, wenn die "
+"Prüfung der Browser-Vorgaben aktiviert wurde."
 
 msgid "Default language"
 msgstr "Standard-Sprache"
 
 msgid "Check Browser Preference"
-msgstr ""
+msgstr "Prüfe die Vorgaben des Browsers"
 
 msgid "gettext"
 msgstr "gettext"
@@ -1701,13 +1693,13 @@ msgstr ""
 "versuchen Sie es später noch einmal."
 
 msgid "The repository index has been successfully updated."
-msgstr ""
+msgstr "Der Index des Erweiterungen-Katalogs wurde erfolgreich aktualisiert."
 
 msgid "All plugins are already up-to-date."
 msgstr "Alle Erweiterungen sind schon auf dem neusten Stand."
 
 msgid "Common Tasks"
-msgstr ""
+msgstr "Allgemeine Aufgaben"
 
 msgid "Warning: Experimental feature!"
 msgstr "Vorsicht: Experimentelle Funktion!"
@@ -1716,9 +1708,11 @@ msgid ""
 "The repository features are currently experimental, and no actual repository has been set up "
 "yet, so none of these features will work at this time."
 msgstr ""
+"Die Funktionen des Erweiterungen-Katalogs sind momental experimentell und es wurde "
+"noch kein eigentlicher Katalog eingerichtet. Im Moment ist der Katalog daher ohne Funktion."
 
 msgid "Update Index"
-msgstr ""
+msgstr "Index aktualisieren"
 
 msgid ""
 "The Gallery repository contains the latest modules and themes extensively tested by the "
@@ -1728,17 +1722,28 @@ msgid ""
 "personal information is sent to the Gallery server during updating. On slower connections "
 "the process might take a minute or two."
 msgstr ""
+"Gallerys Erweiterungen-Katalog enthält die neusten Module und Motive, die ausgiebig vom "
+"Gallery-Team geprüft wurden. Der Katalog-Index enthält Informationen über abrufbare "
+"Erweiterungen, wie zum Beispiel die neusten Versionen, verfügbare Sprachen und "
+"Kompatibilität. Der Index muss regelmäßig mit dem Gallery-Server abgeglichen werden, "
+"damit Sie über verfügbare Aktualisierungen informiert werden. Keine persönlichen "
+"Informationen werden währen dieses Vorgangs zum Gallery-Server übertragen. Bei "
+"langsameren Verbindungen könnte die Aktualisierung ein bis zwei Minuten dauern."
 
 #, c-format
 msgid ""
 "As of the last update on %s, the repository contains %s modules and %s themes. Its contents "
 "can be viewed on the Modules and Themes tabs."
 msgstr ""
+"Seit der letzten Aktualisierung am %s, enthält der Katalog %s Module und %s Motive. Seine "
+"Inhalte können in den Bereichen für Module und Motive betrachtet werden."
 
 msgid ""
 "The index has never been updated. Click on the Update button to see what updates are "
 "available."
 msgstr ""
+"Der Index wurde noch nie aktualisiert. Klicken Sie auf den Aktualisieren-Knopf, um zu sehen, "
+"welche Aktualisierungen verfügbar sind."
 
 msgid "Update"
 msgstr "Aktualisierung"
@@ -1752,51 +1757,61 @@ msgid ""
 "the features of the new version may become available. Here are the recommended steps for "
 "upgrading:"
 msgstr ""
+"Eine neue Gallery-Version ist verfügbar, diese kann jedoch nicht über diese Oberfläche "
+"eingespielt werden. Eine Aktualisierung könnte dazu führen, dass einige Ihrer laufenden "
+"Erweiterungen nicht mehr funktionieren, während andere die von den Funktionen der neuen "
+"Version abhängen verfügbar werden. Hier sind die empfohlenen Schritte für eine "
+"Aktualisierung:"
 
 msgid "Review plugin compatibility (on the Themes and Modules tabs)"
-msgstr ""
+msgstr "Überprüfen Sie die Kompatibilität der Erweiterungen (in den Bereichen Motive und Module)"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%sDownload%s Gallery core"
-msgstr "Gallery-Kern <a href=\"%s\">herunterladen</a>"
+msgstr "Gallery-Kern %sherunterladen%s"
 
 #, c-format
 msgid "Read the %supgrade instructions%s and perform the upgrade"
-msgstr ""
+msgstr "Lesen Sie die %sAktualisierungs-Anleitung%s und führen Sie die Aktualisierung durch"
 
-#, fuzzy
 msgid "Gallery Up-To-Date"
-msgstr "Gallery-Kern"
+msgstr "Gallery ist aktuell"
 
 msgid ""
 "Gallery cannot be upgraded through this interface. When a new version becomes available, "
 "upgrade instructions will be presented here."
-msgstr ""
+msgstr "Gallery kann nicht über diese Oberfäche aktualisiert werden. Wenn eine neue Version verfügbar wird, werden Sie hier eine Anleitung zur Aktualisierung finden."
 
 msgid "Upgrade All Plugins"
-msgstr ""
+msgstr "Alle Erweiterungen aktualisieren"
 
 msgid ""
 "Gallery can automatically upgrade your themes and modules to the latest available versions. "
 "No new plugins will be downloaded."
 msgstr ""
+"Gallery kann automatisch alle Ihre Motive und Module auf die letzte verfügbare Version "
+"aktualisieren. Dabei werden keine neuen Erweiterungen heruntergeladen."
 
-#, fuzzy
 msgid "Upgrade All"
-msgstr "Alle Aktualisieren"
+msgstr "Alle aktualisieren"
 
 msgid ""
 "Once the repository index has been downloaded, a list of available plugins will be "
 "presented. It can be downloaded by clicking on the Update button on the Common Tasks tab."
 msgstr ""
+"Sobald der Katalog-Index heruntergeladen wurde, wird Ihnen eine Liste an verfügbaren "
+"Erweiterungen angeboten. Diese kann durch das Klicken auf den Aktualisieren-Knopf in "
+"Bereich Allgemeine Aufgaben heruntergeladen werden."
 
 msgid ""
 "The following plugins are available. Click on the action beside the plugin you're interested "
 "in to see what's available in the repository."
 msgstr ""
+"Die folgenden Erweiterungen sind verfügbar. Klicken Sie auf die Aktion neben der "
+"Erweiterung, die Sie interessiert, um zu sehen, was sich im Katalog befindet."
 
 msgid "Incompatible plugins are marked with an exclamation icon."
-msgstr ""
+msgstr "Inkompatible Erweiterungen werden mit einem Ausrufezeichen markiert."
 
 #, c-format
 msgid ""
@@ -1804,11 +1819,14 @@ msgid ""
 "installed core module, which are not shown here. You can view a %scomplete list%s of "
 "plugins, including incompatible ones, which are marked with a red icon."
 msgstr ""
+"Eine neue Version des Kernmoduls ist verfügbar. Einige Erweiterungen können inkompatibel "
+"mit dem installierten Kernmodul sein, welche hier nicht aufgeführt werden. Sie können eine "
+"%svollständige Liste%s an Erweiterungen abrufen, einschließlich der inkompatiblen, welche "
+"mit einem roten Symbol gekennzeichnet sind."
 
 msgid "Theme Name"
 msgstr "Motivname"
 
-#, fuzzy
 msgid "Latest"
 msgstr "Neuste"
 
@@ -1818,70 +1836,76 @@ msgstr "Inkompatible Erweiterung"
 msgid "Incompatible plugin!"
 msgstr "Inkompatible Erweiterung!"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Plugin API Required: %s (available: %s)"
-msgstr "Folgendes Modul-API wird benötigt: %s (Verfügbar sind: %s)"
+msgstr "Folgendes Erweiterungen-API wird benötigt: %s (Verfügbar: %s)"
 
 msgid "No packages have been selected."
-msgstr ""
+msgstr "Keine Pakete wurden ausgewählt."
 
-#, fuzzy
 msgid "Base Files"
-msgstr "Basis-Dateiname"
+msgstr "Basis-Dateien"
 
 msgid ""
 "The base files required for the theme to work and the English (US) translation will be "
 "downloaded."
 msgstr ""
+"Die die für das Funktionieren des Motiv notwendigen Basisdateien und die (US)-englische "
+"Übersetzung werden heruntergeladen."
 
 msgid "Upgrade Base Files"
-msgstr ""
+msgstr "Basisdateien aktualisieren"
 
 msgid "You can upgrade the base module files."
-msgstr ""
+msgstr "Sie können die Basismodul-Dateien aktualisieren."
 
 msgid "Upgrade base files"
-msgstr ""
+msgstr "Basisdateien aktualisieren"
 
 msgid "Base Files Up-To-Date"
-msgstr ""
+msgstr "Basisdateien sind aktuell"
 
 msgid "This plugin's base files are up-to-date."
-msgstr ""
+msgstr "Die Basis-Dateien dieser Erweiterung sind auf dem neusten Stand."
 
 msgid "Updated Translations"
-msgstr ""
+msgstr "Aktualisierte Übersetzungen"
 
 msgid ""
 "Below is a list of translations that have been updated since they were last downloaded. "
 "Select the ones you want to download."
 msgstr ""
+"Hier sehen Sie eine Liste an Übersetzungen, die aktualisiert wurden, seit sie das letzte "
+"Mal heruntergeladen wurden. Wählen Sie diejenigen aus, die Sie herunterladen möchten."
 
 msgid "Additional Languages"
-msgstr ""
+msgstr "Zusätzliche Sprachen"
 
 msgid ""
 "Below is a list of languages this plugin has been translated to. Select the ones you want "
 "included in addition to the ones already downloaded."
 msgstr ""
+"Hier sehen Sie eine Liste der Sprachen, in welche dieses Plugin übersetzt wurde. Wählen "
+"Sie die aus, welche sie zusätzlich zu den bereits heruntergeladenen haben möchten."
 
 msgid "Unit Tests"
-msgstr ""
+msgstr "Unit-Test"
 
 msgid ""
 "This plugin has unit tests available for download, which are useful for Gallery developers. "
 "All of the module's features are available without the tests."
 msgstr ""
+"Dieses Plugin bietet einige Unit-Tests zum Herunterladen an, welche für Gallery-Entwickler "
+"nützlich sind. Alle Funktionen dieses Moduls sind auch ohne diese Tests verfügbar."
 
 msgid "Download unit tests"
-msgstr ""
+msgstr "Unit-Tests herunterladen"
 
-#, fuzzy
 msgid "Gallery Repository Setup"
-msgstr "Gallery-Version"
+msgstr "Gallery-Erweiterungen einstellen"
 
 msgid "Warning:"
-msgstr ""
+msgstr "Warnung:"
 
 #, c-format
 msgid ""
@@ -1890,14 +1914,19 @@ msgid ""
 "directory called '%s' and allow the web server to write into it by appropriately setting the "
 "permissions."
 msgstr ""
+"Erstellen Sie einen Ordner mit dem Namen '%s' unterhalb Ihres Basis-Ordners, und erlauben "
+"Sie Ihrem Webserver, in diesen Ordner zu schreiben, indem Sie die entsprechenden Rechte "
+"vergeben."
 
 msgid "Instructions for Unix-type platforms:"
-msgstr ""
+msgstr "Anleitung für Unix-artige Platformen:"
 
 msgid ""
 "Refreshing this page will take you to the Repository if the directory has been successfully "
 "created."
 msgstr ""
+"Nach dem Neuladen dieser Seite werden Sie Zugriff auf den Katalog bekommen, falls der "
+"Ordner erfolgreich eingerichtet wurde."
 
 msgid "Gallery Themes"
 msgstr "Gallery-Motive"
@@ -1970,10 +1999,8 @@ msgstr "Neue Alben"
 msgid "%s Theme Settings"
 msgstr "%s Motiv-Einstellungen"
 
-msgid ""
-"These are the global settings for the theme.  They can be overridden at the album level."
-msgstr ""
-"Dies sind die globalen Motiv-Einstellungen. Sie können für jedes Album überschrieben werden."
+msgid "These are the global settings for the theme.  They can be overridden at the album level."
+msgstr "Dies sind die globalen Motiv-Einstellungen. Sie können für jedes Album überschrieben werden."
 
 msgid "Available"
 msgstr "Verfügbar"
@@ -2085,7 +2112,7 @@ msgid "Database Error"
 msgstr "Datenbankfehler"
 
 msgid "Platform Error"
-msgstr ""
+msgstr "Plattform-Fehler"
 
 msgid "Error"
 msgstr "Fehler"
@@ -2123,15 +2150,18 @@ msgstr ""
 "bitten. Die Fehlerdetails können dann relativ nah am Ende der langen Debug-Ausgabe gefunden "
 "werden."
 
-#, fuzzy
 msgid "An error has occurred while interacting with the platform."
-msgstr "Es ist ein Fehler beim Zugriff auf die Datenbank aufgetreten."
+msgstr "Es ist ein Fehler bei der Kommunikation mit der Platform aufgetreten."
 
 msgid ""
 "The exact nature of the platform error is unknown. A common cause are insufficient file "
 "system permissions. This can happen if you or your webhost changed something in the file "
 "system, e.g. by restoring data from a backup."
 msgstr ""
+"Die genaue Art des Plattform-Fehlers ist unbekannt. Ein verbreiteter Grund sind "
+"ungenügende Dateisystem-Berechtigungen. Dies kann passieren, wenn durch Sie "
+"oder Ihren Webhoster eine Änderung am Dateisystem vorgenommen wurde, z.B. "
+"durch das Einspielen von Daten aus einer Backup."
 
 msgid "An error has occurred."
 msgstr "Es ist ein Fehler aufgetreten."
@@ -2154,8 +2184,7 @@ msgstr ""
 
 #, c-format
 msgid "Visit the <a href=\"%s\">Modules</a> page to activate a Graphics Toolkit."
-msgstr ""
-"Gehen sie auf die <a href=\"%s\">Module-Seite</a> um ein grafisches Werkzeug zu aktivieren."
+msgstr "Gehen sie auf die <a href=\"%s\">Module-Seite</a> um ein grafisches Werkzeug zu aktivieren."
 
 msgid "Add Sub-Album"
 msgstr "Unteralbum hinzufügen"
@@ -2283,8 +2312,7 @@ msgstr "Pfad auf dem Server"
 msgid "You must enter a directory."
 msgstr "Sie müssen ein Verzeichnis eingeben."
 
-msgid ""
-"The directory you entered is invalid.  Make sure that the directory is readable by all users."
+msgid "The directory you entered is invalid.  Make sure that the directory is readable by all users."
 msgstr ""
 "Das angegebene Verzeichnis ist nicht gültig. Vergewissern Sie sich, dass das Verzeichnis von "
 "allen Benutzern gelesen werden kann."
@@ -2546,12 +2574,10 @@ msgstr ""
 "und neuen Elemente angewendet."
 
 msgid "Choose a theme for this album. (The way the album is arranged on the page)"
-msgstr ""
-"Bitte wählen Sie ein Motiv für dieses Album. (Das Layout, mit dem das Album angezeigt wird)"
+msgstr "Bitte wählen Sie ein Motiv für dieses Album. (Das Layout, mit dem das Album angezeigt wird)"
 
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
-msgstr ""
-" Jedes Element benötigt ein Vorschaubild. Geben Sie hier die Standardgröße in Pixeln an."
+msgstr " Jedes Element benötigt ein Vorschaubild. Geben Sie hier die Standardgröße in Pixeln an."
 
 msgid "You must enter a number (greater than zero)"
 msgstr "Sie müssen eine Zahl eingeben (größer als Null)"
@@ -2614,11 +2640,9 @@ msgstr "Sie müssen einen Wert größer/gleich 0 eingeben"
 msgid "Height"
 msgstr "Höhe"
 
-#, fuzzy
 msgid "There were errors saving some items"
 msgstr "Es sind Fehler beim Speichern einiger Elemente aufgetreten"
 
-#, fuzzy
 msgid "There were errors saving all items"
 msgstr "Es sind Fehler beim Speichern aller Elemente aufgetreten"
 
@@ -2706,7 +2730,8 @@ msgstr "Zeit:"
 
 msgid "Use the original capture date and time from file information (e.g. Exif tag):"
 msgstr ""
-"Das original Aufnahmedatum und Aufnahmezeit aus den Dateiinformationen (z.B. EXIF-Tags):"
+"Das original Aufnahmedatum und Aufnahmezeit aus den Dateiinformationen "
+"(z.B. EXIF-Tags):"
 
 msgid "You must enter a valid date and time"
 msgstr "Sie müssen ein gültiges Datum und Zeit eingeben."
@@ -2881,9 +2906,10 @@ msgstr "Einstellung"
 msgid "Use Global"
 msgstr "Globalen Wert benutzen"
 
-msgid ""
-"Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
+msgid "Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
 msgstr ""
+"Beachten Sie: Um das gleiche Motiv für alle Unteralben einzurichten, klicken Sie das "
+"entsprechende Kästchen unter <b>Album</b> an"
 
 msgid "Album Highlight"
 msgstr "Titelbild des Albums"
@@ -2914,16 +2940,13 @@ msgstr "Dieses Album enthält keine verschiebbaren Elemente."
 msgid "Choose the items you want to move"
 msgstr "Wählen Sie die Elemente, die Sie verschieben möchten"
 
-msgid ""
-"The destination you chose does not accept sub-albums, so all sub-albums have been deselected."
+msgid "The destination you chose does not accept sub-albums, so all sub-albums have been deselected."
 msgstr ""
 "Das ausgewählte Ziel erlaubt keine Unteralben, es wurden daher alle entsprechenden "
 "Unteralben abgewählt."
 
-msgid ""
-"The destination you chose only accepts sub-albums, so all non-albums have been deselected."
-msgstr ""
-"Das ausgewählte Ziel erlaubt nur Unteralben, es wurde daher alle nicht-Alben abgewählt."
+msgid "The destination you chose only accepts sub-albums, so all non-albums have been deselected."
+msgstr "Das ausgewählte Ziel erlaubt nur Unteralben, es wurde daher alle nicht-Alben abgewählt."
 
 msgid "You are not allowed to move this item away from here."
 msgstr "Es ist Ihnen nicht erlaubt dieses Element von hier zu verschieben."
@@ -3091,11 +3114,10 @@ msgid "Continue..."
 msgstr "Fortfahren..."
 
 msgid "Site is temporarily down for maintenance."
-msgstr ""
+msgstr "Die Seite wird momentan gewartet und ist daher nicht verfügbar."
 
-#, fuzzy
 msgid "Admin Login"
-msgstr "Admininstrations-Optionen"
+msgstr "Admininstrator-Login"
 
 msgid "Enter a URL"
 msgstr "Bitten geben Sie eine URL ein"
@@ -3132,21 +3154,21 @@ msgstr "Konfigurationsfehler: Fehlendes Motiv"
 msgid "Missing Theme"
 msgstr "Fehlendes Motiv"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "This page is configured to use the %s theme, but it is either inactive, not installed, or "
 "incompatible."
 msgstr ""
-"Dieses Album wurde so konfiguriert, dass es das %s-Motiv benutzt, das aber deaktiviert oder "
-"nicht installiert ist."
+"Diese Seite wurde so konfiguriert, dass sie das %s-Motiv benutzt, welches aber "
+"entweder deaktiviert, nicht installiert oder inkompatibel ist."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "This album is configured to use the %s theme, but it is either inactive, not installed, or "
 "incompatible."
 msgstr ""
-"Dieses Album wurde so konfiguriert, dass es das %s-Motiv benutzt, das aber deaktiviert oder "
-"nicht installiert ist."
+"Dieses Album wurde so konfiguriert, dass es das %s-Motiv benutzt, welches aber "
+"entweder deaktiviert, nicht installiert oder inkompatibel ist."
 
 #, c-format
 msgid ""
@@ -3210,7 +3232,7 @@ msgid "Current Password"
 msgstr "Aktuelles Passwort"
 
 msgid "You must enter your current password"
-msgstr "Sie müssen Ihr aktuelles Passwort eingeben!"
+msgstr "Sie müssen Ihr aktuelles Passwort eingeben"
 
 msgid "Incorrect password"
 msgstr "Falsches Passwort"
@@ -3323,8 +3345,7 @@ msgstr ""
 "Verzeichnis. Damit sind Sie fertig."
 
 msgid "Once you've uploaded the file, click refresh to continue."
-msgstr ""
-"Sobald Sie die Datei hochgeladen haben, klicken Sie auf 'Aktualisieren' um fortzufahren."
+msgstr "Sobald Sie die Datei hochgeladen haben, klicken Sie auf 'Aktualisieren' um fortzufahren."
 
 msgid "Emergency Administrator Password Reset"
 msgstr "Notfall-Zurücksetzen des Administrator-Passworts"
@@ -3333,7 +3354,8 @@ msgid ""
 "This page can be used by a system administrator to securely reset the password on any "
 "account."
 msgstr ""
-"Auf dieser Seite können Systemadministratoren sicher beliebige Kontopasswörter zurücksetzen."
+"Auf dieser Seite können Systemadministratoren sicher beliebige Kontopasswörter "
+"zurücksetzen."
 
 msgid "Authorization Confirmed"
 msgstr "Authorisierung bestätigt"
@@ -3368,8 +3390,7 @@ msgstr "Authorisierungsdatei nicht lesbar"
 
 #, c-format
 msgid "Your %s file is not readable. Please give Gallery read permissions on the file."
-msgstr ""
-"Ihre %s Datei ist nicht lesbar. Bitte geben Sie Gallery Leseberechtigung für diese Datei."
+msgstr "Ihre %s Datei ist nicht lesbar. Bitte geben Sie Gallery Leseberechtigung für diese Datei."
 
 msgid "Refresh"
 msgstr "Aktualisieren"
@@ -3539,13 +3560,3 @@ msgstr "[test] eine zweite Zugriffsberechtigung"
 msgid "Unit test theme"
 msgstr "Unit Test Motiv"
 
-# sidebar.tpl: %d is number of item, %s is truncated title
-#, fuzzy
-#~ msgid "$ cd %s"
-#~ msgstr "%d. %s"
-
-#~ msgid "&laquo; None &raquo;"
-#~ msgstr "&laquo; keine &raquo;"
-
-#~ msgid "Unable to delete directory: /templates_c"
-#~ msgstr "Konnte das Verzeichnis '/templates_c' nicht löschen"

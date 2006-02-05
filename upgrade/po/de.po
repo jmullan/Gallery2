@@ -27,7 +27,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Upgrader 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-05-20 12:20+0200\n"
-"PO-Revision-Date: 2005-09-01 03:14+0000\n"
+"PO-Revision-Date: 2006-02-05 02:49+0000\n"
 "Last-Translator: Frederik Kunz <frederik.kunz@web.de>\n"
 "Language-Team: German <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -54,9 +54,8 @@ msgstr "<b>Fehler:</b> falsches Passwort."
 msgid "Empty Cache"
 msgstr "Cache leeren"
 
-#, fuzzy
 msgid "Finish Upgrade"
-msgstr "Aktualisierung beginnen"
+msgstr "Aktualisierung abschließen"
 
 msgid "System Checks"
 msgstr "Systemprüfungen"
@@ -105,15 +104,15 @@ msgid "Safe Mode"
 msgstr "Safe Mode"
 
 msgid "Regular expressions"
-msgstr ""
+msgstr "Reguläre Ausdrücke"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error: Your PHP is configured without support for %sPerl Compatible Regular Expressions%s. "
 "You must enable these functions before Gallery will run."
 msgstr ""
-"Fehler: Ihre Version von PHP ist mit eingeschaltetem 'Safe Mode' konfiguriert.  Sie müssen "
-"ihn ausschalten, bevor Gallery funktionieren kann."
+"Fehler: Ihre Version von PHP ist ohne %sPerl-kompatible reguläre Ausdrücke%s "
+"konfiguriert.  Sie müssen diese Funktionen einschalten, bevor Gallery funktionieren kann."
 
 msgid "exec() allowed"
 msgstr "exec() erlaubt"
@@ -200,7 +199,7 @@ msgstr ""
 "Hochladen größerer Dateien zu erlauben."
 
 msgid "Translation support"
-msgstr ""
+msgstr "Unterstützung für Übersetzung"
 
 #, c-format
 msgid ""
@@ -208,18 +207,25 @@ msgid ""
 "please instruct your system administrator to reconfigure PHP with the %sgettext%s option "
 "enabled."
 msgstr ""
+"Ihr Webserver unterstützt keine Lokalisierung. Um die Unterstützung für zusätzliche "
+"Sprachen einzuschalten, teilen Sie bitte Ihrem Systemadministrator mit, dass er PHP mit "
+"eingeschalteter %sgettext%s-Option rekonfigurieren soll."
 
 #, c-format
 msgid ""
 "Your PHP is missing the function %sbind_textdomain_codeset%s. This means Gallery may display "
 "extended characters for some languages incorrectly."
 msgstr ""
+"Ihrer PHP-Version fehlt die Funktion %sbind_textdomain_codeset%s. Das könnte dazu führen, "
+"dass Gallery einigen Sprachen mit erweitertem Zeichensatz nicht richtig darstellt."
 
 #, c-format
 msgid ""
 "Your PHP is missing the function %sdngettext%s. This means Gallery will be unable to "
 "translate plural forms."
 msgstr ""
+"Ihrer PHP-Version fehlt die Funktion %sdngettext%s. Das bedeutet, dass Gallery Worte "
+"mit Mehrzahl falsch darstellen wird."
 
 msgid "Zend compatibility mode"
 msgstr "Zend-Kompatibilitätsmodus"
@@ -237,24 +243,21 @@ msgstr ""
 "keine Antwort, dann müssen Sie den <tt>ze1_compatibility_mode</tt> abschalten, bevor Sie "
 "fortfahren."
 
-#, fuzzy
 msgid "putenv() allowed"
-msgstr "exec() erlaubt"
+msgstr "putenv() erlaubt"
 
-#, fuzzy
 msgid ""
 "Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> "
 "parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
 "Gallery will be unable to run in other languages than the system language and English."
 msgstr ""
-"Warnung: die Funktion set_time_limit() in Ihrem PHP ist deaktiviert (<b>disabled_functions</"
-"b> parameter in php.ini).  Gallery kann zwar im Prinzip mit dieser Einstellung arbeiten, "
-"aber nicht zuverlässig.  Jede Operation, die länger als %d Sekunden dauert, wird "
-"fehlschlagen (und in einigen Fällen eine leere Seite anzeigen), möglicherweise führt das "
-"auch zu Datenverlust."
+"Warnung: die Funktion putenv() in Ihrem PHP ist deaktiviert (Parameter "
+"<b>disabled_functions</b>in php.ini).  Gallery kann zwar im Prinzip mit dieser "
+"Einstellung arbeiten, aber auf einigen wenigen Systemen wird Gallery nur "
+"in Englisch und der Systemsprache laufen."
 
 msgid "Output buffering disabled"
-msgstr ""
+msgstr "Ausgabe-Pufferung ausgeschaltet"
 
 #, c-format
 msgid ""
@@ -264,6 +267,13 @@ msgid ""
 "Also, some features like the progress bars might not work correctly if output buffering is "
 "enabled unless ini_set() is allowed."
 msgstr ""
+"Warnung: die Ausgabe-Pufferung in Ihrem PHP ist mittels des <b>%s</b>-Parameters "
+"in Ihrer php.ini aktiviert. Gallery kann zwar im Prinzip mit dieser Einstellung arbeiten - "
+"und das Herunterladen von Dateien ist damit sogar schneller - aber das anbieten  "
+"von gro0en Dateien (z.B. großen Videos) in Gallery könnte beeinträchtigt werden "
+"und Speicherprobleme könnten auftreten. Falls ini_set() nicht erlaubt ist, kann es "
+"bei aktivierter Ausgabe-Pufferung außerdem passieren, dass einige Funktionen, "
+"wie beispielsweise Fortschrittsbalken nicht korrekt funktionieren."
 
 msgid "Storage Directory Permissions"
 msgstr "Speicherordner-Zugriffsrechte"
@@ -292,7 +302,7 @@ msgid "Upgrade Modules"
 msgstr "Aktualisiere Module"
 
 msgid "Unable to initialize Gallery session"
-msgstr ""
+msgstr "Gallery-Sitzung konnte nicht initialisiert werden"
 
 #, c-format
 msgid "Unable to load the %s module"
@@ -357,9 +367,8 @@ msgstr "Authentifiziere mich"
 msgid "Authentication successful!"
 msgstr "Authentifizierung erfolgreich!"
 
-#, fuzzy
 msgid "Successfully cleaned cache directories."
-msgstr "Wir haben erfolgreich Ihre Cache-Ordner gesäubert."
+msgstr "Cache-Ordner erfolgreich gesäubert."
 
 msgid "Delete Cache Directories"
 msgstr "Lösche Cache-Ordner"
@@ -497,8 +506,7 @@ msgstr ""
 "versuchen Sie es erneut."
 
 msgid "If you actually want to run the Gallery 2 installer, please follow the link below."
-msgstr ""
-"Falls Sie wirklich den Gallery-2-Installer ausführen wollen, folgen Sie bitte diesem Verweis."
+msgstr "Falls Sie wirklich den Gallery-2-Installer ausführen wollen, folgen Sie bitte diesem Verweis."
 
 msgid ""
 "If you want to upgrade from Gallery 1, you first need to install Gallery 2 and then use the "
@@ -599,16 +607,16 @@ msgstr ""
 msgid "MySQL"
 msgstr "MySQL"
 
-#, fuzzy, c-format
+#, c-format
 msgid "mysqldump -u%s -p -h %s --opt %s > %s.sql"
-msgstr "mysqldump -u%s -p<i>IhrPasswort</i> --opt %s > %s.sql"
+msgstr "mysqldump -u%s -p -h %s --opt %s > %s.sql"
 
 msgid "PostgreSQL"
 msgstr "PostgreSQL"
 
-#, fuzzy, c-format
+#, c-format
 msgid "pg_dump -h %s --format=t %s > %s.sql"
-msgstr "pg_dump --format=t %s > %s.sql"
+msgstr "pg_dump -h %s --format=t %s > %s.sql"
 
 msgid ""
 "Once the upgrade has begun, please be patient.  If you cancel or reload the page, you may "
@@ -723,8 +731,3 @@ msgstr "Sprache auswählen:"
 msgid "Go"
 msgstr "Sprache einstellen"
 
-#~ msgid "Finished"
-#~ msgstr "Abgeschlossen"
-
-#~ msgid "Upgrade Status"
-#~ msgstr "Aktualisierungs-Status"

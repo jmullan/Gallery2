@@ -27,7 +27,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Installer 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-05-19 01:26+0100\n"
-"PO-Revision-Date: 2005-08-11 23:27+0100\n"
+"PO-Revision-Date: 2006-02-05 02:47+0000\n"
 "Last-Translator: Frederik Kunz <frederik.kunz@web.de>\n"
 "Language-Team: German <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -79,14 +79,14 @@ msgstr ""
 msgid "Create Config File"
 msgstr "Konfigurationsdatei erzeugen"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Unable to write to the <b>config.php</b> configuration file in your %s directory.  Please "
 "change its permissions.  If you're onUnix you can do <i>chmod 666 config.php</i> to fix this."
 msgstr ""
-"Das Schreiben der Datei <b>config.php</b> in Ihrem Ordner <tt>%s</tt> ist fehlgeschlagen.  "
-"Bitte ändern Sie die Zugriffsrechte der Datei.  Unter UNIX können Sie das Kommando <i>chmod "
-"666 config.php</i> benutzen, um dieses Problem zu lösen."
+"Das Schreiben der Datei <b>config.php</b> in Ihrem Ordner %s ist fehlgeschlagen.  "
+"Bitte ändern Sie die Zugriffsrechte der Datei.  Unter UNIX können Sie das Kommando "
+"<i>chmod 666 config.php</i> benutzen, um dieses Problem zu lösen."
 
 #, c-format
 msgid "The config.php file does not exist in your %s directory"
@@ -104,17 +104,16 @@ msgid "Database Setup"
 msgstr "Datenbank einrichten"
 
 msgid "You must have the MySQL PHP module installed"
-msgstr "Sie müssen das MySQL PHP-Modul installiert haben"
+msgstr "Sie müssen das PHP-Modul für MySQL installiert haben"
 
-#, fuzzy
 msgid "You must have the ibm_db2 PHP module installed"
-msgstr "Sie müssen das MySQL PHP-Modul installiert haben"
+msgstr "Sie müssen das PHP-Modul für ibm_db2 installiert haben"
 
 msgid "You must have the PostgreSQL PHP module installed"
-msgstr "Sie müssen das PostgresSQL-Modul installiert haben"
+msgstr "Sie müssen das PHP-Modul für PostgresSQL installiert haben"
 
 msgid "You must have the Oracle OCI8 PHP module installed"
-msgstr "Sie müssen das Oracle OCI8 PHP-Modul installiert haben"
+msgstr "Sie müssen das PHP-Modul für Oracle OCI8 installiert haben"
 
 #, c-format
 msgid "You must specify a column prefix (we recommend %s)"
@@ -180,13 +179,12 @@ msgstr ""
 "Wählen Sie eine Neuinstallation, um alle Daten in der Datenbank und dem Speicherordner zu "
 "löschen und machen Sie weiter mit dem nächsten Schritt."
 
-#, fuzzy
 msgid ""
 "Gallery tables already exist in the database and the Gallery storagedirectory seems to be "
 "intact. Either choose to reuse the existing database tables and storage directory data or "
 "select a clean install to erase all existing data in the database and the storage directory."
 msgstr ""
-"Die Gallery-Tabellen existieren in der Datenbank und der Gallery-Speicherordner scheint "
+"In der Datenbank existieren bereits Gallery-Tabellen und der Gallery-Speicherordner scheint "
 "intakt zu sein. Sie haben die Wahl, entweder die bestehenden Datenbank-Tabellen und "
 "Speicherordner-Dateien zu verwenden oder eine Neuinstallation durchzuführen und damit alle "
 "bestehenden Daten in der Datenbank und dem Speicherordner zu löschen."
@@ -218,9 +216,8 @@ msgstr "MySQL (alle Versionen)"
 msgid "MySQL with Transactions (v3.23.34a and newer)"
 msgstr "MySQL mit Transaktionen (v3.23.34a und neuer)"
 
-#, fuzzy
 msgid "PostgreSQL v7.x and newer"
-msgstr "PostgreSQL v7.x"
+msgstr "PostgreSQL v7.x und neuer"
 
 msgid "PostgreSQL v6.x (not well tested)"
 msgstr "PostgreSQL v6.x (kaum getestet)"
@@ -229,7 +226,7 @@ msgid "Oracle (9i and newer)"
 msgstr "Oracle (9i und neuer)"
 
 msgid "(EXPERIMENTAL!) IBM DB2 (v8.2.2 and newer)"
-msgstr ""
+msgstr "(EXPERIMENTELL!) IBM DB2 (v8.2.2 und neuer)"
 
 msgid "Unknown DB type or no known tables information."
 msgstr "Unbekannter DB-Typ oder keine bekannte Tabellen-Information."
@@ -238,9 +235,9 @@ msgstr "Unbekannter DB-Typ oder keine bekannte Tabellen-Information."
 msgid "Could not find an unused table prefix similar to \"%s\"."
 msgstr "Konnte keinen nicht-verwendeten Tabellen-Präfix ähnlihc zu \"%s\" finden."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Could not open schema file: \"%s\"."
-msgstr "Konnte die SQL Testdatei \"%s\" nicht öffnen."
+msgstr "Konnte die Schemadatei \"%s\" nicht öffnen."
 
 msgid ""
 "Failed to create a DB test sequence.Check the returned error message and README.html for "
@@ -258,7 +255,7 @@ msgstr ""
 "Datenbank."
 
 msgid "Missing SQL statements"
-msgstr ""
+msgstr "Fehlende SQL-Statements"
 
 msgid ""
 "Check the returned error message and README.html for missing privileges and clean up the "
@@ -267,9 +264,8 @@ msgstr ""
 "Überprüfen Sie die zurückgegebene Fehlermeldung und die README.html bezüglich fehlenden "
 "Privilegien und dem Reinigen der Datenbank."
 
-#, fuzzy
 msgid "Finish Installation"
-msgstr "Multisite-Installation"
+msgstr "Installation abschließen"
 
 msgid "Install Gallery Core"
 msgstr "Gallery-Kern"
@@ -298,9 +294,8 @@ msgstr "Das Kernmodul wurde nur teilweise installiert."
 msgid "Install More Modules"
 msgstr "Weitere Module"
 
-#, fuzzy
 msgid "Unable to initialize our Gallery session"
-msgstr "Gallery-Daten konnten nicht initialisiert werden"
+msgstr "Unsere Gallery-Sitzung konnte nicht initialisiert werden"
 
 msgid "Unable to get the module list"
 msgstr "Die Modulliste ist nicht abrufbar"
@@ -376,15 +371,15 @@ msgid "Safe Mode"
 msgstr "Safe Mode"
 
 msgid "Regular expressions"
-msgstr ""
+msgstr "Reguläre Ausdrücke"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error: Your PHP is configured without support for %sPerl Compatible Regular Expressions%s. "
 "You must enable these functions before Gallery will run."
 msgstr ""
-"Fehler: Ihre Version von PHP ist mit eingeschaltetem 'Safe Mode' konfiguriert.  Sie müssen "
-"ihn ausschalten, bevor Gallery funktionieren kann."
+"Fehler: Ihre Version von PHP ist ohne %sPerl-kompatible reguläre Ausdrücke%s "
+"konfiguriert.  Sie müssen diese Funktionen einschalten, bevor Gallery funktionieren kann."
 
 msgid "exec() allowed"
 msgstr "exec() erlaubt"
@@ -411,11 +406,11 @@ msgid ""
 "reliably.  Any operation that takes longer than %d seconds will fail (and in some cases just "
 "return a blank page) possibly leading to data corruption."
 msgstr ""
-"Warnung: die Funktion set_time_limit() in Ihrem PHP ist deaktiviert (<b>disabled_functions</"
-"b> parameter in php.ini).  Gallery kann zwar im Prinzip mit dieser Einstellung arbeiten, "
-"aber nicht zuverlässig.  Jede Operation, die länger als %d Sekunden dauert, wird "
-"fehlschlagen (und in einigen Fällen eine leere Seite anzeigen), möglicherweise führt das "
-"auch zu Datenverlust."
+"Warnung: die Funktion set_time_limit() in Ihrem PHP ist deaktiviert (Parameter  "
+"<b>disabled_functions</b> in php.ini).  Gallery kann zwar im Prinzip mit dieser "
+"Einstellung arbeiten, aber nicht zuverlässig.  Jede Operation, die länger als %d "
+"Sekunden dauert, wird fehlschlagen (und in einigen Fällen eine leere Seite anzeigen), "
+"möglicherweise führt das auch zu Datenverlust."
 
 msgid "Memory limit"
 msgstr "Speicherbegrenzung"
@@ -471,7 +466,7 @@ msgstr ""
 "Hochladen größerer Dateien zu erlauben."
 
 msgid "Translation support"
-msgstr ""
+msgstr "Unterstützung für Übersetzung"
 
 #, c-format
 msgid ""
@@ -479,18 +474,25 @@ msgid ""
 "please instruct your system administrator to reconfigure PHP with the %sgettext%s option "
 "enabled."
 msgstr ""
+"Ihr Webserver unterstützt keine Lokalisierung. Um die Unterstützung für zusätzliche "
+"Sprachen einzuschalten, teilen Sie bitte Ihrem Systemadministrator mit, dass er PHP mit "
+"eingeschalteter %sgettext%s-Option rekonfigurieren soll."
 
 #, c-format
 msgid ""
 "Your PHP is missing the function %sbind_textdomain_codeset%s. This means Gallery may display "
 "extended characters for some languages incorrectly."
 msgstr ""
+"Ihrer PHP-Version fehlt die Funktion %sbind_textdomain_codeset%s. Das könnte dazu führen, "
+"dass Gallery einigen Sprachen mit erweitertem Zeichensatz nicht richtig darstellt."
 
 #, c-format
 msgid ""
 "Your PHP is missing the function %sdngettext%s. This means Gallery will be unable to "
 "translate plural forms."
 msgstr ""
+"Ihrer PHP-Version fehlt die Funktion %sdngettext%s. Das bedeutet, dass Gallery Worte "
+"mit Mehrzahl falsch darstellen wird."
 
 msgid "Zend compatibility mode"
 msgstr "Zend-Kompatibilitätsmodus"
@@ -508,24 +510,21 @@ msgstr ""
 "keine Antwort, dann müssen Sie den <tt>ze1_compatibility_mode</tt> abschalten, bevor Sie "
 "fortfahren."
 
-#, fuzzy
 msgid "putenv() allowed"
-msgstr "exec() erlaubt"
+msgstr "putenv() erlaubt"
 
-#, fuzzy
 msgid ""
 "Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> "
 "parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
 "Gallery will beunable to run in other languages than the system language and English."
 msgstr ""
-"Warnung: die Funktion set_time_limit() in Ihrem PHP ist deaktiviert (<b>disabled_functions</"
-"b> parameter in php.ini).  Gallery kann zwar im Prinzip mit dieser Einstellung arbeiten, "
-"aber nicht zuverlässig.  Jede Operation, die länger als %d Sekunden dauert, wird "
-"fehlschlagen (und in einigen Fällen eine leere Seite anzeigen), möglicherweise führt das "
-"auch zu Datenverlust."
+"Warnung: die Funktion putenv() in Ihrem PHP ist deaktiviert (Parameter "
+"<b>disabled_functions</b>in php.ini).  Gallery kann zwar im Prinzip mit dieser "
+"Einstellung arbeiten, aber auf einigen wenigen Systemen wird Gallery nur "
+"in Englisch und der Systemsprache laufen."
 
 msgid "Output buffering disabled"
-msgstr ""
+msgstr "Ausgabe-Pufferung ausgeschaltet"
 
 #, c-format
 msgid ""
@@ -535,6 +534,13 @@ msgid ""
 "Also, some features like the progress bars might not work correctly if output buffering is "
 "enabled unless ini_set() is allowed."
 msgstr ""
+"Warnung: die Ausgabe-Pufferung in Ihrem PHP ist mittels des <b>%s</b>-Parameters "
+"in Ihrer php.ini aktiviert. Gallery kann zwar im Prinzip mit dieser Einstellung arbeiten - "
+"und das Herunterladen von Dateien ist damit sogar schneller - aber das anbieten  "
+"von gro0en Dateien (z.B. großen Videos) in Gallery könnte beeinträchtigt werden "
+"und Speicherprobleme könnten auftreten. Falls ini_set() nicht erlaubt ist, kann es "
+"bei aktivierter Ausgabe-Pufferung außerdem passieren, dass einige Funktionen, "
+"wie beispielsweise Fortschrittsbalken nicht korrekt funktionieren."
 
 msgid "Gallery file integrity"
 msgstr "Gallery-Dateiintegrität"
@@ -548,9 +554,8 @@ msgstr "Manifest fehlt oder ist nicht abrufbar."
 msgid "Welcome"
 msgstr "Willkommen"
 
-#, fuzzy
 msgid "Please correct the following errors"
-msgstr "Wir haben die folgenden datenbankbezogenen Fehler erhalten:"
+msgstr "Bitte beheben Sie die folgenden Fehler"
 
 msgid ""
 "Every Gallery will have at least one administrator user who has full access to view/modify "
@@ -816,8 +821,7 @@ msgid "Error installing Gallery Core"
 msgstr "Fehler bei der Installation des Gallery-Kerns"
 
 msgid "Something went wrong when we tried to install the core module.  What to do next?"
-msgstr ""
-"Bei der Installation des Kernmoduls ist etwas schiefgelaufen. Was soll jetzt geschehen?"
+msgstr "Bei der Installation des Kernmoduls ist etwas schiefgelaufen. Was soll jetzt geschehen?"
 
 msgid ""
 "Go to the System Checks step of the installer and make sure all checks shows 'Success'. A "
@@ -944,7 +948,7 @@ msgid "Continue to Step %d&raquo;"
 msgstr "Weiter zum Schritt %d&raquo;"
 
 msgid "Debug Output"
-msgstr ""
+msgstr "Fehler-Ausgabe"
 
 msgid "Welcome to the Gallery Installer"
 msgstr "Willkommen zum Gallery-Installer"
@@ -1005,7 +1009,7 @@ msgstr ""
 "es ist dennoch eine gute Idee, sie zu entfernen, um Ihre Installation sauber zu halten."
 
 msgid "Errors occurred. Please see messages below."
-msgstr ""
+msgstr "Es sind Fehler aufgetreten. Bitte lesen Sie die folgenden Meldungen."
 
 msgid "Please select the installation type"
 msgstr "Bitte wählen Sie den Installationstypen aus"
@@ -1190,8 +1194,7 @@ msgid "The directory you entered is read only"
 msgstr "Der von Ihnen angegebene Ordner ist schreibgeschützt"
 
 msgid "There was an error creating the directory structure within the storage directory."
-msgstr ""
-"Beim Erzeugen der Ordner-Struktur im Ordner zur Datenspeicherung ist ein Fehler aufgetreten."
+msgstr "Beim Erzeugen der Ordner-Struktur im Ordner zur Datenspeicherung ist ein Fehler aufgetreten."
 
 msgid "Directory path:"
 msgstr "Pfad des Ordners:"
@@ -1227,8 +1230,7 @@ msgstr ""
 "zugänglichen Bereich zu verschieben und dann hier den Pfad anzupassen."
 
 msgid "<b>Note</b>: Don't forget to delete dir.php when you're done!"
-msgstr ""
-"<b>Beachten Sie</b>: Vergessen Sie nicht, die Datei dir.php zu löschen, wenn Sie fertig sind!"
+msgstr "<b>Beachten Sie</b>: Vergessen Sie nicht, die Datei dir.php zu löschen, wenn Sie fertig sind!"
 
 msgid ""
 "Your webserver needs to be able to write to this directory. Permission systems vary from "
@@ -1244,8 +1246,7 @@ msgstr ""
 "dies so sicher wie möglich einrichten können. Um es zum Laufen zu bringen, können Sie diesen "
 "Beispielen folgen."
 
-msgid ""
-"Note: these are only examples!  You may find that they don't work quite right on your system."
+msgid "Note: these are only examples!  You may find that they don't work quite right on your system."
 msgstr ""
 "Beachten Sie: Dies sind nur Beispiele! Es kann gut sein, dass Sie auf Ihrem System nicht "
 "richtig funktionieren."
@@ -1357,15 +1358,3 @@ msgstr "Sprache einstellen"
 msgid "Begin Installation&raquo;"
 msgstr "Installation starten&raquo;"
 
-#, fuzzy
-#~ msgid "You must have the ODBC module installed"
-#~ msgstr "Sie müssen das MySQL PHP-Modul installiert haben"
-
-#~ msgid "Finished"
-#~ msgstr "Abgeschlossen"
-
-#~ msgid "Installation Status"
-#~ msgstr "Status der Installation"
-
-#~ msgid "SQL test file \"%s\" not found."
-#~ msgstr "SQL Testdatei \"%s\" nicht gefunden."
