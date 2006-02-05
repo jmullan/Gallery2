@@ -254,6 +254,11 @@ class GalleryEmbed {
 	$gallery->setActiveUser($user);
 	$session =& $gallery->getSession();
 	$session->put('embed.id.externalUser', $extUserId);
+	
+	$ret = $session->regenerate();
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 	return null;
     }
 
@@ -284,7 +289,8 @@ class GalleryEmbed {
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    $ret = $session->save();
+	    /* Commit the transaction */
+	    $ret = GalleryEmbed::done();
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
