@@ -38,6 +38,8 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
+	global $gallery;
+
 	parent::setUp();
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'core');
@@ -45,41 +47,49 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	$this->_valueMap = array(
+	    'permissions.directory' => 'x1',
+	    'permissions.file' => 'x2',
+	    'exec.beNice' => 'x2.5',
+	    'exec.expectedStatus' => 'x3',
+	    'default.orderBy' => 'x4',
+	    'default.orderDirection' => 'x5',
+	    'default.theme' => 'x7',
+	    'default.language' => 'x8',
+	    'session.lifetime' => 'x9',
+	    'session.inactivityTimeout' => 'x10',
+	    'misc.markup' => 'x11',
+	    'cookie.path' => '/sub/',
+	    'cookie.domain' => '.example.com',
+	    'lock.system' => 'x13',
+	    'smtp.host' => 'smtp.example.com',
+	    'smtp.username' => 'x14',
+	    'smtp.password' => 'x15',
+	    'smtp.from' => 'gallery@example.com',
+	    'format.date' => 'x16',
+	    'format.time' => 'x17',
+	    'format.datetime' => 'x18',
+	    'language.useBrowserPref' => '1');
+
+	/* The AdminCore controller uses the url generator to check the cookie path */
+	$gallery->setUrlGenerator(new AdminCoreControllerTestUrlGenerator());
     }
 
-    function testChangeValues() {
-	global $gallery;
-	/* The AdminCore controller uses the url generator to check the cookie path */
-	$gallery->setUrlGenerator(new AdminCoreControllerTestUrlGenrator());
-
-	$valueMap = array('permissions.directory' => 'x1',
-			  'permissions.file' => 'x2',
-			  'exec.beNice' => 'x2.5',
-			  'exec.expectedStatus' => 'x3',
-			  'default.orderBy' => 'x4',
-			  'default.orderDirection' => 'x5',
-			  'default.theme' => 'x7',
-			  'default.language' => 'x8',
-			  'session.lifetime' => 'x9',
-			  'session.inactivityTimeout' => 'x10',
-			  'misc.markup' => 'x11',
-			  'cookie.path' => '/sub/',
-			  'cookie.domain' => '.example.com',
-			  'lock.system' => 'x13',
-			  'smtp.host' => 'smtp.example.com',
-			  'smtp.username' => 'x14',
-			  'smtp.password' => 'x15',
-			  'smtp.from' => 'gallery@example.com',
-			  'format.date' => 'x16',
-			  'format.time' => 'x17',
-			  'format.datetime' => 'x18',
-			  'language.useBrowserPref' => '1');
-
+    function _setFormFromValues($valueMap) {
 	/* Change the defaults to something meaningless */
 	foreach ($valueMap as $key => $value) {
 	    list ($outer, $inner) = explode('.', $key);
 	    GalleryUtilities::putRequestVariable('form[' . $outer . '][' . $inner . ']', $value);
 	}
+    }
+
+    function testChangeValues() {
+	global $gallery;
+
+	$valueMap = $this->_valueMap;
+
+	$this->_setFormFromValues($valueMap);
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 
 	/* Perform the request and verify that we succeeded */
@@ -89,8 +99,6 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
-
-	GalleryDataCache::reset();
 
 	$valueMap['smtp.password'] = base64_encode($valueMap['smtp.password']);
 	foreach ($valueMap as $key => $expectedValue) {
@@ -103,11 +111,79 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	}
     }
 
+    function testChangeEmailPasswordWithStars() {
+	global $gallery;
+
+	$valueMap = $this->_valueMap;
+
+	/* Set the password to a 3-letter value (it should be b64 encoded, but this is a dummy) */
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'smtp.password', 'abc');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$valueMap['smtp.password'] = '***';
+	$this->_setFormFromValues($valueMap);
+
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminCore'),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
+			    $results);
+
+
+	list ($ret, $storedPass) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'smtp.password');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('abc', $storedPass,
+			    "matching number of stars shouldn't change the password");
+    }
+
+    function testChangeEmailPasswordWithWrongNumberOfStars() {
+	global $gallery;
+
+	$valueMap = $this->_valueMap;
+
+	/* Set the password to a 3-letter value (it should be b64 encoded, but this is a dummy) */
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'smtp.password', 'abc');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* But oops, the user entered 4 stars */
+	$valueMap['smtp.password'] = '****';
+	$this->_setFormFromValues($valueMap);
+
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminCore'),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
+			    $results);
+
+	list ($ret, $storedPass) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'smtp.password');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('abc', $storedPass,
+			    "mismatched number of stars shouldn't change the password");
+    }
+
     /* Test that we don't accept just any cookie path */
     function testChangeCookiePath() {
 	global $gallery;
-	/* The AdminCore controller uses the url generator to check the cookie path */
-	$gallery->setUrlGenerator(new AdminCoreControllerTestUrlGenrator());
 	/* AdminCore expects all the form vars, even if we test here only the cookie path */
 	$valueMap = array('permissions.directory' => 'IGNORED',
 			  'permissions.file' => 'IGNORED',
@@ -180,8 +256,6 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
     /* Test that we don't accept just any cookie domain */
     function testChangeCookieDomain() {
 	global $gallery;
-	/* The AdminCore controller uses the url generator to check the cookie domain */
-	$gallery->setUrlGenerator(new AdminCoreControllerTestUrlGenrator());
 	/* AdminCore expects all the form vars, even if we test here only the cookie path */
 	$valueMap = array('permissions.directory' => 'IGNORED',
 			  'permissions.file' => 'IGNORED',
@@ -746,7 +820,7 @@ class AdminCoreControllerTestWinNtPlatform extends WinNtPlatform {
 }
 
 /* Small mock url generator for the cookie path test */
-class AdminCoreControllerTestUrlGenrator {
+class AdminCoreControllerTestUrlGenerator {
     function getCurrentUrlDir($forceG2Base=false) {
 	if ($forceG2Base) {
 	    return 'http://www.example.com/sub/gallery2/';

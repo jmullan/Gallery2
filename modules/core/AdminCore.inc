@@ -225,7 +225,8 @@ class AdminCoreController extends GalleryController {
 		    }
 		}
 	    }
-	    if (isset($form['smtp']['password'])) {
+	    if (isset($form['smtp']['password']) &&
+		!preg_match('/^\*+/', $form['smtp']['password'])) {
 		$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'smtp.password',
 							  base64_encode($form['smtp']['password']));
 		if ($ret) {
@@ -321,7 +322,8 @@ class AdminCoreView extends GalleryView {
 		$form[$outer][$inner] = $value;
 	    }
 
-	    $form['smtp']['password'] = base64_decode($form['smtp']['password']);
+	    $form['smtp']['password'] =
+		str_repeat('*', strlen(base64_decode($form['smtp']['password'])));
 	    $form['formName'] = 'AdminCore';
 	    $form['uploadLocalServer']['newDir'] = '';
 	    $form['emailTest']['to'] = '';
