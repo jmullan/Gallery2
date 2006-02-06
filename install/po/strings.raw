@@ -60,6 +60,7 @@ gettext("Finish Installation")
 
 /* steps/InstallCoreModuleStep.class */
 gettext("Install Gallery Core")
+gettext("Installing the core module")
 gettext("Unable to initialize our Gallery data") /* also in: steps/InstallOtherModulesStep.class */
 gettext("Unable to communicate with the database")
 gettext("Unable to load the core module")
@@ -71,10 +72,11 @@ gettext("Core module is only partially installed.")
 /* steps/InstallOtherModulesStep.class */
 gettext("Install More Modules")
 gettext("Unable to initialize our Gallery session")
-gettext("Unable to get the module list")
 gettext("Unable to load the %s module")
+gettext("Installing modules")
 gettext("Unable to install the %s module")
 gettext("Unable to activate the %s module")
+gettext("Unable to get the module list")
 gettext("Other")
 
 /* steps/MultisiteStep.class */
@@ -88,6 +90,7 @@ gettext("Storage Setup") /* also in: templates/StorageSetupRequest.html */
 
 /* steps/SystemChecksStep.class */
 gettext("System Checks") /* also in: templates/SystemChecks.html */
+gettext("Performing system checks")
 gettext("PHP version >= 4.1.0 or >= 5.0.4")
 gettext("Error: Gallery 2 requires PHP version 4.1.0 or newer or 5.0.4 or newer. You have PHP version %s installed. Contact your webserver administrator to request an upgrade, available at the %sPHP website%s.")
 gettext("PHP Version")
@@ -203,6 +206,10 @@ gettext("Congratulations! Your Gallery 2 install is complete! See... that wasn't
 gettext("Go to my Gallery!")
 gettext("You may now go to your new Gallery.  Enter the URL in your browser for %smain.php%s in your %s directory.")
 
+/* templates/Header.html */
+gettext("Installer Help")
+gettext("Start Over")
+
 /* templates/InstallCoreModule.html */
 gettext("Installed Gallery Core successfully")
 gettext("Congratulations, we've successfully installed the Gallery framework.  However, most of the really cool features from Gallery come from additional modules that you can install and configure.  The next step will take you through the process of selecting modules to install so that you can tune Gallery to do exactly what you want.")
@@ -242,9 +249,6 @@ gettext("Debug Output")
 
 /* templates/MainPage.html */
 gettext("Welcome to the Gallery Installer")
-gettext("Installer Help")
-gettext("Start Over")
-gettext("Install Steps")
 gettext("Install %d%% complete")
 gettext("Redo this step")
 gettext("Gallery: <strong>your photos</strong> on <strong>your website</strong>")
@@ -278,6 +282,9 @@ gettext("Select Directory")
 /* templates/MultisiteSuccess.html */
 gettext("Multisite directory setup successfully.")
 gettext("Standard installation selected.")
+
+/* templates/NavBar.html */
+gettext("Install Steps")
 
 /* templates/Secure.html */
 gettext("We want to make sure that your Gallery is secure.  The config.php file that this installer has edited has permissions that allow other people to write to it.  This is required because the installer qualifies as an \"other person\" when it comes to Unix file permissions.  So before you finish, you should change the permissions on this file such that other users can't write to it.  Right now your config.php has modes of %s.  We suggest that you do this:")
@@ -329,7 +336,7 @@ gettext("Go to the Upgrader!")
 gettext("You should go now to the upgrader.  Enter the URL in your browser for %s/upgrade/index.php%s in your %s directory.")
 
 /* templates/Welcome.html */
-gettext("Getting Gallery 2.0 installed on your webserver requires %d steps. This installer will guide you through these steps and provide assistance along the way if additional steps are required to get your Gallery up and running. Once a step has been completed, you can go back and make changes at any time. Please read the %sInstaller Help File%s before proceeding.")
+gettext("Getting Gallery 2 installed on your webserver requires %d steps. This installer will guide you through these steps and provide assistance along the way if additional steps are required to get your Gallery up and running. Once a step has been completed, you can go back and make changes at any time. Please read the %sInstaller Help File%s before proceeding.")
 gettext("Select Language:")
 gettext("Go")
 gettext("Begin Installation&raquo;")

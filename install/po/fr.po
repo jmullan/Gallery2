@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Installer 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-07-06 23:48+0200\n"
-"PO-Revision-Date: 2006-01-19 00:00+0200\n"
+"PO-Revision-Date: 2006-01-21 00:00+0200\n"
 "Last-Translator: Arnaud MOURONVAL <ArnaudMouronval@yahoo.com>\n"
 "Language-Team: French <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -70,14 +70,14 @@ msgstr ""
 msgid "Create Config File"
 msgstr "Création du fichier de configuration"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Unable to write to the <b>config.php</b> configuration file in your %s directory.  Please "
 "change its permissions.  If you're onUnix you can do <i>chmod 666 config.php</i> to fix this."
 msgstr ""
-"Impossible d'écrire le fichier de configuration <b>config.php</b> dans le répertoire <tt>%s</"
-"tt>. Merci de modifier ses permissions. Si vous êtes sous Unix, vous pouvez utiliser la "
-"commande <i>chmod 666 config.php</i> pour corriger celà."
+"Impossible d'écrire le fichier de configuration <b>config.php</b> dans le répertoire %s. "
+"Merci de modifier ses permissions. Si vous êtes sous Unix, vous pouvez utiliser la commande "
+"<i>chmod 666 config.php</i> pour corriger celà."
 
 #, c-format
 msgid "The config.php file does not exist in your %s directory"
@@ -97,9 +97,8 @@ msgstr "Paramétrage de la base de données"
 msgid "You must have the MySQL PHP module installed"
 msgstr "Le module PHP MySQL doit être installé"
 
-#, fuzzy
 msgid "You must have the ibm_db2 PHP module installed"
-msgstr "Le module PHP MySQL doit être installé"
+msgstr "Le module PHP ibm_db2 doit être installé"
 
 msgid "You must have the PostgreSQL PHP module installed"
 msgstr "Le module PHP PostgreSQL doit être installé"
@@ -170,7 +169,6 @@ msgstr ""
 "sélectionner une installation vierge pour supprimer toutes les données dans la base et dans "
 "le répertoire de stockage et continuer à l'étape suivante."
 
-#, fuzzy
 msgid ""
 "Gallery tables already exist in the database and the Gallery storagedirectory seems to be "
 "intact. Either choose to reuse the existing database tables and storage directory data or "
@@ -206,11 +204,10 @@ msgid "MySQL (all versions)"
 msgstr "MySQL (toutes versions)"
 
 msgid "MySQL with Transactions (v3.23.34a and newer)"
-msgstr "MySQL avec transactions (v3.23.34a et plus récent)"
+msgstr "MySQL avec transactions (v3.23.34a et plus récentes)"
 
-#, fuzzy
 msgid "PostgreSQL v7.x and newer"
-msgstr "PostgreSQL v7.x"
+msgstr "PostgreSQL v7.x et plus récentes"
 
 msgid "PostgreSQL v6.x (not well tested)"
 msgstr "PostgreSQL v6.x (peu testé)"
@@ -258,12 +255,15 @@ msgstr ""
 "Consultez le message d'erreur retourné et le fichier README.html pour déterminer les "
 "privilèges manquants et pour nettoyer la base de données."
 
-#, fuzzy
 msgid "Finish Installation"
-msgstr "Installation multi-site"
+msgstr "Finir l'installation"
 
 msgid "Install Gallery Core"
 msgstr "Installation du noyau de Gallery"
+
+#, fuzzy
+msgid "Installing the core module"
+msgstr "Installation des modules supplémentaires"
 
 msgid "Unable to initialize our Gallery data"
 msgstr "Impossible d'initialiser les données de Gallery"
@@ -292,12 +292,13 @@ msgstr "Installation des modules supplémentaires"
 msgid "Unable to initialize our Gallery session"
 msgstr "Impossible d'initialiser notre session Gallery"
 
-msgid "Unable to get the module list"
-msgstr "Impossible d'obtenir la liste des modules"
-
 #, c-format
 msgid "Unable to load the %s module"
 msgstr "Impossible de charger le module %s"
+
+#, fuzzy
+msgid "Installing modules"
+msgstr "Installation des modules supplémentaires"
 
 #, c-format
 msgid "Unable to install the %s module"
@@ -306,6 +307,9 @@ msgstr "Impossible d'installer le module %s"
 #, c-format
 msgid "Unable to activate the %s module"
 msgstr "Impossible d'activer le module %s"
+
+msgid "Unable to get the module list"
+msgstr "Impossible d'obtenir la liste des modules"
 
 msgid "Other"
 msgstr "Autre"
@@ -321,6 +325,9 @@ msgstr "Paramétrage du stockage"
 
 msgid "System Checks"
 msgstr "Vérification du système"
+
+msgid "Performing system checks"
+msgstr ""
 
 msgid "PHP version >= 4.1.0 or >= 5.0.4"
 msgstr "Version de PHP >= 4.1.0 ou >= 5.0.4"
@@ -507,24 +514,21 @@ msgstr ""
 "installation de PHP est correcte. Si vous obtenez un message d'erreur ou une page vide, "
 "alors vous devez désactiver l'option ze1_compatibility_mode avant de continuer."
 
-#, fuzzy
 msgid "putenv() allowed"
-msgstr "Autorisation de la commande exec()"
+msgstr "Autorisation de la commande putenv()"
 
-#, fuzzy
 msgid ""
 "Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> "
 "parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
 "Gallery will beunable to run in other languages than the system language and English."
 msgstr ""
-"Attention&nbsp;: la fonction set_time_limit() est désactivée dans votre installation de PHP "
-"par le paramètre <b>disabled_functions</b> dans le fichier php.ini. Gallery peut fonctionner "
-"dans cette configuration, mais sa fiabilité n'est pas garantie&nbsp;: toute opération qui "
-"dure plus de %d secondes échouera (et dans certains cas retournera une page blanche), ce qui "
-"pourra entraîner une corruption des données."
+"Attention&nbsp;: la fonction putenv() est désactivée dans votre installation de PHP par le "
+"paramètre <b>disabled_functions</b> dans le fichier php.ini. Gallery peut fonctionner dans "
+"cette configuration, mais sur certains systèmes, Gallery ne pourra pas s'afficher dans une "
+"autre langue que la langue par défaut du système et l'anglais."
 
 msgid "Output buffering disabled"
-msgstr ""
+msgstr "Mise en buffer de la sortie désactivée"
 
 #, c-format
 msgid ""
@@ -534,6 +538,13 @@ msgid ""
 "Also, some features like the progress bars might not work correctly if output buffering is "
 "enabled unless ini_set() is allowed."
 msgstr ""
+"Attention&nbsp;: la mise en buffer de la sortie est activée dans votre installation de PHP "
+"par le(s) paramètre(s) <b>%s</b> dans le fichier php.ini. Gallery peut fonctionner dans "
+"cette configuration (le téléchargement de fichier sera même plus rapide), mais Gallery "
+"pourra être dans l'incapacité de fournir de gros fichiers (des vidéos par exemple) et "
+"arriver en saturation de mémoire. De plus, quelques fonctions comme les barres de "
+"progression pourront ne pas s'afficher correctement si la mise en buffer de la sortie est "
+"activée à moins que la fonction ini_set() soit autorisée."
 
 msgid "Gallery file integrity"
 msgstr "Contrôle d'intégrité des fichiers de Gallery"
@@ -547,9 +558,8 @@ msgstr "Manifest manquant ou inaccessible."
 msgid "Welcome"
 msgstr "Bienvenue"
 
-#, fuzzy
 msgid "Please correct the following errors"
-msgstr "Nous avons reçu les erreurs suivantes liés à la base de données&nbsp;:"
+msgstr "Veuillez corriger les erreurs suivantes"
 
 msgid ""
 "Every Gallery will have at least one administrator user who has full access to view/modify "
@@ -593,8 +603,7 @@ msgstr "Mot de passe manquant&nbsp;! Veuillez saisir deux fois le même mot de p
 
 msgid "The passwords you entered do not match!  Please try again."
 msgstr ""
-"Les deux mots de passe que vous avez saisis sont différent&nbsp;! Veuillez essayer de "
-"nouveau."
+"Les deux mots de passe que vous avez saisis sont différents&nbsp;! Veuillez recommencer."
 
 msgid ""
 "As you are reusing existing database tables, this is not a fresh install. This will only "
@@ -799,6 +808,12 @@ msgstr ""
 "Vous pouvez maintenant vous rendre dans Gallery. Saisissez l'URL de %smain.php%s du "
 "répertoire %s directory dans votre navigateur."
 
+msgid "Installer Help"
+msgstr "Aide pour l'installation"
+
+msgid "Start Over"
+msgstr "Reprendre depuis le début"
+
 msgid "Installed Gallery Core successfully"
 msgstr "Noyau de Gallery installé avec succès"
 
@@ -946,15 +961,6 @@ msgstr "Sortie de débuggage"
 msgid "Welcome to the Gallery Installer"
 msgstr "Bienvenue sur l'installeur de Gallery"
 
-msgid "Installer Help"
-msgstr "Aide pour l'installation"
-
-msgid "Start Over"
-msgstr "Reprendre depuis le début"
-
-msgid "Install Steps"
-msgstr "Étapes d'installation"
-
 #, c-format
 msgid "Install %d%% complete"
 msgstr "Instalation complète à %d%%"
@@ -1001,7 +1007,7 @@ msgstr ""
 "problème mais il est préférable de les supprimer pour garder votre installation propre."
 
 msgid "Errors occurred. Please see messages below."
-msgstr ""
+msgstr "Des erreurs ont survenu. Veuillez consulter les messages ci-dessous."
 
 msgid "Please select the installation type"
 msgstr "Veuillez choisir le type d'installation"
@@ -1093,6 +1099,9 @@ msgstr "Répertoire du multi-site"
 
 msgid "Standard installation selected."
 msgstr "Installation standard sélectionnée."
+
+msgid "Install Steps"
+msgstr "Étapes d'installation"
 
 #, c-format
 msgid ""
@@ -1328,14 +1337,14 @@ msgstr ""
 "Vous devriez aller maintenant dans l'outil de mise à jour. Entrez l'URL de %s/upgrade/index."
 "php%s du répertoire %s dans votre navigateur."
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Getting Gallery 2 installed on your webserver requires %d steps. This installer will guide "
 "you through these steps and provide assistance along the way if additional steps are "
 "required to get your Gallery up and running. Once a step has been completed, you can go back "
 "and make changes at any time. Please read the %sInstaller Help File%s before proceeding."
 msgstr ""
-"L'installation de Gallery 2 sur votre serveur Web nécessite %d étapes. Cet installeur va "
+"L'installation de Gallery 2.0 sur votre serveur Web nécessite %d étapes. Cet installeur va "
 "vous guider à travers ces étapes et vous fournir une assistance si d'autres actions sont "
 "nécessaires pour finaliser l'installation de Gallery. Pour chaque étape complétée, vous "
 "pouvez revenir en arrière pour effectuer des modifications à tout moment. Merci de lire %"
@@ -1349,12 +1358,3 @@ msgstr "Go"
 
 msgid "Begin Installation&raquo;"
 msgstr "Commencer l'installation&raquo;"
-
-#~ msgid "You must have the ODBC module installed"
-#~ msgstr "Le module PHP ODBC doit être installé"
-
-#~ msgid "Finished"
-#~ msgstr "Fin"
-
-#~ msgid "Installation Status"
-#~ msgstr "État de l'installation"

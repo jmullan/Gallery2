@@ -25,7 +25,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Upgrader 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-11-19 08:04-0800\n"
-"PO-Revision-Date: 2005-11-20 23:17+0300\n"
+"PO-Revision-Date: 2006-01-22 15:57+0300\n"
 "Last-Translator: Konstantin Ivanov <Continental@vollen.ru>\n"
 "Language-Team: Russian <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -50,9 +50,8 @@ msgstr "<b>Ошибка:</b> пароль неверен."
 msgid "Empty Cache"
 msgstr "Очистка Кэша"
 
-#, fuzzy
 msgid "Finish Upgrade"
-msgstr "Приступить к Обновлению"
+msgstr "Обновлению завершено"
 
 msgid "System Checks"
 msgstr "Проверка системы"
@@ -100,15 +99,15 @@ msgid "Safe Mode"
 msgstr "Safe Mode"
 
 msgid "Regular expressions"
-msgstr ""
+msgstr "Регулярные выражения"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error: Your PHP is configured without support for %sPerl Compatible Regular Expressions%s. "
 "You must enable these functions before Gallery will run."
 msgstr ""
-"Ошибка: Ваша версия PHP сконфигурирована с параметром safe mode enabled.  Вы должны "
-"отключить режим safe mode перед тем, как Галерея будет запущена."
+"Ошибка: Ваша версия PHP сконфигурирована без поддержки %sPerl Compatible Regular Expressions%"
+"s.  Вы должны включить данную функцию перед тем как Галерея будет запущена."
 
 msgid "exec() allowed"
 msgstr "exec() allowed"
@@ -194,7 +193,7 @@ msgstr ""
 "значение для того, чтобы разрешить загрузку файлов больших размеров."
 
 msgid "Translation support"
-msgstr ""
+msgstr "Поддержка перевода"
 
 #, c-format
 msgid ""
@@ -202,18 +201,25 @@ msgid ""
 "please instruct your system administrator to reconfigure PHP with the %sgettext%s option "
 "enabled."
 msgstr ""
+"Ваш Веб-сервер не поддерживает локализацию. Для получения возможности поддержки "
+"дополнительных языков обратитесь за помощью к системному администратору для реконфигурации "
+"PHP с включенной опцией %sgettext%s."
 
 #, c-format
 msgid ""
 "Your PHP is missing the function %sbind_textdomain_codeset%s. This means Gallery may display "
 "extended characters for some languages incorrectly."
 msgstr ""
+"В вашей сборке PHP отсутствует функция %sbind_textdomain_codeset%s. Это означает, что "
+"Галерея может отображать расширенный набор символов для некоторых языков некорректно."
 
 #, c-format
 msgid ""
 "Your PHP is missing the function %sdngettext%s. This means Gallery will be unable to "
 "translate plural forms."
 msgstr ""
+"В вашей сборке PHP отсутствует функция %sdngettext%s. Это означает, что Галерея не сможет "
+"работать с переводом слов в форме множественного числа."
 
 msgid "Zend compatibility mode"
 msgstr "Zend compatibility mode"
@@ -231,24 +237,20 @@ msgstr ""
 "или остались без ответа, тогда Вы должн выключить ze1_compatibility_mode перед тем как "
 "продолжить."
 
-#, fuzzy
 msgid "putenv() allowed"
-msgstr "exec() allowed"
+msgstr "putenv() allowed"
 
-#, fuzzy
 msgid ""
 "Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> "
 "parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
 "Gallery will be unable to run in other languages than the system language and English."
 msgstr ""
-"Предупреждение: Функция set_time_limit() отключена в Вашем php в разделе "
-"<b>disabled_functions</b> в  php.ini. Галерея может функционировать с такими параметрами, но "
-"ее работа будет ненадежной. Любая операция, которая длиться дольше чем %d секунд, будет "
-"выполнена неудачно (и в некоторых случаях возвратит лишь белый экран), возможно, следуя к "
-"повреждению данных."
+"Предупреждение: Функция putenv() отключена в Вашем php в разделе <b>disabled_functions</b> "
+"в  php.ini. Галерея может функционировать без данной настройки, но на некоторые редких "
+"системах Галерея не сможет быть запущена на другом языке, чем системный язык и Английский. "
 
 msgid "Output buffering disabled"
-msgstr ""
+msgstr "Буфферизация выходных данных отключена"
 
 #, c-format
 msgid ""
@@ -258,6 +260,12 @@ msgid ""
 "Also, some features like the progress bars might not work correctly if output buffering is "
 "enabled unless ini_set() is allowed."
 msgstr ""
+"Внимание: буфферезация выходных данных включена в настройках php установкой <b>%s</b> "
+"параметра(ов) в php.ini.  Галерея может функционировать с данной опцией - загрузка файлов "
+"будет происходить даже быстрее - но Галерея не сможет обрабатывать большие файлы (например, "
+"длинные видеоролики) и будет ограничена размером памяти. Кроме того, некоторые функции такие "
+"как статусная строка процента выполнения может работать некорректно, если буфферезация "
+"выходных данных включена пока разрешен параметр ini_set()."
 
 msgid "Storage Directory Permissions"
 msgstr "Разрешения на Директорию Хранилища"
@@ -287,7 +295,7 @@ msgid "Upgrade Modules"
 msgstr "Обновление других модулей"
 
 msgid "Unable to initialize Gallery session"
-msgstr ""
+msgstr "Невозможно инициализировать сессию Галереи"
 
 #, c-format
 msgid "Unable to load the %s module"
@@ -352,9 +360,8 @@ msgstr "Идентифицировать меня"
 msgid "Authentication successful!"
 msgstr "Идентификация прошла успешно!"
 
-#, fuzzy
 msgid "Successfully cleaned cache directories."
-msgstr "Мы успешно очистили Ваши кэш директории (cache)"
+msgstr "Директория кэша (cache) успешно очищена."
 
 msgid "Delete Cache Directories"
 msgstr "Удаление кэш директорий"
@@ -402,6 +409,12 @@ msgstr ""
 msgid "Go to my Gallery!"
 msgstr "Перейти в мою галерею!"
 
+msgid "Upgrader Help"
+msgstr "Помощь"
+
+msgid "Start Over"
+msgstr "Начать сначала"
+
 msgid "Warning"
 msgstr "Предупреждение"
 
@@ -416,12 +429,6 @@ msgstr ""
 
 msgid "Welcome to the Gallery Upgrader"
 msgstr "Добро Пожаловать в Программу Обновления Галереи."
-
-msgid "Upgrader Help"
-msgstr "Помощь"
-
-msgid "Start Over"
-msgstr "Начать сначала"
 
 #, c-format
 msgid "Upgrade %d%% complete"
@@ -594,16 +601,16 @@ msgstr ""
 msgid "MySQL"
 msgstr "MySQL"
 
-#, fuzzy, c-format
+#, c-format
 msgid "mysqldump -u%s -p -h %s --opt %s > %s.sql"
-msgstr "mysqldump -u%s -p<i>ваш_пароль</i> --opt %s > %s.sql"
+msgstr "mysqldump -u%s -p -h %s --opt %s > %s.sql"
 
 msgid "PostgreSQL"
 msgstr "PostgreSQL"
 
-#, fuzzy, c-format
+#, c-format
 msgid "pg_dump -h %s --format=t %s > %s.sql"
-msgstr "pg_dump --format=t %s > %s.sql"
+msgstr "pg_dump -h %s --format=t %s > %s.sql"
 
 msgid ""
 "Once the upgrade has begun, please be patient.  If you cancel or reload the page, you may "
@@ -702,9 +709,9 @@ msgstr "Обновить больше Модулей"
 
 #, c-format
 msgid ""
-"Upgrading Gallery 2 requires %d steps. This upgrade tool will guide you through these "
-"steps and provide assistance along the way if additional steps are required. Please read the "
-"%sHelp File%s before proceeding."
+"Upgrading Gallery 2 requires %d steps. This upgrade tool will guide you through these steps "
+"and provide assistance along the way if additional steps are required. Please read the %"
+"sHelp File%s before proceeding."
 msgstr ""
 "Для обновления Gallery 2 потребуется проделать %d шагов. Эта программа поможет Вам пройти "
 "эти шаги, а так же обеспечит полную поддержку во время обновления, в случае если потребуется "

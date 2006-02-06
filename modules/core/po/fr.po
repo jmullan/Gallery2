@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gallery: Core 1.0\n"
 "POT-Creation-Date: 2003-08-10 04:27+0200\n"
-"PO-Revision-Date: 2006-01-19 00:00--100\n"
+"PO-Revision-Date: 2006-01-21 00:00--100\n"
 "Last-Translator: Arnaud MOURONVAL <arnaudmouronval@yahoo.com>\n"
 "Language-Team: French <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -101,6 +101,15 @@ msgstr "désinstaller"
 msgid "deactivate"
 msgstr "désactiver"
 
+msgid "No acceleration"
+msgstr ""
+
+msgid "Partial acceleration"
+msgstr ""
+
+msgid "Full acceleration"
+msgstr ""
+
 msgid "Performing Maintenance Tasks"
 msgstr "Maintenance du système en cours"
 
@@ -122,6 +131,10 @@ msgstr "Hériter les paramètres de l'album parent"
 
 msgid "Use these settings"
 msgstr "Utiliser ces paramètres"
+
+#, fuzzy
+msgid "Installing the core module"
+msgstr "Module Noyau de Gallery"
 
 msgid "key"
 msgstr "clé"
@@ -174,9 +187,8 @@ msgstr "Détection des images dérivées incorrectes"
 msgid "Clearing fast-download cache"
 msgstr "Vidage du cache des téléchargements rapides"
 
-#, fuzzy
 msgid "Deleting old fast-download cache"
-msgstr "Vidage du cache des téléchargements rapides"
+msgstr "Suppression du vieux cache des téléchargements rapides"
 
 msgid "Site Admins"
 msgstr "Adminstrateurs du site"
@@ -204,6 +216,10 @@ msgstr "Détection des images dérivées corrompues, "
 
 msgid "Detecting broken derivatives, saving "
 msgstr "Détection des images dérivées corrompues, sauvegarde "
+
+#, fuzzy, c-format
+msgid "Deleting old session files (iteration %d)"
+msgstr "Effacement des anciennes tables de permission"
 
 msgid "add items"
 msgstr "ajouter des éléments"
@@ -279,13 +295,11 @@ msgstr "Paramètres sauvegardés avec succès."
 msgid "&laquo; default theme &raquo;"
 msgstr "&laquo; thème par défaut &raquo;"
 
-#, fuzzy
 msgid "Recreating resized images"
-msgstr "Recréer les images redimensionnées"
+msgstr "Regénération des images redimensionnées"
 
-#, fuzzy
 msgid "Rebuilding thumbnails..."
-msgstr "Recréer les vignettes"
+msgstr "Regénération des vignettes..."
 
 msgid "Album"
 msgstr "Album"
@@ -494,6 +508,9 @@ msgstr "Utilisateurs"
 msgid "Groups"
 msgstr "Groupes"
 
+msgid "Performance"
+msgstr ""
+
 msgid "Toolkit Priority"
 msgstr "Priorité des boîtes à outils"
 
@@ -559,10 +576,17 @@ msgstr "%d éléments générés"
 msgid "%d items failed"
 msgstr "%d éléments ont échoué"
 
+#, fuzzy
+msgid "Delete user sessions"
+msgstr "Permissions du système de fichiers"
+
+msgid ""
+"Delete all persistent user sessions according to your current session expiration settings."
+msgstr ""
+
 msgid "Delete database cache"
 msgstr "Effacer le cache de la base de données"
 
-#, fuzzy
 msgid ""
 "Gallery stores commonly used database information on disk for increased performance. If you "
 "modify the database directly, you should run this task to clean out the cache and force "
@@ -664,23 +688,20 @@ msgstr "télécharger"
 msgid "Plugins directory does not exist."
 msgstr "Le répertoire des plugins n'existe pas."
 
-#, fuzzy
 msgid ""
 "Couldn't create plugins subdirectory. Make sure the webserver has write permissions in it."
 msgstr ""
-"Impossible de créer le répertoire des plugins '%s' dans '%s'. Assurez-vous que votre serveur "
-"Web dispose des droits d'écriture sur ce répertoire."
+"Impossible de créer le répertoire des plugins. Assurez-vous que votre serveur Web dispose "
+"des droits d'écriture sur ce répertoire."
 
-#, fuzzy
 msgid "Couldn't create repository cache path."
-msgstr "Impossible de créer le répertoire cache à '%s'."
+msgstr "Impossible de créer le l'arborescence de cache."
 
-#, fuzzy
 msgid ""
 "Couldn't create cache subdirectory. Make sure the web server has write permissions in it."
 msgstr ""
-"Impossible de créer le répertoire cache '%s' dans '%s'. Assuez-vous que votre serveur Web "
-"dispose des droits d'écriture dans ce répertoire."
+"Impossible de créer le sous-répertoire de cache. Assuez-vous que votre serveur Web dispose "
+"des droits d'écriture dans ce répertoire."
 
 #, c-format
 msgid "Error downloading index from '%s'."
@@ -742,7 +763,7 @@ msgid "Donate to the Gallery project"
 msgstr "Faire un don pour le projet Gallery"
 
 msgid "G2.1: Blackjack"
-msgstr ""
+msgstr "G2.1&nbsp;: Blackjack"
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -758,6 +779,18 @@ msgstr "Lignes par page d'album"
 msgid "Columns per album page"
 msgstr "Colonnes par page d'album"
 
+msgid "Allow browser window width to set columns per album page"
+msgstr ""
+
+msgid "Number of items to show per page"
+msgstr "Nombre d'éléments à afficher par page"
+
+msgid "Row height (pixels)"
+msgstr ""
+
+msgid "Column width (pixels)"
+msgstr ""
+
 msgid "Show image owners"
 msgstr "Afficher les propriétaires des images"
 
@@ -766,9 +799,6 @@ msgstr "Afficher les propriétaires des albums"
 
 msgid "Show micro navigation thumbnails"
 msgstr "Afficher les micro-vignettes de navigation"
-
-msgid "Number of items to show per page"
-msgstr "Nombre d'éléments à afficher par page"
 
 msgid "Blocks to show in the sidebar"
 msgstr "Blocs à afficher dans la barre latérale"
@@ -1226,6 +1256,30 @@ msgstr "Domaine"
 msgid "Invalid cookie domain"
 msgstr "Domaine de cookie invalide"
 
+msgid "Captcha for User Login"
+msgstr ""
+
+msgid "Select policy for requiring captcha validation to login:"
+msgstr ""
+
+msgid "High: Always require validation"
+msgstr ""
+
+msgid "Medium: Require validation after some failed attempts for a username"
+msgstr ""
+
+msgid ""
+"Low: Require validation after some failed attempts in one session (this provides protection "
+"against casual password guessers, but not against automated attacks)"
+msgstr ""
+
+#, c-format
+msgid "Configure the number of failed attempts for medium/low in %sCaptcha Settings%s"
+msgstr ""
+
+msgid "Activate Captcha module to enable this feature"
+msgstr ""
+
 msgid "Locking System"
 msgstr "Système de vérouillage"
 
@@ -1679,6 +1733,76 @@ msgstr ""
 msgid "Uninstall"
 msgstr "Désinstaller"
 
+msgid "Performance Tuning"
+msgstr ""
+
+#, fuzzy
+msgid "Updated performance settings successfully"
+msgstr "Email de test envoyé avec succès"
+
+#, fuzzy
+msgid "Deleted all saved pages"
+msgstr "Supprimer un utilisateur"
+
+#, fuzzy
+msgid "Acceleration"
+msgstr "Opération"
+
+msgid ""
+"Improve your Gallery performance by storing entire web pages in the database.  This can "
+"considerably reduce the amount of webserver and database resources required to display a web "
+"page.  The tradeoff is that the web page you see may be a little bit out of date, however "
+"you can always get the most recent version of the page by forcing a refresh in your browser "
+"(typically by holding down the shift key and clicking the reload button)."
+msgstr ""
+
+msgid "Partial Acceleration"
+msgstr ""
+
+#, c-format
+msgid ""
+"Partial acceleration gives you roughly 10-25% performance increase, but some forms of "
+"dynamic data (like view counts) will not get updated right away.  All content that appears "
+"in blocks (like the random image block, any sidebar blocks, etc) will always be updated."
+msgstr ""
+
+msgid "Full Acceleration"
+msgstr ""
+
+#, c-format
+msgid ""
+"Full acceleration gives roughly a 90% performance increase, but no dynamic data (random "
+"image block, other sidebar blocks, number of items in your shopping cart, view counts, etc) "
+"will get updated until the saved page expires."
+msgstr ""
+
+msgid ""
+"You can additionally specify when saved pages expire.  Setting a longer expiration time will "
+"reduce the load on your server, but will increase the interval before users see changes.  "
+"Lower expiration times mean that users will see more current data, but they will place a "
+"higher load on your server."
+msgstr ""
+
+msgid "Here are some standard acceleration profiles:"
+msgstr ""
+
+#, fuzzy
+msgid "Medium acceleration"
+msgstr "éditer les sous-titres"
+
+msgid "High acceleration"
+msgstr ""
+
+#, fuzzy
+msgid "Guest Users"
+msgstr "Utilisateurs enregistrés"
+
+msgid "Expires after:"
+msgstr ""
+
+msgid "Clear Saved Pages"
+msgstr ""
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr ""
 "Veuillez vous assurer que votre connexion à Internet est opérationnelle ou réessayez plus "
@@ -1723,13 +1847,13 @@ msgstr ""
 "durant la mise à jour. Sur des connexions bas débit, cette mise à jour peut prendre quelques "
 "minutes."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "As of the last update on %s, the repository contains %s modules and %s themes. Its contents "
 "can be viewed on the Modules and Themes tabs."
 msgstr ""
-", le répertoire contient %s modules et %s thèmes. Son contenu peut être consulté dans les "
-"onglets 'Modules' et 'Thèmes'."
+"Depuis la dernière mise à jour le %s, le répertoire contient %s modules et %s thèmes. Son "
+"contenu peut être consulté dans les onglets 'Modules' et 'Thèmes'."
 
 msgid ""
 "The index has never been updated. Click on the Update button to see what updates are "
@@ -1756,13 +1880,13 @@ msgstr ""
 msgid "Review plugin compatibility (on the Themes and Modules tabs)"
 msgstr "Passer en revue la compatibilité des plugins (dans les onglets 'Modules' et 'Thèmes')"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%sDownload%s Gallery core"
-msgstr "<a href=\"%s\">Télécharger</a> le noyay de Gallery"
+msgstr "%sTélécharger%s le noyau de Gallery"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Read the %supgrade instructions%s and perform the upgrade"
-msgstr "Lisez les <a href=\"%s\">instructions de mise à jour </a> et suivez la procédure"
+msgstr "Lisez les %sinstructions de mise à jour%s et suivez la procédure"
 
 msgid "Gallery Up-To-Date"
 msgstr "Gallery est à jour"
@@ -1896,17 +2020,19 @@ msgid "Gallery Repository Setup"
 msgstr "Gallery version"
 
 msgid "Warning:"
-msgstr ""
+msgstr "Attention&nbsp;:"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "In order to download plugins from the Gallery repository, a special directory needs to be "
 "created where Gallery will store the data. Under your Gallery base directory, create a "
 "directory called '%s' and allow the web server to write into it by appropriately setting the "
 "permissions."
 msgstr ""
-"Dans votre répertoire de base de Gallery, créez un répertoire nommé '%s' et autorisez le "
-"serveur Web à y écrire en plaçant correctement les permissions."
+"Afin de télécharger des plugins depuis le répertoire de Gallery, un répertoire spécial doit "
+"être créé pour que Gallery y stocke les données. Dans votre répertoire de base de Gallery, "
+"créez un répertoire nommé '%s' et autorisez le serveur Web à y écrire en lui accordant les "
+"permissions nécessaires."
 
 msgid "Instructions for Unix-type platforms:"
 msgstr "Instructions pour les plates-formes de type Unix&nbsp;:"
@@ -2106,7 +2232,7 @@ msgid "Database Error"
 msgstr "Erreur de la base de données"
 
 msgid "Platform Error"
-msgstr ""
+msgstr "Erreur de la plate-forme"
 
 msgid "Error"
 msgstr "Erreur"
@@ -2146,15 +2272,18 @@ msgstr ""
 "Regardez près de la fin de la longue trace de débuggage pour trouver des détails concernant "
 "l'erreur."
 
-#, fuzzy
 msgid "An error has occurred while interacting with the platform."
-msgstr "Une erreur est survenue en accédant à la base de données."
+msgstr "Une erreur est survenue en accédant à la plate-forme."
 
 msgid ""
 "The exact nature of the platform error is unknown. A common cause are insufficient file "
 "system permissions. This can happen if you or your webhost changed something in the file "
 "system, e.g. by restoring data from a backup."
 msgstr ""
+"La nature exacte de l'erreur de plate-forme est inconnue. Une cause commune est un niveau de "
+"droits insuffisants sur le système de fichier. Celà peut arriver lorsque votre hébergeur a "
+"modifié quelque chose au niveau du système de fichier comme par exemple restauré le contenu "
+"d'une sauvegarde."
 
 msgid "An error has occurred."
 msgstr "Une erreur est survenue."
@@ -2569,14 +2698,24 @@ msgstr ""
 "Celà spécifie l'ordre de classement des éléments de cet album. Celà s'applique à tous les "
 "éléments existants et à venir."
 
+#, fuzzy
+msgid "Apply to all subalbums"
+msgstr "Appliquer aux sous-éléments"
+
 msgid "Choose a theme for this album. (The way the album is arranged on the page)"
 msgstr "Choisir un thème pour cet album. (l'organisation de l'album dans la page)"
+
+msgid "Use this theme in all subalbums"
+msgstr ""
 
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr " Chaque élément nécessite une vignette. Spécifiez ici la taille par défaut en pixels."
 
 msgid "You must enter a number (greater than zero)"
 msgstr "Vous devez saisir un nombre (supérieur à zéro)"
+
+msgid "Use this thumbnail size in all subalbums"
+msgstr ""
 
 msgid "Resized Images"
 msgstr "Images redimensionnées"
@@ -2594,6 +2733,9 @@ msgstr "Taille cible (en pixels)"
 
 msgid "You must enter a valid size"
 msgstr "Vous devez saisir une taille valide"
+
+msgid "Use these target sizes in all subalbums"
+msgstr ""
 
 msgid "Recreate thumbnails and resizes"
 msgstr "Recréer les vignettes et les images redimensionnées"
@@ -2897,6 +3039,10 @@ msgstr "Paramètre"
 msgid "Use Global"
 msgstr "Utiliser les paramètres globaux"
 
+#, c-format
+msgid "Use these settings in all subalbums that use %s theme"
+msgstr ""
+
 msgid ""
 "Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
 msgstr ""
@@ -3086,6 +3232,10 @@ msgstr ""
 msgid "Reorder Album"
 msgstr "Réorganiser l'album"
 
+#, fuzzy
+msgid "Order saved successfully"
+msgstr "Modifications sauvegardées avec succès"
+
 msgid ""
 "This album has an automatic sort order specified, so you cannot change the order of items "
 "manually.  You must remove the automatic sort order to continue."
@@ -3151,19 +3301,20 @@ msgstr "Erreur de configuration&nbsp;: thème manquant"
 msgid "Missing Theme"
 msgstr "Thème manquant"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "This page is configured to use the %s theme, but it is either inactive, not installed, or "
 "incompatible."
 msgstr ""
 "Cette page est configurée pour utiliser le thème %s, qui est soit manquant, soit désactivé."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "This album is configured to use the %s theme, but it is either inactive, not installed, or "
 "incompatible."
 msgstr ""
-"Cet album est configuré pour utiliser le thème %s, qui est soit manquant, soit désactivé."
+"Cet album est configuré pour utiliser le thème %s, qui est soit manquant, soit désactivé ou "
+"incompatible."
 
 #, c-format
 msgid ""
@@ -3278,7 +3429,7 @@ msgid ""
 "period.  A recovery confirmation is valid for seven days.  If it is not used during that "
 "time, it will be purged from the system and a new request will have to be made."
 msgstr ""
-"Récuperer votre mot de passe nécessite qu'une adresse email ait été renseignée dans votre "
+"Récupérer votre mot de passe nécessite qu'une adresse email ait été renseignée dans votre "
 "compte, et que vous ayez accès au courrier envoyé à cette adresse. Une confirmation vous "
 "sera envoyée contenant l'URL vers laquelle vous devrez vous rendre pour définir un nouveau "
 "mot de passe. Pour prévenir les abus, les demandes de récupération des mots de passe ne "
@@ -3548,31 +3699,3 @@ msgstr "[test] Une seconde permission"
 
 msgid "Unit test theme"
 msgstr "Thème de tests unitaires"
-
-#~ msgid "Error downloading package from '%s'."
-#~ msgstr "Erreur pendant le téléchargement du package depuis '%s'."
-
-#~ msgid "G2.0: Unpossible!"
-#~ msgstr "G2.0&nbsp;: Unpossible&nbsp;!"
-
-#~ msgid "As of the last update on"
-#~ msgstr "Tel qu'à la dernière mise à jour le"
-
-#~ msgid "Warning: `$errorMessage`"
-#~ msgstr "Attention&nbsp;: `$errorMessage`"
-
-#~ msgid ""
-#~ "In order to download plugins from the Gallery repository, a special directory needs to be "
-#~ "created where Gallery will store the data."
-#~ msgstr ""
-#~ "Afin de télécharger des plugin depuis le répertoire de Gallery, un dossier spécial doit "
-#~ "être créé pour que Gallery puisse y stocker des données."
-
-#~ msgid "$ cd %s"
-#~ msgstr "$ cd %s"
-
-#~ msgid "$ mkdir %s"
-#~ msgstr "$ mkdir %s"
-
-#~ msgid "$ chmod 777 %s"
-#~ msgstr "$ chmod 777 %s"

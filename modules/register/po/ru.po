@@ -26,7 +26,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gallery: Registration 1.0\n"
 "POT-Creation-Date: 2004-06-26 16:08+0200\n"
-"PO-Revision-Date: 2005-11-20 19:48+0300\n"
+"PO-Revision-Date: 2006-01-22 13:24+0300\n"
 "Last-Translator: Konstantin Ivanov <Continental@vollen.ru>\n"
 "Language-Team: Russian <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -70,21 +70,24 @@ msgstr "Регистрация нового пользователя"
 msgid "Register"
 msgstr "Зарегистрироваться"
 
-#, fuzzy
 msgid "New user registration:"
-msgstr "Регистрация нового пользователя"
+msgstr "Регистрация нового пользователя:"
 
-#, fuzzy, c-format
+#, c-format
 msgid "    Username: %s"
-msgstr "Имя пользователя"
+msgstr "    Имя пользователя: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "   Full name: %s"
-msgstr "Полное Имя"
+msgstr "   Полное имя: %s"
 
 #, c-format
 msgid "       Email: %s"
-msgstr ""
+msgstr "       Email: %s"
+
+#, fuzzy
+msgid "Activate or delete this user here"
+msgstr "Пользователь %s активизирован"
 
 msgid "Registration Settings"
 msgstr "Настройки регистрации"
@@ -104,14 +107,13 @@ msgid "Confirmation Policy"
 msgstr "Политика подтверждений"
 
 msgid ""
-"The Registration module can accept new user registrations instantly, require "
-"the user to click a confirmation link in an email that is sent by the "
-"module, or require account activation by a site administrator."
+"The Registration module can accept new user registrations instantly, require the user to "
+"click a confirmation link in an email that is sent by the module, or require account "
+"activation by a site administrator."
 msgstr ""
-"Модуль Регистрация может принимать новых пользователей немедленно, требуя от "
-"пользователя перехода по ссылке для подтверждения, которую он получает в e-"
-"mail сообщение, отправляемом модулем, либо же требовать активацию учетной "
-"записи администратором сайта. "
+"Модуль Регистрация может принимать новых пользователей немедленно, требуя от пользователя "
+"перехода по ссылке для подтверждения, которую он получает в e-mail сообщение, отправляемом "
+"модулем, либо же требовать активацию учетной записи администратором сайта. "
 
 msgid "Choose policy:"
 msgstr "Выберете политику:"
@@ -129,8 +131,7 @@ msgid "Admin Email Subject:"
 msgstr "Тема e-mail сообщения администратору:"
 
 msgid "Email Site Administrators for all new registrations"
-msgstr ""
-"Отправлять e-mail сообщения Администраторам Сайта обо всех новых регистрациях"
+msgstr "Отправлять e-mail сообщения Администраторам Сайта обо всех новых регистрациях"
 
 msgid "Save"
 msgstr "Сохранить"
@@ -184,46 +185,48 @@ msgstr "Активация Учетной Записи"
 msgid "This user cannot be activated."
 msgstr "Этот пользователь не может быть активирован."
 
+#, fuzzy
 msgid ""
-"This can happen if the URL you entered is not correct or you already "
-"activated this account. Please check if your mailclient broke the link into "
-"several lines and append them without spaces."
+"This can happen if the URL you entered is not correct or you already activated this account. "
+"Please check if your mail client broke the link into several lines and append them without "
+"spaces."
 msgstr ""
-"Это могло произойти, если введенный Вами адрес URL неверен или Вы уже "
-"активировали эту учетную запись. Пожалуйста, проверьте, не разбита ли ссылка "
-"Вашей почтовой программой на несколько строк и соедините их без пробелов."
+"Это могло произойти, если введенный Вами адрес URL неверен или Вы уже активировали эту "
+"учетную запись. Пожалуйста, проверьте, не разбита ли ссылка Вашей почтовой программой на "
+"несколько строк и соедините их без пробелов."
 
 msgid "Your account has been activated."
 msgstr "Ваша учетная запись была активирована."
 
 msgid "You can now login to your account with your username and password."
-msgstr ""
-"Теперь Вы можете войти в Вашу учетную запись, используя имя пользователя и "
-"пароль."
+msgstr "Теперь Вы можете войти в Вашу учетную запись, используя имя пользователя и пароль."
 
 #, c-format
 msgid "Hello %s,"
-msgstr ""
+msgstr "Здравствуйте  %s,"
 
 #, c-format
 msgid "You receive this email because you have registered at %s"
-msgstr ""
+msgstr "Вы получили данной e-mail сообщение, поскольку зарегистрировались на %s"
 
 #, c-format
 msgid "Your username is: %s"
-msgstr ""
+msgstr "Ваше имя пользователя: %s"
 
 msgid "To finish the registration process please click the following link:"
 msgstr ""
+"Для того, чтобы завершить процесс регистрации, пожалуйста, перейдите по следующей ссылке:"
 
 msgid ""
-"If you did not register at this site then please ignore this email.  The "
-"registration will not become valid and you will not receive any further "
-"emails.  Sorry for the inconvenience."
+"If you did not register at this site then please ignore this email.  The registration will "
+"not become valid and you will not receive any further emails.  Sorry for the inconvenience."
 msgstr ""
+"Если Вы не регистрировались на данном сайте, пожалуйста, проигнорируйте данное сообщение. "
+"Регистрация не будет действительна и Вы не получите дальнейших сообщений. Приносим свои "
+"извенения за беспокойство."
 
 msgid "Thank you!"
-msgstr ""
+msgstr "Спасибо!"
 
 msgid "Registration successful"
 msgstr "Вы прошли регистрацию"
@@ -231,45 +234,27 @@ msgstr "Вы прошли регистрацию"
 msgid "Your registration was successful."
 msgstr "Ваша регистрация успешна завершена."
 
+#, fuzzy
+msgid ""
+"You will shortly receive an email containing a link. You have to click this link to confirm "
+"and activate your account.  This procedure is necessary to prevent account abuse."
+msgstr ""
+"В ближайшее время Вы получите email сообщение, содержащее ссылку. Вы будут должны перейти по "
+"этой ссылке для подтверждения и активации Вашей учетной записи."
+
 msgid "Your registration will be processed and your account activated soon."
 msgstr ""
-"Ваши регистрационые данные будут обработаны, и ваша учетная запись будет "
-"скоро активирована."
-
-msgid ""
-"You will shortly receive an email containing a link. You have to click this "
-"link to confirm and activate your account."
-msgstr ""
-"В ближайшее время Вы получите email сообщение, содержащее ссылку. Вы будут "
-"должны перейти по этой ссылке для подтверждения и активации Вашей учетной "
-"записи."
-
-msgid "This procedure is necessary to prevent account abuse."
-msgstr "Данная процедура необходима для предотвращения злоупотреблений."
+"Ваши регистрационые данные будут обработаны, и ваша учетная запись будет скоро активирована."
 
 msgid "Your registration was successful and your account has been activated."
 msgstr "Ваша регистрация был успешно завершена и учетная запись активирована."
 
-msgid "You can now"
-msgstr "Теперь Вы можете"
-
 msgid "login"
 msgstr "войти"
 
-# Принадлежит, 'Вы можете теперь войти в систему'
-msgid "to your account with your username and password."
-msgstr "в Вашу учетную запись, используя имя пользователя и пароль."
-
-msgid "This page can only be called once."
-msgstr "Данная страница может быть загружена тоьлко один раз."
-
-#, c-format
-msgid ""
-"This page has been requested before and can only be called once. Probable "
-"you have hit the Reload button. Please proceed to %s."
-msgstr ""
-"Данная страница была запрошена ранее и ее загрузка допускается только один "
-"раз. Возможно, Вы нажали кнопку \"Обновить\". Пожалуйста, перейдите к %s."
+#, fuzzy, c-format
+msgid "You can now %s to your account with your username and password."
+msgstr "Теперь Вы можете войти в Вашу учетную запись, используя имя пользователя и пароль."
 
 msgid "Register As New User"
 msgstr "Зарегистрироваться как Новый Пользователь"
@@ -313,3 +298,23 @@ msgstr "Введенные Вами пароли не сопадают"
 
 msgid "Cancel"
 msgstr "Отменить"
+
+#~ msgid "This procedure is necessary to prevent account abuse."
+#~ msgstr "Данная процедура необходима для предотвращения злоупотреблений."
+
+#~ msgid "You can now"
+#~ msgstr "Теперь Вы можете"
+
+# Принадлежит, 'Вы можете теперь войти в систему'
+#~ msgid "to your account with your username and password."
+#~ msgstr "в Вашу учетную запись, используя имя пользователя и пароль."
+
+#~ msgid "This page can only be called once."
+#~ msgstr "Данная страница может быть загружена тоьлко один раз."
+
+#~ msgid ""
+#~ "This page has been requested before and can only be called once. Probable you have hit "
+#~ "the Reload button. Please proceed to %s."
+#~ msgstr ""
+#~ "Данная страница была запрошена ранее и ее загрузка допускается только один раз. Возможно, "
+#~ "Вы нажали кнопку \"Обновить\". Пожалуйста, перейдите к %s."

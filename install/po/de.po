@@ -84,9 +84,9 @@ msgid ""
 "Unable to write to the <b>config.php</b> configuration file in your %s directory.  Please "
 "change its permissions.  If you're onUnix you can do <i>chmod 666 config.php</i> to fix this."
 msgstr ""
-"Das Schreiben der Datei <b>config.php</b> in Ihrem Ordner %s ist fehlgeschlagen.  "
-"Bitte ändern Sie die Zugriffsrechte der Datei.  Unter UNIX können Sie das Kommando "
-"<i>chmod 666 config.php</i> benutzen, um dieses Problem zu lösen."
+"Das Schreiben der Datei <b>config.php</b> in Ihrem Ordner %s ist fehlgeschlagen.  Bitte "
+"ändern Sie die Zugriffsrechte der Datei.  Unter UNIX können Sie das Kommando <i>chmod 666 "
+"config.php</i> benutzen, um dieses Problem zu lösen."
 
 #, c-format
 msgid "The config.php file does not exist in your %s directory"
@@ -270,6 +270,10 @@ msgstr "Installation abschließen"
 msgid "Install Gallery Core"
 msgstr "Gallery-Kern"
 
+#, fuzzy
+msgid "Installing the core module"
+msgstr "Weitere Module installieren"
+
 msgid "Unable to initialize our Gallery data"
 msgstr "Gallery-Daten konnten nicht initialisiert werden"
 
@@ -297,12 +301,13 @@ msgstr "Weitere Module"
 msgid "Unable to initialize our Gallery session"
 msgstr "Unsere Gallery-Sitzung konnte nicht initialisiert werden"
 
-msgid "Unable to get the module list"
-msgstr "Die Modulliste ist nicht abrufbar"
-
 #, c-format
 msgid "Unable to load the %s module"
 msgstr "%s-Modul kann nicht geladen werden"
+
+#, fuzzy
+msgid "Installing modules"
+msgstr "Weitere Module"
 
 #, c-format
 msgid "Unable to install the %s module"
@@ -311,6 +316,9 @@ msgstr "%s-Modul kann nicht installiert werden"
 #, c-format
 msgid "Unable to activate the %s module"
 msgstr "Das Modul '%s' konnte nicht aktiviert werden"
+
+msgid "Unable to get the module list"
+msgstr "Die Modulliste ist nicht abrufbar"
 
 msgid "Other"
 msgstr "Andere"
@@ -326,6 +334,9 @@ msgstr "Speicherort einrichten"
 
 msgid "System Checks"
 msgstr "Systemprüfungen"
+
+msgid "Performing system checks"
+msgstr ""
 
 msgid "PHP version >= 4.1.0 or >= 5.0.4"
 msgstr "PHP-Version >= 4.1.0 oder >= 5.0.4"
@@ -378,8 +389,8 @@ msgid ""
 "Error: Your PHP is configured without support for %sPerl Compatible Regular Expressions%s. "
 "You must enable these functions before Gallery will run."
 msgstr ""
-"Fehler: Ihre Version von PHP ist ohne %sPerl-kompatible reguläre Ausdrücke%s "
-"konfiguriert.  Sie müssen diese Funktionen einschalten, bevor Gallery funktionieren kann."
+"Fehler: Ihre Version von PHP ist ohne %sPerl-kompatible reguläre Ausdrücke%s konfiguriert.  "
+"Sie müssen diese Funktionen einschalten, bevor Gallery funktionieren kann."
 
 msgid "exec() allowed"
 msgstr "exec() erlaubt"
@@ -407,10 +418,10 @@ msgid ""
 "return a blank page) possibly leading to data corruption."
 msgstr ""
 "Warnung: die Funktion set_time_limit() in Ihrem PHP ist deaktiviert (Parameter  "
-"<b>disabled_functions</b> in php.ini).  Gallery kann zwar im Prinzip mit dieser "
-"Einstellung arbeiten, aber nicht zuverlässig.  Jede Operation, die länger als %d "
-"Sekunden dauert, wird fehlschlagen (und in einigen Fällen eine leere Seite anzeigen), "
-"möglicherweise führt das auch zu Datenverlust."
+"<b>disabled_functions</b> in php.ini).  Gallery kann zwar im Prinzip mit dieser Einstellung "
+"arbeiten, aber nicht zuverlässig.  Jede Operation, die länger als %d Sekunden dauert, wird "
+"fehlschlagen (und in einigen Fällen eine leere Seite anzeigen), möglicherweise führt das "
+"auch zu Datenverlust."
 
 msgid "Memory limit"
 msgstr "Speicherbegrenzung"
@@ -474,8 +485,8 @@ msgid ""
 "please instruct your system administrator to reconfigure PHP with the %sgettext%s option "
 "enabled."
 msgstr ""
-"Ihr Webserver unterstützt keine Lokalisierung. Um die Unterstützung für zusätzliche "
-"Sprachen einzuschalten, teilen Sie bitte Ihrem Systemadministrator mit, dass er PHP mit "
+"Ihr Webserver unterstützt keine Lokalisierung. Um die Unterstützung für zusätzliche Sprachen "
+"einzuschalten, teilen Sie bitte Ihrem Systemadministrator mit, dass er PHP mit "
 "eingeschalteter %sgettext%s-Option rekonfigurieren soll."
 
 #, c-format
@@ -491,8 +502,8 @@ msgid ""
 "Your PHP is missing the function %sdngettext%s. This means Gallery will be unable to "
 "translate plural forms."
 msgstr ""
-"Ihrer PHP-Version fehlt die Funktion %sdngettext%s. Das bedeutet, dass Gallery Worte "
-"mit Mehrzahl falsch darstellen wird."
+"Ihrer PHP-Version fehlt die Funktion %sdngettext%s. Das bedeutet, dass Gallery Worte mit "
+"Mehrzahl falsch darstellen wird."
 
 msgid "Zend compatibility mode"
 msgstr "Zend-Kompatibilitätsmodus"
@@ -519,9 +530,9 @@ msgid ""
 "Gallery will beunable to run in other languages than the system language and English."
 msgstr ""
 "Warnung: die Funktion putenv() in Ihrem PHP ist deaktiviert (Parameter "
-"<b>disabled_functions</b>in php.ini).  Gallery kann zwar im Prinzip mit dieser "
-"Einstellung arbeiten, aber auf einigen wenigen Systemen wird Gallery nur "
-"in Englisch und der Systemsprache laufen."
+"<b>disabled_functions</b>in php.ini).  Gallery kann zwar im Prinzip mit dieser Einstellung "
+"arbeiten, aber auf einigen wenigen Systemen wird Gallery nur in Englisch und der "
+"Systemsprache laufen."
 
 msgid "Output buffering disabled"
 msgstr "Ausgabe-Pufferung ausgeschaltet"
@@ -534,13 +545,13 @@ msgid ""
 "Also, some features like the progress bars might not work correctly if output buffering is "
 "enabled unless ini_set() is allowed."
 msgstr ""
-"Warnung: die Ausgabe-Pufferung in Ihrem PHP ist mittels des <b>%s</b>-Parameters "
-"in Ihrer php.ini aktiviert. Gallery kann zwar im Prinzip mit dieser Einstellung arbeiten - "
-"und das Herunterladen von Dateien ist damit sogar schneller - aber das anbieten  "
-"von gro0en Dateien (z.B. großen Videos) in Gallery könnte beeinträchtigt werden "
-"und Speicherprobleme könnten auftreten. Falls ini_set() nicht erlaubt ist, kann es "
-"bei aktivierter Ausgabe-Pufferung außerdem passieren, dass einige Funktionen, "
-"wie beispielsweise Fortschrittsbalken nicht korrekt funktionieren."
+"Warnung: die Ausgabe-Pufferung in Ihrem PHP ist mittels des <b>%s</b>-Parameters in Ihrer "
+"php.ini aktiviert. Gallery kann zwar im Prinzip mit dieser Einstellung arbeiten - und das "
+"Herunterladen von Dateien ist damit sogar schneller - aber das anbieten  von gro0en Dateien "
+"(z.B. großen Videos) in Gallery könnte beeinträchtigt werden und Speicherprobleme könnten "
+"auftreten. Falls ini_set() nicht erlaubt ist, kann es bei aktivierter Ausgabe-Pufferung "
+"außerdem passieren, dass einige Funktionen, wie beispielsweise Fortschrittsbalken nicht "
+"korrekt funktionieren."
 
 msgid "Gallery file integrity"
 msgstr "Gallery-Dateiintegrität"
@@ -803,6 +814,12 @@ msgstr ""
 "Sie können nun Ihre neue Gallery anschauen.  Geben Sie in Ihrem Browser die URL für %smain."
 "php%s in Ihrem %s-Ordner ein."
 
+msgid "Installer Help"
+msgstr "Installationshilfe"
+
+msgid "Start Over"
+msgstr "Neu anfangen"
+
 msgid "Installed Gallery Core successfully"
 msgstr "Gallery-Kern erfolgreich installiert"
 
@@ -821,7 +838,8 @@ msgid "Error installing Gallery Core"
 msgstr "Fehler bei der Installation des Gallery-Kerns"
 
 msgid "Something went wrong when we tried to install the core module.  What to do next?"
-msgstr "Bei der Installation des Kernmoduls ist etwas schiefgelaufen. Was soll jetzt geschehen?"
+msgstr ""
+"Bei der Installation des Kernmoduls ist etwas schiefgelaufen. Was soll jetzt geschehen?"
 
 msgid ""
 "Go to the System Checks step of the installer and make sure all checks shows 'Success'. A "
@@ -952,15 +970,6 @@ msgstr "Fehler-Ausgabe"
 
 msgid "Welcome to the Gallery Installer"
 msgstr "Willkommen zum Gallery-Installer"
-
-msgid "Installer Help"
-msgstr "Installationshilfe"
-
-msgid "Start Over"
-msgstr "Neu anfangen"
-
-msgid "Install Steps"
-msgstr "Installationsschritte"
 
 # param0 = integer percentage
 #, c-format
@@ -1103,6 +1112,9 @@ msgstr "Multisite-Ordner erfolgreich eingerichtet."
 msgid "Standard installation selected."
 msgstr "Standard-Installation ausgewählt."
 
+msgid "Install Steps"
+msgstr "Installationsschritte"
+
 #, c-format
 msgid ""
 "We want to make sure that your Gallery is secure.  The config.php file that this installer "
@@ -1194,7 +1206,8 @@ msgid "The directory you entered is read only"
 msgstr "Der von Ihnen angegebene Ordner ist schreibgeschützt"
 
 msgid "There was an error creating the directory structure within the storage directory."
-msgstr "Beim Erzeugen der Ordner-Struktur im Ordner zur Datenspeicherung ist ein Fehler aufgetreten."
+msgstr ""
+"Beim Erzeugen der Ordner-Struktur im Ordner zur Datenspeicherung ist ein Fehler aufgetreten."
 
 msgid "Directory path:"
 msgstr "Pfad des Ordners:"
@@ -1230,7 +1243,8 @@ msgstr ""
 "zugänglichen Bereich zu verschieben und dann hier den Pfad anzupassen."
 
 msgid "<b>Note</b>: Don't forget to delete dir.php when you're done!"
-msgstr "<b>Beachten Sie</b>: Vergessen Sie nicht, die Datei dir.php zu löschen, wenn Sie fertig sind!"
+msgstr ""
+"<b>Beachten Sie</b>: Vergessen Sie nicht, die Datei dir.php zu löschen, wenn Sie fertig sind!"
 
 msgid ""
 "Your webserver needs to be able to write to this directory. Permission systems vary from "
@@ -1246,7 +1260,8 @@ msgstr ""
 "dies so sicher wie möglich einrichten können. Um es zum Laufen zu bringen, können Sie diesen "
 "Beispielen folgen."
 
-msgid "Note: these are only examples!  You may find that they don't work quite right on your system."
+msgid ""
+"Note: these are only examples!  You may find that they don't work quite right on your system."
 msgstr ""
 "Beachten Sie: Dies sind nur Beispiele! Es kann gut sein, dass Sie auf Ihrem System nicht "
 "richtig funktionieren."
@@ -1342,8 +1357,8 @@ msgid ""
 "required to get your Gallery up and running. Once a step has been completed, you can go back "
 "and make changes at any time. Please read the %sInstaller Help File%s before proceeding."
 msgstr ""
-"Um Gallery 2 auf Ihrem Webserver zu installieren, müssen Sie %d Schritte durchlaufen. "
-"Dieser Installer wird Sie durch die einzelnen Schritte führen und Ihnen dabei Hilfestellung "
+"Um Gallery 2 auf Ihrem Webserver zu installieren, müssen Sie %d Schritte durchlaufen. Dieser "
+"Installer wird Sie durch die einzelnen Schritte führen und Ihnen dabei Hilfestellung "
 "leisten, falls weitere Schritte erforderlich sind um Ihre Gallery zum Laufen zu bringen. "
 "Sobald ein Schritt abgeschlossen ist, können Sie jederzeit zurückgehen und Änderungen "
 "vornehmen. Bitte lesen Sie die %sInstallationshilfe%s, bevor Sie weitermachen."
@@ -1357,4 +1372,3 @@ msgstr "Sprache einstellen"
 
 msgid "Begin Installation&raquo;"
 msgstr "Installation starten&raquo;"
-

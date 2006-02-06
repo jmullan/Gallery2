@@ -97,6 +97,15 @@ msgstr "卸載"
 msgid "deactivate"
 msgstr "關閉"
 
+msgid "No acceleration"
+msgstr ""
+
+msgid "Partial acceleration"
+msgstr ""
+
+msgid "Full acceleration"
+msgstr ""
+
 msgid "Performing Maintenance Tasks"
 msgstr "系統維護中"
 
@@ -118,6 +127,10 @@ msgstr "從上層相簿中繼承設定值"
 
 msgid "Use these settings"
 msgstr "使用這些設定"
+
+#, fuzzy
+msgid "Installing the core module"
+msgstr "Gallery 核心模組"
 
 msgid "key"
 msgstr "主鍵"
@@ -199,6 +212,10 @@ msgstr "偵測壞掉的衍生檔案，"
 
 msgid "Detecting broken derivatives, saving "
 msgstr "偵測壞掉的衍生檔案，正在儲存"
+
+#, fuzzy, c-format
+msgid "Deleting old session files (iteration %d)"
+msgstr "正在刪除舊的權限表格"
 
 msgid "add items"
 msgstr "增加項目"
@@ -485,6 +502,9 @@ msgstr "用戶"
 msgid "Groups"
 msgstr "成員組"
 
+msgid "Performance"
+msgstr ""
+
 msgid "Toolkit Priority"
 msgstr "工具優先次序"
 
@@ -547,6 +567,14 @@ msgstr "建立了 %d 個項目"
 #, c-format
 msgid "%d items failed"
 msgstr "%d 個項目失敗"
+
+#, fuzzy
+msgid "Delete user sessions"
+msgstr "檔案系統權限"
+
+msgid ""
+"Delete all persistent user sessions according to your current session expiration settings."
+msgstr ""
 
 msgid "Delete database cache"
 msgstr "刪除資料庫快取"
@@ -648,19 +676,16 @@ msgstr "下載"
 msgid "Plugins directory does not exist."
 msgstr "模組目錄不存在。"
 
-#, fuzzy
 msgid ""
 "Couldn't create plugins subdirectory. Make sure the webserver has write permissions in it."
-msgstr "無法在「%2$s」中產生模組目錄「%1$s」，請確定網頁伺服器有寫入的權限。"
+msgstr "無法產生插入組件子目錄。請確定網頁伺服器有寫入的權限。"
 
-#, fuzzy
 msgid "Couldn't create repository cache path."
-msgstr "無法產生軟體庫快取路徑「%s」。"
+msgstr "無法產生軟體庫快取路徑。"
 
-#, fuzzy
 msgid ""
 "Couldn't create cache subdirectory. Make sure the web server has write permissions in it."
-msgstr "無法在「%2$s」中產生快取目錄「%1$s」，請確定網頁伺服器有寫入的權限。"
+msgstr "無法產生快取子目錄。請確定網頁伺服器有寫入的權限。"
 
 #, c-format
 msgid "Error downloading index from '%s'."
@@ -738,6 +763,18 @@ msgstr "相簿每頁列數"
 msgid "Columns per album page"
 msgstr "相簿每頁的欄數"
 
+msgid "Allow browser window width to set columns per album page"
+msgstr ""
+
+msgid "Number of items to show per page"
+msgstr "每頁顯示的預目數"
+
+msgid "Row height (pixels)"
+msgstr ""
+
+msgid "Column width (pixels)"
+msgstr ""
+
 msgid "Show image owners"
 msgstr "顯示照片所有人"
 
@@ -746,9 +783,6 @@ msgstr "顯示相簿所有人"
 
 msgid "Show micro navigation thumbnails"
 msgstr "顯示小型導覽略圖"
-
-msgid "Number of items to show per page"
-msgstr "每頁顯示的預目數"
 
 msgid "Blocks to show in the sidebar"
 msgstr "在邊欄中出現的區塊"
@@ -1170,6 +1204,30 @@ msgstr "網域"
 
 msgid "Invalid cookie domain"
 msgstr "無效的 cookie 網域"
+
+msgid "Captcha for User Login"
+msgstr ""
+
+msgid "Select policy for requiring captcha validation to login:"
+msgstr ""
+
+msgid "High: Always require validation"
+msgstr ""
+
+msgid "Medium: Require validation after some failed attempts for a username"
+msgstr ""
+
+msgid ""
+"Low: Require validation after some failed attempts in one session (this provides protection "
+"against casual password guessers, but not against automated attacks)"
+msgstr ""
+
+#, c-format
+msgid "Configure the number of failed attempts for medium/low in %sCaptcha Settings%s"
+msgstr ""
+
+msgid "Activate Captcha module to enable this feature"
+msgstr ""
 
 msgid "Locking System"
 msgstr "鎖定系統"
@@ -1600,6 +1658,76 @@ msgstr "這也會清除這個模組建立的所有權限設定和資料。"
 msgid "Uninstall"
 msgstr "卸載"
 
+msgid "Performance Tuning"
+msgstr ""
+
+#, fuzzy
+msgid "Updated performance settings successfully"
+msgstr "測試郵件成功發出"
+
+#, fuzzy
+msgid "Deleted all saved pages"
+msgstr "刪除一個用戶"
+
+#, fuzzy
+msgid "Acceleration"
+msgstr "操作"
+
+msgid ""
+"Improve your Gallery performance by storing entire web pages in the database.  This can "
+"considerably reduce the amount of webserver and database resources required to display a web "
+"page.  The tradeoff is that the web page you see may be a little bit out of date, however "
+"you can always get the most recent version of the page by forcing a refresh in your browser "
+"(typically by holding down the shift key and clicking the reload button)."
+msgstr ""
+
+msgid "Partial Acceleration"
+msgstr ""
+
+#, c-format
+msgid ""
+"Partial acceleration gives you roughly 10-25% performance increase, but some forms of "
+"dynamic data (like view counts) will not get updated right away.  All content that appears "
+"in blocks (like the random image block, any sidebar blocks, etc) will always be updated."
+msgstr ""
+
+msgid "Full Acceleration"
+msgstr ""
+
+#, c-format
+msgid ""
+"Full acceleration gives roughly a 90% performance increase, but no dynamic data (random "
+"image block, other sidebar blocks, number of items in your shopping cart, view counts, etc) "
+"will get updated until the saved page expires."
+msgstr ""
+
+msgid ""
+"You can additionally specify when saved pages expire.  Setting a longer expiration time will "
+"reduce the load on your server, but will increase the interval before users see changes.  "
+"Lower expiration times mean that users will see more current data, but they will place a "
+"higher load on your server."
+msgstr ""
+
+msgid "Here are some standard acceleration profiles:"
+msgstr ""
+
+#, fuzzy
+msgid "Medium acceleration"
+msgstr "編輯說明"
+
+msgid "High acceleration"
+msgstr ""
+
+#, fuzzy
+msgid "Guest Users"
+msgstr "註冊用戶"
+
+msgid "Expires after:"
+msgstr ""
+
+msgid "Clear Saved Pages"
+msgstr ""
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr "請確定你的網路連線的設定是正確的或稍後再試。"
 
@@ -1636,11 +1764,12 @@ msgstr ""
 "新的更新。在更新時不會傳送任何私人的資料回 Gallery 伺服器。使用較慢的連線時，這個過程可能會用"
 "到一到兩分鐘的時間。"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "As of the last update on %s, the repository contains %s modules and %s themes. Its contents "
 "can be viewed on the Modules and Themes tabs."
-msgstr "，軟體庫中有 %s 個模組和 %s 個佈景主題。它的內容可以在模組和佈景主題面板中看到。"
+msgstr ""
+"上次在%s更新時，軟體庫中有%s個模組和%s個佈景主題。它的內容可以在模組和佈景主題面板中看到。"
 
 msgid ""
 "The index has never been updated. Click on the Update button to see what updates are "
@@ -1665,13 +1794,13 @@ msgstr ""
 msgid "Review plugin compatibility (on the Themes and Modules tabs)"
 msgstr "檢查插入組件的相容性（在模組和佈景主題面板中）"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%sDownload%s Gallery core"
-msgstr "<a href=\"%s\">下載</a> Gallery 核心"
+msgstr "%s下載%s Gallery 核心"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Read the %supgrade instructions%s and perform the upgrade"
-msgstr "閱讀<a href=\"%s\">昇級指引</a>並開始昇級"
+msgstr "閱讀%s昇級指引%s並開始昇級"
 
 msgid "Gallery Up-To-Date"
 msgstr "Gallery 軟體更新"
@@ -1791,17 +1920,17 @@ msgid "Gallery Repository Setup"
 msgstr "Gallery 軟體庫設定"
 
 msgid "Warning:"
-msgstr ""
+msgstr "警告："
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "In order to download plugins from the Gallery repository, a special directory needs to be "
 "created where Gallery will store the data. Under your Gallery base directory, create a "
 "directory called '%s' and allow the web server to write into it by appropriately setting the "
 "permissions."
 msgstr ""
-"在你的 Gallery 目錄中，產生一個叫「%s」的目錄並設定適當的存取權限以允許網頁伺服器寫入這個目"
-"錄。"
+"為了能從 Gallery 軟體庫下載插入組件，在 Gallery 中必需要有一個特別的目錄來存放這些資料。在你"
+"的 Gallery 目錄中，產生一個叫「%s」的目錄並設定適當的存取權限以允許網頁伺服器寫入這個目錄。"
 
 msgid "Instructions for Unix-type platforms:"
 msgstr "Unix 類平台的指令："
@@ -2128,7 +2257,7 @@ msgid ""
 "must upload the files separately, use a different upload format, or ask your system "
 "administrator to allow larger uploads."
 msgstr ""
-"<b>提示：</b>你一次可以上傳 %s。如果你需要上傳更多，請分開上傳檔案，或使用其他上傳方法，或聯"
+"<b>注意：</b>你一次可以上傳 %s。如果你需要上傳更多，請分開上傳檔案，或使用其他上傳方法，或聯"
 "絡系統管理員允許更大上傳空間。"
 
 #, c-format
@@ -2137,7 +2266,7 @@ msgid ""
 "If you want to upload more than that, you must upload the files separately, use a different "
 "upload format, or ask your system administrator to allow larger uploads."
 msgstr ""
-"<b>提示：</b>你一次可以上傳 %s。每個檔案不能大於 %s。如果你需要上傳更多，請分開上傳檔案，或使"
+"<b>注意：</b>你一次可以上傳 %s。每個檔案不能大於 %s。如果你需要上傳更多，請分開上傳檔案，或使"
 "用其他上傳方法，或聯絡系統管理員允許更大上傳空間。"
 
 msgid "More.."
@@ -2415,14 +2544,24 @@ msgid ""
 "added items."
 msgstr "設定相簿排序方式。將應用到所有目前項目和新添項目中。"
 
+#, fuzzy
+msgid "Apply to all subalbums"
+msgstr "應用變更到子項目"
+
 msgid "Choose a theme for this album. (The way the album is arranged on the page)"
 msgstr "為這個相簿選擇一個佈景主題。（相簿在頁面顯示的排列方式）"
+
+msgid "Use this theme in all subalbums"
+msgstr ""
 
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr "每個項目都需要一個縮略圖，請在這裡設定預設點數大小。"
 
 msgid "You must enter a number (greater than zero)"
 msgstr "你必須輸入一個數字（大於零）"
+
+msgid "Use this thumbnail size in all subalbums"
+msgstr ""
 
 msgid "Resized Images"
 msgstr "變更大小的圖片"
@@ -2438,6 +2577,9 @@ msgstr "目標大小（像素數）"
 
 msgid "You must enter a valid size"
 msgstr "你必須輸入一個有效的大小"
+
+msgid "Use these target sizes in all subalbums"
+msgstr ""
 
 msgid "Recreate thumbnails and resizes"
 msgstr "重建縮略圖和變更大小的圖片"
@@ -2708,6 +2850,10 @@ msgstr "設定"
 msgid "Use Global"
 msgstr "使用全局設定"
 
+#, c-format
+msgid "Use these settings in all subalbums that use %s theme"
+msgstr ""
+
 msgid ""
 "Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
 msgstr "注意：要把所有子相簿設成同一個佈景主題，在<b>相簿</b>面板中選用適當的選項"
@@ -2880,6 +3026,10 @@ msgstr "用戶已擁有此權限 (請檢查子權限設定)"
 
 msgid "Reorder Album"
 msgstr "重新排序相簿"
+
+#, fuzzy
+msgid "Order saved successfully"
+msgstr "變更已儲存成功"
 
 msgid ""
 "This album has an automatic sort order specified, so you cannot change the order of items "

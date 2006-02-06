@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Upgrader 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-07-06 23:48+0200\n"
-"PO-Revision-Date: 2006-01-19 00:00+0200\n"
+"PO-Revision-Date: 2006-01-21 00:00+0200\n"
 "Last-Translator: Arnaud MOURONVAL <ArnaudMouronval@yahoo.com>\n"
 "Language-Team: French <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -45,9 +45,8 @@ msgstr "<b>Erreur&nbsp;:</b> mot de passe invalide."
 msgid "Empty Cache"
 msgstr "Vidage du cache"
 
-#, fuzzy
 msgid "Finish Upgrade"
-msgstr "Commencer la mise à jour"
+msgstr "Terminer la mise à jour"
 
 msgid "System Checks"
 msgstr "Vérification du système"
@@ -237,24 +236,21 @@ msgstr ""
 "installation de PHP est correcte. Si vous obtenez un message d'erreur ou une page vide, "
 "alors vous devez désactiver l'option ze1_compatibility_mode avant de continuer."
 
-#, fuzzy
 msgid "putenv() allowed"
-msgstr "Autorisation de la commande exec()"
+msgstr "Autorisation de la commande putenv()"
 
-#, fuzzy
 msgid ""
 "Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> "
 "parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
 "Gallery will be unable to run in other languages than the system language and English."
 msgstr ""
-"Attention&nbsp;: la fonction set_time_limit() est désactivée dans votre installation de PHP "
-"par le paramètre <b>disabled_functions</b> dans le fichier php.ini. Gallery peut fonctionner "
-"dans cette configuration, mais sa fiabilité n'est pas garantie&nbsp;: toute opération qui "
-"dure plus de %d secondes échouera (et dans certains cas retournera une page blanche), ce qui "
-"pourra entraîner une corruption des données."
+"Attention&nbsp;: la fonction putenv() est désactivée dans votre installation de PHP par le "
+"paramètre <b>disabled_functions</b> dans le fichier php.ini. Gallery peut fonctionner dans "
+"cette configuration, mais sur certains systèmes, Gallery ne pourra pas s'afficher dans une "
+"autre langue que la langue par défaut du système et l'anglais."
 
 msgid "Output buffering disabled"
-msgstr ""
+msgstr "Mise en buffer de la sortie désactivée"
 
 #, c-format
 msgid ""
@@ -264,6 +260,13 @@ msgid ""
 "Also, some features like the progress bars might not work correctly if output buffering is "
 "enabled unless ini_set() is allowed."
 msgstr ""
+"Attention&nbsp;: la mise en buffer de la sortie est activée dans votre installation de PHP "
+"par le(s) paramètre(s) <b>%s</b> dans le fichier php.ini. Gallery peut fonctionner dans "
+"cette configuration (le téléchargement de fichier sera même plus rapide), mais Gallery "
+"pourra être dans l'incapacité de fournir de gros fichiers (des vidéos par exemple) et "
+"arriver en saturation de mémoire. De plus, quelques fonctions comme les barres de "
+"progression pourront ne pas s'afficher correctement si la mise en buffer de la sortie est "
+"activée à moins que la fonction ini_set() soit autorisée."
 
 msgid "Storage Directory Permissions"
 msgstr "Permissions du répertoire de stockage"
@@ -358,9 +361,8 @@ msgstr "M'authentifier"
 msgid "Authentication successful!"
 msgstr "Authentification réussie&nbsp;!"
 
-#, fuzzy
 msgid "Successfully cleaned cache directories."
-msgstr "Nous avons nettoyé les répertoires de cache avec succès."
+msgstr "Nettoyage des répertoires de cache réalisé avec succès."
 
 msgid "Delete Cache Directories"
 msgstr "Effacer les répertoires de cache"
@@ -409,6 +411,12 @@ msgstr ""
 msgid "Go to my Gallery!"
 msgstr "Se rendre dans Gallery&nbsp;!"
 
+msgid "Upgrader Help"
+msgstr "Aide pour la mise à jour"
+
+msgid "Start Over"
+msgstr "Reprendre depuis le début"
+
 msgid "Warning"
 msgstr "Attention"
 
@@ -423,12 +431,6 @@ msgstr ""
 
 msgid "Welcome to the Gallery Upgrader"
 msgstr "Bienvenue sur l'outil de mise à jour de Gallery"
-
-msgid "Upgrader Help"
-msgstr "Aide pour la mise à jour"
-
-msgid "Start Over"
-msgstr "Reprendre depuis le début"
 
 #, c-format
 msgid "Upgrade %d%% complete"
@@ -601,16 +603,16 @@ msgstr ""
 msgid "MySQL"
 msgstr "MySQL"
 
-#, fuzzy, c-format
+#, c-format
 msgid "mysqldump -u%s -p -h %s --opt %s > %s.sql"
-msgstr "mysqldump -u%s -p<i>VotreMotDePasse</i> --opt %s > %s.sql"
+msgstr "mysqldump -u%s -p -h %s --opt %s > %s.sql"
 
 msgid "PostgreSQL"
 msgstr "PostgreSQL"
 
-#, fuzzy, c-format
+#, c-format
 msgid "pg_dump -h %s --format=t %s > %s.sql"
-msgstr "pg_dump --format=t %s > %s.sql"
+msgstr "pg_dump -h %s --format=t %s > %s.sql"
 
 msgid ""
 "Once the upgrade has begun, please be patient.  If you cancel or reload the page, you may "
@@ -710,9 +712,9 @@ msgstr "Mettre à jour d'autres modules"
 
 #, c-format
 msgid ""
-"Upgrading Gallery 2 requires %d steps. This upgrade tool will guide you through these "
-"steps and provide assistance along the way if additional steps are required. Please read the "
-"%sHelp File%s before proceeding."
+"Upgrading Gallery 2 requires %d steps. This upgrade tool will guide you through these steps "
+"and provide assistance along the way if additional steps are required. Please read the %"
+"sHelp File%s before proceeding."
 msgstr ""
 "Mettre à jour Gallery 2 nécessite %d étapes. Cet outil de mise à jour va vous guider à "
 "travers ces étapes et vous fournir une assistance si d'autres actions sont nécessaires pour "
@@ -723,9 +725,3 @@ msgstr "Choix de la langue&nbsp;:"
 
 msgid "Go"
 msgstr "Go"
-
-#~ msgid "Finished"
-#~ msgstr "Fin"
-
-#~ msgid "Upgrade Status"
-#~ msgstr "État de la mise à jour"

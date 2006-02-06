@@ -113,6 +113,15 @@ msgstr "deinstallieren"
 msgid "deactivate"
 msgstr "deaktivieren"
 
+msgid "No acceleration"
+msgstr ""
+
+msgid "Partial acceleration"
+msgstr ""
+
+msgid "Full acceleration"
+msgstr ""
+
 msgid "Performing Maintenance Tasks"
 msgstr "System-Wartungsaufgaben werden ausgeführt"
 
@@ -134,6 +143,10 @@ msgstr "Einstellungen vom übergeordneten Album erben"
 
 msgid "Use these settings"
 msgstr "Diese Einstellungen benutzen"
+
+#, fuzzy
+msgid "Installing the core module"
+msgstr "Gallery-Kernmodul"
 
 msgid "key"
 msgstr "Schlüssel"
@@ -215,6 +228,10 @@ msgstr "Defekte Bildderivate werden ermittelt, "
 
 msgid "Detecting broken derivatives, saving "
 msgstr "Defekte Bildderivate werden ermittelt, speichere "
+
+#, fuzzy, c-format
+msgid "Deleting old session files (iteration %d)"
+msgstr "Lösche alte Berechtigungstabellen"
 
 msgid "add items"
 msgstr "Elemente hinzufügen"
@@ -503,6 +520,9 @@ msgstr "Benutzer"
 msgid "Groups"
 msgstr "Gruppen"
 
+msgid "Performance"
+msgstr ""
+
 msgid "Toolkit Priority"
 msgstr "Werkzeugpriorität"
 
@@ -568,6 +588,14 @@ msgstr "%d Elemente erstellt"
 msgid "%d items failed"
 msgstr "%d elemente fehlgeschlagen"
 
+#, fuzzy
+msgid "Delete user sessions"
+msgstr "Dateisystem-Berechtigungen"
+
+msgid ""
+"Delete all persistent user sessions according to your current session expiration settings."
+msgstr ""
+
 msgid "Delete database cache"
 msgstr "Datenbankzwischenspeicher leeren"
 
@@ -577,9 +605,9 @@ msgid ""
 "Gallery to reload the information from the database."
 msgstr ""
 "Gallery speichert häufig benötigte Datenbank-Informationen zur Beschleunigung auf der "
-"Festplatte. Falls Sie die Datenbank direkt geändert haben, sollten Sie diese Aufgabe ausführen, "
-"um den Zwischenspeicher zu löschen und Gallery dazu zu zwingen, die Informationen aus der "
-"Datenbank neu zu laden."
+"Festplatte. Falls Sie die Datenbank direkt geändert haben, sollten Sie diese Aufgabe "
+"ausführen, um den Zwischenspeicher zu löschen und Gallery dazu zu zwingen, die Informationen "
+"aus der Datenbank neu zu laden."
 
 #, c-format
 msgid "Successfully deleted directory: %s"
@@ -673,7 +701,8 @@ msgstr "downloaden"
 msgid "Plugins directory does not exist."
 msgstr "Der Ordner für Erweiterungen existiert nicht."
 
-msgid "Couldn't create plugins subdirectory. Make sure the webserver has write permissions in it."
+msgid ""
+"Couldn't create plugins subdirectory. Make sure the webserver has write permissions in it."
 msgstr ""
 "Konnte den Ordner für Erweiterungen nicht anlegen. Stellen Sie sicher, dass der Webserver "
 "die nötigen Schreibrechte dafür hat."
@@ -681,10 +710,11 @@ msgstr ""
 msgid "Couldn't create repository cache path."
 msgstr "Pfad für den Plugin-Katalog-Cache konnte nicht erstellt werden."
 
-msgid "Couldn't create cache subdirectory. Make sure the web server has write permissions in it."
+msgid ""
+"Couldn't create cache subdirectory. Make sure the web server has write permissions in it."
 msgstr ""
-"Konnte den Cache-Unterordner nicht anlegen. Stellen Sie sicher, dass der Webserver "
-"die nötigen Schreibrechte dafür hat."
+"Konnte den Cache-Unterordner nicht anlegen. Stellen Sie sicher, dass der Webserver die "
+"nötigen Schreibrechte dafür hat."
 
 #, c-format
 msgid "Error downloading index from '%s'."
@@ -764,6 +794,18 @@ msgstr "Zeilen per Albumseite"
 msgid "Columns per album page"
 msgstr "Spalten pro Albumseite"
 
+msgid "Allow browser window width to set columns per album page"
+msgstr ""
+
+msgid "Number of items to show per page"
+msgstr "Anzahl der anzuzeigenden Elemente pro Seite"
+
+msgid "Row height (pixels)"
+msgstr ""
+
+msgid "Column width (pixels)"
+msgstr ""
+
 msgid "Show image owners"
 msgstr "Bildbesitzer anzeigen"
 
@@ -772,9 +814,6 @@ msgstr "Albumbesitzer anzeigen"
 
 msgid "Show micro navigation thumbnails"
 msgstr "Mikronavigationsbilder anzeigen"
-
-msgid "Number of items to show per page"
-msgstr "Anzahl der anzuzeigenden Elemente pro Seite"
 
 msgid "Blocks to show in the sidebar"
 msgstr "In der Seitenleiste angezeigte Blöcke"
@@ -1233,6 +1272,30 @@ msgstr "Domäne"
 msgid "Invalid cookie domain"
 msgstr "Ungültige Cookie-Domäne"
 
+msgid "Captcha for User Login"
+msgstr ""
+
+msgid "Select policy for requiring captcha validation to login:"
+msgstr ""
+
+msgid "High: Always require validation"
+msgstr ""
+
+msgid "Medium: Require validation after some failed attempts for a username"
+msgstr ""
+
+msgid ""
+"Low: Require validation after some failed attempts in one session (this provides protection "
+"against casual password guessers, but not against automated attacks)"
+msgstr ""
+
+#, c-format
+msgid "Configure the number of failed attempts for medium/low in %sCaptcha Settings%s"
+msgstr ""
+
+msgid "Activate Captcha module to enable this feature"
+msgstr ""
+
 msgid "Locking System"
 msgstr "Verriegelungs-Verfahren"
 
@@ -1687,6 +1750,76 @@ msgstr ""
 msgid "Uninstall"
 msgstr "Deinstallieren"
 
+msgid "Performance Tuning"
+msgstr ""
+
+#, fuzzy
+msgid "Updated performance settings successfully"
+msgstr "Test E-Mail wurde gesendet"
+
+#, fuzzy
+msgid "Deleted all saved pages"
+msgstr "Einen Benutzer löschen"
+
+#, fuzzy
+msgid "Acceleration"
+msgstr "Aktion"
+
+msgid ""
+"Improve your Gallery performance by storing entire web pages in the database.  This can "
+"considerably reduce the amount of webserver and database resources required to display a web "
+"page.  The tradeoff is that the web page you see may be a little bit out of date, however "
+"you can always get the most recent version of the page by forcing a refresh in your browser "
+"(typically by holding down the shift key and clicking the reload button)."
+msgstr ""
+
+msgid "Partial Acceleration"
+msgstr ""
+
+#, c-format
+msgid ""
+"Partial acceleration gives you roughly 10-25% performance increase, but some forms of "
+"dynamic data (like view counts) will not get updated right away.  All content that appears "
+"in blocks (like the random image block, any sidebar blocks, etc) will always be updated."
+msgstr ""
+
+msgid "Full Acceleration"
+msgstr ""
+
+#, c-format
+msgid ""
+"Full acceleration gives roughly a 90% performance increase, but no dynamic data (random "
+"image block, other sidebar blocks, number of items in your shopping cart, view counts, etc) "
+"will get updated until the saved page expires."
+msgstr ""
+
+msgid ""
+"You can additionally specify when saved pages expire.  Setting a longer expiration time will "
+"reduce the load on your server, but will increase the interval before users see changes.  "
+"Lower expiration times mean that users will see more current data, but they will place a "
+"higher load on your server."
+msgstr ""
+
+msgid "Here are some standard acceleration profiles:"
+msgstr ""
+
+#, fuzzy
+msgid "Medium acceleration"
+msgstr "Beschriftungen ändern"
+
+msgid "High acceleration"
+msgstr ""
+
+#, fuzzy
+msgid "Guest Users"
+msgstr "Registrierte Benutzer"
+
+msgid "Expires after:"
+msgstr ""
+
+msgid "Clear Saved Pages"
+msgstr ""
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr ""
 "Bitte vergewissern Sie sich, dass Sie über eine bestehende Internet Verbindung verfügen oder "
@@ -1708,8 +1841,8 @@ msgid ""
 "The repository features are currently experimental, and no actual repository has been set up "
 "yet, so none of these features will work at this time."
 msgstr ""
-"Die Funktionen des Erweiterungen-Katalogs sind momental experimentell und es wurde "
-"noch kein eigentlicher Katalog eingerichtet. Im Moment ist der Katalog daher ohne Funktion."
+"Die Funktionen des Erweiterungen-Katalogs sind momental experimentell und es wurde noch kein "
+"eigentlicher Katalog eingerichtet. Im Moment ist der Katalog daher ohne Funktion."
 
 msgid "Update Index"
 msgstr "Index aktualisieren"
@@ -1725,10 +1858,10 @@ msgstr ""
 "Gallerys Erweiterungen-Katalog enthält die neusten Module und Motive, die ausgiebig vom "
 "Gallery-Team geprüft wurden. Der Katalog-Index enthält Informationen über abrufbare "
 "Erweiterungen, wie zum Beispiel die neusten Versionen, verfügbare Sprachen und "
-"Kompatibilität. Der Index muss regelmäßig mit dem Gallery-Server abgeglichen werden, "
-"damit Sie über verfügbare Aktualisierungen informiert werden. Keine persönlichen "
-"Informationen werden währen dieses Vorgangs zum Gallery-Server übertragen. Bei "
-"langsameren Verbindungen könnte die Aktualisierung ein bis zwei Minuten dauern."
+"Kompatibilität. Der Index muss regelmäßig mit dem Gallery-Server abgeglichen werden, damit "
+"Sie über verfügbare Aktualisierungen informiert werden. Keine persönlichen Informationen "
+"werden währen dieses Vorgangs zum Gallery-Server übertragen. Bei langsameren Verbindungen "
+"könnte die Aktualisierung ein bis zwei Minuten dauern."
 
 #, c-format
 msgid ""
@@ -1764,7 +1897,8 @@ msgstr ""
 "Aktualisierung:"
 
 msgid "Review plugin compatibility (on the Themes and Modules tabs)"
-msgstr "Überprüfen Sie die Kompatibilität der Erweiterungen (in den Bereichen Motive und Module)"
+msgstr ""
+"Überprüfen Sie die Kompatibilität der Erweiterungen (in den Bereichen Motive und Module)"
 
 #, c-format
 msgid "%sDownload%s Gallery core"
@@ -1780,7 +1914,9 @@ msgstr "Gallery ist aktuell"
 msgid ""
 "Gallery cannot be upgraded through this interface. When a new version becomes available, "
 "upgrade instructions will be presented here."
-msgstr "Gallery kann nicht über diese Oberfäche aktualisiert werden. Wenn eine neue Version verfügbar wird, werden Sie hier eine Anleitung zur Aktualisierung finden."
+msgstr ""
+"Gallery kann nicht über diese Oberfäche aktualisiert werden. Wenn eine neue Version "
+"verfügbar wird, werden Sie hier eine Anleitung zur Aktualisierung finden."
 
 msgid "Upgrade All Plugins"
 msgstr "Alle Erweiterungen aktualisieren"
@@ -1800,8 +1936,8 @@ msgid ""
 "presented. It can be downloaded by clicking on the Update button on the Common Tasks tab."
 msgstr ""
 "Sobald der Katalog-Index heruntergeladen wurde, wird Ihnen eine Liste an verfügbaren "
-"Erweiterungen angeboten. Diese kann durch das Klicken auf den Aktualisieren-Knopf in "
-"Bereich Allgemeine Aufgaben heruntergeladen werden."
+"Erweiterungen angeboten. Diese kann durch das Klicken auf den Aktualisieren-Knopf in Bereich "
+"Allgemeine Aufgaben heruntergeladen werden."
 
 msgid ""
 "The following plugins are available. Click on the action beside the plugin you're interested "
@@ -1819,10 +1955,10 @@ msgid ""
 "installed core module, which are not shown here. You can view a %scomplete list%s of "
 "plugins, including incompatible ones, which are marked with a red icon."
 msgstr ""
-"Eine neue Version des Kernmoduls ist verfügbar. Einige Erweiterungen können inkompatibel "
-"mit dem installierten Kernmodul sein, welche hier nicht aufgeführt werden. Sie können eine "
-"%svollständige Liste%s an Erweiterungen abrufen, einschließlich der inkompatiblen, welche "
-"mit einem roten Symbol gekennzeichnet sind."
+"Eine neue Version des Kernmoduls ist verfügbar. Einige Erweiterungen können inkompatibel mit "
+"dem installierten Kernmodul sein, welche hier nicht aufgeführt werden. Sie können eine %"
+"svollständige Liste%s an Erweiterungen abrufen, einschließlich der inkompatiblen, welche mit "
+"einem roten Symbol gekennzeichnet sind."
 
 msgid "Theme Name"
 msgstr "Motivname"
@@ -1875,8 +2011,8 @@ msgid ""
 "Below is a list of translations that have been updated since they were last downloaded. "
 "Select the ones you want to download."
 msgstr ""
-"Hier sehen Sie eine Liste an Übersetzungen, die aktualisiert wurden, seit sie das letzte "
-"Mal heruntergeladen wurden. Wählen Sie diejenigen aus, die Sie herunterladen möchten."
+"Hier sehen Sie eine Liste an Übersetzungen, die aktualisiert wurden, seit sie das letzte Mal "
+"heruntergeladen wurden. Wählen Sie diejenigen aus, die Sie herunterladen möchten."
 
 msgid "Additional Languages"
 msgstr "Zusätzliche Sprachen"
@@ -1885,8 +2021,8 @@ msgid ""
 "Below is a list of languages this plugin has been translated to. Select the ones you want "
 "included in addition to the ones already downloaded."
 msgstr ""
-"Hier sehen Sie eine Liste der Sprachen, in welche dieses Plugin übersetzt wurde. Wählen "
-"Sie die aus, welche sie zusätzlich zu den bereits heruntergeladenen haben möchten."
+"Hier sehen Sie eine Liste der Sprachen, in welche dieses Plugin übersetzt wurde. Wählen Sie "
+"die aus, welche sie zusätzlich zu den bereits heruntergeladenen haben möchten."
 
 msgid "Unit Tests"
 msgstr "Unit-Test"
@@ -1925,8 +2061,8 @@ msgid ""
 "Refreshing this page will take you to the Repository if the directory has been successfully "
 "created."
 msgstr ""
-"Nach dem Neuladen dieser Seite werden Sie Zugriff auf den Katalog bekommen, falls der "
-"Ordner erfolgreich eingerichtet wurde."
+"Nach dem Neuladen dieser Seite werden Sie Zugriff auf den Katalog bekommen, falls der Ordner "
+"erfolgreich eingerichtet wurde."
 
 msgid "Gallery Themes"
 msgstr "Gallery-Motive"
@@ -1999,8 +2135,10 @@ msgstr "Neue Alben"
 msgid "%s Theme Settings"
 msgstr "%s Motiv-Einstellungen"
 
-msgid "These are the global settings for the theme.  They can be overridden at the album level."
-msgstr "Dies sind die globalen Motiv-Einstellungen. Sie können für jedes Album überschrieben werden."
+msgid ""
+"These are the global settings for the theme.  They can be overridden at the album level."
+msgstr ""
+"Dies sind die globalen Motiv-Einstellungen. Sie können für jedes Album überschrieben werden."
 
 msgid "Available"
 msgstr "Verfügbar"
@@ -2158,10 +2296,10 @@ msgid ""
 "system permissions. This can happen if you or your webhost changed something in the file "
 "system, e.g. by restoring data from a backup."
 msgstr ""
-"Die genaue Art des Plattform-Fehlers ist unbekannt. Ein verbreiteter Grund sind "
-"ungenügende Dateisystem-Berechtigungen. Dies kann passieren, wenn durch Sie "
-"oder Ihren Webhoster eine Änderung am Dateisystem vorgenommen wurde, z.B. "
-"durch das Einspielen von Daten aus einer Backup."
+"Die genaue Art des Plattform-Fehlers ist unbekannt. Ein verbreiteter Grund sind ungenügende "
+"Dateisystem-Berechtigungen. Dies kann passieren, wenn durch Sie oder Ihren Webhoster eine "
+"Änderung am Dateisystem vorgenommen wurde, z.B. durch das Einspielen von Daten aus einer "
+"Backup."
 
 msgid "An error has occurred."
 msgstr "Es ist ein Fehler aufgetreten."
@@ -2184,7 +2322,8 @@ msgstr ""
 
 #, c-format
 msgid "Visit the <a href=\"%s\">Modules</a> page to activate a Graphics Toolkit."
-msgstr "Gehen sie auf die <a href=\"%s\">Module-Seite</a> um ein grafisches Werkzeug zu aktivieren."
+msgstr ""
+"Gehen sie auf die <a href=\"%s\">Module-Seite</a> um ein grafisches Werkzeug zu aktivieren."
 
 msgid "Add Sub-Album"
 msgstr "Unteralbum hinzufügen"
@@ -2312,7 +2451,8 @@ msgstr "Pfad auf dem Server"
 msgid "You must enter a directory."
 msgstr "Sie müssen ein Verzeichnis eingeben."
 
-msgid "The directory you entered is invalid.  Make sure that the directory is readable by all users."
+msgid ""
+"The directory you entered is invalid.  Make sure that the directory is readable by all users."
 msgstr ""
 "Das angegebene Verzeichnis ist nicht gültig. Vergewissern Sie sich, dass das Verzeichnis von "
 "allen Benutzern gelesen werden kann."
@@ -2573,14 +2713,26 @@ msgstr ""
 "Dies setzt die Standardsortierung für neue Alben. Die Änderung wird auf alle existierenden "
 "und neuen Elemente angewendet."
 
+#, fuzzy
+msgid "Apply to all subalbums"
+msgstr "Für Unterelemente übernehmen"
+
 msgid "Choose a theme for this album. (The way the album is arranged on the page)"
-msgstr "Bitte wählen Sie ein Motiv für dieses Album. (Das Layout, mit dem das Album angezeigt wird)"
+msgstr ""
+"Bitte wählen Sie ein Motiv für dieses Album. (Das Layout, mit dem das Album angezeigt wird)"
+
+msgid "Use this theme in all subalbums"
+msgstr ""
 
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
-msgstr " Jedes Element benötigt ein Vorschaubild. Geben Sie hier die Standardgröße in Pixeln an."
+msgstr ""
+" Jedes Element benötigt ein Vorschaubild. Geben Sie hier die Standardgröße in Pixeln an."
 
 msgid "You must enter a number (greater than zero)"
 msgstr "Sie müssen eine Zahl eingeben (größer als Null)"
+
+msgid "Use this thumbnail size in all subalbums"
+msgstr ""
 
 msgid "Resized Images"
 msgstr "Skalierte Bilder"
@@ -2598,6 +2750,9 @@ msgstr "Zielgröße (in Pixel)"
 
 msgid "You must enter a valid size"
 msgstr "Sie müssen eine gültige Größe eingeben"
+
+msgid "Use these target sizes in all subalbums"
+msgstr ""
 
 msgid "Recreate thumbnails and resizes"
 msgstr "Erstelle Zwischen- und Vorschaubilder erneut"
@@ -2730,8 +2885,7 @@ msgstr "Zeit:"
 
 msgid "Use the original capture date and time from file information (e.g. Exif tag):"
 msgstr ""
-"Das original Aufnahmedatum und Aufnahmezeit aus den Dateiinformationen "
-"(z.B. EXIF-Tags):"
+"Das original Aufnahmedatum und Aufnahmezeit aus den Dateiinformationen (z.B. EXIF-Tags):"
 
 msgid "You must enter a valid date and time"
 msgstr "Sie müssen ein gültiges Datum und Zeit eingeben."
@@ -2906,7 +3060,12 @@ msgstr "Einstellung"
 msgid "Use Global"
 msgstr "Globalen Wert benutzen"
 
-msgid "Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
+#, c-format
+msgid "Use these settings in all subalbums that use %s theme"
+msgstr ""
+
+msgid ""
+"Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
 msgstr ""
 "Beachten Sie: Um das gleiche Motiv für alle Unteralben einzurichten, klicken Sie das "
 "entsprechende Kästchen unter <b>Album</b> an"
@@ -2940,13 +3099,16 @@ msgstr "Dieses Album enthält keine verschiebbaren Elemente."
 msgid "Choose the items you want to move"
 msgstr "Wählen Sie die Elemente, die Sie verschieben möchten"
 
-msgid "The destination you chose does not accept sub-albums, so all sub-albums have been deselected."
+msgid ""
+"The destination you chose does not accept sub-albums, so all sub-albums have been deselected."
 msgstr ""
 "Das ausgewählte Ziel erlaubt keine Unteralben, es wurden daher alle entsprechenden "
 "Unteralben abgewählt."
 
-msgid "The destination you chose only accepts sub-albums, so all non-albums have been deselected."
-msgstr "Das ausgewählte Ziel erlaubt nur Unteralben, es wurde daher alle nicht-Alben abgewählt."
+msgid ""
+"The destination you chose only accepts sub-albums, so all non-albums have been deselected."
+msgstr ""
+"Das ausgewählte Ziel erlaubt nur Unteralben, es wurde daher alle nicht-Alben abgewählt."
 
 msgid "You are not allowed to move this item away from here."
 msgstr "Es ist Ihnen nicht erlaubt dieses Element von hier zu verschieben."
@@ -3088,6 +3250,10 @@ msgstr "Der Benutzer hat diese Berechtigung schon (Prüfen Sie die Unterrechte)"
 msgid "Reorder Album"
 msgstr "Album umordnen"
 
+#, fuzzy
+msgid "Order saved successfully"
+msgstr "Änderungen erfolgreich gespeichert."
+
 msgid ""
 "This album has an automatic sort order specified, so you cannot change the order of items "
 "manually.  You must remove the automatic sort order to continue."
@@ -3159,16 +3325,16 @@ msgid ""
 "This page is configured to use the %s theme, but it is either inactive, not installed, or "
 "incompatible."
 msgstr ""
-"Diese Seite wurde so konfiguriert, dass sie das %s-Motiv benutzt, welches aber "
-"entweder deaktiviert, nicht installiert oder inkompatibel ist."
+"Diese Seite wurde so konfiguriert, dass sie das %s-Motiv benutzt, welches aber entweder "
+"deaktiviert, nicht installiert oder inkompatibel ist."
 
 #, c-format
 msgid ""
 "This album is configured to use the %s theme, but it is either inactive, not installed, or "
 "incompatible."
 msgstr ""
-"Dieses Album wurde so konfiguriert, dass es das %s-Motiv benutzt, welches aber "
-"entweder deaktiviert, nicht installiert oder inkompatibel ist."
+"Dieses Album wurde so konfiguriert, dass es das %s-Motiv benutzt, welches aber entweder "
+"deaktiviert, nicht installiert oder inkompatibel ist."
 
 #, c-format
 msgid ""
@@ -3345,7 +3511,8 @@ msgstr ""
 "Verzeichnis. Damit sind Sie fertig."
 
 msgid "Once you've uploaded the file, click refresh to continue."
-msgstr "Sobald Sie die Datei hochgeladen haben, klicken Sie auf 'Aktualisieren' um fortzufahren."
+msgstr ""
+"Sobald Sie die Datei hochgeladen haben, klicken Sie auf 'Aktualisieren' um fortzufahren."
 
 msgid "Emergency Administrator Password Reset"
 msgstr "Notfall-Zurücksetzen des Administrator-Passworts"
@@ -3354,8 +3521,7 @@ msgid ""
 "This page can be used by a system administrator to securely reset the password on any "
 "account."
 msgstr ""
-"Auf dieser Seite können Systemadministratoren sicher beliebige Kontopasswörter "
-"zurücksetzen."
+"Auf dieser Seite können Systemadministratoren sicher beliebige Kontopasswörter zurücksetzen."
 
 msgid "Authorization Confirmed"
 msgstr "Authorisierung bestätigt"
@@ -3390,7 +3556,8 @@ msgstr "Authorisierungsdatei nicht lesbar"
 
 #, c-format
 msgid "Your %s file is not readable. Please give Gallery read permissions on the file."
-msgstr "Ihre %s Datei ist nicht lesbar. Bitte geben Sie Gallery Leseberechtigung für diese Datei."
+msgstr ""
+"Ihre %s Datei ist nicht lesbar. Bitte geben Sie Gallery Leseberechtigung für diese Datei."
 
 msgid "Refresh"
 msgstr "Aktualisieren"
@@ -3559,4 +3726,3 @@ msgstr "[test] eine zweite Zugriffsberechtigung"
 
 msgid "Unit test theme"
 msgstr "Unit Test Motiv"
-

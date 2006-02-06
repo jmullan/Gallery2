@@ -10,10 +10,10 @@ gettext("BBCode")
 gettext("Raw HTML")
 gettext("Database") /* also in: classes/SystemInfoTask.class templates/ErrorPage.tpl */
 gettext("File") /* also in: templates/ItemAddFromBrowser.tpl */
-ngettext("%d minute", "%d minutes")
-ngettext("%d hour", "%d hours")
-ngettext("%d day", "%d days")
-ngettext("%d week", "%d weeks")
+ngettext("%d minute", "%d minutes") /* also in: AdminPerformance.inc */
+ngettext("%d hour", "%d hours") /* also in: AdminPerformance.inc */
+ngettext("%d day", "%d days") /* also in: AdminPerformance.inc */
+ngettext("%d week", "%d weeks") /* also in: AdminPerformance.inc */
 
 /* AdminCreateUser.inc */
 gettext("<none>") /* also in: AdminEditUser.inc UserPreferences.inc */
@@ -25,6 +25,11 @@ gettext("configure")
 gettext("activate") /* also in: AdminThemes.inc */
 gettext("uninstall") /* also in: AdminThemes.inc */
 gettext("deactivate") /* also in: AdminThemes.inc */
+
+/* AdminPerformance.inc */
+gettext("No acceleration") /* also in: templates/AdminPerformance.tpl */
+gettext("Partial acceleration")
+gettext("Full acceleration")
 
 /* AdminRepository.inc */
 gettext("Performing Maintenance Tasks")
@@ -52,7 +57,7 @@ gettext("[core] Change item permissions")
 gettext("[core] Delete item")
 gettext("Upgrading permissions")
 gettext("Deleting old permission tables")
-gettext("Registered Users")
+gettext("Registered Users") /* also in: templates/AdminPerformance.tpl */
 gettext("All Users")
 gettext("Detecting broken derivatives")
 gettext("Clearing fast-download cache")
@@ -66,6 +71,7 @@ gettext("Detecting broken derivatives, loading ")
 gettext("Detecting broken derivatives ")
 gettext("Detecting broken derivatives, ")
 gettext("Detecting broken derivatives, saving ")
+gettext("Deleting old session files (iteration %d)")
 
 /* ItemAdd.inc */
 gettext("add items")
@@ -224,6 +230,7 @@ gettext("Themes") /* also in: templates/AdminRepository.tpl test/phpunit/CoreMod
 gettext("Display") /* also in: test/phpunit/CoreModuleTest.class */
 gettext("Users") /* also in: test/phpunit/CoreModuleTest.class */
 gettext("Groups") /* also in: test/phpunit/CoreModuleTest.class */
+gettext("Performance") /* also in: test/phpunit/CoreModuleTest.class */
 gettext("Toolkit Priority") /* also in: templates/AdminToolkitPriority.tpl test/phpunit/CoreModuleTest.class */
 gettext("Graphics Toolkits") /* also in: test/phpunit/CoreModuleTest.class */
 gettext("Account Settings") /* also in: templates/UserPreferences.tpl */
@@ -244,6 +251,10 @@ gettext("Debug output for failed items:")
 gettext("Checked %d items")
 gettext("%d items built")
 gettext("%d items failed")
+
+/* classes/DeleteSessionsTask.class */
+gettext("Delete user sessions")
+gettext("Delete all persistent user sessions according to your current session expiration settings.")
 
 /* classes/FlushDatabaseCacheTask.class */
 gettext("Delete database cache")
@@ -328,10 +339,13 @@ gettext("Memory used: %s, total: %s")
 /* classes/GalleryTheme.class */
 gettext("Rows per album page")
 gettext("Columns per album page")
+gettext("Allow browser window width to set columns per album page")
+gettext("Number of items to show per page")
+gettext("Row height (pixels)")
+gettext("Column width (pixels)")
 gettext("Show image owners")
 gettext("Show album owners")
 gettext("Show micro navigation thumbnails")
-gettext("Number of items to show per page")
 gettext("Blocks to show in the sidebar")
 gettext("Blocks to show on album pages")
 gettext("Blocks to show on photo pages")
@@ -455,13 +469,20 @@ gettext("Once you change the cookie settings, <b>all registered users</b> of you
 gettext("Invalid cookie path")
 gettext("Domain")
 gettext("Invalid cookie domain")
+gettext("Captcha for User Login")
+gettext("Select policy for requiring captcha validation to login:")
+gettext("High: Always require validation")
+gettext("Medium: Require validation after some failed attempts for a username")
+gettext("Low: Require validation after some failed attempts in one session (this provides protection against casual password guessers, but not against automated attacks)")
+gettext("Configure the number of failed attempts for medium/low in %sCaptcha Settings%s")
+gettext("Activate Captcha module to enable this feature")
 gettext("Locking System")
 gettext("Gallery uses a system of locks to prevent simultaneous changes from interfering with each other.  There are two types of locking, each with its advantages and disadvantages.  <b>File</b> based locking is fast and efficient, but won't work on NFS filesystems and will be unreliable on Windows.  <b>Database</b> locking is slower but is more reliable.  If you are unsure which to choose, we recommend using file locking.  If you're getting many lock timeouts, you can try switching to database locking instead.  It's ok to switch back and forth.")
 gettext("Lock system")
 gettext("Helper Processes")
 gettext("Some Gallery modules will use programs on your server to do image processing, archiving and other operations.  These programs can be very compute intensive and can impact the overall performance of a shared web server.  You can make these programs run at a lower priority so that they play nice.  If you're in a shared hosting environment and your web host is complaining, try setting your priority low.")
 gettext("Priority")
-gettext("Save") /* also in: templates/AdminEditGroup.tpl templates/AdminEditUser.tpl templates/AdminThemes.tpl templates/AdminToolkitPriority.tpl templates/ItemEditAlbum.tpl templates/ItemEditAnimation.tpl templates/ItemEditCaptions.tpl templates/ItemEditItem.tpl templates/ItemEditMovie.tpl templates/ItemEditPhoto.tpl templates/ItemEditTheme.tpl templates/UserPreferences.tpl */
+gettext("Save") /* also in: templates/AdminEditGroup.tpl templates/AdminEditUser.tpl templates/AdminPerformance.tpl templates/AdminThemes.tpl templates/AdminToolkitPriority.tpl templates/ItemEditAlbum.tpl templates/ItemEditAnimation.tpl templates/ItemEditCaptions.tpl templates/ItemEditItem.tpl templates/ItemEditMovie.tpl templates/ItemEditPhoto.tpl templates/ItemEditTheme.tpl templates/UserPreferences.tpl */
 gettext("Reset") /* also in: templates/AdminEditGroup.tpl templates/AdminEditUser.tpl templates/AdminThemes.tpl templates/AdminToolkitPriority.tpl templates/ItemEditAlbum.tpl templates/ItemEditItem.tpl templates/ItemEditPhoto.tpl templates/ItemEditTheme.tpl templates/UserPreferences.tpl */
 
 /* templates/AdminCreateGroup.tpl */
@@ -597,6 +618,24 @@ gettext("Confirm module uninstall")
 gettext("Do you really want to uninstall the %s module?")
 gettext("This will also remove any permissions and clean up any data created by this module.")
 gettext("Uninstall")
+
+/* templates/AdminPerformance.tpl */
+gettext("Performance Tuning")
+gettext("Updated performance settings successfully")
+gettext("Deleted all saved pages")
+gettext("Acceleration")
+gettext("Improve your Gallery performance by storing entire web pages in the database.  This can considerably reduce the amount of webserver and database resources required to display a web page.  The tradeoff is that the web page you see may be a little bit out of date, however you can always get the most recent version of the page by forcing a refresh in your browser (typically by holding down the shift key and clicking the reload button).")
+gettext("Partial Acceleration")
+gettext("Partial acceleration gives you roughly 10-25% performance increase, but some forms of dynamic data (like view counts) will not get updated right away.  All content that appears in blocks (like the random image block, any sidebar blocks, etc) will always be updated.")
+gettext("Full Acceleration")
+gettext("Full acceleration gives roughly a 90% performance increase, but no dynamic data (random image block, other sidebar blocks, number of items in your shopping cart, view counts, etc) will get updated until the saved page expires.")
+gettext("You can additionally specify when saved pages expire.  Setting a longer expiration time will reduce the load on your server, but will increase the interval before users see changes.  Lower expiration times mean that users will see more current data, but they will place a higher load on your server.")
+gettext("Here are some standard acceleration profiles:")
+gettext("Medium acceleration")
+gettext("High acceleration")
+gettext("Guest Users")
+gettext("Expires after:")
+gettext("Clear Saved Pages")
 
 /* templates/AdminRepository.tpl */
 gettext("Please make sure that your internet connection is set up properly or try again later.")
@@ -1015,6 +1054,7 @@ gettext("The user already has this permission (check sub-permissions)")
 
 /* templates/ItemReorder.tpl */
 gettext("Reorder Album")
+gettext("Order saved successfully")
 gettext("This album has an automatic sort order specified, so you cannot change the order of items manually.  You must remove the automatic sort order to continue.")
 gettext("Change the order of the items in this album.")
 gettext("Move this item")
