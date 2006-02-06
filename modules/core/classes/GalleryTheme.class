@@ -150,7 +150,8 @@ class GalleryTheme extends GalleryPlugin {
 
 	if (isset($params['useVariableColumns']) && isset($standard['useVariableColumns'])) {
 	    $settings[] = array('key' => 'useVariableColumns',
-				'name' => $core->translate('Allow browser window width to set columns per album page'),
+				'name' => $core->translate(
+				    'Allow browser window width to set columns per album page'),
 				'type' => 'checkbox',
 				'value' => $params['useVariableColumns']);
 	}
@@ -311,12 +312,13 @@ class GalleryTheme extends GalleryPlugin {
 	}
 	if (isset($standard['columns'])) {
 	    if ( (!empty($settings['columns']) && !is_numeric($settings['columns']))
-			|| (empty($settings['columns']) && empty($settings['useVariableColumns'])) ) {
+		    || (empty($settings['columns']) && empty($settings['useVariableColumns'])) ) {
 		$error['columns'] = $this->translate('You must enter a number greater than 0');
 	    }
 	}
 	if (isset($standard['perPage'])) {
-	    $isRequired = !isset($standard['useVariableColumns']) || !empty($settings['useVariableColumns']);
+	    $isRequired =
+		!isset($standard['useVariableColumns']) || !empty($settings['useVariableColumns']);
 	    if ( (!empty($settings['perPage']) && !is_numeric($settings['perPage']))
 			|| (empty($settings['perPage']) && $isRequired) ) {
 		$error['perPage'] = $this->translate('You must enter a number greater than 0');
