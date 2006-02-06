@@ -953,7 +953,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	    '/gallery2/main.php?g2_view=core.UserAdmin',
 	    'v/GoodAlbumName/',
 	    'www.DONTCARE.com/gallery2/main.php',
-	    '\\\\gallery2\\\\main.php');
+	    '\\gallery2\\main.php');
 	foreach ($goodUrls as $url) {
 	    $_GET['g2_return'] = $url;
 	    $ret = $this->_urlGenerator->initNavigation();
