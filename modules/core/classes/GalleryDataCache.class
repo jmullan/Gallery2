@@ -660,15 +660,17 @@ class GalleryDataCache {
 
 	if ($results->resultCount() > 0) {
 	    $result = $results->nextResult();
-	    $chunk = $result[0];
+	    $value = $result[0];
  	    if (function_exists('gzinflate')) {
- 		$chunk = gzinflate($chunk);
+		$storage =& $gallery->getStorage();
+		$value = $storage->decodeBlob($value);
+ 		$value = gzinflate($value);
  	    }
 	} else {
-	    $chunk = null;
+	    $value = null;
 	}
 
-	return array(null, $chunk);
+	return array(null, $value);
     }
 
     /**
@@ -693,6 +695,8 @@ class GalleryDataCache {
 
  	if (function_exists('gzdeflate')) {
 	    $value = gzdeflate($value);
+	    $storage =& $gallery->getStorage();
+	    $value = $storage->encodeBlob($value);
  	}
 
 	$phpVm = $gallery->getPhpVm();

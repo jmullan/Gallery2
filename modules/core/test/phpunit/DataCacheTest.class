@@ -351,7 +351,8 @@ class DataCacheTest extends GalleryTestCase {
     }
 
     function testPutAndGetPageData() {
-	$ret = GalleryDataCache::putPageData('test', 0, array('key'), 'test');
+	$value = '<html><head><title>foo</title><body>this is some content</body></html>';
+	$ret = GalleryDataCache::putPageData('test', 0, array('key'), $value);
 	if ($ret) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -361,7 +362,7 @@ class DataCacheTest extends GalleryTestCase {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals('test', $result);
+	$this->assertEquals($value, $result);
     }
 
     function testRemovePageData() {

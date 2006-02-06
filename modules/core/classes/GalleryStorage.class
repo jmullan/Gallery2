@@ -1034,6 +1034,24 @@ class GalleryStorage {
     }
 
     /**
+     * Encode a blob of binary data into a form that's safe for a varchar column
+     * @param binary data
+     * @return database safe string
+     */
+    function encodeBlob($blob) {
+	return $blob;
+    }
+
+    /**
+     * Decode a blob of binary data into a form that's safe for a varchar column
+     * @param binary data
+     * @return database safe string
+     */
+    function decodeBlob($blob) {
+	return $blob;
+    }
+
+    /**
      * Start tracing.
      * If Gallery is in debug, this method will begin storing all output and routing
      * it into Gallery's debug system.

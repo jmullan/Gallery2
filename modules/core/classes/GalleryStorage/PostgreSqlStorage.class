@@ -105,10 +105,10 @@ class PostgreSqlStorage extends GalleryStorage {
     }
 
     /**
-     * @see GalleryStorage::configureStore 	 
-     */ 	 
-    function configureStore($moduleId, $upgradeInfo=array()) { 	 
-	if ($moduleId == 'core') { 	 
+     * @see GalleryStorage::configureStore
+     */
+    function configureStore($moduleId, $upgradeInfo=array()) {
+	if ($moduleId == 'core') {
 	    $query = '
 	    CREATE AGGREGATE BIT_OR
 	    (
@@ -141,14 +141,14 @@ class PostgreSqlStorage extends GalleryStorage {
 	     */
 	}
 
-	$ret = parent::configureStore($moduleId, $upgradeInfo); 	 
-	if ($ret) { 	 
-	    return $ret->wrap(__FILE__, __LINE__); 	 
-	} 	 
+	$ret = parent::configureStore($moduleId, $upgradeInfo);
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
-	return null; 	 
-     } 	 
-  	 
+	return null;
+     }
+
     /**
      * @see GalleryStorage::convertIntToBits
      */
@@ -177,11 +177,11 @@ class PostgreSqlStorage extends GalleryStorage {
 	    $args = str_replace('?', '?', $args);
 	    $sql = $args[0] . ' & ' . $args[1];
 	    break;
-	    
+
 	case 'BIT_OR':
 	    $sql = 'BIT_OR(' . $args[0] . ')';
             break;
-	    
+
 	case 'UNIX_TIMESTAMP':
 	    $sql = 'date_part(\'epoch\', ' . $args[0] . ')';
 	    break;
@@ -215,13 +215,13 @@ class PostgreSqlStorage extends GalleryStorage {
 	    break;
 
 	case 'MULTI_INSERT':
-	    /* 
+	    /*
 	     * 0 - table name
 	     * 1 - array of column names
 	     * 2 - number of rows
 	     */
 	    $markers = GalleryUtilities::makeMarkers(sizeof($args[1]));
-	    $rowList = rtrim(str_repeat('SELECT ' . $markers . ' UNION ALL ', $args[2]), 
+	    $rowList = rtrim(str_repeat('SELECT ' . $markers . ' UNION ALL ', $args[2]),
 			     'UNION ALL ');
 	    $sql = 'INSERT INTO ' . $args[0] . ' (';
 	    $sql .= join(', ', $args[1]);
@@ -252,6 +252,21 @@ class PostgreSqlStorage extends GalleryStorage {
      */
     function _getOptimizeStatement() {
 	return 'VACUUM ANALYZE VERBOSE %s';
+    }
+
+    /**
+     * @see GalleryStorage::encodeBlob
+     */
+    function encodeBlob($blob) {
+	return pg_escape_bytea($blob);
+    }
+
+    /**
+     * @see GalleryStorage::decodeBlob
+     */
+    function decodeBlob($blob) {
+	/* For some reason we have to unescape it twice */
+	return pg_unescape_bytea(pg_unescape_bytea($blob));
     }
 }
 ?>
