@@ -91,8 +91,8 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 		    if ($platform->is_uploaded_file($file['tmp_name'])) {
 			$tmpFile = $platform->move_uploaded_file($file['tmp_name']);
 			if (!$tmpFile) {
-			    return GalleryCoreApi::error(
-				ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
+			    return array(GalleryCoreApi::error(
+				ERROR_PLATFORM_FAILURE, __FILE__, __LINE__), null, null);
 			}
 			$needToDeleteTmpFile = true;
 		    } else {
