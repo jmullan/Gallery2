@@ -66,7 +66,16 @@ class CustomThumbnailOption extends ItemEditOption {
 		$template->setVariable('ItemAdmin', $ItemAdmin);
 	    }
 	}
-	$template->setVariable('CustomThumbnailOption', array('thumbnail' => $thumbnailImage));
+
+	/* Check toolkit support for jpeg thumbnails */
+	list ($ret, $mimeList) = GalleryCoreApi::getToolkitOperationMimeTypes('thumbnail');
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	$template->setVariable('CustomThumbnailOption',
+			       array('thumbnail' => $thumbnailImage,
+				     'canResize' => isset($mimeList['image/jpeg'])));
 
 	return array(null,
 		    'modules/thumbnail/templates/CustomThumbnail.tpl',
@@ -79,8 +88,7 @@ class CustomThumbnailOption extends ItemEditOption {
     function handleRequestAfterEdit($form, &$item, &$preferred) {
 	GalleryCoreApi::requireOnce('modules/thumbnail/classes/ThumbnailHelper.class');
 
-	$error = array();
-	$warning = array();
+	$error = $warning = array();
 	if (!empty($form['tmp_name'][1])) {
 	    list ($ret, $lockId) = GalleryCoreApi::acquireReadLock(array($item->getId()));
 	    if ($ret) {

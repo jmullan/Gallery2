@@ -373,6 +373,20 @@ class ThumbnailHelper {
 	    $derivative->setDerivativeOperations($op);
 	}
 
+	list ($ret, $mimeList) = GalleryCoreApi::getToolkitOperationMimeTypes('thumbnail');
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	if (!isset($mimeList['image/jpeg'])) {
+	    /*
+	     * No toolkit for jpeg thumbnails.
+	     * Omit thumbnail operation to just use custom thumbnail in its original size.
+	     */
+	    $derivative->setDerivativeOperations(
+		rtrim(preg_replace('/(^|;)thumbnail\|.*?(;|$)/', '$1',
+				   $derivative->getDerivativeOperations()), ';'));
+	}
+
 	$derivative->setDerivativeSourceId($thumbnailId);
 	$derivative->setMimeType('image/jpeg');
 	$ret = $derivative->save();
