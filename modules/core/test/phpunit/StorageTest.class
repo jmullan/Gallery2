@@ -565,13 +565,83 @@ class StorageTest extends GalleryTestCase {
 	/* Cleanup */
 	$ret = GalleryCoreApi::removeAllPluginParameters('module', 'unitTestModule');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	/* Commit our DB transaction to release locks from the PluginParameterMap table */
 	$ret = $storage->checkPoint();
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+    }
+    
+    function testEncodeDecodeBlob() {
+        global $gallery;
+	$storage =& $gallery->getStorage();
+	/* Use a real SQL connection for this test */
+	$storage->_db = null;
+	
+	foreach (array(true, false) as $hasEscapeBytea) {
+	    /* Skip the "emulate < 4.2.0 case for postgres" if it doesn't apply */
+	    if (!$hasEscapeBytea && ($storage->getType() != 'postgres' || 
+	     			    version_compare(PHP_VERSION, '4.2.0', '<'))) {
+		continue;
+	    }
+	    
+	    if (!$hasEscapeBytea) {
+		$gallery->_phpVm = new StorageTestMockPhpVm();
+	    }
+		
+	    /* We want to store binary (gz-deflated) data in a text field */
+	    $blobData = '';
+	    for ($i = 0; $i <= 255; $i++) {
+	        $blobData .= chr($i);
+	    }
+	
+	    /* encode it */
+	    $escapedString = $storage->encodeBlob($blobData);
+
+	    $key = 'test_' . rand();
+	    $ret = GalleryCoreApi::addMapEntry(
+		    'GalleryCache',
+		    array('key' => $key, 'value' => $escapedString, 'userId' => 55,
+		          'itemId' => 99, 'type' => 'test', 'timestamp' => time()));
+	    if ($ret) {
+	        return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    /* No (PHP) error? Good! Next, get the entry from the db and compare */
+	
+	    $query = '
+            SELECT
+              [GalleryCache::value]
+            FROM
+              [GalleryCache]
+            WHERE
+              [GalleryCache::key] = ?
+            ';
+	    list ($ret, $results) = $storage->search($query, array($key));
+	    if ($ret) {
+	        return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    if ($results->resultCount() > 0) {
+	        $result = $results->nextResult();
+	        $this->assertEquals($blobData, $storage->decodeBlob($result[0]), 
+				'blob data was altered in encode -> insert -> select -> decode');
+	    } else {
+	        $this->assert(false, 'SELECT failed, got nothing back!');
+	    }
+	}
+	
+	/* Cleanup */
+	$ret = GalleryCoreApi::removeMapEntry('GalleryCache', array('type' => 'test'));
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Commit our DB transaction to release locks from the Cache table */
+	$ret = $storage->checkPoint();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}	
     }
 }
 
@@ -594,6 +664,16 @@ class StorageTestDB {
 
     function DBTimeStamp($val) {
 	return (string)($val . $val);
+    }
+}
+
+class StorageTestMockPhpVm extends GalleryPhpVm {
+    function function_exists($functionName) {
+    	if (in_array($functionName, array('pg_escape_bytea', 'pg_unescape_bytea'))) {
+    	    return false;
+    	} else {
+    	    return parent::function_exists($functionName);
+    	}
     }
 }
 ?>

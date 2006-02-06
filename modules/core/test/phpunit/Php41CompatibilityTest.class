@@ -58,6 +58,9 @@ class Php41CompatibilityTest extends CodeAuditTestCase {
 	$this->_exceptions['sha1_file']['getid3.lib.inc'] = 1;
 	$this->_exceptions['image_type_to_mime_type']['getid3.lib.inc'] = 1;
 	$this->_exceptions['image_type_to_mime_type']['module.audio.ogg.inc'] = 1;
+	$this->_exceptions['pg_escape_bytea']['PostgreSqlStorage.class'] = 1;
+	$this->_exceptions['pg_unescape_bytea']['PostgreSqlStorage.class'] = 1;
+	
     }
 
     /**
