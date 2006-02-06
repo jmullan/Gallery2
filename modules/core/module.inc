@@ -90,8 +90,7 @@ class CoreModule extends GalleryModule {
 	}
 
 	/* Fetch thumbnail ids */
-	list ($ret, $thumbTable) =
-	    GalleryCoreApi::fetchThumbnailsByItemIds($itemIds, DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+	list ($ret, $thumbTable) = GalleryCoreApi::fetchThumbnailsByItemIds($itemIds);
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -379,8 +378,7 @@ class CoreModule extends GalleryModule {
 
 	/* Fetch thumbnail ids */
 	list ($ret, $thumbTable) =
-	    GalleryCoreApi::fetchDerivativesBySourceIds(array($item->getId()),
-							DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+	    GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -417,12 +415,11 @@ class CoreModule extends GalleryModule {
 				 ? $this->_translate('Edit Permissions')
 				 : $this->_translate('View Permissions'),
 			     'view' => 'core.ItemPermissions');
+	}
 
-	    if (!empty($parentId) && $hasThumb && $parentId != $rootId
-		    && isset($parentPermissions['core.edit'])) {
-		$views[] = array('name' => $this->_translate('Make Highlight'),
-				 'view' => 'core.ItemMakeHighlight');
-	    }
+	if (!empty($parentId) && $hasThumb && isset($parentPermissions['core.edit'])) {
+	    $views[] = array('name' => $this->_translate('Make Highlight'),
+			     'view' => 'core.ItemMakeHighlight');
 	}
 
 	if (isset($permissions['core.viewSource']) && GalleryCapabilities::can('link')) {
