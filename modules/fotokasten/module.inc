@@ -38,9 +38,9 @@ class FotokastenModule extends GalleryModule {
 	$this->setId('fotokasten');
 	$this->setName($gallery->i18n('Fotokasten'));
 	$this->setDescription($gallery->i18n('Fotokasten Photo Printing Module'));
-	$this->setVersion('1.0.1');
+	$this->setVersion('1.0.2');
 	$this->setGroup('commerce', $this->translate('Commerce'));
-	$this->setCallbacks('getItemLinks');
+	$this->setCallbacks('getSiteAdminViews|getItemLinks');
 	$this->setRequiredCoreApi(array(7, 0));
 	$this->setRequiredModuleApi(array(3, 0));
     }
@@ -50,6 +50,22 @@ class FotokastenModule extends GalleryModule {
      */
     function upgrade($currentVersion) {
 	global $gallery;
+
+	list ($ret, $params) =
+	    GalleryCoreApi::fetchAllPluginParameters('module', 'fotokasten');
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	foreach (array('affiliateId' => '1927',
+		       'affiliateIdPass' => 'f12a65d90445f95b90e5fd30c75ee74e')
+		as $key => $value) {
+	    if (!isset($params[$key])) {
+		$ret = $this->setParameter($key, $value);
+		if ($ret) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	}
 
 	if (!isset($currentVersion)) {
 	    list ($ret, $coreParams) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
@@ -87,6 +103,15 @@ class FotokastenModule extends GalleryModule {
 	}
 
 	return null;
+    }
+
+    /**
+     * @see GalleryModule::getSiteAdminViews()
+     */
+    function getSiteAdminViews() {
+	return array(null,
+		     array(array('name' => $this->translate('Fotokasten'),
+				 'view' => 'fotokasten.FotokastenSiteAdmin')));
     }
 
     /**

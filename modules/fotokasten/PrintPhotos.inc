@@ -34,36 +34,19 @@ GalleryCoreApi::requireOnce('modules/fotokasten/lib/nusoap.inc');
  */
 class PrintPhotosController extends GalleryController {
 
-    /* Affiliate Configuration local - enter your affiliate id and password here */
-    var $affiliate_id = '1927';
-    var $affiliate_id_pass = 'f12a65d90445f95b90e5fd30c75ee74e';
-
     /* Server URL configuration */
     var $nserver = '.partner.fotokasten.de';
     var $ftk_soap_path = '/affiliateapi/transfer_basket.php';
+    var $server;
 
     /* Affiliate Configuration */
+    var $affiliate_id;
+    var $affiliate_id_pass;
     var $method_session = 'registerSession';
     var $method_basket = 'transferBasket';
 
-    /* Prepare to transfer Basket */
-    var $server;
-
     /* For testability */
     var $soapclient = 'nusoapclient';
-
-    /**
-     * Constructor
-     */
-    function PrintPhotosController() {
-	$this->server =
-	    array('soapaction'      => 'urn::sopainterop',
-		  'endpoint'        => 'http://' . $this->affiliate_id . $this->nserver .
-				       $this->ftk_soap_path,
-		  'methodNamespace' => 'http://soap.fotokasten.de',
-		  'name'            => $this->affiliate_id . $this->nserver
-	    );
-     }
 
     /**
      * @see GalleryController::handleRequest()
@@ -210,6 +193,21 @@ class PrintPhotosController extends GalleryController {
 
 	    $basket["item" . ++$i] = $basket_item;
 	}
+
+	/* prepare for connection */
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'fotokasten');
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$this->affiliate_id = $params['affiliateId'];
+	$this->affiliate_id_pass = $params['affiliateIdPass'];
+	$this->server =
+	    array('soapaction'      => 'urn::sopainterop',
+		  'endpoint'        => 'http://' . $this->affiliate_id . $this->nserver .
+				       $this->ftk_soap_path,
+		  'methodNamespace' => 'http://soap.fotokasten.de',
+		  'name'            => $this->affiliate_id . $this->nserver
+	    );
 
 	/* get fotokasten session */
 	$ret = $this->getFotokastenSession();
