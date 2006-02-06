@@ -38,6 +38,8 @@ class ItemAddFromBrowser extends ItemAddPlugin {
      * @see ItemAddPlugin::handleRequest
      */
     function handleRequest($form, &$item) {
+	global $gallery;
+
 	$status = array();
 	$error = array();
 	if (isset($form['action']['addFromBrowser'])) {
@@ -80,13 +82,33 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 		    $summary = empty($form['set']['summary']) ? '' : $file['caption'];
 		    $description = empty($form['set']['description']) ? '' : $file['caption'];
 
-		    list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum($file['tmp_name'],
-									   $filename,
-									   $title,
-									   $summary,
-									   $description,
-									   $mimeType,
-									   $item->getId());
+		    /*
+		     * Don't use uploaded files, because the framework cannot safely copy them.
+		     * Move it to our temporary directory first.
+		     */
+
+		    $platform =& $gallery->getPlatform();
+		    if ($platform->is_uploaded_file($file['tmp_name'])) {
+			$tmpFile = $platform->move_uploaded_file($file['tmp_name']);
+			if (!$tmpFile) {
+			    return GalleryCoreApi::error(
+				ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
+			}
+			$needToDeleteTmpFile = true;
+		    } else {
+			$tmpFile = $file['tmp_name'];
+			$needToDeleteTmpFile = false;
+		    }
+
+		    list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum(
+			$tmpFile, $filename, $title, $summary,
+			$description, $mimeType, $item->getId());
+
+		    /* Get rid of the tmp file if necessary */
+		    if ($needToDeleteTmpFile) {
+			@$platform->unlink($tmpFile);
+		    }
+
 		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
