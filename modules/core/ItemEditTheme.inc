@@ -75,16 +75,16 @@ class ItemEditTheme extends ItemEditPlugin {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 		}
 
-                if (isset($form['changeInDescendents'])) {
-                    list ($ret, $subAlbumIds) =
-                        GalleryCoreApi::fetchDescendentAlbumItemIds($item);
-                    if ($ret) {
-                        return array($ret->wrap(__FILE__, __LINE__), null, null, null);
-                    }
-                    array_unshift($subAlbumIds, $item->getId());
-                } else {
-                    $subAlbumIds = array($item->getId());
-                }
+		if (isset($form['changeInDescendents'])) {
+		    list ($ret, $subAlbumIds) =
+			GalleryCoreApi::fetchDescendentAlbumItemIds($item);
+		    if ($ret) {
+			return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+		    }
+		    array_unshift($subAlbumIds, $item->getId());
+		} else {
+		    $subAlbumIds = array($item->getId());
+		}
 
 		/*
 		 * Any settings that are marked as "use global" should be removed from this item.
@@ -96,7 +96,7 @@ class ItemEditTheme extends ItemEditPlugin {
 		foreach ($settings as $setting) {
 		    $key = $setting['key'];
 		    if (!empty($form['useGlobal'][$key])) {
-                        $ret = $theme->removeParameter($key, $subAlbumIds);
+			$ret = $theme->removeParameter($key, $subAlbumIds);
 			if ($ret) {
 			    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 			}
@@ -112,7 +112,7 @@ class ItemEditTheme extends ItemEditPlugin {
 				$setting['typeParams']['packType'], $value);
 			}
 
-                        $ret = $theme->setParameter($key, $value, $subAlbumIds);
+			$ret = $theme->setParameter($key, $value, $subAlbumIds);
 			if ($ret) {
 			    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 			}
@@ -128,10 +128,7 @@ class ItemEditTheme extends ItemEditPlugin {
 		GalleryUtilities::putRequestVariable('form[errorMessage]', $errorMessage);
 	    }
 	} else if (isset($form['action']['undo'])) {
-	    /*
-	     * Take no action and we'll be redirected back to the same page which will reset
-	     * the form
-	     */
+	    /* Do nothing and we'll be redirected back to the same page which resets the form */
 	}
 
 	return array(null, $error, $status, false);
@@ -169,7 +166,7 @@ class ItemEditTheme extends ItemEditPlugin {
 
 	/* Fetch the global-only params */
 	list ($ret, $globalParams) =
-	GalleryCoreApi::fetchAllPluginParameters('theme', $theme->getId());
+	    GalleryCoreApi::fetchAllPluginParameters('theme', $theme->getId());
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
