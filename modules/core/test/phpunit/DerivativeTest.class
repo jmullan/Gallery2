@@ -779,6 +779,54 @@ class DerivativeTest extends GalleryTestCase {
 			    $ops);
     }
 
+    function testFinalOperationsEmpty() {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
+	/* Verify no operations returns array() and not array('') */
+	list ($ret, $item) = $this->_createRandomDataItem($this->_root->getId(), 'test/file');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $derivative) = $this->_createDerivative(
+	    $item, $item->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED, '');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $source, $operations) = $derivative->fetchFinalOperations();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(), $operations);
+
+	/* Verify building derivative with no operations just copies the source file */
+	list ($ret, $derivative, $rebuilt) =
+	    GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($derivative->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($rebuilt, 'thumb was rebuilt');
+	$ops =& DerivativeTestToolkit::getPerformedOperations();
+	$this->assertEquals(array(), $ops, 'no operations');
+
+	list ($ret, $sourcePath) = $item->fetchPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $destPath) = $derivative->fetchPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$expectedSize = $platform->filesize($sourcePath);
+	$this->assertEquals($expectedSize, $derivative->getDerivativeSize(), 'derivative size');
+	if ($platform->file_exists($destPath)) {
+	    $this->assertEquals($expectedSize, $platform->filesize($destPath), 'file size');
+	} else {
+	    $this->assert(false, 'dest file missing');
+	}
+    }
+
     function testHasNoOperations() {
 	list ($ret, $derivative) = $this->_createDerivative(
 	    $this->_root, $this->_root->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED, '');
@@ -791,7 +839,7 @@ class DerivativeTest extends GalleryTestCase {
 
     function testRemoveDerivativeOperation() {
 	$this->assertEquals('test|1,2,3,4;test|4,5,6',
-            GalleryCoreApi::removeDerivativeOperation(
+	    GalleryCoreApi::removeDerivativeOperation(
 		'composite', 'test|1,2,3,4;composite|a,b;test|4,5,6'));
     }
 

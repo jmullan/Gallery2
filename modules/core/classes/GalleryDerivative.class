@@ -378,6 +378,7 @@ class GalleryDerivative extends GalleryChildEntity {
      */
     function _rebuildCache() {
 	global $gallery;
+	$platform =& $gallery->getPlatform();
 
 	/* Figure out our target path */
 	list ($ret, $destPath) = $this->fetchPath();
@@ -488,9 +489,14 @@ class GalleryDerivative extends GalleryChildEntity {
 	    $sourcePath = $destPath;
 	    $mimeType = $outputMimeType;
 	}
+	if (empty($operations)) {
+	    /* No operations.. just copy source file */
+	    if (!$platform->copy($sourcePath, $destPath)) {
+		return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
+	    }
+	}
 
 	/* Get the size of the file */
-	$platform =& $gallery->getPlatform();
 	if ($platform->file_exists($destPath)) {
 	    $size = $platform->filesize($destPath);
 	} else {
@@ -602,7 +608,7 @@ class GalleryDerivative extends GalleryChildEntity {
 	/* Merge in the postfilter operations */
 	$postFilters = $this->getPostFilterOperations();
 	if (empty($operations)) {
-	    $operations = explode(';', $postFilters);
+	    $operations = empty($postFilters) ? array() : explode(';', $postFilters);
 	} else {
 	    foreach (explode(';', $postFilters) as $newOperation) {
 		list ($ret, $operations) =
