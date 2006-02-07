@@ -315,7 +315,7 @@ function _GalleryMain($embedded=false) {
 	 * modified back
 	 */
 	$session =& $gallery->getSession();
-	$html = str_replace('%%SESSION_ID%%', $session->getId(), $html);
+	$html = $session->replaceTempSessionIdIfNecessary($html);
 	print $html;
 	$data['isDone'] = true;
     } else {
@@ -427,6 +427,14 @@ function _GalleryMain($embedded=false) {
 		}
 		$html = preg_replace('/^\s+/m', '', $html);
 
+		list ($ret, $shouldCache) = GalleryDataCache::shouldCache('write', 'full');
+		if ($ret) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		if ($shouldCache && $results['cacheable']) {
+		    $htmlForCache = $html;	
+		}
+		
 		/*
 		 * Session: Find out whether we need to send a cookie & need a new session 
 		 * (only if we don't have one yet)
@@ -445,16 +453,15 @@ function _GalleryMain($embedded=false) {
 		} else {
 		    print $html;
 
-		    list ($ret, $shouldCache) = GalleryDataCache::shouldCache('write', 'full');
-		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-
 		    if ($shouldCache && $results['cacheable']) {
 			$session =& $gallery->getSession();
+			if ($session->getId() != SESSION_TEMP_ID) {
+			    $htmlForCache = str_replace($session->getId(), 
+			    				SESSION_TEMP_ID, $htmlForCache);
+			}
 			$ret = GalleryDataCache::putPageData(
 			    'page', $results['cacheable'], $urlGenerator->getCacheableUrl(),
-			    str_replace($session->getId(), '%%SESSION_ID%%', $html));
+			    $htmlForCache);
 			if ($ret) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
