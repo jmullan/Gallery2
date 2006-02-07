@@ -82,12 +82,14 @@
   function slide_view_start() {
     if (bShowText) show_text();
     preload(move_index(1));
+    if (timer) { clearInterval(timer); clearTimeout(timer); } // Avoid extra timers in opera
     if (!bPause) timer = setTimeout('goto_next_photo()', iDelay);
   }
   function goto_next_photo() {
     index = move_index(1);
     if (bCanBlend) apply_filter();
-    document.images.slide.src = document.getElementById('item_'+index+'_'+item_map[index][iSize]).href;
+    document.images.slide.src =
+      document.getElementById('item_'+index+'_'+item_map[index][iSize]).href;
     linkStop.href = document.getElementById('href_'+index).href;
     if (bCanBlend) document.images.slide.filters[0].Play();
   }
