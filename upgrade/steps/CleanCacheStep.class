@@ -43,6 +43,19 @@ class CleanCacheStep extends UpgradeStep {
 	    }
 	}
 
+	$ret = GalleryCoreApi::removeAllMapEntries('GalleryCache');
+	if ($ret) {
+	    $templateData['errors'][] = _('Unable to clear the page cache');
+	    $templateData['stackTrace'] .= $ret->getAsHtml();
+	}
+
+	$storage =& $gallery->getStorage();
+	$ret = $storage->checkPoint();
+	if ($ret) {
+	    $templateData['errors'][] = _('Unable to commit database transaction');
+	    $templateData['stackTrace'] .= $ret->getAsHtml();
+	}
+
 	/*
 	 * Delete the install.log file that's left over from 2.0 and 2.0.1 installs
 	 * since it's in a known location and contains potential information leaks.
