@@ -277,21 +277,6 @@ function _GalleryMain($embedded=false) {
 	    }
 	}
     }
-
-    list ($ret, $shouldCache) = GalleryDataCache::shouldCache('read', 'full');
-    if ($ret) {
-	return array($ret->wrap(__FILE__, __LINE__), null);
-    }
-
-    if ($shouldCache) {
-	$session =& $gallery->getSession();
-	list ($ret, $html) = GalleryDataCache::getPageData(
-	    'page', array($urlGenerator->getCacheableUrl(), $session->isUsingCookies()));
-	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-    }
-
     /* Load and run the appropriate view */
     if (empty($viewName)) {
 	$viewName = GALLERY_DEFAULT_VIEW;
@@ -302,9 +287,40 @@ function _GalleryMain($embedded=false) {
     if ($ret) {
 	return array($ret->wrap(__FILE__, __LINE__), null);
     }
+    
     if ($gallery->getConfig('mode.maintenance') && !$view->isAllowedInMaintenance()) {
 	/* Maintenance mode - allow admins, else redirect to given url or show standard view */
 	list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (!$isAdmin) {
+	    if (($redirectUrl = $gallery->getConfig('mode.maintenance')) !== true) {
+		return array(null, _GalleryMain_doRedirect($redirectUrl));
+	    }
+	    $viewName = 'core.MaintenanceMode';
+	    list ($ret, $view) = GalleryView::loadView($viewName);
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+    }
+    if (!$embedded && $gallery->getConfig('mode.embed.only') && !$view->isAllowedInEmbedOnly()) {
+	/* Lock out direct access when embed-only is set */
+	return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
+    }
+
+    /* Check if the page is cached and return the cached version, else generate the page */
+    list ($ret, $shouldCache) = GalleryDataCache::shouldCache('read', 'full');
+    if ($ret) {
+	return array($ret->wrap(__FILE__, __LINE__), null);
+    }
+
+    $html = '';
+    if ($shouldCache) {
+	$session =& $gallery->getSession();
+	list ($ret, $html) = GalleryDataCache::getPageData(
+	    'page', array($urlGenerator->getCacheableUrl(), $session->isUsingCookies()));
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -320,38 +336,6 @@ function _GalleryMain($embedded=false) {
 	print $html;
 	$data['isDone'] = true;
     } else {
-	/* Load and run the appropriate view */
-	if (empty($viewName)) {
-	    $viewName = 'core.ShowItem';
-	}
-
-	list ($ret, $view) = GalleryView::loadView($viewName);
-	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	if ($gallery->getConfig('mode.maintenance') && !$view->isAllowedInMaintenance()) {
-	    /* Maintenance mode - allow admins, else redirect to given url or show standard view */
-	    list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
-	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    if (!$isAdmin) {
-		if (($redirectUrl = $gallery->getConfig('mode.maintenance')) !== true) {
-		    return array(null, _GalleryMain_doRedirect($redirectUrl));
-		}
-		$viewName = 'core.MaintenanceMode';
-		list ($ret, $view) = GalleryView::loadView($viewName);
-		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-	    }
-	}
-	if (!$embedded && $gallery->getConfig('mode.embed.only') &&
-	        !$view->isAllowedInEmbedOnly()) {
-	    /* Lock out direct access when embed-only is set */
-	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
-	}
-
 	/* Initialize our container for template data */
 	$gallery->setCurrentView($viewName);
 
