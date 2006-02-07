@@ -43,7 +43,7 @@ if (GalleryUtilities::isEmbedded()) {
 	 * the latest version of the file already.
 	 */
 	if (GalleryUtilities::getServerVar('HTTP_IF_MODIFIED_SINCE') ||
-	        (function_exists('getallheaders') && ($headers = GetAllHeaders()) && 
+	        (function_exists('getallheaders') && ($headers = GetAllHeaders()) &&
 		 (isset($headers['If-Modified-Since']) || isset($headers['If-modified-since'])))) {
 	    header('HTTP/1.x 304 Not Modified');
 	    return;
@@ -284,8 +284,9 @@ function _GalleryMain($embedded=false) {
     }
 
     if ($shouldCache) {
-	list ($ret, $html) =
-	    GalleryDataCache::getPageData('page', $urlGenerator->getCacheableUrl());
+	$session =& $gallery->getSession();
+	list ($ret, $html) = GalleryDataCache::getPageData(
+	    'page', array($urlGenerator->getCacheableUrl(), $session->isUsingCookies()));
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -372,7 +373,7 @@ function _GalleryMain($embedded=false) {
 	    /* From now on, don't add navid / sessionId to URLs if there's no persistent session */
 	    $session->doNotUseTempId();
 	}
-	
+
 	/*
 	 * If this is an immediate view, it will send its own output directly.  This is
 	 * used in the situation where we want to send back data that's not controlled by the
@@ -432,11 +433,11 @@ function _GalleryMain($embedded=false) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		if ($shouldCache && $results['cacheable']) {
-		    $htmlForCache = $html;	
+		    $htmlForCache = $html;
 		}
-		
+
 		/*
-		 * Session: Find out whether we need to send a cookie & need a new session 
+		 * Session: Find out whether we need to send a cookie & need a new session
 		 * (only if we don't have one yet)
 		 */
 		$session =& $gallery->getSession();
@@ -456,11 +457,12 @@ function _GalleryMain($embedded=false) {
 		    if ($shouldCache && $results['cacheable']) {
 			$session =& $gallery->getSession();
 			if ($session->getId() != SESSION_TEMP_ID) {
-			    $htmlForCache = str_replace($session->getId(), 
+			    $htmlForCache = str_replace($session->getId(),
 			    				SESSION_TEMP_ID, $htmlForCache);
 			}
 			$ret = GalleryDataCache::putPageData(
-			    'page', $results['cacheable'], $urlGenerator->getCacheableUrl(),
+			    'page', $results['cacheable'],
+			    array($urlGenerator->getCacheableUrl(), $session->isUsingCookies()),
 			    $htmlForCache);
 			if ($ret) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -477,7 +479,7 @@ function _GalleryMain($embedded=false) {
 
 function _GalleryMain_doRedirect($redirectUrl, $template=null, $controller=null) {
     global $gallery;
-    
+
     /* Create a valid sessionId for guests, if required */
     $session =& $gallery->getSession();
     $ret = $session->start();
@@ -485,7 +487,7 @@ function _GalleryMain_doRedirect($redirectUrl, $template=null, $controller=null)
 	return array($ret->wrap(__FILE__, __LINE__), null);
     }
     $redirectUrl = $session->replaceTempSessionIdIfNecessary($redirectUrl);
-    
+
     if ($gallery->getDebug() == false || $gallery->getDebug() == 'logged') {
 	/*
 	 * The URL generator makes HTML 4.01 compliant URLs using
