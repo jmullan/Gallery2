@@ -487,6 +487,17 @@ function _GalleryMain_doRedirect($redirectUrl, $template=null, $controller=null)
 	return array($ret->wrap(__FILE__, __LINE__), null);
     }
     $redirectUrl = $session->replaceTempSessionIdIfNecessary($redirectUrl);
+    
+    /* 
+     * UserLogin returnUrls don't have a sessionId in the URL to replace, make sure 
+     * there's a sessionId in the redirectUrl for users that don't use cookies
+     */
+    if (!$session->isUsingCookies() && $session->isPersistent() &&
+	    strpos($redirectUrl, $session->getKey()) === false) {
+        $redirectUrl = GalleryUrlGenerator::appendParamsToUrl(
+         				$redirectUrl, 
+         				array($session->getKey() => $session->getId()));	
+    }
 
     if ($gallery->getDebug() == false || $gallery->getDebug() == 'logged') {
 	/*

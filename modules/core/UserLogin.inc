@@ -191,6 +191,11 @@ class UserLoginView extends GalleryView {
 	if ($form['formName'] != 'UserLogin') {
 	    $form['formName'] = 'UserLogin';
 	    $form['username'] = '';
+	    
+	    /*
+	     * When logging in we don't have a session yet, thus no navigation history / a place
+	     * to store the returnUrl. Thus store the returnUrl in the login form
+	     */
 	    $returnUrl = GalleryUtilities::getRequestVariables('return');
 	    if (!empty($returnUrl)) {
 		$form['returnUrl'] = $returnUrl;
