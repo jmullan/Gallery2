@@ -12,7 +12,8 @@
 
 {if !empty($theme.imageViews)}
   {capture name="fallback"}
-    <a href="{g->url arg1="view=core.DownloadItem" arg2="itemId=`$theme.item.id`"}">
+    <a href="{g->url arg1="view=core.DownloadItem" arg2="itemId=`$theme.item.id`"
+		     forceFullUrl=true forceSessionId=true}">
       {g->text text="Download %s" arg1=$theme.sourceImage.itemTypeName.1}
     </a>
   {/capture}

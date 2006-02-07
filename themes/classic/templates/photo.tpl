@@ -50,7 +50,8 @@
         <div id="gsImageView" class="gbBlock">
           {if !empty($theme.imageViews)}
 	    {capture name="fallback"}
-	    <a href="{g->url arg1="view=core.DownloadItem" arg2="itemId=`$theme.item.id`"}">
+	    <a href="{g->url arg1="view=core.DownloadItem" arg2="itemId=`$theme.item.id`"
+			     forceFullUrl=true forceSessionId=true}">
 	      {g->text text="Download %s" arg1=$theme.sourceImage.itemTypeName.1}
 	    </a>
 	    {/capture}
@@ -59,7 +60,8 @@
 	      {if isset($theme.photoFrame)}
 		{g->container type="imageframe.ImageFrame" frame=$theme.photoFrame
 			      width=$image.width height=$image.height}
-		  {g->image id="%ID%" item=$theme.item image=$image fallback=$smarty.capture.fallback class="%CLASS%"}
+		  {g->image id="%ID%" item=$theme.item image=$image
+			    fallback=$smarty.capture.fallback class="%CLASS%"}
 		{/g->container}
 	      {else}
 		{g->image item=$theme.item image=$image fallback=$smarty.capture.fallback}

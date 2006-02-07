@@ -231,7 +231,7 @@ class GalleryMovieItem extends GalleryDataItem {
 	    $src = $urlGenerator->generateUrl(
 		array('view' => 'core.DownloadItem', 'itemId' => $this->getId(),
 		      'serialNumber' => $this->getSerialNumber()),
-		array('forceFullUrl' => !empty($params['forceFullUrl'])));
+		array('forceFullUrl' => true, 'forceSessionId' => true));
 
 	    list ($width, $height) = array($this->getWidth(), $this->getHeight());
 	    switch($this->getMimeType()) {
