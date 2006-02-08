@@ -194,6 +194,7 @@ class MySqlGenerator extends BaseGenerator {
 		'STRING-LARGE' => 'varchar(255)',
 		'TEXT-' => 'text',
 		'TEXT-MEDIUM' => 'text',
+		'TEXT-LARGE' => 'longtext',
 		'BOOLEAN-' => 'int(1)',
 		'BOOLEAN-MEDIUM' => 'int(1)',
 		'TIMESTAMP-' => 'datetime'));
@@ -329,14 +330,14 @@ class MySqlGenerator extends BaseGenerator {
 			    $output .= '  DROP PRIMARY KEY';
 			} else {
 			    /*
-			     * For MySQL, our UNIQUE index names are the name of the first 
+			     * For MySQL, our UNIQUE index names are the name of the first
 			     * column that is part of the index (MySQL sets the name that way
 			     * for unnamed indices (they only need to be unique in each table)
 			     */
 			    $output .= '  DROP INDEX DB_COLUMN_PREFIX' . $c['child'][0]['content'];
 			}
 			break;
-			
+
 		    case 'INDEX':
 			/* column-name */
 			$output .= '  DROP INDEX ';
@@ -416,6 +417,7 @@ class PostgresGenerator extends BaseGenerator {
 		'STRING-LARGE' => 'VARCHAR(255)',
 		'TEXT-' => 'text',
 		'TEXT-MEDIUM' => 'text',
+		'TEXT-LARGE' => 'text',
 		'BOOLEAN-' => 'SMALLINT',
 		'BOOLEAN-MEDIUM' => 'SMALLINT',
 		'TIMESTAMP-' => 'datetime'));
@@ -660,6 +662,7 @@ class OracleGenerator extends BaseGenerator {
 		'STRING-LARGE' => 'VARCHAR2(255)',
 		'TEXT-' => 'VARCHAR2(4000)',
 		'TEXT-MEDIUM' => 'VARCHAR2(4000)',
+		'TEXT-LARGE' => 'CLOB',
 		'BOOLEAN-' => 'NUMBER(1)',
 		'BOOLEAN-MEDIUM' => 'NUMBER(1)',
 		'TIMESTAMP-' => 'datetime'));
@@ -975,6 +978,7 @@ class Db2Generator extends BaseGenerator {
 		'STRING-LARGE' => 'VARCHAR(255)',
 		'TEXT-' => 'VARCHAR(8000)',
 		'TEXT-MEDIUM' => 'VARCHAR(8000)',
+		'TEXT-LARGE' => 'CLOB(4G)',
 		'BOOLEAN-' => 'SMALLINT',
 		'BOOLEAN-MEDIUM' => 'SMALLINT',
 		'TIMESTAMP-' => 'datestamp'));

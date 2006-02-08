@@ -60,7 +60,7 @@ class DataCacheTest extends GalleryTestCase {
     }
 
     function tearDown() {
-	$ret = GalleryCoreApi::removeMapEntry('GalleryCache', array('itemId' => 0));
+	$ret = GalleryCoreApi::removeMapEntry('GalleryCacheMap', array('itemId' => 0));
 	if ($ret) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

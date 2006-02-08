@@ -43,7 +43,7 @@ class CleanCacheStep extends UpgradeStep {
 	    }
 	}
 
-	$ret = GalleryCoreApi::removeAllMapEntries('GalleryCache');
+	$ret = GalleryCoreApi::removeAllMapEntries('GalleryCacheMap');
 	if ($ret) {
 	    $templateData['errors'][] = _('Unable to clear the page cache');
 	    $templateData['stackTrace'] .= $ret->getAsHtml();

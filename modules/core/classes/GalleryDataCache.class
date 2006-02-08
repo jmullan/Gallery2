@@ -641,17 +641,17 @@ class GalleryDataCache {
 	$storage =& $gallery->getStorage();
 	$query = '
         SELECT
-          [GalleryCache::value]
+          [GalleryCacheMap::value]
         FROM
-          [GalleryCache]
+          [GalleryCacheMap]
         WHERE
-          [GalleryCache::key] = ?
+          [GalleryCacheMap::key] = ?
           AND
-          [GalleryCache::type] = ?
+          [GalleryCacheMap::type] = ?
           AND
-          [GalleryCache::userId] = ?
+          [GalleryCacheMap::userId] = ?
           AND
-          [GalleryCache::timestamp] > ?
+          [GalleryCacheMap::timestamp] > ?
         ';
 	list ($ret, $results) = $storage->search($query, array($key, $type, $userId, $cutoff));
 	if ($ret) {
@@ -702,7 +702,7 @@ class GalleryDataCache {
 	$phpVm = $gallery->getPhpVm();
 	$now = $phpVm->time();
 	$ret = GalleryCoreApi::updateMapEntry(
-	    'GalleryCache',
+	    'GalleryCacheMap',
 	    array('key' => $key, 'userId' => $userId, 'itemId' => $itemId, 'type' => $type),
 	    array('value' => $value, 'timestamp' => $now));
 
@@ -714,7 +714,7 @@ class GalleryDataCache {
 
 	if (!$affectedRows) {
 	    $ret = GalleryCoreApi::addMapEntry(
-		'GalleryCache',
+		'GalleryCacheMap',
 		array('key' => $key, 'value' => $value, 'userId' => $userId,
 		      'itemId' => $itemId, 'type' => $type, 'timestamp' => $now));
 	    if ($ret) {
@@ -732,7 +732,7 @@ class GalleryDataCache {
      * @return object GalleryStatus a status code
      */
     function removePageData($itemIds) {
-	$ret = GalleryCoreApi::removeMapEntry('GalleryCache', array('itemId' => $itemIds));
+	$ret = GalleryCoreApi::removeMapEntry('GalleryCacheMap', array('itemId' => $itemIds));
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

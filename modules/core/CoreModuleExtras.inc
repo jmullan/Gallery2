@@ -1689,6 +1689,9 @@ class CoreModuleExtras {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
+	case '1.0.23':
+	    /* Rename GalleryCache to GalleryCacheMap, and make the value column TEXT(LARGE) */
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
@@ -1925,6 +1928,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	case '1.0.20':
 	case '1.0.21':
 	case '1.0.22':
+	case '1.0.23':
 
 	case 'end of upgrade path':
 	    /*

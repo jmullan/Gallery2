@@ -61,7 +61,7 @@ function clearPageCache() {
     require_once(dirname(__FILE__) . '/../../embed.php');
     GalleryEmbed::init();
 
-    $ret1 = GalleryCoreApi::removeAllMapEntries('GalleryCache');
+    $ret1 = GalleryCoreApi::removeAllMapEntries('GalleryCacheMap');
     $ret2 = GalleryEmbed::done();
     if ($ret1 || $ret2) {
 	$status[] = array('error', 'Error deleting page cache!');
