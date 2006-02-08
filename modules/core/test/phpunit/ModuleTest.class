@@ -396,8 +396,9 @@ class ModuleTest extends GalleryTestCase {
 	$userOrGroupIdMarkers = GalleryUtilities::makeMarkers(count($groupIds) + 1);
 
 	$storage =& $gallery->getStorage();
-	list ($ret, $bitOr) = $storage->getFunctionSql('BIT_OR',
-						       array('[GalleryAccessMap::permission]'));
+	list ($ret, $bitOr) = $storage->getFunctionSql(
+				'BIT_OR', array('[GalleryAccessMap::permission]',
+						'[GalleryAccessSubscriberMap::itemId]'));
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

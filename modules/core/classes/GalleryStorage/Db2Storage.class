@@ -95,7 +95,7 @@ class Db2Storage extends GalleryStorage {
 	$statements[] = 'DROP FUNCTION G2_BIT_AND(CHAR(32), CHAR(32))';
 	$statements[] = 'DROP FUNCTION BIT_AND(SMALLINT, SMALLINT)';
 	$statements[] = 'DROP FUNCTION G2_LIKE(VARCHAR(8000), VARCHAR(8000))';
-	$statements[] = 'DROP FUNCTION G2_BIT_OR(VARCHAR(32))';
+	$statements[] = 'DROP FUNCTION G2_BIT_OR(INTEGER, VARCHAR(32))';
 	/*
 	 * These SQLJ.*_JAR() calls blow up, looks like CLI can't handle it
 	 * $recordSet5 = $tmpDb->Execute("CALL SQLJ.REMOVE_JAR ('g2_db2_jar')");
@@ -257,7 +257,12 @@ class Db2Storage extends GalleryStorage {
 	     * plus it stores the result in the DB2 scratchpad. We use the built-in aggregate
 	     * function MAX() to select the last "intermediate" result of the BIT_OR
 	     */
-	    $sql = 'MAX(G2_BIT_OR (' . $args[0] . '))';
+	     
+	    /* 
+	     * arg 0 is the column over which we do the BIT_OR, arg 1 is the GROUP BY column 
+	     * (or a constant number if no GROUP BY clause is used)
+	     */
+	    $sql = 'MAX(G2_BIT_OR (' . $args[1] . ', ' . $args[0] . '))';
 	    break;
 
 	case 'UNIX_TIMESTAMP':
