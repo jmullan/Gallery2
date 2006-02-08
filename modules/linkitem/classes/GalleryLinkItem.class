@@ -154,12 +154,21 @@ class GalleryLinkItem extends GalleryItem {
 	    $link = $this->getLink();
 	    if (is_numeric($link)) {
 		global $gallery;
+		$session =& $gallery->getSession();
+		$ret = $session->start();
+		if ($ret) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		$session->doNotUseTempId();
 		$urlGenerator =& $gallery->getUrlGenerator();
 		$link = $urlGenerator->generateUrl(array('view' => 'core.ShowItem',
-							 'itemId' => $link));
+							 'itemId' => $link),
+						   array('forceFullUrl' => true));
 	    }
-	    header('Location: ' . str_replace('&amp;', '&', $link));
-	    exit;
+	    
+	    $phpVm = $gallery->getPhpVm();
+	    $phpVm->header('Location: ' . str_replace('&amp;', '&', $link));
+	    $phpVm->exit_();
 	}
 
 	return null;
