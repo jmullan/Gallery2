@@ -856,7 +856,7 @@ class CoreModuleExtras {
 	    }
 	case '0.9.26':
 	    /* Added GalleryDerivative::isBroken; default all values to null */
-	    $ret = $storage->configureStore($module->getId(), array('GalleryDerivativeImage:1.0'));
+	    $ret = $storage->configureStore($module->getId(), array('GalleryDerivative:1.0'));
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -1334,6 +1334,19 @@ class CoreModuleExtras {
 	    /* Security fix in zipcart */
 
 	case '1.0.10':
+	    /* Rename unnamed pre-beta-3 index to named index */
+	    if ($storage->getType() == 'mysql') {
+	    	$gallery->debug('Rename unnamed pre-beta-3 index to named index (ignore errors)');
+	        $query = sprintf('
+	        ALTER TABLE %sAccessMap
+                DROP INDEX %saccessListId_2,
+                ADD INDEX %sAccessMap_83732(%saccessListId);',
+                $storage->_tablePrefix, $storage->_columnPrefix, $storage->_tablePrefix,
+                $storage->_columnPrefix);
+	        /* Ignore error, since there's nothing to do for most installations */
+	        $storage->execute($query);
+	    }
+	    
 	    /*
 	     * Combine AccessMap userId/groupId into single userOrGroupId,
 	     * and remove unused GALLERY_PERMISSION_ITEM_ADMIN permission flag.
@@ -1573,6 +1586,102 @@ class CoreModuleExtras {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
+	case '1.0.22':
+	    /* Rename unnamed pre-beta-3 index to named index */
+	    if ($storage->getType() == 'mysql') {
+	    	$gallery->debug('Rename unnamed pre-beta-3 index to named index (ignore errors)');
+	    	$indexChanges = array();
+		$indexChanges[] = array('AccessMap', 'permission',
+					'AccessMap_18058', array('permission'));
+	    	$indexChanges[] = array('AccessSubscriberMap', 'accessListId', 
+					'AccessSubscriberMap_83732', array('accessListId'));
+	    	$indexChanges[] = array('ChildEntity', 'parentId', 
+					'ChildEntity_52718', array('parentId'));
+	    	$indexChanges[] = array('Derivative', 'derivativeSourceId', 
+					'Derivative_85338', array('derivativeSourceId'));	    	
+	    	$indexChanges[] = array('Derivative', 'derivativeOrder', 
+					'Derivative_25243', array('derivativeOrder'));
+		$indexChanges[] = array('Derivative', 'derivativeType', 
+					'Derivative_97216', array('derivativeType'));
+		$indexChanges[] = array('DerivativePrefsMap', 'itemId', 
+					'DerivativePrefsMap_75985', array('itemId'));
+		$indexChanges[] = array('Entity', 'creationTimestamp', 
+					'Entity_76255', array('creationTimestamp'));
+		$indexChanges[] = array('Entity', 'isLinkable', 
+					'Entity_35978', array('isLinkable'));
+		$indexChanges[] = array('Entity', 'modificationTimestamp', 
+					'Entity_63025', array('modificationTimestamp'));
+		$indexChanges[] = array('Entity', 'serialNumber', 
+					'Entity_60702', array('serialNumber'));
+		$indexChanges[] = array('FileSystemEntity ', 'pathComponent', 
+					'FileSystemEntity_3406', array('pathComponent'));
+		$indexChanges[] = array('Item', 'keywords', 'Item_99070', array('keywords'));
+		$indexChanges[] = array('Item', 'ownerId', 'Item_21573', array('ownerId'));
+		$indexChanges[] = array('Item', 'summary', 'Item_54147', array('summary'));
+		$indexChanges[] = array('Item', 'title', 'Item_90059', array('title'));
+		$indexChanges[] = array('ItemAttributesMap', 'parentSequence', 
+					'ItemAttributesMap_95270', array('parentSequence'));
+		$indexChanges[] = array('MaintenanceMap', 'taskId', 
+					'MaintenanceMap_21687', array('taskId'));
+		$indexChanges[] = array('PluginParameterMap', 'pluginType_2', 
+					'PluginParameterMap_12808', 
+					array('pluginType', 'pluginId', 'itemId'));
+		$indexChanges[] = array('PluginParameterMap', 'pluginType_3', 
+					'PluginParameterMap_80596', array('pluginType'));
+		$indexChanges[] = array('TkOperatnMimeTypeMap', 'operationName', 
+					'TkOperatnMimeTypeMap_2014', array('operationName'));
+		$indexChanges[] = array('TkOperatnMimeTypeMap', 'mimeType', 
+					'TkOperatnMimeTypeMap_79463', array('mimeType'));
+		$indexChanges[] = array('TkOperatnParameterMap', 'operationName', 
+					'TkOperatnParameterMap_2014', array('operationName'));
+		$indexChanges[] = array('TkPropertyMimeTypeMap', 'propertyName', 
+					'TkPropertyMimeTypeMap_52881', array('propertyName'));
+		$indexChanges[] = array('TkPropertyMimeTypeMap', 'mimeType', 
+					'TkPropertyMimeTypeMap_79463', array('mimeType'));
+		$indexChanges[] = array('UserGroupMap', 'userId', 
+					'UserGroupMap_69068', array('userId'));
+		$indexChanges[] = array('UserGroupMap', 'groupId', 
+					'UserGroupMap_89328', array('groupId'));
+		$indexChanges[] = array('Lock', 'lockId', 
+					'Lock_11039', array('lockId'));
+		foreach ($indexChanges as $change) {
+		    $indexColumns = implode(', ' . $storage->_columnPrefix, $change[3]);
+		    $indexColumns = $storage->_columnPrefix . $indexColumns;
+		    $query = sprintf('
+		    ALTER TABLE %s%s
+                    DROP INDEX %s%s,
+                    ADD INDEX %s%s(%s);',
+                	$storage->_tablePrefix, $change[0], $storage->_columnPrefix, $change[1], 
+                	$storage->_tablePrefix, $change[2], $indexColumns);
+                    /* Ignore error, since there's nothing to do for most installations */
+	            $storage->execute($query);
+		}
+	        $gallery->debug('Finished renaming unnamed pre-beta-3 indices to named indices');
+	    }
+
+	    /*
+	     * Also add a single column index on AccessMap.accessListId since it was forgotten in
+	     * the initial upgrade code. Ignore errors since some installations already have it.
+	     */
+	    $gallery->debug('Adding an index to the AccessMap table, ignore errors');
+	    $storage->configureStore($module->getId(), array('GalleryAccessMap:1.2'));
+	    $gallery->debug('Finished adding an index to the AccessMap table');
+	    /*
+	     * Make sure the schema update is stored, can't use updateMapEntry because Schema is
+	     * not in Maps.xml
+	     */
+	    $query = sprintf('
+            UPDATE %sSchema
+            SET %smajor=1, %sminor=3
+            WHERE %sname=\'AccessMap\' AND %smajor=1 AND %sminor=2;',
+			     $storage->_tablePrefix, $storage->_columnPrefix,
+			     $storage->_columnPrefix, $storage->_columnPrefix,
+			     $storage->_columnPrefix, $storage->_columnPrefix);
+	    $ret = $storage->execute($query);
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
@@ -1808,6 +1917,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	case '1.0.19':
 	case '1.0.20':
 	case '1.0.21':
+	case '1.0.22':
 
 	case 'end of upgrade path':
 	    /*
