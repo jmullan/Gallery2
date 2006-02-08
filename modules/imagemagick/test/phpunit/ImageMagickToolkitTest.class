@@ -246,7 +246,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    
+
 	    /* Test a basic composite operation (top right corner) */
 	    $dataDir = $gallery->getConfig('data.gallery.base');
 	    $ret = $this->_testOperation('image/png', 'composite',
@@ -1153,6 +1153,10 @@ class ImageMagickToolkitTestPlatform {
 
     function getcwd() {
 	return '/tmp';
+    }
+
+    function chmod($path, $mode=null) {
+	return true;
     }
 }
 ?>
