@@ -1346,7 +1346,7 @@ class CoreModuleExtras {
 	        /* Ignore error, since there's nothing to do for most installations */
 	        $storage->execute($query);
 	    }
-	    
+
 	    /*
 	     * Combine AccessMap userId/groupId into single userOrGroupId,
 	     * and remove unused GALLERY_PERMISSION_ITEM_ADMIN permission flag.
@@ -1593,56 +1593,56 @@ class CoreModuleExtras {
 	    	$indexChanges = array();
 		$indexChanges[] = array('AccessMap', 'permission',
 					'AccessMap_18058', array('permission'));
-	    	$indexChanges[] = array('AccessSubscriberMap', 'accessListId', 
+	    	$indexChanges[] = array('AccessSubscriberMap', 'accessListId',
 					'AccessSubscriberMap_83732', array('accessListId'));
-	    	$indexChanges[] = array('ChildEntity', 'parentId', 
+	    	$indexChanges[] = array('ChildEntity', 'parentId',
 					'ChildEntity_52718', array('parentId'));
-	    	$indexChanges[] = array('Derivative', 'derivativeSourceId', 
-					'Derivative_85338', array('derivativeSourceId'));	    	
-	    	$indexChanges[] = array('Derivative', 'derivativeOrder', 
+	    	$indexChanges[] = array('Derivative', 'derivativeSourceId',
+					'Derivative_85338', array('derivativeSourceId'));
+	    	$indexChanges[] = array('Derivative', 'derivativeOrder',
 					'Derivative_25243', array('derivativeOrder'));
-		$indexChanges[] = array('Derivative', 'derivativeType', 
+		$indexChanges[] = array('Derivative', 'derivativeType',
 					'Derivative_97216', array('derivativeType'));
-		$indexChanges[] = array('DerivativePrefsMap', 'itemId', 
+		$indexChanges[] = array('DerivativePrefsMap', 'itemId',
 					'DerivativePrefsMap_75985', array('itemId'));
-		$indexChanges[] = array('Entity', 'creationTimestamp', 
+		$indexChanges[] = array('Entity', 'creationTimestamp',
 					'Entity_76255', array('creationTimestamp'));
-		$indexChanges[] = array('Entity', 'isLinkable', 
+		$indexChanges[] = array('Entity', 'isLinkable',
 					'Entity_35978', array('isLinkable'));
-		$indexChanges[] = array('Entity', 'modificationTimestamp', 
+		$indexChanges[] = array('Entity', 'modificationTimestamp',
 					'Entity_63025', array('modificationTimestamp'));
-		$indexChanges[] = array('Entity', 'serialNumber', 
+		$indexChanges[] = array('Entity', 'serialNumber',
 					'Entity_60702', array('serialNumber'));
-		$indexChanges[] = array('FileSystemEntity ', 'pathComponent', 
+		$indexChanges[] = array('FileSystemEntity ', 'pathComponent',
 					'FileSystemEntity_3406', array('pathComponent'));
 		$indexChanges[] = array('Item', 'keywords', 'Item_99070', array('keywords'));
 		$indexChanges[] = array('Item', 'ownerId', 'Item_21573', array('ownerId'));
 		$indexChanges[] = array('Item', 'summary', 'Item_54147', array('summary'));
 		$indexChanges[] = array('Item', 'title', 'Item_90059', array('title'));
-		$indexChanges[] = array('ItemAttributesMap', 'parentSequence', 
+		$indexChanges[] = array('ItemAttributesMap', 'parentSequence',
 					'ItemAttributesMap_95270', array('parentSequence'));
-		$indexChanges[] = array('MaintenanceMap', 'taskId', 
+		$indexChanges[] = array('MaintenanceMap', 'taskId',
 					'MaintenanceMap_21687', array('taskId'));
-		$indexChanges[] = array('PluginParameterMap', 'pluginType_2', 
-					'PluginParameterMap_12808', 
+		$indexChanges[] = array('PluginParameterMap', 'pluginType_2',
+					'PluginParameterMap_12808',
 					array('pluginType', 'pluginId', 'itemId'));
-		$indexChanges[] = array('PluginParameterMap', 'pluginType_3', 
+		$indexChanges[] = array('PluginParameterMap', 'pluginType_3',
 					'PluginParameterMap_80596', array('pluginType'));
-		$indexChanges[] = array('TkOperatnMimeTypeMap', 'operationName', 
+		$indexChanges[] = array('TkOperatnMimeTypeMap', 'operationName',
 					'TkOperatnMimeTypeMap_2014', array('operationName'));
-		$indexChanges[] = array('TkOperatnMimeTypeMap', 'mimeType', 
+		$indexChanges[] = array('TkOperatnMimeTypeMap', 'mimeType',
 					'TkOperatnMimeTypeMap_79463', array('mimeType'));
-		$indexChanges[] = array('TkOperatnParameterMap', 'operationName', 
+		$indexChanges[] = array('TkOperatnParameterMap', 'operationName',
 					'TkOperatnParameterMap_2014', array('operationName'));
-		$indexChanges[] = array('TkPropertyMimeTypeMap', 'propertyName', 
+		$indexChanges[] = array('TkPropertyMimeTypeMap', 'propertyName',
 					'TkPropertyMimeTypeMap_52881', array('propertyName'));
-		$indexChanges[] = array('TkPropertyMimeTypeMap', 'mimeType', 
+		$indexChanges[] = array('TkPropertyMimeTypeMap', 'mimeType',
 					'TkPropertyMimeTypeMap_79463', array('mimeType'));
-		$indexChanges[] = array('UserGroupMap', 'userId', 
+		$indexChanges[] = array('UserGroupMap', 'userId',
 					'UserGroupMap_69068', array('userId'));
-		$indexChanges[] = array('UserGroupMap', 'groupId', 
+		$indexChanges[] = array('UserGroupMap', 'groupId',
 					'UserGroupMap_89328', array('groupId'));
-		$indexChanges[] = array('Lock', 'lockId', 
+		$indexChanges[] = array('Lock', 'lockId',
 					'Lock_11039', array('lockId'));
 		foreach ($indexChanges as $change) {
 		    $indexColumns = implode(', ' . $storage->_columnPrefix, $change[3]);
@@ -1651,7 +1651,7 @@ class CoreModuleExtras {
 		    ALTER TABLE %s%s
                     DROP INDEX %s%s,
                     ADD INDEX %s%s(%s);',
-                	$storage->_tablePrefix, $change[0], $storage->_columnPrefix, $change[1], 
+                	$storage->_tablePrefix, $change[0], $storage->_columnPrefix, $change[1],
                 	$storage->_tablePrefix, $change[2], $indexColumns);
                     /* Ignore error, since there's nothing to do for most installations */
 	            $storage->execute($query);
@@ -1665,6 +1665,13 @@ class CoreModuleExtras {
 	     */
 	    $gallery->debug('Adding an index to the AccessMap table, ignore errors');
 	    $storage->configureStore($module->getId(), array('GalleryAccessMap:1.2'));
+
+	    /* Postgres will abort the transaction if the index exists, so checkpoint here. */
+	    $ret = $storage->checkpoint();
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
 	    $gallery->debug('Finished adding an index to the AccessMap table');
 	    /*
 	     * Make sure the schema update is stored, can't use updateMapEntry because Schema is
