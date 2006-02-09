@@ -39,7 +39,7 @@ class RssModule extends GalleryModule {
         $this->setName($gallery->i18n('RSS'));
         $this->setDescription($gallery->i18n('RSS'));
         $this->setVersion('1.0.3');
-        $this->setGroup('gallery', $this->translate('Gallery'));
+        $this->setGroup('export', $this->translate('Export'));
         $this->setCallbacks('getSiteAdminViews|getItemLinks|registerEventListeners');
         $this->setRequiredCoreApi(array (7, 0));
         $this->setRequiredModuleApi(array (3, 0));
