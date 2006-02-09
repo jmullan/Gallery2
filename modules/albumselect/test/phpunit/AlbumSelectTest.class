@@ -57,7 +57,7 @@ class AlbumSelectTest extends GalleryTestCase {
 	}
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId(),
-	    array('title' => 'zzz"zzzzz', 'summary' => 'zzzzzzzz',
+	    array('title' => 'zzz\\z&amp;zz&quot;zz', 'summary' => 'zzzzzzzz',
 		  'orderBy' => 'summary', 'orderDirection' => 'asc'));
 	if ($ret) {
 	    print $ret->getAsHtml();
@@ -104,7 +104,10 @@ class AlbumSelectTest extends GalleryTestCase {
 	    array(), $smarty, 'LoadAlbumData', $gallery->getActiveUserId());
 	$data = $smarty->_tpl_vars['block']['albumselect']['LoadAlbumData']['albumSelect'];
 
-	$this->assertEquals('zzz&quot;zzzzz', $data['titles'][$this->_album->getId()], 'title');
+	$this->assertEquals('zzz\\z&amp;zz&quot;zz', $data['titles'][$this->_album->getId()], 
+			    'title');
+	$this->assertEquals('zzz\\\\z&amp;zz&quot;zz', 
+			    $data['titlesForJs'][$this->_album->getId()], 'title for javascript');
 	$this->assert(!empty($data['params']), 'params');
 	$this->assert(!empty($data['tree']), 'tree');
 	/* Test album and its subalbums should be last 4 tree items: subalbums 1,2,3 */
@@ -136,9 +139,10 @@ class AlbumSelectTest extends GalleryTestCase {
 	    array(), $smarty, 'LoadAlbumData', $gallery->getActiveUserId());
 	$data = $smarty->_tpl_vars['block']['albumselect']['LoadAlbumData']['albumSelect'];
 
-
-	$this->assertEquals('zzz&quot;zzzzz',
-	    $data['titles'][$this->_album->getId()], 'title');
+	$this->assertEquals('zzz\\z&amp;zz&quot;zz', $data['titles'][$this->_album->getId()], 
+			    'title');
+	$this->assertEquals('zzz\\\\z&amp;zz&quot;zz',
+			    $data['titlesForJs'][$this->_album->getId()], 'title for javascript');
 	$this->assert(!empty($data['params']), 'params');
 	$this->assert(!empty($data['tree']), 'tree');
 	/* Test album and its subalbums should be last 4 tree items: subalbums 3,2,1 */
@@ -176,8 +180,10 @@ class AlbumSelectTest extends GalleryTestCase {
 	    array(), $smarty, 'LoadAlbumData', $gallery->getActiveUserId());
 	$data = $smarty->_tpl_vars['block']['albumselect']['LoadAlbumData']['albumSelect'];
 
-	$this->assertEquals('zzz&quot;zzzzz',
-	    $data['titles'][$this->_album->getId()], 'title');
+	$this->assertEquals('zzz\\z&amp;zz&quot;zz', $data['titles'][$this->_album->getId()], 
+			    'title');
+	$this->assertEquals('zzz\\\\z&amp;zz&quot;zz',
+			    $data['titlesForJs'][$this->_album->getId()], 'title for javascript');
 	$this->assert(!empty($data['params']), 'params');
 	$this->assert(!empty($data['tree']), 'tree');
 	/* Find test album in tree; subalbum order is 2,3,1 */
@@ -229,9 +235,15 @@ class AlbumSelectTest extends GalleryTestCase {
 	$ret = $callbacks->callback($callbackParams, $smarty, 'LoadAlbumData', $userId);
 	$data = $smarty->_tpl_vars['block']['albumselect']['LoadAlbumData']['albumSelect'];
 	/* Make sure the value is correct and that it is cached */
-	$this->assertEquals('zzz&quot;zzzzz', $data['titles'][$this->_album->getId()], 'title');
+	$this->assertEquals('zzz\\z&amp;zz&quot;zz', $data['titles'][$this->_album->getId()], 
+			    'title');
+	$this->assertEquals('zzz\\\\z&amp;zz&quot;zz',
+			    $data['titlesForJs'][$this->_album->getId()], 'title for javascript');
 	list ($treeList, $titles) = GalleryDataCache::getFromDisk($cachePathInfo);
-	$this->assertEquals('zzz&quot;zzzzz', $titles[$this->_album->getId()], 'cached title');
+	$this->assertEquals('zzz\\z&amp;zz&quot;zz', $data['titles'][$this->_album->getId()], 
+			    'cached title');
+	$this->assertEquals('zzz\\\\z&amp;zz&quot;zz',
+		$data['titlesForJs'][$this->_album->getId()], 'cached title for javascript');
 
 	/* Change the album title */
 	$this->_album->setTitle('Changed Title');

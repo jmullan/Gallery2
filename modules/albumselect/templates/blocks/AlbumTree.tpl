@@ -49,10 +49,10 @@
       {$albumTree}.config.useIcons = {if $params.treeIcons}true{else}false{/if};
       {$albumTree}.config.useCookies = {if $params.treeCookies}true{else}false{/if};
       {$albumTree}.config.closeSameLevel = {if $params.treeCloseSameLevel}true{else}false{/if};
-      {$albumTree}.add(0, -1, " {$block.albumselect.LoadAlbumData.albumTree.titles.root}",
+      {$albumTree}.add(0, -1, " {$block.albumselect.LoadAlbumData.albumTree.titlesForJs.root}",
 		    '{g->url}');
       {foreach from=$block.albumselect.LoadAlbumData.albumTree.tree item=node}
-	{assign var="title" value=$block.albumselect.LoadAlbumData.albumTree.titles[$node.id]}
+	{assign var="title" value=$block.albumselect.LoadAlbumData.albumTree.titlesForJs[$node.id]}
 	{$albumTree}.add({$node.nodeId}, {$node.parentNode}, "{$title}", 'javascript:albumSelect_goToNode({$node.id})');
       {/foreach}
       document.write({$albumTree});

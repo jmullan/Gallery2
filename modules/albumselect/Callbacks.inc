@@ -50,9 +50,9 @@ class AlbumSelectCallbacks {
 				   'module' => 'albumselect',
 				   'itemId' => $userId . '_' . $languageCode .
 				   '_' . substr(md5(serialize($callbackParams)), 0, 5));
-	    list ($treeList, $titles) = GalleryDataCache::getFromDisk($cachePathInfo);
-	    if (!isset($titles) || !isset($treeList)) {
-		GalleryCoreApi::requireOnce('lib/smarty/plugins/modifier.escape.php');
+	    list ($treeList, $titles, $titlesForJs) = 
+	    				GalleryDataCache::getFromDisk($cachePathInfo);
+	    if (!isset($titles) || !isset($treeList) || !isset($titlesForJs)) {
 		if (isset($callbackParams['stripTitles'])) {
 		    GalleryCoreApi::requireOnce('lib/smarty_plugins/modifier.markup.php');
 		}
@@ -70,7 +70,6 @@ class AlbumSelectCallbacks {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 		$titles = array('root' => preg_replace('/\r\n/', ' ', $rootAlbum->getTitle()));
-		$titles['root'] = smarty_modifier_escape($titles['root']);
 		if (isset($callbackParams['stripTitles'])) {
 		    $titles['root'] = smarty_modifier_markup($titles['root'], 'strip');
 		}
@@ -101,7 +100,6 @@ class AlbumSelectCallbacks {
 		    foreach ($items as $item) {
 			$title = $item->getTitle() ? $item->getTitle() : $item->getPathComponent();
 			$title = preg_replace('/\r\n/', ' ', $title);
-			$title = smarty_modifier_escape($title);
 			if (isset($callbackParams['stripTitles'])) {
 			    $title = smarty_modifier_markup($title, 'strip');
 			}
@@ -134,8 +132,17 @@ class AlbumSelectCallbacks {
 			return null;
 		    }
 		}
+		
+		/* Need to double escape for javascript (double-quote delimiter, backslash, ..) */
+		GalleryCoreApi::requireOnce('lib/smarty/plugins/modifier.escape.php');
+		$titlesForJs = array();
+		foreach ($titles as $id => $title) {
+		    $titlesForJs[$id] = smarty_modifier_escape($title, 'javascript');
+		}
+		
 		GalleryDataCache::putToDisk($cachePathInfo,
-					    $dataToCache = array($treeList, $titles));
+					    $dataToCache = 
+					    		array($treeList, $titles, $titlesForJs));
 	    }
 
 	    $block =& $smarty->_tpl_vars['block'];
@@ -143,6 +150,7 @@ class AlbumSelectCallbacks {
 	    $block['albumselect']['LoadAlbumData'][$type] = array(
 		'tree' => $treeList,
 		'titles' => $titles,
+		'titlesForJs' => $titlesForJs,
 		'params' => $params);
 	    if (isset($albumTreeName)) {
 		$block['albumselect']['LoadAlbumData'][$type]['albumTreeName'] = $albumTreeName;
@@ -199,7 +207,6 @@ class AlbumSelectCallbacks {
 		$title = $subAlbum->getTitle() ? $subAlbum->getTitle()
 					       : $subAlbum->getPathComponent();
 		$title = preg_replace('/\r\n/', ' ', $title);
-		$title = smarty_modifier_escape($title);
 		if (isset($callbackParams['stripTitles'])) {
 		    $title = smarty_modifier_markup($title, 'strip');
 		}
