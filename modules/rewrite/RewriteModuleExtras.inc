@@ -92,6 +92,12 @@ class RewriteModuleExtras {
 		}
 	    }
 
+	    /* The module needs to be reconfigured */
+	    list ($ret) = $module->deactivate();
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
 	case '0.9.3':
 	case '0.9.4':
 	    foreach (array('accessList' => serialize(array()))
@@ -144,14 +150,21 @@ class RewriteModuleExtras {
 		    [RewriteMap::module] ASC, [RewriteMap::ruleId] ASC
 	    ';
 
-	    list ($ret, $searchResults) = $gallery->search($query);
-	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
+	    /*
+	     * If this is an upgrade from Beta 2 we dont have a RewriteMap. Previous to 0.9.3
+	     * rules were static, therefore leave $activeRules empty. It'll get populated
+	     * with the default rules when activate() is called.
+	     */
 	    $activeRules = array();
-	    while ($result = $searchResults->nextResult()) {
-		$activeRules[$result[0]][$result[1]] = $result[2];
+	    if (version_compare($currentVersion, '0.9.3', '>=')) {
+		list ($ret, $searchResults) = $gallery->search($query);
+		if ($ret) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		while ($result = $searchResults->nextResult()) {
+		    $activeRules[$result[0]][$result[1]] = $result[2];
+		}
 	    }
 
 	    $params = array('shortUrls' => serialize(array()),
