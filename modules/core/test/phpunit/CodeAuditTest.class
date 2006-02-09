@@ -261,7 +261,7 @@ class CodeAuditTest extends CodeAuditTestCase {
 		/* Do a simple tab->8spaces conversion.. good enough for this check */
 		$line = str_replace("\t", '        ', $lines[$i]);
 		if (strlen($line) > 100) {
-		    $this->_longLineFiles[] = array($fileName, $i);
+		    $this->_longLineFiles[] = array($fileName, $i + 1);
 		    $longLineCount++;
 		}
 	    }
