@@ -214,16 +214,6 @@ class GalleryModule extends GalleryPlugin {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
-
-	    $ret = $storage->checkPoint();
-	    if ($ret) {
-		if ($gallery->getDebug()) {
-		    $gallery->debug(sprintf('Error: Checkpoint failed, ' .
-					   'this is the error stack trace: %s',
-					    $ret->getAsText()));
-		}
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
 	}
 
 	if ($gallery->getDebug()) {
