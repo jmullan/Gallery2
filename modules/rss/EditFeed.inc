@@ -44,6 +44,8 @@ class EditFeedController extends GalleryController {
 	$status = array();
 	$results = array();
 	$error = array();
+	
+	$mode = $form['mode'];
 
 	/* Check which button was pressed */
 	if (isset($form['action']['create']) || isset($form['action']['update'])) {
@@ -140,16 +142,14 @@ class EditFeedController extends GalleryController {
 		} else {
 		    /* Save was successful change status to refect this */
 		    $status['saved'] = 1;
+		    $mode = 'edit';
 		}
-
-		$mode = 'edit';
 	    } else {
 		$mode = isset($form['action']['create'])?'new':'edit';
 	    }
 	} else if (isset($form['action']['cancel'])) {
 	    /* Cancel button was pressed, do nothing, return to feedlist */
 	    $mode = 'list';
-
 	} else if (isset($form['action']['delete'])) {
 	    /*
 	     * Delete button was pressed, delete feed, return to feedlist.
@@ -201,8 +201,7 @@ class EditFeedView extends GalleryView {
 	}
 
 	/*
-	 * Fetch module parameters and
-	 * save them in an array passed
+	 * Fetch module parameters and save them in an array passed
 	 * to the template engine
 	 */
 	list($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'rss');
@@ -277,7 +276,6 @@ class EditFeedView extends GalleryView {
 		/* There was an error: just leave the form the same it was */
 		$EditFeed = array_merge($EditFeed, $form);
 	    }
-
 	} else if ($EditFeed['mode'] == 'edit') {
 	    /*
 	     * Editing a feed.
@@ -306,7 +304,6 @@ class EditFeedView extends GalleryView {
 		/* There was an error: just leave the form the same it was */
 		$EditFeed = array_merge($EditFeed, $form);
 	    }
-
 	} else {
 	    /*
 	     * No mode stated.

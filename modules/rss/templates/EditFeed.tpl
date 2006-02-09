@@ -52,6 +52,8 @@
   {/if}
 </div>
 
+<input type="hidden" name="{g->formVar var="form[mode]"}" value="{$EditFeed.mode}" />
+
 {if $EditFeed.mode == 'edit' || $EditFeed.mode == 'new' }
 
 {if isset($EditFeed.feedUrl)}
@@ -87,8 +89,6 @@
     <td>
       <input type="text" name="{g->formVar var="form[feedName]"}"
         {if isset($form.feedName)}value="{$form.feedName}"{/if} />
-    </td>
-    <td>
       {if isset($form.error.feedName)}
       <div class="giError">
         {g->text text="You must enter a name"}
