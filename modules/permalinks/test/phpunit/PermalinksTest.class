@@ -134,6 +134,19 @@ class PermalinksTest extends GalleryTestCase {
 	$this->assertEquals(array('testAlias1'), $aliases);
     }
 
+
+    function testCollision() {
+	$ret =
+	    PermalinksMapHelper::createAlias('testAlias', $this->_item->getId());
+
+	/* we expect an error */
+	if (!$ret) {
+	    return $this->assert(false, 'Expected an error');
+	}
+	$this->assert($ret->getErrorCode() & ERROR_COLLISION, 
+	    'No collision reported, but expected one');
+    }
+
     function testDeleteAlias() {
 	/* delete */
 	$ret = PermalinksMapHelper::deleteAlias('testAlias');

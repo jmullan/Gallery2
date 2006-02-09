@@ -172,7 +172,7 @@ class PermalinksModule extends GalleryModule /* and GalleryEventListener */ {
 		    $ret = PermalinksMapHelper::createAlias($album->getPathComponent(),
 							    $album->getId());
 		    if ($ret) {
-			if (!($ret->getErrorCode() & ERROR_STORAGE_FAILURE)) {
+			if (!($ret->getErrorCode() & ERROR_COLLISION)) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 

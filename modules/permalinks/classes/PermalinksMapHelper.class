@@ -49,11 +49,11 @@ class PermalinksMapHelper {
 	if (isset($itemId)) {
 	    $query = '
 	    SELECT
-	    [PermalinksMap::aliasName]
+	      [PermalinksMap::aliasName]
 	    FROM
-	    [PermalinksMap]
+	      [PermalinksMap]
 	    WHERE
-	    [PermalinksMap::destId] = ?
+	      [PermalinksMap::destId] = ?
 	    ';
 
 	    $data = array((int)$itemId);
@@ -65,9 +65,9 @@ class PermalinksMapHelper {
 	} else {
 	    $query = '
 	    SELECT
-	    [PermalinksMap::aliasName]
+	      [PermalinksMap::aliasName]
 	    FROM
-	    [PermalinksMap]
+	      [PermalinksMap]
 	    ';
 
 	    list ($ret, $searchResults) = $gallery->search($query);
@@ -96,11 +96,11 @@ class PermalinksMapHelper {
 
 	$query = '
 	SELECT
-	[PermalinksMap::destId]
+	  [PermalinksMap::destId]
 	FROM
-	[PermalinksMap]
+	  [PermalinksMap]
 	WHERE
-	[PermalinksMap::aliasName] = ?
+	  [PermalinksMap::aliasName] = ?
 	';
 
 	$data = array($aliasName);
@@ -128,6 +128,16 @@ class PermalinksMapHelper {
      */
     function createAlias($aliasName, $itemId) {
 	global $gallery;
+
+	/* first, check for collision */
+	list($ret, $collisionId) = PermalinksMapHelper::fetchItemIdForAlias($aliasName);
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	if (isset($collisionId)) {
+	    /* we expected null, this means we have a collision. Throw it */
+	    return GalleryCoreApi::error(ERROR_COLLISION, __FILE__, __LINE__);
+	}
 
 	/* Add a new alias */
 	$ret = GalleryCoreApi::addMapEntry('PermalinksMap',
