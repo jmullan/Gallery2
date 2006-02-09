@@ -17,7 +17,7 @@
   {/if}
   
   {if $block.rss.showMore}
-    <p><a href="{g->url arg1="view=rss.FeedList"}">{g->text text="About Rss feeds..."}</a></p>
+    <p><a href="{g->url arg1="view=rss.FeedList"}">{g->text text="List all RSS Feeds"}</a></p>
   {/if}
 </div>
 

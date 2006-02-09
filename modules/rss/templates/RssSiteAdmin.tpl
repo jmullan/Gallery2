@@ -261,6 +261,15 @@
 {elseif $RssSiteAdmin.mode == 'list'}
 
 <div class="gbBlock">
+  <h3> {g->text text="Helping users discover RSS feeds"} </h3>
+  <p>{g->text text="If you want to help users discover feeds in your Gallery, you can add
+    the RSS block to the themes used in your Gallery."}</p>
+  <p>{g->text text="This will have two effects: the block itself, which users
+    can see and pick feeds from (and get a list of all feeds); and hidden page headers that
+    modern web browsers will use to make it easier for the user to subscribe to the feeds."}</p>
+</div>
+
+<div class="gbBlock">
   <h3> {g->text text="Global list of RSS feeds"} </h3>
   {if empty($RssSiteAdmin.feeds)}
     <p> {g->text text="No feeds have yet been defined"} </p>

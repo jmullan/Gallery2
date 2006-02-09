@@ -44,6 +44,11 @@ class RssCallbacks {
 			break;
 		    }
 		}
+		
+		if (empty($params['number'])) {
+		    /* still empty, probably because the user never changed the default */
+		    $params['number'] = '5';
+		}
 	    }
 
 	    /* since we get called twice (once for the block, once for the head), cache the feeds */
