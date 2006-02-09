@@ -22,7 +22,9 @@
 /**
  * @version $Revision$ $Date$
  * @package RSS
- * @author Jonatan Heyman <http://heyman.info>, Pierre-Luc Paour, Daniel Grund <http://www.photogrund.nl>
+ * @author Jonatan Heyman <http://heyman.info>
+ * @author Pierre-Luc Paour
+ * @author Daniel Grund <http://www.photogrund.nl>
  */
 
 GalleryCoreApi::requireOnce('modules/rss/SimpleRender.inc');
@@ -35,11 +37,11 @@ GalleryCoreApi::requireOnce('modules/rss/Render.inc');
  * @subpackage PHPUnit
  */
 class RssRenderTest extends GalleryControllerTestCase {
-    
+
     function RssRenderTest($methodName) {
 	$this->GalleryTestCase($methodName);
     }
-    
+
     function setUp() {
 	global $gallery;
 	$ret = parent::setUp();
@@ -47,7 +49,7 @@ class RssRenderTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$ret = $this->_markPluginParametersForCleanup('module', 'rss');
 	if ($ret) {
 	    print $ret->getAsHtml();
@@ -76,9 +78,9 @@ class RssRenderTest extends GalleryControllerTestCase {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
-	
+
 	$gallery->_phpVm = new RssRenderTestVm();
-	
+
 	/* Create something to map */
 	list ($ret, $this->_root) = $this->_createRandomAlbum(
 		$this->_getRootId(), array('modificationTimestamp' => 123456789));
@@ -89,8 +91,8 @@ class RssRenderTest extends GalleryControllerTestCase {
 	$this->_markForCleanup($this->_root);
 
 	list ($ret, $this->_item1) = $this->_createRandomDataItem(
-		$this->_root->getId(), 
-		'image/test', 
+		$this->_root->getId(),
+		'image/test',
 		array('modificationTimestamp' => 123456789),
 		__FILE__,
 		'GalleryPhotoItem');
@@ -107,8 +109,8 @@ class RssRenderTest extends GalleryControllerTestCase {
 	}
 
 	list ($ret, $this->_item2) = $this->_createRandomDataItem(
-		$this->_album->getId(), 
-		'image/test', 
+		$this->_album->getId(),
+		'image/test',
 		array('modificationTimestamp' => 123456789),
 		__FILE__,
 		'GalleryPhotoItem');
@@ -116,37 +118,36 @@ class RssRenderTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$this->_simpleRender = new SimpleRenderView();
 	$this->_render = new RenderView();
     }
-    
+
     function testValidateRssSimple() {
 	global $gallery;
-	$urlGenerator = $gallery->getUrlGenerator();
-	
+	$urlGenerator =& $gallery->getUrlGenerator();
+
 	$feedUrl = urlEncode($urlGenerator->generateUrl(
 	    array(
 		'view' => 'rss.SimpleRender',
 		'itemId' => $this->_root->getId()),
 	    array(
-		'forceSessionId' => false, 
+		'forceSessionId' => false,
 		'forceFullUrl' => true,
 		'htmlEntities' => false)));
-		
+
 	$validate = GalleryCoreApi::fetchWebPage('http://www.feedvalidator.org/check.cgi?url='
 	    . $feedUrl);
-	    
+
 	$this->assert($validate[0], 'http://www.feedvalidator.com couldn\'t be reached. ' .
 		'This is not a real validation failure.');
-		
+
 	if (!$validate) {
-	    $this->assert(strpos($validate[1], 'Congratulations!'), 
+	    $this->assert(strpos($validate[1], 'Congratulations!'),
 		    'The validator says the feed is invalid:' . $validate[1]);
 	}
      }
-    
-    
+
     function testValidateRss() {
 	global $gallery;
 
@@ -172,16 +173,16 @@ class RssRenderTest extends GalleryControllerTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$this->_feedsToDelete[] = $name;
 
-	$urlGenerator = $gallery->getUrlGenerator();
+	$urlGenerator =& $gallery->getUrlGenerator();
 	$feedUrl = urlEncode($urlGenerator->generateUrl(
 	    array(
 		'view' => 'rss.Render',
 		'name' => $name),
 	    array(
-		'forceSessionId' => false, 
+		'forceSessionId' => false,
 		'forceFullUrl' => true,
 		'htmlEntities' => false)));
 
@@ -190,23 +191,23 @@ class RssRenderTest extends GalleryControllerTestCase {
 
 	$this->assert($validate[0], 'http://www.feedvalidator.com couldn\'t be reached. ' .
 		'This is not a real validation failure.');
-	
+
 	if (!$validate) {
-	    $this->assert(strpos($validate[1], 'Congratulations!'), 
+	    $this->assert(strpos($validate[1], 'Congratulations!'),
 		    'The validator says the feed is invalid:' . $validate[1]);
 	}
     }
-    
+
     function testRssSimpleRenderAlbum() {
 	global $gallery;
-	
+
 	GalleryUtilities::putRequestVariable('itemId', $this->_root->getId());
-	list($ret, $version) =
+	list ($ret, $version) =
 	    GalleryCoreApi::getPluginParameter('module', 'rss', '_version');
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-		
+
 	$ret = GalleryCoreApi::setPluginParameter('module', 'rss', 'sfAlbumType', 'album');
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -219,10 +220,10 @@ class RssRenderTest extends GalleryControllerTestCase {
 	    ob_end_clean();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$results = ob_get_contents();
 	ob_end_clean();
-	
+
 	$this->assertEquals(array(
 	    'Header: Content-type: text/xml; charset=UTF-8',
 	    '<rss version="2.0">',
@@ -246,17 +247,17 @@ class RssRenderTest extends GalleryControllerTestCase {
 	    '</rss>'),
 	split("\n", $results));
     }
-    
+
     function testRssSimpleRenderPhotos() {
 	global $gallery;
-	
+
 	GalleryUtilities::putRequestVariable('itemId', $this->_root->getId());
-	list($ret, $version) =
+	list ($ret, $version) =
 	    GalleryCoreApi::getPluginParameter('module', 'rss', '_version');
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-		
+
 	$ret = GalleryCoreApi::setPluginParameter('module', 'rss', 'sfAlbumType', 'photos');
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -269,10 +270,10 @@ class RssRenderTest extends GalleryControllerTestCase {
 	    ob_end_clean();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$results = ob_get_contents();
 	ob_end_clean();
-	
+
 	$this->assertEquals(array(
 	    'Header: Content-type: text/xml; charset=UTF-8',
 	    '<rss version="2.0">',
@@ -296,7 +297,7 @@ class RssRenderTest extends GalleryControllerTestCase {
 	    '</rss>'),
 	split("\n", $results));
     }
-    
+
 }
 
 class RenderViewTestUrlGenerator {
@@ -309,11 +310,11 @@ class RssRenderTestVm {
     function header($string) {
 	print "Header: $string\n";
     }
-    
+
     function headers_sent() {
 	return (isset($_REQUEST['phpVmHeaders']) && !empty($_REQUEST['phpVmHeaders']));
     }
-    
+
     function time() {
 	return 1234567890;
     }

@@ -91,7 +91,8 @@ class RssMapHelper {
 		$feeds[] = $feed;
 	    } else {
 		/* unserialization error */
-		return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__),
+			     null);
 	    }
 	}
 	return array(null, $feeds);
@@ -129,7 +130,7 @@ class RssMapHelper {
 	while ($result = $searchResults->nextResult()) {
 	    $names[] = $result[0];
 	}
-	
+
 	return array(null, $names);
     }
 
@@ -167,7 +168,8 @@ class RssMapHelper {
 		return array(null, $params);
 	    } else {
 		/* unserialization error */
-		return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__),
+			     null);
 	    }
 	} else {
 	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
@@ -184,9 +186,9 @@ class RssMapHelper {
      */
     function createFeed($feedName, $params) {
 	global $gallery;
-	
+
 	/* first, check for collision */
-	list($ret, $feed) = RssMapHelper::fetchFeed($feedName);
+	list ($ret, $feed) = RssMapHelper::fetchFeed($feedName);
 	if (!$ret) {
 	    /* we expected an ERROR_MISSING_OBJECT, this means we have a collision. Throw it */
 	    return GalleryCoreApi::error(ERROR_COLLISION, __FILE__, __LINE__);

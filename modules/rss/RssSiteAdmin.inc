@@ -22,12 +22,13 @@
 /**
  * @version $Revision$ $Date$
  * @package RSS
- * @author Jonatan Heyman <http://heyman.info>, Pierre-Luc Paour, Daniel Grund <http://www.photogrund.nl>
+ * @author Jonatan Heyman <http://heyman.info>
+ * @author Pierre-Luc Paour
+ * @author Daniel Grund <http://www.photogrund.nl>
  */
 
 GalleryCoreApi::requireOnce('modules/rss/classes/RssMapHelper.class');
 GalleryCoreApi::requireOnce('modules/rss/classes/RssHelper.class');
-
 
 /**
  * @package RSS
@@ -43,12 +44,10 @@ class RssSiteAdminController extends GalleryController {
 	/* Make sure the user has permission to do this operation */
 	$ret = GalleryCoreApi :: assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array ($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$status = array();
-	$results = array();
-	$error = array();
+	$status = $results = $error = array();
 	$mode = $form['mode'];
 
 	if (isset($form['action']['save'])) {
@@ -73,9 +72,13 @@ class RssSiteAdminController extends GalleryController {
 				   'maxCount',
 				   'defaultCopyright',
 				   'defaultTtl') as $setting) {
-			GalleryCoreApi::setPluginParameter('module', 'rss', $setting, $form[$setting]);
+			$ret = GalleryCoreApi::setPluginParameter('module', 'rss',
+								  $setting, $form[$setting]);
+			if ($ret) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
 		    }
-    
+
 		    foreach (array('allowSimpleFeed',
 				   'allowConfigurableFeed',
 				   'allowAlbums',
@@ -83,33 +86,41 @@ class RssSiteAdminController extends GalleryController {
 				   'allowPhotosRecurse',
 				   'allowCommentsPhoto',
 				   'allowCommentsAlbum') as $setting) {
-			GalleryCoreApi::setPluginParameter('module', 'rss', $setting,
+			$ret = GalleryCoreApi::setPluginParameter('module', 'rss', $setting,
 			    (isset($form[$setting]) && $form[$setting]) ? 1 : 0);
+			if ($ret) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
 		    }
-    
+
 		    $status['saved'] = 1;
 		}
 	    } else if ($mode == 'simplefeedsettings') {
 		/* error checking */
-		if (!isset($form['sfPhotosRecurseLimit']) || ((int)$form['sfPhotosRecurseLimit']) < 0) {
+		if (!isset($form['sfPhotosRecurseLimit'])
+			|| ((int)$form['sfPhotosRecurseLimit']) < 0) {
 		    $error[] = 'form[error][sfPhotosRecurseLimit]';
 		} else {
 		    /* save parameters */
 		    foreach (array('sfAlbumType',
 				   'sfPhotosRecurseLimit',
 				   'sfDate') as $setting) {
-			GalleryCoreApi::setPluginParameter('module', 'rss', $setting, $form[$setting]);
+			$ret = GalleryCoreApi::setPluginParameter('module', 'rss',
+								  $setting, $form[$setting]);
+			if ($ret) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
 		    }
-	
+
 		    $status['saved'] = 1;
 		}
 	    }
 	} else if (isset($form['action']['reset'])) {
 	    /* do nothing */
-        } else if (isset($form['action']['delete'])) {
+	} else if (isset($form['action']['delete'])) {
 	    $ret = RssMapHelper::deleteFeed($form['action']['delete']);
 	    if ($ret) {
-		return array ($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    $mode = 'list';
@@ -125,7 +136,7 @@ class RssSiteAdminController extends GalleryController {
 	$results[$method]['subView'] = 'rss.RssSiteAdmin';
 	$results[$method]['mode'] = $mode;
 
-	return array (null, $results);
+	return array(null, $results);
     }
 }
 
@@ -134,13 +145,17 @@ class RssSiteAdminController extends GalleryController {
  * @subpackage UserInterface
  */
 class RssSiteAdminView extends GalleryView {
+
+    /**
+     * @see GalleryView::loadTemplate
+     */
     function loadTemplate(&$template, &$form) {
 	$form['formName'] = 'RssSiteAdmin';
 	$RssSiteAdmin = array();
 	$RssSiteAdmin['rssVersionList'] = array('0.91', '2.0');
 
 	/* get list of membertypes */
-	list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'rss');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'rss');
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -151,7 +166,7 @@ class RssSiteAdminView extends GalleryView {
 	}
 
 	/* fetch module parameters and save them in form variable */
-	list($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'rss');
+	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'rss');
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -160,12 +175,12 @@ class RssSiteAdminView extends GalleryView {
 	}
 	if ($RssSiteAdmin['mode'] == 'list') {
 	    /* fetch all feed definitions */
-	    list($ret, $feeds) = RssMapHelper::fetchFeedsForItem();
+	    list ($ret, $feeds) = RssMapHelper::fetchFeedsForItem();
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    list($ret, $RssSiteAdmin['types']) = RssHelper::getFeedTypeTranslation();
+	    list ($ret, $RssSiteAdmin['types']) = RssHelper::getFeedTypeTranslation();
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -177,7 +192,7 @@ class RssSiteAdminView extends GalleryView {
 		    $itemIds[] = $feed['itemId'];
 		}
 
-		list($ret, $items) = GalleryCoreApi::loadEntitiesById($itemIds);
+		list ($ret, $items) = GalleryCoreApi::loadEntitiesById($itemIds);
 		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -192,7 +207,7 @@ class RssSiteAdminView extends GalleryView {
 
 	$template->setVariable('controller', 'rss.RssSiteAdmin');
 	$template->setVariable('RssSiteAdmin', $RssSiteAdmin);
-	return array (null, array('body' => 'modules/rss/templates/RssSiteAdmin.tpl'));
+	return array(null, array('body' => 'modules/rss/templates/RssSiteAdmin.tpl'));
     }
 }
 ?>

@@ -19,17 +19,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 /**
  * @version $Revision$ $Date$
  * @package RSS
- * @author Jonatan Heyman <http://heyman.info>, Pierre-Luc Paour, Daniel Grund <http://www.photogrund.nl>
+ * @author Jonatan Heyman <http://heyman.info>,
+ * @author Pierre-Luc Paour
+ * @author Daniel Grund <http://www.photogrund.nl>
  */
-
 
 GalleryCoreApi::requireOnce('modules/rss/classes/RssMapHelper.class');
 GalleryCoreApi::requireOnce('modules/rss/classes/RssHelper.class');
-
 
 /**
  * @package RSS
@@ -41,10 +40,8 @@ class EditFeedController extends GalleryController {
      */
     function handleRequest($form) {
 	global $gallery;
-	$status = array();
-	$results = array();
-	$error = array();
-	
+	$status = $results = $error = array();
+
 	$mode = $form['mode'];
 
 	/* Check which button was pressed */
@@ -85,9 +82,9 @@ class EditFeedController extends GalleryController {
 	    }
 
 	    /* conditionally check the recurse limit */
-	    if ($form['feedType'] == 'photosRecurse' && 
-		    (!isset($form['photosRecurseLimit']) || 
-		    	((int)$form['photosRecurseLimit']) < 0)) {
+	    if ($form['feedType'] == 'photosRecurse' &&
+		    (!isset($form['photosRecurseLimit']) ||
+			((int)$form['photosRecurseLimit']) < 0)) {
 		$error[] = 'form[error][photosRecurseLimit]';
 	    }
 
@@ -106,7 +103,7 @@ class EditFeedController extends GalleryController {
 		    'useImage' => (isset($form['useImage']) ? '1' : '0'),
 		    'useEnclosure' => (isset($form['useEnclosure']) ? '1' : '0'),
 		    'useCloud' => (isset($form['useCloud']) ? '1' : '0'));
-		    
+
 		if ($parameters['feedType'] == 'photosRecurse') {
 		    $parameters['photosRecurseLimit'] = $form['photosRecurseLimit'];
 		}
@@ -119,7 +116,7 @@ class EditFeedController extends GalleryController {
 			      'cloudRegisterProcedure' => $form['cloudRegisterProcedure'],
 			      'cloudProtocol' => $form['cloudProtocol']));
 		}
-		
+
 		/* Check if we need to update a current feed, or create a new one */
 		if (isset($form['action']['create'])) {
 		    $ret = RssMapHelper::createFeed($form['feedName'], $parameters);
@@ -131,7 +128,7 @@ class EditFeedController extends GalleryController {
 		if ($ret) {
 		    /* If we got anything other than a ERROR_COLLISION, exit */
 		    if (!($ret->getErrorCode() & ERROR_COLLISION)) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
 		    /*
@@ -157,7 +154,7 @@ class EditFeedController extends GalleryController {
 	     */
 	    $ret = RssMapHelper::deleteFeed($form['action']['delete']);
 	    if ($ret) {
-		return array ($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    $mode = 'list';
@@ -176,7 +173,7 @@ class EditFeedController extends GalleryController {
 	    $results[$method]['form'] = $form;
 	}
 
-	return array (null, $results);
+	return array(null, $results);
     }
 }
 
@@ -204,7 +201,7 @@ class EditFeedView extends GalleryView {
 	 * Fetch module parameters and save them in an array passed
 	 * to the template engine
 	 */
-	list($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'rss');
+	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'rss');
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -213,7 +210,7 @@ class EditFeedView extends GalleryView {
 	$EditFeed['itemId'] = GalleryUtilities::getRequestVariables('itemId');
 
 	/* Fetch all feed definitions */
-	list($ret, $feeds) = RssMapHelper::fetchFeedsForItem($EditFeed['itemId']);
+	list ($ret, $feeds) = RssMapHelper::fetchFeedsForItem($EditFeed['itemId']);
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -283,7 +280,7 @@ class EditFeedView extends GalleryView {
 	     */
 	    if (empty($form['error'])) {
 		/* no error: load parameters from DB using the 'feedName' */
-		list($ret, $feed) = RssMapHelper::fetchFeed($form['feedName']);
+		list ($ret, $feed) = RssMapHelper::fetchFeed($form['feedName']);
 		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -310,12 +307,12 @@ class EditFeedView extends GalleryView {
 	     * Retieving all the feeds for this 'itemId'
 	     * Fetch all feed definitions
 	     */
-	    list($ret, $feeds) = RssMapHelper::fetchFeedsForItem($EditFeed['itemId']);
+	    list ($ret, $feeds) = RssMapHelper::fetchFeedsForItem($EditFeed['itemId']);
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
-	    list($ret, $EditFeed['types']) = RssHelper::getFeedTypeTranslation();
+
+	    list ($ret, $EditFeed['types']) = RssHelper::getFeedTypeTranslation();
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -323,7 +320,7 @@ class EditFeedView extends GalleryView {
 	    $EditFeed['feeds'] = $feeds;
 	}
 
-	$EditFeed['rssVersionList'] = array ('0.91', '2.0');
+	$EditFeed['rssVersionList'] = array('0.91', '2.0');
 	$template->setVariable('EditFeed', $EditFeed);
 	$template->setVariable('param', $param);
 	$template->setVariable('controller', 'rss.EditFeed');
@@ -331,3 +328,4 @@ class EditFeedView extends GalleryView {
 	    array('body' => 'modules/rss/templates/EditFeed.tpl'));
     }
 }
+?>

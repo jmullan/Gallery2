@@ -26,25 +26,24 @@
  */
 
 class RssCallbacks {
-    /**
-     */
+
     function callback($params, &$smarty, $callback, $userId=null) {
 	static $feeds;
-	
+
 	GalleryCoreApi::requireOnce('modules/rss/classes/RssMapHelper.class');
 	switch($callback) {
 	case 'FeedList':
 	    if (empty($params['number'])) {
 		/* we're called during preload, so we have to find the params another way */
 		$blocks = $smarty->_tpl_vars['theme']['params']['sidebarBlocks'];
-		
+
 		foreach ($blocks as $block) {
 		    if ($block[0] == 'rss.RssBlock') {
 			$params = $block[1];
 			break;
 		    }
 		}
-		
+
 		if (empty($params['number'])) {
 		    /* still empty, probably because the user never changed the default */
 		    $params['number'] = '5';
@@ -55,10 +54,10 @@ class RssCallbacks {
 	    if (!isset($feeds)) {
 		list($ret, $feeds) = RssMapHelper::fetchFeedNames((int) $params['number']);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
-	    
+
 	    $block =& $smarty->_tpl_vars['block'];
 	    $block['rss']['feeds'] = $feeds;
 	    $block['rss']['showMore'] = true;

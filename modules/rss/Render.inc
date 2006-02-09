@@ -22,7 +22,9 @@
 /**
  * @version $Revision$ $Date$
  * @package RSS
- * @author Jonatan Heyman <http://heyman.info>, Pierre-Luc Paour, Daniel Grund <http://www.photogrund.nl>
+ * @author Jonatan Heyman <http://heyman.info>
+ * @author Pierre-Luc Paour
+ * @author Daniel Grund <http://www.photogrund.nl>
  */
 
 GalleryCoreApi::requireOnce('modules/rss/classes/RssHelper.class');
@@ -50,17 +52,16 @@ class RenderView extends GalleryView {
 	global $gallery;
 
 	/* get all parameters */
-	list ($ret, $params) =
-	    GalleryCoreApi::fetchAllPluginParameters('module', 'rss');
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'rss');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* retrieve request variables */
 	$name = GalleryUtilities::getRequestVariables('name');
 
 	/* we're a configurable feed, load the parameters */
-	list($ret, $params1) = RssMapHelper::fetchFeed($name);
+	list ($ret, $params1) = RssMapHelper::fetchFeed($name);
 	if ($ret) {
 	    header('HTTP/1.0 500 Internal Server Error');
 	    header('Status: 500');
@@ -87,7 +88,7 @@ class RenderView extends GalleryView {
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	return null;
     }
 
@@ -107,7 +108,7 @@ class RenderView extends GalleryView {
 	/* check if we comments are active */
 	if ($params['feedType'] == 'commentsAlbum' || $params['feedType'] == 'commentsPhoto') {
 	    /* make sure that the comments module is active */
-	    list($ret, $modulestatus) = GalleryCoreApi::fetchPluginStatus('module');
+	    list ($ret, $modulestatus) = GalleryCoreApi::fetchPluginStatus('module');
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

@@ -19,15 +19,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 /**
  * @version $Revision$ $Date$
  * @package RSS
- * @author Jonatan Heyman <http://heyman.info>, Pierre-Luc Paour, Daniel Grund <http://www.photogrund.nl>
+ * @author Jonatan Heyman <http://heyman.info>
+ * @author Pierre-Luc Paour
+ * @author Daniel Grund <http://www.photogrund.nl>
  */
 
-
 GalleryCoreApi::requireOnce('modules/rss/classes/RssMapHelper.class');
+
 /**
  * This view will show a list of feeds.
  *
@@ -41,7 +42,7 @@ class FeedListView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	list($ret, $feeds) = RssMapHelper::fetchFeedsForItem();
+	list ($ret, $feeds) = RssMapHelper::fetchFeedsForItem();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -54,3 +55,4 @@ class FeedListView extends GalleryView {
 	    array('body' => 'modules/rss/templates/FeedList.tpl'));
     }
 }
+?>

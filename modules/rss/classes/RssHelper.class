@@ -22,7 +22,9 @@
 /**
  * @version $Revision$ $Date$
  * @package RSS
- * @author Jonatan Heyman <http://heyman.info>, Pierre-Luc Paour, Daniel Grund <http://www.photogrund.nl>
+ * @author Jonatan Heyman <http://heyman.info>
+ * @author Pierre-Luc Paour
+ * @author Daniel Grund <http://www.photogrund.nl>
  */
 
 /**
@@ -54,7 +56,7 @@ class RssHelper {
 	global $gallery;
 
 	/* get gallery entity by id */
-    	list($ret, $entity) = GalleryCoreApi::loadEntitiesById($id);
+	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($id);
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -63,13 +65,13 @@ class RssHelper {
 	$memberData = (array) $entity;
 
 	/* generate url to the album and rss feed */
-	$urlGenerator = $gallery->getUrlGenerator();
+	$urlGenerator =& $gallery->getUrlGenerator();
 	$albumUrl = $urlGenerator->generateUrl(
 	    array(
 		'view' => 'core.ShowItem',
 		'itemId' => $memberData['id']),
 	    array(
-	    	'forceSessionId' => false, 
+		'forceSessionId' => false,
 		'forceFullUrl' => true));
 
 	$generator->addProperty('title', $memberData['title']);
@@ -78,7 +80,7 @@ class RssHelper {
 
 	if ($param['useImage']) {
 	    /* retrieve gallery thumbnail */
-	    list($ret, $thumbArrayl) = GalleryCoreApi::fetchThumbnailsByItemIds(array($id));
+	    list ($ret, $thumbArrayl) = GalleryCoreApi::fetchThumbnailsByItemIds(array($id));
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -88,10 +90,10 @@ class RssHelper {
 		$thumb = $thumbArrayl[$id];
 		$imageUrl = $urlGenerator->generateUrl(
 		    array(
-		    	'view' => 'core.DownloadItem',
+			'view' => 'core.DownloadItem',
 			'itemId' => $thumb->getId()),
 		    array(
-		    	'forceSessionId' => false,
+			'forceSessionId' => false,
 			'forceFullUrl' => true));
 
 		$generator->addProperty('image', array('title' => $memberData['title'],
@@ -116,7 +118,7 @@ class RssHelper {
 	if (isset($param['category'])) {
 	    $generator->addProperty('category', $param['category']);
 	}
-	list($ret, $version) =
+	list ($ret, $version) =
 	    GalleryCoreApi::getPluginParameter('module', 'rss', '_version');
 	$generator->addProperty('generator', 'Gallery 2 RSS Module, version ' . $version);
 	$generator->addProperty('ttl', $param['ttl']);
@@ -132,8 +134,8 @@ class RssHelper {
 	switch ($param['feedType']) {
 	    case 'album':
 	    case 'photosRecurse':
-	    	/* get sub-albums or items, ordered by date */
-		list($ret, $items) = RssHelper::fetchAlbumTree(
+		/* get sub-albums or items, ordered by date */
+		list ($ret, $items) = RssHelper::fetchAlbumTree(
 		    $entity->getId(),
 		    $param['count'],
 		    $newOnly,
@@ -152,23 +154,23 @@ class RssHelper {
 		    if ($param['feedType'] == 'photosRecurse') {
 			/* load parents also, so we can display the name of the parent albums */
 			$parentIds = array();
-    
+
 			foreach ($items as $item) {
 			    if (!in_array($item->getParentId(), $parentIds)) {
 				$parentIds[] = $item->getParentId();
 			    }
 			}
-    
+
 			list ($ret, $parents) = GalleryCoreApi::loadEntitiesById($parentIds);
 			if ($ret) {
 			    return $ret->wrap(__FILE__, __LINE__);
 			}
-    
+
 			$parentsA = array();
 			foreach ($parents as $parent) {
 			    $parentsA[$parent->getId()] = $parent;
 			}
-    
+
 			$param['parents'] = $parentsA;
 		    }
 		}
@@ -176,7 +178,7 @@ class RssHelper {
 		break;
 
 	    case 'photos':
-		list($ret, $items) = RssHelper::getPhotoFeed($entity, $newOnly);
+		list ($ret, $items) = RssHelper::getPhotoFeed($entity, $newOnly);
 		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
@@ -185,13 +187,13 @@ class RssHelper {
 
 	    case 'commentsAlbum':
 	    case 'commentsPhoto':
-		list($ret, $items) = GalleryCommentHelper::fetchComments($id,
+		list ($ret, $items) = GalleryCommentHelper::fetchComments($id,
 		    $param['count'], ORDER_DESCENDING);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
-	    	break;
+		break;
 	}
 
 	/* go through subitems array and pass data to generator */
@@ -228,7 +230,7 @@ class RssHelper {
 	/* go through subitems array and pass data to generator */
 	if (!empty($subIds)) {
 	    /* retrieve array of subitems */
-	    list($ret, $subItems) = GalleryCoreApi::loadEntitiesById($subIds);
+	    list ($ret, $subItems) = GalleryCoreApi::loadEntitiesById($subIds);
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -279,13 +281,13 @@ class RssHelper {
 	global $gallery;
 
 	/* generate url to the images */
-	$urlGenerator = $gallery->getUrlGenerator();
+	$urlGenerator =& $gallery->getUrlGenerator();
 	$url = $urlGenerator->generateUrl(
 	    array(
-	    	'view' => 'core.ShowItem',
+		'view' => 'core.ShowItem',
 		'itemId' => $item->getId()),
 	    array(
-	    	'forceSessionId' => false, 
+		'forceSessionId' => false,
 		'forceFullUrl' => true));
 
 	/* generate description */
@@ -302,11 +304,11 @@ class RssHelper {
 	if (!empty($thumbnails) && !empty($thumbnails[$item->getId()])) {
 	    $thumbnail = $thumbnails[$item->getId()];
 	    $imageUrl = $urlGenerator->generateUrl(
-	    	array(
+		array(
 		    'view' => 'core.DownloadItem',
 		    'itemId' => $thumbnail->getId()),
 		array(
-		    'forceSessionId' => false, 
+		    'forceSessionId' => false,
 		    'forceFullUrl' => true));
 	    $description = '<a href="' . $url .'"><img border="0" src="' . $imageUrl .
 		'" width="' . $thumbnail->getWidth() .
@@ -317,17 +319,17 @@ class RssHelper {
 		/* add a link to the parent album */
 		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'rss');
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
 		$url1 = $urlGenerator->generateUrl(
 		    array(
-		    	'view' => 'core.ShowItem',
+			'view' => 'core.ShowItem',
 			'itemId' => $item->getParentId()),
 		    array(
-		    	'forceSessionId' => false, 
+			'forceSessionId' => false,
 			'forceFullUrl' => true));
-		
+
 		$description .= '<br/>' . $module->translate(
 		    array('text' => 'In album <a href="%s">%s</a>',
 		    'arg1' => $url1,
@@ -341,7 +343,7 @@ class RssHelper {
 	}
 
 	$itemSettings = array('title' => $title,
-			      'link' => $url, 
+			      'link' => $url,
 			      'description' => $description);
 
 	if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
@@ -357,15 +359,15 @@ class RssHelper {
 		&& isset($param['useEnclosure'])
 		&& $param['useEnclosure'] == '1') {
 	    $imageUrl = $urlGenerator->generateUrl(
-	    	array(
+		array(
 		    'view' => 'core.DownloadItem',
 		    'itemId' => $item->getId()),
 		array(
-		    'forceSessionId' => false, 
+		    'forceSessionId' => false,
 		    'forceFullUrl' => true));
 	    $itemSettings['enclosure'] = array(
-	    	'url' => $imageUrl,
-		'length' => $item->getSize(), 
+		'url' => $imageUrl,
+		'length' => $item->getSize(),
 		'type' => $item->getMimeType());
 	}
 
@@ -386,18 +388,18 @@ class RssHelper {
 	global $gallery;
 
 	/* generate url to the images */
-	$urlGenerator = $gallery->getUrlGenerator();
+	$urlGenerator =& $gallery->getUrlGenerator();
 	$url = $urlGenerator->generateUrl(
 	    array(
-	    	'view' => 'comment.ShowAllComments',
+		'view' => 'comment.ShowAllComments',
 		'itemId' => $item->getParentId()),
 	   array(
-	   	'forceSessionId' => false, 
+		'forceSessionId' => false,
 		'forceFullUrl' => true));
 
 	$itemSettings = array(
 	    'title' => $item->getSubject(),
-	    'link' => $url, 
+	    'link' => $url,
 	    'description' => $item->getComment());
 
 	/* check if we should use the category tag */
@@ -541,7 +543,7 @@ class RssHelper {
 
 	return array(null, $list);
     }
-    
+
     /**
      * This provides a translation of the feed type codes
      *
@@ -553,7 +555,7 @@ class RssHelper {
     function getFeedTypeTranslation() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'rss');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	return array(null, array(

@@ -22,7 +22,9 @@
 /**
  * @version $Revision$ $Date$
  * @package RSS
- * @author Jonatan Heyman <http://heyman.info>, Pierre-Luc Paour, Daniel Grund <http://www.photogrund.nl>
+ * @author Jonatan Heyman <http://heyman.info>
+ * @author Pierre-Luc Paour
+ * @author Daniel Grund <http://www.photogrund.nl>
  */
 
 GalleryCoreApi::requireOnce('modules/rss/classes/RssHelper.class');
@@ -44,17 +46,16 @@ class SimpleRenderView extends RenderView {
 	global $gallery;
 
 	/* get all parameters */
-	list ($ret, $params) =
-	    GalleryCoreApi::fetchAllPluginParameters('module', 'rss');
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'rss');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	list ($ret, $item) = $this->_getItem();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	$params['itemId'] = $item->getId();
 
 	/* set feed type */
@@ -67,7 +68,7 @@ class SimpleRenderView extends RenderView {
 	$params['feedDate'] = $params['sfDate'];
 
 	/* apply defaults */
-	foreach(array('copyright' => 'defaultCopyright',
+	foreach (array('copyright' => 'defaultCopyright',
 		      'version' => 'defaultVersion',
 		      'count' => 'defaultCount',
 		      'photosRecurseLimit' => 'sfPhotosRecurseLimit',
@@ -79,12 +80,12 @@ class SimpleRenderView extends RenderView {
 	$params['useImage'] = true;
 	$params['useEnclosure'] = false;
 	$params['useCloud'] = false;
-	
+
 	$ret = $this->continueRender($params);
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	return null;
     }
 }

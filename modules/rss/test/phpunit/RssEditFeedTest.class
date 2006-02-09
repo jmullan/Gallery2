@@ -22,7 +22,9 @@
 /**
  * @version $Revision$ $Date$
  * @package RSS
- * @author Jonatan Heyman <http://heyman.info>, Pierre-Luc Paour, Daniel Grund <http://www.photogrund.nl>
+ * @author Jonatan Heyman <http://heyman.info>
+ * @author Pierre-Luc Paour
+ * @author Daniel Grund <http://www.photogrund.nl>
  */
 
 GalleryCoreApi::requireOnce('modules/rss/classes/RssMapHelper.class');
@@ -34,23 +36,23 @@ GalleryCoreApi::requireOnce('modules/rss/classes/RssMapHelper.class');
  * @subpackage PHPUnit
  */
 class RssEditFeedTest extends GalleryControllerTestCase {
-    
+
     var $_feedsToDelete;
 
     function RssEditFeedTest($methodName) {
 	$this->GalleryControllerTestCase($methodName, 'rss.EditFeed');
     }
-    
+
     function setUp() {
 	parent::setUp();
-	
+
 	$ret = $this->_markPluginParametersForCleanup('module', 'rss');
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
-    
+
     function tearDown() {
 	parent::tearDown();
 
@@ -79,19 +81,19 @@ class RssEditFeedTest extends GalleryControllerTestCase {
 		'subView' => 'rss.EditFeed',
 		'itemId' => '',
 		'mode' => 'list',
-		'form' => array (
+		'form' => array(
 		    'action' => array('cancel' => '1'),
 		    'mode' => 'edit',
 		    'itemId' => (string) $this->_getRootId()))),
 	    $results);
     }
-    
+
     function testRssEditFeed() {
 	$name = 'feed' .rand();
 	GalleryUtilities::putRequestVariable('form[action][create]', '1');
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 	GalleryUtilities::putRequestVariable('form[mode]', 'new');
-	
+
 	$values = array(
 	    'itemId' => (string) $this->_getRootId(),
 	    'mode' => 'edit',
@@ -118,13 +120,13 @@ class RssEditFeedTest extends GalleryControllerTestCase {
 	    'useItemCategory' => '1',
 	    'language' => 'en-us',
 	    'feedDate' => 'updated');
-	
+
 	foreach ($values as $key => $value) {
 	    GalleryUtilities::putRequestVariable('form['.$key.']', $value);
 	}
-	
+
 	$results = $this->handleRequest();
-	
+
 	$this->assertEquals(array(
 	    'status' => array('saved' => 1),
 	    'error' => array(),
@@ -133,39 +135,39 @@ class RssEditFeedTest extends GalleryControllerTestCase {
 		'subView' => 'rss.EditFeed',
 		'itemId' => '',
 		'mode' => 'edit',
-		'form' => array_merge(array (
+		'form' => array_merge(array(
 		    'action' => array('save' => '1', 'create' => '1'),
 		    'mode' => 'new',
 		    ), $values))),
 	    $results);
-	
+
 	/* remember to delete this new feed */
 	$this->_feedsToDelete[] = $name;
-	
+
 	/* check the feed values */
-	list($ret, $feed) = RssMapHelper::fetchFeed($name);
+	list ($ret, $feed) = RssMapHelper::fetchFeed($name);
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
-    
+
     function testRssUpdateFeed() {
 	$name = 'feed' .rand();
-	
+
 	/* create feed we're going to edit */
 	$params = array('itemId' => $this->_getRootId());
 	$ret = RssMapHelper::createFeed($name, $params);
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	/* remember to delete this new feed */
 	$this->_feedsToDelete[] = $name;
-	
+
 	GalleryUtilities::putRequestVariable('form[action][update]', '1');
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 	GalleryUtilities::putRequestVariable('form[mode]', 'edit');
-	
+
 	$values = array(
 	    'itemId' => (string) $this->_getRootId(),
 	    'mode' => 'edit',
@@ -192,13 +194,13 @@ class RssEditFeedTest extends GalleryControllerTestCase {
 	    'useItemCategory' => '1',
 	    'language' => 'en-us',
 	    'feedDate' => 'updated');
-	
+
 	foreach ($values as $key => $value) {
 	    GalleryUtilities::putRequestVariable('form['.$key.']', $value);
 	}
-	
+
 	$results = $this->handleRequest();
-	
+
 	$this->assertEquals(array(
 	    'status' => array('saved' => 1),
 	    'error' => array(),
@@ -207,26 +209,26 @@ class RssEditFeedTest extends GalleryControllerTestCase {
 		'subView' => 'rss.EditFeed',
 		'itemId' => '',
 		'mode' => 'edit',
-		'form' => array_merge(array (
+		'form' => array_merge(array(
 		    'action' => array('save' => '1', 'update' => '1'),
 		    'mode' => 'edit',
 		    ), $values))),
 	    $results);
-	
+
 	/* check the feed values */
-	list($ret, $feed) = RssMapHelper::fetchFeed($name);
+	list ($ret, $feed) = RssMapHelper::fetchFeed($name);
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
-    
+
     function testRssUpdateFeedNew() {
 	$name = 'feed' .rand();
-	
+
 	GalleryUtilities::putRequestVariable('form[action][update]', '1');
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 	GalleryUtilities::putRequestVariable('form[mode]', 'edit');
-	
+
 	$values = array(
 	    'itemId' => (string) $this->_getRootId(),
 	    'mode' => 'edit',
@@ -253,13 +255,13 @@ class RssEditFeedTest extends GalleryControllerTestCase {
 	    'useItemCategory' => '1',
 	    'language' => 'en-us',
 	    'feedDate' => 'updated');
-	
+
 	foreach ($values as $key => $value) {
 	    GalleryUtilities::putRequestVariable('form['.$key.']', $value);
 	}
-	
+
 	$results = $this->handleRequest();
-	
+
 	$this->assertEquals(array(
 	    'status' => array('saved' => 1),
 	    'error' => array(),
@@ -268,7 +270,7 @@ class RssEditFeedTest extends GalleryControllerTestCase {
 		'subView' => 'rss.EditFeed',
 		'itemId' => '',
 		'mode' => 'edit',
-		'form' => array_merge(array (
+		'form' => array_merge(array(
 		    'action' => array('save' => '1', 'update' => '1'),
 		    'mode' => 'edit',
 		    ), $values))),

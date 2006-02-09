@@ -19,11 +19,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 /**
  * @version $Revision$ $Date$
  * @package RSS
- * @author Jonatan Heyman <http://heyman.info>, Pierre-Luc Paour, Daniel Grund <http://www.photogrund.nl>
+ * @author Jonatan Heyman <http://heyman.info>
+ * @author Pierre-Luc Paour
+ * @author Daniel Grund <http://www.photogrund.nl>
  */
 
 /**
@@ -31,41 +32,40 @@
  *
  * @package RSS
  */
-
 class RssModule extends GalleryModule {
+
     function RssModule() {
-        global $gallery;
-        $this->setId('rss');
-        $this->setName($gallery->i18n('RSS'));
-        $this->setDescription($gallery->i18n('RSS'));
-        $this->setVersion('1.0.3');
-        $this->setGroup('export', $this->translate('Export'));
-        $this->setCallbacks('getSiteAdminViews|getItemLinks|registerEventListeners');
-        $this->setRequiredCoreApi(array (7, 0));
-        $this->setRequiredModuleApi(array (3, 0));
+	global $gallery;
+	$this->setId('rss');
+	$this->setName($gallery->i18n('RSS'));
+	$this->setDescription($gallery->i18n('RSS'));
+	$this->setVersion('1.0.3');
+	$this->setGroup('export', $this->translate('Export'));
+	$this->setCallbacks('getSiteAdminViews|getItemLinks|registerEventListeners');
+	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredModuleApi(array(3, 0));
     }
 
     /**
      * @see GalleryModule::isRecommendedDuringInstall()
      */
     function isRecommendedDuringInstall() {
-        return true;
+	return true;
     }
 
     /**
      * @see GalleryModule::needsConfiguration()
      */
     function needsConfiguration() {
-        return array (null, false);
+	return array(null, false);
     }
 
     /**
      * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
-        return array(null,
-	array(array('name' => $this->translate('RSS'),
-		'view' => 'rss.RssSiteAdmin')));
+	return array(null, array(array('name' => $this->translate('RSS'),
+				       'view' => 'rss.RssSiteAdmin')));
     }
 
     /**
@@ -76,7 +76,7 @@ class RssModule extends GalleryModule {
 	$links = array();
 
 	/* check that this type of link is allowed */
-	list($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'rss');
+	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'rss');
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -85,9 +85,9 @@ class RssModule extends GalleryModule {
 	    if (isset($wantsDetailedLinks[$item->getId()])) {
 		if ($param['allowSimpleFeed'] == 1) {
 		    $itemTypeNames = array_merge($item->itemTypeName(), $item->itemTypeName(false));
-		    
+
 		    $links[$item->getId()][] = array(
-		    	'text' => $this->translate(array(
+			'text' => $this->translate(array(
 			    'text' => 'RSS Feed for this %s',
 			    'arg1' => $itemTypeNames[0]), $itemTypeNames[2]),
 			'params' => array(
@@ -100,7 +100,7 @@ class RssModule extends GalleryModule {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		/* 
+		/*
 		 * show the configure feeds link if:
 		 *   - the user is the item owner or the admin
 		 *   - configurable feeds are allowed
@@ -118,7 +118,7 @@ class RssModule extends GalleryModule {
 			$links[$item->getId()][] = array(
 			    'text' => $this->translate('Configure RSS Feeds'),
 			    'params' => array(
-			    	'view' => 'core.ItemAdmin',
+				'view' => 'core.ItemAdmin',
 				'subView' => 'rss.EditFeed',
 				'itemId' => $item->getId(),
 				'return' => 1));
@@ -133,7 +133,7 @@ class RssModule extends GalleryModule {
      * @see GalleryModule::getConfigurationView()
      */
     function getConfigurationView() {
-        return 'RssConfigAdmin';
+	return 'RssConfigAdmin';
     }
 
     /**
@@ -152,7 +152,7 @@ class RssModule extends GalleryModule {
 	    'match' => array('view' => 'rss.Render'),
 	    'pattern' => 'rss/%name%',
 	    'keywords' => array(
-	    	'name' => array(
+		'name' => array(
 		    'pattern' => '([^\/\?]+)',
 		    'help' => $this->translate('The name of the configured RSS Feed'))),
 	    'help' => $this->translate('Short URL for Configurable RSS Feeds'));
@@ -200,7 +200,7 @@ class RssModule extends GalleryModule {
      * @see GalleryModule::upgrade()
      */
     function upgrade($currentVersion) {
-        switch($currentVersion) {
+	switch($currentVersion) {
 	    case null:
 		/* Initial install */
 

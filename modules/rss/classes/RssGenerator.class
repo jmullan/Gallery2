@@ -22,7 +22,9 @@
 /**
  * @version $Revision$ $Date$
  * @package RSS
- * @author Jonatan Heyman <http://heyman.info>, Pierre-Luc Paour, Daniel Grund <http://www.photogrund.nl>
+ * @author Jonatan Heyman <http://heyman.info>
+ * @author Pierre-Luc Paour
+ * @author Daniel Grund <http://www.photogrund.nl>
  */
 
 /**
@@ -171,10 +173,10 @@ class RssGenerator {
 	    return '';
 
 	$linefeed = "\n";
-	
+
 	$data = '<?xml version="1.0"?>' . $linefeed .
-	    '<!DOCTYPE rss SYSTEM "http://my.netscape.com/publish/formats/rss-0.91.dtd">' . $linefeed .
-	    '<rss version="0.91"><channel>' . $linefeed .
+	    '<!DOCTYPE rss SYSTEM "http://my.netscape.com/publish/formats/rss-0.91.dtd">' .
+	    $linefeed . '<rss version="0.91"><channel>' . $linefeed .
 	    '<title>' . $this->_properties['title'] . '</title>' . $linefeed .
 	    '<link>' . $this->_properties['link'] . '</link>' . $linefeed .
 	    '<description>' . $this->_properties['description'] . '</description>' . $linefeed .
@@ -217,13 +219,13 @@ class RssGenerator {
      */
     function generate200() {
 	$linefeed = "\n";
-	
+
 	$data = '<rss version="2.0">'.$linefeed.'<channel>' . $linefeed .
 	    '<title>' . $this->_properties['title'] . '</title>' . $linefeed .
 	    '<link>' . $this->_properties['link'] . '</link>' . $linefeed .
 	    '<description>' . $this->_properties['description'] . '</description>' . $linefeed .
 	    (isset($this->_properties['language']) ?
-		'<language>' . $this->_properties['language'] .	'</language>'. $linefeed  : '') .
+		'<language>' . $this->_properties['language'] . '</language>' . $linefeed  : '') .
 	    (!empty($this->_properties['copyright']) ?
 		'<copyright>' . $this->_properties['copyright'] . '</copyright>'. $linefeed  : '') .
 	    (!empty($this->_properties['category']) ?
@@ -240,8 +242,8 @@ class RssGenerator {
 		'" port="' . $this->_properties['cloud']['port'] .
 		'" path="' . $this->_properties['cloud']['path'] .
 		'" registerProcedure="' . $this->_properties['cloud']['registerProcedure'] .
-		'" protocol="' . $this->_properties['cloud']['protocol'] . '" />'. $linefeed  : '') .
-	    (isset($this->_properties['image']) ?
+		'" protocol="' . $this->_properties['cloud']['protocol'] . '" />' . $linefeed : '')
+	    . (isset($this->_properties['image']) ?
 		'<image><url>' . $this->_properties['image']['url'] . '</url>' . $linefeed .
 		' <title>' . $this->_properties['image']['title'] . '</title>' . $linefeed .
 		' <link>' . $this->_properties['image']['link'] . '</link></image>' : '');
@@ -254,7 +256,7 @@ class RssGenerator {
 		' <title>' . $item['title'] . '</title>' . $linefeed .
 		' <link>' . $item['link'] . '</link>' . $linefeed .
 		' <guid isPermaLink="false">' . $item['link'] . '</guid>' . $linefeed .
-                ' <description><![CDATA[' . $item['description'] . ']]></description>' . $linefeed;
+		' <description><![CDATA[' . $item['description'] . ']]></description>' . $linefeed;
 
 	    if (isset($item['author']))
 		$data .= ' <author>' . $item['author'] . '</author>' . $linefeed;
