@@ -140,7 +140,7 @@ class CoreModuleExtras {
 			   'repository.updateTime' => '0',
 			   'acceleration' => serialize(array('guest' => array('type' => 'none'),
 							     'user' => array('type' => 'none'))),
-			   'validation.level' => 'HIGH',
+			   'validation.level' => 'MEDIUM',
 			   ) as $key => $value) {
 		if (!isset($param[$key])) {
 		    $ret = $module->setParameter($key, (string)$value);
@@ -1527,7 +1527,7 @@ class CoreModuleExtras {
 
 	case '1.0.20':
 	    /* Add configurable captcha security level */
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', 'captcha.level', 'HIGH');
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', 'captcha.level', 'MEDIUM');
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
