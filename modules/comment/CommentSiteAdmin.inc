@@ -53,12 +53,10 @@ class CommentSiteAdminController extends GalleryController {
 		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		foreach (array('captcha', 'latest') as $key) {
-		    $ret = GalleryCoreApi::setPluginParameter('module', 'comment',
-			'comments.' . $key, (isset($form[$key]) && $form[$key]) ? 1 : 0);
-		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
+		$ret = GalleryCoreApi::setPluginParameter('module', 'comment',
+			'comments.latest', (isset($form['latest']) && $form['latest']) ? 1 : 0);
+		if ($ret) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		$status['saved'] = 1;
 	    }
@@ -92,7 +90,7 @@ class CommentSiteAdminView extends GalleryView {
 
 	if ($form['formName'] != 'CommentSiteAdmin') {
 	    $form['formName'] = 'CommentSiteAdmin';
-	    foreach (array('latest', 'show', 'captcha') as $key) {
+	    foreach (array('latest', 'show') as $key) {
 		list ($ret, $value) =
 		    GalleryCoreApi::getPluginParameter('module', 'comment', 'comments.' . $key);
 		if ($ret) {
@@ -100,12 +98,8 @@ class CommentSiteAdminView extends GalleryView {
 		}
 		$form[$key] = $value;
 	    }
-	} else {
-	    foreach (array('latest', 'captcha') as $key) {
-		if (!isset($form[$key])) {
-		    $form[$key] = false;
-		}
-	    }
+	} else if (!isset($form['latest'])) {
+	    $form['latest'] = false;
 	}
 
 	list ($ret, $pluginInstances) =

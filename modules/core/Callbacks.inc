@@ -148,18 +148,22 @@ class CoreCallbacks {
 	    return null;
 
 	case 'LoadValidationPlugins':
-	    list ($ret, $allPluginIds) =
-		GalleryCoreApi::getAllFactoryImplementationIds('GalleryValidationPlugin');
-	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
 	    list ($ret, $options['level']) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'captcha.level');
+		GalleryCoreApi::getPluginParameter('module', 'core', 'validation.level');
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    if ($options['level'] == 'MEDIUM' && !empty($params['key'])) {
 		$options['key'] = $params['keyPrefix'] . '.' . $params['key'];
+	    }
+	    if ($options['level'] == 'OFF') {
+		$allPluginIds = array();
+	    } else {
+		list ($ret, $allPluginIds) =
+		    GalleryCoreApi::getAllFactoryImplementationIds('GalleryValidationPlugin');
+		if ($ret) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 	    }
 
 	    /* Let each plugin load its template data */

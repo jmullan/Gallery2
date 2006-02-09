@@ -276,7 +276,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$ret = GalleryCoreApi::setPluginParameter('module', 'comment', 'comments.captcha', 1);
+	$ret = GalleryCoreApi::setPluginParameter('module', 'comment', 'validation.level', 'HIGH');
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -302,6 +302,60 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array('form[error][AddCommentTestValidation]')),
 			    $results);
+    }
+
+    function testValidationPluginOff() {
+	$ret = $this->_markPluginParametersForCleanup('module', 'comment');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'comment', 'validation.level', 'OFF');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->_controller->_pluginInstances = array(new AddCommentTestValidation());
+
+	global $gallery;
+	$this->_becomeGuestUser();
+	$ret = GalleryCoreApi::addUserPermission($this->_item->getId(),
+						 $gallery->getActiveUserId(), 'comment.add');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	GalleryUtilities::putRequestVariable('form[action][add]', 1);
+	GalleryUtilities::putRequestVariable('form[subject]', 'test');
+	GalleryUtilities::putRequestVariable('form[comment]', 'test');
+
+	/* Perform the request and verify comment was added (validation plugin skipped) */
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('return' => 1,
+		  'redirect' => array(
+		      'view' => 'comment.CommentChangeConfirmation',
+		      'itemId' => $this->_item->getId()),
+		  'status' => array('added' => 1),
+		  'error' => array()),
+	    $results);
+
+	/* Grab the comment and take a look at it */
+	list ($ret, $comments) = GalleryCommentHelper::fetchComments($this->_item->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(1, count($comments));
+	if (count($comments) == 1) {
+	    $this->assert(GalleryUtilities::isA($comments[0], 'GalleryComment'));
+	    $this->assertEquals('test', $comments[0]->getComment());
+	    $this->assertEquals('test', $comments[0]->getSubject());
+	    $this->assertEquals($gallery->getActiveUserId(), $comments[0]->getCommenterId());
+	    $this->assertEquals($_SERVER['REMOTE_ADDR'], $comments[0]->getHost());
+	    $this->assert($comments[0]->getDate() >= $this->_startTime &&
+			  $comments[0]->getDate() <= time(), 'date');
+	}
     }
 }
 

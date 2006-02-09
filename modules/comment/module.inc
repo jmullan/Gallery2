@@ -40,7 +40,7 @@ class CommentModule extends GalleryModule {
 	$this->setId('comment');
 	$this->setName($gallery->i18n('Comments'));
 	$this->setDescription($gallery->i18n('User commenting system'));
-	$this->setVersion('1.0.7'); /* Update upgrade() function below too */
+	$this->setVersion('1.0.8'); /* Update upgrade() function below too */
 	$this->setGroup('data', $gallery->i18n('Extra Data'));
 	$this->setCallbacks('registerEventListeners|getItemLinks|getItemSummaries|' .
 			    'getSiteAdminViews|getItemAdminViews');
@@ -81,7 +81,8 @@ class CommentModule extends GalleryModule {
 		}
 	     }
 
-	    foreach (array('comments.show' => 10, 'comments.captcha' => 0, 'comments.latest' => 1)
+	     foreach (array('comments.show' => 10, 'comments.latest' => 1,
+			    'validation.level' => 'OFF')
 		     as $key => $value) {
 		$ret = $this->setParameter($key, $value);
 		if ($ret) {
@@ -125,6 +126,19 @@ class CommentModule extends GalleryModule {
 	    }
 
 	case '1.0.6':
+	case '1.0.7':
+	    list ($ret, $level) = $this->getParameter('comments.captcha');
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $ret = $this->setParameter('validation.level', $level ? 'HIGH' : 'OFF');
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $ret = $this->removeParameter('comments.captcha');
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 
 	case 'end of upgrade path':
 	    /*
@@ -135,7 +149,7 @@ class CommentModule extends GalleryModule {
 
 	default:
 	    return GalleryCoreApi::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
-					sprintf('Unknown module version %s', $currentVersion));
+					 sprintf('Unknown module version %s', $currentVersion));
 	}
 
 	return null;
@@ -164,6 +178,13 @@ class CommentModule extends GalleryModule {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GallerySearchInterface_1_0', 'GalleryCommentSearch', 'comment',
 	    'modules/comment/classes/GalleryCommentSearch.class', 'comment', null);
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'CaptchaAdminOption', 'CommentCaptchaAdminOption', 'CommentCaptchaAdminOption',
+	    'modules/comment/classes/CommentCaptchaAdminOption.class', 'comment', null);
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

@@ -71,8 +71,7 @@ class CommentSiteAdminControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
 
-	foreach (array('latest' => '1', 'show' => '12', 'captcha' => '0')
-		    as $key => $expectedValue) {
+	foreach (array('latest' => '1', 'show' => '12') as $key => $expectedValue) {
 	    list ($ret, $value) =
 		GalleryCoreApi::getPluginParameter('module', 'comment', 'comments.' . $key);
 	    if ($ret) {

@@ -38,7 +38,7 @@ class RegisterModule extends GalleryModule {
 	$this->setId('register');
 	$this->setName($gallery->i18n('Registration'));
 	$this->setDescription($gallery->i18n('New User Registration'));
-	$this->setVersion('1.0.3');
+	$this->setVersion('1.0.4');
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks('getSystemLinks|getUserAdminViews|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(7, 0));
@@ -49,13 +49,18 @@ class RegisterModule extends GalleryModule {
      * @see GalleryModule::upgrade()
      */
     function upgrade($currentVersion) {
-	if (!isset($currentVersion)) {
-	    foreach (array('confirmation' => 'admin',
-			   'emailadmins' => 1,
-			   'subject' => $this->translate('Account activation'),
-			   'adminsubject' => $this->translate('New user registration'),
-			   'from' => 'webmaster@' . GalleryUtilities::getServerVar('SERVER_NAME'))
-			 as $key => $value) {
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'register');
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	foreach (array('confirmation' => 'admin', 'emailadmins' => 1,
+		       'subject' => $this->translate('Account activation'),
+		       'adminsubject' => $this->translate('New user registration'),
+		       'from' => 'webmaster@' . GalleryUtilities::getServerVar('SERVER_NAME'),
+		       'validation.level' => 'HIGH')
+		as $key => $value) {
+	    if (!isset($params[$key])) {
 		$ret = $this->setParameter($key, $value);
 		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
@@ -73,6 +78,13 @@ class RegisterModule extends GalleryModule {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GalleryEntity', 'GalleryPendingUser', 'GalleryPendingUser',
 	    'modules/register/classes/GalleryPendingUser.class', 'register', null);
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'CaptchaAdminOption', 'RegisterCaptchaAdminOption', 'RegisterCaptchaAdminOption',
+	    'modules/register/classes/RegisterCaptchaAdminOption.class', 'register', null);
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

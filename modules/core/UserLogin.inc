@@ -85,10 +85,21 @@ class UserLoginController extends GalleryController {
 		$isCorrect = ($user != null && $user->isCorrectPassword(
 			    GalleryUtilities::htmlEntityDecode($form['password'])));
 
-		if (isset($this->_pluginInstances)) {
+		/* Prepare for validation */
+		$options = array('pass' => $isCorrect);
+		list ($ret, $options['level']) =
+		    GalleryCoreApi::getPluginParameter('module', 'core', 'validation.level');
+		if ($ret) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		if ($options['level'] == 'MEDIUM') {
+		    $options['key'] = 'core.UserLogin.' . $form['username'];
+		}
+		if ($options['level'] == 'OFF') {
+		    $pluginInstances = array();
+		} else if (isset($this->_pluginInstances)) {
 		    $pluginInstances = $this->_pluginInstances;
 		} else {
-		    /* Get all the login plugins */
 		    list ($ret, $pluginInstances) =
 			GalleryCoreApi::getAllFactoryImplementationIds('GalleryValidationPlugin');
 		    if ($ret) {
@@ -103,15 +114,6 @@ class UserLoginController extends GalleryController {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 		    }
-		}
-		list ($ret, $options['level']) =
-		    GalleryCoreApi::getPluginParameter('module', 'core', 'captcha.level');
-		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		$options['pass'] = $isCorrect;
-		if ($options['level'] == 'MEDIUM') {
-		    $options['key'] = 'core.UserLogin.' . $form['username'];
 		}
 
 		/* Let each plugin do its verification */

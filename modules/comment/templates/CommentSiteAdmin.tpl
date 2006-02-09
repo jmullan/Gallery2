@@ -36,20 +36,6 @@
       </div>
       {/if}
     </td>
-  </tr><tr>
-    <td>
-      <label for="cbCaptcha">
-	{g->text text="Use Captcha for guest comments:"}
-      </label>
-    </td><td>
-      <input type="checkbox" id="cbCaptcha"{if $form.captcha} checked="checked"{/if}
-       name="{g->formVar var="form[captcha]"}"{if !$form.canValidate} disabled="disabled"{/if}/>
-      {if !$form.canValidate}
-      <span class="giDescription">
-	{g->text text="Activate Captcha module to enable this feature"}
-      </span>
-      {/if}
-    </td>
   </tr></table>
 </div>
 

@@ -140,7 +140,7 @@ class CoreModuleExtras {
 			   'repository.updateTime' => '0',
 			   'acceleration' => serialize(array('guest' => array('type' => 'none'),
 							     'user' => array('type' => 'none'))),
-			   'captcha.level' => 'HIGH',
+			   'validation.level' => 'HIGH',
 			   ) as $key => $value) {
 		if (!isset($param[$key])) {
 		    $ret = $module->setParameter($key, (string)$value);
@@ -1336,15 +1336,15 @@ class CoreModuleExtras {
 	case '1.0.10':
 	    /* Rename unnamed pre-beta-3 index to named index */
 	    if ($storage->getType() == 'mysql') {
-	    	$gallery->debug('Rename unnamed pre-beta-3 index to named index (ignore errors)');
-	        $query = sprintf('
-	        ALTER TABLE %sAccessMap
-                DROP INDEX %saccessListId_2,
-                ADD INDEX %sAccessMap_83732(%saccessListId);',
-                $storage->_tablePrefix, $storage->_columnPrefix, $storage->_tablePrefix,
-                $storage->_columnPrefix);
-	        /* Ignore error, since there's nothing to do for most installations */
-	        $storage->execute($query);
+		$gallery->debug('Rename unnamed pre-beta-3 index to named index (ignore errors)');
+		$query = sprintf('
+		ALTER TABLE %sAccessMap
+		DROP INDEX %saccessListId_2,
+		ADD INDEX %sAccessMap_83732(%saccessListId);',
+		$storage->_tablePrefix, $storage->_columnPrefix, $storage->_tablePrefix,
+		$storage->_columnPrefix);
+		/* Ignore error, since there's nothing to do for most installations */
+		$storage->execute($query);
 	    }
 
 	    /*
@@ -1353,7 +1353,7 @@ class CoreModuleExtras {
 	     * Also increase size of GalleryUser::email column.
 	     */
 	    $ret = $storage->configureStore($module->getId(),
-	    				    array('GalleryAccessMap:1.0', 'GalleryUser:1.0'));
+					    array('GalleryAccessMap:1.0', 'GalleryUser:1.0'));
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -1528,6 +1528,9 @@ class CoreModuleExtras {
 	case '1.0.20':
 	    /* Add configurable captcha security level */
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', 'captcha.level', 'HIGH');
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 
 	case '1.0.21':
 	    /* GallerySession change: Store sessions in the database and no longer on disk */
@@ -1589,17 +1592,17 @@ class CoreModuleExtras {
 	case '1.0.22':
 	    /* Rename unnamed pre-beta-3 index to named index */
 	    if ($storage->getType() == 'mysql') {
-	    	$gallery->debug('Rename unnamed pre-beta-3 index to named index (ignore errors)');
-	    	$indexChanges = array();
+		$gallery->debug('Rename unnamed pre-beta-3 index to named index (ignore errors)');
+		$indexChanges = array();
 		$indexChanges[] = array('AccessMap', 'permission',
 					'AccessMap_18058', array('permission'));
-	    	$indexChanges[] = array('AccessSubscriberMap', 'accessListId',
+		$indexChanges[] = array('AccessSubscriberMap', 'accessListId',
 					'AccessSubscriberMap_83732', array('accessListId'));
-	    	$indexChanges[] = array('ChildEntity', 'parentId',
+		$indexChanges[] = array('ChildEntity', 'parentId',
 					'ChildEntity_52718', array('parentId'));
-	    	$indexChanges[] = array('Derivative', 'derivativeSourceId',
+		$indexChanges[] = array('Derivative', 'derivativeSourceId',
 					'Derivative_85338', array('derivativeSourceId'));
-	    	$indexChanges[] = array('Derivative', 'derivativeOrder',
+		$indexChanges[] = array('Derivative', 'derivativeOrder',
 					'Derivative_25243', array('derivativeOrder'));
 		$indexChanges[] = array('Derivative', 'derivativeType',
 					'Derivative_97216', array('derivativeType'));
@@ -1649,14 +1652,14 @@ class CoreModuleExtras {
 		    $indexColumns = $storage->_columnPrefix . $indexColumns;
 		    $query = sprintf('
 		    ALTER TABLE %s%s
-                    DROP INDEX %s%s,
-                    ADD INDEX %s%s(%s);',
-                	$storage->_tablePrefix, $change[0], $storage->_columnPrefix, $change[1],
-                	$storage->_tablePrefix, $change[2], $indexColumns);
-                    /* Ignore error, since there's nothing to do for most installations */
-	            $storage->execute($query);
+		    DROP INDEX %s%s,
+		    ADD INDEX %s%s(%s);',
+			$storage->_tablePrefix, $change[0], $storage->_columnPrefix, $change[1],
+			$storage->_tablePrefix, $change[2], $indexColumns);
+		    /* Ignore error, since there's nothing to do for most installations */
+		    $storage->execute($query);
 		}
-	        $gallery->debug('Finished renaming unnamed pre-beta-3 indices to named indices');
+		$gallery->debug('Finished renaming unnamed pre-beta-3 indices to named indices');
 	    }
 
 	    /*
@@ -1678,9 +1681,9 @@ class CoreModuleExtras {
 	     * not in Maps.xml
 	     */
 	    $query = sprintf('
-            UPDATE %sSchema
-            SET %smajor=1, %sminor=3
-            WHERE %sname=\'AccessMap\' AND %smajor=1 AND %sminor=2;',
+	    UPDATE %sSchema
+	    SET %smajor=1, %sminor=3
+	    WHERE %sname=\'AccessMap\' AND %smajor=1 AND %sminor=2;',
 			     $storage->_tablePrefix, $storage->_columnPrefix,
 			     $storage->_columnPrefix, $storage->_columnPrefix,
 			     $storage->_columnPrefix, $storage->_columnPrefix);
@@ -1691,6 +1694,21 @@ class CoreModuleExtras {
 
 	case '1.0.23':
 	    /* Rename GalleryCache to GalleryCacheMap, and make the value column TEXT(LARGE) */
+
+	case '1.0.24':
+	    /* Add CoreCaptchaAdminOption, rename level parameter */
+	    list ($ret, $level) = $module->getParameter('captcha.level');
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $ret = $module->setParameter('validation.level', $level);
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $ret = $module->removeParameter('captcha.level');
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 
 	case 'end of upgrade path':
 	    /*
@@ -2378,6 +2396,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	$regs[] = array('MaintenanceTask', 'SystemInfoTask', 'class', null);
 	$regs[] = array('MaintenanceTask', 'SetOriginationTimestampTask', 'class', null);
 	$regs[] = array('MaintenanceTask', 'DeleteSessionsTask', 'class', null);
+	$regs[] = array('CaptchaAdminOption', 'CoreCaptchaAdminOption', 'class', null);
 
 	/*
 	 * Unlike other modules, the core module doesn't get deactivated so its

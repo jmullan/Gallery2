@@ -211,7 +211,6 @@ class AdminCoreController extends GalleryController {
 			   'smtp.username',
 			   'cookie.path',
 			   'cookie.domain',
-			   'captcha.level',
 			   'lock.system',
 			   'format.date',
 			   'format.time',
@@ -306,7 +305,6 @@ class AdminCoreView extends GalleryView {
 			   'smtp.password',
 			   'cookie.path',
 			   'cookie.domain',
-			   'captcha.level',
 			   'lock.system',
 			   'format.date',
 			   'format.time',
@@ -407,13 +405,6 @@ class AdminCoreView extends GalleryView {
 		'0' => $module->translate('High Priority (Me first!)'),
 		'1' => $module->translate('Low Priority (I want to share!)'));
 	}
-
-	list ($ret, $pluginInstances) =
-	    GalleryCoreApi::getAllFactoryImplementationIds('GalleryValidationPlugin');
-	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$can['validate'] = !empty($pluginInstances);
 
 	/* Miscellaneous lists */
 	$embeddedMarkupList = array('none' => $module->translate('No Markup'),

@@ -47,6 +47,7 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	/* Create a new user */
 	list ($ret, $this->_user) = $this->_createRandomUser(null, 'password');
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -57,12 +58,24 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	$ret = $gallery->_session->init();
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = $gallery->_session->start();
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_validationLevel) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'validation.level');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'validation.level', 'HIGH');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Disable all plugins by default. */
@@ -75,8 +88,13 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 
     function tearDown() {
 	global $gallery;
-
 	$gallery->_session = $this->_saveSession;
+
+	$ret = GalleryCoreApi::setPluginParameter(
+		'module', 'core', 'validation.level', $this->_validationLevel);
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
 	parent::tearDown();
     }
@@ -287,6 +305,34 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	$plugin = new UserLoginControllerTestPlugin();
 	$plugin->setErrors(array());
 	$plugin->setContinue(true);
+	$this->_controller->setPluginInstances(array($plugin));
+
+	$results = $this->handleRequest();
+	/* May get a redirect url (like from useralbum module) or return */
+	$this->assert(isset($results['return']) || isset($results['redirect']), 'result');
+	$this->assertEquals(array(), $results['status'], 'status');
+	$this->assertEquals(array(), $results['error'], 'error');
+
+	$this->assertEquals($this->_user->getId(), $gallery->getActiveUserId());
+	$this->assert($this->_mockSession->regenerateWasCalled(),
+		      '$session->regenerate() was not called');
+    }
+
+    function testPluginsOff() {
+	global $gallery;
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'validation.level', 'OFF');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryUtilities::putRequestVariable('form[action][login]', 1);
+	GalleryUtilities::putRequestVariable('form[username]', $this->_user->getUserName());
+	/* from _createRandomUser: */
+	GalleryUtilities::putRequestVariable('form[password]', 'password');
+
+	$plugin = new UserLoginControllerTestPlugin();
+	$plugin->setErrors(array('form[error][UserLoginControllerTestPlugin][anError]'));
+	$plugin->setContinue(false);
 	$this->_controller->setPluginInstances(array($plugin));
 
 	$results = $this->handleRequest();

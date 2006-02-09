@@ -149,5 +149,69 @@ class CaptchaSiteAdminControllerTest extends GalleryControllerTestCase {
 	/* Unchanged */
 	$this->assertEquals(1, (int)$threshold);
     }
+
+    function testAdminOptions() {
+	CaptchaAdminOption::testOptions(
+		array('testOptionId1' => new CaptchaSiteAdminTestOption(),
+		      'testOptionId2' => new CaptchaSiteAdminTestOption('unittest.2.level')));
+
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[failedAttemptThreshold]', 3);
+	GalleryUtilities::putRequestVariable('form[level][testOptionId1]', 'HIGH');
+	GalleryUtilities::putRequestVariable('form[level][testOptionId2]', 'LOW');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('redirect' => array('view' => 'core.SiteAdmin',
+				      'subView' => 'captcha.CaptchaSiteAdmin'),
+		  'status' => array('saved' => 1),
+		  'error' => array()),
+	    $results);
+
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'captcha');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(3, (int)$params['failedAttemptThreshold'], 'threshold');
+	$this->assertEquals('HIGH', $params['unittest.level'], 'level 1');
+	$this->assertEquals('LOW', $params['unittest.2.level'], 'level 2');
+    }
+
+    function testBogusOptionId() {
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[failedAttemptThreshold]', 3);
+	GalleryUtilities::putRequestVariable('form[level][bogusOptionId]', 'LOW');
+
+	$this->handleRequest(ERROR_BAD_PARAMETER);
+    }
+
+    function testBogusOptionLevel() {
+	CaptchaAdminOption::testOptions(array('testOptionId' => new CaptchaSiteAdminTestOption()));
+
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[failedAttemptThreshold]', 3);
+	GalleryUtilities::putRequestVariable('form[level][testOptionId]', 'MEDIUM');
+
+	$this->handleRequest(ERROR_BAD_PARAMETER);
+    }
+}
+
+GalleryCoreApi::requireOnce('modules/captcha/CaptchaSiteAdmin.inc');
+
+/**
+ * CaptchaAdminOption for testing.
+ * @package Captcha
+ * @subpackage PHPUnit
+ */
+class CaptchaSiteAdminTestOption extends CaptchaAdminOption {
+    function CaptchaSiteAdminTestOption($param='unittest.level') {
+	$this->_param = $param;
+    }
+
+    function getOptionData() {
+	return array(null, 'test level',
+		     array('module', 'captcha', $this->_param), array('HIGH', 'LOW'));
+    }
 }
 ?>

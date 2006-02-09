@@ -360,49 +360,6 @@
 </div>
 
 <div class="gbBlock">
-  <h3> {g->text text="Captcha for User Login"} </h3>
-
-  {if isset($AdminCore.can.validate)}
-  <p class="giDescription">
-    {g->text text="Select policy for requiring captcha validation to login:"}
-  </p>
-  <table class="gbDataTable">
-    <tr><td>
-      <input type="radio" id="rb.captchaHigh"{if $form.captcha.level == 'HIGH'}
-       checked="checked"{/if} name="{g->formVar var="form[captcha][level]"}" value="HIGH"/>
-    </td><td>
-      <label for="rb.captchaHigh">
-        {g->text text="High: Always require validation"}
-      </label>
-    </td></tr><tr><td>
-      <input type="radio" id="rb.captchaMedium"{if $form.captcha.level == 'MEDIUM'}
-       checked="checked"{/if} name="{g->formVar var="form[captcha][level]"}" value="MEDIUM"/>
-    </td><td>
-      <label for="rb.captchaMedium">
-        {g->text text="Medium: Require validation after some failed attempts for a username"}
-      </label>
-    </td></tr><tr><td>
-      <input type="radio" id="rb.captchaLow"{if $form.captcha.level == 'LOW'}
-       checked="checked"{/if} name="{g->formVar var="form[captcha][level]"}" value="LOW"/>
-    </td><td>
-      <label for="rb.captchaLow">
-        {g->text text="Low: Require validation after some failed attempts in one session (this provides protection against casual password guessers, but not against automated attacks)"}
-      </label>
-    </td></tr>
-  </table>
-  <p class="giDescription">
-    {capture assign="captchaUrl"}
-      <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=captcha.CaptchaSiteAdmin"}">
-    {/capture}
-    {g->text text="Configure the number of failed attempts for medium/low in %sCaptcha Settings%s"
-    	     arg1=$captchaUrl arg2="</a>"}
-  </p>
-  {else}
-    {g->text text="Activate Captcha module to enable this feature"}
-  {/if}
-</div>
-
-<div class="gbBlock">
   <h3> {g->text text="Locking System"} </h3>
 
   <p class="giDescription">

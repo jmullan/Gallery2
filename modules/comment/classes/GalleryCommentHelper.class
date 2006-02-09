@@ -273,12 +273,12 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
     function useValidationPlugins() {
 	global $gallery;
 
-	list ($ret, $on) =
-	    GalleryCoreApi::getPluginParameter('module', 'comment', 'comments.captcha');
+	list ($ret, $level) =
+	    GalleryCoreApi::getPluginParameter('module', 'comment', 'validation.level');
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	if (!$on) {
+	if ($level == 'OFF') {
 	    return array(null, false);
 	}
 

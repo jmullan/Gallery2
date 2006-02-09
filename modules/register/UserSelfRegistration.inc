@@ -64,10 +64,16 @@ class UserSelfRegistrationController extends GalleryController {
 		$error[] = 'form[error][password2][mismatch]';
 	    }
 
-	    if (isset($this->_pluginInstances)) {
+	    list ($ret, $level) =
+		GalleryCoreApi::getPluginParameter('module', 'register', 'validation.level');
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if ($level == 'OFF') {
+		$pluginInstances = array();
+	    } else if (isset($this->_pluginInstances)) {
 		$pluginInstances = $this->_pluginInstances;
 	    } else {
-		/* Get all the login plugins */
 		list ($ret, $pluginInstances) =
 		    GalleryCoreApi::getAllFactoryImplementationIds('GalleryValidationPlugin');
 		if ($ret) {
