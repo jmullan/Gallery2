@@ -120,7 +120,7 @@ class AdminPerformanceControllerTest extends GalleryControllerTestCase {
 	 */
 
 	$storage =& $gallery->getStorage();
-	list ($ret, $results) = $storage->search('SELECT COUNT(*) FROM [GalleryCache]', array());
+	list ($ret, $results) = $storage->search('SELECT COUNT(*) FROM [GalleryCacheMap]', array());
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

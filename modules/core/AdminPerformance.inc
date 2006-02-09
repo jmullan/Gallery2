@@ -89,7 +89,7 @@ class AdminPerformanceController extends GalleryController {
 	    $redirect = array('view' => 'core.SiteAdmin',
 			      'subView' => 'core.AdminPerformance');
 	} else if (isset($form['action']['clear'])) {
-	    $ret = GalleryCoreApi::removeAllMapEntries('GalleryCache');
+	    $ret = GalleryCoreApi::removeAllMapEntries('GalleryCacheMap');
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
