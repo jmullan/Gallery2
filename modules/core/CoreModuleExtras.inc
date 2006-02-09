@@ -1140,7 +1140,7 @@ class CoreModuleExtras {
 		    if ($platform->file_exists("$base/layouts")) {
 			$platform->recursiveRmDir("$base/layouts");
 		    }
-		} else {
+		} else if (file_exists($base)) {
 		    if ($platform->file_exists("$base/layouts")) {
 			$platform->rename("$base/layouts", "$base/themes");
 		    } else {
@@ -1660,6 +1660,12 @@ class CoreModuleExtras {
 		    $storage->execute($query);
 		}
 		$gallery->debug('Finished renaming unnamed pre-beta-3 indices to named indices');
+	    }
+
+	    /* Commit transactions before we execute a query that we expect to fail */
+	    $ret = $storage->checkPoint();
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    /*
