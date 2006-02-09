@@ -42,14 +42,11 @@ class MatrixTheme extends GalleryTheme {
 	$this->setId('matrix');
 	$this->setName($gallery->i18n('Matrix'));
 	$this->setDescription($gallery->i18n('Standard Gallery2 look and feel'));
-	$this->setVersion('1.0.3');
+	$this->setVersion('1.0.4');
 	$this->setRequiredCoreApi(array(7, 0));
 	$this->setRequiredThemeApi(array(2, 1));
 	$this->setStandardSettings(
 	    array('rows' => 3, 'columns' => 3,
-		  'useVariableColumns' => 0,
-		  'perPage' => 12,
-		  'columnWidth' => 200, 'rowHeight' => 300,
 		  'showImageOwner' => 0, 'showAlbumOwner' => 1,
 		  'albumFrame' => '', 'itemFrame' => '', 'photoFrame' => '',
 		  'colorpack' => '',
@@ -64,22 +61,6 @@ class MatrixTheme extends GalleryTheme {
 		  'photoBlocks' => serialize(array(
 			array('exif.ExifInfo', array()),
 			array('comment.ViewComments', array())))));
-    }
-
-    /**
-     * @see GalleryTheme::validateSettings
-     */
-    function validateSettings($settings) {
-	$error = parent::validateSettings($settings);
-	if (!empty($settings['useVariableColumns'])) {
-	    if (empty($settings['columnWidth'])) {
-		$error['columnWidth'] = $this->translate('You must enter a number');
-	    }
-	    if (empty($settings['rowHeight'])) {
-		$error['rowHeight'] = $this->translate('You must enter a number');
-	    }
-	}
-	return $error;
     }
 
     /**

@@ -78,7 +78,7 @@ class GalleryTheme extends GalleryPlugin {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(2, 2);
+	return array(2, 3);
     }
 
     /**
@@ -146,14 +146,6 @@ class GalleryTheme extends GalleryPlugin {
 				'type' => 'text-field',
 				'typeParams' => array('size' => 2),
 				'value' => $params['columns']);
-	}
-
-	if (isset($params['useVariableColumns']) && isset($standard['useVariableColumns'])) {
-	    $settings[] = array('key' => 'useVariableColumns',
-				'name' => $core->translate(
-				    'Allow browser window width to set columns per album page'),
-				'type' => 'checkbox',
-				'value' => $params['useVariableColumns']);
 	}
 
 	if (isset($params['perPage']) && isset($standard['perPage'])) {
@@ -304,31 +296,22 @@ class GalleryTheme extends GalleryPlugin {
 	$error = array();
 	$standard = $this->getStandardSettings();
 
-	if (isset($standard['rows'])) {
-	    if ( (!empty($settings['rows']) && !is_numeric($settings['rows']))
-			|| (empty($settings['rows']) && empty($settings['useVariableColumns'])) ) {
-		$error['rows'] = $this->translate('You must enter a number greater than 0');
-	    }
+	if (isset($standard['rows'])
+		&& (empty($settings['rows']) || !is_numeric($settings['rows']))) {
+	    $error['rows'] = $this->translate('You must enter a number greater than 0');
 	}
-	if (isset($standard['columns'])) {
-	    if ( (!empty($settings['columns']) && !is_numeric($settings['columns']))
-		    || (empty($settings['columns']) && empty($settings['useVariableColumns'])) ) {
-		$error['columns'] = $this->translate('You must enter a number greater than 0');
-	    }
+	if (isset($standard['columns'])
+		&& (empty($settings['columns']) || !is_numeric($settings['columns']))) {
+	    $error['columns'] = $this->translate('You must enter a number greater than 0');
 	}
-	if (isset($standard['perPage'])) {
-	    $isRequired =
-		!isset($standard['useVariableColumns']) || !empty($settings['useVariableColumns']);
-	    if ( (!empty($settings['perPage']) && !is_numeric($settings['perPage']))
-			|| (empty($settings['perPage']) && $isRequired) ) {
-		$error['perPage'] = $this->translate('You must enter a number greater than 0');
-	    }
+	if (isset($standard['perPage'])
+		&& (empty($settings['perPage']) || !is_numeric($settings['perPage']))) {
+	    $error['perPage'] = $this->translate('You must enter a number greater than 0');
 	}
 
 	if (!empty($settings['rowHeight']) && !is_numeric($settings['rowHeight'])) {
 	    $error['rowHeight'] = $this->translate('You must enter a number greater than 0');
 	}
-
 	if (!empty($settings['columnWidth']) && !is_numeric($settings['columnWidth'])) {
 	    $error['columnWidth'] = $this->translate('You must enter a number greater than 0');
 	}
@@ -1743,10 +1726,6 @@ class GalleryTheme extends GalleryPlugin {
      * @return int
      */
     function getPageSize($params) {
-	if (!empty($params['useVariableColumns']) && !empty($params['perPage'])) {
-	    return $params['perPage'];
-	}
-
 	if (!empty($params['rows']) && !empty($params['columns'])) {
 	    return $params['rows'] * $params['columns'];
 	}
