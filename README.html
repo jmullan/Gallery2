@@ -168,7 +168,6 @@
 	<li> About Gallery 2
 	  <ul class="toc-level-2">
 	    <li> <a href="#system_requirements">System Requirements</a> </li>
-	    <li> <a href="#when_to_use">When should I use it?</a> </li>
 	    <li> <a href="#whats_new">What&rsquo;s new in this release?</a> </li>
 	  </ul>
 	</li>
@@ -196,13 +195,12 @@
     </div>
 
     <p>
-      Welcome to Gallery 2. This is the first official release
-      of Gallery 2.0, code named &ldquo;<b>Unpossible!</b>&rdquo;.
-      Please read through this document carefully
-      before installing Gallery 2 and before asking for help.  We have
-      taken care to try to answer as many of your questions here as
-      possible.  If you don't read this and have problems, we may
-      refer you back to this document as a first resource.
+      Welcome to Gallery 2. This is the first release candidate
+      of Gallery 2.1, code named &ldquo;<b>Blackjack</b>&rdquo;.
+      Please read through this document carefully before installing Gallery 2
+      and before asking for help.  We have taken care to try to answer as many
+      of your questions here as possible.  If you don't read this and have
+      problems, we may refer you back to this document as a first resource.
     </p>
 
     <h2><a name="quick_start">Quick Start</a></h2>
@@ -211,9 +209,8 @@
       The odds are that your system is all set to handle Gallery 2 so just skip
       right to the <a href="install/index.php" target="_guided">installer</a>
       and start clicking.  It should walk you through everything you need to
-      get going.  Before you do that though, you really should read the
-      <a href="#when_to_use">When should I use it?</a> section.  If you hit
-      a snag, please come back here and read more before asking questions!  Enjoy.
+      get going.  If you hit a snag, please come back here and read more before
+      asking questions!  Enjoy.
     </p>
 
     <h2><a name="what_is_gallery">What is Gallery?</a></h2>
@@ -221,7 +218,7 @@
     <p>
       Gallery is a web based software product that lets you manage
       your photos on your own website.  You must have your own website
-      with PHP support in order to install and use it.  With Gallery
+      with PHP and database support in order to install and use it.  With Gallery
       you can easily create and maintain albums of photos via an
       intuitive interface.  Photo management includes automatic
       thumbnail creation, image resizing, rotation, ordering,
@@ -252,8 +249,8 @@
       </li>
       <li>
 	One of the following databases: <a href="http://mysql.com/" target="_blank">MySQL</a>
-	3.x or 4.x, <a href="http://www.postgresql.org/" target="_blank">PostgreSQL</a> 7.x or 8.x,
-	<a href="http://www.oracle.com/" target="_blank">Oracle</a> 9i or 10g
+	3.x or 4.x, <a href="http://www.postgresql.org/" target="_blank">PostgreSQL</a>
+	7.x or 8.x, <a href="http://www.oracle.com/" target="_blank">Oracle</a> 9i or 10g
       </li>
       <li>
 	One of the following graphics toolkits: <a href="http://netpbm.sourceforge.net/"
@@ -263,15 +260,6 @@
 	target="_blank">GraphicsMagick</a> 1.x or newer (or else you get no thumbnails!)
       </li>
     </ul>
-
-    <h2><a name="when_to_use">When should I use it?</a></h2>
-    <p class="toc-link"> <a href="#toc">[table of contents]</a> </p>
-    <p>
-      Gallery 2 is a stable and secure environment for you to store
-      your photos online and share them with your friends.  Use it to
-      manage all of your media with confidence.  It is reliable,
-      modular, portable and intuitive.
-    </p>
 
     <div class="important">
       <h3>Warning!</h3>
@@ -310,6 +298,10 @@
 	New Ratings module allows users to vote for their favorite photos.
       </li>
       <li>
+	New RSS module provides syndication of your Gallery's content to the world,
+	so users can track content updates.
+      </li>
+      <li>
 	New module to support hidden items and albums.  Hidden items are restricted
 	from guest users until accessed by the direct URL.  Migrate module now imports
 	hidden items from G1 as hidden in G2 if this module is active.
@@ -318,6 +310,10 @@
 	New module to support password protected items and albums.  Passwords are 
 	complementary to the G2 permission management. Passwords are impersonal while 
 	the G2 permission system handles access and rights for specific users and user groups.
+      </li>
+      <li>
+	New Reupload module allows replacing an image file while keeping the title,
+	description, comments, etc.
       </li>
       <li>
 	New Permalinks module works with the URL Rewrite module to create short URLs
@@ -346,6 +342,10 @@
       </li>
       <li>
 	URL Rewrite module now supports IIS (isapi rewrite) and pathinfo.
+      </li>
+      <li>
+	Captcha module has an improved "medium" security level and now unifies
+	configuration in captcha site admin for all modules making use of validation.
       </li>
       <li>
 	Print modules
@@ -392,10 +392,6 @@
 	Added WMF and TGA image format support in ImageMagick module.
       </li>
       <li>
-	Don't increment the view count for an item multiple times in the same day
-	from the same session.
-      </li>
-      <li>
 	Improved cross-browser support in ImageFrame module.
       </li>
       <li>
@@ -425,8 +421,10 @@
 	by <a href="http://openusability.org/" target="_blank">OpenUsability.org</a>.
       </li>
       <li>
-	New maintenance mode to redirect visitors while upgrading
-	or configuring the site.
+	New performance section in site admin for configuring optional page caching.
+      </li>
+      <li>
+	New maintenance mode to redirect visitors while upgrading or configuring the site.
       </li>
       <li>
 	Multisite installs can now use the tools in lib/support.
@@ -1372,11 +1370,11 @@
 	Everything you need to publish photos, and nothing more.
       </li>
       <li>
-	<b>Typical</b> - The base application, 6 themes and a selection of popular
+	<b>Typical</b> - The base application, 7 themes and a selection of popular
 	modules.  Enough to satisfy the demands of most Gallery users.
       </li>
       <li>
-	<b>Full</b> - The base application, 6 themes and 46 modules.  Every cool
+	<b>Full</b> - The base application, 7 themes and 56 modules.  Every cool
 	feature we've got.
       </li>
       <li>
@@ -1925,96 +1923,13 @@
     <h2><a name="known_issues">Known Issues / Bugs</a></h2>
     <p class="toc-link"> <a href="#toc">[table of contents]</a> </p>
 
-    <ol>
-      <li>
-	<b>Theme upgrade</b> - In beta-4 all layouts have been replaced with the new
-	theme system.  During the upgrade process the layout setting on all albums
-	is cleared and the site-wide default theme is set to matrix.  You'll have to
-	reselect the default theme and any album specific settings to restore the
-	layout configuration in place prior to this upgrade.
-      </li>
-      <li>
-	<b>Performance</b> - There are still some tweaks that we can make to have it go faster,
-	stay tuned!
-      </li>
-      <li>
-	<b>Login Problems</b> - Before beta-4 there were known login / session problems.
-	As a consequence of our fix for this problem, you and all your Gallery users have to
-	delete old GALLERYSID cookie(s) in your browser if Gallery seems to ignore login requests.
-      </li>
-      <li>
-	<b>View names</b> - In beta-4 the naming convention for views changed from using
-	a colon separator to a period (core:ShowItem is now core.ShowItem).  All Gallery
-	code has been updated but there are a few places you should check to make sure
-	your site is up to date:
-	<ul>
-	  <li>
-	    Local tpl files: make sure to update all view names in your customized
-	    templates.  Compare to the current version of the default tpls if needed.
-	  </li>
-	  <li>
-	    External imageblock: update imageblock:External to imageblock.External in
-	    any uses of this feature.
-	  </li>
-	  <li>
-	    PublishXP: Select 'add items' / Windows XP and follow the directions to
-	    update your registry so it will reflect the new view name.
-	  </li>
-	</ul>
-      </li>
-      <li>
-	<a name="multisite"></a>
-	<b>Multisite config.php</b> - The multisite system changed in beta-4 and old style
-	multisite config.php files are no longer supported.  Follow these steps to move
-	your sites to the new system:
-	<ul>
-	  <li>
-	    Replace any symlinks created for multisite support with real directories
-	    and/or remove any .htaccess files that were setup to redirect requests
-	    from a multisite directory to the Gallery 2 codebase.
-	  </li>
-	  <li>
-	    Examine your config.php file and learn the basics of its structure.  You
-	    will find multiple complete single configurations that each start with
-	    <tt>&lt;?php</tt> and end with <tt>?&gt;</tt>, with some additional content
-	    above, below and between these sections.
-	  </li>
-	  <li>
-	    Copy each configuration in the combined file into separate single files.
-	    Each new file should have <tt>&lt;?php</tt> as the very first line and
-	    <tt>?&gt;</tt> as the very last line with no extra spaces or blank lines
-	    at the top or bottom, and there should be only one of each of these tags.
-	    Place each new single config.php in the multisite directory for that site.
-	    The <tt>case 'domain/path':</tt> line just above each configuration in the
-	    combined file will help you determine which config.php goes in which
-	    multisite directory.  Note that this "case" line does not go in the new
-	    config.php file.  The last configuration in the combined file has
-	    <tt>default:</tt> just above it instead of "case".  Rename the combined
-	    file to something else and put this last configuration in place as the
-	    config.php in this directory.
-	  </li>
-	  <li>
-	    Now access the primary site and run through the upgrader.  Make sure
-	    everything is working correctly with this site.
-	  </li>
-	  <li>
-	    For each additional site follow this process: browse to install/index.php
-	    of the primary site.  In step 3 enter the path to the multisite directory
-	    to update.  After this step you should see some new files in the multisite
-	    directory, including <tt>upgrade/index.php</tt>.  At this point <i>stop</i>
-	    using the installer and browse to <tt>upgrade/index.php</tt> for this site
-	    (not the primary site).  Step through the upgrader to the upgrade core module
-	    step.  After the core upgrade completes manually edit the config.php for this
-	    site.  At the bottom you will find a <tt>galleryBaseUrl</tt> setting.
-	    Enter the URL for the primary site here, ending with a /.  For example,
-	    <tt>http://mydomain.com/gallery2/</tt> or <tt>http://photos.mydomain.com/</tt>.
-	    Note this is the URL for the primary site, not the site you are currently
-	    upgrading.  Save this change and finish the remaining steps of the upgrader.
-	    Make sure this site now works correctly.
-	  </li>
-	</ul>
-      </li>
-    </ol>
+    <p>
+      Check our <a href="http://codex.gallery2.org/index.php/Gallery2:Known_Issues"
+      target="_blank">Known Issues</a> list and
+      <a href="http://sourceforge.net/tracker/?group_id=7130&amp;atid=107130"
+      target="_blank">Bug Tracker</a> for information and some workarounds for
+      known problems.
+    </p>
 
     <h2><a name="advanced_topics">Advanced Topics</a></h2>
     <p class="toc-link"> <a href="#toc">[table of contents]</a> </p>
