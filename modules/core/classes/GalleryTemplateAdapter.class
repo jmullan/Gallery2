@@ -599,15 +599,15 @@ class GalleryTemplateAdapter {
 	    if (!$isAdmin) {
 		return;
 	    }
-	    return ''; /* sprintf(
+	    return sprintf(
 		'<a href="%s"><img src="%s" alt="%s" title="%s" ' .
 		'style="border-style: none" width="80" height="15"/></a>',
 		$urlGenerator->generateUrl(
-		    array('href' => 'modules/core/data/g2-unpossible.mp3')),
+		    array('href' => 'modules/core/data/g21-rc1-hitme.mov')),
 		$urlGenerator->generateUrl(
 		    array('href' => 'modules/core/data/g21-blackjack.png')),
-		$core->translate('G2.1: Blackjack'),
-		$core->translate('G2.1: Blackjack')); */
+		$core->translate('G2.1-RC-1: Hit Me'),
+		$core->translate('G2.1-RC-1: Hit Me'));
 	}
     }
 
