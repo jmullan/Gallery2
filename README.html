@@ -249,8 +249,9 @@
       </li>
       <li>
 	One of the following databases: <a href="http://mysql.com/" target="_blank">MySQL</a>
-	3.x or 4.x, <a href="http://www.postgresql.org/" target="_blank">PostgreSQL</a>
-	7.x or 8.x, <a href="http://www.oracle.com/" target="_blank">Oracle</a> 9i or 10g
+	3.x, 4.x or 5.x, <a href="http://www.postgresql.org/" target="_blank">PostgreSQL</a>
+	7.x or 8.x, <a href="http://www.oracle.com/" target="_blank">Oracle</a> 9i or 10g, 
+	<a href="http://www.ibm.com/software/data/db2/" target="_blank">DB2</a> 8.2.2
       </li>
       <li>
 	One of the following graphics toolkits: <a href="http://netpbm.sourceforge.net/"
@@ -442,7 +443,7 @@
 	on shared webhosting servers.
       </li>
       <li>
-	Preliminary support for
+	Support for
 	<a href="http://www.ibm.com/software/data/db2/" target="_blank">DB2</a> database.
       </li>
       <li>
@@ -1464,10 +1465,12 @@
       <li>
 	<b>Database</b> - Right now we support
 	<a href="http://dev.mysql.com/downloads/" target="_blank">MySQL</a>,
-	<a href="http://www.postgresql.org/mirrors-ftp.html" target="_blank">PostgreSQL</a>
-	and <a href="http://www.oracle.com/technology/software/index.html"
-	target="_blank">Oracle</a>.  MySQL is generally faster than
-	PostgreSQL. We require you to create the database yourself.
+	<a href="http://www.postgresql.org/mirrors-ftp.html" target="_blank">PostgreSQL</a>, 
+	<a href="http://www.oracle.com/technology/software/index.html"
+	target="_blank">Oracle</a> and 
+	<a href="http://www.ibm.com/software/data/db2/" target="_blank">DB2</a>.
+	MySQL is generally faster than PostgreSQL. Oracle and DB2 are barely tested. 
+	We require you to create the database yourself.
 	In our examples below, we&rsquo;ll be creating a database called
 	<b>gallery2</b>.  You can use any database name that you
 	choose. <br />
@@ -1511,6 +1514,15 @@
 	  <h3>Oracle</h3>
 	  <p>
 	    $ create database gallery2 {additional parameters};
+	  </p>
+	</div>
+	
+	<div class="instructions">
+	  <h3>DB2</h3>
+	  <p>
+	    $ db2 create database gallery2 using codeset utf-8 territory us pagesize 32 k 
+	    {Also see our <a href="http://codex.gallery2.org/index.php/Gallery2:DB2" 
+	    target="_blank">DB2 page</a>};
 	  </p>
 	</div>
       </li>
