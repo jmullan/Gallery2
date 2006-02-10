@@ -1716,6 +1716,9 @@ class CoreModuleExtras {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
+	case '1.0.25':
+	    /* 2.1 Release Candidate 1! */
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
@@ -1953,6 +1956,8 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	case '1.0.21':
 	case '1.0.22':
 	case '1.0.23':
+	case '1.0.24':
+	case '1.0.25':
 
 	case 'end of upgrade path':
 	    /*
