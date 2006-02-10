@@ -76,6 +76,25 @@ class MySqlStorage extends GalleryStorage {
     }
 
     /**
+     * @see GalleryStorage::_setConnectionSettings
+     */
+    function _setConnectionSettings(&$db) {
+    	/* MySQL 4.1.0+ support UTF-8, for details, see: http://drupal.org/node/40515 */
+    	$version = mysql_get_server_info();
+	if ($version && version_compare($version, '4.1.0', '>=')) {
+    	    $this->_traceStart();
+    	    $recordSet = $db->execute('SET NAMES "utf8"');
+    	    $this->_traceStop();
+    	
+    	    if (!$recordSet) {
+	        return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+	    }
+	}
+    	
+    	return null;
+    }
+    
+    /**
      * @see GalleryStorage::_getSqlReplacements
      */
     function _getSqlReplacements() {
@@ -162,6 +181,31 @@ class MySqlStorage extends GalleryStorage {
 	}
 
 	return array(null, $sql);
+    }
+
+    /**
+     * @see GalleryStorage::encodeBlob
+     */
+    function encodeBlob($blob) {
+	$version = mysql_get_server_info();
+	if ($version && version_compare($version, '4.1.0', '>=')) {
+	    /* See: http://www.postgresql.org/docs/8.1/interactive/datatype-binary.html */
+	    $blob = addcslashes($blob, "\000..\037\047\134\177..\377");
+	}
+
+	return $blob;
+    }
+
+    /**
+     * @see GalleryStorage::decodeBlob
+     */
+    function decodeBlob($blob) {
+	$version = mysql_get_server_info();
+	if ($version && version_compare($version, '4.1.0', '>=')) {
+	    $blob = stripcslashes($blob);
+	} 
+	    
+	return $blob;
     }
 	
     /**

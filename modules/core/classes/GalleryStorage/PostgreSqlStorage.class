@@ -257,37 +257,19 @@ class PostgreSqlStorage extends GalleryStorage {
     /**
      * @see GalleryStorage::encodeBlob
      *
-     * Note: After PHP 4.2 we use pg_escape_bytea which is not compatible
-     * with the addcslashes version.  If we encode any data that we expect
-     * to work across a PHP upgrade, we'll have to re-encode it.
+     * Note: pg_escape_bytea is only available in PHP 4.2.0+ and is even a little
+     * slower than addcslashes. 
      */
     function encodeBlob($blob) {
-    	global $gallery;
-    	$phpVm = $gallery->getPhpVm();
-
-    	/* pg_escape_bytea is available since PHP 4.2+ */
-    	if ($phpVm->function_exists('pg_escape_bytea')) {
-    	    return pg_escape_bytea($blob);
-    	} else {
-    	    /* See: http://www.postgresql.org/docs/8.1/interactive/datatype-binary.html */
-    	    return addcslashes($blob, "\000..\037\047\134\177..\377");
-    	}
+	/* See: http://www.postgresql.org/docs/8.1/interactive/datatype-binary.html */
+	return addcslashes($blob, "\000..\037\047\134\177..\377");
     }
 
     /**
      * @see GalleryStorage::decodeBlob
      */
     function decodeBlob($blob) {
-    	global $gallery;
-    	$phpVm = $gallery->getPhpVm();
-
-    	/* pg_escape_bytea is available since PHP 4.2+ */
-    	if ($phpVm->function_exists('pg_unescape_bytea')) {
-    	    /* For some reason we have to unescape it twice */
-    	    return pg_unescape_bytea(pg_unescape_bytea($blob));
-    	} else {
-    	    return stripcslashes($blob);
-    	}
+	return stripcslashes($blob);
     }
 }
 ?>

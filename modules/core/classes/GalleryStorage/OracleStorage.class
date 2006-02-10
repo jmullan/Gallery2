@@ -76,6 +76,15 @@ class OracleStorage extends GalleryStorage {
     }
 
     /**
+     * @see GalleryStorage::_setConnectionSettings
+     */
+    function _setConnectionSettings(&$db) {
+    	@putenv("NLS_LANG=UTF8");
+    	
+    	return null;
+    }
+
+    /**
      * @see GalleryStorage::getFunctionsSql
      */
     function getFunctionSql($functionName, $args) {

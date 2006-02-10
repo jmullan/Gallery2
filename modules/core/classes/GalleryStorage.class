@@ -234,8 +234,26 @@ class GalleryStorage {
 	    $db->LogSQL();
 	    $this->_traceStop();
 	}
+	
+	$ret = $this->_setConnectionSettings($db);
+	if ($ret) {
+	    return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
+	}
 
 	return array(null, $db);
+    }
+    
+    /**
+     * Set runtime settings for the given database connection
+     * 
+     * Set the connection / client / server encoding and other parameters
+     * 
+     * @param object adodb database handle
+     * @return object GalleryStatus a status code 
+     * @access private
+     */
+    function _setConnectionSettings(&$db) {
+    	return null;
     }
 
     /**
