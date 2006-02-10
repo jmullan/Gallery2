@@ -31,7 +31,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Migrate 1.0\n"
 "Report-Msgid-Bugs-To: gallery-translations@lists.sourceforge.net\n"
 "POT-Creation-Date: 2003-10-01 15:46+0900\n"
-"PO-Revision-Date: 2005-10-29 11:20+0200\n"
+"PO-Revision-Date: 2006-01-21 14:15+0100\n"
 "Last-Translator: Anders Lindquist <andersl@saaf.se>\n"
 "Language-Team: Swedish <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -52,11 +52,11 @@ msgstr "Skapar miniatyrbilder"
 
 #, c-format
 msgid "%sTitle%s was truncated for %sitem %d%s."
-msgstr "%sTitel%s blev trunkerad för %sobjekt %d%s"
+msgstr "%sTiteln%s blev trunkerad för %sobjekt %d%s"
 
 #, c-format
 msgid "%sSummary%s was truncated for %sitem %d%s."
-msgstr "%sSummering%s blev trunkerad för %sobject %d%s"
+msgstr "%sSummeringen%s blev trunkerad för %sobject %d%s"
 
 msgid "Set:"
 msgstr "Uppsättning:"
@@ -88,6 +88,8 @@ msgstr "G1-sökväg"
 
 msgid "G1 URL redirect. Use only if G2 is installed where G1 used"
 msgstr ""
+"G1 URL omstyrning. Använd bara om G2 är installerad där G1 förrut var "
+"installerad"
 
 msgid "Select Albums and Users"
 msgstr "Markera Album och Användare"
@@ -158,10 +160,10 @@ msgid ""
 "for subsequent views.  If you check this box, we'll create the thumbnails at migration "
 "time.  Migration will take longer but the first time you view an album will go much faster."
 msgstr ""
-"Normalt så genererar Gallery miniatyrbilder första gången du tittar på dem, och sedan sparar "
+"Normalt så genererar Gallery miniatyrbilder första gången du tittar på dem, och sparar "
 "dem för efterföljande visningar. Om du klickar i denna ruta så skapas miniatyrbilder vid "
 "migreringstillfället. Migreringen kommer att ta längre tid men första gången albumet visas "
-"kommer att gå mycket snabbare."
+"kommer det att gå mycket snabbare."
 
 msgid "Item captions"
 msgstr "Objektrukriker"
@@ -196,10 +198,10 @@ msgid "Blank"
 msgstr "Tom"
 
 msgid "Set summary from:"
-msgstr "Sätt summering fr&aing;n:"
+msgstr "Sätt summering från:"
 
 msgid "Set description from:"
-msgstr "Sätt beskrivning fr&aing;n:"
+msgstr "Sätt beskrivning från:"
 
 msgid "Default to same as summary if custom field not set"
 msgstr "Fall tillbaka på samma som summering om specialfält inte är satt"
@@ -226,7 +228,7 @@ msgid "Prepare Import"
 msgstr "Förbered Importering"
 
 msgid "Confirm Migration"
-msgstr "Konfirmera flyttning"
+msgstr "Bekräfta flyttning"
 
 msgid "Users to import:"
 msgstr "Användare att importera:"
@@ -244,7 +246,7 @@ msgid "Album Notes"
 msgstr "Albumnoteringar"
 
 msgid "An album already exists with this name.  This album will be renamed."
-msgstr "Ett album finns redan med det namnet.  Detta album kommer att döpas om."
+msgstr "Ett album finns redan med det namnet. Detta album kommer att döpas om."
 
 #, c-format
 msgid "This album has an illegal name and will be renamed to <i>%s</i>"
@@ -261,7 +263,7 @@ msgstr "Importera %s nu."
 msgid ""
 "Top level albums and albums whose parents are not selected will be imported into this album:"
 msgstr ""
-"Huvudalbum och album som inte har några valda överliggande kommer att importeras till detta "
+"Huvudalbum och album som inte har några valda överliggande album kommer att importeras till detta "
 "album:"
 
 #, c-format
@@ -311,19 +313,23 @@ msgstr ""
 "Specialfält importerade till objektfält ovan kommer inte att duplicerade som specialfält"
 
 msgid "Hidden Items"
-msgstr ""
+msgstr "Dolda Objekt"
 
 msgid ""
 "Any hidden albums or items will be imported with restricted view permissions. Activate the "
 "Hidden Items module before migration to import these as \"hidden\" which means they are "
 "invisible to guest users until accessed by the direct URL for those items."
 msgstr ""
+"Alla dolda album eller objekt kommer att importeras med reducerrade "
+"visa rättigheter. Aktivera Dolda Objekt modulen före migrationen för att "
+"importera dessa som \"dolda\" vilket betyder att dom är osynliga för "
+"gäster tills dom är accessade via en direkt URL."
 
 msgid "Cancel"
 msgstr "Avbryt"
 
 msgid "Import Complete"
-msgstr "Importera komplett"
+msgstr "Import komplett"
 
 #, c-format
 msgid "Successfully imported %d user."
@@ -410,7 +416,7 @@ msgid "Download .htaccess file"
 msgstr "Ladda ner .htaccess-fil"
 
 msgid "Import from Gallery 1"
-msgstr "Importera fr&aing;n Gallery 1"
+msgstr "Importera från Gallery 1"
 
 msgid ""
 "Copy all or part of an existing Gallery 1 installation into your Gallery 2.  It won't modify "
@@ -447,7 +453,7 @@ msgid ""
 "errors you see there first."
 msgstr ""
 "<b>Notera:</b> Innan du kan importera data bör du säkerställa att Gallery 1 är korrekt "
-"installerat genom att lägga till ett foto genom webgränssnittet för Gallery 1. Se till att "
+"installerat genom att lägga till ett foto genom webbgränssnittet för Gallery 1. Se till att "
 "du rättar fel som ser där först."
 
 msgid "Recently Used Paths"
@@ -473,13 +479,4 @@ msgid "Delete All"
 msgstr "Ta bort alla"
 
 msgid "Map entries deleted successfully"
-msgstr "Kopplingar borttagna framgåsrikt"
-
-#~ msgid ""
-#~ "G1 URL redirect. Use only if G2 is installed where G1 used to be and you have run a G1 "
-#~ "import with the URL redirect option selected. Otherwise follow instructions in %sMigrate "
-#~ "Site Admin%s."
-#~ msgstr ""
-#~ "G1 URL ompekning. Använd endast om G2 är installerad där G1 förut var installerad och du "
-#~ "måste köra en G1-import med URL ompekning vald. Följ annars instruktionerna i %sMigrering "
-#~ "av Siteadministratör%s."
+msgstr "Kopplingar borttagna framgångsrikt"

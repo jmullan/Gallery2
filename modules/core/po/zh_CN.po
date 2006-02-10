@@ -102,6 +102,15 @@ msgstr "卸载"
 msgid "deactivate"
 msgstr "关闭"
 
+msgid "No acceleration"
+msgstr ""
+
+msgid "Partial acceleration"
+msgstr ""
+
+msgid "Full acceleration"
+msgstr ""
+
 msgid "Performing Maintenance Tasks"
 msgstr ""
 
@@ -125,6 +134,10 @@ msgstr "从上层相册中继承设置值"
 
 msgid "Use these settings"
 msgstr "使用这些设置"
+
+#, fuzzy
+msgid "Installing the core module"
+msgstr "图库核心模块"
 
 msgid "key"
 msgstr "主键"
@@ -207,6 +220,10 @@ msgstr ""
 
 msgid "Detecting broken derivatives, saving "
 msgstr ""
+
+#, fuzzy, c-format
+msgid "Deleting old session files (iteration %d)"
+msgstr "正在删除旧的权限数据表"
 
 msgid "add items"
 msgstr "添加项目"
@@ -514,6 +531,9 @@ msgstr "用户"
 msgid "Groups"
 msgstr "成员组"
 
+msgid "Performance"
+msgstr ""
+
 msgid "Toolkit Priority"
 msgstr "工具优先级"
 
@@ -579,6 +599,14 @@ msgstr "添加项目"
 
 #, c-format
 msgid "%d items failed"
+msgstr ""
+
+#, fuzzy
+msgid "Delete user sessions"
+msgstr "文件系统权限"
+
+msgid ""
+"Delete all persistent user sessions according to your current session expiration settings."
 msgstr ""
 
 msgid "Delete database cache"
@@ -752,7 +780,7 @@ msgstr "此页面符合XHTML 1.0标准"
 msgid "Donate to the Gallery project"
 msgstr "返回图库"
 
-msgid "G2.1: Blackjack"
+msgid "G2.1-RC-1: Hit Me"
 msgstr ""
 
 #, c-format
@@ -769,6 +797,15 @@ msgstr ""
 msgid "Columns per album page"
 msgstr ""
 
+msgid "Number of items to show per page"
+msgstr ""
+
+msgid "Row height (pixels)"
+msgstr ""
+
+msgid "Column width (pixels)"
+msgstr ""
+
 msgid "Show image owners"
 msgstr ""
 
@@ -776,9 +813,6 @@ msgid "Show album owners"
 msgstr ""
 
 msgid "Show micro navigation thumbnails"
-msgstr ""
-
-msgid "Number of items to show per page"
 msgstr ""
 
 msgid "Blocks to show in the sidebar"
@@ -1632,6 +1666,76 @@ msgstr "这也将删除所有权限并清除由此模块建立的所有临时数
 msgid "Uninstall"
 msgstr "卸载"
 
+msgid "Performance Tuning"
+msgstr ""
+
+#, fuzzy
+msgid "Updated performance settings successfully"
+msgstr "缩略图重置成功"
+
+#, fuzzy
+msgid "Deleted all saved pages"
+msgstr "删除用户"
+
+#, fuzzy
+msgid "Acceleration"
+msgstr "操作"
+
+msgid ""
+"Improve your Gallery performance by storing entire web pages in the database.  This can "
+"considerably reduce the amount of webserver and database resources required to display a web "
+"page.  The tradeoff is that the web page you see may be a little bit out of date, however "
+"you can always get the most recent version of the page by forcing a refresh in your browser "
+"(typically by holding down the shift key and clicking the reload button)."
+msgstr ""
+
+msgid "Partial Acceleration"
+msgstr ""
+
+#, c-format
+msgid ""
+"Partial acceleration gives you roughly 10-25% performance increase, but some forms of "
+"dynamic data (like view counts) will not get updated right away.  All content that appears "
+"in blocks (like the random image block, any sidebar blocks, etc) will always be updated."
+msgstr ""
+
+msgid "Full Acceleration"
+msgstr ""
+
+#, c-format
+msgid ""
+"Full acceleration gives roughly a 90% performance increase, but no dynamic data (random "
+"image block, other sidebar blocks, number of items in your shopping cart, view counts, etc) "
+"will get updated until the saved page expires."
+msgstr ""
+
+msgid ""
+"You can additionally specify when saved pages expire.  Setting a longer expiration time will "
+"reduce the load on your server, but will increase the interval before users see changes.  "
+"Lower expiration times mean that users will see more current data, but they will place a "
+"higher load on your server."
+msgstr ""
+
+msgid "Here are some standard acceleration profiles:"
+msgstr ""
+
+#, fuzzy
+msgid "Medium acceleration"
+msgstr "编辑标注"
+
+msgid "High acceleration"
+msgstr ""
+
+#, fuzzy
+msgid "Guest Users"
+msgstr "新建用户"
+
+msgid "Expires after:"
+msgstr ""
+
+msgid "Clear Saved Pages"
+msgstr ""
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr ""
 
@@ -2463,14 +2567,24 @@ msgid ""
 msgstr "设定相册排序方式。将应用到所有当前项目和新添项目中。"
 
 #, fuzzy
+msgid "Apply to all subalbums"
+msgstr "应用变更到子项目"
+
+#, fuzzy
 msgid "Choose a theme for this album. (The way the album is arranged on the page)"
 msgstr "为此相册选择一个界面。（相册在页面显示的排列方式）"
+
+msgid "Use this theme in all subalbums"
+msgstr ""
 
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr "每个项目都需要一个缩略图，请在此设定默认象素尺寸。"
 
 msgid "You must enter a number (greater than zero)"
 msgstr "你必须输入一个数字（大于零）"
+
+msgid "Use this thumbnail size in all subalbums"
+msgstr ""
 
 msgid "Resized Images"
 msgstr "变更尺寸的图片"
@@ -2486,6 +2600,9 @@ msgstr "目标尺寸 (象素)"
 
 msgid "You must enter a valid size"
 msgstr "您必须输入一个有效的尺寸"
+
+msgid "Use these target sizes in all subalbums"
+msgstr ""
 
 msgid "Recreate thumbnails and resizes"
 msgstr "重建缩略图和变更尺寸的图片"
@@ -2756,6 +2873,10 @@ msgstr "设置"
 msgid "Use Global"
 msgstr "使用全局设置"
 
+#, c-format
+msgid "Use these settings in all subalbums that use %s theme"
+msgstr ""
+
 msgid ""
 "Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
 msgstr ""
@@ -2939,6 +3060,10 @@ msgstr "用户已拥有此权限 (请检查子权限设定)"
 
 msgid "Reorder Album"
 msgstr "重新排序相册"
+
+#, fuzzy
+msgid "Order saved successfully"
+msgstr "变更已保存成功"
 
 msgid ""
 "This album has an automatic sort order specified, so you cannot change the order of items "

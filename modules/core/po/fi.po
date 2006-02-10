@@ -105,6 +105,15 @@ msgstr "poista"
 msgid "deactivate"
 msgstr "poista käytöstä"
 
+msgid "No acceleration"
+msgstr ""
+
+msgid "Partial acceleration"
+msgstr ""
+
+msgid "Full acceleration"
+msgstr ""
+
 #, fuzzy
 msgid "Performing Maintenance Tasks"
 msgstr "Järjestelmän Ylläpito"
@@ -129,6 +138,10 @@ msgstr "Peri asetukset ulommasta albumista"
 
 msgid "Use these settings"
 msgstr "Käytä näitä asetuksia"
+
+#, fuzzy
+msgid "Installing the core module"
+msgstr "Gallerian Ydinmoduuli"
 
 msgid "key"
 msgstr "avain"
@@ -211,6 +224,10 @@ msgstr "Etsii rikkoutuneita johdannaisia, "
 
 msgid "Detecting broken derivatives, saving "
 msgstr "Etsii rikkoutuneita johdannaisia, tallentaa "
+
+#, fuzzy, c-format
+msgid "Deleting old session files (iteration %d)"
+msgstr "Poistaa vanhoja oikeus tietoja"
 
 msgid "add items"
 msgstr "lisää kuvia"
@@ -501,6 +518,9 @@ msgstr "Käyttäjät"
 msgid "Groups"
 msgstr "Ryhmät"
 
+msgid "Performance"
+msgstr ""
+
 msgid "Toolkit Priority"
 msgstr "Työkalujen Tärkeysjärjestys"
 
@@ -565,6 +585,14 @@ msgstr "%d kohdetta tehty"
 #, c-format
 msgid "%d items failed"
 msgstr "%d kohdetta epäonnistui"
+
+#, fuzzy
+msgid "Delete user sessions"
+msgstr "Tiedostojen Oikeudet"
+
+msgid ""
+"Delete all persistent user sessions according to your current session expiration settings."
+msgstr ""
 
 msgid "Delete database cache"
 msgstr "Poista tietokannan välimuisti"
@@ -742,7 +770,7 @@ msgstr "Tämä sivu on käypää XHTML 1.0 -koodia."
 msgid "Donate to the Gallery project"
 msgstr "Lahjoita Gallery projektille"
 
-msgid "G2.1: Blackjack"
+msgid "G2.1-RC-1: Hit Me"
 msgstr ""
 
 #, c-format
@@ -759,6 +787,15 @@ msgstr "Rivejä albumin sivulla"
 msgid "Columns per album page"
 msgstr "Sarakkeita albumin sivulla"
 
+msgid "Number of items to show per page"
+msgstr "Kohteiden lukumäärä sivulla"
+
+msgid "Row height (pixels)"
+msgstr ""
+
+msgid "Column width (pixels)"
+msgstr ""
+
 msgid "Show image owners"
 msgstr "Näytä kuvien omistajat"
 
@@ -767,9 +804,6 @@ msgstr "Näytä albumien omistajat"
 
 msgid "Show micro navigation thumbnails"
 msgstr "Näytä pienet esikatselukuvat navigointiin"
-
-msgid "Number of items to show per page"
-msgstr "Kohteiden lukumäärä sivulla"
 
 msgid "Blocks to show in the sidebar"
 msgstr "Laidalla näytettävät lohkot"
@@ -1638,6 +1672,76 @@ msgstr "Tämä poistaa myös kaikki oikeudet ja siivoaa moduulin luomat tilapäi
 msgid "Uninstall"
 msgstr "Poista"
 
+msgid "Performance Tuning"
+msgstr ""
+
+#, fuzzy
+msgid "Updated performance settings successfully"
+msgstr "Kokeilusähköposti lähetetty"
+
+#, fuzzy
+msgid "Deleted all saved pages"
+msgstr "Poista Käyttäjä"
+
+#, fuzzy
+msgid "Acceleration"
+msgstr "Toiminto"
+
+msgid ""
+"Improve your Gallery performance by storing entire web pages in the database.  This can "
+"considerably reduce the amount of webserver and database resources required to display a web "
+"page.  The tradeoff is that the web page you see may be a little bit out of date, however "
+"you can always get the most recent version of the page by forcing a refresh in your browser "
+"(typically by holding down the shift key and clicking the reload button)."
+msgstr ""
+
+msgid "Partial Acceleration"
+msgstr ""
+
+#, c-format
+msgid ""
+"Partial acceleration gives you roughly 10-25% performance increase, but some forms of "
+"dynamic data (like view counts) will not get updated right away.  All content that appears "
+"in blocks (like the random image block, any sidebar blocks, etc) will always be updated."
+msgstr ""
+
+msgid "Full Acceleration"
+msgstr ""
+
+#, c-format
+msgid ""
+"Full acceleration gives roughly a 90% performance increase, but no dynamic data (random "
+"image block, other sidebar blocks, number of items in your shopping cart, view counts, etc) "
+"will get updated until the saved page expires."
+msgstr ""
+
+msgid ""
+"You can additionally specify when saved pages expire.  Setting a longer expiration time will "
+"reduce the load on your server, but will increase the interval before users see changes.  "
+"Lower expiration times mean that users will see more current data, but they will place a "
+"higher load on your server."
+msgstr ""
+
+msgid "Here are some standard acceleration profiles:"
+msgstr ""
+
+#, fuzzy
+msgid "Medium acceleration"
+msgstr "muuta kuvatekstiä"
+
+msgid "High acceleration"
+msgstr ""
+
+#, fuzzy
+msgid "Guest Users"
+msgstr "Rekisteröityneet Käyttäjät"
+
+msgid "Expires after:"
+msgstr ""
+
+msgid "Clear Saved Pages"
+msgstr ""
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr ""
 
@@ -2477,8 +2581,15 @@ msgstr ""
 "Tämä asettaa oletusjärjestyksen albumille, joka koskee kaikkia nykyisiä kohteita sekä vasta "
 "lisättyjä kohteita."
 
+#, fuzzy
+msgid "Apply to all subalbums"
+msgstr "Muuta myös sisältyvät kohteet"
+
 msgid "Choose a theme for this album. (The way the album is arranged on the page)"
 msgstr "Valitse teema tälle albumille. (Tapa jolla albumi sommitellaan sivulle)"
+
+msgid "Use this theme in all subalbums"
+msgstr ""
 
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr ""
@@ -2486,6 +2597,9 @@ msgstr ""
 
 msgid "You must enter a number (greater than zero)"
 msgstr "Sinun on syötettävä numero, joka on suurempi kuin nolla"
+
+msgid "Use this thumbnail size in all subalbums"
+msgstr ""
 
 msgid "Resized Images"
 msgstr "Skaalatut Kuvat"
@@ -2501,6 +2615,9 @@ msgstr "Kohdekoko (pikseleinä)"
 
 msgid "You must enter a valid size"
 msgstr "Sinun tulee syöttää käyttökelpoinen koko"
+
+msgid "Use these target sizes in all subalbums"
+msgstr ""
 
 msgid "Recreate thumbnails and resizes"
 msgstr "Luo esikatseluvat sekä skaalaukset uudelleen"
@@ -2793,6 +2910,10 @@ msgstr "Asetus"
 msgid "Use Global"
 msgstr "Käytä Yleistä"
 
+#, c-format
+msgid "Use these settings in all subalbums that use %s theme"
+msgstr ""
+
 msgid ""
 "Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
 msgstr ""
@@ -2972,6 +3093,10 @@ msgstr "Käyttäjällä on jo tämä oikeus (ehkä se oli sisälletty käyttäj�
 
 msgid "Reorder Album"
 msgstr "Järjestä Albumin Sisältö"
+
+#, fuzzy
+msgid "Order saved successfully"
+msgstr "Muutokset tallennettu"
 
 msgid ""
 "This album has an automatic sort order specified, so you cannot change the order of items "

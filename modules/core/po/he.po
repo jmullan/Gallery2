@@ -102,6 +102,15 @@ msgstr "הסרה"
 msgid "deactivate"
 msgstr "בטל פעילות"
 
+msgid "No acceleration"
+msgstr ""
+
+msgid "Partial acceleration"
+msgstr ""
+
+msgid "Full acceleration"
+msgstr ""
+
 msgid "Performing Maintenance Tasks"
 msgstr ""
 
@@ -125,6 +134,10 @@ msgstr "קבל הגדרות מאלבום-האב"
 
 msgid "Use these settings"
 msgstr "השתמש בהגדרות אלה"
+
+#, fuzzy
+msgid "Installing the core module"
+msgstr "Gallery Core Module"
 
 msgid "key"
 msgstr "מפתח"
@@ -207,6 +220,10 @@ msgstr "מזהה נגזרות שבורות, "
 
 msgid "Detecting broken derivatives, saving "
 msgstr "מזהה נגזרות שבורות, שומר "
+
+#, fuzzy, c-format
+msgid "Deleting old session files (iteration %d)"
+msgstr "מוחק טבלת הרשאות ישנה"
 
 msgid "add items"
 msgstr "הוסף פריטים"
@@ -498,6 +515,9 @@ msgstr "משתמשים"
 msgid "Groups"
 msgstr "קבוצות"
 
+msgid "Performance"
+msgstr ""
+
 msgid "Toolkit Priority"
 msgstr "עדיפות ערכת כלים"
 
@@ -559,6 +579,14 @@ msgstr "הוסף פריטים"
 
 #, c-format
 msgid "%d items failed"
+msgstr ""
+
+#, fuzzy
+msgid "Delete user sessions"
+msgstr "הרשאות מערכת קבצים"
+
+msgid ""
+"Delete all persistent user sessions according to your current session expiration settings."
 msgstr ""
 
 msgid "Delete database cache"
@@ -733,7 +761,7 @@ msgstr "עמוד זה הוא עמוד XHTML 1.0 תקני"
 msgid "Donate to the Gallery project"
 msgstr "חזרה לגלרייה"
 
-msgid "G2.1: Blackjack"
+msgid "G2.1-RC-1: Hit Me"
 msgstr ""
 
 #, c-format
@@ -750,6 +778,15 @@ msgstr ""
 msgid "Columns per album page"
 msgstr ""
 
+msgid "Number of items to show per page"
+msgstr ""
+
+msgid "Row height (pixels)"
+msgstr ""
+
+msgid "Column width (pixels)"
+msgstr ""
+
 msgid "Show image owners"
 msgstr ""
 
@@ -757,9 +794,6 @@ msgid "Show album owners"
 msgstr ""
 
 msgid "Show micro navigation thumbnails"
-msgstr ""
-
-msgid "Number of items to show per page"
 msgstr ""
 
 msgid "Blocks to show in the sidebar"
@@ -1616,6 +1650,76 @@ msgstr "פעולה זה תסיר גם כל הרשאה וכל מידע זמני �
 msgid "Uninstall"
 msgstr "הסרה"
 
+msgid "Performance Tuning"
+msgstr ""
+
+#, fuzzy
+msgid "Updated performance settings successfully"
+msgstr "תמונה מוקטנת נגזרה בהצלחה"
+
+#, fuzzy
+msgid "Deleted all saved pages"
+msgstr "מחק משתמש"
+
+#, fuzzy
+msgid "Acceleration"
+msgstr "פעולה"
+
+msgid ""
+"Improve your Gallery performance by storing entire web pages in the database.  This can "
+"considerably reduce the amount of webserver and database resources required to display a web "
+"page.  The tradeoff is that the web page you see may be a little bit out of date, however "
+"you can always get the most recent version of the page by forcing a refresh in your browser "
+"(typically by holding down the shift key and clicking the reload button)."
+msgstr ""
+
+msgid "Partial Acceleration"
+msgstr ""
+
+#, c-format
+msgid ""
+"Partial acceleration gives you roughly 10-25% performance increase, but some forms of "
+"dynamic data (like view counts) will not get updated right away.  All content that appears "
+"in blocks (like the random image block, any sidebar blocks, etc) will always be updated."
+msgstr ""
+
+msgid "Full Acceleration"
+msgstr ""
+
+#, c-format
+msgid ""
+"Full acceleration gives roughly a 90% performance increase, but no dynamic data (random "
+"image block, other sidebar blocks, number of items in your shopping cart, view counts, etc) "
+"will get updated until the saved page expires."
+msgstr ""
+
+msgid ""
+"You can additionally specify when saved pages expire.  Setting a longer expiration time will "
+"reduce the load on your server, but will increase the interval before users see changes.  "
+"Lower expiration times mean that users will see more current data, but they will place a "
+"higher load on your server."
+msgstr ""
+
+msgid "Here are some standard acceleration profiles:"
+msgstr ""
+
+#, fuzzy
+msgid "Medium acceleration"
+msgstr "ערוך כותרות"
+
+msgid "High acceleration"
+msgstr ""
+
+#, fuzzy
+msgid "Guest Users"
+msgstr "משתמשים רשומים"
+
+msgid "Expires after:"
+msgstr ""
+
+msgid "Clear Saved Pages"
+msgstr ""
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr ""
 
@@ -2458,14 +2562,24 @@ msgstr ""
 "שיוספו בעתיד."
 
 #, fuzzy
+msgid "Apply to all subalbums"
+msgstr "שמור עבור תת-פריטים"
+
+#, fuzzy
 msgid "Choose a theme for this album. (The way the album is arranged on the page)"
 msgstr "בחר תבנית עבור אלבום זה. (הדרך שבה האלבום מסודר בעמוד)"
+
+msgid "Use this theme in all subalbums"
+msgstr ""
 
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr " לכל פריט דרושה תמונה מוקטנת. קבע כאן את גודל ברירת המחדל בפיקסלים."
 
 msgid "You must enter a number (greater than zero)"
 msgstr "אתה מוכרח להכניס מספר גדול מ-0"
+
+msgid "Use this thumbnail size in all subalbums"
+msgstr ""
 
 msgid "Resized Images"
 msgstr "תמונות בגודל שונה"
@@ -2481,6 +2595,9 @@ msgstr "גודל יעד (בפיקסלים)"
 
 msgid "You must enter a valid size"
 msgstr "אתה מוכרח להכניס גודל תיקני"
+
+msgid "Use these target sizes in all subalbums"
+msgstr ""
 
 msgid "Recreate thumbnails and resizes"
 msgstr "צור מחדש תמונות מוקטנות ותמונות בגודל שונה"
@@ -2767,6 +2884,10 @@ msgstr "הגדרה"
 msgid "Use Global"
 msgstr "השתמש בגלובלי"
 
+#, c-format
+msgid "Use these settings in all subalbums that use %s theme"
+msgstr ""
+
 msgid ""
 "Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
 msgstr ""
@@ -2951,6 +3072,10 @@ msgstr "ההרשאות כבר קיימות עבור משתמש זה (בדוק ת
 
 msgid "Reorder Album"
 msgstr "סדר אלבום מחדש"
+
+#, fuzzy
+msgid "Order saved successfully"
+msgstr "שינויים נשמרו בהצלחה"
 
 msgid ""
 "This album has an automatic sort order specified, so you cannot change the order of items "

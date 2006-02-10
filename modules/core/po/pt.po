@@ -103,6 +103,15 @@ msgstr "instalar"
 msgid "deactivate"
 msgstr "desactivar"
 
+msgid "No acceleration"
+msgstr ""
+
+msgid "Partial acceleration"
+msgstr ""
+
+msgid "Full acceleration"
+msgstr ""
+
 msgid "Performing Maintenance Tasks"
 msgstr ""
 
@@ -126,6 +135,10 @@ msgstr ""
 #, fuzzy
 msgid "Use these settings"
 msgstr "Parâmetros da Conta"
+
+#, fuzzy
+msgid "Installing the core module"
+msgstr "Módulo 'Core' Galeria"
 
 msgid "key"
 msgstr "chave"
@@ -214,6 +227,10 @@ msgstr ""
 
 msgid "Detecting broken derivatives, saving "
 msgstr ""
+
+#, fuzzy, c-format
+msgid "Deleting old session files (iteration %d)"
+msgstr "permissões"
 
 #, fuzzy
 msgid "add items"
@@ -548,6 +565,9 @@ msgstr "Utilizadores"
 msgid "Groups"
 msgstr "Grupos"
 
+msgid "Performance"
+msgstr ""
+
 msgid "Toolkit Priority"
 msgstr ""
 
@@ -614,6 +634,14 @@ msgstr "adicionar item"
 
 #, c-format
 msgid "%d items failed"
+msgstr ""
+
+#, fuzzy
+msgid "Delete user sessions"
+msgstr "Permissões do Filesystem"
+
+msgid ""
+"Delete all persistent user sessions according to your current session expiration settings."
 msgstr ""
 
 msgid "Delete database cache"
@@ -798,7 +826,7 @@ msgstr "Esta página é válida de acordo com HTML 4.01"
 msgid "Donate to the Gallery project"
 msgstr "Voltar à vista de Item"
 
-msgid "G2.1: Blackjack"
+msgid "G2.1-RC-1: Hit Me"
 msgstr ""
 
 #, c-format
@@ -815,6 +843,15 @@ msgstr ""
 msgid "Columns per album page"
 msgstr ""
 
+msgid "Number of items to show per page"
+msgstr ""
+
+msgid "Row height (pixels)"
+msgstr ""
+
+msgid "Column width (pixels)"
+msgstr ""
+
 msgid "Show image owners"
 msgstr ""
 
@@ -822,9 +859,6 @@ msgid "Show album owners"
 msgstr ""
 
 msgid "Show micro navigation thumbnails"
-msgstr ""
-
-msgid "Number of items to show per page"
 msgstr ""
 
 msgid "Blocks to show in the sidebar"
@@ -1710,6 +1744,76 @@ msgstr ""
 msgid "Uninstall"
 msgstr "instalar"
 
+msgid "Performance Tuning"
+msgstr ""
+
+#, fuzzy
+msgid "Updated performance settings successfully"
+msgstr "O Album foi criado com sucesso"
+
+#, fuzzy
+msgid "Deleted all saved pages"
+msgstr "Apagar Utilizador"
+
+#, fuzzy
+msgid "Acceleration"
+msgstr "Acção"
+
+msgid ""
+"Improve your Gallery performance by storing entire web pages in the database.  This can "
+"considerably reduce the amount of webserver and database resources required to display a web "
+"page.  The tradeoff is that the web page you see may be a little bit out of date, however "
+"you can always get the most recent version of the page by forcing a refresh in your browser "
+"(typically by holding down the shift key and clicking the reload button)."
+msgstr ""
+
+msgid "Partial Acceleration"
+msgstr ""
+
+#, c-format
+msgid ""
+"Partial acceleration gives you roughly 10-25% performance increase, but some forms of "
+"dynamic data (like view counts) will not get updated right away.  All content that appears "
+"in blocks (like the random image block, any sidebar blocks, etc) will always be updated."
+msgstr ""
+
+msgid "Full Acceleration"
+msgstr ""
+
+#, c-format
+msgid ""
+"Full acceleration gives roughly a 90% performance increase, but no dynamic data (random "
+"image block, other sidebar blocks, number of items in your shopping cart, view counts, etc) "
+"will get updated until the saved page expires."
+msgstr ""
+
+msgid ""
+"You can additionally specify when saved pages expire.  Setting a longer expiration time will "
+"reduce the load on your server, but will increase the interval before users see changes.  "
+"Lower expiration times mean that users will see more current data, but they will place a "
+"higher load on your server."
+msgstr ""
+
+msgid "Here are some standard acceleration profiles:"
+msgstr ""
+
+#, fuzzy
+msgid "Medium acceleration"
+msgstr "Opções de Administração"
+
+msgid "High acceleration"
+msgstr ""
+
+#, fuzzy
+msgid "Guest Users"
+msgstr "editar utilizadores"
+
+msgid "Expires after:"
+msgstr ""
+
+msgid "Clear Saved Pages"
+msgstr ""
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr ""
 
@@ -2565,8 +2669,15 @@ msgid ""
 msgstr "Aplica a ordem de defieto do album. Aplica-se a todos os novos items."
 
 #, fuzzy
+msgid "Apply to all subalbums"
+msgstr "Aplicar aos sub-items"
+
+#, fuzzy
 msgid "Choose a theme for this album. (The way the album is arranged on the page)"
 msgstr "Escolher layout para este album. (A maneira como o album é organizado na página.)"
+
+msgid "Use this theme in all subalbums"
+msgstr ""
 
 #, fuzzy
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
@@ -2574,6 +2685,9 @@ msgstr "Todos os items requem um thumbnail. Introduzir aqui o valor de defeito e
 
 msgid "You must enter a number (greater than zero)"
 msgstr "Introduza um número (maior que zero)"
+
+msgid "Use this thumbnail size in all subalbums"
+msgstr ""
 
 msgid "Resized Images"
 msgstr "Imagens com o tamanho alterado"
@@ -2589,6 +2703,9 @@ msgstr "Tamanho final (pixeis)"
 
 msgid "You must enter a valid size"
 msgstr "Introduza um tamanho válido"
+
+msgid "Use these target sizes in all subalbums"
+msgstr ""
 
 msgid "Recreate thumbnails and resizes"
 msgstr "Recriar thumnails e tamanhos alterados"
@@ -2885,6 +3002,10 @@ msgstr "Parâmetros da Imagem"
 msgid "Use Global"
 msgstr ""
 
+#, c-format
+msgid "Use these settings in all subalbums that use %s theme"
+msgstr ""
+
 msgid ""
 "Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
 msgstr ""
@@ -3078,6 +3199,10 @@ msgstr "O utilizador já tem esta permissão (verificar sub-permissões)"
 
 msgid "Reorder Album"
 msgstr "Reordenar Album"
+
+#, fuzzy
+msgid "Order saved successfully"
+msgstr "As alterações foram gravadas com sucesso"
 
 msgid ""
 "This album has an automatic sort order specified, so you cannot change the order of items "

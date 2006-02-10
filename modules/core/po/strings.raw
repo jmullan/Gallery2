@@ -221,7 +221,7 @@ gettext("Edit Captions") /* also in: templates/ItemEditCaptions.tpl test/phpunit
 gettext("Make Highlight")
 gettext("Reorder Items")
 gettext("Site Admin") /* also in: test/phpunit/CoreModuleTest.class */
-gettext("Login") /* also in: templates/UserLogin.tpl templates/blocks/LoginBlock.tpl */
+gettext("Login") /* also in: classes/CoreCaptchaAdminOption.class templates/UserLogin.tpl templates/blocks/LoginBlock.tpl */
 gettext("Your Account") /* also in: test/phpunit/CoreModuleTest.class */
 gettext("Logout") /* also in: test/phpunit/CoreModuleTest.class */
 gettext("Modules") /* also in: templates/AdminRepository.tpl test/phpunit/CoreModuleTest.class */
@@ -332,14 +332,13 @@ gettext("Descending")
 gettext("Validation disabled until you set allowSessionAccess in config.php")
 gettext("This page is valid XHTML 1.0")
 gettext("Donate to the Gallery project")
-gettext("G2.1: Blackjack")
+gettext("G2.1-RC-1: Hit Me")
 gettext("Estimated time remaining: %d:%02d")
 gettext("Memory used: %s, total: %s")
 
 /* classes/GalleryTheme.class */
 gettext("Rows per album page")
 gettext("Columns per album page")
-gettext("Allow browser window width to set columns per album page")
 gettext("Number of items to show per page")
 gettext("Row height (pixels)")
 gettext("Column width (pixels)")
@@ -469,13 +468,6 @@ gettext("Once you change the cookie settings, <b>all registered users</b> of you
 gettext("Invalid cookie path")
 gettext("Domain")
 gettext("Invalid cookie domain")
-gettext("Captcha for User Login")
-gettext("Select policy for requiring captcha validation to login:")
-gettext("High: Always require validation")
-gettext("Medium: Require validation after some failed attempts for a username")
-gettext("Low: Require validation after some failed attempts in one session (this provides protection against casual password guessers, but not against automated attacks)")
-gettext("Configure the number of failed attempts for medium/low in %sCaptcha Settings%s")
-gettext("Activate Captcha module to enable this feature")
 gettext("Locking System")
 gettext("Gallery uses a system of locks to prevent simultaneous changes from interfering with each other.  There are two types of locking, each with its advantages and disadvantages.  <b>File</b> based locking is fast and efficient, but won't work on NFS filesystems and will be unreliable on Windows.  <b>Database</b> locking is slower but is more reliable.  If you are unsure which to choose, we recommend using file locking.  If you're getting many lock timeouts, you can try switching to database locking instead.  It's ok to switch back and forth.")
 gettext("Lock system")

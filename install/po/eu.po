@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+#
 # Piarres Beobide <pi@beobide.net>, 2005.
 #
 msgid ""
@@ -23,14 +24,14 @@ msgstr ""
 "Project-Id-Version: Gallery: Installer 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-10-30 22:52+0100\n"
-"PO-Revision-Date: 2005-11-17 23:53+0100\n"
+"PO-Revision-Date: 2006-02-08 11:52+0100\n"
 "Last-Translator: Piarres Beobide <pi@beobide.net>\n"
 "Language-Team: librezale.org <librezale@librezale.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 1.10.2\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"X-Generator: Pootle 0.6.3.20060126\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "Unknown"
 msgstr "Ezezaguna"
@@ -71,14 +72,14 @@ msgstr ""
 msgid "Create Config File"
 msgstr "Konfigurazio Fitxategia Sortu"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Unable to write to the <b>config.php</b> configuration file in your %s directory.  Please "
 "change its permissions.  If you're onUnix you can do <i>chmod 666 config.php</i> to fix this."
 msgstr ""
-"Ezin da zure <tt>%s</tt> direktorioko <b>config.php</b> fitxategia idatzi.   Aldatu "
-"fitxategi horren baimenak.  Unix bat erabiltzen ari bazara <i>chmod 666 config.php</i> egin "
-"dezakezu hau konpontzeko."
+"Ezin da zure %s direktorioko <b>config.php</b> fitxategia idatzi.   Aldatu fitxategi horren "
+"baimenak.  Unix bat erabiltzen ari bazara <i>chmod 666 config.php</i> egin dezakezu hau "
+"konpontzeko."
 
 #, c-format
 msgid "The config.php file does not exist in your %s directory"
@@ -88,39 +89,38 @@ msgid ""
 "The config.php file exists but is not writeable.  If your server is Windows, you may have to "
 "disable file sharing for config.php and set its permissions manually."
 msgstr ""
-"config.php fitxategia badago baina ezin da idatzi.  Zure zerbitzaria Windows bat baldin "
-"bada,  config.php fitxategiaren fitxategi partekaketa ezgaitu eta beharrezko baimenak eskuz "
-"ipini beharko dituzu."
+"config.php fitxategia badago baina ezin da idatzi. Zure zerbitzaria Windows bat baldin bada, "
+"config.php fitxategiaren fitxategi partekaketa ezgaitu eta beharrezko baimenak eskuz ipini "
+"beharko dituzu."
 
 msgid "Database Setup"
 msgstr "Datu-base Konfigurazioa"
 
 msgid "You must have the MySQL PHP module installed"
-msgstr "MySQL modulua instalaturik izan behar duzu."
+msgstr "MySQL modulua instalaturik izan behar duzu"
 
-#, fuzzy
 msgid "You must have the ibm_db2 PHP module installed"
-msgstr "MySQL modulua instalaturik izan behar duzu."
+msgstr "ibm_db2 PHP modulua instalaturik izan behar duzu"
 
 msgid "You must have the PostgreSQL PHP module installed"
-msgstr "PostgreSQL PHP modulua instalaturik izan behar duzu."
+msgstr "PostgreSQL PHP modulua instalaturik izan behar duzu"
 
 msgid "You must have the Oracle OCI8 PHP module installed"
-msgstr "Oracle OCI8 PHP modulua instalaturik izan behar duzu."
+msgstr "Oracle OCI8 PHP modulua instalaturik izan behar duzu"
 
 #, c-format
 msgid "You must specify a column prefix (we recommend %s)"
 msgstr "Zutabe aurrizki bat zehaztu behar duzu (%s gomendatzen dugu)"
 
 msgid "Use only letters, numbers and underscore in the column prefix"
-msgstr "Hizkiak, zenbakiak eta azpimarratu bakarrik erabili zutabe aurrizkian."
+msgstr "Hizkiak, zenbakiak eta azpimarratu bakarrik erabili zutabe aurrizkian"
 
 #, c-format
 msgid "You must specify a table prefix (we recommend %s)"
 msgstr "Taula aurrizki bat zehaztu behar duzu (%s gomendatzen dugu)"
 
 msgid "Use only letters, numbers and underscore in the table prefix"
-msgstr "Hizkiak, zenbakiak eta azpimarratu bakarrik erabili taula aurrizkian."
+msgstr "Hizkiak, zenbakiak eta azpimarratu bakarrik erabili taula aurrizkian"
 
 #, c-format
 msgid "Unable to create a database connection of type %s"
@@ -142,8 +142,10 @@ msgid ""
 "install, which will erase all data in the database and in the storage directory."
 msgstr ""
 "Gallery taulak badaude dagoeneko datu-basean!  Baina G2 hondaturiko egoera bat dela dirudi "
-"ez bait dago 'versions.dat' fitxategirik zure G2 biltegiratze direktorioan. Gallery 2-k "
-"funtzionatu beharko lukeela uztez gero beharrezko "
+"ez bait dago 'versions.dat' fitxategirik zure G2 biltegiratze direktorioan. edo Gallery 2-k "
+"funtzionatu beharko lukeela uztez gero beharrezko versions.dat fitxategia formatu zuzenaz "
+"sortu edo instalazio garbi bat aukeratu, honek datubase eta direktorioko datu guztiak "
+"ezabatuko ditu."
 
 msgid ""
 "The G2 storage directory has a versions.dat file of an old install. But the Gallery database "
@@ -167,7 +169,6 @@ msgstr ""
 "garbi bat datu-base eta biltegiratze direktorioko datu guztiak ezabatu eta hurrengo "
 "urratsera jarraitu."
 
-#, fuzzy
 msgid ""
 "Gallery tables already exist in the database and the Gallery storagedirectory seems to be "
 "intact. Either choose to reuse the existing database tables and storage directory data or "
@@ -175,7 +176,8 @@ msgid ""
 msgstr ""
 "Galeria datu-base taulak aurkitu dira eta galeria biltegiratze direkotrioa ondo dagoela "
 "dirudi. Edo dauden datu-base taula eta biltegiratze direktorioa berrerabiltzea edo "
-"instalazio garbi bat eginez datu guztiak ezabatzea hautatu dezakezu."
+"instalazio garbi bat eginez datubase eta direktorioko datu guztiak ezabatzea hautatu "
+"dezakezu."
 
 msgid ""
 "Could not execute the required API to erase the storage directory. Please erase the Gallery "
@@ -204,9 +206,8 @@ msgstr "MySQL (bertsio denak)"
 msgid "MySQL with Transactions (v3.23.34a and newer)"
 msgstr "MySQL transakzioduna (3.23.341 bertsio eta berriagoak)"
 
-#, fuzzy
 msgid "PostgreSQL v7.x and newer"
-msgstr "PostgreSQL v7.x"
+msgstr "PostgreSQL v7.x eta berriagoa"
 
 msgid "PostgreSQL v6.x (not well tested)"
 msgstr "PostgreSQL v6.x (ez behar aina probatua)"
@@ -214,16 +215,15 @@ msgstr "PostgreSQL v6.x (ez behar aina probatua)"
 msgid "Oracle (9i and newer)"
 msgstr "Oracle (9i eta berriagoak)"
 
-#, fuzzy
 msgid "(EXPERIMENTAL!) IBM DB2 (v8.2.2 and newer)"
-msgstr "(ESPERIMENTALA!) IBM DB2  Unix/Windows -rentzat, 8.2.2 eta berriagoak"
+msgstr "(ESPERIMENTALA!) IBM DB2 (8.2.2 eta berriagoak)"
 
 msgid "Unknown DB type or no known tables information."
 msgstr "DB mota ezezaguna edo ez dira taula argibideak ezagutzen."
 
 #, c-format
 msgid "Could not find an unused table prefix similar to \"%s\"."
-msgstr "Ezin da  \"%s\"-ren antzeko taula aurrizki erabili gabekorik aurkitu."
+msgstr "Ezin da \"%s\"-ren antzeko taula aurrizki erabili gabekorik aurkitu."
 
 #, c-format
 msgid "Could not open schema file: \"%s\"."
@@ -253,12 +253,15 @@ msgstr ""
 "Markatu errorea mezua eta README errepikatu arte eta gora.Begiratu itzulitako errore mezua "
 "eta README.html baimen eza eta datu-base garbiketari buruz argibide gehiagorako."
 
-#, fuzzy
 msgid "Finish Installation"
-msgstr "Gune anitzeko instalazioa"
+msgstr "Instalazioa amaitu"
 
 msgid "Install Gallery Core"
 msgstr "Instalatu Galeria Muina"
+
+#, fuzzy
+msgid "Installing the core module"
+msgstr "Modulu gehiago instalatu"
 
 msgid "Unable to initialize our Gallery data"
 msgstr "Ezin dira Gallery datuak abiarazi"
@@ -284,16 +287,16 @@ msgstr "Muin moduluaz erdizka instalaturik dago."
 msgid "Install More Modules"
 msgstr "Modulu gehiago instalatu"
 
-#, fuzzy
 msgid "Unable to initialize our Gallery session"
-msgstr "Ezin dira Gallery datuak abiarazi"
-
-msgid "Unable to get the module list"
-msgstr "Ezin da modulu zerrenda eskuratu"
+msgstr "Ezin izan da Gallery saioa abiarazi"
 
 #, c-format
 msgid "Unable to load the %s module"
 msgstr "Ezin da %s modulua kargatu"
+
+#, fuzzy
+msgid "Installing modules"
+msgstr "Modulu gehiago instalatu"
 
 #, c-format
 msgid "Unable to install the %s module"
@@ -302,6 +305,9 @@ msgstr "Ezin da %s modulua kargatu instalatu"
 #, c-format
 msgid "Unable to activate the %s module"
 msgstr "Ezin da %s modulua kargatu aktibatu"
+
+msgid "Unable to get the module list"
+msgstr "Ezin da modulu zerrenda eskuratu"
 
 msgid "Other"
 msgstr "Bestelakoak"
@@ -318,6 +324,9 @@ msgstr "Biltegi Konfigurazioa"
 msgid "System Checks"
 msgstr "Sistema Egiaztapenak"
 
+msgid "Performing system checks"
+msgstr ""
+
 msgid "PHP version >= 4.1.0 or >= 5.0.4"
 msgstr "PHP bertsioa >= 4.1.0 edo >= 5.0.4"
 
@@ -327,10 +336,9 @@ msgid ""
 "%s installed. Contact your webserver administrator to request an upgrade, available at the %"
 "sPHP website%s."
 msgstr ""
-"Errorea PHP bertsioa or or or PHP bertsioa h instalatuta Kontaktua  -  bertsio-berritu "
-"erabilgarria h.Errorea: Galleery 2-rentzat beharrezkoa da PHP 4.1.0 edo berriago edo 5.0.4 "
-"bertsio edo berriagoa. Instalaturik duzun PHP bertsioa %s da. Harremanetan ipini web "
-"zerbitzari kudeatzailearekin %sPHP website%s-n aurki dezaken eguneraketa eskatzeko."
+"Errorea: Gallery 2-rentzat beharrezkoa da PHP 4.1.0 edo berriago edo 5.0.4 bertsio edo "
+"berriagoa. Instalaturik duzun PHP bertsioa %s da. Harremanetan ipini web zerbitzari "
+"kudeatzailearekin %sPHP website%s-n aurki dezaken eguneraketa eskatzeko."
 
 msgid "PHP Version"
 msgstr "PHP Bertsioa"
@@ -362,15 +370,15 @@ msgid "Safe Mode"
 msgstr "Modu Segurua"
 
 msgid "Regular expressions"
-msgstr ""
+msgstr "Espresio erregularrak"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error: Your PHP is configured without support for %sPerl Compatible Regular Expressions%s. "
 "You must enable these functions before Gallery will run."
 msgstr ""
-"Errorea: Zure PGP bertsio modu segurua gaiturik dulea konfiguraturik dago. Gallery abiarazi "
-"aurretik modu segurua ezgaitu behar duzu."
+"Errorea: Zure PHP %sPerl Compatible Regular Expressions%s onarpen gabe konfiguraturik dago."
+"Gallery abiarazi aurretik funtzio hauek gaitu behar dituzu."
 
 msgid "exec() allowed"
 msgstr "exec() onarturik"
@@ -384,7 +392,7 @@ msgstr ""
 "Abisua: Php exec() funtzioa php.ini fitxategiko <b>disabled_functions</b> parametroaz "
 "ezgaiturik dago. Ezingo da kanpo bitarrik behar duen modulurik erabili (adib, ImageMagick, "
 "NetPBM edo Ffmpeg). Hau zerbitzarian bakarrik ezarri daiteke, beraz php.ini orokorra aldatu "
-"beharko zenuke"
+"beharko zenuke."
 
 msgid "set_time_limit() allowed"
 msgstr "set_time_limit() onarturik"
@@ -398,7 +406,7 @@ msgid ""
 msgstr ""
 "Abisua: Php set_time_limit() funtzioa php.ini fitxategiko <b>disabled_functions</b> "
 "parametroaz ezgaiturik dago. Galriak ezarpen hauekin funtziona dezake, baina oso erabilera "
-"hurrian.  %d segundu baino gehiago tardatzen duen edozein ekintzek huts egingo du (eta "
+"hurrian. %d segundu baino gehiago tardatzen duen edozein ekintzek huts egingo du (eta "
 "batzuetan orri zuri bat itzuliko du) datu galera aukerak asko handituaz."
 
 msgid "Memory limit"
@@ -413,7 +421,7 @@ msgid ""
 "php.ini). You should raise this limit to at least <b>%sMB</b> for proper Gallery operation."
 msgstr ""
 "Abisua: Zerbitzariko php memoria muga %sb-ra ezarririk du php.ini fitxategiko "
-"<b>memory_limit</b> parametroaz.  Muga hori beintzat <b>%sMB</b>-ra igo beharko zenuke "
+"<b>memory_limit</b> parametroaz. Muga hori beintzat <b>%sMB</b>-ra igo beharko zenuke "
 "Galeriak behar bezala funtziona dezan."
 
 msgid "File uploads allowed"
@@ -455,7 +463,7 @@ msgstr ""
 "fitxategi handiagoak igotzea onartzeko."
 
 msgid "Translation support"
-msgstr ""
+msgstr "Itzulpen onarpena"
 
 #, c-format
 msgid ""
@@ -463,18 +471,25 @@ msgid ""
 "please instruct your system administrator to reconfigure PHP with the %sgettext%s option "
 "enabled."
 msgstr ""
+"Zure web zerbitzariak ez du lokalozaziorik onartzen. Hizkuntz gehigarrien onarpena gaiutu "
+"ahal izateko eskatu sistema kudeatzaileari %sgettext%s aukera gaiturik duela PHP "
+"birkonfiguratzeko."
 
 #, c-format
 msgid ""
 "Your PHP is missing the function %sbind_textdomain_codeset%s. This means Gallery may display "
 "extended characters for some languages incorrectly."
 msgstr ""
+"Zure PHP-an %sbind_textdomain_codeset%s funtzioa falta da. Honek zenbait hizkuntzetako "
+"karaktere gehigarriak oker bistaratzea egin dezake."
 
 #, c-format
 msgid ""
 "Your PHP is missing the function %sdngettext%s. This means Gallery will be unable to "
 "translate plural forms."
 msgstr ""
+"Zure PHP-an %sdngettext%s funtzioa falta da. Honek gallery-k ezin itzulpen pluralak "
+"kudeatzea egiten du."
 
 msgid "Zend compatibility mode"
 msgstr "Zend bateragarritasun modua"
@@ -491,23 +506,20 @@ msgstr ""
 "zure PHP-a ondo dago.  Errore bat jaso edo erantzunik jaso ezean jarraitu aurretik "
 "ze1_compatibility_mode ezgaitu beharko zenuke."
 
-#, fuzzy
 msgid "putenv() allowed"
-msgstr "exec() onarturik"
+msgstr "putenv() onarturik"
 
-#, fuzzy
 msgid ""
 "Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> "
 "parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
 "Gallery will beunable to run in other languages than the system language and English."
 msgstr ""
-"Abisua: Php set_time_limit() funtzioa php.ini fitxategiko <b>disabled_functions</b> "
-"parametroaz ezgaiturik dago. Galriak ezarpen hauekin funtziona dezake, baina oso erabilera "
-"hurrian.  %d segundu baino gehiago tardatzen duen edozein ekintzek huts egingo du (eta "
-"batzuetan orri zuri bat itzuliko du) datu galera aukerak asko handituaz."
+"Abisua: Php putenv() funtzioa php.ini fitxategiko <b>disabled_functions</b> parametroaz "
+"ezgaiturik dago. Galeriak ezarpen hauekin funtziona dezake, baina kasu bereizi batzuetan "
+"honek Gallery ingelesa ez den beste izkuntzetan ezin erabili izana eragin dezake."
 
 msgid "Output buffering disabled"
-msgstr ""
+msgstr "Irteera buferra ezgaiturik"
 
 #, c-format
 msgid ""
@@ -517,12 +529,17 @@ msgid ""
 "Also, some features like the progress bars might not work correctly if output buffering is "
 "enabled unless ini_set() is allowed."
 msgstr ""
+"Abisua: Irteera buferra php.ini-ko <b>%s</b> paramtreoaren bidez gaiturik adago zure php-an. "
+"Galleryk ezarpen hauekin funtziona dezake - fitxategiak deskargatzea azkarragoa da - baina "
+"ezingo ditu fitxategi handiak zerbitzatu (adib. bideo luzeak) eta memoriarekin arazoak izan "
+"ditzake. Baita aurrerapen barra bezalako beste zenbait ezaugarrik ez dute ebhar bezala "
+"funtzionatuko irteera buferra gaituri badago nahiz ini_set() gaiturik egon."
 
 msgid "Gallery file integrity"
 msgstr "Gallery fitxategi integritatea"
 
 msgid "Test skipped due to other errors."
-msgstr "Proba beste errore batzugatik alde batertara utzia"
+msgstr "Proba beste errore batzugatik alde batertara utzia."
 
 msgid "Manifest missing or inaccessible."
 msgstr "MAnifestoa falta da edo ezin da eskuratu."
@@ -530,9 +547,8 @@ msgstr "MAnifestoa falta da edo ezin da eskuratu."
 msgid "Welcome"
 msgstr "Ongi etorri"
 
-#, fuzzy
 msgid "Please correct the following errors"
-msgstr "Datu-basearen inguruko errore hauek jaso dira:"
+msgstr "MEsedez konpondu hurrengo errore hauek"
 
 msgid ""
 "Every Gallery will have at least one administrator user who has full access to view/modify "
@@ -541,7 +557,7 @@ msgid ""
 msgstr ""
 "Galeria bakoitzak beintzat elementu guztiak ikusi/eraldatzeko baimena duen kudeatzaile bai "
 "izan behar du. HAutatu zure kudeaketa kontuarentzat erabiltzaile-izen eta pasahitz bat. "
-"Erabiltzaile gehiago beranduago gehitu ditzakezu"
+"Erabiltzaile gehiago beranduago gehitu ditzakezu."
 
 msgid "Admin username"
 msgstr "Kudeatzaile izena"
@@ -583,7 +599,7 @@ msgid ""
 msgstr ""
 "Bazeuden datu-base taulak erabiltzen ari zarenez hau ez da instalazio garbi bat. Honek "
 "konfigruazio pasahitza aldatuko du baina ez sistema kudeatzailearena. Gune kudeatzaile "
-"pasahitza aldatu nahiz gero hautatu Gallery-ren ahaztutako pasahitz atalera"
+"pasahitza aldatu nahiz gero hautatu Gallery-ren ahaztutako pasahitz atalera."
 
 msgid "Create"
 msgstr "Sortu"
@@ -663,9 +679,9 @@ msgid ""
 "and make changes to it if you want."
 msgstr ""
 "Orain zuk emandako informazio guztia zure <b>%s</b> direktorioko <b>config.php</b> fixtategi "
-"batetan gorde behar da. Hau oso galeriak funtzionatu ahal izateko behar duen informazioa "
-"duen fitxategi oso garrantsitsua bat da. Sortu ondoren fitxategi hau irekurri eta nahi "
-"dituzun aldaketak egin ditzakezu."
+"batetan gorde behar da. Hau galeriak funtzionatu ahal izateko behar duen informazioa duen "
+"fitxategi oso garrantsitsua bat da. Sortu ondoren fitxategi hau irakurri eta nahi dituzun "
+"aldaketak egin ditzakezu."
 
 #, c-format
 msgid ""
@@ -676,9 +692,9 @@ msgid ""
 "If there's a problem, we'll tell you what to fix."
 msgstr ""
 "Jarraitu aurretik <b>%s</b> direktorioan <i>config.php</i> izeneko fixtategi bat sortu behar "
-"duzu.  Web zerbitzaria fitxategi horretan idazteko gai dela ziurtatu behar duzu.  Unix "
-"makina batetan bazaude  <i>chmod 666 config.php</i> egiten saiatu.  Windowspean ez zenuke "
-"ezer bereizirik egin beharko.  Bein fitxategi hori sortu eta behar diren baimenak ezarri "
+"duzu. Web zerbitzaria fitxategi horretan idazteko gai dela ziurtatu behar duzu.  Unix makina "
+"batetan bazaude  <i>chmod 666 config.php</i> egiten saiatu.  Windowspean ez zenuke ezer "
+"bereizirik egin beharko.  Bein fitxategi hori sortu eta behar diren baimenak ezarri "
 "dituzula, aurrera jarraitu dezakezu.  Arazorik aurkitu ezkero nola konpondu esango dizugu."
 
 msgid "Create config file"
@@ -715,7 +731,7 @@ msgid ""
 "tables. Either choose a different database or a different table prefix for each multisite!"
 msgstr ""
 "Hau gine-anitzeko instalazio bat da. Gogoratu gune bakoitzak ere datu-base taulak behar "
-"dituela. Edo datu-base ezberdina edo taula aurrizki ezberdina aukeratu gune bakoitzarentzat."
+"dituela. Edo datu-base ezberdina edo taula aurrizki ezberdina aukeratu gune bakoitzarentzat!"
 
 msgid "Database type:"
 msgstr "Datu-basea mota:"
@@ -771,6 +787,12 @@ msgstr ""
 "Orain zure galeriara joan nahiko duzu.  Nabigatzailean %s direktorioko %smain.php%s URL-a "
 "ipini ezazu."
 
+msgid "Installer Help"
+msgstr "Instalazio Laguntza"
+
+msgid "Start Over"
+msgstr "Hasi"
+
 msgid "Installed Gallery Core successfully"
 msgstr "Gallery Muina egoki instalatu da"
 
@@ -810,7 +832,7 @@ msgstr ""
 #, c-format
 msgid "Please visit the %sG2 FAQ%s and read the %sKnown issues section of the Readme%s."
 msgstr ""
-"Mesedez begiratu %sG2 FAQ%s (ingelesez) eta %s Readme fitxategiko Known issues section%s"
+"Mesedez begiratu %sG2 FAQ%s (ingelesez) eta %s Readme fitxategiko Known issues section%s."
 
 #, c-format
 msgid ""
@@ -825,7 +847,7 @@ msgstr ""
 "dezan."
 
 msgid "Stack Trace:"
-msgstr "Aztarna Pilaketa :"
+msgstr "Aztarna Pilaketa:"
 
 msgid "Installed Gallery Core successfully."
 msgstr "Gallery Muina egoki instalaturik."
@@ -861,8 +883,8 @@ msgid ""
 "Some modules may fail to install automatically.  That's ok.  It typically means that they "
 "require some configuration, which you can do on the Site Adminstration page"
 msgstr ""
-"Zenbait moduluk huts egin dezakete instalatzerakoan. Hau ondo dago. Normalean modulu horrek "
-"Gune Kudeaketa horrian egin dezakezun konfigurazio batenbat beharko du."
+"Zenbait moduluk huts egin dezakete instalatzerakoan. Hau ondo dago. Normalean modulu horiek "
+"Gune Kudeaketa horrian egin dezakezun konfigurazio batenbat beharko dute"
 
 msgid "Name"
 msgstr "Izena"
@@ -888,7 +910,7 @@ msgstr "Hautatutako Moduluak Aktibatu"
 
 #, c-format
 msgid "The <i>%s</i> module was installed, but needs configuration to be activated"
-msgstr "<i>%s</i>  modulua instalaturik dago, baina konfigurazioa behar du gaitu aurretik"
+msgstr "<i>%s</i> modulua instalaturik dago, baina konfigurazioa behar du gaitu aurretik"
 
 msgid ""
 "After finishing this installation, login as Admin and browse to Site Admin. Go to the "
@@ -909,19 +931,10 @@ msgid "Continue to Step %d&raquo;"
 msgstr "%d Urratsera jarraitu&raquo;"
 
 msgid "Debug Output"
-msgstr ""
+msgstr "Arazpen irteera"
 
 msgid "Welcome to the Gallery Installer"
 msgstr "Ongi etorri Gallery instalatzailera"
-
-msgid "Installer Help"
-msgstr "Instalazio Laguntza"
-
-msgid "Start Over"
-msgstr "Hasi"
-
-msgid "Install Steps"
-msgstr "Instalatu Urratsak"
 
 #, c-format
 msgid "Install %d%% complete"
@@ -965,11 +978,11 @@ msgid ""
 "These files are no longer part of Gallery. They probably won't cause any problems but it is "
 "a good idea to remove them to keep your install clean."
 msgstr ""
-"Fitxaegi hauek ez dira hemendik aurrera Gallery-ren zati.  Ziurrenik ez dute arazorik "
-"sortuko baina ideia ona izaten da ezabatzea instalazio garbi bat mantentzeko."
+"Fitxaegi hauek ez dira hemendik aurrera Gallery-ren zati. Ziurrenik ez dute arazorik sortuko "
+"baina ideia ona izaten da ezabatzea instalazio garbi bat mantentzeko."
 
 msgid "Errors occurred. Please see messages below."
-msgstr ""
+msgstr "Erroreak gertatu dira. Mesedez begiratu beheragoko mezuak."
 
 msgid "Please select the installation type"
 msgstr "Mesedez instalazio mota bat hautatu ezazu"
@@ -1049,7 +1062,7 @@ msgid ""
 "writeable files:"
 msgstr ""
 "Direktorioa zure web-zerbitzari/php erabiltzailearentzat idazgarria izan behar edo honako "
-"fitxategi idazgarri hauek izan behar ditu."
+"fitxategi idazgarri hauek izan behar ditu:"
 
 msgid "Select Directory"
 msgstr "Hautatu direktorioa"
@@ -1059,6 +1072,9 @@ msgstr "Gune-anitzeko direktorio ezarpena egoki egin da."
 
 msgid "Standard installation selected."
 msgstr "Instalazio Estandarra hautaturik."
+
+msgid "Install Steps"
+msgstr "Instalatu Urratsak"
 
 #, c-format
 msgid ""
@@ -1084,7 +1100,7 @@ msgid ""
 "delete files.  So before you finish, you should change the permissions on this directory "
 "such that other users can't write to it.  We suggest that you do this:"
 msgstr ""
-"Zure galeria segurua dela ziurtatu nahi dugu.  Instalatzaile honek beste edozeinek "
+"Zure galeria segurua dela ziurtatu nahi dugu. Instalatzaile honek beste edozeinek "
 "fitxategiak idatzi edo ezabatu ahal dezan baimenak editatu dizkio config.php fitxategia duen "
 "direktorioari.  Beraz amaitzean direktorio horren baimenak aldatu beharko zenituzke beste "
 "erabiltzaileek bertan idaztea ekiditzeko. Hau egitea gomendatzen dizugu:"
@@ -1140,7 +1156,7 @@ msgid ""
 msgstr ""
 "Nabigatzaile moderno bat erabiltzen ari bazara, hemen sartzen duzun edozein bide betetzen "
 "saiatu gara.  Baina zure g2data direktorioaren bidea ezagutzeko arazorik izan ezkero, testu "
-"kutxan bideak sartuaz proba ezazu eta zein eratan betetzea eskeintzen zaizun begiratu"
+"kutxan bideak sartuaz proba ezazu eta zein eratan betetzea eskeintzen zaizun begiratu."
 
 msgid "The directory you entered is read only"
 msgstr "Ezarritako direktorioa irakurketarako bakarrik da"

@@ -105,6 +105,15 @@ msgstr "deïnstalleren"
 msgid "deactivate"
 msgstr "deactiveren"
 
+msgid "No acceleration"
+msgstr ""
+
+msgid "Partial acceleration"
+msgstr ""
+
+msgid "Full acceleration"
+msgstr ""
+
 msgid "Performing Maintenance Tasks"
 msgstr "Onderhoudstaken Uitvoeren"
 
@@ -126,6 +135,10 @@ msgstr "Instellingen overnemen van bovenliggend album"
 
 msgid "Use these settings"
 msgstr "Gebruik deze instellingen"
+
+#, fuzzy
+msgid "Installing the core module"
+msgstr "Gallery Core Module"
 
 msgid "key"
 msgstr "toets"
@@ -207,6 +220,10 @@ msgstr "Detecteren foute afgeleiden, "
 
 msgid "Detecting broken derivatives, saving "
 msgstr "Detecteren foute afgeleiden, opslaan "
+
+#, fuzzy, c-format
+msgid "Deleting old session files (iteration %d)"
+msgstr "Verwijderen oude rechten tabellen"
 
 msgid "add items"
 msgstr "items toevoegen"
@@ -495,6 +512,9 @@ msgstr "Gebruikers"
 msgid "Groups"
 msgstr "Groepen"
 
+msgid "Performance"
+msgstr ""
+
 msgid "Toolkit Priority"
 msgstr "Toolkit Prioriteit"
 
@@ -559,6 +579,14 @@ msgstr "%d items gebouwd"
 #, c-format
 msgid "%d items failed"
 msgstr "%d items mislukt"
+
+#, fuzzy
+msgid "Delete user sessions"
+msgstr "Bestandssysteem rechten"
+
+msgid ""
+"Delete all persistent user sessions according to your current session expiration settings."
+msgstr ""
 
 msgid "Delete database cache"
 msgstr "Verwijder database cache"
@@ -741,7 +769,7 @@ msgstr "Deze pagina is geldig XHTML 1.0"
 msgid "Donate to the Gallery project"
 msgstr "Terug naar de gallery"
 
-msgid "G2.1: Blackjack"
+msgid "G2.1-RC-1: Hit Me"
 msgstr ""
 
 #, c-format
@@ -758,6 +786,15 @@ msgstr "Rijen per album pagina"
 msgid "Columns per album page"
 msgstr "Kolommen per album pagina"
 
+msgid "Number of items to show per page"
+msgstr "Aantal weer te geven items per pagina"
+
+msgid "Row height (pixels)"
+msgstr ""
+
+msgid "Column width (pixels)"
+msgstr ""
+
 msgid "Show image owners"
 msgstr "Afbeelding eigenaren weergeven"
 
@@ -766,9 +803,6 @@ msgstr "Album eigenaren weergeven"
 
 msgid "Show micro navigation thumbnails"
 msgstr "Micro navigatie miniaturen weergeven"
-
-msgid "Number of items to show per page"
-msgstr "Aantal weer te geven items per pagina"
 
 msgid "Blocks to show in the sidebar"
 msgstr "Blokken om weer te geven in het zijpaneel"
@@ -1671,6 +1705,76 @@ msgstr ""
 msgid "Uninstall"
 msgstr "Deïnstalleren"
 
+msgid "Performance Tuning"
+msgstr ""
+
+#, fuzzy
+msgid "Updated performance settings successfully"
+msgstr "Test email succesvol verzonden."
+
+#, fuzzy
+msgid "Deleted all saved pages"
+msgstr "Verwijder een Gebruiker"
+
+#, fuzzy
+msgid "Acceleration"
+msgstr "Actie"
+
+msgid ""
+"Improve your Gallery performance by storing entire web pages in the database.  This can "
+"considerably reduce the amount of webserver and database resources required to display a web "
+"page.  The tradeoff is that the web page you see may be a little bit out of date, however "
+"you can always get the most recent version of the page by forcing a refresh in your browser "
+"(typically by holding down the shift key and clicking the reload button)."
+msgstr ""
+
+msgid "Partial Acceleration"
+msgstr ""
+
+#, c-format
+msgid ""
+"Partial acceleration gives you roughly 10-25% performance increase, but some forms of "
+"dynamic data (like view counts) will not get updated right away.  All content that appears "
+"in blocks (like the random image block, any sidebar blocks, etc) will always be updated."
+msgstr ""
+
+msgid "Full Acceleration"
+msgstr ""
+
+#, c-format
+msgid ""
+"Full acceleration gives roughly a 90% performance increase, but no dynamic data (random "
+"image block, other sidebar blocks, number of items in your shopping cart, view counts, etc) "
+"will get updated until the saved page expires."
+msgstr ""
+
+msgid ""
+"You can additionally specify when saved pages expire.  Setting a longer expiration time will "
+"reduce the load on your server, but will increase the interval before users see changes.  "
+"Lower expiration times mean that users will see more current data, but they will place a "
+"higher load on your server."
+msgstr ""
+
+msgid "Here are some standard acceleration profiles:"
+msgstr ""
+
+#, fuzzy
+msgid "Medium acceleration"
+msgstr "bewerk bijschriften"
+
+msgid "High acceleration"
+msgstr ""
+
+#, fuzzy
+msgid "Guest Users"
+msgstr "Geregistreerde Gebruikers"
+
+msgid "Expires after:"
+msgstr ""
+
+msgid "Clear Saved Pages"
+msgstr ""
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr "Zorg dat uw internet verbinding juist is ingesteld of probeer het later opnieuw."
 
@@ -2551,14 +2655,24 @@ msgstr ""
 "Hiermee kunt u de standaard volgorde voor het album instellen. Dit is van toepassing op alle "
 "huidige items en alle items die later worden toegevoegd."
 
+#, fuzzy
+msgid "Apply to all subalbums"
+msgstr "Sub-items ook aanpassen"
+
 msgid "Choose a theme for this album. (The way the album is arranged on the page)"
 msgstr "Kies een thema voor dit album. (De manier waarop dit album is opgesteld op de pagina)"
+
+msgid "Use this theme in all subalbums"
+msgstr ""
 
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr " Iedere item moet een miniatuur hebben. Geef hier de standaard pixelgrootte in."
 
 msgid "You must enter a number (greater than zero)"
 msgstr "U moet een nummer ingeven (groter dan nul)"
+
+msgid "Use this thumbnail size in all subalbums"
+msgstr ""
 
 msgid "Resized Images"
 msgstr "Geschaalde afbeeldingen"
@@ -2574,6 +2688,9 @@ msgstr "Doel grootte (in pixels)"
 
 msgid "You must enter a valid size"
 msgstr "U moet een gebruikersnaam opgeven"
+
+msgid "Use these target sizes in all subalbums"
+msgstr ""
 
 msgid "Recreate thumbnails and resizes"
 msgstr "Miniaturen en schalen opnieuw aanmaken"
@@ -2875,6 +2992,10 @@ msgstr "Instelling"
 msgid "Use Global"
 msgstr "Gebruik algemene instelling"
 
+#, c-format
+msgid "Use these settings in all subalbums that use %s theme"
+msgstr ""
+
 msgid ""
 "Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
 msgstr ""
@@ -3059,6 +3180,10 @@ msgstr "De gebruiker heeft reeds deze rechten (controleer de sub-rechten)."
 
 msgid "Reorder Album"
 msgstr "Album volgorde"
+
+#, fuzzy
+msgid "Order saved successfully"
+msgstr "Verandering succesvol opgeslagen"
 
 msgid ""
 "This album has an automatic sort order specified, so you cannot change the order of items "

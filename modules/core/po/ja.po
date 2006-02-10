@@ -98,6 +98,15 @@ msgstr "アンインストール"
 msgid "deactivate"
 msgstr "無効化"
 
+msgid "No acceleration"
+msgstr ""
+
+msgid "Partial acceleration"
+msgstr ""
+
+msgid "Full acceleration"
+msgstr ""
+
 msgid "Performing Maintenance Tasks"
 msgstr "メンテナンスタスクを実行"
 
@@ -119,6 +128,10 @@ msgstr "親アルバムから設定を継承する"
 
 msgid "Use these settings"
 msgstr "これらの設定を使う"
+
+#, fuzzy
+msgid "Installing the core module"
+msgstr "Gallery Core モジュール"
 
 msgid "key"
 msgstr "キー"
@@ -201,6 +214,10 @@ msgstr "壊れた派生物を検出しています、"
 
 msgid "Detecting broken derivatives, saving "
 msgstr "壊れた派生物を検出しています 保存中"
+
+#, fuzzy, c-format
+msgid "Deleting old session files (iteration %d)"
+msgstr "古いパーミッションテーブルを削除しています"
 
 msgid "add items"
 msgstr "アイテム追加"
@@ -489,6 +506,9 @@ msgstr "ユーザー"
 msgid "Groups"
 msgstr "グループ"
 
+msgid "Performance"
+msgstr ""
+
 msgid "Toolkit Priority"
 msgstr "ツールキットの優先順位"
 
@@ -555,6 +575,14 @@ msgstr "%d アイテムが構築されました"
 #, c-format
 msgid "%d items failed"
 msgstr "%d アイテムが失敗しました"
+
+#, fuzzy
+msgid "Delete user sessions"
+msgstr "ファイルシステム パーミッション"
+
+msgid ""
+"Delete all persistent user sessions according to your current session expiration settings."
+msgstr ""
 
 msgid "Delete database cache"
 msgstr "データベースキャッシュ削除"
@@ -740,7 +768,7 @@ msgstr "このページは XHTML 1.0 に準拠しています。"
 msgid "Donate to the Gallery project"
 msgstr "Galleryプロジェクトに寄付をする"
 
-msgid "G2.1: Blackjack"
+msgid "G2.1-RC-1: Hit Me"
 msgstr ""
 
 #, c-format
@@ -757,6 +785,15 @@ msgstr "アルバムページの列数"
 msgid "Columns per album page"
 msgstr "アルバムページの行数"
 
+msgid "Number of items to show per page"
+msgstr "1ページに表示するアイテム数"
+
+msgid "Row height (pixels)"
+msgstr ""
+
+msgid "Column width (pixels)"
+msgstr ""
+
 msgid "Show image owners"
 msgstr "画像の所有者を表示する"
 
@@ -765,9 +802,6 @@ msgstr "アルバム所有者を表示する"
 
 msgid "Show micro navigation thumbnails"
 msgstr "小さいナビゲーションサムネイルを表示する"
-
-msgid "Number of items to show per page"
-msgstr "1ページに表示するアイテム数"
 
 msgid "Blocks to show in the sidebar"
 msgstr "サイドバーに表示するブロック数"
@@ -1618,6 +1652,76 @@ msgstr ""
 msgid "Uninstall"
 msgstr "アンインストール"
 
+msgid "Performance Tuning"
+msgstr ""
+
+#, fuzzy
+msgid "Updated performance settings successfully"
+msgstr "テストメールの送信に成功しました。"
+
+#, fuzzy
+msgid "Deleted all saved pages"
+msgstr "ユーザー削除"
+
+#, fuzzy
+msgid "Acceleration"
+msgstr "アクション"
+
+msgid ""
+"Improve your Gallery performance by storing entire web pages in the database.  This can "
+"considerably reduce the amount of webserver and database resources required to display a web "
+"page.  The tradeoff is that the web page you see may be a little bit out of date, however "
+"you can always get the most recent version of the page by forcing a refresh in your browser "
+"(typically by holding down the shift key and clicking the reload button)."
+msgstr ""
+
+msgid "Partial Acceleration"
+msgstr ""
+
+#, c-format
+msgid ""
+"Partial acceleration gives you roughly 10-25% performance increase, but some forms of "
+"dynamic data (like view counts) will not get updated right away.  All content that appears "
+"in blocks (like the random image block, any sidebar blocks, etc) will always be updated."
+msgstr ""
+
+msgid "Full Acceleration"
+msgstr ""
+
+#, c-format
+msgid ""
+"Full acceleration gives roughly a 90% performance increase, but no dynamic data (random "
+"image block, other sidebar blocks, number of items in your shopping cart, view counts, etc) "
+"will get updated until the saved page expires."
+msgstr ""
+
+msgid ""
+"You can additionally specify when saved pages expire.  Setting a longer expiration time will "
+"reduce the load on your server, but will increase the interval before users see changes.  "
+"Lower expiration times mean that users will see more current data, but they will place a "
+"higher load on your server."
+msgstr ""
+
+msgid "Here are some standard acceleration profiles:"
+msgstr ""
+
+#, fuzzy
+msgid "Medium acceleration"
+msgstr "キャプションを編集"
+
+msgid "High acceleration"
+msgstr ""
+
+#, fuzzy
+msgid "Guest Users"
+msgstr "ゲストユーザのみ"
+
+msgid "Expires after:"
+msgstr ""
+
+msgid "Clear Saved Pages"
+msgstr ""
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr "インターネット接続が正しく設定されているか確認するか、後出ためしてください。"
 
@@ -2436,8 +2540,15 @@ msgstr ""
 "これはアルバムのデフォルトのソート順を設定します。これは全ての新しいアイテムに適用されます。"
 
 #, fuzzy
+msgid "Apply to all subalbums"
+msgstr "サブアイテムに適用"
+
+#, fuzzy
 msgid "Choose a theme for this album. (The way the album is arranged on the page)"
 msgstr "このアルバム��配置方法を選択してください。 (ギャラリーがページ上で配置される方法)"
+
+msgid "Use this theme in all subalbums"
+msgstr ""
 
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr ""
@@ -2445,6 +2556,9 @@ msgstr ""
 
 msgid "You must enter a number (greater than zero)"
 msgstr "0より大きい数字を入力しなくてはなりません"
+
+msgid "Use this thumbnail size in all subalbums"
+msgstr ""
 
 msgid "Resized Images"
 msgstr "リサイズされた画像"
@@ -2460,6 +2574,9 @@ msgstr "目標のサイズ (ピクセル指定)"
 
 msgid "You must enter a valid size"
 msgstr "有効なサイズを入力しなくてはなりません"
+
+msgid "Use these target sizes in all subalbums"
+msgstr ""
 
 msgid "Recreate thumbnails and resizes"
 msgstr "サムネイルおよびリサイズを再生成"
@@ -2735,6 +2852,10 @@ msgstr "設定"
 msgid "Use Global"
 msgstr "グローバルを使う"
 
+#, c-format
+msgid "Use these settings in all subalbums that use %s theme"
+msgstr ""
+
 msgid ""
 "Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
 msgstr ""
@@ -2917,6 +3038,10 @@ msgstr ""
 
 msgid "Reorder Album"
 msgstr "アルバムの並べ替え"
+
+#, fuzzy
+msgid "Order saved successfully"
+msgstr "変更の保存に成功しました。"
 
 msgid ""
 "This album has an automatic sort order specified, so you cannot change the order of items "
@@ -3361,9 +3486,6 @@ msgstr ""
 
 #~ msgid "Gallery Debug Output"
 #~ msgstr "Gallery デバッグ出力"
-
-#~ msgid "Guest User Only"
-#~ msgstr "ゲストユーザのみ"
 
 #, fuzzy
 #~ msgid "None"
