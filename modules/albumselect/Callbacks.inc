@@ -142,7 +142,7 @@ class AlbumSelectCallbacks {
 		
 		GalleryDataCache::putToDisk($cachePathInfo,
 					    $dataToCache = 
-					    		array($treeList, $titles, $titlesForJs));
+					       array($treeList, $titles, $titlesForJs));
 	    }
 
 	    $block =& $smarty->_tpl_vars['block'];
