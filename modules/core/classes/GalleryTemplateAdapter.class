@@ -503,6 +503,7 @@ class GalleryTemplateAdapter {
 	global $gallery;
 
 	$classes = array();
+//XXX works with turkish?
 	$userAgent = strtolower(GalleryUtilities::getServerVar('HTTP_USER_AGENT'));
 	if (strpos($userAgent, 'safari') !== false) {
 	    $classes[] = 'safari';
@@ -543,7 +544,7 @@ class GalleryTemplateAdapter {
 	    if (!$isAdmin) {
 		/* Don't show exact patch release to non-admins */
 		$installedVersions['gallery'] =
-		    preg_replace('/^(.*?\..*?)(\.\d+)+/', '$1', $installedVersions['gallery']);
+		    preg_replace('/^(\d+\.\d+).*$/', '$1', $installedVersions['gallery']);
 	    }
 	    $version = $core->translate(
 		    array('text' => "Gallery %s", 'arg1' => $installedVersions['gallery']));
