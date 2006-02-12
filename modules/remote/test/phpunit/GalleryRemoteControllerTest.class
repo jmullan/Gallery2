@@ -231,6 +231,63 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	$this->assert($seen[1]);
     }
 
+    function testFetchAlbumsNoPerms() {
+	global $gallery;
+
+	/* Create some albums */
+	$parentId = $this->_rootAlbum->getId();
+	for ($i = 0; $i < 2; $i++) {
+	    list ($ret, $album[$i]) = $this->_createRandomAlbum($parentId);
+	    if ($ret) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $parentId = $album[$i]->getId();
+	}
+
+	/* give the 2nd album only view permissions */
+	$ret = GalleryCoreApi::removeItemPermissions($album[1]->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $album[1]->getId(), $gallery->getActiveUserId(), 'core.view');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryUtilities::putRequestVariable('form[cmd]', 'fetch-albums');
+	GalleryUtilities::putRequestVariable('form[no_perms]', '1');
+	$results = $this->handleRequest();
+	$this->assertEquals(array(), $results['error']);
+	$this->assertEquals('remote.GalleryRemote', $results['delegate']['view']);
+
+	$response = $results['status']['controllerResponse'];
+	$this->assertEquals($this->_code['SUCCESS'], (int)$response->getProperty('status'));
+
+	/* Make sure the albums we created are in the list -- Ignore the rest of the results */
+	$this->assert($response->getProperty('album_count') >= 4);
+	$this->assert($response->hasProperty('status_text'));
+
+	$seen = array();
+	for ($i = 1; $i <= $response->getProperty('album_count'); $i++) {
+	    for ($j = 0; $j < sizeof($album); $j++) {
+		if ($response->getProperty('album.name.' . $i) == $album[$j]->getId()) {
+		    $seen[$j] = 1;
+		    $this->assertEquals(
+			$album[$j]->getTitle(), $response->getProperty('album.title.' . $i));
+		    $this->assertEquals(
+			$album[$j]->getSummary(), $response->getProperty('album.summary.' . $i));
+		    $this->assertEquals($album[$j]->getParentId(),
+					(int)$response->getProperty('album.parent.' . $i));
+					
+		    $this->assertEquals($response->getProperty('album.perms.add.0'), null);
+		}
+	    }
+	}
+	$this->assert($seen[0]);
+	$this->assert($seen[1]);
+    }
+
     function testFetchAlbumsPrune() {
 	global $gallery;
 
@@ -302,6 +359,81 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 			$expected, $response->getProperty('album.perms.del_alb.' . $i));
 		    $this->assertEquals(
 			$expected, $response->getProperty('album.perms.create_sub.' . $i));
+		}
+	    }
+	}
+	foreach (array(0, 1, 2, 4) as $i) {
+	    $this->assert($seen[$i]);
+	}
+	$this->assert(empty($seen[3]));
+    }
+
+
+    function testFetchAlbumsPruneNoPerms() {
+	global $gallery;
+
+	/* Create some albums */
+	$parentId = $this->_rootAlbum->getId();
+	for ($i = 0; $i < 4; $i++) {
+	    list ($ret, $album[$i]) = $this->_createRandomAlbum($parentId);
+	    if ($ret) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $parentId = $album[$i]->getId();
+	}
+	list ($ret, $album[4]) = $this->_createRandomAlbum($this->_rootAlbum->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* give albums 1 and 3 only view permissions */
+	foreach (array(1, 3) as $i) {
+	    $ret = GalleryCoreApi::removeItemPermissions($album[$i]->getId());
+	    if ($ret) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $ret = GalleryCoreApi::addUserPermission(
+		$album[$i]->getId(), $gallery->getActiveUserId(), 'core.view');
+	    if ($ret) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+	
+	/* root
+	    + 0
+	      + 1 (read-only)
+	        + 2
+		  + 3 (read-only, should not appear)
+	      + 4
+	 */
+
+	GalleryUtilities::putRequestVariable('form[cmd]', 'fetch-albums-prune');
+	GalleryUtilities::putRequestVariable('form[no_perms]', '1');
+	$results = $this->handleRequest();
+	$this->assertEquals(array(), $results['error']);
+	$this->assertEquals('remote.GalleryRemote', $results['delegate']['view']);
+
+	$response = $results['status']['controllerResponse'];
+	$this->assertEquals($this->_code['SUCCESS'], (int)$response->getProperty('status'));
+
+	/* Make sure the albums we created are in the list -- Ignore the rest of the results */
+	$this->assert($response->getProperty('album_count') >= 5);
+	$this->assert($response->hasProperty('status_text'));
+
+	/* test album contents */
+	$seen = array();
+	for ($i = 1; $i <= $response->getProperty('album_count'); $i++) {
+	    for ($j = 0; $j < sizeof($album); $j++) {
+		if ($response->getProperty('album.name.' . $i) == $album[$j]->getId()) {
+		    $seen[$j] = 1;
+		    $this->assertEquals(
+			$album[$j]->getTitle(), $response->getProperty('album.title.' . $i));
+		    $this->assertEquals(
+			$album[$j]->getSummary(), $response->getProperty('album.summary.' . $i));
+		    $this->assertEquals($album[$j]->getParentId(),
+					(int)$response->getProperty('album.parent.' . $i));
+					
+		    $this->assertEquals($response->getProperty('album.perms.add.0'), null);
 		}
 	    }
 	}
