@@ -313,28 +313,28 @@ class RssHelper {
 	    $description = '<a href="' . $url .'"><img border="0" src="' . $imageUrl .
 		'" width="' . $thumbnail->getWidth() .
 		'" height="' . $thumbnail->getHeight() .
-		'"/></a><br/>' . $description;
+		'"/></a>' . (!empty($description) ? '<br/>' . $description : $description);
+	}
 
-	    if ($param['feedType'] == 'photosRecurse') {
-		/* add a link to the parent album */
-		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'rss');
-		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-
-		$url1 = $urlGenerator->generateUrl(
-		    array(
-			'view' => 'core.ShowItem',
-			'itemId' => $item->getParentId()),
-		    array(
-			'forceSessionId' => false,
-			'forceFullUrl' => true));
-
-		$description .= '<br/>' . $module->translate(
-		    array('text' => 'In album <a href="%s">%s</a>',
-		    'arg1' => $url1,
-		    'arg2' => $param['parents'][$item->getParentId()]->getTitle()));
+	if ($param['feedType'] == 'photosRecurse') {
+	    /* add a link to the parent album */
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'rss');
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
+
+	    $url1 = $urlGenerator->generateUrl(
+		array(
+		    'view' => 'core.ShowItem',
+		    'itemId' => $item->getParentId()),
+		array(
+		    'forceSessionId' => false,
+		    'forceFullUrl' => true));
+
+	    $description .= '<br/>' . $module->translate(
+		array('text' => 'In album <a href="%s">%s</a>',
+		'arg1' => $url1,
+		'arg2' => $param['parents'][$item->getParentId()]->getTitle()));
 	}
 
 	$title = $item->getTitle();

@@ -224,28 +224,29 @@ class RssRenderTest extends GalleryControllerTestCase {
 	$results = ob_get_contents();
 	ob_end_clean();
 
-	$this->assertEquals(array(
-	    'Header: Content-type: text/xml; charset=UTF-8',
-	    '<rss version="2.0">',
-	    '<channel>',
-	    '<title>I am Jack\'s title</title>',
-	    '<link>url:'.$this->_root->getId().'</link>',
-	    '<description>This is my description</description>',
-	    '<language>en-us</language>',
-	    '<generator>Gallery 2 RSS Module, version '.$version.'</generator>',
-	    '<lastBuildDate>Sat, 14 Feb 2009 00:31:30 +0100</lastBuildDate>',
-	    '<ttl>120</ttl>',
-	    '<item>',
-	    ' <title>I am Jack\'s title</title>',
-	    ' <link>url:'.$this->_album->getId().'</link>',
-	    ' <guid isPermaLink="false">url:'.$this->_album->getId().'</guid>',
-	    ' <description><![CDATA[This is my description]]></description>',
-	    ' <category>album</category>',
-	    ' <pubDate>Sat, 14 Feb 2009 00:31:30 +0100</pubDate>',
-	    '</item>',
-	    '</channel>',
-	    '</rss>'),
-	split("\n", $results));
+	$this->assertEquals(
+	    array(
+		'Header: Content-type: text/xml; charset=UTF-8',
+		'<rss version="2.0">',
+		'<channel>',
+		'<title>I am Jack\'s title</title>',
+		'<link>url:'.$this->_root->getId().'</link>',
+		'<description>This is my description</description>',
+		'<language>en-us</language>',
+		'<generator>Gallery 2 RSS Module, version '.$version.'</generator>',
+		'<lastBuildDate>Sat, 14 Feb 2009 00:31:30 +0100</lastBuildDate>',
+		'<ttl>120</ttl>',
+		'<item>',
+		' <title>I am Jack\'s title</title>',
+		' <link>url:'.$this->_album->getId().'</link>',
+		' <guid isPermaLink="false">url:'.$this->_album->getId().'</guid>',
+		' <description><![CDATA[This is my description]]></description>',
+		' <category>album</category>',
+		' <pubDate>Sat, 14 Feb 2009 00:31:30 +0100</pubDate>',
+		'</item>',
+		'</channel>',
+		'</rss>'),
+	    split($gallery->getPlatform()->getLineEnding(), $results));
     }
 
     function testRssSimpleRenderPhotos() {
@@ -274,28 +275,29 @@ class RssRenderTest extends GalleryControllerTestCase {
 	$results = ob_get_contents();
 	ob_end_clean();
 
-	$this->assertEquals(array(
-	    'Header: Content-type: text/xml; charset=UTF-8',
-	    '<rss version="2.0">',
-	    '<channel>',
-	    '<title>I am Jack\'s title</title>',
-	    '<link>url:'.$this->_root->getId().'</link>',
-	    '<description>This is my description</description>',
-	    '<language>en-us</language>',
-	    '<generator>Gallery 2 RSS Module, version '.$version.'</generator>',
-	    '<lastBuildDate>Sat, 14 Feb 2009 00:31:30 +0100</lastBuildDate>',
-	    '<ttl>120</ttl>',
-	    '<item>',
-	    ' <title>I am Jack\'s title</title>',
-	    ' <link>url:'.$this->_item1->getId().'</link>',
-	    ' <guid isPermaLink="false">url:'.$this->_item1->getId().'</guid>',
-	    ' <description><![CDATA[This is a description]]></description>',
-	    ' <category>photo</category>',
-	    ' <pubDate>Sat, 14 Feb 2009 00:31:30 +0100</pubDate>',
-	    '</item>',
-	    '</channel>',
-	    '</rss>'),
-	split("\n", $results));
+	$this->assertEquals(
+	    array(
+		'Header: Content-type: text/xml; charset=UTF-8',
+		'<rss version="2.0">',
+		'<channel>',
+		'<title>I am Jack\'s title</title>',
+		'<link>url:'.$this->_root->getId().'</link>',
+		'<description>This is my description</description>',
+		'<language>en-us</language>',
+		'<generator>Gallery 2 RSS Module, version '.$version.'</generator>',
+		'<lastBuildDate>Sat, 14 Feb 2009 00:31:30 +0100</lastBuildDate>',
+		'<ttl>120</ttl>',
+		'<item>',
+		' <title>I am Jack\'s title</title>',
+		' <link>url:'.$this->_item1->getId().'</link>',
+		' <guid isPermaLink="false">url:'.$this->_item1->getId().'</guid>',
+		' <description><![CDATA[This is a description]]></description>',
+		' <category>photo</category>',
+		' <pubDate>Sat, 14 Feb 2009 00:31:30 +0100</pubDate>',
+		'</item>',
+		'</channel>',
+		'</rss>'),
+	    split($gallery->getPlatform()->getLineEnding(), $results));
     }
 
 }
@@ -308,7 +310,9 @@ class RenderViewTestUrlGenerator {
 
 class RssRenderTestVm {
     function header($string) {
-	print "Header: $string\n";
+	global $gallery;
+	
+	print 'Header: ' . $string . $gallery->getPlatform()->getLineEnding();
     }
 
     function headers_sent() {
