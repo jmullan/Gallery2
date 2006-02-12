@@ -1688,9 +1688,9 @@ class CoreModuleExtras {
 	     * not in Maps.xml
 	     */
 	    $query = sprintf('
-	    UPDATE `%sSchema`
-	    SET `%smajor`=1, `%sminor`=3
-	    WHERE `%sname`=\'AccessMap\' AND `%smajor`=1 AND `%sminor`=2;',
+	    UPDATE %sSchema
+	    SET %smajor=1, %sminor=3
+	    WHERE %sname=\'AccessMap\' AND %smajor=1 AND %sminor=2;',
 			     $storage->_tablePrefix, $storage->_columnPrefix,
 			     $storage->_columnPrefix, $storage->_columnPrefix,
 			     $storage->_columnPrefix, $storage->_columnPrefix);
@@ -1801,7 +1801,8 @@ class CoreModuleExtras {
 			    }
 			    if (count($changeToBinary)) {
 			    	$query = 
-					"ALTER TABLE `$tableName` " . implode(', ', $changeToBinary);
+					"ALTER TABLE `$tableName` " . 
+						implode(', ', $changeToBinary);
 			    	$ret = $storage->Execute($query);
 			    	if ($ret) {
 	    		            return $ret->wrap(__FILE__, __LINE__);
