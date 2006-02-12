@@ -151,9 +151,9 @@ class GalleryLinkItem extends GalleryItem {
 	/* Redirect if trying to show this item */
 	list ($view, $itemId) = GalleryUtilities::getRequestVariables('view', 'itemId');
 	if ($view == 'core.ShowItem' && $itemId == $this->getId()) {
+	    global $gallery;
 	    $link = $this->getLink();
 	    if (is_numeric($link)) {
-		global $gallery;
 		$session =& $gallery->getSession();
 		$ret = $session->start();
 		if ($ret) {
