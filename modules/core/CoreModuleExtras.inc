@@ -1591,7 +1591,7 @@ class CoreModuleExtras {
 
 	case '1.0.22':
 	    /* Rename unnamed pre-beta-3 index to named index */
-	    $gallery->guaranteeTimeLimit(60);
+	    $gallery->guaranteeTimeLimit(120);
 	    if ($storage->getType() == 'mysql') {
 		$gallery->debug('Rename unnamed pre-beta-3 index to named index (ignore errors)');
 		$indexChanges = array();
@@ -1649,12 +1649,12 @@ class CoreModuleExtras {
 		$indexChanges[] = array('Lock', 'lockId',
 					'Lock_11039', array('lockId'));
 		foreach ($indexChanges as $change) {
-		    $indexColumns = implode(', ' . $storage->_columnPrefix, $change[3]);
+		    $indexColumns = implode('`, `' . $storage->_columnPrefix, $change[3]);
 		    $indexColumns = $storage->_columnPrefix . $indexColumns;
 		    $query = sprintf('
-		    ALTER TABLE %s%s
-		    DROP INDEX %s%s,
-		    ADD INDEX %s%s(%s);',
+		    ALTER TABLE `%s%s`
+		    DROP INDEX `%s%s`,
+		    ADD INDEX `%s%s`(`%s`);',
 			$storage->_tablePrefix, $change[0], $storage->_columnPrefix, $change[1],
 			$storage->_tablePrefix, $change[2], $indexColumns);
 		    /* Ignore error, since there's nothing to do for most installations */
@@ -1688,9 +1688,9 @@ class CoreModuleExtras {
 	     * not in Maps.xml
 	     */
 	    $query = sprintf('
-	    UPDATE %sSchema
-	    SET %smajor=1, %sminor=3
-	    WHERE %sname=\'AccessMap\' AND %smajor=1 AND %sminor=2;',
+	    UPDATE `%sSchema`
+	    SET `%smajor`=1, `%sminor`=3
+	    WHERE `%sname`=\'AccessMap\' AND `%smajor`=1 AND `%sminor`=2;',
 			     $storage->_tablePrefix, $storage->_columnPrefix,
 			     $storage->_columnPrefix, $storage->_columnPrefix,
 			     $storage->_columnPrefix, $storage->_columnPrefix);
@@ -1729,7 +1729,8 @@ class CoreModuleExtras {
 		if ($version && version_compare($version, '4.1.0', '>=')) {
 		    /* Check if the database uses UTF8 already */
 		    list ($ret, $results) = 
-		    		$storage->search('SHOW CREATE DATABASE ' . $storage->_database);
+		    		$storage->search('SHOW CREATE DATABASE `' . $storage->_database .
+		    				 '`');
 		    if ($ret) {
 		    	return $ret->wrap(__FILE__, __LINE__);
 		    }
@@ -1742,7 +1743,7 @@ class CoreModuleExtras {
 			if ($ret) {
 		    	    return $ret->wrap(__FILE__, __LINE__);
 			}
-		    	$gallery->guaranteeTimeLimit(60);
+		    	$gallery->guaranteeTimeLimit(120);
 		    	$storageExtras =& $storage->_getExtras(); 
 			list ($ret, $tableVersions) = $storageExtras->_loadTableVersions();
 			if ($ret) {
@@ -1756,7 +1757,7 @@ class CoreModuleExtras {
 		    	    $i++;
 		    	    $tableName = $storage->_tablePrefix . $tableName;
 		    	    /* First the table itself */
-		    	    $query = "ALTER TABLE $tableName DEFAULT CHARACTER SET utf8";
+		    	    $query = "ALTER TABLE `$tableName` DEFAULT CHARACTER SET utf8";
 		    	    $ret = $storage->execute($query);
 		    	    if ($ret) {
 	    		        return $ret->wrap(__FILE__, __LINE__);
@@ -1770,7 +1771,7 @@ class CoreModuleExtras {
 			     * 3. Convert them to character/text columns with UTF8 charset 
 			     */
 		    	    /* 1. Detect current column attributes */
-			    $query = "SHOW FULL COLUMNS FROM $tableName";
+			    $query = "SHOW FULL COLUMNS FROM `$tableName`";
 			    $originalFetchMode = $storage->_db->SetFetchMode(ADODB_FETCH_ASSOC);
 			    list ($ret, $results) = $storage->search($query);
 			    if ($ret) {
@@ -1783,8 +1784,8 @@ class CoreModuleExtras {
 				if (!isset($types[$type])) {
 				    continue;
 				}
-				$change = 'CHANGE ' . $column['Field'] . ' ' . 
-						$column['Field'] . ' ';
+				$change = 'CHANGE `' . $column['Field'] . '` `' . 
+						$column['Field'] . '` ';
 				$binaryType = preg_replace('/'. $type .'/i', $types[$type], 
 							   $column['Type']);
 				$attributes = ' ';
@@ -1800,13 +1801,13 @@ class CoreModuleExtras {
 			    }
 			    if (count($changeToBinary)) {
 			    	$query = 
-					"ALTER TABLE $tableName " . implode(', ', $changeToBinary);
+					"ALTER TABLE `$tableName` " . implode(', ', $changeToBinary);
 			    	$ret = $storage->Execute($query);
 			    	if ($ret) {
 	    		            return $ret->wrap(__FILE__, __LINE__);
 			        }
 			        $query = 
-					"ALTER TABLE $tableName " . implode(', ', $changeToUtf8);
+					"ALTER TABLE `$tableName` " . implode(', ', $changeToUtf8);
 			    	$ret = $storage->Execute($query);
 			    	if ($ret) {
 	    		            return $ret->wrap(__FILE__, __LINE__);
@@ -1819,7 +1820,7 @@ class CoreModuleExtras {
 			    if ($ret) {
 		    	        return $ret->wrap(__FILE__, __LINE__);
 			    }
-		    	    $gallery->guaranteeTimeLimit(60);
+		    	    $gallery->guaranteeTimeLimit(120);
 		    	} /* end for each table */
 		    } /* end if database character set not utf8 */
 		} /* end if MySql version > 4.1.0 */
