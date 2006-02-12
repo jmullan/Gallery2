@@ -62,7 +62,7 @@ class RewriteCheckConflictTask extends MaintenanceTask {
 	$urlGenerator =& $gallery->getUrlGenerator();
 	$platform =& $gallery->getPlatform();
 	$pluginBaseDirs = GalleryCoreApi::getPluginBaseDirs();
-	$baseDir = $pluginBaseDirs['base'];
+	$baseDir = rtrim($pluginBaseDirs['base'], '/');
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'rewrite');
 	if ($ret) {
@@ -89,7 +89,7 @@ class RewriteCheckConflictTask extends MaintenanceTask {
 	while ($result = $results->nextResult()) {
 	    $params = array('view' => 'core.ShowItem',
 			    'itemId' => (int)$result[0]);
-	    $path = substr($urlGenerator->generateUrl($params),
+	    $path = substr($urlGenerator->generateUrl($params, array('forceFullUrl' => true)),
 		    strlen($urlGenerator->getCurrentUrlDir()) - 1);
 	    if (($query = strpos($path, '?')) !== false) {
 		$path = substr($path, 0, $query);
