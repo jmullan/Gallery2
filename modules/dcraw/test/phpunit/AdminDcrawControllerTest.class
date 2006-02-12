@@ -197,7 +197,8 @@ class AdminDcrawControllerTest extends GalleryControllerTestCase {
 	    array(array(array('/path/to/dcraw'))),
 	    array(1, array(), array('Wrong version of dcraw')));
 	$this->_platform->setReply('realpath',
-	    array(dirname(dirname(dirname(dirname(__FILE__)))) . '/core/classes/../../..'),
+	    array(dirname(dirname(dirname(dirname(__FILE__)))) . DIRECTORY_SEPARATOR . 'core' . 
+			DIRECTORY_SEPARATOR . 'classes/../../..'),
 	    realpath(dirname(dirname(dirname(dirname(dirname(__FILE__)))))), true /*optional*/);
 
 	$results = $this->handleRequest();
