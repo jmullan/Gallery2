@@ -111,9 +111,6 @@ class ADODB_db2 extends ADOConnection {
 
 		if (isset($php_errormsg)) $php_errormsg = '';
 		$this->_errorMsg = isset($php_errormsg) ? $php_errormsg : '';
-		if ($this->debug && $argDatabasename) {
-			ADOConnection::outp("For db2 PConnect(), $argDatabasename is not used. Place dsn in 1st parameter.");
-		}
 		
 		if ($argDatabasename) {
 			$this->_connectionID = db2_pconnect($argDatabasename,$argUsername,$argPassword);
