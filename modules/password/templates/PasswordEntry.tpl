@@ -34,7 +34,8 @@
   </script>
 </div>
 
-{g->callback type="core.LoadValidationPlugins" keyPrefix="password.PasswordEntry" key=$form.itemId}
+{g->callback type="core.LoadValidationPlugins"
+	     level=$form.validationLevel key="password.PasswordEntry."|cat:$form.itemId}
 {foreach from=$block.core.ValidationPlugins item=plugin}
   {include file="gallery:`$plugin.file`" l10Domain=$plugin.l10Domain}
 {/foreach}

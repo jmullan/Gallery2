@@ -83,8 +83,19 @@ class PasswordEntryController extends GalleryController {
 	    $isCorrect = $canSee && $hashedPassword
 		&& GalleryUtilities::isCorrectPassword($guess, $hashedPassword);
 
-	    /* Use captcha if available */
-	    if (isset($this->_pluginInstances)) {
+	    /* Prepare for validation */
+	    $options = array('pass' => $isCorrect);
+	    list ($ret, $options['level']) =
+		GalleryCoreApi::getPluginParameter('module', 'password', 'validation.level');
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if ($options['level'] == 'MEDIUM') {
+		$options['key'] = 'password.PasswordEntry.' . $itemId;
+	    }
+	    if ($options['level'] == 'OFF') {
+		$plugins = array();
+	    } else if (isset($this->_pluginInstances)) {
 		$plugins = $this->_pluginInstances;
 	    } else {
 		list ($ret, $plugins) =
@@ -99,15 +110,6 @@ class PasswordEntryController extends GalleryController {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		}
-	    }
-	    list ($ret, $options['level']) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'validation.level');
-	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    $options['pass'] = $isCorrect;
-	    if ($options['level'] == 'MEDIUM') {
-		$options['key'] = 'password.PasswordEntry.' . $itemId;
 	    }
 
 	    /* Let each plugin do its verification */
@@ -162,6 +164,12 @@ class PasswordEntryView extends GalleryView {
 	if ($form['formName'] != 'PasswordEntry') {
 	    $form['formName'] = 'PasswordEntry';
 	    $form['itemId'] = GalleryUtilities::getRequestVariables('itemId');
+	}
+
+	list ($ret, $form['validationLevel']) =
+	    GalleryCoreApi::getPluginParameter('module', 'password', 'validation.level');
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$template->setVariable('controller', 'password.PasswordEntry');

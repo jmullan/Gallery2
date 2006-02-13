@@ -50,7 +50,7 @@
 </div>
 
 {* Include our ValidationPlugins *}
-{g->callback type="core.LoadValidationPlugins" keyPrefix="core.UserLogin" key=$form.username}
+{g->callback type="core.LoadValidationPlugins" key="core.UserLogin."|cat:$form.username}
 {foreach from=$block.core.ValidationPlugins item=plugin}
   {include file="gallery:`$plugin.file`" l10Domain=$plugin.l10Domain}
 {/foreach}

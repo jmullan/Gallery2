@@ -43,11 +43,31 @@ class PasswordModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setName($gallery->i18n('Password Items'));
 	$this->setDescription(
 	    $gallery->i18n('Assign passwords for viewing particular albums or items'));
-	$this->setVersion('1.0.0');
+	$this->setVersion('1.0.1');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('registerEventListeners');
-	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredCoreApi(array(7, 1));
 	$this->setRequiredModuleApi(array(3, 0));
+    }
+
+    /**
+     * @see GalleryModule::upgrade()
+     */
+    function upgrade($currentVersion) {
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'password');
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	foreach (array('validation.level' => 'MEDIUM') as $key => $value) {
+	    if (!isset($params[$key])) {
+		$ret = $this->setParameter($key, $value);
+		if ($ret) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	}
+
+	return null;
     }
 
     /**
@@ -78,6 +98,13 @@ class PasswordModule extends GalleryModule /* and GalleryEventListener */ {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'PasswordInterface_1_0', 'PasswordHelper', 'Password',
 	    'modules/password/classes/PasswordHelper.class', 'password', null);
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'CaptchaAdminOption', 'PasswordCaptchaAdminOption', 'PasswordCaptchaAdminOption',
+	    'modules/password/classes/PasswordCaptchaAdminOption.class', 'password', null);
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
