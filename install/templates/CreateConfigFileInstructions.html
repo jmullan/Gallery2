@@ -1,10 +1,12 @@
     <h1><?php print _('Create a config file') ?></h1>
 
+    <?php if (!empty($templateData['error'])): ?>
     <div class="error">
       <h2>
-      <?php if (!empty($templateData['error'])) print $templateData['error'] ?>
+      <?php print $templateData['error'] ?>
       </h2>
     </div>
+    <?php endif; ?>
 
     <p>
       <?php printf(_("Now we need to write out all the information you provided into a file called <b>config.php</b> in your <b>%s</b> directory.  This is a very important file that gives Gallery all the information that it needs to operate.  After we create it, you can read through this file and make changes to it if you want."), $templateData['galleryDir']) ?>
@@ -15,7 +17,7 @@
     </p>
 
     <div class="go">
-	  <div class="btn btn-continue"><span><span><span><span>
+      <div class="btn btn-continue"><span><span><span><span>
       <a href="<?php generateUrl(sprintf('%s?step=%s', INDEX_PHP, $currentStep->getStepNumber())) ?>"><?php print _('Create config file') ?></a>
-	  </span></span></span></span></div>
+      </span></span></span></span></div>
     </div>
