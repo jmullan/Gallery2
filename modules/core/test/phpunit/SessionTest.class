@@ -2913,7 +2913,9 @@ function SessionTest_error_handler($errno, $errstr, $errfile, $errline) {
 				 $storage->_tablePrefix);
 	    $expected2 = '{pg_exec().*: Query failed: ERROR:  current transaction is aborted,' .
 		' commands ignored until end of transaction block}';
-	    if (preg_match($expected1, $errstr) || preg_match($expected2, $errstr)) {
+	    $expected3 = '{db2_exec\(\).*: Statement Execute Failed}';
+	    if (preg_match($expected1, $errstr) || preg_match($expected2, $errstr) || 
+		    preg_match($expected3, $errstr)) {
 		return;
 	    }
 	}
