@@ -263,14 +263,44 @@ class EntityTest extends GalleryTestCase {
 	$this->assert($entity->isModified('onLoadHandlers'));
     }
 
+    function testNullVsEmpty() {
+	GalleryCoreApi::requireOnce('modules/core/classes/GalleryEntity.class');
+	$entity = new GalleryEntity();
+	$ret = $entity->create();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$entity->setOnLoadHandlers('');
+	$ret = $entity->save();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($entity);
+
+	list ($ret, $entity) = $entity->refresh();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(!$entity->isModified('onLoadHandlers'), 'after refresh');
+	$entity->setOnLoadHandlers('');
+	$this->assert(!$entity->isModified('onLoadHandlers'), 'should not be modified');
+    }
+
     function testSaveWithoutEvent() {
 	$listener = new EntityTestEventListener($this);
 	GalleryCoreApi::registerEventListener('GalleryEntity::save', $listener);
 
 	GalleryCoreApi::requireOnce('modules/core/classes/GalleryEntity.class');
 	$entity = new GalleryEntity();
-	$entity->create();
+	$ret = $entity->create();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 	$ret = $entity->save(false);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 	$this->_markForCleanup($entity);
 	$this->assertEquals(null, $listener->getEvent());
 
