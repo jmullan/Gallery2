@@ -115,8 +115,7 @@
         {g->text text="Invalid time to live, this must be a number of minutes (0 to disable ttl)"}
       </div>
       {else}
-        {g->text text="Time to live: this must be a number of minutes (0 to disable ttl)
-	  aggregators should wait between checks of whether the feed has been updated"}
+        {g->text text="Time to live: this must be a number of minutes (0 to disable ttl) aggregators should wait between checks of whether the feed has been updated"}
       {/if}
     </td>
   </tr><tr>
@@ -150,11 +149,9 @@
     </td><td>
     </td></tr>
     <tr><td></td><td colspan="3">
-      {g->text text="If you enable this, users will be able to subscribe to a feed for any
-        album or photo they can view."}
+      {g->text text="If you enable this, users will be able to subscribe to a feed for any album or photo they can view."}
       <br/>
-      {g->text text="To edit the settings for Simple Feeds, use the corresponding tab at the top 
-        of the screen."}
+      {g->text text="To edit the settings for Simple Feeds, use the corresponding tab at the top of the screen."}
     </td></tr>
 
     <tr><td>
@@ -167,11 +164,9 @@
       </label>
     </td></tr>
     <tr><td></td><td colspan="3">
-      {g->text text="Only album owners will be able to define such feeds. They can set
-        parameters for the type of feed they want."}
+      {g->text text="Only album owners will be able to define such feeds. They can set parameters for the type of feed they want."}
       <br/>
-      {g->text text="Once a feed is defined, users will be able to subscribe to those feeds
-        if they can view the associated item."}
+      {g->text text="Once a feed is defined, users will be able to subscribe to those feeds if they can view the associated item."}
     </td></tr>
     <tr><td>
     </td><td>
@@ -261,11 +256,8 @@
 
 <div class="gbBlock">
   <h3> {g->text text="Helping users discover RSS feeds"} </h3>
-  <p>{g->text text="If you want to help users discover feeds in your Gallery, you can add
-    the RSS block to the themes used in your Gallery."}</p>
-  <p>{g->text text="This will have two effects: the block itself, which users
-    can see and pick feeds from (and get a list of all feeds); and hidden page headers that
-    modern web browsers will use to make it easier for the user to subscribe to the feeds."}</p>
+  <p>{g->text text="If you want to help users discover feeds in your Gallery, you can add the RSS block to the themes used in your Gallery."}</p>
+  <p>{g->text text="This will have two effects: the block itself, which users can see and pick feeds from (and get a list of all feeds); and hidden page headers that modern web browsers will use to make it easier for the user to subscribe to the feeds."}</p>
 </div>
 
 <div class="gbBlock">

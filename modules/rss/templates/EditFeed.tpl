@@ -79,8 +79,7 @@
   </tr>
 {else}
   <p class="giDescription">
-    {g->text text="Pick name for your feed (this name will be referenced in the URL to your feed
-      so try to use only letters)"}
+    {g->text text="Pick name for your feed (this name will be referenced in the URL to your feed so try to use only letters)"}
   </p>
 
   <table class="gbDataTable">
@@ -134,8 +133,7 @@
         {g->text text="Items in this album"}
       </label>
     {if !$param.allowPhotos}
-      <br/>{g->text text="Feeds of this type are disallowed by the administrator. Users won't be
-        able to view them."}
+      <br/>{g->text text="Feeds of this type are disallowed by the administrator. Users won't be able to view them."}
     {/if}
     </td>
   </tr><tr valign="top">
@@ -148,8 +146,7 @@
         {g->text text="Sub-albums of this album"}
       </label>
     {if !$param.allowAlbums}
-      <br/>{g->text text="Feeds of this type are disallowed by the administrator. Users won't be
-        able to view them."}
+      <br/>{g->text text="Feeds of this type are disallowed by the administrator. Users won't be able to view them."}
     {/if}
     </td>
   </tr><tr valign="top">
@@ -162,8 +159,7 @@
         {g->text text="Items in this album and its subalbums"}
       </label>
     {if !$param.allowPhotosRecurse}
-      <br/>{g->text text="Feeds of this type are disallowed by the administrator. Users won't be
-        able to view them."}
+      <br/>{g->text text="Feeds of this type are disallowed by the administrator. Users won't be able to view them."}
     {/if}
       <br/>
       <label for="EditFeed_typePhotosRecurseLimit">
@@ -190,8 +186,7 @@
         {g->text text="Comments for this album"}
       </label>
     {if !$param.allowCommentsAlbum}
-      <br/>{g->text text="Feeds of this type are disallowed by the administrator. Users won't be
-        able to view them."}
+      <br/>{g->text text="Feeds of this type are disallowed by the administrator. Users won't be able to view them."}
     {/if}
     </td>
   </tr>
@@ -205,8 +200,7 @@
         {g->text text="Comments for this item"}
       </label>
     {if !$param.allowCommentsPhoto}
-      <br/>{g->text text="Feeds of this type are disallowed by the administrator. Users won't be
-        able to view them."}
+      <br/>{g->text text="Feeds of this type are disallowed by the administrator. Users won't be able to view them."}
     {/if}
     </td>
   </tr>
@@ -304,8 +298,7 @@
         {g->text text="Invalid time to live, this must be a number of minutes (0 to disable ttl)"}
       </div>
       {else}
-        {g->text text="Time to live: this must be a number of minutes (0 to disable ttl)
-	  aggregators should wait between checks of whether the feed has been updated"}
+        {g->text text="Time to live: this must be a number of minutes (0 to disable ttl) aggregators should wait between checks of whether the feed has been updated"}
       {/if}
     </td>
   </tr>
@@ -361,8 +354,9 @@
 
   <h3> {g->text text="Cloud tag (RSS 2.0)"} </h3>
   <p class="giDescription">
-    {g->text text="If you want to use the cloud tag, you can set up it's properties here<br />
-	Example: "}
+    {g->text text="If you want to use the cloud tag, you can set up its properties here"}
+    <br />
+    {g->text text="Example: "}
     &lt;cloud domain="<b>domain</b>"
               port="<b>port</b>"
 	      path="<b>path</b>"
