@@ -101,7 +101,7 @@ class PasswordEntryController extends GalleryController {
 		}
 	    }
 	    list ($ret, $options['level']) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'captcha.level');
+		GalleryCoreApi::getPluginParameter('module', 'core', 'validation.level');
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
