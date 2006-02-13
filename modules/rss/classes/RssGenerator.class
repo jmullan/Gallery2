@@ -173,8 +173,9 @@ class RssGenerator {
 	    !isset($this->_properties['description']) ||
 	    !count($this->_items))
 	    return '';
-
-	$linefeed = $gallery->getPlatform()->getLineEnding();
+	
+	$platform =& $gallery->getPlatform();
+	$linefeed = $platform->getLineEnding();
 
 	$data = '<?xml version="1.0"?>' . $linefeed .
 	    '<!DOCTYPE rss SYSTEM "http://my.netscape.com/publish/formats/rss-0.91.dtd">' .
@@ -221,8 +222,9 @@ class RssGenerator {
      */
     function generate200() {
 	global $gallery;
+	$platform =& $gallery->getPlatform();
 	
-	$linefeed = $gallery->getPlatform()->getLineEnding();
+	$linefeed = $platform->getLineEnding();
 
 	$data = '<rss version="2.0">'.$linefeed.'<channel>' . $linefeed .
 	    '<title>' . $this->_properties['title'] . '</title>' . $linefeed .
