@@ -1,7 +1,9 @@
-    <h1<?php if ($templateData['secure']) print ' class="success"' ?>>
+    <div <?php if ($templateData['secure']) print ' class="success"' ?>>
+    <h1>
       <?php print _("Check Security") ?>
     </h1>
-
+    </div>
+    
     <?php if (!$templateData['secure']): ?>
     <?php if (!$templateData['file']['secure']): ?>
     <p>
