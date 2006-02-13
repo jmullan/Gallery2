@@ -73,10 +73,9 @@ class GalleryRemoteController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-	$start = array_sum(explode(" ",microtime()));
+	$start = array_sum(explode(' ', microtime()));
 
-	$status = array();
-	$error = array();
+	$status = $error = array();
 	$response = new GalleryRemoteProperties();
 	$grStatusCodes = GalleryRemoteConstants::getStatusCodes();
 
@@ -171,7 +170,7 @@ class GalleryRemoteController extends GalleryController {
 	    $response->setProperty('debug_user', 'error getting user');
 	}
 
-	$end = array_sum(explode(" ",microtime()));
+	$end = array_sum(explode(' ', microtime()));
 	$response->setProperty('debug_time', round($end - $start, 3).'s');
 
 	$status['controllerResponse'] = $response;
@@ -208,15 +207,15 @@ class GalleryRemoteController extends GalleryController {
 		$gallery->setActiveUser($user);
 		$response->setProperty('server_version',
 		    sprintf('%d.%d', $grVersionCodes['MAJ'], $grVersionCodes['MIN']));
-		    
-		$response->setProperty('debug_core_version', 
+
+		$response->setProperty('debug_core_version',
 		    implode(',', GalleryCoreApi::getApiVersion()));
-		    
-		list($ret, $version) = 
+
+		list ($ret, $version) =
 		    GalleryCoreApi::getPluginParameter('module', 'remote', '_version');
 		/* don't fail on error */
 		$response->setProperty('debug_module_version', $version);
-		    
+
 		$response->setProperty('status', $grStatusCodes['SUCCESS']);
 		$response->setProperty('status_text', 'Login successful.');
 		return null;
@@ -270,7 +269,7 @@ class GalleryRemoteController extends GalleryController {
     function fetchAlbums($prune, $form, &$response) {
 	global $gallery;
 
-	$start = array_sum(explode(" ",microtime()));
+	$start = array_sum(explode(' ', microtime()));
 	$fetchPermissions = empty($form['no_perms']);
 
 	$grStatusCodes = GalleryRemoteConstants::getStatusCodes();
@@ -304,7 +303,8 @@ class GalleryRemoteController extends GalleryController {
 	    }
 	}
 
-	$response->setProperty('debug_time_albumids', round(array_sum(explode(" ",microtime())) - $start, 3).'s');
+	$response->setProperty('debug_time_albumids',
+			       round(array_sum(explode(' ', microtime())) - $start, 3) . 's');
 
 	if (empty($albumIds)) {
 	    $response->setProperty('status', $grStatusCodes['SUCCESS']);
@@ -319,7 +319,8 @@ class GalleryRemoteController extends GalleryController {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$response->setProperty('debug_time_entities', round(array_sum(explode(" ",microtime())) - $start, 3).'s');
+	$response->setProperty('debug_time_entities',
+			       round(array_sum(explode(' ', microtime())) - $start, 3) . 's');
 
 	if ($prune) {
 	    /* Recursively load parents */
@@ -338,7 +339,8 @@ class GalleryRemoteController extends GalleryController {
 	    }
 	}
 
-	$response->setProperty('debug_time_permissions', round(array_sum(explode(" ",microtime())) - $start, 3).'s');
+	$response->setProperty('debug_time_permissions',
+			       round(array_sum(explode(' ', microtime())) - $start, 3) . 's');
 
 	/* Now add all the albums to the tree */
 	$i = 1;
@@ -348,7 +350,7 @@ class GalleryRemoteController extends GalleryController {
 	    $response->setProperty('album.title.' . $i, $album->getTitle());
 	    $response->setProperty('album.summary.' . $i, $album->getSummary());
 	    $response->setProperty('album.parent.' . $i, $album->getParentId());
-	    
+
 	    if ($fetchPermissions) {
 		$perms = $permissionsTable[$album->getId()];
 
@@ -361,13 +363,14 @@ class GalleryRemoteController extends GalleryController {
 		$response->setProperty('album.perms.create_sub.' . $i,
 				       isset($perms['core.addAlbumItem']) ? 'true' : 'false');
 	    }
-	    
+
 	    $response->setProperty('album.info.extrafields.' . $i, "Summary,Description");
 
 	    $i++;
 	}
 
-	$response->setProperty('debug_time_generate', round(array_sum(explode(" ",microtime())) - $start, 3).'s');
+	$response->setProperty('debug_time_generate',
+			       round(array_sum(explode(' ', microtime())) - $start, 3) . 's');
 
 	$perm = GalleryCoreApi::hasItemPermission($rootId, 'core.addAlbumItem');
 	if ($ret) {
