@@ -308,7 +308,6 @@ class SystemChecksStep extends UpgradeStep {
 	$outputBuffers = array();
 	foreach (array('output_buffering', 'zlib.output_compression') as $outputFunction) {
 	    if (GalleryUtilities::getPhpIniBool($outputFunction) ||
-		    (int) ini_get($outputFunction) > 0 ||
 		    (int) ini_get($outputFunction) > 0) {
 		$outputBuffers[] = $outputFunction;
 	    }
