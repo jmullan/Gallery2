@@ -263,7 +263,8 @@ class EntityTest extends GalleryTestCase {
 	$this->assert($entity->isModified('onLoadHandlers'));
     }
 
-    function testNullVsEmpty() {
+    function testEmptyVsNull() {
+	/* Ensure we can save and reset empty string without triggering modified flag */
 	GalleryCoreApi::requireOnce('modules/core/classes/GalleryEntity.class');
 	$entity = new GalleryEntity();
 	$ret = $entity->create();
