@@ -115,6 +115,7 @@ class Getid3Helper {
 	    $rawGetid3Data = null;
 	    return;
 	}
+
 	$getID3 = new getID3;
 	$rawGetid3Data = $getID3->analyze($path);
     }
@@ -148,8 +149,8 @@ class Getid3Helper {
 	    }
 	}
 	return ($results);
-    }	
-    
+    }
+
     function getId3ArchiveData($path, $viewMode) {
 	Getid3Helper::_fetchRawGetid3Data($path, $rawGetid3Data);
 	$fileArray = null;

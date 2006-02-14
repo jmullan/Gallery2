@@ -127,6 +127,18 @@ class Getid3Module extends GalleryModule {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	/*
+	 * Stopgap for now, don't allow installation on Windows until
+	 * we resolve the fact that the helperapps dir is missing from
+	 * the getid3 lib and the lib won't work properly if there are
+	 * spaces in the path.
+	 */
+	$platform =& $gallery->getPlatform();
+	if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
+	  return array(null,
+		       array('view' => 'core.SiteAdmin',
+			     'subView' => 'getid3.CantActivate'));
+	}
 
 	list ($ret, $redirect) = parent::activate($postActivationEvent);
 	if ($ret) {
@@ -163,6 +175,13 @@ class Getid3Module extends GalleryModule {
 	return array(null,
 	             array(array('name' => $this->translate('Getid3'),
 	                         'view' => 'getid3:AdminGetid3')));
+    }
+
+    /**
+     * @see GalleryModule::getConfigurationView()
+     */
+    function getConfigurationView() {
+	return 'getid3.CantActivate';
     }
 }
 ?>
