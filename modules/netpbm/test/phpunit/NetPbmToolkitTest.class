@@ -588,15 +588,53 @@ class NetPbmToolkitTest extends GalleryTestCase {
 				  'image/bmp'),
 			    $mimeTypes);
     }
+
+    function testBinariesWindowsCygwin() {
+	list ($ret, $results, $mimeTypes) = NetPbmToolkitHelper::testBinaries('/windowsCygwin/');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array(
+			      array('name' => 'pnmscale', 'success' => true, 'message' => array()),
+			      array('name' => 'pnmcut', 'success' => true, 'message' => array()),
+			      array('name' => 'pamfile', 'success' => true, 'message' => array()),
+			      array('name' => 'pnmcomp', 'success' => true, 'message' => array()),
+			      array('name' => 'pnmflip', 'success' => true, 'message' => array()),
+			      array('name' => 'jpegtopnm', 'success' => true, 'message' => array()),
+			      array('name' => 'ppmtojpeg', 'success' => true, 'message' => array()),
+			      array('name' => 'giftopnm', 'success' => true, 'message' => array()),
+			      array('name' => 'ppmtogif', 'success' => true, 'message' => array()),
+			      array('name' => 'pnmquant', 'success' => true, 'message' => array()),
+			      array('name' => 'pngtopnm', 'success' => true, 'message' => array()),
+			      array('name' => 'pnmtopng', 'success' => true, 'message' => array()),
+			      array('name' => 'tifftopnm', 'success' => true, 'message' => array()),
+			      array('name' => 'pnmtotiff', 'success' => true, 'message' => array()),
+			      array('name' => 'bmptopnm', 'success' => true, 'message' => array()),
+			      array('name' => 'ppmtobmp', 'success' => true, 'message' => array()),
+			      array('name' => 'pnmquant', 'success' => true, 'message' => array())),
+			    $results);
+
+	$this->assertEquals(array('image/jpeg',
+				  'image/pjpeg',
+				  'image/gif',
+				  'image/png',
+				  'image/tiff',
+				  'image/bmp'),
+			    $mimeTypes);
+    }
 }
 
 /**
  * Test platform
  *
+ * Note: this has to extend WinNtPlatform because when we're doing binary discovery
+ * we detect windows and try to append .exe to the binary filename.
+ *
  * @package NetPbm
  * @subpackage PHPUnit
  */
-class NetPbmToolkitTestPlatform {
+class NetPbmToolkitTestPlatform extends WinNtPlatform {
 
     function NetPbmToolkitTestPlatform($platform) {
 	$this->_platform = $platform;
@@ -855,6 +893,22 @@ class NetPbmToolkitTestPlatform {
 	    case $this->_netPbmPath . 'pnmcut':
 	    case $this->_netPbmPath . 'pnmfile':
 	    case $this->_netPbmPath . 'pnmcomp':
+	    case '/windowsCygwin/bmptopnm.exe':
+	    case '/windowsCygwin/giftopnm.exe':
+	    case '/windowsCygwin/jpegtopnm.exe':
+	    case '/windowsCygwin/pngtopnm.exe':
+	    case '/windowsCygwin/pnmtopng.exe':
+	    case '/windowsCygwin/pnmtotiff.exe':
+	    case '/windowsCygwin/ppmtobmp.exe':
+	    case '/windowsCygwin/ppmtogif.exe':
+	    case '/windowsCygwin/ppmtojpeg.exe':
+	    case '/windowsCygwin/tifftopnm.exe':
+	    case '/windowsCygwin/pnmscale.exe':
+	    case '/windowsCygwin/pnmcut.exe':
+	    case '/windowsCygwin/pamfile.exe':  /* test pamfile instead of pnmfile */
+	    case '/windowsCygwin/pnmcomp.exe':
+	    case '/windowsCygwin/pnmflip.exe':
+	    case '/windowsCygwin/pamquant': /* test files that don't have end in .exe */
 		return array(1, array(), array());
 	    }
 	}
@@ -915,6 +969,23 @@ class NetPbmToolkitTestPlatform {
 	case $this->_netPbmPath . 'pnmflip':
 	case $this->_netPbmPath . 'ppmquant':
 	case $this->_netPbmPath:
+	case '/windowsCygwin/bmptopnm.exe':
+	case '/windowsCygwin/giftopnm.exe':
+	case '/windowsCygwin/jpegtopnm.exe':
+	case '/windowsCygwin/pngtopnm.exe':
+	case '/windowsCygwin/pnmtopng.exe':
+	case '/windowsCygwin/pnmtotiff.exe':
+	case '/windowsCygwin/ppmtobmp.exe':
+	case '/windowsCygwin/ppmtogif.exe':
+	case '/windowsCygwin/ppmtojpeg.exe':
+	case '/windowsCygwin/tifftopnm.exe':
+	case '/windowsCygwin/pnmscale.exe':
+	case '/windowsCygwin/pnmcut.exe':
+	case '/windowsCygwin/pamfile.exe':  /* test pamfile instead of pnmfile */
+	case '/windowsCygwin/pnmcomp.exe':
+	case '/windowsCygwin/pnmflip.exe':
+	case '/windowsCygwin/pnmquant': /* test files that don't have end in .exe */
+	case '/windowsCygwin/':
 	    return true;
 	}
 
@@ -931,6 +1002,7 @@ class NetPbmToolkitTestPlatform {
 	switch($path) {
 	case $this->_netPbmPath:
 	case '/validPath/':
+	case '/windowsCygwin/':
 	    return true;
 	}
 

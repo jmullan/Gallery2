@@ -238,13 +238,13 @@ class NetPbmToolkitHelper {
 	}
 
 	$binaryData = array(
-	    '' => array('pnmscale', 'pnmcut', 'pnmfile', 'pnmcomp|pamcomp',
-			'exist' => 'pnmflip'), /* No --version for this */
+	    '' => array('pnmscale', 'pnmcut|pamcut', 'pnmfile|pamfile', 'pnmcomp|pamcomp',
+			'exist' => 'pnmflip|pamflip'), /* No --version for this */
 	    'image/jpeg|image/pjpeg' => array('jpegtopnm', 'pnmtojpeg|ppmtojpeg'),
-	    'image/gif' => array('giftopnm', 'ppmtogif', 'exist' => 'ppmquant'),
+	    'image/gif' => array('giftopnm', 'ppmtogif', 'exist' => 'ppmquant|pnmquant'),
 	    'image/png' => array('pngtopnm', 'pnmtopng'),
-	    'image/tiff' => array('tifftopnm', 'pnmtotiff'),
-	    'image/bmp' => array('bmptopnm|bmptoppm', 'ppmtobmp', 'exist' => 'ppmquant'),
+	    'image/tiff' => array('tifftopnm', 'pnmtotiff|pamtotiff'),
+	    'image/bmp' => array('bmptopnm|bmptoppm', 'ppmtobmp', 'exist' => 'ppmquant|pnmquant'),
 	);
 
 	$tests = $mimeTypes = array();
@@ -256,7 +256,9 @@ class NetPbmToolkitHelper {
 		foreach (explode('|', $binaries) as $binary) {
 		    $fullPath = $netPbmPath . $binary;
 		    if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
-			$fullPath .= '.exe';
+			if (!$isRestrictedPath && !$platform->file_exists($fullPath)) {
+			    $fullPath .= '.exe';
+			}
 		    }
 		    if (!$isRestrictedPath && !$platform->file_exists($fullPath)) {
 			continue;
