@@ -278,6 +278,7 @@ class ImageMagickModule extends GalleryModule {
 	    $paths[] = "C:\\apps\ImageMagick\\";
 	    $paths[] = "C:\\ImageMagick\\";
 	    $paths[] = "C:\\ImageMagick\\VisualMagick\\bin\\";
+	    $paths[] = "C:\\cygwin\\bin\\";
 	} else if (GalleryUtilities::isA($platform, 'UnixPlatform')){
 	    foreach (explode(':', getenv('PATH')) as $path) {
 		$path = trim($path);

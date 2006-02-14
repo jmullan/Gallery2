@@ -110,6 +110,7 @@ class ZipCartModule extends GalleryModule {
 	    $paths[] = 'C:\\Program Files\\Zip\\zip.exe';
 	    $paths[] = 'C:\\apps\Zip\\zip.exe';
 	    $paths[] = 'C:\\Zip\\zip.exe';
+	    $paths[] = 'C:\\cygwin\\bin\\zip.exe';
 	} else if (GalleryUtilities::isA($platform, 'UnixPlatform')){
 	    foreach (explode(':', getenv('PATH')) as $path) {
 		$path = trim($path);
