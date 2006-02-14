@@ -965,7 +965,7 @@ class GalleryStorage {
 		    $alias .= $chr;
 		}
 	    }
-	    $alias = strtolower($alias) . ($number - 1);
+	    $alias = GalleryUtilities::strToLower($alias) . ($number - 1);
 	} else {
 	    $tableName = $split[0];
 	    $alias = null;
