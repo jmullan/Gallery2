@@ -284,6 +284,7 @@ class AdminFfmpegView extends GalleryView {
 		if ($ret) {
 		    if ($ret->getErrorCode() & ERROR_BAD_PATH) {
 			$form['error']['path']['badPath'] = 1;
+			$tests = $mimeTypes = array();
 		    } else {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
