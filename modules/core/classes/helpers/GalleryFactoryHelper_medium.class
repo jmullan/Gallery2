@@ -175,8 +175,8 @@ class GalleryFactoryHelper_medium {
 	    $hints = null;
 	} else {
 	    /* Lowercase hints for easier lookups */
-	    for ($i = 0; $i < sizeof($hints); $i++) {
-		$hints[$i] = strtolower($hints[$i]);
+	    foreach ($hints as $i => $hint) {
+		$hints[$i] = GalleryUtilities::strToLower($hint);
 	    }
 	}
 
