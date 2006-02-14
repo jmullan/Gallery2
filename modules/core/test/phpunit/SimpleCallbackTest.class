@@ -201,7 +201,7 @@ class SimpleCallbackTest extends GalleryTestCase {
     function testLookupDirectoriesWithUmlauts() {
 	/* Filesystem doesn't accept / return UTF-8 characters */
 	global $gallery;
-	$gallery->_phpVm =  new SimpleCallbackTestPhpVm();
+	$gallery->_phpVm = new SimpleCallbackTestPhpVm();
 	$platform = new UnitTestPlatform();
 	$platform->setReply('file_exists', array('/phpäunit'), true);
 	$platform->setReply('is_dir', array('/phpäunit'), true);
@@ -213,13 +213,16 @@ class SimpleCallbackTest extends GalleryTestCase {
 	$platform->setReply('closedir', array('dh'), true);
 	$gallery->setPlatform($platform);
 
+	/* Fake a specific charset to isolate this test */
+	GalleryDataCache::put('GalleryCharsetHelper_simple::detectSystemCharset', 'ISO-8859-1');
+
 	/* German umlaut 'ä' in ISO-8859-1 */
 	$umlautUtf8 = GalleryCoreApi::convertToUtf8(chr(228), 'ISO-8859-1');
 	$prefix = '/php' . $umlautUtf8 . 'unit';
 	GalleryUtilities::putRequestVariable('command', 'lookupDirectories');
 	GalleryUtilities::putRequestVariable('prefix', $prefix);
 	$results = $this->_runCallback();
-	
+
 	$this->assertEquals($prefix . '/t' . $umlautUtf8 . 'st', $results, 'results');
 	$this->assert($platform->isComplete(), $platform->getRemaining());
     }
@@ -301,6 +304,9 @@ class SimpleCallbackTest extends GalleryTestCase {
 	$platform->setReply('closedir', array('dh'), true);
 	$gallery->setPlatform($platform);
 
+	/* Fake a specific charset to isolate this test */
+	GalleryDataCache::put('GalleryCharsetHelper_simple::detectSystemCharset', 'ISO-8859-1');
+
 	/* German umlaut 'ä' in ISO-8859-1 */
 	$umlautUtf8 = GalleryCoreApi::convertToUtf8(chr(228), 'ISO-8859-1');
 	$prefix = '/php' . $umlautUtf8 . 'unit';
@@ -312,7 +318,7 @@ class SimpleCallbackTest extends GalleryTestCase {
 	$this->assertEquals("$prefix/dir\n$prefix/t" . $umlautUtf8 . "st", $results, 'results');
 	$this->assert($platform->isComplete(), $platform->getRemaining());
     }
-    
+
     function testLookupFilesAsNonSiteAdmin() {
 	global $gallery;
 
@@ -353,18 +359,6 @@ class SimpleCallbackTestPhpVm {
 	default:
 	    return function_exists($functionName);
 	}
-    }
-
-    function nl_langinfo($item) {
-	if ($item == CODESET) {
-	    return 'ISO-8859-1';
-	} else {
-	    return '';
-	}
-    }
-
-    function setlocale($category, $locale) {
-	return '';
     }
 }
 ?>

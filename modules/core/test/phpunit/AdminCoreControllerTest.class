@@ -434,11 +434,6 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
     function testAddUploadLocalServerDirBogus() {
 	global $gallery;
 
-	/* On windows boxes, we don't have the CODESET constant, so fake it */
-	if (!defined('CODESET')) {
-	    define('CODESET', 'CODESET');
-	}
-
 	$gallery->_phpVm = new AdminCoreControllerTestPhpVm('');
 
 	GalleryUtilities::putRequestVariable('form[uploadLocalServer][newDir]',
@@ -598,10 +593,8 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
     function testAddUploadLocalServerDirWithUmlaut() {
 	global $gallery;
 
-	/* On windows boxes, we don't have the CODESET constant, so fake it */
-	if (!defined('CODESET')) {
-	    define('CODESET', 'CODESET');
-	}
+	/* Fake a specific charset to isolate this test */
+	GalleryDataCache::put('GalleryCharsetHelper_simple::detectSystemCharset', 'ISO-8859-1');
 
 	$gallery->_phpVm = new AdminCoreControllerTestPhpVm('');
 	$platform = new UnitTestPlatform();
@@ -854,14 +847,6 @@ class AdminCoreControllerTestPhpVm extends GalleryPhpVm {
 	    return true;
 	default:
 	    return function_exists($functionName);
-	}
-    }
-
-    function nl_langinfo($item) {
-	if ($item == CODESET) {
-	    return 'ISO-8859-1';
-	} else {
-	    return '';
 	}
     }
 
