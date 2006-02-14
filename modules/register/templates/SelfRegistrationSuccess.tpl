@@ -25,14 +25,14 @@
       {g->text text="Your registration was successful and your account has been activated."}
   </h2>
   <p class="giDescription">
-      {capture name=login}
+      {capture name=loginLink}
       <a href="{g->url arg1="view=core.UserAdmin" arg2="subView=core.UserLogin" forceFullUrl=true}">
-	{g->text text="login"}
+      {/capture}
+      {capture name=loginLinkEnd}
       </a>
       {/capture}
-
-      {g->text text="You can now %s to your account with your username and password."
-	       arg1=$smarty.capture.login}
+      {g->text text="You can now %slogin%s to your account with your username and password."
+	       arg1=$smarty.capture.loginLink arg2=$smarty.capture.loginLinkEnd}
   </p>
 {/if}
 </div>
