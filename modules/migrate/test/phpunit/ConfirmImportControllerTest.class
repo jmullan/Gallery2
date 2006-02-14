@@ -879,7 +879,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	}
 	$this->assertEquals('head_left', $item->getTitle(), 'title');
 	$this->assertEquals('head left', $item->getSummary(), 'summary, html stripped out');
-	$this->assertEquals(null, $item->getDescription(), 'description');
+	$this->assertEquals('', $item->getDescription(), 'description');
 
 	/*
 	 * album04 is a hidden album (hidden in its parent, album03)

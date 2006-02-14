@@ -173,7 +173,7 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	    if ($ret) {
 		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    $this->assertEquals(null, $derivative->getPostFilterOperations(),
+	    $this->assertEquals('', $derivative->getPostFilterOperations(),
 				'Post filter mismatch');
 	}
     }

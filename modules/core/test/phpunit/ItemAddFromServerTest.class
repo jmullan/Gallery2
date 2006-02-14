@@ -335,10 +335,10 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	foreach ($escapedBasenames as $base) {
 	    $item =& $items[$results[1]['addedFiles'][$i]['id']];
 	    $expectedName = GalleryCoreApi::convertToUtf8($base);
-	    $this->assertEquals($setTitle ? $expectedName : null, $item->getTitle(), 'title');
-	    $this->assertEquals($setSummary ? $expectedName : null, $item->getSummary(),
+	    $this->assertEquals($setTitle ? $expectedName : '', $item->getTitle(), 'title');
+	    $this->assertEquals($setSummary ? $expectedName : '', $item->getSummary(),
 				'summary');
-	    $this->assertEquals($setDescription ? $expectedName : null, $item->getDescription(),
+	    $this->assertEquals($setDescription ? $expectedName : '', $item->getDescription(),
 				'description');
 
 	    list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCount($item->getId());
@@ -388,7 +388,7 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	$this->assertEquals('December - _#952_.jpg', $item->getPathComponent(), 'pathComponent');
 	$this->assertEquals('December - &lt;#952&gt;', $item->getTitle(), 'title');
 	$this->assertEquals('December - &lt;#952&gt;', $item->getSummary(), 'summary');
-	$this->assertEquals(null, $item->getDescription(), 'description');
+	$this->assertEquals('', $item->getDescription(), 'description');
     }
 
     /**

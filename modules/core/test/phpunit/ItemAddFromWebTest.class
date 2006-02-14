@@ -134,7 +134,7 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 	    $base = $basenames[$i];
 	    $this->assertEquals($base, $item->getTitle(), "title $i");
 	    $this->assertEquals($base, $item->getSummary(), "summary $i");
-	    $this->assertEquals(null, $item->getDescription(), "description $i");
+	    $this->assertEquals('', $item->getDescription(), "description $i");
 	    $i++;
 	}
     }

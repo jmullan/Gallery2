@@ -194,8 +194,8 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('a caption', $item->getTitle(), 'title');
-	$this->assertEquals(null, $item->getSummary(), 'summary');
-	$this->assertEquals(null, $item->getDescription(), 'description');
+	$this->assertEquals('', $item->getSummary(), 'summary');
+	$this->assertEquals('', $item->getDescription(), 'description');
     }
 
     function testAddWithEmptyTitle() {
@@ -233,9 +233,9 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals(null, $item->getTitle(), 'title');
+	$this->assertEquals('', $item->getTitle(), 'title');
 	$this->assertEquals('a caption', $item->getSummary(), 'summary');
-	$this->assertEquals(null, $item->getDescription(), 'description');
+	$this->assertEquals('', $item->getDescription(), 'description');
     }
 
     function testAddWithSpaces() {

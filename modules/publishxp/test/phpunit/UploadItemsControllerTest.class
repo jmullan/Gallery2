@@ -93,8 +93,8 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals($this->_parent->getId(), $entity->getParentId());
 	$this->assertEquals('test/file', $entity->getMimeType());
 	$this->assertEquals('Foo.dat', $entity->getTitle());
-	$this->assertEquals(null, $entity->getSummary());
-	$this->assertEquals(null, $entity->getDescription());
+	$this->assertEquals('', $entity->getSummary(), 'summary');
+	$this->assertEquals('', $entity->getDescription(), 'description');
     }
 
     function testUploadItemsPermissionDenied() {
@@ -139,8 +139,8 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals($this->_parent->getId(), $entity->getParentId());
 	$this->assertEquals('application/x-csh', $entity->getMimeType());
 	$this->assertEquals('Foo.csh', $entity->getTitle());
-	$this->assertEquals(null, $entity->getSummary());
-	$this->assertEquals(null, $entity->getDescription());
+	$this->assertEquals('', $entity->getSummary(), 'summary');
+	$this->assertEquals('', $entity->getDescription(), 'description');
     }
 
     function testUploadItemsSetCaptionsAndStripExtensions() {
@@ -169,7 +169,7 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals('test/file', $entity->getMimeType());
 	$this->assertEquals('Foo', $entity->getTitle(), 'title');
 	$this->assertEquals('Foo', $entity->getSummary(), 'summary');
-	$this->assertEquals(null, $entity->getDescription());
+	$this->assertEquals('', $entity->getDescription(), 'description');
     }
 
     function testUploadItemsWithOption() {
@@ -207,8 +207,8 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals($this->_parent->getId(), $entity->getParentId());
 	$this->assertEquals('test/file', $entity->getMimeType());
 	$this->assertEquals('Foo.dat', $entity->getTitle());
-	$this->assertEquals(null, $entity->getSummary());
-	$this->assertEquals(null, $entity->getDescription());
+	$this->assertEquals('', $entity->getSummary(), 'summary');
+	$this->assertEquals('', $entity->getDescription(), 'description');
     }
 }
 

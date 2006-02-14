@@ -1112,18 +1112,13 @@ class GalleryStorage {
      */
     function _normalizeValue($value, $memberData, $fromDb=false) {
 	$notNull = !empty($memberData['notNull']) ||
-	    ( !empty($memberData['notNullEmptyAllowed']) && $this->_isEmptyAllowedForNotNullColumn);
+	   ( !empty($memberData['notNullEmptyAllowed']) && $this->_isEmptyAllowedForNotNullColumn);
 
 	if (is_null($value) && !$notNull) {
 	    return $value;
 	}
 
 	$type = $memberData['type'];
-	if ( !$notNull && empty($value) && !is_numeric($value) &&
-	        ( !($type & STORAGE_TYPE_BOOLEAN) || $value !== false)) {
-	    return null;
-	}
-
 	if ($type & STORAGE_TYPE_BOOLEAN) {
 	    /* Convert booleans to 1 : 0 */
 	    return (int)!empty($value);

@@ -154,7 +154,7 @@ class ConfirmDeleteControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals(null, $derivative->getPostfilterOperations(), 'not watermarked');
+	$this->assertEquals('', $derivative->getPostfilterOperations(), 'not watermarked');
     }
 
     function testAdminDelete() {
@@ -181,7 +181,7 @@ class ConfirmDeleteControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals(null, $derivative->getPostfilterOperations(), 'not watermarked');
+	$this->assertEquals('', $derivative->getPostfilterOperations(), 'not watermarked');
     }
 }
 ?>
