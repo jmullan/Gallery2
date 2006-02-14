@@ -135,7 +135,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
 	    }
 	    if (empty($form['error'])) {
 		if (isset($actualUrl) && $actualUrl != $form['webPage']) {
-		    $form['webPage'] = $actualUrl;
+		    $form['webPage'] = str_replace('&', '&amp;', $actualUrl);
 		    $baseUrlComponents = parse_url($form['webPage']);
 		}
 
@@ -165,9 +165,11 @@ class ItemAddFromWeb extends ItemAddPlugin {
 		     * Parse the buffer.  We match:
 		     *  href="foo bar"    href='foo bar'   href=foo
 		     *  src="foo bar"     src='foo bar'    src=foo
+		     *  value="http:foo"  value='http:foo' value=http:foo (or https)
 		     */
-		    preg_match_all('/(src|href)\s*=\s*(?:\"(.*?)\"|\'(.*?)\'|([^\'\"\> ]*))/i',
-				   $buffer, $matches);
+		    preg_match_all('/(src|href|value(?=\s*=\s*[\'"]?https?:))\s*=\s*'
+			    . '(?:\"(.*?)\"|\'(.*?)\'|([^\'\"\> ]*))/i',
+			    $buffer, $matches);
 
 		    $seenBefore = array();
 		    for ($i = 0; $i < count($matches[1]); $i++) {

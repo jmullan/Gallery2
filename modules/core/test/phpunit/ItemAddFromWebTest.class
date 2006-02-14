@@ -34,6 +34,8 @@
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryPhotoItem.class');
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryAlbumItem.class');
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryDerivativeImage.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryMovieItem.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryUnknownItem.class');
 
 /**
  * ItemAddFromWeb plugin test
@@ -55,7 +57,6 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
 	$this->_markForCleanup($this->_album);
 
 	list ($ret, $this->_lockIds) = GalleryCoreApi::acquireReadLock($this->_album->getId());
@@ -66,6 +67,18 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 	global $gallery;
 	$this->_savePlatform =& $gallery->getPlatform();
 	$gallery->setPlatform(new ItemAddFromWebTestPlatform($this));
+
+	$this->_session =& $gallery->getSession();
+	$this->_saveRecentUrls = $this->_session->get('core.view.ItemAddFromWeb.recentUrls');
+	$this->_session->put('core.view.ItemAddFromWeb.recentUrls', array());
+
+	$photo = new GalleryPhotoItem();
+	list ($this->_photo) = $photo->itemTypeName();
+	$movie = new GalleryMovieItem();
+	list ($this->_movie) = $movie->itemTypeName();
+	$audio = new GalleryUnknownItem();
+	$audio->setMimeType('audio/mp3');
+	list ($this->_audio) = $audio->itemTypeName();
     }
 
     function tearDown() {
@@ -75,6 +88,13 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 	$ret = GalleryCoreApi::releaseLocks($this->_lockIds);
 	if ($ret) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$session =& $gallery->getSession();
+	if (isset($this->_saveRecentUrls)) {
+	    $session->put('core.view.ItemAddFromWeb.recentUrls', $this->_saveRecentUrls);
+	} else {
+	    $session->remove('core.view.ItemAddFromWeb.recentUrls');
 	}
 
 	parent::tearDown();
@@ -156,6 +176,165 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 	$this->assertEquals('1',
 	    GalleryUtilities::getRequestVariables('form[error][webPage][nothingSelected]'));
     }
+
+    function testParserHtml() {
+	$template = new ItemAddFromWebTestTemplate();
+	$form = array('formName' => 'ItemAddFromWeb',
+		      'action' => array('findFilesFromWebPage' => true),
+		      'webPage' => 'http://www.test.com/t/index.php?foo=bar');
+	list ($ret) = $this->_plugin->loadTemplate($template, $form, $this->_album);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array('ItemAddFromWeb' =>
+		    array('webPageUrlCount' => 9,
+			  'recentUrls' => array('http://www.test.com/t/index.php?foo=bar'))),
+		    $template->_data, 'template');
+	$this->assertEquals(
+		array('http://www.test.com/t/index.php?foo=bar' => 1),
+		$this->_session->get('core.view.ItemAddFromWeb.recentUrls'), 'session urls');
+	$this->assertEquals(
+		array('formName' => 'ItemAddFromWeb',
+		      'action' => array('findFilesFromWebPage' => true),
+		      'webPage' => 'http://www.test.com/t/index.php?foo=bar',
+		      'webPageUrls' => array(
+			  array('url' => 'http://gallery.test.com/img.jpg',
+			        'itemType' => $this->_photo),
+			  array('url' => 'http://www.test.com/blah.png',
+			        'itemType' => $this->_photo),
+			  array('url' => 'http://www.test.com/t/test.gif',
+			        'itemType' => $this->_photo),
+			  array('url' => 'http://www.test.com/t/test.mov',
+			        'itemType' => $this->_movie),
+			  array('url' => 'http://www.test.com/a.mp3',
+			        'itemType' => $this->_audio),
+			  array('url' => 'ftp://test.com/b.bmp',
+			        'itemType' => $this->_photo),
+			  array('url' => 'http://www.test.com/t/test.gif',
+			        'itemType' => $this->_photo),
+			  array('url' => 'http://blah.com/blah.jpg',
+			        'itemType' => $this->_photo),
+			  array('url' => 'https://blah.com/blah.jpg',
+			        'itemType' => $this->_photo)),
+		      'set' => array('title' => 1, 'summary' => 0, 'description' => 0)),
+		$form, 'form data');
+    }
+
+    function testParserNoUrls() {
+	$this->_session->put('core.view.ItemAddFromWeb.recentUrls',
+		array('http://www.test.com/page.php' => 1, 'http://blah.com/other.html' => 1));
+	$template = new ItemAddFromWebTestTemplate();
+	$form = array('formName' => 'ItemAddFromWeb',
+		      'action' => array('findFilesFromWebPage' => true),
+		      'webPage' => 'http://www.test.com/page.php');
+	list ($ret) = $this->_plugin->loadTemplate($template, $form, $this->_album);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array('ItemAddFromWeb' =>
+		    array('webPageUrlCount' => 0,
+			  'recentUrls' => array('http://www.test.com/page.php',
+						'http://blah.com/other.html'))),
+		    $template->_data, 'template');
+	$this->assertEquals(
+		array('http://www.test.com/page.php' => 1,
+		      'http://blah.com/other.html' => 1),
+		$this->_session->get('core.view.ItemAddFromWeb.recentUrls'), 'session urls');
+	$this->assertEquals(
+		array('formName' => 'ItemAddFromWeb',
+		      'action' => array('findFilesFromWebPage' => true),
+		      'webPage' => 'http://www.test.com/page.php',
+		      'webPageUrls' => array(),
+		      'error' => array('webPage' => array('noUrlsFound' => 1)),
+		      'set' => array('title' => 1, 'summary' => 0, 'description' => 0)),
+		$form, 'form data');
+    }
+
+    function testParserRedirectToImage() {
+	$this->_session->put('core.view.ItemAddFromWeb.recentUrls',
+			     array('http://blah.com/other.html' => 1));
+	$template = new ItemAddFromWebTestTemplate();
+	$form = array('formName' => 'ItemAddFromWeb',
+		      'action' => array('findFilesFromWebPage' => true),
+		      'webPage' => 'http://www.test.com/redirect.php');
+	list ($ret) = $this->_plugin->loadTemplate($template, $form, $this->_album);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array('ItemAddFromWeb' =>
+		    array('webPageUrlCount' => 1,
+			  'recentUrls' => array('http://blah.com/other.html',
+						'http://www.test.com/image.php?id=3&amp;sn=1'))),
+		    $template->_data, 'template');
+	$this->assertEquals(
+		array('http://blah.com/other.html' => 1,
+		      'http://www.test.com/image.php?id=3&amp;sn=1' => 1),
+		$this->_session->get('core.view.ItemAddFromWeb.recentUrls'), 'session urls');
+	$this->assertEquals(
+		array('formName' => 'ItemAddFromWeb',
+		      'action' => array('findFilesFromWebPage' => true),
+		      'webPage' => 'http://www.test.com/image.php?id=3&amp;sn=1',
+		      'webPageUrls' => array(array('url' =>
+						     'http://www.test.com/image.php?id=3&amp;sn=1',
+						   'itemType' => $this->_photo)),
+		      'set' => array('title' => 1, 'summary' => 0, 'description' => 0)),
+		$form, 'form data');
+    }
+
+    function testParserMissingUrl() {
+	$template = new ItemAddFromWebTestTemplate();
+	$form = array('formName' => 'ItemAddFromWeb',
+		      'action' => array('findFilesFromWebPage' => true));
+	list ($ret) = $this->_plugin->loadTemplate($template, $form, $this->_album);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array('formName' => 'ItemAddFromWeb',
+				  'action' => array('findFilesFromWebPage' => true),
+				  'error' => array('webPage' => array('missing' => 1)),
+				  'set' => array('title' => 1, 'summary' => 0, 'description' => 0)),
+			    $form);
+    }
+
+    function testParserInvalidUrl() {
+	$template = new ItemAddFromWebTestTemplate();
+	$form = array('formName' => 'ItemAddFromWeb',
+		      'action' => array('findFilesFromWebPage' => true),
+		      'webPage' => 'bogus:url.html');
+	list ($ret) = $this->_plugin->loadTemplate($template, $form, $this->_album);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array('formName' => 'ItemAddFromWeb',
+				  'action' => array('findFilesFromWebPage' => true),
+				  'webPage' => 'bogus:url.html',
+				  'error' => array('webPage' => array('invalid' => 1)),
+				  'set' => array('title' => 1, 'summary' => 0, 'description' => 0)),
+			    $form);
+    }
+
+    function testParserUnavailable() {
+	$template = new ItemAddFromWebTestTemplate();
+	$form = array('formName' => 'ItemAddFromWeb',
+		      'action' => array('findFilesFromWebPage' => true),
+		      'webPage' => 'http://www.test.com/404.jpg');
+	list ($ret) = $this->_plugin->loadTemplate($template, $form, $this->_album);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array('formName' => 'ItemAddFromWeb',
+				  'action' => array('findFilesFromWebPage' => true),
+				  'webPage' => 'http://www.test.com/404.jpg',
+				  'error' => array('webPage' => array('unavailable' => 1)),
+				  'set' => array('title' => 1, 'summary' => 0, 'description' => 0)),
+			    $form);
+    }
 }
 
 /**
@@ -219,6 +398,7 @@ class ItemAddFromWebTestPlatform  {
 		$this->_readBuffer[$handle] = $buffer;
 		return strlen($string);
 
+	    case "GET /404.jpg HTTP/1.0\r\nHost: www.test.com\r\n\r\n":
 	    case "GET /404.jpg HTTP/1.0\r\n" .
 		"Host: www.test.com\r\n" .
 		"Referer: http://www.test.com/index.php?foo=bar&a=b\r\n\r\n":
@@ -237,6 +417,60 @@ class ItemAddFromWebTestPlatform  {
 		$buffer[] = 'Client-Response-Num: 1';
 		$buffer[] = '';
 		$buffer[] = 'test';
+		$buffer[] = '';
+		$this->_readBuffer[$handle] = $buffer;
+		return strlen($string);
+
+	    case "GET /t/index.php?foo=bar HTTP/1.0\r\nHost: www.test.com\r\n\r\n":
+		$buffer = array();
+		$buffer[] = 'HTTP/1.1 200 OK';
+		$buffer[] = 'Connection: close';
+		$buffer[] = 'Date: Mon, 13 Feb 2006 21:10:03 GMT';
+		$buffer[] = 'Content-type: text/html';
+		$buffer[] = '';
+		$buffer[] = '<html><body>';
+		$buffer[] = '<img src="http://gallery.test.com/img.jpg"/>';
+		$buffer[] = 'abc <img src=\'/blah.png\' alt=test/> def';
+		$buffer[] = 'test <img';
+		$buffer[] = 'src=test.gif> <a href="test.mov">hi</a><a href=/a.mp3 onclick='
+			  . '"return true">bye</a><a';
+		$buffer[] = ' href=\'ftp://test.com/b.bmp\'>test</a>';
+		$buffer[] = '<a href="/t/test.gif">repeat</a>';
+		$buffer[] = '<input type=text value="not_a_url"/>';
+		$buffer[] = '<input type=text value="http://blah.com/blah.jpg"/>';
+		$buffer[] = '<input type=text value=\'https://blah.com/blah.jpg\'/>';
+		$buffer[] = '</body></html>';
+		$this->_readBuffer[$handle] = $buffer;
+		return strlen($string);
+
+	    case "GET /page.php HTTP/1.0\r\nHost: www.test.com\r\n\r\n":
+		$buffer = array();
+		$buffer[] = 'HTTP/1.1 200 OK';
+		$buffer[] = 'Connection: close';
+		$buffer[] = 'Date: Mon, 13 Feb 2006 21:10:05 GMT';
+		$buffer[] = 'Content-type: text/html';
+		$buffer[] = '';
+		$buffer[] = '<html><body>';
+		$buffer[] = 'no urls here</body></html>';
+		$this->_readBuffer[$handle] = $buffer;
+		return strlen($string);
+
+	    case "GET /redirect.php HTTP/1.0\r\nHost: www.test.com\r\n\r\n":
+		$buffer = array();
+		$buffer[] = 'HTTP/1.1 302 Found';
+		$buffer[] = 'Location: http://www.test.com/image.php?id=3&sn=1';
+		$buffer[] = '';
+		$this->_readBuffer[$handle] = $buffer;
+		return strlen($string);
+
+	    case "GET /image.php?id=3&sn=1 HTTP/1.0\r\nHost: www.test.com\r\n\r\n":
+		$buffer = array();
+		$buffer[] = 'HTTP/1.1 200 OK';
+		$buffer[] = 'Date: Mon, 13 Feb 2006 21:10:04 GMT';
+		$buffer[] = 'Content-Type: image/jpeg';
+		$buffer[] = 'Content-Length: 6';
+		$buffer[] = '';
+		$buffer[] = 'image';
 		$buffer[] = '';
 		$this->_readBuffer[$handle] = $buffer;
 		return strlen($string);
@@ -439,6 +673,22 @@ class ItemAddFromWebTestPlatform  {
     function exec($cmd) {
 	/* In case add of jpeg tries to get 'colorspace' property */
 	return array(true, array(''), array());
+    }
+}
+
+/**
+ * Test template
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ItemAddFromWebTestTemplate {
+    function ItemAddFromWebTestTemplate() {
+	$this->_data = array();
+    }
+
+    function setVariable($key, $value) {
+	$this->_data[$key] = $value;
     }
 }
 ?>
