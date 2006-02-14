@@ -98,7 +98,7 @@ if (empty($_SESSION['language'])) {
 if (function_exists('dgettext')) {
     $gallery = new GalleryStub();
     $translator = new GalleryTranslator();
-    $translator->init($_SESSION['language']);
+    $translator->init($_SESSION['language'], true);
     unset($gallery);
     bindtextdomain('gallery2_install', dirname(__FILE__) . '/locale');
     textdomain('gallery2_install');
