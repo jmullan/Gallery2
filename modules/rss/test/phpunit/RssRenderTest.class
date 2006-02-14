@@ -235,7 +235,7 @@ class RssRenderTest extends GalleryControllerTestCase {
 		'<description>This is my description</description>',
 		'<language>en-us</language>',
 		'<generator>Gallery 2 RSS Module, version ' . $version . '</generator>',
-		'<lastBuildDate>Sat, 14 Feb 2009 00:31:30 +0100</lastBuildDate>',
+		'<lastBuildDate>' . date('r', 1234567890) . '</lastBuildDate>',
 		'<ttl>120</ttl>',
 		'<item>',
 		' <title>I am Jack\'s title</title>',
@@ -243,7 +243,7 @@ class RssRenderTest extends GalleryControllerTestCase {
 		' <guid isPermaLink="false">url:' . $this->_album->getId() . '</guid>',
 		' <description><![CDATA[This is my description]]></description>',
 		' <category>album</category>',
-		' <pubDate>Sat, 14 Feb 2009 00:31:30 +0100</pubDate>',
+		' <pubDate>' . date('r', 1234567890) . '</pubDate>',
 		'</item>',
 		'</channel>',
 		'</rss>'),
@@ -287,7 +287,7 @@ class RssRenderTest extends GalleryControllerTestCase {
 		'<description>This is my description</description>',
 		'<language>en-us</language>',
 		'<generator>Gallery 2 RSS Module, version ' .$version . '</generator>',
-		'<lastBuildDate>Sat, 14 Feb 2009 00:31:30 +0100</lastBuildDate>',
+		'<lastBuildDate>' . date('r', 1234567890) . '</lastBuildDate>',
 		'<ttl>120</ttl>',
 		'<item>',
 		' <title>I am Jack\'s title</title>',
@@ -295,7 +295,7 @@ class RssRenderTest extends GalleryControllerTestCase {
 		' <guid isPermaLink="false">url:' . $this->_item1->getId() . '</guid>',
 		' <description><![CDATA[This is a description]]></description>',
 		' <category>photo</category>',
-		' <pubDate>Sat, 14 Feb 2009 00:31:30 +0100</pubDate>',
+		' <pubDate>' . date('r', 1234567890) . '</pubDate>',
 		'</item>',
 		'</channel>',
 		'</rss>'),
@@ -314,7 +314,7 @@ class RssRenderTestVm {
     function header($string) {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
-	
+
 	print 'Header: ' . $string . $platform->getLineEnding();
     }
 
