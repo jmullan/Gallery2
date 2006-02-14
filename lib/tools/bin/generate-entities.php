@@ -28,8 +28,10 @@ if (!empty($_SERVER['SERVER_NAME'])) {
 require_once(dirname(__FILE__) . '/XmlParser.inc');
 require_once(dirname(__FILE__) . '/../../smarty/Smarty.class.php');
 
-if (!empty($_ENV['TMP'])) {
-    $tmpdir = $_ENV['TMP'];
+/* getenv() works even if $_ENV isn't populated */
+$envTmp = getenv('TMP');
+if (!empty($envTmp)) {
+    $tmpdir = $envTmp;
 } else {
     $tmpdir = '/tmp';
 }

@@ -34,7 +34,7 @@
    </column>
 {/foreach}
 {foreach from=$keys item=key}
-{if $key.primary}
+{if !empty($key.primary)}
    <key primary="true">
 {else}
    <key>
