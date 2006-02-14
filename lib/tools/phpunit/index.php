@@ -35,6 +35,8 @@ require_once('CodeAuditTestCase.class');
 require_once('UnitTestPlatform.class');
 require_once('MockTemplateAdapter.class');
 
+@ini_set('output_buffering', 0);
+
 function PhpUnitGalleryMain(&$testSuite, $filter) {
     $ret = GalleryInitFirstPass();
     if ($ret) {
