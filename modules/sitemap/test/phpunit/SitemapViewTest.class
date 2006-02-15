@@ -43,11 +43,7 @@ class SitemapViewTest extends GalleryTestCase {
     function setUp() {
 	global $gallery;
 
-	$ret = parent::setUp();
-	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	parent::setUp();
 
 	$gallery->_phpVm = new SitemapViewTestVm();
 
@@ -76,7 +72,7 @@ class SitemapViewTest extends GalleryTestCase {
     function testRenderSitemap() {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
-	
+
 	ob_start();
 	$ret = $this->_view->renderSitemap($this->_root->getId());
 	if ($ret) {
@@ -88,25 +84,25 @@ class SitemapViewTest extends GalleryTestCase {
 	ob_end_clean();
 
 	if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
-	    /* 
-	     * Windows generates a localized timezone string and it's not 
+	    /*
+	     * Windows generates a localized timezone string and it's not
 	     * controllable by the locale. Use preg_match
 	     */
 	    $timeZone = '.+';
 	} else {
 	    $timeZone = '\\+00:00';
 	}
-	
-	$expectedRegexp = 
+
+	$expectedRegexp =
 		  "{Header: Content-type: application/xhtml\\+xml\n" .
 		  "<\\?xml version='1.0' encoding='UTF-8'\\?>\n" .
 		  "<urlset xmlns=\"http://www.google.com/schemas/sitemap/0.84\" " .
 		   "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " .
 		   "xsi:schemaLocation=\"http://www.google.com/schemas/sitemap/0.84 " .
-		   "http://www.google.com/schemas/sitemap/0.84/sitemap.xsd\">\n" . 
+		   "http://www.google.com/schemas/sitemap/0.84/sitemap.xsd\">\n" .
 		  sprintf(
 		      "<url><loc>url:%d</loc><lastmod>2009-02-13T23:31:30%s</lastmod></url>\n",
-		      $this->_root->getId(), $timeZone) . 
+		      $this->_root->getId(), $timeZone) .
 		  sprintf(
 		      "<url><loc>url:%d</loc><lastmod>2009-02-13T23:31:30%s</lastmod></url>\n",
 		      $this->_item[0]->getId(), $timeZone) .
@@ -117,7 +113,7 @@ class SitemapViewTest extends GalleryTestCase {
 		      "<url><loc>url:%d</loc><lastmod>2009-02-13T23:31:30%s</lastmod></url>\n",
 		      $this->_item[2]->getId(), $timeZone) .
 		 "</urlset>}";
-		 
+
 	$this->assert($matched = preg_match($expectedRegexp, $results)
 	);
 	if (!$matched) {
