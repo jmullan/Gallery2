@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2006 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
@@ -31,7 +31,6 @@
  *
  * @package Getid3
  * @subpackage PHPUnit
- *
  */
 class Getid3HelperTest extends GalleryTestCase {
 
@@ -97,19 +96,17 @@ class Getid3HelperTest extends GalleryTestCase {
      * @see GalleryTestCase::tearDown()
      */
     function tearDown() {
-	parent::tearDown();
-
 	$ret = Getid3Helper::setProperties(GETID3_SUMMARY, $this->_save['summary']);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = Getid3Helper::setProperties(GETID3_DETAILED, $this->_save['detailed']);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	parent::tearDown();
     }
 
     /**
@@ -148,11 +145,11 @@ class Getid3HelperTest extends GalleryTestCase {
      * Test getting meta data from gzipped tape archive "tar.gz" or "tgz" test file
      */
     function testGetId3ArchiveDataTgz() {
-        list ($ret, $id3ArchiveData) = Getid3Helper::getId3ArchiveData(
+	list ($ret, $id3ArchiveData) = Getid3Helper::getId3ArchiveData(
 	    dirname(__FILE__) . '/../data/tgztest.tgz', GETID3_SUMMARY);
-        if ($ret) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 	$this->assertEquals($this->_expectedTarResults, $id3ArchiveData);
     }
 
@@ -173,9 +170,8 @@ class Getid3HelperTest extends GalleryTestCase {
      * Test getting meta data from an avi (video/x-msvideo) test file
      */
     function testGetId3DataAvi() {
-	list ($ret, $id3Data) =
-	    Getid3Helper::getId3Data(
-	        dirname(__FILE__) . '/../data/test_small.avi', GETID3_DETAILED);
+	list ($ret, $id3Data) = Getid3Helper::getId3Data(
+		dirname(__FILE__) . '/../data/test_small.avi', GETID3_DETAILED);
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -186,53 +182,50 @@ class Getid3HelperTest extends GalleryTestCase {
 	 * we still may not get it back if its not in the image.  Doh.  Let's do a quick and dirty
 	 * test for now and just check for 'Make' and 'Model' to make sure that we got something.
 	 */
-	$verifiedCount = 0;
-	$unknownCount = 0;
+	$verifiedCount = $unknownCount = 0;
 	for ($i = 0; $i < sizeof($id3Data); $i++) {
 	    switch ($id3Data[$i]['title']) {
 	    case 'Audio Bit Rate':
-	        $this->assertEquals('88192', $id3Data[$i]['value'], 'Audio Bit Rate Mismatch');
-	        $verifiedCount++;
-	        break;
+		$this->assertEquals(88192, $id3Data[$i]['value'], 'Audio Bit Rate Mismatch');
+		$verifiedCount++;
+		break;
 	    case 'Audio Bit Rate Mode':
-	        $this->assertEquals('cbr', $id3Data[$i]['value'], 'Audio Bit Rate Mode Mismatch');
-	        $verifiedCount++;
-	        break;
+		$this->assertEquals('cbr', $id3Data[$i]['value'], 'Audio Bit Rate Mode Mismatch');
+		$verifiedCount++;
+		break;
 	    case 'Audio Channels':
-	        $this->assertEquals('1', $id3Data[$i]['value'], 'Audio Channels Mismatch');
-	        $verifiedCount++;
-	        break;
+		$this->assertEquals(1, $id3Data[$i]['value'], 'Audio Channels Mismatch');
+		$verifiedCount++;
+		break;
 	    case 'Audio Codec':
-	        $this->assertEquals(
-	            'Pulse Code Modulation (PCM)',
-	            $id3Data[$i]['value'],
-	            'Audio Codec Mismatch');
-	        $verifiedCount++;
-	        break;
+		$this->assertEquals('Pulse Code Modulation (PCM)', $id3Data[$i]['value'],
+				    'Audio Codec Mismatch');
+		$verifiedCount++;
+		break;
 	    case 'Video Bit Rate Mode':
-	        $this->assertEquals('vbr', $id3Data[$i]['value'], 'Video Bit Rate Mode Mismatch');
-	        $verifiedCount++;
-	        break;
+		$this->assertEquals('vbr', $id3Data[$i]['value'], 'Video Bit Rate Mode Mismatch');
+		$verifiedCount++;
+		break;
 	    case 'Video Codec':
-	        $this->assertEquals(
-	            'Microsoft Video 1 (CRAM)',
-	            $id3Data[$i]['value'],
-	            'Video Codec Mismatch');
-	        $verifiedCount++;
-	        break;
+		$this->assertEquals(
+		    'Microsoft Video 1 (CRAM)',
+		    $id3Data[$i]['value'],
+		    'Video Codec Mismatch');
+		$verifiedCount++;
+		break;
 	    case 'Video Bit Rate Mode':
-	        $this->assertEquals('vbr', $id3Data[$i]['value'], 'Video Bit Rate Mode Mismatch');
-	        $verifiedCount++;
-	        break;
+		$this->assertEquals('vbr', $id3Data[$i]['value'], 'Video Bit Rate Mode Mismatch');
+		$verifiedCount++;
+		break;
 	    case 'Channel Mode':
 	    case 'Video Bit Rate':
 	    case 'Date/Time':
-	        /* Don't verify these */
-	        break;
+		/* Don't verify these */
+		break;
 	    default:
-	        print "<!-- Unknown: ".$id3Data[$i]['title']." = ".$id3Data[$i]['value']." -->\n";
-	        $unknownCount++;
-	        break;
+		print "<!-- Unknown: ".$id3Data[$i]['title']." = ".$id3Data[$i]['value']." -->\n";
+		$unknownCount++;
+		break;
 	    }
 	}
 	$this->assertEquals(6, $verifiedCount, 'Verified count');
@@ -251,66 +244,61 @@ class Getid3HelperTest extends GalleryTestCase {
      * Test getting meta data from a flac test file
      */
     function testGetId3DataFlac() {
-        list ($ret, $id3Data) =
-            Getid3Helper::getId3Data(
-                dirname(__FILE__) . '/../data/sine_12000_22050.flac',
-                GETID3_DETAILED);
-        if ($ret) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
+	list ($ret, $id3Data) = Getid3Helper::getId3Data(
+		dirname(__FILE__) . '/../data/sine_12000_22050.flac', GETID3_DETAILED);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
-        /*
-         * What we get back depends on what options we've set for our mode, which will vary
-         * depending on the current settings of the database.  Even if we request a specific field,
-         * we still may not get it back if its not in the image.  Doh.  Let's do a quick and dirty
-         * test for now and just check for 'Make' and 'Model' to make sure that we got something.
-         */
-        $verifiedCount = 0;
+	/*
+	 * What we get back depends on what options we've set for our mode, which will vary
+	 * depending on the current settings of the database.  Even if we request a specific field,
+	 * we still may not get it back if its not in the image.  Doh.  Let's do a quick and dirty
+	 * test for now and just check for 'Make' and 'Model' to make sure that we got something.
+	 */
+	$verifiedCount = 0;
 	$this->assert(sizeof($id3Data) > 0, "No flac data");
-        for ($i = 0; $i < sizeof($id3Data); $i++) {
-            switch ($id3Data[$i]['title']) {
+	for ($i = 0; $i < sizeof($id3Data); $i++) {
+	    switch ($id3Data[$i]['title']) {
 	    case 'Audio Bit Rate':
 		$value = abs(488992.7448 - $id3Data[$i]['value']);
-                $this->assert($value < 0.01, 'value is ' . $value);
-                $verifiedCount++;
-	        break;
-	    case 'Audio Bit Rate Mode':
-                $this->assertEquals('vbr', $id3Data[$i]['value'], 'audio bit rate mode');
-                $verifiedCount++;
-	        break;
-	    case 'Audio Channels':
-                $this->assertEquals('1', $id3Data[$i]['value'], 'audio channels');
-                $verifiedCount++;
-	        break;
-            case 'Channel Mode':
-                $this->assertEquals('mono', $id3Data[$i]['value'], 'channel mode');
-                $verifiedCount++;
-	        break;
-	    default:
-	        $this->assertEquals('', $id3Data[$i]['title'], "Unknown flac data");
+		$this->assert($value < 0.01, 'value is ' . $value);
+		$verifiedCount++;
 		break;
-            }
-        }
-        $this->assertEquals(4, $verifiedCount, 'verified count');
+	    case 'Audio Bit Rate Mode':
+		$this->assertEquals('vbr', $id3Data[$i]['value'], 'audio bit rate mode');
+		$verifiedCount++;
+		break;
+	    case 'Audio Channels':
+		$this->assertEquals(1, $id3Data[$i]['value'], 'audio channels');
+		$verifiedCount++;
+		break;
+	    case 'Channel Mode':
+		$this->assertEquals('mono', $id3Data[$i]['value'], 'channel mode');
+		$verifiedCount++;
+		break;
+	    default:
+		$this->assertEquals('', $id3Data[$i]['title'], "Unknown flac data");
+		break;
+	    }
+	}
+	$this->assertEquals(4, $verifiedCount, 'verified count');
 
-        /* Make sure there are no duplicates in the list */
-        $seen = array();
-        for ($i = 0; $i < sizeof($id3Data); $i++) {
-            $title = $id3Data[$i]['title'];
-            $this->assert(!isset($seen[$title]), "$title is duplicated");
-            $seen[$title] = 1;
-        }
+	/* Make sure there are no duplicates in the list */
+	$seen = array();
+	for ($i = 0; $i < sizeof($id3Data); $i++) {
+	    $title = $id3Data[$i]['title'];
+	    $this->assert(!isset($seen[$title]), "$title is duplicated");
+	    $seen[$title] = 1;
+	}
     }
-
 
     /**
      * Test getting id3 data from an mp3 test file
      */
     function testGetId3DataMp3() {
-	list ($ret, $id3Data) =
-	    Getid3Helper::getId3Data(
-	        dirname(__FILE__) . '/../data/sine_8000_11025_64.mp3',
-	        GETID3_SUMMARY);
+	list ($ret, $id3Data) = Getid3Helper::getId3Data(
+		dirname(__FILE__) . '/../data/sine_8000_11025_64.mp3', GETID3_SUMMARY);
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -324,12 +312,12 @@ class Getid3HelperTest extends GalleryTestCase {
 	$verifiedCount = 0;
 	for ($i = 0; $i < sizeof($id3Data); $i++) {
 	    if ($id3Data[$i]['title'] == 'Artist') {
-	        $this->assertEquals('Don Willingham', $id3Data[$i]['value']);
-	        $verifiedCount++;
+		$this->assertEquals('Don Willingham', $id3Data[$i]['value']);
+		$verifiedCount++;
 	    }
 	    if ($id3Data[$i]['title'] == 'Title') {
-	        $this->assertEquals('8000Hz sine', $id3Data[$i]['value']);
-	        $verifiedCount++;
+		$this->assertEquals('8000Hz sine', $id3Data[$i]['value']);
+		$verifiedCount++;
 	    }
 	}
 	$this->assertEquals(2, $verifiedCount);
@@ -347,42 +335,40 @@ class Getid3HelperTest extends GalleryTestCase {
      * Test getting meta data from an .ogg ("ogg vorbis", application/ogg) test file
      */
     function testGetId3DataOgg() {
-        list ($ret, $id3Data) =
-            Getid3Helper::getId3Data(
-                dirname(__FILE__) . '/../data/sine_12000_22050_64.ogg',
-                GETID3_DETAILED);
-        if ($ret) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
+	list ($ret, $id3Data) = Getid3Helper::getId3Data(
+		dirname(__FILE__) . '/../data/sine_12000_22050_64.ogg', GETID3_DETAILED);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
-        /*
-         * What we get back depends on what options we've set for our mode, which will vary
-         * depending on the current settings of the database.  Even if we request a specific field,
-         * we still may not get it back if its not in the image.  Doh.  Let's do a quick and dirty
-         * test for now and just check for 'Make' and 'Model' to make sure that we got something.
-         */
-        $verifiedCount = 0;
+	/*
+	 * What we get back depends on what options we've set for our mode, which will vary
+	 * depending on the current settings of the database.  Even if we request a specific field,
+	 * we still may not get it back if its not in the image.  Doh.  Let's do a quick and dirty
+	 * test for now and just check for 'Make' and 'Model' to make sure that we got something.
+	 */
+	$verifiedCount = 0;
 	$this->assert(sizeof($id3Data) > 0, 'No ogg meta data');
-        for ($i = 0; $i < sizeof($id3Data); $i++) {
-            switch ($id3Data[$i]['title']) {
+	for ($i = 0; $i < sizeof($id3Data); $i++) {
+	    switch ($id3Data[$i]['title']) {
 	    case 'Artist':
-                $this->assertEquals('Don Willingham', $id3Data[$i]['value']);
-                $verifiedCount++;
-	        break;
-            case 'Title':
-                $this->assertEquals('12000Hz sine', $id3Data[$i]['value']);
-                $verifiedCount++;
-	        break;
-            }
-        }
-        $this->assertEquals(2, $verifiedCount);
-        /* Make sure there are no duplicates in the list */
-        $seen = array();
-        for ($i = 0; $i < sizeof($id3Data); $i++) {
-            $title = $id3Data[$i]['title'];
-            $this->assert(!isset($seen[$title]), "$title is duplicated");
-            $seen[$title] = 1;
-        }
+		$this->assertEquals('Don Willingham', $id3Data[$i]['value']);
+		$verifiedCount++;
+		break;
+	    case 'Title':
+		$this->assertEquals('12000Hz sine', $id3Data[$i]['value']);
+		$verifiedCount++;
+		break;
+	    }
+	}
+	$this->assertEquals(2, $verifiedCount);
+	/* Make sure there are no duplicates in the list */
+	$seen = array();
+	for ($i = 0; $i < sizeof($id3Data); $i++) {
+	    $title = $id3Data[$i]['title'];
+	    $this->assert(!isset($seen[$title]), "$title is duplicated");
+	    $seen[$title] = 1;
+	}
     }
 
     /**
@@ -404,8 +390,8 @@ class Getid3HelperTest extends GalleryTestCase {
 	$verifiedCount = 0;
 	for ($i = 0; $i < sizeof($id3Data); $i++) {
 	    if ($id3Data[$i]['title'] == 'Audio Bit Rate') {
-	        $this->assert(abs(205.3466 - $id3Data[$i]['value']) < 0.01, "value $i");
-	        $verifiedCount++;
+		$this->assert(abs(205.3466 - $id3Data[$i]['value']) < 0.01, "value $i");
+		$verifiedCount++;
 	    }
 	}
 	$this->assertEquals(1, $verifiedCount, 'verified count');
@@ -423,38 +409,37 @@ class Getid3HelperTest extends GalleryTestCase {
      * Test getting meta data from a wave test file
      */
     function testGetId3DataWave() {
-        list ($ret, $id3Data) =
-            Getid3Helper::getId3Data(
-	        dirname(__FILE__) . '/../data/sine_20_11025.wav', GETID3_DETAILED);
-        if ($ret) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
+	list ($ret, $id3Data) = Getid3Helper::getId3Data(
+		dirname(__FILE__) . '/../data/sine_20_11025.wav', GETID3_DETAILED);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
-        /*
-         * What we get back depends on what options we've set for our mode, which will vary
-         * depending on the current settings of the database.  Even if we request a specific field,
-         * we still may not get it back if its not in the image.  Doh.  Let's do a quick and dirty
-         * test for now and just check for 'Make' and 'Model' to make sure that we got something.
-         */
-        $verifiedCount = 0;
-        for ($i = 0; $i < sizeof($id3Data); $i++) {
-            if ($id3Data[$i]['title'] == 'Audio Bit Rate') {
-                $this->assertEquals('88200', $id3Data[$i]['value']);
-                $verifiedCount++;
-            }
-            if ($id3Data[$i]['title'] == 'Audio Codec') {
-                $this->assertEquals('Pulse Code Modulation (PCM)', $id3Data[$i]['value']);
-                $verifiedCount++;
-            }
-        }
-        $this->assertEquals(2, $verifiedCount);
-        /* Make sure there are no duplicates in the list */
-        $seen = array();
-        for ($i = 0; $i < sizeof($id3Data); $i++) {
-            $title = $id3Data[$i]['title'];
-            $this->assert(!isset($seen[$title]), "$title is duplicated");
-            $seen[$title] = 1;
-        }
+	/*
+	 * What we get back depends on what options we've set for our mode, which will vary
+	 * depending on the current settings of the database.  Even if we request a specific field,
+	 * we still may not get it back if its not in the image.  Doh.  Let's do a quick and dirty
+	 * test for now and just check for 'Make' and 'Model' to make sure that we got something.
+	 */
+	$verifiedCount = 0;
+	for ($i = 0; $i < sizeof($id3Data); $i++) {
+	    if ($id3Data[$i]['title'] == 'Audio Bit Rate') {
+		$this->assertEquals(88200, $id3Data[$i]['value']);
+		$verifiedCount++;
+	    }
+	    if ($id3Data[$i]['title'] == 'Audio Codec') {
+		$this->assertEquals('Pulse Code Modulation (PCM)', $id3Data[$i]['value']);
+		$verifiedCount++;
+	    }
+	}
+	$this->assertEquals(2, $verifiedCount);
+	/* Make sure there are no duplicates in the list */
+	$seen = array();
+	for ($i = 0; $i < sizeof($id3Data); $i++) {
+	    $title = $id3Data[$i]['title'];
+	    $this->assert(!isset($seen[$title]), "$title is duplicated");
+	    $seen[$title] = 1;
+	}
     }
 
     /**
@@ -467,5 +452,4 @@ class Getid3HelperTest extends GalleryTestCase {
 	$this->assert(isset($getid3Keys['Genre']));
     }
 }
-
 ?>

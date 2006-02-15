@@ -124,17 +124,17 @@ class Getid3Helper {
 	foreach(array_keys($fileArray) as $filename) {
 	    /* Only prepend a non-empty nameprefix and '/' to filename */
 	    if ($nameprefix == '') {
-	        $prefixedname = $filename;
+		$prefixedname = $filename;
 	    } else {
-	        $prefixedname = $nameprefix.'/'.$filename;
+		$prefixedname = $nameprefix.'/'.$filename;
 	    }
 	    if (is_array($fileArray[$filename])) {
-	        $results = Getid3Helper::getId3ArchiveRecurse(
-	                       $results, $fileArray[$filename], $prefixedname);
+		$results = Getid3Helper::getId3ArchiveRecurse(
+			       $results, $fileArray[$filename], $prefixedname);
 	    } else {
-	        if (($nameprefix == '') || ($filename != 0) || ($fileArray[$filename] != 0)) {
-	            $results[] = array('name' => $prefixedname, 'size' => $fileArray[$filename]);
-	        }
+		if (($nameprefix == '') || ($filename != 0) || ($fileArray[$filename] != 0)) {
+		    $results[] = array('name' => $prefixedname, 'size' => $fileArray[$filename]);
+		}
 	    }
 	}
 	return ($results);
@@ -144,8 +144,8 @@ class Getid3Helper {
 	$results = array();
 	foreach (array_keys($fileDetails) as $filename) {
 	    if (is_array($fileDetails[$filename])) {
-	        $results[] = array('name' => $filename,
-	                           'size' => $fileDetails[$filename]['size']);
+		$results[] = array('name' => $filename,
+				   'size' => $fileDetails[$filename]['size']);
 	    }
 	}
 	return ($results);
@@ -157,17 +157,17 @@ class Getid3Helper {
 	if (isset($rawGetid3Data['zip']['files'])) {
 	    /* We must recurse through files array */
 	    return(array(null,
-	         Getid3Helper::getId3ArchiveRecurse(array(), $rawGetid3Data['zip']['files'])));
+		 Getid3Helper::getId3ArchiveRecurse(array(), $rawGetid3Data['zip']['files'])));
 	}
 	if (isset($rawGetid3Data['iso']['files'])) {
 	    /* Recurse through files like zip */
 	    return(array(null,
-	        Getid3Helper::getId3ArchiveRecurse(array(), $rawGetid3Data['iso']['files'])));
+		Getid3Helper::getId3ArchiveRecurse(array(), $rawGetid3Data['iso']['files'])));
 	}
 	if (isset($rawGetid3Data['tar']['file_details'])) {
 	    /* getid3's tar output allows us to simply look, and not have to recurse */
 	    return(array(null,
-	         Getid3Helper::getId3ArchiveTar($rawGetid3Data['tar']['file_details'])));
+		 Getid3Helper::getId3ArchiveTar($rawGetid3Data['tar']['file_details'])));
 	}
 	if (isset($rawGetid3Data['gzip']['member_header']['1']['tar']['file_details'])) {
 	    /* tar-gzip is like tar, just buried a little deeper */
@@ -199,19 +199,19 @@ class Getid3Helper {
 
 	$errors = Getid3Helper::_getValue($rawGetid3Data, explode('.', 'error.0'));
 	if (isset($errors) && strlen($errors)) {
-	        /* If there was an error, return nothing */
-	        return array(null, array());
+		/* If there was an error, return nothing */
+		return array(null, array());
 	}
 	foreach ($properties as $property) {
 	    $title = $getid3Keys[$property][0];
 	    for ($i = 1; $i < count($getid3Keys[$property]); $i++) {
-	        $value = Getid3Helper::_getValue(
-	            $rawGetid3Data, explode('.', $getid3Keys[$property][$i]));
-	        if (isset($value)) {
-	            $value = Getid3Helper::postProcessValue($property, $value);
-	            $results[] = array('title' => $title, 'value' => $value);
-	            break;
-	        }
+		$value = Getid3Helper::_getValue(
+		    $rawGetid3Data, explode('.', $getid3Keys[$property][$i]));
+		if (isset($value)) {
+		    $value = Getid3Helper::postProcessValue($property, $value);
+		    $results[] = array('title' => $title, 'value' => $value);
+		    break;
+		}
 	    }
 	}
 
@@ -245,7 +245,7 @@ class Getid3Helper {
 	    default: return null;
 	    }
 	    $time = mktime((int)$m[4], (int)$m[5], (int)$m[6],
-	               $month,     (int)$m[3], (int)$m[7]);
+		       $month,     (int)$m[3], (int)$m[7]);
 	    return $time;
 	}
 	return null;
@@ -265,7 +265,7 @@ class Getid3Helper {
 	 */
 	if (preg_match('#(\d+):(\d+):(\d+)\ +(\d+):(\d+):(\d+)#', $value, $m)) {
 	    $time = mktime((int)$m[4], (int)$m[5], (int)$m[6],
-	                   (int)$m[2], (int)$m[3], (int)$m[1]);
+			   (int)$m[2], (int)$m[3], (int)$m[1]);
 	    return $time;
 	}
 	return null;
@@ -397,7 +397,7 @@ class Getid3Helper {
 	}
 
 	if (empty($keyPath)) {
-	    return str_replace("\0", '', $source[$key]);
+	    return is_string($source[$key]) ? str_replace("\0", '', $source[$key]) : $source[$key];
 	} else {
 	    return Getid3Helper::_getValue($source[$key], $keyPath);
 	}
