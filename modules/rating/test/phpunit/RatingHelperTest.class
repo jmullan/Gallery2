@@ -83,6 +83,15 @@ class RatingHelperTest extends GalleryTestCase {
 	global $gallery;
 	$gallery->_session = $this->_origSession;
 
+	list ($ret, $languageCode) = $gallery->getActiveLanguageCode();
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	} else {
+	    /* Init a new translator so that we reset our locale */
+	    $translator = new GalleryTranslator();
+	    $translator->init($languageCode);
+	}
+
 	parent::tearDown();
     }
 
@@ -93,7 +102,7 @@ class RatingHelperTest extends GalleryTestCase {
 	$this->assert(!empty($session->_sessionId), 'session id');
 
 	$testRating = rand(1, 5);
-	list ($ret, $RatingData) = 
+	list ($ret, $RatingData) =
 	    RatingHelper::rateItem($this->_item->getId(), $testRating, $this->_users[0]->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -117,7 +126,7 @@ class RatingHelperTest extends GalleryTestCase {
 	$testRating = rand(1, 5);
 
 	$_SERVER['HTTP_USER_AGENT'] = 'Googlebot/2.1 (+http://www.googlebot.com/bot.html)';
-	list ($ret, $RatingData) = 
+	list ($ret, $RatingData) =
 	    RatingHelper::rateItem($this->_item->getId(), $testRating, $this->_users[0]->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -143,7 +152,7 @@ class RatingHelperTest extends GalleryTestCase {
 	/* It should create a new persistent session */
 	$this->_becomeGuestUser();
 	$this->assertEquals(false, $gallery->_session->isPersistent(), 'not persistent');
-	
+
 	list ($ret, $guestId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
@@ -153,18 +162,18 @@ class RatingHelperTest extends GalleryTestCase {
 
 	/* Rate! */
 	$testRating = rand(1, 5);
-	list ($ret, $RatingData) = 
+	list ($ret, $RatingData) =
 	    RatingHelper::rateItem($this->_item->getId(), 3, $anonymousUserId);
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(true, $gallery->_session->isPersistent(), 'is persistent');
-	list ($ret, $RatingData) = 
+	list ($ret, $RatingData) =
 	    RatingHelper::rateItem($this->_item->getId(), $testRating, $anonymousUserId);
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$this->assertEquals($testRating, (int)$RatingData['userRating']);
 	$this->assertEquals(1, (int)$RatingData['votes']);
 	$this->assertEquals($testRating, (int)$RatingData['rating']);
@@ -172,7 +181,7 @@ class RatingHelperTest extends GalleryTestCase {
 
     function testRateBogusItem() {
 	$testRating = rand(1, 5);
-	list ($ret, $RatingData) = 
+	list ($ret, $RatingData) =
 	    RatingHelper::rateItem(-1, $testRating, $this->_users[0]->getId());
 	/* This *should* fail. */
 	$this->assert($ret);
@@ -183,10 +192,10 @@ class RatingHelperTest extends GalleryTestCase {
 
     function testMultiUserRateItem() {
 	$totalRating = 0;
-	$votes = 0; 
+	$votes = 0;
 	foreach ($this->_users as $user) {
 	    $testRating = rand(1, 5);
-	    list ($ret, $RatingData) = 
+	    list ($ret, $RatingData) =
 		RatingHelper::rateItem($this->_item->getId(), $testRating, $user->getId());
 	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -226,7 +235,7 @@ class RatingHelperTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$anonymousUserId = (int)$guestId;
-	
+
 	/* Create a few ratings */
 	$totalRating = 0;
 	$votes = 0;
@@ -246,9 +255,9 @@ class RatingHelperTest extends GalleryTestCase {
 		$this->_becomeGuestUser();
 		$this->assertEquals(false, $gallery->_session->isPersistent(), 'not persistent');
 	    }
-	    
+
 	    $testRating = rand(1, 5);
-	    list ($ret, $RatingData) = 
+	    list ($ret, $RatingData) =
 		RatingHelper::rateItem($this->_item->getId(), $testRating, $userId);
 	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -276,7 +285,7 @@ class RatingHelperTest extends GalleryTestCase {
 			    'average for guest that has rated');
 	$this->assertEquals($testRating, (int)$RatingData[$this->_item->getId()]['userRating'],
 		    'User rating for guest that has rated');
-	
+
 	/* Fetch ratings as guest without a persistent session */
 	$gallery->_session = null;
 	$ret = $gallery->initSession();
@@ -311,7 +320,6 @@ class RatingHelperTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(!isset($RatingData['userRating']), 'no user rating');
-	
     }
 
     function testGetItemSummaries() {

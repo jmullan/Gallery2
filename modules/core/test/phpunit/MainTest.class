@@ -48,7 +48,7 @@ class MainTest extends GalleryTestCase {
 	 * session object. Thus we need to backup the session too
 	 */
 	$this->_saveSession = $GLOBALS['gallery']->_session;
-	
+
 	/*
 	 * Previously we defined G2_EMBED here to prevent main.php from displaying any content
 	 * when it was included.  This caused problems with some tests that varied their behavior
@@ -76,6 +76,16 @@ class MainTest extends GalleryTestCase {
     function tearDown() {
 	$GLOBALS['gallery'] = $this->_saveGallery;
 	$GLOBALS['gallery']->_session = $this->_saveSession;
+
+	global $gallery;
+	list ($ret, $languageCode) = $gallery->getActiveLanguageCode();
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	} else {
+	    /* Init a new translator so that we reset our locale */
+	    $translator = new GalleryTranslator();
+	    $translator->init($languageCode);
+	}
 
 	parent::tearDown();
     }
@@ -134,7 +144,7 @@ class MainTest extends GalleryTestCase {
 	global $gallery;
 
 	/* Prepare test cases */
-	
+
 	/* IIS servers with a version < 6 are affected */
 	$buggyWebServers = array('Microsoft-IIS/3.0', 'Microsoft-IIS/4.0', 'Microsoft-IIS/5.0',
 				 'Microsoft-IIS/3.5', 'Microsoft-IIS/5.1', ' Microsoft-IIS/5.2 ');
@@ -146,8 +156,7 @@ class MainTest extends GalleryTestCase {
 	$okControllers = array('core.ItemAdd', 'migrate.Redirect', null, 'core.ItemMove');
 	/* Controllers that should trigger the fix */
 	$needFixControllers = array('core.Logout', 'core.UserLogin', 'publishxp.Login');
-	
-	
+
 	$base = 'http://www.example.com/';
 	$session =& $gallery->getSession();
 	$ret = $session->init();
@@ -172,7 +181,7 @@ class MainTest extends GalleryTestCase {
 	$needFixUrls = array('main.php', 'main.php?g2_view=core.ShowItem&amp;g2_navId=x7865x',
 			     '?g2_controller=core.ItemEdit&amp;g2_itemId=13&amp;g2_returnUrl=' .
 			     urlencode("$base?$sessionParamString"));
-	
+
 	/* Run a quite exhaustive series of tests */
 	foreach (array_merge($goodWebServers, $buggyWebServers) as $server) {
 	    $_SERVER['SERVER_SOFTWARE'] = $server;
@@ -186,10 +195,10 @@ class MainTest extends GalleryTestCase {
 		    $this->assertEquals(array('isDone' => true),
 					_GalleryMain_doRedirect($base . $url, null, $controller),
 					"unexpected return value for $server, $url, $controller");
-		    
+
 		    /* Assemble expected result */
 		    $expectedUrl = str_replace('&amp;', '&', $base . $url);
-		    
+
 		    /* Check if this case needs the bugfix */
 		    if (in_array($server, $buggyWebServers) &&
 			    in_array($controller, $needFixControllers) &&
@@ -197,7 +206,7 @@ class MainTest extends GalleryTestCase {
 			$expectedUrl .= strpos($expectedUrl, '?') ? '&' : '?';
 			$expectedUrl .= $sessionParamString;
 		    }
-		    
+
 		    /* Verify the result */
 		    $headers = $phpVm->headers_sent() ? $_REQUEST['phpVmHeaders'] : array();
 		    if (isset($headers['Location'])) {
