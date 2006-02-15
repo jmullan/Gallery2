@@ -725,14 +725,14 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	$this->assertEquals('', $operation, 'no operation');
 	$this->assertEquals(1, $this->_items[0]->getSerialNumber(), 'Serial Number');
     }
-    
-    /* change dimensions, delete larger resizes, replace thumbnail */
-    function testChangeDimDropResizesChangeThumbnail() {
+
+    /* change dimensions, delete larger resizes */
+    function testChangeDimDropResizes() {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 	$id = $this->_items[0]->getId();
 	$item =& $this->_items[0];
-	
+
 	/* Add resizes and a thumbnail, that is usually done before sizelimit does its job */
 	list ($ret, $thumbnail) = $this->_createDerivative($item, $id,
 							   DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
@@ -759,10 +759,10 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	$ret = $this->_verifyEntity($tooLargeResize);
 	$this->assertEquals(null, $ret, 'verify large resize before test');
 	$ret = $this->_verifyEntity($smallResize);
-	$this->assertEquals(null, $ret, 'verify small resize  before test');
+	$this->assertEquals(null, $ret, 'verify small resize before test');
 	$ret = $this->_verifyEntity($thumbnail);
-	$this->assertEquals(null, $ret, 'verify thumb  before test');
-	
+	$this->assertEquals(null, $ret, 'verify thumb before test');
+
 	/* Set the sizelimit settings for the album */
 	foreach (array('width' => 768, 'height' => 1024, 'keepOriginal' => 0) as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
@@ -772,8 +772,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	    }
 	}
 	/* Execute the test */
-	list ($errors, $warnings) = 
-				$this->_handleRequestAfterAdd(array(), array($item));
+	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), array($item));
 	$this->assertEquals($this->_noErrors, $errors);
 	$this->assertEquals($this->_noWarnings, $warnings);
 
@@ -788,11 +787,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	$this->assertEquals($this->_expectResize, $operation, 'operation');
 	$this->assertEquals(2, $item->getSerialNumber(), 'Serial Number');
 	$platform->clearstatcache();
-	$ret = $item->rescan();
-	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	
+
 	/* We should have a new thumb and one resize should be deleted */
 	$ret = $this->_verifyMissing($tooLargeResize->getId());
 	$this->assertEquals(null, $ret, 'verify missing large resize');
@@ -839,7 +834,7 @@ class SetSizeOptionTestPlatform extends GalleryPlatform {
 	$imagesize = GalleryUtilities::getRequestVariables('imagesize_' . basename($file));
 	if ($imagesize) {
 	    /* doing it this way keeps CodeAudit happy */
-  	    return array($imagesize[0], $imagesize[1]);
+	    return array($imagesize[0], $imagesize[1]);
 	}
 	return array(1728, 2304);
     }
