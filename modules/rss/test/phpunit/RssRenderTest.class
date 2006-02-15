@@ -44,11 +44,8 @@ class RssRenderTest extends GalleryControllerTestCase {
 
     function setUp() {
 	global $gallery;
-	$ret = parent::setUp();
-	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+
+	parent::setUp();
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'rss');
 	if ($ret) {
@@ -222,8 +219,8 @@ class RssRenderTest extends GalleryControllerTestCase {
 	}
 
 	$results = ob_get_contents();
-	$platform =& $gallery->getPlatform();
 	ob_end_clean();
+	$platform =& $gallery->getPlatform();
 
 	$this->assertEquals(
 	    array(
@@ -274,8 +271,8 @@ class RssRenderTest extends GalleryControllerTestCase {
 	}
 
 	$results = ob_get_contents();
-	$platform =& $gallery->getPlatform();
 	ob_end_clean();
+	$platform =& $gallery->getPlatform();
 
 	$this->assertEquals(
 	    array(
@@ -319,7 +316,7 @@ class RssRenderTestVm {
     }
 
     function headers_sent() {
-	return (isset($_REQUEST['phpVmHeaders']) && !empty($_REQUEST['phpVmHeaders']));
+	return false;
     }
 
     function time() {
