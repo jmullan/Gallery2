@@ -1018,8 +1018,24 @@ class GallerySession {
 	    /* Remove sessionId from URLs for guests that have no session (normal case) */
 	    $sessionString =
 		GalleryUtilities::prefixFormVariable($this->getKey()) . '=' . SESSION_TEMP_ID;
+	    /* 
+	     * Handling only most cases here, still leaving &&, ?& but handling traling ? and &
+	     * Experimented a lot with str_replace and preg_replace. A perfect solution would
+	     * be again 40% slower (e.g. 12 instead of 8.5ms on a slow box for a lot of data). 
+	     */
+	    /* sessionString normal and URL encoded */
+	    $regexp = GalleryUtilities::prefixFormVariable($this->getKey()) . '(?:=|%3D)' .
+	    		SESSION_TEMP_ID;
+	    /*
+	     * Remove trailing & and ? from URLs, also handle javascript (no HTML entities) and 
+	     * URL encoded (return URL) versions of & and ?
+	     * This preg_replace takes about the same time as the str_replace that follows 
+	     */
+	    $html = preg_replace('/(?:\\?|%3F|&amp;|&|%26amp%3B|%26)' . $regexp . '(["\'])/S',
+	    			 '\\1', $html);
+	    /* Remove sessionStrings that are not at the end of URLs and sessionIds in the HTML */
 	    $html = str_replace(array($sessionString,
-				      urlencode($sessionString),
+	    			      urlencode($sessionString),
 				      SESSION_TEMP_ID),
 				'', $html);
 	}

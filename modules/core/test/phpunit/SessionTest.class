@@ -1740,10 +1740,30 @@ class SessionTest extends GalleryTestCase {
 	$sessionString =
 	    GalleryUtilities::prefixFormVariable($session->getKey()) . '=' . SESSION_TEMP_ID;
 	
-	$html = sprintf('ksaj%ssajlksajsaj29%s131j0s0enld9u1odu%s109211j0',
-			SESSION_TEMP_ID, $sessionString, urlencode($sessionString));
-	$expected = 'ksajsajlksajsaj29131j0s0enld9u1odu109211j0';
+	$html = 'ksaj' . SESSION_TEMP_ID . 'sajlksa' . "?$sessionString\"" . 'jsaj29' . 
+		urlencode($sessionString) . '131j0s0enld9u1odu' . urlencode("?$sessionString") . 
+		"'" . '109' . "main.php?$sessionString" . '211j' . "%26amp%3B$sessionString'" . 
+		'0';
+	$expected = 'ksaj' . 'sajlksa' . '"' .  'jsaj29' . '131j0s0enld9u1odu' . "'" . 
+		    '109' . 'main.php?' . '211j' . "'" . '0';
 	$this->assertEquals($expected, $session->replaceTempSessionIdIfNecessary($html));
+    }
+    
+    /* 
+     * Our replaceTempSessionIdIfNecessary() code and the page caching assume that the session key
+     * and the temp session string have no characters that change when HTML or URL encoded
+     */
+    function testSessionKeyAndTempSessionHaveNoSpecialCharacters() {
+    	global $gallery;
+    	$session =& $gallery->getSession();
+    	$this->assertEquals($session->getKey(), urlencode($session->getKey()), 
+			    'url encoded session key');
+	$this->assertEquals($session->getKey(), htmlentities($session->getKey()), 
+			    'HTML entities of session key');
+	$this->assertEquals(SESSION_TEMP_ID, urlencode(SESSION_TEMP_ID), 
+			    'url encoded temp id');
+	$this->assertEquals(SESSION_TEMP_ID, htmlentities(SESSION_TEMP_ID), 
+			    'HTML entities of temp id');
     }
 
     function testReplaceTempSessionIdIfNecessaryReplace() {
