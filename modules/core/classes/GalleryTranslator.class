@@ -277,24 +277,9 @@ class GalleryTranslator {
      */
     function init($languageCode=null, $dontUseDatabase=false) {
 	if (empty($languageCode) && !$dontUseDatabase) {
-	    list ($ret, $useBrowserPref) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'language.useBrowserPref');
+	    list ($ret, $languageCode) = GalleryTranslator::getDefaultLanguageCode();
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    if ($useBrowserPref) {
-		/* Check the user-agent's preferences */
-		$languageCode = GalleryTranslator::getLanguageCodeFromRequest();
-	    }
-
-	    if (empty($languageCode)) {
-		/* Use the site-wide default language */
-		list ($ret, $languageCode) =
-		    GalleryCoreApi::getPluginParameter('module', 'core', 'default.language');
-		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
 	    }
 	}
 
@@ -360,6 +345,37 @@ class GalleryTranslator {
     }
 
     /**
+     * Get default language code for this request.
+     *
+     * @return array object GalleryStatus a status code
+     *               string language code
+     * @static
+     */
+    function getDefaultLanguageCode() {
+	list ($ret, $useBrowserPref) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'language.useBrowserPref');
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if ($useBrowserPref) {
+	    /* Check the user-agent's preferences */
+	    $languageCode = GalleryTranslator::getLanguageCodeFromRequest();
+	}
+
+	if (empty($languageCode)) {
+	    /* Use the site-wide default language */
+	    list ($ret, $languageCode) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'default.language');
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	return array(null, $languageCode);
+    }
+
+    /**
      * Find a supported locale from given string.
      *
      * @param string the language code hint
@@ -397,16 +413,14 @@ class GalleryTranslator {
      * Examine the incoming request and try to figure out what languages the
      * browser will accept.  Take the first one that we can support.
      *
-     * @return a language code in the <language>_<COUNTRY> format, eg: en_US
+     * @return null or a language code in the <language>_<COUNTRY> format, eg: en_US
      * @static
      */
     function getLanguageCodeFromRequest() {
 	/* Take the first thing the browser accepts that we can use */
 	$httpAcceptLanguage = GalleryUtilities::getServerVar('HTTP_ACCEPT_LANGUAGE');
 	if (!empty($httpAcceptLanguage)) {
-	    foreach (explode(',', $httpAcceptLanguage)
-		     as $code) {
-
+	    foreach (explode(',', $httpAcceptLanguage) as $code) {
 		list ($languageCode) = GalleryTranslator::getSupportedLanguageCode($code, false);
 		if (isset($languageCode)) {
 		    return $languageCode;

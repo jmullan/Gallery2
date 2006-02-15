@@ -133,7 +133,7 @@ class GallerySession {
     var $_isSessionSaved;
 
     /**
-     * Whether this is a session for a search engine 
+     * Whether this is a session for a search engine
      *
      * @var bool $_isSearchEngineSession
      * @access private
@@ -188,7 +188,7 @@ class GallerySession {
      * @access private
      */
     var $_expirationLimit = 500;
-    
+
     /*
      * ****************************************
      *                 Methods
@@ -202,7 +202,7 @@ class GallerySession {
      */
     function init() {
 	global $gallery;
-	
+
 	/* Check to see if we have an existing session. */
 	$this->_sessionId = '';
 	$this->_isSearchEngineSession = $this->_isSessionSaved = $this->_isPersistent = false;
@@ -241,7 +241,7 @@ class GallerySession {
 		$this->_sessionId = GalleryUtilities::getRequestVariables(SESSION_ID_PARAMETER);
 	    }
 	}
-	
+
 	/*
 	 * Sanitize the session id (which may have come from user input) to
 	 * avoid possibly writing outside the session storage dir.
@@ -252,11 +252,11 @@ class GallerySession {
 	    $this->_sessionId = '';
 	}
 	$this->_sessionId = GalleryUtilities::strToLower($this->_sessionId);
-	
+
 
 	/*
 	 * Load the session data if a session with that id exists.
-	 * And expire the session if necessary. 
+	 * And expire the session if necessary.
 	 */
 	$ret = $this->_loadSessionData();
 	if ($ret) {
@@ -264,13 +264,13 @@ class GallerySession {
 	}
 
 	$this->_forceSaveSession = false;
-	
+
 	/* Only need to check for sessoin hijacking if the session is not new  */
 	if ($this->_isPersistent) {
 
 	    /* Verify the remote address to avoid casual session hijacking */
 	    $currentRemoteIdentifier = $this->getRemoteIdentifier();
-	    
+
 	    if (!isset($this->_remoteIdentifier)) {
 		/*
 		 * Initialize remoteIdentifier if not yet set (via initEmpty(true)
@@ -288,7 +288,7 @@ class GallerySession {
 			$gallery->debug_r($this->_remoteIdentifier);
 			$gallery->debug_r($currentRemoteIdentifier);
 		    }
-		    
+
 		    /*
 		     * The session was not created from this browser address, so reset
 		     * our data to prevent hijacking.
@@ -304,7 +304,7 @@ class GallerySession {
 
 	return null;
     }
-    
+
     /**
      * Start the session by ensuring that we've got a valid, unqiue sessionId and send the cookie
      * if necessary
@@ -316,7 +316,7 @@ class GallerySession {
 	    /* No need to send a cookie or to get a new sessionId */
 	    return null;
 	}
-	
+
 	/*
 	 * If the session doesn't have any important data / attributes, we don't need a persistent
 	 * session
@@ -328,12 +328,12 @@ class GallerySession {
 	if (!$isRequired) {
 	    return null;
 	}
-	
+
 	/* For new sessions (no sessionId in DB yet), first get a new, collision-free sessionId */
 	if (!$this->_isPersistent) {
 	    /*
 	     * Since getting a new collision-free sessionId requires a DB query anyway, we save the
-	     * whole session in this case. In all typical cases (main.php), there won't be any 
+	     * whole session in this case. In all typical cases (main.php), there won't be any
 	     * session changes after start() was called, thus we actually save the session only
 	     * once per request.
 	     */
@@ -347,7 +347,7 @@ class GallerySession {
 	 * Send a cookie to the browser, if necessry ( this must be done before we start outputting
 	 * HTML because the DownloadItem requests might come in before we reach $session->save() )
 	 */
-	
+
 	/* Don't save session / send cookie for DownloadItem, CSS, migrate.Redirect requests .. */
 	if ( !isset($_COOKIE[SESSION_ID_PARAMETER]) || $this->_forceSaveSession ||
 	        $_COOKIE[SESSION_ID_PARAMETER] != $this->_sessionId ) {
@@ -359,7 +359,7 @@ class GallerySession {
 
 	return null;
     }
-    
+
     /**
      * Save any session changes to the store
      *
@@ -379,13 +379,13 @@ class GallerySession {
 	    if (empty($this->_userId)) {
 		return GalleryCoreApi::error(ERROR_MISSING_VALUE, __FILE__, __LINE__);
 	    }
-	    
+
 	    /* Only bother saving if we've been modified at all */
 	    $serialized = $this->_getSerializedSession();
 	    if ($serialized != $this->_loadedSessionData) {
 		if (!$this->_isPersistent) {
 		    $ret = $this->_acquireNewPersistentSession();
-		} else {   
+		} else {
 		    $this->_modificationTime = $phpVm->time();
 		    $entry = array('userId' => $this->_userId,
 				   'remoteIdentifier' => serialize($this->_remoteIdentifier),
@@ -416,7 +416,7 @@ class GallerySession {
 		    $this->_isSessionSaved = true;
 		}
 	    }
-	    
+
 	    $this->_loadedSessionData = $this->_getSerializedSession();
 	    $this->_isPersistent = true;
 	}
@@ -439,7 +439,7 @@ class GallerySession {
     function initEmpty($emptyRemoteId=false, $userId=null) {
 	$this->_emptySessionData();
 	$this->_sessionId = '';
-	
+
 	if ($emptyRemoteId) {
 	    $this->_remoteIdentifier = null;
 	}
@@ -493,12 +493,12 @@ class GallerySession {
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	$ret = $this->init();
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	return null;
     }
 
@@ -513,13 +513,13 @@ class GallerySession {
 	$localSessionData = $this->_sessionData;
 	$localLoadedSessionData = $this->_loadedSessionData;
 	$userId = $this->getUserId();
-	
+
 	/* Reset the session data to create a new session id */
 	$ret = $this->reset();
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	/* Restore the stored session data */
 	$this->_sessionData = $localSessionData;
 	$this->_loadedSessionData = $localLoadedSessionData;
@@ -530,7 +530,7 @@ class GallerySession {
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	/* Replace old session id with new one in any return or navigation urls */
 	$key = GalleryUtilities::prefixFormVariable($this->getKey()) . '=';
 	$match = '/' . $key . '[a-fA-F0-9]+/';
@@ -566,7 +566,7 @@ class GallerySession {
      */
     function _setCookie($delete=false) {
 	global $gallery;
-	
+
 	/*
 	 * Send back a cookie.
 	 *
@@ -581,7 +581,7 @@ class GallerySession {
 	} else {
 	    $cookie = 'Set-Cookie: ' . SESSION_ID_PARAMETER . '=';
 	}
-	
+
 	/*
 	 * As part of the session/cookie management, we are forced to append the SID to all
 	 * DownloadItem URLs in embedded G2 if cookie path / domain are not configured
@@ -595,7 +595,7 @@ class GallerySession {
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	list ($ret, $sessionLifetime) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'session.lifetime');
 	if ($ret) {
@@ -618,10 +618,10 @@ class GallerySession {
 	    $expirationDate = GalleryUtilities::getHttpDate(time() + $sessionLifetime);
 	    $cookie .= '; expires=' . $expirationDate;
 	}
-	
+
 	/* Because of short urls, the cookie path must always be set explicitly */
 	$cookie .= '; path=' . $cookiePath;
-	
+
 	/*
 	 * Set the cookie domain only if needed, i.e. embedded multi-subdomain installs
 	 * that is when G2 is installed on a different subdomain than the embedding
@@ -681,14 +681,14 @@ class GallerySession {
 	if (!empty($this->_cookieDomain)) {
 	    $cookie .= '; domain=' . $this->_cookieDomain;
 	}
-	
+
 	/*
 	 * Tag on the HttpOnly modifier.  IE 6.0 SP1 will prevent any cookies
 	 * with this in it from being visible to JavaScript, which mitigates
 	 * XSS attacks.
 	 */
 	$cookie .= '; HttpOnly=1';
-	
+
 	/*
 	 * Init may be called multiple times (from unit tests) but don't send the headers
 	 * more than once.
@@ -713,7 +713,7 @@ class GallerySession {
 	global $gallery;
 	$phpVm = $gallery->getPhpVm();
 	$storage =& $gallery->getStorage();
-	
+
 	/* Assemble the data */
 	$this->_modificationTime = time();
 	$data = array('userId' => $this->_userId,
@@ -721,7 +721,7 @@ class GallerySession {
 		      'creationTimestamp' => $this->_creationTime,
 		      'modificationTimestamp' => $this->_modificationTime,
 		      'data' => serialize($this->_sessionData));
-	
+
 	/*
 	 * Get a new sessionId, there's a 1 : 2^128 probability of collision (md5),
 	 * try it 5 times
@@ -735,7 +735,7 @@ class GallerySession {
 		$this->_sessionId = $phpVm->md5(uniqid($remoteHost . microtime() . rand(1, 32767)));
 	    }
 	    $this->_sessionId = $data['id'] = GalleryUtilities::strToLower($this->_sessionId);
-	    
+
 	    $ret = @GalleryCoreApi::addMapEntry('GallerySessionMap', $data);
 	    if ($ret) {
 		if (!($ret->getErrorCode() & ERROR_STORAGE_FAILURE)) {
@@ -746,8 +746,8 @@ class GallerySession {
 		$success = true;
 	    }
 	    /*
-	     * Make sure the session exists before other requests (DownloadItem, 
-	     * printing shops, ...) arrive that rely on it 
+	     * Make sure the session exists before other requests (DownloadItem,
+	     * printing shops, ...) arrive that rely on it
 	     */
 	    $ret = $storage->checkPoint();
 	    if ($ret) {
@@ -758,7 +758,7 @@ class GallerySession {
 	if (!$success) {
 	    return GalleryCoreApi::error(ERROR_COLLISION, __FILE__, __LINE__);
 	}
-	
+
 	$this->_isPersistent  = true;
 	/* Make sure we don't save the session a 2nd time for vain */
 	$this->_loadedSessionData = $this->_getSerializedSession();
@@ -766,7 +766,7 @@ class GallerySession {
 	$this->_isSessionSaved = true;
 	/* To remember to replace SESSION_TEMP_ID with the real id in the generated HTML */
 	$this->_isPersistentSessionNew = true;
-	
+
 	return null;
     }
 
@@ -788,7 +788,7 @@ class GallerySession {
 	if (!empty($this->_isSearchEngineSession) || empty($this->_userId)) {
 	    return array(null, false);
 	}
-	
+
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
@@ -800,7 +800,7 @@ class GallerySession {
 	    /*
 	     * - lastViewed: We don't care about viewed count, we can check that less strict with
 	     *                HTTP modified since headers
-	     * - permissionCache: we don't care about the permission cache (session based 
+	     * - permissionCache: we don't care about the permission cache (session based
 	     *   permissions are stored as ACLs in another session data entry)
 	     * - navigation: no, we don't need navigation
 	     * - language: only useful if it's different from what we'd have set anyway
@@ -811,24 +811,23 @@ class GallerySession {
 	    unset($sessionDataCopy['permissionCache']);
 	    unset($sessionDataCopy['core.navigation']);
 	    unset($sessionDataCopy['embed.id.externalUser']);
-	    $translator = new GalleryTranslator();
-	    list ($ret, $detectedLanguageCode) = $translator->init();
+	    list ($ret, $detectedLanguageCode) = GalleryTranslator::getDefaultLanguageCode();
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
 	    if (isset($sessionDataCopy['core.language']) &&
 		    $sessionDataCopy['core.language'] == $detectedLanguageCode) {
 		unset($sessionDataCopy['core.language']);
 	    }
-	    
+
 	    /* If there's anything left in the session data, we should probably create a session */
 	    return array(null, !empty($sessionDataCopy));
 	} else {
 	    return array(null, true);
 	}
     }
-    
+
     /**
      * Whether this controller / view request generally allows creating a session
      *
@@ -871,7 +870,7 @@ class GallerySession {
 
 	return $this->_isPersistentSessionAllowedForRequest;
     }
-    
+
     /**
      * Load the session data or generate a new session with new data
      * Also sets $this->_isPersistent to true if loaded from persistent store
@@ -901,7 +900,7 @@ class GallerySession {
 	    $phpVm = $gallery->getPhpVm();
 	    $lifetimeCutoff = $phpVm->time() - $lifetime;
 	    $inactiveCutoff = $phpVm->time() - $inactivityTimeout;
-	    
+
 	    $query = '
                 SELECT [GallerySessionMap::id], [GallerySessionMap::userId],
                     [GallerySessionMap::remoteIdentifier],[GallerySessionMap::creationTimestamp],
@@ -923,7 +922,7 @@ class GallerySession {
 		}
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    
+
 	    if ($results->resultCount()) {
 		$pSession = $results->nextResult();
 		if ($pSession[4] > $inactiveCutoff && $pSession[3] > $lifetimeCutoff) {
@@ -934,7 +933,7 @@ class GallerySession {
 		    $this->_modificationTime = (int)$pSession[4];
 		    $this->_sessionData = unserialize($pSession[5]);
 		    $this->_loadedSessionData = $this->_getSerializedSession();
-		    
+
 		    $this->_isPersistent = true;
 		} else {
 		    /* The session has timed out, remove it */
@@ -943,10 +942,10 @@ class GallerySession {
 		    if ($ret) {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
-		    
+
 		    /* Get a new sessionId + session meta data (later) */
 		    $this->_sessionId = '';
-		} 
+		}
 	    } else { /*  There's no session with this sessionId in the database */
 		$this->_sessionId = '';
 	    }
@@ -968,8 +967,8 @@ class GallerySession {
 
 	if (!$this->_isPersistent) {
 	    $this->_emptySessionData();
-	}    
-	
+	}
+
 	return null;
     }
 
@@ -987,7 +986,7 @@ class GallerySession {
 	$this->_modificationTime = time();
 	$this->_remoteIdentifier = $this->getRemoteIdentifier();
 	/* Don't change userId or isUsingCookies */
-	
+
 	$this->_isPersistentSessionNew = false;
 	$this->_isSessionSaved = false;
     }
@@ -999,13 +998,13 @@ class GallerySession {
      * and remove SESSION_TEMP_ID from the HTML.
      * If a session was created (saved in the persistent store) during the request, replace the
      * SESSION_TEMP_ID with the new/real session id.
-     * 
+     *
      * @param string HTML
      * @return string same HTML with replaced or removed sessionId
      */
     function replaceTempSessionIdIfNecessary($html) {
 	global $gallery;
-	
+
 	if ($this->_isPersistentSessionNew) {
 	    /*
 	     * Session was created during request, probably need to replace TEMP session id with
@@ -1018,18 +1017,18 @@ class GallerySession {
 	    /* Remove sessionId from URLs for guests that have no session (normal case) */
 	    $sessionString =
 		GalleryUtilities::prefixFormVariable($this->getKey()) . '=' . SESSION_TEMP_ID;
-	    /* 
+	    /*
 	     * Handling only most cases here, still leaving &&, ?& but handling traling ? and &
 	     * Experimented a lot with str_replace and preg_replace. A perfect solution would
-	     * be again 40% slower (e.g. 12 instead of 8.5ms on a slow box for a lot of data). 
+	     * be again 40% slower (e.g. 12 instead of 8.5ms on a slow box for a lot of data).
 	     */
 	    /* sessionString normal and URL encoded */
 	    $regexp = GalleryUtilities::prefixFormVariable($this->getKey()) . '(?:=|%3D)' .
 	    		SESSION_TEMP_ID;
 	    /*
-	     * Remove trailing & and ? from URLs, also handle javascript (no HTML entities) and 
+	     * Remove trailing & and ? from URLs, also handle javascript (no HTML entities) and
 	     * URL encoded (return URL) versions of & and ?
-	     * This preg_replace takes about the same time as the str_replace that follows 
+	     * This preg_replace takes about the same time as the str_replace that follows
 	     */
 	    $html = preg_replace('/(?:\\?|%3F|&amp;|&|%26amp%3B|%26)' . $regexp . '(["\'])/S',
 	    			 '\\1', $html);
@@ -1065,7 +1064,7 @@ class GallerySession {
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	$phpVm = $gallery->getPhpVm();
 	$inactiveCutoff = $phpVm->time() - $sessionInactivityTimeout;
 	$lifetimeCutoff = $phpVm->time() - $lifetime;
@@ -1136,7 +1135,7 @@ class GallerySession {
 		}
 	    }
 	}
-	
+
 	return null;
     }
 
@@ -1172,7 +1171,7 @@ class GallerySession {
 
     /**
      * Return the user id of the active user of this sesison
-     * @return int the user id 
+     * @return int the user id
      */
     function getUserId() {
 	return $this->_userId;
@@ -1180,11 +1179,11 @@ class GallerySession {
 
     /**
      * Set the active user id for this session
-     * @param int the user id 
+     * @param int the user id
      */
     function setUserId($userId) {
 	return $this->_userId = $userId;
-    }    
+    }
 
     /*
      * Returns the cookie domain
@@ -1207,7 +1206,7 @@ class GallerySession {
 		$this->_cookieDomain = '';
 	    }
 	}
-	
+
 	return array(null, $this->_cookieDomain);
     }
 
@@ -1262,7 +1261,7 @@ class GallerySession {
     function exists($key) {
 	return isset($this->_sessionData[$key]);
     }
-    
+
     /**
      * Return a value that we can use to identify the client.  We can't tie it
      * to the IP address because that changes too frequently (dialup users,
