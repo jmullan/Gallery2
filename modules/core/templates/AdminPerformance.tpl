@@ -33,13 +33,13 @@
     <dt style="font-weight: bold"> {g->text text="Partial Acceleration"} </dt>
     <dd>
       <p>
-	{g->text text="Partial acceleration gives you roughly 10-25% performance increase, but some forms of dynamic data (like view counts) will not get updated right away.  All content that appears in blocks (like the random image block, any sidebar blocks, etc) will always be updated."}
+	{g->text text="Partial acceleration gives you roughly 10-25% performance increase, but some forms of dynamic data (like view counts) will not get updated right away.  All content that appears in blocks (like the random image block, any sidebar blocks, etc) will always be updated." cFormat=false}
       </p>
     </dd>
     <dt style="font-weight: bold"> {g->text text="Full Acceleration"} </dt>
     <dd>
       <p>
-	{g->text text="Full acceleration gives roughly a 90% performance increase, but no dynamic data (random image block, other sidebar blocks, number of items in your shopping cart, view counts, etc) will get updated until the saved page expires."}
+	{g->text text="Full acceleration gives roughly a 90% performance increase, but no dynamic data (random image block, other sidebar blocks, number of items in your shopping cart, view counts, etc) will get updated until the saved page expires." cFormat=false}
       </p>
     </dd>
   </dl>

@@ -213,11 +213,18 @@ function extractStrings($filename) {
 		$many = str_replace('"', '\\"', $many);    /* escape double-quotes */
 	    }
 
+	    /* c-format hint for xgettext */
+	    if (preg_match('/c[Ff]ormat=(true|false)/s', $string, $matches)) {
+		$hint = '/* xgettext:' . ($matches[1] == 'false' ? 'no-' : '') . "c-format */\n";
+	    } else {
+		$hint = '';
+	    }
+
 	    /* pick gettext() or ngettext() */
 	    if ($text != null) {
-		$string = sprintf('gettext("%s")', $text);
-	    } elseif ($one != null && $many != null) {
-		$string = sprintf('ngettext("%s", "%s")', $one, $many);
+		$string = $hint . sprintf('gettext("%s")', $text);
+	    } else if ($one != null && $many != null) {
+		$string = $hint . sprintf('ngettext("%s", "%s")', $one, $many);
 	    } else {
 		/* parse error */
 		$stderr = fopen('php://stderr', 'w');
