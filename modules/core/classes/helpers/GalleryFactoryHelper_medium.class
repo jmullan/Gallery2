@@ -98,7 +98,7 @@ class GalleryFactoryHelper_medium {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$hint = strtolower($hint);
+	$hint = GalleryUtilities::strToLower($hint);
 	if (isset($registry['hints'][$classType][$hint])) {
 	    $result = $registry['hints'][$classType][$hint];
 	} else {
