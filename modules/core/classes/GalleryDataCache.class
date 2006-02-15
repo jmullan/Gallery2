@@ -531,7 +531,7 @@ class GalleryDataCache {
 	 * pruning down the total number of cached permission sets, then create a new set
 	 * and add all cached values to that.
 	 */
-	static $initialized;
+	static $initialized, $newEntries;
 	if (!isset($initialized)) {
 	    if (!isset($permissions)) {
 		$permissions = array();
@@ -539,16 +539,19 @@ class GalleryDataCache {
 
 	    array_unshift($permissions, array());
 	    /* Trim down the cache */
-	    $max = 10;
+	    $max = 6;
 	    if (sizeof($permissions) > $max) {
 		array_splice($permissions, -1, sizeof($permissions) - $max);
 	    }
 
 	    $initialized = 1;
+	    $newEntries = 0;
 	}
 
+	/* Make sure the session permission cache is not too large */
+	$maxEntries = 40;
 	/* Add our new data to the head of the list */
-	foreach ($ids as $id) {
+	while ($id = array_shift($ids) && $maxEntries > $newEntries++) {
 	    $permissions[0][$permission][$id] = 1;
 	}
 
