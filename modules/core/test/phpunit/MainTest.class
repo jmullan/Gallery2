@@ -71,6 +71,7 @@ class MainTest extends GalleryTestCase {
 	}
 	$GLOBALS['gallery']->setUrlGenerator($this->_urlGenerator);
 	$GLOBALS['gallery']->_session = new GallerySession();
+	unset($_REQUEST['phpVmHeaders']);
     }
 
     function tearDown() {
