@@ -93,6 +93,13 @@ class SizeLimitHelper {
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+	
+	if ($operation == 'scale') {
+	    $ret = SizeLimitHelper::_updateResizes($item->getId(), $args);
+	     if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
 
 	return null;
     }
@@ -179,7 +186,53 @@ class SizeLimitHelper {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
+	
+	if ($operation == 'scale') {
+	    $ret = SizeLimitHelper::_updateResizes($item->getId(), $args);
+	     if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+	
 	return null;
+    }
+    
+    /**
+     * After shrinking the fullsize, we might need to delete resizes
+     * 
+     * @param int item id
+     * @param array (int sizelimit width, int sizelimit height)
+     * @return object GalleryStatus a status code
+     */
+    function _updateResizes($itemId, $limit) {
+    	if (count($limit) != 2) {
+    	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+    	}
+    	$limit['width'] = $limit[0];
+    	$limit['height'] = $limit[1];
+    	/* Remove larger or equal sized resizes if necessary */
+	list ($ret, $resizes) = GalleryCoreApi::fetchResizesByItemIds(array($itemId));
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	if (!empty($resizes[$itemId])) {
+	    foreach ($resizes[$itemId] as $derivative) {
+		if (preg_match('/(?:resize|scale)\|(\d+)(?:,(\d+))?/', 
+			       $derivative->getDerivativeOperations(), $matches)) {
+		    $width = $matches[1];
+		    $height = empty($matches[2]) ? $width : $matches[2];
+		    if ($width >= $limit['width'] || $height >= $limit['height']) {
+			/* The resize is larger or has the same size as the fullsize */
+			$ret = GalleryCoreApi::deleteEntityById($derivative->getId());
+			if ($ret) {
+		    	    return $ret->wrap(__FILE__, __LINE__);
+			}
+		    }
+		}
+	    }
+	}
+	
+    	return null;
     }
 }
 ?>

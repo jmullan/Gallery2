@@ -725,6 +725,92 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	$this->assertEquals('', $operation, 'no operation');
 	$this->assertEquals(1, $this->_items[0]->getSerialNumber(), 'Serial Number');
     }
+    
+    /* change dimensions, delete larger resizes, replace thumbnail */
+    function testChangeDimDropResizesChangeThumbnail() {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+	$id = $this->_items[0]->getId();
+	$item =& $this->_items[0];
+	
+	/* Add resizes and a thumbnail, that is usually done before sizelimit does its job */
+	list ($ret, $thumbnail) = $this->_createDerivative($item, $id,
+							   DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+							   'thumbnail|2000',
+							   'test/file');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $tooLargeResize) = $this->_createDerivative($item, $id,
+								DERIVATIVE_TYPE_IMAGE_RESIZE,
+								'scale|800,1400',
+								'test/file');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $smallResize) = $this->_createDerivative($item, $id,
+							     DERIVATIVE_TYPE_IMAGE_RESIZE,
+							     'scale|600,800',
+							     'test/file');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = $this->_verifyEntity($tooLargeResize);
+	$this->assertEquals(null, $ret, 'verify large resize before test');
+	$ret = $this->_verifyEntity($smallResize);
+	$this->assertEquals(null, $ret, 'verify small resize  before test');
+	$ret = $this->_verifyEntity($thumbnail);
+	$this->assertEquals(null, $ret, 'verify thumb  before test');
+	
+	/* Set the sizelimit settings for the album */
+	foreach (array('width' => 768, 'height' => 1024, 'keepOriginal' => 0) as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
+		$key, $value, $this->_album->getId());
+	    if ($ret) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+	/* Execute the test */
+	list ($errors, $warnings) = 
+				$this->_handleRequestAfterAdd(array(), array($item));
+	$this->assertEquals($this->_noErrors, $errors);
+	$this->assertEquals($this->_noWarnings, $warnings);
+
+	list ($ret, $item) = $item->refresh();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(768, $item->getWidth(), 'Width');
+	$this->assertEquals(1024, $item->getHeight(), 'Height');
+	$operation = GalleryUtilities::getRequestVariables('operation');
+	$this->assertEquals($this->_expectResize, $operation, 'operation');
+	$this->assertEquals(2, $item->getSerialNumber(), 'Serial Number');
+	$platform->clearstatcache();
+	$ret = $item->rescan();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	/* We should have a new thumb and one resize should be deleted */
+	$ret = $this->_verifyMissing($tooLargeResize->getId());
+	$this->assertEquals(null, $ret, 'verify missing large resize');
+	$ret = $this->_verifyEntity($smallResize);
+	$this->assertEquals(null, $ret, 'verify small resize');
+	$ret = $this->_verifyEntity($thumbnail);
+	$this->assertEquals(null, $ret, 'verify that the same thumb still exists');
+	list ($ret, $thumbTable) = GalleryCoreApi::fetchThumbnailsByItemIds(array($id));
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	if (!empty($thumbTable[$id])) {
+	    $this->assertEquals($thumbnail->getId(), $thumbTable[$id]->getId(),
+				'same old thumbnail');
+	} else {
+	    $this->assert(false, 'no thumbnail for our item id after test');
+	}
+    }
 }
 
 /**
