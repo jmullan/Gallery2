@@ -24,7 +24,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gallery: Core 1.0\n"
 "POT-Creation-Date: 2003-02-11 03:09-0800\n"
-"PO-Revision-Date: 2006-01-21 18:12+0300\n"
+"PO-Revision-Date: 2006-02-12 14:45+0300\n"
 "Last-Translator: Konstantin Ivanov <Continental@vollen.ru>\n"
 "Language-Team: Russian <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -112,13 +112,13 @@ msgid "deactivate"
 msgstr "дезактивировать"
 
 msgid "No acceleration"
-msgstr ""
+msgstr "Акселерация отсутствует"
 
 msgid "Partial acceleration"
-msgstr ""
+msgstr "Частичная акселерация"
 
 msgid "Full acceleration"
-msgstr ""
+msgstr "Полная акселерация"
 
 msgid "Performing Maintenance Tasks"
 msgstr "Выполнение задач по обслуживанию"
@@ -142,9 +142,8 @@ msgstr "Наследовать настройки от родительског�
 msgid "Use these settings"
 msgstr "Использовать эти настройки"
 
-#, fuzzy
 msgid "Installing the core module"
-msgstr "Модуль Общие файлы Галереи"
+msgstr "Инсталляция основного модуля (ядра)"
 
 msgid "key"
 msgstr "ключ"
@@ -230,9 +229,9 @@ msgstr "Обнаружение неисправных модификаций,"
 msgid "Detecting broken derivatives, saving "
 msgstr "Обнаружение неисправных модификаций, при сохранении"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Deleting old session files (iteration %d)"
-msgstr "Удаление старых таблиц с разрешениями"
+msgstr "Удаление старых файлов сессий (итераций %d)"
 
 msgid "add items"
 msgstr "добавить элементы"
@@ -524,7 +523,7 @@ msgid "Groups"
 msgstr "Группы"
 
 msgid "Performance"
-msgstr ""
+msgstr "Производительность"
 
 msgid "Toolkit Priority"
 msgstr "Приоритеты инструментов"
@@ -591,13 +590,14 @@ msgstr "%d элементов создано"
 msgid "%d items failed"
 msgstr "%d элементов подвреждено"
 
-#, fuzzy
 msgid "Delete user sessions"
-msgstr "Разрешения файловой системы"
+msgstr "Удаление пользовательских сессий"
 
 msgid ""
 "Delete all persistent user sessions according to your current session expiration settings."
 msgstr ""
+"Стереть все существующие пользовательские сессии согласно текущим настройкам длительности "
+"сессии."
 
 msgid "Delete database cache"
 msgstr "Очистка кэша базы данных"
@@ -779,7 +779,7 @@ msgid "Donate to the Gallery project"
 msgstr "Поддержите проект Галерея"
 
 msgid "G2.1-RC-1: Hit Me"
-msgstr ""
+msgstr "G2.1-RC-1: Hit Me"
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -799,10 +799,10 @@ msgid "Number of items to show per page"
 msgstr "Число элементов для отображения на странице"
 
 msgid "Row height (pixels)"
-msgstr ""
+msgstr "Высота ряда (в пикселях)"
 
 msgid "Column width (pixels)"
-msgstr ""
+msgstr "Ширина Колонки (в пикселях)"
 
 msgid "Show image owners"
 msgstr "Отображать владельца изображения"
@@ -1721,19 +1721,16 @@ msgid "Uninstall"
 msgstr "Деинсталляция"
 
 msgid "Performance Tuning"
-msgstr ""
+msgstr "Оптимизация производительности"
 
-#, fuzzy
 msgid "Updated performance settings successfully"
-msgstr "Тестовое e-mail сообщение успешно отправлено"
+msgstr "Настройки производительности успешно сохранены"
 
-#, fuzzy
 msgid "Deleted all saved pages"
-msgstr "Удалить Пользователя"
+msgstr "Все Сохранненные Страницы Удалены"
 
-#, fuzzy
 msgid "Acceleration"
-msgstr "Действие"
+msgstr "Акселерация"
 
 msgid ""
 "Improve your Gallery performance by storing entire web pages in the database.  This can "
@@ -1742,9 +1739,15 @@ msgid ""
 "you can always get the most recent version of the page by forcing a refresh in your browser "
 "(typically by holding down the shift key and clicking the reload button)."
 msgstr ""
+"Вы можете увеличить производительность Галереи благодаря хранению веб-страниц целиком в базе "
+"данных. Данная настройка может значительно уменьшить нагрузку на базу данных веб-сервера, "
+"которая требуется для отображения веб-страницы. Обратной стороной является то, что "
+"просматриваемая веб-страница может быть несколько устаревшей, однако, Вы всегда можете "
+"получить самую последнюю ее версию путем принудительного обновления в Вашем браузере (обычно "
+"для этого требуется удерживая клавишу Shift нажать на кнопку Обновления)."
 
 msgid "Partial Acceleration"
-msgstr ""
+msgstr "Частичная акселерация"
 
 #, no-c-format
 msgid ""
@@ -1752,9 +1755,13 @@ msgid ""
 "dynamic data (like view counts) will not get updated right away.  All content that appears "
 "in blocks (like the random image block, any sidebar blocks, etc) will always be updated."
 msgstr ""
+"Частичная акселерация дает прирост производительности примерно на 10-25%, но некоторые виды "
+"содержимого (например, как счетчик просмотров) не будут обновляться соответствующим образом. "
+"Все содержимое, отображающееся в блоках (такое как блок изображения, боковое меню и т.д.) "
+"будут обновляться всегда."
 
 msgid "Full Acceleration"
-msgstr ""
+msgstr "Полная акселерация"
 
 #, no-c-format
 msgid ""
@@ -1762,6 +1769,10 @@ msgid ""
 "image block, other sidebar blocks, number of items in your shopping cart, view counts, etc) "
 "will get updated until the saved page expires."
 msgstr ""
+"Полная акселерация дает прирост сильный производительности на 90%, но динамический контент "
+"(блок случайного изображения, другие боковые блоки, кол-во элементов в корзине, счетчик "
+"просмотров и т.д.) не будут обновлена до истечения времени использования сохраненной "
+"страницы."
 
 msgid ""
 "You can additionally specify when saved pages expire.  Setting a longer expiration time will "
@@ -1769,26 +1780,28 @@ msgid ""
 "Lower expiration times mean that users will see more current data, but they will place a "
 "higher load on your server."
 msgstr ""
+"Вы можете дополнительно указать время хранения страницы. Установка более длительного "
+"интервала сократит нагрузку на Ваш сервер, но увеличит период времени, перед тем, как "
+"пользователи увидят обновления. Уменьшение интервала означает, что пользователи увидят "
+"больше текущих данных, но это будет сказываться на более сильной нагрузке на сервер."
 
 msgid "Here are some standard acceleration profiles:"
-msgstr ""
+msgstr "Здесь приведены несколько стандартных профилей акселерации:"
 
-#, fuzzy
 msgid "Medium acceleration"
-msgstr "редактировать заголовки"
+msgstr "Средняя акселерация"
 
 msgid "High acceleration"
-msgstr ""
+msgstr "Высокая акселерация"
 
-#, fuzzy
 msgid "Guest Users"
-msgstr "Зарегистрированные Пользователи"
+msgstr "Незарегистрированные пользователи"
 
 msgid "Expires after:"
-msgstr ""
+msgstr "Истекает через:"
 
 msgid "Clear Saved Pages"
-msgstr ""
+msgstr "Очистить Сохраненные Страницы"
 
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr ""
@@ -2687,15 +2700,14 @@ msgstr ""
 "Этот параметр определяет порядок сортировки в альбоме. Он влияет на все текущие элементы, а "
 "так же на вновь добавляемые."
 
-#, fuzzy
 msgid "Apply to all subalbums"
-msgstr "Применить к вложенным элементам"
+msgstr "Применить ко всем вложенным альбомам"
 
 msgid "Choose a theme for this album. (The way the album is arranged on the page)"
 msgstr "Выбор темы для данного альбома (внешний вид альбома на странице)."
 
 msgid "Use this theme in all subalbums"
-msgstr ""
+msgstr "Использовать данную тему во всех вложенных альбомах"
 
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr ""
@@ -2706,7 +2718,7 @@ msgid "You must enter a number (greater than zero)"
 msgstr "Вы должны ввести число (большее, чем ноль)"
 
 msgid "Use this thumbnail size in all subalbums"
-msgstr ""
+msgstr "Использовать данный размер макета во всех вложенных альбомах"
 
 msgid "Resized Images"
 msgstr "Изображения промежуточных размеров"
@@ -2726,7 +2738,7 @@ msgid "You must enter a valid size"
 msgstr "Вы должны ввести верный размер"
 
 msgid "Use these target sizes in all subalbums"
-msgstr ""
+msgstr "Использовать данный размер во всех вложенных альбомах"
 
 msgid "Recreate thumbnails and resizes"
 msgstr "Обновить макеты и изображения промежуточных размеров"
@@ -3035,7 +3047,7 @@ msgstr "Использовать глобальные настройки"
 
 #, c-format
 msgid "Use these settings in all subalbums that use %s theme"
-msgstr ""
+msgstr "Использовать данные настройки во всех вложенных альбомах, которые используют тему %s"
 
 msgid ""
 "Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
@@ -3226,9 +3238,8 @@ msgstr "Пользователь уже обладает данным разре
 msgid "Reorder Album"
 msgstr "Упорядочить Альбом"
 
-#, fuzzy
 msgid "Order saved successfully"
-msgstr "Изменения успешно сохранены"
+msgstr "Порядок успешно сохранен"
 
 msgid ""
 "This album has an automatic sort order specified, so you cannot change the order of items "

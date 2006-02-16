@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Captcha 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-06-05 14:54+0200\n"
-"PO-Revision-Date: 2005-09-02 14:24+0200\n"
+"PO-Revision-Date: 2006-02-12 15:16+0100\n"
 "Last-Translator: Jan Korbel <jackc@teptin.net>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -42,15 +42,17 @@ msgid "Gallery"
 msgstr "Galerie"
 
 msgid "Reset captcha failure counts"
-msgstr ""
+msgstr "Vynulovat počet chyb captcha"
 
 msgid ""
 "Captcha records failure counts in the database when configured for medium security level.  "
 "Run this task to clear all counters."
 msgstr ""
+"Při nastaveném středním zabezpečení Captcha zaznamenává počet chyb do databáze. "
+"Spusťte tuto úlohu pro výmaz všech těchto záznamů."
 
 msgid "Successfully reset failure counts"
-msgstr ""
+msgstr "Úspěšně vymazána počítadla chyb captcha"
 
 msgid "Captcha plugin configuration test"
 msgstr "Zkouška konfigurace Captcha pluginu"
@@ -92,13 +94,11 @@ msgstr "Nastavení úspěšně uloženo"
 msgid "High Security - Always On"
 msgstr "Vysoké zabezpečení - vždy zapnuto"
 
-#, fuzzy
 msgid "Always require the Captcha value to be entered before proceeding."
-msgstr "Moduly jako je Registrace uživatelů budou vždy vyžadovat zadání Captcha informací."
+msgstr "Vždy vyžadovat zadání Captcha informací."
 
-#, fuzzy
 msgid "Medium/Low Security - Failed Attempts"
-msgstr "Střední zabezpečení - neúspěšné pokusy"
+msgstr "Střední/nízké zabezpečení - neúspěšné pokusy"
 
 msgid ""
 "Users are not required to pass the Captcha test unless they have failed validation or user "
@@ -119,27 +119,32 @@ msgid ""
 "failures in the session.  This provides some protection against casual password guessers, "
 "but no protection against automated attacks."
 msgstr ""
+"Při středním zabezpečení se registruje počet chyb ve vstupech jako je uživatelské jméno "
+"při pokusu o přihlášení. To znamená, že se počítají pokusy kohokoliv, i vlastníka, a "
+"pokud počet pokusů přesáhne danou hodnotu, při příštím přihlášení je vynuceno zadání "
+"captcha informací. Při nízkém zabezpečení se počítají pokusy v rámci sezení (session). "
+"To zajistí ochranu před příležitostným hádáním hesla, ale ne před útoky automatů."
 
 msgid "Configure validation policy for modules using captcha:"
-msgstr ""
+msgstr "Nastavit politiku ověřování pro moduly využívající captcha:"
 
 msgid "High"
-msgstr ""
+msgstr "Vysoké"
 
 msgid "Medium"
-msgstr ""
+msgstr "Střední"
 
 msgid "Low"
-msgstr ""
+msgstr "Nízké"
 
 msgid "Off"
-msgstr ""
+msgstr "Vypnuto"
 
 msgid "Save"
-msgstr ""
+msgstr "Uložit"
 
 msgid "Reset"
-msgstr ""
+msgstr "Výchozí hodnoty"
 
 msgid "Type the word appearing in the picture."
 msgstr "Zadejte číslo nebo slovo zobrazené na obrázku."

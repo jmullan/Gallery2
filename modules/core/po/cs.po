@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Core 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-01-28 21:40+0100\n"
-"PO-Revision-Date: 2006-01-15 14:02+0100\n"
+"PO-Revision-Date: 2006-02-12 14:16+0100\n"
 "Last-Translator: Jan Korbel <jackc@teptin.net>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -108,13 +108,13 @@ msgid "deactivate"
 msgstr "deaktivovat"
 
 msgid "No acceleration"
-msgstr ""
+msgstr "Bez akcelerace"
 
 msgid "Partial acceleration"
-msgstr ""
+msgstr "Částečná akcelerace"
 
 msgid "Full acceleration"
-msgstr ""
+msgstr "Plná akcelerace"
 
 msgid "Performing Maintenance Tasks"
 msgstr "Provádím údržbu systému"
@@ -138,9 +138,8 @@ msgstr "Zdědit nastavení z nadřazeného alba"
 msgid "Use these settings"
 msgstr "Použít tato nastavení"
 
-#, fuzzy
 msgid "Installing the core module"
-msgstr "Hlavní modul Galerie"
+msgstr "Instaluji modul jádra"
 
 msgid "key"
 msgstr "klíč"
@@ -197,7 +196,7 @@ msgid "Deleting old fast-download cache"
 msgstr "Mažu starou cache rychlých downloadů"
 
 msgid "Converting MySQL data to UTF8"
-msgstr ""
+msgstr "Konvertuji MySQL data do UTF8"
 
 msgid "Site Admins"
 msgstr "Správci"
@@ -226,9 +225,9 @@ msgstr "Detekuji chybné zmenšeniny, "
 msgid "Detecting broken derivatives, saving "
 msgstr "Detekuji chybné zmenšeniny, ukládám "
 
-#, fuzzy, c-format
+#, c-format
 msgid "Deleting old session files (iteration %d)"
-msgstr "Mažu staré tabulky oprávnění"
+msgstr "Mažu staré session soubory (průchod %d)"
 
 msgid "add items"
 msgstr "přidat položky"
@@ -520,7 +519,7 @@ msgid "Groups"
 msgstr "Skupiny"
 
 msgid "Performance"
-msgstr ""
+msgstr "Výkon"
 
 msgid "Toolkit Priority"
 msgstr "Priorita nástrojů"
@@ -587,13 +586,13 @@ msgstr "vytvořeno %d položek"
 msgid "%d items failed"
 msgstr "%d položek selhalo"
 
-#, fuzzy
 msgid "Delete user sessions"
-msgstr "Nastavení oprávnění souborového systému"
+msgstr "Výmaz sezení (sessions) uživatelů"
 
 msgid ""
 "Delete all persistent user sessions according to your current session expiration settings."
 msgstr ""
+"Vymaže všechna trvalá uživatelská sezení (sessions) podle aktuálního nastavení expirace."
 
 msgid "Delete database cache"
 msgstr "Výmaz cache databáze"
@@ -696,22 +695,19 @@ msgstr "stáhnout"
 msgid "Plugins directory does not exist."
 msgstr "Adresář pluginů neexistuje."
 
-#, fuzzy
 msgid ""
 "Couldn't create plugins subdirectory. Make sure the webserver has write permissions in it."
 msgstr ""
-"Nelze vytvořit adresář pluginů '%s' v '%s'. Zkontrolujte zda webový server může do tohoto "
+"Nelze vytvořit adresář pluginů. Zkontrolujte zda webový server může do tohoto "
 "adresáře zapisovat."
 
-#, fuzzy
 msgid "Couldn't create repository cache path."
-msgstr "Nelze vytvořit cache zdroje '%s'."
+msgstr "Nelze vytvořit cache zdroje (repository)."
 
-#, fuzzy
 msgid ""
 "Couldn't create cache subdirectory. Make sure the web server has write permissions in it."
 msgstr ""
-"Nelze vytvořit adresář cache '%s' v '%s'. Zkontrolujte zda webový server může do tohoto "
+"Nelze vytvořit adresář cache. Zkontrolujte zda webový server může do tohoto "
 "adresáře zapisovat."
 
 #, c-format
@@ -774,7 +770,7 @@ msgid "Donate to the Gallery project"
 msgstr "Finanční podpora projektu Galerie"
 
 msgid "G2.1-RC-1: Hit Me"
-msgstr ""
+msgstr "G2.1-RC-1: Hit Me"
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -794,10 +790,10 @@ msgid "Number of items to show per page"
 msgstr "Počet položek na stránku"
 
 msgid "Row height (pixels)"
-msgstr ""
+msgstr "Výška řádku (v pixelech)"
 
 msgid "Column width (pixels)"
-msgstr ""
+msgstr "Šířka sloupce (v pixelech)"
 
 msgid "Show image owners"
 msgstr "Zobrazit vlastníky obrázku"
@@ -1693,19 +1689,16 @@ msgid "Uninstall"
 msgstr "Odinstalovat"
 
 msgid "Performance Tuning"
-msgstr ""
+msgstr "Ladění výkonu"
 
-#, fuzzy
 msgid "Updated performance settings successfully"
-msgstr "Zkušební email úspěšně odeslán"
+msgstr "Úspěšně zaktualizováno nastavení výkonnosti"
 
-#, fuzzy
 msgid "Deleted all saved pages"
-msgstr "Smazat uživatele"
+msgstr "Vymazány všechny uložené stránky"
 
-#, fuzzy
 msgid "Acceleration"
-msgstr "Akce"
+msgstr "Akcelerace"
 
 msgid ""
 "Improve your Gallery performance by storing entire web pages in the database.  This can "
@@ -1714,9 +1707,14 @@ msgid ""
 "you can always get the most recent version of the page by forcing a refresh in your browser "
 "(typically by holding down the shift key and clicking the reload button)."
 msgstr ""
+"Ukládáním kompletních web stránek do databáze lze zvýšit výkon Galerie. To značně sníží "
+"množství zdrojů databáze a webového serveru potřebných k zobrazení stránky. Nevýhoda je, "
+"že zobrazená stránka nemusí být úplně aktuální. Nicméně vždy je možné získat nejnovější "
+"verzi vynucením obnovení pomocí webového prohlížeče. Nejčastěji se toto dá provést "
+"podržením klávesy Shift a kliknutím na tlačítko Obnovit."
 
 msgid "Partial Acceleration"
-msgstr ""
+msgstr "Částečná akcelerace"
 
 #, no-c-format
 msgid ""
@@ -1724,9 +1722,13 @@ msgid ""
 "dynamic data (like view counts) will not get updated right away.  All content that appears "
 "in blocks (like the random image block, any sidebar blocks, etc) will always be updated."
 msgstr ""
+"Částečná akcelerace zvýší výkon přibližně o 10-25%, ale některá dynamická data (například "
+"počet zobrazení) nemusí být dobře aktualizována. Veškerý obsah zobrazený v blocích (jako "
+"je blok náhodných obrázků nebo například bloky v postranním panelu) proto bude aktualizován "
+"při každém požadavku."
 
 msgid "Full Acceleration"
-msgstr ""
+msgstr "Plná akcelerace"
 
 #, no-c-format
 msgid ""
@@ -1734,6 +1736,9 @@ msgid ""
 "image block, other sidebar blocks, number of items in your shopping cart, view counts, etc) "
 "will get updated until the saved page expires."
 msgstr ""
+"Plná akcelerace zvýší výkon přibližně o 90%, ale žádná dynamická data (blok náhodných "
+"obrázků, další bloky v postranním panelu, počet položek v nákupním košíku, počet zobrazení "
+"apod.) nebudou aktualizována, dokud uložená stránka nevyexpiruje."
 
 msgid ""
 "You can additionally specify when saved pages expire.  Setting a longer expiration time will "
@@ -1741,26 +1746,27 @@ msgid ""
 "Lower expiration times mean that users will see more current data, but they will place a "
 "higher load on your server."
 msgstr ""
+"Můžete také nastavit, kdy uložené stránky vyexpirují. Nastavení delšího času sníží zátěž "
+"serveru, ale zvýší interval, ve kterém uživatelé uvidí změny na stránkách. "
+"Kratší čas bude znamenat aktuálnější obsah pro uživatele, ale také výšší zátěž serveru."
 
 msgid "Here are some standard acceleration profiles:"
-msgstr ""
+msgstr "Zde jsou některé standardní akcelerační profily:"
 
-#, fuzzy
 msgid "Medium acceleration"
-msgstr "editovat popisky"
+msgstr "Střední akcelerace"
 
 msgid "High acceleration"
-msgstr ""
+msgstr "Vysoká akcelerace"
 
-#, fuzzy
 msgid "Guest Users"
-msgstr "Registrovaní uživatelé"
+msgstr "Návštěvníci"
 
 msgid "Expires after:"
-msgstr ""
+msgstr "Vyprší po:"
 
 msgid "Clear Saved Pages"
-msgstr ""
+msgstr "Výmaz uložených stránek"
 
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr ""
@@ -1803,13 +1809,13 @@ msgstr ""
 "aktualizacích. Během aktualizace nejsou odesílány žádné osobní informace. Na slabším "
 "připojení může tento proces trvat minutu nebo dvě."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "As of the last update on %s, the repository contains %s modules and %s themes. Its contents "
 "can be viewed on the Modules and Themes tabs."
 msgstr ""
-", zdroj obsahuje %s moduly a %s témata. Obsah aktualizace si můžete prohlédnout v záložkách "
-"Modulů a Témat."
+"%s, Po poslední aktualizaci zdroj obsahuje %s moduly a %s témata. Obsah aktualizace si můžete "
+"prohlédnout v záložkách Modulů a Témat."
 
 msgid ""
 "The index has never been updated. Click on the Update button to see what updates are "
@@ -1837,13 +1843,13 @@ msgstr ""
 msgid "Review plugin compatibility (on the Themes and Modules tabs)"
 msgstr "Posoudit kompatibilitu pluginu (na záložkách Témat a Modulů)"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%sDownload%s Gallery core"
-msgstr "<a href=\"%s\">Stáhnout</a> Jádto Galerie"
+msgstr "%sStáhnout%s jádro Galerie"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Read the %supgrade instructions%s and perform the upgrade"
-msgstr "Přečíst <a href=\"%s\">instrukce k aktualizaci</a> a provést aktualizaci"
+msgstr "Přečíst %sinstrukce k aktualizaci%s a provést aktualizaci"
 
 msgid "Gallery Up-To-Date"
 msgstr "Galerie aktuální"
@@ -1974,17 +1980,18 @@ msgid "Gallery Repository Setup"
 msgstr "Nastavení zdroje Galerie"
 
 msgid "Warning:"
-msgstr ""
+msgstr "Varování:"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "In order to download plugins from the Gallery repository, a special directory needs to be "
 "created where Gallery will store the data. Under your Gallery base directory, create a "
 "directory called '%s' and allow the web server to write into it by appropriately setting the "
 "permissions."
 msgstr ""
-"V základním adresáři Vaší Galerie vytvořte adresář '%s' a povolte webserveru zápis do tohoto "
-"adresáře nastavením správných oprávnění."
+"Pro download puginů ze zdroje (repository) Galerie je potřeba vytvořit zvláštní adresář, "
+"do kterého Galerie bude ukládat data. V základním adresáři Vaší Galerie vytvořte adresář "
+"'%s' a povolte webserveru zápis do tohoto adresáře nastavením správných oprávnění."
 
 msgid "Instructions for Unix-type platforms:"
 msgstr "Instrukce pro systémy typu Unix:"
@@ -2638,15 +2645,14 @@ msgstr ""
 "Toto je nastavení třídění pro album.  To bude aplikováno pro všechny současné položky a také "
 "pro všechny nové."
 
-#, fuzzy
 msgid "Apply to all subalbums"
-msgstr "Použít i pro vnořené položky"
+msgstr "Aplikovat i na vnořená alba"
 
 msgid "Choose a theme for this album. (The way the album is arranged on the page)"
 msgstr "Vyberte téma pro toto album (způsob jak je toto album uspořádáno na stránce)."
 
 msgid "Use this theme in all subalbums"
-msgstr ""
+msgstr "Použít toto téma pro všechna vnořená alba"
 
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr "Každá položka potřebuje náhled. Vyberte výchozí velikost v pixelech."
@@ -2655,7 +2661,7 @@ msgid "You must enter a number (greater than zero)"
 msgstr "Musíte zadat číslo (větší než nula)"
 
 msgid "Use this thumbnail size in all subalbums"
-msgstr ""
+msgstr "Použít tuto velikost náhledů pro všechna vnořená alba"
 
 msgid "Resized Images"
 msgstr "Zmenšené obrázky"
@@ -2673,7 +2679,7 @@ msgid "You must enter a valid size"
 msgstr "Musíte zadat platnou velikost"
 
 msgid "Use these target sizes in all subalbums"
-msgstr ""
+msgstr "Použít tuto cílovou velikost pro všechna vnořená alba"
 
 msgid "Recreate thumbnails and resizes"
 msgstr "Znovu vytvořit náhledy a zmenšeniny"
@@ -2969,7 +2975,7 @@ msgstr "Použít globálně"
 
 #, c-format
 msgid "Use these settings in all subalbums that use %s theme"
-msgstr ""
+msgstr "Použít toto nastavení pro všechna vnořená alba, která používají téma %s"
 
 msgid ""
 "Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
@@ -3154,9 +3160,8 @@ msgstr "Uživatel už vlastní tato oprávnění (zkontrolujte vnořená oprávn
 msgid "Reorder Album"
 msgstr "Změnit pořadí alba"
 
-#, fuzzy
 msgid "Order saved successfully"
-msgstr "Změny úspěšně uloženy"
+msgstr "Uspořádání úspěšně uloženo"
 
 msgid ""
 "This album has an automatic sort order specified, so you cannot change the order of items "
@@ -3610,9 +3615,6 @@ msgstr "[test] Druhá oprávnění"
 msgid "Unit test theme"
 msgstr "Téma testovací jednotky"
 
-#~ msgid "G2.1: Blackjack"
-#~ msgstr "G2.1: Blackjack"
-
 #~ msgid "Error downloading package from '%s'."
 #~ msgstr "Chyba při stahování balíku z '%s'."
 
@@ -3628,18 +3630,6 @@ msgstr "Téma testovací jednotky"
 #~ msgstr ""
 #~ "Pro potřeby stahování pluginů ze zdroje Galerie je potřeba vytvořit speciální adresář, do "
 #~ "kterého Galerie uloží data."
-
-#~ msgid "$ cd %s"
-#~ msgstr "$ cd %s"
-
-#~ msgid "$ mkdir %s"
-#~ msgstr "$ mkdir %s"
-
-#~ msgid "$ chmod 777 %s"
-#~ msgstr "$ chmod 777 %s"
-
-#~ msgid "G2.0: Unpossible!"
-#~ msgstr "G2.0: Unpossible!"
 
 #~ msgid "&laquo; None &raquo;"
 #~ msgstr "&laquo; Žádná &raquo;"
