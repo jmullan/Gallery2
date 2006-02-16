@@ -968,6 +968,7 @@ class OracleGenerator extends BaseGenerator {
  */
 class Db2Generator extends BaseGenerator {
     function Db2Generator() {
+	/* The column size is limited to 32kbyte */
 	$this->setColumnDefinitionMap(
 	    array(
 		'INTEGER-' => 'INTEGER',
@@ -978,8 +979,8 @@ class Db2Generator extends BaseGenerator {
 		'STRING-SMALL' => 'VARCHAR(32)',
 		'STRING-MEDIUM' => 'VARCHAR(128)',
 		'STRING-LARGE' => 'VARCHAR(255)',
-		'TEXT-' => 'VARCHAR(8000)',
-		'TEXT-MEDIUM' => 'VARCHAR(8000)',
+		'TEXT-' => 'VARCHAR(15000)',
+		'TEXT-MEDIUM' => 'VARCHAR(15000)',
 		'TEXT-LARGE' => 'CLOB(2G) NOT LOGGED',
 		'BOOLEAN-' => 'SMALLINT',
 		'BOOLEAN-MEDIUM' => 'SMALLINT',
