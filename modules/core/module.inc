@@ -300,7 +300,7 @@ class CoreModule extends GalleryModule {
 	$data = array(array('name' => $this->translate('General'),
 			    'view' => 'core.AdminCore'),
 		      array('name' => $this->translate('Modules'),
-			  'view' => 'core.AdminModules'),
+			    'view' => 'core.AdminModules'),
 		      /* TODO: Add back Repository link when downloadable plugins is ready:
 		      array('name' => $this->translate('Repository'),
 			    'view' => 'core.AdminRepository'), */
