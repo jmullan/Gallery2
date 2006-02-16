@@ -27,8 +27,8 @@ msgstr ""
 "Project-Id-Version: Gallery: Upgrader 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-05-20 12:20+0200\n"
-"PO-Revision-Date: 2006-02-05 02:49+0000\n"
-"Last-Translator: Frederik Kunz <frederik.kunz@web.de>\n"
+"PO-Revision-Date: 2006-02-16 19:17+0100\n"
+"Last-Translator: Jens Tkotz <jens@peino.de>\n"
 "Language-Team: German <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -54,9 +54,8 @@ msgstr "<b>Fehler:</b> falsches Passwort."
 msgid "Empty Cache"
 msgstr "Cache leeren"
 
-#, fuzzy
 msgid "Unable to clear the page cache"
-msgstr "Das Motiv '%s' kann nicht geladen werden"
+msgstr "Der Cache-Ordner konnte nicht gesäubert werden"
 
 msgid "Unable to commit database transaction"
 msgstr "Die Datenbank-Transaktion konnte nicht abgeschlossen werden (commit)"
@@ -371,11 +370,9 @@ msgstr "Authentifiziere mich"
 msgid "Authentication successful!"
 msgstr "Authentifizierung erfolgreich!"
 
-#, fuzzy
 msgid "Successfully cleaned caches."
 msgstr "Cache-Ordner erfolgreich gesäubert."
 
-#, fuzzy
 msgid "Delete Caches"
 msgstr "Lösche Cache-Ordner"
 
@@ -485,12 +482,17 @@ msgstr ""
 msgid "Old files (%d)"
 msgstr "Veraltete Dateien (%d)"
 
+#, fuzzy, c-format
 msgid ""
 "These files are no longer part of Gallery. They probably won't cause any problems but it is "
-"a good idea to remove them to keep your install clean."
+"a good idea to remove them to keep your install clean.  Gallery can't remove these files for "
+"you, but you can download and run %s in your gallery2 directory to delete them for you."
 msgstr ""
 "Diese Dateien gehören nicht mehr zur Gallery. Wahrscheinlich machen sie keine Probleme, aber "
 "es ist dennoch eine gute Idee, sie zu entfernen, um Ihre Installation sauber zu halten."
+
+msgid "this script"
+msgstr ""
 
 msgid "Upgrade Steps"
 msgstr "Aktualisierung"
