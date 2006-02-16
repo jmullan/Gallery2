@@ -58,6 +58,7 @@
     </b>
   </span>
   <br/>
-  <?php print _("These files are no longer part of Gallery. They probably won't cause any problems but it is a good idea to remove them to keep your install clean."); ?>
+  <?php printf(
+    _("These files are no longer part of Gallery. They probably won't cause any problems but it is a good idea to remove them to keep your install clean.  Gallery can't remove these files for you, but you can download and run %s in your gallery2 directory to delete them for you."), sprintf('<a href="%s">%s</a>', generateUrl('index.php?step=' . $currentStep->getStepNumber() . '&amp;downloadCleaupScript=1', false), _("this script"))); ?>
   <textarea wrap="off" readonly="readonly" rows="<?php print count($manifest['shouldRemove'])?>" class="manifestBlock" id="ManifestSystemCheck_shouldRemove" style="display: none"><?php foreach ($manifest['shouldRemove'] as $fileName): ?><?php print "$fileName\n" ?><?php endforeach; ?></textarea>
   <?php endif; ?>

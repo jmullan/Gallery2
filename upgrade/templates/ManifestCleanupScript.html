@@ -1,0 +1,12 @@
+<?php if ($isWindows): ?>
+<?php foreach ($manifest['shouldRemove'] as $file): ?>
+del <?php print str_replace('/', '\\', $file); ?>
+
+<?php endforeach; ?>
+<?php else: ?>
+#!/bin/sh
+<?php foreach ($manifest['shouldRemove'] as $file): ?>
+rm <?php print $file ?>
+
+<?php endforeach; ?>
+<?php endif; ?>

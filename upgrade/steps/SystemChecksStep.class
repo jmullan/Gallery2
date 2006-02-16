@@ -56,6 +56,18 @@ class SystemChecksStep extends UpgradeStep {
 	    $x = $x[0];
 	    print "SUCCESS\n";
 	    return false;
+	} else if (!empty($_GET['downloadCleaupScript'])) {
+	    $manifest = SystemChecksStep::CheckManifest();
+	    $isWindows = !strncasecmp(PHP_OS, 'win', 3);
+	    if ($isWindows) {
+		$fileName = 'cleanup.bat';
+	    } else {
+		$fileName = 'cleanup.sh';
+	    }
+	    header("Content-Type: application/data");
+	    header('Content-Disposition: attachment; filename=' . $fileName);
+	    include(dirname(__FILE__) . '/../templates/ManifestCleanupScript.html');
+	    return false;
 	}
 
 	return true;
@@ -308,6 +320,7 @@ class SystemChecksStep extends UpgradeStep {
 	$outputBuffers = array();
 	foreach (array('output_buffering', 'zlib.output_compression') as $outputFunction) {
 	    if (GalleryUtilities::getPhpIniBool($outputFunction) ||
+		    (int) ini_get($outputFunction) > 0 ||
 		    (int) ini_get($outputFunction) > 0) {
 		$outputBuffers[] = $outputFunction;
 	    }
@@ -331,7 +344,7 @@ class SystemChecksStep extends UpgradeStep {
 				'ini_set() is allowed.'), implode(', ', $outputBuffers)),
 		);
 	} /* skip showing 'success' for this one */
-	
+
 	/* Check if the files and dirs in the storage dir are (still) writeable */
 	$title = _('Storage Directory Permissions');
 	if (!SystemChecksStep::CheckFileDirective()) {
@@ -375,6 +388,8 @@ class SystemChecksStep extends UpgradeStep {
 		       && empty($manifest['shouldRemove'])) {
 		$templateData['check'][] = array('title' => $title, 'success' => true);
 	    } else {
+		global $currentStep; /* needed for ManifestSystemCheck.html */
+
 		ob_start();
 		include(dirname(__FILE__) . '/../templates/ManifestSystemCheck.html');
 		$notice = ob_get_contents();
