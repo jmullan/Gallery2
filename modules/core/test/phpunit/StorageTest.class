@@ -519,7 +519,8 @@ class StorageTest extends GalleryTestCase {
 	$this->assertEquals(5, $storage->_normalizeValue('5', $memberData, true),
 			    'from DB 2');
 	$this->assertEquals(null, $storage->_normalizeValue(null, $memberData, true), 'null');
-	$this->assertEquals(0, $storage->_normalizeValue('', $memberData), 'empty string');
+	$this->assertEquals($storage->convertIntToBits(0), 
+			    $storage->_normalizeValue('', $memberData), 'empty string');
     }
 
     function testNormalizeValueFromTextToString() {
