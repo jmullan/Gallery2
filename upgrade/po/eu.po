@@ -23,14 +23,14 @@ msgstr ""
 "Project-Id-Version: Gallery: Upgrader 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-11-06 22:51+0100\n"
-"PO-Revision-Date: 2005-11-09 21:25+0100\n"
+"PO-Revision-Date: 2006-02-16 10:26+0100\n"
 "Last-Translator: Piarres Beobide <pi@beobide.net>\n"
 "Language-Team: librezale.org <librezale@librezale.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 1.10.2\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"X-Generator: Pootle 0.6.3.20060126\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "Unknown"
 msgstr "Ezezaguna"
@@ -54,9 +54,8 @@ msgstr "Ezin da %s gaia kargatu"
 msgid "Unable to commit database transaction"
 msgstr "Ezin da datu-base transakzioa egin"
 
-#, fuzzy
 msgid "Finish Upgrade"
-msgstr "Bertsio-berritzea hasi"
+msgstr "Bertsio-berritzea amaitu"
 
 msgid "System Checks"
 msgstr "Sistema Egiaztapenak"
@@ -104,15 +103,15 @@ msgid "Safe Mode"
 msgstr "Modu Segurua"
 
 msgid "Regular expressions"
-msgstr ""
+msgstr "Espresio erregularrak"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error: Your PHP is configured without support for %sPerl Compatible Regular Expressions%s. "
 "You must enable these functions before Gallery will run."
 msgstr ""
-"Errorea: Zure PHP modu segurua gaiturik du. Modu segurua ezgqaitu egin behar duzu Gallery "
-"erabiltzeko."
+"Errorea: Zure PHP-a %sPerl bateragarri diren espresio erregular%s onarpenik gabe "
+"konfiguraturik dago. Funtzio hau gaitu behar duzu Gallery abiarazi ahal izateko."
 
 msgid "exec() allowed"
 msgstr "exec() onarturik"
@@ -159,7 +158,7 @@ msgstr ""
 "bezal funtziona dezan."
 
 msgid "File uploads allowed"
-msgstr "Fitxategi Igoera gaiturik"
+msgstr "Fitxategi igoera gaiturik"
 
 msgid ""
 "Warning: Your PHP is configured not to allow file uploads (<b>file_uploads</b> parameter in "
@@ -197,7 +196,7 @@ msgstr ""
 "onartzeko."
 
 msgid "Translation support"
-msgstr ""
+msgstr "Itzulpen onarpena"
 
 #, c-format
 msgid ""
@@ -205,18 +204,24 @@ msgid ""
 "please instruct your system administrator to reconfigure PHP with the %sgettext%s option "
 "enabled."
 msgstr ""
+"Zure web zerbitzariak ez du lokalizaziorik onartzen. Hizkuntza gehigarrien onarpena gaitzeko "
+"eskatu sistema kudeatzaileari PHP  %sgettext%s aukera gaiturik duela birkonfiguratzeko."
 
 #, c-format
 msgid ""
 "Your PHP is missing the function %sbind_textdomain_codeset%s. This means Gallery may display "
 "extended characters for some languages incorrectly."
 msgstr ""
+"Zure PHP-an %sbind_textdomain_codeset%s funtzioa falta da. Honen ondorioz Gallery-k okerreko "
+"ikurrak bistaraziko ditu zenait hizkuntzetako karaktere gehigarrietan."
 
 #, c-format
 msgid ""
 "Your PHP is missing the function %sdngettext%s. This means Gallery will be unable to "
 "translate plural forms."
 msgstr ""
+"Zure PHP-an %sdngettext%s funtzioa falta da. Honen ondorioz Gallery-k ezingo ditu pluralak "
+"itzuli."
 
 msgid "Zend compatibility mode"
 msgstr "Zend bateragarritasun modua"
@@ -233,23 +238,20 @@ msgstr ""
 "PHP ondo d:ago. Errorea bat eman ezkero ze1_compatibility_mode ezgaitu beharko zenuke "
 "aurrera jarraitu aurretik."
 
-#, fuzzy
 msgid "putenv() allowed"
-msgstr "exec() onarturik"
+msgstr "putenv() onarturik"
 
-#, fuzzy
 msgid ""
 "Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> "
 "parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
 "Gallery will be unable to run in other languages than the system language and English."
 msgstr ""
-"Abisua: zure set_time_limit() funtzioa ez gaiturik dago php.ini fitxategiko "
-"<b>disabled_functions</b> parametroaren bidez.  Gallery-k ezarpena hauez funtziona dezake "
-"baina ez behar bezain ondo. %d segundutik gora behar duen edozein eskarik huts egin dezake "
-"(kasu batzuetan orri zuri bat itzuliaz) datu apurtze aukeraz."
+"Abisua: zure putenv()  funtzioa ezgaiturik dago php.ini fitxategiko <b>disabled_functions</"
+"b> parametroaren bidez.  Gallery-k ezarpena hauez funtziona dezake baina sistema arraro "
+"batzuetan ezin izango da abiarazi ingelesaz beste hizkuntzarik."
 
 msgid "Output buffering disabled"
-msgstr ""
+msgstr "Irteera buferra ezgaiturik"
 
 #, c-format
 msgid ""
@@ -259,6 +261,11 @@ msgid ""
 "Also, some features like the progress bars might not work correctly if output buffering is "
 "enabled unless ini_set() is allowed."
 msgstr ""
+"Abisua: Irteera buferra php.ini-ko <b>%s</b> paramtreoaren bidez gaiturik adago zure php-an. "
+"Galleryk ezarpen hauekin funtziona dezake - fitxategiak deskargatzea azkarragoa da - baina "
+"ezingo ditu fitxategi handiak zerbitzatu (adib. bideo luzeak) eta memoriarekin arazoak izan "
+"ditzake. Baita aurrerapen barra bezalako beste zenbait ezaugarrik ez dute behar bezala "
+"funtzionatuko irteera buferra gaituri badago nahiz ini_set() gaiturik egon."
 
 msgid "Storage Directory Permissions"
 msgstr "Biltegiratze Direktorio Baimenak"
@@ -288,7 +295,7 @@ msgid "Upgrade Modules"
 msgstr "Moduluak Bertsio-berritu"
 
 msgid "Unable to initialize Gallery session"
-msgstr ""
+msgstr "Ezin da Gallery saioa abiarazi"
 
 #, c-format
 msgid "Unable to load the %s module"
@@ -336,10 +343,10 @@ msgid ""
 "you performed the install, you entered a password which went into your config.php.  Type "
 "that in now.  Refer to your config.php if you've forgotten what you entered."
 msgstr ""
-"Instalazioarekin aurrera jarraitu ahal izateko zu esaten duzuna zareñla ziurtatu behar "
-"dugu.  Instalazioa egiterakoan config.php fitxategian gordetzen den pasahitz bat idatzi "
-"duzu.  Idatzi pasahitz hori orain.  Begiratu config.php fitxategia zein pasahitz sartu "
-"zenuen gogoratzen ez bazara"
+"Instalazioarekin aurrera jarraitu ahal izateko zu esaten duzuna zarela ziurtatu behar dugu.  "
+"Instalazioa egiterakoan config.php fitxategian gordetzen den pasahitz bat idatzi duzu.  "
+"Idatzi pasahitz hori orain.  Begiratu config.php fitxategia zein pasahitz sartu zenuen "
+"gogoratzen ez bazara"
 
 msgid "Password:"
 msgstr "Pasahitza:"
@@ -352,7 +359,7 @@ msgstr "Autentifikazioa behar bezala egin da!"
 
 #, fuzzy
 msgid "Successfully cleaned caches."
-msgstr "Katxe diraktorioak behar bezala garbitu dira."
+msgstr "Katxe direktorioak behar bezala garbitu dira."
 
 #, fuzzy
 msgid "Delete Caches"
@@ -365,7 +372,7 @@ msgid ""
 msgstr ""
 "Gallery-k zure datu batzuen aldiroko kopiak gordetzen ditu disko gogorrean. Honek azkarragoa "
 "izaten laguntzen du.  Baina bertsio-berritzea, fitxategi hauetako batzuek zaharkiturik "
-"geratu zitezken beraz ideai ona da fixtataegi horiek orain berriz sortzea. Gallery-k "
+"geratu zitezken beraz ideai ona da fitxataegi horiek orain berriz sortzea. Gallery-k "
 "fitxategi horiek behar dituenean berriz sortuko ditu."
 
 msgid ""
@@ -433,11 +440,11 @@ msgid "Continue to Step %d&raquo;"
 msgstr "Jarraitu %d Urratsera&raquo;"
 
 msgid "Gallery: <strong>your photos</strong> on <strong>your website</strong>"
-msgstr "Galeria:<strong>Zure argazkiak </strong> -<strong>zure webgunean</strong>"
+msgstr "Galeria:<strong>zure argazkiak </strong> -<strong>zure webgunean</strong>"
 
 #, c-format
 msgid "Missing files (%d)"
-msgstr "fitxategiak falta dira (%d)"
+msgstr "Fitxategiak falta dira (%d)"
 
 msgid ""
 "Note: You're running Gallery from CVS, so recently removed files may appear here.  It might "
@@ -461,14 +468,19 @@ msgstr ""
 
 #, c-format
 msgid "Old files (%d)"
-msgstr "fitxategi zaharrak (%d)"
+msgstr "Fitxategi zaharrak (%d)"
 
+#, fuzzy, c-format
 msgid ""
 "These files are no longer part of Gallery. They probably won't cause any problems but it is "
-"a good idea to remove them to keep your install clean."
+"a good idea to remove them to keep your install clean.  Gallery can't remove these files for "
+"you, but you can download and run %s in your gallery2 directory to delete them for you."
 msgstr ""
 "Fitxaegi hauek ez dira hemendik aurrera Gallery-ren zati.  Ziurrenik ez dute arazorik "
 "sortuko baina ideia ona izaten da ezabatzea instalazio garbi bat mantentzeko."
+
+msgid "this script"
+msgstr ""
 
 msgid "Upgrade Steps"
 msgstr "Bertsio-berritze Urratsak"
@@ -485,7 +497,7 @@ msgid ""
 "If you've lost your config.php file when replacing the Gallery 2 files in the preparation "
 "for this upgrade, please restore it and try again."
 msgstr ""
-"Eguneraketa honetarako Gallery 2 fitxategiak ordezkatzean config.php fixtategia ezabatu "
+"Eguneraketa honetarako Gallery 2 fitxategiak ordezkatzean config.php fitxategia ezabatu "
 "baduzu, berreskuratu ezazu eta berriz saia zaitez."
 
 msgid "If you actually want to run the Gallery 2 installer, please follow the link below."
@@ -548,13 +560,13 @@ msgstr ""
 "eguneraketa leunki egiteko"
 
 msgid "Currently installed"
-msgstr "instalaturik"
+msgstr "Dagoeneko instalaturik"
 
 msgid "New version"
 msgstr "Bertsio berria"
 
 msgid "Config.php upgrade"
-msgstr "config.php bertsio-berritu"
+msgstr "Config.php bertsio-berritu"
 
 msgid "Required"
 msgstr "Beharrezkoa"
@@ -589,16 +601,16 @@ msgstr ""
 msgid "MySQL"
 msgstr "MySQL"
 
-#, fuzzy, c-format
+#, c-format
 msgid "mysqldump -u%s -p -h %s --opt %s > %s.sql"
-msgstr "mysqldump -u%s -p<i>ZurePasahitza</i> --opt %s > %s.sql"
+msgstr "mysqldump -u%s -p -h %s --opt %s > %s.sql"
 
 msgid "PostgreSQL"
 msgstr "PostgreSQL"
 
-#, fuzzy, c-format
+#, c-format
 msgid "pg_dump -h %s --format=t %s > %s.sql"
-msgstr "pg_dump --format=t %s > %s.sql"
+msgstr "pg_dump -h %s--format=t %s > %s.sql"
 
 msgid ""
 "Once the upgrade has begun, please be patient.  If you cancel or reload the page, you may "
@@ -611,7 +623,7 @@ msgid "Begin Upgrade"
 msgstr "Bertsio-berritzea hasi"
 
 msgid "Recheck config.php"
-msgstr "conifg.php berriz egiaztatu"
+msgstr "Config.php berriz egiaztatu"
 
 msgid "Upgraded Gallery Core Module successfully."
 msgstr "Galeria muin modulua behar bezala bertsio-berritu da."
@@ -644,7 +656,7 @@ msgstr ""
 "orain emandako erabakia beranduago alda dezakezu"
 
 msgid "Missing Code"
-msgstr "Kodea Falta da "
+msgstr "Kodea Falta da"
 
 msgid ""
 "The code for some plugins that were previously active can no longer be found. You must "
