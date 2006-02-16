@@ -328,7 +328,8 @@ class DataCacheTest extends GalleryTestCase {
 
     function testCachePermission() {
 	global $gallery;
-
+	GalleryDataCache::remove('GalleryDataCache::cachePermissions::newEntries');
+	
 	GalleryDataCache::cachePermissions(array('1', '2'), 'test.TestPermission');
 	$this->assert(GalleryDataCache::hasPermission('1', 'test.TestPermission'),
 			'1 should have permission test.TestPermission');
