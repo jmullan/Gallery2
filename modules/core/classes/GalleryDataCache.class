@@ -645,7 +645,12 @@ class GalleryDataCache {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$key = md5(serialize($keyData) . '|' . join(",", $aclIds));
+	list ($ret, $extraKey) = GalleryDataCache::_getExtraPageCacheKey();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	$key = md5(serialize($keyData) . '|' . $extraKey . '|' . implode(",", $aclIds));
 	$userId = $gallery->getActiveUserId();
 
 	$storage =& $gallery->getStorage();
@@ -700,8 +705,13 @@ class GalleryDataCache {
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+	
+	list ($ret, $extraKey) = GalleryDataCache::_getExtraPageCacheKey();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
-	$key = md5(serialize($keyData) . '|' . join(",", $aclIds));
+	$key = md5(serialize($keyData) . '|' . $extraKey . '|' . implode(",", $aclIds));
 
  	if (function_exists('gzdeflate')) {
 	    $value = gzdeflate($value);
@@ -772,6 +782,15 @@ class GalleryDataCache {
 		return array(null, false);
 	    }
 	}
+	
+	/*
+	 * Don't cache guest preview pages since we want a realtime preview 
+	 * and they are infrequently visited 
+	 */
+	$session =& $gallery->getSession();
+	if ($session->get('theme.guestPreviewMode')) {
+	    return array(null, false);
+	}
 
 	list ($ret, $acceleration) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'acceleration');
@@ -791,5 +810,25 @@ class GalleryDataCache {
 	    (($userId == $anonymousUserId && $acceleration['guest']['type'] == $type) ||
 	     ($userId != $anonymousUserId && $acceleration['user']['type'] == $type)));
     }
+    
+    /**
+     * Returns session related page cache key, e.g. to make the page cache language sensitive 
+     * 
+     * @return array object GalleryStatus a status code
+     *               string extra cache key
+     */
+    function _getExtraPageCacheKey() {
+    	global $gallery;
+    	$session =& $gallery->getSession();
+    	
+    	/* Add session specific flags & values to the cache key */
+	list ($ret, $languageCode) = $gallery->getActiveLanguageCode();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$extraKey = (int)($session->isUsingCookies()) . '-' . $languageCode;
+	
+	return array(null, $extraKey);
+    } 
 }
 ?>

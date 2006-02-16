@@ -320,7 +320,7 @@ function _GalleryMain($embedded=false) {
     if ($shouldCache) {
 	$session =& $gallery->getSession();
 	list ($ret, $html) = GalleryDataCache::getPageData(
-	    'page', array($urlGenerator->getCacheableUrl(), $session->isUsingCookies()));
+	    'page', $urlGenerator->getCacheableUrl());
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -446,7 +446,7 @@ function _GalleryMain($embedded=false) {
 			}
 			$ret = GalleryDataCache::putPageData(
 			    'page', $results['cacheable'],
-			    array($urlGenerator->getCacheableUrl(), $session->isUsingCookies()),
+			    $urlGenerator->getCacheableUrl(),
 			    $htmlForCache);
 			if ($ret) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
