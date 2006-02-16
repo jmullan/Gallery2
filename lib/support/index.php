@@ -6,7 +6,7 @@ require_once(dirname(__FILE__) . '/security.inc');
 define('G2_SUPPORT', true);
 if (!empty($_SERVER['QUERY_STRING'])) {
     foreach (array('phpinfo', 'cache', 'gd') as $script) {
-	if (isset($_GET[$script])) {
+	if ($_SERVER['QUERY_STRING'] == $script) {
 	    include(dirname(__FILE__) . '/' . $script . '.php');
 	}
     }
