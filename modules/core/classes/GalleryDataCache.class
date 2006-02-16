@@ -549,18 +549,18 @@ class GalleryDataCache {
 
 	$cacheKey = 'GalleryDataCache::cachePermissions::newEntries';
 	if (GalleryDataCache::containsKey($cacheKey)) {
-	    $newEntries = GalleryDataCache::get($cacheKey); 	
+	    $newEntries = GalleryDataCache::get($cacheKey);
 	} else {
 	    $newEntries = 0;
 	}
-	
+
 	/* Make sure the session permission cache is not too large */
 	$maxEntries = 40;
 	/* Add our new data to the head of the list */
 	while (($id = array_shift($ids)) && $maxEntries > $newEntries++) {
 	    $permissions[0][$permission][$id] = 1;
 	}
-	
+
 	GalleryDataCache::put($cacheKey, $newEntries);
 	$session->put('permissionCache', $permissions);
     }
@@ -649,7 +649,7 @@ class GalleryDataCache {
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	$key = md5(serialize($keyData) . '|' . $extraKey . '|' . implode(",", $aclIds));
 	$userId = $gallery->getActiveUserId();
 
@@ -676,11 +676,11 @@ class GalleryDataCache {
 	if ($results->resultCount() > 0) {
 	    $result = $results->nextResult();
 	    $value = $result[0];
- 	    if (function_exists('gzinflate')) {
+	    if (function_exists('gzinflate')) {
 		$storage =& $gallery->getStorage();
 		$value = $storage->decodeBlob($value);
- 		$value = gzinflate($value);
- 	    }
+		$value = gzinflate($value);
+	    }
 	} else {
 	    $value = null;
 	}
@@ -705,19 +705,19 @@ class GalleryDataCache {
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	list ($ret, $extraKey) = GalleryDataCache::_getExtraPageCacheKey();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$key = md5(serialize($keyData) . '|' . $extraKey . '|' . implode(",", $aclIds));
 
- 	if (function_exists('gzdeflate')) {
+	if (function_exists('gzdeflate')) {
 	    $value = gzdeflate($value);
 	    $storage =& $gallery->getStorage();
 	    $value = $storage->encodeBlob($value);
- 	}
+	}
 
 	$phpVm = $gallery->getPhpVm();
 	$now = $phpVm->time();
@@ -782,10 +782,10 @@ class GalleryDataCache {
 		return array(null, false);
 	    }
 	}
-	
+
 	/*
-	 * Don't cache guest preview pages since we want a realtime preview 
-	 * and they are infrequently visited 
+	 * Don't cache guest preview pages since we want a realtime preview
+	 * and they are infrequently visited
 	 */
 	$session =& $gallery->getSession();
 	if ($session->get('theme.guestPreviewMode')) {
@@ -810,25 +810,25 @@ class GalleryDataCache {
 	    (($userId == $anonymousUserId && $acceleration['guest']['type'] == $type) ||
 	     ($userId != $anonymousUserId && $acceleration['user']['type'] == $type)));
     }
-    
+
     /**
-     * Returns session related page cache key, e.g. to make the page cache language sensitive 
-     * 
+     * Returns session related page cache key, e.g. to make the page cache language sensitive
+     *
      * @return array object GalleryStatus a status code
      *               string extra cache key
      */
     function _getExtraPageCacheKey() {
-    	global $gallery;
-    	$session =& $gallery->getSession();
-    	
-    	/* Add session specific flags & values to the cache key */
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	/* Add session specific flags & values to the cache key */
 	list ($ret, $languageCode) = $gallery->getActiveLanguageCode();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$extraKey = (int)($session->isUsingCookies()) . '-' . $languageCode;
-	
+
 	return array(null, $extraKey);
-    } 
+    }
 }
 ?>
