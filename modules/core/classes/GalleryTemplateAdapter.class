@@ -503,8 +503,8 @@ class GalleryTemplateAdapter {
 	global $gallery;
 
 	$classes = array();
-//XXX works with turkish?
-	$userAgent = strtolower(GalleryUtilities::getServerVar('HTTP_USER_AGENT'));
+	$userAgent =
+	    GalleryUtilities::strToLower(GalleryUtilities::getServerVar('HTTP_USER_AGENT'));
 	if (strpos($userAgent, 'safari') !== false) {
 	    $classes[] = 'safari';
 	} else if (strpos($userAgent, 'opera') !== false) {
