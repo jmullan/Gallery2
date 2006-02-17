@@ -189,6 +189,12 @@ class PasswordModule extends GalleryModule /* and GalleryEventListener */ {
 		if (isset($permissions['core.view']) || !empty($isHidden)) {
 		    /* Redirect to PasswordEntry if we have core.view or item is also hidden */
 		    global $gallery;
+		    $session =& $gallery->getSession();
+		    $ret = $session->start();
+		    if ($ret) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		    $session->doNotUseTempId();
 		    $urlGenerator =& $gallery->getUrlGenerator();
 		    $phpVm = $gallery->getPhpVm();
 		    $phpVm->header('Location: ' . $urlGenerator->generateUrl(

@@ -32,6 +32,8 @@
     document.getElementById('Password1_tb').focus();
     // ]]>
   </script>
+  {* We want submit the password action if enter is pressed *}
+  {g->defaultButton name="form[action][password]"}
 </div>
 
 {g->callback type="core.LoadValidationPlugins"
