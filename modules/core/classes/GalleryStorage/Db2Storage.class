@@ -282,7 +282,7 @@ class Db2Storage extends GalleryStorage {
 	    break;
 
 	case 'LIMIT':
-	    $sql = $args[1] . ' LIMIT ' . $args[0];
+	    $sql = $args[1] . ' FETCH FIRST ' . $args[0] . ' ROWS ONLY';
 	    break;
 
 	case 'CASE':
