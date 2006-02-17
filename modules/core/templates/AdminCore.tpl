@@ -381,7 +381,7 @@
 <div class="gbBlock">
   <h3> {g->text text="Helper Processes"} </h3>
   <p class="giDescription">
-    {g->text text="Some Gallery modules will use programs on your server to do image processing, archiving and other operations.  These programs can be very compute intensive and can impact the overall performance of a shared web server.  You can make these programs run at a lower priority so that they play nice.  If you're in a shared hosting environment and your web host is complaining, try setting your priority low."}
+    {g->text text="Some Gallery modules will use programs on your server to do image processing, archiving and other operations.  These programs can be very computationally intensive and can impact the overall performance of a shared web server.  You can make these programs run at a lower priority so that they play nice.  If you're in a shared hosting environment and your web host is complaining, try setting your priority low."}
   </p>
 
   <table class="gbDataTable">
