@@ -115,7 +115,8 @@ class MainTest extends GalleryTestCase {
 	if (isset($headers['Location'])) {
 	    $urlGenerator =& $gallery->getUrlGenerator();
 	    $expectedUrl = $urlGenerator->generateUrl(array('view' => 'core.MaintenanceMode'),
-						      array('htmlEntities' => false));
+						      array('htmlEntities' => false, 
+							    'forceFullUrl' => true));
 	    $this->assertEquals($expectedUrl, trim($headers['Location']), 'wrong redirect url');
 	} else {
 	    $this->assert(false, 'should have redirected');
@@ -218,6 +219,41 @@ class MainTest extends GalleryTestCase {
 		    }
 		}
 	    }
+	}
+    }
+
+    function testDoRedirectRemoveTrailingQMark() {
+	global $gallery;
+
+	$backup = $gallery->_session;
+    	/* Make sure the redirect has no sessionId in it */
+    	GalleryUtilities::removeRequestVariable(SESSION_ID_PARAMETER);
+	unset($_COOKIE[SESSION_ID_PARAMETER]);
+	unset($_SERVER['HTTP_COOKIE']);
+    	$session = new GallerySession();
+    	$ret = $session->init();
+    	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(false, $session->isUsingCookies(), 'isUsingCookies');
+	$this->assertEquals(SESSION_TEMP_ID, $session->getId(), 'temp session id');
+	
+	/* Use the PHP VM to record the headers */
+	$phpVm = new MainTestPhpVm();
+	$gallery->_phpVm = $phpVm;
+
+	/* Execute the function under test */
+	$this->assertEquals(array('isDone' => true), 
+			    _GalleryMain_doRedirect('http://example.com/main.php?&amp; '),
+			    'unexpected return value');
+
+	/* Verify the result */
+	$headers = $phpVm->headers_sent() ? $_REQUEST['phpVmHeaders'] : array();
+	if (isset($headers['Location'])) {
+	    $this->assertEquals(' http://example.com/main.php', 
+	    			$headers['Location'], 'wrong header');
+	} else {
+	    $this->assert(false, 'no headers set');
 	}
     }
 }

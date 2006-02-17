@@ -185,7 +185,8 @@ function _GalleryMain($embedded=false) {
 	    if (!$isAdmin) {
 		if (($redirectUrl = $gallery->getConfig('mode.maintenance')) === true) {
 		    $redirectUrl =
-			$urlGenerator->generateUrl(array('view' => 'core.MaintenanceMode'));
+			$urlGenerator->generateUrl(array('view' => 'core.MaintenanceMode'), 
+						   array('forceFullUrl' => true));
 		}
 		return array(null, _GalleryMain_doRedirect($redirectUrl));
 	    }
@@ -245,7 +246,8 @@ function _GalleryMain($embedded=false) {
 	    if (!empty($navId)) {
 		$urlToGenerate['navId'] = $navId;
 	    }
-	    $redirectUrl = $urlGenerator->generateUrl($urlToGenerate);
+	    $redirectUrl = $urlGenerator->generateUrl($urlToGenerate, 
+						      array('forceFullUrl' => true));
 	}
 
 	/* If we have a redirect url.. use it */
@@ -383,7 +385,8 @@ function _GalleryMain($embedded=false) {
 		if (isset($results['redirectUrl'])) {
 		    $redirectUrl = $results['redirectUrl'];
 		} else {
-		    $redirectUrl = $urlGenerator->generateUrl($results['redirect']);
+		    $redirectUrl = $urlGenerator->generateUrl($results['redirect'], 
+		    					      array('forceFullUrl' => true));
 		}
 		return array(null,
 			     _GalleryMain_doRedirect($redirectUrl, $template));
@@ -471,7 +474,8 @@ function _GalleryMain_doRedirect($redirectUrl, $template=null, $controller=null)
 	return array($ret->wrap(__FILE__, __LINE__), null);
     }
     $redirectUrl = $session->replaceTempSessionIdIfNecessary($redirectUrl);
-    
+    $session->doNotUseTempId();
+ 
     /* 
      * UserLogin returnUrls don't have a sessionId in the URL to replace, make sure 
      * there's a sessionId in the redirectUrl for users that don't use cookies
@@ -489,6 +493,7 @@ function _GalleryMain_doRedirect($redirectUrl, $template=null, $controller=null)
 	 * &amp; but we don't want those in our Location: header.
 	 */
 	$redirectUrl = str_replace('&amp;', '&', $redirectUrl);
+	$redirectUrl = rtrim($redirectUrl, '&? ');
 
 	/*
 	 * IIS 3.0 - 5.0 webservers will ignore all other headers if the location header is set.
@@ -511,7 +516,7 @@ function _GalleryMain_doRedirect($redirectUrl, $template=null, $controller=null)
 		$sessionParamString =
 		    GalleryUtilities::prefixFormVariable(urlencode($session->getKey())) . '=' .
 		    urlencode($session->getId());
-		if (!strstr($redirectUrl, $sessionParamString)) {
+		if ($session->isPersistent() && !strstr($redirectUrl, $sessionParamString)) {
 		    $redirectUrl .= (strpos($redirectUrl, '?') === false) ? '?' : '&';
 		    $redirectUrl .= $sessionParamString;
 		}
