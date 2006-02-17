@@ -58,6 +58,14 @@ class SystemChecksStep extends UpgradeStep {
 	    return false;
 	} else if (!empty($_GET['downloadCleaupScript'])) {
 	    $manifest = SystemChecksStep::CheckManifest();
+	    $removeList = array();
+	    $base = dirname(dirname(dirname(__FILE__))) . '/';
+	    foreach ($manifest['shouldRemove'] as $file) {
+		$removeList[$file] = is_dir($base . $file);
+	    }
+	    /* Reverse sort it by key so that directories are last */
+	    krsort($removeList);
+
 	    $isWindows = !strncasecmp(PHP_OS, 'win', 3);
 	    if ($isWindows) {
 		$fileName = 'cleanup.bat';
