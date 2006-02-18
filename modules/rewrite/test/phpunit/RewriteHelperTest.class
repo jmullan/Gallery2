@@ -139,7 +139,7 @@ class RewriteHelperTest extends GalleryTestCase {
 
     function testParseActiveRules() {
 	$tests = array();
-	$serverName = GalleryUtilities::getServerVar('SERVER_NAME');
+	$serverName = GalleryUtilities::getServerVar('HTTP_HOST');
 
 	/* Test basic rule without keyword */
 	$activeRules = array();
