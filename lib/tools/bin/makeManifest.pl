@@ -109,7 +109,7 @@ foreach my $manifest (keys %sections) {
       }
     }
 
-    print $out map("R\t$_\n", sort keys %deleted);
+    print $out map("R\t$_\n", sort rSort keys %deleted);
   }
   close($out);
 
@@ -177,3 +177,10 @@ sub parseCvs {
   }
   close FD;
 }
+
+sub rSort {
+  return 1 if ("$a/" eq substr($b, 0, length($a) + 1));
+  return -1 if ("$b/" eq substr($a, 0, length($b) + 1));
+  return $a cmp $b;
+}
+
