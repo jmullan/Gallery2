@@ -589,7 +589,7 @@ class DatabaseSetupStep extends InstallStep {
 	if ($level >= $platformLevel) {
 	    /* Gallery init selects language from browser; reset to language currently in use */
 	    $translator =& $gallery->getTranslator();
-	    $translator->init($_SESSION['language']);
+	    $translator->init($_SESSION['language'], true);
 	}
 
 	return $success;
