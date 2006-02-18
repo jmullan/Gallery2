@@ -104,7 +104,7 @@ if (!empty($storageConfig)) {
 	if (empty($_SESSION['language'])) {
 	    $_SESSION['language'] = GalleryTranslator::getLanguageCodeFromRequest();
 	}
-	$translator->init($_SESSION['language']);
+	$translator->init($_SESSION['language'], true);
 	/* Select domain for translation */
 	bindtextdomain('gallery2_upgrade', dirname(__FILE__) . '/locale');
 	textdomain('gallery2_upgrade');
