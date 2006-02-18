@@ -62,14 +62,21 @@ class GalleryCharsetHelper_simple {
 	     *    LC_CTYPE=en_US.UTF-8;LC_NUMERIC=C;LC_TIME=C;LC_COLLATE=C;LC_MONETARY=C;
 	     *    LC_MESSAGES=C;LC_PAPER=C;LC_NAME=C;LC_ADDRESS=C;LC_TELEPHONE=C;
 	     *    LC_MEASUREMENT=C;LC_IDENTIFICATION=C
+	     * or just
+	     *    French_France.1252
 	     */
-	    foreach ($lcTable as $lc) {
-		if (!strncmp($lc, "LC_CTYPE", 8)) {
-		    if (($i = strpos($lc, '.')) !== false) {
-			$sourceEncoding = substr($lc, $i + 1);
-			break;
+	    if (count($lcTable) == 1) {
+	    	$lcCandidate = $lcTable[0];
+	    } else {
+		foreach ($lcTable as $lc) {
+		    if (!strncmp($lc, "LC_CTYPE", 8)) {
+		    	$lcCandidate = $lc;
+		    	break;
 		    }
 		}
+	    }
+	    if (!empty($lcCandidate) && ($i = strpos($lcCandidate, '.')) !== false) {
+		$sourceEncoding = substr($lcCandidate, $i + 1);
 	    }
 
 	    if (empty($sourceEncoding)) {
