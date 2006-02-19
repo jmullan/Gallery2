@@ -172,13 +172,15 @@ class UserRecoverPasswordController extends GalleryController {
 			/* Generate baseUrl and recoverUrl for the email template */
 			$generator =& $gallery->getUrlGenerator();
 			$baseUrl = $generator->generateUrl(array(),
-					array('forceFullUrl' => true, 'htmlEntities' => false));
+					array('forceFullUrl' => true, 'htmlEntities' => false,
+					      'forceSessionId' => false));
 			$recoverUrl = $generator->generateUrl(
 					array('view' => 'core.UserAdmin',
 					      'subView' => 'core.UserRecoverPasswordConfirm',
 					      'userName' => $user->getUserName(),
 					      'authString' => $authString),
-					array('forceFullUrl' => true, 'htmlEntities' => false));
+					array('forceFullUrl' => true, 'htmlEntities' => false,
+					      'forceSessionId' => false));
 
 			/* email template data */
 			$tplData = array('name' => $user->getfullName(),
