@@ -281,7 +281,7 @@
 	      {$feed.item->getTitle()}</a></td>
 	    <td>{$RssSiteAdmin.types[$feed.params.feedType]}</td>
 	    <td>
-	      <a href="{g->url arg1="controller=rss.rssSiteAdmin"
+	      <a href="{g->url arg1="controller=rss.RssSiteAdmin"
 	        arg2="form[action][delete]=`$feed.name`"}">
 		{g->text text="delete"}</a>
 	      <a href="{g->url arg1="view=core.ItemAdmin" arg2="subView=rss.EditFeed"

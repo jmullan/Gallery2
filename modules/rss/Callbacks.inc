@@ -60,7 +60,7 @@ class RssCallbacks {
 
 	    $block =& $smarty->_tpl_vars['block'];
 	    $block['rss']['feeds'] = $feeds;
-	    $block['rss']['showMore'] = true;
+	    $block['rss']['showMore'] = !empty($feeds);
 
 	    return null;
 	}

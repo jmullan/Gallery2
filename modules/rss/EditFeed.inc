@@ -42,7 +42,7 @@ class EditFeedController extends GalleryController {
 	global $gallery;
 	$status = $results = $error = array();
 
-	$mode = $form['mode'];
+	$mode = empty($form['mode']) ? '' : $form['mode'];
 
 	/* Check which button was pressed */
 	if (isset($form['action']['create']) || isset($form['action']['update'])) {

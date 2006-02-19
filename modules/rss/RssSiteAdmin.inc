@@ -42,13 +42,13 @@ class RssSiteAdminController extends GalleryController {
 	global $gallery;
 
 	/* Make sure the user has permission to do this operation */
-	$ret = GalleryCoreApi :: assertUserIsSiteAdministrator();
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$status = $results = $error = array();
-	$mode = $form['mode'];
+	$mode = empty($form['mode']) ? '' : $form['mode'];
 
 	if (isset($form['action']['save'])) {
 	    if ($mode == 'settings') {
@@ -173,6 +173,7 @@ class RssSiteAdminView extends GalleryView {
 	foreach ($param as $key => $value) {
 	    $form[$key] = $value;
 	}
+	
 	if ($RssSiteAdmin['mode'] == 'list') {
 	    /* fetch all feed definitions */
 	    list ($ret, $feeds) = RssMapHelper::fetchFeedsForItem();
