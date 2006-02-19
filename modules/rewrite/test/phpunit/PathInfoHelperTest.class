@@ -120,7 +120,9 @@ class PathInfoHelperMockPlatform extends GalleryPlatform {
     function fsockopen($target, $port, &$errno, &$errstr, $timeout) {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
-	if ($target == $urlGenerator->getHostName()) {
+	/* The hostName can include the port part */
+	list ($host) = explode(':', $urlGenerator->getHostName());
+	if ($target == $host) {
 	    return 'phpunit';
 	}
 

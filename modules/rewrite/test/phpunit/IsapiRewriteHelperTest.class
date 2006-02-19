@@ -156,8 +156,8 @@ class IsapiRewriteHelperTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals(REWRITE_STATUS_OK, $status);
-	$this->assertEquals(REWRITE_STATUS_OK, $trueStatus);
+	$this->assertEquals(REWRITE_STATUS_OK, $status, 'status, pass');
+	$this->assertEquals(REWRITE_STATUS_OK, $trueStatus, 'truestatus, pass');
 
 	GalleryUtilities::putRequestVariable('isapiRewriteTest', 'fail');
 	list ($ret, $status, $trueStatus) = IsapiRewriteHelper::checkIsapiRewrite();
@@ -165,8 +165,8 @@ class IsapiRewriteHelperTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals(REWRITE_STATUS_NO_ISAPI_REWRITE, $status, 'fail');
-	$this->assertEquals(REWRITE_STATUS_NO_ISAPI_REWRITE, $trueStatus, 'fail');
+	$this->assertEquals(REWRITE_STATUS_NO_ISAPI_REWRITE, $status, 'status, fail');
+	$this->assertEquals(REWRITE_STATUS_NO_ISAPI_REWRITE, $trueStatus, 'truestatus, fail');
 
 	GalleryUtilities::putRequestVariable('isapiRewriteTest', '404');
 	list ($ret, $status, $trueStatus) = IsapiRewriteHelper::checkIsapiRewrite();
@@ -174,8 +174,8 @@ class IsapiRewriteHelperTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals(REWRITE_STATUS_NO_ISAPI_REWRITE, $status, '404');
-	$this->assertEquals(REWRITE_STATUS_NO_ISAPI_REWRITE, $trueStatus, '404');
+	$this->assertEquals(REWRITE_STATUS_NO_ISAPI_REWRITE, $status, 'status, 404');
+	$this->assertEquals(REWRITE_STATUS_NO_ISAPI_REWRITE, $trueStatus, 'truestatus, 404');
     }
 
     function testCheckIsapiRewriteForced() {
@@ -214,7 +214,9 @@ class IsapiRewriteHelperMockPlatform extends GalleryPlatform {
     function fsockopen($target, $port, &$errno, &$errstr, $timeout) {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
-	if ($target == $urlGenerator->getHostName()) {
+	/* The hostName can include the port part */
+	list ($host) = explode(':', $urlGenerator->getHostName());
+	if ($target == $host) {
 	    return 'phpunit';
 	}
 
