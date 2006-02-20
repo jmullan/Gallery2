@@ -731,9 +731,6 @@ class GalleryTheme extends GalleryPlugin {
 	$theme['useFullScreen'] = !empty($viewResults['useFullScreen']);
 
 	/* Unserialize our blocks and preload them if necessary */
-	$platform =& $gallery->getPlatform();
-	$g2Base = dirname(dirname(dirname(dirname(__FILE__))));
-
 	foreach (array('sidebarBlocks', 'albumBlocks', 'photoBlocks') as $blockKey) {
 	    if (!isset($theme['params'][$blockKey])) {
 		continue;
@@ -746,30 +743,10 @@ class GalleryTheme extends GalleryPlugin {
 		$seen[$block[0]][] = $block[1];
 	    }
 
-	    if (!empty($seen) && !isset($pluginStatus)) {
-		list ($ret, $pluginStatus) = GalleryCoreApi::fetchPluginStatus('module');
+	    foreach ($seen as $blockId => $blockParams) {
+		$ret = $this->preloadBlock($template, $blockId, $blockParams);
 		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-	    }
-
-	    foreach ($seen as $key => $blockParams) {
-		list ($module, $file) = explode('.', $key);
-
-		if (empty($pluginStatus[$module]['active'])) {
-		    continue;
-		}
-
-		$path = "modules/$module/Preloads.inc";
-		if ($platform->file_exists("$g2Base/$path")) {
-		    GalleryCoreApi::requireOnce($path);
-		    $className = "${module}Preloads";
-		    $instance = new $className;
-		    $ret = $instance->preload($template, $file, $blockParams);
-		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
 		}
 	    }
 	}
@@ -1017,6 +994,46 @@ class GalleryTheme extends GalleryPlugin {
 	}
 
 	return array(null, $result);
+    }
+
+    /**
+     * Call preload for given block if the module is active and a preload exists.
+     *
+     * @param object GalleryTemplate the template instance
+     * @param string block id (module.blockName)
+     * @param array (optional) block parameters
+     * @return object GalleryStatus a status code
+     */
+    function preloadBlock(&$template, $blockId, $blockParams=array()) {
+	global $gallery;
+	static $g2Base;
+	static $pluginStatus;
+	if (!isset($g2Base)) {
+	    $g2Base = dirname(dirname(dirname(dirname(__FILE__))));
+	    list ($ret, $pluginStatus) = GalleryCoreApi::fetchPluginStatus('module');
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	list ($module, $blockName) = explode('.', $blockId);
+	if (empty($pluginStatus[$module]['active'])) {
+	    return null;
+	}
+
+	$path = "modules/$module/Preloads.inc";
+	$platform =& $gallery->getPlatform();
+	if ($platform->file_exists("$g2Base/$path")) {
+	    GalleryCoreApi::requireOnce($path);
+	    $className = $module . 'Preloads';
+	    $instance = new $className;
+	    $ret = $instance->preload($template, $blockName, $blockParams);
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	return null;
     }
 
     /**
