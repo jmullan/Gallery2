@@ -60,7 +60,7 @@ modules/core/UserAdmin.inc	44496009	2323180351	5828	6021
 modules/core/UserChangePassword.inc	360963714	3269146182	4950	5127
 modules/core/UserLogin.inc	2175236263	844156440	6050	6261
 modules/core/UserPreferences.inc	2612126668	355728531	6649	6872
-modules/core/UserRecoverPassword.inc	3641178998	766005638	9401	9698
+modules/core/UserRecoverPassword.inc	2467700270	329889458	9477	9776
 modules/core/UserRecoverPasswordAdmin.inc	4036978582	1100695837	6414	6629
 modules/core/UserRecoverPasswordConfirm.inc	887300693	1910181327	5924	6116
 modules/core/UserRecoverPasswordDownload.inc	3017820673	873879317	2003	2072
@@ -163,7 +163,7 @@ modules/core/classes/ResetViewCountsTask.class	1372535290	809745081	2822	2919
 modules/core/classes/SetOriginationTimestampTask.class	3802342207	1044592127	5134	5301
 modules/core/classes/SystemInfoTask.class	177067712	1250120335	2960	3054
 modules/core/classes/helpers/GalleryCharsetHelper_medium.class	332644383	2081054827	47742	48462
-modules/core/classes/helpers/GalleryCharsetHelper_simple.class	3359850368	2315910069	6935	7141
+modules/core/classes/helpers/GalleryCharsetHelper_simple.class	95025357	4281240257	7141	7354
 modules/core/classes/helpers/GalleryChildEntityHelper_simple.class	4010262626	3256454998	22580	23280
 modules/core/classes/helpers/GalleryDerivativeHelper_advanced.class	3153848253	3719519054	23732	24539
 modules/core/classes/helpers/GalleryDerivativeHelper_medium.class	2332178880	2503847706	6948	7176
@@ -211,7 +211,7 @@ modules/core/data/module-install.gif	4101952210	4101952210	85	85
 modules/core/data/module-upgrade.gif	2826176224	2826176224	512	512
 modules/core/locale/ar/LC_MESSAGES/modules_core.mo	3209445316	3209445316	82733	82733
 modules/core/locale/bg/LC_MESSAGES/modules_core.mo	75267948	75267948	29916	29916
-modules/core/locale/cs/LC_MESSAGES/modules_core.mo	1856325251	1856325251	105867	105867
+modules/core/locale/cs/LC_MESSAGES/modules_core.mo	3478742597	3478742597	105875	105875
 modules/core/locale/da/LC_MESSAGES/modules_core.mo	2616152352	2616152352	96297	96297
 modules/core/locale/de/LC_MESSAGES/modules_core.mo	3035062635	3035062635	107862	107862
 modules/core/locale/el/LC_MESSAGES/modules_core.mo	1697752567	1697752567	4530	4530
@@ -231,9 +231,9 @@ modules/core/locale/ja/LC_MESSAGES/modules_core.mo	3208672311	3208672311	61644	6
 modules/core/locale/lt/LC_MESSAGES/modules_core.mo	1954530648	1954530648	100240	100240
 modules/core/locale/nl/LC_MESSAGES/modules_core.mo	1218981775	1218981775	101151	101151
 modules/core/locale/no/LC_MESSAGES/modules_core.mo	4098650572	4098650572	77648	77648
-modules/core/locale/pl/LC_MESSAGES/modules_core.mo	811225463	811225463	71723	71723
+modules/core/locale/pl/LC_MESSAGES/modules_core.mo	2038560260	2038560260	75179	75179
 modules/core/locale/pt/LC_MESSAGES/modules_core.mo	1985517006	1985517006	24176	24176
-modules/core/locale/pt_BR/LC_MESSAGES/modules_core.mo	3907302498	3907302498	36618	36618
+modules/core/locale/pt_BR/LC_MESSAGES/modules_core.mo	1258925088	1258925088	85758	85758
 modules/core/locale/ru/LC_MESSAGES/modules_core.mo	3782866488	3782866488	150097	150097
 modules/core/locale/sr/LC_MESSAGES/modules_core.mo	2742934097	2742934097	85027	85027
 modules/core/locale/sv/LC_MESSAGES/modules_core.mo	2046650591	2046650591	99213	99213
@@ -246,7 +246,7 @@ modules/core/plugins/ImageCrop.jar	1928512550	1928512550	6030	6030
 modules/core/po/GNUmakefile	1866879166	2808215985	98	103
 modules/core/po/ar.po	2750065361	3653246404	107634	111146
 modules/core/po/bg.po	1134162808	3310300917	75531	78937
-modules/core/po/cs.po	2720273858	2256048525	108769	112407
+modules/core/po/cs.po	1444629392	3121072700	109025	112678
 modules/core/po/da.po	1310978817	3100414524	102357	105945
 modules/core/po/de.po	441691011	903615956	112739	116439
 modules/core/po/el.po	3410711413	1503777946	80333	83951
@@ -266,9 +266,9 @@ modules/core/po/ja.po	3606689692	1946478858	115420	119444
 modules/core/po/lt.po	555757640	2819697191	106821	110445
 modules/core/po/nl.po	1031070437	2307043371	106981	110630
 modules/core/po/no.po	2554875201	337886435	99046	102692
-modules/core/po/pl.po	740712978	361931768	91981	95457
+modules/core/po/pl.po	3992476679	3457829716	93860	97353
 modules/core/po/pt.po	3457069410	2500186142	83931	87598
-modules/core/po/pt_BR.po	2694248563	1416763458	79208	82757
+modules/core/po/pt_BR.po	3892975107	2467684965	101790	105422
 modules/core/po/ru.po	276738580	4041840405	154652	158400
 modules/core/po/sr.po	3401728384	1894388830	99863	103451
 modules/core/po/strings.raw	4087572799	4002270045	68465	69676
@@ -394,7 +394,7 @@ modules/core/test/phpunit/AdminToolkitPriorityControllerTest.class	2166071762	20
 modules/core/test/phpunit/AdminUsersControllerTest.class	1184939419	2506158081	7020	7231
 modules/core/test/phpunit/AlbumTest.class	2035759415	3199300054	30086	31059
 modules/core/test/phpunit/CallbacksTest.class	2207604153	313165314	10239	10521
-modules/core/test/phpunit/CharsetTest.class	525201559	2269361001	16097	16552
+modules/core/test/phpunit/CharsetTest.class	2651287142	3344556155	16560	17027
 modules/core/test/phpunit/ChildTest.class	2184502275	4218477923	13159	13535
 modules/core/test/phpunit/CodeAuditTest.class	2005274988	2819012989	13525	13954
 modules/core/test/phpunit/ControllerTest.class	3929251595	877715532	3070	3175
@@ -486,7 +486,7 @@ modules/core/test/phpunit/UserLoginControllerTest.class	1183030692	2095824743	14
 modules/core/test/phpunit/UserPreferencesControllerTest.class	2129202890	2357562593	8035	8265
 modules/core/test/phpunit/UserRecoverPasswordAdminControllerTest.class	323434112	2536620848	12001	12350
 modules/core/test/phpunit/UserRecoverPasswordConfirmControllerTest.class	3815047949	1892028100	7362	7591
-modules/core/test/phpunit/UserRecoverPasswordControllerTest.class	3727583110	3003630741	18323	18898
+modules/core/test/phpunit/UserRecoverPasswordControllerTest.class	3191586449	1823951492	18637	19219
 modules/core/test/phpunit/UtilitiesTest.class	1270768145	3243667360	57688	59181
 modules/core/test/phpunit/ViewTest.class	2806725947	325254439	4123	4256
 modules/core/test/phpunit/WebTest.class	1107333266	4075785345	25491	26195
