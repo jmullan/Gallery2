@@ -219,9 +219,13 @@ class RatingHelper {
 	}
 
 	/* Compute average and update cache table */
+	list ($ret, $avg) = $storage->getFunctionSql('AVG', array('[RatingMap::rating]'));
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 	$query = '
 	    SELECT
-	    AVG([RatingMap::rating]),
+	    ' . $avg . ',
 	    COUNT([RatingMap::rating])
 		FROM
 		[RatingMap]

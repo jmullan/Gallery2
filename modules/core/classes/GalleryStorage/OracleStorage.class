@@ -147,6 +147,10 @@ class OracleStorage extends GalleryStorage {
 	    $sql .= ') ' . $rowList;
 	    break;
 
+	case 'AVG':
+	    $sql = sprintf('AVG(%s)', $args[0]);
+	    break;
+
 	default:
 	    return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__,
 					      $functionName . ' ' . implode(' ', $args)), null);

@@ -311,6 +311,14 @@ class Db2Storage extends GalleryStorage {
 	    $sql .= ') VALUES ' . $rowList;
 	    break;
 
+	case 'AVG':
+	    /*
+	     * DB2's AVG's return value is of the same type as the input value. To get the same
+	     * behavior that we expect from MySQL and PostgreSQL, cast the input to double
+	     */
+	    $sql = sprintf('AVG(double(%s))', $args[0]);
+	    break;
+
 	default:
 	    return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__,
 					      $functionName . ' ' . implode(' ', $args)), null);
