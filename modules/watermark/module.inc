@@ -324,6 +324,7 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 					  'itemId' => '%1'),
 		   'flags' => array(),
 		   'locked' => 1,
+		   'exemptReferer' => 1,
 		   'help' => $this->translate(
 		       'Apply watermark to images downloaded from outside your Gallery. Select ' .
 		       'which watermark to use in Watermark Site Admin.')
