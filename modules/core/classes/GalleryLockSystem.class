@@ -37,41 +37,50 @@ class GalleryLockSystem {
 
     /**
      * Information about all the locks we currently hold
+     *
+     * @var array of (lockId => array('type' => LOCK_READ or LOCK_WRITE,
+     *                                'ids' => array of entity ids))
+     * @access protected
      */
     var $_locks;
+
+    /**
+     * List of locks that are to be released
+     *
+     * @var array of (lockId => true)
+     * @access protected
+     */
+    var $_releaseQueue;
 
     /**
      * Constructor
      */
     function GalleryLockSystem() {
-	$this->_locks = array();
+	$this->_locks = $this->_releaseQueue = array();
     }
 
     /**
-     * Read Lock one or more objects
+     * Read lock one or more objects
      *
-     * @access public
      * @param array ids to lock, or int single id
      * @param integer how long to wait for the lock before giving up
      * @return array object GalleryStatus a status code
      *               int the lock id
-     * @static
+     * @abstract
      */
     function acquireReadLock($ids, $timeout=10) {
 	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
     }
 
     /**
-     * Return true if the given id is read locked or write locked.
+     * Return true if the given id is read locked or write locked
      *
-     * @access public
      * @param int an entity id
      * @return boolean true if the entity is read locked
-     * @static
      */
     function isReadLocked($id) {
 	foreach ($this->_locks as $lockId => $lock) {
-	    if (in_array($id, $lock['ids'])) {
+	    if (in_array($id, $lock['ids']) && !isset($this->_releaseQueue[$lockId])) {
 		return true;
 	    }
 	}
@@ -82,7 +91,6 @@ class GalleryLockSystem {
     /**
      * Write lock one or more objects
      *
-     * @access public
      * @param array ids to lock, or int single id
      * @param integer how long to wait for the lock before giving up
      * @return array object GalleryStatus a status code
@@ -96,13 +104,13 @@ class GalleryLockSystem {
     /**
      * Return true if the given id is write locked
      *
-     * @access public
      * @param int an entity id
      * @return boolean true if the entity is write locked
      */
     function isWriteLocked($id) {
 	foreach ($this->_locks as $lockId => $lock) {
-	    if ($lock['type'] == LOCK_WRITE && in_array($id, $lock['ids'])) {
+	    if ($lock['type'] == LOCK_WRITE && in_array($id, $lock['ids'])
+		    && !isset($this->_releaseQueue[$lockId])) {
 		return true;
 	    }
 	}
@@ -122,7 +130,8 @@ class GalleryLockSystem {
     }
 
     /**
-     * Release any locks that we're holding.
+     * Release any locks that we're holding
+     *
      * @return object GalleryStatus a status code
      */
     function releaseAllLocks() {

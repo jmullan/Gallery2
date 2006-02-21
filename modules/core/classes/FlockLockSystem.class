@@ -141,6 +141,7 @@ class FlockLockSystem extends GalleryLockSystem {
      *
      * @param int the input id
      * @return string the complete path to the lock file
+     * @access private
      */
     function _getLockFile($id) {
 	global $gallery;
@@ -167,7 +168,6 @@ class FlockLockSystem extends GalleryLockSystem {
      * @return array object GalleryStatus a status code
      *               int the lock id
      * @access private
-     * @static
      */
     function _acquireLock($ids, $timeout, $lockType) {
 	global $gallery;
