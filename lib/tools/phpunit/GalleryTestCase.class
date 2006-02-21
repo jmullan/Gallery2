@@ -262,7 +262,7 @@ class GalleryTestCase extends TestCase {
 	/* Make sure we're not hanging onto any locks */
 	$lockIds = GalleryCoreApi::getLockIds();
 	if (!empty($lockIds)) {
-	    GalleryCoreApi::releaseAllLocks(false);
+	    GalleryCoreApi::releaseAllLocks();
 	    $this->assert(0, 'There are unreleased locks!');
 	}
 
