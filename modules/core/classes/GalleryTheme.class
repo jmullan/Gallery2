@@ -1091,6 +1091,7 @@ class GalleryTheme extends GalleryPlugin {
 				    $childIds=array(), $useCache=true) {
 	global $gallery;
 
+	$imageViewsIndex = GalleryUtilities::getRequestVariables('imageViewsIndex');
 	if ($useCache && $this->_cacheablePage) {
 	    list ($ret, $shouldCache) = GalleryDataCache::shouldCache('read', 'partial');
 	    if ($ret) {
@@ -1099,7 +1100,8 @@ class GalleryTheme extends GalleryPlugin {
 
 	    if ($shouldCache) {
 		list ($ret, $serializedData) = GalleryDataCache::getPageData(
-		    'template', array($item->getId(), $params, $dataToLoad, $childIds));
+		    'template', array($item->getId(), $params, $dataToLoad,
+				      $childIds, $imageViewsIndex));
 		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
@@ -1668,7 +1670,6 @@ class GalleryTheme extends GalleryPlugin {
 		}
 	    }
 
-	    $imageViewsIndex = GalleryUtilities::getRequestVariables('imageViewsIndex');
 	    if (empty($imageViewsIndex)) {
 		$imageViewsIndex = 0;
 	    }
@@ -1717,7 +1718,7 @@ class GalleryTheme extends GalleryPlugin {
 	    if ($shouldCache) {
 		$ret = GalleryDataCache::putPageData(
 		    'template', $item->getId(),
-		    array($item->getId(), $params, $dataToLoad, $childIds),
+		    array($item->getId(), $params, $dataToLoad, $childIds, $imageViewsIndex),
 		    serialize($template->_smarty->_tpl_vars));
 		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
