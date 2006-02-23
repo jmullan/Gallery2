@@ -248,5 +248,50 @@ class RssMapHelper {
 
 	return null;
     }
+
+    /**
+     * Check whether configuring feeds is allowed.
+     *
+     * @param object GalleryItem item
+     * @param array module parameters
+     * @param boolean (optional) if true, throw error if not allowed
+     * @return array object GalleryStatus a status code
+     *               boolean true if allowed
+     */
+    function canConfigureFeed($item, $params, $assert=false) {
+	global $gallery;
+	static $isAdmin;
+	if (!isset($isAdmin)) {
+	    list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	/*
+	 * show the configure feeds link if:
+	 *   - the user is the item owner or the admin
+	 *   - configurable feeds are allowed
+	 *   - and the allowed feeds are appropriate for this item type
+	 */
+	if ($params['allowConfigurableFeed'] == 1
+		&& ($isAdmin || $item->getOwnerId() == $gallery->getActiveUserId())
+		&& (
+		    (GalleryUtilities::isA($item, 'GalleryAlbumItem')
+		     && ($params['allowAlbums'] == 1
+			 || $params['allowPhotos'] == 1
+			 || $params['allowPhotosRecurse'] == 1
+			 || $params['allowCommentsAlbum'] == 1))
+		    || (GalleryUtilities::isA($item, 'GalleryDataItem') &&
+			$params['allowCommentsPhoto'] == 1))) {
+	    return array(null, true);
+	}
+
+	if ($assert) {
+	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
+	} else {
+	    return array(null, false);
+	}
+    }
 }
 ?>

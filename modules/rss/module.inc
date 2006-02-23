@@ -32,7 +32,7 @@
  *
  * @package RSS
  */
-class RssModule extends GalleryModule {
+class RssModule extends GalleryModule /* and GalleryEventListener */ {
 
     function RssModule() {
 	global $gallery;
@@ -40,24 +40,10 @@ class RssModule extends GalleryModule {
 	$this->setName($gallery->i18n('RSS'));
 	$this->setDescription($gallery->i18n('RSS'));
 	$this->setVersion('1.0.3');
-	$this->setGroup('export', $this->translate('Export'));
+	$this->setGroup('export', $gallery->i18n('Export'));
 	$this->setCallbacks('getSiteAdminViews|getItemLinks|registerEventListeners');
 	$this->setRequiredCoreApi(array(7, 0));
 	$this->setRequiredModuleApi(array(3, 0));
-    }
-
-    /**
-     * @see GalleryModule::isRecommendedDuringInstall()
-     */
-    function isRecommendedDuringInstall() {
-	return true;
-    }
-
-    /**
-     * @see GalleryModule::needsConfiguration()
-     */
-    function needsConfiguration() {
-	return array(null, false);
     }
 
     /**
@@ -72,6 +58,7 @@ class RssModule extends GalleryModule {
      * @see GalleryModule::getItemLinks()
      */
     function getItemLinks($items, $wantsDetailedLinks, $permissions) {
+	GalleryCoreApi::requireOnce('modules/rss/classes/RssMapHelper.class');
 	global $gallery;
 	$links = array();
 
@@ -82,58 +69,38 @@ class RssModule extends GalleryModule {
 	}
 
 	foreach ($items as $item) {
-	    if (isset($wantsDetailedLinks[$item->getId()])) {
+	    $itemId = $item->getId();
+	    if (isset($wantsDetailedLinks[$itemId])) {
 		if ($param['allowSimpleFeed'] == 1) {
 		    $itemTypeNames = array_merge($item->itemTypeName(), $item->itemTypeName(false));
 
-		    $links[$item->getId()][] = array(
+		    $links[$itemId][] = array(
 			'text' => $this->translate(array(
 			    'text' => 'RSS Feed for this %s',
 			    'arg1' => $itemTypeNames[0]), $itemTypeNames[2]),
 			'params' => array(
 			    'view' => 'rss.SimpleRender',
-			    'itemId' => $item->getId()));
+			    'itemId' => $itemId));
 		}
 
-		list ($ret, $inGroup) = GalleryCoreApi::isUserInSiteAdminGroup();
+		list ($ret, $canConfigure) = RssMapHelper::canConfigureFeed($item, $param);
 		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		/*
-		 * show the configure feeds link if:
-		 *   - the user is the item owner or the admin
-		 *   - configurable feeds are allowed
-		 *   - and the allowed feeds are appropriate for this item type
-		 */
-		if ($param['allowConfigurableFeed'] == 1
-		     && ($item->getOwnerId() == $gallery->getActiveUserId() || $inGroup)
-		     && (GalleryUtilities::isA($items[0], 'GalleryAlbumItem') &&
-			($param['allowAlbums'] == 1
-			|| $param['allowPhotos'] == 1
-			|| $param['allowPhotosRecurse'] == 1
-			|| $param['allowCommentsAlbum'] == 1))
-		     || (GalleryUtilities::isA($items[0], 'GalleryDataItem') &&
-			$param['allowCommentsPhoto'] == 1)) {
-			$links[$item->getId()][] = array(
+		if ($canConfigure) {
+		    $links[$itemId][] = array(
 			    'text' => $this->translate('Configure RSS Feeds'),
 			    'params' => array(
 				'view' => 'core.ItemAdmin',
 				'subView' => 'rss.EditFeed',
-				'itemId' => $item->getId(),
+				'itemId' => $itemId,
 				'return' => 1));
 		}
 	    }
 	}
 
 	return array(null, $links);
-    }
-
-    /**
-     * @see GalleryModule::getConfigurationView()
-     */
-    function getConfigurationView() {
-	return 'RssConfigAdmin';
     }
 
     /**

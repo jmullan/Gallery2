@@ -44,6 +44,19 @@ class EditFeedController extends GalleryController {
 
 	$mode = empty($form['mode']) ? '' : $form['mode'];
 
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($form['itemId']);
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'rss');
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	list ($ret) = RssMapHelper::canConfigureFeed($item, $param, true);
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	/* Check which button was pressed */
 	if (isset($form['action']['create']) || isset($form['action']['update'])) {
 	    /*
@@ -202,6 +215,10 @@ class EditFeedView extends GalleryView {
 	 * to the template engine
 	 */
 	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'rss');
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	list ($ret) = RssMapHelper::canConfigureFeed($item, $param, true);
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

@@ -154,8 +154,7 @@ class RssSiteAdminView extends GalleryView {
 	$RssSiteAdmin = array();
 	$RssSiteAdmin['rssVersionList'] = array('0.91', '2.0');
 
-	/* get list of membertypes */
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'rss');
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

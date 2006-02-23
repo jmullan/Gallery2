@@ -70,8 +70,12 @@ class RenderView extends GalleryView {
 	}
 
 	$params = array_merge($params, $params1);
-
 	$feedType = $params['feedType'];
+
+	$ret = GalleryCoreApi::assertHasItemPermission($params['itemId'], 'core.view');
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
 	if (($feedType == 'album' && $params['allowAlbums'] != 1)
 		|| ($feedType == 'photos' && $params['allowPhotos'] != 1)
