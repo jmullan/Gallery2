@@ -51,6 +51,15 @@ class RssEditFeedTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'rss', 'allowConfigurableFeed', 1);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'rss', 'allowAlbums', 1);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
     }
 
     function tearDown() {
@@ -72,7 +81,6 @@ class RssEditFeedTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[mode]', 'edit');
 
 	$results = $this->handleRequest();
-
 	$this->assertEquals(array(
 	    'status' => array(),
 	    'error' => array(),
