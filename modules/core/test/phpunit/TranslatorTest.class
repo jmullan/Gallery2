@@ -372,7 +372,7 @@ class TranslatorTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	if ($translator->canTranslate()) {
-	    $this->assertEquals('Álbum', $results);
+	    $this->assertEquals("\xEF\xBF\xBDlbum", $results);
 	} else {
 	    $this->assertEquals('Album', $results);
 	}
