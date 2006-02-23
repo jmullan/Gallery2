@@ -372,7 +372,7 @@ class RewriteParserMockPlatform extends GalleryPlatform {
     }
 
     function recursiveRmdir($path) {
-	return true;
+	return parent::recursiveRmdir($path);
     }
 
     function fsockopen($target, $port, &$errno, &$errstr, $timeout) {
