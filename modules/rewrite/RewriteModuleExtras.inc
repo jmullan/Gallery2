@@ -135,6 +135,7 @@ class RewriteModuleExtras {
 	case '0.9.15':
 	case '0.9.16':
 	case '0.9.17':
+	case '0.9.18':
 	case '1.0.0':
 	case '1.0.1':
 	case '1.0.2':
