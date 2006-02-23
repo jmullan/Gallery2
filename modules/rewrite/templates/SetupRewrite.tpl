@@ -31,7 +31,8 @@
 {/if}
 
 {if isset($SetupRewrite.bootstrap)}
-{if $SetupRewrite.server == 'APACHE'}
+{* Don't offer Apache mod_rewrite if we have detected IIS *}
+{if $SetupRewrite.server != 'IIS'}
 <div class="gbBlock">
   <h2> <a href="{g->url arg1="controller=rewrite.SetupRewrite" arg2="form[parser]=modrewrite" arg3="form[action][save]=1"}">{g->text text="Apache mod_rewrite"}</a> </h2>
 
@@ -41,7 +42,8 @@
 </div>
 {/if}
 
-{if $SetupRewrite.server == 'IIS'}
+{* Don't offer Isapi Rewrite if we have detected Apache *}
+{if $SetupRewrite.server != 'APACHE'}
 <div class="gbBlock">
   <h2> <a href="{g->url arg1="controller=rewrite.SetupRewrite" arg2="form[parser]=isapirewrite" arg3="form[action][save]=1"}">{g->text text="IIS ISAPI_Rewrite"}</a> </h2>
 
