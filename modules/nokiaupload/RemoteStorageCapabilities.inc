@@ -68,6 +68,7 @@ class RemoteStorageCapabilitiesView extends GalleryView {
 
 	$gallery->debug("Sending:\n$reply");
 
+	header("Content-type: text/plain; charset=UTF-8");
 	header('Content-Length: ' . strlen($reply));
 	print $reply;
 

@@ -202,6 +202,7 @@ class PrintPhotosView extends GalleryView {
 	 */
 	if (!headers_sent() /* Should only skip cookie in unit test */) {
 	    setcookie('G2_shutterfly', '1');
+	    header("Content-type: text/html; charset=UTF-8");
 	}
 
 	GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplate.class');

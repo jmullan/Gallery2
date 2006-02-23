@@ -185,7 +185,7 @@ function _GalleryMain($embedded=false) {
 	    if (!$isAdmin) {
 		if (($redirectUrl = $gallery->getConfig('mode.maintenance')) === true) {
 		    $redirectUrl =
-			$urlGenerator->generateUrl(array('view' => 'core.MaintenanceMode'), 
+			$urlGenerator->generateUrl(array('view' => 'core.MaintenanceMode'),
 						   array('forceFullUrl' => true));
 		}
 		return array(null, _GalleryMain_doRedirect($redirectUrl));
@@ -246,7 +246,7 @@ function _GalleryMain($embedded=false) {
 	    if (!empty($navId)) {
 		$urlToGenerate['navId'] = $navId;
 	    }
-	    $redirectUrl = $urlGenerator->generateUrl($urlToGenerate, 
+	    $redirectUrl = $urlGenerator->generateUrl($urlToGenerate,
 						      array('forceFullUrl' => true));
 	}
 
@@ -289,7 +289,7 @@ function _GalleryMain($embedded=false) {
     if ($ret) {
 	return array($ret->wrap(__FILE__, __LINE__), null);
     }
-    
+
     if ($gallery->getConfig('mode.maintenance') && !$view->isAllowedInMaintenance()) {
 	/* Maintenance mode - allow admins, else redirect to given url or show standard view */
 	list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
@@ -335,6 +335,12 @@ function _GalleryMain($embedded=false) {
 	 */
 	$session =& $gallery->getSession();
 	$html = $session->replaceTempSessionIdIfNecessary($html);
+
+	/* Set the appropriate charset in our HTTP header */
+	if (!headers_sent()) {
+	    header('Content-Type: text/html; charset=UTF-8');
+	}
+
 	print $html;
 	$data['isDone'] = true;
     } else {
@@ -385,7 +391,7 @@ function _GalleryMain($embedded=false) {
 		if (isset($results['redirectUrl'])) {
 		    $redirectUrl = $results['redirectUrl'];
 		} else {
-		    $redirectUrl = $urlGenerator->generateUrl($results['redirect'], 
+		    $redirectUrl = $urlGenerator->generateUrl($results['redirect'],
 		    					      array('forceFullUrl' => true));
 		}
 		return array(null,
@@ -439,6 +445,10 @@ function _GalleryMain($embedded=false) {
 		    $data['themeData'] =& $template->getVariableByReference('theme');
 		    $data['isDone'] = false;
 		} else {
+		    /* Set the appropriate charset in our HTTP header */
+		    if (!headers_sent()) {
+			header('Content-Type: text/html; charset=UTF-8');
+		    }
 		    print $html;
 
 		    if ($shouldCache && $results['cacheable']) {
@@ -475,16 +485,16 @@ function _GalleryMain_doRedirect($redirectUrl, $template=null, $controller=null)
     }
     $redirectUrl = $session->replaceTempSessionIdIfNecessary($redirectUrl);
     $session->doNotUseTempId();
- 
-    /* 
-     * UserLogin returnUrls don't have a sessionId in the URL to replace, make sure 
+
+    /*
+     * UserLogin returnUrls don't have a sessionId in the URL to replace, make sure
      * there's a sessionId in the redirectUrl for users that don't use cookies
      */
     if (!$session->isUsingCookies() && $session->isPersistent() &&
 	    strpos($redirectUrl, $session->getKey()) === false) {
         $redirectUrl = GalleryUrlGenerator::appendParamsToUrl(
-         				$redirectUrl, 
-         				array($session->getKey() => $session->getId()));	
+         				$redirectUrl,
+         				array($session->getKey() => $session->getId()));
     }
 
     if ($gallery->getDebug() == false || $gallery->getDebug() == 'logged') {

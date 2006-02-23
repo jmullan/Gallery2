@@ -298,11 +298,6 @@ class GalleryTranslator {
 	    GalleryTranslator::_setlocale(LC_ALL, $languageCode);
 	}
 
-	/* Set the appropriate charset in our HTTP header */
-	if (!headers_sent()) {
-	    header('Content-Type: text/html; charset=UTF-8');
-	}
-
 	$this->_languageCode = $languageCode;
 	return array(null, $languageCode);
     }

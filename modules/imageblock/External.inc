@@ -108,6 +108,11 @@ class ExternalView extends GalleryView {
 	    $ImageBlockData['forceFullUrl'] = 1;
 
 	    $template->setVariable('l10Domain', 'modules_imageblock');
+
+	    if (!headers_sent()) {
+		header("Content-type: text/html; charset=UTF-8");
+	    }
+
 	    $template->display('gallery:modules/imageblock/templates/ImageBlock.tpl');
 	}
 
