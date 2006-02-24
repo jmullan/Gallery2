@@ -1,9 +1,9 @@
-            <?php newRow(); ?>
+	    <?php newRow(); ?>
 	    <td class="<?php print modifier('plugin') ?>">
 	      <?php print $plugin ?>
 	    </td>
-	    <td bgcolor="<?php print percentColor($pluginData['percentDone']) ?>">
-              <?php print round($pluginData['percentDone']) ?>%
+	    <td style="background-color:<?php print percentColor($pluginData['percentDone']) ?>">
+	      <?php print round($pluginData['percentDone']) ?>%
 	    </td>
 
 	    <?php if (isset($pluginData['missing'])) { ?>

@@ -7,10 +7,10 @@
     <body>
       <h1> Localization Status Report for Gallery 2 </h1>
       <h3> Generated: <?php print strftime("%x %X") ?> <br/>
-           Most Recent PO: <?php print strftime("%x %X", $mostRecentPoDate) ?> </h3>
+	   Most Recent PO: <?php print strftime("%x %X", $mostRecentPoDate) ?> </h3>
 
       <center>
-        View: <b> summary </b> | <a href="?type=detail"> detail </a>
+	View: <b> summary </b> | <a href="?type=detail"> detail </a>
 	<table class="report">
 	    <?php $index = 0; ?>
 	    <?php foreach ($reportData as $locale => $localeData) { ?>
@@ -25,12 +25,13 @@
 	      <td class="dark">
 		<?php print $locale ?>
 	      </td>
-	      <td bgcolor="<?php print percentColor($localeData['percentDone']) ?>" class="locale_percent">
+	      <td class="locale_percent" style="background-color:<?php
+		  print percentColor($localeData['percentDone']) ?>">
 		<?php print round($localeData['percentDone']) ?>%
 	      </td>
 	      <?php $summaryData = $localeData['summary']; ?>
 	      <td class="<?php print modifier('total') ?>">
-	        <?php print $summaryData['total'] ?>
+		<?php print $summaryData['total'] ?>
 	      </td>
 	      <td class="<?php print modifier('translated') ?>">
 		<?php print round($summaryData['translated']) ?>%

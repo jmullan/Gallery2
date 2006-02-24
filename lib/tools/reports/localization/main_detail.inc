@@ -7,10 +7,10 @@
     <body>
       <h1> Localization Status Report for Gallery 2 </h1>
       <h3> Generated: <?php print strftime("%x %X") ?> <br/>
-           Most Recent PO: <?php print strftime("%x %X", $mostRecentPoDate) ?> </h3>
+	   Most Recent PO: <?php print strftime("%x %X", $mostRecentPoDate) ?> </h3>
 
       <center>
-        View: <a href="?type=summary"> summary </a> | <b> detail </b>
+	View: <a href="?type=summary"> summary </a> | <b> detail </b>
 	<table class="report">
 	  <?php $index = 0; ?>
 	  <?php foreach ($reportData as $locale => $localeData) { ?>
@@ -23,7 +23,8 @@
 	      <td rowspan="<?php print sizeof($localeData['plugins'])?>" class="dark">
 		<?php print $locale ?>
 	      </td>
-	      <td bgcolor="<?php print percentColor($localeData['percentDone']) ?>" rowspan="<?php print sizeof($localeData['plugins'])?>" class="locale_percent">
+	      <td rowspan="<?php print sizeof($localeData['plugins'])?>" class="locale_percent"
+		  style="background-color:<?php print percentColor($localeData['percentDone']) ?>">
 		<?php print round($localeData['percentDone']) ?>%
 	      </td>
 	      <?php $keys = array_keys($localeData['plugins']); ?>
