@@ -49,6 +49,37 @@
     <p class="error">
       <?php print _("The installed version is newer than the version you are trying to upgrade to. You cannot downgrade G2. Please replace the gallery2 files with files from the currently installed version or later.") ?>
     </p>
+    <?php elseif (isset($templateData['brokenPlugins'])): ?>
+    <?php $galleryWebsiteLink = sprintf('<a href="http://codex.gallery2.org/index.php/Gallery2:Download">%s</a>', _("the Gallery website")); ?>
+    <p class="error">
+      <?php printf(_("Your upgrade cannot begin because some of your active modules/themes are incompatible or missing.  You must either locate more recent versions of these modules or themes, or revert to your original version of Gallery.  No changes have been made so it's safe to revert.  If you have many incompatible modules listed below, it's possible that you downloaded a smaller distribution of Gallery than what you originally installed.  You can download a larger distribution from %s."), $galleryWebsiteLink) ?>
+    </p>
+    <div class="error">
+      <ul>
+	<?php foreach ($templateData['brokenPlugins'] as $pluginType => $pluginList): ?>
+	<?php foreach ($pluginList as $pluginId => $status): ?>
+	<li>
+	  <?php if (!empty($status['missing'])): ?>
+	  <?php if ($pluginType == 'module'): ?>
+	  <?php printf("Module %s is missing", $pluginId) ?>
+	  <?php else: ?>
+	  <?php printf("Theme %s is missing", $pluginId) ?>
+	  <?php endif ?>
+	  <?php else: ?>
+	  <?php if ($pluginType == 'module'): ?>
+	  <?php printf("Module %s is incompatible", $pluginId) ?>
+	  <?php else: ?>
+	  <?php printf("Theme %s is incompatible", $pluginId) ?>
+	  <?php endif; ?>
+	  <?php endif; ?>
+	</li>
+	<?php endforeach; ?>
+	<?php endforeach; ?>
+      </ul>
+    </div>
+    <p class="error">
+      <?php printf(_('Download replacement modules from %s'), $galleryWebsiteLink); ?>
+    </p>
     <?php else: ?>
     <p>
       <?php print _("Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  If you fail to make a backup and something goes wrong, there is a strong possibility that we will not be able to help you recover your data!  Refer to the following examples:") ?>

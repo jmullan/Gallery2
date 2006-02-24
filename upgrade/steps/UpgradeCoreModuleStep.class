@@ -120,10 +120,84 @@ class UpgradeCoreModuleStep extends UpgradeStep {
 		     */
 		    $templateData['isTryingToDowngrade'] = 1;
 		}
+
+		list ($ret, $pluginStatus) = $this->_ensureNeededPlugins();
+		if ($ret) {
+		    $templateData['errors'][] = _('Unable to verify plugins');
+		    $templateData['stackTrace'] = $ret->getAsHtml();
+		}
+		if (!empty($pluginStatus)) {
+		    $templateData['brokenPlugins'] = $pluginStatus;
+		    $templateData['api']['core'] = GalleryCoreApi::getApiVersion();
+		    $templateData['api']['theme'] = GalleryTheme::getApiVersion();
+		    $templateData['api']['module'] = GalleryModule::getApiVersion();
+		}
 	    }
 	}
 
 	$template->renderBodyAndFooter($templateData);
+    }
+
+    /**
+     * TODO: Integrate this code with the similar code in UpgradeOtherModulesStep.
+     */
+    function _ensureNeededPlugins() {
+	global $gallery;
+	$results = array();
+
+	list ($ret, $modules) = GalleryCoreApi::fetchPluginList('module');
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	foreach ($modules as $moduleId => $moduleInfo) {
+	    $gallery->guaranteeTimeLimit(30);
+	    if ($moduleInfo['active']) {
+		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId, true, true);
+		if ($ret) {
+		    if ($ret->getErrorCode() & (ERROR_BAD_PLUGIN | ERROR_BAD_PARAMETER)) {
+			$results['module'][$moduleId] = array('missing' => 1);
+		    } else {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		} else {
+		    if (!GalleryCoreApi::isPluginCompatibleWithApis($module)) {
+			$results['module'][$moduleId] =
+			    array('incompatible' => array(
+				      'module' => $module->getRequiredModuleApi(),
+				      'core' => $module->getRequiredCoreApi()));
+		    }
+		}
+	    }
+	}
+
+	list ($ret, $themes) = GalleryCoreApi::fetchPluginList('theme');
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	foreach ($themes as $themeId => $themeInfo) {
+	    $gallery->guaranteeTimeLimit(30);
+	    if ($themeInfo['active']) {
+		list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId, true, true);
+		if ($ret) {
+		    if ($ret->getErrorCode() & (ERROR_BAD_PLUGIN | ERROR_BAD_PARAMETER)) {
+			$results['theme'][$themeId] = array('missing' => 1);
+		    } else {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		} else {
+		    if (!GalleryCoreApi::isPluginCompatibleWithApis($theme)) {
+			$results['theme'][$themeId] =
+			    array('incompatible' => array(
+				      'theme' => $theme->getRequiredThemeApi(),
+				      'core' => $theme->getRequiredCoreApi()));
+		    }
+		}
+	    }
+	}
+
+	return array(null, $results);
     }
 }
 ?>
