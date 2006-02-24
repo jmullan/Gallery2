@@ -48,7 +48,7 @@ class AdminModulesVerifyUninstallController extends GalleryController {
 	$moduleId = GalleryUtilities::getRequestVariables('moduleId');
 
 	if (!empty($moduleId) && isset($form['action']['uninstall'])) {
-	    list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -67,7 +67,7 @@ class AdminModulesVerifyUninstallController extends GalleryController {
 		    $redirect['view'] = 'core.SiteAdmin';
 		    $redirect['subView'] = 'core.AdminModules';
 		}
-		$status['uninstalled'] = $module->getName();
+		$status['uninstalled'] = $module->translate($module->getName());
 	    }
 	}
 
