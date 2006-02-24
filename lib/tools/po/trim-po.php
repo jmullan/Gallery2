@@ -3,9 +3,21 @@
  * Usage: php trim-po.php xx_YY.po
  * Prints a copy of xx_YY.po, omitting all translations that match xx.po.
  * Simply prints the given file if not of the form xx_YY.po or xx.po does not exist.
+ * For en_* it trims any translations where msgid == msgstr.
  */
 $path = $argv[1];
 $langpath = preg_replace('{(..)_..\.po$}', '$1.po', $path);
+
+if ($langpath == 'en.po') {
+    list ($po, $header) = readPo($path);
+    print $header;
+    foreach ($po as $id => $str) {
+	if (substr($id, 5) != substr($str, 6)) {
+	    print $id . $str . "\n";
+	}
+    }
+    exit;
+}
 if ($langpath == $path || !file_exists($langpath)) {
     readfile($path);
     if ($langpath != $path && !in_array($langpath, array('en.po', 'zh.po'))) {
