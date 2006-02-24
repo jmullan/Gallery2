@@ -38,16 +38,17 @@ class GalleryLockSystem {
     /**
      * Information about all the locks we currently hold
      *
-     * @var array of (lockId => array('type' => LOCK_READ or LOCK_WRITE,
-     *                                'ids' => array of entity ids))
+     * @var array of (lockId => array('lockId' => lock id, 'type' => LOCK_READ or LOCK_WRITE,
+     *                                'ids' => array of locked object id => additional data))
      * @access protected
      */
     var $_locks;
 
     /**
-     * List of locks that are to be released
+     * List of locks that are pending release
      *
-     * @var array of (lockId => true)
+     * @var array of (lockId => array('lockId' => lock id, 'type' => LOCK_READ or LOCK_WRITE,
+     *                                'ids' => array of locked object id => additional data))
      * @access protected
      */
     var $_releaseQueue;
@@ -63,24 +64,137 @@ class GalleryLockSystem {
      * Read lock one or more objects
      *
      * @param array ids to lock, or int single id
-     * @param integer how long to wait for the lock before giving up
+     * @param integer (optional) how many seconds to wait for the lock before giving up
      * @return array object GalleryStatus a status code
-     *               int the lock id
-     * @abstract
+     *               mixed the lock id
      */
     function acquireReadLock($ids, $timeout=10) {
+	if (!is_array($ids)) {
+	    $ids = array($ids);
+	}
+
+	/*
+	 * Close out write locks pending release that cover any of these ids
+	 * (this does leave a window where another request could grab a lock)
+	 */
+	foreach ($this->_releaseQueue as $lockId => $lock) {
+	    if ($lock['type'] != LOCK_WRITE) {
+		continue;
+	    }
+	    $foundIds = array_intersect(array_keys($lock['ids']), $ids);
+	    if (count($foundIds) == count($lock['ids'])) {
+		/* Release this entire lock */
+		$ret = $this->_releaseLocksNow(array($lockId => $lock));
+		if ($ret) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		unset($this->_releaseQueue[$lockId]);
+	    } else if (!empty($foundIds)) {
+		/* Remove ids from this lock */
+		$ret = $this->_removeObjectsFromLock($this->_releaseQueue[$lockId], $foundIds);
+		if ($ret) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+	}
+
+	list ($ret, $lockId) = $this->_acquireLock($ids, $timeout, LOCK_READ);
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(null, $lockId);
+    }
+
+    /**
+     * Write lock one or more objects
+     *
+     * @param array ids to lock, or int single id
+     * @param integer (optional) how many seconds to wait for the lock before giving up
+     * @return array object GalleryStatus a status code
+     *               mixed the lock id
+     */
+    function acquireWriteLock($ids, $timeout=10) {
+	if (!is_array($ids)) {
+	    $ids = array($ids);
+	}
+
+	/*
+	 * Check for locks pending release that cover any of these ids.
+	 * Move write locks between lockIds to keep lock in place; close out read locks
+	 * (so read->write does leave a window where another request could grab a lock)
+	 */
+	$relock = array();
+	foreach ($this->_releaseQueue as $lockId => $lock) {
+	    $foundIds = array_intersect(array_keys($lock['ids']), $ids);
+	    if (empty($foundIds)) {
+		continue;
+	    }
+	    if ($lock['type'] == LOCK_WRITE) {
+		$relock[$lockId] = $foundIds;
+		$ids = array_diff($ids, $foundIds);
+	    } else if (count($foundIds) == count($lock['ids'])) {
+		/* Release this entire read lock */
+		$ret = $this->_releaseLocksNow(array($lockId => $lock));
+		if ($ret) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		unset($this->_releaseQueue[$lockId]);
+	    } else if (!empty($foundIds)) {
+		/* Remove ids from this read lock */
+		$ret = $this->_removeObjectsFromLock($this->_releaseQueue[$lockId], $foundIds);
+		if ($ret) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+	}
+
+	if (!empty($ids)) {
+	    list ($ret, $lockId) = $this->_acquireLock($ids, $timeout, LOCK_WRITE);
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	} else {
+	    list ($ret, $lockId) = $this->_newLockId();
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $this->_locks[$lockId] = array('lockId' => $lockId, 'type' => LOCK_WRITE);
+	}
+
+	if (!empty($relock)) {
+	    $ret = $this->_moveObjectsBetweenLocks($relock, $lockId);
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+	return array(null, $lockId);
+    }
+
+    /**
+     * Extending class must implement this function to actually acquire a lock.
+     *
+     * @param array of object ids
+     * @param integer how many seconds to wait for the lock before giving up
+     * @param lockType LOCK_READ or LOCK_WRITE
+     * @return array object GalleryStatus a status code
+     *               int the lock id
+     * @access protected
+     * @abstract
+     */
+    function _acquireLock($ids, $timeout, $lockType) {
 	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
     }
 
     /**
      * Return true if the given id is read locked or write locked
      *
-     * @param int an entity id
-     * @return boolean true if the entity is read locked
+     * @param int an object id
+     * @return boolean true if the object is read locked
      */
     function isReadLocked($id) {
 	foreach ($this->_locks as $lockId => $lock) {
-	    if (in_array($id, $lock['ids']) && !isset($this->_releaseQueue[$lockId])) {
+	    if (isset($lock['ids'][$id])) {
 		return true;
 	    }
 	}
@@ -89,28 +203,14 @@ class GalleryLockSystem {
     }
 
     /**
-     * Write lock one or more objects
-     *
-     * @param array ids to lock, or int single id
-     * @param integer how long to wait for the lock before giving up
-     * @return array object GalleryStatus a status code
-     *               int the lock id
-     * @abstract
-     */
-    function acquireWriteLock($ids, $timeout=10) {
-	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
-    }
-
-    /**
      * Return true if the given id is write locked
      *
-     * @param int an entity id
-     * @return boolean true if the entity is write locked
+     * @param int an object id
+     * @return boolean true if the object is write locked
      */
     function isWriteLocked($id) {
 	foreach ($this->_locks as $lockId => $lock) {
-	    if ($lock['type'] == LOCK_WRITE && in_array($id, $lock['ids'])
-		    && !isset($this->_releaseQueue[$lockId])) {
+	    if ($lock['type'] == LOCK_WRITE && isset($lock['ids'][$id])) {
 		return true;
 	    }
 	}
@@ -120,13 +220,116 @@ class GalleryLockSystem {
 
     /**
      * Release the given lock(s)
+     * (queue the specified locks for later release on transactional databases or release them
+     *  immediately if transactions are not supported)
      *
      * @param array a list of lock ids, or a single lock id
      * @return object GalleryStatus a status code
-     * @abstract
      */
     function releaseLocks($lockIds) {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	if (!is_array($lockIds)) {
+	    $lockIds = array($lockIds);
+	}
+
+	/* Remove any empty or invalid elements */
+	foreach ($lockIds as $key => $lockId) {
+	    if (empty($lockId) || !isset($this->_locks[$lockId])) {
+		unset($lockIds[$key]);
+	    }
+	}
+	/* Queue locks for release */
+	foreach ($lockIds as $lockId) {
+	    $this->_releaseQueue[$lockId] = $this->_locks[$lockId];
+	    unset($this->_locks[$lockId]);
+	}
+
+	if (!$storage->isTransactional()) {
+	    $ret = $this->releaseQueue();
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	return null;
+    }
+
+    /**
+     * Cleanup any locks queued for release
+     *
+     * @return object GalleryStatus a status code
+     */
+    function releaseQueue() {
+	if (!empty($this->_releaseQueue)) {
+	    $ret = $this->_releaseLocksNow($this->_releaseQueue);
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $this->_releaseQueue = array();
+	}
+	return null;
+    }
+
+    /**
+     * Release the given locks now
+     *
+     * @param array of lockId => lock
+     * @return object GalleryStatus a status code
+     * @access protected
+     * @abstract
+     */
+    function _releaseLocksNow($locks) {
 	return GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+    }
+
+    /**
+     * Remove some object ids from the given lock.
+     *
+     * @param array lock
+     * @param array ids to remove
+     * @return object GalleryStatus a status code
+     * @access protected
+     * @abstract
+     */
+    function _removeObjectsFromLock(&$lock, $ids) {
+	return GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+    }
+
+    /**
+     * Move ids from givens locks into a new lock.
+     * Remove any locks that now have no objects remaining.
+     *
+     * @param array of (lockId => array of ids)
+     * @param lockId move ids into this lock
+     * @return object GalleryStatus a status code
+     * @access protected
+     */
+    function _moveObjectsBetweenLocks($relock, $newLockId) {
+	foreach ($relock as $lockId => $ids) {
+	    foreach ($ids as $id) {
+		$this->_locks[$newLockId]['ids'][$id] =
+		    $this->_releaseQueue[$lockId]['ids'][$id];
+		unset($this->_releaseQueue[$lockId]['ids'][$id]);
+	    }
+	    if (empty($this->_releaseQueue[$lockId]['ids'])) {
+		unset($this->_releaseQueue[$lockId]);
+	    }
+	}
+	return null;
+    }
+
+    /**
+     * Generate an id for a new lock.
+     *
+     * @return array object GalleryStatus a status code
+     *               mixed lockId
+     * @access protected
+     * @abstract
+     */
+    function _newLockId() {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
     }
 
     /**

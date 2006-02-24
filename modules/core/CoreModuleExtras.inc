@@ -1834,6 +1834,8 @@ class CoreModuleExtras {
 	case '1.0.27':
 	case '1.0.28':
 	    /* Change in page cache key format */
+	case '1.0.29':
+	    /* Support for transactional locking */
 
 	case 'end of upgrade path':
 	    /*
@@ -2077,6 +2079,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	case '1.0.26':
 	case '1.0.27':
 	case '1.0.28':
+	case '1.0.29':
 
 	case 'end of upgrade path':
 	    /*

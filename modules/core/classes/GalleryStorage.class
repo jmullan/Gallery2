@@ -273,6 +273,15 @@ class GalleryStorage {
     }
 
     /**
+     * Is the database transactional?
+     *
+     * @return boolean true if transactional
+     */
+    function isTransactional() {
+	return $this->_isTransactional;
+    }
+
+    /**
      * Load the GalleryEntities with the ids specified
      *
      * @param mixed the ids of the GalleryEntities to load
@@ -346,7 +355,7 @@ class GalleryStorage {
      * @param array entityIds list of entityIds
      * @param int timeout before giving up on the lock
      * @return array object GalleryStatus a status code
-     *               object a GalleryLock instance
+     *               array lock data
      */
     function acquireReadLock($entityIds, $timeout) {
 	$extras =& $this->_getExtras();
@@ -359,7 +368,7 @@ class GalleryStorage {
      * @param array or integer a set of ids
      * @param int timeout before giving up on the lock
      * @return array object GalleryStatus a status code
-     *               object a GalleryLock instance
+     *               array lock data
      */
     function acquireWriteLock($entityIds, $timeout) {
 	$extras =& $this->_getExtras();
@@ -388,6 +397,42 @@ class GalleryStorage {
     function releaseLocks($lockIds) {
 	$extras =& $this->_getExtras();
 	return $extras->releaseLocks($lockIds);
+    }
+
+    /**
+     * Remove ids from a lock.
+     *
+     * @param array lock data
+     * @param array ids to remove
+     * @return object GalleryStatus a status code
+     */
+    function removeIdsFromLock($lock, $ids) {
+	$extras =& $this->_getExtras();
+	return $extras->removeIdsFromLock($lock, $ids);
+    }
+
+    /**
+     * Move ids between locks.
+     *
+     * @param array of lockId => object ids
+     * @param int the new lockId
+     * @param lock type
+     * @return object GalleryStatus a status code
+     */
+    function moveIdsBetweenLocks($relock, $newLockId, $lockType) {
+	$extras =& $this->_getExtras();
+	return $extras->moveIdsBetweenLocks($relock, $newLockId, $lockType);
+    }
+
+    /**
+     * Generate a new lock id.
+     *
+     * @return array object GalleryStatus a status code
+     *               int lock id
+     */
+    function newLockId() {
+	$extras =& $this->_getExtras();
+	return $extras->newLockId();
     }
 
     /**
@@ -643,17 +688,30 @@ class GalleryStorage {
      * @return object GalleryStatus a status code
      */
     function commitTransaction() {
-	if (!isset($this->_db)) {
-	    return null;
-	}
-
-	if ($this->_isTransactional && $this->_db->transCnt > 0) {
+	if ($this->_isTransactional && isset($this->_db) && $this->_db->transCnt > 0) {
 	    $this->_traceStart();
 	    $ok = $this->_db->CommitTrans();
 	    $this->_traceStop();
 
 	    if (!$ok) {
 		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+	    }
+	}
+
+	if ($this->_isTransactional) {
+	    /* Release any queued locks */
+	    global $gallery;
+	    $result =& $gallery->getLockSystem(false);
+	    $ret = $result[0];
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $lockSystem =& $result[1];
+	    if (isset($lockSystem)) {
+		$ret = $lockSystem->releaseQueue();
+		if ($ret) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 	    }
 	}
 
@@ -685,17 +743,30 @@ class GalleryStorage {
      * @return object GalleryStatus a status code
      */
     function rollbackTransaction() {
-	if (!isset($this->_db)) {
-	    return null;
-	}
-
-	if ($this->_isTransactional && $this->_db->transCnt > 0) {
+	if ($this->_isTransactional && isset($this->_db) && $this->_db->transCnt > 0) {
 	    $this->_traceStart();
 	    $ok = $this->_db->RollbackTrans();
 	    $this->_traceStop();
 
 	    if (!$ok) {
 		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+	    }
+	}
+
+	if ($this->_isTransactional) {
+	    /* Release any queued locks */
+	    global $gallery;
+	    $result =& $gallery->getLockSystem(false);
+	    $ret = $result[0];
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $lockSystem =& $result[1];
+	    if (isset($lockSystem)) {
+		$ret = $lockSystem->releaseQueue();
+		if ($ret) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 	    }
 	}
 

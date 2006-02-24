@@ -259,6 +259,11 @@ class GalleryTestCase extends TestCase {
 	$gallery->_config = array_shift($this->_saveVars);
 	$gallery->_phpVm = array_shift($this->_saveVars);
 
+	/* Release any queued locks before restoring lockSystem */
+	if (isset($gallery->_lockSystem)) {
+	    $gallery->_lockSystem->releaseQueue();
+	}
+
 	/* Make sure we're not hanging onto any locks */
 	$lockIds = GalleryCoreApi::getLockIds();
 	if (!empty($lockIds)) {

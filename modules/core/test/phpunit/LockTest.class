@@ -42,6 +42,7 @@ class LockTest extends GalleryTestCase {
     }
 
     function setUp() {
+	global $gallery;
 	parent::setUp();
 
 	list ($ret, $this->_parentAlbum) = $this->_createRandomAlbum($this->_getRootId());
@@ -56,19 +57,28 @@ class LockTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	$storage =& $gallery->getStorage();
+	$ret = $storage->checkPoint();
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
     }
 
     function _tryAllLockSystems($testFunction) {
 	global $gallery;
-	$testFunction = "_" . $testFunction;
+	$testFunction = '_' . $testFunction;
 
 	$gallery->_lockSystem = new DatabaseLockSystem();
 	$this->$testFunction('dblock');
 	$gallery->_lockSystem->releaseAllLocks();
+	$gallery->_lockSystem->releaseQueue();
 
 	$gallery->_lockSystem = new FlockLockSystem();
 	$this->$testFunction('flock');
 	$gallery->_lockSystem->releaseAllLocks();
+	$gallery->_lockSystem->releaseQueue();
     }
 
     function testOneWriteLock() {
@@ -298,6 +308,319 @@ class LockTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::releaseLocks(array());
 	if ($ret) {
 	    $this->assert(false, $lockSystem);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
+     * Verify that locks are not being released before commit on transactional databases.
+     * http://sourceforge.net/tracker/index.php?func=detail&aid=1345508&group_id=7130&atid=107130
+     */
+    function testReleaseLocksNotBeforeCommit() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_item->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->_item->setTitle($this->_item->getTitle() . 'changed');
+	$ret = $this->_item->save();
+	if ($ret) {
+	    GalleryCoreApi::releaseLocks($lockId);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Temporarily clear the existing lock information to simulate another request */
+	$queuedLocks = $gallery->_lockSystem->_releaseQueue;
+	$locks = $gallery->_lockSystem->_locks;
+	$gallery->_lockSystem->_releaseQueue = array();
+	$gallery->_lockSystem->_locks = array();
+
+	/* This should time out if the previous lock is queued */
+	list ($ret, $secondLockId) = GalleryCoreApi::acquireWriteLock($this->_item->getId(), 5);
+	if ($ret) {
+	    $this->assertEquals($ret->getErrorCode(), GALLERY_ERROR | ERROR_LOCK_TIMEOUT,
+		'The lock acquisition should have timed out.');
+	    if ($ret->getErrorCode() != (GALLERY_ERROR | ERROR_LOCK_TIMEOUT)) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	} else {
+	    /* Lock successfully acquired, this should only happen on nontransactional databases */
+	    $this->assert(!$storage->isTransactional(), 'Lock acquired on transactional database.');
+
+	    $ret = GalleryCoreApi::releaseLocks($secondLockId);
+	    if ($ret) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	/* Restore lock information and force their release. */
+	$gallery->_lockSystem->_releaseQueue = $queuedLocks;
+	$gallery->_lockSystem->_locks = $locks;
+	$ret = $gallery->_lockSystem->releaseQueue();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function testRelockRead() {
+	/* Read lock, release, relock before committing transaction */
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->_item->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(count($gallery->_lockSystem->_releaseQueue) == 1
+		      || !$storage->isTransactional(), 'release first lock');
+
+	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->_item->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Release queue unaffected */
+	$this->assert(count($gallery->_lockSystem->_releaseQueue) == 1
+		      || !$storage->isTransactional(), 'get second lock');
+
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Release queue unaffected, multiple read locks are ok */
+	$this->assert(count($gallery->_lockSystem->_releaseQueue) == 2
+		      || !$storage->isTransactional(), 'release second lock');
+    }
+
+    function testWriteThenRead() {
+	/* Write lock, release, then acquire read lock before committing transaction */
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_item->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(count($gallery->_lockSystem->_releaseQueue) == 1
+		      || !$storage->isTransactional(), 'release write lock');
+
+	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->_item->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Had to release that write lock in order to get new read lock */
+	$this->assert(empty($gallery->_lockSystem->_releaseQueue), 'release queue should be empty');
+
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function testWriteThenReadPartial() {
+	/* Write lock, release, then acquire a read lock for one entity in that write lock */
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock(array($this->_parentAlbum->getId(),
+								      $this->_item->getId()));
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(
+		(count($gallery->_lockSystem->_releaseQueue) == 1
+		 && count($gallery->_lockSystem->_releaseQueue[$lockId]['ids']) == 2)
+		|| !$storage->isTransactional(), 'release write lock');
+
+	list ($ret, $newLockId) = GalleryCoreApi::acquireReadLock($this->_item->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Removed single entity from pending write lock in order to get new read lock */
+	$this->assert(
+		(count($gallery->_lockSystem->_releaseQueue) == 1
+		 && count($gallery->_lockSystem->_releaseQueue[$lockId]['ids']) == 1)
+		|| !$storage->isTransactional(), 'pending write lock should have one entity');
+
+	$ret = GalleryCoreApi::releaseLocks($newLockId);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function testRelockWrite() {
+	/* Write lock, release, relock before committing transaction */
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_item->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(count($gallery->_lockSystem->_releaseQueue) == 1
+		      || !$storage->isTransactional(), 'release first lock');
+
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_item->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Real lock moved to new lockId which clears out queued lock */
+	$this->assert(empty($gallery->_lockSystem->_releaseQueue), 'release queue should be empty');
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function testRelockWritePartial() {
+	/* Write lock, release, then acquire new write lock for one id in previous lock */
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock(array($this->_parentAlbum->getId(),
+								      $this->_item->getId()));
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(
+	    (count($gallery->_lockSystem->_releaseQueue) == 1
+	     && count($gallery->_lockSystem->_releaseQueue[$lockId]['ids']) == 2)
+	    || !$storage->isTransactional(), 'release first lock');
+
+	list ($ret, $newLockId) = GalleryCoreApi::acquireWriteLock($this->_item->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* One id moved to new lockId */
+	$this->assert(
+	    (count($gallery->_lockSystem->_releaseQueue) == 1
+	     && count($gallery->_lockSystem->_releaseQueue[$lockId]['ids']) == 1)
+	    || !$storage->isTransactional(), 'acquire new lock');
+
+	$ret = GalleryCoreApi::releaseLocks($newLockId);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+    function testRelockWriteMore() {
+	/* Write lock, release, then acquire new write lock with more ids than previous lock */
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_item->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(
+	    (count($gallery->_lockSystem->_releaseQueue) == 1
+	     && count($gallery->_lockSystem->_releaseQueue[$lockId]['ids']) == 1)
+	    || !$storage->isTransactional(), 'release first lock');
+
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock(array($this->_parentAlbum->getId(),
+								      $this->_item->getId()));
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Real lock moved to new lockId which clears out queued lock */
+	$this->assert(empty($gallery->_lockSystem->_releaseQueue), 'release queue should be empty');
+
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function testReadThenWrite() {
+	/* Read lock, release, then acquire write lock before committing transaction */
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->_item->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(count($gallery->_lockSystem->_releaseQueue) == 1
+		      || !$storage->isTransactional(), 'release read lock');
+
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_item->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Had to release that read lock in order to get new write lock */
+	$this->assert(empty($gallery->_lockSystem->_releaseQueue), 'release queue should be empty');
+
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function testReadThenWritePartial() {
+	/* Read lock, release, then acquire a write lock for one entity in that read lock */
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock(array($this->_item->getId(),
+								     $this->_parentAlbum->getId()));
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(
+		(count($gallery->_lockSystem->_releaseQueue) == 1
+		 && count($gallery->_lockSystem->_releaseQueue[$lockId]['ids']) == 2)
+		|| !$storage->isTransactional(), 'release read lock');
+
+	list ($ret, $newLockId) = GalleryCoreApi::acquireWriteLock($this->_item->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Removed single entity from pending read lock in order to get new write lock */
+	$this->assert(
+		(count($gallery->_lockSystem->_releaseQueue) == 1
+		 && count($gallery->_lockSystem->_releaseQueue[$lockId]['ids']) == 1)
+		|| !$storage->isTransactional(), 'pending read lock should have one entity');
+
+	$ret = GalleryCoreApi::releaseLocks($newLockId);
+	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }

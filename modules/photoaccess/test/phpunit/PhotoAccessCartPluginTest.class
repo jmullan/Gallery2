@@ -148,6 +148,13 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$storage =& $gallery->getStorage();
+	$ret = $storage->checkPoint();
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	/* Empty out the plugin session id */
 	$session =& $gallery->getSession();
 	$this->_saveCartUrlFragment = $session->get('photoaccess.cartUrlFragment');

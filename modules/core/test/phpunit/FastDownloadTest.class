@@ -83,6 +83,13 @@ class FastDownloadTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	$storage =& $gallery->getStorage();
+	$ret = $storage->checkPoint();
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
     }
 
     function testCreateFastDownloadFileForDerivative() {
@@ -123,6 +130,10 @@ class FastDownloadTest extends GalleryTestCase {
 		    $this->_item[0]->getPathComponent(),
 		    $this->_derivatives[0][0]->getMimeType()),
 	    $bytesWritten);
+
+	if (isset($gallery->_lockSystem)) {
+	    $gallery->_lockSystem->releaseQueue();
+	}
     }
 
     function testCreateFastDownloadFileForDataItem() {
@@ -164,6 +175,10 @@ class FastDownloadTest extends GalleryTestCase {
 		    $this->_item[0]->getPathComponent(),
 		    $this->_item[0]->getMimeType()),
 	    $bytesWritten);
+
+	if (isset($gallery->_lockSystem)) {
+	    $gallery->_lockSystem->releaseQueue();
+	}
     }
 
     function testMaliciousUrlComponent() {

@@ -359,7 +359,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	     * only affecting one row each time.
 	     */
 	    foreach ($queryList as $queryAndData) {
-		list($query, $data) = $queryAndData;
+		list ($query, $data) = $queryAndData;
 
 		$this->_gs->_traceStart();
 		$recordSet = $this->_gs->_db->Execute($query, $data);
@@ -504,7 +504,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	 * we should refresh.  But either way that requires a database hit so we
 	 * might as well just retrieve the record every time
 	 */
-	list ($ret, list($freshEntity)) = $this->_gs->loadEntities(array($entity->id));
+	list ($ret, list ($freshEntity)) = $this->_gs->loadEntities(array($entity->id));
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -551,15 +551,12 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	 * 3. Acquire our read locks
 	 */
 	while (true) {
-	    list($ret, $lockId) = $this->_getLockClearance($cutoffTime);
+	    list ($ret, $lockId) = $this->_getLockClearance($cutoffTime);
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    /*
-	     * Check to see if any of the ids that we care about are write
-	     * locked.
-	     */
+	    /* Check to see if any of the ids that we care about are write locked */
 	    $writeEntityIdCol = $this->_gs->_translateColumnName('writeEntityId');
 	    $markers = GalleryUtilities::makeMarkers(count($entityIds));
 	    $query = 'SELECT COUNT(*) FROM ' . $lockTable
@@ -606,6 +603,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	$readEntityIdCol = $this->_gs->_translateColumnName('readEntityId');
 	$freshUntilCol = $this->_gs->_translateColumnName('freshUntil');
 	$freshUntil = time() + 30;
+	$lockInfo = array();
 	foreach ($entityIds as $entityId) {
 	    $query = sprintf('INSERT INTO %s (%s, %s, %s) VALUES (?, ?, ?)',
 			     $lockTable, $lockIdCol, $readEntityIdCol, $freshUntilCol);
@@ -619,6 +617,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 		return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__),
 			     null);
 	    }
+	    $lockInfo[$entityId] = true;
 	}
 
 	/* Drop the lock request, now that we've got the write locks */
@@ -636,7 +635,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	}
 
 	return array(null,
-		     array($lockId, array('type' => LOCK_READ, 'ids' => $entityIds)));
+		     array('lockId' => $lockId, 'type' => LOCK_READ, 'ids' => $lockInfo));
     }
 
     /**
@@ -672,7 +671,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	 * 3. Acquire our write locks
 	 */
 	while (true) {
-	    list($ret, $lockId) = $this->_getLockClearance($cutoffTime);
+	    list ($ret, $lockId) = $this->_getLockClearance($cutoffTime);
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -727,6 +726,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	$writeEntityIdCol = $this->_gs->_translateColumnName('writeEntityId');
 	$freshUntilCol = $this->_gs->_translateColumnName('freshUntil');
 	$freshUntil = time() + 30;
+	$lockInfo = array();
 	foreach ($entityIds as $entityId) {
 	    $query = sprintf('INSERT INTO %s (%s, %s, %s) VALUES (?, ?, ?)',
 			     $lockTable, $lockIdCol, $writeEntityIdCol, $freshUntilCol);
@@ -740,6 +740,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 		return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__),
 			     null);
 	    }
+	    $lockInfo[$entityId] = true;
 	}
 
 	/* Drop the lock request, now that we've got the write locks */
@@ -757,7 +758,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	}
 
 	return array(null,
-		     array($lockId, array('type' => LOCK_WRITE, 'ids' => $entityIds)));
+		     array('lockId' => $lockId, 'type' => LOCK_WRITE, 'ids' => $lockInfo));
     }
 
     /**
@@ -831,7 +832,6 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	if (!is_array($lockIds)) {
 	    $lockIds = array($lockIds);
 	}
-
 	foreach ($lockIds as $idx => $id) {
 	    $lockIds[$idx] = (int)$id;
 	}
@@ -857,6 +857,73 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	} else {
 	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
 	}
+    }
+
+    /**
+     * @see GalleryStorage::removeIdsFromLock
+     */
+    function removeIdsFromLock($lock, $ids) {
+	list ($ret, $db) = $this->_getNonTransactionalDatabaseConnection();
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$query = '
+	DELETE FROM [Lock]
+	WHERE [::lockId] = ?
+	  AND [::' . ($lock['type'] == LOCK_WRITE ? 'write' : 'read') . 'EntityId] IN ('
+	    . GalleryUtilities::makeMarkers(count($ids)) . ')';
+	$query = $this->_gs->_translateQuery($query);
+
+	$this->_gs->_traceStart();
+	$recordSet = $db->Execute($query, array_merge(array($lock['lockId']), $ids));
+	$this->_gs->_traceStop();
+	if ($recordSet) {
+	    return null;
+	} else {
+	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+	}
+    }
+
+    /**
+     * @see GalleryStorage::moveIdsBetweenLocks
+     */
+    function moveIdsBetweenLocks($relock, $newLockId, $lockType) {
+	list ($ret, $db) = $this->_getNonTransactionalDatabaseConnection();
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$query = '
+	UPDATE [Lock] SET [::lockId] = ? WHERE [::lockId] = ? AND [::'
+	    . ($lockType == LOCK_WRITE ? 'write' : 'read') . 'EntityId] IN (';
+	$query = $this->_gs->_translateQuery($query);
+	foreach ($relock as $lockId => $ids) {
+	    $this->_gs->_traceStart();
+	    $recordSet = $db->Execute($query . GalleryUtilities::makeMarkers(count($ids)) . ')',
+				      array_merge(array($newLockId, $lockId), $ids));
+	    $this->_gs->_traceStop();
+	    if (!$recordSet) {
+		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+	    }
+	}
+	return null;
+    }
+
+    /**
+     * @see GalleryStorage::newLockId
+     */
+    function newLockId() {
+	list ($ret, $db) = $this->_getNonTransactionalDatabaseConnection();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$this->_gs->_traceStart();
+	$lockId = $db->GenId($this->_gs->_tablePrefix . DATABASE_SEQUENCE_LOCK);
+	$this->_gs->_traceStop();
+
+	return array(null, $lockId);
     }
 
     /**
@@ -897,10 +964,10 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	list ($tableName) = $this->_gs->_translateTableName($mapName);
 	$data = $columns = array();
 	foreach ($mapInfo as $memberName => $memberData) {
- 	    if (!array_key_exists($memberName, $entry)) {
- 		return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
- 					     'Missing parameter: ' . $memberName);
- 	    }
+	    if (!array_key_exists($memberName, $entry)) {
+		return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					     'Missing parameter: ' . $memberName);
+	    }
 
 	    if (is_array($entry[$memberName])) {
 		return $this->_addMapEntries($mapInfo, $tableName, $entry);
@@ -951,7 +1018,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    }
 	}
 
-	list($ret, $query) =
+	list ($ret, $query) =
 	    $this->_gs->getFunctionSql('MULTI_INSERT', array($tableName, $columns, $rows));
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);

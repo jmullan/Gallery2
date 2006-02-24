@@ -112,6 +112,13 @@ class PrintPhotoControllerTest extends GalleryControllerTestCase {
 	$this->_thumbId = $derivative->getId();
 	$this->_sourceId = $this->_photo->getId();
 
+	$storage =& $gallery->getStorage();
+	$ret = $storage->checkPoint();
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	/* Empty out the plugin session id */
 	$session =& $gallery->getSession();
 	$this->_saveCartUrlFragment = $session->get('photoaccess.cartUrlFragment');

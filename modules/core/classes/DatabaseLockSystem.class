@@ -33,65 +33,95 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryLockSystem.class');
  *
  * @package GalleryCore
  * @subpackage Classes
- * @abstract
  */
 class DatabaseLockSystem extends GalleryLockSystem {
 
     /**
-     * @see GalleryLockSystem::acquireReadLock()
+     * @see GalleryLockSystem::_acquireLock()
      */
-    function acquireReadLock($ids, $timeout=10) {
+    function _acquireLock($ids, $timeout, $lockType) {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
-	list ($ret, list($lockId, $lock)) = $storage->acquireReadLock($ids, $timeout);
-	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$this->_locks[$lockId] = $lock;
-	return array(null, $lockId);
-    }
-
-    /**
-     * @see GalleryLockSystem::acquireWriteLock()
-     */
-    function acquireWriteLock($ids, $timeout=10) {
-	global $gallery;
-	$storage =& $gallery->getStorage();
-
-	list ($ret, list($lockId, $lock)) = $storage->acquireWriteLock($ids, $timeout);
-	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$this->_locks[$lockId] = $lock;
-	return array(null, $lockId);
-    }
-
-    /**
-     * @see GalleryLockSystem::releaseLocks()
-     */
-    function releaseLocks($lockIds) {
-	if (!is_array($lockIds)) {
-	    $lockIds = array($lockIds);
-	}
-
-	if (!empty($lockIds)) {
-	    global $gallery;
-	    $storage =& $gallery->getStorage();
-
-	    $ret = $storage->releaseLocks($lockIds);
+	if ($lockType == LOCK_WRITE) {
+	    list ($ret, $lock) = $storage->acquireWriteLock($ids, $timeout);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
+	} else {
+	    list ($ret, $lock) = $storage->acquireReadLock($ids, $timeout);
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
 
-	    foreach ($lockIds as $lockId) {
-		unset($this->_locks[$lockId]);
-	    }
+	$this->_locks[$lock['lockId']] = $lock;
+	return array(null, $lock['lockId']);
+    }
+
+    /**
+     * @see GalleryLockSystem::_releaseLocksNow()
+     */
+    function _releaseLocksNow($locks) {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	$ret = $storage->releaseLocks(array_keys($locks));
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	return null;
+    }
+
+    /**
+     * @see GalleryLockSystem:_removeObjectsFromLock()
+     */
+    function _removeObjectsFromLock(&$lock, $ids) {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	$ret = $storage->removeIdsFromLock($lock, $ids);
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	foreach ($ids as $id) {
+	    unset($lock['ids'][$id]);
+	}
+	return null;
+    }
+
+    /**
+     * @see GalleryLockSystem:_moveObjectsBetweenLocks()
+     */
+    function _moveObjectsBetweenLocks($relock, $newLockId) {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	$ret = $storage->moveIdsBetweenLocks(
+		$relock, $newLockId, $this->_locks[$newLockId]['type']);
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$ret = parent::_moveObjectsBetweenLocks($relock, $newLockId);
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return null;
+    }
+
+    /**
+     * @see GalleryLockSystem::_newLockId()
+     */
+    function _newLockId() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	list ($ret, $lockId) = $storage->newLockId();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	return array(null, $lockId);
     }
 
     /**
@@ -99,9 +129,9 @@ class DatabaseLockSystem extends GalleryLockSystem {
      */
     function refreshLocks($freshUntil) {
 	global $gallery;
-	$storage =& $gallery->getStorage();
 
 	if (!empty($this->_locks)) {
+	    $storage =& $gallery->getStorage();
 	    $ret = $storage->refreshLocks(array_keys($this->_locks), $freshUntil);
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);

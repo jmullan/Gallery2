@@ -366,16 +366,21 @@ class Gallery {
     /**
      * Return the active lock system.
      *
+     * @param boolean (optional) if false and lockSystem isn't yet initialized, return null
      * @return array object GalleryStatus a status code
      *               object GalleryLockSystem the lock implementation (reference)
      */
-    function &getLockSystem() {
+    function &getLockSystem($canInit=true) {
 	if (!isset($this->_lockSystem)) {
-	    list ($ret, $which) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'lock.system');
-	    if ($ret) {
-		$ret = array($ret->wrap(__FILE__, __LINE__), null);
-		return $ret;
+	    if ($canInit) {
+		list ($ret, $which) =
+		    GalleryCoreApi::getPluginParameter('module', 'core', 'lock.system');
+		if ($ret) {
+		    $ret = array($ret->wrap(__FILE__, __LINE__), null);
+		    return $ret;
+		}
+	    } else {
+		$which = 'null';
 	    }
 
 	    switch($which) {
@@ -387,6 +392,10 @@ class Gallery {
 	    case 'database':
 		GalleryCoreApi::requireOnce('modules/core/classes/DatabaseLockSystem.class');
 		$this->_lockSystem = new DatabaseLockSystem();
+		break;
+
+	    case 'null':
+		$this->_lockSystem = null;
 		break;
 
 	    default:
@@ -418,6 +427,7 @@ class Gallery {
 
 	    /* Release all locks and ignore any errors */
 	    $this->_lockSystem->releaseAllLocks();
+	    $this->_lockSystem->releaseQueue();
 	}
 
 	/* Roll back any transactions */
