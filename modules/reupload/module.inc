@@ -35,7 +35,7 @@ class ReuploadModule extends GalleryModule {
     function ReuploadModule() {
 	global $gallery;
 	$this->setId('reupload');
-	$this->setName('Reupload');
+	$this->setName($gallery->i18n('Reupload'));
 	$this->setDescription($gallery->i18n('Allows reupload of pictures.'));
 	$this->setVersion('1.0.0');
 	$this->setGroup('data', $gallery->i18n('Extra Data'));
