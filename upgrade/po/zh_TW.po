@@ -274,6 +274,9 @@ msgstr "找不到或無法存取檔案清單"
 msgid "Upgrade Core"
 msgstr "昇級核心"
 
+msgid "Unable to verify plugins"
+msgstr ""
+
 msgid "Upgrade Modules"
 msgstr "昇級模組"
 
@@ -440,10 +443,18 @@ msgstr ""
 msgid "Old files (%d)"
 msgstr "舊版的檔案（%d）"
 
+# c-format
+#, c-format
 msgid ""
 "These files are no longer part of Gallery. They probably won't cause any problems but it is "
-"a good idea to remove them to keep your install clean."
-msgstr "Gallery 已經不再使用這些檔案。它們大概不會造成任何問題可是最好還是把它們刪除。"
+"a good idea to remove them to keep your install clean.  Gallery can't remove these files for "
+"you, but you can download and run %s in your gallery2 directory to delete them for you."
+msgstr ""
+"Gallery 已經不再使用這些檔案。它們大概不會造成任何問題可是最好還是把它們刪除。Gallery 無法替"
+"你刪除這些檔案，可是你可以下載並在你的 gallery2 目錄中執行%s以刪除它們。"
+
+msgid "this script"
+msgstr "這個指令檔"
 
 msgid "Upgrade Steps"
 msgstr "昇級步驟"
@@ -540,6 +551,24 @@ msgid ""
 msgstr ""
 "目前安裝的版本比你要昇級的版本還新。你不能把 G2 降級。請把 Gallery 2 的檔案換成目前安裝或更新"
 "的版本"
+
+#, fuzzy
+msgid "the Gallery website"
+msgstr "前往 Gallery 2 安裝程式"
+
+#, c-format
+msgid ""
+"Your upgrade cannot begin because some of your active modules/themes are incompatible or "
+"missing.  You must either locate more recent versions of these modules or themes, or revert "
+"to your original version of Gallery.  No changes have been made so it's safe to revert.  If "
+"you have many incompatible modules listed below, it's possible that you downloaded a smaller "
+"distribution of Gallery than what you originally installed.  You can download a larger "
+"distribution from %s."
+msgstr ""
+
+#, c-format
+msgid "Download replacement modules from %s"
+msgstr ""
 
 msgid ""
 "Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  "
@@ -661,14 +690,16 @@ msgstr ""
 "昇級到 Gallery 2 需要 %d 個步驟。這個昇級工具會帶你走過這些步驟並在需要額外步驟時提供協助。在"
 "繼續之前，請先閱讀%s說明檔案%s。"
 
+msgid ""
+"If you have a busy site, consider putting your Gallery in maintenance mode. This gives "
+"visitors a message that the site is temporarily offline, rather than showing everybody this "
+"upgrade page. Edit your config.php file to activate maintenance mode."
+msgstr ""
+"如果你的網站有很多訪客，請考慮是否讓你的 Gallery 進入維護模式。這樣訪客會看到本站正在維護中的"
+"訊息，而不會讓每個人都看到這個昇級畫面。編輯你的 config.php 以啟動維護模式。"
+
 msgid "Select Language:"
 msgstr "選擇語言："
 
 msgid "Go"
 msgstr "開始"
-
-#~ msgid "Finished"
-#~ msgstr "完成"
-
-#~ msgid "Upgrade Status"
-#~ msgstr "昇級狀況"

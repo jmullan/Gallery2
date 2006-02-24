@@ -23,7 +23,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Upgrader 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-11-06 22:51+0100\n"
-"PO-Revision-Date: 2006-02-16 10:26+0100\n"
+"PO-Revision-Date: 2006-02-19 23:20+0100\n"
 "Last-Translator: Piarres Beobide <pi@beobide.net>\n"
 "Language-Team: librezale.org <librezale@librezale.org>\n"
 "MIME-Version: 1.0\n"
@@ -47,9 +47,8 @@ msgstr "<b> Errorea:</b>okerreko pasahitza."
 msgid "Empty Cache"
 msgstr "Katxea Garbitu"
 
-#, fuzzy
 msgid "Unable to clear the page cache"
-msgstr "Ezin da %s gaia kargatu"
+msgstr "Ezin da katxe orrialdea garbitu"
 
 msgid "Unable to commit database transaction"
 msgstr "Ezin da datu-base transakzioa egin"
@@ -291,6 +290,9 @@ msgstr "Manifestoa falta da edo ez da eskuragarri"
 msgid "Upgrade Core"
 msgstr "Muina Bertsio-berritu"
 
+msgid "Unable to verify plugins"
+msgstr ""
+
 msgid "Upgrade Modules"
 msgstr "Moduluak Bertsio-berritu"
 
@@ -357,13 +359,11 @@ msgstr "Egiaztatu iezadazu"
 msgid "Authentication successful!"
 msgstr "Autentifikazioa behar bezala egin da!"
 
-#, fuzzy
 msgid "Successfully cleaned caches."
-msgstr "Katxe direktorioak behar bezala garbitu dira."
+msgstr "Katxeak behar bezala garbitu dira."
 
-#, fuzzy
 msgid "Delete Caches"
-msgstr "Katxea Direktorioak Ezabatu"
+msgstr "Katxeak Ezabatu"
 
 msgid ""
 "Gallery creates temporary copies of some of your data on your hard drive.  This helps it to "
@@ -430,7 +430,7 @@ msgstr "Ongi etorri Galeria Bertsi-berritzera"
 
 #, c-format
 msgid "Upgrade %d%% complete"
-msgstr " %d%% Bertsio-berritzea osatua"
+msgstr "%d%% Bertsio-berritzea osatua"
 
 msgid "Redo this step"
 msgstr "Urrats hau berregin"
@@ -440,7 +440,7 @@ msgid "Continue to Step %d&raquo;"
 msgstr "Jarraitu %d Urratsera&raquo;"
 
 msgid "Gallery: <strong>your photos</strong> on <strong>your website</strong>"
-msgstr "Galeria:<strong>zure argazkiak </strong> -<strong>zure webgunean</strong>"
+msgstr "Galeria: <strong>zure argazkiak </strong> -<strong>zure webgunean</strong>"
 
 #, c-format
 msgid "Missing files (%d)"
@@ -470,17 +470,19 @@ msgstr ""
 msgid "Old files (%d)"
 msgstr "Fitxategi zaharrak (%d)"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "These files are no longer part of Gallery. They probably won't cause any problems but it is "
 "a good idea to remove them to keep your install clean.  Gallery can't remove these files for "
 "you, but you can download and run %s in your gallery2 directory to delete them for you."
 msgstr ""
-"Fitxaegi hauek ez dira hemendik aurrera Gallery-ren zati.  Ziurrenik ez dute arazorik "
-"sortuko baina ideia ona izaten da ezabatzea instalazio garbi bat mantentzeko."
+"Fitxategi hauek ez dira hemendik aurrera Gallery-ren zati.  Ziurrenik ez dute arazorik "
+"sortuko baina ideia ona izaten da ezabatzea instalazio garbi bat mantentzeko. Gallery2-k "
+"ezin ditu fitxategi hauek ezabatu baina %s deskargatu eta gallery2 direktorioan abiaraziaz "
+"ezabatuko dira."
 
 msgid "this script"
-msgstr ""
+msgstr "skript hau"
 
 msgid "Upgrade Steps"
 msgstr "Bertsio-berritze Urratsak"
@@ -588,6 +590,24 @@ msgstr ""
 "Instalatutako bertsioa bertsio berritzen saiatzen ari zaren bertsioa baino berriagoa da. "
 "Mesedez gallery 2 fitxategiak orain instalaturiko bertioko fitxategiez edo berriagoz "
 "ordezkatu."
+
+#, fuzzy
+msgid "the Gallery website"
+msgstr "Joan Gallery 2 instalatzailera"
+
+#, c-format
+msgid ""
+"Your upgrade cannot begin because some of your active modules/themes are incompatible or "
+"missing.  You must either locate more recent versions of these modules or themes, or revert "
+"to your original version of Gallery.  No changes have been made so it's safe to revert.  If "
+"you have many incompatible modules listed below, it's possible that you downloaded a smaller "
+"distribution of Gallery than what you originally installed.  You can download a larger "
+"distribution from %s."
+msgstr ""
+
+#, c-format
+msgid "Download replacement modules from %s"
+msgstr ""
 
 msgid ""
 "Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  "
@@ -715,6 +735,12 @@ msgstr ""
 "Gallery 2 bertsio-berritzeko %d urrats bete behar dira. Bertsio-berritze tresna honek urrats "
 "orien zehar gidatu eta urrats gehigarririk egin beharko balitz laguntza ematen saiatuko da.  "
 "Irakurri %sLaguntza Fitxategia%s jarraitu aurretik."
+
+msgid ""
+"If you have a busy site, consider putting your Gallery in maintenance mode. This gives "
+"visitors a message that the site is temporarily offline, rather than showing everybody this "
+"upgrade page. Edit your config.php file to activate maintenance mode."
+msgstr ""
 
 msgid "Select Language:"
 msgstr "Hizkuntza Hautatu:"

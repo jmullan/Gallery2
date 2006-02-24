@@ -60,6 +60,7 @@ gettext("Manifest missing or inaccessible.")
 
 /* steps/UpgradeCoreModuleStep.class */
 gettext("Upgrade Core")
+gettext("Unable to verify plugins")
 
 /* steps/UpgradeOtherModulesStep.class */
 gettext("Upgrade Modules")
@@ -156,6 +157,9 @@ gettext("Required")
 gettext("Unable to write to config.php in your %s directory.  Please change its permissions.")
 gettext("You can do <i>chmod 666 config.php</i> to fix this.")
 gettext("The installed version is newer than the version you are trying to upgrade to. You cannot downgrade G2. Please replace the gallery2 files with files from the currently installed version or later.")
+gettext("the Gallery website")
+gettext("Your upgrade cannot begin because some of your active modules/themes are incompatible or missing.  You must either locate more recent versions of these modules or themes, or revert to your original version of Gallery.  No changes have been made so it's safe to revert.  If you have many incompatible modules listed below, it's possible that you downloaded a smaller distribution of Gallery than what you originally installed.  You can download a larger distribution from %s.")
+gettext("Download replacement modules from %s")
 gettext("Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  If you fail to make a backup and something goes wrong, there is a strong possibility that we will not be able to help you recover your data!  Refer to the following examples:")
 gettext("MySQL")
 gettext("mysqldump -u%s -p -h %s --opt %s > %s.sql")
