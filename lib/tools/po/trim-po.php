@@ -11,9 +11,9 @@ $langpath = preg_replace('{(..)_..\.po$}', '$1.po', $path);
 if ($langpath == 'en.po') {
     list ($po, $header) = readPo($path);
     print $header;
-    foreach ($po as $id => $str) {
-	if (substr($id, 5) != substr($str, 6)) {
-	    print $id . $str . "\n";
+    foreach ($po as $id => $data) {
+	if (substr($id, 5) != substr($data['msgstr'], 6)) {
+	    print $data['before'] . $id . $data['msgstr'] . "\n";
 	}
     }
     exit;
@@ -30,9 +30,9 @@ list ($po, $header) = readPo($path);
 list ($langpo) = readPo($langpath);
 
 print $header;
-foreach ($po as $id => $str) {
-    if (!isset($langpo[$id]) || $langpo[$id] != $str) {
-	print $id . $str . "\n";
+foreach ($po as $id => $data) {
+    if (!isset($langpo[$id]) || $langpo[$id] != $data['msgstr']) {
+	print $data['before'] . $id . $data['msgstr'] . "\n";
     }
 }
 
@@ -43,7 +43,7 @@ function readPo($path) {
 	$line = array_shift($lines);
     }
     $id = $str = false;
-    $key = $value = '';
+    $key = $value = $before = '';
     while ($lines) {
 	$line = array_shift($lines);
 	if (!$id && substr($line, 0, 5) == 'msgid') {
@@ -51,19 +51,21 @@ function readPo($path) {
 	} else if ($id && substr($line, 0, 6) == 'msgstr') {
 	    $str = true;
 	} else if ($id && $str && !trim($line)) {
-	    $data[$key] = $value;
+	    $data[$key] = array('msgstr' => $value, 'before' => $before);
 	    $id = $str = false;
-	    $key = $value = '';
+	    $key = $value = $before = '';
 	    continue;
 	}
 	if ($str) {
 	    $value .= $line;
 	} else if ($id) {
 	    $key .= $line;
+	} else {
+	    $before .= $line;
 	}
     }
     if ($key && $value) {
-	$data[$key] = $value;
+	$data[$key] = array('msgstr' => $value, 'before' => $before);
     }
     return array($data, implode('', $header));
 }
