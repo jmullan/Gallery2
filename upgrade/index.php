@@ -97,7 +97,7 @@ if (!empty($storageConfig)) {
 	return;
     }
 
-    $translator = $gallery->getTranslator();
+    $translator =& $gallery->getTranslator();
     if (!$translator->canTranslate()) {
 	unset($translator);
     } else {
