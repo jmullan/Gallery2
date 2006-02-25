@@ -64,7 +64,6 @@ class RenderView extends GalleryView {
 	list ($ret, $params1) = RssMapHelper::fetchFeed($name);
 	if ($ret) {
 	    header('HTTP/1.0 500 Internal Server Error');
-	    header('Status: 500');
 	    print('This feed no longer exists!');
 	    return null;
 	}
@@ -83,7 +82,6 @@ class RenderView extends GalleryView {
 		|| ($feedType == 'commentsAlbum' && $params['allowCommentsAlbum'] != 1)
 		|| ($feedType == 'commentsPhoto' && $params['allowCommentsPhoto'] != 1)) {
 	    header('HTTP/1.0 500 Internal Server Error');
-	    header('Status: 500');
 	    print('Feeds of that type are not allowed!');
 	    return null;
 	}
@@ -104,7 +102,6 @@ class RenderView extends GalleryView {
 	if ($feedType != 'album' && $feedType != 'photos'  && $feedType != 'photosRecurse' &&
 		$feedType != 'commentsAlbum' && $feedType != 'commentsPhoto') {
 	    header('HTTP/1.0 500 Internal Server Error');
-	    header('Status: 500');
 	    print('Incorrect feed type!');
 	    return null;
 	}
@@ -118,7 +115,6 @@ class RenderView extends GalleryView {
 	    }
 	    if($modulestatus['comment']['active'] != '1') {
 		header('HTTP/1.0 500 Internal Server Error');
-		header('Status: 500');
 		print('Comments module is not active or comments in photo feeds are not allowed!');
 		return null;
 	    }
