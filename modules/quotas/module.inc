@@ -38,7 +38,7 @@ class QuotasModule extends GalleryModule {
 	$this->setId('quotas');
 	$this->setName($gallery->i18n('Quotas'));
 	$this->setDescription($gallery->i18n('User/Group Disk Quotas'));
-	$this->setVersion('1.0.3');
+	$this->setVersion('1.0.4');
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(7, 0));
@@ -84,7 +84,7 @@ class QuotasModule extends GalleryModule {
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'ItemAddOption', 'DiskQuotaOption', 'DiskQuotaOption',
-	    'modules/quotas/DiskQuotaOption.inc', 'quotas', null);
+	    'modules/quotas/DiskQuotaOption.inc', 'quotas', null, 9);
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
