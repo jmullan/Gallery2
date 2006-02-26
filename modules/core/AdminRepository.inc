@@ -224,8 +224,13 @@ class AdminRepositoryController extends GalleryController {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
 	/* Download files. */
-	$titleText = $gallery->i18n('Performing Maintenance Tasks');
+	$titleText = $module->translate('Performing Maintenance Tasks');
 	foreach ($files as $pluginType => $plugins) {
 	    foreach ($plugins as $pluginId => $pluginDownloadData) {
 		$packageUrls = $pluginDownloadData['files'];
@@ -245,7 +250,7 @@ class AdminRepositoryController extends GalleryController {
 		foreach ($packageUrls as $packageName => $relativePackageUrl) {
 		    /* Update progress bar. */
 		    $ret = $templateAdapter->updateProgressBar($titleText,
-			sprintf($gallery->i18n('Downloading %s'), $pluginName),
+			sprintf($module->translate('Downloading %s'), $pluginName),
 			$currentUrlIndex / $totalUrls);
 		    if ($ret) {
 			$templateAdapter->errorProgressBar($ret);
@@ -301,7 +306,7 @@ class AdminRepositoryController extends GalleryController {
 	}
 
 	/* Update progress bar. */
-	$ret = $templateAdapter->updateProgressBar($titleText, $gallery->i18n('Done.'), 1);
+	$ret = $templateAdapter->updateProgressBar($titleText, $module->translate('Done.'), 1);
 	if ($ret) {
 	    $templateAdapter->errorProgressBar($ret);
 	    return $ret->wrap(__FILE__, __LINE__);

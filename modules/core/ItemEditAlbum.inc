@@ -410,9 +410,8 @@ class ItemEditAlbum extends ItemEditPlugin {
 		if (!(++$ind % $step)) {
 		    $message = $module->translate(array('text' => 'Processing image %d of %d',
 							'arg1' => $ind, 'arg2' => $total));
-		    $ret = $templateAdapter->updateProgressBar($message,
-							       'rebuilding resized images...',
-							       $ind / $total);
+		    $ret = $templateAdapter->updateProgressBar(
+			$message, $module->translate('Rebuilding resized images...'), $ind / $total);
 		    if ($ret) {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
@@ -427,9 +426,8 @@ class ItemEditAlbum extends ItemEditPlugin {
 		if (!(++$ind % $step)) {
 		    $message = $module->translate(array('text' => 'Processing image %d of %d',
 							'arg1' => $ind, 'arg2' => $total));
-		    $ret = $templateAdapter->updateProgressBar($message,
-							       'rebuilding resized images...',
-							       $ind / $total);
+		    $ret = $templateAdapter->updateProgressBar(
+			$message, $module->translate('Rebuilding resized images...'), $ind / $total);
 		    if ($ret) {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
@@ -459,7 +457,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 			if ($ret) {
 			    return $ret->wrap(__FILE__, __LINE__);
 			}
-	    
+
 			foreach ($preferences as $preference) {
 			    if (preg_match('/(?:resize|scale)\|(\d+)(?:,(\d+))?/',
 					   $preference['derivativeOperations'],
@@ -467,10 +465,10 @@ class ItemEditAlbum extends ItemEditPlugin {
 				$width = $matches[1];
 				$height = empty($matches[2]) ? $width : $matches[2];
 			    }
-	    
+
 			    if ($preference['derivativeType'] == DERIVATIVE_TYPE_IMAGE_RESIZE
 				&& !empty($width)) {
-				$resizes[$albumId][] = 
+				$resizes[$albumId][] =
                                     array('width' => $width, 'height' => $height);
 				}
 			    }
@@ -581,8 +579,8 @@ class ItemEditAlbum extends ItemEditPlugin {
 		if (!(++$ind % $step) || $ind == $total) {
 		    $message = $module->translate(array('text' => 'Processing image %d of %d',
 							'arg1' => $ind, 'arg2' => $total));
-		    $ret = $templateAdapter->updateProgressBar($message, 'rebuilding thumbnails...',
-							       $ind / $total);
+		    $ret = $templateAdapter->updateProgressBar(
+			$message, $module->translate('Rebuilding thumbnails...'), $ind / $total);
 		    if ($ret) {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
@@ -597,9 +595,9 @@ class ItemEditAlbum extends ItemEditPlugin {
 		    if ($ret) {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
-	
+
 		    foreach ($preferences as $preference) {
-			if (preg_match('/thumbnail\|(\d+)/', 
+			if (preg_match('/thumbnail\|(\d+)/',
 			    $preference['derivativeOperations'], $matches)) {
 			    $thumbnailSizes[$albumId] = $matches[1];
 			    break;
