@@ -30,7 +30,7 @@ class LinkItemModule extends GalleryModule /* and GalleryEventListener */ {
     function LinkItemModule() {
 	global $gallery;
 	$this->setId('linkitem');
-	$this->setName('Link Items');
+	$this->setName($gallery->i18n('Link Items'));
 	$this->setDescription($gallery->i18n('Create links to other albums or external urls'));
 	$this->setVersion('1.0.2');
 	$this->setGroup('display', $gallery->i18n('Display'));
