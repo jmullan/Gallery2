@@ -63,23 +63,25 @@ class UploadAppletSiteAdminController extends GalleryController {
 	    }
 	} else if (isset($form['action']['delete'])) {
 	    $type = $form['variable']['type'];
-
 	    if (empty($form['delete']['variable'])) {
-		$error[] = "form[error][nonexistent_variable]";
-	    } else {
-		list ($ret, $variables) = $this->getVariables($type);
-		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    }
 
-		/* delete it */
-		unset($variables[$form['delete']['variable']]);
+	    list ($ret, $variables) = $this->getVariables($type);
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if (!isset($variables[$form['delete']['variable']])) {
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    }
 
-		/* serialize it again */
-		$ret = $this->setVariables($type, $variables);
-		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
+	    /* delete it */
+	    unset($variables[$form['delete']['variable']]);
+
+	    /* serialize it again */
+	    $ret = $this->setVariables($type, $variables);
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 
@@ -116,7 +118,7 @@ class UploadAppletSiteAdminController extends GalleryController {
 	if (!empty($variables)) {
 	    $variables1 = explode('|', $variables);
 	    foreach ($variables1 as $variable) {
-		list($key, $value) = explode('=', $variable);
+		list ($key, $value) = explode('=', $variable);
 		$variables2[$key] = $value;
 	    }
 
@@ -170,7 +172,6 @@ class UploadAppletSiteAdminView extends GalleryView {
 	    }
 	}
 
-	$template->javascript('lib/javascript/BlockToggle.js');
 	$template->setVariable('AdminUploadApplet', $AdminUploadApplet);
 	$template->setVariable('controller', 'uploadapplet.UploadAppletSiteAdmin');
 	return array(null,

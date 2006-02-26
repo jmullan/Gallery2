@@ -28,7 +28,8 @@
       <tr class="{cycle values="gbEven,gbOdd"}">
 	<td>{$variable}</td>
 	<td><a href="{g->url arg1="controller=uploadapplet.UploadAppletSiteAdmin"
-	   arg2="form[action][delete]=1" arg3="form[delete][variable]=`$variable`"
+	   arg2="form[action][delete]=1"
+	   arg3=$variable|regex_replace:"/^(.*?)=.*$/":"form[delete][variable]=\\1"
 	   arg4="form[variable][type]=default" arg5="mode=variables"}">
 	   {g->text text="Delete"}</a></td>
       </tr>
@@ -40,9 +41,9 @@
 <div class="gbBlock">
   <h4> {g->text text="Add a new default variable"} </h4>
 
-  {if isset($form.error.default.name.missing)}
+  {if isset($form.error.default)}
   <div class="giError">
-    {g->text text="You must enter a variable name"}
+    {g->text text="You must enter a variable name and value"}
   </div>
   {/if}
 
@@ -73,7 +74,8 @@
       <tr class="{cycle values="gbEven,gbOdd"}">
 	<td>{$variable}</td>
 	<td><a href="{g->url arg1="controller=uploadapplet.UploadAppletSiteAdmin"
-	   arg2="form[action][delete]=1" arg3="form[delete][variable]=`$variable`"
+	   arg2="form[action][delete]=1"
+	   arg3=$variable|regex_replace:"/^(.*?)=.*$/":"form[delete][variable]=\\1"
 	   arg4="form[variable][type]=override" arg5="mode=variables"}">
 	   {g->text text="Delete"}</a></td>
       </tr>
@@ -85,9 +87,9 @@
 <div class="gbBlock">
   <h4> {g->text text="Add a new override variable"} </h4>
 
-  {if isset($form.error.default.name.missing)}
+  {if isset($form.error.override)}
   <div class="giError">
-    {g->text text="You must enter a variable name"}
+    {g->text text="You must enter a variable name and value"}
   </div>
   {/if}
 
