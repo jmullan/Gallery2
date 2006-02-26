@@ -1519,9 +1519,23 @@
 	<div class="instructions">
 	  <h3>DB2</h3>
 	  <p>
-	    $ db2 create database gallery2 using codeset utf-8 territory us pagesize 32 k
-	    {Also see our <a href="http://codex.gallery2.org/index.php/Gallery2:DB2"
-	    target="_blank">DB2 page</a>};
+	    $ db2 "create database gallery2 using codeset utf-8 territory us pagesize 32 k"
+	  </p>
+	</div>
+	<ul class="note">
+	  <li> Also see our <a href="http://codex.gallery2.org/index.php/Gallery2:DB2"
+	    target="_blank">DB2 page</a>
+	  </li>
+	  <li> You will also need to install a Jar file that contains Java User-Defined Function that Gallery will use. For this, you must use the account that Gallery will use to access the database. For example:
+	  </li>
+	</ul>
+	<div class="instructions">  
+	  <p>
+	    $ db2 "CONNECT TO gallery2 USER g2user USING g2password"
+	    <br />
+	    $ db2 "CALL SQLJ.INSTALL_JAR('FILE:<path to Gallery2>/modules/core/classes/GalleryStorage/g2_db2.jar', 'g2_db2_jar')"
+	    <br />
+	    $ db2 "CONNECT RESET"
 	  </p>
 	</div>
       </li>
