@@ -120,81 +120,9 @@ class Db2Storage extends GalleryStorage {
 	if ($moduleId == 'core') {
 	    global $gallery;
 
-	    /*
-	     * Need to install the JAR file for the java UDF here
-	     * because the path to the jar file is variable, so it can't be hard-coded in
-	     * 'Db2CreateUdfs.sql'.
-	     * The source code for the Java DB2 UDF can be downloaded at:
-	     * http://codex.gallery2.org/index.php/Gallery2:DB2
-	     *
-	     * The INSTALL call looks like it's unsupported in CLI (and therefore PHP)
-	     * so we have to use (shudder) CLP.
-	     *
-	     * And DB2 considers the CLP call to be a separate application, so it requires
-	     * its own CONNECT and CONNECT RESET.  Which means the userid and password need
-	     * to be included in the CLP script.
-	     *
-	     * 1. Create a SQL file with correct username, password, and jar file path
-	     *    which can be called from the command line
-	     * 2. Execute the db2 command line call
-	     * 3. Cleanup: Delete the SQL generated file
-	     * 4. Verify the successful installation of the UDF
-	     * 5. Create the UDFs with a normal G2 DB connection
-	     */
-
-	    /* 1. Create a temporary file to hold the SQL */
+	    /* Create our user-defined DB2 functions */
 	    $platform =& $gallery->getPlatform();
-	    $fileName = $platform->tempnam($gallery->getConfig('data.gallery.tmp'), 'db2_');
-
 	    $slash = $platform->getDirectorySeparator();
-	    $pathToJar = dirname(__FILE__) . $slash . 'g2_db2.jar';
-
-	    $buf = sprintf("CONNECT TO gallery2 USER %s USING %s\n" .
-			   "CALL SQLJ.INSTALL_JAR('file:%s', 'g2_db2_jar')\n" .
-			   "CONNECT RESET", $this->_username, $this->_password, $pathToJar);
-
-	    $platform->atomicWrite($fileName, $buf);
-
-	    /* Assemble the command line call to install the Java UDF */
-	    if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
-		$cmdArgs= array("db2cmd", "/c",  "/w",  "/i",  "db2", "-vf");
-	    } else {
-		$cmdArgs = array("db2",  "-vf");
-	    }
-	    $cmdArgs[] = $fileName;
-
-	    /* 2. Execute the command */
-	    list ($success, $outputArray) = $platform->exec(array($cmdArgs));
-
-	    /*
-	     * 3. Cleanup: Delete the SQL file since it contains the DB username / password and
-	     *    it's not needed anymore
-	     */
-	    @$platform->unlink($fileName);
-
-	    /* 4. Check for successful installation of the UDF */
-	    if (!$success) {
-		return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
-	    }
-
-	    /* We expect a success code (DB20000I) right after the INSTALL_JAR line */
-	    $ok = $checkNextLine = false;
-	    while (!is_null($line = array_shift($outputArray))) {
-		if (!$checkNextLine && strpos(strtoupper($line), 'CALL SQLJ.INSTALL_JAR(') === 0) {
-		    $checkNextLine = true;
-		} else if ($checkNextLine && strpos($line, 'DB20000I ') === 0) {
-		    $ok = true;
-		    break;
-		} else {
-		    $checkNextLine = false;
-		}
-	    }
-
-	    if (!$ok) {
-		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
-	    }
-
-	    /* 5. Create our user-defined DB2 functions */
 	    $ret = $this->_executeSqlFile(dirname(__FILE__) . $slash . 'Db2CreateUdfs.sql');
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
