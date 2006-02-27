@@ -139,7 +139,7 @@ function extractStrings($filename) {
     }
 
     /* grab phrases of this format: translate(array('one' => '...', 'many' => '...')) */
-    if (preg_match_all("/translate\(.*?array\('one'\s*=>\s*'(.*?)'.*?'many'\s*=>\s*'(.*?)'.*?\).*?\)/s",
+    if (preg_match_all("/translate\(.*?array\(\s*'one'\s*=>\s*'(.*?)'.*?'many'\s*=>\s*'(.*?)'.*?\).*?\)/s",
 		       $data, $matches, PREG_SET_ORDER)) {
 	foreach ($matches as $match) {
 	    $one = $match[1];
@@ -157,7 +157,7 @@ function extractStrings($filename) {
     }
 
     /* grab phrases of this format: translate(array('text' => '...', ...)) */
-    if (preg_match_all("/translate\(\s*array\('text'\s*=>\s+'(.*?[^\\\])'/s",
+    if (preg_match_all("/translate\(\s*array\(\s*'text'\s*=>\s+'(.*?[^\\\])'/s",
 		       $data, $matches, PREG_SET_ORDER)) {
 	foreach ($matches as $match) {
 	    $text = $match[1];
