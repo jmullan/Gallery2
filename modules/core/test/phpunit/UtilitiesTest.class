@@ -484,6 +484,12 @@ class UtilitiesTest extends GalleryTestCase {
 	    $ca[] = rand(0, 255);
 	    $da[] = rand(0, 255);
 	}
+
+	/* Put in RFC1918 prefixes to raise the odds on testing them */
+	$aa[] = 10;
+	$aa[] = 172;
+	$aa[] = 192; $ba[] = 168;
+
 	foreach ($aa as $a) {
 	    foreach ($ba as $b) {
 		foreach ($ca as $c) {
@@ -491,7 +497,7 @@ class UtilitiesTest extends GalleryTestCase {
 			$addr = "$a.$b.$c.$d";
 			$trusted = GalleryUtilities::isTrustedProxy($addr);
 			$shouldBeTrusted = (($a == 10) ||
-					    ($a == 172 && $b == 16) ||
+					    ($a == 172 && $b >= 16 && $b <= 31) ||
 					    ($a == 192 && $b == 168));
 			if ($shouldBeTrusted != $trusted) {
 			    $this->assert(false, sprintf(
@@ -505,9 +511,11 @@ class UtilitiesTest extends GalleryTestCase {
 	}
 
 	/* Sanity check some known RFC1918 addrs */
-	$this->assert(GalleryUtilities::isTrustedProxy('10.1.2.3'), '10/24 failed');
+	$this->assert(GalleryUtilities::isTrustedProxy('10.1.2.3'), '10/8 failed');
+	$this->assert(GalleryUtilities::isTrustedProxy('172.16.254.253'), '172.16/12 failed 1');
+	$this->assert(GalleryUtilities::isTrustedProxy('172.31.254.253'), '172.16/12 failed 2');
+	$this->assert(!GalleryUtilities::isTrustedProxy('172.32.254.253'), '172.16/12 failed 3');
 	$this->assert(GalleryUtilities::isTrustedProxy('192.168.1.2'), '192.168/16 failed');
-	$this->assert(GalleryUtilities::isTrustedProxy('172.16.254.253'), '172.16/16 failed');
     }
 
     function testIsPathInList() {
