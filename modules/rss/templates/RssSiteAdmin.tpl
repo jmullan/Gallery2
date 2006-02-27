@@ -373,13 +373,15 @@
     </td>
   </tr>
 
+  <tr><td>&nbsp;</td></tr>
+
   <tr valign="top">
     <td>{g->text text="For items"}</td>
     <td><input type="radio" name="fake"
         value="commentsPhoto" checked="checked" id="RssSiteAdmin_typeCommentsPhoto" />
     </td><td>
       <label for="RssSiteAdmin_typeAlbum">
-        {g->text text="Comments for items"}
+        {g->text text="Comments for items (always selected)"}
       </label>
     </td><td>
       {g->text text="Fast"}

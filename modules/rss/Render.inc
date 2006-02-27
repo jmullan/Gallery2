@@ -63,26 +63,19 @@ class RenderView extends GalleryView {
 	/* we're a configurable feed, load the parameters */
 	list ($ret, $params1) = RssMapHelper::fetchFeed($name);
 	if ($ret) {
-	    header('HTTP/1.0 500 Internal Server Error');
-	    print('This feed no longer exists!');
+	    $this->handleError($gallery->i18n('This feed no longer exists!'));
 	    return null;
 	}
 
 	$params = array_merge($params, $params1);
 	$feedType = $params['feedType'];
 
-	$ret = GalleryCoreApi::assertHasItemPermission($params['itemId'], 'core.view');
-	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
 	if (($feedType == 'album' && $params['allowAlbums'] != 1)
 		|| ($feedType == 'photos' && $params['allowPhotos'] != 1)
 		|| ($feedType == 'photosRecurse' && $params['allowPhotosRecurse'] != 1)
 		|| ($feedType == 'commentsAlbum' && $params['allowCommentsAlbum'] != 1)
 		|| ($feedType == 'commentsPhoto' && $params['allowCommentsPhoto'] != 1)) {
-	    header('HTTP/1.0 500 Internal Server Error');
-	    print('Feeds of that type are not allowed!');
+	    $this->handleError($gallery->i18n('Feeds of that type are not allowed!'));
 	    return null;
 	}
 
@@ -97,12 +90,22 @@ class RenderView extends GalleryView {
     function continueRender($params) {
 	global $gallery;
 
+	/* check permissions */
+	list ($ret, $perm) = GalleryCoreApi::hasItemPermission($params['itemId'], 'core.view');
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	if (!$perm) {
+	    $this->handleError($gallery->i18n('Not permitted to view this item'));
+	    return null;
+	}
+
 	/* check render type */
 	$feedType = $params['feedType'];
 	if ($feedType != 'album' && $feedType != 'photos'  && $feedType != 'photosRecurse' &&
 		$feedType != 'commentsAlbum' && $feedType != 'commentsPhoto') {
-	    header('HTTP/1.0 500 Internal Server Error');
-	    print('Incorrect feed type!');
+	    $this->handleError($gallery->i18n('Incorrect feed type!'));
 	    return null;
 	}
 
@@ -113,9 +116,21 @@ class RenderView extends GalleryView {
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    if($modulestatus['comment']['active'] != '1') {
-		header('HTTP/1.0 500 Internal Server Error');
-		print('Comments module is not active or comments in photo feeds are not allowed!');
+	    
+	    if ($modulestatus['comment']['active'] != '1') {
+		$this->handleError($gallery->i18n(
+			'Comments module is not active or comment feeds are not allowed!'));
+		return null;
+	    }
+	    
+	    /* check the permissions */
+	    list ($ret, $perm) = GalleryCoreApi::hasItemPermission($params['itemId'], 'comment.view');
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    
+	    if (!$perm) {
+		$this->handleError($gallery->i18n('Not permitted to view comments for this item'));
 		return null;
 	    }
 	}
@@ -147,6 +162,18 @@ class RenderView extends GalleryView {
 
 	print($generator->generate($params['version']));
 	return null;
+    }
+    
+    function handleError($message) {
+	header('HTTP/1.0 500 Internal Server Error');
+
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'rss');
+	if ($ret) {
+	    /* swallow the error and just print the untranslated message */
+	    print($message);
+	} else {
+	    print($module->translate($message));
+	}
     }
 }
 ?>

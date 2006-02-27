@@ -74,8 +74,14 @@ class RssModule extends GalleryModule /* and GalleryEventListener */ {
 		if ($param['allowSimpleFeed'] == 1) {
 		    $itemTypeNames = array_merge($item->itemTypeName(), $item->itemTypeName(false));
 
+		    /* 
+		     * Specific translations: 
+		     * _('RSS Feed for this Album') 
+		     * _('RSS Feed for this Photo') 
+		     * _('RSS Feed for this Movie') 
+		     */
 		    $links[$itemId][] = array(
-			'text' => $this->translate(array(
+			'text' => $this->_translate(array(
 			    'text' => 'RSS Feed for this %s',
 			    'arg1' => $itemTypeNames[0]), $itemTypeNames[2]),
 			'params' => array(

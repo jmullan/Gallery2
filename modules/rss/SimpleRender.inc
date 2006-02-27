@@ -52,18 +52,11 @@ class SimpleRenderView extends RenderView {
 	}
 
 	if ($params['allowSimpleFeed'] != 1) {
-	    header('HTTP/1.0 500 Internal Server Error');
-	    header('Status: 500');
-	    print('Feeds of that type are not allowed!');
+	    $this->handleError($gallery->i18n('Feeds of that type are not allowed!'));
 	    return null;
 	}
 
 	list ($ret, $item) = $this->_getItem();
-	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	$ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'core.view');
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
