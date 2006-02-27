@@ -81,10 +81,15 @@
   // <![CDATA[
   var text = '';
   var textUrls = '';
+  var apphead = '';
+  var appfoot = '';
 
   function startingUpload() {ldelim}
     text = textUrls = '';
-    addText('<h2>{g->text text="Uploading files..."}</h2><ul>');
+    apphead = '<h2>{g->text text="Uploading files..."}</h2><ul>';
+    appfoot = '</ul>';
+    
+    addText('');
   {rdelim}
 
   function uploadedOne(itemId, itemName) {ldelim}
@@ -93,8 +98,8 @@
   {rdelim}
 
   function doneUploading() {ldelim}
-    addText('</ul><h2>{g->text text="Upload complete"}</h2>'
-    	+ '<p>{g->text text="you can keep uploading or go to some of the pictures you uploaded by clicking on the links above"}<p>');
+    apphead = '<h2>{g->text text="Upload complete"}</h2><ul>';
+    appfoot = '</ul><p>{g->text text="You can keep uploading or go to some of the pictures you uploaded by clicking on the links above"}</p>';
 
     showUrls();
   {rdelim}
@@ -103,18 +108,21 @@
     text = text + s;
     textUrls = textUrls + s1;
 
-    getRef().innerHTML='<div class="gbBlock gcBackground1">' + text + '</div>';
+    getRef().innerHTML = '<div class="gbBlock gcBackground1">' + apphead 
+    			 + text + appfoot + '</div>';
   {rdelim}
 
   function addText(s) {ldelim}
     text = text + s;
     textUrls = textUrls + s;
 
-    getRef().innerHTML='<div class="gbBlock gcBackground1">' + text + '</div>';
+    getRef().innerHTML = '<div class="gbBlock gcBackground1">' + apphead 
+    			 + text + appfoot + '</div>';
   {rdelim}
 
   function showUrls() {ldelim}
-    getRef().innerHTML='<div class="gbBlock gcBackground1">' + textUrls + '</div>';
+    getRef().innerHTML = '<div class="gbBlock gcBackground1">' + apphead 
+    			 + textUrls + appfoot + '</div>';
   {rdelim}
 
   function getRef() {ldelim}
@@ -124,15 +132,15 @@
       return document.all["uploadapplet_Feedback"];
     {rdelim}
   {rdelim}
-
-  //setTimeout('test()', 2000);
-
-  function test() {ldelim}
-    startingUpload();
-    setTimeout('test1()', 2000);
-  {rdelim}
-  function test1() {ldelim}
-    uploadedOne('7', 'toto');
+  
+  function printfire() {ldelim}
+    if (document.createEvent)
+    {ldelim}
+        printfire.args = arguments;
+        var ev = document.createEvent("Events");
+        ev.initEvent("printfire", false, true);
+        dispatchEvent(ev);
+    {rdelim}
   {rdelim}
   // ]]>
 </script>
