@@ -86,62 +86,64 @@
 
   function startingUpload() {ldelim}
     text = textUrls = '';
-    apphead = '<h2>{g->text text="Uploading files..."}</h2><ul>';
+    apphead = '<h2>{g->text text="Uploading files..." forJavascript=true}</h2><ul>';
     appfoot = '</ul>';
-    
+
     addText('');
   {rdelim}
 
   function uploadedOne(itemId, itemName) {ldelim}
     addTextUrls('<li>' + itemName + '</li>',
-    	'<li><a href="{g->url arg1="view=core.ShowItem" arg2="itemId="}' + itemId + '">' + itemName + '</a></li>');
+	'<li><a href="{g->url arg1="view=core.ShowItem" arg2="itemId=" forceSessionId=false}'
+	+ itemId + '">' + itemName + '</a></li>');
   {rdelim}
 
   function doneUploading() {ldelim}
-    apphead = '<h2>{g->text text="Upload complete"}</h2><ul>';
-    appfoot = '</ul><p>{g->text text="You can keep uploading or go to some of the pictures you uploaded by clicking on the links above"}</p>';
+    apphead = '<h2>{g->text text="Upload complete" forJavascript=true}</h2><ul>';
+    appfoot = '</ul><p>{g->text text="You can keep uploading or go to some of the pictures you uploaded by clicking on the links above" forJavascript=true}</p>';
 
     showUrls();
   {rdelim}
 
-  function addTextUrls(s, s1) {ldelim}
+  {literal}
+  function addTextUrls(s, s1) {
     text = text + s;
     textUrls = textUrls + s1;
 
-    getRef().innerHTML = '<div class="gbBlock gcBackground1">' + apphead 
-    			 + text + appfoot + '</div>';
-  {rdelim}
+    getRef().innerHTML = '<div class="gbBlock gcBackground1">' + apphead
+			 + text + appfoot + '</div>';
+  }
 
-  function addText(s) {ldelim}
+  function addText(s) {
     text = text + s;
     textUrls = textUrls + s;
 
-    getRef().innerHTML = '<div class="gbBlock gcBackground1">' + apphead 
-    			 + text + appfoot + '</div>';
-  {rdelim}
+    getRef().innerHTML = '<div class="gbBlock gcBackground1">' + apphead
+			 + text + appfoot + '</div>';
+  }
 
-  function showUrls() {ldelim}
-    getRef().innerHTML = '<div class="gbBlock gcBackground1">' + apphead 
-    			 + textUrls + appfoot + '</div>';
-  {rdelim}
+  function showUrls() {
+    getRef().innerHTML = '<div class="gbBlock gcBackground1">' + apphead
+			 + textUrls + appfoot + '</div>';
+  }
 
-  function getRef() {ldelim}
-    if (document.getElementById) {ldelim}
+  function getRef() {
+    if (document.getElementById) {
       return document.getElementById("uploadapplet_Feedback");
-    {rdelim} else if (document.all) {ldelim}
+    } else if (document.all) {
       return document.all["uploadapplet_Feedback"];
-    {rdelim}
-  {rdelim}
-  
-  function printfire() {ldelim}
-    if (document.createEvent)
-    {ldelim}
-        printfire.args = arguments;
-        var ev = document.createEvent("Events");
-        ev.initEvent("printfire", false, true);
-        dispatchEvent(ev);
-    {rdelim}
-  {rdelim}
+    }
+  }
+
+  function printfire() {
+    if (document.createEvent) {
+	printfire.args = arguments;
+	var ev = document.createEvent("Events");
+	ev.initEvent("printfire", false, true);
+	dispatchEvent(ev);
+    }
+  }
+  {/literal}
   // ]]>
 </script>
 {/g->addToTrailer}
