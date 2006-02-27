@@ -91,6 +91,12 @@ class SlideshowAppletView extends GalleryView {
 	    $SlideshowApplet['galleryVersion'] = 2;
 	    $SlideshowApplet['code'] = 'com.gallery.GalleryRemote.GRAppletSlideshow';
 
+	    list ($ret, $locale) = $gallery->getActiveLanguageCode();
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $SlideshowApplet['locale'] = $locale;
+
 	    if (isset($startId)) {
 		/* format the start_from as album_picture, that's what GR expects */
 		$SlideshowApplet['extra']['gr_slideshow_start_from'] = $item->getId().'_'.$startId;

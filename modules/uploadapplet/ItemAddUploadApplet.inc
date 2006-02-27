@@ -72,6 +72,12 @@ class ItemAddUploadApplet extends ItemAddPlugin {
 	    $ItemAddUploadApplet['galleryVersion'] = 2;
 	    $ItemAddUploadApplet['code'] = 'com.gallery.GalleryRemote.ItemAddUploadAppletMini';
 
+	    list ($ret, $locale) = $gallery->getActiveLanguageCode();
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	    $ItemAddUploadApplet['locale'] = $locale;
+
 	    list ($ret, $params) =
 		GalleryCoreApi::fetchAllPluginParameters('module', 'uploadapplet');
 	    if ($ret) {

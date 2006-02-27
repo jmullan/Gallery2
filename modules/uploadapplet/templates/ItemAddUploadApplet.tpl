@@ -28,6 +28,7 @@
     <param name="gr_album" value="{$ItemAddUploadApplet.album}"/>
     <param name="gr_user_agent" value="{$ItemAddUploadApplet.userAgent}"/>
     <param name="gr_gallery_version" value="{$ItemAddUploadApplet.galleryVersion}"/>
+    <param name="gr_locale" value="{$ItemAddUploadApplet.locale}"/>
     {foreach key=key item=value from=$ItemAddUploadApplet.default}
     <param name="GRDefault_{$key}" value="{$value}"/>
     {/foreach}
@@ -54,6 +55,7 @@
           gr_album="{$ItemAddUploadApplet.album}"
           gr_user_agent="{$ItemAddUploadApplet.userAgent}"
           gr_gallery_version="{$ItemAddUploadApplet.galleryVersion}"
+          gr_locale="{$ItemAddUploadApplet.locale}"
           {foreach key=key item=value from=$ItemAddUploadApplet.default}
           GRDefault_{$key}="{$value}"
           {/foreach}

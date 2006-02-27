@@ -32,6 +32,7 @@
     <param name="gr_album" value="{$SlideshowApplet.album}"/>
     <param name="gr_user_agent" value="{$SlideshowApplet.userAgent}"/>
     <param name="gr_gallery_version" value="{$SlideshowApplet.galleryVersion}"/>
+    <param name="gr_locale" value="{$SlideshowApplet.locale}"/>
     {foreach key=key item=value from=$SlideshowApplet.extra}
     <param name="{$key}" value="{$value}"/>
     {/foreach}
@@ -61,6 +62,7 @@
           gr_album="{$SlideshowApplet.album}"
           gr_user_agent="{$SlideshowApplet.userAgent}"
           gr_gallery_version="{$SlideshowApplet.galleryVersion}"
+          gr_locale="{$SlideshowApplet.locale}"
           {foreach key=key item=value from=$SlideshowApplet.extra}
           {$key}="{$value}"
           {/foreach}
@@ -71,8 +73,8 @@
           GROverride_{$key}="{$value}"
           {/foreach}
       >
-          <noembed alt="{g->text text="Your browser doesn't support applets; you should use one of the other upload methods."}">
-            {g->text text="Your browser doesn't support applets; you should use one of the other upload methods."}
+          <noembed alt="{g->text text="Your browser doesn't support applets; you should use the standard slideshow."}">
+            {g->text text="Your browser doesn't support applets; you should use the standard slideshow."}
           </noembed>
       </embed>
     </comment>

@@ -111,16 +111,26 @@
   <p>{g->text text="Here are a selection of variables that affect uploads."}</p>
   <table class="gbDataTable">
     <tr><th>{g->text text="variable"}</th><th>{g->text text="values"}</th><th>{g->text text="help"}</th></tr>
-    <tr class="gbEven"><td>resizeBeforeUpload</td><td>true/false</td><td>{g->text text="instructs the applet to resize pictures before uploading to the album; by default, resizes to the album's intermediate image size"}</td>
-    <tr class="gbOdd"><td>resizeTo1</td><td>600</td><td>{g->text text="dimension the images will be resized to; this overrides album settings"}</td>
-    <tr class="gbEven"><td>setCaptionsNone</td><td>true/false</td><td>{g->text text="no automatic captions"}</td>
-    <tr class="gbOdd"><td>setCaptionsWithFilenames</td><td>true/false</td><td>{g->text text="use filenames for captions"}</td>
-    <tr class="gbEven"><td>captionStripExtension</td><td>true/false</td><td>{g->text text="if using the filename for captions, strip the extension"}</td>
-    <tr class="gbOdd"><td>setCaptionsWithMetadataComment</td><td>true/false</td><td>{g->text text="use EXIF extension for caption"}</td>
-    <tr class="gbEven"><td>useJavaResize</td><td>true/false</td><td>{g->text text="set to false if you want to avoid losing EXIF data when the image is resized and ImageMagick is not found"}</td>
-    <tr class="gbOdd"><td>suppressWarningIM</td><td>true/false</td><td>{g->text text="if true, the applet will not complain if it can't find ImageMagick"}</td>
-    <tr class="gbEven"><td>suppressWarningJpegtran</td><td>true/false</td><td>{g->text text="if true, the applet will not complain if it can't find Jpegtran"}</td>
-    <tr class="gbOdd"><td>im.jpegQuality</td><td>0-99</td><td>{g->text text="quality of JPEG compression when resizing with ImageMagick"}</td>
+    <tr class="gbEven"><td>resizeBeforeUpload</td><td>true/false</td>
+      <td>{g->text text="instructs the applet to resize pictures before uploading to the album; by default, resizes to the album's intermediate image size"}</td>
+    <tr class="gbOdd"><td>resizeTo1</td><td>600</td>
+      <td>{g->text text="dimension the images will be resized to; this overrides album settings"}</td>
+    <tr class="gbEven"><td>setCaptionsNone</td><td>true/false</td>
+      <td>{g->text text="no automatic captions"}</td>
+    <tr class="gbOdd"><td>setCaptionsWithFilenames</td><td>true/false</td>
+      <td>{g->text text="use filenames for captions"}</td>
+    <tr class="gbEven"><td>captionStripExtension</td><td>true/false</td>
+      <td>{g->text text="if using the filename for captions, strip the extension"}</td>
+    <tr class="gbOdd"><td>setCaptionsWithMetadataComment</td><td>true/false</td>
+      <td>{g->text text="use EXIF extension for caption"}</td>
+    <tr class="gbEven"><td>useJavaResize</td><td>true/false</td>
+      <td>{g->text text="set to false if you want to avoid losing EXIF data when the image is resized and ImageMagick is not found"}</td>
+    <tr class="gbOdd"><td>suppressWarningIM</td><td>true/false</td>
+      <td>{g->text text="if true, the applet will not complain if it can't find ImageMagick"}</td>
+    <tr class="gbEven"><td>suppressWarningJpegtran</td><td>true/false</td>
+      <td>{g->text text="if true, the applet will not complain if it can't find Jpegtran"}</td>
+    <tr class="gbOdd"><td>im.jpegQuality</td><td>0-99</td>
+      <td>{g->text text="quality of JPEG compression when resizing with ImageMagick"}</td>
   </table>
   <p><a href="http://cvs.sourceforge.net/viewcvs.py/*checkout*/gallery/gallery_remote/defaults.properties" target="other">
   	{g->text text="Complete list of variables"}</a></p>
