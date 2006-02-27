@@ -112,25 +112,27 @@
   <table class="gbDataTable">
     <tr><th>{g->text text="variable"}</th><th>{g->text text="values"}</th><th>{g->text text="help"}</th></tr>
     <tr class="gbEven"><td>resizeBeforeUpload</td><td>true/false</td>
-      <td>{g->text text="instructs the applet to resize pictures before uploading to the album; by default, resizes to the album's intermediate image size"}</td>
+      <td>{g->text text="instructs the applet to resize pictures before uploading to the album; by default, resizes to the album's intermediate image size"}</td></tr>
     <tr class="gbOdd"><td>resizeTo1</td><td>600</td>
-      <td>{g->text text="dimension the images will be resized to; this overrides album settings"}</td>
+      <td>{g->text text="dimension the images will be resized to; this overrides album settings"}</td></tr>
     <tr class="gbEven"><td>setCaptionsNone</td><td>true/false</td>
-      <td>{g->text text="no automatic captions"}</td>
+      <td>{g->text text="no automatic captions"}</td></tr>
     <tr class="gbOdd"><td>setCaptionsWithFilenames</td><td>true/false</td>
-      <td>{g->text text="use filenames for captions"}</td>
+      <td>{g->text text="use filenames for captions"}</td></tr>
     <tr class="gbEven"><td>captionStripExtension</td><td>true/false</td>
-      <td>{g->text text="if using the filename for captions, strip the extension"}</td>
+      <td>{g->text text="if using the filename for captions, strip the extension"}</td></tr>
     <tr class="gbOdd"><td>setCaptionsWithMetadataComment</td><td>true/false</td>
-      <td>{g->text text="use EXIF extension for caption"}</td>
+      <td>{g->text text="use EXIF extension for caption"}</td></tr>
+    <tr class="gbOdd"><td>htmlEscapeCaptions</td><td>true/false</td>
+      <td>{g->text text="if false, the upload applet will use UTF-8 to send image meta-data to Gallery, rather than escaping it with HTML entities"}</td></tr>
     <tr class="gbEven"><td>useJavaResize</td><td>true/false</td>
-      <td>{g->text text="set to false if you want to avoid losing EXIF data when the image is resized and ImageMagick is not found"}</td>
+      <td>{g->text text="set to false if you want to avoid losing EXIF data when the image is resized and ImageMagick is not found"}</td></tr>
     <tr class="gbOdd"><td>suppressWarningIM</td><td>true/false</td>
-      <td>{g->text text="if true, the applet will not complain if it can't find ImageMagick"}</td>
+      <td>{g->text text="if true, the applet will not complain if it can't find ImageMagick"}</td></tr>
     <tr class="gbEven"><td>suppressWarningJpegtran</td><td>true/false</td>
-      <td>{g->text text="if true, the applet will not complain if it can't find Jpegtran"}</td>
+      <td>{g->text text="if true, the applet will not complain if it can't find Jpegtran"}</td></tr>
     <tr class="gbOdd"><td>im.jpegQuality</td><td>0-99</td>
-      <td>{g->text text="quality of JPEG compression when resizing with ImageMagick"}</td>
+      <td>{g->text text="quality of JPEG compression when resizing with ImageMagick"}</td></tr>
   </table>
   <p><a href="http://cvs.sourceforge.net/viewcvs.py/*checkout*/gallery/gallery_remote/defaults.properties" target="other">
   	{g->text text="Complete list of variables"}</a></p>
