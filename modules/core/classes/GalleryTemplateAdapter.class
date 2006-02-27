@@ -537,6 +537,7 @@ class GalleryTemplateAdapter {
 	if ($ret) {
 	    return;
 	}
+	$linkTarget = empty($params['target']) ? '' : (' target="' . $params['target'] . '"');
 
 	switch($params['type']) {
 	case 'gallery2':
@@ -548,7 +549,7 @@ class GalleryTemplateAdapter {
 	    }
 	    $version = $core->translate(
 		    array('text' => "Gallery %s", 'arg1' => $installedVersions['gallery']));
-	    return '<a href="http://gallery.sourceforge.net"><img src="' .
+	    return '<a href="http://gallery.sourceforge.net"' . $linkTarget . '><img src="' .
 		$urlGenerator->generateUrl(array('href' => 'images/gallery.gif')) .
 		'" alt="' . $version . '" '.
 		'title="' . $version . '" ' .
@@ -575,7 +576,7 @@ class GalleryTemplateAdapter {
 		    $core->translate(
 			'Validation disabled until you set allowSessionAccess in config.php'));
 	    }
-	    return '<a href="' . $validationUri . '"><img src="' .
+	    return '<a href="' . $validationUri . '"' . $linkTarget . '><img src="' .
 		$urlGenerator->generateUrl(array('href' => 'images/xhtml10.png')) .
 		'" alt="' . $core->translate('This page is valid XHTML 1.0') .
 		'" title="' . $core->translate('This page is valid XHTML 1.0') .
@@ -587,11 +588,12 @@ class GalleryTemplateAdapter {
 	    }
 	    $installedVersions = $core->getInstalledVersions();
 	    return sprintf(
-		    '<a href="%s"><img src="%s" alt="%s" title="%s" ' .
+		    '<a href="%s"%s><img src="%s" alt="%s" title="%s" ' .
 		    'style="border-style: none" width="80" height="15"/></a>',
 		    $urlGenerator->generateUrl(
 			array('href' => 'http://gallery.sourceforge.net/donate.php?donate_tag=' .
 			      $installedVersions['gallery'])),
+		    $linkTarget,
 		    $urlGenerator->generateUrl(array('href' => 'modules/core/data/donate.png')),
 		    $core->translate('Donate to the Gallery project'),
 		    $core->translate('Donate to the Gallery project'));
@@ -601,10 +603,11 @@ class GalleryTemplateAdapter {
 		return;
 	    }
 	    return sprintf(
-		'<a href="%s"><img src="%s" alt="%s" title="%s" ' .
+		'<a href="%s"%s><img src="%s" alt="%s" title="%s" ' .
 		'style="border-style: none" width="80" height="15"/></a>',
 		$urlGenerator->generateUrl(
 		    array('href' => 'modules/core/data/g21-rc1-hitme.mov')),
+		$linkTarget,
 		$urlGenerator->generateUrl(
 		    array('href' => 'modules/core/data/g21-blackjack.png')),
 		$core->translate('G2.1-RC-1: Hit Me'),
