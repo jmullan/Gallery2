@@ -165,6 +165,8 @@ class GallerySession {
 	    }
 	}
 
+	/* Sanitize the session id to avoid writing outside the session storage dir. */
+	$this->_sessionId = preg_replace('/[^a-zA-Z0-9]/', '', $this->_sessionId);
 
 	/*
 	 * If we don't have a session id at this point, create one. And expire the session if
@@ -185,12 +187,6 @@ class GallerySession {
 		/* Ensure we don't randomly pick an id already in use.. */
 	    } while (!empty($this->_sessionData));
 	} else {
-	    /*
-	     * Sanitize the session id (which may have come from user input) to
-	     * avoid possibly writing outside the session storage dir.
-	     */
-	    $this->_sessionId = preg_replace('/[^a-zA-Z0-9]/', '', $this->_sessionId);
-
 	    /* Load session state */
 	    $ret = $this->_loadSessionData();
 	    if ($ret->isError()) {

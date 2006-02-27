@@ -237,6 +237,32 @@ class SessionTest extends GalleryTestCase {
 	GallerySession::_expireSessions();
     }
 
+    function testMaliciousSessionId1() {
+	$_COOKIE[SESSION_ID_PARAMETER] = '/etc/passwd';
+	$testSession = new SessionTestSessionWithMockIsSessionValid();
+	$testSession->init();
+
+	$this->assertEquals('etcpasswd', $testSession->isSessionValidSessionId);
+    }
+
+    function testMaliciousSessionId2() {
+	$_COOKIE[SESSION_ID_PARAMETER] = 'ABCD';
+	GalleryUtilities::putRequestVariable(SESSION_ID_PARAMETER, '/etc/passwd');
+	$testSession = new SessionTestSessionWithMockIsSessionValid();
+	$testSession->init();
+
+	$this->assertEquals('etcpasswd', $testSession->isSessionValidSessionId);
+    }
+
+    function testMaliciousSessionId3() {
+	unset($_COOKIE[SESSION_ID_PARAMETER]);
+	GalleryUtilities::putRequestVariable(SESSION_ID_PARAMETER, '/etc/passwd');
+	$testSession = new SessionTestSessionWithMockIsSessionValid();
+	$testSession->init();
+
+	$this->assertEquals('etcpasswd', $testSession->isSessionValidSessionId);
+    }
+
     function testIllegalSessionId() {
 	global $gallery;
 	$session = $gallery->_session;
@@ -991,6 +1017,13 @@ class SessionTest extends GalleryTestCase {
 	    $this->assertEquals($testCase['er'], $session->_shouldSaveSession(),
 				$testCase['type'] . ': ' . $testCase['value']);
 	}
+    }
+}
+
+class SessionTestSessionWithMockIsSessionValid extends GallerySession {
+    function _isSessionValid() {
+	$this->isSessionValidSessionId = $this->_sessionId;
+	return array(GalleryStatus::success(), true);
     }
 }
 

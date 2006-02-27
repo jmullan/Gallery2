@@ -49,6 +49,10 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->_mkdir = array();
 	$this->_savePlatform = $gallery->getPlatform();
 	$gallery->_platform = new UtilitiesTestPlatform($this);
+
+	foreach (array('HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP', 'REMOTE_ADDR') as $key) {
+	    unset($_SERVER[$key]);
+	}
     }
 
     function tearDown() {
@@ -380,27 +384,104 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->assertEquals(array(), GalleryUtilities::getFormVariables('utilitiestest', false));
     }
 
-    function testGetRemoteHostAddress() {
+    function testGetRemoteHostAddress1() {
 	global $gallery;
 
+	$addr = GalleryUtilities::getRemoteHostAddress();
+	$this->assertEquals(null, $addr, 'Unavailable IP');
+    }
+
+    function testGetRemoteHostAddress2() {
+	$_SERVER['HTTP_CLIENT_IP'] = '1.2.3.4';
+	$_SERVER['HTTP_X_FORWARDED_FOR'] = '5.6.7.8';
+	$_SERVER['REMOTE_ADDR'] = '2.2.2.2';
+	$addr = GalleryUtilities::getRemoteHostAddress();
+	$this->assertEquals('2.2.2.2', $addr, 'Remote addr is untrusted, header IPs ignored');
+    }
+
+    function testGetRemoteHostAddress3() {
+	$_SERVER['HTTP_CLIENT_IP'] = '1.2.3.4';
+	$_SERVER['HTTP_X_FORWARDED_FOR'] = '5.6.7.8';
+	$_SERVER['REMOTE_ADDR'] = '10.0.0.0';
+	$addr = GalleryUtilities::getRemoteHostAddress();
+	$this->assertEquals('5.6.7.8', $addr, 'Trusted remote addr, prefer HTTP_X_FORWARDED_FOR');
+    }
+
+    function testGetRemoteHostAddress4() {
+	$_SERVER['HTTP_CLIENT_IP'] = '1.2.3.4';
+	$_SERVER['REMOTE_ADDR'] = '10.0.0.0';
+	$addr = GalleryUtilities::getRemoteHostAddress();
+	$this->assertEquals('1.2.3.4', $addr, 'Trusted remote addr, use HTTP_CLIENT_IP ');
+    }
+
+    function testGetRemoteHostAddress5() {
+	$_SERVER['HTTP_CLIENT_IP'] = '1.2.3.4';
+	$_SERVER['REMOTE_ADDR'] = '10.0.0.0';
+	$addr = GalleryUtilities::getRemoteHostAddress();
+	$this->assertEquals('1.2.3.4', $addr, 'Trusted remote addr, use HTTP_CLIENT_IP ');
+    }
+
+    function testMalformedRemoteHostAddress() {
+	$_SERVER['HTTP_X_FORWARDED_FOR'] = '1.2';
+	$_SERVER['REMOTE_ADDR'] = '10.0.0.0';
+	$addr = GalleryUtilities::getRemoteHostAddress();
+	$this->assertEquals('10.0.0.0', $addr, 'Use remote addr if header is malformed');
+    }
+
+    function testMalformedRemoteHostAddress2() {
+	$_SERVER['HTTP_X_FORWARDED_FOR'] = "1.2.3.4\n<evil/>";
+	$_SERVER['REMOTE_ADDR'] = '10.0.0.0';
+	$addr = GalleryUtilities::getRemoteHostAddress();
+	$this->assertEquals('10.0.0.0', $addr, 'Use remote addr if header is malformed');
+    }
+
+    function testMaliciousRemoteHostAddress() {
 	foreach (array('HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP', 'REMOTE_ADDR') as $key) {
 	    unset($_SERVER[$key]);
 	}
 
-	$ip = GalleryUtilities::getRemoteHostAddress();
-	$this->assertEquals($ip, null, 'Unavailable IP');
+	$_SERVER['HTTP_X_FORWARDED_FOR'] = '<evil/>';
+	$_SERVER['REMOTE_ADDR'] = '10.0.0.0';
+	$addr = GalleryUtilities::getRemoteHostAddress();
+	$this->assertEquals('10.0.0.0', $addr, 'Ignore evil addresses, even from trusted hosts');
+    }
 
-	$_SERVER['REMOTE_ADDR'] = '111.222.333.444';
-	$ip = GalleryUtilities::getRemoteHostAddress();
-	$this->assertEquals($ip, '111.222.333.444', 'IP From REMOTE_ADDR');
+    /* Right now we only trust RFC1918 addresses */
+    function testIsTrustedProxy() {
+	/*
+	 * Hard to verify this completely because it takes too long to test 255^4 addresses.  Try
+	 * the approach of testing 15^4 (50625) addresses at random instead.
+	 */
+	for ($i = 0; $i < 15; $i++) {
+	    $aa[] = rand(0, 255);
+	    $ba[] = rand(0, 255);
+	    $ca[] = rand(0, 255);
+	    $da[] = rand(0, 255);
+	}
+	foreach ($aa as $a) {
+	    foreach ($ba as $b) {
+		foreach ($ca as $c) {
+		    foreach ($da as $d) {
+			$addr = "$a.$b.$c.$d";
+			$trusted = GalleryUtilities::isTrustedProxy($addr);
+			$shouldBeTrusted = (($a == 10) ||
+					    ($a == 172 && $b == 16) ||
+					    ($a == 192 && $b == 168));
+			if ($shouldBeTrusted != $trusted) {
+			    $this->assert(false, sprintf(
+					      "$addr %s be trusted.  IMPORTANT! " .
+					      "Save and report this *exact* error message!",
+					      $shouldBeTrusted ? 'should' : 'should not'));
+			}
+		    }
+		}
+	    }
+	}
 
-	$_SERVER['HTTP_CLIENT_IP'] = '222.333.444.555';
-	$ip = GalleryUtilities::getRemoteHostAddress();
-	$this->assertEquals($ip, '222.333.444.555', 'IP From HTTP_CLIENT_IP');
-
-	$_SERVER['HTTP_X_FORWARDED_FOR'] = '333.444.555.666';
-	$ip = GalleryUtilities::getRemoteHostAddress();
-	$this->assertEquals($ip, '333.444.555.666', 'IP From HTTP_X_FORWARDED_FOR');
+	/* Sanity check some known RFC1918 addrs */
+	$this->assert(GalleryUtilities::isTrustedProxy('10.1.2.3'), '10/24 failed');
+	$this->assert(GalleryUtilities::isTrustedProxy('192.168.1.2'), '192.168/16 failed');
+	$this->assert(GalleryUtilities::isTrustedProxy('172.16.254.253'), '172.16/16 failed');
     }
 
     function testIsPathInList() {
