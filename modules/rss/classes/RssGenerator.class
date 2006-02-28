@@ -55,15 +55,7 @@ class RssGenerator {
      * @param string optional key for the item array
      */
     function addItem($properties, $key='') {
-	/*
-	 * create new item
-	 * remove bb tags and convert < and > to html codes
-	 */
-	$properties = $this->sanitizeStrings($properties);
-
-	/*
-	 * add the new item to our items array
-	 */
+	/* add the new item to our items array */
 	if ($key == '') {
 	    $this->_items[] = $properties;
 	} else {
@@ -123,27 +115,6 @@ class RssGenerator {
     }
 
     /**
-     * Remove BBtags and replace < and > with html code in all array elements that are strings and
-     * the elements that are strings of all sub arrays etc. (recursive)
-     *
-     * @param either a string or an array of strings to be sanitized
-     * @return sanitized string or array of strings
-     */
-    function sanitizeStrings($arr) {
-	if (is_array($arr)) {
-	    $newarr = array();
-	    foreach ($arr as $key => $value) {
-		$newarr[$key] = $this->sanitizeStrings($value);
-	    }
-	    return $newarr;
-	} else if (is_string($arr)) {
-	    return GalleryUtilities::markup($arr);
-	} else {
-	    return $arr;
-	}
-    }
-
-    /**
      * Generate the RSS data string of the items added by addItem()
      *
      * @param string the rss version number
@@ -175,42 +146,48 @@ class RssGenerator {
 	    return '';
 	
 	$platform =& $gallery->getPlatform();
-	$linefeed = $platform->getLineEnding();
+	$lf = $platform->getLineEnding();
 
-	$data = '<?xml version="1.0"?>' . $linefeed .
-	    '<!DOCTYPE rss SYSTEM "http://my.netscape.com/publish/formats/rss-0.91.dtd">' .
-	    $linefeed . '<rss version="0.91"><channel>' . $linefeed .
-	    '<title>' . $this->_properties['title'] . '</title>' . $linefeed .
-	    '<link>' . $this->_properties['link'] . '</link>' . $linefeed .
-	    '<description>' . $this->_properties['description'] . '</description>' . $linefeed .
-	    (isset($this->_properties['language']) ? '<language>' . $this->_properties['language'] .
-		'</language>' : '') . $linefeed .
+	$data = '<?xml version="1.0"?>' . $lf .
+	    '<!DOCTYPE rss SYSTEM "http://my.netscape.com/publish/formats/rss-0.91.dtd">' . $lf . 
+	    '<rss version="0.91"><channel>' . $lf .
+	    '<title>' . GalleryUtilities::markup($this->_properties['title']) . '</title>' . $lf .
+	    '<link>' . $this->_properties['link'] . '</link>' . $lf .
+	    '<description>' . GalleryUtilities::markup($this->_properties['description']) . 
+	    '</description>' . $lf .
+	    (isset($this->_properties['language']) ? 
+	    	'<language>' . $this->_properties['language'] .
+		'</language>' : '') . $lf .
 	    (!empty($this->_properties['copyright']) ?
-		'<copyright>' . $this->_properties['copyright'] . '</copyright>' : '');
+		'<copyright>' . GalleryUtilities::markup($this->_properties['copyright']) . 
+		'</copyright>' : '');
 
 	if (isset($this->_properties['webmaster'])) {
-	    $data .= '<webMaster>' . $this->_properties . '</webMaster>'. $linefeed ;
+	    $data .= '<webMaster>' . GalleryUtilities::markup($this->_properties['webmaster']) . 
+	    '</webMaster>'. $lf ;
 	}
 
 	if (isset($this->_properties['image'])) {
-	    $data .= '<image>' . $linefeed .
-		' <title>' . $this->_properties['image']['title'] . '</title>' . $linefeed .
-		' <link>' . $this->_properties['image']['link'] . '</link>' . $linefeed .
-		' <url>' . $this->_properties['image']['url'] . '</url>' . $linefeed .
-		'</image>'.$linefeed ;
+	    $data .= '<image>' . $lf .
+		' <title>' . GalleryUtilities::markup($this->_properties['image']['title']) . 
+		'</title>' . $lf .
+		' <link>' . $this->_properties['image']['link'] . '</link>' . $lf .
+		' <url>' . $this->_properties['image']['url'] . '</url>' . $lf .
+		'</image>'.$lf ;
 	}
 
 	foreach ($this->_items as $item) {
-	    if (!isset($item['title']))	return "";
-
-	    $data .= '<item>' . $linefeed .
-		' <title>' . $item['title'] . '</title>' . $linefeed .
-		' <link>' . $item['link'] . '</link>' . $linefeed .
-		' <description>' . $item['description'] . '</description>' . $linefeed .
-		'</item>'. $linefeed;
+	    if (isset($item['title'])) {
+		$data .= '<item>' . $lf .
+		    ' <title>' . GalleryUtilities::markup($item['title']) . '</title>' . $lf .
+		    ' <link>' . $item['link'] . '</link>' . $lf .
+		    ' <description>' . GalleryUtilities::markup($item['description']) . 
+		    '</description>' . $lf .
+		    '</item>'. $lf;
+	    }
 	}
 
-	$data .= '</channel>'. $linefeed.'</rss>';
+	$data .= '</channel>'. $lf.'</rss>';
 
 	return $data;
     }
@@ -222,68 +199,90 @@ class RssGenerator {
      */
     function generate200() {
 	global $gallery;
-	$platform =& $gallery->getPlatform();
 	
-	$linefeed = $platform->getLineEnding();
+	$platform =& $gallery->getPlatform();
+	$lf = $platform->getLineEnding();
 
-	$data = '<rss version="2.0">'.$linefeed.'<channel>' . $linefeed .
-	    '<title>' . $this->_properties['title'] . '</title>' . $linefeed .
-	    '<link>' . $this->_properties['link'] . '</link>' . $linefeed .
-	    '<description>' . $this->_properties['description'] . '</description>' . $linefeed .
+	$data = '<rss version="2.0">'.$lf.'<channel>' . $lf .
+	    '<title>' . GalleryUtilities::markup($this->_properties['title']) . '</title>' . $lf .
+	    '<link>' . $this->_properties['link'] . '</link>' . $lf .
+	    '<description>' . GalleryUtilities::markup($this->_properties['description']) . 
+	    '</description>' . $lf .
 	    (isset($this->_properties['language']) ?
-		'<language>' . $this->_properties['language'] . '</language>' . $linefeed  : '') .
+		'<language>' . $this->_properties['language'] . '</language>' . $lf  : '') .
 	    (!empty($this->_properties['copyright']) ?
-		'<copyright>' . $this->_properties['copyright'] . '</copyright>'. $linefeed  : '') .
+		'<copyright>' . GalleryUtilities::markup($this->_properties['copyright']) . 
+		'</copyright>'. $lf  : '') .
 	    (!empty($this->_properties['category']) ?
-		'<category>' . $this->_properties['category'] . '</category>'. $linefeed  : '') .
+		'<category>' . GalleryUtilities::markup($this->_properties['category']) . 
+		'</category>'. $lf  : '') .
 	    (isset($this->_properties['generator']) ?
-		'<generator>' . $this->_properties['generator'] . '</generator>'. $linefeed  : '') .
+		'<generator>' . GalleryUtilities::markup($this->_properties['generator']) . 
+		'</generator>'. $lf  : '') .
 	    (isset($this->_properties['lastBuildDate']) ?
-		'<lastBuildDate>' .
-		$this->_properties['lastBuildDate'] . '</lastBuildDate>'. $linefeed  : '') .
+		'<lastBuildDate>' . $this->_properties['lastBuildDate'] . 
+		'</lastBuildDate>'. $lf  : '') .
 	    (isset($this->_properties['ttl']) ?
-		'<ttl>' . $this->_properties['ttl'] . '</ttl>'. $linefeed : '') .
+		'<ttl>' . $this->_properties['ttl'] . '</ttl>'. $lf : '') .
 	    (isset($this->_properties['cloud']) ?
-		'<cloud domain="' . $this->_properties['cloud']['domain'] .
+		'<cloud domain="' . 
+		GalleryUtilities::markup($this->_properties['cloud']['domain']) .
 		'" port="' . $this->_properties['cloud']['port'] .
-		'" path="' . $this->_properties['cloud']['path'] .
+		'" path="' . GalleryUtilities::markup($this->_properties['cloud']['path']) .
 		'" registerProcedure="' . $this->_properties['cloud']['registerProcedure'] .
-		'" protocol="' . $this->_properties['cloud']['protocol'] . '" />' . $linefeed : '')
+		'" protocol="' . $this->_properties['cloud']['protocol'] . '" />' . $lf : '')
 	    . (isset($this->_properties['image']) ?
-		'<image><url>' . $this->_properties['image']['url'] . '</url>' . $linefeed .
-		' <title>' . $this->_properties['image']['title'] . '</title>' . $linefeed .
+		'<image><url>' . $this->_properties['image']['url'] . '</url>' . $lf .
+		' <title>' . GalleryUtilities::markup($this->_properties['image']['title']) . 
+		'</title>' . $lf .
 		' <link>' . $this->_properties['image']['link'] . '</link></image>' : '');
 
 	foreach ($this->_items as $item) {
-	    if (!isset($item['title']) || !isset($item['link']) || !isset($item['description']))
-		return 'Error! title, link or description is not set for an item.';
-
-	    $data .= '<item>' . $linefeed .
-		' <title>' . $item['title'] . '</title>' . $linefeed .
-		' <link>' . $item['link'] . '</link>' . $linefeed .
-		' <guid isPermaLink="false">' . $item['link'] . '</guid>' . $linefeed .
-		' <description><![CDATA[' . $item['description'] . ']]></description>' . $linefeed;
-
-	    if (isset($item['author']))
-		$data .= ' <author>' . $item['author'] . '</author>' . $linefeed;
-	    if (isset($item['category']))
-		$data .= ' <category>' . $item['category'] . '</category>' . $linefeed;
-	    if (isset($item['comments']))
-		$data .= ' <comments>' . $item['comments'] . '</comments>' . $linefeed;
-	    if (isset($item['enclosure']))
-		$data .= ' <enclosure url="' . $item['enclosure']['url'] . '" length="' .
-		    $item['enclosure']['length'] . '" type="' .
-		    $item['enclosure']['type'] . '" />' . $linefeed;
-	    if (isset($item['guid']))
-		$data .= ' <guid>' . $item['guid'] . '</guid>' . $linefeed;
-	    if (isset($item['pubDate']))
-		$data .= ' <pubDate>' . $item['pubDate'] . '</pubDate>' . $linefeed;
-	    if (isset($item['source']))
-		$data .= ' <source>' . $item['source'] . '</source>' . $linefeed;
-	    $data .= '</item>'. $linefeed;
+	    if (isset($item['title']) && isset($item['link']) && isset($item['description'])) {
+		$data .= '<item>' . $lf .
+		    ' <title>' . GalleryUtilities::markup($item['title']) . '</title>' . $lf .
+		    ' <link>' . $item['link'] . '</link>' . $lf .
+		    ' <guid isPermaLink="false">' . $item['link'] . '</guid>' . $lf .
+		    ' <description><![CDATA[' . $item['description'] . ']]></description>' . $lf;
+    
+		if (isset($item['author'])) {
+		    $data .= ' <author>' . GalleryUtilities::markup($item['author']) . 
+		    	     '</author>' . $lf;
+		}
+		
+		if (isset($item['category'])) {
+		    $data .= ' <category>' . GalleryUtilities::markup($item['category']) . 
+		    	     '</category>' . $lf;
+		}
+		
+		if (isset($item['comments'])) {
+		    $data .= ' <comments>' . GalleryUtilities::markup($item['comments']) . 
+		    	     '</comments>' . $lf;
+		}
+		
+		if (isset($item['enclosure'])) {
+		    $data .= ' <enclosure url="' . $item['enclosure']['url'] . '" length="' .
+			$item['enclosure']['length'] . '" type="' .
+			$item['enclosure']['type'] . '" />' . $lf;
+		}
+		
+		if (isset($item['guid'])) {
+		    $data .= ' <guid>' . $item['guid'] . '</guid>' . $lf;
+		}
+		
+		if (isset($item['pubDate'])) {
+		    $data .= ' <pubDate>' . $item['pubDate'] . '</pubDate>' . $lf;
+		}
+		
+		if (isset($item['source'])) {
+		    $data .= ' <source>' . $item['source'] . '</source>' . $lf;
+		}
+		
+		$data .= '</item>'. $lf;
+	    }
 	}
 
-	$data .= '</channel>'. $linefeed.'</rss>';
+	$data .= '</channel>'. $lf.'</rss>';
 	return $data;
     }
 }
