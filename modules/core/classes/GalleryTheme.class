@@ -158,7 +158,7 @@ class GalleryTheme extends GalleryPlugin {
 
 	if (isset($params['rowHeight']) && isset($standard['rowHeight'])) {
 	    $settings[] = array('key' => 'rowHeight',
-				'name' => $this->translate('Row height (pixels)'),
+				'name' => $core->translate('Row height (pixels)'),
 				'type' => 'text-field',
 				'typeParams' => array('size' => 3),
 				'value' => $params['rowHeight']);
@@ -166,7 +166,7 @@ class GalleryTheme extends GalleryPlugin {
 
 	if (isset($params['columnWidth']) && isset($standard['columnWidth'])) {
 	    $settings[] = array('key' => 'columnWidth',
-				'name' => $this->translate('Column width (pixels)'),
+				'name' => $core->translate('Column width (pixels)'),
 				'type' => 'text-field',
 				'typeParams' => array('size' => 3),
 				'value' => $params['columnWidth']);
@@ -296,24 +296,29 @@ class GalleryTheme extends GalleryPlugin {
 	$error = array();
 	$standard = $this->getStandardSettings();
 
+	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret) {
+	    $core = $this;
+	}
+
 	if (isset($standard['rows'])
 		&& (empty($settings['rows']) || !is_numeric($settings['rows']))) {
-	    $error['rows'] = $this->translate('You must enter a number greater than 0');
+	    $error['rows'] = $core->translate('You must enter a number greater than 0');
 	}
 	if (isset($standard['columns'])
 		&& (empty($settings['columns']) || !is_numeric($settings['columns']))) {
-	    $error['columns'] = $this->translate('You must enter a number greater than 0');
+	    $error['columns'] = $core->translate('You must enter a number greater than 0');
 	}
 	if (isset($standard['perPage'])
 		&& (empty($settings['perPage']) || !is_numeric($settings['perPage']))) {
-	    $error['perPage'] = $this->translate('You must enter a number greater than 0');
+	    $error['perPage'] = $core->translate('You must enter a number greater than 0');
 	}
 
 	if (!empty($settings['rowHeight']) && !is_numeric($settings['rowHeight'])) {
-	    $error['rowHeight'] = $this->translate('You must enter a number greater than 0');
+	    $error['rowHeight'] = $core->translate('You must enter a number greater than 0');
 	}
 	if (!empty($settings['columnWidth']) && !is_numeric($settings['columnWidth'])) {
-	    $error['columnWidth'] = $this->translate('You must enter a number greater than 0');
+	    $error['columnWidth'] = $core->translate('You must enter a number greater than 0');
 	}
 
 	foreach (array('sidebarBlocks', 'albumBlocks', 'photoBlocks') as $blockKey) {
@@ -323,7 +328,7 @@ class GalleryTheme extends GalleryPlugin {
 			$this->packSetting('block-list', $settings[$blockKey]);
 		    if (!$success) {
 			$error[$blockKey] =
-			    $this->translate('Format: [module.BlockName param=value] ...');
+			    $core->translate('Format: [module.BlockName param=value] ...');
 		    }
 		}
 	    }
