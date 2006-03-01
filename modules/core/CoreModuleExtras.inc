@@ -1280,6 +1280,7 @@ class CoreModuleExtras {
 	case '1.0.0':
 	case '1.0.0.1':
 	case '1.0.0.2':
+	case '1.0.0.3':
 	    /* Schema only upgrade */
 	    $ret = $storage->configureStore($module->getId(),
 					    array('GalleryPluginParameterMap:1.2'));
@@ -2008,6 +2009,7 @@ $gallery->setConfig(\'cookieId\', \'' . $cookieId . '\');
 	case '1.0.0':
 	case '1.0.0.1':
 	case '1.0.0.2':
+	case '1.0.0.3':
 	case '1.0.1':
 	case '1.0.2':
 	case '1.0.3':
