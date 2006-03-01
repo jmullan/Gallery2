@@ -2,26 +2,27 @@
 /**
  * Usage: php trim-po.php xx_YY.po
  * Prints a copy of xx_YY.po, omitting all translations that match xx.po.
- * Simply prints the given file if not of the form xx_YY.po or xx.po does not exist.
- * For en_* it trims any translations where msgid == msgstr.
+ * If not of form xx_YY.po or xx.po does not exist then trim any translations
+ * where msgid == msgstr (applies mainly to en_*).
+ * Both cases also print warnings for any translation hints that are not
+ * handled in this translation (and will appear in the application).
  */
 $path = $argv[1];
 $langpath = preg_replace('{(..)_..\.po$}', '$1.po', $path);
 
-if ($langpath == 'en.po') {
+if ($langpath == $path || !file_exists($langpath)) {
+    if ($langpath != $path && !in_array($langpath, array('en.po', 'zh.po'))) {
+	fwrite(STDERR, "\nWarning: $path without $langpath\n");
+    }
     list ($po, $header) = readPo($path);
     print $header;
     foreach ($po as $id => $data) {
+	if (strpos($id, '<!--') !== false && $data['msgstr'] == "msgstr \"\"\n") {
+	    fwrite(STDERR, "\nWarning: Unhandled translator hint in $path\n");
+	}
 	if (substr($id, 5) != substr($data['msgstr'], 6)) {
 	    print $data['before'] . $id . $data['msgstr'] . "\n";
 	}
-    }
-    exit;
-}
-if ($langpath == $path || !file_exists($langpath)) {
-    readfile($path);
-    if ($langpath != $path && !in_array($langpath, array('en.po', 'zh.po'))) {
-	fwrite(STDERR, "\nWarning: $path without $langpath\n");
     }
     exit;
 }
