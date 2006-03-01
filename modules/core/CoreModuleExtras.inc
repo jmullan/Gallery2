@@ -1211,6 +1211,9 @@ class CoreModuleExtras {
 	case '1.0.0.1':
 	    /* Security fix in zipcart */
 
+	case '1.0.0.2':
+	    /* Security fix in GalleryUtilities and GallerySession */
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
@@ -1381,6 +1384,7 @@ $gallery->setConfig(\'cookieId\', \'' . $cookieId . '\');
 	case '0.9.37':
 	case '1.0.0':
 	case '1.0.0.1':
+	case '1.0.0.2':
 
 	case 'end of upgrade path':
 	    /*
