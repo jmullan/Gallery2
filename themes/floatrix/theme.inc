@@ -37,126 +37,149 @@ class FloatrixTheme extends GalleryTheme {
      * Constructor
      */
     function FloatrixTheme() {
-	global $gallery;
+        global $gallery;
 
-	$this->setId('floatrix');
-	$this->setName($gallery->i18n('Floatrix'));
-	$this->setDescription($gallery->i18n('Variable column theme based on Matrix'));
-	$this->setVersion('1.0.0');
-	$this->setRequiredCoreApi(array(7, 0));
-	$this->setRequiredThemeApi(array(2, 3));
-	$this->setStandardSettings(
-	    array('perPage' => 12,
-		  'columnWidth' => 200, 'rowHeight' => 300,
-		  'showImageOwner' => 0, 'showAlbumOwner' => 1,
-		  'albumFrame' => '', 'itemFrame' => '', 'photoFrame' => '',
-		  'colorpack' => '',
-		  'showMicroThumbs' => 0,
-		  'sidebarBlocks' => serialize(array(
-			array('search.SearchBlock', array('showAdvancedLink' => true)),
-			array('core.ItemLinks', array('useDropdown' => false)),
-			array('core.PeerList', array()),
-			array('imageblock.ImageBlock', array()))),
-		  'albumBlocks' => serialize(array(
-			array('comment.ViewComments', array()))),
-		  'photoBlocks' => serialize(array(
-			array('exif.ExifInfo', array()),
-			array('comment.ViewComments', array())))));
+        $this->setId('floatrix');
+        $this->setName($gallery->i18n('Floatrix'));
+        $this->setDescription($gallery->i18n('Variable column theme based on Matrix'));
+        $this->setVersion('1.0.0');
+        $this->setRequiredCoreApi(array(7, 0));
+        $this->setRequiredThemeApi(array(2, 3));
+        $this->setStandardSettings(
+            array('perPage' => 12,
+                  'columnWidth' => 200, 'rowHeight' => 300,
+                  'showImageOwner' => 0, 'showAlbumOwner' => 1,
+                  'albumFrame' => '', 'itemFrame' => '', 'photoFrame' => '',
+                  'colorpack' => '',
+                  'showMicroThumbs' => 0,
+                  'sidebarBlocks' => serialize(array(
+                        array('core.ItemLinks', array('useDropdown' => false)),
+                        array('core.PeerList', array()),
+                        array('imageblock.ImageBlock', array()))),
+                  'albumBlocks' => serialize(array(
+                        array('comment.ViewComments', array()))),
+                  'photoBlocks' => serialize(array(
+                        array('exif.ExifInfo', array()),
+                        array('comment.ViewComments', array())))));
     }
-
+    
     /**
      * @see GalleryTheme::validateSettings
      */
     function validateSettings($settings) {
-	$error = parent::validateSettings($settings);
-	if (empty($settings['columnWidth'])) {
-	    $error['columnWidth'] = $this->translate('You must enter a number');
-	}
-	if (empty($settings['rowHeight'])) {
-	    $error['rowHeight'] = $this->translate('You must enter a number');
-	}
-	return $error;
+        $error = parent::validateSettings($settings);
+        if (empty($settings['columnWidth'])) {
+            $error['columnWidth'] = $this->translate('You must enter a number');
+        }
+        if (empty($settings['rowHeight'])) {
+            $error['rowHeight'] = $this->translate('You must enter a number');
+        }
+        return $error;
     }
 
     /**
      * @see GalleryTheme::showAlbumPage
      */
     function showAlbumPage(&$template, $item, $params, $childIds) {
-	$ret = $this->loadCommonTemplateData(
-	    $template, $item, $params,
-	    array('owner', 'viewCount', 'childCount', 'descendentCount', 'parents',
-		  'systemLinks', 'itemLinks', 'itemSummaries', 'permissions',
-		  'thumbnails', 'pageNavigator', 'jumpRange'),
-	     $childIds);
-	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Add our header and styles */
-	return array(null, 'theme.tpl');
+        $ret = $this->loadCommonTemplateData(
+            $template, $item, $params,
+            array('owner', 'viewCount', 'childCount', 'descendentCount', 'parents',
+              'systemLinks', 'itemLinks', 'itemSummaries', 'permissions',
+              'thumbnails', 'pageNavigator', 'jumpRange'),
+             $childIds);
+        if ($ret) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+        $ret = $this->preloadBlock($template, 'search.SearchBlock');
+        if ($ret) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+        
+        $theme =& $template->getVariableByReference('theme');
+        $userViews = array(
+            'slideshow.Slideshow' => true,
+            'slideshowapplet.SlideshowApplet' => true,
+            'comment.AddComment' => true,
+            'comment.ShowAllComments' => true,
+            'rss.SimpleRender' => true,
+        );
+        $theme['userLinks'] = array();
+        foreach ($theme['itemLinks'] as $i => $link) {
+            if (isset($userViews[$link['params']['view']])) {
+            $theme['userLinks'][] = $link;
+            unset($theme['itemLinks'][$i]);
+            }
+        }
+        
+    /* Add our header and styles */
+    return array(null, 'theme.tpl');
     }
 
     /**
      * @see GalleryTheme::showPhotoPage
      */
     function showPhotoPage(&$template, $item, $params) {
-	$dataTypes = array('owner', 'parents', 'systemLinks', 'itemLinks', 'permissions',
-			   'itemLinksDetailed', 'itemNavigator', 'imageViews');
-	if (!empty($params['showMicroThumbs'])) {
-	    $dataTypes[] = 'navThumbnails';
-	}
-	$ret = $this->loadCommonTemplateData($template, $item, $params, $dataTypes);
-	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+        $dataTypes = array('owner', 'parents', 'systemLinks', 'itemLinks', 'permissions',
+                           'itemLinksDetailed', 'itemNavigator', 'imageViews');
+        if (!empty($params['showMicroThumbs'])) {
+            $dataTypes[] = 'navThumbnails';
+        }
+        $ret = $this->loadCommonTemplateData($template, $item, $params, $dataTypes);
+        if ($ret) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+        $ret = $this->preloadBlock($template, 'search.SearchBlock');
+        if ($ret) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
 
-	return array(null, 'theme.tpl');
+        return array(null, 'theme.tpl');
     }
-
+    
     /**
      * @see GalleryTheme::showModulePage
      */
     function showModulePage(&$template, $item, $params, $templateFile) {
-	$ret = $this->loadCommonTemplateData(
-	    $template, $item, $params, array('parents', 'systemLinks'));
-	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+        $ret = $this->loadCommonTemplateData(
+            $template, $item, $params, array('parents', 'systemLinks'));
+        if ($ret) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
 
-	return array(null, 'theme.tpl');
+        return array(null, 'theme.tpl');
     }
 
     /**
      * @see GalleryTheme::showAdminPage
      */
     function showAdminPage(&$template, $item, $params, $templateFile) {
-	$ret = $this->loadCommonTemplateData(
-	    $template, $item, $params, array('parents', 'systemLinks'));
-	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+        $ret = $this->loadCommonTemplateData(
+            $template, $item, $params, array('parents', 'systemLinks'));
+        if ($ret) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
 
-	return array(null, 'theme.tpl');
+        return array(null, 'theme.tpl');
     }
 
     /**
      * @see GalleryTheme::showErrorPage
      */
     function showErrorPage(&$template) {
-	return array(null, 'error.tpl');
+        return array(null, 'error.tpl');
     }
 
     /**
      * @see GalleryTheme::showProgressBarPage
      */
     function showProgressBarPage(&$template, $item, $params) {
-	$ret = $this->loadCommonTemplateData(
-	    $template, $item, $params, array('parents', 'systemLinks'));
-	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+        $ret = $this->loadCommonTemplateData(
+            $template, $item, $params, array('parents', 'systemLinks'));
+        if ($ret) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
 
-	return array(null, 'theme.tpl');
+        return array(null, 'theme.tpl');
     }
 }
 ?>

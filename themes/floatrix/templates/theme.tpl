@@ -17,6 +17,7 @@
 
     {* Include this theme's style sheet *}
     <link rel="stylesheet" type="text/css" href="{g->theme url="theme.css"}"/>
+    <script type="text/javascript" src="{g->theme url="functions.js"}"></script>
   </head>
   <body class="gallery">
     <div {g->mainDivAttributes}>
@@ -44,7 +45,21 @@
 	</div>
       </div>
 
-      {* Include the appropriate content type for the page we want to draw. *}
+    {* Add the sidebar menu to pages but not admin pages. *}
+    {if !empty($theme.params.sidebarBlocks) && $theme.pageType != 'admin' && $theme.pageType != 'progressbar'}
+    <div id="showSidebarTab">
+    <a href="javascript:return true;" onclick="MM_changeProp('gsSidebarCol','','style.display','block','DIV');
+        MM_changeProp('showSidebarTab','','style.display','none','DIV');
+	return false;"
+        style="display: block; width: 21px; height: 151px;">
+      <img id="sideBarTab" src="{$theme.themeUrl}/images/tab_open_sidebar.gif" alt="Show album options"/></a>
+    </div>
+    <div id="gsSidebarCol">
+      {g->theme include="sidebar.tpl"}
+    </div>
+    {/if}
+    
+    {* Include the appropriate content type for the page we want to draw. *}
       {if $theme.pageType == 'album'}
 	{g->theme include="album.tpl"}
       {elseif $theme.pageType == 'photo'}

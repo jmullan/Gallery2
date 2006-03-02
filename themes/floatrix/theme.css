@@ -17,7 +17,7 @@
 }
 
 .gbBlock {
-    padding: 0.7em;
+    padding: 0.7em 0.7em 0.7em 3.0em;
     border-width: 0 0 1px 0;
     border-style: inherit;
     border-color: inherit;
@@ -95,11 +95,12 @@ body.gallery {
     padding: 0;
 }
 
-#gallery {
-    padding: 8px;
-}
 #gallery.rtl {
     direction: rtl;
+}
+
+#gsHeader {
+    padding: 4px 6px;    
 }
 
 #gsNavBar {
@@ -115,14 +116,78 @@ body.gallery {
     padding: 0 4px;
 }
 
+#gsSidebarCol {
+    position: absolute;
+    z-index: 100;
+    display: none;
+    margin: 0;
+    padding: 0;
+    width: 196px;
+    cursor: move;
+}
+
+/*
+  hack for ie<6 problem with select elements not respecting z-index
+  http://www.hedgerwow.com/360/bugs/css-select-free.html
+*/
+#gsSidebarCol iframe {
+    position:absolute;
+    top:0;
+    left:0;
+    z-index:-1;
+    filter:alpha(opacity:0);
+    width:200px;
+    height:800px;
+}
+
+#showSidebarTab {
+   position: absolute;
+   left: 0;
+   display: block;
+   z-index: 200;
+}
+
+#hideSidebarTab {
+    z-index: 200;
+    display: block;
+}
+
 #gsSidebar {
-    border-right-width: 1px;
+    position: absolute;
+    background: #E0E3EF;
     width: 175px;
+    margin: 0;
+    padding: 0;
+    border: 4px solid #828CB7;
+    border-left: none;
     overflow: hidden;
 }
-#gsSidebarCol {
-    width: 1%; /* Expand to fit content ("0" bad4 firefox, "1px" bad4 opera) */
+
+#gsSidebar .gbBlock {
+    padding: 8px;
 }
+
+td#gsSidebarCol {
+    display: inline;
+    position: relative;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    width: 175px;
+}
+
+/* ie6 doesn't handle this properly and won't read it */
+html>body td#gsSidebarCol {
+    display: table-cell;
+}
+
+td#gsSidebarCol #gsSideBar {
+    width: 175px;
+}
+
+#gsContent {
+    margin: 0;
+}    
 
 div.giAlbumCell, div.giItemCell {
     float: left;
@@ -130,7 +195,7 @@ div.giAlbumCell, div.giItemCell {
     margin: 0.2em;
     padding: 1em;
     text-align: center;
-    overflow: auto;
+    overflow: hidden;
 }
 
 div.giAlbumCell table, div.giItemCell table {
@@ -158,8 +223,8 @@ td.giAlbumCell table, td.giItemCell table {
 }
 
 /* ********************************************************************************
- * Matrix Theme for Gallery 2
- * by Ross A. Reyman, Jon Huang, and Chad Kieffer
+ * Floatrix Theme for Gallery 2, based on Matrix
+ * by Chad Kieffer
  * updated by Alan Harder
  */
 
@@ -252,6 +317,11 @@ body.gallery {
     font-size: 1.2em;
 }
 
+#gbSearch {
+    float: right;
+    margin: 0 8px 0 1.0em;
+}
+
 .giSubtitle {
     font-size: 0.9em;
     font-weight: normal;
@@ -261,6 +331,7 @@ body.gallery {
 .giDescription {
     font-size: 1.1em;
     line-height: 1.4em;
+    margin-top: 1.2em;
 }
 
 .gbEmptyAlbum {
@@ -278,7 +349,13 @@ body.gallery {
 }
 
 .giInfo span.summary {
+    display: inline;
+    margin-right: 2.0em;
+}
+
+.giAlbumCell span.summary, .giItemCell span.summary {
     display: block;
+    margin-right: 0;
 }
 
 .giSuccess, .giWarning, .giError  {
@@ -313,7 +390,16 @@ body.gallery {
 }
 
 #gsThumbMatrix {
-    width: 100%;
+    width: auto;
+}
+
+#gsImageViewContainer {
+    margin: 0 auto;
+    padding: 0;
+}
+
+#gsImageViewContainer img {
+    margin: 0;
 }
 
 #gallery.IE div.gbBreadCrumb span {
@@ -347,15 +433,15 @@ table.gbDataTable th {
 div.gbTabBar {
     font-size: 0.9em;
     font-weight: bold;
-    margin: 0.8em 0 0;
+    margin: 0.8em 0 0 3.0em;
     padding: 6px;
-    background: url('../matrix/images/tab_bg.gif') repeat-x bottom;
+    background: url('../floatrix/images/tab_bg.gif') repeat-x bottom;
     white-space: nowrap;
 }
 
 div.gbTabBar span.o {
     padding: 6px 0 5px 8px;
-    background: url('../matrix/images/tab_left.jpg') no-repeat left top;
+    background: url('../floatrix/images/tab_left.jpg') no-repeat left top;
 }
 #gallery.IE div.gbTabBar span.o {
     display: inline-block;   /* IE loses padding-left on wrapped inline nowrap element */
@@ -367,7 +453,7 @@ div.gbTabBar span.o {
 
 #gallery div.gbTabBar span span {
     padding: 6px 12px 5px 4px;
-    background: url('../matrix/images/tab_right.jpg') no-repeat right top;
+    background: url('../floatrix/images/tab_right.jpg') no-repeat right top;
 }
 
 #gallery div.gbTabBar a {
@@ -381,13 +467,13 @@ div.gbTabBar span.o {
 
 #gallery div.gbTabBar span.giSelected {
     padding-bottom: 6px;
-    background-image: url('../matrix/images/tab_left_on.jpg');
+    background-image: url('../floatrix/images/tab_left_on.jpg');
 }
 
 #gallery div.gbTabBar span.giSelected span {
     color: #333;
     padding-bottom: 6px;
-    background-image: url('../matrix/images/tab_right_on.jpg');
+    background-image: url('../floatrix/images/tab_right_on.jpg');
 }
 
 .autoCompleteBackground {
@@ -458,17 +544,17 @@ div.gbTabBar span.o {
 }
 
 #giFormUsername, .giFormUsername {
-    background: url('../matrix/images/userinfo.png') no-repeat 0 1px;
+    background: url('../floatrix/images/userinfo.png') no-repeat 0 1px;
     padding-left: 17px;
 }
 
 #giFormGroupname {
-    background: url('../matrix/images/groupinfo.png') no-repeat 0 1px;
+    background: url('../floatrix/images/groupinfo.png') no-repeat 0 1px;
     padding-left: 17px;
 }
 
 #giFormPassword {
-    background: url('../matrix/images/key7-16-bw.gif') no-repeat 0 1px;
+    background: url('../floatrix/images/key7-16-bw.gif') no-repeat 0 1px;
     padding-left: 17px;
 }
 
@@ -562,6 +648,10 @@ div.gbNavigator div.next-and-last img {
 div.block-search-SearchBlock a.advanced {
   display: block;
   padding: 3px;
+}
+
+.block-core-ItemInfo {
+    margin-top: 1.2em;
 }
 
 div.block-core-ItemLinks {
@@ -660,12 +750,18 @@ td.bsw_BlockCommands {
   text-align: center;
 }
 
+.gbAlbumBlock {
+    margin: 0 1.0em 1.0em 2.0em;
+}
+
 #gsFooter {
   padding-top: 4px;
+  float: right;
+  clear: both;
 }
 
 /* ********************************************************************************
- * Rating module style fix for Matrix
+ * Rating module style fix for Floatrix
  */
 .giRatingUI {
     margin: 10px auto; /* Required to center default rating module star images */
