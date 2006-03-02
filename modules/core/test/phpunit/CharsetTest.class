@@ -357,6 +357,28 @@ class CharsetTest extends GalleryTestCase {
 	GalleryCapabilities::set('systemCharset', null);
     }
 
+    function testDetectSourceEncodingWithOpenBSDBug() {
+	/* nl_langinfo(CODESET) on OpenBSD 3.7 returns the wrong value (D_T_FMT value instead) */
+	global $gallery;
+
+	/* On windows boxes, we don't have the CODESET constant, so fake it */
+	if (!defined('CODESET')) {
+	    define('CODESET', 'CODESET');
+	}
+	if (!defined('D_T_FMT')) {
+	    define('D_T_FMT', 'D_T_FMT');
+	}
+
+	$phpVm = new CharsetTestPhpVm();
+	$phpVm->setFunctionExists('nl_langinfo', true);
+	$phpVm->setReturn('nl_langinfo', array(CODESET), '%a %b %d %H:%M:%S %Y');
+	$phpVm->setReturn('nl_langinfo', array(D_T_FMT), '%a %b %d %H:%M:%S %Y');
+	$phpVm->setReturn('setlocale', array(LC_ALL, '0'),
+			  'LC_CTYPE=en_US.UTF-8;LC_NUMERIC=C;LC_TIME=C');
+	$gallery->_phpVm = $phpVm;
+	$this->assertEquals('UTF-8', GalleryCharsetHelper_simple::detectSystemCharset());
+    }
+
     function testConvertToUtf8SystemCharset() {
 	global $gallery;
 
@@ -430,37 +452,37 @@ class CharsetTestPhpVm {
     }
 
     function setReturn($function, $args, $return) {
-	$this->_returns[$function] = array($args, $return);
+	$this->_returns[$function][implode(',', $args)] = $return;
     }
 
     function iconv($arg1, $arg2, $arg3) {
-	if ($this->_returns['iconv'][0] == array($arg1, $arg2, $arg3)) {
-	    return $this->_returns['iconv'][1];
+	if (isset($this->_returns['iconv']["$arg1,$arg2,$arg3"])) {
+	    return $this->_returns['iconv']["$arg1,$arg2,$arg3"];
 	}
 	return false;
     }
 
     function mb_convert_encoding($arg1, $arg2, $arg3) {
-	if ($this->_returns['mb_convert_encoding'][0] == array($arg1, $arg2, $arg3)) {
-	    return $this->_returns['mb_convert_encoding'][1];
+	if (isset($this->_returns['mb_convert_encoding']["$arg1,$arg2,$arg3"])) {
+	    return $this->_returns['mb_convert_encoding']["$arg1,$arg2,$arg3"];
 	}
     }
 
     function recode_string($arg1, $arg2) {
-	if ($this->_returns['recode_string'][0] == array($arg1, $arg2)) {
-	    return $this->_returns['recode_string'][1];
+	if (isset($this->_returns['recode_string']["$arg1,$arg2"])) {
+	    return $this->_returns['recode_string']["$arg1,$arg2"];
 	}
     }
 
     function nl_langinfo($item) {
-	if ($this->_returns['nl_langinfo'][0] == array($item)) {
-	    return $this->_returns['nl_langinfo'][1];
+	if (isset($this->_returns['nl_langinfo'][$item])) {
+	    return $this->_returns['nl_langinfo'][$item];
 	}
     }
 
     function setlocale($category, $locale) {
-	if ($this->_returns['setlocale'][0] == array($category, $locale)) {
-	    return $this->_returns['setlocale'][1];
+	if (isset($this->_returns['setlocale']["$category,$locale"])) {
+	    return $this->_returns['setlocale']["$category,$locale"];
 	}
     }
 }
