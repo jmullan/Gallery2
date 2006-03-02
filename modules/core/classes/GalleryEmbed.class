@@ -102,6 +102,7 @@ class GalleryEmbed {
 
 	/* Only InitFirstPass if not already done so in a prior call */
 	if (!GalleryDataCache::containsKey($firstCacheKey)) {
+	    GalleryEmbed::_saveState();
 	    if (isset($initParams['embedUri'])) {
 		$initParams['baseUri'] = $initParams['embedUri'];
 		unset($initParams['embedUri']);
@@ -167,6 +168,7 @@ class GalleryEmbed {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
+	GalleryEmbed::_restoreState();
 	return null;
     }
 
@@ -187,7 +189,9 @@ class GalleryEmbed {
      * @static
      */
     function handleRequest() {
-	return GalleryMain(true);
+	$result = GalleryMain(true);
+	GalleryEmbed::_restoreState();
+	return $result;
     }
 
     /**
@@ -279,6 +283,7 @@ class GalleryEmbed {
 	    $hasSession = GalleryUtilities::hasRequestVariable(SESSION_ID_PARAMETER);
 	}
 	if (!empty($hasSession)) {
+	    GalleryEmbed::_saveState();
 	    $ret = GalleryInitFirstPass($params);
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -308,6 +313,24 @@ class GalleryEmbed {
 	global $gallery;
 	$session =& $gallery->getSession();
 	return $session->getId();
+    }
+
+    /**
+     * Save any state we'd like to restore after G2 processing.
+     */
+    function _saveState() {
+	if (isset($GLOBALS['ADODB_FETCH_MODE'])) {
+	    GalleryDataCache::put('GalleryEmbed::ADODB_FETCH_MODE', $GLOBALS['ADODB_FETCH_MODE']);
+	}
+    }
+
+    /**
+     * Restore state before returning control to embedding app.
+     */
+    function _restoreState() {
+	if (GalleryDataCache::containsKey('GalleryEmbed::ADODB_FETCH_MODE')) {
+	    $GLOBALS['ADODB_FETCH_MODE'] = GalleryDataCache::get('GalleryEmbed::ADODB_FETCH_MODE');
+	}
     }
 
     /**
