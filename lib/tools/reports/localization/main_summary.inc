@@ -25,7 +25,7 @@
 	      <td class="dark">
 		<?php print $locale ?>
 	      </td>
-	      <td class="locale_percent" style="background-color:<?php
+	      <td class="locale_percent" style="background-color:#<?php
 		  print percentColor($localeData['percentDone']) ?>">
 		<?php print round($localeData['percentDone']) ?>%
 	      </td>

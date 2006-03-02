@@ -24,7 +24,7 @@
 		<?php print $locale ?>
 	      </td>
 	      <td rowspan="<?php print sizeof($localeData['plugins'])?>" class="locale_percent"
-		  style="background-color:<?php print percentColor($localeData['percentDone']) ?>">
+		  style="background-color:#<?php print percentColor($localeData['percentDone']) ?>">
 		<?php print round($localeData['percentDone']) ?>%
 	      </td>
 	      <?php $keys = array_keys($localeData['plugins']); ?>

@@ -2,7 +2,7 @@
 	    <td class="<?php print modifier('plugin') ?>">
 	      <?php print $plugin ?>
 	    </td>
-	    <td style="background-color:<?php print percentColor($pluginData['percentDone']) ?>">
+	    <td style="background-color:#<?php print percentColor($pluginData['percentDone']) ?>">
 	      <?php print round($pluginData['percentDone']) ?>%
 	    </td>
 
