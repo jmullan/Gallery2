@@ -62,7 +62,7 @@ class FloatrixTheme extends GalleryTheme {
 			array('exif.ExifInfo', array()),
 			array('comment.ViewComments', array())))));
     }
-    
+
     /**
      * @see GalleryTheme::validateSettings
      */
@@ -94,7 +94,7 @@ class FloatrixTheme extends GalleryTheme {
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	$theme =& $template->getVariableByReference('theme');
 	$userViews = array(
 	    'slideshow.Slideshow' => true,
@@ -110,9 +110,8 @@ class FloatrixTheme extends GalleryTheme {
 	    unset($theme['itemLinks'][$i]);
 	    }
 	}
-	
-    /* Add our header and styles */
-    return array(null, 'theme.tpl');
+
+	return array(null, 'theme.tpl');
     }
 
     /**
@@ -135,7 +134,7 @@ class FloatrixTheme extends GalleryTheme {
 
 	return array(null, 'theme.tpl');
     }
-    
+
     /**
      * @see GalleryTheme::showModulePage
      */
