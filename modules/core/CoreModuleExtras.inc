@@ -44,6 +44,7 @@ class CoreModuleExtras {
     function upgrade($module, $currentVersion, $statusMonitor) {
 	global $gallery;
 	$storage =& $gallery->getStorage();
+	$platform =& $gallery->getPlatform();
 	$gallery->debug('Entering CoreModuleExtras::upgrade');
 
 	/*
@@ -69,8 +70,10 @@ class CoreModuleExtras {
 		$currentVersion = '0';
 	    }
 	}
-
-	$platform =& $gallery->getPlatform();
+	if (substr($currentVersion, 0, 6) == '1.0.0.') {
+	    /* Enable upgrade from any Gallery 2.0.x version */
+	    $currentVersion = '1.0.0.x';
+	}
 
 	/**
 	 * README: How to update the block below.
@@ -1278,9 +1281,7 @@ class CoreModuleExtras {
 	    /* 2.0 Release! */
 
 	case '1.0.0':
-	case '1.0.0.1':
-	case '1.0.0.2':
-	case '1.0.0.3':
+	case '1.0.0.x':
 	    /* Schema only upgrade */
 	    $ret = $storage->configureStore($module->getId(),
 					    array('GalleryPluginParameterMap:1.2'));
