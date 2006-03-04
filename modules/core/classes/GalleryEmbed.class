@@ -635,6 +635,15 @@ class GalleryEmbed {
      * @static
      */
     function searchScan($searchString, $resultsPerModule=3) {
+    	global $gallery;
+    	
+    	$session =& $gallery->getSession();
+	$ret = $session->start();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$session->doNotUseTempId();
+	
 	GalleryCoreApi::requireOnce('modules/search/classes/SearchUtilities.class');
 	$searchInstances = $searchResults = array();
 	list ($ret, $ids) =
@@ -686,6 +695,15 @@ class GalleryEmbed {
      * @static
      */
     function search($searchString, $moduleId, $offset, $count) {
+    	global $gallery;
+    	
+    	$session =& $gallery->getSession();
+	$ret = $session->start();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$session->doNotUseTempId();
+	
 	GalleryCoreApi::requireOnce('modules/search/classes/SearchUtilities.class');
 	list ($ret, $searchInstance) =
 	    GalleryCoreApi::newFactoryInstanceById('GallerySearchInterface_1_0', $moduleId);
@@ -778,6 +796,14 @@ class GalleryEmbed {
 	global $gallery;
 	$moduleId = 'imageblock';
 	$blockHtml = $headHtml = null;
+
+    	$session =& $gallery->getSession();
+	$ret = $session->start();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+	$session->doNotUseTempId();
+	
 
 	/* Load the module list */
 	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
