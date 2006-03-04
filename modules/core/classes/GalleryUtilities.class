@@ -795,7 +795,7 @@ class GalleryUtilities {
     function unsanitizeInputValues(&$value, $adaptForMagicQuotes=true) {
 	if (is_array($value)) {
 	    foreach (array_keys($value) as $key) {
-		GalleryUtilities::unsanitizeInputValues($value[$key]);
+		GalleryUtilities::unsanitizeInputValues($value[$key], $adaptForMagicQuotes);
 	    }
 	} else {
 	    /* Unsanitize dangerous html entities */
