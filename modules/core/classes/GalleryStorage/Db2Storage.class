@@ -96,6 +96,7 @@ class Db2Storage extends GalleryStorage {
 	$statements[] = 'DROP FUNCTION BIT_AND(SMALLINT, SMALLINT)';
 	$statements[] = 'DROP FUNCTION G2_LIKE(VARCHAR(8000), VARCHAR(8000))';
 	$statements[] = 'DROP FUNCTION G2_BIT_OR(INTEGER, VARCHAR(32))';
+	$statements[] = "CALL SQLJ.REMOVE_JAR('g2_db2_jar')";
 	/*
 	 * These SQLJ.*_JAR() calls blow up, looks like CLI can't handle it
 	 * $recordSet5 = $tmpDb->Execute("CALL SQLJ.REMOVE_JAR ('g2_db2_jar')");
@@ -120,13 +121,43 @@ class Db2Storage extends GalleryStorage {
 	if ($moduleId == 'core') {
 	    global $gallery;
 
-	    /* Create our user-defined DB2 functions */
+	    /*
+	     *  Create our user-defined DB2 functions
+	     *   1) Create a temporary database connection
+	     *   2) Register the Jar file
+	     *   3) Create/Catalog the UDFs
+	     *   4) Disconnect from the database
+	     */
 	    $platform =& $gallery->getPlatform();
 	    $slash = $platform->getDirectorySeparator();
+	   
+	    /* 1) Create a temporary database connection */
+	    list ($ret, $tmpDb) = $this->_getConnection(true);
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    /* 
+	     * 2) Register the Jar file (use ODBC delimiters, see 
+	     *    http://gallery.menalto.com/node/37648?from=850#comment-172690) 
+	     */
+	    $sql = "{CALL SQLJ.INSTALL_JAR('file:" . dirname(__FILE__) . $slash .
+		    "g2_db2.jar',  'g2_db2_jar')}";
+	    $this->_traceStart();
+	    $recordSet = $tmpDb->Execute($sql);
+	    $this->_traceStop();
+	    if (empty($recordSet)) {
+		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+	    }
+
+	    /* 3) Create/Catalog the UDFs */
 	    $ret = $this->_executeSqlFile(dirname(__FILE__) . $slash . 'Db2CreateUdfs.sql');
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+
+	    /* 4) Disconnect from the database */
+	    $tmpDb->Close();
 
 	    /*
 	     * XXX: At some point figure out a way to detect if the UDFs are
