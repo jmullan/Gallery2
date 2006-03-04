@@ -19,11 +19,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 /**
  * @version $Revision$ $Date$
  * @package GalleryCore
- * @subpackage Classes
  * @author Alan Harder <alan.harder@sun.com>
  */
 
@@ -35,7 +33,6 @@ GalleryCoreApi::requireOnce('modules/core/AdminMaintenance.inc');
  *
  * @package GalleryCore
  * @subpackage Classes
- *
  */
 class SystemInfoTask extends MaintenanceTask {
 
@@ -76,6 +73,19 @@ class SystemInfoTask extends MaintenanceTask {
 	    $toolkitList = $core->translate('unknown');
 	}
 
+	list ($ret, $acceleration) = $core->getParameter('acceleration');
+	if (!$ret) {
+	    $acceleration = unserialize($acceleration);
+	    $acceleration = $acceleration['guest']['type']
+		. (isset($acceleration['guest']['expiration'])
+			? '/' . $acceleration['guest']['expiration'] : '') . ', '
+		. $acceleration['user']['type']
+		. (isset($acceleration['user']['expiration'])
+			? '/' . $acceleration['user']['expiration'] : '');
+	} else {
+	    $acceleration = $core->translate('unknown');
+	}
+
 	$info = array(
 	    $core->translate('Gallery version') . ' = ' . $version,
 	    $core->translate('PHP version') . ' = ' . phpversion() . ' ' . php_sapi_name(),
@@ -84,6 +94,7 @@ class SystemInfoTask extends MaintenanceTask {
 	    $core->translate('Database') . ' = ' .
 		$storage->getAdoDbType() . ' ' . @$storage->getVersion(),
 	    $core->translate('Toolkits') . ' = ' . $toolkitList,
+	    $core->translate('Acceleration') . ' = ' . $acceleration,
 	    $core->translate('Operating system') . ' = ' . php_uname(),
 	    $core->translate('Browser') . ' = ' . GalleryUtilities::getServerVar('HTTP_USER_AGENT')
 	);
