@@ -188,10 +188,20 @@ class UpgradeCoreModuleStep extends UpgradeStep {
 		    }
 		} else {
 		    if (!GalleryCoreApi::isPluginCompatibleWithApis($theme)) {
+                        continue;
+                        /**
+                         * 'continue' added on 2006-03-05 to allow upgrades with incompatible
+                         * themes installed.  This will allow users to upgrade and then select a new
+                         * theme if necessary instead of locking upgrade completely.
+                         *
+                         * Previous code follows
+                         */
+                        /*
 			$results['theme'][$themeId] =
 			    array('incompatible' => array(
 				      'theme' => $theme->getRequiredThemeApi(),
-				      'core' => $theme->getRequiredCoreApi()));
+                                      'core' => $theme->getRequiredCoreApi()));
+                        */
 		    }
 		}
 	    }
