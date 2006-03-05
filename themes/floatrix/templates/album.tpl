@@ -4,32 +4,36 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-
-      <div id="gsContent" class="gcBorder1">
+      <div id="gsContent">
         <div class="gbBlock gcBackground1">
-            <div id="gbSearch">
+          <div id="gbSearch">
             {g->block type="search.SearchBlock"}
-            </div>
+          </div>
 
-            {if !empty($theme.item.title)}
-            <h2> {$theme.item.title|markup} </h2>
-            {/if}
-            {if !empty($theme.item.description)}
-            <p class="giDescription">
-              {$theme.item.description|markup}
-            </p>
-            {/if}
+          {if !empty($theme.item.title)}
+          <h2> {$theme.item.title|markup} </h2>
+          {/if}
+          {if !empty($theme.item.description)}
+          <p class="giDescription">
+            {$theme.item.description|markup}
+          </p>
+          {/if}
 
-            {g->block type="core.ItemInfo"
-                      item=$theme.item
-                      showDate=true
-                      showSize=true
-                      showOwner=true
-                      class="giInfo"}
+          {g->block type="core.ItemInfo"
+                    item=$theme.item
+                    showDate=true
+                    showSize=true
+                    showOwner=true
+                    class="giInfo"}
         </div>
 
         {if !empty($theme.navigator)}
         <div class="gbBlock gcBackground2 gbNavigator">
+          {if !empty($theme.jumpRange)}
+        <div class="gbPager">
+          {g->block type="core.Pager"}
+        </div>
+          {/if}
           {g->block type="core.Navigator" navigator=$theme.navigator reverseOrder=true}
         </div>
         {/if}
@@ -115,19 +119,18 @@
         {* Show any other album blocks (comments, etc) *}
         {foreach from=$theme.params.albumBlocks item=block}
         <div class="gbAlbumBlock">
-        {g->block type=$block.0 params=$block.1}
+          {g->block type=$block.0 params=$block.1}
         </div>
         {/foreach}
 
         {if !empty($theme.navigator)}
         <div class="gbBlock gcBackground2 gbNavigator">
-          {g->block type="core.Navigator" navigator=$theme.navigator reverseOrder=true}
-        </div>
-        {/if}
-
-        {if !empty($theme.jumpRange)}
-        <div id="gsPages" class="gbBlock gcBackground1">
+          {if !empty($theme.jumpRange)}
+        <div class="gbPager">
           {g->block type="core.Pager"}
+        </div>
+          {/if}
+          {g->block type="core.Navigator" navigator=$theme.navigator reverseOrder=true}
         </div>
         {/if}
 
