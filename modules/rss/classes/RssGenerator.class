@@ -251,7 +251,9 @@ class RssGenerator {
 		    '</title>' . $lf .
 		    ' <link>' . $item['link'] . '</link>' . $lf .
 		    ' <guid isPermaLink="false">' . $item['link'] . '</guid>' . $lf .
-		    ' <description><![CDATA[' . $item['description'] . ']]></description>' . $lf;
+		    ' <description>' .
+		    $this->cdata(GalleryUtilities::markup($item['description']))
+		    . '</description>' . $lf;
 
 		if (isset($item['author'])) {
 		    $data .= ' <author>' . GalleryUtilities::markup($item['author']) .
