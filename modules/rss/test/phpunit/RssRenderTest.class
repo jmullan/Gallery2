@@ -227,15 +227,15 @@ class RssRenderTest extends GalleryControllerTestCase {
 		'Header: Content-type: text/xml; charset=UTF-8',
 		'<rss version="2.0">',
 		'<channel>',
-		'<title>I am Jack\'s title</title>',
+		'<title><![CDATA[I am Jack\'s title]]></title>',
 		'<link>url:' . $this->_root->getId() . '</link>',
-		'<description>This is my description</description>',
+		'<description><![CDATA[This is my description]]></description>',
 		'<language>en-us</language>',
 		'<generator>Gallery 2 RSS Module, version ' . $version . '</generator>',
 		'<lastBuildDate>' . date('r', 1234567890) . '</lastBuildDate>',
 		'<ttl>120</ttl>',
 		'<item>',
-		' <title>I am Jack\'s title</title>',
+		' <title><![CDATA[I am Jack\'s title]]></title>',
 		' <link>url:' . $this->_album->getId() . '</link>',
 		' <guid isPermaLink="false">url:' . $this->_album->getId() . '</guid>',
 		' <description><![CDATA[This is my description]]></description>',
@@ -279,15 +279,15 @@ class RssRenderTest extends GalleryControllerTestCase {
 		'Header: Content-type: text/xml; charset=UTF-8',
 		'<rss version="2.0">',
 		'<channel>',
-		'<title>I am Jack\'s title</title>',
+		'<title><![CDATA[I am Jack\'s title]]></title>',
 		'<link>url:' . $this->_root->getId() . '</link>',
-		'<description>This is my description</description>',
+		'<description><![CDATA[This is my description]]></description>',
 		'<language>en-us</language>',
 		'<generator>Gallery 2 RSS Module, version ' .$version . '</generator>',
 		'<lastBuildDate>' . date('r', 1234567890) . '</lastBuildDate>',
 		'<ttl>120</ttl>',
 		'<item>',
-		' <title>I am Jack\'s title</title>',
+		' <title><![CDATA[I am Jack\'s title]]></title>',
 		' <link>url:' . $this->_item1->getId() . '</link>',
 		' <guid isPermaLink="false">url:' . $this->_item1->getId() . '</guid>',
 		' <description><![CDATA[This is a description]]></description>',
@@ -298,7 +298,6 @@ class RssRenderTest extends GalleryControllerTestCase {
 		'</rss>'),
 	    split($platform->getLineEnding(), $results));
     }
-
 }
 
 class RenderViewTestUrlGenerator {

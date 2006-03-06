@@ -138,38 +138,41 @@ class RssGenerator {
      */
     function generate091() {
 	global $gallery;
-	
+
 	if (!isset($this->_properties['title']) ||
 	    !isset($this->_properties['link']) ||
 	    !isset($this->_properties['description']) ||
 	    !count($this->_items))
 	    return '';
-	
+
 	$platform =& $gallery->getPlatform();
 	$lf = $platform->getLineEnding();
 
 	$data = '<?xml version="1.0"?>' . $lf .
-	    '<!DOCTYPE rss SYSTEM "http://my.netscape.com/publish/formats/rss-0.91.dtd">' . $lf . 
+	    '<!DOCTYPE rss SYSTEM "http://my.netscape.com/publish/formats/rss-0.91.dtd">' . $lf .
 	    '<rss version="0.91"><channel>' . $lf .
-	    '<title>' . GalleryUtilities::markup($this->_properties['title']) . '</title>' . $lf .
+	    '<title>' . $this->cdata(GalleryUtilities::markup($this->_properties['title'])) .
+	    '</title>' . $lf .
 	    '<link>' . $this->_properties['link'] . '</link>' . $lf .
-	    '<description>' . GalleryUtilities::markup($this->_properties['description']) . 
+	    '<description>' .
+	    $this->cdata(GalleryUtilities::markup($this->_properties['description'])) .
 	    '</description>' . $lf .
-	    (isset($this->_properties['language']) ? 
+	    (isset($this->_properties['language']) ?
 	    	'<language>' . $this->_properties['language'] .
 		'</language>' : '') . $lf .
 	    (!empty($this->_properties['copyright']) ?
-		'<copyright>' . GalleryUtilities::markup($this->_properties['copyright']) . 
+		'<copyright>' . GalleryUtilities::markup($this->_properties['copyright']) .
 		'</copyright>' : '');
 
 	if (isset($this->_properties['webmaster'])) {
-	    $data .= '<webMaster>' . GalleryUtilities::markup($this->_properties['webmaster']) . 
+	    $data .= '<webMaster>' . GalleryUtilities::markup($this->_properties['webmaster']) .
 	    '</webMaster>'. $lf ;
 	}
 
 	if (isset($this->_properties['image'])) {
 	    $data .= '<image>' . $lf .
-		' <title>' . GalleryUtilities::markup($this->_properties['image']['title']) . 
+		' <title>' .
+		$this->cdata(GalleryUtilities::markup($this->_properties['image']['title'])) .
 		'</title>' . $lf .
 		' <link>' . $this->_properties['image']['link'] . '</link>' . $lf .
 		' <url>' . $this->_properties['image']['url'] . '</url>' . $lf .
@@ -179,9 +182,10 @@ class RssGenerator {
 	foreach ($this->_items as $item) {
 	    if (isset($item['title'])) {
 		$data .= '<item>' . $lf .
-		    ' <title>' . GalleryUtilities::markup($item['title']) . '</title>' . $lf .
+		    ' <title>' . $this->cdata(GalleryUtilities::markup($item['title'])) .
+		    '</title>' . $lf .
 		    ' <link>' . $item['link'] . '</link>' . $lf .
-		    ' <description>' . GalleryUtilities::markup($item['description']) . 
+		    ' <description>' . $this->cdata(GalleryUtilities::markup($item['description'])) .
 		    '</description>' . $lf .
 		    '</item>'. $lf;
 	    }
@@ -199,33 +203,35 @@ class RssGenerator {
      */
     function generate200() {
 	global $gallery;
-	
+
 	$platform =& $gallery->getPlatform();
 	$lf = $platform->getLineEnding();
 
 	$data = '<rss version="2.0">'.$lf.'<channel>' . $lf .
-	    '<title>' . GalleryUtilities::markup($this->_properties['title']) . '</title>' . $lf .
+	    '<title>' . $this->cdata(GalleryUtilities::markup($this->_properties['title'])) .
+	    '</title>' . $lf .
 	    '<link>' . $this->_properties['link'] . '</link>' . $lf .
-	    '<description>' . GalleryUtilities::markup($this->_properties['description']) . 
+	    '<description>' .
+	    $this->cdata(GalleryUtilities::markup($this->_properties['description'])) .
 	    '</description>' . $lf .
 	    (isset($this->_properties['language']) ?
 		'<language>' . $this->_properties['language'] . '</language>' . $lf  : '') .
 	    (!empty($this->_properties['copyright']) ?
-		'<copyright>' . GalleryUtilities::markup($this->_properties['copyright']) . 
+		'<copyright>' . GalleryUtilities::markup($this->_properties['copyright']) .
 		'</copyright>'. $lf  : '') .
 	    (!empty($this->_properties['category']) ?
-		'<category>' . GalleryUtilities::markup($this->_properties['category']) . 
+		'<category>' . GalleryUtilities::markup($this->_properties['category']) .
 		'</category>'. $lf  : '') .
 	    (isset($this->_properties['generator']) ?
-		'<generator>' . GalleryUtilities::markup($this->_properties['generator']) . 
+		'<generator>' . GalleryUtilities::markup($this->_properties['generator']) .
 		'</generator>'. $lf  : '') .
 	    (isset($this->_properties['lastBuildDate']) ?
-		'<lastBuildDate>' . $this->_properties['lastBuildDate'] . 
+		'<lastBuildDate>' . $this->_properties['lastBuildDate'] .
 		'</lastBuildDate>'. $lf  : '') .
 	    (isset($this->_properties['ttl']) ?
 		'<ttl>' . $this->_properties['ttl'] . '</ttl>'. $lf : '') .
 	    (isset($this->_properties['cloud']) ?
-		'<cloud domain="' . 
+		'<cloud domain="' .
 		GalleryUtilities::markup($this->_properties['cloud']['domain']) .
 		'" port="' . $this->_properties['cloud']['port'] .
 		'" path="' . GalleryUtilities::markup($this->_properties['cloud']['path']) .
@@ -233,57 +239,68 @@ class RssGenerator {
 		'" protocol="' . $this->_properties['cloud']['protocol'] . '" />' . $lf : '')
 	    . (isset($this->_properties['image']) ?
 		'<image><url>' . $this->_properties['image']['url'] . '</url>' . $lf .
-		' <title>' . GalleryUtilities::markup($this->_properties['image']['title']) . 
+	       ' <title>' .
+	       $this->cdata(GalleryUtilities::markup($this->_properties['image']['title'])) .
 		'</title>' . $lf .
 		' <link>' . $this->_properties['image']['link'] . '</link></image>' : '');
 
 	foreach ($this->_items as $item) {
 	    if (isset($item['title']) && isset($item['link']) && isset($item['description'])) {
 		$data .= '<item>' . $lf .
-		    ' <title>' . GalleryUtilities::markup($item['title']) . '</title>' . $lf .
+		    ' <title>' . $this->cdata(GalleryUtilities::markup($item['title'])) .
+		    '</title>' . $lf .
 		    ' <link>' . $item['link'] . '</link>' . $lf .
 		    ' <guid isPermaLink="false">' . $item['link'] . '</guid>' . $lf .
 		    ' <description><![CDATA[' . $item['description'] . ']]></description>' . $lf;
-    
+
 		if (isset($item['author'])) {
-		    $data .= ' <author>' . GalleryUtilities::markup($item['author']) . 
+		    $data .= ' <author>' . GalleryUtilities::markup($item['author']) .
 		    	     '</author>' . $lf;
 		}
-		
+
 		if (isset($item['category'])) {
-		    $data .= ' <category>' . GalleryUtilities::markup($item['category']) . 
+		    $data .= ' <category>' . GalleryUtilities::markup($item['category']) .
 		    	     '</category>' . $lf;
 		}
-		
+
 		if (isset($item['comments'])) {
-		    $data .= ' <comments>' . GalleryUtilities::markup($item['comments']) . 
+		    $data .= ' <comments>' . GalleryUtilities::markup($item['comments']) .
 		    	     '</comments>' . $lf;
 		}
-		
+
 		if (isset($item['enclosure'])) {
 		    $data .= ' <enclosure url="' . $item['enclosure']['url'] . '" length="' .
 			$item['enclosure']['length'] . '" type="' .
 			$item['enclosure']['type'] . '" />' . $lf;
 		}
-		
+
 		if (isset($item['guid'])) {
 		    $data .= ' <guid>' . $item['guid'] . '</guid>' . $lf;
 		}
-		
+
 		if (isset($item['pubDate'])) {
 		    $data .= ' <pubDate>' . $item['pubDate'] . '</pubDate>' . $lf;
 		}
-		
+
 		if (isset($item['source'])) {
 		    $data .= ' <source>' . $item['source'] . '</source>' . $lf;
 		}
-		
+
 		$data .= '</item>'. $lf;
 	    }
 	}
 
 	$data .= '</channel>'. $lf.'</rss>';
 	return $data;
+    }
+
+    /**
+     * Wrap a text element in <![CDATA .. ]]>
+     * @param text
+     * @return wrapped text
+     */
+    function cdata($text) {
+	return '<![CDATA[' . $text . ']]>';
     }
 }
 ?>
