@@ -80,17 +80,17 @@ areCookiesSupported();
 /* Sanitize the sessionId */
 if (!empty($sessionId)) {
     if (function_exists('preg_replace')) {
-    	$sessionId = preg_replace('/[^a-zA-Z0-9]/', '', $sessionId);
+	$sessionId = preg_replace('/[^a-zA-Z0-9]/', '', $sessionId);
     } else {
-    	$sessionId = ereg_replace('/[^a-zA-Z0-9]/', '', $sessionId);
+	$sessionId = ereg_replace('/[^a-zA-Z0-9]/', '', $sessionId);
     }
     /* Make sure we don't use invalid data at a later point */
     foreach (array($_GET, $_POST, $_REQUEST, $_COOKIE) as $superGlobal) {
 	unset($superGlobal[$sessionName]);
     }
-    /* 
-     * md5 has a 128 bit (32 * 4bit) string, but we want to allow for other possible 
-     * hash functions too which possibly have hash strings of only 10 characters 
+    /*
+     * md5 has a 128 bit (32 * 4bit) string, but we want to allow for other possible
+     * hash functions too which possibly have hash strings of only 10 characters
      */
     if (strlen($sessionId) >= 10) {
 	session_id($sessionId);
@@ -272,8 +272,8 @@ function generateUrl($uri, $print=true) {
     } else if (!strncmp($uri, 'index.php', 9)) {
 	/* If session.use_trans_sid is on then it will add the session id. */
 	if (!areCookiesSupported() && !ini_get('session.use_trans_sid')) {
-	    /* 
-	     * Don't use SID since it's a constant and we change (regenerate) the session id 
+	    /*
+	     * Don't use SID since it's a constant and we change (regenerate) the session id
 	     * in the request
 	     */
 	    $sid = session_name() . '=' . session_id();
@@ -294,7 +294,7 @@ function generateUrl($uri, $print=true) {
  */
 function regenerateSession() {
     /* 1. Generate a new session id */
-    $newSessionId = md5(uniqid(rand() . serialize($_REQUEST)));
+    $newSessionId = md5(uniqid(substr(rand() . serialize($_REQUEST), 0, 114)));
     $sessionData = array();
     if (!empty($_SESSION) && is_array($_SESSION)) {
 	foreach ($_SESSION as $key => $value) {
@@ -314,20 +314,20 @@ function regenerateSession() {
     session_start();
     foreach ($sessionData as $key => $value) {
 	$_SESSION[$key] = $value;
-    }	
+    }
 }
 
 /**
- * Are cookies supported by the current user-agent? 
+ * Are cookies supported by the current user-agent?
  */
 function areCookiesSupported() {
     static $areCookiesSupported;
-    
+
     /* Remember the state since we might unset $_COOKIE */
     if (!isset($areCookiesSupported)) {
-    	$areCookiesSupported = !empty($_COOKIE[session_name()]);
+	$areCookiesSupported = !empty($_COOKIE[session_name()]);
     }
-    
+
     return $areCookiesSupported;
 }
 

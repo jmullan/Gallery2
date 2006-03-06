@@ -350,7 +350,7 @@ class GallerySession {
 
 	/* Don't save session / send cookie for DownloadItem, CSS, migrate.Redirect requests .. */
 	if ( !isset($_COOKIE[SESSION_ID_PARAMETER]) || $this->_forceSaveSession ||
-	        $_COOKIE[SESSION_ID_PARAMETER] != $this->_sessionId ) {
+		$_COOKIE[SESSION_ID_PARAMETER] != $this->_sessionId ) {
 	    $ret = $this->_setCookie();
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -374,7 +374,7 @@ class GallerySession {
 	$dieRoll = $phpVm->rand(1, 100);
 
 	if ( !empty($this->_sessionId) &&
-	        ($this->_isPersistentSessionAllowedForRequest() || $this->_forceSaveSession)) {
+		($this->_isPersistentSessionAllowedForRequest() || $this->_forceSaveSession)) {
 	    $this->_sessionId = GalleryUtilities::strtolower($this->_sessionId);
 	    if (empty($this->_userId)) {
 		return GalleryCoreApi::error(ERROR_MISSING_VALUE, __FILE__, __LINE__);
@@ -732,7 +732,8 @@ class GallerySession {
 	do {
 	    /* If there's sessionId given, first try it with this, else generate a new one */
 	    if ($attempt != 0 || empty($this->_sessionId)) {
-		$this->_sessionId = $phpVm->md5(uniqid($remoteHost . microtime() . rand(1, 32767)));
+		$this->_sessionId =
+		    $phpVm->md5(uniqid(substr($remoteHost . microtime() . rand(1, 32767), 0, 114)));
 	    }
 	    $this->_sessionId = $data['id'] = GalleryUtilities::strToLower($this->_sessionId);
 
@@ -916,7 +917,7 @@ class GallerySession {
 		}
 		$instVersions = $module->getInstalledVersions();
 		if (!empty($instVersions['core']) &&
-		        version_compare($instVersions['core'], '1.0.22', '<')) {
+			version_compare($instVersions['core'], '1.0.22', '<')) {
 		    $this->_emptySessionData();
 		    return null;
 		}
@@ -1024,17 +1025,17 @@ class GallerySession {
 	     */
 	    /* sessionString normal and URL encoded */
 	    $regexp = GalleryUtilities::prefixFormVariable($this->getKey()) . '(?:=|%3D)' .
-	    		SESSION_TEMP_ID;
+			SESSION_TEMP_ID;
 	    /*
 	     * Remove trailing & and ? from URLs, also handle javascript (no HTML entities) and
 	     * URL encoded (return URL) versions of & and ?
 	     * This preg_replace takes about the same time as the str_replace that follows
 	     */
 	    $html = preg_replace('/(?:\\?|%3F|&amp;|&|%26amp%3B|%26)' . $regexp . '(["\'])/S',
-	    			 '\\1', $html);
+				 '\\1', $html);
 	    /* Remove sessionStrings that are not at the end of URLs and sessionIds in the HTML */
 	    $html = str_replace(array($sessionString,
-	    			      urlencode($sessionString),
+				      urlencode($sessionString),
 				      SESSION_TEMP_ID),
 				'', $html);
 	}
@@ -1075,8 +1076,8 @@ class GallerySession {
 	 * long.
 	 */
 	$where = '
-           WHERE [GallerySessionMap::creationTimestamp] < ? OR
-                 [GallerySessionMap::modificationTimestamp] < ?';
+	WHERE [GallerySessionMap::creationTimestamp] < ?
+	   OR [GallerySessionMap::modificationTimestamp] < ?';
 	$data[] = (int)$lifetimeCutoff;
 	$data[] = (int)$inactiveCutoff;
 	if ($lastWeek > $lifetimeCutoff) {
@@ -1088,7 +1089,7 @@ class GallerySession {
 	    }
 	    /* Delete all sessions of guest users that are older than a week*/
 	    $where .= ' OR
-                 ([GallerySessionMap::userId] = ? AND [GallerySessionMap::creationTimestamp] < ?)';
+		([GallerySessionMap::userId] = ? AND [GallerySessionMap::creationTimestamp] < ?)';
 	    $data[] = (int)$anonymousUserId;
 	    $data[] = (int)$lastWeek;
 	}
@@ -1100,9 +1101,9 @@ class GallerySession {
 	     * optimize for MySQL by using DELETE .. LIMIT 500
 	     */
 	    $query = '
-           DELETE FROM [GallerySessionMap]
-           ' . $where . '
-           LIMIT ' . (int)$this->_expirationLimit;
+	    DELETE FROM [GallerySessionMap]
+	    ' . $where . '
+	    LIMIT ' . (int)$this->_expirationLimit;
 	    list ($ret, $results) = $storage->execute($query, $data);
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -1113,8 +1114,8 @@ class GallerySession {
 	     * adodb can't implement the LIMIT clause in subqueries DB independently!
 	     */
 	    $query = '
-           SELECT [GallerySessionMap::id]
-           FROM [GallerySessionMap]' . $where;
+	    SELECT [GallerySessionMap::id]
+	    FROM [GallerySessionMap]' . $where;
 	    $option['limit']['count'] = $this->_expirationLimit;
 	    list ($ret, $results) = $gallery->search($query, $data, $option);
 	    if ($ret) {
@@ -1127,8 +1128,9 @@ class GallerySession {
 		}
 		/* Delete the selected sessions */
 		$query = sprintf('
-           DELETE FROM [GallerySessionMap]
-           WHERE [GallerySessionMap::id] IN (%s)', GalleryUtilities::makeMarkers(count($ids)));
+		DELETE FROM [GallerySessionMap]
+		WHERE [GallerySessionMap::id] IN (%s)',
+		    GalleryUtilities::makeMarkers(count($ids)));
 		list ($ret, $results) = $storage->execute($query, $ids);
 		if ($ret) {
 		    return $ret->wrap(__FILE__, __LINE__);
