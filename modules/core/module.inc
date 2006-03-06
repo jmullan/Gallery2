@@ -40,7 +40,7 @@ class CoreModule extends GalleryModule {
 	$this->setGalleryVersion('2.1-rc-1b');
 
 	/* Don't forget to update CoreModuleExtras::upgrade and _prepareConfigUpgrade too! */
-	$this->setVersion('1.0.31');
+	$this->setVersion('1.0.32');
 
 	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));

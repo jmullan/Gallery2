@@ -133,8 +133,8 @@ class CoreModuleExtras {
 			   'default.language' => GalleryTranslator::getLanguageCodeFromRequest(),
 			   'language.useBrowserPref' => '0',
 			   'default.newAlbumsUseDefaults' => 'false',
-			   'session.lifetime' => 25 * 365 * 86400, /* 25 years */
-			   'session.inactivityTimeout' => 14 * 86400, /* two weeks */
+			   'session.lifetime' => 21 * 86400, /* three weeks */
+			   'session.inactivityTimeout' => 7 * 86400, /* one week */
 			   'misc.markup' => 'bbcode',
 			   'lock.system' => $flockType,
 			   'format.date' => '%x',
@@ -1847,6 +1847,22 @@ class CoreModuleExtras {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
+	case '1.0.31':
+	    list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    foreach (array('session.lifetime' => array(25 * 365 * 86400, 21 * 86400),
+			   'session.inactivityTimeout' => array(14 * 86400, 7 * 86400)) as
+		     $key => $oldAndNew) {
+		if ($params[$key] == $oldAndNew[0]) {
+		    $ret = GalleryCoreApi::setPluginParameter('module', 'core', $key, $oldAndNew[1]);
+		    if ($ret) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		}
+	    }
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
@@ -2094,6 +2110,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	case '1.0.28':
 	case '1.0.29':
 	case '1.0.30':
+	case '1.0.31':
 
 	case 'end of upgrade path':
 	    /*
