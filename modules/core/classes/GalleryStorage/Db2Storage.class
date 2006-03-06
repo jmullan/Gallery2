@@ -96,11 +96,11 @@ class Db2Storage extends GalleryStorage {
 	$statements[] = 'DROP FUNCTION BIT_AND(SMALLINT, SMALLINT)';
 	$statements[] = 'DROP FUNCTION G2_LIKE(VARCHAR(8000), VARCHAR(8000))';
 	$statements[] = 'DROP FUNCTION G2_BIT_OR(INTEGER, VARCHAR(32))';
-	$statements[] = "CALL SQLJ.REMOVE_JAR('g2_db2_jar')";
 	/*
-	 * These SQLJ.*_JAR() calls blow up, looks like CLI can't handle it
-	 * $recordSet5 = $tmpDb->Execute("CALL SQLJ.REMOVE_JAR ('g2_db2_jar')");
+	 * Unregister the Jar file (use ODBC delimiters, see
+	 * http://gallery.menalto.com/node/37648?from=850#comment-172690)
 	 */
+	$statements[] = "{CALL SQLJ.REMOVE_JAR('g2_db2_jar')}";
 	foreach ($statements as $sql) {
 	    $this->_traceStart();
 	    $recordSet = $tmpDb->Execute($sql);
