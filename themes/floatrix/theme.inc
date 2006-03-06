@@ -105,9 +105,9 @@ class FloatrixTheme extends GalleryTheme {
 	);
 	$theme['userLinks'] = array();
 	foreach ($theme['itemLinks'] as $i => $link) {
-	    if (isset($userViews[$link['params']['view']])) {
-	    $theme['userLinks'][] = $link;
-	    unset($theme['itemLinks'][$i]);
+	    if (isset($link['params']['view']) && isset($userViews[$link['params']['view']])) {
+		$theme['userLinks'][] = $link;
+		unset($theme['itemLinks'][$i]);
 	    }
 	}
 
