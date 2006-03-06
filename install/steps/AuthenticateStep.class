@@ -78,6 +78,8 @@ class AuthenticateStep extends InstallStep {
 
 		$fileAuth = trim(join("", file($authFile)));
 		if ($fileAuth == $this->_uniqueKey) {
+		    /* Session fixation prevention: regenerate the session id on login */
+		    regenerateSession();
 		    $this->setComplete(true);
 		} else {
 		    $templateData['errors'][] =
