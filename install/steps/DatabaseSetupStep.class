@@ -55,7 +55,7 @@ class DatabaseSetupStep extends InstallStep {
 		$this->_config['password'] = $this->sanitize($_POST['password']);
 	    }
 	}
-	
+
 	$dbPlatformType = null;
 	switch ($this->_config['type']) {
 	    case 'mysql':
@@ -287,9 +287,9 @@ class DatabaseSetupStep extends InstallStep {
 		$galleryStub->setConfig('installed.version', $datVersion);
 	    }
 	    $templateData['bodyFile'] = 'DatabaseSetupSuccess.html';
-	} elseif ((empty($templateData['errors']) && empty($templateData['error']) ||
+	} else if ((empty($templateData['errors']) && empty($templateData['error']) ||
 		   !empty($_POST['action']) && $_POST['action'] == 'clean') &&
-		  !empty($_POST['confirmCleanInstall'])) {
+		   !empty($_POST['confirmCleanInstall'])) {
 	    $galleryStub->setConfig('storage.config', $this->_config);
 	    $templateData['bodyFile'] = 'CleanInstallRequest.html';
 	} else {
