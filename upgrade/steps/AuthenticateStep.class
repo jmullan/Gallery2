@@ -36,6 +36,8 @@ class AuthenticateStep extends UpgradeStep {
 		} else if ($_POST['password'] != $gallery->getConfig('setup.password')) {
 		    $templateData['error']['password'] = _('<b>Error:</b> invalid password.');
 		} else {
+		    /* Session fixation prevention: regenerate the session id on login */
+		    regenerateSession();
 		    $this->setComplete(true);
 		}
 	    }
