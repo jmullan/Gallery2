@@ -1888,6 +1888,10 @@ class CoreModuleExtras {
 	global $gallery;
 	$configChanges = array();
 
+	if (substr($currentVersion, 0, 6) == '1.0.0.') {
+	    $currentVersion = '1.0.0.x';
+	}
+
 	/**
 	 * README: How to update the block below.
 	 *
@@ -2008,9 +2012,7 @@ $gallery->setConfig(\'cookieId\', \'' . $cookieId . '\');
 	case '0.9.36':
 	case '0.9.37':
 	case '1.0.0':
-	case '1.0.0.1':
-	case '1.0.0.2':
-	case '1.0.0.3':
+	case '1.0.0.x':
 	case '1.0.1':
 	case '1.0.2':
 	case '1.0.3':
