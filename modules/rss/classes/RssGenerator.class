@@ -100,7 +100,7 @@ class RssGenerator {
     function sortItems($order) {
 	if ($order == 'ASC') {
 	    ksort($this->_items);
-	} elseif ($order == 'DESC') {
+	} else if ($order == 'DESC') {
 	    krsort($this->_items);
 	}
     }
@@ -166,7 +166,7 @@ class RssGenerator {
 
 	if (isset($this->_properties['webmaster'])) {
 	    $data .= '<webMaster>' . GalleryUtilities::markup($this->_properties['webmaster']) .
-	    '</webMaster>'. $lf ;
+	    '</webMaster>' . $lf;
 	}
 
 	if (isset($this->_properties['image'])) {
@@ -176,7 +176,7 @@ class RssGenerator {
 		'</title>' . $lf .
 		' <link>' . $this->_properties['image']['link'] . '</link>' . $lf .
 		' <url>' . $this->_properties['image']['url'] . '</url>' . $lf .
-		'</image>'.$lf ;
+		'</image>' . $lf;
 	}
 
 	foreach ($this->_items as $item) {
@@ -185,13 +185,14 @@ class RssGenerator {
 		    ' <title>' . $this->cdata(GalleryUtilities::markup($item['title'])) .
 		    '</title>' . $lf .
 		    ' <link>' . $item['link'] . '</link>' . $lf .
-		    ' <description>' . $this->cdata(GalleryUtilities::markup($item['description'])) .
+		    ' <description>' .
+		    $this->cdata(GalleryUtilities::markup($item['description'])) .
 		    '</description>' . $lf .
-		    '</item>'. $lf;
+		    '</item>' . $lf;
 	    }
 	}
 
-	$data .= '</channel>'. $lf.'</rss>';
+	$data .= '</channel>' . $lf . '</rss>';
 
 	return $data;
     }
@@ -207,7 +208,7 @@ class RssGenerator {
 	$platform =& $gallery->getPlatform();
 	$lf = $platform->getLineEnding();
 
-	$data = '<rss version="2.0">'.$lf.'<channel>' . $lf .
+	$data = '<rss version="2.0">' . $lf . '<channel>' . $lf .
 	    '<title>' . $this->cdata(GalleryUtilities::markup($this->_properties['title'])) .
 	    '</title>' . $lf .
 	    '<link>' . $this->_properties['link'] . '</link>' . $lf .
@@ -218,18 +219,18 @@ class RssGenerator {
 		'<language>' . $this->_properties['language'] . '</language>' . $lf  : '') .
 	    (!empty($this->_properties['copyright']) ?
 		'<copyright>' . GalleryUtilities::markup($this->_properties['copyright']) .
-		'</copyright>'. $lf  : '') .
+		'</copyright>' . $lf  : '') .
 	    (!empty($this->_properties['category']) ?
 		'<category>' . GalleryUtilities::markup($this->_properties['category']) .
-		'</category>'. $lf  : '') .
+		'</category>' . $lf  : '') .
 	    (isset($this->_properties['generator']) ?
 		'<generator>' . GalleryUtilities::markup($this->_properties['generator']) .
-		'</generator>'. $lf  : '') .
+		'</generator>' . $lf  : '') .
 	    (isset($this->_properties['lastBuildDate']) ?
 		'<lastBuildDate>' . $this->_properties['lastBuildDate'] .
-		'</lastBuildDate>'. $lf  : '') .
+		'</lastBuildDate>' . $lf  : '') .
 	    (isset($this->_properties['ttl']) ?
-		'<ttl>' . $this->_properties['ttl'] . '</ttl>'. $lf : '') .
+		'<ttl>' . $this->_properties['ttl'] . '</ttl>' . $lf : '') .
 	    (isset($this->_properties['cloud']) ?
 		'<cloud domain="' .
 		GalleryUtilities::markup($this->_properties['cloud']['domain']) .
@@ -288,11 +289,11 @@ class RssGenerator {
 		    $data .= ' <source>' . $item['source'] . '</source>' . $lf;
 		}
 
-		$data .= '</item>'. $lf;
+		$data .= '</item>' . $lf;
 	    }
 	}
 
-	$data .= '</channel>'. $lf.'</rss>';
+	$data .= '</channel>' . $lf . '</rss>';
 	return $data;
     }
 

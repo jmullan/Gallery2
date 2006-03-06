@@ -95,7 +95,7 @@ class RenderView extends GalleryView {
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	if (!$perm) {
 	    $this->handleError($gallery->i18n('Not permitted to view this item'));
 	    return null;
@@ -116,19 +116,20 @@ class RenderView extends GalleryView {
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    
+
 	    if ($modulestatus['comment']['active'] != '1') {
 		$this->handleError($gallery->i18n(
 			'Comments module is not active or comment feeds are not allowed!'));
 		return null;
 	    }
-	    
+
 	    /* check the permissions */
-	    list ($ret, $perm) = GalleryCoreApi::hasItemPermission($params['itemId'], 'comment.view');
+	    list ($ret, $perm) =
+		GalleryCoreApi::hasItemPermission($params['itemId'], 'comment.view');
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    
+
 	    if (!$perm) {
 		$this->handleError($gallery->i18n('Not permitted to view comments for this item'));
 		return null;
@@ -163,7 +164,7 @@ class RenderView extends GalleryView {
 	print($generator->generate($params['version']));
 	return null;
     }
-    
+
     function handleError($message) {
 	header('HTTP/1.0 500 Internal Server Error');
 

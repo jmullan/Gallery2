@@ -1856,7 +1856,7 @@ class CoreModuleExtras {
 			   'session.inactivityTimeout' => array(14 * 86400, 7 * 86400)) as
 		     $key => $oldAndNew) {
 		if ($params[$key] == $oldAndNew[0]) {
-		    $ret = GalleryCoreApi::setPluginParameter('module', 'core', $key, $oldAndNew[1]);
+		    $ret = $module->setParameter($key, $oldAndNew[1]);
 		    if ($ret) {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
