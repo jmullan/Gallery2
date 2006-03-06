@@ -80,6 +80,17 @@ class UserPreferencesController extends GalleryController {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
+	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($userId);
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
+	    list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+
 	    /* email is required for non-anonymous but optional for administrators */
 	    if (empty($form['email']) && !$isAdmin) {
 		$error[] = 'form[error][email][missing]';
@@ -90,21 +101,23 @@ class UserPreferencesController extends GalleryController {
 		}
 	    }
 
+	    if (!empty($form['currentPassword']) &&
+		    !$user->isCorrectPassword($form['currentPassword'])) {
+		$error[] = 'form[error][currentPassword][incorrect]';
+	    }
+	    
 	    /* Set a default if for some reason it doesn't get sent from the browser */
 	    $form['email'] = empty($form['email']) ? '' : $form['email'];
 
+	    /* Require a password to change the email address */
+	    if ($form['email'] != $user->getEmail()) {
+		if (empty($form['currentPassword'])) {
+		    $error[] = 'form[error][currentPassword][missing]';
+		}
+		}
+
 	    /* If all the right fields are in place then go ahead and modify the user. */
 	    if (empty($error)) {
-		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($userId);
-		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
-		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
 		$user->setFullname(trim($form['fullName']));
 		$user->setEmail($form['email']);
 
@@ -120,15 +133,15 @@ class UserPreferencesController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		$ret = GalleryCoreApi::releaseLocks($lockId);
-		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
 		/* Request a redirect to the confirmation screen */
 		$redirect['view'] = 'core.UserAdmin';
 		$redirect['subView'] = 'core.UserPreferences';
 		$status['saved'] = 1;
+	    }
+
+	    $ret = GalleryCoreApi::releaseLocks($lockId);
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 

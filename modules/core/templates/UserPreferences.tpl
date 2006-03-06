@@ -32,9 +32,9 @@
       {g->text text="E-mail Address"}
       <span class="giSubtitle">
       {if !isset($UserAdmin.isSiteAdmin)}
-	{g->text text="(required)"}
+	{g->text text="(required, password required for change)"}
       {else}
-	{g->text text="(suggested)"}
+	{g->text text="(suggested, password required for change)"}
       {/if}
       </span>
     </h4>
@@ -62,6 +62,28 @@
     </select>
   </div>
   {/if}
+
+  <div>
+    <h4>
+      {g->text text="Current Password"}
+      <span class="giSubtitle">
+	{g->text text="(required to change the e-mail address)"}
+      </span>
+    </h4>
+
+    <input type="password" name="{g->formVar var="form[currentPassword]"}"/>
+
+    {if isset($form.error.currentPassword.missing)}
+    <div class="giError">
+      {g->text text="You must enter your current password to change the e-mail address"}
+    </div>
+    {/if}
+    {if isset($form.error.currentPassword.incorrect)}
+    <div class="giError">
+      {g->text text="Incorrect password"}
+    </div>
+    {/if}
+  </div>
 </div>
 
 <div class="gbBlock gcBackground1">
