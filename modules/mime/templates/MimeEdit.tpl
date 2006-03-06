@@ -19,6 +19,16 @@
 {/if}
 
 <div class="gbBlock">
+  <p class="giDescription giWarning">
+    {capture name="xss"}<a href="http://www.google.com/search?q=cross%20site%20scripting">{g->text text="Cross Site Scripting"}</a>{/capture}
+    {g->text text="Warning: Adding any of the following mime types could leave you open to %s security vulnerabilities." arg1=$smarty.capture.xss}
+  </p>
+  <ul class="giWarning">
+    <li>text/html</li>
+    <li>application/xhtml+xml</li>
+    <li>text/xml</li>
+  </ul>
+  </p>
   <h4> {g->text text="MIME type: "} </h4>
 
   <input type="text" size="25" name="{g->formVar var="form[mimeType]"}" value="{$form.mimeType}"/>

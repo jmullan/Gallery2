@@ -1839,6 +1839,14 @@ class CoreModuleExtras {
 	case '1.0.29':
 	    /* Support for transactional locking */
 
+	case '1.0.30':
+	    /* Pull dangerous mime types */
+	    $ret = GalleryCoreApi::removeMimeType(
+		array('mimeType' => array('text/html', 'application/xhtml+xml', 'text/xml')));
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
@@ -2085,6 +2093,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	case '1.0.27':
 	case '1.0.28':
 	case '1.0.29':
+	case '1.0.30':
 
 	case 'end of upgrade path':
 	    /*
