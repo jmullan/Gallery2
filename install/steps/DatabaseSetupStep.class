@@ -44,12 +44,18 @@ class DatabaseSetupStep extends InstallStep {
 	    }
 	}
 
+	$templateData['password'] = strlen($this->_config['password']) ? '******' : '';
+
 	if (!empty($_POST['action']) && $_POST['action'] == 'save') {
-	    foreach (array('type', 'hostname', 'username',
-			   'password', 'database', 'tablePrefix', 'columnPrefix') as $key) {
+	    foreach (array('type', 'hostname', 'username', 'database',
+			   'tablePrefix', 'columnPrefix') as $key) {
 		$this->_config[$key] = $this->sanitize($_POST[$key]);
 	    }
+	    if (!preg_match('/^\*+$/', trim($_POST['password']))){
+		$this->_config['password'] = $this->sanitize($_POST['password']);
+	    }
 	}
+	
 	$dbPlatformType = null;
 	switch ($this->_config['type']) {
 	    case 'mysql':

@@ -38,8 +38,8 @@ class AdminUserSetupStep extends InstallStep {
 	    $this->_fullName = _('Gallery Administrator');
 	}
 	
-	$templateData['passwordA'] = $this->_password;
-	$templateData['passwordB'] = $this->_password;
+	$templateData['passwordA'] = $templateData['passwordB'] =
+	    strlen($this->_password) ? '******' : '';
 	$templateData['adminName'] = $this->_adminName;
 	$templateData['email'] = $this->_email;
 	$templateData['fullName'] = $this->_fullName;
@@ -50,16 +50,18 @@ class AdminUserSetupStep extends InstallStep {
 	    $passwordOk = false;
 	    if (empty($_POST['passwordA'])) {
 		$templateData['error']['passwordA_missing'] = 1;
-		$templateData['passwordA'] = '';
+		$templateData['passwordA'] = $templateData['passwordB'] = '';
 	    } else if (empty($_POST['passwordB'])) {
 		$templateData['error']['passwordB_missing'] = 1;
-		$templateData['passwordB'] = '';
+		$templateData['passwordA'] = $templateData['passwordB'] = ''; 
 	    } else if ($_POST['passwordA'] != $_POST['passwordB']) {
 		$templateData['error']['password_mismatch'] = 1;
-		$templateData['passwordA'] = $_POST['passwordA'];
-		$templateData['passwordB'] = '';
+		$templateData['passwordA'] = $templateData['passwordB'] = ''; 
 	    } else {
+		if (!preg_match('/^\*+$/', trim($_POST['passwordA']))) {
 		$this->_password = $this->sanitize($_POST['passwordA']);
+		}
+		$templateData['passwordA'] = $templateData['passwordB'] = '******';
 		$passwordOk = true;
 	    }
 	    
