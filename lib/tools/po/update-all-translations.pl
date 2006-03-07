@@ -26,7 +26,8 @@ GetOptions('make-binary!' => \$OPTS{'MAKE_BINARY'},
 	   'verbose|v!' => \$OPTS{'VERBOSE'},
 	   'remove-obsolete!' => \$OPTS{'REMOVE_OBSOLETE'},
 	   'po=s' => \$OPTS{'PO'},
-	   'permissions!' => \$OPTS{'PERMISSIONS'});
+	   'permissions!' => \$OPTS{'PERMISSIONS'},
+	   'cvs-add!' => \$OPTS{'CVS_ADD'});
 
 my %PO_DIRS = ();
 my %MO_FILES = ();
@@ -47,6 +48,29 @@ if ($OPTS{'PERMISSIONS'}) {
     &my_system("chmod 644 $poParam 2> /dev/null");
   }
   print STDERR "Updated permissions for $poParam in " . scalar(keys %PO_DIRS) . " directories.\n";
+  exit;
+}
+
+if ($OPTS{'CVS_ADD'}) {
+  my $poParam = $OPTS{'PO'} ? "$OPTS{PO}.po" : '*.po';
+  foreach my $poDir (keys(%PO_DIRS)) {
+    my %cvs = ();
+    chdir $poDir;
+    open(CVS, '<CVS/Entries') or die;
+    while (<CVS>) {
+      m|^/(.*?)/| and $cvs{$1} = 1;
+    }
+    close CVS;
+    @_ = glob $poParam;
+    chdir '..';
+    foreach my $poFile (@_) {
+      unless (exists $cvs{$poFile}) {
+        $_ = 'locale/' . substr($poFile, 0, -3);
+        system("cvs add po/$poFile" . (-d $_ ? " $_ $_/LC_MESSAGES" : ''));
+        -d $_ and system("cvs add -kb $_/LC_MESSAGES/*.mo");
+      }
+    }
+  }
   exit;
 }
 
