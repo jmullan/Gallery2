@@ -40,7 +40,7 @@ class CreateConfigFileStep extends InstallStep {
 	    /* The file exists but we can't write to it */
 	    $templateData['error'] = sprintf(
 		_('Unable to write to the <b>config.php</b> configuration file in your %s ' .
-			  'directory.  Please change its permissions.  If you\'re on' .
+			  'directory.  Please change its permissions.  If you\'re on ' .
 			  'Unix you can do <i>chmod 666 config.php</i> to fix this.'),
 			'<tt>' . basename($configDir) . '</tt>');
 	    $this->setInError(true);
