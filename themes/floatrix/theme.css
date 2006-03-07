@@ -1,7 +1,6 @@
 /* ********************************************************************************
- * Floatrix Theme for Gallery 2, based on Matrix
+ * Floatrix Theme for Gallery 2, based on Matrix and ideas from Floating Matrix Theme
  * by Chad Kieffer
- * updated by Alan Harder
  */
 
 /* ********************************************************************************
@@ -91,7 +90,7 @@ table.gbDataTable th, table.gbDataTable td {
  * Sections
  * body.gallery     Page body in G2 standalone (doesn't apply to embedded)
  * #gallery         Page container
- * #gsNavBar   Top bar with breadcrumb and other links
+ * #gsNavBar        Top bar with breadcrumb and other links
  * #gsSidebar       Sidebar
  * #gsContent       Main content
  */
@@ -125,7 +124,7 @@ body.gallery {
 #gsSidebarCol {
     position: absolute;
     display: none;
-    width: 175px;
+    width: 195px;
     height: 350px;
 }
 
@@ -142,9 +141,8 @@ body.gallery {
 #gsSidebar {
     z-index: 100; /* to avoid overlap of images on sidebar in Safari */
     position: absolute;
-    width: 175px;
+    width: 195px;
     height: 350px;
-    /* background: #E0E3EF; */ /* moved to sidebar.tpl because of admin sidebar conflict */
     /* overflow: auto; */ /* moved to sidebar.tpl because of admin sidebar conflict */
 }
 
@@ -155,6 +153,7 @@ body.gallery {
 td#gsSidebarCol {
     position: relative;
     display: block;
+    width: 195px;
     margin: 0;
     padding: 0;
 }
@@ -172,7 +171,7 @@ td#gsSidebarCol #gsSideBar {
     left: 0;
     z-index: -1;
     filter: alpha(opacity:0);
-    width: 175px;
+    width: 195px;
     height: 350px;
 }
 
@@ -300,6 +299,10 @@ body.gallery {
 }
 
 .gcBackground2 {
+    background-color: #e7e7e7;
+}
+
+.gcBackground3 {
     background-color: #e7e7e7;
 }
 
@@ -434,6 +437,7 @@ body.gallery {
 
 #gsThumbMatrix {
     width: auto;
+    clear: both;
 }
 
 #gsImageViewContainer {
@@ -798,8 +802,9 @@ td.bsw_BlockCommands {
   text-align: center;
 }
 
-.gbAlbumBlock {
+#gbAlbumBlocks {
     margin: 0 1.0em 1.0em 2.0em;
+    clear: both;
 }
 
 #gsFooter {
