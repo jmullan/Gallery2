@@ -25,7 +25,8 @@ GetOptions('make-binary!' => \$OPTS{'MAKE_BINARY'},
 	   'dry-run!' => \$OPTS{'DRY_RUN'},
 	   'verbose|v!' => \$OPTS{'VERBOSE'},
 	   'remove-obsolete!' => \$OPTS{'REMOVE_OBSOLETE'},
-	   'po=s' => \$OPTS{'PO'});
+	   'po=s' => \$OPTS{'PO'},
+	   'permissions!' => \$OPTS{'PERMISSIONS'});
 
 my %PO_DIRS = ();
 my %MO_FILES = ();
@@ -37,6 +38,17 @@ my $basedir = cwd();
 $basedir =~ s{(/.*)/(lib|docs|layouts|modules|setup|templates)/.*?$}{$1};
 
 find(\&locatePoDir, $basedir);
+
+if ($OPTS{'PERMISSIONS'}) {
+  my $poParam = $OPTS{'PO'} ? "$OPTS{PO}.po" : '*.po';
+  foreach my $poDir (keys(%PO_DIRS)) {
+    chmod(0755, $poDir);
+    chdir $poDir;
+    &my_system("chmod 644 $poParam 2> /dev/null");
+  }
+  print STDERR "Updated permissions for $poParam in " . scalar(keys %PO_DIRS) . " directories.\n";
+  exit;
+}
 
 my $TARGET = $OPTS{'REMOVE_OBSOLETE'} ? 'all-remove-obsolete' : 'all';
 foreach my $poDir (keys(%PO_DIRS)) {
