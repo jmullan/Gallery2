@@ -263,6 +263,9 @@
 	      <input type="text" size="{$setting.typeParams.size|default:6}"
 	       name="{g->formVar var="form[key][`$setting.key`]"}"
 	       value="{$form.key[$setting.key]}"/>
+	    {elseif ($setting.type == 'textarea')}
+	      <textarea style="width:{$setting.typeParams.width|default:'400px'};height:{$setting.typeParams.height|default:'75px'};"
+	       name="{g->formVar var="form[key][`$setting.key`]"}">{$form.key[$setting.key]}</textarea>
 	    {elseif ($setting.type == 'single-select')}
 	      <select name="{g->formVar var="form[key][`$setting.key`]"}">
 		{html_options options=$setting.choices selected=$form.key[$setting.key]}
