@@ -4,7 +4,7 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-      <div id="gsContent">
+      <div id="gsContent" class="gcBorder1">
         <div class="gbBlock gcBackground1">
           <div id="gbSearch">
             {g->block type="search.SearchBlock"}
@@ -117,11 +117,11 @@
         {/if}
         
         {* Show any other album blocks (comments, etc) *}
+        <div id="gbAlbumBlocks">
         {foreach from=$theme.params.albumBlocks item=block}
-        <div class="gbAlbumBlock">
           {g->block type=$block.0 params=$block.1}
-        </div>
         {/foreach}
+        </div>
 
         {if !empty($theme.navigator)}
         <div class="gbBlock gcBackground2 gbNavigator">
