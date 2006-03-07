@@ -1,18 +1,18 @@
 # $Id$
-# 
+#
 # Gallery - a web based photo album viewer and editor
 # Copyright (C) 2000-2006 Bharat Mediratta
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or (at
 # your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
@@ -20,14 +20,14 @@
 # Previous translators (as far as known, add yourself here, please):
 # - Georg Rehfeld <rehfeld@georg-rehfeld.de>
 # - Frederik Kunz <frederik.kunz@web.de>
-# 
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Rewrite 1.0\n"
+"Project-Id-Version: Gallery: URL Rewrite 1.1.2\n"
 "POT-Creation-Date: 2005-05-10 20:52+0200\n"
-"PO-Revision-Date: 2005-10-06 06:45+0200\n"
+"PO-Revision-Date: 2006-02-27 01:31+0200\n"
 "Last-Translator: Goker ISIK <admin@ansolon.com>\n"
-"Language-Team: Turkish <admin@ansolon.com>\n"
+"Language-Team: Turkish <admin@ansolon.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -41,9 +41,8 @@ msgstr "404 Dosya Bulunamadı"
 msgid "URL Rewrite"
 msgstr "URL Rewrite"
 
-#, fuzzy
 msgid "Enables short URLs using Apache mod_rewrite, ISAPI Rewrite, or PathInfo."
-msgstr "mod_rewrite'ı kullanarak kısa URL'leri aktif duruma getir."
+msgstr "Apache mod_rewrite, ISAPI Rewrite, ya da PathInfo kullanarak kısa URL'leri aktif duruma getir."
 
 msgid "Gallery"
 msgstr "Galeri"
@@ -78,9 +77,8 @@ msgstr "Site Yöneticisi"
 msgid "Quick and easy way to access Site Admin."
 msgstr ""
 
-#, fuzzy
 msgid "404 File not found"
-msgstr "404 Dosya Bulunamadı"
+msgstr "404 Dosya bulunamadı"
 
 msgid "Block hotlinked items"
 msgstr ""
@@ -88,9 +86,7 @@ msgstr ""
 msgid "Check short style URLs for filesystem conflicts"
 msgstr ""
 
-msgid ""
-"This will go through all your Gallery items and check if the short style URL links to an "
-"existing file or directory on your webserver."
+msgid "This will go through all your Gallery items and check if the short style URL links to an existing file or directory on your webserver."
 msgstr ""
 
 msgid "Processing..."
@@ -113,9 +109,8 @@ msgstr "Kötü anahtarkelime."
 msgid "Duplicate short url rule."
 msgstr ""
 
-#, fuzzy
 msgid "Ivalid pattern."
-msgstr "Geçersiz klasör yolu."
+msgstr "Geçersiz yol."
 
 msgid "Empty configuration value."
 msgstr ""
@@ -123,42 +118,35 @@ msgstr ""
 msgid "Cannot read the httpd.ini file"
 msgstr ""
 
-#, fuzzy
 msgid "Cannot write to httpd.ini file"
-msgstr "Galeri .htaccess dosyasına yazılamıyor."
+msgstr "Galeri .httpd.ini dosyasına yazamıyor"
 
 msgid "Cannot write to httpd.ini file, please create it."
 msgstr ""
 
-#, fuzzy
 msgid "Cannot read the .htaccess file"
-msgstr "Galeri .htaccess dosyasına yazılamıyor."
+msgstr "Galeri .htaccess dosyasını okuyamıyor"
 
-#, fuzzy
 msgid "Cannot write to the .htaccess file"
-msgstr "Galeri .htaccess dosyasına yazılamıyor."
+msgstr "Galeri .htaccess dosyasına yazamıyor"
 
-#, fuzzy
 msgid "Cannot write to the .htaccess file, please create it."
-msgstr "Galeri .htaccess dosyasına yazılamıyor."
+msgstr "Galeri .htaccess dosyasına yazamıyor, lütfen yaratın."
 
-#, fuzzy
 msgid "Cannot read the embedded .htaccess file"
-msgstr "Galeri .htaccess dosyasına yazılamıyor."
+msgstr "Galeri gömülü .htaccess dosyasını okuyamıyor"
 
 msgid "Cannot write to the embedded .htaccess file"
 msgstr ""
 
-#, fuzzy
 msgid "Cannot write to the embedded .htaccess file, please create it."
-msgstr "Galeri .htaccess dosyasına yazılamıyor."
+msgstr "Galeri gömülü .htaccess dosyasına yazamıyor, lütfen bu dosyayı yaratın."
 
 msgid "URL Rewrite Administration"
 msgstr "URL Rewrite Yönetimi"
 
-#, fuzzy
 msgid "Successfully saved settings"
-msgstr "Yapılandırma başarıyla kaydedildi"
+msgstr "Ayarlar başarıyla kaydedildi"
 
 msgid "An error occured while trying to save your settings"
 msgstr ""
@@ -178,14 +166,10 @@ msgstr "Kurulum"
 msgid "Test"
 msgstr "Test"
 
-msgid ""
-"Short URLs are compiled out of predefined keywords. Modules may provide additional keywords. "
-"Keywords are escaped with % (eg: %itemId%)."
+msgid "Short URLs are compiled out of predefined keywords. Modules may provide additional keywords. Keywords are escaped with % (eg: %itemId%)."
 msgstr ""
 
-msgid ""
-"It is recomended that you don't activate the 'Download Item' URL since it will slow down "
-"Gallery."
+msgid "It is recomended that you don't activate the 'Download Item' URL since it will slow down Gallery."
 msgstr ""
 
 msgid "A pattern may not begin with a keyword."
@@ -230,13 +214,10 @@ msgstr "Kaydet"
 msgid "Approved referers"
 msgstr ""
 
-msgid ""
-"Some rules only apply if the referer (the site that linked to the item) is something other "
-"than Gallery itself. Hosts in the list below will be treated as friendly referers."
+msgid "Some rules only apply if the referer (the site that linked to the item) is something other than Gallery itself. Hosts in the list below will be treated as friendly referers."
 msgstr ""
 
-msgid ""
-"Warning: If you don't allow empty referer users won't be able to download nor play movies."
+msgid "Warning: If you don't allow empty referer users won't be able to download nor play movies."
 msgstr ""
 
 msgid "Allow empty referer?"
@@ -248,9 +229,8 @@ msgstr ""
 msgid "Test the Rewrite Parser Configuration"
 msgstr ""
 
-#, fuzzy
 msgid "Test again"
-msgstr "Webserver'ı tekrar test et"
+msgstr "Yeniden Test et"
 
 msgid "The selected URL Rewrite Parser does not provide any tests."
 msgstr ""
@@ -303,9 +283,7 @@ msgstr ""
 msgid "In order to make the test pass you need to add the test rewrite rule in your httpd.ini:"
 msgstr ""
 
-msgid ""
-"If you add this at the bottom, please make sure that there's atleast one empty line below "
-"the section"
+msgid "If you add this at the bottom, please make sure that there's atleast one empty line below the section"
 msgstr ""
 
 msgid "Test ISAPI Rewrite Manually"
@@ -315,7 +293,7 @@ msgid "Gallery did not detect ISAPI Rewrite, please run this test yourself to ve
 msgstr ""
 
 msgid "Force"
-msgstr ""
+msgstr "Zorla"
 
 msgid "ISAPI Rewrite Test"
 msgstr ""
@@ -338,9 +316,7 @@ msgstr ""
 msgid "Please make sure Gallery can write to the httpd.ini file"
 msgstr ""
 
-msgid ""
-"For URL Rewrite to work in an embedded environment you need to set up an extra htaccess file "
-"to hold the mod_rewrite rules."
+msgid "For URL Rewrite to work in an embedded environment you need to set up an extra htaccess file to hold the mod_rewrite rules."
 msgstr ""
 
 msgid "Htaccess path:"
@@ -359,9 +335,7 @@ msgstr "Uyarı"
 msgid "Custom Gallery directory test setup"
 msgstr ""
 
-msgid ""
-"Gallery tries to test mod_rewrite in action. For this to work you need to edit each of these "
-"two files accordingly:"
+msgid "Gallery tries to test mod_rewrite in action. For this to work you need to edit each of these two files accordingly:"
 msgstr ""
 
 msgid "Line 6:"
@@ -370,10 +344,7 @@ msgstr "Satır 6:"
 msgid "Test mod_rewrite manually"
 msgstr ""
 
-msgid ""
-"For whatever reason, Gallery did not detect a working mod_rewrite setup. If you are "
-"confident that mod_rewrite does work you may override the automatic detection. Please, run "
-"these two tests to see for yourself."
+msgid "For whatever reason, Gallery did not detect a working mod_rewrite setup. If you are confident that mod_rewrite does work you may override the automatic detection. Please, run these two tests to see for yourself."
 msgstr ""
 
 msgid "Works"
@@ -388,21 +359,17 @@ msgstr ""
 msgid "If one of the two tests gives you a page with the text PASS_REWRITE you are good to go."
 msgstr ""
 
-#, fuzzy
 msgid "Apache mod_rewrite and Gallery multisite"
-msgstr "Apache mod_rewrite"
+msgstr "Apache mod_rewrite ve Galeri çoklusite"
 
-msgid ""
-"Gallery tries to test mod_rewrite in action. This does not work with multisite since Gallery "
-"lacks the complete codebase."
+msgid "Gallery tries to test mod_rewrite in action. This does not work with multisite since Gallery lacks the complete codebase."
 msgstr ""
 
 msgid "Gallery .htaccess file"
 msgstr "Galeri .htaccess dosyası"
 
-#, fuzzy
 msgid "Testing if Gallery can write to the .htaccess file."
-msgstr "Galeri .htaccess dosyasına yazılamıyor."
+msgstr "Galerinin .htaccess dosyasına yazabilirliği test ediliyor."
 
 msgid "Please create a file in your Gallery directory named .htaccess"
 msgstr ""
@@ -416,9 +383,8 @@ msgstr ""
 msgid "Embedded .htaccess file"
 msgstr "Gömülmüş .htaccess dosyası"
 
-#, fuzzy
 msgid "Testing if Gallery can write to the embedded .htaccess file."
-msgstr "Galeri .htaccess dosyasına yazılamıyor."
+msgstr "Galerinin gömülü .htaccess dosyasına yazabilirliği test ediliyor."
 
 msgid "Please configure the embedded htaccess path."
 msgstr ""
@@ -441,37 +407,29 @@ msgstr ""
 msgid "If the test gives you a page that says PASS_PATH_INFO you are good to go."
 msgstr ""
 
-#, fuzzy
 msgid "URL Rewrite Setup"
-msgstr "URL Rewrite"
+msgstr "URL Rewrite Kurulumu"
 
-msgid ""
-"The Apache mod_rewrite module is installed on most Apache servers by default. If you are "
-"unsure of what method you should choose then select this. Gallery will try to detect if your "
-"server supports mod_rewrite."
+msgid "The Apache mod_rewrite module is installed on most Apache servers by default. If you are unsure of what method you should choose then select this. Gallery will try to detect if your server supports mod_rewrite."
 msgstr ""
 
 msgid "IIS ISAPI_Rewrite"
-msgstr ""
+msgstr "IIS ISAPI_Rewrite"
 
-msgid ""
-"This method allows for short URLs on IIS servers with ISAPI Rewrite installed. Gallery will "
-"try to detect if your server supports this method before activating the module."
+msgid "This method allows for short URLs on IIS servers with ISAPI Rewrite installed. Gallery will try to detect if your server supports this method before activating the module."
 msgstr ""
 
 msgid "PHP Path Info"
 msgstr ""
 
-msgid ""
-"Using Path Info is supported by most systems. With this method Gallery parses the URL itself "
-"during the request."
+msgid "Using Path Info is supported by most systems. With this method Gallery parses the URL itself during the request."
 msgstr ""
 
 msgid "Block hotlinking is not supported."
 msgstr ""
 
 msgid "Back"
-msgstr ""
+msgstr "Geri"
 
 msgid "Done"
 msgstr ""
@@ -481,15 +439,12 @@ msgstr ""
 
 #~ msgid "Item file name (eg, image.jpg)"
 #~ msgstr "Öge dosya adı (ör, resim.jpg)"
-
 #~ msgid "Test .htaccess File Again"
 #~ msgstr ".htaccess dosyasını tekrar test et"
-
 #~ msgid "Test .htaccess Files Again"
 #~ msgstr ".htaccess dosyalarını tekrar test et"
-
 #~ msgid "URL Rewrite System Checks"
 #~ msgstr "URL Rewrite Sistem Kontrolleri"
-
 #~ msgid "Test mod_rewrite"
 #~ msgstr "mod_rewrite'ı test et"
+

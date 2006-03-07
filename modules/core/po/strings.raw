@@ -407,6 +407,7 @@ gettext("Gallery version") /* also in: templates/ErrorPage.tpl */
 gettext("PHP version") /* also in: templates/ErrorPage.tpl */
 gettext("Webserver") /* also in: templates/ErrorPage.tpl */
 gettext("Toolkits") /* also in: templates/ErrorPage.tpl */
+gettext("Acceleration") /* also in: templates/AdminPerformance.tpl */
 gettext("Operating system") /* also in: templates/ErrorPage.tpl */
 gettext("Browser") /* also in: templates/ErrorPage.tpl */
 
@@ -483,7 +484,7 @@ gettext("Reset") /* also in: templates/AdminEditGroup.tpl templates/AdminEditUse
 /* templates/AdminCreateGroup.tpl */
 gettext("Create A New Group")
 gettext("Group Name") /* also in: templates/AdminEditGroup.tpl templates/AdminGroups.tpl */
-gettext("(required)") /* also in: templates/AdminCreateUser.tpl templates/AdminEditGroup.tpl templates/AdminEditUser.tpl templates/ItemAddAlbum.tpl templates/ItemEditItem.tpl templates/UserChangePassword.tpl templates/UserPreferences.tpl */
+gettext("(required)") /* also in: templates/AdminCreateUser.tpl templates/AdminEditGroup.tpl templates/AdminEditUser.tpl templates/ItemAddAlbum.tpl templates/ItemEditItem.tpl templates/UserChangePassword.tpl */
 gettext("You must enter a group name") /* also in: templates/AdminEditGroup.tpl templates/AdminGroups.tpl templates/ItemPermissions.tpl */
 gettext("Group '%s' already exists") /* also in: templates/AdminEditGroup.tpl */
 gettext("Create Group") /* also in: templates/AdminGroups.tpl */
@@ -552,7 +553,7 @@ gettext("Edit a user")
 gettext("That username is already in use")
 gettext("You must enter a new username")
 gettext("E-mail Address") /* also in: templates/UserPreferences.tpl */
-gettext("(suggested)") /* also in: templates/UserPreferences.tpl */
+gettext("(suggested)")
 
 /* templates/AdminGroups.tpl */
 gettext("Group Management")
@@ -618,7 +619,6 @@ gettext("Uninstall")
 gettext("Performance Tuning")
 gettext("Updated performance settings successfully")
 gettext("Deleted all saved pages")
-gettext("Acceleration")
 gettext("Improve your Gallery performance by storing entire web pages in the database.  This can considerably reduce the amount of webserver and database resources required to display a web page.  The tradeoff is that the web page you see may be a little bit out of date, however you can always get the most recent version of the page by forcing a refresh in your browser (typically by holding down the shift key and clicking the reload button).")
 gettext("Partial Acceleration")
 /* xgettext:no-c-format */
@@ -1097,9 +1097,9 @@ gettext("User Options")
 /* templates/UserChangePassword.tpl */
 gettext("Password changed successfully")
 gettext("You must enter your current password to prove that it's you, then enter your new password twice to make sure that you didn't make a mistake.")
-gettext("Current Password")
+gettext("Current Password") /* also in: templates/UserPreferences.tpl */
 gettext("You must enter your current password")
-gettext("Incorrect password")
+gettext("Incorrect password") /* also in: templates/UserPreferences.tpl */
 gettext("New Password") /* also in: templates/UserRecoverPasswordAdmin.tpl templates/UserRecoverPasswordConfirm.tpl */
 gettext("You must enter a new password") /* also in: templates/UserRecoverPasswordAdmin.tpl templates/UserRecoverPasswordConfirm.tpl */
 gettext("Verify New Password") /* also in: templates/UserRecoverPasswordAdmin.tpl templates/UserRecoverPasswordConfirm.tpl */
@@ -1114,6 +1114,10 @@ gettext("Welcome, %s!")
 
 /* templates/UserPreferences.tpl */
 gettext("Account settings saved successfully")
+gettext("(required, password required for change)")
+gettext("(suggested, password required for change)")
+gettext("(required to change the e-mail address)")
+gettext("You must enter your current password to change the e-mail address")
 
 /* templates/UserRecoverPassword.tpl */
 gettext("Recover a lost or forgotten password")

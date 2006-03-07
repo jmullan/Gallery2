@@ -30,29 +30,60 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+msgid "This feed no longer exists!"
+msgstr "這個新聞派送已經不存在了！"
+
+msgid "Feeds of that type are not allowed!"
+msgstr "不允許這種新聞派送種類！"
+
+msgid "Not permitted to view this item"
+msgstr "沒有可以觀看這個項目的權限"
+
+msgid "Incorrect feed type!"
+msgstr "不正確的新聞派送種類！"
+
+msgid "Comments module is not active or comment feeds are not allowed!"
+msgstr "沒有啟用回應模組或不允許回應新聞派送！"
+
+msgid "Not permitted to view comments for this item"
+msgstr "沒有可以觀看這個項目回應的權限"
+
 msgid "RSS"
 msgstr "RSS"
 
 msgid "Export"
 msgstr "滙出"
 
+msgid "RSS Feed for this Album"
+msgstr "這個相簿的 RSS 新聞派送"
+
+msgid "RSS Feed for this Photo"
+msgstr "這個照片的 RSS 新聞派送"
+
+msgid "RSS Feed for this Movie"
+msgstr "這個影片的 RSS 新聞派送"
+
 msgid "Configure RSS Feeds"
-msgstr "設定 RSS 訂閱"
+msgstr "設定 RSS 新聞派送"
 
 msgid "Simple RSS Feed"
-msgstr "簡易 RSS 訂閱"
+msgstr "簡易 RSS 新聞派送"
 
 msgid "Short URL for Simple RSS Feeds"
-msgstr "簡易 RSS 訂閱的短式網址"
+msgstr "簡易 RSS 新聞派送的短式網址"
 
 msgid "RSS Feed"
-msgstr "RSS 訂閱"
+msgstr "RSS 新聞派送"
 
 msgid "The name of the configured RSS Feed"
-msgstr "設定的 RSS 訂閱名稱"
+msgstr "設定的 RSS 新聞派送名稱"
 
 msgid "Short URL for Configurable RSS Feeds"
-msgstr "可調式 RSS 訂閱的短式網址"
+msgstr "可調式 RSS 新聞派送的短式網址"
+
+#, c-format
+msgid "RSS Feed for this %s"
+msgstr "這個%s的新聞派送"
 
 msgid "Items in an album"
 msgstr "相簿中的項目"
@@ -74,7 +105,7 @@ msgid "In album <a href=\"%s\">%s</a>"
 msgstr "在相簿<a href=\"%s\">%s</a>中"
 
 msgid "RSS Feeds"
-msgstr "RSS 訂閱"
+msgstr "RSS 新聞派送"
 
 msgid "Settings have been saved"
 msgstr "設定已經儲存"
@@ -86,25 +117,24 @@ msgid "List"
 msgstr "列表"
 
 msgid "Edit Feed"
-msgstr "編輯訂閱"
+msgstr "編輯新聞派送"
 
 msgid "New Feed"
-msgstr "新的訂閱"
+msgstr "產生新的新聞派送"
 
 msgid "Feed URL"
-msgstr "訂閱網址"
+msgstr "新聞派送網址"
 
 msgid "Feed name"
-msgstr "訂閱名稱"
+msgstr "新聞派送名稱"
 
 msgid "You can't change the name of the feed"
-msgstr "你不能改變這個訂閱的名稱"
+msgstr "你不能改變這個新聞派送的名稱"
 
 msgid ""
-"Pick name for your feed (this name will be referenced in the URL to your "
-"feed so try to use only letters)"
-msgstr ""
-"為你𥫩訂閱選一個名稱（這個名稱會在你的訂閱網址中用到，所以請盡量使用英文字母）"
+"Pick name for your feed (this name will be referenced in the URL to your feed so try to use "
+"only letters)"
+msgstr "為你的新聞派送選一個名稱（這個名稱會在你的新聞派送網址中用到，所以請盡量使用英文字母）"
 
 msgid "You must enter a name"
 msgstr "你必需輸入一個名稱"
@@ -116,22 +146,20 @@ msgid "Description"
 msgstr "詳細說明"
 
 msgid "Feed settings"
-msgstr "訂閱設定"
+msgstr "新聞派送設定"
 
 msgid "Choose what type of data that will be present in the feed"
-msgstr "選擇訂閱中的資料種類"
+msgstr "選擇新聞派送中的資料種類"
 
 msgid "Type of feed"
-msgstr "訂閱種類"
+msgstr "新聞派送種類"
 
 msgid "Items in this album"
 msgstr "這個相簿中的項目"
 
 msgid ""
-"Feeds of this type are disallowed by the administrator. Users won't be able "
-"to view them."
-msgstr ""
-"網站管厘員不允許這種類型的訂閱。使用者將無法看到它們。"
+"Feeds of this type are disallowed by the administrator. Users won't be able to view them."
+msgstr "網站管理員不允許這種類型的新聞派送。使用者將無法看到它們。"
 
 msgid "Sub-albums of this album"
 msgstr "這個相簿中的子相簿"
@@ -164,7 +192,7 @@ msgid "New and updated items"
 msgstr "新的和最近更新的項目"
 
 msgid "Choose the options for the feed"
-msgstr "選擇訂閱的選項"
+msgstr "選擇新聞派送的選項"
 
 msgid "RSS version"
 msgstr "RSS 版本"
@@ -196,16 +224,13 @@ msgstr "類別標籤"
 msgid "ttl tag"
 msgstr "ttl 標籤"
 
-msgid ""
-"Invalid time to live, this must be a number of minutes (0 to disable ttl)"
-msgstr ""
-"不正確的有效時間，必需是分鐘數（或用零取消 ttl）"
+msgid "Invalid time to live, this must be a number of minutes (0 to disable ttl)"
+msgstr "不正確的有效時間，必需是分鐘數（或用零取消 ttl）"
 
 msgid ""
-"Time to live: this must be a number of minutes (0 to disable ttl) "
-"aggregators should wait between checks of whether the feed has been updated"
-msgstr ""
-"有效時間：閱讀程式在兩次檢查訂閱是否更新之間需要等待的分鐘數（或用零取消 ttl）"
+"Time to live: this must be a number of minutes (0 to disable ttl) aggregators should wait "
+"between checks of whether the feed has been updated"
+msgstr "有效時間：閱讀程式在兩次檢查新聞派送是否更新之間需要等待的分鐘數（或用零取消 ttl）"
 
 msgid "Copyright"
 msgstr "版權說明"
@@ -219,11 +244,8 @@ msgstr "使用圖像標籤"
 msgid "Include image tag"
 msgstr "包含圖像標籤"
 
-msgid ""
-"This adds a main image to the feed, corresponding to the thumbnail for this "
-"item"
-msgstr ""
-"在訂閱中加上一個對應這個項目縮略圖的主圖像"
+msgid "This adds a main image to the feed, corresponding to the thumbnail for this item"
+msgstr "在新聞派送中加上一個對應這個項目縮略圖的主圖像"
 
 msgid "Invalid value"
 msgstr "不正確的值"
@@ -235,10 +257,8 @@ msgid "Include enclosure tags"
 msgstr "包含附件標籤"
 
 msgid ""
-"This adds an enclosure to each image in the feed, that contains the full "
-"resolution image"
-msgstr ""
-"在訂閱中的每個圖像加上含有全尺寸圖像的附件"
+"This adds an enclosure to each image in the feed, that contains the full resolution image"
+msgstr "在新聞派送中的每個圖像加上含有全尺寸圖像的附件"
 
 msgid "Cloud tag (RSS 2.0)"
 msgstr "群組標籤（RSS 2.0）"
@@ -277,25 +297,25 @@ msgid "protocol"
 msgstr "協定"
 
 msgid "Update Feed"
-msgstr "更新訂閱"
+msgstr "更新新聞派送"
 
 msgid "Create Feed"
-msgstr "產生訂閱"
+msgstr "產生新聞派送"
 
 msgid "Cancel"
 msgstr "取消"
 
 msgid "RSS feeds for this item"
-msgstr "這個項目的訂閱"
+msgstr "這個項目的新聞派送"
 
 msgid "No feeds have yet been defined"
-msgstr "沒有定義任何訂閱"
+msgstr "沒有定義任何新聞派送"
 
 msgid "Feed link"
-msgstr "訂閱網址"
+msgstr "新聞派送網址"
 
 msgid "Feed type"
-msgstr "訂閱種類"
+msgstr "新聞派送種類"
 
 msgid "Actions"
 msgstr "操作"
@@ -307,7 +327,7 @@ msgid "edit"
 msgstr "編輯"
 
 msgid "This is a list of all the feeds that are available on this Gallery"
-msgstr "這是這個 Gallery 所有訂閱的列表"
+msgstr "這是這個 Gallery 所有新聞派送的列表"
 
 msgid "RSS Settings"
 msgstr "RSS 設定"
@@ -316,25 +336,22 @@ msgid "Settings"
 msgstr "設定"
 
 msgid "Simple Feed Settings"
-msgstr "簡易訂閱設定"
+msgstr "簡易新聞派送設定"
 
 msgid "General settings"
 msgstr "一般設定"
 
-msgid ""
-"These are the default and maximum values that are used by all feeds on your "
-"Gallery"
-msgstr ""
-"這些是你的 Gallery 中所有訂閱可用的預設和最大值"
+msgid "These are the default and maximum values that are used by all feeds on your Gallery"
+msgstr "這些是你的 Gallery 中所有新聞派送可用的預設和最大值"
 
 msgid "Default number of items in feeds"
-msgstr "預設訂閱項目數"
+msgstr "預設新聞派送項目數"
 
 msgid "Invalid default number"
 msgstr "不正確的預設值"
 
 msgid "Maximum number of items in feeds"
-msgstr "最大訂閱項目數"
+msgstr "最大新聞派送項目數"
 
 msgid "Invalid maximum number"
 msgstr "不正確的最大值"
@@ -346,64 +363,59 @@ msgid "Default copyright"
 msgstr "預設版權說明"
 
 msgid "Feed Types"
-msgstr "訂閱種類"
+msgstr "新聞派送種類"
 
 msgid "Configure which types of feeds are allowed"
-msgstr "設定可用那些訂閱類型"
+msgstr "設定可用那些新聞派送類型"
 
 msgid "Allow Simple RSS Feed to be used"
-msgstr "允許使用簡易 RSS 訂閱"
+msgstr "允許使用簡易 RSS 新聞派送"
 
 msgid ""
-"If you enable this, users will be able to subscribe to a feed for any album "
-"or photo they can view."
-msgstr ""
-"如果你啟用這個選項，使用者將能訂閱所有他們可以觀看的相簿或照片。"
+"If you enable this, users will be able to subscribe to a feed for any album or photo they "
+"can view."
+msgstr "如果你啟用這個選項，使用者將能訂閱所有他們可以觀看的相簿或照片。"
 
 msgid ""
-"To edit the settings for Simple Feeds, use the corresponding tab at the top "
-"of the screen."
-msgstr ""
-"請使用螢幕上端的標籤來變更簡易訂閱設定。"
+"To edit the settings for Simple Feeds, use the corresponding tab at the top of the screen."
+msgstr "請使用螢幕上端的標籤來變更簡易新聞派送設定。"
 
 msgid "Allow configurable RSS feeds to be used"
-msgstr "允許使用可調式 RSS 訂閱"
+msgstr "允許使用可調式 RSS 新聞派送"
 
 msgid ""
-"Only album owners will be able to define such feeds. They can set parameters "
-"for the type of feed they want."
-msgstr ""
-"只有相簿所有人才能定義這種訂閱。他們可以設定他們想要的訂閱形式的參數。"
+"Only album owners will be able to define such feeds. They can set parameters for the type of "
+"feed they want."
+msgstr "只有相簿所有人才能定義這種新聞派送。他們可以設定他們想要的新聞派送形式的參數。"
 
 msgid ""
-"Once a feed is defined, users will be able to subscribe to those feeds if "
-"they can view the associated item."
-msgstr ""
-"在定義一個訂閱後，對相關項目有觀看權限的使用者就可以訂閱它們。"
+"Once a feed is defined, users will be able to subscribe to those feeds if they can view the "
+"associated item."
+msgstr "在定義一個新聞派送後，對相關項目有觀看權限的使用者就可以訂閱它們。"
 
 msgid "Allow RSS feeds of photos inside an album"
-msgstr "允許在相簿中的照片的 RSS 訂閱"
+msgstr "允許在相簿中的照片的 RSS 新聞派送"
 
 msgid "Fast"
 msgstr "快"
 
 msgid "Allow RSS feeds of subalbums of an album"
-msgstr "允許在相簿中的子相簿的 RSS 訂閱"
+msgstr "允許在相簿中的子相簿的 RSS 新聞派送"
 
 msgid "Slow"
 msgstr "慢"
 
 msgid "Allow RSS feeds of photos inside an album and its subalbums"
-msgstr "允許相簿和其子相簿中照片的 RSS 訂閱"
+msgstr "允許相簿和其子相簿中照片的 RSS 新聞派送"
 
 msgid "Slower"
 msgstr "更慢"
 
 msgid "Allow RSS feeds comments of a photo"
-msgstr "允許照片回應的 RSS 訂閱"
+msgstr "允許照片回應的 RSS 新聞派送"
 
 msgid "Allow RSS feeds comments of an album"
-msgstr "允許相簿回應的 RSS 訂閱"
+msgstr "允許相簿回應的 RSS 新聞派送"
 
 msgid "Save Settings"
 msgstr "儲存設定"
@@ -412,32 +424,30 @@ msgid "Reset"
 msgstr "重置"
 
 msgid "Helping users discover RSS feeds"
-msgstr "幫助使用者找到 RSS 訂閱"
+msgstr "幫助使用者找到 RSS 新聞派送"
 
 msgid ""
-"If you want to help users discover feeds in your Gallery, you can add the "
-"RSS block to the themes used in your Gallery."
+"If you want to help users discover feeds in your Gallery, you can add the RSS block to the "
+"themes used in your Gallery."
 msgstr ""
-"如果你要協助使用者找到你的 Gallery 的訂閱，你可以在你使用的 Gallery 佈景主題中加上"
-" RSS 區塊。"
+"如果你要協助使用者找到你的 Gallery 的新聞派送，你可以在你使用的 Gallery 佈景主題中加上 RSS 區塊。"
 
 msgid ""
-"This will have two effects: the block itself, which users can see and pick "
-"feeds from (and get a list of all feeds); and hidden page headers that "
-"modern web browsers will use to make it easier for the user to subscribe to "
-"the feeds."
+"This will have two effects: the block itself, which users can see and pick feeds from (and "
+"get a list of all feeds); and hidden page headers that modern web browsers will use to make "
+"it easier for the user to subscribe to the feeds."
 msgstr ""
-"這會有兩個效果：使用者可以用來看到並選取訂閱（和取得所有訂閱的列表）的區塊本身；還有"
-"瀏覽程式可用來讓使用者更容易地使用訂閱的隱藏頁面檔頭。"
+"這會有兩個效果：使用者可以用來看到並選取新聞派送（和取得所有新聞派送的列表）的區塊本身；還有瀏覽程式"
+"可用來讓使用者更容易地訂閱新聞派送的隱藏頁面檔頭。"
 
 msgid "Global list of RSS feeds"
-msgstr "所有訂閱的列表"
+msgstr "所有新聞派送的列表"
 
 msgid "On item"
 msgstr "使用項目"
 
 msgid "Simple Feed settings"
-msgstr "簡易訂閱設定"
+msgstr "簡易新聞派送設定"
 
 msgid "For albums"
 msgstr "相簿"
@@ -457,17 +467,17 @@ msgstr "相簿的回應"
 msgid "For items"
 msgstr "項目"
 
-msgid "Comments for items"
-msgstr "項目的回應"
+msgid "Comments for items (always selected)"
+msgstr "項目的回應（永遠選用）"
 
 msgid "List all RSS Feeds"
-msgstr "所有 RSS 訂閱列表"
+msgstr "所有 RSS 新聞派送列表"
 
 msgid "List of RSS Feeds"
-msgstr "RSS 訂閱列表"
+msgstr "RSS 新聞派送列表"
 
 msgid "Number of feeds to display"
-msgstr "顯示的訂閱數"
+msgstr "顯示的新聞派送數"
 
 msgid "1"
 msgstr "1"

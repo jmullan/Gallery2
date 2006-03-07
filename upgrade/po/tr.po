@@ -22,12 +22,12 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Upgrader 1.0\n"
+"Project-Id-Version: Gallery: Upgrader 2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-05-20 12:20+0200\n"
-"PO-Revision-Date: 2005-10-06 04:17+0200\n"
+"PO-Revision-Date: 2006-02-26 23:28+0200\n"
 "Last-Translator: Goker ISIK <admin@ansolon.com>\n"
-"Language-Team: Turkish <admin@ansolon.com>\n"
+"Language-Team: Turkish <admin@ansolon.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -51,16 +51,14 @@ msgstr "<b>Hata:</b> geçersiz şifre."
 msgid "Empty Cache"
 msgstr "Boş Önbellek"
 
-#, fuzzy
 msgid "Unable to clear the page cache"
-msgstr "%s Teması yüklenemiyor"
+msgstr "Sayfa önbelleği temizlenemiyor"
 
 msgid "Unable to commit database transaction"
 msgstr "Veritabanı işlemi gerçekleştirilemiyor"
 
-#, fuzzy
 msgid "Finish Upgrade"
-msgstr "Güncellemeye Başla"
+msgstr "Güncellemeyi Bitir"
 
 msgid "System Checks"
 msgstr "Sistem Kontrolü"
@@ -112,13 +110,13 @@ msgstr "Güvenli Kip"
 msgid "Regular expressions"
 msgstr ""
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error: Your PHP is configured without support for %sPerl Compatible Regular Expressions%s. "
 "You must enable these functions before Gallery will run."
 msgstr ""
-"Hata: PHP versiyonunuz safe mode açık olarak yapılandırılmış. Galeriyi çalıştırmadan çnce "
-"safe mode'u kapatmalısınız."
+"Hata: PHP versiyonunuz  %sPerl Compatible Regular Expressions%s desteklemeyen biçimde "
+"yapılandırılmış.  Galeriyi çalıştırmadan önce bu fonksiyonları açık duruma getirmelisiniz."
 
 msgid "exec() allowed"
 msgstr "exec() allowed"
@@ -203,7 +201,7 @@ msgstr ""
 "yükseltmelisiniz. "
 
 msgid "Translation support"
-msgstr ""
+msgstr "Çeviri desteği"
 
 #, c-format
 msgid ""
@@ -211,18 +209,25 @@ msgid ""
 "please instruct your system administrator to reconfigure PHP with the %sgettext%s option "
 "enabled."
 msgstr ""
+"Webserverınız yerelleştirmeyi desteklemiyor. Galerinizde diğer dil desteğini aktif duruma "
+"geçirebilmek için, sistem yöneticinizle bağlantıya geçerek, PHP'nizin %sgettext%s destekli "
+"olarak yapılandırılmasını sağlayın."
 
 #, c-format
 msgid ""
 "Your PHP is missing the function %sbind_textdomain_codeset%s. This means Gallery may display "
 "extended characters for some languages incorrectly."
 msgstr ""
+"PHP'nizin %sbind_textdomain_codeset%s fonksiyonu eksik. Bu nedenle Galeriniz bazı dillerdeki "
+"genişletilmiş karakterleri yanlış gösterebilir."
 
 #, c-format
 msgid ""
 "Your PHP is missing the function %sdngettext%s. This means Gallery will be unable to "
 "translate plural forms."
 msgstr ""
+"PHP'nizin  %sdngettext%s fonksiyonu eksik. Bunun anlamı Galeriniz çoğul anlamların "
+"çevirisini yapamayacak."
 
 msgid "Zend compatibility mode"
 msgstr "Zend uyumluluk modu"
@@ -239,20 +244,17 @@ msgstr ""
 "\"BAŞARILI\" görüyorsanız PHP'nizde sorun yok. Eğer hatayla karşılaşıyorsanız, işlem "
 "yapmadan önce  ze1_compatibility_mode'u kapatmalısınız."
 
-#, fuzzy
 msgid "putenv() allowed"
-msgstr "exec() allowed"
+msgstr "putenv() izinli"
 
-#, fuzzy
 msgid ""
 "Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> "
 "parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
 "Gallery will be unable to run in other languages than the system language and English."
 msgstr ""
-"Uyarı: set_time_limit() fonksiyonu php.ini de bulunan <b>disabled_functions</b> parametresi "
+"Uyarı: putenv() fonksiyonu php.ini de bulunan <b>disabled_functions</b> parametresi "
 "kullanılarak kapalı konuma getirilmiş. Galeri bu durumda çalışmasını sürdürebilir, ancak "
-"operasyonları güvenilir olarak gerçekleştiremez. %d saniyeden fazla süren her işlem "
-"başarısızlıkla sonuçlanır (bazen boş sayfala sonuçlanır) ve veri bozulmasına yol açabilir."
+"ender bulunan sistemlerde Galeri İngilizce ve sistem dili dışındaki dillerde çalışamaz."
 
 msgid "Output buffering disabled"
 msgstr ""
@@ -289,6 +291,9 @@ msgstr "Manifest kayıp ya da ulaşılamaz"
 
 msgid "Upgrade Core"
 msgstr "Çekirdeği Güncelle"
+
+msgid "Unable to verify plugins"
+msgstr ""
 
 msgid "Upgrade Modules"
 msgstr "Modülleri Güncelle"
@@ -355,13 +360,11 @@ msgstr "Beni Doğrula"
 msgid "Authentication successful!"
 msgstr "Doğrulama başarılı!"
 
-#, fuzzy
 msgid "Successfully cleaned caches."
-msgstr "Önbellek klasörleriniz başarılı olarak temizlendi."
+msgstr "Önbellekler başarıyla temizlendi."
 
-#, fuzzy
 msgid "Delete Caches"
-msgstr "Önbellek Klasörlerini Sil"
+msgstr "Önbellekleri Sil"
 
 msgid ""
 "Gallery creates temporary copies of some of your data on your hard drive.  This helps it to "
@@ -469,12 +472,17 @@ msgstr ""
 msgid "Old files (%d)"
 msgstr "Eski dosyalar (%d)"
 
+#, fuzzy, c-format
 msgid ""
 "These files are no longer part of Gallery. They probably won't cause any problems but it is "
-"a good idea to remove them to keep your install clean."
+"a good idea to remove them to keep your install clean.  Gallery can't remove these files for "
+"you, but you can download and run %s in your gallery2 directory to delete them for you."
 msgstr ""
 "Bu dosyalar artık Galerinin bir parçası değil. Büyük ihtimalle hiç bir probleme yol açmazlar "
 "ancak kurulumunuzu temiz tutmak açısından bu dosyaları kaldırmak iyi bir fikir."
+
+msgid "this script"
+msgstr ""
 
 msgid "Upgrade Steps"
 msgstr "Güncelleme Adımları"
@@ -580,6 +588,24 @@ msgstr ""
 "versiyon alçaltması yapamazsınız. Lütfen Galeri 2 dosyalarınızı şu anda kurulu olan ile ve "
 "ya da daha yenisi ile değiştirin."
 
+#, fuzzy
+msgid "the Gallery website"
+msgstr "Galeri 2 Kurulumuna Git"
+
+#, c-format
+msgid ""
+"Your upgrade cannot begin because some of your active modules/themes are incompatible or "
+"missing.  You must either locate more recent versions of these modules or themes, or revert "
+"to your original version of Gallery.  No changes have been made so it's safe to revert.  If "
+"you have many incompatible modules listed below, it's possible that you downloaded a smaller "
+"distribution of Gallery than what you originally installed.  You can download a larger "
+"distribution from %s."
+msgstr ""
+
+#, c-format
+msgid "Download replacement modules from %s"
+msgstr ""
+
 msgid ""
 "Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  "
 "If you fail to make a backup and something goes wrong, there is a strong possibility that we "
@@ -592,16 +618,16 @@ msgstr ""
 msgid "MySQL"
 msgstr "MySQL"
 
-#, fuzzy, c-format
+#, c-format
 msgid "mysqldump -u%s -p -h %s --opt %s > %s.sql"
-msgstr "mysqldump -u%s -p<i>Şifreniz</i> --opt %s > %s.sql"
+msgstr "mysqldump -u%s -p -h %s --opt %s > %s.sql"
 
 msgid "PostgreSQL"
 msgstr "PostgreSQL"
 
-#, fuzzy, c-format
+#, c-format
 msgid "pg_dump -h %s --format=t %s > %s.sql"
-msgstr "pg_dump --format=t %s > %s.sql"
+msgstr "pg_dump -h %s --format=t %s > %s.sql"
 
 msgid ""
 "Once the upgrade has begun, please be patient.  If you cancel or reload the page, you may "
@@ -706,6 +732,12 @@ msgstr ""
 "Galeri 2 güncellemesi için %d adım gereklidir. Bu güncelleme aracı adımlarda size rehberlik "
 "edecek ve gerekli başka adımlar olması durumunda size yol gösterecektir. İşlem yapmadan önce "
 "lütfen %sYardım Dosyasını%s okuyunuz."
+
+msgid ""
+"If you have a busy site, consider putting your Gallery in maintenance mode. This gives "
+"visitors a message that the site is temporarily offline, rather than showing everybody this "
+"upgrade page. Edit your config.php file to activate maintenance mode."
+msgstr ""
 
 msgid "Select Language:"
 msgstr "Dil Seç:"
