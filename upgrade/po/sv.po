@@ -1,25 +1,25 @@
 # $Id$
-# 
+#
 # Gallery - a web based photo album viewer and editor
 # Copyright (C) 2000-2006 Bharat Mediratta
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or (at
 # your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Upgrader 1.0\n"
+"Project-Id-Version: Gallery: Upgrader 2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-01-22 11:57+0100\n"
 "PO-Revision-Date: 2006-01-22 12:00+0100\n"
@@ -290,6 +290,9 @@ msgstr "Manifest saknas eller är oåtkommlig."
 msgid "Upgrade Core"
 msgstr "Uppgradera Kärnan"
 
+msgid "Unable to verify plugins"
+msgstr ""
+
 msgid "Upgrade Modules"
 msgstr "Uppgradera Moduler"
 
@@ -467,12 +470,17 @@ msgstr ""
 msgid "Old files (%d)"
 msgstr "Gamla filer (%d)"
 
+#, fuzzy, c-format
 msgid ""
 "These files are no longer part of Gallery. They probably won't cause any problems but it is "
-"a good idea to remove them to keep your install clean."
+"a good idea to remove them to keep your install clean.  Gallery can't remove these files for "
+"you, but you can download and run %s in your gallery2 directory to delete them for you."
 msgstr ""
 "Dessa filer är inte längre en del av Gallery. Dom kommer troligen inte skapa några problem "
 "men det är bra om man tar bort dom så att installationen hålls ren."
+
+msgid "this script"
+msgstr ""
 
 msgid "Upgrade Steps"
 msgstr "Uppgraderings Steg"
@@ -576,6 +584,24 @@ msgstr ""
 "Den installerade versionen är nyare än den version du försöker uppgradera till. Du kan inte "
 "nergradera G2. Var snäll och ersätt gallery2 filerna med filer från den version som "
 "förnärvarande är installerad eller nyare filer."
+
+#, fuzzy
+msgid "the Gallery website"
+msgstr "Gå till Gallery 2 Installeraren"
+
+#, c-format
+msgid ""
+"Your upgrade cannot begin because some of your active modules/themes are incompatible or "
+"missing.  You must either locate more recent versions of these modules or themes, or revert "
+"to your original version of Gallery.  No changes have been made so it's safe to revert.  If "
+"you have many incompatible modules listed below, it's possible that you downloaded a smaller "
+"distribution of Gallery than what you originally installed.  You can download a larger "
+"distribution from %s."
+msgstr ""
+
+#, c-format
+msgid "Download replacement modules from %s"
+msgstr ""
 
 msgid ""
 "Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  "
@@ -704,6 +730,12 @@ msgstr ""
 "Uppgradering av Gallery 2.0 kräver %d steg. Det här uppgraderings verktyget kommer att leda "
 "dig genom dessa steg och bistå med hjälp under vägen om det krävs ytterligare steg. Läs %"
 "sHjälp Filerna%s innan du fortsätter."
+
+msgid ""
+"If you have a busy site, consider putting your Gallery in maintenance mode. This gives "
+"visitors a message that the site is temporarily offline, rather than showing everybody this "
+"upgrade page. Edit your config.php file to activate maintenance mode."
+msgstr ""
 
 msgid "Select Language:"
 msgstr "Välj Språk:"

@@ -19,7 +19,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Upgrader 1.0\n"
+"Project-Id-Version: Gallery: Upgrader 2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-06-01 11:42+0000\n"
 "PO-Revision-Date: 2006-01-13 16:40+0100\n"
@@ -293,6 +293,9 @@ msgstr "Manifest mancante o non accessibile."
 msgid "Upgrade Core"
 msgstr "Aggiornamento Core"
 
+msgid "Unable to verify plugins"
+msgstr ""
+
 msgid "Upgrade Modules"
 msgstr "Aggiornamento Moduli"
 
@@ -472,12 +475,17 @@ msgstr ""
 msgid "Old files (%d)"
 msgstr "File vecchi (%d)"
 
+#, fuzzy, c-format
 msgid ""
 "These files are no longer part of Gallery. They probably won't cause any problems but it is "
-"a good idea to remove them to keep your install clean."
+"a good idea to remove them to keep your install clean.  Gallery can't remove these files for "
+"you, but you can download and run %s in your gallery2 directory to delete them for you."
 msgstr ""
 "Questi file non fanno pi&ugrave; parte di Gallery. Probabilmente non creeranno alcun "
 "problema ma sarebbe una buona idea quella di cancellarli e tenere pulita l'installazione."
+
+msgid "this script"
+msgstr ""
 
 msgid "Upgrade Steps"
 msgstr "Fasi Aggiornamento"
@@ -581,6 +589,24 @@ msgstr ""
 "La versione installata &egrave; pi&ugrave; recente di quella a cui stai cercando di fare "
 "l'aggiornamento. Non puoi fare il downgrade di G2. Sostituisci i file di gallery2 coi file "
 "dell'installazione corrente o pi&ugrave; recenti."
+
+#, fuzzy
+msgid "the Gallery website"
+msgstr "Vai all'Installer di Gallery"
+
+#, c-format
+msgid ""
+"Your upgrade cannot begin because some of your active modules/themes are incompatible or "
+"missing.  You must either locate more recent versions of these modules or themes, or revert "
+"to your original version of Gallery.  No changes have been made so it's safe to revert.  If "
+"you have many incompatible modules listed below, it's possible that you downloaded a smaller "
+"distribution of Gallery than what you originally installed.  You can download a larger "
+"distribution from %s."
+msgstr ""
+
+#, c-format
+msgid "Download replacement modules from %s"
+msgstr ""
 
 msgid ""
 "Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  "
@@ -709,6 +735,12 @@ msgstr ""
 "L'aggiornamento di Gallery 2 necessita di %d fasi. Questo strumento di aggiornamento ti "
 "guider&agrave; attraverso queste fasi e ti dar&agrave; assistenza lungo il cammino se ci "
 "sar&agrave; bisogno di ulteriori passi. Leggi il %sFile di Help%s prima di continuare."
+
+msgid ""
+"If you have a busy site, consider putting your Gallery in maintenance mode. This gives "
+"visitors a message that the site is temporarily offline, rather than showing everybody this "
+"upgrade page. Edit your config.php file to activate maintenance mode."
+msgstr ""
 
 msgid "Select Language:"
 msgstr "Seleziona Lingua:"

@@ -20,7 +20,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Upgrader 1.0\n"
+"Project-Id-Version: Gallery: Upgrader 2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-09-07 02:41+0200\n"
 "PO-Revision-Date: 2005-09-07 12:46+0200\n"
@@ -287,6 +287,9 @@ msgstr "Manifest fali ili je nedostupan"
 msgid "Upgrade Core"
 msgstr "Nadogradnja jezgra"
 
+msgid "Unable to verify plugins"
+msgstr ""
+
 msgid "Upgrade Modules"
 msgstr "Nadogradnja modula"
 
@@ -464,12 +467,17 @@ msgstr ""
 msgid "Old files (%d)"
 msgstr "Stare datoteke (%d)"
 
+#, fuzzy, c-format
 msgid ""
 "These files are no longer part of Gallery. They probably won't cause any problems but it is "
-"a good idea to remove them to keep your install clean."
+"a good idea to remove them to keep your install clean.  Gallery can't remove these files for "
+"you, but you can download and run %s in your gallery2 directory to delete them for you."
 msgstr ""
 "Ove datoteke više nisu deo Galerije. Verovatno neće prouzrokovati nikakve probleme, ali bi "
 "bilo dobro da ih uklonite kako bi vaša instalacija bila čista."
+
+msgid "this script"
+msgstr ""
 
 msgid "Upgrade Steps"
 msgstr "Koraci nadogradnje"
@@ -578,6 +586,24 @@ msgstr ""
 "Instalirana verzija je novija od one na koju želite da nadogradite. Nije moguće instalirate "
 "stariju verziju preko nove. Molimo vas da zamenite datoteke Galerije 2 trenutno instaliranom "
 "verzijom ili novijom."
+
+#, fuzzy
+msgid "the Gallery website"
+msgstr "Pokreni proces instalacije Galerije 2"
+
+#, c-format
+msgid ""
+"Your upgrade cannot begin because some of your active modules/themes are incompatible or "
+"missing.  You must either locate more recent versions of these modules or themes, or revert "
+"to your original version of Gallery.  No changes have been made so it's safe to revert.  If "
+"you have many incompatible modules listed below, it's possible that you downloaded a smaller "
+"distribution of Gallery than what you originally installed.  You can download a larger "
+"distribution from %s."
+msgstr ""
+
+#, c-format
+msgid "Download replacement modules from %s"
+msgstr ""
 
 msgid ""
 "Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  "
@@ -705,6 +731,12 @@ msgstr ""
 "Nadogradnja Galerije 2 se sastoji iz %d koraka. Proces nadogradnje će vas voditi kroz te "
 "korake i pružati vam pomoć usput ako su potrebni dodatni koraci. Molimo vas da pročitate %"
 "sUputstvo za upotrebu%s pre nego što nastavite."
+
+msgid ""
+"If you have a busy site, consider putting your Gallery in maintenance mode. This gives "
+"visitors a message that the site is temporarily offline, rather than showing everybody this "
+"upgrade page. Edit your config.php file to activate maintenance mode."
+msgstr ""
 
 msgid "Select Language:"
 msgstr "Izaberite jezik:"
