@@ -25,6 +25,10 @@
                     showSize=true
                     showOwner=true
                     class="giInfo"}
+	  {if !empty($theme.userLinks)}
+            {g->block type="core.ItemLinks" useDropdown=false
+		      links=$theme.userLinks class="floatrix-userLinks"}
+	  {/if}
         </div>
 
         {if !empty($theme.navigator)}
