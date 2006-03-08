@@ -49,7 +49,9 @@ class ErrorPageView extends GalleryView {
 
 	list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
 	$ErrorPage['isAdmin'] = (!$ret && $isAdmin);
-	$ErrorPage['stackTrace'] = $this->_error->getAsHtml($isAdmin);
+	if ($gallery->getDebug() || $ErrorPage['isAdmin']) {
+	    $ErrorPage['stackTrace'] = $this->_error->getAsHtml($isAdmin);
+	}
 
 	/* Landing page for errors.. */
 	$errorCode = $this->_error->getErrorCode();

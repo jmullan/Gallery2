@@ -61,6 +61,7 @@
     </p>
   </div>
 
+  {if !empty($ErrorPage.stackTrace)}
   <div class="gbBlock">
     <h3>
       {g->text text="Error Detail"}
@@ -73,6 +74,7 @@
       {$ErrorPage.stackTrace}
     </div>
   </div>
+  {/if}
 
   {if $ErrorPage.isAdmin}
   <div class="gbBlock">
