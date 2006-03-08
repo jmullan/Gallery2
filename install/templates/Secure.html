@@ -4,6 +4,7 @@
     </h1>
     </div>
     
+    <?php if ($templateData['showFileSystemPermissionWarnings']): ?>
     <?php if (!$templateData['secure']): ?>
     <?php if (!$templateData['file']['secure']): ?>
     <p>
@@ -27,7 +28,22 @@
     <p>
       <?php print _("If you really want to continue, you can.  But we recommend that you take an extra moment to make sure that you're safe.") ?>
     </p>
+    <?php endif; ?>
 
+    <?php if ($templateData['secure']): ?>
+    <p>
+      <?php print _("We've verified that your config.php is secure.") ?>
+    </p>
+    <?php endif; ?>
+    <?php endif; ?>
+    
+    
+    <div class="warning">
+      <?php printf(_('Please read the %sGallery Security Guide%s. For a brief overview, take a look at the short check list within the security guide.'), '<a href="http://codex.gallery2.org/index.php/Gallery2:Security" target="_blank">', '</a>') ?>
+    </div>
+    
+    <?php if ($templateData['showFileSystemPermissionWarnings'] && 
+              !$templateData['dir']['secure']): ?>
     <div class="go">
 	  <div class="btn btn-redo"><span><span><span><span>
 	<a href="<?php generateUrl(sprintf('%s?step=%s', INDEX_PHP, $currentStep->getStepNumber())) ?>">
@@ -35,10 +51,4 @@
 	</a>
 	  </span></span></span></span></div>
     </div>
-    <?php endif; ?>
-
-    <?php if ($templateData['secure']): ?>
-    <p>
-      <?php print _("We've verified that your config.php is secure.") ?>
-    </p>
     <?php endif; ?>
