@@ -85,6 +85,10 @@ class SystemInfoTask extends MaintenanceTask {
 	} else {
 	    $acceleration = $core->translate('unknown');
 	}
+	list ($ret, $lockSystem) = $core->getParameter('lock.system');
+	if ($ret) {
+	    $lockSystem = $core->translate('unknown');
+	}
 
 	$info = array(
 	    $core->translate('Gallery version') . ' = ' . $version,
@@ -92,7 +96,8 @@ class SystemInfoTask extends MaintenanceTask {
 	    $core->translate('Webserver') . ' = ' .
 		GalleryUtilities::getServerVar('SERVER_SOFTWARE'),
 	    $core->translate('Database') . ' = ' .
-		$storage->getAdoDbType() . ' ' . @$storage->getVersion(),
+		$storage->getAdoDbType() . ' ' . @$storage->getVersion() .
+		', lock.system=' . $lockSystem,
 	    $core->translate('Toolkits') . ' = ' . $toolkitList,
 	    $core->translate('Acceleration') . ' = ' . $acceleration,
 	    $core->translate('Operating system') . ' = ' . php_uname(),
