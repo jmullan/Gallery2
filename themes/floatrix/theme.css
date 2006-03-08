@@ -180,7 +180,7 @@ td#gsSidebarCol #gsSideBar {
  * ydnar@sixapart.com - http://www.sixapart.com
  */
 
-.ydsf {
+.dropshadow {
     display: block;
     position: relative;
     margin: 4px -10px -4px 4px;
@@ -188,22 +188,22 @@ td#gsSidebarCol #gsSideBar {
 }
 
 /* ie6 ignores this selector */
-html>body .ydsf {
+html>body .dropshadow {
     z-index: 100; /* to avoid overlap of images on sidebar in Safari */
     margin: 10px -15px -15px 0px;
     background: url(images/shadow.png) right bottom no-repeat;
 }
 
 /* shadow corners */
-.ydsf:before, .ydsf:after {
+.dropshadow:before, .dropshadow:after {
     content: " ";
     display: block;
-    width: 20px;
-    height: 20px;
+    width: 15px;
+    height: 10px;
     background: inherit;	
 }
 
-.ydsf:before {
+.dropshadow:before {
     position: absolute;
     top: 0;
     right: 0;
@@ -211,12 +211,12 @@ html>body .ydsf {
     background-position: right top;
 }
 
-.ydsf:after {
+.dropshadow:after {
     margin: -10px 0 0 -10px;
     background-position: left bottom;
 }
 
-.ydsf .inner {
+.dropshadow .inner {
     display: block;
     position: relative;
     overflow: hidden; /* prevents margin leakage from child elements */
@@ -225,7 +225,7 @@ html>body .ydsf {
 }
 
 /* ie6 ignores this selector */
-html>body .ydsf .inner {
+html>body .dropshadow .inner {
     left: -15px;
     top: -15px;
     margin: 0;
@@ -234,6 +234,7 @@ html>body .ydsf .inner {
 
 #gsContent {
     margin: 0;
+    padding: 0;
     border-left: 1px solid #ddd;
 }    
 
