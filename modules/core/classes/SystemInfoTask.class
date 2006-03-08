@@ -60,6 +60,10 @@ class SystemInfoTask extends MaintenanceTask {
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
 
 	$version = $core->getInstalledVersions();
 	$version = !empty($version)
@@ -73,9 +77,8 @@ class SystemInfoTask extends MaintenanceTask {
 	    $toolkitList = $core->translate('unknown');
 	}
 
-	list ($ret, $acceleration) = $core->getParameter('acceleration');
-	if (!$ret) {
-	    $acceleration = unserialize($acceleration);
+	if ($params['acceleration']) {
+	    $acceleration = unserialize($params['acceleration']);
 	    $acceleration = $acceleration['guest']['type']
 		. (isset($acceleration['guest']['expiration'])
 			? '/' . $acceleration['guest']['expiration'] : '') . ', '
@@ -85,9 +88,10 @@ class SystemInfoTask extends MaintenanceTask {
 	} else {
 	    $acceleration = $core->translate('unknown');
 	}
-	list ($ret, $lockSystem) = $core->getParameter('lock.system');
+
+	list ($ret, $locale) = $gallery->getActiveLanguageCode();
 	if ($ret) {
-	    $lockSystem = $core->translate('unknown');
+	    $locale = $core->translate('unknown');
 	}
 
 	$info = array(
@@ -97,10 +101,12 @@ class SystemInfoTask extends MaintenanceTask {
 		GalleryUtilities::getServerVar('SERVER_SOFTWARE'),
 	    $core->translate('Database') . ' = ' .
 		$storage->getAdoDbType() . ' ' . @$storage->getVersion() .
-		', lock.system=' . $lockSystem,
+		', lock.system=' . $params['lock.system'],
 	    $core->translate('Toolkits') . ' = ' . $toolkitList,
 	    $core->translate('Acceleration') . ' = ' . $acceleration,
 	    $core->translate('Operating system') . ' = ' . php_uname(),
+	    $core->translate('Default theme') . ' = ' . $params['default.theme'],
+	    $core->translate('Locale') . ' = ' . $locale,
 	    $core->translate('Browser') . ' = ' . GalleryUtilities::getServerVar('HTTP_USER_AGENT')
 	);
 
