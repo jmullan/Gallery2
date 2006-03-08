@@ -3,7 +3,7 @@
       <?php print _("Check Security") ?>
     </h1>
     </div>
-    
+
     <?php if ($templateData['showFileSystemPermissionWarnings']): ?>
     <?php if (!$templateData['secure']): ?>
     <?php if (!$templateData['file']['secure']): ?>
@@ -36,13 +36,13 @@
     </p>
     <?php endif; ?>
     <?php endif; ?>
-    
-    
+
+
     <div class="warning">
-      <?php printf(_('Please read the %sGallery Security Guide%s. For a brief overview, take a look at the short check list within the security guide.'), '<a href="http://codex.gallery2.org/index.php/Gallery2:Security" target="_blank">', '</a>') ?>
+      <?php printf(_('Please read the %1$sGallery Security Guide%3$s. For a brief overview, take a look at the %2$sshort check list%3$s within the security guide.'), '<a href="http://codex.gallery2.org/index.php/Gallery2:Security" target="_blank">', '<a href="http://codex.gallery2.org/index.php/Gallery2:Security#Short_Check_List" target="_blank">', '</a>') ?>
     </div>
-    
-    <?php if ($templateData['showFileSystemPermissionWarnings'] && 
+
+    <?php if ($templateData['showFileSystemPermissionWarnings'] &&
               !$templateData['dir']['secure']): ?>
     <div class="go">
 	  <div class="btn btn-redo"><span><span><span><span>
