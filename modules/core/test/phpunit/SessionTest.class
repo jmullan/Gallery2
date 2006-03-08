@@ -1138,7 +1138,7 @@ class SessionTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
- 	$this->assertEquals(true, $gallery->_session->isPersistent(), 'is persistent');
+	$this->assertEquals(true, $gallery->_session->isPersistent(), 'is persistent');
 	$this->assertEquals($newSid, $gallery->_session->_sessionId, 'sid after force save');
 	$this->_markSessionForCleanup($gallery->_session);
     }
@@ -1195,13 +1195,12 @@ class SessionTest extends GalleryTestCase {
 	$this->assertEquals(false, $session->isPersistent(), 'is not persistent after save');
 
 	if (!empty($gallery->_storage->_query)) {
-	    $query = '
-           SELECT [GallerySessionMap::id]
-           FROM [GallerySessionMap]
-           WHERE [GallerySessionMap::creationTimestamp] < ? OR
-                 [GallerySessionMap::modificationTimestamp] < ? OR
-                 ([GallerySessionMap::userId] = ? AND [GallerySessionMap::creationTimestamp] < ?)';
-	    $this->assertEquals($query, $gallery->_storage->_query[0], 'query');
+	    $query = 'SELECT [GallerySessionMap::id] FROM [GallerySessionMap] '
+		. 'WHERE [GallerySessionMap::creationTimestamp] < ? OR '
+		. '[GallerySessionMap::modificationTimestamp] < ? OR ([GallerySessionMap::userId]'
+		. ' = ? AND [GallerySessionMap::creationTimestamp] < ?)';
+	    $this->assertEquals($query,
+		    trim(preg_replace('/\s*\n\s*/', ' ', $gallery->_storage->_query[0])), 'query');
 	    $this->assertEquals(1, count($gallery->_storage->_query), 'number of queries');
 	    $this->assertEquals(array((int)($now - 86400 * 14), (int)($now - 86400),
 				      $this->_anonymousUserId, (int)($now - 86400 * 7)),
@@ -1740,9 +1739,9 @@ class SessionTest extends GalleryTestCase {
      * and the temp session string have no characters that change when HTML or URL encoded
      */
     function testSessionKeyAndTempSessionHaveNoSpecialCharacters() {
-    	global $gallery;
-    	$session =& $gallery->getSession();
-    	$this->assertEquals($session->getKey(), urlencode($session->getKey()),
+	global $gallery;
+	$session =& $gallery->getSession();
+	$this->assertEquals($session->getKey(), urlencode($session->getKey()),
 			    'url encoded session key');
 	$this->assertEquals($session->getKey(), htmlentities($session->getKey()),
 			    'HTML entities of session key');
