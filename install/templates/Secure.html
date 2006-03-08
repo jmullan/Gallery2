@@ -12,7 +12,7 @@
     </p>
 
     <div class="example">
-      <pre> <?php printf(_("chmod 644 %s"), $templateData['configFilePath']) ?></pre>
+      <pre> <?php printf("chmod 644 %s", $templateData['configFilePath']) ?></pre>
     </div>
     <?php endif; ?>
     <?php if (!$templateData['dir']['secure']): ?>
@@ -21,7 +21,7 @@
     </p>
 
     <div class="example">
-      <pre> <?php printf(_("chmod 755 %s"), dirname($templateData['configFilePath'])) ?></pre>
+      <pre> <?php printf("chmod 755 %s", dirname($templateData['configFilePath'])) ?></pre>
     </div>
     <?php endif; ?>
 
@@ -37,18 +37,16 @@
     <?php endif; ?>
     <?php endif; ?>
 
-
     <div class="warning">
       <?php printf(_('Please read the %1$sGallery Security Guide%3$s. For a brief overview, take a look at the %2$sshort check list%3$s within the security guide.'), '<a href="http://codex.gallery2.org/index.php/Gallery2:Security" target="_blank">', '<a href="http://codex.gallery2.org/index.php/Gallery2:Security#Short_Check_List" target="_blank">', '</a>') ?>
     </div>
 
-    <?php if ($templateData['showFileSystemPermissionWarnings'] &&
-              !$templateData['dir']['secure']): ?>
+    <?php if ($templateData['showFileSystemPermissionWarnings'] && !$templateData['secure']): ?>
     <div class="go">
-	  <div class="btn btn-redo"><span><span><span><span>
+      <div class="btn btn-redo"><span><span><span><span>
 	<a href="<?php generateUrl(sprintf('%s?step=%s', INDEX_PHP, $currentStep->getStepNumber())) ?>">
 	  <?php echo _('Check Again') ?>
 	</a>
-	  </span></span></span></span></div>
+      </span></span></span></span></div>
     </div>
     <?php endif; ?>
