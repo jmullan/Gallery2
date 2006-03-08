@@ -138,7 +138,7 @@
   </p>
   {if !empty($form.error.version.vulnerable)}
   <p class="giWarning">
-    {g->text text="Warning: This version of %s has a %sknown vulnerability%s that can be exploited to cause infinite loops. You may wish to upgrade." arg1=$AdminImageMagick.version.0 arg2="<a href=\"http://nvd.nist.gov/nvd.cfm?cvename=CVE-2005-1739\">" arg3="</a>"}
+    {g->text text="Warning: This version of %s has a %sknown vulnerability%s that can be exploited to cause infinite loops. You may wish to upgrade. This determination may be inaccurate for %sDebian%s." arg1=$AdminImageMagick.version.0 arg2="<a href=\"http://nvd.nist.gov/nvd.cfm?cvename=CVE-2005-1739\">" arg3="</a>" arg4="<a href=\"http://packages.debian.org/stable/graphics/imagemagick\">" arg5="</a>"}
   </p>
   <input type="checkbox" id="cbForceSave" name="{g->formVar var="form[forceSave]"}"/>
   <label for="cbForceSave">
