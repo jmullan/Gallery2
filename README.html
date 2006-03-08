@@ -80,11 +80,10 @@
       .important {
 	background: #FACA61;
 	border: 2px;
-	width: 480px;
+	width: 600px;
 	margin: 0.6em 0 0.6em 0;
 	padding: 0.6em;
 	color: #C00;
-	text-align: center;
       }
       .important .email {
 	font-size: 1.3em;
@@ -195,7 +194,7 @@
     </div>
 
     <p>
-      Welcome to Gallery 2. This is the first release candidate
+      Welcome to Gallery 2. This is the second release candidate
       of Gallery 2.1, code named &ldquo;<b>Blackjack</b>&rdquo;.
       Please read through this document carefully before installing Gallery 2
       and before asking for help.  We have taken care to try to answer as many
@@ -264,15 +263,32 @@
 
     <div class="important">
       <h3>Warning!</h3>
-      <span>
-	While Gallery 2 has not yet been subjected to a rigorous
-	security audit, it has been widely used for over a year during
-	the alpha, beta and release candidates phases.  Only minor
-	security flaws have been identified during this time, and they
-	were quickly addressed.  We take security very seriously, so
-	if you find a security flaw, do not hesitate to email us at:
-      </span>
-      <div class="email"> security AT gallery.menalto.com </div>
+      <p>
+	Web application security testing of Gallery 2.1 Release
+	Candidate 1 was performed by <a
+	href="http://www.jibble.org/">Paul Mutton</a>, director of <a
+	href="http://www.intershot.com/security/">Intershot Limited</a>.  In
+	his report, Paul says:
+      </p>
+
+      <p>
+	<i>"The Gallery installer and Gallery application were
+	subjected to a manual web application security test. It is
+	important to note that such tests cannot be exhaustive and may
+	not discover all vulnerabilities. All tests were carried out
+	against a standalone installation of Gallery - no integrated
+	installations were tested (e.g. with phpBB or phpnuke). The
+	security of external tools used by the Gallery application,
+	such as graphics toolkits, were not included in this test. No
+	denial of service attacks were carried out against the
+	application server."</i>
+      </p>
+
+      <p>
+	The Gallery project treats security issues very seriously.  If
+	you find a security flaw, do not hesitate to email us at:
+      </p>
+      <div class="email" style="text-align: center">security AT gallery.menalto.com</div>
     </div>
 
     <h2><a name="whats_new">What&rsquo;s new in this release?</a></h2>
@@ -1122,9 +1138,9 @@
 	<b> Embedding Gallery 2 </b> - We've made great improvements in
 	embedding Gallery 2 into other applications.  We've
 	successfully (though not completely) embedded it into Xaraya
-	and have begun working on other platforms.  See 
+	and have begun working on other platforms.  See
 	<a href="http://codex.gallery2.org/index.php/Gallery2:Embedding"
-	target="_blank">Gallery 2 Embedding</a>. 
+	target="_blank">Gallery 2 Embedding</a>.
       </li>
 
       <li>
@@ -1454,11 +1470,14 @@
 	</div>
 
 	In the Unix example, you may note that modes of 777 on your
-	<strong>g2data</strong> directory are not all that secure.  However, making it
-	more secure depends on how your system is configured.  Talk
-	with your system administrator about ways to change the
-	permissions on that directory to make it so that Gallery can
-	still write to the files but that others can&rsquo;t.
+	<strong>g2data</strong> directory are not all that secure.
+	However, making it more secure depends on how your system is
+	configured.  Talk with your system administrator about ways to
+	change the permissions on that directory to make it so that
+	Gallery can still write to the files but that others
+	can&rsquo;t.  Refer to the <a
+	href="http://codex.gallery2.org/index.php/Gallery2:Security">Gallery
+	2 Security Guide</a> for more information.
       </li>
 
       <li>
@@ -1530,23 +1549,40 @@
       </li>
 
       <li>
-	<b>Graphics Toolkits</b> - Gallery 2 works with <a href="http://netpbm.sourceforge.net"
-	target="_blank">NetPBM</a>, <a href="http://www.imagemagick.org/"
-	target="_blank">ImageMagick</a>, <a href="http://php.net/gd" target="_blank">GD</a>
-	or <a href="http://www.graphicsmagick.org/" target="_blank">GraphicsMagick</a>.
-	They&rsquo;re all almost equally good, though some say that NetPBM has slightly better
-	quality and that ImageMagick is slightly faster than
-	NetPBM. GD cannot do image rotation.  GraphicsMagick and
-	ImageMagick are very similar. GD can be very fast, but it will
-	also use a lot of memory so it may cause you to run into
-	predefined server limits.  It is also compiled into PHP by
-	default if your PHP is 4.3.0 or more recent, however it may
-	not have support for all image types (e.g. it might not have
-	JPEG support). If the binaries for NetPBM and ImageMagick are
-	installed in default, or standard, locations then Gallery 2
-	will auto-detect them during installation.  It won&rsquo;t cause any harm to
-	enable all of these toolkits&#8212;in fact you&rsquo;ll get the widest file type
-	support if you do so.
+	<b>Graphics Toolkits</b> - Gallery 2 works with many different
+	toolkits (<a href="http://netpbm.sourceforge.net"
+	target="_blank">NetPBM</a>, <a
+	href="http://www.imagemagick.org/"
+	target="_blank">ImageMagick</a>, <a href="http://php.net/gd"
+	target="_blank">GD</a> or <a
+	href="http://www.graphicsmagick.org/"
+	target="_blank">GraphicsMagick</a>).  You need to activate at
+	least one or you won't get any thumbnails, but there's no
+	limit on how many you can have.  In fact, more is better
+	because they can work together.  Here are some interesting
+	points about the main supported toolkits (mostly reported by
+	users, your mileage may vary).
+
+	<ul>
+	  <li>
+	    <b>Fastest</b> - ImageMagick and GraphicsMagick
+	  </li>
+	  <li>
+	    <b>Highest Quality</b> - NetPBM (ImageMagick is a close second though)
+	  </li>
+	</ul>
+
+	Limitations:
+	<ul>
+	  <li>
+	    <b>GD</b> - cannot do image rotation, may hit server
+	    memory limits and crash PHP.
+	  </li>
+	  <li>
+	    <b>NetPBM, ImageMagick, GraphicsMagick</b> - require server to support exec() system
+	    call (not usually a problem)
+	  </li>
+	</ul>
       </li>
     </ol>
 
@@ -1870,6 +1906,32 @@
       Updating is quick and easy and should not lose any of your data.
     </p>
 
+    <div class="important">
+      <h3> Warning! </h3>
+      <p>
+	There are changes in Gallery 2.1 that cause it to be
+	incompatible with modules and themes from Gallery 2.0.  All
+	modules and themes released by the Gallery project have been
+	updated to work with 2.1, but if you're using third party
+	modules/themes you may find that they do not work with the 2.1
+	release.
+      </p>
+      <p>
+	If you're worried, you can either deactivate any third party
+	modules before beginning your upgrade, or find and use the
+	latest version of the third party module.
+      </p>
+      <p>
+	Gallery 2.1 will detect if you're missing the appropriate
+	version of a necessary module and will abort the upgrade
+	<b>before making any changes</b> so you will not lose any
+	data.
+      </p>
+      <p>
+	Third party modules and themes: <a href="http://codex.gallery2.org/index.php/Gallery2:UserContributions">http://codex.gallery2.org/index.php/Gallery2:UserContributions</a>
+      </p>
+    </div>
+
     <ol>
       <li>
 	If you have a busy site, consider putting your Gallery in maintenance mode
@@ -1877,6 +1939,12 @@
 	message that the site is temporarily offline, rather than showing everybody
 	the upgrade page. Edit your config.php file to activate maintenance mode.
 	This feature is new in 2.1, so it is not available in an upgrade from 2.0.x.
+      </li>
+
+      <li>
+	Download the latest code for any active third party modules
+	that you're using, or deactivate them.  If in doubt,
+	deactivating is safe.
       </li>
 
       <li>
@@ -1911,28 +1979,48 @@
     <h2><a name="getting_help">Getting Help</a></h2>
     <p class="toc-link"> <a href="#toc">[table of contents]</a> </p>
     <p>
-      If you have problems, you should start by looking at the
-      <a href="http://codex.gallery2.org/index.php/Gallery2:How_do_I_Install_Gallery2"
-      target="_blank">&quot;How do I Install Gallery2&quot; article</a> on the
-      <a href="http://codex.gallery2.org/" target="_blank">Gallery Documentation Website</a>,
-      the <a href="http://codex.gallery2.org/index.php/Gallery2:faq"
-      target="_blank" >Gallery 2 FAQ</a>, or the <a href="http://gallery.menalto.com/forum/11"
-      target="_blank">Gallery 2 Support Forums</a> on the <a href="http://gallery.sourceforge.net"
-      target="_blank">Gallery Website</a>.  Search the forum to see if somebody else has
-      posted a similar problem and maybe there&rsquo;s an answer
-      there, otherwise start a new topic to get help.  If the problem
-      seems like a bug in the Gallery 2 software you can
-      <a href="http://sourceforge.net/tracker/?group_id=7130&amp;atid=107130"
-      target="_blank">file a bug</a> in our bug tracker on SourceForge.  Please read our
-      <a href="http://gallery.menalto.com/wiki/Feature_Requests_and_Bug_Reports"
-      target="_blank">tracker guidelines</a> before filing a bug so
-      that we can cut down on the number of spurious reports.  If
-      you're unsure whether to file a bug you can always post in the
-      forums first and we'll ask you to file a bug if needed.  If you
-      want to chat in real time, you can talk on our user-to-user irc
-      support channel, <a href="irc://chat.freenode.net/#gallery-support"
-      target="_blank">#gallery-support on chat.freenode.net</a>.
+      There are many resources available to you if you're having problems with Gallery:
     </p>
+      <ul>
+	<li>
+	  Look at the <a
+	    href="http://codex.gallery2.org/index.php/Gallery2:How_do_I_Install_Gallery2"
+	    target="_blank">&quot;How do I Install Gallery2&quot;
+	    article</a> on the <a href="http://codex.gallery2.org/"
+	    target="_blank">Gallery Documentation Website</a>
+	</li>
+	<li>
+	  Read the <a href="http://codex.gallery2.org/index.php/Gallery2:faq" target="_blank" >Gallery 2 FAQ</a>
+	</li>
+	<li>
+	  Use the <a href="http://gallery.menalto.com/forum/11"
+	    target="_blank">Gallery 2 Support Forums</a> on the <a
+	    href="http://gallery.sourceforge.net"
+	    target="_blank">Gallery Website</a>.
+	</li>
+	<li>
+	  Search the forum to see if somebody else has
+	  posted a similar problem and maybe there&rsquo;s an answer
+	  there, otherwise start a new topic to get help.
+	</li>
+	<li>
+	  If the problem seems like a bug in the Gallery 2 software
+	  you can <a
+	    href="http://sourceforge.net/tracker/?group_id=7130&amp;atid=107130"
+	    target="_blank">file a bug</a> in our bug tracker on
+	  SourceForge.  Please read our <a
+	    href="http://gallery.menalto.com/wiki/Feature_Requests_and_Bug_Reports"
+	    target="_blank">tracker guidelines</a> before filing a bug
+	  so that we can cut down on the number of spurious reports.
+	</li>
+	<li>
+	  If you're unsure whether to file a bug you can always post in the
+	  forums first and we'll ask you to file a bug if needed.  If you
+	  want to chat in real time, you can talk on our user-to-user irc
+	  support channel, <a href="irc://chat.freenode.net/#gallery-support"
+	    target="_blank">#gallery-support on chat.freenode.net</a>
+	</li>
+      </ul>
 
     <p>
       Remember &ndash; reporting bugs is <b>good</b>.  Even if you think
@@ -1956,12 +2044,13 @@
     <h2><a name="advanced_topics">Advanced Topics</a></h2>
     <p class="toc-link"> <a href="#toc">[table of contents]</a> </p>
     <p style="margin: 10px 0 0 0">
-      <b> Unit Tests </b> - Gallery 2 was designed using
-      <a href="http://www.google.com/search?q=extreme+programming"
-      target="_blank">Extreme Programming</a> methodologies.  This means that we have
-      a ton of unit tests that help us make sure that the code is behaving as it should.
-      If you want to help us out, you can <a href="lib/tools/phpunit/index.php"
-      target="_guided">try running the unit tests</a> and report back to us if any of them fail.
+      <b> Unit Tests </b> - Gallery 2 was designed using <a
+      href="http://www.google.com/search?q=extreme+programming"
+      target="_blank">Extreme Programming</a> methodologies.  This
+      means that we have over 2,000 unit tests that ensure code
+      quality.  If you want to help us out, you can <a
+      href="lib/tools/phpunit/index.php" target="_guided">try running
+      the unit tests</a> and report back to us if any of them fail.
       <br/>
     </p>
     <p style="margin: 0 0 0 10px">
@@ -2002,8 +2091,8 @@
 
     <p>
       <b> Embedding </b> - To learn more about embedding Gallery 2 into your website and
-      about existing integrations in content management systems, portals, blogs etc. 
-      please see <a href="http://codex.gallery2.org/index.php/Gallery2:Embedding" 
+      about existing integrations in content management systems, portals, blogs etc.
+      please see <a href="http://codex.gallery2.org/index.php/Gallery2:Embedding"
       target="_blank">Gallery 2 Embedding</a>.
     </p>
 
