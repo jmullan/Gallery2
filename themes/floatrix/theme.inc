@@ -95,22 +95,6 @@ class FloatrixTheme extends GalleryTheme {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$theme =& $template->getVariableByReference('theme');
-	$userViews = array(
-	    'slideshow.Slideshow' => true,
-	    'slideshowapplet.SlideshowApplet' => true,
-	    'comment.AddComment' => true,
-	    'comment.ShowAllComments' => true,
-	    'rss.SimpleRender' => true,
-	);
-	$theme['userLinks'] = array();
-	foreach ($theme['itemLinks'] as $i => $link) {
-	    if (isset($link['params']['view']) && isset($userViews[$link['params']['view']])) {
-		$theme['userLinks'][] = $link;
-		unset($theme['itemLinks'][$i]);
-	    }
-	}
-
 	return array(null, 'theme.tpl');
     }
 
