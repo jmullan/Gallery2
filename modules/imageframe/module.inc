@@ -37,7 +37,7 @@ class ImageFrameModule extends GalleryModule {
 	$this->setId('imageframe');
 	$this->setName($gallery->i18n('ImageFrame'));
 	$this->setDescription($gallery->i18n('Render frames around images'));
-	$this->setVersion('1.0.1');
+	$this->setVersion('1.0.2');
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('');
 	$this->setRequiredCoreApi(array(7, 0));

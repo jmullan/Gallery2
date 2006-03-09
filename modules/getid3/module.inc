@@ -40,7 +40,7 @@ class Getid3Module extends GalleryModule {
 	$this->setId('getid3');
 	$this->setName($gallery->i18n('Getid3'));
 	$this->setDescription($gallery->i18n('A toolkit for getting id3 tag information'));
-	$this->setVersion('0.9.0');
+	$this->setVersion('0.9.1'); /* Update upgrade() function below too */
 	$this->setGroup('data', $gallery->i18n('Extra Data'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(7, 1));
@@ -58,24 +58,24 @@ class Getid3Module extends GalleryModule {
 	    GalleryCoreApi::requireOnce('modules/getid3/classes/Getid3Helper.class');
 	    $ret = Getid3Helper::setDefaultProperties(GETID3_SUMMARY);
 	    if ($ret) {
-	        return $ret->wrap(__FILE__, __LINE__);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    $ret = Getid3Helper::setDefaultProperties(GETID3_DETAILED);
 	    if ($ret) {
-	        return $ret->wrap(__FILE__, __LINE__);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
-
 	} else {
 	    switch ($currentVersion) {
 	    case '0.0.1':
 	    case '0.9.0':
-	    case '0.9.9':
-	    case '1.0.0':
-	        break;
+
+	    case 'end of upgrade path':
+		break;
+
 	    default:
-	        return GalleryCoreApi::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
-	                                    sprintf('Unknown module version %s', $currentVersion));
+		return GalleryCoreApi::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
+					     sprintf('Unknown module version %s', $currentVersion));
 	    }
 	}
 
@@ -118,11 +118,11 @@ class Getid3Module extends GalleryModule {
     function activate($postActivationEvent=true) {
 	global $gallery;
 	$ret = GalleryCoreApi::registerToolkitProperty(
-	        'Getid3',
-	        array('video/x-msvideo'),
-	        'originationTimestamp',
-	        'int',
-	        $gallery->i18n('Get the origination timestamp'));
+		'Getid3',
+		array('video/x-msvideo'),
+		'originationTimestamp',
+		'int',
+		$gallery->i18n('Get the origination timestamp'));
 	if ($ret) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -170,11 +170,8 @@ class Getid3Module extends GalleryModule {
      * @see GalleryModule::getSiteAdminViews()
      */
     function getSiteAdminViews() {
-	global $gallery;
-
-	return array(null,
-	             array(array('name' => $this->translate('Getid3'),
-	                         'view' => 'getid3:AdminGetid3')));
+	return array(null, array(array('name' => $this->translate('Getid3'),
+				       'view' => 'getid3:AdminGetid3')));
     }
 
     /**

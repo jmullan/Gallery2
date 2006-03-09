@@ -33,7 +33,7 @@ class SitemapModule extends GalleryModule {
 	$this->setId('sitemap');
 	$this->setName($gallery->i18n('Sitemap'));
 	$this->setDescription($gallery->i18n('Generate a Google Sitemap for your Gallery'));
-	$this->setVersion('0.0.1');
+	$this->setVersion('0.0.2');
 	$this->setGroup('export', $gallery->i18n('Export'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(7, 0));

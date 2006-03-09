@@ -28,55 +28,37 @@
 class PicasaModule extends GalleryModule {
 
     function PicasaModule() {
-        global $gallery;
-        $this->setId('picasa');
-        $this->setName($gallery->i18n('Picasa'));
-        $this->setDescription($gallery->i18n('Import for Picasa 2 XML-Exports'));
-        $this->setVersion('1.0.0');
-        $this->setGroup('import', $this->translate('Import'));
-        $this->setCallbacks('getSiteAdminViews');
-        $this->setRequiredCoreApi(array(7, 0));
-        $this->setRequiredModuleApi(array(3, 0));
+	global $gallery;
+	$this->setId('picasa');
+	$this->setName($gallery->i18n('Picasa'));
+	$this->setDescription($gallery->i18n('Import for Picasa 2 XML-Exports'));
+	$this->setVersion('1.0.1');
+	$this->setGroup('import', $this->translate('Import'));
+	$this->setCallbacks('getSiteAdminViews');
+	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredModuleApi(array(3, 0));
     }
 
-    /**
-     * @see GalleryModule::autoConfigure()
-     */
-    
-    function autoConfigure() {
-	   /* We don't require any special configuration */
-	   return array(null, true);
-    }
-    
-    /**
-     * @see GalleryModule::needsConfiguration
-     */
-    function needsConfiguration() {
-	    return array(null, false);
-    }
-    
     /**
      * @see GalleryModule::performFactoryRegistrations()
      */
     function performFactoryRegistrations() {
-    	$ret = GalleryCoreApi::registerFactoryImplementation(
+	$ret = GalleryCoreApi::registerFactoryImplementation(
     	    'ItemAddPlugin', 'ItemAddFromPicasa', 'ItemAddFromPicasa',
     	    'modules/picasa/ItemAddFromPicasa.inc', 'picasa', null);
     	if ($ret) {
     	    return $ret->wrap(__FILE__, __LINE__);
     	}
     	return null;
-	}
+    }
 
 
     /**
      * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
-	global $gallery;
-	return array(null,
-	    array(array('name' => $this->translate('Picasa 2'),
-		'view' => 'picasa.SelectPicasaExportPath')));
+	return array(null, array(array('name' => $this->translate('Picasa 2'),
+				       'view' => 'picasa.SelectPicasaExportPath')));
     }
 }
 ?>

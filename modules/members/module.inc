@@ -38,7 +38,7 @@ class MembersModule extends GalleryModule {
 	$this->setId('members');
 	$this->setName($gallery->i18n('Members'));
 	$this->setDescription($gallery->i18n('Members List and Profiles'));
-	$this->setVersion('1.0.1');
+	$this->setVersion('1.0.2');
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(7, 0));
