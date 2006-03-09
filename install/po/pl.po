@@ -902,10 +902,6 @@ msgid ""
 "can't write to it.  Right now your config.php has modes of %s.  We suggest that you do this:"
 msgstr ""
 
-#, c-format
-msgid "chmod 644 %s"
-msgstr ""
-
 msgid ""
 "We want to make sure that your Gallery is secure.  The directory containing your config.php "
 "file that this installer has edited has permissions that allow other people to write or "
@@ -913,16 +909,9 @@ msgid ""
 "such that other users can't write to it.  We suggest that you do this:"
 msgstr ""
 
-#, c-format
-msgid "chmod 755 %s"
-msgstr ""
-
 msgid ""
 "If you really want to continue, you can.  But we recommend that you take an extra moment to "
 "make sure that you're safe."
-msgstr ""
-
-msgid "Check Again"
 msgstr ""
 
 msgid "We've verified that your config.php is secure."
@@ -930,14 +919,19 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Gallery needs to store data in a directory on your server. It will use this directory to "
-"store your images as well as other important data. For security, we suggest that you place "
-"this directory <b>outside</b> of your web site so that it cannot be browsed directly via the "
-"web. This is necessary if you wish to have your images accessible only via Gallery [%s]. "
-"Note that the default path provided below is inside the webserver area. This is because we "
-"are unable to reliably guess a directory outside of your web site. You should update it with "
-"a secure location, such as a path under your user home directory, if possible. If you access "
-"your site via FTP, you might not have this option."
+"Please read the %1$sGallery Security Guide%3$s. For a brief overview, take a look at the %2"
+"$sshort check list%3$s within the security guide."
+msgstr ""
+
+msgid "Check Again"
+msgstr ""
+
+msgid ""
+"Gallery needs a directory to store your images. The directory we chose for you will work, "
+"but is web accessible."
+msgstr ""
+
+msgid "For maximum security you should pick a directory that is not web accessible."
 msgstr ""
 
 msgid ""
@@ -984,11 +978,8 @@ msgid "<b>Note</b>: Don't forget to delete dir.php when you're done!"
 msgstr ""
 
 msgid ""
-"Your webserver needs to be able to write to this directory. Permission systems vary from "
-"host to host. You can set a very relaxed set of permissions on this directory to get Gallery "
-"working, but if you're concerned about security you should consult your system adminstrator "
-"to figure out how to make this as secure as possible. To get it working, you can follow "
-"these examples."
+"Your webserver needs to be able to write to this directory. To get it working, you can "
+"follow these examples."
 msgstr ""
 
 msgid ""
@@ -1019,7 +1010,10 @@ msgstr ""
 msgid "cd %s"
 msgstr ""
 
-msgid "This is sometimes known as an <b>image firewall</b>."
+#, c-format
+msgid ""
+"For information on how to secure your Gallery storage directory, please read the %sSecurity "
+"Guide%s."
 msgstr ""
 
 msgid "Storage directory set successfully."
