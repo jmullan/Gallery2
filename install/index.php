@@ -136,6 +136,10 @@ if (function_exists('dgettext')) {
     if (function_exists('bind_textdomain_codeset')) {
 	bind_textdomain_codeset('gallery2_install', 'UTF-8');
     }
+    /* Set the appropriate charset in our HTTP header */
+    if (!headers_sent()) {
+	header('Content-Type: text/html; charset=UTF-8');
+    }
 }
 
 /*
