@@ -603,8 +603,10 @@ class GalleryTemplateAdapter {
 		return;
 	    }
 	    return sprintf(
-		'<img src="%s" alt="%s" title="%s" ' .
-		'style="border-style: none" width="80" height="15"/>',
+		'<a href="%s"%s><img src="%s" alt="%s" title="%s" ' .
+		'style="border-style: none" width="80" height="15"/></a>',
+		'http://www.hyperborea.org/flash/doubledown.html',
+		$linkTarget,
 		$urlGenerator->generateUrl(
 		    array('href' => 'modules/core/data/g21-blackjack.png')),
 		$core->translate('G2.1-RC-2: Double Down'),

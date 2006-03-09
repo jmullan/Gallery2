@@ -1863,6 +1863,9 @@ class CoreModuleExtras {
 		}
 	    }
 
+	case '1.0.32':
+	    /* 2.1 Release Candidate 2! */
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
@@ -2111,6 +2114,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	case '1.0.29':
 	case '1.0.30':
 	case '1.0.31':
+	case '1.0.32':
 
 	case 'end of upgrade path':
 	    /*
