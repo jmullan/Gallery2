@@ -56,6 +56,7 @@ if (!function_exists('_')) {
 }
 
 /* Our install steps, in order */
+$stepOrder = array();
 $stepOrder[] = 'Welcome';
 $stepOrder[] = 'Authenticate';
 $stepOrder[] = 'SystemChecks';
