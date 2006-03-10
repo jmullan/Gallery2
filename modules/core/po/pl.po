@@ -18,9 +18,9 @@
 # Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.0.33\n"
+"Project-Id-Version: Gallery: Core 1.0.34\n"
 "POT-Creation-Date: 2006-02-23 10:15+0100\n"
-"PO-Revision-Date: 2006-03-02 13:50+0100\n"
+"PO-Revision-Date: 2006-03-09 14:15+0100\n"
 "Last-Translator: Kappana\n"
 "Language-Team: Polish <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -215,7 +215,7 @@ msgstr "To jest początek twojej Galerii"
 
 #, c-format
 msgid "Upgrading permissions (%d items complete, %d remaining)"
-msgstr ""
+msgstr "Aktualizacja uprawnień (skończone pozycje: %d; pozostałe pozycje: %d)"
 
 msgid "Detecting broken derivatives, loading "
 msgstr "Wykrywanie uszkodzonych zmiennych, ładowanie"
@@ -312,7 +312,6 @@ msgstr "&laquo; temat domyślny &raquo;"
 msgid "Recreating resized images"
 msgstr "Odtwarzanie przeskalowanych zdjęć..."
 
-#, fuzzy
 msgid "Rebuilding resized images..."
 msgstr "Odtwarzanie przeskalowanych zdjęć..."
 
@@ -437,7 +436,7 @@ msgid "your account"
 msgstr "twoje konto"
 
 msgid "Password Recovery"
-msgstr "Odzyskaj hasło"
+msgstr "Odzyskiwanie hasła"
 
 msgid "Core"
 msgstr "Moduł główny"
@@ -631,7 +630,7 @@ msgid ""
 "Also run this if you remove a local/*.tpl file so Smarty will switch back to the default tpl "
 "file."
 msgstr ""
-"Gallery przekompiluje pliki szablonów w celu zwiększenia wydajności działania. Jeżeli "
+"Galeria przekompiluje pliki szablonów w celu zwiększenia wydajności działania. Jeżeli "
 "wystąpi problem typu <i>Smarty error</i> uruchomienie tego zadania może pomóc w usunięciu "
 "tego problemu. Zadanie to należy również uruchomić w przypadku, gdy usunięte zostały pliki "
 "local/*.tpl - Smarty wykorzysta wtedy domyślne pliki tpl, aby poprawnie wyświetlić strony "
@@ -961,7 +960,7 @@ msgid "core"
 msgstr "moduł główny"
 
 msgid "Gallery version"
-msgstr "Wersja Gallery"
+msgstr "Wersja Galerii"
 
 msgid "PHP version"
 msgstr "Wersja PHP"
@@ -1168,7 +1167,7 @@ msgid ""
 "authentication information if required.  Optionally add :port after the server name to use a "
 "non-default port."
 msgstr ""
-"Domyślnie Gallery wykorzystuje funkcję mail wbudowaną w PHP do wysyłania wiadomości e-mail. "
+"Domyślnie Galeria wykorzystuje funkcję mail wbudowaną w PHP do wysyłania wiadomości e-mail. "
 "Nie wymaga ona żadnej konfiguracji. Aby wykorzystać do wysyłania wiadomości serwer SMTP "
 "uzupełnij informacje poniżej, razem z informacjami potrzebnymi do autoryzacji (jeżeli jest "
 "taka potrzeba). Jeżeli serwer korzysta z niestandardowego portu zaraz za jego nazwą dodaj po "
@@ -1952,18 +1951,18 @@ msgid ""
 "included in addition to the ones already downloaded."
 msgstr ""
 
-#, fuzzy
 msgid "Unit Tests"
-msgstr "Testy podstawowe"
+msgstr "Testy poprawności programu"
 
 msgid ""
 "This plugin has unit tests available for download, which are useful for Gallery developers. "
 "All of the module's features are available without the tests."
 msgstr ""
+"Ten moduł posiada dostępne testy poprawności programu, które mogą być pomocne dla "
+"deweloperów Galerii. Wszystkie właściwości modułów są dostępne bez tych testów."
 
-#, fuzzy
 msgid "Download unit tests"
-msgstr "Pobierz testy podstawowe"
+msgstr "Pobierz testy poprawności programu"
 
 msgid "Gallery Repository Setup"
 msgstr "Konfiguracja Repozytorium Galerii"
@@ -3311,7 +3310,7 @@ msgid "Login to your account"
 msgstr "Zaloguj się na swoje konto"
 
 msgid "Your password has been recovered, please login."
-msgstr "Hasło zostało odzyskane, proszę się zalogować."
+msgstr "Hasło zostało zmienione, proszę się zalogować."
 
 msgid "Your login information is incorrect.  Please try again."
 msgstr "Twój login lub hasło są nieprawidłowe. Spróbuj ponownie."
@@ -3320,9 +3319,7 @@ msgstr "Twój login lub hasło są nieprawidłowe. Spróbuj ponownie."
 msgid ""
 "Lost or forgotten passwords can be retrieved using the <a href=\"%s\">recover password</a> "
 "page"
-msgstr ""
-"Zapomniane hasło może być odzyskane za pomocą strony <a href=\"%s\">Przywróć zapomniane "
-"hasło</a> "
+msgstr "Zapomniane hasło może być odzyskane <a href=\"%s\">tutaj</a>."
 
 #, c-format
 msgid "Welcome, %s!"
@@ -3332,21 +3329,19 @@ msgid "Account settings saved successfully"
 msgstr "Ustawienia konta zapamiętane"
 
 msgid "(required, password required for change)"
-msgstr ""
+msgstr "(wymagane; wymagane hasło do zmiany)"
 
 msgid "(suggested, password required for change)"
-msgstr ""
+msgstr "(opcjonalne; wymagane hasło do zmiany)"
 
-#, fuzzy
 msgid "(required to change the e-mail address)"
-msgstr "Musisz wprowadzić adres e-mail"
+msgstr "(wymagane do zmiany adresu e-mail)"
 
-#, fuzzy
 msgid "You must enter your current password to change the e-mail address"
-msgstr "Musisz wprowadzić swoje obecne hasło!"
+msgstr "Musisz wprowadzić swoje obecne hasło, aby zmienić adres e-mail"
 
 msgid "Recover a lost or forgotten password"
-msgstr "Przywróć zapomniane hasło"
+msgstr "Odzyskaj zapomniane hasło"
 
 msgid ""
 "Recovering your password requires that your user account has an email address assigned, and "
@@ -3356,6 +3351,12 @@ msgid ""
 "period.  A recovery confirmation is valid for seven days.  If it is not used during that "
 "time, it will be purged from the system and a new request will have to be made."
 msgstr ""
+"Odzyskiwanie hasła wymaga, aby we właściwościach twojego konta podany był prawidłowy adres e-"
+"mail do którego masz dostęp. Na to konto zostanie przesłany e-mail zawierający adres URL, za "
+"pomocą którego będzie możliwe ustawienie nowego hasła. Jeśli nie zrobisz tego w ciągu 7 dni "
+"od momentu otrzymania e-maila, twoje zgłoszenie zostanie skasowane i będziesz musiał "
+"ponownie zgłosić prośbę o przywrócenie hasła. Aby uniknąć nadużyć, zgłoszenie nie może być "
+"powtarzane częściej niż co 20 minut."
 
 msgid "Your recovery request has been sent!"
 msgstr "Prośba o przwyrócenie zapomnianego hasła została wysłana!"
@@ -3373,9 +3374,12 @@ msgid ""
 "if they fail to receive recovery email due to server problems, or lack of a working email "
 "address."
 msgstr ""
+"W przypadku odzyskiwania hasła administratora, w szczególności, gdy nie możliwe jest "
+"przywrócenie hasła za pomocą e-maila, administratorzy mogą użyć %sAwaryjnego odzyskiwania "
+"hasła%s."
 
 msgid "Recover"
-msgstr "Przywróć"
+msgstr "Odzyskaj hasło"
 
 #, c-format
 msgid ""
@@ -3385,6 +3389,9 @@ msgid ""
 "new text file called %s in your gallery2 directory. It must contain the following randomly "
 "generated characters:"
 msgstr ""
+"Aby kontynuować odzyskiwanie hasła musisz najpierw przejść weryfikację potwierdzającą, że "
+"posiadasz odpowiednie uprawnienia. W tym celu, stwórz w katalogu głównym twojej Galerii nowy "
+"plik %s zawierający następujący ciąg losowo wygenerowanych znaków:"
 
 #, c-format
 msgid "%s"
@@ -3395,12 +3402,14 @@ msgid ""
 "As a convenience to you, we've prepared a %scorrect version of login.txt%s for you.  "
 "Download that and copy it into your install directory and you're all set."
 msgstr ""
+"Dla twojej wygody przygotowaliśmy prawidłową wersję pliku  %slogin.txt%s. Pobierz go i "
+"skopiuj do katalogu głównego Galerii."
 
 msgid "Once you've uploaded the file, click refresh to continue."
-msgstr "Plik został wysłany, kliknij odśwież, aby kontynuować."
+msgstr "Jak tylko plik zostanie przesłany, kliknij przycisk odśwież, aby kontynuować."
 
 msgid "Emergency Administrator Password Reset"
-msgstr "Awaryjny reset hasła Administratora"
+msgstr "Awaryjne odzyskiwanie hasła"
 
 msgid ""
 "This page can be used by a system administrator to securely reset the password on any "
@@ -3410,7 +3419,7 @@ msgstr ""
 "dowolnego konta."
 
 msgid "Authorization Confirmed"
-msgstr "Autoryzacja poprawna."
+msgstr "Autoryzacja poprawna"
 
 msgid ""
 "Your authorization has been confirmed.  Please enter your new password below.  After setting "
@@ -3420,19 +3429,19 @@ msgstr ""
 "przeniesiony do strony logowania."
 
 msgid "Recover Password for Username"
-msgstr "Przywróć hasło dla użytkownika"
+msgstr "Ustaw nowe hasło dla użytkownika"
 
 msgid "You must enter a username to recover the password for."
-msgstr "Musisz wprowadzić nazwę użytkownika aby odzyskać hasło."
+msgstr "Musisz wprowadzić nazwę użytkownika, aby odzyskać hasło"
 
 msgid "The username you entered does not exist."
-msgstr "Nazwa użytkownika, którą wprowadziłeś, jest nieprawidłowa"
+msgstr "Wprowadzona nazwa użytkownika jest nieprawidłowa"
 
 msgid "Authorization Incorrect"
-msgstr "Autoryzacja niepoprawna."
+msgstr "Autoryzacja nieudana"
 
 msgid "Recovery Instructions"
-msgstr "Instrukcja przywracania hasła"
+msgstr "Instrukcja odzyskiwania hasła"
 
 msgid "AuthFile Missing"
 msgstr "Plik autoryzacyjny nie istnieje"
@@ -3455,12 +3464,16 @@ msgid ""
 "There is no request which matches the username and authorization provided. Request a new "
 "authorization from the <a href=\"%s\">lost password page</a>"
 msgstr ""
+"Podana nazwa użytkownika i kod autoryzacyjny nie pasują do tego żadnego zgłoszenia. Prośbę o "
+"nowy kod autoryzacyjny możesz zgłosić <a href=\"%s\">tutaj</a>."
 
 #, c-format
 msgid ""
 "The request you are trying to access has expired.  Request a new authorization from the <a "
 "href=\"%s\">lost password page</a>."
 msgstr ""
+"Zgłoszenie do którego sie odwołujesz, wygasło. Prośbę o nowy kod autoryzacyjny możesz "
+"zgłosić <a href=\"%s\">tutaj</a>."
 
 msgid "Authorization missing"
 msgstr "Brak autoryzacji"
@@ -3478,8 +3491,8 @@ msgstr "Witaj %s,"
 #, c-format
 msgid "You receive this email because a password recovery for %s was requested by %s at %s"
 msgstr ""
-"Otrzymałeś ten e-mail ponieważ została zgłoszona prośba o odzyskanie hasła dla %s. "
-"Zgłoszenie przyjęto od %s w %s"
+"Otrzymałeś/aś ten e-mail ponieważ została zgłoszona prośba o odzyskanie hasła dla %s. "
+"Zgłoszenie przyjęto od %s w dniu %s"
 
 #, c-format
 msgid "Your username is: %s"
@@ -3489,11 +3502,11 @@ msgid ""
 "To finish the password recovery process please click the following link and enter the "
 "required information:"
 msgstr ""
-"Aby zakończyć proces odzyskiwania hasła, proszę kliknąć poniższy link i wprowadzić wymagane "
-"informacje."
+"Aby zakończyć proces odzyskiwania hasła, proszę kliknij poniższy link autoryzacyjny i "
+"wprowadź wymagane informacje."
 
 msgid "If you did not request this recovery email, you may safely ignore it."
-msgstr "Jeśli nie prosiłeś o tę usługę, możesz spokojnie zignorować ten e-mail."
+msgstr "Jeśli nie prosiłeś/aś o tę usługę, możesz spokojnie zignorować ten e-mail."
 
 msgid "Thank you!"
 msgstr "Dziękujemy!"
@@ -3591,9 +3604,8 @@ msgstr "Blok loginu"
 msgid "Links to album/photo peers"
 msgstr "Linki do albumów i zdjęć znajomych"
 
-#, fuzzy
 msgid "Unit test module"
-msgstr "Moduł testu podstawowego"
+msgstr "Moduł testów poprawności programu"
 
 msgid "[test] A permission"
 msgstr "[test] Uprawnienie"
@@ -3601,9 +3613,8 @@ msgstr "[test] Uprawnienie"
 msgid "[test] A second permission"
 msgstr "[test] Drugie uprawnienie"
 
-#, fuzzy
 msgid "Unit test theme"
-msgstr "Temat testu podstawowego"
+msgstr "Temat testów poprawności programu"
 
 #~ msgid "G2.1-RC-1: Hit Me"
 #~ msgstr "G2.1-RC-1: Hit Me"
