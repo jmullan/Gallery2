@@ -21,7 +21,8 @@
  */
 /**
  * Access point for external application in which Gallery is embedded.
- * See docs/EMBEDDING and modules/core/classes/GalleryEmbed.class for more details.
+ * See modules/core/classes/GalleryEmbed.class  and
+ * http://codex.gallery2.org/index.php/Gallery2:Embedding  for more details.
  *
  * @package GalleryMain
  * @version $Revision$ $Date$
