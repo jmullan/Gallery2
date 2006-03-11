@@ -7,70 +7,85 @@
 <h2>{$theme.item.title|markup}</h2>
 
 {if !count($theme.children)}
-  <p><strong>{g->text text="This album is empty."}</strong></p>
-  <p><a href="{g->url arg1="view=core.ItemAdmin" arg2="subView=core.ItemAdd"
-		      arg3="itemId=`$theme.item.id`"}">{g->text text="Add a photo!"}</a></p>
+  <div class="gallery-empty">
+    <p><strong>{g->text text="This album is empty."}</strong></p>
+    <p><a href="{g->url arg1="view=core.ItemAdmin" arg2="subView=core.ItemAdd"
+			arg3="itemId=`$theme.item.id`"}">{g->text text="Add a photo!"}</a></p>
+  </div>
 {else}
-  <div class="gallery-albums">
-    {assign var="currentYear" value=""}
-    {foreach from=$theme.children item=child}
+  {assign var="firstAlbum" value=true}
 
-	{* Year separator *}
-	{if $theme.params.groupByYear && $child.canContainChildren}
-	  {capture name=year}{g->date format="%Y" timestamp=$child.originationTimestamp}{/capture}
-	  {if $smarty.capture.year != $currentYear}
-	    <h3 style="clear: both;">{$smarty.capture.year}</h3>
-	    {assign var="currentYear" value=$smarty.capture.year}
-	  {/if}
-	{/if}
+  {assign var="currentYear" value=""}
+  {foreach from=$theme.children item=child}
 
-	{if $child.canContainChildren}
-	  <div class="gallery-album">
-	    <div class="gallery-thumb">
-		<a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$child.id`"}">
-		{if isset($child.thumbnail)}
-		  {g->image item=$child image=$child.thumbnail}
-		{else}
-		  {g->text text="no thumbnail"}
-		{/if}
-		</a>
-	    </div>
-
-	    <h4><a href="{g->url arg1="view=core.ShowItem"
-	    arg2="itemId=`$child.id`"}">{$child.title|default:$child.pathComponent|markup}</a></h4>
-
-	    <div class="meta">
-	      {if ($child.childCount > 0)}
-		{g->text text="%d Images" arg1=$child.descendentCount}
-	      {/if}
-	    </div>
-
-	    <p>{if isset($child.summary)}{$child.summary|entitytruncate:256|markup}{/if}</p>
-	  </div>
-	{/if}
-    {/foreach}
-    <div class="clear"></div>
-  </div>
-
-  <div class="gallery-items">
-    {foreach from=$theme.children item=child}
-      {if !$child.canContainChildren}
-	<div class="gallery-thumb">
-	  <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$child.id`"}">
-	  {if isset($child.thumbnail)}
-	    {g->image item=$child image=$child.thumbnail}
-	  {else}
-	    {g->text text="no thumbnail"}
-	  {/if}
-	  </a>
-	</div>
+    {if $child.canContainChildren}
+      {if $firstAlbum}
+        <div class="gallery-albums">
+        {assign var="firstAlbum" value=false}
       {/if}
-    {/foreach}
-    <div class="clear"></div>
-  </div>
-{/if}
 
-<br style="clear: both;" />
+      {* Year separator *}
+      {if $theme.params.groupByYear}
+	{capture name=year}{g->date format="%Y" timestamp=$child.originationTimestamp}{/capture}
+	{if $smarty.capture.year != $currentYear}
+	  <h3 style="clear: both;">{$smarty.capture.year}</h3>
+	  {assign var="currentYear" value=$smarty.capture.year}
+	{/if}
+      {/if}
+
+      <div class="gallery-album">
+        <div class="gallery-thumb">
+          <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$child.id`"}">
+          {if isset($child.thumbnail)}
+            {g->image item=$child image=$child.thumbnail}
+          {else}
+            {g->text text="no thumbnail"}
+          {/if}
+          </a>
+        </div>
+
+        <h4><a href="{g->url arg1="view=core.ShowItem"
+               arg2="itemId=`$child.id`"}">{$child.title|default:$child.pathComponent|markup}</a></h4>
+
+        <div class="meta">
+          {if ($child.childCount > 0)}
+            {g->text text="%d Images" arg1=$child.descendentCount}
+          {/if}
+        </div>
+
+        <p>{if isset($child.summary)}{$child.summary|entitytruncate:256|markup}{/if}</p>
+      </div>
+    {/if}
+  {/foreach}
+  {if !$firstAlbum}
+      <div class="clear"></div>
+    </div>
+  {/if}
+
+  {assign var="firstItem" value=true}
+
+  {foreach from=$theme.children item=child}
+    {if !$child.canContainChildren}
+      {if $firstItem}
+        <div class="gallery-items">
+        {assign var="firstItem" value=false}
+      {/if}
+      <div class="gallery-thumb">
+        <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$child.id`"}">
+          {if isset($child.thumbnail)}
+            {g->image item=$child image=$child.thumbnail}
+          {else}
+            {g->text text="no thumbnail"}
+          {/if}
+        </a>
+      </div>
+    {/if}
+  {/foreach}
+  {if !$firstItem}
+      <div class="clear"></div>
+    </div>
+  {/if}
+{/if}
 
 {* Navigator *}
 {if $theme.totalPages > 1}
@@ -80,7 +95,7 @@
 
 {* Description *}
 {if !empty($theme.item.description)}
-  <hr/>
+  <hr />
   <p>{$theme.item.description|markup}</p>
 {/if}
 

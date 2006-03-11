@@ -1,37 +1,34 @@
+/*
+	Siriux Gallery 2 Theme
+	Copyright 2005-2006 Nico Kaiser.
+*/
+
+
 /* -- Main layout definitions ------------- */
 
 body.gallery {
+	margin: 1.5em;
+	padding: 0;
 	font-family: "Lucida Grande", Verdana, Arial, sans-serif;
 	font-size: small;
-	margin: 1.5em;
 	background-color: #fff;
 	color: #333;
 	text-align: center;
 }
 
-
-.gallery-album {
-        width: 46%; /* Change to 96% if you want 1 Album per line */
-	padding-right: 3%;
-}
-
-
-
 a {
 	color: #38c;
-	text-decoration: none;
 }
 
 a:hover {
-	text-decoration: underline;
+	color: #05a;
 }
-
 
 hr {
 	color: #fff;
 	height: 1px;
 	border: none;
-	border-bottom: 1px solid #ccc;
+	border-bottom: 1px solid #ddd;
 	margin: 0;
 	padding: 0;
 	clear: both;
@@ -43,8 +40,11 @@ hr {
 
 .breadcrumb {
 	float: right;
-	color: #999;
+	color: #333;
 	font-size: 0.9em;
+}
+
+.header {
 }
 
 .content {
@@ -56,15 +56,23 @@ hr {
 .footer {
 	font-size: 0.8em;
 	color: #999;
-	margin-top: 3em;
+	margin-top: 4em;
+	padding-top: 1.5em;
+	border-top: 1px solid #ddd;
 }
 
 .gallery h2 {
 	clear: both;
 	margin: 1.5em 0;
 	padding-bottom: 0.2em;
-	border-bottom: 1px solid #ccc;
-	font-size: 1.4em;
+	border-bottom: 1px solid #ddd;
+	font-size: 1.5em;
+}
+
+.gallery h3 {
+	clear: both;
+	margin: 1.5em 0 1em 0;
+	font-size: 1.2em;
 }
 
 
@@ -77,11 +85,11 @@ hr {
 }
 
 .gallery-thumb img {
-	background: #eee;
-	border: 1px solid #ccc;
+	background: #f3f3f3;
+	border: 1px solid #ddd;
 	padding: 7px;
 	margin: 1px;
-	-moz-border-radius: 5px;
+	-moz-border-radius: 3px;
 }
 
 .gallery-thumb a img {
@@ -92,7 +100,7 @@ hr {
 	border-width: 2px;
 	border-color: #38c;
 	margin: 0;
-	-moz-border-radius: 7px;
+	-moz-border-radius: 5px;
 }
 
 
@@ -102,7 +110,7 @@ hr {
 	clear: both;
 }
 
-.gallery-albums h4 {
+.gallery-albums h4 { /* Years in Album overview (when grouped by year) */
 	margin: 10px 0 0 0;
 	font-size: 1.1em;
 }
@@ -112,6 +120,8 @@ hr {
 }
 
 .gallery-album {
+	width: 46%; /* Change to 96% if you want 1 Album per line */
+	padding-right: 3%;
 	display: block;
 	float: left;
 	overflow: hidden;
@@ -135,6 +145,14 @@ hr {
 	clear: both;
 }
 
+.gallery-empty {
+	padding: 0.5em 1.5em;
+	margin: 1.5em 3em;
+	border: 1px solid #ddd;
+	background: #ffe;
+	font-size: 1.2em;
+}
+
 
 /* -- Gallery Photo (detail page) --------- */
 
@@ -143,10 +161,10 @@ hr {
 }
 
 .gallery-photo img {
-	background: #eee;
-	border: 1px solid #ccc;
+	background: #f3f3f3;
+	border: 1px solid #ddd;
 	padding: 7px;
-	-moz-border-radius: 5px;
+	-moz-border-radius: 3px;
 }
 
 
@@ -156,7 +174,7 @@ hr {
 	float: right;
 	margin: 1.5em 0;
 	font-size: 0.9em;
-	color: #999;
+	color: #333;
 }
 
 .block-core-Navigator .current,
@@ -170,13 +188,6 @@ hr {
 }
 
 
-/* -- Sidebar on add items page ----------- */
-
-#gsSidebar {
-	margin: 0 2.0em 0 0;
-}
-
-
 /* -- ExifInfo ---------------------------- */
 
 .block-exif-ExifInfo div {
@@ -187,11 +198,136 @@ hr {
 
 table.gbDataTable {
 	width: 100%;
-	font-size: 0.8em;
-	margin: 1.5em 0;
+	border-collapse: collapse;
 }
 
-table.gbDataTable .gbOdd {
+table.gbDataTable td {
+	padding: 0.2em 0.5em 0.2em 0;
+	border-bottom: 1px solid #eee;
+}
+
+table.gbDataTable td.gbEven {
 	font-weight: bold;
 }
 
+
+/* -- System- / Item-Links ---------------- */
+
+.gbSystemLinks, .block-core-ItemLinks {
+	clear: both;
+	border-top: 3px solid #9c9;
+	border-bottom: 1px solid #9c9;
+	background: #efe;
+	margin: 1.5em 0;
+	padding: 0.5em;
+}
+
+.block-core-SystemLink { font-weight: bold; }
+
+.gbSystemLinks .block-core-SystemLink a,
+.block-core-ItemLinks a {
+	display: block;
+	padding: 0.3em;
+}
+
+
+/* -- Toolbar ----------------------------- */
+
+#toolbar {
+	clear: both;
+	border: 1px solid #ccc;
+	background: #f1f1f1;
+	margin: 1em 0;
+	padding: 0.5em;
+}
+
+
+/* -- Admin ------------------------------- */
+
+.gallery-admin {
+	font-size: 0.9em;
+}
+
+.gallery-admin h2 {
+	font-size: 1.2em;
+	margin-top: 2em;
+	overflow: hidden;
+}
+
+.gallery-admin h4 {
+	margin-bottom: 0.5em;
+}
+
+.giSuccess, .giWarning, .giError  {
+	font-weight: bold;
+}
+
+.giSuccess { color: #5c0; }
+.giWarning { color: #c50; }
+.giError { color: #a44; }
+
+.gallery-admin .gbBlock {
+	margin: 1.5em 0 2em 0;
+}
+
+#gsSidebar {
+	width: 13em;
+	overflow: hidden;
+	padding-right: 1em;
+}
+
+#gsSidebarCol {
+	width: 1%;
+}
+
+#gsSidebar ul {
+	padding: 0.2em 0 1.5em 0;
+	margin: 0;
+	font-weight: bold;
+}
+
+#gsSidebar ul ul {
+	font-weight: normal;
+}
+#gsSidebar li.gbAdminLink {
+	background: none;
+	list-style: none;
+	padding: 0.2em 0;
+	margin: 0;
+}
+
+.gbTabBar {
+	padding: 0.2em 0;
+	border-bottom: 1px solid #ccc;
+}
+
+.gbTabBar a {
+	border: 1px solid #ccc;
+	padding: 0.2em 1em;
+	background: #eee;
+	margin: 0 0.2em;
+}
+
+.gbTabBar .giSelected {
+	margin: 0 0.2em;
+	padding: 0.2em 1em;
+	border: 1px solid #ccc;
+	border-bottom: 1px solid #fff;
+	font-weight: bold;
+	background: #fff;
+}
+
+#giFormUsername, .giFormUsername {
+	background: url('../siriux/images/userinfo.png') no-repeat 0 1px;
+	padding-left: 17px;
+}
+
+#giFormGroupname {
+	background: url('../siriux/images/groupinfo.png') no-repeat 0 1px;
+	padding-left: 17px;
+}
+
+#giFormPassword {
+	background: url('../siriux/images/key7-16-bw.gif') no-repeat 0 1px;
+	padding-left: 17px;
+}

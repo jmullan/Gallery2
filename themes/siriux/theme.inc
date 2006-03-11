@@ -42,7 +42,7 @@ class SiriuxTheme extends GalleryTheme {
 	$this->setId('siriux');
 	$this->setName($gallery->i18n('Siriux'));
 	$this->setDescription($gallery->i18n('Siriux.net Gallery theme'));
-	$this->setVersion('1.0.3');
+	$this->setVersion('1.0.5' /*Set to 1.1.0 for 2.1 final*/);
 	$this->setRequiredCoreApi(array(7, 0));
 	$this->setRequiredThemeApi(array(2, 2));
 	$this->setStandardSettings(
@@ -53,7 +53,9 @@ class SiriuxTheme extends GalleryTheme {
 		  'photoBlocks' => serialize(array(
 			array('exif.ExifInfo', array()),
 			array('comment.ViewComments', array()))),
-		  'contentWidth' => 700));
+		  'contentWidth' => 700,
+		  'groupByYear' => 0,
+		  'enableImageMap' => 1));
     }
 
     /**
@@ -78,7 +80,6 @@ class SiriuxTheme extends GalleryTheme {
 	if (isset($theme['navigator']['last'])) {
 	    unset($theme['navigator']['last']);
 	}
-	$theme['params']['groupByYear'] = !$item->getParentId();
 
 	/* Find the thumbnail size for this album */
 	$theme['params']['thumbnailSize'] = 150;
@@ -191,6 +192,14 @@ class SiriuxTheme extends GalleryTheme {
 			    'type' => 'text-field',
 			    'typeParams' => array('size' => 2),
 			    'value' => $params['contentWidth']);
+	$settings[] = array('key' => 'groupByYear',
+			    'name' => $this->translate('Group sub-albums by year (album must be sorted by date!)'),
+			    'type' => 'checkbox',
+			    'value' => $params['groupByYear']);
+	$settings[] = array('key' => 'enableImageMap',
+			    'name' => $this->translate('Enable prev/next navigation by clicking in the left/right half of the image'),
+			    'type' => 'checkbox',
+			    'value' => $params['enableImageMap']);
 
 	return array(null, $settings);
     }

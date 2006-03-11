@@ -20,7 +20,11 @@
 
   {if ($image.viewInline)}
     <div class="gallery-photo">
-      {g->image item=$theme.item image=$image fallback=$smarty.capture.fallback usemap=#prevnext}
+      {if $theme.params.enableImageMap}
+        {g->image item=$theme.item image=$image fallback=$smarty.capture.fallback usemap=#prevnext}
+      {else}
+        {g->image item=$theme.item image=$image fallback=$smarty.capture.fallback}
+      {/if}
     </div>
   {else}
     {$smarty.capture.fallback}
@@ -30,6 +34,7 @@
 {/if}
 
 {* Navigation image map *}
+{if $theme.params.enableImageMap}
 <map name="prevnext">
 {if isset($theme.navigator.back)}
   <area shape="rect" coords="0,0,{math equation="round(x/2-1)" x=$image.width},{$image.height}"
@@ -41,6 +46,7 @@
    href="{g->url params=$theme.navigator.next.urlParams}"/>
 {/if}
 </map>
+{/if}
 
 
 <br style="clear: both;" />

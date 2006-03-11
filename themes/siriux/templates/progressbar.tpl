@@ -58,7 +58,7 @@
     var progressToGo = document.getElementById('progressToGo');
 
     if (progressMade == 100) {
-      progressToGo.style.display = 'none'; 
+      progressToGo.style.display = 'none';
     } else {
       progressToGo.style.display = saveToGoDisplay;
       progressToGo.style.width = (100 - progressMade) + "%";
