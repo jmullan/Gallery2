@@ -48,6 +48,11 @@ function PhpUnitGalleryMain(&$testSuite, $filter) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
+    /* Set the appropriate charset in our HTTP header */
+    if (!headers_sent()) {
+	header('Content-Type: text/html; charset=UTF-8');
+    }
+
     global $gallery;
 
     /* Configure our url Generator, find the correct base URL */
