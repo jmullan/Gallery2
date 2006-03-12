@@ -193,11 +193,13 @@ class SiriuxTheme extends GalleryTheme {
 			    'typeParams' => array('size' => 2),
 			    'value' => $params['contentWidth']);
 	$settings[] = array('key' => 'groupByYear',
-			    'name' => $this->translate('Group sub-albums by year (album must be sorted by date!)'),
+			    'name' => $this->translate(
+				'Group sub-albums by year (album must be sorted by date!)'),
 			    'type' => 'checkbox',
 			    'value' => $params['groupByYear']);
 	$settings[] = array('key' => 'enableImageMap',
-			    'name' => $this->translate('Enable prev/next navigation by clicking in the left/right half of the image'),
+			    'name' => $this->translate(
+		'Enable prev/next navigation by clicking in the left/right half of the image'),
 			    'type' => 'checkbox',
 			    'value' => $params['enableImageMap']);
 
