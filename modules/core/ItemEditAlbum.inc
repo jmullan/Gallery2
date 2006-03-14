@@ -366,7 +366,7 @@ class ItemEditAlbum extends ItemEditPlugin {
     function runRecreateResizes($form, $item, $preferred, $status) {
 	global $gallery;
 	$storage =& $gallery->getStorage();
-	
+
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -420,6 +420,9 @@ class ItemEditAlbum extends ItemEditPlugin {
 		}
 		foreach ($resizes as $resize) {
 		    $ret = GalleryCoreApi::deleteEntityById($resize->getId());
+		    if ($ret) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
 		}
 	    }
 
@@ -469,21 +472,21 @@ class ItemEditAlbum extends ItemEditPlugin {
 			    }
 
 			    if ($preference['derivativeType'] == DERIVATIVE_TYPE_IMAGE_RESIZE
-				&& !empty($width)) {
+				    && !empty($width)) {
 				$resizes[$albumId][] =
 				    array('width' => $width, 'height' => $height);
-				}
 			    }
 			}
-			if (empty($resizes[$albumId])) {
-			    return GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
-			}
+		    }
+		    if (empty($resizes[$albumId])) {
+			return GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+		    }
 		    $resize = $resizes[$albumId];
 		    for ($i = 0; $i < sizeof($resize); $i++) {
 			/* Special case to make sure that we don't upsample photos */
 			if (GalleryUtilities::isA($child, 'GalleryPhotoItem')) {
 			    if ($child->getWidth() <= $resize[$i]['width']
-				  && $child->getHeight() <= $resize[$i]['height']) {
+				    && $child->getHeight() <= $resize[$i]['height']) {
 				continue;
 			    }
 			}
@@ -545,7 +548,7 @@ class ItemEditAlbum extends ItemEditPlugin {
     function runRecreateThumbnails($form, $item, $preferred, $status) {
 	global $gallery;
 	$storage =& $gallery->getStorage();
-	
+
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
