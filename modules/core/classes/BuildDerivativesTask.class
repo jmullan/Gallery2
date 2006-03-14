@@ -58,6 +58,7 @@ class BuildDerivativesTask extends MaintenanceTask {
     function run() {
 	global $gallery;
 	$templateAdapter =& $gallery->getTemplateAdapter();
+	$storage =& $gallery->getStorage();
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
@@ -110,6 +111,11 @@ class BuildDerivativesTask extends MaintenanceTask {
 		$message = $module->translate(
 		    array('text' => 'Processing image %d of %d', 'arg1' => $i, 'arg2' => $total));
 		$ret = $templateAdapter->updateProgressBar($message, '', $i / $total);
+		if ($ret) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+		/* Close open locks (too many open files for flock based locking) */
+		$ret = $storage->checkPoint();
 		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}

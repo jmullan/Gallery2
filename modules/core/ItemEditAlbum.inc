@@ -365,6 +365,8 @@ class ItemEditAlbum extends ItemEditPlugin {
 
     function runRecreateResizes($form, $item, $preferred, $status) {
 	global $gallery;
+	$storage =& $gallery->getStorage();
+	
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -389,7 +391,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 	$total = sizeof($childIds) * 2;
 	$runningTotal = 0;
 	$step = min(200, intval($total/20));
-	$batchSize = 300;
+	$batchSize = 100;
 	$resizes = array();
 	while (!empty($childIds)) {
 	    $ind = $runningTotal;	/* little true-up */
@@ -520,6 +522,10 @@ class ItemEditAlbum extends ItemEditPlugin {
 		}
 	    }
 	    $runningTotal += (sizeof($currentChildIds) * 2);
+	    $ret = $storage->checkPoint();
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	}
 	$ret = $templateAdapter->updateProgressBar(
 	    $module->translate('Recreating resized images'), 'Complete', 1);
@@ -538,6 +544,8 @@ class ItemEditAlbum extends ItemEditPlugin {
 
     function runRecreateThumbnails($form, $item, $preferred, $status) {
 	global $gallery;
+	$storage =& $gallery->getStorage();
+	
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -555,7 +563,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$batchSize = 300;
+	$batchSize = 100;
 	$childItems = array();
 	$total = sizeof($childIds);
 	$ind = 0;
@@ -705,12 +713,11 @@ class ItemEditAlbum extends ItemEditPlugin {
 		    }
 		}
 	    }
-	    $storage =& $gallery->getStorage();
-	    $ret = $storage->checkPoint();
+	    $ret = GalleryCoreApi::releaseLocks($lockIds);
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    $ret = GalleryCoreApi::releaseLocks($lockIds);
+	    $ret = $storage->checkPoint();
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
