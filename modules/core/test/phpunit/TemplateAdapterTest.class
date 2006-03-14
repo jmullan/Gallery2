@@ -42,7 +42,7 @@ class TemplateAdapterTest extends GalleryTestCase {
 	$this->GalleryTestCase($methodName);
     }
 
-    function _setupMockAdapter() {
+    function _setupAdapterWithMocks() {
 	global $gallery;
 	$this->_mockUrlGenerator = new TemplateAdapterMockUrlGenerator();
 	$gallery->setUrlGenerator($this->_mockUrlGenerator);
@@ -111,7 +111,7 @@ class TemplateAdapterTest extends GalleryTestCase {
     }
 
     function testForceFullUrlOn() {
-	$this->_setupMockAdapter();
+	$this->_setupAdapterWithMocks();
 	$this->_templateAdapter->url(array('arg1' => 'foo=bar',
 				    'forceFullUrl' => 'anything'), $this->_mockSmarty);
 
@@ -120,16 +120,16 @@ class TemplateAdapterTest extends GalleryTestCase {
     }
 
     function testForceFullUrlOff() {
-	$this->_setupMockAdapter();
+	$this->_setupAdapterWithMocks();
 	$this->_templateAdapter->url(array('arg1' => 'foo=bar'), $this->_mockSmarty);
 
 	$this->assertEquals(array(array('foo' => 'bar'), array()),
 			    $this->_mockUrlGenerator->_calls[0]);
     }
-    
+
     function testChangeInDescendents() {
 	$test = array('module' => 'pirate', 'text' => 'ninja', 'l10Domain' => 'en_US');
-	$this->_setupMockAdapter();
+	$this->_setupAdapterWithMocks();
 	$result = GalleryTemplateAdapter::changeInDescendents($test, $this->_mockSmarty);
 	$this->assertEquals('<input type="checkbox" id="pirate_ChangeInDescendents"	' .
 	    'name="g2_form[changeInDescendents][pirate]"/>  <label ' .
@@ -140,7 +140,7 @@ class TemplateAdapterTest extends GalleryTestCase {
     function testTextViewL10domain() {
 	global $gallery;
 	$gallery->_translator = new TemplateAdapterMockTranslator();
-	$this->_setupMockAdapter();
+	$this->_setupAdapterWithMocks();
 	$this->_mockSmarty->_tpl_vars['l10Domain'] = 'en_US';
 	$this->_mockSmarty->_tpl_vars['viewL10domain'] = 'te_TE';
 	$translated = $this->_templateAdapter->text(array('text' => 'Test failed'),
