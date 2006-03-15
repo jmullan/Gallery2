@@ -500,6 +500,12 @@ class PostgresGenerator extends BaseGenerator {
 		    $output .= ' ' . $this->columnDefinition($c['child'], false, false);
 		    $output .= ";\n\n";
 
+		    if ($this->getNotNullElement($c['child'])) {
+			$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
+			    ' ALTER DB_COLUMN_PREFIX' . $c['child'][0]['content'] .
+			    " SET NOT NULL;\n\n";
+		    }
+
 		    $defaultValue = $this->getDefaultElement($c['child']);
 		    if (isset($defaultValue)) {
 			$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'];
