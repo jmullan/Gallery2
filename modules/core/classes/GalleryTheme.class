@@ -1856,7 +1856,7 @@ class GalleryTheme extends GalleryPlugin {
      * @return array('headHtml' => ..., 'bodyHtml' => ...)
      */
     function splitHtml($mainHtml, $extraHtml) {
-	if (preg_match('|<head>(.*)</head>.*<body.*?>(.*)</body>|s', $mainHtml, $matches) == 1) {
+	if (preg_match('|<head>(.*)</head>.*?<body.*?>(.*)</body>|s', $mainHtml, $matches) == 1) {
 	    $results = array('headHtml' => $matches[1], 'bodyHtml' => $matches[2]);
 	} else {
 	    $results = array('bodyHtml' => $mainHtml);
