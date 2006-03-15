@@ -44,11 +44,13 @@ class TemplateAdapterTest extends GalleryTestCase {
 
     function _setupAdapterWithMocks() {
 	global $gallery;
-	$this->_mockUrlGenerator = new TemplateAdapterMockUrlGenerator();
+	$this->_mockUrlGenerator =& new TemplateAdapterMockUrlGenerator();
 	$gallery->setUrlGenerator($this->_mockUrlGenerator);
 
 	$this->_mockSmarty = new TemplateAdapterMockSmarty();
 	$this->_templateAdapter = new GalleryTemplateAdapter();
+
+	$this->_templateAdapter->_theme = new TemplateAdapterMockTheme();
     }
 
     function testLinkId1() {
@@ -148,6 +150,54 @@ class TemplateAdapterTest extends GalleryTestCase {
 
 	$this->assertEquals('Test passed', $translated);
     }
+
+    function testThemeUrls() {
+	$this->_setupAdapterWithMocks();
+	$results = $this->_templateAdapter->theme(
+	    array('url' => 'foo.css'), $this->_mockSmarty);
+	$this->assertEquals(array('href' => 'themes/mock/foo.css'),
+			    $results);
+    }
+
+    function testThemeUrlsWithOverride() {
+	global $gallery;
+	$this->_setupAdapterWithMocks();
+
+	$base = dirname(dirname(dirname(__FILE__))) . '/../../';
+	$mockPlatform = new UnitTestPlatform();
+	$mockPlatform->setReply('file_exists', array($base . 'themes/mock/local/foo.css'), 1);
+	$mockPlatform->setReply('is_readable', array($base . 'themes/mock/local/foo.css'), 1);
+	$gallery->_platform =& $mockPlatform;
+
+	$results = $this->_templateAdapter->theme(
+	    array('url' => 'foo.css'), $this->_mockSmarty);
+	$this->assertEquals(array('href' => 'themes/mock/local/foo.css'),
+			    $results);
+    }
+
+    function testThemeUrlsWithOverrideSubdir() {
+	global $gallery;
+	$this->_setupAdapterWithMocks();
+
+	$base = dirname(dirname(dirname(__FILE__))) . '/../../';
+	$mockPlatform = new UnitTestPlatform();
+	$mockPlatform->setReply(
+	    'file_exists', array($base . 'themes/mock/templates/local/foo.css'), 1);
+	$mockPlatform->setReply(
+	    'is_readable', array($base . 'themes/mock/templates/local/foo.css'), 1);
+	$gallery->_platform =& $mockPlatform;
+
+	$results = $this->_templateAdapter->theme(
+	    array('url' => 'templates/foo.css'), $this->_mockSmarty);
+	$this->assertEquals(array('href' => 'themes/mock/templates/local/foo.css'),
+			    $results);
+    }
+}
+
+class TemplateAdapterMockTheme {
+    function getId() {
+	return 'mock';
+    }
 }
 
 class TemplateAdapterMockSmarty {
@@ -156,6 +206,7 @@ class TemplateAdapterMockSmarty {
 class TemplateAdapterMockUrlGenerator {
     function generateUrl($params=array(), $options=array()) {
 	$this->_calls[] = array($params, $options);
+	return $params;
     }
 }
 

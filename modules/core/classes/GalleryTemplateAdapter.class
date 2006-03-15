@@ -264,12 +264,12 @@ class GalleryTemplateAdapter {
 	if ($ret) {
 	    return '[Translation error]';
 	}
-        
-        return '<input type="checkbox" id="' . $params['module'] . 
+
+        return '<input type="checkbox" id="' . $params['module'] .
             '_ChangeInDescendents"	name="' .
             GalleryUtilities::prefixFormVariable(
                 'form[changeInDescendents][' . $params['module'] . ']' ) .
-            '"/>  <label for="' . $params['module'] . '_ChangeInDescendents"> ' . 
+            '"/>  <label for="' . $params['module'] . '_ChangeInDescendents"> ' .
             $text . '</label>';
     }
 
@@ -661,9 +661,26 @@ class GalleryTemplateAdapter {
 		'smarty_include_vars' => $params));
 	    $smarty->_tpl_vars = $save;
 	} else if (isset($params['url'])) {
+	    /*
+	     * Use this combo of dirname and '..' in g2Dir to avoid creating paths in the unit
+	     * test that won't be Windows compatible.
+	     */
+	    $g2Dir = dirname(dirname(__FILE__)) . '/../../';
+	    $base = 'themes/' . $this->_theme->getId() . '/';
+	    if (($dirname = dirname($params['url'])) == '.') {
+		$localVersion = 'local/' . $params['url'];
+	    } else {
+		$localVersion = $dirname . '/local/' . basename($params['url']);
+	    }
+	    $platform =& $gallery->getPlatform();
 	    $urlGenerator =& $gallery->getUrlGenerator();
-	    return $urlGenerator->generateUrl(
-		array('href' => 'themes/' . $this->_theme->getId() . '/' . $params['url']));
+	    if ($platform->file_exists($g2Dir . $base . $localVersion) &&
+		    $platform->is_readable($g2Dir . $base . $localVersion)) {
+		$target = $localVersion;
+	    } else {
+		$target = $params['url'];
+	    }
+	    return $urlGenerator->generateUrl(array('href' => $base . $target));
 	}
     }
 
