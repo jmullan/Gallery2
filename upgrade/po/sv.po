@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Upgrader 2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-01-22 11:57+0100\n"
-"PO-Revision-Date: 2006-01-22 12:00+0100\n"
+"PO-Revision-Date: 2006-03-14 00:50+0100\n"
 "Last-Translator: Anders Lindquist <andersl@saaf.se>\n"
 "Language-Team: Swedish <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -45,9 +45,8 @@ msgstr "<b>Fel:</b> ogilltigt lösenord."
 msgid "Empty Cache"
 msgstr "Töm Cache"
 
-#, fuzzy
 msgid "Unable to clear the page cache"
-msgstr "Kan ej ladda %s temat"
+msgstr "Kan ej tömma sid cachen"
 
 msgid "Unable to commit database transaction"
 msgstr "Kan ej komitta databas transaktionen"
@@ -291,7 +290,7 @@ msgid "Upgrade Core"
 msgstr "Uppgradera Kärnan"
 
 msgid "Unable to verify plugins"
-msgstr ""
+msgstr "Kan ej verifiera pluginerna"
 
 msgid "Upgrade Modules"
 msgstr "Uppgradera Moduler"
@@ -358,13 +357,11 @@ msgstr "Verifiera mig"
 msgid "Authentication successful!"
 msgstr "Verifieringen lyckades"
 
-#, fuzzy
 msgid "Successfully cleaned caches."
-msgstr "Vi har lyckats med att rensa din cache katalog."
+msgstr "Lyckades rensa cacherna."
 
-#, fuzzy
 msgid "Delete Caches"
-msgstr "Radera Cache Katalogen"
+msgstr "Radera Cacharna"
 
 msgid ""
 "Gallery creates temporary copies of some of your data on your hard drive.  This helps it to "
@@ -470,17 +467,18 @@ msgstr ""
 msgid "Old files (%d)"
 msgstr "Gamla filer (%d)"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "These files are no longer part of Gallery. They probably won't cause any problems but it is "
 "a good idea to remove them to keep your install clean.  Gallery can't remove these files for "
 "you, but you can download and run %s in your gallery2 directory to delete them for you."
 msgstr ""
 "Dessa filer är inte längre en del av Gallery. Dom kommer troligen inte skapa några problem "
-"men det är bra om man tar bort dom så att installationen hålls ren."
+"men det är bra om man tar bort dom så att installationen hålls ren. Gallery kan inte ta bort "
+"dessa filer åt dig men du kan ladda ner och köra %s i din gallery2 katalog för att radera dom."
 
 msgid "this script"
-msgstr ""
+msgstr "detta skript"
 
 msgid "Upgrade Steps"
 msgstr "Uppgraderings Steg"
@@ -585,9 +583,8 @@ msgstr ""
 "nergradera G2. Var snäll och ersätt gallery2 filerna med filer från den version som "
 "förnärvarande är installerad eller nyare filer."
 
-#, fuzzy
 msgid "the Gallery website"
-msgstr "Gå till Gallery 2 Installeraren"
+msgstr "Gallery:s webbsite"
 
 #, c-format
 msgid ""
@@ -598,10 +595,17 @@ msgid ""
 "distribution of Gallery than what you originally installed.  You can download a larger "
 "distribution from %s."
 msgstr ""
+"Din uppgradering kan inte starta eftersom vissa av dinna aktiva moduler/teman inte är "
+"kompatibla eller saknas. Du måste antingen lokalisera mer aktuella versioner av dessa "
+"moduler eller teman eller återgå till din ursprungliga version av Gallery. Inga ändringar "
+"har gjorts än så det är säkert att återgå till den gamla versionen. Om du har många "
+"inkompatibla moduler listade här nedan så är det möjligt att du har laddat ner en mindre "
+"distribution av Gallery än den du ursprungligen installerade. Du kan ladda ner en större "
+"distribution från %s."
 
 #, c-format
 msgid "Download replacement modules from %s"
-msgstr ""
+msgstr "Ladda ner ersättnings moduler från %s"
 
 msgid ""
 "Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  "
@@ -721,13 +725,13 @@ msgstr "Lyckades uppgradera %s temat"
 msgid "Upgrade More Modules"
 msgstr "Uppgradera Fler Moduler"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Upgrading Gallery 2 requires %d steps. This upgrade tool will guide you through these steps "
 "and provide assistance along the way if additional steps are required. Please read the %"
 "sHelp File%s before proceeding."
 msgstr ""
-"Uppgradering av Gallery 2.0 kräver %d steg. Det här uppgraderings verktyget kommer att leda "
+"Uppgradering av Gallery 2 kräver %d steg. Det här uppgraderings verktyget kommer att leda "
 "dig genom dessa steg och bistå med hjälp under vägen om det krävs ytterligare steg. Läs %"
 "sHjälp Filerna%s innan du fortsätter."
 
@@ -736,6 +740,9 @@ msgid ""
 "visitors a message that the site is temporarily offline, rather than showing everybody this "
 "upgrade page. Edit your config.php file to activate maintenance mode."
 msgstr ""
+"Om du har en upptagen site, överväg att sätta ditt Gallery i underhållsmode. Det ger "
+"besökare ett medelande att siten tillfälligt är offline, istället för att visa uppgraderingssidan. "
+"Editera din config.php fil för att aktivera underhållsmoden."
 
 msgid "Select Language:"
 msgstr "Välj Språk:"

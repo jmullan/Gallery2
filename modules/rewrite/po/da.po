@@ -26,7 +26,7 @@ msgstr ""
 "Project-Id-Version: Gallery: URL Rewrite 1.1.3\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-07-25 14:14+0200\n"
-"PO-Revision-Date: 2006-02-15 23:41+0100\n"
+"PO-Revision-Date: 2006-03-10 14:00+0100\n"
 "Last-Translator: Bjorn Graabek <bjorn@graabek.com>\n"
 "Language-Team: Danish <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -50,13 +50,13 @@ msgid "Show Item"
 msgstr "Vis Element"
 
 msgid "Path to an item (eg, /album/image.jpg.html)"
-msgstr "Sti til et element (f.eks. /album/billede.jpg.html)"
+msgstr "Sti til et objekt (f.eks. /album/billede.jpg.html)"
 
 msgid "Current language (eg, en or de)"
 msgstr "Nuværende sprog (f.eks. en eller da)"
 
 msgid "The general URL for viewing items."
-msgstr ""
+msgstr "Generel URL for at se emner."
 
 msgid "Download Item"
 msgstr "Hent Element"
@@ -65,10 +65,10 @@ msgid "Ensures browsers do not use cached version when image has changed"
 msgstr "Sikrer at browseren ikke bruger en cachet version af billedet, når billedet er blevet ændret"
 
 msgid "The item file name."
-msgstr ""
+msgstr "Emne filnavn."
 
 msgid "The general URL for downloading items."
-msgstr ""
+msgstr "Generel URL for at downloade emner."
 
 msgid "Site Admin"
 msgstr "Gallery Administration"
@@ -80,13 +80,13 @@ msgid "404 File not found"
 msgstr "404 Fil ikke fundet"
 
 msgid "Block hotlinked items"
-msgstr "Bloker hotlink'ede elementer"
+msgstr "Bloker hotlink'ede objekter"
 
 msgid "Check short style URLs for filesystem conflicts"
 msgstr "Kontroller korte URLer for konflikter med filsystemet"
 
 msgid "This will go through all your Gallery items and check if the short style URL links to an existing file or directory on your webserver."
-msgstr "Dette vil gå gennem alle dine Gallery elementer og kontrollere om de korte URLer fører til en eksisterende fil eller bibliotek på din webserver."
+msgstr "Dette vil gå gennem alle dine Gallery objekter og kontrollere om de korte URLer fører til en eksisterende fil eller bibliotek på din webserver."
 
 msgid "Processing..."
 msgstr "Behandler..."
@@ -96,11 +96,11 @@ msgstr "Ugyldig sti:"
 
 #, c-format
 msgid "Checking item %d of %d"
-msgstr "Kontroller element %d af %d"
+msgstr "Kontroller objekt %d af %d"
 
 #, c-format
 msgid "Checked %d items and found %d conflicts"
-msgstr "Kontrollerede %d elementer og fandt %d konflikter"
+msgstr "Kontrollerede %d objekter og fandt %d konflikter"
 
 msgid "Bad keyword."
 msgstr "Fokert nøgleord"
@@ -121,7 +121,7 @@ msgid "Cannot write to httpd.ini file"
 msgstr "Kan ikke skrive til .htaccess filen"
 
 msgid "Cannot write to httpd.ini file, please create it."
-msgstr ""
+msgstr "Kan ikke skrive til httpd.ini filen, "
 
 msgid "Cannot read the .htaccess file"
 msgstr "Kan ikke læse .htaccess filen"
@@ -169,7 +169,7 @@ msgid "Short URLs are compiled out of predefined keywords. Modules may provide a
 msgstr "Kort URLer er oversat ud fra prædefinerede nøgleord. Moduler kan stille yderligere nøgleord til rådighed. Nøgleord skrives inde i % (f.eks. %ItemId%)."
 
 msgid "It is recomended that you don't activate the 'Download Item' URL since it will slow down Gallery."
-msgstr ""
+msgstr "Det anbefales at 'Download Emne' URL ikke aktiveres da det vil gøre Gallery langsommere."
 
 msgid "A pattern may not begin with a keyword."
 msgstr ""
@@ -214,7 +214,7 @@ msgid "Approved referers"
 msgstr "Godkendte henvisere"
 
 msgid "Some rules only apply if the referer (the site that linked to the item) is something other than Gallery itself. Hosts in the list below will be treated as friendly referers."
-msgstr "Nogle regler gælder kun hvis henviseren (det sted som henviste til elementet) er noget andet end Gallery selv. Websteder i nedenstående liste vil blive opfattet som venlige henvisere."
+msgstr "Nogle regler gælder kun hvis henviseren (det sted som henviste til objektet) er noget andet end Gallery selv. Websteder i nedenstående liste vil blive opfattet som venlige henvisere."
 
 msgid "Warning: If you don't allow empty referer users won't be able to download nor play movies."
 msgstr ""
@@ -274,7 +274,7 @@ msgid "Error"
 msgstr "Fejl"
 
 msgid "The current status may not be accurate, you have forced the test to pass."
-msgstr ""
+msgstr "Den nuværende status er måske ikke korrekt, du har tvunget testen til at godkende."
 
 msgid "How to setup ISAP Rewrite"
 msgstr ""
@@ -326,7 +326,7 @@ msgstr "Apache mod_rewrite"
 
 #, c-format
 msgid "Testing if %s is supported by the server."
-msgstr ""
+msgstr "Afprøver om %s er understøttet af serveren."
 
 msgid "Warning"
 msgstr "Advarsel"
@@ -335,10 +335,10 @@ msgid "Custom Gallery directory test setup"
 msgstr "Speciel Gallery bibliotekskontrolindstilinger"
 
 msgid "Gallery tries to test mod_rewrite in action. For this to work you need to edit each of these two files accordingly:"
-msgstr "Gallery prøver at kontrollere mod_rewrite ved at bruge det. For at dette skal virke skal du ændre i hver af disse filer som følgende:"
+msgstr "Gallery forsøger at prøve mod_rewrite ved at benytte det. For at dette skal virke skal du ændre i disse to filer som følgende:"
 
 msgid "Line 6:"
-msgstr "Linie 6"
+msgstr "Linie 6:"
 
 msgid "Test mod_rewrite manually"
 msgstr "Kontroller mod_rewrite manuelt"
@@ -350,10 +350,10 @@ msgid "Works"
 msgstr "Virker"
 
 msgid "mod_rewrite configuration 1 (with global Options +FollowSymlinks)"
-msgstr ""
+msgstr "mod_rewrite konfiguration 1 (med global Options +FollowSymlinks)"
 
 msgid "mod_rewrite configuration 2 (with local Options +FollowSymlinks)"
-msgstr ""
+msgstr "mod_rewrite konfiguration 2 (med local Options +FollowSymlinks)"
 
 msgid "If one of the two tests gives you a page with the text PASS_REWRITE you are good to go."
 msgstr "Hvis en af disse to tests giver dig en side med teksten PASS_REWRITE er du klar til at gå videre."
@@ -365,7 +365,7 @@ msgid "Gallery tries to test mod_rewrite in action. This does not work with mult
 msgstr "Gallery prøver at kontrollere mod_rewrite ved at bruge det. Dette virker ikke i en \"multisite\" opsætning, da Gallery ikke har adgang til hele installationen."
 
 msgid "Gallery .htaccess file"
-msgstr "Galleriets .htaccess fil"
+msgstr "Gallery .htaccess fil"
 
 msgid "Testing if Gallery can write to the .htaccess file."
 msgstr "Undersøger om Gallery kan skrive til .htaccess filen."
@@ -389,19 +389,19 @@ msgid "Please configure the embedded htaccess path."
 msgstr "Konfigurer den indlejrede .htaccess sti."
 
 msgid "PHP Path Info Support"
-msgstr "PHP Path Info Understøttelse"
+msgstr "PHP PathInfo Understøttelse"
 
 msgid "Testing if the server supports PHP Path Info."
-msgstr "Tester om serveren understøtter PHP Path Info."
+msgstr "Tester om serveren understøtter PHP PathInfo."
 
 msgid "Test Path Info Manually"
-msgstr "Test Path Info Manuelt"
+msgstr "Test PathInfo Manuelt"
 
 msgid "Gallery did not detect Path Info, please run this thest yourself to verify."
-msgstr ""
+msgstr "Gallery kunne ikke finde PathInfo, udfør selv denne test for at efterprøve."
 
 msgid "PHP Path Info Test"
-msgstr "PHP Path Info Test"
+msgstr "PHP PathInfo Test"
 
 msgid "If the test gives you a page that says PASS_PATH_INFO you are good to go."
 msgstr "Hvis testen resulterer i en side med teksten PASS_PATH_INFO er du klar til at gå videre."
@@ -422,7 +422,7 @@ msgid "PHP Path Info"
 msgstr "PHP Path Info"
 
 msgid "Using Path Info is supported by most systems. With this method Gallery parses the URL itself during the request."
-msgstr ""
+msgstr "PathInfo er understøttet af de fleste systemer. Med denne metode parser Gallery selv URL'en ved forespørgslen."
 
 msgid "Block hotlinking is not supported."
 msgstr "Blok hotlinking er ikke understøttet"
