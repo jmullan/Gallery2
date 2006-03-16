@@ -56,7 +56,13 @@ if (!empty($getEmbedPath)){
 	$localhost = GalleryUtilities::getServerVar('HTTP_HOST');
 	$localhost = !empty($localhost) ? gethostbyname($localhost) : '127.0.0.1';
 	if (!empty($remotehost) && $remotehost == $localhost) {
-	    header('X-G2-EMBED-PATH: ' . __FILE__ );
+	    if (defined('GALLERY_CONFIG_DIR')) {
+	    	/* GALLERY_CONFIG_DIR is multisite-aware */
+		header('X-G2-EMBED-PATH: ' . GALLERY_CONFIG_DIR . '/embed.php');
+	    } else {
+	    	/* Fallback if G2 isn't installed yet */
+		header('X-G2-EMBED-PATH: ' . __FILE__ );
+	    }
 	}
     }
 }
