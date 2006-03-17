@@ -35,39 +35,37 @@ class AdminMembersController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-    	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-    	if ($ret) {
-    	    return array($ret->wrap(__FILE__, __LINE__), null);
-    	}
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
-    	$error = $status = array();
-    	if (isset($form['action']['save'])) {
-    	    foreach (array('canViewMembersModule', 'canViewEmailAddress') as $key) {
-    	        if (isset($form[$key])) {
-    		    $ret = GalleryCoreApi::setPluginParameter('module',
-    		                                              'members',
-    		                                              $key,
-    		                                              trim($form[$key]));
-    		    if ($ret) {
-    		        return array($ret->wrap(__FILE__, __LINE__), null);
-    		    }
-    		}
-    	    }
+	$error = $status = array();
+	if (isset($form['action']['save'])) {
+	    foreach (array('canViewMembersModule', 'canViewEmailAddress') as $key) {
+		if (isset($form[$key])) {
+		    $ret = GalleryCoreApi::setPluginParameter('module', 'members',
+							      $key, trim($form[$key]));
+		    if ($ret) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		}
+	    }
 
-    	    $status['saved'] = 1;
-    	} /* else $form['action']['cancel'] */
+	    $status['saved'] = 1;
+	} /* else $form['action']['cancel'] */
 
-    	if (empty($error)) {
-    	    $results['redirect'] = array('view' => 'core.SiteAdmin',
-    					 'subView' => 'members.AdminMembers');
-    	} else {
-    	    $results['delegate']['view'] = 'core.SiteAdmin';
-    	    $results['delegate']['subView'] = 'members.AdminMembers';
-    	}
-    	$results['status'] = $status;
-    	$results['error'] = $error;
+	if (empty($error)) {
+	    $results['redirect'] = array('view' => 'core.SiteAdmin',
+					 'subView' => 'members.AdminMembers');
+	} else {
+	    $results['delegate']['view'] = 'core.SiteAdmin';
+	    $results['delegate']['subView'] = 'members.AdminMembers';
+	}
+	$results['status'] = $status;
+	$results['error'] = $error;
 
-    	return array(null, $results);
+	return array(null, $results);
     }
 }
 
@@ -81,49 +79,48 @@ class AdminMembersView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-    	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-    	if ($ret) {
-    	    return array($ret->wrap(__FILE__, __LINE__), null);
-    	}
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
-    	list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'members');
-    	if ($ret) {
-    	    return array($ret->wrap(__FILE__, __LINE__), null);
-        }
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'members');
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
-    	/* Load our default values if we didn't just come from this form. */
-    	if ($form['formName'] != 'AdminMembers') {
-    	    foreach (array('canViewMembersModule', 'canViewEmailAddress') as $key) {
-    	        list ($ret, $form[$key]) =
-    	            GalleryCoreApi::getPluginParameter('module', 'members', $key);
-    	        if ($ret) {
-    	            return array($ret->wrap(__FILE__, __LINE__), null);
-    	        }
-    	    }
-    	    $form['formName'] = 'AdminMembers';
-    	}
+	/* Load our default values if we didn't just come from this form. */
+	if ($form['formName'] != 'AdminMembers') {
+	    foreach (array('canViewMembersModule', 'canViewEmailAddress') as $key) {
+		list ($ret, $form[$key]) =
+		    GalleryCoreApi::getPluginParameter('module', 'members', $key);
+		if ($ret) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+	    $form['formName'] = 'AdminMembers';
+	}
 
-    	foreach (array('id.adminGroup',
-    	               'id.everybodyGroup',
-    	               'id.allUserGroup') as $key) {
-    	    list ($ret, $groupIds[]) =
-                GalleryCoreApi::getPluginParameter('module', 'core', $key);
-            if ($ret) {
-                return array($ret->wrap(__FILE__, __LINE__), null);
-            }
-    	}
-    	$viewTerms = array('Administrators', 'Everybody', 'Logged In Users');
-    	$members = array();
-    	$members['memberViews'] = array($groupIds[0] => $module->translate($viewTerms[0]),
-    	                                $groupIds[1] => $module->translate($viewTerms[1]),
-    	                                $groupIds[2] => $module->translate($viewTerms[2]));
-    	$members['emailViews'] = array(true => $module->translate('Show Email Addresses'),
+	foreach (array('id.adminGroup',
+		       'id.everybodyGroup',
+		       'id.allUserGroup') as $key) {
+	    list ($ret, $groupIds[]) =
+		GalleryCoreApi::getPluginParameter('module', 'core', $key);
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+	$members = array();
+	$members['memberViews'] = array($groupIds[1] => $module->translate('Everybody'),
+					$groupIds[2] => $module->translate('Registered Users'),
+					$groupIds[0] => $module->translate('Site Admins'));
+	$members['emailViews'] = array(true => $module->translate('Show Email Addresses'),
 				       false => $module->translate("Don't Show Email Addresses"));
 	$template->setVariable('Members', $members);
-    	$template->setVariable('controller', 'members.AdminMembers');
+	$template->setVariable('controller', 'members.AdminMembers');
 
-    	return array(null,
-    		     array('body' => 'modules/members/templates/AdminMembers.tpl'));
+	return array(null,
+		     array('body' => 'modules/members/templates/AdminMembers.tpl'));
     }
 }
 ?>
