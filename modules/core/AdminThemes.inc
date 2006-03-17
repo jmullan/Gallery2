@@ -399,7 +399,7 @@ class AdminThemesView extends GalleryView {
 	    $themes[$id] = $entry;
 
 	    if (!empty($status['active'])) {
-		$themeList[$id] = $theme->getName();
+		$themeList[$id] = $theme->translate($theme->getName());
 	    }
 	}
 
