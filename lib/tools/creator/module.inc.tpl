@@ -43,8 +43,8 @@ class {$ucModuleId}Module extends GalleryModule {ldelim}
 	$this->setVersion('1.0.0');
 	$this->setCallbacks('getItemLinks');
 	$this->setGroup('other', $this->translate('Other'));
-	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredModuleApi(array(2, 2));
+	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredModuleApi(array(3, 0));
     {rdelim}
 
     /**
