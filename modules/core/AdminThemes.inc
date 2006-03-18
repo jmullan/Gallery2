@@ -74,7 +74,7 @@ class AdminThemesController extends GalleryController {
 		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
-		    $status['activated'] = $theme->getName();
+		    $status['activated'] = $theme->translate($theme->getName());
 		}
 
 		$redirect['view'] = 'core.SiteAdmin';
@@ -89,7 +89,7 @@ class AdminThemesController extends GalleryController {
 		$redirect['view'] = 'core.SiteAdmin';
 		$redirect['subView'] = 'core.AdminThemes';
 		$redirect['mode'] = 'config';
-		$status['installed'] = $theme->getName();
+		$status['installed'] = $theme->translate($theme->getName());
 	    } else if (isset($form['action']['upgrade'])) {
 		$ret = $theme->installOrUpgrade();
 		if ($ret) {
@@ -99,14 +99,14 @@ class AdminThemesController extends GalleryController {
 		$redirect['view'] = 'core.SiteAdmin';
 		$redirect['subView'] = 'core.AdminThemes';
 		$redirect['mode'] = 'config';
-		$status['upgraded'] = $theme->getName();
+		$status['upgraded'] = $theme->translate($theme->getName());
 	    } else if (isset($form['action']['uninstall'])) {
 		if (!$isActive) {
 		    $ret = $theme->uninstall();
 		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
-		    $status['uninstalled'] = $theme->getName();
+		    $status['uninstalled'] = $theme->translate($theme->getName());
 		}
 
 		$redirect['view'] = 'core.SiteAdmin';
@@ -125,7 +125,7 @@ class AdminThemesController extends GalleryController {
 		    if ($ret) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
-		    $status['deactivated'] = $theme->getName();
+		    $status['deactivated'] = $theme->translate($theme->getName());
 		}
 
 		$redirect['view'] = 'core.SiteAdmin';
@@ -168,7 +168,7 @@ class AdminThemesController extends GalleryController {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 			if (empty($error)) {
-			    $status[$statusKey] = $theme->getName();
+			    $status[$statusKey] = $theme->translate($theme->getName());
 			}
 		    }
 
@@ -178,7 +178,7 @@ class AdminThemesController extends GalleryController {
 			$redirect['subView'] = 'core.AdminThemes';
 			$redirect['mode'] = 'editTheme';
 			$redirect['themeId'] = $themeId;
-			$status['savedTheme'] = $theme->getName();
+			$status['savedTheme'] = $theme->translate($theme->getName());
 		    }
 		} else {
 		    foreach ($validationErrors as $validationKey => $validationMessage) {
@@ -193,7 +193,7 @@ class AdminThemesController extends GalleryController {
 		$redirect['subView'] = 'core.AdminThemes';
 		$redirect['mode'] = 'editTheme';
 		$redirect['themeId'] = $themeId;
-		$status['restoredTheme'] = $theme->getName();
+		$status['restoredTheme'] = $theme->translate($theme->getName());
 	    }
 	} else {  /* no theme id provided */
 	    if (isset($form['action']['saveDefaults'])) {
@@ -323,7 +323,7 @@ class AdminThemesView extends GalleryView {
 	    }
 
 	    $entry = array();
-	    $entry['name'] = $theme->getName();
+	    $entry['name'] = $theme->translate($theme->getName());
 	    $entry['active'] = !empty($status['active']);
 	    $entry['l10Domain'] = $theme->getL10Domain();
 	    $entry['action'] = array();
