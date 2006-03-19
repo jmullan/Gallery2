@@ -678,6 +678,7 @@ class OracleGenerator extends BaseGenerator {
 	    /* table-name, schema-from, schema-to, (add, alter, remove)+ */
 	    $alters = $others = '';
 	    for ($i = 3; $i < count($child); $i++) {
+		/* This logic depends on add/remove INDEX being in their own <add> or <remove> */
 		if (!$this->isIndex($child[$i]['child'][0]) ||
 			$this->isPrimaryKey($child[$i]['child'][0])) {
 		    $alters .= $this->createSql($child[$i], $i, count($child) - 1, $node) . "\n";
