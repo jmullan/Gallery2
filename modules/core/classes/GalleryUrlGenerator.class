@@ -809,7 +809,7 @@ class GalleryUrlGenerator {
 	     * normalize to URL / *nix style paths to check fewer cases
 	     */
 	    $normReturnUrl = str_replace("\\", '/', $returnUrl);
-	    if ((strpos($returnUrl, $this->_file[0]) !== 0 &&
+	    if (((empty($this->_file[0]) || strpos($returnUrl, $this->_file[0]) !== 0) &&
 		    strpos($normReturnUrl, $validPath) !== 0 &&
 		    strpos($returnUrl, $this->getCurrentUrlDir()) !== 0 &&
 		    !( !preg_match('{^\s*\w*://}i', $normReturnUrl) &&

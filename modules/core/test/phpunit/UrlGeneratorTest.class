@@ -996,6 +996,24 @@ class UrlGeneratorTest extends GalleryTestCase {
 				array('text' => 'Back to %s', 'arg1' => 'I want a pony')))),
 			    $links, 'Navigation link was altered');
     }
+    
+    /* Regression test to check that we handle embedUri = /foo/bar/ correctly (no file part) */
+    function testInitNavigationHandlesEmbedUriWithoutFilePart() {
+	$urlGenerator = new GalleryUrlGenerator();
+	$ret = $urlGenerator->init('/foo/bar/');
+	if ($ret) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	GalleryUtilities::putRequestVariable('return', 'foo');
+	/* Assert that there's no PHP warning during the execution of this function */
+	$ret = $urlGenerator->initNavigation();
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	$this->assertEquals(null, $ret);
+    }
 
     function testRelativeUrlOverrides() {
 	global $gallery;
