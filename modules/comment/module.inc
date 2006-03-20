@@ -56,7 +56,8 @@ class CommentModule extends GalleryModule {
 
 	if (!isset($currentVersion)) {
 	    $currentVersion = '0';
-	} else if (version_compare($currentVersion, '0.9.6', '<=')) {
+	} else if (version_compare($currentVersion, '0.9.6', '<=')
+		|| substr($currentVersion, 0, 4) == '0.81') {
 	    /* Instead of enumerating all previous versions... */
 	    $currentVersion = '0.9.6';
 	}
