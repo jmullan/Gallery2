@@ -43,15 +43,12 @@ class RepositoryTest extends GalleryTestCase {
     function setUp() {
 	parent::setUp();
 
-	/* Set up mock translator and storage. */
+	/* Set up mock storage. */
 	global $gallery;
-	$this->_galleryTranslator = $gallery->_translator;
-	$gallery->translator = new RepositoryIndexTestTranslator();
-
 	$this->_galleryStorage =& $gallery->_storage;
 	$this->_testStorage =& RepositoryTestStorage::getSingleton();
 	$gallery->_storage =& $this->_testStorage;
-	
+
 	/* Prepare test index. */
 	include(dirname(__FILE__) . '/../../../../lib/tools/repository/test/data/SampleIndex.inc');
 	$this->_sampleIndex = $sampleIndex;
@@ -61,9 +58,8 @@ class RepositoryTest extends GalleryTestCase {
     }
 
     function tearDown() {
-	/* Return original translator and storage. */
+	/* Return original storage. */
 	global $gallery;
-	$gallery->_translator = $this->_galleryTranslator;
 	$gallery->_storage =& $this->_galleryStorage;
 
 	parent::tearDown();
@@ -179,7 +175,7 @@ class RepositoryTest extends GalleryTestCase {
 		    }
 		    $platform->setReply('readdir', array('fh'), false);
 		    $platform->setReply('closedir', array('fh'), true);
-	        }
+		}
 	    }
 	    $gallery->setPlatform($platform);
 
@@ -273,6 +269,15 @@ class RepositoryTest extends GalleryTestCase {
     }
 
     function testGetRepositoryPluginList() {
+	global $gallery;
+	list ($ret, $saveLanguage) = $gallery->getActiveLanguageCode();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = $gallery->setActiveLanguageCode('en_US');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
 	$testModule = $this->_sampleIndex['modules']['testModule'];
 	$testModuleWithVersion = $testModule;
@@ -376,6 +381,11 @@ class RepositoryTest extends GalleryTestCase {
 	    }
 
 	    $this->assertEquals($case['expectedPluginList'], $pluginList);
+	}
+
+	$ret = $gallery->setActiveLanguageCode($saveLanguage);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
 
@@ -522,8 +532,8 @@ class RepositoryTest extends GalleryTestCase {
 	$indexData = array('module' => array(
 	    'testModule' => array('descriptorUrl' => 'testModuleDescriptorUrl',
 				  'name' => 'Test Module',
-	    			  'package1' => 'package1Url',
-	    			  'package2' => 'package2Url')));
+				  'package1' => 'package1Url',
+				  'package2' => 'package2Url')));
 
 	$repository = new GalleryRepository();
 	$repository->_index = new RepositoryTestIndex($this->_sampleIndex, $indexData);
@@ -542,7 +552,7 @@ class RepositoryTest extends GalleryTestCase {
 			     'package2' => $indexData['module']['testModule']['package2'])))),
 	    $files, 'Unexpected file data.');
     }
-    
+
     function testUpdatePluginIndexFile() {
 	global $gallery;
 	$gallery->setConfig('data.gallery.plugins', 'plugins/');
@@ -558,25 +568,25 @@ class RepositoryTest extends GalleryTestCase {
 	    array('plugins/index.modules'), $indexWithoutPlugin);
 	$platform->setReply('file_put_contents', array('plugins/index.modules', $indexWithPlugin),
 	    true);
-			    
+
 	/* Return index with the specified plugin ID. */
 	$platform->setReply('file_exists', array('plugins/index.modules'), true);
 	$platform->setReply('file_get_contents',
 	    array('plugins/index.modules'), $indexWithPlugin);
 	$gallery->setPlatform($platform);
 
-	/* Test case when the plugin index file doesn't contain the specified plugin ID. */ 
+	/* Test case when the plugin index file doesn't contain the specified plugin ID. */
 	$ret = $repository->updatePluginIndexFile('module', 'testModule');
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
-	
-	/* Test case when the plugin index already contains the specified plugin ID. */ 
+
+	/* Test case when the plugin index already contains the specified plugin ID. */
 	$ret = $repository->updatePluginIndexFile('module', 'testModule');
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
-	
+
 	$this->assert($platform->isComplete(), $platform->getRemaining());
     }
 
@@ -593,7 +603,7 @@ class RepositoryTest extends GalleryTestCase {
 	$gallery->setConfig('data.gallery.plugins', 'plugins/');
 
 	$platform = new UnitTestPlatform();
-	/* Package download. */ 
+	/* Package download. */
 	$platform->setReply('file_exists', array('plugins/modules/testModule/'), true);
 	$platform->setReply('file_put_contents',
 	    array($testPackagePath, serialize(array($testPackageUrl))), true);
@@ -667,13 +677,6 @@ class RepositoryTest extends GalleryTestCase {
     }
 }
 
-class RepositoryTestTranslator {
-
-    function getActiveLanguageCode() {
-	return 'en_US';
-    }
-}
-
 class RepositoryTestUtilities {
 
     var $_packages;
@@ -715,7 +718,7 @@ class RepositoryTestUtilities {
     function isPluginCompatible($pluginType, $version1, $version2) {
 	return $this->_utilities->isPluginCompatible($pluginType, $version1, $version2);
     }
-    
+
     function downloadFile($url) {
 	return array(true, serialize(array($url)));
     }

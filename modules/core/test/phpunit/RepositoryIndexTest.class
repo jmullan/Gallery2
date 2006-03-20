@@ -36,18 +36,13 @@ class RepositoryIndexTest extends GalleryTestCase {
 
     var $_index;
     var $_sampleIndex;
-
-    var $_galleryTranslator;
     var $_galleryStorage;
 
     function setUp() {
 	parent::setUp();
 
-	/* Set up mock translator and storage. */
+	/* Set up mock storage. */
 	global $gallery;
-	$this->_galleryTranslator = $gallery->_translator;
-	$gallery->translator = new RepositoryIndexTestTranslator();
-
 	$this->_galleryStorage =& $gallery->_storage;
 	$this->_testStorage =& RepositoryTestStorage::getSingleton();
 	$gallery->_storage =& $this->_testStorage;
@@ -62,9 +57,8 @@ class RepositoryIndexTest extends GalleryTestCase {
     }
 
     function tearDown() {
-	/* Return original translator and storage. */
+	/* Return original storage. */
 	global $gallery;
-	$gallery->_translator = $this->_galleryTranslator;
 	$gallery->_storage =& $this->_galleryStorage;
 	GalleryDataCache::reset();
 
@@ -139,19 +133,38 @@ class RepositoryIndexTest extends GalleryTestCase {
 
     function testGetPluginName() {
 	global $gallery;
-	$oldTranslator =
-	$testcases = array(array(
-	    'pluginType' => 'module',
-	    'pluginId' => 'testModule',
-	    'expectedName' => 'Test Module'), array(
+	list ($ret, $saveLanguage) = $gallery->getActiveLanguageCode();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
-	    'pluginType' => 'theme',
-	    'pluginId' => 'testTheme',
-	    'expectedName' => 'Test Theme'));
+	$testcases = array(
+		'en_US',
+		array('pluginType' => 'module',
+		      'pluginId' => 'testModule',
+		      'expectedName' => 'Test Module'),
+		array('pluginType' => 'theme',
+		      'pluginId' => 'testTheme',
+		      'expectedName' => 'Test Theme'),
+		'en_GB',
+		array('pluginType' => 'module',
+		      'pluginId' => 'testModule',
+		      'expectedName' => 'en_GB-modules_testModule-Test Module'),
+		array('pluginType' => 'theme',
+		      'pluginId' => 'testTheme',
+		      'expectedName' => 'en_GB-themes_testTheme-Test Theme'),
+		);
 
 	$this->_index->utilities = new RepositoryIndexTestUtilities();
 
 	foreach ($testcases as $case) {
+	    if (!is_array($case)) {
+		$ret = $gallery->setActiveLanguageCode($case);
+		if ($ret) {
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+		continue;
+	    }
 	    list ($ret, $name) =
 		$this->_index->getPluginName($case['pluginType'], $case['pluginId']);
 	    if ($ret) {
@@ -159,6 +172,11 @@ class RepositoryIndexTest extends GalleryTestCase {
 	    }
 
 	    $this->assertEquals($case['expectedName'], $name, 'Unexpected name returned.');
+	}
+
+	$ret = $gallery->setActiveLanguageCode($saveLanguage);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
 
@@ -200,7 +218,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 		['GalleryPluginParameterMap']['change']['parameterValue'];
 	} else if (isset($this->_testStorage->_addedMapData['GalleryPluginParameterMap'])) {
 	    $addedData = $this->_testStorage->_addedMapData['GalleryPluginParameterMap'];
-	    
+
 	    if (isset($addedData['parameterName'])
 		    && $addedData['parameterName'] == 'repository.updateTime') {
 		$timestampWritten = true;
@@ -415,13 +433,6 @@ class RepositoryIndexTest extends GalleryTestCase {
     }
 }
 
-class RepositoryIndexTestTranslator {
-
-    function getActiveLanguageCode() {
-	return 'en_US';
-    }
-}
-
 class RepositoryIndexTestUtilities {
 
     var $_fileContents;
@@ -446,7 +457,7 @@ class RepositoryIndexTestUtilities {
     }
 
     function getPluginVersion($pluginType, $pluginId) {
-    	return array(null, 'someVersion');
+	return array(null, 'someVersion');
     }
 
     function isPluginCompatible($pluginType, $requiredCoreApi, $requiredPluginApi, $apis = null) {
