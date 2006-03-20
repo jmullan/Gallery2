@@ -485,7 +485,7 @@ class CoreModuleExtras {
 	      [GalleryAccessMap] ([::accessListId], [::userOrGroupId], [::permission])
 	    SELECT
 	      ?,
-	      MAX([GalleryPermissionMap::userId], [GalleryPermissionMap::groupId]),
+	      [GalleryPermissionMap::userId] + [GalleryPermissionMap::groupId],
 	      [GalleryPermissionMap::permission]
 	    FROM
 	      [GalleryPermissionMap]
@@ -700,14 +700,18 @@ class CoreModuleExtras {
 	    /*
 	     * Create 'plugins' and 'plugins_data' directories in g2data.  Remove trailing slash
 	     * for config paths using substr so file_exists can detect either file or dir.
+	     * Update: in core 1.0.6 the data.gallery.plugins dir moved under gallery2 basedir,
+	     * not in g2data anymore; we may not have permission to create a dir here.
+	     * So code below is now updated to not require those mkdirs to succeed.
 	     */
 	    $gallery->guaranteeTimeLimit(30);
-	    foreach (array(substr($gallery->getConfig('data.gallery.plugins'), 0, -1),
-			   $gallery->getConfig('data.gallery.plugins') . 'modules',
-			   $gallery->getConfig('data.gallery.plugins') . 'layouts',
-			   substr($gallery->getConfig('data.gallery.plugins_data'), 0, -1),
-			   $gallery->getConfig('data.gallery.plugins_data') . 'modules',
-			   $gallery->getConfig('data.gallery.plugins_data') . 'layouts') as $dir) {
+	    foreach (array(substr($gallery->getConfig('data.gallery.plugins'), 0, -1) => false,
+			   $gallery->getConfig('data.gallery.plugins') . 'modules' => false,
+			   $gallery->getConfig('data.gallery.plugins') . 'layouts' => false,
+			   substr($gallery->getConfig('data.gallery.plugins_data'), 0, -1) => true,
+			   $gallery->getConfig('data.gallery.plugins_data') . 'modules' => true,
+			   $gallery->getConfig('data.gallery.plugins_data') . 'layouts' => true)
+		    as $dir => $isRequired) {
 		if ($platform->file_exists($dir)) {
 		    if ($platform->is_dir($dir)) {
 			/* No need to do anything.  Except maybe we could check permissions here. */
@@ -720,7 +724,7 @@ class CoreModuleExtras {
 			}
 		    }
 		} else {
-		    if (!@$platform->mkdir($dir)) {
+		    if (!@$platform->mkdir($dir) && $isRequired) {
 			return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 						    "Unable to create $dir");
 		    }
@@ -879,11 +883,15 @@ class CoreModuleExtras {
 	    /*
 	     * 1. Get a list of all derivatives that are not already marked as isBroken
 	     *    (We can't count on derivativeSize being correct, so check all derivatives)
+	     * Update: upgrade from pre-beta-1 will fail to load RandomHighlightDerivativeImage
+	     *         so restrict this query to only GalleryDerivativeImage
 	     */
 	    $gallery->guaranteeTimeLimit(60);
 	    $query = 'SELECT [GalleryDerivative::id]
-		      FROM [GalleryDerivative]
-		      WHERE [GalleryDerivative::isBroken] IS NULL';
+		      FROM [GalleryDerivative], [GalleryEntity]
+		      WHERE [GalleryDerivative::isBroken] IS NULL
+		      AND [GalleryDerivative::id] = [GalleryEntity::id]
+		      AND [GalleryEntity::entityType] = \'GalleryDerviativeImage\'';
 	    list ($ret, $searchResults) = $gallery->search($query);
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -1360,15 +1368,18 @@ class CoreModuleExtras {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    $query = '
-	    UPDATE
-	      [GalleryAccessMap]
-	    SET
-	      [::userOrGroupId] = [::userId] + [::groupId]
-	    ';
-	    $ret = $storage->execute($query, array());
-	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+	    /* If coming from 0.9.5 or earlier then GalleryAccessMap already has userOrGroupId */
+	    if (version_compare($currentVersion, '0.9.5', '>')) {
+		$query = '
+		UPDATE
+		  [GalleryAccessMap]
+		SET
+		  [::userOrGroupId] = [::userId] + [::groupId]
+		';
+		$ret = $storage->execute($query, array());
+		if ($ret) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 	    }
 
 	    $ret = $storage->configureStore($module->getId(), array('GalleryAccessMap:1.1'));
