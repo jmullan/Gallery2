@@ -47,11 +47,14 @@
         <h4><a href="{g->url arg1="view=core.ShowItem"
                arg2="itemId=`$child.id`"}">{$child.title|default:$child.pathComponent|markup}</a></h4>
 
-        <div class="meta">
-          {if ($child.childCount > 0)}
-            {g->text text="%d Images" arg1=$child.descendentCount}
-          {/if}
-        </div>
+	<div class="meta">
+	  {if ($child.descendentCount > 0)}
+	    {g->text text="%d Images" arg1=$child.descendentCount}
+	  {/if}
+	  {if isset($child.itemSummaries.newitems)}
+	    <span class="summary-newitems summary">{$child.itemSummaries.newitems}</span>
+	  {/if}
+	</div>
 
         <p>{if isset($child.summary)}{$child.summary|entitytruncate:256|markup}{/if}</p>
       </div>
