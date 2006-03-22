@@ -5,7 +5,7 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
       <div id="gsContent" class="gcBorder1">
-        <div class="gbBlock gcBackground1">
+        <div id="gbTitleBar" class="gbBlock gcBackground1">
           <div id="gbSearch">
             {g->block type="search.SearchBlock"}
           </div>
