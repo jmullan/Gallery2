@@ -52,7 +52,7 @@
 	      MM_changeProp('showSidebarTab','','style.display','none','DIV');
 	      return false;">
           <img src="{$theme.themeUrl}/images/tab_open_sidebar.gif" alt="Show album options"/></a>
-      <div id="gsSidebarCol" class="ydsf">
+      <div id="gsSidebarCol" class="dropshadow">
         {g->theme include="sidebar.tpl"}
       </div>
       {/if}
