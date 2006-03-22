@@ -349,7 +349,7 @@ class GalleryPluginHelper_simple {
 	}
 
 	while ($result = $searchResults->nextResult()) {
-	    $data[$result[0]][$result[1]] = $result[2];
+	    $data[$result[0]][$result[1]] = (string)$result[2];
 	}
 
 	foreach (array_slice($queryIds, 2) as $itemId) {

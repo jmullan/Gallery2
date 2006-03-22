@@ -236,5 +236,17 @@ class OracleStorage extends GalleryStorage {
 	/* Is this the right command to use? */
 	return 'ANALYZE TABLE %s COMPUTE STATISTICS';
     }
+
+    /**
+     * @see GalleryStorage::_normalizeValue
+     */
+    function _normalizeValue($value, $memberData, $fromDb=false) {
+	if ($fromDb && is_null($value) && ($memberData['type'] == STORAGE_TYPE_STRING
+					|| $memberData['type'] == STORAGE_TYPE_TEXT)) {
+	    return '';
+	} else {
+	    return parent::_normalizeValue($value, $memberData, $fromDb);
+	}
+    }
 }
 ?>
