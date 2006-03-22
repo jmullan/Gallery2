@@ -43,7 +43,7 @@ class ClassicTheme extends GalleryTheme {
 	$this->setId('classic');
 	$this->setName($gallery->i18n('Classic'));
 	$this->setDescription($gallery->i18n('Classic Gallery2 root album look and feel'));
-	$this->setVersion('1.0.3');
+	$this->setVersion('1.1.0');
 	$this->setRequiredThemeApi(array(2, 2));
 	$this->setRequiredCoreApi(array(7, 0));
 	$this->setStandardSettings(
