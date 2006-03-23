@@ -1,0 +1,662 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2006 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * Test some Storage functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class StorageTest extends GalleryTestCase {
+
+    var $_db;		/* backup of ADODB object */
+    var $_results;	/* results from the generated query */
+
+    function StorageTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	global $gallery;
+	parent::setUp();
+
+	$storage =& $gallery->getStorage();
+	$this->_db = $storage->_db;
+	$this->_isEmptyAllowedForNotNullColumn = $storage->_isEmptyAllowedForNotNullColumn;
+	$storage->_db = new StorageTestDB($this);
+    }
+
+    function tearDown() {
+	global $gallery;
+
+	$storage =& $gallery->getStorage();
+	$storage->_db = $this->_db;
+	$storage->_isEmptyAllowedForNotNullColumn = $this->_isEmptyAllowedForNotNullColumn;
+
+	parent::tearDown();
+    }
+
+    function testTranslateQuery() {
+	/*
+	 * Ensure GalleryStorage::_translateQuery() can handle table and column names
+	 * with underscore character..
+	 */
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	$this->assertEquals(
+	    'SELECT ' . $storage->_tablePrefix . 'Test_table.' . $storage->_columnPrefix .
+	    'Test_column FROM ' . $storage->_tablePrefix . 'Test_table',
+	    $storage->_translateQuery(
+		'SELECT [Test_table::Test_column] FROM [Test_table]')
+	);
+    }
+
+    function testGetUniqueId() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	/*
+	 * Hard to test this properly, so get two ids and make sure that the
+	 * second id is bigger than the first.
+	 */
+	list ($ret, $id1) = $storage->getUniqueId();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $id2) = $storage->getUniqueId();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(is_int($id1), 'Id1 is not an int');
+	$this->assert(is_int($id2), 'Id2 is not an int');
+	$this->assert($id2 > $id1);
+    }
+
+    function testAddMap() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	/*
+	 * We really should use a fake map, but it's hard to insert a fake map definition into
+	 * GalleryStorage at the moment.
+	 */
+	$ret = $storage->addMapEntry(
+	    'GalleryUserGroupMap',
+	    array('userId' => 0, 'groupId' => 1));
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(
+	    array(array(
+		sprintf('INSERT INTO %sUserGroupMap (%suserId, %sgroupId) VALUES (?,?)',
+			$storage->_tablePrefix, $storage->_columnPrefix,
+			$storage->_columnPrefix),
+		array(0, 1))),
+	    $this->_results);
+    }
+
+    function testAddMapTruncate() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	/*
+	 * We really should use a fake map, but it's hard to insert a fake map definition into
+	 * GalleryStorage at the moment.
+	 */
+	$ret = $storage->addMapEntry(
+	    'ExternalIdMap',
+	    array('externalId' => str_repeat('x', 200),
+		  'entityType' => 'test',
+		  'entityId' => 1));
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(
+	    array(array(
+		sprintf('INSERT INTO %1$sExternalIdMap (%2$sexternalId, %2$sentityType, ' .
+			'%2$sentityId) VALUES (?,?,?)',
+			$storage->_tablePrefix, $storage->_columnPrefix),
+		array(str_repeat('x', 128), 'test', 1))),
+	    $this->_results);
+    }
+
+    function testUpdateMapTruncate() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	/*
+	 * We really should use a fake map, but it's hard to insert a fake map definition into
+	 * GalleryStorage at the moment.
+	 */
+	$ret = $storage->updateMapEntry(
+	    'ExternalIdMap',
+	    array('externalId' => str_repeat('y', 200)),
+	    array('externalId' => str_repeat('x', 200)));
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(
+	    array(array(
+		sprintf('UPDATE %1$sExternalIdMap SET %2$sexternalId=? WHERE %2$sexternalId=?',
+			$storage->_tablePrefix, $storage->_columnPrefix),
+		array(str_repeat('x', 128), str_repeat('y', 128)))),
+	    $this->_results);
+    }
+
+    function testUpdateMapTruncateMultipleMatches() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	/*
+	 * We really should use a fake map, but it's hard to insert a fake map definition into
+	 * GalleryStorage at the moment.
+	 */
+	$ret = $storage->updateMapEntry(
+	    'ExternalIdMap',
+	    array('externalId' => array(str_repeat('y', 200), str_repeat('z', 200))),
+	    array('externalId' => str_repeat('x', 200)));
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(
+	    array(array(
+		sprintf('UPDATE %1$sExternalIdMap SET %2$sexternalId=? WHERE ' .
+			'%2$sexternalId IN (?,?)',
+			$storage->_tablePrefix, $storage->_columnPrefix),
+		array(str_repeat('x', 128), str_repeat('y', 128), str_repeat('z', 128)))),
+	    $this->_results);
+    }
+
+    function testUpdateMapValueIsNull() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	/*
+	 * Make sure that when a value is NULL that we use IS NULL and not = ? in
+	 * the generated SQL
+	 */
+	$ret = $storage->updateMapEntry('GalleryFactoryMap', array('classType' => null),
+					array('classType' => 'testType'));
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(
+	    array(array(sprintf('UPDATE %1$sFactoryMap SET %2$sclassType=? WHERE ' .
+				'%2$sclassType IS NULL',
+				$storage->_tablePrefix, $storage->_columnPrefix),
+			array('testType'))),
+	    $this->_results);
+    }
+
+    function testRemoveMapValueIsNull() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	/*
+	 * Make sure that when a value is NULL that we use IS NULL and not = ? in
+	 * the generated SQL
+	 */
+	$ret = $storage->removeMapEntry('GalleryFactoryMap', array('classType' => null));
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(
+	    array(array(sprintf('DELETE FROM %1$sFactoryMap WHERE %2$sclassType IS NULL',
+				$storage->_tablePrefix, $storage->_columnPrefix),
+			array())),
+	    $this->_results);
+    }
+
+    function testAddMapArray() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	/*
+	 * We really should use a fake map, but it's hard to insert a fake map definition into
+	 * GalleryStorage at the moment.
+	 */
+	$ret = $storage->addMapEntry(
+	    'GalleryUserGroupMap',
+	    array('userId' =>array(1, 2, 3), 'groupId' => array(4, 5, 6)));
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $sql) = $storage->getFunctionSql(
+	    'MULTI_INSERT',
+	    array($storage->_tablePrefix . 'UserGroupMap',
+		  array($storage->_columnPrefix . 'userId',
+			$storage->_columnPrefix . 'groupId'), 3));
+
+	$this->assertEquals(
+	    array(array($sql, array(1, 4, 2, 5, 3, 6))),
+	    $this->_results);
+    }
+
+    function testAddMapArrayTruncate() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	/*
+	 * We really should use a fake map, but it's hard to insert a fake map definition into
+	 * GalleryStorage at the moment.
+	 */
+	$ret = $storage->addMapEntry(
+	    'ExternalIdMap',
+	    array('externalId' => array(str_repeat('x', 200), str_repeat('y', 200)),
+		  'entityType' => array('test1', 'test2'),
+		  'entityId' => array(1, 2)));
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $sql) = $storage->getFunctionSql(
+	    'MULTI_INSERT',
+	    array($storage->_tablePrefix . 'ExternalIdMap',
+		  array($storage->_columnPrefix . 'externalId',
+			$storage->_columnPrefix . 'entityType',
+			$storage->_columnPrefix . 'entityId'), 2));
+
+	$this->assertEquals(
+	    array(array($sql, array(str_repeat('x', 128), 'test1', 1,
+				    str_repeat('y', 128), 'test2', 2))),
+	    $this->_results);
+    }
+
+    function testSaveEntity() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+	$entity = new GalleryChildEntity();
+	$ret = $entity->create(1234);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $storage->saveEntity($entity);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Only some entity fields are set because we're not calling GalleryEntity::save() here */
+	$this->assertEquals(
+	    array(
+		array(
+		    sprintf('INSERT INTO %1$sChildEntity (%2$sparentId, %2$sid) VALUES (?,?)',
+			    $storage->_tablePrefix, $storage->_columnPrefix),
+		    array(1234, $entity->id)),
+		array(
+		    sprintf('INSERT INTO %1$sEntity (%2$sid, %2$screationTimestamp, ' .
+			    '%2$sisLinkable, %2$sserialNumber, %2$sentityType) ' .
+			    'VALUES (?,?,?,?,?)',
+			    $storage->_tablePrefix, $storage->_columnPrefix),
+		    array($entity->id, $entity->creationTimestamp, 0, 1, 'GalleryChildEntity')),
+		),
+	    $this->_results);
+    }
+
+    function testTruncateOnSave() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	$entity = new GalleryEntity();
+	$ret = $entity->create();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* onLoadHandlers is a medium string, which is 128 chars */
+	$entity->onLoadHandlers = str_repeat('x', 200);
+
+	$ret = $storage->saveEntity($entity);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Only some entity fields are set because we're not calling GalleryEntity::save() here */
+	$this->assertEquals(
+	    array(
+		array(
+		    sprintf('INSERT INTO %1$sEntity (%2$sid, %2$screationTimestamp, ' .
+			    '%2$sisLinkable, %2$sserialNumber, %2$sentityType, ' .
+			    '%2$sonLoadHandlers) VALUES (?,?,?,?,?,?)',
+			    $storage->_tablePrefix, $storage->_columnPrefix),
+		    array($entity->id, $entity->creationTimestamp, 0, 1, 'GalleryEntity',
+			  str_repeat('x', 128))
+		    )
+		),
+	    $this->_results);
+    }
+
+    function testNormalizeValueToTimeStamp() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	$memberData['type'] = STORAGE_TYPE_TIMESTAMP;
+	$this->assertEquals('foofoo', $storage->_normalizeValue('foo', $memberData), 'normal');
+	$this->assertEquals('', $storage->_normalizeValue('', $memberData), 'empty string');
+	$this->assertEquals('', $storage->_normalizeValue(false, $memberData), 'boolean false');
+	$this->assertEquals(null, $storage->_normalizeValue(null, $memberData), 'boolean false');
+	$this->assertEquals('00', $storage->_normalizeValue('0', $memberData), 'numeric empty');
+    }
+
+    function testNormalizeValueNotNull() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	$memberData['notNull'] = true;
+	foreach (array(STORAGE_TYPE_TIMESTAMP, STORAGE_TYPE_INTEGER,
+		       STORAGE_TYPE_STRING, STORAGE_TYPE_TEXT, STORAGE_TYPE_BIT) as $type) {
+	    $memberData['type'] = $type;
+	    $memberData['size'] = $type & STORAGE_TYPE_STRING ? STORAGE_SIZE_MEDIUM : null;
+	    $this->assert(!is_null($storage->_normalizeValue('', $memberData)),
+			  "empty string for $type");
+	    $this->assert(!is_null($storage->_normalizeValue('0', $memberData)),
+			  "0 string for $type");
+	    $this->assert(!is_null($storage->_normalizeValue(null, $memberData)), "null for $type");
+	    $this->assert(!is_null($storage->_normalizeValue(false, $memberData)),
+			  "boolean false for $type");
+	}
+    }
+
+    function testNormalizeValueBitNotNull() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	$memberData['notNull'] = true;
+	$memberData['type'] = STORAGE_TYPE_BOOLEAN;
+	$this->assertEquals(0, $storage->_normalizeValue(false, $memberData), 'boolean false');
+	$this->assertEquals(1, $storage->_normalizeValue('foo', $memberData), 'string');
+	$this->assertEquals(1, $storage->_normalizeValue(1, $memberData), 'int 1');
+	$this->assertEquals(0, $storage->_normalizeValue('', $memberData), 'empty string');
+	$this->assertEquals(0, $storage->_normalizeValue('0', $memberData), '0 string');
+	$this->assertEquals(0, $storage->_normalizeValue(null, $memberData), 'null');
+    }
+
+    function testNormalizeValueNotNullEmptyAllowed() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+	$storage->_isEmptyAllowedForNotNullColumn = true;
+
+	$memberData['notNullEmptyAllowed'] = true;
+	foreach (array(STORAGE_TYPE_TIMESTAMP, STORAGE_TYPE_INTEGER,
+		       STORAGE_TYPE_STRING, STORAGE_TYPE_TEXT, STORAGE_TYPE_BIT) as $type) {
+	    $memberData['type'] = $type;
+	    $memberData['size'] = $type & STORAGE_TYPE_STRING ? STORAGE_SIZE_MEDIUM : null;
+	    $this->assert(!is_null($storage->_normalizeValue('', $memberData)),
+			  "empty string for $type");
+	    $this->assert(!is_null($storage->_normalizeValue('0', $memberData)),
+			  "0 string for $type");
+	    $this->assert(!is_null($storage->_normalizeValue(null, $memberData)), "null for $type");
+	}
+    }
+
+    /* Do not change empty strings to NULL */
+    function testNormalizeValueNotNullEmptyNotAllowed() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+	$storage->_isEmptyAllowedForNotNullColumn = false;
+
+	$memberData['notNullEmptyAllowed'] = true;
+	$memberData['notNull'] = true;
+	foreach (array(STORAGE_TYPE_TIMESTAMP, STORAGE_TYPE_INTEGER, STORAGE_TYPE_BOOLEAN,
+		       STORAGE_TYPE_STRING, STORAGE_TYPE_TEXT, STORAGE_TYPE_BIT) as $type) {
+	    $memberData['type'] = $type;
+	    $memberData['size'] = $type & STORAGE_TYPE_STRING ? STORAGE_SIZE_MEDIUM : null;
+	    $this->assert(!is_null($storage->_normalizeValue('', $memberData)),
+				"empty string for $type");
+	    $this->assert(!is_null($storage->_normalizeValue('0', $memberData)),
+			  "0 string for $type");
+	    $this->assert(!is_null($storage->_normalizeValue(null, $memberData)),
+				"null for $type");
+	}
+    }
+    
+    function testNormalizeValueToBoolean() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	/* We use integers in the DB, thus cast to integer, 3rd param doesn't matter */
+	$memberData['type'] = STORAGE_TYPE_BOOLEAN;
+	$memberData['notNull'] = false;
+	$this->assertEquals(1, $storage->_normalizeValue('foo', $memberData), 'from string');
+	$this->assertEquals(0, $storage->_normalizeValue('', $memberData, false),
+			    'from string 2');
+	$this->assertEquals(null, $storage->_normalizeValue(null, $memberData), 'from null');
+	$this->assertEquals(0, $storage->_normalizeValue(false, $memberData, true)
+			    , 'from false');
+	$this->assertEquals(1, $storage->_normalizeValue(true, $memberData), 'from true');
+	$this->assertEquals(1, $storage->_normalizeValue(1, $memberData, true), 'from 1');
+    }
+
+    function testNormalizeValueToInteger() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	$memberData['type'] = STORAGE_TYPE_INTEGER;
+	$this->assertEquals(1, $storage->_normalizeValue('1', $memberData, true),
+			    'from string');
+	$this->assertEquals(0, $storage->_normalizeValue('0', $memberData), 'from string 2');
+	$this->assertEquals(7, $storage->_normalizeValue('007', $memberData), 'from string 3');
+	$this->assertEquals(0, $storage->_normalizeValue('', $memberData), 'from empty string');
+	$this->assertEquals(15, $storage->_normalizeValue(15, $memberData), 'from integer');
+    }
+
+    function testNormalizeValueToString() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	$memberData['type'] = STORAGE_TYPE_STRING;
+	$this->assertEquals('1', $storage->_normalizeValue('1', $memberData, true), 'from string');
+	$this->assertEquals('', $storage->_normalizeValue('', $memberData, true),
+			    'from string 2');
+
+	$value = str_repeat('x', 135);
+	$memberData['size'] = STORAGE_SIZE_MEDIUM;
+	$this->assertEquals($value, $storage->_normalizeValue($value, $memberData, true),
+			    'from string 3');
+	$this->assertEquals(str_repeat('x', 128), $storage->_normalizeValue($value, $memberData),
+			    'from string with truncate');
+	$this->assertEquals('15', $storage->_normalizeValue(15, $memberData), 'from integer');
+	$this->assertEquals('0', $storage->_normalizeValue(0, $memberData, true),
+			    'from integer 2');
+	$this->assertEquals('1', $storage->_normalizeValue(true, $memberData, true),
+			    'from boolean');
+	$this->assertEquals('', $storage->_normalizeValue(false, $memberData), 'from boolean 2');
+	$this->assertEquals(null, $storage->_normalizeValue(null, $memberData), 'from null');
+    }
+
+    function testNormalizeValueToOtherType() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	$memberData['type'] = 0x00000080;
+	$this->assertEquals(array(1, 'foo'),
+			    $storage->_normalizeValue(array(1, 'foo'), $memberData));
+    }
+
+    function testNormalizeValueToBit() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	$memberData['type'] = STORAGE_TYPE_BIT;
+	$expected = $storage->convertIntToBits(5);
+	$this->assertEquals($expected, $storage->_normalizeValue(5, $memberData), 'to DB');
+	$this->assertEquals(5, $storage->_normalizeValue(5, $memberData, true), 'from DB');
+	$this->assertEquals(5, $storage->_normalizeValue('5', $memberData, true),
+			    'from DB 2');
+	$this->assertEquals(null, $storage->_normalizeValue(null, $memberData, true), 'null');
+	$this->assertEquals($storage->convertIntToBits(0), 
+			    $storage->_normalizeValue('', $memberData), 'empty string');
+    }
+
+    function testNormalizeValueFromTextToString() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	$memberData['type'] = STORAGE_TYPE_TEXT;
+	$this->assertEquals(str_repeat('1', 10),
+			    $storage->_normalizeValue((int)str_repeat('1', 10), $memberData));
+	$this->assertEquals(null, $storage->_normalizeValue(null, $memberData));
+    }
+
+    function testSqlInjectionWithNullCharacter() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+	/* Use a real SQL connection for this test */
+	$storage->_db = null;
+
+	/* \0 -> \\000 special escape, see http://pgsqld.active-venture.com/datatype-binary.html */
+	$testString = "The NULL character should be escaped \0 !";
+	$key = 'test' . rand();
+	$ret = $storage->addMapEntry('GalleryPluginParameterMap',
+				     array('pluginType' => 'module',
+					   'pluginId' => 'unitTestModule',
+					   'itemId' => 1,
+					   'parameterName' => $key,
+					   'parameterValue' => $testString));
+	/* If the \0 character wasn't properly escaped, PG would throw an error here */
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $value) =
+	    GalleryCoreApi::getPluginParameter('module', 'unitTestModule', $key, 1);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/*
+	 * Different DBMS handle the \0 differently. PG interprets it as string termination and
+	 * only inserts the string up to \0. MySQL inserts the whole string.
+	 * Just compare the string up to the \0 character
+	 */
+	$expected = "The NULL character should be escaped ";
+	$this->assertEquals($expected, substr($value, 0, strlen($expected)));
+
+	/* Cleanup */
+	$ret = GalleryCoreApi::removeAllPluginParameters('module', 'unitTestModule');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Commit our DB transaction to release locks from the PluginParameterMap table */
+	$ret = $storage->checkPoint();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function testEncodeDecodeBlob() {
+        global $gallery;
+	$storage =& $gallery->getStorage();
+	/* Use a real SQL connection for this test */
+	$storage->_db = null;
+	
+	/* We want to store binary (gz-deflated) data in a text field */
+	$blobData = '';
+	for ($i = 0; $i <= 255; $i++) {
+	    $blobData .= chr($i);
+	}
+	
+	/* encode it */
+	$escapedString = $storage->encodeBlob($blobData);
+	
+	$key = 'test_' . rand();
+	$ret = GalleryCoreApi::addMapEntry(
+	    'GalleryCacheMap',
+	    array('key' => $key, 'value' => $escapedString, 'userId' => 55,
+		  'itemId' => 99, 'type' => 'test', 'timestamp' => time()));
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* No (PHP) error? Good! Next, get the entry from the db and compare */
+	
+	$query = '
+            SELECT
+              [GalleryCacheMap::value]
+            FROM
+              [GalleryCacheMap]
+            WHERE
+              [GalleryCacheMap::key] = ?
+            ';
+	list ($ret, $results) = $storage->search($query, array($key));
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	if ($results->resultCount() > 0) {
+	    $result = $results->nextResult();
+	    $this->assertEquals($blobData, $storage->decodeBlob($result[0]),
+				'blob data was altered in encode -> insert -> select -> decode');
+	} else {
+	    $this->assert(false, 'SELECT failed, got nothing back!');
+	}
+	
+	/* Cleanup */
+	$ret = GalleryCoreApi::removeMapEntry('GalleryCacheMap', array('type' => 'test'));
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Commit our DB transaction to release locks from the Cache table */
+	$ret = $storage->checkPoint();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+}
+
+class StorageTestDB {
+    var $_testCase;
+    var $transCnt = 1; /* Pretend we're already in a transaction */
+
+    function StorageTestDB(&$testCase) {
+	$this->_testCase =& $testCase;
+    }
+
+    function execute($query, $data) {
+	$this->_testCase->_results[] = array($query, $data);
+	return 1;
+    }
+
+    function GenID($val) {
+	return $this->_testCase->_db->GenID($val);
+    }
+
+    function DBTimeStamp($val) {
+	return (string)($val . $val);
+    }
+}
+?>

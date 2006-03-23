@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+  <head>
+    <title>{g->text text="Package Removal Results"}</title>
+    <STYLE TYPE="text/css">
+      {include file="gallery:lib/tools/repository/templates/stylesheet.css"}
+    </STYLE>
+  </head>
+  <body>
+    <h1>{g->text text="Package Removal Successful"}</h1>
+    <div class="section">
+      {g->text text="You can review the results below."}
+    </div>
+
+    <h2>
+      {g->text text="Files Removed"}
+    </h2>
+
+    <div class="section">
+      <table class="details" id="modules_listing">
+        {if count($files) == 0}
+        <tr>
+          <td>
+            {g->text text="No files have been removed."}
+          </td>
+        </tr>
+        {/if}
+        {foreach from=$files item=path}
+        <tr>
+          <td>
+            {$path}
+          </td>
+        </tr>
+        {/foreach}
+      </table>
+    </div>
+
+  </body>
+</html>

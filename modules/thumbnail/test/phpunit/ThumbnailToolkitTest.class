@@ -1,0 +1,137 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2006 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Thumbnail
+ * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * Load required classes
+ */
+GalleryCoreApi::requireOnce('modules/thumbnail/classes/ThumbnailHelper.class');
+
+/**
+ * ThumbnailToolkit tests
+ *
+ * @package Thumbnail
+ * @subpackage PHPUnit
+ */
+class ThumbnailToolkitTest extends GalleryTestCase {
+
+    function ThumbnailToolkitTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	parent::setUp();
+
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'thumbnail');
+	if ($ret || !isset($module)) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $toolkit) =
+	    GalleryCoreApi::newFactoryInstance('GalleryToolkit', 'ThumbnailToolkit');
+	if ($ret || !isset($toolkit)) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $id) = ThumbnailHelper::addItem('test/fakemime', null, 'unittest.jpg',
+	    dirname(__FILE__) . '/../../images/G2video.jpg', 'image/jpeg');
+	if ($ret || !isset($id)) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->_toolkit = $toolkit;
+	$this->_itemId = $id;
+    }
+
+    function tearDown() {
+	global $gallery;
+	$ret = GalleryCoreApi::deleteEntityById($this->_itemId);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$platform =& $gallery->getPlatform();
+	$ret = $platform->unlink(
+	    $gallery->getConfig('data.gallery.base') . '/unittest.jpg');
+	if (!$ret) {
+	    return $this->failWithStatus('Unlink failed');
+	}
+	$ret = GalleryCoreApi::unregisterToolkitOperation('Thumbnail',
+	    'convert-to-image/jpeg', array('test/fakemime'));
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	parent::tearDown();
+    }
+
+    function testToolkit() {
+	global $gallery;
+
+	list ($ret, $outputMimeType) = $this->_toolkit->performOperation(
+	    'test/badmime', 'convert-to-image/jpeg',
+	    dirname(__FILE__) . '/x', dirname(__FILE__) . '/y', null);
+	$this->assertEquals(GALLERY_ERROR | ERROR_UNSUPPORTED_OPERATION, $ret->getErrorCode(),
+			    'Error expected for bad mime');
+
+	list ($ret, $outputMimeType) = $this->_toolkit->performOperation(
+	    'image/gif', 'thumbnail|150',
+	    dirname(__FILE__) . '/x', dirname(__FILE__) . '/y', null);
+	$this->assertEquals(GALLERY_ERROR | ERROR_UNSUPPORTED_OPERATION, $ret->getErrorCode(),
+			    'Error expected for bad operation');
+
+	$platform =& $gallery->getPlatform();
+	$gallery->setPlatform(new ThumbnailToolkitTestDummyPlatform());
+
+	list ($ret, $outputMimeType) = $this->_toolkit->performOperation(
+	    'test/fakemime', 'convert-to-image/jpeg',
+	    dirname(__FILE__) . '/x', $gallery->getConfig('data.gallery.base') . '/unittest.jpg',
+	    null);
+	$this->assertEquals(GALLERY_ERROR | ERROR_PLATFORM_FAILURE, $ret->getErrorCode(),
+			    'Error expected for bad destination file');
+
+	$gallery->setPlatform($platform);
+
+	list ($ret, $outputMimeType) = $this->_toolkit->performOperation(
+	    'test/fakemime', 'convert-to-image/jpeg',
+	    dirname(__FILE__) . '/x', $gallery->getConfig('data.gallery.base') . '/unittest.jpg',
+	    null);
+	$this->assert(!isset($ret), 'Copy should succeed');
+    }
+}
+
+/**
+ * @package Thumbnail
+ * @subpackage PHPUnit
+ */
+class ThumbnailToolkitTestDummyPlatform {
+    function copy($source, $dest) {
+	/* Simulate copy failure.. */
+	return false;
+    }
+    function getDirectorySeparator() {
+	return DIRECTORY_SEPARATOR;
+    }
+}
+?>

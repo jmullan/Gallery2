@@ -1,0 +1,18 @@
+<div class="success">
+    <h1><?php print _("Upgraded Gallery Core Module successfully.") ?></h1>
+</div>
+
+    <p>
+      <?php print _("We've successfully upgraded the Gallery Core Module.") ?>
+    </p>
+
+    <?php if ($templateData['isConfigWriteable'] && $templateData['canChmod']): ?>
+    <p>
+      <?php print _("<b>Reminder</b>: Now check the permissions on config.php and make sure it is not globally writeable.") ?>
+    </p>
+    <div class="go">
+	  <div class="btn btn-redo"><span><span><span><span>
+	<a href="<?php generateUrl('index.php?step=' . $stepNumber) ?>"><?php print _('Recheck config.php') ?></a>
+	  </span></span></span></span></div>
+    </div>
+    <?php endif; ?>

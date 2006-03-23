@@ -1,0 +1,284 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2006 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package AlbumSelect
+ * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+GalleryCoreApi::requireOnce('modules/core/classes/GallerySmarty.class');
+GalleryCoreApi::requireOnce('modules/albumselect/Callbacks.inc');
+
+/**
+ * Test AlbumSelect functionality
+ *
+ * @package AlbumSelect
+ * @subpackage PHPUnit
+ */
+class AlbumSelectTest extends GalleryTestCase {
+
+    function AlbumSelectTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	parent::setUp();
+
+	$ret = $this->_markPluginParametersForCleanup('module', 'albumselect');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'albumselect');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId(),
+	    array('title' => 'zzz\\z&amp;zz&quot;zz', 'summary' => 'zzzzzzzz',
+		  'orderBy' => 'summary', 'orderDirection' => 'asc'));
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($this->_album);
+
+	/* Manual order: 1,2,3  Title order: 3,2,1  Summary order: 2,3,1 */
+	list ($ret, $this->_subalbum[1]) = $this->_createRandomAlbum($this->_album->getId(),
+	    array('title' => 'zzzz', 'summary' => 'zzzz'));
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $this->_subalbum[2]) = $this->_createRandomAlbum($this->_album->getId(),
+	    array('title' => 'mmmm', 'summary' => 'aaaa'));
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $this->_subalbum[3]) = $this->_createRandomAlbum($this->_album->getId(),
+	    array('title' => 'aaaa', 'summary' => 'mmmm'));
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function tearDown() {
+	GalleryDataCache::removeFromDisk(array('type' => 'module-data', 'module' => 'albumselect'));
+	parent::tearDown();
+    }
+
+    function testAlbumSelectManualSort() {
+	global $gallery;
+	$ret = $this->_module->setParameter('sort', 'manual');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$smarty = new GallerySmarty();
+	$callbacks = new AlbumSelectCallbacks();
+	$ret = $callbacks->callback(
+	    array(), $smarty, 'LoadAlbumData', $gallery->getActiveUserId());
+	$data = $smarty->_tpl_vars['block']['albumselect']['LoadAlbumData']['albumSelect'];
+
+	$this->assertEquals('zzz\\z&amp;zz&quot;zz', $data['titles'][$this->_album->getId()], 
+			    'title');
+	$this->assertEquals('zzz\\\\z&amp;zz&quot;zz', 
+			    $data['titlesForJs'][$this->_album->getId()], 'title for javascript');
+	$this->assert(!empty($data['params']), 'params');
+	$this->assert(!empty($data['tree']), 'tree');
+	/* Test album and its subalbums should be last 4 tree items: subalbums 1,2,3 */
+	$albumNode = count($data['tree']) - 3;
+	$this->assertEquals(
+	    array(
+		array('id' => $this->_album->getId(), 'nodeId' => $albumNode,
+		      'parentNode' => 0, 'depth' => 0),
+		array('id' => $this->_subalbum[1]->getId(), 'nodeId' => $albumNode + 1,
+		      'parentNode' => $albumNode, 'depth' => 1),
+		array('id' => $this->_subalbum[2]->getId(), 'nodeId' => $albumNode + 2,
+		      'parentNode' => $albumNode, 'depth' => 1),
+		array('id' => $this->_subalbum[3]->getId(), 'nodeId' => $albumNode + 3,
+		      'parentNode' => $albumNode, 'depth' => 1)),
+	    array_slice($data['tree'], -4),
+	    'test albums in tree');
+    }
+
+    function testAlbumSelectSortByTitle() {
+	global $gallery;
+	$ret = $this->_module->setParameter('sort', 'title');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$smarty = new GallerySmarty();
+	$callbacks = new AlbumSelectCallbacks();
+	$ret = $callbacks->callback(
+	    array(), $smarty, 'LoadAlbumData', $gallery->getActiveUserId());
+	$data = $smarty->_tpl_vars['block']['albumselect']['LoadAlbumData']['albumSelect'];
+
+	$this->assertEquals('zzz\\z&amp;zz&quot;zz', $data['titles'][$this->_album->getId()], 
+			    'title');
+	$this->assertEquals('zzz\\\\z&amp;zz&quot;zz',
+			    $data['titlesForJs'][$this->_album->getId()], 'title for javascript');
+	$this->assert(!empty($data['params']), 'params');
+	$this->assert(!empty($data['tree']), 'tree');
+	/* Test album and its subalbums should be last 4 tree items: subalbums 3,2,1 */
+	$albumNode = count($data['tree']) - 3;
+
+	/*
+	 * Note: this assumes that an album with title zzzz will be the last one in the
+	 * topmost album.  That's not necessarily the case, if you consider non-ascii
+	 * characters
+	 */
+	$this->assertEquals(
+	    array(
+		array('id' => $this->_album->getId(), 'nodeId' => $albumNode,
+		      'parentNode' => 0, 'depth' => 0),
+		array('id' => $this->_subalbum[3]->getId(), 'nodeId' => $albumNode + 1,
+		      'parentNode' => $albumNode, 'depth' => 1),
+		array('id' => $this->_subalbum[2]->getId(), 'nodeId' => $albumNode + 2,
+		      'parentNode' => $albumNode, 'depth' => 1),
+		array('id' => $this->_subalbum[1]->getId(), 'nodeId' => $albumNode + 3,
+		      'parentNode' => $albumNode, 'depth' => 1)),
+	    array_slice($data['tree'], -4),
+	    'test albums in tree');
+    }
+
+    function testAlbumSelectSortByAlbum() {
+	global $gallery;
+	$ret = $this->_module->setParameter('sort', 'album');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$smarty = new GallerySmarty();
+	$callbacks = new AlbumSelectCallbacks();
+	$ret = $callbacks->callback(
+	    array(), $smarty, 'LoadAlbumData', $gallery->getActiveUserId());
+	$data = $smarty->_tpl_vars['block']['albumselect']['LoadAlbumData']['albumSelect'];
+
+	$this->assertEquals('zzz\\z&amp;zz&quot;zz', $data['titles'][$this->_album->getId()], 
+			    'title');
+	$this->assertEquals('zzz\\\\z&amp;zz&quot;zz',
+			    $data['titlesForJs'][$this->_album->getId()], 'title for javascript');
+	$this->assert(!empty($data['params']), 'params');
+	$this->assert(!empty($data['tree']), 'tree');
+	/* Find test album in tree; subalbum order is 2,3,1 */
+	$tree = $data['tree'];
+	for ($i = 0; $i < count($tree); $i++) {
+	    if ($tree[$i]['id'] == $this->_album->getId()) {
+		break;
+	    }
+	}
+	$this->assert($i < count($tree), 'test album not found');
+	$albumNode = $tree[$i]['nodeId'];
+	$this->assertEquals(
+	    array(
+		array('id' => $this->_album->getId(), 'nodeId' => $albumNode,
+		      'parentNode' => 0, 'depth' => 0),
+		array('id' => $this->_subalbum[2]->getId(), 'nodeId' => $albumNode + 1,
+		      'parentNode' => $albumNode, 'depth' => 1),
+		array('id' => $this->_subalbum[3]->getId(), 'nodeId' => $albumNode + 2,
+		      'parentNode' => $albumNode, 'depth' => 1),
+		array('id' => $this->_subalbum[1]->getId(), 'nodeId' => $albumNode + 3,
+		      'parentNode' => $albumNode, 'depth' => 1)),
+	    array_slice($tree, $i, 4),
+	    'test albums in tree');
+    }
+
+    function testCacheInvalidationByTitleChange() {
+	global $gallery;
+
+	$smarty = new GallerySmarty();
+	$callbacks = new AlbumSelectCallbacks();
+	GalleryDataCache::setFileCachingEnabled(true);
+	$this->_registerTestEventListener('GalleryEntity::save', new AlbumSelectModule());
+	$this->_registerTestEventListener('Gallery::ViewableTreeChange', new AlbumSelectModule());
+	$this->_registerTestEventListener('Gallery::ItemOrder', new AlbumSelectModule());
+
+	/* Preparation */
+	$userId = $gallery->getActiveUserId();
+	list ($ret, $languageCode) = $gallery->getActiveLanguageCode();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$callbackParams = array();
+	$cachePathInfo = array('type' => 'module-data',
+			       'module' => 'albumselect',
+			       'itemId' => $userId . '_' . $languageCode .
+			       '_' . substr(md5(serialize($callbackParams)), 0, 5));
+
+	/* Call it a first time */
+	$ret = $callbacks->callback($callbackParams, $smarty, 'LoadAlbumData', $userId);
+	$data = $smarty->_tpl_vars['block']['albumselect']['LoadAlbumData']['albumSelect'];
+	/* Make sure the value is correct and that it is cached */
+	$this->assertEquals('zzz\\z&amp;zz&quot;zz', $data['titles'][$this->_album->getId()], 
+			    'title');
+	$this->assertEquals('zzz\\\\z&amp;zz&quot;zz',
+			    $data['titlesForJs'][$this->_album->getId()], 'title for javascript');
+	list ($treeList, $titles) = GalleryDataCache::getFromDisk($cachePathInfo);
+	$this->assertEquals('zzz\\z&amp;zz&quot;zz', $data['titles'][$this->_album->getId()], 
+			    'cached title');
+	$this->assertEquals('zzz\\\\z&amp;zz&quot;zz',
+		$data['titlesForJs'][$this->_album->getId()], 'cached title for javascript');
+
+	/* Change the album title */
+	$this->_album->setTitle('Changed Title');
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_album->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = $this->_album->save();
+	if ($ret) {
+	    GalleryCoreApi::releaseLocks($lockId);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Make sure the cache was invalidated */
+	list ($treeList, $titles) = GalleryDataCache::getFromDisk($cachePathInfo);
+	$this->assert(empty($titles), 'cache should be gone');
+    }
+}
+
+/**
+ * @package AlbumSelect
+ * @subpackage PHPUnit
+ */
+class AlbumSelectDummyGalleryTemplate {
+    var $data = array();
+    function setVariable($key, $value) {
+	$this->data[$key] = $value;
+    }
+    function style($path) {
+    }
+    function javascript($path) {
+    }
+}
+?>

@@ -1,0 +1,192 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2006 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Rewrite
+ * @subpackage PHPUnit
+ * @author Douglas Cau <douglas@cau.se>
+ */
+
+/**
+ * Test RewriteApi functionality
+ *
+ * @package Rewrite
+ * @subpackage PHPUnit
+ *
+ */
+class RewriteApiTest extends GalleryTestCase {
+
+    function RewriteApiTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	global $gallery;
+	parent::setUp();
+
+        $ret = $this->_markPluginParametersForCleanup('module', 'rewrite');
+        if ($ret) {
+            print $ret->getAsHtml();
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+
+        /* Set up our mock parser */
+        $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'parserId',
+            'rewriteapimock');
+        if ($ret) {
+            print $ret->getAsHtml();
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+
+        /* Make sure we use the mock parser */
+        GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
+        list ($ret, $parser) = RewriteHelper::getRewriteParser(true);
+        if ($ret) {
+            print $ret->getAsHtml();
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        $this->assertEquals('rewriteapimock', $parser->getParserId(), 'parserId');
+
+	/* Load the api class */
+	list ($ret, $this->_rewriteApi) = GalleryCoreApi::newFactoryInstance('RewriteApi');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Set gallery in embedded mode */
+	GalleryDataCache::put('G2_EMBED', 1, true);
+    }
+
+    function tearDown() {
+	global $gallery;
+
+	GalleryDataCache::remove('G2_EMBED');
+
+	parent::tearDown();
+    }
+
+    function testGetParserId() {
+	$this->assertEquals('rewriteapimock', $this->_rewriteApi->getParserId());
+    }
+
+    function testGetParserType() {
+	$this->assertEquals('mock', $this->_rewriteApi->getParserType());
+    }
+
+    function testNeedsEmbedConfig1() {
+	list ($ret, $needsConfiguration) = $this->_rewriteApi->needsEmbedConfig();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(true, $needsConfiguration);
+    }
+
+    function testNeedsEmbedConfig2() {
+	GalleryDataCache::remove('G2_EMBED');
+	list ($ret, $needsConfiguration) = $this->_rewriteApi->needsEmbedConfig();
+	if ($ret && !($ret->getErrorCode() & ERROR_UNSUPPORTED_OPERATION)) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(ERROR_UNSUPPORTED_OPERATION & $ret->getErrorCode());
+    }
+
+    function testFetchEmbedConfig1() {
+	list ($ret, $params) = $this->_rewriteApi->fetchEmbedConfig();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array('phpunit' => 'test'), $params);
+    }
+
+    function testFetchEmbedConfig2() {
+	GalleryDataCache::remove('G2_EMBED');
+	list ($ret, $params) = $this->_rewriteApi->fetchEmbedConfig();
+	if ($ret && !($ret->getErrorCode() & ERROR_UNSUPPORTED_OPERATION)) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(ERROR_UNSUPPORTED_OPERATION & $ret->getErrorCode());
+    }
+
+    function testSaveEmbedConfig1() {
+	list ($ret, $code, $errstr) = $this->_rewriteApi->saveEmbedConfig(array('phpunit' => 1));
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(REWRITE_STATUS_OK, $code, 'code');
+	$this->assertEquals(null, $errstr, 'errstr');
+
+	list ($ret, $code, $errstr) = $this->_rewriteApi->saveEmbedConfig(array('phpunit' => 0));
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(REWRITE_STATUS_INVALID_PATTERN, $code, 'code');
+	$this->assertEquals('Bad pattern', $errstr, 'errstr');
+    }
+
+    function testSaveEmbedConfig2() {
+	GalleryDataCache::remove('G2_EMBED');
+	list ($ret, $params) = $this->_rewriteApi->saveEmbedConfig(array());
+	if ($ret && !($ret->getErrorCode() & ERROR_UNSUPPORTED_OPERATION)) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(ERROR_UNSUPPORTED_OPERATION & $ret->getErrorCode());
+    }
+}
+
+/**
+ * Mock rewrite parser for this test
+ *
+ * @package Rewrite
+ * @subpackage PHPUnit
+ */
+GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteParser.class');
+class RewriteApiMockParser extends RewriteParser {
+    function RewriteApiMockParser() {
+        $this->_setParserId('rewriteapimock');
+        $this->_setParserType('mock');
+    }
+
+    function needsEmbedConfig() {
+	return array(null, true);
+    }
+
+    function fetchEmbedConfig() {
+	return array(null, array('phpunit' => 'test'));
+    }
+
+    function saveEmbedConfig($params) {
+	if ($params['phpunit']) {
+	    return array(null, REWRITE_STATUS_OK, null);
+	}
+
+	return array(null, REWRITE_STATUS_INVALID_PATTERN, 'Bad pattern');
+    }
+}
+?>

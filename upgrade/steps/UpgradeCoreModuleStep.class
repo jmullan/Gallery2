@@ -1,0 +1,215 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2006 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+class UpgradeCoreModuleStep extends UpgradeStep {
+    function stepName() {
+	return _('Upgrade Core');
+    }
+
+    function processRequest() {
+	global $gallery;
+	if (!$gallery->getDebug()) {
+	    $gallery->setDebug('buffered');
+	}
+
+	/*
+	 * We'll need a translator to load up the core module for the
+	 * GalleryPlugin::setGroup() method to work.
+	 */
+	$translator =& $gallery->getTranslator();
+	if (empty($translator)) {
+	    $ret = $gallery->initTranslator(true /* dontUseDatabase */ );
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	require_once(dirname(__FILE__) . '/../../modules/core/module.inc');
+	require_once(dirname(__FILE__) . '/../../modules/core/CoreModuleExtras.inc');
+	$core = new CoreModule();
+	$versions = $core->getInstalledVersions();
+
+	/* We didn't have these values before 2.0-alpha-3 when the core version was 0.8 */
+	if (!isset($versions['core'])) {
+	    $versions['core'] = '0.8';
+	}
+	if (!isset($versions['gallery'])) {
+	    $versions['gallery'] = '2.0-alpha-3';
+	}
+
+	$templateData['installed'] = $versions;
+	$templateData['coreVersion'] = $core->getVersion();
+	$templateData['storeConfig'] = $gallery->getConfig('storage.config');
+
+	$templateData['isConfigUpgradeRequired'] =
+	    CoreModuleExtras::isConfigUpgradeRequired($versions['core']);
+	$platform =& $gallery->getPlatform();
+	$configFilePath = GALLERY_CONFIG_DIR . '/config.php';
+	$templateData['isConfigWriteable'] = $platform->is_writeable($configFilePath);
+	$templateData['canChmod'] = strncasecmp(PHP_OS, 'win', 3);
+
+	$template = new StatusTemplate();
+
+	if (isset($_POST['confirm'])) {
+	    $template->renderHeader(true);
+	    $ret = selectAdminUser();
+	    if ($ret) {
+		/* Core APIs required for selectAdminUser may not work until core is upgraded */
+		$gallery->debug('Unable to selectAdminUser for core upgrade: ' . $ret->getAsText());
+	    }
+	    /*
+	     * Do the upgrade in bootstrap mode so that we avoid going to the
+	     * database for anything that's not vital.
+	     */
+	    $ret = $core->installOrUpgrade(true, $template);
+	    if (!$ret) {
+		list ($ret,  $ignored) = $core->activate();
+		if (!$ret) {
+		    $storage =& $gallery->getStorage();
+		    $ret = $storage->commitTransaction();
+
+		    if (!$ret && $templateData['isConfigUpgradeRequired']) {
+			$ret = CoreModuleExtras::performConfigUpgrade($versions['core']);
+		    }
+		}
+	    }
+	    $this->resetL10Domain();
+	    if ($ret) {
+		$templateData['stackTrace'] = $ret->getAsHtml();
+		$templateData['debug'] = $gallery->getDebugBuffer();
+		$templateData['bodyFile'] = 'UpgradeCoreModuleError.html';
+	    } else {
+		$templateData['bodyFile'] = 'UpgradeCoreModuleSuccess.html';
+		$this->setComplete(true);
+		$this->_performedUpgrade = true;
+	    }
+	    $template->hideStatusBlock();
+	} else {
+	    $template->renderHeader();
+	    if (($cmp = version_compare($versions['core'], $core->getVersion())) == 0) {
+		$templateData['bodyFile'] = isset($this->_performedUpgrade)
+		    ? 'UpgradeCoreModuleSuccess.html' : 'UpgradeCoreModuleUpToDate.html';
+		$this->setComplete(true);
+	    } else {
+		/* The core module requires an upgrade */
+		$templateData['bodyFile'] = 'UpgradeCoreModuleRequest.html';
+		$this->setComplete(false);
+
+		if ($cmp != -1) {
+		    /*
+		     * The new version is older than the installed version, don't
+		     * let the user continue this silly attempt to break his G2
+		     */
+		    $templateData['isTryingToDowngrade'] = 1;
+		}
+
+		list ($ret, $pluginStatus) = $this->_ensureNeededPlugins();
+		if ($ret) {
+		    $templateData['errors'][] = _('Unable to verify plugins');
+		    $templateData['stackTrace'] = $ret->getAsHtml();
+		}
+		$this->resetL10Domain();
+		if (!empty($pluginStatus)) {
+		    $templateData['brokenPlugins'] = $pluginStatus;
+		    $templateData['api']['core'] = GalleryCoreApi::getApiVersion();
+		    $templateData['api']['theme'] = GalleryTheme::getApiVersion();
+		    $templateData['api']['module'] = GalleryModule::getApiVersion();
+		}
+	    }
+	}
+
+	$template->renderBodyAndFooter($templateData);
+    }
+
+    /**
+     * TODO: Integrate this code with the similar code in UpgradeOtherModulesStep.
+     */
+    function _ensureNeededPlugins() {
+	global $gallery;
+	$results = array();
+
+	list ($ret, $modules) = GalleryCoreApi::fetchPluginList('module');
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	foreach ($modules as $moduleId => $moduleInfo) {
+	    $gallery->guaranteeTimeLimit(30);
+	    if ($moduleInfo['active']) {
+		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId, true, true);
+		if ($ret) {
+		    if ($ret->getErrorCode() & (ERROR_BAD_PLUGIN | ERROR_BAD_PARAMETER)) {
+			$results['module'][$moduleId] = array('missing' => 1);
+		    } else {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		} else {
+		    if (!GalleryCoreApi::isPluginCompatibleWithApis($module)) {
+			$results['module'][$moduleId] =
+			    array('incompatible' => array(
+				      'module' => $module->getRequiredModuleApi(),
+				      'core' => $module->getRequiredCoreApi()));
+		    }
+		}
+	    }
+	}
+
+	list ($ret, $themes) = GalleryCoreApi::fetchPluginList('theme');
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	foreach ($themes as $themeId => $themeInfo) {
+	    $gallery->guaranteeTimeLimit(30);
+	    if ($themeInfo['active']) {
+		list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId, true, true);
+		if ($ret) {
+		    if ($ret->getErrorCode() & (ERROR_BAD_PLUGIN | ERROR_BAD_PARAMETER)) {
+			$results['theme'][$themeId] = array('missing' => 1);
+		    } else {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		} else {
+		    if (!GalleryCoreApi::isPluginCompatibleWithApis($theme)) {
+                        continue;
+                        /**
+                         * 'continue' added on 2006-03-05 to allow upgrades with incompatible
+                         * themes installed.  This will allow users to upgrade and then select a new
+                         * theme if necessary instead of locking upgrade completely.
+                         *
+                         * Previous code follows
+                         */
+                        /*
+			$results['theme'][$themeId] =
+			    array('incompatible' => array(
+				      'theme' => $theme->getRequiredThemeApi(),
+                                      'core' => $theme->getRequiredCoreApi()));
+                        */
+		    }
+		}
+	    }
+	}
+
+	return array(null, $results);
+    }
+}
+?>
