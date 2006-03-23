@@ -3,7 +3,7 @@
 	      <?php print $plugin ?>
 	    </td>
 	    <td style="background-color:#<?php print percentColor($pluginData['percentDone']) ?>">
-	      <?php print round($pluginData['percentDone']) ?>%
+	      <?php print round($pluginData['percentDone'], $precision) ?>%
 	    </td>
 
 	    <?php if (isset($pluginData['missing'])) { ?>

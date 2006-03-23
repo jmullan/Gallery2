@@ -24,7 +24,7 @@
  * Authors: Jens Tkotz, Bharat Mediratta
  */
 require_once(dirname(__FILE__) . '/../../support/security.inc');
-$poFiles = findPoFiles('../../..');
+ini_set('magic_quotes_runtime', false);
 
 $type = 'summary';
 if (!empty($_REQUEST['type']) && $_REQUEST['type'] == 'detail') {
@@ -33,8 +33,10 @@ if (!empty($_REQUEST['type']) && $_REQUEST['type'] == 'detail') {
     $type = 'detail';
 }
 
-ini_set('magic_quotes_runtime', false);
+$poFiles = findPoFiles('../../..');
 list ($reportData, $mostRecentPoDate) = parsePoFiles($poFiles);
+
+$precision = isset($_GET['precision']) ? (int)$_GET['precision'] : 1;
 require(dirname(__FILE__) . '/localization/main_' . $type . '.inc');
 exit;
 
@@ -63,7 +65,6 @@ function findPoFiles($dir) {
 }
 
 function parsePoFiles($poFiles) {
-
     /*
      * Parse each .po file for relevant statistics and gather it together into a
      * single data structure.
@@ -216,7 +217,7 @@ function parsePoFiles($poFiles) {
 	if (empty($total)) {
 	    $percentDone = 0;
 	} else {
-	    $percentDone = ($translated - $fuzzy) / $total * 100;
+	    $percentDone = ($translated - $fuzzy) * 100 / $total;
 	}
 	$poData[$locale]['plugins'][$plugin] = array('translated' => $translated,
 						     'untranslated' => $untranslated,
@@ -264,7 +265,7 @@ function parsePoFiles($poFiles) {
 	if (empty($overallTotal)) {
 	    $poData[$locale]['percentDone'] = 0;
 	} else {
-	    $poData[$locale]['percentDone'] = $pluginTotal / $overallTotal * 100;
+	    $poData[$locale]['percentDone'] = $pluginTotal * 100 / $overallTotal;
 	}
 
 	foreach (array('translated', 'untranslated', 'fuzzy', 'obsolete') as $key) {

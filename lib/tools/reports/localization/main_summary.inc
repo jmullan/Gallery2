@@ -27,28 +27,28 @@
 	      </td>
 	      <td class="locale_percent" style="background-color:#<?php
 		  print percentColor($localeData['percentDone']) ?>">
-		<?php print round($localeData['percentDone']) ?>%
+		<?php print round($localeData['percentDone'], $precision) ?>%
 	      </td>
 	      <?php $summaryData = $localeData['summary']; ?>
 	      <td class="<?php print modifier('total') ?>">
 		<?php print $summaryData['total'] ?>
 	      </td>
 	      <td class="<?php print modifier('translated') ?>">
-		<?php print round($summaryData['translated']) ?>%
+		<?php print round($summaryData['translated'], $precision) ?>%
 	      </td>
 	      <td class="<?php print modifier('fuzzy') ?>">
-		<?php print round($summaryData['fuzzy']) ?>%
+		<?php print round($summaryData['fuzzy'], $precision) ?>%
 	      </td>
 	      <td class="<?php print modifier('untranslated') ?>">
 		<?php
 		  print '<span title="overall untranslated including missing *.po files">'
-		    . round(100 - $summaryData['translated'])
+		    . round(100 - $summaryData['translated'], $precision)
 		    . '%</span> (<span title="untranslated in existing *.po files">'
-		    . round($summaryData['untranslated']) . '%</span>)';
+		    . round($summaryData['untranslated'], $precision) . '%</span>)';
 		?>
 	      </td>
 	      <td class="<?php print modifier('obsolete') ?>">
-		<?php print round($summaryData['obsolete']) ?>%
+		<?php print round($summaryData['obsolete'], $precision) ?>%
 	      </td>
 	    </tr>
 	  <?php } ?>
