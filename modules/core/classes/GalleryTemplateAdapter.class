@@ -603,11 +603,8 @@ class GalleryTemplateAdapter {
 		return;
 	    }
 	    return sprintf(
-		'<a href="%s"%s><img src="%s" alt="%s" title="%s" ' .
-		'style="border-style: none" width="80" height="15"/></a>',
-		$urlGenerator->generateUrl(
-		    array('href' => 'modules/core/data/g21-blackjack.html')),
-		$linkTarget,
+		'<img src="%s" alt="%s" title="%s" ' .
+		'style="border-style: none" width="80" height="15"/>',
 		$urlGenerator->generateUrl(
 		    array('href' => 'modules/core/data/g21-blackjack.png')),
 		$core->translate('G2.1: Blackjack'),
