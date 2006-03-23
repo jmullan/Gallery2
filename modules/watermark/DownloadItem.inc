@@ -36,14 +36,28 @@
 class DownloadItemView extends GalleryView {
 
     /**
-     * @see GalleryView::isImmediate
+     * @see GalleryView::isImmediate()
      */
     function isImmediate() {
 	return true;
     }
 
     /**
-     * @see GalleryView::renderImmediate
+     * @see GalleryView::isAllowedInEmbedOnly()
+     */
+    function isAllowedInEmbedOnly() {
+	return true;
+    }
+
+    /**
+     * @see GalleryView::shouldSaveSession()
+     */
+    function shouldSaveSession() {
+	return false;
+    }
+
+    /**
+     * @see GalleryView::renderImmediate()
      */
     function renderImmediate($status, $error) {
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
@@ -61,6 +75,11 @@ class DownloadItemView extends GalleryView {
 	list ($ret, $pseudoFileName) = GalleryUtilities::getPseudoFileName($item);
 	if ($ret) {
 	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	/* Don't allow malicious URLs */
+	$fileName = GalleryUtilities::getRequestVariables('fileName');
+	if (!empty($fileName) && $fileName != $pseudoFileName) {
+	    return GalleryCoreApi::error(GALLERY_ERROR, __FILE__, __LINE__, 'malicious url');
 	}
 
 	/* Get the path to the file */
