@@ -1188,19 +1188,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 		}
 		continue;
 	    }
-	    if ($dbType == 'oracle') {
-		/* TODO: use this line below always, remove the else block */
-		/* This change is needed for oracle so no statements are executed with
-		 * trailing semicolon.. other dbs ignore this; but we're too close to
-		 * 2.1 release, so just making this change for oracle now.
-		 */
-		$insertPointer .= $line . "\n";
-	    } else {
-		if (!empty($insertPointer)) {
-		    $insertPointer .= "\n";
-		}
-		$insertPointer .= $line;
-	    }
+	    $insertPointer .= $line . "\n";
 	}
 
 	return $info;
