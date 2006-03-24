@@ -32,7 +32,7 @@ class LinkItemModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('linkitem');
 	$this->setName($gallery->i18n('Link Items'));
 	$this->setDescription($gallery->i18n('Create links to other albums or external urls'));
-	$this->setVersion('1.0.4');
+	$this->setVersion('1.0.5');
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('registerEventListeners');
 	$this->setRequiredCoreApi(array(7, 0));
@@ -59,6 +59,14 @@ class LinkItemModule extends GalleryModule /* and GalleryEventListener */ {
 	    !$platform->copy(dirname(__FILE__) . "${slash}images${slash}arrow.png", $imageFile)) {
 	    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 					"Unable to copy arrow.png to $imageDir");
+	}
+
+	if (!empty($currentVersion) && version_compare($currentVersion, '1.0.4', '<=')) {
+	    $storage =& $gallery->getStorage();
+	    $ret = $storage->configureStore($this->getId(), array('GalleryLinkItem:1.0'));
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	}
 
 	return null;
