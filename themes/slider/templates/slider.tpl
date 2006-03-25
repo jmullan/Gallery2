@@ -24,7 +24,30 @@
 {/foreach}
 </div>
 
-<div id="imagearea" class="gcBackground1"><div id="image"></div></div>
+<div id="imagearea" class="gcBackground1">{if $theme.params.enableImageMap}<img
+     src="{g->theme url="images/arrow-left.gif"}" alt="" width="20" height="17"
+     id="prevArrow" style="position: absolute; top: 30px; left: 30px; visibility: hidden"
+     onmouseover="document.getElementById('prevArrow').style.visibility='visible'"
+     onmouseout="document.getElementById('prevArrow').style.visibility='hidden'"
+  />{/if}<div id="image"></div>{if $theme.params.enableImageMap}<img
+     src="{g->theme url="images/arrow-right.gif"}" alt="" width="20" height="17"
+     id="nextArrow" style="position: absolute; top: 30px; right: 30px; visibility: hidden"
+     onmouseover="document.getElementById('nextArrow').style.visibility='visible'"
+     onmouseout="document.getElementById('nextArrow').style.visibility='hidden'"
+  />{/if}</div>
+
+{if $theme.params.enableImageMap}
+<map id="prevnext" name="prevnext">
+  <area shape="rect" coords="0,0,0,0"
+   href="javascript:image_prev()" alt=""
+   onmouseover="document.getElementById('prevArrow').style.visibility='visible'"
+   onmouseout="document.getElementById('prevArrow').style.visibility='hidden'"/>
+  <area shape="rect" coords="0,0,0,0"
+   href="javascript:image_next()" alt=""
+   onmouseover="document.getElementById('nextArrow').style.visibility='visible'"
+   onmouseout="document.getElementById('nextArrow').style.visibility='hidden'"/>
+</map>
+{/if}
 
 <div id="titlebar" class="gcBackground2 gcBorder2">
   <div id="tools_left">
@@ -66,7 +89,7 @@
     </p></noscript>
     {foreach from=$theme.children key=i item=it}{strip}
     {if isset($it.image)}
-      <a href="" onclick="image_show({$it.imageIndex});return false">
+      <a href="" onclick="this.blur();image_show({$it.imageIndex});return false">
 	{if isset($it.thumbnail)}
 	  {g->image item=$it image=$it.thumbnail class=hthumb}
 	{else}

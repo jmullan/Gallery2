@@ -45,14 +45,33 @@ class SliderTheme extends GalleryTheme {
 	$this->setName($gallery->i18n('Slider'));
 	$this->setDescription(
 	    $gallery->i18n('Image viewer/slideshow; subalbums/other items not shown'));
-	$this->setVersion('1.0.3');
+	$this->setVersion('1.0.4');
 	$this->setRequiredCoreApi(array(7, 0));
 	$this->setRequiredThemeApi(array(2, 0));
 	$this->setStandardSettings(array(
 	    'colorpack' => '',
 	    'sidebarBlocks' => serialize(array(
 		 array('search.SearchBlock', array('showAdvancedLink' => true)),
-		 array('imageblock.ImageBlock', array())))));
+		 array('imageblock.ImageBlock', array()))),
+	    'enableImageMap' => 0));
+    }
+
+    /**
+     * @see GalleryTheme::getSettings
+     */
+    function getSettings($itemId=null) {
+	list ($ret, $settings, $params) = parent::getSettings($itemId);
+	if ($ret) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$settings[] = array('key' => 'enableImageMap',
+			    'name' => $this->translate(
+		'Enable prev/next navigation by clicking in the left/right half of the image'),
+			    'type' => 'checkbox',
+			    'value' => $params['enableImageMap']);
+
+	return array(null, $settings);
     }
 
     /**
