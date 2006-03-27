@@ -21,7 +21,7 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package Gallery
+ * @package TileTheme
  * @author Alan Harder <alan.harder@sun.com>
  */
 
@@ -29,7 +29,7 @@
  * This implements a gallery theme with a tiled background image and image thumbnails
  * on top of it; Displays inline items ONLY; subalbums or other item types are NOT shown.
  *
- * @package GalleryTheme
+ * @package TileTheme
  * @subpackage Theme
  */
 class TileTheme extends GalleryTheme {

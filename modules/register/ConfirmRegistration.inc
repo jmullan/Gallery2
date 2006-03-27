@@ -87,7 +87,7 @@ class ConfirmRegistrationController extends GalleryController {
 /**
  * This view shows a confirmation that the users account was activated
  *
- * @package Selfregistration
+ * @package SelfRegistration
  * @subpackage UserInterface
  */
 class ConfirmRegistrationView extends GalleryView {

@@ -21,7 +21,7 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package RSS
+ * @package Rss
  * @author Jonatan Heyman <http://heyman.info>
  * @author Pierre-Luc Paour
  * @author Daniel Grund <http://www.photogrund.nl>
@@ -35,7 +35,7 @@ GalleryCoreApi::requireOnce('modules/rss/Render.inc');
 /**
  * Render the Simple Feed
  *
- * @package RSS
+ * @package Rss
  * @subpackage UserInterface
  */
 class SimpleRenderView extends RenderView {

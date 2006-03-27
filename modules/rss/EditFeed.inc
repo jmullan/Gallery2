@@ -21,7 +21,7 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package RSS
+ * @package Rss
  * @author Jonatan Heyman <http://heyman.info>,
  * @author Pierre-Luc Paour
  * @author Daniel Grund <http://www.photogrund.nl>
@@ -31,7 +31,7 @@ GalleryCoreApi::requireOnce('modules/rss/classes/RssMapHelper.class');
 GalleryCoreApi::requireOnce('modules/rss/classes/RssHelper.class');
 
 /**
- * @package RSS
+ * @package Rss
  * @subpackage UserInterface
  */
 class EditFeedController extends GalleryController {
@@ -194,7 +194,7 @@ class EditFeedController extends GalleryController {
 /**
  * This view will show a form to generate an URL to an RSS feed.
  *
- * @package RSS
+ * @package Rss
  * @subpackage UserInterface
  */
 class EditFeedView extends GalleryView {

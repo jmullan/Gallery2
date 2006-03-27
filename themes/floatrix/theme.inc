@@ -21,14 +21,14 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package Gallery
+ * @package FloatrixTheme
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
 /**
  * This implements the standard gallery theme
  *
- * @package GalleryTheme
+ * @package FloatrixTheme
  * @subpackage Theme
  */
 class FloatrixTheme extends GalleryTheme {

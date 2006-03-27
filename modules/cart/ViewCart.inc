@@ -34,7 +34,7 @@ GalleryCoreApi::requireOnce('modules/cart/classes/CartHelper.class');
 /**
  * This view will allow users to view their individual carts
  *
- * @package Comment
+ * @package Cart
  * @subpackage UserInterface
  */
 class ViewCartView extends GalleryView {

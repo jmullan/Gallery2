@@ -21,7 +21,7 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package RSS
+ * @package Rss
  * @author Jonatan Heyman <http://heyman.info>
  * @author Pierre-Luc Paour
  * @author Daniel Grund <http://www.photogrund.nl>
@@ -31,7 +31,7 @@ GalleryCoreApi::requireOnce('modules/rss/classes/RssMapHelper.class');
 GalleryCoreApi::requireOnce('modules/rss/classes/RssHelper.class');
 
 /**
- * @package RSS
+ * @package Rss
  * @subpackage UserInterface
  */
 class RssSiteAdminController extends GalleryController {
@@ -141,7 +141,7 @@ class RssSiteAdminController extends GalleryController {
 }
 
 /**
- * @package RSS
+ * @package Rss
  * @subpackage UserInterface
  */
 class RssSiteAdminView extends GalleryView {
@@ -172,7 +172,7 @@ class RssSiteAdminView extends GalleryView {
 	foreach ($param as $key => $value) {
 	    $form[$key] = $value;
 	}
-	
+
 	if ($RssSiteAdmin['mode'] == 'list') {
 	    /* fetch all feed definitions */
 	    list ($ret, $feeds) = RssMapHelper::fetchFeedsForItem();

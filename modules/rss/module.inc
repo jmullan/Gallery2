@@ -21,7 +21,7 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package RSS
+ * @package Rss
  * @author Jonatan Heyman <http://heyman.info>
  * @author Pierre-Luc Paour
  * @author Daniel Grund <http://www.photogrund.nl>
@@ -30,7 +30,7 @@
 /**
  * Implementation of the RSS module
  *
- * @package RSS
+ * @package Rss
  */
 class RssModule extends GalleryModule /* and GalleryEventListener */ {
 
@@ -74,11 +74,11 @@ class RssModule extends GalleryModule /* and GalleryEventListener */ {
 		if ($param['allowSimpleFeed'] == 1) {
 		    $itemTypeNames = array_merge($item->itemTypeName(), $item->itemTypeName(false));
 
-		    /* 
-		     * Specific translations: 
-		     * _('RSS Feed for this Album') 
-		     * _('RSS Feed for this Photo') 
-		     * _('RSS Feed for this Movie') 
+		    /*
+		     * Specific translations:
+		     * _('RSS Feed for this Album')
+		     * _('RSS Feed for this Photo')
+		     * _('RSS Feed for this Movie')
 		     */
 		    $links[$itemId][] = array(
 			'text' => $this->_translate(array(

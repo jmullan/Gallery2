@@ -57,7 +57,7 @@ class ReuploadOptionTest extends ItemEditOptionTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markToolkitForCleanup('ReuploadOptionTestToolkit');
-	
+
 	$ret = GalleryCoreApi::registerToolkitProperty('ReuploadOptionTestToolkit',
 	    array('image/known'), 'dimensions', 'int,int', 'desc');
 	if ($ret) {
@@ -72,7 +72,7 @@ class ReuploadOptionTest extends ItemEditOptionTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_itemSize = $this->_item->getSize();
-	
+
         /* create custom platform to return dummy filesize, imagesize, etc. */
         $gallery->setPlatform(new ReuploadOptionTestPlatform($gallery->getPlatform()));
     }
@@ -85,11 +85,11 @@ class ReuploadOptionTest extends ItemEditOptionTestCase {
 	/* Perform the request and verify that we succeeded */
 	list ($errors, $warnings) = $this->_handleRequestAfterEdit($form, $this->_item);
 	$this->assertEquals(array(), $errors, 'Errors');
-	$this->assertEquals(array($this->_translate('Reuploaded file successfully.')), 
+	$this->assertEquals(array($this->_translate('Reuploaded file successfully.')),
 			    $warnings, 'Warnings');
 	$this->assertEquals(800, $this->_item->getSize(), 'Item size');
     }
-    
+
     /*
      * This imitates the case when the file couldn't be uploaded.
      * We are assuming that the reason is that filesize exceeds the limit
@@ -107,7 +107,7 @@ class ReuploadOptionTest extends ItemEditOptionTestCase {
 	$this->assertEquals(array(), $warnings, 'Warnings');
 	$this->assertEquals($this->_itemSize, $this->_item->getSize(), 'Item size');
     }
-    
+
     /* This imitates the case when the new file has different mime type than the old one */
     function testReuploadToolkitFailure() {
 	$form['tmp_name']['reupload'] = 'bogus.mpeg';
@@ -127,7 +127,7 @@ class ReuploadOptionTest extends ItemEditOptionTestCase {
 	}
 	$this->assertEquals($this->_itemSize, $item->getSize(), 'Item size');
     }
-    
+
     /*
      * This imitates the case when we didn't even try to upload the file
      * Shouldn't be any errors!
@@ -142,7 +142,7 @@ class ReuploadOptionTest extends ItemEditOptionTestCase {
 	list ($errors, $warnings) = $this->_handleRequestAfterEdit($form, $this->_item);
 	$this->assertEquals(array(), $errors, 'Errors');
 	$this->assertEquals(array(), $warnings, 'Warnings');
-    }    
+    }
 }
 
 /**
@@ -167,7 +167,7 @@ class ReuploadOptionTestPlatform extends GalleryPlatform {
     function copy($input, $output) {
 	return true;
     }
-    
+
     function filesize($path) {
 	return 800;
     }
@@ -175,7 +175,7 @@ class ReuploadOptionTestPlatform extends GalleryPlatform {
 
 /**
  * Test toolkit
- * @package ReuploadOption
+ * @package Reupload
  * @subpackage PHPUnit
  */
 class ReuploadOptionTestToolkit extends GalleryToolkit {

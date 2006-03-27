@@ -21,14 +21,14 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package Gallery
+ * @package AjaxianTheme
  * @author Ross Shannon <ross.shannon@gmail.com>
  */
 
 /**
  * This implements the DHTML-enabled slideshow theme
  *
- * @package GalleryTheme
+ * @package AjaxianTheme
  * @subpackage Theme
  */
 class AjaxianTheme extends GalleryTheme {

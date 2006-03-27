@@ -21,7 +21,7 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package GalleryRemote
+ * @package Remote
  * @subpackage PHPUnit
  * @author Bharat Mediratta <bharat@menalto.com>
  */
@@ -29,7 +29,7 @@
 /**
  * GalleryRemote controller tests
  *
- * @package GalleryRemote
+ * @package Remote
  * @subpackage PHPUnit
  */
 class GalleryRemoteControllerTest extends GalleryControllerTestCase {
@@ -279,7 +279,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 			$album[$j]->getSummary(), $response->getProperty('album.summary.' . $i));
 		    $this->assertEquals($album[$j]->getParentId(),
 					(int)$response->getProperty('album.parent.' . $i));
-					
+
 		    $this->assertEquals($response->getProperty('album.perms.add.0'), null);
 		}
 	    }
@@ -317,7 +317,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
-	
+
 	/* root
 	    + 0
 	      + 1 (read-only)
@@ -398,7 +398,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
-	
+
 	/* root
 	    + 0
 	      + 1 (read-only)
@@ -432,7 +432,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 			$album[$j]->getSummary(), $response->getProperty('album.summary.' . $i));
 		    $this->assertEquals($album[$j]->getParentId(),
 					(int)$response->getProperty('album.parent.' . $i));
-					
+
 		    $this->assertEquals($response->getProperty('album.perms.add.0'), null);
 		}
 	    }
@@ -587,7 +587,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    
+
 	    list ($ret, $derivative[$i]) = $this->_createDerivative(
 		$image[$i], $image[$i]->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	    if ($ret) {
@@ -616,7 +616,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    
+
 	    list ($ret, $derivative[$i]) = $this->_createDerivative(
 		$image[$i], $image[$i]->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	    if ($ret) {
@@ -627,7 +627,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	GalleryUtilities::putRequestVariable('form[cmd]', 'fetch-album-images');
 	GalleryUtilities::putRequestVariable('form[set_albumName]', $this->_rootAlbum->getId());
 	GalleryUtilities::putRequestVariable('form[albums_too]', 'yes');
@@ -656,7 +656,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	/* increase the view count on the image */
 	GalleryUtilities::putRequestVariable('form[cmd]', 'increment-view-count');
 	GalleryUtilities::putRequestVariable('form[itemId]', $image->getId());
@@ -731,7 +731,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	list ($ret, $thumb) = $this->_createDerivative(
 	    $image, $image->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	if ($ret) {
@@ -757,7 +757,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals($image->getTitle(), $response->getProperty('image.caption'));
 	$this->assertEquals($image->getPathComponent(), $response->getProperty('image.title'));
 	$this->assertEquals($image->getId().'', $response->getProperty('image.name'));
-	
+
 	$this->assertEquals($resized->getId().'', $response->getProperty('image.resizedName'));
 	$this->assertEquals($thumb->getId().'', $response->getProperty('image.thumbName'));
     }

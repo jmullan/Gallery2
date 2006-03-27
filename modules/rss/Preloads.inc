@@ -21,7 +21,7 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package RSS
+ * @package Rss
  * @author Jonatan Heyman <http://heyman.info>
  * @author Pierre-Luc Paour
  * @author Daniel Grund <http://www.photogrund.nl>

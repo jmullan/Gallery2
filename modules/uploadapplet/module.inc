@@ -21,7 +21,7 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package uploadapplet
+ * @package UploadApplet
  * @author Pierre-Luc Paour <paour@users.sourceforge.net>
  */
 
@@ -59,7 +59,7 @@ class UploadAppletModule extends GalleryModule {
 	}
 
 	if (!isset($params['uploadoverrideVariables'])) {
-	    $ret = $this->setParameter('uploadoverrideVariables', 
+	    $ret = $this->setParameter('uploadoverrideVariables',
 		    'toSysOut=true|htmlEscapeCaptions=true');
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);

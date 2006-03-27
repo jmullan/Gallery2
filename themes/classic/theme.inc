@@ -21,7 +21,7 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package Gallery
+ * @package ClassicTheme
  * @author Bharat Mediratta <bharat@menalto.com>
  * @author Alan Harder <alan.harder@sun.com>
  */
@@ -29,7 +29,7 @@
 /**
  * This implements the standard gallery theme
  *
- * @package GalleryTheme
+ * @package ClassicTheme
  * @subpackage Theme
  */
 class ClassicTheme extends GalleryTheme {

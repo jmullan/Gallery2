@@ -21,7 +21,7 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package Gallery
+ * @package SliderTheme
  * @author Alan Harder <alan.harder@sun.com>
  */
 
@@ -30,7 +30,7 @@
  * slideshow support in a single dynamic page.  Displays inline items ONLY; subalbums
  * or other items types are NOT shown.
  *
- * @package GalleryTheme
+ * @package SliderTheme
  * @subpackage Theme
  */
 class SliderTheme extends GalleryTheme {

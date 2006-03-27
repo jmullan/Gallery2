@@ -21,7 +21,7 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package Gallery
+ * @package HybridTheme
  * @author Alan Harder <alan.harder@sun.com>
  */
 
@@ -29,7 +29,7 @@
  * This implements gallery theme combining thumb-view, image-view
  * and slideshow into a single dynamic page.
  *
- * @package GalleryTheme
+ * @package HybridTheme
  * @subpackage Theme
  */
 class HybridTheme extends GalleryTheme {

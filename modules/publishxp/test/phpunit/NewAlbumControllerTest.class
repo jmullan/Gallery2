@@ -21,14 +21,14 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package PublishXP
+ * @package PublishXp
  * @subpackage PHPUnit
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
 /**
  * NewAlbum controller tests
- * @package PublishXP
+ * @package PublishXp
  * @subpackage PHPUnit
  */
 class NewAlbumControllerTest extends GalleryControllerTestCase {
@@ -59,14 +59,14 @@ class NewAlbumControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$this->assertEquals($this->_getRootId(), $album->getParentId());
 	$this->assertEquals($pathComponent, $album->getPathComponent());
 	$this->assertEquals('test title', $album->getTitle());
 	$this->assertEquals('test summary', $album->getSummary());
 	$this->assertEquals('test description', $album->getDescription());
 	$this->assertEquals(null, $album->getKeywords());
-	
+
 	$ret = GalleryCoreApi::deleteEntityById($albumId);
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

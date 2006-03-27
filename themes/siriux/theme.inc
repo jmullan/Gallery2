@@ -21,14 +21,14 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package Gallery
+ * @package SiriuxTheme
  * @author Nico Kaiser <nico@siriux.net>
  */
 
 /**
  * This implements the standard gallery theme
  *
- * @package GalleryTheme
+ * @package SiriuxTheme
  * @subpackage Theme
  */
 class SiriuxTheme extends GalleryTheme {

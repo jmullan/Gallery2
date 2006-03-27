@@ -21,7 +21,7 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package RSS
+ * @package Rss
  * @author Jonatan Heyman <http://heyman.info>
  * @author Pierre-Luc Paour
  * @author Daniel Grund <http://www.photogrund.nl>
@@ -32,7 +32,7 @@ GalleryCoreApi::requireOnce('modules/rss/classes/RssMapHelper.class');
 /**
  * This view will show a list of feeds.
  *
- * @package RSS
+ * @package Rss
  * @subpackage UserInterface
  */
 class FeedListView extends GalleryView {

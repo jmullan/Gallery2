@@ -21,7 +21,7 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package uploadapplet
+ * @package UploadApplet
  * @author Pierre-Luc Paour <gallery@paour.com>
  */
 

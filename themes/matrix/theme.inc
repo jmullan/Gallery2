@@ -21,14 +21,14 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package Gallery
+ * @package MatrixTheme
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
 /**
  * This implements the standard gallery theme
  *
- * @package GalleryTheme
+ * @package MatrixTheme
  * @subpackage Theme
  */
 class MatrixTheme extends GalleryTheme {
