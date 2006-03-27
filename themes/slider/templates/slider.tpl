@@ -26,12 +26,14 @@
 
 <div id="imagearea" class="gcBackground1">{if $theme.params.enableImageMap}<img
      src="{g->theme url="images/arrow-left.gif"}" alt="" width="20" height="17"
-     id="prevArrow" style="position: absolute; top: 30px; left: 30px; visibility: hidden"
+     id="prevArrow" onclick="image_prev()"
+     style="position: absolute; top: 30px; left: 30px; visibility: hidden; cursor: pointer"
      onmouseover="document.getElementById('prevArrow').style.visibility='visible'"
      onmouseout="document.getElementById('prevArrow').style.visibility='hidden'"
   />{/if}<div id="image"></div>{if $theme.params.enableImageMap}<img
      src="{g->theme url="images/arrow-right.gif"}" alt="" width="20" height="17"
-     id="nextArrow" style="position: absolute; top: 30px; right: 30px; visibility: hidden"
+     id="nextArrow" onclick="image_next()"
+     style="position: absolute; top: 30px; right: 30px; visibility: hidden; cursor: pointer"
      onmouseover="document.getElementById('nextArrow').style.visibility='visible'"
      onmouseout="document.getElementById('nextArrow').style.visibility='hidden'"
   />{/if}</div>

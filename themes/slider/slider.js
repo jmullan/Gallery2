@@ -166,6 +166,10 @@ function image_show(i) {
   ui_sethtml('title', document.getElementById('title_'+image_index).innerHTML);
   image_setsize();
   if (options_on) options_setsize();
+  if (image_map && app_is_ie) {
+    document.getElementById('prevArrow').style.visibility = 'hidden';
+    document.getElementById('nextArrow').style.visibility = 'hidden';
+  }
   if (data_iw[i] < 0) {
     image_div.innerHTML = '<iframe style="width:100%;height:' + (image_area.offsetHeight-4)
       + 'px" frameborder="0" src="' + document.getElementById('img_'+i).href + '"></iframe>';

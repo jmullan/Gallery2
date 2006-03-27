@@ -14,6 +14,6 @@ var data_iw = new Array({$theme.imageWidths}),
 {/if}
 var data_count = data_iw.length, data_name = '{$theme.item.id}',
     data_view = {$theme.viewIndex|default:0},
-    image_map = '{if $theme.params.enableImageMap} usemap="prevnext"{/if}';
+    image_map = '{if $theme.params.enableImageMap} usemap="#prevnext"{/if}';
 </script>
 <script type="text/javascript" src="{$theme.themeUrl}/slider.js"></script>
