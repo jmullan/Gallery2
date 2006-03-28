@@ -1,27 +1,9 @@
 <?php
-/*
- * $RCSfile$
- *
- * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2006 Bharat Mediratta
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
- * your option) any later version.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
- */
 /* 
-  This is a version of the ADODB driver for DB2.  It uses the 'ibm_db2' PECL extension for PHP
-  (http://pecl.php.net/package/ibm_db2), which in turn requires DB2 V8.2.
+  V4.80 8 Mar 2006  (c) 2006 John Lim (jlim@natsoft.com.my). All rights reserved.
+
+This is a version of the ADODB driver for DB2.  It uses the 'ibm_db2' PECL extension for PHP
+  (http://pecl.php.net/package/ibm_db2), which in turn requires DB2 V8.2.2.
 
   Tested with PHP 5.1.1 and Apache 2.0.55 on Windows XP SP2.
 
@@ -29,11 +11,6 @@
   I ripped out what I believed to be a lot of redundant or obsolete code, but there are
   probably still some remnants of the ODBC support in this file; I'm relying on reviewers
   of this code to point out any other things that can be removed.
-
-  Reviewers should include:
-
-    - Dan Scott (owner of 'ibm_db2' PECL extension)
-    - John Lim  (owner of ADOdb)
 */
 
 // security - hide paths
@@ -74,8 +51,10 @@ class ADODB_db2 extends ADOConnection {
 	{
 		global $php_errormsg;
 		
-		if (!function_exists('db2_connect')) return null;
-		
+		if (!function_exists('db2_connect')) {
+			ADOConnection::outp("Warning: The old ODBC based DB2 driver has been renamed 'odbc_db2'. This ADOdb driver calls PHP's native db2 extension.");
+			return null;
+		}
 		// This needs to be set before the connect().
 		// Replaces the odbc_binmode() call that was in Execute()
 		ini_set('ibm_db2.binmode', $this->binmode);
