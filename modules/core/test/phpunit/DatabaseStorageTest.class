@@ -70,28 +70,28 @@ class DatabaseStorageTest extends GalleryTestCase {
 	$results = GalleryStorageExtras::parseSqlTemplate($this->_data,
 							   'database_with_everything');
 	$this->assertEquals(
-	    array('alter' => array(
+	    array('table' => array(
+		      'SomeTable' => "Some mysql SQL\nSome multiline SQL\n",
+		      ),
+		  'alter' => array(
 		      'SomeTable' => array(
 			  '1' => array(
-			      '0' => 'Some 0->1 alter SQL',
-			      '1' => 'Some 1->2 alter SQL'
+			      '0' => "Some 0->1 alter SQL\n",
+			      '1' => "Some 1->2 alter SQL\n"
 			      ),
 			  ),
-		      ),
-		  'test' => array(
-		      'AnInstallerTest' => array(
-			  '1' => 'Some test SQL',
-			  '2' => 'Some test SQL'
-			  )
-		      ),
-		  'table' => array(
-		      'SomeTable' => "Some mysql SQL\nSome multiline SQL",
 		      ),
 		  'remove' => array(
 		      'SomeTable' => array(
 			  '1' => array(
-			      '0' => 'Some mysql drop table SQL'
+			      '0' => "Some mysql drop table SQL\n"
 			      )
+			  )
+		      ),
+		  'test' => array(
+		      'AnInstallerTest' => array(
+			  '1' => "Some test SQL\n",
+			  '2' => "Some test SQL\n"
 			  )
 		      )
 		  ),
@@ -103,7 +103,7 @@ class DatabaseStorageTest extends GalleryTestCase {
 	    GalleryStorageExtras::parseSqlTemplate($this->_data, 'database_with_only_tables');
 	$this->assertEquals(
 	    array('table' => array(
-		      'SomeTable' => 'Some postgres SQL'
+		      'SomeTable' => "Some postgres SQL\n"
 		      ),
 		  'alter' => array(),
 		  'remove' => array(),
@@ -121,7 +121,7 @@ class DatabaseStorageTest extends GalleryTestCase {
 		  'remove' => array(
 		      'SomeTable' => array(
 			  '1' => array(
-			      '0' =>  'Some oracle drop table SQL'
+			      '0' =>  "Some oracle drop table SQL\n"
 			      )
 			  )
 		      ),
@@ -136,6 +136,6 @@ class DatabaseStorageTest extends GalleryTestCase {
 				  'alter' => array(),
 				  'remove' => array(),
 				  'test' => array()), $results);
-    }    
+    }
 }
 ?>
