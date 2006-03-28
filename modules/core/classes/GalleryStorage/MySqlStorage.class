@@ -52,7 +52,7 @@ class MySqlStorage extends GalleryStorage {
     function MySqlStorage($config) {
 	$this->GalleryStorage($config);
 	$this->_mysqlType = $config['type'];
-	if ($this->_mysqlType == 'mysqlt') {
+	if ($this->_mysqlType != 'mysql' /* mysqlt and mysqli are transactional */) {
 	    $this->_isTransactional = true;
 	}
     }
@@ -79,21 +79,22 @@ class MySqlStorage extends GalleryStorage {
      * @see GalleryStorage::_setConnectionSettings
      */
     function _setConnectionSettings(&$db) {
-    	/* MySQL 4.1.0+ support UTF-8, for details, see: http://drupal.org/node/40515 */
-    	$version = mysql_get_server_info();
-	if ($version && version_compare($version, '4.1.0', '>=')) {
-    	    $this->_traceStart();
-    	    $recordSet = $db->execute('SET NAMES "utf8"');
-    	    $this->_traceStop();
-    	
-    	    if (!$recordSet) {
-	        return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+	/* MySQL 4.1.0+ support UTF-8, for details, see: http://drupal.org/node/40515 */
+	$this->_serverInfo = ($this->_mysqlType == 'mysqli')
+	    ? mysqli_get_server_info($db->_connectionID) : mysql_get_server_info();
+	if ($this->_serverInfo && version_compare($this->_serverInfo, '4.1.0', '>=')) {
+	    $this->_traceStart();
+	    $recordSet = $db->execute('SET NAMES "utf8"');
+	    $this->_traceStop();
+
+	    if (!$recordSet) {
+		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
 	    }
 	}
-    	
-    	return null;
+
+	return null;
     }
-    
+
     /**
      * @see GalleryStorage::_getSqlReplacements
      */
@@ -124,8 +125,8 @@ class MySqlStorage extends GalleryStorage {
 
 	case 'BIT_OR':
 	    $sql = 'BIT_OR(' . $args[0] . ')';
-            break;
-	    
+	    break;
+
 	case 'UNIX_TIMESTAMP':
 	    $sql = sprintf('UNIX_TIMESTAMP(%s)', $args[0]);
 	    break;
@@ -161,9 +162,9 @@ class MySqlStorage extends GalleryStorage {
 	case 'LIKE':
 	    $sql = $args[0] . ' LIKE ' . $args[1];
 	    break;
-	    
+
 	case 'MULTI_INSERT':
-	    /* 
+	    /*
 	     * 0 - table name
 	     * 1 - array of column names
 	     * 2 - number of rows
@@ -191,8 +192,10 @@ class MySqlStorage extends GalleryStorage {
      * @see GalleryStorage::encodeBlob
      */
     function encodeBlob($blob) {
-	$version = mysql_get_server_info();
-	if ($version && version_compare($version, '4.1.0', '>=')) {
+	if (!isset($this->_db)) {
+	    list ($ret, $this->_db) = $this->_getConnection();
+	}
+	if ($this->_serverInfo && version_compare($this->_serverInfo, '4.1.0', '>=')) {
 	    /* See: http://www.postgresql.org/docs/8.1/interactive/datatype-binary.html */
 	    $blob = addcslashes($blob, "\000..\037\047\134\177..\377");
 	}
@@ -204,20 +207,29 @@ class MySqlStorage extends GalleryStorage {
      * @see GalleryStorage::decodeBlob
      */
     function decodeBlob($blob) {
-	$version = mysql_get_server_info();
-	if ($version && version_compare($version, '4.1.0', '>=')) {
+	if (!isset($this->_db)) {
+	    list ($ret, $this->_db) = $this->_getConnection();
+	}
+	if ($this->_serverInfo && version_compare($this->_serverInfo, '4.1.0', '>=')) {
 	    $blob = stripcslashes($blob);
-	} 
-	    
+	}
+
 	return $blob;
     }
-	
+
     /**
      * Get database version.
      * @return string version
      */
     function getVersion() {
-	return mysql_get_server_info();
+	if (!isset($this->_db)) {
+	    list ($ret, $this->_db) = $this->_getConnection();
+	    if ($ret) {
+		return ($this->_mysqlType == 'mysqli'
+			? mysqli_get_client_info() : mysql_get_client_info()) . ' client';
+	    }
+	}
+	return $this->_serverInfo;
     }
 
     /**

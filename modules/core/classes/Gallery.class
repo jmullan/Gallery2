@@ -447,6 +447,7 @@ class Gallery {
 	    switch ($config['type']) {
 	    case 'mysql':
 	    case 'mysqlt':
+	    case 'mysqli':
 		GalleryCoreApi::requireOnce(
 			'modules/core/classes/GalleryStorage/MySqlStorage.class', true);
 		$this->_storage = new MySqlStorage($config);

@@ -33,7 +33,7 @@ class DatabaseSetupStep extends InstallStep {
 	    $this->_config = $galleryStub->getConfig('storage.config');
 	    if (empty($this->_config)) {
 		$this->_config = array();
-		$this->_config['type'] = 'mysql';
+		$this->_config['type'] = 'mysqlt';
 		$this->_config['hostname'] = 'localhost';
 		$this->_config['username'] = 'root';
 		$this->_config['password'] = '';
@@ -57,12 +57,25 @@ class DatabaseSetupStep extends InstallStep {
 	}
 
 	$dbPlatformType = null;
+	/* Autoselect mysqli instead of mysqlt if possible */
+	$mysqltType = 'mysqlt';
+	if ($this->_config['type'] == 'mysqlt' && function_exists('mysqli_real_connect')) {
+	    $this->_config['type'] = 'mysqli';
+	    $mysqltType = 'mysqli';
+	}
 	switch ($this->_config['type']) {
 	    case 'mysql':
 	    case 'mysqlt':
 		if (!$firstConfig && !function_exists('mysql_connect')) {
 		    $templateData['error']['phpDbMissing'] =
 			_('You must have the MySQL PHP module installed');
+		}
+		$dbPlatformType = 'mysql';
+		break;
+	    case 'mysqli':
+		if (!$firstConfig && !function_exists('mysqli_real_connect')) {
+		    $templateData['error']['phpDbMissing'] =
+			_('You must have the MySQL Improved PHP module installed');
 		}
 		$dbPlatformType = 'mysql';
 		break;
@@ -74,7 +87,6 @@ class DatabaseSetupStep extends InstallStep {
 		$dbPlatformType = 'db2';
 		break;
 	    case 'postgres7':
-	    case 'postgres':
 		if (!$firstConfig && !function_exists('pg_connect')) {
 		    $templateData['error']['phpDbMissing'] =
 			_('You must have the PostgreSQL PHP module installed');
@@ -295,10 +307,9 @@ class DatabaseSetupStep extends InstallStep {
 	} else {
 	    $templateData['config'] = $this->_config;
 
-	    foreach (array('mysql'  => _('MySQL (all versions)'),
-			   'mysqlt' => _('MySQL with Transactions (v3.23.34a and newer)'),
+	    foreach (array($mysqltType => _('MySQL (v3.23.34a and newer)'),
+			   'mysql'  => _('MySQL (versions before v3.23.34a)'),
 			   'postgres7' => _('PostgreSQL v7.x and newer'),
-			   'postgres' => _('PostgreSQL v6.x (not well tested)'),
 			   'oci8po' => _('Oracle (9i and newer)'),
 			   'db2' => _('IBM DB2 (v8.2 and newer)'))
 		     as $key => $value) {
