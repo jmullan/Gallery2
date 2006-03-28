@@ -475,6 +475,12 @@ class Gallery {
 		$this->_storage = new OracleStorage($config);
 		break;
 
+	    case 'mssql':
+		GalleryCoreApi::requireOnce(
+			'modules/core/classes/GalleryStorage/MSSqlStorage.class', true);
+		$this->_storage = new MSSqlStorage($config);
+		break;
+
 	    default:
 		$this->debug('Unknown storage type');
 		$this->debug_r($config);
