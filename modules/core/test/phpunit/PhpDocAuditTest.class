@@ -46,7 +46,8 @@ class PhpDocAuditTest extends CodeAuditTestCase {
      * @see CodeAuditTestCase::shouldCheckFile()
      */
     function shouldCheckFile($fileName) {
-	if (substr($fileName, -4) == '.inc' || substr($fileName, -6) == '.class') {
+	if (substr($fileName, -4) == '.inc' || (substr($fileName, -6) == '.class'
+		    && basename($fileName) != 'PhpDocAuditTest.class')) {
 	    return true;
 	}
 
