@@ -75,12 +75,14 @@ $gallery->setConfig('data.gallery.base', '');
  * you modify it back.
  *
  * The possible database types are:
- *  mysql        Standard MySQL
- *  mysqlt       MySQL with transactions (3.23.34a and newer)
- *  postgres     PostgreSQL 6.x (not rigorously tested)
- *  postgres7    PostgreSQL 7.x
- *  oci8po       Oracle (9i and newer)
- *  db2          (EXPERIMENTAL!) IBM DB2 for Linux/UNIX/Windows, v8.2.2
+ *  mysqlt       MySQL (3.23.34a and newer)
+ *  mysqli       MySQL (4.1 and newer) with PHP5 mysqli extension
+ *  mysql        Older MySQL (no transactions)
+ *  postgres7    PostgreSQL 7.x and newer
+ *  postgres     PostgreSQL 6.x (not tested)
+ *  oci8po       Oracle 9i and newer
+ *  db2          IBM DB2 8.2 and newer
+ *  mssql        Microsoft SQL Server
  */
 $storeConfig['type'] = 'mysql';
 $storeConfig['hostname'] = 'localhost';
