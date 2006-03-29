@@ -343,7 +343,7 @@ class ImageMagickToolkitHelper {
      * @param string path to the ImageMagick we are testing
      * @return array object GalleryStatus general status of tests
      *	       array ('name' => string: the name of the binary,
-     *		      'success' => boolean: test successfull?
+     *		      'success' => boolean: test successful?
      *		      'message' => string: the error message, in case of
      *				   IMAGEMAGIC_TEST_ERROR
      *		     )
@@ -463,7 +463,7 @@ class ImageMagickToolkitHelper {
 				  $results));
 		} else if (implode('', $results) != '') {
 		    /*
-		     * 'convert' normaly doesn't say anything: if it does,
+		     * 'convert' normally doesn't say anything: if it does,
 		     * it was an error message
 		     */
 		    $testArray[] = array('name' => 'convert',
@@ -523,9 +523,7 @@ class ImageMagickToolkitHelper {
 		    $testArray[] = array('name' => $compositeCmd,
 					 'success' => true);
 		}
-		if ($platform->file_exists($tmpFilename)) {
-		    @$platform->unlink($tmpFilename);
-		}
+		@$platform->unlink($tmpFilename);
 		break;
 	    default:
 		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);

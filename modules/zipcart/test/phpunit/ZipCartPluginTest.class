@@ -315,6 +315,10 @@ class ZipCartPluginTestPlatform {
     function chdir($path) {
 	return $this->_platform->chdir($path);
     }
+
+    function chmod($path, $mode=null) {
+	return true;
+    }
 }
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryToolkit.class');

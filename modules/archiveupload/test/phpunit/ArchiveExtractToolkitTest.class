@@ -124,7 +124,7 @@ class ArchiveExtractToolkitTestPlatform {
 	return $path;
     }
 
-    function recursiveFixDirPermissions($path) {
+    function recursiveChmod($path, $dirMode=null, $fileMode=null) {
 	switch($path) {
 	case 'testPerformOperation2.dir':
 	    return true;

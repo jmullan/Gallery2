@@ -87,10 +87,11 @@ class UnixPlatform extends GalleryPlatform {
 	if ($gallery->getDebug()) {
 	    $gallery->debug("Executing: $command");
 	}
-	if (!isset($this->_umask)) {
-	    $this->_loadPermissionPreferences();
-	}
-	$umask = umask($this->_umask);
+	/*
+	 * It is the responsibility of exec'ers to chmod output files to preferred perms.
+	 * Set a default umask here in case any code forgets this.
+	 */
+	$umask = umask(022);
 	$results = array();
 	exec($command, $results, $status);
 	umask($umask);

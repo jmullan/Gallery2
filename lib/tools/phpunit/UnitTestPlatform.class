@@ -352,6 +352,10 @@ class UnitTestPlatform {
 	return $this->_makeReply('chmod', array($path, $mode));
     }
 
+    function recursiveChmod($path, $dirMode=null, $fileMode=null) {
+	return $this->_makeReply('recursiveChmod', array($path, $dirMode, $fileMode));
+    }
+
     function recursiveFixDirPermissions($path) {
 	return $this->_makeReply('recursiveFixDirPermissions', array($path));
     }

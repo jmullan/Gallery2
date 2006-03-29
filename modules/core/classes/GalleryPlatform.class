@@ -1165,11 +1165,64 @@ class GalleryPlatform {
     }
 
     /**
+     * Recursively set filesystem permissions.
+     * Modes default to system preferences for file/dir permissions.
+     * @param string path to directory
+     * @param int (optional) mode for dirs or -1 to skip chmod of dirs
+     * @param int (optional) mode for files or -1 to skip chmod of files
+     * @return boolean true on success
+     */
+    function recursiveChmod($path, $dirMode=null, $fileMode=null) {
+	if (!isset($this->_filePerms) || !isset($this->_dirPerms)) {
+	    $this->_loadPermissionPreferences();
+	}
+	if (!isset($dirMode)) {
+	    $dirMode = $this->_dirPerms;
+	}
+	if (!isset($fileMode)) {
+	    $fileMode = $this->_filePerms;
+	}
+	return $this->_recursiveChmod($path, $dirMode, $fileMode);
+    }
+
+    /**
+     * Helper for recursiveChmod
+     * @access private
+     */
+    function _recursiveChmod($path, $dirMode, $fileMode) {
+	if ($this->is_dir($path)) {
+	    if ($dirMode >= 0 && !$this->chmod($path, $dirMode)) {
+		return false;
+	    }
+	    if (!($dir = $this->opendir($path))) {
+		return false;
+	    }
+	    $slash = $this->getDirectorySeparator();
+	    $list = array();
+	    while ($file = $this->readdir($dir)) {
+		if ($file != '.' && $file != '..') {
+		    $list[] = $path . $slash . $file;
+		}
+	    }
+	    $this->closedir($dir);
+	    foreach ($list as $path) {
+		if (!$this->_recursiveChmod($path, $dirMode, $fileMode)) {
+		    return false;
+		}
+	    }
+	} else if ($fileMode >= 0 && !$this->chmod($path, $fileMode)) {
+	    return false;
+	}
+	return true;
+    }
+
+    /**
      * Fixes the directory permissions (as e.g. unzip creates them with file permissions
      * because of the umask)
      *
      * @param string $path the directory which should be fixed
      * @return boolean true if all went well, false if there was an error.
+     * @deprecated -- TODO: remove at the next major version bump of core api
      */
     function recursiveFixDirPermissions($path) {
 	if (!$this->is_dir($path)) {

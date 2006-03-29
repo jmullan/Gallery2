@@ -52,9 +52,11 @@ class GalleryCoreApi {
      *   the API has more features than you need but should still work for you.
      *
      * @return array major number, minor number
+     *
+     * TODO: remove GalleryPlatform::recursiveFixDirPermissions on next major version bump
      */
     function getApiVersion() {
-	return array(7, 2);
+	return array(7, 3);
     }
 
     /**

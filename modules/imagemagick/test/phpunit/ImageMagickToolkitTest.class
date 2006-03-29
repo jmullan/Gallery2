@@ -87,7 +87,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	}
 
 	$this->_platform = new ImageMagickToolkitTestPlatform($gallery->getPlatform(),
-							      $this->_files);
+							      $this->_files, $this);
 	$gallery->setPlatform($this->_platform);
 
 	/* Get a toolkit to work with */
@@ -141,6 +141,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
      */
     function _testOperation($mimeType, $operation, $src, $dst, $params, $namedParams,
 			    $quality=null) {
+	$this->_chmodWasCalled = false;
 	list ($ret, $outputMimeType) =
 	    $this->_toolkit->performOperation($mimeType, $operation,
 					      $src, $dst, $params);
@@ -185,6 +186,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 
 	$this->assertEquals($expected, $this->_files[$dst]['operation'],
 	    $this->_currentEnvironment['path'] . " $operation " . implode(' ', $params));
+	$this->assert($this->_chmodWasCalled, 'chmod not called');
 
 	return null;
     }
@@ -897,9 +899,10 @@ class ImageMagickToolkitTestPlatform {
     var $_environment = array();
     var $_files;
 
-    function ImageMagickToolkitTestPlatform($originalPlatform, &$files) {
+    function ImageMagickToolkitTestPlatform($originalPlatform, &$files, &$test) {
 	$this->_platform = $originalPlatform;
 	$this->_files =& $files;
+	$this->_test =& $test;
     }
 
     function setEnvironment($environment) {
@@ -1156,6 +1159,7 @@ class ImageMagickToolkitTestPlatform {
     }
 
     function chmod($path, $mode=null) {
+	$this->_test->_chmodWasCalled = true;
 	return true;
     }
 }

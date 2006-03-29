@@ -88,9 +88,9 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
     }
 
     /**
-     * Test whether the importing routine works
+     * Test whether the importing routine works; NOTE: archiveupload module is required
      */
-    function testImportFromPicasaSuccessfull() {
+    function testImportFromPicasaSuccessful() {
 
 	/* The XML Data that we will test with */
 	$testXmlData = array('<?xml version="1.0" encoding="utf-8" ?>',
@@ -156,11 +156,7 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
         $this->_platform->setReply('exec',
             array(array(array('0' => $unzip, '1' => '/picasaimport.tmp'))), array(true));
         $this->_platform->setReply('chdir', array('/'), true);
-        /*
-         * The next call lies about /tmp.dir being a file, so that no recursive checking for
-         * directory permissions is done.
-         */
-        $this->_platform->setReply('recursiveFixDirPermissions', array('/tmp.dir'), true);
+        $this->_platform->setReply('recursiveChmod', array('/tmp.dir', null, null), true);
         $this->_platform->setReply('getDirectorySeparator', array(), '/');
         $this->_platform->setReply('file_exists', array('/tmp.dir/index.xml'), true);
         $this->_platform->setReply('is_readable', array('/tmp.dir/index.xml'), true);
