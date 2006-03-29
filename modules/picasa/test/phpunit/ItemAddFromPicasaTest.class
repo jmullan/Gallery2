@@ -42,7 +42,7 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
     }
 
     function setUp() {
-        global $gallery;
+	global $gallery;
 	parent::setUp();
 
 	/* Make sure translate calls during test won't generate any platform calls */
@@ -52,39 +52,39 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-        $this->_platform = new UnitTestPlatform();
-        $gallery->setPlatform($this->_platform);
-        $gallery->_lockSystem = new MockLockSystem();
-        $this->_platform->setReply('legalizePathComponent', array('albumtest'), 'albumtest');
-        $this->_platform->setReply('getDirectorySeparator', array(), '/');
-        $this->_platform->setReply('file_exists', array('fuzzy' => '{.*albumtest}'), false);
-        $this->_platform->setReply('mkdir', array('fuzzy' => '{.*albumtest}', '0755'), true);
-        list ($ret, $this->_temporaryAlbum) = GalleryCoreApi::createAlbum(
-            $this->_getRootId(), 'albumtest',
-            'This is my title', 'This is my summary',
-            'This is my description', null);
-        if ($ret) {
-            print $ret->getAsHtml();
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
+	$this->_platform = new UnitTestPlatform();
+	$gallery->setPlatform($this->_platform);
+	$gallery->_lockSystem = new MockLockSystem();
+	$this->_platform->setReply('legalizePathComponent', array('albumtest'), 'albumtest');
+	$this->_platform->setReply('getDirectorySeparator', array(), '/');
+	$this->_platform->setReply('file_exists', array('fuzzy' => '{.*albumtest}'), false);
+	$this->_platform->setReply('mkdir', array('fuzzy' => '{.*albumtest}', '0755'), true);
+	list ($ret, $this->_temporaryAlbum) = GalleryCoreApi::createAlbum(
+		$this->_getRootId(), 'albumtest',
+		'This is my title', 'This is my summary',
+		'This is my description', null);
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
-        $this->_markForCleanup($this->_temporaryAlbum);
-        list ($ret, $this->_lockIds) =
-            GalleryCoreApi::acquireReadLock($this->_temporaryAlbum->getId());
-        if ($ret) {
-            print $ret->getAsHtml();
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
+	$this->_markForCleanup($this->_temporaryAlbum);
+	list ($ret, $this->_lockIds) =
+	    GalleryCoreApi::acquireReadLock($this->_temporaryAlbum->getId());
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
     }
 
     function tearDown() {
-        $ret = GalleryCoreApi::releaseLocks($this->_lockIds);
-        if ($ret) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
+	$ret = GalleryCoreApi::releaseLocks($this->_lockIds);
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
-        $this->assert($this->_platform->isComplete(), $this->_platform->getRemaining());
-        parent::tearDown();
+	$this->assert($this->_platform->isComplete(), $this->_platform->getRemaining());
+	parent::tearDown();
     }
 
     /**
@@ -92,8 +92,8 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
      */
     function testImportFromPicasaSuccessfull() {
 
-        /* The XML Data that we will test with */
-        $testXmlData = array('<?xml version="1.0" encoding="utf-8" ?>',
+	/* The XML Data that we will test with */
+	$testXmlData = array('<?xml version="1.0" encoding="utf-8" ?>',
             '<album><albumName>GalleryTest 2</albumName>',
             '<albumItemCount>2</albumItemCount>',
             '<albumCaption>This is a test</albumCaption>',
@@ -205,7 +205,7 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
             $this->assertEquals($file, $status['addedFiles'][$i]['fileName']);
             $this->assert(isset($status['addedFiles'][$i]['id']));
             $ids[] = $status['addedFiles'][$i]['id'];
-            $this->assertEquals('', $status['addedFiles'][$i]['warnings']);
+            $this->assertEquals(array(), $status['addedFiles'][$i]['warnings']);
             $i++;
         }
 
