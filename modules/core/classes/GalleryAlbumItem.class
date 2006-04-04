@@ -142,9 +142,28 @@ class GalleryAlbumItem extends GalleryItem {
 
 	if ($useDefaults != 'true') {
 	    /* Use parent's settings */
-	    $this->setTheme($parent->getTheme());
+	    $this->setTheme($theme = $parent->getTheme());
 	    $this->setOrderBy($parent->getOrderBy());
 	    $this->setOrderDirection($parent->getOrderDirection());
+	    if (empty($theme)) {
+		list ($ret, $theme) =
+		    GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
+		if ($ret) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	    list ($ret, $themeParams) =
+		GalleryCoreApi::fetchAllPluginParameters('theme', $theme, $parent->getId());
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    foreach ($themeParams as $key => $value) {
+		$ret = GalleryCoreApi::setPluginParameter('theme', $theme,
+							  $key, $value, $this->getId());
+		if ($ret) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
 	} else {
 	    $this->setTheme(null);
 	    $this->setOrderBy(null);

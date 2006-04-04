@@ -664,7 +664,12 @@ class AlbumTest extends GalleryTestCase {
 	/* Create an album with one group of settings */
 	list ($ret, $album) = $this->_createRandomAlbum(
 	    $this->_parentAlbum->getId(),
-	    array('theme' => 'a', 'orderBy' => 'b', 'orderDirection' => 'c'));
+	    array('theme' => 'AlbumTestTheme', 'orderBy' => 'b', 'orderDirection' => 'c'));
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::setPluginParameter(
+		'theme', 'AlbumTestTheme', 'testParam', 'testValue', $album->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -686,10 +691,50 @@ class AlbumTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	list ($ret, $params) =
+	    GalleryCoreApi::fetchAllPluginParameters('theme', 'AlbumTestTheme', $child1->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
-	$this->assertEquals('a', $child1->getTheme());
+	$this->assertEquals('AlbumTestTheme', $child1->getTheme());
 	$this->assertEquals('b', $child1->getOrderBy());
 	$this->assertEquals('c', $child1->getOrderDirection());
+	$this->assertEquals(array('testParam' => 'testValue'), $params);
+
+	/* Now set the default theme to AlbumTestTheme */
+	$ret = GalleryCoreApi::setPluginParameter(
+		'module', 'core', 'default.theme', 'AlbumTestTheme');
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $album2) = $this->_createRandomAlbum(
+	    $this->_parentAlbum->getId(),
+	    array('theme' => '', 'orderBy' => 'd', 'orderDirection' => 'e'));
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::setPluginParameter(
+		'theme', 'AlbumTestTheme', 'testParam', 'testValue2', $album2->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Create a sub album.  It should pick up the settings of the default theme */
+	list ($ret, $child2) = $this->_createRandomAlbum($album2->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $params) =
+	    GalleryCoreApi::fetchAllPluginParameters('theme', 'AlbumTestTheme', $child2->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('', $child2->getTheme());
+	$this->assertEquals('d', $child2->getOrderBy());
+	$this->assertEquals('e', $child2->getOrderDirection());
+	$this->assertEquals(array('testParam' => 'testValue2'), $params);
 
 	/* Now switch to using the defaults */
 	$ret = GalleryCoreApi::setPluginParameter(
@@ -699,14 +744,20 @@ class AlbumTest extends GalleryTestCase {
 	}
 
 	/* Create a sub album.  It should pick up the defaults */
-	list ($ret, $child2) = $this->_createRandomAlbum($album->getId());
+	list ($ret, $child3) = $this->_createRandomAlbum($album->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $params) =
+	    GalleryCoreApi::fetchAllPluginParameters('theme', 'AlbumTestTheme', $child3->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals(null, $child2->getTheme());
-	$this->assertEquals(null, $child2->getOrderBy());
-	$this->assertEquals(null, $child2->getOrderDirection());
+	$this->assertEquals(null, $child3->getTheme(), 'theme');
+	$this->assertEquals(null, $child3->getOrderBy(), 'orderBy');
+	$this->assertEquals(null, $child3->getOrderDirection(), 'orderDirection');
+	$this->assertEquals(array(), $params, 'params');
     }
 
     /**
