@@ -102,6 +102,9 @@ class GalleryCharsetHelper_simple {
 	case '1251':   /* Windows XP has LC_CTYPE=Russian_Russia.1251 */
 	    $sourceEncoding = 'CP1251';
 	    break;
+	case '646':   /* Solaris iconv returns "646" for ASCII */
+	    $sourceEncoding = 'ASCII';
+	    break;
 	}
 	/* FreeBSD may return charset with missing hyphen from nl_langinfo */
 	$sourceEncoding = str_replace('ISO8859', 'ISO-8859', $sourceEncoding);
