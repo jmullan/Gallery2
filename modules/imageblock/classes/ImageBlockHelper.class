@@ -108,6 +108,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	if (array_key_exists('maxSize', $params)) {
 	    $ImageBlockData['maxSize'] = $params['maxSize'];
 	}
+	$ImageBlockData['link'] = isset($params['link']) ? $params['link'] : '';
 	if (isset($params['linkTarget'])) {
 	    $ImageBlockData['linkTarget'] = $params['linkTarget'];
 	}

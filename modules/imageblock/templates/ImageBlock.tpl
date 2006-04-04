@@ -10,12 +10,18 @@
     <h3> {g->text text=$block.title} </h3>
   {/if}
 
-  {capture name="link"}
-  <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$block.id`" forceFullUrl=$ImageBlockData.forceFullUrl}" {strip}
-    {if !empty($ImageBlockData.linkTarget)}
-      target="{$ImageBlockData.linkTarget}"
-    {/if}{/strip}>
-  {/capture}
+  {capture assign="linkHref"}{strip}
+    {if empty($ImageBlockData.link)}
+      {g->url arg1="view=core.ShowItem" arg2="itemId=`$block.id`"
+	      forceFullUrl=$ImageBlockData.forceFullUrl}
+    {elseif $ImageBlockData.link != 'none'}
+      {$ImageBlockData.link}
+    {/if}
+  {/strip}{/capture}
+  {capture assign="link"}{if !empty($linkHref)}
+    <a href="{$linkHref}"{if
+	!empty($ImageBlockData.linkTarget)} target="{$ImageBlockData.linkTarget}"{/if}>
+  {/if}{/capture}
   {if $block.item.canContainChildren}
     {assign var=frameType value="albumFrame"}
   {else}
@@ -33,9 +39,9 @@
   {if isset($ImageBlockData.$frameType)}
     {g->container type="imageframe.ImageFrame" frame=$ImageBlockData.$frameType
 		  width=$block.thumb.width height=$block.thumb.height maxSize=$maxSize}
-      {$smarty.capture.link}
+      {$link}
 	{g->image item=$imageItem image=$block.thumb id="%ID%" class="%CLASS%" maxSize=$maxSize forceFullUrl=$ImageBlockData.forceFullUrl}
-      </a>
+      {if !empty($linkHref)} </a> {/if}
     {/g->container}
   {else}
     {$smarty.capture.link}

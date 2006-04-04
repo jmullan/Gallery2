@@ -110,6 +110,9 @@
     <td> {$ImageBlockSiteAdmin.prefix}maxSize </td>
     <td> {g->text text="Scale images to this maximum size. If maxSize exceeds the thumbnail dimensions, you must also specify g2_show=fullSize"} </td>
   </tr><tr>
+    <td> {$ImageBlockSiteAdmin.prefix}link </td>
+    <td> {g->text text="Href for link on image; value of none for no link; default is link to item in the Gallery"} </td>
+  </tr><tr>
     <td> {$ImageBlockSiteAdmin.prefix}linkTarget </td>
     <td> {g->text text="Add a link target (for example, to open links in a new browser window)"} </td>
   {if isset($ImageBlockSiteAdmin.list)}
