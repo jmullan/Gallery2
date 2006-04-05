@@ -192,6 +192,7 @@ class MySqlGenerator extends BaseGenerator {
 		'STRING-SMALL' => 'varchar(32)',
 		'STRING-MEDIUM' => 'varchar(128)',
 		'STRING-LARGE' => 'varchar(255)',
+		'TEXT-SMALL' => 'text',
 		'TEXT-' => 'text',
 		'TEXT-MEDIUM' => 'text',
 		'TEXT-LARGE' => 'longtext',
@@ -417,6 +418,7 @@ class PostgresGenerator extends BaseGenerator {
 		'STRING-SMALL' => 'VARCHAR(32)',
 		'STRING-MEDIUM' => 'VARCHAR(128)',
 		'STRING-LARGE' => 'VARCHAR(255)',
+		'TEXT-SMALL' => 'text',
 		'TEXT-' => 'text',
 		'TEXT-MEDIUM' => 'text',
 		'TEXT-LARGE' => 'text',
@@ -679,8 +681,9 @@ class OracleGenerator extends BaseGenerator {
 		'STRING-SMALL' => 'VARCHAR2(32)',
 		'STRING-MEDIUM' => 'VARCHAR2(128)',
 		'STRING-LARGE' => 'VARCHAR2(255)',
-		'TEXT-' => 'VARCHAR2(4000)',
-		'TEXT-MEDIUM' => 'VARCHAR2(4000)',
+		'TEXT-SMALL' => 'VARCHAR2(4000)',
+		'TEXT-' => 'CLOB',
+		'TEXT-MEDIUM' => 'CLOB',
 		'TEXT-LARGE' => 'CLOB',
 		'BOOLEAN-' => 'NUMBER(1)',
 		'BOOLEAN-MEDIUM' => 'NUMBER(1)',
@@ -694,23 +697,10 @@ class OracleGenerator extends BaseGenerator {
 	switch ($node['name']) {
 	case 'CHANGE':
 	    /* table-name, schema-from, schema-to, (add, alter, remove)+ */
-	    $alters = $others = '';
 	    for ($i = 3; $i < count($child); $i++) {
-		/* This logic depends on add/remove INDEX being in their own <add> or <remove> */
-		if (!$this->isIndex($child[$i]['child'][0]) ||
-			$this->isPrimaryKey($child[$i]['child'][0])) {
-		    $alters .= $this->createSql($child[$i], $i, count($child) - 1, $node) . "\n";
-		} else {
-		    $others .= $this->createSql($child[$i], $i, count($child) - 1, $node) . ";\n\n";
-		}
+		$output .= $this->createSql($child[$i], $i, count($child) - 1, $node);
 	    }
-
-	    if ($alters) {
-		$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $node['child'][0]['content'];
-		$output .= "\n" . $alters . ";\n\n";
-	    }
-
-	    $output .= $others . $this->generateSchemaUpdate($child);
+	    $output .= $this->generateSchemaUpdate($child);
 	    break;
 
 	case 'REMOVE':
@@ -722,26 +712,24 @@ class OracleGenerator extends BaseGenerator {
 		}
 	    } else if ($parent['name'] == 'CHANGE') {
 		/* (column-name, key, index)+ */
-		$i = 0;
 		foreach ($child as $c) {
-		    if ($i++ > 0) {
-			$output .= ",\n";
-		    }
 		    switch ($c['name']) {
 		    case 'COLUMN-NAME':
 			/* column-name */
-			$output .= '  DROP (DB_COLUMN_PREFIX' . $c['content'] . ')';
+			$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'];
+			$output .= "\n" . '  DROP (DB_COLUMN_PREFIX' . $c['content'] . ')';
 			break;
 
 		    case 'KEY':
+			$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'];
 			if (isset($child[0]['attrs']['PRIMARY'])) {
-			    $output .= "  DROP PRIMARY KEY";
+			    $output .= "\n  DROP PRIMARY KEY";
 			} else {
 			    $keyColumns = array();
 			    foreach ($c['child'] as $keyColumn) {
 				$keyColumns[] = 'DB_COLUMN_PREFIX' . $keyColumn['content'];
 			    }
-			    $output .= '  DROP UNIQUE (' . implode(', ', $keyColumns) . ')';
+			    $output .= "\n" . '  DROP UNIQUE (' . implode(', ', $keyColumns) . ')';
 			}
 			break;
 
@@ -760,6 +748,7 @@ class OracleGenerator extends BaseGenerator {
 		    default:
 			$output .= "7. UNIMPLEMENTED: REMOVE $c[name]\n";
 		    }
+		    $output .= ";\n\n";
 		}
 	    }
 	    break;
@@ -771,13 +760,15 @@ class OracleGenerator extends BaseGenerator {
 		switch ($c['name']) {
 		case 'COLUMN':
 		    /* column-name */
-		    $output .= '  ADD (DB_COLUMN_PREFIX' . $c['child'][0]['content'];
+		    $output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'];
+		    $output .= "\n" . '  ADD (DB_COLUMN_PREFIX' . $c['child'][0]['content'];
 		    $output .= ' ' . $this->columnDefinition($c['child']) . ')';
 		    break;
 
 		case 'KEY':
 		    /* column-name+ */
-		    $output .= '  ADD ';
+		    $output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'];
+		    $output .= "\n  ADD ";
 		    if (!empty($c['attrs']['PRIMARY'])) {
 			$output .= 'PRIMARY KEY(';
 		    } else {
@@ -816,9 +807,7 @@ class OracleGenerator extends BaseGenerator {
 		default:
 		    $output .= "8. UNIMPLEMLENTED: ADD $c[name]\n";
 		}
-		if ($k < count($child) - 1) {
-		    $output .= "\n  ";
-		}
+		$output .= ";\n\n";
 	    }
 	    break;
 
@@ -883,30 +872,34 @@ class OracleGenerator extends BaseGenerator {
 	    /* column-name, column-type, column-size, not-null? */
 	    $output .= ' DB_COLUMN_PREFIX' . $child[0]['content'];
 	    $output .= ' ' . $this->columnDefinition($child, false);
-	    if ($notNull = $this->getNotNullElement($child)) {
-		if (empty($notNull['attrs']['EMPTY']) || $notNull['attrs']['EMPTY'] != 'allowed') {
-		    $output .= ' NOT NULL';
-		}
+	    if (($notNull = $this->getNotNullElement($child))
+		&& (empty($notNull['attrs']['EMPTY']) || $notNull['attrs']['EMPTY'] != 'allowed')) {
+		$output .= ' NOT NULL';
 	    }
 	    break;
 
 	case 'ALTER':
 	    /* column+ */
-	    $output .= '  MODIFY (';
 	    for ($i = 0; $i < count($child); $i++) {
-		$output .= 'DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'];
-		$output .= ' ' . $this->columnDefinition($child[$i]['child'], false);
-		if ($notNull = $this->getNotNullElement($child[$i]['child'])) {
-		    if (empty($notNull['attrs']['EMPTY']) ||
-			$notNull['attrs']['EMPTY'] != 'allowed') {
-			$output .= ' NOT NULL';
-		    }
-		}
-		if ($i < count($child) - 1) {
-		    $output .= ', ';
+		$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
+		    ' ADD (DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . 'Temp';
+		$output .= ' ' . $this->columnDefinition($child[$i]['child'], false) . ");\n\n";
+		$output .= 'UPDATE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
+		    ' SET DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . 'Temp' .
+		    ' = DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . ";\n\n";
+		$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
+		    ' DROP (DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . ");\n\n";
+		$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
+		    ' RENAME COLUMN DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . 'Temp' .
+		    ' TO DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . ";\n\n";
+		if (($notNull = $this->getNotNullElement($child[$i]['child']))
+		    && (empty($notNull['attrs']['EMPTY'])
+			|| $notNull['attrs']['EMPTY'] != 'allowed')) {
+		    $output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
+			' MODIFY (DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] .
+			" NOT NULL);\n\n";
 		}
 	    }
-	    $output .= ')';
 	    break;
 
 	default:
@@ -958,6 +951,7 @@ class Db2Generator extends BaseGenerator {
 		'STRING-SMALL' => 'VARCHAR(32)',
 		'STRING-MEDIUM' => 'VARCHAR(128)',
 		'STRING-LARGE' => 'VARCHAR(255)',
+		'TEXT-SMALL' => 'VARCHAR(10000)',
 		'TEXT-' => 'VARCHAR(15000)',
 		'TEXT-MEDIUM' => 'VARCHAR(15000)',
 		'TEXT-LARGE' => 'CLOB(2G) NOT LOGGED',
