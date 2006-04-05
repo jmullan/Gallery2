@@ -44,9 +44,9 @@
       {if !empty($linkHref)} </a> {/if}
     {/g->container}
   {else}
-    {$smarty.capture.link}
+    {$link}
       {g->image item=$imageItem image=$block.thumb class="giThumbnail" maxSize=$maxSize forceFullUrl=$ImageBlockData.forceFullUrl}
-    </a>
+    {if !empty($linkHref)} </a> {/if}
   {/if}
 
   {if isset($ImageBlockData.show.title) && isset($block.item.title)}
