@@ -44,14 +44,14 @@ class MaintenanceHelper_simple {
 	list ($ret, $allTaskIds) =
 	    GalleryCoreApi::getAllFactoryImplementationIds('MaintenanceTask');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$taskInstances = array();
 	foreach (array_keys($allTaskIds) as $taskId) {
 	    list ($ret, $task) = GalleryCoreApi::newFactoryInstanceById('MaintenanceTask', $taskId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    $taskInstances[$taskId] = $task;
@@ -91,7 +91,7 @@ class MaintenanceHelper_simple {
 	list ($ret, $searchResults) =
 	    $gallery->search($query, array($taskId), array('limit' => array('count' => 1)));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$result = $searchResults->nextResult();
@@ -121,7 +121,7 @@ class MaintenanceHelper_simple {
 	$storage =& $gallery->getStorage();
 	list ($ret, $runId) = $storage->getUniqueId();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::addMapEntry(
@@ -132,7 +132,7 @@ class MaintenanceHelper_simple {
 		  'success' => (int)$success,
 		  'details' => serialize($details)));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;

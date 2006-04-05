@@ -37,7 +37,7 @@ class AdminMembersController extends GalleryController {
     function handleRequest($form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$error = $status = array();
@@ -47,7 +47,7 @@ class AdminMembersController extends GalleryController {
 		    $ret = GalleryCoreApi::setPluginParameter('module', 'members',
 							      $key, trim($form[$key]));
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		}
 	    }
@@ -81,12 +81,12 @@ class AdminMembersView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'members');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Load our default values if we didn't just come from this form. */
@@ -95,7 +95,7 @@ class AdminMembersView extends GalleryView {
 		list ($ret, $form[$key]) =
 		    GalleryCoreApi::getPluginParameter('module', 'members', $key);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	    $form['formName'] = 'AdminMembers';
@@ -107,7 +107,7 @@ class AdminMembersView extends GalleryView {
 	    list ($ret, $groupIds[]) =
 		GalleryCoreApi::getPluginParameter('module', 'core', $key);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 	$members = array();

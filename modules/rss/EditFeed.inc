@@ -46,15 +46,15 @@ class EditFeedController extends GalleryController {
 
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($form['itemId']);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'rss');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	list ($ret) = RssMapHelper::canConfigureFeed($item, $param, true);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Check which button was pressed */
@@ -141,7 +141,7 @@ class EditFeedController extends GalleryController {
 		if ($ret) {
 		    /* If we got anything other than a ERROR_COLLISION, exit */
 		    if (!($ret->getErrorCode() & ERROR_COLLISION)) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 
 		    /*
@@ -167,7 +167,7 @@ class EditFeedController extends GalleryController {
 	     */
 	    $ret = RssMapHelper::deleteFeed($form['action']['delete']);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    $mode = 'list';
@@ -207,7 +207,7 @@ class EditFeedView extends GalleryView {
 	/* Load the item */
 	list ($ret, $item) = $this->_getItem();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/*
@@ -216,11 +216,11 @@ class EditFeedView extends GalleryView {
 	 */
 	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'rss');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	list ($ret) = RssMapHelper::canConfigureFeed($item, $param, true);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$EditFeed = array();
@@ -229,7 +229,7 @@ class EditFeedView extends GalleryView {
 	/* Fetch all feed definitions */
 	list ($ret, $feeds) = RssMapHelper::fetchFeedsForItem($EditFeed['itemId']);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$EditFeed['mode'] = GalleryUtilities::getRequestVariables('mode');
@@ -299,7 +299,7 @@ class EditFeedView extends GalleryView {
 		/* no error: load parameters from DB using the 'feedName' */
 		list ($ret, $feed) = RssMapHelper::fetchFeed($form['feedName']);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		$EditFeed = array_merge($EditFeed, $feed);
@@ -326,12 +326,12 @@ class EditFeedView extends GalleryView {
 	     */
 	    list ($ret, $feeds) = RssMapHelper::fetchFeedsForItem($EditFeed['itemId']);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    list ($ret, $EditFeed['types']) = RssHelper::getFeedTypeTranslation();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    $EditFeed['feeds'] = $feeds;

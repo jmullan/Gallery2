@@ -69,7 +69,7 @@ class ShowItemView extends GalleryView {
 
 	list ($ret, $item) = $this->_getItem();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Make sure we have permission to view this item */
@@ -79,7 +79,7 @@ class ShowItemView extends GalleryView {
 		list ($ret2, $anonymousId) = GalleryCoreApi::getPluginParameter(
 		    'module', 'core', 'id.anonymousUser');
 		if ($ret2) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		if ($gallery->getActiveUserId() == $anonymousId) {
 		    /* Redirect to login view */
@@ -90,7 +90,7 @@ class ShowItemView extends GalleryView {
 		list ($ret2, $rootId) = GalleryCoreApi::getPluginParameter(
 		    'module', 'core', 'id.rootAlbum');
 		if ($ret2) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		if ($item->getId() == $rootId) {
 		    /* No permission on root album; redirect to login view */
@@ -100,13 +100,13 @@ class ShowItemView extends GalleryView {
 		return array(null, array('redirect' =>
 		    array('view' => 'core.ShowItem', 'itemId' => $rootId)));
 	    }
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Increment the view count */
 	$ret = GalleryCoreApi::incrementItemViewCount($item->getId());
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, array());
@@ -118,7 +118,7 @@ class ShowItemView extends GalleryView {
     function _getItem() {
 	list ($ret, $item, $wasSpecified) = parent::_getItem();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	/* Always return wasSpecified==true no itemId param still uses root album theme/params */
 	return array(null, $item, true);
@@ -132,7 +132,7 @@ class ShowItemView extends GalleryView {
 
 	list ($ret, $item) = $this->_getItem();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$typeName = $item->itemTypeName(true);

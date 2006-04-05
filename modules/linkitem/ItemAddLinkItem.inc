@@ -45,18 +45,18 @@ class ItemAddLinkItem extends ItemAddPlugin {
 	    if (empty($error)) {
 		list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($item->getId());
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret, null, null);
 		}
 
 		list ($ret, $newItem) =
 		    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryLinkItem');
 		if ($ret) {
 		    GalleryCoreApi::releaseLocks($lockId);
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret, null, null);
 		}
 		if (empty($newItem)) {
 		    GalleryCoreApi::releaseLocks($lockId);
-		    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
+		    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT),
 				 null, null);
 		}
 
@@ -69,7 +69,7 @@ class ItemAddLinkItem extends ItemAddPlugin {
 			$error[] = 'form[error][linkedAlbumId][invalid]';
 		    } else {
 			GalleryCoreApi::releaseLocks($lockId);
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return array($ret, null, null);
 		    }
 		}
 
@@ -77,7 +77,7 @@ class ItemAddLinkItem extends ItemAddPlugin {
 		    $ret = $newItem->save();
 		    if ($ret) {
 			GalleryCoreApi::releaseLocks($lockId);
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return array($ret, null, null);
 		    }
 
 		    /* set order weight -- add to end of parent album */
@@ -85,12 +85,12 @@ class ItemAddLinkItem extends ItemAddPlugin {
 			GalleryCoreApi::fetchExtremeChildWeight($item->getId(), HIGHER_WEIGHT);
 		    if ($ret) {
 			GalleryCoreApi::releaseLocks($lockId);
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return array($ret, null, null);
 		    }
 		    $ret = GalleryCoreApi::setItemOrderWeight($newItem->getId(), $maxWeight + 1000);
 		    if ($ret) {
 			GalleryCoreApi::releaseLocks($lockId);
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return array($ret, null, null);
 		    }
 
 		    /* add thumbnail */
@@ -100,7 +100,7 @@ class ItemAddLinkItem extends ItemAddPlugin {
 			    GalleryCoreApi::fetchThumbnailsByItemIds(array($link));
 			if ($ret) {
 			    GalleryCoreApi::releaseLocks($lockId);
-			    return array($ret->wrap(__FILE__, __LINE__), null, null);
+			    return array($ret, null, null);
 			}
 			if (!empty($thumbnailTable)) {
 			    $source = array_shift($thumbnailTable);
@@ -110,23 +110,22 @@ class ItemAddLinkItem extends ItemAddPlugin {
 			'GalleryDerivative', $source->getEntityType());
 		    if ($ret) {
 			GalleryCoreApi::releaseLocks($lockIds);
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return array($ret, null, null);
 		    }
 		    if (!isset($derivative)) {
 			GalleryCoreApi::releaseLocks($lockIds);
-			return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT,
-							  __FILE__, __LINE__), null, null);
+			return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null, null);
 		    }
 		    $ret = $derivative->create($newItem->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 		    if ($ret) {
 			GalleryCoreApi::releaseLocks($lockIds);
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return array($ret, null, null);
 		    }
 		    list ($ret, $preferences) =
 			GalleryCoreApi::fetchDerivativePreferencesForItem($item->getId());
 		    if ($ret) {
 			GalleryCoreApi::releaseLocks($lockIds);
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return array($ret, null, null);
 		    }
 		    foreach ($preferences as $preference) {
 			if ($preference['derivativeType'] == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
@@ -136,15 +135,14 @@ class ItemAddLinkItem extends ItemAddPlugin {
 		    }
 		    if (empty($derivativeOperations)) {
 			GalleryCoreApi::releaseLocks($lockIds);
-			return array(GalleryCoreApi::error(ERROR_MISSING_VALUE,
-							  __FILE__, __LINE__), null, null);
+			return array(GalleryCoreApi::error(ERROR_MISSING_VALUE), null, null);
 		    }
 		    list ($ret, $isSupported, $outputMimeType) =
 			GalleryCoreApi::isSupportedOperationSequence(
 			    $source->getMimeType(), $derivativeOperations);
 		    if ($ret) {
 			GalleryCoreApi::releaseLocks($lockIds);
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return array($ret, null, null);
 		    }
 		    if ($isSupported) {
 			$derivative->setDerivativeOperations($derivativeOperations);
@@ -157,7 +155,7 @@ class ItemAddLinkItem extends ItemAddPlugin {
 				$outputMimeType, $watermarkOp);
 			if ($ret) {
 			    GalleryCoreApi::releaseLocks($lockIds);
-			    return array($ret->wrap(__FILE__, __LINE__), null, null);
+			    return array($ret, null, null);
 			}
 			if ($isSupported) {
 			    $derivative->setPostFilterOperations($watermarkOp);
@@ -170,12 +168,12 @@ class ItemAddLinkItem extends ItemAddPlugin {
 			$ret = GalleryCoreApi::estimateDerivativeDimensions($derivative, $source);
 			if ($ret) {
 			    GalleryCoreApi::releaseLocks($lockIds);
-			    return array($ret->wrap(__FILE__, __LINE__), null, null);
+			    return array($ret, null, null);
 			}
 			$ret = $derivative->save();
 			if ($ret) {
 			    GalleryCoreApi::releaseLocks($lockIds);
-			    return array($ret->wrap(__FILE__, __LINE__), null, null);
+			    return array($ret, null, null);
 			}
 
 			/* Set as album highlight if no highlight yet */
@@ -183,14 +181,14 @@ class ItemAddLinkItem extends ItemAddPlugin {
 			    GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
 			if ($ret) {
 			    GalleryCoreApi::releaseLocks($lockIds);
-			    return array($ret->wrap(__FILE__, __LINE__), null, null);
+			    return array($ret, null, null);
 			}
 			if (empty($thumbnailTable)) {
 			    list ($ret) = GalleryCoreApi::setThumbnailFromItem(
 							  $item->getId(), $newItem->getId());
 			    if ($ret) {
 				GalleryCoreApi::releaseLocks($lockIds);
-				return array($ret->wrap(__FILE__, __LINE__), null, null);
+				return array($ret, null, null);
 			    }
 			}
 		    }
@@ -203,7 +201,7 @@ class ItemAddLinkItem extends ItemAddPlugin {
 
 		$ret = GalleryCoreApi::releaseLocks($lockId);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret, null, null);
 		}
 	    }
 	}
@@ -223,11 +221,11 @@ class ItemAddLinkItem extends ItemAddPlugin {
 
 	list ($ret, $albumIds) = GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.view');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($albumIds);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	$template->setVariable('ItemAddLinkItem',
 	    array('albumTree' => GalleryUtilities::createAlbumTree($albums)));
@@ -242,7 +240,7 @@ class ItemAddLinkItem extends ItemAddPlugin {
     function getTitle() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'linkitem');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $module->translate('Link'));

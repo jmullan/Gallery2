@@ -50,12 +50,12 @@ class FlushDatabaseCacheTaskTest extends GalleryTestCase {
 
 	list ($ret, $success, $details) = $task->run();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$expected = array();
@@ -88,12 +88,12 @@ class FlushDatabaseCacheTaskTest extends GalleryTestCase {
 
 	list ($ret, $success, $details) = $task->run();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$expected = array();

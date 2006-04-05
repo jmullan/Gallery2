@@ -45,7 +45,7 @@ class Picasa2DataParserTest extends GalleryControllerTestCase {
 	$testRawXml = '<?xml encoding="utf-8" ?>';
 	list ($ret, $picasaXmlArray) = Picasa2DataParser::getXmlArray($testRawXml);
 	/*if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}*/
 	$this->assertEquals($ret->_errorMessage, 'Error parsing XML.');
     }
@@ -59,7 +59,7 @@ class Picasa2DataParserTest extends GalleryControllerTestCase {
 	    '<albumItemCount>2</albumItemCount></album></albumName>';
 	list ($ret, $picasaXmlArray) = Picasa2DataParser::getXmlArray($testRawXml);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$expected = array('album' => array ('open' => array ('content' => 'GalleryTest'),
 	    'albumName' => array ('albumItemCount' => '2')));
@@ -103,7 +103,7 @@ class Picasa2DataParserTest extends GalleryControllerTestCase {
             '</album>';
         list ($ret, $picasaXmlArray) = Picasa2DataParser::getXmlArray($testRawXml);
         if ($ret) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+            return $this->failWithStatus($ret);
         }
         $expected = array('album' =>
             array(
@@ -179,7 +179,7 @@ class Picasa2DataParserTest extends GalleryControllerTestCase {
         );
         list ($ret, $albumArray) = Picasa2DataParser::getAlbumFromArray($testPicasaXmlArray);
         if ($ret) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+            return $this->failWithStatus($ret);
         }
         $expected = array (
             'albumName' => 'GalleryTest',

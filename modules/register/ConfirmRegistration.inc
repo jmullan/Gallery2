@@ -61,7 +61,7 @@ class ConfirmRegistrationController extends GalleryController {
 		    $results['error'][] = 'form[error][unknownUser]';
 		}
 	    } else {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	} else {
 	    /* verify registration key: */
@@ -70,7 +70,7 @@ class ConfirmRegistrationController extends GalleryController {
 	    } else {
 		$ret = GalleryPendingUserHelper::createGalleryUser($user);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	}

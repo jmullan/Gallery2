@@ -43,7 +43,7 @@ class ThumbnailToolkit extends GalleryToolkit {
      * @see GalleryToolkit::getProperty()
      */
     function getProperty($mimeType, $propertyName, $sourceFilename) {
-	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
     }
 
     /**
@@ -57,7 +57,7 @@ class ThumbnailToolkit extends GalleryToolkit {
 
 	list ($ret, $mimeTypeMap) = ThumbnailHelper::fetchMimeTypeMap();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	if (!isset($mimeTypeMap[$mimeType]) || $operationName != 'convert-to-image/jpeg') {
 	    return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
@@ -65,11 +65,11 @@ class ThumbnailToolkit extends GalleryToolkit {
 	}
 	list ($ret, $thumbImage) = GalleryCoreApi::loadEntitiesById($mimeTypeMap[$mimeType]);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	list ($ret, $thumbPath) = $thumbImage->fetchPath();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	$outputMimeType = 'image/jpeg';

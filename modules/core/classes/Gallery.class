@@ -222,7 +222,7 @@ class Gallery {
 	$storage =& $this->getStorage();
 	list ($ret, $results) = $storage->search($query, $data, $options);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $results);
@@ -314,7 +314,7 @@ class Gallery {
 	    $this->_session = new GallerySession();
 	    $ret = $this->_session->init();
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
@@ -376,7 +376,7 @@ class Gallery {
 		list ($ret, $which) =
 		    GalleryCoreApi::getPluginParameter('module', 'core', 'lock.system');
 		if ($ret) {
-		    $ret = array($ret->wrap(__FILE__, __LINE__), null);
+		    $ret = array($ret, null);
 		    return $ret;
 		}
 	    } else {
@@ -399,7 +399,7 @@ class Gallery {
 		break;
 
 	    default:
-		$ret = array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+		$ret = array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 		return $ret;
 	    }
 	}
@@ -562,18 +562,18 @@ class Gallery {
 	    /* Do we already have an activeLanguage for this session? */
 	    list ($ret, $language) = $this->getActiveLanguageCode();
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 
 	    }
 
 	    $this->_translator = new GalleryTranslator();
 	    list ($ret, $languageCode) = $this->_translator->init($language, $dontUseDatabase);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    $ret = $this->setActiveLanguageCode($languageCode);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 

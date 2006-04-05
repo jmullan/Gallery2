@@ -39,7 +39,7 @@ class ArchiveUploadSiteAdminController extends GalleryController {
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$status = $error = array();
@@ -75,16 +75,16 @@ class ArchiveUploadSiteAdminController extends GalleryController {
 		$ret = GalleryCoreApi::setPluginParameter(
 				       'module', 'archiveupload', 'unzipPath', $form['unzipPath']);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'archiveupload');
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		list ($ret, $isActive) = $module->isActive();
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		if ($isActive) {
@@ -127,7 +127,7 @@ class ArchiveUploadSiteAdminView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if ($form['formName'] != 'ArchiveUploadSiteAdmin') {
@@ -136,18 +136,18 @@ class ArchiveUploadSiteAdminView extends GalleryView {
 		list ($ret, $form[$key]) =
 		    GalleryCoreApi::getPluginParameter('module', 'archiveupload', $key);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'archiveupload');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	list ($ret, $isActive) = $module->isActive();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$form['isConfigure'] = !$isActive;
 

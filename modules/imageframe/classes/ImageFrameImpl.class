@@ -52,7 +52,7 @@ class ImageFrameImpl extends ImageFrameInterface_1_1 {
 	 */
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imageframe', true);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$frames = array('solid' => $module->translate('Solid'));
@@ -95,7 +95,7 @@ class ImageFrameImpl extends ImageFrameInterface_1_1 {
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imageframe');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$urlGenerator =& $gallery->getUrlGenerator();
 	$baseUrl = $urlGenerator->generateUrl(array('href' => 'modules/imageframe/frames'));

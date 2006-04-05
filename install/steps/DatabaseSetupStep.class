@@ -268,7 +268,7 @@ class DatabaseSetupStep extends InstallStep {
 		$this->_captureStart();
 		$ret = $this->_cleanDatabase();
 		if ($ret) {
-		    $ret = $ret->wrap(__FILE__, __LINE__);
+		    $ret = $ret;
 		    global $gallery;
 		    $templateData['errors'][] =
 			_('Could not execute the required API to drop the Gallery database tables' .
@@ -675,12 +675,12 @@ class DatabaseSetupStep extends InstallStep {
 	$gallery->setDebug('immediate');
 	$ret = $storage->cleanStore();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = $storage->commitTransaction();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;

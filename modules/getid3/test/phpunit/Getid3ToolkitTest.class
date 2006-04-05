@@ -58,7 +58,7 @@ class Getid3ToolkitTest extends GalleryTestCase {
 	    $this->_toolkit->getProperty('video/x-msvideo', 'originationTimestamp',
 	                                 dirname(__FILE__) . '/../data/test_small.avi');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(array(mktime(15, 06, 18, 1, 15, 2006)),
 	                    $results,
@@ -68,7 +68,7 @@ class Getid3ToolkitTest extends GalleryTestCase {
 	    $this->_toolkit->getProperty('video/quicktime', 'originationTimestamp',
 	                                 dirname(__FILE__) . '/../data/newday.mov');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	/* Use mktime() instead of hardcoding a value */
 	/* mktime(21, 18, 18, 5, 28, 2000) */

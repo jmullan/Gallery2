@@ -57,11 +57,11 @@ class DownloadRegistryFileView extends GalleryView {
 	/* Get the name of the gallery */
 	list($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	list($ret, $root) = GalleryCoreApi::loadEntitiesById($rootId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$title = $root->getTitle();
 
@@ -80,7 +80,7 @@ class DownloadRegistryFileView extends GalleryView {
 	list ($ret, $html) =
 	    $template->fetch('gallery:modules/publishxp/templates/DownloadRegistryFile.tpl');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Make sure we use Windows line endings */

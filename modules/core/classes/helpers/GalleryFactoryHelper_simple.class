@@ -98,7 +98,7 @@ class GalleryFactoryHelper_simple {
                 ';
 		list ($ret, $searchResults) = $gallery->search($query);
 		if ($ret) {
-		    $ret = array($ret->wrap(__FILE__, __LINE__), null);
+		    $ret = array($ret, null);
 		    return $ret;
 		}
 
@@ -134,7 +134,7 @@ class GalleryFactoryHelper_simple {
     function newInstanceByHint($classType, $hints) {
 	list ($ret, $registry) = GalleryFactoryHelper_simple::_getFactoryData();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (!is_array($hints)) {
 	    $hints = array($hints);
@@ -156,7 +156,7 @@ class GalleryFactoryHelper_simple {
 	$className = $classNames[0];
 	list ($ret, $instance) = GalleryFactoryHelper_simple::newInstance($classType, $className);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $instance);
@@ -176,7 +176,7 @@ class GalleryFactoryHelper_simple {
 
 	list ($ret, $registry) = GalleryFactoryHelper_simple::_getFactoryData();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if (!isset($className)) {

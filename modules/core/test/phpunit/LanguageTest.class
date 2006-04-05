@@ -47,7 +47,7 @@ class LanguageTest extends GalleryControllerTestCase {
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.language');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -65,7 +65,7 @@ class LanguageTest extends GalleryControllerTestCase {
 
 	list ($ret, $language) = $gallery->getActiveLanguageCode();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(null, $language, 'not set');
 
@@ -76,7 +76,7 @@ class LanguageTest extends GalleryControllerTestCase {
 
 	list ($ret, $language) = $gallery->getActiveLanguageCode();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals('test_language', $language, 'user language');
 
@@ -84,7 +84,7 @@ class LanguageTest extends GalleryControllerTestCase {
 
 	list ($ret, $language) = $gallery->getActiveLanguageCode();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals('sess_language', $language, 'session language');
     }
@@ -101,7 +101,7 @@ class LanguageTest extends GalleryControllerTestCase {
 
 	list ($ret, $language) = $gallery->getActiveLanguageCode();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals('test_language', $language, 'language');
     }

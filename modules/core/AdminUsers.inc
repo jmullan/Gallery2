@@ -42,7 +42,7 @@ class AdminUsersController extends GalleryController {
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$status = array();
@@ -54,7 +54,7 @@ class AdminUsersController extends GalleryController {
 		GalleryCoreApi::fetchUserByUserName($form['text']['userName']);
 	    if ($ret) {
 		if (!($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	}
@@ -98,7 +98,7 @@ class AdminUsersController extends GalleryController {
 		list ($ret, $anonymousUserId) =
 		    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		if ($user->getId() == $anonymousUserId) {
@@ -147,7 +147,7 @@ class AdminUsersView extends GalleryView {
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if ($form['formName'] != 'AdminUsers') {
@@ -167,7 +167,7 @@ class AdminUsersView extends GalleryView {
 	/* Fetch the user count every time we reload */
 	list ($ret, $totalUserCount) = GalleryCoreApi::fetchUserCount();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$form['list']['count'] = $totalUserCount;
@@ -178,7 +178,7 @@ class AdminUsersView extends GalleryView {
 	    list ($ret, $form['list']['count']) =
 		GalleryCoreApi::fetchUserCount($form['list']['filter']);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 
@@ -197,13 +197,13 @@ class AdminUsersView extends GalleryView {
 					   ($form['list']['page'] - 1) * $form['list']['pageSize'],
 					   $form['list']['filter']);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$myUserId = $gallery->getActiveUserId();

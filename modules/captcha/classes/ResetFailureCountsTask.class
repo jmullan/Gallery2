@@ -56,21 +56,21 @@ class ResetFailureCountsTask extends MaintenanceTask {
     function run() {
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'captcha');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	foreach ($params as $key => $value) {
 	    if (substr($key, 0, 10) == 'failCount-') {
 		$ret = GalleryCoreApi::removePluginParameter('module', 'captcha', $key);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret, null, null);
 		}
 	    }
 	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'captcha');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	return array(null, true, array($module->translate('Successfully reset failure counts')));

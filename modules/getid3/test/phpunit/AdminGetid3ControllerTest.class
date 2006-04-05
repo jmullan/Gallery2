@@ -45,24 +45,24 @@ class AdminGetid3ControllerTest extends GalleryControllerTestCase {
 	list ($ret, $this->_save['summary']) = Getid3Helper::getProperties(GETID3_SUMMARY);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_save['detailed']) = Getid3Helper::getProperties(GETID3_DETAILED);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = Getid3Helper::setDefaultProperties(GETID3_SUMMARY);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = Getid3Helper::setDefaultProperties(GETID3_DETAILED);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -73,13 +73,13 @@ class AdminGetid3ControllerTest extends GalleryControllerTestCase {
 	$ret = Getid3Helper::setProperties(GETID3_SUMMARY, $this->_save['summary']);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = Getid3Helper::setProperties(GETID3_DETAILED, $this->_save['detailed']);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -98,7 +98,7 @@ class AdminGetid3ControllerTest extends GalleryControllerTestCase {
 	/* Make sure they're there */
 	list ($ret, $properties) = Getid3Helper::getProperties(GETID3_SUMMARY);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assert(in_array('Genre', $properties));
@@ -120,7 +120,7 @@ class AdminGetid3ControllerTest extends GalleryControllerTestCase {
 	/* Make sure they're gone */
 	list ($ret, $properties) = Getid3Helper::getProperties(GETID3_SUMMARY);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assert(!in_array('Artist', $properties));
@@ -153,7 +153,7 @@ class AdminGetid3ControllerTest extends GalleryControllerTestCase {
 	/* Verify the new positions */
 	list ($ret, $properties) = Getid3Helper::getProperties(GETID3_SUMMARY);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals('Album',  $properties[0]);
@@ -188,7 +188,7 @@ class AdminGetid3ControllerTest extends GalleryControllerTestCase {
 	/* Verify the new positions */
 	list ($ret, $properties) = Getid3Helper::getProperties(GETID3_SUMMARY);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals('Artist', $properties[0]);
@@ -212,7 +212,7 @@ class AdminGetid3ControllerTest extends GalleryControllerTestCase {
 	/* Remove all properties */
 	$ret = Getid3Helper::setProperties(GETID3_SUMMARY, array());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryUtilities::putRequestVariable('form[action][resetSummary]', 1);
@@ -226,7 +226,7 @@ class AdminGetid3ControllerTest extends GalleryControllerTestCase {
 	/* Make sure they're all back again */
 	list ($ret, $properties) = Getid3Helper::getProperties(GETID3_SUMMARY);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(5, sizeof($properties));
@@ -250,7 +250,7 @@ class AdminGetid3ControllerTest extends GalleryControllerTestCase {
 	/* Make sure they're there */
 	list ($ret, $properties) = Getid3Helper::getProperties(GETID3_DETAILED);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assert(in_array('Playtime (Seconds)', $properties));
@@ -272,7 +272,7 @@ class AdminGetid3ControllerTest extends GalleryControllerTestCase {
 	/* Make sure they're gone */
 	list ($ret, $properties) = Getid3Helper::getProperties(GETID3_DETAILED);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assert(!in_array('Artist', $properties));
@@ -306,7 +306,7 @@ class AdminGetid3ControllerTest extends GalleryControllerTestCase {
 	/* Verify the new positions */
 	list ($ret, $properties) = Getid3Helper::getProperties(GETID3_DETAILED);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals('Album', $properties[0]);
@@ -341,7 +341,7 @@ class AdminGetid3ControllerTest extends GalleryControllerTestCase {
 	/* Verify the new positions */
 	list ($ret, $properties) = Getid3Helper::getProperties(GETID3_DETAILED);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals('Artist', $properties[1]);
@@ -364,7 +364,7 @@ class AdminGetid3ControllerTest extends GalleryControllerTestCase {
 	/* Remove all properties */
 	$ret = Getid3Helper::setProperties(GETID3_DETAILED, array());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryUtilities::putRequestVariable('form[action][resetDetailed]', 1);
@@ -378,7 +378,7 @@ class AdminGetid3ControllerTest extends GalleryControllerTestCase {
 	/* Make sure they're all back again */
 	list ($ret, $properties) = Getid3Helper::getProperties(GETID3_DETAILED);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Spot check */

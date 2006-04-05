@@ -41,14 +41,14 @@ class AdminEditGroupController extends GalleryController {
     function handleRequest($form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$results = $status = $error = array();
 	$groupId = GalleryUtilities::getRequestVariables('groupId');
 	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($groupId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if (isset($form['action']['cancel'])) {
@@ -71,7 +71,7 @@ class AdminEditGroupController extends GalleryController {
 	    } else {
 		list ($ret, $tmpGroup) = GalleryCoreApi::fetchGroupByGroupname($form['groupName']);
 		if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		if (!empty($tmpGroup) && $tmpGroup->getId() != $groupId) {
@@ -83,25 +83,25 @@ class AdminEditGroupController extends GalleryController {
 		/* Save our changes */
 		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($groupId);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		/* Refresh our object, now that it's locked */
 		list ($ret, $group) = $group->refresh();
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		/* Enact the change */
 		$group->setGroupName($form['groupName']);
 		$ret = $group->save();
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		$ret = GalleryCoreApi::releaseLocks($lockId);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		/* Request a redirect to the confirmation screen */
@@ -138,13 +138,13 @@ class AdminEditGroupView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$groupId = GalleryUtilities::getRequestVariables('groupId');
 	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($groupId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if ($form['formName'] != 'AdminEditGroup') {

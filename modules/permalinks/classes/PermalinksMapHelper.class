@@ -60,7 +60,7 @@ class PermalinksMapHelper {
 
 	    list ($ret, $searchResults) = $gallery->search($query, $data);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	} else {
 	    $query = '
@@ -72,7 +72,7 @@ class PermalinksMapHelper {
 
 	    list ($ret, $searchResults) = $gallery->search($query);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 
@@ -107,7 +107,7 @@ class PermalinksMapHelper {
 
 	list ($ret, $searchResults) = $gallery->search($query, $data);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if ($result = $searchResults->nextResult()) {
@@ -132,18 +132,18 @@ class PermalinksMapHelper {
 	/* first, check for collision */
 	list($ret, $collisionId) = PermalinksMapHelper::fetchItemIdForAlias($aliasName);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	if (isset($collisionId)) {
 	    /* we expected null, this means we have a collision. Throw it */
-	    return GalleryCoreApi::error(ERROR_COLLISION, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_COLLISION);
 	}
 
 	/* Add a new alias */
 	$ret = GalleryCoreApi::addMapEntry('PermalinksMap',
 					   array('aliasName' => $aliasName, 'destId' => $itemId));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -162,7 +162,7 @@ class PermalinksMapHelper {
 	/* Remove this alias from our groups table. */
 	$ret = GalleryCoreApi::removeMapEntry('PermalinksMap', array('aliasName' => $aliasName));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;

@@ -55,13 +55,13 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 	    $this->_createRandomAlbum($this->_getRootId(), array('orderBy' => 'orderWeight'));
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_album);
 
 	list ($ret, $this->_lockIds) = GalleryCoreApi::acquireReadLock($this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	global $gallery;
@@ -87,7 +87,7 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 
 	$ret = GalleryCoreApi::releaseLocks($this->_lockIds);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 
 	$session =& $gallery->getSession();
@@ -142,14 +142,14 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 
 	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($this->_album);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$i = 0;
 	foreach ($ids as $id) {
 	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($id);
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    $base = $basenames[$i];
 	    $this->assertEquals($base, $item->getTitle(), "title $i");
@@ -184,7 +184,7 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 		      'webPage' => 'http://www.test.com/t/index.php?foo=bar');
 	list ($ret) = $this->_plugin->loadTemplate($template, $form, $this->_album);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(array('ItemAddFromWeb' =>
@@ -230,7 +230,7 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 		      'webPage' => 'http://www.test.com/page.php');
 	list ($ret) = $this->_plugin->loadTemplate($template, $form, $this->_album);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(array('ItemAddFromWeb' =>
@@ -261,7 +261,7 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 		      'webPage' => 'http://www.test.com/redirect.php');
 	list ($ret) = $this->_plugin->loadTemplate($template, $form, $this->_album);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(array('ItemAddFromWeb' =>
@@ -290,7 +290,7 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 		      'action' => array('findFilesFromWebPage' => true));
 	list ($ret) = $this->_plugin->loadTemplate($template, $form, $this->_album);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(array('formName' => 'ItemAddFromWeb',
@@ -307,7 +307,7 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 		      'webPage' => 'bogus:url.html');
 	list ($ret) = $this->_plugin->loadTemplate($template, $form, $this->_album);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(array('formName' => 'ItemAddFromWeb',
@@ -325,7 +325,7 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 		      'webPage' => 'http://www.test.com/404.jpg');
 	list ($ret) = $this->_plugin->loadTemplate($template, $form, $this->_album);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(array('formName' => 'ItemAddFromWeb',

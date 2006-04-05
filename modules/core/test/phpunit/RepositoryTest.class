@@ -191,7 +191,7 @@ class RepositoryTest extends GalleryTestCase {
 	/* Get installed core version. */
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	$installedCoreVersion = $core->getVersion();
 
@@ -272,11 +272,11 @@ class RepositoryTest extends GalleryTestCase {
 	global $gallery;
 	list ($ret, $saveLanguage) = $gallery->getActiveLanguageCode();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = $gallery->setActiveLanguageCode('en_US');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$testModule = $this->_sampleIndex['modules']['testModule'];
@@ -385,7 +385,7 @@ class RepositoryTest extends GalleryTestCase {
 
 	$ret = $gallery->setActiveLanguageCode($saveLanguage);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 

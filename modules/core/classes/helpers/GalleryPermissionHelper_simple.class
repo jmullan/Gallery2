@@ -51,7 +51,7 @@ class GalleryPermissionHelper_simple {
 	if (!GalleryDataCache::containsKey($cacheKey)) {
 	    list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($userId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    $groupIds = array_keys($groupIds);
 	    if ($sessionPermissions && $userId == $gallery->getActiveUserId()) {
@@ -66,14 +66,14 @@ class GalleryPermissionHelper_simple {
 
 	    list ($ret, $bits) = GalleryCoreApi::convertPermissionIdsToBits($permission);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    $storage =& $gallery->getStorage();
 	    list ($ret, $bitAndPermission) =
 		$storage->getFunctionSql('BITAND', array('[GalleryAccessMap::permission]', '?'));
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    $query = '
@@ -96,7 +96,7 @@ class GalleryPermissionHelper_simple {
 
 	    list ($ret, $results) = $gallery->search($query, $data);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    $aclIds = array();
@@ -136,7 +136,7 @@ class GalleryPermissionHelper_simple {
 
 	list ($ret, $allPermissions) = GalleryPermissionHelper_simple::_fetchAllPermissions();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$results = 0;
@@ -184,7 +184,7 @@ class GalleryPermissionHelper_simple {
 
 	    list ($ret, $searchResults) = $gallery->search($query);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    /*
@@ -206,7 +206,7 @@ class GalleryPermissionHelper_simple {
 		    $translator->translateDomain('modules_' . $result[0],
 						 array('text' => $result[2]));
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		$permissions[$result[1]] = array('module' => $result[0],

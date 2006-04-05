@@ -40,7 +40,7 @@ class ColorPackInterface_1_0 {
      *               array of colorpack_id => localized_colorpack_name
      */
     function getColorPacks() {
-	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
     }
 
     /**
@@ -50,7 +50,7 @@ class ColorPackInterface_1_0 {
      * @return object GalleryStatus a status code
      */
     function selectColorPack(&$template, $colorpack) {
-	return GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+	return GalleryCoreApi::error(ERROR_UNIMPLEMENTED);
     }
 }
 ?>

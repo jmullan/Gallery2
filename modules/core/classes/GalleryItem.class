@@ -184,21 +184,21 @@ class GalleryItem extends GalleryFileSystemEntity {
 	global $gallery;
 
 	if (!isset($path) || !isset($parentId)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
 	list($ret, $parent) = GalleryCoreApi::loadEntitiesById($parentId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	if (!$parent->getCanContainChildren()) {
-	    return GalleryCoreApi::error(ERROR_ILLEGAL_CHILD, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_ILLEGAL_CHILD);
 	}
 
 	$ret = parent::create($parentId, $path);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Record the owner */
@@ -236,7 +236,7 @@ class GalleryItem extends GalleryFileSystemEntity {
 
 	$ret = parent::createRoot();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Record the owner */
@@ -259,16 +259,16 @@ class GalleryItem extends GalleryFileSystemEntity {
 
 	$ret = parent::createLink($entity, $parentId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	list($ret, $parent) = GalleryCoreApi::loadEntitiesById($parentId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	if (!$parent->getCanContainChildren()) {
-	    return GalleryCoreApi::error(ERROR_ILLEGAL_CHILD, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_ILLEGAL_CHILD);
 	}
 
 	/* Record the owner */
@@ -313,7 +313,7 @@ class GalleryItem extends GalleryFileSystemEntity {
 	list ($ret, $searchResults) =
 	    $gallery->search($query, array($this->getId()));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	while ($result = $searchResults->nextResult()) {
@@ -326,20 +326,20 @@ class GalleryItem extends GalleryFileSystemEntity {
 	     * since we only care that it's gone.
 	     */
 	    if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
 	/* Delete myself */
 	$ret = parent::delete();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Remove all my attributes */
 	$ret = GalleryCoreApi::removeItemAttributes($this->getId());
 	if ($ret) {
-	    return $ret2->wrap(__FILE__, __LINE__);
+	    return $ret2;
 	}
 
 	if ($this->getParentId()) {
@@ -347,7 +347,7 @@ class GalleryItem extends GalleryFileSystemEntity {
 	    $event->setData(array('userId' => null, 'itemId' => $this->getParentId()));
 	    list ($ret) = GalleryCoreApi::postEvent($event);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    /* Instruct G2 to "touch" modification timestamp of parent album at end of request */
@@ -369,7 +369,7 @@ class GalleryItem extends GalleryFileSystemEntity {
 	$parentId = $this->getParentId();
 	$ret = parent::move($newParentId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
@@ -377,7 +377,7 @@ class GalleryItem extends GalleryFileSystemEntity {
 	    empty($parentId) ? $this->getParentId() : array($parentId, $this->getParentId())));
 	list ($ret) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -401,14 +401,14 @@ class GalleryItem extends GalleryFileSystemEntity {
 	if ($isNew && $this->getParentId()) {
 	    list ($ret, $setAclId) = GalleryCoreApi::fetchAccessListId($this->getParentId());
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
 	/* Save myself */
 	$ret = parent::save($postEvent, $setAclId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	if ($isNew) {
@@ -416,7 +416,7 @@ class GalleryItem extends GalleryFileSystemEntity {
 		list ($ret, $parentSequence) =
 		    GalleryCoreApi::fetchParentSequence($this->getParentId());
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 		$parentSequence[] = $this->getParentId();
 	    } else {
@@ -426,7 +426,7 @@ class GalleryItem extends GalleryFileSystemEntity {
 	    /* Create an empty attribute entry */
 	    $ret = GalleryCoreApi::createItemAttributes($this->getId(), $parentSequence);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    if ($this->getParentId()) {
@@ -434,7 +434,7 @@ class GalleryItem extends GalleryFileSystemEntity {
 		$event->setData(array('userId' => null, 'itemId' => $this->getParentId()));
 		list ($ret) = GalleryCoreApi::postEvent($event);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	}

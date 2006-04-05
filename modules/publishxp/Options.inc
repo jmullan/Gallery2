@@ -88,7 +88,7 @@ class OptionsView extends GalleryView {
 	    }
 
 	    if (empty($form['albumId'])) {
-		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	    }
 	}
 
@@ -99,14 +99,14 @@ class OptionsView extends GalleryView {
 	} else {
 	    list ($ret, $optionInstances) = ItemAddOption::getAllAddOptions();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 
 	/* Now let all options load their template data */
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($form['albumId']);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$Options['options'] = array();
@@ -114,7 +114,7 @@ class OptionsView extends GalleryView {
 	    list ($ret, $entry['file'], $entry['l10Domain']) =
 		$option->loadTemplate($template, $form, $item);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    if (!empty($entry['file'])) {
 		$Options['options'][] = $entry;

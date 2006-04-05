@@ -44,17 +44,17 @@ class ShowAllCommentsView extends GalleryView {
 
 	list ($ret, $item) = $this->_getItem();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'comment.view');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $showCount) =
 	    GalleryCoreApi::getPluginParameter('module', 'comment', 'comments.show');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$page = GalleryUtilities::getRequestVariables('page');
 	if (empty($page)) {
@@ -64,7 +64,7 @@ class ShowAllCommentsView extends GalleryView {
 	list ($ret, $comments, $count) = GalleryCommentHelper::fetchAllComments(
 	    $item->getId(), $showCount, ($page - 1) * $showCount, ORDER_DESCENDING);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$commenters = $itemIds = $can = $itemData = array();
@@ -81,7 +81,7 @@ class ShowAllCommentsView extends GalleryView {
 	    list ($ret, $commentersList) =
 		GalleryCoreApi::loadEntitiesById(array_keys($commenters));
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    foreach ($commentersList as $commenter) {
@@ -93,25 +93,25 @@ class ShowAllCommentsView extends GalleryView {
 	    $itemIds = array_keys($itemIds);
 	    $ret = GalleryCoreApi::studyPermissions($itemIds);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    list ($ret, $itemList) = GalleryCoreApi::loadEntitiesById($itemIds);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    foreach ($itemList as $it) {
 		$items[$it->getId()] = (array)$it;
 	    }
 	    list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds($itemIds);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 
 	foreach ($comments as $comment) {
 	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($comment['parentId']);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    foreach (array('delete' => 'comment.delete',
 			   'edit' => 'comment.edit') as $canFlag => $permission) {
@@ -160,7 +160,7 @@ class ShowAllCommentsView extends GalleryView {
     function getViewDescription() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'comment');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $module->translate('show comments'));

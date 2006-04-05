@@ -42,7 +42,7 @@ class Getid3DescriptionOption extends ItemAddOption {
 	list ($ret, $addOption) =
 	     GalleryCoreApi::getPluginParameter('module', 'getid3', 'addOption');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), false);
+	    return array($ret, false);
 	}
 	return array(null, $addOption > 0);
     }
@@ -59,7 +59,7 @@ class Getid3DescriptionOption extends ItemAddOption {
 	list ($ret, $addOption) =
 	    GalleryCoreApi::getPluginParameter('module', 'getid3', 'addOption');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	/* Copy the array because we will change it with do / while / array_splice */
@@ -77,7 +77,7 @@ class Getid3DescriptionOption extends ItemAddOption {
 	    }
 	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($itemIds);
 	    if ($ret) {
-	        return array($ret->wrap(__FILE__, __LINE__), null, null);
+	        return array($ret, null, null);
 	    }
 
 	    for ($i = 0; $i < count($currentItems); $i++) {
@@ -92,7 +92,7 @@ class Getid3DescriptionOption extends ItemAddOption {
 	                );
 	            if ($ret) {
 	                GalleryCoreApi::releaseLocks($lockId);
-	                return array($ret->wrap(__FILE__, __LINE__), null, null);
+	                return array($ret, null, null);
 	            }
 
 	            $mustSave = false;
@@ -108,7 +108,7 @@ class Getid3DescriptionOption extends ItemAddOption {
 	                $ret = $currentItems[$i]->save();
 	                if ($ret) {
 	                    GalleryCoreApi::releaseLocks($lockId);
-	                    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	                    return array($ret, null, null);
 	                }
 	            }
 	        }
@@ -116,7 +116,7 @@ class Getid3DescriptionOption extends ItemAddOption {
 
 	    $ret = GalleryCoreApi::releaseLocks($lockId);
 	    if ($ret) {
-	        return array($ret->wrap(__FILE__, __LINE__), null, null);
+	        return array($ret, null, null);
 	    }
 	} while (!empty($itemsInBatches));
 

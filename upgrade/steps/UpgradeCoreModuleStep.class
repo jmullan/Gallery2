@@ -39,7 +39,7 @@ class UpgradeCoreModuleStep extends UpgradeStep {
 	if (empty($translator)) {
 	    $ret = $gallery->initTranslator(true /* dontUseDatabase */ );
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
@@ -149,7 +149,7 @@ class UpgradeCoreModuleStep extends UpgradeStep {
 
 	list ($ret, $modules) = GalleryCoreApi::fetchPluginList('module');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	foreach ($modules as $moduleId => $moduleInfo) {
@@ -160,7 +160,7 @@ class UpgradeCoreModuleStep extends UpgradeStep {
 		    if ($ret->getErrorCode() & (ERROR_BAD_PLUGIN | ERROR_BAD_PARAMETER)) {
 			$results['module'][$moduleId] = array('missing' => 1);
 		    } else {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		} else {
 		    if (!GalleryCoreApi::isPluginCompatibleWithApis($module)) {
@@ -175,7 +175,7 @@ class UpgradeCoreModuleStep extends UpgradeStep {
 
 	list ($ret, $themes) = GalleryCoreApi::fetchPluginList('theme');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	foreach ($themes as $themeId => $themeInfo) {
@@ -186,7 +186,7 @@ class UpgradeCoreModuleStep extends UpgradeStep {
 		    if ($ret->getErrorCode() & (ERROR_BAD_PLUGIN | ERROR_BAD_PARAMETER)) {
 			$results['theme'][$themeId] = array('missing' => 1);
 		    } else {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		} else {
 		    if (!GalleryCoreApi::isPluginCompatibleWithApis($theme)) {

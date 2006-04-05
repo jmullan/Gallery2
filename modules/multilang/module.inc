@@ -59,7 +59,7 @@ class MultiLangModule extends GalleryModule /* and GalleryEventListener */ {
 	if (!isset($currentVersion)) {
 	    $ret = $this->setParameter('languages', '');
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
@@ -74,21 +74,21 @@ class MultiLangModule extends GalleryModule /* and GalleryEventListener */ {
 	    'ItemEditPlugin', 'MultiLangItemEdit', 'MultiLangItemEdit',
 	    'modules/multilang/MultiLangItemEdit.inc', 'multilang', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GalleryOnLoadHandler', 'MultiLangModule', 'MultiLang',
 	    'modules/multilang/module.inc', 'multilang', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GallerySearchInterface_1_0', 'MultiLangSearch', 'MultiLang',
 	    'modules/multilang/classes/MultiLangSearch.class', 'multilang', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -108,7 +108,7 @@ class MultiLangModule extends GalleryModule /* and GalleryEventListener */ {
 	/* This module requires gettext to be installed */
 	list ($ret, $needsConfiguration) = $this->needsConfiguration();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	return array(null, !$needsConfiguration);
     }
@@ -155,7 +155,7 @@ class MultiLangModule extends GalleryModule /* and GalleryEventListener */ {
 	    GalleryCoreApi::requireOnce('modules/multilang/classes/MultiLangHelper.class');
 	    $ret = MultiLangHelper::onLoad($entity);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 	return null;
@@ -171,7 +171,7 @@ class MultiLangModule extends GalleryModule /* and GalleryEventListener */ {
 	    $ret = GalleryCoreApi::removeMapEntry(
 		'MultiLangItemMap', array('itemId' => $entity->getId()));
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 	return array(null, null);

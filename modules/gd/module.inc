@@ -55,7 +55,7 @@ class GdModule extends GalleryModule {
 	    /* Initial install */
 	    $ret = $this->setParameter('jpegQuality', '75');
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
@@ -71,7 +71,7 @@ class GdModule extends GalleryModule {
 	    'GalleryToolkit', 'GdToolkit', 'Gd',
 	    'modules/gd/classes/GdToolkit.class', 'gd', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -88,18 +88,18 @@ class GdModule extends GalleryModule {
 	list ($ret, $results) =
 	    GdToolkitHelper::getOperationsAndProperties();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $priority) = GalleryCoreApi::getToolkitPriorityById('Gd');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if (!$priority) {
 	    list ($ret, $priority) = GalleryCoreApi::getMaximumManagedToolkitPriority();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    $priority++;
 	}
@@ -113,7 +113,7 @@ class GdModule extends GalleryModule {
 							    $info['description'],
 							    $outputMimeType, $priority);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 
@@ -124,13 +124,13 @@ class GdModule extends GalleryModule {
 							   $info['type'],
 							   $info['description']);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 
 	list ($ret, $redirect) = parent::activate($postActivationEvent);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $redirect);
@@ -147,12 +147,12 @@ class GdModule extends GalleryModule {
 	 */
 	$ret = GalleryCoreApi::unregisterToolkit('Gd');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $redirect) = parent::deactivate($postDeactivationEvent);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $redirect);
@@ -165,7 +165,7 @@ class GdModule extends GalleryModule {
 	/* This module requires all fields to be filled out before it can be activated. */
 	list ($ret, $value) = $this->getParameter('jpegQuality');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (empty($value)) {
 	    return array(null, true);
@@ -179,7 +179,7 @@ class GdModule extends GalleryModule {
 
 	list($ret, $isSupported) = GdToolkitHelper::isGdVersionSupported();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (!$isSupported) {
 	    return array(null, true);
@@ -194,7 +194,7 @@ class GdModule extends GalleryModule {
     function autoConfigure() {
 	list ($ret, $needsConfiguration) = $this->needsConfiguration();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), false);
+	    return array($ret, false);
 	}
 
 	return array(null, !$needsConfiguration);

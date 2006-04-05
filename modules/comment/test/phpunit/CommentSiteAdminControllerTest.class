@@ -44,7 +44,7 @@ class CommentSiteAdminControllerTest extends GalleryControllerTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'comment');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -75,7 +75,7 @@ class CommentSiteAdminControllerTest extends GalleryControllerTestCase {
 	    list ($ret, $value) =
 		GalleryCoreApi::getPluginParameter('module', 'comment', 'comments.' . $key);
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    $this->assertEquals($expectedValue, $value, $key);
 	}

@@ -46,7 +46,7 @@ class UserAdminView extends GalleryView {
 	/* Load the module list */
 	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Get a list of all the admin views for each module */
@@ -63,12 +63,12 @@ class UserAdminView extends GalleryView {
 		    if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
 			continue;
 		    }
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		list ($ret, $moduleViews) = $module->getUserAdminViews($user);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		$subViewChoices = array_merge($subViewChoices, $moduleViews);
@@ -78,7 +78,7 @@ class UserAdminView extends GalleryView {
 	/* If we have a specific sub view, load it now */
 	$subViewName = GalleryUtilities::getRequestVariables('subView');
 	if ($subViewName == 'core.UserAdmin') {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	}
 	if (empty($subViewName) && !empty($subViewChoices)) {
 	    $subViewName = $subViewChoices[0]['view'];
@@ -86,7 +86,7 @@ class UserAdminView extends GalleryView {
 
 	list ($ret, $isSiteAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Our sub view may have set some hints, like the encoding type */
@@ -101,23 +101,23 @@ class UserAdminView extends GalleryView {
 	$urlGenerator =& $gallery->getUrlGenerator();
 	list ($ret, $navigationLinks) = $urlGenerator->getNavigationLinks();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Bring in the root album information for the breadcrumb */
 	list ($ret, $rootAlbumId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($rootAlbumId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Set up my view parameters */
@@ -130,12 +130,12 @@ class UserAdminView extends GalleryView {
 	if (!empty($subViewName)) {
 	    list ($ret, $subView) = GalleryView::loadView($subViewName);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    list ($ret, $results) = $subView->loadTemplate($template, $form);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    if (isset($results['redirect'])) {
@@ -172,12 +172,12 @@ class UserAdminView extends GalleryView {
 	}
 	list ($ret, $subView) = GalleryView::loadView($subViewName);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $description) = $subView->getViewDescription();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $description);

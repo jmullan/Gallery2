@@ -67,7 +67,7 @@ class RewriteModule extends GalleryModule {
 	GalleryCoreApi::requireOnce('modules/rewrite/RewriteModuleExtras.inc');
 	$ret = RewriteModuleExtras::upgrade($this, $currentVersion);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -80,19 +80,19 @@ class RewriteModule extends GalleryModule {
     	GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
 	list ($ret, $rewriteParser) = RewriteHelper::getRewriteParser();
 	if ($ret && !($ret->getErrorCode() & ERROR_MISSING_VALUE)) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	if (!$ret) {
 	    list ($ret) = $rewriteParser->saveActiveRules(array());
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
 	$ret = parent::uninstall();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -115,14 +115,14 @@ class RewriteModule extends GalleryModule {
     	GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
 	list ($ret, $rewriteParser) = RewriteHelper::getRewriteParser();
 	if ($ret && !($ret->getErrorCode() & ERROR_MISSING_VALUE)) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	} else if ($ret && ($ret->getErrorCode() & ERROR_MISSING_VALUE)) {
 	    return array(null, true);
 	}
 
 	list ($ret, $status) = $rewriteParser->needsConfiguration($this);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $status);
@@ -142,13 +142,13 @@ class RewriteModule extends GalleryModule {
 	GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
 	list ($ret, $rewriteParser) = RewriteHelper::getRewriteParser();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list($ret, $activeRules) = GalleryCoreApi::getPluginParameter(
 	    'module', 'rewrite', 'activeRules');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$activeRules = unserialize($activeRules);
 
@@ -165,16 +165,16 @@ class RewriteModule extends GalleryModule {
 
 	list ($ret, $code) = $rewriteParser->saveActiveRules($activeRules);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if ($code != REWRITE_STATUS_OK) {
-	    return array(GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED, __FILE__, __LINE__),
+	    return array(GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED),
 			 null);
 	}
 
 	list ($ret, $redirect) = parent::activate($postActivationEvent);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, array());
@@ -223,7 +223,7 @@ class RewriteModule extends GalleryModule {
 	GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
 	list ($ret, $rewriteParser) = RewriteHelper::getRewriteParser();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$rewriteUrlGenerator = $rewriteParser->getUrlGeneratorId();
@@ -232,21 +232,21 @@ class RewriteModule extends GalleryModule {
 	    'modules/rewrite/classes/parsers/' . $rewriteParser->getParserId() . '/' .
 	    $rewriteUrlGenerator . '.class', 'rewrite', null, 2);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'MaintenanceTask', 'RewriteCheckConflictTask', 'RewriteCheckConflictTask',
 	    'modules/rewrite/classes/RewriteCheckConflictTask.class', 'rewrite', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'RewriteApi', 'RewriteApi', 'RewriteApi',
 	    'modules/rewrite/classes/RewriteApi.class', 'rewrite', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;

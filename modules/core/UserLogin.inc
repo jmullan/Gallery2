@@ -80,7 +80,7 @@ class UserLoginController extends GalleryController {
 	    if (empty($error)) {
 		list ($ret, $user) = GalleryCoreApi::fetchUserByUsername($form['username']);
 		if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		GalleryUtilities::unsanitizeInputValues($form['password'], false);
 		$isCorrect = (isset($user) && $user->isCorrectPassword($form['password']));
@@ -90,7 +90,7 @@ class UserLoginController extends GalleryController {
 		list ($ret, $options['level']) =
 		    GalleryCoreApi::getPluginParameter('module', 'core', 'validation.level');
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		if ($options['level'] == 'MEDIUM') {
 		    $options['key'] = 'core.UserLogin.' . $form['username'];
@@ -103,7 +103,7 @@ class UserLoginController extends GalleryController {
 		    list ($ret, $pluginInstances) =
 			GalleryCoreApi::getAllFactoryImplementationIds('GalleryValidationPlugin');
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 
 		    foreach (array_keys($pluginInstances) as $pluginId) {
@@ -111,7 +111,7 @@ class UserLoginController extends GalleryController {
 			    GalleryCoreApi::newFactoryInstanceById('GalleryValidationPlugin',
 								   $pluginId);
 			if ($ret) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
+			    return array($ret, null);
 			}
 		    }
 		}
@@ -121,7 +121,7 @@ class UserLoginController extends GalleryController {
 		    list ($ret, $pluginErrors, $continue) =
 			$plugin->performValidation($form, $options);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 
 		    $error = array_merge($error, $pluginErrors);
@@ -139,13 +139,13 @@ class UserLoginController extends GalleryController {
 		    $event->setEntity($user);
 		    list ($ret, $redirect) = GalleryCoreApi::postEvent($event);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 
 		    $session =& $gallery->getSession();
 		    $ret = $session->regenerate();
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 
 		    /* Redirect if requested by event listener, otherwise return */

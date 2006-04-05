@@ -119,7 +119,7 @@ class GalleryDerivativeImage extends GalleryDerivative {
 	    list($ret, $searchResults) =
 		$gallery->search($query, array($parentId, $derivativeType));
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    $result = $searchResults->nextResult();
@@ -132,7 +132,7 @@ class GalleryDerivativeImage extends GalleryDerivative {
 
 	$ret = parent::create($parentId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Save our derivative type */
@@ -160,25 +160,25 @@ class GalleryDerivativeImage extends GalleryDerivative {
 	/* Figure out our target path */
 	list($ret, $destPath) = $this->fetchPath();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = parent::rebuildCache();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Update our dimensions */
 	$mimeType = $this->getMimeType();
 	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByProperty($mimeType, 'dimensions');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	if (isset($toolkit)) {
 	    list ($ret, $dimensions) = $toolkit->getProperty($mimeType, 'dimensions', $destPath);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    $this->setWidth($dimensions[0]);

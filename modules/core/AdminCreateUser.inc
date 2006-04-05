@@ -42,7 +42,7 @@ class AdminCreateUserController extends GalleryController {
     function handleRequest($form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$results = $status = $error = array();
@@ -63,18 +63,18 @@ class AdminCreateUserController extends GalleryController {
 		list ($ret, $user) =
 		    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		if (!isset($user)) {
-		    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
+		    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT),
 				 null);
 		}
 
 		$ret = $user->create($form['userName']);
 		if ($ret) {
 		    if (!($ret->getErrorCode() & ERROR_COLLISION)) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 
 		    /* Set our error status and fall back to the view */
@@ -88,7 +88,7 @@ class AdminCreateUserController extends GalleryController {
 
 		    $ret = $user->save();
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 
 		    /* Request a redirect to the confirmation screen */
@@ -139,7 +139,7 @@ class AdminCreateUserView extends GalleryView {
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if ($form['formName'] != 'AdminCreateUser') {
@@ -154,7 +154,7 @@ class AdminCreateUserView extends GalleryView {
 	/* Set up our language selection list */
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$languageList = array();
 	$languageList[''] = $module->translate('<none>');

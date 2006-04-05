@@ -134,7 +134,7 @@ class GalleryComment extends GalleryChildEntity {
     function create($parentId) {
 	$ret = parent::create($parentId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$this->setCommenterId(null);

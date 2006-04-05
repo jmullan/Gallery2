@@ -50,7 +50,7 @@ class ControllerTest extends GalleryTestCase {
 	GalleryCoreApi::requireOnce('modules/core/classes/GalleryController.class');
 	list ($ret, $controller) = GalleryController::loadController('core.ItemEdit');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert(isset($controller));
     }
@@ -73,7 +73,7 @@ class ControllerTest extends GalleryTestCase {
 	 */
 	list ($ret, $controller) = GalleryController::loadController('controllertest.ConfigView');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert(isset($controller));
     }

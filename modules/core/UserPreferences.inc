@@ -47,10 +47,10 @@ class UserPreferencesController extends GalleryController {
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if ($userId == $anonymousUserId) {
-	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
 	}
 
 	$results = array();
@@ -77,17 +77,17 @@ class UserPreferencesController extends GalleryController {
 
 	    list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($userId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    
 	    list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 
@@ -130,7 +130,7 @@ class UserPreferencesController extends GalleryController {
 
 		$ret = $user->save();
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		/* Request a redirect to the confirmation screen */
@@ -141,7 +141,7 @@ class UserPreferencesController extends GalleryController {
 
 	    $ret = GalleryCoreApi::releaseLocks($lockId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 
@@ -178,10 +178,10 @@ class UserPreferencesView extends GalleryView {
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if ($userId == $anonymousUserId) {
-	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
 	}
 
 	$user = $gallery->getActiveUser();
@@ -198,7 +198,7 @@ class UserPreferencesView extends GalleryView {
 	/* Set up our language selection list */
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$languageList = array();
@@ -227,7 +227,7 @@ class UserPreferencesView extends GalleryView {
     function getViewDescription() {
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $core->translate('your account'));

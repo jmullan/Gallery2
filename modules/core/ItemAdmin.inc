@@ -46,13 +46,13 @@ class ItemAdminView extends GalleryView {
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Find its thumbnail */
 	list ($ret, $thumbnailTable) = GalleryCoreApi::fetchThumbnailsByItemIds(array($itemId));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (empty($thumbnailTable)) {
 	    $thumbnailData = null;
@@ -64,7 +64,7 @@ class ItemAdminView extends GalleryView {
 	/* Load the module list */
 	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Get a list of all the admin views for each module */
@@ -81,12 +81,12 @@ class ItemAdminView extends GalleryView {
 		    if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
 			continue;
 		    }
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		list ($ret, $moduleViews) = $module->getItemAdminViews($item);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		$subViewChoiceData = array_merge($subViewChoiceData, $moduleViews);
@@ -97,7 +97,7 @@ class ItemAdminView extends GalleryView {
 
 	$subViewName = GalleryUtilities::getRequestVariables('subView');
 	if ($subViewName == 'core.ItemAdmin') {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	}
 
 	/* Turn sub view choices into url params */
@@ -129,7 +129,7 @@ class ItemAdminView extends GalleryView {
 
 	list ($ret, $subView) = GalleryView::loadView($subViewName);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Get the type of the item */
@@ -138,7 +138,7 @@ class ItemAdminView extends GalleryView {
 	/* Load the item's parents */
 	list ($ret, $parents) = GalleryCoreApi::fetchParents($item, 'core.view');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	for ($i = 0; $i < sizeof($parents); $i++) {
 	    $parents[$i] = (array)$parents[$i];
@@ -146,12 +146,12 @@ class ItemAdminView extends GalleryView {
 
 	list ($ret, $results) = $subView->loadTemplate($template, $form);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $isSiteAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Our sub view may have set some hints, like the encoding type */
@@ -164,19 +164,19 @@ class ItemAdminView extends GalleryView {
 	list ($ret, $rootAlbumId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Get the links for navigating back to where we came from */
 	$urlGenerator =& $gallery->getUrlGenerator();
 	list ($ret, $navigationLinks) = $urlGenerator->getNavigationLinks();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$ItemAdmin['navigationLinks'] = $navigationLinks;
@@ -216,12 +216,12 @@ class ItemAdminView extends GalleryView {
 	}
 	list ($ret, $subView) = GalleryView::loadView($subViewName);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $description) = $subView->getViewDescription();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $description);

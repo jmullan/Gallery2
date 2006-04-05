@@ -43,7 +43,7 @@ class ItemCreateLinkSingleControllerTest extends GalleryControllerTestCase {
 	list ($ret, $this->_rootAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_markForCleanup($this->_rootAlbum);
@@ -51,7 +51,7 @@ class ItemCreateLinkSingleControllerTest extends GalleryControllerTestCase {
 	list ($ret, $this->_destinationAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_markForCleanup($this->_destinationAlbum);
@@ -60,7 +60,7 @@ class ItemCreateLinkSingleControllerTest extends GalleryControllerTestCase {
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_rootAlbum->getId());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -102,7 +102,7 @@ class ItemCreateLinkSingleControllerTest extends GalleryControllerTestCase {
     function testLinkItemWithNoViewPermissions() {
 	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	global $gallery;
@@ -142,7 +142,7 @@ class ItemCreateLinkSingleControllerTest extends GalleryControllerTestCase {
 
 	$ret = GalleryCoreApi::removeItemPermissions($this->_destinationAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	// The UI never displays targets that we can't add to

@@ -209,7 +209,7 @@ class GalleryStorage {
 	$db =& ADONewConnection($this->getAdoDbType());
 	$this->_traceStop();
 	if (empty($db)) {
-	    return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE), null);
 	}
 
 	/* Turn on debugging in the database connection if Gallery is in debug mode */
@@ -226,7 +226,7 @@ class GalleryStorage {
 	$this->_traceStop();
 
 	if (!$ret) {
-	    return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE), null);
 	}
 
 	if ($gallery->isProfiling('sql')) {
@@ -237,7 +237,7 @@ class GalleryStorage {
 	
 	$ret = $this->_setConnectionSettings($db);
 	if ($ret) {
-	    return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE), null);
 	}
 
 	return array(null, $db);
@@ -448,7 +448,7 @@ class GalleryStorage {
 	if (!isset($this->_db)) {
 	    list ($ret, $this->_db) = $this->_getConnection();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 
@@ -473,7 +473,7 @@ class GalleryStorage {
 	if ($recordSet) {
 	    return array(null, new GallerySearchResults($recordSet));
 	} else {
-	    return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE), null);
 	}
     }
 
@@ -536,18 +536,18 @@ class GalleryStorage {
 	if (!isset($this->_db)) {
 	    list ($ret, $this->_db) = $this->_getConnection();
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
 	$ret = $this->_guaranteeTransaction();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	list ($ret, $mapInfo) = $this->describeMap($mapName);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	list ($tableName, $unused) = $this->_translateTableName($mapName);
 	$data = $set = $where = $wheredata = array();
@@ -594,7 +594,7 @@ class GalleryStorage {
 	}
 
 	if (count($set) == 0 || count($where) == 0) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
 	$query = 'UPDATE ' . $tableName . ' SET ' . implode(', ', $set) . ' ';
@@ -607,7 +607,7 @@ class GalleryStorage {
 	$recordSet = $this->_db->Execute($query, $data);
 	$this->_traceStop();
 	if (!$recordSet) {
-	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
 	}
 
 	return null;
@@ -665,7 +665,7 @@ class GalleryStorage {
 	if (!isset($this->_db)) {
 	    list ($ret, $this->_db) = $this->_getConnection();
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
@@ -675,7 +675,7 @@ class GalleryStorage {
 	    $this->_traceStop();
 
 	    if (!$ok) {
-		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
 	    }
 	}
 
@@ -694,7 +694,7 @@ class GalleryStorage {
 	    $this->_traceStop();
 
 	    if (!$ok) {
-		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
 	    }
 	}
 
@@ -704,13 +704,13 @@ class GalleryStorage {
 	    $result =& $gallery->getLockSystem(false);
 	    $ret = $result[0];
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    $lockSystem =& $result[1];
 	    if (isset($lockSystem)) {
 		$ret = $lockSystem->releaseQueue();
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	}
@@ -731,7 +731,7 @@ class GalleryStorage {
 
 	$ret = $this->commitTransaction();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -749,7 +749,7 @@ class GalleryStorage {
 	    $this->_traceStop();
 
 	    if (!$ok) {
-		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
 	    }
 	}
 
@@ -759,13 +759,13 @@ class GalleryStorage {
 	    $result =& $gallery->getLockSystem(false);
 	    $ret = $result[0];
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    $lockSystem =& $result[1];
 	    if (isset($lockSystem)) {
 		$ret = $lockSystem->releaseQueue();
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	}
@@ -783,7 +783,7 @@ class GalleryStorage {
 	if ($this->_isTransactional && !$this->_db->transCnt) {
 	    $ret = $this->beginTransaction();
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
@@ -838,7 +838,7 @@ class GalleryStorage {
      *               string the function SQL
      */
     function getFunctionSql($functionName, $args) {
-	return array(GalleryCoreApi::error(ERROR_NOT_IMPLEMENTED, __FILE__, __LINE__), null);
+	return array(GalleryCoreApi::error(ERROR_NOT_IMPLEMENTED), null);
     }
 
     /**
@@ -1075,7 +1075,7 @@ class GalleryStorage {
 	if (!isset($mapInfo)) {
 	    list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    $mapInfo = array();
@@ -1091,7 +1091,7 @@ class GalleryStorage {
 		 */
 		$moduleDir = GalleryCoreApi::getPluginBaseDir('module', $moduleId);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		$mapsFile = "$moduleDir/modules/$moduleId/classes/Maps.inc";
@@ -1109,7 +1109,7 @@ class GalleryStorage {
 	if (!$tryAllModules && !isset($mapInfo[$mapName])) {
 	    list ($ret, $mapInfo[$mapName]) = $this->describeMap($mapName, true);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 

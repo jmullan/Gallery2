@@ -49,14 +49,14 @@ class MyPageController extends GalleryController {ldelim}
 	if (isset($form['action']['save'])) {ldelim}
 	    $ret = GalleryCoreApi::removeMapEntry('{$mapName}', array('itemId' => $itemId));
 	    if ($ret) {ldelim}
-	        return array($ret->wrap(__FILE__, __LINE__), null);
+	        return array($ret, null);
 	    {rdelim}
 
 	    $ret = GalleryCoreApi::addMapEntry(
                 '{$mapName}',
                 array('itemId' => $itemId, 'itemValue' => $form['value']));
 	    if ($ret) {ldelim}
-	        return array($ret->wrap(__FILE__, __LINE__), null);
+	        return array($ret, null);
 	    {rdelim}
 
 	    /* Send the user to a confirmation page, for now */
@@ -89,7 +89,7 @@ class MyPageView extends GalleryView {ldelim}
 	/* Load our item */
 	list ($ret, $item) = $this->_getItem();
 	if ($ret) {ldelim}
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	{rdelim}
 
 	$MyPage = array();
@@ -97,7 +97,7 @@ class MyPageView extends GalleryView {ldelim}
 	GalleryCoreApi::requireOnce('modules/{$moduleId}/classes/MyPageHelper.class');
 	list ($ret, $MyPage['value']) = MyPageHelper::getItemValue($item->getId());
 	if ($ret) {ldelim}
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	{rdelim}
 
 	$template->setVariable('MyPage', $MyPage);

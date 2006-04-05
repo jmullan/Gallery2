@@ -41,7 +41,7 @@ class AdminModulesVerifyUninstallController extends GalleryController {
     function handleRequest($form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$status = $error = array();
@@ -50,18 +50,18 @@ class AdminModulesVerifyUninstallController extends GalleryController {
 	if (!empty($moduleId) && isset($form['action']['uninstall'])) {
 	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    list ($ret, $isActive) = $module->isActive();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    if (!$isActive) {
 		$ret = $module->uninstall();
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		if (empty($redirect)) {
 		    $redirect['view'] = 'core.SiteAdmin';
@@ -98,13 +98,13 @@ class AdminModulesVerifyUninstallView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$moduleId = GalleryUtilities::getRequestVariables('moduleId');
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if ($form['formName'] != 'AdminModulesVerifyUninstall') {

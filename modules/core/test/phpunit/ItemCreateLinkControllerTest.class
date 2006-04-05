@@ -44,7 +44,7 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_markForCleanup($this->_album);
@@ -56,12 +56,12 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
     function testLinkItemSuccessful() {
 	list ($ret, $childAlbum) = $this->_createRandomAlbum($this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $childItem) = $this->_createRandomDataItem($childAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	global $gallery;
@@ -86,12 +86,12 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
     function testLinkAlbumUnsuccessful() {
 	list ($ret, $childAlbum) = $this->_createRandomAlbum($this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $grandChildAlbum) = $this->_createRandomAlbum($childAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	global $gallery;
@@ -111,12 +111,12 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	list ($ret, $item) = $this->_createRandomDataItem($this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::removeItemPermissions($item->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
@@ -134,12 +134,12 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
     function testLinkItemIntoBogusDestination() {
 	list ($ret, $childAlbum) = $this->_createRandomAlbum($this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $childItem) = $this->_createRandomDataItem($childAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	global $gallery;
@@ -162,18 +162,18 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
     function testLinkItemIntoAlbumWithNoAddPermissions() {
 	list ($ret, $childAlbum) = $this->_createRandomAlbum($this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $childItem) = $this->_createRandomDataItem($childAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Remove add permission in the destination */
 	$ret = GalleryCoreApi::removeItemPermissions($this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	global $gallery;
@@ -194,7 +194,7 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
 	for ($i = 0; $i < 5; $i++) {
 	    list($ret, $items[$i]) = $this->_createRandomDataItem($this->_album->getId());
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	}
 
@@ -228,7 +228,7 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
 	for ($i = 0; $i < 5; $i++) {
 	    list($ret, $items[$i]) = $this->_createRandomDataItem($this->_album->getId());
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	}
 
@@ -260,12 +260,12 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
     function testCreateLinkCancelButton() {
 	list ($ret, $childAlbum) = $this->_createRandomAlbum($this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $childItem) = $this->_createRandomDataItem($childAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	global $gallery;
@@ -287,7 +287,7 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
     function testLinkNoSelection() {
         list ($ret, $childAlbum) = $this->_createRandomAlbum($this->_album->getId());
         if ($ret) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+            return $this->failWithStatus($ret);
         }
 
         GalleryUtilities::putRequestVariable('itemId', $childAlbum->getId());

@@ -47,7 +47,7 @@ class ModuleTest extends GalleryTestCase {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$module->setRequiredCoreApi(GalleryCoreApi::getApiVersion());
 	$module->setRequiredModuleApi(GalleryModule::getApiVersion());
@@ -56,7 +56,7 @@ class ModuleTest extends GalleryTestCase {
 	    array('onLoadHandlers' => '|ModuleTestOnLoadHandler|'));
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_rootAlbum);
 
@@ -64,7 +64,7 @@ class ModuleTest extends GalleryTestCase {
 	    'test/file', array('onLoadHandlers' => '|ModuleTestOnLoadHandler|OtherHandler|'));
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -72,28 +72,28 @@ class ModuleTest extends GalleryTestCase {
 	/* If a unittest fails it might not deactivate/uninstall the mock module properly */
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 
 	list ($ret, $isActive) = $module->isActive();
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 	if ($isActive) {
 	    list ($ret, $redirect) = $module->deactivate();
 	    if ($ret) {
-		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		$this->failWithStatus($ret);
 	    }
 	}
 
 	$ret = $module->uninstall();
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::removePlugin('module', 'ModuleTest');
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 
 	parent::tearDown();
@@ -103,26 +103,26 @@ class ModuleTest extends GalleryTestCase {
 	global $gallery;
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Install the module */
 	$ret = $module->installOrUpgrade();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Verify that the first permission was added*/
 	list ($ret, $ids) = GalleryCoreApi::getPermissionIds();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert(array_key_exists('moduletest.one', $ids), 'Permission was not added');
 
 	/* Remove all permissions */
 	$ret = GalleryCoreApi::removeItemPermissions($this->_rootAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Add a token permission so that we have something tangible to compare */
@@ -130,7 +130,7 @@ class ModuleTest extends GalleryTestCase {
 						 $gallery->getActiveUserId(),
 						 'core.view');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $originalBits) =
@@ -138,7 +138,7 @@ class ModuleTest extends GalleryTestCase {
 					       $gallery->getActiveUserId(),
 					       null);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Assign our permission */
@@ -146,18 +146,18 @@ class ModuleTest extends GalleryTestCase {
 						 $gallery->getActiveUserId(),
 						 'moduletest.one');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Activate the module */
 	list ($ret, $redirect) = $module->activate();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(array(), $redirect, 'activate redirect');
 	list ($ret, $isActive) = $module->isActive();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($isActive, 'Is active');
 
@@ -165,17 +165,17 @@ class ModuleTest extends GalleryTestCase {
 	$entity = new ModuleTestEntity();
 	$ret = $entity->create();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = $entity->save();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Deactivate the module */
 	list ($ret, $redirect) = $module->deactivate();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(array(), $redirect, 'deactivate redirect');
 
@@ -183,20 +183,20 @@ class ModuleTest extends GalleryTestCase {
 	$module->setVersion('1.0.1');
 	$ret = $module->installOrUpgrade();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Verify that the second permission was added*/
 	list ($ret, $ids) = GalleryCoreApi::getPermissionIds();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert(array_key_exists('moduletest.two', $ids), 'Permission was not added');
 
 	/* Uninstall the module */
 	$ret = $module->uninstall();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert(!empty($this->_removedDir),
 		      'plugins_data/modules/moduletest directory not removed in uninstall');
@@ -215,7 +215,7 @@ class ModuleTest extends GalleryTestCase {
 	/* Verify that the permission itself is gone */
 	list ($ret, $ids) = GalleryCoreApi::getPermissionIds();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	foreach ($ids as $id) {
@@ -226,13 +226,13 @@ class ModuleTest extends GalleryTestCase {
 	/* Verify our OnLoadHandler was removed from all entities */
 	list ($ret, $album) = $this->_rootAlbum->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(null, $album->getOnLoadHandlers(), 'album onLoadHandlers');
 
 	list ($ret, $item) = $this->_item->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals('|OtherHandler|', $item->getOnLoadHandlers(), 'item onLoadHandlers');
 
@@ -247,7 +247,7 @@ class ModuleTest extends GalleryTestCase {
 	global $gallery;
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($major, $minor) = $module->getRequiredModuleApi();
@@ -255,7 +255,7 @@ class ModuleTest extends GalleryTestCase {
 
 	$ret = $module->installOrUpgrade();
 	if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
 	    'success?');
@@ -265,12 +265,12 @@ class ModuleTest extends GalleryTestCase {
 	global $gallery;
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = $module->installOrUpgrade();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($major, $minor) = $module->getRequiredModuleApi();
@@ -278,14 +278,14 @@ class ModuleTest extends GalleryTestCase {
 
 	list ($ret, $redirect) = $module->activate();
 	if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
 	    'success?');
 
 	list ($ret, $isActive) = $module->isActive();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert(!$isActive, 'is active');
     }
@@ -294,7 +294,7 @@ class ModuleTest extends GalleryTestCase {
 	global $gallery;
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($major, $minor) = $module->getRequiredCoreApi();
@@ -302,7 +302,7 @@ class ModuleTest extends GalleryTestCase {
 
 	$ret = $module->installOrUpgrade();
 	if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
 	    'success?');
@@ -312,12 +312,12 @@ class ModuleTest extends GalleryTestCase {
 	global $gallery;
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = $module->installOrUpgrade();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($major, $minor) = $module->getRequiredCoreApi();
@@ -325,14 +325,14 @@ class ModuleTest extends GalleryTestCase {
 
 	list ($ret, $redirect) = $module->activate();
 	if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
 	    'success?');
 
 	list ($ret, $isActive) = $module->isActive();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert(!$isActive, 'is active');
     }
@@ -342,30 +342,30 @@ class ModuleTest extends GalleryTestCase {
 	global $gallery;
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = $module->installOrUpgrade();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::removeItemPermissions($this->_rootAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::addUserPermission($this->_rootAlbum->getId(),
 						 $gallery->getActiveUserId(),
 						 'moduletest.one');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = $module->uninstall();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	list ($ret, $bits) = $this->_fetchPermissionBitsForItem($this->_rootAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($bits == 0, 'no bits');
 
@@ -374,11 +374,11 @@ class ModuleTest extends GalleryTestCase {
 						 $gallery->getActiveUserId(),
 						 'core.viewAll');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	list ($ret, $bits) = $this->_fetchPermissionBitsForItem($this->_rootAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($bits > 0, 'bits');
     }
@@ -389,7 +389,7 @@ class ModuleTest extends GalleryTestCase {
 	$userId = $gallery->getActiveUserId();
 	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($userId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$groupIds = array_keys($groupIds);
@@ -400,7 +400,7 @@ class ModuleTest extends GalleryTestCase {
 				'BIT_OR', array('[GalleryAccessMap::permission]',
 						'[GalleryAccessSubscriberMap::itemId]'));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$query = '
@@ -421,7 +421,7 @@ class ModuleTest extends GalleryTestCase {
 
 	list($ret, $searchResults) = $gallery->search($query, $data);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$permTable = array();
@@ -456,13 +456,13 @@ class ModuleTestModule extends GalleryModule {
 	    $ret = GalleryCoreApi::registerPermission($this->getId(),
 		'moduletest.one', $gallery->i18n('[test] A permission'));
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	} else {
 	    $ret = GalleryCoreApi::registerPermission($this->getId(),
 		'moduletest.two', $gallery->i18n('[test] A second permission'));
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
@@ -474,7 +474,7 @@ class ModuleTestModule extends GalleryModule {
 	    'GalleryOnLoadHandler', 'ModuleTestOnLoadHandler', 'ModuleTestOnLoadHandler',
 	     'modules/core/test/phpunit/ModuleTest.class', 'moduletest', null);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	return null;
     }

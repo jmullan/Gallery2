@@ -45,7 +45,7 @@ class DcrawToolkitHelperTest extends GalleryTestCase {
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'dcraw');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_module->translate('Binary output:');
 
@@ -66,7 +66,7 @@ class DcrawToolkitHelperTest extends GalleryTestCase {
 
 	list ($ret, $testArray, $version) = DcrawToolkitHelper::testBinary('/path/to/dcraw');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(array(array('name' => 'dcraw', 'success' => true)), $testArray);
@@ -81,7 +81,7 @@ class DcrawToolkitHelperTest extends GalleryTestCase {
 
 	list ($ret, $testArray, $version) = DcrawToolkitHelper::testBinary('/path/to/dcraw');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(array(array('name' => 'dcraw', 'success' => true)), $testArray);
@@ -96,7 +96,7 @@ class DcrawToolkitHelperTest extends GalleryTestCase {
 
 	list ($ret, $testArray, $version) = DcrawToolkitHelper::testBinary('/path/to/dcraw');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(array(array('name' => 'dcraw', 'success' => true)), $testArray);
@@ -111,7 +111,7 @@ class DcrawToolkitHelperTest extends GalleryTestCase {
 
 	list ($ret, $testArray, $version) = DcrawToolkitHelper::testBinary('/path/to/dcraw');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(array(array('name' => 'dcraw', 'success' => true)), $testArray);
@@ -125,7 +125,7 @@ class DcrawToolkitHelperTest extends GalleryTestCase {
 
 	list ($ret, $testArray, $version) = DcrawToolkitHelper::testBinary('/path/to/dcraw');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(array(array('name' => 'dcraw', 'success' => true)), $testArray);
@@ -149,7 +149,7 @@ class DcrawToolkitHelperTest extends GalleryTestCase {
 
 	list ($ret, $testArray, $version) = DcrawToolkitHelper::testBinary('/path/to/dcraw');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(

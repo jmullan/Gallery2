@@ -68,7 +68,7 @@ class UserRecoverPasswordConfirmController extends GalleryController {
 	    if (empty($error)) {
 		list ($ret, $user) = GalleryCoreApi::fetchUserByUsername($form['userName']);
 		if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		/*
 		 * Check the database to see if a previous request.
@@ -79,7 +79,7 @@ class UserRecoverPasswordConfirmController extends GalleryController {
 		list ($ret, $requestExpires) = UserRecoverPasswordHelper_simple::getRequestExpires(
 		    $form['userName'], $form['authString']);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		if ($user && !empty($requestExpires)) {
@@ -92,24 +92,24 @@ class UserRecoverPasswordConfirmController extends GalleryController {
 		    } else if (!empty($user)) {
 			list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($user->getId());
 			if ($ret) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
+			    return array($ret, null);
 			}
 
 			list ($ret, $user) = $user->refresh();
 			if ($ret) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
+			    return array($ret, null);
 			}
 
 			$user->changePassword($form['password1']);
 
 			$ret = $user->save();
 			if ($ret) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
+			    return array($ret, null);
 			}
 
 			$ret = GalleryCoreApi::releaseLocks($lockId);
 			if ($ret) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
+			    return array($ret, null);
 			}
 
 			$status['passwordRecovered'] = 1;
@@ -173,7 +173,7 @@ class UserRecoverPasswordConfirmView extends GalleryView {
 	list ($ret, $requestExpires) = UserRecoverPasswordHelper_simple::getRequestExpires(
 	    $form['userName'], $form['authString']);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if (empty($requestExpires)) {

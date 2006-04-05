@@ -47,19 +47,18 @@ class FfmpegToolkitHelper {
 
 	list ($ret, $ffmpegPath) = GalleryCoreApi::getPluginParameter('module', 'ffmpeg', 'path');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if (empty($ffmpegPath)) {
-	    return array(GalleryCoreApi::error(ERROR_MISSING_VALUE,
-					      __FILE__, __LINE__),
+	    return array(GalleryCoreApi::error(ERROR_MISSING_VALUE),
 			 null);
 	}
 
 	list ($ret, $tests, $mimeTypes, $supportsOffset) =
 	    FfmpegToolkitHelper::testBinary($ffmpegPath);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/*
@@ -127,7 +126,7 @@ class FfmpegToolkitHelper {
 	 */
 	if (!$platform->isRestrictedByOpenBaseDir($ffmpegPath)) {
 	    if (!$platform->file_exists($ffmpegPath) || !$platform->is_file($ffmpegPath)) {
-		return array(GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__),
+		return array(GalleryCoreApi::error(ERROR_BAD_PATH),
 			     null, null, null);
 	    }
 	}
@@ -187,7 +186,7 @@ class FfmpegToolkitHelper {
 			list ($ret, $mime) =
 			    GalleryCoreApi::convertExtensionToMime($relevantTypes[$type]);
 			if ($ret) {
-			    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+			    return array($ret, null, null, null);
 			}
 			$mimeTypes[$mime] = 1;
 		    }
@@ -200,7 +199,7 @@ class FfmpegToolkitHelper {
 			    list ($ret, $mime) = GalleryCoreApi::convertExtensionToMime(
 				$relevantTypes[$type]);
 			    if ($ret) {
-				return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+				return array($ret, null, null, null);
 			    }
 			    $mimeTypes[$mime] = 1;
 			}
@@ -223,7 +222,7 @@ class FfmpegToolkitHelper {
 				list ($ret, $mime) = GalleryCoreApi::convertExtensionToMime(
 				    $relevantTypes[$type]);
 				if ($ret) {
-				    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+				    return array($ret, null, null, null);
 				}
 				$mimeTypes[$mime] = 1;
 			    }

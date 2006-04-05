@@ -44,20 +44,20 @@ class ItemMakeHighlightController extends GalleryController {
 	    $itemId = GalleryUtilities::getRequestVariables('itemId');
 	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    /* Make sure we have permission to edit this item */
 	    $ret = GalleryCoreApi::assertHasItemPermission($form['parentId'], 'core.edit');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    /* XXX: What should we do if this fails? */
 	    list ($ret, $success) =
 		GalleryCoreApi::setThumbnailFromItem($form['parentId'], $itemId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	} /* else $form['action']['cancel'] */
 
@@ -85,14 +85,14 @@ class ItemMakeHighlightView extends GalleryView {
 
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$parentId = $item->getParentId();
 
 	/* Make sure we have permission do edit the parent of this item */
 	$ret = GalleryCoreApi::assertHasItemPermission($parentId, 'core.edit');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if ($form['formName'] != 'ItemMakeHighlight') {
@@ -101,7 +101,7 @@ class ItemMakeHighlightView extends GalleryView {
 
 	list ($ret, $parents) = GalleryCoreApi::fetchParents($item, 'core.edit');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$parentList = array();
@@ -123,7 +123,7 @@ class ItemMakeHighlightView extends GalleryView {
     function getViewDescription() {
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $core->translate('make highlight'));

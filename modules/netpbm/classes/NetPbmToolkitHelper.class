@@ -49,22 +49,22 @@ class NetPbmToolkitHelper {
 	list ($ret, $netPbmPath) =
 	    GalleryCoreApi::getPluginParameter('module', 'netpbm', 'path');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if (empty($netPbmPath)) {
-	    return array(GalleryCoreApi::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_MISSING_VALUE), null);
 	}
 
 	list ($ret, $tests, $mimeTypes) = NetPbmToolkitHelper::testBinaries($netPbmPath);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if ($saveParameters) {
 	    $ret = NetPbmToolkitHelper::saveParameters($tests);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 
@@ -187,7 +187,7 @@ class NetPbmToolkitHelper {
 	 * Else just hope that it's valid and use it.
 	 */
 	if (!$platform->isRestrictedByOpenBaseDir($jheadPath) && !@$platform->is_dir($jheadPath)) {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__), null, null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PATH), null, null);
 	}
 	$tests = array();
 	$fullPath = $jheadPath . 'jhead';
@@ -234,7 +234,7 @@ class NetPbmToolkitHelper {
 	 * Else just hope that it's valid and use it.
 	 */
 	if (!$isRestrictedPath && !@$platform->is_dir($netPbmPath)) {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__), null, null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PATH), null, null);
 	}
 
 	$binaryData = array(
@@ -280,7 +280,7 @@ class NetPbmToolkitHelper {
 			/* Only used for translation, so ignore version mismatch during upgrade */
 			list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'netpbm', true);
 			if ($ret) {
-			    return array($ret->wrap(__FILE__, __LINE__), null, null);
+			    return array($ret, null, null);
 			}
 		    }
 		    $tests[] = array(
@@ -324,7 +324,7 @@ class NetPbmToolkitHelper {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', $key,
 						      isset($binary[$key]) ? $binary[$key] : $key);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 	return null;

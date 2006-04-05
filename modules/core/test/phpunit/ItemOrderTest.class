@@ -45,7 +45,7 @@ class ItemOrderTest extends GalleryTestCase {
 	list ($ret, $this->_parentItem) = $this->_createRandomAlbum($this->_getRootId(),
 	    array('orderBy' => $orderBy, 'orderDirection' => $orderDirection));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_parentItem);
 
@@ -54,7 +54,7 @@ class ItemOrderTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::addUserPermission($this->_parentItem->getId(),
 						 $userId, 'core.all', false);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$titles = array('ztitle', 'ytitle', 'xtitle');
@@ -63,7 +63,7 @@ class ItemOrderTest extends GalleryTestCase {
 	    list ($ret, $this->_childItems[$i]) = $this->_createRandomAlbum(
 		$this->_parentItem->getId(), array('title' => $titles[$i]));
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
@@ -73,7 +73,7 @@ class ItemOrderTest extends GalleryTestCase {
     function testFetchByOrder() {
 	$ret = $this->_createTestAlbum('orderWeight');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Assign the item order in reverse */
@@ -81,14 +81,14 @@ class ItemOrderTest extends GalleryTestCase {
 	for ($i = 0; $i < count($this->_childItems); $i++) {
 	    $ret = GalleryCoreApi::setItemOrderWeight($this->_childItems[$i]->getId(), 100 - $i);
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    array_unshift($correctResults, $this->_childItems[$i]->getId());
 	}
 
 	list ($ret, $results) = GalleryCoreApi::fetchChildItemIds($this->_parentItem);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals($correctResults, $results);
@@ -97,7 +97,7 @@ class ItemOrderTest extends GalleryTestCase {
     function testFetchByCreateDate() {
 	$ret = $this->_createTestAlbum('creationTimestamp');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Make manual order different from creation order */
@@ -105,14 +105,14 @@ class ItemOrderTest extends GalleryTestCase {
 	for ($i = 0; $i < count($this->_childItems); $i++) {
 	    $ret = GalleryCoreApi::setItemOrderWeight($this->_childItems[$i]->getId(), 100 - $i);
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    $correctResults[] = $this->_childItems[$i]->getId();
 	}
 
 	list ($ret, $results) = GalleryCoreApi::fetchChildItemIds($this->_parentItem);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals($correctResults, $results);
@@ -121,7 +121,7 @@ class ItemOrderTest extends GalleryTestCase {
     function testFetchByModifyDate() {
 	$ret = $this->_createTestAlbum('modificationTimestamp', ORDER_DESCENDING);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$correctResults = array();
@@ -131,7 +131,7 @@ class ItemOrderTest extends GalleryTestCase {
 
 	list ($ret, $results) = GalleryCoreApi::fetchChildItemIds($this->_parentItem);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals($correctResults, $results);
@@ -140,7 +140,7 @@ class ItemOrderTest extends GalleryTestCase {
     function testFetchByTitle() {
 	$ret = $this->_createTestAlbum('title');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$correctResults = array();
@@ -150,7 +150,7 @@ class ItemOrderTest extends GalleryTestCase {
 
 	list ($ret, $results) = GalleryCoreApi::fetchChildItemIds($this->_parentItem);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals($correctResults, $results);
@@ -159,7 +159,7 @@ class ItemOrderTest extends GalleryTestCase {
     function testFetchByRandom() {
 	$ret = $this->_createTestAlbum('random');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Can't verify the order (it's random), just make sure we got the right ids */
@@ -171,7 +171,7 @@ class ItemOrderTest extends GalleryTestCase {
 
 	list ($ret, $results) = GalleryCoreApi::fetchChildItemIds($this->_parentItem);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	sort($results);

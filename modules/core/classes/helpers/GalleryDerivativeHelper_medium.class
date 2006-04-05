@@ -45,7 +45,7 @@ class GalleryDerivativeHelper_medium {
      */
     function fetchThumbnailsByItemIds($ids) {
 	if (!is_array($ids)) {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	}
 
 	if (empty($ids)) {
@@ -55,7 +55,7 @@ class GalleryDerivativeHelper_medium {
 	list ($ret, $results) = GalleryDerivativeHelper_medium::_loadDerivatives(
 	    $ids, null, DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Only one thumb per item, so simplify the results */
@@ -77,7 +77,7 @@ class GalleryDerivativeHelper_medium {
      */
     function fetchResizesByItemIds($ids) {
 	if (!is_array($ids)) {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	}
 
 	if (empty($ids)) {
@@ -87,7 +87,7 @@ class GalleryDerivativeHelper_medium {
 	list ($ret, $results) = GalleryDerivativeHelper_medium::_loadDerivatives(
 	    $ids, null, DERIVATIVE_TYPE_IMAGE_RESIZE);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	return array(null, $results);
     }
@@ -102,7 +102,7 @@ class GalleryDerivativeHelper_medium {
      */
     function fetchPreferredsByItemIds($ids) {
 	if (!is_array($ids)) {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	}
 
 	if (empty($ids)) {
@@ -112,7 +112,7 @@ class GalleryDerivativeHelper_medium {
 	list ($ret, $results) = GalleryDerivativeHelper_medium::_loadDerivatives(
 	    $ids, null, DERIVATIVE_TYPE_IMAGE_PREFERRED);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Only one preferred per item, so simplify the results */
@@ -140,7 +140,7 @@ class GalleryDerivativeHelper_medium {
 	if (empty($itemIds) && empty($sourceIds) ||
 	    empty($itemIds) && !is_array($sourceIds) ||
 	    empty($sourceIds) && !is_array($itemIds)) {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER),
 			 null);
 	}
 
@@ -188,7 +188,7 @@ class GalleryDerivativeHelper_medium {
 
 	list ($ret, $searchResults) = $gallery->search($query, $data);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$derivativeTable = array();
@@ -212,7 +212,7 @@ class GalleryDerivativeHelper_medium {
 	    /* Load all the derivative images */
 	    list ($ret, $derivativeEntities) = GalleryCoreApi::loadEntitiesById($derivativeIds);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    /* Create a table of child id -> image data */

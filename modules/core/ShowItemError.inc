@@ -43,7 +43,7 @@ class ShowItemErrorView extends GalleryView {
 
 	list ($ret, $item, $wasSpecified) = $this->_getItem();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$problem = GalleryUtilities::getRequestVariables('problem');
@@ -53,7 +53,7 @@ class ShowItemErrorView extends GalleryView {
 	    if ($wasSpecified) {
 		list ($ret, $themeId) = GalleryCoreApi::fetchThemeId($item);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		if (GalleryUtilities::isA($item, 'GalleryDataItem')) {
@@ -64,13 +64,13 @@ class ShowItemErrorView extends GalleryView {
 
 		list ($ret, $canEdit) = GalleryCoreApi::hasItemPermission($targetId, 'core.edit');
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    } else {
 		list ($ret, $themeId) =
 		    GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		$targetId = null;
@@ -79,7 +79,7 @@ class ShowItemErrorView extends GalleryView {
 
 	    list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    $template->setVariable('ShowItemError',

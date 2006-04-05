@@ -51,7 +51,7 @@ class ThemeTest extends GalleryTestCase {
 	list ($ret, $this->_theme) = GalleryCoreApi::loadPlugin('theme', 'ThemeTest');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_theme->setRequiredCoreApi(GalleryCoreApi::getApiVersion());
 	$this->_theme->setRequiredThemeApi(GalleryTheme::getApiVersion());
@@ -61,23 +61,23 @@ class ThemeTest extends GalleryTestCase {
 	/* If a unitest fails it might not deactivate/uninstall the mock theme properly */
 	list ($ret, $isActive) = $this->_theme->isActive();
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 	if ($isActive) {
 	    list ($ret, $redirect) = $this->_theme->deactivate();
 	    if ($ret) {
-		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		$this->failWithStatus($ret);
 	    }
 	}
 
 	$ret = $this->_theme->uninstall();
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::removePlugin('theme', 'ThemeTest');
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 
 	parent::tearDown();
@@ -219,7 +219,7 @@ class ThemeTest extends GalleryTestCase {
 
 	$ret = $this->_theme->installOrUpgrade();
 	if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
 	    'success?');
@@ -228,7 +228,7 @@ class ThemeTest extends GalleryTestCase {
     function testActivateBadThemeApiActivate() {
 	$ret = $this->_theme->installOrUpgrade();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($major, $minor) = $this->_theme->getRequiredThemeApi();
@@ -236,14 +236,14 @@ class ThemeTest extends GalleryTestCase {
 
 	list ($ret, $redirect) = $this->_theme->activate();
 	if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
 	    'success?');
 
 	list ($ret, $isActive) = $this->_theme->isActive();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert(!$isActive, 'is active');
     }
@@ -254,7 +254,7 @@ class ThemeTest extends GalleryTestCase {
 
 	$ret = $this->_theme->installOrUpgrade();
 	if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
 	    'success?');
@@ -263,7 +263,7 @@ class ThemeTest extends GalleryTestCase {
     function testActivateBadCoreApiActivate() {
 	$ret = $this->_theme->installOrUpgrade();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($major, $minor) = $this->_theme->getRequiredCoreApi();
@@ -271,14 +271,14 @@ class ThemeTest extends GalleryTestCase {
 
 	list ($ret, $redirect) = $this->_theme->activate();
 	if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
 	    'success?');
 
 	list ($ret, $isActive) = $this->_theme->isActive();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert(!$isActive, 'is active');
     }

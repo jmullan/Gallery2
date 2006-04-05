@@ -234,17 +234,17 @@ class Picasa2DataParser {
     function getAlbum($picasaXmlPath) {
 	list($ret, $rawXml) = Picasa2DataParser::getRawXmlFromPicasaPath($picasaXmlPath);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list($ret, $picasaXmlArray) = Picasa2DataParser::getXmlArray($rawXml);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list($ret, $albumArray) = Picasa2DataParser::getAlbumFromArray($picasaXmlArray);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	return array(null, $albumArray);
     }

@@ -37,7 +37,7 @@ class RandomHighlightSiteAdminController extends GalleryController {
     function handleRequest($form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$status = $error = array();
@@ -52,7 +52,7 @@ class RandomHighlightSiteAdminController extends GalleryController {
 		$ret = GalleryCoreApi::setPluginParameter(
 		    'module', 'randomhighlight', 'duration', round($form['duration'] * 60));
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		$status['saved'] = 1;
 	    }
@@ -81,7 +81,7 @@ class RandomHighlightSiteAdminView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if ($form['formName'] != 'RandomHighlightSiteAdmin') {
@@ -89,7 +89,7 @@ class RandomHighlightSiteAdminView extends GalleryView {
 	    list ($ret, $duration) =
 		GalleryCoreApi::getPluginParameter('module', 'randomhighlight', 'duration');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    /* String conversion here may use comma as fraction separator, based on locale */
 	    $form['duration'] = (string)round($duration / 60, 2);

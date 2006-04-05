@@ -82,13 +82,13 @@ class DcrawToolkitHelper {
 	 */
 	if (!$platform->isRestrictedByOpenBaseDir($dcrawPath) &&
 		!@$platform->is_file($dcrawPath)) {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__), null, null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PATH), null, null);
 	}
 
 	/* Only used for translation, so ignore version mismatch during upgrade */
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'dcraw', true);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	list ($success, $stdout, $stderr) = $platform->exec(array(array($dcrawPath)));

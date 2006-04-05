@@ -52,7 +52,7 @@ class IsapiRewriteUrlGeneratorTest extends RewriteUrlGeneratorTestCase {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', $key, $value);
 	    if ($ret) {
 		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	}
 
@@ -64,7 +64,7 @@ class IsapiRewriteUrlGeneratorTest extends RewriteUrlGeneratorTestCase {
 	$ret = $this->_urlGeneratorInit('IsapiRewriteUrlGenerator');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -85,7 +85,7 @@ class IsapiRewriteUrlGeneratorTest extends RewriteUrlGeneratorTestCase {
 
 	$ret = $this->_runGenerateUrlTest($env, $expectedUrl, $params);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
     }
 }

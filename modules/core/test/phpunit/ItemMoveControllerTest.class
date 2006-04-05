@@ -49,7 +49,7 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	    $path, 'coreTest', null);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markToolkitForCleanup('ItemMoveTestToolkit');
 
@@ -61,7 +61,7 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	    'test-description');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::registerToolkitOperation(
 	    'ItemMoveTestToolkit', array('image/test'), 'scale',
@@ -70,7 +70,7 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	    'test-description');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$parentId = $this->_getRootId();
@@ -78,7 +78,7 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	    list ($ret, $this->_album[$i]) = $this->_createRandomAlbum($parentId);
 	    if ($ret) {
 		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    $parentId = $this->_album[$i]->getId();
 
@@ -90,19 +90,19 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 		$ret = GalleryCoreApi::removeItemPermissions($itemId);
 		if ($ret) {
 		    print $ret->getAsHtml();
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		    return $this->failWithStatus($ret);
 		}
 
 		$ret = GalleryCoreApi::addUserPermission($itemId, $userId, 'core.delete');
 		if ($ret) {
 		    print $ret->getAsHtml();
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		    return $this->failWithStatus($ret);
 		}
 
 		$ret = GalleryCoreApi::addUserPermission($itemId, $userId, 'core.addAlbumItem');
 		if ($ret) {
 		    print $ret->getAsHtml();
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		    return $this->failWithStatus($ret);
 		}
 		break;
 
@@ -111,19 +111,19 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 		$ret = GalleryCoreApi::removeItemPermissions($itemId);
 		if ($ret) {
 		    print $ret->getAsHtml();
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		    return $this->failWithStatus($ret);
 		}
 
 		$ret = GalleryCoreApi::addUserPermission($itemId, $userId, 'core.delete');
 		if ($ret) {
 		    print $ret->getAsHtml();
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		    return $this->failWithStatus($ret);
 		}
 
 		$ret = GalleryCoreApi::addUserPermission($itemId, $userId, 'core.addDataItem');
 		if ($ret) {
 		    print $ret->getAsHtml();
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		    return $this->failWithStatus($ret);
 		}
 		break;
 
@@ -132,13 +132,13 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 		$ret = GalleryCoreApi::removeItemPermissions($itemId);
 		if ($ret) {
 		    print $ret->getAsHtml();
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		    return $this->failWithStatus($ret);
 		}
 
 		$ret = GalleryCoreApi::addUserPermission($itemId, $userId, 'core.delete');
 		if ($ret) {
 		    print $ret->getAsHtml();
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		    return $this->failWithStatus($ret);
 		}
 		break;
 
@@ -147,7 +147,7 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 		$ret = GalleryCoreApi::addUserPermission($itemId, $userId, 'core.all');
 		if ($ret) {
 		    print $ret->getAsHtml();
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		    return $this->failWithStatus($ret);
 		}
 
 		break;
@@ -157,7 +157,7 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 		$ret = GalleryCoreApi::removeItemPermissions($itemId);
 		if ($ret) {
 		    print $ret->getAsHtml();
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		    return $this->failWithStatus($ret);
 		}
 		break;
 	    }
@@ -170,7 +170,7 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 			   $this->_album[3]->getId(), 'image/test', array('width' => 700));
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -181,20 +181,20 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::removeDerivativePreferencesForItem($itemId);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::addDerivativePreference(0, $itemId,
 		   DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'thumbnail|' . $thumbSize);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	foreach ($args as $i => $resizeSize) {
 	    $ret = GalleryCoreApi::addDerivativePreference($i+1, $itemId,
 			DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|' . $resizeSize);
 	    if ($ret) {
 		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	}
     }
@@ -207,7 +207,7 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds($itemIds);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	foreach ($thumbnails as $id => $deriv) {
 	    $data[$id][] = array('type' => $deriv->getDerivativeType(),
@@ -216,7 +216,7 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	list ($ret, $resizes) = GalleryCoreApi::fetchResizesByItemIds($itemIds);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	foreach ($resizes as $id => $derivs) {
 	    foreach ($derivs as $deriv) {
@@ -251,7 +251,7 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	list ($ret, $parentSequence) =
 	    GalleryCoreApi::fetchParentSequence($this->_album[2]->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(array($this->_getRootId(), $this->_album[0]->getId()),
@@ -266,7 +266,7 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $peer) = $this->_createRandomAlbum($this->_album[0]->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryUtilities::putRequestVariable('itemId', $this->_album[0]->getId());
@@ -287,7 +287,7 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	list ($ret, $parentSequence) =
 	    GalleryCoreApi::fetchParentSequence($this->_album[1]->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(array($this->_getRootId(),
 				  $this->_album[0]->getId(),
@@ -297,7 +297,7 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($peer->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(array($this->_getRootId(), $this->_album[0]->getId()),
 			    $parentSequence, 'peer is under the root');
@@ -305,7 +305,7 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	list ($ret, $parentSequence) =
 	    GalleryCoreApi::fetchParentSequence($this->_album[0]->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(array($this->_getRootId()),
 			    $parentSequence, 'album 0 is under the root');
@@ -326,7 +326,7 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 		list($ret, $items[$i]) = $this->_createRandomDataItem($this->_album[1]->getId());
 	    }
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	}
 
@@ -364,7 +364,7 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 		list($ret, $items[$i]) = $this->_createRandomDataItem($this->_album[1]->getId());
 	    }
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	}
 
@@ -545,7 +545,7 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::addExistingItemToAlbum(
 				$this->_item, $this->_album[3]->getId(), true);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	// Verify they were created ok..
 	$sizes = $this->_getDerivativeSizes($this->_item->getId());
@@ -571,7 +571,7 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	/* Verify parent sequence */
 	list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($this->_item->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(array($this->_getRootId(), $this->_album[0]->getId(),
 				  $this->_album[1]->getId()),

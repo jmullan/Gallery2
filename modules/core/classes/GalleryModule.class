@@ -131,7 +131,7 @@ class GalleryModule extends GalleryPlugin {
 	} else {
 	    list ($ret, $installedVersion) = $this->getParameter('_version');
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
@@ -148,7 +148,7 @@ class GalleryModule extends GalleryPlugin {
 					    'this is the error stack trace: %s',
 					    $ret->getAsText()));
 		}
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    if ($gallery->getDebug()) {
@@ -161,7 +161,7 @@ class GalleryModule extends GalleryPlugin {
 					    'is the error stack trace: %s', $this->getId(),
 					    $ret->getAsText()));
 		}
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    if ($gallery->getDebug()) {
@@ -174,7 +174,7 @@ class GalleryModule extends GalleryPlugin {
 					   'this is the error stack trace: %s',
 					    $ret->getAsText()));
 		}
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    /*
@@ -192,7 +192,7 @@ class GalleryModule extends GalleryPlugin {
 		    $gallery->debug(sprintf('Error: Failed to reactivate the module, this' .
 					    ' is the error stack trace: %s', $ret->getAsText()));
 		}
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    if ($gallery->getDebug()) {
@@ -211,7 +211,7 @@ class GalleryModule extends GalleryPlugin {
 						', this is the error stack trace: %s', $key,
 						$ret->getAsText()));
 		    }
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	}
@@ -235,32 +235,32 @@ class GalleryModule extends GalleryPlugin {
 	/* Find and remove all module permissions */
 	$ret = GalleryCoreApi::unregisterModulePermissions($this->getId());
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Remove onLoadHandlers */
 	$ret = GalleryCoreApi::removeOnLoadHandlers($this->getOnLoadHandlerIds());
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Delete entities for types registered by this module */
 	$ret = $this->_deleteModuleEntities();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Remove all tables */
 	$storage =& $gallery->getStorage();
 	$ret = $storage->unconfigureStore($this->getId());
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Remove this plugin */
 	$ret = parent::uninstall();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -285,12 +285,12 @@ class GalleryModule extends GalleryPlugin {
 	';
 	list ($ret, $searchResults) = $gallery->search($query, $types);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	while ($result = $searchResults->nextResult()) {
 	    $ret = GalleryCoreApi::deleteEntityById($result[0]);
 	    if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 	return null;
@@ -302,7 +302,7 @@ class GalleryModule extends GalleryPlugin {
     function deactivate($postDeactivationEvent=true) {
 	list ($ret, $redirect) = parent::deactivate($postDeactivationEvent);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if (!empty($redirect)) {
@@ -312,7 +312,7 @@ class GalleryModule extends GalleryPlugin {
 	/* Unregister all factory implementations */
 	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, array());
@@ -333,16 +333,16 @@ class GalleryModule extends GalleryPlugin {
 	/* Make sure that we don't need configuration before we allow activation. */
 	list ($ret, $needs) = $this->needsConfiguration();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if ($needs) {
-	    return array(GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED, __FILE__, __LINE__),
+	    return array(GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED),
 			 null);
 	}
 
 	list ($ret, $redirect) = parent::activate($postActivationEvent);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if (!empty($redirect)) {
@@ -351,7 +351,7 @@ class GalleryModule extends GalleryPlugin {
 
 	$ret = $this->performFactoryRegistrations();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, array());

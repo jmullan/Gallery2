@@ -47,13 +47,13 @@ class WatermarkTest extends GalleryTestCase {
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_album);
 
 	list ($ret, $this->_user) = $this->_createUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_saveUser = $gallery->getActiveUser();
 	$gallery->setActiveUser($this->_user);
@@ -63,13 +63,13 @@ class WatermarkTest extends GalleryTestCase {
 	$ret = $watermark->create(__FILE__, 'test/file', 'phpunit_' . rand() . '.gif');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = $watermark->save();
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_watermark = $watermark;
@@ -80,7 +80,7 @@ class WatermarkTest extends GalleryTestCase {
 	/* We never gave permission to our test watermark, so it shouldn't show up */
 	list ($ret, $watermarks) = WatermarkHelper::fetchWatermarks();
 	if ($ret) {
-	    return $this->failWithStatus(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assert(!isset($watermarks[$this->_watermark->getId()]),
@@ -94,11 +94,11 @@ class WatermarkTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::addUserPermission(
 	    $this->_watermark->getId(), $gallery->getActiveUserId(), 'core.all');
 	if ($ret) {
-	    return $this->failWithStatus(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret);
 	}
 	list ($ret, $watermarks) = WatermarkHelper::fetchWatermarks();
 	if ($ret) {
-	    return $this->failWithStatus(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assert(isset($watermarks[$this->_watermark->getId()]),
@@ -112,7 +112,7 @@ class WatermarkTest extends GalleryTestCase {
 	list ($ret, $watermarkIds) =
 	    WatermarkHelper::fetchWatermarkIdsByOwnerId($gallery->getActiveUserId());
 	if ($ret) {
-	    return $this->failWithStatus(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assert(in_array($this->_watermark->getId(), $watermarkIds),
@@ -123,7 +123,7 @@ class WatermarkTest extends GalleryTestCase {
         /* Use a random/bogus user id */
 	list ($ret, $watermarkIds) = WatermarkHelper::fetchWatermarkIdsByOwnerId(1234567);
 	if ($ret) {
-	    return $this->failWithStatus(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assert(!in_array($this->_watermark->getId(), $watermarkIds),
@@ -134,27 +134,27 @@ class WatermarkTest extends GalleryTestCase {
 	/* Create an item to watermark */
 	list ($ret, $item) = $this->_createRandomDataItem($this->_album->getId(), 'test/file');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Give it some derivatives */
 	list ($ret, $preferred) = $this->_createDerivative(
 	    $item, $item->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED, 'rotate|90');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $thumbnail) = $this->_createDerivative(
 	    $item, $preferred->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
 	    'crop|10,10,30,40;scale|200');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $resize) = $this->_createDerivative($item, $preferred->getId(),
 							DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|500');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Apply the watermark */
@@ -163,7 +163,7 @@ class WatermarkTest extends GalleryTestCase {
 						    DERIVATIVE_TYPE_IMAGE_THUMBNAIL => true,
 						    DERIVATIVE_TYPE_IMAGE_RESIZE => true));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Verify that it went properly */
@@ -173,7 +173,7 @@ class WatermarkTest extends GalleryTestCase {
 	foreach (array($preferred, $resize, $thumbnail) as $derivative) {
 	    list ($ret, $derivative) = $derivative->refresh();
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    $this->assertEquals($filter, $derivative->getPostFilterOperations());
 	}
@@ -183,19 +183,19 @@ class WatermarkTest extends GalleryTestCase {
 	/* Create an item to watermark */
 	list ($ret, $item) = $this->_createRandomDataItem($this->_album->getId(), 'test/file');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $thumbnail) = $this->_createDerivative(
 	    $item, $item->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'crop|10,10,30,40;scale|200');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $resize) = $this->_createDerivative(
 	    $item, $item->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|500');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Apply the watermark */
@@ -204,7 +204,7 @@ class WatermarkTest extends GalleryTestCase {
 						    DERIVATIVE_TYPE_IMAGE_THUMBNAIL => true,
 						    DERIVATIVE_TYPE_IMAGE_RESIZE => true));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Verify that we have a preferred now */
@@ -213,7 +213,7 @@ class WatermarkTest extends GalleryTestCase {
 		    $this->_watermark->getFileName());
 	list ($ret, $table) = GalleryCoreApi::fetchPreferredsByItemIds(array($item->getId()));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	if (!empty($table[$item->getId()])) {
@@ -224,7 +224,7 @@ class WatermarkTest extends GalleryTestCase {
 	    foreach (array($resize, $thumbnail) as $derivative) {
 		list ($ret, $derivative) = $derivative->refresh();
 		if ($ret) {
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		    return $this->failWithStatus($ret);
 		}
 		$this->assertEquals($preferred->getId(), $derivative->getDerivativeSourceId());
 	    }
@@ -237,26 +237,26 @@ class WatermarkTest extends GalleryTestCase {
 	/* Create an item to watermark */
 	list ($ret, $item) = $this->_createRandomDataItem($this->_album->getId(), 'test/file');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $preferred) = $this->_createDerivative($item, $item->getId(),
 							   DERIVATIVE_TYPE_IMAGE_PREFERRED, '');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $thumbnail) = $this->_createDerivative(
 	    $item, $preferred->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
 	    'crop|10,10,30,40;scale|200');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $resize) = $this->_createDerivative($item, $preferred->getId(),
 							DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|500');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Apply the watermark */
@@ -265,7 +265,7 @@ class WatermarkTest extends GalleryTestCase {
 						    DERIVATIVE_TYPE_IMAGE_THUMBNAIL => true,
 						    DERIVATIVE_TYPE_IMAGE_RESIZE => true));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Verify that we have a preferred now */
@@ -274,7 +274,7 @@ class WatermarkTest extends GalleryTestCase {
 		    $this->_watermark->getFileName());
 	list ($ret, $table) = GalleryCoreApi::fetchPreferredsByItemIds(array($item->getId()));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assert(empty($table[$item->getId()]), 'preferred is not gone!');
@@ -283,7 +283,7 @@ class WatermarkTest extends GalleryTestCase {
 	foreach (array($resize, $thumbnail) as $derivative) {
 	    list ($ret, $derivative) = $derivative->refresh();
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    $this->assertEquals($item->getId(), $derivative->getDerivativeSourceId());
 	}

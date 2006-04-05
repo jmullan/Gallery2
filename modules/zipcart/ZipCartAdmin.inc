@@ -39,7 +39,7 @@ class ZipCartAdminController extends GalleryController {
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$error = $status = array();
@@ -79,16 +79,16 @@ class ZipCartAdminController extends GalleryController {
 	if (isset($form['action']['save']) && empty($error)) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'zipcart', 'path', $form['path']);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'zipcart');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    list ($ret, $isActive) = $module->isActive();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    $redirect['view'] = 'core.SiteAdmin';
@@ -132,7 +132,7 @@ class ZipCartAdminView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if ($form['formName'] != 'ZipCartAdmin') {
@@ -140,7 +140,7 @@ class ZipCartAdminView extends GalleryView {
 	    list ($ret, $form['path']) =
 		    GalleryCoreApi::getPluginParameter('module', 'zipcart', 'path');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 
@@ -150,11 +150,11 @@ class ZipCartAdminView extends GalleryView {
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'zipcart');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	list ($ret, $isActive) = $module->isActive();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$ZipCartAdmin = array('isConfigure' => !$isActive);

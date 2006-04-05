@@ -45,12 +45,12 @@ class GalleryFileSystemEntityHelper_simple {
     function fetchItemIdByPath($path) {
 	global $gallery;
 	if (empty($path)) {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	}
 
 	list ($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$rootId = (int)$rootId;
 	
@@ -63,7 +63,7 @@ class GalleryFileSystemEntityHelper_simple {
 	    list ($ret, $currentId) =
 		GalleryCoreApi::fetchChildIdByPathComponent($currentId, $pathComponent);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 
@@ -87,7 +87,7 @@ class GalleryFileSystemEntityHelper_simple {
 	global $gallery;
 
 	if (empty($parentId) || empty($pathComponent)) {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER),
 			 null);
 	}
 
@@ -111,7 +111,7 @@ class GalleryFileSystemEntityHelper_simple {
 
 	list ($ret, $searchResults) = $gallery->search($query, $data);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if ($searchResults->resultCount() == 0) {
@@ -120,7 +120,7 @@ class GalleryFileSystemEntityHelper_simple {
 	}
 
 	if ($searchResults->resultCount() > 1) {
-	    return array(GalleryCoreApi::error(ERROR_COLLISION, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_COLLISION), null);
 	}
 
 	$data = array();

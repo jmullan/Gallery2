@@ -68,7 +68,7 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 		$ret = $template->renderStatusMessage(_('Upgrading modules'),
 		    $module->getName(), $currentModule / $totalModules);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 
 		$ret = $module->installOrUpgrade();
@@ -112,7 +112,7 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 		$ret = $template->renderStatusMessage(_('Upgrading themes'),
 		    $theme->getName(), $currentTheme / $totalThemes);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 
 		$ret = $theme->installOrUpgrade();
@@ -169,7 +169,7 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 	if (empty($translator)) {
 	    $ret = $gallery->initTranslator();
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 

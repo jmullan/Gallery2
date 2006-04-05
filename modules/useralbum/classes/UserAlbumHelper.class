@@ -43,11 +43,11 @@ class UserAlbumHelper {
     function createUserAlbum($user) {
 	list ($ret, $core) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	list ($ret, $module) = GalleryCoreApi::fetchAllPluginParameters('module', 'useralbum');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Create album.. */
@@ -65,13 +65,13 @@ class UserAlbumHelper {
 	    if ($ret->getErrorCode() & ERROR_COLLISION) {
 		$albumName .= '_';
 	    } else {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($album->getId());
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Set owner.. */
@@ -79,7 +79,7 @@ class UserAlbumHelper {
 	$ret = $album->save();
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockId);
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$albumId = $album->getId();
 
@@ -87,17 +87,17 @@ class UserAlbumHelper {
 	$ret = GalleryCoreApi::removeItemPermissions($albumId);
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockId);
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::addGroupPermission($albumId, $core['id.adminGroup'], 'core.all');
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockId);
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::addUserPermission($albumId, $user->getId(), 'core.all');
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockId);
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$viewPermissions = $module['fullSize'] ? array('core.viewAll')
@@ -115,21 +115,21 @@ class UserAlbumHelper {
 		$ret = GalleryCoreApi::addGroupPermission($albumId, $groupId, $permission);
 		if ($ret) {
 		    GalleryCoreApi::releaseLocks($lockId);
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	}
 
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Record id of album */
 	$ret = GalleryCoreApi::setPluginParameter(
 			       'module', 'useralbum', 'albumId', $albumId, $user->getId());
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;

@@ -38,7 +38,7 @@ class CommentSiteAdminController extends GalleryController {
     function handleRequest($form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$status = $error = array();
@@ -51,12 +51,12 @@ class CommentSiteAdminController extends GalleryController {
 		$ret = GalleryCoreApi::setPluginParameter('module', 'comment',
 							  'comments.show', $form['show']);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		$ret = GalleryCoreApi::setPluginParameter('module', 'comment',
 			'comments.latest', (isset($form['latest']) && $form['latest']) ? 1 : 0);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		$status['saved'] = 1;
 	    }
@@ -85,7 +85,7 @@ class CommentSiteAdminView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if ($form['formName'] != 'CommentSiteAdmin') {
@@ -94,7 +94,7 @@ class CommentSiteAdminView extends GalleryView {
 		list ($ret, $value) =
 		    GalleryCoreApi::getPluginParameter('module', 'comment', 'comments.' . $key);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		$form[$key] = $value;
 	    }
@@ -105,7 +105,7 @@ class CommentSiteAdminView extends GalleryView {
 	list ($ret, $pluginInstances) =
 	    GalleryCoreApi::getAllFactoryImplementationIds('GalleryValidationPlugin');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$form['canValidate'] = !empty($pluginInstances);
 

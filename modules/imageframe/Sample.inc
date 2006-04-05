@@ -38,19 +38,19 @@ class SampleView extends GalleryView {
 	list ($ret, $imageframe) =
 	    GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (!isset($imageframe)) {
-	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
 	}
 
 	list ($ret, $list) = $imageframe->getImageFrameList();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$ret = $imageframe->init($template, array_keys($list));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$ImageFrameSample = array('list' => $list);
@@ -58,15 +58,15 @@ class SampleView extends GalleryView {
 	if (!empty($itemId)) {
 	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    list ($ret, $thumbnail) = GalleryCoreApi::fetchThumbnailsByItemIds(array($itemId));
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    list ($ret, $canSee) = GalleryCoreApi::hasItemPermission($itemId, 'core.view');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    if ($canSee && isset($thumbnail[$itemId])) {
 		$ImageFrameSample['item'] = (array)$item;
@@ -76,7 +76,7 @@ class SampleView extends GalleryView {
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imageframe');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$template->setVariable('ImageFrameSample', $ImageFrameSample);
@@ -92,7 +92,7 @@ class SampleView extends GalleryView {
     function getViewDescription() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imageframe');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	return array(null, $module->translate('Image Frame Samples'));
     }

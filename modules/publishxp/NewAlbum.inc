@@ -55,14 +55,14 @@ class NewAlbumController extends GalleryController {
                     $form['parentId'], $form['pathComponent'], $form['title'],
 		    $form['summary'], $form['description'], null);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		if (empty($error)) {
 		    /* Give the creator all permissions on the new album */
 		    $ret = GalleryCoreApi::addUserPermission(
 			$newAlbum->getId(), $newAlbum->getOwnerId(), 'core.all', false);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		    $redirect['view'] = 'publishxp.SelectAlbum';
 		    $redirect['albumId'] = $newAlbum->getId();
@@ -102,7 +102,7 @@ class NewAlbumView extends GalleryView {
 	    $form['formName'] = 'NewAlbum';
 	    $parentId = GalleryUtilities::getRequestVariables('parentId');
 	    if (empty($parentId)) {
-		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	    }
 
 	    $form['parentId'] = $parentId;
@@ -115,18 +115,18 @@ class NewAlbumView extends GalleryView {
 
 	$ret = GalleryCoreApi::assertHasItemPermission($form['parentId'], 'core.addAlbumItem');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list($ret, $parent) = GalleryCoreApi::loadEntitiesById($form['parentId']);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Load the item's parents */
 	list($ret, $parents) = GalleryCoreApi::fetchParents($parent, 'core.view');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	for ($i = 0; $i < sizeof($parents); $i ++) {
 	    $parents[$i] = (array)$parents[$i];

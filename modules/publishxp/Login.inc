@@ -48,7 +48,7 @@ class LoginController extends GalleryController {
 	    if (empty($error)) {
 		list($ret, $user) = GalleryCoreApi::fetchUserByUsername($form['userName']);
 		if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		if (isset($user) && $user->isCorrectPassword($form['password'])) {
 		    $gallery->setActiveUser($user);
@@ -57,7 +57,7 @@ class LoginController extends GalleryController {
 		    $event->setEntity($user);
 		    list ($ret, $ignoreTheRedirect) = GalleryCoreApi::postEvent($event);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 
 		    $session =& $gallery->getSession();
@@ -102,7 +102,7 @@ class LoginView extends GalleryView {
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if ($gallery->getActiveUserId() != $anonymousUserId) {

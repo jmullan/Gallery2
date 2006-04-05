@@ -30,12 +30,12 @@ require_once('../../../init.inc');
 function RepositoryToolsMain() {
     $ret = GalleryInitFirstPass();
     if ($ret) {
-	return $ret->wrap(__FILE__, __LINE__);
+	return $ret;
     }
 
     $ret = GalleryInitSecondPass();
     if ($ret) {
-	return $ret->wrap(__FILE__, __LINE__);
+	return $ret;
     }
 
     global $gallery;
@@ -65,7 +65,7 @@ function RepositoryToolsMain() {
     $urlGenerator = new GalleryUrlGenerator();
     $ret = $urlGenerator->init('lib/tools/repository');
     if ($ret) {
-	return $ret->wrap(__FILE__, __LINE__);
+	return $ret;
     }
     $gallery->setUrlGenerator($urlGenerator);
 
@@ -95,7 +95,7 @@ function RepositoryToolsMain() {
 
     $ret = $controller->$methodName();
     if ($ret) {
-	return $ret->wrap(__FILE__, __LINE__);
+	return $ret;
     }
 
     return null;
@@ -103,7 +103,7 @@ function RepositoryToolsMain() {
 
 $ret = RepositoryToolsMain();
 if ($ret) {
-    $ret = $ret->wrap(__FILE__, __LINE__);
+    $ret = $ret;
     print $ret->getAsHtml();
     print $gallery->getDebugBuffer();
     return;
@@ -111,7 +111,7 @@ if ($ret) {
 
 list ($ret, $isSiteAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
 if ($ret) {
-    $ret = $ret->wrap(__FILE__, __LINE__);
+    $ret = $ret;
     print $ret->getAsHtml();
     return;
 }

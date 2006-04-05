@@ -54,7 +54,7 @@ class ZipCartModule extends GalleryModule {
 	    'CartPluginInterface_1_0', 'ZipCartPlugin', 'zipcart',
 	    'modules/zipcart/classes/ZipCartPlugin.class', 'zipcart', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -66,7 +66,7 @@ class ZipCartModule extends GalleryModule {
     function needsConfiguration() {
 	list ($ret, $value) = $this->getParameter('path');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, empty($value));
@@ -80,7 +80,7 @@ class ZipCartModule extends GalleryModule {
 
 	list ($ret, $needsConfiguration) = $this->needsConfiguration();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), false);
+	    return array($ret, false);
 	}
 	if (!$needsConfiguration) {
 	    return array(null, true);
@@ -137,7 +137,7 @@ class ZipCartModule extends GalleryModule {
 		/* We have a winner */
 		$ret = $this->setParameter('path', $path);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), false);
+		    return array($ret, false);
 		}
 		return array(null, true);
 	    }

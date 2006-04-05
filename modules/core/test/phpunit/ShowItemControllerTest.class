@@ -47,7 +47,7 @@ class ShowItemControllerTest extends GalleryControllerTestCase {
 	$ret = $gallery->_session->initEmpty();
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
     }
 

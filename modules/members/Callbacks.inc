@@ -40,19 +40,19 @@ class MembersCallbacks {
 	    list ($ret, $block['members']['LoadMembers']['canViewList']) =
 		GalleryMembersHelper::canViewMembersModule($gallery->getActiveUserId());
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    /* The members count */
 	    list ($ret, $block['members']['LoadMembers']['count']) =
 		GalleryMembersHelper::getMembersCount();
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    return null;
 	}
 
-	return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
     }
 }
 ?>

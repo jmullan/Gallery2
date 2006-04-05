@@ -88,7 +88,7 @@ class MySqlStorage extends GalleryStorage {
 	    $this->_traceStop();
 
 	    if (!$recordSet) {
-		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
 	    }
 	}
 

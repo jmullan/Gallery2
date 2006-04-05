@@ -57,14 +57,14 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    if (empty($this->_gs->_nonTransactionalDb)) {
 		list ($ret, $this->_gs->_nonTransactionalDb) = $this->_gs->_getConnection(true);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	    return array(null, $this->_gs->_nonTransactionalDb);
 	} else {
 	    $ret = $this->_dbInit();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    return array(null, $this->_gs->_db);
 	}
@@ -79,13 +79,13 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	if (!isset($this->_gs->_db)) {
 	    list ($ret, $this->_gs->_db) = $this->_gs->_getConnection();
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 	if ($transaction) {
 	    $ret = $this->_gs->_guaranteeTransaction();
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 	return null;
@@ -98,7 +98,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	global $gallery;
 	$ret = $this->_dbInit();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	foreach ($ids as $idx => $id) {
@@ -108,7 +108,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	/* Identify all the ids at once */
 	list ($ret, $types) = $this->_identifyEntities($ids);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Separate the ids by type */
@@ -132,7 +132,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    /* Get our member info for this class */
 	    list ($ret, $memberInfo) = $this->describeEntity($className);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    $idCol = $this->_gs->_translateColumnName('id');
@@ -177,7 +177,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    $this->_gs->_traceStop();
 	    if ($recordSet) {
 		if ($recordSet->RecordCount() != count($targetIds)) {
-		    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
+		    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT),
 				 null);
 		}
 
@@ -195,7 +195,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 		    $entity = new $className;
 
 		    if (empty($entity)) {
-			return array(GalleryCoreApi::error(ERROR_BAD_DATA_TYPE, __FILE__, __LINE__),
+			return array(GalleryCoreApi::error(ERROR_BAD_DATA_TYPE),
 				     null);
 		    }
 
@@ -213,7 +213,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 
 		$recordSet->Close();
 	    } else {
-		return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__),
+		return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE),
 			     null);
 	    }
 	}
@@ -233,7 +233,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
     function saveEntity(&$entity) {
 	$ret = $this->_dbInit(true);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Update the serial number, but remember the original one */
@@ -242,7 +242,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	/* Get our member info for this class */
 	list ($ret, $memberInfo) = $this->describeEntity($entity->entityType);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$idColumn = null;
 
@@ -314,7 +314,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 		$this->_gs->_traceStop();
 
 		if (!$recordSet) {
-		    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+		    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
 		}
 	    }
 	} else {
@@ -366,7 +366,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 		$this->_gs->_traceStop();
 
 		if (!$recordSet) {
-		    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+		    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
 		} else {
 		    $affectedRows = $this->_gs->_db->Affected_Rows();
 		    if ($affectedRows == 0) {
@@ -385,7 +385,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	$entity->resetOriginalValues();
 	$ret = $entity->onSave();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -397,7 +397,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
     function deleteEntity(&$entity) {
 	$ret = $this->_dbInit(true);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* If this object has not yet been saved in the database, don't bother saving it. */
@@ -410,7 +410,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	/* Get our persistent and member info for this class */
 	list ($ret, $memberInfo) = $this->describeEntity($entity->entityType);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$idCol = $this->_gs->_translateColumnName('id');
@@ -437,7 +437,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    $recordSet = $this->_gs->_db->Execute($query, $data);
 	    $this->_gs->_traceStop();
 	    if (!$recordSet) {
-		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
 	    }
 	}
 
@@ -453,7 +453,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	/* getUniqueId does _dbInit */
 	list ($ret, $id) = $this->getUniqueId();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$entity->id = $id;
@@ -469,7 +469,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
     function getUniqueId() {
 	$ret = $this->_dbInit();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* In case we're embedded in an app that sets adodb hasGenID to false (xaraya/postnuke) */
@@ -495,7 +495,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
     function refreshEntity($entity) {
 	$ret = $this->_dbInit();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/*
@@ -506,13 +506,13 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	 */
 	list ($ret, list ($freshEntity)) = $this->_gs->loadEntities(array($entity->id));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Let entity do its post-load procedure */
 	$ret = $freshEntity->onLoad();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $freshEntity);
@@ -534,7 +534,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	/* Acquire a non-transactional connection to use for this request */
 	list ($ret, $db) = $this->_getNonTransactionalDatabaseConnection();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Know when to call it quits */
@@ -553,7 +553,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	while (true) {
 	    list ($ret, $lockId) = $this->_getLockClearance($cutoffTime);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    /* Check to see if any of the ids that we care about are write locked */
@@ -570,7 +570,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    $this->_gs->_traceStop();
 	    if (!$recordSet) {
 		$this->releaseLocks($lockId);
-		return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__),
+		return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE),
 			     null);
 	    }
 
@@ -583,7 +583,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 		$this->releaseLocks($lockId);
 
 		if (time() > $cutoffTime) {
-		    return array(GalleryCoreApi::error(ERROR_LOCK_TIMEOUT, __FILE__, __LINE__),
+		    return array(GalleryCoreApi::error(ERROR_LOCK_TIMEOUT),
 				 null);
 		}
 
@@ -593,7 +593,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 		/* Expire any bogus locks */
 		$ret = $this->_expireLocks();
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	}
@@ -614,7 +614,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    $this->_gs->_traceStop();
 	    if (!$recordSet) {
 		$this->releaseLocks($lockId);
-		return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__),
+		return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE),
 			     null);
 	    }
 	    $lockInfo[$entityId] = true;
@@ -631,7 +631,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	$this->_gs->_traceStop();
 	if (!$recordSet) {
 	    $this->releaseLocks($lockId);
-	    return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE), null);
 	}
 
 	return array(null,
@@ -654,7 +654,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	/* Acquire a non-transactional connection to use for this request */
 	list ($ret, $db) = $this->_getNonTransactionalDatabaseConnection();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Know when to call it quits */
@@ -673,7 +673,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	while (true) {
 	    list ($ret, $lockId) = $this->_getLockClearance($cutoffTime);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    /* Check to see if any of the ids that we care about are locked */
@@ -693,7 +693,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    $this->_gs->_traceStop();
 	    if (!$recordSet) {
 		$this->releaseLocks($lockId);
-		return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__),
+		return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE),
 			     null);
 	    }
 
@@ -706,7 +706,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 		$this->releaseLocks($lockId);
 
 		if (time() > $cutoffTime) {
-		    return array(GalleryCoreApi::error(ERROR_LOCK_TIMEOUT, __FILE__, __LINE__),
+		    return array(GalleryCoreApi::error(ERROR_LOCK_TIMEOUT),
 				 null);
 		}
 
@@ -716,7 +716,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 		/* Expire any bogus locks */
 		$ret = $this->_expireLocks();
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	}
@@ -737,7 +737,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    $this->_gs->_traceStop();
 	    if (!$recordSet) {
 		$this->releaseLocks($lockId);
-		return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__),
+		return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE),
 			     null);
 	    }
 	    $lockInfo[$entityId] = true;
@@ -754,7 +754,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	$this->_gs->_traceStop();
 	if (!$recordSet) {
 	    $this->releaseLocks($lockId);
-	    return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE), null);
 	}
 
 	return array(null,
@@ -773,7 +773,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    /* Acquire a non-transactional connection to use for this request */
 	    list ($ret, $db) = $this->_getNonTransactionalDatabaseConnection();
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    list ($lockTable, $unused) = $this->_gs->_translateTableName('Lock');
@@ -789,7 +789,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    $this->_gs->_traceStop();
 
 	    if (!$recordSet) {
-		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
 	    }
 	}
 
@@ -806,7 +806,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	/* Acquire a non-transactional connection to use for this request */
 	list ($ret, $db) = $this->_getNonTransactionalDatabaseConnection();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	list ($lockTable, $unused) = $this->_gs->_translateTableName('Lock');
@@ -819,7 +819,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	$this->_gs->_traceStop();
 
 	if (!$recordSet) {
-	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
 	}
 
 	return null;
@@ -839,7 +839,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	/* Acquire a non-transactional connection to use for this request */
 	list ($ret, $db) = $this->_getNonTransactionalDatabaseConnection();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Get the true name of the lock table */
@@ -855,7 +855,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	if ($recordSet) {
 	    return null;
 	} else {
-	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
 	}
     }
 
@@ -865,7 +865,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
     function removeIdsFromLock($lock, $ids) {
 	list ($ret, $db) = $this->_getNonTransactionalDatabaseConnection();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$query = '
@@ -881,7 +881,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	if ($recordSet) {
 	    return null;
 	} else {
-	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
 	}
     }
 
@@ -891,7 +891,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
     function moveIdsBetweenLocks($relock, $newLockId, $lockType) {
 	list ($ret, $db) = $this->_getNonTransactionalDatabaseConnection();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$query = '
@@ -904,7 +904,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 				      array_merge(array($newLockId, $lockId), $ids));
 	    $this->_gs->_traceStop();
 	    if (!$recordSet) {
-		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
 	    }
 	}
 	return null;
@@ -916,7 +916,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
     function newLockId() {
 	list ($ret, $db) = $this->_getNonTransactionalDatabaseConnection();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$this->_gs->_traceStart();
@@ -932,7 +932,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
     function execute($statement, $data=array()) {
 	$ret = $this->_dbInit(true);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$statement = $this->_gs->_translateQuery($statement);
@@ -945,7 +945,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	GalleryDataCache::reset();
 
 	return $recordSet ? null
-			  : GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+			  : GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
     }
 
     /**
@@ -954,12 +954,12 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
     function addMapEntry($mapName, $entry) {
 	$ret = $this->_dbInit(true);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	list ($ret, $mapInfo) = $this->_gs->describeMap($mapName);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	list ($tableName) = $this->_gs->_translateTableName($mapName);
 	$data = $columns = array();
@@ -985,7 +985,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	$recordSet = $this->_gs->_db->Execute($query, $data);
 	$this->_gs->_traceStop();
 	if ($recordSet === false) {
-	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
 	}
 
 	return null;
@@ -1021,14 +1021,14 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	list ($ret, $query) =
 	    $this->_gs->getFunctionSql('MULTI_INSERT', array($tableName, $columns, $rows));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$this->_gs->_traceStart();
 	$recordSet = $this->_gs->_db->Execute($query, $data);
 	$this->_gs->_traceStop();
 	if ($recordSet === false) {
-	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
 	}
 
 	return null;
@@ -1040,12 +1040,12 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
     function removeMapEntry($mapName, $match) {
 	$ret = $this->_dbInit(true);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	list ($ret, $mapInfo) = $this->_gs->describeMap($mapName);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	list ($tableName, $unused) = $this->_gs->_translateTableName($mapName);
 	$data = $where = array();
@@ -1089,7 +1089,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	$recordSet = $this->_gs->_db->Execute($query, $data);
 	$this->_gs->_traceStop();
 	if (!$recordSet) {
-	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
 	}
 
 	return null;
@@ -1101,7 +1101,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
     function removeAllMapEntries($mapName) {
 	$ret = $this->_dbInit(true);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	list ($tableName) = $this->_gs->_translateTableName($mapName);
@@ -1111,7 +1111,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	$recordSet = $this->_gs->_db->Execute($query);
 	$this->_gs->_traceStop();
 	if ($recordSet === false) {
-	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
 	}
 
 	return null;
@@ -1205,12 +1205,12 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 
 	$ret = $this->_dbInit(true);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	list ($ret, $moduleSql) = $this->_getModuleSql($moduleId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Get the metabase info about this database */
@@ -1233,7 +1233,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	if (!in_array(strtolower($schemaTableName), $metatables)) {
 	    $ret = $this->_executeSql($moduleSql['table']['Schema']);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    unset($moduleSql['table']['Schema']);
 
@@ -1243,7 +1243,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 		$result = $this->_gs->_db->CreateSequence($this->_gs->_tablePrefix . $sequenceId);
 		$this->_gs->_traceStop();
 		if (empty($result)) {
-		    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+		    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
 		}
 	    }
 	}
@@ -1251,7 +1251,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	/* Load all table versions */
 	list ($ret, $tableVersions) = $this->_loadTableVersions();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/*
@@ -1267,7 +1267,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    if (!in_array(strtolower($tableName), $metatables)) {
 		$ret = $this->_executeSql($sql);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    } else {
 		while (1) {
@@ -1291,13 +1291,13 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 			$sql = $moduleSql['alter'][$rawTableName][$major][$minor];
 			$ret = $this->_executeSql($sql);
 			if ($ret) {
-			    return $ret->wrap(__FILE__, __LINE__);
+			    return $ret;
 			}
 
 			/* Reload all table versions, cause one has now changed */
 			list ($ret, $tableVersions) = $this->_loadTableVersions();
 			if ($ret) {
-			    return $ret->wrap(__FILE__, __LINE__);
+			    return $ret;
 			}
 		    } else {
 			/* No upgrade available */
@@ -1318,12 +1318,12 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 
 	$ret = $this->_dbInit(true);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	list ($ret, $moduleSql) = $this->_getModuleSql($moduleId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Get the metabase info about this database */
@@ -1344,7 +1344,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	/* Load all table versions */
 	list ($ret, $tableVersions) = $this->_loadTableVersions();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Now locate any existing tables that should be removed and drop them. */
@@ -1373,7 +1373,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 			$ret = $this->_executeSql(
 			    $moduleSql['remove'][$rawTableName][$major][$minor]);
 			if ($ret) {
-			    return $ret->wrap(__FILE__, __LINE__);
+			    return $ret;
 			}
 		    }
 		}
@@ -1397,7 +1397,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 
 	list ($ret, $moduleSql) = $this->_getModuleSql($moduleId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Get the metabase info about this database */
@@ -1437,7 +1437,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 		$dropQuery = sprintf('DROP TABLE %s', $tableName);
 		$recordSet = $this->_gs->_db->Execute($dropQuery);
 		if (empty($recordSet)) {
-		    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+		    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
 		}
 	    }
 
@@ -1445,7 +1445,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 				  $schemaTableName, $schemaColumnName);
 	    $recordSet = $this->_gs->_db->Execute($cleanQuery, array($tableNameInSchema));
 	    if (empty($recordSet)) {
-		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
 	    }
 	    $this->_gs->_traceStop();
 	}
@@ -1540,12 +1540,12 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 
 	$ret = $this->_dbInit(true);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = $this->_executeSql($buffer);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -1560,7 +1560,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 
 	$ret = $this->_dbInit(true);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Get the metabase info about this database */
@@ -1584,7 +1584,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    /* Load all table versions */
 	    list ($ret, $tableVersions) = $this->_loadTableVersions();
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    foreach (array_keys($tableVersions) as $rawTableName) {
@@ -1595,7 +1595,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 		$recordSet = $this->_gs->_db->Execute($query);
 		$this->_gs->_traceStop();
 		if (empty($recordSet)) {
-		    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+		    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
 		}
 	    }
 
@@ -1605,7 +1605,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 		$recordSet = $this->_gs->_db->DropSequence($this->_gs->_tablePrefix . $sequenceId);
 		$this->_gs->_traceStop();
 		if (empty($recordSet)) {
-		    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+		    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
 		}
 	    }
 	}
@@ -1634,7 +1634,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
     function isInstalled() {
 	$ret = $this->_dbInit();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Get the metabase info about this database */
@@ -1653,13 +1653,13 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
     function optimize() {
 	$ret = $this->_dbInit();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Load all table versions */
 	list ($ret, $tableVersions) = $this->_loadTableVersions();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$statement = $this->_gs->_getOptimizeStatement();
@@ -1671,7 +1671,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 		$this->_gs->_traceStop();
 
 		if (!$recordSet) {
-		    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+		    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
 		}
 	    }
 	}
@@ -1685,7 +1685,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
     function getAffectedRows() {
 	$ret = $this->_dbInit(true);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $this->_gs->_db->Affected_Rows());
@@ -1706,7 +1706,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	/* Acquire a non-transactional connection to use for this request */
 	list ($ret, $db) = $this->_getNonTransactionalDatabaseConnection();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Get a new lock id */
@@ -1727,7 +1727,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	$this->_gs->_traceStop();
 	if (!$recordSet) {
 	    $this->releaseLocks($lockId);
-	    return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE), null);
 	}
 
 	/* Wait till it's our turn */
@@ -1741,7 +1741,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    $this->_gs->_traceStop();
 	    if (!$recordSet) {
 		$this->releaseLocks($lockId);
-		return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__),
+		return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE),
 			     null);
 	    }
 
@@ -1756,12 +1756,12 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    /* Expire any bogus locks */
 	    $ret = $this->_expireLocks();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    if (time() > $cutoffTime) {
 		$this->releaseLocks($lockId);
-		return array(GalleryCoreApi::error(ERROR_LOCK_TIMEOUT, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_LOCK_TIMEOUT), null);
 	    }
 	}
 
@@ -1810,7 +1810,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 		while ($row = $recordSet->FetchRow()) {
 		    if (empty($row[1])) {
 			return array(
-			    GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+			    GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
 		    } else {
 			/*
 			 * Save a copy locally, in case the global cache is disabled
@@ -1822,7 +1822,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 		    }
 		}
 	    } else {
-		return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__),
+		return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE),
 			     null);
 	    }
 	}
@@ -1877,7 +1877,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	if (!isset($entityInfo)) {
 	    list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    $entityInfo = array();
@@ -1893,7 +1893,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 		 */
 		$moduleDir = GalleryCoreApi::getPluginBaseDir('module', $moduleId);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		$entitiesFile = "$moduleDir/modules/$moduleId/classes/Entities.inc";
@@ -1912,7 +1912,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	if (!$tryAllModules && !isset($entityInfo[$entityName])) {
 	    list ($ret, $entityInfo) = $this->describeEntity($entityName, true);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 

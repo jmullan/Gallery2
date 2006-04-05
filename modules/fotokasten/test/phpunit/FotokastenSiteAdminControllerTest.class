@@ -44,7 +44,7 @@ class FotokastenSiteAdminControllerTest extends GalleryControllerTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'fotokasten');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -74,7 +74,7 @@ class FotokastenSiteAdminControllerTest extends GalleryControllerTestCase {
 	list ($ret, $params) =
 	    GalleryCoreApi::fetchAllPluginParameters('module', 'fotokasten');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals('1234', $params['affiliateId'], 'affiliateId');
 	$this->assertEquals('abcde12345', $params['affiliateIdPass'], 'affiliateIdPass');

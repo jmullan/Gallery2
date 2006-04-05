@@ -97,7 +97,7 @@ function GalleryInitFirstPass($params=array()) {
 	list ($ret, $urlGenerator) = @GalleryCoreApi::newFactoryInstance('GalleryUrlGenerator');
 	/* Swallow ERROR_STORAGE_FAILURE, or automatic upgrading fails */
 	if ($ret && !($ret->getErrorCode() & ERROR_STORAGE_FAILURE)) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
     }
     if (!isset($urlGenerator)) {
@@ -112,7 +112,7 @@ function GalleryInitFirstPass($params=array()) {
 	isset($params['g2Uri']) ? $params['g2Uri'] : null,
 	isset($params['embedSessionString']) ? $params['embedSessionString'] : null);
     if ($ret) {
-	return $ret->wrap(__FILE__, __LINE__);
+	return $ret;
     }
     $gallery->setUrlGenerator($urlGenerator);
 
@@ -124,7 +124,7 @@ function GalleryInitFirstPass($params=array()) {
 	}
 	$ret = $gallery->initSession();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
     } else {
 	$gallery->initEmptySession();
@@ -140,7 +140,7 @@ function GalleryInitFirstPass($params=array()) {
     }
     $ret = $gallery->initTranslator(isset($params['noDatabase']));
     if ($ret) {
-	return $ret->wrap(__FILE__, __LINE__);
+	return $ret;
     }
 
     return null;
@@ -153,7 +153,7 @@ function GalleryInitSecondPass() {
 
     $ret = $urlGenerator->initNavigation();
     if ($ret) {
-	return $ret->wrap(__FILE__, __LINE__);
+	return $ret;
     }
     
     /*
@@ -167,7 +167,7 @@ function GalleryInitSecondPass() {
 	list ($ret, $activeUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
     }
 
@@ -178,15 +178,15 @@ function GalleryInitSecondPass() {
 	    list ($ret, $activeUserId) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    list ($ret, $activeUser) = GalleryCoreApi::loadEntitiesById($activeUserId);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	} else {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
     }
 

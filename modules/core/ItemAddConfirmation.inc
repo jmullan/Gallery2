@@ -45,7 +45,7 @@ class ItemAddConfirmationView extends GalleryView {
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/*
@@ -63,7 +63,7 @@ class ItemAddConfirmationView extends GalleryView {
 		} else if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
 		    $status['addedFiles'][$i]['exists'] = false;
 		} else {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	} else {
@@ -87,7 +87,7 @@ class ItemAddConfirmationView extends GalleryView {
     function getViewDescription() {
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $core->translate('add items confirmation'));

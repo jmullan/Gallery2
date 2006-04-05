@@ -93,7 +93,7 @@ class GalleryItemAttributesHelper_simple {
 	    array('itemId' => $itemId),
 	    array('viewCount' => new GallerySqlFragment($func, $step)));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;

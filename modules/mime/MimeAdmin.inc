@@ -37,7 +37,7 @@ class MimeAdminController extends GalleryController {
     function handleRequest($form) {
         $ret = GalleryCoreApi::assertUserIsSiteAdministrator();
         if ($ret) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
+            return array($ret, null);
         }
 
 	$status = array();
@@ -46,7 +46,7 @@ class MimeAdminController extends GalleryController {
             $ret = GalleryCoreApi::removeMimeType(
                 array('mimeType' => $mimeType));
             if ($ret) {
-                return array($ret->wrap(__FILE__, __LINE__), null);
+                return array($ret, null);
             }
 	    $status['deleted'] = $mimeType;
 
@@ -76,7 +76,7 @@ class MimeAdminView extends GalleryView {
     function loadTemplate(&$template, &$form) {
         $ret = GalleryCoreApi::assertUserIsSiteAdministrator();
         if ($ret) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
+            return array($ret, null);
         }
 
 	if ($form['formName'] != 'MimeAdmin') {
@@ -85,7 +85,7 @@ class MimeAdminView extends GalleryView {
         GalleryCoreApi::requireOnce('modules/mime/classes/MimeHelper.class');
         list ($ret, $typeMap) = MimeHelper::getMimeTypeMap();
         if ($ret) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
+            return array($ret, null);
         }
 
         $MimeAdmin = array();

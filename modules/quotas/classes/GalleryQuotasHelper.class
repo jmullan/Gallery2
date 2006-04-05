@@ -71,7 +71,7 @@ class GalleryQuotasHelper {
 
         list ($ret, $searchResults) = $gallery->search($query, $data);
         if ($ret) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
+            return array($ret, null);
         }
 
         /* Get our user's total disk usage */
@@ -103,13 +103,13 @@ class GalleryQuotasHelper {
 	list ($ret, $userQuotaExists, $userQuotaInfo) = 
 	    GalleryQuotasHelper::fetchUserQuota($userId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	if (!$userQuotaExists) {
 	    list ($ret, $groupQuotaExists, $groupQuotaInfo) = 
 	        GalleryQuotasHelper::fetchHighestGroupQuota($userId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    if ($groupQuotaExists) {
 	        $userDiskQuota = $groupQuotaInfo['quota']; 
@@ -140,7 +140,7 @@ class GalleryQuotasHelper {
 
 	list ($ret, $groupQuotaIds) = GalleryCoreApi::fetchGroupsForUser($userId);
         if ($ret) {
-            return array($ret->wrap(__FILE__, __LINE__), null, null);
+            return array($ret, null, null);
         }
         $storage =& $gallery->getStorage();
         $groupQuotaIds = array_keys($groupQuotaIds);
@@ -165,7 +165,7 @@ class GalleryQuotasHelper {
 
         list ($ret, $searchResults) = $gallery->search($query, $data, $options);
         if ($ret) {
-            return array($ret->wrap(__FILE__, __LINE__), null, null);
+            return array($ret, null, null);
         }
 
         /* Get our group's quota size and name */
@@ -238,7 +238,7 @@ class GalleryQuotasHelper {
 
         list ($ret, $searchResults) = $gallery->search($query, $data, $options);
         if ($ret) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
+            return array($ret, null);
         }
 
         /* Get our groups' id, quota size, and name */
@@ -275,7 +275,7 @@ class GalleryQuotasHelper {
 
         list ($ret, $searchResults) = $gallery->search($query);
         if ($ret) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
+            return array($ret, null);
         }
 
         /* Get the number of groups that have quotas assigned */
@@ -318,7 +318,7 @@ class GalleryQuotasHelper {
 
         list ($ret, $searchResults) = $gallery->search($query, $data, $options);
         if ($ret) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
+            return array($ret, null);
         }
 
         /* Get our users' id, quota size, and name */
@@ -355,7 +355,7 @@ class GalleryQuotasHelper {
 
         list ($ret, $searchResults) = $gallery->search($query);
         if ($ret) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
+            return array($ret, null);
         }
 
         /* Get the number of users that have quotas assigned */
@@ -396,7 +396,7 @@ class GalleryQuotasHelper {
 
         list ($ret, $searchResults) = $gallery->search($query, $data);
         if ($ret) {
-            return array($ret->wrap(__FILE__, __LINE__), null, null);
+            return array($ret, null, null);
         }
 
         /* Get our group's quota size and name */
@@ -445,7 +445,7 @@ class GalleryQuotasHelper {
 
         list ($ret, $searchResults) = $gallery->search($query, $data);
         if ($ret) {
-            return array($ret->wrap(__FILE__, __LINE__), null, null);
+            return array($ret, null, null);
         }
 
         /* Get our users' quota size and name */

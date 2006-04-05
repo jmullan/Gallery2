@@ -53,7 +53,7 @@ class ReuploadModule extends GalleryModule {
 	    'modules/reupload/ReuploadPhotoOption.inc', 'reupload',
 	    array('ItemEditRotateAndScalePhoto'));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	return null;
     }

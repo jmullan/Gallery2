@@ -44,7 +44,7 @@ class AlbumSelectSiteAdminControllerTest extends GalleryControllerTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'albumselect');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
     }
 
@@ -78,7 +78,7 @@ class AlbumSelectSiteAdminControllerTest extends GalleryControllerTestCase {
 		       'treeCloseSameLevel' => '1') as $key => $expectedValue) {
 	    list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'albumselect', $key);
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    $this->assertEquals($expectedValue, $value, $key);
 	}

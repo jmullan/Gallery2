@@ -45,13 +45,13 @@ class RemoteModule extends GalleryModule {
     function upgrade($currentVersion) {
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'remote');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	foreach (array('showItemAdd' => 1) as $key => $value) {
 	    if (!isset($params[$key])) {
 		$ret = $this->setParameter($key, $value);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	}
@@ -68,7 +68,7 @@ class RemoteModule extends GalleryModule {
 	    'ItemAddPlugin', 'ItemAddGalleryRemote', 'ItemAddGalleryRemote',
 	    'modules/remote/ItemAddGalleryRemote.inc', 'remote', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;

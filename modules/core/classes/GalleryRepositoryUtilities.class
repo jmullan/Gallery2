@@ -226,12 +226,12 @@ class GalleryRepositoryUtilities {
 	/* Get the strings.raw file's first line which contains the timestamp. */
 	list ($ret, $line) = $this->getFirstBytesFromFile($pluginLanguageBasePath, 128);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $revision) = $this->extractRevision($line);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $revision);
@@ -249,7 +249,7 @@ class GalleryRepositoryUtilities {
 	/* REVISIT: Cache plugin list/convert to hashtable for better performance? */
 	list ($ret, $plugins) = GalleryCoreApi::getAllPluginIds($pluginType);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$isAvailable = in_array($pluginId, $plugins);
@@ -348,7 +348,7 @@ class GalleryRepositoryUtilities {
 
 	list ($ret, $searchResults) = $gallery->search($query, array($pluginType, $pluginId));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$data = array();
@@ -402,7 +402,7 @@ class GalleryRepositoryUtilities {
     function getPluginVersion($pluginType, $pluginId) {
 	list ($ret, $plugin) = GalleryCoreApi::loadPlugin($pluginType, $pluginId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $plugin->getVersion());

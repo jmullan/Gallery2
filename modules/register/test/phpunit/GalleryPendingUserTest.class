@@ -51,7 +51,7 @@ class GalleryPendingUserTest extends GalleryTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'register');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -61,7 +61,7 @@ class GalleryPendingUserTest extends GalleryTestCase {
 	/* Create a new pending user */
 	list ($ret, $user) = $this->_createRandomPendingUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryDataCache::reset();
@@ -69,13 +69,13 @@ class GalleryPendingUserTest extends GalleryTestCase {
 	/* Verify it */
 	$ret = $this->_verifyEntity($user);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Delete it */
 	$ret = $this->_deleteAndVerifyEntity($user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -84,12 +84,12 @@ class GalleryPendingUserTest extends GalleryTestCase {
 	list ($ret, $pendingUser) =
 	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryPendingUser');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	list ($ret, $user) =
 	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	if (empty($pendingUser) || empty($user)) {
 	    return $this->assert(false, 'factory error');
@@ -108,28 +108,28 @@ class GalleryPendingUserTest extends GalleryTestCase {
 	list ($ret, $user) =
 	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryPendingUser');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if (!isset($user)) {
-	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
 	}
 
 	$username = 'testuser_' . rand(1000, 1000000);
 
 	$ret = $user->create($username);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$ret = $user->save();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list($ret, $user) = GalleryPendingUserHelper::fetchPendingUserByUserName($username);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array( null, $user);

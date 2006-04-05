@@ -39,7 +39,7 @@ class AdminDcrawController extends GalleryController {
     function handleRequest($form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$error = $status = array();
@@ -54,7 +54,7 @@ class AdminDcrawController extends GalleryController {
 		    if ($ret->getErrorCode() & ERROR_BAD_PATH) {
 			$error[] = 'form[error][path][badPath]';
 		    } else {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		} else {
 		    $failCount = 0;
@@ -77,17 +77,17 @@ class AdminDcrawController extends GalleryController {
 			 as $key => $value) {
 		    $ret = GalleryCoreApi::setPluginParameter('module', 'dcraw', $key, $value);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		}
 
 		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'dcraw');
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		list ($ret, $isActive) = $module->isActive();
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		$redirect['view'] = 'core.SiteAdmin';
@@ -134,7 +134,7 @@ class AdminDcrawView extends GalleryView {
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Load our default values if we didn't just come from this form. */
@@ -144,7 +144,7 @@ class AdminDcrawView extends GalleryView {
 	    list ($ret, $form['path']) =
 		GalleryCoreApi::getPluginParameter('module', 'dcraw', 'path');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 
@@ -165,7 +165,7 @@ class AdminDcrawView extends GalleryView {
 			$testResults = array();
 			$form['error']['path']['bad'] = 1;
 		    } else {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		} else {
 		    $success = true;
@@ -186,11 +186,11 @@ class AdminDcrawView extends GalleryView {
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'dcraw');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	list ($ret, $isActive) = $module->isActive();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$AdminDcraw = array();

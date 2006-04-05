@@ -47,11 +47,11 @@ class ViewCartView extends GalleryView {
 
 	list ($ret, $itemList) = CartHelper::loadCartItems();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	list ($ret, $cartItemIds) = CartHelper::fetchCartItemCounts();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if ($form['formName'] != 'ViewCart') {
@@ -67,11 +67,11 @@ class ViewCartView extends GalleryView {
 	list ($ret, $rootAlbumId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($rootAlbumId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$ViewCart['rootAlbum'] = (array)$rootAlbum;
 
@@ -80,14 +80,14 @@ class ViewCartView extends GalleryView {
 	list ($ret, $ids) =
 	    GalleryCoreApi::getAllFactoryImplementationIds('CartPluginInterface_1_0');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$plugins = array();
 	foreach ($ids as $id => $className) {
 	    list ($ret, $instances[$id]) =
 		GalleryCoreApi::newFactoryInstance('CartPluginInterface_1_0', $className);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    /*
@@ -98,7 +98,7 @@ class ViewCartView extends GalleryView {
 	    list ($ret, $plugins[$id]['actionDisplayName']) =
 		$instances[$id]->getActionDisplayName();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 
@@ -131,7 +131,7 @@ class ViewCartView extends GalleryView {
 	    list ($ret, $thumbnailList) =
 		GalleryCoreApi::fetchThumbnailsByItemIds(array_keys($cartItemIds));
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    foreach ($thumbnailList as $thumbnail) {
 		$thumbnails[$thumbnail->getParentId()] = (array)$thumbnail;
@@ -148,13 +148,13 @@ class ViewCartView extends GalleryView {
 	$urlGenerator =& $gallery->getUrlGenerator();
 	list ($ret, $navigationLinks) = $urlGenerator->getNavigationLinks();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$template->setVariable('navigationLinks', $navigationLinks);
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'cart');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$template->title($module->translate('View Your Cart'));
@@ -168,7 +168,7 @@ class ViewCartView extends GalleryView {
     function getViewDescription() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'cart');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $module->translate('view cart'));

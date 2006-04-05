@@ -54,7 +54,7 @@ class RatingCallbackView extends GalleryView {
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	if (!headers_sent()) {
 	    header("Content-type: text/plain; charset=UTF-8");
@@ -64,7 +64,7 @@ class RatingCallbackView extends GalleryView {
 	case 'rate':
 	    list ($ret, $permission) = GalleryCoreApi::hasItemPermission($itemId, 'rating.add');
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    if (!$permission) {
 		return null;
@@ -73,7 +73,7 @@ class RatingCallbackView extends GalleryView {
 	    list ($ret, $results) = RatingHelper::rateItem($itemId, (int)$rating,
 		    $gallery->getActiveUserId());
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    print $results['itemId'] . "\n"

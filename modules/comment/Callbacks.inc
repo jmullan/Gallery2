@@ -35,13 +35,13 @@ class CommentCallbacks {
 	    $itemId = $params['itemId'];
 	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    list ($ret, $permissions) =
 		GalleryCoreApi::fetchPermissionsForItems(array($itemId), $userId);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    if (!isset($permissions[$itemId]['comment.view'])) {
@@ -54,13 +54,13 @@ class CommentCallbacks {
 	    list ($ret, $comments) =
 		GalleryCommentHelper::fetchComments($item->getId(), $viewMax, ORDER_DESCENDING);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    list ($ret, $counts) =
 		GalleryCommentHelper::fetchCommentCounts(array($item->getId()));
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    $commenters = array();
@@ -80,7 +80,7 @@ class CommentCallbacks {
 		    list ($ret, $commentersList) =
 			GalleryCoreApi::loadEntitiesById(array_keys($commenters));
 		    if ($ret) {
-			return $ret->wrap(__FILE__, __LINE__);
+			return $ret;
 		    }
 		}
 
@@ -93,7 +93,7 @@ class CommentCallbacks {
 
 	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($item->getId());
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    foreach (array('delete' => 'comment.delete',
@@ -116,7 +116,7 @@ class CommentCallbacks {
 	    return null;
 	}
 
-	return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
     }
 }
 ?>

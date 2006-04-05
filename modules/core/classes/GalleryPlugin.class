@@ -181,7 +181,7 @@ class GalleryPlugin {
 
 	list ($ret, $pluginStatus) = GalleryCoreApi::fetchPluginStatus($pluginType);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if (isset($pluginStatus[$pluginId]['active'])) {
@@ -198,7 +198,7 @@ class GalleryPlugin {
 		      'active' => 1));
 	}
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Flush the cache */
@@ -219,7 +219,7 @@ class GalleryPlugin {
 				  'pluginId' => $this->getId()));
 	    list ($ret) = GalleryCoreApi::postEvent($event);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 
@@ -250,7 +250,7 @@ class GalleryPlugin {
 		  'pluginId' => $pluginId),
 	    array('active' => 0));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Flush the cache */
@@ -263,7 +263,7 @@ class GalleryPlugin {
 	if ($postDeactivationEvent) {
 	    $ret = $this->_postDeactivationEvent();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 
@@ -288,7 +288,7 @@ class GalleryPlugin {
 
 	list ($ret, $isActive) = $this->isActive();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (!$isActive) {
 	    if ($gallery->getDebug()) {
@@ -305,7 +305,7 @@ class GalleryPlugin {
 
 	list ($ret, $redirect) = $this->deactivate(false);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (!empty($redirect)) {
 	    return array(null, $redirect);
@@ -320,7 +320,7 @@ class GalleryPlugin {
 	if ($ret) {
 	    /* Try to send the deactivation event before failing completely. */
 	    $this->_postDeactivationEvent();
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if (!empty($redirect)) {
@@ -349,7 +349,7 @@ class GalleryPlugin {
 			      'pluginId' => $this->getId()));
 	list ($ret) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -366,7 +366,7 @@ class GalleryPlugin {
 	/* Remove this plugin */
 	$ret = GalleryCoreApi::removePlugin($this->getPluginType(), $this->getId());
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Remove data directory for this plugin */
@@ -382,7 +382,7 @@ class GalleryPlugin {
 			      'pluginId' => $this->getId()));
 	list ($ret) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -412,7 +412,7 @@ class GalleryPlugin {
 
 	list($ret, $pluginStatus) = GalleryCoreApi::fetchPluginStatus($this->getPluginType());
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if (empty($pluginStatus[$this->getId()])) {
@@ -437,7 +437,7 @@ class GalleryPlugin {
 	list ($ret, $value) = GalleryCoreApi::getPluginParameter(
 	    $this->getPluginType(), $this->getId(), $parameterName, $itemId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $value);
@@ -455,7 +455,7 @@ class GalleryPlugin {
 	$ret = GalleryCoreApi::setPluginParameter(
 	    $this->getPluginType(), $this->getId(), $parameterName, $parameterValue, $itemId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -472,7 +472,7 @@ class GalleryPlugin {
 	$ret = GalleryCoreApi::removePluginParameter(
 	    $this->getPluginType(), $this->getId(), $parameterName, $itemId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -499,7 +499,7 @@ class GalleryPlugin {
 	    list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters(
 		$this->getPluginType(), $this->getId(), $id);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    $results = array_merge($results, $params);
 	}

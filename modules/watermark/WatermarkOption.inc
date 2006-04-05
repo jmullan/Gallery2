@@ -43,7 +43,7 @@ class WatermarkOption extends ItemAddOption {
 
 	list ($ret, $watermarks) = WatermarkHelper::fetchWatermarks();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	$currentId = null;
@@ -72,7 +72,7 @@ class WatermarkOption extends ItemAddOption {
 	/* Only appropriate if we've got some watermarks to show */
 	list ($ret, $watermarks) = WatermarkHelper::fetchWatermarks();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, !empty($watermarks));
@@ -91,7 +91,7 @@ class WatermarkOption extends ItemAddOption {
 		list ($ret, $watermark) =
 		    GalleryCoreApi::loadEntitiesById($form['WatermarkOption']['watermarkId']);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret, null, null);
 		}
 		$watermarkArray =
 		    array(DERIVATIVE_TYPE_IMAGE_THUMBNAIL => $watermark->getApplyToThumbnail(),
@@ -102,7 +102,7 @@ class WatermarkOption extends ItemAddOption {
 						      $watermark->getYPercentage(),
 						      $watermarkArray);
 	    	if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret, null, null);
 		}
 	    }
 	}

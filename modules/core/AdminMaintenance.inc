@@ -46,7 +46,7 @@ class AdminMaintenanceController extends GalleryController {
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$results = $status = $error = array();
@@ -55,7 +55,7 @@ class AdminMaintenanceController extends GalleryController {
 
 	    list ($ret, $tasks) = MaintenanceHelper_simple::fetchTasks();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    if (isset($tasks[$taskId])) {
@@ -69,7 +69,7 @@ class AdminMaintenanceController extends GalleryController {
 		} else {
 		    list ($ret, $success)  = $this->runTask($taskId, $task, false);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 
 		    $status['run'] = array('taskId' => $taskId, 'success' => $success);
@@ -109,7 +109,7 @@ class AdminMaintenanceController extends GalleryController {
 	    if ($useProgressBar) {
 		$templateAdapter->errorProgressBar($ret);
 	    }
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$status['run']['success'] = $success;
@@ -142,7 +142,7 @@ class AdminMaintenanceView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Load some standard form parameters */
@@ -152,14 +152,14 @@ class AdminMaintenanceView extends GalleryView {
 
 	list ($ret, $tasks) = MaintenanceHelper_simple::fetchTasks();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$AdminMaintenance = array();
 	foreach ($tasks as $taskId => $task) {
 	    list ($ret, $info) = MaintenanceHelper_simple::fetchLastRun($taskId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    $AdminMaintenance['tasks'][$taskId] = $task->getInfo();
@@ -202,7 +202,7 @@ class MaintenanceTask {
      *               array string output text
      */
     function run() {
-	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null, null);
     }
 
     /**

@@ -55,7 +55,7 @@ class NokiaUploadModule extends GalleryModule {
     function autoConfigure() {
 	list ($ret, $needsConfiguration) = $this->needsConfiguration();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	return array(null, !$needsConfiguration);
     }
@@ -66,7 +66,7 @@ class NokiaUploadModule extends GalleryModule {
     function needsConfiguration() {
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'nokiaupload');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	foreach (array('id.mobileGroup', 'id.uploadAlbum') as $key) {
 	    if (empty($params[$key])) {

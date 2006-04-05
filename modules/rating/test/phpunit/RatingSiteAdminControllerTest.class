@@ -44,7 +44,7 @@ class RatingSiteAdminControllerTest extends GalleryControllerTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'rating');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -62,7 +62,7 @@ class RatingSiteAdminControllerTest extends GalleryControllerTestCase {
 	list ($ret, $allowAlbumRating) = GalleryCoreApi::getPluginParameter('module', 'rating',
 		'allowAlbumRating');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(1, (int)$allowAlbumRating);
     }
@@ -80,7 +80,7 @@ class RatingSiteAdminControllerTest extends GalleryControllerTestCase {
 	list ($ret, $allowAlbumRating) = GalleryCoreApi::getPluginParameter('module', 'rating',
 		'allowAlbumRating');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(0, (int)$allowAlbumRating);
     }

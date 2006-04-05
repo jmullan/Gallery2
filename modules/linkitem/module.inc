@@ -65,7 +65,7 @@ class LinkItemModule extends GalleryModule /* and GalleryEventListener */ {
 	    $storage =& $gallery->getStorage();
 	    $ret = $storage->configureStore($this->getId(), array('GalleryLinkItem:1.0'));
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
@@ -80,21 +80,21 @@ class LinkItemModule extends GalleryModule /* and GalleryEventListener */ {
 	    'GalleryEntity', 'GalleryLinkItem', 'GalleryLinkItem',
 	    'modules/linkitem/classes/GalleryLinkItem.class', 'linkitem', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'ItemAddPlugin', 'ItemAddLinkItem', 'ItemAddLinkItem',
 	    'modules/linkitem/ItemAddLinkItem.inc', 'linkitem', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'ItemEditOption', 'LinkItemOption', 'LinkItemOption',
 	    'modules/linkitem/LinkItemOption.inc', 'linkitem', array('ItemEditItem'));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -132,12 +132,12 @@ class LinkItemModule extends GalleryModule /* and GalleryEventListener */ {
 	    ';
 	    list ($ret, $searchResults) = $gallery->search($query, array((string)$entity->getId()));
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    while ($result = $searchResults->nextResult()) {
 		$ret = GalleryCoreApi::deleteEntityById($result[0]);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	}

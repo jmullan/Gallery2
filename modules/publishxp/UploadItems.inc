@@ -66,19 +66,19 @@ class UploadItemsController extends GalleryController {
 	    /* Check the user has permissions in this album */
 	    $ret = GalleryCoreApi::assertHasItemPermission($form['albumId'], 'core.addDataItem');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    /* Get the file passed in this submission */
 	    $file = GalleryUtilities::getFile('userFile', false);
 	    list($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock($form['albumId']);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    if (empty($file['name'])) {
 		GalleryCoreApi::releaseLocks($lockIds);
-		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	    }
 
 	    /*
@@ -91,7 +91,7 @@ class UploadItemsController extends GalleryController {
 		list ($ret, $exts) = GalleryCoreApi::convertMimeToExtensions($mimeType);
 		if ($ret) {
 		    GalleryCoreApi::releaseLocks($lockIds);
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 
@@ -103,7 +103,7 @@ class UploadItemsController extends GalleryController {
 		list($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
 		if ($ret) {
 		    GalleryCoreApi::releaseLocks($lockIds);
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	    $title = basename($file['name']);
@@ -120,11 +120,11 @@ class UploadItemsController extends GalleryController {
 		$mimeType, $form['albumId']);
 	    if ($ret) {
 		GalleryCoreApi::releaseLocks($lockIds);
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    $ret = GalleryCoreApi::releaseLocks($lockIds);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    if (isset($this->_optionInstances)) {
@@ -133,7 +133,7 @@ class UploadItemsController extends GalleryController {
 		GalleryCoreApi::requireOnce('modules/core/ItemAdd.inc');
 		list ($ret, $optionInstances) = ItemAddOption::getAllAddOptions();
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 
@@ -148,7 +148,7 @@ class UploadItemsController extends GalleryController {
 		list ($ret, $optionErrors, $optionWarnings) =
 		    $option->handleRequestAfterAdd($extraOptionsForm, array($newItem));
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		/*

@@ -49,7 +49,7 @@ class ItemEditMoviePluginTest extends ItemEditPluginTestCase {
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_markForCleanup($this->_album);
@@ -57,7 +57,7 @@ class ItemEditMoviePluginTest extends ItemEditPluginTestCase {
 	list ($ret, $this->_item) =
 	    $this->_createRandomDataItem($this->_album->getId(), 'video/x-msvideo');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_preferred = null;
@@ -79,7 +79,7 @@ class ItemEditMoviePluginTest extends ItemEditPluginTestCase {
 	/* Verify that the preferred is gone */
 	list ($ret, $this->_item) = $this->_item->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(123, $this->_item->getWidth());
@@ -102,7 +102,7 @@ class ItemEditMoviePluginTest extends ItemEditPluginTestCase {
 	/* Reload the item */
 	list ($ret, $this->_item) = $this->_item->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(0, $this->_item->getWidth());

@@ -107,17 +107,17 @@ class GalleryAnimationItem extends GalleryDataItem {
 
 	/* Validate the input filename */
 	if (empty($animationFileName)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
 	if (!$platform->file_exists($animationFileName)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PATH);
 	}
 
 	/* Create our data item */
 	$ret = parent::create($parentId, $animationFileName, $mimeType, $targetName, $symlink);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Default to empty dimensions */
@@ -135,7 +135,7 @@ class GalleryAnimationItem extends GalleryDataItem {
 	    if (!$ret2) {
 		@$platform->unlink($path);
 	    }
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -149,18 +149,18 @@ class GalleryAnimationItem extends GalleryDataItem {
 
 	$ret = parent::rescan();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	list ($ret, $path) = $this->fetchPath();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$mimeType = $this->getMimeType();
 	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByProperty($mimeType, 'dimensions');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	if (isset($toolkit)) {
@@ -172,7 +172,7 @@ class GalleryAnimationItem extends GalleryDataItem {
 		 * Or our graphics code is broken.  Hard to tell which at this point.
 		 */
 		$ret->addErrorCode(ERROR_BAD_DATA_TYPE);
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    $this->setWidth($dimensions[0]);

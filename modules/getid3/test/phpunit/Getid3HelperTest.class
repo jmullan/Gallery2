@@ -70,25 +70,25 @@ class Getid3HelperTest extends GalleryTestCase {
 	list ($ret, $this->_save['summary']) = Getid3Helper::getProperties(GETID3_SUMMARY);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_save['detailed']) = Getid3Helper::getProperties(GETID3_DETAILED);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = Getid3Helper::setDefaultProperties(GETID3_SUMMARY);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = Getid3Helper::setDefaultProperties(GETID3_DETAILED);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -98,12 +98,12 @@ class Getid3HelperTest extends GalleryTestCase {
     function tearDown() {
 	$ret = Getid3Helper::setProperties(GETID3_SUMMARY, $this->_save['summary']);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 
 	$ret = Getid3Helper::setProperties(GETID3_DETAILED, $this->_save['detailed']);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 
 	parent::tearDown();
@@ -116,7 +116,7 @@ class Getid3HelperTest extends GalleryTestCase {
 	list ($ret, $id3ArchiveData) = Getid3Helper::getId3ArchiveData(
 	    dirname(__FILE__) . '/../data/isotest.iso', GETID3_SUMMARY);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(4, sizeof($id3ArchiveData), 'iso test number of files');
 	$this->assertEquals($id3ArchiveData[0]['name'], 'FILE1.TXT', 'file1.txt');
@@ -136,7 +136,7 @@ class Getid3HelperTest extends GalleryTestCase {
 	list ($ret, $id3ArchiveData) = Getid3Helper::getId3ArchiveData(
 	    dirname(__FILE__) . '/../data/tartest.tar', GETID3_SUMMARY);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals($this->_expectedTarResults, $id3ArchiveData);
     }
@@ -148,7 +148,7 @@ class Getid3HelperTest extends GalleryTestCase {
 	list ($ret, $id3ArchiveData) = Getid3Helper::getId3ArchiveData(
 	    dirname(__FILE__) . '/../data/tgztest.tgz', GETID3_SUMMARY);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals($this->_expectedTarResults, $id3ArchiveData);
     }
@@ -161,7 +161,7 @@ class Getid3HelperTest extends GalleryTestCase {
 	list ($ret, $id3ArchiveData) = Getid3Helper::getId3ArchiveData(
 	    dirname(__FILE__) . '/../data/ziptest.zip', GETID3_SUMMARY);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals($this->_expectedZipResults, $id3ArchiveData);
     }
@@ -173,7 +173,7 @@ class Getid3HelperTest extends GalleryTestCase {
 	list ($ret, $id3Data) = Getid3Helper::getId3Data(
 		dirname(__FILE__) . '/../data/test_small.avi', GETID3_DETAILED);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/*
@@ -247,7 +247,7 @@ class Getid3HelperTest extends GalleryTestCase {
 	list ($ret, $id3Data) = Getid3Helper::getId3Data(
 		dirname(__FILE__) . '/../data/sine_12000_22050.flac', GETID3_DETAILED);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/*
@@ -300,7 +300,7 @@ class Getid3HelperTest extends GalleryTestCase {
 	list ($ret, $id3Data) = Getid3Helper::getId3Data(
 		dirname(__FILE__) . '/../data/sine_8000_11025_64.mp3', GETID3_SUMMARY);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/*
@@ -338,7 +338,7 @@ class Getid3HelperTest extends GalleryTestCase {
 	list ($ret, $id3Data) = Getid3Helper::getId3Data(
 		dirname(__FILE__) . '/../data/sine_12000_22050_64.ogg', GETID3_DETAILED);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/*
@@ -378,7 +378,7 @@ class Getid3HelperTest extends GalleryTestCase {
 	list ($ret, $id3Data) =
 	    Getid3Helper::getId3Data(dirname(__FILE__) . '/../data/newday.mov', GETID3_DETAILED);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/*
@@ -412,7 +412,7 @@ class Getid3HelperTest extends GalleryTestCase {
 	list ($ret, $id3Data) = Getid3Helper::getId3Data(
 		dirname(__FILE__) . '/../data/sine_20_11025.wav', GETID3_DETAILED);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/*

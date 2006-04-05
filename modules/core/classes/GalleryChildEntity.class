@@ -74,12 +74,12 @@ class GalleryChildEntity extends GalleryEntity {
 	global $gallery;
 
 	if (empty($parentId)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
 	$ret = parent::create();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Set the parent id */
@@ -96,7 +96,7 @@ class GalleryChildEntity extends GalleryEntity {
 
 	$ret = parent::createLink($entity);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Set the parent id */
@@ -115,7 +115,7 @@ class GalleryChildEntity extends GalleryEntity {
 	global $gallery;
 
 	if (empty($newParentId)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
 	/* Set the new parent id */
@@ -133,7 +133,7 @@ class GalleryChildEntity extends GalleryEntity {
     function createRoot() {
 	$ret = parent::create();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* No parent for root */
@@ -155,7 +155,7 @@ class GalleryChildEntity extends GalleryEntity {
 	if (isset($parentId)) {
 	    list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($this->getParentId());
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	} else {
 	    $parent = null;

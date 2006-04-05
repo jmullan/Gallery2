@@ -58,16 +58,16 @@ class ItemEditOptionTestCase extends GalleryTestCase {
 	list ($ret, $this->_option) =
 	    GalleryCoreApi::newFactoryInstanceById('ItemEditOption', $optionName);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	if (!isset($this->_option)) {
 	    return $this->failWithStatus(
-			  GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__));
+			  GalleryCoreApi::error(ERROR_MISSING_OBJECT));
 	}
 
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', $moduleName);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
         $this->_statusMonitor = new ItemEditOptionTestImmediateStatusView();
     }
@@ -83,7 +83,7 @@ class ItemEditOptionTestCase extends GalleryTestCase {
     function _handleRequestAfterEdit($form, &$item, $errorCode=null) {
 	list ($ret, $preferred) = GalleryCoreApi::fetchPreferredsByItemIds(array($item->getId()));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$preferred = empty($preferred) ? null : array_shift($preferred);
 
@@ -97,7 +97,7 @@ class ItemEditOptionTestCase extends GalleryTestCase {
 				      join(' | ', GalleryStatus::getErrorCodeConstants($ret->getErrorCode()))));
 	    }
 	} else if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	} else {
 	    /* Check to make sure we got back everything we want */
 	    $this->assert(isset($error) && is_array($error), 'option error results missing');

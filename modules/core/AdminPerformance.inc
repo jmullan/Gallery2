@@ -44,14 +44,14 @@ class AdminPerformanceController extends GalleryController {
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$results = $status = $error = array();
 	list ($ret, $acceleration) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'acceleration');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if ($acceleration) {
 	    $acceleration = unserialize($acceleration);
@@ -75,14 +75,14 @@ class AdminPerformanceController extends GalleryController {
 		    break;
 
 		default:
-		    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+		    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER),
 				 null);
 		}
 	    }
 	    $ret = GalleryCoreApi::setPluginParameter(
 		'module', 'core', 'acceleration', serialize($acceleration));
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    $status['saved'] = 1;
@@ -91,7 +91,7 @@ class AdminPerformanceController extends GalleryController {
 	} else if (isset($form['action']['clear'])) {
 	    $ret = GalleryCoreApi::removeAllMapEntries('GalleryCacheMap');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    $status['cleared'] = 1;
 	    $redirect = array('view' => 'core.SiteAdmin',
@@ -126,7 +126,7 @@ class AdminPerformanceView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Load some standard form parameters */
@@ -147,7 +147,7 @@ class AdminPerformanceView extends GalleryView {
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Set up our type lists */

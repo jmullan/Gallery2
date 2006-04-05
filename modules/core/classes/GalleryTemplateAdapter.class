@@ -847,7 +847,7 @@ class GalleryTemplateAdapter {
 	if (!isset($coreModule)) {
 	    list ($ret, $coreModule) = GalleryCoreApi::loadPlugin('module', 'core');
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 

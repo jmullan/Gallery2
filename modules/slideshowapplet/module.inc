@@ -48,7 +48,7 @@ class SlideshowAppletModule extends GalleryModule {
 	list ($ret, $params) =
 	    GalleryCoreApi::fetchAllPluginParameters('module', 'slideshowapplet');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	if (!isset($params['slideshowdefaultVariables'])) {
@@ -61,12 +61,12 @@ class SlideshowAppletModule extends GalleryModule {
 		/* remove the old parameters */
 		$ret = $this->removeParameter('slideshowRecursive');
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 
 		$ret = $this->removeParameter('slideshowMaxPictures');
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    } else {
 		/* install */
@@ -74,14 +74,14 @@ class SlideshowAppletModule extends GalleryModule {
 	    }
 	    $ret = $this->setParameter('slideshowdefaultVariables', $newDefault);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
 	if (!isset($params['slideshowoverrideVariables'])) {
 	    $ret = $this->setParameter('slideshowoverrideVariables', 'toSysOut=true');
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 

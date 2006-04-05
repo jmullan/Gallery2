@@ -47,26 +47,26 @@ class ItemEditController extends GalleryController {
 	/* Make sure we have permission do edit this item */
 	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Check to see if we have a preferred source */
 	list ($ret, $preferredTable) =
 	    GalleryCoreApi::fetchPreferredsByItemIds(array($item->getId()));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$preferred = empty($preferredTable) ? null : array_shift($preferredTable);
 
 	/* Load the thumbnail */
 	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$thumbnail = empty($thumbnails) ? null : array_shift($thumbnails);
 
@@ -74,24 +74,24 @@ class ItemEditController extends GalleryController {
 	list ($ret, $optionInstances) =
 	    ItemEditOption::getAllOptions($editPlugin, $item, $thumbnail);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Load the correct edit plugin */
 	list ($ret, $plugin) =
 	    GalleryCoreApi::newFactoryInstanceById('ItemEditPlugin', $editPlugin);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (!isset($plugin)) {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	}
 
 	$status = array();
 	list ($ret, $error, $status['editMessage'], $requiresProgressBar) =
 	    $plugin->handleRequest($form, $item, $preferred);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (!empty($requiresProgressBar)) {
 	    $results['delegate']['view'] = 'core.ProgressBar';
@@ -110,7 +110,7 @@ class ItemEditController extends GalleryController {
 		    list ($ret, $optionErrors, $optionWarnings) =
 			$option->handleRequestAfterEdit($form, $item, $preferred);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 
 		    $error = array_merge($error, $optionErrors);
@@ -156,7 +156,7 @@ class ItemEditController extends GalleryController {
 	    list ($ret, $optionErrors, $optionWarnings) =
 		$option->handleRequestAfterEdit($form, $item, $preferred);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    $error = array_merge($error, $optionErrors);
@@ -197,18 +197,18 @@ class ItemEditView extends GalleryView {
 	/* Make sure we have permission do edit this item */
 	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Load the thumbnail */
 	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (!empty($thumbnails)) {
 	    list ($ret, $thumbnail) = GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent(
@@ -224,7 +224,7 @@ class ItemEditView extends GalleryView {
 	list ($ret, $allPluginIds) =
 	    GalleryCoreApi::getAllFactoryImplementationIds('ItemEditPlugin');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$pluginInstances = array();
@@ -232,7 +232,7 @@ class ItemEditView extends GalleryView {
 	    list ($ret, $plugin) =
 		GalleryCoreApi::newFactoryInstanceById('ItemEditPlugin', $pluginId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    if ($plugin->isSupported($item, $thumbnail)) {
@@ -261,7 +261,7 @@ class ItemEditView extends GalleryView {
 	foreach ($pluginInstances as $pluginId => $plugin) {
 	    list ($ret, $title) =  $plugin->getTitle();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    $plugins[] = array('title' => $title,
 			       'id' => $pluginId,
@@ -279,21 +279,21 @@ class ItemEditView extends GalleryView {
 
 	list ($ret, $ItemEdit['isAdmin']) = GalleryCoreApi::isUserInSiteAdminGroup();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Let the plugin load its template data */
 	list ($ret, $ItemEdit['pluginFile'], $ItemEdit['pluginL10Domain']) =
 	    $pluginInstances[$editPlugin]->loadTemplate($template, $form, $item, $thumbnail);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Get all the edit options */
 	list ($ret, $optionInstances) =
 	    ItemEditOption::getAllOptions($editPlugin, $item, $thumbnail);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Now let all options load their template data */
@@ -302,7 +302,7 @@ class ItemEditView extends GalleryView {
 	    list ($ret, $entry['file'], $entry['l10Domain']) =
 		$option->loadTemplate($template, $form, $item, $thumbnail);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    if (!empty($entry['file'])) {
 		$ItemEdit['options'][] = $entry;
@@ -323,12 +323,12 @@ class ItemEditView extends GalleryView {
 
 	list ($ret, $item) = $this->_getItem();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$itemTypeNames = $item->itemTypeName(true);
@@ -369,7 +369,7 @@ class ItemEditPlugin {
      *               string localization domain for the template file
      */
     function loadTemplate(&$template, &$form, $item, $thumbnail) {
-	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null, null);
     }
 
     /**
@@ -385,7 +385,7 @@ class ItemEditPlugin {
      *               boolean true if progress bar is needed
      */
     function handleRequest($form, &$item, &$preferred) {
-	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED),
 		     null, null, null);
     }
 
@@ -396,7 +396,7 @@ class ItemEditPlugin {
      *               string localized title
      */
     function getTitle() {
-	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
     }
 }
 
@@ -425,7 +425,7 @@ class ItemEditOption {
 	list ($ret, $allOptionIds) =
 	    GalleryCoreApi::getAllFactoryImplementationIdsWithHint('ItemEditOption', $editPlugin);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$optionInstances = array();
@@ -433,12 +433,12 @@ class ItemEditOption {
 	    list ($ret, $option) =
 		GalleryCoreApi::newFactoryInstanceById('ItemEditOption', $optionId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    list ($ret, $isAppropriate) = $option->isAppropriate($item, $thumbnail);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    if ($isAppropriate) {
@@ -461,7 +461,7 @@ class ItemEditOption {
      *               string localization domain for the template file
      */
     function loadTemplate(&$template, &$form, $item, $thumbnail) {
-	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null, null);
     }
 
     /**
@@ -476,7 +476,7 @@ class ItemEditOption {
      *               array localized warning messages
      */
     function handleRequestAfterEdit($form, &$item, &$preferred) {
-	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null, null);
     }
 
     /**

@@ -80,7 +80,7 @@ class PostgreSqlStorage extends GalleryStorage {
     function cleanStore() {
 	$ret = parent::cleanStore();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/*
@@ -89,7 +89,7 @@ class PostgreSqlStorage extends GalleryStorage {
 	 */
 	list ($ret, $tmpDb) = $this->_getConnection(true);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$this->_traceStart();
@@ -98,7 +98,7 @@ class PostgreSqlStorage extends GalleryStorage {
 	$this->_traceStop();
 
 	if (empty($recordSet)) {
-	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
 	}
 
 	return null;
@@ -123,7 +123,7 @@ class PostgreSqlStorage extends GalleryStorage {
 	     */
 	    list ($ret, $tmpDb) = $this->_getConnection(true);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    $this->_traceStart();
@@ -143,7 +143,7 @@ class PostgreSqlStorage extends GalleryStorage {
 
 	$ret = parent::configureStore($moduleId, $upgradeInfo);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;

@@ -46,14 +46,14 @@ class PermissionSetTest extends GalleryTestCase {
 						  'test.test1',
 						  'regular permission');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::registerPermission('testModule',
 						  'test.test2',
 						  'another regular permission');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::registerPermission('testModule',
@@ -62,7 +62,7 @@ class PermissionSetTest extends GalleryTestCase {
 						  GALLERY_PERMISSION_COMPOSITE,
 						  array('test.test1', 'test.test2'));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::registerPermission('testModule',
@@ -70,14 +70,14 @@ class PermissionSetTest extends GalleryTestCase {
 						  'all access permission',
 						  GALLERY_PERMISSION_ALL_ACCESS);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::registerPermission('testModule',
 						  'test.test5',
 						  'another regular permission');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::registerPermission('testModule',
@@ -86,14 +86,14 @@ class PermissionSetTest extends GalleryTestCase {
 						  GALLERY_PERMISSION_COMPOSITE,
 						  array('test.test1', 'test.test5'));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
     function tearDown() {
 	$ret = GalleryCoreApi::unregisterModulePermissions('testModule');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	parent::tearDown();
@@ -138,12 +138,12 @@ class PermissionSetTest extends GalleryTestCase {
     function testConvertRoundTrip1() {
 	list ($ret, $bits) = GalleryCoreApi::convertPermissionIdsToBits(array('test.test1'));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $ids) = GalleryCoreApi::convertPermissionBitsToIds($bits);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(array(array('id' => 'test.test1',
@@ -159,12 +159,12 @@ class PermissionSetTest extends GalleryTestCase {
     function testConvertRoundTrip2() {
 	list ($ret, $bits) = GalleryCoreApi::convertPermissionIdsToBits(array('test.test3'));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $ids) = GalleryCoreApi::convertPermissionBitsToIds($bits);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(array(array('id' => 'test.test1',
@@ -185,12 +185,12 @@ class PermissionSetTest extends GalleryTestCase {
 							    'test.test2',
 							    'test.test5'));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $ids) = GalleryCoreApi::convertPermissionBitsToIds($bits);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(array(array('id' => 'test.test1',
@@ -217,12 +217,12 @@ class PermissionSetTest extends GalleryTestCase {
 							    'test.test2',
 							    'test.test5'));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $ids) = GalleryCoreApi::convertPermissionBitsToIds($bits, true);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(array(array('id' => 'test.test3',
@@ -241,12 +241,12 @@ class PermissionSetTest extends GalleryTestCase {
 							    'test.test5',
 							    'core.all'));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $ids) = GalleryCoreApi::convertPermissionBitsToIds($bits, true);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(2, sizeof($ids));

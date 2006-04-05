@@ -31,7 +31,7 @@ class Getid3Callbacks {
 
 	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($params['itemId']);
 	    if ($ret) {
-	        return $ret->wrap(__FILE__, __LINE__);
+	        return $ret;
 	    }
 
 	    /* Ensure Item is a data item */
@@ -42,7 +42,7 @@ class Getid3Callbacks {
 	    /* Feed the file to getid3 */
 	    list($ret, $path) = $item->fetchPath();
 	    if ($ret) {
-	        return $ret->wrap(__FILE__, __LINE__);
+	        return $ret;
 	    }
 
 	    /* Figure out which version we're looking at */
@@ -62,7 +62,7 @@ class Getid3Callbacks {
 
 	    list ($ret, $getid3Data) = Getid3Helper::getId3Data($path, $filter);
 	    if ($ret) {
-	        return $ret->wrap(__FILE__, __LINE__);
+	        return $ret;
 	    }
 	    if (empty($getid3Data)) {
 	        if ($filter == GETID3_SUMMARY) {
@@ -71,13 +71,13 @@ class Getid3Callbacks {
 	            list ($ret, $getid3Data) = Getid3Helper::getId3Data($path, GETID3_SUMMARY);
 	        }
 	        if ($ret) {
-	            return $ret->wrap(__FILE__, __LINE__);
+	            return $ret;
 	        }
 	        $mode = null;
 	    }
 	    list ($ret, $getid3ArchiveData) = Getid3Helper::getId3ArchiveData($path, $filter);
 	    if ($ret) {
-	        return $ret->wrap(__FILE__, __LINE__);
+	        return $ret;
 	    }
 	    if (empty($getid3Data) && empty($getid3ArchiveData)) {
 	        return null;
@@ -91,7 +91,7 @@ class Getid3Callbacks {
 	    return null;
 	}
 
-	return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
     }
 }
 ?>

@@ -48,23 +48,23 @@ class SizeLimitHelper {
 	/* Get the path of the source */
 	list($ret, $sourcePath) = $item->fetchPath();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Get the appropriate toolkit */
 	list ($ret, $toolkit) =
 	    GalleryCoreApi::getToolkitByOperation($item->getMimeType(), $operation);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	if (!isset($toolkit)) {
-	    return GalleryCoreApi::error(ERROR_UNSUPPORTED_FILE_TYPE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_UNSUPPORTED_FILE_TYPE);
 	}
 
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($item->getId());
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Perform the operation */
@@ -72,7 +72,7 @@ class SizeLimitHelper {
 		$item->getMimeType(), $operation, $sourcePath, $sourcePath, $args);
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockId);
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$item->setMimeType($outputMimeType);
 
@@ -80,26 +80,26 @@ class SizeLimitHelper {
 	$ret = $item->rescan();
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockId);
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Save the item */
 	$ret = $item->save();
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockId);
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	if ($operation == 'scale') {
 	    $ret = SizeLimitHelper::_updateResizes(
 		    $item->getId(), $item->getWidth(), $item->getHeight());
 	     if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
@@ -121,17 +121,17 @@ class SizeLimitHelper {
 	/* Check to see if we have a preferred source */
 	list ($ret, $preferred) = GalleryCoreApi::fetchPreferredSource($item);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Make sure we support the given operation */
 	list ($ret, $toolkit) =
 	    GalleryCoreApi::getToolkitByOperation($item->getMimeType(), $operation);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	if (!isset($toolkit)) {
-	    return GalleryCoreApi::error(ERROR_UNSUPPORTED_FILE_TYPE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_UNSUPPORTED_FILE_TYPE);
 	}
 
 	/*
@@ -142,16 +142,16 @@ class SizeLimitHelper {
 	    list ($ret, $preferred) = GalleryCoreApi::newFactoryInstanceByHint(
 		'GalleryDerivative', $item->getEntityType());
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    if (!isset($preferred)) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    $ret = $preferred->create($item->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    $preferred->setDerivativeSourceId($item->getId());
@@ -159,7 +159,7 @@ class SizeLimitHelper {
 
 	    $ret = GalleryCoreApi::remapSourceIds($item->getId(), $preferred->getId());
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
@@ -167,24 +167,24 @@ class SizeLimitHelper {
 	list ($ret, $operations) = GalleryCoreApi::mergeDerivativeOperations(
 	    $preferred->getDerivativeOperations(), $operationString);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$preferred->setDerivativeOperations($operations);
 
 	list ($ret, $lockIds) = GalleryCoreApi::acquireWriteLock($preferred->getId());
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$ret = $preferred->save();
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockIds);
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	if (!empty($lockIds)) {
 	    $ret = GalleryCoreApi::releaseLocks($lockIds);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
@@ -193,7 +193,7 @@ class SizeLimitHelper {
 		    $item->getWidth(), $item->getHeight(), $args[0], $args[1]);
 	    $ret = SizeLimitHelper::_updateResizes($item->getId(), $width, $height);
 	     if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
@@ -212,7 +212,7 @@ class SizeLimitHelper {
 	/* Remove larger or equal sized resizes if necessary */
 	list ($ret, $resizes) = GalleryCoreApi::fetchResizesByItemIds(array($itemId));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	if (!empty($resizes[$itemId])) {
 	    foreach ($resizes[$itemId] as $derivative) {
@@ -224,7 +224,7 @@ class SizeLimitHelper {
 			/* The resize is larger or has the same size as the fullsize */
 			$ret = GalleryCoreApi::deleteEntityById($derivative->getId());
 			if ($ret) {
-			    return $ret->wrap(__FILE__, __LINE__);
+			    return $ret;
 			}
 		    }
 		}

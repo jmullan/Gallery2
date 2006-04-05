@@ -51,7 +51,7 @@ class CustomFieldItemAdminController extends GalleryController {
 	    $itemId = (int)$itemId;
 	    $ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    /* Activate album-specific settings: */
@@ -59,18 +59,18 @@ class CustomFieldItemAdminController extends GalleryController {
 		/* Copy in global settings */
 		list ($ret, $globalParam) = CustomFieldHelper::loadParameters();
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		$ret = CustomFieldHelper::saveParameters($globalParam, $itemId);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		/* Mark setId on existing field values */
 		list ($ret, $searchResults) = $gallery->search(
 		    'SELECT [ChildEntity::id] FROM [ChildEntity] WHERE [ChildEntity::parentId]=?',
 		    array($itemId));
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		$idList = array($itemId);
 		while ($rec = $searchResults->nextResult()) {
@@ -81,7 +81,7 @@ class CustomFieldItemAdminController extends GalleryController {
 		    array('itemId' => $idList),
 		    array('setId' => $itemId) );
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 
@@ -95,7 +95,7 @@ class CustomFieldItemAdminController extends GalleryController {
 		/* Clear setId for existing field values that can be retained */
 		list ($ret, $globalParam) = CustomFieldHelper::loadParameters();
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		foreach (array('common' => 0, 'album' => 1, 'photo' => 2) as $set => $setType) {
 		    $fieldList = array();
@@ -112,14 +112,14 @@ class CustomFieldItemAdminController extends GalleryController {
 		    $ret = GalleryCoreApi::updateMapEntry(
 			'CustomFieldMap', $match, array('setId' => 0));
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		}
 		/* Remove remaining field values */
 		$ret = GalleryCoreApi::removeMapEntry(
 		    'CustomFieldMap', array('setId' => $itemId));
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 

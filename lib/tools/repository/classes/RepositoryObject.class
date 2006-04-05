@@ -146,7 +146,7 @@ class RepositoryObject {
 
 		list($ret, $contents) = $this->_template->fetch('gallery:' . $templatePath);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 

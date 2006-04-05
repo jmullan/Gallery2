@@ -50,14 +50,14 @@ class PanoramaSiteAdminControllerTest extends GalleryControllerTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'panorama');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_getRootId(), 'image/test',
 		array(), __FILE__, 'GalleryPhotoItem');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_markForCleanup($this->_item);
@@ -66,7 +66,7 @@ class PanoramaSiteAdminControllerTest extends GalleryControllerTestCase {
 	$ret = PanoramaHelper::assignEntityType($this->_item, true);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $derivative) =
@@ -74,12 +74,12 @@ class PanoramaSiteAdminControllerTest extends GalleryControllerTestCase {
 				     DERIVATIVE_TYPE_IMAGE_PREFERRED);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = PanoramaHelper::assignEntityType($derivative, true);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_derivative = $derivative;
     }
@@ -139,13 +139,13 @@ class PanoramaSiteAdminControllerTest extends GalleryControllerTestCase {
 	$ret = $this->_savePanoramaItems();
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $count) = PanoramaHelper::fetchItemCount();
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($count >= 2, 'Should be at least two Panorama entities in db');
 
@@ -161,14 +161,14 @@ class PanoramaSiteAdminControllerTest extends GalleryControllerTestCase {
 	list ($ret, $count) = PanoramaHelper::fetchItemCount();
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(0, $count, 'Should be no Panorama entities in db after reset');
 
 	$ret = $this->_restorePanoramaItems();
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -180,7 +180,7 @@ class PanoramaSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $results) = $gallery->search($query, array(), array());
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$ids = array();
 	while ($result = $results->nextResult()) {
@@ -196,12 +196,12 @@ class PanoramaSiteAdminControllerTest extends GalleryControllerTestCase {
 	}
 	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($this->_panoramaIds);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	foreach ($items as $item) {
 	    $ret = PanoramaHelper::assignEntityType($item, true);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 	return null;

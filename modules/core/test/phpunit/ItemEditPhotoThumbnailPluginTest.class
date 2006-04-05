@@ -42,7 +42,7 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_album);
 
@@ -53,7 +53,7 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 	    $path, 'coreTest', null);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markToolkitForCleanup('ItemEditPhotoThumbnailPluginTestToolkit');
 
@@ -64,7 +64,7 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 		      array('type' => 'int', 'description' => 'test')),
 		'test-description');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditPhotoThumbnailPluginTestToolkit',
@@ -72,7 +72,7 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 		array(array('type' => 'int', 'description' => 'test')),
 		'test-description');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditPhotoThumbnailPluginTestToolkit',
@@ -81,14 +81,14 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 		      array('type' => 'int', 'description' => 'test')),
 		'test-description', '');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GalleryEntity', 'ItemEditPhotoThumbnailTestItem', 'ItemEditPhotoThumbnailTestItem',
 	    $path, 'coreTest', array());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markFactoryModuleForCleanup('coreTest');
 
@@ -96,34 +96,34 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 	    $this->_album->getId(), 'test/file', array('width' => 640, 'height' => 480),
 	    __FILE__, 'ItemEditPhotoThumbnailTestItem');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_item2) = $this->_createRandomDataItem(
 	    $this->_album->getId(), 'test/file', array('width' => 640, 'height' => 480),
 	    __FILE__, 'ItemEditPhotoThumbnailTestItem');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_derivative[0]) = $this->_createDerivative(
 	    $this->_item, $this->_item->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED, 'rotate|90',
 	    'test/file', array('width' => 640, 'height' => 480));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_derivative[1]) = $this->_createDerivative(
 	    $this->_item, $this->_derivative[0]->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
 	    'scale|200');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_derivative[2]) = $this->_createDerivative(
 	    $this->_item2, $this->_item2->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'scale|200');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -143,7 +143,7 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 	/* Get the thumbnail and verify its operations */
 	list ($ret, $this->_derivative[1]) = $this->_derivative[1]->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* The crop operation is expressed in percentages, not in pixels */
@@ -167,7 +167,7 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 	/* Get the thumbnail and verify its operations */
 	list ($ret, $this->_derivative[1]) = $this->_derivative[1]->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* The crop operation is expressed in percentages, not in pixels */
@@ -181,25 +181,25 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_derivative[2]->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_derivative[2]->setDerivativeOperations($operations);
 
 	$ret = $this->_derivative[2]->save();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Get the thumbnail and verify its operations */
 	list ($ret, $this->_derivative[2]) = $this->_derivative[2]->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* The crop operation is expressed in percentages, not in pixels */
@@ -215,7 +215,7 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 	/* Get the thumbnail and verify its operations */
 	list ($ret, $this->_derivative[2]) = $this->_derivative[2]->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* The crop operation is expressed in percentages, not in pixels */
@@ -251,7 +251,7 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 	list ($ret, $this->_derivative[1]) = $this->_derivative[1]->refresh();
 	if ($ret) {
 	    setlocale(LC_ALL, $currentLocale);
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals('crop|7.813,10.417,31.25,41.667;scale|200',

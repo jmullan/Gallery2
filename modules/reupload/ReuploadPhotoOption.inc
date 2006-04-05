@@ -48,18 +48,18 @@ class ReuploadPhotoOption extends ItemEditOption {
 
 	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'reupload');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 
 	    if (!$platform->is_uploaded_file($inputFileName)
 		    || !$platform->file_exists($inputFileName)) {
-		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER),
 			     null, null);
 	    }
 
 	    list ($ret, $path) = $item->fetchPath();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 
 	    /*
@@ -68,30 +68,30 @@ class ReuploadPhotoOption extends ItemEditOption {
 	     */
 	    list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLockParents($item->getId());
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($item->getId());
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 
 	    /* take backup first */
 	    $tmpfname = $platform->tempnam($gallery->getConfig('data.gallery.tmp'), 'tmp_');
 	    if (!$tmpfname) {
 		GalleryCoreApi::releaseLocks($lockIds);
-		return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__),
+		return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE),
 			     null, null);
 	    }
 	    if (!$platform->copy($path, $tmpfname)) {
 		$platform->unlink($tmpfname);
 		GalleryCoreApi::releaseLocks($lockIds);
-		return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__),
+		return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE),
 			     null, null);
 	    }
 	    if (!$platform->copy($inputFileName, $path)) {
 		$platform->unlink($tmpfname);
 		GalleryCoreApi::releaseLocks($lockIds);
-		return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__),
+		return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE),
 			     null, null);
 	    }
 
@@ -113,19 +113,19 @@ class ReuploadPhotoOption extends ItemEditOption {
 		$platform->copy($tmpfname, $path);
 		$platform->unlink($tmpfname);
 		GalleryCoreApi::releaseLocks($lockIds);
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 
 	    $platform->unlink($tmpfname);
 	    $ret = GalleryCoreApi::releaseLocks($lockIds);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 
 	    $ret = GalleryCoreApi::invalidateDerivativeDimensionsBySourceIds(
 		array($item->getId()));
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 
 	    $status[] = $module->translate('Reuploaded file successfully.');
@@ -148,7 +148,7 @@ class ReuploadPhotoOption extends ItemEditOption {
     function loadTemplate(&$template, &$form, $item, $thumbnail) {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'reupload');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	if ($template->hasVariable('ItemAdmin')) {

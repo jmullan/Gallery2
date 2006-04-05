@@ -87,12 +87,12 @@ class StorageTest extends GalleryTestCase {
 	 */
 	list ($ret, $id1) = $storage->getUniqueId();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $id2) = $storage->getUniqueId();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assert(is_int($id1), 'Id1 is not an int');
@@ -112,7 +112,7 @@ class StorageTest extends GalleryTestCase {
 	    'GalleryUserGroupMap',
 	    array('userId' => 0, 'groupId' => 1));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(
@@ -138,7 +138,7 @@ class StorageTest extends GalleryTestCase {
 		  'entityType' => 'test',
 		  'entityId' => 1));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(
@@ -163,7 +163,7 @@ class StorageTest extends GalleryTestCase {
 	    array('externalId' => str_repeat('y', 200)),
 	    array('externalId' => str_repeat('x', 200)));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(
@@ -187,7 +187,7 @@ class StorageTest extends GalleryTestCase {
 	    array('externalId' => array(str_repeat('y', 200), str_repeat('z', 200))),
 	    array('externalId' => str_repeat('x', 200)));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(
@@ -210,7 +210,7 @@ class StorageTest extends GalleryTestCase {
 	$ret = $storage->updateMapEntry('GalleryFactoryMap', array('classType' => null),
 					array('classType' => 'testType'));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(
@@ -231,7 +231,7 @@ class StorageTest extends GalleryTestCase {
 	 */
 	$ret = $storage->removeMapEntry('GalleryFactoryMap', array('classType' => null));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(
@@ -253,7 +253,7 @@ class StorageTest extends GalleryTestCase {
 	    'GalleryUserGroupMap',
 	    array('userId' =>array(1, 2, 3), 'groupId' => array(4, 5, 6)));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $sql) = $storage->getFunctionSql(
@@ -281,7 +281,7 @@ class StorageTest extends GalleryTestCase {
 		  'entityType' => array('test1', 'test2'),
 		  'entityId' => array(1, 2)));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $sql) = $storage->getFunctionSql(
@@ -303,12 +303,12 @@ class StorageTest extends GalleryTestCase {
 	$entity = new GalleryChildEntity();
 	$ret = $entity->create(1234);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = $storage->saveEntity($entity);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Only some entity fields are set because we're not calling GalleryEntity::save() here */
@@ -335,7 +335,7 @@ class StorageTest extends GalleryTestCase {
 	$entity = new GalleryEntity();
 	$ret = $entity->create();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* onLoadHandlers is a medium string, which is 128 chars */
@@ -343,7 +343,7 @@ class StorageTest extends GalleryTestCase {
 
 	$ret = $storage->saveEntity($entity);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Only some entity fields are set because we're not calling GalleryEntity::save() here */
@@ -550,13 +550,13 @@ class StorageTest extends GalleryTestCase {
 					   'parameterValue' => $testString));
 	/* If the \0 character wasn't properly escaped, PG would throw an error here */
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $value) =
 	    GalleryCoreApi::getPluginParameter('module', 'unitTestModule', $key, 1);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/*
@@ -570,12 +570,12 @@ class StorageTest extends GalleryTestCase {
 	/* Cleanup */
 	$ret = GalleryCoreApi::removeAllPluginParameters('module', 'unitTestModule');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	/* Commit our DB transaction to release locks from the PluginParameterMap table */
 	$ret = $storage->checkPoint();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -600,7 +600,7 @@ class StorageTest extends GalleryTestCase {
 	    array('key' => $key, 'value' => $escapedString, 'userId' => 55,
 		  'itemId' => 99, 'type' => 'test', 'timestamp' => time()));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	/* No (PHP) error? Good! Next, get the entry from the db and compare */
 	
@@ -614,7 +614,7 @@ class StorageTest extends GalleryTestCase {
             ';
 	list ($ret, $results) = $storage->search($query, array($key));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	
 	if ($results->resultCount() > 0) {
@@ -628,12 +628,12 @@ class StorageTest extends GalleryTestCase {
 	/* Cleanup */
 	$ret = GalleryCoreApi::removeMapEntry('GalleryCacheMap', array('type' => 'test'));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	/* Commit our DB transaction to release locks from the Cache table */
 	$ret = $storage->checkPoint();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 }

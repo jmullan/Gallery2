@@ -64,7 +64,7 @@ class GalleryUnknownItem extends GalleryDataItem {
 	/* Create our data item */
 	$ret = parent::create($parentId, $inputFileName, $mimeType, $targetName, $symlink);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* We're linkable */

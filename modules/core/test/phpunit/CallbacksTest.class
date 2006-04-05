@@ -50,7 +50,7 @@ class CallbacksTest extends GalleryTestCase {
 
 	$ret = $this->_callback->callback(array(), $this->_smarty, 'LoadLanguageSelector');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$LanguageSelector = $this->_smarty->_tpl_vars['block']['core']['LanguageSelector'];
 
@@ -62,7 +62,7 @@ class CallbacksTest extends GalleryTestCase {
 
 	list ($ret, $activeLanguageCode) = $gallery->getActiveLanguageCode();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals($activeLanguageCode, $LanguageSelector['language']);
@@ -78,7 +78,7 @@ class CallbacksTest extends GalleryTestCase {
 					  $this->_smarty,
 					  'ShouldShowEmergencyEditItemLink');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(
@@ -97,7 +97,7 @@ class CallbacksTest extends GalleryTestCase {
 					  $this->_smarty,
 					  'ShouldShowEmergencyEditItemLink');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(
@@ -117,7 +117,7 @@ class CallbacksTest extends GalleryTestCase {
 	    $this->_smarty,
 	    'ShouldShowEmergencyEditItemLink');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(
@@ -136,7 +136,7 @@ class CallbacksTest extends GalleryTestCase {
 					  $this->_smarty,
 					  'ShouldShowEmergencyEditItemLink');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(
@@ -155,7 +155,7 @@ class CallbacksTest extends GalleryTestCase {
 					  $this->_smarty,
 					  'ShouldShowEmergencyEditItemLink');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(
@@ -186,13 +186,13 @@ class CallbacksTest extends GalleryTestCase {
     function testLoadPeers() {
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_album);
 	for ($i = 0; $i < 11; $i++) {
 	    list ($ret, $this->_items[$i]) = $this->_createRandomDataItem($this->_album->getId());
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	}
 
@@ -202,7 +202,7 @@ class CallbacksTest extends GalleryTestCase {
 					  $this->_smarty,
 					  'LoadPeers');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_assertPeers(7, 11, 6, array(1, 4, 5, 6, 7, 8, 11), 'simple');
 
@@ -211,7 +211,7 @@ class CallbacksTest extends GalleryTestCase {
 						'windowSize' => 7, 'addEnds' => false),
 					  $this->_smarty, 'LoadPeers');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_assertPeers(7, 11, 5, array(2, 3, 4, 5, 6, 7, 8), 'no ends');
 
@@ -220,7 +220,7 @@ class CallbacksTest extends GalleryTestCase {
 						'windowSize' => 7),
 					  $this->_smarty, 'LoadPeers');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_assertPeers(8, 11, 3, array(1, 2, 3, 4, 5, 6, 7, 11), 'front');
 
@@ -229,7 +229,7 @@ class CallbacksTest extends GalleryTestCase {
 						'windowSize' => 5, 'addEnds' => false),
 					  $this->_smarty, 'LoadPeers');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_assertPeers(5, 11, 10, array(7, 8, 9, 10, 11), 'end');
 
@@ -238,7 +238,7 @@ class CallbacksTest extends GalleryTestCase {
 						'windowSize' => 21),
 					  $this->_smarty, 'LoadPeers');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_assertPeers(11, 11, 8, array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11), 'both ends');
 
@@ -247,7 +247,7 @@ class CallbacksTest extends GalleryTestCase {
 						'windowSize' => 6, 'addEnds' => false),
 					  $this->_smarty, 'LoadPeers');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_assertPeers(6, 11, 7, array(5, 6, 7, 8, 9, 10), 'unbalanced');
 
@@ -256,7 +256,7 @@ class CallbacksTest extends GalleryTestCase {
 						'windowSize' => 4, 'addEnds' => false),
 					  $this->_smarty, 'LoadPeers');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_assertPeers(4, 11, 1, array(1, 2, 3, 4), 'unbalanced front');
 
@@ -265,7 +265,7 @@ class CallbacksTest extends GalleryTestCase {
 						'windowSize' => 8),
 					  $this->_smarty, 'LoadPeers');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_assertPeers(9, 11, 9, array(1, 4, 5, 6, 7, 8, 9, 10, 11), 'unbalanced end');
     }
@@ -273,7 +273,7 @@ class CallbacksTest extends GalleryTestCase {
     function testLoadValidationPlugins() {
 	$ret = $this->_callback->callback(array(), $this->_smarty, 'LoadValidationPlugins');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assert(is_array($this->_smarty->_tpl_vars['block']['core']['ValidationPlugins']));

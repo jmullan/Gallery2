@@ -47,7 +47,7 @@ class ImageMagickToolkitHelper {
 
 	list ($ret, $mimeTypes) = ImageMagickToolkitHelper::discoverMimeTypes();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/*
@@ -207,17 +207,17 @@ class ImageMagickToolkitHelper {
 	    list ($ret, $imageMagickPath) =
 		GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'path');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    list ($ret, $binary) =
 		GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'binary');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	} else {
 	    list ($ret, $binary) = ImageMagickToolkitHelper::discoverBinary($imageMagickPath);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 
@@ -250,11 +250,11 @@ class ImageMagickToolkitHelper {
 	    list ($ret, $imageMagickPath) =
 		GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'path');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    if (empty($imageMagickPath)) {
-		return array(GalleryCoreApi::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_MISSING_VALUE), null);
 	    }
 	}
 
@@ -296,7 +296,7 @@ class ImageMagickToolkitHelper {
 	    list ($ret, $command) =
 		ImageMagickToolkitHelper::getCommand('identify', $imageMagickPath);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    $command = array_merge($command, array($dataPath . $test['file']));
 	    list ($success, $results) = $platform->exec(array($command));
@@ -316,13 +316,13 @@ class ImageMagickToolkitHelper {
 
 	$platform->chdir($oldPwd);
 	if ($successCount == 0) {
-	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE), null);
 	}
 
 	list ($ret, $cmykSupport) =
 	    ImageMagickToolkitHelper::discoverColorspaceSupport($imageMagickPath);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if ($cmykSupport) {
 	    foreach (array('image/jpeg', 'image/tiff') as $mimeType) {
@@ -361,13 +361,13 @@ class ImageMagickToolkitHelper {
 	 */
 	if (!$platform->isRestrictedByOpenBaseDir($imageMagickPath) &&
 		!@$platform->is_dir($imageMagickPath)) {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PATH), null);
 	}
 
 	/* We need to translate some strings */
 	list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imagemagick');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* What do we want to test */
@@ -388,7 +388,7 @@ class ImageMagickToolkitHelper {
 		list ($ret, $command) =
 		    ImageMagickToolkitHelper::getCommand('identify', $imageMagickPath);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		if (!$platform->isRestrictedByOpenBaseDir($command[0])
@@ -429,7 +429,7 @@ class ImageMagickToolkitHelper {
 		list ($ret, $command) =
 		    ImageMagickToolkitHelper::getCommand('convert', $imageMagickPath);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		$tmpDir = $gallery->getConfig('data.gallery.tmp');
 		$tmpFilename = $platform->tempnam($tmpDir, 'imgk_');
@@ -481,12 +481,12 @@ class ImageMagickToolkitHelper {
 		list ($ret, $compositeCmd) =
 		    ImageMagickToolkitHelper::discoverCompositeCmd($imageMagickPath);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		list ($ret, $command) =
 		    ImageMagickToolkitHelper::getCommand($compositeCmd, $imageMagickPath);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		$tmpDir = $gallery->getConfig('data.gallery.tmp');
 		$tmpFilename = $platform->tempnam($tmpDir, 'imgk_');
@@ -526,7 +526,7 @@ class ImageMagickToolkitHelper {
 		@$platform->unlink($tmpFilename);
 		break;
 	    default:
-		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 		break;
 	    }
 	}
@@ -553,10 +553,10 @@ class ImageMagickToolkitHelper {
 	    list ($ret, $imageMagickPath) =
 		GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'path');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    if (empty($imageMagickPath)) {
-		return array(GalleryCoreApi::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_MISSING_VALUE), null);
 	    }
 	}
 
@@ -583,7 +583,7 @@ class ImageMagickToolkitHelper {
 
 	list ($ret, $command) = ImageMagickToolkitHelper::getCommand('identify', $imageMagickPath);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	list ($success, $results) = $platform->exec(array($command));
@@ -597,7 +597,7 @@ class ImageMagickToolkitHelper {
 		return array(null, $version, $vulnerable);
 	    }
 	}
-	return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null, null);
+	return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE), null, null);
     }
 
     /**
@@ -616,7 +616,7 @@ class ImageMagickToolkitHelper {
 
 	list ($ret, $binary) = ImageMagickToolkitHelper::discoverBinary($imageMagickPath);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if ($binary != '') {
 	    /* GraphicsMagick is always 'composite' */
@@ -627,10 +627,10 @@ class ImageMagickToolkitHelper {
 	    list ($ret, $imageMagickPath) =
 		GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'path');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    if (empty($imageMagickPath)) {
-		return array(GalleryCoreApi::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_MISSING_VALUE), null);
 	    }
 	}
 
@@ -664,7 +664,7 @@ class ImageMagickToolkitHelper {
 	list ($ret, $convertCmd) =
 	    ImageMagickToolkitHelper::getCommand('convert', $imageMagickPath);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$tmpDir = $gallery->getConfig('data.gallery.tmp');
@@ -706,12 +706,12 @@ class ImageMagickToolkitHelper {
 	list ($ret, $convertCmd) =
 	    ImageMagickToolkitHelper::getCommand('convert', $imageMagickPath);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	list ($ret, $identifyCmd) =
 	    ImageMagickToolkitHelper::getCommand('identify', $imageMagickPath);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$tmpDir = $gallery->getConfig('data.gallery.tmp');
@@ -752,35 +752,35 @@ class ImageMagickToolkitHelper {
 	/* Find out if we are GraphicsMagick, using "gm" as a binary */
 	list ($ret, $binary) = ImageMagickToolkitHelper::discoverBinary($imageMagickPath);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', 'binary', $binary);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Find out what composite cmd to use */
 	list ($ret, $compositeCmd) =
 	    ImageMagickToolkitHelper::discoverCompositeCmd($imageMagickPath);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick',
 						  'compositeCmd', $compositeCmd);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Find out how to remove meta data from jpegs */
 	list ($ret, $removeMetaDataSwitch) =
 	    ImageMagickToolkitHelper::discoverRemoveMetaDataSwitch($imageMagickPath);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', 'removeMetaDataSwitch',
 						  implode('|', $removeMetaDataSwitch));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;

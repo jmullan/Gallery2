@@ -37,7 +37,7 @@ class UserAlbumSiteAdminController extends GalleryController {
     function handleRequest($form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$status = array();
@@ -45,14 +45,14 @@ class UserAlbumSiteAdminController extends GalleryController {
 	    foreach (array('create', 'view', 'fullSize', 'targetLocation') as $key) {
 		$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', $key, $form[$key]);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	    foreach (array('loginRedirect', 'homeLink') as $key) {
 		$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', $key,
 							  isset($form[$key]) ? 1 : 0);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	    $status['saved'] = 1;
@@ -80,7 +80,7 @@ class UserAlbumSiteAdminView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if ($form['formName'] != 'UserAlbumSiteAdmin') {
@@ -90,25 +90,25 @@ class UserAlbumSiteAdminView extends GalleryView {
 		list ($ret, $form[$key]) =
 		    GalleryCoreApi::getPluginParameter('module', 'useralbum', $key);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	}
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'useralbum');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	/* Get ids of all all albums where we can add new album items */
 	list ($ret, $albumIds) =
 	    GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.addAlbumItem');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Load all the album entities */
 	list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($albumIds);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$g2AlbumTree = GalleryUtilities::createAlbumTree($albums);
 

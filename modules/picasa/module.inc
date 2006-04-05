@@ -47,7 +47,7 @@ class PicasaModule extends GalleryModule {
     	    'ItemAddPlugin', 'ItemAddFromPicasa', 'ItemAddFromPicasa',
     	    'modules/picasa/ItemAddFromPicasa.inc', 'picasa', null);
     	if ($ret) {
-    	    return $ret->wrap(__FILE__, __LINE__);
+    	    return $ret;
     	}
     	return null;
     }

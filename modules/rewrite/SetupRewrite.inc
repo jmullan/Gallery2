@@ -45,42 +45,42 @@ class SetupRewriteController extends GalleryController {
 	if (isset($form['action']['testParser'])) {
 	    list ($ret, $rewriteParser) = RewriteHelper::getRewriteParser();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    list ($ret, $error, $status) = $rewriteParser->handleTestResultsRequest($form);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	} else if (isset($form['action']['adminParser'])) {
 	    list ($ret, $rewriteParser) = RewriteHelper::getRewriteParser();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    list ($ret, $error, $status) = $rewriteParser->handleAdminParserRequest($form);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	} else if (isset($form['action']['save']) && isset($form['parser'])) {
 	    if (empty($form['parser']) || !preg_match('/\w/', $form['parser'])) {
-		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	    }
 	    
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
 	        'parserId', $form['parser']);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    list ($ret, $rewriteParser) = RewriteHelper::getRewriteParser();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    list ($ret, $code) = $rewriteParser->needsConfiguration();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    if (!$code) {
@@ -93,7 +93,7 @@ class SetupRewriteController extends GalleryController {
 	} else if (isset($form['action']['back'])) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'parserId', '');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 
@@ -126,11 +126,11 @@ class SetupRewriteView extends GalleryView {
 	/* Make sure the module is not yet active */
 	list ($ret, $rewrite) = GalleryCoreApi::loadPlugin('module', 'rewrite');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	list ($ret, $isActive) = $rewrite->isActive();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if ($isActive) {
 	    return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
@@ -140,7 +140,7 @@ class SetupRewriteView extends GalleryView {
     	GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
 	list ($ret, $rewriteParser) = RewriteHelper::getRewriteParser();
 	if ($ret && !($ret->getErrorCode() & ERROR_MISSING_VALUE)) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if (isset($rewriteParser)) {
@@ -159,17 +159,17 @@ class SetupRewriteView extends GalleryView {
 
 	    $ret = $rewriteParser->loadTestResultsTemplate($template, $form);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    list ($ret, $SetupRewrite['needsConfiguration']) = $rewriteParser->needsConfiguration();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    $ret = $rewriteParser->loadAdminParserTemplate($template, $form);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	} else {
 	    $SetupRewrite['bootstrap'] = 1;

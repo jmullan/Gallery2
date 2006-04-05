@@ -92,7 +92,7 @@ class GalleryEventHelper_simple {
 	if (!isset($allListenersRegistered)) {
 	    list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    foreach ($moduleStatus as $moduleId => $status) {
@@ -107,7 +107,7 @@ class GalleryEventHelper_simple {
 			list ($ret, $module) =
 			    GalleryCoreApi::loadPlugin('module', $moduleId, true);
 			if ($ret) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
+			    return array($ret, null);
 			}
 
 			if (!GalleryCoreApi::isPluginCompatibleWithApis($module)) {
@@ -130,7 +130,7 @@ class GalleryEventHelper_simple {
 	    for ($i = 0; $i < count($listeners); $i++) {
 		list ($ret, $data) = $listeners[$i]->handleEvent($event);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		if (isset($data)) {
 		    $result[] = $data;

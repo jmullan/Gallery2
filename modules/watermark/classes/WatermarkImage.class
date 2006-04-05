@@ -234,10 +234,10 @@ class WatermarkImage extends GalleryEntity {
 
 	/* Validate the input file */
 	if (empty($inputFileName)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 	if (!$platform->file_exists($inputFileName)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PATH);
 	}
 
 	/*
@@ -253,7 +253,7 @@ class WatermarkImage extends GalleryEntity {
 
 	list ($ret, $watermarks) = WatermarkHelper::fetchWatermarks();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$nameMap = array();
 	foreach ($watermarks as $watermark) {
@@ -267,7 +267,7 @@ class WatermarkImage extends GalleryEntity {
 
 	$ret = parent::create();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$this->setName($targetName);
@@ -284,20 +284,20 @@ class WatermarkImage extends GalleryEntity {
 
 	$newFileName = $dir . $targetFilename;
 	if (!$platform->copy($inputFileName, $newFileName)) {
-	    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE);
 	}
 	$this->setSize($platform->filesize($newFileName));
 
 	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByProperty($mimeType, 'dimensions');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	if (isset($toolkit)) {
 	    list ($ret, $dimensions) = $toolkit->getProperty($mimeType, 'dimensions', $newFileName);
 	    if ($ret) {
 		$ret->addErrorCode(ERROR_BAD_DATA_TYPE);
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    $this->setWidth($dimensions[0]);
 	    $this->setHeight($dimensions[1]);
@@ -318,7 +318,7 @@ class WatermarkImage extends GalleryEntity {
 	/* Delete myself */
 	$ret = parent::delete();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Delete our source file */

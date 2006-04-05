@@ -42,14 +42,14 @@ class ShowCommentsView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	list ($ret, $item) = $this->_getItem();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	GalleryCoreApi::requireOnce('modules/comment/classes/GalleryCommentHelper.class');
 	list ($ret, $comments) =
 	    GalleryCommentHelper::fetchComments($item->getId(), null, ORDER_ASCENDING);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$commenters = array();
@@ -67,7 +67,7 @@ class ShowCommentsView extends GalleryView {
 		list ($ret, $commentersList) =
 		    GalleryCoreApi::loadEntitiesById(array_keys($commenters));
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 
@@ -78,7 +78,7 @@ class ShowCommentsView extends GalleryView {
 
 	list ($ret, $permissions) = GalleryCoreApi::getPermissions($item->getId());
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	foreach (array('delete' => 'comment.delete',
@@ -104,7 +104,7 @@ class ShowCommentsView extends GalleryView {
     function getViewDescription() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'comment');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $module->translate('show comments'));

@@ -49,7 +49,7 @@ class MultiLangItemEditPluginTest extends ItemEditPluginTestCase {
 		  'onLoadHandlers' => '|MultiLang|'));
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_markForCleanup($this->_album);
@@ -57,14 +57,14 @@ class MultiLangItemEditPluginTest extends ItemEditPluginTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'multilang');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'multilang',
 						  'languages', 'de_DE|he_IL|zh_CN');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$session =& $gallery->getSession();
@@ -104,7 +104,7 @@ class MultiLangItemEditPluginTest extends ItemEditPluginTestCase {
 		  'onLoadHandlers' => '|MultiLang|'));
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$results = $this->handleRequest($this->_subAlbum, $this->_subAlbum);
@@ -114,7 +114,7 @@ class MultiLangItemEditPluginTest extends ItemEditPluginTestCase {
 	$gallery->setActiveLanguageCode('en_US');
 	list ($ret, $album) = $this->_subAlbum->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals('title', $album->getTitle());
 	$this->assertEquals('summary', $album->getSummary());
@@ -123,7 +123,7 @@ class MultiLangItemEditPluginTest extends ItemEditPluginTestCase {
 	$gallery->setActiveLanguageCode('zh_CN');
 	list ($ret, $album) = $this->_subAlbum->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals('cn title', $album->getTitle());
 	$this->assertEquals('cn summary', $album->getSummary());
@@ -131,12 +131,12 @@ class MultiLangItemEditPluginTest extends ItemEditPluginTestCase {
 
 	$ret = GalleryCoreApi::deleteEntityById($this->_subAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $data) = MultiLangHelper::getItemData($this->_subAlbum->getId());
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 	$this->assertEquals(array(), $data, 'MultiLang data for test item not deleted!');
     }
@@ -146,7 +146,7 @@ class MultiLangItemEditPluginTest extends ItemEditPluginTestCase {
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'core', 'id.rootAlbum', $this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	GalleryUtilities::putRequestVariable('form[language]', 'zh_CN');
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
@@ -156,7 +156,7 @@ class MultiLangItemEditPluginTest extends ItemEditPluginTestCase {
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'core', 'id.rootAlbum', $rootAlbumId);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 }

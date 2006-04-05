@@ -45,19 +45,19 @@ class ColorPackTest extends GalleryTestCase {
 	    GalleryCoreApi::newFactoryInstance('ColorPackInterface_1_0', 'ColorPackImpl');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	if (!isset($this->_colorpack)) {
 	    print 'Missing ColorPackImpl';
 	    return $this->failWithStatus(
-		GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__));
+		GalleryCoreApi::error(ERROR_MISSING_OBJECT));
 	}
     }
 
     function testColorPackList() {
 	list ($ret, $list) = $this->_colorpack->getColorPacks();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert(isset($list['']) && isset($list['blue']), 'Should have "" and "blue" keys');
     }
@@ -66,7 +66,7 @@ class ColorPackTest extends GalleryTestCase {
 	$template = new ColorPackDummyGalleryTemplate();
 	$ret = $this->_colorpack->selectColorPack($template, 'blue');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(array('modules/colorpack/packs/blue/color.css'), $template->style);
     }

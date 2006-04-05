@@ -42,7 +42,7 @@ class ImageFrameInterface_1_1 {
      *               array(frame_id=>localized_frame_name) )
      */
     function getImageFrameList() {
-	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED),
 		     null);
     }
 
@@ -60,7 +60,7 @@ class ImageFrameInterface_1_1 {
      * @return object GalleryStatus a status code
      */
     function init(&$template, $frameIds) {
-	return GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+	return GalleryCoreApi::error(ERROR_UNIMPLEMENTED);
     }
 
     /**
@@ -72,7 +72,7 @@ class ImageFrameInterface_1_1 {
      *               string view url
      */
     function getSampleUrl($itemId=null) {
-	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED),
 		     null);
     }
 }

@@ -41,11 +41,11 @@ class MovieThumbnailOption extends ItemAddOption {
 	list ($ret, $useWatermark) =
 	    GalleryCoreApi::getPluginParameter('module', 'ffmpeg', 'useWatermark');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation('image/jpeg', 'composite');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	return array(null, $useWatermark && isset($toolkit));
     }
@@ -64,7 +64,7 @@ class MovieThumbnailOption extends ItemAddOption {
 	if (!empty($movieIds)) {
 	    list ($ret, $thumbTable) = GalleryCoreApi::fetchThumbnailsByItemIds($movieIds);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    foreach ($thumbTable as $itemId => $thumbnail) {
 		$thumbIds[] = $thumbnail->getId();
@@ -75,7 +75,7 @@ class MovieThumbnailOption extends ItemAddOption {
 	}
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($thumbIds);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	$op = 'composite|plugins_data/modules/ffmpeg/filmreel.png,image/png,12,399';
@@ -91,13 +91,13 @@ class MovieThumbnailOption extends ItemAddOption {
 	    $ret = $thumbnail->save();
 	    if ($ret) {
 		GalleryCoreApi::releaseLocks($lockId);
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	}
 
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	return array(null, $errors, $warnings);

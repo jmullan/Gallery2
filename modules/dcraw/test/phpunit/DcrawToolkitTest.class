@@ -48,7 +48,7 @@ class DcrawToolkitTest extends GalleryTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'dcraw');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_setParam('path', '/usr/bin/dcraw');
 
@@ -70,7 +70,7 @@ class DcrawToolkitTest extends GalleryTestCase {
     function _setParam($key, $value) {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'dcraw', $key, $value);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
     }
 
@@ -91,7 +91,7 @@ class DcrawToolkitTest extends GalleryTestCase {
 	    'image/x-dcraw', 'convert-to-image/x-portable-pixmap',
 	    'INPUTFILE', 'OUTPUTFILE', array(), array());
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
     }
 
@@ -110,7 +110,7 @@ class DcrawToolkitTest extends GalleryTestCase {
 	    'image/x-dcraw', 'convert-to-image/x-portable-pixmap',
 	    'INPUTFILE', 'OUTPUTFILE', array(), array());
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
     }
 
@@ -203,7 +203,7 @@ class DcrawToolkitTest extends GalleryTestCase {
 	    'modules/dcraw/test/phpunit/DcrawToolkitTest.class', 'dcrawTest', null);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markToolkitForCleanup('DcrawTestToolkit');
 
@@ -211,13 +211,13 @@ class DcrawToolkitTest extends GalleryTestCase {
 	    'DcrawTestToolkit', array('image/x-portable-pixmap'),
 	    'dimensions', 'int,int', 'test-description');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $results) = $this->_toolkit->getProperty(
 	    'image/x-dcraw', 'dimensions', 'INPUTFILE');
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 	$this->assertEquals(array(1, 2), $results);
     }

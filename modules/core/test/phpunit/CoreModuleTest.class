@@ -44,13 +44,13 @@ class CoreModuleTest extends GalleryTestCase {
 
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_parentAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_markForCleanup($this->_parentAlbum);
@@ -60,14 +60,14 @@ class CoreModuleTest extends GalleryTestCase {
 						       'core.all');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
     function testGetSiteAdminViews() {
 	list ($ret, $content) = $this->_module->getSiteAdminViews();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$expected = array(
 			  array('name' => $this->_module->translate('General'),
@@ -92,7 +92,7 @@ class CoreModuleTest extends GalleryTestCase {
 			  );
 	list ($ret, $list) = GalleryCoreApi::getRedundantToolkitPriorities();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	if (!empty($list)) {
 	    $expected[] = array('name' => $this->_module->translate('Toolkit Priority'),
@@ -106,7 +106,7 @@ class CoreModuleTest extends GalleryTestCase {
     function testGetItemAdminViews() {
 	list ($ret, $content) = $this->_module->getItemAdminViews($this->_parentAlbum);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(
@@ -137,12 +137,12 @@ class CoreModuleTest extends GalleryTestCase {
 
 	list ($ret) = $this->_createRandomDataItem($this->_parentAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $content) = $this->_module->getItemAdminViews($this->_parentAlbum);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(
@@ -182,7 +182,7 @@ class CoreModuleTest extends GalleryTestCase {
     function testGetSystemLinks() {
 	list ($ret, $content) = $this->_module->getSystemLinks();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(
@@ -209,18 +209,18 @@ class CoreModuleTest extends GalleryTestCase {
 
 	$ret = $this->_module->setParameter($key, $value);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $newValue) = $this->_module->getParameter($key);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Clean up */
 	$ret = GalleryCoreApi::removePluginParameter('module', 'core', $key);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals($value, (int)$newValue);

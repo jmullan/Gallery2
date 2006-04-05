@@ -39,28 +39,28 @@ class LinkItemTest extends GalleryTestCase {
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_album);
 
 	list ($ret, $this->_targetAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_lockId) = GalleryCoreApi::acquireReadLock(
 	    array($this->_album->getId(), $this->_targetAlbum->getId()));
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_link) =
 	    $this->_createLinkItem($this->_album->getId(), 'http://test.com/test.html');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -68,18 +68,18 @@ class LinkItemTest extends GalleryTestCase {
 	list ($ret, $link) =
 	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryLinkItem');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (empty($link)) {
-	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
 	}
 	$ret = $link->create($parentId, $target);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$ret = $link->save();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	return array(null, $link);
     }
@@ -88,7 +88,7 @@ class LinkItemTest extends GalleryTestCase {
 	if (isset($this->_lockId)) {
 	    $ret = GalleryCoreApi::releaseLocks($this->_lockId);
 	    if ($ret) {
-		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		$this->failWithStatus($ret);
 	    }
 	}
 
@@ -101,7 +101,7 @@ class LinkItemTest extends GalleryTestCase {
 
 	$ret = $this->_link->move($this->_targetAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals($this->_targetAlbum->getId(), $this->_link->getParentId());
@@ -112,17 +112,17 @@ class LinkItemTest extends GalleryTestCase {
 	list ($ret, $link) =
 	    $this->_createLinkItem($this->_album->getId(), $this->_targetAlbum->getId());
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::releaseLocks($this->_lockId);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 	unset($this->_lockId);
 
 	$ret = GalleryCoreApi::deleteEntityById($this->_targetAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $gone) = $link->refresh();
@@ -139,22 +139,22 @@ class LinkItemTest extends GalleryTestCase {
 	/* Verify delete of an album also deletes links that point to its subalbums */
 	list ($ret, $subalbum) = $this->_createRandomAlbum($this->_targetAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	list ($ret, $link) =
 	    $this->_createLinkItem($this->_album->getId(), $subalbum->getId());
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::releaseLocks($this->_lockId);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 	unset($this->_lockId);
 
 	$ret = GalleryCoreApi::deleteEntityById($this->_targetAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $gone) = $link->refresh();
@@ -177,7 +177,7 @@ class LinkItemTest extends GalleryTestCase {
     	$session = new GallerySession();
     	$ret = $session->init();
     	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(false, $session->isUsingCookies(), 'isUsingCookies');
 	$this->assertEquals(SESSION_TEMP_ID, $session->getId(), 'temp session id');
@@ -192,11 +192,11 @@ class LinkItemTest extends GalleryTestCase {
         list ($ret, $this->_lockId[]) = 
         		GalleryCoreApi::acquireWriteLock(array($this->_link->getId()));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
         $ret = $this->_link->save();
         if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$gallery->_session = $session;
 	/* Make sure it passes the onLoad conditions */
@@ -208,7 +208,7 @@ class LinkItemTest extends GalleryTestCase {
 	list ($ret, $link) = GalleryCoreApi::loadEntitiesById($this->_link->getId());
         if ($ret) {
             $gallery->_session = $backup;
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	GalleryDataCache::setMemoryCachingEnabled(true);
 	/* Verify results */

@@ -43,7 +43,7 @@ class ExifDescriptionOption extends ItemAddOption {
     function isAppropriate() {
 	list ($ret, $addOption) = GalleryCoreApi::getPluginParameter('module', 'exif', 'addOption');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	return array(null, $addOption > 0);
     }
@@ -60,7 +60,7 @@ class ExifDescriptionOption extends ItemAddOption {
 	list ($ret, $addOption) =
 	    GalleryCoreApi::getPluginParameter('module', 'exif', 'addOption');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	/* Copy the array because we will change it with do / while / array_splice */
@@ -78,7 +78,7 @@ class ExifDescriptionOption extends ItemAddOption {
 	    }
 	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($itemIds);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 
 	    for ($i = 0; $i < count($currentItems); $i++) {
@@ -96,7 +96,7 @@ class ExifDescriptionOption extends ItemAddOption {
 			);
 		if ($ret) {
 		    GalleryCoreApi::releaseLocks($lockId);
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret, null, null);
 		}
 
 		$mustSave = false;
@@ -136,14 +136,14 @@ class ExifDescriptionOption extends ItemAddOption {
 		    $ret = $currentItems[$i]->save();
 		    if ($ret) {
 			GalleryCoreApi::releaseLocks($lockId);
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return array($ret, null, null);
 		    }
 		}
 	    }
 
 	    $ret = GalleryCoreApi::releaseLocks($lockId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	} while (!empty($itemsInBatches));
 

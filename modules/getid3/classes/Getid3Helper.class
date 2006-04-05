@@ -88,12 +88,12 @@ class Getid3Helper {
 	    break;
 
 	default:
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER);
 	}
 
 	$ret = Getid3Helper::setProperties($viewMode, $properties);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -194,7 +194,7 @@ class Getid3Helper {
 
 	list ($ret, $properties) = Getid3Helper::getProperties($viewMode);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$errors = Getid3Helper::_getValue($rawGetid3Data, explode('.', 'error.0'));
@@ -425,7 +425,7 @@ class Getid3Helper {
 	  [Getid3PropsMap::sequence] ASC';
 	list ($ret, $searchResults) = $gallery->search($query, array($viewMode));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$data = array();
@@ -449,7 +449,7 @@ class Getid3Helper {
 	/* Remove all old map entries */
 	$ret = GalleryCoreApi::removeMapEntry('Getid3PropsMap', array('viewMode' => $viewMode));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	for ($i = 0; $i < sizeof($properties); $i++) {
@@ -459,7 +459,7 @@ class Getid3Helper {
 	              'viewMode' => $viewMode,
 	              'sequence' => $i));
 	    if ($ret) {
-	        return $ret->wrap(__FILE__, __LINE__);
+	        return $ret;
 	    }
 	}
 

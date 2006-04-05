@@ -42,7 +42,7 @@ class HiddenItemOption extends ItemEditOption {
 	list ($ret, $canHide) =
 	    GalleryCoreApi::hasItemPermission($item->getId(), 'core.changePermissions');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	return array(null, $canHide);
     }
@@ -56,7 +56,7 @@ class HiddenItemOption extends ItemEditOption {
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'hidden');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	/* Specific translations: _('Hide Album') _('Hide Photo') _('Hide Movie') */
@@ -76,18 +76,18 @@ class HiddenItemOption extends ItemEditOption {
 
 	$ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'core.changePermissions');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	if (isset($form['HiddenItemOption']['setHidden'])
 		&& $form['HiddenItemOption']['setHidden']) {
 	    $ret = HiddenHelper::hideItem($item);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	} else {
 	    $ret = HiddenHelper::unHideItem($item);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	}
 

@@ -53,7 +53,7 @@ class QuotasHelperTest extends GalleryTestCase {
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_album);
 
@@ -61,7 +61,7 @@ class QuotasHelperTest extends GalleryTestCase {
 	list ($ret, $this->_user) = $this->_createRandomUser();
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_user);
 
@@ -69,7 +69,7 @@ class QuotasHelperTest extends GalleryTestCase {
 	list ($ret, $this->_group) = $this->_createRandomGroup();
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_group);
 
@@ -80,12 +80,12 @@ class QuotasHelperTest extends GalleryTestCase {
 		GalleryCoreApi::getPluginParameter('module', 'core', 'id.' . $groupName);
 	    if ($ret) {
 		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    list ($ret, $hasQuota, $quota) = GalleryQuotasHelper::fetchGroupQuota($groupId);
 	    if ($ret) {
 		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    if ($hasQuota) {
 		$this->_saveQuota[$groupId] = $quota;
@@ -93,7 +93,7 @@ class QuotasHelperTest extends GalleryTestCase {
 		    'QuotasMap', array('userOrGroupId' => $groupId));
 		if ($ret) {
 		    print $ret->getAsHtml();
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		    return $this->failWithStatus($ret);
 		}
 	    }
 	}
@@ -105,7 +105,7 @@ class QuotasHelperTest extends GalleryTestCase {
 		'QuotasMap',
 		array('userOrGroupId' => $groupId, 'quotaSize' => $quota['quota']));
 	    if ($ret) {
-		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		$this->failWithStatus($ret);
 	    }
 	}
 	parent::tearDown();
@@ -116,7 +116,7 @@ class QuotasHelperTest extends GalleryTestCase {
 	/* check the user's usage, it should be zero */
 	list ($ret, $userDiskUsage) = GalleryQuotasHelper::getUserDiskUsage($this->_user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(0, $userDiskUsage, 'User\'s disk usage is incorrect!');
@@ -130,7 +130,7 @@ class QuotasHelperTest extends GalleryTestCase {
 					     array('ownerId' => $this->_user->getId(),
 						   'size' => 100000 + $j));
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	}
 
@@ -145,7 +145,7 @@ class QuotasHelperTest extends GalleryTestCase {
 		GalleryQuotasHelper::getUserDiskUsage($this->_user->getId(),
 						      $excludeIds);
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    $expectedUsage += $j + 100000;
 	    $this->assert($userDiskUsage == $expectedUsage,
@@ -158,7 +158,7 @@ class QuotasHelperTest extends GalleryTestCase {
 	list ($ret, $quotaExists, $userDiskQuota) =
 	    GalleryQuotasHelper::getUserDiskQuota($this->_user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($quotaExists == false, 'A quota should not exist');
 
@@ -170,7 +170,7 @@ class QuotasHelperTest extends GalleryTestCase {
 	list ($ret, $quotaExists, $userDiskQuota) =
 	    GalleryQuotasHelper::getUserDiskQuota($this->_user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($quotaExists == true, 'A user quota should exist for this user');
 	$this->assert($userDiskQuota == 1024, 'The user quota should be 1024 KB for this user');
@@ -178,7 +178,7 @@ class QuotasHelperTest extends GalleryTestCase {
 	/* Add our dummy user to our dummy group, dummy */
 	$ret = GalleryCoreApi::addUserToGroup($this->_user->getId(), $this->_group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryDataCache::reset();
@@ -187,7 +187,7 @@ class QuotasHelperTest extends GalleryTestCase {
 	list ($ret, $quotaExists, $userDiskQuota) =
 	    GalleryQuotasHelper::getUserDiskQuota($this->_user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($quotaExists == true, 'A user quota should exist for this user');
 	$this->assert($userDiskQuota == 1024, 'The user quota should be 1024 KB for this user');
@@ -200,7 +200,7 @@ class QuotasHelperTest extends GalleryTestCase {
 	list ($ret, $quotaExists, $userDiskQuota) =
 	    GalleryQuotasHelper::getUserDiskQuota($this->_user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($quotaExists == true, 'A user quota should exist for this user');
 	$this->assert($userDiskQuota == 1024, 'The user quota should be 1024 KB for this user');
@@ -212,7 +212,7 @@ class QuotasHelperTest extends GalleryTestCase {
 	list ($ret, $quotaExists, $userDiskQuota) =
 	    GalleryQuotasHelper::getUserDiskQuota($this->_user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assert($quotaExists == true, 'A group quota should exist for this user');
@@ -225,7 +225,7 @@ class QuotasHelperTest extends GalleryTestCase {
 	list ($ret, $quotaExists, $userDiskQuota) =
 	    GalleryQuotasHelper::getUserDiskQuota($this->_user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($quotaExists == false, 'A quota should not exist');
     }
@@ -234,7 +234,7 @@ class QuotasHelperTest extends GalleryTestCase {
 	/* Add our dummy user to our dummy group, dummy */
 	$ret = GalleryCoreApi::addUserToGroup($this->_user->getId(), $this->_group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryDataCache::reset();
@@ -243,7 +243,7 @@ class QuotasHelperTest extends GalleryTestCase {
 	list ($ret, $groupQuotaExists, $groupQuotaInfo) =
 	    GalleryQuotasHelper::fetchHighestGroupQuota($this->_user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assert($groupQuotaExists == false, 'A quota should not exist');
@@ -256,7 +256,7 @@ class QuotasHelperTest extends GalleryTestCase {
 	list ($ret, $groupQuotaExists, $groupQuotaInfo) =
 	    GalleryQuotasHelper::fetchHighestGroupQuota($this->_user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($groupQuotaExists == true, 'Quota existance failure');
 
@@ -277,7 +277,7 @@ class QuotasHelperTest extends GalleryTestCase {
 	    list ($ret, $humanReadable, $units) =
 		GalleryQuotasHelper::humanReadableFromKilobytes($key);
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    $this->assertEquals((string)$value[0], $humanReadable, 'Incorrect value');
 	    $this->assertEquals($value[1], $units, 'Incorrect units');
@@ -288,12 +288,12 @@ class QuotasHelperTest extends GalleryTestCase {
 	/* get the actual number of group quotas there is */
 	list ($ret, $groupCount) = GalleryQuotasHelper::fetchQuotaGroupCount();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	/* now we use that as the count (+1 for good measure) */
 	list ($ret, $groupIdList) = GalleryQuotasHelper::fetchQuotaGroupIdList($groupCount + 1);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($groupCount == count($groupIdList), 'Group count is incorrect');
 	/* add a quota of 105 KB to this group */
@@ -302,7 +302,7 @@ class QuotasHelperTest extends GalleryTestCase {
 	/* now we use that as the count (+1 for good measure) */
 	list ($ret, $groupIdList) = GalleryQuotasHelper::fetchQuotaGroupIdList($groupCount + 1);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals($groupCount + 1, count($groupIdList), 'New group count is incorrect');
 	$this->assertEquals(array('quota' => 105, 'name' => $this->_group->getGroupName()),
@@ -314,14 +314,14 @@ class QuotasHelperTest extends GalleryTestCase {
     function testFetchQuotaGroupCount() {
 	list ($ret, $preGroupCount) = GalleryQuotasHelper::fetchQuotaGroupCount();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	/* add a quota of 99 KB to this group */
 	$this->_addMapEntry(array('userOrGroupId' => $this->_group->getId(),
 				  'quotaSize' => 99));
 	list ($ret, $postGroupCount) = GalleryQuotasHelper::fetchQuotaGroupCount();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($postGroupCount = $preGroupCount + 1, 'Group Counts do not match up');
 	$this->_removeMapEntry(array('userOrGroupId' => $this->_group->getId()));
@@ -331,12 +331,12 @@ class QuotasHelperTest extends GalleryTestCase {
 	/* get the actual number of User quotas there is */
 	list ($ret, $userCount) = GalleryQuotasHelper::fetchQuotaUserCount();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	/* now we use that as the count (+1 for good measure) */
 	list ($ret, $userIdList) = GalleryQuotasHelper::fetchQuotaUserIdList($userCount + 1);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($userCount == count($userIdList), 'User count is incorrect');
 	/* add a quota of 467 KB to this user */
@@ -345,7 +345,7 @@ class QuotasHelperTest extends GalleryTestCase {
 	/* now we use that as the count (+1 for good measure) */
 	list ($ret, $userIdList) = GalleryQuotasHelper::fetchQuotaUserIdList($userCount + 1);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals($userCount + 1, count($userIdList), 'New User count is incorrect');
 	$this->assertEquals(array('quota' => 467, 'name' => $this->_user->getUserName()),
@@ -357,14 +357,14 @@ class QuotasHelperTest extends GalleryTestCase {
     function testFetchQuotaUserCount() {
 	list ($ret, $preUserCount) = GalleryQuotasHelper::fetchQuotaUserCount();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	/* add a quota of 86 KB to this user */
 	$this->_addMapEntry(array('userOrGroupId' => $this->_user->getId(),
 				  'quotaSize' => 86));
 	list ($ret, $postUserCount) = GalleryQuotasHelper::fetchQuotaUserCount();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($postUserCount = $preUserCount + 1, 'User Counts do not match up');
 	$this->_removeMapEntry(array('userOrGroupId' => $this->_user->getId()));
@@ -374,7 +374,7 @@ class QuotasHelperTest extends GalleryTestCase {
 	list ($ret, $quotaExists, $groupQuotaInfo) =
 	    GalleryQuotasHelper::FetchGroupQuota($this->_group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($quotaExists == false, 'Quota should not exist for this group');
 	$this->assert(empty($groupQuotaInfo), 'Group should have no quota information');
@@ -386,7 +386,7 @@ class QuotasHelperTest extends GalleryTestCase {
 	list ($ret, $quotaExists, $groupQuotaInfo) =
 	    GalleryQuotasHelper::FetchGroupQuota($this->_group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($quotaExists == true, 'Quota should exist for this group');
 	$this->assertEquals(array('id' => $this->_group->getId(), 'quota' => 47,
@@ -400,7 +400,7 @@ class QuotasHelperTest extends GalleryTestCase {
 	list ($ret, $quotaExists, $userQuotaInfo) =
 	    GalleryQuotasHelper::FetchUserQuota($this->_user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($quotaExists == false, 'Quota should not exist for this user');
 	$this->assert(empty($userQuotaInfo), 'User should have no quota information');
@@ -412,7 +412,7 @@ class QuotasHelperTest extends GalleryTestCase {
 	list ($ret, $quotaExists, $userQuotaInfo) =
 	    GalleryQuotasHelper::fetchUserQuota($this->_user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($quotaExists == true, 'Quota should exist for this user');
 	$this->assertEquals(array('id' => $this->_user->getId(), 'quota' => 86,
@@ -425,21 +425,21 @@ class QuotasHelperTest extends GalleryTestCase {
     function _removeMapEntry($remove) {
 	$ret = GalleryCoreApi::removeMapEntry('QuotasMap', $remove);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
     }
 
     function _addMapEntry($add) {
 	$ret = GalleryCoreApi::addMapEntry('QuotasMap', $add);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
     }
 
     function _deleteEntity($entity) {
 	$ret = GalleryCoreApi::deleteEntityById($entity->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 }

@@ -47,7 +47,7 @@ class ItemEditWatermark extends ItemEditPlugin {
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'watermark');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+	    return array($ret, null, null, null);
 	}
 
 	if (isset($form['action']['save'])) {
@@ -60,7 +60,7 @@ class ItemEditWatermark extends ItemEditPlugin {
 	    if (empty($error)) {
 		list ($ret, $watermark) = GalleryCoreApi::loadEntitiesById($form['watermarkId']);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+		    return array($ret, null, null, null);
 		}
 
 		GalleryCoreApi::requireOnce(
@@ -74,7 +74,7 @@ class ItemEditWatermark extends ItemEditPlugin {
 			  DERIVATIVE_TYPE_IMAGE_THUMBNAIL => isset(
 			      $form['whichDerivative']['thumbnail'])));
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+		    return array($ret, null, null, null);
 		}
 		$status = $module->translate('Watermark applied successfully');
 	    }
@@ -82,7 +82,7 @@ class ItemEditWatermark extends ItemEditPlugin {
 	    list ($ret, $derivativeTable) =
 		GalleryCoreApi::fetchDerivativesByItemIds(array($item->getId()));
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+		return array($ret, null, null, null);
 	    }
 
 	    if (isset($derivativeTable[$item->getId()])) {
@@ -96,13 +96,13 @@ class ItemEditWatermark extends ItemEditPlugin {
 		/* Lock them all */
 		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($ids);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+		    return array($ret, null, null, null);
 		}
 
 		foreach ($derivatives as $derivative) {
 		    list ($ret, $derivative) = $derivative->refresh();
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+			return array($ret, null, null, null);
 		    }
 
 		    $newPostFilters = GalleryCoreApi::removeDerivativeOperation(
@@ -115,33 +115,33 @@ class ItemEditWatermark extends ItemEditPlugin {
 
 		    $ret = $derivative->save();
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+			return array($ret, null, null, null);
 		    }
 		}
 
 
 		$ret = GalleryCoreApi::releaseLocks($lockId);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+		    return array($ret, null, null, null);
 		}
 	    }
 
 	    if (isset($preferred)) {
 		list ($ret, $preferred) = $preferred->refresh();
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+		    return array($ret, null, null, null);
 		}
 
 		if ($preferred->hasNoOperations()) {
 		    $ret = GalleryCoreApi::remapSourceIds(
 			$preferred->getId(), $preferred->getDerivativeSourceId());
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+			return array($ret, null, null, null);
 		    }
 
 		    $ret = GalleryCoreApi::deleteEntityById($preferred->getId());
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+			return array($ret, null, null, null);
 		    }
 		}
 	    }
@@ -162,14 +162,14 @@ class ItemEditWatermark extends ItemEditPlugin {
 
 	list ($ret, $ItemEditWatermark['isAdmin']) = GalleryCoreApi::isUserInSiteAdminGroup();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	/* Load up all watermarks */
 	GalleryCoreApi::requireOnce('modules/watermark/classes/WatermarkHelper.class');
 	list ($ret, $watermarks) = WatermarkHelper::fetchWatermarks();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	if (!empty($watermarks)) {
@@ -233,7 +233,7 @@ class ItemEditWatermark extends ItemEditPlugin {
 	list ($ret, $derivatives) =
 	    GalleryCoreApi::fetchDerivativesByItemIds(array($item->getId()));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	$smallestSize = null;
 	$displayDerivative = null;
@@ -306,7 +306,7 @@ class ItemEditWatermark extends ItemEditPlugin {
     function getTitle() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'watermark');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $module->translate('Watermark'));

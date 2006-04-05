@@ -65,7 +65,7 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	    break;
 
 	default:
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	}
 
 	$query = '
@@ -85,7 +85,7 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 					       array('limit' => array('count' => (int)$count)));
 
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Get all of our ids */
@@ -99,7 +99,7 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	if (!empty($allIds)) {
 	    list ($ret, $comments) = GalleryCoreApi::loadEntitiesById($allIds);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 
@@ -131,13 +131,13 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	    break;
 
 	default:
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER),
 			 null, null);
 	}
 
 	list ($ret, $sequence) = GalleryCoreApi::fetchParentSequence($itemId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	$sequence = implode('/', $sequence);
 	if (!empty($sequence)) {
@@ -148,7 +148,7 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	list ($ret, $aclIds) =
 	    GalleryCoreApi::fetchAccessListIds('comment.view', $gallery->getActiveUserId());
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	$aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
 
@@ -185,7 +185,7 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	    $gallery->search($query, $data, array('limit' => array('count' => (int)$count,
 								   'offset' => (int)$offset)));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	/* Get all of our ids */
@@ -199,7 +199,7 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	if (!empty($allIds)) {
 	    list ($ret, $comments) = GalleryCoreApi::loadEntitiesById($allIds);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	}
 
@@ -212,7 +212,7 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	      COUNT([GalleryComment::id]) ' . $queryBase;
 	    list ($ret, $searchResults) = $gallery->search($query, $data);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    if ($result = $searchResults->nextResult()) {
 		$totalCount = (int)$result[0];
@@ -252,7 +252,7 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 
 	list($ret, $searchResults) = $gallery->search($query, $itemIds);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$data = array();
@@ -276,7 +276,7 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	list ($ret, $level) =
 	    GalleryCoreApi::getPluginParameter('module', 'comment', 'validation.level');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if ($level == 'OFF') {
 	    return array(null, false);
@@ -285,7 +285,7 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $anonymousUserId == $gallery->getActiveUserId());
@@ -321,13 +321,13 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 
 	    list($ret, $searchResults) = $gallery->search($query, array((int)$entity->getId()));
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    while ($result = $searchResults->nextResult()) {
 		$ret = GalleryCoreApi::deleteEntityById((int)$result[0]);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	}

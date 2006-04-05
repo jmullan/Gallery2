@@ -44,7 +44,7 @@ class MailHelperTest extends GalleryTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'core');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$this->templateFile = 'modules/core/test/data/MailHelperTest.tpl';
@@ -57,7 +57,7 @@ class MailHelperTest extends GalleryTestCase {
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'smtp.from', '');
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 
 	$emailData = array(
@@ -71,7 +71,7 @@ class MailHelperTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::sendTemplatedEmail(
 	    $this->templateFile, $emailData, null, $emailData['to'], $emailData['subject']);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 	$this->assertEquals($expectedData, $dummyPlatform->getMailData(), 'Blank From');
 
@@ -83,20 +83,20 @@ class MailHelperTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::sendTemplatedEmail(
 	    $this->templateFile, $emailData, $from, $emailData['to'], $emailData['subject']);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 	$this->assertEquals($expectedData, $dummyPlatform->getMailData(), 'Function From');
 
 	/* Test that the from header is retrieved from the core.smtp.from field */
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'smtp.from', $from);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::sendTemplatedEmail(
 	    $this->templateFile, $emailData, null, $emailData['to'], $emailData['subject']);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 	$this->assertEquals($expectedData, $dummyPlatform->getMailData(), 'smtp.from');
 
@@ -108,7 +108,7 @@ class MailHelperTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::sendTemplatedEmail(
 	    $this->templateFile, $emailData, $from, $emailData['to'], $emailData['subject']);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 	$this->assertEquals($expectedData, $dummyPlatform->getMailData(),
 			    'function over smtp.from');
@@ -121,7 +121,7 @@ class MailHelperTest extends GalleryTestCase {
 	    $this->templateFile, $emailData, $from, $emailData['to'], $emailData['subject'],
 								      $emailData['headers']);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 	$this->assertEquals($expectedData, $dummyPlatform->getMailData(),
 			    'Specify content-type');
@@ -134,7 +134,7 @@ class MailHelperTest extends GalleryTestCase {
 	    $this->templateFile, $emailData, $from, $emailData['to'], $emailData['subject'],
 								      $emailData['headers']);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 	$this->assertEquals($expectedData, $dummyPlatform->getMailData(),
 			    'Specify content-type');
@@ -157,7 +157,7 @@ class MailHelperTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::sendTemplatedEmail(
 	    $this->templateFile, $emailData, null, $multiTo, $emailData['subject']);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 	$this->assertEquals(4, $dummyPlatform->getMailedCount(), 'MailedCount incorrect');
     }

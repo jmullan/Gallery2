@@ -47,7 +47,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	    $path, 'coreTest', null);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Register a dummy toolkit */
@@ -56,7 +56,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	    $path, 'coreTest', null);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markToolkitForCleanup('ItemEditAlbumPluginTestToolkit');
 	$this->_markFactoryModuleForCleanup('coreTest');
@@ -69,7 +69,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 		'test-description');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditAlbumPluginTestToolkit',
@@ -79,7 +79,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 		'test-description');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditAlbumPluginTestToolkit',
@@ -90,13 +90,13 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 		      array('type' => 'float', 'description' => 'test')), 'test-description');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_markForCleanup($this->_album);
@@ -140,7 +140,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 
 	list ($ret, $this->_album) = $this->_album->refresh();
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 
 	/* Verify basic settings */
@@ -152,7 +152,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	list ($ret, $preferences) =
 	    GalleryCoreApi::fetchDerivativePreferencesForItem($this->_album->getId());
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 	$this->assert(array(array('order' => 0,
 				  'derivativeType' => 2,
@@ -240,20 +240,20 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 		$this->_album->getId(), 'test/file', array(),
 		__FILE__, 'ItemEditAlbumPluginTestDataItem');
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	}
 
 	/* and subalbum with grandchildren */
 	list ($ret, $this->_childAlbum) = $this->_createRandomAlbum($this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	list ($ret, $child[2]) = $this->_createRandomDataItem(
 	    $this->_childAlbum->getId(), 'test/file', array(),
 	    __FILE__, 'ItemEditAlbumPluginTestDataItem');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $ignore) = $this->_createDerivative($child[0], $child[0]->getId(),
@@ -261,7 +261,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 							'thumbnail|100',
 							'test/file');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $ignore) = $this->_createDerivative($child[0], $child[0]->getId(),
@@ -269,7 +269,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 							'scale|100,100',
 							'test/file');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $ignore) = $this->_createDerivative($child[1], $child[1]->getId(),
@@ -277,7 +277,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 							'crop|0,0,50,50;thumbnail|100',
 							'test/file');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $ignore) = $this->_createDerivative($child[1], $child[1]->getId(),
@@ -285,7 +285,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 							'rotate|90',
 							'test/file');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $ignore) = $this->_createDerivative($child[2], $child[2]->getId(),
@@ -293,7 +293,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 							'crop|0,0,80,80;thumbnail|150',
 							'test/file');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $ignore) = $this->_createDerivative($child[2], $child[2]->getId(),
@@ -301,7 +301,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 							'rotate|180',
 							'test/file');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* 
@@ -313,17 +313,17 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	    $this->_childAlbum->getId(), 
 	    array(DERIVATIVE_TYPE_IMAGE_THUMBNAIL, DERIVATIVE_TYPE_IMAGE_RESIZE));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::addDerivativePreference(0, $this->_childAlbum->getId(),
 	    DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'thumbnail|246');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::addDerivativePreference(0, $this->_childAlbum->getId(),
 	    DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|987');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	 
 	/* Use valid inputs */
@@ -361,12 +361,12 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	/* Run the tasks */
 	$ret = $mockAdapter->runCallbacks();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_album) = $this->_album->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Verify the thumbnail and resizes on our children */
@@ -374,7 +374,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	    GalleryCoreApi::fetchThumbnailsByItemIds(array($child[0]->getId(),
 		$child[1]->getId(), $child[2]->getId()));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals('thumbnail|123',
@@ -388,7 +388,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	    GalleryCoreApi::fetchResizesByItemIds(array($child[0]->getId(),
 		$child[1]->getId(), $child[2]->getId()));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	for ($i = 0; $i < 2; $i++) {
@@ -422,7 +422,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 
 	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/*
@@ -431,12 +431,12 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	 */
 	$ret = GalleryCoreApi::removeDerivativePreferencesForItem($this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $photo) = GalleryCoreApi::newItemByMimeType('image/gif');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = $photo->create($this->_album->getId(),
@@ -444,22 +444,22 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 			      'image/gif',
 			      'test image');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::addExistingItemToAlbum($photo, $this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = $photo->save();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Use valid inputs */
@@ -493,13 +493,13 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	/* Run the tasks */
 	$ret = $mockAdapter->runCallbacks();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Now verify that we didn't upsample our resizes */
 	list ($ret, $resizes) = GalleryCoreApi::fetchResizesByItemIds(array($photo->getId()));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assert(isset($resizes[$photo->getId()]), 'Missing resizes for new photo');
@@ -535,7 +535,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 
 	list ($ret, $this->_childAlbum) = $this->_createRandomAlbum($this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/*
@@ -545,7 +545,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	list ($ret, $this->_grandchildAlbum) = $this->_createRandomAlbum(
             $this->_childAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest($this->_album, $this->_preferred);
@@ -555,7 +555,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
         /* On the album itself */
 	list ($ret, $this->_album) = $this->_album->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals('bar', $this->_album->getTheme(), 'Album');
@@ -565,7 +565,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	list ($ret, $preferences) = GalleryCoreApi::fetchDerivativePreferencesForItem(
 	    $this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
         usort ($preferences, "ItemEditAlbumPluginTestCmp");
 	$this->assertEquals(array(
@@ -580,7 +580,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	/* On the child */
 	list ($ret, $this->_childAlbum) = $this->_childAlbum->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals('bar', $this->_childAlbum->getTheme(), 'Child');
 	$this->assertEquals('baz', $this->_childAlbum->getOrderBy(), 'Child');
@@ -588,7 +588,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	list ($ret, $preferences) = GalleryCoreApi::fetchDerivativePreferencesForItem(
 	    $this->_childAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	usort ($preferences, "ItemEditAlbumPluginTestCmp");
 	$this->assertEquals(array(
@@ -603,7 +603,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	/* On the grandchild */
 	list ($ret, $this->_grandchildAlbum) = $this->_grandchildAlbum->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals('bar', $this->_grandchildAlbum->getTheme(), 'grandchild');
 	$this->assertEquals('baz', $this->_grandchildAlbum->getOrderBy(), 'grandchild');
@@ -611,7 +611,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	list ($ret, $preferences) = GalleryCoreApi::fetchDerivativePreferencesForItem(
 	    $this->_grandchildAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	usort ($preferences, "ItemEditAlbumPluginTestCmp");
 	$this->assertEquals(array(
@@ -654,7 +654,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
         /* On the album itself */
 	list ($ret, $this->_album) = $this->_album->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals('bar', $this->_album->getTheme(), 'Album');
@@ -664,7 +664,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	list ($ret, $preferences) = GalleryCoreApi::fetchDerivativePreferencesForItem(
 	    $this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
         usort ($preferences, "ItemEditAlbumPluginTestCmp");
 	$this->assertEquals(array(

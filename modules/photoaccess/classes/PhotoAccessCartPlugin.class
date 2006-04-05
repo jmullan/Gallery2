@@ -46,7 +46,7 @@ class PhotoAccessCartPlugin extends CartPluginInterface_1_0 {
     function getActionDisplayName() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'photoaccess');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$action = $module->translate('Print with PhotoAccess');
@@ -64,7 +64,7 @@ class PhotoAccessCartPlugin extends CartPluginInterface_1_0 {
 	GalleryCoreApi::requireOnce('modules/photoaccess/classes/PhotoAccessHelper.class');
 	list ($ret, $cartUrl) = PhotoAccessHelper::printPhotos($cartItemIds, $returnUrl);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, array('href' => $cartUrl));

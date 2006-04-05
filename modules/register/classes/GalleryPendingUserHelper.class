@@ -52,17 +52,17 @@ class GalleryPendingUserHelper {
 	';
 	list ($ret, $searchResults) = $gallery->search($query, array($userName));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if ($searchResults->resultCount() == 0) {
-	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
 	} else {
 	    $result = $searchResults->nextResult();
 	    $id = (int)$result[0];
 	    list ($ret, $user) = GalleryCoreApi::loadEntitiesById($id);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    return array(null, $user);
@@ -90,7 +90,7 @@ class GalleryPendingUserHelper {
 
 	list ($ret, $searchResults) = $gallery->search($query, $data);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$result = $searchResults->nextResult();
@@ -131,7 +131,7 @@ class GalleryPendingUserHelper {
 	list ($ret, $searchResults) = $gallery->search($query, $data,
 	     array('limit' => array('count' => (int)$count, 'offset' => (int)$offset)));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$data = array();
@@ -157,11 +157,11 @@ class GalleryPendingUserHelper {
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'register');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	list($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'register');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$decodedUserName = $pendingUser->getUserName();
@@ -188,7 +188,7 @@ class GalleryPendingUserHelper {
 		$pendingUser->getEmail(),
 		$module->translate($params['subject']));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -204,24 +204,24 @@ class GalleryPendingUserHelper {
     function sendAdminEmail(&$pendingUser) {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'register');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'register');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	list ($ret, $adminGroupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	list ($ret, $adminUserIds) = GalleryCoreApi::fetchUsersForGroup($adminGroupId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	list ($ret, $adminUsers) = GalleryCoreApi::loadEntitiesById(array_keys($adminUserIds));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$toList = array();
 	foreach ($adminUsers as $admin) {
@@ -244,7 +244,7 @@ class GalleryPendingUserHelper {
 		    implode(',', $toList),
 		    $module->translate($params['adminsubject']));
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
@@ -262,16 +262,16 @@ class GalleryPendingUserHelper {
     function createGalleryUser(&$pendingUser, $delete=true) {
 	list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	if (!isset($user)) {
-	    return GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
 	}
 
 	$ret = $user->create($pendingUser->getUserName());
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* copy all values to the new "real" user */
@@ -282,7 +282,7 @@ class GalleryPendingUserHelper {
 
 	$ret = $user->save();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* notify gallery event system */
@@ -291,23 +291,23 @@ class GalleryPendingUserHelper {
 	$event->setEntity($pendingUser);
 	list ($ret) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
-	    return  $ret->wrap(__FILE__, __LINE__);
+	    return  $ret;
 	}
 
 	if ($delete) {
 	    list($ret, $lock) = GalleryCoreApi::acquireWriteLock(array($pendingUser->getId()));
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    $ret = $pendingUser->delete();
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    $ret = GalleryCoreApi::releaseLocks($lock);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 

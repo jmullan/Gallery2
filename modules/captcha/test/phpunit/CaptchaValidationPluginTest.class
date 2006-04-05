@@ -45,7 +45,7 @@ class CaptchaValidationPluginTest extends GalleryTestCase {
 									 'CaptchaValidationPlugin');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert(isset($this->_plugin), 'init plugin');
 
@@ -57,12 +57,12 @@ class CaptchaValidationPluginTest extends GalleryTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'captcha');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'captcha', 'failedAttemptThreshold', 0);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_form = array();
@@ -79,7 +79,7 @@ class CaptchaValidationPluginTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::removePluginParameter('module', 'captcha',
 						     'failCount-captcha.UnitTest');
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 	parent::tearDown();
     }
@@ -110,7 +110,7 @@ class CaptchaValidationPluginTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'captcha',
 						  'failCount-captcha.UnitTest', 3);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 
 	$result = $this->_plugin->loadTemplate($this->_form,
@@ -169,7 +169,7 @@ class CaptchaValidationPluginTest extends GalleryTestCase {
 	list ($ret, $count) =
 	    GalleryCoreApi::getPluginParameter('module', 'captcha', 'failCount-captcha.UnitTest');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(1, (int)$count, 'failure count 1');
 
@@ -184,7 +184,7 @@ class CaptchaValidationPluginTest extends GalleryTestCase {
 	list ($ret, $count) =
 	    GalleryCoreApi::getPluginParameter('module', 'captcha', 'failCount-captcha.UnitTest');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(1, (int)$count, 'failure count 2');
 
@@ -197,7 +197,7 @@ class CaptchaValidationPluginTest extends GalleryTestCase {
 	list ($ret, $count) =
 	    GalleryCoreApi::getPluginParameter('module', 'captcha', 'failCount-captcha.UnitTest');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(2, (int)$count, 'failure count 3');
 
@@ -209,7 +209,7 @@ class CaptchaValidationPluginTest extends GalleryTestCase {
 	list ($ret, $count) =
 	    GalleryCoreApi::getPluginParameter('module', 'captcha', 'failCount-captcha.UnitTest');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(null, $count, 'failure count 4');
     }

@@ -60,13 +60,13 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
     function init($baseUri=null, $g2Uri=null, $embedSessionString=null) {
 	$ret = parent::init($baseUri, $g2Uri, $embedSessionString);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	list ($ret, $this->_shortUrls) = GalleryCoreApi::getPluginParameter(
 	    'module', 'rewrite', 'shortUrls');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$this->_shortUrls = empty($this->_shortUrls) ? array() : unserialize($this->_shortUrls);
 
@@ -97,7 +97,7 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 		    $this->_shortUrls[$match]['onLoad'][1],
 		    $this->_shortUrls[$match]['onLoad'][2]));
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 

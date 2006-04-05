@@ -44,19 +44,19 @@ class GalleryPluginHelper_medium {
      */
     function activate($pluginType, $pluginId) {
 	if (empty($pluginId) || empty($pluginType)) {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER),
 			 null);
 	}
 
 	list ($ret, $plugin) =
 	    GalleryPluginHelper_simple::loadPlugin($pluginType, $pluginId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $redirect) = $plugin->activate();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $redirect);
@@ -73,19 +73,19 @@ class GalleryPluginHelper_medium {
      */
     function deactivate($pluginType, $pluginId) {
 	if (empty($pluginId) || empty($pluginType)) {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER),
 			 null);
 	}
 
 	list ($ret, $plugin) =
 	    GalleryPluginHelper_simple::loadPlugin($pluginType, $pluginId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $redirect) = $plugin->deactivate();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $redirect);
@@ -101,19 +101,19 @@ class GalleryPluginHelper_medium {
      */
     function removePlugin($pluginType, $pluginId) {
 	if (empty($pluginId) || empty($pluginType)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
 	/* Remove all plugin parameters */
 	$ret = GalleryPluginHelper_medium::removeAllParameters($pluginType, $pluginId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::removeMapEntry(
 	    'GalleryPluginMap', array('pluginType' => $pluginType, 'pluginId' => $pluginId));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Flush the cache */
@@ -180,13 +180,13 @@ class GalleryPluginHelper_medium {
 	global $gallery;
 
 	if (empty($itemId)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
 	$ret = GalleryCoreApi::removeMapEntry(
 	    'GalleryPluginParameterMap', array('itemId' => $itemId));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Invalidate our cache */
@@ -214,7 +214,7 @@ class GalleryPluginHelper_medium {
 	global $gallery;
 
 	if (empty($pluginType) || empty($pluginId) || empty($parameterName)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
 	/* Convert null to 0, just in case */
@@ -232,7 +232,7 @@ class GalleryPluginHelper_medium {
 			  'itemId' => $itemId,
 			  'parameterName' => $parameterName));
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    /* Invalidate our cache */
@@ -261,7 +261,7 @@ class GalleryPluginHelper_medium {
 
 	if (empty($pluginType) || empty($pluginId) ||
 		empty($parameterName) || !isset($parameterValue)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
 	$ret = GalleryCoreApi::removeMapEntry(
@@ -271,7 +271,7 @@ class GalleryPluginHelper_medium {
 		  'parameterName' => $parameterName,
 		  'parameterValue' => $parameterValue));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Invalidate the entire cache for this plugin, because we can't invalidate by value */
@@ -293,14 +293,14 @@ class GalleryPluginHelper_medium {
      */
     function removeAllParameters($pluginType, $pluginId) {
 	if (empty($pluginType) || empty($pluginId)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
 	$ret = GalleryCoreApi::removeMapEntry(
 	    'GalleryPluginParameterMap',
 	    array('pluginType' => $pluginType, 'pluginId' => $pluginId));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Invalidate our cache */
@@ -332,7 +332,7 @@ class GalleryPluginHelper_medium {
 	}
 
 	if (empty($pluginType) || empty($pluginId) || empty($parameterName)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
 	/* Convert null to 0, just in case */
@@ -350,7 +350,7 @@ class GalleryPluginHelper_medium {
 	list ($ret, $params) =
 	    GalleryPluginHelper_simple::_fetchAllParameters($pluginType, $pluginId, $itemId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	if (!is_array($itemId)) $itemId = array($itemId);
@@ -359,13 +359,13 @@ class GalleryPluginHelper_medium {
 		$ret = GalleryPluginHelper_medium::_addParameter(
 			$pluginType, $pluginId, $parameterName, $parameterValue, $id);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    } else {
 		$ret = GalleryPluginHelper_medium::_updateParameter(
 			$pluginType, $pluginId, $parameterName, $parameterValue, $id);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 
@@ -399,7 +399,7 @@ class GalleryPluginHelper_medium {
      */
     function _addParameter($pluginType, $pluginId, $parameterName, $parameterValue, $itemId=0) {
 	if (empty($pluginType) || empty($pluginId) || empty($parameterName)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
 	/* Convert null to 0, just in case */
@@ -415,7 +415,7 @@ class GalleryPluginHelper_medium {
 		  'parameterName' => $parameterName,
 		  'parameterValue' => (string)$parameterValue));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$cacheKey = "GalleryPluginHelper::fetchAllParameters($pluginType, $pluginId, $itemId)";
@@ -438,7 +438,7 @@ class GalleryPluginHelper_medium {
      */
     function _updateParameter($pluginType, $pluginId, $parameterName, $parameterValue, $itemId=0) {
 	if (empty($pluginType) || empty($pluginId) || empty($parameterName)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
 	/* Convert null to 0, just in case */
@@ -454,7 +454,7 @@ class GalleryPluginHelper_medium {
 		  'parameterName' => $parameterName),
 	    array('parameterValue' => (string)$parameterValue));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$cacheKey = "GalleryPluginHelper::fetchAllParameters($pluginType, $pluginId, $itemId)";

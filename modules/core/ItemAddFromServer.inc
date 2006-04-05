@@ -64,11 +64,11 @@ class ItemAddFromServer extends ItemAddPlugin {
 	    /* We need the localServerDirList only in the system charset */
 	    list ($ret, $unused, $localServerDirList) = $this->fetchLocalServerDirList();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 
 	    if (!GalleryUtilities::isPathInList($dir, $localServerDirList)) {
-		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER),
 			     null, null);
 	    }
 	    if ($dir{strlen($dir)-1} != $this->_dirSep) {
@@ -77,7 +77,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 
 	    list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($item->getId());
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 
 	    if (!empty($form['localServerFiles'])) {
@@ -96,7 +96,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 					  $textFields, $status, $error);
 		    if ($ret) {
 			GalleryCoreApi::releaseLocks($lockId);
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return array($ret, null, null);
 		    }
 		}
 	    }
@@ -108,7 +108,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 		$ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'core.addAlbumItem');
 		if ($ret) {
 		    GalleryCoreApi::releaseLocks($lockId);
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret, null, null);
 		}
 
 		foreach ($form['localServerDirectories'] as $directory => $data) {
@@ -122,14 +122,14 @@ class ItemAddFromServer extends ItemAddPlugin {
 			$dir . urldecode($directory), $useSymlink, $textFields, $status, $error);
 		    if ($ret) {
 			GalleryCoreApi::releaseLocks($lockId);
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return array($ret, null, null);
 		    }
 		    if ($albumId) {
 			$ret = $this->processDirectory($albumId, $dir . urldecode($directory),
 			    $useSymlink, $textFields, $status, $error);
 			if ($ret) {
 			    GalleryCoreApi::releaseLocks($lockId);
-			    return array($ret->wrap(__FILE__, __LINE__), null, null);
+			    return array($ret, null, null);
 			}
 		    }
 		}
@@ -137,7 +137,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 
 	    $ret = GalleryCoreApi::releaseLocks($lockId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	}
 	
@@ -149,7 +149,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 	list ($base, $extension) = GalleryUtilities::getFileNameComponents($fileName);
 	list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$base = GalleryCoreApi::convertToUtf8($base);
 	GalleryUtilities::sanitizeInputValues($base);
@@ -167,7 +167,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 							       $parentId,
 							       $useSymlink);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$status['addedFiles'][] = array('fileName' => GalleryCoreApi::convertToUtf8($fileName),
@@ -205,18 +205,18 @@ class ItemAddFromServer extends ItemAddPlugin {
 		$error[] = 'form[error][pathComponent][collision]';
 		return array(null, false);
 	    } else {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 
 	if (!isset($album)) {
-	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
 	}
 
 	$ret = GalleryCoreApi::addUserPermission($album->getId(), $album->getOwnerId(),
 						 'core.all', false);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $album->getId());
@@ -227,7 +227,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 
 	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($albumId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Look into the directory, add anything we find */
@@ -251,7 +251,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 			$useSymlink, $textFields, $status, $error);
 		    if ($ret) {
 			GalleryCoreApi::releaseLocks($lockId);
-			return $ret->wrap(__FILE__, __LINE__);
+			return $ret;
 		    }
 		    if ($newAlbumId) {
 			$albumList[$newAlbumId] = $filePath;
@@ -261,7 +261,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 					  $textFields, $status, $error);
 		    if ($ret) {
 			GalleryCoreApi::releaseLocks($lockId);
-			return $ret->wrap(__FILE__, __LINE__);
+			return $ret;
 		    }
 		}
 		if (!empty($error)) {
@@ -273,14 +273,14 @@ class ItemAddFromServer extends ItemAddPlugin {
 
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	foreach ($albumList as $newAlbumId => $filePath) {
 	    $ret = $this->processDirectory($newAlbumId, $filePath,
 					   $useSymlink, $textFields, $status, $error);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    if (!empty($error)) {
 		/* Bail out if an error has occurred */
@@ -299,7 +299,7 @@ class ItemAddFromServer extends ItemAddPlugin {
     function fetchLocalServerDirList() {
 	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	$localServerDirList = array();
 	$localServerDirListInSystemCharset = array();
@@ -327,7 +327,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 	list ($ret, $localServerDirList, $localServerDirListInSystemCharset) =
 	    $this->fetchLocalServerDirList();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	/* Look up the platform type */
@@ -402,13 +402,13 @@ class ItemAddFromServer extends ItemAddPlugin {
 			    } else {
 				list ($ret, $mimeType) = GalleryCoreApi::getMimeType($fileName);
 				if ($ret) {
-				    return array($ret->wrap(__FILE__, __LINE__), null, null);
+				    return array($ret, null, null);
 				}
 				if (!isset($mimeTypeItemMap[$mimeType])) {
 				    list ($ret, $mimeTypeItem) =
 					GalleryCoreApi::newItemByMimeType($mimeType);
 				    if ($ret) {
-					return array($ret->wrap(__FILE__, __LINE__), null, null);
+					return array($ret, null, null);
 				    }
 				    /* Get localized and english names: */
 				    $mimeTypeItem->setMimeType($mimeType);
@@ -432,11 +432,11 @@ class ItemAddFromServer extends ItemAddPlugin {
 		} else if ($platform->is_file($path) && !$platform->is_link($path)) {
 		    list ($ret, $mimeType) = GalleryCoreApi::getMimeType($path);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return array($ret, null, null);
 		    }
 		    list ($ret, $mimeTypeItem) = GalleryCoreApi::newItemByMimeType($mimeType);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return array($ret, null, null);
 		    }
 		    $mimeTypeItem->setMimeType($mimeType);
 		    $mimeTypeItemName = array_merge($mimeTypeItem->itemTypeName(),
@@ -517,7 +517,7 @@ class ItemAddFromServer extends ItemAddPlugin {
     function getTitle() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $module->translate('From Local Server'));

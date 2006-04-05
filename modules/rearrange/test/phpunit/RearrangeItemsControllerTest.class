@@ -45,7 +45,7 @@ class RearrangeItemsControllerTest extends GalleryControllerTestCase {
 							       array('orderBy' => 'orderWeight'));
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_markForCleanup($this->_album);
@@ -55,20 +55,20 @@ class RearrangeItemsControllerTest extends GalleryControllerTestCase {
 		list ($ret, $this->_child[$i]) = $this->_createRandomAlbum($this->_album->getId());
 		if ($ret) {
 		    print $ret->getAsHtml();
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		    return $this->failWithStatus($ret);
 		}
 	    } else {
 		list ($ret, $this->_child[$i]) =
 		    $this->_createRandomDataItem($this->_album->getId());
 		if ($ret) {
 		    print $ret->getAsHtml();
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		    return $this->failWithStatus($ret);
 		}
 		if ($i == 1) {
 		    $ret = GalleryCoreApi::removeItemPermissions($this->_child[$i]->getId());
 		    if ($ret) {
 			print $ret->getAsHtml();
-			return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+			return $this->failWithStatus($ret);
 		    }
 		}
 	    }
@@ -76,7 +76,7 @@ class RearrangeItemsControllerTest extends GalleryControllerTestCase {
 	    $ret = GalleryCoreApi::setItemOrderWeight($this->_child[$i]->getId(), $i * 1000);
 	    if ($ret) {
 		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    $this->_childIds[] = $this->_child[$i]->getId();
 	}
@@ -110,7 +110,7 @@ class RearrangeItemsControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_album);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(array($this->_childIds[4],
@@ -121,7 +121,7 @@ class RearrangeItemsControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $orderWeights) = GalleryCoreApi::fetchItemOrderWeights($this->_childIds);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	foreach ($this->_childIds as $id) {
 	    $weightList[] = $orderWeights[$id];
@@ -140,7 +140,7 @@ class RearrangeItemsControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_album);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(array($this->_childIds[0],

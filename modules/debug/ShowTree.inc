@@ -44,7 +44,7 @@ class ShowTreeView extends GalleryView {
 	/* Make sure we have permission */
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Try the entity id.  Fall back to the item id, then the root album id */
@@ -55,7 +55,7 @@ class ShowTreeView extends GalleryView {
 		list ($ret, $entityId) =
 		    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	}
@@ -63,20 +63,20 @@ class ShowTreeView extends GalleryView {
 	/* Get the parent ids leading up to this entity */
 	list ($ret, $parentIds) = GalleryCoreApi::fetchParentSequence($entityId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Load everything at once */
 	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($entityId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Get all of this entity's children */
 	if ($entity->getCanContainChildren()) {
 	    list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($entity);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	} else {
 	    $childIds = array();
@@ -87,7 +87,7 @@ class ShowTreeView extends GalleryView {
 	    list ($ret, $entityObjects) =
 		GalleryCoreApi::loadEntitiesById(array_merge($parentIds, $childIds));
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 	$entityObjects[] = $entity;
@@ -109,7 +109,7 @@ class ShowTreeView extends GalleryView {
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'debug');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$template->title($module->translate('Gallery Debug'));

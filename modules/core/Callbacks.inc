@@ -43,7 +43,7 @@ class CoreCallbacks {
 
 	    list ($ret, $language) = $gallery->getActiveLanguageCode();
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    $block['core']['LanguageSelector'] =
@@ -77,18 +77,18 @@ class CoreCallbacks {
 		list ($ret, $canViewParent) = GalleryCoreApi::hasItemPermission(
 		    $item['parentId'], 'core.view', $theme['actingUserId']);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	    if ($canViewParent) {
 		list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($item['parentId']);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 		list ($ret, $peerIds) =
 		    GalleryCoreApi::fetchChildItemIds($parent, null, null, $theme['actingUserId']);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 		foreach ($peerIds as $i => $id) {
 		    if ($id == $item['id']) {
@@ -121,12 +121,12 @@ class CoreCallbacks {
 
 		list ($ret, $peerItems) = GalleryCoreApi::loadEntitiesById($peerMap);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 		if (!empty($params['loadThumbnails'])) {
 		    list ($ret, $thumbTable) = GalleryCoreApi::fetchThumbnailsByItemIds($peerMap);
 		    if ($ret) {
-			return $ret->wrap(__FILE__, __LINE__);
+			return $ret;
 		    }
 		}
 		$j = 0;
@@ -154,7 +154,7 @@ class CoreCallbacks {
 		list ($ret, $options['level']) =
 		    GalleryCoreApi::getPluginParameter('module', 'core', 'validation.level');
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	    if ($options['level'] == 'MEDIUM' && !empty($params['key'])) {
@@ -166,7 +166,7 @@ class CoreCallbacks {
 		list ($ret, $allPluginIds) =
 		    GalleryCoreApi::getAllFactoryImplementationIds('GalleryValidationPlugin');
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 
@@ -176,13 +176,13 @@ class CoreCallbacks {
 		list ($ret, $plugin) =
 		    GalleryCoreApi::newFactoryInstanceById('GalleryValidationPlugin', $pluginId);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 
 		list ($ret, $data['file'], $data['l10Domain']) =
 		    $plugin->loadTemplate($smarty->_tpl_vars['form'], $options);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 		if (isset($data['file'])) {
 		    $block['core']['ValidationPlugins'][] = $data;
@@ -191,7 +191,7 @@ class CoreCallbacks {
 	    return null;
 	}
 
-	return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
     }
 }
 ?>

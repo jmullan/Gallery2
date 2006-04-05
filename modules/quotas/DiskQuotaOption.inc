@@ -56,7 +56,7 @@ class DiskQuotaOption extends ItemAddOption {
         list ($ret, $quotaExists, $userDiskQuota) =
             GalleryQuotasHelper::getUserDiskQuota($gallery->getActiveUserId());
         if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
         }
 
         /* if user has a quota */
@@ -67,7 +67,7 @@ class DiskQuotaOption extends ItemAddOption {
 	    }
 	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'quotas');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    for ($i = 0; $i < count($items); $i++) {
 		$warnings[$i] = array();
@@ -82,7 +82,7 @@ class DiskQuotaOption extends ItemAddOption {
 		list ($ret, $userDiskUsage) = GalleryQuotasHelper::getUserDiskUsage(
 		    $gallery->getActiveUserId(), $excludedIds);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret, null, null);
 		}
 
 		/* make disk usage into KB */
@@ -92,7 +92,7 @@ class DiskQuotaOption extends ItemAddOption {
 		    list ($ret, $userDiskQuotaHumanReadable, $userDiskQuotaHumanReadableUnit) =
 			GalleryQuotasHelper::humanReadableFromKilobytes($userDiskQuota);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return array($ret, null, null);
 		    }
 		    $warnings[$i][] = $module->translate(
 			array('text' => 'Warning: You have reached your disk quota (%s %s), ' .
@@ -106,12 +106,12 @@ class DiskQuotaOption extends ItemAddOption {
 		    list ($ret, $userDiskQuotaHumanReadable, $userDiskQuotaHumanReadableUnit) = 
 			GalleryQuotasHelper::humanReadableFromKilobytes($userDiskQuota);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return array($ret, null, null);
 		    }
 		    list ($ret, $userDiskUsageHumanReadable, $userDiskUsageHumanReadableUnit) = 
 			GalleryQuotasHelper::humanReadableFromKilobytes($userDiskUsage);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return array($ret, null, null);
 		    }
 
 		    $warnings[$i][] = $module->translate(

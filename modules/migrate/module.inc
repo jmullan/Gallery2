@@ -66,7 +66,7 @@ class MigrateModule extends GalleryModule /* and GalleryEventListener */ {
 	    /* Added index */
 	    $ret = $storage->configureStore($this->getId(), array('G1MigrateMap:1.0'));
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	case 'end of upgrade path':
@@ -96,7 +96,7 @@ class MigrateModule extends GalleryModule /* and GalleryEventListener */ {
 	    $ret = GalleryCoreApi::removeMapEntry('G1MigrateMap',
 						  array('itemId' => $item->getId()));
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 	return array(null, null);

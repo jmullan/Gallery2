@@ -50,13 +50,13 @@ class IconsModule extends GalleryModule {
     function upgrade($currentVersion) {
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'icons');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	foreach (array('iconpack' => '') as $key => $value) {
 	    if (!isset($params[$key])) {
 		$ret = $this->setParameter($key, $value);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	}
@@ -69,7 +69,7 @@ class IconsModule extends GalleryModule {
 	case '0':
 	    $ret = $this->setParameter('iconpack', 'paularmstrongdesigns');
 	    if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 	    }
 	    break;
 
@@ -80,7 +80,7 @@ class IconsModule extends GalleryModule {
 		/* Removed ".com" from paularmstrongdesigns.com dir, IIS 5.1 didn't like it */
 		$ret = $this->setParameter('iconpack', 'paularmstrongdesigns');
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 
@@ -110,7 +110,7 @@ class IconsModule extends GalleryModule {
 	    'IconsInterface_1_0', 'IconsImpl', 'Icons',
 	    'modules/icons/classes/IconsImpl.class', 'icons', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;

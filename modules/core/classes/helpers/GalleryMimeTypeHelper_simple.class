@@ -44,7 +44,7 @@ class GalleryMimeTypeHelper_simple {
     function convertExtensionToMime($extension) {
 	list ($ret, $mimeData) = GalleryMimeTypeHelper_simple::_getMimeData();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$extension = strtolower($extension);
@@ -64,7 +64,7 @@ class GalleryMimeTypeHelper_simple {
     function convertMimeToExtensions($mimeType) {
 	list ($ret, $mimeData) = GalleryMimeTypeHelper_simple::_getMimeData();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$mimeType = strtolower($mimeType);
@@ -87,7 +87,7 @@ class GalleryMimeTypeHelper_simple {
 	list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
 	list ($ret, $mimeType) = GalleryMimeTypeHelper_simple::convertExtensionToMime($extension);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	return array(null, $mimeType);
     }
@@ -102,7 +102,7 @@ class GalleryMimeTypeHelper_simple {
     function isViewableMimeType($mimeType) {
 	list ($ret, $mimeData) = GalleryMimeTypeHelper_simple::_getMimeData();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null,
@@ -147,7 +147,7 @@ class GalleryMimeTypeHelper_simple {
 		';
 		list ($ret, $searchResults) = $gallery->search($query);
 		if ($ret) {
-		    $ret = array($ret->wrap(__FILE__, __LINE__), null);
+		    $ret = array($ret, null);
 		    return $ret;
 		}
 

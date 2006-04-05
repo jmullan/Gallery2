@@ -63,7 +63,7 @@ class FlushDatabaseCacheTask extends MaintenanceTask {
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	$cacheDirs = array('entity', 'theme', 'module');

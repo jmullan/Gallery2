@@ -48,18 +48,18 @@ class ThumbnailToolkitTest extends GalleryTestCase {
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'thumbnail');
 	if ($ret || !isset($module)) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 	list ($ret, $toolkit) =
 	    GalleryCoreApi::newFactoryInstance('GalleryToolkit', 'ThumbnailToolkit');
 	if ($ret || !isset($toolkit)) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 
 	list ($ret, $id) = ThumbnailHelper::addItem('test/fakemime', null, 'unittest.jpg',
 	    dirname(__FILE__) . '/../../images/G2video.jpg', 'image/jpeg');
 	if ($ret || !isset($id)) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 
 	$this->_toolkit = $toolkit;
@@ -70,7 +70,7 @@ class ThumbnailToolkitTest extends GalleryTestCase {
 	global $gallery;
 	$ret = GalleryCoreApi::deleteEntityById($this->_itemId);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$platform =& $gallery->getPlatform();
 	$ret = $platform->unlink(
@@ -81,7 +81,7 @@ class ThumbnailToolkitTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::unregisterToolkitOperation('Thumbnail',
 	    'convert-to-image/jpeg', array('test/fakemime'));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	parent::tearDown();
     }

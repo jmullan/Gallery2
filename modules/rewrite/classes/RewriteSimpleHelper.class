@@ -49,7 +49,7 @@ class RewriteSimpleHelper {
 
 	    list ($ret, $itemId) = GalleryCoreApi::fetchItemIdByPath($path);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    GalleryUtilities::putRequestVariable('itemId', $itemId);
 	}

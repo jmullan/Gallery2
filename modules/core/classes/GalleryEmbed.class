@@ -110,7 +110,7 @@ class GalleryEmbed {
 	    $ret = GalleryInitFirstPass($initParams);
 	    GalleryDataCache::put($firstCacheKey, true);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 	
@@ -130,7 +130,7 @@ class GalleryEmbed {
 	if (isset($initParams['activeUserId'])) {
 	    $ret = GalleryEmbed::checkActiveUser($initParams['activeUserId']);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
@@ -140,7 +140,7 @@ class GalleryEmbed {
 		$ret = GalleryInitSecondPass();
 		GalleryDataCache::put($secondCacheKey, true);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	}
@@ -159,13 +159,13 @@ class GalleryEmbed {
 	$session =& $gallery->getSession();
 	$ret = $session->save();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	if ($gallery->isStorageInitialized()) {
 	    $storage =& $gallery->getStorage();
 	    $ret = $storage->commitTransaction();
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 	GalleryEmbed::_restoreState();
@@ -217,7 +217,7 @@ class GalleryEmbed {
 		/* Logout */
 		$ret = $session->reset();
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	    $session->put('embed.id.externalUser', $activeUserId);
@@ -226,7 +226,7 @@ class GalleryEmbed {
 	    list ($ret, $user) =
 		GalleryCoreApi::loadEntityByExternalId($activeUserId, 'GalleryUser');
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    $gallery->setActiveUser($user);
 	    $session->put('embed.id.externalUser', $activeUserId);
@@ -253,7 +253,7 @@ class GalleryEmbed {
 	global $gallery;
 	list ($ret, $user) = GalleryCoreApi::loadEntityByExternalId($extUserId, 'GalleryUser');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$gallery->setActiveUser($user);
 	$session =& $gallery->getSession();
@@ -261,7 +261,7 @@ class GalleryEmbed {
 	
 	$ret = $session->regenerate();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	return null;
     }
@@ -286,18 +286,18 @@ class GalleryEmbed {
 	    GalleryEmbed::_saveState();
 	    $ret = GalleryInitFirstPass($params);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    global $gallery;
 	    $session =& $gallery->getSession();
 	    $ret = $session->reset();
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    /* Commit the transaction */
 	    $ret = GalleryEmbed::done();
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 	return null;
@@ -347,31 +347,31 @@ class GalleryEmbed {
      */
     function createUser($extUserId, $args) {
 	if (empty($extUserId) || empty($args['username'])) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 	list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	if (!isset($user)) {
-	    return GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
 	}
 
 	$ret = $user->create($args['username']);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	GalleryEmbed::_setUserData($user, $args, true);
 	$ret = $user->save();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::addMapEntry(
 	    'ExternalIdMap',
 	    array('externalId' => $extUserId,
 		  'entityType' => 'GalleryUser', 'entityId' => $user->getId()));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	return null;
     }
@@ -391,22 +391,22 @@ class GalleryEmbed {
     function updateUser($extUserId, $args) {
 	list ($ret, $user) = GalleryCoreApi::loadEntityByExternalId($extUserId, 'GalleryUser');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($user->getId());
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	GalleryEmbed::_setUserData($user, $args);
 	$ret = $user->save();
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockId);
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	return null;
     }
@@ -457,17 +457,17 @@ class GalleryEmbed {
     function deleteUser($extUserId) {
 	list ($ret, $user) = GalleryCoreApi::loadEntityByExternalId($extUserId, 'GalleryUser');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::deleteEntityById($user->getId());
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::removeMapEntry(
 	    'ExternalIdMap',
 	    array('externalId' => $extUserId, 'entityType' => 'GalleryUser'));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	return null;
     }
@@ -482,30 +482,30 @@ class GalleryEmbed {
      */
     function createGroup($extGroupId, $groupName) {
 	if (empty($extGroupId) || empty($groupName)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 	list ($ret, $group) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryGroup');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	if (!isset($group)) {
-	    return GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
 	}
 
 	$ret = $group->create($groupName);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$ret = $group->save();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::addMapEntry(
 	    'ExternalIdMap',
 	    array('externalId' => $extGroupId,
 		  'entityType' => 'GalleryGroup', 'entityId' => $group->getId()));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	return null;
     }
@@ -520,16 +520,16 @@ class GalleryEmbed {
     function deleteGroup($extGroupId) {
 	list ($ret, $group) = GalleryCoreApi::loadEntityByExternalId($extGroupId, 'GalleryGroup');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::deleteEntityById($group->getId());
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::removeMapEntry(
 	    'ExternalIdMap', array('externalId' => $extGroupId, 'entityType' => 'GalleryGroup'));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	return null;
     }
@@ -546,11 +546,11 @@ class GalleryEmbed {
     function updateGroup($extGroupId, $args) {
 	list ($ret, $group) = GalleryCoreApi::loadEntityByExternalId($extGroupId, 'GalleryGroup');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($group->getId());
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	if (isset($args['groupname'])) {
@@ -559,11 +559,11 @@ class GalleryEmbed {
 	$ret = $group->save();
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockId);
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	return null;
     }
@@ -579,22 +579,22 @@ class GalleryEmbed {
     function addUserToGroup($extUserId, $extGroupId) {
 	list ($ret, $user) = GalleryCoreApi::loadEntityByExternalId($extUserId, 'GalleryUser');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	list ($ret, $group) = GalleryCoreApi::loadEntityByExternalId($extGroupId, 'GalleryGroup');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	/* First check if the user is not already a member of the group */
 	list($ret, $membership) = GalleryCoreApi::fetchGroupsForUser($user->getId());
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	/* Only add user to group if not already done so */
 	if (!isset($membership[$group->getId()])) {
 	    $ret = GalleryCoreApi::addUserToGroup($user->getId(), $group->getId());
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 	return null;
@@ -611,15 +611,15 @@ class GalleryEmbed {
     function removeUserFromGroup($extUserId, $extGroupId) {
 	list ($ret, $user) = GalleryCoreApi::loadEntityByExternalId($extUserId, 'GalleryUser');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	list ($ret, $group) = GalleryCoreApi::loadEntityByExternalId($extGroupId, 'GalleryGroup');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::removeUserFromGroup($user->getId(), $group->getId());
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	return null;
     }
@@ -640,7 +640,7 @@ class GalleryEmbed {
     	$session =& $gallery->getSession();
 	$ret = $session->start();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$session->doNotUseTempId();
 	
@@ -649,20 +649,20 @@ class GalleryEmbed {
 	list ($ret, $ids) =
 	    GalleryCoreApi::getAllFactoryImplementationIds('GallerySearchInterface_1_0');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	foreach ($ids as $id => $className) {
 	    list ($ret, $searchInstances[$id]) =
 		GalleryCoreApi::newFactoryInstance('GallerySearchInterface_1_0', $className);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 	foreach ($searchInstances as $id => $instance) {
 	    list ($ret, $searchInfo) = $instance->getSearchModuleInfo();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    $options = array();
 	    foreach ($searchInfo['options'] as $option => $info) {
@@ -675,7 +675,7 @@ class GalleryEmbed {
 				  SearchUtilities::sanitizeSearchCriteria($searchString),
 				  0, $resultsPerModule);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    $searchResults[$id]['name'] = $searchInfo['name'];
 	}
@@ -700,7 +700,7 @@ class GalleryEmbed {
     	$session =& $gallery->getSession();
 	$ret = $session->start();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$session->doNotUseTempId();
 	
@@ -708,14 +708,14 @@ class GalleryEmbed {
 	list ($ret, $searchInstance) =
 	    GalleryCoreApi::newFactoryInstanceById('GallerySearchInterface_1_0', $moduleId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (!isset($searchInstance)) {
-	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
 	}
 	list ($ret, $searchInfo) = $searchInstance->getSearchModuleInfo();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$options = array();
 	foreach ($searchInfo['options'] as $option => $info) {
@@ -728,7 +728,7 @@ class GalleryEmbed {
 				    SearchUtilities::sanitizeSearchCriteria($searchString),
 				    $offset, $count);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$searchResults['name'] = $searchInfo['name'];
 	return array(null, $searchResults);
@@ -800,7 +800,7 @@ class GalleryEmbed {
     	$session =& $gallery->getSession();
 	$ret = $session->start();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	$session->doNotUseTempId();
 	
@@ -808,7 +808,7 @@ class GalleryEmbed {
 	/* Load the module list */
 	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	if (isset($moduleStatus[$moduleId]) && !empty($moduleStatus[$moduleId]['active'])
@@ -827,7 +827,7 @@ class GalleryEmbed {
 		'modules/imageblock/classes/ImageBlockHelper.class');
 	    $ret = ImageBlockHelper::loadImageBlocks($template, $params);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 
 	    if ($template->hasVariable('ImageBlockData')) {
@@ -835,7 +835,7 @@ class GalleryEmbed {
 		/* Render and get the imageblock html */
 		list ($ret, $blockHtml) = $template->fetch("gallery:$tpl");
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret, null, null);
 		}
 		/* Check for any css required for imageframes */
 		$head = $template->getVariable('head');
@@ -843,12 +843,12 @@ class GalleryEmbed {
 		    list ($tpl) = each($head['tpl']);
 		    list ($ret, $headHtml) = $template->fetch("gallery:$tpl");
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return array($ret, null, null);
 		    }
 		}
 	    }
 	} else {
-	    return array(GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED, __FILE__, __LINE__),
+	    return array(GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED),
 			 null, null);
 	}
 	return array(null, $blockHtml, $headHtml);
@@ -871,7 +871,7 @@ class GalleryEmbed {
 		  'entityType' => $entityType,
 		  'entityId' => $entityId));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	return null;
     }
@@ -890,7 +890,7 @@ class GalleryEmbed {
 	global $gallery;
 	/* Input validation */
 	if ($key != 'externalId' && $key != 'entityId') {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	}
 
 	$query = '
@@ -899,7 +899,7 @@ class GalleryEmbed {
 	';
 	list ($ret, $results) = $gallery->search($query);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$map = array();
@@ -936,7 +936,7 @@ class GalleryEmbed {
 	';
 	list ($ret, $results) = $gallery->search($query, array($externalId, $entityType));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	if (!($result = $results->nextResult())) {
 	    return GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__,

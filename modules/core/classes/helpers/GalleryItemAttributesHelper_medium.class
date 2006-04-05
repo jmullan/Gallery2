@@ -54,11 +54,11 @@ class GalleryItemAttributesHelper_medium {
         ', GalleryUtilities::makeMarkers($itemIds));
 	list ($ret, $searchResults) = $gallery->search($query, $itemIds);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if ($searchResults->resultCount() != sizeof($itemIds)) {
-	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
 	}
 
 	$data = array();
@@ -80,11 +80,11 @@ class GalleryItemAttributesHelper_medium {
 	list ($ret, $orderWeights) =
 	    GalleryItemAttributesHelper_medium::fetchOrderWeights(array($itemId));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if (!isset($orderWeights[$itemId])) {
-	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
 	}
 
 	return array(null, (int)$orderWeights[$itemId]);
@@ -115,7 +115,7 @@ class GalleryItemAttributesHelper_medium {
         ';
 	list ($ret, $searchResults) = $gallery->search($query, $itemIds);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$data = array();
@@ -145,7 +145,7 @@ class GalleryItemAttributesHelper_medium {
         ';
 	list ($ret, $searchResults) = $gallery->search($query, array((int)$itemId));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if ($searchResults->resultCount() != 1) {

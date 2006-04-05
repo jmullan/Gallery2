@@ -62,7 +62,7 @@ class SliderTheme extends GalleryTheme {
     function getSettings($itemId=null) {
 	list ($ret, $settings, $params) = parent::getSettings($itemId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$settings[] = array('key' => 'enableImageMap',
@@ -82,14 +82,14 @@ class SliderTheme extends GalleryTheme {
 	    array('parents', 'systemLinks', 'itemLinks'),
 	    $childIds);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$theme =& $template->getVariableByReference('theme');
 
 	list ($ret, $imageWidths, $imageHeights) =
 	    $this->_buildItemList($childIds, $theme['children']);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$theme['imageWidths'] = implode(',', $imageWidths);
@@ -109,7 +109,7 @@ class SliderTheme extends GalleryTheme {
 	    /* Render this item */
 	    list ($ret, $image) = GalleryCoreApi::loadEntitiesById($renderId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    $template->setVariable('theme', array('item' => (array)$item,
 						  'image' => (array)$image));
@@ -119,16 +119,16 @@ class SliderTheme extends GalleryTheme {
 	/* Otherwise, load the parent with initial view of this item  */
 	list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($item->getParentId());
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($parent);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $tplFile) = $this->showAlbumPage($template, $parent, $params, $childIds);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$theme =& $template->getVariableByReference('theme');
 	foreach ($theme['children'] as $tmp) {
@@ -150,7 +150,7 @@ class SliderTheme extends GalleryTheme {
 	$ret = $this->loadCommonTemplateData(
 	    $template, $item, $params, array('parents', 'systemLinks'));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, 'theme.tpl');
@@ -163,7 +163,7 @@ class SliderTheme extends GalleryTheme {
 	$ret = $this->loadCommonTemplateData(
 	    $template, $item, $params, array('parents', 'systemLinks'));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, 'theme.tpl');
@@ -183,7 +183,7 @@ class SliderTheme extends GalleryTheme {
 	$ret = $this->loadCommonTemplateData(
 	    $template, $item, $params, array('parents', 'systemLinks'));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, 'theme.tpl');
@@ -198,26 +198,26 @@ class SliderTheme extends GalleryTheme {
 	if (!empty($childIds)) {
 	    $ret = GalleryCoreApi::studyPermissions($childIds);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    list ($ret, $childItems) = GalleryCoreApi::loadEntitiesById($childIds);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    list ($ret, $preferredFullImages) =
 		GalleryCoreApi::fetchPreferredsByItemIds($childIds);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    list ($ret, $resizedImages) =
 		GalleryCoreApi::fetchResizesByItemIds($childIds);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    list ($ret, $thumbnails) =
 		GalleryCoreApi::fetchThumbnailsByItemIds($childIds);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	}
 	$i = -1;
@@ -233,7 +233,7 @@ class SliderTheme extends GalleryTheme {
 		    list ($ret, $thumbnails[$childId]) =
 			GalleryCoreApi::rebuildDerivativeCache($thumbnails[$childId]->getId());
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return array($ret, null, null);
 		    }
 		}
 		$children[$i]['thumbnail'] = (array)$thumbnails[$childId];
@@ -241,7 +241,7 @@ class SliderTheme extends GalleryTheme {
 
 	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($childId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 
 	    $images = array();
@@ -270,7 +270,7 @@ class SliderTheme extends GalleryTheme {
 			&& !($image->getWidth() && $image->getHeight())) {
 		    list ($ret, $image) = GalleryCoreApi::rebuildDerivativeCache($image->getId());
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return array($ret, null, null);
 		    }
 		}
 		$image = (array)$image;

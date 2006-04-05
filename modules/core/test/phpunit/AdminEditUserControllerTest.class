@@ -42,13 +42,13 @@ class AdminEditUserControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $this->_user[0]) = $this->_createUser(array('fullName' => 'full name'));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_user[0]);
 
 	list ($ret, $this->_user[1]) = $this->_createUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_user[1]);
     }
@@ -191,7 +191,7 @@ class AdminEditUserControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $user) = $this->_user[0]->refresh();
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 	$this->assert($user->isCorrectPassword($password), 'check password');
     }
@@ -218,7 +218,7 @@ class AdminEditUserControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $user) = $this->_user[0]->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals($userName, $user->getUserName());

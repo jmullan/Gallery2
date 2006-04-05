@@ -447,25 +447,25 @@ class ImageUploadHelper {
 
 	list ($ret, $group) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryGroup');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (!isset($group)) {
-	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
 	}
 
 	$ret = $group->create($name);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$ret = $group->save();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter(
 				  'module', 'nokiaupload', 'id.mobileGroup', $group->getId());
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $group->getId());
@@ -483,22 +483,22 @@ class ImageUploadHelper {
 	global $gallery;
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'nokiaupload');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $album) =
 	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryAlbumItem');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (!isset($album)) {
-	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
 	}
 
 	/* Lock the parent album */
 	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($parentId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Choose a name for the album. Hopefully it's unique.*/
@@ -506,7 +506,7 @@ class ImageUploadHelper {
 	$ret = $album->create($parentId, $albumName);
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockId);
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Set the album info and save it. */
@@ -530,17 +530,17 @@ class ImageUploadHelper {
 	$ret = $album->save();
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockId);
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$ret = $module->setParameter('id.uploadAlbum', $album->getId());
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $album->getId());
@@ -562,40 +562,40 @@ class ImageUploadHelper {
 	list ($ret, $everybodyId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	list ($ret, $adminGroupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Reset album permissions */
 	$ret = GalleryCoreApi::removeItemPermissions($albumId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Admin permissions */
 	$ret = GalleryCoreApi::addGroupPermission($albumId, $adminGroupId, 'core.all');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Mobile user group permissions */
 	$ret = GalleryCoreApi::addGroupPermission($albumId, $groupId, 'core.addDataItem');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::addGroupPermission($albumId, $groupId, 'core.addAlbumItem');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Everybody else can only view the items. */
 	$ret = GalleryCoreApi::addGroupPermission($albumId, $everybodyId, 'core.viewAll');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;

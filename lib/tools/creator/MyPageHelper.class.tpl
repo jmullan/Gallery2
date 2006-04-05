@@ -57,7 +57,7 @@ class MyPageHelper {ldelim}
 
 	list ($ret, $searchResults) = $gallery->search($query, array($itemId));
 	if ($ret) {ldelim}
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	{rdelim}
 
         if ($searchResults->resultCount() != 0) {ldelim}

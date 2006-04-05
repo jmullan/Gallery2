@@ -48,7 +48,7 @@ class AdminThemesControllerTest extends GalleryControllerTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'core');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
     }
 
@@ -190,7 +190,7 @@ class AdminThemesControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'core', 'default.theme', 'AdminThemesControllerTest');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* The ui doesn't permit this, so expect a silent failure */
@@ -305,7 +305,7 @@ class AdminThemesControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals('albumsFirst|viewCount', $params['default.orderBy'], 'orderBy');

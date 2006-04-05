@@ -50,7 +50,7 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $this->_user) = $this->_createUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_markForCleanup($this->_user);
@@ -61,20 +61,20 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 	$ret = $watermark->create(__FILE__, 'test/file', 'phpunit_' . rand() . '.gif');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = $watermark->save();
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::addUserPermission(
 	    $watermark->getId(), $this->_user->getId(), 'core.all');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_watermark = $watermark;
@@ -100,7 +100,7 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 	// Verify the watermark
 	list ($ret, $this->_watermark) = $this->_watermark->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals('foo bar', $this->_watermark->getName());
@@ -129,7 +129,7 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 	// Verify the watermark
 	list ($ret, $this->_watermark) = $this->_watermark->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals('foo bar', $this->_watermark->getName());
@@ -156,7 +156,7 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 	// Verify the watermark
 	list ($ret, $this->_watermark) = $this->_watermark->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(1, $this->_watermark->getSerialNumber());
@@ -176,7 +176,7 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 	// Verify the watermark
 	list ($ret, $this->_watermark) = $this->_watermark->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(1, $this->_watermark->getSerialNumber());
@@ -200,7 +200,7 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 	// Verify the watermark
 	list ($ret, $this->_watermark) = $this->_watermark->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals('100', $this->_watermark->getXPercentage());

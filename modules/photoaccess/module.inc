@@ -58,7 +58,7 @@ class PhotoAccessModule extends GalleryModule {
 	}
 	list ($ret, $coreParams) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	switch ($currentVersion) {
@@ -67,14 +67,14 @@ class PhotoAccessModule extends GalleryModule {
 	    $ret = GalleryCoreApi::registerPermission($this->getId(), 'photoaccess.print',
 						      $gallery->i18n('[photoaccess] Print'));
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    /* Give everybody print permission by default */
 	    $ret = GalleryCoreApi::addGroupPermission(
 		$coreParams['id.rootAlbum'], $coreParams['id.everybodyGroup'],
 		'photoaccess.print', true);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    break;
 
@@ -82,13 +82,13 @@ class PhotoAccessModule extends GalleryModule {
 	    $ret = GalleryCoreApi::registerPermission($this->getId(), 'photoaccess.print',
 						      $gallery->i18n('[photoaccess] Print'));
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    $ret = GalleryCoreApi::addGroupPermission(
 		$coreParams['id.rootAlbum'], $coreParams['id.everybodyGroup'],
 		'photoaccess.print', true);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	case '1.0.1':
@@ -114,7 +114,7 @@ class PhotoAccessModule extends GalleryModule {
 	    'CartPluginInterface_1_0', 'PhotoAccessCartPlugin', 'photoaccess',
 	    'modules/photoaccess/classes/PhotoAccessCartPlugin.class', 'photoaccess', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;

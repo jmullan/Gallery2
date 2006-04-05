@@ -101,7 +101,7 @@ class GalleryPluginHelper_simple {
 			    $pluginType, $pluginId, $ignoreVersionMismatch,
 			    $errorOnVersionMismatch, $depth + 1);
 			if ($ret) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
+			    return array($ret, null);
 			}
 		    } else {
 			return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
@@ -136,7 +136,7 @@ class GalleryPluginHelper_simple {
 	    /* Verify that the versions match */
 	    list ($ret, $status) = GalleryPluginHelper_simple::fetchPluginStatus($pluginType);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    if (isset($status[$pluginId]) &&
@@ -151,7 +151,7 @@ class GalleryPluginHelper_simple {
 		    /* Try to deactivate the plugin */
 		    list ($ret, $redirectInfo) = $plugin->deactivate();
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 
 		    if (!empty($redirectInfo) && !$errorOnVersionMismatch) {
@@ -245,7 +245,7 @@ class GalleryPluginHelper_simple {
 	list ($ret, $params) =
 	    GalleryPluginHelper_simple::_fetchAllParameters($pluginType, $pluginId, $itemId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Return the value, or null if the param doesn't exist */
@@ -274,7 +274,7 @@ class GalleryPluginHelper_simple {
 	list ($ret, $params) =
 	    GalleryPluginHelper_simple::_fetchAllParameters($pluginType, $pluginId, $itemId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	return array(null, $params[$itemId]);
     }
@@ -345,7 +345,7 @@ class GalleryPluginHelper_simple {
 
 	list ($ret, $searchResults) = $gallery->search($query, $queryIds);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	while ($result = $searchResults->nextResult()) {
@@ -390,7 +390,7 @@ class GalleryPluginHelper_simple {
 	    if (!isset($plugins)) {
 		list ($ret, $plugins) = GalleryPluginHelper_simple::fetchPluginList($pluginType);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		$platform =& $gallery->getPlatform();
@@ -441,7 +441,7 @@ class GalleryPluginHelper_simple {
 					GalleryPluginHelper_simple::getParameter(
 					    $pluginType, $pluginId, '_' . $paramName);
 				    if ($ret) {
-					return array($ret->wrap(__FILE__, __LINE__), null);
+					return array($ret, null);
 				    }
 
 				    /* Separate out the major/minor version. */
@@ -518,7 +518,7 @@ class GalleryPluginHelper_simple {
 
 	    list ($ret, $searchResults) = $gallery->search($query, array($pluginType));
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    $data = array();

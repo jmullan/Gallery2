@@ -60,14 +60,14 @@ class AdminRepositoryController extends GalleryController {
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Init repository. */
 	$repository = $this->_getRepository();
 	$ret = $repository->init();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$status = $error = array();
@@ -160,7 +160,7 @@ class AdminRepositoryController extends GalleryController {
 		/* Get list of upgradeable packages. */
 		list ($ret, $packages) = $repository->getAllUpgradeablePackages();
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		if (empty($packages)) {
@@ -214,19 +214,19 @@ class AdminRepositoryController extends GalleryController {
 	$repository = $this->_getRepository();
 	$ret = $repository->init();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Create download file list. */
 	list ($ret, $files) = $repository->getDownloadFileList($pluginData);
 	if ($ret) {
 	    $templateAdapter->errorProgressBar($ret);
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Download files. */
@@ -240,7 +240,7 @@ class AdminRepositoryController extends GalleryController {
 		$ret = $repository->updatePluginIndexFile($pluginType, $pluginId);
 		if ($ret) {
 		    $templateAdapter->errorProgressBar($ret);
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 
 		/* Set up progress bar variables. */
@@ -254,7 +254,7 @@ class AdminRepositoryController extends GalleryController {
 			$currentUrlIndex / $totalUrls);
 		    if ($ret) {
 			$templateAdapter->errorProgressBar($ret);
-			return $ret->wrap(__FILE__, __LINE__);
+			return $ret;
 		    }
 		    $currentUrlIndex++;
 
@@ -263,7 +263,7 @@ class AdminRepositoryController extends GalleryController {
 			$pluginType, $pluginId, $packageName, $relativePackageUrl);
 		    if ($ret) {
 			$templateAdapter->errorProgressBar($ret);
-			return $ret->wrap(__FILE__, __LINE__);
+			return $ret;
 		    }
 
 		    if (!empty($pluginDescriptor)) {
@@ -283,7 +283,7 @@ class AdminRepositoryController extends GalleryController {
 			    $packageName, $descriptor);
 			if ($ret) {
 			    $templateAdapter->errorProgressBar($ret);
-			    return $ret->wrap(__FILE__, __LINE__);
+			    return $ret;
 			}
 
 			/* Update plugin package map. */
@@ -292,13 +292,13 @@ class AdminRepositoryController extends GalleryController {
 								   $packageName);
 			if ($ret) {
 			    $templateAdapter->errorProgressBar($ret);
-			    return $ret->wrap(__FILE__, __LINE__);
+			    return $ret;
 			}
 			$ret = $repository->updatePackageMetaData(
 			    $pluginType, $pluginId, $packageName, $version, $build);
 			if ($ret) {
 			    $templateAdapter->errorProgressBar($ret);
-			    return $ret->wrap(__FILE__, __LINE__);
+			    return $ret;
 			}
 		    }
 		}
@@ -309,7 +309,7 @@ class AdminRepositoryController extends GalleryController {
 	$ret = $templateAdapter->updateProgressBar($titleText, $module->translate('Done.'), 1);
 	if ($ret) {
 	    $templateAdapter->errorProgressBar($ret);
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Show link to return to the previously selected tab. */
@@ -354,14 +354,14 @@ class AdminRepositoryView extends GalleryView {
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Init repository. */
 	$repository = $this->_getRepository();
 	$ret = $repository->init();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$mode = GalleryUtilities::getRequestVariables('mode');
@@ -413,7 +413,7 @@ class AdminRepositoryView extends GalleryView {
 		list ($ret, $browseData) =
 		    $repository->getRepositoryPluginList($pluginType, $showIncompatible, $coreApis);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		$template->setVariable('browseData', $browseData);
 	    }
@@ -435,14 +435,14 @@ class AdminRepositoryView extends GalleryView {
 	    list ($ret, $upgradeData) =
 		$repository->getPluginUpgradeInfo($pluginType, $pluginId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    $actionText = isset($upgradeData['upgradeablePackages']) ? $gallery->i18n('Upgrade')
 								     : $gallery->i18n('Download');
 
 	    list ($ret, $pluginName) = $repository->getPluginName($pluginType, $pluginId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    $template->setVariable('pluginName', $pluginName);
 	    $template->setVariable('upgradeData', $upgradeData);
@@ -461,7 +461,7 @@ class AdminRepositoryView extends GalleryView {
 		/* Get local index meta data. */
 		list ($ret, $indexMetaData) = $repository->getIndexMetaData();
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		$template->setVariable('indexMetaData', $indexMetaData);
 	    }
@@ -472,7 +472,7 @@ class AdminRepositoryView extends GalleryView {
 	    list ($ret, $isCoreUpgradeAvailable, $apiVersions) =
 		$repository->isCoreUpgradeAvailable();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    if ($isCoreUpgradeAvailable) {
 		$template->setVariable('latestCoreApiVersion', $apiVersions['core']);

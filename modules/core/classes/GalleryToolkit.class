@@ -58,9 +58,7 @@ class GalleryToolkit {
      *	       mixed the value of the property
      */
     function getProperty($mimeType, $propertyName, $sourceFilename) {
-	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED,
-					  __FILE__, __LINE__),
-		     null);
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
     }
 
     /**
@@ -86,7 +84,7 @@ class GalleryToolkit {
      */
     function performOperation($mimeType, $operationName, $sourceFilename,
 			      $destFilename, $parameters, $context=array()) {
-	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null, null);
     }
 
     /**

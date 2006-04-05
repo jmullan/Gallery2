@@ -71,7 +71,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
 		    /* Add it */
 		    list ($ret, $mimeType, $fileName) = $this->_getMimeType($url, $headers, true);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return array($ret, null, null);
 		    }
 
 		    list ($base) = GalleryUtilities::getFileNameComponents($fileName);
@@ -89,7 +89,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
 									   $mimeType,
 									   $item->getId());
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return array($ret, null, null);
 		    }
 
 		    $status['addedFiles'][] = array('fileName' => $url,
@@ -154,7 +154,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
 		     */
 		    list ($ret, $typeName) = $this->_getTypeName($form['webPage'], null, $headers);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return array($ret, null, null);
 		    }
 		    if (!empty($typeName)) {
 			$form['webPageUrls'][] = array('url' => $form['webPage'],
@@ -231,7 +231,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
 
 			list ($ret, $typeName) = $this->_getTypeName($url, $matches[1][$i]);
 			if ($ret) {
-			    return array($ret->wrap(__FILE__, __LINE__), null, null);
+			    return array($ret, null, null);
 			}
 
 			if (!empty($typeName)) {
@@ -299,7 +299,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
 	if (!empty($urlComponents['path'])) {
 	    list ($ret, $mimeType) = GalleryCoreApi::getMimeType($urlComponents['path']);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    if (!empty($mimeType) && $mimeType != 'application/unknown') {
 		return array(null, $mimeType, $fileName);
@@ -313,7 +313,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
 	     */
 	    list ($ret, $mimeType) = GalleryCoreApi::getMimeType($urlComponents['query']);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    if (!empty($mimeType) && $mimeType != 'application/unknown') {
 		return array(null, $mimeType, $fileName);
@@ -324,7 +324,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
 		&& preg_match('/filename="(.*?)"/', $headers['Content-Disposition'], $match)) {
 	    list ($ret, $mimeType) = GalleryCoreApi::getMimeType($match[1]);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    if (!empty($mimeType) && $mimeType != 'application/unknown') {
 		return array(null, $mimeType, $fileName);
@@ -353,13 +353,13 @@ class ItemAddFromWeb extends ItemAddPlugin {
 	    /* For <img> src attribute just assume "Photo" and don't examine mime type */
 	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    return array(null, $module->translate('Photo'));
 	} else {
 	    list ($ret, $mimeType) = $this->_getMimeType($url, $headers);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    if (empty($mimeType)) {
 		return array(null, null);
@@ -369,7 +369,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
 	    if (!isset($mimeTypeNameMap[$mimeType])) {
 		list ($ret, $mimeTypeItem) = GalleryCoreApi::newItemByMimeType($mimeType);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		$mimeTypeItem->setMimeType($mimeType);
 		$mimeTypeNameMap[$mimeType] = $mimeTypeItem->itemTypeName();
@@ -384,7 +384,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
     function getTitle() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $module->translate('From Web Page'));

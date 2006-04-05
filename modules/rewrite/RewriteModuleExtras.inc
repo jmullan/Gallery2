@@ -55,7 +55,7 @@ class RewriteModuleExtras {
 		     as $key => $value) {
 		$ret = $module->setParameter($key, $value);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	    break;
@@ -88,14 +88,14 @@ class RewriteModuleExtras {
 		     as $key => $value) {
 		$ret = $module->setParameter($key, $value);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 
 	    /* The module needs to be reconfigured */
 	    list ($ret) = $module->deactivate();
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	case '0.9.3':
@@ -104,7 +104,7 @@ class RewriteModuleExtras {
 		     as $key => $value) {
 		$ret = $module->setParameter($key, $value);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 
@@ -124,7 +124,7 @@ class RewriteModuleExtras {
 		     as $key => $value) {
 		$ret = $module->setParameter($key, $value);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 
@@ -160,7 +160,7 @@ class RewriteModuleExtras {
 	    if (version_compare($currentVersion, '0.9.3', '>=')) {
 		list ($ret, $searchResults) = $gallery->search($query);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 
 		while ($result = $searchResults->nextResult()) {
@@ -187,7 +187,7 @@ class RewriteModuleExtras {
 		     as $key) {
 		list ($ret, $value) = $module->getParameter($key);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 
 		$params['modrewrite.' . $key] = $value;
@@ -195,21 +195,21 @@ class RewriteModuleExtras {
 
 	    list ($ret, $value) = $module->getParameter('accessList');
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    $params['accessList'] = $value;
 
 	    /* Cleanup: Remove all old params */
 	    $ret = GalleryCoreApi::removeAllPluginParameters('module', $module->getId());
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    /* Set the new params */
 	    foreach ($params as $key => $value) {
 		$ret = $module->setParameter($key, $value);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 
@@ -237,7 +237,7 @@ class RewriteModuleExtras {
     function handleDeactivatePlugin($module, $pluginId) {
 	list ($ret, $activeRules) = $module->getParameter('activeRules');
     	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$activeRules = unserialize($activeRules);
 
@@ -246,21 +246,21 @@ class RewriteModuleExtras {
     	    GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
 	    list ($ret, $rewriteParser) = RewriteHelper::getRewriteParser();
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    /* Save the old patterns for later use if module gets reactivated */
 	    $ret = $module->setParameter('history.' . $pluginId,
 		serialize($activeRules[$pluginId]));
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    unset($activeRules[$pluginId]);
 
 	    /* Try to activate the new rules */
 	    list ($ret) = $rewriteParser->saveActiveRules($activeRules, $module);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
@@ -273,7 +273,7 @@ class RewriteModuleExtras {
     function handleUninstallPlugin($module, $pluginId) {
 	$ret = $module->removeParameter('history.' . $pluginId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -286,24 +286,24 @@ class RewriteModuleExtras {
 	/* Get saved patterns */
 	list ($ret, $plugin) = GalleryCoreApi::loadPlugin('module', $pluginId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$rules = $plugin->getRewriteRules();
 
 	list ($ret, $history) = $module->getParameter('history.' . $pluginId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$ret = $module->removeParameter('history.' . $pluginId);
 	if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	}
 
 	if (!empty($history)) {
 	    $history = unserialize($history);
 	    list ($ret, $activeRules) = $module->getParameter('activeRules');
     	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    $activeRules = unserialize($activeRules);
 	    $originalSize = sizeof($activeRules);
@@ -327,12 +327,12 @@ class RewriteModuleExtras {
 		GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
 		list ($ret, $rewriteParser) = RewriteHelper::getRewriteParser();
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 
 		list ($ret) = $rewriteParser->saveActiveRules($activeRules, $module);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	}

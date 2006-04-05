@@ -50,20 +50,20 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_album);
 
 	$ret = GalleryCoreApi::removeItemPermissions($this->_album->getId());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::addUserPermission(
 	    $this->_album->getId(), $gallery->getActiveUserId(), 'core.all');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	for ($i = 0; $i < 3; $i++) {
@@ -77,7 +77,7 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 					     'test/jpeg', array(), __FILE__, 'GalleryPhotoItem');
 	    if ($ret) {
 		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 
 
@@ -86,13 +86,13 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 		'GalleryDerivative', $this->_items[$i]->getEntityType());
 	    if ($ret) {
 		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 
 	    $ret = $derivative->create($this->_items[$i]->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	    if ($ret) {
 		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 
 	    $derivative->setDerivativeSourceId($this->_items[$i]->getId());
@@ -102,7 +102,7 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	    $ret = $derivative->save();
 	    if ($ret) {
 		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 
 	    /*
@@ -118,13 +118,13 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	    'GalleryDerivative', $this->_items[2]->getEntityType());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = $derivative->create($this->_items[2]->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$derivative->setDerivativeSourceId($this->_items[2]->getId());
@@ -135,7 +135,7 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	$ret = $derivative->save();
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_sourceIds[2] = $derivative->getId();
@@ -145,14 +145,14 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	    $this->_items[1]->getId(), $gallery->getActiveUserId(), 'photoaccess.print');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$storage =& $gallery->getStorage();
 	$ret = $storage->checkPoint();
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Empty out the plugin session id */
@@ -164,7 +164,7 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	list ($ret) = GalleryCoreApi::getPermissionIds();
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Swap in a dummy url generator */
@@ -216,7 +216,7 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	$cartPlugin = new PhotoAccessCartPlugin();
 	list ($ret, $urlParams) = $cartPlugin->fulfillCart($cartItemIds);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(array('href' => 'http://www.photoworks.com/REDIRECT_URL'), $urlParams);

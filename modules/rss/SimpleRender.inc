@@ -48,7 +48,7 @@ class SimpleRenderView extends RenderView {
 	/* get all parameters */
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'rss');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	if ($params['allowSimpleFeed'] != 1) {
@@ -58,7 +58,7 @@ class SimpleRenderView extends RenderView {
 
 	list ($ret, $item) = $this->_getItem();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$params['itemId'] = $item->getId();
@@ -88,7 +88,7 @@ class SimpleRenderView extends RenderView {
 
 	$ret = $this->continueRender($params);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;

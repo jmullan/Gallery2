@@ -65,20 +65,20 @@ class ImageBlockModule extends GalleryModule {
 	    $storage =& $gallery->getStorage();
 	    $ret = $storage->configureStore($this->getId(), array('ImageBlockCacheMap:1.0'));
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'imageblock');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	foreach (array('show' => 'heading|title|date|views', 'albumFrame' => '', 'itemFrame' => '')
 		as $key => $value) {
 	    if (!isset($params[$key])) {
 		$ret = $this->setParameter($key, $value);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	}
@@ -87,7 +87,7 @@ class ImageBlockModule extends GalleryModule {
 	if (isset($params['blocks'])) {
 	    $ret = GalleryCoreApi::removePluginParameter('module', 'imageblock', 'blocks');
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
@@ -102,7 +102,7 @@ class ImageBlockModule extends GalleryModule {
 	   'ItemEditOption', 'ImageBlockOption', 'ImageBlockOption',
 	   'modules/imageblock/ImageBlockOption.inc', 'imageblock', array('ItemEditAlbum'));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;

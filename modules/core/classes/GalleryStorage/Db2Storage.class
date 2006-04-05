@@ -79,7 +79,7 @@ class Db2Storage extends GalleryStorage {
     function cleanStore() {
 	$ret = parent::cleanStore();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/*
@@ -88,7 +88,7 @@ class Db2Storage extends GalleryStorage {
 	 */
 	list ($ret, $tmpDb) = $this->_getConnection(true);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$statements = array();
@@ -106,7 +106,7 @@ class Db2Storage extends GalleryStorage {
 	    $recordSet = $tmpDb->Execute($sql);
 	    $this->_traceStop();
 	    if (empty($recordSet)) {
-		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
 	    }
 	}
 	$tmpDb->Close();
@@ -134,7 +134,7 @@ class Db2Storage extends GalleryStorage {
 	    /* 1) Create a temporary database connection */
 	    list ($ret, $tmpDb) = $this->_getConnection(true);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    /* 
@@ -147,13 +147,13 @@ class Db2Storage extends GalleryStorage {
 	    $recordSet = $tmpDb->Execute($sql);
 	    $this->_traceStop();
 	    if (empty($recordSet)) {
-		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
 	    }
 
 	    /* 3) Create/Catalog the UDFs */
 	    $ret = $this->_executeSqlFile(dirname(__FILE__) . $slash . 'Db2CreateUdfs.sql');
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    /* 4) Disconnect from the database */
@@ -167,7 +167,7 @@ class Db2Storage extends GalleryStorage {
 
 	$ret = parent::configureStore($moduleId, $upgradeInfo);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;

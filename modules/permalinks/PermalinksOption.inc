@@ -46,7 +46,7 @@ class PermalinksOption extends ItemEditOption {
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'permalinks');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	if (!empty($form['PermalinksOption']['aliasName'])) {
@@ -54,7 +54,7 @@ class PermalinksOption extends ItemEditOption {
 						    $item->getId());
 	    if ($ret) {
 		if (!($ret->getErrorCode() & ERROR_COLLISION)) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret, null, null);
 		}
 
 		/* Set our error status and fall back to the view. */
@@ -68,7 +68,7 @@ class PermalinksOption extends ItemEditOption {
 	    foreach ($form['PermalinksOption']['delete'] as $name => $status) {
 		$ret = PermalinksMapHelper::deleteAlias($name);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret, null, null);
 		}
 
 		/* don't do anything if we're successful */
@@ -85,7 +85,7 @@ class PermalinksOption extends ItemEditOption {
     function loadTemplate(&$template, &$form, $item, $thumbnail) {
 	list ($ret, $aliases) = PermalinksMapHelper::fetchAliasesForItem($item->getId());
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	$template->setVariable('PermalinksOption', array('aliases' => $aliases));
@@ -99,7 +99,7 @@ class PermalinksOption extends ItemEditOption {
     function isAppropriate($item, $thumbnail) {
 	list ($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null,

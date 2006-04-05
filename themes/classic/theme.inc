@@ -73,7 +73,7 @@ class ClassicTheme extends GalleryTheme {
     function getSettings($itemId=null) {
 	list ($ret, $settings, $params) = parent::getSettings($itemId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Add in our custom settings */
@@ -117,7 +117,7 @@ class ClassicTheme extends GalleryTheme {
 		  'thumbnails', 'pageNavigator', 'jumpRange'),
 	     $childIds);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Add in our extra stuff */
@@ -129,14 +129,14 @@ class ClassicTheme extends GalleryTheme {
 		    $params['subalbumDepth'] > 0 ? $params['subalbumDepth'] : null,
 		    $theme['actingUserId']);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    } else {
 		list ($ret, $tree) = GalleryCoreApi::fetchAlbumTree($item->getId(),
 		    $params['subalbumDepth'] > 0 ? $params['subalbumDepth'] + 1 : null,
 		    $theme['actingUserId']);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		$treeIds = $treeList = $treeItems = array();
 		foreach ($theme['children'] as $child) {
@@ -149,7 +149,7 @@ class ClassicTheme extends GalleryTheme {
 		if (!empty($treeIds)) {
 		    list ($ret, $treeItems) = GalleryCoreApi::loadEntitiesById($treeIds);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		}
 		$theme['tree'] = $treeList;
@@ -175,7 +175,7 @@ class ClassicTheme extends GalleryTheme {
 	}
 	$ret = $this->loadCommonTemplateData($template, $item, $params, $dataTypes);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, 'theme.tpl');
@@ -188,7 +188,7 @@ class ClassicTheme extends GalleryTheme {
 	$ret = $this->loadCommonTemplateData(
 	    $template, $item, $params, array('parents', 'systemLinks'));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, 'theme.tpl');
@@ -201,7 +201,7 @@ class ClassicTheme extends GalleryTheme {
 	$ret = $this->loadCommonTemplateData(
 	    $template, $item, $params, array('parents', 'systemLinks'));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, 'theme.tpl');
@@ -221,7 +221,7 @@ class ClassicTheme extends GalleryTheme {
 	$ret = $this->loadCommonTemplateData(
 	    $template, $item, $params, array('parents', 'systemLinks'));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, 'theme.tpl');
@@ -251,12 +251,12 @@ class ClassicTheme extends GalleryTheme {
 	list ($ret, $subAlbumIds) =
 	    GalleryCoreApi::fetchChildAlbumItemIds($album, null, null, $userId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	if (!empty($subAlbumIds)) {
 	    list ($ret, $subAlbums) = GalleryCoreApi::loadEntitiesById($subAlbumIds);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    foreach ($subAlbums as $subAlbum) {
 		$id = $subAlbum->getId();
@@ -270,7 +270,7 @@ class ClassicTheme extends GalleryTheme {
 		    $ret = $this->_buildTree($subAlbum, $treeList, $treeItems, $maxDepth, $userId,
 					     $depth + 1, $branchId);
 		    if ($ret) {
-			return $ret->wrap(__FILE__, __LINE__);
+			return $ret;
 		    }
 		}
 	    }

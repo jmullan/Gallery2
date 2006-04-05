@@ -55,13 +55,13 @@ class RepositoryPackage extends RepositoryObject {
 
 	$ret = $this->setOutputDir($outputDir);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$this->_descriptor = $descriptor;
 
 	$this->setTemplateFile('package.tpl');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -81,7 +81,7 @@ class RepositoryPackage extends RepositoryObject {
 	foreach ($this->_descriptor->getPackages() as $packageType) {
 	    $ret = $this->writeSinglePackageToDisk($packageType, $overwritePackages);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    if ($this->_wasFileWritten) {
 		$packagesWritten[] = $packageType;
@@ -133,7 +133,7 @@ class RepositoryPackage extends RepositoryObject {
 
 	$ret = $this->writeToDisk($overwritePackage);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	return null;
     }

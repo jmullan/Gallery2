@@ -54,14 +54,14 @@ class ImageMagickModule extends GalleryModule {
     function upgrade($currentVersion) {
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'imagemagick');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	foreach (array('path' => '', 'jpegQuality' => '75', 'cmykSupport' => 'none',
 		       'versionOk' => '') as $key => $value) {
 	    if (!isset($params[$key])) {
 		$ret = $this->setParameter($key, $value);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	}
@@ -74,16 +74,16 @@ class ImageMagickModule extends GalleryModule {
 	    if (!$ret && !$vulnerable) {
 		$ret = $this->setParameter('versionOk', '1');
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    } else {
 		list ($ret, $isActive) = $this->isActive();
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 		if ($isActive) {
 		    /* Force upgrade from site admin to see vulnerable-version warning */
-		    return GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED, __FILE__, __LINE__);
+		    return GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED);
 		}
 	    }
 	}
@@ -100,7 +100,7 @@ class ImageMagickModule extends GalleryModule {
 	    'GalleryToolkit', 'ImageMagickToolkit', 'ImageMagick',
 	    'modules/imagemagick/classes/ImageMagickToolkit.class', 'imagemagick', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -118,18 +118,18 @@ class ImageMagickModule extends GalleryModule {
 	list ($ret, $results) =
 	    ImageMagickToolkitHelper::getOperationsAndProperties();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $priority) = GalleryCoreApi::getToolkitPriorityById('ImageMagick');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if (!$priority) {
 	    list ($ret, $priority) = GalleryCoreApi::getMaximumManagedToolkitPriority();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    $priority++;
 	}
@@ -143,24 +143,24 @@ class ImageMagickModule extends GalleryModule {
 							    $info['description'],
 							    $outputMimeType, $priority);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 
 	/* Check CMYK colorspace support */
 	list ($ret, $cmykSupport) = $this->getParameter('cmykSupport');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (!isset($results['properties']['colorspace']) && $cmykSupport != 'none') {
 	    $ret = $this->setParameter('cmykSupport', $cmykSupport = 'none');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	} else if (isset($results['properties']['colorspace']) && $cmykSupport == 'none') {
 	    $ret = $this->setParameter('cmykSupport', $cmykSupport = 'off');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 
@@ -175,19 +175,19 @@ class ImageMagickModule extends GalleryModule {
 							   $info['type'],
 							   $info['description']);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 
 	/* Save some platform specific ImageMagick parameters */
 	$ret = ImageMagickToolkitHelper::savePlatformParameters();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $redirect) = parent::activate($postActivationEvent);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $redirect);
@@ -204,12 +204,12 @@ class ImageMagickModule extends GalleryModule {
 	 */
 	$ret = GalleryCoreApi::unregisterToolkit('ImageMagick');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $redirect) = parent::deactivate($postDeactivationEvent);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $redirect);
@@ -223,7 +223,7 @@ class ImageMagickModule extends GalleryModule {
 	foreach (array('path', 'jpegQuality', 'cmykSupport', 'versionOk') as $key) {
 	    list ($ret, $value) = $this->getParameter($key);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    if (empty($value)) {
@@ -242,7 +242,7 @@ class ImageMagickModule extends GalleryModule {
 
 	list ($ret, $needsConfiguration) = $this->needsConfiguration();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), false);
+	    return array($ret, false);
 	}
 
 	if (!$needsConfiguration) {
@@ -323,7 +323,7 @@ class ImageMagickModule extends GalleryModule {
 		/* We have a winner */
 		$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', 'path', $path);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), false);
+		    return array($ret, false);
 		}
 
 		/* Force admin to visit site admin to view warning for vulnerable version */
@@ -333,7 +333,7 @@ class ImageMagickModule extends GalleryModule {
 		    $ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick',
 							      'versionOk', '1');
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), false);
+			return array($ret, false);
 		    }
 		} else {
 		    $vulnerable = true;

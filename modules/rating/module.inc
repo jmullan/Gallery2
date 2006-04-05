@@ -62,14 +62,14 @@ class RatingModule extends GalleryModule {
 		'RatingItemEdit', 'modules/rating/RatingItemEdit.inc', 'rating',
 		array('ItemEditAlbum'));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation( 'GallerySortInterface_1_1',
 		'RatingSortOrder', 'RatingSortOrder',
 		'modules/rating/classes/RatingSortOrder.class', 'rating', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -96,7 +96,7 @@ class RatingModule extends GalleryModule {
 	    list ($ret, $enabled) = GalleryCoreApi::getPluginParameter('module', 'rating',
 					'enabled', $parentId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    $enabledAlbums[$parentId] = !empty($enabled);
@@ -123,7 +123,7 @@ class RatingModule extends GalleryModule {
 	list ($ret, $allowAlbumRating) = GalleryCoreApi::getPluginParameter('module', 'rating',
 		'allowAlbumRating');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Acquire the current rating for the items (populate $RatingData) */
@@ -131,7 +131,7 @@ class RatingModule extends GalleryModule {
 	list ($ret, $RatingData) = RatingHelper::fetchRatings($itemIds,
 		$gallery->getActiveUserId());
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$summaries = array();
@@ -180,7 +180,7 @@ class RatingModule extends GalleryModule {
 	    list ($ret, $summaries[$itemId]) =
 		$template->fetch('gallery:modules/rating/templates/RatingInterface.tpl');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    $RatingSummary['firstCall'] = false;
@@ -204,7 +204,7 @@ class RatingModule extends GalleryModule {
 	case '0':
 	    list ($ret, $coreParams) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    /* Initial install.  Register our permissions */
@@ -217,7 +217,7 @@ class RatingModule extends GalleryModule {
 			'rating.' . $p[0],
 			$p[1], $p[2], $p[3]);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 
@@ -226,7 +226,7 @@ class RatingModule extends GalleryModule {
 		$coreParams['id.rootAlbum'], $coreParams['id.everybodyGroup'],
 		'rating.all', true);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    break;
 
@@ -270,12 +270,12 @@ class RatingModule extends GalleryModule {
 		$ret = GalleryCoreApi::removeMapEntry('RatingMap',
 						      array('itemId' => $entity->getId()));
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		$ret = GalleryCoreApi::removeMapEntry('RatingCacheMap',
 						      array('itemId' => $entity->getId()));
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	}

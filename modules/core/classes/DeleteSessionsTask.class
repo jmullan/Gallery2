@@ -62,19 +62,19 @@ class DeleteSessionsTask extends MaintenanceTask {
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	/* Touch this admin session to ensure that we don't delete it */
 	$session->put('touch', time());
 	$ret = $session->save();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	$inactivityTimeout = (int)$params['session.inactivityTimeout'];
 	$lifetime = (int)$params['session.lifetime'];
@@ -83,7 +83,7 @@ class DeleteSessionsTask extends MaintenanceTask {
 	$ret =
 	    $templateAdapter->updateProgressBar($module->translate('Delete user sessions'), '', 0);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	$data = array(time() - $inactivityTimeout, time() - $lifetime,
@@ -98,7 +98,7 @@ class DeleteSessionsTask extends MaintenanceTask {
 	';
 	list ($ret, $results) = $gallery->search($query, $data);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	$result = $results->resultCount();
 	$total = $result[0];
@@ -113,13 +113,13 @@ class DeleteSessionsTask extends MaintenanceTask {
 		$gallery->guaranteeTimeLimit(120);
 		$ret = $session->_expireSessions();
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret, null, null);
 		}
 		
 		$ret = $templateAdapter->updateProgressBar(
 		    $module->translate('Delete user sessions'), '', $i / $iterations);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret, null, null);
 		}
 	    }
 	}
@@ -127,7 +127,7 @@ class DeleteSessionsTask extends MaintenanceTask {
 	$ret =
 	    $templateAdapter->updateProgressBar($module->translate('Delete user sessions'), '', 1);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	
 	return array(null, true, $result);

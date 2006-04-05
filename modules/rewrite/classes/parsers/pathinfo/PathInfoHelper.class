@@ -42,7 +42,7 @@ class PathInfoHelper {
 	    list($ret, $activeRules) = GalleryCoreApi::getPluginParameter(
 		'module', 'rewrite', 'activeRules');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    $activeRules = unserialize($activeRules);
 	}
@@ -53,7 +53,7 @@ class PathInfoHelper {
 	    list ($ret, $code, $regexRules, $shortUrls, $errorId) = RewriteHelper::parseActiveRules(
 		$activeRules, $parser, $rewriteModule);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    if ($code != REWRITE_STATUS_OK) {
 		return array(null, $code, $errorId);
@@ -62,20 +62,20 @@ class PathInfoHelper {
 
 	$ret = PathInfoHelper::saveParser($regexRules);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	/* Finally, save the new rules */
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'rewrite', 'shortUrls', serialize($shortUrls));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'rewrite', 'activeRules', serialize($activeRules));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	return array(null, REWRITE_STATUS_OK, null);
@@ -106,7 +106,7 @@ class PathInfoHelper {
 			    'dynamic.find' => $find,
 			    'dynamic.replace' => $replace)));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -128,7 +128,7 @@ class PathInfoHelper {
 	list ($ret, $forced) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'pathinfo.forced');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	$fetch = $urlGenerator->generateUrl(
@@ -155,7 +155,7 @@ class PathInfoHelper {
     	list ($ret, $TestResults['pathInfo'], $TestResults['truePathInfo']) =
     	    PathInfoHelper::checkPathInfo();
     	if ($ret) {
-    	    return $ret->wrap(__FILE__, __LINE__);
+    	    return $ret;
     	}
 
 	if ($TestResults['pathInfo'] != REWRITE_STATUS_OK) {

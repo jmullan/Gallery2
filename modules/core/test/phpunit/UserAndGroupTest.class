@@ -46,7 +46,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -54,7 +54,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core',
 						  'id.adminGroup', $this->_siteAdminGroupId);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 
 	parent::tearDown();
@@ -69,7 +69,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Create a new user */
 	list ($ret, $user) = $this->_createRandomUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryDataCache::reset();
@@ -77,13 +77,13 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Verify it */
 	$ret = $this->_verifyEntity($user);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Delete it */
 	$ret = $this->_deleteAndVerifyEntity($user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -98,7 +98,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Create a new group */
 	list ($ret, $group) = $this->_createRandomGroup();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($group);
 	$groupId = $group->getId();
@@ -106,7 +106,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Create a new user */
 	list ($ret, $user) = $this->_createRandomUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$userId = $user->getId();
 
@@ -114,13 +114,13 @@ class UserAndGroupTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::addUserToGroup($userId, $groupId);
 	if ($ret) {
 	    $this->_markForCleanup($user);
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	/* Verify */
 	list ($ret, $inGroup) = GalleryCoreApi::isUserInGroup($userId, $groupId);
 	if ($ret) {
 	    $this->_markForCleanup($user);
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($inGroup, 'failed to add the user to a group');
 
@@ -130,7 +130,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	if ($ret) {
 	    GalleryCoreApi::removeMapEntry('GalleryUserGroupMap', array('userId' => $userId));
 	    $this->_markForCleanup($user);
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	/* Verify the user has the permission  */
 	list($ret, $hasPermission) =
@@ -138,7 +138,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	if ($ret) {
 	    GalleryCoreApi::removeMapEntry('GalleryUserGroupMap', array('userId' => $userId));
 	    $this->_markForCleanup($user);
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($hasPermission, 'failed to add a permission to the user');
 
@@ -152,7 +152,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	    GalleryCoreApi::removeMapEntry(
 		'GalleryAccessMap', array('userOrGroupId' => $user->getId));
 	    $this->_markForCleanup($user);
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($item);
 
@@ -165,7 +165,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	    $this->assert(false, 'The user could not be deleted.');
 	    GalleryCoreApi::removeMapEntry('GalleryUserGroupMap', array('userId' => $userId));
 	    GalleryCoreApi::removeMapEntry('GalleryAccessMap', array('userOrGroupId' => $userId));
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	GalleryDataCache::reset();
 
@@ -184,7 +184,7 @@ class UserAndGroupTest extends GalleryTestCase {
 		GalleryCoreApi::removeMapEntry('GalleryUserGroupMap', array('userId' => $userId));
 		GalleryCoreApi::removeMapEntry(
 		    'GalleryAccessMap', array('userOrGroupId' => $userId));
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	}
 	/* Verify the new owner of the item */
@@ -192,7 +192,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	if ($ret) {
 	    GalleryCoreApi::removeMapEntry('GalleryUserGroupMap', array('userId' => $userId));
 	    GalleryCoreApi::removeMapEntry('GalleryAccessMap', array('userOrGroupId' => $userId));
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert(isset($groupIds[$this->_siteAdminGroupId]),
 		      'The new ownerId of the item is wrong.');
@@ -202,13 +202,13 @@ class UserAndGroupTest extends GalleryTestCase {
 	if ($ret) {
 	    GalleryCoreApi::removeMapEntry('GalleryUserGroupMap', array('userId' => $userId));
 	    GalleryCoreApi::removeMapEntry('GalleryAccessMap', array('userOrGroupId' => $userId));
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(0, count($groupIds), 'There are still some group maps.');
 	/* Make sure there are no mappings left (garbage) */
 	$ret = GalleryCoreApi::removeMapEntry('GalleryUserGroupMap', array('userId' => $userId));
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 
 	/* Verify all permission maps for this user are gone */
@@ -216,7 +216,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	list ($ret, $permissions) =
 	    GalleryCoreApi::fetchPermissionsForItems($checkItemIds, $userId);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 	$this->assertEquals(array(), $permissions,
 			    'Not all permissions of the deleted user were removed');
@@ -225,7 +225,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::removeMapEntry('GalleryAccessMap',
 					      array('userOrGroupId' => $userId));
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
     }
 
@@ -235,7 +235,7 @@ class UserAndGroupTest extends GalleryTestCase {
 
 	list ($ret, $user) = $this->_createRandomUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($user);
 	$gallery->setActiveUser($user);
@@ -260,24 +260,24 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Create a new user in a new group, and make that the Site Admins group */
 	list ($ret, $user) = $this->_createRandomUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($user);
 	$userId = $user->getId();
 	list ($ret, $group) = $this->_createRandomGroup();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($group);
 	$groupId = $group->getId();
 
 	$ret = GalleryCoreApi::addUserToGroup($userId, $groupId);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'id.adminGroup', $groupId);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Attempt to delete user */
@@ -292,37 +292,37 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Create 2 new users in a new group, and make that the Site Admins group */
 	list ($ret, $user) = $this->_createRandomUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$userId = $user->getId();
 	list ($ret, $otherUser) = $this->_createRandomUser();
 	if ($ret) {
 	    $this->_markForCleanup($user);
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($otherUser);
 	$otherUserId = $otherUser->getId();
 	list ($ret, $group) = $this->_createRandomGroup();
 	if ($ret) {
 	    $this->_markForCleanup($user);
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($group);
 	$groupId = $group->getId();
 	$ret = GalleryCoreApi::addUserToGroup($userId, $groupId);
 	if ($ret) {
 	    $this->_markForCleanup($user);
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::addUserToGroup($otherUserId, $groupId);
 	if ($ret) {
 	    $this->_markForCleanup($user);
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'id.adminGroup', $groupId);
 	if ($ret) {
 	    $this->_markForCleanup($user);
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Create an album and item owned by this admin */
@@ -330,21 +330,21 @@ class UserAndGroupTest extends GalleryTestCase {
 							array('ownerId' => $userId));
 	if ($ret) {
 	    $this->_markForCleanup($user);
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($album);
 	list ($ret, $item) = $this->_createRandomDataItem($album->getId(), 'test/file',
 							  array('ownerId' => $userId));
 	if ($ret) {
 	    $this->_markForCleanup($user);
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Delete this admin */
 	$ret = GalleryCoreApi::deleteEntityById($userId);
 	if ($ret) {
 	    $this->assert(false, 'The user could not be deleted.');
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	GalleryDataCache::reset();
 	$ret = $this->_verifyMissing($userId);
@@ -355,12 +355,12 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Verify owner was remapped to our other admin */
 	list ($ret, $album) = $album->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals($otherUserId, $album->getOwnerId(), 'album owner');
 	list ($ret, $item) = $item->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals($otherUserId, $item->getOwnerId(), 'item owner');
     }
@@ -371,12 +371,12 @@ class UserAndGroupTest extends GalleryTestCase {
 	    list ($ret, $groupId) =
 		GalleryCoreApi::getPluginParameter('module', 'core', $paramName);
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    
 	    $ret = GalleryCoreApi::deleteEntityById($groupId);
 	    if ($ret && !($ret->getErrorCode() & ERROR_BAD_PARAMETER)) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    
 	    $this->assert($ret && ($ret->getErrorCode() & ERROR_BAD_PARAMETER),
@@ -385,7 +385,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	    /* Make sure the entity still exists */
 	    list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($groupId);
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    $groupName = $entity->getGroupName();
 	    $this->assert(!empty($groupName), "$paramName: group name should not be empty");
@@ -401,18 +401,18 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Create a new user */
 	list ($ret, $user) = $this->_createRandomUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Lock and refresh it */
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $user) = $user->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Modify it */
@@ -421,25 +421,25 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Save it */
 	$ret = $user->save();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Unlock it */
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Verify it */
 	$ret = $this->_verifyEntity($user);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Delete it */
 	$ret = $this->_deleteAndVerifyEntity($user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -451,14 +451,14 @@ class UserAndGroupTest extends GalleryTestCase {
 
 	list ($ret, $user) = $this->_createRandomUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryDataCache::reset();
 
 	list ($ret, $names) = GalleryCoreApi::fetchUserNames();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assert(in_array($user->getUserName(), $names));
@@ -466,7 +466,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Delete it */
 	$ret = $this->_deleteAndVerifyEntity($user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -494,20 +494,20 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Create test user 1, the owner of most items in the new item tree. */
 	list ($ret, $user1) = $this->_createRandomUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($user1);
 	/* Create test user 2, the owner of a few subitems in the new item tree */
 	list ($ret, $user2) = $this->_createRandomUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($user2);
 
 	/* Add a test container album. All test items/albums will be in this container. */
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_markForCleanup($this->_album);
@@ -518,7 +518,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	    $this->_album->getId(), $user1->getId(),
 	    array('core.addDataItem','core.addAlbumItem'), false);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	/* Change the active user to our test user1. */
 	$this->_activeUserBackup = $gallery->getActiveUser();
@@ -527,7 +527,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Add a test album with user1 */
 	list ($ret, $albumWithDeletePermission) = $this->_createRandomAlbum($this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$remainingItems[] = $albumWithDeletePermission;
 	$deletePermissionItems[] = $albumWithDeletePermission;
@@ -543,7 +543,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	list ($ret, $subAlbumWithDeletePermission) =
 	    $this->_createRandomAlbum($albumWithDeletePermission->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$deletedItems[] = $subAlbumWithDeletePermission;
 	$deletePermissionItems[] = $subAlbumWithDeletePermission;
@@ -551,28 +551,28 @@ class UserAndGroupTest extends GalleryTestCase {
 	list ($ret, $subItemWithDeletePermission) =
 	    $this->_createRandomDataItem($albumWithDeletePermission->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$deletedItems[] = $subItemWithDeletePermission;
 	$deletePermissionItems[] = $subItemWithDeletePermission;
 	list ($ret, $subSubItemWithDeletePermission) =
 	    $this->_createRandomDataItem($subAlbumWithDeletePermission->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$deletedItems[] = $subSubItemWithDeletePermission;
 	$deletePermissionItems[] = $subSubItemWithDeletePermission;
 	list ($ret, $subSubAlbumWithDeletePermission) =
 	    $this->_createRandomAlbum($subAlbumWithDeletePermission->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$deletedItems[] = $subSubAlbumWithDeletePermission;
 	$deletePermissionItems[] = $subSubAlbumWithDeletePermission;
 	list ($ret, $subSubSubItemWithDeletePermission) =
 	    $this->_createRandomDataItem($subSubAlbumWithDeletePermission->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$deletedItems[] = $subSubSubItemWithDeletePermission;
 	$deletePermissionItems[] = $subSubSubItemWithDeletePermission;
@@ -589,7 +589,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	list ($ret, $subAlbumWithDeletePermission2) =
 	    $this->_createRandomAlbum($albumWithDeletePermission->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$remainingItems[] = $subAlbumWithDeletePermission2;
@@ -598,7 +598,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	list ($ret, $subSubAlbumWithoutDeletePermission2) =
 	    $this->_createRandomAlbum($subAlbumWithDeletePermission2->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$remainingItems[] = $subSubAlbumWithoutDeletePermission2;
 
@@ -606,7 +606,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	list ($ret, $subSubAlbumWithDeletePermission2) =
 	    $this->_createRandomAlbum($subAlbumWithDeletePermission2->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$remainingItems[] = $subSubAlbumWithDeletePermission2;
 	$deletePermissionItems[] = $subSubAlbumWithDeletePermission2;
@@ -617,7 +617,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	list ($ret, $subSubSubItemWithDeletePermission2) =
 	    $this->_createRandomDataItem($subSubAlbumWithoutDeletePermission2->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$deletedItems[] = $subSubSubItemWithDeletePermission2;
 	$deletePermissionItems[] = $subSubSubItemWithDeletePermission2;
@@ -625,7 +625,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	list ($ret, $subSubSubItemWithoutDeletePermission2) =
 	    $this->_createRandomDataItem($subSubAlbumWithDeletePermission2->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$remainingItems[] = $subSubSubItemWithoutDeletePermission2;
 
@@ -639,14 +639,14 @@ class UserAndGroupTest extends GalleryTestCase {
 	list ($ret, $subAlbumWithDeletePermission3) =
 	    $this->_createRandomAlbum($albumWithDeletePermission->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$remainingItems[] = $subAlbumWithDeletePermission3;
 	$deletePermissionItems[] = $subAlbumWithDeletePermission3;
 	list ($ret, $subSubItemWithDeletePermission3) =
 	    $this->_createRandomDataItem($subAlbumWithDeletePermission3->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$deletedItems[] = $subSubItemWithDeletePermission3;
 	$deletePermissionItems[] = $subSubItemWithDeletePermission3;
@@ -658,7 +658,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	list ($ret, $subSubItemWithDeletePermissionDifferentOwner3) =
 	    $this->_createRandomDataItem($subAlbumWithDeletePermission3->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$remainingItems[] = $subSubItemWithDeletePermissionDifferentOwner3;
 	$deletePermissionItems[] = $subSubItemWithDeletePermissionDifferentOwner3;
@@ -671,7 +671,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	    $ret = GalleryCoreApi::addUserPermission(
 		$item->getId(), $user1->getId(), array('core.delete'), false);
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	}
 
@@ -689,14 +689,14 @@ class UserAndGroupTest extends GalleryTestCase {
 	    /* Verify the site admin has the needed permissions */
 	    $ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'core.viewResizes');
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	}
 
 	/* Execute the "delete user1" call */
 	$ret = GalleryCoreApi::deleteUserItems($user1->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	GalleryDataCache::reset();
 
@@ -704,7 +704,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	foreach ($deletedItems as $item) {
 	    $ret = $this->_verifyMissing($item->getId());
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	}
 
@@ -720,7 +720,7 @@ class UserAndGroupTest extends GalleryTestCase {
 		if ($ret && $ret->getErrorCode() & ERROR_MISSING_OBJECT) {
 		    $this->assert(false, "Wrongly deleted item ($id)");
 		}
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    /* Verify the owner is still user1 */
 	    if ($item->getId() != $this->_album->getId()
@@ -739,19 +739,19 @@ class UserAndGroupTest extends GalleryTestCase {
 
 	list ($ret, $countBefore) = GalleryCoreApi::fetchUserCount();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $user) = $this->_createRandomUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryDataCache::reset();
 
 	list ($ret, $countAfter) = GalleryCoreApi::fetchUserCount();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals($countBefore+1, $countAfter);
@@ -759,7 +759,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Delete it */
 	$ret = $this->_deleteAndVerifyEntity($user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -772,7 +772,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	$unique = rand(0, 65535);
 	list ($ret, $count) = GalleryCoreApi::fetchUserCount($unique, null);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Nobody matches our unique tag */
@@ -780,14 +780,14 @@ class UserAndGroupTest extends GalleryTestCase {
 
 	list ($ret, $user) = $this->_createRandomUser($unique);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryDataCache::reset();
 
 	list ($ret, $count) = GalleryCoreApi::fetchUserCount($unique, null);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* We now have one user that matches the description */
@@ -796,7 +796,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Clean up */
 	$ret = $this->_deleteAndVerifyEntity($user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -809,45 +809,45 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Create a user */
 	list ($ret, $user) = $this->_createRandomUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Create a group */
 	list ($ret, $group) = $this->_createRandomGroup();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* fetchUserCount should return 0 */
 	list ($ret, $countBefore) = GalleryCoreApi::fetchUserCount(null, $group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(0, $countBefore);
 
 	/* Put the user into the group */
 	$ret = GalleryCoreApi::addUserToGroup($user->getId(), $group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* fetchUserCount should return 1 */
 	list ($ret, $countAfter) = GalleryCoreApi::fetchUserCount(null, $group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(1, $countAfter);
 
 	/* Delete user */
 	$ret = $this->_deleteAndVerifyEntity($user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Delete group */
 	$ret = $this->_deleteAndVerifyEntity($group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -864,64 +864,64 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Create a group */
 	list ($ret, $group) = $this->_createRandomGroup();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* fetchUserCount should return 0 */
 	list ($ret, $countBefore) = GalleryCoreApi::fetchUserCount($strSearch, $group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(0, $countBefore);
 
 	/* Create the first user */
 	list ($ret, $userFirst) = $this->_createRandomUser($strSearch . $uniqueFirst);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Create the second user */
 	list ($ret, $userSecond) = $this->_createRandomUser($strSearch . $uniqueSecond);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Put the first user into the group */
 	$ret = GalleryCoreApi::addUserToGroup($userFirst->getId(), $group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Put the second user into the group */
 	$ret = GalleryCoreApi::addUserToGroup($userSecond->getId(), $group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* fetchUserCount should return 1 */
 	list ($ret, $countAfter) = GalleryCoreApi::fetchUserCount($strSearch . $uniqueFirst,
 								  $group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(1, $countAfter);
 
 	/* Delete first user */
 	$ret = $this->_deleteAndVerifyEntity($userFirst->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Delete second user */
 	$ret = $this->_deleteAndVerifyEntity($userSecond->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Delete group */
 	$ret = $this->_deleteAndVerifyEntity($group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -938,38 +938,38 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Create a group */
 	list ($ret, $group) = $this->_createRandomGroup();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* fetchUserCount should return 0 */
 	list ($ret, $countBefore) = GalleryCoreApi::fetchUserCount($strSearch, $group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(0, $countBefore);
 
 	/* Create the first user */
 	list ($ret, $userFirst) = $this->_createRandomUser($strSearch . $uniqueFirst);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Create the second user */
 	list ($ret, $userSecond) = $this->_createRandomUser($strSearch . $uniqueSecond);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Put the first user into the group */
 	$ret = GalleryCoreApi::addUserToGroup($userFirst->getId(), $group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Put the second user into the group */
 	$ret = GalleryCoreApi::addUserToGroup($userSecond->getId(), $group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* fetchUsersForGroup should return one user */
@@ -980,26 +980,26 @@ class UserAndGroupTest extends GalleryTestCase {
 					$strSearch . $uniqueFirst
 			      );
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(1, count($users));
 
 	/* Delete first user */
 	$ret = $this->_deleteAndVerifyEntity($userFirst->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Delete second user */
 	$ret = $this->_deleteAndVerifyEntity($userSecond->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Delete group */
 	$ret = $this->_deleteAndVerifyEntity($group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -1011,14 +1011,14 @@ class UserAndGroupTest extends GalleryTestCase {
 
 	list ($ret, $user) = $this->_createRandomUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryDataCache::reset();
 
 	list ($ret, $newUser) = GalleryCoreApi::fetchUserByUserName($user->getUserName());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals($user, $newUser);
@@ -1026,7 +1026,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Delete it */
 	$ret = $this->_deleteAndVerifyEntity($user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -1038,7 +1038,7 @@ class UserAndGroupTest extends GalleryTestCase {
 
 	list ($ret, $group) = $this->_createRandomGroup();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryDataCache::reset();
@@ -1046,13 +1046,13 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Verify it */
 	$ret = $this->_verifyEntity($group);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Delete it */
 	$ret = $this->_deleteAndVerifyEntity($group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -1066,7 +1066,7 @@ class UserAndGroupTest extends GalleryTestCase {
 
 	list ($ret, $group) = $this->_createRandomGroup($groupTag);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryDataCache::reset();
@@ -1074,7 +1074,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Verify it */
 	$ret = $this->_verifyEntity($group);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryDataCache::reset();
@@ -1087,7 +1087,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Delete it */
 	$ret = $this->_deleteAndVerifyEntity($group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -1101,7 +1101,7 @@ class UserAndGroupTest extends GalleryTestCase {
 
 	list ($ret, $user) = $this->_createRandomUser($userTag);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryDataCache::reset();
@@ -1109,7 +1109,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Verify it */
 	$ret = $this->_verifyEntity($user);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryDataCache::reset();
@@ -1122,7 +1122,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Delete it */
 	$ret = $this->_deleteAndVerifyEntity($user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -1135,18 +1135,18 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Create a new group */
 	list ($ret, $group) = $this->_createRandomGroup();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Lock and refresh it */
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $group) = $group->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Modify it */
@@ -1155,25 +1155,25 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Save it */
 	$ret = $group->save();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Unlock it */
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Verify it */
 	$ret = $this->_verifyEntity($group);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Delete it */
 	$ret = $this->_deleteAndVerifyEntity($group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -1187,51 +1187,51 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Create a user */
 	list ($ret, $user) = $this->_createRandomUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Create a group */
 	list ($ret, $group) = $this->_createRandomGroup();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Put the user into the group */
 	$ret = GalleryCoreApi::addUserToGroup($user->getId(), $group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Verify */
 	list ($ret, $inGroup) = GalleryCoreApi::isUserInGroup($user->getId(), $group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($inGroup);
 
 	/* Remove user from group */
 	$ret = GalleryCoreApi::removeUserFromGroup($user->getId(), $group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Verify */
 	list ($ret, $inGroup) = GalleryCoreApi::isUserInGroup($user->getId(), $group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert(!$inGroup);
 
 	/* Delete user */
 	$ret = $this->_deleteAndVerifyEntity($user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Delete group */
 	$ret = $this->_deleteAndVerifyEntity($group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -1243,14 +1243,14 @@ class UserAndGroupTest extends GalleryTestCase {
 
 	list ($ret, $group) = $this->_createRandomGroup();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryDataCache::reset();
 
 	list ($ret, $names) = GalleryCoreApi::fetchGroupNames();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assert(in_array($group->getGroupName(), $names));
@@ -1258,7 +1258,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Delete it */
 	$ret = $this->_deleteAndVerifyEntity($group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -1270,19 +1270,19 @@ class UserAndGroupTest extends GalleryTestCase {
 
 	list ($ret, $countBefore) = GalleryCoreApi::fetchGroupCount();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $group) = $this->_createRandomGroup();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryDataCache::reset();
 
 	list ($ret, $countAfter) = GalleryCoreApi::fetchGroupCount();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals($countBefore+1, $countAfter);
@@ -1290,7 +1290,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Delete it */
 	$ret = $this->_deleteAndVerifyEntity($group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -1302,14 +1302,14 @@ class UserAndGroupTest extends GalleryTestCase {
 
 	list ($ret, $group) = $this->_createRandomGroup();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryDataCache::reset();
 
 	list ($ret, $newGroup) = GalleryCoreApi::fetchGroupByGroupName($group->getGroupName());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals($group, $newGroup);
@@ -1317,14 +1317,14 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Delete it */
 	$ret = $this->_deleteAndVerifyEntity($group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
     function testAssertSiteAdministrator() {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -1333,7 +1333,7 @@ class UserAndGroupTest extends GalleryTestCase {
 
 	$ret = GalleryCoreApi::assertHasItemPermission($this->_getRootId(), 'core.view');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -1344,7 +1344,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	list ($ret, $hasPermission) =
 	    GalleryCoreApi::hasItemPermission($this->_getRootId(), 'core.view');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($hasPermission, 'activeUser should have core.view on root');
 
@@ -1353,47 +1353,47 @@ class UserAndGroupTest extends GalleryTestCase {
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Add an item such that we can set permissions to check hasItemPermission */
 	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($item);
 
 	/* Reset permissions */
 	$ret = GalleryCoreApi::removeItemPermissions($item->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Add a permission to the active user */
 	$ret = GalleryCoreApi::addUserPermission($item->getId(), $userId, 'core.view', false);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Now test activeUser with and without userId param */
 	list ($ret, $hasPermission) =
 	    GalleryCoreApi::hasItemPermission($item->getId(), 'core.view');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($hasPermission, 'default user should have core.view on item');
 
 	list ($ret, $hasPermission) =
 	    GalleryCoreApi::hasItemPermission($item->getId(), 'core.view', $userId);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($hasPermission, 'userId should have core.view on item');
 
 	list ($ret, $hasPermission) =
 	    GalleryCoreApi::hasItemPermission($item->getId(), 'core.view', $anonymousUserId);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert(!$hasPermission, 'guest user shouldn\'t have core.view on item');
     }
@@ -1404,7 +1404,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Create a new group */
 	list ($ret, $group) = $this->_createRandomGroup();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($group);
 	$groupId = $group->getId();
@@ -1413,7 +1413,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* If the unit test aborts to some reason, this user will still be in the db */
 	list ($ret, $user) = $this->_createRandomUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($user);
 	$userId = $user->getId();
@@ -1421,12 +1421,12 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Put the user into the group */
 	$ret = GalleryCoreApi::addUserToGroup($userId, $groupId);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	/* Verify */
 	list ($ret, $count) = GalleryCoreApi::fetchUserCount(null, $groupId);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(1, $count, 'first');
 
@@ -1435,12 +1435,12 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Put the same user into the group again */
 	$ret = GalleryCoreApi::addUserToGroup($userId, $groupId);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	/* Verify */
 	list ($ret, $count) = GalleryCoreApi::fetchUserCount(null, $groupId);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(1, $count, 'second');
     }
@@ -1448,7 +1448,7 @@ class UserAndGroupTest extends GalleryTestCase {
     function testCheckUserPassword() {
 	list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert(!empty($user), 'factory error');
 

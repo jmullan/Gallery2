@@ -52,7 +52,7 @@ class RewriteSimpleHelperTest extends GalleryTestCase {
     function testParsePath() {
 	list ($ret, $testAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($testAlbum);
 	list ($ret, $testItem) = $this->_createRandomDataItem(
@@ -60,12 +60,12 @@ class RewriteSimpleHelperTest extends GalleryTestCase {
 	    'application/unknown',
 	    array('pathComponent' => 'foo# bar&.dat'));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $testItemPath) = $testItem->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$testItemPath = str_replace('%2F', '/', urlencode($testItemPath));
 
@@ -82,7 +82,7 @@ class RewriteSimpleHelperTest extends GalleryTestCase {
     function testParseFileName() {
 	list ($ret, $testAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($testAlbum);
 	list ($ret, $testItem) = $this->_createRandomDataItem(
@@ -90,12 +90,12 @@ class RewriteSimpleHelperTest extends GalleryTestCase {
 	    'application/unknown',
 	    array('pathComponent' => 'foo# bar&.dat'));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	list ($ret, $derivative) =
 	    $this->_createDerivative($testItem, $testItem->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$testItemName = urlencode($testItem->getPathComponent());
 
@@ -113,7 +113,7 @@ class RewriteSimpleHelperTest extends GalleryTestCase {
     function testParseSerialNumber() {
 	list ($ret, $testAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($testAlbum);
 	list ($ret, $testItem) = $this->_createRandomDataItem(
@@ -121,12 +121,12 @@ class RewriteSimpleHelperTest extends GalleryTestCase {
 	    'application/unknown',
 	    array('pathComponent' => 'foo# bar&.dat'));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	list ($ret, $derivative) =
 	    $this->_createDerivative($testItem, $testItem->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$testSerialNumber = $testItem->getSerialNumber();
 
@@ -146,7 +146,7 @@ class RewriteSimpleHelperTest extends GalleryTestCase {
 
 	list ($ret, $language) = $gallery->getActiveLanguageCode();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	if (empty($language)) {
 	    $language = array('en', 'US');
@@ -173,19 +173,19 @@ class RewriteSimpleHelperTest extends GalleryTestCase {
         /* Setup.. */
 	list ($ret, $testAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($testAlbum);
 
 	list ($ret, $testAlbumPath) = $testAlbum->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryUtilities::putRequestVariable('path', $testAlbumPath);
 	$ret = RewriteSimpleHelper::loadItemIdFromPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$itemId = (int)GalleryUtilities::getRequestVariables('itemId');

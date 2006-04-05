@@ -41,7 +41,7 @@ class AdminNetPbmController extends GalleryController {
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$status = $error = array();
@@ -67,7 +67,7 @@ class AdminNetPbmController extends GalleryController {
 		    if ($ret->getErrorCode() & ERROR_BAD_PATH) {
 			$error[] = 'form[error][path][badPath]';
 		    } else {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		} else if (empty($mimeTypes)) {
 		    /* At least one mime type must be supported, else this path is invalid */
@@ -82,7 +82,7 @@ class AdminNetPbmController extends GalleryController {
 		    if ($ret->getErrorCode() & ERROR_BAD_PATH) {
 			$error[] = 'form[error][jheadPath][badPath]';
 		    } else {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		} else {
 		    $successCount = 0;
@@ -99,14 +99,14 @@ class AdminNetPbmController extends GalleryController {
 		$ret = GalleryCoreApi::setPluginParameter(
 		    'module', 'netpbm', 'path', $form['path']);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		/* Set the image quality */
 		$ret = GalleryCoreApi::setPluginParameter(
 		    'module', 'netpbm', 'jpegQuality', $form['jpegQuality']);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		/* Set the jhead binary name */
@@ -114,22 +114,22 @@ class AdminNetPbmController extends GalleryController {
 		$ret = GalleryCoreApi::setPluginParameter(
 		    'module', 'netpbm', 'jheadPath', $jheadPath);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		/* Save binaries to use for this netpbm path */
 		$ret = NetPbmToolkitHelper::saveParameters($testResults);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'netpbm');
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		list ($ret, $isActive) = $module->isActive();
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		$redirect['view'] = 'core.SiteAdmin';
@@ -177,7 +177,7 @@ class AdminNetPbmView extends GalleryView {
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Load our default values if we didn't just come from this form. */
@@ -186,7 +186,7 @@ class AdminNetPbmView extends GalleryView {
 		list ($ret, $form[$key]) =
 		    GalleryCoreApi::getPluginParameter('module', 'netpbm', $key);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	    $form['formName'] = 'AdminNetPbm';
@@ -223,7 +223,7 @@ class AdminNetPbmView extends GalleryView {
 		    if ($ret->getErrorCode() & ERROR_BAD_PATH) {
 			$form['error']['path']['badPath'] = 1;
 		    } else {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		} else {
 		    foreach ($tests as $test) {
@@ -243,7 +243,7 @@ class AdminNetPbmView extends GalleryView {
 		    if ($ret->getErrorCode() & ERROR_BAD_PATH) {
 			$form['error']['jheadPath']['badPath'] = 1;
 		    } else {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		} else {
 		    foreach ($jheadTests as $test) {
@@ -256,11 +256,11 @@ class AdminNetPbmView extends GalleryView {
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'netpbm');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	list ($ret, $isActive) = $module->isActive();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$AdminNetPbm = array();

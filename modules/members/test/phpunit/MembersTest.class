@@ -53,7 +53,7 @@ class MembersTest extends GalleryTestCase {
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_rootAlbumId);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_markForCleanup($this->_album);
@@ -62,7 +62,7 @@ class MembersTest extends GalleryTestCase {
 	list ($ret, $this->_user) = $this->_createRandomUser();
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_markForCleanup($this->_user);
@@ -70,7 +70,7 @@ class MembersTest extends GalleryTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'members');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -78,7 +78,7 @@ class MembersTest extends GalleryTestCase {
 	/* Initial check, should be zero */
         list ($ret, $itemCount) = GalleryMembersHelper::fetchUserItemCount($this->_user->getId());
         if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
         }
 
         $this->assertEquals(0, $itemCount);
@@ -93,7 +93,7 @@ class MembersTest extends GalleryTestCase {
 		$this->_album->getId(), 'application/unknown',
 		array('creationTimestamp' => $i * 1000, 'ownerId' => $this->_user->getId()));
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
         }
 
@@ -101,7 +101,7 @@ class MembersTest extends GalleryTestCase {
         list ($ret, $itemCount) =
             GalleryMembersHelper::fetchUserItemCount($this->_user->getId());
         if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
         }
 
 	/* assert it equals our original number of items we created*/
@@ -126,7 +126,7 @@ class MembersTest extends GalleryTestCase {
 	list ($ret, $items) =
 	    GalleryMembersHelper::fetchLastUserItems($this->_user->getId(), 1, 2, ORDER_ASCENDING);
         if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
         }
 
 	$this->assertEquals(array($originalItems[1], $originalItems[2]), $items);
@@ -138,30 +138,30 @@ class MembersTest extends GalleryTestCase {
 	list ($ret, $adminGroupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'members', 'canViewMembersModule', $adminGroupId);
     	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
     	}
 
 	list ($ret, $result) =
 	    GalleryMembersHelper::canViewMembersModule($this->_user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(false, $result);
 
 	$ret = GalleryCoreApi::addUserToGroup($this->_user->getId(), $adminGroupId);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $result) = GalleryMembersHelper::canViewMembersModule($this->_user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(true, $result);
     }
@@ -175,12 +175,12 @@ class MembersTest extends GalleryTestCase {
     	                                          'canViewEmailAddress',
     	                                          0);
     	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
     	}
 
 	list ($ret, $result) = GalleryMembersHelper::canViewProfileEmail($this->_user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(false, $result);
 
@@ -190,12 +190,12 @@ class MembersTest extends GalleryTestCase {
     	                                          'canViewEmailAddress',
     	                                          1);
     	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
     	}
 
 	list ($ret, $result) = GalleryMembersHelper::canViewProfileEmail($this->_user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(true, $result);
 
@@ -205,23 +205,23 @@ class MembersTest extends GalleryTestCase {
     	                                          'canViewEmailAddress',
     	                                          0);
     	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
     	}
 
 	list ($ret, $adminGroupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::addUserToGroup($this->_user->getId(), $adminGroupId);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $result) = GalleryMembersHelper::canViewProfileEmail($this->_user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(true, $result);
 
@@ -231,17 +231,17 @@ class MembersTest extends GalleryTestCase {
     	                                          'canViewEmailAddress',
     	                                          1);
     	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
     	}
 
 	$ret = GalleryCoreApi::addUserToGroup($this->_user->getId(), $adminGroupId);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $result) = GalleryMembersHelper::canViewProfileEmail($this->_user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(true, $result);
     }
@@ -251,51 +251,51 @@ class MembersTest extends GalleryTestCase {
 
 	list ($ret, $result) = GalleryMembersHelper::daysSinceCreation($this->_user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(0, $result, '0 days');
 
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$sevenDays = date("U", mktime(0, 0, 0, date("m"), date("d")-7, date("Y")));
 	$this->_user->setCreationTimestamp($sevenDays);
 	$ret = $this->_user->save();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $result) = GalleryMembersHelper::daysSinceCreation($this->_user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(7, $result, '7 days ago');
 
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$sixDays = date("U", mktime(0, 0, 0, date("m"), date("d")-6, date("Y")));
 	$this->_user->setCreationTimestamp($sixDays);
 	$ret = $this->_user->save();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $result) = GalleryMembersHelper::daysSinceCreation($this->_user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(6, $result, '6 days ago');
     }

@@ -42,7 +42,7 @@ class ItemEditControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_markForCleanup($this->_album);
@@ -50,7 +50,7 @@ class ItemEditControllerTest extends GalleryControllerTestCase {
 	list ($ret, $this->_item) =
 	    $this->_createRandomDataItem($this->_album->getId(), 'test/file');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$path = 'modules/core/test/phpunit/ItemEditControllerTest.class';
@@ -59,7 +59,7 @@ class ItemEditControllerTest extends GalleryControllerTestCase {
 	    'ItemEditControllerTestPluginSuccess', $path, 'coreTest', null);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
@@ -67,7 +67,7 @@ class ItemEditControllerTest extends GalleryControllerTestCase {
 	    'ItemEditControllerTestPluginFailAndWarn', $path, 'coreTest', null);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
@@ -75,7 +75,7 @@ class ItemEditControllerTest extends GalleryControllerTestCase {
 	    $path, 'coreTest', array('ItemEditControllerTestPluginFailAndWarn'));
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markFactoryModuleForCleanup('coreTest');
     }
@@ -85,7 +85,7 @@ class ItemEditControllerTest extends GalleryControllerTestCase {
 	    $this->_createDerivative($this->_item, $this->_item->getId(),
 				     DERIVATIVE_TYPE_IMAGE_PREFERRED, 'rotate|90');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
@@ -156,14 +156,14 @@ class ItemEditControllerTestPluginSuccess {
 	list ($ret, $preferredTable) =
 	    GalleryCoreApi::fetchPreferredsByItemIds(array($item->getId()));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+	    return array($ret, null, null, null);
 	}
 
 	if ($preferred != null &&
 	    (empty($preferredTable) ||
 	     !is_object($preferredTable[$item->getId()]) ||
 	     $preferredTable[$item->getId()]->getId() != $preferred->getId())) {
-	    return array(GalleryCoreApi::error(ERROR_UNKNOWN, __FILE__, __LINE__),
+	    return array(GalleryCoreApi::error(ERROR_UNKNOWN),
 			 array('PREFERRED MISMATCH'), null, null);
 	}
 

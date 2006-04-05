@@ -55,14 +55,14 @@ class MarkupTest extends GalleryTestCase {
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
     function tearDown() {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'misc.markup', $this->_markup);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 
 	parent::tearDown();
@@ -206,7 +206,7 @@ class MarkupTest extends GalleryTestCase {
     function testMarkupNone() {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'misc.markup', 'none');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals('&lt;b&gt; [i] &amp;oacute;',
@@ -218,7 +218,7 @@ class MarkupTest extends GalleryTestCase {
     function testMarkupBbcode() {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'misc.markup', 'bbcode');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Bbcode processor adds closing </i> tag too */
@@ -231,7 +231,7 @@ class MarkupTest extends GalleryTestCase {
     function testMarkupHtml() {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'misc.markup', 'html');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals('<b> [i] &oacute;',

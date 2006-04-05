@@ -47,7 +47,7 @@ class ThumbPageItemEditPluginTest extends ItemEditPluginTestCase {
 	    'thumbpageTest', null);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markToolkitForCleanup('ThumbPageTestToolkit');
 
@@ -55,14 +55,14 @@ class ThumbPageItemEditPluginTest extends ItemEditPluginTestCase {
 	    array('test/document'), 'page-count', 'int', 'desc');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_item) = $this->_createRandomDataItem(
 	    $this->_getRootId(), 'test/document', array(), __FILE__, 'GalleryPhotoItem');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_markForCleanup($this->_item);
@@ -71,7 +71,7 @@ class ThumbPageItemEditPluginTest extends ItemEditPluginTestCase {
 	    $this->_item, $this->_item->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -94,7 +94,7 @@ class ThumbPageItemEditPluginTest extends ItemEditPluginTestCase {
 
 	list ($ret, $item) = $this->_thumbnail->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals('select-page|2;test-operation|100', $item->getDerivativeOperations(),
 			    'page two');
@@ -108,7 +108,7 @@ class ThumbPageItemEditPluginTest extends ItemEditPluginTestCase {
 
 	list ($ret, $item) = $this->_thumbnail->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals('test-operation|100', $item->getDerivativeOperations(),
 			    'page one');

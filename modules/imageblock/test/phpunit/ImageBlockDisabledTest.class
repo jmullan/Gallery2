@@ -51,7 +51,7 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 	    'modules/imageblock/test/phpunit/ImageBlockDisabledTest.class', 'imageblock', null);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markToolkitForCleanup('ImageBlockToolkit');
 
@@ -60,20 +60,20 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 	    array(array('type' => 'int', 'description' => 'size')), 'desc');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'imageblock');
 	if ($ret || !isset($this->_module)) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_topAlbum, $this->_topItems) =
 	    $this->_createSubAlbumWithItems($this->_getRootId());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_markForCleanup($this->_topAlbum);
@@ -82,26 +82,26 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 	    $this->_createSubAlbumWithItems($this->_topAlbum->getId());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Set the ImageBlockDisabled flag */
 	$ret = ImageBlockHelper::setDisabledFlag($this->_topAlbum, true, true);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_itemId) = $this->_module->getParameter('itemId');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = $this->_module->setParameter('itemId', $this->_topAlbum->getId());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -113,14 +113,14 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 	    $this->_module->getPluginType(), $this->_module->getId(), 'itemId');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Unset the ImageBlockDisabled flag */
 	$ret = ImageBlockHelper::setDisabledFlag($this->_topAlbum, true, false);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	parent::tearDown();
@@ -130,28 +130,28 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 	/* Create a new album and image, set thumbnail and highlight */
 	list ($ret, $album) = $this->_createRandomAlbum($parentId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($album->getId());
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	$imagePath = GalleryCoreApi::getPluginBaseDir('module', 'core')
 	    . 'modules/core/test/data/test1.gif';
 	list ($ret, $photo, $thumbId) = $this->_addPhoto($album->getId(), $imagePath);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	list ($ret, $tmpId) =
 	    $this->_addDerivative($album, $photo, DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 150);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	$items = array();
@@ -163,27 +163,27 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 	list ($ret, $photo) =
 	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryPhotoItem');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	list ($ret, $mimeType) = GalleryCoreApi::getMimeType($imagePath);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	$ret = $photo->create($parentId, $imagePath, $mimeType,
 			      'testitem_' . time() . substr($imagePath, -4));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	$photo->setTitle('Test Item');
 	$ret = $photo->save();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	/* add thumbnail */
 	list ($ret, $thumbId) = $this->_addDerivative($photo, $photo,
 	    DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 150);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	return array(null, $photo, $thumbId);
     }
@@ -192,14 +192,14 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 	list ($ret, $derivative) =
 	    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $item->getEntityType());
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (!isset($derivative)) {
-	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
 	}
 	$ret = $derivative->create($item->getId(), $derivativeType);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$derivative->setDerivativeSourceId($src->getId());
 	$derivative->setMimeType($src->getMimeType());
@@ -225,7 +225,7 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 	}
 	$ret = $derivative->save();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	return array(null, $derivative->getId());
     }
@@ -243,7 +243,7 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 	$callbacks = new ImageBlockCallbacks();
 	$ret = $callbacks->callback(array('useDefaults' => true), $smarty, 'LoadImageBlock');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$data = $smarty->_tpl_vars;
 	$this->assert(!isset($data['ImageBlockData']['blocks']), 'Block should not exist');
@@ -253,14 +253,14 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 	/* Unset the ImageBlockDisabled flag on the subAlbum */
 	$ret = ImageBlockHelper::setDisabledFlag($this->_subAlbum, true, false);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$smarty = new GallerySmarty();
 	$callbacks = new ImageBlockCallbacks();
 	$ret = $callbacks->callback(array('useDefaults' => true), $smarty, 'LoadImageBlock');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$data = $smarty->_tpl_vars;
 

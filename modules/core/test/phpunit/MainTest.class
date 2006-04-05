@@ -67,7 +67,7 @@ class MainTest extends GalleryTestCase {
 	$ret = $this->_urlGenerator->init('phpunit_test.php');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$GLOBALS['gallery']->setUrlGenerator($this->_urlGenerator);
 	$GLOBALS['gallery']->_session = new GallerySession();
@@ -81,7 +81,7 @@ class MainTest extends GalleryTestCase {
 	global $gallery;
 	list ($ret, $languageCode) = $gallery->getActiveLanguageCode();
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	} else {
 	    /* Init a new translator so that we reset our locale */
 	    $translator = new GalleryTranslator();
@@ -109,7 +109,7 @@ class MainTest extends GalleryTestCase {
 
 	list ($ret, $g2Data) = _GalleryMain(false);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$headers = $phpVm->headers_sent() ? $_REQUEST['phpVmHeaders'] : array();
 	if (isset($headers['Location'])) {
@@ -131,7 +131,7 @@ class MainTest extends GalleryTestCase {
 
 	list ($ret, $g2Data) = _GalleryMain(false);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$headers = $phpVm->headers_sent() ? $_REQUEST['phpVmHeaders'] : array();
 	if (isset($headers['Location'])) {
@@ -163,11 +163,11 @@ class MainTest extends GalleryTestCase {
 	$session =& $gallery->getSession();
 	$ret = $session->init();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = $session->start();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$sessionId = $session->getId();
 	$sessionKey = $session->getKey();
@@ -233,7 +233,7 @@ class MainTest extends GalleryTestCase {
     	$session = new GallerySession();
     	$ret = $session->init();
     	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(false, $session->isUsingCookies(), 'isUsingCookies');
 	$this->assertEquals(SESSION_TEMP_ID, $session->getId(), 'temp session id');

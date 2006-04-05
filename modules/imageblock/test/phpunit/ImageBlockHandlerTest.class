@@ -48,7 +48,7 @@ class ImageBlockHandlerTest extends GalleryTestCase {
 	list ($ret, $this->_topAlbum, $this->_topItems) =
 	    $this->_createSubAlbumWithItems($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_markForCleanup($this->_topAlbum);
@@ -56,7 +56,7 @@ class ImageBlockHandlerTest extends GalleryTestCase {
 	list ($ret, $this->_subAlbum, $this->_subItems) =
 	    $this->_createSubAlbumWithItems($this->_topAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -66,7 +66,7 @@ class ImageBlockHandlerTest extends GalleryTestCase {
     function tearDown() {
     	$ret = ImageBlockHelper::setDisabledFlag($this->_topAlbum, true, false);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	parent::tearDown();
@@ -76,14 +76,14 @@ class ImageBlockHandlerTest extends GalleryTestCase {
 	/* Create a new album and image, set thumbnail and highlight */
 	list ($ret, $album) = $this->_createRandomAlbum($parentId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	$items = array();
 	for ($i = 0; $i < 5; $i++) {
 	    list($ret, $items[$i]) = $this->_createRandomDataItem($album->getId());
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	}
 
@@ -99,30 +99,30 @@ class ImageBlockHandlerTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::addMapEntry(
 	    'ImageBlockDisabledMap', array('itemId' => $this->_topAlbum->getId()));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_handlerItem) = $this->_createRandomDataItem($this->_topAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$handlerItemId = $this->_handlerItem->getId();
 
 	list($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($handlerItemId);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($disabledFlag, 'Add eventHandler failed');
 
 	$ret = GalleryCoreApi::deleteEntityById($this->_handlerItem->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($handlerItemId);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert(!$disabledFlag, 'Delete eventHandler failed');
     }
@@ -232,7 +232,7 @@ class ImageBlockHandlerTest extends GalleryTestCase {
 	/* Execute the test */
 	list ($ret, $item) = $this->_createRandomDataItem($this->_subAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Verification: Is it in the disabled list? */
@@ -251,7 +251,7 @@ class ImageBlockHandlerTest extends GalleryTestCase {
 	/* Execute the test */
 	list ($ret, $item) = $this->_createRandomDataItem($this->_subAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Verification: Is it in the disabled list? */
@@ -263,7 +263,7 @@ class ImageBlockHandlerTest extends GalleryTestCase {
 	list ($ret, $albumItem, $this->_subItems2) =
 	    $this->_createSubAlbumWithItems($this->_topAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Add the album to the disabled map */
@@ -290,7 +290,7 @@ class ImageBlockHandlerTest extends GalleryTestCase {
 	list ($ret, $albumItem, $this->_subItems2) =
 	    $this->_createSubAlbumWithItems($this->_topAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Make sure the album is not in the disabled map */
@@ -317,7 +317,7 @@ class ImageBlockHandlerTest extends GalleryTestCase {
 	list ($ret, $albumItem, $this->_subItems2) =
 	    $this->_createSubAlbumWithItems($this->_topAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Make sure the album is in the disabled map */
@@ -344,7 +344,7 @@ class ImageBlockHandlerTest extends GalleryTestCase {
 	list ($ret, $albumItem, $this->_subItems2) =
 	    $this->_createSubAlbumWithItems($this->_topAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Make sure the album is not in the disabled map */
@@ -378,7 +378,7 @@ class ImageBlockHandlerTest extends GalleryTestCase {
 	/* Execute the test */
 	list ($ret, $albumItem) = $this->_createRandomAlbum($this->_subAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Verification: Is it in the disabled list? */
@@ -397,7 +397,7 @@ class ImageBlockHandlerTest extends GalleryTestCase {
 	/* Execute the test */
 	list ($ret, $albumItem) = $this->_createRandomAlbum($this->_subAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Verification: Is it in the disabled list? */
@@ -415,22 +415,22 @@ class ImageBlockHandlerTest extends GalleryTestCase {
 	/* Execute the test */
 	list ($ret, $user) = $this->_createRandomUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($user);
 
 	$user->setFullName('new name to trigger new save');
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = $user->save();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -449,15 +449,15 @@ class ImageBlockHandlerTest extends GalleryTestCase {
 	    GalleryCoreApi::acquireReadLock(array($newParent->getId(),
 						  $oldParent->getId()));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($item->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = $item->move($newParent->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = $item->save();
 	if ($ret) {
@@ -466,11 +466,11 @@ class ImageBlockHandlerTest extends GalleryTestCase {
 	     * disabled list if it already was in the list, else we'd see the result here
 	     * as an error
 	     */
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::releaseLocks($lockIds);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -479,7 +479,7 @@ class ImageBlockHandlerTest extends GalleryTestCase {
 	foreach ($items as $item) {
 	    list ($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($item->getId());
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    $this->assertEquals($expectedValue, !empty($disabledFlag),
 				'item is / is not in disabledFlag map');
@@ -490,12 +490,12 @@ class ImageBlockHandlerTest extends GalleryTestCase {
     function _setAndAssertDisabledFlag($item, $value) {
 	$ret = ImageBlockHelper::setDisabledFlag($item, false, $value);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	/* Assert that the item is in the disable map, or not */
 	list ($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($item->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals($value, !empty($disabledFlag),
 			    'item disabledFlag map assertion failed');

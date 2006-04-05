@@ -49,7 +49,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_getRootId());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_item);
 
@@ -57,7 +57,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_startTime = time();
@@ -67,7 +67,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core',
 						  'misc.markup', $this->_saveMarkup);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 
 	parent::tearDown();
@@ -96,7 +96,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	/* Grab the comment and take a look at it */
 	list ($ret, $comments) = GalleryCommentHelper::fetchComments($this->_item->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(1, count($comments));
@@ -150,7 +150,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	list ($ret, $counts) =
 	    GalleryCommentHelper::fetchCommentCounts(array($this->_item->getId()));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert(empty($counts[$this->_item->getId()]));
     }
@@ -176,7 +176,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	list ($ret, $counts) =
 	    GalleryCommentHelper::fetchCommentCounts(array($this->_item->getId()));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert(empty($counts[$this->_item->getId()]));
     }
@@ -185,7 +185,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'misc.markup', 'bbcode');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Use valid inputs */
@@ -209,7 +209,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	/* Post the same comment but with html markup mode active */
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'misc.markup', 'html');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	sleep(1);
 	$results = $this->handleRequest();
@@ -224,7 +224,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	/* Grab the comment and take a look at it */
 	list ($ret, $comments) = GalleryCommentHelper::fetchComments($this->_item->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(2, count($comments));
@@ -274,11 +274,11 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
     function testValidationPlugin() {
 	$ret = $this->_markPluginParametersForCleanup('module', 'comment');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'comment', 'validation.level', 'HIGH');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_controller->_pluginInstances = array(new AddCommentTestValidation());
@@ -288,7 +288,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::addUserPermission($this->_item->getId(),
 						 $gallery->getActiveUserId(), 'comment.add');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
@@ -307,11 +307,11 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
     function testValidationPluginOff() {
 	$ret = $this->_markPluginParametersForCleanup('module', 'comment');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'comment', 'validation.level', 'OFF');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_controller->_pluginInstances = array(new AddCommentTestValidation());
@@ -321,7 +321,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::addUserPermission($this->_item->getId(),
 						 $gallery->getActiveUserId(), 'comment.add');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
@@ -343,7 +343,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	/* Grab the comment and take a look at it */
 	list ($ret, $comments) = GalleryCommentHelper::fetchComments($this->_item->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(1, count($comments));

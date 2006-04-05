@@ -54,7 +54,7 @@ class RssCallbacks {
 	    if (!isset($feeds)) {
 		list($ret, $feeds) = RssMapHelper::fetchFeedNames((int) $params['number']);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 
@@ -65,7 +65,7 @@ class RssCallbacks {
 	    return null;
 	}
 
-	return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
     }
 }
 ?>

@@ -47,7 +47,7 @@ class MapTest extends GalleryTestCase {
 	    array('name' => $name, 'parametersCrc' => 'test', 'outputMimeType' => 'test'));
 	$this->assert($ret->getErrorCode() & ERROR_BAD_PARAMETER, 'expect error for missing key');
 	if ($ret && !($ret->getErrorCode() & ERROR_BAD_PARAMETER)) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::addMapEntry(
@@ -56,12 +56,12 @@ class MapTest extends GalleryTestCase {
 		  'description' => null));
 	$this->assert(!$ret, 'should succeed with null value');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::removeMapEntry('GalleryToolkitOperationMap', array('name' => $name));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -73,7 +73,7 @@ class MapTest extends GalleryTestCase {
 	    array('name' => $name, 'parametersCrc' => 'test', 'outputMimeType' => 'test',
 		  'description' => 'test'));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::updateMapEntry(
@@ -82,7 +82,7 @@ class MapTest extends GalleryTestCase {
 	    array('description' => null));
 	$this->assert(!$ret, 'should succeed setting null value');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::updateMapEntry(
@@ -91,12 +91,12 @@ class MapTest extends GalleryTestCase {
 	    array('parametersCrc' => 'changed'));
 	$this->assert(!$ret, 'should succeed matching null value');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::removeMapEntry('GalleryToolkitOperationMap', array('name' => $name));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 }

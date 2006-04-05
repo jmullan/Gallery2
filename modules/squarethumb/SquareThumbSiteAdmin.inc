@@ -37,7 +37,7 @@ class SquareThumbSiteAdminController extends GalleryController {
     function handleRequest($form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$status = $error = array();
@@ -51,7 +51,7 @@ class SquareThumbSiteAdminController extends GalleryController {
 		    $ret = GalleryCoreApi::setPluginParameter('module', 'squarethumb',
 							      $key, $form[$key]);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		}
 		$status['saved'] = 1;
@@ -80,7 +80,7 @@ class SquareThumbSiteAdminView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if ($form['formName'] != 'SquareThumbSiteAdmin') {
@@ -89,7 +89,7 @@ class SquareThumbSiteAdminView extends GalleryView {
 		list ($ret, $form[$key]) =
 		    GalleryCoreApi::getPluginParameter('module', 'squarethumb', $key);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	}

@@ -56,7 +56,7 @@ class CartModule extends GalleryModule {
 	}
 	list ($ret, $coreParams) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	switch ($currentVersion) {
@@ -65,13 +65,13 @@ class CartModule extends GalleryModule {
 	    $ret = GalleryCoreApi::registerPermission($this->getId(), 'cart.add',
 						      $gallery->i18n('[cart] Add to cart'));
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    /* Give everybody cart permission by default */
 	    $ret = GalleryCoreApi::addGroupPermission(
 		$coreParams['id.rootAlbum'], $coreParams['id.everybodyGroup'], 'cart.add', true);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    break;
 
@@ -90,7 +90,7 @@ class CartModule extends GalleryModule {
 	    ';
 	    $ret = $storage->execute($query);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    $query = '
 	      DELETE FROM [Schema]
@@ -98,7 +98,7 @@ class CartModule extends GalleryModule {
 	    ';
 	    $ret = $storage->execute($query);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	case '0.8.9':
@@ -114,13 +114,13 @@ class CartModule extends GalleryModule {
 	    $ret = GalleryCoreApi::registerPermission($this->getId(), 'cart.add',
 						      $gallery->i18n('[cart] Add to cart'));
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    /* Give everybody cart permission by default */
 	    $ret = GalleryCoreApi::addGroupPermission(
 		$coreParams['id.rootAlbum'], $coreParams['id.everybodyGroup'], 'cart.add', true);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	case '1.0.1':

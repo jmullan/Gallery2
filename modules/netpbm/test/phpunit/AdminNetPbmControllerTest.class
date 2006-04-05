@@ -44,14 +44,14 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'netpbm');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	foreach (array('jpegQuality' => 75, 'pnmcomp' => 'pamcomp') as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', $key, $value);
 	    if ($ret) {
 		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	}
 

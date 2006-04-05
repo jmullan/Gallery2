@@ -39,7 +39,7 @@ class MimeEditController extends GalleryController {
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$error = array();
 	$status = array();
@@ -61,7 +61,7 @@ class MimeEditController extends GalleryController {
 
 		    list ($ret, $existingMimeType) = GalleryCoreApi::convertExtensionToMime($ext);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 
 		    if ($existingMimeType != $form['mimeType'] &&
@@ -78,13 +78,13 @@ class MimeEditController extends GalleryController {
 	    if (empty($error)) {
 		$ret = GalleryCoreApi::removeMimeType(array('mimeType' => $form['mimeType']));
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		foreach ($mimeTypeMap as $mimeType) {
 		    $ret = GalleryCoreApi::addMimeType(
 			   $mimeType['extension'], $mimeType['mimeType'], $mimeType['viewable']);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		}
 		$status['saved'] = true;
@@ -132,12 +132,12 @@ class MimeEditView extends GalleryView {
 		list ($ret, $form['extensions']) =
 		    GalleryCoreApi::convertMimeToExtensions($mimeType);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		list ($ret, $form['viewable']) = GalleryCoreApi::isViewableMimeType($mimeType);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    } else {
 		$form['viewable'] = false;

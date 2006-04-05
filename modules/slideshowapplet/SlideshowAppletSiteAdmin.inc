@@ -37,7 +37,7 @@ class SlideshowAppletSiteAdminController extends GalleryController {
     function handleRequest($form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$status = $error = array();
@@ -49,7 +49,7 @@ class SlideshowAppletSiteAdminController extends GalleryController {
 	    } else {
 		list ($ret, $variables) = $this->getVariables($type);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		/* modify it */
@@ -58,21 +58,21 @@ class SlideshowAppletSiteAdminController extends GalleryController {
 		/* serialize it again */
 		$ret = $this->setVariables($type, $variables);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	} else if (isset($form['action']['delete'])) {
 	    $type = $form['variable']['type'];
 	    if (empty($form['delete']['variable'])) {
-		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	    }
 
 	    list ($ret, $variables) = $this->getVariables($type);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    if (!isset($variables[$form['delete']['variable']])) {
-		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	    }
 
 	    /* delete it */
@@ -81,7 +81,7 @@ class SlideshowAppletSiteAdminController extends GalleryController {
 	    /* serialize it again */
 	    $ret = $this->setVariables($type, $variables);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 
@@ -110,7 +110,7 @@ class SlideshowAppletSiteAdminController extends GalleryController {
 	list ($ret, $variables) = GalleryCoreApi::getPluginParameter('module', 'slideshowapplet',
 		'slideshow' . $type . 'Variables');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* unserialize the plugin parameter */
@@ -147,13 +147,13 @@ class SlideshowAppletSiteAdminView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $params) =
 	    GalleryCoreApi::fetchAllPluginParameters('module', 'slideshowapplet');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	foreach ($params as $key => $value) {
 	    $form[$key] = $value;

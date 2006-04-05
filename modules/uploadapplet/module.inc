@@ -48,13 +48,13 @@ class UploadAppletModule extends GalleryModule {
 	list ($ret, $params) =
 	    GalleryCoreApi::fetchAllPluginParameters('module', 'uploadapplet');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	if (!isset($params['uploaddefaultVariables'])) {
 	    $ret = $this->setParameter('uploaddefaultVariables', '');
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
@@ -62,7 +62,7 @@ class UploadAppletModule extends GalleryModule {
 	    $ret = $this->setParameter('uploadoverrideVariables',
 		    'toSysOut=true|htmlEscapeCaptions=true');
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
@@ -77,7 +77,7 @@ class UploadAppletModule extends GalleryModule {
 	    'ItemAddPlugin', 'ItemAddUploadApplet', 'ItemAddUploadApplet',
 	    'modules/uploadapplet/ItemAddUploadApplet.inc', 'uploadapplet', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;

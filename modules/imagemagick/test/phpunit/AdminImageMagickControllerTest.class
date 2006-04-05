@@ -44,13 +44,13 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'imagemagick');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	list ($ret, $this->_cmykSupport) =
 	    GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'cmykSupport');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$platform =& $gallery->getPlatform();
@@ -69,7 +69,7 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 	 */
 	$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', 'path', $path);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Use valid inputs */
@@ -198,7 +198,7 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 	 */
 	$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', 'path', $path);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Use valid inputs */

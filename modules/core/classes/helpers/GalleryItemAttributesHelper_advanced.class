@@ -47,12 +47,12 @@ class GalleryItemAttributesHelper_advanced {
 
 	list ($ret, $parentItem) = GalleryCoreApi::loadEntitiesById($parentItemId);
 	if ($ret) {
- 	    return $ret->wrap(__FILE__, __LINE__);
+ 	    return $ret;
 	}
 
 	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIdsIgnorePermissions($parentItem);
 	if ($ret) {
- 	    return $ret->wrap(__FILE__, __LINE__);
+ 	    return $ret;
 	}
 
 	$current = $spacing;
@@ -60,7 +60,7 @@ class GalleryItemAttributesHelper_advanced {
 	    $gallery->guaranteeTimeLimit(5);
 	    $ret = GalleryItemAttributesHelper_advanced::setOrderWeight($id, $current);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    $current += $spacing;
 	}
@@ -97,7 +97,7 @@ class GalleryItemAttributesHelper_advanced {
         ';
 	list ($ret, $searchResults) = $gallery->search($query, array((int)$itemId));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$result = $searchResults->nextResult();
@@ -150,7 +150,7 @@ class GalleryItemAttributesHelper_advanced {
         ';
 	list ($ret, $searchResults) = $gallery->search($query, array((int)$itemId));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$result = $searchResults->nextResult();
@@ -176,7 +176,7 @@ class GalleryItemAttributesHelper_advanced {
 	    array('itemId' => $itemId),
 	    array('viewCount' => $count));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -202,7 +202,7 @@ class GalleryItemAttributesHelper_advanced {
 	    array('itemId' => $itemId),
 	    array('parentSequence' => $parentSequence));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -228,7 +228,7 @@ class GalleryItemAttributesHelper_advanced {
 		  'orderWeight' => 0,
 		  'parentSequence' => $parentSequence));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -244,7 +244,7 @@ class GalleryItemAttributesHelper_advanced {
 	$ret = GalleryCoreApi::removeMapEntry(
 	    'GalleryItemAttributesMap', array('itemId' => $itemId));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -263,7 +263,7 @@ class GalleryItemAttributesHelper_advanced {
 	    array('itemId' => $itemId),
 	    array('orderWeight' => $orderWeight));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -282,7 +282,7 @@ class GalleryItemAttributesHelper_advanced {
 	list ($ret, $viewCounts) =
 	    GalleryItemAttributesHelper_medium::fetchViewCounts(array($itemId));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $viewCounts[$itemId]);
@@ -308,11 +308,11 @@ class GalleryItemAttributesHelper_advanced {
 	list ($ret, $substring) = $storage->getFunctionSql('SUBSTRING', array(
 		  '[GalleryItemAttributesMap::parentSequence]', strlen($oldParentSequence) + 1));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	list ($ret, $newSequenceSql) = $storage->getFunctionSql('CONCAT', array('?', $substring));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::updateMapEntry(
@@ -322,7 +322,7 @@ class GalleryItemAttributesHelper_advanced {
 	    array('parentSequence' =>
 		  new GallerySqlFragment('=' . $newSequenceSql, $newParentSequence)));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;

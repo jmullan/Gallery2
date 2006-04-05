@@ -74,7 +74,7 @@ function smtpmail($config, $to, $subject, $body, $headers=null) {
     // Wait for reply
     $ret = server_parse($socket, "220");
     if ($ret) {
-	return $ret->wrap(__FILE__, __LINE__);
+	return $ret;
     }
 
     // Do we want to use AUTH?, send RFC2554 EHLO, else send RFC821 HELO
@@ -82,31 +82,31 @@ function smtpmail($config, $to, $subject, $body, $headers=null) {
 	fputs($socket, "EHLO " . $config['smtp.host'] . "\r\n");
 	$ret = server_parse($socket, "250");
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	fputs($socket, "AUTH LOGIN\r\n");
 	$ret = server_parse($socket, "334");
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	fputs($socket, base64_encode($config['smtp.username']) . "\r\n");
 	$ret = server_parse($socket, "334");
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	fputs($socket, $config['smtp.password'] . "\r\n"); // Already encoded
 	$ret = server_parse($socket, "235");
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
     } else {
 	fputs($socket, "HELO " . $config['smtp.host'] . "\r\n");
 	$ret = server_parse($socket, "250");
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
     }
 
@@ -115,7 +115,7 @@ function smtpmail($config, $to, $subject, $body, $headers=null) {
     fputs($socket, "MAIL FROM: <" . $config['smtp.from'] . ">\r\n");
     $ret = server_parse($socket, "250");
     if ($ret) {
-	return $ret->wrap(__FILE__, __LINE__);
+	return $ret;
     }
 
     // Add an additional bit of error checking to the To field.
@@ -124,7 +124,7 @@ function smtpmail($config, $to, $subject, $body, $headers=null) {
 	fputs($socket, "RCPT TO: <$to>\r\n");
 	$ret = server_parse($socket, "250");
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
     }
 
@@ -135,7 +135,7 @@ function smtpmail($config, $to, $subject, $body, $headers=null) {
 	    fputs($socket, "RCPT TO: <$address>\r\n");
 	    $ret = server_parse($socket, "250");
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
     }
@@ -146,7 +146,7 @@ function smtpmail($config, $to, $subject, $body, $headers=null) {
     // This is the last response code we look for until the end of the message.
     $ret = server_parse($socket, "354");
     if ($ret) {
-	return $ret->wrap(__FILE__, __LINE__);
+	return $ret;
     }
 
     // Send the Subject Line...
@@ -167,7 +167,7 @@ function smtpmail($config, $to, $subject, $body, $headers=null) {
     fputs($socket, ".\r\n");
     $ret = server_parse($socket, "250");
     if ($ret) {
-	return $ret->wrap(__FILE__, __LINE__);
+	return $ret;
     }
 
     // Now tell the server we are done and close the socket...

@@ -52,7 +52,7 @@ class SetSizeOption extends ItemAddOption {
 	$warnings = array();
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'sizelimit');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	for ($i = 0; $i < count($items); $i++) {
 	    $warnings[$i] = array();
@@ -63,7 +63,7 @@ class SetSizeOption extends ItemAddOption {
 	    list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters(
 		'module', 'sizelimit', $items[$i]->getParentId());
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    $param = array_merge(
 		array('keepOriginal' => 0, 'width' => 0, 'height' => 0, 'size' => 0), $param);
@@ -84,7 +84,7 @@ class SetSizeOption extends ItemAddOption {
 			    array('text' => 'WARNING: Cannot resize mime type %s',
 				  'arg1' => $items[$i]->getMimeType()));
 		    } else {
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return array($ret, null, null);
 		    }
 		}
 	    }
@@ -104,7 +104,7 @@ class SetSizeOption extends ItemAddOption {
 			    array('text' => 'WARNING: Cannot compress mime type %s',
 				  'arg1' => $items[$i]->getMimeType()));
 		    } else {
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return array($ret, null, null);
 		    }
 		}
 	    }

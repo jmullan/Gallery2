@@ -65,7 +65,7 @@ class RssModule extends GalleryModule /* and GalleryEventListener */ {
 	/* check that this type of link is allowed */
 	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'rss');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	foreach ($items as $item) {
@@ -91,7 +91,7 @@ class RssModule extends GalleryModule /* and GalleryEventListener */ {
 
 		list ($ret, $canConfigure) = RssMapHelper::canConfigureFeed($item, $param);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		if ($canConfigure) {
@@ -154,13 +154,13 @@ class RssModule extends GalleryModule /* and GalleryEventListener */ {
 		GalleryCoreApi::requireOnce('modules/rss/classes/RssMapHelper.class');
 		list ($ret, $results) = RssMapHelper::fetchFeedsForItem($entity->getId());
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		foreach ($results as $feed) {
 		    $ret = RssMapHelper::deleteFeed($feed['name']);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		}
 	    }
@@ -192,7 +192,7 @@ class RssModule extends GalleryModule /* and GalleryEventListener */ {
 			    ) as $key => $value) {
 		    $ret = $this->setParameter($key, $value);
 		    if ($ret) {
-			return $ret->wrap(__FILE__, __LINE__);
+			return $ret;
 		    }
 		}
 		/* keep going */
@@ -204,7 +204,7 @@ class RssModule extends GalleryModule /* and GalleryEventListener */ {
 			    ) as $key => $value) {
 		    $ret = $this->setParameter($key, $value);
 		    if ($ret) {
-			return $ret->wrap(__FILE__, __LINE__);
+			return $ret;
 		    }
 		}
 	}

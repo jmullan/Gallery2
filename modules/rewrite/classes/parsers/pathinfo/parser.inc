@@ -63,7 +63,7 @@ class PathInfoParser extends RewriteParser {
 
 	list ($ret, $code) = PathInfoHelper::checkPathInfo();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $code != REWRITE_STATUS_OK);
@@ -86,13 +86,13 @@ class PathInfoParser extends RewriteParser {
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	if (isset($form['force']['test'])) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'pathinfo.forced', '1');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	}
 

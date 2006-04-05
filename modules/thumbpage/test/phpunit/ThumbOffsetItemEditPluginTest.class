@@ -47,7 +47,7 @@ class ThumbOffsetItemEditPluginTest extends ItemEditPluginTestCase {
 	    'thumbpageTest', null);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markToolkitForCleanup('ThumbOffsetTestToolkit');
 
@@ -55,14 +55,14 @@ class ThumbOffsetItemEditPluginTest extends ItemEditPluginTestCase {
 	    array('test/movie'), 'dimensions-and-duration', 'int,int,float', 'desc');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_item) = $this->_createRandomDataItem(
 	    $this->_getRootId(), 'test/movie', array(), __FILE__, 'GalleryMovieItem');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_markForCleanup($this->_item);
@@ -71,7 +71,7 @@ class ThumbOffsetItemEditPluginTest extends ItemEditPluginTestCase {
 	    $this->_item, $this->_item->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -94,7 +94,7 @@ class ThumbOffsetItemEditPluginTest extends ItemEditPluginTestCase {
 
 	list ($ret, $item) = $this->_thumbnail->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals('select-offset|4.8;test-operation|100',
 			    $item->getDerivativeOperations(),
@@ -109,7 +109,7 @@ class ThumbOffsetItemEditPluginTest extends ItemEditPluginTestCase {
 
 	list ($ret, $item) = $this->_thumbnail->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals('test-operation|100', $item->getDerivativeOperations(),
 			    'no offset');

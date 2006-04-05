@@ -64,7 +64,7 @@ class GalleryRepository {
 	if ($this->_index->existsInCache()) {
 	    $ret = $this->_index->load();
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 	return null;
@@ -80,12 +80,12 @@ class GalleryRepository {
     function isCoreUpgradeAvailable() {
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	list ($ret, $header) = $this->_index->getPluginHeader('module', 'core');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	$repositoryVersion = $header['version'];
 
@@ -96,7 +96,7 @@ class GalleryRepository {
 	list ($ret, $relation) =
 	    $this->_utilities->compareVersions($repositoryVersion, $core->getVersion());
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	$apiVersions = array();
@@ -127,7 +127,7 @@ class GalleryRepository {
 	list ($ret, $installedPackages) =
 	    $this->_utilities->getPluginPackages($pluginType, $pluginId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Check if this plugin's base files are installed. */
@@ -138,7 +138,7 @@ class GalleryRepository {
 	    /* Get version info from repository index for base files. */
 	    list ($ret, $header) = $this->_index->getPluginHeader($pluginType, $pluginId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    $repositoryDataVersion = $header['version'];
 	    $repositoryDataBuild = $header['buildTimestamp'];
@@ -147,7 +147,7 @@ class GalleryRepository {
 	    list ($ret, $relation) = $this->_utilities->compareVersions(
 		$dataVersion, $repositoryDataVersion, $dataBuild, $repositoryDataBuild);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    if ($relation == 'older') {
 		$upgradeInfo['isBaseUpgradeable'] = 1;
@@ -168,14 +168,14 @@ class GalleryRepository {
 	list ($ret, $languages) =
 	    $this->_index->getAvailableLanguagesInPlugin($pluginType, $pluginId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	foreach ($languages as $language => $revision) {
 	    list ($ret, $languageDescription) =
 		$this->_utilities->getLanguageDescription($language);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    if (!isset($installedPackages['lang-' . $language])) {
@@ -218,7 +218,7 @@ class GalleryRepository {
 	list ($ret, $repositoryPluginList) =
 	    $this->_index->getPlugins($pluginType, $showAllPlugins, $coreApis);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	foreach ($repositoryPluginList[$pluginType] as $pluginId => $plugin) {
 	    $action = '';
@@ -227,7 +227,7 @@ class GalleryRepository {
 	    /* Get active language. */
 	    list ($ret, $language) = $gallery->getActiveLanguageCode();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    /* Fall back to en_US if there are no descriptions in the active language. */
@@ -245,7 +245,7 @@ class GalleryRepository {
 		list ($ret, $upgradeInfo) =
 		$this->getPluginUpgradeInfo($pluginType, $pluginId);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		if (!empty($upgradeInfo)) {
 		    $action = $gallery->i18n('upgrade');
@@ -333,7 +333,7 @@ class GalleryRepository {
 	foreach (array('module', 'theme') as $pluginType) {
 	    list ($ret, $plugins) = GalleryCoreApi::getAllPluginIds($pluginType);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    foreach ($plugins as $pluginId) {
@@ -343,7 +343,7 @@ class GalleryRepository {
 
 		list ($ret, $upgradeInfo) = $this->getPluginUpgradeInfo($pluginType, $pluginId);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		if (isset($upgradeInfo['isBaseUpgradeable'])) {
@@ -399,7 +399,7 @@ class GalleryRepository {
 	list ($ret, $searchResults) =
 	    $gallery->search($query, array($pluginType, $pluginId, $packageName));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	if ($searchResults->resultCount() > 1) {
@@ -424,7 +424,7 @@ class GalleryRepository {
 		      'packageVersion' => $packageVersion, 'packageBuild' => $packageBuild));
 	}
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -499,13 +499,13 @@ class GalleryRepository {
 	    foreach ($plugin as $pluginId => $packages) {
 		list ($ret, $pluginName) = $this->_index->getPluginName($pluginType, $pluginId);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		list ($ret, $descriptorUrl) =
 		    $this->_index->getDescriptorUrl($pluginType, $pluginId);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		$files[$pluginType][$pluginId]['name'] = $pluginName;
@@ -515,7 +515,7 @@ class GalleryRepository {
 			$this->_index->getPackageUrl($pluginType, $pluginId, $package);
 		    if ($ret) {
 			print($ret->getAsHtml());
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 
 		    $files[$pluginType][$pluginId]['files'][$package] = $packageUrl;

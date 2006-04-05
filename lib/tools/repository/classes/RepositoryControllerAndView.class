@@ -81,7 +81,7 @@
 	/* Send template to the browser. */
 	list($ret, $templateContents) = $this->_template->fetch('gallery:' . $viewFileRelative);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	print $templateContents;
 

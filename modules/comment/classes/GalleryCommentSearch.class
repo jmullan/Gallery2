@@ -48,7 +48,7 @@ class GalleryCommentSearch extends GallerySearchInterface_1_0 {
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'comment');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$info = array('name' => $module->translate('Comments'),
@@ -71,12 +71,12 @@ class GalleryCommentSearch extends GallerySearchInterface_1_0 {
 	list ($ret, $aclIds) = GalleryCoreApi::fetchAccessListIds('comment.view',
 								  $gallery->getActiveUserId());
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	list ($ret, $viewAclIds) = GalleryCoreApi::fetchAccessListIds('core.view',
 								      $gallery->getActiveUserId());
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$aclIds = array_intersect($aclIds, $viewAclIds);
 	if (empty($aclIds)) {
@@ -137,7 +137,7 @@ class GalleryCommentSearch extends GallerySearchInterface_1_0 {
 	/* Find the total */
 	list ($ret, $results) = $gallery->search($countQuery, $data);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$result = $results->nextResult();
 	$numRows = (int)$result[0];
@@ -145,12 +145,12 @@ class GalleryCommentSearch extends GallerySearchInterface_1_0 {
 	list ($ret, $results) = $gallery->search(
 	    $query, $data, array('limit' => array('offset' => $offset, 'count' => $count)));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
         list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'comment');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$text['subject'] = $module->translate('Subject');

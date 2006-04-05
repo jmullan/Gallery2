@@ -44,7 +44,7 @@ class RssSiteAdminController extends GalleryController {
 	/* Make sure the user has permission to do this operation */
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$status = $results = $error = array();
@@ -75,7 +75,7 @@ class RssSiteAdminController extends GalleryController {
 			$ret = GalleryCoreApi::setPluginParameter('module', 'rss',
 								  $setting, $form[$setting]);
 			if ($ret) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
+			    return array($ret, null);
 			}
 		    }
 
@@ -89,7 +89,7 @@ class RssSiteAdminController extends GalleryController {
 			$ret = GalleryCoreApi::setPluginParameter('module', 'rss', $setting,
 			    (isset($form[$setting]) && $form[$setting]) ? 1 : 0);
 			if ($ret) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
+			    return array($ret, null);
 			}
 		    }
 
@@ -108,7 +108,7 @@ class RssSiteAdminController extends GalleryController {
 			$ret = GalleryCoreApi::setPluginParameter('module', 'rss',
 								  $setting, $form[$setting]);
 			if ($ret) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
+			    return array($ret, null);
 			}
 		    }
 
@@ -120,7 +120,7 @@ class RssSiteAdminController extends GalleryController {
 	} else if (isset($form['action']['delete'])) {
 	    $ret = RssMapHelper::deleteFeed($form['action']['delete']);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    $mode = 'list';
@@ -156,7 +156,7 @@ class RssSiteAdminView extends GalleryView {
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$RssSiteAdmin['mode'] = GalleryUtilities::getRequestVariables('mode');
@@ -167,7 +167,7 @@ class RssSiteAdminView extends GalleryView {
 	/* fetch module parameters and save them in form variable */
 	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'rss');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	foreach ($param as $key => $value) {
 	    $form[$key] = $value;
@@ -177,12 +177,12 @@ class RssSiteAdminView extends GalleryView {
 	    /* fetch all feed definitions */
 	    list ($ret, $feeds) = RssMapHelper::fetchFeedsForItem();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    list ($ret, $RssSiteAdmin['types']) = RssHelper::getFeedTypeTranslation();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    if (!empty($feeds)) {
@@ -194,7 +194,7 @@ class RssSiteAdminView extends GalleryView {
 
 		list ($ret, $items) = GalleryCoreApi::loadEntitiesById($itemIds);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		for ($i = 0; $i < sizeof($feeds); $i++) {

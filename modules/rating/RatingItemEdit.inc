@@ -44,7 +44,7 @@ class RatingItemEdit extends ItemEditOption {
             list ($ret, $subAlbumIds) =
                 GalleryCoreApi::fetchDescendentAlbumItemIds($item);
             if ($ret) {
-                return array($ret->wrap(__FILE__, __LINE__), null, null);
+                return array($ret, null, null);
             }
             array_unshift($subAlbumIds, $item->getId());
         } else {
@@ -58,7 +58,7 @@ class RatingItemEdit extends ItemEditOption {
 		    (empty($form['rating']['enabled']) ? 0 : 1),
 		    $id);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	}
 
@@ -76,7 +76,7 @@ class RatingItemEdit extends ItemEditOption {
 		    'enabled',
 		    $item->getId());
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	}
 

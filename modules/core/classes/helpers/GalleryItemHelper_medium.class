@@ -48,13 +48,13 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	global $gallery;
 
 	if (empty($itemType)) {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	}
 
 	list ($ret, $aclIds) =
 	    GalleryCoreApi::fetchAccessListIds($permission, $gallery->getActiveUserId());
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (empty($aclIds)) {
 	    return array(null, array());
@@ -83,7 +83,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 
 	list ($ret, $searchResults) = $gallery->search($query, $data);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$data = array();
@@ -108,7 +108,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	global $gallery;
 
 	if (empty($ownerId)) {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	}
 
 	$storage =& $gallery->getStorage();
@@ -124,7 +124,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	';
 	list ($ret, $queryResults) = $gallery->search($query, array((int)$ownerId));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$itemIds = array();
 	while ($result = $queryResults->nextResult()) {
@@ -151,7 +151,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	list ($ret, $instance) = GalleryCoreApi::newFactoryInstanceByHint('GalleryItem',
 	    array($mimeType, substr($mimeType, 0, strpos($mimeType, '/')) . '/*'));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $instance);
@@ -183,7 +183,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	 */
 	list ($ret, $newItem) = GalleryCoreApi::newItemByMimeType($mimeType);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$ret = $newItem->create($albumId, $fileName, $mimeType, $itemName, $symlink);
@@ -201,10 +201,10 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 
 		$ret = $newItem->create($albumId, $fileName, $mimeType, $itemName, $symlink);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    } else {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 
@@ -215,7 +215,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	/* Try to get an originationTimestamp for the just added item */
 	list ($ret, $originationTimestamp) = GalleryCoreApi::fetchOriginationTimestamp($newItem);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (!empty($originationTimestamp)) {
 	    $newItem->setOriginationTimestamp($originationTimestamp);
@@ -223,12 +223,12 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 
 	$ret = $newItem->save();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$ret = GalleryCoreApi::addExistingItemToAlbum($newItem, $albumId, true);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $newItem);
@@ -249,19 +249,19 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	list ($ret, $toolkits) =
 	    GalleryCoreApi::getToolkitsByProperty($item->getMimeType(), 'originationTimestamp');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if ($toolkits) {
 	    list ($ret, $path) = $item->fetchPath();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    foreach ($toolkits as $toolkit) {
 		if (isset($toolkit)) {
 		    list ($ret, $originationTimestamp) =
 			$toolkit->getProperty($item->getMimeType(), 'originationTimestamp', $path);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		    if (is_array($originationTimestamp) && !empty($originationTimestamp[0])) {
 			return array(null, $originationTimestamp[0]);
@@ -286,12 +286,12 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	/* Set the order weight */
 	list ($ret, $maxWeight) = GalleryCoreApi::fetchExtremeChildWeight($albumId, HIGHER_WEIGHT);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::setItemOrderWeight($item->getId(), $maxWeight + 1000);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/*
@@ -300,12 +300,12 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	 */
 	list ($ret, $preferences) = GalleryCoreApi::fetchDerivativePreferencesForItem($albumId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	list ($ret, $source) = GalleryCoreApi::fetchPreferredSource($item);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$mimeType = $source->getMimeType();
@@ -313,7 +313,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	/* Make the file type viewable, if we need to. */
 	list ($ret, $isViewable) = GalleryCoreApi::isViewableMimeType($mimeType);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	if (!$isViewable && !strncmp($mimeType, 'image/', 6)) {
 	    if (GalleryUtilities::isA($source, 'GalleryDerivative')) {
@@ -325,7 +325,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		GalleryCoreApi::makeSupportedViewableOperationSequence(
 		    $mimeType, $operations, false);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    if ($newOperations != $operations) {
@@ -339,16 +339,16 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		    list ($ret, $preferred) = GalleryCoreApi::newFactoryInstanceByHint(
 			'GalleryDerivative', $item->getEntityType());
 		    if ($ret) {
-			return $ret->wrap(__FILE__, __LINE__);
+			return $ret;
 		    }
 
 		    if (!isset($preferred)) {
-			return GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+			return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
 		    }
 
 		    $ret = $preferred->create($source->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED);
 		    if ($ret) {
-			return $ret->wrap(__FILE__, __LINE__);
+			return $ret;
 		    }
 
 		    $preferred->setDerivativeSourceId($source->getId());
@@ -356,19 +356,19 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 
 		    $ret = GalleryCoreApi::remapSourceIds($source->getId(), $preferred->getId());
 		    if ($ret) {
-			return $ret->wrap(__FILE__, __LINE__);
+			return $ret;
 		    }
 		    $source = $preferred;
 		} else {
 		    /* Lock the preferred so that we can modify it */
 		    list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($source->getId());
 		    if ($ret) {
-			return $ret->wrap(__FILE__, __LINE__);
+			return $ret;
 		    }
 
 		    $ret = $source->expireCache();
 		    if ($ret) {
-			return $ret->wrap(__FILE__, __LINE__);
+			return $ret;
 		    }
 		}
 
@@ -378,18 +378,18 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		/* Let our change ripple down the derivative tree, if necessary */
 		$ret = GalleryCoreApi::adjustDependentDerivatives($source->getId(), $newOperations);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 
 		$ret = $source->save();
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 
 		if (!empty($lockIds)) {
 		    $ret = GalleryCoreApi::releaseLocks($lockIds);
 		    if ($ret) {
-			return $ret->wrap(__FILE__, __LINE__);
+			return $ret;
 		    }
 		}
 
@@ -404,14 +404,14 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	if (!$isNew) {
 	    list ($ret, $tmp) = GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    if (!empty($tmp)) {
 		$derivs[DERIVATIVE_TYPE_IMAGE_THUMBNAIL][] = array_shift($tmp);
 	    }
 	    list ($ret, $tmp) = GalleryCoreApi::fetchResizesByItemIds(array($item->getId()));
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    if (!empty($tmp)) {
 		foreach (array_shift($tmp) as $resize) {
@@ -457,7 +457,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		$derivative = array_shift($derivs[$type]);
 		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($derivative->getId());
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 
 		/* Preserve any existing derivative operations on a thumbnail */
@@ -477,16 +477,16 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		list ($ret, $derivative) = GalleryCoreApi::newFactoryInstanceByHint(
 		    'GalleryDerivative', $source->getEntityType());
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 
 		if (!isset($derivative)) {
-		    return GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+		    return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
 		}
 
 		$ret = $derivative->create($item->getId(), $type);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 
@@ -498,7 +498,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		GalleryCoreApi::makeSupportedViewableOperationSequence(
 		    $mimeType, $operations, $type == DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    if (empty($operations)) {
@@ -518,18 +518,18 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	    $derivative->setHeight(0);
 	    $ret = GalleryCoreApi::estimateDerivativeDimensions($derivative, $source);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    $ret = $derivative->save();
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    if (isset($lockId)) {
 		$ret = GalleryCoreApi::releaseLocks(array($lockId));
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 		unset($lockId);
 	    }
@@ -544,7 +544,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	    foreach ($tmp as $derivative) {
 		$ret = GalleryCoreApi::deleteEntityById($derivative->getId());
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	}
@@ -554,14 +554,14 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	    list ($ret, $thumbnailTable) =
 		GalleryCoreApi::fetchThumbnailsByItemIds(array($albumId));
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    if (empty($thumbnailTable)) {
 		list ($ret, $success) =
 		    GalleryCoreApi::setThumbnailFromItem($albumId, $item->getId());
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	}
@@ -587,7 +587,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	list ($ret, $thumbnailTable) =
 	    GalleryCoreApi::fetchThumbnailsByItemIds(array($itemId, $fromItemId));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), false);
+	    return array($ret, false);
 	}
 
 	/*
@@ -607,7 +607,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	/* 1. The fromItem's preferred derivative's source id */
 	list ($ret, $derivatives) = GalleryCoreApi::fetchPreferredsByItemIds(array($fromItemId));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (!empty($derivatives[$fromItemId])) {
 	    $source = $derivatives[$fromItemId];
@@ -626,7 +626,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	if (!$sourceMimeType) {
 	    list ($ret, $fromItem) = GalleryCoreApi::loadEntitiesById($fromItemId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    if (GalleryUtilities::isA($fromItem, 'GalleryDataItem')) {
@@ -647,7 +647,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		    /* Ignore errors -- we're already in an error handler */
 		    GalleryCoreApi::releaseLocks($lockIds);
 		}
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    /* Reuse the existing derivative, if one exists */
@@ -661,7 +661,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 			/* Ignore errors -- we're already in an error handler */
 			GalleryCoreApi::releaseLocks($lockIds);
 		    }
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		list ($ret, $derivative) = $derivative->refresh();
@@ -670,7 +670,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 			/* Ignore errors -- we're already in an error handler */
 			GalleryCoreApi::releaseLocks($lockIds);
 		    }
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		$derivativeOperations = $derivative->getDerivativeOperations();
@@ -683,7 +683,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 			/* Ignore errors -- we're already in an error handler */
 			GalleryCoreApi::releaseLocks($lockIds);
 		    }
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		if (!isset($derivative)) {
@@ -691,7 +691,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 			/* Ignore errors -- we're already in an error handler */
 			GalleryCoreApi::releaseLocks($lockIds);
 		    }
-		    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
+		    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT),
 				 null);
 		}
 
@@ -701,7 +701,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 			/* Ignore errors -- we're already in an error handler */
 			GalleryCoreApi::releaseLocks($lockIds);
 		    }
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		$createdNewParentThumbnail = true;
@@ -717,7 +717,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 			/* Ignore errors -- we're already in an error handler */
 			GalleryCoreApi::releaseLocks($lockIds);
 		    }
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		$parentId = $item->getParentId();
@@ -732,7 +732,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 			/* Ignore errors -- we're already in an error handler */
 			GalleryCoreApi::releaseLocks($lockIds);
 		    }
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		foreach ($preferences as $preference) {
@@ -746,7 +746,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		    if (!empty($lockIds)) {
 			GalleryCoreApi::releaseLocks($lockIds);
 		    }
-		    return array(GalleryCoreApi::error(ERROR_MISSING_VALUE, __FILE__, __LINE__),
+		    return array(GalleryCoreApi::error(ERROR_MISSING_VALUE),
 				 null);
 		}
 	    }
@@ -764,7 +764,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 			/* Ignore errors -- we're already in an error handler */
 			GalleryCoreApi::releaseLocks($lockIds);
 		    }
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		if ($isSupported) {
@@ -786,7 +786,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 			/* Ignore errors -- we're already in an error handler */
 			GalleryCoreApi::releaseLocks($lockIds);
 		    }
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		$ret = $derivative->save();
@@ -795,14 +795,14 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 			/* Ignore errors -- we're already in an error handler */
 			GalleryCoreApi::releaseLocks($lockIds);
 		    }
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 
 	    if (!empty($lockIds)) {
 		$ret = GalleryCoreApi::releaseLocks($lockIds);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	}
@@ -815,14 +815,14 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	if ($success && !empty($parentId) && $createdNewParentThumbnail) {
 	    list ($ret, $thumbTable) = GalleryCoreApi::fetchThumbnailsByItemIds(array($parentId));
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    if (empty($thumbTable)) {
 		list ($ret, $success) =
 		    GalleryItemHelper_medium::setThumbnailFromItem($parentId, $itemId);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	}
@@ -856,7 +856,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	    $ret = GalleryCoreApi::removeMapEntry(
 		'GalleryDescendentCountsMap', array('userId' => $userId));
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
@@ -876,7 +876,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 			 */
 			continue;
 		    }
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 		foreach ($parentSequence as $parentId) {
 		    $ids[$parentId] = true;
@@ -891,7 +891,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		}
 		$ret = GalleryCoreApi::removeMapEntry('GalleryDescendentCountsMap', $data);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	}
@@ -911,7 +911,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	    $ret = GalleryItemHelper_medium::invalidateDescendentCountCaches(
 		$param['userId'], $param['itemId']);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	} else if ($event->getEventName() == 'Gallery::RemovePermission') {
 	    /*
@@ -944,7 +944,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	    foreach (array('core.view', 'core.viewResizes', 'core.viewSource') as $permissionId) {
 		list ($ret, $bits[]) = GalleryCoreApi::convertPermissionIdsToBits($permissionId);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 
@@ -952,12 +952,12 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	    list ($ret, $anonymousUserId) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($anonymousUserId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    $groupIds = array_keys($groupIds);
 	    $groupIntersect = array_intersect(array($param['groupId']), $groupIds);
@@ -1006,13 +1006,13 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		list ($ret, $thumbnails) =
 		    GalleryCoreApi::fetchThumbnailsByItemIds($thumbnailIds);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		$targetDerivatives = $thumbnails;
 
 		list ($ret, $resizes) = GalleryCoreApi::fetchResizesByItemIds($resizeIds);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		foreach ($resizes as $resize) {
 		    $targetDerivatives = array_merge($targetDerivatives, $resize);
@@ -1020,7 +1020,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 
 		list ($ret, $preferreds) = GalleryCoreApi::fetchPreferredsByItemIds($preferredIds);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		$targetDerivatives = array_merge($targetDerivatives, $preferreds);
 
@@ -1042,7 +1042,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 
 	    $ret = GalleryDataCache::removePageData($expireItemIds);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 

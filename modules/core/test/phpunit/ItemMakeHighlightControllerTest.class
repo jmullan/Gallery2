@@ -48,7 +48,7 @@ class ItemMakeHighlightControllerTest extends GalleryControllerTestCase {
 	    'coreTest', null);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markToolkitForCleanup('ItemMakeHighlightTestToolkit');
 
@@ -60,27 +60,27 @@ class ItemMakeHighlightControllerTest extends GalleryControllerTestCase {
 	    'test-description');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_album);
 
 	list ($ret, $this->_subalbum) = $this->_createRandomAlbum($this->_album->getId());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_item) =
 	    $this->_createRandomDataItem($this->_subalbum->getId(), 'test/file');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_derivative) =
@@ -88,7 +88,7 @@ class ItemMakeHighlightControllerTest extends GalleryControllerTestCase {
 				     DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'thumbnail|200');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -113,7 +113,7 @@ class ItemMakeHighlightControllerTest extends GalleryControllerTestCase {
 	list ($ret, $thumbnail) =
 	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_subalbum->getId()));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	if (!empty($thumbnail)) {
 	    $thumbnail = array_shift($thumbnail);
@@ -135,7 +135,7 @@ class ItemMakeHighlightControllerTest extends GalleryControllerTestCase {
 	list ($ret, $thumbnail) =
 	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_album->getId()));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	if (!empty($thumbnail)) {
 	    $thumbnail = array_shift($thumbnail);

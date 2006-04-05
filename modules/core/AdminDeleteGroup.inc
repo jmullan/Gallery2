@@ -42,7 +42,7 @@ class AdminDeleteGroupController extends GalleryController {
     function handleRequest($form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$results = $status = $error = array();
@@ -59,12 +59,12 @@ class AdminDeleteGroupController extends GalleryController {
 	    /* Only allow users to delete GROUP_NORMAL groups. */
 	    list ($ret, $group) = GalleryCoreApi::loadEntitiesById($groupId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    $ret = GalleryCoreApi::deleteEntityById($group->getId());
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    
 	    /* Request a redirect to the confirmation screen */
@@ -100,13 +100,13 @@ class AdminDeleteGroupView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$groupId = GalleryUtilities::getRequestVariables('groupId');
 	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($groupId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
         if ($form['formName'] != 'AdminDeleteGroup') {

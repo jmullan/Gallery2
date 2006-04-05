@@ -48,7 +48,7 @@ class CustomFieldItemAdminControllerTest extends GalleryControllerTestCase {
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_markForCleanup($this->_album);
@@ -57,13 +57,13 @@ class CustomFieldItemAdminControllerTest extends GalleryControllerTestCase {
 		'image/test', array(), __FILE__, 'GalleryPhotoItem');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'customfield');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = CustomFieldHelper::saveParameters(array(
@@ -81,14 +81,14 @@ class CustomFieldItemAdminControllerTest extends GalleryControllerTestCase {
 	));
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = CustomFieldHelper::saveFieldValues($this->_item,
 				  array('Catalog Id' => 'A2', 'Category' => 'A'));
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -109,7 +109,7 @@ class CustomFieldItemAdminControllerTest extends GalleryControllerTestCase {
 	list ($ret, $data, $tmp, $isContainer) =
 		CustomFieldHelper::fetchFieldValues(array($this->_item));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(array('Catalog Id' => 'A2', 'Category' => 'A'),
 		$data[$this->_item->getId()], 'Field values');
@@ -144,7 +144,7 @@ class CustomFieldItemAdminControllerTest extends GalleryControllerTestCase {
 	$ret = CustomFieldHelper::saveFieldValues($this->_item,
 				  array('Catalog Id' => 'A3', 'Category' => 'B', 'Dummy' => 'X'));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	// Revert to global settings..
@@ -160,7 +160,7 @@ class CustomFieldItemAdminControllerTest extends GalleryControllerTestCase {
 	list ($ret, $data, $tmp, $isContainer) =
 		CustomFieldHelper::fetchFieldValues(array($this->_item));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(array('Catalog Id' => 'A3', 'Category' => 'B'),
 		$data[$this->_item->getId()], 'Field values');

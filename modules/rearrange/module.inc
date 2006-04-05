@@ -64,7 +64,7 @@ class RearrangeModule extends GalleryModule {
 	     */
 	    list ($ret, $childCounts) = GalleryCoreApi::fetchChildCounts($itemIds);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    foreach ($itemIds as $itemId) {
@@ -95,11 +95,11 @@ class RearrangeModule extends GalleryModule {
 
 	list ($ret, $permissions) = GalleryCoreApi::getPermissions($item->getId());
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	list ($ret, $childCounts) = GalleryCoreApi::fetchChildCounts(array($item->getId()));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$childCount = empty($childCounts[$item->getId()]) ? 0 : $childCounts[$item->getId()];
 

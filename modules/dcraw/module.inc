@@ -57,7 +57,7 @@ class DcrawModule extends GalleryModule {
 	    'GalleryToolkit', 'DcrawToolkit', 'Dcraw',
 	    'modules/dcraw/classes/DcrawToolkit.class', 'dcraw', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -71,13 +71,13 @@ class DcrawModule extends GalleryModule {
 
         list ($ret, $priority) = GalleryCoreApi::getToolkitPriorityById('Dcraw');
         if ($ret) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
+            return array($ret, null);
         }
 
         if (!$priority) {
 	    list ($ret, $priority) = GalleryCoreApi::getMaximumManagedToolkitPriority();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    $priority++;
 	}
@@ -86,14 +86,14 @@ class DcrawModule extends GalleryModule {
 	    'Dcraw', array('image/x-dcraw'), 'convert-to-image/x-portable-pixmap',
 	    array(), $gallery->i18n('Convert to PPM'), 'image/x-portable-pixmap', $priority);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$ret = GalleryCoreApi::registerToolkitProperty(
 	    'Dcraw', array('image/x-dcraw'), 'dimensions', 'int,int',
 	    $gallery->i18n('Get the width and height of the image'));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Assign all extensions we handle to our image mime type */
@@ -103,7 +103,7 @@ class DcrawModule extends GalleryModule {
 	    $ret = GalleryCoreApi::addMimeType($extension, 'image/x-dcraw', 0);
 	    if ($ret) {
 		if (!($ret->getErrorCode() & ERROR_COLLISION)) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	}
@@ -113,22 +113,22 @@ class DcrawModule extends GalleryModule {
 
 	list ($ret, $path) = $this->getParameter('path');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $testResults, $version) = DcrawToolkitHelper::testBinary($path);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$ret = $this->setParameter('version', $version);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $redirect) = parent::activate($postActivationEvent);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $redirect);
@@ -145,12 +145,12 @@ class DcrawModule extends GalleryModule {
 	 */
 	$ret = GalleryCoreApi::unregisterToolkit('Dcraw');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $redirect) = parent::deactivate($postDeactivationEvent);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $redirect);
@@ -162,12 +162,12 @@ class DcrawModule extends GalleryModule {
     function needsConfiguration() {
 	list ($ret, $path) = $this->getParameter('path');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $version) = $this->getParameter('version');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, empty($path) || empty($version));
@@ -181,7 +181,7 @@ class DcrawModule extends GalleryModule {
 
 	list ($ret, $needsConfiguration) = $this->needsConfiguration();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), false);
+	    return array($ret, false);
 	}
 
 	if (!$needsConfiguration) {
@@ -259,7 +259,7 @@ class DcrawModule extends GalleryModule {
 		/* We have a winner */
 		$ret = GalleryCoreApi::setPluginParameter('module', 'dcraw', 'path', $path);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), false);
+		    return array($ret, false);
 		}
 
 		return array(null, true);

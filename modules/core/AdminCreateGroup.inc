@@ -42,7 +42,7 @@ class AdminCreateGroupController extends GalleryController {
     function handleRequest($form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$results = $status = $error = array();
@@ -61,18 +61,18 @@ class AdminCreateGroupController extends GalleryController {
 		list ($ret, $group) =
 		    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryGroup');
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		if (!isset($group)) {
-		    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
+		    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT),
 				 null);
 		}
 
 		$ret = $group->create($form['groupName']);
 		if ($ret) {
 		    if (!($ret->getErrorCode() & ERROR_COLLISION)) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 
 		    // Set our error status and fall back to the view.
@@ -80,7 +80,7 @@ class AdminCreateGroupController extends GalleryController {
 		} else {
 		    $ret = $group->save();
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 
 		    /* Request a redirect to the confirmation screen */
@@ -121,7 +121,7 @@ class AdminCreateGroupView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if ($form['formName'] != 'AdminCreateGroup') {

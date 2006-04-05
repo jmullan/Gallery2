@@ -47,29 +47,29 @@ class UserAlbumTest extends GalleryTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'useralbum');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'create', 'immediate');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'view', 'allusers');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'fullSize', '0');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_parentAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_parentAlbum);
 
@@ -77,26 +77,26 @@ class UserAlbumTest extends GalleryTestCase {
 						  'targetLocation', $this->_parentAlbum->getId());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'loginRedirect', '1');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'homeLink', '1');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_allUserGroupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -106,25 +106,25 @@ class UserAlbumTest extends GalleryTestCase {
 	/* Create new user.. */
 	list ($ret, $user) = $this->_createRandomUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($user);
 
 	/* Retrieve the parent album's logical path */
 	list($ret, $parentPath) = $this->_parentAlbum->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Verify user's album was created.. */
 	list ($ret, $albumId) =
 	    GalleryCoreApi::fetchItemIdByPath($parentPath . '/' . $user->getUserName());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	list ($ret, $album) = GalleryCoreApi::loadEntitiesById($albumId);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert(GalleryUtilities::isA($album, 'GalleryAlbumItem'), 'album');
 	$this->assertEquals($user->getId(), $album->getOwnerId(), 'owner');
@@ -132,7 +132,7 @@ class UserAlbumTest extends GalleryTestCase {
 	/* Verify permissions.. */
 	list ($ret, $permissions) = GalleryCoreApi::fetchAllPermissionsForItem($albumId);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$seenViewResizes = $seenViewSource = false;
@@ -154,7 +154,7 @@ class UserAlbumTest extends GalleryTestCase {
 	list ($ret, $subalbum) =
 	    $this->_createRandomAlbum($albumId, array('ownerId' => $user->getId()));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Verify login redirect.. */
@@ -162,14 +162,14 @@ class UserAlbumTest extends GalleryTestCase {
 	$event->setEntity($user);
 	list ($ret, $result) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(array(array('controller' => 'useralbum.UserAlbum')),
 			    $result, 'login redirect');
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'loginRedirect', '0');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Verify no login redirect.. */
@@ -177,7 +177,7 @@ class UserAlbumTest extends GalleryTestCase {
 	$event->setEntity($user);
 	list ($ret, $result) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(array(), $result, 'no login redirect');
 
@@ -185,11 +185,11 @@ class UserAlbumTest extends GalleryTestCase {
 	$gallery->setActiveUser($user);
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'useralbum');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	list ($ret, $links) = $module->getSystemLinks();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(array('YourAlbum' => array('text' => $module->translate('Your Album'),
 			      'params' => array('view' => 'core.ShowItem', 'itemId' => $albumId))),
@@ -197,13 +197,13 @@ class UserAlbumTest extends GalleryTestCase {
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'homeLink', '0');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Verify no system link.. */
 	list ($ret, $links) = $module->getSystemLinks();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(array(), $links, 'no system link');
     }
@@ -211,32 +211,32 @@ class UserAlbumTest extends GalleryTestCase {
     function testUserAlbumDeleteTarget() {
 	list ($ret, $album) = $this->_createRandomAlbum($this->_parentAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum',
 						  'targetLocation', $album->getId());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::deleteEntityById($album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $targetLocation) =
 	    GalleryCoreApi::getPluginParameter('module', 'useralbum', 'targetLocation');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $rootAlbum) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assert($targetLocation == $rootAlbum,
@@ -250,26 +250,26 @@ class UserAlbumTest extends GalleryTestCase {
 	 */
 	list ($ret, $user) = $this->_createRandomUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($user);
 
 	list ($ret, $userAlbum) = GalleryCoreApi::getPluginParameter('module', 'useralbum',
 								     'albumId', $user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert(!empty($userAlbum), 'User should have valid album');
 
 	$ret = GalleryCoreApi::deleteEntityById($userAlbum);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $userAlbum) = GalleryCoreApi::getPluginParameter('module', 'useralbum',
 								     'albumId', $user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert(!isset($userAlbum), 'User album should be empty');
     }
@@ -281,22 +281,22 @@ class UserAlbumTest extends GalleryTestCase {
 	/* Create album that will collide.. */
 	list ($ret, $album) = $this->_createRandomAlbum($this->_parentAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = $album->rename($userName);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list($ret, $parentPath) = $this->_parentAlbum->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Create new user.. */
 	list ($ret, $user) = $this->_createRandomUser($userString);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($user);
 
@@ -304,11 +304,11 @@ class UserAlbumTest extends GalleryTestCase {
 	list ($ret, $albumId) =
 	    GalleryCoreApi::fetchItemIdByPath($parentPath . '/' . $user->getUserName() . '_');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	list ($ret, $album) = GalleryCoreApi::loadEntitiesById($albumId);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert(GalleryUtilities::isA($album, 'GalleryAlbumItem'), 'album');
 	$this->assertEquals($user->getId(), $album->getOwnerId(), 'owner');

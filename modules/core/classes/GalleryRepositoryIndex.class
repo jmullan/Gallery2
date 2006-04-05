@@ -106,12 +106,12 @@ class GalleryRepositoryIndex {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core',
 						  'repository.updateTime', time());
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = $this->unserializeIndex($indexContents);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	return null;
     }
@@ -136,7 +136,7 @@ class GalleryRepositoryIndex {
 	list ($ret, $timestamp) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'repository.updateTime');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, array('timestamp' => $timestamp,
@@ -171,7 +171,7 @@ class GalleryRepositoryIndex {
 
 	$ret = $this->unserializeIndex($index);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	return null;
     }
@@ -234,7 +234,7 @@ class GalleryRepositoryIndex {
 
 	list ($ret, $isAvailable) = $this->_utilities->isPluginAvailable($pluginType, $pluginId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/*
@@ -245,7 +245,7 @@ class GalleryRepositoryIndex {
 	    list ($ret, $revision) =
 		$this->_utilities->getLanguageBaseRevision($pluginType, $pluginId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	} else {
 	    $revision = $this->_index[$pluginType . 's'][$pluginId]['header']['stringsRevision'];
@@ -293,7 +293,7 @@ class GalleryRepositoryIndex {
 	/* Make sure description exists in current language. */
 	list ($ret, $language) = $gallery->getActiveLanguageCode();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Fall back to en_US if the description is not available in the active language. */
@@ -329,7 +329,7 @@ class GalleryRepositoryIndex {
 
 	list ($ret, $header) = $this->getPluginHeader($pluginType, $pluginId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, sprintf('%ss/%s-%s-%s.descriptor',
@@ -349,7 +349,7 @@ class GalleryRepositoryIndex {
 	list ($ret, $version, $build) =
 	    $this->getPackageVersionAndBuild($pluginType, $pluginId, $package);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if (preg_match('/^lang-(.._..)$/', $package)) {
@@ -384,14 +384,14 @@ class GalleryRepositoryIndex {
 
 	list ($ret, $header) = $this->getPluginHeader($pluginType, $pluginId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	if (preg_match('/^lang-(.._..)$/', $package, $languageCode)) {
 	    list ($ret, $isAvailable) =
 		$this->_utilities->isPluginAvailable($pluginType, $pluginId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    $languageCode = $languageCode[1];
 	    $languages = $this->_index[$pluginType . 's'][$pluginId]['languages'];
@@ -401,7 +401,7 @@ class GalleryRepositoryIndex {
 		list ($ret, $baseRevision) =
 		    $this->_utilities->getLanguageBaseRevision($pluginType, $pluginId);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret, null, null);
 		}
 	    } else {
 		/* Get strings revision from index, since this plugin isn't locally available. */
@@ -454,14 +454,14 @@ class GalleryRepositoryIndex {
 		list ($ret, $isPluginAvailable) =
 		    $this->_utilities->isPluginAvailable($pluginType, $pluginId);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		if ($isPluginAvailable) {
 		    list ($ret, $version) =
 			$this->_utilities->getPluginVersion($pluginType, $pluginId);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		    $pluginList[$pluginType][$pluginId]['localVersion'] = $version;
 		}

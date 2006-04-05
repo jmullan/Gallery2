@@ -51,7 +51,7 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 	list ($ret, $this->_user) = $this->_createUser();
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_markForCleanup($this->_user);
@@ -63,7 +63,7 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 	list ($ret, $this->_watermark) = $this->_createWatermark();
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -73,18 +73,18 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 	$watermark = new WatermarkImage();
 	$ret = $watermark->create(__FILE__, 'test/file', 'phpunit_' . rand() . '.gif');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$ret = $watermark->save();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$ret = GalleryCoreApi::addUserPermission($watermark->getId(),
 						 $gallery->getActiveUserId(), 'core.all');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $watermark);
@@ -95,7 +95,7 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 	    $ret = GalleryCoreApi::deleteEntityById($this->_idToDelete);
 	    if ($ret) {
 		print $ret->getAsHtml();
-		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		$this->failWithStatus($ret);
 	    }
 	}
 	parent::tearDown();
@@ -121,7 +121,7 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 	// Verify the watermark
 	list ($ret, $this->_watermark) = $this->_watermark->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals('foo bar', $this->_watermark->getName());
@@ -150,7 +150,7 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 	// Verify the watermark
 	list ($ret, $this->_watermark) = $this->_watermark->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals('foo bar', $this->_watermark->getName());
@@ -176,7 +176,7 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 	// Verify the watermark
 	list ($ret, $this->_watermark) = $this->_watermark->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(1, $this->_watermark->getSerialNumber());
@@ -185,7 +185,7 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
     function testEditWatermarkDuplicateName() {
 	list ($ret, $watermark) = $this->_createWatermark();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryUtilities::putRequestVariable('watermarkId', $this->_watermark->getId());
@@ -208,7 +208,7 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 	$gallery->setActiveUser($this->_saveUser);
 	list ($ret, $watermark) = $this->_createWatermark();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_idToDelete = $watermark->getId();
 	$gallery->setActiveUser($this->_user);
@@ -230,7 +230,7 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 	// Verify the watermark
 	list ($ret, $this->_watermark) = $this->_watermark->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals($watermark->getName(), $this->_watermark->getName());
@@ -255,7 +255,7 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 	// Verify the watermark
 	list ($ret, $this->_watermark) = $this->_watermark->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(1, $this->_watermark->getSerialNumber());
@@ -279,7 +279,7 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 	// Verify the watermark
 	list ($ret, $this->_watermark) = $this->_watermark->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals('100', $this->_watermark->getXPercentage());

@@ -260,7 +260,7 @@ class AdminRepositoryControllerTest extends GalleryControllerTestCase {
 
 	$ret = $mockAdapter->runCallbacks();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(array('0.25', '0.5', '0.75', '1', '1',

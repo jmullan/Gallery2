@@ -49,7 +49,7 @@ class ViewTest extends GalleryTestCase {
     function testLoadViewSuccess() {
 	list ($ret, $view) = GalleryView::loadView('core.ShowItem');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -69,19 +69,19 @@ class ViewTest extends GalleryTestCase {
 	 */
 	list ($ret, $view) = GalleryView::loadView('viewtest.ViewTestConfig');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
     function testGetItem() {
 	list ($ret, $view) = GalleryView::loadView('core.ShowItemError');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($album);
 
@@ -89,7 +89,7 @@ class ViewTest extends GalleryTestCase {
 
 	list ($ret, $item, $wasSpecified) = $view->_getItem();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($wasSpecified, 'itemId specified');
 	$this->assertEquals($album->getId(), $item->getId(), 'itemId');
@@ -98,7 +98,7 @@ class ViewTest extends GalleryTestCase {
 
 	list ($ret, $item, $wasSpecified) = $view->_getItem();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert(!$wasSpecified, 'not specified');
 	$this->assertEquals($this->_getRootId(), $item->getId(), 'root album by default');
@@ -106,12 +106,12 @@ class ViewTest extends GalleryTestCase {
 	/* ShowItem view returns wasSpecified==true even when root album selected by default */
 	list ($ret, $view) = GalleryView::loadView('core.ShowItem');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $item, $wasSpecified) = $view->_getItem();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($wasSpecified, 'ShowItem specified');
 	$this->assertEquals($this->_getRootId(), $item->getId(), 'ShowItem root album by default');

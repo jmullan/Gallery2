@@ -49,7 +49,7 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
 	list ($ret) = GalleryCoreApi::getPermissionIds();
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_platform = new UnitTestPlatform();
@@ -65,7 +65,7 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
 		'This is my description', null);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_markForCleanup($this->_temporaryAlbum);
@@ -73,14 +73,14 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
 	    GalleryCoreApi::acquireReadLock($this->_temporaryAlbum->getId());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
     function tearDown() {
 	$ret = GalleryCoreApi::releaseLocks($this->_lockIds);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assert($this->_platform->isComplete(), $this->_platform->getRemaining());
@@ -151,7 +151,7 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
         list ($ret, $unzip) =
             GalleryCoreApi::getPluginParameter('module', 'archiveupload', 'unzipPath');
         if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
         }
         $this->_platform->setReply('exec',
             array(array(array('0' => $unzip, '1' => '/picasaimport.tmp'))), array(true));
@@ -212,7 +212,7 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
         /* Verify item attributes (like order weight) */
         list ($ret, $itemIds) = GalleryCoreApi::fetchChildItemIds($this->_temporaryAlbum);
         if ($ret) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+            return $this->failWithStatus($ret);
         }
         /* There should have been one album imported */
         $this->assertEquals(1, count($itemIds), 'child count 1');
@@ -221,7 +221,7 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
 
         list ($ret, $itemIds) = GalleryCoreApi::fetchChildItemIds($importedAlbum);
         if ($ret) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+            return $this->failWithStatus($ret);
         }
         /* There should have been one album imported */
         $this->assertEquals(3, count($itemIds), 'child count');
@@ -230,13 +230,13 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
         foreach ($ids as $id) {
             list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCount($id);
             if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
             }
             $this->assertEquals(0, $viewCount);
 
             list ($ret, $orderWeight) = GalleryCoreApi::fetchItemOrderWeight($id);
             if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
             }
             $this->assert(!isset($seenWeights[$orderWeight]), 'Seen this weight before');
             $seenWeights[$orderWeight] = 1;
@@ -244,7 +244,7 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
 
         list ($ret, $items) = GalleryCoreApi::loadEntitiesById($ids);
         if ($ret) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+            return $this->failWithStatus($ret);
         }
 
         $i = 0;

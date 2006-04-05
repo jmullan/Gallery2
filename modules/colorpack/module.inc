@@ -52,7 +52,7 @@ class ColorPackModule extends GalleryModule {
 	    'ColorPackInterface_1_0', 'ColorPackImpl', 'ColorPack',
 	    'modules/colorpack/classes/ColorPackImpl.class', 'colorpack', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;

@@ -241,19 +241,19 @@ function selectAdminUser() {
     list ($ret, $siteAdminGroupId) =
 	GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
     if ($ret) {
-	return $ret->wrap(__FILE__, __LINE__);
+	return $ret;
     }
     list ($ret, $adminUserInfo) = GalleryCoreApi::fetchUsersForGroup($siteAdminGroupId, 1);
     if ($ret) {
-	return $ret->wrap(__FILE__, __LINE__);
+	return $ret;
     }
     if (empty($adminUserInfo)) {
-	return GalleryCoreApi::error(ERROR_MISSING_VALUE, __FILE__, __LINE__);
+	return GalleryCoreApi::error(ERROR_MISSING_VALUE);
     }
     $adminUserInfo = array_keys($adminUserInfo);
     list ($ret, $adminUser) = GalleryCoreApi::loadEntitiesById($adminUserInfo[0]);
     if ($ret) {
-	return $ret->wrap(__FILE__, __LINE__);
+	return $ret;
     }
 
     $gallery->setActiveUser($adminUser);

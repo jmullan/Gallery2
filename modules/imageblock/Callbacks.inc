@@ -41,7 +41,7 @@ class ImageBlockCallbacks {
 		list ($ret, $moduleParams) =
 		    GalleryCoreApi::fetchAllPluginParameters('module', 'imageblock');
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 
 		$showMap = array_flip(explode('|', $moduleParams['show']));
@@ -81,13 +81,13 @@ class ImageBlockCallbacks {
 
 	    $ret = ImageBlockHelper::loadImageBlocks($template, $params);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    return null;
 	}
 
-	return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
     }
 }
 ?>

@@ -43,11 +43,11 @@ class ItemEditTheme extends ItemEditPlugin {
 
 	list ($ret, $themeId) = GalleryCoreApi::fetchThemeId($item);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+	    return array($ret, null, null, null);
 	}
 	list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+	    return array($ret, null, null, null);
 	}
 
 	$status = null;
@@ -56,13 +56,13 @@ class ItemEditTheme extends ItemEditPlugin {
 	if ($theme->isAdvancedSettings()) {
 	    list ($ret, $error, $status) = $theme->handleSettingsRequest($form, $item->getId());
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+		return array($ret, null, null, null);
 	    }
 	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+	    return array($ret, null, null, null);
 	}
 
 	if (isset($form['action']['save']) && empty($error)) {
@@ -72,14 +72,14 @@ class ItemEditTheme extends ItemEditPlugin {
 		/* Get the item settings */
 		list ($ret, $settings) = $theme->getSettings($item->getId());
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+		    return array($ret, null, null, null);
 		}
 
 		if (isset($form['changeInDescendents'])) {
 		    list ($ret, $subAlbumIds) =
 			GalleryCoreApi::fetchDescendentAlbumItemIds($item);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+			return array($ret, null, null, null);
 		    }
 		    array_unshift($subAlbumIds, $item->getId());
 		} else {
@@ -98,7 +98,7 @@ class ItemEditTheme extends ItemEditPlugin {
 		    if (!empty($form['useGlobal'][$key])) {
 			$ret = $theme->removeParameter($key, $subAlbumIds);
 			if ($ret) {
-			    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+			    return array($ret, null, null, null);
 			}
 		    } else {
 			if ($setting['type'] == 'checkbox') {
@@ -114,7 +114,7 @@ class ItemEditTheme extends ItemEditPlugin {
 
 			$ret = $theme->setParameter($key, $value, $subAlbumIds);
 			if ($ret) {
-			    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+			    return array($ret, null, null, null);
 			}
 		    }
 		}
@@ -143,17 +143,17 @@ class ItemEditTheme extends ItemEditPlugin {
 
 	list ($ret, $themeId) = GalleryCoreApi::fetchThemeId($item);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	if ($theme->isAdvancedSettings()) {
 	    list ($ret, $tpl) = $theme->loadSettingsTemplate($template, $form, $item->getId());
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    $ItemEditTheme['customTemplate'] = $tpl;
 	}
@@ -161,14 +161,14 @@ class ItemEditTheme extends ItemEditPlugin {
 	/* Get the per-item settings (global + item) */
 	list ($ret, $settings) = $theme->getSettings($item->getId());
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	/* Fetch the global-only params */
 	list ($ret, $globalParams) =
 	    GalleryCoreApi::fetchAllPluginParameters('theme', $theme->getId());
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	for ($i = 0; $i < count($settings); $i++) {
@@ -187,7 +187,7 @@ class ItemEditTheme extends ItemEditPlugin {
 	list ($ret, $itemParams) =
 	    GalleryCoreApi::fetchAllPluginParameters('theme', $theme->getId(), $item->getId());
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	if ($form['formName'] != 'ItemEditTheme') {
@@ -213,7 +213,7 @@ class ItemEditTheme extends ItemEditPlugin {
 
 	list ($ret, $ItemEditTheme['availableBlocks']) = $this->loadAvailableBlocks();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	$ItemEditTheme['theme']['name'] = $theme->getName();
@@ -239,7 +239,7 @@ class ItemEditTheme extends ItemEditPlugin {
     function getTitle() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $module->translate('Theme'));
@@ -256,7 +256,7 @@ class ItemEditTheme extends ItemEditPlugin {
 	GalleryCoreApi::requireOnce('modules/core/AdminThemes.inc');
 	list ($ret, $blocks) = AdminThemesView::loadAvailableBlocks();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $blocks);

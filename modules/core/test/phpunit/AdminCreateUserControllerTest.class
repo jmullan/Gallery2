@@ -67,7 +67,7 @@ class AdminCreateUserControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $user) = GalleryCoreApi::fetchUserByUserName($userName);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($user);
 
@@ -94,7 +94,7 @@ class AdminCreateUserControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $user) = GalleryCoreApi::fetchUserByUserName($userName);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($user);
 
@@ -168,7 +168,7 @@ class AdminCreateUserControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $user) = GalleryCoreApi::fetchUserByUserName($userName);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($user);
     }

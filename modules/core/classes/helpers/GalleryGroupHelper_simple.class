@@ -85,7 +85,7 @@ class GalleryGroupHelper_simple {
 			     array('limit' => array('count' => $count,
 						    'offset' => $offset)));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$groupnames = array();
@@ -125,7 +125,7 @@ class GalleryGroupHelper_simple {
 
 	list ($ret, $searchResults) = $gallery->search($query, $data);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$groupnames = array();
@@ -154,17 +154,17 @@ class GalleryGroupHelper_simple {
         ';
 	list ($ret, $searchResults) = $gallery->search($query, array($groupName));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if ($searchResults->resultCount() == 0) {
-	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
 	} else {
 	    $result = $searchResults->nextResult();
 	    $id = $result[0];
 	    list ($ret, $group) = GalleryCoreApi::loadEntitiesById($id);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    return array(null, $group);

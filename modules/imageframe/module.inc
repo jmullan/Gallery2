@@ -52,7 +52,7 @@ class ImageFrameModule extends GalleryModule {
 	    'ImageFrameInterface_1_1', 'ImageFrameImpl', 'ImageFrame',
 	    'modules/imageframe/classes/ImageFrameImpl.class', 'imageframe', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;

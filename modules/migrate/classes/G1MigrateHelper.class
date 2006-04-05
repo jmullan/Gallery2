@@ -47,7 +47,7 @@ class G1MigrateHelper {
 
 	list ($ret, $searchResults) = $gallery->search($query, array(), array());
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$count = 0;
@@ -82,7 +82,7 @@ class G1MigrateHelper {
 
 	list ($ret, $searchResults) = $gallery->search($query, $data);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$id = null;

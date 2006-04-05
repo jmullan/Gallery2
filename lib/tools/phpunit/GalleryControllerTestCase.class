@@ -45,7 +45,7 @@ class GalleryControllerTestCase extends GalleryTestCase {
 	GalleryCoreApi::requireOnce('modules/core/classes/GalleryController.class');
 	list ($ret, $this->_controller) = GalleryController::loadController($controllerName);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -71,7 +71,7 @@ class GalleryControllerTestCase extends GalleryTestCase {
 			join(' | ', GalleryStatus::getErrorCodeConstants($ret->getErrorCode()))));
 	    }
 	} else if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	} else {
 	    /* Check to make sure we got back everything we want */
 	    $this->assert(isset($results['status']), 'controller results missing status');

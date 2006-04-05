@@ -78,13 +78,13 @@ class ThumbnailModule extends GalleryModule {
 	    list ($ret, $rootId) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    $storage =& $gallery->getStorage();
 	    $ret = $storage->configureStore($this->getId(), array('ThumbnailImage:1.0'));
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    $query = '
@@ -93,7 +93,7 @@ class ThumbnailModule extends GalleryModule {
 	    ';
 	    $ret = $storage->execute($query);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	case '0.8.3':
@@ -124,7 +124,7 @@ class ThumbnailModule extends GalleryModule {
 	    list ($ret, $rootId) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    $query = '
 	    SELECT
@@ -138,7 +138,7 @@ class ThumbnailModule extends GalleryModule {
 	    ';
 	    list ($ret, $results) = $gallery->search($query, array((int)$rootId));
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    $ids = array();
 	    while ($result = $results->nextResult()) {
@@ -149,12 +149,12 @@ class ThumbnailModule extends GalleryModule {
 	    if (!empty($ids)) {
 		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($ids);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 
 		list ($ret, $thumbs) = GalleryCoreApi::loadEntitiesById($ids);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 
 		foreach ($thumbs as $thumb) {
@@ -162,13 +162,13 @@ class ThumbnailModule extends GalleryModule {
 		    $ret = $thumb->save();
 		    if ($ret) {
 			GalleryCoreApi::releaseLocks($lockId);
-			return $ret->wrap(__FILE__, __LINE__);
+			return $ret;
 		    }
 		}
 
 		$ret = GalleryCoreApi::releaseLocks($lockId);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 
@@ -207,21 +207,21 @@ class ThumbnailModule extends GalleryModule {
 	    'GalleryEntity', 'ThumbnailImage', 'ThumbnailImage',
 	    'modules/thumbnail/classes/ThumbnailImage.class', 'thumbnail', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GalleryToolkit', 'ThumbnailToolkit', 'Thumbnail',
 	    'modules/thumbnail/classes/ThumbnailToolkit.class', 'thumbnail', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'ItemEditOption', 'CustomThumbnailOption', 'CustomThumbnailOption',
 	    'modules/thumbnail/CustomThumbnailOption.inc', 'thumbnail', array('ItemEditItem'));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -251,21 +251,21 @@ class ThumbnailModule extends GalleryModule {
 	/* Register toolkit operation for any mime type settings already in the database */
 	list ($ret, $mimeTypeMap) = ThumbnailHelper::fetchMimeTypeMap();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (!empty($mimeTypeMap)) {
 	    $ret = GalleryCoreApi::registerToolkitOperation('Thumbnail',
 				   array_keys($mimeTypeMap), 'convert-to-image/jpeg', array(),
 				   $gallery->i18n('Convert to a JPEG'), 'image/jpeg', 50);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 
 	/* Set some defaults if not already supported */
 	list ($ret, $toolkitMime) = ThumbnailHelper::fetchToolkitSupport();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$itemId = array();
 	GalleryCoreApi::requireOnce('modules/thumbnail/classes/ThumbnailImage.class');
@@ -283,12 +283,12 @@ class ThumbnailModule extends GalleryModule {
 			    array('width' => 400, 'height' => 352),
 			    new ThumbnailImage());
 			if ($ret) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
+			    return array($ret, null);
 			}
 		    } else {
 			$ret = ThumbnailHelper::updateItem($itemId[$mimeImage], $mime);
 			if ($ret) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
+			    return array($ret, null);
 			}
 		    }
 		}
@@ -297,7 +297,7 @@ class ThumbnailModule extends GalleryModule {
 
 	list ($ret, $redirect) = parent::activate($postActivationEvent);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $redirect);
@@ -311,13 +311,13 @@ class ThumbnailModule extends GalleryModule {
 
 	list ($ret, $redirect) = parent::deactivate($postDeactivationEvent);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Unregister all of our properties and operations */
 	$ret = GalleryCoreApi::unregisterToolkit('Thumbnail');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $redirect);
@@ -339,7 +339,7 @@ class ThumbnailModule extends GalleryModule {
 	';
 	list ($ret, $searchResults) = $gallery->search($query);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	while ($result = $searchResults->nextResult()) {
 	    $itemIds[] = (int)$result[0];
@@ -347,19 +347,19 @@ class ThumbnailModule extends GalleryModule {
 	while (!empty($itemIds)) {
 	    list ($ret, $items) = GalleryCoreApi::loadEntitiesById(array_splice($itemIds, 0, 100));
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    foreach ($items as $item) {
 		$ret = ThumbnailHelper::restoreThumbnail($item);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	}
 
 	$ret = parent::uninstall();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	return null;
     }
@@ -391,12 +391,12 @@ class ThumbnailModule extends GalleryModule {
 		    /* Already gone.. ok! */
 		    return array(null, null);
 		}
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    if (GalleryUtilities::isA($source, 'ThumbnailImage')) {
 		$ret = GalleryCoreApi::deleteEntityById($source->getId());
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	}

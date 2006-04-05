@@ -46,12 +46,12 @@ class DatabaseLockSystem extends GalleryLockSystem {
 	if ($lockType == LOCK_WRITE) {
 	    list ($ret, $lock) = $storage->acquireWriteLock($ids, $timeout);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	} else {
 	    list ($ret, $lock) = $storage->acquireReadLock($ids, $timeout);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 
@@ -68,7 +68,7 @@ class DatabaseLockSystem extends GalleryLockSystem {
 
 	$ret = $storage->releaseLocks(array_keys($locks));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -83,7 +83,7 @@ class DatabaseLockSystem extends GalleryLockSystem {
 
 	$ret = $storage->removeIdsFromLock($lock, $ids);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	foreach ($ids as $id) {
 	    unset($lock['ids'][$id]);
@@ -101,11 +101,11 @@ class DatabaseLockSystem extends GalleryLockSystem {
 	$ret = $storage->moveIdsBetweenLocks(
 		$relock, $newLockId, $this->_locks[$newLockId]['type']);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$ret = parent::_moveObjectsBetweenLocks($relock, $newLockId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	return null;
     }
@@ -119,7 +119,7 @@ class DatabaseLockSystem extends GalleryLockSystem {
 
 	list ($ret, $lockId) = $storage->newLockId();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	return array(null, $lockId);
     }
@@ -134,7 +134,7 @@ class DatabaseLockSystem extends GalleryLockSystem {
 	    $storage =& $gallery->getStorage();
 	    $ret = $storage->refreshLocks(array_keys($this->_locks), $freshUntil);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 

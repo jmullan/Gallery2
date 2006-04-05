@@ -50,7 +50,7 @@ class GalleryUserHelper_simple {
 	list ($ret, $hasPermission) =
 	    GalleryUserHelper_simple::hasItemPermission($itemId, $permission);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	if (!$hasPermission) {
@@ -87,7 +87,7 @@ class GalleryUserHelper_simple {
 
 	list ($ret, $aclIds) = GalleryCoreApi::fetchAccessListIds($permission, $userId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (empty($aclIds)) {
 	    return array(null, false);
@@ -115,7 +115,7 @@ class GalleryUserHelper_simple {
 	list($ret, $searchResults) =
 	    $gallery->search($query, $data, array('limit' => array('count' => 1)));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$hasPermission = ($searchResults->resultCount() > 0);

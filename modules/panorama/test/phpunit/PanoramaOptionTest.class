@@ -49,7 +49,7 @@ class PanoramaOptionTest extends ItemEditOptionTestCase {
 		    array('width' => 10000, 'height' => 100), __FILE__, 'GalleryPhotoItem');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_item);
 
@@ -58,26 +58,26 @@ class PanoramaOptionTest extends ItemEditOptionTestCase {
 		'test-operation|80', 'image/test', array('width' => 8000, 'height' => 80));
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
     function _makePanoramas() {
 	$ret = PanoramaHelper::assignEntityType($this->_item, true);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	list ($ret, $this->_item) = $this->_item->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = PanoramaHelper::assignEntityType($this->_derivative, true);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	list ($ret, $this->_derivative) = $this->_derivative->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	return null;
     }
@@ -90,13 +90,13 @@ class PanoramaOptionTest extends ItemEditOptionTestCase {
 
 	list ($ret, $item) = $this->_item->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals('PanoramaPhotoItem', $item->getEntityType());
 
 	list ($ret, $item) = $this->_derivative->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals('PanoramaDerivativeImage', $item->getEntityType());
     }
@@ -104,7 +104,7 @@ class PanoramaOptionTest extends ItemEditOptionTestCase {
     function testPanoramaOff() {
 	$ret = $this->_makePanoramas();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$result = $this->_handleRequestAfterEdit(array(), $this->_item);
@@ -112,14 +112,14 @@ class PanoramaOptionTest extends ItemEditOptionTestCase {
 
 	list ($ret, $item) = $this->_item->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals('GalleryPhotoItem', $item->getEntityType());
 
 	list ($ret, $item) = $this->_derivative->refresh();
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals('GalleryDerivativeImage', $item->getEntityType());
     }
@@ -127,7 +127,7 @@ class PanoramaOptionTest extends ItemEditOptionTestCase {
     function testHelper() {
 	list ($ret, $images) = PanoramaHelper::fetchViewableImages(array($this->_item));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert(isset($images[$this->_item->getId()]), 'Missing result');
 	$this->assertEquals($this->_derivative->getId(),
@@ -138,7 +138,7 @@ class PanoramaOptionTest extends ItemEditOptionTestCase {
 	/* Make sure we use full urls in applet parameters, and sessionid in image url */
 	$ret = $this->_makePanoramas();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$html = $this->_item->render('HTML', array());

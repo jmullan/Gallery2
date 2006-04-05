@@ -66,7 +66,7 @@ class PanoramaOption extends ItemEditOption {
     function loadTemplate(&$template, &$form, $item, $thumbnail) {
 	list ($ret, $preferred) = GalleryCoreApi::fetchPreferredsByItemIds(array($item->getId()));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	$form['PanoramaOption']['isPanorama'] = empty($preferred)
 	    ? GalleryUtilities::isA($item, 'PanoramaPhotoItem')
@@ -86,13 +86,13 @@ class PanoramaOption extends ItemEditOption {
 	    $form['PanoramaOption']['isPanorama'];
 	$ret = PanoramaHelper::assignEntityType($item, $isPanorama);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	if (isset($preferred) && GalleryUtilities::isA($preferred, 'GalleryDerivativeImage')) {
 	    $ret = PanoramaHelper::assignEntityType($preferred, $isPanorama);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	}
 

@@ -41,7 +41,7 @@ class AdminFfmpegController extends GalleryController {
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$status = $error = array();
@@ -90,7 +90,7 @@ class AdminFfmpegController extends GalleryController {
 			if ($ret->getErrorCode() & ERROR_BAD_PATH) {
 			    $error[] = 'form[error][path][badPath]';
 			} else {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
+			    return array($ret, null);
 			}
 		    } else {
 			$failCount = 0;
@@ -118,7 +118,7 @@ class AdminFfmpegController extends GalleryController {
 		      AND [GalleryEntity::entityType] = \'GalleryMovieItem\'';
 		    $ret = $this->_processThumbnails($query, '_addWatermark');
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		    $status['added'] = 1;
 		} else if (isset($form['removeWatermark']) && $form['removeWatermark']) {
@@ -129,7 +129,7 @@ class AdminFfmpegController extends GalleryController {
 			  LIKE \'%composite|%filmreel.png%\'';
 		    $ret = $this->_processThumbnails($query, '_removeWatermark');
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		    $status['removed'] = 1;
 		}
@@ -137,22 +137,22 @@ class AdminFfmpegController extends GalleryController {
 		$ret = GalleryCoreApi::setPluginParameter('module', 'ffmpeg',
 							  'path', $form['path']);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		$ret = GalleryCoreApi::setPluginParameter('module', 'ffmpeg',
 		    'useWatermark', (isset($form['useWatermark']) &&
 				     $form['useWatermark']) ? 1 : 0);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ffmpeg');
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		list ($ret, $isActive) = $module->isActive();
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		$redirect['view'] = 'core.SiteAdmin';
@@ -188,7 +188,7 @@ class AdminFfmpegController extends GalleryController {
 	global $gallery;
 	list ($ret, $searchResults) = $gallery->search($query);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$ids = array();
 	while ($result = $searchResults->nextResult()) {
@@ -198,24 +198,24 @@ class AdminFfmpegController extends GalleryController {
 	    $idSet = array_splice($ids, 0, 100);
 	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($idSet);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    list ($ret, $thumbnails) = GalleryCoreApi::loadEntitiesById($idSet);
 	    if ($ret) {
 		GalleryCoreApi::releaseLocks($lockId);
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    foreach ($thumbnails as $thumbnail) {
 		$this->$operation($thumbnail);
 		$ret = $thumbnail->save();
 		if ($ret) {
 		    GalleryCoreApi::releaseLocks($lockId);
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	    $ret = GalleryCoreApi::releaseLocks($lockId);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 	return null;
@@ -251,7 +251,7 @@ class AdminFfmpegView extends GalleryView {
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Load our default values if we didn't just come from this form. */
@@ -260,7 +260,7 @@ class AdminFfmpegView extends GalleryView {
 		list ($ret, $form[$key]) =
 		    GalleryCoreApi::getPluginParameter('module', 'ffmpeg', $key);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	    $form['formName'] = 'AdminFfmpeg';
@@ -286,7 +286,7 @@ class AdminFfmpegView extends GalleryView {
 			$form['error']['path']['badPath'] = 1;
 			$tests = $mimeTypes = array();
 		    } else {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		}
 
@@ -300,16 +300,16 @@ class AdminFfmpegView extends GalleryView {
 
 	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation('image/jpeg', 'composite');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ffmpeg');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	list ($ret, $isActive) = $module->isActive();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$AdminFfmpeg = array();

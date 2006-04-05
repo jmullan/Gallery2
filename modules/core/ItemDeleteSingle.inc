@@ -50,18 +50,18 @@ class ItemDeleteSingleController extends GalleryController {
 	    list ($ret, $rootId) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    /* The view shouldn't let us get this far if we don't have delete permission */
 	    $ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.delete');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    /* The view shouldn't let us try to delete the root album, either */
@@ -72,13 +72,13 @@ class ItemDeleteSingleController extends GalleryController {
 
 	    $ret = GalleryCoreApi::deleteEntityById($itemId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    list ($ret, $success) =
 		GalleryCoreApi::guaranteeAlbumHasThumbnail($item->getParentId());
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    /* What do we do if we weren't successful?  No thumbnail, I guess */
 
@@ -126,13 +126,13 @@ class ItemDeleteSingleView extends GalleryView {
 
 	list($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Get child counts */
 	list ($ret, $childCountTable) = GalleryCoreApi::fetchDescendentCounts(array($itemId));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$childCount = isset($childCountTable[$itemId]) ? $childCountTable[$itemId] : 0;
 
@@ -154,12 +154,12 @@ class ItemDeleteSingleView extends GalleryView {
     function getViewDescription() {
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $item) = $this->_getItem();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$itemTypeNames = $item->itemTypeName(true);

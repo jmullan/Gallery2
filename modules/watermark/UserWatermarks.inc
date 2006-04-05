@@ -61,38 +61,38 @@ class UserWatermarksController extends GalleryController {
 	    list ($ret, $item) =
 		GalleryCoreApi::newFactoryInstance('GalleryEntity', 'WatermarkImage');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    if (!isset($item)) {
-		return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
 	    }
 
 	    $ret = $item->create($form['tmp_name'][1], $mimeType, $form['name'][1]);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    $ret = $item->save();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    /* Give appropriate permissions */
 	    list ($ret, $id) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    $ret = GalleryCoreApi::addGroupPermission($item->getId(), $id, 'core.all');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    $ret = GalleryCoreApi::addUserPermission($item->getId(), $gallery->getActiveUserId(),
 						     'core.all');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    $results['redirect']['view'] = 'core.UserAdmin';
@@ -108,7 +108,7 @@ class UserWatermarksController extends GalleryController {
 	    list ($ret, $wasDeleted) =
 		WatermarkHelper::deleteWatermarkImageById($form['delete']['watermarkId']);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    if ($wasDeleted) {
@@ -146,16 +146,16 @@ class UserWatermarksView extends GalleryView {
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if ($gallery->getActiveUserId() == $anonymousUserId) {
-	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
 	}
 
 	list ($ret, $watermarks) = WatermarkHelper::fetchWatermarks();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	foreach ($watermarks as $id => $watermark) {
 	    /* Exclude site-wide watermarks (and, in the case of admins -- other people's) */
@@ -199,7 +199,7 @@ class UserWatermarksView extends GalleryView {
     function getViewDescription() {
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'watermark');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $core->translate('user watermarks'));

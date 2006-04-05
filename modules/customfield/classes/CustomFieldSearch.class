@@ -48,7 +48,7 @@ class CustomFieldSearch extends GallerySearchInterface_1_0 {
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'customfield');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$info = array('name' => $module->translate('Custom Fields'),
@@ -69,7 +69,7 @@ class CustomFieldSearch extends GallerySearchInterface_1_0 {
 	list ($ret, $aclIds) =
 	    GalleryCoreApi::fetchAccessListIds('core.view', $gallery->getActiveUserId());
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (empty($aclIds)) {
 	    return array(null,
@@ -114,7 +114,7 @@ class CustomFieldSearch extends GallerySearchInterface_1_0 {
 	/* Find the total */
 	list ($ret, $results) = $gallery->search($countQuery, $data);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$result = $results->nextResult();
 	$numRows = (int)$result[0];
@@ -122,7 +122,7 @@ class CustomFieldSearch extends GallerySearchInterface_1_0 {
 	list ($ret, $results) = $gallery->search(
 	    $query, $data, array('limit' => array('offset' => $offset, 'count' => $count)));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$searchResults = array();

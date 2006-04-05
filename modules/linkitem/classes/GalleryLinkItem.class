@@ -76,22 +76,22 @@ class GalleryLinkItem extends GalleryItem {
      */
     function create($parentId, $link) {
 	if (!isset($parentId) || empty($link)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 	if (is_numeric($link)) {
 	    /* Link to an album */
 	    list ($ret, $linkedAlbum) = GalleryCoreApi::loadEntitiesById($link);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    if (!GalleryUtilities::isA($linkedAlbum, 'GalleryAlbumItem')) {
-		return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+		return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	    }
 	}
 
 	$ret = parent::create($parentId, 'linkitem');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$this->setLink($link);
@@ -121,7 +121,7 @@ class GalleryLinkItem extends GalleryItem {
 	$this->setLinkedEntity(null);
 
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	return null;
     }
@@ -145,7 +145,7 @@ class GalleryLinkItem extends GalleryItem {
     function onLoad() {
 	$ret = parent::onLoad();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Redirect if trying to show this item */
@@ -157,7 +157,7 @@ class GalleryLinkItem extends GalleryItem {
 		$session =& $gallery->getSession();
 		$ret = $session->start();
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 		$session->doNotUseTempId();
 		$urlGenerator =& $gallery->getUrlGenerator();

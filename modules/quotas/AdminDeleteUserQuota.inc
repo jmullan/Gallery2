@@ -41,14 +41,14 @@ class AdminDeleteUserQuotaController extends GalleryController {
     function handleRequest($form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$results = $status = $error = array();
 	$userId = GalleryUtilities::getRequestVariables('userId');
 	list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (isset($form['action']['cancel'])) {
 
@@ -63,14 +63,14 @@ class AdminDeleteUserQuotaController extends GalleryController {
 	    list ($ret, $quotaExists, $userQuota) =
 	        GalleryQuotasHelper::fetchUserQuota($user->getId());
 	    if ($ret) {
-	        return array($ret->wrap(__FILE__, __LINE__), null);
+	        return array($ret, null);
 	    }
 
 	    if ($quotaExists) {
 		$ret = GalleryCoreApi::removeMapEntry(
 		    'QuotasMap', array('userOrGroupId' => $user->getId()));
                 if ($ret) {
-                    return array($ret->wrap(__FILE__, __LINE__), null);
+                    return array($ret, null);
                 }
 
 		/* Request a redirect to the confirmation screen */
@@ -107,19 +107,19 @@ class AdminDeleteUserQuotaView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	GalleryCoreApi::requireOnce('modules/quotas/classes/GalleryQuotasHelper.class');
 	$userId = GalleryUtilities::getRequestVariables('userId');
 	list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $quotaExists, $userQuota) =
 	    GalleryQuotasHelper::fetchUserQuota($user->getId());
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
         if ($form['formName'] != 'AdminDeleteUserQuota') {
@@ -132,7 +132,7 @@ class AdminDeleteUserQuotaView extends GalleryView {
 	list ($ret, $AdminDeleteUserQuota['quotaSize'], $AdminDeleteUserQuota['quotaUnit']) =
 	    GalleryQuotasHelper::humanReadableFromKilobytes($userQuota['quota']);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$AdminDeleteUserQuota['user'] = (array)$user;
 

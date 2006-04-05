@@ -50,12 +50,12 @@ class SitemapView extends GalleryView {
  	list ($ret, $rootId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret) {
- 	    return $ret->wrap(__FILE__, __LINE__);
+ 	    return $ret;
  	}
 
 	$ret = $this->renderSitemap($rootId);
  	if ($ret) {
- 	    return $ret->wrap(__FILE__, __LINE__);
+ 	    return $ret;
  	}
     }
 
@@ -94,14 +94,14 @@ class SitemapView extends GalleryView {
 	    list ($ret, $newIds) =
 		GalleryCoreApi::fetchChildItemIdsWithPermission($currentId, 'core.view');
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    $queue = array_merge($queue, $newIds);
 
 	    /* TODO: load entities in chunks */
 	    list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($currentId);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    printf("<url><loc>%s</loc><lastmod>%s</lastmod></url>\n",

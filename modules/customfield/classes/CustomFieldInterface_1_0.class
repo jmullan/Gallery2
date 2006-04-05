@@ -43,7 +43,7 @@ class CustomFieldInterface_1_0 {
      *               array(string duplicate field names))
      */
     function createCustomFields($fieldNames, $containerId=0) {
-	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED),
 		     null);
     }
 
@@ -55,7 +55,7 @@ class CustomFieldInterface_1_0 {
      * @return object GalleryStatus a status code
      */
     function setCustomFieldValues($itemId, $data) {
-	return GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+	return GalleryCoreApi::error(ERROR_UNIMPLEMENTED);
     }
 }
 ?>

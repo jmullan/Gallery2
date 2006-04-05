@@ -50,7 +50,7 @@ class GalleryMembersHelper {
 	list ($ret, $aclIds) =
 	    GalleryCoreApi::fetchAccessListIds('core.view', $gallery->getActiveUserId());
         if ($ret) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
+            return array($ret, null);
         }
 	if (empty($aclIds)) {
 	    return array(null, 0);
@@ -76,7 +76,7 @@ class GalleryMembersHelper {
 
 	list ($ret, $searchResults) = $gallery->search($query, $data);
         if ($ret) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
+            return array($ret, null);
         }
 
 	$result = $searchResults->nextResult();
@@ -106,14 +106,14 @@ class GalleryMembersHelper {
 	    break;
 
 	default:
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER),
 			 null);
 	}
 
 	list ($ret, $aclIds) =
 	    GalleryCoreApi::fetchAccessListIds('core.view', $gallery->getActiveUserId());
         if ($ret) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
+            return array($ret, null);
         }
 	if (empty($aclIds)) {
 	    return array(null, array());
@@ -146,7 +146,7 @@ class GalleryMembersHelper {
 
 	list ($ret, $searchResults) = $gallery->search($query, $data, $options);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Get all of our item ids */
@@ -159,7 +159,7 @@ class GalleryMembersHelper {
 	if (sizeof($itemIds) > 0) {
 	    list ($ret, $items) = GalleryCoreApi::loadEntitiesById($itemIds);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	} else {
 	    $items = array();
@@ -182,12 +182,12 @@ class GalleryMembersHelper {
 	list ($ret, $viewSelectedGroupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'members', 'canViewMembersModule');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $result) = GalleryCoreApi::isUserInGroup($userId, $viewSelectedGroupId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	return array(null, $result);
     }
@@ -208,19 +208,19 @@ class GalleryMembersHelper {
 	list ($ret, $resultOne) =
 	    GalleryCoreApi::getPluginParameter('module', 'members', 'canViewEmailAddress');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $groupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Is the current user an admin? */
 	list ($ret, $resultTwo) = GalleryCoreApi::isUserInGroup($userId, $groupId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/*
@@ -268,11 +268,11 @@ class GalleryMembersHelper {
 	list ($ret, $groupId) =
             GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	list ($ret, $totalUserCount) = GalleryCoreApi::fetchUserCount(null, $groupId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
         return array(null, (int)$totalUserCount);
     }

@@ -45,7 +45,7 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_album);
 
@@ -56,7 +56,7 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 	    'CreateThumbnailOptionTestToolkit',
 	    $path, 'coreTest', null);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markToolkitForCleanup('CreateThumbnailOptionTestToolkit');
 
@@ -71,7 +71,7 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 								    'test/file');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_itemThumbnail = array();
@@ -80,7 +80,7 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 				     DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
 				     'thumbnail|200');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_noWarnings = array(array());
@@ -95,7 +95,7 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 
 	list ($ret, $isCurrent) = $this->_itemThumbnail[0]->isCacheCurrent();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assert($isCurrent, 'Thumbnail was not created!');
@@ -114,7 +114,7 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 
 	list ($ret, $isCurrent) = $this->_itemThumbnail[0]->isCacheCurrent();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assert(!$isCurrent, 'Thumbnail was created, but not requested!');
@@ -126,14 +126,14 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 	    list ($ret, $this->_items[$j]) = $this->_createRandomDataItem($this->_album->getId(),
 									  'test/file');
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    list ($ret, $this->_itemThumbnail[$j]) =
 		$this->_createDerivative($this->_items[$j], $this->_items[$j]->getId(),
 					 DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
 					 'thumbnail|200');
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 
 	    $this->_noWarnings[] = $this->_noWarnings[$j-1];
@@ -147,7 +147,7 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 	for ($j = 0; $j < $totalTestItems; $j++) {
 	    list ($ret, $isCurrent) = $this->_itemThumbnail[$j]->isCacheCurrent();
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    $this->assert($isCurrent, "Thumbnail $j was not created!");
 	}
@@ -168,7 +168,7 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 	    list ($ret, $this->_items[$j]) = $this->_createRandomDataItem($this->_album->getId(),
 									 'test/file');
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    $this->_noWarnings[] = $this->_noWarnings[$j-1];
 	}

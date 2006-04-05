@@ -57,9 +57,11 @@ class GalleryCoreApi {
      * - remove GallerySession::getSessionId
      * - remove GalleryPlatform::recursiveFixDirPermissions
      * - remove GalleryUtilities::htmlEntityDecode
+     * - remove GalleryStatus::wrap
+     * - Change GalleryCoreApi::error to only take error code and error message
      */
     function getApiVersion() {
-	return array(7, 3);
+	return array(7, 4);
     }
 
     /**
@@ -2850,18 +2852,19 @@ class GalleryCoreApi {
     }
 
     /**
-     * Return an error status
+     * Return an error status.
+     *
+     * Starting in GalleryCoreApi 7.4 we ignore the filename and line number.  You still need to
+     * provide them if you want to provide an error message.  Next major API bump we'll remove the
+     * fileName and lineNumber arguments.
      *
      * @return object GalleryStatus an error status
      * @static
      */
-    function error($errorCode, $fileName, $lineNumber, $errorMessage=null) {
+    function error($errorCode, $fileName='ignored', $lineNumber='ignored', $errorMessage=null) {
 	GalleryCoreApi::requireOnce('modules/core/classes/GalleryStatus.class');
-	$status =
-	    new GalleryStatus(GALLERY_ERROR | $errorCode, $fileName, $lineNumber, $errorMessage);
-	if (function_exists('debug_backtrace')) {
-	    $status->setStackTrace(debug_backtrace());
-	}
+	$status = new GalleryStatus(GALLERY_ERROR | $errorCode, $errorMessage);
+	$status->setStackTrace(debug_backtrace());
 	return $status;
     }
 
@@ -2877,13 +2880,13 @@ class GalleryCoreApi {
 	global $gallery;
 
 	if (sizeof($match) == 0 || sizeof($change) == 0) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
 	$storage =& $gallery->getStorage();
 	$ret = $storage->updateMapEntry($mapName, $match, $change);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	return null;
     }
@@ -2900,13 +2903,13 @@ class GalleryCoreApi {
 	global $gallery;
 
 	if (sizeof($data) == 0) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
 	$storage =& $gallery->getStorage();
 	$ret = $storage->removeMapEntry($mapName, $data);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	return null;
     }
@@ -2925,7 +2928,7 @@ class GalleryCoreApi {
 	$storage =& $gallery->getStorage();
 	$ret = $storage->addMapEntry($mapName, $data);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	return null;
     }
@@ -2942,7 +2945,7 @@ class GalleryCoreApi {
 	$storage =& $gallery->getStorage();
 	$ret = $storage->removeAllMapEntries($mapName);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	return null;
     }
@@ -2962,7 +2965,7 @@ class GalleryCoreApi {
 	$storage =& $gallery->getStorage();
 	list ($ret, $entityInfo) = $storage->describeMap($mapName, $tryAllModules);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $entityInfo);
@@ -2982,7 +2985,7 @@ class GalleryCoreApi {
 	$storage =& $gallery->getStorage();
 	list ($ret, $entityInfo) = $storage->describeEntity($entityName, $tryAllModules);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $entityInfo);

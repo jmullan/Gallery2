@@ -50,12 +50,12 @@ class IndexGeneratorControllerAndView extends RepositoryControllerAndView {
 
 	$ret = $index->init($repositoryDir);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	list ($ret, $pluginCounts) = $index->generate();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$viewData = array('moduleCount' => $pluginCounts['modules'],
@@ -66,7 +66,7 @@ class IndexGeneratorControllerAndView extends RepositoryControllerAndView {
 
 	$ret = $this->showView('IndexGenerationResults', $viewData);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;

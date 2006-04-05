@@ -47,7 +47,7 @@ class FastDownloadTest extends GalleryTestCase {
 	    list ($ret, $this->_item[$i]) = $this->_createRandomDataItem($this->_getRootId());
 	    if ($ret) {
 		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    $this->_markForCleanup($this->_item[$i]);
 
@@ -59,7 +59,7 @@ class FastDownloadTest extends GalleryTestCase {
 					     $derivativeType);
 		if ($ret) {
 		    print $ret->getAsHtml();
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		    return $this->failWithStatus($ret);
 		}
 	    }
 	}
@@ -72,7 +72,7 @@ class FastDownloadTest extends GalleryTestCase {
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_album);
 	/* Set the thumbnail of the album */
@@ -81,14 +81,14 @@ class FastDownloadTest extends GalleryTestCase {
 				     DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$storage =& $gallery->getStorage();
 	$ret = $storage->checkPoint();
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -103,18 +103,18 @@ class FastDownloadTest extends GalleryTestCase {
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::addUserPermission(
 	    $this->_item[0]->getId(), $anonymousUserId, 'core.view', false);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::createFastDownloadFile($this->_derivatives[0][0], true);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$cachePath = GalleryDataCache::getCachePath(
@@ -147,23 +147,23 @@ class FastDownloadTest extends GalleryTestCase {
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::addUserPermission(
 	    $this->_item[0]->getId(), $anonymousUserId, 'core.viewSource', false);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::createFastDownloadFile($this->_item[0], true);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $path) = $this->_item[0]->fetchPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$relativePath = str_replace($gallery->getConfig('data.gallery.base'), '', $path);
 	
@@ -198,13 +198,13 @@ class FastDownloadTest extends GalleryTestCase {
 	list ($ret, $bits) = GalleryCoreApi::convertPermissionIdsToBits(
 	    array('core.view', 'core.viewResizes', 'core.viewSource'));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $adminGroupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$event = GalleryCoreApi::newEvent('Gallery::RemovePermission');
@@ -218,7 +218,7 @@ class FastDownloadTest extends GalleryTestCase {
 
 	list ($ret, $response) = GalleryItemHelper_medium::handleEvent($event);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(0, count($buf['unlink']), 'no files should be deleted');
@@ -231,7 +231,7 @@ class FastDownloadTest extends GalleryTestCase {
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_testRemovePermission($anonymousUserId, null);
@@ -243,7 +243,7 @@ class FastDownloadTest extends GalleryTestCase {
 	list ($ret, $everybodyGroupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_testRemovePermission(null, $everybodyGroupId);
@@ -271,7 +271,7 @@ class FastDownloadTest extends GalleryTestCase {
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_testRemovePermission($anonymousUserId, null, 'newBits');
@@ -290,11 +290,11 @@ class FastDownloadTest extends GalleryTestCase {
 
 	list ($ret, $bits) = GalleryCoreApi::convertPermissionIdsToBits($permissions);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	list ($ret, $bits2) = GalleryCoreApi::convertPermissionIdsToBits($permissions2);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$event = GalleryCoreApi::newEvent('Gallery::RemovePermission');
@@ -310,7 +310,7 @@ class FastDownloadTest extends GalleryTestCase {
 
 	list ($ret, $response) = GalleryItemHelper_medium::handleEvent($event);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(6, count($buf['unlink']), '5 files should be deleted');

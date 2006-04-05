@@ -44,7 +44,7 @@ class NokiaUploadConfigureControllerTest extends GalleryControllerTestCase {
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_markForCleanup($this->_album);
@@ -52,7 +52,7 @@ class NokiaUploadConfigureControllerTest extends GalleryControllerTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'nokiaupload');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
     }
 
@@ -61,7 +61,7 @@ class NokiaUploadConfigureControllerTest extends GalleryControllerTestCase {
 	    $ret = GalleryCoreApi::deleteEntityById($this->_groupId);
 	    if ($ret) {
 		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	}
 	parent::tearDown();
@@ -91,12 +91,12 @@ class NokiaUploadConfigureControllerTest extends GalleryControllerTestCase {
     	list ($ret, $groupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	
 	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($groupId);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryUtilities::putRequestVariable('form[group]', $group->getGroupName());
@@ -124,17 +124,17 @@ class NokiaUploadConfigureControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'nokiaupload');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	list ($ret, $config) = $module->needsConfiguration();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(false, $config, 'Needs Configuration');
 
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'nokiaupload');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert(!empty($params['id.mobileGroup']), 'group param');
 	$this->assert(!empty($params['id.uploadAlbum']), 'album param');
@@ -143,7 +143,7 @@ class NokiaUploadConfigureControllerTest extends GalleryControllerTestCase {
 	list ($ret, $perms) =
 	    GalleryCoreApi::fetchAllPermissionsForItem($params['id.uploadAlbum'], true);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$hasAddDataItem = false;

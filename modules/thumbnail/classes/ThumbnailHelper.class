@@ -71,7 +71,7 @@ class ThumbnailHelper {
 			     array('limit' => array('count' => (int)$count,
 						    'offset' => (int)$offset)));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$items = array();
@@ -98,14 +98,14 @@ class ThumbnailHelper {
 	     WHERE [ThumbnailImage::id] = [ChildEntity::id] AND [ChildEntity::parentId] = ?',
 	    array((int)$itemId));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$thumbnailImage = null;
 	if ($result = $searchResults->nextResult()) {
 	    list ($ret, $thumbnailImage) = GalleryCoreApi::loadEntitiesById((int)$result[0]);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 
@@ -125,7 +125,7 @@ class ThumbnailHelper {
 	    'SELECT [ThumbnailImage::id], [ThumbnailImage::itemMimeTypes]
 	     FROM [ThumbnailImage] WHERE [ThumbnailImage::itemMimeTypes] IS NOT NULL');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$data = array();
 	while ($result = $searchResults->nextResult()) {
@@ -150,11 +150,11 @@ class ThumbnailHelper {
     function fetchToolkitSupport($byMimeType=true) {
 	list ($ret, $tList) = GalleryCoreApi::getToolkitOperationMimeTypes('thumbnail');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	list ($ret, $cList) = GalleryCoreApi::getToolkitOperationMimeTypes('convert-to-image/jpeg');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	$data = array_merge_recursive($tList, $cList);
 	if ($byMimeType) {
@@ -207,7 +207,7 @@ class ThumbnailHelper {
 	    }
 	}
 	if ($fileMimeType != 'image/jpeg') {
-	    return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_FILE_TYPE, __FILE__, __LINE__),
+	    return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_FILE_TYPE),
 			 null);
 	}
 
@@ -215,16 +215,16 @@ class ThumbnailHelper {
 	    list ($ret, $item) =
 		GalleryCoreApi::newFactoryInstance('GalleryEntity', 'ThumbnailImage');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    if (!isset($item)) {
-		return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
 	    }
 	}
 
 	$ret = $item->create($tmpfile, $fileMimeType, $filename);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (isset($mimeType)) {
 	    $item->setItemMimeTypes($mimeType);
@@ -239,17 +239,17 @@ class ThumbnailHelper {
 	}
 	$ret = $item->save();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $adminGroupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$ret = GalleryCoreApi::addGroupPermission($item->getId(), $adminGroupId, 'core.viewSource');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if (isset($mimeType)) {
@@ -257,7 +257,7 @@ class ThumbnailHelper {
 				   array($mimeType), 'convert-to-image/jpeg', array(),
 				   $gallery->i18n('Convert to a JPEG'), 'image/jpeg', 50);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 
@@ -276,11 +276,11 @@ class ThumbnailHelper {
     function updateItem($itemId, $mimeType, $isAdd=true) {
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($itemId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$mimeTypes = $item->getItemMimeTypesList();
 	if ($isAdd) {
@@ -298,11 +298,11 @@ class ThumbnailHelper {
 	$ret = $item->save();
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockId);
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	if ($isAdd) {
 	    global $gallery;
@@ -310,13 +310,13 @@ class ThumbnailHelper {
 				   array($mimeType), 'convert-to-image/jpeg', array(),
 				   $gallery->i18n('Convert to a JPEG'), 'image/jpeg', 50);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	} else {
 	    $ret = GalleryCoreApi::unregisterToolkitOperation('Thumbnail',
 				   'convert-to-image/jpeg', array($mimeType));
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 	return null;
@@ -333,13 +333,13 @@ class ThumbnailHelper {
     function applyThumbnail(&$item, $thumbnailId) {
 	list ($ret, $derivative) = GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	if (!empty($derivative)) {
 	    $derivative = array_shift($derivative);
 	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($derivative->getId());
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    /* Make sure operations contains only thumbnail and composite */
 	    $derivative->setDerivativeOperations(
@@ -349,19 +349,19 @@ class ThumbnailHelper {
 	    list ($ret, $derivative) =
 		GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', 'ThumbnailImage');
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    if (!isset($derivative)) {
-		return GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+		return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
 	    }
 	    $ret = $derivative->create($item->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    list ($ret, $prefs) =
 		GalleryCoreApi::fetchDerivativePreferencesForItem($item->getParentId());
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    $op = 'thumbnail|150';
 	    foreach ($prefs as $pref) {
@@ -375,7 +375,7 @@ class ThumbnailHelper {
 
 	list ($ret, $mimeList) = GalleryCoreApi::getToolkitOperationMimeTypes('thumbnail');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	if (!isset($mimeList['image/jpeg'])) {
 	    /*
@@ -394,12 +394,12 @@ class ThumbnailHelper {
 	    if (isset($lockId)) {
 		GalleryCoreApi::releaseLocks($lockId);
 	    }
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	if (isset($lockId)) {
 	    $ret = GalleryCoreApi::releaseLocks($lockId);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
@@ -417,17 +417,17 @@ class ThumbnailHelper {
     function restoreThumbnail(&$item) {
 	list ($ret, $derivative) = GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	if (empty($derivative)) {
-	    return GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
 	}
 	$derivative = array_shift($derivative);
 
 	if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
 	    list ($ret, $success) = GalleryCoreApi::guaranteeAlbumHasThumbnail($item->getId());
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    return null;
 	}
@@ -438,26 +438,26 @@ class ThumbnailHelper {
 
 	list ($ret, $source) = GalleryCoreApi::fetchPreferredSource($item);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	list ($ret, $operations, $outputMimeType) =
 	    GalleryCoreApi::makeSupportedViewableOperationSequence(
 					 $source->getMimeType(), $operations, true);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	if (empty($operations)) {
 	    /* Operations not supported.. remove the thumbnail */
 	    $ret = GalleryCoreApi::deleteEntityById($derivative->getId());
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	} else {
 	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($derivative->getId());
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    $derivative->setMimeType($outputMimeType);
@@ -466,12 +466,12 @@ class ThumbnailHelper {
 
 	    $ret = $derivative->save();
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    $ret = GalleryCoreApi::releaseLocks($lockId);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
@@ -495,7 +495,7 @@ class ThumbnailHelper {
 	';
 	list ($ret, $searchResults) = $gallery->search($query);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	while ($result = $searchResults->nextResult()) {
 	    $typeMap[$result[0]][] = $result[1];

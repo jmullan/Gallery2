@@ -59,7 +59,7 @@ class CSSView extends GalleryView {
     function renderImmediate($status, $error) {
 	$frameList = GalleryUtilities::getRequestVariables('frames');
 	if (empty($frameList)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 	$frameList = explode('|', $frameList);
 
@@ -90,10 +90,10 @@ class CSSView extends GalleryView {
 
 	list ($ret, $imageframe) = GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	if (!isset($imageframe)) {
-	    return GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
 	}
 
 	GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplate.class');
@@ -102,7 +102,7 @@ class CSSView extends GalleryView {
 
 	$ret = $imageframe->init($template, $frameList);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	header('Content-type: text/css');
@@ -111,7 +111,7 @@ class CSSView extends GalleryView {
 
 	$ret = $template->display('gallery:modules/imageframe/templates/ImageFrameStyle.tpl');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;

@@ -47,13 +47,13 @@ class WebCamModule extends GalleryModule {
 
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'webcam');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	foreach (array('duration' => 600 /* 10 minutes */) as $key => $value) {
 	    if (!isset($params[$key])) {
 		$ret = $this->setParameter($key, $value);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	}
@@ -75,12 +75,12 @@ class WebCamModule extends GalleryModule {
 		    AND [GalleryEntity::onLoadHandlers] IS NULL';
 		$ret = $storage->execute($query);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 		list ($ret, $handlers) = $storage->getFunctionSql('CONCAT',
 		    array('[GalleryEntity::onLoadHandlers]', "'WebCam|'"));
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 		$query = 'UPDATE [GalleryEntity]
 		    SET [::entityType] = \'GalleryPhotoItem\',
@@ -89,7 +89,7 @@ class WebCamModule extends GalleryModule {
 		    AND [GalleryEntity::onLoadHandlers] IS NOT NULL';
 		$ret = $storage->execute($query);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 		break;
 
@@ -126,14 +126,14 @@ class WebCamModule extends GalleryModule {
 	    'GalleryOnLoadHandler', 'WebCamModule', 'WebCam',
 	    'modules/webcam/module.inc', 'webcam', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'ItemAddPlugin', 'ItemAddWebCam', 'ItemAddWebCam',
 	    'modules/webcam/ItemAddWebCam.inc', 'webcam', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -168,19 +168,19 @@ class WebCamModule extends GalleryModule {
 	}
 	list ($ret, $duration) = $this->getParameter('duration');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	if (time() - $item->getModificationTimestamp() > $duration && !$loop) {
 	    /* Lock and refresh to ensure another request didn't just update image.. */
 	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($id);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    GalleryDataCache::put("webcam:load-$id", true);
 	    list ($ret, $refresh) = $item->refresh();
 	    if ($ret) {
 		GalleryCoreApi::releaseLocks($lockId);
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    if ($refresh->getSerialNumber() == $item->getSerialNumber()) {
 		$old = true;
@@ -194,7 +194,7 @@ class WebCamModule extends GalleryModule {
 	    list ($ret, $url) = $this->getParameter('imageUrl', $id);
 	    if ($ret) {
 		GalleryCoreApi::releaseLocks($lockId);
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    list ($successfullyCopied, $response, $headers) =
@@ -205,24 +205,24 @@ class WebCamModule extends GalleryModule {
 		list ($ret, $path) = $item->fetchPath();
 		if ($ret) {
 		    GalleryCoreApi::releaseLocks($lockId);
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 		/* Backup previous file */
 		$ret = $platform->copy($path, $tmpFile . '.bak');
 		if (!$ret) {
 		    GalleryCoreApi::releaseLocks($lockId);
-		    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
+		    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE);
 		}
 		$ret = $platform->copy($tmpFile, $path);
 		if (!$ret) {
 		    GalleryCoreApi::releaseLocks($lockId);
-		    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
+		    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE);
 		}
 		$ret = $item->rescan();
 		if ($ret) {
 		    if (!($ret->getErrorCode() & ERROR_BAD_DATA_TYPE)) {
 			GalleryCoreApi::releaseLocks($lockId);
-			return $ret->wrap(__FILE__, __LINE__);
+			return $ret;
 		    }
 		    /* Problem with new file (maybe html response, not data file); rollback */
 		    $platform->copy($tmpFile . '.bak', $path);
@@ -231,12 +231,12 @@ class WebCamModule extends GalleryModule {
 		    $ret = $item->save();
 		    if ($ret) {
 			GalleryCoreApi::releaseLocks($lockId);
-			return $ret->wrap(__FILE__, __LINE__);
+			return $ret;
 		    }
 		    $ret = GalleryCoreApi::expireDerivativeTreeBySourceIds(array($id));
 		    if ($ret) {
 			GalleryCoreApi::releaseLocks($lockId);
-			return $ret->wrap(__FILE__, __LINE__);
+			return $ret;
 		    }
 		}
 		@$platform->unlink($tmpFile . '.bak');
@@ -246,7 +246,7 @@ class WebCamModule extends GalleryModule {
 	if (isset($lockId)) {
 	    $ret = GalleryCoreApi::releaseLocks($lockId);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 

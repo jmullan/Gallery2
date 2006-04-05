@@ -44,7 +44,7 @@ class RemoteSiteAdminControllerTest extends GalleryControllerTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'remote');
 	if ($ret) {
 		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	}
     }
 
@@ -73,7 +73,7 @@ class RemoteSiteAdminControllerTest extends GalleryControllerTestCase {
 	foreach (array('showItemAdd' => '1') as $key => $expectedValue) {
 	    list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'remote', $key);
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    $this->assertEquals($expectedValue, $value, $key);
 	}

@@ -103,7 +103,7 @@ class GdToolkit extends GalleryToolkit {
 	    list ($ret, $this->_hasImageCreateTrueColor) =
 		GdToolkitHelper::hasImageCreateTrueColor($gd);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 	return array(null, $this->_hasImageCreateTrueColor);
@@ -117,13 +117,13 @@ class GdToolkit extends GalleryToolkit {
 	case 'dimensions':
 	    list ($ret, $width, $height) = $this->_getImageDimensions($mimeType, $sourceFilename);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    $results = array((int)$width, (int)$height);
 	    break;
 
 	default:
-	    return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
+	    return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED),
 			 null);
 	}
 
@@ -147,7 +147,7 @@ class GdToolkit extends GalleryToolkit {
 	$outputMimeType = $mimeType;
 	list($ret, $sourceRes) = $this->_getImageResource($mimeType, $sourceFilename);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	switch($operationName) {
@@ -157,7 +157,7 @@ class GdToolkit extends GalleryToolkit {
 	    $targetHeight = empty($parameters[1]) ? $parameters[0] : $parameters[1];
 	    list ($ret, $width, $height) = $this->_getImageDimensionsForResource($sourceRes);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    /* Don't enlarge images for a thumbnail */
 	    if ($operationName == 'thumbnail' &&
@@ -171,7 +171,7 @@ class GdToolkit extends GalleryToolkit {
 								$destWidth,
 								$destHeight);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    if (isset($context['width'])) {
 		$context['width'] = $destWidth;
@@ -188,7 +188,7 @@ class GdToolkit extends GalleryToolkit {
 						    $parameters[0],
 						    $parameters[1]);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    if (isset($context['width'])) {
 		$context['width'] = $parameters[0];
@@ -204,7 +204,7 @@ class GdToolkit extends GalleryToolkit {
 	    $degrees = 0 - $parameters[0];
 	    list ($ret, $destRes) = $gd->imageRotate($sourceRes, $degrees, 0);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    if (isset($context['width']) && ($degrees == 90 || $degrees == -90)) {
 		$tmp = $context['width'];
@@ -224,7 +224,7 @@ class GdToolkit extends GalleryToolkit {
 	    /* source dimensions are required to convert from percentages to pixels  */
 	    list ($ret, $width, $height) = $this->_getImageDimensionsForResource($sourceRes);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    $pixelX = round($parameters[0] / 100 * $width);
 	    $pixelY = round($parameters[1] / 100 * $height);
@@ -233,13 +233,13 @@ class GdToolkit extends GalleryToolkit {
 
 	    list($ret, $destRes) = $this->_getTrueColorImageRes($pixelWidth, $pixelHeight);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    $ret = $gd->imageCopy($destRes, $sourceRes,
 				  0, 0,				/* dst x,y */
 				  $pixelX, $pixelY, $pixelWidth, $pixelHeight);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    if (isset($context['width'])) {
 		$context['width'] = $pixelWidth;
@@ -274,7 +274,7 @@ class GdToolkit extends GalleryToolkit {
 	    list ($ret, $sourceWidth, $sourceHeight) =
 		$this->_getImageDimensionsForResource($sourceRes);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 
 	    switch ($compositeAlignmentType) {
@@ -347,7 +347,7 @@ class GdToolkit extends GalleryToolkit {
 	    list($ret, $overlayRes) = $this->_getImageResource($compositeOverlayMimeType,
 							       $dataDir . $compositeOverlayPath);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 
 	    $destRes = $sourceRes;
@@ -358,7 +358,7 @@ class GdToolkit extends GalleryToolkit {
 				       $compositeWidth, $compositeHeight
 				      );
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    break;
 
@@ -372,7 +372,7 @@ class GdToolkit extends GalleryToolkit {
 	    list ($ret, $quality) =
 		GalleryCoreApi::getPluginParameter('module', 'gd', 'jpegQuality');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    $maxQuality = 100;
 	    $minQuality = 5;
@@ -380,7 +380,7 @@ class GdToolkit extends GalleryToolkit {
 		$ret = $this->_saveImageResourceToFile($sourceRes, $destFilename, $outputMimeType,
 						       $quality);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret, null, null);
 		}
 		clearstatcache();
 		$fileSize = $gd->filesize($destFilename) >> 10;
@@ -403,13 +403,13 @@ class GdToolkit extends GalleryToolkit {
 	if (isset($destRes)) {
 	    $ret = $this->_saveImageResourceToFile($destRes, $destFilename, $outputMimeType);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	} else {
 	    /* Just copy the source to the destination */
 	    if ($sourceFilename != $destFilename) {
 		if (!$gd->copy($sourceFilename, $destFilename)) {
-		    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__),
+		    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE),
 				 null, null);
 		}
 	    }
@@ -453,10 +453,10 @@ class GdToolkit extends GalleryToolkit {
 	    break;
 	}
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (! $res) {
-	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE), null);
 	}
 	return array(null, $res);
     }
@@ -476,7 +476,7 @@ class GdToolkit extends GalleryToolkit {
 	$gd =& $this->_getGdFunctionality();
 	list ($ret, $hasImageCreateTrueColor) = $this->_hasImageCreateTrueColor();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if ($hasImageCreateTrueColor) {
 	    list ($ret, $res) = $gd->imageCreateTruecolor($width, $height);
@@ -488,21 +488,21 @@ class GdToolkit extends GalleryToolkit {
 	    /* Create a temporary jpeg file ... */
 	    list ($ret, $tmpRes) = $gd->imageCreate($width, $height);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    $ret = $gd->imageJpeg($tmpRes, $tmpFile);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    /* ... and load it back into a resource (now truecolor) */
 	    list ($ret, $res) = $gd->imageCreateFromJpeg($tmpFile);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    $gd->unlink($tmpFile);
 	}
 	if (! $res) {
-	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE), null);
 	}
 	return array(null, $res);
     }
@@ -526,7 +526,7 @@ class GdToolkit extends GalleryToolkit {
 		list ($ret, $jpegQuality) =
 		    GalleryCoreApi::getPluginParameter('module', 'gd', 'jpegQuality');
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	    $ret = $gd->imageJpeg($res, $filename, $jpegQuality);
@@ -545,7 +545,7 @@ class GdToolkit extends GalleryToolkit {
 	    break;
 	}
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$gd->chmod($filename);
 	return null;
@@ -566,16 +566,16 @@ class GdToolkit extends GalleryToolkit {
 
 	list ($ret, $sourceWidth) = $gd->imageSX($sourceRes);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	list ($ret, $sourceHeight) = $gd->imageSY($sourceRes);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list($ret, $destRes) = $this->_getTrueColorImageRes($destWidth, $destHeight);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$result = false;
 	$ret = $this->_imageCopyResampled($destRes, $sourceRes,
@@ -584,7 +584,7 @@ class GdToolkit extends GalleryToolkit {
 				 $sourceWidth, $sourceHeight /* src W,H */
 				 );
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	return array(null, $destRes);
     }
@@ -608,12 +608,12 @@ class GdToolkit extends GalleryToolkit {
 
 	list($ret, $res) = $this->_getImageResource($mimeType, $filename);
 	if ($ret) {
-	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), 0, 0);
+	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE), 0, 0);
 	}
 
 	list ($ret, $width, $height) = $this->_getImageDimensionsForResource($res);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	return array(null, $width, $height);
@@ -631,16 +631,16 @@ class GdToolkit extends GalleryToolkit {
 	$gd =& $this->_getGdFunctionality();
 	list ($ret, $x) = $gd->imageSx($res);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	list ($ret, $y) = $gd->imageSy($res);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	if ($x > 0 && $y > 0) {
 	    return array(null, $x, $y);
 	}
-	return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__),
+	return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE),
 		     null, null);
     }
 
@@ -665,7 +665,7 @@ class GdToolkit extends GalleryToolkit {
 					 $dstW, $dstH, $srcW, $srcH);
 	}
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	return null;
     }

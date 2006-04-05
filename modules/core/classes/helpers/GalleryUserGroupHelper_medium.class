@@ -44,7 +44,7 @@ class GalleryUserGroupHelper_medium {
     function addUserToGroup($userId, $groupId) {
 	global $gallery;
 	if (empty($userId) || empty($groupId)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
 	$userId = (int) $userId;
@@ -53,7 +53,7 @@ class GalleryUserGroupHelper_medium {
 	/* Is the user already in the group? */
 	list ($ret, $inGroup) = GalleryCoreApi::isUserInGroup($userId, $groupId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	if ($inGroup) {
 	    return null;
@@ -63,7 +63,7 @@ class GalleryUserGroupHelper_medium {
 	$ret = GalleryCoreApi::addMapEntry(
 	    'GalleryUserGroupMap', array('userId' => $userId, 'groupId' => $groupId));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	GalleryDataCache::remove("GalleryUserGroupHelper::isUserInGroup($userId,$groupId)");
 
@@ -71,7 +71,7 @@ class GalleryUserGroupHelper_medium {
 	$event->setData(array('userId' => $userId, 'itemId' => null));
 	list ($ret) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -87,7 +87,7 @@ class GalleryUserGroupHelper_medium {
     function removeUserFromGroup($userId, $groupId) {
 	global $gallery;
 	if (empty($userId) || empty($groupId)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
 	$userId = (int) $userId;
@@ -97,7 +97,7 @@ class GalleryUserGroupHelper_medium {
 	$ret = GalleryCoreApi::removeMapEntry(
 	    'GalleryUserGroupMap', array('userId' => $userId, 'groupId' => $groupId));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	GalleryDataCache::remove("GalleryUserGroupHelper::isUserInGroup($userId,$groupId)");
 
@@ -105,7 +105,7 @@ class GalleryUserGroupHelper_medium {
 	$event->setData(array('userId' => $userId, 'itemId' => null));
 	list ($ret) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -121,7 +121,7 @@ class GalleryUserGroupHelper_medium {
     function removeUserFromAllGroups($userId) {
 	global $gallery;
 	if (empty($userId)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
 	$userId = (int) $userId;
@@ -129,14 +129,14 @@ class GalleryUserGroupHelper_medium {
 	/* Remove this relationship from our groups table. */
 	$ret = GalleryCoreApi::removeMapEntry('GalleryUserGroupMap', array('userId' => $userId));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
 	$event->setData(array('userId' => $userId, 'itemId' => null));
 	list ($ret) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -152,7 +152,7 @@ class GalleryUserGroupHelper_medium {
     function removeAllUsersFromGroup($groupId) {
 	global $gallery;
 	if (empty($groupId)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
 	$groupId = (int) $groupId;
@@ -160,24 +160,24 @@ class GalleryUserGroupHelper_medium {
 	/* Remove this relationship from our groups table. */
 	$ret = GalleryCoreApi::removeMapEntry('GalleryUserGroupMap', array('groupId' => $groupId));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($groupId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	if ($group->getGroupType() != GROUP_ALL_USERS &&
 	        $group->getGroupType() != GROUP_EVERYBODY) {
 	    list ($ret, $userData) = GalleryCoreApi::fetchUsersForGroup($groupId);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    $event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
 	    $event->setData(array('userId' => array_keys($userData), 'itemId' => null));
 	    list ($ret) = GalleryCoreApi::postEvent($event);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
@@ -229,7 +229,7 @@ class GalleryUserGroupHelper_medium {
 	list ($ret, $searchResults) = $gallery->search(
 	    $query, $data, array('limit' => array('count' => $count, 'offset' => $offset)));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$data = array();
@@ -278,7 +278,7 @@ class GalleryUserGroupHelper_medium {
 				  array('limit' => array('count' => $count,
 							 'offset' => $offset)));
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    $data = array();

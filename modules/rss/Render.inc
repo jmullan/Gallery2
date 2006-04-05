@@ -54,7 +54,7 @@ class RenderView extends GalleryView {
 	/* get all parameters */
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'rss');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* retrieve request variables */
@@ -81,7 +81,7 @@ class RenderView extends GalleryView {
 
 	$ret = $this->continueRender($params);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -93,7 +93,7 @@ class RenderView extends GalleryView {
 	/* check permissions */
 	list ($ret, $perm) = GalleryCoreApi::hasItemPermission($params['itemId'], 'core.view');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	if (!$perm) {
@@ -114,7 +114,7 @@ class RenderView extends GalleryView {
 	    /* make sure that the comments module is active */
 	    list ($ret, $modulestatus) = GalleryCoreApi::fetchPluginStatus('module');
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    if ($modulestatus['comment']['active'] != '1') {
@@ -127,7 +127,7 @@ class RenderView extends GalleryView {
 	    list ($ret, $perm) =
 		GalleryCoreApi::hasItemPermission($params['itemId'], 'comment.view');
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    if (!$perm) {
@@ -152,7 +152,7 @@ class RenderView extends GalleryView {
 
 	$ret = RssHelper::getFeed($generator, $params['itemId'], $params);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$generator->sliceItems($count);

@@ -266,7 +266,7 @@ class UtilitiesTest extends GalleryTestCase {
 	$urlGenerator = new GalleryUrlGenerator();
 	$ret = $urlGenerator->init('phpunit_test.php');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$gallery->setUrlGenerator($urlGenerator);
 
@@ -283,7 +283,7 @@ class UtilitiesTest extends GalleryTestCase {
 	$urlGenerator = new GalleryUrlGenerator();
 	$ret = $urlGenerator->init('phpunit_test.php?test=on', '/gallery2/');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$gallery->setUrlGenerator($urlGenerator);
 	$_SERVER['REQUEST_URI'] = '/testcms/phpunit_test.php?test=on&foo=bar';
@@ -298,7 +298,7 @@ class UtilitiesTest extends GalleryTestCase {
 	$urlGenerator = new GalleryUrlGenerator();
 	$ret = $urlGenerator->init('phpunit_test.php');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$gallery->setUrlGenerator($urlGenerator);
 
@@ -348,7 +348,7 @@ class UtilitiesTest extends GalleryTestCase {
 	list ($ret, $album) =
 	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryAlbumItem');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert(GalleryUtilities::isExactlyA($album, 'GalleryAlbumItem'), 'album');
 	$this->assert(!GalleryUtilities::isExactlyA($album, 'GalleryItem'), 'item');
@@ -605,7 +605,7 @@ class UtilitiesTest extends GalleryTestCase {
 	    list ($ret, $albums[$i]) =
 		GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryAlbumItem');
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    $albums[$i]->setId($i);
 	}
@@ -1319,78 +1319,78 @@ class UtilitiesTest extends GalleryTestCase {
 
 	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($album);
 
 	$ret = GalleryCoreApi::addMimeType('phpunit_movie', 'test/movie', false);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	list ($ret, $item) = $this->_createRandomDataItem($album->getId(), 'test/movie',
 					   array('pathComponent' => 'testitem.phpunit_movie'));
 	if ($ret) {
 	    GalleryCoreApi::removeMimeType(array('extension' => 'phpunit_movie'));
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	list ($ret, $clip) = $this->_createDerivative($item, $item->getId(),
 	    DERIVATIVE_TYPE_IMAGE_PREFERRED, 'movieclip|5,10', 'test/movie');
 	if ($ret) {
 	    GalleryCoreApi::removeMimeType(array('extension' => 'phpunit_movie'));
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::addMimeType('phpunit_image', 'test/image', true);
 	if ($ret) {
 	    GalleryCoreApi::removeMimeType(array('extension' => 'phpunit_movie'));
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	list ($ret, $thumb) = $this->_createDerivative($item, $item->getId(),
 	    DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'convert-to-test/image;thumbnail|150', 'test/image');
 	if ($ret) {
 	    GalleryCoreApi::removeMimeType(
 			    array('extension' => array('phpunit_movie', 'phpunit_image')));
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	list ($ret, $highlight) = $this->_createDerivative($album, $thumb->getId(),
 	    DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'thumbnail|200', 'test/image');
 	if ($ret) {
 	    GalleryCoreApi::removeMimeType(
 			    array('extension' => array('phpunit_movie', 'phpunit_image')));
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Item gives its own name */
 	list ($ret, $result) = GalleryUtilities::getPseudoFileName($item);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 	$this->assertEquals('testitem.phpunit_movie', $result);
 
 	/* Derivative with same mime type as parent */
 	list ($ret, $result) = GalleryUtilities::getPseudoFileName($clip);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 	$this->assertEquals('testitem.phpunit_movie', $result);
 
 	/* Derivative with different mime type from parent */
 	list ($ret, $result) = GalleryUtilities::getPseudoFileName($thumb);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 	$this->assertEquals('testitem.phpunit_image', $result);
 
 	/* Derivative with non-item parent */
 	list ($ret, $result) = GalleryUtilities::getPseudoFileName($highlight);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 	$this->assertEquals($album->getPathComponent() . '.phpunit_image', $result);
 
 	/* Entity that is not a FileSystemEntity or Derivative */
 	list ($ret, $result) = GalleryUtilities::getPseudoFileName($gallery->getActiveUser());
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 	$this->assertEquals('unknown', $result);
 
@@ -1398,7 +1398,7 @@ class UtilitiesTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::removeMimeType(
 			       array('extension' => array('phpunit_movie', 'phpunit_image')));
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
     }
 

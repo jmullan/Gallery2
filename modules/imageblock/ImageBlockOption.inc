@@ -60,13 +60,13 @@ class ImageBlockOption extends ItemEditOption {
 
 	list ($ret, $currentlyDisabled) = ImageBlockHelper::getDisabledFlag($item->getId());
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	if ($setDisabled != $currentlyDisabled) {
 	    $ret = ImageBlockHelper::setDisabledFlag($item, $setRecursive, $setDisabled);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	}
 	return array(null, $error, $warning);
@@ -80,7 +80,7 @@ class ImageBlockOption extends ItemEditOption {
 	list($ret, $form['ImageBlockOption']['setDisabled']) =
 	    ImageBlockHelper::getDisabledFlag($item->getId());
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	return array(null,

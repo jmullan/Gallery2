@@ -44,7 +44,7 @@ class ArchiveUploadSiteAdminControllerTest extends GalleryControllerTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'archiveupload');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$gallery->_platform = new ArchiveUploadSiteAdminControllerTestPlatform();
@@ -66,7 +66,7 @@ class ArchiveUploadSiteAdminControllerTest extends GalleryControllerTestCase {
 	list ($ret, $unzipPath) =
 	    GalleryCoreApi::getPluginParameter('module', 'archiveupload', 'unzipPath');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals('/validPath/unzip', $unzipPath);
     }
@@ -87,7 +87,7 @@ class ArchiveUploadSiteAdminControllerTest extends GalleryControllerTestCase {
 	list ($ret, $unzipPath) =
 	    GalleryCoreApi::getPluginParameter('module', 'archiveupload', 'unzipPath');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals('/incompletePath/unzip', $unzipPath);
     }

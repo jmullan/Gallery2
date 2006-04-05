@@ -60,7 +60,7 @@ class PanoramaModule extends GalleryModule {
 			   'width' => 800) as $key => $value) {
 		$ret = $this->setParameter($key, $value);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	}
@@ -76,14 +76,14 @@ class PanoramaModule extends GalleryModule {
 	    'GalleryEntity', 'PanoramaDerivativeImage', 'PanoramaDerivativeImage',
 	    'modules/panorama/classes/PanoramaDerivativeImage.class', 'panorama', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GalleryEntity', 'PanoramaPhotoItem', 'PanoramaPhotoItem',
 	    'modules/panorama/classes/PanoramaPhotoItem.class', 'panorama', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
@@ -91,14 +91,14 @@ class PanoramaModule extends GalleryModule {
 	    'modules/panorama/classes/PanoramaDerivativeImage.class', 'panorama',
 	    array('PanoramaPhotoItem'));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'ItemEditOption', 'PanoramaOption', 'PanoramaOption',
 	    'modules/panorama/PanoramaOption.inc', 'panorama', array('ItemEditPhoto'));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -111,7 +111,7 @@ class PanoramaModule extends GalleryModule {
 	GalleryCoreApi::requireOnce('modules/panorama/classes/PanoramaHelper.class');
 	list ($ret, $count) = PanoramaHelper::fetchItemCount();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if ($count > 0) {
 	    /* Can't deactivate if panorama entities exist.. */
@@ -122,7 +122,7 @@ class PanoramaModule extends GalleryModule {
 
 	list ($ret, $redirect) = parent::deactivate($postDeactivationEvent);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	return array(null, $redirect);
     }
@@ -144,7 +144,7 @@ class PanoramaModule extends GalleryModule {
 
 	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'panorama');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if ($param['itemLink']) {
 	    GalleryCoreApi::requireOnce('modules/panorama/classes/PanoramaHelper.class');
@@ -156,7 +156,7 @@ class PanoramaModule extends GalleryModule {
 	     */
 	    list ($ret, $images) = PanoramaHelper::fetchViewableImages($items);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    foreach ($items as $item) {
 		$itemId = $item->getId();

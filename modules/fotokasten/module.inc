@@ -54,7 +54,7 @@ class FotokastenModule extends GalleryModule {
 	list ($ret, $params) =
 	    GalleryCoreApi::fetchAllPluginParameters('module', 'fotokasten');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	foreach (array('affiliateId' => '1927',
 		       'affiliateIdPass' => 'f12a65d90445f95b90e5fd30c75ee74e')
@@ -62,7 +62,7 @@ class FotokastenModule extends GalleryModule {
 	    if (!isset($params[$key])) {
 		$ret = $this->setParameter($key, $value);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	}
@@ -70,21 +70,21 @@ class FotokastenModule extends GalleryModule {
 	if (!isset($currentVersion)) {
 	    list ($ret, $coreParams) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    /* Register our permission */
 	    $ret = GalleryCoreApi::registerPermission($this->getId(), 'fotokasten.print',
 						      $gallery->i18n('[fotokasten] Print'));
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    /* Give everybody print permission by default */
 	    $ret = GalleryCoreApi::addGroupPermission(
 		$coreParams['id.rootAlbum'], $coreParams['id.everybodyGroup'],
 		'fotokasten.print', true);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
@@ -99,7 +99,7 @@ class FotokastenModule extends GalleryModule {
 	    'CartPluginInterface_1_0', 'FotokastenCartPlugin', 'fotokasten',
 	    'modules/fotokasten/classes/FotokastenCartPlugin.class', 'fotokasten', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;

@@ -86,21 +86,21 @@ class GalleryLockSystem {
 		/* Release this entire lock */
 		$ret = $this->_releaseLocksNow(array($lockId => $lock));
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		unset($this->_releaseQueue[$lockId]);
 	    } else if (!empty($foundIds)) {
 		/* Remove ids from this lock */
 		$ret = $this->_removeObjectsFromLock($this->_releaseQueue[$lockId], $foundIds);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	}
 
 	list ($ret, $lockId) = $this->_acquireLock($ids, $timeout, LOCK_READ);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $lockId);
@@ -137,14 +137,14 @@ class GalleryLockSystem {
 		/* Release this entire read lock */
 		$ret = $this->_releaseLocksNow(array($lockId => $lock));
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		unset($this->_releaseQueue[$lockId]);
 	    } else if (!empty($foundIds)) {
 		/* Remove ids from this read lock */
 		$ret = $this->_removeObjectsFromLock($this->_releaseQueue[$lockId], $foundIds);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	}
@@ -152,12 +152,12 @@ class GalleryLockSystem {
 	if (!empty($ids)) {
 	    list ($ret, $lockId) = $this->_acquireLock($ids, $timeout, LOCK_WRITE);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	} else {
 	    list ($ret, $lockId) = $this->_newLockId();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    $this->_locks[$lockId] = array('lockId' => $lockId, 'type' => LOCK_WRITE);
 	}
@@ -165,7 +165,7 @@ class GalleryLockSystem {
 	if (!empty($relock)) {
 	    $ret = $this->_moveObjectsBetweenLocks($relock, $lockId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 	return array(null, $lockId);
@@ -183,7 +183,7 @@ class GalleryLockSystem {
      * @abstract
      */
     function _acquireLock($ids, $timeout, $lockType) {
-	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
     }
 
     /**
@@ -249,7 +249,7 @@ class GalleryLockSystem {
 	if (!$storage->isTransactional()) {
 	    $ret = $this->releaseQueue();
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
@@ -265,7 +265,7 @@ class GalleryLockSystem {
 	if (!empty($this->_releaseQueue)) {
 	    $ret = $this->_releaseLocksNow($this->_releaseQueue);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    $this->_releaseQueue = array();
 	}
@@ -281,7 +281,7 @@ class GalleryLockSystem {
      * @abstract
      */
     function _releaseLocksNow($locks) {
-	return GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+	return GalleryCoreApi::error(ERROR_UNIMPLEMENTED);
     }
 
     /**
@@ -294,7 +294,7 @@ class GalleryLockSystem {
      * @abstract
      */
     function _removeObjectsFromLock(&$lock, $ids) {
-	return GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+	return GalleryCoreApi::error(ERROR_UNIMPLEMENTED);
     }
 
     /**
@@ -329,7 +329,7 @@ class GalleryLockSystem {
      * @abstract
      */
     function _newLockId() {
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+	return GalleryCoreApi::error(ERROR_UNIMPLEMENTED);
     }
 
     /**
@@ -340,7 +340,7 @@ class GalleryLockSystem {
     function releaseAllLocks() {
 	$ret = $this->releaseLocks(array_keys($this->_locks));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -354,7 +354,7 @@ class GalleryLockSystem {
      * @abstract
      */
     function refreshLocks($freshUntil) {
-	return GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+	return GalleryCoreApi::error(ERROR_UNIMPLEMENTED);
     }
 
     /**

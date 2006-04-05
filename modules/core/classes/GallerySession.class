@@ -260,7 +260,7 @@ class GallerySession {
 	 */
 	$ret = $this->_loadSessionData();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$this->_forceSaveSession = false;
@@ -296,7 +296,7 @@ class GallerySession {
 		    $this->_sessionId = '';
 		    $ret = $this->_emptySessionData();
 		    if ($ret) {
-			return $ret->wrap(__FILE__, __LINE__);
+			return $ret;
 		    }
 		}
 	    }
@@ -323,7 +323,7 @@ class GallerySession {
 	 */
 	list ($ret, $isRequired) = $this->_isPersistentSessionRequired();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	if (!$isRequired) {
 	    return null;
@@ -339,7 +339,7 @@ class GallerySession {
 	     */
 	    $ret = $this->_acquireNewPersistentSession();
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	} /* Else: not a new session  */
 
@@ -353,7 +353,7 @@ class GallerySession {
 		$_COOKIE[SESSION_ID_PARAMETER] != $this->_sessionId ) {
 	    $ret = $this->_setCookie();
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
@@ -377,7 +377,7 @@ class GallerySession {
 		($this->_isPersistentSessionAllowedForRequest() || $this->_forceSaveSession)) {
 	    $this->_sessionId = GalleryUtilities::strtolower($this->_sessionId);
 	    if (empty($this->_userId)) {
-		return GalleryCoreApi::error(ERROR_MISSING_VALUE, __FILE__, __LINE__);
+		return GalleryCoreApi::error(ERROR_MISSING_VALUE);
 	    }
 
 	    /* Only bother saving if we've been modified at all */
@@ -396,7 +396,7 @@ class GallerySession {
 							  array('id' => $this->_sessionId), $entry);
 		}
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 		$this->_isSessionSaved = true;
 	    } else if (!$this->_isSessionSaved) {
@@ -411,7 +411,7 @@ class GallerySession {
 			'GallerySessionMap', array('id' => $this->_sessionId),
 			array('modificationTimestamp' => $this->_modificationTime));
 		    if ($ret) {
-			return $ret->wrap(__FILE__, __LINE__);
+			return $ret;
 		    }
 		    $this->_isSessionSaved = true;
 		}
@@ -425,7 +425,7 @@ class GallerySession {
 	if ($this->_isPersistentSessionNew && $dieRoll <= 2 ) {
 	    $ret = $this->_expireSessions();
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
@@ -448,7 +448,7 @@ class GallerySession {
 	    list ($ret, $userId) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 	$this->_userId = (int)$userId;
@@ -456,7 +456,7 @@ class GallerySession {
 	/* Get a sessionId, don't send cookies */
 	$ret = $this->_acquireNewPersistentSession();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
     }
 
@@ -472,7 +472,7 @@ class GallerySession {
 	    $ret = GalleryCoreApi::removeMapEntry('GallerySessionMap',
 						  array('id' => $this->_sessionId));
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 	$this->_sessionId = '';
@@ -491,12 +491,12 @@ class GallerySession {
 	/* Delete the cookie on the browser */
 	$ret = $this->_setCookie(true);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = $this->init();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -517,7 +517,7 @@ class GallerySession {
 	/* Reset the session data to create a new session id */
 	$ret = $this->reset();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Restore the stored session data */
@@ -528,7 +528,7 @@ class GallerySession {
 	/* Start the session again (create a session in the db, ..) */
 	$ret = $this->start();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Replace old session id with new one in any return or navigation urls */
@@ -588,12 +588,12 @@ class GallerySession {
 	 */
 	list ($ret, $this->_cookieDomain) = $this->getCookieDomain();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$urlGenerator =& $gallery->getUrlGenerator();
 	list ($ret, $cookiePath) = $urlGenerator->getCookiePath();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	list ($ret, $sessionLifetime) =
@@ -606,7 +606,7 @@ class GallerySession {
 		 */
 		$sessionLifetime = 0;
 	    } else {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
@@ -741,7 +741,7 @@ class GallerySession {
 	    if ($ret) {
 		if (!($ret->getErrorCode() & ERROR_STORAGE_FAILURE)) {
 		    /* No luck after x attempts, give up, stop hitting the server with DB queries */
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    } else {
 		$success = true;
@@ -752,12 +752,12 @@ class GallerySession {
 	     */
 	    $ret = $storage->checkPoint();
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	} while (!$success && $attempt++ < 4);
 
 	if (!$success) {
-	    return GalleryCoreApi::error(ERROR_COLLISION, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_COLLISION);
 	}
 
 	$this->_isPersistent  = true;
@@ -793,7 +793,7 @@ class GallerySession {
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if ($this->_userId == $anonymousUserId) {
@@ -814,7 +814,7 @@ class GallerySession {
 	    unset($sessionDataCopy['embed.id.externalUser']);
 	    list ($ret, $detectedLanguageCode) = GalleryTranslator::getDefaultLanguageCode();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    if (isset($sessionDataCopy['core.language']) &&
@@ -889,13 +889,13 @@ class GallerySession {
 	    list ($ret, $lifetime) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'session.lifetime');
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    list ($ret, $inactivityTimeout) =
 		GalleryCoreApi::getPluginParameter('module', 'core',
 						   'session.inactivityTimeout');
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    $phpVm = $gallery->getPhpVm();
@@ -913,7 +913,7 @@ class GallerySession {
 		/* When upgrading from versions before 1.0.22, there's no DB table yet */
 		list ($ret2, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 		if ($ret2) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 		$instVersions = $module->getInstalledVersions();
 		if (!empty($instVersions['core']) &&
@@ -921,7 +921,7 @@ class GallerySession {
 		    $this->_emptySessionData();
 		    return null;
 		}
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    if ($results->resultCount()) {
@@ -941,7 +941,7 @@ class GallerySession {
 		    $ret = GalleryCoreApi::removeMapEntry('GallerySessionMap',
 							  array('id' => $this->_sessionId));
 		    if ($ret) {
-			return $ret->wrap(__FILE__, __LINE__);
+			return $ret;
 		    }
 
 		    /* Get a new sessionId + session meta data (later) */
@@ -960,7 +960,7 @@ class GallerySession {
 		    unset($_COOKIE[SESSION_ID_PARAMETER]);
 		    $ret = $this->_setCookie(true);
 		    if ($ret) {
-			return $ret->wrap(__FILE__, __LINE__);
+			return $ret;
 		    }
 		}
 	    }
@@ -1057,13 +1057,13 @@ class GallerySession {
 	list ($ret, $sessionInactivityTimeout) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'session.inactivityTimeout');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	list ($ret, $lifetime) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'session.lifetime');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$phpVm = $gallery->getPhpVm();
@@ -1085,7 +1085,7 @@ class GallerySession {
 	    list ($ret, $anonymousUserId) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    /* Delete all sessions of guest users that are older than a week*/
 	    $where .= ' OR
@@ -1106,7 +1106,7 @@ class GallerySession {
 	    LIMIT ' . (int)$this->_expirationLimit;
 	    list ($ret, $results) = $storage->execute($query, $data);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	} else {
 	    /*
@@ -1119,7 +1119,7 @@ class GallerySession {
 	    $option['limit']['count'] = $this->_expirationLimit;
 	    list ($ret, $results) = $gallery->search($query, $data, $option);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    if ($results->resultCount()) {
 		$ids = array();
@@ -1133,7 +1133,7 @@ class GallerySession {
 		    GalleryUtilities::makeMarkers(count($ids)));
 		list ($ret, $results) = $storage->execute($query, $ids);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	}
@@ -1202,7 +1202,7 @@ class GallerySession {
 	    list ($ret, $this->_cookieDomain) = GalleryCoreApi::getPluginParameter('module', 'core',
 										   'cookie.domain');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    if (!isset($this->_cookieDomain)) {
 		$this->_cookieDomain = '';

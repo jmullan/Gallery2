@@ -77,7 +77,7 @@ class GalleryToolkitHelper_simple {
 	    list ($ret, $searchResults) = 
 		$gallery->search($query, array((string)$mimeType, (string)$operationName));
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 
 	    $toolkit = null;
@@ -89,7 +89,7 @@ class GalleryToolkitHelper_simple {
 		list ($ret, $toolkit) =
 		    GalleryCoreApi::newFactoryInstanceById('GalleryToolkit', $toolkitId);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret, null, null);
 		}
 
 		if (isset($toolkit)) {
@@ -121,7 +121,7 @@ class GalleryToolkitHelper_simple {
 	    list ($ret, $toolkits) = 
 		GalleryToolkitHelper_simple::getToolkitsByProperty($mimeType, $propertyName);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    $toolkit = $toolkits[0];
 	} else {
@@ -164,7 +164,7 @@ class GalleryToolkitHelper_simple {
 	    list ($ret, $searchResults) =
 		$gallery->search($query, array((string)$mimeType, (string)$propertyName));
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    $toolkits = null;
@@ -172,7 +172,7 @@ class GalleryToolkitHelper_simple {
 		list ($ret, $toolkit) =
 		    GalleryCoreApi::newFactoryInstanceById('GalleryToolkit', $result[0]);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		$toolkits[] = $toolkit;
 	    }
@@ -206,7 +206,7 @@ class GalleryToolkitHelper_simple {
 
 	list ($ret, $results) = $gallery->search($query);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if ($result = $results->nextResult()) {
@@ -240,7 +240,7 @@ class GalleryToolkitHelper_simple {
 
 	list ($ret, $results) = $gallery->search($query, array((string)$toolkitId));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if ($result = $results->nextResult()) {

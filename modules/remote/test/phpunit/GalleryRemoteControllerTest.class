@@ -46,14 +46,14 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	/* Create a new user */
 	list ($ret, $this->_user) = $this->_createRandomUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_markForCleanup($this->_user);
 
 	list ($ret, $this->_rootAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_markForCleanup($this->_rootAlbum);
@@ -125,7 +125,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 
 	/*
@@ -176,7 +176,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	for ($i = 0; $i < 2; $i++) {
 	    list ($ret, $album[$i]) = $this->_createRandomAlbum($parentId);
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    $parentId = $album[$i]->getId();
 	}
@@ -184,12 +184,12 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	/* give the 2nd album only view permissions */
 	$ret = GalleryCoreApi::removeItemPermissions($album[1]->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::addUserPermission(
 	    $album[1]->getId(), $gallery->getActiveUserId(), 'core.view');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryUtilities::putRequestVariable('form[cmd]', 'fetch-albums');
@@ -239,7 +239,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	for ($i = 0; $i < 2; $i++) {
 	    list ($ret, $album[$i]) = $this->_createRandomAlbum($parentId);
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    $parentId = $album[$i]->getId();
 	}
@@ -247,12 +247,12 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	/* give the 2nd album only view permissions */
 	$ret = GalleryCoreApi::removeItemPermissions($album[1]->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::addUserPermission(
 	    $album[1]->getId(), $gallery->getActiveUserId(), 'core.view');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryUtilities::putRequestVariable('form[cmd]', 'fetch-albums');
@@ -296,25 +296,25 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	for ($i = 0; $i < 4; $i++) {
 	    list ($ret, $album[$i]) = $this->_createRandomAlbum($parentId);
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    $parentId = $album[$i]->getId();
 	}
 	list ($ret, $album[4]) = $this->_createRandomAlbum($this->_rootAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* give albums 1 and 3 only view permissions */
 	foreach (array(1, 3) as $i) {
 	    $ret = GalleryCoreApi::removeItemPermissions($album[$i]->getId());
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    $ret = GalleryCoreApi::addUserPermission(
 		$album[$i]->getId(), $gallery->getActiveUserId(), 'core.view');
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	}
 
@@ -377,25 +377,25 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	for ($i = 0; $i < 4; $i++) {
 	    list ($ret, $album[$i]) = $this->_createRandomAlbum($parentId);
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    $parentId = $album[$i]->getId();
 	}
 	list ($ret, $album[4]) = $this->_createRandomAlbum($this->_rootAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* give albums 1 and 3 only view permissions */
 	foreach (array(1, 3) as $i) {
 	    $ret = GalleryCoreApi::removeItemPermissions($album[$i]->getId());
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    $ret = GalleryCoreApi::addUserPermission(
 		$album[$i]->getId(), $gallery->getActiveUserId(), 'core.view');
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	}
 
@@ -470,14 +470,14 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	/* Make sure the item was added */
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_rootAlbum);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(1, sizeof($childIds));
 
 	list ($ret, $newItem) = GalleryCoreApi::loadEntitiesById($childIds[0]);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals('testfile.txt', $newItem->getPathComponent());
@@ -517,14 +517,14 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	/* Make sure the item was added */
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_rootAlbum);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(1, sizeof($childIds));
 
 	list ($ret, $newItem) = GalleryCoreApi::loadEntitiesById($childIds[0]);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Make sure our option was called */
@@ -557,7 +557,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	/* Make sure the item was added */
 	list ($ret, $newAlbum) = GalleryCoreApi::loadEntitiesById($newAlbumId);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals('title', $newAlbum->getTitle());
@@ -585,13 +585,13 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	for ($i = 0; $i < 2; $i++) {
 	    list ($ret, $image[$i]) = $this->_createRandomDataItem($parentId, 'image/jpg');
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 
 	    list ($ret, $derivative[$i]) = $this->_createDerivative(
 		$image[$i], $image[$i]->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	}
 	GalleryUtilities::putRequestVariable('form[cmd]', 'fetch-album-images');
@@ -614,18 +614,18 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	for ($i = 0; $i < 2; $i++) {
 	    list ($ret, $image[$i]) = $this->_createRandomDataItem($parentId, 'image/jpg');
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 
 	    list ($ret, $derivative[$i]) = $this->_createDerivative(
 		$image[$i], $image[$i]->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	}
 	list ($ret, $album) = $this->_createRandomAlbum($parentId);
 	if ($ret) {
-	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	return $this->failWithStatus($ret);
 	}
 
 	GalleryUtilities::putRequestVariable('form[cmd]', 'fetch-album-images');
@@ -649,12 +649,12 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $image) = $this->_createRandomDataItem($parentId, 'image/jpg');
 	if ($ret) {
-	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $album) = $this->_createRandomAlbum($parentId);
 	if ($ret) {
-	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	return $this->failWithStatus($ret);
 	}
 
 	/* increase the view count on the image */
@@ -680,11 +680,11 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	/* Make sure the the view count is 1 */
 	list($ret, $imageViewCount) = GalleryCoreApi::fetchItemViewCount($image->getId());
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	list($ret, $albumViewCount) = GalleryCoreApi::fetchItemViewCount($album->getId());
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$this->assertEquals(1, $imageViewCount);
 	$this->assertEquals(1, $albumViewCount);
@@ -708,7 +708,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::addDerivativePreference(
 		1, $this->_rootAlbum->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|640,640');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryUtilities::putRequestVariable('form[cmd]', 'album-properties');
@@ -729,19 +729,19 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	$parentId = $this->_rootAlbum->getId();
 	list ($ret, $image) = $this->_createRandomDataItem($parentId, 'image/jpg');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $thumb) = $this->_createDerivative(
 	    $image, $image->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $resized) = $this->_createDerivative(
 	    $image, $image->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|640,640');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryUtilities::putRequestVariable('form[cmd]', 'image-properties');

@@ -55,7 +55,7 @@ class QuotasModule extends GalleryModule {
 	    $storage =& $gallery->getStorage();
 	    $ret = $storage->configureStore($this->getId(), array('QuotasMap:1.0'));
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
@@ -86,7 +86,7 @@ class QuotasModule extends GalleryModule {
 	    'ItemAddOption', 'DiskQuotaOption', 'DiskQuotaOption',
 	    'modules/quotas/DiskQuotaOption.inc', 'quotas', null, 9);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -113,14 +113,14 @@ class QuotasModule extends GalleryModule {
 		    list ($ret, $quotaExists, $groupQuota) =
 			GalleryQuotasHelper::fetchGroupQuota($entity->getId());
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		/* If its a user, find if a user quota exists, if so delete it */
 		} else if (GalleryUtilities::isA($entity, 'GalleryUser')) {
 		    list ($ret, $quotaExists, $userQuota) =
 			GalleryQuotasHelper::fetchUserQuota($entity->getId());
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		   }
 		}
 
@@ -128,7 +128,7 @@ class QuotasModule extends GalleryModule {
 		    $ret = GalleryCoreApi::removeMapEntry(
 			'QuotasMap', array('userOrGroupId' => $entity->getId()));
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		}
 	    }

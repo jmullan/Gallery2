@@ -56,22 +56,6 @@ class GalleryStatus {
     var $_errorCode;
 
     /**
-     * The file name where the error occurred
-     *
-     * @var string $_fileName
-     * @access private
-     */
-    var $_fileName;
-
-    /**
-     * The line number where the error occurred
-     *
-     * @var string $_lineNumber
-     * @access private
-     */
-    var $_lineNumber;
-
-    /**
      * A descriptive message of the error
      *
      * @var string $_errorMessage
@@ -92,10 +76,8 @@ class GalleryStatus {
      * @param lineNumber the line number in the file where the error occurred
      * @param errorMessage descriptive message of the error
      */
-    function GalleryStatus($errorCode, $fileName=null, $lineNumber=null, $errorMessage=null) {
+    function GalleryStatus($errorCode, $errorMessage=null) {
 	$this->_errorCode = $errorCode;
-	$this->_fileName = array($fileName);
-	$this->_lineNumber = array($lineNumber);
 	$this->_errorMessage = $errorMessage;
     }
 
@@ -106,24 +88,6 @@ class GalleryStatus {
      */
     function setStackTrace($trace) {
 	$this->_stackTrace = $trace;
-    }
-
-    /**
-     * Return the filename the error was found in.
-     *
-     * @return string
-     */
-    function getFileName() {
-	return $this->_fileName[0];
-    }
-
-    /**
-     * Return the line number the error was found at.
-     *
-     * @return int
-     */
-    function getLineNumber() {
-	return $this->_lineNumber[0];
     }
 
     /**
@@ -154,6 +118,8 @@ class GalleryStatus {
     }
 
     /**
+     * Deprecated.  Remove in the next major API bump.
+     *
      * Add a new file name and line number to our stack trace
      *
      * Don't add the value, unless it's an error.  As a debug measure, whine if
@@ -164,12 +130,7 @@ class GalleryStatus {
      * @param int a line number
      * @return object GalleryStatus the new status object
      */
-    function wrap($fileName, $lineNumber) {
-	if (!empty($this->_errorCode)) {
-	    array_push($this->_fileName, $fileName);
-	    array_push($this->_lineNumber, $lineNumber);
-	}
-
+    function wrap() {
 	return $this;
     }
 

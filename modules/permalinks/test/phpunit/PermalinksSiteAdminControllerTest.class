@@ -44,7 +44,7 @@ class PermalinksSiteAdminControllerTest extends GalleryControllerTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'permalinks');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -52,7 +52,7 @@ class PermalinksSiteAdminControllerTest extends GalleryControllerTestCase {
 	/* test toggling autoPermalink */
 	$ret = GalleryCoreApi::setPluginParameter('module', 'permalinks', 'autoPermalink', 1);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$results = $this->handleRequest();
@@ -65,7 +65,7 @@ class PermalinksSiteAdminControllerTest extends GalleryControllerTestCase {
 	foreach (array('autoPermalink' => '0') as $key => $expectedValue) {
 	    list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'permalinks', $key);
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    $this->assertEquals($expectedValue, $value, $key);
 	}
@@ -83,7 +83,7 @@ class PermalinksSiteAdminControllerTest extends GalleryControllerTestCase {
 	foreach (array('autoPermalink' => '1') as $key => $expectedValue) {
 	    list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'permalinks', $key);
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    $this->assertEquals($expectedValue, $value, $key);
 	}

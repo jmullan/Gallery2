@@ -88,13 +88,13 @@ class ModRewriteParser extends RewriteParser {
 	if (!isset($rewriteModule)) {
 	    list($ret, $rewriteModule) = GalleryCoreApi::loadPlugin('module', 'rewrite');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 
 	list ($ret, $message) = parent::getErrorMessage($code, $rewriteModule);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if (!isset($message)) {
@@ -120,7 +120,7 @@ class ModRewriteParser extends RewriteParser {
 		    'file, please create it.');
 		break;
 	    default:
-	        return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	        return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	    }
 	}
 
@@ -144,14 +144,14 @@ class ModRewriteParser extends RewriteParser {
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	if (isset($form['force']['test1'])) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
 		'modrewrite.status', serialize(array('needOptions' => false, 'forced' => 1)));
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	}
 
@@ -159,7 +159,7 @@ class ModRewriteParser extends RewriteParser {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
 		'modrewrite.status', serialize(array('needOptions' => true, 'forced' => 1)));
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	}
 
@@ -187,12 +187,12 @@ class ModRewriteParser extends RewriteParser {
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	/* We can only save the embedded .htaccess in embedded mode */
 	if (!GalleryUtilities::isEmbedded()) {
-	    return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__),
+	    return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_OPERATION),
 		null, null);
 	}
 
@@ -207,7 +207,7 @@ class ModRewriteParser extends RewriteParser {
 	    $this,
 	    GalleryUtilities::getRequestVariables('controller') != 'SetupRewriteController');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	if ($code == REWRITE_STATUS_OK) {
@@ -227,7 +227,7 @@ class ModRewriteParser extends RewriteParser {
 	    list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 		'modrewrite.' . $key);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    if (empty($value)) {
@@ -247,7 +247,7 @@ class ModRewriteParser extends RewriteParser {
 	    list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 		'modrewrite.' . $key);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    $config[$key] = $value;
@@ -265,7 +265,7 @@ class ModRewriteParser extends RewriteParser {
 
 	list ($ret, $code) = ModRewriteHelper::saveEmbedConfig($param, $this, true);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	return array(null, $code,

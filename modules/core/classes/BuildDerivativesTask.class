@@ -62,7 +62,7 @@ class BuildDerivativesTask extends MaintenanceTask {
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	$ret = $templateAdapter->updateProgressBar(
@@ -70,7 +70,7 @@ class BuildDerivativesTask extends MaintenanceTask {
 	    '',
 	    0);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	$query = '
@@ -82,7 +82,7 @@ class BuildDerivativesTask extends MaintenanceTask {
 	';
 	list ($ret, $results) = $gallery->search($query);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	$i = $broken = $built = 0;
@@ -93,7 +93,7 @@ class BuildDerivativesTask extends MaintenanceTask {
 	    list ($ret, $derivative, $wasBuilt) =
 		GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($result[0], true);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    $debug = $gallery->stopRecordingDebugSnippet();
 	    if ($wasBuilt) {
@@ -112,12 +112,12 @@ class BuildDerivativesTask extends MaintenanceTask {
 		    array('text' => 'Processing image %d of %d', 'arg1' => $i, 'arg2' => $total));
 		$ret = $templateAdapter->updateProgressBar($message, '', $i / $total);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret, null, null);
 		}
 		/* Close open locks (too many open files for flock based locking) */
 		$ret = $storage->checkPoint();
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret, null, null);
 		}
 		$gallery->guaranteeTimeLimit(120);
 	    }

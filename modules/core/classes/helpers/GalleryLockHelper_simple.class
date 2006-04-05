@@ -59,13 +59,13 @@ class GalleryLockHelper_simple {
 	$result =& $gallery->getLockSystem();
 	$ret = $result[0];
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$lockSystem =& $result[1];
 
 	list ($ret, $lockId) = $lockSystem->acquireReadLock($ids, $timeout);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $lockId);
@@ -96,7 +96,7 @@ class GalleryLockHelper_simple {
 	$result =& $gallery->getLockSystem();
 	$ret = $result[0];
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$lockSystem =& $result[1];
 
@@ -115,7 +115,7 @@ class GalleryLockHelper_simple {
 
 	list ($ret, $searchResults) = $gallery->search($query, array((int)$id));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if ($searchResults->resultCount() == 0) {
@@ -147,7 +147,7 @@ class GalleryLockHelper_simple {
 	/* Read lock the parents */
 	list ($ret, $lock) = $lockSystem->acquireReadLock($parentIds, $timeout);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $lock);
@@ -178,13 +178,13 @@ class GalleryLockHelper_simple {
 	$result =& $gallery->getLockSystem();
 	$ret = $result[0];
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$lockSystem =& $result[1];
 
 	list ($ret, $lockId) = $lockSystem->acquireWriteLock($ids, $timeout);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $lockId);
@@ -215,13 +215,13 @@ class GalleryLockHelper_simple {
 	$result =& $gallery->getLockSystem();
 	$ret = $result[0];
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$lockSystem =& $result[1];
 
 	$ret = $lockSystem->releaseLocks($lockIds);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -235,13 +235,13 @@ class GalleryLockHelper_simple {
 	$result =& $gallery->getLockSystem();
 	$ret = $result[0];
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$lockSystem =& $result[1];
 
 	$ret = $lockSystem->releaseAllLocks();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -255,13 +255,13 @@ class GalleryLockHelper_simple {
 	$result =& $gallery->getLockSystem();
 	$ret = $result[0];
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$lockSystem =& $result[1];
 
 	$ret = $lockSystem->refreshLocks();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;

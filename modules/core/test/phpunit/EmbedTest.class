@@ -48,12 +48,12 @@ class EmbedTest extends GalleryTestCase {
 	$ret = $gallery->_session->init();
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$ret = $gallery->_session->start();
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	/* Clean all cached variables */
 	GalleryDataCache::reset();
@@ -165,7 +165,7 @@ class EmbedTest extends GalleryTestCase {
 	/* Init a first time */
 	$ret = GalleryEmbed::init(array('embedUri' => '/cms/index.php?mod=g2', 'g2Uri' => '/'));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	/* Check if we get the the urls that it should generate (sanity check) */
 	global $gallery;
@@ -183,7 +183,7 @@ class EmbedTest extends GalleryTestCase {
 	 */
 	$ret = GalleryEmbed::init(array('embedUri' => '/cms2nd/index.php?mod=g2', 'g2Uri' => '/'));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	global $gallery;
 	$urlgenerator =& $gallery->getUrlGenerator();
@@ -212,7 +212,7 @@ class EmbedTest extends GalleryTestCase {
 	$secondCacheKey = 'GalleryEmbed::initSecondPass';
 	$ret = GalleryEmbed::init();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	/* Both, init first pass and second pass should have been called */
 	$this->assert(GalleryDataCache::containsKey($firstCacheKey),
@@ -229,7 +229,7 @@ class EmbedTest extends GalleryTestCase {
 	/* we set fullInit = false, only InitFirstPass should be called */
 	$ret = GalleryEmbed::init(array('fullInit' => false));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	/* Verify */
 	$this->assert(GalleryDataCache::containsKey($firstCacheKey),
@@ -245,7 +245,7 @@ class EmbedTest extends GalleryTestCase {
 	/* we set fullInit = true, both should be called */
 	$ret = GalleryEmbed::init(array('fullInit' => true));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	/* Verify */
 	$this->assert(GalleryDataCache::containsKey($firstCacheKey),
@@ -271,12 +271,12 @@ class EmbedTest extends GalleryTestCase {
 					    array('username' => 'test_' . rand(),
 						  'language' => 'en_GB'));
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    list ($ret, $user[$i]) = GalleryCoreApi::loadEntityByExternalId($activeUserId[$i],
 									    'GalleryUser');
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    $this->_markForCleanup($user[$i]);
 	    $this->assertEquals('en_GB', $user[$i]->getlanguage(),
@@ -304,7 +304,7 @@ class EmbedTest extends GalleryTestCase {
 	$sessionId = $session->getId();
 	$ret = GalleryEmbed::checkActiveUser($activeUserId[0]);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals($user[0]->getId(), $session->getUserId(),
 			    'session user id has changed');
@@ -319,7 +319,7 @@ class EmbedTest extends GalleryTestCase {
 	$sessionId = $session->getId();
 	$ret = GalleryEmbed::checkActiveUser($activeUserId[1]);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals($user[1]->getId(), $session->getUserId(),
 			    'session user idhas not changed');
@@ -334,7 +334,7 @@ class EmbedTest extends GalleryTestCase {
 	$sessionId = $session->getId();
 	$ret = GalleryEmbed::checkActiveUser('');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(null, $session->getUserId(),
 			    'session user idshould be null after logout');
@@ -348,7 +348,7 @@ class EmbedTest extends GalleryTestCase {
 	$sessionId = $session->getId();
 	$ret = GalleryEmbed::checkActiveUser('');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(null, $session->getUserId(),
 			    'session user id should be null after logout');
@@ -363,7 +363,7 @@ class EmbedTest extends GalleryTestCase {
 	$sessionId = $session->getId();
 	$ret = GalleryEmbed::checkActiveUser($activeUserId[0]);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals($user[0]->getId(), $session->getUserId(),
 			    'session user id after login');
@@ -396,14 +396,14 @@ class EmbedTest extends GalleryTestCase {
 	$apiVersion[1] -= 2;
 	$ret = GalleryEmbed::init(array('apiVersion' => $apiVersion));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$apiVersion[1] += 7;
 	$ret = GalleryEmbed::init(array('apiVersion' => $apiVersion));
 	$this->assert(!empty($ret) && $ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH,
 		      'API too old');
 	if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$apiVersion[1] -= 8;
 	$apiVersion[0] -= 1;
@@ -411,7 +411,7 @@ class EmbedTest extends GalleryTestCase {
 	$this->assert(!empty($ret) && $ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH,
 		      '(major) API too old');
 	if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 }

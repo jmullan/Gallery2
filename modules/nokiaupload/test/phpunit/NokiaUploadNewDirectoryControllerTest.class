@@ -45,7 +45,7 @@ class NokiaUploadNewDirectoryControllerTest extends GalleryControllerTestCase {
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_markForCleanup($this->_album);
@@ -53,7 +53,7 @@ class NokiaUploadNewDirectoryControllerTest extends GalleryControllerTestCase {
 	list ($ret, $this->_group) = $this->_createRandomGroup();
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_markForCleanup($this->_group);
@@ -62,12 +62,12 @@ class NokiaUploadNewDirectoryControllerTest extends GalleryControllerTestCase {
 			  $this->_album->getId(), $this->_group->getId(), 'core.addAlbumItem');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	list ($ret, $this->_user) = $this->_createRandomUser();
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_markForCleanup($this->_user);
@@ -80,20 +80,20 @@ class NokiaUploadNewDirectoryControllerTest extends GalleryControllerTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'nokiaupload');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter(
 			  'module', 'nokiaupload', 'id.mobileGroup', $this->_group->getId());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::setPluginParameter(
 			  'module', 'nokiaupload', 'id.uploadAlbum', $this->_album->getId());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -151,7 +151,7 @@ class NokiaUploadNewDirectoryControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $album) = GalleryCoreApi::loadEntitiesById($results['status']['id']);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert(GalleryUtilities::isA($album, 'GalleryAlbumItem'), 'item type');
 	$this->assertEquals($this->_album->getId(), $album->getParentId(), 'parent');

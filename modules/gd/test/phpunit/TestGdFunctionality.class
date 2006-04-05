@@ -146,7 +146,7 @@ class TestGdFunctionality {
 
     function phpinfo($section=null) {
 	if ($section != '8') {
-	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE), null);
 	}
 	if (!isset($this->_gdEnvironment['phpinfo(8)'])) {
 	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__,
@@ -213,7 +213,7 @@ class TestGdFunctionality {
 					'Environment: ' . $this->getEnvironmentName()), null);
 	}
 	if (!isset($this->_gdEnvironment['gd_info'])) {
-	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE), null);
 	}
 	return array(null, $this->_gdEnvironment['gd_info']);
     }
@@ -314,10 +314,10 @@ class TestGdFunctionality {
 					'Environment: ' . $this->getEnvironmentName());
 	}
 	if (!$this->isValidResource($res)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 	if (!$this->isValidFile($filename)) {
-	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE);
 	}
 	$this->saveResource($res, $filename, 'image/gif');
 	return null;
@@ -329,10 +329,10 @@ class TestGdFunctionality {
 					'Environment: ' . $this->getEnvironmentName());
 	}
 	if (!$this->isValidResource($res)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 	if (!$this->isValidFile($filename)) {
-	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE);
 	}
 	$this->saveResource($res, $filename, 'image/jpeg');
 	return null;
@@ -344,10 +344,10 @@ class TestGdFunctionality {
 					'Environment: ' . $this->getEnvironmentName());
 	}
 	if (!$this->isValidResource($res)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 	if (!$this->isValidFile($filename)) {
-	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE);
 	}
 	$this->saveResource($res, $filename, 'image/png');
 	return null;
@@ -359,10 +359,10 @@ class TestGdFunctionality {
 					'Environment: ' . $this->getEnvironmentName());
 	}
 	if (!$this->isValidResource($res)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 	if (!$this->isValidFile($filename)) {
-	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE);
 	}
 	$this->saveResource($res, $filename, 'image/vnd.wap.wbmp');
 	return null;
@@ -374,10 +374,10 @@ class TestGdFunctionality {
 					'Environment: ' . $this->getEnvironmentName());
 	}
 	if (!$this->isValidResource($res)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 	if (!$this->isValidFile($filename)) {
-	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE);
 	}
 	$this->saveResource($res, $filename, 'image/x-xbitmap');
 	return null;
@@ -389,10 +389,10 @@ class TestGdFunctionality {
 					'Environment: ' . $this->getEnvironmentName());
 	}
 	if (!$this->isValidResource($res)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 	if (!$this->isValidFile($filename)) {
-	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE);
 	}
 	$this->saveResource($res, $filename, 'image/x-xpixmap');
 	return null;
@@ -405,7 +405,7 @@ class TestGdFunctionality {
 					'Environment: ' . $this->getEnvironmentName());
 	}
 	if (!$this->isValidResource($srcRes) || !$this->isValidResource($dstRes)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 	return null;
     }
@@ -417,7 +417,7 @@ class TestGdFunctionality {
 					'Environment: ' . $this->getEnvironmentName());
 	}
 	if (!$this->isValidResource($srcRes) || !$this->isValidResource($dstRes)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 	return null;
     }
@@ -428,7 +428,7 @@ class TestGdFunctionality {
 					'Environment: ' . $this->getEnvironmentName());
 	}
 	if (!$this->isValidResource($srcRes) || !$this->isValidResource($dstRes)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 	return null;
     }
@@ -439,7 +439,7 @@ class TestGdFunctionality {
 					'Environment: ' . $this->getEnvironmentName());
 	}
 	if (!$this->isValidResource($srcRes) || !$this->isValidResource($dstRes)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
 	$this->setResourceData(
@@ -457,7 +457,7 @@ class TestGdFunctionality {
 			 null);
 	}
 	if (!$this->isValidResource($res)) {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER),
 			 null);
 	}
 	return array(null, $this->getResourceData($res, 'x'));
@@ -470,7 +470,7 @@ class TestGdFunctionality {
 			 null);
 	}
 	if (!$this->isValidResource($res)) {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER),
 			 null);
 	}
 	return array(null, $this->getResourceData($res, 'y'));

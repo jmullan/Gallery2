@@ -49,7 +49,7 @@ class RatingCallbackViewTest extends GalleryTestCase {
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_album);
 
@@ -57,19 +57,19 @@ class RatingCallbackViewTest extends GalleryTestCase {
 		'image/test', array(), __FILE__, 'GalleryPhotoItem');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'rating');
 	if ($ret || !isset($this->_module)) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_view) = GalleryView::loadView('rating.RatingCallback');
 	if ($ret || !isset($this->_view)) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
     }
@@ -85,7 +85,7 @@ class RatingCallbackViewTest extends GalleryTestCase {
 	$ret = $this->_view->renderImmediate(array(), array());
 	if ($ret) {
 	    ob_end_clean();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$results = explode("\n", ob_get_contents());
 	ob_end_clean();
@@ -114,7 +114,7 @@ class RatingCallbackViewTest extends GalleryTestCase {
 	$ret = $this->_view->renderImmediate(array(), array());
 	if ($ret) {
 	    ob_end_clean();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$results = explode("\n", ob_get_contents());
 	ob_end_clean();
@@ -134,12 +134,12 @@ class RatingCallbackViewTest extends GalleryTestCase {
 	/* Remove all permissions */
 	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::addUserPermission(
 	    $this->_item->getId(), $this->_userId, 'rating.view');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$newRating = rand(1, 5);
@@ -152,7 +152,7 @@ class RatingCallbackViewTest extends GalleryTestCase {
 	$ret = $this->_view->renderImmediate(array(), array());
 	if ($ret) {
 	    ob_end_clean();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$results = explode("\n", ob_get_contents());
 	ob_end_clean();
@@ -175,7 +175,7 @@ class RatingCallbackViewTest extends GalleryTestCase {
 	$ret = $this->_view->renderImmediate(array(), array());
 	if ($ret) {
 	    ob_end_clean();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$results = explode("\n", ob_get_contents());
 	ob_end_clean();
@@ -195,17 +195,17 @@ class RatingCallbackViewTest extends GalleryTestCase {
 	/* Remove all permissions */
 	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::addUserPermission(
 	    $this->_item->getId(), $this->_userId, 'rating.view');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::addUserPermission(
 	    $this->_item->getId(), $this->_userId, 'rating.add');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$newRating = rand(1, 5);
@@ -218,7 +218,7 @@ class RatingCallbackViewTest extends GalleryTestCase {
 	$ret = $this->_view->renderImmediate(array(), array());
 	if ($ret) {
 	    ob_end_clean();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$results = explode("\n", ob_get_contents());
 	ob_end_clean();

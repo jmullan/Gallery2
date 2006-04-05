@@ -33,7 +33,7 @@ class ImageBlockPreloads {
 	    list ($ret, $moduleParams) =
 		GalleryCoreApi::fetchAllPluginParameters('module', 'imageblock');
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    $frameIds = array();
 	    foreach ($paramSet as $params) {
@@ -51,7 +51,7 @@ class ImageBlockPreloads {
 		list ($ret, $imageframe) =
 		    GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 
 		if (isset($imageframe)) {
@@ -60,7 +60,7 @@ class ImageBlockPreloads {
 			if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
 			    /* It's there, but unusable so ignore it. */
 			} else {
-			    return $ret->wrap(__FILE__, __LINE__);
+			    return $ret;
 			}
 		    }
 		}
@@ -70,7 +70,7 @@ class ImageBlockPreloads {
 	}
 
 
-	return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
     }
 }
 ?>

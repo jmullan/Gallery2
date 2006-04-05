@@ -49,28 +49,28 @@ class UserAlbumController extends GalleryController {
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if ($userId == $anonymousUserId) {
-	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
 	}
 
 	list ($ret, $albumId) =
 	    GalleryCoreApi::getPluginParameter('module', 'useralbum', 'albumId', $userId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $createMode) =
 	    GalleryCoreApi::getPluginParameter('module', 'useralbum', 'create');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if (!empty($albumId)) {
 	    list ($ret, $album) = GalleryCoreApi::loadEntitiesById($albumId);
 	    if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 
@@ -78,19 +78,19 @@ class UserAlbumController extends GalleryController {
 	    /* If userId matches active user then create the user album */
 	    if ($userId != $activeUserId) {
 		return
-		    array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
+		    array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
 	    }
 	    GalleryCoreApi::requireOnce('modules/useralbum/classes/UserAlbumHelper.class');
 
 	    $ret = UserAlbumHelper::createUserAlbum($gallery->getActiveUser());
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    list ($ret, $albumId) =
 		GalleryCoreApi::getPluginParameter('module', 'useralbum', 'albumId', $userId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 

@@ -48,7 +48,7 @@ class AdminDeleteUserQuotaControllerTest extends GalleryControllerTestCase {
 	/* Create a user that we can delete */
 	list ($ret, $this->_user) = $this->_createRandomUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_user);
     }
@@ -116,14 +116,14 @@ class AdminDeleteUserQuotaControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::addMapEntry(
 	    'QuotasMap', array('userOrGroupId' => $userId, 'quotaSize' => $quota));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
     }
 
     function _deleteUserQuota($userId) {
 	$ret = GalleryCoreApi::removeMapEntry('QuotasMap', array('userOrGroupId' => $userId));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
     }
 }

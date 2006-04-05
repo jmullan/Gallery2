@@ -65,21 +65,21 @@ class HiddenModule extends GalleryModule /* and GalleryEventListener */ {
 	    'GalleryOnLoadHandler', 'HiddenModule', 'Hidden',
 	    'modules/hidden/module.inc', 'hidden', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'ItemEditOption', 'HiddenItemOption', 'HiddenItemOption',
 	    'modules/hidden/HiddenItemOption.inc', 'hidden', array('ItemEditItem'));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'HiddenInterface_1_0', 'HiddenHelper', 'Hidden',
 	    'modules/hidden/classes/HiddenHelper.class', 'hidden', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -107,7 +107,7 @@ class HiddenModule extends GalleryModule /* and GalleryEventListener */ {
 	    ';
 	list ($ret, $searchResults) = $gallery->search($query);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	while ($result = $searchResults->nextResult()) {
 	    $itemIds[] = (int)$result[0];
@@ -116,19 +116,19 @@ class HiddenModule extends GalleryModule /* and GalleryEventListener */ {
 	while (!empty($itemIds)) {
 	    list ($ret, $items) = GalleryCoreApi::loadEntitiesById(array_splice($itemIds, 0, 100));
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    foreach ($items as $item) {
 		$ret = HiddenHelper::unHideItem($item);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	}
 
 	$ret = parent::uninstall();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	return null;
     }
@@ -141,7 +141,7 @@ class HiddenModule extends GalleryModule /* and GalleryEventListener */ {
 	if ($view == 'core.ShowItem' && $itemId == $item->getId()) {
 	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($itemId);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    if (!isset($permissions['core.view']) && (isset($permissions['core.viewResizes'])
 		    || isset($permissions['core.viewSource']))) {
@@ -172,7 +172,7 @@ class HiddenModule extends GalleryModule /* and GalleryEventListener */ {
 	    GalleryCoreApi::requireOnce('modules/hidden/classes/HiddenHelper.class');
 	    $ret = HiddenHelper::handleMoveItem($item);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 	return array(null, null);

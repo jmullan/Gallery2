@@ -44,7 +44,7 @@ class PanoramaHelper {
     function assignEntityType(&$item, $isPanorama) {
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($item->getId());
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	if (GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
 	    $item->setEntityType(
@@ -55,11 +55,11 @@ class PanoramaHelper {
 	}
 	$ret = $item->save();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	return null;
     }
@@ -85,16 +85,16 @@ class PanoramaHelper {
 	list ($ret, $preferredFullImages) =
 	    GalleryCoreApi::fetchPreferredsByItemIds($ids);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	list ($ret, $resizedImages) =
 	    GalleryCoreApi::fetchResizesByItemIds($ids);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$ret = GalleryCoreApi::studyPermissions($ids);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$data = array();
@@ -105,7 +105,7 @@ class PanoramaHelper {
 	    }
 	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($id);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    if (isset($permissions['core.viewSource'])) {
@@ -152,7 +152,7 @@ class PanoramaHelper {
 
 	list ($ret, $searchResults) = $gallery->search($query, array(), array());
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$count = 0;
@@ -184,7 +184,7 @@ class PanoramaHelper {
 
 	list ($ret, $searchResults) = $gallery->search($query, array(), array());
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	for ($i = 0; $result = $searchResults->nextResult();) {
@@ -194,11 +194,11 @@ class PanoramaHelper {
 	    $id = (int)$result[0];
 	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($id);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    $ret = PanoramaHelper::assignEntityType($item, false);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 	return null;

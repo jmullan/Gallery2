@@ -41,7 +41,7 @@ class AdminThemesController extends GalleryController {
     function handleRequest($form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$status = $error = $errorMessage = array();
@@ -55,16 +55,16 @@ class AdminThemesController extends GalleryController {
 		    isset($form['action']['upgrade'])) {
 		    list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId, true);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		} else {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 
 	    list ($ret, $isActive) = $theme->isActive();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    if (isset($form['action']['activate'])) {
@@ -72,7 +72,7 @@ class AdminThemesController extends GalleryController {
 		if (!$isActive) {
 		    list ($ret, $redirect) = $theme->activate();
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		    $status['activated'] = $theme->translate($theme->getName());
 		}
@@ -83,7 +83,7 @@ class AdminThemesController extends GalleryController {
 	    } else if (isset($form['action']['install'])) {
 		$ret = $theme->installOrUpgrade();
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		$redirect['view'] = 'core.SiteAdmin';
@@ -93,7 +93,7 @@ class AdminThemesController extends GalleryController {
 	    } else if (isset($form['action']['upgrade'])) {
 		$ret = $theme->installOrUpgrade();
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		$redirect['view'] = 'core.SiteAdmin';
@@ -104,7 +104,7 @@ class AdminThemesController extends GalleryController {
 		if (!$isActive) {
 		    $ret = $theme->uninstall();
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		    $status['uninstalled'] = $theme->translate($theme->getName());
 		}
@@ -116,14 +116,14 @@ class AdminThemesController extends GalleryController {
 		list ($ret, $defaultThemeId) =
 		    GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		/* Only deactivate if we're not already deactive and not the default! */
 		if ($isActive && $theme->getId() != $defaultThemeId) {
 		    list ($ret, $redirect) = $theme->deactivate();
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		    $status['deactivated'] = $theme->translate($theme->getName());
 		}
@@ -135,7 +135,7 @@ class AdminThemesController extends GalleryController {
 		/* Get all the possible settings */
 		list ($ret, $settings) = $theme->getSettings(null);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		/* Validate the settings */
@@ -157,7 +157,7 @@ class AdminThemesController extends GalleryController {
 			if ($setting['value'] !== $value) {
 			    $ret = $theme->setParameter($setting['key'], $value);
 			    if ($ret) {
-				return array($ret->wrap(__FILE__, __LINE__), null);
+				return array($ret, null);
 			    }
 			}
 		    }
@@ -165,7 +165,7 @@ class AdminThemesController extends GalleryController {
 		    if ($theme->isAdvancedSettings()) {
 			list ($ret, $error, $statusKey) = $theme->handleSettingsRequest($form);
 			if ($ret) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
+			    return array($ret, null);
 			}
 			if (empty($error)) {
 			    $status[$statusKey] = $theme->translate($theme->getName());
@@ -210,7 +210,7 @@ class AdminThemesController extends GalleryController {
 			}
 			$ret = GalleryCoreApi::setPluginParameter('module', 'core', $key, $value);
 			if ($ret) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
+			    return array($ret, null);
 			}
 		    }
 		}
@@ -250,12 +250,12 @@ class AdminThemesView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($themeId, $mode) = GalleryUtilities::getRequestVariables('themeId', 'mode');
@@ -266,7 +266,7 @@ class AdminThemesView extends GalleryView {
 	/* Load the theme list */
 	list ($ret, $themes) = GalleryCoreApi::fetchPluginStatus('theme', true);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/*
@@ -280,7 +280,7 @@ class AdminThemesView extends GalleryView {
 	    if (!empty($status['active'])) {
 		list($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $id, false, true);
 		if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	}
@@ -288,7 +288,7 @@ class AdminThemesView extends GalleryView {
 	/* Reload the theme list, which may now be updated because of obsolete modules. */
 	list ($ret, $themes) = GalleryCoreApi::fetchPluginStatus('theme', true);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/*
@@ -303,7 +303,7 @@ class AdminThemesView extends GalleryView {
 	list ($ret, $defaultThemeId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Transform it to include all the theme data that we want to display */
@@ -312,7 +312,7 @@ class AdminThemesView extends GalleryView {
 
 	    list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $id, true);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    /* Detect and remove old themes which not even had a setId() in their constructor */
@@ -417,7 +417,7 @@ class AdminThemesView extends GalleryView {
 		list ($ret, $value) =
 		    GalleryCoreApi::getPluginParameter('module', 'core', $key);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		if ($key == 'default.orderBy') {
@@ -445,7 +445,7 @@ class AdminThemesView extends GalleryView {
 	    list ($ret, $orderByList, $presortList, $orderDirectionList) =
 		GallerySortInterface_1_1::getAllSortOrders(false);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    $AdminThemes['orderByList'] = $orderByList;
@@ -463,25 +463,25 @@ class AdminThemesView extends GalleryView {
 	    /* Load the config settings from the active theme */
 	    list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    if ($theme->isAdvancedSettings()) {
 		list ($ret, $tpl) = $theme->loadSettingsTemplate($template, $form);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		$AdminThemes['customTemplate'] = $tpl;
 	    }
 
 	    list ($ret, $AdminThemes['settings']) = $theme->getSettings(null);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    list ($ret, $AdminThemes['availableBlocks']) = $this->loadAvailableBlocks();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    break;
 	}
@@ -534,7 +534,7 @@ class AdminThemesView extends GalleryView {
 
 	list ($ret, $pluginStatus) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$data = array();

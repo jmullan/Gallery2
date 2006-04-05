@@ -57,7 +57,7 @@ class NewItemsModule extends GalleryModule {
 		     as $key => $value) {
 		$ret = $this->setParameter($key, $value);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	}
@@ -73,7 +73,7 @@ class NewItemsModule extends GalleryModule {
 	    'GallerySortInterface_1_1', 'NewItemsSortOrder', 'NewItems',
 	    'modules/newitems/classes/NewItemsSortOrder.class', 'newitems', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -86,12 +86,12 @@ class NewItemsModule extends GalleryModule {
 	GalleryCoreApi::requireOnce('modules/newitems/classes/NewItemsHelper.class');
 	list ($ret, $count) = NewItemsHelper::fetchAlbumCount();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	list ($ret, $default) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderBy');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if ($count > 0 || strpos($default, 'NewItems') !== false) {
 	    /* Can't deactivate if NewItems sort is in use */
@@ -102,7 +102,7 @@ class NewItemsModule extends GalleryModule {
 
 	list ($ret, $redirect) = parent::deactivate($postDeactivationEvent);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	return array(null, $redirect);
     }
@@ -122,7 +122,7 @@ class NewItemsModule extends GalleryModule {
     function getItemSummaries($items, $permissions) {
 	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'newitems');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$time = time();
 	$newTime = $time - $param['days.new'] * 86400;

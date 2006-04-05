@@ -58,7 +58,7 @@ class ItemMoveController extends GalleryController {
 		$newParentId = $form['destination'];
 		list ($ret, $permissions) = GalleryCoreApi::getPermissions($newParentId);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		$canAddItem = isset($permissions['core.addDataItem']);
@@ -71,7 +71,7 @@ class ItemMoveController extends GalleryController {
 		list ($ret, $newParentAncestorIds) =
 		    GalleryCoreApi::fetchParentSequence($newParentId);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		$newParentAncestorIds[] = $newParentId;
 	    } else {
@@ -84,11 +84,11 @@ class ItemMoveController extends GalleryController {
 		/* Load the source items */
 		list ($ret, $selectedItems) = GalleryCoreApi::loadEntitiesById($selectedIds);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		$ret = GalleryCoreApi::studyPermissions($selectedIds);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		$oldParentIds = array();
@@ -104,7 +104,7 @@ class ItemMoveController extends GalleryController {
 		    $oldParentIds[] = $selectedItem->getParentId();
 		    list ($ret, $permissions) = GalleryCoreApi::getPermissions($selectedId);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 
 		    /* Can we delete this item from here? */
@@ -131,7 +131,7 @@ class ItemMoveController extends GalleryController {
 		list ($ret, $lockIds[]) =
 		    GalleryCoreApi::acquireReadLock(array($newParentId, $itemId));
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		/* Do the move / locking in batches to prevent too many open files issues */
@@ -147,7 +147,7 @@ class ItemMoveController extends GalleryController {
 		    list ($ret, $currentLockIds) = GalleryCoreApi::acquireWriteLock($currentIds);
 		    if ($ret) {
 			GalleryCoreApi::releaseLocks($lockIds);
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 
 		    /* If we have no problems, do the moves */
@@ -155,14 +155,14 @@ class ItemMoveController extends GalleryController {
 			$ret = $selectedItem->move($newParentId);
 			if ($ret) {
 			    GalleryCoreApi::releaseLocks(array_merge($lockIds, $currentLockIds));
-			    return array($ret->wrap(__FILE__, __LINE__), null);
+			    return array($ret, null);
 			}
 			$status['moved']['count']++;
 
 			$ret = $selectedItem->save();
 			if ($ret) {
 			    GalleryCoreApi::releaseLocks(array_merge($lockIds, $currentLockIds));
-			    return array($ret->wrap(__FILE__, __LINE__), null);
+			    return array($ret, null);
 			}
 
 			if (GalleryUtilities::isA($selectedItem, 'GalleryDataItem')) {
@@ -172,25 +172,25 @@ class ItemMoveController extends GalleryController {
 			    if ($ret) {
 				GalleryCoreApi::releaseLocks(
 				    array_merge($lockIds, $currentLockIds));
-				return array($ret->wrap(__FILE__, __LINE__), null);
+				return array($ret, null);
 			    }
 			}
 		    }
 		    $ret = GalleryCoreApi::releaseLocks($currentLockIds);
 		    if ($ret) {
 			GalleryCoreApi::releaseLocks($lockIds);
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		} while (!empty($selectedItems));
 
 		$ret = GalleryCoreApi::releaseLocks($lockIds);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		list ($ret, $success) = GalleryCoreApi::guaranteeAlbumHasThumbnail($itemId);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		/* Figure out where to redirect upon success */
@@ -203,7 +203,7 @@ class ItemMoveController extends GalleryController {
 	    list ($ret, $peerIds) =
 		GalleryCoreApi::fetchChildItemIdsWithPermission($itemId, 'core.delete');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    $numPages = ceil(sizeof($peerIds) / $form['numPerPage']);
@@ -261,14 +261,14 @@ class ItemMoveView extends GalleryView {
 
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Get all peers that we can delete */
 	list ($ret, $peerIds) =
 	    GalleryCoreApi::fetchChildItemIdsWithPermission($itemId, 'core.delete');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$albumIds = array();
@@ -316,13 +316,13 @@ class ItemMoveView extends GalleryView {
 	    /* Load all the peers */
 	    list ($ret, $peerItems) = GalleryCoreApi::loadEntitiesById($peerIds);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    /* get peer thumbnails */
 	    list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds($peerIds);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    /* Build our peers table */
@@ -343,7 +343,7 @@ class ItemMoveView extends GalleryView {
 		    list ($ret, $thumbnail) =
 			GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($thumbnail->getId());
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		    $peers[$peerItem->getId()]['thumbnail'] = (array)$thumbnail;
 		}
@@ -354,7 +354,7 @@ class ItemMoveView extends GalleryView {
 		list ($ret, $peerDescendentCounts) =
 		    GalleryCoreApi::fetchDescendentCounts(array_keys($peerTypes['album']));
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 
@@ -362,21 +362,21 @@ class ItemMoveView extends GalleryView {
 	    list ($ret, $rootId) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    /* Get ids of all all albums where we can add new data items */
 	    list ($ret, $albumIds['addDataItem']) =
 		GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.addDataItem');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    /* Get ids of all all albums where we can add new album items */
 	    list ($ret, $albumIds['addAlbumItem']) =
 		GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.addAlbumItem');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    /* Merge them together to get the master list of ids */
@@ -386,7 +386,7 @@ class ItemMoveView extends GalleryView {
 	    /* Load all the album entities */
 	    list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($albumIds['allIds']);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    $albumTree = GalleryUtilities::createAlbumTree($albums);
@@ -420,7 +420,7 @@ class ItemMoveView extends GalleryView {
     function getViewDescription() {
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $core->translate('move item'));

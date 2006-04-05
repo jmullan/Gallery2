@@ -79,7 +79,7 @@ class UserRecoverPasswordController extends GalleryController {
 		    list ($ret, $pluginInstances) =
 			GalleryCoreApi::getAllFactoryImplementationIds('GalleryValidationPlugin');
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 
 		    foreach (array_keys($pluginInstances) as $pluginId) {
@@ -87,7 +87,7 @@ class UserRecoverPasswordController extends GalleryController {
 			    GalleryCoreApi::newFactoryInstanceById('GalleryValidationPlugin',
 								   $pluginId);
 			if ($ret) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
+			    return array($ret, null);
 			}
 		    }
 		}
@@ -96,7 +96,7 @@ class UserRecoverPasswordController extends GalleryController {
 		foreach ($pluginInstances as $plugin) {
 		    list ($ret, $pluginErrors, $continue) = $plugin->performValidation($form);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 
 		    $error = array_merge($error, $pluginErrors);
@@ -114,7 +114,7 @@ class UserRecoverPasswordController extends GalleryController {
 	    if (empty($error)) {
 		list ($ret, $user) = GalleryCoreApi::fetchUserByUsername($form['userName']);
 		if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		if (isset($user) && $user->getEmail() != '') {
@@ -136,7 +136,7 @@ class UserRecoverPasswordController extends GalleryController {
 		    list ($ret, $lastRequest) = UserRecoverPasswordHelper_simple::getRequestExpires(
 			$user->getUserName(), null);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 
 		    /*
@@ -163,7 +163,7 @@ class UserRecoverPasswordController extends GalleryController {
 				  'authString' => $authString,
 				  'requestExpires' => $requestExpires));
 			if ($ret) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
+			    return array($ret, null);
 			}
 			$shouldSendEmail = true;
 		    }
@@ -194,7 +194,7 @@ class UserRecoverPasswordController extends GalleryController {
 			/* Load core for translation */
 			list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 			if ($ret) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
+			    return array($ret, null);
 			}
 
 			/* Send the user email based on our confirmation template */
@@ -203,7 +203,7 @@ class UserRecoverPasswordController extends GalleryController {
 			    $tplData, '', $user->getEmail(),
 			    $module->translate('Password Recovery'));
 			if ($ret) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
+			    return array($ret, null);
 			}
 		    }
 
@@ -268,7 +268,7 @@ class UserRecoverPasswordView extends GalleryView {
 	list ($ret, $allPluginIds) =
 	    GalleryCoreApi::getAllFactoryImplementationIds('GalleryValidationPlugin');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Let each plugin load its template data */
@@ -277,12 +277,12 @@ class UserRecoverPasswordView extends GalleryView {
 	    list ($ret, $plugin) =
 		GalleryCoreApi::newFactoryInstanceById('GalleryValidationPlugin', $pluginId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    list ($ret, $data['file'], $data['l10Domain']) = $plugin->loadTemplate($form);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    if (isset($data['file'])) {

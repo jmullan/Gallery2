@@ -91,8 +91,7 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 		    if ($platform->is_uploaded_file($file['tmp_name'])) {
 			$tmpFile = $platform->move_uploaded_file($file['tmp_name']);
 			if (!$tmpFile) {
-			    return array(GalleryCoreApi::error(
-				ERROR_PLATFORM_FAILURE, __FILE__, __LINE__), null, null);
+			    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE), null, null);
 			}
 			$needToDeleteTmpFile = true;
 		    } else {
@@ -110,7 +109,7 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 		    }
 
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return array($ret, null, null);
 		    }
 
 		    $status['addedFiles'][] = array('fileName' => $file['name'],
@@ -140,7 +139,7 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	foreach (array('totalUploadSize', 'maxFileSize') as $key) {
@@ -195,7 +194,7 @@ class ItemAddFromBrowser extends ItemAddPlugin {
     function getTitle() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $module->translate('From Web Browser'));

@@ -50,7 +50,7 @@ class MaintenanceHelperTest extends GalleryTestCase {
 	    'MaintenanceHelperTestTask', $path, 'coreTest', null);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markFactoryModuleForCleanup('coreTest');
     }
@@ -61,7 +61,7 @@ class MaintenanceHelperTest extends GalleryTestCase {
 	    array('taskId' => 'MaintenanceHelperTestTask'));
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	parent::tearDown();
@@ -70,7 +70,7 @@ class MaintenanceHelperTest extends GalleryTestCase {
     function testFetchTasks() {
 	list ($ret, $tasks) = MaintenanceHelper_simple::fetchTasks();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assert(GalleryUtilities::isA($tasks['MaintenanceHelperTestTask'],
@@ -83,7 +83,7 @@ class MaintenanceHelperTest extends GalleryTestCase {
 	$ret = MaintenanceHelper_simple::addRun(
 	    'MaintenanceHelperTestTask', $time, true, array('some details'));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $info) = MaintenanceHelper_simple::fetchLastRun('MaintenanceHelperTestTask');
@@ -98,7 +98,7 @@ class MaintenanceHelperTest extends GalleryTestCase {
 	$ret = MaintenanceHelper_simple::addRun(
 	    'MaintenanceHelperTestTask', $time, false, array('different details'));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $info) = MaintenanceHelper_simple::fetchLastRun('MaintenanceHelperTestTask');

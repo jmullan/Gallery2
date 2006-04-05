@@ -49,16 +49,16 @@ class RssEditFeedTest extends GalleryControllerTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'rss');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'rss', 'allowConfigurableFeed', 1);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'rss', 'allowAlbums', 1);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -69,7 +69,7 @@ class RssEditFeedTest extends GalleryControllerTestCase {
 	    foreach ($this->_feedsToDelete as $name) {
 		$ret = RssMapHelper::deleteFeed($name);
 		if ($ret) {
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		    return $this->failWithStatus($ret);
 		}
 	    }
 	}
@@ -155,7 +155,7 @@ class RssEditFeedTest extends GalleryControllerTestCase {
 	/* check the feed values */
 	list ($ret, $feed) = RssMapHelper::fetchFeed($name);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -166,7 +166,7 @@ class RssEditFeedTest extends GalleryControllerTestCase {
 	$params = array('itemId' => $this->_getRootId());
 	$ret = RssMapHelper::createFeed($name, $params);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* remember to delete this new feed */
@@ -226,7 +226,7 @@ class RssEditFeedTest extends GalleryControllerTestCase {
 	/* check the feed values */
 	list ($ret, $feed) = RssMapHelper::fetchFeed($name);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 

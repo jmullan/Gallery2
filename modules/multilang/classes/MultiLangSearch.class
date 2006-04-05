@@ -47,7 +47,7 @@ class MultiLangSearch extends GallerySearchInterface_1_0 {
 	global $gallery;
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'multilang');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$info = array('name' => $module->translate('MultiLanguage'),
@@ -55,12 +55,12 @@ class MultiLangSearch extends GallerySearchInterface_1_0 {
 
 	list ($ret, $languageCode) = $gallery->getActiveLanguageCode();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	list ($ret, $defaultLanguage) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.language');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if ($languageCode == $defaultLanguage) {
 	    $info['options'] = array();
@@ -104,13 +104,13 @@ class MultiLangSearch extends GallerySearchInterface_1_0 {
 
 	list ($ret, $languageCode) = $gallery->getActiveLanguageCode();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $aclIds) =
 	    GalleryCoreApi::fetchAccessListIds('core.view', $gallery->getActiveUserId());
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (empty($aclIds)) {
 	    return array(null,
@@ -175,7 +175,7 @@ class MultiLangSearch extends GallerySearchInterface_1_0 {
 	/* Find the total */
 	list ($ret, $results) = $gallery->search($countQuery, $data);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$result = $results->nextResult();
 	$numRows = (int)$result[0];
@@ -183,12 +183,12 @@ class MultiLangSearch extends GallerySearchInterface_1_0 {
 	list ($ret, $results) = $gallery->search(
 	    $query, $data, array('limit' => array('offset' => $offset, 'count' => $count)));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'multilang');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$label = array($module->translate('Title'),

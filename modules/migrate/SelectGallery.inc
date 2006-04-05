@@ -47,7 +47,7 @@ class SelectGalleryController extends GalleryController {
 	/* Verify that active user is an admin */
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$error = array();
@@ -91,7 +91,7 @@ class SelectGalleryController extends GalleryController {
 	} else if (isset($form['action']['deleteMap'])) {
 	    $ret = GalleryCoreApi::removeAllMapEntries('G1MigrateMap');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    $redirect['view'] = 'core.SiteAdmin';
@@ -138,7 +138,7 @@ class SelectGalleryView extends GalleryView {
 
 	list ($ret, $operations) = GalleryCoreApi::getToolkitOperations('image/jpeg');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$hasToolkit = false;
@@ -151,7 +151,7 @@ class SelectGalleryView extends GalleryView {
 
 	list ($ret, $mapCount) = G1MigrateHelper::fetchMapCount();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$SelectGallery = array();

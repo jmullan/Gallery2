@@ -212,7 +212,7 @@ class GalleryMimeTypeHelper_advanced {
 	/* Start with a clean slate */
 	$ret = GalleryCoreApi::removeAllMapEntries('GalleryMimeTypeMap');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	foreach ($mimeTypes as $ext => $mime) {
@@ -220,7 +220,7 @@ class GalleryMimeTypeHelper_advanced {
 		'viewable' => (int) isset($viewableMimeTypes[$mime]));
 	    $ret = GalleryCoreApi::addMapEntry('GalleryMimeTypeMap', $mimeTypeMap);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
@@ -238,7 +238,7 @@ class GalleryMimeTypeHelper_advanced {
     function removeMimeType($mimeMatch) {
 	$ret = GalleryCoreApi::removeMapEntry('GalleryMimeTypeMap', $mimeMatch);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	GalleryMimeTypeHelper_simple::_deleteCache();
 	return null;
@@ -269,11 +269,11 @@ class GalleryMimeTypeHelper_advanced {
 	list ($ret, $results) =
 	    $gallery->search($query, array($extension), array('limit' => array('count' => 1)));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	if ($results->resultCount() > 0) {
-	    return GalleryCoreApi::error(ERROR_COLLISION, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_COLLISION);
 	}
 
 	/* Insert the record */
@@ -282,7 +282,7 @@ class GalleryMimeTypeHelper_advanced {
 	    array('extension' => $extension, 'mimeType' => $mimeType,
 		  'viewable' => $viewable ? 1 : 0));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	GalleryMimeTypeHelper_simple::_deleteCache();

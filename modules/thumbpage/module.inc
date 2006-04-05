@@ -54,14 +54,14 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
 	    'ItemEditPlugin', 'ItemEditThumbPage', 'ItemEditThumbPage',
 	    'modules/thumbpage/ItemEditThumbPage.inc', 'thumbpage', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'ItemEditPlugin', 'ItemEditThumbOffset', 'ItemEditThumbOffset',
 	    'modules/thumbpage/ItemEditThumbOffset.inc', 'thumbpage', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -80,11 +80,11 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
     function activate($postActivationEvent=true) {
 	list ($ret, $page) = $this->_getSupportedMultiPageTypes();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	list ($ret, $movie) = $this->_getSupportedMovieTypes();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if (empty($page) && empty($movie)) {
@@ -94,17 +94,17 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
 	} else {
 	    $ret = $this->setParameter('pageTypes', implode('|', $page));
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    $ret = $this->setParameter('movieTypes', implode('|', $movie));
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 
 	list ($ret, $redirect) = parent::activate($postActivationEvent);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $redirect);
@@ -127,18 +127,18 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
     function _getSupportedMultiPageTypes() {
 	list ($ret, $thumbnail) = GalleryCoreApi::getToolkitOperationMimeTypes('thumbnail');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	list ($ret, $select) = GalleryCoreApi::getToolkitOperationMimeTypes('select-page');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$mimeTypes = array();
 	foreach (array_intersect(array_keys($thumbnail), array_keys($select)) as $mimeType) {
 	    list ($ret, $properties) = GalleryCoreApi::getToolkitProperties($mimeType);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    foreach ($properties as $tmp) {
 		if ($tmp['name'] == 'page-count') {
@@ -162,18 +162,18 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
 	list ($ret, $convert) =
 	    GalleryCoreApi::getToolkitOperationMimeTypes('convert-to-image/jpeg');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	list ($ret, $select) = GalleryCoreApi::getToolkitOperationMimeTypes('select-offset');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$mimeTypes = array();
 	foreach (array_intersect(array_keys($convert), array_keys($select)) as $mimeType) {
 	    list ($ret, $properties) = GalleryCoreApi::getToolkitProperties($mimeType);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    foreach ($properties as $tmp) {
 		if ($tmp['name'] == 'dimensions-and-duration') {
@@ -202,13 +202,13 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
 		$data['pluginType'] == 'module' && $data['pluginId'] != 'thumbpage') {
 	    list ($ret, $isActive) = $this->isActive();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    if ($isActive) {
 		/* Reactivate may fail if toolkit support no longer found. */
 		list ($ret, $redirect) = $this->reactivate();
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	}

@@ -46,14 +46,14 @@ class RewriteHelperTest extends GalleryTestCase {
         $ret = $this->_markPluginParametersForCleanup('module', 'rewrite');
         if ($ret) {
             print $ret->getAsHtml();
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+            return $this->failWithStatus($ret);
         }
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'accessList',
 	    serialize(array('phpunit1', 'phpunit2')));
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
         /* Set up our mock parser */
@@ -61,14 +61,14 @@ class RewriteHelperTest extends GalleryTestCase {
             'rewritehelpermock');
         if ($ret) {
             print $ret->getAsHtml();
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+            return $this->failWithStatus($ret);
         }
 
         /* Make sure we use the mock parser */
         list ($ret, $this->_parser) = RewriteHelper::getRewriteParser(true);
         if ($ret) {
             print $ret->getAsHtml();
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+            return $this->failWithStatus($ret);
         }
         $this->assertEquals('rewritehelpermock', $this->_parser->getParserId(), 'parserId');
 
@@ -81,31 +81,31 @@ class RewriteHelperTest extends GalleryTestCase {
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'rewritehelpermock');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	/* Install it */
 	$ret = $this->_module->installOrUpgrade();
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	/* Activate the module */
 	list ($ret, $redirect) = $this->_module->activate(false);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
     function tearDown() {
 	list ($ret, $redirect) = $this->_module->deactivate(false);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::removePlugin('module', 'rewritehelpermock');
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 
 	parent::tearDown();
@@ -114,25 +114,25 @@ class RewriteHelperTest extends GalleryTestCase {
     function testGetRewriteParser() {
 	list ($ret, $parser) = RewriteHelper::getRewriteParser();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals('rewritehelpermock', $parser->getParserId(), 'parserId');
 
         $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'parserId', '');
         if ($ret) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+            return $this->failWithStatus($ret);
         }	
 
 	/* Should still use the same parser (static check) */
 	list ($ret, $parser) = RewriteHelper::getRewriteParser();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals('rewritehelpermock', $parser->getParserId(), 'static');
 
         list ($ret, $parser) = RewriteHelper::getRewriteParser(true);
 	if ($ret && !($ret->getErrorCode() & ERROR_MISSING_VALUE)) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert(ERROR_MISSING_VALUE & $ret->getErrorCode());
     }
@@ -252,7 +252,7 @@ class RewriteHelperTest extends GalleryTestCase {
 	    list ($ret, $code, $regexRules, $shortUrls, $errno) = RewriteHelper::parseActiveRules(
 		$tests[$i][0], $this->_parser, null, $tests[$i][6]);
 	    if ($ret) {
-		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		$this->failWithStatus($ret);
 	    }
 
 	    $this->assertEquals($tests[$i][1], $code, 'code ' . $i);
@@ -271,7 +271,7 @@ class RewriteHelperTest extends GalleryTestCase {
 	list ($ret, $code, $regexRules, $shortUrls, $errno) = RewriteHelper::parseActiveRules(
 	    $activeRules, $this->_parser);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(REWRITE_STATUS_BAD_KEYWORD, $code, 'code ');
@@ -289,7 +289,7 @@ class RewriteHelperTest extends GalleryTestCase {
 	list ($ret, $code, $regexRules, $shortUrls, $errno) = RewriteHelper::parseActiveRules(
 	    $activeRules, $this->_parser);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(REWRITE_STATUS_INVALID_PATTERN, $code, 'code ');
@@ -308,7 +308,7 @@ class RewriteHelperTest extends GalleryTestCase {
 	list ($ret, $code, $regexRules, $shortUrls, $errno) = RewriteHelper::parseActiveRules(
 	    $activeRules, $this->_parser);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(REWRITE_STATUS_DUPE_SHORT_URL, $code, 'code ');

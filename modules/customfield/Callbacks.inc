@@ -35,11 +35,11 @@ class CustomFieldCallbacks {
 	case 'LoadCustomFields':
 	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($params['itemId']);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    list ($ret, $fields) = CustomFieldHelper::fetchFieldValues(array($item), 'detail');
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    $block =& $smarty->_tpl_vars['block'];
@@ -49,7 +49,7 @@ class CustomFieldCallbacks {
 	    return null;
 	}
 
-	return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
     }
 }
 ?>

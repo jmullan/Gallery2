@@ -40,7 +40,7 @@ class AdminEditGroupControllerTest extends GalleryControllerTestCase {
     function testCancel() {
 	list ($ret, $group) = $this->_createGroup();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryUtilities::putRequestVariable('groupId', $group->getId());
@@ -58,7 +58,7 @@ class AdminEditGroupControllerTest extends GalleryControllerTestCase {
     function testUndo() {
 	list ($ret, $group) = $this->_createGroup();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryUtilities::putRequestVariable('groupId', $group->getId());
@@ -78,7 +78,7 @@ class AdminEditGroupControllerTest extends GalleryControllerTestCase {
     function testEditGroup() {
 	list ($ret, $group) = $this->_createGroup();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$newGroupName = 'newname-'.rand();
@@ -98,7 +98,7 @@ class AdminEditGroupControllerTest extends GalleryControllerTestCase {
     function testEditGroupMissingName() {
 	list ($ret, $group) = $this->_createGroup();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryUtilities::putRequestVariable('groupId', $group->getId());
@@ -119,21 +119,21 @@ class AdminEditGroupControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $group) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryGroup');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if (!isset($group)) {
-	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT),
 			 null);
 	}
 
 	$ret = $group->create('testgroup-'.rand());
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$ret = $group->save();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	return array(null, $group);
     }
@@ -142,7 +142,7 @@ class AdminEditGroupControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	$ret = GalleryCoreApi::deleteEntityById($group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 }

@@ -44,7 +44,7 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	list ($ret, $this->_parent) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_parent);
 	$this->_controller->setOptionInstances(array());
@@ -52,7 +52,7 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::addMimeType('phpunit_ext', 'test/file', false);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_saveSession =& $gallery->getSession();
@@ -62,7 +62,7 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	$ret = GalleryCoreApi::removeMimeType(array('extension' => 'phpunit_ext'));
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 
 	$gallery->_session = $this->_saveSession;
@@ -87,7 +87,7 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	$id = $entityCounter->getRecentEntityId('GalleryUnknownItem');
 	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($id);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals($this->_parent->getId(), $entity->getParentId());
@@ -133,7 +133,7 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	$id = $entityCounter->getRecentEntityId('GalleryUnknownItem');
 	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($id);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals($this->_parent->getId(), $entity->getParentId());
@@ -162,7 +162,7 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	$id = $entityCounter->getRecentEntityId('GalleryUnknownItem');
 	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($id);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals($this->_parent->getId(), $entity->getParentId());
@@ -197,7 +197,7 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	$id = $entityCounter->getRecentEntityId('GalleryUnknownItem');
 	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($id);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Make sure our option was called */

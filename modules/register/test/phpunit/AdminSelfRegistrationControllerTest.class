@@ -47,7 +47,7 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'register');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	// Create a pending user..
@@ -55,17 +55,17 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryPendingUser');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = $pendingUser->create('testuser_' . rand(1000, 1000000));
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = $pendingUser->save();
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_pendingUser =& $pendingUser;
@@ -76,7 +76,7 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	    $ret = GalleryCoreApi::deleteEntityById($this->_pendingUser->getId());
 	    if ($ret) {
 		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	}
 	parent::tearDown();
@@ -110,7 +110,7 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	    list ($ret, $realValue) =
 		GalleryCoreApi::getPluginParameter('module', 'register', $key);
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    $this->assertEquals($expectedValue, $realValue, "value mismatch for $key");
 	}
@@ -131,14 +131,14 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
 
 	$ret = $this->_verifyMissing($this->_pendingUser->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$username = $this->_pendingUser->getUserName();
 	$this->_pendingUser = null;
 
 	list ($ret, $user) = GalleryCoreApi::fetchUserByUsername($username);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_pendingUser = $user;
     }
@@ -158,7 +158,7 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
 
 	$ret = $this->_verifyMissing($this->_pendingUser->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_pendingUser = null;
     }
@@ -168,24 +168,24 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	    'modules/register/classes/GalleryPendingUserHelper.class');
 	list ($ret, $count) = GalleryPendingUserHelper::fetchUserCount();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($count > 0, 'User count');
 	list ($ret, $count) = GalleryPendingUserHelper::fetchUserCount('testuser');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($count > 0, 'User count with filter');
 
 	list ($ret, $data) = GalleryPendingUserHelper::fetchUserData(3, 0);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert(!empty($data), 'User data');
 
 	list ($ret, $data) = GalleryPendingUserHelper::fetchUserData(3, 0, 'testuser');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert(!empty($data), 'User data with filter');
     }

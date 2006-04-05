@@ -51,19 +51,19 @@ class ArchiveExtractToolkit extends GalleryToolkit {
 					       "$operationName $mimeType"), null, null);
 	}
 	if (!$platform->is_dir($destFilename)) {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER),
 			 null, null);
 	}
 
 	list ($ret, $unzip) =
 	    GalleryCoreApi::getPluginParameter('module', 'archiveupload', 'unzipPath');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	$cwd = $platform->getcwd();
 	if (!$platform->chdir($destFilename)) {
-	    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__),
+	    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE),
 			 null, null);
 	}
 	$gallery->guaranteeTimeLimit(60);
@@ -73,13 +73,13 @@ class ArchiveExtractToolkit extends GalleryToolkit {
 	    @$platform->chdir($cwd);
 	}
 	if (!$success) {
-	    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__),
+	    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE),
 			 null, null);
 	}
 
 	/* Set permissions according to core parameter settings */
 	if (!$platform->recursiveChmod($destFilename)) {
-	    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__),
+	    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE),
 			 null, null);
 	}
 

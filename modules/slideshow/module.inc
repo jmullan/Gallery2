@@ -52,7 +52,7 @@ class SlideshowModule extends GalleryModule {
 	    'SlideshowInterface_1_0', 'SlideshowImpl', 'Slideshow',
 	    'modules/slideshow/classes/SlideshowImpl.class', 'slideshow', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;

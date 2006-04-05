@@ -58,7 +58,7 @@ class RandomHighlightOption extends ItemEditOption {
     function handleRequestAfterEdit($form, &$item, &$preferred) {
 	list ($ret, $thumbnail) = GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	$thumbnail = array_shift($thumbnail);
 	$isRandomHighlight = isset($form['RandomHighlightOption']['isRandomHighlight'])
@@ -68,7 +68,7 @@ class RandomHighlightOption extends ItemEditOption {
 	        $isRandomHighlight != $thumbnail->hasOnLoadHandler('RandomHighlight')) {
 	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($thumbnail->getId());
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    if ($isRandomHighlight) {
 		$thumbnail->addOnLoadHandler('RandomHighlight');
@@ -78,11 +78,11 @@ class RandomHighlightOption extends ItemEditOption {
 	    $ret = $thumbnail->save();
 	    if ($ret) {
 		GalleryCoreApi::releaseLocks($lockId);
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    $ret = GalleryCoreApi::releaseLocks($lockId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	}
 

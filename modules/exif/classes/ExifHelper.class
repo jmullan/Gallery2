@@ -128,12 +128,12 @@ class ExifHelper {
 	    break;
 
 	default:
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
 	$ret = ExifHelper::setProperties($viewMode, $properties);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -150,7 +150,7 @@ class ExifHelper {
     function addDefaultIptcProperties($viewMode) {
 	list($ret, $properties) = ExifHelper::getProperties($viewMode);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	switch($viewMode) {
@@ -166,12 +166,12 @@ class ExifHelper {
 	    break;
 
 	default:
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
 	$ret = ExifHelper::setProperties($viewMode, $properties);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -254,7 +254,7 @@ class ExifHelper {
 	ExifHelper::_fetchRawExifData($path, $rawExifData);
 	list ($ret, $iptcObj) = ExifHelper::getIptcObject($path);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$exifKeys = ExifHelper::getExifKeys();
@@ -262,7 +262,7 @@ class ExifHelper {
 	$results = array();
 	list ($ret, $properties) = ExifHelper::getProperties($viewMode);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	foreach ($properties as $property) {
 	    $title = $exifKeys[$property][0];
@@ -505,7 +505,7 @@ class ExifHelper {
           [ExifPropertiesMap::sequence] ASC';
 	list ($ret, $searchResults) = $gallery->search($query, array((int)$viewMode));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$data = array();
@@ -530,7 +530,7 @@ class ExifHelper {
 	$ret = GalleryCoreApi::removeMapEntry(
 	    'ExifPropertiesMap', array('viewMode' => $viewMode));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	for ($i = 0; $i < sizeof($properties); $i++) {
@@ -540,7 +540,7 @@ class ExifHelper {
 		      'viewMode' => $viewMode,
 		      'sequence' => $i));
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 

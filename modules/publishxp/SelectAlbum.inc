@@ -107,14 +107,14 @@ class SelectAlbumView extends GalleryView {
 	list ($ret, $albumIds['addDataItem']) =
 	    GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.addDataItem');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Get ids of all all albums where we can add new album items */
 	list ($ret, $albumIds['addAlbumItem']) =
 	    GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.addAlbumItem');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Merge them together to get the master list of ids */
@@ -124,7 +124,7 @@ class SelectAlbumView extends GalleryView {
 	/* Load all the album entities */
 	list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($albumIds['allIds']);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$SelectAlbum = array();

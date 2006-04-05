@@ -40,12 +40,12 @@ class CustomFieldSiteAdminController extends GalleryController {
 	/* Make sure we have adequate permissions */
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $status) = CustomFieldHelper::handleAdminAction($form);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Figure out where to redirect upon success */
@@ -70,7 +70,7 @@ class CustomFieldSiteAdminView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if ($form['formName'] != 'CustomFieldSiteAdmin') {
@@ -78,7 +78,7 @@ class CustomFieldSiteAdminView extends GalleryView {
 
 	    $ret = CustomFieldHelper::loadAdminForm($form);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 	$template->setVariable('controller', 'customfield.CustomFieldSiteAdmin');

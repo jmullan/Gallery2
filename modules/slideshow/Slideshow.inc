@@ -47,14 +47,14 @@ class SlideshowView extends GalleryView {
 	    /* Build slideshow for an album */
 	    list ($ret, $item) = $this->_getItem();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    if (!$item->getCanContainChildren()) {
 		/* Photo: do slideshow of parent album, start at this photo */
 		$startId = $item->getId();
 		list ($ret, $item) = GalleryCoreApi::loadEntitiesById($item->getParentId());
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	    $SlideShow['item'] = (array)$item;
@@ -63,7 +63,7 @@ class SlideshowView extends GalleryView {
 	list ($ret, $itemList, $start) =
 	    $this->buildSlideshow($item, $startId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$SlideShow['itemList'] = $itemList;
@@ -74,7 +74,7 @@ class SlideshowView extends GalleryView {
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'slideshow');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (!empty($SlideShow['item']['title'])) {
 	    $template->title($module->translate(array('text' => 'Slideshow for %s',
@@ -106,7 +106,7 @@ class SlideshowView extends GalleryView {
 	    list ($ret, $this->exifExtractor) =
 		GalleryCoreApi::newFactoryInstance('ExifInterface_1_0');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    $this->init = 1;
 	}
@@ -115,7 +115,7 @@ class SlideshowView extends GalleryView {
 	} else {
 	    list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	}
 	$itemList = array();
@@ -124,26 +124,26 @@ class SlideshowView extends GalleryView {
 	    $gallery->guaranteeTimeLimit(30);
 	    $ret = GalleryCoreApi::studyPermissions($childIds);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    list ($ret, $childItems) = GalleryCoreApi::loadEntitiesById($childIds);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    list ($ret, $preferredFullImages) =
 		GalleryCoreApi::fetchPreferredsByItemIds($childIds);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    list ($ret, $resizedImages) =
 		GalleryCoreApi::fetchResizesByItemIds($childIds);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    list ($ret, $thumbnails) =
 		GalleryCoreApi::fetchThumbnailsByItemIds($childIds);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    /* If an Exif extractor is available try to get capture dates */
 	    $exif = array();
@@ -151,7 +151,7 @@ class SlideshowView extends GalleryView {
 		list ($ret, $exif) =
 		    $this->exifExtractor->getMetaData($childIds);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret, null, null);
 		}
 	    }
 	}
@@ -174,7 +174,7 @@ class SlideshowView extends GalleryView {
 		    list ($ret, $sublist) =
 			$this->buildSlideshow($child, null, $recursive);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return array($ret, null, null);
 		    }
 		    $itemList = array_merge($itemList, $sublist);
 		}
@@ -184,7 +184,7 @@ class SlideshowView extends GalleryView {
 		list ($ret, $permissions) =
 		    GalleryCoreApi::getPermissions($childId);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret, null, null);
 		}
 
 		$images = array();
@@ -218,7 +218,7 @@ class SlideshowView extends GalleryView {
 			    list ($ret, $image) =
 				GalleryCoreApi::rebuildDerivativeCache($image->getId());
 			    if ($ret) {
-				return array($ret->wrap(__FILE__, __LINE__), null, null);
+				return array($ret, null, null);
 			    }
 			}
 		    }

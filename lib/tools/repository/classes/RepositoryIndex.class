@@ -61,7 +61,7 @@ class RepositoryIndex extends RepositoryObject {
 
 	$ret = $this->setOutputDir($repositoryDir);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$this->setOutputFile('index');
@@ -135,7 +135,7 @@ class RepositoryIndex extends RepositoryObject {
 			$this->_utilities->compareVersions($currentPluginVersion,
 			    $indexPluginVersion, $currentPluginBuild, $indexPluginBuild);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 
 		    if ($relation == 'newer') {
@@ -182,7 +182,7 @@ class RepositoryIndex extends RepositoryObject {
 	$this->_template->setVariable('contents', $serializedIndex);
 	$ret = $this->writeToDisk(true);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Write index hash to disk. */
@@ -191,7 +191,7 @@ class RepositoryIndex extends RepositoryObject {
 	$this->_template->setVariable('contents', $this->_indexHash);
 	$ret = $this->writeToDisk(true);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$this->setOutputFile($indexFile);
 

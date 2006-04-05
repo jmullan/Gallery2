@@ -46,7 +46,7 @@ class FlushTemplatesTaskTest extends GalleryTestCase {
 	list ($ret, $dirPerms) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'permissions.directory');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$gallery->setConfig('data.smarty.templates_c', '/templates_c');
@@ -56,12 +56,12 @@ class FlushTemplatesTaskTest extends GalleryTestCase {
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $success, $details) = $task->run();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assert($success, 'should have succeeded');
@@ -82,12 +82,12 @@ class FlushTemplatesTaskTest extends GalleryTestCase {
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $success, $details) = $task->run();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$expected = $module->translate(array('text' => 'Unable to delete directory: %s',

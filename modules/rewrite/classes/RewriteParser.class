@@ -72,7 +72,7 @@ class RewriteParser {
      *                     int rule id (on error)
      */
     function saveActiveRules($activeRules=null, $rewriteModule=null) {
-	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null, null);
     }
 
     /**
@@ -87,7 +87,7 @@ class RewriteParser {
      *               int rewrite status code (REWRITE_STATUS_OK on success)
      */
     function saveAccessList($accessList, $allowEmptyReferer) {
-	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
     }
 
     /**
@@ -140,7 +140,7 @@ class RewriteParser {
 	if (!isset($rewriteModule)) {
 	    list($ret, $rewriteModule) = GalleryCoreApi::loadPlugin('module', 'rewrite');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 

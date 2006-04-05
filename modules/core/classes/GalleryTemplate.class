@@ -199,13 +199,13 @@ class GalleryTemplate {
 
 	$ret = $this->_initCompiledTemplateDir();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$this->_smarty->compile_dir = $this->_compiledTemplateDir;
 
 	list($ret, $html) = $this->_smarty->fetch($templateName);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	return array(null, $html);
     }
@@ -221,13 +221,13 @@ class GalleryTemplate {
 
 	$ret = $this->_initCompiledTemplateDir();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$this->_smarty->compile_dir = $this->_compiledTemplateDir;
 
 	list ($ret, $junk) = $this->_smarty->fetch($templateName, null, null, true);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	return null;
     }
@@ -249,7 +249,7 @@ class GalleryTemplate {
 	/* Make a unique subdirectory for compiled templates for this templates dir */
 	$dir = $this->_compiledTemplateDir;
 	if ($platform->file_exists($dir) && !$platform->is_dir($dir)) {
-	    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE);
 	}
 
 	$templateVersionFile = $dir . '/v_' . TEMPLATE_DATA_VERSION;
@@ -267,7 +267,7 @@ class GalleryTemplate {
 	    }
 	} else {
 	    if (!$platform->is_writeable($dir)) {
-		return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
+		return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE);
 	    }
 
 	    $rebuild = false;

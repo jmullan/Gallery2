@@ -52,7 +52,7 @@ class IconsImpl extends IconsInterface_1_0 {
 	 */
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'icons', true);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$icons = array('' => $module->translate('None'));
@@ -78,7 +78,7 @@ class IconsImpl extends IconsInterface_1_0 {
     function init(&$template) {
 	list ($ret, $iconpack) = GalleryCoreApi::getPluginParameter('module', 'icons', 'iconpack');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	if (!empty($iconpack)) {
 	    global $gallery;

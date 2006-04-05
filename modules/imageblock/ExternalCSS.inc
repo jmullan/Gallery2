@@ -39,7 +39,7 @@ class ExternalCSSController extends GalleryController {
     function handleRequest($form) {
 	list ($ret, $imageframe) = GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (isset($imageframe)) {
 	    $frames = GalleryUtilities::getRequestVariables('frames');
@@ -49,7 +49,7 @@ class ExternalCSSController extends GalleryController {
 		    list ($ret, $frame) =
 			GalleryCoreApi::getPluginParameter('module', 'imageblock', $key);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		    if (!empty($frame)) {
 			$frames[] = $frame;

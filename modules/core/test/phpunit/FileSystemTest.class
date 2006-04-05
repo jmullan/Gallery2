@@ -52,7 +52,7 @@ class FileSystemTest extends GalleryTestCase {
 	    list ($ret, $this->_albums[$i]) = $this->_createRandomAlbum($parentId);
 	    if ($ret) {
 		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 
 	    $parentId = $this->_albums[$i]->getId();
@@ -69,7 +69,7 @@ class FileSystemTest extends GalleryTestCase {
 	}
 	list ($ret, $id) = GalleryCoreApi::fetchItemIdByPath($path);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals($this->_albums[2]->getId(), $id);
@@ -78,19 +78,19 @@ class FileSystemTest extends GalleryTestCase {
     function testFetchLogicalPath() {
 	list ($ret, $root) = GalleryCoreApi::loadEntitiesById($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $logicalPath) = $root->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals('/', $logicalPath);
 
 	list ($ret, $logicalPath) = $this->_albums[1]->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(sprintf('/%s/%s/',
@@ -100,12 +100,12 @@ class FileSystemTest extends GalleryTestCase {
 
 	list ($ret, $item) = $this->_createRandomDataItem($this->_albums[1]->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $logicalPath) = $item->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(sprintf('/%s/%s/%s',
@@ -124,7 +124,7 @@ class FileSystemTest extends GalleryTestCase {
 
 	list ($ret, $path) = $this->_albums[1]->fetchPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(sprintf('%s/%s/',
@@ -136,7 +136,7 @@ class FileSystemTest extends GalleryTestCase {
 
 	list ($ret, $path) = $this->_albums[1]->fetchPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(sprintf('%s\\%s\\',
@@ -164,19 +164,19 @@ class FileSystemTest extends GalleryTestCase {
 
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_albums[0]->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	for ($i = 0; $i < 3; $i++) {
 	    $entity[$i] = new GalleryFileSystemEntity();
 	    $ret = $entity[$i]->create($this->_albums[0]->getId(), 'valid_path.jpg');
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 
 	    $ret = $entity[$i]->save();
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 
 	    if ($i > 0) {
@@ -187,7 +187,7 @@ class FileSystemTest extends GalleryTestCase {
 
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -196,34 +196,34 @@ class FileSystemTest extends GalleryTestCase {
 								      $this->_albums[1]->getId(),
 								      $this->_albums[2]->getId()));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = $this->_albums[1]->rename('foo');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = $this->_albums[1]->save();
 
 	$ret = $this->_albums[1]->move($this->_albums[0]->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = $this->_albums[2]->rename('foo');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = $this->_albums[2]->move($this->_albums[0]->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals('foo_001', $this->_albums[2]->getPathComponent());
 
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -244,7 +244,7 @@ class FileSystemTest extends GalleryTestCase {
 								      $this->_albums[1]->getId(),
 								      $this->_albums[2]->getId()));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$gallery->setPlatform(new FileSystemTestPlatformForRename('\\'));
 
@@ -252,7 +252,7 @@ class FileSystemTest extends GalleryTestCase {
 	$ret = $this->_albums[2]->move($this->_albums[0]->getId());
 	if ($ret) {
 	    $gallery->setPlatform($originalPlatform);
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Now change the mock platform to a unix like system */
@@ -261,13 +261,13 @@ class FileSystemTest extends GalleryTestCase {
 	$ret = $this->_albums[2]->move($this->_albums[1]->getId());
 	if ($ret) {
 	    $gallery->setPlatform($originalPlatform);
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$gallery->setPlatform($originalPlatform);
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -276,7 +276,7 @@ class FileSystemTest extends GalleryTestCase {
 	list ($ret, $path) =
 	    GalleryCoreApi::getLegalPathComponent('testpath', $this->_albums[2]->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals('testpath', $path, 'no collision');
 
@@ -284,7 +284,7 @@ class FileSystemTest extends GalleryTestCase {
 	list ($ret, $path) = GalleryCoreApi::getLegalPathComponent(
 			     $this->_albums[1]->getPathComponent(), $this->_albums[0]->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals($this->_albums[1]->getPathComponent() . '_001', $path,
 			    'avoid collision');
@@ -294,7 +294,7 @@ class FileSystemTest extends GalleryTestCase {
 			     $this->_albums[1]->getPathComponent(), $this->_albums[0]->getId(),
 			     $this->_albums[1]->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals($this->_albums[1]->getPathComponent(), $path, 'ignore self-collision');
 
@@ -302,7 +302,7 @@ class FileSystemTest extends GalleryTestCase {
 	list ($ret, $path) = GalleryCoreApi::getLegalPathComponent(
 			     'my/test&file!.php', $this->_albums[1]->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals('my_test_file__php', $path, 'a few bad characters');
 
@@ -310,7 +310,7 @@ class FileSystemTest extends GalleryTestCase {
 	list ($ret, $path) = GalleryCoreApi::getLegalPathComponent(
 			     "\xe6\xaa\x94\xe6\xa1\x88.jpg", $this->_albums[1]->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(strftime('%Y%m%d') . '.jpg', $path, 'extended characters');
     }

@@ -50,7 +50,7 @@ class RepositoryManagerControllerAndView extends RepositoryControllerAndView {
 	$index->init($gallery->getConfig('repository.path'));
 	list ($ret, $pluginInfo) = $index->getPluginInfo();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$data['pluginInfo'] = $pluginInfo;
 
@@ -70,7 +70,7 @@ class RepositoryManagerControllerAndView extends RepositoryControllerAndView {
 
 	$ret = $this->showView('RepositoryManager', $data);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;

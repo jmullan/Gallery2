@@ -164,20 +164,20 @@ class GalleryView {
 	/* If the module is not active, only let site admins see the config view */
 	list ($ret, $plugin) = GalleryCoreApi::loadPlugin('module', $module);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	list ($ret, $isActive) = $plugin->isActive();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (!$isActive) {
 	    if ($viewName == $plugin->getConfigurationView()) {
 		$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    } else {
-		return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__),
+		return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED),
 			     null);
 	    }
 	}
@@ -257,7 +257,7 @@ class GalleryView {
 	list ($ret, $guestId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	$user['isGuest'] = ($user['id'] == $guestId);
@@ -272,7 +272,7 @@ class GalleryView {
 	/* Load up the theme. */
 	list ($ret, $item, $wasSpecified) = $this->_getItem();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	list ($ret, $theme) = $this->loadThemeForItem($wasSpecified ? $item : null);
@@ -306,7 +306,7 @@ class GalleryView {
 	}
 	list ($ret, $params) = $theme->fetchParameters($wasSpecified ? $targetId : null);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	$templateAdapter =& $gallery->getTemplateAdapter();
@@ -316,7 +316,7 @@ class GalleryView {
 	/* Let the view and theme load up template data */
 	list ($ret, $results) = $this->loadTemplate($template, $form);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	if (isset($results['redirect']) || isset($results['redirectUrl'])) {
 	    return array(null, $results, $theme);
@@ -324,7 +324,7 @@ class GalleryView {
 
 	list ($ret, $results) = $theme->loadTemplate($this, $template, $item, $params, $results);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	return array(null, $results, $theme);
@@ -340,7 +340,7 @@ class GalleryView {
      *               string localized description
      */
     function getViewDescription() {
-	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
     }
 
     /**
@@ -370,7 +370,7 @@ class GalleryView {
 	    list ($ret, $itemId) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	    GalleryUtilities::putRequestVariable('itemId', $itemId);
 	}
@@ -378,7 +378,7 @@ class GalleryView {
 	/* Load the item */
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	return array(null, $item, $wasSpecified);
@@ -399,7 +399,7 @@ class GalleryView {
 	} else {
 	    list ($ret, $nearestAlbum) = GalleryCoreApi::loadEntitiesById($item->getParentId());
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 
@@ -407,26 +407,26 @@ class GalleryView {
 	if (isset($nearestAlbum)) {
 	    list ($ret, $themeId) = GalleryCoreApi::fetchThemeId($nearestAlbum);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	} else {
 	    list ($ret, $themeId) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 
 	$validTheme = false;
 	list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId, false, true);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if (isset($theme)) {
 	    list ($ret, $validTheme) = $theme->isActive();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 

@@ -81,7 +81,7 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
 	global $gallery;
 
 	if (empty($pathComponent)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
 	/*
@@ -91,18 +91,18 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
 	 * really practical to check the entire tree so just check the parent.
 	 */
 	if (!GalleryCoreApi::isReadLocked($parentId)) {
-	    return GalleryCoreApi::error(ERROR_LOCK_REQUIRED, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_LOCK_REQUIRED);
 	}
 
 	list ($ret, $pathComponent) =
 	    GalleryCoreApi::getLegalPathComponent($pathComponent, $parentId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = parent::create($parentId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Set our path component */
@@ -125,7 +125,7 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
 	/* No collision -- proceed! */
 	$ret = parent::createRoot();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* The root has no path component */
@@ -146,13 +146,13 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
 
 	$ret = parent::createLink($entity, $parentId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	list ($ret, $pathComponent) =
 	    GalleryCoreApi::getLegalPathComponent($entity->getPathComponent(), $parentId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Set our path component */
@@ -174,14 +174,14 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
 	list ($ret, $rootAlbumId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	if ($this->getId() == $rootAlbumId) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
 	if (empty($newPathComponent)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
 	/* No need to do anything if renaming to same name */
@@ -193,7 +193,7 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
 	list ($ret, $newPathComponent) =
 	    GalleryCoreApi::getLegalPathComponent($newPathComponent, $parentId, $this->getId());
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$this->setPathComponent($newPathComponent);
@@ -231,33 +231,33 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
 	/* Get the new parent */
 	list ($ret, $newParent) = GalleryCoreApi::loadEntitiesById($newParentId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	if (!$newParent->getCanContainChildren()) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
 	list ($ret, $newPathComponent) = GalleryCoreApi::getLegalPathComponent(
 					 $this->getPathComponent(), $newParentId, $this->getId());
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	list ($ret, $currentPath) = $this->fetchPath();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	list ($ret, $newParentPath) = $newParent->fetchPath();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* No collision -- proceed! */
 	$ret = parent::move($newParentId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	if (!$this->isLinked()) {
@@ -295,7 +295,7 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
 	if (!empty($parentId)) {
 	    if (!GalleryCoreApi::isReadLocked($parentId) &&
 		    !GalleryCoreApi::isWriteLocked($parentId)) {
-		return GalleryCoreApi::error(ERROR_LOCK_REQUIRED, __FILE__, __LINE__);
+		return GalleryCoreApi::error(ERROR_LOCK_REQUIRED);
 	    }
 	}
 
@@ -317,24 +317,24 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
 	if ($this->isContainer()) {
 	    list ($ret, $path) = $this->fetchPath();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    return array(null, $path);
 	} else {
 	    list ($ret, $parent) = $this->fetchParent();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    if (isset($parent)) {
 		list ($ret, $path) = $parent->fetchContainerPath();
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		return array(null, $path);
 	    } else {
-		return array(GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_BAD_PATH), null);
 	    }
 	}
     }
@@ -363,12 +363,12 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
 	if (!empty($parentId)) {
 	    list($ret, $parent) = $this->fetchParent();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    list($ret, $parentPath) = $parent->fetchLogicalPath();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	} else {
 	    $parentPath = '';
@@ -397,12 +397,12 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
 	    $linkedEntity = $this->getLinkedEntity();
 	    list ($ret, $logicalPath) = $linkedEntity->fetchLogicalPath();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	} else {
 	    list ($ret, $logicalPath) = $this->fetchLogicalPath();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 

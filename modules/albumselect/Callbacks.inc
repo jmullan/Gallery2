@@ -38,13 +38,13 @@ class AlbumSelectCallbacks {
 	    list ($ret, $params) =
 		GalleryCoreApi::fetchAllPluginParameters('module', 'albumselect');
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    /* Try to load it from the cache */
 	    list ($ret, $languageCode) = $gallery->getActiveLanguageCode();
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    $cachePathInfo = array('type' => 'module-data',
 				   'module' => 'albumselect',
@@ -63,11 +63,11 @@ class AlbumSelectCallbacks {
 		list ($ret, $rootAlbumId) =
 		    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 		list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($rootAlbumId);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 		$titles = array('root' => preg_replace('/\r\n/', ' ', $rootAlbum->getTitle()));
 		if (isset($callbackParams['stripTitles'])) {
@@ -85,7 +85,7 @@ class AlbumSelectCallbacks {
 			if ($ret->getErrorCode() & ERROR_PERMISSION_DENIED) {
 			    $tree = null;
 			} else {
-			    return $ret->wrap(__FILE__, __LINE__);
+			    return $ret;
 			}
 		    }
 		    if (empty($tree)) {
@@ -95,7 +95,7 @@ class AlbumSelectCallbacks {
 		    list ($ret, $items) = GalleryCoreApi::loadEntitiesById(
 			GalleryUtilities::arrayKeysRecursive($tree));
 		    if ($ret) {
-			return $ret->wrap(__FILE__, __LINE__);
+			return $ret;
 		    }
 		    foreach ($items as $item) {
 			$title = $item->getTitle() ? $item->getTitle() : $item->getPathComponent();
@@ -119,13 +119,13 @@ class AlbumSelectCallbacks {
 		    list ($ret, $canView) =
 			GalleryCoreApi::hasItemPermission($rootAlbumId, 'core.view', $userId);
 		    if ($ret) {
-			return $ret->wrap(__FILE__, __LINE__);
+			return $ret;
 		    }
 		    if ($canView) {
 			$ret = $this->_buildTree($rootAlbum, $treeList, $titles, $nodeId,
 						 $userId, 0, 0, $callbackParams);
 			if ($ret) {
-			    return $ret->wrap(__FILE__, __LINE__);
+			    return $ret;
 			}
 		    }
 		    if (empty($treeList)) {
@@ -159,7 +159,7 @@ class AlbumSelectCallbacks {
 	    return null;
 	}
 
-	return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
     }
 
     /**
@@ -194,12 +194,12 @@ class AlbumSelectCallbacks {
 	list ($ret, $subAlbumIds) =
 	    GalleryCoreApi::fetchChildAlbumItemIds($album, null, null, $userId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	if (!empty($subAlbumIds)) {
 	    list ($ret, $subAlbums) = GalleryCoreApi::loadEntitiesById($subAlbumIds);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    foreach ($subAlbums as $subAlbum) {
 		$treeList[] = array('id' => $subAlbum->getId(), 'nodeId' => ++$nodeId,
@@ -222,7 +222,7 @@ class AlbumSelectCallbacks {
 					 $nodeId, $userId, $nodeId, $depth + 1,
 					 $callbackParams);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	}

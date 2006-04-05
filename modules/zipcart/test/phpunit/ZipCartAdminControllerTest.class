@@ -44,7 +44,7 @@ class ZipCartAdminControllerTest extends GalleryControllerTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'zipcart');
 	if ($ret) {
 		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	}
 
 	$this->_platform = new UnitTestPlatform();

@@ -44,12 +44,12 @@ class ModRewriteUrlGenerator extends RewriteUrlGenerator {
     function init($baseUri=null, $g2Uri=null, $embedSessionString=null) {
 	$ret = parent::init($baseUri, $g2Uri, $embedSessionString);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = $this->_onLoad();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;

@@ -52,14 +52,14 @@ class RssMapTest extends GalleryTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'rss');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* create an album */
 	list ($ret, $this->_root) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_root);
 
@@ -68,7 +68,7 @@ class RssMapTest extends GalleryTestCase {
 	$params = array('itemId' => $this->_root->getId());
 	$ret = RssMapHelper::createFeed($this->_name, $params);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	
 	$this->_feedsToDelete[] = $this->_name;
@@ -81,7 +81,7 @@ class RssMapTest extends GalleryTestCase {
 	    foreach ($this->_feedsToDelete as $name) {
 		$ret = RssMapHelper::deleteFeed($name);
 		if ($ret) {
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		    return $this->failWithStatus($ret);
 		}
 	    }
 	}
@@ -101,7 +101,7 @@ class RssMapTest extends GalleryTestCase {
     function testDelete() {
 	$ret = RssMapHelper::deleteFeed($this->_name);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	
 	list($ret, $feed) = RssMapHelper::fetchFeed($this->_name);
@@ -118,7 +118,7 @@ class RssMapTest extends GalleryTestCase {
 	
 	list($ret, $feeds) = RssMapHelper::fetchFeedsForItem($this->_root->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	
 	$this->assertEquals($feeds, array(array(
@@ -134,7 +134,7 @@ class RssMapTest extends GalleryTestCase {
 	
 	list($ret, $names) = RssMapHelper::fetchFeedNames();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	
 	$this->assert(in_array($this->_name, $names));

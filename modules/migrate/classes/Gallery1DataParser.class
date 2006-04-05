@@ -73,7 +73,7 @@ class Gallery1DataParser {
         $tmp = $platform->file($fileName);
 
 	if (empty($tmp)) {
-	    return array(GalleryCoreApi::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_MISSING_VALUE), null);
 	}
 
 	$tmp = join('', $tmp);
@@ -104,7 +104,7 @@ class Gallery1DataParser {
 
 	list ($ret, $albumOrder) = Gallery1DataParser::loadFile($path . 'albumdb.dat');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* TODO: check that there is an $albumOrder */
@@ -112,7 +112,7 @@ class Gallery1DataParser {
 	    list ($ret, $albumFields) =
 		Gallery1DataParser::loadAlbumFields($path . $albumName . $slash);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__),'');
+		return array($ret,'');
 	    }
 	    $albumList[$albumName] = $albumFields;
 	}
@@ -135,14 +135,14 @@ class Gallery1DataParser {
 
 	list ($ret, $albumOrder) = Gallery1DataParser::loadFile($path . 'albumdb.dat');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	foreach($albumOrder as $albumName){
 	    list ($ret, $albumFields) =
 		Gallery1DataParser::loadAlbumFields($path . $albumName . $slash);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__),'');
+		return array($ret,'');
 	    }
 	    $parentAlbumList[$albumName] = $albumFields['parentAlbumName'];
 	}
@@ -159,7 +159,7 @@ class Gallery1DataParser {
     function getAlbumHierarchy($path) {
 	list ($ret, $parentAlbumList) = Gallery1DataParser::getParentAlbumList($path);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	foreach($parentAlbumList as $myName => $parentName) {
@@ -192,14 +192,14 @@ class Gallery1DataParser {
 
 	list ($ret, $albumOrder) = Gallery1DataParser::loadFile($path . 'albumdb.dat');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	foreach($albumOrder as $albumName){
 	    list ($ret, $albumFields) =
 		Gallery1DataParser::loadAlbumFields($path . $albumName . $slash);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__),'');
+		return array($ret,'');
 	    }
 	    if ($albumFields['parentAlbumName'] == '.root') {
 		$rootAlbums[] = $albumName;
@@ -229,7 +229,7 @@ class Gallery1DataParser {
 	$albumName = $albumPath[count($albumPath)-2];
         list ($ret, $album) = Gallery1DataParser::loadFile($path . 'album.dat');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$album->fields['name'] = $albumName;
 	if (!$album->fields['parentAlbumName']){
@@ -248,7 +248,7 @@ class Gallery1DataParser {
     function getPhotoCount($path) {
 	list ($ret, $photos) = Gallery1DataParser::loadFile($path . 'photos.dat');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$photoCount = count($photos);
 	return array(null, $photoCount);
@@ -268,7 +268,7 @@ class Gallery1DataParser {
 
 	list ($ret, $photos) = Gallery1DataParser::loadFile($path . $slash . 'photos.dat');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	return array(null, $photos);
     }
@@ -293,7 +293,7 @@ class Gallery1DataParser {
 	    list ($ret, $userDB) =
 		Gallery1DataParser::loadFile($path . '.users' . $slash . 'userdb.dat');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    $uids[$path] = array();
 	    foreach ($userDB->userMap as $username => $uid) {
@@ -378,7 +378,7 @@ class Gallery1DataParser {
 	    if (Gallery1DataParser::isValidUidString($uid)) {
 		list ($ret, $user) = Gallery1DataParser::loadFile($path . '.users' . $slash . $uid);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		foreach ($user as $key => $value){
 		    $fields[$path][$uid][$key] = $value;
@@ -400,13 +400,13 @@ class Gallery1DataParser {
         global $gallery;
         list($ret, $uids) = Gallery1DataParser::getUserUids($path);
         if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
         }
 	$usernames = array_flip($uids);
         $uid = $usernames[$username];
 	list ($ret, $fields) = Gallery1DataParser::getUserFieldsByUid($path, $uid);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	return array(null, $fields);
     }

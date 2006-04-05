@@ -40,13 +40,13 @@ class AdminModulesView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Load the module list */
 	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module', true);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/*
@@ -60,7 +60,7 @@ class AdminModulesView extends GalleryView {
 	    if (!empty($status['active'])) {
 		list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 		if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	}
@@ -68,7 +68,7 @@ class AdminModulesView extends GalleryView {
 	/* Reload the module list, which may now be updated because of obsolete modules. */
 	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module', true);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if ($form['formName'] != 'AdminModules') {
@@ -81,7 +81,7 @@ class AdminModulesView extends GalleryView {
 	    /* Get the selected module's admin view (even if the module needs upgrading)  */
 	    list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId, true);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    $entry = array();
@@ -93,7 +93,7 @@ class AdminModulesView extends GalleryView {
 
 	    list ($ret, $entry['state']) = ModuleCallbackView::getModuleState($module, $status);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    if ($entry['state'] == 'incompatible') {

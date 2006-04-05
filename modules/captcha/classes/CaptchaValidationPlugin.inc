@@ -48,7 +48,7 @@ class CaptchaValidationPlugin extends GalleryValidationPlugin {
 
 	list ($ret, $useCaptcha, $failedAttempts) = $this->_shouldValidate($options);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	$error = array();
@@ -71,7 +71,7 @@ class CaptchaValidationPlugin extends GalleryValidationPlugin {
 		$ret = GalleryCoreApi::setPluginParameter(
 			'module', 'captcha', 'failCount-' . $options['key'], $failedAttempts + 1);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret, null, null);
 		}
 	    } else {
 		$session->put('captcha.failedAttempts', $failedAttempts + 1);
@@ -81,7 +81,7 @@ class CaptchaValidationPlugin extends GalleryValidationPlugin {
 	    $ret = GalleryCoreApi::removePluginParameter(
 		    'module', 'captcha', 'failCount-' . $options['key']);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	}
 
@@ -94,7 +94,7 @@ class CaptchaValidationPlugin extends GalleryValidationPlugin {
     function loadTemplate(&$form, $options=array()) {
 	list ($ret, $useCaptcha) = $this->_shouldValidate($options);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	if ($useCaptcha) {
@@ -148,7 +148,7 @@ class CaptchaValidationPlugin extends GalleryValidationPlugin {
 	    list ($ret, $failedAttemptThreshold) = GalleryCoreApi::getPluginParameter(
 		    'module', 'captcha', 'failedAttemptThreshold');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 
 	    if ($securityLevel == 'LOW') {
@@ -159,7 +159,7 @@ class CaptchaValidationPlugin extends GalleryValidationPlugin {
 		list ($ret, $failedAttempts) = GalleryCoreApi::getPluginParameter(
 			'module', 'captcha', 'failCount-' . $options['key']);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret, null, null);
 		}
 	    }
 
@@ -170,7 +170,7 @@ class CaptchaValidationPlugin extends GalleryValidationPlugin {
 
 	default:
 	    /* Bad Parameter */
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER),
 			 null, null);
 	}
 

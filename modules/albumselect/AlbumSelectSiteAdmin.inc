@@ -37,7 +37,7 @@ class AlbumSelectSiteAdminController extends GalleryController {
     function handleRequest($form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$status = $error = array();
@@ -48,7 +48,7 @@ class AlbumSelectSiteAdminController extends GalleryController {
 			      ($key == 'sort') ? $form['sort']
 					       : ((isset($form[$key]) && $form[$key]) ? 1 : 0));
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	    $status['saved'] = 1;
@@ -79,7 +79,7 @@ class AlbumSelectSiteAdminView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	foreach (array('sort', 'treeLines', 'treeIcons', 'treeCookies',
@@ -93,7 +93,7 @@ class AlbumSelectSiteAdminView extends GalleryView {
 	    list ($ret, $params) =
 		GalleryCoreApi::fetchAllPluginParameters('module', 'albumselect');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    foreach ($params as $key => $value) {
 		$form[$key] = $value;

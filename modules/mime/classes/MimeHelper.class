@@ -56,7 +56,7 @@ class MimeHelper {
         ';
         list ($ret, $searchResults) = $gallery->search($query);
         if ($ret) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
+            return array($ret, null);
         }
         while ($result = $searchResults->nextResult()) {
             $MimeTypeMap['ext'][$result[0]][] = $result[1];

@@ -67,20 +67,20 @@ class CartHelper {
     function addItemsToCart($ids) {
 	list ($ret, $cartItemIds) = CartHelper::fetchCartItemCounts();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	if (!empty($ids)) {
 	    $ret = GalleryCoreApi::studyPermissions($ids);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
 	foreach ($ids as $id) {
 	    list ($ret, $canAdd) = GalleryCoreApi::hasItemPermission($id, 'cart.add');
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    if ($canAdd) {
 		if (isset($cartItemIds[$id])) {
@@ -93,7 +93,7 @@ class CartHelper {
 
 	$ret = CartHelper::setCartItemCounts($cartItemIds);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -130,13 +130,13 @@ class CartHelper {
     function loadCartItems() {
 	list ($ret, $cartItemIds) = CartHelper::fetchCartItemCounts();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$idList = array_keys($cartItemIds);
 	if (!empty($cartItemIds)) {
 	    $ret = GalleryCoreApi::studyPermissions($idList);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 	$changed = false;
@@ -150,12 +150,12 @@ class CartHelper {
 		    $changed = true;
 		    continue;
 		} else {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	    list ($ret, $canView) = GalleryCoreApi::hasItemPermission($itemId, 'core.view');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    if ($canView) {
 		$items[] = $item;
@@ -167,7 +167,7 @@ class CartHelper {
 	if ($changed) {
 	    $ret = CartHelper::setCartItemCounts($cartItemIds);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
     

@@ -69,7 +69,7 @@ class SiriuxTheme extends GalleryTheme {
 		  'thumbnails', 'pageNavigator', 'jumpRange'),
 	     $childIds);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Override some navigator settings */
@@ -86,7 +86,7 @@ class SiriuxTheme extends GalleryTheme {
 	list ($ret, $preferences) =
 	    GalleryCoreApi::fetchDerivativePreferencesForItem($item->getId());
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	foreach ($preferences as $preference) {
 	    if ($preference['derivativeType'] == DERIVATIVE_TYPE_IMAGE_THUMBNAIL &&
@@ -107,7 +107,7 @@ class SiriuxTheme extends GalleryTheme {
 	    array('owner', 'parents', 'systemLinks', 'itemLinks', 'permissions',
 		  'itemLinksDetailed', 'itemNavigator', 'imageViews'));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Override some navigator settings */
@@ -129,7 +129,7 @@ class SiriuxTheme extends GalleryTheme {
 	$ret = $this->loadCommonTemplateData(
 	    $template, $item, $params, array('parents', 'systemLinks'));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Add in our extra stuff */
@@ -147,7 +147,7 @@ class SiriuxTheme extends GalleryTheme {
 	$ret = $this->loadCommonTemplateData(
 	    $template, $item, $params, array('parents', 'systemLinks'));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Add in our extra stuff */
@@ -171,7 +171,7 @@ class SiriuxTheme extends GalleryTheme {
 	$ret = $this->loadCommonTemplateData(
 	    $template, $item, $params, array('parents', 'systemLinks'));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, 'theme.tpl');
@@ -183,7 +183,7 @@ class SiriuxTheme extends GalleryTheme {
     function getSettings($itemId=null) {
 	list ($ret, $settings, $params) = parent::getSettings($itemId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Add in our custom settings */

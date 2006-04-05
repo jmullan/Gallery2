@@ -141,7 +141,7 @@ class GdFunctionality {
      */
     function gd_info() {
 	if (!function_exists('gd_info')) {
-	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE), null);
 	}
 	$info = @gd_info();
 	return array(null, $info);
@@ -170,8 +170,8 @@ class GdFunctionality {
     function imageCreate($width, $height) {
 	$res = @imageCreate($width, $height);
 	if (!$res) {
-	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
-					      __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION),
+			 null);
 	}
 	return array(null, $res);
     }
@@ -195,12 +195,12 @@ class GdFunctionality {
      */
     function imageCreateTruecolor($width, $height) {
 	if (!function_exists('imageCreateTruecolor')) {
-	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
-					      __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION),
+			 null);
 	}
 	$res = @imageCreateTruecolor($width, $height);
 	if (!$res) {
-	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE), null);
 	}
 	return array(null, $res);
     }
@@ -227,14 +227,14 @@ class GdFunctionality {
      * @return array object GalleryStatus
      *	       resource GD resource
      */
-    function checkResource($res, $filename, $file, $line) {
+    function checkResource($res, $filename) {
 	if (!$res) {
 	    if (!$this->isValidFile($filename)) {
-		return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_PLATFORM_FAILURE,
-						  $file, $line), null);
+		return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_PLATFORM_FAILURE),
+			     null);
 	    }
-	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_FILE_TYPE,
-					      $file, $line), null);
+	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_FILE_TYPE),
+			 null);
 	}
 	return array(null, $res);
     }
@@ -255,9 +255,9 @@ class GdFunctionality {
 					      __FILE__, __LINE__), null);
 	}
 	$res = @imageCreateFromGif($filename);
-	list ($ret, $resource) = $this->checkResource($res, $filename, __FILE__, __LINE__);
+	list ($ret, $resource) = $this->checkResource($res, $filename);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $resource);
@@ -275,7 +275,7 @@ class GdFunctionality {
      */
     function imageCreateFromJpeg($filename) {
 	$res = @imageCreateFromJpeg($filename);
-	return $this->checkResource($res, $filename, __FILE__, __LINE__);
+	return $this->checkResource($res, $filename);
     }
 
     /**
@@ -290,7 +290,7 @@ class GdFunctionality {
      */
     function imageCreateFromPng($filename) {
 	$res = @imageCreateFromPng($filename);
-	return $this->checkResource($res, $filename, __FILE__, __LINE__);
+	return $this->checkResource($res, $filename);
     }
 
     /**
@@ -305,7 +305,7 @@ class GdFunctionality {
      */
     function imageCreateFromWbmp($filename) {
 	$res = @imageCreateFromWbmp($filename);
-	return $this->checkResource($res, $filename, __FILE__, __LINE__);
+	return $this->checkResource($res, $filename);
     }
 
     /**
@@ -320,7 +320,7 @@ class GdFunctionality {
      */
     function imageCreateFromXbm($filename) {
 	$res = @imageCreateFromXbm($filename);
-	return $this->checkResource($res, $filename, __FILE__, __LINE__);
+	return $this->checkResource($res, $filename);
     }
 
     /**
@@ -335,7 +335,7 @@ class GdFunctionality {
      */
     function imageCreateFromXpm($filename) {
 	$res = @imageCreateFromXpm($filename);
-	return $this->checkResource($res, $filename, __FILE__, __LINE__);
+	return $this->checkResource($res, $filename);
     }
 
     /**
@@ -349,14 +349,13 @@ class GdFunctionality {
      */
     function imageGif($res, $filename) {
 	if (!function_exists('imageGif')) {
-	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
-					__FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION);
 	}
 	$result = @imageGif($res, $filename);
 	if ($result) {
 	    return null;
 	} else {
-	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE);
 	}
     }
 
@@ -371,14 +370,13 @@ class GdFunctionality {
      */
     function imageJpeg($res, $filename, $quality) {
 	if (!function_exists('imageJpeg')) {
-	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
-					__FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION);
 	}
 	$result = @imageJpeg($res, $filename, $quality);
 	if ($result) {
 	    return null;
 	} else {
-	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE);
 	}
     }
 
@@ -393,14 +391,13 @@ class GdFunctionality {
      */
     function imagePng($res, $filename) {
 	if (!function_exists('imagePng')) {
-	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
-					__FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION);
 	}
 	$result = @imagePng($res, $filename);
 	if ($result) {
 	    return null;
 	} else {
-	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE);
 	}
     }
 
@@ -415,14 +412,13 @@ class GdFunctionality {
      */
     function imageWbmp($res, $filename) {
 	if (!function_exists('imageWbmp')) {
-	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
-					__FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION);
 	}
 	$result = @imageWbmp($res, $filename);
 	if ($result) {
 	    return null;
 	} else {
-	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE);
 	}
     }
 
@@ -436,14 +432,13 @@ class GdFunctionality {
      */
     function imageXbm($res, $filename) {
 	if (!function_exists('imageXbm')) {
-	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
-					__FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION);
 	}
 	$result = @imageXbm($res, $filename);
 	if ($result) {
 	    return null;
 	} else {
-	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE);
 	}
     }
 
@@ -459,15 +454,14 @@ class GdFunctionality {
     function imageCopyResampled(
 	    $dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH) {
 	if (!function_exists('imageCopyResampled')) {
-	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
-					__FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION);
 	}
 	$result = @imageCopyResampled($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY,
 				      $dstW, $dstH, $srcW, $srcH);
 	if ($result) {
 	    return null;
 	} else {
-	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE);
 	}
     }
 
@@ -486,7 +480,7 @@ class GdFunctionality {
 	if ($result) {
 	    return null;
 	} else {
-	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE);
 	}
     }
 
@@ -503,7 +497,7 @@ class GdFunctionality {
 	if ($result) {
 	    return null;
 	} else {
-	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE);
 	}
     }
 
@@ -520,7 +514,7 @@ class GdFunctionality {
 	if ($result) {
 	    return null;
 	} else {
-	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE);
 	}
     }
 
@@ -553,14 +547,14 @@ class GdFunctionality {
      */
     function imageRotate($srcRes, $angle, $bgdColor) {
 	if (!function_exists('imageRotate')) {
-	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
-					      __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION),
+			 null);
 	}
 	$res = @imageRotate($srcRes, $angle, $bgdColor);
 	if ($res) {
 	    return array(null, $res);
 	} else {
-	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE), null);
 	}
     }
 }

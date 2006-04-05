@@ -61,7 +61,7 @@ class MainPageControllerAndView extends RepositoryControllerAndView {
 
 	$ret = $this->showView('MainPage', $data);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	return null;
     }

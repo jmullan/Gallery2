@@ -44,7 +44,7 @@ class ImageBlockSiteAdminControllerTest extends GalleryControllerTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'imageblock');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -86,7 +86,7 @@ class ImageBlockSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'imageblock');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals('date', $params['show']);
     }
@@ -107,7 +107,7 @@ class ImageBlockSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'imageblock');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals('title|views', $params['show']);
 	$this->assertEquals('solid', $params['albumFrame']);

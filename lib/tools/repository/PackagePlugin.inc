@@ -45,12 +45,12 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
 	list ($ret, $plugins) = $this->getAvailablePluginList(array(
 	    'package' => array('controller' => 'PackagePlugin', 'action' => 'packagePlugin')));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = $this->showView('PackagePlugin', array('plugins' => $plugins));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -73,12 +73,12 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
 
 	list ($ret, $pluginInfo) = $this->doPackagePlugin($pluginType, $pluginId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = $this->showView('PackageResults', array('results' => array($pluginInfo)));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -100,14 +100,14 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
 
 	list ($ret, $plugins) = $this->getAvailablePluginList(array());
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	foreach ($plugins as $pluginId => $plugin) {
 	    if (preg_match($filter, $pluginId)) {
 		list ($ret, $pluginInfo) = $this->doPackagePlugin($plugin['type'], $pluginId);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 		$packagedPluginList[] = $pluginInfo;
 	    }
@@ -127,7 +127,7 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
 
 	list ($ret, $plugin) = GalleryCoreApi::loadPlugin($pluginType, $pluginId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$outputDir .= sprintf('%ss', $pluginType);
@@ -135,28 +135,28 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
 	$descriptor = new RepositoryDescriptor();
 	$ret = $descriptor->init($outputDir);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$ret = $descriptor->generate($plugin);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$ret = $descriptor->writeToDisk();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$package = new RepositoryPackage();
 	$ret = $package->init($descriptor, $descriptor->getOutputDir());
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $packagesWritten) = $package->writeAllPackagesToDisk();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$pluginInfo = array('pluginId' => $descriptor->getPluginId(),
@@ -182,7 +182,7 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
 	foreach ($pluginTypes as $pluginType) {
 	    list ($ret, $plugins) = GalleryCoreApi::fetchPluginStatus($pluginType, true);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    foreach ($plugins as $pluginId => $plugin) {

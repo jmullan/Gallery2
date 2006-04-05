@@ -35,14 +35,14 @@ class RatingCallbacks {
 	    $itemId = $params['itemId'];
 	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    list ($ret, $allowAlbumRating) = GalleryCoreApi::getPluginParameter('module',
 		    'rating',
 		    'allowAlbumRating');
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    if (GalleryUtilities::isA($item, 'GalleryAlbumItem') && !$allowAlbumRating) {
@@ -53,7 +53,7 @@ class RatingCallbacks {
 		    'rating.view',
 		    $userId);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    if (!$permission) {
@@ -64,7 +64,7 @@ class RatingCallbacks {
 	    GalleryCoreApi::requireOnce('modules/rating/classes/RatingHelper.class');
 	    list ($ret, $RatingData) = RatingHelper::fetchRatings(array($itemId), $userId);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    if (!isset($RatingData[$itemId])) {
@@ -89,7 +89,7 @@ class RatingCallbacks {
 		    'rating.add',
 		    $userId);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    $RatingData[$itemId]['canRate'] = ($permission ? true : false);
 	    $RatingSummary = array('ratingValues' => array(1, 2, 3, 4, 5), 'firstCall' => true);
@@ -102,7 +102,7 @@ class RatingCallbacks {
 	    return null;
 	}
 
-	return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
     }
 }
 ?>

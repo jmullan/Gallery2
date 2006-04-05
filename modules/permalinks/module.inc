@@ -55,13 +55,13 @@ class PermalinksModule extends GalleryModule /* and GalleryEventListener */ {
     function upgrade($currentVersion) {
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'permalinks');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	foreach (array('autoPermalink' => 0) as $key => $value) {
 	    if (!isset($params[$key])) {
 		$ret = $this->setParameter($key, $value);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	}
@@ -75,7 +75,7 @@ class PermalinksModule extends GalleryModule /* and GalleryEventListener */ {
     function activate($postActivationEvent=true) {
 	list ($ret, $redirect) = parent::activate($postActivationEvent);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, array('view' => 'core.SiteAdmin',
@@ -90,7 +90,7 @@ class PermalinksModule extends GalleryModule /* and GalleryEventListener */ {
 	   'ItemEditOption', 'PermalinksOption', 'PermalinksOption',
 	   'modules/permalinks/PermalinksOption.inc', 'permalinks', array('ItemEditItem'));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -130,13 +130,13 @@ class PermalinksModule extends GalleryModule /* and GalleryEventListener */ {
 		GalleryCoreApi::requireOnce('modules/permalinks/classes/PermalinksMapHelper.class');
 		list ($ret, $results) = PermalinksMapHelper::fetchAliasesForItem($entity->getId());
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		foreach ($results as $name) {
 		    $ret = PermalinksMapHelper::deleteAlias($name);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		}
 	    }
@@ -145,21 +145,21 @@ class PermalinksModule extends GalleryModule /* and GalleryEventListener */ {
 
 	    list ($ret, $isActive) = $this->isActive();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    if ($isActive) {
 		/* We can't run without the rewrite module, so we might as well deactivate. */
 		list ($ret, $redirect) = $this->deactivate();
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	} else if ($event->getEventName() == 'GalleryEntity::save') {
 	    list ($ret, $autoPermalink) =
 		GalleryCoreApi::getPluginParameter('module', 'permalinks', 'autoPermalink');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    if ($autoPermalink) {
@@ -173,7 +173,7 @@ class PermalinksModule extends GalleryModule /* and GalleryEventListener */ {
 							    $album->getId());
 		    if ($ret) {
 			if (!($ret->getErrorCode() & ERROR_COLLISION)) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
+			    return array($ret, null);
 			}
 
 			/* We have a collision... not really a problem, just eat it */

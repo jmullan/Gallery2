@@ -102,7 +102,7 @@ class GalleryPhotoItem extends GalleryDataItem {
 
 	/* Validate the input filename */
 	if (empty($imageFileName)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
 	if (!$platform->file_exists($imageFileName)) {
@@ -113,7 +113,7 @@ class GalleryPhotoItem extends GalleryDataItem {
 	$ret = parent::create($parentId, $imageFileName,
 			      $mimeType, $targetName, $symlink);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* We're linkable */
@@ -131,7 +131,7 @@ class GalleryPhotoItem extends GalleryDataItem {
 	    if (!$ret2) {
 		@$platform->unlink($path);
 	    }
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -143,25 +143,25 @@ class GalleryPhotoItem extends GalleryDataItem {
     function rescan() {
 	$ret = parent::rescan();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	list ($ret, $path) = $this->fetchPath();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$mimeType = $this->getMimeType();
 
 	/* Check for CMYK colorspace and alter mime type if detected */
 	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByProperty($mimeType, 'colorspace');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	if (isset($toolkit)) {
 	    list ($ret, $colorspace) = $toolkit->getProperty($mimeType, 'colorspace', $path);
 	    if ($ret) {
 		$ret->addErrorCode(ERROR_BAD_DATA_TYPE); /* See BAD_DATA_TYPE comment below */
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    if ($colorspace[0] == 'CMYK') {
 		$this->setMimeType($mimeType .= '-cmyk');
@@ -171,7 +171,7 @@ class GalleryPhotoItem extends GalleryDataItem {
 
 	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByProperty($mimeType, 'dimensions');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	if (isset($toolkit)) {
@@ -183,7 +183,7 @@ class GalleryPhotoItem extends GalleryDataItem {
 		 * Or our graphics code is broken.  Hard to tell which at this point.
 		 */
 		$ret->addErrorCode(ERROR_BAD_DATA_TYPE);
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    $this->setWidth($dimensions[0]);

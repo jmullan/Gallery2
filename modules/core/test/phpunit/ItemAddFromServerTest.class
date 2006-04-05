@@ -45,13 +45,13 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	list ($ret, $this->_rootAlbum) =
 	    $this->_createRandomAlbum($this->_getRootId(), array('orderBy' => 'orderWeight'));
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_rootAlbum);
 
 	list ($ret, $this->_lockId) = GalleryCoreApi::acquireReadLock($this->_rootAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_symlinkAllowedPlatform =
@@ -62,25 +62,25 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'core');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dir.1',
 						  dirname(dirname(__FILE__)));
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dir.2',
 						  $gallery->getConfig('data.gallery.base'));
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::removePluginParameter('module', 'core', 'uploadLocalServer.dir.3');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$gallery->setPlatform($this->_symlinkAllowedPlatform);
@@ -89,7 +89,7 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
     function tearDown() {
 	$ret = GalleryCoreApi::releaseLocks($this->_lockId);
 	if ($ret) {
-	   return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	   return $this->failWithStatus($ret);
 	}
 
 	parent::tearDown();
@@ -300,19 +300,19 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	/* Verify item attributes (like order weight) */
 	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($this->_rootAlbum);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	if ($addDirectories) {
 	    $this->assertEquals(1, count($ids), 'top child count');
 	    list ($ret, $subalbum) = GalleryCoreApi::loadEntitiesById($ids[0]);
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    $this->assertEquals('galleryalbumitem', strtolower(get_class($subalbum)), 'subalbum');
 	    $this->assertEquals('localUploadDir', $subalbum->getPathComponent(), 'subalbum path');
 	    list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($subalbum);
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	}
 	$addDirectoriesString = $addDirectories ? ' addDirectories' : ' !addDirectories';
@@ -320,7 +320,7 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	
 	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($ids);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Organize items array by id */
@@ -343,13 +343,13 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 
 	    list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCount($item->getId());
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    $this->assertEquals(0, $viewCount);
 
 	    list ($ret, $orderWeight) = GalleryCoreApi::fetchItemOrderWeight($item->getId());
 	    if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	    $this->assert(!isset($seenWeights[$item->getParentId()][$orderWeight]),
 			  'Seen this weight before');
@@ -383,7 +383,7 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($results[1]['addedFiles'][0]['id']);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals('December - _#952_.jpg', $item->getPathComponent(), 'pathComponent');
 	$this->assertEquals('December - &lt;#952&gt;', $item->getTitle(), 'title');
@@ -399,7 +399,7 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 
 	list ($ret, $path) = $this->_rootAlbum->fetchPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryUtilities::putRequestVariable('form[action][addFromLocalServer]', 1);

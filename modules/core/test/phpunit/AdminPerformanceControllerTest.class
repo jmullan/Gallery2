@@ -44,7 +44,7 @@ class AdminPerformanceControllerTest extends GalleryControllerTestCase {
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'core');
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 
 	$acceleration['user']['type'] = 'none';
@@ -54,7 +54,7 @@ class AdminPerformanceControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'core', 'acceleration', serialize($acceleration));
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
     }
 
@@ -79,7 +79,7 @@ class AdminPerformanceControllerTest extends GalleryControllerTestCase {
 	list ($ret, $acceleration) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'acceleration');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$acceleration = unserialize($acceleration);
 
@@ -100,7 +100,7 @@ class AdminPerformanceControllerTest extends GalleryControllerTestCase {
 
 	$ret = GalleryDataCache::putPageData('test-key', 0, 'key', 'test-value');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryUtilities::putRequestVariable('form[action][clear]', 1);
@@ -122,7 +122,7 @@ class AdminPerformanceControllerTest extends GalleryControllerTestCase {
 	$storage =& $gallery->getStorage();
 	list ($ret, $results) = $storage->search('SELECT COUNT(*) FROM [GalleryCacheMap]', array());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$result = $results->nextResult();
 	$this->assertEquals(0, (int)$result[0]);

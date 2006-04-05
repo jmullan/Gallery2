@@ -44,14 +44,14 @@ class ItemEditThumbPage extends ItemEditPlugin {
 	$error = array();
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'thumbpage');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+	    return array($ret, null, null, null);
 	}
 
 	if (isset($form['action']['save'])) {
 	    list ($ret, $thumbnails) =
 		GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+		return array($ret, null, null, null);
 	    }
 	    $thumb = array_shift($thumbnails);
 	    $operations = $thumb->getDerivativeOperations();
@@ -66,16 +66,16 @@ class ItemEditThumbPage extends ItemEditPlugin {
 	    }
 	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($thumb->getId());
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+		return array($ret, null, null, null);
 	    }
 	    $thumb->setDerivativeOperations($operations);
 	    $ret = $thumb->save();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+		return array($ret, null, null, null);
 	    }
 	    $ret = GalleryCoreApi::releaseLocks($lockId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+		return array($ret, null, null, null);
 	    }
 
 	    $status = $module->translate('Changes saved successfully');
@@ -98,7 +98,7 @@ class ItemEditThumbPage extends ItemEditPlugin {
 	}
 	list ($ret, $count) = $this->_getPageCount($item);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 	$ItemEditThumbPage = array('pageList' => array());
 	for ($i = 1; $i <= $count; $i++) {
@@ -134,7 +134,7 @@ class ItemEditThumbPage extends ItemEditPlugin {
     function getTitle() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'thumbpage');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	return array(null, $module->translate('Thumbnail'));
     }
@@ -150,19 +150,19 @@ class ItemEditThumbPage extends ItemEditPlugin {
     function _getPageCount(&$item) {
 	list ($ret, $path) = $item->fetchPath();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	list ($ret, $toolkit) =
 	    GalleryCoreApi::getToolkitByProperty($item->getMimeType(), 'page-count');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (!isset($toolkit)) {
-	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE), null);
 	}
 	list ($ret, $result) = $toolkit->getProperty($item->getMimeType(), 'page-count', $path);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	return array(null, $result[0]);
     }

@@ -43,12 +43,12 @@ class RedirectController extends GalleryController {
     function handleRequest(&$form) {
 	$alias = GalleryUtilities::getRequestVariables('filename');
 	if (empty($alias)) {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	}
 
 	list ($ret, $itemId) = PermalinksMapHelper::fetchItemIdForAlias($alias);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	GalleryUtilities::putRequestVariable('itemId', $itemId);

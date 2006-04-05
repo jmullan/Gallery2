@@ -64,45 +64,45 @@ class PrintPhotosController extends GalleryController {
 	    $session->remove('fotokasten.cart');
 	}
 	if (empty($cartItemIds)) {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	}
 
 	/* Load the necessary item data */
 	$itemIds = array_keys($cartItemIds);
 	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($itemIds);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds($itemIds);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $resizes) = GalleryCoreApi::fetchResizesByItemIds($itemIds);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $preferreds) = GalleryCoreApi::fetchPreferredsByItemIds($itemIds);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$ret = GalleryCoreApi::studyPermissions($itemIds);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* We want to know which are viewable to guests */
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$ret = GalleryCoreApi::studyPermissions($itemIds, $anonymousUserId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	/* Assemble all our data */
 	$i = 0;
@@ -111,12 +111,12 @@ class PrintPhotosController extends GalleryController {
 	    $itemId = $item->getId();
 	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($itemId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    list ($ret, $publicPermissions) =
 		GalleryCoreApi::getPermissions($itemId, $anonymousUserId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    if (!isset($permissions['fotokasten.print'])) {
@@ -153,7 +153,7 @@ class PrintPhotosController extends GalleryController {
 		$foSession = new GallerySession();
 		$ret = $foSession->initEmpty(true, $gallery->getActiveUserId());
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		/*
 		 * TODO: Would like to enforce a particular session timeout to ensure this
@@ -166,7 +166,7 @@ class PrintPhotosController extends GalleryController {
 		 */
 		$ret = $foSession->save();
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	    $sessionParam =
@@ -197,7 +197,7 @@ class PrintPhotosController extends GalleryController {
 	/* prepare for connection */
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'fotokasten');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$this->affiliate_id = $params['affiliateId'];
 	$this->affiliate_id_pass = $params['affiliateIdPass'];
@@ -212,13 +212,13 @@ class PrintPhotosController extends GalleryController {
 	/* get fotokasten session */
 	$ret = $this->getFotokastenSession();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* transfer cart to fotokasten */
 	list ($ret, $referer) = $this->sendFotokastenCart($basket);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* add language parameter */

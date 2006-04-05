@@ -37,7 +37,7 @@ class ImageBlockSiteAdminController extends GalleryController {
     function handleRequest($form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$status = array();
@@ -51,14 +51,14 @@ class ImageBlockSiteAdminController extends GalleryController {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'imageblock',
 						      'show', implode('|', $param));
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    foreach (array('albumFrame', 'itemFrame') as $key) {
 		if (isset($form[$key])) {
 		    $ret = GalleryCoreApi::setPluginParameter('module', 'imageblock',
 							      $key, $form[$key]);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		}
 	    }
@@ -87,7 +87,7 @@ class ImageBlockSiteAdminView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if ($form['formName'] != 'ImageBlockSiteAdmin') {
@@ -98,7 +98,7 @@ class ImageBlockSiteAdminView extends GalleryView {
 	    list ($ret, $param) =
 		GalleryCoreApi::fetchAllPluginParameters('module', 'imageblock');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    foreach (explode('|', $param['show']) as $tmp) {
 		$form[$tmp] = 1;
@@ -111,16 +111,16 @@ class ImageBlockSiteAdminView extends GalleryView {
 	/* ImageFrame settings, if available */
 	list ($ret, $imageframe) = GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (isset($imageframe)) {
 	    list ($ret, $ImageBlockSiteAdmin['list']) = $imageframe->getImageFrameList();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    list ($ret, $ImageBlockSiteAdmin['sampleUrl']) = $imageframe->getSampleUrl();
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	}
 

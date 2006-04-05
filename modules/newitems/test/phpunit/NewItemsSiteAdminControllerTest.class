@@ -50,26 +50,26 @@ class NewItemsSiteAdminControllerTest extends GalleryControllerTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'newitems');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'core');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'default.orderBy', 'NewItems');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId(),
 	    array('orderBy' => 'NewItems', 'orderDirection' => ORDER_DESCENDING));
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_markForCleanup($this->_album);
@@ -102,7 +102,7 @@ class NewItemsSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $days) = GalleryCoreApi::getPluginParameter('module', 'newitems', 'days.new');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals('13', $days, 'days');
     }
@@ -136,12 +136,12 @@ class NewItemsSiteAdminControllerTest extends GalleryControllerTestCase {
     function testNewItemsSiteAdminControllerReset() {
 	$ret = $this->_saveNewItemSorts();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $count) = NewItemsHelper::fetchAlbumCount();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert($count > 0, 'Should be at least one NewItems sort in db');
 
@@ -156,19 +156,19 @@ class NewItemsSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $count) = NewItemsHelper::fetchAlbumCount();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(0, $count, 'Should be no NewItems sorts in db after reset');
 
 	$ret = $this->_restoreNewItemSorts();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $defaultSort) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderBy');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals('orderWeight', $defaultSort, 'default sort');
     }
@@ -180,7 +180,7 @@ class NewItemsSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $results) = $gallery->search($query);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$ids = array();
 	while ($result = $results->nextResult()) {
@@ -196,23 +196,23 @@ class NewItemsSiteAdminControllerTest extends GalleryControllerTestCase {
 	}
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock(array_keys($this->_newItemSortIds));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	list ($ret, $items) = GalleryCoreApi::loadEntitiesById(array_keys($this->_newItemSortIds));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	foreach ($items as $item) {
 	    $item->setOrderBy('NewItems');
 	    $item->setOrderDirection($this->_newItemSortIds[$item->getId()]);
 	    $ret = $item->save();
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	return null;
     }

@@ -66,7 +66,7 @@ class CreateThumbnailOption extends ItemAddOption {
 
 	list ($ret, $thumbTable) = GalleryCoreApi::fetchThumbnailsByItemIds($itemIds);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	foreach ($items as $item) {
@@ -76,7 +76,7 @@ class CreateThumbnailOption extends ItemAddOption {
 		list ($ret) =
 		    GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($thumbnail->getId());
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret, null, null);
 		}
 	    }
 	}

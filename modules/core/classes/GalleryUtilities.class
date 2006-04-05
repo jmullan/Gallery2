@@ -1182,7 +1182,7 @@ class GalleryUtilities {
 	} else if (GalleryUtilities::isA($entity, 'GalleryDerivative')) {
 	    list ($ret, $parentEntity) = GalleryCoreApi::loadEntitiesById($entity->getParentId());
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    if (GalleryUtilities::isA($parentEntity, 'GalleryFileSystemEntity')) {
@@ -1192,7 +1192,7 @@ class GalleryUtilities {
 		    list ($ret, $extensions) =
 			GalleryCoreApi::convertMimeToExtensions($entity->getMimeType());
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		    if (!empty($extensions)) {
 			if (method_exists($parentEntity, 'getMimeType')) {

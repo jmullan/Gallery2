@@ -201,7 +201,7 @@ class GalleryDerivative extends GalleryChildEntity {
 	list ($ret, $derivativesTable) =
 	    GalleryCoreApi::fetchDerivativesBySourceIds(array($this->getId()));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	foreach ($derivativesTable as $itemId => $derivatives) {
@@ -217,7 +217,7 @@ class GalleryDerivative extends GalleryChildEntity {
 		 * gone.
 		 */
 		if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	}
@@ -225,7 +225,7 @@ class GalleryDerivative extends GalleryChildEntity {
 	/* Delete myself */
 	$ret = parent::delete();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Expire our cache, and don't abort if this fails */
@@ -246,7 +246,7 @@ class GalleryDerivative extends GalleryChildEntity {
     function create($parentId) {
 	$ret = parent::create($parentId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$this->setDerivativeOrder(0);
@@ -270,7 +270,7 @@ class GalleryDerivative extends GalleryChildEntity {
 	/* Save myself */
 	$ret = parent::save($postEvent);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	if (!$isNew) {
@@ -278,14 +278,14 @@ class GalleryDerivative extends GalleryChildEntity {
 	    if ($expire) {
 		$ret = $this->expireCache();
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 
 	    /* Expire anything that depends on me */
 	    $ret = GalleryCoreApi::expireDerivativeTreeBySourceIds(array($this->getId()));
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
@@ -337,16 +337,16 @@ class GalleryDerivative extends GalleryChildEntity {
 			    $status = null;
 			} else {
 			    $status =
-				GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
+				GalleryCoreApi::error(ERROR_PLATFORM_FAILURE);
 			}
 		    } else {
-			$status = $ret->wrap(__FILE__, __LINE__);
+			$status = $ret;
 		    }
 		} else {
-		    $status = GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
+		    $status = GalleryCoreApi::error(ERROR_PLATFORM_FAILURE);
 		}
 	    } else {
-		$status = $ret->wrap(__FILE__, __LINE__);
+		$status = $ret;
 	    }
 
 	    /*
@@ -355,9 +355,9 @@ class GalleryDerivative extends GalleryChildEntity {
 	     */
 	    $ret = $this->save(false);
 	    if ($status) {
-		return $status->wrap(__FILE__, __LINE__);
+		return $status;
 	    } else if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    /* Pretend the operation was successful */
@@ -383,7 +383,7 @@ class GalleryDerivative extends GalleryChildEntity {
 	/* Figure out our target path */
 	list ($ret, $destPath) = $this->fetchPath();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Make sure our path is legit */
@@ -391,27 +391,27 @@ class GalleryDerivative extends GalleryChildEntity {
 
 	list ($ret, $source, $operations) = $this->fetchFinalOperations();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	if (GalleryUtilities::isA($source, 'GalleryDerivative')) {
 	    list ($ret, $rebuild) =
 		GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($source->getId());
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    if ($rebuild) {
 		/* Fetch the updated version back from our entity cache */
 		list ($ret, $source) = GalleryCoreApi::loadEntitiesById($source->getId());
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 
 	    list ($ret, $sourcePath) = $source->fetchPath();
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	} else {
 	    /* Get the path of the source file */
@@ -419,12 +419,12 @@ class GalleryDerivative extends GalleryChildEntity {
 		$linkedEntity = $source->getLinkedEntity();
 		list ($ret, $sourcePath) = $linkedEntity->fetchPath();
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    } else {
 		list ($ret, $sourcePath) = $source->fetchPath();
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	}
@@ -452,7 +452,7 @@ class GalleryDerivative extends GalleryChildEntity {
 	    list ($ret, $toolkit, $nextMimeType) =
 		GalleryCoreApi::getToolkitByOperation($mimeType, $operationName);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    if (!isset($toolkit)) {
@@ -471,7 +471,7 @@ class GalleryDerivative extends GalleryChildEntity {
 		list ($ret, $nextToolkit) =
 		    GalleryCoreApi::getToolkitByOperation($nextMimeType, $nextOperationName);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 		$context['next.toolkit'] = isset($nextToolkit) ? $nextToolkit : null;
 		$context['next.operation'] = $nextOperationName;
@@ -482,7 +482,7 @@ class GalleryDerivative extends GalleryChildEntity {
 		$mimeType, $operationName, $sourcePath, $destPath,
 		explode(',', $operationArgs), $context);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    /* Prepare for the next operation */
@@ -492,7 +492,7 @@ class GalleryDerivative extends GalleryChildEntity {
 	if (empty($operations)) {
 	    /* No operations.. just copy source file */
 	    if (!$platform->copy($sourcePath, $destPath)) {
-		return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
+		return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE);
 	    }
 	}
 
@@ -513,7 +513,7 @@ class GalleryDerivative extends GalleryChildEntity {
 		      'parentId' => $this->getParentId());
 	list ($ret, $data['pseudoFileName']) = GalleryUtilities::getPseudoFileName($this);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	GalleryDataCache::putToDisk(
@@ -522,7 +522,7 @@ class GalleryDerivative extends GalleryChildEntity {
 	GalleryCoreApi::deleteFastDownloadFileById($this->getId());
 	$ret = GalleryCoreApi::createFastDownloadFile($this);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -542,7 +542,7 @@ class GalleryDerivative extends GalleryChildEntity {
 	/* Load the source */
 	list ($ret, $source) = GalleryCoreApi::loadEntitiesById($this->getDerivativeSourceId());
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret, null, null);
 	}
 
 	if (GalleryUtilities::isA($source, 'GalleryDerivative')) {
@@ -563,7 +563,7 @@ class GalleryDerivative extends GalleryChildEntity {
 		list ($ret, $tmp) =
 		    GalleryCoreApi::loadEntitiesById($sources[0]->getDerivativeSourceId());
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret, null, null);
 		}
 
 		if (!GalleryUtilities::isA($tmp, 'GalleryDerivative')) {
@@ -597,7 +597,7 @@ class GalleryDerivative extends GalleryChildEntity {
 		    list ($ret, $operations) =
 			GalleryCoreApi::mergeDerivativeOperations($operations, $newOperation);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return array($ret, null, null);
 		    }
 		}
 	    }
@@ -614,7 +614,7 @@ class GalleryDerivative extends GalleryChildEntity {
 		list ($ret, $operations) =
 		    GalleryCoreApi::mergeDerivativeOperations($operations, $newOperation);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret, null, null);
 		}
 	    }
 
@@ -639,7 +639,7 @@ class GalleryDerivative extends GalleryChildEntity {
 
 	list ($ret, $path) = $this->fetchPath();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), false);
+	    return array($ret, false);
 	}
 
 	$bool = $platform->file_exists($path);
@@ -658,7 +658,7 @@ class GalleryDerivative extends GalleryChildEntity {
 
 	list ($ret, $path) = $this->fetchPath();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	if ($platform->file_exists($path)) {

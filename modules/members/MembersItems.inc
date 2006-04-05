@@ -45,7 +45,7 @@ class MembersItemsView extends GalleryView {
 	list ($ret, $result) =
 	    GalleryMembersHelper::canViewMembersModule($gallery->getActiveUserId());
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (!$result) {
 	    return array(null,
@@ -58,7 +58,7 @@ class MembersItemsView extends GalleryView {
 
 	$userId = GalleryUtilities::getRequestVariables('userId');
 	if (empty($userId)) {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	}
 
 	if ($form['formName'] != 'MembersItems') {
@@ -70,13 +70,13 @@ class MembersItemsView extends GalleryView {
 
 	list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list($ret, $form['list']['count']) =
 	    GalleryMembersHelper::fetchUserItemCount($user->getId());
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if ($form['list']['count'] == 0) {
@@ -103,18 +103,18 @@ class MembersItemsView extends GalleryView {
 						     $form['list']['pageSize'],
 						     ORDER_DESCENDING);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Bring in the root album information for the breadcrumb */
 	list ($ret, $rootAlbumId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($rootAlbumId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	$MembersItems['rootAlbum'] = (array)$rootAlbum;
 
@@ -129,7 +129,7 @@ class MembersItemsView extends GalleryView {
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'members');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$template->title($module->translate('Member Items'));

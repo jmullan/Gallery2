@@ -108,7 +108,7 @@ class GalleryController {
      *               return-array
      */
     function handleRequest($form) {
-	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED),
 		     null);
     }
 
@@ -137,20 +137,20 @@ class GalleryController {
 	/* If the module is not active, only let site admins use the config controller */
 	list ($ret, $plugin) = GalleryCoreApi::loadPlugin('module', $module);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	list ($ret, $isActive) = $plugin->isActive();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (!$isActive) {
 	    if ($controllerName == $plugin->getConfigurationView()) {
 		$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    } else {
-		return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__),
+		return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED),
 			     null);
 	    }
 	}
@@ -162,7 +162,7 @@ class GalleryController {
 
 	    $platform =& $gallery->getPlatform();
 	    if (!$platform->file_exists($moduleBaseDir . $fileName)) {
-		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	    }
 
 	    GalleryCoreApi::requireOnce($fileName);

@@ -135,7 +135,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 	global $gallery;
 	list ($ret, $saveLanguage) = $gallery->getActiveLanguageCode();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$testcases = array(
@@ -161,7 +161,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 	    if (!is_array($case)) {
 		$ret = $gallery->setActiveLanguageCode($case);
 		if ($ret) {
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		    return $this->failWithStatus($ret);
 		}
 		continue;
 	    }
@@ -176,7 +176,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 
 	$ret = $gallery->setActiveLanguageCode($saveLanguage);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 

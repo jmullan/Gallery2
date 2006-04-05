@@ -45,7 +45,7 @@ class ModifyCartControllerTest extends GalleryControllerTestCase {
 	/* create an album to hold all of the test items */
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 
 	$this->_markForCleanup($this->_album);
@@ -54,7 +54,7 @@ class ModifyCartControllerTest extends GalleryControllerTestCase {
 	list($ret, $this->_saveCartItemCounts) = CartHelper::fetchCartItemCounts();
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$cartItemCounts = array(1 => 3,
@@ -62,7 +62,7 @@ class ModifyCartControllerTest extends GalleryControllerTestCase {
 	$ret = CartHelper::setCartItemCounts($cartItemCounts);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -73,7 +73,7 @@ class ModifyCartControllerTest extends GalleryControllerTestCase {
 	$ret = CartHelper::setCartItemCounts($this->_saveCartItemCounts);
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	parent::tearDown();
@@ -96,7 +96,7 @@ class ModifyCartControllerTest extends GalleryControllerTestCase {
 	/* Verify our cart */
 	list($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(array(2 => 5), $cartItemCounts);
@@ -117,7 +117,7 @@ class ModifyCartControllerTest extends GalleryControllerTestCase {
 	/* Verify our cart */
 	list($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(array(), $cartItemCounts);

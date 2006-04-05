@@ -61,7 +61,7 @@ class MailHelper_simple {
 
 	list($ret, $emailText) = $template->fetch('gallery:' . $file);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* If no from address is given, try and get the SMTP from address */
@@ -69,7 +69,7 @@ class MailHelper_simple {
 	    list ($ret, $smtpFrom) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'smtp.from');
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    if (!empty($smtpFrom)) {

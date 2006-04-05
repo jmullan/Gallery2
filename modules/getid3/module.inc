@@ -58,12 +58,12 @@ class Getid3Module extends GalleryModule {
 	    GalleryCoreApi::requireOnce('modules/getid3/classes/Getid3Helper.class');
 	    $ret = Getid3Helper::setDefaultProperties(GETID3_SUMMARY);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    $ret = Getid3Helper::setDefaultProperties(GETID3_DETAILED);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	} else {
 	    switch ($currentVersion) {
@@ -92,21 +92,21 @@ class Getid3Module extends GalleryModule {
 	    'Getid3Interface_1_0', 'Getid3Extractor', 'Getid3',
 	    'modules/getid3/classes/Getid3Extractor.class', 'getid3', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GalleryToolkit', 'Getid3Toolkit', 'Getid3',
 	    'modules/getid3/classes/Getid3Toolkit.class', 'getid3', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation('ItemAddOption',
 	    'Getid3DescriptionOption', 'Getid3DescriptionOption',
 	    'modules/getid3/Getid3DescriptionOption.inc', 'getid3', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 
@@ -125,7 +125,7 @@ class Getid3Module extends GalleryModule {
 		'int',
 		$gallery->i18n('Get the origination timestamp'));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/*
@@ -143,7 +143,7 @@ class Getid3Module extends GalleryModule {
 
 	list ($ret, $redirect) = parent::activate($postActivationEvent);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $redirect);
@@ -155,13 +155,13 @@ class Getid3Module extends GalleryModule {
     function deactivate() {
 	list ($ret, $redirect) = parent::deactivate();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Unregister all of our properties and operations */
 	$ret = GalleryCoreApi::unregisterToolkit('Getid3');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $redirect);

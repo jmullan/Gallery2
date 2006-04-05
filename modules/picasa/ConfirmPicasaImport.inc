@@ -43,7 +43,7 @@ class ConfirmPicasaImportController extends GalleryController {
         /* Verify that active user is an admin */
         $ret = GalleryCoreApi::assertUserIsSiteAdministrator();
         if ($ret) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
+            return array($ret, null);
         }
 
         /* build framework for error and status arrays */
@@ -95,7 +95,7 @@ class ConfirmPicasaImportController extends GalleryController {
 
         list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'picasa');
         if ($ret) {
-            return $ret->wrap(__FILE__, __LINE__);
+            return $ret;
         }
 
         $sourceEncoding = 'UTF-8';
@@ -103,7 +103,7 @@ class ConfirmPicasaImportController extends GalleryController {
         list ($ret, $markupType) =
             GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
         if ($ret) {
-            return $ret->wrap(__FILE__, __LINE__);
+            return $ret;
         }
 
         $itemsCreated = $picasaAlbum = array();
@@ -116,7 +116,7 @@ class ConfirmPicasaImportController extends GalleryController {
             list ($ret, $rootId) =
                 GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
             if ($ret) {
-                return $ret->wrap(__FILE__, __LINE__);
+                return $ret;
             }
             $form['destinationAlbumId'] = $rootId;
         }
@@ -135,7 +135,7 @@ class ConfirmPicasaImportController extends GalleryController {
 
         list($ret, $picasaAlbum) = Picasa2DataParser::getAlbum($picasaXmlPath);
         if ($ret) {
-            return $ret->wrap(__FILE__, __LINE__);
+            return $ret;
         }
 
         $totalItemsToImport = count($picasaAlbum['images']);
@@ -156,7 +156,7 @@ class ConfirmPicasaImportController extends GalleryController {
             $module->translate('Importing albums'),
             $picasaAlbum['albumName'], $numberOfItemsImported / $totalItemsToImport);
         if ($ret) {
-            return $ret->wrap(__FILE__, __LINE__);
+            return $ret;
         }
 
         $desiredname = $platform->legalizePathComponent($picasaAlbum['albumName']);
@@ -167,7 +167,7 @@ class ConfirmPicasaImportController extends GalleryController {
                 GalleryCoreApi::fetchChildIdByPathComponent($destinationAlbumId, $desiredname);
             if ($ret) {
                 if (!$ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-                    return $ret->wrap(__FILE__, __LINE__);
+                    return $ret;
                 } else {
                     $invalidName = false;
                 }
@@ -179,19 +179,19 @@ class ConfirmPicasaImportController extends GalleryController {
         /* Make sure we have permission to edit the target item */
         $ret = GalleryCoreApi::assertHasItemPermission($destinationAlbumId, 'core.addAlbumItem');
         if ($ret) {
-            return $ret->wrap(__FILE__, __LINE__);
+            return $ret;
         }
 
         /* Try to load targeted parent */
         list ($ret, $targetAlbumObject) = GalleryCoreApi::loadEntitiesById($destinationAlbumId);
         if ($ret) {
-            return $ret->wrap(__FILE__, __LINE__);
+            return $ret;
         }
 
         /* Get a lock on said parent */
         list ($ret, $importLockIds[]) = GalleryCoreApi::acquireReadLock($destinationAlbumId);
         if ($ret) {
-            return $ret->wrap(__FILE__, __LINE__);
+            return $ret;
         }
 
         /*
@@ -202,16 +202,16 @@ class ConfirmPicasaImportController extends GalleryController {
             list ($ret, $newAlbumInstance) =
                 GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryAlbumItem');
             if ($ret) {
-                return $ret->wrap(__FILE__, __LINE__);
+                return $ret;
             }
             if (!isset($newAlbumInstance)) {
-                return GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+                return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
             }
 
             /* this is where the album is actually created */
             $ret = $newAlbumInstance->create($destinationAlbumId, $desiredname);
             if ($ret) {
-                return $ret->wrap(__FILE__, __LINE__);
+                return $ret;
             }
 
             $newAlbumInstanceId = $newAlbumInstance->getId();
@@ -234,7 +234,7 @@ class ConfirmPicasaImportController extends GalleryController {
 
             $ret = $newAlbumInstance->save();
             if ($ret) {
-                return $ret->wrap(__FILE__, __LINE__);
+                return $ret;
             }
 
             $itemsCreated[] = $newAlbumInstance->getId();
@@ -250,7 +250,7 @@ class ConfirmPicasaImportController extends GalleryController {
 
         $ret = GalleryCoreApi::releaseLocks($importLockIds);
         if ($ret) {
-            return $ret->wrap(__FILE__, __LINE__);
+            return $ret;
         } else {
             $importLockIds = array();
         }
@@ -258,7 +258,7 @@ class ConfirmPicasaImportController extends GalleryController {
         list ($ret, $importLockIds[]) =
             GalleryCoreApi::acquireReadLock($newAlbumInstanceId);
         if ($ret) {
-            return $ret->wrap(__FILE__, __LINE__);
+            return $ret;
         }
 
         $photos = $picasaAlbum['images'];
@@ -274,25 +274,25 @@ class ConfirmPicasaImportController extends GalleryController {
                 $picasaAlbum['albumName'] . ' ' . $filename,
                 $numberOfItemsImported / $totalItemsToImport);
             if ($ret) {
-                return $ret->wrap(__FILE__, __LINE__);
+                return $ret;
             }
             list ($base, $extension) =
                 GalleryUtilities::getFileNameComponents($filename);
             list ($ret, $mimeType) =
                 GalleryCoreApi::convertExtensionToMime($extension);
             if ($ret) {
-                return $ret->wrap(__FILE__, __LINE__);
+                return $ret;
             }
             list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum(
                 $filepath, $filename, $base, $filecaption,
                 $filecaption, $mimeType, $newAlbumInstanceId);
             if ($ret) {
-                return $ret->wrap(__FILE__, __LINE__);
+                return $ret;
             }
             $itemsCreated[] = $newItem->getId();
             $numberOfItemsImported++;
             if ($ret) {
-                return $ret->wrap(__FILE__, __LINE__);
+                return $ret;
             }
             $status['pictureImportSuccess'][$filename] = $newItem->getId();
 
@@ -309,7 +309,7 @@ class ConfirmPicasaImportController extends GalleryController {
 
         $ret = GalleryCoreApi::releaseLocks($importLockIds);
         if ($ret) {
-            return $ret->wrap(__FILE__, __LINE__);
+            return $ret;
         }
         return null;
     }
@@ -330,7 +330,7 @@ class ConfirmPicasaImportView extends GalleryView {
         /* Verify that active user is an admin */
         $ret = GalleryCoreApi::assertUserIsSiteAdministrator();
         if ($ret) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
+            return array($ret, null);
         }
 
         $platform =& $gallery->getPlatform();
@@ -341,11 +341,11 @@ class ConfirmPicasaImportView extends GalleryView {
 
         list ($ret, $album) = Picasa2DataParser::getAlbum($picasaXmlPath);
         if ($ret) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
+            return array($ret, null);
         }
         list ($ret, $targetAlbum) = GalleryCoreApi::loadEntitiesById($destinationAlbumId);
         if ($ret) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
+            return array($ret, null);
         }
 
         $albumName = $album['albumName'];
@@ -354,7 +354,7 @@ class ConfirmPicasaImportView extends GalleryView {
             $platform->legalizePathComponent($albumName));
         if ($ret) {
             if (!$ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-                return array($ret->wrap(__FILE__, __LINE__), null);
+                return array($ret, null);
             }
         } else {
             $existingAlbums[$albumName] = $existingAlbumId;

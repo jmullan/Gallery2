@@ -46,7 +46,7 @@ class ShutterflyCartPlugin extends CartPluginInterface_1_0 {
     function getActionDisplayName() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'shutterfly');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	return array(null, $module->translate('Print with Shutterfly'));
     }

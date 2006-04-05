@@ -107,12 +107,12 @@ class AdminCreateGroupControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $group) = GalleryCoreApi::fetchGroupByGroupName($groupName);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::deleteEntityById($group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 }

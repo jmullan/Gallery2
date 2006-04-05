@@ -44,14 +44,14 @@ class CustomFieldSiteAdminControllerTest extends GalleryControllerTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'customfield');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	foreach (array('common', 'album', 'photo') as $key) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'customfield', $key, '');
 	    if ($ret) {
 		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	}
     }
@@ -138,7 +138,7 @@ class CustomFieldSiteAdminControllerTest extends GalleryControllerTestCase {
 	/* Check data so far.. */
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'customfield');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	foreach ($params as $key => $value) {
 	    if ($key[0] == '_') {
@@ -171,7 +171,7 @@ class CustomFieldSiteAdminControllerTest extends GalleryControllerTestCase {
 	/* Check data so far.. */
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'customfield');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	foreach ($params as $key => $value) {
 	    if ($key[0] == '_') {
@@ -219,7 +219,7 @@ class CustomFieldSiteAdminControllerTest extends GalleryControllerTestCase {
 	/* Check data so far.. */
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'customfield');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	foreach ($params as $key => $value) {
 	    if ($key[0] == '_') {
@@ -246,7 +246,7 @@ class CustomFieldSiteAdminControllerTest extends GalleryControllerTestCase {
 	/* Check data so far.. */
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'customfield');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	foreach ($params as $key => $value) {
 	    if ($key[0] == '_') {

@@ -45,7 +45,7 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_album);
 
@@ -53,7 +53,7 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	    $this->_album->getId(), 'test/file');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_preferred) = $this->_createDerivative(
@@ -62,7 +62,7 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	    'test/file2');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_thumbnail) = $this->_createDerivative(
@@ -70,14 +70,14 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	    'crop|10,10,30,40;scale|200');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_resize) = $this->_createDerivative(
 	    $this->_item, $this->_preferred->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|500');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Create a watermark */
@@ -87,12 +87,12 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 		. 'modules/core/test/data/test1.gif', 'image/gif',
 		'phpunit_' . rand() . '.gif');
 	if ($ret) {
-	    return $this->failWithStatus(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = $this->_watermark->save();
 	if ($ret) {
-	    return $this->failWithStatus(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_watermark);
     }
@@ -115,7 +115,7 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	foreach (array($this->_preferred, $this->_resize, $this->_thumbnail) as $derivative) {
 	    list ($ret, $derivative) = $derivative->refresh();
 	    if ($ret) {
-		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		$this->failWithStatus($ret);
 	    }
 	    $this->assertEquals(sprintf('composite|plugins_data/modules/watermark/' .
 					'%s,image/gif,62,75,manual,25.000,50.000',
@@ -142,7 +142,7 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 								      $this->_resize->getId(),
 								      $this->_thumbnail->getId()));
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 	foreach (array($this->_preferred, $this->_resize, $this->_thumbnail) as $derivative) {
 	    $derivative->setPostFilterOperations(
@@ -151,12 +151,12 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 			$this->_watermark->getFileName()));
 	    $ret = $derivative->save();
 	    if ($ret) {
-		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		$this->failWithStatus($ret);
 	    }
 	}
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 
 	/* Now tell the controller to remove them all */
@@ -171,7 +171,7 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	foreach (array($this->_preferred, $this->_resize, $this->_thumbnail) as $derivative) {
 	    list ($ret, $derivative) = $derivative->refresh();
 	    if ($ret) {
-		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		$this->failWithStatus($ret);
 	    }
 	    $this->assertEquals('', $derivative->getPostFilterOperations(),
 				'Post filter mismatch');
@@ -182,12 +182,12 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	/* Remap and get rid of the preferred to start */
 	$ret = GalleryCoreApi::remapSourceIds($this->_preferred->getId(), $this->_item->getId());
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::deleteEntityById($this->_preferred->getId());
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
@@ -207,7 +207,7 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	list ($ret, $preferredTable) =
 	    GalleryCoreApi::fetchPreferredsByItemIds(array($this->_item->getId()));
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 
 	$preferred = $preferredTable[$this->_item->getId()];
@@ -224,7 +224,7 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	    foreach (array($this->_resize, $this->_thumbnail) as $derivative) {
 		list ($ret, $derivative) = $derivative->refresh();
 		if ($ret) {
-		    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		    $this->failWithStatus($ret);
 		}
 		$this->assertEquals($preferred->getId(), $derivative->getDerivativeSourceId(),
 				    'Derivative not remapped to point to item');
@@ -236,7 +236,7 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	/* Give our preferred a watermark but no operation */
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_preferred->getId());
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 	$this->_preferred->setDerivativeOperations(null);
 	$this->_preferred->setPostFilterOperations(
@@ -245,11 +245,11 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 		    $this->_watermark->getFileName()));
 	$ret = $this->_preferred->save();
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 
 	/* Now tell the controller to remove watermarks */
@@ -264,7 +264,7 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	list ($ret, $preferredTable) =
 	    GalleryCoreApi::fetchPreferredsByItemIds(array($this->_item->getId()));
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 
 	$this->assert(empty($preferredTable), 'Preferred should be gone, but isn\'t');
@@ -273,7 +273,7 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	foreach (array($this->_resize, $this->_thumbnail) as $derivative) {
 	    list ($ret, $derivative) = $derivative->refresh();
 	    if ($ret) {
-		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		$this->failWithStatus($ret);
 	    }
 	    $this->assertEquals($this->_item->getId(), $derivative->getDerivativeSourceId(),
 				'Derivative not remapped to point to item');
@@ -305,7 +305,7 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	    'modules/watermark/test/phpunit/ItemEditWatermarkPluginTest.class',
 	    'watermarkTest', null);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markToolkitForCleanup('ItemEditWatermarkPluginTestToolkit');
 
@@ -321,7 +321,7 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 		  array('type' => 'int', 'description' => 'test')),
 	    'test-description');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 }

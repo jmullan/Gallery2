@@ -63,7 +63,7 @@ class PathInfoUrlGenerator extends RewriteUrlGenerator {
     function init($baseUri=null, $g2Uri=null, $embedSessionString=null) {
 	$ret = parent::init($baseUri, $g2Uri, $embedSessionString);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	foreach (array(0, 1) as $fD) {
@@ -91,7 +91,7 @@ class PathInfoUrlGenerator extends RewriteUrlGenerator {
 	list($ret, $parser) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'pathinfo.parser');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$parser = unserialize($parser);
 
@@ -127,7 +127,7 @@ class PathInfoUrlGenerator extends RewriteUrlGenerator {
 
 	$ret = $this->_onLoad();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;

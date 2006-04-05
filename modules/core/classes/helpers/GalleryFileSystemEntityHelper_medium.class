@@ -70,7 +70,7 @@ class GalleryFileSystemEntityHelper_medium {
 
 	list ($ret, $searchResults) = $gallery->search($query, $data);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$result = $searchResults->nextResult();
@@ -100,7 +100,7 @@ class GalleryFileSystemEntityHelper_medium {
 	/* Get the parent, just to verify id is valid */
 	list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($parentId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Extract the file base and extension */
@@ -135,7 +135,7 @@ class GalleryFileSystemEntityHelper_medium {
 	    list ($ret, $isCollision) = GalleryFileSystemEntityHelper_medium::checkPathCollision(
 					$newPathComponent, $parentId, $selfId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 
 	    if (!$isCollision) {
@@ -143,7 +143,7 @@ class GalleryFileSystemEntityHelper_medium {
 	    }
 
 	    if (++$retry > 100) {
-		return array(GalleryCoreApi::error(ERROR_COLLISION, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_COLLISION), null);
 	    }
 	}
 

@@ -47,7 +47,7 @@ class ModifyCartController extends GalleryController {
     function handleRequest($form) {
 	list ($ret, $cartItemIds) = CartHelper::fetchCartItemCounts();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$error = array();
@@ -77,7 +77,7 @@ class ModifyCartController extends GalleryController {
 		/* Update the cart values */
 		$ret = CartHelper::setCartItemCounts($cartItemIds);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		$status['cartModified'] = 1;
 		break;
@@ -86,7 +86,7 @@ class ModifyCartController extends GalleryController {
 		/* Empty the cart */
 		$ret = CartHelper::setCartItemCounts(array());
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 		$status['cartModified'] = 1;
 		break;
@@ -99,7 +99,7 @@ class ModifyCartController extends GalleryController {
 		    GalleryCoreApi::newFactoryInstanceById('CartPluginInterface_1_0',
 							   $form['pluginId']);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		if (!isset($cartPlugin)) {
@@ -109,7 +109,7 @@ class ModifyCartController extends GalleryController {
 		/* Pass in only the types the plugin supports */
 		list ($ret, $itemList) = GalleryCoreApi::loadEntitiesById(array_keys($cartItemIds));
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		$fulfillmentCart = array();
@@ -125,7 +125,7 @@ class ModifyCartController extends GalleryController {
 
 		list ($ret, $redirect) = $cartPlugin->fulfillCart($fulfillmentCart);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		/* Remove the fulfilled items */
@@ -136,7 +136,7 @@ class ModifyCartController extends GalleryController {
 		/* Save the modified cart */
 		$ret = CartHelper::setCartItemCounts($cartItemIds);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		if (!isset($redirect['href'])) {

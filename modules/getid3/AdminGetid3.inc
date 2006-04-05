@@ -47,7 +47,7 @@ class AdminGetid3Controller extends GalleryController {
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$error = array();
@@ -55,7 +55,7 @@ class AdminGetid3Controller extends GalleryController {
 	if (isset($form['action']['availableToSummary'])) {
 	    list ($ret, $properties) = Getid3Helper::getProperties(GETID3_SUMMARY);
 	    if ($ret) {
-	        return array($ret->wrap(__FILE__, __LINE__), null);
+	        return array($ret, null);
 	    }
 
 	    if (isset($form['available'])) {
@@ -69,7 +69,7 @@ class AdminGetid3Controller extends GalleryController {
 
 	        $ret = Getid3Helper::setProperties(GETID3_SUMMARY, $properties);
 	        if ($ret) {
-	            return array($ret->wrap(__FILE__, __LINE__), null);
+	            return array($ret, null);
 	        }
 
 	        $status['added']['summary'] = $count;
@@ -82,7 +82,7 @@ class AdminGetid3Controller extends GalleryController {
 	} else if (isset($form['action']['availableToDetailed'])) {
 	    list ($ret, $properties) = Getid3Helper::getProperties(GETID3_DETAILED);
 	    if ($ret) {
-	        return array($ret->wrap(__FILE__, __LINE__), null);
+	        return array($ret, null);
 	    }
 
 	    if (isset($form['available'])) {
@@ -96,7 +96,7 @@ class AdminGetid3Controller extends GalleryController {
 
 	        $ret = Getid3Helper::setProperties(GETID3_DETAILED, $properties);
 	        if ($ret) {
-	            return array($ret->wrap(__FILE__, __LINE__), null);
+	            return array($ret, null);
 	        }
 
 	        $status['added']['detailed'] = $count;
@@ -108,7 +108,7 @@ class AdminGetid3Controller extends GalleryController {
 	} else if (isset($form['action']['removeFromSummary'])) {
 	    list ($ret, $properties) = Getid3Helper::getProperties(GETID3_SUMMARY);
 	    if ($ret) {
-	        return array($ret->wrap(__FILE__, __LINE__), null);
+	        return array($ret, null);
 	    }
 
 	    if (isset($form['summary'])) {
@@ -124,7 +124,7 @@ class AdminGetid3Controller extends GalleryController {
 
 	        $ret = Getid3Helper::setProperties(GETID3_SUMMARY, $newProperties);
 	        if ($ret) {
-	            return array($ret->wrap(__FILE__, __LINE__), null);
+	            return array($ret, null);
 	        }
 
 	        $status['removed']['summary'] = $count;
@@ -137,7 +137,7 @@ class AdminGetid3Controller extends GalleryController {
 	} else if (isset($form['action']['resetSummary'])) {
 	    $ret = Getid3Helper::setDefaultProperties(GETID3_SUMMARY);
 	    if ($ret) {
-	        return array($ret->wrap(__FILE__, __LINE__), null);
+	        return array($ret, null);
 	    }
 	    $status['restored']['summary'] = 1;
 	    $redirect['view'] = 'core.SiteAdmin';
@@ -145,7 +145,7 @@ class AdminGetid3Controller extends GalleryController {
 	} else if (isset($form['action']['removeFromDetailed'])) {
 	    list ($ret, $properties) = Getid3Helper::getProperties(GETID3_DETAILED);
 	    if ($ret) {
-	        return array($ret->wrap(__FILE__, __LINE__), null);
+	        return array($ret, null);
 	    }
 
 	    if (isset($form['detailed'])) {
@@ -161,7 +161,7 @@ class AdminGetid3Controller extends GalleryController {
 
 	        $ret = Getid3Helper::setProperties(GETID3_DETAILED, $newProperties);
 	        if ($ret) {
-	            return array($ret->wrap(__FILE__, __LINE__), null);
+	            return array($ret, null);
 	        }
 
 	        $status['removed']['detailed'] = $count;
@@ -173,7 +173,7 @@ class AdminGetid3Controller extends GalleryController {
 	} else if (isset($form['action']['resetDetailed'])) {
 	    $ret = Getid3Helper::setDefaultProperties(GETID3_DETAILED);
 	    if ($ret) {
-	        return array($ret->wrap(__FILE__, __LINE__), null);
+	        return array($ret, null);
 	    }
 	    $status['restored']['detailed'] = 1;
 	    $redirect['view'] = 'core.SiteAdmin';
@@ -182,7 +182,7 @@ class AdminGetid3Controller extends GalleryController {
 	} else if (isset($form['action']['moveUpSummary'])) {
 	    list ($ret, $properties) = Getid3Helper::getProperties(GETID3_SUMMARY);
 	    if ($ret) {
-	        return array($ret->wrap(__FILE__, __LINE__), null);
+	        return array($ret, null);
 	    }
 
 	    if (isset($form['summary'])) {
@@ -205,7 +205,7 @@ class AdminGetid3Controller extends GalleryController {
 
 	        $ret = Getid3Helper::setProperties(GETID3_SUMMARY, $properties);
 	        if ($ret) {
-	            return array($ret->wrap(__FILE__, __LINE__), null);
+	            return array($ret, null);
 	        }
 
 	        $status['movedUp']['summary'] = $count;
@@ -217,7 +217,7 @@ class AdminGetid3Controller extends GalleryController {
 	} else if (isset($form['action']['moveDownSummary'])) {
 	    list ($ret, $properties) = Getid3Helper::getProperties(GETID3_SUMMARY);
 	    if ($ret) {
-	        return array($ret->wrap(__FILE__, __LINE__), null);
+	        return array($ret, null);
 	    }
 
 	    if (isset($form['summary'])) {
@@ -240,7 +240,7 @@ class AdminGetid3Controller extends GalleryController {
 
 	        $ret = Getid3Helper::setProperties(GETID3_SUMMARY, $properties);
 	        if ($ret) {
-	            return array($ret->wrap(__FILE__, __LINE__), null);
+	            return array($ret, null);
 	        }
 
 	        $status['movedDown']['summary'] = $count;
@@ -252,7 +252,7 @@ class AdminGetid3Controller extends GalleryController {
 	} else if (isset($form['action']['moveUpDetailed'])) {
 	    list ($ret, $properties) = Getid3Helper::getProperties(GETID3_DETAILED);
 	    if ($ret) {
-	        return array($ret->wrap(__FILE__, __LINE__), null);
+	        return array($ret, null);
 	    }
 
 	    if (isset($form['detailed'])) {
@@ -275,7 +275,7 @@ class AdminGetid3Controller extends GalleryController {
 
 	        $ret = Getid3Helper::setProperties(GETID3_DETAILED, $properties);
 	        if ($ret) {
-	            return array($ret->wrap(__FILE__, __LINE__), null);
+	            return array($ret, null);
 	        }
 
 	        $status['movedUp']['detailed'] = $count;
@@ -287,7 +287,7 @@ class AdminGetid3Controller extends GalleryController {
 	} else if (isset($form['action']['moveDownDetailed'])) {
 	    list ($ret, $properties) = Getid3Helper::getProperties(GETID3_DETAILED);
 	    if ($ret) {
-	        return array($ret->wrap(__FILE__, __LINE__), null);
+	        return array($ret, null);
 	    }
 
 	    if (isset($form['detailed'])) {
@@ -310,7 +310,7 @@ class AdminGetid3Controller extends GalleryController {
 
 	        $ret = Getid3Helper::setProperties(GETID3_DETAILED, $properties);
 	        if ($ret) {
-	            return array($ret->wrap(__FILE__, __LINE__), null);
+	            return array($ret, null);
 	        }
 
 	        $status['movedDown']['detailed'] = $count;
@@ -324,7 +324,7 @@ class AdminGetid3Controller extends GalleryController {
 	    $ret = GalleryCoreApi::setPluginParameter(
 	        'module', 'getid3', 'addOption', $addOptions);
 	    if ($ret) {
-	        return array($ret->wrap(__FILE__, __LINE__), null);
+	        return array($ret, null);
 	    }
 	    $status['saved'] = 1;
 	    $redirect['view'] = 'core.SiteAdmin';
@@ -360,14 +360,14 @@ class AdminGetid3View extends GalleryView {
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$mode = GalleryUtilities::getRequestVariables('mode');
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'getid3');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if ($form['formName'] != 'AdminGetid3') {
@@ -375,14 +375,14 @@ class AdminGetid3View extends GalleryView {
 	        list ($ret, $form[$key]) =
 	            GalleryCoreApi::getPluginParameter('module', 'getid3', $key);
 	        if ($ret) {
-	            return array($ret->wrap(__FILE__, __LINE__), null);
+	            return array($ret, null);
 	        }
 	    }
 	    $form['formName'] = 'AdminGetid3';
 
 	    list ($ret, $addOption) = $module->getParameter('addOption');
 	    if ($ret) {
-	        return array($ret->wrap(__FILE__, __LINE__), null);
+	        return array($ret, null);
 	    }
 	    $form['item'] = array('mp3title' => $addOption & GETID3_MP3_TITLE);
 	}
@@ -394,7 +394,7 @@ class AdminGetid3View extends GalleryView {
 	$summaryList = array();
 	list ($ret, $tmp) = Getid3Helper::getProperties(GETID3_SUMMARY);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	foreach ($tmp as $property) {
 	    $summaryList[$property] = $module->translate($getid3Keys[$property][0]);
@@ -404,7 +404,7 @@ class AdminGetid3View extends GalleryView {
 	$detailedList = array();
 	list ($ret, $tmp) = Getid3Helper::getProperties(GETID3_DETAILED);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	foreach ($tmp as $property) {
 	    $detailedList[$property] = $module->translate($getid3Keys[$property][0]);

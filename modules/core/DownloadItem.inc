@@ -64,19 +64,19 @@ class DownloadItemView extends GalleryView {
 	/* Figure out which item we're talking about */
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 	if (empty($itemId)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
 	/* Load the item */
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Figure out the filename */
 	list ($ret, $pseudoFileName) = GalleryUtilities::getPseudoFileName($item);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	/* Don't allow malicious URLs */
 	$fileName = GalleryUtilities::getRequestVariables('fileName');
@@ -87,14 +87,14 @@ class DownloadItemView extends GalleryView {
 	/* Get the path to the file */
 	list ($ret, $path) = $item->fetchPath();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Rebuild derivative cache, if necessary */
 	if (GalleryUtilities::isA($item, 'GalleryDerivative')) {
 	    list ($ret, $item) = GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($item->getId());
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    $itemForPermission = $item->getParentId();
 	    $derivativeType = $item->getDerivativeType();
@@ -109,7 +109,7 @@ class DownloadItemView extends GalleryView {
 				      'pseudoFileName' => $pseudoFileName,
 				      'parentId' => $itemForPermission));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::createFastDownloadFile($item);
@@ -137,7 +137,7 @@ class DownloadItemView extends GalleryView {
 	}
 	$ret = GalleryCoreApi::assertHasItemPermission($data['parentId'], $permission);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	header('Content-type: ' . $data['mimeType']);

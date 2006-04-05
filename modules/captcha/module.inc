@@ -54,13 +54,13 @@ class CaptchaModule extends GalleryModule {
 	    'GalleryValidationPlugin', 'CaptchaValidationPlugin', 'CaptchaValidationPlugin',
 	    'modules/captcha/classes/CaptchaValidationPlugin.inc', 'captcha', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'MaintenanceTask', 'ResetFailureCountsTask', 'ResetFailureCountsTask',
 	    'modules/captcha/classes/ResetFailureCountsTask.class', 'captcha', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -76,7 +76,7 @@ class CaptchaModule extends GalleryModule {
 	    /* Set some reasonable defaults */
 	    $ret = $this->setParameter('failedAttemptThreshold', 3);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    break;
 
@@ -119,7 +119,7 @@ class CaptchaModule extends GalleryModule {
 	/* We need to perform a test before activating */
 	list ($ret, $needsConfiguration) = $this->needsConfiguration();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	return array(null, !$needsConfiguration);
     }

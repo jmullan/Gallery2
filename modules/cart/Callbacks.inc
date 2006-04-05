@@ -36,7 +36,7 @@ class CartCallbacks {
 	    GalleryCoreApi::requireOnce('modules/cart/classes/CartHelper.class');
 	    list ($ret, $cartItemIds) = CartHelper::fetchCartItemCounts();
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    $unique = array_keys($cartItemIds);
@@ -52,7 +52,7 @@ class CartCallbacks {
 	    return null;
 	}
 
-	return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
     }
 }
 ?>

@@ -48,7 +48,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	/* create an album to hold all of the test items */
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_album);
 
@@ -72,7 +72,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	}
 	for ($i = 0; $i < count($ret); $i++) {
 	    if ($ret[$i]) {
-		$this->failWithStatus($ret[$i]->wrap(__FILE__, __LINE__));
+		$this->failWithStatus($ret[$i]);
 	    }
 	}
 
@@ -98,7 +98,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	/* Create a user that we can delete */
 	list ($ret, $user) = $this->_createRandomUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markUserForCleanup($user);
 
@@ -119,7 +119,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	list ($ret, $user) = $user->refresh();
 	if ($ret) {
 	    if (!$ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	} else {
 	    $this->assert(false, 'The user was not actually deleted');
@@ -153,7 +153,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryUtilities::putRequestVariable('userId', $anonymousUserId);
@@ -179,7 +179,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	/* Create a user that we can delete */
 	list ($ret, $user) = $this->_createRandomUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($user);
 	$this->_markUserForCleanup($user);
@@ -192,7 +192,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 		if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
 		    break;
 		} else {
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		    return $this->failWithStatus($ret);
 		}
 	    }
 	}
@@ -217,7 +217,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	    if($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
 	    	$this->assert(false, 'The user was deleted');
 	    } else {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	}
 	/* The teardown code takes care of deleting the user */
@@ -232,7 +232,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	/* Create a user that we can delete */
 	list ($ret, $user) = $this->_createRandomUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($user);
 	$this->_markUserForCleanup($user);
@@ -258,7 +258,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	    if($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
 	    	$this->assert(false, 'The user was deleted');
 	    } else {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	}
 	/* The teardown code takes care of deleting the user */
@@ -273,7 +273,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	/* Create a user that we can delete */
 	list ($ret, $user) = $this->_createRandomUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($user);
 	$this->_markUserForCleanup($user);
@@ -282,11 +282,11 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	list ($ret, $anonymousUserId) =
 			GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	}
 	list ($ret, $anonymousUser) = GalleryCoreApi::loadEntitiesById($anonymousUserId);
 	if ($ret) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	}
 
 	GalleryUtilities::putRequestVariable('userId', $user->getId());
@@ -310,7 +310,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	    if($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
 	    	$this->assert(false, 'The user was deleted');
 	    } else {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret);
 	    }
 	}
 	/* The teardown code takes care of the deletion of the user */
@@ -326,7 +326,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	/* Create a user that we can delete */
 	list ($ret, $user) = $this->_createRandomUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markUserForCleanup($user);
 
@@ -335,19 +335,19 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::addUserPermission($this->_album->getId(), $user->getId(),
 						'core.addDataItem', false);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$gallery->setActiveUser($user);
 	list($ret, $item) = $this->_createRandomDataItem($this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	/* Add permission to delete the item to the new user/owner */
 	$ret = GalleryCoreApi::addUserPermission($item->getId(), $user->getId(),
 						'core.delete', false);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/*  Now execute the request */
@@ -370,7 +370,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	/* Verifiy the user, his permissions and his groupMappings are gone */
 	$ret = $this->_verifyMissingAll($user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	/* Verify the item is gone */
 	$ret = $this->_verifyMissing($item->getId());
@@ -390,7 +390,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	/* Create a user that we can delete */
 	list ($ret, $user) = $this->_createRandomUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markUserForCleanup($user);
 
@@ -399,13 +399,13 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::addUserPermission($this->_album->getId(), $user->getId(),
 						'core.addDataItem', false);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$gallery->setActiveUser($user);
 	list($ret, $item) = $this->_createRandomDataItem($this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/*  Now execute the request */
@@ -428,7 +428,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	/* Verifiy the user, his permissions and his groupMappings are gone */
 	$ret = $this->_verifyMissingAll($user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	/* Verify the item still exists */
 	list ($ret, $item) = $item->refresh();
@@ -436,17 +436,17 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
 	    	$this->assert(false, 'The item was deleted');
 	    }
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	/* Verify the new owner of the item */
 	list($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($item->getOwnerId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	list ($ret, $siteAdminGroupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert(isset($groupIds[$siteAdminGroupId]), 'The new ownerId of the item is wrong.');
 	/* The teardown method takes care of the item deletion */
@@ -462,13 +462,13 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	/* Create a user that we can delete */
 	list ($ret, $user) = $this->_createRandomUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markUserForCleanup($user);
 	/* Create a new owner */
 	list ($ret, $newOwner) = $this->_createRandomUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($newOwner);
 	$this->_markUserForCleanup($newOwner);
@@ -478,13 +478,13 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::addUserPermission($this->_album->getId(), $user->getId(),
 						'core.addAlbumItem', false);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	$gallery->setActiveUser($user);
 	list($ret, $item) = $this->_createRandomAlbum($this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	/*  Now execute the request */
@@ -508,7 +508,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	/* Verifiy the user, his permissions and his groupMappings are gone */
 	$ret = $this->_verifyMissingAll($user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	/* Verify the item still exists */
 	list ($ret, $item) = $item->refresh();
@@ -516,7 +516,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
 	    	$this->assert(false, 'The item was deleted');
 	    }
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	/* Verify the new owner of the item */
 	$this->assert($item->getOwnerId() == $newOwner->getId(),
@@ -526,7 +526,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 			GalleryCoreApi::fetchPermissionsForItems(array($item->getId()),
 								 $newOwner->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assert(isset($userPermissions[$item->getId()]['core.addAlbumItem']),
 					'Not all permissions were transfered correctly.');
@@ -544,7 +544,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	/* Verify the group mappings are for this user are gone */
 	list($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($userId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$this->assert(count($groupIds) == 0, 'Not all group memberships were removed');
 
@@ -559,7 +559,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	';
 	list($ret, $searchResults) = $gallery->search($query, array($userId));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$this->assertEquals(1, (int)$searchResults->resultCount());
 	$result = $searchResults->nextResult();

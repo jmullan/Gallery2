@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2006 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
@@ -51,12 +51,12 @@ class ItemAddOptionTestCase extends GalleryTestCase {
 
 	list ($ret, $this->_option) = GalleryCoreApi::newFactoryInstanceById('ItemAddOption', $optionName);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', $moduleName);
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -78,13 +78,13 @@ class ItemAddOptionTestCase extends GalleryTestCase {
 				      join(' | ', GalleryStatus::getErrorCodeConstants($ret->getErrorCode()))));
 	    }
 	} else if ($ret) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret);
 	} else {
 	    /* Check to make sure we got back everything we want */
 	    $this->assert(isset($errors) && is_array($errors), 'option error results missing');
 
 	    /* Check to make sure we got back everything we want */
-	    $this->assert(isset($warnings) && is_array($warnings), 
+	    $this->assert(isset($warnings) && is_array($warnings),
 	    		  'option warning results missing');
 	}
 

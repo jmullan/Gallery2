@@ -44,7 +44,7 @@ class IconsSiteAdminControllerTest extends GalleryControllerTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'icons');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
     }
 
@@ -73,7 +73,7 @@ class IconsSiteAdminControllerTest extends GalleryControllerTestCase {
 	list ($ret, $iconpack) =
 		GalleryCoreApi::getPluginParameter('module', 'icons', 'iconpack');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals('testpack', $iconpack, 'iconpack');
     }

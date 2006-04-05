@@ -53,7 +53,7 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
         list ($ret, $albumFields) = Gallery1DataParser::loadAlbumFields(
 	    $this->_albumsDir . 'album01' . $this->_slash);
         if ($ret) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+            return $this->failWithStatus($ret);
         }
 
         $expected = array('title' => 'Who likes bananas?',
@@ -158,7 +158,7 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
         list ($ret, $countOfPhotos) =
 	    Gallery1DataParser::getPhotoCount($this->_albumsDir . 'album01/');
         if ($ret) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+            return $this->failWithStatus($ret);
         }
         $this->assertEquals(2, $countOfPhotos);
     }
@@ -166,7 +166,7 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
     function testGetRootAlbums() {
         list ($ret, $rootAlbums) = Gallery1DataParser::getRootAlbums($this->_albumsDir);
         if ($ret) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+            return $this->failWithStatus($ret);
         }
         $this->assertEquals(array('monkey!',
 				  'album01',
@@ -180,7 +180,7 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
     function testGetParentAlbumList() {
         list ($ret, $parentAlbumList) = Gallery1DataParser::getParentAlbumList($this->_albumsDir);
         if ($ret) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+            return $this->failWithStatus($ret);
         }
         $this->assertEquals(array('monkey!' => '.root',
 				  'album01' => '.root',
@@ -198,7 +198,7 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
     function testGetAlbumList() {
         list ($ret, $albumList) = Gallery1DataParser::getAlbumList($this->_albumsDir);
         if ($ret) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+            return $this->failWithStatus($ret);
         }
         $this->assertEquals(array('monkey!',
 				  'album01',
@@ -215,7 +215,7 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
     function testGetAlbumHierarchy() {
         list ($ret, $albumList) = Gallery1DataParser::getAlbumHierarchy($this->_albumsDir);
         if ($ret) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+            return $this->failWithStatus($ret);
         }
         $this->assertEquals(array('monkey!' => array(),
 				  'album01' => array(),
@@ -234,7 +234,7 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
     function testGetUserUids() {
         list ($ret, $uids) = Gallery1DataParser::getUserUids($this->_albumsDir);
         if ($ret) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+            return $this->failWithStatus($ret);
         }
         $this->assertEquals(array('1054014347_1233740678' => 'admin',
                                   '1057837115_2072132305' => 'monkey',
@@ -250,7 +250,7 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
         list ($ret, $fields) =
 	    Gallery1DataParser::getUserFieldsByUsername($this->_albumsDir, 'monkey');
         if ($ret) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+            return $this->failWithStatus($ret);
         }
 
         $this->assertEquals(array('username' => 'monkey',
@@ -275,7 +275,7 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
         list ($ret, $fields) =
 	    Gallery1DataParser::getUserFieldsByUid($this->_albumsDir, '1057837115_2072132305');
         if ($ret) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+            return $this->failWithStatus($ret);
         }
 
         $this->assertEquals(array('username' => 'monkey',
@@ -299,7 +299,7 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
         list ($ret, $fields) =
 	    Gallery1DataParser::getUserFieldsByUid($this->_albumsDir, '1057837154_228147420');
         if ($ret) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+            return $this->failWithStatus($ret);
         }
 
         $this->assertEquals(array('username' => 'phpunit_foobar',

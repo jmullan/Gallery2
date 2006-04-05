@@ -40,20 +40,20 @@ class PanoramaView extends GalleryView {
 
 	list ($ret, $item) = $this->_getItem();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	list ($ret, $image) = PanoramaHelper::fetchViewableImages(array($item));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	if (empty($image)) {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	}
 	$image = $image[$item->getId()];
 
 	list ($ret, $viewWidth) = GalleryCoreApi::getPluginParameter('module', 'panorama', 'width');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$urlGenerator =& $gallery->getUrlGenerator();
@@ -64,7 +64,7 @@ class PanoramaView extends GalleryView {
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'panorama');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$Panorama['item'] = (array)$item;

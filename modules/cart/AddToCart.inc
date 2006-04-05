@@ -50,26 +50,26 @@ class AddToCartController extends GalleryController {
 
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Figure out what ids we care about */
 	if ($item->getCanContainChildren()) {
 	    list ($ret, $ids) = GalleryCoreApi::fetchChildDataItemIds($item);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	} else {
 	    $ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.view');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    $ids = array($item->getId());
 	}
 
 	$ret = CartHelper::addItemsToCart($ids);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Prepare our results */

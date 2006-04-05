@@ -56,7 +56,7 @@ class ItemAddGalleryRemote extends ItemAddPlugin {
     function getTitle() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'remote');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $module->translate('Gallery Remote'));
@@ -69,7 +69,7 @@ class ItemAddGalleryRemote extends ItemAddPlugin {
 	list ($ret, $showItemAdd) =
 	    GalleryCoreApi::getPluginParameter('module', 'remote', 'showItemAdd');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $showItemAdd);

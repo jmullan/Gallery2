@@ -83,7 +83,7 @@ class ExternalView extends GalleryView {
 
 	$ret = ImageBlockHelper::loadImageBlocks($template, $params);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	if (!empty($frameIds)) {
@@ -92,13 +92,13 @@ class ExternalView extends GalleryView {
 	    list ($ret, $imageframe) =
 		GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    if (isset($imageframe)) {
 		$ret = $imageframe->init($template, $frameIds);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	}

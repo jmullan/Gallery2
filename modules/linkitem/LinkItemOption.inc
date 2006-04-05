@@ -67,19 +67,19 @@ class LinkItemOption extends ItemEditOption {
 	} else {
 	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock(array($item->getId()));
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 
 	    $item->setLink($form['LinkItemOption']['link']);
 	    $ret = $item->save();
 	    if ($ret) {
 		GalleryCoreApi::releaseLocks($lockId);
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 
 	    $ret = GalleryCoreApi::releaseLocks($lockId);
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret, null, null);
 	    }
 	}
 

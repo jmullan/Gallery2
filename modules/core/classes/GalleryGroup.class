@@ -101,17 +101,17 @@ class GalleryGroup extends GalleryEntity {
 	    $gallery->search($query, array($groupName),
 			     array('limit' => array('count' => 1)));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$result = $results->nextResult();
 	if ($result[0] > 0) {
-	    return GalleryCoreApi::error(ERROR_COLLISION, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_COLLISION);
 	}
 
 	$ret = parent::create();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$this->setGroupName($groupName);
@@ -137,19 +137,19 @@ class GalleryGroup extends GalleryEntity {
 	
 	$ret = GalleryCoreApi::removeAllUsersFromGroup($this->getId());
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Delete all permissions from the permissions map table */
 	$ret = GalleryCoreApi::removeMapEntry(
 	    'GalleryAccessMap', array('userOrGroupId' => $this->getId()));
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = parent::delete();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;

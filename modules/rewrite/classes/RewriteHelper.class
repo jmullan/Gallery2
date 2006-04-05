@@ -59,10 +59,10 @@ class RewriteHelper {
 	    list ($ret, $rewriteParserId) = GalleryCoreApi::getPluginParameter(
 		'module', 'rewrite', 'parserId');
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    if (empty($rewriteParserId)) {
-		return array(GalleryCoreApi::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
+		return array(GalleryCoreApi::error(ERROR_MISSING_VALUE), null);
 	    }
 
 	    $path = 'modules/rewrite/classes/parsers/' . $rewriteParserId . '/parser.inc';
@@ -100,7 +100,7 @@ class RewriteHelper {
 	list ($ret, $accessList) = GalleryCoreApi::getPluginParameter(
 	    'module', 'rewrite', 'accessList');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null, null, null);
+	    return array($ret, null, null, null, null);
 	}
 	$accessList = unserialize($accessList);
 	$ourHostNames[$urlGenerator->getHostName()] = true;
@@ -123,7 +123,7 @@ class RewriteHelper {
 			 */
 			$ret->addErrorCode(ERROR_CONFIGURATION_REQUIRED);
 		    }
-		    return array($ret->wrap(__FILE__, __LINE__), null, null, null, null);
+		    return array($ret, null, null, null, null);
 		}
 	    }
 
@@ -215,7 +215,7 @@ class RewriteHelper {
 		list ($ret, $code) = RewriteHelper::_parseRule($activeRules[$moduleId][$ruleId],
 		    $keywords, $queryString, $regexRules, $settings);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null, null, null);
+		    return array($ret, null, null, null, null);
 		}
 		if ($code != REWRITE_STATUS_OK) {
 		    return array(null, $code, null, null,

@@ -60,28 +60,28 @@ class ItemCreateLinkSingleController extends GalleryController {
 		list ($ret, $permissions) =
 		    GalleryCoreApi::fetchPermissionsForItems(array($itemId, $destinationId));
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		if (!isset($permissions[$destinationId]['core.addDataItem'])) {
-		    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__),
+		    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED),
 				 null);
 		}
 
 		if (!isset($permissions[$itemId]['core.viewSource'])) {
-		    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__),
+		    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED),
 				 null);
 		}
 
 		/* Load the item */
 		list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		/* Look out for monkey business */
 		if (!$item->getIsLinkable()) {
-		    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__),
+		    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED),
 				 null);
 		}
 
@@ -93,19 +93,19 @@ class ItemCreateLinkSingleController extends GalleryController {
 		list ($ret, $locks[]) =
 		    GalleryCoreApi::acquireReadLock(array($itemId, $destinationId));
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		list ($ret, $locks[]) = GalleryCoreApi::acquireReadLockParents($itemId);
 		if ($ret) {
 		    GalleryCoreApi::releaseLocks($locks);
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		list ($ret, $locks[]) = GalleryCoreApi::acquireReadLockParents($destinationId);
 		if ($ret) {
 		    GalleryCoreApi::releaseLocks($locks);
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		/* Create all our links */
@@ -124,19 +124,19 @@ class ItemCreateLinkSingleController extends GalleryController {
 		}
 		if ($ret) {
 		    GalleryCoreApi::releaseLocks($locks);
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		$ret = $linkedItem->save();
 		if ($ret) {
 		    GalleryCoreApi::releaseLocks($locks);
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		$ret = GalleryCoreApi::addExistingItemToAlbum($linkedItem, $destinationId);
 		if ($ret) {
 		    GalleryCoreApi::releaseLocks($locks);
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		$status['linked'] = 1;
@@ -144,7 +144,7 @@ class ItemCreateLinkSingleController extends GalleryController {
 		/* Release the locks */
 		$ret = GalleryCoreApi::releaseLocks($locks);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		/* Figure out where to redirect upon success */
@@ -191,20 +191,20 @@ class ItemCreateLinkSingleView extends GalleryView {
 
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Find all the possible locations where this item can be linked. */
 	list ($ret, $albumIds) =
 	    GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.addDataItem');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Load all the album entities */
 	list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($albumIds);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$ItemCreateLinkSingle = array();
@@ -223,7 +223,7 @@ class ItemCreateLinkSingleView extends GalleryView {
     function getViewDescription() {
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, $core->translate('link an item'));

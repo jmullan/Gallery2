@@ -37,7 +37,7 @@ class RatingSiteAdminController extends GalleryController {
     function handleRequest($form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$status = $error = array();
@@ -45,7 +45,7 @@ class RatingSiteAdminController extends GalleryController {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'rating', 'allowAlbumRating',
 		    (empty($form['allowAlbumRating']) ? 0 : 1));
 	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret, null);
 	    }
 	    $status['saved'] = 1;
 	}
@@ -73,7 +73,7 @@ class RatingSiteAdminView extends GalleryView {
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if ($form['formName'] != 'RatingSiteAdmin') {
@@ -83,7 +83,7 @@ class RatingSiteAdminView extends GalleryView {
 	    GalleryCoreApi::getPluginParameter('module', 'rating',
 		'allowAlbumRating');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$template->setVariable('controller', 'rating.RatingSiteAdmin');

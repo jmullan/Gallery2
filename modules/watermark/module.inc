@@ -76,7 +76,7 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 	    $storage =& $gallery->getStorage();
 	    $ret = $storage->configureStore($this->getId(), array('WatermarkImage:1.0'));
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	case '0.8.1':
@@ -119,7 +119,7 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 		list ($ret, $searchResults) =
 		    $gallery->search($query, array(), array('limit' => array('count' => 50)));
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 
 		if ($searchResults->resultCount() == 0) {
@@ -133,13 +133,13 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 
 		list ($ret, $lock) = GalleryCoreApi::acquireWriteLock($ids);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 
 		list ($ret, $derivatives) = GalleryCoreApi::loadEntitiesById($ids);
 		if ($ret) {
 		    GalleryCoreApi::releaseLocks($lock);
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 
 		foreach ($derivatives as $derivative) {
@@ -151,13 +151,13 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 		    $ret = $derivative->save();
 		    if ($ret) {
 			GalleryCoreApi::releaseLocks($lock);
-			return $ret->wrap(__FILE__, __LINE__);
+			return $ret;
 		    }
 		}
 
 		$ret = GalleryCoreApi::releaseLocks($lock);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 
@@ -203,18 +203,18 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 	';
 	list ($ret, $searchResults) = $gallery->search($query);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	while ($result = $searchResults->nextResult()) {
 	    list ($ret) = WatermarkHelper::deleteWatermarkImageById((int)$result[0], true);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	}
 
 	$ret = parent::uninstall();
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	return null;
     }
@@ -227,21 +227,21 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 	    'GalleryEntity', 'WatermarkImage', 'WatermarkImage',
 	    'modules/watermark/classes/WatermarkImage.class', 'watermark', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'ItemEditPlugin', 'ItemEditWatermark', 'ItemEditWatermark',
 	    'modules/watermark/ItemEditWatermark.inc', 'watermark', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'ItemAddOption', 'WatermarkOption', 'WatermarkOption',
 	    'modules/watermark/WatermarkOption.inc', 'watermark', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
@@ -272,7 +272,7 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	$views = array();
@@ -299,13 +299,13 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 		list ($ret, $watermarkIds) =
 		    WatermarkHelper::fetchWatermarkIdsByOwnerId($entity->getId());
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 
 		foreach ($watermarkIds as $id) {
 		    list ($ret) = WatermarkHelper::deleteWatermarkImageById($id, true);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
 		}
 	    }
