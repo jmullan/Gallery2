@@ -1,0 +1,339 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2006 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+GalleryCoreApi::requireOnce('modules/core/ModuleCallback.inc');
+
+/**
+ * ModuleCallback tests
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ModuleCallbackTest extends GalleryTestCase {
+
+    function ModuleCallbackTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	parent::setUp();
+
+	$this->_testModule =& ModuleCallbackControllerTestModule::getSingleton();
+	$this->_callback = new ModuleCallbackView();
+    }
+
+    function tearDown() {
+	$this->_testModule->reset();
+
+	parent::tearDown();
+    }
+
+    function _handleCallback($command) {
+	$result = array();
+	$ret = $this->_callback->handleCallback($command, $result);
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+	return $result;
+    }
+
+    function testInstall() {
+	GalleryUtilities::putRequestVariable('moduleId', 'ModuleCallbackControllerTest');
+	$result = $this->_handleCallback('installModule');
+
+	$this->assertEquals(array('status' => 'success'), $result);
+	$this->assert($this->_testModule->wasCalled('installOrUpgrade'),
+		      'installOrUpgrade not called');
+	$this->assert($this->_testModule->wasCalled('autoConfigure'),
+		      'autoConfigure not called');
+	$this->assert($this->_testModule->wasCalled('activate'),
+		      'activate not called');
+    }
+
+    function testUpgrade() {
+	GalleryUtilities::putRequestVariable('moduleId', 'ModuleCallbackControllerTest');
+	$result = $this->_handleCallback('upgradeModule');
+
+	$this->assertEquals(array('status' => 'success'), $result);
+	$this->assert($this->_testModule->wasCalled('installOrUpgrade'),
+		      'installOrUpgrade not called');
+    }
+
+    /**
+     * Activate a module that doesn't require configuration (this should succeed)
+     */
+    function testActivate() {
+	GalleryUtilities::putRequestVariable('moduleId', 'ModuleCallbackControllerTest');
+	$this->_testModule->_isActive = false;
+	$this->_testModule->_needsConfiguration = false;
+	$result = $this->_handleCallback('activateModule');
+
+	$this->assertEquals(array('status' => 'success'), $result);
+	$this->assert($this->_testModule->wasCalled('activate'), 'activate not called');
+    }
+
+    /**
+     * Activate a module that sends back a redirects
+     */
+    function testActivateWithRedirect() {
+	GalleryUtilities::putRequestVariable('moduleId', 'ModuleCallbackControllerTest');
+	$this->_testModule->_isActive = false;
+	$this->_testModule->_needsConfiguration = false;
+	$this->_testModule->_activate = array('foo' => 'bar');
+	$result = $this->_handleCallback('activateModule');
+
+	$this->assertEquals(array('status' => 'redirect',
+				  'redirect' => array('foo' => 'bar')), $result);
+	$this->assert($this->_testModule->wasCalled('activate'), 'activate not called');
+    }
+
+    /**
+     * Activate a module that requires configuration (this should fail)
+     */
+    function testActivateNeedsConfiguration() {
+	GalleryUtilities::putRequestVariable('moduleId', 'ModuleCallbackControllerTest');
+	$this->_testModule->_isActive = false;
+	$this->_testModule->_needsConfiguration = true;
+	$result = $this->_handleCallback('activateModule');
+
+	$this->assertEquals(array('status' => 'invalid'), $result);
+	$this->assert(!$this->_testModule->wasCalled('activate'), 'activate was called');
+    }
+
+    /* Deactivate a module that is active (should succeed) */
+    function testDeactivate() {
+	GalleryUtilities::putRequestVariable('moduleId', 'ModuleCallbackControllerTest');
+	$this->_testModule->_isActive = true;
+
+	$result = $this->_handleCallback('deactivateModule');
+
+	$this->assertEquals(array('status' => 'success'), $result);
+	$this->assert($this->_testModule->wasCalled('deactivate'), 'deactivate not called');
+    }
+
+    /* Deactivate a module that is inactive (should succeed silently) */
+    function testDeactivateAlreadyDeactivated() {
+	GalleryUtilities::putRequestVariable('moduleId', 'ModuleCallbackControllerTest');
+	$this->_testModule->_isActive = false;
+
+	$result = $this->_handleCallback('deactivateModule');
+
+	$this->assertEquals(array('status' => 'invalid'), $result);
+	$this->assert(!$this->_testModule->wasCalled('deactivate'), 'deactivate was called');
+    }
+
+    /* Uninstall a module that is deactive (should send us to the confirm page) */
+    function testUninstall() {
+	GalleryUtilities::putRequestVariable('moduleId', 'ModuleCallbackControllerTest');
+	$result = $this->_handleCallback('uninstallModule');
+
+	$this->assertEquals(array('status' => 'redirect',
+				  'redirect' => array(
+				      'view' => 'core.SiteAdmin',
+				      'subView' => 'core.AdminModulesVerifyUninstall',
+				      'moduleId' => 'ModuleCallbackControllerTest')),
+			    $result);
+    }
+
+    function _getModuleState($status) {
+	list ($ret, $state) =
+	    $this->_callback->getModuleState($this->_testModule, $status);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	return $state;
+    }
+
+    /* Core module is always active */
+    function testGetModuleStateCore() {
+	$this->_testModule->_getId = 'core';
+	$this->assertEquals('active', $this->_getModuleState(array()));
+    }
+
+    function testGetModuleStateActive() {
+	$this->assertEquals('active',
+			    $this->_getModuleState(array('active' => 1)));
+    }
+
+    function testGetModuleStateIncompatibleCoreApi() {
+	$this->_testModule->_getRequiredCoreApi = array(0, 0);
+	$this->assertEquals('incompatible',
+			    $this->_getModuleState(array('active' => 1)));
+    }
+
+    function testGetModuleStateIncompatibleModuleApi() {
+	$this->_testModule->_getRequiredModuleApi = array(0, 0);
+	$this->assertEquals('incompatible',
+			    $this->_getModuleState(array('active' => 1)));
+    }
+
+    function testGetModuleStateUninstalled() {
+	$this->_testModule->_getVersion = '1.0';
+	$this->assertEquals('uninstalled',
+			    $this->_getModuleState(array('active' => 0, 'version' => null)));
+    }
+
+    function testGetModuleStateUnupgraded() {
+	$this->_testModule->_getVersion = '2.0';
+	$this->assertEquals('unupgraded',
+			    $this->_getModuleState(array('active' => 0, 'version' => '1.0')));
+    }
+
+    function testGetModuleStateUnconfigured() {
+	$this->_testModule->_getVersion = '1.0';
+	$this->_testModule->_needsConfiguration = 'anything';
+	$this->assertEquals('unconfigured',
+			    $this->_getModuleState(array('active' => 0, 'version' => '1.0')));
+    }
+
+    function testGetModuleStateInactive() {
+	$this->_testModule->_getVersion = '1.0';
+	$this->_testModule->_needsConfiguration = null;
+	$this->assertEquals('inactive',
+			    $this->_getModuleState(array('active' => 0, 'version' => '1.0')));
+    }
+}
+
+/**
+ * Test module
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ModuleCallbackControllerTestModule {
+
+    function &getSingleton() {
+	static $singleton;
+	if (!isset($singleton)) {
+	    $singleton = new ModuleCallbackControllerTestModule();
+	}
+
+	return $singleton;
+    }
+
+    function getId() {
+	$singleton = &$this->getSingleton();
+	if (isset($singleton->_getId)) {
+	    return $singleton->_getId;
+	} else {
+	    return 'ModuleCallbackControllerTest';
+	}
+    }
+
+    function getVersion() {
+	$singleton = &$this->getSingleton();
+	if (isset($singleton->_getVersion)) {
+	    return $singleton->_getVersion;
+	} else {
+	    return '1.0';
+	}
+    }
+
+    function getRequiredCoreApi() {
+	$singleton = &$this->getSingleton();
+	if (isset($singleton->_getRequiredCoreApi)) {
+	    return $singleton->_getRequiredCoreApi;
+	} else {
+	    return GalleryCoreApi::getApiVersion();
+	}
+    }
+
+    function getRequiredModuleApi() {
+	$singleton = &$this->getSingleton();
+	if (isset($singleton->_getRequiredModuleApi)) {
+	    return $singleton->_getRequiredModuleApi;
+	} else {
+	    return GalleryModule::getApiVersion();
+	}
+    }
+
+    function getName() {
+	return 'ModuleCallback Controller Test';
+    }
+
+    function init() {
+	$this->_setCalled('init');
+	return null;
+    }
+
+    function installOrUpgrade() {
+	$this->_setCalled('installOrUpgrade');
+	return null;
+    }
+
+    function autoConfigure() {
+	$this->_setCalled('autoConfigure');
+	return array(null, true);
+    }
+
+    function activate() {
+	$singleton = &$this->getSingleton();
+	$this->_setCalled('activate');
+	if (isset($singleton->_activate)) {
+	    return array(null, $singleton->_activate);
+	} else {
+	    return array(null, array());
+	}
+    }
+
+    function deactivate() {
+	$this->_setCalled('deactivate');
+	return array(null, array());
+    }
+
+    function _setCalled($function) {
+	$singleton = &$this->getSingleton();
+	$singleton->_callMap[$function] = 1;
+    }
+
+    function wasCalled($function) {
+	$singleton = &$this->getSingleton();
+	return isset($singleton->_callMap[$function]);
+    }
+
+    function reset() {
+	$singleton = &$this->getSingleton();
+	$singleton = new ModuleCallbackControllerTestModule();
+    }
+
+    function isActive() {
+	$singleton = &$this->getSingleton();
+	return array(null, $singleton->_isActive);
+    }
+
+    function needsConfiguration() {
+	$singleton = &$this->getSingleton();
+	return array(null, $singleton->_needsConfiguration);
+    }
+
+    function translate($string) {
+	return $string;
+    }
+}
+
+?>
