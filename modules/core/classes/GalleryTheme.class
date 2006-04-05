@@ -955,6 +955,11 @@ class GalleryTheme extends GalleryPlugin {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 		    }
+		} else {
+		    /* Not available; unset params so theme won't try to use imageframe */
+		    unset($theme['params']['albumFrame']);
+		    unset($theme['params']['itemFrame']);
+		    unset($theme['params']['photoFrame']);
 		}
 	    }
 	    break;
