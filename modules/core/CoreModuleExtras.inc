@@ -1880,6 +1880,8 @@ class CoreModuleExtras {
 	    /* Security fix in installer/upgrader - RC-2a */
 	case '1.0.34':
 	    /* 2.1 Release! */
+	case '1.1.0':
+	    /* 2.1.1 Bugfix Release */
 
 	case 'end of upgrade path':
 	    /*
@@ -2132,6 +2134,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	case '1.0.32':
 	case '1.0.33':
 	case '1.0.34':
+	case '1.1.0':
 
 	case 'end of upgrade path':
 	    /*
