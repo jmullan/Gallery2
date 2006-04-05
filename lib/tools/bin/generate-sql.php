@@ -1018,7 +1018,7 @@ class Db2Generator extends BaseGenerator {
 			} else {
 			    $output .= 'DB_TABLE_PREFIX' .
 				substr($parent['child'][0]['content'], 0, 5) .
-				substr(md5($child[0]['content']), -2) .
+				substr(md5($parent['child'][0]['content']), -2) .
 				'_' . $this->getIndexCrc($c['child']);
 			}
 			$output .= ";\n\n";
@@ -1072,7 +1072,7 @@ class Db2Generator extends BaseGenerator {
 		    } else {
 			$output .= 'DB_TABLE_PREFIX' .
 			    substr($parent['child'][0]['content'], 0, 5) .
-			    substr(md5($child[0]['content']), -2) .
+			    substr(md5($parent['child'][0]['content']), -2) .
 			    '_' . $this->getIndexCrc($c['child']);
 		    }
 		    $output .= ' ON ' . 'DB_TABLE_PREFIX' . $parent['child'][0]['content'] . '(';
