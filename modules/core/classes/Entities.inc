@@ -86,7 +86,7 @@ $entityInfo['GalleryGroup'] = array(
 $entityInfo['GalleryItem'] = array(
     'members' => array(
 	'canContainChildren' => array('type' => STORAGE_TYPE_BOOLEAN, 'notNull' => 1),
-	'description' => array('type' => STORAGE_TYPE_TEXT),
+	'description' => array('type' => STORAGE_TYPE_TEXT, 'size' => STORAGE_SIZE_SMALL),
 	'keywords' => array('type' => STORAGE_TYPE_STRING, 'size' => STORAGE_SIZE_LARGE),
 	'ownerId' => array('type' => STORAGE_TYPE_INTEGER, 'notNull' => 1),
 	'summary' => array('type' => STORAGE_TYPE_STRING, 'size' => STORAGE_SIZE_LARGE),
