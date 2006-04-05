@@ -538,6 +538,8 @@ class GalleryTemplateAdapter {
 	    return;
 	}
 	$linkTarget = empty($params['target']) ? '' : (' target="' . $params['target'] . '"');
+	$isAdminOrShowAll = $isAdmin || (isset($params['showToAll']) && $params['showToAll']);
+	$useLink = !isset($params['link']) || $params['link'];
 
 	switch($params['type']) {
 	case 'gallery2':
@@ -549,17 +551,19 @@ class GalleryTemplateAdapter {
 	    }
 	    $version = $core->translate(
 		    array('text' => "Gallery %s", 'arg1' => $installedVersions['gallery']));
-	    return '<a href="http://gallery.sourceforge.net"' . $linkTarget . '><img src="' .
-		$urlGenerator->generateUrl(array('href' => 'images/gallery.gif')) .
-		'" alt="' . $version . '" '.
-		'title="' . $version . '" ' .
-		'style="border-style: none" width="80" height="15"/></a>';
+	    return sprintf(
+		    '%s<img src="%s" alt="%s" title="%s" style="%s" width="80" height="15"/>%s',
+		    $useLink ? ('<a href="http://gallery.sourceforge.net"' . $linkTarget . '>')
+			     : '',
+		    $urlGenerator->generateUrl(array('href' => 'images/gallery.gif')),
+		    $version, $version, 'border-style: none',
+		    $useLink ? '</a>' : '');
 
 	case 'validation':
-	    if (!$isAdmin) {
+	    if (!$isAdminOrShowAll) {
 		return;
 	    }
-	    if ($gallery->getConfig('allowSessionAccess')) {
+	    if ($useLink && $gallery->getConfig('allowSessionAccess')) {
 		/* Calculate a URI that we can use for the validation link */
 		$validationUri = $urlGenerator->getCurrentUrl();
 		$session =& $gallery->getSession();
@@ -570,45 +574,49 @@ class GalleryTemplateAdapter {
 		$validationUri = sprintf(
 		    'http://validator.w3.org/check?uri=%s&amp;ss=1',
 		    urlencode(str_replace('&amp;', '&', $validationUri)));
-	    } else {
+	    } else if ($useLink) {
 		$validationUri = sprintf(
 		    'javascript:alert(\'%s\');',
 		    $core->translate(
 			'Validation disabled until you set allowSessionAccess in config.php'));
 	    }
-	    return '<a href="' . $validationUri . '"' . $linkTarget . '><img src="' .
-		$urlGenerator->generateUrl(array('href' => 'images/xhtml10.png')) .
-		'" alt="' . $core->translate('This page is valid XHTML 1.0') .
-		'" title="' . $core->translate('This page is valid XHTML 1.0') .
-		'" style="border-style: none" width="80" height="15"/></a>';
+	    return sprintf(
+		    '%s<img src="%s" alt="%s" title="%s" style="%s" width="80" height="15"/>%s',
+		    $useLink ? ('<a href="' . $validationUri . '"' . $linkTarget . '>') : '',
+		    $urlGenerator->generateUrl(array('href' => 'images/xhtml10.png')),
+		    $core->translate('This page is valid XHTML 1.0'),
+		    $core->translate('This page is valid XHTML 1.0'),
+		    'border-style: none',
+		    $useLink ? '</a>' : '');
 
 	case 'donate':
-	    if (!$isAdmin) {
+	    if (!$isAdminOrShowAll) {
 		return;
 	    }
 	    $installedVersions = $core->getInstalledVersions();
 	    return sprintf(
-		    '<a href="%s"%s><img src="%s" alt="%s" title="%s" ' .
-		    'style="border-style: none" width="80" height="15"/></a>',
-		    $urlGenerator->generateUrl(
-			array('href' => 'http://gallery.sourceforge.net/donate.php?donate_tag=' .
-			      $installedVersions['gallery'])),
-		    $linkTarget,
+		    '%s<img src="%s" alt="%s" title="%s" style="%s" width="80" height="15"/>%s',
+		    $useLink ? ('<a href="http://gallery.sourceforge.net/donate.php?donate_tag=' .
+			$installedVersions['gallery'] . '"' . $linkTarget . '>') : '',
 		    $urlGenerator->generateUrl(array('href' => 'modules/core/data/donate.png')),
 		    $core->translate('Donate to the Gallery project'),
-		    $core->translate('Donate to the Gallery project'));
+		    $core->translate('Donate to the Gallery project'),
+		    'border-style: none',
+		    $useLink ? '</a>' : '');
 
 	case 'gallery2-version':
-	    if (!$isAdmin) {
+	    if (!$isAdminOrShowAll) {
 		return;
 	    }
-	    return sprintf(
-		'<img src="%s" alt="%s" title="%s" ' .
-		'style="border-style: none" width="80" height="15"/>',
-		$urlGenerator->generateUrl(
-		    array('href' => 'modules/core/data/g21-blackjack.png')),
-		$core->translate('G2.1: Blackjack'),
-		$core->translate('G2.1: Blackjack'));
+	    return ''; /* sprintf(
+		    '%s<img src="%s" alt="%s" title="%s" style="%s" width="80" height="15"/>%s',
+		    $useLink ? '' : '',
+		    $urlGenerator->generateUrl(
+			array('href' => 'modules/core/data/g21-blackjack.png')),
+		    $core->translate('G2.1: Blackjack'),
+		    $core->translate('G2.1: Blackjack'),
+		    'border-style: none',
+		    $useLink ? '' : ''); */
 	}
     }
 
