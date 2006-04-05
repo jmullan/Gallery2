@@ -47,7 +47,7 @@ class NetPbmToolkitTest extends GalleryTestCase {
 
 	parent::setUp();
 
-	$this->_platform = new NetPbmToolkitTestPlatform($gallery->getPlatform());
+	$this->_platform = new NetPbmToolkitTestPlatform($gallery->getPlatform(), $this);
 	$ret = $this->_platform->init();
 	if ($ret) {
 	    print $ret->getAsHtml();
@@ -80,6 +80,7 @@ class NetPbmToolkitTest extends GalleryTestCase {
     }
 
     function testPerformOperations() {
+	$this->_chmodWasCalled = false;
 	list ($ret, $mimeType) =
 	    $this->_toolkit->performOperation('image/gif', 'thumbnail',
 					      'testPerformOperations1.gif',
@@ -88,6 +89,7 @@ class NetPbmToolkitTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->assert($this->_chmodWasCalled, 'chmod not called');
 
 	/*
 	 * Test platform will support jhead for 4.jpg but not for 41.jpg
@@ -111,6 +113,7 @@ class NetPbmToolkitTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$this->_chmodWasCalled = false;
 	list ($ret, $mimeType) =
 	    $this->_toolkit->performOperation('image/tiff', 'rotate',
 					      'testPerformOperations6.tiff',
@@ -119,6 +122,7 @@ class NetPbmToolkitTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->assert($this->_chmodWasCalled, 'chmod not called');
 
 	list ($ret, $mimeType) =
 	    $this->_toolkit->performOperation('image/png', 'crop',
@@ -634,8 +638,9 @@ class NetPbmToolkitTest extends GalleryTestCase {
  */
 class NetPbmToolkitTestPlatform extends WinNtPlatform {
 
-    function NetPbmToolkitTestPlatform($platform) {
+    function NetPbmToolkitTestPlatform($platform, &$test) {
 	$this->_platform = $platform;
+	$this->_test =& $test;
     }
 
     function init() {
@@ -1052,6 +1057,11 @@ class NetPbmToolkitTestPlatform extends WinNtPlatform {
 	}
 	print "filesize $path<br/>\n";
 	return 0;
+    }
+
+    function chmod($path, $mode=null) {
+	$this->_test->_chmodWasCalled = true;
+	return true;
     }
 }
 ?>

@@ -237,14 +237,14 @@ class PlatformTest extends GalleryTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $this->_platform->resetPlatform();
-	    $this->_permissionTest(0600, 1, array('exec', 'copy', 'atomicWrite', 'symlink'));
+	    $this->_permissionTest(0600, 1, array('copy', 'atomicWrite', 'symlink'));
 
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', 'permissions.file', '664');
 	    if ($ret) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $this->_platform->resetPlatform();
-	    $this->_permissionTest(0664, 2, array('copy', 'symlink', 'exec', 'atomicWrite'));
+	    $this->_permissionTest(0664, 2, array('copy', 'symlink', 'atomicWrite'));
 
 	    $this->assert($this->_platform->copy($this->_sourceFile, $this->_destFile), 'copy');
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', 'permissions.file', '612');
@@ -262,6 +262,9 @@ class PlatformTest extends GalleryTestCase {
 	    }
 	    $this->_platform->resetPlatform();
 	    $this->_permissionTest(0751, 4, array('chmod'));
+
+	    /* exec now uses a default umask of 022 -- exec'ers must chmod output files */
+	    $this->_permissionTest(0644, 5, array('exec'));
 
 	    $this->_platform->resetPlatform();
 	}
@@ -330,47 +333,121 @@ class PlatformTest extends GalleryTestCase {
 	}
     }
 
-    function testRecursiveFixDirPermissions() {
-	list ($ret, $param) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'permissions.directory');
-	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
+    function _setupChmodTest() {
 	$this->assert($this->_platform->mkdir($this->_destFile), 'mkdir');
 	$this->assert($this->_platform->mkdir($this->_destFile . '/1'), 'mkdir/1');
 	$this->assert($this->_platform->copy($this->_sourceFile, $this->_destFile . '/1/2'), 'cp');
 	$this->assert($this->_platform->mkdir($this->_destFile . '/1/3'), 'mkdir/1/3');
+	$this->assert($this->_platform->copy($this->_sourceFile, $this->_destFile . '/1/3/4'),
+		      'cp2');
+	$this->assert($this->_platform->mkdir($this->_destFile . '/1/5'), 'mkdir/1/5');
 
-	$fileStat = $this->_platform->stat($this->_destFile . '/1/2');
+	$ret = $this->_markPluginParametersForCleanup('module', 'core');
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'permissions.directory', '734');
 	if ($ret) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	$this->_platform->resetPlatform();
-
-	$this->assert($this->_platform->recursiveFixDirPermissions($this->_destFile), 'fix perms');
-	$this->_platform->clearstatcache();
-	if (GalleryUtilities::isA($this->_platform, 'WinNtPlatform')) {
-	    $expected = '777';
-	} else {
-	    $expected = '734';
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'permissions.file', '652');
+	if ($ret) {
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	$stat = $this->_platform->stat($this->_destFile);
-	$this->assertEquals($expected, decoct($stat[2] & 0777), 'perm1');
-	$stat = $this->_platform->stat($this->_destFile . '/1');
-	$this->assertEquals($expected, decoct($stat[2] & 0777), 'perm2');
-	$stat = $this->_platform->stat($this->_destFile . '/1/2');
-	$this->assertEquals(decoct($fileStat[2]), decoct($stat[2]), 'file should be unchanged');
-	$stat = $this->_platform->stat($this->_destFile . '/1/3');
-	$this->assertEquals($expected, decoct($stat[2] & 0777), 'perm4');
+	return null;
+    }
 
-	$this->assert($this->_platform->recursiveRmdir($this->_destFile), 'remove');
-	$ret = GalleryCoreApi::setPluginParameter('module', 'core',
-						  'permissions.directory', $param);
+    function testRecursiveChmod1() {
+	/* Set dir and file permissions by system prefs */
+	$ret = $this->_setupChmodTest();
 	if ($ret) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	$this->_platform->resetPlatform();
+	$this->assert($this->_platform->recursiveChmod($this->_destFile), 'set perms');
+	$this->_platform->clearstatcache();
+	$expected = GalleryUtilities::isA($this->_platform, 'WinNtPlatform') ? '777' : '734';
+	$expected2 = GalleryUtilities::isA($this->_platform, 'WinNtPlatform') ? '777' : '652';
+
+	$stat = $this->_platform->stat($this->_destFile);
+	$this->assertEquals($expected, decoct($stat[2] & 0777), 'perm0');
+	$stat = $this->_platform->stat($this->_destFile . '/1');
+	$this->assertEquals($expected, decoct($stat[2] & 0777), 'perm1');
+	$stat = $this->_platform->stat($this->_destFile . '/1/2');
+	$this->assertEquals($expected2, decoct($stat[2] & 0777), 'perm2');
+	$stat = $this->_platform->stat($this->_destFile . '/1/3');
+	$this->assertEquals($expected, decoct($stat[2] & 0777), 'perm3');
+	$stat = $this->_platform->stat($this->_destFile . '/1/3/4');
+	$this->assertEquals($expected2, decoct($stat[2] & 0777), 'perm4');
+	$stat = $this->_platform->stat($this->_destFile . '/1/5');
+	$this->assertEquals($expected, decoct($stat[2] & 0777), 'perm5');
+
+	$this->assert($this->_platform->recursiveRmdir($this->_destFile), 'remove');
+	$this->_platform->resetPlatform();
+    }
+
+    function testRecursiveChmod2() {
+	/* Set given dir permission, don't change file permissions */
+	$ret = $this->_setupChmodTest();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$fileStat = $this->_platform->stat($this->_destFile . '/1/2');
+	$fileStat = decoct($fileStat[2]);
+	$this->_platform->resetPlatform();
+
+	$this->assert($this->_platform->recursiveChmod($this->_destFile, 0711, -1), 'set perms');
+	$this->_platform->clearstatcache();
+	$expected = GalleryUtilities::isA($this->_platform, 'WinNtPlatform') ? '777' : '711';
+
+	$stat = $this->_platform->stat($this->_destFile);
+	$this->assertEquals($expected, decoct($stat[2] & 0777), 'perm0');
+	$stat = $this->_platform->stat($this->_destFile . '/1');
+	$this->assertEquals($expected, decoct($stat[2] & 0777), 'perm1');
+	$stat = $this->_platform->stat($this->_destFile . '/1/2');
+	$this->assertEquals($fileStat, decoct($stat[2]), 'file2 should be unchanged');
+	$stat = $this->_platform->stat($this->_destFile . '/1/3');
+	$this->assertEquals($expected, decoct($stat[2] & 0777), 'perm3');
+	$stat = $this->_platform->stat($this->_destFile . '/1/3/4');
+	$this->assertEquals($fileStat, decoct($stat[2]), 'file4 should be unchanged');
+	$stat = $this->_platform->stat($this->_destFile . '/1/5');
+	$this->assertEquals($expected, decoct($stat[2] & 0777), 'perm5');
+
+	$this->assert($this->_platform->recursiveRmdir($this->_destFile), 'remove');
+	$this->_platform->resetPlatform();
+    }
+
+    function testRecursiveChmod3() {
+	/* Set given file permission, don't change dir permissions */
+	$ret = $this->_setupChmodTest();
+	if ($ret) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$dirStat = $this->_platform->stat($this->_destFile . '/1');
+	$dirStat = decoct($dirStat[2]);
+	$this->_platform->resetPlatform();
+
+	$this->assert($this->_platform->recursiveChmod($this->_destFile, -1, 0640), 'set perms');
+	$this->_platform->clearstatcache();
+	$expected = GalleryUtilities::isA($this->_platform, 'WinNtPlatform') ? '777' : '640';
+
+	$stat = $this->_platform->stat($this->_destFile);
+	$this->assertEquals($dirStat, decoct($stat[2]), 'dir0 should be unchanged');
+	$stat = $this->_platform->stat($this->_destFile . '/1');
+	$this->assertEquals($dirStat, decoct($stat[2]), 'dir1 should be unchanged');
+	$stat = $this->_platform->stat($this->_destFile . '/1/2');
+	$this->assertEquals($expected, decoct($stat[2] & 0777), 'perm2');
+	$stat = $this->_platform->stat($this->_destFile . '/1/3');
+	$this->assertEquals($dirStat, decoct($stat[2]), 'dir3 should be unchanged');
+	$stat = $this->_platform->stat($this->_destFile . '/1/3/4');
+	$this->assertEquals($expected, decoct($stat[2] & 0777), 'perm4');
+	$stat = $this->_platform->stat($this->_destFile . '/1/5');
+	$this->assertEquals($dirStat, decoct($stat[2]), 'dir5 should be unchanged');
+
+	$this->assert($this->_platform->recursiveRmdir($this->_destFile), 'remove');
 	$this->_platform->resetPlatform();
     }
 

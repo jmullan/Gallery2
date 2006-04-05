@@ -41,7 +41,7 @@ class DcrawModule extends GalleryModule {
 	$this->setName($gallery->i18n('Dcraw'));
 	$this->setDescription(
 	    $gallery->i18n('Graphics toolkit for processing images in raw format'));
-	$this->setVersion('1.0.4');
+	$this->setVersion('1.0.5');
 	$this->setGroup('toolkits', $gallery->i18n('Graphics Toolkits'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(7, 0));

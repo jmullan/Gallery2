@@ -152,6 +152,7 @@ class DcrawToolkit extends GalleryToolkit {
 						  "Failed renaming $tmpFilename -> $destFilename"),
 			     null, null);
 	    }
+	    $platform->chmod($destFilename);
 
 	    return array(null, 'image/x-portable-pixmap', $context);
 

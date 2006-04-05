@@ -50,7 +50,7 @@ class FfmpegToolkitTest extends GalleryTestCase {
 	parent::setUp();
 
 	$gallery->_platform = new FfmpegToolkitTestPlatform();
-	$ret = $gallery->_platform->init();
+	$ret = $gallery->_platform->init($this);
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -407,6 +407,7 @@ class FfmpegToolkitTest extends GalleryTestCase {
     }
 
     function testPerformOperation() {
+	$this->_chmodWasCalled = false;
 	list ($ret, $results) =
 	    $this->_toolkit->performOperation('video/avi',
 					      'convert-to-image/jpeg',
@@ -417,9 +418,11 @@ class FfmpegToolkitTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals($results, 'image/jpeg');
+	$this->assert($this->_chmodWasCalled, 'chmod not called');
     }
 
     function testPerformOperationWithOffset() {
+	$this->_chmodWasCalled = false;
 	list ($ret, $results, $context) =
 	    $this->_toolkit->performOperation('video/avi',
 					      'select-offset',
@@ -444,6 +447,7 @@ class FfmpegToolkitTest extends GalleryTestCase {
 	}
 	$this->assertEquals($results, 'image/jpeg', 'mime after convert');
 	$this->assertEquals(array(), $context, 'no offset');
+	$this->assert($this->_chmodWasCalled, 'chmod not called');
     }
 }
 
@@ -455,7 +459,8 @@ class FfmpegToolkitTest extends GalleryTestCase {
  */
 class FfmpegToolkitTestPlatform {
 
-    function init() {
+    function init(&$test) {
+	$this->_test =& $test;
 	list ($ret, $this->_ffmpegPath) =
 	    GalleryCoreApi::getPluginParameter('module', 'ffmpeg', 'path');
 	if ($ret) {
@@ -835,6 +840,11 @@ class FfmpegToolkitTestPlatform {
 
     function realpath($path) {
 	return $path;
+    }
+
+    function chmod($path, $mode=null) {
+	$this->_test->_chmodWasCalled = true;
+	return true;
     }
 }
 ?>
