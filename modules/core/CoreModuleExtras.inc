@@ -60,8 +60,7 @@ class CoreModuleExtras {
 	     * 0.8 (which didn't have the core versions.dat file).  Use a module
 	     * parameter as our acid test.
 	     *
-	     * TODO: Get rid of this when we get to the final release.  It's
-	     * only useful in the alpha -> beta transition.
+	     * TODO: Get rid of this when we stop supporting upgrades from alphas.
 	     */
 	    list ($ret, $paramValue) = $module->getParameter('permissions.directory');
 	    if (isset($paramValue)) {
@@ -1690,7 +1689,7 @@ class CoreModuleExtras {
 	    $storage->configureStore($module->getId(), array('GalleryAccessMap:1.2'));
 
 	    /* Postgres will abort the transaction if the index exists, so checkpoint here. */
-	    $ret = $storage->checkpoint();
+	    $ret = $storage->checkPoint();
 	    if ($ret) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -1703,7 +1702,7 @@ class CoreModuleExtras {
 	    $query = sprintf('
 	    UPDATE %sSchema
 	    SET %smajor=1, %sminor=3
-	    WHERE %sname=\'AccessMap\' AND %smajor=1 AND %sminor=2;',
+	    WHERE %sname=\'AccessMap\' AND %smajor=1 AND %sminor=2',
 			     $storage->_tablePrefix, $storage->_columnPrefix,
 			     $storage->_columnPrefix, $storage->_columnPrefix,
 			     $storage->_columnPrefix, $storage->_columnPrefix);
