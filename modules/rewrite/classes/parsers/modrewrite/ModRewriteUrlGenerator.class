@@ -87,7 +87,8 @@ class ModRewriteUrlGenerator extends RewriteUrlGenerator {
 	    $tmp = $path . $this->_file[$forceDirect];
 	    $queryString = GalleryUtilities::getServerVar('QUERY_STRING');
 	    if (!empty($queryString)) {
-		$tmp .= '?' . GalleryUtilities::htmlEntityDecode($queryString);
+		GalleryUtilities::unsanitizeInputValues($queryString, false);
+		$tmp .= '?' . $queryString;
 	    }
 
 	    $this->_currentUrl[$forceDirect] = $this->makeUrl($tmp);

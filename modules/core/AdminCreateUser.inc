@@ -57,10 +57,8 @@ class AdminCreateUserController extends GalleryController {
 	     * If all the right fields are in place then go ahead and
 	     * create the user.
 	     */
-	    if (!empty($form['userName']) &&
-	        !empty($form['email']) &&
-	        !empty($form['password1']) &&
-	        $form['password1'] == $form['password2']) {
+	    if (!empty($form['userName']) && !empty($form['email'])
+		    && !empty($form['password1']) && $form['password1'] == $form['password2']) {
 
 		list ($ret, $user) =
 		    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
@@ -79,13 +77,14 @@ class AdminCreateUserController extends GalleryController {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
-		    // Set our error status and fall back to the view.
+		    /* Set our error status and fall back to the view */
 		    $error[] = 'form[error][userName][exists]';
 		} else {
 		    $user->setEmail($form['email']);
 		    $user->setFullName($form['fullName']);
 		    $user->setLanguage($form['language']);
-		    $user->changePassword(GalleryUtilities::htmlEntityDecode($form['password1']));
+		    GalleryUtilities::unsanitizeInputValues($form['password1'], false);
+		    $user->changePassword($form['password1']);
 
 		    $ret = $user->save();
 		    if ($ret) {
@@ -104,9 +103,8 @@ class AdminCreateUserController extends GalleryController {
 		    }
 		}
 
-		if (!empty($form['password1']) &&
-		        !empty($form['password2']) &&
-		        $form['password1'] != $form['password2']) {
+		if (!empty($form['password1']) && !empty($form['password2'])
+			&& $form['password1'] != $form['password2']) {
 		    $error[] = 'form[error][password2][mismatch]';
 		}
 	    }

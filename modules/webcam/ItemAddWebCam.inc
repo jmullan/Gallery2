@@ -46,7 +46,8 @@ class ItemAddWebCam extends ItemAddPlugin {
 	    $platform =& $gallery->getPlatform();
 	    $tmpDir = $gallery->getConfig('data.gallery.tmp');
 	    $tmpFile = $platform->tempnam($tmpDir, 'webcam');
-	    $url = GalleryUtilities::htmlEntityDecode($form['imageUrl']);
+	    $url = $form['imageUrl'];
+	    GalleryUtilities::unsanitizeInputValues($url, false);
 
 	    list ($successfullyCopied, $response, $headers) =
 		GalleryCoreApi::fetchWebFile($url, $tmpFile);

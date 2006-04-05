@@ -79,9 +79,9 @@ class PasswordEntryController extends GalleryController {
 	    if ($ret) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    $guess = GalleryUtilities::htmlEntityDecode($form['password']);
+	    GalleryUtilities::unsanitizeInputValues($form['password'], false);
 	    $isCorrect = $canSee && $hashedPassword
-		&& GalleryUtilities::isCorrectPassword($guess, $hashedPassword);
+		&& GalleryUtilities::isCorrectPassword($form['password'], $hashedPassword);
 
 	    /* Prepare for validation */
 	    $options = array('pass' => $isCorrect);

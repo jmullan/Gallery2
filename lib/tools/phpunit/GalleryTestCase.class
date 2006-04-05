@@ -882,23 +882,7 @@ class GalleryTestCase extends TestCase {
 	return null;
     }
 
-    /**
-     * Like print_r($value, 1)
-     * @static
-     */
-    function sprint_r($value) {
-	ob_start();
-	print_r($value);
-	$buf = ob_get_contents();
-	ob_end_clean();
-	return $buf;
-    }
-
     function _verifyFields($entity, $fields) {
-	if (version_compare(phpversion(), '4.2.0', '<')) {
-	    /* Before 4.2.0, uninitialized class variables are not reported by get_class_vars() */
-	    return null;
-	}
 	$vars = get_class_vars(get_class($entity));
 	foreach ($fields as $field) {
 	    if (!array_key_exists($field, $vars)) {

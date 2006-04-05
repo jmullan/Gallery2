@@ -68,12 +68,6 @@ if (phpversion() >= '4') {
 	    return;
 	}
 
-	/* Allow php 4.1 warnings for undefined $this->$member access in GalleryPersistent */
-	if (version_compare(phpversion(), '4.2.0') <= 0
-		&& strpos($errstr, 'Undefined property:') !== false) {
-	    return;
-	}
-
 	$message = "<B>PHP ERROR:</B> ".$errstr;
 	if (function_exists('debug_backtrace')) {
 	    $traceSource = debug_backtrace();

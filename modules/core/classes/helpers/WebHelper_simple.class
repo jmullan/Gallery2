@@ -261,10 +261,7 @@ class WebHelper_simple {
 	$ok = $platform->fflush($fd);
 	if (!$ok) {
 	    $gallery->debug("fflush call failed in fetchWebPage($url)");
-	    if (version_compare(phpversion(), '4.2.0', '>=')) {
-		/* Ignore false returned from fflush on PHP 4.1 */
-		return array(false, null, null, null, null);
-	    }
+	    return array(false, null, null, null, null);
 	}
 
 	/*

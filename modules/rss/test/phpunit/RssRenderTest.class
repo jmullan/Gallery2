@@ -124,7 +124,7 @@ class RssRenderTest extends GalleryControllerTestCase {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
 
-	$feedUrl = urlEncode($urlGenerator->generateUrl(
+	$feedUrl = urlencode($urlGenerator->generateUrl(
 	    array(
 		'view' => 'rss.SimpleRender',
 		'itemId' => $this->_root->getId()),
@@ -174,7 +174,7 @@ class RssRenderTest extends GalleryControllerTestCase {
 	$this->_feedsToDelete[] = $name;
 
 	$urlGenerator =& $gallery->getUrlGenerator();
-	$feedUrl = urlEncode($urlGenerator->generateUrl(
+	$feedUrl = urlencode($urlGenerator->generateUrl(
 	    array(
 		'view' => 'rss.Render',
 		'name' => $name),

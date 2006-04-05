@@ -76,9 +76,10 @@ class PasswordOption extends ItemEditOption {
 	} else if (!empty($form['PasswordOption']['password1'])
 		|| !empty($form['PasswordOption']['password2'])) {
 	    if ($form['PasswordOption']['password1'] == $form['PasswordOption']['password2']) {
+		GalleryUtilities::unsanitizeInputValues($form['PasswordOption']['password1'],
+							false);
 		GalleryCoreApi::requireOnce('modules/password/classes/PasswordHelper.class');
-		$ret = PasswordHelper::setPassword($item,
-			GalleryUtilities::htmlEntityDecode($form['PasswordOption']['password1']));
+		$ret = PasswordHelper::setPassword($item, $form['PasswordOption']['password1']);
 		if ($ret) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}

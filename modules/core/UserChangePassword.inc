@@ -104,7 +104,8 @@ class UserChangePasswordController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		$user->changePassword(GalleryUtilities::htmlEntityDecode($form['password1']));
+		GalleryUtilities::unsanitizeInputValues($form['password1'], false);
+		$user->changePassword($form['password1']);
 
 		$ret = $user->save();
 		if ($ret) {

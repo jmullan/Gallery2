@@ -422,7 +422,7 @@ class ImageUploadHelper {
 		/* If album doesn't have a name set use the file system name. */
 		$name = $album->getPathComponent();
 	    }
-	    $name = GalleryUtilities::htmlEntityDecode($name);
+	    GalleryUtilities::unsanitizeInputValues($name, false);
 	    $albumData[] = array('id' => $id, 'parentid' => $parentId, 'name' => $name);
 	}
 

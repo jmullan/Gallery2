@@ -82,8 +82,8 @@ class SimpleCallbackView extends GalleryView {
 	case 'lookupDirectories':
 	    list ($ret, $isSiteAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
 	    if (!$ret && $isSiteAdmin) {
-		$dirs = implode("\n",
-		    $this->_getAllImmediateSubdirs(GalleryUtilities::htmlEntityDecode($prefix)));
+		GalleryUtilities::unsanitizeInputValues($prefix, false);
+		$dirs = implode("\n", $this->_getAllImmediateSubdirs($prefix));
 		GalleryUtilities::sanitizeInputValues($dirs, false);
 		print $dirs;
 	    }
@@ -92,8 +92,8 @@ class SimpleCallbackView extends GalleryView {
 	case 'lookupFiles':
 	    list ($ret, $isSiteAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
 	    if (!$ret && $isSiteAdmin) {
-		$files = implode("\n",
-		    $this->_getAllFiles(GalleryUtilities::htmlEntityDecode($prefix)));
+		GalleryUtilities::unsanitizeInputValues($prefix, false);
+		$files = implode("\n", $this->_getAllFiles($prefix));
 		GalleryUtilities::sanitizeInputValues($files, false);
 		print $files;
 	    }

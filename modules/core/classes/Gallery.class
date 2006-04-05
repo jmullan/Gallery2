@@ -801,15 +801,7 @@ class Gallery {
      */
     function debug_r($object, $escapeHtmlEntities=false) {
 	if (!empty($this->_debug)) {
-	    if (version_compare(phpversion(), '4.3.0', '>=')) {
-		$buf = print_r($object, true);
-	    } else {
-		ob_start();
-		print_r($object);
-		$buf = ob_get_contents();
-		ob_end_clean();
-	    }
-
+	    $buf = print_r($object, true);
 	    if ($escapeHtmlEntities) {
 		$buf = htmlentities($buf);
 	    }

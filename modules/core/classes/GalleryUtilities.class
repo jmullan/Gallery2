@@ -571,12 +571,7 @@ class GalleryUtilities {
      * @static
      */
     function isA($instance, $className) {
-	if (function_exists('is_a')) {
-	    return is_a($instance, $className);
-	} else {
-	    return (is_subclass_of($instance, $className) ||
-		    !strcasecmp(get_class($instance), $className));
-	}
+	return is_a($instance, $className);
     }
 
     /**
@@ -799,7 +794,7 @@ class GalleryUtilities {
 	    }
 	} else {
 	    /* Unsanitize dangerous html entities */
-	    $value = GalleryUtilities::htmlEntityDecode($value);
+	    $value = html_entity_decode($value);
 
 	    /* Redo the damage caused by magic_quotes */
 	    if ($adaptForMagicQuotes) {
@@ -902,19 +897,10 @@ class GalleryUtilities {
      *
      * @param string with html entities
      * @return same string without them
+     * @deprecated -- TODO: remove at the next major version bump of core api
      */
     function htmlEntityDecode($string) {
-	if (function_exists("html_entity_decode")) {
-	    return html_entity_decode($string, ENT_COMPAT);
-	}
-
-	static $translation_table = null;
-	if (!isset($translation_table)) {
-	    $translation_table = get_html_translation_table(HTML_ENTITIES, ENT_COMPAT);
-	    $translation_table = array_flip($translation_table);
-	}
-
-	return strtr($string, $translation_table);
+	return html_entity_decode($string, ENT_COMPAT);
     }
 
     /**
@@ -942,7 +928,7 @@ class GalleryUtilities {
 	    $parser =& new HTML_Safe();
 	}
 	if ($decode) {
-	    $html = GalleryUtilities::htmlEntityDecode($html);
+	    GalleryUtilities::unsanitizeInputValues($html, false);
 	}
 	$html = $parser->parse($html);
 	if ($decode) {

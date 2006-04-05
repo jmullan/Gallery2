@@ -78,7 +78,7 @@ class UnitTestPlatform {
 
     function getRemaining() {
 	return 'Error count: ' . $_GET['UnitTestPlatform']['errorCount'] . "\nRemaining requests: "
-	     . UnitTestPlatform::sprint_r($_GET['UnitTestPlatform']['replies']);
+	     . print_r($_GET['UnitTestPlatform']['replies'], true);
     }
 
     function _makeReply($function, $request) {
@@ -94,9 +94,9 @@ class UnitTestPlatform {
 	$_GET['UnitTestPlatform']['errorCount']++;
 	printf("Unhandled reply<br/>\n");
 	printf("Received:<br/>\nFunction: %s<br/>\nRequest: <pre>%s</pre><br/>\n",
-	       $function, UnitTestPlatform::sprint_r($request));
+	       $function, print_r($request, true));
 	printf("Expected:<br/>\nFunction: %s<br/>\nRequest: <pre>%s</pre><br/>\n",
-	       $expected[0], UnitTestPlatform::sprint_r($expected[1]));
+	       $expected[0], print_r($expected[1], true));
 	$ret = GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 				    'Unhandled reply in UnitTestPlatform');
 	print $ret->getAsHtml();
@@ -117,18 +117,6 @@ class UnitTestPlatform {
 	    }
 	}
 	return ($i == count($actual));
-    }
-
-    /**
-     * Like print_r($value, 1)
-     * @static
-     */
-    function sprint_r($value) {
-	ob_start();
-	print_r($value);
-	$buf = ob_get_contents();
-	ob_end_clean();
-	return $buf;
     }
 
     /* Everything below this is a function from GalleryPlatform */

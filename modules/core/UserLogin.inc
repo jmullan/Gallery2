@@ -82,8 +82,8 @@ class UserLoginController extends GalleryController {
 		if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		$isCorrect = ($user != null && $user->isCorrectPassword(
-			    GalleryUtilities::htmlEntityDecode($form['password'])));
+		GalleryUtilities::unsanitizeInputValues($form['password'], false);
+		$isCorrect = (isset($user) && $user->isCorrectPassword($form['password']));
 
 		/* Prepare for validation */
 		$options = array('pass' => $isCorrect);

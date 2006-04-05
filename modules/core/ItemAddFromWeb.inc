@@ -61,7 +61,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
 		$tmpFile = $platform->tempnam($tmpDir, 'add');
 
 		$successfullyCopied = false;
-		$url = GalleryUtilities::htmlEntityDecode($url);
+		GalleryUtilities::unsanitizeInputValues($url, false);
 		if (empty($extraHeaders)) {
 		    $extraHeaders = array('Referer' => str_replace('&amp;', '&', $url));
 		}

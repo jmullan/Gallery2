@@ -40,7 +40,6 @@ class SelectPicasaExportPathController extends GalleryController {
      * @see GalleryController::handleRequest()
      */
     function handleRequest($form) {
-
         global $gallery;
 
         /* Verify that active user is an admin */
@@ -51,21 +50,22 @@ class SelectPicasaExportPathController extends GalleryController {
 
 	$error = $status = array();
 
-        if (isset($form['action']['select'])) {
-            if (empty($form['picasaXmlPath'])) {
-                $error[] = 'form[error][picasaXmlPath][missing]';
-            } else {
+	if (isset($form['action']['select'])) {
+	    if (empty($form['picasaXmlPath'])) {
+		$error[] = 'form[error][picasaXmlPath][missing]';
+	    } else {
 		$platform =& $gallery->getPlatform();
-                $slash = $platform->getDirectorySeparator();
-                $tmp = trim($form['picasaXmlPath']);
-                if ($tmp[strlen($tmp)-1] != $slash) {
-                    $tmp .= $slash;
-                }
-                $form['picasaXmlPath'] = trim(GalleryUtilities::htmlEntityDecode($tmp));
-                if (!Picasa2DataParser::isValidPicasaXmlPath($form['picasaXmlPath'])) {
-                    $error[] = 'form[error][picasaXmlPath][invalid]';
-                }
-            }
+		$slash = $platform->getDirectorySeparator();
+		$tmp = trim($form['picasaXmlPath']);
+		if ($tmp[strlen($tmp)-1] != $slash) {
+		    $tmp .= $slash;
+		}
+		GalleryUtilities::unsanitizeInputValues($tmp, false);
+		$form['picasaXmlPath'] = trim($tmp);
+		if (!Picasa2DataParser::isValidPicasaXmlPath($form['picasaXmlPath'])) {
+		    $error[] = 'form[error][picasaXmlPath][invalid]';
+		}
+	    }
             if (empty($error)) {
                 $session =& $gallery->getSession();
                 $recentPaths = $session->get('picasa.view.SelectPicasaExportPath.recentPaths');
@@ -107,7 +107,6 @@ class SelectPicasaExportPathView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-
         global $gallery;
         if ($form['formName'] != 'SelectPicasaExportPath') {
             $form['formName'] = 'SelectPicasaExportPath';

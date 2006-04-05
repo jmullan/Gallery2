@@ -173,7 +173,8 @@ class GalleryUrlGenerator {
 	    }
 	}
 
-	return GalleryUtilities::htmlEntityDecode($path);
+	GalleryUtilities::unsanitizeInputValues($path, false);
+	return $path;
     }
 
     /**

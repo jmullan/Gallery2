@@ -229,6 +229,12 @@ class UtilitiesTest extends GalleryTestCase {
 	}
     }
 
+    function testUnsanitizeInputValues() {
+	$result = '&lt;a href=&quot;javascript:alert(\'hi\')&quot;&gt;yo&lt;/a&gt;';
+	GalleryUtilities::unsanitizeInputValues($result, false);
+	$this->assertEquals('<a href="javascript:alert(\'hi\')">yo</a>', $result);
+    }
+
     function testMakeMarkers() {
 	$this->assertEquals('?,?,?,?,?',
 			    GalleryUtilities::makeMarkers(5));
@@ -548,12 +554,6 @@ class UtilitiesTest extends GalleryTestCase {
     function testProcessingPaths() {
 	GalleryUtilities::putRequestVariable('test', __FILE__);
 	$this->assertEquals(__FILE__, GalleryUtilities::getRequestVariables('test'));
-    }
-
-    function testHtmlEntityDecode() {
-	$result = GalleryUtilities::htmlEntityDecode(
-	    '&lt;a href=&quot;javascript:alert(\'hi\')&quot;&gt;yo&lt;/a&gt;');
-	$this->assertEquals('<a href="javascript:alert(\'hi\')">yo</a>', $result);
     }
 
     function testEntitySubstr() {
@@ -1213,7 +1213,7 @@ class UtilitiesTest extends GalleryTestCase {
 		foreach ($tC['er'] as $eR) {
 		    if (isset($_COOKIE[$eR['key']])) {
 			/* Check value */
-			$expectedValue = $addSlashes ? addSlashes($eR['val']) : $eR['val'];
+			$expectedValue = $addSlashes ? addslashes($eR['val']) : $eR['val'];
 			$this->assertEquals($expectedValue, $_COOKIE[$eR['key']],
 					    $addSlashesInfo . 'value does not match for key ' .
 					    $eR['key'] . ' for test case: ' . $debugInfo);

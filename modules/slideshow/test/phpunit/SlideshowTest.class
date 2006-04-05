@@ -358,12 +358,12 @@ class SlideshowTest extends GalleryTestCase {
 		foreach ($expectedResults[$slide['id']][0] as $i => $id) {
 		    $this->assertEquals($id, $slide['sources'][$i]['id'],
 			"$test: Slide id " . $slide['id'] . " source $i id"
-			. '<br><pre>' . $this->_dump($this->_photoData)) . '</pre>';
+			. '<br><pre>' . print_r($this->_photoData, true) . '</pre>');
 		}
 		foreach ($expectedResults[$slide['id']][1] as $i => $index) {
 		    $this->assertEquals($index, $slide['sizeClassMap'][$i],
 			"$test: Slide id " . $slide['id'] . " size map $i"
-			. '<br>' . $this->_dump($this->_photoData));
+			. '<br>' . print_r($this->_photoData, true));
 		    if ($index != $slide['sizeClassMap'][$i]) {
 			ob_start();
 			print_r($expectedResults);
@@ -388,18 +388,6 @@ class SlideshowTest extends GalleryTestCase {
 	$gallery->setActiveUser($this->_admin);
 
 	return null;
-    }
-
-    function _dump(&$object) {
-	if (version_compare(phpversion(), '4.3.0', '>=')) {
-	    $buf = print_r($object, true);
-	} else {
-	    ob_start();
-	    print_r($object);
-	    $buf = ob_get_contents();
-	    ob_end_clean();
-	}
-	return $buf;
     }
 
     /*

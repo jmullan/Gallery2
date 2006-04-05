@@ -59,7 +59,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 	     * the filesystem needs the path in the system charset
 	     */
 	    $dir = GalleryCoreApi::convertFromUtf8($form['localServerPath']);
-	    $dir = GalleryUtilities::htmlEntityDecode($dir);
+	    GalleryUtilities::unsanitizeInputValues($dir, false);
 
 	    /* We need the localServerDirList only in the system charset */
 	    list ($ret, $unused, $localServerDirList) = $this->fetchLocalServerDirList();
@@ -348,7 +348,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 	     * $form['localServerPath'] is UTF-8, $localServerPath is in the system charset
 	     */
 	    $localServerPath = GalleryCoreApi::convertFromUtf8($localServerPath);
-	    $localServerPath = GalleryUtilities::htmlEntityDecode($localServerPath);
+	    GalleryUtilities::unsanitizeInputValues($localServerPath, false);
 	    $localServerPath = $platform->realpath($localServerPath);
 	    $form['localServerPath'] = GalleryCoreApi::convertToUtf8($localServerPath);
 	    

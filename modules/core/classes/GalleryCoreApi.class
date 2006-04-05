@@ -53,7 +53,10 @@ class GalleryCoreApi {
      *
      * @return array major number, minor number
      *
-     * TODO: remove GalleryPlatform::recursiveFixDirPermissions on next major version bump
+     * TODO: for next major version bump:
+     * - remove GallerySession::getSessionId
+     * - remove GalleryPlatform::recursiveFixDirPermissions
+     * - remove GalleryUtilities::htmlEntityDecode
      */
     function getApiVersion() {
 	return array(7, 3);

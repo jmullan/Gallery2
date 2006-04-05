@@ -123,7 +123,8 @@ class AdminCoreController extends GalleryController {
 	}
 
 	if (isset($form['action']['addUploadLocalServerDir'])) {
-	    $path = GalleryUtilities::htmlEntityDecode($form['uploadLocalServer']['newDir']);
+	    $path = $form['uploadLocalServer']['newDir'];
+	    GalleryUtilities::unsanitizeInputValues($path, false);
 	    /* $path is UTF-8, $realPath is in the system charset for filesystem interactions */
 	    $realPath = GalleryCoreApi::convertFromUtf8($path);
 	    if (empty($path)) {

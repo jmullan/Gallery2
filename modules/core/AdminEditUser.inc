@@ -135,8 +135,8 @@ class AdminEditUserController extends GalleryController {
 		    $user->setEmail($form['email']);
 		    $user->setLanguage($form['language']);
 		    if (!empty($form['password1'])) {
-			$user->changePassword(
-			    GalleryUtilities::htmlEntityDecode($form['password1']));
+			GalleryUtilities::unsanitizeInputValues($form['password1'], false);
+			$user->changePassword($form['password1']);
 		    }
 		}
 

@@ -164,11 +164,13 @@ class GalleryPendingUserHelper {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	$decodedUserName = $pendingUser->getUserName();
+	GalleryUtilities::unsanitizeInputValues($decodedUserName, false);
 	$generator =& $gallery->getUrlGenerator();
 	$confirmationUrl = $generator->generateUrl(
 	    array('controller' => 'register.ConfirmRegistration',
 		  /* Incoming url params will get sanitized, so decode here */
-		  'username' => GalleryUtilities::htmlEntityDecode($pendingUser->getUserName()),
+		  'username' => $decodedUserName,
 		  'key' => $pendingUser->getRegistrationKey()),
 	    array('forceFullUrl' => true, 'htmlEntities' => false));
 	$baseUrl = $generator->generateUrl(
@@ -178,8 +180,8 @@ class GalleryPendingUserHelper {
 		'modules/register/templates/ConfirmationEmail.tpl',
 		array(
 		    'name' => $pendingUser->getFullName(),
-			/* We send plain text email so decode entities in username */
-		    'username' => GalleryUtilities::htmlEntityDecode($pendingUser->getUserName()),
+		    /* We send plain text email so decode entities in username */
+		    'username' => $decodedUserName,
 		    'confirmationUrl' => $confirmationUrl,
 		    'baseUrl' => $baseUrl),
 		$params['from'],
@@ -230,12 +232,13 @@ class GalleryPendingUserHelper {
 	}
 
 	if (!empty($toList)) {
+	    $decodedUserName = $pendingUser->getUserName();
+	    GalleryUtilities::unsanitizeInputValues($decodedUserName, false);
 	    $ret = GalleryCoreApi::sendTemplatedEmail(
 		    'modules/register/templates/AdminEmail.tpl',
 		    array('name' => $pendingUser->getFullName(),
-			      /* We send plain text email so decode entities in username */
-			  'username' =>
-			      GalleryUtilities::htmlEntityDecode($pendingUser->getUserName()),
+			  /* We send plain text email so decode entities in username */
+			  'username' => $decodedUserName,
 			  'email' => $pendingUser->getEmail()),
 		    $params['from'],
 		    implode(',', $toList),

@@ -306,15 +306,9 @@ class GalleryDerivativeHelper_advanced {
     function addPreference($order, $itemId, $derivativeType, $derivativeOperations) {
 	if (is_array($itemId)) {
 	    /* Allow for adding same set of preferences to multiple items */
-	    $order = array($order);
-	    $derivativeType = array($derivativeType);
-	    $derivativeOperations = array($derivativeOperations);
-	    /* TODO: use array_fill when we require php 4.2+ */
-	    for ($i = 1; $i < count($itemId); $i++) {
-		$order[] = $order[0];
-		$derivativeType[] = $derivativeType[0];
-		$derivativeOperations[] = $derivativeOperations[0];
-	    }
+	    $order = array_fill(0, count($itemId), $order);
+	    $derivativeType = array_fill(0, count($itemId), $derivativeType);
+	    $derivativeOperations = array_fill(0, count($itemId), $derivativeOperations);
 	}
 	$ret = GalleryCoreApi::addMapEntry(
 	    'GalleryDerivativePreferencesMap',

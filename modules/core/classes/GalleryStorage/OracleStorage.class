@@ -140,10 +140,7 @@ class OracleStorage extends GalleryStorage {
 	     * 2 - number of rows
 	     */
 	    $markers = GalleryUtilities::makeMarkers(sizeof($args[1]));
-	    $rowList = array(); //php4.2: array-fill(1, $args[2], 'SELECT '.$markers.' FROM DUAL');
-	    for ($i = 0; $i < $args[2]; $i++) {
-		$rowList[] = 'SELECT ' . $markers . ' FROM DUAL';
-	    }
+	    $rowList = array_fill(0, $args[2], 'SELECT ' . $markers . ' FROM DUAL');
 	    $sql = 'INSERT INTO ' . $args[0] . ' (';
 	    $sql .= implode(', ', $args[1]);
 	    $sql .= ') ' . implode(' UNION ALL ', $rowList);
