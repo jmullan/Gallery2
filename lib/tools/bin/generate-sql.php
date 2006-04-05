@@ -1313,7 +1313,7 @@ class MSSqlGenerator extends BaseGenerator {
 
 		    $defaultValue = $this->getDefaultElement($c['child']);
 		    if (isset($defaultValue)) {
-			$crc = $this->getIndexCrc($c['child'][0]['content']);
+			$crc = $this->getIndexCrc(array($c['child'][0]));
 			$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'];
 			$output .= ' ADD CONSTRAINT ';
 			$output .= 'DB_COLUMN_PREFIX' . $c['child'][0]['content'] . '_' . $crc;
