@@ -742,7 +742,17 @@ class GalleryTemplateAdapter {
 	    return;
 	}
 
+	list ($ret, $pluginStatus) = GalleryCoreApi::fetchPluginStatus('module');
+	if ($ret) {
+	    /* What can we do here? */
+	    return '[container error]';
+	}
+
 	list ($module, $file) = explode('.', $params['type']);
+	if (empty($pluginStatus[$module]['active'])) {
+	    return $content;
+	}
+
 	/* Guard template vars so that the include doesn't pollute our namespace */
 	$save = $smarty->_tpl_vars;
 	$smarty->_smarty_include(
