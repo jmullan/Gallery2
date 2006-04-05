@@ -1703,7 +1703,7 @@ class CoreModuleExtras {
 	    $query = sprintf('
 	    UPDATE %sSchema
 	    SET %smajor=1, %sminor=3
-	    WHERE %sname=\'AccessMap\' AND %smajor=1 AND %sminor=2;',
+	    WHERE %sname=\'AccessMap\' AND %smajor=1 AND %sminor=2',
 			     $storage->_tablePrefix, $storage->_columnPrefix,
 			     $storage->_columnPrefix, $storage->_columnPrefix,
 			     $storage->_columnPrefix, $storage->_columnPrefix);
