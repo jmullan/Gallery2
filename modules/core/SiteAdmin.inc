@@ -70,13 +70,21 @@ class SiteAdminView extends GalleryView {
 	$subViewChoices = array();
 	ksort($moduleStatus);
 
+	/*
+	 * We show all site admin links to the Modules page because it will hide any links for
+	 * modules that are not active.
+	 */
+	$subView = GalleryUtilities::getRequestVariables('subView');
+	$showAllSiteAdminViews = ($subView == 'core.AdminModules');
+
 	foreach ($moduleStatus as $moduleId => $status) {
-	    if (empty($status['active'])) {
+	    if (empty($status['active']) && !$showAllSiteAdminViews) {
 		continue;
 	    }
 
 	    /* Get the selected module's admin view */
-	    if (in_array('getSiteAdminViews', explode('|', $status['callbacks']))) {
+	    if (in_array('getSiteAdminViews', explode('|', $status['callbacks'])) ||
+		$showAllSiteAdminViews) {
 		list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 		if ($ret) {
 		    if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {

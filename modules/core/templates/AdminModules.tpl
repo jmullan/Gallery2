@@ -4,36 +4,116 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
+<script type="text/javascript">
+  //<![CDATA[
+  contexts = new Array();
+
+  var stateData = {ldelim}
+    "inactive" : {ldelim}
+      "img.src" : "{g->url href="modules/core/data/module-inactive.gif"}",
+      "img.alt" : "{g->text text="Status: Inactive"}",
+      "actions" : {ldelim} "activate": 1, "uninstall" : 1 {rdelim}
+    {rdelim},
+    "active" : {ldelim}
+      "img.src" : "{g->url href="modules/core/data/module-active.gif"}",
+      "img.alt" : "{g->text text="Status: Active"}",
+      "actions" : {ldelim} "deactivate": 1 {rdelim}
+    {rdelim},
+    "uninstalled" : {ldelim}
+      "img.src" : "{g->url href="modules/core/data/module-install.gif"}",
+      "img.alt" : "{g->text text="Status: Not Installed"}",
+      "actions" : {ldelim} "install": 1 {rdelim}
+    {rdelim},
+    "unupgraded" : {ldelim}
+      "img.src" : "{g->url href="modules/core/data/module-upgrade.gif"}",
+      "img.alt" : "{g->text text="Status: Upgrade Required (Inactive)"}",
+      "actions" : {ldelim} "upgrade": 1 {rdelim}
+    {rdelim},
+    "incompatible" : {ldelim}
+      "img.src" : "{g->url href="modules/core/data/module-incompatible.gif"}",
+      "img.alt" : "{g->text text="Status: Incompatible Module (Inactive)"}",
+      "actions" : {ldelim} {rdelim}
+    {rdelim},
+    "unconfigured" : {ldelim}
+      "img.src" : "{g->url href="modules/core/data/module-inactive.gif"}",
+      "img.alt" : "{g->text text="Status: Inactive (Configuration Required)"}",
+      "actions" : {ldelim} "configure" : 1, "uninstall" : 1 {rdelim}
+    {rdelim}
+  {rdelim};
+  var errorPageUrl = '{g->url arg1="view=core.ErrorPage" htmlEntities=0}';
+
+{literal}
+  var allActions = [ "install", "configure", "upgrade", "activate", "deactivate", "uninstall" ];
+  function updateModuleState(moduleId, state) {
+    icon = document.getElementById("module-icon-" + moduleId);
+    icon.src = stateData[state]['img.src'];
+    icon.alt = stateData[state]['img.alt'];
+    for (var i in allActions) {
+      var node = document.getElementById("action-" + allActions[i] + "-" + moduleId);
+      if (node) {
+	node.style.display = stateData[state]['actions'][allActions[i]] ? 'inline' : 'none';
+      }
+    }
+
+    var re = new RegExp().compile('gbLink-' + moduleId + '_');
+    var links = document.getElementsByTagName("li");
+    for (i in links) {
+      if (re.test(links[i].className)) {
+        links[i].style.display = (state == 'active') ? 'block' : 'none';
+      }
+    }
+  }
+
+  function setModuleBusyStatus(moduleId, makeBusy) {
+    var row = document.getElementById("module-row-" + moduleId);
+    if (makeBusy) {
+      row.className = row.className + " gbBusy";
+    } else {
+      row.className = row.className.replace(" gbBusy", "");
+    }
+  }
+
+  function performModuleAction(moduleId, url) {
+    if (contexts[moduleId]) {
+      return;
+    }
+
+    contexts[moduleId] = Array();
+    contexts[moduleId]['connection'] = GetXmlHttp();
+
+    var callback = function(response) {
+      if (response.readyState != 4) {
+	return;
+      }
+
+      eval("var result = " + response.responseText)
+      if (result['status'] == 'success') {
+        for (var stateChangeModuleId in result['states']) {
+          updateModuleState(stateChangeModuleId, result['states'][stateChangeModuleId]);
+        }
+      } else if (result['status'] == 'redirect') {
+	document.location.href = result['redirect'];
+      } else if (result['status'] == 'error') {
+	document.location.href = errorPageUrl;
+      }
+
+      setModuleBusyStatus(moduleId, false);
+      delete(contexts[moduleId]);
+    }
+
+    SendHttpGet(contexts[moduleId]['connection'], url, "", callback);
+    setModuleBusyStatus(moduleId, true);
+
+    return false;
+  }
+
+  //]]>
+</script>
+{/literal}
+
 <div class="gbBlock gcBackground1">
   <h2> {g->text text="Gallery Modules"} </h2>
 </div>
-
-{if !empty($status)}
-<div class="gbBlock"><h2 class="giSuccess">
-  {if isset($status.installed)}
-    {if !empty($status.autoConfigured)}
-      {g->text text="Successfully installed and auto-configured module %s" arg1=$status.installed}
-    {else}
-      {g->text text="Successfully installed module %s" arg1=$status.installed}
-    {/if}
-  {/if}
-  {if isset($status.configured)}
-    {g->text text="Successfully configured module %s" arg1=$status.configured}
-  {/if}
-  {if isset($status.upgraded)}
-    {g->text text="Successfully upgraded module %s" arg1=$status.upgraded}
-  {/if}
-  {if isset($status.activated)}
-    {g->text text="Successfully activated module %s" arg1=$status.activated}
-  {/if}
-  {if isset($status.deactivated)}
-    {g->text text="Successfully deactivated module %s" arg1=$status.deactivated}
-  {/if}
-  {if isset($status.uninstalled)}
-    {g->text text="Successfully uninstalled module %s" arg1=$status.uninstalled}
-  {/if}
-</h2></div>
-{/if}
 
 <div class="gbBlock">
   <p class="giDescription">
@@ -60,28 +140,9 @@
       {/if}
       {assign var="group" value=$module.group}
 
-      <tr class="{cycle values="gbEven,gbOdd"}">
+      <tr id="module-row-{$module.id}" class="{cycle values="gbEven,gbOdd"}">
 	<td>
-	  {if $module.state == 'install'}
-	  <img src="{g->url href="modules/core/data/module-install.gif"}" width="13" height="13"
-	       alt="{g->text text="Status: Not Installed"}" />
-	  {/if}
-	  {if $module.state == 'active'}
-	  <img src="{g->url href="modules/core/data/module-active.gif"}" width="13" height="13"
-	       alt="{g->text text="Status: Active"}" />
-	  {/if}
-	  {if $module.state == 'inactive'}
-	  <img src="{g->url href="modules/core/data/module-inactive.gif"}" width="13" height="13"
-	       alt="{g->text text="Status: Inactive"}" />
-	  {/if}
-	  {if $module.state == 'upgrade'}
-	  <img src="{g->url href="modules/core/data/module-upgrade.gif"}" width="13" height="13"
-	       alt="{g->text text="Status: Upgrade Required (Inactive)"}" />
-	  {/if}
-	  {if $module.state == 'incompatible'}
-	  <img src="{g->url href="modules/core/data/module-incompatible.gif"}" width="13"
-	       height="13" alt="{g->text text="Status: Incompatible Module (Inactive)"}" />
-	  {/if}
+	  <img id="module-icon-{$module.id}" src="" width="13" height="13" alt="" />
 	</td>
 
 	<td>
@@ -117,24 +178,29 @@
 	</td>
 
 	<td>
-	  {if (!empty($module.action))}
-	    {foreach name=actions from=$module.action item=action}{strip}
-	      {if !$smarty.foreach.actions.first}
-		<br/>
-	      {/if}
-	      {if (empty($action.controller)) }
-		<a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=`$action.view`"}">
-		  {$action.text}
-		</a>
-	      {else}
-		<a href="{g->url arg1="controller=`$action.controller`" arg2="moduleId=`$action.moduleId`" arg3="action=`$action.action`"}">
-		  {$action.text}
-		</a>
-	      {/if}
-	    {/strip}{/foreach}
-	  {else}
+          {if $module.id == 'core' || $module.state == 'incompatible'}
 	    &nbsp;
+	  {else}
+            <a style="cursor: pointer" id="action-install-{$module.id}" onclick="performModuleAction('{$module.id}', '{g->url arg1="view=core.ModuleCallback" arg2="moduleId=`$module.id`" arg3="command=installModule"}')">
+              {g->text text="install"}
+            </a>
+            <a style="cursor: pointer" id="action-upgrade-{$module.id}" onclick="performModuleAction('{$module.id}', '{g->url arg1="view=core.ModuleCallback" arg2="moduleId=`$module.id`" arg3="command=upgradeModule"}')">
+              {g->text text="upgrade"}
+            </a>
+            <a style="cursor: pointer" id="action-configure-{$module.id}" onclick="performModuleAction('{$module.id}', '{g->url arg1="view=core.ModuleCallback" arg2="moduleId=`$module.id`" arg3="command=configureModule"}')">
+              {g->text text="configure"}
+            </a>
+            <a style="cursor: pointer" id="action-activate-{$module.id}" onclick="performModuleAction('{$module.id}', '{g->url arg1="view=core.ModuleCallback" arg2="moduleId=`$module.id`" arg3="command=activateModule"}')">
+              {g->text text="activate"}
+            </a>
+            <a style="cursor: pointer" id="action-deactivate-{$module.id}" onclick="performModuleAction('{$module.id}', '{g->url arg1="view=core.ModuleCallback" arg2="moduleId=`$module.id`" arg3="command=deactivateModule"}')">
+              {g->text text="deactivate"}
+            </a>
+            <a style="cursor: pointer" id="action-uninstall-{$module.id}" onclick="performModuleAction('{$module.id}', '{g->url arg1="view=core.ModuleCallback" arg2="moduleId=`$module.id`" arg3="command=uninstallModule"}')">
+              {g->text text="uninstall"}
+            </a>
 	  {/if}
+          <script type="text/javascript"> updateModuleState('{$module.id}', '{$module.state}'); </script>
 	</td>
       </tr>
     {/foreach}

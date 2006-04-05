@@ -40,6 +40,13 @@ class ErrorPageView extends GalleryView {
     }
 
     /**
+     * @see GalleryView::getViewType()
+     */
+    function getViewType() {
+	return VIEW_TYPE_ERROR;
+    }
+
+    /**
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
@@ -47,14 +54,26 @@ class ErrorPageView extends GalleryView {
 
 	$ErrorPage = array();
 
+	$error = null;
+	if (isset($this->_error)) {
+	    $error = $this->_error;
+	} else {
+	    $session =& $gallery->getSession();
+	    $error = $session->get('core.error');
+	    if ($error) {
+		GalleryCoreApi::requireOnce('modules/core/classes/GalleryStatus.class');
+		$error = unserialize($error);
+	    }
+	}
+
 	list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
 	$ErrorPage['isAdmin'] = (!$ret && $isAdmin);
 	if ($gallery->getDebug() || $ErrorPage['isAdmin']) {
-	    $ErrorPage['stackTrace'] = $this->_error->getAsHtml($isAdmin);
+	    $ErrorPage['stackTrace'] = $error->getAsHtml($isAdmin);
 	}
 
 	/* Landing page for errors.. */
-	$errorCode = $this->_error->getErrorCode();
+	$errorCode = $error->getErrorCode();
 	if ($errorCode & ERROR_OBSOLETE_DATA) {
 	    $ErrorPage['code']['obsoleteData'] = true;
 	}

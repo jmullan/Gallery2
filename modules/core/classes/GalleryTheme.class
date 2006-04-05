@@ -744,8 +744,10 @@ class GalleryTheme extends GalleryPlugin {
 	    $theme['params'][$blockKey] = unserialize($theme['params'][$blockKey]);
 
 	    $seen = array();
-	    foreach ($theme['params'][$blockKey] as $block) {
-		$seen[$block[0]][] = $block[1];
+	    if ($theme['params'][$blockKey]) {
+		foreach ($theme['params'][$blockKey] as $block) {
+		    $seen[$block[0]][] = $block[1];
+		}
 	    }
 
 	    foreach ($seen as $blockId => $blockParams) {
@@ -965,6 +967,16 @@ class GalleryTheme extends GalleryPlugin {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    break;
+
+	case VIEW_TYPE_ERROR:
+	    $theme['pageType'] = 'error';
+	    $theme['errorTemplate'] = $viewResults['body'];
+	    list ($ret, $result) = $this->showErrorPage($template);
+	    if ($ret) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    break;
+
 
 	default: /* VIEW_TYPE_MODULE */
 	    $theme['pageType'] = 'module';

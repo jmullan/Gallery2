@@ -17,7 +17,7 @@
     <td id="gsSidebarCol"><div id="gsSidebar" class="gcBorder1">
       <div class="gbBlock">
 	<h2> {g->text text="Admin Options"} </h2>
-	<ul>
+	<ul id="gbSiteAdminLinks">
 	  {foreach from=$SiteAdmin.subViewGroups item=group}
 	  <li> <span>{$group.0.groupLabel}</span>
 	    <ul>
