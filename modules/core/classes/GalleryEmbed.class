@@ -816,7 +816,7 @@ class GalleryEmbed {
 	    /* Load the G2 templating engine */
 	    GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplate.class');
 	    $template = new GalleryTemplate(dirname(__FILE__) . '/../../..');
-	    $template->setVariable('l10Domain', 'module_' . $moduleId);
+	    $template->setVariable('l10Domain', 'modules_' . $moduleId);
 
 	    if (!isset($params['maxSize'])) {
 		$params['maxSize'] = null;
