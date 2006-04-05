@@ -494,11 +494,29 @@ class PostgresGenerator extends BaseGenerator {
 	    foreach ($child as $c) {
 		switch ($c['name']) {
 		case 'COLUMN':
-		    /* column-name */
+		    /* Add a new column, optionally with a default value and a not null constraint
+		     * In PG7, we can not set the default value in the add column statement
+		     * (PG8 doesn't have this limitation though). Therefore do it in 3 steps:
+		     * 1. Add the column without any options.
+		     * 2. Set the default value (only affects future rows) and add the default
+		     *    value for existing rows.
+		     * 3. Add the not-null constraint
+		     */
 		    $output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'];
 		    $output .= ' ADD COLUMN DB_COLUMN_PREFIX' . $c['child'][0]['content'];
-		    $output .= ' ' . $this->columnDefinition($c['child'], false, true);
+		    $output .= ' ' . $this->columnDefinition($c['child'], false, false);
 		    $output .= ";\n\n";
+
+		    $defaultValue = $this->getDefaultElement($c['child']);
+		    if (isset($defaultValue)) {
+			$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'];
+			$output .= ' ALTER COLUMN DB_COLUMN_PREFIX' . $c['child'][0]['content'];
+			$output .= " SET DEFAULT '$defaultValue';\n\n";
+
+			$output .= 'UPDATE DB_TABLE_PREFIX' . $parent['child'][0]['content'];
+			$output .= ' SET DB_COLUMN_PREFIX' . $c['child'][0]['content'];
+			$output .= " = '$defaultValue';\n\n";
+		    }
 
 		    if ($this->getNotNullElement($c['child'])) {
 			$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
