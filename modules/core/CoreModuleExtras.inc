@@ -69,10 +69,8 @@ class CoreModuleExtras {
 		$currentVersion = '0';
 	    }
 	}
-	if (substr($currentVersion, 0, 6) == '1.0.0.') {
-	    /* Enable upgrade from any Gallery 2.0.x version */
-	    $currentVersion = '1.0.0.x';
-	}
+	/* Enable upgrade from any patch release version */
+	$currentVersion = preg_replace('/^(1\.[01]\.0)\.\d+$/', '$1.x', $currentVersion);
 
 	/**
 	 * README: How to update the block below.
@@ -1880,6 +1878,10 @@ class CoreModuleExtras {
 	case '1.0.34':
 	    /* 2.1 Release! */
 
+	case '1.1.0':
+	case '1.1.0.x':
+	    /* New versions of ADODB and Smarty */
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
@@ -1929,9 +1931,7 @@ class CoreModuleExtras {
 	global $gallery;
 	$configChanges = array();
 
-	if (substr($currentVersion, 0, 6) == '1.0.0.') {
-	    $currentVersion = '1.0.0.x';
-	}
+	$currentVersion = preg_replace('/^(1\.[01]\.0)\.\d+$/', '$1.x', $currentVersion);
 
 	/**
 	 * README: How to update the block below.
@@ -2131,6 +2131,8 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	case '1.0.32':
 	case '1.0.33':
 	case '1.0.34':
+	case '1.1.0':
+	case '1.1.0.x':
 
 	case 'end of upgrade path':
 	    /*
