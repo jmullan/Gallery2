@@ -1878,7 +1878,7 @@ class CoreModuleExtras {
 
 	case '1.1.0':
 	case '1.1.0.x':
-	    /* New versions of ADODB and Smarty */
+	    /* Minimum PHP version now 4.3.0; new versions of ADODB and Smarty */
 
 	case 'end of upgrade path':
 	    /*
