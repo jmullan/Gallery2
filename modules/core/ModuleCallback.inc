@@ -188,13 +188,6 @@ class ModuleCallbackView extends GalleryView {
 	    break;
 
 	case 'upgradeModule':
-	    $ret = $module->installOrUpgrade();
-	    if ($ret) {
-		return $ret;
-	    }
-	    $result['status'] = 'success';
-	    break;
-
 	case 'installModule':
 	    $ret = $module->installOrUpgrade();
 	    if ($ret) {

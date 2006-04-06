@@ -81,6 +81,10 @@ class ModuleCallbackTest extends GalleryTestCase {
 	$this->assertEquals(array('status' => 'success'), $result);
 	$this->assert($this->_testModule->wasCalled('installOrUpgrade'),
 		      'installOrUpgrade not called');
+	$this->assert($this->_testModule->wasCalled('autoConfigure'),
+		      'autoConfigure not called');
+	$this->assert($this->_testModule->wasCalled('activate'),
+		      'activate not called');
     }
 
     /**
