@@ -85,12 +85,17 @@ class SiteAdminView extends GalleryView {
 	    /* Get the selected module's admin view */
 	    if (in_array('getSiteAdminViews', explode('|', $status['callbacks'])) ||
 		$showAllSiteAdminViews) {
-		list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
-		if ($ret) {
-		    if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
-			continue;
+		if ($showAllSiteAdminViews) {
+		    list($ret, $module) =
+			GalleryCoreApi::loadPlugin('module', $moduleId, true, false);
+		} else {
+		    list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
+		    if ($ret) {
+			if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
+			    continue;
+			}
+			return array($ret, null);
 		    }
-		    return array($ret, null);
 		}
 
 		list ($ret, $moduleViews) = $module->getSiteAdminViews();
