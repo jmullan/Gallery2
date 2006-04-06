@@ -226,11 +226,13 @@ class GalleryPluginHelper_simple {
      * @param string the plugin id
      * @param string the parameter name
      * @param string optional item id
+     * @param bool ignore the disk cache (optional, default=false)
      * @return array object GalleryStatus a status code
      *               string a value
      * @static
      */
-    function getParameter($pluginType, $pluginId, $parameterName, $itemId=0) {
+    function getParameter($pluginType, $pluginId, $parameterName, $itemId=0,
+			  $ignoreDiskCache=false) {
 	global $gallery;
 
 	if ($gallery->getDebug()) {
@@ -242,8 +244,8 @@ class GalleryPluginHelper_simple {
 	    $itemId = 0;
 	}
 
-	list ($ret, $params) =
-	    GalleryPluginHelper_simple::_fetchAllParameters($pluginType, $pluginId, $itemId);
+	list ($ret, $params) = GalleryPluginHelper_simple::_fetchAllParameters(
+		$pluginType, $pluginId, $itemId, $ignoreDiskCache);
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -262,17 +264,18 @@ class GalleryPluginHelper_simple {
      * @param string the type of the plugin
      * @param string the id of the plugin
      * @param integer the id of item (or null/zero for a global setting)
+     * @param bool ignore the disk cache (optional, default=false)
      * @return array object GalleryStatus a status code
      *               array (parameterName => parameterValue)
      * @static
      */
-    function fetchAllParameters($pluginType, $pluginId, $itemId=0) {
+    function fetchAllParameters($pluginType, $pluginId, $itemId=0, $ignoreDiskCache=false) {
 	/* Convert null to 0, just in case */
 	if ($itemId == null) {
 	    $itemId = 0;
 	}
-	list ($ret, $params) =
-	    GalleryPluginHelper_simple::_fetchAllParameters($pluginType, $pluginId, $itemId);
+	list ($ret, $params) = GalleryPluginHelper_simple::_fetchAllParameters(
+		$pluginType, $pluginId, $itemId, $ignoreDiskCache);
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -285,11 +288,12 @@ class GalleryPluginHelper_simple {
      * @param string the type of the plugin
      * @param string the id of the plugin
      * @param mixed int id of item (or null/zero for a global setting) or array of ids
+     * @param bool ignore the cache (optional, default=false)
      * @return array object GalleryStatus a status code
      *               array (itemId/zero => array(parameterName => parameterValue), ..)
      * @static
      */
-    function _fetchAllParameters($pluginType, $pluginId, $itemId) {
+    function _fetchAllParameters($pluginType, $pluginId, $itemId, $ignoreDiskCache=false) {
 	global $gallery;
 	if (empty($pluginType) || empty($pluginId)) {
 	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
@@ -313,12 +317,14 @@ class GalleryPluginHelper_simple {
 		$data[$itemId] = GalleryDataCache::get($cacheKey);
 		continue;
 	    }
-	    $cacheData =& GalleryDataCache::getFromDisk(
-		array('type' => $pluginType, 'itemId' => $itemId, 'id' => $pluginId));
-	    if (isset($cacheData)) {
-		$data[$itemId] = $cacheData;
-		GalleryDataCache::put($cacheKey, $cacheData);
-		continue;
+	    if (!$ignoreDiskCache) {
+		$cacheData =& GalleryDataCache::getFromDisk(
+		    array('type' => $pluginType, 'itemId' => $itemId, 'id' => $pluginId));
+		if (isset($cacheData)) {
+		    $data[$itemId] = $cacheData;
+		    GalleryDataCache::put($cacheKey, $cacheData);
+		    continue;
+		}
 	    }
 	    $queryIds[] = (int)$itemId;
 	}
@@ -439,7 +445,7 @@ class GalleryPluginHelper_simple {
 				foreach ($frameworkParams as $paramName) {
 				    list ($ret, $plugins[$pluginId][$paramName]) =
 					GalleryPluginHelper_simple::getParameter(
-					    $pluginType, $pluginId, '_' . $paramName);
+					    $pluginType, $pluginId, '_' . $paramName, 0, true);
 				    if ($ret) {
 					return array($ret, null);
 				    }
