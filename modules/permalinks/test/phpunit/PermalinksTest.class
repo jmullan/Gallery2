@@ -143,7 +143,7 @@ class PermalinksTest extends GalleryTestCase {
 	if (!$ret) {
 	    return $this->assert(false, 'Expected an error');
 	}
-	$this->assert($ret->getErrorCode() & ERROR_COLLISION, 
+	$this->assert($ret->getErrorCode() & ERROR_COLLISION,
 	    'No collision reported, but expected one');
     }
 
