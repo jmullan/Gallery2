@@ -4,6 +4,7 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
+<script type="text/javascript" src="{g->url href="lib/prototype/prototype.js"}"></script>
 <script type="text/javascript">
   //<![CDATA[
   contexts = new Array();
@@ -44,12 +45,12 @@
 
 {literal}
   var allActions = [ "install", "configure", "upgrade", "activate", "deactivate", "uninstall" ];
-  function updateModuleState(moduleId, state) {
-    icon = document.getElementById("module-icon-" + moduleId);
+  function updateModuleState(moduleId, state, isSeedingRun) {
+    icon = $("module-icon-" + moduleId);
     icon.src = stateData[state]['img.src'];
     icon.alt = stateData[state]['img.alt'];
     for (var i in allActions) {
-      var node = document.getElementById("action-" + allActions[i] + "-" + moduleId);
+      var node = $("action-" + allActions[i] + "-" + moduleId);
       if (node) {
 	node.style.display = stateData[state]['actions'][allActions[i]] ? 'inline' : 'none';
       }
@@ -62,10 +63,14 @@
         links[i].style.display = (state == 'active') ? 'block' : 'none';
       }
     }
+
+    if (!isSeedingRun) {
+      addMessage(moduleId, "Module [" + moduleId + "] state set to " + state);
+    }
   }
 
   function setModuleBusyStatus(moduleId, makeBusy) {
-    var row = document.getElementById("module-row-" + moduleId);
+    var row = $("module-row-" + moduleId);
     if (makeBusy) {
       row.className = row.className + " gbBusy";
     } else {
@@ -79,7 +84,6 @@
     }
 
     contexts[moduleId] = Array();
-    contexts[moduleId]['connection'] = GetXmlHttp();
 
     var callback = function(response) {
       if (response.readyState != 4) {
@@ -89,7 +93,7 @@
       eval("var result = " + response.responseText)
       if (result['status'] == 'success') {
         for (var stateChangeModuleId in result['states']) {
-          updateModuleState(stateChangeModuleId, result['states'][stateChangeModuleId]);
+          updateModuleState(stateChangeModuleId, result['states'][stateChangeModuleId], false);
         }
       } else if (result['status'] == 'redirect') {
 	document.location.href = result['redirect'];
@@ -101,15 +105,54 @@
       delete(contexts[moduleId]);
     }
 
-    SendHttpGet(contexts[moduleId]['connection'], url, "", callback);
+    new Ajax.Request(url, {method: 'get', parameters: '', onComplete: callback});
     setModuleBusyStatus(moduleId, true);
 
     return false;
   }
 
+  var STATUS_COUNTER = 0;
+  var STATUS_BOX_ID = "gbModuleStatusUpdates";
+  addMessage = function(moduleId, message) {
+    var moduleStatus = document.createElement("div");
+    moduleStatus.id = "module-status-details-" + moduleId + "-" + (STATUS_COUNTER++);
+    moduleStatus.style.whiteSpace = "nowrap";
+    moduleStatus.appendChild(document.createTextNode(message));
+
+    var containerEl = $(STATUS_BOX_ID);
+    containerEl.appendChild(moduleStatus);
+    containerEl.style.display = "block";
+
+    var dimensions = Element.getDimensions(containerEl);
+    containerEl.style.left = ((document.width - dimensions.width) / 2) + "px";
+
+    updateStatusPosition();
+    setTimeout("removeMessage('" + moduleStatus.id + "')", 3000);
+  }
+
+  removeMessage = function(moduleStatusId) {
+    var containerEl = $(STATUS_BOX_ID);
+    var statusMessage = $(moduleStatusId);
+    if (statusMessage != null) {
+      containerEl.removeChild(statusMessage);
+    }
+
+    if (containerEl.childNodes.length == 0) {
+      containerEl.style.display = "none";
+    }
+  }
+
+  updateStatusPosition = function() {
+    var containerEl = $(STATUS_BOX_ID);
+    containerEl.style.top = document.getElementsByTagName("html")[0].scrollTop + "px";
+  }
+
+  Event.observe(window, "scroll", updateStatusPosition, false);
   //]]>
 </script>
 {/literal}
+
+<div id="gbModuleStatusUpdates"></div>
 
 <div class="gbBlock gcBackground1">
   <h2> {g->text text="Gallery Modules"} </h2>
@@ -141,7 +184,7 @@
       {assign var="group" value=$module.group}
 
       <tr id="module-row-{$module.id}" class="{cycle values="gbEven,gbOdd"}">
-	<td>
+	<td style="display: relative;">
 	  <img id="module-icon-{$module.id}" src="" width="13" height="13" alt="" />
 	</td>
 
@@ -200,7 +243,7 @@
               {g->text text="uninstall"}
             </a>
 	  {/if}
-          <script type="text/javascript"> updateModuleState('{$module.id}', '{$module.state}'); </script>
+          <script type="text/javascript"> updateModuleState('{$module.id}', '{$module.state}', true); </script>
 	</td>
       </tr>
     {/foreach}
