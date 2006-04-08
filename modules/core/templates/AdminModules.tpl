@@ -176,6 +176,36 @@
     {g->text text="Gallery features come as separate modules.  You can download and install modules to add more features to your Gallery, or you can disable features if you don't want to use them.  In order to use a feature, you must install, configure (if necessary) and activate it.  If you don't wish to use a feature, you can deactivate it."}
   </p>
 
+  {capture name=legend}
+  <div style="width: 100%; text-align: right">
+    <img src="{g->url href="modules/core/data/module-active.gif"}" width="13" height="13" alt="" />
+    <span style="margin-right: 10px; vertical-align: top">
+      {g->text text="up to date"}
+    </span>
+
+    <img src="{g->url href="modules/core/data/module-inactive.gif"}" width="13" height="13" alt="" >
+    <span style="margin-right: 10px; vertical-align: top">
+      {g->text text="disabled"}
+    </span>
+
+    <img src="{g->url href="modules/core/data/module-upgrade.gif"}" width="13" height="13" alt="" >
+    <span style="margin-right: 10px; vertical-align: top">
+      {g->text text="upgrade required"}
+    </span>
+
+    <img src="{g->url href="modules/core/data/module-install.gif"}" width="13" height="13" alt="" >
+    <span style="margin-right: 10px; vertical-align: top">
+      {g->text text="not installed"}
+    </span>
+
+    <img src="{g->url href="modules/core/data/module-incompatible.gif"}" width="13" height="13" alt="" >
+    <span style="margin-right: 10px; vertical-align: top">
+      {g->text text="incompatible"}
+    </span>
+  </div>
+  {/capture}
+  {$smarty.capture.legend}
+
   <table class="gbDataTable">
     {assign var="group" value=""}
     {foreach from=$AdminModules.modules item=module}
@@ -261,4 +291,5 @@
       </tr>
     {/foreach}
   </table>
+  {$smarty.capture.legend}
 </div>
