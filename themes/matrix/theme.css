@@ -329,7 +329,7 @@ table.gbDataTable th {
 }
 
 .gbBusy {
-    background-color: #ae9 !important;
+    background-color: #78D478 !important;
 }
 
 .gbOdd {
@@ -665,11 +665,24 @@ td.bsw_BlockCommands {
 }
 
 #gbModuleStatusUpdates {
-  position: absolute; 
-  font-size: 1.5em; 
+  position: absolute;
+  font-size: 1.5em;
+  display: none;
+  background: #999;
+}
+
+#gbModuleStatusUpdates div.giSuccess {
+  background: #5c0;
+  color: white;
   padding: 15px;
-  background: #FF0;
-  border: #333;
-  font-weight: bold;
-  display: none;  
+  width: 200px;
+  text-align: center;
+}
+
+#gbModuleStatusUpdates div.giWarning {
+  background: #c50;
+  color: white;
+  padding: 15px;
+  width: 200px;
+  text-align: center;
 }

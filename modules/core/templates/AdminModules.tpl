@@ -7,23 +7,27 @@
 <script type="text/javascript" src="{g->url href="lib/prototype/prototype.js"}"></script>
 <script type="text/javascript">
   //<![CDATA[
-  contexts = new Array();
+  var moduleNames = {ldelim} {foreach name=names from=$AdminModules.modules item=module}"{$module.id}":"{$module.name}"{if !$smarty.foreach.names.last}, {/if}{/foreach}{rdelim};
+  var contexts = new Array();
 
   var stateData = {ldelim}
     "inactive" : {ldelim}
       "img.src" : "{g->url href="modules/core/data/module-inactive.gif"}",
       "img.alt" : "{g->text text="Status: Inactive"}",
-      "actions" : {ldelim} "activate": 1, "uninstall" : 1 {rdelim}
+      "actions" : {ldelim} "activate": 1, "uninstall" : 1 {rdelim},
+      "message" : {ldelim} "type" : "giSuccess", "text" : "{g->text text="__MODULE__ deactivated"}" {rdelim}
     {rdelim},
     "active" : {ldelim}
       "img.src" : "{g->url href="modules/core/data/module-active.gif"}",
       "img.alt" : "{g->text text="Status: Active"}",
-      "actions" : {ldelim} "deactivate": 1 {rdelim}
+      "actions" : {ldelim} "deactivate": 1 {rdelim},
+      "message" : {ldelim} "type" : "giSuccess", "text" : "{g->text text="__MODULE__ activated"}" {rdelim}
     {rdelim},
     "uninstalled" : {ldelim}
       "img.src" : "{g->url href="modules/core/data/module-install.gif"}",
       "img.alt" : "{g->text text="Status: Not Installed"}",
-      "actions" : {ldelim} "install": 1 {rdelim}
+      "actions" : {ldelim} "install": 1 {rdelim},
+      "message" : {ldelim} "type" : "giSuccess", "text" : "{g->text text="__MODULE__ uninstalled"}" {rdelim}
     {rdelim},
     "unupgraded" : {ldelim}
       "img.src" : "{g->url href="modules/core/data/module-upgrade.gif"}",
@@ -38,14 +42,15 @@
     "unconfigured" : {ldelim}
       "img.src" : "{g->url href="modules/core/data/module-inactive.gif"}",
       "img.alt" : "{g->text text="Status: Inactive (Configuration Required)"}",
-      "actions" : {ldelim} "configure" : 1, "uninstall" : 1 {rdelim}
+      "actions" : {ldelim} "configure" : 1, "uninstall" : 1 {rdelim},
+      "message" : {ldelim} "type" : "giWarning", "text" : "{g->text text="__MODULE__ needs configuration"}" {rdelim}
     {rdelim}
   {rdelim};
   var errorPageUrl = '{g->url arg1="view=core.ErrorPage" htmlEntities=0}';
 
 {literal}
   var allActions = [ "install", "configure", "upgrade", "activate", "deactivate", "uninstall" ];
-  function updateModuleState(moduleId, state, isSeedingRun) {
+  function updateModuleState(moduleId, state, noAlertMessage) {
     icon = $("module-icon-" + moduleId);
     icon.src = stateData[state]['img.src'];
     icon.alt = stateData[state]['img.alt'];
@@ -64,8 +69,8 @@
       }
     }
 
-    if (!isSeedingRun) {
-      addMessage(moduleId, "Module [" + moduleId + "] state set to " + state);
+    if (!noAlertMessage && stateData[state]['message']) {
+      addMessage(moduleId, stateData[state]['message']['text'], stateData[state]['message']['type']);
     }
   }
 
@@ -105,26 +110,34 @@
       delete(contexts[moduleId]);
     }
 
+    url += '&rnd=' + Math.random();
     new Ajax.Request(url, {method: 'get', parameters: '', onComplete: callback});
     setModuleBusyStatus(moduleId, true);
 
     return false;
   }
 
-  var STATUS_COUNTER = 0;
   var STATUS_BOX_ID = "gbModuleStatusUpdates";
-  addMessage = function(moduleId, message) {
+  addMessage = function(moduleId, messageText, messageType) {
     var moduleStatus = document.createElement("div");
-    moduleStatus.id = "module-status-details-" + moduleId + "-" + (STATUS_COUNTER++);
+    var detailsId = "module-status-details-" + moduleId;
+    if ($(detailsId)) {
+      $(STATUS_BOX_ID).removeChild($(detailsId));
+    }
+
+    moduleStatus.className = messageType;
+    moduleStatus.id = detailsId;
     moduleStatus.style.whiteSpace = "nowrap";
-    moduleStatus.appendChild(document.createTextNode(message));
+    var text = messageText.replace('__MODULE__', moduleNames[moduleId]);
+    moduleStatus.appendChild(document.createTextNode(text));
 
     var containerEl = $(STATUS_BOX_ID);
     containerEl.appendChild(moduleStatus);
     containerEl.style.display = "block";
 
-    var dimensions = Element.getDimensions(containerEl);
-    containerEl.style.left = ((document.width - dimensions.width) / 2) + "px";
+    var statusDimensions = Element.getDimensions(containerEl);
+    var bodyDimensions = Element.getDimensions(document.body);
+    containerEl.style.left = ((bodyDimensions.width - statusDimensions.width) / 2) + "px";
 
     updateStatusPosition();
     setTimeout("removeMessage('" + moduleStatus.id + "')", 3000);
