@@ -58,16 +58,21 @@ class AdminModulesVerifyUninstallController extends GalleryController {
 		return array($ret, null);
 	    }
 
-	    if (!$isActive) {
+	    if ($isActive) {
+		list ($ret, $redirect) = $module->deactivate();
+		if ($ret) {
+		    return array($ret, null);
+		}
+	    }
+
+	    if (empty($redirect)) {
 		$ret = $module->uninstall();
 		if ($ret) {
 		    return array($ret, null);
 		}
-		if (empty($redirect)) {
-		    $redirect['view'] = 'core.SiteAdmin';
-		    $redirect['subView'] = 'core.AdminModules';
-		}
 		$status['uninstalled'] = $module->translate($module->getName());
+		$redirect['view'] = 'core.SiteAdmin';
+		$redirect['subView'] = 'core.AdminModules';
 	    }
 	}
 

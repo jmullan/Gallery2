@@ -66,7 +66,7 @@ class AdminModulesVerifyUninstallControllerTest extends GalleryControllerTestCas
 	$this->assert($this->_testModule->wasCalled('uninstall'), 'uninstall not called');
     }
 
-    /* Uninstall a module that is active (should fail silently) */
+    /* Uninstall a module that is active */
     function testUninstallActiveModule() {
 	GalleryUtilities::putRequestVariable('moduleId',
 					     'AdminModulesVerifyUninstallControllerTest');
@@ -74,11 +74,30 @@ class AdminModulesVerifyUninstallControllerTest extends GalleryControllerTestCas
 	$this->_testModule->_isActive = true;
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
 						      'subView' => 'core.AdminModules'),
+				  'status' => array('uninstalled' =>
+						    'AdminModulesVerifyUninstall Controller Test'),
+				  'error' => array()),
+			    $results);
+	$this->assert($this->_testModule->wasCalled('deactivate'), 'deactivate not called');
+	$this->assert($this->_testModule->wasCalled('uninstall'), 'uninstall not called');
+    }
+
+    /* Uninstall a module that can't be deactived (should fail with a redirect) */
+    function testUninstallModuleThatCantBeDeactivated() {
+	GalleryUtilities::putRequestVariable('moduleId',
+					     'AdminModulesVerifyUninstallControllerTest');
+	GalleryUtilities::putRequestVariable('form[action][uninstall]', '1');
+	$this->_testModule->_isActive = true;
+	$this->_testModule->_deactivate = array(null, array('view' => 'some.Error'));
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'some.Error'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
+	$this->assert($this->_testModule->wasCalled('deactivate'), 'deactivate not called');
 	$this->assert(!$this->_testModule->wasCalled('uninstall'), 'uninstall called');
     }
 }
@@ -116,6 +135,16 @@ class AdminModulesVerifyUninstallControllerTestModule {
     function uninstall() {
 	$this->_setCalled('uninstall');
 	return null;
+    }
+
+    function deactivate() {
+	$this->_setCalled('deactivate');
+	$singleton =& $this->getSingleton();
+	if (isset($singleton->_deactivate)) {
+	    return $singleton->_deactivate;
+	} else {
+	    return array(null, array());
+	}
     }
 
     function _setCalled($function) {

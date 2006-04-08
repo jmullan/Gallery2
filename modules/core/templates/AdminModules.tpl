@@ -20,7 +20,7 @@
     "active" : {ldelim}
       "img.src" : "{g->url href="modules/core/data/module-active.gif"}",
       "img.alt" : "{g->text text="Status: Active"}",
-      "actions" : {ldelim} "deactivate": 1 {rdelim},
+      "actions" : {ldelim} "deactivate": 1, "uninstall" : 1  {rdelim},
       "message" : {ldelim} "type" : "giSuccess", "text" : "{g->text text="__MODULE__ activated"}" {rdelim}
     {rdelim},
     "uninstalled" : {ldelim}
@@ -183,22 +183,22 @@
       {g->text text="up to date"}
     </span>
 
-    <img src="{g->url href="modules/core/data/module-inactive.gif"}" width="13" height="13" alt="" >
+    <img src="{g->url href="modules/core/data/module-inactive.gif"}" width="13" height="13" alt="" />
     <span style="margin-right: 10px; vertical-align: top">
       {g->text text="disabled"}
     </span>
 
-    <img src="{g->url href="modules/core/data/module-upgrade.gif"}" width="13" height="13" alt="" >
+    <img src="{g->url href="modules/core/data/module-upgrade.gif"}" width="13" height="13" alt="" />
     <span style="margin-right: 10px; vertical-align: top">
       {g->text text="upgrade required"}
     </span>
 
-    <img src="{g->url href="modules/core/data/module-install.gif"}" width="13" height="13" alt="" >
+    <img src="{g->url href="modules/core/data/module-install.gif"}" width="13" height="13" alt="" />
     <span style="margin-right: 10px; vertical-align: top">
       {g->text text="not installed"}
     </span>
 
-    <img src="{g->url href="modules/core/data/module-incompatible.gif"}" width="13" height="13" alt="" >
+    <img src="{g->url href="modules/core/data/module-incompatible.gif"}" width="13" height="13" alt="" />
     <span style="margin-right: 10px; vertical-align: top">
       {g->text text="incompatible"}
     </span>
@@ -263,28 +263,40 @@
 	  {/if}
 	</td>
 
-	<td>
+	<td style="width: 150px">
           {if $module.id == 'core' || $module.state == 'incompatible'}
 	    &nbsp;
 	  {else}
-            <a style="cursor: pointer" id="action-install-{$module.id}" onclick="performModuleAction('{$module.id}', '{g->url arg1="view=core.ModuleCallback" arg2="moduleId=`$module.id`" arg3="command=installModule"}')">
-              {g->text text="install"}
-            </a>
-            <a style="cursor: pointer" id="action-upgrade-{$module.id}" onclick="performModuleAction('{$module.id}', '{g->url arg1="view=core.ModuleCallback" arg2="moduleId=`$module.id`" arg3="command=upgradeModule"}')">
-              {g->text text="upgrade"}
-            </a>
-            <a style="cursor: pointer" id="action-configure-{$module.id}" onclick="performModuleAction('{$module.id}', '{g->url arg1="view=core.ModuleCallback" arg2="moduleId=`$module.id`" arg3="command=configureModule"}')">
-              {g->text text="configure"}
-            </a>
-            <a style="cursor: pointer" id="action-activate-{$module.id}" onclick="performModuleAction('{$module.id}', '{g->url arg1="view=core.ModuleCallback" arg2="moduleId=`$module.id`" arg3="command=activateModule"}')">
-              {g->text text="activate"}
-            </a>
-            <a style="cursor: pointer" id="action-deactivate-{$module.id}" onclick="performModuleAction('{$module.id}', '{g->url arg1="view=core.ModuleCallback" arg2="moduleId=`$module.id`" arg3="command=deactivateModule"}')">
-              {g->text text="deactivate"}
-            </a>
-            <a style="cursor: pointer" id="action-uninstall-{$module.id}" onclick="performModuleAction('{$module.id}', '{g->url arg1="view=core.ModuleCallback" arg2="moduleId=`$module.id`" arg3="command=uninstallModule"}')">
-              {g->text text="uninstall"}
-            </a>
+            <span id="action-install-{$module.id}">
+              <a style="cursor: pointer" onclick="performModuleAction('{$module.id}', '{g->url arg1="view=core.ModuleCallback" arg2="moduleId=`$module.id`" arg3="command=installModule"}')">
+                {g->text text="install"}
+              </a>
+            </span>
+            <span id="action-upgrade-{$module.id}">
+              <a style="cursor: pointer" onclick="performModuleAction('{$module.id}', '{g->url arg1="view=core.ModuleCallback" arg2="moduleId=`$module.id`" arg3="command=upgradeModule"}')">
+                {g->text text="upgrade"}
+              </a>
+            </span>
+            <span id="action-configure-{$module.id}">
+              <a style="cursor: pointer" onclick="performModuleAction('{$module.id}', '{g->url arg1="view=core.ModuleCallback" arg2="moduleId=`$module.id`" arg3="command=configureModule"}')">
+                {g->text text="configure"}
+              </a> |
+            </span>
+            <span id="action-activate-{$module.id}">
+              <a style="cursor: pointer" onclick="performModuleAction('{$module.id}', '{g->url arg1="view=core.ModuleCallback" arg2="moduleId=`$module.id`" arg3="command=activateModule"}')">
+                {g->text text="activate"}
+              </a> |
+            </span>
+            <span id="action-deactivate-{$module.id}">
+              <a style="cursor: pointer" onclick="performModuleAction('{$module.id}', '{g->url arg1="view=core.ModuleCallback" arg2="moduleId=`$module.id`" arg3="command=deactivateModule"}')">
+                {g->text text="deactivate"}
+              </a> |
+            </span>
+            <span id="action-uninstall-{$module.id}">
+              <a style="cursor: pointer" onclick="performModuleAction('{$module.id}', '{g->url arg1="view=core.ModuleCallback" arg2="moduleId=`$module.id`" arg3="command=uninstallModule"}')">
+                {g->text text="uninstall"}
+              </a>
+            </span>
 	  {/if}
           <script type="text/javascript"> updateModuleState('{$module.id}', '{$module.state}', true); </script>
 	</td>
