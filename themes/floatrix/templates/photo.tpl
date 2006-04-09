@@ -52,7 +52,15 @@
               {/capture}
     
               {if ($image.viewInline)}
-                {if isset($theme.photoFrame)}
+                {if (count($theme.imageViews) > 1)}
+		  {if ($theme.imageViewsIndex < 1)}
+		    {assign var="imageViewsLink" value=$theme.imageViewsIndex+1}
+		  {else}
+		    {assign var="imageViewsLink" value=$theme.imageViewsIndex-1}
+		  {/if}
+		  <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$theme.item.id`" arg3="imageViewsIndex=`$imageViewsLink`"}">
+		{/if}
+		{if isset($theme.photoFrame)}
                   {g->container type="imageframe.ImageFrame" frame=$theme.photoFrame
                                 width=$image.width height=$image.height}
                     {g->image id="%ID%" item=$theme.item image=$image
@@ -61,6 +69,9 @@
                 {else}
                   {g->image item=$theme.item image=$image fallback=$smarty.capture.fallback}
                 {/if}
+                {if count($theme.imageViews) > 1 }
+		  </a>
+		{/if}
               {else}
                 {$smarty.capture.fallback}
               {/if}
