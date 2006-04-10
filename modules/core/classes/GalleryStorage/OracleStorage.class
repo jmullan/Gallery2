@@ -79,9 +79,10 @@ class OracleStorage extends GalleryStorage {
      * @see GalleryStorage::_setConnectionSettings
      */
     function _setConnectionSettings(&$db) {
-    	@putenv("NLS_LANG=UTF8");
-    	
-    	return null;
+	/* May cause "ORA-12705: Cannot access NLS data files or invalid environment specified" */
+	/* @putenv("NLS_LANG=UTF8"); */
+
+	return null;
     }
 
     /**
@@ -100,7 +101,7 @@ class OracleStorage extends GalleryStorage {
 	case 'BIT_OR':
 	    $sql = 'BIT_OR(' . $args[0] . ')';
             break;
-	    
+
 	case 'AS':
 	    $sql = '';
 	    break;
@@ -134,7 +135,7 @@ class OracleStorage extends GalleryStorage {
 	    break;
 
 	case 'MULTI_INSERT':
-	    /* 
+	    /*
 	     * 0 - table name
 	     * 1 - array of column names
 	     * 2 - number of rows
