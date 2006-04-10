@@ -63,18 +63,6 @@ class ViewCartView extends GalleryView {
 	}
 	$ViewCart = array();
 
-	/* Bring in the root album information for the breadcrumb */
-	list ($ret, $rootAlbumId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
-	if ($ret) {
-	    return array($ret, null);
-	}
-	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($rootAlbumId);
-	if ($ret) {
-	    return array($ret, null);
-	}
-	$ViewCart['rootAlbum'] = (array)$rootAlbum;
-
 	/* Find all our cart plugins */
 	GalleryCoreApi::requireOnce('modules/cart/classes/CartPluginInterface_1_0.class');
 	list ($ret, $ids) =

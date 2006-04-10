@@ -106,18 +106,6 @@ class MembersItemsView extends GalleryView {
 	    return array($ret, null);
 	}
 
-	/* Bring in the root album information for the breadcrumb */
-	list ($ret, $rootAlbumId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
-	if ($ret) {
-	    return array($ret, null);
-	}
-	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($rootAlbumId);
-	if ($ret) {
-	    return array($ret, null);
-	}
-	$MembersItems['rootAlbum'] = (array)$rootAlbum;
-
 	$MembersItems['user'] = (array)$user;
 
 	$MembersItems['lastItems'] = array();

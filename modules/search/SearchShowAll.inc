@@ -182,16 +182,6 @@ class SearchShowAllView extends GalleryView {
 	    $form['searchCriteria'] = '';
 	}
 
-	list ($ret, $rootAlbumId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
-	if ($ret) {
-	    return array($ret, null);
-	}
-	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($rootAlbumId);
-	if ($ret) {
-	    return array($ret, null);
-	}
-
 	/* Render the HTML body */
 	$template->setVariable('SearchShowAll', array(
 	    'controller' => 'search.SearchShowAll',
@@ -200,8 +190,7 @@ class SearchShowAllView extends GalleryView {
 	    'moduleId' => $moduleId,
 	    'results' => $results,
 	    'thumbnails' => $thumbnails,
-	    'items' => $items,
-	    'rootAlbum' => (array)$rootAlbum));
+	    'items' => $items));
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'search');
 	if ($ret) {

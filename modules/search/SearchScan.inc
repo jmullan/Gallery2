@@ -228,16 +228,6 @@ class SearchScanView extends GalleryView {
 	}
 	$slideshowAvailable = !empty($ids);
 
-	list ($ret, $rootAlbumId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
-	if ($ret) {
-	    return array($ret, null);
-	}
-	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($rootAlbumId);
-	if ($ret) {
-	    return array($ret, null);
-	}
-
 	/* Render the HTML body */
 	$template->setVariable('SearchScan', array(
 	    'controller' => 'search.SearchScan',
@@ -245,8 +235,7 @@ class SearchScanView extends GalleryView {
 	    'searchResults' => $searchResults,
 	    'thumbnails' => $thumbnails,
 	    'items' => $items,
-	    'slideshowAvailable' => $slideshowAvailable,
-	    'rootAlbum' => (array)$rootAlbum));
+	    'slideshowAvailable' => $slideshowAvailable));
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'search');
 	if ($ret) {

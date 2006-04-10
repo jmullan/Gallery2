@@ -48,18 +48,6 @@ class SiteAdminView extends GalleryView {
 	    return array($ret, null);
 	}
 
-	/* Bring in the root album information for the breadcrumb */
-	list ($ret, $rootAlbumId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
-	if ($ret) {
-	    return array($ret, null);
-	}
-	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($rootAlbumId);
-	if ($ret) {
-	    return array($ret, null);
-	}
-	$rootAlbumData = (array)$rootAlbum;
-
 	/* Load the module list */
 	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret) {
@@ -185,7 +173,6 @@ class SiteAdminView extends GalleryView {
 	}
 
 	/* Set up my view parameters */
-	$SiteAdmin['rootAlbum'] = $rootAlbumData;
 	$SiteAdmin['navigationLinks'] = $navigationLinks;
 	$SiteAdmin['subViewGroups'] = $subViewGroups;
 	$SiteAdmin['subViewName'] = $subViewName;
