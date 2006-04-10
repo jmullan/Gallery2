@@ -15,7 +15,7 @@
   <table width="100%" cellspacing="0" cellpadding="0">
     <tr valign="top">
     <td id="gsSidebarCol"><div id="gsSidebar" class="gcBorder1">
-      {if !$ItemAdmin.isRootAlbum or !empty($ItemAdmin.thumbnail)}
+      {if $ItemAdmin.item.parentId or !empty($ItemAdmin.thumbnail)}
       <div class="gbBlock">
 	{if empty($ItemAdmin.thumbnail)}
 	  {g->text text="No Thumbnail"}
