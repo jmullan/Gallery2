@@ -41,7 +41,7 @@ class RewriteSimpleHelper {
      */
     function loadItemIdFromPath() {
 	list($path, $itemId) = GalleryUtilities::getRequestVariables('path', 'itemId');
-	
+
 	if (!empty($path) && empty($itemId)) {
 	    if (substr($path, -5) == '.html') {
 		$path = substr($path, 0, -5);
@@ -58,19 +58,19 @@ class RewriteSimpleHelper {
     }
 
     /**
-     * Replace the keyword with excpected value.
+     * Replace the keyword with expected value.
      *
      * @param string url passed by reference
      * @param array of url params passed by reference
-     * @param object GalleryEntity loaded gallery enity with item id = $params['itemId'], or null
+     * @param object GalleryEntity loaded gallery entity with item id = $params['itemId'], or null
      * @return boolean true on success
      */
     function parsePath(&$url, &$params, &$entity) {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
 
-	if (!isset($entity) && ($entity = $urlGenerator->loadEntity($params['itemId'])) == null ||
-		!GalleryUtilities::isA($entity, 'GalleryFileSystemEntity')) {
+	if (!isset($entity) && ($entity = $urlGenerator->loadEntity($params['itemId'])) == null
+		|| !GalleryUtilities::isA($entity, 'GalleryFileSystemEntity')) {
 	    return false;
 	}
 	list ($ret, $path) = $entity->fetchLogicalPath();
@@ -78,7 +78,7 @@ class RewriteSimpleHelper {
 	    return false;
 	}
 
-	/* We dont provide short URLs for the root album */
+	/* We don't provide short URLs for the root album */
 	if ($path == '/') {
 	    return false;
 	}
@@ -124,7 +124,7 @@ class RewriteSimpleHelper {
 
 	    $urlGenerator->_language = join('_', $language);
 	}
-	
+
 	$url = str_replace('%language%', $urlGenerator->_language, $url);
 	return true;
     }
