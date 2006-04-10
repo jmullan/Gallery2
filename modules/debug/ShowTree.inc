@@ -27,8 +27,7 @@
  */
 
 /**
- * This controller will show a tree of elements starting with the current
- * item
+ * This controller will show a tree of elements starting with the current item
  *
  * @package Debug
  * @subpackage UserInterface
@@ -39,47 +38,51 @@ class ShowTreeView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	list ($entityId, $itemId) = GalleryUtilities::getRequestVariables('entityId', 'itemId');
-
 	/* Make sure we have permission */
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret, null);
 	}
 
-	/* Try the entity id.  Fall back to the item id, then the root album id */
+	/* Get the entity */
+	$entityId = GalleryUtilities::getRequestVariables('entityId');
 	if (empty($entityId)) {
-	    if (!empty($itemId)) {
-		$entityId = $itemId;
-	    } else {
-		list ($ret, $entityId) =
-		    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
-		if ($ret) {
-		    return array($ret, null);
-		}
-	    }
-	}
-
-	/* Get the parent ids leading up to this entity */
-	list ($ret, $parentIds) = GalleryCoreApi::fetchParentSequence($entityId);
-	if ($ret) {
-	    return array($ret, null);
-	}
-
-	/* Load everything at once */
-	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($entityId);
-	if ($ret) {
-	    return array($ret, null);
-	}
-
-	/* Get all of this entity's children */
-	if ($entity->getCanContainChildren()) {
-	    list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($entity);
+	    list ($ret, $entity) = $this->_getItem();
 	    if ($ret) {
 		return array($ret, null);
 	    }
+	    $entityId = $entity->getId();
 	} else {
-	    $childIds = array();
+	    list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($entityId);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	}
+
+	$parentIds = $childIds = $entityObjects = $isItemTable = $entityTable = array();
+	if (GalleryUtilities::isA($entity, 'GalleryChildEntity')) {
+	    global $gallery;
+
+	    /* Get the parent ids leading up to this entity */
+	    if (GalleryUtilities::isA($entity, 'GalleryItem')) {
+		list ($ret, $parentIds) = GalleryCoreApi::fetchParentSequence($entityId);
+		if ($ret) {
+		    return array($ret, null);
+		}
+	    } else if ($entity->getParentId()) {
+		$parentIds[] = $entity->getParentId();
+	    }
+
+	    /* Get all of this entity's children */
+	    list ($ret, $results) = $gallery->search('
+		SELECT [::id] FROM [GalleryChildEntity] WHERE [::parentId] = ?
+	    ', array($entityId));
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    while ($result = $results->nextResult()) {
+		$childIds[] = (int)$result[0];
+	    }
 	}
 
 	if (!empty($parentIds) || !empty($childIds)) {
@@ -93,7 +96,7 @@ class ShowTreeView extends GalleryView {
 	$entityObjects[] = $entity;
 
 	foreach ($entityObjects as $entity) {
-	    $isItem[$entity->getId()] = GalleryUtilities::isA($entity, 'GalleryItem');
+	    $isItemTable[$entity->getId()] = GalleryUtilities::isA($entity, 'GalleryItem');
 	    $entityTable[$entity->getId()] = (array)$entity;
 	}
 
@@ -103,8 +106,7 @@ class ShowTreeView extends GalleryView {
 	$ShowTree['childIds'] = $childIds;
 	$ShowTree['entityId'] = $entityId;
 	$ShowTree['entityTable'] = $entityTable;
-	$ShowTree['isItem'] = $isItem;
-	$ShowTree['form'] = $form;
+	$ShowTree['isItem'] = $isItemTable;
 	$template->setVariable('ShowTree', $ShowTree);
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'debug');

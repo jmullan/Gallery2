@@ -10,7 +10,7 @@
 
 {if !empty($ShowTree.isItem.$entityId)}
   &nbsp;
-  <a href="{g->url arg1="itemId=$entityId"}">
+  <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=$entityId"}">
     {g->text text="[browse]"}
   </a>
 {/if}
