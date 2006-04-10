@@ -1,6 +1,6 @@
 <?php
 /*
- * $RCSfile$
+ * $RCSfile$viewName}.inc.tpl,v $
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2006 Bharat Mediratta
@@ -34,7 +34,7 @@
  * @subpackage UserInterface
  *
  */
-class MyPageController extends GalleryController {ldelim}
+class {$viewName}Controller extends GalleryController {ldelim}
     /**
      * @see GalleryController::handleRequest()
      */
@@ -60,7 +60,7 @@ class MyPageController extends GalleryController {ldelim}
 	    {rdelim}
 
 	    /* Send the user to a confirmation page, for now */
-	    $redirect['view'] = '{$moduleId}.MyPage';
+	    $redirect['view'] = '{$moduleId}.{$viewName}';
 	    $redirect['itemId'] = (int)$itemId;
 	    $status['added'] = 1;
 	{rdelim}
@@ -80,7 +80,7 @@ class MyPageController extends GalleryController {ldelim}
  * @subpackage UserInterface
  *
  */
-class MyPageView extends GalleryView {ldelim}
+class {$viewName}View extends GalleryView {ldelim}
 
     /**
      * @see GalleryView::loadTemplate
@@ -92,17 +92,17 @@ class MyPageView extends GalleryView {ldelim}
 	    return array($ret, null);
 	{rdelim}
 
-	$MyPage = array();
-	$MyPage['item'] = (array)$item;
-	GalleryCoreApi::requireOnce('modules/{$moduleId}/classes/MyPageHelper.class');
-	list ($ret, $MyPage['value']) = MyPageHelper::getItemValue($item->getId());
+	${$viewName} = array();
+	${$viewName}['item'] = (array)$item;
+	GalleryCoreApi::requireOnce('modules/{$moduleId}/classes/{$viewName}Helper.class');
+	list ($ret, ${$viewName}['value']) = {$viewName}Helper::getItemValue($item->getId());
 	if ($ret) {ldelim}
 	    return array($ret, null);
 	{rdelim}
 
-	$template->setVariable('MyPage', $MyPage);
+	$template->setVariable('{$viewName}', ${$viewName});
 
-	return array(null, array('body' => 'modules/{$moduleId}/templates/MyPage.tpl'));
+	return array(null, array('body' => 'modules/{$moduleId}/templates/{$viewName}.tpl'));
     {rdelim}
 {rdelim}
 ?>

@@ -8,22 +8,22 @@
 </div>
 
 <div class="gbBlock">
-  The item you chose for this action was: <b>{ldelim}$MyPage.item.title|default:$MyPage.item.pathComponent{rdelim}</b>
+  The item you chose for this action was: <b>{ldelim}${$viewName}.item.title|default:${$viewName}.item.pathComponent{rdelim}</b>
 </div>
 <div class="gbBlock">
-  {ldelim}if empty($MyPage.value){rdelim}
+  {ldelim}if empty(${$viewName}.value){rdelim}
   There is no value yet for this item.
   {ldelim}else{rdelim}
-  The value in the database for this item is: <b>{ldelim}$MyPage.value{rdelim}</b>
+  The value in the database for this item is: <b>{ldelim}${$viewName}.value{rdelim}</b>
   {ldelim}/if{rdelim}
 </div>
 
 <form action="{ldelim}g->url{rdelim}" method="post">
   <div>
     {ldelim}g->hiddenFormVars{rdelim}
-    <input type="hidden" name="{ldelim}g->formVar var="controller"{rdelim}" value="{$moduleId}.MyPage"/>
+    <input type="hidden" name="{ldelim}g->formVar var="controller"{rdelim}" value="{$moduleId}.{$viewName}"/>
     <input type="hidden" name="{ldelim}g->formVar var="form[formName]"{rdelim}" value="{ldelim}$form.formName}"/>
-    <input type="hidden" name="{ldelim}g->formVar var="itemId"{rdelim}" value="{ldelim}$MyPage.item.id}"/>
+    <input type="hidden" name="{ldelim}g->formVar var="itemId"{rdelim}" value="{ldelim}${$viewName}.item.id}"/>
   </div>
 
   <div class="gbBlock">

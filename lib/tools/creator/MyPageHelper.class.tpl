@@ -1,6 +1,6 @@
 <?php
 /*
- * $RCSfile$
+ * $RCSfile$viewName}Helper.class.tpl,v $
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2006 Bharat Mediratta
@@ -34,7 +34,7 @@
  * @subpackage UserInterface
  *
  */
-class MyPageHelper {ldelim}
+class {$viewName}Helper {ldelim}
 
     /**
      * Load a text value out of the database for a given item id.
