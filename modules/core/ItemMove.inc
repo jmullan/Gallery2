@@ -358,14 +358,7 @@ class ItemMoveView extends GalleryView {
 		}
 	    }
 
-	    /* Get all possible destinations (where user has write permission) */
-	    list ($ret, $rootId) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
-	    if ($ret) {
-		return array($ret, null);
-	    }
-
-	    /* Get ids of all all albums where we can add new data items */
+	    /* Get ids of all albums where we can add new data items */
 	    list ($ret, $albumIds['addDataItem']) =
 		GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.addDataItem');
 	    if ($ret) {

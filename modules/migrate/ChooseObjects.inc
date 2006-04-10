@@ -226,13 +226,7 @@ class ChooseObjectsView extends GalleryView {
 	    return array($ret, null);
 	}
 
-	/* Get all possible destinations (where user has write permission) */
-	list ($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
-	if ($ret) {
-	    return array($ret, null);
-	}
-
-	/* Get ids of all all albums where we can add new album items */
+	/* Get ids of all albums where we can add new album items */
 	list ($ret, $albumIds) =
 	    GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.addAlbumItem');
 	if ($ret) {

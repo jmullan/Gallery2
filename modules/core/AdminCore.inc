@@ -415,11 +415,6 @@ class AdminCoreView extends GalleryView {
 	$lockSystemList = array('database' => $module->translate('Database'),
 				'flock' => $module->translate('File'));
 
-	list ($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
-	if ($ret) {
-	    return array($ret, null);
-	}
-
 	$AdminCore['can'] = $can;
 	$AdminCore['localServerDirList'] = $localServerDirList;
 	$AdminCore['sessionTimeList'] = $sessionTimeList;
