@@ -79,7 +79,8 @@ class OracleStorage extends GalleryStorage {
      * @see GalleryStorage::_setConnectionSettings
      */
     function _setConnectionSettings(&$db) {
-    	@putenv("NLS_LANG=UTF8");
+	/* May cause "ORA-12705: Cannot access NLS data files or invalid environment specified" */
+	/* @putenv("NLS_LANG=UTF8"); */
     	
     	return null;
     }
