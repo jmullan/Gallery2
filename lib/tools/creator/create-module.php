@@ -90,7 +90,7 @@ $smarty->assign('moduleName', $moduleName);
 $smarty->assign('author', $author);
 $smarty->assign('authorFullName', $authorFullName);
 $smarty->assign('viewName', $ucModuleId);
-$smarty->assign('mapName', "${ucModuleId}Map");
+$smarty->assign('mapName', $ucModuleId . "Map");
 
 /*
  * Start building things!
