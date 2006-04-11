@@ -196,6 +196,11 @@
     {g->text text="You must enter a number (greater than zero)"}
   </div>
   {/if}
+  {if !empty($form.error.thumbnail.create)}
+  <div class="giError">
+    {g->text text="Unable to create a thumbnail for this item"}
+  </div>
+  {/if}
 </div>
 {/if}
 

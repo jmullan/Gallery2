@@ -106,19 +106,43 @@ class ItemEditItem extends ItemEditPlugin {
 		}
 		$thumbnail = empty($thumbnail) ? null : $thumbnail[$item->getId()];
 
-		if (!isset($thumbnail) && $form['thumbnail']['size'] > 0
-			&& GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
-		    /* Create album highlight (with default thumbnail size) */
-		    list ($ret) = GalleryCoreApi::guaranteeAlbumHasThumbnail($item->getId());
-		    if ($ret) {
-			return array($ret, null, null, null);
+		if (!isset($thumbnail) && $form['thumbnail']['size'] > 0) {
+		    if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
+			/* Create album highlight (with default thumbnail size) */
+			list ($ret) = GalleryCoreApi::guaranteeAlbumHasThumbnail($item->getId());
+			if ($ret) {
+			    return array($ret, null, null, null);
+			}
+			list ($ret, $thumbnail) =
+			    GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
+			if ($ret) {
+			    return array($ret, null, null, null);
+			}
+			if (empty($thumbnail)) {
+			    $error[] = 'form[error][thumbnail][create][forAlbum]';
+			    $thumbnail = null;
+			} else {
+			    $thumbnail = $thumbnail[$item->getId()];
+			}
+		    } else {
+			/* Prepare new thumbnail source and toolkit operations */
+			list ($ret, $source) = GalleryCoreApi::fetchPreferredSource($item);
+			if ($ret) {
+			    return array($ret, null, null, null);
+			}
+			if (isset($source)) {
+			    list ($ret, $operations, $outputMimeType) =
+				GalleryCoreApi::makeSupportedViewableOperationSequence(
+					$source->getMimeType(),
+					'thumbnail|' . $form['thumbnail']['size']);
+			    if ($ret) {
+				return array($ret, null, null, null);
+			    }
+			}
+			if (!isset($operations)) {
+			    $error[] = 'form[error][thumbnail][create][forItem]';
+			}
 		    }
-		    list ($ret, $thumbnail) =
-			GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
-		    if ($ret) {
-			return array($ret, null, null, null);
-		    }
-		    $thumbnail = empty($thumbnail) ? null : $thumbnail[$item->getId()];
 		}
 
 		if (isset($thumbnail) && $form['thumbnail']['size'] > 0) {
@@ -149,24 +173,8 @@ class ItemEditItem extends ItemEditPlugin {
 		    if ($ret) {
 			return array($ret, null, null, null);
 		    }
-		} else if (!isset($thumbnail) && $form['thumbnail']['size'] > 0) {
+		} else if ($form['thumbnail']['size'] > 0 && empty($error)) {
 		    /* Create the thumbnail */
-		    list ($ret, $source) = GalleryCoreApi::fetchPreferredSource($item);
-		    if ($ret) {
-			return array($ret, null, null, null);
-		    }
-
-		    list ($ret, $operations, $outputMimeType) =
-			GalleryCoreApi::makeSupportedViewableOperationSequence(
-			    $item->getMimeType(), 'thumbnail|' . $form['thumbnail']['size']);
-		    if ($ret) {
-			return array($ret, null, null, null);
-		    }
-		    if (!isset($operations)) {
-			return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_OPERATION),
-				     null, null, null);
-		    }
-
 		    list ($ret, $thumbnail) =
 			GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative',
 								 $source->getEntityType());

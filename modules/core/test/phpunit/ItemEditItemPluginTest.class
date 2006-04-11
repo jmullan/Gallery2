@@ -599,6 +599,17 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	$this->assertEquals(array(array('form[error][thumbnail][size][invalid]'), null), $results);
     }
 
+    function testThumbnailForEmptyAlbum() {
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[thumbnail][size]', '120');
+	$this->_putItemRequestVariables($this->_album[0]);
+
+	/* Perform the request and verify that we failed */
+	$results = $this->handleRequest($this->_album[0], $this->_preferred);
+	$this->assertEquals(array(array('form[error][thumbnail][create][forAlbum]'), null),
+			    $results);
+    }
+
 
     function _putItemRequestVariables(&$item) {
 	/* Put item attributes into request */
