@@ -1879,6 +1879,7 @@ class CoreModuleExtras {
 	case '1.1.0':
 	case '1.1.0.x':
 	    /* Minimum PHP version now 4.3.0; new versions of ADODB and Smarty */
+	case '1.1.1':
 
 	case 'end of upgrade path':
 	    /*
@@ -2131,6 +2132,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	case '1.0.34':
 	case '1.1.0':
 	case '1.1.0.x':
+	case '1.1.1':
 
 	case 'end of upgrade path':
 	    /*

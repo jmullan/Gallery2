@@ -79,7 +79,6 @@ class GalleryItemHelper_simple {
      * Return the number of children for the items specified, that are visible to the
      * user specified.
      *
-     * @access public
      * @param array item ids
      * @param int an optional user id (default is the current user)
      * @return array object GalleryStatus a status code
@@ -322,25 +321,28 @@ class GalleryItemHelper_simple {
      * Return the number of of items that match the given type and have the
      * given permission (defaults to 'core.view')
      *
-     * @access public
      * @param string an item type (eg, 'GalleryAlbumItem')
+     * @param int an optional user id (default is the current user)
      * @return array object GalleryStatus a status code
      *               int a count
      * @static
      */
-    function fetchItemIdCount($itemType, $permission='core.view') {
+    function fetchItemIdCount($itemType, $permission='core.view', $userId=null) {
 	global $gallery;
+	if (!isset($userId)) {
+	    $userId = $gallery->getActiveUserId();
+	}
 
 	if (empty($itemType)) {
 	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	}
 
-	$cacheKey = "GalleryItemHelper::fetchItemIdCount($itemType, $permission)";
+	$cacheKey = "GalleryItemHelper::fetchItemIdCount($itemType, $permission, $userId)";
 	if (GalleryDataCache::containsKey($cacheKey)) {
 	    $count = GalleryDataCache::get($cacheKey);
 	} else {
 	    list ($ret, $aclIds) =
-		GalleryCoreApi::fetchAccessListIds($permission, $gallery->getActiveUserId());
+		GalleryCoreApi::fetchAccessListIds($permission, $userId);
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -348,21 +350,20 @@ class GalleryItemHelper_simple {
 		$aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
 
 		$query = sprintf('
-                SELECT
-                  COUNT([GalleryItem::id])
-                FROM
-                  [GalleryEntity], [GalleryItem], [GalleryAccessSubscriberMap]
-                WHERE
-                  [GalleryEntity::entityType] = ?
-                  AND
-                  [GalleryItem::id] = [GalleryEntity::id]
-                  AND
-                  [GalleryAccessSubscriberMap::itemId] = [GalleryEntity::id]
-                  AND
-                  [GalleryAccessSubscriberMap::accessListId] IN (%s)
-                ', $aclMarkers);
-		$data = array($itemType);
-		$data = array_merge($data, $aclIds);
+		SELECT
+		  COUNT([GalleryItem::id])
+		FROM
+		  [GalleryEntity], [GalleryItem], [GalleryAccessSubscriberMap]
+		WHERE
+		  [GalleryEntity::entityType] = ?
+		  AND
+		  [GalleryItem::id] = [GalleryEntity::id]
+		  AND
+		  [GalleryAccessSubscriberMap::itemId] = [GalleryEntity::id]
+		  AND
+		  [GalleryAccessSubscriberMap::accessListId] IN (%s)
+		', $aclMarkers);
+		$data = array_merge(array($itemType), $aclIds);
 
 		list ($ret, $searchResults) = $gallery->search($query, $data);
 		if ($ret) {

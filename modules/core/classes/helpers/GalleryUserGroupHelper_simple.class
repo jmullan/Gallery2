@@ -36,20 +36,24 @@ class GalleryUserGroupHelper_simple {
     /**
      * Is the active user in the admin group?
      *
+     * @param int an optional user id (default is the current user)
      * @return array object GalleryStatus a status code
      *               bool true if yes
      * @static
      */
-    function isUserInSiteAdminGroup() {
+    function isUserInSiteAdminGroup($userId=null) {
 	global $gallery;
+	if (!isset($userId)) {
+	    $userId = $gallery->getActiveUserId();
+	}
+
 	list ($ret, $adminGroupId) =
-	  GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret) {
 	    return array($ret, false);
 	}
 
-	list ($ret, $result) = GalleryUserGroupHelper_simple::isUserInGroup(
-	    $gallery->getActiveUserId(), $adminGroupId);
+	list ($ret, $result) = GalleryUserGroupHelper_simple::isUserInGroup($userId, $adminGroupId);
 	if ($ret) {
 	    return array($ret, false);
 	}
@@ -77,15 +81,15 @@ class GalleryUserGroupHelper_simple {
 	}
 
 	$query = '
-        SELECT
-          [GalleryUserGroupMap::userId]
-        FROM
-          [GalleryUserGroupMap]
-        WHERE
-          [GalleryUserGroupMap::userId] = ?
-          AND
-          [GalleryUserGroupMap::groupId] = ?
-        ';
+	SELECT
+	  [GalleryUserGroupMap::userId]
+	FROM
+	  [GalleryUserGroupMap]
+	WHERE
+	  [GalleryUserGroupMap::userId] = ?
+	  AND
+	  [GalleryUserGroupMap::groupId] = ?
+	';
 
 	list ($ret, $searchResults) =
 	    $gallery->search($query,

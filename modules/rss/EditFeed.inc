@@ -52,7 +52,8 @@ class EditFeedController extends GalleryController {
 	if ($ret) {
 	    return array($ret, null);
 	}
-	list ($ret) = RssMapHelper::canConfigureFeed($item, $param, true);
+	list ($ret) =
+	    RssMapHelper::canConfigureFeed($item, $param, $gallery->getActiveUserId(), true);
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -218,7 +219,8 @@ class EditFeedView extends GalleryView {
 	if ($ret) {
 	    return array($ret, null);
 	}
-	list ($ret) = RssMapHelper::canConfigureFeed($item, $param, true);
+	list ($ret) =
+	    RssMapHelper::canConfigureFeed($item, $param, $gallery->getActiveUserId(), true);
 	if ($ret) {
 	    return array($ret, null);
 	}

@@ -40,21 +40,20 @@ class DebugModule extends GalleryModule {
 	$this->setId('debug');
 	$this->setName($gallery->i18n('Debugging'));
 	$this->setDescription($gallery->i18n('Debugging and Developer Tools'));
-	$this->setVersion('1.0.3');
+	$this->setVersion('1.0.4');
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks('getItemLinks');
-	$this->setRequiredCoreApi(array(7, 0));
-	$this->setRequiredModuleApi(array(3, 0));
+	$this->setRequiredCoreApi(array(7, 5));
+	$this->setRequiredModuleApi(array(3, 1));
     }
 
     /**
      * @see GalleryModule::getItemLinks
      */
-    function getItemLinks($items, $wantsDetailedLinks, $permissions) {
+    function getItemLinks($items, $wantsDetailedLinks, $permissions, $userId) {
 	$links = array();
 
-	/* This doesn't obey the acting user id.  That's acceptable for a debug link */
-	list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
+	list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup($userId);
 	if ($ret) {
 	    return array($ret, null);
 	}

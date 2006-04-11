@@ -217,8 +217,6 @@ class RssMapHelper {
      * @static
      */
     function updateFeed($feedName, $params) {
-	global $gallery;
-
 	$ret = GalleryCoreApi::updateMapEntry('RssMap',
 	    array('feedName' => $feedName),
 		  array('feedName' => $feedName,
@@ -239,8 +237,6 @@ class RssMapHelper {
      * @static
      */
     function deleteFeed($feedName) {
-	global $gallery;
-
 	$ret = GalleryCoreApi::removeMapEntry('RssMap', array('feedName' => $feedName));
 	if ($ret) {
 	    return $ret;
@@ -254,15 +250,15 @@ class RssMapHelper {
      *
      * @param object GalleryItem item
      * @param array module parameters
+     * @param int user id
      * @param boolean (optional) if true, throw error if not allowed
      * @return array object GalleryStatus a status code
      *               boolean true if allowed
      */
-    function canConfigureFeed($item, $params, $assert=false) {
-	global $gallery;
+    function canConfigureFeed($item, $params, $userId, $assert=false) {
 	static $isAdmin;
-	if (!isset($isAdmin)) {
-	    list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
+	if (!isset($isAdmin[$userId])) {
+	    list ($ret, $isAdmin[$userId]) = GalleryCoreApi::isUserInSiteAdminGroup($userId);
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -275,7 +271,7 @@ class RssMapHelper {
 	 *   - and the allowed feeds are appropriate for this item type
 	 */
 	if ($params['allowConfigurableFeed'] == 1
-		&& ($isAdmin || $item->getOwnerId() == $gallery->getActiveUserId())
+		&& ($isAdmin[$userId] || $item->getOwnerId() == $userId)
 		&& (
 		    (GalleryUtilities::isA($item, 'GalleryAlbumItem')
 		     && ($params['allowAlbums'] == 1

@@ -61,7 +61,7 @@ class GalleryCoreApi {
      * - Change GalleryCoreApi::error to only take error code and error message
      */
     function getApiVersion() {
-	return array(7, 4);
+	return array(7, 5);
     }
 
     /**
@@ -1531,13 +1531,14 @@ class GalleryCoreApi {
      *
      * @access public
      * @param string an item type (eg, 'GalleryAlbumItem')
+     * @param int an optional user id (default is the current user)
      * @return array object GalleryStatus a status code
      *               int a count
      * @static
      */
-    function fetchItemIdCount($itemType, $permission='core.view') {
+    function fetchItemIdCount($itemType, $permission='core.view', $userId=null) {
 	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryItemHelper_simple.class');
-	return GalleryItemHelper_simple::fetchItemIdCount($itemType, $permission);
+	return GalleryItemHelper_simple::fetchItemIdCount($itemType, $permission, $userId);
     }
 
     /**
@@ -1759,14 +1760,15 @@ class GalleryCoreApi {
     /**
      * Is the active user in the admin group?
      *
+     * @param int an optional user id (default is the current user)
      * @return array object GalleryStatus a status code
      *               bool true if yes
      * @static
      */
-    function isUserInSiteAdminGroup() {
+    function isUserInSiteAdminGroup($userId=null) {
 	GalleryCoreApi::requireOnce(
 	    'modules/core/classes/helpers/GalleryUserGroupHelper_simple.class');
-	return GalleryUserGroupHelper_simple::isUserInSiteAdminGroup();
+	return GalleryUserGroupHelper_simple::isUserInSiteAdminGroup($userId);
     }
 
     /**

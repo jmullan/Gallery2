@@ -36,14 +36,15 @@ class RssModule extends GalleryModule /* and GalleryEventListener */ {
 
     function RssModule() {
 	global $gallery;
+
 	$this->setId('rss');
 	$this->setName($gallery->i18n('RSS'));
 	$this->setDescription($gallery->i18n('RSS'));
-	$this->setVersion('1.0.6');
+	$this->setVersion('1.0.7');
 	$this->setGroup('export', $gallery->i18n('Export'));
 	$this->setCallbacks('getSiteAdminViews|getItemLinks|registerEventListeners');
-	$this->setRequiredCoreApi(array(7, 0));
-	$this->setRequiredModuleApi(array(3, 0));
+	$this->setRequiredCoreApi(array(7, 5));
+	$this->setRequiredModuleApi(array(3, 1));
     }
 
     /**
@@ -57,9 +58,8 @@ class RssModule extends GalleryModule /* and GalleryEventListener */ {
     /**
      * @see GalleryModule::getItemLinks()
      */
-    function getItemLinks($items, $wantsDetailedLinks, $permissions) {
+    function getItemLinks($items, $wantsDetailedLinks, $permissions, $userId) {
 	GalleryCoreApi::requireOnce('modules/rss/classes/RssMapHelper.class');
-	global $gallery;
 	$links = array();
 
 	/* check that this type of link is allowed */
@@ -70,39 +70,41 @@ class RssModule extends GalleryModule /* and GalleryEventListener */ {
 
 	foreach ($items as $item) {
 	    $itemId = $item->getId();
-	    if (isset($wantsDetailedLinks[$itemId])) {
-		if ($param['allowSimpleFeed'] == 1) {
-		    $itemTypeNames = array_merge($item->itemTypeName(), $item->itemTypeName(false));
+	    if (!isset($wantsDetailedLinks[$itemId])) {
+		continue;
+	    }
 
-		    /*
-		     * Specific translations:
-		     * _('RSS Feed for this Album')
-		     * _('RSS Feed for this Photo')
-		     * _('RSS Feed for this Movie')
-		     */
-		    $links[$itemId][] = array(
+	    if ($param['allowSimpleFeed'] == 1) {
+		$itemTypeNames = array_merge($item->itemTypeName(), $item->itemTypeName(false));
+
+		/*
+		 * Specific translations:
+		 * _('RSS Feed for this Album')
+		 * _('RSS Feed for this Photo')
+		 * _('RSS Feed for this Movie')
+		 */
+		$links[$itemId][] = array(
 			'text' => $this->_translate(array(
 			    'text' => 'RSS Feed for this %s',
 			    'arg1' => $itemTypeNames[0]), $itemTypeNames[2]),
 			'params' => array(
 			    'view' => 'rss.SimpleRender',
 			    'itemId' => $itemId));
-		}
+	    }
 
-		list ($ret, $canConfigure) = RssMapHelper::canConfigureFeed($item, $param);
-		if ($ret) {
-		    return array($ret, null);
-		}
+	    list ($ret, $canConfigure) = RssMapHelper::canConfigureFeed($item, $param, $userId);
+	    if ($ret) {
+		return array($ret, null);
+	    }
 
-		if ($canConfigure) {
-		    $links[$itemId][] = array(
-			    'text' => $this->translate('Configure RSS Feeds'),
-			    'params' => array(
-				'view' => 'core.ItemAdmin',
-				'subView' => 'rss.EditFeed',
-				'itemId' => $itemId,
-				'return' => 1));
-		}
+	    if ($canConfigure) {
+		$links[$itemId][] = array(
+			'text' => $this->translate('Configure RSS Feeds'),
+			'params' => array(
+			    'view' => 'core.ItemAdmin',
+			    'subView' => 'rss.EditFeed',
+			    'itemId' => $itemId,
+			    'return' => 1));
 	    }
 	}
 

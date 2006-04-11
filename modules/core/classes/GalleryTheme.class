@@ -1452,7 +1452,7 @@ class GalleryTheme extends GalleryPlugin {
 
 		if (isset($itemLinks) && isset($callbacks['getItemLinks'])) {
 		    list ($ret, $links) = $module->getItemLinks(
-			$allItems, $wantsDetailedLinks, $permissions);
+			$allItems, $wantsDetailedLinks, $permissions, $theme['actingUserId']);
 		    if ($ret) {
 			return $ret;
 		    }

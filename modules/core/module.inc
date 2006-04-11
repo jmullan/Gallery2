@@ -40,15 +40,15 @@ class CoreModule extends GalleryModule {
 	$this->setGalleryVersion('2.2-cvs');
 
 	/* Don't forget to update CoreModuleExtras::upgrade and _prepareConfigUpgrade too! */
-	$this->setVersion('1.1.1');
+	$this->setVersion('1.1.2');
 
 	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks('registerEventListeners|' .
 			    'getItemLinks|getSystemLinks|' .
 			    'getSiteAdminViews|getUserAdminViews|getItemAdminViews');
-	$this->setRequiredCoreApi(array(7, 2));
-	$this->setRequiredModuleApi(array(3, 0));
+	$this->setRequiredCoreApi(array(7, 5));
+	$this->setRequiredModuleApi(array(3, 1));
     }
 
     /**
@@ -66,7 +66,7 @@ class CoreModule extends GalleryModule {
     /**
      * @see GalleryModule::getItemLinks
      */
-    function getItemLinks($items, $wantsDetailedLinks, $permissions) {
+    function getItemLinks($items, $wantsDetailedLinks, $permissions, $userId) {
 	list ($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret) {
 	    return array($ret, null);
@@ -102,7 +102,8 @@ class CoreModule extends GalleryModule {
 	    $isAlbum = $item->getCanContainChildren();
 
 	    /* Permissions for its parent */
-	    list ($ret, $parentPermissions) = GalleryCoreApi::getPermissions($item->getParentId());
+	    list ($ret, $parentPermissions) =
+		GalleryCoreApi::getPermissions($item->getParentId(), $userId);
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -136,13 +137,13 @@ class CoreModule extends GalleryModule {
 		if ($item->getIsLinkable()) {
 		    if ($isAlbum) {
 			list ($ret, $count) = GalleryCoreApi::fetchItemIdCount(
-			    'GalleryAlbumItem', 'core.addAlbumItem');
+			    'GalleryAlbumItem', 'core.addAlbumItem', $userId);
 			if ($ret) {
 			    return array($ret, null);
 			}
 		    } else {
 			list ($ret, $count) = GalleryCoreApi::fetchItemIdCount(
-			    'GalleryAlbumItem', 'core.addDataItem');
+			    'GalleryAlbumItem', 'core.addDataItem', $userId);
 			if ($ret) {
 			    return array($ret, null);
 			}
