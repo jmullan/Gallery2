@@ -3019,5 +3019,60 @@ class GalleryCoreApi {
 	    'modules/core/classes/helpers/GalleryEntityHelper_medium.class');
 	return GalleryEntityHelper_medium::createFastDownloadFile($entity, $runEvenInUnitTest);
     }
+
+    /**
+     * Get id of the album to display by default.
+     *
+     * @return array object GalleryStatus a status code
+     *               int album id
+     */
+    function getDefaultAlbumId() {
+	$id = GalleryCapabilities::get('defaultAlbumId');
+	if (empty($id)) {
+	    list ($ret, $id) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	}
+	return array(null, $id);
+    }
+
+    /**
+     * Get id of the guest user.
+     *
+     * @return array object GalleryStatus a status code
+     *               int user id
+     */
+    function getAnonymousUserId() {
+	$id = GalleryCapabilities::get('anonymousUserId');
+	if (empty($id)) {
+	    list ($ret, $id) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	}
+	return array(null, $id);
+    }
+
+    /**
+     * Is the user a guest?
+     *
+     * @param int id of user (default is current user)
+     * @return array object GalleryStatus a status code
+     *               boolean true if anonymous
+     */
+    function isAnonymousUser($userId=null) {
+	if (empty($userId)) {
+	    global $gallery;
+	    $userId = $gallery->getActiveUserId();
+	}
+	list ($ret, $anonymousId) = GalleryCoreApi::getAnonymousUserId();
+	if ($ret) {
+	    return array($ret, null);
+	}
+	return array(null, $userId == $anonymousId);
+    }
 }
 ?>
