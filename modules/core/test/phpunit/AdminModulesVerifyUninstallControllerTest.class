@@ -141,7 +141,8 @@ class AdminModulesVerifyUninstallControllerTestModule {
 	$this->_setCalled('deactivate');
 	$singleton =& $this->getSingleton();
 	if (isset($singleton->_deactivate)) {
-	    return $singleton->_deactivate;
+	    list ($ret, $result) = $singleton->_deactivate;
+	    return array($ret, $result);
 	} else {
 	    return array(null, array());
 	}
