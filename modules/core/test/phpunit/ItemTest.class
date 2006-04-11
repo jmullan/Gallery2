@@ -275,10 +275,17 @@ class ItemTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::addUserPermission(
-	    $child[1]->getId(), $user->getId(), 'core.view', false);
+	    $child[2]->getId(), $user->getId(), 'core.view', false);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
+
+	/* Used to have a bug where count was cached by itemId only, not itemId+userId */
+	list ($ret, $counts) = GalleryCoreApi::fetchChildCounts(array($this->_album->getId()));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(array($this->_album->getId() => 3), $counts);
 
 	list ($ret, $counts) =
 	    GalleryCoreApi::fetchChildCounts(array($this->_album->getId()), $user->getId());
@@ -286,7 +293,7 @@ class ItemTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	/* We can view child[0] and child[1] */
+	/* We can view child[0] and child[2] */
 	$this->assertEquals(array($this->_album->getId() => 2), $counts);
     }
 

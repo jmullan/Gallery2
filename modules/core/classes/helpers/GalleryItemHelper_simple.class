@@ -87,18 +87,17 @@ class GalleryItemHelper_simple {
      */
     function fetchChildCounts($itemIds, $userId=null) {
 	global $gallery;
+	if (!isset($userId)) {
+	    $userId = $gallery->getActiveUserId();
+	}
 
 	if (empty($itemIds)) {
 	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	}
 
-	if (!isset($userId)) {
-	    $userId = $gallery->getActiveUserId();
-	}
-
 	$counts = $missing = array();
 	foreach ($itemIds as $itemId) {
-	    $cacheKey = "GalleryItemHelper::fetchChildCounts($itemId)";
+	    $cacheKey = "GalleryItemHelper::fetchChildCounts($itemId, $userId)";
 	    if (GalleryDataCache::containsKey($cacheKey)) {
 		$counts[$itemId] = GalleryDataCache::get($cacheKey);
 	    } else {
@@ -143,7 +142,7 @@ class GalleryItemHelper_simple {
 
 	    while ($result = $searchResults->nextResult()) {
 		$counts[$result[0]] = $result[1];
-		GalleryDataCache::put("GalleryItemHelper::fetchChildCounts($result[0])",
+		GalleryDataCache::put("GalleryItemHelper::fetchChildCounts($result[0], $userId)",
 				      $result[1]);
 	    }
 	}
