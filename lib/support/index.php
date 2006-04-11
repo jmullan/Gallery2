@@ -5,8 +5,13 @@ require_once(dirname(__FILE__) . '/security.inc');
 /* Tell other scripts we passed security.inc ok */
 define('G2_SUPPORT', true);
 if (!empty($_SERVER['QUERY_STRING'])) {
-    foreach (array('phpinfo', 'cache', 'gd') as $script) {
-	if ($_SERVER['QUERY_STRING'] == $script) {
+    foreach (array('phpinfo', 'cache', 'gd', 'chmod') as $script) {
+    	/* 
+    	 * Don't use isset($_GET[$script]) since we want to allow for GET args could collide 
+    	 * with the above mentioned script names
+    	 */
+	if ($_SERVER['QUERY_STRING'] == $script || 
+	        strncmp($_SERVER['QUERY_STRING'], $script . '&', strlen($script)+1) == 0) {
 	    include(dirname(__FILE__) . '/' . $script . '.php');
 	}
     }
@@ -36,6 +41,8 @@ if (!empty($_SERVER['QUERY_STRING'])) {
       <p> PHP configuration information </p>
       <h3> <a href="index.php?cache">Cache Maintenance</a> </h3>
       <p> Delete files from the Gallery data cache </p>
+      <h3> <a href="index.php?chmod">Filesystem Permissions</a> </h3>
+      <p> Change the filesystem permissions of your Gallery and your storage folder. </p>
       <h3> <a href="index.php?gd">GD</a> </h3>
       <p> Information about your GD configuration </p>
   </body>
