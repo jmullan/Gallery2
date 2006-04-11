@@ -184,7 +184,8 @@ class ItemPermissionsControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	foreach ($permissions as $permission) {
-	    if ($permission['groupId'] == $this->_group->getId()) {
+	    if (isset($permission['groupId'])
+		    && $permission['groupId'] == $this->_group->getId()) {
 		$this->assertEquals(array('groupId' => $this->_group->getId(),
 					  'permission' => 'core.edit'),
 				    $permission);
