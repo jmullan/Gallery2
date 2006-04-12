@@ -116,7 +116,7 @@ class UserAlbumSiteAdminView extends GalleryView {
 	    'createList' => array('immediate' => $module->translate('When user is created'),
 				  'access' => $module->translate('When first accessed')),
 	    'viewList' => array('everybody' => $module->translate('Everybody'),
-				'allusers' => $module->translate('All Users'),
+				'allusers' => $module->translate('Registered Users'),
 				'user' => $module->translate('User Only')),
 	    'sizeList' => array('1' => $module->translate('Yes'),
 				'0' => $module->translate('No')),
