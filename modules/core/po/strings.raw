@@ -18,14 +18,6 @@ ngettext("%d week", "%d weeks") /* also in: AdminPerformance.inc */
 /* AdminCreateUser.inc */
 gettext("<none>") /* also in: AdminEditUser.inc UserPreferences.inc */
 
-/* AdminModules.inc */
-gettext("install") /* also in: AdminThemes.inc */
-gettext("upgrade") /* also in: AdminThemes.inc classes/GalleryRepository.class */
-gettext("configure")
-gettext("activate") /* also in: AdminThemes.inc */
-gettext("uninstall") /* also in: AdminThemes.inc */
-gettext("deactivate") /* also in: AdminThemes.inc */
-
 /* AdminPerformance.inc */
 gettext("No acceleration") /* also in: templates/AdminPerformance.tpl */
 gettext("Partial acceleration")
@@ -39,6 +31,11 @@ gettext("Upgrade")
 gettext("Download")
 
 /* AdminThemes.inc */
+gettext("install") /* also in: templates/AdminModules.tpl */
+gettext("upgrade") /* also in: classes/GalleryRepository.class templates/AdminModules.tpl */
+gettext("activate") /* also in: templates/AdminModules.tpl */
+gettext("uninstall") /* also in: templates/AdminModules.tpl */
+gettext("deactivate") /* also in: templates/AdminModules.tpl */
 gettext("Inherit settings from parent album")
 gettext("Use these settings")
 
@@ -589,27 +586,31 @@ gettext("run now")
 gettext("Last Run Details:")
 
 /* templates/AdminModules.tpl */
+gettext("Status: Inactive") /* also in: templates/AdminThemes.tpl */
+gettext("__MODULE__ deactivated")
+gettext("Status: Active") /* also in: templates/AdminThemes.tpl */
+gettext("__MODULE__ activated")
+gettext("Status: Not Installed") /* also in: templates/AdminThemes.tpl */
+gettext("__MODULE__ uninstalled")
+gettext("Status: Upgrade Required (Inactive)") /* also in: templates/AdminThemes.tpl */
+gettext("Status: Incompatible Module (Inactive)")
+gettext("Status: Inactive (Configuration Required)")
+gettext("__MODULE__ needs configuration")
 gettext("Gallery Modules")
-gettext("Successfully installed and auto-configured module %s")
-gettext("Successfully installed module %s")
-gettext("Successfully configured module %s")
-gettext("Successfully upgraded module %s")
-gettext("Successfully activated module %s")
-gettext("Successfully deactivated module %s")
-gettext("Successfully uninstalled module %s")
 gettext("Gallery features come as separate modules.  You can download and install modules to add more features to your Gallery, or you can disable features if you don't want to use them.  In order to use a feature, you must install, configure (if necessary) and activate it.  If you don't wish to use a feature, you can deactivate it.")
+gettext("up to date")
+gettext("disabled")
+gettext("upgrade required")
+gettext("not installed")
+gettext("incompatible")
 gettext("Module Name") /* also in: templates/AdminRepository.tpl */
 gettext("Version") /* also in: templates/AdminThemes.tpl */
 gettext("Installed") /* also in: templates/AdminRepository.tpl templates/AdminThemes.tpl */
 gettext("Actions") /* also in: templates/AdminRepository.tpl templates/AdminThemes.tpl */
-gettext("Status: Not Installed") /* also in: templates/AdminThemes.tpl */
-gettext("Status: Active") /* also in: templates/AdminThemes.tpl */
-gettext("Status: Inactive") /* also in: templates/AdminThemes.tpl */
-gettext("Status: Upgrade Required (Inactive)") /* also in: templates/AdminThemes.tpl */
-gettext("Status: Incompatible Module (Inactive)")
 gettext("Incompatible module!")
 gettext("Core API Required: %s (available: %s)") /* also in: templates/AdminRepository.tpl templates/AdminThemes.tpl */
 gettext("Module API Required: %s (available: %s)")
+gettext("configure")
 
 /* templates/AdminModulesVerifyUninstall.tpl */
 gettext("Confirm module uninstall")
@@ -952,6 +953,7 @@ gettext("You must enter a valid date and time")
 gettext("Thumbnail") /* also in: templates/ItemEditPhotoThumbnail.tpl */
 gettext("Set the size of the thumbnail.  The largest side of the thumbnail will be no larger than this value. Leave this field blank if you don't want a thumbnail.")
 gettext("There are no graphics toolkits enabled that support this type of item, so we cannot create or modify a thumbnail.")
+gettext("Unable to create a thumbnail for this item")
 
 /* templates/ItemEditMovie.tpl */
 gettext("In order for Gallery to properly display this movie, it has to know the movie's width and height.  If you have installed a graphics toolkit that can handle movie types, then these values may already be set.  If not, they may be set to 0.  If you do not enter the correct values here, the movie may appear distorted when viewed in your web browser.  Note that changing these values do <b>not</b> change the movie itself so experimentation won't cause harm.")

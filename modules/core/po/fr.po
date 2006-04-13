@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.0\n"
+"Project-Id-Version: Gallery: Core 1.1.2\n"
 "POT-Creation-Date: 2003-08-10 04:27+0200\n"
 "PO-Revision-Date: 2006-03-15 00:00+0100\n"
 "Last-Translator: Arnaud MOURONVAL <ArnaudMouronval@yahoo.com>\n"
@@ -83,24 +83,6 @@ msgstr[1] "%d semaines"
 msgid "<none>"
 msgstr "<aucune>"
 
-msgid "install"
-msgstr "installer"
-
-msgid "upgrade"
-msgstr "mettre à jour"
-
-msgid "configure"
-msgstr "configurer"
-
-msgid "activate"
-msgstr "activer"
-
-msgid "uninstall"
-msgstr "désinstaller"
-
-msgid "deactivate"
-msgstr "désactiver"
-
 msgid "No acceleration"
 msgstr "Aucune accélération"
 
@@ -125,6 +107,21 @@ msgstr "Mettre à jour"
 
 msgid "Download"
 msgstr "Télécharger"
+
+msgid "install"
+msgstr "installer"
+
+msgid "upgrade"
+msgstr "mettre à jour"
+
+msgid "activate"
+msgstr "activer"
+
+msgid "uninstall"
+msgstr "désinstaller"
+
+msgid "deactivate"
+msgstr "désactiver"
 
 msgid "Inherit settings from parent album"
 msgstr "Hériter les paramètres de l'album parent"
@@ -1629,36 +1626,39 @@ msgstr "exécuter maintenant"
 msgid "Last Run Details:"
 msgstr "Résultat de la dernière exécution&nbsp;:"
 
+msgid "Status: Inactive"
+msgstr "Statut&nbsp;: Inactif"
+
+#, fuzzy
+msgid "__MODULE__ deactivated"
+msgstr "désactiver"
+
+msgid "Status: Active"
+msgstr "Statut&nbsp;: Actif"
+
+msgid "__MODULE__ activated"
+msgstr ""
+
+msgid "Status: Not Installed"
+msgstr "Statut&nbsp;: Non installé"
+
+msgid "__MODULE__ uninstalled"
+msgstr ""
+
+msgid "Status: Upgrade Required (Inactive)"
+msgstr "Statut&nbsp;: Mise à jour requise (inactif)"
+
+msgid "Status: Incompatible Module (Inactive)"
+msgstr "Statut&nbsp;: Module incompatible (inactif)"
+
+msgid "Status: Inactive (Configuration Required)"
+msgstr ""
+
+msgid "__MODULE__ needs configuration"
+msgstr ""
+
 msgid "Gallery Modules"
 msgstr "Modules de Gallery"
-
-#, c-format
-msgid "Successfully installed and auto-configured module %s"
-msgstr "Module %s installé et auto-configuré avec succès"
-
-#, c-format
-msgid "Successfully installed module %s"
-msgstr "Module %s installé avec succès"
-
-#, c-format
-msgid "Successfully configured module %s"
-msgstr "Module %s configuré avec succès"
-
-#, c-format
-msgid "Successfully upgraded module %s"
-msgstr "Module %s mis à jour avec succès"
-
-#, c-format
-msgid "Successfully activated module %s"
-msgstr "Module %s activé avec succès"
-
-#, c-format
-msgid "Successfully deactivated module %s"
-msgstr "Module %s désactivé avec succès"
-
-#, c-format
-msgid "Successfully uninstalled module %s"
-msgstr "Module %s désinstallé avec succès"
 
 msgid ""
 "Gallery features come as separate modules.  You can download and install modules to add more "
@@ -1672,6 +1672,26 @@ msgstr ""
 "utiliser une fonctionnalité, vous devez installer, configurer (si nécessaire) et activer le "
 "module. Pour ne plus l'utiliser, vous pouvez simplement le désactiver."
 
+#, fuzzy
+msgid "up to date"
+msgstr "Mettre à jour"
+
+#, fuzzy
+msgid "disabled"
+msgstr "%d éléments ont échoué"
+
+#, fuzzy
+msgid "upgrade required"
+msgstr "(requis)"
+
+#, fuzzy
+msgid "not installed"
+msgstr "désinstaller"
+
+#, fuzzy
+msgid "incompatible"
+msgstr "Plugin incompatible"
+
 msgid "Module Name"
 msgstr "Nom du module"
 
@@ -1684,21 +1704,6 @@ msgstr "Installé"
 msgid "Actions"
 msgstr "Opérations"
 
-msgid "Status: Not Installed"
-msgstr "Statut&nbsp;: Non installé"
-
-msgid "Status: Active"
-msgstr "Statut&nbsp;: Actif"
-
-msgid "Status: Inactive"
-msgstr "Statut&nbsp;: Inactif"
-
-msgid "Status: Upgrade Required (Inactive)"
-msgstr "Statut&nbsp;: Mise à jour requise (inactif)"
-
-msgid "Status: Incompatible Module (Inactive)"
-msgstr "Statut&nbsp;: Module incompatible (inactif)"
-
 msgid "Incompatible module!"
 msgstr "Module incompatible&nbsp;!"
 
@@ -1709,6 +1714,9 @@ msgstr "API noyau requise&nbsp;: %s (disponible&nbsp;: %s)"
 #, c-format
 msgid "Module API Required: %s (available: %s)"
 msgstr "API Module requise&nbsp;: %s (disponible&nbsp;: %s)"
+
+msgid "configure"
+msgstr "configurer"
 
 msgid "Confirm module uninstall"
 msgstr "Confirmer la désinstallation du module"
@@ -2884,6 +2892,10 @@ msgstr ""
 "Il n'y a pas de boîte à outils graphiques activée qui supporte ce type d'élément,nous ne "
 "pouvons donc pas créer ou modifier la vignette."
 
+#, fuzzy
+msgid "Unable to create a thumbnail for this item"
+msgstr "Vous devez saisir un nom pour cet élément."
+
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the movie's width and "
 "height.  If you have installed a graphics toolkit that can handle movie types, then these "
@@ -3708,3 +3720,24 @@ msgstr "[test] Une seconde permission"
 
 msgid "Unit test theme"
 msgstr "Thème de tests unitaires"
+
+#~ msgid "Successfully installed and auto-configured module %s"
+#~ msgstr "Module %s installé et auto-configuré avec succès"
+
+#~ msgid "Successfully installed module %s"
+#~ msgstr "Module %s installé avec succès"
+
+#~ msgid "Successfully configured module %s"
+#~ msgstr "Module %s configuré avec succès"
+
+#~ msgid "Successfully upgraded module %s"
+#~ msgstr "Module %s mis à jour avec succès"
+
+#~ msgid "Successfully activated module %s"
+#~ msgstr "Module %s activé avec succès"
+
+#~ msgid "Successfully deactivated module %s"
+#~ msgstr "Module %s désactivé avec succès"
+
+#~ msgid "Successfully uninstalled module %s"
+#~ msgstr "Module %s désinstallé avec succès"
