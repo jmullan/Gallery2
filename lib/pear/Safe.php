@@ -1,4 +1,6 @@
 <?php
+if (class_exists('HTML_Safe')) { return; } /* In case defined elsewhere (when embedded) */
+
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
 /**
