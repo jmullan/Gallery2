@@ -2367,8 +2367,10 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	if ($ret) {
 	    return $ret;
 	}
-
-	GalleryCoreApi::removeUserFromGroup($user->getId(), $allUserGroupId);
+	$ret = GalleryCoreApi::removeUserFromGroup($user->getId(), $allUserGroupId);
+	if ($ret) {
+	    return $ret;
+	}
 
 	$ret = $module->setParameter('id.anonymousUser', $user->getId());
 	if ($ret) {
