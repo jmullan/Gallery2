@@ -92,11 +92,30 @@ class MainTest extends GalleryTestCase {
     }
 
     function testEmbedOnly() {
+	/* Test embed-only mode with simple permission denied error */
 	global $gallery;
 	$gallery->setConfig('mode.embed.only', true);
 
 	list ($ret, $g2Data) = _GalleryMain(false);
 	$this->assertEquals(GALLERY_ERROR | ERROR_PERMISSION_DENIED, $ret->getErrorCode());
+    }
+
+    function testEmbedOnlyUrl() {
+	/* Test embed-only mode with configured redirect url */
+	global $gallery;
+	$gallery->_phpVm = $phpVm = new MainTestPhpVm();
+	$gallery->setConfig('mode.embed.only', $expectedUrl = '/embedApp/index.php');
+
+	list ($ret, $g2Data) = _GalleryMain(false);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$headers = $phpVm->headers_sent() ? $_REQUEST['phpVmHeaders'] : array();
+	if (isset($headers['Location'])) {
+	    $this->assertEquals($expectedUrl, trim($headers['Location']), 'wrong redirect url');
+	} else {
+	    $this->assert(false, 'should have redirected');
+	}
     }
 
     function testMaintenanceMode() {

@@ -174,7 +174,10 @@ function _GalleryMain($embedded=false) {
 	if (!$embedded && $gallery->getConfig('mode.embed.only') &&
 		!$controller->isAllowedInEmbedOnly()) {
 	    /* Lock out direct access when embed-only is set */
-	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
+	    if (($redirectUrl = $gallery->getConfig('mode.embed.only')) === true) {
+		return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
+	    }
+	    return array(null, _GalleryMain_doRedirect($redirectUrl));
 	}
 	if ($gallery->getConfig('mode.maintenance') && !$controller->isAllowedInMaintenance()) {
 	    /* Maintenance mode - allow admins, else redirect to given or standard url */
@@ -309,7 +312,10 @@ function _GalleryMain($embedded=false) {
     }
     if (!$embedded && $gallery->getConfig('mode.embed.only') && !$view->isAllowedInEmbedOnly()) {
 	/* Lock out direct access when embed-only is set */
-	return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
+	if (($redirectUrl = $gallery->getConfig('mode.embed.only')) === true) {
+	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
+	}
+	return array(null, _GalleryMain_doRedirect($redirectUrl));
     }
 
     /* Check if the page is cached and return the cached version, else generate the page */
