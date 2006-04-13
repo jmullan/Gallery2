@@ -1,6 +1,4 @@
 <?php
-if (class_exists('HTML_Safe')) { return; } /* In case defined elsewhere (when embedded) */
-
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
 /**
@@ -20,8 +18,12 @@ if (class_exists('HTML_Safe')) { return; } /* In case defined elsewhere (when em
 
 /**
  * This package requires HTMLSax3 package
+ * @G2 - skip if already defined elsewhere (when embedded)
  */
+if (!class_exists('XML_HTMLSax3')) {
 require_once(dirname(__FILE__) . '/HTMLSax3.php');
+}
+if (class_exists('HTML_Safe')) { return; } /* @G2 - done if defined elsewhere (when embedded) */
 
  
 /**
