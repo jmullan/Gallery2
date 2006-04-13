@@ -65,7 +65,6 @@ class ToolkitTest extends GalleryTestCase {
     }
 
     function testOperation() {
-
 	$params = array(array('type' => 'test-type1',
 			      'description' => 'test-description1'),
 			array('type' => 'test-type2',
@@ -154,7 +153,7 @@ class ToolkitTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	/* Get the operation */
+	/* Get the property */
 	list ($ret, $properties) = GalleryCoreApi::getToolkitProperties('test/type');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -658,6 +657,44 @@ class ToolkitTest extends GalleryTestCase {
 	$this->assertEquals(array(true, null, null),
 	    $toolkit->mergeOperations('rotate', array(180), 'rotate', array(180)),
 	    'rotate 180 180');
+    }
+
+    function testUnregisterToolkitsByModuleId() {
+	$params = array(array('type' => 'test-type1', 'description' => 'test-description1'));
+	$ret = GalleryCoreApi::registerToolkitOperation('TestToolkit',
+						       array('test/type'),
+						       'test-operation',
+						       $params,
+						       'test-description',
+						       'test/outputType');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = GalleryCoreApi::registerToolkitProperty(
+	    'TestToolkit2', array('test/type'), 'test-property',
+	    'int', 'test-description');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = GalleryCoreApi::unregisterToolkitsByModuleId('coreTest');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Get the operation */
+	list ($ret, $operations) = GalleryCoreApi::getToolkitOperations('test/type');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(0, sizeof($operations), 'all operations should be gone');
+
+	list ($ret, $properties) = GalleryCoreApi::getToolkitProperties('test/type');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(0, sizeof($properties), 'all properties should be gone');
     }
 }
 

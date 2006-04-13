@@ -200,26 +200,6 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::deactivate()
-     */
-    function deactivate($postDeactivationEvent=true) {
-	global $gallery;
-
-	list ($ret, $redirect) = parent::deactivate($postDeactivationEvent);
-	if ($ret) {
-	    return array($ret, null);
-	}
-
-	/* Unregister all of our properties and operations */
-	$ret = GalleryCoreApi::unregisterToolkit('SquareThumb');
-	if ($ret) {
-	    return array($ret, null);
-	}
-
-	return array(null, $redirect);
-    }
-
-    /**
      * Handler for Gallery::DeactivatePlugin event.
      *
      * @see GalleryEventListener::handleEvent

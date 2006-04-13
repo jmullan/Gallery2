@@ -309,7 +309,11 @@ class GalleryModule extends GalleryPlugin {
 	    return array(null, $redirect);
 	}
 
-	/* Unregister all factory implementations */
+	$ret = GalleryCoreApi::unregisterToolkitsByModuleId($this->getId());
+	if ($ret) {
+	    return array($ret, null);
+	}
+
 	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
 	if ($ret) {
 	    return array($ret, null);

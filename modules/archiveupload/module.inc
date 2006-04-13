@@ -149,24 +149,6 @@ class ArchiveUploadModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::deactivate()
-     */
-    function deactivate($postDeactivationEvent=true) {
-	list ($ret, $redirect) = parent::deactivate($postDeactivationEvent);
-	if ($ret) {
-	    return array($ret, null);
-	}
-
-	/* Unregister all of our properties and operations */
-	$ret = GalleryCoreApi::unregisterToolkit('ArchiveUpload');
-	if ($ret) {
-	    return array($ret, null);
-	}
-
-	return array(null, $redirect);
-    }
-
-    /**
      * @see GalleryModule::getSiteAdminViews()
      */
     function getSiteAdminViews() {

@@ -304,26 +304,6 @@ class ThumbnailModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::deactivate()
-     */
-    function deactivate($postDeactivationEvent=true) {
-	global $gallery;
-
-	list ($ret, $redirect) = parent::deactivate($postDeactivationEvent);
-	if ($ret) {
-	    return array($ret, null);
-	}
-
-	/* Unregister all of our properties and operations */
-	$ret = GalleryCoreApi::unregisterToolkit('Thumbnail');
-	if ($ret) {
-	    return array($ret, null);
-	}
-
-	return array(null, $redirect);
-    }
-
-    /**
      * @see GalleryModule::uninstall()
      */
     function uninstall() {

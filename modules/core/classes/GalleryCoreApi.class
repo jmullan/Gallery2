@@ -58,10 +58,10 @@ class GalleryCoreApi {
      * - remove GalleryPlatform::recursiveFixDirPermissions
      * - remove GalleryUtilities::htmlEntityDecode
      * - remove GalleryStatus::wrap
-     * - Change GalleryCoreApi::error to only take error code and error message
+     * - change GalleryCoreApi::error to only take error code and error message
      */
     function getApiVersion() {
-	return array(7, 5);
+	return array(7, 6);
     }
 
     /**
@@ -1992,6 +1992,20 @@ class GalleryCoreApi {
 	    'modules/core/classes/helpers/GalleryToolkitHelper_medium.class');
 	return GalleryToolkitHelper_medium::unregisterOperation($toolkitId, $operationName,
 								$mimeTypes);
+    }
+
+    /**
+     * Unregister all operations and properties provided by toolkits implemented
+     * by the given module.
+     *
+     * @param string the id of the module
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function unregisterToolkitsByModuleId($moduleId) {
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryToolkitHelper_medium.class');
+	return GalleryToolkitHelper_medium::unregisterToolkitsByModuleId($moduleId);
     }
 
     /**

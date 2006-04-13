@@ -354,6 +354,44 @@ class GalleryToolkitHelper_medium {
     }
 
     /**
+     * Unregister all operations and properties provided by toolkits implemented
+     * by the given module.
+     *
+     * @param string the id of the module
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function unregisterToolkitsByModuleId($moduleId) {
+	global $gallery;
+	$query = '
+        SELECT
+          [GalleryFactoryMap::implId]
+        FROM
+          [GalleryFactoryMap]
+        WHERE
+          [GalleryFactoryMap::implModuleId] = ?
+        ';
+	list($ret, $searchResults) = $gallery->search($query, array($moduleId));
+	if ($ret) {
+	    return $ret;
+	}
+
+	$implIds = array();
+	while ($result = $searchResults->nextResult()) {
+	    $implIds[] = $result[0];
+	}
+
+	foreach ($implIds as $implId) {
+	    $ret = GalleryToolkitHelper_medium::unregisterToolkit($implId);
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+
+	return null;
+    }
+
+    /**
      * Get all valid operations on a certain mime type
      *
      * @access public

@@ -150,24 +150,6 @@ class Getid3Module extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::deactivate()
-     */
-    function deactivate() {
-	list ($ret, $redirect) = parent::deactivate();
-	if ($ret) {
-	    return array($ret, null);
-	}
-
-	/* Unregister all of our properties and operations */
-	$ret = GalleryCoreApi::unregisterToolkit('Getid3');
-	if ($ret) {
-	    return array($ret, null);
-	}
-
-	return array(null, $redirect);
-    }
-
-    /**
      * @see GalleryModule::getSiteAdminViews()
      */
     function getSiteAdminViews() {
