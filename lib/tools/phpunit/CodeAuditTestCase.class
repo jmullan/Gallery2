@@ -118,8 +118,7 @@ class CodeAuditTestCase extends GalleryTestCase {
 	if ($this->shouldCheckFile($fileName)) {
 	    $gallery->guaranteeTimeLimit(30);
 	    $platform =& $gallery->getPlatform();
-	    $fd = $platform->fopen($fileName, 'r');
-	    $buf = $platform->fread($fd, $platform->filesize($fileName));
+	    $buf = $platform->file_get_contents($fileName);
 	    $this->checkFile($fileName, $buf);
 	}
     }
@@ -166,5 +165,4 @@ class CodeAuditTestCase extends GalleryTestCase {
 	return true;
     }
 }
-
 ?>
