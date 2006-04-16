@@ -4,3 +4,4 @@
 $mapInfo['{$mapName}'] = array({foreach name=inner from=$map item=member}'{$member.name}'=>array('type'=>{$member.type},'size'=>{$member.size}{if !empty($member.notNull)},'notNull'=>true{/if}{if !empty($member.notNullEmptyAllowed)},'notNullEmptyAllowed'=>true{/if}){if !$smarty.foreach.inner.last},{/if}{/foreach});
 {/foreach}
 ?>
+
