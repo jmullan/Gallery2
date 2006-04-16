@@ -60,7 +60,7 @@ $xml = "<!DOCTYPE classes SYSTEM \"" . dirname(__FILE__) .
 $xml .= "<classes>\n";
 if (!$dh = opendir('.')) {
     print "Unable to opendir(.)\n";
-    exit(1);
+    cleanExit(1);
 }
 
 $files = array();
@@ -81,7 +81,7 @@ foreach ($files as $file) {
 
 if (empty($classXml)) {
     /* Nothing to do */
-    exit(0);
+    cleanExit(0);
 }
 
 $xml .= $classXml;
@@ -90,14 +90,14 @@ $xml .= "</classes>\n";
 $entitiesXml = "$tmpdir/Entities.xml";
 if (!$fp = fopen($entitiesXml, 'wb')) {
     print "Unable to write to $entitiesXml\n";
-    exit(1);
+    cleanExit(1);
 }
 fwrite($fp, $xml);
 fclose($fp);
 
 if (system("xmllint --valid --noout $entitiesXml", $retval)) {
     print "System error: $retval\n";
-    exit;
+    cleanExit();
 }
 
 $p =& new XmlParser();
@@ -165,13 +165,17 @@ $fd = fopen('Entities.inc', 'w');
 fwrite($fd, $new);
 fclose($fd);
 
-/* Clean up the cheap and easy way */
-if (file_exists($tmpdir)) {
-    system("rm -rf $tmpdir");
-}
-
 /* Done */
-exit(0);
+cleanExit(0);
+
+function cleanExit($status=0) {
+    /* Clean up the cheap and easy way */
+    global $tmpdir;
+    if (file_exists($tmpdir)) {
+	system("rm -rf $tmpdir");
+    }
+    exit($status);
+}
 
 function getXml($filename) {
     $results = array();
