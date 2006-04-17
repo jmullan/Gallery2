@@ -92,8 +92,50 @@ class SiteAdminView extends GalleryView {
 		}
 
 		$group = $module->getGroup();
+		/**
+		 * Pre 2.2, we only accepted a 'view', which we made the subView to
+		 * core.SiteAdmin.  In 2.2, we now let them specify extra parameters
+		 * so we create a separate 'view' which contains all the url parameters
+		 * to form a complete SiteAdmin view (except that we force view to
+		 * be core.SiteAdmin).
+		 *
+		 * TODO: change the API to allow the module to return this form directly
+		 * so that we don't have to massage it like this.
+		 */
+		$currentSubView = GalleryUtilities::getRequestVariables('subView');
 		foreach (array_keys($moduleViews) as $i) {
-		    $moduleViews[$i] = array_merge($group, $moduleViews[$i]);
+		    $outer = array('name' => $moduleViews[$i]['name']);
+		    if (isset($moduleViews[$i]['group'])) {
+			$outer['group'] = $moduleViews[$i]['group'];
+			unset($moduleViews[$i]['group']);
+			$outer['groupLabel'] = $moduleViews[$i]['groupLabel'];
+			unset($moduleViews[$i]['groupLabel']);
+		    } else {
+			$outer['group'] = $group['group'];
+			$outer['groupLabel'] = $group['groupLabel'];
+		    }
+
+		    $inner = $moduleViews[$i];
+		    unset($inner['name']);
+		    $inner['subView'] = $inner['view'];
+		    $inner['view'] = 'core.SiteAdmin';
+		    $outer['view'] = $inner;
+
+		    if ($inner['subView'] == $currentSubView) {
+			/* This is probably our selected view */
+			$selected = true;
+			foreach ($inner as $key => $value) {
+			    if ($key == 'view') {
+				continue;
+			    }
+			    if (GalleryUtilities::getRequestVariables($key) != $value) {
+				$selected = false;
+				break;
+			    }
+			}
+			$outer['selected'] = $selected;
+		    }
+		    $moduleViews[$i] = $outer;
 		}
 
 		$subViewChoices = array_merge($subViewChoices, $moduleViews);

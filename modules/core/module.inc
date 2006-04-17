@@ -300,15 +300,10 @@ class CoreModule extends GalleryModule {
     function getSiteAdminViews() {
 	$data = array(array('name' => $this->translate('General'),
 			    'view' => 'core.AdminCore'),
-		      array('name' => $this->translate('Modules'),
-			    'view' => 'core.AdminModules'),
-		      /* TODO: Add back Repository link when downloadable plugins is ready:
+		      array('name' => $this->translate('Plugins'),
+			    'view' => 'core.AdminPlugins'),
 		      array('name' => $this->translate('Repository'),
-			    'view' => 'core.AdminRepository'), */
-		      array('name' => $this->translate('Themes'),
-			    'view' => 'core.AdminThemes',
-			    'group' => 'display',
-			    'groupLabel' => $this->translate('Display')),
+			    'view' => 'core.AdminRepository'),
 		      array('name' => $this->translate('Users'),
 			    'view' => 'core.AdminUsers'),
 		      array('name' => $this->translate('Groups'),
@@ -328,6 +323,36 @@ class CoreModule extends GalleryModule {
 			    'group' => 'toolkits',
 			    'groupLabel' => $this->translate('Graphics Toolkits'));
 	}
+
+	$themeLabel =  $this->translate('Themes');
+	$data[] = array('name' => $this->translate('Defaults'),
+			'view' => 'core.AdminThemes',
+			'mode' => 'defaults',
+			'group' => 'themes',
+			'groupLabel' => $themeLabel);
+
+	list ($ret, $themes) = GalleryCoreApi::fetchPluginStatus('theme', true);
+	if ($ret) {
+	    return array($ret, null);
+	}
+	foreach ($themes as $themeId => $status) {
+	    if (empty($status['active'])) {
+		continue;
+	    }
+
+	    list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId, true);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    $data[] = array('name' => $theme->translate($theme->getName()),
+			    'view' => 'core.AdminThemes',
+			    'themeId' => $themeId,
+			    'mode' => 'editTheme',
+			    'group' => 'themes',
+			    'groupLabel' => $themeLabel);
+	}
+
 	return array(null, $data);
     }
 

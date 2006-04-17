@@ -38,17 +38,6 @@
 {/if}
 
 <div class="gbTabBar">
-  {if ($AdminThemes.mode == 'config')}
-    <span class="giSelected o"><span>
-	{g->text text="All Themes"}
-    </span></span>
-  {else}
-    <span class="o"><span>
-      <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminThemes"
-		       arg3="mode=config"}">{g->text text="All Themes"}</a>
-    </span></span>
-  {/if}
-
   {if ($AdminThemes.mode == 'defaults')}
     <span class="giSelected o"><span>
       {g->text text="Defaults"}
@@ -75,99 +64,6 @@
   {/if}
   {/foreach}
 </div>
-
-{if ($AdminThemes.mode == 'config')}
-<div class="gbBlock">
-  <table class="gbDataTable"><tr>
-    <th> &nbsp; </th>
-    <th> {g->text text="Theme Name"} </th>
-    <th> {g->text text="Version"} </th>
-    <th> {g->text text="Installed"} </th>
-    <th> {g->text text="Description"} </th>
-    <th> {g->text text="Actions"} </th>
-  </tr>
-
-  {foreach from=$AdminThemes.themes key=themeId item=theme}
-    <tr class="{cycle values="gbEven,gbOdd"}">
-      <td>
-	{if $theme.state == 'install'}
-	<img src="{g->url href="modules/core/data/module-install.gif"}" width="13" height="13"
-	 alt="{g->text text="Status: Not Installed"}" />
-	{/if}
-	{if $theme.state == 'active'}
-	<img src="{g->url href="modules/core/data/module-active.gif"}" width="13" height="13"
-	 alt="{g->text text="Status: Active"}" />
-	{/if}
-	{if $theme.state == 'inactive'}
-	<img src="{g->url href="modules/core/data/module-inactive.gif"}" width="13" height="13"
-	 alt="{g->text text="Status: Inactive"}" />
-	{/if}
-	{if $theme.state == 'upgrade'}
-	<img src="{g->url href="modules/core/data/module-upgrade.gif"}" width="13" height="13"
-	 alt="{g->text text="Status: Upgrade Required (Inactive)"}" />
-	{/if}
-	{if $theme.state == 'incompatible'}
-	<img src="{g->url href="modules/core/data/module-incompatible.gif"}" width="13" height="13"
-	 alt="{g->text text="Status: Incompatible Theme (Inactive)"}" />
-	{/if}
-      </td>
-
-      <td{if ($themeId == $AdminThemes.defaultThemeId)} style="font-weight: bold"{/if}>
-	{g->text text=$theme.name l10Domain=$theme.l10Domain}
-      </td>
-
-      <td align="center"{if
-       ($themeId == $AdminThemes.defaultThemeId)} style="font-weight: bold"{/if}>
-	{$theme.version}
-      </td>
-
-      <td align="center"{if
-       ($themeId == $AdminThemes.defaultThemeId)} style="font-weight: bold"{/if}>
-	{$theme.installedVersion}
-      </td>
-
-      <td{if ($themeId == $AdminThemes.defaultThemeId)} style="font-weight: bold"{/if}>
-	{g->text text=$theme.description l10Domain=$theme.l10Domain}
-	{if $theme.state == 'incompatible'}
-	  <br/>
-	  <span class="giError">
-	    {g->text text="Incompatible theme!"}
-	    {if $theme.api.required.core != $theme.api.provided.core}
-	      <br/>
-	      {g->text text="Core API Required: %s (available: %s)"
-		       arg1=$theme.api.required.core arg2=$theme.api.provided.core}
-	    {/if}
-	    {if $theme.api.required.theme != $theme.api.provided.theme}
-	      <br/>
-	      {g->text text="Theme API Required: %s (available: %s)"
-		       arg1=$theme.api.required.theme arg2=$theme.api.provided.theme}
-	    {/if}
-	  </span>
-	{/if}
-      </td>
-
-      <td{if ($themeId == $AdminThemes.defaultThemeId)} style="font-weight: bold"{/if}>
-	{if ($themeId == $AdminThemes.defaultThemeId)}
-	  {g->text text="(default)"}
-	{/if}
-	{if (!empty($theme.action))}
-	  {foreach name=actions from=$theme.action item=action}{strip}
-	    {if !$smarty.foreach.actions.first}
-	      <br/>
-	    {/if}
-	    <a href="{g->url params=$action.params}">
-	      {$action.text}
-	    </a>
-	  {/strip}{/foreach}
-	{else}
-	  &nbsp;
-	{/if}
-      </td>
-    </tr>
-  {/foreach}
-  </table>
-</div>
-{/if}
 
 {if ($AdminThemes.mode == 'defaults')}
 <div class="gbBlock">

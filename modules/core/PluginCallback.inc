@@ -34,7 +34,7 @@
  * @package GalleryCore
  * @subpackage UserInterface
  */
-class ModuleCallbackView extends GalleryView {
+class PluginCallbackView extends GalleryView {
 
     /**
      * @see GalleryView::isImmediate()
@@ -55,7 +55,7 @@ class ModuleCallbackView extends GalleryView {
 	    header("Content-type: text/plain; charset=UTF-8");
 	}
 
-	list ($ret, $beforeStates) = $this->getModuleStates();
+	list ($ret, $beforeStates) = $this->getPluginStates();
 	if ($ret) {
 	    $result['status'] = 'error';
 	    $session->put('core.error', serialize($ret));
@@ -76,7 +76,7 @@ class ModuleCallbackView extends GalleryView {
 	}
 
 	if (!$ret) {
-	    list ($ret, $afterStates) = $this->getModuleStates();
+	    list ($ret, $afterStates) = $this->getPluginStates();
 	    if ($ret) {
 		$result['status'] = 'error';
 		$session->put('core.error', serialize($ret));
@@ -96,13 +96,17 @@ class ModuleCallbackView extends GalleryView {
      * @param array before states (moduleId => state, ...)
      * @param array after states (moduleId => state, ...)
      * @return array changed states (moduleId => state, ...)
+     *
+     * @static
      */
     function calculateStateChanges($beforeStates, $afterStates) {
 	$changes = array();
-	foreach ($afterStates as $moduleId => $state) {
-	    if (!isset($beforeStates[$moduleId]) ||
-		$beforeStates[$moduleId] != $state) {
-		$changes[$moduleId] = $state;
+	foreach (array('module', 'theme') as $type) {
+	    foreach ($afterStates[$type] as $moduleId => $state) {
+		if (!isset($beforeStates[$type][$moduleId]) ||
+		    $beforeStates[$type][$moduleId] != $state) {
+		    $changes[$type][$moduleId] = $state;
+		}
 	    }
 	}
 	return $changes;
@@ -124,23 +128,30 @@ class ModuleCallbackView extends GalleryView {
 	}
 
 	$result = array();
-	$moduleId = GalleryUtilities::getRequestVariables('moduleId');
+	list ($pluginType, $pluginId) =
+	    GalleryUtilities::getRequestVariables('pluginType', 'pluginId');
 
-	list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId, true);
+	list($ret, $plugin) = GalleryCoreApi::loadPlugin($pluginType, $pluginId, true);
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $isActive) = $plugin->isActive();
 	if ($ret) {
 	    return $ret;
 	}
 
 	switch($command) {
-	case 'activateModule':
-	    list ($ret, $isActive) = $module->isActive();
-	    if ($ret) {
-		return $ret;
-	    }
+	case 'activate':
 
-	    list ($ret, $needsConfiguration) = $module->needsConfiguration();
-	    if ($ret) {
-		return $ret;
+	    if ($pluginType == 'module') {
+		list ($ret, $needsConfiguration) = $plugin->needsConfiguration();
+		if ($ret) {
+		    return $ret;
+		}
+	    } else {
+		/* Themes don't need configuration */
+		$needsConfiguration = false;
 	    }
 
 	    if ($isActive || $needsConfiguration) {
@@ -149,7 +160,7 @@ class ModuleCallbackView extends GalleryView {
 		return null;
 	    }
 
-	    list ($ret, $redirect) = $module->activate();
+	    list ($ret, $redirect) = $plugin->activate();
 	    if ($ret) {
 		return $ret;
 	    }
@@ -162,45 +173,61 @@ class ModuleCallbackView extends GalleryView {
 	    }
 	    break;
 
-	case 'deactivateModule':
-	    list ($ret, $isActive) = $module->isActive();
-	    if ($ret) {
-		return $ret;
-	    }
-
+	case 'deactivate':
 	    if (!$isActive) {
 		/* UI shouldn't let us come here anyway */
 		$result['status'] = 'invalid';
 		return null;
 	    }
 
-	    list ($ret, $redirect) = $module->deactivate();
-	    if ($ret) {
-		return $ret;
+	    if ($pluginType == 'theme') {
+		list($ret, $defaultThemeId) = GalleryCoreApi::getPluginParameter(
+		    'module', 'core', 'default.theme');
+		if ($ret) {
+		    return $ret;
+		}
+
+		if ($plugin->getId() == $defaultThemeId) {
+		    /* UI shouldn't let us come here anyway */
+		    $result['status'] = 'invalid';
+		}
 	    }
 
-	    if ($redirect) {
-		$result['status'] = 'redirect';
-		$result['redirect'] = $redirect;
-	    } else {
-		$result['status'] = 'success';
+	    if (empty($result['status'])) {
+		list ($ret, $redirect) = $plugin->deactivate();
+		if ($ret) {
+		    return $ret;
+		}
+
+		if ($redirect) {
+		    $result['status'] = 'redirect';
+		    $result['redirect'] = $redirect;
+		} else {
+		    $result['status'] = 'success';
+		}
 	    }
 	    break;
 
-	case 'upgradeModule':
-	case 'installModule':
-	    $ret = $module->installOrUpgrade();
+	case 'upgrade':
+	case 'install':
+	    $ret = $plugin->installOrUpgrade();
 	    if ($ret) {
 		return $ret;
 	    }
 
-	    list($ret, $autoConfigured) = $module->autoConfigure();
-	    if ($ret) {
-		return $ret;
+	    if ($pluginType == 'module') {
+		list($ret, $autoConfigured) = $plugin->autoConfigure();
+		if ($ret) {
+		    return $ret;
+		}
+	    } else {
+		/* Themes don't need this step */
+		$autoConfigured = true;
 	    }
+
 
 	    if ($autoConfigured) {
-		list ($ret, $redirect) = $module->activate();
+		list ($ret, $redirect) = $plugin->activate();
 		if ($ret) {
 		    return $ret;
 		}
@@ -216,17 +243,39 @@ class ModuleCallbackView extends GalleryView {
 	    }
 	    break;
 
-	case 'uninstallModule':
-	    $result['status'] = 'redirect';
-	    $result['redirect'] = array('view' => 'core.SiteAdmin',
-					'subView' => 'core.AdminModulesVerifyUninstall',
-					'moduleId' => $moduleId);
+	case 'uninstall':
+	    if ($pluginType == 'theme') {
+		if ($isActive) {
+		    list ($ret, $redirect) = $plugin->deactivate();
+		    if ($ret) {
+			return $ret;
+		    }
+		} else {
+		    $redirect = false;
+		}
+
+		if ($redirect) {
+		    $result['status'] = 'redirect';
+		    $results['redirect'] = $redirect;
+		} else {
+		    $ret = $plugin->uninstall();
+		    if ($ret) {
+			return $ret;
+		    }
+		    $result['status'] = 'success';
+		}
+	    } else {
+		$result['status'] = 'redirect';
+		$result['redirect'] = array('view' => 'core.SiteAdmin',
+					    'subView' => 'core.AdminModulesVerifyUninstall',
+					    'moduleId' => $pluginId);
+	    }
 	    break;
 
-	case 'configureModule':
+	case 'configure':
 	    $result['status'] = 'redirect';
 	    $result['redirect'] = array('view' => 'core.SiteAdmin',
-					'subView' => $module->getConfigurationView());
+					'subView' => $plugin->getConfigurationView());
 	    break;
 	}
 
@@ -240,22 +289,25 @@ class ModuleCallbackView extends GalleryView {
      *               array(moduleId => state, ...)
      * @static
      */
-    function getModuleStates() {
+    function getPluginStates() {
 	$states = array();
 
-	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module', true);
-	if ($ret) {
-	    return array($ret, null);
-	}
-	foreach ($moduleStatus as $moduleId => $status) {
-	    list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId, true);
+	foreach (array('module', 'theme') as $type) {
+	    list ($ret, $pluginStatus) = GalleryCoreApi::fetchPluginStatus($type, true);
 	    if ($ret) {
 		return array($ret, null);
 	    }
+	    foreach ($pluginStatus as $pluginId => $status) {
+		list($ret, $plugin) = GalleryCoreApi::loadPlugin($type, $pluginId, true);
+		if ($ret) {
+		    return array($ret, null);
+		}
 
-	    list ($ret, $states[$moduleId]) = $this->getModuleState($module, $status);
-	    if ($ret) {
-		return array($ret, null);
+		list ($ret, $states[$type][$pluginId]) =
+		    $this->getPluginState($type, $plugin, $status);
+		if ($ret) {
+		    return array($ret, null);
+		}
 	    }
 	}
 
@@ -265,20 +317,35 @@ class ModuleCallbackView extends GalleryView {
     /**
      * Get the state ('active', 'inactive', 'uninstalled', etc) of a given module
      *
+     * @param string the type ('module' or 'theme')
+     * @param object GalleryPlugin the plugin
+     * @param array the status of the plugin (from GalleryCoreApi::fetchPluginStatus)
      * @return array object GalleryStatus a status code
      *               string a state
      * @static
      */
-    function getModuleState($module, $status) {
-	if ($module->getId() == 'core') {
+    function getPluginState($type, $plugin, $status) {
+	if ($type == 'module' && $plugin->getId() == 'core') {
 	    return array(null, 'active');
 	}
 
 	$coreApiCompatible = GalleryUtilities::isCompatibleWithApi(
-	    $module->getRequiredCoreApi(), GalleryCoreApi::getApiVersion());
-	$moduleApiCompatible = GalleryUtilities::isCompatibleWithApi(
-	    $module->getRequiredModuleApi(), GalleryModule::getApiVersion());
-	if ($coreApiCompatible && $moduleApiCompatible) {
+	    $plugin->getRequiredCoreApi(), GalleryCoreApi::getApiVersion());
+
+	/* TODO: refactor this into type specific wrapper methods around getPluginState() */
+	switch ($type) {
+	case 'module':
+	    $pluginApiCompatible = GalleryUtilities::isCompatibleWithApi(
+		$plugin->getRequiredModuleApi(), GalleryModule::getApiVersion());
+	    break;
+
+	case 'theme':
+	    $pluginApiCompatible = GalleryUtilities::isCompatibleWithApi(
+		$plugin->getRequiredThemeApi(), GalleryTheme::getApiVersion());
+	    break;
+	}
+
+	if ($coreApiCompatible && $pluginApiCompatible) {
 	    if (empty($status['active'])) {
 		$version = $status['version'];
 		$state = 'inactive';
@@ -287,20 +354,24 @@ class ModuleCallbackView extends GalleryView {
 		 * If the database versions doesn't match the module
 		 * version, we need to get the user to install the module.
 		 */
-		if ($version != $module->getVersion()) {
+		if ($version != $plugin->getVersion()) {
 		    if (empty($version)) {
 			$state = 'uninstalled';
 		    } else {
 			$state = 'unupgraded';
 		    }
 		} else {
-		    /*
-		     * The versions match, but the module can still demand
-		     * to be configured before being activated.
-		     */
-		    list ($ret, $needsConfig) = $module->needsConfiguration();
-		    if ($ret) {
-			return array($ret, null);
+		    if ($type == 'module') {
+			/*
+			 * The versions match, but the module can still demand
+			 * to be configured before being activated.
+			 */
+			list ($ret, $needsConfig) = $plugin->needsConfiguration();
+			if ($ret) {
+			    return array($ret, null);
+			}
+		    } else {
+			$needsConfig = false;
 		    }
 
 		    if ($needsConfig) {

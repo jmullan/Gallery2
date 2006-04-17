@@ -55,6 +55,11 @@ class ThemeTest extends GalleryTestCase {
 	}
 	$this->_theme->setRequiredCoreApi(GalleryCoreApi::getApiVersion());
 	$this->_theme->setRequiredThemeApi(GalleryTheme::getApiVersion());
+
+	$ret = $this->_markPluginParametersForCleanup('module', 'core');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
     }
 
     function tearDown() {
@@ -281,6 +286,21 @@ class ThemeTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	$this->assert(!$isActive, 'is active');
+    }
+
+    function testDeactivateDefaultTheme() {
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'core', 'default.theme', 'themetest');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $redirect) = $this->_theme->deactivate();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array('href' => 'upgrade/'), $redirect);
     }
 }
 

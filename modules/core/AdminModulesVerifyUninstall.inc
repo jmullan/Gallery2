@@ -72,7 +72,7 @@ class AdminModulesVerifyUninstallController extends GalleryController {
 		}
 		$status['uninstalled'] = $module->translate($module->getName());
 		$redirect['view'] = 'core.SiteAdmin';
-		$redirect['subView'] = 'core.AdminModules';
+		$redirect['subView'] = 'core.AdminPlugins';
 	    }
 	}
 
@@ -80,7 +80,7 @@ class AdminModulesVerifyUninstallController extends GalleryController {
 	    $results['redirect'] = $redirect;
 	} else {
 	    $results['delegate']['view'] = 'core.SiteAdmin';
-	    $results['delegate']['subView'] = 'core.AdminModules';
+	    $results['delegate']['subView'] = 'core.AdminPlugins';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;

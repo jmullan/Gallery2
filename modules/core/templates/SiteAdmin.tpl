@@ -22,11 +22,11 @@
 	  <li> <span>{$group.0.groupLabel}</span>
 	    <ul>
 	      {foreach from=$group item=choice}
-		<li class="gbAdminLink {g->linkId urlParams=$choice}">
-		{if ($SiteAdmin.subViewName == $choice.view)}
+		<li class="gbAdminLink {g->linkId view=$choice.view.subView}">
+		{if !empty($choice.selected)}
 		  {$choice.name}
 		{else}
-		  <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=`$choice.view`"}">
+		  <a href="{g->url params=$choice.view}">
 		    {$choice.name}
 		  </a>
 		{/if}

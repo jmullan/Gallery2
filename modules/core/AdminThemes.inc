@@ -67,71 +67,7 @@ class AdminThemesController extends GalleryController {
 		return array($ret, null);
 	    }
 
-	    if (isset($form['action']['activate'])) {
-		/* Only activate if we're not already active! */
-		if (!$isActive) {
-		    list ($ret, $redirect) = $theme->activate();
-		    if ($ret) {
-			return array($ret, null);
-		    }
-		    $status['activated'] = $theme->translate($theme->getName());
-		}
-
-		$redirect['view'] = 'core.SiteAdmin';
-		$redirect['subView'] = 'core.AdminThemes';
-		$redirect['mode'] = 'config';
-	    } else if (isset($form['action']['install'])) {
-		$ret = $theme->installOrUpgrade();
-		if ($ret) {
-		    return array($ret, null);
-		}
-
-		$redirect['view'] = 'core.SiteAdmin';
-		$redirect['subView'] = 'core.AdminThemes';
-		$redirect['mode'] = 'config';
-		$status['installed'] = $theme->translate($theme->getName());
-	    } else if (isset($form['action']['upgrade'])) {
-		$ret = $theme->installOrUpgrade();
-		if ($ret) {
-		    return array($ret, null);
-		}
-
-		$redirect['view'] = 'core.SiteAdmin';
-		$redirect['subView'] = 'core.AdminThemes';
-		$redirect['mode'] = 'config';
-		$status['upgraded'] = $theme->translate($theme->getName());
-	    } else if (isset($form['action']['uninstall'])) {
-		if (!$isActive) {
-		    $ret = $theme->uninstall();
-		    if ($ret) {
-			return array($ret, null);
-		    }
-		    $status['uninstalled'] = $theme->translate($theme->getName());
-		}
-
-		$redirect['view'] = 'core.SiteAdmin';
-		$redirect['subView'] = 'core.AdminThemes';
-		$redirect['mode'] = 'config';
-	    } else if (isset($form['action']['deactivate'])) {
-		list ($ret, $defaultThemeId) =
-		    GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
-		if ($ret) {
-		    return array($ret, null);
-		}
-
-		/* Only deactivate if we're not already deactive and not the default! */
-		if ($isActive && $theme->getId() != $defaultThemeId) {
-		    list ($ret, $redirect) = $theme->deactivate();
-		    if ($ret) {
-			return array($ret, null);
-		    }
-		    $status['deactivated'] = $theme->translate($theme->getName());
-		}
-
-		$redirect['view'] = 'core.SiteAdmin';
-		$redirect['subView'] = 'core.AdminThemes';
-		$redirect['mode'] = 'config';
-	    } else if (isset($form['action']['saveTheme'])) {
+	    if (isset($form['action']['saveTheme'])) {
 		/* Get all the possible settings */
 		list ($ret, $settings) = $theme->getSettings(null);
 		if ($ret) {

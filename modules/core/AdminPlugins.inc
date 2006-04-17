@@ -1,0 +1,168 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2006 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * This view will show administration possibilities for available modules
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ */
+class AdminPluginsView extends GalleryView {
+
+    /**
+     * @see GalleryView::loadTemplate
+     */
+    function loadTemplate(&$template, &$form) {
+	global $gallery;
+
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	$themeGroup = array('group' => 'theme', 'groupLabel' => $gallery->i18n('Themes'));
+
+	if ($form['formName'] != 'AdminPlugins') {
+	    /* We have no form variables */
+	    $form['formName'] = 'AdminPlugins';
+	}
+
+	foreach (array('module', 'theme') as $type) {
+	    /* Load the module list */
+	    list ($ret, $pluginStatus[$type]) = GalleryCoreApi::fetchPluginStatus($type, true);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    /*
+	     * It's possible that we have some out-of-date plugins which haven't
+	     * been deactivated yet, since the deactivation only occurs when we try
+	     * to load the module.  Load all the active plugins now to force the
+	     * version check, then reload the plugin status when we're done to pick
+	     * up any changes we trigger.
+	     */
+	    foreach ($pluginStatus[$type] as $pluginId => $status) {
+		if (!empty($status['active'])) {
+		    list($ret, $module) = GalleryCoreApi::loadPlugin($type, $pluginId);
+		    if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+			return array($ret, null);
+		    }
+		}
+	    }
+
+	    /* Reload the plugin list, which may now be updated because of obsolete modules. */
+	    list ($ret, $pluginStatus[$type]) = GalleryCoreApi::fetchPluginStatus($type, true);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    GalleryCoreApi::requireOnce('modules/core/PluginCallback.inc');
+	    foreach ($pluginStatus[$type] as $pluginId => $status) {
+		list($ret, $plugin) = GalleryCoreApi::loadPlugin($type, $pluginId, true);
+		if ($ret) {
+		    return array($ret, null);
+		}
+
+		$entry = array();
+		$entry['type'] = $type;
+		$entry['name'] = $plugin->translate($plugin->getName());
+		$entry['id'] = $plugin->getId();
+		$entry['description'] = $plugin->translate($plugin->getDescription());
+		$entry['version'] = $plugin->getVersion();
+		$entry['installedVersion'] = isset($status['version']) ? $status['version'] : null;
+
+		list ($ret, $entry['state']) =
+		    PluginCallbackView::getPluginState($type, $plugin, $status);
+		if ($ret) {
+		    return array($ret, null);
+		}
+
+		if ($entry['state'] == 'incompatible') {
+		    $entry['api']['required']['plugin'] =
+			join('.', $type == 'theme' ?
+			     $plugin->getRequiredThemeApi() : $plugin->getRequiredModuleApi());
+		    $entry['api']['provided']['plugin'] = join('.', GalleryModule::getApiVersion());
+		    $entry['api']['required']['core'] = join('.', $plugin->getRequiredCoreApi());
+		    $entry['api']['provided']['core'] = join('.', GalleryCoreApi::getApiVersion());
+		}
+
+		if ($type == 'theme') {
+		    $plugins[] = array_merge($entry, $themeGroup);
+		} else {
+		    $plugins[] = array_merge($entry, $plugin->getGroup());
+		}
+	    }
+	}
+
+	usort($plugins, array($this, 'pluginSort'));
+
+	$AdminPlugins = array();
+	$AdminPlugins['plugins'] = $plugins;
+	list ($ret, $AdminPlugins['defaultTheme']) = GalleryCoreApi::getPluginParameter(
+	    'module', 'core', 'default.theme');
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	$template->setVariable('AdminPlugins', $AdminPlugins);
+	$template->setVariable('controller', 'core.AdminPlugins');
+	$template->javascript('lib/javascript/XmlHttp.js');
+
+	return array(null,
+		     array('body' => 'modules/core/templates/AdminPlugins.tpl'));
+    }
+
+    function pluginSort($a, $b) {
+	static $groupOrder;
+	if (!isset($groupOrder)) {
+	    /* gallery first, toolkits second, other last */
+	    $groupOrder = array('gallery' => 1, 'toolkits' => 2, '' => 3, 'other' => 4);
+	}
+	$ag = $a['group'];
+	$bg = $b['group'];
+	if ($ag != $bg) {
+	    $ao = isset($groupOrder[$ag]) ? $groupOrder[$ag] : $groupOrder[''];
+	    $bo = isset($groupOrder[$bg]) ? $groupOrder[$bg] : $groupOrder[''];
+	    if ($ao != $bo) {
+		return ($ao > $bo) ? 1 : -1;
+	    }
+	    $ag = isset($a['groupLabel']) ? $a['groupLabel'] : $ag;
+	    $bg = isset($b['groupLabel']) ? $b['groupLabel'] : $bg;
+	    return ($ag > $bg) ? 1 : -1;
+	} else {
+	    $an = $a['name'];
+	    $bn = $b['name'];
+	    if ($an == $bn) {
+		return 0;
+	    } else {
+		return ($an > $bn) ? 1 : -1;
+	    }
+	}
+    }
+}
+?>
