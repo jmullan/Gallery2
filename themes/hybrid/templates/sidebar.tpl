@@ -22,7 +22,7 @@
       <li>
 	&raquo;
 	<a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$parent.id`"}">
-	  {$parent.title|default:$parent.pathComponent|markup:strip}
+	  {$parent.title|markup:strip|default:$parent.pathComponent}
 	</a>
       </li>
     {/foreach}

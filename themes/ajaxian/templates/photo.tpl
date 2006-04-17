@@ -42,7 +42,7 @@
       <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$theme.parents[parent].id`"
 			arg3="highlightId=`$theme.item.id`"}" class="backtoalbum"
 			title="{g->text text="Back to %s"
-				arg1=$theme.parents[parent].title|default:$theme.parents[parent].pathComponent|markup:strip}">
+				arg1=$theme.parents[parent].title|markup:strip|default:$theme.parents[parent].pathComponent}">
 	{g->text text="Go back to album"}
       </a></div>
     {/if}

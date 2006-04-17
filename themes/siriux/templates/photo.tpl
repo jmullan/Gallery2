@@ -55,7 +55,7 @@
 {if isset($theme.navigator.back)}
   <area shape="rect" coords="0,0,{math equation="round(x/2-1)" x=$image.width},{$image.height}"
    href="{g->url params=$theme.navigator.back.urlParams}"
-   alt="{$theme.item.title|default:$theme.item.pathComponent|markup:strip}"
+   alt="{$theme.item.title|markup:strip|default:$theme.item.pathComponent}"
    onmouseover="document.getElementById('prevArrow').style.visibility='visible'"
    onmouseout="document.getElementById('prevArrow').style.visibility='hidden'"/>
 {/if}
@@ -63,7 +63,7 @@
   <area shape="rect" coords="{math equation="round(x/2)"
 				   x=$image.width},0,{$image.width},{$image.height}"
    href="{g->url params=$theme.navigator.next.urlParams}"
-   alt="{$theme.item.title|default:$theme.item.pathComponent|markup:strip}"
+   alt="{$theme.item.title|markup:strip|default:$theme.item.pathComponent}"
    onmouseover="document.getElementById('nextArrow').style.visibility='visible'"
    onmouseout="document.getElementById('nextArrow').style.visibility='hidden'"/>
 {/if}
