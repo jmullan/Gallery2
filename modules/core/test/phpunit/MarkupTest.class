@@ -138,6 +138,11 @@ class MarkupTest extends GalleryTestCase {
 			    $results);
     }
 
+    function testImageSize() {
+	$results = $this->_bbcode->parse('[img width=50 height=15]/images/foo.png[/img]');
+	$this->assertEquals('<img src="/images/foo.png" alt="" width="50" height="15"/>', $results);
+    }
+
     function testJavascriptInImage() {
 	$results = $this->_bbcode->parse('[img]javascript:alert()[/img]');
 	$this->assertEquals('[img]javascript:alert()[/img]', $results);
