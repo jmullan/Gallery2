@@ -502,10 +502,13 @@ class UrlGeneratorTest extends GalleryTestCase {
 			    $this->_urlGenerator->generateUrl(
 				array('controller' => 'test.Controller', 'param' => 12345)));
 
-	/* Hrefs should go to the multisite codebase */
+	/* Hrefs should go to the multisite codebase, unless forceDirect given */
 	$this->assertEquals('test://codebase/somepath/theme/test_3745/images/foo.jpg',
 			    $this->_urlGenerator->generateUrl(
 				array('href' => 'theme/test_3745/images/foo.jpg')));
+	$this->assertEquals('site/image.jpg',
+			    $this->_urlGenerator->generateUrl(
+				array('href' => 'site/image.jpg'), array('forceDirect' => true)));
 
 	/* URL with baseUrl shouldn't be changed */
 	$this->assertEquals('fix_base_url/foo.php?g2_foo=bar',

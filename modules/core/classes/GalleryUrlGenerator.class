@@ -520,7 +520,7 @@ class GalleryUrlGenerator {
      *    %CURRENT_URL% token in a parameter value will be replaced with current url
      * @param array (optional) additional url generation options:
      *    'baseUrl' => string; to override the default baseUrl
-     *    'forceDirect' => true; to generate from G2 site url even if embedded
+     *    'forceDirect' => true; to generate from G2 site url even if embedded/multisite
      *    'forceFullUrl' => true; to generate absolute url instead of relative path url
      *    'forceSessionId' => boolean; to force session id to be in/not in the url; by default
      *        it is included when cookies are not in use (for href urls, default=not included)
@@ -534,10 +534,10 @@ class GalleryUrlGenerator {
 	$currentView = $gallery->getCurrentView();
 
 	/*
-	 * For non-absolute 'href' urls always use G2 base url
-	 * (direct to G2 codebase location, even if multisite or embedded),
 	 * For 'core.DownloadItem' urls or if 'forceDirect' option given, use G2 site url
-	 * (direct to main.php in directory for active config.php, even if embedded)
+	 * (direct to main.php in directory for active config.php, even if embedded/multisite)
+	 * For other non-absolute 'href' urls use G2 base url
+	 * (direct to G2 codebase location, even if multisite or embedded),
 	 * Otherwise use application url
 	 * (embed url; same as G2 site url if not embedded)
 	 */
@@ -547,7 +547,7 @@ class GalleryUrlGenerator {
 	} else if (isset($params['href'])) {
 	     /* In case of multisites, get the codebase base URL */
 	    $url = $gallery->getConfig('galleryBaseUrl');
-	    if (empty($url)) {
+	    if (empty($url) || !empty($options['forceDirect'])) {
 		$url = $this->getCurrentUrlDir(true);
 	    }
 
