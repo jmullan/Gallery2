@@ -43,7 +43,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
 
 	$status = array();
 	$error = array();
-	
+
 	if (isset($form['action']['findFilesFromWebPage'])) {
 	    /* Delegate back to the same view */
 	} else if (isset($form['action']['addFromWebPage']) && empty($form['webPageUrls'])) {
@@ -146,8 +146,20 @@ class ItemAddFromWeb extends ItemAddPlugin {
 		$session->put('core.view.ItemAddFromWeb.recentUrls', $recentUrls);
 
 		$form['webPageUrls'] = array();
-		if (isset($headers['Content-Type']) &&
-			strncmp($headers['Content-Type'], 'text', 4)) {
+
+		if (isset($headers['Content-Type'])) {
+		    $contentType = $headers['Content-Type'];
+		} else if (isset($headers['Content-type'])) {
+		    /*
+		     * Grumble grumble.  Some servers (eg Sun-ONE-Web-Server/6.1)
+		     * capitalize this header differently
+		     */
+		    $contentType = $headers['Content-type'];
+		} else {
+		    $contentType = '';
+		}
+
+		if (strncmp($contentType, 'text', 4)) {
 		    /*
 		     * If the buffer does not contain text(/html) then just offer
 		     * to add this url, rather than parsing the contents.
