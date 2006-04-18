@@ -178,8 +178,10 @@ class GalleryBbcodeMarkupParser {
 	}
 
 	if ($openClose == 'all') {
+	    $size = (isset($attrs['width']) ? ' width="' . (int)$attrs['width'] . '"' : '')
+		. (isset($attrs['height']) ? ' height="' . (int)$attrs['height'] . '"' : '');
 	    /* Input should have entities already, so no htmlspecialchars here */
-	    return sprintf('<img src="%s" alt=""/>', $elementContents);
+	    return sprintf('<img src="%s" alt=""%s/>', $elementContents, $size);
 	} else {
 	    return false;
 	}
