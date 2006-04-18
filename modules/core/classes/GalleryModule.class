@@ -258,12 +258,7 @@ class GalleryModule extends GalleryPlugin {
 	}
 
 	/* Remove this plugin */
-	$ret = parent::uninstall();
-	if ($ret) {
-	    return $ret;
-	}
-
-	return null;
+	return parent::uninstall();
     }
 
     /**

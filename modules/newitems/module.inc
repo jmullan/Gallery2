@@ -80,34 +80,6 @@ class NewItemsModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::deactivate()
-     */
-    function deactivate($postDeactivationEvent=true) {
-	GalleryCoreApi::requireOnce('modules/newitems/classes/NewItemsHelper.class');
-	list ($ret, $count) = NewItemsHelper::fetchAlbumCount();
-	if ($ret) {
-	    return array($ret, null);
-	}
-	list ($ret, $default) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderBy');
-	if ($ret) {
-	    return array($ret, null);
-	}
-	if ($count > 0 || strpos($default, 'NewItems') !== false) {
-	    /* Can't deactivate if NewItems sort is in use */
-	    return array(null,
-			 array('view' => 'core.SiteAdmin',
-			       'subView' => 'newitems.NewItemsSiteAdmin'));
-	}
-
-	list ($ret, $redirect) = parent::deactivate($postDeactivationEvent);
-	if ($ret) {
-	    return array($ret, null);
-	}
-	return array(null, $redirect);
-    }
-
-    /**
      * @see GalleryModule::getSiteAdminViews()
      */
     function getSiteAdminViews() {
@@ -143,6 +115,19 @@ class NewItemsModule extends GalleryModule {
 	    }
 	}
 	return array(null, $summaries);
+    }
+
+
+    /**
+     * @see GalleryModule::uninstall
+     */
+    function uninstall() {
+	$ret = GalleryCoreApi::removeSortOrderFromAllAlbums('NewItems');
+	if ($ret) {
+	    return $ret;
+	}
+
+	return parent::uninstall();
     }
 }
 ?>

@@ -48,19 +48,6 @@ class RewriteModule extends GalleryModule {
     }
 
     /**
-     * When rewrite is deactivated we need to restore the original URL generator for this request.
-     *
-     * @see GalleryModule::deactivate
-     */
-    function deactivate($postDeactivationEvent=true) {
-	global $gallery;
-	$urlGenerator =& $gallery->getUrlGenerator();
-	$urlGenerator->_error = true;
-
-    	return parent::deactivate($postDeactivationEvent);
-    }
-
-    /**
      * @see GalleryModule::upgrade
      */
     function upgrade($currentVersion) {

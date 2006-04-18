@@ -704,5 +704,64 @@ class GalleryItemHelper_advanced {
 
 	return array(null, $tree);
     }
+
+    /**
+     * Remove the given sort order from all albums that are using it.
+     *
+     * @param string the sort order
+     */
+    function removeSortOrderFromAllAlbums($sortOrder) {
+	global $gallery;
+
+	/* Find all albums that have the new items sort order and remove it */
+	$query = '
+        SELECT
+          [GalleryAlbumItem::id]
+        FROM
+          [GalleryAlbumItem]
+        WHERE
+          [GalleryAlbumItem::orderBy] LIKE ?
+          OR [GalleryAlbumItem::orderBy] LIKE ?
+          OR [GalleryAlbumItem::orderBy] = ?
+        ';
+	list ($ret, $searchResults) = $gallery->search(
+	    $query, array("$sortOrder|%", "%|$sortOrder", $sortOrder));
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ids = array();
+	while ($result = $searchResults->nextResult()) {
+	    $ids[] = $result[0];
+	}
+
+	$batchSize = 100;
+	while (!empty($ids)) {
+	    $currentIds = array_splice($ids, 0, $batchSize);
+	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($currentIds);
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($currentIds);
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    foreach ($albums as $album) {
+		$album->setOrderBy('');
+		$ret = $album->save();
+		if ($ret) {
+		    GalleryCoreApi::releaseLocks($lockId);
+		    return $ret;
+		}
+	    }
+
+	    $ret = GalleryCoreApi::releaseLocks($lockId);
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+    }
 }
 ?>

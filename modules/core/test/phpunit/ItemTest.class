@@ -1562,6 +1562,33 @@ class ItemTest extends GalleryTestCase {
 	$this->assert(GalleryUtilities::isA($newItem, 'GalleryUnknownItem'),
 		      'newItem is not a GalleryUnknownItem');
     }
+
+    function testRemoveSortOrderFromAllAlbums() {
+	foreach (array('ItemTestOrder', 'ItemTestOrder|something', 'something|ItemTestOrder')
+		 as $order) {
+	    list ($ret, $albums[$order]) = $this->_createRandomAlbum(
+	    $this->_album->getId(), array('orderBy' => $order, 'orderDirection' => ORDER_ASCENDING));
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
+	}
+
+	$ret = GalleryCoreApi::removeSortOrderFromAllAlbums('ItemTestOrder');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	foreach ($albums as $order => $album) {
+	    list ($ret, $album) = $album->refresh();
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
+
+	    $this->assertEquals('', $album->getOrderBy(), "orderBy not removed for '$order'");
+	    $this->assertEquals(ORDER_ASCENDING, $album->getOrderDirection(),
+				"orderDirection changed for '$order'");
+	}
+    }
 }
 
 /**

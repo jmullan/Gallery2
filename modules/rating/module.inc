@@ -58,14 +58,14 @@ class RatingModule extends GalleryModule {
      * @see GalleryModule::performFactoryRegistrations()
      */
     function performFactoryRegistrations() {
-	$ret = GalleryCoreApi::registerFactoryImplementation( 'ItemEditOption', 'RatingItemEdit',
+	$ret = GalleryCoreApi::registerFactoryImplementation('ItemEditOption', 'RatingItemEdit',
 		'RatingItemEdit', 'modules/rating/RatingItemEdit.inc', 'rating',
 		array('ItemEditAlbum'));
 	if ($ret) {
 	    return $ret;
 	}
 
-	$ret = GalleryCoreApi::registerFactoryImplementation( 'GallerySortInterface_1_1',
+	$ret = GalleryCoreApi::registerFactoryImplementation('GallerySortInterface_1_1',
 		'RatingSortOrder', 'RatingSortOrder',
 		'modules/rating/classes/RatingSortOrder.class', 'rating', null);
 	if ($ret) {
@@ -74,7 +74,6 @@ class RatingModule extends GalleryModule {
 
 	return null;
     }
-
 
     /**
      * @see GalleryModule::getItemSummaries()
@@ -104,7 +103,7 @@ class RatingModule extends GalleryModule {
 		$numEnabledAlbums++;
 	    }
 	}
- 
+
 	if (empty($numEnabledAlbums)) {
 	    return array(null, array());
 	}
@@ -189,7 +188,6 @@ class RatingModule extends GalleryModule {
 	return array(null, $summaries);
     }
 
-
     /**
      * @see GalleryModule::upgrade()
      */
@@ -245,7 +243,6 @@ class RatingModule extends GalleryModule {
 	return null;
     }
 
-
     /**
      * @see GalleryModule::getSiteAdminViews()
      */
@@ -282,5 +279,16 @@ class RatingModule extends GalleryModule {
 	return array(null, $result);
     }
 
+    /**
+     * @see GalleryModule::uninstall
+     */
+    function uninstall() {
+	$ret = GalleryCoreApi::removeSortOrderFromAllAlbums('RatingSortOrder');
+	if ($ret) {
+	    return $ret;
+	}
+
+	return parent::uninstall();
+    }
 }
 ?>

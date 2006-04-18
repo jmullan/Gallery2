@@ -61,7 +61,7 @@ class GalleryCoreApi {
      * - change GalleryCoreApi::error to only take error code and error message
      */
     function getApiVersion() {
-	return array(7, 6);
+	return array(7, 7);
     }
 
     /**
@@ -3087,6 +3087,17 @@ class GalleryCoreApi {
 	    return array($ret, null);
 	}
 	return array(null, $userId == $anonymousId);
+    }
+
+    /**
+     * Remove the given sort order from all albums that are using it.
+     *
+     * @param string the sort order
+     */
+    function removeSortOrderFromAllAlbums($sortOrder) {
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryItemHelper_advanced.class');
+	return GalleryItemHelper_advanced::removeSortOrderFromAllAlbums($sortOrder);
     }
 }
 ?>

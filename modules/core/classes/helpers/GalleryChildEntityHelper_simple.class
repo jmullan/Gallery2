@@ -529,7 +529,7 @@ class GalleryChildEntityHelper_simple {
 	}
 	return array(null, $ids);
     }
-    
+
     /**
      * If we want to sort, which storage info we need?
      *
@@ -557,6 +557,7 @@ class GalleryChildEntityHelper_simple {
 	 * Don't simply plug getOrderBy into the SQL clause, or we could open
 	 * the door for SQL injection.
 	 */
+	$usingDefaults = false;
 	if (empty($orderBy)) {
 	    list ($ret, $orderBy) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderBy');
@@ -568,6 +569,7 @@ class GalleryChildEntityHelper_simple {
 	    if ($ret) {
 		return array($ret, null, null, null, null);
 	    }
+	    $usingDefaults = true;
 	}
 
 	$directionList = explode('|', $orderDirection);
@@ -666,27 +668,34 @@ class GalleryChildEntityHelper_simple {
 		if ($ret) {
 		    return array($ret, null, null, null, null);
 		}
-		if (!isset($sort)) {
-		    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__,
-						      $orderType), null, null, null, null);
-		}
-		list ($ret, $orderClause, $select[], $conditionClause, $joinClause) =
-		    $sort->getSortOrder($direction);
-		if ($ret) {
-		    return array($ret, null, null, null, null);
-		}
+		if (isset($sort)) {
+		    list ($ret, $orderClause, $select[], $conditionClause, $joinClause) =
+			$sort->getSortOrder($direction);
+		    if ($ret) {
+			return array($ret, null, null, null, null);
+		    }
 
-		for ($i = 1; $i <= 3; $i++) {
-		    $orderClause = preg_replace("{%$i%}", $i + 1 + count($order), $orderClause);
-		}
-		$order[] = $orderClause;
-		if (!empty($conditionClause)) {
-		    $condition[] = $conditionClause;
-		}
-		if (!empty($joinClause)) {
-		    $join[] = $joinClause;
+		    for ($i = 1; $i <= 3; $i++) {
+			$orderClause = preg_replace("{%$i%}", $i + 1 + count($order), $orderClause);
+		    }
+		    $order[] = $orderClause;
+		    if (!empty($conditionClause)) {
+			$condition[] = $conditionClause;
+		    }
+		    if (!empty($joinClause)) {
+			$join[] = $joinClause;
+		    }
+		    break;
+		} else {
+		    /* Sort order implementation is missing -- fall through to the default */
+		    if ($usingDefaults) {
+			return $this->_getOrderInfo('orderWeight', ORDER_ASCENDING);
+		    } else {
+			return $this->_getOrderInfo();
+		    }
 		}
 	    }
+
 	    if (isset($column)) {
 		$order[] = $column . $direction;
 		$select[] = $column;
