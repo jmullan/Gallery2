@@ -1436,6 +1436,15 @@ class UtilitiesTest extends GalleryTestCase {
 	/* Unclosed tags are closed, unmatched close is stripped */
 	$this->assertEquals('<tt><b>closed</b>  <i>open</i></tt>', GalleryUtilities::htmlSafe(
 		'<tt><b>closed</b> </td> <i>open'));
+
+    }
+
+    function testHtmlSafeUtf7() {
+	/*
+	 * HTML_Safe 0.9.9beta strips "invalid UTF-7": a+b-c -> ac
+	 * We removed UTF-7 handling to avoid this
+	 */
+	$this->assertEquals('a+b-c', GalleryUtilities::htmlSafe('a+b-c'));
     }
 
     function testStrToLower() {

@@ -604,7 +604,8 @@ class HTML_Safe
        $doc = str_replace("\xC0\xBC", '&lt;', $doc);
 
        // UTF-7 encoding ASCII decode
-       $doc = $this->repackUTF7($doc);
+       // @G2 - skip UTF-7 handling, causes a string like 'a+b-c' to become 'ac'
+       //$doc = $this->repackUTF7($doc);
 
        // Instantiate the parser
        $parser=& new XML_HTMLSax3();
