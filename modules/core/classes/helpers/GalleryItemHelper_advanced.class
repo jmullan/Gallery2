@@ -706,11 +706,12 @@ class GalleryItemHelper_advanced {
     }
 
     /**
-     * Remove the given sort order from all albums that are using it.
+     * Remove the given sort order from any thing in the framework that uses it
+     * (albums and the default sort order).
      *
      * @param string the sort order
      */
-    function removeSortOrderFromAllAlbums($sortOrder) {
+    function deleteSortOrder($sortOrder) {
 	global $gallery;
 
 	/* Find all albums that have the new items sort order and remove it */
@@ -758,6 +759,16 @@ class GalleryItemHelper_advanced {
 	    }
 
 	    $ret = GalleryCoreApi::releaseLocks($lockId);
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+
+	list ($ret, $orderBy) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderBy');
+	if (preg_match("/\b$sortOrder$/", $orderBy)) {
+	    $ret = GalleryCoreApi::setPluginParameter(
+		'module', 'core', 'default.orderBy', 'orderWeight');
 	    if ($ret) {
 		return $ret;
 	    }

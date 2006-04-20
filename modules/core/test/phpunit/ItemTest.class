@@ -1563,7 +1563,7 @@ class ItemTest extends GalleryTestCase {
 		      'newItem is not a GalleryUnknownItem');
     }
 
-    function testRemoveSortOrderFromAllAlbums() {
+    function testDeleteSortOrderFromAlbums() {
 	foreach (array('ItemTestOrder', 'ItemTestOrder|something', 'something|ItemTestOrder')
 		 as $order) {
 	    list ($ret, $albums[$order]) = $this->_createRandomAlbum(
@@ -1573,7 +1573,7 @@ class ItemTest extends GalleryTestCase {
 	    }
 	}
 
-	$ret = GalleryCoreApi::removeSortOrderFromAllAlbums('ItemTestOrder');
+	$ret = GalleryCoreApi::deleteSortOrder('ItemTestOrder');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -1587,6 +1587,48 @@ class ItemTest extends GalleryTestCase {
 	    $this->assertEquals('', $album->getOrderBy(), "orderBy not removed for '$order'");
 	    $this->assertEquals(ORDER_ASCENDING, $album->getOrderDirection(),
 				"orderDirection changed for '$order'");
+	}
+    }
+
+    function testDeleteSortOrderFromDefault() {
+	$ret = $this->_markPluginParametersForCleanup('module', 'core');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	foreach (array(array('sort' => array('MyTestSortOrder', 'orderWeight'),
+			     'order' => array(ORDER_ASCENDING, ORDER_ASCENDING)),
+		       array('sort' => array('MyPresort|MyTestSortOrder', 'orderWeight'),
+			     'order' => array(ORDER_DESCENDING, ORDER_DESCENDING)),
+		       array('sort' => array('SomeOtherSortOrder', 'SomeOtherSortOrder'),
+			     'order' => array(ORDER_ASCENDING, ORDER_ASCENDING)))
+		 as $index => $test) {
+	    $ret = GalleryCoreApi::setPluginParameter(
+		'module', 'core', 'default.orderBy', $test['sort'][0]);
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
+
+	    $ret = GalleryCoreApi::setPluginParameter(
+		'module', 'core', 'default.orderDirection', $test['order'][0]);
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
+
+	    $ret = GalleryCoreApi::deleteSortOrder('MyTestSortOrder');
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
+
+	    list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
+
+	    $this->assertEquals($test['sort'][1], $params['default.orderBy'],
+				"orderBy: $index test case");
+	    $this->assertEquals($test['order'][1], $params['default.orderDirection'],
+				"orderDirection: $index test case");
 	}
     }
 }

@@ -689,9 +689,10 @@ class GalleryChildEntityHelper_simple {
 		} else {
 		    /* Sort order implementation is missing -- fall through to the default */
 		    if ($usingDefaults) {
-			return $this->_getOrderInfo('orderWeight', ORDER_ASCENDING);
+			return GalleryChildEntityHelper_simple::_getOrderInfo(
+			    'orderWeight', ORDER_ASCENDING);
 		    } else {
-			return $this->_getOrderInfo();
+			return GalleryChildEntityHelper_simple::_getOrderInfo();
 		    }
 		}
 	    }

@@ -3090,14 +3090,15 @@ class GalleryCoreApi {
     }
 
     /**
-     * Remove the given sort order from all albums that are using it.
+     * Remove the given sort order from any thing in the framework that uses it
+     * (albums and the default sort order).
      *
      * @param string the sort order
      */
-    function removeSortOrderFromAllAlbums($sortOrder) {
+    function deleteSortOrder($sortOrder) {
 	GalleryCoreApi::requireOnce(
 	    'modules/core/classes/helpers/GalleryItemHelper_advanced.class');
-	return GalleryItemHelper_advanced::removeSortOrderFromAllAlbums($sortOrder);
+	return GalleryItemHelper_advanced::deleteSortOrder($sortOrder);
     }
 }
 ?>
