@@ -97,7 +97,7 @@ class GdToolkit extends GalleryToolkit {
      * @access private
      */
     function _hasImageCreateTrueColor() {
-	if (! isset($this->_hasImageCreateTrueColor)) {
+	if (!isset($this->_hasImageCreateTrueColor)) {
 	    $gd =& $this->_getGdFunctionality();
 	    /* Remember the info for later calls */
 	    list ($ret, $this->_hasImageCreateTrueColor) =
@@ -145,7 +145,7 @@ class GdToolkit extends GalleryToolkit {
 	}
 
 	$outputMimeType = $mimeType;
-	list($ret, $sourceRes) = $this->_getImageResource($mimeType, $sourceFilename);
+	list ($ret, $sourceRes) = $this->_getImageResource($mimeType, $sourceFilename);
 	if ($ret) {
 	    return array($ret, null, null);
 	}
@@ -185,8 +185,7 @@ class GdToolkit extends GalleryToolkit {
 	     * $parameters[1]: target height
 	     */
 	    list ($ret, $destRes) = $this->_resizeImageResource($sourceRes,
-						    $parameters[0],
-						    $parameters[1]);
+								$parameters[0], $parameters[1]);
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
@@ -231,7 +230,7 @@ class GdToolkit extends GalleryToolkit {
 	    $pixelWidth = round($parameters[2] / 100 * $width);
 	    $pixelHeight = round($parameters[3] / 100 * $height);
 
-	    list($ret, $destRes) = $this->_getTrueColorImageRes($pixelWidth, $pixelHeight);
+	    list ($ret, $destRes) = $this->_getTrueColorImageRes($pixelWidth, $pixelHeight);
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
@@ -344,8 +343,8 @@ class GdToolkit extends GalleryToolkit {
 	    $compositeAlignY = max(0, $compositeAlignY);
 
 	    $dataDir = $gallery->getConfig('data.gallery.base');
-	    list($ret, $overlayRes) = $this->_getImageResource($compositeOverlayMimeType,
-							       $dataDir . $compositeOverlayPath);
+	    list ($ret, $overlayRes) = $this->_getImageResource($compositeOverlayMimeType,
+							        $dataDir . $compositeOverlayPath);
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
@@ -434,28 +433,28 @@ class GdToolkit extends GalleryToolkit {
 	$res = null;
 	switch ($mimeType) {
 	case 'image/gif':
-	    list($ret, $res) = $gd->imageCreateFromGif($filename);
+	    list ($ret, $res) = $gd->imageCreateFromGif($filename);
 	    break;
 	case 'image/jpeg':
-	    list($ret, $res) = $gd->imageCreateFromJpeg($filename);
+	    list ($ret, $res) = $gd->imageCreateFromJpeg($filename);
 	    break;
 	case 'image/png':
-	    list($ret, $res) = $gd->imageCreateFromPng($filename);
+	    list ($ret, $res) = $gd->imageCreateFromPng($filename);
 	    break;
 	case 'image/vnd.wap.wbmp':
-	    list($ret, $res) = $gd->imageCreateFromWbmp($filename);
+	    list ($ret, $res) = $gd->imageCreateFromWbmp($filename);
 	    break;
 	case 'image/x-xpixmap':
-	    list($ret, $res) = $gd->imageCreateFromXpm($filename);
+	    list ($ret, $res) = $gd->imageCreateFromXpm($filename);
 	    break;
 	case 'image/x-xbitmap':
-	    list($ret, $res) = $gd->imageCreateFromXbm($filename);
+	    list ($ret, $res) = $gd->imageCreateFromXbm($filename);
 	    break;
 	}
 	if ($ret) {
 	    return array($ret, null);
 	}
-	if (! $res) {
+	if (!$res) {
 	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE), null);
 	}
 	return array(null, $res);
@@ -480,6 +479,9 @@ class GdToolkit extends GalleryToolkit {
 	}
 	if ($hasImageCreateTrueColor) {
 	    list ($ret, $res) = $gd->imageCreateTruecolor($width, $height);
+	    if ($ret) {
+		return array($ret, null);
+	    }
 	} else {
 	    /* Do something else to get a truecolor GD resource */
 	    global $gallery;
@@ -501,7 +503,7 @@ class GdToolkit extends GalleryToolkit {
 	    }
 	    $gd->unlink($tmpFile);
 	}
-	if (! $res) {
+	if (!$res) {
 	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE), null);
 	}
 	return array(null, $res);
@@ -573,7 +575,7 @@ class GdToolkit extends GalleryToolkit {
 	    return array($ret, null);
 	}
 
-	list($ret, $destRes) = $this->_getTrueColorImageRes($destWidth, $destHeight);
+	list ($ret, $destRes) = $this->_getTrueColorImageRes($destWidth, $destHeight);
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -606,7 +608,7 @@ class GdToolkit extends GalleryToolkit {
 	    return array(null, $results[0], $results[1]);
 	}
 
-	list($ret, $res) = $this->_getImageResource($mimeType, $filename);
+	list ($ret, $res) = $this->_getImageResource($mimeType, $filename);
 	if ($ret) {
 	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE), 0, 0);
 	}

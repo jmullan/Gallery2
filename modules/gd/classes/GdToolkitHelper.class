@@ -183,6 +183,7 @@ class GdToolkitHelper {
 	$properties['dimensions']['type'] = 'int,int';
 	$properties['dimensions']['description'] =
 	    $gallery->i18n('Get the width and height of the image');
+	$mimeTypes[] = 'application/x-shockwave-flash'; /* Supported by php getimagesize */
 	$properties['dimensions']['mimeTypes'] = $mimeTypes;
 
 	return array(null, array('operations' => $operations,

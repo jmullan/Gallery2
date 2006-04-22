@@ -157,11 +157,11 @@ class NetPbmToolkitHelper {
 	$properties['dimensions']['type'] = 'int,int';
 	$properties['dimensions']['description'] =
 	    $gallery->i18n('Get the width and height of the image');
-	$properties['dimensions']['mimeTypes'] =
-	    array_merge($mimeTypes, array('image/x-portable-pixmap'));
+	$properties['dimensions']['mimeTypes'] = array_merge($mimeTypes,
+		array('image/x-portable-pixmap',
+		      'application/x-shockwave-flash')); /* Supported by php getimagesize */
 
-	return array(null,
-		     array('operations' => $operations, 'properties' => $properties));
+	return array(null, array('operations' => $operations, 'properties' => $properties));
     }
 
     /**

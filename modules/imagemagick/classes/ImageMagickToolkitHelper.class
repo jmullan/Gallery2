@@ -164,7 +164,8 @@ class ImageMagickToolkitHelper {
 	$properties['dimensions'] = array(
 	    'type' => 'int,int',
 	    'description' => $gallery->i18n('Get the width and height of the image'),
-	    'mimeTypes' => array_merge($mimeTypes, array('image/x-portable-pixmap')));
+	    'mimeTypes' => array_merge($mimeTypes, array('image/x-portable-pixmap',
+		    'application/x-shockwave-flash'))); /* Supported by php getimagesize */
 
 	if (!empty($multiPageMimeTypes)) {
 	    $properties['page-count'] = array(
@@ -187,8 +188,7 @@ class ImageMagickToolkitHelper {
 		'mimeTypes' => $rgbTypes);
 	}
 
-	return array(null, array('operations' => $operations,
-						     'properties' => $properties));
+	return array(null, array('operations' => $operations, 'properties' => $properties));
     }
 
     /**
