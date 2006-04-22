@@ -80,6 +80,9 @@ class MSSqlStorage extends GalleryStorage {
     function getFunctionSql($functionName, $args) {
 	switch($functionName) {
 	case 'CONCAT':
+	    foreach ($args as $key => $value) {
+		$args[$key] = 'CAST(' . $value . ' AS NVARCHAR)';
+	    }
 	    $sql = implode(' + ', $args);
 	    break;
 
