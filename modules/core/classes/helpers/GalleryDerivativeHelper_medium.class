@@ -53,6 +53,8 @@ class GalleryDerivativeHelper_medium {
 	    return array(null, array());
 	}
 
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryDerivativeHelper_simple.class');
 	list ($ret, $results) = GalleryDerivativeHelper_simple::_loadDerivatives(
 	    $ids, null, DERIVATIVE_TYPE_IMAGE_RESIZE);
 	if ($ret) {
@@ -78,6 +80,8 @@ class GalleryDerivativeHelper_medium {
 	    return array(null, array());
 	}
 
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryDerivativeHelper_simple.class');
 	list ($ret, $results) = GalleryDerivativeHelper_simple::_loadDerivatives(
 	    $ids, null, DERIVATIVE_TYPE_IMAGE_PREFERRED);
 	if ($ret) {
