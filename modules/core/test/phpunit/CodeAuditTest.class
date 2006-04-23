@@ -311,11 +311,28 @@ class CodeAuditTest extends CodeAuditTestCase {
 
 		    $finalCount = "array($commaCount)";
 		    $returnCount[$function][$i] = array($finalCount, $tmp);
+		} else if (preg_match('/\w\s*\(.*\)/', $returns[$i])) {
+		    $returnCount[$function][$i] = array("function", $returns[$i]);
 		} else {
 		    $returnCount[$function][$i] = array("scalar", $returns[$i]);
 		}
-		if ($i > 0 && $returnCount[$function][$i][0] != $returnCount[$function][0][0]) {
-		    $returnMismatch[$function] = 1;
+	    }
+
+	    /* Find the first non-function and compare it to every other non-function */
+	    $compare = false;
+	    for ($i = 0; $i < count($returnCount[$function]); $i++) {
+		if ($returnCount[$function][$i][0] != 'function') {
+		    $compare = $i;
+		    break;
+		}
+	    }
+
+	    if ($compare !== false) {
+		for ($i = 0; $i < count($returnCount[$function]); $i++) {
+		    if ($returnCount[$function][$i][0] != 'function' &&
+			$returnCount[$function][$i][0] != $returnCount[$function][$compare][0]) {
+			$returnMismatch[$function] = 1;
+		    }
 		}
 	    }
 	}
