@@ -29,13 +29,7 @@ require_once(dirname(__FILE__) . '/XmlParser.inc');
 require_once(dirname(__FILE__) . '/../../smarty/Smarty.class.php');
 
 /* getenv() works even if $_ENV isn't populated */
-$envTmp = getenv('TMP');
-if (!empty($envTmp)) {
-    $tmpdir = $envTmp;
-} else {
-    $tmpdir = '/tmp';
-}
-$tmpdir .= "/g2_" . rand(1, 30000);
+$tmpdir = 'tmp_entities_' . rand(1, 30000);
 if (file_exists($tmpdir)) {
     print "Tmp dir already exists: $tmpdir\n";
     exit(1);
@@ -55,8 +49,8 @@ $smarty->template_dir = dirname(__FILE__);
 
 /* Grab all G2 XML from entity class files */
 
-$xml = "<!DOCTYPE classes SYSTEM \"" . dirname(__FILE__) .
-    "/../../../lib/tools/dtd/GalleryClass2.1.dtd\">\n";
+$xml = "<!DOCTYPE classes SYSTEM \"" .
+    "../../../../lib/tools/dtd/GalleryClass2.1.dtd\">\n";
 $xml .= "<classes>\n";
 if (!$dh = opendir('.')) {
     print "Unable to opendir(.)\n";
@@ -172,7 +166,7 @@ function cleanExit($status=0) {
     /* Clean up the cheap and easy way */
     global $tmpdir;
     if (file_exists($tmpdir)) {
-	system("rm -rf $tmpdir");
+        system("rm -rf $tmpdir");
     }
     exit($status);
 }

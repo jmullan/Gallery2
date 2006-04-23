@@ -28,14 +28,7 @@ if (!empty($_SERVER['SERVER_NAME'])) {
 require_once(dirname(__FILE__) . '/XmlParser.inc');
 require_once(dirname(__FILE__) . '/../../smarty/Smarty.class.php');
 
-/* getenv() works even if $_ENV isn't populated */
-$envTmp = getenv('TMP');
-if (!empty($envTmp)) {
-    $tmpdir = $envTmp;
-} else {
-    $tmpdir = '/tmp';
-}
-$tmpdir .= "/g2_" . rand(1, 30000);
+$tmpdir = 'tmp_dbxml_' . rand(1, 30000);
 if (file_exists($tmpdir)) {
     print "Tmp dir already exists: $tmpdir\n";
     exit(1);
@@ -307,6 +300,6 @@ generateMapDbXml();
 
 /* Clean up the cheap and easy way */
 if (file_exists($tmpdir)) {
-    system("rm -rf $tmpdir");
+  system("rm -rf $tmpdir");
 }
 ?>
