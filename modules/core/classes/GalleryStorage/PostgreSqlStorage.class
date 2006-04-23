@@ -39,30 +39,11 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryStorage.class', true);
 class PostgreSqlStorage extends GalleryStorage {
 
     /**
-     * The type of postgres database (postgres or postgrest)
-     *
-     * @var string $_postgresType
-     * @access private
-     */
-    var $_postgresType;
-
-    /**
      * Constructor
-     *
      */
     function PostgreSqlStorage($config) {
 	$this->GalleryStorage($config);
-	$this->_postgresType = $config['type'];
 	$this->_isTransactional = true;
-    }
-
-    /**
-     * Return the type of this database
-     *
-     * @return string
-     */
-    function getAdoDbType() {
-	return $this->_postgresType;
     }
 
     /**
@@ -262,7 +243,7 @@ class PostgreSqlStorage extends GalleryStorage {
      * @see GalleryStorage::encodeBlob
      *
      * Note: pg_escape_bytea is only available in PHP 4.2.0+ and is even a little
-     * slower than addcslashes. 
+     * slower than addcslashes.
      */
     function encodeBlob($blob) {
 	/* See: http://www.postgresql.org/docs/8.1/interactive/datatype-binary.html */

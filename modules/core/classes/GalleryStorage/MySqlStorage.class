@@ -39,31 +39,13 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryStorage.class', true);
 class MySqlStorage extends GalleryStorage {
 
     /**
-     * The type of mysql database (mysql or mysqlt)
-     *
-     * @var string $_mysqlType
-     * @access private
-     */
-    var $_mysqlType;
-
-    /**
      * Constructor
      */
     function MySqlStorage($config) {
 	$this->GalleryStorage($config);
-	$this->_mysqlType = $config['type'];
-	if ($this->_mysqlType != 'mysql' /* mysqlt and mysqli are transactional */) {
+	if ($this->_type != 'mysql' /* mysqlt and mysqli are transactional */) {
 	    $this->_isTransactional = true;
 	}
-    }
-
-    /**
-     * Return the type of this database
-     *
-     * @return string
-     */
-    function getAdoDbType() {
-	return $this->_mysqlType;
     }
 
     /**
@@ -80,7 +62,7 @@ class MySqlStorage extends GalleryStorage {
      */
     function _setConnectionSettings(&$db) {
 	/* MySQL 4.1.0+ support UTF-8, for details, see: http://drupal.org/node/40515 */
-	$this->_serverInfo = ($this->_mysqlType == 'mysqli')
+	$this->_serverInfo = ($this->_type == 'mysqli')
 	    ? mysqli_get_server_info($db->_connectionID) : mysql_get_server_info();
 	if ($this->_serverInfo && version_compare($this->_serverInfo, '4.1.0', '>=')) {
 	    $this->_traceStart();
@@ -225,7 +207,7 @@ class MySqlStorage extends GalleryStorage {
 	if (!isset($this->_db)) {
 	    list ($ret, $this->_db) = $this->_getConnection();
 	    if ($ret) {
-		return ($this->_mysqlType == 'mysqli'
+		return ($this->_type == 'mysqli'
 			? mysqli_get_client_info() : mysql_get_client_info()) . ' client';
 	    }
 	}

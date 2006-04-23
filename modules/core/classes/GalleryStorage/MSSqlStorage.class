@@ -38,31 +38,12 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryStorage.class', true);
 class MSSqlStorage extends GalleryStorage {
 
     /**
-     * The type of MSSql database (N/A for MSSql)
-     *
-     * @var string $_mssqlType
-     * @access private
-     */
-    var $_mssqlType;
-
-    /**
      * Constructor
-     *
      */
     function MSSqlStorage($config) {
 	$this->GalleryStorage($config);
-	$this->_mssqlType = $config['type'];
 	$this->_isTransactional = true;
 	$this->_isEmptyAllowedForNotNullColumn = true;
-    }
-
-    /**
-     * Return the type of this database
-     *
-     * @return string
-     */
-    function getAdoDbType() {
-	return $this->_mssqlType;
     }
 
     /**

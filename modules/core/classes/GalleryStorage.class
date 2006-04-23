@@ -90,6 +90,14 @@ class GalleryStorage {
     var $_nonTransactionalDb;
 
     /**
+     * Database type (ADOdb driver name)
+     *
+     * @var string $_type
+     * @access protected
+     */
+    var $_type;
+
+    /**
      * Name of the database user
      *
      * @var string $_username
@@ -177,6 +185,7 @@ class GalleryStorage {
      * @param array database configuration values
      */
     function GalleryStorage($config) {
+	$this->_type = $config['type'];
 	$this->_username = $config['username'];
 	$this->_password = $config['password'];
 	$this->_hostname = $config['hostname'];
@@ -234,7 +243,7 @@ class GalleryStorage {
 	    $db->LogSQL();
 	    $this->_traceStop();
 	}
-	
+
 	$ret = $this->_setConnectionSettings($db);
 	if ($ret) {
 	    return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE), null);
@@ -242,14 +251,23 @@ class GalleryStorage {
 
 	return array(null, $db);
     }
-    
+
+    /**
+     * Return the type of this database (ADOdb driver name)
+     *
+     * @return string
+     */
+    function getAdoDbType() {
+	return $this->_type;
+    }
+
     /**
      * Set runtime settings for the given database connection
-     * 
+     *
      * Set the connection / client / server encoding and other parameters
-     * 
+     *
      * @param object adodb database handle
-     * @return object GalleryStatus a status code 
+     * @return object GalleryStatus a status code
      * @access private
      */
     function _setConnectionSettings(&$db) {
