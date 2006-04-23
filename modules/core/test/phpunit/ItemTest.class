@@ -1567,7 +1567,8 @@ class ItemTest extends GalleryTestCase {
 	foreach (array('ItemTestOrder', 'ItemTestOrder|something', 'something|ItemTestOrder')
 		 as $order) {
 	    list ($ret, $albums[$order]) = $this->_createRandomAlbum(
-	    $this->_album->getId(), array('orderBy' => $order, 'orderDirection' => ORDER_ASCENDING));
+		$this->_album->getId(),
+		array('orderBy' => $order, 'orderDirection' => ORDER_ASCENDING));
 	    if ($ret) {
 		return $this->failWithStatus($ret);
 	    }
