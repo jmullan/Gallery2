@@ -47,9 +47,9 @@ class GalleryDerivativeHelper_advanced {
      */
     function fetchDerivativesBySourceIds($ids, $types=array()) {
 	GalleryCoreApi::requireOnce(
-		'modules/core/classes/helpers/GalleryDerivativeHelper_medium.class');
+		'modules/core/classes/helpers/GalleryDerivativeHelper_simple.class');
 	list ($ret, $results) =
-		GalleryDerivativeHelper_medium::_loadDerivatives(null, $ids, $types);
+		GalleryDerivativeHelper_simple::_loadDerivatives(null, $ids, $types);
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -67,12 +67,12 @@ class GalleryDerivativeHelper_advanced {
      */
     function fetchDerivativesByItemIds($ids) {
 	GalleryCoreApi::requireOnce(
-		'modules/core/classes/helpers/GalleryDerivativeHelper_medium.class');
+		'modules/core/classes/helpers/GalleryDerivativeHelper_simple.class');
 	if (empty($ids)) {
 	    return array(null, array());
 	}
 
-	list ($ret, $results) = GalleryDerivativeHelper_medium::_loadDerivatives($ids, null);
+	list ($ret, $results) = GalleryDerivativeHelper_simple::_loadDerivatives($ids, null);
 	if ($ret) {
 	    return array($ret, null);
 	}

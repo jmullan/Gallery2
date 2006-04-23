@@ -127,8 +127,8 @@ class GalleryCoreApi {
      */
     function newFactoryInstanceById($classType, $id) {
 	GalleryCoreApi::requireOnce(
-	    'modules/core/classes/helpers/GalleryFactoryHelper_medium.class');
-	return GalleryFactoryHelper_medium::newInstanceById($classType, $id);
+	    'modules/core/classes/helpers/GalleryFactoryHelper_simple.class');
+	return GalleryFactoryHelper_simple::newInstanceById($classType, $id);
     }
 
     /**
@@ -655,8 +655,8 @@ class GalleryCoreApi {
      */
     function convertPermissionBitsToIds($permissionBits, $compress=false) {
 	GalleryCoreApi::requireOnce(
-	    'modules/core/classes/helpers/GalleryPermissionHelper_medium.class');
-	return GalleryPermissionHelper_medium::convertBitsToIds($permissionBits, $compress);
+	    'modules/core/classes/helpers/GalleryPermissionHelper_simple.class');
+	return GalleryPermissionHelper_simple::convertBitsToIds($permissionBits, $compress);
     }
 
     /**
@@ -670,8 +670,8 @@ class GalleryCoreApi {
      */
     function fetchPermissionsForItems($itemIds, $userId=null) {
 	GalleryCoreApi::requireOnce(
-	    'modules/core/classes/helpers/GalleryPermissionHelper_medium.class');
-	return GalleryPermissionHelper_medium::fetchPermissionsForItems($itemIds, $userId);
+	    'modules/core/classes/helpers/GalleryPermissionHelper_simple.class');
+	return GalleryPermissionHelper_simple::fetchPermissionsForItems($itemIds, $userId);
     }
 
     /**
@@ -685,8 +685,8 @@ class GalleryCoreApi {
      */
     function getPermissions($itemId, $userId=null) {
 	GalleryCoreApi::requireOnce(
-	    'modules/core/classes/helpers/GalleryPermissionHelper_medium.class');
-	return GalleryPermissionHelper_medium::getPermissions($itemId, $userId);
+	    'modules/core/classes/helpers/GalleryPermissionHelper_simple.class');
+	return GalleryPermissionHelper_simple::getPermissions($itemId, $userId);
     }
 
     /**
@@ -699,8 +699,8 @@ class GalleryCoreApi {
      */
     function studyPermissions($itemIds, $userId=null) {
 	GalleryCoreApi::requireOnce(
-	    'modules/core/classes/helpers/GalleryPermissionHelper_medium.class');
-	return GalleryPermissionHelper_medium::studyPermissions($itemIds, $userId);
+	    'modules/core/classes/helpers/GalleryPermissionHelper_simple.class');
+	return GalleryPermissionHelper_simple::studyPermissions($itemIds, $userId);
     }
 
     /**
@@ -1016,8 +1016,8 @@ class GalleryCoreApi {
      */
     function fetchThumbnailsByItemIds($ids) {
 	GalleryCoreApi::requireOnce(
-	    'modules/core/classes/helpers/GalleryDerivativeHelper_medium.class');
-	return GalleryDerivativeHelper_medium::fetchThumbnailsByItemIds($ids);
+	    'modules/core/classes/helpers/GalleryDerivativeHelper_simple.class');
+	return GalleryDerivativeHelper_simple::fetchThumbnailsByItemIds($ids);
     }
 
     /**
@@ -1319,8 +1319,8 @@ class GalleryCoreApi {
      */
     function fetchItemViewCount($itemId) {
 	GalleryCoreApi::requireOnce(
-	    'modules/core/classes/helpers/GalleryItemAttributesHelper_advanced.class');
-	return GalleryItemAttributesHelper_advanced::fetchViewCount($itemId);
+	    'modules/core/classes/helpers/GalleryItemAttributesHelper_simple.class');
+	return GalleryItemAttributesHelper_simple::fetchViewCount($itemId);
     }
 
     /**
@@ -1332,8 +1332,8 @@ class GalleryCoreApi {
      */
     function fetchItemViewCounts($itemIds) {
 	GalleryCoreApi::requireOnce(
-	    'modules/core/classes/helpers/GalleryItemAttributesHelper_medium.class');
-	return GalleryItemAttributesHelper_medium::fetchViewCounts($itemIds);
+	    'modules/core/classes/helpers/GalleryItemAttributesHelper_simple.class');
+	return GalleryItemAttributesHelper_simple::fetchViewCounts($itemIds);
     }
 
     /**
@@ -1459,8 +1459,8 @@ class GalleryCoreApi {
      */
     function fetchParentSequence($itemId) {
 	GalleryCoreApi::requireOnce(
-	    'modules/core/classes/helpers/GalleryItemAttributesHelper_medium.class');
-	return GalleryItemAttributesHelper_medium::fetchParentSequence($itemId);
+	    'modules/core/classes/helpers/GalleryItemAttributesHelper_simple.class');
+	return GalleryItemAttributesHelper_simple::fetchParentSequence($itemId);
     }
 
     /**
@@ -1874,8 +1874,8 @@ class GalleryCoreApi {
      */
     function fetchGroupsForUser($userId, $count=null, $offset=null) {
 	GalleryCoreApi::requireOnce(
-	    'modules/core/classes/helpers/GalleryUserGroupHelper_medium.class');
-	return GalleryUserGroupHelper_medium::fetchGroupsForUser($userId, $count, $offset);
+	    'modules/core/classes/helpers/GalleryUserGroupHelper_simple.class');
+	return GalleryUserGroupHelper_simple::fetchGroupsForUser($userId, $count, $offset);
     }
 
     /**
@@ -2759,8 +2759,8 @@ class GalleryCoreApi {
      * Currently it returns gallery2/ and gallery2/plugins/.
      */
      function getPluginBaseDirs() {
-	GalleryCoreApi::requireOnce(
-	    'modules/core/classes/helpers/GalleryPluginHelper_simple.class');
+	 GalleryCoreApi::requireOnce(
+	     'modules/core/classes/helpers/GalleryPluginHelper_simple.class');
 	return GalleryPluginHelper_simple::getPluginBaseDirs();
     }
 

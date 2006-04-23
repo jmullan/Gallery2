@@ -47,7 +47,7 @@ class GalleryItemAttributesHelper_simple {
 	if (!$session->exists('core.lastViewed')) {
 	    if (!$session->isPersistent()) {
 		/*
-		 * For guests, we don't create a session. So the lastViewed data is not available 
+		 * For guests, we don't create a session. So the lastViewed data is not available
 		 * for guests. Thus, rely on HTTP if-modified-since for guests which is admittedly
 		 * quite unreliable. Alternatively we could store this data on the client with a
 		 * non-session cookie but sending lastViewed data on each request could take a lot
@@ -61,7 +61,7 @@ class GalleryItemAttributesHelper_simple {
 			  isset($headers['If-modified-since'])))) {
 		    return null;
 		}
-		
+
 		/* Only increment in 50% of all cases since our check is very unreliable */
 		if ($phpVm->rand(0, 1) == 0) {
 		    return null;
@@ -71,7 +71,7 @@ class GalleryItemAttributesHelper_simple {
 				   GalleryUtilities::getHttpDate($phpVm->time()));
 		}
 	    }
-		
+
 	    $lastViewed = array($itemId => $elapsed);
 	    $session->put('core.lastViewed', $lastViewed);
 	} else {
@@ -97,6 +97,102 @@ class GalleryItemAttributesHelper_simple {
 	}
 
 	return null;
+    }
+
+    /**
+     * Get the view count for this item id
+     * @param int the item id
+     * @return array object GalleryStatus a status code
+     *               int view count
+     * @static
+     */
+    function fetchViewCount($itemId) {
+	list ($ret, $viewCounts) =
+	    GalleryItemAttributesHelper_simple::fetchViewCounts(array($itemId));
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	return array(null, $viewCounts[$itemId]);
+    }
+
+    /**
+     * Get the view counts for many item ids
+     * @param array the item ids
+     * @return array object GalleryStatus a status code
+     *               array (itemId => viewCount, ..)
+     * @static
+     */
+    function fetchViewCounts($itemIds) {
+	global $gallery;
+
+	foreach ($itemIds as $idx => $id) {
+	    $itemIds[$idx] = (int)$id;
+	}
+	$query = sprintf('
+        SELECT
+          [GalleryItemAttributesMap::itemId], [GalleryItemAttributesMap::viewCount]
+        FROM
+          [GalleryItemAttributesMap]
+        WHERE
+          [GalleryItemAttributesMap::itemId] IN (%s)
+        ', GalleryUtilities::makeMarkers($itemIds));
+	list ($ret, $searchResults) = $gallery->search($query, $itemIds);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	if ($searchResults->resultCount() != sizeof($itemIds)) {
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
+	}
+
+	$data = array();
+	while ($result = $searchResults->nextResult()) {
+	    $data[$result[0]] = (int)$result[1];
+	}
+
+	return array(null, $data);
+    }
+
+    /**
+     * Get the parent sequence for this item id
+     * @param int the item id
+     * @return array object GalleryStatus a status code
+     *               array the parent id sequence
+     * @static
+     */
+    function fetchParentSequence($itemId) {
+	global $gallery;
+
+	$query = '
+        SELECT
+          [GalleryItemAttributesMap::parentSequence]
+        FROM
+          [GalleryItemAttributesMap]
+        WHERE
+          [GalleryItemAttributesMap::itemId] = ?
+        ';
+	list ($ret, $searchResults) = $gallery->search($query, array((int)$itemId));
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	if ($searchResults->resultCount() != 1) {
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__,
+					      "ParentSequence for $itemId"), null);
+	}
+
+	$result = $searchResults->nextResult();
+	/* DB2 doesn't trim when storing data in a varchar column */
+	$parentSequence = preg_split('/\//', trim($result[0]), -1, PREG_SPLIT_NO_EMPTY);
+
+	if (is_array($parentSequence)) {
+	    foreach ($parentSequence as $idx => $id) {
+		$parentSequence[$idx] = (int)$id;
+	    }
+	}
+
+	return array(null, $parentSequence);
     }
 }
 ?>

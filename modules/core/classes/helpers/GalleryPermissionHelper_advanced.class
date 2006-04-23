@@ -560,14 +560,11 @@ class GalleryPermissionHelper_advanced {
 	}
 
 	$storage =& $gallery->getStorage();
-	GalleryCoreApi::requireOnce(
-	    'modules/core/classes/helpers/GalleryPermissionHelper_medium.class');
-
 	$data = array();
 	while ($result = $searchResults->nextResult()) {
 	    $permissions = $storage->convertBitsToInt($result[3]);
 	    list ($ret, $permissions) =
-		GalleryPermissionHelper_medium::convertBitsToIds($permissions, $compress);
+		GalleryCoreApi::convertPermissionBitsToIds($permissions, $compress);
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -796,7 +793,7 @@ class GalleryPermissionHelper_advanced {
 	foreach ($entityIds as $idx => $id) {
 	    $entityIds[$idx] = (int)$id;
 	}
-	
+
 	$query = '
 	SELECT
 	  [GalleryAccessSubscriberMap::itemId]
@@ -938,9 +935,7 @@ class GalleryPermissionHelper_advanced {
 	    return array($ret, null);
 	}
 
-	GalleryCoreApi::requireOnce(
-		'modules/core/classes/helpers/GalleryPermissionHelper_medium.class');
-	list ($ret, $ids) = GalleryPermissionHelper_medium::convertBitsToIds($bits);
+	list ($ret, $ids) = GalleryCoreApi::convertPermissionBitsToIds($bits);
 	if ($ret) {
 	    return array($ret, null);
 	}

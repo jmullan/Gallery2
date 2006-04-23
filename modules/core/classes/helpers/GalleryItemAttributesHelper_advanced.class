@@ -270,25 +270,6 @@ class GalleryItemAttributesHelper_advanced {
     }
 
     /**
-     * Get the view count for this item id
-     * @param int the item id
-     * @return array object GalleryStatus a status code
-     *               int view count
-     * @static
-     */
-    function fetchViewCount($itemId) {
-	GalleryCoreApi::requireOnce(
-	    'modules/core/classes/helpers/GalleryItemAttributesHelper_medium.class');
-	list ($ret, $viewCounts) =
-	    GalleryItemAttributesHelper_medium::fetchViewCounts(array($itemId));
-	if ($ret) {
-	    return array($ret, null);
-	}
-
-	return array(null, $viewCounts[$itemId]);
-    }
-
-    /**
      * Update all items containing the source parent sequence to the new parent sequence
      *
      * @param int id the item id

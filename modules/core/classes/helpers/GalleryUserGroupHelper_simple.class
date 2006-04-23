@@ -103,5 +103,58 @@ class GalleryUserGroupHelper_simple {
 	GalleryDataCache::put($cacheKey, $result);
 	return array(null, $result);
     }
+
+    /**
+     * Return a list of groups that a user belongs to
+     *
+     * You can specify how many userids to list, and where the windows is in
+     * the list of all users.
+     *
+     * @param int the user id
+     * @param int the number of group ids desired
+     * @param int the start of the range
+     * @return array object GalleryStatus a status code
+     *               array group id => group name
+     * @static
+     */
+    function fetchGroupsForUser($userId, $count=null, $offset=null) {
+	global $gallery;
+
+	$cacheKey = "GalleryUserGroupHelper::fetchGroupsForUser($userId,$count,$offset)";
+	if (GalleryDataCache::containsKey($cacheKey)) {
+	    $data = GalleryDataCache::get($cacheKey);
+	} else {
+	    $query = '
+            SELECT
+              [GalleryGroup::id],
+              [GalleryGroup::groupName]
+            FROM
+              [GalleryUserGroupMap], [GalleryGroup]
+            WHERE
+              [GalleryGroup::id] = [GalleryUserGroupMap::groupId]
+              AND
+              [GalleryUserGroupMap::userId] = ?
+            ORDER BY
+              [GalleryGroup::groupName]
+            ';
+	    list ($ret, $searchResults) =
+		$gallery->search($query,
+				  array((int) $userId),
+				  array('limit' => array('count' => $count,
+							 'offset' => $offset)));
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    $data = array();
+	    while ($result = $searchResults->nextResult()) {
+		$data[$result[0]] = $result[1];
+	    }
+
+	    GalleryDataCache::put($cacheKey, $data);
+	}
+
+	return array(null, $data);
+    }
 }
 ?>
