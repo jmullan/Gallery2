@@ -35,14 +35,11 @@ class MimeEditController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	global $gallery;
-
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret, null);
 	}
-	$error = array();
-	$status = array();
+	$status = $error = array();
 
 	if (isset($form['action']['save']) || isset($form['action']['apply'])) {
 	    if (empty($form['mimeType'])) {
@@ -87,7 +84,7 @@ class MimeEditController extends GalleryController {
 			return array($ret, null);
 		    }
 		}
-		$status['saved'] = true;
+		$status['mimeSaved'] = true;
 	    }
 	}
 
@@ -120,7 +117,10 @@ class MimeEditView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	global $gallery;
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return array($ret, null);
+	}
 
 	$mimeType = GalleryUtilities::getRequestVariables('mimeType');
 
@@ -163,8 +163,7 @@ class MimeEditView extends GalleryView {
 	}
 
 	$template->setVariable('controller', 'mime.MimeEdit');
-	return array(null,
-	     array('body' => 'modules/mime/templates/MimeEdit.tpl'));
+	return array(null, array('body' => 'modules/mime/templates/MimeEdit.tpl'));
     }
 }
 ?>

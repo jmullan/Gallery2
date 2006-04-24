@@ -19,11 +19,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 /**
  * @version $Revision$ $Date$
  * @package Mime
  * @author Felix Rabinovich <Felix@Rabinovich.org>
+ * @author Alan Harder <alan.harder@sun.com>
  */
 
 /**
@@ -39,7 +39,7 @@ class MimeModule extends GalleryModule {
 	$this->setId('mime');
 	$this->setName($gallery->i18n('MIME Maintenance'));
 	$this->setDescription($gallery->i18n('Maintain MIME types and file extensions'));
-	$this->setVersion('1.0.3');
+	$this->setVersion('1.1.0');
 	$this->setGroup('data', $gallery->i18n('Extra Data'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(7, 0));
@@ -53,6 +53,40 @@ class MimeModule extends GalleryModule {
 	return array(null,
 		     array(array('name' => $this->translate('MIME Types'),
 				 'view' => 'mime.MimeAdmin')));
+    }
+
+    /**
+     * @see GalleryModule::performFactoryRegistrations()
+     */
+    function performFactoryRegistrations() {
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'ItemAddOption', 'RestrictMimeOption', 'RestrictMimeOption',
+	    'modules/mime/RestrictMimeOption.inc', 'mime', null);
+	if ($ret) {
+	    return $ret;
+	}
+
+	return null;
+    }
+
+    /**
+     * @see GalleryModule::upgrade()
+     */
+    function upgrade($currentVersion) {
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'mime');
+	if ($ret) {
+	    return $ret;
+	}
+	foreach (array('allowMime' => 'all', 'mimeList' => '') as $key => $value) {
+	    if (!isset($params[$key])) {
+		$ret = $this->setParameter($key, $value);
+		if ($ret) {
+		    return $ret;
+		}
+	    }
+	}
+
+	return null;
     }
 }
 ?>

@@ -50,7 +50,7 @@ class MimeEditControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
 						      'subView' => 'mime.MimeEdit',
 						      'mimeType' => 'test/test'),
-				  'status' => array('saved' => 'test/test'),
+				  'status' => array('mimeSaved' => 'test/test'),
 				  'error' => array()),
 			    $results, 'Add new');
 	list($ret, $extensions) = GalleryCoreApi::convertMimeToExtensions('test/test');
@@ -71,7 +71,7 @@ class MimeEditControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
 						      'subView' => 'mime.MimeEdit',
 						      'mimeType' => 'test/test'),
-				  'status' => array('saved' => 'test/test'),
+				  'status' => array('mimeSaved' => 'test/test'),
 				  'error' => array()),
 			    $results, 'Add new');
 	list($ret, $extensions) = GalleryCoreApi::convertMimeToExtensions('test/test');
@@ -90,7 +90,7 @@ class MimeEditControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
 						      'subView' => 'mime.MimeAdmin'),
-				  'status' => array('saved' => 'test/test'),
+				  'status' => array('mimeSaved' => 'test/test'),
 				  'error' => array()),
 			    $results, 'Add new');
 	list($ret, $extensions) = GalleryCoreApi::convertMimeToExtensions('test/test');
@@ -168,7 +168,7 @@ class MimeEditControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
 						      'subView' => 'mime.MimeAdmin'),
-				  'status' => array('saved' => 'test/test'),
+				  'status' => array('mimeSaved' => 'test/test'),
 				  'error' => array()),
 			    $results, 'Add new');
 	list ($ret, $extensions) = GalleryCoreApi::convertMimeToExtensions('test/test');

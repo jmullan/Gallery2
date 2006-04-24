@@ -35,6 +35,11 @@ class MimeAdminControllerTest extends GalleryControllerTestCase {
     function setUp() {
 	parent::setUp();
 
+	$ret = $this->_markPluginParametersForCleanup('module', 'mime');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
 	$ret = GalleryCoreApi::addMimeType('xxx', 'test/test', false);
 	if ($ret) {
 	    print $ret->getAsHtml();
@@ -49,6 +54,47 @@ class MimeAdminControllerTest extends GalleryControllerTestCase {
 	}
 
 	parent::tearDown();
+    }
+
+    function testSaveAllowAll() {
+	GalleryUtilities::putRequestVariable('form[action][save]', 'Save');
+	GalleryUtilities::putRequestVariable('form[allowMime]', 'all');
+	GalleryUtilities::putRequestVariable('form[upload][test/test]', 'on');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'mime.MimeAdmin'),
+				  'status' => array('saved' => true),
+				  'error' => array()),
+			    $results);
+
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'mime');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals('all', $params['allowMime'], 'allowMime');
+	$this->assertEquals('', $params['mimeList'], 'mimeList');
+    }
+
+    function testSaveBlock() {
+	GalleryUtilities::putRequestVariable('form[action][save]', 'Save');
+	GalleryUtilities::putRequestVariable('form[allowMime]', 'block');
+	GalleryUtilities::putRequestVariable('form[upload][image/bmp]', 'on');
+	GalleryUtilities::putRequestVariable('form[upload][test/test]', 'on');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'mime.MimeAdmin'),
+				  'status' => array('saved' => true),
+				  'error' => array()),
+			    $results);
+
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'mime');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals('block', $params['allowMime'], 'allowMime');
+	$this->assertEquals('image/bmp | test/test', $params['mimeList'], 'mimeList');
     }
 
     function testDelete() {
