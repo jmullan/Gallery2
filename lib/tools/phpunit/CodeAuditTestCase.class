@@ -45,82 +45,38 @@ class CodeAuditTestCase extends GalleryTestCase {
     function testCodeAudit() {
 	global $gallery;
 
-	/* If the base gallery dir has a CVS dir, then we're all set */
+	/* If the base gallery dir has a .svn dir, then we're all set */
 	$platform =& $gallery->getPlatform();
-	if ($platform->file_exists($this->_baseDir . '/CVS/Entries')) {
-	    $this->_scanDir($this->_baseDir);
+	if (!$platform->file_exists($this->_baseDir . '/.svn/entries')) {
+	    return;
 	}
 
-	if ($this->_shouldHalt) {
-	    $this->assert(false, 'Halted prematurely');
+	list ($success, $fileList, $error) =
+	    $platform->exec(sprintf('cd %s; svn --non-interactive status -v -q', $this->_baseDir));
+	if (!$success) {
+	    $this->assert(false, 'svn error: ' . $error);
+	}
+	foreach ($fileList as $line) {
+	    if (!preg_match('/^(.).....\s*\d+\s+\d+\s+\S+\s+(.*\.(?:class|inc|php|tpl|po))$/',
+			    $line, $match)) {
+		$this->assert(false, "Unable to parse [$line]");
+		continue;
+	    }
+
+	    $file = $this->_baseDir . '/' . $match[2];
+	    if ($match[1] != 'D' && $this->shouldCheckFile($file)) {
+		$gallery->guaranteeTimeLimit(30);
+		$buf = $platform->file_get_contents($file);
+		$this->checkFile($file, $buf);
+	    }
+
+	    if ($this->_shouldHalt) {
+		$this->assert(false, 'Halted prematurely');
+		break;
+	    }
 	}
 
 	$this->finishScan($this->_shouldHalt);
-    }
-
-    function _scanDir($dirPath) {
-	if ($this->_shouldHalt) {
-	    return;
-	}
-
-	global $gallery;
-	$platform =& $gallery->getPlatform();
-
-	if (!file_exists($dirPath) || !is_dir($dirPath)) {
-	    /*
-	     * It appears that CVS doesn't tend its Entries file very well so we get entries that
-	     * no longer exist in the local workspace.  That's ok -- just ignore them.
-	     */
-	    return;
-	}
-
-	$fd = $platform->fopen("$dirPath/CVS/Entries", 'r');
-	$this->assert(!empty($fd), "Unable to parse CVS for dir: $dirPath");
-	if ($fd) {
-	    while ($line = $platform->fgets($fd, 4096)) {
-		$line = trim($line);
-		if ($line == 'D') {
-		    continue;
-		}
-
-		if ($line[0] == 'D') {
-		    if (preg_match('|^D/(.*?)/|', $line, $matches)) {
-			$dirName = $matches[1];
-			$this->_scanDir(sprintf("%s/%s", $dirPath, $dirName));
-		    } else {
-			$this->assert(false, "Unable to parse [$line]");
-		    }
-		} else {
-		    if (preg_match('|^/(.*?)/(-?)|', $line, $matches)) {
-			/* deleted files have a negative version number */
-			if ($matches[2] != '-') {
-			    $fileName = $matches[1];
-			    if (preg_match('/\.(class|inc|php|tpl|po)$/', $fileName)) {
-				$this->_scanFile(sprintf("%s/%s", $dirPath, $fileName));
-			    }
-			}
-		    } else {
-			$this->assert(false, "Unable to parse [$line]");
-		    }
-		}
-	    }
-	    $platform->fclose($fd);
-	}
-    }
-
-    function _scanFile($fileName) {
-	global $gallery;
-
-	if ($this->_shouldHalt) {
-	    return;
-	}
-
-	if ($this->shouldCheckFile($fileName)) {
-	    $gallery->guaranteeTimeLimit(30);
-	    $platform =& $gallery->getPlatform();
-	    $buf = $platform->file_get_contents($fileName);
-	    $this->checkFile($fileName, $buf);
-	}
     }
 
     /**

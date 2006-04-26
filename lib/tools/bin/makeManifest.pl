@@ -3,8 +3,6 @@
 # This script traverses the Gallery tree and creates a manifest file that
 # contains a list of checksums for files in the distribution.  The installer
 # verifies the integrity of the files before proceeding.
-# The Debug module also uses this file to figure out whether or not it's
-# safe to show you the contents of the file in stack traces.
 #
 use strict;
 use File::Basename;
@@ -16,16 +14,15 @@ $| = 1;
 chdir(dirname($0) . '/../../..');
 my $basedir = cwd();
 
-# Get a list of every file committed to CVS.
+# Get a list of every file committed to Subversion.
 #
 my @entries = ();
 print STDERR "Finding all files...";
-&parseCvs($basedir, \@entries);
+&listSvn(\@entries);
 print STDERR "\n";
 
 # Strip base dir, sort
 print STDERR "Sorting...";
-map(s{$basedir/}{}, @entries);
 @entries = sort @entries;
 print STDERR "\n";
 
@@ -138,41 +135,24 @@ sub replaceIfNecessary {
   }
 }
 
-sub parseCvs {
-  my $activeDir = shift;
+sub listSvn {
   my $entries = shift;
-
-  my $cvsDir = "$activeDir/CVS";
-  die "missing $cvsDir" unless (-d $cvsDir);
-
+  my %binaryList = ();
   local *FD;
-  open(FD, "<$cvsDir/Entries") or die;
+  open(FD, "svn propget --non-interactive -R svn:mime-type |") or die;
   while (<FD>) {
-    next if /^D$/;
-
-    if (m|^D/([^/]*)/|) {
-      my $target = "$activeDir/$1";
-      if (-d $target) {
-	&parseCvs($target, $entries);
-      } elsif (-f $target) {
-	die "$target not a dir" if (! -d $target);
-      } else {
-	# CVS doesn't always get rid of D/ entries when the dir is
-	# pruned.  Ignore.
-      }
-    } elsif (m|/([^/]*)/([^/]*)/|) {
-      my $target;
-      if ($2 =~ '^-') {
-	# Deleted file
-	$target = "deleted:$activeDir/$1";
-      } else {
-	$target = "$activeDir/$1";
-	die "$target not a file" if (! -f $target);
-      }
-      push(@$entries, sprintf("%s@@%d", $target, m/-kb/));
-    } else {
-      die "Can't parse: $_";
-    }
+    split / - /;
+    $binaryList{$_[0]} = 1;
+  }
+  close FD;
+  open(FD, "svn status --non-interactive -v -q |") or die;
+  while (<FD>) {
+    die "\n$_" unless /^(.).....\s*\d+\s+\d+\s+\S+\s+(.*)$/;
+    die "\n$2" unless (-e $2);
+    next unless (-f $2);
+    die "Check status for $1" if ($1 ne ' ' and $1 ne 'D');
+    push(@$entries,
+      sprintf("%s%s@@%d", ($1 eq 'D' ? 'deleted:' : ''), $2, exists($binaryList{$2})));
   }
   close FD;
 }
