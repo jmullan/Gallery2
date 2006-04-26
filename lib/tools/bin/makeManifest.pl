@@ -150,7 +150,8 @@ sub listSvn {
     die "\n$_" unless /^(.).....\s*\d+\s+\d+\s+\S+\s+(.*)$/;
     die "\n$2" unless (-e $2);
     next unless (-f $2);
-    die "Check status for $1" if ($1 ne ' ' and $1 ne 'D');
+    die "Check $1 status for $2" if ($1 ne ' ' and $1 ne 'D' and $1 ne 'M');
+    print STDERR "Warning: $2 is locally modified\n" if ($1 eq 'M');
     push(@$entries,
       sprintf("%s%s@@%d", ($1 eq 'D' ? 'deleted:' : ''), $2, exists($binaryList{$2})));
   }
