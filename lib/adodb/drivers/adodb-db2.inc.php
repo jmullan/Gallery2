@@ -2,12 +2,14 @@
 /* 
   V4.80 8 Mar 2006  (c) 2006 John Lim (jlim@natsoft.com.my). All rights reserved.
 
-This is a version of the ADODB driver for DB2.  It uses the 'ibm_db2' PECL extension for PHP
-  (http://pecl.php.net/package/ibm_db2), which in turn requires DB2 V8.2.2.
+  This is a version of the ADODB driver for DB2.  It uses the 'ibm_db2' PECL extension
+  for PHP (http://pecl.php.net/package/ibm_db2), which in turn requires DB2 V8.2.2 or
+  higher.
 
-  Tested with PHP 5.1.1 and Apache 2.0.55 on Windows XP SP2.
+  Originally tested with PHP 5.1.1 and Apache 2.0.55 on Windows XP SP2.
+  More recently tested with PHP 5.1.2 and Apache 2.0.55 on Windows XP SP2.
 
-  This file was ported from "adodb-odbc.inc.php" by Larry Menard, "larry.menard@rogers.com".
+  This file was ported from "adodb-odbc.inc.php", by Larry Menard ("larry.menard@rogers.com").
   I ripped out what I believed to be a lot of redundant or obsolete code, but there are
   probably still some remnants of the ODBC support in this file; I'm relying on reviewers
   of this code to point out any other things that can be removed.
@@ -35,22 +37,24 @@ class ADODB_db2 extends ADOConnection {
 	var $useFetchArray = false; // setting this to true will make array elements in FETCH_ASSOC mode case-sensitive
 								// breaking backward-compat
 	var $_bindInputArray = false;	
-	var $_genSeqSQL = "create table %s (id integer)";
+	var $_genIDSQL = "VALUES NEXTVAL FOR %s";
+	var $_genSeqSQL = "CREATE SEQUENCE %s START WITH 1 NO MAXVALUE NO CYCLE";
+	var $_dropSeqSQL = "DROP SEQUENCE %s";
 	var $_autocommit = true;
 	var $_haserrorfunctions = true;
 	var $_lastAffectedRows = 0;
 	var $uCaseTables = true; // for meta* functions, uppercase table names
-	
+
 	function ADODB_db2() 
 	{ 	
 		$this->_haserrorfunctions = ADODB_PHPVER >= 0x4050;
 	}
-	
+
 		// returns true or false
 	function _connect($argDSN, $argUsername, $argPassword, $argDatabasename)
 	{
 		global $php_errormsg;
-		
+
 		if (!function_exists('db2_connect')) {
 			ADOConnection::outp("Warning: The old ODBC based DB2 driver has been renamed 'odbc_db2'. This ADOdb driver calls PHP's native db2 extension.");
 			return null;
@@ -139,11 +143,9 @@ class ADODB_db2 extends ADOConnection {
 		if (empty($this->_genSeqSQL)) return false;
 		$ok = $this->Execute(sprintf($this->_genSeqSQL,$seqname));
 		if (!$ok) return false;
-		$start -= 1;
-		return $this->Execute("insert into $seqname values($start)");
+		return true;
 	}
-	
-	var $_dropSeqSQL = 'drop table %s';
+
 	function DropSequence($seqname)
 	{
 		if (empty($this->_dropSeqSQL)) return false;
@@ -160,28 +162,8 @@ class ADODB_db2 extends ADOConnection {
 	{	
 		// if you have to modify the parameter below, your database is overloaded,
 		// or you need to implement generation of id's yourself!
-		$MAXLOOPS = 100;
-		while (--$MAXLOOPS>=0) {
-			$num = $this->GetOne("select id from $seq");
-			if ($num === false) {
-				$this->Execute(sprintf($this->_genSeqSQL ,$seq));	
-				$start -= 1;
-				$num = '0';
-				$ok = $this->Execute("insert into $seq values($start)");
-				if (!$ok) return false;
-			} 
-			$this->Execute("update $seq set id=id+1 where id=$num");
-			
-			if ($this->affected_rows() > 0) {
-				$num += 1;
-				$this->genID = $num;
-				return $num;
-			}
-		}
-		if ($fn = $this->raiseErrorFn) {
-			$fn($this->databaseType,'GENID',-32000,"Unable to generate unique id after $MAXLOOPS attempts",$seq,$num);
-		}
-		return false;
+		$num = $this->GetOne("VALUES NEXTVAL FOR $seq");
+		return $num;
 	}
 
 
