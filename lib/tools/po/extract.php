@@ -1,8 +1,6 @@
 #!/usr/bin/php -f
 <?php
 /*
- * $RCSfile$
- *
  * PHP script to extract strings from all the files and print
  * to stdout for use with xgettext.
  *
