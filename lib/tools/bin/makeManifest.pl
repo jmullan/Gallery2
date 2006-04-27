@@ -8,7 +8,18 @@ use strict;
 use File::Basename;
 use Cwd;
 use String::CRC32;
-
+my $quiet = 0;
+foreach my $i (0 .. $#ARGV) {
+    if ('-q' == $ARGV[$i]) {
+	$quiet = 1;
+    }
+}
+sub quietprint {
+    if (!$quiet) {
+	my $string = shift;
+	print STDERR $string;
+    }
+}
 $| = 1;
 
 chdir(dirname($0) . '/../../..');
@@ -17,19 +28,19 @@ my $basedir = cwd();
 # Get a list of every file committed to Subversion.
 #
 my @entries = ();
-print STDERR "Finding all files...";
+quietprint("Finding all files...");
 &listSvn(\@entries);
-print STDERR "\n";
+quietprint("\n");
 
 # Strip base dir, sort
-print STDERR "Sorting...";
+quietprint("Sorting...");
 @entries = sort @entries;
-print STDERR "\n";
+quietprint("\n");
 
 # Split into sections
 #
 my %sections;
-print STDERR "Separating into sections...";
+quietprint("Separating into sections...");
 foreach my $file (@entries) {
   if ($file =~ m{^((modules|layouts|themes)/.*?)/}) {
     push(@{$sections{"$1/MANIFEST"}}, $file);
@@ -37,11 +48,11 @@ foreach my $file (@entries) {
     push(@{$sections{'MANIFEST'}}, $file);
   }
 }
-print STDERR "\n";
+quietprint("\n");
 
 # Now generate the checksum files
 #
-print STDERR "Generating checksums...";
+quietprint("Generating checksums...");
 my $changed = 0;
 my $total = 0;
 foreach my $manifest (keys %sections) {
@@ -113,11 +124,11 @@ foreach my $manifest (keys %sections) {
   $changed += replaceIfNecessary($oldContent, $manifest, "$manifest.new");
   $total++;
 
-  print STDERR ".";
+  quietprint(".");
 }
-print STDERR "\n";
-printf(STDERR "Completed in %d seconds\n", time - $^T);
-printf(STDERR "Manifests changed: $changed (total: $total)\n");
+quietprint("\n");
+quietprint(sprintf("Completed in %d seconds\n", time - $^T));
+quietprint(sprintf("Manifests changed: $changed (total: $total)\n"));
 
 sub replaceIfNecessary {
   my ($oldContent, $oldFile, $newFile) = @_;
@@ -151,7 +162,7 @@ sub listSvn {
     die "\n$2" unless (-e $2);
     next unless (-f $2);
     die "Check $1 status for $2" if ($1 ne ' ' and $1 ne 'D' and $1 ne 'M');
-    print STDERR "Warning: $2 is locally modified\n" if ($1 eq 'M');
+    quietprint("Warning: $2 is locally modified\n") if ($1 eq 'M');
     push(@$entries,
       sprintf("%s%s@@%d", ($1 eq 'D' ? 'deleted:' : ''), $2, exists($binaryList{$2})));
   }
