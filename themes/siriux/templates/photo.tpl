@@ -50,7 +50,7 @@
 {/if}
 
 {* Navigation image map *}
-{if $theme.params.enableImageMap}
+{if $theme.params.enableImageMap && !empty($image.width) && !empty($image.height)}
 <map id="prevnext" name="prevnext">
 {if isset($theme.navigator.back)}
   <area shape="rect" coords="0,0,{math equation="round(x/2-1)" x=$image.width},{$image.height}"
