@@ -13,7 +13,7 @@
   <form name="form1">
   <object classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93"
 	  codebase="http://java.sun.com/products/plugin/autodl/jinstall-1_4-windows-i586.cab#Version=1,4,0,0"
-	  width="600" height="400" mayscript="true">
+	  width="600" height="400" mayscript="true" id="applet_object">
     <param name="code" value="com.gallery.GalleryRemote.GRAppletMini"/>
     <param name="archive" value="{g->url href="modules/uploadapplet/applets/GalleryRemoteAppletMini.jar},{g->url href="modules/uploadapplet/applets/GalleryRemoteHTTPClient.jar"},{g->url href="modules/uploadapplet/applets/applet_img.jar"}"/>
     <param name="type" value="application/x-java-applet;version=1.4"/>
@@ -40,6 +40,7 @@
       <embed
           type="application/x-java-applet;version=1.4"
           code="com.gallery.GalleryRemote.GRAppletMini"
+	  id="applet_embed"
           archive="{g->url href="modules/uploadapplet/applets/GalleryRemoteAppletMini.jar},{g->url href="modules/uploadapplet/applets/GalleryRemoteHTTPClient.jar"},{g->url href="modules/uploadapplet/applets/applet_img.jar"}"
           width="600"
           height="400"
