@@ -615,11 +615,79 @@ class GalleryRemoteController extends GalleryController {
 	    }
 	}
 
-	/* Get children of the album */
+	if (isset($form['random']) && $form['random'] == 'yes' && isset($form['limit'])) {
+	    /* get random descendants (only GalleryPhotoItems) of the album */
+	    list ($ret, $aclIds) = GalleryCoreApi::fetchAccessListIds('core.view', 
+		    $gallery->getActiveUserId());
+	    if (empty($aclIds)) {
+		$response->setProperty('status', $grStatusCodes['ERROR']);
+		$response->setProperty('status_text', 'Can\'t get ACLs for the current user.');
+		return null;
+	    }
+	    $aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
+    
+	    list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($albumId);
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $parentSequence[] = $albumId;
+	    $parentSequence = implode('/', $parentSequence);
+	    
+	    /* get the random function for the DB */
+	    $storage =& $gallery->getStorage();
+	    list ($ret, $orderBy) = $storage->getFunctionSql('RAND', array());
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $query = '
+		SELECT
+		  [GalleryDataItem::id]
+ 		FROM
+		  [GalleryDataItem], [GalleryItemAttributesMap],
+		  [GalleryAccessSubscriberMap], [GalleryEntity]
+		WHERE
+		  [GalleryDataItem::id] = [GalleryItemAttributesMap::itemId]
+		  AND
+		  [GalleryDataItem::id] = [GalleryEntity::id]';
+    
+	    if (!empty($parentSequence)) {
+		$query .= "
+		  AND
+		  [GalleryItemAttributesMap::parentSequence] LIKE '$parentSequence/%'";
+	    }
+    
+	    $query .= "
+		  AND
+		  [GalleryDataItem::id] = [GalleryAccessSubscriberMap::itemId]
+		  AND
+		  [GalleryAccessSubscriberMap::accessListId] IN ($aclMarkers)
+		ORDER BY
+		  $orderBy
+		";
+
+	    $data = $aclIds;
+    
+	    $params = array();
+	    $params['limit'] = array('count' => $form['limit']);
+    
+	    list ($ret, $searchResults) = $gallery->search($query, $data, $params);
+	    if ($ret) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    
+	    $ids = array();
+	    while ($result = $searchResults->nextResult()) {
+		$ids[] = $result[0];
+	    }
+	} else {
+	    /* get children of the album */
 	list ($ret, $ids) =
 	    GalleryCoreApi::fetchChildItemIdsWithPermission($albumId, 'core.view');
 	if ($ret) {
-	    return $ret;
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	}
 
 	if (empty($ids)) {
