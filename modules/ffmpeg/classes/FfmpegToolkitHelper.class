@@ -130,11 +130,8 @@ class FfmpegToolkitHelper {
 	}
 
 	/* We only care about video for now */
-	$relevantTypes['mpeg'] = 'mpeg';
-	$relevantTypes['asf'] = 'asf';
-	$relevantTypes['avi'] = 'avi';
-	$relevantTypes['mov'] = 'mov';
-	$relevantTypes['wmv1'] = 'wmv';
+	$relevantTypes = array('mpeg' => 'mpeg', 'asf' => 'asf', 'avi' => 'avi',
+			       'mov' => 'mov', 'wmv1' => 'wmv', 'flv' => 'flv');
 	list ($ignored, $results) = $platform->exec(array(array($ffmpegPath, '-formats')));
 	$mimeTypes = array();
 
