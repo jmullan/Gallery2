@@ -17,7 +17,7 @@
     RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} -f [OR]
     RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} -d [OR]
     RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} gallery\_remote2\.php
-    RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} !{$Htaccess.matchBaseFile}$
+    RewriteCond %{ldelim}REQUEST_URI{rdelim} !{$Htaccess.matchBaseFile}$
     RewriteRule .   -   [L]
 
 
@@ -34,9 +34,10 @@
   {/if}
 {else}
     RewriteCond %{ldelim}THE_REQUEST{rdelim} \ {$Htaccess.rewriteBase}{$rule.pattern}(\?.|\ .)
-    RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} !{$Htaccess.matchBaseFile}$
+    RewriteCond %{ldelim}REQUEST_URI{rdelim} !{$Htaccess.matchBaseFile}$
 {/if}
-{if strpos($rule.queryString, 'view=core.DownloadItem') !== false}
+{if strpos($rule.queryString, 'view=core.DownloadItem') !== false ||
+    strpos($rule.queryString, 'view=watermark.DownloadItem') !== false}
     RewriteRule .   {$Htaccess.galleryDirectory}{$Htaccess.mainPhp}?{$rule.queryString}   [{$rule.settings.flags}]
 {else}
     RewriteRule .   {$Htaccess.directory}{$Htaccess.baseFile}{$rule.queryString}   [{$rule.settings.flags}]
