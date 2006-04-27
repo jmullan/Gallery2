@@ -51,10 +51,15 @@ class CodeAuditTestCase extends GalleryTestCase {
 	    return;
 	}
 
-	list ($success, $fileList, $error) =
-	    $platform->exec(sprintf('cd %s; svn --non-interactive status -v -q', $this->_baseDir));
+	$cwd = $platform->getcwd();
+	if (!$platform->chdir($this->_baseDir)) {
+	    return $this->assert(false, 'Unable to chdir to ' . $this->_baseDir);
+	}
+	list ($success, $fileList, $error) = $platform->exec(
+		array(array('svn', 'status', '--non-interactive', '-v', '-q')));
+	$platform->chdir($cwd);
 	if (!$success) {
-	    $this->assert(false, 'svn error: ' . $error);
+	    return $this->assert(false, 'svn error: ' . implode('', $error));
 	}
 	foreach ($fileList as $line) {
 	    if (!preg_match('/^(.).....\s*\d+\s+\d+\s+\S+\s+(.*\.(?:class|inc|php|tpl|po))$/',
