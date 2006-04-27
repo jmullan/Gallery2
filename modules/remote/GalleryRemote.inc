@@ -172,6 +172,9 @@ class GalleryRemoteController extends GalleryController {
 
 	$end = array_sum(explode(' ', microtime()));
 	$response->setProperty('debug_time', round($end - $start, 3).'s');
+	if (!empty($status['controllerError'])) {
+	    $response->setProperty('debug_exception', $status['controllerError']->getErrorMessage());
+	}
 
 	$status['controllerResponse'] = $response;
 
@@ -603,18 +606,37 @@ class GalleryRemoteController extends GalleryController {
 
 	$albumsToo = isset($form['albums_too']) && $form['albums_too'] == 'yes';
 
+	list ($ret, $rootId) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	if ($ret) {
+	    return $ret;
+	}
+
 	if (isset($form['set_albumName'])) {
 	    /* list an actual album */
 	    $albumId = $form['set_albumName'];
 	} else {
 	    /* list the root album */
-	    list ($ret, $albumId) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
-	    if ($ret) {
+	    $albumId = $rootId;
+	}
+	
+	/* check that the item is an album */
+	list ($ret, $album) = GalleryCoreApi::loadEntitiesById($albumId);
+	if ($ret) {
+	    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT == ERROR_MISSING_OBJECT) {
+		$response->setProperty('status', $grStatusCodes['ERROR']);
+		$response->setProperty('status_text', 'albumName is not a valid G2 object ID');
+		return null;
+	    } else {
 		return $ret;
 	    }
 	}
-
+	if (!GalleryUtilities::isA($album, 'GalleryAlbumItem')) {
+	    $response->setProperty('status', $grStatusCodes['ERROR']);
+	    $response->setProperty('status_text', 'albumName doesn\'t correspond to an actual album');
+	    return null;
+	}
+	
 	if (isset($form['random']) && $form['random'] == 'yes' && isset($form['limit'])) {
 	    /* get random descendants (only GalleryPhotoItems) of the album */
 	    list ($ret, $aclIds) = GalleryCoreApi::fetchAccessListIds('core.view', 
@@ -625,20 +647,25 @@ class GalleryRemoteController extends GalleryController {
 		return null;
 	    }
 	    $aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
-    
-	    list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($albumId);
-	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
+	    
+	    /* set parent sequence */
+	    if ($albumId == $rootId) {
+		$parentSequence = '';
+	    } else {
+		list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($albumId);
+		if ($ret) {
+		    return $ret;
+		}
 
-	    $parentSequence[] = $albumId;
-	    $parentSequence = implode('/', $parentSequence);
+		$parentSequence[] = $albumId;
+		$parentSequence = implode('/', $parentSequence);
+	    }
 	    
 	    /* get the random function for the DB */
 	    $storage =& $gallery->getStorage();
 	    list ($ret, $orderBy) = $storage->getFunctionSql('RAND', array());
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    $query = '
@@ -646,11 +673,9 @@ class GalleryRemoteController extends GalleryController {
 		  [GalleryDataItem::id]
  		FROM
 		  [GalleryDataItem], [GalleryItemAttributesMap],
-		  [GalleryAccessSubscriberMap], [GalleryEntity]
+		  [GalleryAccessSubscriberMap]
 		WHERE
-		  [GalleryDataItem::id] = [GalleryItemAttributesMap::itemId]
-		  AND
-		  [GalleryDataItem::id] = [GalleryEntity::id]';
+		  [GalleryDataItem::id] = [GalleryItemAttributesMap::itemId]';
     
 	    if (!empty($parentSequence)) {
 		$query .= "
@@ -674,7 +699,7 @@ class GalleryRemoteController extends GalleryController {
     
 	    list ($ret, $searchResults) = $gallery->search($query, $data, $params);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    
 	    $ids = array();
@@ -683,10 +708,10 @@ class GalleryRemoteController extends GalleryController {
 	    }
 	} else {
 	    /* get children of the album */
-	list ($ret, $ids) =
-	    GalleryCoreApi::fetchChildItemIdsWithPermission($albumId, 'core.view');
-	if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+	    list ($ret, $ids) =
+		    GalleryCoreApi::fetchChildItemIdsWithPermission($albumId, 'core.view');
+	    if ($ret) {
+		return $ret;
 	    }
 	}
 
