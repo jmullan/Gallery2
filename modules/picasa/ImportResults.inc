@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.2 $ $Date: 2006/01/10 04:41:32 $
  * @package Picasa
  * @subpackage UserInterface
  * @author Waldemar Schlackow <gallery@schlackow.de> based on code by 

@@ -1,7 +1,7 @@
 /****************************
  * Slider theme for Gallery2
  * @author Alan Harder <alan.harder@sun.com>
- * $Revision$ $Date$
+ * $Revision: 1.2 $ $Date: 2005/07/15 00:37:27 $
  */
 
 //Class app

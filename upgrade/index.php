@@ -10,7 +10,7 @@
  *
  * ----------------------------------------------------------------------------
  *
- * $Id$
+ * $Id: index.php,v 1.33 2006/03/10 00:15:34 mindless Exp $
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2006 Bharat Mediratta

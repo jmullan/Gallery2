@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.4 $ $Date: 2006/02/27 19:27:30 $
  * @package RSS
  * @author Jonatan Heyman <http://heyman.info>
  * @author Pierre-Luc Paour

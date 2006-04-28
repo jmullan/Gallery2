@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.19 $ $Date: 2006/01/10 04:40:41 $
  * @package Migrate
  * @subpackage UserInterface
  * @author Jesse Mullan <jmullan@visi.com>
@@ -33,7 +33,7 @@ GalleryCoreApi::requireOnce('modules/migrate/classes/Gallery1DataParser.class');
 GalleryCoreApi::requireOnce('modules/migrate/classes/G1MigrateHelper.class');
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.19 $ $Date: 2006/01/10 04:40:41 $
  * @package Migrate
  * @subpackage UserInterface
  */
@@ -113,7 +113,7 @@ class SelectGalleryController extends GalleryController {
 }
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.19 $ $Date: 2006/01/10 04:40:41 $
  * @package Migrate
  * @subpackage UserInterface
  */

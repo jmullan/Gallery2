@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.5 $ $Date: 2006/01/30 18:25:52 $
  * @package Captcha
  * @subpackage UserInterface
  * @author Stefan Ioachim <stefanioachim@gmail.com>

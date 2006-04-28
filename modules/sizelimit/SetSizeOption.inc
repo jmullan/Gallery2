@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.10 $ $Date: 2006/01/10 04:42:42 $
  * @package SizeLimit
  * @subpackage UserInterface
  * @author Felix Rabinovich <felix@rabinovich.org>

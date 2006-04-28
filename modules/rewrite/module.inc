@@ -21,7 +21,7 @@
  */
 /**
  * @package Rewrite
- * @version $Revision$ $Date$
+ * @version $Revision: 1.49 $ $Date: 2006/03/22 03:52:35 $
  * @author Douglas Cau <douglas@cau.se>
  */
 

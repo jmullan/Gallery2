@@ -21,7 +21,7 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.8 $ $Date: 2006/01/10 04:42:59 $
  * @package SquareThumb
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>

@@ -21,7 +21,7 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.2 $ $Date: 2006/01/10 04:38:41 $
  * @package {$ucModuleId}
  * @subpackage Helpers
  * @author {$authorFullName}

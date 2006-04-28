@@ -21,7 +21,7 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.2 $ $Date: 2006/01/10 04:41:53 $
  * @package Rating
  * @author  Don Seiler <don@seiler.us>
  */

@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.6 $ $Date: 2006/02/06 18:09:40 $
  * @package Fotokasten
  * @author Ioana Ciocanescu <service@fotokasten.de>
  */

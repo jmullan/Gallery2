@@ -27,7 +27,7 @@
  * register Gallery as a publisher in XP, it doesn't actually do any of the
  * processing of images.
  *
- * @version $Revision$ $Date$
+ * @version $Revision: 1.5 $ $Date: 2006/01/13 15:39:38 $
  * @package PublishXp
  * @author Timothy Webb <tiwebb@cisco.com>
  */

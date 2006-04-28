@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.19 $ $Date: 2006/01/10 04:39:44 $
  * @package Debug
  * @subpackage UserInterface
  * @author Ernesto Baschny <ernst@baschny.de>

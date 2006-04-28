@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.7.2.1 $ $Date: 2006/04/05 22:10:59 $
  * @package RSS
  * @author Jonatan Heyman <http://heyman.info>
  * @author Pierre-Luc Paour

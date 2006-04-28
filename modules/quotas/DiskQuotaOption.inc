@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.7 $ $Date: 2006/01/13 03:39:48 $
  * @package Quotas
  * @subpackage UserInterface
  * @author Robert Balousek <volksport@users.sf.net>

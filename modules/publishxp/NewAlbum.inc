@@ -27,7 +27,7 @@
  * is redirected back to the select album page after creating the album with
  * the newly created album automatically selected.
  *
- * @version $Revision$ $Date$
+ * @version $Revision: 1.9 $ $Date: 2006/02/01 12:05:51 $
  * @package PublishXp
  * @author Timothy Webb <tiwebb@cisco.com>
  */

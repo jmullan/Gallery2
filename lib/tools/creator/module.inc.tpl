@@ -21,7 +21,7 @@
  */
 /**
  * @package {$moduleName}
- * @version $Revision$ $Date$
+ * @version $Revision: 1.3 $ $Date: 2006/03/17 17:10:34 $
  * @author {$authorFullName}
  */
 

@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id$
+ * $Id: IndexGenerator.inc,v 1.4 2006/01/10 04:38:42 mindless Exp $
  */
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryRepositoryUtilities.class');
@@ -29,7 +29,7 @@ GalleryCoreApi::requireOnce('lib/tools/repository/classes/RepositoryIndex.class'
  *
  * @author Jozef Selesi <selesi at gmail dot com>
  *
- * @version $Revision$ $Date$
+ * @version $Revision: 1.4 $ $Date: 2006/01/10 04:38:42 $
  * @package RepositoryTools
  * @subpackage Controllers
  * @module IndexGeneratorController

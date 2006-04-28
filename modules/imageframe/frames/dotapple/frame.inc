@@ -1,4 +1,4 @@
-<?php /* $Id$ */
+<?php /* $Id: frame.inc,v 1.1 2005/07/30 21:21:10 volksport Exp $ */
 /* Contributed by: volksport */
 $frameData = array(
 

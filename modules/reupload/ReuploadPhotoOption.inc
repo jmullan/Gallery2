@@ -21,7 +21,7 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.1 $ $Date: 2006/01/27 04:36:04 $
  * @package Reupload
  * @author Piotr P. Karwasz <piotr.karwasz@ens.fr>
  */

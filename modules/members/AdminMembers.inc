@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.13 $ $Date: 2006/03/17 18:52:51 $
  * @package Members
  * @author Robert Balousek <rbalousek@hotmail.com>
  */

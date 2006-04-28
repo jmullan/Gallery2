@@ -115,7 +115,7 @@ $gdEnvironments[] = array(
 &lt;/table&gt;&lt;br&gt;
 &lt;h2 align=&quot;center&quot;&gt;&lt;a name=&quot;module_posix&quot;&gt;posix&lt;/a&gt;&lt;/h2&gt;
 &lt;table border=&quot;0&quot; cellpadding=&quot;3&quot; cellspacing=&quot;1&quot; width=&quot;600&quot; bgcolor=&quot;#000000&quot; align=&quot;center&quot;&gt;
-&lt;tr valign=&quot;baseline&quot; bgcolor=&quot;#cccccc&quot;&gt;&lt;td bgcolor=&quot;#ccccff&quot; &gt;&lt;b&gt;Revision&lt;/b&gt;&lt;/td&gt;&lt;td align=&quot;left&quot;&gt;$Revision$&lt;/td&gt;&lt;/tr&gt;
+&lt;tr valign=&quot;baseline&quot; bgcolor=&quot;#cccccc&quot;&gt;&lt;td bgcolor=&quot;#ccccff&quot; &gt;&lt;b&gt;Revision&lt;/b&gt;&lt;/td&gt;&lt;td align=&quot;left&quot;&gt;$Revision: 1.3 $&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;&lt;br&gt;
 &lt;h2 align=&quot;center&quot;&gt;&lt;a name=&quot;module_pgsql&quot;&gt;pgsql&lt;/a&gt;&lt;/h2&gt;
 &lt;table border=&quot;0&quot; cellpadding=&quot;3&quot; cellspacing=&quot;1&quot; width=&quot;600&quot; bgcolor=&quot;#000000&quot; align=&quot;center&quot;&gt;
@@ -216,7 +216,7 @@ $gdEnvironments[] = array(
 &lt;h2 align=&quot;center&quot;&gt;&lt;a name=&quot;module_ldap&quot;&gt;ldap&lt;/a&gt;&lt;/h2&gt;
 &lt;table border=&quot;0&quot; cellpadding=&quot;3&quot; cellspacing=&quot;1&quot; width=&quot;600&quot; bgcolor=&quot;#000000&quot; align=&quot;center&quot;&gt;
 &lt;tr valign=&quot;baseline&quot; bgcolor=&quot;#cccccc&quot;&gt;&lt;td bgcolor=&quot;#ccccff&quot; &gt;&lt;b&gt;LDAP Support&lt;/b&gt;&lt;/td&gt;&lt;td align=&quot;left&quot;&gt;enabled&lt;/td&gt;&lt;/tr&gt;
-&lt;tr valign=&quot;baseline&quot; bgcolor=&quot;#cccccc&quot;&gt;&lt;td bgcolor=&quot;#ccccff&quot; &gt;&lt;b&gt;RCS Version&lt;/b&gt;&lt;/td&gt;&lt;td align=&quot;left&quot;&gt;$Id$&lt;/td&gt;&lt;/tr&gt;
+&lt;tr valign=&quot;baseline&quot; bgcolor=&quot;#cccccc&quot;&gt;&lt;td bgcolor=&quot;#ccccff&quot; &gt;&lt;b&gt;RCS Version&lt;/b&gt;&lt;/td&gt;&lt;td align=&quot;left&quot;&gt;$Id: GdFunctionMatrix.inc,v 1.3 2006/01/13 03:39:33 andy_st Exp $&lt;/td&gt;&lt;/tr&gt;
 &lt;tr valign=&quot;baseline&quot; bgcolor=&quot;#cccccc&quot;&gt;&lt;td bgcolor=&quot;#ccccff&quot; &gt;&lt;b&gt;Total Links&lt;/b&gt;&lt;/td&gt;&lt;td align=&quot;left&quot;&gt;0/unlimited&lt;/td&gt;&lt;/tr&gt;
 &lt;tr valign=&quot;baseline&quot; bgcolor=&quot;#cccccc&quot;&gt;&lt;td bgcolor=&quot;#ccccff&quot; &gt;&lt;b&gt;API Version&lt;/b&gt;&lt;/td&gt;&lt;td align=&quot;left&quot;&gt;2004&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;&lt;br&gt;
@@ -298,7 +298,7 @@ $gdEnvironments[] = array(
 &lt;table border=&quot;0&quot; cellpadding=&quot;3&quot; cellspacing=&quot;1&quot; width=&quot;600&quot; bgcolor=&quot;#000000&quot; align=&quot;center&quot;&gt;
 &lt;tr valign=&quot;baseline&quot; bgcolor=&quot;#cccccc&quot;&gt;&lt;td bgcolor=&quot;#ccccff&quot; &gt;&lt;b&gt;PDF Support&lt;/b&gt;&lt;/td&gt;&lt;td align=&quot;left&quot;&gt;enabled&lt;/td&gt;&lt;/tr&gt;
 &lt;tr valign=&quot;baseline&quot; bgcolor=&quot;#cccccc&quot;&gt;&lt;td bgcolor=&quot;#ccccff&quot; &gt;&lt;b&gt;PDFlib GmbH Version&lt;/b&gt;&lt;/td&gt;&lt;td align=&quot;left&quot;&gt;4.0.3&lt;/td&gt;&lt;/tr&gt;
-&lt;tr valign=&quot;baseline&quot; bgcolor=&quot;#cccccc&quot;&gt;&lt;td bgcolor=&quot;#ccccff&quot; &gt;&lt;b&gt;Revision&lt;/b&gt;&lt;/td&gt;&lt;td align=&quot;left&quot;&gt;$Revision$&lt;/td&gt;&lt;/tr&gt;
+&lt;tr valign=&quot;baseline&quot; bgcolor=&quot;#cccccc&quot;&gt;&lt;td bgcolor=&quot;#ccccff&quot; &gt;&lt;b&gt;Revision&lt;/b&gt;&lt;/td&gt;&lt;td align=&quot;left&quot;&gt;$Revision: 1.3 $&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;&lt;br&gt;
 &lt;h2 align=&quot;center&quot;&gt;Additional Modules&lt;/h2&gt;
 &lt;table border=&quot;0&quot; cellpadding=&quot;3&quot; cellspacing=&quot;1&quot; width=&quot;600&quot; bgcolor=&quot;#000000&quot; align=&quot;center&quot;&gt;
@@ -540,7 +540,7 @@ hr {width: 600px; align: center; background-color: #cccccc; border: 0px; height:
 &lt;h2&gt;&lt;a name=&quot;module_exif&quot;&gt;exif&lt;/a&gt;&lt;/h2&gt;
 &lt;table border=&quot;0&quot; cellpadding=&quot;3&quot; width=&quot;600&quot;&gt;
 &lt;tr&gt;&lt;td class=&quot;e&quot;&gt;EXIF Support &lt;/td&gt;&lt;td class=&quot;v&quot;&gt;enabled &lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td class=&quot;e&quot;&gt;EXIF Version &lt;/td&gt;&lt;td class=&quot;v&quot;&gt;1.4 $Id$ &lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class=&quot;e&quot;&gt;EXIF Version &lt;/td&gt;&lt;td class=&quot;v&quot;&gt;1.4 $Id: GdFunctionMatrix.inc,v 1.3 2006/01/13 03:39:33 andy_st Exp $ &lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td class=&quot;e&quot;&gt;Supported EXIF Version &lt;/td&gt;&lt;td class=&quot;v&quot;&gt;0220 &lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td class=&quot;e&quot;&gt;Supported filetypes &lt;/td&gt;&lt;td class=&quot;v&quot;&gt;JPEG,TIFF &lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;&lt;br /&gt;
@@ -588,7 +588,7 @@ hr {width: 600px; align: center; background-color: #cccccc; border: 0px; height:
 &lt;h2&gt;&lt;a name=&quot;module_ldap&quot;&gt;ldap&lt;/a&gt;&lt;/h2&gt;
 &lt;table border=&quot;0&quot; cellpadding=&quot;3&quot; width=&quot;600&quot;&gt;
 &lt;tr&gt;&lt;td class=&quot;e&quot;&gt;LDAP Support &lt;/td&gt;&lt;td class=&quot;v&quot;&gt;enabled &lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td class=&quot;e&quot;&gt;RCS Version &lt;/td&gt;&lt;td class=&quot;v&quot;&gt;$Id$ &lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class=&quot;e&quot;&gt;RCS Version &lt;/td&gt;&lt;td class=&quot;v&quot;&gt;$Id: GdFunctionMatrix.inc,v 1.3 2006/01/13 03:39:33 andy_st Exp $ &lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td class=&quot;e&quot;&gt;Total Links &lt;/td&gt;&lt;td class=&quot;v&quot;&gt;0/unlimited &lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td class=&quot;e&quot;&gt;API Version &lt;/td&gt;&lt;td class=&quot;v&quot;&gt;2004 &lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td class=&quot;e&quot;&gt;Vendor Name &lt;/td&gt;&lt;td class=&quot;v&quot;&gt;OpenLDAP &lt;/td&gt;&lt;/tr&gt;
@@ -708,7 +708,7 @@ hr {width: 600px; align: center; background-color: #cccccc; border: 0px; height:
 &lt;/table&gt;&lt;br /&gt;
 &lt;h2&gt;&lt;a name=&quot;module_posix&quot;&gt;posix&lt;/a&gt;&lt;/h2&gt;
 &lt;table border=&quot;0&quot; cellpadding=&quot;3&quot; width=&quot;600&quot;&gt;
-&lt;tr&gt;&lt;td class=&quot;e&quot;&gt;Revision &lt;/td&gt;&lt;td class=&quot;v&quot;&gt;$Revision$ &lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class=&quot;e&quot;&gt;Revision &lt;/td&gt;&lt;td class=&quot;v&quot;&gt;$Revision: 1.3 $ &lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;&lt;br /&gt;
 &lt;h2&gt;&lt;a name=&quot;module_qtdom&quot;&gt;qtdom&lt;/a&gt;&lt;/h2&gt;
 &lt;table border=&quot;0&quot; cellpadding=&quot;3&quot; width=&quot;600&quot;&gt;
@@ -1060,7 +1060,7 @@ hr {width: 600px; background-color: #cccccc; border: 0px; height: 1px; color: #0
 &lt;h2&gt;&lt;a name=&quot;module_exif&quot;&gt;exif&lt;/a&gt;&lt;/h2&gt;
 &lt;table border=&quot;0&quot; cellpadding=&quot;3&quot; width=&quot;600&quot;&gt;
 &lt;tr&gt;&lt;td class=&quot;e&quot;&gt;EXIF Support &lt;/td&gt;&lt;td class=&quot;v&quot;&gt;enabled &lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td class=&quot;e&quot;&gt;EXIF Version &lt;/td&gt;&lt;td class=&quot;v&quot;&gt;1.4 $Id$ &lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class=&quot;e&quot;&gt;EXIF Version &lt;/td&gt;&lt;td class=&quot;v&quot;&gt;1.4 $Id: GdFunctionMatrix.inc,v 1.3 2006/01/13 03:39:33 andy_st Exp $ &lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td class=&quot;e&quot;&gt;Supported EXIF Version &lt;/td&gt;&lt;td class=&quot;v&quot;&gt;0220 &lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td class=&quot;e&quot;&gt;Supported filetypes &lt;/td&gt;&lt;td class=&quot;v&quot;&gt;JPEG,TIFF &lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;&lt;br /&gt;
@@ -1098,7 +1098,7 @@ hr {width: 600px; background-color: #cccccc; border: 0px; height: 1px; color: #0
 &lt;h2&gt;&lt;a name=&quot;module_ldap&quot;&gt;ldap&lt;/a&gt;&lt;/h2&gt;
 &lt;table border=&quot;0&quot; cellpadding=&quot;3&quot; width=&quot;600&quot;&gt;
 &lt;tr&gt;&lt;td class=&quot;e&quot;&gt;LDAP Support &lt;/td&gt;&lt;td class=&quot;v&quot;&gt;enabled &lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td class=&quot;e&quot;&gt;RCS Version &lt;/td&gt;&lt;td class=&quot;v&quot;&gt;$Id$ &lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class=&quot;e&quot;&gt;RCS Version &lt;/td&gt;&lt;td class=&quot;v&quot;&gt;$Id: GdFunctionMatrix.inc,v 1.3 2006/01/13 03:39:33 andy_st Exp $ &lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td class=&quot;e&quot;&gt;Total Links &lt;/td&gt;&lt;td class=&quot;v&quot;&gt;0/unlimited &lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td class=&quot;e&quot;&gt;API Version &lt;/td&gt;&lt;td class=&quot;v&quot;&gt;2004 &lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td class=&quot;e&quot;&gt;Vendor Name &lt;/td&gt;&lt;td class=&quot;v&quot;&gt;OpenLDAP &lt;/td&gt;&lt;/tr&gt;
@@ -1225,7 +1225,7 @@ hr {width: 600px; background-color: #cccccc; border: 0px; height: 1px; color: #0
 &lt;/table&gt;&lt;br /&gt;
 &lt;h2&gt;&lt;a name=&quot;module_posix&quot;&gt;posix&lt;/a&gt;&lt;/h2&gt;
 &lt;table border=&quot;0&quot; cellpadding=&quot;3&quot; width=&quot;600&quot;&gt;
-&lt;tr&gt;&lt;td class=&quot;e&quot;&gt;Revision &lt;/td&gt;&lt;td class=&quot;v&quot;&gt;$Revision$ &lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class=&quot;e&quot;&gt;Revision &lt;/td&gt;&lt;td class=&quot;v&quot;&gt;$Revision: 1.3 $ &lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;&lt;br /&gt;
 &lt;h2&gt;&lt;a name=&quot;module_qtdom&quot;&gt;qtdom&lt;/a&gt;&lt;/h2&gt;
 &lt;table border=&quot;0&quot; cellpadding=&quot;3&quot; width=&quot;600&quot;&gt;

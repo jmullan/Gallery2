@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.3 $ $Date: 2006/01/10 04:41:21 $
  * @package Permalinks
  * @subpackage UserInterface
  * @author Pierre-Luc Paour <gallery@paour.com>

@@ -21,7 +21,7 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.9 $ $Date: 2006/01/13 03:39:33 $
  * @package Members
  * @subpackage UserInterface
  * @author Robert Balousek <rbalousek@hotmail.com>

@@ -21,7 +21,7 @@
 */
 
 /**
-* @version $Revision$ $Date$
+* @version $Revision: 1.2 $ $Date: 2006/01/10 04:41:32 $
 * @package Picasa
 * @subpackage UserInterface
 * @author Waldemar Schlackow <gallery@schlackow.de> based on the migrate module by
@@ -31,7 +31,7 @@
 GalleryCoreApi::requireOnce('modules/picasa/classes/Picasa2DataParser.class');
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.2 $ $Date: 2006/01/10 04:41:32 $
  * @package Picasa
  * @subpackage UserInterface
  */
@@ -98,7 +98,7 @@ class SelectPicasaExportPathController extends GalleryController {
 }
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.2 $ $Date: 2006/01/10 04:41:32 $
  * @package Picasa
  * @subpackage UserInterface
  */

@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.12 $ $Date: 2006/03/22 03:52:38 $
  * @package Gallery
  * @author Nico Kaiser <nico@siriux.net>
  */

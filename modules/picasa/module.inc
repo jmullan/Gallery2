@@ -21,7 +21,7 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.4.2.1 $ $Date: 2006/04/05 00:19:57 $
  * @package Picasa
  * @author Waldemar Schlackow <gallery@schlackow.de>
  */

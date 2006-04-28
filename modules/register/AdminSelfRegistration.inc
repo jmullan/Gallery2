@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.13 $ $Date: 2006/01/17 01:52:03 $
  * @package SelfRegistration
  * @author Sebastian Eichner <mailsp@sebastian-eichner.de>
  */

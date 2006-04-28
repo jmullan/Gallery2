@@ -14,7 +14,7 @@
 # Copyright 2001-2002 Chuck Hagenbuch <chuck@horde.org>
 # Copyright 2001-2002 Jan Schneider <jan@horde.org>
 #
-# $Id$
+# $Id: GNUmakefile.inc,v 1.15 2006/03/07 20:47:44 mindless Exp $
 #
 MODULE_DIR = $(shell dirname `pwd`)
 TYPE_DIR = $(shell dirname $(MODULE_DIR))

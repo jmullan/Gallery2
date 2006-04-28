@@ -21,7 +21,7 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.14 $ $Date: 2006/03/22 03:52:32 $
  * @package Mime
  * @author Felix Rabinovich <Felix@Rabinovich.org>
  */

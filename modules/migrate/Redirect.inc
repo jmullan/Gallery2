@@ -21,7 +21,7 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.20 $ $Date: 2006/03/18 03:24:48 $
  * @package Migrate
  * @subpackage Redirect
  * @author Joseph Elwell <jelwell@yahoo.com>

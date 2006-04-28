@@ -21,7 +21,7 @@
  */
 /**
  * @package ArchiveUpload
- * @version $Revision$ $Date$
+ * @version $Revision: 1.18.2.1 $ $Date: 2006/04/05 00:19:52 $
  * @author Alan Harder <alan.harder@sun.com>
  */
 

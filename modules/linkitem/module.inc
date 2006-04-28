@@ -21,7 +21,7 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.9 $ $Date: 2006/03/22 03:52:32 $
  * @package LinkItem
  * @author Alan Harder <alan.harder@sun.com>
  */

@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.7 $ $Date: 2006/02/26 07:23:31 $
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Jozef Selesi <selesi at gmail dot com>

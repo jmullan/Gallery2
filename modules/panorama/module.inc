@@ -23,7 +23,7 @@
  *   Metamorphose applet Copyright (C) 2000 Rüdiger Appel
  */
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.48 $ $Date: 2006/03/22 03:52:33 $
  * @package Panorama
  * @author Alan Harder <alan.harder@sun.com>
  * Java applet: @author Rüdiger Appel

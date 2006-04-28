@@ -21,7 +21,7 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.30 $ $Date: 2006/02/04 21:37:37 $
  * @package Search
  * @author Bharat Mediratta <bharat@menalto.com>
  */

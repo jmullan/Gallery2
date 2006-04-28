@@ -21,7 +21,7 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.18 $ $Date: 2006/01/11 23:14:37 $
  * @package ZipCart
  * @author Alan Harder <alan.harder@sun.com>
  */

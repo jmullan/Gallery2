@@ -21,7 +21,7 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.12 $ $Date: 2006/01/10 04:41:54 $
  * @package Rearrange
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>

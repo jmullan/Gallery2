@@ -26,7 +26,7 @@
  * Also lets the user select a parent album and go to the new album page should the
  * user wish to first create a new album.
  *
- * @version $Revision$ $Date$
+ * @version $Revision: 1.7 $ $Date: 2006/01/13 15:39:38 $
  * @package PublishXp
  * @author Timothy Webb <tiwebb@cisco.com>
  */

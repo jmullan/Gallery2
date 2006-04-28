@@ -21,7 +21,7 @@
 */
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.6 $ $Date: 2006/02/09 10:36:15 $
  * @package Permalinks
  * @subpackage UserInterface
  * @author Pierre-Luc Paour <gallery@paour.com>

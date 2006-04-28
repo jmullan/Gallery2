@@ -21,7 +21,7 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.11 $ $Date: 2006/02/23 09:41:10 $
  * @package NokiaUpload
  * @author Jerome Rannikko <jeromer@hotpop.com>
  */

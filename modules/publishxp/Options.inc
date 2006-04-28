@@ -26,7 +26,7 @@
  * within Gallery.  The two options supported are for whether the file extension
  * should be used in the title and if the captions should be set automatically.
  *
- * @version $Revision$ $Date$
+ * @version $Revision: 1.8 $ $Date: 2006/01/13 15:39:38 $
  * @package PublishXp
  * @author Timothy Webb <tiwebb@cisco.com>
  */

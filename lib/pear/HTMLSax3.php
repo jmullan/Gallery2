@@ -20,7 +20,7 @@
 // +----------------------------------------------------------------------+
 //
 // PEAR  Id: HTMLSax3.php,v 1.1 2004/06/02 14:09:19 hfuecks
-//   G2 $Id$
+//   G2 $Id: HTMLSax3.php,v 1.2 2006/01/13 21:37:47 mindless Exp $
 //
 /**
 * Main parser components

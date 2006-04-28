@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.34 $ $Date: 2006/03/22 03:52:28 $
  * @package AlbumSelect
  * @author Alan Harder <alan.harder@sun.com>
  * @author Jonas Forsberg <jonas@gargamel.nu> (Initial dTree integration)

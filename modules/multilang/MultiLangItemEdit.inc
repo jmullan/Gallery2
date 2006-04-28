@@ -21,7 +21,7 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.9 $ $Date: 2006/01/10 04:40:52 $
  * @package MultiLang
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>

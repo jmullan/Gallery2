@@ -21,7 +21,7 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.1 $ $Date: 2006/02/14 09:05:02 $
  * @package Getid3
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>

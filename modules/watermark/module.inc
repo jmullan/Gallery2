@@ -21,7 +21,7 @@
  */
 /**
  * @package Watermark
- * @version $Revision$ $Date$
+ * @version $Revision: 1.47.2.1 $ $Date: 2006/04/05 22:10:59 $
  * @author Alan Harder <alan.harder@sun.com>
  */
 
