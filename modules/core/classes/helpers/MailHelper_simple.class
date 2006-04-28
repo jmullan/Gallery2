@@ -54,8 +54,10 @@ class MailHelper_simple {
 	    $template->setVariable($key, $value);
 	}
 
-	/* Set the translation domain */
-	$template->setVariable('l10Domain', 'modules_core');
+	/* Default translation domain if none given */
+	if (!isset($data['l10Domain'])) {
+	    $template->setVariable('l10Domain', 'modules_core');
+	}
 
 	list($ret, $emailText) = $template->fetch('gallery:' . $file);
 	if ($ret) {

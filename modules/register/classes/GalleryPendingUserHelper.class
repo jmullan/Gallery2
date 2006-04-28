@@ -170,9 +170,9 @@ class GalleryPendingUserHelper {
 		  /* Incoming url params will get sanitized, so decode here */
 		  'username' => $decodedUserName,
 		  'key' => $pendingUser->getRegistrationKey()),
-	    array('forceFullUrl' => true, 'htmlEntities' => false));
-	$baseUrl = $generator->generateUrl(
-	    array(), array('forceFullUrl' => true, 'htmlEntities' => false));
+	    array('forceFullUrl' => true, 'forceSessionId' => false, 'htmlEntities' => false));
+	$baseUrl = $generator->generateUrl(array(),
+	    array('forceFullUrl' => true, 'forceSessionId' => false, 'htmlEntities' => false));
 
 	$ret = GalleryCoreApi::sendTemplatedEmail(
 		'modules/register/templates/ConfirmationEmail.tpl',
@@ -181,7 +181,8 @@ class GalleryPendingUserHelper {
 		    /* We send plain text email so decode entities in username */
 		    'username' => $decodedUserName,
 		    'confirmationUrl' => $confirmationUrl,
-		    'baseUrl' => $baseUrl),
+		    'baseUrl' => $baseUrl,
+		    'l10Domain' => 'modules_register'),
 		$params['from'],
 		$pendingUser->getEmail(),
 		$module->translate($params['subject']));
@@ -237,7 +238,8 @@ class GalleryPendingUserHelper {
 		    array('name' => $pendingUser->getFullName(),
 			  /* We send plain text email so decode entities in username */
 			  'username' => $decodedUserName,
-			  'email' => $pendingUser->getEmail()),
+			  'email' => $pendingUser->getEmail(),
+			  'l10Domain' => 'modules_register'),
 		    $params['from'],
 		    implode(',', $toList),
 		    $module->translate($params['adminsubject']));
