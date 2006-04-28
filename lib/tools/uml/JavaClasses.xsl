@@ -6,7 +6,7 @@
   
   <xsl:template match="class">
 /*
- * $RCSfile$
+ * $RCSfile: JavaClasses.xsl,v $
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
