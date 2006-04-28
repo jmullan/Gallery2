@@ -21,7 +21,7 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.7 $ $Date: 2005/08/23 03:49:52 $
  * @package SelfRegistration
  * @subpackage UserInterface
  * @author Sebastian Eichner <mailsp@sebastian-eichner.de>

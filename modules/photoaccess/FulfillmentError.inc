@@ -21,7 +21,7 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.5 $ $Date: 2005/08/23 03:49:48 $
  * @package PhotoAccess
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>

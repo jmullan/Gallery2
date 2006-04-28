@@ -22,7 +22,7 @@
 /**
  * @package SelfRegistration
  * @subpackage ClassInterfaces
- * @version $Revision$ $Date$
+ * @version $Revision: 1.10 $ $Date: 2005/08/23 03:49:52 $
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 

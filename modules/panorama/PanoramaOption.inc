@@ -21,7 +21,7 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.6 $ $Date: 2005/08/23 03:49:48 $
  * @package Panorama
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>

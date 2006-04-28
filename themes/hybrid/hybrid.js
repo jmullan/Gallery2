@@ -1,7 +1,7 @@
 /****************************
  * Hybrid theme for Gallery2
  * @author Alan Harder <alan.harder@sun.com>
- * $Revision$ $Date$
+ * $Revision: 1.3 $ $Date: 2005/08/17 14:46:14 $
  */
 
 //Class app

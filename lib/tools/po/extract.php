@@ -25,7 +25,7 @@
  *
  * Copyright 2002-2005 Bharat Mediratta <bharat@menalto.com>
  *
- * $Id$
+ * $Id: extract.php,v 1.15 2005/09/09 06:29:59 bharat Exp $
  */
 
 if (!empty($_SERVER['SERVER_NAME'])) {

@@ -21,7 +21,7 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.42 $ $Date: 2005/09/04 04:28:41 $
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Ernesto Baschny <ernst@baschny.de>

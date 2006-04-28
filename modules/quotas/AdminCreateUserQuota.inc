@@ -21,7 +21,7 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.7 $ $Date: 2005/08/23 03:49:49 $
  * @package Quotas
  * @subpackage UserInterface
  * @author Robert Balousek <volksport@users.sf.net>

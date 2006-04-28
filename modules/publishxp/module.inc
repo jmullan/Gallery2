@@ -27,7 +27,7 @@
  * has to download a registry file and install it.  Once installed, the user can use
  * the Publish option.
  *
- * @version $Id$
+ * @version $Id: module.inc,v 1.12 2005/09/10 20:28:14 mindless Exp $
  * @package PublishXp
  * @author Timothy Webb <tiwebb@cisco.com>
  */

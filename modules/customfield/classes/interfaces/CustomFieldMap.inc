@@ -22,7 +22,7 @@
 /**
  * @package CustomField
  * @subpackage ClassInterfaces
- * @version $Revision$ $Date$
+ * @version $Revision: 1.9 $ $Date: 2005/08/23 03:49:37 $
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 

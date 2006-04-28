@@ -21,7 +21,7 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.29 $ $Date: 2005/08/23 03:49:45 $
  * @package Migrate
  * @author Jesse Mullan <jmullan@visi.com>
  */

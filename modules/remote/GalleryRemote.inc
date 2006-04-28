@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.35 $ $Date: 2005/08/26 05:15:13 $
  * @package Remote
  * @subpackage UserInterface
  * @author Pierre-Luc Paour <paour@users.sourceforge.net>

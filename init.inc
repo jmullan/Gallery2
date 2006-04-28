@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.13 $ $Date: 2005/08/23 03:48:55 $
  * @package Gallery
  * @author Bharat Mediratta <bharat@menalto.com>
  */

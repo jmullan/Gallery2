@@ -21,7 +21,7 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.31 $ $Date: 2005/09/10 20:28:16 $
  * @package WebCam
  * @author Alan Harder <alan.harder@sun.com>
  */

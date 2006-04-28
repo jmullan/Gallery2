@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.4 $ $Date: 2005/08/23 03:49:43 $
  * @package Icons
  * @author Alan Harder <alan.harder@sun.com>
  */

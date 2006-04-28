@@ -1,4 +1,4 @@
-<?php /* $Id$ */
+<?php /* $Id: frame.inc,v 1.1 2004/07/21 01:24:21 mindless Exp $ */
 $frameData = array(
 
 'name' => $gallery->i18n('Polaroids'),

@@ -21,7 +21,7 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.18 $ $Date: 2005/09/10 20:28:15 $
  * @package SizeLimit
  * @author Felix Rabinovich <felix@rabinovich.org>
  */

@@ -23,7 +23,7 @@
 /**
  * @package Quotas
  * @subpackage ClassInterfaces
- * @version $Revision$ $Date$
+ * @version $Revision: 1.2 $ $Date: 2005/08/23 03:49:49 $
  * @author Robert Balousek <rbalousek@hotmail.com>
  */
 

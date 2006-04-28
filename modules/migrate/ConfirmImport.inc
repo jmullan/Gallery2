@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.131 $ $Date: 2005/09/10 06:43:07 $
  * @package Migrate
  * @subpackage UserInterface
  * @author Jesse Mullan <jmullan@visi.com>

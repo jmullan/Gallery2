@@ -22,7 +22,7 @@
 /**
  * @package Comment
  * @subpackage ClassInterfaces
- * @version $Revision$ $Date$
+ * @version $Revision: 1.26 $ $Date: 2005/08/23 03:49:02 $
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 

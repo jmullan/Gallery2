@@ -22,7 +22,7 @@
 #
 # Copyright 2002-2003 Bharat Mediratta <bharat@menalto.com>
 #
-# $Id$
+# $Id: extract.pl,v 1.14 2004/10/21 17:27:15 bharat Exp $
 #
 use FileHandle;
 use File::Basename;

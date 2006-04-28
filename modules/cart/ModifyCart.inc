@@ -21,7 +21,7 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.11 $ $Date: 2005/08/23 03:49:00 $
  * @package Cart
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>

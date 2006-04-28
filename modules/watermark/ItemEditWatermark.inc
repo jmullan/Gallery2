@@ -21,7 +21,7 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.13 $ $Date: 2005/08/23 03:49:57 $
  * @package Watermark
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>

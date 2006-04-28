@@ -21,7 +21,7 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.3 $ $Date: 2005/08/23 03:49:00 $
  * @package Captcha
  * @subpackage UserInterface
  * @author Stefan Ioachim <stefanioachim@gmail.com>

@@ -21,7 +21,7 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1.6 $ $Date: 2005/08/23 03:49:57 $
  * @package UserAlbum
  * @author Alan Harder <alan.harder@sun.com>
  */

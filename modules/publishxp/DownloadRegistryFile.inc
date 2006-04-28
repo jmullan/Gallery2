@@ -26,7 +26,7 @@
  * The information in the registry file informs Windows that there is a web service
  * which supports uploading media.
  *
- * @version $Id$
+ * @version $Id: DownloadRegistryFile.inc,v 1.4 2005/08/23 03:49:49 mindless Exp $
  * @package PublishXp
  * @author Timothy Webb <tiwebb@cisco.com>
  */

@@ -24,7 +24,7 @@
  * See docs/EMBEDDING and modules/core/classes/GalleryEmbed.class for more details.
  *
  * @package GalleryMain
- * @version $Revision$ $Date$
+ * @version $Revision: 1.46 $ $Date: 2005/08/23 03:48:55 $
  * @author Alan Harder <alan.harder@sun.com>
  */
 

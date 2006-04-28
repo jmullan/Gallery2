@@ -4,7 +4,7 @@
  * Derived from adodb-errorhandler.inc.php which is
  * (c) 2000, 2001 John Lim (jlim@natsoft.com.my).  All rights reserved.
  *
- * @version $Revision$ $Date$
+ * @version $Revision: 1.6 $ $Date: 2005/07/09 05:44:19 $
  * @package GalleryCore
  * @subpackage Storage
  */

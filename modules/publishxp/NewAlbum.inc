@@ -27,7 +27,7 @@
  * is redirected back to the select album page after creating the album with
  * the newly created album automatically selected.
  *
- * @version $Id$
+ * @version $Id: NewAlbum.inc,v 1.5 2005/08/23 03:49:49 mindless Exp $
  * @package PublishXp
  * @author Timothy Webb <tiwebb@cisco.com>
  */
@@ -91,7 +91,7 @@ class NewAlbumController extends GalleryController {
  * is redirected back to the select album page after creating the album with
  * the newly created album automatically selected.
  *
- * @version $Id$
+ * @version $Id: NewAlbum.inc,v 1.5 2005/08/23 03:49:49 mindless Exp $
  * @package PublishXp
  * @author Timothy Webb <tiwebb@cisco.com>
  */

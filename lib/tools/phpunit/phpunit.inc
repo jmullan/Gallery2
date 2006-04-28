@@ -5,7 +5,7 @@
 // Written by Fred Yankowski <fred@ontosys.com>
 //            OntoSys, Inc  <http://www.OntoSys.com>
 //
-// $Id$
+// $Id: phpunit.inc,v 1.9 2005/08/24 21:59:38 cryptographite Exp $
 
 // Copyright (c) 2000 Fred Yankowski
 

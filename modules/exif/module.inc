@@ -21,7 +21,7 @@
  */
 /**
  * @package Exif
- * @version $Revision$ $Date$
+ * @version $Revision: 1.50 $ $Date: 2005/09/10 20:28:12 $
  * @author Bharat Mediratta <bharat@menalto.com>
  * @author Georg Rehfeld <rehfeld@georg-rehfeld.de>
  */

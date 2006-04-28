@@ -26,7 +26,7 @@
  * within Gallery.  The two options supported are for whether the file extension
  * should be used in the title and if the captions should be set automatically.
  *
- * @version $Id$
+ * @version $Id: Options.inc,v 1.4 2005/08/23 03:49:49 mindless Exp $
  * @package PublishXp
  * @author Timothy Webb <tiwebb@cisco.com>
  */
@@ -58,7 +58,7 @@ class OptionsController extends GalleryController {
  * within Gallery.  The two options supported are for whether the file extension
  * should be used in the title and if the captions should be set automatically.
  *
- * @version $Id$
+ * @version $Id: Options.inc,v 1.4 2005/08/23 03:49:49 mindless Exp $
  * @package PublishXp
  * @author Timothy Webb <tiwebb@cisco.com>
  */

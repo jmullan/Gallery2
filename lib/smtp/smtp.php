@@ -7,7 +7,7 @@
  *   email                : support@phpbb.com
  *
  *   phpBB  Id: smtp.php,v 1.16.2.9 2003/07/18 16:34:01 acydburn
- *      G2 $Id$
+ *      G2 $Id: smtp.php,v 1.5 2005/06/29 20:42:55 cryptographite Exp $
  *
  ***************************************************************************/
 
