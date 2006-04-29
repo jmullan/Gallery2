@@ -88,6 +88,8 @@ class SitemapView extends GalleryView {
 
  	$queue = array($rootId);
 	while (!empty($queue)) {
+	    $gallery->guaranteeTimeLimit(30);
+
 	    $currentId = array_shift($queue);
 	    list ($ret, $newIds) =
 		GalleryCoreApi::fetchChildItemIdsWithPermission($currentId, 'core.view');
@@ -106,9 +108,7 @@ class SitemapView extends GalleryView {
  		   $urlGenerator->generateUrl(
  		       array('view' => 'core.ShowItem', 'itemId' => $currentId),
  		       array('forceSessionId' => false, 'forceFullUrl' => true)),
-		   substr_replace(
-		       gmstrftime("%Y-%m-%dT%H:%M:%S%z", $entity->getModificationTimestamp()),
-		       ":", -2, 0));
+		   gmstrftime("%Y-%m-%dT%H:%M:%S+00:00", $entity->getModificationTimestamp()));
 	}
 	print '</urlset>';
 

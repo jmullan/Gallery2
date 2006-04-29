@@ -81,43 +81,29 @@ class SitemapViewTest extends GalleryTestCase {
 	$results = ob_get_contents();
 	ob_end_clean();
 
-	if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
-	    /*
-	     * Windows generates a localized timezone string and it's not
-	     * controllable by the locale. Use preg_match
-	     */
-	    $timeZone = '.+';
-	} else {
-	    $timeZone = '\\+00:00';
-	}
+	$expected =
+	    "Header: Content-type: application/xhtml+xml\n" .
+	    "<?xml version='1.0' encoding='UTF-8'?>\n" .
+	    "<urlset xmlns=\"http://www.google.com/schemas/sitemap/0.84\" " .
+	    "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " .
+	    "xsi:schemaLocation=\"http://www.google.com/schemas/sitemap/0.84 " .
+	    "http://www.google.com/schemas/sitemap/0.84/sitemap.xsd\">\n" .
+	    sprintf(
+		"<url><loc>url:%d</loc><lastmod>2009-02-13T23:31:30+00:00</lastmod></url>\n",
+		$this->_root->getId()) .
+	    sprintf(
+		"<url><loc>url:%d</loc><lastmod>2009-02-13T23:31:30+00:00</lastmod></url>\n",
+		$this->_item[0]->getId()) .
+	    sprintf(
+		"<url><loc>url:%d</loc><lastmod>2009-02-13T23:31:30+00:00</lastmod></url>\n",
+		$this->_item[1]->getId()) .
+	    sprintf(
+		"<url><loc>url:%d</loc><lastmod>2009-02-13T23:31:30+00:00</lastmod></url>\n",
+		$this->_item[2]->getId()) .
+	    "</urlset>";
 
-	$expectedRegexp =
-		  "{Header: Content-type: application/xhtml\\+xml\n" .
-		  "<\\?xml version='1.0' encoding='UTF-8'\\?>\n" .
-		  "<urlset xmlns=\"http://www.google.com/schemas/sitemap/0.84\" " .
-		   "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " .
-		   "xsi:schemaLocation=\"http://www.google.com/schemas/sitemap/0.84 " .
-		   "http://www.google.com/schemas/sitemap/0.84/sitemap.xsd\">\n" .
-		  sprintf(
-		      "<url><loc>url:%d</loc><lastmod>2009-02-13T23:31:30%s</lastmod></url>\n",
-		      $this->_root->getId(), $timeZone) .
-		  sprintf(
-		      "<url><loc>url:%d</loc><lastmod>2009-02-13T23:31:30%s</lastmod></url>\n",
-		      $this->_item[0]->getId(), $timeZone) .
-		  sprintf(
-		      "<url><loc>url:%d</loc><lastmod>2009-02-13T23:31:30%s</lastmod></url>\n",
-		      $this->_item[1]->getId(), $timeZone) .
-		  sprintf(
-		      "<url><loc>url:%d</loc><lastmod>2009-02-13T23:31:30%s</lastmod></url>\n",
-		      $this->_item[2]->getId(), $timeZone) .
-		 "</urlset>}";
-
-	$this->assert($matched = preg_match($expectedRegexp, $results)
-	);
-	if (!$matched) {
-	    /* Show some failure details */
-	    $this->assertEquals($expectedRegexp, $results, 'failure details: expected = regexp');
-	}
+	$this->assertEquals(split("\n", $expected),
+			    split("\n", $results));
     }
 
     function _listing($entity) {
