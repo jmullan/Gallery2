@@ -171,7 +171,8 @@ class GalleryRemoteController extends GalleryController {
 	$end = array_sum(explode(' ', microtime()));
 	$response->setProperty('debug_time', round($end - $start, 3).'s');
 	if (!empty($status['controllerError'])) {
-	    $response->setProperty('debug_exception', $status['controllerError']->getErrorMessage());
+	    $response->setProperty('debug_exception',
+				   $status['controllerError']->getErrorMessage());
 	}
 
 	$status['controllerResponse'] = $response;
@@ -617,7 +618,7 @@ class GalleryRemoteController extends GalleryController {
 	    /* list the root album */
 	    $albumId = $rootId;
 	}
-	
+
 	/* check that the item is an album */
 	list ($ret, $album) = GalleryCoreApi::loadEntitiesById($albumId);
 	if ($ret) {
@@ -631,13 +632,14 @@ class GalleryRemoteController extends GalleryController {
 	}
 	if (!GalleryUtilities::isA($album, 'GalleryAlbumItem')) {
 	    $response->setProperty('status', $grStatusCodes['ERROR']);
-	    $response->setProperty('status_text', 'albumName doesn\'t correspond to an actual album');
+	    $response->setProperty('status_text',
+				   'albumName doesn\'t correspond to an actual album');
 	    return null;
 	}
-	
+
 	if (isset($form['random']) && $form['random'] == 'yes' && isset($form['limit'])) {
 	    /* get random descendants (only GalleryPhotoItems) of the album */
-	    list ($ret, $aclIds) = GalleryCoreApi::fetchAccessListIds('core.view', 
+	    list ($ret, $aclIds) = GalleryCoreApi::fetchAccessListIds('core.view',
 		    $gallery->getActiveUserId());
 	    if (empty($aclIds)) {
 		$response->setProperty('status', $grStatusCodes['ERROR']);
@@ -645,7 +647,7 @@ class GalleryRemoteController extends GalleryController {
 		return null;
 	    }
 	    $aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
-	    
+
 	    /* set parent sequence */
 	    if ($albumId == $rootId) {
 		$parentSequence = '';
@@ -658,7 +660,7 @@ class GalleryRemoteController extends GalleryController {
 		$parentSequence[] = $albumId;
 		$parentSequence = implode('/', $parentSequence);
 	    }
-	    
+
 	    /* get the random function for the DB */
 	    $storage =& $gallery->getStorage();
 	    list ($ret, $orderBy) = $storage->getFunctionSql('RAND', array());
@@ -669,18 +671,18 @@ class GalleryRemoteController extends GalleryController {
 	    $query = '
 		SELECT
 		  [GalleryDataItem::id]
- 		FROM
+		FROM
 		  [GalleryDataItem], [GalleryItemAttributesMap],
 		  [GalleryAccessSubscriberMap]
 		WHERE
 		  [GalleryDataItem::id] = [GalleryItemAttributesMap::itemId]';
-    
+
 	    if (!empty($parentSequence)) {
 		$query .= "
 		  AND
 		  [GalleryItemAttributesMap::parentSequence] LIKE '$parentSequence/%'";
 	    }
-    
+
 	    $query .= "
 		  AND
 		  [GalleryDataItem::id] = [GalleryAccessSubscriberMap::itemId]
@@ -691,15 +693,15 @@ class GalleryRemoteController extends GalleryController {
 		";
 
 	    $data = $aclIds;
-    
+
 	    $params = array();
 	    $params['limit'] = array('count' => $form['limit']);
-    
+
 	    list ($ret, $searchResults) = $gallery->search($query, $data, $params);
 	    if ($ret) {
 		return $ret;
 	    }
-	    
+
 	    $ids = array();
 	    while ($result = $searchResults->nextResult()) {
 		$ids[] = $result[0];
