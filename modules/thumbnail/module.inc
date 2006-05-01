@@ -271,7 +271,7 @@ class ThumbnailModule extends GalleryModule {
 	    'G2audio.jpg' => array('audio/mpeg', 'audio/x-wav', 'audio/x-aiff',
 				   'audio/midi', 'audio/basic', 'audio/x-ms-wma'),
 	    'G2video.jpg' => array('video/mpeg', 'video/quicktime', 'video/x-msvideo',
-				   'video/x-ms-asf', 'video/x-ms-wmv')
+				   'video/x-ms-asf', 'video/x-ms-wmv', 'video/x-flv')
 	    ) as $mimeImage => $mimeList) {
 	    foreach ($mimeList as $mime) {
 		if (!isset($toolkitMime[$mime])) {
