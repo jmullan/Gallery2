@@ -27,7 +27,7 @@ GetOptions('make-binary!' => \$OPTS{'MAKE_BINARY'},
 	   'remove-obsolete!' => \$OPTS{'REMOVE_OBSOLETE'},
 	   'po=s' => \$OPTS{'PO'},
 	   'permissions!' => \$OPTS{'PERMISSIONS'},
-	   'cvs-add!' => \$OPTS{'CVS_ADD'});
+	   'svn-add!' => \$OPTS{'SVN_ADD'});
 
 my %PO_DIRS = ();
 my %MO_FILES = ();
@@ -36,7 +36,7 @@ my @warnings = ();
 
 my $curdir = cwd();
 my $basedir = cwd();
-$basedir =~ s{(/.*)/(lib|docs|layouts|modules|setup|templates)/.*?$}{$1};
+$basedir =~ s{(/.*)/(lib|themes|modules|install|upgrade)/.*?$}{$1};
 
 find(\&locatePoDir, $basedir);
 
@@ -51,23 +51,24 @@ if ($OPTS{'PERMISSIONS'}) {
   exit;
 }
 
-if ($OPTS{'CVS_ADD'}) {
+if ($OPTS{'SVN_ADD'}) {
   my $poParam = $OPTS{'PO'} ? "$OPTS{PO}.po" : '*.po';
   foreach my $poDir (keys(%PO_DIRS)) {
-    my %cvs = ();
+    my %svn = ();
     chdir $poDir;
-    open(CVS, '<CVS/Entries') or die;
-    while (<CVS>) {
-      m|^/(.*?)/| and $cvs{$1} = 1;
+    open(SVN, 'svn status --non-interactive |') or die;
+    while (<SVN>) {
+      m|^\?      (.*\.po)$| and $svn{$1} = 1;
     }
-    close CVS;
+    close SVN;
     @_ = glob $poParam;
     chdir '..';
     foreach my $poFile (@_) {
-      unless (exists $cvs{$poFile}) {
-        $_ = 'locale/' . substr($poFile, 0, -3);
-        system("cvs add po/$poFile" . (-d $_ ? " $_ $_/LC_MESSAGES" : ''));
-        -d $_ and system("cvs add -kb $_/LC_MESSAGES/*.mo");
+      if (exists $svn{$poFile}) {
+	$_ = 'locale/' . substr($poFile, 0, -3);
+	my_system("svn add po/$poFile" . (-d $_ ? " $_/LC_MESSAGES/*.mo" : ''));
+	-d $_ and
+	  my_system("svn propset svn:mime-type application/octet-stream $_/LC_MESSAGES/*.mo");
       }
     }
   }
@@ -98,12 +99,10 @@ foreach my $poDir (keys(%PO_DIRS)) {
 }
 
 if ($OPTS{'MAKE_BINARY'}) {
-  # Make all .mo files binary in CVS.  We could make this smarter by reading
-  # the CVS/Entries files
-  #
+  # Make all .mo files binary in SVN.
   find(\&locateMoFile, $basedir);
   chdir $basedir;
-  my_system("cvs admin -kb " . join(" ", keys(%MO_FILES)));
+  my_system("svn propset svn:mime-type application/octet-stream " . join(' ', keys(%MO_FILES)));
 }
 
 sub my_system {
