@@ -171,6 +171,8 @@ class SizeLimitOptionTest extends ItemEditOptionTestCase {
 
     function testApplyToDescendents() {
 	global $gallery;
+	$mockAdapter = new MockTemplateAdapter();
+	$gallery->_templateAdapter =& $mockAdapter;
 
 	$ret = $this->_registerToolkit();
 	if ($ret) {
