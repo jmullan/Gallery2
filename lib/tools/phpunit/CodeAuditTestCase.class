@@ -42,44 +42,72 @@ class CodeAuditTestCase extends GalleryTestCase {
 
     function testCodeAudit() {
 	global $gallery;
-
-	/* If the base gallery dir has a .svn dir, then we're all set */
 	$platform =& $gallery->getPlatform();
+
 	if (!$platform->file_exists($this->_baseDir . '/.svn/entries')) {
+	    $this->assert(false, 'Test skipped: .svn/entries not found');
+	    return;
+	}
+	if (!function_exists('xml_parser_create')) {
+	    $this->assert(false, 'Test skipped: PHP does not have XML support');
 	    return;
 	}
 
-	$cwd = $platform->getcwd();
-	if (!$platform->chdir($this->_baseDir)) {
-	    return $this->assert(false, 'Unable to chdir to ' . $this->_baseDir);
-	}
-	list ($success, $fileList, $error) = $platform->exec(
-		array(array('svn', 'status', '--non-interactive', '-v', '-q')));
-	$platform->chdir($cwd);
-	if (!$success) {
-	    return $this->assert(false, 'svn error: ' . implode('', $error));
-	}
-	foreach ($fileList as $line) {
-	    if (!preg_match('/^(.).....\s*\d+\s+\d+\s+\S+\s+(.*\.(?:class|inc|php|tpl|po))$/',
-			    $line, $match)) {
-		$this->assert(false, "Unable to parse [$line]");
-		continue;
-	    }
-
-	    $file = $this->_baseDir . '/' . $match[2];
-	    if ($match[1] != 'D' && $this->shouldCheckFile($file)) {
-		$gallery->guaranteeTimeLimit(30);
-		$buf = $platform->file_get_contents($file);
-		$this->checkFile($file, $buf);
-	    }
-
-	    if ($this->_shouldHalt) {
-		$this->assert(false, 'Halted prematurely');
-		break;
-	    }
+	$this->_scanDir($this->_baseDir);
+	if ($this->_shouldHalt) {
+	    $this->assert(false, 'Halted prematurely');
 	}
 
 	$this->finishScan($this->_shouldHalt);
+    }
+
+    function _scanDir($dirPath) {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
+	$parser = xml_parser_create();
+	xml_parse_into_struct($parser, $platform->file_get_contents("$dirPath/.svn/entries"),
+			      $xmlValues, $xmlIndex);
+	xml_parser_free($parser);
+
+	if (empty($xmlIndex['ENTRY'])) {
+	    $this->assert(false, 'Unable to parse .svn/entries for dir: ' . $dirPath);
+	} else {
+	    $dirs = array();
+	    foreach ($xmlIndex['ENTRY'] as $entry) {
+		switch ($xmlValues[$entry]['attributes']['KIND']) {
+		case 'dir':
+		    if (!empty($xmlValues[$entry]['attributes']['NAME'])) {
+			$dirs[] = $xmlValues[$entry]['attributes']['NAME'];
+		    }
+		    break;
+
+		case 'file':
+		    $file = $dirPath . '/' . $xmlValues[$entry]['attributes']['NAME'];
+		    if (preg_match('/\.(?:class|inc|php|tpl|po)$/', $file)
+			    && $this->shouldCheckFile($file)) {
+			$gallery->guaranteeTimeLimit(30);
+			$buf = $platform->file_get_contents($file);
+			$this->checkFile($file, $buf);
+
+			if ($this->_shouldHalt) {
+			    return;
+			}
+		    }
+		    break;
+
+		default:
+		    $this->assert(false,
+			    'Unable to parse ' . $xmlValues[$entry]['attributes']['KIND']);
+		}
+	    }
+	    foreach ($dirs as $dir) {
+		$this->_scanDir($dirPath . '/' . $dir);
+		if ($this->_shouldHalt) {
+		    return;
+		}
+	    }
+	}
     }
 
     /**
