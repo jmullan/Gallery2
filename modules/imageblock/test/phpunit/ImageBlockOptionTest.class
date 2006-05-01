@@ -152,6 +152,10 @@ class ImageBlockOptionTest extends ItemEditOptionTestCase {
     }
 
     function testImageBlockOptionRecursive() {
+	global $gallery;
+	$mockAdapter = new MockTemplateAdapter();
+	$gallery->_templateAdapter =& $mockAdapter;
+
 	/*
 	 * Enable the Option recursively
 	 */

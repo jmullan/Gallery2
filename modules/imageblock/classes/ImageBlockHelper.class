@@ -668,21 +668,31 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
      * @param object GalleryAlbumItem AlbumItem which is to be flagged
      * @param bool whether to set the disabledFlag recursively to all subalbums
      * @param whether to set the disabledFlag to true or to false
+     * @param (optional) whether to use a progressbar during update (default=false)
      * @return object GalleryStatus a status code
      * @static
      */
-    function setDisabledFlag($parentAlbum, $recursive, $disabled) {
+    function setDisabledFlag($parentAlbum, $recursive, $disabled, $useProgressBar=false) {
 	global $gallery;
 
 	$parentAlbumId = $parentAlbum->getId();
 	$childIds = array();
 
-	if ($recursive) {
-	    $select[] = '[GalleryItemAttributesMap::itemId]';
-	    $from[] = '[GalleryItemAttributesMap]';
-	    $where[] = '[GalleryItemAttributesMap::parentSequence] LIKE ?' .
-		       ' OR [GalleryItemAttributesMap::itemId] = ?';
+	if ($useProgressBar) {
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imageblock');
+	    if ($ret) {
+		return $ret;
+	    }
 
+	    $message = $module->translate('Image Block');
+	    $templateAdapter =& $gallery->getTemplateAdapter();
+	    $ret = $templateAdapter->updateProgressBar($message, '', 0);
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+
+	if ($recursive) {
 	    /*
 	     * We don't care about ERROR_MISSING_OBJECT because it's generated if
 	     * the album is at the top-level
@@ -691,21 +701,20 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 		return $ret;
 	    }
-
-	    /* Prevent issues with empty implode(), below */
-	    if (!empty($sequence)) {
-		$sequence = implode('/', $sequence) . '/';
-	    } else {
-		$sequence = '';
-	    }
-
-	    $data[] = $sequence . $parentAlbumId . '/%';
-	    $data[] = (int)$parentAlbum->getId();
+	    $sequence = empty($sequence) ? '' : (implode('/', $sequence) . '/');
 
 	    /* Build the query */
-	    $query = 'SELECT ' . implode(', ', $select) .
-		     ' FROM ' . implode(', ', $from) .
-		     ' WHERE ' . implode(' AND ', $where);
+	    $query = '
+	    SELECT
+	      [GalleryItemAttributesMap::itemId]
+	    FROM
+	      [GalleryItemAttributesMap]
+	    WHERE
+	      [GalleryItemAttributesMap::parentSequence] LIKE ?
+	      OR
+	      [GalleryItemAttributesMap::itemId] = ?
+	    ';
+	    $data = array($sequence . $parentAlbumId . '/%', (int)$parentAlbum->getId());
 
 	    list ($ret, $searchResult) = $gallery->search($query, $data);
 	    if ($ret) {
@@ -723,6 +732,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    }
 	}
 
+	$i = 0;
+	$total = count($childIds);
 	foreach ($childIds as $itemId) {
 	    if ($disabled) {
 		$ret = GalleryCoreApi::addMapEntry(
@@ -733,6 +744,12 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    } else {
 		$ret = GalleryCoreApi::removeMapEntry(
 		    'ImageBlockDisabledMap', array('itemId' => $itemId));
+		if ($ret) {
+		    return $ret;
+		}
+	    }
+	    if ($useProgressBar && (!(++$i % 30) || $i == $total)) {
+		$ret = $templateAdapter->updateProgressBar($message, '', $i / $total);
 		if ($ret) {
 		    return $ret;
 		}
@@ -752,13 +769,13 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
     function getDisabledFlag($itemId) {
 	global $gallery;
 	$query = '
-		SELECT
-		    [ImageBlockDisabledMap::itemId]
-		FROM
-		    [ImageBlockDisabledMap]
-		WHERE
-		    [ImageBlockDisabledMap::itemId] = ?
-		  ';
+	SELECT
+	  [ImageBlockDisabledMap::itemId]
+	FROM
+	  [ImageBlockDisabledMap]
+	WHERE
+	  [ImageBlockDisabledMap::itemId] = ?
+	';
 	list ($ret, $searchResults) = $gallery->search($query, array((int)$itemId));
 	if ($ret) {
 	    return array($ret, null);

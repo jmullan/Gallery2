@@ -146,7 +146,9 @@ class ImageBlockHelperTest extends GalleryTestCase {
     }
 
     function testImageBlockHelperSetDisabledFlagRecursive() {
-    	global $gallery;
+	global $gallery;
+	$mockAdapter = new MockTemplateAdapter();
+	$gallery->_templateAdapter =& $mockAdapter;
 
 	$ret = ImageBlockHelper::setDisabledFlag($this->_topAlbum, true, true);
         if ($ret) {

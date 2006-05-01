@@ -62,7 +62,8 @@ class ImageBlockOption extends ItemEditOption {
 	}
 
 	if ($setDisabled != $currentlyDisabled) {
-	    $ret = ImageBlockHelper::setDisabledFlag($item, $setRecursive, $setDisabled);
+	    $ret = ImageBlockHelper::setDisabledFlag($item, $setRecursive,
+						     $setDisabled, $setRecursive);
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
@@ -91,6 +92,14 @@ class ImageBlockOption extends ItemEditOption {
      */
     function isAppropriate($item, $thumbnail) {
 	return array(null, GalleryUtilities::isA($item, 'GalleryAlbumItem'));
+    }
+
+    /**
+     * @see ItemEditOption::requiresProgressBar()
+     */
+    function requiresProgressBar($form) {
+	return (isset($form['ImageBlockOption']['setRecursive'])
+		&& $form['ImageBlockOption']['setRecursive'] != 'off');
     }
 }
 ?>
