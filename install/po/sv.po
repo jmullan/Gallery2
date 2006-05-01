@@ -19,7 +19,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Installer 2.1\n"
+"Project-Id-Version: Gallery: Installer 2.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-01-15 16:15+0100\n"
 "PO-Revision-Date: 2006-03-13 16:50+0100\n"
@@ -94,6 +94,10 @@ msgstr "Databas Uppsättning"
 msgid "You must have the MySQL PHP module installed"
 msgstr "Du måste ha MySQL PHP modulen installerad"
 
+#, fuzzy
+msgid "You must have the MySQL Improved PHP module installed"
+msgstr "Du måste ha MySQL PHP modulen installerad"
+
 msgid "You must have the ibm_db2 PHP module installed"
 msgstr "Du måste ha ibm_db2 PHP modulen installerad"
 
@@ -102,6 +106,10 @@ msgstr "Du måste ha PostgreSQL PHP modulen installerad"
 
 msgid "You must have the Oracle OCI8 PHP module installed"
 msgstr "Du måste ha Oracle OCI8 PHP modulen installerad"
+
+#, fuzzy
+msgid "You must have the MSSQL PHP module installed"
+msgstr "Du måste ha MySQL PHP modulen installerad"
 
 #, c-format
 msgid "You must specify a column prefix (we recommend %s)"
@@ -194,23 +202,25 @@ msgstr ""
 "Kunde inte ladda G2 API. Radera Gallery databasens tabeller och filerna i fillagerkatalogen "
 "manuellt."
 
-msgid "MySQL (all versions)"
-msgstr "MySQL (alla versioner)"
-
-msgid "MySQL with Transactions (v3.23.34a and newer)"
+#, fuzzy
+msgid "MySQL (v3.23.34a and newer)"
 msgstr "MySQL med Transaktioner (v3.23.34a och nyare)"
+
+#, fuzzy
+msgid "MySQL (versions before v3.23.34a)"
+msgstr "MySQL (alla versioner)"
 
 msgid "PostgreSQL v7.x and newer"
 msgstr "PostgreSQL v7.x och nyare"
-
-msgid "PostgreSQL v6.x (not well tested)"
-msgstr "PostgreSQL v6.x (inte så vältestad)"
 
 msgid "Oracle (9i and newer)"
 msgstr "Oracle (9i och nyare)"
 
 msgid "IBM DB2 (v8.2 and newer)"
 msgstr "IBM DB2 (v8.2 och nyare)"
+
+msgid "MSSQL (Experimental!)"
+msgstr ""
 
 msgid "Unknown DB type or no known tables information."
 msgstr "Okänd DB typ eller okänd tabellinformation."
@@ -319,12 +329,13 @@ msgstr "Kontroll av Systemet"
 msgid "Performing system checks"
 msgstr "Utför kontroll av Systemet"
 
-msgid "PHP version >= 4.1.0 or >= 5.0.4"
+#, fuzzy
+msgid "PHP version >= 4.3.0 or >= 5.0.4"
 msgstr "PHP version >= 4.1.0 or >= 5.0.4"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Error: Gallery 2 requires PHP version 4.1.0 or newer or 5.0.4 or newer. You have PHP version "
+"Error: Gallery 2 requires PHP version 4.3.0 or newer or 5.0.4 or newer. You have PHP version "
 "%s installed. Contact your webserver administrator to request an upgrade, available at the %"
 "sPHP website%s."
 msgstr ""
@@ -1103,8 +1114,8 @@ msgid ""
 "Please read the %1$sGallery Security Guide%3$s. For a brief overview, take a look at the %2"
 "$sshort check list%3$s within the security guide."
 msgstr ""
-"Var god läs %1$sGallery Security Guide%3$s. För en kort överblick, se på %2"
-"$sshort check list%3$s inuti säkerhets guiden."
+"Var god läs %1$sGallery Security Guide%3$s. För en kort överblick, se på %2$sshort check list"
+"%3$s inuti säkerhets guiden."
 
 msgid "Check Again"
 msgstr "Kontrollera Igen"
@@ -1112,11 +1123,13 @@ msgstr "Kontrollera Igen"
 msgid ""
 "Gallery needs a directory to store your images. The directory we chose for you will work, "
 "but is web accessible."
-msgstr "Gallery behöver en katalog där dinna bilder sparas. Den katalog som vi har valt åt "
-"dig kommer att fungera men den är direkt åtkommlig via webben."
+msgstr ""
+"Gallery behöver en katalog där dinna bilder sparas. Den katalog som vi har valt åt dig "
+"kommer att fungera men den är direkt åtkommlig via webben."
 
 msgid "For maximum security you should pick a directory that is not web accessible."
-msgstr "För maximal säkerhet så bör du välja en katalog som inte är åtkommlig direkt via webben."
+msgstr ""
+"För maximal säkerhet så bör du välja en katalog som inte är åtkommlig direkt via webben."
 
 msgid ""
 "This is a multisite installation. Remember that each multisite requires its own storage "
@@ -1180,8 +1193,8 @@ msgid ""
 "Your webserver needs to be able to write to this directory. To get it working, you can "
 "follow these examples."
 msgstr ""
-"Din webbserver behöver kunna skriva till denna katalog. För att få det att fungera, kan "
-"du följa detta exempel."
+"Din webbserver behöver kunna skriva till denna katalog. För att få det att fungera, kan du "
+"följa detta exempel."
 
 msgid ""
 "Note: these are only examples!  You may find that they don't work quite right on your system."
@@ -1219,8 +1232,8 @@ msgid ""
 "For information on how to secure your Gallery storage directory, please read the %sSecurity "
 "Guide%s."
 msgstr ""
-"För information om hur du skall säkra upp din Gallerylagerkatalog, var god läs "
-"%sSäkerhets Guiden%s."
+"För information om hur du skall säkra upp din Gallerylagerkatalog, var god läs %sSäkerhets "
+"Guiden%s."
 
 msgid "Storage directory set successfully."
 msgstr "Lyckades skapa lagerkatalogen"
@@ -1296,3 +1309,6 @@ msgstr "Utför"
 
 msgid "Begin Installation&raquo;"
 msgstr "Börja Installationen&raquo;"
+
+#~ msgid "PostgreSQL v6.x (not well tested)"
+#~ msgstr "PostgreSQL v6.x (inte så vältestad)"

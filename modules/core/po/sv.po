@@ -28,10 +28,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.0\n"
+"Project-Id-Version: Gallery: Core 1.1.3\n"
 "Report-Msgid-Bugs-To: gallery-translations@lists.sourceforge.net\n"
 "POT-Creation-Date: 2003-02-11 03:09-0800\n"
-"PO-Revision-Date: 2006-03-13 18:40+0100\n"
+"PO-Revision-Date: 2006-04-29 18:55+0200\n"
 "Last-Translator: Anders Lindquist <andersl@saaf.se>\n"
 "Language-Team: Swedish <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -95,24 +95,6 @@ msgstr[1] "%d veckor"
 msgid "<none>"
 msgstr "<ingen>"
 
-msgid "install"
-msgstr "installera"
-
-msgid "upgrade"
-msgstr "uppgradera"
-
-msgid "configure"
-msgstr "konfigurera"
-
-msgid "activate"
-msgstr "aktivera"
-
-msgid "uninstall"
-msgstr "avinstallera"
-
-msgid "deactivate"
-msgstr "avaktivera"
-
 msgid "No acceleration"
 msgstr "Ingen acceleration"
 
@@ -121,6 +103,9 @@ msgstr "Partiell acceleration"
 
 msgid "Full acceleration"
 msgstr "Full acceleration"
+
+msgid "Themes"
+msgstr "Teman"
 
 msgid "Performing Maintenance Tasks"
 msgstr "Utför Systemunderhåll"
@@ -137,6 +122,21 @@ msgstr "uppgradera"
 
 msgid "Download"
 msgstr "Laddar ned"
+
+msgid "install"
+msgstr "installera"
+
+msgid "upgrade"
+msgstr "uppgradera"
+
+msgid "activate"
+msgstr "aktivera"
+
+msgid "uninstall"
+msgstr "avinstallera"
+
+msgid "deactivate"
+msgstr "avaktivera"
 
 msgid "Inherit settings from parent album"
 msgstr "Ärv inställningar från överliggande album"
@@ -511,17 +511,11 @@ msgstr "Ditt Konto"
 msgid "Logout"
 msgstr "Logga ut"
 
-msgid "Modules"
-msgstr "Moduler"
+msgid "Plugins"
+msgstr ""
 
 msgid "Repository"
 msgstr "Förvaringsplats"
-
-msgid "Themes"
-msgstr "Teman"
-
-msgid "Display"
-msgstr "Visa"
 
 msgid "Users"
 msgstr "Användare"
@@ -537,6 +531,9 @@ msgstr "Verktygsprioritet"
 
 msgid "Graphics Toolkits"
 msgstr "Grafiska Verktyg"
+
+msgid "Defaults"
+msgstr "Förvalda värden"
 
 msgid "Account Settings"
 msgstr "Kontoinställningar"
@@ -900,6 +897,49 @@ msgstr "Användare"
 
 msgid "user"
 msgstr "användare"
+
+#, fuzzy
+msgid "Integrity Check"
+msgstr "Intigritets kontrol av index misslyckades"
+
+msgid "Check data integrity and report any inconsistencies."
+msgstr ""
+
+msgid "Loading all entities"
+msgstr ""
+
+msgid "Checking for orphaned entity data"
+msgstr ""
+
+msgid "Checking for orphaned item data"
+msgstr ""
+
+msgid "Checking for orphaned plugin data"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Checked %d entities"
+msgstr "Markerade %d filer"
+
+#, fuzzy, c-format
+msgid "Failed to load entity ids: %s"
+msgstr "Misslyckades att lägga till %s"
+
+#, c-format
+msgid "Orphaned data in table %s with missing parent entity; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with no row in %s table; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with missing derivative source; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Unknown plugin: %s %s"
+msgstr ""
 
 msgid "Optimize database"
 msgstr "Optimera databas"
@@ -1620,87 +1660,6 @@ msgstr "kör nu"
 msgid "Last Run Details:"
 msgstr "Detaljer För Senaste Körning:"
 
-msgid "Gallery Modules"
-msgstr "Gallery:s Moduler"
-
-#, c-format
-msgid "Successfully installed and auto-configured module %s"
-msgstr "Installerade och automatkonfigurerade framgångsrikt modul %s"
-
-#, c-format
-msgid "Successfully installed module %s"
-msgstr "Installerade framgångsrikt modul %s"
-
-#, c-format
-msgid "Successfully configured module %s"
-msgstr "Konfigurerade framgångsrikt modul %s"
-
-#, c-format
-msgid "Successfully upgraded module %s"
-msgstr "Uppgraderade framgångsrikt modul %s"
-
-#, c-format
-msgid "Successfully activated module %s"
-msgstr "Aktiverade framgångsrikt modul %s"
-
-#, c-format
-msgid "Successfully deactivated module %s"
-msgstr "Avaktiverade framgångsrikt modul %s"
-
-#, c-format
-msgid "Successfully uninstalled module %s"
-msgstr "Avinstallerade framgångsrikt modul %s"
-
-msgid ""
-"Gallery features come as separate modules.  You can download and install modules to add more "
-"features to your Gallery, or you can disable features if you don't want to use them.  In "
-"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
-"don't wish to use a feature, you can deactivate it."
-msgstr ""
-"Galleryegenskaper kommer som separata moduler.  Du kan hämta och installera moduler för att "
-"lägga till fler egenskaper i ditt Gallery eller så kan du avaktivera egenskaper om inte vill "
-"använda dem.  För att kunna använda en egenskap så måste du installera, konfigurera (om "
-"nödvändigt) och aktivera den.  Om du inte önskar att använda en egenskap så kan du "
-"avaktivera den."
-
-msgid "Module Name"
-msgstr "Modulnamn"
-
-msgid "Version"
-msgstr "Version"
-
-msgid "Installed"
-msgstr "Installerad"
-
-msgid "Actions"
-msgstr "Händelser"
-
-msgid "Status: Not Installed"
-msgstr "Status: Inte Installerad"
-
-msgid "Status: Active"
-msgstr "Status: Aktiv"
-
-msgid "Status: Inactive"
-msgstr "Status: Inaktiv"
-
-msgid "Status: Upgrade Required (Inactive)"
-msgstr "Status: Uppgradering Nödvändig (Inaktiv)"
-
-msgid "Status: Incompatible Module (Inactive)"
-msgstr "Status: Inkompatibel modul (Inaktiv)"
-
-msgid "Incompatible module!"
-msgstr "Inkompatibel modul!"
-
-#, c-format
-msgid "Core API Required: %s (available: %s)"
-msgstr "Kärn-API Begärd : %s (tillgänglig: %s)"
-
-#, c-format
-msgid "Module API Required: %s (available: %s)"
-msgstr "Modul API obligatorisk: %s (tillgänglig: %s)"
-
 msgid "Confirm module uninstall"
 msgstr "Bekräfta avinstallation av modul"
 
@@ -1792,6 +1751,102 @@ msgstr "Upphör att gälla efter:"
 msgid "Clear Saved Pages"
 msgstr "Rensa Sparade Sidor"
 
+msgid "Status: Inactive"
+msgstr "Status: Inaktiv"
+
+#, fuzzy
+msgid "__PLUGIN__ deactivated"
+msgstr "avaktivera"
+
+msgid "Status: Active"
+msgstr "Status: Aktiv"
+
+msgid "__PLUGIN__ activated"
+msgstr ""
+
+msgid "Status: Not Installed"
+msgstr "Status: Inte Installerad"
+
+msgid "__PLUGIN__ uninstalled"
+msgstr ""
+
+msgid "Status: Upgrade Required (Inactive)"
+msgstr "Status: Uppgradering Nödvändig (Inaktiv)"
+
+#, fuzzy
+msgid "Status: Incompatible Plugin (Inactive)"
+msgstr "Status: Inkompatibel modul (Inaktiv)"
+
+msgid "Status: Inactive (Configuration Required)"
+msgstr ""
+
+msgid "__PLUGIN__ needs configuration"
+msgstr ""
+
+#, fuzzy
+msgid "Gallery Plugins"
+msgstr "Gallery:s Moduler"
+
+#, fuzzy
+msgid ""
+"Gallery features come as separate plugins.  You can download and install plugins to add more "
+"features to your Gallery, or you can disable features if you don't want to use them.  In "
+"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
+"don't wish to use a feature, you can deactivate it."
+msgstr ""
+"Galleryegenskaper kommer som separata moduler.  Du kan hämta och installera moduler för att "
+"lägga till fler egenskaper i ditt Gallery eller så kan du avaktivera egenskaper om inte vill "
+"använda dem.  För att kunna använda en egenskap så måste du installera, konfigurera (om "
+"nödvändigt) och aktivera den.  Om du inte önskar att använda en egenskap så kan du "
+"avaktivera den."
+
+#, fuzzy
+msgid "up to date"
+msgstr "Uppdatera"
+
+#, fuzzy
+msgid "disabled"
+msgstr "%d objekt misslyckade"
+
+#, fuzzy
+msgid "upgrade required"
+msgstr "(obligatorisk)"
+
+#, fuzzy
+msgid "not installed"
+msgstr "avinstallera"
+
+#, fuzzy
+msgid "incompatible"
+msgstr "Inkompatibel modul!"
+
+#, fuzzy
+msgid "Plugin Name"
+msgstr "Fullständigt Namn"
+
+msgid "Version"
+msgstr "Version"
+
+msgid "Installed"
+msgstr "Installerad"
+
+msgid "Actions"
+msgstr "Händelser"
+
+msgid "Incompatible plugin!"
+msgstr "Inkompatibel modul!"
+
+#, c-format
+msgid "Core API Required: %s (available: %s)"
+msgstr "Kärn-API Begärd : %s (tillgänglig: %s)"
+
+#, c-format
+msgid "Plugin API Required: %s (available: %s)"
+msgstr "Modul API obligatorisk: %s (tillgänglig: %s)"
+
+msgid "configure"
+msgstr "konfigurera"
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr "Kontrollera att din internetförbindelse fungerar eller försök igen senare."
 
@@ -1803,6 +1858,9 @@ msgstr "Alla plugin moduler är redan uppdaterade."
 
 msgid "Common Tasks"
 msgstr "Vanliga uppgifter"
+
+msgid "Modules"
+msgstr "Moduler"
 
 msgid "Warning: Experimental feature!"
 msgstr "Varning: experimentell feature!"
@@ -1929,18 +1987,14 @@ msgstr ""
 msgid "Theme Name"
 msgstr "Temanamn"
 
+msgid "Module Name"
+msgstr "Modulnamn"
+
 msgid "Latest"
 msgstr "sista"
 
 msgid "Incompatible Plugin"
 msgstr "Inkompatibel modul!"
-
-msgid "Incompatible plugin!"
-msgstr "Inkompatibel modul!"
-
-#, c-format
-msgid "Plugin API Required: %s (available: %s)"
-msgstr "Modul API obligatorisk: %s (tillgänglig: %s)"
 
 msgid "No packages have been selected."
 msgstr "Inget paket har valts"
@@ -2059,25 +2113,6 @@ msgstr "Sparade framgångsrikt förvalda albuminställningar"
 
 msgid "Restored theme settings"
 msgstr "Återskapade temainställningar"
-
-msgid "All Themes"
-msgstr "Alla Teman"
-
-msgid "Defaults"
-msgstr "Förvalda värden"
-
-msgid "Status: Incompatible Theme (Inactive)"
-msgstr "Status: Inkompatibelt Tema (Inaktiv)"
-
-msgid "Incompatible theme!"
-msgstr "Inkompatibelt tema!"
-
-#, c-format
-msgid "Theme API Required: %s (available: %s)"
-msgstr "Tema-API Begärd : %s (tillgänglig: %s)"
-
-msgid "(default)"
-msgstr "(förvalda värden)"
 
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
@@ -2842,6 +2877,10 @@ msgstr ""
 "Det finns inga grafiska verktyg tillgängliga som stödjer denna typ av objekt så vi kan inte "
 "skapa eller modifiera miniatyrbild."
 
+#, fuzzy
+msgid "Unable to create a thumbnail for this item"
+msgstr "Du måste skriva in ett namn för detta objekt."
+
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the movie's width and "
 "height.  If you have installed a graphics toolkit that can handle movie types, then these "
@@ -3227,10 +3266,10 @@ msgid "Enter an image URL"
 msgstr "Skriv in en bild-webbadress"
 
 msgid "B <!-- Button label for Bold -->"
-msgstr "B <!-- Button label for Bold -->"
+msgstr "F"
 
 msgid "i <!-- Button label for italic -->"
-msgstr "i <!-- Button label for italic -->"
+msgstr "k"
 
 msgid "list"
 msgstr "lista"
@@ -3652,3 +3691,48 @@ msgstr "[test] En andra rättighet"
 
 msgid "Unit test theme"
 msgstr "Tema för unittest"
+
+#~ msgid "Display"
+#~ msgstr "Visa"
+
+#~ msgid "Successfully installed and auto-configured module %s"
+#~ msgstr "Installerade och automatkonfigurerade framgångsrikt modul %s"
+
+#~ msgid "Successfully installed module %s"
+#~ msgstr "Installerade framgångsrikt modul %s"
+
+#~ msgid "Successfully configured module %s"
+#~ msgstr "Konfigurerade framgångsrikt modul %s"
+
+#~ msgid "Successfully upgraded module %s"
+#~ msgstr "Uppgraderade framgångsrikt modul %s"
+
+#~ msgid "Successfully activated module %s"
+#~ msgstr "Aktiverade framgångsrikt modul %s"
+
+#~ msgid "Successfully deactivated module %s"
+#~ msgstr "Avaktiverade framgångsrikt modul %s"
+
+#~ msgid "Successfully uninstalled module %s"
+#~ msgstr "Avinstallerade framgångsrikt modul %s"
+
+#~ msgid "Incompatible module!"
+#~ msgstr "Inkompatibel modul!"
+
+#~ msgid "Module API Required: %s (available: %s)"
+#~ msgstr "Modul API obligatorisk: %s (tillgänglig: %s)"
+
+#~ msgid "All Themes"
+#~ msgstr "Alla Teman"
+
+#~ msgid "Status: Incompatible Theme (Inactive)"
+#~ msgstr "Status: Inkompatibelt Tema (Inaktiv)"
+
+#~ msgid "Incompatible theme!"
+#~ msgstr "Inkompatibelt tema!"
+
+#~ msgid "Theme API Required: %s (available: %s)"
+#~ msgstr "Tema-API Begärd : %s (tillgänglig: %s)"
+
+#~ msgid "(default)"
+#~ msgstr "(förvalda värden)"

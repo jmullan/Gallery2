@@ -21,10 +21,10 @@
 # - Kennichi Uehara <ken.w3m+nospam@gmail.com>
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Installer 2.1\n"
+"Project-Id-Version: Gallery: Installer 2.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-08-09 01:16+0900\n"
-"PO-Revision-Date: 2006-01-21 12:38+0900\n"
+"PO-Revision-Date: 2006-03-26 13:27+0900\n"
 "Last-Translator: Yosuke Suzuki\n"
 "Language-Team: Japanese <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -98,6 +98,10 @@ msgstr "データベースセットアップ"
 msgid "You must have the MySQL PHP module installed"
 msgstr "PHP の MySQL モジュールがインストールされていなければなりません"
 
+#, fuzzy
+msgid "You must have the MySQL Improved PHP module installed"
+msgstr "PHP の MySQL モジュールがインストールされていなければなりません"
+
 msgid "You must have the ibm_db2 PHP module installed"
 msgstr "PHP の ibm_db2 モジュールがインストールされていなければなりません"
 
@@ -106,6 +110,10 @@ msgstr "PHP の PostgreSQL モジュールがインストールされていな�
 
 msgid "You must have the Oracle OCI8 PHP module installed"
 msgstr "PHP の Oracle OCI8 モジュールがインストールされていなければなりません"
+
+#, fuzzy
+msgid "You must have the MSSQL PHP module installed"
+msgstr "PHP の MySQL モジュールがインストールされていなければなりません"
 
 #, c-format
 msgid "You must specify a column prefix (we recommend %s)"
@@ -202,24 +210,26 @@ msgstr ""
 "G2 APIを読み込めませんでした。Galleryデータベーステーブルとストレージディレクトリを手動で削除"
 "してください。"
 
-msgid "MySQL (all versions)"
-msgstr "MySQL (全てのバージョン)"
-
-msgid "MySQL with Transactions (v3.23.34a and newer)"
+#, fuzzy
+msgid "MySQL (v3.23.34a and newer)"
 msgstr "MySQL トランザクションあり (v3.23.34a 以上)"
+
+#, fuzzy
+msgid "MySQL (versions before v3.23.34a)"
+msgstr "MySQL (全てのバージョン)"
 
 #, fuzzy
 msgid "PostgreSQL v7.x and newer"
 msgstr "PostgreSQL v7.x"
-
-msgid "PostgreSQL v6.x (not well tested)"
-msgstr "PostgreSQL v6.x (十分にテストされていません)"
 
 msgid "Oracle (9i and newer)"
 msgstr "Oracle (9i 以上)"
 
 msgid "IBM DB2 (v8.2 and newer)"
 msgstr "IBM DB2 for Unix/Windows, v8.2 以上"
+
+msgid "MSSQL (Experimental!)"
+msgstr ""
 
 msgid "Unknown DB type or no known tables information."
 msgstr "未知のタイプのデータベースかテーブル情報です"
@@ -330,15 +340,15 @@ msgid "System Checks"
 msgstr "システムチェック"
 
 msgid "Performing system checks"
-msgstr ""
+msgstr "システムチェックを実行中"
 
 #, fuzzy
-msgid "PHP version >= 4.1.0 or >= 5.0.4"
+msgid "PHP version >= 4.3.0 or >= 5.0.4"
 msgstr "PHP バージョン >= 4.1.0 or >= 5.0.4"
 
 #, fuzzy, c-format
 msgid ""
-"Error: Gallery 2 requires PHP version 4.1.0 or newer or 5.0.4 or newer. You have PHP version "
+"Error: Gallery 2 requires PHP version 4.3.0 or newer or 5.0.4 or newer. You have PHP version "
 "%s installed. Contact your webserver administrator to request an upgrade, available at the %"
 "sPHP website%s."
 msgstr ""
@@ -529,7 +539,7 @@ msgstr ""
 "かる操作は、データの衝突ですべて失敗します（場合によっては、ブランクページを表示します）"
 
 msgid "Output buffering disabled"
-msgstr ""
+msgstr "出力バッファリングが無効になっています"
 
 #, c-format
 msgid ""
@@ -539,6 +549,10 @@ msgid ""
 "Also, some features like the progress bars might not work correctly if output buffering is "
 "enabled unless ini_set() is allowed."
 msgstr ""
+"警告: ＰＨＰの出力バッファリングが、php.iniの<b>%s</b>パラメーターによって有効になっていま"
+"す。 Galleryはこの設定で動作しますが、ファイルのダウンロードはより速く、動画のような大きな"
+"ファイルを扱うことができず、メモリーの限界値に達してしまいます。進行状態を表すメーターのよう"
+"な機能も、ini_set() が許可されていないとうまく動かないかもしれません。"
 
 msgid "Gallery file integrity"
 msgstr "Gallery ファイルの完全性"
@@ -986,7 +1000,7 @@ msgstr ""
 "んが、インストール状態をきれいに保つために削除しておくことはよい考えです。"
 
 msgid "Errors occurred. Please see messages below."
-msgstr ""
+msgstr "エラーが発生しました。下のメッセージを見てください。"
 
 msgid "Please select the installation type"
 msgstr "インストールタイプを選択してください。"
@@ -1120,6 +1134,8 @@ msgid ""
 "Please read the %1$sGallery Security Guide%3$s. For a brief overview, take a look at the %2"
 "$sshort check list%3$s within the security guide."
 msgstr ""
+"%1$sGallery Security Guide%3$s を読んでください。簡単な概要は、ガイドの %2$sshort check list%"
+"3$s を閲覧してください。"
 
 msgid "Check Again"
 msgstr "もう一度チェック"
@@ -1128,9 +1144,13 @@ msgid ""
 "Gallery needs a directory to store your images. The directory we chose for you will work, "
 "but is web accessible."
 msgstr ""
+"Gallery を利用するには、画像を保存するディレクトリが必要です。我々が選択するディレクトリでも"
+"動作しすますが、ウェブ上でダイレクトにアクセスできてしまいます。"
 
 msgid "For maximum security you should pick a directory that is not web accessible."
 msgstr ""
+"セキュリティを最大に高めるためには、ウェブからアクセスできないディレクトリを選択してくださ"
+"い。"
 
 msgid ""
 "This is a multisite installation. Remember that each multisite requires its own storage "
@@ -1195,6 +1215,8 @@ msgid ""
 "Your webserver needs to be able to write to this directory. To get it working, you can "
 "follow these examples."
 msgstr ""
+"あなたの(Apacheなどの)ウェブサーバーは、このディレクトリへの書き込み権限を与えてください。そ"
+"れをするためには、これらの例を参考にしてください。"
 
 msgid ""
 "Note: these are only examples!  You may find that they don't work quite right on your system."
@@ -1230,7 +1252,7 @@ msgstr "cd %s"
 msgid ""
 "For information on how to secure your Gallery storage directory, please read the %sSecurity "
 "Guide%s."
-msgstr ""
+msgstr "Galleryの保存ディレクトリを安全にするための情報は、 %sSecurity Guide%s を見てください"
 
 msgid "Storage directory set successfully."
 msgstr "ストレージディレクトリの設定に成功しました"
@@ -1306,6 +1328,9 @@ msgstr "Go"
 
 msgid "Begin Installation&raquo;"
 msgstr "インストールを始める&raquo;"
+
+#~ msgid "PostgreSQL v6.x (not well tested)"
+#~ msgstr "PostgreSQL v6.x (十分にテストされていません)"
 
 #~ msgid "chmod 644 %s"
 #~ msgstr "chmod 644 %s"

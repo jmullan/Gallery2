@@ -23,6 +23,9 @@ gettext("No acceleration") /* also in: templates/AdminPerformance.tpl */
 gettext("Partial acceleration")
 gettext("Full acceleration")
 
+/* AdminPlugins.inc */
+gettext("Themes") /* also in: module.inc templates/AdminRepository.tpl */
+
 /* AdminRepository.inc */
 gettext("Performing Maintenance Tasks")
 gettext("Downloading %s")
@@ -135,7 +138,7 @@ gettext("Animation Size")
 gettext("edit captions")
 
 /* ItemEditItem.inc */
-gettext("General") /* also in: module.inc test/phpunit/CoreModuleTest.class */
+gettext("General") /* also in: module.inc */
 
 /* ItemEditMovie.inc */
 gettext("Movie Size")
@@ -182,7 +185,7 @@ gettext("edit %s permissions")
 gettext("reorder items")
 
 /* MaintenanceMode.inc */
-gettext("Maintenance") /* also in: module.inc templates/MaintenanceMode.tpl test/phpunit/CoreModuleTest.class */
+gettext("Maintenance") /* also in: module.inc templates/MaintenanceMode.tpl */
 
 /* SiteAdmin.inc */
 gettext("Gallery Site Administration")
@@ -224,15 +227,14 @@ gettext("Site Admin") /* also in: test/phpunit/CoreModuleTest.class */
 gettext("Login") /* also in: classes/CoreCaptchaAdminOption.class templates/UserLogin.tpl templates/blocks/LoginBlock.tpl */
 gettext("Your Account") /* also in: test/phpunit/CoreModuleTest.class */
 gettext("Logout") /* also in: test/phpunit/CoreModuleTest.class */
-gettext("Modules") /* also in: templates/AdminRepository.tpl test/phpunit/CoreModuleTest.class */
-gettext("Repository") /* also in: templates/AdminRepository.tpl test/phpunit/CoreModuleTest.class */
-gettext("Themes") /* also in: templates/AdminRepository.tpl test/phpunit/CoreModuleTest.class */
-gettext("Display") /* also in: test/phpunit/CoreModuleTest.class */
-gettext("Users") /* also in: test/phpunit/CoreModuleTest.class */
-gettext("Groups") /* also in: test/phpunit/CoreModuleTest.class */
-gettext("Performance") /* also in: test/phpunit/CoreModuleTest.class */
-gettext("Toolkit Priority") /* also in: templates/AdminToolkitPriority.tpl test/phpunit/CoreModuleTest.class */
-gettext("Graphics Toolkits") /* also in: test/phpunit/CoreModuleTest.class */
+gettext("Plugins")
+gettext("Repository") /* also in: templates/AdminRepository.tpl */
+gettext("Users")
+gettext("Groups")
+gettext("Performance")
+gettext("Toolkit Priority") /* also in: templates/AdminToolkitPriority.tpl */
+gettext("Graphics Toolkits")
+gettext("Defaults") /* also in: templates/AdminThemes.tpl */
 gettext("Account Settings") /* also in: templates/UserPreferences.tpl */
 gettext("Change Password") /* also in: templates/UserChangePassword.tpl templates/UserRecoverPasswordConfirm.tpl */
 gettext("Link Album")
@@ -249,7 +251,7 @@ gettext("Ensure data files for all derivatives (thumbnails, etc) have been built
 gettext("Build All Thumbnails/Resizes")
 gettext("Debug output for failed items:")
 gettext("Checked %d items")
-gettext("%d items built")
+gettext("%d items built") /* also in: classes/IntegrityCheckTask.class */
 gettext("%d items failed")
 
 /* classes/DeleteSessionsTask.class */
@@ -281,7 +283,7 @@ gettext("Search descriptions")
 gettext("Search keywords")
 gettext("Search summaries")
 gettext("Search titles")
-gettext("Description") /* also in: classes/GallerySortInterface_1_1.class templates/AdminPlugins.tpl templates/AdminRepository.tpl templates/AdminThemes.tpl templates/ItemAddAlbum.tpl templates/ItemAddFromBrowser.tpl templates/ItemAddFromServer.tpl templates/ItemAddFromWeb.tpl templates/ItemEditCaptions.tpl templates/ItemEditItem.tpl test/phpunit/CoreSearchTest.class */
+gettext("Description") /* also in: classes/GallerySortInterface_1_1.class templates/AdminPlugins.tpl templates/AdminRepository.tpl templates/ItemAddAlbum.tpl templates/ItemAddFromBrowser.tpl templates/ItemAddFromServer.tpl templates/ItemAddFromWeb.tpl templates/ItemEditCaptions.tpl templates/ItemEditItem.tpl test/phpunit/CoreSearchTest.class */
 gettext("Keywords") /* also in: classes/GallerySortInterface_1_1.class templates/ItemAddAlbum.tpl templates/ItemEditCaptions.tpl templates/ItemEditItem.tpl test/phpunit/CoreSearchTest.class */
 gettext("Summary") /* also in: classes/GallerySortInterface_1_1.class templates/ItemAddAlbum.tpl templates/ItemAddFromBrowser.tpl templates/ItemAddFromServer.tpl templates/ItemAddFromWeb.tpl templates/ItemEditCaptions.tpl templates/ItemEditItem.tpl test/phpunit/CoreSearchTest.class */
 gettext("Title") /* also in: classes/GallerySortInterface_1_1.class templates/ItemAddAlbum.tpl templates/ItemAddFromServer.tpl templates/ItemAddFromWeb.tpl templates/ItemEditCaptions.tpl templates/ItemEditItem.tpl test/phpunit/CoreSearchTest.class */
@@ -377,6 +379,20 @@ gettext("Back to %s") /* also in: test/phpunit/UrlGeneratorTest.class */
 /* classes/GalleryUser.class */
 gettext("User")
 gettext("user")
+
+/* classes/IntegrityCheckTask.class */
+gettext("Integrity Check")
+gettext("Check data integrity and report any inconsistencies.")
+gettext("Loading all entities")
+gettext("Checking for orphaned entity data")
+gettext("Checking for orphaned item data")
+gettext("Checking for orphaned plugin data")
+gettext("Checked %d entities")
+gettext("Failed to load entity ids: %s")
+gettext("Orphaned data in table %s with missing parent entity; ids: %s")
+gettext("Orphaned data in table %s with no row in %s table; ids: %s")
+gettext("Orphaned data in table %s with missing derivative source; ids: %s")
+gettext("Unknown plugin: %s %s")
 
 /* classes/OptimizeDatabaseTask.class */
 gettext("Optimize database")
@@ -585,33 +601,6 @@ gettext("Failed")
 gettext("run now")
 gettext("Last Run Details:")
 
-/* templates/AdminPlugins.tpl */
-gettext("Status: Inactive") /* also in: templates/AdminThemes.tpl */
-gettext("__MODULE__ deactivated")
-gettext("Status: Active") /* also in: templates/AdminThemes.tpl */
-gettext("__MODULE__ activated")
-gettext("Status: Not Installed") /* also in: templates/AdminThemes.tpl */
-gettext("__MODULE__ uninstalled")
-gettext("Status: Upgrade Required (Inactive)") /* also in: templates/AdminThemes.tpl */
-gettext("Status: Incompatible Module (Inactive)")
-gettext("Status: Inactive (Configuration Required)")
-gettext("__MODULE__ needs configuration")
-gettext("Gallery Modules")
-gettext("Gallery features come as separate modules.  You can download and install modules to add more features to your Gallery, or you can disable features if you don't want to use them.  In order to use a feature, you must install, configure (if necessary) and activate it.  If you don't wish to use a feature, you can deactivate it.")
-gettext("up to date")
-gettext("disabled")
-gettext("upgrade required")
-gettext("not installed")
-gettext("incompatible")
-gettext("Module Name") /* also in: templates/AdminRepository.tpl */
-gettext("Version") /* also in: templates/AdminThemes.tpl */
-gettext("Installed") /* also in: templates/AdminRepository.tpl templates/AdminThemes.tpl */
-gettext("Actions") /* also in: templates/AdminRepository.tpl templates/AdminThemes.tpl */
-gettext("Incompatible module!")
-gettext("Core API Required: %s (available: %s)") /* also in: templates/AdminRepository.tpl templates/AdminThemes.tpl */
-gettext("Module API Required: %s (available: %s)")
-gettext("configure")
-
 /* templates/AdminModulesVerifyUninstall.tpl */
 gettext("Confirm module uninstall")
 gettext("Do you really want to uninstall the %s module?")
@@ -637,11 +626,39 @@ gettext("Guest Users")
 gettext("Expires after:")
 gettext("Clear Saved Pages")
 
+/* templates/AdminPlugins.tpl */
+gettext("Status: Inactive")
+gettext("__PLUGIN__ deactivated")
+gettext("Status: Active")
+gettext("__PLUGIN__ activated")
+gettext("Status: Not Installed")
+gettext("__PLUGIN__ uninstalled")
+gettext("Status: Upgrade Required (Inactive)")
+gettext("Status: Incompatible Plugin (Inactive)")
+gettext("Status: Inactive (Configuration Required)")
+gettext("__PLUGIN__ needs configuration")
+gettext("Gallery Plugins")
+gettext("Gallery features come as separate plugins.  You can download and install plugins to add more features to your Gallery, or you can disable features if you don't want to use them.  In order to use a feature, you must install, configure (if necessary) and activate it.  If you don't wish to use a feature, you can deactivate it.")
+gettext("up to date")
+gettext("disabled")
+gettext("upgrade required")
+gettext("not installed")
+gettext("incompatible")
+gettext("Plugin Name")
+gettext("Version")
+gettext("Installed") /* also in: templates/AdminRepository.tpl */
+gettext("Actions") /* also in: templates/AdminRepository.tpl */
+gettext("Incompatible plugin!") /* also in: templates/AdminRepository.tpl */
+gettext("Core API Required: %s (available: %s)") /* also in: templates/AdminRepository.tpl */
+gettext("Plugin API Required: %s (available: %s)") /* also in: templates/AdminRepository.tpl */
+gettext("configure")
+
 /* templates/AdminRepository.tpl */
 gettext("Please make sure that your internet connection is set up properly or try again later.")
 gettext("The repository index has been successfully updated.")
 gettext("All plugins are already up-to-date.")
 gettext("Common Tasks")
+gettext("Modules")
 gettext("Warning: Experimental feature!")
 gettext("The repository features are currently experimental, and no actual repository has been set up yet, so none of these features will work at this time.")
 gettext("Update Index")
@@ -663,11 +680,10 @@ gettext("Once the repository index has been downloaded, a list of available plug
 gettext("The following plugins are available. Click on the action beside the plugin you're interested in to see what's available in the repository.")
 gettext("Incompatible plugins are marked with an exclamation icon.")
 gettext("A new core module version is available. There may be plugins that are incompatible with the installed core module, which are not shown here. You can view a %scomplete list%s of plugins, including incompatible ones, which are marked with a red icon.")
-gettext("Theme Name") /* also in: templates/AdminThemes.tpl */
+gettext("Theme Name")
+gettext("Module Name")
 gettext("Latest")
 gettext("Incompatible Plugin")
-gettext("Incompatible plugin!")
-gettext("Plugin API Required: %s (available: %s)")
 
 /* templates/AdminRepositoryDownload.tpl */
 gettext("No packages have been selected.")
@@ -702,12 +718,6 @@ gettext("Successfully uninstalled theme %s")
 gettext("Successfully upgraded theme %s")
 gettext("Successfully saved default album settings")
 gettext("Restored theme settings")
-gettext("All Themes")
-gettext("Defaults")
-gettext("Status: Incompatible Theme (Inactive)")
-gettext("Incompatible theme!")
-gettext("Theme API Required: %s (available: %s)")
-gettext("(default)")
 gettext("These are default display settings for albums in your gallery.  They can be overridden in each album.")
 gettext("Default sort order")
 gettext("with") /* also in: templates/ItemEditAlbum.tpl */
