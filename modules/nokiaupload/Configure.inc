@@ -82,7 +82,7 @@ class ConfigureController extends GalleryController {
 
 	if (empty($error)) {
 	    $results['redirect'] = array('view' => 'core.SiteAdmin',
-					 'subView' => 'core.AdminModules');
+					 'subView' => 'core.AdminPlugins');
 	} else {
 	    $results['delegate'] = array('view' => 'core.SiteAdmin',
 					 'subView' => 'nokiaupload.Configure');

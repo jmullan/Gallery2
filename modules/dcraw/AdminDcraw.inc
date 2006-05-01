@@ -93,7 +93,7 @@ class AdminDcrawController extends GalleryController {
 		    $redirect['subView'] = 'dcraw.AdminDcraw';
 		    $status['saved'] = 1;
 		} else {
-		    $redirect['subView'] = 'core.AdminModules';
+		    $redirect['subView'] = 'core.AdminPlugins';
 		    $status['configured'] = 'dcraw';
 		}
 	    }
@@ -102,7 +102,7 @@ class AdminDcrawController extends GalleryController {
 	    $redirect['subView'] = 'dcraw.AdminDcraw';
 	} else if (isset($form['action']['cancel'])) {
 	    $redirect['view'] = 'core.SiteAdmin';
-	    $redirect['subView'] = 'core.AdminModules';
+	    $redirect['subView'] = 'core.AdminPlugins';
 	}
 
 	if (!empty($redirect)) {

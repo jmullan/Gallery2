@@ -75,7 +75,7 @@ class SetupRewriteControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
-						      'subView' => 'core.AdminModules'),
+						      'subView' => 'core.AdminPlugins'),
 				  'error' => array(),
 				  'status' => array('saved' => 1)),
 			    $results, 'handleRequest');
@@ -155,7 +155,7 @@ class SetupRewriteControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
-						      'subView' => 'core.AdminModules'),
+						      'subView' => 'core.AdminPlugins'),
 				  'error' => array(),
 				  'status' => array()),
 			    $results, 'handleRequest');

@@ -94,7 +94,7 @@ class ZipCartAdminController extends GalleryController {
 		$redirect['subView'] = 'zipcart.ZipCartAdmin';
 		$status['saved'] = 1;
 	    } else {
-		$redirect['subView'] = 'core.AdminModules';
+		$redirect['subView'] = 'core.AdminPlugins';
 		$status['configured'] = 'zipcart';
 	    }
 	} else if (isset($form['action']['reset'])) {
@@ -102,7 +102,7 @@ class ZipCartAdminController extends GalleryController {
 	    $redirect['subView'] = 'zipcart.ZipCartAdmin';
 	} else if (isset($form['action']['cancel'])) {
 	    $redirect['view'] = 'core.SiteAdmin';
-	    $redirect['subView'] = 'core.AdminModules';
+	    $redirect['subView'] = 'core.AdminPlugins';
 	}
 
 	if (!empty($redirect)) {

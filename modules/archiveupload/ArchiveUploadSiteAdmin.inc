@@ -89,12 +89,12 @@ class ArchiveUploadSiteAdminController extends GalleryController {
 		    $redirectSubview = 'archiveupload.ArchiveUploadSiteAdmin';
 		    $status['saved'] = 1;
 		} else {
-		    $redirectSubview = 'core.AdminModules';
+		    $redirectSubview = 'core.AdminPlugins';
 		    $status['configured'] = 'archiveupload';
 		}
 	    }
 	} else if (isset($form['action']['cancel'])) {
-	    $redirectSubview = 'core.AdminModules';
+	    $redirectSubview = 'core.AdminPlugins';
 	} else if (isset($form['action']['reset'])) {
 	    $redirectSubview = 'archiveupload.ArchiveUploadSiteAdmin';
 	}

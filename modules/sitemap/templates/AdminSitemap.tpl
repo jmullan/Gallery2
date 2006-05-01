@@ -23,7 +23,7 @@
     {if $AdminSitemap.canRewrite}
       {assign var=subView value="rewrite.AdminRewrite"}
     {else}
-      {assign var=subView value="core.AdminModules"}
+      {assign var=subView value="core.AdminPlugins"}
     {/if}
     <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=`$subView`"}">
       {g->text text="URL Rewrite Module"}</a>

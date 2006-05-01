@@ -62,14 +62,14 @@ class AdminGdController extends GalleryController {
 		$redirect['subView'] = 'gd.AdminGd';
 		$status['saved'] = 1;
 	    } else {
-		$redirect['subView'] = 'core.AdminModules';
+		$redirect['subView'] = 'core.AdminPlugins';
 	    }
 	} else if (isset($form['action']['reset'])) {
 	    $redirect['view'] = 'core.SiteAdmin';
 	    $redirect['subView'] = 'gd.AdminGd';
 	} else if (isset($form['action']['cancel'])) {
 	    $redirect['view'] = 'core.SiteAdmin';
-	    $redirect['subView'] = 'core.AdminModules';
+	    $redirect['subView'] = 'core.AdminPlugins';
 	}
 
 	if (!empty($redirect)) {

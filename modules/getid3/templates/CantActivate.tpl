@@ -10,7 +10,7 @@
 
 <div class="gbBlock"><h2 class="giError">
   {capture name="url"}
-    {g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminModules"}
+    {g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminPlugins"}
   {/capture}
   {g->text text="This module does not work on Windows, yet."}
 </h2></div>

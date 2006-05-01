@@ -64,7 +64,7 @@ class SetupRewriteController extends GalleryController {
 	    if (empty($form['parser']) || !preg_match('/\w/', $form['parser'])) {
 		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	    }
-	    
+
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
 	        'parserId', $form['parser']);
 	    if ($ret) {
@@ -82,12 +82,12 @@ class SetupRewriteController extends GalleryController {
 	    }
 
 	    if (!$code) {
-		$results['redirect']['subView'] = 'core.AdminModules';
+		$results['redirect']['subView'] = 'core.AdminPlugins';
 	    }
 
 	    $status['saved'] = 1;
 	} else if (isset($form['action']['done'])) {
-	    $results['redirect']['subView'] = 'core.AdminModules';
+	    $results['redirect']['subView'] = 'core.AdminPlugins';
 	} else if (isset($form['action']['back'])) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'parserId', '');
 	    if ($ret) {

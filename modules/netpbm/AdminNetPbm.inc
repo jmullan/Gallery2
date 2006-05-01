@@ -135,7 +135,7 @@ class AdminNetPbmController extends GalleryController {
 		    $redirect['subView'] = 'netpbm.AdminNetPbm';
 		    $status['saved'] = 1;
 		} else {
-		    $redirect['subView'] = 'core.AdminModules';
+		    $redirect['subView'] = 'core.AdminPlugins';
 		    $status['configured'] = 'netpbm';
 		}
 	    }
@@ -144,7 +144,7 @@ class AdminNetPbmController extends GalleryController {
 	    $redirect['subView'] = 'netpbm.AdminNetPbm';
 	} else if (isset($form['action']['cancel'])) {
 	    $redirect['view'] = 'core.SiteAdmin';
-	    $redirect['subView'] = 'core.AdminModules';
+	    $redirect['subView'] = 'core.AdminPlugins';
 	}
 
 	if (!empty($redirect)) {

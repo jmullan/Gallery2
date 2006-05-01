@@ -12,7 +12,7 @@
 <div class="gbBlock giWarning">
   {g->text text="You don't have any Graphics Toolkit activated that can handle JPEG images.  If you add images, you will probably not have any thumbnails."}
   {capture name="url"}
-    {g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminModules"}
+    {g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminPlugins"}
   {/capture}
   {if $ItemAdd.isAdmin}
     {g->text text="Visit the <a href=\"%s\">Modules</a> page to activate a Graphics Toolkit." arg1=$smarty.capture.url}

@@ -158,7 +158,7 @@ class AdminFfmpegController extends GalleryController {
 		    $redirect['subView'] = 'ffmpeg.AdminFfmpeg';
 		    $status['saved'] = 1;
 		} else {
-		    $redirect['subView'] = 'core.AdminModules';
+		    $redirect['subView'] = 'core.AdminPlugins';
 		    $status['configured'] = 'ffmpeg';
 		}
 	    }
@@ -167,7 +167,7 @@ class AdminFfmpegController extends GalleryController {
 	    $redirect['subView'] = 'ffmpeg.AdminFfmpeg';
 	} else if (isset($form['action']['cancel'])) {
 	    $redirect['view'] = 'core.SiteAdmin';
-	    $redirect['subView'] = 'core.AdminModules';
+	    $redirect['subView'] = 'core.AdminPlugins';
 	}
 
 	if (!empty($redirect)) {

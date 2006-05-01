@@ -61,7 +61,7 @@ class SiteAdminView extends GalleryView {
 	 * modules that are not active.
 	 */
 	$subView = GalleryUtilities::getRequestVariables('subView');
-	$showAllSiteAdminViews = ($subView == 'core.AdminModules');
+	$showAllSiteAdminViews = ($subView == 'core.AdminPlugins');
 
 	foreach ($moduleStatus as $moduleId => $status) {
 	    if (empty($status['active']) && !$showAllSiteAdminViews) {

@@ -153,7 +153,7 @@ class AdminImageMagickController extends GalleryController {
 		    $redirect['subView'] = 'imagemagick.AdminImageMagick';
 		    $status['saved'] = 1;
 		} else {
-		    $redirect['subView'] = 'core.AdminModules';
+		    $redirect['subView'] = 'core.AdminPlugins';
 		    $status['configured'] = 'imagemagick';
 		}
 	    }
@@ -162,7 +162,7 @@ class AdminImageMagickController extends GalleryController {
 	    $redirect['subView'] = 'imagemagick.AdminImageMagick';
 	} else if (isset($form['action']['cancel'])) {
 	    $redirect['view'] = 'core.SiteAdmin';
-	    $redirect['subView'] = 'core.AdminModules';
+	    $redirect['subView'] = 'core.AdminPlugins';
 	}
 
 	if (!empty($redirect)) {

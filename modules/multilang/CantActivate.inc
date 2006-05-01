@@ -39,7 +39,7 @@ class CantActivateController extends GalleryController {
     function handleRequest($form) {
 	/* Figure out where to redirect upon success */
 	$results['redirect']['view'] = 'core.SiteAdmin';
-	$results['redirect']['subView'] = 'core.AdminModules';
+	$results['redirect']['subView'] = 'core.AdminPlugins';
 	$results['status'] = array();
 	$results['error'] = array();
 

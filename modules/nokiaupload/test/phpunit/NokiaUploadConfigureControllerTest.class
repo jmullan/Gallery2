@@ -69,7 +69,7 @@ class NokiaUploadConfigureControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][cancel]', '1');
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
-						   'subView' => 'core.AdminModules'),
+						   'subView' => 'core.AdminPlugins'),
 				  'status' => array(), 'error' => array()),
 			    $results);
     }
@@ -91,7 +91,7 @@ class NokiaUploadConfigureControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	
+
 	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($groupId);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -116,7 +116,7 @@ class NokiaUploadConfigureControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 	$results = $this->handleRequest();
 	$this->assertEquals(array(
-	    'redirect' => array('view' => 'core.SiteAdmin', 'subView' => 'core.AdminModules'),
+	    'redirect' => array('view' => 'core.SiteAdmin', 'subView' => 'core.AdminPlugins'),
 	    'status' => array('configured' => 'nokiaupload'), 'error' => array()),
 		$results);
 
