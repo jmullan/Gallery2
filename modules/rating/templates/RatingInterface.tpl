@@ -17,9 +17,8 @@
 		onMouseOver="updateStarDisplay({$RatingData.itemId}, {$ratingValue}); return true"
 		onMouseOut="resetStarDisplay({$RatingData.itemId}); return true">{/if}<img
 		src="{g->url href="modules/rating/images/transparent.gif"}"
-		id="rating.star.{$RatingData.itemId}.{$ratingValue}" class="giRatingUnit"
-		alt=""
-		title="Click a star to rate this item!"/>{if $RatingData.canRate}</a>{/if}{/foreach}
+		id="rating.star.{$RatingData.itemId}.{$ratingValue}" class="giRatingUnit" alt=""
+		title="{g->text text="Click a star to rate this item!"}"/>{if $RatingData.canRate}</a>{/if}{/foreach}
 	<div class="giRatingAverageContainer">
 		<div class="giRatingAverage" id="rating.averagePercent.{$RatingData.itemId}"
 			style="width:{$RatingData.averagePercent}%"></div></div>
