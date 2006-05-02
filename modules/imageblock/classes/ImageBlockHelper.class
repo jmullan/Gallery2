@@ -599,7 +599,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	     */
 	    $entity = $event->getEntity();
 
-	    
+
 	    /*
 	     * If the entity is a GalleryDataItem or GalleryAlbumItem and is
 	     * Newly Created or the parent has changed (item moved), continue
@@ -735,6 +735,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	$i = 0;
 	$total = count($childIds);
 	foreach ($childIds as $itemId) {
+	    $gallery->guaranteeTimeLimit(30);
 	    if ($disabled) {
 		$ret = GalleryCoreApi::addMapEntry(
 		    'ImageBlockDisabledMap', array('itemId' => $itemId));
