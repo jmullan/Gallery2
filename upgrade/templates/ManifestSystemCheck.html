@@ -20,9 +20,9 @@
       <?php printf(_("Missing files (%d)"), count($manifest['missing'])) ?>
     </b>
   </span>
-  <?php if ($isCvsInstall): ?>
+  <?php if ($isSvnInstall): ?>
   <br/>
-  <?php print _("Note: You're running Gallery from CVS, so recently removed files may appear here.  It might be safe to ignore these."); ?>
+  <?php print _("Note: You're running Gallery from SVN, so recently removed files may appear here.  It might be safe to ignore these."); ?>
   <?php endif; ?>
   <textarea wrap="off" readonly="readonly" rows="<?php print count($manifest['missing'])?>" class="manifestBlock" id="ManifestSystemCheck_missing" style="display: none"><?php foreach ($manifest['missing'] as $fileName): ?><?php print "$fileName\n" ?><?php endforeach; ?></textarea>
   <?php endif; ?>
@@ -33,15 +33,14 @@
 
   <?php if (!empty($manifest['modified'])): ?>
   <span id="ManifestSystemCheck_modified_toggle" onclick="BlockToggle('ManifestSystemCheck_modified', 'ManifestSystemCheck_modified_toggle_indicator')">
-
     <span id="ManifestSystemCheck_modified_toggle_indicator" class="showHideToggle">+</span>
     <b>
       <?php printf(_("Modified files (%d)"), count($manifest['modified'])) ?>
     </b>
   </span>
-  <?php if ($isCvsInstall): ?>
+  <?php if ($isSvnInstall): ?>
   <br/>
-  <?php print _("Note: You're running Gallery from CVS, so some modified files are to be expected.  You can probably ignore these, but to be safe you should make sure that you do <b>cvs update -Pd</b> before continuing."); ?>
+  <?php print _("Note: You're running Gallery from SVN, so some modified files are to be expected.  You can probably ignore these, but to be safe you should make sure that you do 'svn update' before continuing."); ?>
   <?php endif; ?>
   <textarea wrap="off" readonly="readonly" rows="<?php print count($manifest['modified'])?>" class="manifestBlock" id="ManifestSystemCheck_modified" style="display: none"><?php foreach ($manifest['modified'] as $fileName): ?><?php print "$fileName\n" ?><?php endforeach; ?></textarea>
   <?php endif; ?>

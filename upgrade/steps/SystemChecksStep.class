@@ -383,7 +383,7 @@ class SystemChecksStep extends UpgradeStep {
 		      'warning' => true,
 		      'notice' => _('Test skipped due to other errors.'));
 	} else {
-	    $isCvsInstall = file_exists(dirname(__FILE__) . '/CVS');
+	    $isSvnInstall = file_exists(dirname(__FILE__) . '/.svn');
 	    $manifest = SystemChecksStep::CheckManifest();
 	    if (!isset($manifest)) {
 		$templateData['check'][] =

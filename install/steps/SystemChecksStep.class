@@ -346,7 +346,7 @@ class SystemChecksStep extends InstallStep {
 		      'warning' => true,
 		      'notice' => _('Test skipped due to other errors.'));
 	} else {
-	    $isCvsInstall = file_exists(dirname(__FILE__) . '/CVS');
+	    $isSvnInstall = file_exists(dirname(__FILE__) . '/.svn');
 	    $manifest = SystemChecksStep::CheckManifest($template, $setTimeLimitAvailable);
 	    if (!isset($manifest)) {
 		$templateData['check'][] =
@@ -381,7 +381,7 @@ class SystemChecksStep extends InstallStep {
 					    'There are missing/modified files!');
 		}
 	    }
-	    $galleryStub->setConfig('systemchecks.iscvsinstall', $isCvsInstall);
+	    $galleryStub->setConfig('systemchecks.issvninstall', $isSvnInstall);
 	}
 
 	$template->renderStatusMessage(_('Performing system checks'), '', 1);

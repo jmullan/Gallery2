@@ -216,8 +216,8 @@ class InstallCoreModuleStep extends InstallStep {
 	global $galleryStub;
 
 	$storage =& $gallery->getStorage();
-	$isCvsInstall = $galleryStub->getConfig('systemchecks.iscvsinstall');
-	$isCvsInstall = empty($isCvsInstall) ? "No" : "Yes";
+	$isSvnInstall = $galleryStub->getConfig('systemchecks.issvninstall');
+	$isSvnInstall = empty($isSvnInstall) ? "No" : "Yes";
 
 	$gallery->debug("\n
 --------------------------------------------------------
@@ -225,7 +225,7 @@ System and Gallery information:
 --------------------------------------------------------
     Gallery version:\t" . $galleryStub->getConfig('codebase.version') . "
     File integrity:\t" . $galleryStub->getConfig('systemchecks.fileintegrity') . "
-    CVS install:\t" . $isCvsInstall . "
+    SVN install:\t" . $isSvnInstall . "
     PHP version:\t" . phpversion() . " " . php_sapi_name() . "
     PHP memory limit:\t" . ini_get('memory_limit') . "
     PHP disable_functions:\t" . ini_get('disable_functions') . "
