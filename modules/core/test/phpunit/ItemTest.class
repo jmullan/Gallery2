@@ -1630,6 +1630,49 @@ class ItemTest extends GalleryTestCase {
 				"orderDirection: $index test case");
 	}
     }
+
+    function testMultipleThumbnailPreferences() {
+	$ret = GalleryCoreApi::removeDerivativePreferencesForItem($this->_album->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Add 2 thumbnail preferences */
+	for ($i = 0; $i < 2; $i++) {
+	    $ret = GalleryCoreApi::addDerivativePreference(
+		0, $this->_album->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL, "thumbnail|[$i]");
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
+	}
+
+	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->_album->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum(
+	    __FILE__, 'itemName', 'title', 'caption', 'description',
+	    'application/unknown', $this->_album->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* We should have ignored the duplicate preference  */
+	list ($ret, $thumbTable) = GalleryCoreApi::fetchThumbnailsByItemIds(
+	    array($newItem->getId()));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(1, count($thumbTable[$newItem->getId()]), 'wrong number of thumbnails');
+	$operation = $thumbTable[$newItem->getId()]->getDerivativeOperations();
+	$this->assert(strpos($operation, 'thumbnail|[1]') !== false, "Wrong operation: $operation");
+    }
 }
 
 /**
