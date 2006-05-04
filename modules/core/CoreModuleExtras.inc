@@ -848,7 +848,7 @@ class CoreModuleExtras {
 		}
 	    }
 	case '0.9.25':
-	    /* And image/tiff-cmyk mime type */
+	    /* Add image/tiff-cmyk mime type */
 	    list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime('tifcmyk');
 	    if (!$ret && $mimeType == 'application/unknown') {
 		$ret = GalleryCoreApi::addMimeType('tifcmyk', 'image/tiff-cmyk', false);
@@ -1291,7 +1291,7 @@ class CoreModuleExtras {
 	    }
 
 	case '1.0.1':
-	    /* And image/wmf mime type */
+	    /* Add image/wmf mime type */
 	    list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime('wmf');
 	    if (!$ret && $mimeType == 'application/unknown') {
 		$ret = GalleryCoreApi::addMimeType('wmf', 'image/wmf', false);
@@ -1505,7 +1505,7 @@ class CoreModuleExtras {
 	    $storageExtras =& $storage->_getExtras();
 	    $storageExtras->_clearEntityAndMapCache();
 	case '1.0.17':
-	    /* And image/tga mime type */
+	    /* Add image/tga mime type */
 	    list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime('tga');
 	    if (!$ret && $mimeType == 'application/unknown') {
 		$ret = GalleryCoreApi::addMimeType('tga', 'image/tga', false);
@@ -1879,6 +1879,23 @@ class CoreModuleExtras {
 	    /* Minimum PHP version now 4.3.0; new versions of ADODB and Smarty */
 	case '1.1.1':
 
+	case '1.1.2':
+	    /* Add Flash Video and Windows playlist mime types */
+	    list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime('flv');
+	    if (!$ret && $mimeType == 'application/unknown') {
+		$ret = GalleryCoreApi::addMimeType('flv', 'video/x-flv', false);
+		if ($ret) {
+		    return $ret;
+		}
+	    }
+	    list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime('asx');
+	    if (!$ret && $mimeType == 'application/unknown') {
+		$ret = GalleryCoreApi::addMimeType('asx', 'video/x-ms-asx', false);
+		if ($ret) {
+		    return $ret;
+		}
+	    }
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
@@ -2131,6 +2148,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	case '1.1.0':
 	case '1.1.0.x':
 	case '1.1.1':
+	case '1.1.2':
 
 	case 'end of upgrade path':
 	    /*
@@ -2555,9 +2573,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	$regs[] = array('GalleryEntity', 'GalleryPhotoItem', 'class', null);
 	$regs[] = array('GalleryEntity', 'GalleryUnknownItem', 'class', null);
 	$regs[] = array('GalleryItem', 'GalleryPhotoItem', 'class', array('image/*'));
-	$regs[] = array('GalleryItem', 'GalleryMovieItem', 'class',
-			array('video/x-msvideo', 'video/quicktime', 'video/mpeg',
-			      'video/x-ms-asf', 'video/x-ms-wmv'));
+	$regs[] = array('GalleryItem', 'GalleryMovieItem', 'class', array('video/*'));
 	$regs[] = array('GalleryItem', 'GalleryAnimationItem', 'class',
 			array('application/x-director', 'application/x-shockwave-flash'));
 	$regs[] = array('GalleryItem', 'GalleryUnknownItem', 'class', array('*'));
