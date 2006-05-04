@@ -78,7 +78,7 @@ install:
 		fi; \
 		if test -z "$${QUIET}"; then echo $${LOCALE}; fi; \
 		if $(TOOLDIR)/po/shtool mkdir -p ../locale/$${LOCALE}/LC_MESSAGES; then \
-			php -f $(TOOLDIR)/po/trim-po.php $${LOCALE}.po > tmp.po; \
+			php -f $(TOOLDIR)/po/trim-po.php `pwd`/$${LOCALE}.po > tmp.po; \
 			if test "${OSTYPE}" = "solaris"; then \
 				if {MSGFMTSOL} ../locale/$${LOCALE}/LC_MESSAGES/${APPLICATION}.mo \
 						tmp.po; then \
