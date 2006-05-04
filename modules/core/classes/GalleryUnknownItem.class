@@ -23,9 +23,6 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
-/**
- * Load the parent class
- */
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryDataItem.class');
 
 /**
@@ -85,7 +82,7 @@ class GalleryUnknownItem extends GalleryDataItem {
 		    => array($gallery->i18n('Audio'), $gallery->i18n('audio')),
 		':^application/(zip|mac-[cb].*|x-((us|g)?tar|gzip|compress|cpio|stuffit|shar))$:'
 		    => array($gallery->i18n('Archive'), $gallery->i18n('archive')),
-		':^(text/|application/(pdf|postscript|photoshop|msword)$):'
+		':^(text/|application/(pdf|postscript|photoshop|msword|vnd.ms-powerpoint)$):'
 		    => array($gallery->i18n('Document'), $gallery->i18n('document')),
 		':application/vnd.ms-excel:'
 		    => array($gallery->i18n('Spreadsheet'), $gallery->i18n('spreadsheet')),
@@ -105,8 +102,8 @@ class GalleryUnknownItem extends GalleryDataItem {
 		    array($core->translate($result[0]), $core->translate($result[1])) : $result;
 	    }
 	}
-	return isset($core) ? array($core->translate('Unknown'), $core->translate('unknown'))
-			    : array('Unknown', 'unknown');
+	return isset($core) ? array($core->translate('File'), $core->translate('file'))
+			    : array('File', 'file');
     }
 
     /**
