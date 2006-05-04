@@ -1420,6 +1420,10 @@ class GalleryUtilities {
 	    return 'askjeeves';
 	} else if (strstr($userAgent, 'msnbot')) {
 	    return 'microsoft';
+	} else if (strstr($userAgent, 'Yandex')) {
+	    return 'yandex';
+	} else if (strstr($userAgent, 'StackRambler')) {
+	    return 'stackrambler';
 	}
 
 	return null;
@@ -1661,7 +1665,7 @@ class GalleryUtilities {
 
     /**
      * ASCII version of PHP's strtolower()
-     * 
+     *
      * @return string upper-case version of the string
      */
     function strToUpper($string) {
