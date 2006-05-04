@@ -98,10 +98,10 @@ class DatabaseSetupStep extends InstallStep {
 		}
 		$dbPlatformType = 'oracle';
 		break;
-	    case 'mssql':
-		if (!$firstConfig && !function_exists('mssql_connect')) {
+	    case 'ado_mssql':
+		if (!$firstConfig && !class_exists('COM')) {
 		    $templateData['error']['phpDbMissing'] =
-			_('You must have the MSSQL PHP module installed');
+			_('You must have the Component Object Model(COM) PHP module installed');
 		}
 		$dbPlatformType = 'mssql';
 		break;
@@ -317,7 +317,7 @@ class DatabaseSetupStep extends InstallStep {
 			   'postgres7' => _('PostgreSQL v7.x and newer'),
 			   'oci8po' => _('Oracle (9i and newer)'),
 			   'db2' => _('IBM DB2 (v8.2 and newer)'),
-			   'mssql' => _('MSSQL (Experimental!)'))
+			   'ado_mssql' => _('MSSQL (Experimental!)'))
 		     as $key => $value) {
 		$templateData['dbList'][$key] = $value;
 	    }
