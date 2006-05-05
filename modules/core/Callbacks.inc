@@ -72,8 +72,8 @@ class CoreCallbacks {
 	    $item = $params['item'];
 	    $canViewParent = false;
 	    if ($item['parentId'] > 0) {
-		list ($ret, $canViewParent) = GalleryCoreApi::hasItemPermission(
-		    $item['parentId'], 'core.view', $theme['actingUserId']);
+		list ($ret, $canViewParent) =
+		    GalleryCoreApi::hasItemPermission($item['parentId'], 'core.view', $userId);
 		if ($ret) {
 		    return $ret;
 		}
@@ -84,7 +84,7 @@ class CoreCallbacks {
 		    return $ret;
 		}
 		list ($ret, $peerIds) =
-		    GalleryCoreApi::fetchChildItemIds($parent, null, null, $theme['actingUserId']);
+		    GalleryCoreApi::fetchChildItemIds($parent, null, null, $userId);
 		if ($ret) {
 		    return $ret;
 		}
