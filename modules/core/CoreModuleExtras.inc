@@ -1912,23 +1912,18 @@ class CoreModuleExtras {
 	     * base classes and set the items to use the PanoramaRenderer instead.
 	     */
 	    $query = '
-              SELECT
-	        [GalleryEntity::id], [GalleryEntity::entityType]
+	      SELECT
+		[GalleryEntity::id], [GalleryEntity::entityType]
 	      FROM
-                [GalleryEntity]
+		[GalleryEntity]
 	      WHERE
-                [GalleryEntity::entityType] IN (\'PanoramaPhotoItem\', \'PanoramaDerivativeImage\')
-            ';
+		[GalleryEntity::entityType] IN (\'PanoramaPhotoItem\', \'PanoramaDerivativeImage\')
+	    ';
 	    list ($ret, $searchResults) = $gallery->search($query, array());
 	    if ($ret) {
 		return $ret;
 	    }
-	    if (!$searchResults->resultCount()) {
-		return null;
-	    }
-
-	    $photos = array();
-	    $derivatives = array();
+	    $photos = $derivatives = array();
 	    while ($result = $searchResults->nextResult()) {
 		$gallery->guaranteeTimeLimit(30);
 		if ($result[1] == 'PanoramaPhotoItem') {
