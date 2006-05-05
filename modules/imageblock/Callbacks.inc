@@ -57,10 +57,9 @@ class ImageBlockCallbacks {
 		$params['show'] = implode('|', array_keys($showMap));
 	    }
 
-	    $vars =& $smarty->_tpl_vars;
-	    if (isset($vars['theme']['actingUserId'])) {
+	    if (isset($userId)) {
 		/* Support guest-preview mode */
-		$params['userId'] = $vars['theme']['actingUserId'];
+		$params['userId'] = $userId;
 	    }
 
 	    /*

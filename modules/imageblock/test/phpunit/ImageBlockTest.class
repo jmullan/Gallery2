@@ -577,7 +577,7 @@ class ImageBlockTest extends GalleryTestCase {
 	if (isset($itemId)) {
 	    $params['itemId'] = $itemId;
 	}
-	$ret = $callbacks->callback($params, $smarty, 'LoadImageBlock');
+	$ret = $callbacks->callback($params, $smarty, 'LoadImageBlock', $userId);
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	    $result = array();
