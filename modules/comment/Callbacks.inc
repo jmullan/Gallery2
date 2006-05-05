@@ -36,13 +36,11 @@ class CommentCallbacks {
 		return $ret;
 	    }
 
-	    list ($ret, $permissions) =
-		GalleryCoreApi::fetchPermissionsForItems(array($itemId), $userId);
+	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($item->getId(), $userId);
 	    if ($ret) {
 		return $ret;
 	    }
-
-	    if (!isset($permissions[$itemId]['comment.view'])) {
+	    if (!isset($permissions['comment.view'])) {
 		return null;
 	    }
 
@@ -87,11 +85,6 @@ class CommentCallbacks {
 		}
 	    } else {
 		$totalComments = 0;
-	    }
-
-	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($item->getId());
-	    if ($ret) {
-		return $ret;
 	    }
 
 	    foreach (array('delete' => 'comment.delete',
