@@ -417,12 +417,10 @@ class GalleryDataItem extends GalleryItem {
     }
 
     /**
-     * Render this item in the given format.  For example, GalleryPhotoItem may want to
-     * render as an <img> tag in the HTML format, whereas GalleryMovieItem would use
-     * <object> or <embed> in HTML.
+     * @see GalleryRenderer::render()
      *
-     * @param string the format (eg, "HTML")
-     * @param array format specific key value pairs
+     * TODO: change this API to match that of GalleryRenderer::render()
+     *       on the next major GalleryModule API bump.
      */
     function render($format, $params) {
 	return null;

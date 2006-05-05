@@ -1896,6 +1896,80 @@ class CoreModuleExtras {
 		}
 	    }
 
+	case '1.1.3':
+	    /* Add renderers to GalleryItem */
+	    $ret = $storage->configureStore($module->getId(), array('GalleryItem:1.1'));
+	    if ($ret) {
+		return $ret;
+	    }
+	    $ret = $storage->execute('UPDATE [GalleryItem] SET [::renderer] = NULL');
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    /*
+	     * Switch PanoramaPhotoItem and PanoramaDerivativeImage entities back to their
+	     * base classes and set the items to use the PanoramaRenderer instead.
+	     */
+	    $query = '
+              SELECT
+	        [GalleryEntity::id], [GalleryEntity::entityType]
+	      FROM
+                [GalleryEntity]
+	      WHERE
+                [GalleryEntity::entityType] IN (\'PanoramaPhotoItem\', \'PanoramaDerivativeImage\')
+            ';
+	    list ($ret, $searchResults) = $gallery->search($query, array());
+	    if ($ret) {
+		return $ret;
+	    }
+	    if (!$searchResults->resultCount()) {
+		return null;
+	    }
+
+	    $photos = array();
+	    $derivatives = array();
+	    while ($result = $searchResults->nextResult()) {
+		$gallery->guaranteeTimeLimit(30);
+		if ($result[1] == 'PanoramaPhotoItem') {
+		    $photos[] = $result[0];
+		} else {
+		    $derivatives[] = $result[0];
+		}
+	    }
+
+	    /* Switch PanoramaPhotoItems back to GalleryPhotoItems */
+	    while ($photos) {
+		$ids = array_splice($photos, 0, 500);
+		$markers = GalleryUtilities::makeMarkers($ids);
+		$query = "UPDATE [GalleryItem] SET [::renderer] = 'PanoramaRenderer' " .
+		    "WHERE [GalleryItem::id] IN ($markers)";
+		$ret = $storage->execute($query, $ids);
+		if ($ret) {
+		    return $ret;
+		}
+
+		$query = "UPDATE [GalleryEntity] SET [::entityType] = 'GalleryPhotoItem' " .
+		    "WHERE [GalleryEntity::id] IN ($markers)";
+		$ret = $storage->execute($query, $ids);
+		if ($ret) {
+		    return $ret;
+		}
+	    }
+
+	    /* Switch PanoramaDerivativeImage back to GalleryDerivativeImage */
+	    while ($derivatives) {
+		$ids = array_splice($derivatives, 0, 500);
+		$markers = GalleryUtilities::makeMarkers($ids);
+		$query = "UPDATE [GalleryEntity] SET [::entityType] = 'GalleryDerivativeImage' " .
+		    "WHERE [GalleryEntity::id] IN ($markers)";
+		$ret = $storage->execute($query, $ids);
+		if ($ret) {
+		    return $ret;
+		}
+	    }
+
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
@@ -2149,6 +2223,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	case '1.1.0.x':
 	case '1.1.1':
 	case '1.1.2':
+	case '1.1.3':
 
 	case 'end of upgrade path':
 	    /*

@@ -25,13 +25,7 @@
  */
 
 /**
- * Load required classes
- */
-GalleryCoreApi::requireOnce('modules/panorama/classes/PanoramaHelper.class');
-
-/**
  * PanoramaSiteAdmin controller tests
- * Also tests PanoramaHelper::assignEntityType,resetPanoramaItems,fetchItemCount
  *
  * @package Panorama
  * @subpackage PHPUnit
@@ -50,36 +44,6 @@ class PanoramaSiteAdminControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
-
-	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_getRootId(), 'image/test',
-		array(), __FILE__, 'GalleryPhotoItem');
-	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
-	}
-
-	$this->_markForCleanup($this->_item);
-
-	$this->_item->setMimeType('image/gif');
-	$ret = PanoramaHelper::assignEntityType($this->_item, true);
-	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
-	}
-
-	list ($ret, $derivative) =
-	    $this->_createDerivative($this->_item, $this->_item->getId(),
-				     DERIVATIVE_TYPE_IMAGE_PREFERRED);
-	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
-	}
-	$ret = PanoramaHelper::assignEntityType($derivative, true);
-	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
-	}
-	$this->_derivative = $derivative;
     }
 
     function testPanoramaSiteAdminControllerUndo() {
@@ -131,79 +95,5 @@ class PanoramaSiteAdminControllerTest extends GalleryControllerTestCase {
 				  'error' => array('form[error][width]')),
 			    $results);
     }
-
-    function testPanoramaSiteAdminControllerReset() {
-
-	$ret = $this->_savePanoramaItems();
-	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
-	}
-
-	list ($ret, $count) = PanoramaHelper::fetchItemCount();
-	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
-	}
-	$this->assert($count >= 2, 'Should be at least two Panorama entities in db');
-
-	GalleryUtilities::putRequestVariable('form[action][reset]', '1');
-
-	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
-						      'subView' => 'panorama.PanoramaSiteAdmin'),
-				  'status' => array('reset' => 1),
-				  'error' => array()),
-			    $results);
-
-	list ($ret, $count) = PanoramaHelper::fetchItemCount();
-	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
-	}
-	$this->assertEquals(0, $count, 'Should be no Panorama entities in db after reset');
-
-	$ret = $this->_restorePanoramaItems();
-	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
-	}
-    }
-
-    function _savePanoramaItems() {
-	global $gallery;
-	$query = 'SELECT [GalleryEntity::id] FROM [GalleryEntity]
-	WHERE [GalleryEntity::entityType] = \'PanoramaPhotoItem\'
-	   OR [GalleryEntity::entityType] = \'PanoramaDerivativeImage\'';
-
-	list ($ret, $results) = $gallery->search($query, array(), array());
-	if ($ret) {
-	    return $ret;
-	}
-	$ids = array();
-	while ($result = $results->nextResult()) {
-	    $ids[] = (int)$result[0];
-	}
-	$this->_panoramaIds = $ids;
-	return null;
-    }
-
-    function _restorePanoramaItems() {
-	if (empty($this->_panoramaIds)) {
-	    return null;
-	}
-	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($this->_panoramaIds);
-	if ($ret) {
-	    return $ret;
-	}
-	foreach ($items as $item) {
-	    $ret = PanoramaHelper::assignEntityType($item, true);
-	    if ($ret) {
-		return $ret;
-	    }
-	}
-	return null;
-    }
-
 }
 ?>

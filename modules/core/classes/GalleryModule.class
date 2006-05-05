@@ -76,6 +76,10 @@ class GalleryModule extends GalleryPlugin {
      * This follows the same rules as the core API.
      * @see GalleryCoreApi::getApiVersion()
      *
+     * TODO: for next major version bump:
+     * - Change GalleryDataItem::render to match GalleryRenderer::render and
+     *   consider dropping the format, since it's always HTML.
+     *
      * @return array major number, minor number
      */
     function getApiVersion() {

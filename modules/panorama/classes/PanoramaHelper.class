@@ -32,37 +32,6 @@
 class PanoramaHelper {
 
     /**
-     * Set entity type for an item
-     *
-     * @param GalleryDataItem item
-     * @param boolean isPanorama true to set panorama type
-     * @return GalleryStatus a status code
-     * @static
-     */
-    function assignEntityType(&$item, $isPanorama) {
-	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($item->getId());
-	if ($ret) {
-	    return $ret;
-	}
-	if (GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
-	    $item->setEntityType(
-		$isPanorama ? 'PanoramaPhotoItem' : 'GalleryPhotoItem');
-	} else if (GalleryUtilities::isA($item, 'GalleryDerivativeImage')) {
-	    $item->setEntityType(
-		$isPanorama ? 'PanoramaDerivativeImage' : 'GalleryDerivativeImage');
-	}
-	$ret = $item->save();
-	if ($ret) {
-	    return $ret;
-	}
-	$ret = GalleryCoreApi::releaseLocks($lockId);
-	if ($ret) {
-	    return $ret;
-	}
-	return null;
-    }
-
-    /**
      * Fetch largest viewable images for use in a panorama
      *
      * @param array of GalleryDataItem
@@ -125,81 +94,6 @@ class PanoramaHelper {
 	    }
 	}
 	return array(null, $data);
-    }
-
-    /**
-     * Count number of panorama entities
-     *
-     * @return array GalleryStatus a status code
-     *               int count
-     * @static
-     */
-    function fetchItemCount() {
-	global $gallery;
-
-	$query = '
-	SELECT
-	  COUNT([GalleryEntity::id])
-	FROM
-	  [GalleryEntity]
-	WHERE
-	  [GalleryEntity::entityType] = \'PanoramaPhotoItem\'
-	  OR
-	  [GalleryEntity::entityType] = \'PanoramaDerivativeImage\'
-	';
-
-	list ($ret, $searchResults) = $gallery->search($query, array(), array());
-	if ($ret) {
-	    return array($ret, null);
-	}
-
-	$count = 0;
-	if ($result = $searchResults->nextResult()) {
-	    $count = (int)$result[0];
-	}
-	return array(null, $count);
-    }
-
-    /**
-     * Reset all panorama entities back to their normal type
-     *
-     * @return GalleryStatus a status code
-     * @static
-     */
-    function resetPanoramaItems() {
-	global $gallery;
-
-	$query = '
-	SELECT
-	  [GalleryEntity::id]
-	FROM
-	  [GalleryEntity]
-	WHERE
-	  [GalleryEntity::entityType] = \'PanoramaPhotoItem\'
-	  OR
-	  [GalleryEntity::entityType] = \'PanoramaDerivativeImage\'
-	';
-
-	list ($ret, $searchResults) = $gallery->search($query, array(), array());
-	if ($ret) {
-	    return $ret;
-	}
-
-	for ($i = 0; $result = $searchResults->nextResult();) {
-	    if ($i++ % 10 == 0) {
-		$gallery->guaranteeTimeLimit(5);
-	    }
-	    $id = (int)$result[0];
-	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($id);
-	    if ($ret) {
-		return $ret;
-	    }
-	    $ret = PanoramaHelper::assignEntityType($item, false);
-	    if ($ret) {
-		return $ret;
-	    }
-	}
-	return null;
     }
 }
 ?>

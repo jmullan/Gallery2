@@ -288,19 +288,44 @@ class GalleryTemplateAdapter {
      * @param array containing item, image, maxSize, fallback, and any img attributes
      * @param object Smarty the smarty instance
      * @return string HTML content
+     *
+     * TODO: Figure out a more graceful way to deal with errors here.
      */
     function image($params, &$smarty) {
-	/* Ask the entity to render itself in HTML */
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($params['item']['id']);
+	list ($ret, $html) = $this->_image($params, $smarty);
 	if ($ret) {
-	    /* TODO: is there a more graceful way to handle this? */
-	    return '[Render error: missing item]';
+	    return '[Render error]';
 	}
 
-	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($params['image']['id']);
-	if ($ret) {
-	    /* TODO: is there a more graceful way to handle this? */
-	    return '[Render error: missing entity]';
+	return $html;
+    }
+
+    /**
+     * Implementation of image() that can return an error.
+     *
+     * @access private
+     * @see GalleryTemplateAdapter::image
+     */
+    function _image($params, &$smarty) {
+	/*
+	 * Cases:
+	 * - Item can render itself
+	 * - Entity can render itself (with info from the item)
+	 * - Renderer can render the entity (with info from the item)
+	 */
+	if ($params['item']['id'] == $params['image']['id']) {
+	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($params['item']['id']);
+	    if ($ret) {
+		return $ret;
+	    }
+	    $entity = null;
+	} else {
+	    list ($ret, $results) = GalleryCoreApi::loadEntitiesById(
+		array($params['item']['id'], $params['image']['id']));
+	    if ($ret) {
+		return $ret;
+	    }
+	    list ($item, $entity) = $results;
 	}
 
 	unset($params['item']);
@@ -311,13 +336,36 @@ class GalleryTemplateAdapter {
 	    $fallback = $params['fallback'] = null;
 	}
 
-	if ($entity->getId() == $item->getId()) {
-	    $html = $item->render('HTML', $params);
+	$rendererClass = $item->getRenderer();
+	if ($rendererClass) {
+	    list ($ret, $renderer) =
+		GalleryCoreApi::newFactoryInstanceById('GalleryRenderer', $rendererClass);
+	    if ($ret) {
+		return $ret;
+	    }
 	} else {
-	    $html = $entity->render('HTML', $item, $params);
+	    $renderer = null;
 	}
 
-	return !empty($html) ? $html : $fallback;
+	/* TODO: Normalize these 3 different APIs */
+	$html = null;
+	if (isset($renderer)) {
+	    $html = $renderer->render('HTML', $entity ? $entity : $item, $item, $params);
+	}
+
+	if ($html === null) {
+	    if ($entity) {
+		$html = $entity->render('HTML', $item, $params);
+	    } else {
+		$html = $item->render('HTML', $params);
+	    }
+	}
+
+	if (empty($html)) {
+	    $html = $fallback;
+	}
+
+	return array(null, $html);
     }
 
     /**

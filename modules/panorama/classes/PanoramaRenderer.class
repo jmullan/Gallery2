@@ -23,46 +23,43 @@
  * @author Alan Harder <alan.harder@sun.com>
  */
 
-GalleryCoreApi::requireOnce('modules/core/classes/GalleryPhotoItem.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryRenderer.class');
 
 /**
- * An extension of GalleryPhotoItem to render in panorama mode
- *
- * @g2 <class-name>PanoramaPhotoItem</class-name>
- * @g2 <parent-class-name>GalleryPhotoItem</parent-class-name>
- * @g2 <schema>
- * @g2   <schema-major>1</schema-major>
- * @g2   <schema-minor>0</schema-minor>
- * @g2 </schema>
- * @g2 <requires-id/>
+ * A GalleryRenderer that uses the panorama applet
  *
  * @package Panorama
  * @subpackage Classes
  */
-class PanoramaPhotoItem extends GalleryPhotoItem {
+class PanoramaRenderer extends GalleryRenderer {
 
     /**
-     * @see GalleryDataItem::render
+     * @see GalleryRenderer::render
      */
-    function render($format, $params) {
+    function render($format, $entity, $item, $params) {
 	global $gallery;
 
 	list ($ret, $viewWidth) = GalleryCoreApi::getPluginParameter('module', 'panorama', 'width');
-	if ($ret || !empty($params['forceRawImage']) || $this->getWidth() < $viewWidth) {
-	    return parent::render($format, $params);
+	if ($ret) {
+	    return $ret;
+	}
+
+	if (!empty($params['forceRawImage']) || $entity->getWidth() < $viewWidth) {
+	    /* Return nothing so that we fall back to the default renderer */
+	    return null;
 	}
 
 	switch($format) {
 	case 'HTML':
 	    $urlGenerator =& $gallery->getUrlGenerator();
 	    $src = $urlGenerator->generateUrl(
-		array('view' => 'core.DownloadItem', 'itemId' => $this->getId(),
-		      'serialNumber' => $this->getSerialNumber()),
+		array('view' => 'core.DownloadItem', 'itemId' => $entity->getId(),
+		      'serialNumber' => $entity->getSerialNumber()),
 		array('forceFullUrl' => true, 'forceSessionId' => true));
 
-	    list ($width, $height) = array($this->getWidth(), $this->getHeight());
-	    $baseUrl = GalleryUtilities::convertPathToUrl(dirname(dirname(__FILE__)),
-							  array('forceFullUrl' => true));
+	    list ($width, $height) = array($entity->getWidth(), $entity->getHeight());
+	    $baseUrl = GalleryUtilities::convertPathToUrl(
+		dirname(dirname(__FILE__)), array('forceFullUrl' => true));
 
 	    return sprintf('
 		    <object width="%d" height="%d"
@@ -93,13 +90,6 @@ class PanoramaPhotoItem extends GalleryPhotoItem {
 	default:
 	    return null;
 	}
-    }
-
-    /**
-     * @see GalleryEntity::getClassName()
-     */
-    function getClassName() {
-	return 'PanoramaPhotoItem';
     }
 }
 ?>

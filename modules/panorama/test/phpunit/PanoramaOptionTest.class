@@ -26,6 +26,7 @@
 
 GalleryCoreApi::requireOnce('lib/tools/phpunit/ItemEditOptionTestCase.class');
 GalleryCoreApi::requireOnce('modules/panorama/classes/PanoramaHelper.class');
+GalleryCoreApi::requireOnce('modules/panorama/classes/PanoramaRenderer.class');
 
 /**
  * PanoramaOption tests
@@ -58,25 +59,32 @@ class PanoramaOptionTest extends ItemEditOptionTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
+
+	$this->_renderer = new PanoramaRenderer();
     }
 
     function _makePanoramas() {
-	$ret = PanoramaHelper::assignEntityType($this->_item, true);
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_item->getId());
 	if ($ret) {
-	    return $ret;
+	    return $this->failWithStatus($ret);
 	}
+
 	list ($ret, $this->_item) = $this->_item->refresh();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$ret = PanoramaHelper::assignEntityType($this->_derivative, true);
-	if ($ret) {
-	    return $ret;
-	}
-	list ($ret, $this->_derivative) = $this->_derivative->refresh();
+
+	$this->_item->setRenderer('PanoramaRenderer');
+	$ret = $this->_item->save();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
+
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
 	return null;
     }
 
@@ -90,13 +98,7 @@ class PanoramaOptionTest extends ItemEditOptionTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assertEquals('PanoramaPhotoItem', $item->getEntityType());
-
-	list ($ret, $item) = $this->_derivative->refresh();
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-	$this->assertEquals('PanoramaDerivativeImage', $item->getEntityType());
+	$this->assertEquals('PanoramaRenderer', $item->getRenderer());
     }
 
     function testPanoramaOff() {
@@ -112,14 +114,7 @@ class PanoramaOptionTest extends ItemEditOptionTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assertEquals('GalleryPhotoItem', $item->getEntityType());
-
-	list ($ret, $item) = $this->_derivative->refresh();
-	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
-	}
-	$this->assertEquals('GalleryDerivativeImage', $item->getEntityType());
+	$this->assertEquals(null, $item->getRenderer());
     }
 
     function testHelper() {
@@ -139,7 +134,7 @@ class PanoramaOptionTest extends ItemEditOptionTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$html = $this->_item->render('HTML', array());
+	$html = $this->_renderer->render('HTML', $this->_item, $this->_item, array());
 	$this->assert(preg_match('{<object[^>]*archive="http}', $html),
 		      'item: jar full url: ' . htmlentities($html));
 	$this->assert(preg_match('{<param[^>]*name="ScrollerThumb"[^>]*value="http}', $html),
@@ -148,7 +143,7 @@ class PanoramaOptionTest extends ItemEditOptionTestCase {
 				 . SESSION_ID_PARAMETER . '}', $html),
 		      'item: image full url: ' . htmlentities($html));
 
-	$html = $this->_derivative->render('HTML', $this->_item, array());
+	$html = $this->_renderer->render('HTML', $this->_derivative, $this->_item, array());
 	$this->assert(preg_match('{<object[^>]*archive="http}', $html),
 		      'deriv: jar full url: ' . htmlentities($html));
 	$this->assert(preg_match('{<param[^>]*name="ScrollerThumb"[^>]*value="http}', $html),
@@ -156,14 +151,15 @@ class PanoramaOptionTest extends ItemEditOptionTestCase {
 	$this->assert(preg_match('{<param[^>]*name="PanoramaTile"[^>]*value="http[^"]*'
 				 . SESSION_ID_PARAMETER . '}', $html),
 		      'deriv: image full url: ' . htmlentities($html));
-    
+
 	/* Accept forceRawImage parameter to bypass applet display */
-	$html = $this->_item->render('HTML', array('forceRawImage' => true));
-	$this->assert(strpos($html, '<img') !== false && strpos($html, '<object') === false,
-		      'item: raw image');
-	$html = $this->_derivative->render('HTML', $this->_item, array('forceRawImage' => true));
-	$this->assert(strpos($html, '<img') !== false && strpos($html, '<object') === false,
-		      'deriv: raw image');
+	$html = $this->_renderer->render(
+	    'HTML', $this->_item, $this->_item, array('forceRawImage' => true));
+	$this->assertEquals(null, $html, 'item: raw image');
+
+	$html = $this->_renderer->render(
+	    'HTML', $this->_derivative, $this->_item, array('forceRawImage' => true));
+	$this->assertEquals(null, $html, 'deriv: raw image');
     }
 }
 ?>

@@ -43,7 +43,7 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryFileSystemEntity.class'
  * @g2 <parent-class-name>GalleryFileSystemEntity</parent-class-name>
  * @g2 <schema>
  * @g2   <schema-major>1</schema-major>
- * @g2   <schema-minor>1</schema-minor>
+ * @g2   <schema-minor>2</schema-minor>
  * @g2 </schema>
  * @g2 <requires-id/>
  *
@@ -109,6 +109,20 @@ class GalleryItem extends GalleryFileSystemEntity {
      * @access public
      */
     var $ownerId;
+
+    /**
+     * The renderer for drawing this item
+     *
+     * @g2 <member>
+     * @g2   <member-name>renderer</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>MEDIUM</member-size>
+     * @g2 </member>
+     *
+     * @var int $renderer
+     * @access public
+     */
+    var $renderer;
 
     /**
      * The summary of this item
@@ -216,6 +230,7 @@ class GalleryItem extends GalleryFileSystemEntity {
 	$this->setSummary(null);
 	$this->setDescription(null);
 	$this->setKeywords(null);
+	$this->setRenderer(null);
 
 	return null;
     }
@@ -486,6 +501,14 @@ class GalleryItem extends GalleryFileSystemEntity {
 
     function setOwnerId($ownerId) {
 	$this->ownerId = $ownerId;
+    }
+
+    function getRenderer() {
+	return $this->renderer;
+    }
+
+    function setRenderer($renderer) {
+	$this->renderer = $renderer;
     }
 
     function getSummary() {

@@ -58,13 +58,6 @@ class PanoramaSiteAdminController extends GalleryController {
 		}
 		$status['saved'] = 1;
 	    }
-	} else if(isset($form['action']['reset'])) {
-	    GalleryCoreApi::requireOnce('modules/panorama/classes/PanoramaHelper.class');
-	    $ret = PanoramaHelper::resetPanoramaItems();
-	    if ($ret) {
-		return array($ret, null);
-	    }
-	    $status['reset'] = 1;
 	}
 
 	/* Figure out where to redirect upon success */
@@ -102,18 +95,11 @@ class PanoramaSiteAdminView extends GalleryView {
 	}
 	if ($form['formName'] != 'PanoramaSiteAdmin') {
 	    $form['formName'] = 'PanoramaSiteAdmin';
-	    list ($ret, $param) =
-		GalleryCoreApi::fetchAllPluginParameters('module', 'panorama');
+	    list ($ret, $form['width']) =
+		GalleryCoreApi::fetchPluginParameter('module', 'panorama', 'width');
 	    if ($ret) {
 		return array($ret, null);
 	    }
-	    foreach ($param as $key => $value) {
-		$form[$key] = $value;
-	    }
-	}
-	list ($ret, $form['count']) = PanoramaHelper::fetchItemCount();
-	if ($ret) {
-	    return array($ret, null);
 	}
 
 	$template->setVariable('controller', 'panorama.PanoramaSiteAdmin');

@@ -1,0 +1,54 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2006 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+/**
+ * @version $Revision: 13541 $ $Date: 2006-04-27 09:58:35 -0700 (Thu, 27 Apr 2006) $
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * An interface for classes that render GalleryDataItems in different
+ * formats.
+ *
+ * @package GalleryCore
+ * @subpackage Classes
+ */
+class GalleryRenderer {
+    /**
+     * Render the given GalleryItem in the given output format.  For example, you can render a
+     * GalleryPhotoItem with an <img> tag in the HTML format, whereas GalleryMovieItem would use
+     * <object> or <embed>.
+     *
+     * This method takes an entity to render, and the item which has its metadata.  In some cases,
+     * these will be the same thing (like when rendering the original of a GalleryPhotoItem).  In
+     * other cases, it will be different, like when you're rendering a resize.  In that case, the
+     * entity would be a GalleryDerivative and the item would be the GalleryPhotoItem.
+     *
+     * @param object GalleryEntity the entity to render
+     * @param object GalleryItem the parent item
+     * @param string the format (eg, "HTML")
+     * @param array format specific key value pairs
+     * @return string formatted output
+     */
+    function render($format, $entity, $item, $params) {
+	return null;
+    }
+}
+?>
