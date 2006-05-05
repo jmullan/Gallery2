@@ -263,12 +263,10 @@ class GalleryTemplateAdapter {
 	    return '[Translation error]';
 	}
 
-        return '<input type="checkbox" id="' . $params['module'] .
-            '_ChangeInDescendents"	name="' .
-            GalleryUtilities::prefixFormVariable(
-                'form[changeInDescendents][' . $params['module'] . ']' ) .
-            '"/>  <label for="' . $params['module'] . '_ChangeInDescendents"> ' .
-            $text . '</label>';
+	return '<input type="checkbox" id="' . $params['module'] . '_ChangeInDescendents" name="'
+	     . GalleryUtilities::prefixFormVariable(
+		     'form[changeInDescendents][' . $params['module'] . ']') . '"/> <label for="'
+	     . $params['module'] . '_ChangeInDescendents"> ' . $text . '</label>';
     }
 
     /**
@@ -316,14 +314,14 @@ class GalleryTemplateAdapter {
 	if ($params['item']['id'] == $params['image']['id']) {
 	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($params['item']['id']);
 	    if ($ret) {
-		return $ret;
+		return array($ret, null);
 	    }
 	    $entity = null;
 	} else {
 	    list ($ret, $results) = GalleryCoreApi::loadEntitiesById(
 		array($params['item']['id'], $params['image']['id']));
 	    if ($ret) {
-		return $ret;
+		return array($ret, null);
 	    }
 	    list ($item, $entity) = $results;
 	}
@@ -341,7 +339,7 @@ class GalleryTemplateAdapter {
 	    list ($ret, $renderer) =
 		GalleryCoreApi::newFactoryInstanceById('GalleryRenderer', $rendererClass);
 	    if ($ret) {
-		return $ret;
+		return array($ret, null);
 	    }
 	} else {
 	    $renderer = null;
