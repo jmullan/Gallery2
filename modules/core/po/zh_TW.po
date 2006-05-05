@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.0\n"
+"Project-Id-Version: Gallery: Core 1.1.4\n"
 "POT-Creation-Date: 2005-07-27 23:11-0400\n"
 "PO-Revision-Date: 2005-08-24 14:00-0400\n"
 "Last-Translator: Stephen Chu <stephen@ju-ju.com>\n"
@@ -79,24 +79,6 @@ msgstr[0] "%d 星期"
 msgid "<none>"
 msgstr "<無>"
 
-msgid "install"
-msgstr "安裝"
-
-msgid "upgrade"
-msgstr "昇級"
-
-msgid "configure"
-msgstr "設定"
-
-msgid "activate"
-msgstr "啟動"
-
-msgid "uninstall"
-msgstr "卸載"
-
-msgid "deactivate"
-msgstr "關閉"
-
 msgid "No acceleration"
 msgstr "無加速"
 
@@ -105,6 +87,9 @@ msgstr "部分加速"
 
 msgid "Full acceleration"
 msgstr "完全加速"
+
+msgid "Themes"
+msgstr "佈景主題"
 
 msgid "Performing Maintenance Tasks"
 msgstr "系統維護中"
@@ -121,6 +106,21 @@ msgstr "昇級"
 
 msgid "Download"
 msgstr "下載"
+
+msgid "install"
+msgstr "安裝"
+
+msgid "upgrade"
+msgstr "昇級"
+
+msgid "activate"
+msgstr "啟動"
+
+msgid "uninstall"
+msgstr "卸載"
+
+msgid "deactivate"
+msgstr "關閉"
 
 msgid "Inherit settings from parent album"
 msgstr "從上層相簿中繼承設定值"
@@ -493,17 +493,11 @@ msgstr "你的帳戶"
 msgid "Logout"
 msgstr "登出"
 
-msgid "Modules"
-msgstr "模組"
+msgid "Plugins"
+msgstr ""
 
 msgid "Repository"
 msgstr "軟體庫"
-
-msgid "Themes"
-msgstr "佈景主題"
-
-msgid "Display"
-msgstr "顯示"
 
 msgid "Users"
 msgstr "用戶"
@@ -519,6 +513,9 @@ msgstr "工具優先次序"
 
 msgid "Graphics Toolkits"
 msgstr "圖形工具"
+
+msgid "Defaults"
+msgstr "預設值"
 
 msgid "Account Settings"
 msgstr "帳戶設定"
@@ -824,10 +821,10 @@ msgid "%dx%d"
 msgstr "%d乘%d"
 
 msgid "Audio"
-msgstr "音頻"
+msgstr "音樂/聲音"
 
 msgid "audio"
-msgstr "音頻"
+msgstr "音樂/聲音"
 
 msgid "Archive"
 msgstr "壓縮檔"
@@ -847,11 +844,9 @@ msgstr "試算表"
 msgid "spreadsheet"
 msgstr "試算表"
 
-msgid "Unknown"
-msgstr "未知"
-
-msgid "unknown"
-msgstr "未知"
+#, fuzzy
+msgid "file"
+msgstr "檔案"
 
 #, c-format
 msgid ""
@@ -871,6 +866,49 @@ msgstr "用戶"
 
 msgid "user"
 msgstr "用戶"
+
+#, fuzzy
+msgid "Integrity Check"
+msgstr "索引完整性驗証失敗。"
+
+msgid "Check data integrity and report any inconsistencies."
+msgstr ""
+
+msgid "Loading all entities"
+msgstr ""
+
+msgid "Checking for orphaned entity data"
+msgstr ""
+
+msgid "Checking for orphaned item data"
+msgstr ""
+
+msgid "Checking for orphaned plugin data"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Checked %d entities"
+msgstr "檢查了 %d 個項目"
+
+#, fuzzy, c-format
+msgid "Failed to load entity ids: %s"
+msgstr "無法增加%s"
+
+#, c-format
+msgid "Orphaned data in table %s with missing parent entity; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with no row in %s table; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with missing derivative source; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Unknown plugin: %s %s"
+msgstr ""
 
 msgid "Optimize database"
 msgstr "資料庫最佳化"
@@ -927,6 +965,9 @@ msgstr "詳細系統資料；可用來貼入 G2 技術支援論譠。"
 
 msgid "core"
 msgstr "核心"
+
+msgid "unknown"
+msgstr "不明文件"
 
 msgid "Gallery version"
 msgstr "Gallery 版本"
@@ -1556,85 +1597,6 @@ msgstr "馬上執行"
 msgid "Last Run Details:"
 msgstr "上次執行細節："
 
-msgid "Gallery Modules"
-msgstr "Gallery 模組"
-
-#, c-format
-msgid "Successfully installed and auto-configured module %s"
-msgstr "「%s」模組安裝並自動設定成功"
-
-#, c-format
-msgid "Successfully installed module %s"
-msgstr "「%s」模組安裝成功"
-
-#, c-format
-msgid "Successfully configured module %s"
-msgstr "「%s」模組昇級成功"
-
-#, c-format
-msgid "Successfully upgraded module %s"
-msgstr "「%s」模組昇級成功"
-
-#, c-format
-msgid "Successfully activated module %s"
-msgstr "「%s」模組啟動成功"
-
-#, c-format
-msgid "Successfully deactivated module %s"
-msgstr "「%s」模組關閉成功"
-
-#, c-format
-msgid "Successfully uninstalled module %s"
-msgstr "「%s」模組卸載成功"
-
-msgid ""
-"Gallery features come as separate modules.  You can download and install modules to add more "
-"features to your Gallery, or you can disable features if you don't want to use them.  In "
-"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
-"don't wish to use a feature, you can deactivate it."
-msgstr ""
-"Gallery 相關功能均來自獨立的模組。你可以通過下載並安裝模組來增加 Gallery 功能，或通過關閉模組"
-"來禁用不使用的功能。要使用一個功能，你必須安裝，設定（如需要）並啟動它。如果你不想使用一個功"
-"能，可以關閉它。"
-
-msgid "Module Name"
-msgstr "模組名稱"
-
-msgid "Version"
-msgstr "版本"
-
-msgid "Installed"
-msgstr "安裝版本"
-
-msgid "Actions"
-msgstr "操作"
-
-msgid "Status: Not Installed"
-msgstr "狀態：未安裝"
-
-msgid "Status: Active"
-msgstr "狀態：啟動"
-
-msgid "Status: Inactive"
-msgstr "狀態：關閉"
-
-msgid "Status: Upgrade Required (Inactive)"
-msgstr "狀態：需要昇級 (關閉)"
-
-msgid "Status: Incompatible Module (Inactive)"
-msgstr "狀態：模組不相容 (關閉)"
-
-msgid "Incompatible module!"
-msgstr "模組不相容！"
-
-#, c-format
-msgid "Core API Required: %s (available: %s)"
-msgstr "核心API需要：%s (%s 可用)"
-
-#, c-format
-msgid "Module API Required: %s (available: %s)"
-msgstr "模組API需要：%s (%s 可用)"
-
 msgid "Confirm module uninstall"
 msgstr "確認模組卸載"
 
@@ -1719,6 +1681,100 @@ msgstr "有效期限："
 msgid "Clear Saved Pages"
 msgstr "清除儲存頁面"
 
+msgid "Status: Inactive"
+msgstr "狀態：關閉"
+
+#, fuzzy
+msgid "__PLUGIN__ deactivated"
+msgstr "關閉"
+
+msgid "Status: Active"
+msgstr "狀態：啟動"
+
+msgid "__PLUGIN__ activated"
+msgstr ""
+
+msgid "Status: Not Installed"
+msgstr "狀態：未安裝"
+
+msgid "__PLUGIN__ uninstalled"
+msgstr ""
+
+msgid "Status: Upgrade Required (Inactive)"
+msgstr "狀態：需要昇級 (關閉)"
+
+#, fuzzy
+msgid "Status: Incompatible Plugin (Inactive)"
+msgstr "狀態：模組不相容 (關閉)"
+
+msgid "Status: Inactive (Configuration Required)"
+msgstr ""
+
+msgid "__PLUGIN__ needs configuration"
+msgstr ""
+
+#, fuzzy
+msgid "Gallery Plugins"
+msgstr "Gallery 模組"
+
+#, fuzzy
+msgid ""
+"Gallery features come as separate plugins.  You can download and install plugins to add more "
+"features to your Gallery, or you can disable features if you don't want to use them.  In "
+"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
+"don't wish to use a feature, you can deactivate it."
+msgstr ""
+"Gallery 相關功能均來自獨立的模組。你可以通過下載並安裝模組來增加 Gallery 功能，或通過關閉模組"
+"來禁用不使用的功能。要使用一個功能，你必須安裝，設定（如需要）並啟動它。如果你不想使用一個功"
+"能，可以關閉它。"
+
+#, fuzzy
+msgid "up to date"
+msgstr "更新"
+
+#, fuzzy
+msgid "disabled"
+msgstr "%d 個項目失敗"
+
+#, fuzzy
+msgid "upgrade required"
+msgstr "（必要）"
+
+#, fuzzy
+msgid "not installed"
+msgstr "卸載"
+
+#, fuzzy
+msgid "incompatible"
+msgstr "不相容的模組"
+
+#, fuzzy
+msgid "Plugin Name"
+msgstr "全名"
+
+msgid "Version"
+msgstr "版本"
+
+msgid "Installed"
+msgstr "安裝版本"
+
+msgid "Actions"
+msgstr "操作"
+
+msgid "Incompatible plugin!"
+msgstr "不相容的模組！"
+
+#, c-format
+msgid "Core API Required: %s (available: %s)"
+msgstr "核心API需要：%s (%s 可用)"
+
+#, c-format
+msgid "Plugin API Required: %s (available: %s)"
+msgstr "模組API需要：%s (%s 可用)"
+
+msgid "configure"
+msgstr "設定"
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr "請確定你的網路連線的設定是正確的或稍後再試。"
 
@@ -1730,6 +1786,9 @@ msgstr "所有插入組件都已經是最新版。"
 
 msgid "Common Tasks"
 msgstr "共通作業"
+
+msgid "Modules"
+msgstr "模組"
 
 msgid "Warning: Experimental feature!"
 msgstr "警告：實驗中的功能！"
@@ -1839,18 +1898,14 @@ msgstr ""
 msgid "Theme Name"
 msgstr "佈景主題名稱"
 
+msgid "Module Name"
+msgstr "模組名稱"
+
 msgid "Latest"
 msgstr "最新"
 
 msgid "Incompatible Plugin"
 msgstr "不相容的模組"
-
-msgid "Incompatible plugin!"
-msgstr "不相容的模組！"
-
-#, c-format
-msgid "Plugin API Required: %s (available: %s)"
-msgstr "模組API需要：%s (%s 可用)"
 
 msgid "No packages have been selected."
 msgstr "沒有選取任何軟體包。"
@@ -1959,25 +2014,6 @@ msgstr "預設相簿設定儲存成功"
 
 msgid "Restored theme settings"
 msgstr "重新載入佈景主題設定"
-
-msgid "All Themes"
-msgstr "所有佈景主題"
-
-msgid "Defaults"
-msgstr "預設值"
-
-msgid "Status: Incompatible Theme (Inactive)"
-msgstr "狀態：佈景主題不相容 (關閉)"
-
-msgid "Incompatible theme!"
-msgstr "不相容的佈景主題！"
-
-#, c-format
-msgid "Theme API Required: %s (available: %s)"
-msgstr "核心API需要：%s (%s 可用)"
-
-msgid "(default)"
-msgstr "（預設）"
 
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
@@ -2705,6 +2741,10 @@ msgid ""
 "or modify a thumbnail."
 msgstr "沒有啟動的圖形工具支援這個照片格式，所以無法建立或更改縮略圖。"
 
+#, fuzzy
+msgid "Unable to create a thumbnail for this item"
+msgstr "你必須輸入這個項目的名稱"
+
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the movie's width and "
 "height.  If you have installed a graphics toolkit that can handle movie types, then these "
@@ -3424,6 +3464,9 @@ msgstr "%d. %s"
 msgid "Size: "
 msgstr "大小："
 
+msgid "Unknown"
+msgstr "未知"
+
 msgid "Full size: "
 msgstr "全尺寸："
 
@@ -3453,3 +3496,48 @@ msgstr "[測試] 第二個權限"
 
 msgid "Unit test theme"
 msgstr "單元測試佈景主題"
+
+#~ msgid "Display"
+#~ msgstr "顯示"
+
+#~ msgid "Successfully installed and auto-configured module %s"
+#~ msgstr "「%s」模組安裝並自動設定成功"
+
+#~ msgid "Successfully installed module %s"
+#~ msgstr "「%s」模組安裝成功"
+
+#~ msgid "Successfully configured module %s"
+#~ msgstr "「%s」模組昇級成功"
+
+#~ msgid "Successfully upgraded module %s"
+#~ msgstr "「%s」模組昇級成功"
+
+#~ msgid "Successfully activated module %s"
+#~ msgstr "「%s」模組啟動成功"
+
+#~ msgid "Successfully deactivated module %s"
+#~ msgstr "「%s」模組關閉成功"
+
+#~ msgid "Successfully uninstalled module %s"
+#~ msgstr "「%s」模組卸載成功"
+
+#~ msgid "Incompatible module!"
+#~ msgstr "模組不相容！"
+
+#~ msgid "Module API Required: %s (available: %s)"
+#~ msgstr "模組API需要：%s (%s 可用)"
+
+#~ msgid "All Themes"
+#~ msgstr "所有佈景主題"
+
+#~ msgid "Status: Incompatible Theme (Inactive)"
+#~ msgstr "狀態：佈景主題不相容 (關閉)"
+
+#~ msgid "Incompatible theme!"
+#~ msgstr "不相容的佈景主題！"
+
+#~ msgid "Theme API Required: %s (available: %s)"
+#~ msgstr "核心API需要：%s (%s 可用)"
+
+#~ msgid "(default)"
+#~ msgstr "（預設）"

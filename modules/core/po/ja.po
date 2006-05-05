@@ -21,10 +21,10 @@
 # - Kennichi Uehara <ken.w3m+nospam@gmail.com>
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.3\n"
+"Project-Id-Version: Gallery: Core 1.1.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-08-06 00:53+0900\n"
-"PO-Revision-Date: 2006-04-08 13:45+0900\n"
+"PO-Revision-Date: 2006-05-03 23:51+0900\n"
 "Last-Translator: Yosuke Suzuki\n"
 "Language-Team: Japanese <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -592,13 +592,12 @@ msgstr "現在のセッション消去の設定に従って、すべての持続
 msgid "Delete database cache"
 msgstr "データベースキャッシュ削除"
 
-#, fuzzy
 msgid ""
 "Gallery stores commonly used database information on disk for increased performance. If you "
 "modify the database directly, you should run this task to clean out the cache and force "
 "Gallery to reload the information from the database."
 msgstr ""
-"Gallery 共通して使われるデータベース情報を、パフォーマンスアップのためにディスクに保存しま"
+"Galleryは共通して使われるデータベース情報を、パフォーマンスアップのためにディスクに保存しま"
 "す。もしデータベースを直接編集した場合、このタスクを実行してキャッシュを掃除し、Gallery に"
 "データベースから情報を再読み込みさせてください。"
 
@@ -621,11 +620,8 @@ msgid ""
 "file."
 msgstr ""
 "Galleryはパフォーマンス改善のためにテンプレートファイルをコンパイルして保存しておきます。"
-"<i>Smarty error</i> の問題に遭遇したらこのタスクを実行してください。\n"
-"Gallery compiles template files and saves them for increased performance.  If you're "
-"experiencing problems that say <i>Smarty error</i> then you might try running this task.  "
-"Also run this if you remove a local/*.tpl file so Smarty will switch back to the default tpl "
-"file."
+"<i>Smarty error</i> の問題に遭遇したらこのタスクを実行してください。そしてもしlocal/*.tpl の"
+"ファイルを削除してしまった場合にも、デフォルトのtplファイルに戻れるようにしてください。\n"
 
 msgid "Template cache deleted successfully"
 msgstr "テンプレートキャッシュの削除に成功しました"
@@ -728,7 +724,6 @@ msgstr "&laquo; デフォルトのソート順 &laquo;"
 msgid "Manual sort order"
 msgstr "手動のソート順"
 
-#, fuzzy
 msgid "Origination Date"
 msgstr "創作日"
 
@@ -864,11 +859,9 @@ msgstr "スプレッドシート"
 msgid "spreadsheet"
 msgstr "スプレッドシート"
 
-msgid "Unknown"
-msgstr "未知"
-
-msgid "unknown"
-msgstr "未知"
+#, fuzzy
+msgid "file"
+msgstr "ファイル"
 
 #, c-format
 msgid ""
@@ -993,6 +986,9 @@ msgstr "システム情報を取得(G2 サポートフォーラムにコピー&a
 
 msgid "core"
 msgstr "コア"
+
+msgid "unknown"
+msgstr "未知"
 
 msgid "Gallery version"
 msgstr "Gallery バージョン"
@@ -1321,9 +1317,8 @@ msgstr ""
 "て、こうした影響を減らすことができます。もしあなたのホストが共有の環境で、ホストから不満を伝"
 "えられている場合は、あなたの優先度を下げるようにしてください。"
 
-#, fuzzy
 msgid "Priority"
-msgstr "ツールキットの優先順位"
+msgstr "優先順位"
 
 msgid "Save"
 msgstr "保存"
@@ -1712,12 +1707,11 @@ msgstr "中程度の高速化"
 msgid "High acceleration"
 msgstr "高度の高速化"
 
-#, fuzzy
 msgid "Guest Users"
-msgstr "ゲストユーザのみ"
+msgstr "ゲストユーザ"
 
 msgid "Expires after:"
-msgstr ""
+msgstr "消去までの時間"
 
 msgid "Clear Saved Pages"
 msgstr "保存されたページを消去する"
@@ -1942,7 +1936,7 @@ msgstr ""
 msgid "Incompatible plugins are marked with an exclamation icon."
 msgstr "同時に利用できないプラグインは「！」が付いています"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "A new core module version is available. There may be plugins that are incompatible with the "
 "installed core module, which are not shown here. You can view a %scomplete list%s of "
@@ -2077,11 +2071,11 @@ msgstr "デフォルトのアルバム設定の保存に成功しました"
 msgid "Restored theme settings"
 msgstr "保存されたテーマの設定"
 
-#, fuzzy
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
 "each album."
-msgstr "これはデフォルト値です。それぞれのアルバムで別の値に設定できます。"
+msgstr ""
+"これらはアルバム表示のデフォルト設定です。それぞれのアルバムごとに別の値に設定できます。"
 
 msgid "Default sort order"
 msgstr "既定のソート順:"
@@ -2096,10 +2090,9 @@ msgstr "新しいアルバム"
 msgid "%s Theme Settings"
 msgstr "%s テーマ設定"
 
-#, fuzzy
 msgid ""
 "These are the global settings for the theme.  They can be overridden at the album level."
-msgstr "これらはレイアウトのグローバル設定です。これらはアルバムレベルで個別に設定できます。"
+msgstr "これらはテーマのグローバル設定です。これらはアルバムレベルで個別に設定できます。"
 
 msgid "Available"
 msgstr "有効なもの"
@@ -2737,11 +2730,9 @@ msgstr "0以上の数字を入力しなくてはなりません"
 msgid "Height"
 msgstr "高さ"
 
-#, fuzzy
 msgid "There were errors saving some items"
 msgstr "いくつかのアイテム保存時にエラーが発生しました"
 
-#, fuzzy
 msgid "There were errors saving all items"
 msgstr "全てのアイテム保存時にエラーが発生しました"
 
@@ -2941,7 +2932,6 @@ msgstr "サイズを入力しなくてはなりません"
 msgid "Preserve Original"
 msgstr "オリジナルを保護"
 
-#, fuzzy
 msgid ""
 "Gallery does not modify your original photo when rotating and scaling. Instead, it "
 "duplicates your photo and works with copies.  This requires a little extra disk space but "
@@ -2949,9 +2939,9 @@ msgid ""
 "(rotating, scaling, etc) to modify the original."
 msgstr ""
 "Galleryは画像の回転やサイズ変更をする際にも、元の画像を変更することはありません。その代わり"
-"に、画像の複製を作ってそれを扱います。これには少し余分なディスクスペースが必要です。このオプ"
-"ションを無効にすると、どんな作業も元の画像に作用します。これは元の画像を元に戻せなくなりま"
-"す。"
+"に、画像の複製を作ってそれを扱います。これには少し余分なディスクスペースが必要ですが、元の画"
+"像を損なうことはありません。このオプションを無効にすると、どの作業（回転、大きさの変更）は元"
+"の画像に行います。"
 
 msgid "This is a link to another photo, so you cannot change the original"
 msgstr "これは他の画像へのリンクですので、オリジナルを変更することはできません"
@@ -3121,7 +3111,6 @@ msgstr "入力したユーザ名は無効です"
 msgid "Apply changes"
 msgstr "変更を適用"
 
-#, fuzzy
 msgid ""
 "This item has sub-items.  The changes you make here can be applied to just this item, or you "
 "can apply them to all sub-items.  Note that applying changes to sub-items will merge your "
@@ -3245,21 +3234,21 @@ msgstr "コンフィグレーションエラー: テーマ欠落"
 msgid "Missing Theme"
 msgstr "テーマ欠落"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "This page is configured to use the %s theme, but it is either inactive, not installed, or "
 "incompatible."
 msgstr ""
 "このアルバムはテーマ %s を使うように設定されています。しかしアクティブでないか、インストール"
-"されていません"
+"されていないか、利用できません"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "This album is configured to use the %s theme, but it is either inactive, not installed, or "
 "incompatible."
 msgstr ""
 "このアルバムはテーマ %s を使うように設定されています。しかしアクティブでないか、インストール"
-"されていません"
+"されていないか、利用できません"
 
 #, c-format
 msgid ""
@@ -3363,9 +3352,8 @@ msgstr "ようこそ、 %s ！"
 msgid "Account settings saved successfully"
 msgstr "アカウント設定の保存に成功しました。"
 
-#, fuzzy
 msgid "(required, password required for change)"
-msgstr "（変更には、パスワードが必要です)"
+msgstr "（必須、変更にはパスワードが必要です)"
 
 msgid "(suggested, password required for change)"
 msgstr "(推奨、変更にはパスワードが必要です)"
@@ -3617,6 +3605,9 @@ msgstr "%d。 %s"
 msgid "Size: "
 msgstr "サイズ: "
 
+msgid "Unknown"
+msgstr "未知"
+
 msgid "Full size: "
 msgstr "完全: "
 
@@ -3632,7 +3623,6 @@ msgstr "ドロップダウンメニューを使う"
 msgid "Login block"
 msgstr "ログインブロック"
 
-#, fuzzy
 msgid "Links to album/photo peers"
 msgstr "アルバム／写真　へリンク"
 
