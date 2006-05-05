@@ -11,7 +11,7 @@ $path = $argv[1];
 $langpath = preg_replace('{(..)_..\.po$}', '$1.po', $path);
 
 if ($langpath == $path || !file_exists($langpath)) {
-    if ($langpath != $path && !in_array($langpath, array('en.po', 'zh.po'))) {
+    if ($langpath != $path && !in_array(basename($langpath), array('en.po', 'zh.po'))) {
 	fwrite(STDERR, "\nWarning: $path without $langpath\n");
     }
     list ($po, $header) = readPo($path);
