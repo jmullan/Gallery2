@@ -221,7 +221,7 @@ class FfmpegModule extends GalleryModule {
 	    if ($ret) {
 		return array($ret, null);
 	    }
-	    $priority++;
+	    $priority = min($priority + 1, 40);
 	}
 
 	foreach ($results['operations'] as $operation => $info) {

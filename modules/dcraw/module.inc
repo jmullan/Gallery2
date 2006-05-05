@@ -77,7 +77,7 @@ class DcrawModule extends GalleryModule {
 	    if ($ret) {
 		return array($ret, null);
 	    }
-	    $priority++;
+	    $priority = min($priority + 1, 40);
 	}
 
 	$ret = GalleryCoreApi::registerToolkitOperation(

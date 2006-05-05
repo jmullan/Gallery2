@@ -98,6 +98,11 @@ class AdminToolkitPriorityView extends GalleryView {
 	    return array($ret, null);
 	}
 	asort($list);
+	/* Reset all priorities to start of managed-priority window; ensure we break any ties */
+	$priority = 20;
+	foreach ($list as $toolkit => $tmp) {
+	    $list[$toolkit] = $priority++;
+	}
 
 	$AdminToolkitPriority = array('list' => $list, 'count' => count($list));
 	$template->setVariable('AdminToolkitPriority', $AdminToolkitPriority);
