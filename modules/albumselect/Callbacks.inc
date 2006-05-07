@@ -77,7 +77,8 @@ class AlbumSelectCallbacks {
 		$treeList = array();
 
 		if ($params['sort'] != 'album') {
-		    list ($ret, $tree) = GalleryCoreApi::fetchAlbumTree($rootAlbumId, null, $userId);
+		    list ($ret, $tree) =
+			GalleryCoreApi::fetchAlbumTree($rootAlbumId, null, $userId);
 		    if ($ret) {
 			if ($ret->getErrorCode() & ERROR_PERMISSION_DENIED) {
 			    $tree = null;

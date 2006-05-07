@@ -295,11 +295,11 @@ class CharsetTest extends GalleryTestCase {
 	$gallery->_phpVm = $phpVm;
 	$this->assertEquals('ASCII', GalleryCharsetHelper_simple::detectSystemCharset());
 
-	/* We can override what the system tells us using GalleryCapabilities */
-	GalleryCapabilities::set('systemCharset', 'xyz123');
+	/* We can override what the system tells us using $gallery->setConfig */
+	$gallery->setConfig('systemCharset', 'xyz123');
 	GalleryDataCache::reset();
 	$this->assertEquals('xyz123', GalleryCharsetHelper_simple::detectSystemCharset());
-	GalleryCapabilities::set('systemCharset', null);
+	$gallery->setConfig('systemCharset', null);
     }
 
     function testDetectSourceEncodingWithoutNlLangInfo() {
@@ -348,11 +348,11 @@ class CharsetTest extends GalleryTestCase {
 	$gallery->_phpVm = $phpVm;
 	$this->assertEquals('CP1251', GalleryCharsetHelper_simple::detectSystemCharset());
 
-	/* We can override what the system tells us using GalleryCapabilities */
-	GalleryCapabilities::set('systemCharset', 'xyz123');
+	/* We can override what the system tells us using $gallery->setConfig */
+	$gallery->setConfig('systemCharset', 'xyz123');
 	GalleryDataCache::reset();
 	$this->assertEquals('xyz123', GalleryCharsetHelper_simple::detectSystemCharset());
-	GalleryCapabilities::set('systemCharset', null);
+	$gallery->setConfig('systemCharset', null);
     }
 
     function testDetectSourceEncodingWithOpenBSDBug() {
