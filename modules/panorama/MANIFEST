@@ -1,12 +1,10 @@
 # File crc32 crc32(crlf) size size(crlf)  or  R File
 modules/panorama/Panorama.inc	1702368203	2597345160	2616	2697
-modules/panorama/PanoramaOption.inc	1281066758	3885797444	3389	3489
-modules/panorama/PanoramaSiteAdmin.inc	1273461766	2329760901	3617	3741
-R	modules/panorama/classes/Entities.inc
-R	modules/panorama/classes/GNUmakefile
-R	modules/panorama/classes/PanoramaDerivativeImage.class
-modules/panorama/classes/PanoramaHelper.class	167210531	4041015293	5186	5391
-R	modules/panorama/classes/PanoramaPhotoItem.class
+modules/panorama/PanoramaOption.inc	3308514961	3750700336	3476	3584
+modules/panorama/PanoramaSiteAdmin.inc	4181632818	3111018224	3187	3297
+modules/panorama/classes/PanoramaHelper.class	432067018	2706907256	2780	2879
+modules/panorama/classes/PanoramaRenderer.class	200471566	1351420880	3147	3242
+modules/panorama/classes/PanoramaUpgradeHelper.class	1025756238	2858808835	3731	3849
 modules/panorama/images/slider.png	2777505656	2777505656	320	320
 modules/panorama/java/Metamorphose.jar	2448152966	2448152966	9597	9597
 modules/panorama/locale/af/LC_MESSAGES/modules_panorama.mo	3895753202	3895753202	3154	3154
@@ -17,7 +15,7 @@ modules/panorama/locale/eu/LC_MESSAGES/modules_panorama.mo	1756777238	1756777238
 modules/panorama/locale/fr/LC_MESSAGES/modules_panorama.mo	86187280	86187280	3293	3293
 modules/panorama/locale/is/LC_MESSAGES/modules_panorama.mo	1350193669	1350193669	419	419
 modules/panorama/locale/it/LC_MESSAGES/modules_panorama.mo	2326633886	2326633886	3262	3262
-modules/panorama/locale/ja/LC_MESSAGES/modules_panorama.mo	1745267687	1745267687	1902	1902
+modules/panorama/locale/ja/LC_MESSAGES/modules_panorama.mo	4088587398	4088587398	1833	1833
 modules/panorama/locale/lt/LC_MESSAGES/modules_panorama.mo	1799426977	1799426977	3250	3250
 modules/panorama/locale/nl/LC_MESSAGES/modules_panorama.mo	4078274397	4078274397	3167	3167
 modules/panorama/locale/no/LC_MESSAGES/modules_panorama.mo	1899715956	1899715956	3018	3018
@@ -29,35 +27,40 @@ modules/panorama/locale/sv/LC_MESSAGES/modules_panorama.mo	910670865	910670865	3
 modules/panorama/locale/tr/LC_MESSAGES/modules_panorama.mo	2065254289	2065254289	1650	1650
 modules/panorama/locale/zh_CN/LC_MESSAGES/modules_panorama.mo	1248581764	1248581764	2911	2911
 modules/panorama/locale/zh_TW/LC_MESSAGES/modules_panorama.mo	1416507087	1416507087	3020	3020
-modules/panorama/module.inc	1499424273	1824601254	5646	5829
+modules/panorama/module.inc	4118080899	2892790393	4713	4866
 modules/panorama/po/GNUmakefile	1866879166	2808215985	98	103
-modules/panorama/po/af.po	2702012502	2991534502	4025	4116
-modules/panorama/po/cs.po	1857681659	1036762987	4124	4234
-modules/panorama/po/da.po	3945630980	1934983455	4059	4153
-modules/panorama/po/de.po	1872682301	2444111248	4348	4465
-modules/panorama/po/eu.po	2504740222	1769981037	4005	4104
-modules/panorama/po/fr.po	4057674704	2392272226	4204	4315
-modules/panorama/po/is.po	1658411858	2738089262	2721	2816
-modules/panorama/po/it.po	4235254870	912128289	4101	4189
-modules/panorama/po/ja.po	1440514732	1298765668	3417	3512
-modules/panorama/po/lt.po	1314394617	3664613295	4274	4387
-modules/panorama/po/nl.po	3675117166	943121189	4190	4302
-modules/panorama/po/no.po	3400212489	4037319291	3970	4061
-modules/panorama/po/pl.po	429079992	3832415399	4152	4241
-modules/panorama/po/pt_BR.po	2179096085	431853774	4317	4406
-modules/panorama/po/ru.po	569922954	898827439	5451	5546
-modules/panorama/po/sr.po	3110187887	1770232478	4021	4118
-modules/panorama/po/strings.raw	1641917738	2766090319	1492	1520
-modules/panorama/po/sv.po	1619798003	924855479	4232	4347
-modules/panorama/po/tr.po	686132650	3921746461	3401	3495
-modules/panorama/po/zh_CN.po	1632139965	1156456295	3813	3915
-modules/panorama/po/zh_TW.po	3637921249	4288646350	3868	3970
-modules/panorama/templates/Panorama.tpl	579493934	2160533876	1530	1563
-modules/panorama/templates/PanoramaOption.tpl	3384374798	2669406534	746	765
-modules/panorama/templates/PanoramaSiteAdmin.tpl	2214695540	3259374567	2815	2887
-modules/panorama/test/phpunit/PanoramaOptionTest.class	3974751955	3247535203	5859	6028
-modules/panorama/test/phpunit/PanoramaSiteAdminControllerTest.class	3690955282	749628595	6316	6525
+modules/panorama/po/af.po	3599083373	338422724	4028	4119
+modules/panorama/po/cs.po	2411524905	1086366758	4127	4237
+modules/panorama/po/da.po	3972717875	2980424775	4062	4156
+modules/panorama/po/de.po	3783453384	1302612167	4351	4468
+modules/panorama/po/eu.po	986153786	3875546882	4008	4107
+modules/panorama/po/fr.po	4230654937	2150785810	4207	4318
+modules/panorama/po/is.po	3507063911	4153182650	2724	2819
+modules/panorama/po/it.po	4074585837	2281915096	4104	4192
+modules/panorama/po/ja.po	1408580435	3891835685	3207	3298
+modules/panorama/po/lt.po	222671237	1569755637	4277	4390
+modules/panorama/po/nl.po	3223518531	534032391	4193	4305
+modules/panorama/po/no.po	1445777084	1039283412	3973	4064
+modules/panorama/po/pl.po	4117753575	3720843849	4155	4244
+modules/panorama/po/pt_BR.po	4073738675	3756509276	4320	4409
+modules/panorama/po/ru.po	669216895	247705710	5454	5549
+modules/panorama/po/sr.po	2021270942	3486673986	4024	4121
+modules/panorama/po/strings.raw	370931261	666123057	1260	1286
+modules/panorama/po/sv.po	4226304199	404303842	4235	4350
+modules/panorama/po/tr.po	3428346731	2334440239	3404	3498
+modules/panorama/po/zh_CN.po	47602779	4116984559	3817	3919
+modules/panorama/po/zh_TW.po	2008072231	2825558075	3871	3973
+modules/panorama/templates/Panorama.tpl	751273510	3381993115	1528	1561
+modules/panorama/templates/PanoramaOption.tpl	2373953859	1918622638	745	764
+modules/panorama/templates/PanoramaSiteAdmin.tpl	2965125925	3577445021	2368	2430
+modules/panorama/test/phpunit/PanoramaHelperTest.class	3349223158	1075105742	4954	5127
+modules/panorama/test/phpunit/PanoramaOptionTest.class	2313527473	1734019473	5617	5782
+modules/panorama/test/phpunit/PanoramaSiteAdminControllerTest.class	1336145778	151722172	3325	3424
 R	modules/panorama/PanoramaItemEdit.inc
+R	modules/panorama/classes/Entities.inc
+R	modules/panorama/classes/GNUmakefile
+R	modules/panorama/classes/PanoramaDerivativeImage.class
+R	modules/panorama/classes/PanoramaPhotoItem.class
 R	modules/panorama/classes/interfaces/GNUmakefile
 R	modules/panorama/classes/interfaces/PanoramaDerivativeImage.inc
 R	modules/panorama/classes/interfaces/PanoramaPhotoItem.inc
