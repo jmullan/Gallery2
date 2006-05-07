@@ -138,7 +138,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 		return array($ret, null, null);
 	    }
 	}
-	
+
 	return array(null, $error, $status);
     }
 
@@ -232,7 +232,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 	$dirList = $albumList = array();
 	$handle = $this->_platform->opendir($path);
 	while (($fileName = $this->_platform->readdir($handle)) !== false) {
-	    if ($fileName == '.' || $fileName == '..' || $fileName == 'CVS') {
+	    if ($fileName == '.' || $fileName == '..' || $fileName == '.svn') {
 		continue;
 	    }
 	    $dirList[] = $fileName;
@@ -331,7 +331,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 	/* Look up the platform type */
 	$platform =& $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
-  
+
 	if (isset($form['action']['startOver'])) {
 	    $form['localServerFiles'] = array();
 	} else if (isset($form['action']['findFilesFromLocalServer'])) {
@@ -349,7 +349,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 	    GalleryUtilities::unsanitizeInputValues($localServerPath, false);
 	    $localServerPath = $platform->realpath($localServerPath);
 	    $form['localServerPath'] = GalleryCoreApi::convertToUtf8($localServerPath);
-	    
+
 	    /* Validate the path */
 	    $form['localServerFiles'] = array();
 	    if (empty($localServerPath)) {
@@ -380,7 +380,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 			    continue;
 			}
 			$filePath = $path . $slash . $fileName;
-			
+
 			if ($platform->is_readable($filePath)) {
 			    if ($platform->is_dir($filePath)) {
 				$filePath = $platform->realpath($filePath);
