@@ -25,8 +25,10 @@
 
 /**
  * Switches and configuration for some core functionality.
- * This gives modules or an embedded environment an access point to modify core behavior.
+ * This class is deprecated; use $gallery->setConfig instead.
+ * TODO: remove this class on next major bump of core/embed api.
  *
+ * @deprecated
  * @package GalleryCore
  * @subpackage Classes
  */
@@ -39,33 +41,6 @@ class GalleryCapabilities {
      */
 
     /**
-     * Return reference to array of configuration values.
-     * @access private
-     * @static
-     */
-    function &_getConfig() {
-	static $config;
-	if (!isset($config)) {
-	    $config = array(
-
-		/* Offer UserAdmin links on sidebar (Login/Logout/Your Account) */
-		'login' => true,
-
-		/* UrlGenerator parameters for redirect when ShowItem target is inaccessible */
-		'loginRedirect' => array('view' => 'core.UserAdmin',
-					 'subView' => 'core.UserLogin', 'return' => true),
-
-		/* Allow item linking */
-		'link' => true,
-
-		/* Can we allow themes to show the sidebar? */
-		'showSidebarBlocks' => true,
-	    );
-	}
-	return $config;
-    }
-
-    /**
      * Get a configuration value.
      *
      * @param string key name
@@ -73,8 +48,8 @@ class GalleryCapabilities {
      * @static
      */
     function get($key) {
-	$config =& GalleryCapabilities::_getConfig();
-	return isset($config[$key]) ? $config[$key] : null;
+	global $gallery;
+	return $gallery->getConfig($key);
     }
 
     /**
@@ -85,8 +60,8 @@ class GalleryCapabilities {
      * @static
      */
     function can($key) {
-	$config =& GalleryCapabilities::_getConfig();
-	return isset($config[$key]) ? (boolean)$config[$key] : null;
+	global $gallery;
+	return (boolean)$gallery->getConfig($key);
     }
 
     /**
@@ -97,12 +72,8 @@ class GalleryCapabilities {
      * @static
      */
     function set($key, $value) {
-	$config =& GalleryCapabilities::_getConfig();
-	if (!isset($value)) {
-	    unset($config[$key]);
-	} else {
-	    $config[$key] = $value;
-	}
+	global $gallery;
+	$galllery->setConfig($key, $value);
     }
 }
 ?>

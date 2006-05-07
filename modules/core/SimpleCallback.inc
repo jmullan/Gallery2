@@ -46,11 +46,8 @@ class SimpleCallbackView extends GalleryView {
      * @see GalleryView::isImmediate()
      */
     function renderImmediate($status, $error) {
-	global $gallery;
-
 	list ($command, $prefix) = GalleryUtilities::getRequestVariables('command', 'prefix');
-	list ($ret, $anonymousUserId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser();
 	if ($ret) {
 	    return $ret;
 	}
@@ -60,7 +57,7 @@ class SimpleCallbackView extends GalleryView {
 
 	switch($command) {
 	case 'lookupUsername':
-	    if ($gallery->getActiveUserId() != $anonymousUserId) {
+	    if (!$isAnonymous) {
 		list ($ret, $usernames) = GalleryCoreApi::fetchUsernames(10, null, $prefix);
 		if (!$ret) {
 		    print implode("\n", $usernames);
@@ -69,7 +66,7 @@ class SimpleCallbackView extends GalleryView {
 	    break;
 
 	case 'lookupGroupname':
-	    if ($gallery->getActiveUserId() != $anonymousUserId) {
+	    if (!$isAnonymous) {
 		list ($ret, $groupNames) = GalleryCoreApi::fetchGroupNames(10, null, $prefix);
 		if (!$ret) {
 		    print implode("\n", $groupNames);

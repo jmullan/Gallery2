@@ -40,20 +40,15 @@ class UserPreferencesController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-	$userId = $gallery->getActiveUserId();
-
-	list ($ret, $anonymousUserId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser();
 	if ($ret) {
 	    return array($ret, null);
 	}
-	if ($userId == $anonymousUserId) {
+	if ($isAnonymous) {
 	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
 	}
 
-	$results = array();
-	$status = array();
-	$error = array();
+	$results = $status = $error = array();
 	if (isset($form['action']['cancel'])) {
 
 	    /* Redirect back to the previous view */
@@ -78,11 +73,11 @@ class UserPreferencesController extends GalleryController {
 		return array($ret, null);
 	    }
 
+	    $userId = $gallery->getActiveUserId();
 	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($userId);
 	    if ($ret) {
 		return array($ret, null);
 	    }
-	    
 	    list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
 	    if ($ret) {
 		return array($ret, null);
@@ -103,7 +98,7 @@ class UserPreferencesController extends GalleryController {
 		    !$user->isCorrectPassword($form['currentPassword'])) {
 		$error[] = 'form[error][currentPassword][incorrect]';
 	    }
-	    
+
 	    /* Set a default if for some reason it doesn't get sent from the browser */
 	    $form['email'] = empty($form['email']) ? '' : $form['email'];
 
@@ -112,7 +107,7 @@ class UserPreferencesController extends GalleryController {
 		if (empty($form['currentPassword'])) {
 		    $error[] = 'form[error][currentPassword][missing]';
 		}
-		}
+	    }
 
 	    /* If all the right fields are in place then go ahead and modify the user. */
 	    if (empty($error)) {
@@ -128,6 +123,7 @@ class UserPreferencesController extends GalleryController {
 
 		$ret = $user->save();
 		if ($ret) {
+		    GalleryCoreApi::releaseLocks($lockId);
 		    return array($ret, null);
 		}
 
@@ -172,13 +168,11 @@ class UserPreferencesView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	$userId = $gallery->getActiveUserId();
-	list ($ret, $anonymousUserId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser();
 	if ($ret) {
 	    return array($ret, null);
 	}
-	if ($userId == $anonymousUserId) {
+	if ($isAnonymous) {
 	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
 	}
 

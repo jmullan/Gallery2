@@ -17,7 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 /**
  * @version $Revision$ $Date$
  * @package Rating
@@ -44,16 +43,11 @@ class RatingCallbackView extends GalleryView {
      */
     function renderImmediate($status, $error) {
 	global $gallery;
-
 	GalleryCoreApi::requireOnce('modules/rating/classes/RatingHelper.class');
 
-	list ($command, $itemId, $rating) = GalleryUtilities::getRequestVariables('command',
-		'itemId', 'rating');
-	list ($ret, $anonymousUserId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
-	if ($ret) {
-	    return $ret;
-	}
+	list ($command, $itemId, $rating) =
+	    GalleryUtilities::getRequestVariables('command', 'itemId', 'rating');
+
 	if (!headers_sent()) {
 	    header("Content-type: text/plain; charset=UTF-8");
 	}
@@ -68,8 +62,8 @@ class RatingCallbackView extends GalleryView {
 		return null;
 	    }
 
-	    list ($ret, $results) = RatingHelper::rateItem($itemId, (int)$rating,
-		    $gallery->getActiveUserId());
+	    list ($ret, $results) =
+		RatingHelper::rateItem($itemId, (int)$rating, $gallery->getActiveUserId());
 	    if ($ret) {
 		return $ret;
 	    }

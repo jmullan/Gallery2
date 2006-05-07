@@ -211,8 +211,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    /* Set random selection for anonymous user */
 	    $order = 'random';
 	    $count = 1;
-	    list ($ret, $userId) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	    list ($ret, $userId) = GalleryCoreApi::getAnonymousUserId();
 	    if ($ret) {
 		return array($ret, null);
 	    }

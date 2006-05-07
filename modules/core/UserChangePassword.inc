@@ -39,15 +39,13 @@ class UserChangePasswordController extends GalleryController {
      */
     function handleRequest($form) {
 	global $gallery;
-
 	$user = $gallery->getActiveUser();
 
-	list ($ret, $anonymousUserId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser();
 	if ($ret) {
 	    return array($ret, null);
 	}
-	if ($user->getId() == $anonymousUserId) {
+	if ($isAnonymous) {
 	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
 	}
 
@@ -148,8 +146,6 @@ class UserChangePasswordView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	global $gallery;
-
 	/* Load the form with user data the first time around. */
 	if ($form['formName'] != 'UserChangePassword') {
 	    $form['formName'] = 'UserChangePassword';

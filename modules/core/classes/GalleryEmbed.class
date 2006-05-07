@@ -119,10 +119,10 @@ class GalleryEmbed {
 	    }
 	}
 
-	GalleryCapabilities::set('login', false);
+	global $gallery;
+	$gallery->setConfig('login', false);
 	if (isset($initParams['loginRedirect'])) {
-	    GalleryCapabilities::set('loginRedirect',
-				     array('href' => $initParams['loginRedirect']));
+	    $gallery->setConfig('loginRedirect', array('href' => $initParams['loginRedirect']));
 	}
 
 	if (isset($initParams['activeUserId'])) {

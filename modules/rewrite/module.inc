@@ -41,7 +41,7 @@ class RewriteModule extends GalleryModule {
 	$this->setVersion('1.1.4'); /* Update RewriteModuleExtras::upgrade also! */
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
-	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredCoreApi(array(7, 5));
 	$this->setRequiredModuleApi(array(3, 0));
     }
 

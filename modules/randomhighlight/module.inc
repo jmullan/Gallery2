@@ -262,8 +262,7 @@ class RandomHighlightModule extends GalleryModule {
 	    $highlight = $thumbnails[$itemId];
 
 	    /* Check if we have selected a public item for the highlight */
-	    list ($ret, $guestId) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	    list ($ret, $guestId) = GalleryCoreApi::getAnonymousUserId();
 	    if ($ret) {
 		GalleryCoreApi::releaseLocks($lockId);
 		return $ret;

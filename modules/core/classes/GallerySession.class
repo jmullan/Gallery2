@@ -263,7 +263,7 @@ class GallerySession {
 
 	$this->_forceSaveSession = false;
 
-	/* Only need to check for sessoin hijacking if the session is not new  */
+	/* Only need to check for session hijacking if the session is not new  */
 	if ($this->_isPersistent) {
 
 	    /* Verify the remote address to avoid casual session hijacking */
@@ -443,8 +443,7 @@ class GallerySession {
 	}
 
 	if (empty($userId)) {
-	    list ($ret, $userId) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	    list ($ret, $userId) = GalleryCoreApi::getAnonymousUserId();
 	    if ($ret) {
 		return $ret;
 	    }
@@ -788,13 +787,12 @@ class GallerySession {
 	    return array(null, false);
 	}
 
-	list ($ret, $anonymousUserId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser($this->_userId);
 	if ($ret) {
 	    return array($ret, null);
 	}
 
-	if ($this->_userId == $anonymousUserId) {
+	if ($isAnonymous) {
 	    $sessionDataCopy = $this->_sessionData;
 	    /*
 	     * - lastViewed: We don't care about viewed count, we can check that less strict with
@@ -1069,10 +1067,7 @@ class GallerySession {
 	$lifetimeCutoff = $phpVm->time() - $lifetime;
 	$lastWeek = $phpVm->time() -  86400 * 7;
 
-	/*
-	 * Only delete in small chunks, else we're potentially locking the whole Gallery for too
-	 * long.
-	 */
+	/* Only delete in small chunks, else we may lock the whole Gallery for too long */
 	$where = '
 	WHERE [GallerySessionMap::creationTimestamp] < ?
 	   OR [GallerySessionMap::modificationTimestamp] < ?';
@@ -1080,8 +1075,7 @@ class GallerySession {
 	$data[] = (int)$inactiveCutoff;
 	if ($lastWeek > $lifetimeCutoff) {
 	    /* Delete guest user sessions more aggressively than other sessions */
-	    list ($ret, $anonymousUserId) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	    list ($ret, $anonymousUserId) = GalleryCoreApi::getAnonymousUserId();
 	    if ($ret) {
 		return $ret;
 	    }

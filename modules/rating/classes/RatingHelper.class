@@ -17,7 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 /**
  * @version $Revision$ $Date$
  * @package Rating
@@ -67,8 +66,8 @@ class RatingHelper {
 
 	$data = array();
 	while ($result = $searchResults->nextResult()) {
-	    $data[(int)$result[0]] = array('itemId' => (int)$result[0], 'rating' => $result[1]/1000,
-		    'votes' => (int)$result[2]);
+	    $data[(int)$result[0]] = array('itemId' => (int)$result[0],
+		    'rating' => $result[1] / 1000, 'votes' => (int)$result[2]);
 	}
 
 	/* Check for existing votes from this user! */
@@ -94,16 +93,14 @@ class RatingHelper {
 	    $searchParams[] = (int)$userId;
 
 	    /* Handle extra checks for anonymous users */
-	    list ($ret, $anonymousUserId) =
-		GalleryCoreApi::getPluginParameter( 'module', 'core', 'id.anonymousUser');
+	    list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser($userId);
 	    if ($ret) {
 		return array($ret, null);
 	    }
-
-	    if ($userId == $anonymousUserId) {
+	    if ($isAnonymous) {
 		$sessionId = $session->getId();
 		$remoteId = $session->getRemoteIdentifier();
-	    
+
 		$query .= '
 		AND
 		(
@@ -116,7 +113,6 @@ class RatingHelper {
 		$searchParams[] = $sessionId;
 		$searchParams[] = implode(":", $remoteId);
 	    }
-
 
 	    list ($ret, $searchResults) = $gallery->search($query, $searchParams);
 	    if ($ret) {
@@ -159,7 +155,7 @@ class RatingHelper {
 	if ($ret) {
 	    return array($ret, null);
 	}
-	
+
 	/* Use this to get new IDs and check affected rows for updates */
 	$storage = $gallery->getStorage();
 
@@ -175,23 +171,22 @@ class RatingHelper {
 		return array($ret, null);
 	    }
 	}
-	
+
 	$sessionId = $session->getId();
 	$remoteId = $session->getRemoteIdentifier();
 
 	/* Handle extra checks for anonymous users */
-	list ($ret, $anonymousUserId) = GalleryCoreApi::getPluginParameter( 'module', 'core',
-		'id.anonymousUser');
+	list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser($userId);
 	if ($ret) {
 	    return array($ret, null);
 	}
 
 	/* Update existing user vote for this item */
 	$matchParams = array(	'itemId' => (int)$itemId,
-				'userId' => (int)$userId );
-	if ($userId == $anonymousUserId) {
+				'userId' => (int)$userId);
+	if ($isAnonymous) {
 	    $matchParams['sessionId'] = $sessionId;
-	    $matchParams['remoteIdentifier'] = implode(":", $remoteId);
+	    $matchParams['remoteIdentifier'] = implode(':', $remoteId);
 	}
 
 	$ret = GalleryCoreApi::removeMapEntry('RatingMap', $matchParams);
@@ -211,7 +206,7 @@ class RatingHelper {
 		    'userId' => $userId,
 		    'rating' => $rating,
 		    'sessionId' => $sessionId,
-		    'remoteIdentifier' => implode(":", $remoteId) ));
+		    'remoteIdentifier' => implode(':', $remoteId) ));
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -256,7 +251,7 @@ class RatingHelper {
 	    }
 
 	    $data['itemId'] = (int)$itemId;
-	    $data['rating'] = $averageRating/1000;
+	    $data['rating'] = $averageRating / 1000;
 	    $data['votes'] = (int)$voteCount;
 	    $data['userRating'] = (int)$rating;
 	}

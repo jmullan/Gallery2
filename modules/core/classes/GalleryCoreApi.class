@@ -57,6 +57,7 @@ class GalleryCoreApi {
      * - remove GalleryUtilities::htmlEntityDecode
      * - remove GalleryStatus::wrap
      * - change GalleryCoreApi::error to only take error code and error message
+     * - remove GalleryCapabilities (major bump of embed api too?)
      */
     function getApiVersion() {
 	return array(7, 8);
@@ -67,7 +68,7 @@ class GalleryCoreApi {
      *
      * @param string the class type (eg. 'GalleryGraphics')
      * @param string the class name (eg. 'NetPbmGraphics')
-     * @param string an implementatin id (eg. 'NetPBM')
+     * @param string an implementation id (eg. 'NetPBM')
      * @param string the relative path to the implementation file
      *               (eg. 'modules/netpbm/classes/NetPbmGraphics.class')
      * @param string the id of the module containing the implementation (eg. 'netpbm')
@@ -3039,7 +3040,8 @@ class GalleryCoreApi {
      *               int album id
      */
     function getDefaultAlbumId() {
-	$id = GalleryCapabilities::get('defaultAlbumId');
+	global $gallery;
+	$id = $gallery->getConfig('defaultAlbumId');
 	if (empty($id)) {
 	    list ($ret, $id) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
@@ -3057,7 +3059,8 @@ class GalleryCoreApi {
      *               int user id
      */
     function getAnonymousUserId() {
-	$id = GalleryCapabilities::get('anonymousUserId');
+	global $gallery;
+	$id = $gallery->getConfig('anonymousUserId');
 	if (empty($id)) {
 	    list ($ret, $id) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');

@@ -35,8 +35,7 @@ class UserWatermarksController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-	$status = array();
-	$error = array();
+	$status = $error = array();
 	if (isset($form['action']['add']) && !empty($form['tmp_name'][1])) {
 
 	    /* Get the mime type from the upload info. */
@@ -141,13 +140,11 @@ class UserWatermarksView extends GalleryView {
 	global $gallery;
 	GalleryCoreApi::requireOnce('modules/watermark/classes/WatermarkHelper.class');
 
-	list ($ret, $anonymousUserId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser();
 	if ($ret) {
 	    return array($ret, null);
 	}
-
-	if ($gallery->getActiveUserId() == $anonymousUserId) {
+	if ($isAnonymous) {
 	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
 	}
 

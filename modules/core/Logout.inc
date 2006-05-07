@@ -60,8 +60,7 @@ class LogoutController extends GalleryController {
 	    return array($ret, null);
 	}
 
-	list ($ret, $anonymousUserId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	list ($ret, $anonymousUserId) = GalleryCoreApi::getAnonymousUserId();
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -69,7 +68,7 @@ class LogoutController extends GalleryController {
 	if ($ret) {
 	    return array($ret, null);
 	}
-	
+
 	$gallery->setActiveUser($guestUser);
 
 	/* Force return to core.ShowItem, as we don't know if the guest user

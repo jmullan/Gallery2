@@ -42,7 +42,7 @@ class CommentModule extends GalleryModule {
 	$this->setGroup('data', $gallery->i18n('Extra Data'));
 	$this->setCallbacks('registerEventListeners|getItemLinks|getItemSummaries|' .
 			    'getSiteAdminViews|getItemAdminViews');
-	$this->setRequiredCoreApi(array(7, 1));
+	$this->setRequiredCoreApi(array(7, 5));
 	$this->setRequiredModuleApi(array(3, 0));
     }
 

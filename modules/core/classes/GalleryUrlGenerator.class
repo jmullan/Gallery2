@@ -649,8 +649,7 @@ class GalleryUrlGenerator {
 	    unset($params['view']);
 
 	    if (empty($this->_rootItemId)) {
-		list ($ret, $this->_rootItemId) = GalleryCoreApi::getPluginParameter('module',
-		    'core', 'id.rootAlbum');
+		list ($ret, $this->_rootItemId) = GalleryCoreApi::getDefaultAlbumId();
 		if ($ret) {
 		    $this->_rootItemId = -1;
 		}

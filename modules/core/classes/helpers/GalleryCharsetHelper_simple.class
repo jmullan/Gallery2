@@ -45,7 +45,7 @@ class GalleryCharsetHelper_simple {
 
 	global $gallery;
 	$phpVm = $gallery->getPhpVm();
-	$sourceEncoding = GalleryCapabilities::get('systemCharset');
+	$sourceEncoding = $gallery->getConfig('systemCharset');
 
 	/* Determine character set of current locale */
 	if (empty($sourceEncoding) && $phpVm->function_exists('nl_langinfo')

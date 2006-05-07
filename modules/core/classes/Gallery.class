@@ -211,6 +211,24 @@ class Gallery {
 
 	/* Set up a shutdown function to release any hanging locks. */
 	register_shutdown_function(array(&$this, '_shutdown'));
+
+	/* Default config settings (can be overridden via config.php or embedded environment) */
+	$this->_config = array(
+	    'login' => true,             /* Offer UserAdmin links (Login/Logout/Your Account) */
+
+	    /* UrlGenerator parameters for redirect when ShowItem target is inaccessible */
+	    'loginRedirect' => array('view' => 'core.UserAdmin',
+				     'subView' => 'core.UserLogin', 'return' => true),
+
+	    'link' => true,              /* Allow item linking */
+
+	    'showSidebarBlocks' => true, /* Can we allow themes to show the sidebar? */
+
+	    'systemCharset' => null,     /* Specify system character set, skip autodetect */
+	    'defaultAlbumId' => null,    /* Initial album to display instead of root album */
+	    'breadcrumbRootId' => null,  /* Omit any parents above this id in fetchParentSequence */
+	    'anonymousUserId' => null,   /* Alternate user account for guest sessions */
+	);
     }
 
     /**

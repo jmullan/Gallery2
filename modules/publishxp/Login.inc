@@ -97,16 +97,14 @@ class LoginView extends GalleryView {
 	    $form['formName'] = 'Login';
 	}
 
-	list ($ret, $anonymousUserId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser();
 	if ($ret) {
 	    return array($ret, null);
 	}
 
-	if ($gallery->getActiveUserId() != $anonymousUserId) {
+	if (!$isAnonymous) {
 	    /* No need to log in */
-	    return array(null,
-			 array('redirect' => array('view' => 'publishxp.SelectAlbum')));
+	    return array(null, array('redirect' => array('view' => 'publishxp.SelectAlbum')));
 	}
 
 	$template->setVariable('controller', 'publishxp.Login');

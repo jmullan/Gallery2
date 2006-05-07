@@ -252,13 +252,10 @@ class GalleryView {
 	/* Standard user info available for every view */
 	$user = $gallery->getActiveUser();
 	$user = (array)$user;
-	list ($ret, $guestId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	list ($ret, $user['isGuest']) = GalleryCoreApi::isAnonymousUser($user['id']);
 	if ($ret) {
 	    return array($ret, null, null);
 	}
-
-	$user['isGuest'] = ($user['id'] == $guestId);
 	$user['isRegisteredUser'] = !$user['isGuest'];
 	list ($ret, $user['isAdmin']) = GalleryCoreApi::isUserInSiteAdminGroup();
 	if ($ret) {
@@ -365,8 +362,7 @@ class GalleryView {
 	/* If we don't have an itemId, default to the root album */
 	if (empty($itemId)) {
 	    $wasSpecified = false;
-	    list ($ret, $itemId) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	    list ($ret, $itemId) = GalleryCoreApi::getDefaultAlbumId();
 	    if ($ret) {
 		return array($ret, null, null);
 	    }

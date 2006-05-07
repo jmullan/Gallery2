@@ -77,9 +77,9 @@ class AdminDeleteUserController extends GalleryController {
 
 	    /* Get the anonymous user for checks */
 	    list ($ret, $anonymousUserId) =
-			GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+		GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	    if ($ret) {
-			return array($ret, null);
+		return array($ret, null);
 	    }
 
 	    /*
@@ -97,7 +97,7 @@ class AdminDeleteUserController extends GalleryController {
 		} else if ($newOwner->getId() == $userId) {
 		    /* new Owner = deleted user, doesn't make sense */
 		    $error[] = 'form[error][text][newOwnerIsDeletedUser]';
-		} else if($newOwner->getId() == $anonymousUserId) {
+		} else if ($newOwner->getId() == $anonymousUserId) {
 		    $error[] = 'form[error][text][newOwnerIsGuest]';
 		}
 	    } else { /* new owner field is empty, set the default new owner: 'admin' */
@@ -105,7 +105,7 @@ class AdminDeleteUserController extends GalleryController {
 		list ($ret, $newOwner) = GalleryCoreApi::loadEntitiesById($activeUserId);
 		if ($ret) {
 		    return array($ret, null);
-	   	}
+		}
 	    }
 
 	    /* Verify the user exists */
@@ -121,11 +121,10 @@ class AdminDeleteUserController extends GalleryController {
 	    }
 
 	    /*
-	     * Only continue to delete the user if we have no errors
-	     * and if we don't try to delete the anonymous user or the active user.
-	     * In theory we should never get to this point unless we're
-	     * operating on a valid user, so don't bother sending errors back
-	     * in case we can't delete.
+	     * Only continue to delete the user if we have no errors and if we don't try
+	     * to delete the anonymous user or the active user.  In theory we should never
+	     * get to this point unless we're operating on a valid user, so don't bother
+	     * sending errors back in case we can't delete.
 	     */
 	    if (empty($error) && $userId != $anonymousUserId
 			&& $userId != $gallery->getActiveUserId()

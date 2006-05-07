@@ -267,14 +267,13 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
     function getUserAdminViews($user) {
 	global $gallery;
 
-	list ($ret, $anonymousUserId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser($user->getId());
 	if ($ret) {
 	    return array($ret, null);
 	}
 
 	$views = array();
-	if ($user->getId() != $anonymousUserId) {
+	if (!$isAnonymous) {
 	    $views[] = array('name' => $this->translate('Watermarks'),
 			     'view' => 'watermark.UserWatermarks');
 	}

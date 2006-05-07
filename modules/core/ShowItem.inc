@@ -64,7 +64,6 @@ class ShowItemView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
-
 	list ($ret, $item) = $this->_getItem();
 	if ($ret) {
 	    return array($ret, null);
@@ -74,26 +73,22 @@ class ShowItemView extends GalleryView {
 	$ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'core.view');
 	if ($ret) {
 	    if ($ret->getErrorCode() & ERROR_PERMISSION_DENIED) {
-		list ($ret2, $anonymousId) = GalleryCoreApi::getPluginParameter(
-		    'module', 'core', 'id.anonymousUser');
+		list ($ret2, $isAnonymous) = GalleryCoreApi::isAnonymousUser();
 		if ($ret2) {
 		    return array($ret, null);
 		}
-		if ($gallery->getActiveUserId() == $anonymousId) {
+		if ($isAnonymous) {
 		    /* Redirect to login view */
-		    return array(null,
-				 array('redirect' => GalleryCapabilities::get('loginRedirect')));
+		    return array(null, array('redirect' => $gallery->getConfig('loginRedirect')));
 		}
-		/* Try to redirect to root */
-		list ($ret2, $rootId) = GalleryCoreApi::getPluginParameter(
-		    'module', 'core', 'id.rootAlbum');
+		/* Try to redirect to default album */
+		list ($ret2, $rootId) = GalleryCoreApi::getDefaultAlbumId();
 		if ($ret2) {
 		    return array($ret, null);
 		}
 		if ($item->getId() == $rootId) {
 		    /* No permission on root album; redirect to login view */
-		    return array(null,
-				 array('redirect' => GalleryCapabilities::get('loginRedirect')));
+		    return array(null, array('redirect' => $gallery->getConfig('loginRedirect')));
 		}
 		return array(null, array('redirect' =>
 		    array('view' => 'core.ShowItem', 'itemId' => $rootId)));
@@ -126,8 +121,6 @@ class ShowItemView extends GalleryView {
      * @see GalleryView::getViewDescription()
      */
     function getViewDescription() {
-	global $gallery;
-
 	list ($ret, $item) = $this->_getItem();
 	if ($ret) {
 	    return array($ret, null);

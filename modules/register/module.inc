@@ -39,7 +39,7 @@ class RegisterModule extends GalleryModule {
 	$this->setVersion('1.0.6');
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks('getSystemLinks|getUserAdminViews|getSiteAdminViews');
-	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredCoreApi(array(7, 5));
 	$this->setRequiredModuleApi(array(3, 0));
     }
 
@@ -101,17 +101,13 @@ class RegisterModule extends GalleryModule {
      * @see GalleryModule::getSystemLinks
      */
     function getSystemLinks() {
-	global $gallery;
 	$links = array();
 
-	list ($ret, $anonymousUserId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser();
 	if ($ret) {
 	    return array($ret, null);
 	}
-
-	/* Only anonymous users will see the register link */
-	if ($gallery->getActiveUserId() == $anonymousUserId) {
+	if ($isAnonymous) {
 	    $links['Register'] = array(
 		'text' => $this->translate('Register'),
 		'params' => array('view' => 'core.UserAdmin',
@@ -126,17 +122,13 @@ class RegisterModule extends GalleryModule {
      * @see GalleryModule::getUserAdminViews();
      */
     function getUserAdminViews($user) {
-	global $gallery;
 	$views = array();
 
-	list ($ret, $anonymousUserId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser();
 	if ($ret) {
 	    return array($ret, null);
 	}
-
-	/* Only anonymous users will see the register link */
-	if ($gallery->getActiveUserId() == $anonymousUserId) {
+	if ($isAnonymous) {
 	    $views[] = array('name' => $this->translate('Register'),
 			     'view' => 'register.UserSelfRegistration');
 	}

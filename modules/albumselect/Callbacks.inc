@@ -58,8 +58,7 @@ class AlbumSelectCallbacks {
 		    GalleryCoreApi::requireOnce(
 			'lib/smarty_plugins/modifier.entitytruncate.php');
 		}
-		list ($ret, $rootAlbumId) =
-		    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+		list ($ret, $rootAlbumId) = GalleryCoreApi::getDefaultAlbumId();
 		if ($ret) {
 		    return $ret;
 		}
@@ -78,7 +77,7 @@ class AlbumSelectCallbacks {
 		$treeList = array();
 
 		if ($params['sort'] != 'album') {
-		    list ($ret, $tree) = GalleryCoreApi::fetchAlbumTree(null, null, $userId);
+		    list ($ret, $tree) = GalleryCoreApi::fetchAlbumTree($rootAlbumId, null, $userId);
 		    if ($ret) {
 			if ($ret->getErrorCode() & ERROR_PERMISSION_DENIED) {
 			    $tree = null;

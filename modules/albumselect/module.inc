@@ -40,7 +40,7 @@ class AlbumSelectModule extends GalleryModule {
 	$this->setVersion('1.0.3');
 	$this->setGroup('blocks', $gallery->i18n('Blocks'));
 	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
-	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredCoreApi(array(7, 5));
 	$this->setRequiredModuleApi(array(3, 0));
     }
 

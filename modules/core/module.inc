@@ -65,6 +65,7 @@ class CoreModule extends GalleryModule {
      * @see GalleryModule::getItemLinks
      */
     function getItemLinks($items, $wantsDetailedLinks, $permissions, $userId) {
+	global $gallery;
 	list ($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret) {
 	    return array($ret, null);
@@ -131,7 +132,7 @@ class CoreModule extends GalleryModule {
 
 	    if (isset($wantsDetailedLinks[$itemId]) &&
 		    isset($permissions[$itemId]['core.viewSource']) &&
-		    GalleryCapabilities::can('link')) {
+		    $gallery->getConfig('link')) {
 		if ($item->getIsLinkable()) {
 		    if ($isAlbum) {
 			list ($ret, $count) = GalleryCoreApi::fetchItemIdCount(
@@ -254,7 +255,6 @@ class CoreModule extends GalleryModule {
      */
     function getSystemLinks() {
 	global $gallery;
-
 	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
 	if ($ret) {
 	    return array($ret, null);
@@ -272,8 +272,12 @@ class CoreModule extends GalleryModule {
 							  'return' => 1));
 	}
 
-	if (GalleryCapabilities::can('login')) {
-	    if ($gallery->getActiveUserId() == $param['id.anonymousUser']) {
+	if ($gallery->getConfig('login')) {
+	    list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser();
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    if ($isAnonymous) {
 		$links['Login'] = array('text' => $this->translate('Login'),
 					'params' => array('view' => 'core.UserAdmin',
 							  'subView' => 'core.UserLogin',
@@ -361,15 +365,16 @@ class CoreModule extends GalleryModule {
      * @see GalleryModule::getUserAdminViews();
      */
     function getUserAdminViews($user) {
+	global $gallery;
 	$views = array();
 
-	if (GalleryCapabilities::can('login')) {
-	    list ($ret, $anonymousUserId) = $this->getParameter('id.anonymousUser');
+	if ($gallery->getConfig('login')) {
+	    list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser($user->getId());
 	    if ($ret) {
 		return array($ret, null);
 	    }
 
-	    if ($user->getId() != $anonymousUserId) {
+	    if (!$isAnonymous) {
 		$views[] = array('name' => $this->translate('Account Settings'),
 				 'view' => 'core.UserPreferences');
 		$views[] = array('name' => $this->translate('Change Password'),
@@ -387,6 +392,7 @@ class CoreModule extends GalleryModule {
      * @see GalleryModule::getItemAdminViews();
      */
     function getItemAdminViews($item) {
+	global $gallery;
 	$views = array();
 	list ($ret, $permissions) = GalleryCoreApi::getPermissions($item->getId());
 	if ($ret) {
@@ -450,7 +456,7 @@ class CoreModule extends GalleryModule {
 			     'view' => 'core.ItemMakeHighlight');
 	}
 
-	if (isset($permissions['core.viewSource']) && GalleryCapabilities::can('link')) {
+	if (isset($permissions['core.viewSource']) && $gallery->getConfig('link')) {
 	    if ($item->getIsLinkable()) {
 		if ($isAlbum) {
 		    list ($ret, $count) =

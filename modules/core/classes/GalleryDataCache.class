@@ -623,17 +623,12 @@ class GalleryDataCache {
 	}
 	$acceleration = unserialize($acceleration);
 
-	list ($ret, $anonymousUserId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser();
 	if ($ret) {
 	    return array($ret, null);
 	}
 
-	if ($gallery->getActiveUserId() == $anonymousUserId) {
-	    $expiration = $acceleration['guest']['expiration'];
-	} else {
-	    $expiration = $acceleration['user']['expiration'];
-	}
+	$expiration = $acceleration[$isAnonymous ? 'guest' : 'user']['expiration'];
 	$phpVm = $gallery->getPhpVm();
 	$cutoff = $phpVm->time() - $expiration;
 
@@ -796,17 +791,12 @@ class GalleryDataCache {
 	    return array($ret, null);
 	}
 	$acceleration = unserialize($acceleration);
-	$userId = $gallery->getActiveUserId();
-	list ($ret, $anonymousUserId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser();
 	if ($ret) {
 	    return array($ret, null);
 	}
 
-	return array(
-	    null,
-	    (($userId == $anonymousUserId && $acceleration['guest']['type'] == $type) ||
-	     ($userId != $anonymousUserId && $acceleration['user']['type'] == $type)));
+	return array(null, $acceleration[$isAnonymous ? 'guest' : 'user']['type'] == $type);
     }
 
     /**

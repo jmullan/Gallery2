@@ -762,7 +762,7 @@ class GalleryTheme extends GalleryPlugin {
 	    return array(null, $viewResults);
 	}
 
-	if (!GalleryCapabilities::can('showSidebarBlocks') && !empty($params['sidebarBlocks'])) {
+	if (!$gallery->getConfig('showSidebarBlocks') && !empty($params['sidebarBlocks'])) {
 	    $extractedSidebarBlocks = $theme['params']['sidebarBlocks'];
 	    $theme['params']['sidebarBlocks'] = array();
 	}
@@ -815,8 +815,7 @@ class GalleryTheme extends GalleryPlugin {
 
 	    if ($session->get('theme.guestPreviewMode')) {
 		$theme['guestPreviewMode'] = 1;
-		list ($ret, $theme['actingUserId']) =
-		    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+		list ($ret, $theme['actingUserId']) = GalleryCoreApi::getAnonymousUserId();
 		if ($ret) {
 		    return array($ret, null);
 		}

@@ -44,12 +44,11 @@ class UserAlbumController extends GalleryController {
 	    $userId = $activeUserId;
 	}
 
-	list ($ret, $anonymousUserId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser($userId);
 	if ($ret) {
 	    return array($ret, null);
 	}
-	if ($userId == $anonymousUserId) {
+	if ($isAnonymous) {
 	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
 	}
 

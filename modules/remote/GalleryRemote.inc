@@ -237,8 +237,7 @@ class GalleryRemoteController extends GalleryController {
 		return null;
 	    } else {
 		/* They're logged in as the guest account */
-		list ($ret, $anonymousUserId) =
-		    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+		list ($ret, $anonymousUserId) = GalleryCoreApi::getAnonymousUserId();
 		if ($ret) {
 		    return $ret;
 		}

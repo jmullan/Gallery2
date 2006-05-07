@@ -162,8 +162,7 @@ function GalleryInitSecondPass() {
     $activeUserId = $session->getUserId();
     if (empty($activeUserId)) {
 	/* No active user -- be anonymous */
-	list ($ret, $activeUserId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	list ($ret, $activeUserId) = GalleryCoreApi::getAnonymousUserId();
 	if ($ret) {
 	    return $ret;
 	}
@@ -173,8 +172,7 @@ function GalleryInitSecondPass() {
     if ($ret) {
 	if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
 	    /* Missing user -- be anonymous */
-	    list ($ret, $activeUserId) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	    list ($ret, $activeUserId) = GalleryCoreApi::getAnonymousUserId();
 	    if ($ret) {
 		return $ret;
 	    }

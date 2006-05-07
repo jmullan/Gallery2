@@ -51,7 +51,7 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
      * @access private
      */
     var $_shortUrls = array();
-    
+
     /**
      * @see GalleryUrlGenerator::init
      */
@@ -106,7 +106,7 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
      * @see GalleryUrlGenerator::generateUrl
      */
     function generateUrl($params=array(), $options=array()) {
-	$index = null;	
+	$index = null;
 	if ($this->_error) {
 	    return parent::generateUrl($params, $options);
 	}
@@ -125,7 +125,7 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 	    if ($this->embedForceSessionId($params)) {
 		$options['forceSessionId'] = true;
 	    }
-	    
+
 	    $trueParams = $params;
 	    /* Parse and replace all keywords */
 	    $url = $this->_shortUrls[$index]['pattern'];
@@ -197,13 +197,12 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 
     /**
      * @param int itemId of the entity to load
-     * @return object GalleryEntity
+     * @return object GalleryEntity or null on failure
      */
     function loadEntity(&$itemId) {
 	/* Assume rootAlbum if itemId not specified */
 	if (empty($itemId)) {
-	    list ($ret, $itemId) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	    list ($ret, $itemId) = GalleryCoreApi::getDefaultAlbumId();
 	    if ($ret) {
 		return null;
 	    }
