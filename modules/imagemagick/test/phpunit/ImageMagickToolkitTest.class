@@ -841,7 +841,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 		    'type' => 'int,int',
 		    'description' => 'Get the width and height of the image',
 		    'mimeTypes' => array_merge(
-			$environment['mimeTypes'], array('image/x-portable-pixmap'))
+			$environment['mimeTypes'],
+			array('image/x-portable-pixmap', 'application/x-shockwave-flash'))
 		),
 		'page-count' => array(
 		    'type' => 'int',

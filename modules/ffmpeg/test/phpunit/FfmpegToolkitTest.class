@@ -83,7 +83,7 @@ class FfmpegToolkitTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	$expectedMimeTypes = array('video/mpeg', 'video/x-ms-asf', 'video/x-msvideo',
-				   'video/quicktime', 'video/x-ms-wmv');
+				   'video/quicktime', 'video/x-flv', 'video/x-ms-wmv');
 	$this->assertEquals(array('convert-to-image/jpeg' => array(
 		'params' => array(),
 		'description' => 'Convert to a JPEG',
@@ -115,7 +115,7 @@ class FfmpegToolkitTest extends GalleryTestCase {
 	}
 
 	$expectedMimeTypes = array('video/mpeg', 'video/x-ms-asf', 'video/x-msvideo',
-		'video/quicktime', 'video/x-ms-wmv');
+				   'video/quicktime', 'video/x-flv', 'video/x-ms-wmv');
 	$output[] = 'Output audio/video file formats: mpeg vcd vob mpegts crc image ' .
 	    'imagepipe mp2 ac3 h263 m4v h264 mpeg1video mjpeg s16le s16be u16le u16be ' .
 	    's8 u8 mulaw alaw rawvideo null rm asf asf_stream avi wav swf au gif mpjpeg ' .
@@ -157,8 +157,8 @@ class FfmpegToolkitTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$expectedMimeTypes = array(
-	    'video/mpeg', 'video/x-ms-asf', 'video/x-msvideo', 'video/quicktime', 'video/x-ms-wmv');
+	$expectedMimeTypes = array('video/mpeg', 'video/x-ms-asf', 'video/x-msvideo',
+				   'video/quicktime', 'video/x-flv', 'video/x-ms-wmv');
 	sort($expectedMimeTypes);
 
 	$output[] = 'File formats:';

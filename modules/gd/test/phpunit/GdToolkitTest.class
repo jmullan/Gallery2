@@ -515,6 +515,7 @@ class GdToolkitTest extends GalleryTestCase {
 	    $this->assertEquals($expectedOperations, $results['operations'],
 				'(operations) Environment ' . $environment['name']);
 
+	    $environment['mimeTypes'][] = 'application/x-shockwave-flash';
 	    $this->assertEquals(array(
 		'dimensions' => array(
 		    'type' => 'int,int',
