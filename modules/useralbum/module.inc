@@ -91,6 +91,7 @@ class UserAlbumModule extends GalleryModule /* and GalleryEventListener */ {
      * @see GalleryModule::getSystemLinks
      */
     function getSystemLinks() {
+	global $gallery;
 	$links = array();
 
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'useralbum');
@@ -107,7 +108,8 @@ class UserAlbumModule extends GalleryModule /* and GalleryEventListener */ {
 
 	    if (!$isAnonymous) {
 		list ($ret, $albumId) =
-		    GalleryCoreApi::getPluginParameter('module', 'useralbum', 'albumId', $userId);
+		    GalleryCoreApi::getPluginParameter('module', 'useralbum',
+						       'albumId', $gallery->getActiveUserId());
 		if ($ret) {
 		    return array($ret, null);
 		}
