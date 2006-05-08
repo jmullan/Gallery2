@@ -1653,7 +1653,7 @@ class ItemTest extends GalleryTestCase {
 
 	list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum(
 	    __FILE__, 'itemName', 'title', 'caption', 'description',
-	    'application/unknown', $this->_album->getId());
+	    'image/jpeg', $this->_album->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
