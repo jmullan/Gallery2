@@ -94,5 +94,47 @@ class  ADODB_ado_mssql extends ADODB_ado {
 	{
 	        return $this->ADORecordSet_ado($id,$mode);
 	}
+
+	/* @G2 - begin code copied from adodb-mssql.inc.php */
+	var $_dropSeqSQL = "drop table %s";
+	
+	function CreateSequence($seq='adodbseq',$start=1)
+	{
+		
+		$this->Execute('BEGIN TRANSACTION adodbseq');
+		$start -= 1;
+		$this->Execute("create table $seq (id float(53))");
+		$ok = $this->Execute("insert into $seq with (tablock,holdlock) values($start)");
+		if (!$ok) {
+				$this->Execute('ROLLBACK TRANSACTION adodbseq');
+				return false;
+		}
+		$this->Execute('COMMIT TRANSACTION adodbseq'); 
+		return true;
+	}
+
+	function GenID($seq='adodbseq',$start=1)
+	{
+		//$this->debug=1;
+		$this->Execute('BEGIN TRANSACTION adodbseq');
+		$ok = $this->Execute("update $seq with (tablock,holdlock) set id = id + 1");
+		if (!$ok) {
+			$this->Execute("create table $seq (id float(53))");
+			$ok = $this->Execute("insert into $seq with (tablock,holdlock) values($start)");
+			if (!$ok) {
+				$this->Execute('ROLLBACK TRANSACTION adodbseq');
+				return false;
+			}
+			$this->Execute('COMMIT TRANSACTION adodbseq'); 
+			return $start;
+		}
+		$num = $this->GetOne("select id from $seq");
+		$this->Execute('COMMIT TRANSACTION adodbseq'); 
+		return $num;
+		
+		// in old implementation, pre 1.90, we returned GUID...
+		//return $this->GetOne("SELECT CONVERT(varchar(255), NEWID()) AS 'Char'");
+	}
+	/* @G2 - end of code copied from adodb-mssql.inc.php */
 }
 ?>
