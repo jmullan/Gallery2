@@ -792,7 +792,8 @@ class GalleryUtilities {
 	    }
 	} else {
 	    /* Unsanitize dangerous html entities */
-	    $value = html_entity_decode($value);
+	    /* bugs.php.net/bug.php?id=22014 - TODO: remove empty check when min php is 4.3.2+ */
+	    $value = empty($value) ? $value : html_entity_decode($value);
 
 	    /* Redo the damage caused by magic_quotes */
 	    if ($adaptForMagicQuotes) {
@@ -898,7 +899,7 @@ class GalleryUtilities {
      * @deprecated -- TODO: remove at the next major version bump of core api
      */
     function htmlEntityDecode($string) {
-	return html_entity_decode($string, ENT_COMPAT);
+	return empty($string) ? $string : html_entity_decode($string, ENT_COMPAT);
     }
 
     /**

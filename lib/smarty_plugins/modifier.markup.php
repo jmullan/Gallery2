@@ -84,7 +84,8 @@ class GalleryNoMarkupParser {
 
 class GalleryHtmlMarkupParser {
     function parse($text) {
-	return html_entity_decode($text);
+	/* http://bugs.php.net/bug.php?id=22014 - TODO: remove empty check when min php is 4.3.2+ */
+	return empty($text) ? $text : html_entity_decode($text);
     }
 }
 
