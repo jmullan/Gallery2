@@ -83,14 +83,19 @@ class WebHelper_simple {
 	    $extraHeaderLines[] = "$headerKey: $headerValue";
 	}
 	
-	$platform->fwrite($fd, sprintf("GET %s HTTP/1.0\r\n" .
-				       "Host: %s\r\n" .
-				       "%s" .
-				       "\r\n",
-				       $get,
-				       $components['host'],
-				       empty($extraHeaderLines) ? '' :
-				       join("\r\n", $extraHeaderLines) . "\r\n"));
+	$ok = $platform->fwrite($fd, sprintf("GET %s HTTP/1.0\r\n" .
+					     "Host: %s\r\n" .
+					     "%s\r\n",
+					     $get,
+					     $components['host'],
+					     empty($extraHeaderLines) ? '' :
+					     implode("\r\n", $extraHeaderLines) . "\r\n"));
+	if (!$ok) {
+	    /* Zero bytes written or false was returned */
+	    $gallery->debug(
+		"fwrite call failed in fetchWebFile($url)" . ($ok === false ? ' - false' : ''));
+	    return array(false, null, null, null, null);
+	}
 	$platform->fflush($fd);
 
 	/*
@@ -242,25 +247,18 @@ class WebHelper_simple {
 
 	$ok = $platform->fwrite($fd, sprintf("GET %s HTTP/1.0\r\n" .
 					     "Host: %s\r\n" .
-					     "%s" .
-					     "\r\n",
+					     "%s\r\n",
 					     $get,
 					     $components['host'],
 					     empty($extraHeaderLines) ? '' :
-					     join("\r\n", $extraHeaderLines) . "\r\n"));
+					     implode("\r\n", $extraHeaderLines) . "\r\n"));
 	if (!$ok) {
 	    /* Zero bytes written or false was returned */
-	    $gallery->debug("fwrite call failed in fetchWebPage($url)");
-	    if ($ok === false) {
-		$gallery->debug('return value was false');
-	    }
+	    $gallery->debug(
+		"fwrite call failed in fetchWebPage($url)" . ($ok === false ? ' - false' : ''));
 	    return array(false, null, null, null, null);
 	}
-	$ok = $platform->fflush($fd);
-	if (!$ok) {
-	    $gallery->debug("fflush call failed in fetchWebPage($url)");
-	    return array(false, null, null, null, null);
-	}
+	$platform->fflush($fd);
 
 	/*
 	 * Read the response code. fgets stops after newlines.
@@ -398,10 +396,16 @@ class WebHelper_simple {
 			       $post,
 			       $components['host'],
 			       empty($extraHeaderLines) ? '' :
-			       join("\r\n", $extraHeaderLines) . "\r\n",
+			       implode("\r\n", $extraHeaderLines) . "\r\n",
 			       strlen($postDataRaw),
 			       $postDataRaw);
-	$platform->fwrite($fd, $postRequest);
+	$ok = $platform->fwrite($fd, $postRequest);
+	if (!$ok) {
+	    /* Zero bytes written or false was returned */
+	    $gallery->debug(
+		"fwrite call failed in postToWebPage($url)" . ($ok === false ? ' - false' : ''));
+	    return array(false, null, null, null, null);
+	}
 	$platform->fflush($fd);
 
 	/*
