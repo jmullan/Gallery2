@@ -94,7 +94,7 @@ class WebHelper_simple {
 	    /* Zero bytes written or false was returned */
 	    $gallery->debug(
 		"fwrite call failed in fetchWebFile($url)" . ($ok === false ? ' - false' : ''));
-	    return array(false, null, null, null, null);
+	    return array(false, null, null, null);
 	}
 	$platform->fflush($fd);
 
@@ -404,7 +404,7 @@ class WebHelper_simple {
 	    /* Zero bytes written or false was returned */
 	    $gallery->debug(
 		"fwrite call failed in postToWebPage($url)" . ($ok === false ? ' - false' : ''));
-	    return array(false, null, null, null, null);
+	    return array(null, null, null);
 	}
 	$platform->fflush($fd);
 
