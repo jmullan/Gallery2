@@ -633,7 +633,7 @@ class PlatformTest extends GalleryTestCase {
 	/* We know this is going to bomb so unset PHPunit's error handler */
 	restore_error_handler();
 
-	$fd = @$this->_platform->fsockopen('www.BOGUSBOGUSBOGUS.com', $_SERVER['SERVER_PORT'],
+	$fd = @$this->_platform->fsockopen('www.BOGUSBOGUSBOGUSBOGUS.com', $_SERVER['SERVER_PORT'],
 					   $errno, $errstr, 30);
 	$this->assertEquals(false, $fd);
     }
