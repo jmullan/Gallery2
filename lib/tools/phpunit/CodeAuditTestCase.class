@@ -64,6 +64,10 @@ class CodeAuditTestCase extends GalleryTestCase {
     function _scanDir($dirPath) {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
+	static $KIND;
+	if (!isset($KIND)) {
+	    $KIND = strtoupper('kind'); /* Won't be KIND in Turkish locale */
+	}
 
 	$parser = xml_parser_create();
 	xml_parse_into_struct($parser, $platform->file_get_contents("$dirPath/.svn/entries"),
@@ -75,7 +79,7 @@ class CodeAuditTestCase extends GalleryTestCase {
 	} else {
 	    $dirs = array();
 	    foreach ($xmlIndex['ENTRY'] as $entry) {
-		switch ($xmlValues[$entry]['attributes']['KIND']) {
+		switch ($xmlValues[$entry]['attributes'][$KIND]) {
 		case 'dir':
 		    if (!empty($xmlValues[$entry]['attributes']['NAME'])) {
 			$dirs[] = $xmlValues[$entry]['attributes']['NAME'];
@@ -98,7 +102,7 @@ class CodeAuditTestCase extends GalleryTestCase {
 
 		default:
 		    $this->assert(false,
-			    'Unable to parse ' . $xmlValues[$entry]['attributes']['KIND']);
+			    'Unable to parse ' . $xmlValues[$entry]['attributes'][$KIND]);
 		}
 	    }
 	    foreach ($dirs as $dir) {
