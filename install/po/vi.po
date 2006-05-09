@@ -19,7 +19,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Installer 2.1\n"
+"Project-Id-Version: Gallery: Installer 2.2\n"
 "POT-Creation-Date: 2005-05-29 05:54-0400\n"
 "PO-Revision-Date: 2005-08-29 18:40+0100\n"
 "Last-Translator: Trung Dong Huynh <trungdong@donggiang.com>\n"
@@ -95,6 +95,10 @@ msgstr "Cài đặt Cơ sở dữ liệu"
 msgid "You must have the MySQL PHP module installed"
 msgstr "Bạn cần có module MySQL cài trong chương trình PHP"
 
+#, fuzzy
+msgid "You must have the MySQL Improved PHP module installed"
+msgstr "Bạn cần có module MySQL cài trong chương trình PHP"
+
 msgid "You must have the ibm_db2 PHP module installed"
 msgstr "Bạn cần có module ibm_db2 cài trong chương trình PHP"
 
@@ -102,6 +106,10 @@ msgid "You must have the PostgreSQL PHP module installed"
 msgstr "Bạn cần có module PostgreSQL cài trong chương trình PHP"
 
 msgid "You must have the Oracle OCI8 PHP module installed"
+msgstr "Bạn cần có module Oracle OCI8 cài trong chương trình PHP"
+
+#, fuzzy
+msgid "You must have the Component Object Model(COM) PHP module installed"
 msgstr "Bạn cần có module Oracle OCI8 cài trong chương trình PHP"
 
 #, c-format
@@ -195,23 +203,25 @@ msgstr ""
 "Không thể nạp các hàm API của G2. Bạn hãy tự xóa các bảng trong cơ sở dữ liệu và thư mục lưu "
 "trữ của Gallery."
 
-msgid "MySQL (all versions)"
-msgstr "MySQL (tất cả phiên bản)"
-
-msgid "MySQL with Transactions (v3.23.34a and newer)"
+#, fuzzy
+msgid "MySQL (v3.23.34a and newer)"
 msgstr "MySQL với Transactions (v3.23.34a và mới hơn)"
+
+#, fuzzy
+msgid "MySQL (versions before v3.23.34a)"
+msgstr "MySQL (tất cả phiên bản)"
 
 msgid "PostgreSQL v7.x and newer"
 msgstr "PostgreSQL v7.x và mới hơn"
-
-msgid "PostgreSQL v6.x (not well tested)"
-msgstr "PostgreSQL v6.x (chưa được kiểm tra kỹ)"
 
 msgid "Oracle (9i and newer)"
 msgstr "Oracle (9i và mới hơn)"
 
 msgid "IBM DB2 (v8.2 and newer)"
 msgstr "IBM DB2 (v8.2 và mới hơn)"
+
+msgid "MSSQL (Experimental!)"
+msgstr ""
 
 msgid "Unknown DB type or no known tables information."
 msgstr "Không xác định được kiểu cơ sở dữ liệu hoặc thông tin về bảng."
@@ -324,12 +334,13 @@ msgstr "Các kiểm tra hệ thống"
 msgid "Performing system checks"
 msgstr ""
 
-msgid "PHP version >= 4.1.0 or >= 5.0.4"
+#, fuzzy
+msgid "PHP version >= 4.3.0 or >= 5.0.4"
 msgstr "Phiên bản PHP >= 4.1.0 hoặc >= 5.0.4"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Error: Gallery 2 requires PHP version 4.1.0 or newer or 5.0.4 or newer. You have PHP version "
+"Error: Gallery 2 requires PHP version 4.3.0 or newer or 5.0.4 or newer. You have PHP version "
 "%s installed. Contact your webserver administrator to request an upgrade, available at the %"
 "sPHP website%s."
 msgstr ""
@@ -939,8 +950,9 @@ msgstr "Gallery: <strong>ảnh của bạn</strong> trên chính <strong>trang w
 msgid "Missing files (%d)"
 msgstr "Các tập tin thiếu(%d)"
 
+#, fuzzy
 msgid ""
-"Note: You're running Gallery from CVS, so recently removed files may appear here.  It might "
+"Note: You're running Gallery from SVN, so recently removed files may appear here.  It might "
 "be safe to ignore these."
 msgstr ""
 "Lưu ý: Bạn đang dùng phiên bản Gallery từ CVS và một số tập tin mới bị xóa gần đây được liệt "
@@ -950,10 +962,11 @@ msgstr ""
 msgid "Modified files (%d)"
 msgstr "Các tập tin bị hiệu chỉnh (%d)"
 
+#, fuzzy
 msgid ""
-"Note: You're running Gallery from CVS, so some modified files are to be expected.  You can "
-"probably ignore these, but to be safe you should make sure that you do 'cvs update -Pd' "
-"before continuing."
+"Note: You're running Gallery from SVN, so some modified files are to be expected.  You can "
+"probably ignore these, but to be safe you should make sure that you do 'svn update' before "
+"continuing."
 msgstr ""
 "Lưu ý: Bạn đang dùng phiên bản Gallery từ CVS và một số tập tin mới được hiệu chỉnh được "
 "liệt kê dưới đây. Tuy bạn có thể bỏ qua các cảnh báo này, nhưng để an toàn thì bạn nên chạy "
@@ -1290,6 +1303,9 @@ msgstr "Đi tiếp"
 
 msgid "Begin Installation&raquo;"
 msgstr "Bắt đầu cài đặt&raquo;"
+
+#~ msgid "PostgreSQL v6.x (not well tested)"
+#~ msgstr "PostgreSQL v6.x (chưa được kiểm tra kỹ)"
 
 #~ msgid "chmod 644 %s"
 #~ msgstr "chmod 644 %s"

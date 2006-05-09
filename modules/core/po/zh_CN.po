@@ -19,7 +19,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.0\n"
+"Project-Id-Version: Gallery: Core 1.1.4\n"
 "POT-Creation-Date: 2005-03-28 14:00+0800\n"
 "PO-Revision-Date: 2006-03-10 11:37+0800\n"
 "Last-Translator: Lyric <lyric@lyricli.com>\n"
@@ -83,24 +83,6 @@ msgstr[1] "%d 星期"
 msgid "<none>"
 msgstr "<无>"
 
-msgid "install"
-msgstr "安装"
-
-msgid "upgrade"
-msgstr "升级"
-
-msgid "configure"
-msgstr "设置"
-
-msgid "activate"
-msgstr "开启"
-
-msgid "uninstall"
-msgstr "卸载"
-
-msgid "deactivate"
-msgstr "关闭"
-
 msgid "No acceleration"
 msgstr "不加速"
 
@@ -109,6 +91,9 @@ msgstr "局部加速"
 
 msgid "Full acceleration"
 msgstr "全加速"
+
+msgid "Themes"
+msgstr "主题"
 
 msgid "Performing Maintenance Tasks"
 msgstr "执行维护任务"
@@ -125,6 +110,21 @@ msgstr "升级"
 
 msgid "Download"
 msgstr "下载"
+
+msgid "install"
+msgstr "安装"
+
+msgid "upgrade"
+msgstr "升级"
+
+msgid "activate"
+msgstr "开启"
+
+msgid "uninstall"
+msgstr "卸载"
+
+msgid "deactivate"
+msgstr "关闭"
 
 msgid "Inherit settings from parent album"
 msgstr "从上层相册中继承设置值"
@@ -499,17 +499,11 @@ msgstr "您的帐户"
 msgid "Logout"
 msgstr "退出"
 
-msgid "Modules"
-msgstr "模块"
+msgid "Plugins"
+msgstr ""
 
 msgid "Repository"
 msgstr "仓库"
-
-msgid "Themes"
-msgstr "主题"
-
-msgid "Display"
-msgstr "显示"
 
 msgid "Users"
 msgstr "用户"
@@ -525,6 +519,9 @@ msgstr "工具优先级"
 
 msgid "Graphics Toolkits"
 msgstr "图形工具"
+
+msgid "Defaults"
+msgstr "默认值"
 
 msgid "Account Settings"
 msgstr "帐户设置"
@@ -853,11 +850,9 @@ msgstr "数据表"
 msgid "spreadsheet"
 msgstr "数据表"
 
-msgid "Unknown"
-msgstr "未知"
-
-msgid "unknown"
-msgstr "未知"
+#, fuzzy
+msgid "file"
+msgstr "文件"
 
 #, c-format
 msgid ""
@@ -877,6 +872,49 @@ msgstr "用户"
 
 msgid "user"
 msgstr "用户"
+
+#, fuzzy
+msgid "Integrity Check"
+msgstr "索引完整性检查失败"
+
+msgid "Check data integrity and report any inconsistencies."
+msgstr ""
+
+msgid "Loading all entities"
+msgstr ""
+
+msgid "Checking for orphaned entity data"
+msgstr ""
+
+msgid "Checking for orphaned item data"
+msgstr ""
+
+msgid "Checking for orphaned plugin data"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Checked %d entities"
+msgstr "检查 %d 个项目"
+
+#, fuzzy, c-format
+msgid "Failed to load entity ids: %s"
+msgstr "添加 %s 出错"
+
+#, c-format
+msgid "Orphaned data in table %s with missing parent entity; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with no row in %s table; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with missing derivative source; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Unknown plugin: %s %s"
+msgstr ""
 
 msgid "Optimize database"
 msgstr "优化数据库"
@@ -933,6 +971,9 @@ msgstr "获得系统详情；可以拷贝/粘贴到G2支持论坛中。"
 
 msgid "core"
 msgstr "核心"
+
+msgid "unknown"
+msgstr "未知"
 
 msgid "Gallery version"
 msgstr "图库版本"
@@ -1562,85 +1603,6 @@ msgstr "立刻运行"
 msgid "Last Run Details:"
 msgstr "最后运行结果："
 
-msgid "Gallery Modules"
-msgstr "图库模块"
-
-#, c-format
-msgid "Successfully installed and auto-configured module %s"
-msgstr "模块 %s 安装并自动设置成功"
-
-#, c-format
-msgid "Successfully installed module %s"
-msgstr "模块 %s 安装成功"
-
-#, c-format
-msgid "Successfully configured module %s"
-msgstr "模块 %s 配置成功"
-
-#, c-format
-msgid "Successfully upgraded module %s"
-msgstr "模块 %s 升级成功"
-
-#, c-format
-msgid "Successfully activated module %s"
-msgstr "模块 %s 开启成功"
-
-#, c-format
-msgid "Successfully deactivated module %s"
-msgstr "模块 %s 关闭成功"
-
-#, c-format
-msgid "Successfully uninstalled module %s"
-msgstr "模块 %s 卸载成功"
-
-msgid ""
-"Gallery features come as separate modules.  You can download and install modules to add more "
-"features to your Gallery, or you can disable features if you don't want to use them.  In "
-"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
-"don't wish to use a feature, you can deactivate it."
-msgstr ""
-"图库相关功能均来自独立的模块。您可以通过下载并安装模块来增加图库功能，或通过关闭模块来禁用不"
-"使用的功能。要使用一个功能，您必须安装，设置（如需要）并启动它。如果您不想使用一个功能，可以"
-"关闭它。"
-
-msgid "Module Name"
-msgstr "模块名称"
-
-msgid "Version"
-msgstr "版本"
-
-msgid "Installed"
-msgstr "已安装"
-
-msgid "Actions"
-msgstr "操作"
-
-msgid "Status: Not Installed"
-msgstr "状态: 未安装"
-
-msgid "Status: Active"
-msgstr "状态: 开启"
-
-msgid "Status: Inactive"
-msgstr "状态: 关闭"
-
-msgid "Status: Upgrade Required (Inactive)"
-msgstr "状态: 需要升级 (关闭)"
-
-msgid "Status: Incompatible Module (Inactive)"
-msgstr "状态: 模块不兼容 (关闭)"
-
-msgid "Incompatible module!"
-msgstr "模块不兼容！"
-
-#, c-format
-msgid "Core API Required: %s (available: %s)"
-msgstr "核心API需要: %s (%s 可用)"
-
-#, c-format
-msgid "Module API Required: %s (available: %s)"
-msgstr "模块API需要: %s (%s 可用)"
-
 msgid "Confirm module uninstall"
 msgstr "确认模块卸载"
 
@@ -1722,6 +1684,100 @@ msgstr "在多久后过期："
 msgid "Clear Saved Pages"
 msgstr "清除存储页面"
 
+msgid "Status: Inactive"
+msgstr "状态: 关闭"
+
+#, fuzzy
+msgid "__PLUGIN__ deactivated"
+msgstr "关闭"
+
+msgid "Status: Active"
+msgstr "状态: 开启"
+
+msgid "__PLUGIN__ activated"
+msgstr ""
+
+msgid "Status: Not Installed"
+msgstr "状态: 未安装"
+
+msgid "__PLUGIN__ uninstalled"
+msgstr ""
+
+msgid "Status: Upgrade Required (Inactive)"
+msgstr "状态: 需要升级 (关闭)"
+
+#, fuzzy
+msgid "Status: Incompatible Plugin (Inactive)"
+msgstr "状态: 模块不兼容 (关闭)"
+
+msgid "Status: Inactive (Configuration Required)"
+msgstr ""
+
+msgid "__PLUGIN__ needs configuration"
+msgstr ""
+
+#, fuzzy
+msgid "Gallery Plugins"
+msgstr "图库模块"
+
+#, fuzzy
+msgid ""
+"Gallery features come as separate plugins.  You can download and install plugins to add more "
+"features to your Gallery, or you can disable features if you don't want to use them.  In "
+"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
+"don't wish to use a feature, you can deactivate it."
+msgstr ""
+"图库相关功能均来自独立的模块。您可以通过下载并安装模块来增加图库功能，或通过关闭模块来禁用不"
+"使用的功能。要使用一个功能，您必须安装，设置（如需要）并启动它。如果您不想使用一个功能，可以"
+"关闭它。"
+
+#, fuzzy
+msgid "up to date"
+msgstr "更新"
+
+#, fuzzy
+msgid "disabled"
+msgstr "%d 个项目错误"
+
+#, fuzzy
+msgid "upgrade required"
+msgstr "(必填项)"
+
+#, fuzzy
+msgid "not installed"
+msgstr "卸载"
+
+#, fuzzy
+msgid "incompatible"
+msgstr "模块不兼容"
+
+#, fuzzy
+msgid "Plugin Name"
+msgstr "全名"
+
+msgid "Version"
+msgstr "版本"
+
+msgid "Installed"
+msgstr "已安装"
+
+msgid "Actions"
+msgstr "操作"
+
+msgid "Incompatible plugin!"
+msgstr "模块不兼容！"
+
+#, c-format
+msgid "Core API Required: %s (available: %s)"
+msgstr "核心API需要: %s (%s 可用)"
+
+#, c-format
+msgid "Plugin API Required: %s (available: %s)"
+msgstr "模块API需要: %s (%s 可用)"
+
+msgid "configure"
+msgstr "设置"
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr "确保互联网连接正确然后再试验一次。"
 
@@ -1733,6 +1789,9 @@ msgstr "所有插件都是最新的。"
 
 msgid "Common Tasks"
 msgstr "一般任务"
+
+msgid "Modules"
+msgstr "模块"
 
 msgid "Warning: Experimental feature!"
 msgstr "警告：实验性功能！"
@@ -1839,18 +1898,14 @@ msgstr ""
 msgid "Theme Name"
 msgstr "主题名"
 
+msgid "Module Name"
+msgstr "模块名称"
+
 msgid "Latest"
 msgstr "最新"
 
 msgid "Incompatible Plugin"
 msgstr "模块不兼容"
-
-msgid "Incompatible plugin!"
-msgstr "模块不兼容！"
-
-#, c-format
-msgid "Plugin API Required: %s (available: %s)"
-msgstr "模块API需要: %s (%s 可用)"
 
 msgid "No packages have been selected."
 msgstr "没有包被选择。"
@@ -1958,25 +2013,6 @@ msgstr "默认相册设置保存成功"
 
 msgid "Restored theme settings"
 msgstr "恢复主题设置"
-
-msgid "All Themes"
-msgstr "所有主题"
-
-msgid "Defaults"
-msgstr "默认值"
-
-msgid "Status: Incompatible Theme (Inactive)"
-msgstr "状态: 主题不兼容 (关闭)"
-
-msgid "Incompatible theme!"
-msgstr "主题不兼容！"
-
-#, c-format
-msgid "Theme API Required: %s (available: %s)"
-msgstr "主题API需要: %s (%s 可用)"
-
-msgid "(default)"
-msgstr "(默认值)"
 
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
@@ -2710,6 +2746,10 @@ msgid ""
 "or modify a thumbnail."
 msgstr "没有可使用的图形工具支持此照片格式，因此无法建立或更改缩略图。"
 
+#, fuzzy
+msgid "Unable to create a thumbnail for this item"
+msgstr "你必须输入此项目的名称"
+
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the movie's width and "
 "height.  If you have installed a graphics toolkit that can handle movie types, then these "
@@ -3422,6 +3462,9 @@ msgstr "%d. %s"
 msgid "Size: "
 msgstr "尺寸："
 
+msgid "Unknown"
+msgstr "未知"
+
 msgid "Full size: "
 msgstr "全尺寸："
 
@@ -3451,6 +3494,51 @@ msgstr "[测试]权限"
 
 msgid "Unit test theme"
 msgstr "公测主题"
+
+#~ msgid "Display"
+#~ msgstr "显示"
+
+#~ msgid "Successfully installed and auto-configured module %s"
+#~ msgstr "模块 %s 安装并自动设置成功"
+
+#~ msgid "Successfully installed module %s"
+#~ msgstr "模块 %s 安装成功"
+
+#~ msgid "Successfully configured module %s"
+#~ msgstr "模块 %s 配置成功"
+
+#~ msgid "Successfully upgraded module %s"
+#~ msgstr "模块 %s 升级成功"
+
+#~ msgid "Successfully activated module %s"
+#~ msgstr "模块 %s 开启成功"
+
+#~ msgid "Successfully deactivated module %s"
+#~ msgstr "模块 %s 关闭成功"
+
+#~ msgid "Successfully uninstalled module %s"
+#~ msgstr "模块 %s 卸载成功"
+
+#~ msgid "Incompatible module!"
+#~ msgstr "模块不兼容！"
+
+#~ msgid "Module API Required: %s (available: %s)"
+#~ msgstr "模块API需要: %s (%s 可用)"
+
+#~ msgid "All Themes"
+#~ msgstr "所有主题"
+
+#~ msgid "Status: Incompatible Theme (Inactive)"
+#~ msgstr "状态: 主题不兼容 (关闭)"
+
+#~ msgid "Incompatible theme!"
+#~ msgstr "主题不兼容！"
+
+#~ msgid "Theme API Required: %s (available: %s)"
+#~ msgstr "主题API需要: %s (%s 可用)"
+
+#~ msgid "(default)"
+#~ msgstr "(默认值)"
 
 #~ msgid "&laquo; None &raquo;"
 #~ msgstr "&laquo; 无 &raquo;"

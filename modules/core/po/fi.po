@@ -23,7 +23,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.0\n"
+"Project-Id-Version: Gallery: Core 1.1.4\n"
 "POT-Creation-Date: 2003-05-16 09:41+0300\n"
 "PO-Revision-Date: 2005-12-11 14:35+0200\n"
 "Last-Translator: Marko Kohtala <marko.kohtala@gmail.com>\n"
@@ -87,24 +87,6 @@ msgstr[1] "%d viikkoa"
 msgid "<none>"
 msgstr "<ei valittu>"
 
-msgid "install"
-msgstr "asenna"
-
-msgid "upgrade"
-msgstr "päivitä"
-
-msgid "configure"
-msgstr "konfiguroi"
-
-msgid "activate"
-msgstr "ota käyttöön"
-
-msgid "uninstall"
-msgstr "poista"
-
-msgid "deactivate"
-msgstr "poista käytöstä"
-
 msgid "No acceleration"
 msgstr ""
 
@@ -113,6 +95,9 @@ msgstr ""
 
 msgid "Full acceleration"
 msgstr ""
+
+msgid "Themes"
+msgstr "Teema"
 
 #, fuzzy
 msgid "Performing Maintenance Tasks"
@@ -132,6 +117,21 @@ msgstr "päivitä"
 
 msgid "Download"
 msgstr ""
+
+msgid "install"
+msgstr "asenna"
+
+msgid "upgrade"
+msgstr "päivitä"
+
+msgid "activate"
+msgstr "ota käyttöön"
+
+msgid "uninstall"
+msgstr "poista"
+
+msgid "deactivate"
+msgstr "poista käytöstä"
 
 msgid "Inherit settings from parent album"
 msgstr "Peri asetukset ulommasta albumista"
@@ -511,17 +511,12 @@ msgstr "Oma Käyttäjätilisi"
 msgid "Logout"
 msgstr "Kirjaudu Ulos"
 
-msgid "Modules"
-msgstr "Moduulit"
+#, fuzzy
+msgid "Plugins"
+msgstr "sisäänkirjautuminen"
 
 msgid "Repository"
 msgstr ""
-
-msgid "Themes"
-msgstr "Teema"
-
-msgid "Display"
-msgstr "Näyttö"
 
 msgid "Users"
 msgstr "Käyttäjät"
@@ -537,6 +532,9 @@ msgstr "Työkalujen Tärkeysjärjestys"
 
 msgid "Graphics Toolkits"
 msgstr "Grafiikkatyökalut"
+
+msgid "Defaults"
+msgstr "Oletukset"
 
 msgid "Account Settings"
 msgstr "Omat Asetukset"
@@ -874,11 +872,9 @@ msgstr "Taulukkolaskenta"
 msgid "spreadsheet"
 msgstr "taulukkolaskenta"
 
-msgid "Unknown"
-msgstr "Tuntematon"
-
-msgid "unknown"
-msgstr "tuntematon"
+#, fuzzy
+msgid "file"
+msgstr "Tiedosto"
 
 #, c-format
 msgid ""
@@ -898,6 +894,48 @@ msgstr "Käyttäjä"
 
 msgid "user"
 msgstr "käyttäjä"
+
+msgid "Integrity Check"
+msgstr ""
+
+msgid "Check data integrity and report any inconsistencies."
+msgstr ""
+
+msgid "Loading all entities"
+msgstr ""
+
+msgid "Checking for orphaned entity data"
+msgstr ""
+
+msgid "Checking for orphaned item data"
+msgstr ""
+
+msgid "Checking for orphaned plugin data"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Checked %d entities"
+msgstr "%d kohdetta tarkistettu"
+
+#, fuzzy, c-format
+msgid "Failed to load entity ids: %s"
+msgstr "Ei voinut lisätä tiedostoa %s"
+
+#, c-format
+msgid "Orphaned data in table %s with missing parent entity; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with no row in %s table; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with missing derivative source; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Unknown plugin: %s %s"
+msgstr ""
 
 msgid "Optimize database"
 msgstr "Optimoi tietokanta"
@@ -959,6 +997,9 @@ msgstr "Ota systeemin yksityiskohdat talteen; kopioitavaksi esimerkiksi G2 tukif
 
 msgid "core"
 msgstr "ydin"
+
+msgid "unknown"
+msgstr "tuntematon"
 
 msgid "Gallery version"
 msgstr "Gallerian versio"
@@ -1600,86 +1641,6 @@ msgstr "suorita nyt"
 msgid "Last Run Details:"
 msgstr "Edellisen Ajon Tiedot:"
 
-msgid "Gallery Modules"
-msgstr "Gallerian Moduulit"
-
-#, c-format
-msgid "Successfully installed and auto-configured module %s"
-msgstr "Asennettu ja itse-konfiguroitu moduuli %s"
-
-#, c-format
-msgid "Successfully installed module %s"
-msgstr "Moduuli %s asennettu"
-
-#, c-format
-msgid "Successfully configured module %s"
-msgstr "Moduuli %s konfiguroitu"
-
-#, c-format
-msgid "Successfully upgraded module %s"
-msgstr "Moduuli %s päivitetty"
-
-#, c-format
-msgid "Successfully activated module %s"
-msgstr "Moduuli %s otettu käyttöön"
-
-#, c-format
-msgid "Successfully deactivated module %s"
-msgstr "Moduuli %s otettu pois käytöstä"
-
-#, c-format
-msgid "Successfully uninstalled module %s"
-msgstr "Moduuli %s poistettu"
-
-msgid ""
-"Gallery features come as separate modules.  You can download and install modules to add more "
-"features to your Gallery, or you can disable features if you don't want to use them.  In "
-"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
-"don't wish to use a feature, you can deactivate it."
-msgstr ""
-"Gallerian ominaisuuksiin kuuluu erilliset moduulit. Voit ladata ja asentaa moduuleita, "
-"joilla saat lisää ominaisuuksia Galleriaasi, tai jos et halua käyttää jotain tiettyä "
-"moduulia, voit poistaa sen käytöstä. Käyttääksesi moduulia, sinun täytyy asentaa, "
-"konfiguroida ja otaa se käyttöön."
-
-msgid "Module Name"
-msgstr "Moduulin Nimi"
-
-msgid "Version"
-msgstr "Versio"
-
-msgid "Installed"
-msgstr "Asennettu"
-
-msgid "Actions"
-msgstr "Toiminnot"
-
-msgid "Status: Not Installed"
-msgstr "Tila: Ei Asennettu"
-
-msgid "Status: Active"
-msgstr "Tila: Käytössä"
-
-msgid "Status: Inactive"
-msgstr "Tila: Ei Käytössä"
-
-msgid "Status: Upgrade Required (Inactive)"
-msgstr "Tila: Tarvitsee Päivityksen (Ei Käytössä)"
-
-msgid "Status: Incompatible Module (Inactive)"
-msgstr "Tila: Epäyhteensopiva (Ei Käytössä)"
-
-msgid "Incompatible module!"
-msgstr "Epäyhteensopiva moduuli!"
-
-#, c-format
-msgid "Core API Required: %s (available: %s)"
-msgstr "Vaadittu Ytimen Rajapinta: %s (käytettävissä: %s)"
-
-#, c-format
-msgid "Module API Required: %s (available: %s)"
-msgstr "Tarvittava Moduulin Rajapinta: %s (käytettävissä: %s)"
-
 msgid "Confirm module uninstall"
 msgstr "Vahvista moduulin poisto"
 
@@ -1760,6 +1721,102 @@ msgstr ""
 msgid "Clear Saved Pages"
 msgstr ""
 
+msgid "Status: Inactive"
+msgstr "Tila: Ei Käytössä"
+
+#, fuzzy
+msgid "__PLUGIN__ deactivated"
+msgstr "poista käytöstä"
+
+msgid "Status: Active"
+msgstr "Tila: Käytössä"
+
+msgid "__PLUGIN__ activated"
+msgstr ""
+
+msgid "Status: Not Installed"
+msgstr "Tila: Ei Asennettu"
+
+msgid "__PLUGIN__ uninstalled"
+msgstr ""
+
+msgid "Status: Upgrade Required (Inactive)"
+msgstr "Tila: Tarvitsee Päivityksen (Ei Käytössä)"
+
+#, fuzzy
+msgid "Status: Incompatible Plugin (Inactive)"
+msgstr "Tila: Epäyhteensopiva (Ei Käytössä)"
+
+msgid "Status: Inactive (Configuration Required)"
+msgstr ""
+
+msgid "__PLUGIN__ needs configuration"
+msgstr ""
+
+#, fuzzy
+msgid "Gallery Plugins"
+msgstr "Gallerian Moduulit"
+
+#, fuzzy
+msgid ""
+"Gallery features come as separate plugins.  You can download and install plugins to add more "
+"features to your Gallery, or you can disable features if you don't want to use them.  In "
+"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
+"don't wish to use a feature, you can deactivate it."
+msgstr ""
+"Gallerian ominaisuuksiin kuuluu erilliset moduulit. Voit ladata ja asentaa moduuleita, "
+"joilla saat lisää ominaisuuksia Galleriaasi, tai jos et halua käyttää jotain tiettyä "
+"moduulia, voit poistaa sen käytöstä. Käyttääksesi moduulia, sinun täytyy asentaa, "
+"konfiguroida ja otaa se käyttöön."
+
+#, fuzzy
+msgid "up to date"
+msgstr "Päiväys"
+
+#, fuzzy
+msgid "disabled"
+msgstr "%d kohdetta epäonnistui"
+
+#, fuzzy
+msgid "upgrade required"
+msgstr "(vaadittu)"
+
+#, fuzzy
+msgid "not installed"
+msgstr "poista"
+
+#, fuzzy
+msgid "incompatible"
+msgstr "Epäyhteensopiva moduuli!"
+
+#, fuzzy
+msgid "Plugin Name"
+msgstr "Koko Nimi"
+
+msgid "Version"
+msgstr "Versio"
+
+msgid "Installed"
+msgstr "Asennettu"
+
+msgid "Actions"
+msgstr "Toiminnot"
+
+#, fuzzy
+msgid "Incompatible plugin!"
+msgstr "Epäyhteensopiva moduuli!"
+
+#, c-format
+msgid "Core API Required: %s (available: %s)"
+msgstr "Vaadittu Ytimen Rajapinta: %s (käytettävissä: %s)"
+
+#, fuzzy, c-format
+msgid "Plugin API Required: %s (available: %s)"
+msgstr "Tarvittava Moduulin Rajapinta: %s (käytettävissä: %s)"
+
+msgid "configure"
+msgstr "konfiguroi"
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr ""
 
@@ -1771,6 +1828,9 @@ msgstr ""
 
 msgid "Common Tasks"
 msgstr ""
+
+msgid "Modules"
+msgstr "Moduulit"
 
 msgid "Warning: Experimental feature!"
 msgstr ""
@@ -1873,6 +1933,9 @@ msgstr ""
 msgid "Theme Name"
 msgstr "Teeman Nimi"
 
+msgid "Module Name"
+msgstr "Moduulin Nimi"
+
 #, fuzzy
 msgid "Latest"
 msgstr "viimeinen"
@@ -1880,14 +1943,6 @@ msgstr "viimeinen"
 #, fuzzy
 msgid "Incompatible Plugin"
 msgstr "Epäyhteensopiva moduuli!"
-
-#, fuzzy
-msgid "Incompatible plugin!"
-msgstr "Epäyhteensopiva moduuli!"
-
-#, fuzzy, c-format
-msgid "Plugin API Required: %s (available: %s)"
-msgstr "Tarvittava Moduulin Rajapinta: %s (käytettävissä: %s)"
 
 msgid "No packages have been selected."
 msgstr ""
@@ -1995,25 +2050,6 @@ msgstr "Oletusasetukset albumeille tallennettu"
 
 msgid "Restored theme settings"
 msgstr "Teeman asetukset palautettu"
-
-msgid "All Themes"
-msgstr "Kaikki Teemat"
-
-msgid "Defaults"
-msgstr "Oletukset"
-
-msgid "Status: Incompatible Theme (Inactive)"
-msgstr "Tila: Epäyhteensopiva Teema (Ei Käytössä)"
-
-msgid "Incompatible theme!"
-msgstr "Epäyhteensopiva teema!"
-
-#, c-format
-msgid "Theme API Required: %s (available: %s)"
-msgstr "Vaadittu Teeman Rajapinta: %s (käytettävissä: %s)"
-
-msgid "(default)"
-msgstr "(oletusarvo)"
 
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
@@ -2777,6 +2813,10 @@ msgid ""
 msgstr ""
 "Ei ole työkalua tämän tyyppiselle kohteelle, joten emme voi tehdä tai muokata "
 "esikatselukuvaa."
+
+#, fuzzy
+msgid "Unable to create a thumbnail for this item"
+msgstr "Sinun tulee antaa nimi tälle kohteelle."
 
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the movie's width and "
@@ -3547,6 +3587,9 @@ msgstr "%d. %s"
 msgid "Size: "
 msgstr "Koko: "
 
+msgid "Unknown"
+msgstr "Tuntematon"
+
 msgid "Full size: "
 msgstr "Täysi koko: "
 
@@ -3577,6 +3620,51 @@ msgstr "[test] Toinen oikeus"
 msgid "Unit test theme"
 msgstr "Yksikkötestauksen teema"
 
+#~ msgid "Display"
+#~ msgstr "Näyttö"
+
+#~ msgid "Successfully installed and auto-configured module %s"
+#~ msgstr "Asennettu ja itse-konfiguroitu moduuli %s"
+
+#~ msgid "Successfully installed module %s"
+#~ msgstr "Moduuli %s asennettu"
+
+#~ msgid "Successfully configured module %s"
+#~ msgstr "Moduuli %s konfiguroitu"
+
+#~ msgid "Successfully upgraded module %s"
+#~ msgstr "Moduuli %s päivitetty"
+
+#~ msgid "Successfully activated module %s"
+#~ msgstr "Moduuli %s otettu käyttöön"
+
+#~ msgid "Successfully deactivated module %s"
+#~ msgstr "Moduuli %s otettu pois käytöstä"
+
+#~ msgid "Successfully uninstalled module %s"
+#~ msgstr "Moduuli %s poistettu"
+
+#~ msgid "Incompatible module!"
+#~ msgstr "Epäyhteensopiva moduuli!"
+
+#~ msgid "Module API Required: %s (available: %s)"
+#~ msgstr "Tarvittava Moduulin Rajapinta: %s (käytettävissä: %s)"
+
+#~ msgid "All Themes"
+#~ msgstr "Kaikki Teemat"
+
+#~ msgid "Status: Incompatible Theme (Inactive)"
+#~ msgstr "Tila: Epäyhteensopiva Teema (Ei Käytössä)"
+
+#~ msgid "Incompatible theme!"
+#~ msgstr "Epäyhteensopiva teema!"
+
+#~ msgid "Theme API Required: %s (available: %s)"
+#~ msgstr "Vaadittu Teeman Rajapinta: %s (käytettävissä: %s)"
+
+#~ msgid "(default)"
+#~ msgstr "(oletusarvo)"
+
 #~ msgid "&laquo; None &raquo;"
 #~ msgstr "&laquo; Ei mitään &raquo;"
 
@@ -3601,9 +3689,6 @@ msgstr "Yksikkötestauksen teema"
 #~ msgid "view permissions"
 #~ msgstr "oikeudet"
 
-#~ msgid "login"
-#~ msgstr "sisäänkirjautuminen"
-
 #, fuzzy
 #~ msgid "Successfully deleted directory: /cache/entity"
 #~ msgstr "Onnistuneesti lisätty yksi tiedosto."
@@ -3619,4 +3704,3 @@ msgstr "Yksikkötestauksen teema"
 #, fuzzy
 #~ msgid "Unable to delete directory: /cache/theme"
 #~ msgstr "Onnistuneesti lisätty yksi tiedosto."
-

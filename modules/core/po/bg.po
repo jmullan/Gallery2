@@ -23,7 +23,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.0\n"
+"Project-Id-Version: Gallery: Core 1.1.4\n"
 "Report-Msgid-Bugs-To: gallery-translations@lists.sourceforge.net\n"
 "POT-Creation-Date: 2003-02-11 03:09-0800\n"
 "PO-Revision-Date: 2005-08-13 11:42-0500\n"
@@ -90,24 +90,6 @@ msgstr[1] "%d седмици"
 msgid "<none>"
 msgstr ""
 
-msgid "install"
-msgstr "инсталиране"
-
-msgid "upgrade"
-msgstr "обновяване"
-
-msgid "configure"
-msgstr "конфигуриране"
-
-msgid "activate"
-msgstr "активиране"
-
-msgid "uninstall"
-msgstr "премахване"
-
-msgid "deactivate"
-msgstr "деактивиране"
-
 msgid "No acceleration"
 msgstr ""
 
@@ -115,6 +97,9 @@ msgid "Partial acceleration"
 msgstr ""
 
 msgid "Full acceleration"
+msgstr ""
+
+msgid "Themes"
 msgstr ""
 
 msgid "Performing Maintenance Tasks"
@@ -133,6 +118,21 @@ msgstr "обновяване"
 
 msgid "Download"
 msgstr ""
+
+msgid "install"
+msgstr "инсталиране"
+
+msgid "upgrade"
+msgstr "обновяване"
+
+msgid "activate"
+msgstr "активиране"
+
+msgid "uninstall"
+msgstr "премахване"
+
+msgid "deactivate"
+msgstr "деактивиране"
 
 msgid "Inherit settings from parent album"
 msgstr "Използват се настройките на по-горния албум"
@@ -509,16 +509,10 @@ msgstr "Вашите Настройки"
 msgid "Logout"
 msgstr "Изход"
 
-msgid "Modules"
-msgstr "Модули"
+msgid "Plugins"
+msgstr ""
 
 msgid "Repository"
-msgstr ""
-
-msgid "Themes"
-msgstr ""
-
-msgid "Display"
 msgstr ""
 
 msgid "Users"
@@ -535,6 +529,9 @@ msgstr "Приоритети"
 
 msgid "Graphics Toolkits"
 msgstr "Графични Програми"
+
+msgid "Defaults"
+msgstr "Презададени Настройки"
 
 msgid "Account Settings"
 msgstr "Потребителски Настройки"
@@ -863,11 +860,9 @@ msgstr ""
 msgid "spreadsheet"
 msgstr ""
 
-msgid "Unknown"
-msgstr ""
-
-msgid "unknown"
-msgstr ""
+#, fuzzy
+msgid "file"
+msgstr "Файл"
 
 #, c-format
 msgid ""
@@ -887,6 +882,48 @@ msgstr "Потребител"
 
 msgid "user"
 msgstr "потребител"
+
+msgid "Integrity Check"
+msgstr ""
+
+msgid "Check data integrity and report any inconsistencies."
+msgstr ""
+
+msgid "Loading all entities"
+msgstr ""
+
+msgid "Checking for orphaned entity data"
+msgstr ""
+
+msgid "Checking for orphaned item data"
+msgstr ""
+
+msgid "Checking for orphaned plugin data"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Checked %d entities"
+msgstr "Проверени елементи: %d"
+
+#, c-format
+msgid "Failed to load entity ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with missing parent entity; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with no row in %s table; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with missing derivative source; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Unknown plugin: %s %s"
+msgstr ""
 
 msgid "Optimize database"
 msgstr ""
@@ -941,6 +978,9 @@ msgstr ""
 
 msgid "core"
 msgstr "ядро"
+
+msgid "unknown"
+msgstr ""
 
 msgid "Gallery version"
 msgstr "Версия на Галерията"
@@ -1555,82 +1595,6 @@ msgstr ""
 msgid "Last Run Details:"
 msgstr ""
 
-msgid "Gallery Modules"
-msgstr "Модули на Галерията"
-
-#, c-format
-msgid "Successfully installed and auto-configured module %s"
-msgstr "Модула %s е успешно инсталиран и автоматично конфигуриран"
-
-#, c-format
-msgid "Successfully installed module %s"
-msgstr "Модула %s е успешно инсталиран"
-
-#, c-format
-msgid "Successfully configured module %s"
-msgstr "Модула %s е успешно конфигуриран"
-
-#, c-format
-msgid "Successfully upgraded module %s"
-msgstr "Модула %s е успешно обновен"
-
-#, c-format
-msgid "Successfully activated module %s"
-msgstr "Модула %s е успешно активиран"
-
-#, c-format
-msgid "Successfully deactivated module %s"
-msgstr "Модула %s е успешно деактивиран"
-
-#, c-format
-msgid "Successfully uninstalled module %s"
-msgstr "Модула %s е успешно премахнат"
-
-msgid ""
-"Gallery features come as separate modules.  You can download and install modules to add more "
-"features to your Gallery, or you can disable features if you don't want to use them.  In "
-"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
-"don't wish to use a feature, you can deactivate it."
-msgstr ""
-
-msgid "Module Name"
-msgstr "Име на Модула"
-
-msgid "Version"
-msgstr "Версия"
-
-msgid "Installed"
-msgstr "Инсталиран"
-
-msgid "Actions"
-msgstr "Действия"
-
-msgid "Status: Not Installed"
-msgstr ""
-
-msgid "Status: Active"
-msgstr ""
-
-msgid "Status: Inactive"
-msgstr ""
-
-msgid "Status: Upgrade Required (Inactive)"
-msgstr ""
-
-msgid "Status: Incompatible Module (Inactive)"
-msgstr ""
-
-msgid "Incompatible module!"
-msgstr ""
-
-#, c-format
-msgid "Core API Required: %s (available: %s)"
-msgstr ""
-
-#, c-format
-msgid "Module API Required: %s (available: %s)"
-msgstr ""
-
 msgid "Confirm module uninstall"
 msgstr "Потвърдете премахването на модула"
 
@@ -1713,6 +1677,94 @@ msgstr ""
 msgid "Clear Saved Pages"
 msgstr ""
 
+msgid "Status: Inactive"
+msgstr ""
+
+#, fuzzy
+msgid "__PLUGIN__ deactivated"
+msgstr "деактивиране"
+
+msgid "Status: Active"
+msgstr ""
+
+msgid "__PLUGIN__ activated"
+msgstr ""
+
+msgid "Status: Not Installed"
+msgstr ""
+
+msgid "__PLUGIN__ uninstalled"
+msgstr ""
+
+msgid "Status: Upgrade Required (Inactive)"
+msgstr ""
+
+msgid "Status: Incompatible Plugin (Inactive)"
+msgstr ""
+
+msgid "Status: Inactive (Configuration Required)"
+msgstr ""
+
+msgid "__PLUGIN__ needs configuration"
+msgstr ""
+
+#, fuzzy
+msgid "Gallery Plugins"
+msgstr "Модули на Галерията"
+
+msgid ""
+"Gallery features come as separate plugins.  You can download and install plugins to add more "
+"features to your Gallery, or you can disable features if you don't want to use them.  In "
+"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
+"don't wish to use a feature, you can deactivate it."
+msgstr ""
+
+#, fuzzy
+msgid "up to date"
+msgstr "Дата:"
+
+#, fuzzy
+msgid "disabled"
+msgstr "Неуспешно изградени: %d"
+
+#, fuzzy
+msgid "upgrade required"
+msgstr "(необходимо)"
+
+#, fuzzy
+msgid "not installed"
+msgstr "премахване"
+
+msgid "incompatible"
+msgstr ""
+
+#, fuzzy
+msgid "Plugin Name"
+msgstr "Пълно Име"
+
+msgid "Version"
+msgstr "Версия"
+
+msgid "Installed"
+msgstr "Инсталиран"
+
+msgid "Actions"
+msgstr "Действия"
+
+msgid "Incompatible plugin!"
+msgstr ""
+
+#, c-format
+msgid "Core API Required: %s (available: %s)"
+msgstr ""
+
+#, c-format
+msgid "Plugin API Required: %s (available: %s)"
+msgstr ""
+
+msgid "configure"
+msgstr "конфигуриране"
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr ""
 
@@ -1724,6 +1776,9 @@ msgstr ""
 
 msgid "Common Tasks"
 msgstr ""
+
+msgid "Modules"
+msgstr "Модули"
 
 msgid "Warning: Experimental feature!"
 msgstr ""
@@ -1826,18 +1881,14 @@ msgstr ""
 msgid "Theme Name"
 msgstr "Име"
 
+msgid "Module Name"
+msgstr "Име на Модула"
+
 #, fuzzy
 msgid "Latest"
 msgstr "последна"
 
 msgid "Incompatible Plugin"
-msgstr ""
-
-msgid "Incompatible plugin!"
-msgstr ""
-
-#, c-format
-msgid "Plugin API Required: %s (available: %s)"
 msgstr ""
 
 msgid "No packages have been selected."
@@ -1945,25 +1996,6 @@ msgstr "Презададените настройки на албума за успешно записани"
 
 msgid "Restored theme settings"
 msgstr "Настройките на стила са възстановени"
-
-msgid "All Themes"
-msgstr "Всички стилове"
-
-msgid "Defaults"
-msgstr "Презададени Настройки"
-
-msgid "Status: Incompatible Theme (Inactive)"
-msgstr ""
-
-msgid "Incompatible theme!"
-msgstr ""
-
-#, c-format
-msgid "Theme API Required: %s (available: %s)"
-msgstr ""
-
-msgid "(default)"
-msgstr ""
 
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
@@ -2684,6 +2716,10 @@ msgid ""
 "or modify a thumbnail."
 msgstr ""
 
+#, fuzzy
+msgid "Unable to create a thumbnail for this item"
+msgstr "Трябва да въведете име за този елемент."
+
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the movie's width and "
 "height.  If you have installed a graphics toolkit that can handle movie types, then these "
@@ -3387,6 +3423,9 @@ msgstr "%d. %s"
 msgid "Size: "
 msgstr ""
 
+msgid "Unknown"
+msgstr ""
+
 msgid "Full size: "
 msgstr ""
 
@@ -3416,6 +3455,30 @@ msgstr ""
 
 msgid "Unit test theme"
 msgstr ""
+
+#~ msgid "Successfully installed and auto-configured module %s"
+#~ msgstr "Модула %s е успешно инсталиран и автоматично конфигуриран"
+
+#~ msgid "Successfully installed module %s"
+#~ msgstr "Модула %s е успешно инсталиран"
+
+#~ msgid "Successfully configured module %s"
+#~ msgstr "Модула %s е успешно конфигуриран"
+
+#~ msgid "Successfully upgraded module %s"
+#~ msgstr "Модула %s е успешно обновен"
+
+#~ msgid "Successfully activated module %s"
+#~ msgstr "Модула %s е успешно активиран"
+
+#~ msgid "Successfully deactivated module %s"
+#~ msgstr "Модула %s е успешно деактивиран"
+
+#~ msgid "Successfully uninstalled module %s"
+#~ msgstr "Модула %s е успешно премахнат"
+
+#~ msgid "All Themes"
+#~ msgstr "Всички стилове"
 
 #~ msgid "HDTV 16x9"
 #~ msgstr "HDTV Екран 16x9"

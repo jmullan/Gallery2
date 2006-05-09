@@ -18,7 +18,7 @@
 # Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.0\n"
+"Project-Id-Version: Gallery: Core 1.1.4\n"
 "POT-Creation-Date: 2005-05-23 02:14+0200\n"
 "PO-Revision-Date: 2006-02-27 00:00+0200\n"
 "Last-Translator: Goker ISIK <admin@ansolon.com>\n"
@@ -84,24 +84,6 @@ msgstr[1] "%d hafta"
 msgid "<none>"
 msgstr ""
 
-msgid "install"
-msgstr "kur"
-
-msgid "upgrade"
-msgstr "güncelle"
-
-msgid "configure"
-msgstr "konfigüre et"
-
-msgid "activate"
-msgstr "Aktive et"
-
-msgid "uninstall"
-msgstr "kaldır"
-
-msgid "deactivate"
-msgstr ""
-
 msgid "No acceleration"
 msgstr ""
 
@@ -110,6 +92,9 @@ msgstr ""
 
 msgid "Full acceleration"
 msgstr ""
+
+msgid "Themes"
+msgstr "Temalar"
 
 #, fuzzy
 msgid "Performing Maintenance Tasks"
@@ -128,6 +113,21 @@ msgstr "Güncelle"
 
 msgid "Download"
 msgstr "Yükle"
+
+msgid "install"
+msgstr "kur"
+
+msgid "upgrade"
+msgstr "güncelle"
+
+msgid "activate"
+msgstr "Aktive et"
+
+msgid "uninstall"
+msgstr "kaldır"
+
+msgid "deactivate"
+msgstr ""
 
 msgid "Inherit settings from parent album"
 msgstr ""
@@ -508,17 +508,11 @@ msgstr "Hesabınız"
 msgid "Logout"
 msgstr "Çıkış"
 
-msgid "Modules"
-msgstr "Modüller"
+msgid "Plugins"
+msgstr ""
 
 msgid "Repository"
 msgstr ""
-
-msgid "Themes"
-msgstr "Temalar"
-
-msgid "Display"
-msgstr "Görüntüle"
 
 msgid "Users"
 msgstr "Kullanıcılar"
@@ -534,6 +528,9 @@ msgstr "Araç Önceliği"
 
 msgid "Graphics Toolkits"
 msgstr "Grafik Araçları"
+
+msgid "Defaults"
+msgstr "Varsayılanlar"
 
 msgid "Account Settings"
 msgstr "Hesap Ayarları"
@@ -864,11 +861,9 @@ msgstr "Reset"
 msgid "spreadsheet"
 msgstr "hesapçizelgesi"
 
-msgid "Unknown"
-msgstr "Bilinmeyen"
-
-msgid "unknown"
-msgstr "bilinmeyen"
+#, fuzzy
+msgid "file"
+msgstr "Dosya"
 
 #, c-format
 msgid ""
@@ -888,6 +883,48 @@ msgstr "Kullanıcı"
 
 msgid "user"
 msgstr "kullanıcı"
+
+msgid "Integrity Check"
+msgstr ""
+
+msgid "Check data integrity and report any inconsistencies."
+msgstr ""
+
+msgid "Loading all entities"
+msgstr ""
+
+msgid "Checking for orphaned entity data"
+msgstr ""
+
+msgid "Checking for orphaned item data"
+msgstr ""
+
+msgid "Checking for orphaned plugin data"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Checked %d entities"
+msgstr "add item"
+
+#, fuzzy, c-format
+msgid "Failed to load entity ids: %s"
+msgstr "%s eklemesi başarısız"
+
+#, c-format
+msgid "Orphaned data in table %s with missing parent entity; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with no row in %s table; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with missing derivative source; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Unknown plugin: %s %s"
+msgstr ""
 
 msgid "Optimize database"
 msgstr "Veritabanı optimizasyonu"
@@ -942,6 +979,9 @@ msgstr "Sistem detaylarını al; G2 destek forumlarına kopyalama/yapıştırma 
 
 msgid "core"
 msgstr "çekirdek"
+
+msgid "unknown"
+msgstr "bilinmeyen"
 
 msgid "Gallery version"
 msgstr "Galeri Versiyonu"
@@ -1545,82 +1585,6 @@ msgstr "şimdi çalıştır"
 msgid "Last Run Details:"
 msgstr "Son Çalıştırma Detayları:"
 
-msgid "Gallery Modules"
-msgstr "Galeri Modülleri"
-
-#, c-format
-msgid "Successfully installed and auto-configured module %s"
-msgstr "Modül %s başarıyla otomatik konfigüre edildi ve kuruldu"
-
-#, c-format
-msgid "Successfully installed module %s"
-msgstr "Modül %s başarıyla kuruldu"
-
-#, c-format
-msgid "Successfully configured module %s"
-msgstr "Modül %s başarıyla yapılandırıldı."
-
-#, c-format
-msgid "Successfully upgraded module %s"
-msgstr "Modül %s başarıyla güncellendi"
-
-#, c-format
-msgid "Successfully activated module %s"
-msgstr "Modül  %s başarıyla etkinleştirildi"
-
-#, c-format
-msgid "Successfully deactivated module %s"
-msgstr "Modül %s başarıyla çalışamaz duruma getirildi."
-
-#, c-format
-msgid "Successfully uninstalled module %s"
-msgstr "Modül %s başarıyla kaldırıldı"
-
-msgid ""
-"Gallery features come as separate modules.  You can download and install modules to add more "
-"features to your Gallery, or you can disable features if you don't want to use them.  In "
-"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
-"don't wish to use a feature, you can deactivate it."
-msgstr ""
-
-msgid "Module Name"
-msgstr "Modül Adı"
-
-msgid "Version"
-msgstr "Versiyon"
-
-msgid "Installed"
-msgstr "Kuruldu"
-
-msgid "Actions"
-msgstr "Hareketler"
-
-msgid "Status: Not Installed"
-msgstr "Durum: Kurulmadı"
-
-msgid "Status: Active"
-msgstr "Durum: Aktif"
-
-msgid "Status: Inactive"
-msgstr "Durum : Aktif Değil"
-
-msgid "Status: Upgrade Required (Inactive)"
-msgstr "Durum: Güncelleme gerekli (Aktif Değik)"
-
-msgid "Status: Incompatible Module (Inactive)"
-msgstr "Durum: Uyumsuz Modül (Aktif Değil)"
-
-msgid "Incompatible module!"
-msgstr "Uyumsuz modül!"
-
-#, c-format
-msgid "Core API Required: %s (available: %s)"
-msgstr ""
-
-#, c-format
-msgid "Module API Required: %s (available: %s)"
-msgstr ""
-
 msgid "Confirm module uninstall"
 msgstr ""
 
@@ -1698,6 +1662,94 @@ msgstr ""
 msgid "Clear Saved Pages"
 msgstr ""
 
+msgid "Status: Inactive"
+msgstr "Durum : Aktif Değil"
+
+msgid "__PLUGIN__ deactivated"
+msgstr ""
+
+msgid "Status: Active"
+msgstr "Durum: Aktif"
+
+msgid "__PLUGIN__ activated"
+msgstr ""
+
+msgid "Status: Not Installed"
+msgstr "Durum: Kurulmadı"
+
+msgid "__PLUGIN__ uninstalled"
+msgstr ""
+
+msgid "Status: Upgrade Required (Inactive)"
+msgstr "Durum: Güncelleme gerekli (Aktif Değik)"
+
+#, fuzzy
+msgid "Status: Incompatible Plugin (Inactive)"
+msgstr "Durum: Uyumsuz Modül (Aktif Değil)"
+
+msgid "Status: Inactive (Configuration Required)"
+msgstr ""
+
+msgid "__PLUGIN__ needs configuration"
+msgstr ""
+
+#, fuzzy
+msgid "Gallery Plugins"
+msgstr "Galeri Modülleri"
+
+msgid ""
+"Gallery features come as separate plugins.  You can download and install plugins to add more "
+"features to your Gallery, or you can disable features if you don't want to use them.  In "
+"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
+"don't wish to use a feature, you can deactivate it."
+msgstr ""
+
+#, fuzzy
+msgid "up to date"
+msgstr "Güncelle"
+
+msgid "disabled"
+msgstr ""
+
+#, fuzzy
+msgid "upgrade required"
+msgstr "[gerekli]"
+
+#, fuzzy
+msgid "not installed"
+msgstr "kaldır"
+
+#, fuzzy
+msgid "incompatible"
+msgstr "Uyumsuz Eklenti"
+
+#, fuzzy
+msgid "Plugin Name"
+msgstr "İsim"
+
+msgid "Version"
+msgstr "Versiyon"
+
+msgid "Installed"
+msgstr "Kuruldu"
+
+msgid "Actions"
+msgstr "Hareketler"
+
+msgid "Incompatible plugin!"
+msgstr "Uyumsuz eklenti!"
+
+#, c-format
+msgid "Core API Required: %s (available: %s)"
+msgstr ""
+
+#, c-format
+msgid "Plugin API Required: %s (available: %s)"
+msgstr ""
+
+msgid "configure"
+msgstr "konfigüre et"
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr ""
 
@@ -1709,6 +1761,9 @@ msgstr ""
 
 msgid "Common Tasks"
 msgstr ""
+
+msgid "Modules"
+msgstr "Modüller"
 
 msgid "Warning: Experimental feature!"
 msgstr ""
@@ -1808,18 +1863,14 @@ msgstr ""
 msgid "Theme Name"
 msgstr "Tema Adı"
 
+msgid "Module Name"
+msgstr "Modül Adı"
+
 msgid "Latest"
 msgstr "Son"
 
 msgid "Incompatible Plugin"
 msgstr "Uyumsuz Eklenti"
-
-msgid "Incompatible plugin!"
-msgstr "Uyumsuz eklenti!"
-
-#, c-format
-msgid "Plugin API Required: %s (available: %s)"
-msgstr ""
 
 msgid "No packages have been selected."
 msgstr ""
@@ -1925,25 +1976,6 @@ msgstr "Varsayılan albüm ayarları başarıyla kaydedildi"
 
 msgid "Restored theme settings"
 msgstr "Tema ayarları iade edildi"
-
-msgid "All Themes"
-msgstr "Tüm Temalar"
-
-msgid "Defaults"
-msgstr "Varsayılanlar"
-
-msgid "Status: Incompatible Theme (Inactive)"
-msgstr "Durum: Uyumsuz Tema (Aktif Değil)"
-
-msgid "Incompatible theme!"
-msgstr "Uyumsuz tema!"
-
-#, c-format
-msgid "Theme API Required: %s (available: %s)"
-msgstr ""
-
-msgid "(default)"
-msgstr "(varsayılan)"
 
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
@@ -2672,6 +2704,10 @@ msgid ""
 "or modify a thumbnail."
 msgstr ""
 
+#, fuzzy
+msgid "Unable to create a thumbnail for this item"
+msgstr "Bu öge için isim girmelisiniz."
+
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the movie's width and "
 "height.  If you have installed a graphics toolkit that can handle movie types, then these "
@@ -3374,6 +3410,9 @@ msgstr "%d. %s"
 msgid "Size: "
 msgstr "Boyut:"
 
+msgid "Unknown"
+msgstr "Bilinmeyen"
+
 msgid "Full size: "
 msgstr "Tam boyut:"
 
@@ -3403,3 +3442,42 @@ msgstr "[test] İkinci izin"
 
 msgid "Unit test theme"
 msgstr ""
+
+#~ msgid "Display"
+#~ msgstr "Görüntüle"
+
+#~ msgid "Successfully installed and auto-configured module %s"
+#~ msgstr "Modül %s başarıyla otomatik konfigüre edildi ve kuruldu"
+
+#~ msgid "Successfully installed module %s"
+#~ msgstr "Modül %s başarıyla kuruldu"
+
+#~ msgid "Successfully configured module %s"
+#~ msgstr "Modül %s başarıyla yapılandırıldı."
+
+#~ msgid "Successfully upgraded module %s"
+#~ msgstr "Modül %s başarıyla güncellendi"
+
+#~ msgid "Successfully activated module %s"
+#~ msgstr "Modül  %s başarıyla etkinleştirildi"
+
+#~ msgid "Successfully deactivated module %s"
+#~ msgstr "Modül %s başarıyla çalışamaz duruma getirildi."
+
+#~ msgid "Successfully uninstalled module %s"
+#~ msgstr "Modül %s başarıyla kaldırıldı"
+
+#~ msgid "Incompatible module!"
+#~ msgstr "Uyumsuz modül!"
+
+#~ msgid "All Themes"
+#~ msgstr "Tüm Temalar"
+
+#~ msgid "Status: Incompatible Theme (Inactive)"
+#~ msgstr "Durum: Uyumsuz Tema (Aktif Değil)"
+
+#~ msgid "Incompatible theme!"
+#~ msgstr "Uyumsuz tema!"
+
+#~ msgid "(default)"
+#~ msgstr "(varsayılan)"

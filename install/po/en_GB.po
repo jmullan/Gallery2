@@ -19,7 +19,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Installer 2.1\n"
+"Project-Id-Version: Gallery: Installer 2.2\n"
 "POT-Creation-Date: 2006-02-24 12:02-0800\n"
 "PO-Revision-Date: 2006-02-24 12:02-0800\n"
 "Last-Translator: Alan Harder <alan.harder@sun.com>\n"
@@ -95,6 +95,10 @@ msgstr "Database Setup"
 msgid "You must have the MySQL PHP module installed"
 msgstr "You must have the MySQL PHP module installed"
 
+#, fuzzy
+msgid "You must have the MySQL Improved PHP module installed"
+msgstr "You must have the MySQL PHP module installed"
+
 msgid "You must have the ibm_db2 PHP module installed"
 msgstr "You must have the ibm_db2 PHP module installed"
 
@@ -102,6 +106,10 @@ msgid "You must have the PostgreSQL PHP module installed"
 msgstr "You must have the PostgreSQL PHP module installed"
 
 msgid "You must have the Oracle OCI8 PHP module installed"
+msgstr "You must have the Oracle OCI8 PHP module installed"
+
+#, fuzzy
+msgid "You must have the Component Object Model(COM) PHP module installed"
 msgstr "You must have the Oracle OCI8 PHP module installed"
 
 #, c-format
@@ -194,23 +202,25 @@ msgstr ""
 "Could not load the G2 API. Please erase the Gallery database tables and the storage "
 "directory manually."
 
-msgid "MySQL (all versions)"
-msgstr "MySQL (all versions)"
-
-msgid "MySQL with Transactions (v3.23.34a and newer)"
+#, fuzzy
+msgid "MySQL (v3.23.34a and newer)"
 msgstr "MySQL with Transactions (v3.23.34a and newer)"
+
+#, fuzzy
+msgid "MySQL (versions before v3.23.34a)"
+msgstr "MySQL (all versions)"
 
 msgid "PostgreSQL v7.x and newer"
 msgstr "PostgreSQL v7.x and newer"
-
-msgid "PostgreSQL v6.x (not well tested)"
-msgstr "PostgreSQL v6.x (not well tested)"
 
 msgid "Oracle (9i and newer)"
 msgstr "Oracle (9i and newer)"
 
 msgid "IBM DB2 (v8.2 and newer)"
 msgstr "IBM DB2 (v8.2 and newer)"
+
+msgid "MSSQL (Experimental!)"
+msgstr ""
 
 msgid "Unknown DB type or no known tables information."
 msgstr "Unknown DB type or no known tables information."
@@ -319,12 +329,13 @@ msgstr "System Checks"
 msgid "Performing system checks"
 msgstr "Performing system checks"
 
-msgid "PHP version >= 4.1.0 or >= 5.0.4"
+#, fuzzy
+msgid "PHP version >= 4.3.0 or >= 5.0.4"
 msgstr "PHP version >= 4.1.0 or >= 5.0.4"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Error: Gallery 2 requires PHP version 4.1.0 or newer or 5.0.4 or newer. You have PHP version "
+"Error: Gallery 2 requires PHP version 4.3.0 or newer or 5.0.4 or newer. You have PHP version "
 "%s installed. Contact your webserver administrator to request an upgrade, available at the %"
 "sPHP website%s."
 msgstr ""
@@ -941,8 +952,9 @@ msgstr "Gallery: <strong>your photos</strong> on <strong>your website</strong>"
 msgid "Missing files (%d)"
 msgstr "Missing files (%d)"
 
+#, fuzzy
 msgid ""
-"Note: You're running Gallery from CVS, so recently removed files may appear here.  It might "
+"Note: You're running Gallery from SVN, so recently removed files may appear here.  It might "
 "be safe to ignore these."
 msgstr ""
 "Note: You're running Gallery from CVS, so recently removed files may appear here.  It might "
@@ -952,10 +964,11 @@ msgstr ""
 msgid "Modified files (%d)"
 msgstr "Modified files (%d)"
 
+#, fuzzy
 msgid ""
-"Note: You're running Gallery from CVS, so some modified files are to be expected.  You can "
-"probably ignore these, but to be safe you should make sure that you do 'cvs update -Pd' "
-"before continuing."
+"Note: You're running Gallery from SVN, so some modified files are to be expected.  You can "
+"probably ignore these, but to be safe you should make sure that you do 'svn update' before "
+"continuing."
 msgstr ""
 "Note: You're running Gallery from CVS, so some modified files are to be expected.  You can "
 "probably ignore these, but to be safe you should make sure that you do 'cvs update -Pd' "
@@ -1290,6 +1303,9 @@ msgstr "Go"
 
 msgid "Begin Installation&raquo;"
 msgstr "Begin Installation&raquo;"
+
+#~ msgid "PostgreSQL v6.x (not well tested)"
+#~ msgstr "PostgreSQL v6.x (not well tested)"
 
 #~ msgid "chmod 644 %s"
 #~ msgstr "chmod 644 %s"

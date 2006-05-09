@@ -25,7 +25,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.0\n"
+"Project-Id-Version: Gallery: Core 1.1.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-11-04 20:08+0100\n"
 "PO-Revision-Date: 2006-01-06 17:02+0100\n"
@@ -90,24 +90,6 @@ msgstr[0] "%d hét"
 msgid "<none>"
 msgstr "<nincs>"
 
-msgid "install"
-msgstr "telepítés"
-
-msgid "upgrade"
-msgstr "frissítés"
-
-msgid "configure"
-msgstr "beállítás"
-
-msgid "activate"
-msgstr "aktiválás"
-
-msgid "uninstall"
-msgstr "eltávolít"
-
-msgid "deactivate"
-msgstr "deaktiválás"
-
 msgid "No acceleration"
 msgstr ""
 
@@ -116,6 +98,9 @@ msgstr ""
 
 msgid "Full acceleration"
 msgstr ""
+
+msgid "Themes"
+msgstr "Témák"
 
 #, fuzzy
 msgid "Performing Maintenance Tasks"
@@ -134,6 +119,21 @@ msgstr "Frissítés"
 
 msgid "Download"
 msgstr "Letöltés"
+
+msgid "install"
+msgstr "telepítés"
+
+msgid "upgrade"
+msgstr "frissítés"
+
+msgid "activate"
+msgstr "aktiválás"
+
+msgid "uninstall"
+msgstr "eltávolít"
+
+msgid "deactivate"
+msgstr "deaktiválás"
 
 msgid "Inherit settings from parent album"
 msgstr "Beállítások öröklése a szülőalbumtól"
@@ -513,17 +513,12 @@ msgstr "A Te fiókod"
 msgid "Logout"
 msgstr "Kilépés"
 
-msgid "Modules"
-msgstr "Modulok"
+#, fuzzy
+msgid "Plugins"
+msgstr "belépés"
 
 msgid "Repository"
 msgstr ""
-
-msgid "Themes"
-msgstr "Témák"
-
-msgid "Display"
-msgstr "Megjelenítés"
 
 msgid "Users"
 msgstr "Felhasználók"
@@ -539,6 +534,9 @@ msgstr "Kezelőkészlt prioritása"
 
 msgid "Graphics Toolkits"
 msgstr "Grafikus eszköztár"
+
+msgid "Defaults"
+msgstr "Alapértelmezettek"
 
 msgid "Account Settings"
 msgstr "Felhasználói beállítások"
@@ -867,11 +865,9 @@ msgstr "Táblázat"
 msgid "spreadsheet"
 msgstr ""
 
-msgid "Unknown"
-msgstr "Ismeretlen"
-
-msgid "unknown"
-msgstr "ismeretlen"
+#, fuzzy
+msgid "file"
+msgstr "Fájl"
 
 #, c-format
 msgid ""
@@ -891,6 +887,48 @@ msgstr "Felhasználó"
 
 msgid "user"
 msgstr "felhasználó"
+
+msgid "Integrity Check"
+msgstr ""
+
+msgid "Check data integrity and report any inconsistencies."
+msgstr ""
+
+msgid "Loading all entities"
+msgstr ""
+
+msgid "Checking for orphaned entity data"
+msgstr ""
+
+msgid "Checking for orphaned item data"
+msgstr ""
+
+msgid "Checking for orphaned plugin data"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Checked %d entities"
+msgstr "%d elem ellenőrizve"
+
+#, fuzzy, c-format
+msgid "Failed to load entity ids: %s"
+msgstr "%s hozzáadása sikertelen"
+
+#, c-format
+msgid "Orphaned data in table %s with missing parent entity; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with no row in %s table; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with missing derivative source; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Unknown plugin: %s %s"
+msgstr ""
 
 msgid "Optimize database"
 msgstr "Adatbázis optimalizálása"
@@ -948,6 +986,9 @@ msgstr ""
 
 msgid "core"
 msgstr "mag"
+
+msgid "unknown"
+msgstr "ismeretlen"
 
 msgid "Gallery version"
 msgstr "Galéria verzió"
@@ -1569,86 +1610,6 @@ msgstr "futtatás most"
 msgid "Last Run Details:"
 msgstr "Utolsó Futás Részletei:"
 
-msgid "Gallery Modules"
-msgstr "Galéria modulok"
-
-#, c-format
-msgid "Successfully installed and auto-configured module %s"
-msgstr "%s modul sikeresen telepítve és beállítva"
-
-#, c-format
-msgid "Successfully installed module %s"
-msgstr "%s modul sikeresen telepítve"
-
-#, c-format
-msgid "Successfully configured module %s"
-msgstr "%s modul sikeresen konfigurálva"
-
-#, c-format
-msgid "Successfully upgraded module %s"
-msgstr "%s modul sikeresen frissítve"
-
-#, c-format
-msgid "Successfully activated module %s"
-msgstr "%s modul sikeresen aktiválva"
-
-#, c-format
-msgid "Successfully deactivated module %s"
-msgstr "%s modul sikeresen kikapcsolva"
-
-#, c-format
-msgid "Successfully uninstalled module %s"
-msgstr "%s modul sikeresen eltávolítva"
-
-msgid ""
-"Gallery features come as separate modules.  You can download and install modules to add more "
-"features to your Gallery, or you can disable features if you don't want to use them.  In "
-"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
-"don't wish to use a feature, you can deactivate it."
-msgstr ""
-"A Galéria lehetőségei különböző modulok formájában jönnek. Ilyen modulok külön "
-"letölthetőekés telepíthetőek, ha új lehetőségeket szeretnénk hozzáadni, vagy törölhetőek ha "
-"valamitmár nem használunk. Az ilyen lehetőségek használatához telepíteni kell a modult majd "
-"aktíválni (esetleg beállítani)."
-
-msgid "Module Name"
-msgstr "Modulnév"
-
-msgid "Version"
-msgstr "Verzió"
-
-msgid "Installed"
-msgstr "Telepítve"
-
-msgid "Actions"
-msgstr "Műveletek"
-
-msgid "Status: Not Installed"
-msgstr "Állapot: nem telepített"
-
-msgid "Status: Active"
-msgstr "Állapot: aktív"
-
-msgid "Status: Inactive"
-msgstr "Állapot: inaktív"
-
-msgid "Status: Upgrade Required (Inactive)"
-msgstr "Állapot: frissíteni kell (inaktív)"
-
-msgid "Status: Incompatible Module (Inactive)"
-msgstr "Állapot: nem kompatibilis modul (inaktív)"
-
-msgid "Incompatible module!"
-msgstr "Inkompatibilis modul!"
-
-#, c-format
-msgid "Core API Required: %s (available: %s)"
-msgstr "Szükséges Core API: %s (jelenleg %s)"
-
-#, c-format
-msgid "Module API Required: %s (available: %s)"
-msgstr "Szükséges modul API: %s (jelenleg %s)"
-
 msgid "Confirm module uninstall"
 msgstr "Modul leszedésének megerősítése"
 
@@ -1729,6 +1690,102 @@ msgstr ""
 msgid "Clear Saved Pages"
 msgstr ""
 
+msgid "Status: Inactive"
+msgstr "Állapot: inaktív"
+
+#, fuzzy
+msgid "__PLUGIN__ deactivated"
+msgstr "deaktiválás"
+
+msgid "Status: Active"
+msgstr "Állapot: aktív"
+
+msgid "__PLUGIN__ activated"
+msgstr ""
+
+msgid "Status: Not Installed"
+msgstr "Állapot: nem telepített"
+
+msgid "__PLUGIN__ uninstalled"
+msgstr ""
+
+msgid "Status: Upgrade Required (Inactive)"
+msgstr "Állapot: frissíteni kell (inaktív)"
+
+#, fuzzy
+msgid "Status: Incompatible Plugin (Inactive)"
+msgstr "Állapot: nem kompatibilis modul (inaktív)"
+
+msgid "Status: Inactive (Configuration Required)"
+msgstr ""
+
+msgid "__PLUGIN__ needs configuration"
+msgstr ""
+
+#, fuzzy
+msgid "Gallery Plugins"
+msgstr "Galéria modulok"
+
+#, fuzzy
+msgid ""
+"Gallery features come as separate plugins.  You can download and install plugins to add more "
+"features to your Gallery, or you can disable features if you don't want to use them.  In "
+"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
+"don't wish to use a feature, you can deactivate it."
+msgstr ""
+"A Galéria lehetőségei különböző modulok formájában jönnek. Ilyen modulok külön "
+"letölthetőekés telepíthetőek, ha új lehetőségeket szeretnénk hozzáadni, vagy törölhetőek ha "
+"valamitmár nem használunk. Az ilyen lehetőségek használatához telepíteni kell a modult majd "
+"aktíválni (esetleg beállítani)."
+
+#, fuzzy
+msgid "up to date"
+msgstr "Dátum"
+
+#, fuzzy
+msgid "disabled"
+msgstr "%d elem sikertelen"
+
+#, fuzzy
+msgid "upgrade required"
+msgstr "(szükséges)"
+
+#, fuzzy
+msgid "not installed"
+msgstr "eltávolít"
+
+#, fuzzy
+msgid "incompatible"
+msgstr "Inkompatibilis modul!"
+
+#, fuzzy
+msgid "Plugin Name"
+msgstr "Teljes név"
+
+msgid "Version"
+msgstr "Verzió"
+
+msgid "Installed"
+msgstr "Telepítve"
+
+msgid "Actions"
+msgstr "Műveletek"
+
+#, fuzzy
+msgid "Incompatible plugin!"
+msgstr "Inkompatibilis modul!"
+
+#, c-format
+msgid "Core API Required: %s (available: %s)"
+msgstr "Szükséges Core API: %s (jelenleg %s)"
+
+#, fuzzy, c-format
+msgid "Plugin API Required: %s (available: %s)"
+msgstr "Szükséges modul API: %s (jelenleg %s)"
+
+msgid "configure"
+msgstr "beállítás"
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr ""
 
@@ -1740,6 +1797,9 @@ msgstr ""
 
 msgid "Common Tasks"
 msgstr ""
+
+msgid "Modules"
+msgstr "Modulok"
 
 msgid "Warning: Experimental feature!"
 msgstr ""
@@ -1842,6 +1902,9 @@ msgstr ""
 msgid "Theme Name"
 msgstr "Felület Neve"
 
+msgid "Module Name"
+msgstr "Modulnév"
+
 #, fuzzy
 msgid "Latest"
 msgstr "utolsó"
@@ -1849,14 +1912,6 @@ msgstr "utolsó"
 #, fuzzy
 msgid "Incompatible Plugin"
 msgstr "Inkompatibilis modul!"
-
-#, fuzzy
-msgid "Incompatible plugin!"
-msgstr "Inkompatibilis modul!"
-
-#, fuzzy, c-format
-msgid "Plugin API Required: %s (available: %s)"
-msgstr "Szükséges modul API: %s (jelenleg %s)"
 
 msgid "No packages have been selected."
 msgstr ""
@@ -1964,25 +2019,6 @@ msgstr "Alapértelmezett albumbeállítások sikeresen elmentve"
 
 msgid "Restored theme settings"
 msgstr "Felületbeállítások visszaállítva"
-
-msgid "All Themes"
-msgstr "Minden Felület"
-
-msgid "Defaults"
-msgstr "Alapértelmezettek"
-
-msgid "Status: Incompatible Theme (Inactive)"
-msgstr "Állapot: Inkompatibilis Felület (Inaktív)"
-
-msgid "Incompatible theme!"
-msgstr "Inkompatibilis felület!"
-
-#, c-format
-msgid "Theme API Required: %s (available: %s)"
-msgstr "Szükséges Felületi API: %s (jelenlegi: %s)"
-
-msgid "(default)"
-msgstr "(alapértelmezett)"
 
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
@@ -2745,6 +2781,10 @@ msgid ""
 msgstr ""
 "Ennek az elemnek a formátumhoz nincs grafikus kezelőkészlet telepítve, így nem készíthetsz, "
 "vagy modosíthatsz előnézeti képeket."
+
+#, fuzzy
+msgid "Unable to create a thumbnail for this item"
+msgstr "Add meg az elem nevét."
 
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the movie's width and "
@@ -3515,6 +3555,9 @@ msgstr "%d. %s"
 msgid "Size: "
 msgstr "Méret:"
 
+msgid "Unknown"
+msgstr "Ismeretlen"
+
 msgid "Full size: "
 msgstr "Teljes méret:"
 
@@ -3544,6 +3587,51 @@ msgstr "[test] Egy második jogosultság"
 
 msgid "Unit test theme"
 msgstr "Egységtesztelő felület"
+
+#~ msgid "Display"
+#~ msgstr "Megjelenítés"
+
+#~ msgid "Successfully installed and auto-configured module %s"
+#~ msgstr "%s modul sikeresen telepítve és beállítva"
+
+#~ msgid "Successfully installed module %s"
+#~ msgstr "%s modul sikeresen telepítve"
+
+#~ msgid "Successfully configured module %s"
+#~ msgstr "%s modul sikeresen konfigurálva"
+
+#~ msgid "Successfully upgraded module %s"
+#~ msgstr "%s modul sikeresen frissítve"
+
+#~ msgid "Successfully activated module %s"
+#~ msgstr "%s modul sikeresen aktiválva"
+
+#~ msgid "Successfully deactivated module %s"
+#~ msgstr "%s modul sikeresen kikapcsolva"
+
+#~ msgid "Successfully uninstalled module %s"
+#~ msgstr "%s modul sikeresen eltávolítva"
+
+#~ msgid "Incompatible module!"
+#~ msgstr "Inkompatibilis modul!"
+
+#~ msgid "Module API Required: %s (available: %s)"
+#~ msgstr "Szükséges modul API: %s (jelenleg %s)"
+
+#~ msgid "All Themes"
+#~ msgstr "Minden Felület"
+
+#~ msgid "Status: Incompatible Theme (Inactive)"
+#~ msgstr "Állapot: Inkompatibilis Felület (Inaktív)"
+
+#~ msgid "Incompatible theme!"
+#~ msgstr "Inkompatibilis felület!"
+
+#~ msgid "Theme API Required: %s (available: %s)"
+#~ msgstr "Szükséges Felületi API: %s (jelenlegi: %s)"
+
+#~ msgid "(default)"
+#~ msgstr "(alapértelmezett)"
 
 #~ msgid "&laquo; None &raquo;"
 #~ msgstr "&laquo;·Nincs·&raquo;"
@@ -3583,9 +3671,6 @@ msgstr "Egységtesztelő felület"
 #, fuzzy
 #~ msgid "view permissions"
 #~ msgstr "jogok szerkesztése"
-
-#~ msgid "login"
-#~ msgstr "belépés"
 
 #~ msgid "and then"
 #~ msgstr "és utána"

@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.0\n"
+"Project-Id-Version: Gallery: Core 1.1.4\n"
 "POT-Creation-Date: 2003-03-06 16:30+0200\n"
 "PO-Revision-Date: 2003-03-06 16:30+0200\n"
 "Last-Translator: Nikos Batsis <nickthegreek@yahoo.com>\n"
@@ -85,24 +85,6 @@ msgstr[1] "%d Εβδομάδα"
 msgid "<none>"
 msgstr ""
 
-msgid "install"
-msgstr ""
-
-msgid "upgrade"
-msgstr ""
-
-msgid "configure"
-msgstr ""
-
-msgid "activate"
-msgstr ""
-
-msgid "uninstall"
-msgstr ""
-
-msgid "deactivate"
-msgstr ""
-
 msgid "No acceleration"
 msgstr ""
 
@@ -111,6 +93,10 @@ msgstr ""
 
 msgid "Full acceleration"
 msgstr ""
+
+#, fuzzy
+msgid "Themes"
+msgstr "Προσθέστε Φωτογραφίες"
 
 msgid "Performing Maintenance Tasks"
 msgstr ""
@@ -127,6 +113,21 @@ msgid "Upgrade"
 msgstr ""
 
 msgid "Download"
+msgstr ""
+
+msgid "install"
+msgstr ""
+
+msgid "upgrade"
+msgstr ""
+
+msgid "activate"
+msgstr ""
+
+msgid "uninstall"
+msgstr ""
+
+msgid "deactivate"
 msgstr ""
 
 msgid "Inherit settings from parent album"
@@ -556,17 +557,10 @@ msgstr ""
 msgid "Logout"
 msgstr ""
 
-msgid "Modules"
+msgid "Plugins"
 msgstr ""
 
 msgid "Repository"
-msgstr ""
-
-#, fuzzy
-msgid "Themes"
-msgstr "Προσθέστε Φωτογραφίες"
-
-msgid "Display"
 msgstr ""
 
 msgid "Users"
@@ -584,6 +578,9 @@ msgstr ""
 #, fuzzy
 msgid "Graphics Toolkits"
 msgstr "Εργαλειοθήκη Γραφικών"
+
+msgid "Defaults"
+msgstr "Προεπιλογές"
 
 #, fuzzy
 msgid "Account Settings"
@@ -935,11 +932,9 @@ msgstr ""
 msgid "spreadsheet"
 msgstr ""
 
-msgid "Unknown"
-msgstr ""
-
-msgid "unknown"
-msgstr ""
+#, fuzzy
+msgid "file"
+msgstr "Αρχείο: "
 
 #, c-format
 msgid ""
@@ -962,6 +957,48 @@ msgstr "Πλήρες Πρόσβαση"
 #, fuzzy
 msgid "user"
 msgstr "Επεξεργασία Χρήστη"
+
+msgid "Integrity Check"
+msgstr ""
+
+msgid "Check data integrity and report any inconsistencies."
+msgstr ""
+
+msgid "Loading all entities"
+msgstr ""
+
+msgid "Checking for orphaned entity data"
+msgstr ""
+
+msgid "Checking for orphaned item data"
+msgstr ""
+
+msgid "Checking for orphaned plugin data"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Checked %d entities"
+msgstr "Προσθέστε Φωτογραφίες"
+
+#, c-format
+msgid "Failed to load entity ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with missing parent entity; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with no row in %s table; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with missing derivative source; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Unknown plugin: %s %s"
+msgstr ""
 
 msgid "Optimize database"
 msgstr ""
@@ -1018,6 +1055,9 @@ msgid "Get system details; useful for copy/paste into G2 support forum."
 msgstr ""
 
 msgid "core"
+msgstr ""
+
+msgid "unknown"
 msgstr ""
 
 #, fuzzy
@@ -1671,85 +1711,6 @@ msgstr ""
 msgid "Last Run Details:"
 msgstr ""
 
-#, fuzzy
-msgid "Gallery Modules"
-msgstr "Γκαλλερύ"
-
-#, c-format
-msgid "Successfully installed and auto-configured module %s"
-msgstr ""
-
-#, c-format
-msgid "Successfully installed module %s"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Successfully configured module %s"
-msgstr "Η Ομάδα '%s' Διαγράφηκε με επιτυχία"
-
-#, c-format
-msgid "Successfully upgraded module %s"
-msgstr ""
-
-#, c-format
-msgid "Successfully activated module %s"
-msgstr ""
-
-#, c-format
-msgid "Successfully deactivated module %s"
-msgstr ""
-
-#, c-format
-msgid "Successfully uninstalled module %s"
-msgstr ""
-
-msgid ""
-"Gallery features come as separate modules.  You can download and install modules to add more "
-"features to your Gallery, or you can disable features if you don't want to use them.  In "
-"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
-"don't wish to use a feature, you can deactivate it."
-msgstr ""
-
-#, fuzzy
-msgid "Module Name"
-msgstr "Πλήρες Όνομα"
-
-msgid "Version"
-msgstr ""
-
-msgid "Installed"
-msgstr ""
-
-msgid "Actions"
-msgstr "Ενέργειες"
-
-msgid "Status: Not Installed"
-msgstr ""
-
-#, fuzzy
-msgid "Status: Active"
-msgstr "Ενεργό"
-
-msgid "Status: Inactive"
-msgstr ""
-
-msgid "Status: Upgrade Required (Inactive)"
-msgstr ""
-
-msgid "Status: Incompatible Module (Inactive)"
-msgstr ""
-
-msgid "Incompatible module!"
-msgstr ""
-
-#, c-format
-msgid "Core API Required: %s (available: %s)"
-msgstr ""
-
-#, c-format
-msgid "Module API Required: %s (available: %s)"
-msgstr ""
-
 msgid "Confirm module uninstall"
 msgstr ""
 
@@ -1829,6 +1790,91 @@ msgstr ""
 msgid "Clear Saved Pages"
 msgstr ""
 
+msgid "Status: Inactive"
+msgstr ""
+
+msgid "__PLUGIN__ deactivated"
+msgstr ""
+
+#, fuzzy
+msgid "Status: Active"
+msgstr "Ενεργό"
+
+msgid "__PLUGIN__ activated"
+msgstr ""
+
+msgid "Status: Not Installed"
+msgstr ""
+
+msgid "__PLUGIN__ uninstalled"
+msgstr ""
+
+msgid "Status: Upgrade Required (Inactive)"
+msgstr ""
+
+msgid "Status: Incompatible Plugin (Inactive)"
+msgstr ""
+
+msgid "Status: Inactive (Configuration Required)"
+msgstr ""
+
+msgid "__PLUGIN__ needs configuration"
+msgstr ""
+
+#, fuzzy
+msgid "Gallery Plugins"
+msgstr "Γκαλλερύ"
+
+msgid ""
+"Gallery features come as separate plugins.  You can download and install plugins to add more "
+"features to your Gallery, or you can disable features if you don't want to use them.  In "
+"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
+"don't wish to use a feature, you can deactivate it."
+msgstr ""
+
+#, fuzzy
+msgid "up to date"
+msgstr "Διαγραφή Χρήστη"
+
+msgid "disabled"
+msgstr ""
+
+msgid "upgrade required"
+msgstr ""
+
+msgid "not installed"
+msgstr ""
+
+msgid "incompatible"
+msgstr ""
+
+#, fuzzy
+msgid "Plugin Name"
+msgstr "Πλήρες Όνομα"
+
+msgid "Version"
+msgstr ""
+
+msgid "Installed"
+msgstr ""
+
+msgid "Actions"
+msgstr "Ενέργειες"
+
+msgid "Incompatible plugin!"
+msgstr ""
+
+#, c-format
+msgid "Core API Required: %s (available: %s)"
+msgstr ""
+
+#, c-format
+msgid "Plugin API Required: %s (available: %s)"
+msgstr ""
+
+msgid "configure"
+msgstr ""
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr ""
 
@@ -1839,6 +1885,9 @@ msgid "All plugins are already up-to-date."
 msgstr ""
 
 msgid "Common Tasks"
+msgstr ""
+
+msgid "Modules"
 msgstr ""
 
 msgid "Warning: Experimental feature!"
@@ -1942,17 +1991,14 @@ msgid "Theme Name"
 msgstr ""
 
 #, fuzzy
+msgid "Module Name"
+msgstr "Πλήρες Όνομα"
+
+#, fuzzy
 msgid "Latest"
 msgstr "Διαγραφή Χρήστη"
 
 msgid "Incompatible Plugin"
-msgstr ""
-
-msgid "Incompatible plugin!"
-msgstr ""
-
-#, c-format
-msgid "Plugin API Required: %s (available: %s)"
 msgstr ""
 
 msgid "No packages have been selected."
@@ -2062,27 +2108,6 @@ msgstr ""
 #, fuzzy
 msgid "Restored theme settings"
 msgstr "Ρυθμίσεις Λευκόματος"
-
-#, fuzzy
-msgid "All Themes"
-msgstr "Πλήρες Πρόσβαση"
-
-msgid "Defaults"
-msgstr "Προεπιλογές"
-
-msgid "Status: Incompatible Theme (Inactive)"
-msgstr ""
-
-msgid "Incompatible theme!"
-msgstr ""
-
-#, c-format
-msgid "Theme API Required: %s (available: %s)"
-msgstr ""
-
-#, fuzzy
-msgid "(default)"
-msgstr "Προεπιλογές"
 
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
@@ -2842,6 +2867,10 @@ msgid ""
 "or modify a thumbnail."
 msgstr ""
 
+#, fuzzy
+msgid "Unable to create a thumbnail for this item"
+msgstr "Διαγραφή Χρήστη"
+
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the movie's width and "
 "height.  If you have installed a graphics toolkit that can handle movie types, then these "
@@ -3585,6 +3614,9 @@ msgstr "Επεξεργασία Χρήστη"
 msgid "Size: "
 msgstr "Επεξεργασία Μεγέθους"
 
+msgid "Unknown"
+msgstr ""
+
 msgid "Full size: "
 msgstr ""
 
@@ -3618,6 +3650,18 @@ msgstr "Δικαιώματα Αντικειμένου"
 
 msgid "Unit test theme"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Successfully configured module %s"
+#~ msgstr "Η Ομάδα '%s' Διαγράφηκε με επιτυχία"
+
+#, fuzzy
+#~ msgid "All Themes"
+#~ msgstr "Πλήρες Πρόσβαση"
+
+#, fuzzy
+#~ msgid "(default)"
+#~ msgstr "Προεπιλογές"
 
 #, fuzzy
 #~ msgid "add album"

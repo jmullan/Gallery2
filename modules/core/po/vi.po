@@ -19,7 +19,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.0\n"
+"Project-Id-Version: Gallery: Core 1.1.4\n"
 "POT-Creation-Date: 2005-05-04 16:46-0400\n"
 "PO-Revision-Date: 2005-08-29 14:16+0100\n"
 "Last-Translator: Trung Dong Huynh <trungdong@donggiang.com>\n"
@@ -83,24 +83,6 @@ msgstr[1] "%d tuần"
 msgid "<none>"
 msgstr "<không có>"
 
-msgid "install"
-msgstr "cài đặt"
-
-msgid "upgrade"
-msgstr "nâng cấp"
-
-msgid "configure"
-msgstr "chỉnh cấu hình"
-
-msgid "activate"
-msgstr "kích hoạt"
-
-msgid "uninstall"
-msgstr "gỡ bỏ"
-
-msgid "deactivate"
-msgstr "bỏ kích hoạt"
-
 msgid "No acceleration"
 msgstr ""
 
@@ -109,6 +91,9 @@ msgstr ""
 
 msgid "Full acceleration"
 msgstr ""
+
+msgid "Themes"
+msgstr "Kiểu trình bày"
 
 #, fuzzy
 msgid "Performing Maintenance Tasks"
@@ -128,6 +113,21 @@ msgstr "nâng cấp"
 
 msgid "Download"
 msgstr ""
+
+msgid "install"
+msgstr "cài đặt"
+
+msgid "upgrade"
+msgstr "nâng cấp"
+
+msgid "activate"
+msgstr "kích hoạt"
+
+msgid "uninstall"
+msgstr "gỡ bỏ"
+
+msgid "deactivate"
+msgstr "bỏ kích hoạt"
 
 msgid "Inherit settings from parent album"
 msgstr "Thừa kế từ album cha"
@@ -507,17 +507,11 @@ msgstr "Tài khoản"
 msgid "Logout"
 msgstr "Thoát"
 
-msgid "Modules"
-msgstr "Module"
+msgid "Plugins"
+msgstr ""
 
 msgid "Repository"
 msgstr ""
-
-msgid "Themes"
-msgstr "Kiểu trình bày"
-
-msgid "Display"
-msgstr "Hiển thị"
 
 msgid "Users"
 msgstr "Thành viên"
@@ -533,6 +527,9 @@ msgstr "Thứ tự ưu tiên bộ công cụ"
 
 msgid "Graphics Toolkits"
 msgstr "Bộ công cụ đồ họa"
+
+msgid "Defaults"
+msgstr "Giá trị mặc định"
 
 msgid "Account Settings"
 msgstr "Các thông số của tài khoản"
@@ -870,11 +867,9 @@ msgstr "Bảng tính"
 msgid "spreadsheet"
 msgstr "bảng tính"
 
-msgid "Unknown"
-msgstr "Không nhận ra"
-
-msgid "unknown"
-msgstr "không biết"
+#, fuzzy
+msgid "file"
+msgstr "Tập tin"
 
 #, c-format
 msgid ""
@@ -894,6 +889,48 @@ msgstr "Thành viên"
 
 msgid "user"
 msgstr "thành viên"
+
+msgid "Integrity Check"
+msgstr ""
+
+msgid "Check data integrity and report any inconsistencies."
+msgstr ""
+
+msgid "Loading all entities"
+msgstr ""
+
+msgid "Checking for orphaned entity data"
+msgstr ""
+
+msgid "Checking for orphaned item data"
+msgstr ""
+
+msgid "Checking for orphaned plugin data"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Checked %d entities"
+msgstr "Đã kiểm tra %d đối tượng"
+
+#, fuzzy, c-format
+msgid "Failed to load entity ids: %s"
+msgstr "Thất bại khi thêm %s"
+
+#, c-format
+msgid "Orphaned data in table %s with missing parent entity; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with no row in %s table; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with missing derivative source; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Unknown plugin: %s %s"
+msgstr ""
 
 msgid "Optimize database"
 msgstr "Tối ưu hóa cơ sơ dữ liệu"
@@ -957,6 +994,9 @@ msgstr ""
 
 msgid "core"
 msgstr "lõi"
+
+msgid "unknown"
+msgstr "không biết"
 
 msgid "Gallery version"
 msgstr "Phiên bản Gallery"
@@ -1614,87 +1654,6 @@ msgstr "thực hiện"
 msgid "Last Run Details:"
 msgstr "Chi tiết lần chạy trước"
 
-msgid "Gallery Modules"
-msgstr "Các module của Gallery"
-
-#, c-format
-msgid "Successfully installed and auto-configured module %s"
-msgstr "Đã cài và tự động đặt cấu hình cho module %s"
-
-#, c-format
-msgid "Successfully installed module %s"
-msgstr "Đã cài đặt module %s"
-
-#, c-format
-msgid "Successfully configured module %s"
-msgstr "Đã cấu hình module %s"
-
-#, c-format
-msgid "Successfully upgraded module %s"
-msgstr "Đã nâng cấp module %s"
-
-#, c-format
-msgid "Successfully activated module %s"
-msgstr "Đã kích hoạt module %s"
-
-#, c-format
-msgid "Successfully deactivated module %s"
-msgstr "Đã bỏ kích hoạt module %s"
-
-#, c-format
-msgid "Successfully uninstalled module %s"
-msgstr "Đã gỡ bỏ module %s"
-
-msgid ""
-"Gallery features come as separate modules.  You can download and install modules to add more "
-"features to your Gallery, or you can disable features if you don't want to use them.  In "
-"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
-"don't wish to use a feature, you can deactivate it."
-msgstr ""
-"Các tính năng của Gallery được để vào các module riêng biệt. Bạn có thể tải các module về và "
-"cài đặt để thêm tính năng cho Gallery của bạn, hoặc bạn có thể tắt bớt một số tính năng nếu "
-"bạn không muốn dùng chúng. Để sử dụng một tính năng nào đó, bạn phải cài vào, định cấu hình "
-"(nếu cần thiết)và kích hoạt nó. Nếu bạn không muốn dùng một tính năng nào thì bạn có thể bỏ "
-"kích hoạt nó đi."
-
-msgid "Module Name"
-msgstr "Tên module"
-
-msgid "Version"
-msgstr "Phiên bản"
-
-msgid "Installed"
-msgstr "Đã cài đặt"
-
-msgid "Actions"
-msgstr "Chọn lựa"
-
-msgid "Status: Not Installed"
-msgstr "Tình trạng: Chưa được cài"
-
-msgid "Status: Active"
-msgstr "Tình trạng: Đang hoạt động"
-
-msgid "Status: Inactive"
-msgstr "Tình trạng: Chưa kích hoạt"
-
-msgid "Status: Upgrade Required (Inactive)"
-msgstr "Tình trạng: Cần được nâng cấp (Chưa kích hoạt)"
-
-msgid "Status: Incompatible Module (Inactive)"
-msgstr "Tình trạng: Module không tương thích (Chưa kích hoạt)"
-
-msgid "Incompatible module!"
-msgstr "Module không tương thích"
-
-#, c-format
-msgid "Core API Required: %s (available: %s)"
-msgstr "Cần dùng hàm API lõi: %s (đang có: %s)"
-
-#, c-format
-msgid "Module API Required: %s (available: %s)"
-msgstr "Cần hàm API module: %s (đang có: %s)"
-
 msgid "Confirm module uninstall"
 msgstr "Xác nhận gỡ bỏ module"
 
@@ -1775,6 +1734,103 @@ msgstr ""
 msgid "Clear Saved Pages"
 msgstr ""
 
+msgid "Status: Inactive"
+msgstr "Tình trạng: Chưa kích hoạt"
+
+#, fuzzy
+msgid "__PLUGIN__ deactivated"
+msgstr "bỏ kích hoạt"
+
+msgid "Status: Active"
+msgstr "Tình trạng: Đang hoạt động"
+
+msgid "__PLUGIN__ activated"
+msgstr ""
+
+msgid "Status: Not Installed"
+msgstr "Tình trạng: Chưa được cài"
+
+msgid "__PLUGIN__ uninstalled"
+msgstr ""
+
+msgid "Status: Upgrade Required (Inactive)"
+msgstr "Tình trạng: Cần được nâng cấp (Chưa kích hoạt)"
+
+#, fuzzy
+msgid "Status: Incompatible Plugin (Inactive)"
+msgstr "Tình trạng: Module không tương thích (Chưa kích hoạt)"
+
+msgid "Status: Inactive (Configuration Required)"
+msgstr ""
+
+msgid "__PLUGIN__ needs configuration"
+msgstr ""
+
+#, fuzzy
+msgid "Gallery Plugins"
+msgstr "Các module của Gallery"
+
+#, fuzzy
+msgid ""
+"Gallery features come as separate plugins.  You can download and install plugins to add more "
+"features to your Gallery, or you can disable features if you don't want to use them.  In "
+"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
+"don't wish to use a feature, you can deactivate it."
+msgstr ""
+"Các tính năng của Gallery được để vào các module riêng biệt. Bạn có thể tải các module về và "
+"cài đặt để thêm tính năng cho Gallery của bạn, hoặc bạn có thể tắt bớt một số tính năng nếu "
+"bạn không muốn dùng chúng. Để sử dụng một tính năng nào đó, bạn phải cài vào, định cấu hình "
+"(nếu cần thiết)và kích hoạt nó. Nếu bạn không muốn dùng một tính năng nào thì bạn có thể bỏ "
+"kích hoạt nó đi."
+
+#, fuzzy
+msgid "up to date"
+msgstr "Ngày"
+
+#, fuzzy
+msgid "disabled"
+msgstr "%d đối tượng bị thất bại"
+
+#, fuzzy
+msgid "upgrade required"
+msgstr "(cần có)"
+
+#, fuzzy
+msgid "not installed"
+msgstr "gỡ bỏ"
+
+#, fuzzy
+msgid "incompatible"
+msgstr "Module không tương thích"
+
+#, fuzzy
+msgid "Plugin Name"
+msgstr "Tên đầy đủ"
+
+msgid "Version"
+msgstr "Phiên bản"
+
+msgid "Installed"
+msgstr "Đã cài đặt"
+
+msgid "Actions"
+msgstr "Chọn lựa"
+
+#, fuzzy
+msgid "Incompatible plugin!"
+msgstr "Module không tương thích"
+
+#, c-format
+msgid "Core API Required: %s (available: %s)"
+msgstr "Cần dùng hàm API lõi: %s (đang có: %s)"
+
+#, fuzzy, c-format
+msgid "Plugin API Required: %s (available: %s)"
+msgstr "Cần hàm API module: %s (đang có: %s)"
+
+msgid "configure"
+msgstr "chỉnh cấu hình"
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr ""
 
@@ -1786,6 +1842,9 @@ msgstr ""
 
 msgid "Common Tasks"
 msgstr ""
+
+msgid "Modules"
+msgstr "Module"
 
 msgid "Warning: Experimental feature!"
 msgstr ""
@@ -1888,6 +1947,9 @@ msgstr ""
 msgid "Theme Name"
 msgstr "Tên kiểu trình bày"
 
+msgid "Module Name"
+msgstr "Tên module"
+
 #, fuzzy
 msgid "Latest"
 msgstr "cuối cùng"
@@ -1895,14 +1957,6 @@ msgstr "cuối cùng"
 #, fuzzy
 msgid "Incompatible Plugin"
 msgstr "Module không tương thích"
-
-#, fuzzy
-msgid "Incompatible plugin!"
-msgstr "Module không tương thích"
-
-#, fuzzy, c-format
-msgid "Plugin API Required: %s (available: %s)"
-msgstr "Cần hàm API module: %s (đang có: %s)"
 
 msgid "No packages have been selected."
 msgstr ""
@@ -2010,25 +2064,6 @@ msgstr "Đã lưu cài đặt mặt định của album"
 
 msgid "Restored theme settings"
 msgstr "Cài đặt của kiểu trình bày đã được khôi phục lại"
-
-msgid "All Themes"
-msgstr "Tất cả kiểu trình bày"
-
-msgid "Defaults"
-msgstr "Giá trị mặc định"
-
-msgid "Status: Incompatible Theme (Inactive)"
-msgstr "Tình trạng: Kiểu trình bày không tương thích (Chưa kích hoạt)"
-
-msgid "Incompatible theme!"
-msgstr "Kiểu trình bày không tương thích"
-
-#, c-format
-msgid "Theme API Required: %s (available: %s)"
-msgstr "Cần dùng hàm API kiểu trình bày: %s (đang có: %s)"
-
-msgid "(default)"
-msgstr "(mặc định)"
 
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
@@ -2808,6 +2843,10 @@ msgstr ""
 "Không có bộ công cụ đồ họa nào hỗ trợ loại đối tượng này nên không thể tạo hoặc chỉnh sửa "
 "ảnh con."
 
+#, fuzzy
+msgid "Unable to create a thumbnail for this item"
+msgstr "Bạn phải điền một tên cho đối tượng này."
+
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the movie's width and "
 "height.  If you have installed a graphics toolkit that can handle movie types, then these "
@@ -3584,6 +3623,9 @@ msgstr "%d. %s"
 msgid "Size: "
 msgstr "Kích thước:"
 
+msgid "Unknown"
+msgstr "Không nhận ra"
+
 msgid "Full size: "
 msgstr "Kích cỡ đầy đủ:"
 
@@ -3613,6 +3655,51 @@ msgstr "[kiểm tra] Một quyền hạn thứ hai"
 
 msgid "Unit test theme"
 msgstr "Kiểu trình bày thử"
+
+#~ msgid "Display"
+#~ msgstr "Hiển thị"
+
+#~ msgid "Successfully installed and auto-configured module %s"
+#~ msgstr "Đã cài và tự động đặt cấu hình cho module %s"
+
+#~ msgid "Successfully installed module %s"
+#~ msgstr "Đã cài đặt module %s"
+
+#~ msgid "Successfully configured module %s"
+#~ msgstr "Đã cấu hình module %s"
+
+#~ msgid "Successfully upgraded module %s"
+#~ msgstr "Đã nâng cấp module %s"
+
+#~ msgid "Successfully activated module %s"
+#~ msgstr "Đã kích hoạt module %s"
+
+#~ msgid "Successfully deactivated module %s"
+#~ msgstr "Đã bỏ kích hoạt module %s"
+
+#~ msgid "Successfully uninstalled module %s"
+#~ msgstr "Đã gỡ bỏ module %s"
+
+#~ msgid "Incompatible module!"
+#~ msgstr "Module không tương thích"
+
+#~ msgid "Module API Required: %s (available: %s)"
+#~ msgstr "Cần hàm API module: %s (đang có: %s)"
+
+#~ msgid "All Themes"
+#~ msgstr "Tất cả kiểu trình bày"
+
+#~ msgid "Status: Incompatible Theme (Inactive)"
+#~ msgstr "Tình trạng: Kiểu trình bày không tương thích (Chưa kích hoạt)"
+
+#~ msgid "Incompatible theme!"
+#~ msgstr "Kiểu trình bày không tương thích"
+
+#~ msgid "Theme API Required: %s (available: %s)"
+#~ msgstr "Cần dùng hàm API kiểu trình bày: %s (đang có: %s)"
+
+#~ msgid "(default)"
+#~ msgstr "(mặc định)"
 
 #~ msgid "&laquo; None &raquo;"
 #~ msgstr "&laquo; Không có &raquo;"

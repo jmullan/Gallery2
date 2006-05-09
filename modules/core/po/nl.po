@@ -23,7 +23,7 @@
 # Gidie <gidie at users.sourceforge REMOVE THIS dot net>, 2005
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.0\n"
+"Project-Id-Version: Gallery: Core 1.1.4\n"
 "POT-Creation-Date: 2003-02-11 03:09-0800\n"
 "PO-Revision-Date: 2006-03-17 19:49+0100\n"
 "Last-Translator: Buut <buut at users.sourceforge Remove - This dot net>\n"
@@ -87,24 +87,6 @@ msgstr[1] "%d weken"
 msgid "<none>"
 msgstr "<geen>"
 
-msgid "install"
-msgstr "installeren"
-
-msgid "upgrade"
-msgstr "opwaarderen"
-
-msgid "configure"
-msgstr "configureren"
-
-msgid "activate"
-msgstr "activeren"
-
-msgid "uninstall"
-msgstr "deïnstalleren"
-
-msgid "deactivate"
-msgstr "deactiveren"
-
 msgid "No acceleration"
 msgstr "Geen versnelling"
 
@@ -113,6 +95,9 @@ msgstr "Gedeeltelijke versnelling"
 
 msgid "Full acceleration"
 msgstr "Volledige versnelling"
+
+msgid "Themes"
+msgstr "Thema's"
 
 msgid "Performing Maintenance Tasks"
 msgstr "Onderhoudstaken Uitvoeren"
@@ -129,6 +114,21 @@ msgstr "Opwaarderen"
 
 msgid "Download"
 msgstr "Download"
+
+msgid "install"
+msgstr "installeren"
+
+msgid "upgrade"
+msgstr "opwaarderen"
+
+msgid "activate"
+msgstr "activeren"
+
+msgid "uninstall"
+msgstr "deïnstalleren"
+
+msgid "deactivate"
+msgstr "deactiveren"
 
 msgid "Inherit settings from parent album"
 msgstr "Instellingen overnemen van bovenliggend album"
@@ -503,17 +503,11 @@ msgstr "Uw account"
 msgid "Logout"
 msgstr "Uitloggen"
 
-msgid "Modules"
-msgstr "Modules"
+msgid "Plugins"
+msgstr ""
 
 msgid "Repository"
 msgstr "Repository"
-
-msgid "Themes"
-msgstr "Thema's"
-
-msgid "Display"
-msgstr "Weergave"
 
 msgid "Users"
 msgstr "Gebruikers"
@@ -529,6 +523,9 @@ msgstr "Toolkit Prioriteit"
 
 msgid "Graphics Toolkits"
 msgstr "Grafische Toolkits"
+
+msgid "Defaults"
+msgstr "Standaard instellingen"
 
 msgid "Account Settings"
 msgstr "Account Instellingen"
@@ -864,11 +861,9 @@ msgstr "Spreadsheet"
 msgid "spreadsheet"
 msgstr "spreadsheet"
 
-msgid "Unknown"
-msgstr "Onbekend"
-
-msgid "unknown"
-msgstr "onbekend"
+#, fuzzy
+msgid "file"
+msgstr "Bestand"
 
 #, c-format
 msgid ""
@@ -890,6 +885,49 @@ msgstr "Gebruiker"
 
 msgid "user"
 msgstr "gebruiker"
+
+#, fuzzy
+msgid "Integrity Check"
+msgstr "Index integriteit controle mislukt."
+
+msgid "Check data integrity and report any inconsistencies."
+msgstr ""
+
+msgid "Loading all entities"
+msgstr ""
+
+msgid "Checking for orphaned entity data"
+msgstr ""
+
+msgid "Checking for orphaned item data"
+msgstr ""
+
+msgid "Checking for orphaned plugin data"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Checked %d entities"
+msgstr "%d items gecontroleerd"
+
+#, fuzzy, c-format
+msgid "Failed to load entity ids: %s"
+msgstr "Toevoegen van %s mislukt"
+
+#, c-format
+msgid "Orphaned data in table %s with missing parent entity; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with no row in %s table; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with missing derivative source; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Unknown plugin: %s %s"
+msgstr ""
 
 msgid "Optimize database"
 msgstr "Optimaliseer database"
@@ -952,6 +990,9 @@ msgstr ""
 
 msgid "core"
 msgstr "core"
+
+msgid "unknown"
+msgstr "onbekend"
 
 msgid "Gallery version"
 msgstr "Gallery versie"
@@ -1620,87 +1661,6 @@ msgstr "nu draaien"
 msgid "Last Run Details:"
 msgstr "Details Laatste Keer:"
 
-msgid "Gallery Modules"
-msgstr "Gallery Modules"
-
-#, c-format
-msgid "Successfully installed and auto-configured module %s"
-msgstr "Succesvol geïnstalleerd en automatische configuratie module %s"
-
-#, c-format
-msgid "Successfully installed module %s"
-msgstr "Succesvol module %s geïnstalleerd"
-
-#, c-format
-msgid "Successfully configured module %s"
-msgstr "Succesvol module %s ingesteld"
-
-#, c-format
-msgid "Successfully upgraded module %s"
-msgstr "Succesvol module %s opgewaardeerd"
-
-#, c-format
-msgid "Successfully activated module %s"
-msgstr "Succesvol module %s geactiveerd"
-
-#, c-format
-msgid "Successfully deactivated module %s"
-msgstr "Succesvol module %s gedeactiveerd"
-
-#, c-format
-msgid "Successfully uninstalled module %s"
-msgstr "Succesvol module %s gedeïnstalleerd"
-
-msgid ""
-"Gallery features come as separate modules.  You can download and install modules to add more "
-"features to your Gallery, or you can disable features if you don't want to use them.  In "
-"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
-"don't wish to use a feature, you can deactivate it."
-msgstr ""
-"Gallery functionaliteit is beschikbaar in afzonderlijke modules. U kunt modules downloaden "
-"en installeren om meer functionaliteit aan uw Gallery toe te voegen, of u kunt modules "
-"uitschakelen als u die niet wilt gebruiken. Om een functionaliteit te gebruiken moet u de "
-"module installeren, configureren (indien nodig) en activeren. Als u geen gebruik wilt maken "
-"van een module kunt u deze deactiveren."
-
-msgid "Module Name"
-msgstr "Module naam"
-
-msgid "Version"
-msgstr "Versie"
-
-msgid "Installed"
-msgstr "Geïnstalleerd"
-
-msgid "Actions"
-msgstr "Acties"
-
-msgid "Status: Not Installed"
-msgstr "Status: Niet Geïnstalleerd"
-
-msgid "Status: Active"
-msgstr "Status: Actief"
-
-msgid "Status: Inactive"
-msgstr "Status: Niet Actief"
-
-msgid "Status: Upgrade Required (Inactive)"
-msgstr "Status: Opwaardering Noodzakelijk (Inactief)"
-
-msgid "Status: Incompatible Module (Inactive)"
-msgstr "Statis: Niet compaitbele Module (Inactief)"
-
-msgid "Incompatible module!"
-msgstr "Niet compatibele module!"
-
-#, c-format
-msgid "Core API Required: %s (available: %s)"
-msgstr "Core API Vereist: %s (beschikbaar: %s)"
-
-#, c-format
-msgid "Module API Required: %s (available: %s)"
-msgstr "Module API Vereist: %s (beschikbaar: %s)"
-
 msgid "Confirm module uninstall"
 msgstr "Bevestig deïnstalleren module"
 
@@ -1793,6 +1753,102 @@ msgstr "Verloopt na: "
 msgid "Clear Saved Pages"
 msgstr "Wis de opgeslagen pagina's "
 
+msgid "Status: Inactive"
+msgstr "Status: Niet Actief"
+
+#, fuzzy
+msgid "__PLUGIN__ deactivated"
+msgstr "deactiveren"
+
+msgid "Status: Active"
+msgstr "Status: Actief"
+
+msgid "__PLUGIN__ activated"
+msgstr ""
+
+msgid "Status: Not Installed"
+msgstr "Status: Niet Geïnstalleerd"
+
+msgid "__PLUGIN__ uninstalled"
+msgstr ""
+
+msgid "Status: Upgrade Required (Inactive)"
+msgstr "Status: Opwaardering Noodzakelijk (Inactief)"
+
+#, fuzzy
+msgid "Status: Incompatible Plugin (Inactive)"
+msgstr "Statis: Niet compaitbele Module (Inactief)"
+
+msgid "Status: Inactive (Configuration Required)"
+msgstr ""
+
+msgid "__PLUGIN__ needs configuration"
+msgstr ""
+
+#, fuzzy
+msgid "Gallery Plugins"
+msgstr "Gallery Modules"
+
+#, fuzzy
+msgid ""
+"Gallery features come as separate plugins.  You can download and install plugins to add more "
+"features to your Gallery, or you can disable features if you don't want to use them.  In "
+"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
+"don't wish to use a feature, you can deactivate it."
+msgstr ""
+"Gallery functionaliteit is beschikbaar in afzonderlijke modules. U kunt modules downloaden "
+"en installeren om meer functionaliteit aan uw Gallery toe te voegen, of u kunt modules "
+"uitschakelen als u die niet wilt gebruiken. Om een functionaliteit te gebruiken moet u de "
+"module installeren, configureren (indien nodig) en activeren. Als u geen gebruik wilt maken "
+"van een module kunt u deze deactiveren."
+
+#, fuzzy
+msgid "up to date"
+msgstr "Bijwerken"
+
+#, fuzzy
+msgid "disabled"
+msgstr "%d items mislukt"
+
+#, fuzzy
+msgid "upgrade required"
+msgstr "(verplicht)"
+
+#, fuzzy
+msgid "not installed"
+msgstr "deïnstalleren"
+
+#, fuzzy
+msgid "incompatible"
+msgstr "Niet Compatibele Plugin"
+
+#, fuzzy
+msgid "Plugin Name"
+msgstr "Volledige naam"
+
+msgid "Version"
+msgstr "Versie"
+
+msgid "Installed"
+msgstr "Geïnstalleerd"
+
+msgid "Actions"
+msgstr "Acties"
+
+msgid "Incompatible plugin!"
+msgstr "Niet compatibele plugin!"
+
+#, c-format
+msgid "Core API Required: %s (available: %s)"
+msgstr "Core API Vereist: %s (beschikbaar: %s)"
+
+#, c-format
+msgid "Plugin API Required: %s (available: %s)"
+msgstr "Plugin API Vereist: %s (beschikbaar: %s)"
+
+msgid "configure"
+msgstr "configureren"
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr "Zorg dat uw internet verbinding juist is ingesteld of probeer het later opnieuw."
 
@@ -1804,6 +1860,9 @@ msgstr "De plugins zijn reeds bijgewerkt."
 
 msgid "Common Tasks"
 msgstr "Gemeenschappelijke Taken"
+
+msgid "Modules"
+msgstr "Modules"
 
 msgid "Warning: Experimental feature!"
 msgstr "Waarschuwing: Experimentele functionaliteit!"
@@ -1931,18 +1990,14 @@ msgstr ""
 msgid "Theme Name"
 msgstr "Thema Naam"
 
+msgid "Module Name"
+msgstr "Module naam"
+
 msgid "Latest"
 msgstr "Laatste"
 
 msgid "Incompatible Plugin"
 msgstr "Niet Compatibele Plugin"
-
-msgid "Incompatible plugin!"
-msgstr "Niet compatibele plugin!"
-
-#, c-format
-msgid "Plugin API Required: %s (available: %s)"
-msgstr "Plugin API Vereist: %s (beschikbaar: %s)"
 
 msgid "No packages have been selected."
 msgstr "Er zijn geen paketten geselecteerd."
@@ -2061,25 +2116,6 @@ msgstr "Succesvol standaard album instellingen opgeslagen"
 
 msgid "Restored theme settings"
 msgstr "Thema instelling hersteld"
-
-msgid "All Themes"
-msgstr "Alle Thema's"
-
-msgid "Defaults"
-msgstr "Standaard instellingen"
-
-msgid "Status: Incompatible Theme (Inactive)"
-msgstr "Status: Niet compatibel Thema (Inactief)"
-
-msgid "Incompatible theme!"
-msgstr "Niet compatibel thema!"
-
-#, c-format
-msgid "Theme API Required: %s (available: %s)"
-msgstr "Thema API Vereist: %s (beschikbaar: %s)"
-
-msgid "(default)"
-msgstr "(standaard)"
 
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
@@ -2855,6 +2891,10 @@ msgid ""
 msgstr ""
 "Er zijn geen grafische toolkits beschikbaar die dit type foto of item ondersteund, dus kan "
 "er geen miniatuur aangemaakt of aangepast worden."
+
+#, fuzzy
+msgid "Unable to create a thumbnail for this item"
+msgstr "U moet een naam voor dit item opgeven."
 
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the movie's width and "
@@ -3646,6 +3686,9 @@ msgstr "%d. %s"
 msgid "Size: "
 msgstr "Grootte: "
 
+msgid "Unknown"
+msgstr "Onbekend"
+
 msgid "Full size: "
 msgstr "Volledige grootte: "
 
@@ -3675,3 +3718,48 @@ msgstr "[test] Een tweede recht"
 
 msgid "Unit test theme"
 msgstr "Eenheids test thema"
+
+#~ msgid "Display"
+#~ msgstr "Weergave"
+
+#~ msgid "Successfully installed and auto-configured module %s"
+#~ msgstr "Succesvol geïnstalleerd en automatische configuratie module %s"
+
+#~ msgid "Successfully installed module %s"
+#~ msgstr "Succesvol module %s geïnstalleerd"
+
+#~ msgid "Successfully configured module %s"
+#~ msgstr "Succesvol module %s ingesteld"
+
+#~ msgid "Successfully upgraded module %s"
+#~ msgstr "Succesvol module %s opgewaardeerd"
+
+#~ msgid "Successfully activated module %s"
+#~ msgstr "Succesvol module %s geactiveerd"
+
+#~ msgid "Successfully deactivated module %s"
+#~ msgstr "Succesvol module %s gedeactiveerd"
+
+#~ msgid "Successfully uninstalled module %s"
+#~ msgstr "Succesvol module %s gedeïnstalleerd"
+
+#~ msgid "Incompatible module!"
+#~ msgstr "Niet compatibele module!"
+
+#~ msgid "Module API Required: %s (available: %s)"
+#~ msgstr "Module API Vereist: %s (beschikbaar: %s)"
+
+#~ msgid "All Themes"
+#~ msgstr "Alle Thema's"
+
+#~ msgid "Status: Incompatible Theme (Inactive)"
+#~ msgstr "Status: Niet compatibel Thema (Inactief)"
+
+#~ msgid "Incompatible theme!"
+#~ msgstr "Niet compatibel thema!"
+
+#~ msgid "Theme API Required: %s (available: %s)"
+#~ msgstr "Thema API Vereist: %s (beschikbaar: %s)"
+
+#~ msgid "(default)"
+#~ msgstr "(standaard)"

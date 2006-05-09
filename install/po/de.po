@@ -24,7 +24,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Installer 2.1\n"
+"Project-Id-Version: Gallery: Installer 2.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-05-19 01:26+0100\n"
 "PO-Revision-Date: 2006-03-18 02:45+0100\n"
@@ -104,6 +104,10 @@ msgstr "Datenbank einrichten"
 msgid "You must have the MySQL PHP module installed"
 msgstr "Sie müssen das PHP-Modul für MySQL installiert haben"
 
+#, fuzzy
+msgid "You must have the MySQL Improved PHP module installed"
+msgstr "Sie müssen das PHP-Modul für MySQL installiert haben"
+
 msgid "You must have the ibm_db2 PHP module installed"
 msgstr "Sie müssen das PHP-Modul für ibm_db2 installiert haben"
 
@@ -111,6 +115,10 @@ msgid "You must have the PostgreSQL PHP module installed"
 msgstr "Sie müssen das PHP-Modul für PostgresSQL installiert haben"
 
 msgid "You must have the Oracle OCI8 PHP module installed"
+msgstr "Sie müssen das PHP-Modul für Oracle OCI8 installiert haben"
+
+#, fuzzy
+msgid "You must have the Component Object Model(COM) PHP module installed"
 msgstr "Sie müssen das PHP-Modul für Oracle OCI8 installiert haben"
 
 #, c-format
@@ -208,23 +216,25 @@ msgstr ""
 "Die G2-API konnte nicht geladen werden. Bitte köschen Sie die Gallery-Datenbank-Tabellen und "
 "den Speicherordner von Hand."
 
-msgid "MySQL (all versions)"
-msgstr "MySQL (alle Versionen)"
-
-msgid "MySQL with Transactions (v3.23.34a and newer)"
+#, fuzzy
+msgid "MySQL (v3.23.34a and newer)"
 msgstr "MySQL mit Transaktionen (v3.23.34a und neuer)"
+
+#, fuzzy
+msgid "MySQL (versions before v3.23.34a)"
+msgstr "MySQL (alle Versionen)"
 
 msgid "PostgreSQL v7.x and newer"
 msgstr "PostgreSQL v7.x und neuer"
-
-msgid "PostgreSQL v6.x (not well tested)"
-msgstr "PostgreSQL v6.x (kaum getestet)"
 
 msgid "Oracle (9i and newer)"
 msgstr "Oracle (9i und neuer)"
 
 msgid "IBM DB2 (v8.2 and newer)"
 msgstr "IBM DB2 (v8.2 und neuer)"
+
+msgid "MSSQL (Experimental!)"
+msgstr ""
 
 msgid "Unknown DB type or no known tables information."
 msgstr "Unbekannter DB-Typ oder keine bekannte Tabellen-Information."
@@ -334,13 +344,14 @@ msgstr "Systemprüfungen"
 msgid "Performing system checks"
 msgstr "Führe Systemprüfungen durch"
 
-msgid "PHP version >= 4.1.0 or >= 5.0.4"
+#, fuzzy
+msgid "PHP version >= 4.3.0 or >= 5.0.4"
 msgstr "PHP-Version >= 4.1.0 oder >= 5.0.4"
 
 # param0 = existing php version, param1 = '<a href...>', param2 = '</a>'
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Error: Gallery 2 requires PHP version 4.1.0 or newer or 5.0.4 or newer. You have PHP version "
+"Error: Gallery 2 requires PHP version 4.3.0 or newer or 5.0.4 or newer. You have PHP version "
 "%s installed. Contact your webserver administrator to request an upgrade, available at the %"
 "sPHP website%s."
 msgstr ""
@@ -982,8 +993,9 @@ msgstr "Gallery: <strong>Ihre Photos</strong> auf <strong>Ihrer Webseite</strong
 msgid "Missing files (%d)"
 msgstr "Fehlende Dateien (%d)"
 
+#, fuzzy
 msgid ""
-"Note: You're running Gallery from CVS, so recently removed files may appear here.  It might "
+"Note: You're running Gallery from SVN, so recently removed files may appear here.  It might "
 "be safe to ignore these."
 msgstr ""
 "Beachten Sie: Sie verwenden die CVS-Version von Gallery, also kann es sein, dass hier vor "
@@ -993,10 +1005,11 @@ msgstr ""
 msgid "Modified files (%d)"
 msgstr "Veränderte Dateien (%d)"
 
+#, fuzzy
 msgid ""
-"Note: You're running Gallery from CVS, so some modified files are to be expected.  You can "
-"probably ignore these, but to be safe you should make sure that you do 'cvs update -Pd' "
-"before continuing."
+"Note: You're running Gallery from SVN, so some modified files are to be expected.  You can "
+"probably ignore these, but to be safe you should make sure that you do 'svn update' before "
+"continuing."
 msgstr ""
 "Beachten Sie: Sie verwenden die CVS-Version von Gallery, also sind veränderte Dateien zu "
 "erwarten. Sie können diese wahrscheinlich ignorieren, aber um sicher zu gehen, sollten Sie "
@@ -1168,8 +1181,8 @@ msgstr ""
 
 msgid "For maximum security you should pick a directory that is not web accessible."
 msgstr ""
-"Für maximale Sicherheit sollten Sie einen Ordner auswählen, der nicht aus dem Web "
-"erreichbar ist."
+"Für maximale Sicherheit sollten Sie einen Ordner auswählen, der nicht aus dem Web erreichbar "
+"ist."
 
 msgid ""
 "This is a multisite installation. Remember that each multisite requires its own storage "
@@ -1356,3 +1369,6 @@ msgstr "Sprache einstellen"
 
 msgid "Begin Installation&raquo;"
 msgstr "Installation starten&raquo;"
+
+#~ msgid "PostgreSQL v6.x (not well tested)"
+#~ msgstr "PostgreSQL v6.x (kaum getestet)"

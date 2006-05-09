@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.0\n"
+"Project-Id-Version: Gallery: Core 1.1.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-03-31 20:26+0200\n"
 "PO-Revision-Date: 2005-08-14 13:34+0300\n"
@@ -84,24 +84,6 @@ msgstr[1] ""
 msgid "<none>"
 msgstr "<لا يوجد>"
 
-msgid "install"
-msgstr "تحميل"
-
-msgid "upgrade"
-msgstr "ترقية"
-
-msgid "configure"
-msgstr "إعداد"
-
-msgid "activate"
-msgstr "تنشيط"
-
-msgid "uninstall"
-msgstr "حذف"
-
-msgid "deactivate"
-msgstr "إغلاق(غير منشط)"
-
 msgid "No acceleration"
 msgstr ""
 
@@ -110,6 +92,9 @@ msgstr ""
 
 msgid "Full acceleration"
 msgstr ""
+
+msgid "Themes"
+msgstr "الثيمات"
 
 #, fuzzy
 msgid "Performing Maintenance Tasks"
@@ -129,6 +114,21 @@ msgstr "ترقية"
 
 msgid "Download"
 msgstr ""
+
+msgid "install"
+msgstr "تحميل"
+
+msgid "upgrade"
+msgstr "ترقية"
+
+msgid "activate"
+msgstr "تنشيط"
+
+msgid "uninstall"
+msgstr "حذف"
+
+msgid "deactivate"
+msgstr "إغلاق(غير منشط)"
 
 msgid "Inherit settings from parent album"
 msgstr "إستخدام نفس إعدادات الألبوم الرئيسي"
@@ -508,17 +508,11 @@ msgstr "حسابك الشخصي"
 msgid "Logout"
 msgstr "خروج"
 
-msgid "Modules"
-msgstr "الموديولات"
+msgid "Plugins"
+msgstr ""
 
 msgid "Repository"
 msgstr ""
-
-msgid "Themes"
-msgstr "الثيمات"
-
-msgid "Display"
-msgstr "عرض"
 
 msgid "Users"
 msgstr "مستخدون"
@@ -534,6 +528,9 @@ msgstr ""
 
 msgid "Graphics Toolkits"
 msgstr ""
+
+msgid "Defaults"
+msgstr "أساسيات"
 
 msgid "Account Settings"
 msgstr "إعدادات الحساب الشخصي"
@@ -869,11 +866,9 @@ msgstr "جدول حسابات"
 msgid "spreadsheet"
 msgstr "جدول حسابي"
 
-msgid "Unknown"
-msgstr "غير معروف"
-
-msgid "unknown"
-msgstr "غير معروف"
+#, fuzzy
+msgid "file"
+msgstr "ملف"
 
 #, c-format
 msgid ""
@@ -893,6 +888,48 @@ msgstr "المستخدم"
 
 msgid "user"
 msgstr "مستخدم"
+
+msgid "Integrity Check"
+msgstr ""
+
+msgid "Check data integrity and report any inconsistencies."
+msgstr ""
+
+msgid "Loading all entities"
+msgstr ""
+
+msgid "Checking for orphaned entity data"
+msgstr ""
+
+msgid "Checking for orphaned item data"
+msgstr ""
+
+msgid "Checking for orphaned plugin data"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Checked %d entities"
+msgstr "تم إختيار %d مادة"
+
+#, c-format
+msgid "Failed to load entity ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with missing parent entity; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with no row in %s table; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with missing derivative source; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Unknown plugin: %s %s"
+msgstr ""
 
 msgid "Optimize database"
 msgstr "تحسين أداء قاعدة البيانات"
@@ -953,6 +990,9 @@ msgstr "الحصول على معلومات النظام : مفيد لنسخها 
 
 msgid "core"
 msgstr "البنية الرئيسية"
+
+msgid "unknown"
+msgstr "غير معروف"
 
 msgid "Gallery version"
 msgstr "نسخة الجاليري"
@@ -1581,85 +1621,6 @@ msgstr "تشغيل الآن"
 msgid "Last Run Details:"
 msgstr "تفاصيل آخر تشغيل:"
 
-msgid "Gallery Modules"
-msgstr "موديولات الجاليري"
-
-#, c-format
-msgid "Successfully installed and auto-configured module %s"
-msgstr "تم تخزين و إعداد الموديول %s بنجاح"
-
-#, c-format
-msgid "Successfully installed module %s"
-msgstr "تم تخزين الموديول %s بنجاح"
-
-#, c-format
-msgid "Successfully configured module %s"
-msgstr "تم إعداد الموديول %s  بنجاح"
-
-#, c-format
-msgid "Successfully upgraded module %s"
-msgstr "تم تطوير الموديول %s بنجاح"
-
-#, c-format
-msgid "Successfully activated module %s"
-msgstr "تم تنشيط الموديول %s  بنجاح"
-
-#, c-format
-msgid "Successfully deactivated module %s"
-msgstr "تم إغلاق الموديول %s بنجاح"
-
-#, c-format
-msgid "Successfully uninstalled module %s"
-msgstr "تم حذف الموديول %s بنجاح"
-
-msgid ""
-"Gallery features come as separate modules.  You can download and install modules to add more "
-"features to your Gallery, or you can disable features if you don't want to use them.  In "
-"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
-"don't wish to use a feature, you can deactivate it."
-msgstr ""
-"خصائص الجاليري تأتي كموديولات منفصلة. بإمكانك تحميل و تخزين الموديولات لإضافة خصائص أكثر "
-"للجاليري , أو يمكنك إغلاق الخصائص إذا لم تكن تريد أن تستخدمها. لإستخدام خاصية ، يجب أن تقوم "
-"بتخزين إعداد (إذا طلب ذلك) و تفعيلها. إذا لم تكن تريد إستخدام الخاصية بإمكانك إغلاقها."
-
-msgid "Module Name"
-msgstr "إسم الموديول"
-
-msgid "Version"
-msgstr "نسخة"
-
-msgid "Installed"
-msgstr "تم تحميلها"
-
-msgid "Actions"
-msgstr "عمليات"
-
-msgid "Status: Not Installed"
-msgstr "الحالة : لم يتم التحميل"
-
-msgid "Status: Active"
-msgstr "الحالة : نشط"
-
-msgid "Status: Inactive"
-msgstr "الحالة : غير نشط"
-
-msgid "Status: Upgrade Required (Inactive)"
-msgstr "الحالة : الترقية مطلوبة (غير نشط)"
-
-msgid "Status: Incompatible Module (Inactive)"
-msgstr "الحالة : الموديول غير متوافق(غير نشط)"
-
-msgid "Incompatible module!"
-msgstr "الموديول غير متوافق !"
-
-#, c-format
-msgid "Core API Required: %s (available: %s)"
-msgstr ""
-
-#, c-format
-msgid "Module API Required: %s (available: %s)"
-msgstr ""
-
 msgid "Confirm module uninstall"
 msgstr "تأكيد حذف الموديول"
 
@@ -1740,6 +1701,101 @@ msgstr ""
 msgid "Clear Saved Pages"
 msgstr ""
 
+msgid "Status: Inactive"
+msgstr "الحالة : غير نشط"
+
+#, fuzzy
+msgid "__PLUGIN__ deactivated"
+msgstr "إغلاق(غير منشط)"
+
+msgid "Status: Active"
+msgstr "الحالة : نشط"
+
+msgid "__PLUGIN__ activated"
+msgstr ""
+
+msgid "Status: Not Installed"
+msgstr "الحالة : لم يتم التحميل"
+
+msgid "__PLUGIN__ uninstalled"
+msgstr ""
+
+msgid "Status: Upgrade Required (Inactive)"
+msgstr "الحالة : الترقية مطلوبة (غير نشط)"
+
+#, fuzzy
+msgid "Status: Incompatible Plugin (Inactive)"
+msgstr "الحالة : الموديول غير متوافق(غير نشط)"
+
+msgid "Status: Inactive (Configuration Required)"
+msgstr ""
+
+msgid "__PLUGIN__ needs configuration"
+msgstr ""
+
+#, fuzzy
+msgid "Gallery Plugins"
+msgstr "موديولات الجاليري"
+
+#, fuzzy
+msgid ""
+"Gallery features come as separate plugins.  You can download and install plugins to add more "
+"features to your Gallery, or you can disable features if you don't want to use them.  In "
+"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
+"don't wish to use a feature, you can deactivate it."
+msgstr ""
+"خصائص الجاليري تأتي كموديولات منفصلة. بإمكانك تحميل و تخزين الموديولات لإضافة خصائص أكثر "
+"للجاليري , أو يمكنك إغلاق الخصائص إذا لم تكن تريد أن تستخدمها. لإستخدام خاصية ، يجب أن تقوم "
+"بتخزين إعداد (إذا طلب ذلك) و تفعيلها. إذا لم تكن تريد إستخدام الخاصية بإمكانك إغلاقها."
+
+#, fuzzy
+msgid "up to date"
+msgstr "التاريخ :"
+
+#, fuzzy
+msgid "disabled"
+msgstr "%d مادة فشلت"
+
+#, fuzzy
+msgid "upgrade required"
+msgstr "(مطلوب)"
+
+#, fuzzy
+msgid "not installed"
+msgstr "حذف"
+
+#, fuzzy
+msgid "incompatible"
+msgstr "الموديول غير متوافق !"
+
+#, fuzzy
+msgid "Plugin Name"
+msgstr "الإسم الكامل"
+
+msgid "Version"
+msgstr "نسخة"
+
+msgid "Installed"
+msgstr "تم تحميلها"
+
+msgid "Actions"
+msgstr "عمليات"
+
+#, fuzzy
+msgid "Incompatible plugin!"
+msgstr "الموديول غير متوافق !"
+
+#, c-format
+msgid "Core API Required: %s (available: %s)"
+msgstr ""
+
+#, c-format
+msgid "Plugin API Required: %s (available: %s)"
+msgstr ""
+
+msgid "configure"
+msgstr "إعداد"
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr ""
 
@@ -1751,6 +1807,9 @@ msgstr ""
 
 msgid "Common Tasks"
 msgstr ""
+
+msgid "Modules"
+msgstr "الموديولات"
 
 msgid "Warning: Experimental feature!"
 msgstr ""
@@ -1853,6 +1912,9 @@ msgstr ""
 msgid "Theme Name"
 msgstr "إسم الثيم"
 
+msgid "Module Name"
+msgstr "إسم الموديول"
+
 #, fuzzy
 msgid "Latest"
 msgstr "الأخير"
@@ -1860,14 +1922,6 @@ msgstr "الأخير"
 #, fuzzy
 msgid "Incompatible Plugin"
 msgstr "الموديول غير متوافق !"
-
-#, fuzzy
-msgid "Incompatible plugin!"
-msgstr "الموديول غير متوافق !"
-
-#, c-format
-msgid "Plugin API Required: %s (available: %s)"
-msgstr ""
 
 msgid "No packages have been selected."
 msgstr ""
@@ -1974,25 +2028,6 @@ msgstr "تم حفظ إعدادات الألبوم الرئيسة بنجاح"
 
 msgid "Restored theme settings"
 msgstr "تم إستعادة إعدادات الثيم"
-
-msgid "All Themes"
-msgstr "جميع الثيمات"
-
-msgid "Defaults"
-msgstr "أساسيات"
-
-msgid "Status: Incompatible Theme (Inactive)"
-msgstr "الحالة : الثيم غير متوافقه (غير نشط)"
-
-msgid "Incompatible theme!"
-msgstr "الثيم غير متوافقة!"
-
-#, c-format
-msgid "Theme API Required: %s (available: %s)"
-msgstr ""
-
-msgid "(default)"
-msgstr "(افتراضي)"
 
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
@@ -2749,6 +2784,10 @@ msgstr ""
 "لا يوجد هنا أي أداة رسم مفعلة لدعم هذا النوع من المواد, لذلك لا يمكن إنشاء أو تعديل الصور "
 "المصغرة."
 
+#, fuzzy
+msgid "Unable to create a thumbnail for this item"
+msgstr "يجب كتابة إسم لهذه المادة."
+
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the movie's width and "
 "height.  If you have installed a graphics toolkit that can handle movie types, then these "
@@ -3497,6 +3536,9 @@ msgstr "%d. %s"
 msgid "Size: "
 msgstr "الحجم: "
 
+msgid "Unknown"
+msgstr "غير معروف"
+
 msgid "Full size: "
 msgstr "الحجم الكامل :"
 
@@ -3526,6 +3568,45 @@ msgstr ""
 
 msgid "Unit test theme"
 msgstr ""
+
+#~ msgid "Display"
+#~ msgstr "عرض"
+
+#~ msgid "Successfully installed and auto-configured module %s"
+#~ msgstr "تم تخزين و إعداد الموديول %s بنجاح"
+
+#~ msgid "Successfully installed module %s"
+#~ msgstr "تم تخزين الموديول %s بنجاح"
+
+#~ msgid "Successfully configured module %s"
+#~ msgstr "تم إعداد الموديول %s  بنجاح"
+
+#~ msgid "Successfully upgraded module %s"
+#~ msgstr "تم تطوير الموديول %s بنجاح"
+
+#~ msgid "Successfully activated module %s"
+#~ msgstr "تم تنشيط الموديول %s  بنجاح"
+
+#~ msgid "Successfully deactivated module %s"
+#~ msgstr "تم إغلاق الموديول %s بنجاح"
+
+#~ msgid "Successfully uninstalled module %s"
+#~ msgstr "تم حذف الموديول %s بنجاح"
+
+#~ msgid "Incompatible module!"
+#~ msgstr "الموديول غير متوافق !"
+
+#~ msgid "All Themes"
+#~ msgstr "جميع الثيمات"
+
+#~ msgid "Status: Incompatible Theme (Inactive)"
+#~ msgstr "الحالة : الثيم غير متوافقه (غير نشط)"
+
+#~ msgid "Incompatible theme!"
+#~ msgstr "الثيم غير متوافقة!"
+
+#~ msgid "(default)"
+#~ msgstr "(افتراضي)"
 
 #, fuzzy
 #~ msgid "$ cd %s"

@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Installer 2.1\n"
+"Project-Id-Version: Gallery: Installer 2.2\n"
 "POT-Creation-Date: 2005-08-05 21:48-0400\n"
 "PO-Revision-Date: 2005-08-05 21:48-0400\n"
 "Last-Translator: Stephen Chu <stephen@ju-ju.com>\n"
@@ -90,6 +90,10 @@ msgstr "資料庫設定"
 msgid "You must have the MySQL PHP module installed"
 msgstr "你必需裝有 MySQL PHP 模組"
 
+#, fuzzy
+msgid "You must have the MySQL Improved PHP module installed"
+msgstr "你必需裝有 MySQL PHP 模組"
+
 msgid "You must have the ibm_db2 PHP module installed"
 msgstr "你必需裝有 ibm_db2 PHP 模組"
 
@@ -97,6 +101,10 @@ msgid "You must have the PostgreSQL PHP module installed"
 msgstr "你必需裝有 PostgreSQL PHP 模組"
 
 msgid "You must have the Oracle OCI8 PHP module installed"
+msgstr "你必需裝有 Oracle OCI8 PHP 模組"
+
+#, fuzzy
+msgid "You must have the Component Object Model(COM) PHP module installed"
 msgstr "你必需裝有 Oracle OCI8 PHP 模組"
 
 #, c-format
@@ -178,23 +186,25 @@ msgid ""
 "directory manually."
 msgstr "無法載入 G2 API。請手動刪除 Gallery 資料庫表格和儲存目錄。"
 
-msgid "MySQL (all versions)"
-msgstr "MySQL（所有版本）"
-
-msgid "MySQL with Transactions (v3.23.34a and newer)"
+#, fuzzy
+msgid "MySQL (v3.23.34a and newer)"
 msgstr "MySQL with Transactions（v3.23.34a 和更新版）"
+
+#, fuzzy
+msgid "MySQL (versions before v3.23.34a)"
+msgstr "MySQL（所有版本）"
 
 msgid "PostgreSQL v7.x and newer"
 msgstr "PostgreSQL v7.x 和更新版"
-
-msgid "PostgreSQL v6.x (not well tested)"
-msgstr "PostgreSQL v6.x（並未充分測試）"
 
 msgid "Oracle (9i and newer)"
 msgstr "Oracle（9i 和更新版"
 
 msgid "IBM DB2 (v8.2 and newer)"
 msgstr "IBM DB2（v8.2 和更新版）"
+
+msgid "MSSQL (Experimental!)"
+msgstr ""
 
 msgid "Unknown DB type or no known tables information."
 msgstr "不明資料庫類型或沒有表格資訊。"
@@ -300,12 +310,13 @@ msgstr "系統檢查"
 msgid "Performing system checks"
 msgstr "進行系統檢查中"
 
-msgid "PHP version >= 4.1.0 or >= 5.0.4"
+#, fuzzy
+msgid "PHP version >= 4.3.0 or >= 5.0.4"
 msgstr "PHP 版本大於或等於 4.1.0 或大於或等於 5.0.4"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Error: Gallery 2 requires PHP version 4.1.0 or newer or 5.0.4 or newer. You have PHP version "
+"Error: Gallery 2 requires PHP version 4.3.0 or newer or 5.0.4 or newer. You have PHP version "
 "%s installed. Contact your webserver administrator to request an upgrade, available at the %"
 "sPHP website%s."
 msgstr ""
@@ -883,8 +894,9 @@ msgstr "Gallery：<strong>你的照片</strong>、<strong>你的網站</strong>"
 msgid "Missing files (%d)"
 msgstr "缺少的檔案（%d）"
 
+#, fuzzy
 msgid ""
-"Note: You're running Gallery from CVS, so recently removed files may appear here.  It might "
+"Note: You're running Gallery from SVN, so recently removed files may appear here.  It might "
 "be safe to ignore these."
 msgstr ""
 "注意：你正在執行由 CVS 中下載的 Gallery，所以有些最近移除的檔案可能會出現在這裡。可能可以安全"
@@ -894,10 +906,11 @@ msgstr ""
 msgid "Modified files (%d)"
 msgstr "修改過的檔案（%d）"
 
+#, fuzzy
 msgid ""
-"Note: You're running Gallery from CVS, so some modified files are to be expected.  You can "
-"probably ignore these, but to be safe you should make sure that you do 'cvs update -Pd' "
-"before continuing."
+"Note: You're running Gallery from SVN, so some modified files are to be expected.  You can "
+"probably ignore these, but to be safe you should make sure that you do 'svn update' before "
+"continuing."
 msgstr ""
 "注意：你正在執行由 CVS 中下載的 Gallery，所以會有些修改過的檔案。你大概可以忽略這些檔案，可是"
 "為了安全起見，你最好先執行「cvs update -Pd」指令再繼續。"
@@ -1202,3 +1215,6 @@ msgstr "開始"
 
 msgid "Begin Installation&raquo;"
 msgstr "開始安裝&raquo;"
+
+#~ msgid "PostgreSQL v6.x (not well tested)"
+#~ msgstr "PostgreSQL v6.x（並未充分測試）"

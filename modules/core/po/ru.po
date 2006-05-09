@@ -22,7 +22,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.0\n"
+"Project-Id-Version: Gallery: Core 1.1.4\n"
 "POT-Creation-Date: 2003-02-11 03:09-0800\n"
 "PO-Revision-Date: 2006-03-17 18:20+0300\n"
 "Last-Translator: Konstantin Ivanov <Continental@vollen.ru>\n"
@@ -93,24 +93,6 @@ msgstr[2] "%d недель"
 msgid "<none>"
 msgstr "<нет>"
 
-msgid "install"
-msgstr "установить"
-
-msgid "upgrade"
-msgstr "обновить"
-
-msgid "configure"
-msgstr "настроить"
-
-msgid "activate"
-msgstr "активизировать"
-
-msgid "uninstall"
-msgstr "деинсталлировать"
-
-msgid "deactivate"
-msgstr "дезактивировать"
-
 msgid "No acceleration"
 msgstr "Акселерация отсутствует"
 
@@ -119,6 +101,9 @@ msgstr "Частичная акселерация"
 
 msgid "Full acceleration"
 msgstr "Полная акселерация"
+
+msgid "Themes"
+msgstr "Темы"
 
 msgid "Performing Maintenance Tasks"
 msgstr "Выполнение задач по обслуживанию"
@@ -135,6 +120,21 @@ msgstr "Обновить"
 
 msgid "Download"
 msgstr "Загрузить"
+
+msgid "install"
+msgstr "установить"
+
+msgid "upgrade"
+msgstr "обновить"
+
+msgid "activate"
+msgstr "активизировать"
+
+msgid "uninstall"
+msgstr "деинсталлировать"
+
+msgid "deactivate"
+msgstr "дезактивировать"
 
 msgid "Inherit settings from parent album"
 msgstr "Наследовать настройки от родительского альбома"
@@ -511,17 +511,11 @@ msgstr "Ваши Настройки"
 msgid "Logout"
 msgstr "Выход"
 
-msgid "Modules"
-msgstr "Модули"
+msgid "Plugins"
+msgstr ""
 
 msgid "Repository"
 msgstr "Репозитарий"
-
-msgid "Themes"
-msgstr "Темы"
-
-msgid "Display"
-msgstr "Отображение"
 
 msgid "Users"
 msgstr "Пользователи"
@@ -537,6 +531,9 @@ msgstr "Приоритеты инструментов"
 
 msgid "Graphics Toolkits"
 msgstr "Графические инструменты"
+
+msgid "Defaults"
+msgstr "По умолчанию"
 
 msgid "Account Settings"
 msgstr "Настройки Учетной Записи"
@@ -878,11 +875,9 @@ msgstr "Электронная таблица"
 msgid "spreadsheet"
 msgstr "электронная таблица"
 
-msgid "Unknown"
-msgstr "Неизвестный"
-
-msgid "unknown"
-msgstr "неизвестный"
+#, fuzzy
+msgid "file"
+msgstr "Файл"
 
 # Перевод "return URL" требует уточнение, пока не понятно, к чему относится вся фраза.
 #, c-format
@@ -905,6 +900,49 @@ msgstr "Пользователь"
 
 msgid "user"
 msgstr "пользователь"
+
+#, fuzzy
+msgid "Integrity Check"
+msgstr "Проверка целостности файлов не прошла."
+
+msgid "Check data integrity and report any inconsistencies."
+msgstr ""
+
+msgid "Loading all entities"
+msgstr ""
+
+msgid "Checking for orphaned entity data"
+msgstr ""
+
+msgid "Checking for orphaned item data"
+msgstr ""
+
+msgid "Checking for orphaned plugin data"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Checked %d entities"
+msgstr "Проверено %d элементов"
+
+#, fuzzy, c-format
+msgid "Failed to load entity ids: %s"
+msgstr "%s не добавлен"
+
+#, c-format
+msgid "Orphaned data in table %s with missing parent entity; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with no row in %s table; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with missing derivative source; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Unknown plugin: %s %s"
+msgstr ""
 
 msgid "Optimize database"
 msgstr "Оптимизация базы данных"
@@ -967,6 +1005,9 @@ msgstr ""
 
 msgid "core"
 msgstr "core"
+
+msgid "unknown"
+msgstr "неизвестный"
 
 msgid "Gallery version"
 msgstr "Gallery version"
@@ -1642,87 +1683,6 @@ msgstr "Запустить сейчас"
 msgid "Last Run Details:"
 msgstr "Данные последнего запуска:"
 
-msgid "Gallery Modules"
-msgstr "Модули Галереи"
-
-#, c-format
-msgid "Successfully installed and auto-configured module %s"
-msgstr "Модуль %s успешно установлен и сконфигурирован автоматически."
-
-#, c-format
-msgid "Successfully installed module %s"
-msgstr "Модуль %s успешно установлен"
-
-#, c-format
-msgid "Successfully configured module %s"
-msgstr "Модуль %s успешно сконфигурирован"
-
-#, c-format
-msgid "Successfully upgraded module %s"
-msgstr "Модуль %s успешно обновлен"
-
-#, c-format
-msgid "Successfully activated module %s"
-msgstr "Модуль %s успешно активизирован"
-
-#, c-format
-msgid "Successfully deactivated module %s"
-msgstr "Модуль %s успешно деактивизирован"
-
-#, c-format
-msgid "Successfully uninstalled module %s"
-msgstr "Модуль %s успешно деинсталлирован"
-
-msgid ""
-"Gallery features come as separate modules.  You can download and install modules to add more "
-"features to your Gallery, or you can disable features if you don't want to use them.  In "
-"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
-"don't wish to use a feature, you can deactivate it."
-msgstr ""
-"Особенности галереи - это модульная структура. Вы можете загрузить и установить модули, "
-"чтобы расширить функции Вашей Галереи, или Вы можете их отключить, если не желаете их "
-"использование. Для использованния данной возможности Вам необходимо установить, если "
-"необходимо, то сконфигурировать и активизировать модуль. Если Вы не хотите использовать "
-"какую-либо функцию, просто сделайте ее неактивной."
-
-msgid "Module Name"
-msgstr "Название Модуля"
-
-msgid "Version"
-msgstr "Версия"
-
-msgid "Installed"
-msgstr "Установлена"
-
-msgid "Actions"
-msgstr "Действия"
-
-msgid "Status: Not Installed"
-msgstr "Состояние: Не установлен"
-
-msgid "Status: Active"
-msgstr "Состояние: Активнен"
-
-msgid "Status: Inactive"
-msgstr "Состояние: Неактивен"
-
-msgid "Status: Upgrade Required (Inactive)"
-msgstr "Состояние: Требует обновления (неактивен)"
-
-msgid "Status: Incompatible Module (Inactive)"
-msgstr "Состояние: Несовместимый Модуль (неактивен)"
-
-msgid "Incompatible module!"
-msgstr "Несовместимый модуль!"
-
-#, c-format
-msgid "Core API Required: %s (available: %s)"
-msgstr "Требуется API для основных файлов: %s (доступен: %s)"
-
-#, c-format
-msgid "Module API Required: %s (available: %s)"
-msgstr "Требуется API для модуля: %s (доступен: %s)"
-
 msgid "Confirm module uninstall"
 msgstr "Подтвердите деинсталляцию модуля"
 
@@ -1816,6 +1776,102 @@ msgstr "Истекает через:"
 msgid "Clear Saved Pages"
 msgstr "Очистить Сохраненные Страницы"
 
+msgid "Status: Inactive"
+msgstr "Состояние: Неактивен"
+
+#, fuzzy
+msgid "__PLUGIN__ deactivated"
+msgstr "дезактивировать"
+
+msgid "Status: Active"
+msgstr "Состояние: Активнен"
+
+msgid "__PLUGIN__ activated"
+msgstr ""
+
+msgid "Status: Not Installed"
+msgstr "Состояние: Не установлен"
+
+msgid "__PLUGIN__ uninstalled"
+msgstr ""
+
+msgid "Status: Upgrade Required (Inactive)"
+msgstr "Состояние: Требует обновления (неактивен)"
+
+#, fuzzy
+msgid "Status: Incompatible Plugin (Inactive)"
+msgstr "Состояние: Несовместимый Модуль (неактивен)"
+
+msgid "Status: Inactive (Configuration Required)"
+msgstr ""
+
+msgid "__PLUGIN__ needs configuration"
+msgstr ""
+
+#, fuzzy
+msgid "Gallery Plugins"
+msgstr "Модули Галереи"
+
+#, fuzzy
+msgid ""
+"Gallery features come as separate plugins.  You can download and install plugins to add more "
+"features to your Gallery, or you can disable features if you don't want to use them.  In "
+"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
+"don't wish to use a feature, you can deactivate it."
+msgstr ""
+"Особенности галереи - это модульная структура. Вы можете загрузить и установить модули, "
+"чтобы расширить функции Вашей Галереи, или Вы можете их отключить, если не желаете их "
+"использование. Для использованния данной возможности Вам необходимо установить, если "
+"необходимо, то сконфигурировать и активизировать модуль. Если Вы не хотите использовать "
+"какую-либо функцию, просто сделайте ее неактивной."
+
+#, fuzzy
+msgid "up to date"
+msgstr "Обновить"
+
+#, fuzzy
+msgid "disabled"
+msgstr "%d элементов подвреждено"
+
+#, fuzzy
+msgid "upgrade required"
+msgstr "(обязательно)"
+
+#, fuzzy
+msgid "not installed"
+msgstr "деинсталлировать"
+
+#, fuzzy
+msgid "incompatible"
+msgstr "Несовместимый Плагин"
+
+#, fuzzy
+msgid "Plugin Name"
+msgstr "Полное Имя"
+
+msgid "Version"
+msgstr "Версия"
+
+msgid "Installed"
+msgstr "Установлена"
+
+msgid "Actions"
+msgstr "Действия"
+
+msgid "Incompatible plugin!"
+msgstr "Несовместимый плагин!"
+
+#, c-format
+msgid "Core API Required: %s (available: %s)"
+msgstr "Требуется API для основных файлов: %s (доступен: %s)"
+
+#, c-format
+msgid "Plugin API Required: %s (available: %s)"
+msgstr "Требуется API для плагина: %s (доступен: %s)"
+
+msgid "configure"
+msgstr "настроить"
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr ""
 "Пожалуйста, удостовертесь, что соединение с интернет установлено должны образом, и "
@@ -1829,6 +1885,9 @@ msgstr "Все плагины имеют последнии версии."
 
 msgid "Common Tasks"
 msgstr "Общие Задачи"
+
+msgid "Modules"
+msgstr "Модули"
 
 msgid "Warning: Experimental feature!"
 msgstr "Внимание: Эксперитентальная функция!"
@@ -1955,18 +2014,14 @@ msgstr ""
 msgid "Theme Name"
 msgstr "Название Темы"
 
+msgid "Module Name"
+msgstr "Название Модуля"
+
 msgid "Latest"
 msgstr "Последняя"
 
 msgid "Incompatible Plugin"
 msgstr "Несовместимый Плагин"
-
-msgid "Incompatible plugin!"
-msgstr "Несовместимый плагин!"
-
-#, c-format
-msgid "Plugin API Required: %s (available: %s)"
-msgstr "Требуется API для плагина: %s (доступен: %s)"
 
 msgid "No packages have been selected."
 msgstr "Не было выбрано никаких пакетов."
@@ -2085,25 +2140,6 @@ msgstr "Установки альбома по умолчанию успешно
 
 msgid "Restored theme settings"
 msgstr "Настройки темы восстановлены"
-
-msgid "All Themes"
-msgstr "Все Темы"
-
-msgid "Defaults"
-msgstr "По умолчанию"
-
-msgid "Status: Incompatible Theme (Inactive)"
-msgstr "Состояние: Несовместимая Тема (неактивна)"
-
-msgid "Incompatible theme!"
-msgstr "Несовместимая тема!"
-
-#, c-format
-msgid "Theme API Required: %s (available: %s)"
-msgstr "Требуется API для темы: %s (доступен: %s)"
-
-msgid "(default)"
-msgstr "(по умолчанию)"
 
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
@@ -2898,6 +2934,10 @@ msgid ""
 msgstr ""
 "Графические инструменты, отвечающие за работу с данным типом элементов, не доступны, поэтому "
 "невозможно создать или редактировать макет."
+
+#, fuzzy
+msgid "Unable to create a thumbnail for this item"
+msgstr "Вы должны ввести Название для этого элемента."
 
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the movie's width and "
@@ -3705,6 +3745,9 @@ msgstr "%d. %s"
 msgid "Size: "
 msgstr "Размер:"
 
+msgid "Unknown"
+msgstr "Неизвестный"
+
 msgid "Full size: "
 msgstr "Полный размер:"
 
@@ -3734,6 +3777,51 @@ msgstr "[test] A second permission"
 
 msgid "Unit test theme"
 msgstr "Unit test theme"
+
+#~ msgid "Display"
+#~ msgstr "Отображение"
+
+#~ msgid "Successfully installed and auto-configured module %s"
+#~ msgstr "Модуль %s успешно установлен и сконфигурирован автоматически."
+
+#~ msgid "Successfully installed module %s"
+#~ msgstr "Модуль %s успешно установлен"
+
+#~ msgid "Successfully configured module %s"
+#~ msgstr "Модуль %s успешно сконфигурирован"
+
+#~ msgid "Successfully upgraded module %s"
+#~ msgstr "Модуль %s успешно обновлен"
+
+#~ msgid "Successfully activated module %s"
+#~ msgstr "Модуль %s успешно активизирован"
+
+#~ msgid "Successfully deactivated module %s"
+#~ msgstr "Модуль %s успешно деактивизирован"
+
+#~ msgid "Successfully uninstalled module %s"
+#~ msgstr "Модуль %s успешно деинсталлирован"
+
+#~ msgid "Incompatible module!"
+#~ msgstr "Несовместимый модуль!"
+
+#~ msgid "Module API Required: %s (available: %s)"
+#~ msgstr "Требуется API для модуля: %s (доступен: %s)"
+
+#~ msgid "All Themes"
+#~ msgstr "Все Темы"
+
+#~ msgid "Status: Incompatible Theme (Inactive)"
+#~ msgstr "Состояние: Несовместимая Тема (неактивна)"
+
+#~ msgid "Incompatible theme!"
+#~ msgstr "Несовместимая тема!"
+
+#~ msgid "Theme API Required: %s (available: %s)"
+#~ msgstr "Требуется API для темы: %s (доступен: %s)"
+
+#~ msgid "(default)"
+#~ msgstr "(по умолчанию)"
 
 #~ msgid "G2.1-RC-2: Double Down"
 #~ msgstr "G2.1-RC-2: Double Down"

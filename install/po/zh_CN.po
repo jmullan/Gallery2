@@ -19,7 +19,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Installer 2.1\n"
+"Project-Id-Version: Gallery: Installer 2.2\n"
 "POT-Creation-Date: 2005-08-05 21:48-0400\n"
 "PO-Revision-Date: 2006-03-09 23:54+0800\n"
 "Last-Translator: Lyric <lyric@lyricli.com>\n"
@@ -91,6 +91,10 @@ msgstr "数据库设置"
 msgid "You must have the MySQL PHP module installed"
 msgstr "你必需装有 MySQL PHP 模块"
 
+#, fuzzy
+msgid "You must have the MySQL Improved PHP module installed"
+msgstr "你必需装有 MySQL PHP 模块"
+
 msgid "You must have the ibm_db2 PHP module installed"
 msgstr "你必需装有 ibm_db2 PHP 模块"
 
@@ -98,6 +102,10 @@ msgid "You must have the PostgreSQL PHP module installed"
 msgstr "你必需装有 PostgreSQL PHP 模块"
 
 msgid "You must have the Oracle OCI8 PHP module installed"
+msgstr "你必需装有 Oracle OCI8 PHP 模块"
+
+#, fuzzy
+msgid "You must have the Component Object Model(COM) PHP module installed"
 msgstr "你必需装有 Oracle OCI8 PHP 模块"
 
 #, c-format
@@ -186,17 +194,16 @@ msgid ""
 "directory manually."
 msgstr "无法载入 图库 API。请手动删除 图库数据库表格和储存目录。"
 
-msgid "MySQL (all versions)"
-msgstr "MySQL（所有版本）"
-
-msgid "MySQL with Transactions (v3.23.34a and newer)"
+#, fuzzy
+msgid "MySQL (v3.23.34a and newer)"
 msgstr "MySQL with Transactions（v3.23.34a 和更新版）"
+
+#, fuzzy
+msgid "MySQL (versions before v3.23.34a)"
+msgstr "MySQL（所有版本）"
 
 msgid "PostgreSQL v7.x and newer"
 msgstr "PostgreSQL v7.x 和更新版"
-
-msgid "PostgreSQL v6.x (not well tested)"
-msgstr "PostgreSQL v6.x（并未充分测试）"
 
 msgid "Oracle (9i and newer)"
 msgstr "Oracle（9i 和更新版）"
@@ -204,6 +211,9 @@ msgstr "Oracle（9i 和更新版）"
 #, fuzzy
 msgid "IBM DB2 (v8.2 and newer)"
 msgstr "（实验性质！）IBM DB2（v8.2.2 和更新版）"
+
+msgid "MSSQL (Experimental!)"
+msgstr ""
 
 msgid "Unknown DB type or no known tables information."
 msgstr "不明数据库类型或没有表资讯。"
@@ -311,12 +321,13 @@ msgstr "系统检查"
 msgid "Performing system checks"
 msgstr "进行系统检查中"
 
-msgid "PHP version >= 4.1.0 or >= 5.0.4"
+#, fuzzy
+msgid "PHP version >= 4.3.0 or >= 5.0.4"
 msgstr "PHP 版本大於或等於 4.1.0 或大於或等於 5.0.4"
 
 #, fuzzy, c-format
 msgid ""
-"Error: Gallery 2 requires PHP version 4.1.0 or newer or 5.0.4 or newer. You have PHP version "
+"Error: Gallery 2 requires PHP version 4.3.0 or newer or 5.0.4 or newer. You have PHP version "
 "%s installed. Contact your webserver administrator to request an upgrade, available at the %"
 "sPHP website%s."
 msgstr ""
@@ -910,7 +921,7 @@ msgstr "缺少的文件（%d）"
 
 #, fuzzy
 msgid ""
-"Note: You're running Gallery from CVS, so recently removed files may appear here.  It might "
+"Note: You're running Gallery from SVN, so recently removed files may appear here.  It might "
 "be safe to ignore these."
 msgstr ""
 "注意：你正在执行由 CVS 中下载的 Gallery，所以有些最近移除的文件可能会出现在这里。可能可以安全"
@@ -922,9 +933,9 @@ msgstr "修改过的文件（%d）"
 
 #, fuzzy
 msgid ""
-"Note: You're running Gallery from CVS, so some modified files are to be expected.  You can "
-"probably ignore these, but to be safe you should make sure that you do 'cvs update -Pd' "
-"before continuing."
+"Note: You're running Gallery from SVN, so some modified files are to be expected.  You can "
+"probably ignore these, but to be safe you should make sure that you do 'svn update' before "
+"continuing."
 msgstr ""
 "注意：你正在执行由 CVS 中下载的 Gallery，所以会有些修改过的文件。你大概可以忽略这些文件，可是"
 "为了安全起见，你最好先执行「cvs update -Pd」指令再继续。"
@@ -1232,6 +1243,9 @@ msgstr "开始"
 
 msgid "Begin Installation&raquo;"
 msgstr "开始安装&raquo;"
+
+#~ msgid "PostgreSQL v6.x (not well tested)"
+#~ msgstr "PostgreSQL v6.x（并未充分测试）"
 
 #~ msgid "Install 图库Core"
 #~ msgstr "安装图库核心"

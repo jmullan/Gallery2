@@ -20,7 +20,7 @@
 # Previous translators:
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Installer 2.1\n"
+"Project-Id-Version: Gallery: Installer 2.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-06-08 17:49+0200\n"
 "PO-Revision-Date: 2006-03-16 09:53+0200\n"
@@ -99,6 +99,10 @@ msgid "You must have the MySQL PHP module installed"
 msgstr "Die MySQL PHP module moet geïnstalleer wees"
 
 #, fuzzy
+msgid "You must have the MySQL Improved PHP module installed"
+msgstr "Die MySQL PHP module moet geïnstalleer wees"
+
+#, fuzzy
 msgid "You must have the ibm_db2 PHP module installed"
 msgstr "Die MySQL PHP module moet geïnstalleer wees"
 
@@ -106,6 +110,10 @@ msgid "You must have the PostgreSQL PHP module installed"
 msgstr "Die PostgreSQL PHP module moet geïnstalleerd wees"
 
 msgid "You must have the Oracle OCI8 PHP module installed"
+msgstr "Die Oracle OCI8 PHP module moet geïnstalleer wees"
+
+#, fuzzy
+msgid "You must have the Component Object Model(COM) PHP module installed"
 msgstr "Die Oracle OCI8 PHP module moet geïnstalleer wees"
 
 #, c-format
@@ -200,23 +208,25 @@ msgstr ""
 "Kan die G2 API nie laai nie. Verwyder die Gallery databasistabelle en die stoordirectory "
 "handmatig."
 
-msgid "MySQL (all versions)"
-msgstr "MySQL (alle weergawes)"
-
-msgid "MySQL with Transactions (v3.23.34a and newer)"
+#, fuzzy
+msgid "MySQL (v3.23.34a and newer)"
 msgstr "MySQL met Transaksies (v3.23.34a of nuwer)"
+
+#, fuzzy
+msgid "MySQL (versions before v3.23.34a)"
+msgstr "MySQL (alle weergawes)"
 
 #, fuzzy
 msgid "PostgreSQL v7.x and newer"
 msgstr "PostgreSQL v7.x"
 
-msgid "PostgreSQL v6.x (not well tested)"
-msgstr "PostgreSQL v6.x (nie goed getoets nie)"
-
 msgid "Oracle (9i and newer)"
 msgstr "Oracle (9i of nuwer)"
 
 msgid "IBM DB2 (v8.2 and newer)"
+msgstr ""
+
+msgid "MSSQL (Experimental!)"
 msgstr ""
 
 msgid "Unknown DB type or no known tables information."
@@ -329,12 +339,13 @@ msgstr "Stelselkontrole"
 msgid "Performing system checks"
 msgstr ""
 
-msgid "PHP version >= 4.1.0 or >= 5.0.4"
+#, fuzzy
+msgid "PHP version >= 4.3.0 or >= 5.0.4"
 msgstr "PHP weergawe >= 4.1.0 of >= 5.0.4"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Error: Gallery 2 requires PHP version 4.1.0 or newer or 5.0.4 or newer. You have PHP version "
+"Error: Gallery 2 requires PHP version 4.3.0 or newer or 5.0.4 or newer. You have PHP version "
 "%s installed. Contact your webserver administrator to request an upgrade, available at the %"
 "sPHP website%s."
 msgstr ""
@@ -953,8 +964,9 @@ msgstr "Gallery: <strong>u fotos</strong> op <strong>u webwerf</strong>"
 msgid "Missing files (%d)"
 msgstr "Vermiste lêers (%d)"
 
+#, fuzzy
 msgid ""
-"Note: You're running Gallery from CVS, so recently removed files may appear here.  It might "
+"Note: You're running Gallery from SVN, so recently removed files may appear here.  It might "
 "be safe to ignore these."
 msgstr ""
 "Let op: U loop Gallery vanaf CVS, daarom kan onlangs verwyderde lêers hier verskyn. U kan "
@@ -964,10 +976,11 @@ msgstr ""
 msgid "Modified files (%d)"
 msgstr "Gewysigde lêers (%d)"
 
+#, fuzzy
 msgid ""
-"Note: You're running Gallery from CVS, so some modified files are to be expected.  You can "
-"probably ignore these, but to be safe you should make sure that you do 'cvs update -Pd' "
-"before continuing."
+"Note: You're running Gallery from SVN, so some modified files are to be expected.  You can "
+"probably ignore these, but to be safe you should make sure that you do 'svn update' before "
+"continuing."
 msgstr ""
 "Let op: U loop Gallery vanaf CVS, daarom kan u sommige gewysigde lêers hier verwag. U kan "
 "hierdie waarskynlik met veiligheid ignoreer, maar om veilig te wees moet u  'cvs update -Pd' "
@@ -1310,6 +1323,9 @@ msgstr "Gaan"
 
 msgid "Begin Installation&raquo;"
 msgstr "Begin Installasie&raquo;"
+
+#~ msgid "PostgreSQL v6.x (not well tested)"
+#~ msgstr "PostgreSQL v6.x (nie goed getoets nie)"
 
 #~ msgid "SQL test file \"%s\" not found."
 #~ msgstr "SQL toetsl&ecirc;er  \"%s\" nie gevind nie."

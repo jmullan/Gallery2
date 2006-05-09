@@ -20,7 +20,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.0\n"
+"Project-Id-Version: Gallery: Core 1.1.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-10-31 14:44+0100\n"
 "PO-Revision-Date: 2006-02-19 11:14+0100\n"
@@ -86,24 +86,6 @@ msgstr[1] "%d aste"
 msgid "<none>"
 msgstr "<bat ere ez>"
 
-msgid "install"
-msgstr "instalatu"
-
-msgid "upgrade"
-msgstr "bertsio-berritu"
-
-msgid "configure"
-msgstr "konfiguratu"
-
-msgid "activate"
-msgstr "gaitu"
-
-msgid "uninstall"
-msgstr "desinstalatu"
-
-msgid "deactivate"
-msgstr "ezgaitu"
-
 msgid "No acceleration"
 msgstr "Azeleraziorik ez"
 
@@ -112,6 +94,9 @@ msgstr "Azelerazio ertaina"
 
 msgid "Full acceleration"
 msgstr "Azelerazio osoa"
+
+msgid "Themes"
+msgstr "Gaiak"
 
 msgid "Performing Maintenance Tasks"
 msgstr "Sistema Mantenua Egiten"
@@ -128,6 +113,21 @@ msgstr "Eguneratu"
 
 msgid "Download"
 msgstr "Deskargatu"
+
+msgid "install"
+msgstr "instalatu"
+
+msgid "upgrade"
+msgstr "bertsio-berritu"
+
+msgid "activate"
+msgstr "gaitu"
+
+msgid "uninstall"
+msgstr "desinstalatu"
+
+msgid "deactivate"
+msgstr "ezgaitu"
 
 msgid "Inherit settings from parent album"
 msgstr "Erabili direktorio gurasoaren ezarpenak"
@@ -503,17 +503,11 @@ msgstr "Zure Kontua"
 msgid "Logout"
 msgstr "Saioa amaitu"
 
-msgid "Modules"
-msgstr "Moduluak"
+msgid "Plugins"
+msgstr ""
 
 msgid "Repository"
 msgstr "Errepositorioa"
-
-msgid "Themes"
-msgstr "Gaiak"
-
-msgid "Display"
-msgstr "Bistaratu"
 
 msgid "Users"
 msgstr "Erabiltzaileak"
@@ -529,6 +523,9 @@ msgstr "Tresna-joko lehentasuna"
 
 msgid "Graphics Toolkits"
 msgstr "Tresna-joko Grafikoak"
+
+msgid "Defaults"
+msgstr "Lehenetsiak"
 
 msgid "Account Settings"
 msgstr "Kontu ezarpenak"
@@ -866,11 +863,9 @@ msgstr "Kalkulu-orria"
 msgid "spreadsheet"
 msgstr "kalkulu-orria"
 
-msgid "Unknown"
-msgstr "Ezezaguna"
-
-msgid "unknown"
-msgstr "ezezaguna"
+#, fuzzy
+msgid "file"
+msgstr "Fitxategia"
 
 #, c-format
 msgid ""
@@ -892,6 +887,49 @@ msgstr "Erabiltzailea"
 
 msgid "user"
 msgstr "erabiltzailea"
+
+#, fuzzy
+msgid "Integrity Check"
+msgstr "Indize osotasun egiaztapenak huts egin du."
+
+msgid "Check data integrity and report any inconsistencies."
+msgstr ""
+
+msgid "Loading all entities"
+msgstr ""
+
+msgid "Checking for orphaned entity data"
+msgstr ""
+
+msgid "Checking for orphaned item data"
+msgstr ""
+
+msgid "Checking for orphaned plugin data"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Checked %d entities"
+msgstr "%d elementu egiazturik"
+
+#, fuzzy, c-format
+msgid "Failed to load entity ids: %s"
+msgstr "Huts %s gehitzerakoan"
+
+#, c-format
+msgid "Orphaned data in table %s with missing parent entity; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with no row in %s table; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with missing derivative source; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Unknown plugin: %s %s"
+msgstr ""
 
 msgid "Optimize database"
 msgstr "Datu-basea optimizatu"
@@ -953,6 +991,9 @@ msgstr "Sistema xehetasunak eskuratu; G2 laguntza foroan kopiatu/itsasi egiteko 
 
 msgid "core"
 msgstr "muina"
+
+msgid "unknown"
+msgstr "ezezaguna"
 
 msgid "Gallery version"
 msgstr "Gallery bertsioa"
@@ -1614,87 +1655,6 @@ msgstr "orain abiarazi"
 msgid "Last Run Details:"
 msgstr "Azken Abiarazte Xehetasunak:"
 
-msgid "Gallery Modules"
-msgstr "Gallery Moduluak"
-
-#, c-format
-msgid "Successfully installed and auto-configured module %s"
-msgstr "%s modulua behar bezala instaltu eta auto-konfiguratu da"
-
-#, c-format
-msgid "Successfully installed module %s"
-msgstr "%s Modulua behar bezala instalatuta da"
-
-#, c-format
-msgid "Successfully configured module %s"
-msgstr "%s Modulua behar bezala konfiguratu da"
-
-#, c-format
-msgid "Successfully upgraded module %s"
-msgstr "%s Modulua behar bezala eguneratu da"
-
-#, c-format
-msgid "Successfully activated module %s"
-msgstr "%s Modulua behar bezala gaitu da"
-
-#, c-format
-msgid "Successfully deactivated module %s"
-msgstr "%s Modulua behar bezala ezgaitu da"
-
-#, c-format
-msgid "Successfully uninstalled module %s"
-msgstr "%s Modulua behar bezala desinstalatu da"
-
-msgid ""
-"Gallery features come as separate modules.  You can download and install modules to add more "
-"features to your Gallery, or you can disable features if you don't want to use them.  In "
-"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
-"don't wish to use a feature, you can deactivate it."
-msgstr ""
-"Gallery ezaugarriak modulu ezberdinak bezala banatzen dira.  Zuk zure galeriari ezaugarriak "
-"gehitzeko moduluak deskargatu eta instaltu ditzakezu, edo ezaugarriak ezgaitu ditzakezu "
-"erabili nahi ez izan ezkero.  Ezaugarri bat behar bezala erabilzteko berau instalatu, "
-"konfiguratu (beharrezkoa bada) eta gaitu egin behar duzu.  Ezaugarri bat ez erabili nahi "
-"izan ezkero berau ezgaitu egin dezakezu."
-
-msgid "Module Name"
-msgstr "Modulu Izena"
-
-msgid "Version"
-msgstr "Bertsioa"
-
-msgid "Installed"
-msgstr "Instalaturik"
-
-msgid "Actions"
-msgstr "Ekintzak"
-
-msgid "Status: Not Installed"
-msgstr "Egoera: Ez indatalatua"
-
-msgid "Status: Active"
-msgstr "Egoera: Gaiturik"
-
-msgid "Status: Inactive"
-msgstr "Egoera Ezgaiturik"
-
-msgid "Status: Upgrade Required (Inactive)"
-msgstr "Egoera: Bertsio-berritzea Beharrezkoa (ezgaiturik)"
-
-msgid "Status: Incompatible Module (Inactive)"
-msgstr "Egoera: Modulu bateraezina (ezgaiturik)"
-
-msgid "Incompatible module!"
-msgstr "Moduu baterezina!"
-
-#, c-format
-msgid "Core API Required: %s (available: %s)"
-msgstr "Miun API-a beharrezkoa: %s (%s eskuragarri)"
-
-#, c-format
-msgid "Module API Required: %s (available: %s)"
-msgstr "Modulu API-a beharrezkoa: %s (%s eskuragarri)"
-
 msgid "Confirm module uninstall"
 msgstr "Berretsi modulu desinstalazioa"
 
@@ -1786,6 +1746,102 @@ msgstr "Iraungitze epea:"
 msgid "Clear Saved Pages"
 msgstr "Gordetako Orrialdeak Garbitu"
 
+msgid "Status: Inactive"
+msgstr "Egoera Ezgaiturik"
+
+#, fuzzy
+msgid "__PLUGIN__ deactivated"
+msgstr "ezgaitu"
+
+msgid "Status: Active"
+msgstr "Egoera: Gaiturik"
+
+msgid "__PLUGIN__ activated"
+msgstr ""
+
+msgid "Status: Not Installed"
+msgstr "Egoera: Ez indatalatua"
+
+msgid "__PLUGIN__ uninstalled"
+msgstr ""
+
+msgid "Status: Upgrade Required (Inactive)"
+msgstr "Egoera: Bertsio-berritzea Beharrezkoa (ezgaiturik)"
+
+#, fuzzy
+msgid "Status: Incompatible Plugin (Inactive)"
+msgstr "Egoera: Modulu bateraezina (ezgaiturik)"
+
+msgid "Status: Inactive (Configuration Required)"
+msgstr ""
+
+msgid "__PLUGIN__ needs configuration"
+msgstr ""
+
+#, fuzzy
+msgid "Gallery Plugins"
+msgstr "Gallery Moduluak"
+
+#, fuzzy
+msgid ""
+"Gallery features come as separate plugins.  You can download and install plugins to add more "
+"features to your Gallery, or you can disable features if you don't want to use them.  In "
+"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
+"don't wish to use a feature, you can deactivate it."
+msgstr ""
+"Gallery ezaugarriak modulu ezberdinak bezala banatzen dira.  Zuk zure galeriari ezaugarriak "
+"gehitzeko moduluak deskargatu eta instaltu ditzakezu, edo ezaugarriak ezgaitu ditzakezu "
+"erabili nahi ez izan ezkero.  Ezaugarri bat behar bezala erabilzteko berau instalatu, "
+"konfiguratu (beharrezkoa bada) eta gaitu egin behar duzu.  Ezaugarri bat ez erabili nahi "
+"izan ezkero berau ezgaitu egin dezakezu."
+
+#, fuzzy
+msgid "up to date"
+msgstr "Eguneratu"
+
+#, fuzzy
+msgid "disabled"
+msgstr "%d elementuk huts egin dute"
+
+#, fuzzy
+msgid "upgrade required"
+msgstr "(beharrezkoa)"
+
+#, fuzzy
+msgid "not installed"
+msgstr "desinstalatu"
+
+#, fuzzy
+msgid "incompatible"
+msgstr "Plugin baterezina"
+
+#, fuzzy
+msgid "Plugin Name"
+msgstr "Izen osoa"
+
+msgid "Version"
+msgstr "Bertsioa"
+
+msgid "Installed"
+msgstr "Instalaturik"
+
+msgid "Actions"
+msgstr "Ekintzak"
+
+msgid "Incompatible plugin!"
+msgstr "Plugin baterezina!"
+
+#, c-format
+msgid "Core API Required: %s (available: %s)"
+msgstr "Miun API-a beharrezkoa: %s (%s eskuragarri)"
+
+#, c-format
+msgid "Plugin API Required: %s (available: %s)"
+msgstr "Plugin API-a beharrezkoa: %s (%s eskuragarri)"
+
+msgid "configure"
+msgstr "konfiguratu"
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr ""
 "Ziurtatu zaitez zure interneteriko konexioa martxan dagoela edo saiatu zaitez beranduago."
@@ -1798,6 +1854,9 @@ msgstr "Dagoeneko plugin guztiak eguneraturik daude."
 
 msgid "Common Tasks"
 msgstr "Ataza Orokorrak"
+
+msgid "Modules"
+msgstr "Moduluak"
 
 msgid "Warning: Experimental feature!"
 msgstr "Kontuz: Ezaugarri esperimentala!"
@@ -1922,18 +1981,14 @@ msgstr ""
 msgid "Theme Name"
 msgstr "Gai izena"
 
+msgid "Module Name"
+msgstr "Modulu Izena"
+
 msgid "Latest"
 msgstr "Azkena"
 
 msgid "Incompatible Plugin"
 msgstr "Plugin baterezina"
-
-msgid "Incompatible plugin!"
-msgstr "Plugin baterezina!"
-
-#, c-format
-msgid "Plugin API Required: %s (available: %s)"
-msgstr "Plugin API-a beharrezkoa: %s (%s eskuragarri)"
 
 msgid "No packages have been selected."
 msgstr "Ez duzu paketerik aukeratu."
@@ -2050,25 +2105,6 @@ msgstr "Lehenetsiriko album ezarpenak behar bezala gorde dira"
 
 msgid "Restored theme settings"
 msgstr "Gai ezarpenak berreskuraturik"
-
-msgid "All Themes"
-msgstr "Gai Guztiak"
-
-msgid "Defaults"
-msgstr "Lehenetsiak"
-
-msgid "Status: Incompatible Theme (Inactive)"
-msgstr "Egoera: Gai bateraezina (ezgaiturik)"
-
-msgid "Incompatible theme!"
-msgstr "Gai bateraezina!"
-
-#, c-format
-msgid "Theme API Required: %s (available: %s)"
-msgstr "Gai API-a beharrezkoa: %s (%s eskuragarri)"
-
-msgid "(default)"
-msgstr "(lehenetsia)"
 
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
@@ -2842,6 +2878,10 @@ msgid ""
 msgstr ""
 "Ez dago elemntu mota hau onartzen duen trsna-sprta grafikorik instalaturik, beraz ezingo da "
 "argazkitxoa sortu edo eraldatu."
+
+#, fuzzy
+msgid "Unable to create a thumbnail for this item"
+msgstr "Elementu honentzt izen bat idatzi behar duzu."
 
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the movie's width and "
@@ -3622,6 +3662,9 @@ msgstr "%d. %s"
 msgid "Size: "
 msgstr "Tamaina: "
 
+msgid "Unknown"
+msgstr "Ezezaguna"
+
 msgid "Full size: "
 msgstr "Tamaina osoa: "
 
@@ -3651,6 +3694,51 @@ msgstr "[proba] A bigarren baimena"
 
 msgid "Unit test theme"
 msgstr "Unitate proba gaia"
+
+#~ msgid "Display"
+#~ msgstr "Bistaratu"
+
+#~ msgid "Successfully installed and auto-configured module %s"
+#~ msgstr "%s modulua behar bezala instaltu eta auto-konfiguratu da"
+
+#~ msgid "Successfully installed module %s"
+#~ msgstr "%s Modulua behar bezala instalatuta da"
+
+#~ msgid "Successfully configured module %s"
+#~ msgstr "%s Modulua behar bezala konfiguratu da"
+
+#~ msgid "Successfully upgraded module %s"
+#~ msgstr "%s Modulua behar bezala eguneratu da"
+
+#~ msgid "Successfully activated module %s"
+#~ msgstr "%s Modulua behar bezala gaitu da"
+
+#~ msgid "Successfully deactivated module %s"
+#~ msgstr "%s Modulua behar bezala ezgaitu da"
+
+#~ msgid "Successfully uninstalled module %s"
+#~ msgstr "%s Modulua behar bezala desinstalatu da"
+
+#~ msgid "Incompatible module!"
+#~ msgstr "Moduu baterezina!"
+
+#~ msgid "Module API Required: %s (available: %s)"
+#~ msgstr "Modulu API-a beharrezkoa: %s (%s eskuragarri)"
+
+#~ msgid "All Themes"
+#~ msgstr "Gai Guztiak"
+
+#~ msgid "Status: Incompatible Theme (Inactive)"
+#~ msgstr "Egoera: Gai bateraezina (ezgaiturik)"
+
+#~ msgid "Incompatible theme!"
+#~ msgstr "Gai bateraezina!"
+
+#~ msgid "Theme API Required: %s (available: %s)"
+#~ msgstr "Gai API-a beharrezkoa: %s (%s eskuragarri)"
+
+#~ msgid "(default)"
+#~ msgstr "(lehenetsia)"
 
 #~ msgid "G2.1-RC-1: Hit Me"
 #~ msgstr "G2.1-RC-1: Ni jo"

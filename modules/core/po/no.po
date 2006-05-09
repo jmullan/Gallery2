@@ -21,7 +21,7 @@
 # - Sverre M. Vikan <sverre AT urven DOT net>
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.0\n"
+"Project-Id-Version: Gallery: Core 1.1.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-02-01 23:38+0100\n"
 "PO-Revision-Date: 2006-03-17 14:42+0100\n"
@@ -86,24 +86,6 @@ msgstr[1] "%d uker"
 msgid "<none>"
 msgstr "<ingen>"
 
-msgid "install"
-msgstr "installer"
-
-msgid "upgrade"
-msgstr "oppgrader"
-
-msgid "configure"
-msgstr "oppsett"
-
-msgid "activate"
-msgstr "aktiver"
-
-msgid "uninstall"
-msgstr "avinstaller"
-
-msgid "deactivate"
-msgstr "deaktiver"
-
 msgid "No acceleration"
 msgstr "Ingen akselerasjon"
 
@@ -112,6 +94,9 @@ msgstr "Delvis akselerasjon"
 
 msgid "Full acceleration"
 msgstr "Full akselerasjon"
+
+msgid "Themes"
+msgstr "Tema"
 
 msgid "Performing Maintenance Tasks"
 msgstr "Utfører vedlikeholdsoppgaver"
@@ -128,6 +113,21 @@ msgstr "Oppgrader"
 
 msgid "Download"
 msgstr "Last ned"
+
+msgid "install"
+msgstr "installer"
+
+msgid "upgrade"
+msgstr "oppgrader"
+
+msgid "activate"
+msgstr "aktiver"
+
+msgid "uninstall"
+msgstr "avinstaller"
+
+msgid "deactivate"
+msgstr "deaktiver"
 
 msgid "Inherit settings from parent album"
 msgstr "Arve innstillinger fra hovedalbum"
@@ -502,17 +502,11 @@ msgstr "Din konto"
 msgid "Logout"
 msgstr "Logg ut"
 
-msgid "Modules"
-msgstr "Moduler"
+msgid "Plugins"
+msgstr ""
 
 msgid "Repository"
 msgstr "Kodelager"
-
-msgid "Themes"
-msgstr "Tema"
-
-msgid "Display"
-msgstr "Visning"
 
 msgid "Users"
 msgstr "Brukere"
@@ -528,6 +522,9 @@ msgstr "Verktøyprioritet"
 
 msgid "Graphics Toolkits"
 msgstr "Grafikkverktøy"
+
+msgid "Defaults"
+msgstr "Standarder"
 
 msgid "Account Settings"
 msgstr "Kontoinnstillinger"
@@ -865,11 +862,9 @@ msgstr "Regneark"
 msgid "spreadsheet"
 msgstr "regneark"
 
-msgid "Unknown"
-msgstr "Ukjent"
-
-msgid "unknown"
-msgstr "ukjent"
+#, fuzzy
+msgid "file"
+msgstr "Fil"
 
 #, c-format
 msgid ""
@@ -891,6 +886,49 @@ msgstr "Bruker"
 
 msgid "user"
 msgstr "bruker"
+
+#, fuzzy
+msgid "Integrity Check"
+msgstr "Integritetskontroll av indeks mislyktes."
+
+msgid "Check data integrity and report any inconsistencies."
+msgstr ""
+
+msgid "Loading all entities"
+msgstr ""
+
+msgid "Checking for orphaned entity data"
+msgstr ""
+
+msgid "Checking for orphaned item data"
+msgstr ""
+
+msgid "Checking for orphaned plugin data"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Checked %d entities"
+msgstr "Markerte %d objekter"
+
+#, fuzzy, c-format
+msgid "Failed to load entity ids: %s"
+msgstr "Kunne ikke legge til %s"
+
+#, c-format
+msgid "Orphaned data in table %s with missing parent entity; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with no row in %s table; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with missing derivative source; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Unknown plugin: %s %s"
+msgstr ""
 
 msgid "Optimize database"
 msgstr "Optimaliser database"
@@ -953,6 +991,9 @@ msgstr ""
 
 msgid "core"
 msgstr "kjerne"
+
+msgid "unknown"
+msgstr "ukjent"
 
 msgid "Gallery version"
 msgstr "Gallery-versjon"
@@ -1610,86 +1651,6 @@ msgstr "kjør nå"
 msgid "Last Run Details:"
 msgstr "Detaljer fra siste gjennomkjøring:"
 
-msgid "Gallery Modules"
-msgstr "Gallery-moduler"
-
-#, c-format
-msgid "Successfully installed and auto-configured module %s"
-msgstr "Vellykket installasjon og automatisk konfigurasjon av modulen %s"
-
-#, c-format
-msgid "Successfully installed module %s"
-msgstr "Vellykket installasjon av modul %s"
-
-#, c-format
-msgid "Successfully configured module %s"
-msgstr "Vellykket konfigurering av modul %s"
-
-#, c-format
-msgid "Successfully upgraded module %s"
-msgstr "Vellykket oppgradering av modul %s"
-
-#, c-format
-msgid "Successfully activated module %s"
-msgstr "Vellykket aktivering av modul %s"
-
-#, c-format
-msgid "Successfully deactivated module %s"
-msgstr "Vellykket deaktivering av modul %s"
-
-#, c-format
-msgid "Successfully uninstalled module %s"
-msgstr "Vellykket avinstallering av modul %s"
-
-msgid ""
-"Gallery features come as separate modules.  You can download and install modules to add more "
-"features to your Gallery, or you can disable features if you don't want to use them.  In "
-"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
-"don't wish to use a feature, you can deactivate it."
-msgstr ""
-"Gallerys funksjoner kommer som separate moduler.  Du kan laste ned og installere moduler for "
-"å legge til flere funksjoner i ditt galleri, eller du kan deaktivere funksjoner om du ikke "
-"ønsker å bruke dem.  Du må installere, sette opp (om nødvendig) og aktivere en modul for å "
-"benytte den."
-
-msgid "Module Name"
-msgstr "Modulnavn"
-
-msgid "Version"
-msgstr "Versjon"
-
-msgid "Installed"
-msgstr "Installert"
-
-msgid "Actions"
-msgstr "Handlinger"
-
-msgid "Status: Not Installed"
-msgstr "Status: ikke installert"
-
-msgid "Status: Active"
-msgstr "Status: Aktiv"
-
-msgid "Status: Inactive"
-msgstr "Status: Deaktivert"
-
-msgid "Status: Upgrade Required (Inactive)"
-msgstr "Status: oppgradering påkrevd (deaktivert)"
-
-msgid "Status: Incompatible Module (Inactive)"
-msgstr "Status: Ikke-kompatibel modul (Deaktivert)"
-
-msgid "Incompatible module!"
-msgstr "Ikke-kompatibel modul!"
-
-#, c-format
-msgid "Core API Required: %s (available: %s)"
-msgstr "Påkrevd kjerne-API: %s (tilgjengelig: %s)"
-
-#, c-format
-msgid "Module API Required: %s (available: %s)"
-msgstr "Modul-API påkrevd: %s (tilgjengelig: %s) "
-
 msgid "Confirm module uninstall"
 msgstr "Bekreft avinstallasjon av modul"
 
@@ -1782,6 +1743,101 @@ msgstr "Utløper etter:"
 msgid "Clear Saved Pages"
 msgstr "Fjern lagrede sider"
 
+msgid "Status: Inactive"
+msgstr "Status: Deaktivert"
+
+#, fuzzy
+msgid "__PLUGIN__ deactivated"
+msgstr "deaktiver"
+
+msgid "Status: Active"
+msgstr "Status: Aktiv"
+
+msgid "__PLUGIN__ activated"
+msgstr ""
+
+msgid "Status: Not Installed"
+msgstr "Status: ikke installert"
+
+msgid "__PLUGIN__ uninstalled"
+msgstr ""
+
+msgid "Status: Upgrade Required (Inactive)"
+msgstr "Status: oppgradering påkrevd (deaktivert)"
+
+#, fuzzy
+msgid "Status: Incompatible Plugin (Inactive)"
+msgstr "Status: Ikke-kompatibel modul (Deaktivert)"
+
+msgid "Status: Inactive (Configuration Required)"
+msgstr ""
+
+msgid "__PLUGIN__ needs configuration"
+msgstr ""
+
+#, fuzzy
+msgid "Gallery Plugins"
+msgstr "Gallery-moduler"
+
+#, fuzzy
+msgid ""
+"Gallery features come as separate plugins.  You can download and install plugins to add more "
+"features to your Gallery, or you can disable features if you don't want to use them.  In "
+"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
+"don't wish to use a feature, you can deactivate it."
+msgstr ""
+"Gallerys funksjoner kommer som separate moduler.  Du kan laste ned og installere moduler for "
+"å legge til flere funksjoner i ditt galleri, eller du kan deaktivere funksjoner om du ikke "
+"ønsker å bruke dem.  Du må installere, sette opp (om nødvendig) og aktivere en modul for å "
+"benytte den."
+
+#, fuzzy
+msgid "up to date"
+msgstr "Oppdater"
+
+#, fuzzy
+msgid "disabled"
+msgstr "%d objekter mislyktes"
+
+#, fuzzy
+msgid "upgrade required"
+msgstr "(påkrevd)"
+
+#, fuzzy
+msgid "not installed"
+msgstr "avinstaller"
+
+#, fuzzy
+msgid "incompatible"
+msgstr "Ikke-kompatibelt programtillegg"
+
+#, fuzzy
+msgid "Plugin Name"
+msgstr "Fullt navn"
+
+msgid "Version"
+msgstr "Versjon"
+
+msgid "Installed"
+msgstr "Installert"
+
+msgid "Actions"
+msgstr "Handlinger"
+
+msgid "Incompatible plugin!"
+msgstr "Ikke-kompatibelt programtillegg!"
+
+#, c-format
+msgid "Core API Required: %s (available: %s)"
+msgstr "Påkrevd kjerne-API: %s (tilgjengelig: %s)"
+
+#, c-format
+msgid "Plugin API Required: %s (available: %s)"
+msgstr "Programtillegg-API påkrevd: %s (tilgjengelig: %s) "
+
+msgid "configure"
+msgstr "oppsett"
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr ""
 "Vennligst påse at din Internettforbindelse er satt opp riktig eller forsøk igjen senere."
@@ -1794,6 +1850,9 @@ msgstr "Alle programtillegg er allerede oppdaterte."
 
 msgid "Common Tasks"
 msgstr "Vanlige oppgaver"
+
+msgid "Modules"
+msgstr "Moduler"
 
 msgid "Warning: Experimental feature!"
 msgstr "Advarsel: eksperimentell funksjon!"
@@ -1920,18 +1979,14 @@ msgstr ""
 msgid "Theme Name"
 msgstr "Temanavn"
 
+msgid "Module Name"
+msgstr "Modulnavn"
+
 msgid "Latest"
 msgstr "Siste"
 
 msgid "Incompatible Plugin"
 msgstr "Ikke-kompatibelt programtillegg"
-
-msgid "Incompatible plugin!"
-msgstr "Ikke-kompatibelt programtillegg!"
-
-#, c-format
-msgid "Plugin API Required: %s (available: %s)"
-msgstr "Programtillegg-API påkrevd: %s (tilgjengelig: %s) "
 
 msgid "No packages have been selected."
 msgstr "Ingen pakker er valgt."
@@ -2049,25 +2104,6 @@ msgstr "Vellykket lagring av standard albuminnstillinger"
 
 msgid "Restored theme settings"
 msgstr "Gjenopprettet temainnstillinger"
-
-msgid "All Themes"
-msgstr "Alle temaer"
-
-msgid "Defaults"
-msgstr "Standarder"
-
-msgid "Status: Incompatible Theme (Inactive)"
-msgstr "Status: ikke-kompatibelt tema (Deaktivert)"
-
-msgid "Incompatible theme!"
-msgstr "Ikke-kompatibelt tema!"
-
-#, c-format
-msgid "Theme API Required: %s (available: %s)"
-msgstr "Tema-API påkrevd: %s (tilgjengelig: %s)"
-
-msgid "(default)"
-msgstr "(standard)"
 
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
@@ -2831,6 +2867,10 @@ msgid ""
 msgstr ""
 "Det er ingen grafikkverktøy aktivert som støtter denne typen objekt, så vi kan ikke opprette "
 "eller endre et miniatyrbilde."
+
+#, fuzzy
+msgid "Unable to create a thumbnail for this item"
+msgstr "Du må skrive inn et navn for dette objektet."
 
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the movie's width and "
@@ -3609,6 +3649,9 @@ msgstr "%d. %s"
 msgid "Size: "
 msgstr "Størrelse: "
 
+msgid "Unknown"
+msgstr "Ukjent"
+
 msgid "Full size: "
 msgstr "Full størrelse: "
 
@@ -3638,3 +3681,48 @@ msgstr "[test] En andre tilgang"
 
 msgid "Unit test theme"
 msgstr "Enhetstesttema"
+
+#~ msgid "Display"
+#~ msgstr "Visning"
+
+#~ msgid "Successfully installed and auto-configured module %s"
+#~ msgstr "Vellykket installasjon og automatisk konfigurasjon av modulen %s"
+
+#~ msgid "Successfully installed module %s"
+#~ msgstr "Vellykket installasjon av modul %s"
+
+#~ msgid "Successfully configured module %s"
+#~ msgstr "Vellykket konfigurering av modul %s"
+
+#~ msgid "Successfully upgraded module %s"
+#~ msgstr "Vellykket oppgradering av modul %s"
+
+#~ msgid "Successfully activated module %s"
+#~ msgstr "Vellykket aktivering av modul %s"
+
+#~ msgid "Successfully deactivated module %s"
+#~ msgstr "Vellykket deaktivering av modul %s"
+
+#~ msgid "Successfully uninstalled module %s"
+#~ msgstr "Vellykket avinstallering av modul %s"
+
+#~ msgid "Incompatible module!"
+#~ msgstr "Ikke-kompatibel modul!"
+
+#~ msgid "Module API Required: %s (available: %s)"
+#~ msgstr "Modul-API påkrevd: %s (tilgjengelig: %s) "
+
+#~ msgid "All Themes"
+#~ msgstr "Alle temaer"
+
+#~ msgid "Status: Incompatible Theme (Inactive)"
+#~ msgstr "Status: ikke-kompatibelt tema (Deaktivert)"
+
+#~ msgid "Incompatible theme!"
+#~ msgstr "Ikke-kompatibelt tema!"
+
+#~ msgid "Theme API Required: %s (available: %s)"
+#~ msgstr "Tema-API påkrevd: %s (tilgjengelig: %s)"
+
+#~ msgid "(default)"
+#~ msgstr "(standard)"

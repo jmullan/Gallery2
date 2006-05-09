@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.0\n"
+"Project-Id-Version: Gallery: Core 1.1.4\n"
 "POT-Creation-Date: 2003-06-05 16:56-0300\n"
 "PO-Revision-Date: 2003-08-27 22:25-0700\n"
 "Last-Translator: Alvaro Cortizo <alvaro@netpandora.com>\n"
@@ -84,25 +84,6 @@ msgstr[1] "semana %d"
 msgid "<none>"
 msgstr "<ninguno>"
 
-msgid "install"
-msgstr "instalar"
-
-msgid "upgrade"
-msgstr ""
-
-msgid "configure"
-msgstr "configurar"
-
-msgid "activate"
-msgstr "activar"
-
-#, fuzzy
-msgid "uninstall"
-msgstr "instalar"
-
-msgid "deactivate"
-msgstr "desactivar"
-
 msgid "No acceleration"
 msgstr ""
 
@@ -111,6 +92,10 @@ msgstr ""
 
 msgid "Full acceleration"
 msgstr ""
+
+#, fuzzy
+msgid "Themes"
+msgstr "Tema"
 
 msgid "Performing Maintenance Tasks"
 msgstr ""
@@ -128,6 +113,22 @@ msgstr ""
 
 msgid "Download"
 msgstr ""
+
+msgid "install"
+msgstr "instalar"
+
+msgid "upgrade"
+msgstr ""
+
+msgid "activate"
+msgstr "activar"
+
+#, fuzzy
+msgid "uninstall"
+msgstr "instalar"
+
+msgid "deactivate"
+msgstr "desactivar"
 
 msgid "Inherit settings from parent album"
 msgstr ""
@@ -564,17 +565,10 @@ msgstr ""
 msgid "Logout"
 msgstr "desconectarse"
 
-msgid "Modules"
-msgstr "M&oacute;dulos"
-
-msgid "Repository"
+msgid "Plugins"
 msgstr ""
 
-#, fuzzy
-msgid "Themes"
-msgstr "Tema"
-
-msgid "Display"
+msgid "Repository"
 msgstr ""
 
 msgid "Users"
@@ -591,6 +585,9 @@ msgstr ""
 
 msgid "Graphics Toolkits"
 msgstr ""
+
+msgid "Defaults"
+msgstr "Por defecto"
 
 #, fuzzy
 msgid "Account Settings"
@@ -953,11 +950,9 @@ msgstr "Resetear"
 msgid "spreadsheet"
 msgstr "Resetear"
 
-msgid "Unknown"
-msgstr ""
-
-msgid "unknown"
-msgstr ""
+#, fuzzy
+msgid "file"
+msgstr "Archivo: "
 
 #, c-format
 msgid ""
@@ -980,6 +975,48 @@ msgstr "Usuarios"
 #, fuzzy
 msgid "user"
 msgstr "Usuarios"
+
+msgid "Integrity Check"
+msgstr ""
+
+msgid "Check data integrity and report any inconsistencies."
+msgstr ""
+
+msgid "Loading all entities"
+msgstr ""
+
+msgid "Checking for orphaned entity data"
+msgstr ""
+
+msgid "Checking for orphaned item data"
+msgstr ""
+
+msgid "Checking for orphaned plugin data"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Checked %d entities"
+msgstr "agregar item"
+
+#, c-format
+msgid "Failed to load entity ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with missing parent entity; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with no row in %s table; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with missing derivative source; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Unknown plugin: %s %s"
+msgstr ""
 
 msgid "Optimize database"
 msgstr ""
@@ -1038,6 +1075,9 @@ msgstr ""
 #, fuzzy
 msgid "core"
 msgstr "configurar"
+
+msgid "unknown"
+msgstr ""
 
 #, fuzzy
 msgid "Gallery version"
@@ -1687,86 +1727,6 @@ msgstr ""
 msgid "Last Run Details:"
 msgstr ""
 
-#, fuzzy
-msgid "Gallery Modules"
-msgstr "Gallery"
-
-#, c-format
-msgid "Successfully installed and auto-configured module %s"
-msgstr ""
-
-#, c-format
-msgid "Successfully installed module %s"
-msgstr ""
-
-#, c-format
-msgid "Successfully configured module %s"
-msgstr ""
-
-#, c-format
-msgid "Successfully upgraded module %s"
-msgstr ""
-
-#, c-format
-msgid "Successfully activated module %s"
-msgstr ""
-
-#, c-format
-msgid "Successfully deactivated module %s"
-msgstr ""
-
-#, c-format
-msgid "Successfully uninstalled module %s"
-msgstr ""
-
-msgid ""
-"Gallery features come as separate modules.  You can download and install modules to add more "
-"features to your Gallery, or you can disable features if you don't want to use them.  In "
-"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
-"don't wish to use a feature, you can deactivate it."
-msgstr ""
-
-msgid "Module Name"
-msgstr "Nombre del M&oacute;dulo"
-
-msgid "Version"
-msgstr "Versi&oacute;n"
-
-#, fuzzy
-msgid "Installed"
-msgstr "instalar"
-
-msgid "Actions"
-msgstr "Acciones"
-
-#, fuzzy
-msgid "Status: Not Installed"
-msgstr "instalar"
-
-#, fuzzy
-msgid "Status: Active"
-msgstr "Activo"
-
-msgid "Status: Inactive"
-msgstr ""
-
-msgid "Status: Upgrade Required (Inactive)"
-msgstr ""
-
-msgid "Status: Incompatible Module (Inactive)"
-msgstr ""
-
-msgid "Incompatible module!"
-msgstr ""
-
-#, c-format
-msgid "Core API Required: %s (available: %s)"
-msgstr ""
-
-#, c-format
-msgid "Module API Required: %s (available: %s)"
-msgstr ""
-
 msgid "Confirm module uninstall"
 msgstr ""
 
@@ -1847,6 +1807,96 @@ msgstr ""
 msgid "Clear Saved Pages"
 msgstr ""
 
+msgid "Status: Inactive"
+msgstr ""
+
+#, fuzzy
+msgid "__PLUGIN__ deactivated"
+msgstr "desactivar"
+
+#, fuzzy
+msgid "Status: Active"
+msgstr "Activo"
+
+msgid "__PLUGIN__ activated"
+msgstr ""
+
+#, fuzzy
+msgid "Status: Not Installed"
+msgstr "instalar"
+
+msgid "__PLUGIN__ uninstalled"
+msgstr ""
+
+msgid "Status: Upgrade Required (Inactive)"
+msgstr ""
+
+msgid "Status: Incompatible Plugin (Inactive)"
+msgstr ""
+
+msgid "Status: Inactive (Configuration Required)"
+msgstr ""
+
+msgid "__PLUGIN__ needs configuration"
+msgstr ""
+
+#, fuzzy
+msgid "Gallery Plugins"
+msgstr "Gallery"
+
+msgid ""
+"Gallery features come as separate plugins.  You can download and install plugins to add more "
+"features to your Gallery, or you can disable features if you don't want to use them.  In "
+"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
+"don't wish to use a feature, you can deactivate it."
+msgstr ""
+
+#, fuzzy
+msgid "up to date"
+msgstr "Borrar un usuario"
+
+msgid "disabled"
+msgstr ""
+
+#, fuzzy
+msgid "upgrade required"
+msgstr "[required]"
+
+#, fuzzy
+msgid "not installed"
+msgstr "instalar"
+
+msgid "incompatible"
+msgstr ""
+
+#, fuzzy
+msgid "Plugin Name"
+msgstr "Nombre completo"
+
+msgid "Version"
+msgstr "Versi&oacute;n"
+
+#, fuzzy
+msgid "Installed"
+msgstr "instalar"
+
+msgid "Actions"
+msgstr "Acciones"
+
+msgid "Incompatible plugin!"
+msgstr ""
+
+#, c-format
+msgid "Core API Required: %s (available: %s)"
+msgstr ""
+
+#, c-format
+msgid "Plugin API Required: %s (available: %s)"
+msgstr ""
+
+msgid "configure"
+msgstr "configurar"
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr ""
 
@@ -1858,6 +1908,9 @@ msgstr ""
 
 msgid "Common Tasks"
 msgstr ""
+
+msgid "Modules"
+msgstr "M&oacute;dulos"
 
 msgid "Warning: Experimental feature!"
 msgstr ""
@@ -1960,18 +2013,14 @@ msgstr ""
 msgid "Theme Name"
 msgstr "Tema"
 
+msgid "Module Name"
+msgstr "Nombre del M&oacute;dulo"
+
 #, fuzzy
 msgid "Latest"
 msgstr "Borrar un usuario"
 
 msgid "Incompatible Plugin"
-msgstr ""
-
-msgid "Incompatible plugin!"
-msgstr ""
-
-#, c-format
-msgid "Plugin API Required: %s (available: %s)"
 msgstr ""
 
 msgid "No packages have been selected."
@@ -2081,27 +2130,6 @@ msgstr ""
 #, fuzzy
 msgid "Restored theme settings"
 msgstr "Opciones del Album"
-
-#, fuzzy
-msgid "All Themes"
-msgstr "Tema"
-
-msgid "Defaults"
-msgstr "Por defecto"
-
-msgid "Status: Incompatible Theme (Inactive)"
-msgstr ""
-
-msgid "Incompatible theme!"
-msgstr ""
-
-#, c-format
-msgid "Theme API Required: %s (available: %s)"
-msgstr ""
-
-#, fuzzy
-msgid "(default)"
-msgstr "Por defecto"
 
 #, fuzzy
 msgid ""
@@ -2875,6 +2903,10 @@ msgid ""
 "or modify a thumbnail."
 msgstr ""
 
+#, fuzzy
+msgid "Unable to create a thumbnail for this item"
+msgstr "Tiene que ingresar un nombre para este item."
+
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the movie's width and "
 "height.  If you have installed a graphics toolkit that can handle movie types, then these "
@@ -3639,6 +3671,9 @@ msgstr "Editar un usuario"
 msgid "Size: "
 msgstr "Editar Tama&ntilde;o"
 
+msgid "Unknown"
+msgstr ""
+
 msgid "Full size: "
 msgstr ""
 
@@ -3673,6 +3708,14 @@ msgstr "permisos"
 
 msgid "Unit test theme"
 msgstr ""
+
+#, fuzzy
+#~ msgid "All Themes"
+#~ msgstr "Tema"
+
+#, fuzzy
+#~ msgid "(default)"
+#~ msgstr "Por defecto"
 
 #, fuzzy
 #~ msgid "add album"

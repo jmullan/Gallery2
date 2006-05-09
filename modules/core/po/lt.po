@@ -19,7 +19,7 @@
 # Darius Žitkevičius <skystis@splius.lt>, 2005, 2006.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.0\n"
+"Project-Id-Version: Gallery: Core 1.1.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-03-12 22:28+0200\n"
 "PO-Revision-Date: 2006-03-12 23:02+0200\n"
@@ -90,24 +90,6 @@ msgstr[2] "%d savaičių"
 msgid "<none>"
 msgstr "<tuščia>"
 
-msgid "install"
-msgstr "įdiegti"
-
-msgid "upgrade"
-msgstr "atnaujinti"
-
-msgid "configure"
-msgstr "konfigūruoti"
-
-msgid "activate"
-msgstr "aktyvuoti"
-
-msgid "uninstall"
-msgstr "pašalinti"
-
-msgid "deactivate"
-msgstr "deaktyvuoti"
-
 msgid "No acceleration"
 msgstr "Be aksceleracijos"
 
@@ -116,6 +98,9 @@ msgstr "Dalinė aksceleracija"
 
 msgid "Full acceleration"
 msgstr "Pilna aksceleracija"
+
+msgid "Themes"
+msgstr "Temos"
 
 msgid "Performing Maintenance Tasks"
 msgstr "Vykdomi tvarkymo darbai"
@@ -132,6 +117,21 @@ msgstr "Atnaujinti"
 
 msgid "Download"
 msgstr "Atsisiųsti"
+
+msgid "install"
+msgstr "įdiegti"
+
+msgid "upgrade"
+msgstr "atnaujinti"
+
+msgid "activate"
+msgstr "aktyvuoti"
+
+msgid "uninstall"
+msgstr "pašalinti"
+
+msgid "deactivate"
+msgstr "deaktyvuoti"
 
 msgid "Inherit settings from parent album"
 msgstr "Nustatymus paveldėti iš ankstesnio albumo"
@@ -508,17 +508,11 @@ msgstr "Jūsų duomenys"
 msgid "Logout"
 msgstr "Atsijungti"
 
-msgid "Modules"
-msgstr "Moduliai"
+msgid "Plugins"
+msgstr ""
 
 msgid "Repository"
 msgstr "Repozicija"
-
-msgid "Themes"
-msgstr "Temos"
-
-msgid "Display"
-msgstr "Vaizdas"
 
 msgid "Users"
 msgstr "Vartotojai"
@@ -534,6 +528,9 @@ msgstr "Įrankių prioritetai"
 
 msgid "Graphics Toolkits"
 msgstr "Grafikos įrankiai"
+
+msgid "Defaults"
+msgstr "Numatyti nustatymai"
 
 msgid "Account Settings"
 msgstr "Paskyros nustatymai"
@@ -869,11 +866,9 @@ msgstr "Skaičiuoklės dokumetas"
 msgid "spreadsheet"
 msgstr "skaičiuoklės dokumetas"
 
-msgid "Unknown"
-msgstr "Nežinomas"
-
-msgid "unknown"
-msgstr "nežinomas"
+#, fuzzy
+msgid "file"
+msgstr "Failas"
 
 #, c-format
 msgid ""
@@ -894,6 +889,49 @@ msgstr "Vartotojas"
 
 msgid "user"
 msgstr "vartotojas"
+
+#, fuzzy
+msgid "Integrity Check"
+msgstr "Indeksas nėra vientisas."
+
+msgid "Check data integrity and report any inconsistencies."
+msgstr ""
+
+msgid "Loading all entities"
+msgstr ""
+
+msgid "Checking for orphaned entity data"
+msgstr ""
+
+msgid "Checking for orphaned item data"
+msgstr ""
+
+msgid "Checking for orphaned plugin data"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Checked %d entities"
+msgstr "Patikrinta %d elementų"
+
+#, fuzzy, c-format
+msgid "Failed to load entity ids: %s"
+msgstr "Nepavyko įkelti %s"
+
+#, c-format
+msgid "Orphaned data in table %s with missing parent entity; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with no row in %s table; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with missing derivative source; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Unknown plugin: %s %s"
+msgstr ""
 
 msgid "Optimize database"
 msgstr "Optimizuoti duombazę"
@@ -955,6 +993,9 @@ msgstr "Rodyti sistemos informaciją; ją naudinga nukopijuoti G2 palaikymo foru
 
 msgid "core"
 msgstr "pagrindas"
+
+msgid "unknown"
+msgstr "nežinomas"
 
 msgid "Gallery version"
 msgstr "Gallery versija"
@@ -1600,87 +1641,6 @@ msgstr "vykdyti dabar"
 msgid "Last Run Details:"
 msgstr "Paskutinio atlikimo detalės"
 
-msgid "Gallery Modules"
-msgstr "Galerijos moduliai"
-
-#, c-format
-msgid "Successfully installed and auto-configured module %s"
-msgstr "Modulis %s sėkmingai įdiegtas ir automatiškai sukonfigūruotas"
-
-#, c-format
-msgid "Successfully installed module %s"
-msgstr "Modulis %s įdiegtas sėkmingai"
-
-#, c-format
-msgid "Successfully configured module %s"
-msgstr "Modulis %s sukonfigūruotas sėkmingai"
-
-#, c-format
-msgid "Successfully upgraded module %s"
-msgstr "Modulis %s sėkmingai atnaujintas"
-
-#, c-format
-msgid "Successfully activated module %s"
-msgstr "Modulis %s sėkmingai aktyvuotas"
-
-#, c-format
-msgid "Successfully deactivated module %s"
-msgstr "Modulis %s sėkmingai deaktyvuotas"
-
-#, c-format
-msgid "Successfully uninstalled module %s"
-msgstr "Modulis %s sėkmingai pašalintas"
-
-msgid ""
-"Gallery features come as separate modules.  You can download and install modules to add more "
-"features to your Gallery, or you can disable features if you don't want to use them.  In "
-"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
-"don't wish to use a feature, you can deactivate it."
-msgstr ""
-"Galerijos galimybės pateiktos kaip atskiri moduliai.  Kad išplėsti Galerijo galimybes jūs "
-"galite atsisiųsti ir įsidiegti daugiau modulių, arba galima išjungti galimybes, kurių "
-"neplanuojate naudoti.  Norint naudotis papildomomis galimybėmis reikia įdiegti, "
-"sukonfigūruoti (jei būtina) ir aktyvuoti atitinkamą modulį.  Jei daugiau jo nebeplanuojate "
-"naudoti, jį galima deaktyvuoti."
-
-msgid "Module Name"
-msgstr "Modulio pavadinimas"
-
-msgid "Version"
-msgstr "Versija"
-
-msgid "Installed"
-msgstr "Įdiegtas"
-
-msgid "Actions"
-msgstr "Veiksmai"
-
-msgid "Status: Not Installed"
-msgstr "Būsena: ne įdiegtas"
-
-msgid "Status: Active"
-msgstr "Būsena: aktyvus"
-
-msgid "Status: Inactive"
-msgstr "Būsena: ne aktyvus"
-
-msgid "Status: Upgrade Required (Inactive)"
-msgstr "Būsena: reikalingas atnaujinimas (ne aktyvus)"
-
-msgid "Status: Incompatible Module (Inactive)"
-msgstr "Būsena: nesuderinamas modulis (ne aktyvus)"
-
-msgid "Incompatible module!"
-msgstr "Nesuderinamas modulis!"
-
-#, c-format
-msgid "Core API Required: %s (available: %s)"
-msgstr "Pagrindo reikalingas API: %s (yra: %s)"
-
-#, c-format
-msgid "Module API Required: %s (available: %s)"
-msgstr "Modulios reikalingas API: %s (yra: %s)"
-
 msgid "Confirm module uninstall"
 msgstr "Patvirtinti modulio pašalinimą"
 
@@ -1775,6 +1735,102 @@ msgstr "Nebegalios po:"
 msgid "Clear Saved Pages"
 msgstr "Išvalyti išsaugotus puslapius"
 
+msgid "Status: Inactive"
+msgstr "Būsena: ne aktyvus"
+
+#, fuzzy
+msgid "__PLUGIN__ deactivated"
+msgstr "deaktyvuoti"
+
+msgid "Status: Active"
+msgstr "Būsena: aktyvus"
+
+msgid "__PLUGIN__ activated"
+msgstr ""
+
+msgid "Status: Not Installed"
+msgstr "Būsena: ne įdiegtas"
+
+msgid "__PLUGIN__ uninstalled"
+msgstr ""
+
+msgid "Status: Upgrade Required (Inactive)"
+msgstr "Būsena: reikalingas atnaujinimas (ne aktyvus)"
+
+#, fuzzy
+msgid "Status: Incompatible Plugin (Inactive)"
+msgstr "Būsena: nesuderinamas modulis (ne aktyvus)"
+
+msgid "Status: Inactive (Configuration Required)"
+msgstr ""
+
+msgid "__PLUGIN__ needs configuration"
+msgstr ""
+
+#, fuzzy
+msgid "Gallery Plugins"
+msgstr "Galerijos moduliai"
+
+#, fuzzy
+msgid ""
+"Gallery features come as separate plugins.  You can download and install plugins to add more "
+"features to your Gallery, or you can disable features if you don't want to use them.  In "
+"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
+"don't wish to use a feature, you can deactivate it."
+msgstr ""
+"Galerijos galimybės pateiktos kaip atskiri moduliai.  Kad išplėsti Galerijo galimybes jūs "
+"galite atsisiųsti ir įsidiegti daugiau modulių, arba galima išjungti galimybes, kurių "
+"neplanuojate naudoti.  Norint naudotis papildomomis galimybėmis reikia įdiegti, "
+"sukonfigūruoti (jei būtina) ir aktyvuoti atitinkamą modulį.  Jei daugiau jo nebeplanuojate "
+"naudoti, jį galima deaktyvuoti."
+
+#, fuzzy
+msgid "up to date"
+msgstr "Atnaujinti"
+
+#, fuzzy
+msgid "disabled"
+msgstr "%d elementų nepavyko sutvarkyti"
+
+#, fuzzy
+msgid "upgrade required"
+msgstr "(būtina)"
+
+#, fuzzy
+msgid "not installed"
+msgstr "pašalinti"
+
+#, fuzzy
+msgid "incompatible"
+msgstr "Nesuderinamas priedas"
+
+#, fuzzy
+msgid "Plugin Name"
+msgstr "Pilnas vardas"
+
+msgid "Version"
+msgstr "Versija"
+
+msgid "Installed"
+msgstr "Įdiegtas"
+
+msgid "Actions"
+msgstr "Veiksmai"
+
+msgid "Incompatible plugin!"
+msgstr "Nesuderinamas priedas!"
+
+#, c-format
+msgid "Core API Required: %s (available: %s)"
+msgstr "Pagrindo reikalingas API: %s (yra: %s)"
+
+#, c-format
+msgid "Plugin API Required: %s (available: %s)"
+msgstr "Priedo API reikalinga: %s (yra: %s)"
+
+msgid "configure"
+msgstr "konfigūruoti"
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr "Įsitikinkite kad jūsų interneto ryšys nustatytas tinkamai ir pabandykite vėliau."
 
@@ -1786,6 +1842,9 @@ msgstr "Visų priedų versijos jau yra pačios naujausios."
 
 msgid "Common Tasks"
 msgstr "Dažniausiai atliekamos užduotys"
+
+msgid "Modules"
+msgstr "Moduliai"
 
 msgid "Warning: Experimental feature!"
 msgstr "Dėmesio: Eksperimentinė savybė!"
@@ -1910,18 +1969,14 @@ msgstr ""
 msgid "Theme Name"
 msgstr "Temos pavadinimas"
 
+msgid "Module Name"
+msgstr "Modulio pavadinimas"
+
 msgid "Latest"
 msgstr "Naujausias"
 
 msgid "Incompatible Plugin"
 msgstr "Nesuderinamas priedas"
-
-msgid "Incompatible plugin!"
-msgstr "Nesuderinamas priedas!"
-
-#, c-format
-msgid "Plugin API Required: %s (available: %s)"
-msgstr "Priedo API reikalinga: %s (yra: %s)"
 
 msgid "No packages have been selected."
 msgstr "Nepažymėti jokie paketai."
@@ -2037,25 +2092,6 @@ msgstr "Numatyti albumo nustatymai išsaugoti sėkmingai"
 
 msgid "Restored theme settings"
 msgstr "Temos nustatymai atstatyti"
-
-msgid "All Themes"
-msgstr "Visos temos"
-
-msgid "Defaults"
-msgstr "Numatyti nustatymai"
-
-msgid "Status: Incompatible Theme (Inactive)"
-msgstr "Būsena: Nesuderinama tema (neaktyvi)"
-
-msgid "Incompatible theme!"
-msgstr "Nesuderinama tema!"
-
-#, c-format
-msgid "Theme API Required: %s (available: %s)"
-msgstr "Reikalinga temos API: %s (yra: %s)"
-
-msgid "(default)"
-msgstr "(numatyta)"
 
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
@@ -2841,6 +2877,10 @@ msgstr ""
 "Nerasta jokių grafinių įrankių, kurie galėtu apdoroti šio tipo elementus, todėl miniatiūra "
 "negali būti sukurta ar pakeista."
 
+#, fuzzy
+msgid "Unable to create a thumbnail for this item"
+msgstr "Reikia įvesti šio elemento pavadinimą."
+
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the movie's width and "
 "height.  If you have installed a graphics toolkit that can handle movie types, then these "
@@ -3622,6 +3662,9 @@ msgstr "%d. %s"
 msgid "Size: "
 msgstr "Dydis: "
 
+msgid "Unknown"
+msgstr "Nežinomas"
+
 msgid "Full size: "
 msgstr "Pilnas dydis: "
 
@@ -3651,3 +3694,48 @@ msgstr "[test] antra teisė"
 
 msgid "Unit test theme"
 msgstr "Elemento testavimo tema"
+
+#~ msgid "Display"
+#~ msgstr "Vaizdas"
+
+#~ msgid "Successfully installed and auto-configured module %s"
+#~ msgstr "Modulis %s sėkmingai įdiegtas ir automatiškai sukonfigūruotas"
+
+#~ msgid "Successfully installed module %s"
+#~ msgstr "Modulis %s įdiegtas sėkmingai"
+
+#~ msgid "Successfully configured module %s"
+#~ msgstr "Modulis %s sukonfigūruotas sėkmingai"
+
+#~ msgid "Successfully upgraded module %s"
+#~ msgstr "Modulis %s sėkmingai atnaujintas"
+
+#~ msgid "Successfully activated module %s"
+#~ msgstr "Modulis %s sėkmingai aktyvuotas"
+
+#~ msgid "Successfully deactivated module %s"
+#~ msgstr "Modulis %s sėkmingai deaktyvuotas"
+
+#~ msgid "Successfully uninstalled module %s"
+#~ msgstr "Modulis %s sėkmingai pašalintas"
+
+#~ msgid "Incompatible module!"
+#~ msgstr "Nesuderinamas modulis!"
+
+#~ msgid "Module API Required: %s (available: %s)"
+#~ msgstr "Modulios reikalingas API: %s (yra: %s)"
+
+#~ msgid "All Themes"
+#~ msgstr "Visos temos"
+
+#~ msgid "Status: Incompatible Theme (Inactive)"
+#~ msgstr "Būsena: Nesuderinama tema (neaktyvi)"
+
+#~ msgid "Incompatible theme!"
+#~ msgstr "Nesuderinama tema!"
+
+#~ msgid "Theme API Required: %s (available: %s)"
+#~ msgstr "Reikalinga temos API: %s (yra: %s)"
+
+#~ msgid "(default)"
+#~ msgstr "(numatyta)"

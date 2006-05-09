@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.0\n"
+"Project-Id-Version: Gallery: Core 1.1.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-01-28 21:40+0100\n"
 "PO-Revision-Date: 2006-03-11 17:40+0100\n"
@@ -89,24 +89,6 @@ msgstr[2] "%d týdnů"
 msgid "<none>"
 msgstr "<žádné>"
 
-msgid "install"
-msgstr "instalovat"
-
-msgid "upgrade"
-msgstr "aktualizovat"
-
-msgid "configure"
-msgstr "konfigurovat"
-
-msgid "activate"
-msgstr "aktivovat"
-
-msgid "uninstall"
-msgstr "odinstalovat"
-
-msgid "deactivate"
-msgstr "deaktivovat"
-
 msgid "No acceleration"
 msgstr "Bez akcelerace"
 
@@ -115,6 +97,9 @@ msgstr "Částečná akcelerace"
 
 msgid "Full acceleration"
 msgstr "Plná akcelerace"
+
+msgid "Themes"
+msgstr "Témata"
 
 msgid "Performing Maintenance Tasks"
 msgstr "Provádím údržbu systému"
@@ -131,6 +116,21 @@ msgstr "Aktualizovat"
 
 msgid "Download"
 msgstr "Stáhnout"
+
+msgid "install"
+msgstr "instalovat"
+
+msgid "upgrade"
+msgstr "aktualizovat"
+
+msgid "activate"
+msgstr "aktivovat"
+
+msgid "uninstall"
+msgstr "odinstalovat"
+
+msgid "deactivate"
+msgstr "deaktivovat"
 
 msgid "Inherit settings from parent album"
 msgstr "Zdědit nastavení z nadřazeného alba"
@@ -507,17 +507,11 @@ msgstr "Váš účet"
 msgid "Logout"
 msgstr "Odhlásit"
 
-msgid "Modules"
-msgstr "Moduly"
+msgid "Plugins"
+msgstr ""
 
 msgid "Repository"
 msgstr "Zdroj"
-
-msgid "Themes"
-msgstr "Témata"
-
-msgid "Display"
-msgstr "Zobrazení"
 
 msgid "Users"
 msgstr "Uživatelé"
@@ -533,6 +527,9 @@ msgstr "Priorita nástrojů"
 
 msgid "Graphics Toolkits"
 msgstr "Grafické nástroje"
+
+msgid "Defaults"
+msgstr "Výchozí hodnoty"
 
 msgid "Account Settings"
 msgstr "Nastavení účtu"
@@ -869,11 +866,9 @@ msgstr "Tabulka"
 msgid "spreadsheet"
 msgstr "tabulka"
 
-msgid "Unknown"
-msgstr "neznámý"
-
-msgid "unknown"
-msgstr "neznámý"
+#, fuzzy
+msgid "file"
+msgstr "soubor"
 
 #, c-format
 msgid ""
@@ -895,6 +890,49 @@ msgstr "Uživatel"
 
 msgid "user"
 msgstr "uživatel"
+
+#, fuzzy
+msgid "Integrity Check"
+msgstr "Chyba při kontrole integrity indexu."
+
+msgid "Check data integrity and report any inconsistencies."
+msgstr ""
+
+msgid "Loading all entities"
+msgstr ""
+
+msgid "Checking for orphaned entity data"
+msgstr ""
+
+msgid "Checking for orphaned item data"
+msgstr ""
+
+msgid "Checking for orphaned plugin data"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Checked %d entities"
+msgstr "Zkontrolováno %d položek"
+
+#, fuzzy, c-format
+msgid "Failed to load entity ids: %s"
+msgstr "Chyba při přidání %s"
+
+#, c-format
+msgid "Orphaned data in table %s with missing parent entity; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with no row in %s table; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with missing derivative source; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Unknown plugin: %s %s"
+msgstr ""
 
 msgid "Optimize database"
 msgstr "Optimalizace databáze"
@@ -954,6 +992,9 @@ msgstr "Zjistí detaily o systému. Užitečné při hledání podpory napříkl
 
 msgid "core"
 msgstr "jádro"
+
+msgid "unknown"
+msgstr "neznámý"
 
 msgid "Gallery version"
 msgstr "Verze Galerie"
@@ -1611,86 +1652,6 @@ msgstr "spustit teď"
 msgid "Last Run Details:"
 msgstr "Detaily posledního testu:"
 
-msgid "Gallery Modules"
-msgstr "Moduly Galerie"
-
-#, c-format
-msgid "Successfully installed and auto-configured module %s"
-msgstr "Modul %s úspěšně nainstalován a nakonfigurován"
-
-#, c-format
-msgid "Successfully installed module %s"
-msgstr "Modul %s úspěšně aktivován"
-
-#, c-format
-msgid "Successfully configured module %s"
-msgstr "Modul %s úspěšně zkonfigurován"
-
-#, c-format
-msgid "Successfully upgraded module %s"
-msgstr "Modul %s úspěšně aktualizován"
-
-#, c-format
-msgid "Successfully activated module %s"
-msgstr "Modul %s úspěšně aktivován"
-
-#, c-format
-msgid "Successfully deactivated module %s"
-msgstr "Modul %s úspěšně deaktivován"
-
-#, c-format
-msgid "Successfully uninstalled module %s"
-msgstr "Modul %s úspěšně odinstalován"
-
-msgid ""
-"Gallery features come as separate modules.  You can download and install modules to add more "
-"features to your Gallery, or you can disable features if you don't want to use them.  In "
-"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
-"don't wish to use a feature, you can deactivate it."
-msgstr ""
-"Vlastnosti Galerie jsou dostupné v oddělených modulech.  Pokud chcete rozšířit možnosti "
-"Galerie, můžete stáhnout a nainstalovat další moduly. Naopak můžete vypnout ty vlastnosti, "
-"které nechcete používat. Při použití modulu je třeba modul nejdříve nainstalovat, v "
-"některých případech nakonfigurovat a nakonec aktivovat."
-
-msgid "Module Name"
-msgstr "Jméno modulu"
-
-msgid "Version"
-msgstr "Verze"
-
-msgid "Installed"
-msgstr "Nainstalovaná"
-
-msgid "Actions"
-msgstr "Akce"
-
-msgid "Status: Not Installed"
-msgstr "Stav: Nenainstalovaný"
-
-msgid "Status: Active"
-msgstr "Stav: Aktivní"
-
-msgid "Status: Inactive"
-msgstr "Stav: Neaktivní"
-
-msgid "Status: Upgrade Required (Inactive)"
-msgstr "Stav: Nutná aktualizace (neaktivní)"
-
-msgid "Status: Incompatible Module (Inactive)"
-msgstr "Stav: Nekompatibilní modul (neaktivní)"
-
-msgid "Incompatible module!"
-msgstr "Nekompatibilní modul!"
-
-#, c-format
-msgid "Core API Required: %s (available: %s)"
-msgstr "Vyžadované API jádra: %s (dostupné: %s)"
-
-#, c-format
-msgid "Module API Required: %s (available: %s)"
-msgstr "Vyžadované API modulu: %s (dostupné: %s)"
-
 msgid "Confirm module uninstall"
 msgstr "Potvrdit odinstalování modulu"
 
@@ -1781,6 +1742,101 @@ msgstr "Vyprší po:"
 msgid "Clear Saved Pages"
 msgstr "Výmaz uložených stránek"
 
+msgid "Status: Inactive"
+msgstr "Stav: Neaktivní"
+
+#, fuzzy
+msgid "__PLUGIN__ deactivated"
+msgstr "deaktivovat"
+
+msgid "Status: Active"
+msgstr "Stav: Aktivní"
+
+msgid "__PLUGIN__ activated"
+msgstr ""
+
+msgid "Status: Not Installed"
+msgstr "Stav: Nenainstalovaný"
+
+msgid "__PLUGIN__ uninstalled"
+msgstr ""
+
+msgid "Status: Upgrade Required (Inactive)"
+msgstr "Stav: Nutná aktualizace (neaktivní)"
+
+#, fuzzy
+msgid "Status: Incompatible Plugin (Inactive)"
+msgstr "Stav: Nekompatibilní modul (neaktivní)"
+
+msgid "Status: Inactive (Configuration Required)"
+msgstr ""
+
+msgid "__PLUGIN__ needs configuration"
+msgstr ""
+
+#, fuzzy
+msgid "Gallery Plugins"
+msgstr "Moduly Galerie"
+
+#, fuzzy
+msgid ""
+"Gallery features come as separate plugins.  You can download and install plugins to add more "
+"features to your Gallery, or you can disable features if you don't want to use them.  In "
+"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
+"don't wish to use a feature, you can deactivate it."
+msgstr ""
+"Vlastnosti Galerie jsou dostupné v oddělených modulech.  Pokud chcete rozšířit možnosti "
+"Galerie, můžete stáhnout a nainstalovat další moduly. Naopak můžete vypnout ty vlastnosti, "
+"které nechcete používat. Při použití modulu je třeba modul nejdříve nainstalovat, v "
+"některých případech nakonfigurovat a nakonec aktivovat."
+
+#, fuzzy
+msgid "up to date"
+msgstr "Aktualizovat"
+
+#, fuzzy
+msgid "disabled"
+msgstr "%d položek selhalo"
+
+#, fuzzy
+msgid "upgrade required"
+msgstr "(vyžadováno)"
+
+#, fuzzy
+msgid "not installed"
+msgstr "odinstalovat"
+
+#, fuzzy
+msgid "incompatible"
+msgstr "Nekompatibilní plugin"
+
+#, fuzzy
+msgid "Plugin Name"
+msgstr "Jméno a příjmení"
+
+msgid "Version"
+msgstr "Verze"
+
+msgid "Installed"
+msgstr "Nainstalovaná"
+
+msgid "Actions"
+msgstr "Akce"
+
+msgid "Incompatible plugin!"
+msgstr "Nekompatibilní plugin!"
+
+#, c-format
+msgid "Core API Required: %s (available: %s)"
+msgstr "Vyžadované API jádra: %s (dostupné: %s)"
+
+#, c-format
+msgid "Plugin API Required: %s (available: %s)"
+msgstr "Vyžadované API pluginu: %s (dostupné: %s)"
+
+msgid "configure"
+msgstr "konfigurovat"
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr ""
 "Prosím ujistěte se, že Vaše internetové připojení je správně nakonfigurováno a zkuste to "
@@ -1794,6 +1850,9 @@ msgstr "Všechny pluginy již jsou aktuální."
 
 msgid "Common Tasks"
 msgstr "Společné úlohy"
+
+msgid "Modules"
+msgstr "Moduly"
 
 msgid "Warning: Experimental feature!"
 msgstr "Varování: Experimentální funkce!"
@@ -1917,18 +1976,14 @@ msgstr ""
 msgid "Theme Name"
 msgstr "Jméno tématu"
 
+msgid "Module Name"
+msgstr "Jméno modulu"
+
 msgid "Latest"
 msgstr "Nejnovější"
 
 msgid "Incompatible Plugin"
 msgstr "Nekompatibilní plugin"
-
-msgid "Incompatible plugin!"
-msgstr "Nekompatibilní plugin!"
-
-#, c-format
-msgid "Plugin API Required: %s (available: %s)"
-msgstr "Vyžadované API pluginu: %s (dostupné: %s)"
 
 msgid "No packages have been selected."
 msgstr "Nebyly vybrány žádné balíčky."
@@ -2043,25 +2098,6 @@ msgstr "Výchozí nastavení alba úspěšně uloženo"
 
 msgid "Restored theme settings"
 msgstr "Obnoveno nastavení tématu"
-
-msgid "All Themes"
-msgstr "Všechna témata"
-
-msgid "Defaults"
-msgstr "Výchozí hodnoty"
-
-msgid "Status: Incompatible Theme (Inactive)"
-msgstr "Stav: Nekompatibilní téma (neaktivní)"
-
-msgid "Incompatible theme!"
-msgstr "Nekompatibilní téma!"
-
-#, c-format
-msgid "Theme API Required: %s (available: %s)"
-msgstr "Vyžadované API témat: %s (dostupné: %s)"
-
-msgid "(default)"
-msgstr "(výchozí)"
 
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
@@ -2835,6 +2871,10 @@ msgstr ""
 "Nejsou dostupné žádné nástroje, které podporují tento typ položky, takže není možné vytvořit "
 "nebo změnit náhled."
 
+#, fuzzy
+msgid "Unable to create a thumbnail for this item"
+msgstr "Musíte zadat jméno této položky."
+
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the movie's width and "
 "height.  If you have installed a graphics toolkit that can handle movie types, then these "
@@ -3607,6 +3647,9 @@ msgstr "%d. %s"
 msgid "Size: "
 msgstr "Velikost: "
 
+msgid "Unknown"
+msgstr "neznámý"
+
 msgid "Full size: "
 msgstr "Plná velikost: "
 
@@ -3636,6 +3679,51 @@ msgstr "[test] Druhá oprávnění"
 
 msgid "Unit test theme"
 msgstr "Téma testovací jednotky"
+
+#~ msgid "Display"
+#~ msgstr "Zobrazení"
+
+#~ msgid "Successfully installed and auto-configured module %s"
+#~ msgstr "Modul %s úspěšně nainstalován a nakonfigurován"
+
+#~ msgid "Successfully installed module %s"
+#~ msgstr "Modul %s úspěšně aktivován"
+
+#~ msgid "Successfully configured module %s"
+#~ msgstr "Modul %s úspěšně zkonfigurován"
+
+#~ msgid "Successfully upgraded module %s"
+#~ msgstr "Modul %s úspěšně aktualizován"
+
+#~ msgid "Successfully activated module %s"
+#~ msgstr "Modul %s úspěšně aktivován"
+
+#~ msgid "Successfully deactivated module %s"
+#~ msgstr "Modul %s úspěšně deaktivován"
+
+#~ msgid "Successfully uninstalled module %s"
+#~ msgstr "Modul %s úspěšně odinstalován"
+
+#~ msgid "Incompatible module!"
+#~ msgstr "Nekompatibilní modul!"
+
+#~ msgid "Module API Required: %s (available: %s)"
+#~ msgstr "Vyžadované API modulu: %s (dostupné: %s)"
+
+#~ msgid "All Themes"
+#~ msgstr "Všechna témata"
+
+#~ msgid "Status: Incompatible Theme (Inactive)"
+#~ msgstr "Stav: Nekompatibilní téma (neaktivní)"
+
+#~ msgid "Incompatible theme!"
+#~ msgstr "Nekompatibilní téma!"
+
+#~ msgid "Theme API Required: %s (available: %s)"
+#~ msgstr "Vyžadované API témat: %s (dostupné: %s)"
+
+#~ msgid "(default)"
+#~ msgstr "(výchozí)"
 
 #~ msgid "Error downloading package from '%s'."
 #~ msgstr "Chyba při stahování balíku z '%s'."

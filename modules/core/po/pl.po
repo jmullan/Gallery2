@@ -18,7 +18,7 @@
 # Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.0\n"
+"Project-Id-Version: Gallery: Core 1.1.4\n"
 "POT-Creation-Date: 2006-02-23 10:15+0100\n"
 "PO-Revision-Date: 2006-03-22 17:04+0100\n"
 "Last-Translator: Kappana\n"
@@ -89,24 +89,6 @@ msgstr[2] "%d tygodni"
 msgid "<none>"
 msgstr "<nic>"
 
-msgid "install"
-msgstr "instaluj"
-
-msgid "upgrade"
-msgstr "aktualizuj"
-
-msgid "configure"
-msgstr "konfiguruj"
-
-msgid "activate"
-msgstr "aktywuj"
-
-msgid "uninstall"
-msgstr "odinstaluj"
-
-msgid "deactivate"
-msgstr "deaktywuj"
-
 msgid "No acceleration"
 msgstr "Bez przyspieszenia"
 
@@ -115,6 +97,9 @@ msgstr "Częściowe przyspieszenie"
 
 msgid "Full acceleration"
 msgstr "Pełne przyspieszenie"
+
+msgid "Themes"
+msgstr "Tematy"
 
 msgid "Performing Maintenance Tasks"
 msgstr "Konserwacja systemu"
@@ -131,6 +116,21 @@ msgstr "Aktualizuj"
 
 msgid "Download"
 msgstr "Pobierz"
+
+msgid "install"
+msgstr "instaluj"
+
+msgid "upgrade"
+msgstr "aktualizuj"
+
+msgid "activate"
+msgstr "aktywuj"
+
+msgid "uninstall"
+msgstr "odinstaluj"
+
+msgid "deactivate"
+msgstr "deaktywuj"
 
 msgid "Inherit settings from parent album"
 msgstr "Pobierz ustawienia z macierzystego albumu"
@@ -507,17 +507,11 @@ msgstr "Twoje konto"
 msgid "Logout"
 msgstr "Wyloguj się"
 
-msgid "Modules"
-msgstr "Moduły"
+msgid "Plugins"
+msgstr ""
 
 msgid "Repository"
 msgstr "Repozytorium"
-
-msgid "Themes"
-msgstr "Tematy"
-
-msgid "Display"
-msgstr "Wygląd"
 
 msgid "Users"
 msgstr "Użytkownicy"
@@ -533,6 +527,9 @@ msgstr "Priorytet narzędzi"
 
 msgid "Graphics Toolkits"
 msgstr "Narzędzia graficzne"
+
+msgid "Defaults"
+msgstr "Wartości standardowe"
 
 msgid "Account Settings"
 msgstr "Ustawienia konta"
@@ -873,11 +870,9 @@ msgstr "Arkusz"
 msgid "spreadsheet"
 msgstr "Arkusz"
 
-msgid "Unknown"
-msgstr "Nieznany"
-
-msgid "unknown"
-msgstr "nieznany"
+#, fuzzy
+msgid "file"
+msgstr "Plik"
 
 #, c-format
 msgid ""
@@ -899,6 +894,49 @@ msgstr "Użytkownik"
 
 msgid "user"
 msgstr "użytkownik"
+
+#, fuzzy
+msgid "Integrity Check"
+msgstr "Sprawdzanie spójności listy zakończone niepowodzeniem."
+
+msgid "Check data integrity and report any inconsistencies."
+msgstr ""
+
+msgid "Loading all entities"
+msgstr ""
+
+msgid "Checking for orphaned entity data"
+msgstr ""
+
+msgid "Checking for orphaned item data"
+msgstr ""
+
+msgid "Checking for orphaned plugin data"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Checked %d entities"
+msgstr "Sprawdzono pozycji: %d"
+
+#, fuzzy, c-format
+msgid "Failed to load entity ids: %s"
+msgstr "Nieudane dodanie %s"
+
+#, c-format
+msgid "Orphaned data in table %s with missing parent entity; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with no row in %s table; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Orphaned data in table %s with missing derivative source; ids: %s"
+msgstr ""
+
+#, c-format
+msgid "Unknown plugin: %s %s"
+msgstr ""
 
 msgid "Optimize database"
 msgstr "Optymalizacja bazy danych"
@@ -960,6 +998,9 @@ msgstr ""
 
 msgid "core"
 msgstr "moduł główny"
+
+msgid "unknown"
+msgstr "nieznany"
 
 msgid "Gallery version"
 msgstr "Wersja Galerii"
@@ -1609,86 +1650,6 @@ msgstr "Uruchom teraz"
 msgid "Last Run Details:"
 msgstr "Szczegóły ostatniego uruchomienia"
 
-msgid "Gallery Modules"
-msgstr "Moduły Galerii"
-
-#, c-format
-msgid "Successfully installed and auto-configured module %s"
-msgstr "Moduł %s został zainstalowany i automatycznie skonfigurowany."
-
-#, c-format
-msgid "Successfully installed module %s"
-msgstr "Moduł %s został zainstalowany."
-
-#, c-format
-msgid "Successfully configured module %s"
-msgstr "Moduł %s został skonfigurowany."
-
-#, c-format
-msgid "Successfully upgraded module %s"
-msgstr "Moduł %s został zaktualizowany."
-
-#, c-format
-msgid "Successfully activated module %s"
-msgstr "Moduł %s został aktywowany."
-
-#, c-format
-msgid "Successfully deactivated module %s"
-msgstr "Moduł %s został zdeaktywowany."
-
-#, c-format
-msgid "Successfully uninstalled module %s"
-msgstr "Moduł %s został odinstalowany."
-
-msgid ""
-"Gallery features come as separate modules.  You can download and install modules to add more "
-"features to your Gallery, or you can disable features if you don't want to use them.  In "
-"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
-"don't wish to use a feature, you can deactivate it."
-msgstr ""
-"Pewne własności Galerii zorganizowane są w oddzielnych modułach. Możesz pobrać je i "
-"zainstalować aby dodać więcej własności do twojej Galerii lub możesz usunąć pewne własności, "
-"jeśli nie chcesz ich używać. Aby użyć własności musisz ja zainstalować, skonfigurować (jeśli "
-"to konieczne) i zaktywować . Jeśli nie chcesz używać własności zdeaktywuj ją."
-
-msgid "Module Name"
-msgstr "Nazwa modułu"
-
-msgid "Version"
-msgstr "Wersja"
-
-msgid "Installed"
-msgstr "Zainstalowana"
-
-msgid "Actions"
-msgstr "Akcje"
-
-msgid "Status: Not Installed"
-msgstr "Status: Nie zainstalowany"
-
-msgid "Status: Active"
-msgstr "Status: Aktywny"
-
-msgid "Status: Inactive"
-msgstr "Status: Nieaktywny"
-
-msgid "Status: Upgrade Required (Inactive)"
-msgstr "Status: Wymagana aktualizacja (Nieaktywny)"
-
-msgid "Status: Incompatible Module (Inactive)"
-msgstr "Status: Niekompatybilny moduł (Nieaktywny)"
-
-msgid "Incompatible module!"
-msgstr "Niekompatybilny moduł!"
-
-#, c-format
-msgid "Core API Required: %s (available: %s)"
-msgstr "Wymagana wersja modułu głównego: %s (zainstalowana: %s)"
-
-#, c-format
-msgid "Module API Required: %s (available: %s)"
-msgstr "Wymagana wersja modułu: %s (zainstalowana: %s)"
-
 msgid "Confirm module uninstall"
 msgstr "Potwierdź odinstalowanie modułu"
 
@@ -1782,6 +1743,101 @@ msgstr "Wygasa po:"
 msgid "Clear Saved Pages"
 msgstr "Wyczyść zapisane strony"
 
+msgid "Status: Inactive"
+msgstr "Status: Nieaktywny"
+
+#, fuzzy
+msgid "__PLUGIN__ deactivated"
+msgstr "deaktywuj"
+
+msgid "Status: Active"
+msgstr "Status: Aktywny"
+
+msgid "__PLUGIN__ activated"
+msgstr ""
+
+msgid "Status: Not Installed"
+msgstr "Status: Nie zainstalowany"
+
+msgid "__PLUGIN__ uninstalled"
+msgstr ""
+
+msgid "Status: Upgrade Required (Inactive)"
+msgstr "Status: Wymagana aktualizacja (Nieaktywny)"
+
+#, fuzzy
+msgid "Status: Incompatible Plugin (Inactive)"
+msgstr "Status: Niekompatybilny moduł (Nieaktywny)"
+
+msgid "Status: Inactive (Configuration Required)"
+msgstr ""
+
+msgid "__PLUGIN__ needs configuration"
+msgstr ""
+
+#, fuzzy
+msgid "Gallery Plugins"
+msgstr "Moduły Galerii"
+
+#, fuzzy
+msgid ""
+"Gallery features come as separate plugins.  You can download and install plugins to add more "
+"features to your Gallery, or you can disable features if you don't want to use them.  In "
+"order to use a feature, you must install, configure (if necessary) and activate it.  If you "
+"don't wish to use a feature, you can deactivate it."
+msgstr ""
+"Pewne własności Galerii zorganizowane są w oddzielnych modułach. Możesz pobrać je i "
+"zainstalować aby dodać więcej własności do twojej Galerii lub możesz usunąć pewne własności, "
+"jeśli nie chcesz ich używać. Aby użyć własności musisz ja zainstalować, skonfigurować (jeśli "
+"to konieczne) i zaktywować . Jeśli nie chcesz używać własności zdeaktywuj ją."
+
+#, fuzzy
+msgid "up to date"
+msgstr "Aktualizuj"
+
+#, fuzzy
+msgid "disabled"
+msgstr "Błędnych pozycji: %d"
+
+#, fuzzy
+msgid "upgrade required"
+msgstr "(wymagane)"
+
+#, fuzzy
+msgid "not installed"
+msgstr "odinstaluj"
+
+#, fuzzy
+msgid "incompatible"
+msgstr "Niekompatybilny moduł!"
+
+#, fuzzy
+msgid "Plugin Name"
+msgstr "Imię i nazwisko"
+
+msgid "Version"
+msgstr "Wersja"
+
+msgid "Installed"
+msgstr "Zainstalowana"
+
+msgid "Actions"
+msgstr "Akcje"
+
+msgid "Incompatible plugin!"
+msgstr "Niekompatybilny moduł!"
+
+#, c-format
+msgid "Core API Required: %s (available: %s)"
+msgstr "Wymagana wersja modułu głównego: %s (zainstalowana: %s)"
+
+#, c-format
+msgid "Plugin API Required: %s (available: %s)"
+msgstr "Wymagana wersja modułu: %s (zainstalowana: %s)"
+
+msgid "configure"
+msgstr "konfiguruj"
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr ""
 "Proszę upewnij się, że połączenie z internetem jest ustawione poprawnie lub spróbuj później."
@@ -1794,6 +1850,9 @@ msgstr "Wszystkie moduły zostały zaktualizowane."
 
 msgid "Common Tasks"
 msgstr "Podstawowe zadania"
+
+msgid "Modules"
+msgstr "Moduły"
 
 msgid "Warning: Experimental feature!"
 msgstr "Uwaga: Funkcjonalność testowa!"
@@ -1920,18 +1979,14 @@ msgstr ""
 msgid "Theme Name"
 msgstr "Nazwa tematu"
 
+msgid "Module Name"
+msgstr "Nazwa modułu"
+
 msgid "Latest"
 msgstr "Ostatnia strona"
 
 msgid "Incompatible Plugin"
 msgstr "Niekompatybilny moduł!"
-
-msgid "Incompatible plugin!"
-msgstr "Niekompatybilny moduł!"
-
-#, c-format
-msgid "Plugin API Required: %s (available: %s)"
-msgstr "Wymagana wersja modułu: %s (zainstalowana: %s)"
 
 msgid "No packages have been selected."
 msgstr "Żaden pakiet nie został wybrany."
@@ -2049,25 +2104,6 @@ msgstr "Domyślne ustawienia albumu zostały zapisane"
 
 msgid "Restored theme settings"
 msgstr "Przywróć standardowe ustawienia tematu"
-
-msgid "All Themes"
-msgstr "Wszystkie tematy"
-
-msgid "Defaults"
-msgstr "Wartości standardowe"
-
-msgid "Status: Incompatible Theme (Inactive)"
-msgstr "Status: Niekompatybilny temat (Nieaktywny)"
-
-msgid "Incompatible theme!"
-msgstr "Niekompatybilny temat!"
-
-#, c-format
-msgid "Theme API Required: %s (available: %s)"
-msgstr "Wymagana wersja tematu: %s (zainstalowana: %s)"
-
-msgid "(default)"
-msgstr "(domyślny)"
 
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
@@ -2838,6 +2874,10 @@ msgid ""
 msgstr ""
 "Nie ma zainstalowanych żadnych narzędzi graficznych wspierających ten typ pozycji, nie można "
 "tworzyć ani modyfikować miniaturek."
+
+#, fuzzy
+msgid "Unable to create a thumbnail for this item"
+msgstr "Musisz wprowadzić nazwę tej pozycji"
 
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the movie's width and "
@@ -3622,6 +3662,9 @@ msgstr "%d. %s"
 msgid "Size: "
 msgstr "Rozmiar: "
 
+msgid "Unknown"
+msgstr "Nieznany"
+
 msgid "Full size: "
 msgstr "Pełny rozmiar: "
 
@@ -3651,3 +3694,48 @@ msgstr "[test] Drugie uprawnienie"
 
 msgid "Unit test theme"
 msgstr "Temat testów poprawności programu"
+
+#~ msgid "Display"
+#~ msgstr "Wygląd"
+
+#~ msgid "Successfully installed and auto-configured module %s"
+#~ msgstr "Moduł %s został zainstalowany i automatycznie skonfigurowany."
+
+#~ msgid "Successfully installed module %s"
+#~ msgstr "Moduł %s został zainstalowany."
+
+#~ msgid "Successfully configured module %s"
+#~ msgstr "Moduł %s został skonfigurowany."
+
+#~ msgid "Successfully upgraded module %s"
+#~ msgstr "Moduł %s został zaktualizowany."
+
+#~ msgid "Successfully activated module %s"
+#~ msgstr "Moduł %s został aktywowany."
+
+#~ msgid "Successfully deactivated module %s"
+#~ msgstr "Moduł %s został zdeaktywowany."
+
+#~ msgid "Successfully uninstalled module %s"
+#~ msgstr "Moduł %s został odinstalowany."
+
+#~ msgid "Incompatible module!"
+#~ msgstr "Niekompatybilny moduł!"
+
+#~ msgid "Module API Required: %s (available: %s)"
+#~ msgstr "Wymagana wersja modułu: %s (zainstalowana: %s)"
+
+#~ msgid "All Themes"
+#~ msgstr "Wszystkie tematy"
+
+#~ msgid "Status: Incompatible Theme (Inactive)"
+#~ msgstr "Status: Niekompatybilny temat (Nieaktywny)"
+
+#~ msgid "Incompatible theme!"
+#~ msgstr "Niekompatybilny temat!"
+
+#~ msgid "Theme API Required: %s (available: %s)"
+#~ msgstr "Wymagana wersja tematu: %s (zainstalowana: %s)"
+
+#~ msgid "(default)"
+#~ msgstr "(domyślny)"

@@ -19,7 +19,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Installer 2.1\n"
+"Project-Id-Version: Gallery: Installer 2.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-06-04 17:42+0200\n"
 "PO-Revision-Date: 2006-03-11 21:44+0100\n"
@@ -97,6 +97,10 @@ msgstr "Nastavení databáze"
 msgid "You must have the MySQL PHP module installed"
 msgstr "Musíte mít nainstalovaný PHP modul pro MySQL"
 
+#, fuzzy
+msgid "You must have the MySQL Improved PHP module installed"
+msgstr "Musíte mít nainstalovaný PHP modul pro MySQL"
+
 msgid "You must have the ibm_db2 PHP module installed"
 msgstr "Musíte mít nainstalovaný PHP modul ibm_db2"
 
@@ -104,6 +108,10 @@ msgid "You must have the PostgreSQL PHP module installed"
 msgstr "Musíte mít nainstalovaný PHP modul pro PostgreSQL"
 
 msgid "You must have the Oracle OCI8 PHP module installed"
+msgstr "Musíte mít nainstalovaný PHP modul pro Oracle OCI8"
+
+#, fuzzy
+msgid "You must have the Component Object Model(COM) PHP module installed"
 msgstr "Musíte mít nainstalovaný PHP modul pro Oracle OCI8"
 
 #, c-format
@@ -191,23 +199,25 @@ msgid ""
 "directory manually."
 msgstr "Nelze nahrát API G2. Prosím vymažte databázi Galerie a datový adresář ručně."
 
-msgid "MySQL (all versions)"
-msgstr "MySQL (všechny verze)"
-
-msgid "MySQL with Transactions (v3.23.34a and newer)"
+#, fuzzy
+msgid "MySQL (v3.23.34a and newer)"
 msgstr "MySQL s transakcemi (v3.23.34a a novější)"
+
+#, fuzzy
+msgid "MySQL (versions before v3.23.34a)"
+msgstr "MySQL (všechny verze)"
 
 msgid "PostgreSQL v7.x and newer"
 msgstr "PostgreSQL v7.x a novější"
-
-msgid "PostgreSQL v6.x (not well tested)"
-msgstr "PostgreSQL v6.x (nedostatečně otestováno)"
 
 msgid "Oracle (9i and newer)"
 msgstr "Oracle (9i a novější)"
 
 msgid "IBM DB2 (v8.2 and newer)"
 msgstr "IBM DB2 (v8.2 a novější)"
+
+msgid "MSSQL (Experimental!)"
+msgstr ""
 
 msgid "Unknown DB type or no known tables information."
 msgstr "Neznámý typ databáze nebo neznámé tabulky."
@@ -316,12 +326,13 @@ msgstr "Systémové kontroly"
 msgid "Performing system checks"
 msgstr "Provádím systémové kontroly"
 
-msgid "PHP version >= 4.1.0 or >= 5.0.4"
+#, fuzzy
+msgid "PHP version >= 4.3.0 or >= 5.0.4"
 msgstr "PHP verze >= 4.1.0 nebo >= 5.0.4"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Error: Gallery 2 requires PHP version 4.1.0 or newer or 5.0.4 or newer. You have PHP version "
+"Error: Gallery 2 requires PHP version 4.3.0 or newer or 5.0.4 or newer. You have PHP version "
 "%s installed. Contact your webserver administrator to request an upgrade, available at the %"
 "sPHP website%s."
 msgstr ""
@@ -928,8 +939,9 @@ msgstr "Galerie: <strong>Vaše fotografie</strong> na <strong>na Vašem webu</st
 msgid "Missing files (%d)"
 msgstr "Chybějící soubory (%d)"
 
+#, fuzzy
 msgid ""
-"Note: You're running Gallery from CVS, so recently removed files may appear here.  It might "
+"Note: You're running Gallery from SVN, so recently removed files may appear here.  It might "
 "be safe to ignore these."
 msgstr ""
 "Poznámka: Toto je Galerie z CVS, takže se zde mohou vyskytnout nedávno odebrané soubory. "
@@ -939,10 +951,11 @@ msgstr ""
 msgid "Modified files (%d)"
 msgstr "Modifikované soubory (%d)"
 
+#, fuzzy
 msgid ""
-"Note: You're running Gallery from CVS, so some modified files are to be expected.  You can "
-"probably ignore these, but to be safe you should make sure that you do 'cvs update -Pd' "
-"before continuing."
+"Note: You're running Gallery from SVN, so some modified files are to be expected.  You can "
+"probably ignore these, but to be safe you should make sure that you do 'svn update' before "
+"continuing."
 msgstr ""
 "Poznámka: Toto je Galerie z CVS, takže se zde mohou vyskytnout nedávno upravené soubory. "
 "Nejspíše lze bez problému ignorovat, ale pokud si chcete být jisti, můžete (než budete "
@@ -1094,8 +1107,8 @@ msgid ""
 "Please read the %1$sGallery Security Guide%3$s. For a brief overview, take a look at the %2"
 "$sshort check list%3$s within the security guide."
 msgstr ""
-"Prosím přečtěte si %1$sBezpečnostního průvodce Galerií%3$s. Pro stručný přehled se "
-"podívejte na %2$skrátký seznam%3$s v bezpečnostním průvodci."
+"Prosím přečtěte si %1$sBezpečnostního průvodce Galerií%3$s. Pro stručný přehled se podívejte "
+"na %2$skrátký seznam%3$s v bezpečnostním průvodci."
 
 msgid "Check Again"
 msgstr "Zkontrolovat znovu"
@@ -1104,8 +1117,8 @@ msgid ""
 "Gallery needs a directory to store your images. The directory we chose for you will work, "
 "but is web accessible."
 msgstr ""
-"Galerie potřebuje adresář, do kterého bude ukládat Vaše fotografie. Adresář, který jsme "
-"pro Vás vybrali, bude fungovat, ale je všem dostupný pomocí služby www."
+"Galerie potřebuje adresář, do kterého bude ukládat Vaše fotografie. Adresář, který jsme pro "
+"Vás vybrali, bude fungovat, ale je všem dostupný pomocí služby www."
 
 msgid "For maximum security you should pick a directory that is not web accessible."
 msgstr "Pro maximální bezpečnost byste měli vybrat adresář, který není z webu dostupný."
@@ -1210,8 +1223,8 @@ msgid ""
 "For information on how to secure your Gallery storage directory, please read the %sSecurity "
 "Guide%s."
 msgstr ""
-"Více informací o tom, jak zabezpečit Vaše úložiště Galerie, najdete v %sPrůvodci "
-"zabezpečení%s."
+"Více informací o tom, jak zabezpečit Vaše úložiště Galerie, najdete v %sPrůvodci zabezpečení%"
+"s."
 
 msgid "Storage directory set successfully."
 msgstr "Adresář úložiště úspěšně nastaven."
@@ -1284,6 +1297,9 @@ msgstr "Go"
 
 msgid "Begin Installation&raquo;"
 msgstr "Začátek instalace&raquo;"
+
+#~ msgid "PostgreSQL v6.x (not well tested)"
+#~ msgstr "PostgreSQL v6.x (nedostatečně otestováno)"
 
 #~ msgid "chmod 644 %s"
 #~ msgstr "chmod 644 %s"

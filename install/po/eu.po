@@ -20,7 +20,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Installer 2.1\n"
+"Project-Id-Version: Gallery: Installer 2.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-10-30 22:52+0100\n"
 "PO-Revision-Date: 2006-02-19 23:19+0100\n"
@@ -99,6 +99,10 @@ msgstr "Datu-base Konfigurazioa"
 msgid "You must have the MySQL PHP module installed"
 msgstr "MySQL modulua instalaturik izan behar duzu"
 
+#, fuzzy
+msgid "You must have the MySQL Improved PHP module installed"
+msgstr "MySQL modulua instalaturik izan behar duzu"
+
 msgid "You must have the ibm_db2 PHP module installed"
 msgstr "Ibm_db2 PHP modulua instalaturik izan behar duzu"
 
@@ -106,6 +110,10 @@ msgid "You must have the PostgreSQL PHP module installed"
 msgstr "PostgreSQL PHP modulua instalaturik izan behar duzu"
 
 msgid "You must have the Oracle OCI8 PHP module installed"
+msgstr "Oracle OCI8 PHP modulua instalaturik izan behar duzu"
+
+#, fuzzy
+msgid "You must have the Component Object Model(COM) PHP module installed"
 msgstr "Oracle OCI8 PHP modulua instalaturik izan behar duzu"
 
 #, c-format
@@ -200,23 +208,25 @@ msgstr ""
 "Ezin da G2 API-a abiarazi. Ezabatu itzazu Gallery datu-basea eta biltegiratze direktorioa "
 "eskuz."
 
-msgid "MySQL (all versions)"
-msgstr "MySQL (bertsio denak)"
-
-msgid "MySQL with Transactions (v3.23.34a and newer)"
+#, fuzzy
+msgid "MySQL (v3.23.34a and newer)"
 msgstr "MySQL transakzioduna (3.23.341 bertsio eta berriagoak)"
+
+#, fuzzy
+msgid "MySQL (versions before v3.23.34a)"
+msgstr "MySQL (bertsio denak)"
 
 msgid "PostgreSQL v7.x and newer"
 msgstr "PostgreSQL v7.x eta berriagoa"
-
-msgid "PostgreSQL v6.x (not well tested)"
-msgstr "PostgreSQL v6.x (ez behar aina probatua)"
 
 msgid "Oracle (9i and newer)"
 msgstr "Oracle (9i eta berriagoak)"
 
 msgid "IBM DB2 (v8.2 and newer)"
 msgstr "IBM DB2 (8.2 eta berriagoak)"
+
+msgid "MSSQL (Experimental!)"
+msgstr ""
 
 msgid "Unknown DB type or no known tables information."
 msgstr "DB mota ezezaguna edo ez dira taula argibideak ezagutzen."
@@ -327,12 +337,13 @@ msgstr "Sistema Egiaztapenak"
 msgid "Performing system checks"
 msgstr ""
 
-msgid "PHP version >= 4.1.0 or >= 5.0.4"
+#, fuzzy
+msgid "PHP version >= 4.3.0 or >= 5.0.4"
 msgstr "PHP bertsioa >= 4.1.0 edo >= 5.0.4"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Error: Gallery 2 requires PHP version 4.1.0 or newer or 5.0.4 or newer. You have PHP version "
+"Error: Gallery 2 requires PHP version 4.3.0 or newer or 5.0.4 or newer. You have PHP version "
 "%s installed. Contact your webserver administrator to request an upgrade, available at the %"
 "sPHP website%s."
 msgstr ""
@@ -950,8 +961,9 @@ msgstr "Gallery: <strong>zure argazkiak</strong> <strong>zure webgunean</strong>
 msgid "Missing files (%d)"
 msgstr "Falta dire fitxategiak (%d)"
 
+#, fuzzy
 msgid ""
-"Note: You're running Gallery from CVS, so recently removed files may appear here.  It might "
+"Note: You're running Gallery from SVN, so recently removed files may appear here.  It might "
 "be safe to ignore these."
 msgstr ""
 "Oharra: Zu CVS-ko Gallery erabiltzen ari zara, beraz azken aldian ezabaturiko fitxategi "
@@ -961,10 +973,11 @@ msgstr ""
 msgid "Modified files (%d)"
 msgstr "Aldatu diren fitxategiak (%d)"
 
+#, fuzzy
 msgid ""
-"Note: You're running Gallery from CVS, so some modified files are to be expected.  You can "
-"probably ignore these, but to be safe you should make sure that you do 'cvs update -Pd' "
-"before continuing."
+"Note: You're running Gallery from SVN, so some modified files are to be expected.  You can "
+"probably ignore these, but to be safe you should make sure that you do 'svn update' before "
+"continuing."
 msgstr ""
 "Oharra: Zu CVS-ko erabiltzen ari zara, beraz zenbait fitxategi aldatua izana espero da.  "
 "Hauek alde batetara utzi ditzazkezu baina ziurtatu zaitez jarraitu aurretik 'cvs update -Pd' "
@@ -1303,6 +1316,9 @@ msgstr "Joan"
 
 msgid "Begin Installation&raquo;"
 msgstr "Instalazio hasi&raquo;"
+
+#~ msgid "PostgreSQL v6.x (not well tested)"
+#~ msgstr "PostgreSQL v6.x (ez behar aina probatua)"
 
 #~ msgid "chmod 644 %s"
 #~ msgstr "chmod 644 %s"

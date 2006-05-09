@@ -24,7 +24,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Upgrader 2.1\n"
+"Project-Id-Version: Gallery: Upgrader 2.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-05-20 12:20+0200\n"
 "PO-Revision-Date: 2006-03-10 00:32+0000\n"
@@ -66,13 +66,14 @@ msgstr "Aktualisierung abschließen"
 msgid "System Checks"
 msgstr "Systemprüfungen"
 
-msgid "PHP version >= 4.1.0 or >= 5.0.4"
+#, fuzzy
+msgid "PHP version >= 4.3.0 or >= 5.0.4"
 msgstr "PHP-Version >= 4.1.0 oder >= 5.0.4"
 
 # param0 = existing php version, param1 = '<a href...>', param2 = '</a>'
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Error: Gallery 2 requires PHP version 4.1.0 or newer or 5.0.4 or newer. You have PHP version "
+"Error: Gallery 2 requires PHP version 4.3.0 or newer or 5.0.4 or newer. You have PHP version "
 "%s installed. Contact your webserver administrator to request an upgrade, available at the %"
 "sPHP website%s."
 msgstr ""
@@ -461,8 +462,9 @@ msgstr "Gallery: <strong>Ihre Photos</strong> auf <strong>Ihrer Webseite</strong
 msgid "Missing files (%d)"
 msgstr "Fehlende Dateien (%d)"
 
+#, fuzzy
 msgid ""
-"Note: You're running Gallery from CVS, so recently removed files may appear here.  It might "
+"Note: You're running Gallery from SVN, so recently removed files may appear here.  It might "
 "be safe to ignore these."
 msgstr ""
 "Beachten Sie: Sie verwenden die CVS-Version von Gallery, also kann es sein, dass hier vor "
@@ -472,10 +474,11 @@ msgstr ""
 msgid "Modified files (%d)"
 msgstr "Veränderte Dateien (%d)"
 
+#, fuzzy
 msgid ""
-"Note: You're running Gallery from CVS, so some modified files are to be expected.  You can "
-"probably ignore these, but to be safe you should make sure that you do <b>cvs update -Pd</b> "
-"before continuing."
+"Note: You're running Gallery from SVN, so some modified files are to be expected.  You can "
+"probably ignore these, but to be safe you should make sure that you do 'svn update' before "
+"continuing."
 msgstr ""
 "Beachten Sie: Sie verwenden die CVS-Version von Gallery, also sind veränderte Dateien zu "
 "erwarten. Sie können diese wahrscheinlich ignorieren, aber um sicher zu gehen, sollten Sie "
@@ -519,7 +522,8 @@ msgstr ""
 "versuchen Sie es erneut."
 
 msgid "If you actually want to run the Gallery 2 installer, please follow the link below."
-msgstr "Falls Sie wirklich den Gallery-2-Installer ausführen wollen, folgen Sie bitte diesem Verweis."
+msgstr ""
+"Falls Sie wirklich den Gallery-2-Installer ausführen wollen, folgen Sie bitte diesem Verweis."
 
 msgid ""
 "If you want to upgrade from Gallery 1, you first need to install Gallery 2 and then use the "
@@ -619,13 +623,13 @@ msgid ""
 "distribution of Gallery than what you originally installed.  You can download a larger "
 "distribution from %s."
 msgstr ""
-"Die Aktualisierung kann nicht starten weil einige Ihrer aktiven Module/Motive inkompatibel sind "
-"oder fehlen. Sie müssen entweder aktuellere Versionen dieser Module oder Motive finden, oder "
-"ihre ursprüngliche Gallery-Version wiederherstellen. Es wurden keine Änderungen "
+"Die Aktualisierung kann nicht starten weil einige Ihrer aktiven Module/Motive inkompatibel "
+"sind oder fehlen. Sie müssen entweder aktuellere Versionen dieser Module oder Motive finden, "
+"oder ihre ursprüngliche Gallery-Version wiederherstellen. Es wurden keine Änderungen "
 "vorgenommen, die Wiederherstellung ist also sicher. Wenn unten viele inkompatible Module "
 "aufgelistet werden, könnte es sein, dass die von Ihnen heruntergeladene Gallery-Distribution "
-"kleiner ist als diejenige, welche Sie ursprünglich installiert hatten. Sie können eine größere "
-"Distribution von der %s herunterladen."
+"kleiner ist als diejenige, welche Sie ursprünglich installiert hatten. Sie können eine "
+"größere Distribution von der %s herunterladen."
 
 #, c-format
 msgid "Download replacement modules from %s"
@@ -767,10 +771,9 @@ msgid ""
 "upgrade page. Edit your config.php file to activate maintenance mode."
 msgstr ""
 "Wenn Sie eine starkfrequentierte Seite haben, überlegen Sie sich, Ihre Gallery in den "
-"Wartungsmodus zu versetzen. Dadurch erhalten Besucher eine Benachrichtigung, "
-"dass die Seite vorrübergehend offline ist und sie landen nicht alle auf dieser "
-"Upgrade-Seite. Bearbeiten Sie Ihre config.php-Datei, um den Wartungsmodus "
-"(maintenance mode) zu aktivieren."
+"Wartungsmodus zu versetzen. Dadurch erhalten Besucher eine Benachrichtigung, dass die Seite "
+"vorrübergehend offline ist und sie landen nicht alle auf dieser Upgrade-Seite. Bearbeiten "
+"Sie Ihre config.php-Datei, um den Wartungsmodus (maintenance mode) zu aktivieren."
 
 msgid "Select Language:"
 msgstr "Sprache auswählen:"
@@ -778,4 +781,3 @@ msgstr "Sprache auswählen:"
 # Badly chosen mgsid: means: switch to selected language
 msgid "Go"
 msgstr "Sprache einstellen"
-
