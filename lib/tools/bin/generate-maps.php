@@ -26,14 +26,7 @@ if (!empty($_SERVER['SERVER_NAME'])) {
 require_once(dirname(__FILE__) . '/XmlParser.inc');
 require_once(dirname(__FILE__) . '/../../smarty/Smarty.class.php');
 
-/* getenv() works even if $_ENV isn't populated */
-$envTmp = getenv('TMP');
-if (!empty($envTmp)) {
-    $tmpdir = $envTmp;
-} else {
-    $tmpdir = '/tmp';
-}
-$tmpdir .= "/g2_" . rand(1, 30000);
+$tmpdir = 'tmp_entities_' . rand(1, 30000);
 if (file_exists($tmpdir)) {
     print "Tmp dir already exists: $tmpdir\n";
     exit(1);
@@ -52,8 +45,10 @@ $smarty->use_sub_dirs = false;
 $smarty->template_dir = dirname(__FILE__);
 
 $xmlFile = 'Maps.xml';
+
 if (!file_exists($xmlFile)) {
-    return;
+    print "Missing Maps.xml, can't continue.\n";
+    exit(1);
 }
 
 $p =& new XmlParser();
@@ -100,6 +95,9 @@ foreach ($root[0]['child'] as $map) {
 $smarty->assign('maps', $maps);
 $smarty->assign('mapName', $mapName);
 $new = $smarty->fetch('maps.tpl');
+
+# Windows leaves a CR at the end of the file
+$new = rtrim($new, "\r");
 
 $fd = fopen('Maps.inc', 'w');
 fwrite($fd, $new);

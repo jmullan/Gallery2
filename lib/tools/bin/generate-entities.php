@@ -26,7 +26,6 @@ if (!empty($_SERVER['SERVER_NAME'])) {
 require_once(dirname(__FILE__) . '/XmlParser.inc');
 require_once(dirname(__FILE__) . '/../../smarty/Smarty.class.php');
 
-/* getenv() works even if $_ENV isn't populated */
 $tmpdir = 'tmp_entities_' . rand(1, 30000);
 if (file_exists($tmpdir)) {
     print "Tmp dir already exists: $tmpdir\n";
@@ -152,6 +151,9 @@ foreach ($root[0]['child'] as $entity) {
 
 $smarty->assign('entities', $entities);
 $new = $smarty->fetch('entities.tpl');
+
+# Windows leaves a CR at the end of the file
+$new = rtrim($new, "\r");
 
 $fd = fopen('Entities.inc', 'w');
 fwrite($fd, $new);

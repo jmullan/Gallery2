@@ -4,6 +4,7 @@ TMPDIR ?= tmp
 RXP ?= $(shell which rxp 2>/dev/null)
 XMLLINT ?= $(shell which xmllint 2>/dev/null)
 XMLFILES = $(wildcard xml-src/*.xml)
+PHP ?= php
 
 all: validate tmp dbxml sql
 
@@ -15,10 +16,10 @@ tmp:
 dbxml:
 	perl $(TOOLDIR)/bin/extractClassXml.pl --dtd=$(TOOLDIR)/dtd/GalleryClass2.0.dtd --quiet --out-dir=tmp/classxml $(CLASSDIR)/*.class
 	@if [ "x" != "$(XMLFILES)x" ]; then cp xml-src/*.xml tmp/dbxml; fi
-	php -f $(TOOLDIR)/bin/generate-dbxml.php
+	$(PHP) -q -C -f $(TOOLDIR)/bin/generate-dbxml.php
 
 sql:
-	php -f $(TOOLDIR)/bin/generate-sql.php
+	$(PHP) -q -C -f $(TOOLDIR)/bin/generate-sql.php
 
 clean:
 	rm -rf tmp
