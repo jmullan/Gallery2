@@ -86,6 +86,28 @@ class GalleryDataItem extends GalleryItem {
      * @return boolean true if this data item can be viewed inline
      */
     function canBeViewedInline() {
+	return $this->_canBeViewedInline();
+    }
+
+    /**
+     * Helper function to check renderer and list of mime types for canBeViewedInline.
+     *
+     * @param array (optional) list of mime types that render() will support
+     * @return boolean true if this data item can be viewed inline
+     * @access protected
+     */
+    function _canBeViewedInline($mimeList=null) {
+	$renderer = $this->getRenderer();
+	if (!empty($renderer)) {
+	    list ($ret, $renderer) =
+		GalleryCoreApi::newFactoryInstanceById('GalleryRenderer', $renderer);
+	    if (!$ret && isset($renderer)) {
+		return $renderer->canBeViewedInline($this);
+	    }
+	}
+	if (isset($mimeList) && in_array($this->getMimeType(), $mimeList)) {
+	    return true;
+	}
 	return false;
     }
 

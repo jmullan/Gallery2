@@ -93,6 +93,12 @@ class ItemTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryRenderer', 'ItemTestRenderer', 'ItemTestRenderer', $path, 'coreTest', null);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
     }
 
     function testFetchChildIdsByTitle() {
@@ -189,7 +195,8 @@ class ItemTest extends GalleryTestCase {
 		return $this->failWithStatus($ret);
 	    }
 	    $instance->setMimeType($mimeType);
-	    if (GalleryUtilities::isExactlyA($instance, 'GalleryMovieItem')) {
+	    if (GalleryUtilities::isExactlyA($instance, 'GalleryMovieItem')
+		    || GalleryUtilities::isExactlyA($instance, 'GalleryAnimationItem')) {
 		$instance->setWidth(100);
 		$instance->setHeight(100);
 	    }
@@ -198,6 +205,26 @@ class ItemTest extends GalleryTestCase {
 	    $inlineOk = ($html != 'ERROR' && $html != null);
 	    $this->assertEquals($inlineOk, $instance->canBeViewedInline(), $mimeType);
 	}
+    }
+
+    function testCanBeViewedInlineRenderer() {
+	list ($ret, $instance) = GalleryCoreApi::newItemByMimeType('image/jpeg');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$instance->setMimeType('image/jpeg');
+	$this->assert($instance->canBeViewedInline(), 'jpeg');
+	$instance->setRenderer('ItemTestRenderer');
+	$this->assert(!$instance->canBeViewedInline(), 'jpeg renderer');
+
+	list ($ret, $instance) = GalleryCoreApi::newItemByMimeType('test/item');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$instance->setMimeType('test/item');
+	$this->assert(!$instance->canBeViewedInline(), 'test item');
+	$instance->setRenderer('ItemTestRenderer');
+	$this->assert($instance->canBeViewedInline(), 'test item renderer');
     }
 
     function testGetChildCounts() {
@@ -1698,11 +1725,11 @@ class ItemTestToolkit extends GalleryToolkit {
 
 }
 
-
 /**
  * Required classes
  */
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryMovieItem.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryRenderer.class');
 
 /**
  * Test movie item
@@ -1716,6 +1743,28 @@ class ItemTestMovieItem extends GalleryMovieItem {
      */
     function getClassName() {
 	return 'ItemTestMovieItem';
+    }
+}
+
+/**
+ * Test renderer
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ItemTestRenderer extends GalleryRenderer {
+    /**
+     * @see GalleryRenderer::canBeViewedInline()
+     */
+    function canBeViewedInline($item) {
+	return (substr($item->getMimeType(), 0, 5) == 'test/');
+    }
+
+    /**
+     * @see GalleryRenderer::render()
+     */
+    function render($format, $entity, $item, $params) {
+	return null;
     }
 }
 ?>

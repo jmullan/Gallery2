@@ -31,6 +31,17 @@
  * @subpackage Classes
  */
 class GalleryRenderer {
+
+    /**
+     * Can this renderer display the given item?
+     *
+     * @param GalleryDataItem item
+     * @return boolean true if this data item can be viewed inline
+     */
+    function canBeViewedInline($item) {
+	return false;
+    }
+
     /**
      * Render the given GalleryItem in the given output format.  For example, you can render a
      * GalleryPhotoItem with an <img> tag in the HTML format, whereas GalleryMovieItem would use

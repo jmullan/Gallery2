@@ -31,8 +31,7 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryDataItem.class');
 /**
  * A subclass of DataItem for containing Movies
  *
- * A GalleryItem whose source is a movie of some kind (like an MPEG
- * or an AVI)
+ * A GalleryItem whose source is a movie of some kind (like an MPEG or an AVI)
  *
  * @g2 <class-name>GalleryMovieItem</class-name>
  * @g2 <parent-class-name>GalleryDataItem</parent-class-name>
@@ -93,16 +92,15 @@ class GalleryMovieItem extends GalleryDataItem {
      * @see GalleryDataItem::canBeViewedInline()
      */
     function canBeViewedInline() {
-	$mimeType = $this->getMimeType();
 	/* The mimeTypes listed here should provide a render() output */
-	$canBeViewedInline = array(
+	static $mimeList = array(
 	    'video/quicktime',
 	    'video/mpeg',
 	    'video/x-msvideo',
 	    'video/x-ms-wmv',
 	);
-	return ($this->getWidth() != 0 && $this->getHeight() != 0
-		&& in_array($mimeType, $canBeViewedInline));
+	return $this->_canBeViewedInline(
+		($this->getWidth() > 0 && $this->getHeight() > 0) ? $mimeList : null);
     }
 
     /**

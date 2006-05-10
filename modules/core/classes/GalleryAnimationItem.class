@@ -79,13 +79,13 @@ class GalleryAnimationItem extends GalleryDataItem {
      * @see GalleryDataItem::canBeViewedInline()
      */
     function canBeViewedInline() {
-	$mimeType = $this->getMimeType();
 	/* The mimeTypes listed here should provide a render() output */
-	$canBeViewedInline = array(
+	static $mimeList = array(
 	    'application/x-shockwave-flash',
 	    'application/x-director',
 	);
-	return (in_array($mimeType, $canBeViewedInline));
+	return $this->_canBeViewedInline(
+		($this->getWidth() > 0 && $this->getHeight() > 0) ? $mimeList : null);
     }
 
     /**

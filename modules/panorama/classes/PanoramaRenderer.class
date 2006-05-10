@@ -34,6 +34,13 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryRenderer.class');
 class PanoramaRenderer extends GalleryRenderer {
 
     /**
+     * @see GalleryRenderer::canBeViewedInline
+     */
+    function canBeViewedInline($item) {
+	return true;
+    }
+
+    /**
      * @see GalleryRenderer::render
      */
     function render($format, $entity, $item, $params) {
