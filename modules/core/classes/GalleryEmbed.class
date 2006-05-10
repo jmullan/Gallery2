@@ -45,7 +45,7 @@
  * @static
  */
 class GalleryEmbed {
-    
+
     /**
      * Return the major and minor version of the Embedding API.
      *
@@ -55,7 +55,7 @@ class GalleryEmbed {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(1, 1);
+	return array(1, 2);
     }
 
     /**
@@ -67,7 +67,7 @@ class GalleryEmbed {
     function isCompatibleWithEmbedApi($apiVersion) {
 	return GalleryUtilities::isCompatibleWithApi($apiVersion, GalleryEmbed::getApiVersion());
     }
-    
+
     /**
      * Initialize Gallery; must be called before most GalleryEmbed methods can be used.
      * This method should only be called once during the lifetime of the request.
@@ -111,7 +111,7 @@ class GalleryEmbed {
 		return $ret;
 	    }
 	}
-	
+
 	if (isset($initParams['apiVersion'])) {
 	    if (!GalleryEmbed::isCompatibleWithEmbedApi($initParams['apiVersion'])) {
 		return GalleryCoreApi::error(ERROR_PLUGIN_VERSION_MISMATCH, __FILE__, __LINE__,
@@ -256,7 +256,7 @@ class GalleryEmbed {
 	$gallery->setActiveUser($user);
 	$session =& $gallery->getSession();
 	$session->put('embed.id.externalUser', $extUserId);
-	
+
 	$ret = $session->regenerate();
 	if ($ret) {
 	    return $ret;
@@ -633,15 +633,15 @@ class GalleryEmbed {
      * @static
      */
     function searchScan($searchString, $resultsPerModule=3) {
-    	global $gallery;
-    	
-    	$session =& $gallery->getSession();
+	global $gallery;
+
+	$session =& $gallery->getSession();
 	$ret = $session->start();
 	if ($ret) {
 	    return array($ret, null);
 	}
 	$session->doNotUseTempId();
-	
+
 	GalleryCoreApi::requireOnce('modules/search/classes/SearchUtilities.class');
 	$searchInstances = $searchResults = array();
 	list ($ret, $ids) =
@@ -693,15 +693,15 @@ class GalleryEmbed {
      * @static
      */
     function search($searchString, $moduleId, $offset, $count) {
-    	global $gallery;
-    	
-    	$session =& $gallery->getSession();
+	global $gallery;
+
+	$session =& $gallery->getSession();
 	$ret = $session->start();
 	if ($ret) {
 	    return array($ret, null);
 	}
 	$session->doNotUseTempId();
-	
+
 	GalleryCoreApi::requireOnce('modules/search/classes/SearchUtilities.class');
 	list ($ret, $searchInstance) =
 	    GalleryCoreApi::newFactoryInstanceById('GallerySearchInterface_1_0', $moduleId);
@@ -795,13 +795,12 @@ class GalleryEmbed {
 	$moduleId = 'imageblock';
 	$blockHtml = $headHtml = null;
 
-    	$session =& $gallery->getSession();
+	$session =& $gallery->getSession();
 	$ret = $session->start();
 	if ($ret) {
 	    return array($ret, null, null);
 	}
 	$session->doNotUseTempId();
-	
 
 	/* Load the module list */
 	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
