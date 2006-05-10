@@ -842,8 +842,8 @@ class GalleryTestCase extends TestCase {
 
     function DeepCompare($obj1, $obj2, $context=null) {
 	if (gettype($obj1) !== gettype($obj2)) {
-	    return sprintf("[$context] $obj1 type (%s) !== $obj2 type (%s)",
-			   gettype($obj1), gettype($obj2));
+	    return "[$context] $obj1 type (" . gettype($obj1)
+		 . ") !== $obj2 type (" . gettype($obj2) . ')';
 	}
 
 	if (is_array($obj1)) {
@@ -854,9 +854,9 @@ class GalleryTestCase extends TestCase {
 		if (empty($keys1) && empty($keys2)) {
 		    break;
 		} else if (empty($keys1) && !empty($keys2)) {
-		    return sprintf("[$context] extra keys in array 2: %s", join(',', $keys2));
+		    return "[$context] extra keys in array 2: " . implode(',', $keys2);
 		} else if (empty($keys2) && !empty($keys1)) {
-		    return sprintf("[$context] extra keys in array 1: %s", join(',', $keys1));
+		    return "[$context] extra keys in array 1: " . implode(',', $keys1);
 		}
 
 		$key1 = array_shift($keys1);
