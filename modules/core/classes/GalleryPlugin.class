@@ -230,7 +230,11 @@ class GalleryPlugin {
     }
 
     /**
-     * Deactivate this plugin
+     * Deactivate this plugin.
+     *
+     * Note that modules and themes should not override this method to do anything critical.
+     * Modules and themes can be forcibly deactivated during the upgrade process and it's
+     * important that this doesn't leave the app in a broken state.
      *
      * @param bool should we post a deactivation event?  Normally true, but the
      *             upgrader may choose to suppress this event so that it can
