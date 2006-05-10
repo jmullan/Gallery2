@@ -98,6 +98,8 @@ class GalleryMovieItem extends GalleryDataItem {
 	    'video/mpeg',
 	    'video/x-msvideo',
 	    'video/x-ms-wmv',
+	    'video/x-ms-asf',
+	    'video/x-ms-asx',
 	);
 	return $this->_canBeViewedInline(
 		($this->getWidth() > 0 && $this->getHeight() > 0) ? $mimeList : null);
@@ -221,7 +223,7 @@ class GalleryMovieItem extends GalleryDataItem {
 
 	$fallback = trim(preg_replace("/[\r\n]/", '', $params['fallback']));
 
-	switch($format) {
+	switch ($format) {
 	case 'HTML':
 	    $urlGenerator =& $gallery->getUrlGenerator();
 	    $src = $urlGenerator->generateUrl(
@@ -230,7 +232,7 @@ class GalleryMovieItem extends GalleryDataItem {
 		array('forceFullUrl' => true, 'forceSessionId' => true));
 
 	    list ($width, $height) = array($this->getWidth(), $this->getHeight());
-	    switch($this->getMimeType()) {
+	    switch ($this->getMimeType()) {
 	    case 'video/quicktime':
 		return sprintf(
 		'<object classid="clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B"
@@ -257,9 +259,14 @@ class GalleryMovieItem extends GalleryDataItem {
 	    case 'video/mpeg':
 	    case 'video/x-msvideo':
 	    case 'video/x-ms-wmv':
+		$classId = 'CLSID:05589FA1-C356-11CE-BF01-00AA0055595A';
+	    case 'video/x-ms-asf':
+	    case 'video/x-ms-asx':
+		if (!isset($classId)) {
+		    $classId = 'CLSID:22D6F312-B0F6-11D0-94AB-0080C74C7E95';
+		}
 		return sprintf(
-		'<object classid="CLSID:05589FA1-C356-11CE-BF01-00AA0055595A"
-			 width="%s" height="%s" id="%s"%s>
+		'<object classid="%s" width="%s" height="%s" id="%s"%s>
 			   <param name="ShowDisplay" value="0"/>
 			   <param name="ShowControls" value="1"/>
 			   <param name="AutoStart" value="1"/>
@@ -271,7 +278,7 @@ class GalleryMovieItem extends GalleryDataItem {
 			   <noembed>%s</noembed>
 		 </object>',
 
-		$width, $height + 50,
+		$classId, $width, $height + 50,
 		!empty($params['id']) ? $params['id'] : 'movie',
 		!empty($params['class']) ? ' class="' . $params['class'] . '"' : '',
 		$src, $src,
