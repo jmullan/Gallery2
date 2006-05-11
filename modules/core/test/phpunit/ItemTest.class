@@ -1696,9 +1696,10 @@ class ItemTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assertEquals(1, count($thumbTable[$newItem->getId()]), 'wrong number of thumbnails');
+
+	$this->assert(!empty($thumbTable[$newItem->getId()]), 'missing thumbnail');
 	$operation = $thumbTable[$newItem->getId()]->getDerivativeOperations();
-	$this->assert(strpos($operation, 'thumbnail|[1]') !== false, "Wrong operation: $operation");
+	$this->assertEquals('thumbnail|[1]', $operation, 'Wrong operation');
     }
 
     function testDeleteRenderer() {
