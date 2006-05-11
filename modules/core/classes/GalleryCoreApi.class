@@ -1139,6 +1139,26 @@ class GalleryCoreApi {
     }
 
     /**
+     * Use the given operation as a transform for each derivative that depends on the target
+     *
+     * @param the operation to be executed
+     * @param argument of the operations
+     * @param boolean whether to preserve original
+     * @param object the item to perfrom the operation on
+     * @param optional object the preferred derivative to execute the operation on
+     * @param optional serialNumber
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function applyToolkitOperation($operation, $args, $preserveOriginal, $item, $preferred=null, 
+								    $serialNumber=null) {
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryDerivativeHelper_advanced.class');
+	return GalleryDerivativeHelper_advanced::applyToolkitOperation($operation,
+				$args, $preserveOriginal, $item, $preferred, $serialNumber);
+    }
+
+    /**
      * Find all derivatives attached to one source and switch them to another one
      *
      * @param string the original source id

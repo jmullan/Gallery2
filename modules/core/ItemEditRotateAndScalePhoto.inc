@@ -131,195 +131,26 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 		$status = $module->translate('Reverted rotate and scale changes successfully');
 	    }
 	}
+	
+	/* Force us to preserve original if we're a link */
+	$preserveOriginal = isset($form['preserveOriginal']);
+	if (!$preserveOriginal && ($isLinked || $isLinkedTo)) {
+	    $preserveOriginal = true;
+	}
+	
+	$serialNumber = $form['serialNumber'];
 
 	/*
 	 * If we have a command, then apply it to the correct object.
 	 */
 	if (!empty($operation)) {
-	    if ($item->isLinked()) {
-		$isLinked = true;
-		$isLinkedTo = false;
-	    } else {
-		list ($ret, $linkedIds) = GalleryCoreApi::fetchEntitiesLinkedTo($item->getId());
-		if ($ret) {
-		    return array($ret, null, null, null);
-		}
-
-		$isLinked = false;
-		$isLinkedTo = !empty($linkedIds);
+	    $ret = GalleryCoreApi::applyToolkitOperation($operation, $args, $preserveOriginal, 
+								$item, $preferred, $serialNumber);
+	
+	    if ($ret) {
+		return array($ret, null, null, null);
 	    }
-
-	    /* Force us to preserve original if we're a link */
-	    $preserveOriginal = isset($form['preserveOriginal']);
-	    if (!$preserveOriginal && ($isLinked || $isLinkedTo)) {
-		$preserveOriginal = true;
-	    }
-
-	    /* If we don't have a preferred and we're preserving, then create one */
-	    $lockIds = array();
-
-	    if (empty($preferred) && !$preserveOriginal) {
-		/*
-		 * We have no preferred photo, and we're not preserving the
-		 * original.  So, we're changing the original photo here.  Make
-		 * the appropriate change, then expire the derivative tree.
-		 *
-		 * Note that we are explicitly not allowing linked items to execute
-		 * this code!
-		 */
-
-		/* Get the path of the source */
-		list($ret, $sourcePath) = $item->fetchPath();
-		if ($ret) {
-		    return array($ret, null, null, null);
-		}
-
-		/* Get the appropriate toolkit */
-		list ($ret, $toolkit) =
-		    GalleryCoreApi::getToolkitByOperation($item->getMimeType(), $operation);
-		if ($ret) {
-		    return array($ret, null, null, null);
-		}
-
-		if (!isset($toolkit)) {
-		    /* This should never happen */
-		    return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED),
-				 null, null, null);
-		}
-
-		/* Perform the operation */
-		list ($ret, $outputMimeType) = $toolkit->performOperation(
-		    $item->getMimeType(), $operation, $sourcePath, $sourcePath, $args);
-		if ($ret) {
-		    return array($ret, null, null, null);
-		}
-		$item->setMimeType($outputMimeType);
-
-		/* Get the item to rescan its data object */
-		$ret = $item->rescan();
-		if ($ret) {
-		    return array($ret, null, null, null);
-		}
-
-		/* Let our change ripple down the derivative tree, if necessary */
-		$ret = GalleryCoreApi::adjustDependentDerivatives(
-		    $item->getId(), sprintf('%s|%s', $operation, join(',', $args)));
-		if ($ret) {
-		    return array($ret, null, null, null);
-		}
-
-		$gallery->debug('checking is modified');
-		/* Save the item, if it's modified */
-		if ($item->isModified()) {
-		    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($item->getId());
-		    if ($ret) {
-			return array($ret, null, null, null);
-		    }
-
-		    $item->setSerialNumber($form['serialNumber']);
-
-		    $ret = $item->save();
-		    if ($ret) {
-			GalleryCoreApi::releaseLocks($lockId);
-			return array($ret, null, null, null);
-		    }
-
-		    $ret = GalleryCoreApi::releaseLocks($lockId);
-		    if ($ret) {
-			return array($ret, null, null, null);
-		    }
-		}
-
-		$ret = GalleryCoreApi::expireDerivativeTreeBySourceIds(array($item->getId()));
-		if ($ret) {
-		    return array($ret, null, null, null);
-		}
-	    } else {
-		/* If we have no preferred, then create one */
-		if (empty($preferred)) {
-		    list ($ret, $preferred) = GalleryCoreApi::newFactoryInstanceByHint(
-			'GalleryDerivative', $item->getEntityType());
-		    if ($ret) {
-			return array($ret, null, null, null);
-		    }
-
-		    if (!isset($preferred)) {
-			return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null, null, null);
-		    }
-
-		    $ret = $preferred->create($item->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED);
-		    if ($ret) {
-			return array($ret, null, null, null);
-		    }
-
-		    $preferred->setDerivativeSourceId($item->getId());
-		    $preferred->setMimeType($item->getMimeType());
-
-		    $ret = GalleryCoreApi::remapSourceIds($item->getId(), $preferred->getId());
-		    if ($ret) {
-			return array($ret, null, null, null);
-		    }
-		} else {
-		    /*
-		     * Otherwise, lock the preferred so that we can modify it
-		     */
-		    list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($preferred->getId());
-		    if ($ret) {
-			return array($ret, null, null, null);
-		    }
-
-		    $ret = $preferred->expireCache();
-		    if ($ret) {
-			return array($ret, null, null, null);
-		    }
-		}
-
-		$operationString = $operation . '|' . join(',', $args);
-		list ($ret, $operations) = GalleryCoreApi::mergeDerivativeOperations(
-		    $preferred->getDerivativeOperations(), $operationString);
-		if ($ret) {
-		    return array($ret, null, null, null);
-		}
-		$preferred->setDerivativeOperations($operations);
-
-		/* Let our change ripple down the derivative tree, if necessary */
-		$ret = GalleryCoreApi::adjustDependentDerivatives(
-		    $preferred->getId(), $operationString);
-		if ($ret) {
-		    return array($ret, null, null, null);
-		}
-
-		/*
-		 * Perform a final check -- if the new derivative is exactly
-		 * the same as the original then delete it.
-		 */
-		if ($preferred->hasNoOperations()) {
-		    $ret = GalleryCoreApi::remapSourceIds(
-			$preferred->getId(), $preferred->getDerivativeSourceId());
-		    if ($ret) {
-			return array($ret, null, null, null);
-		    }
-
-		    $ret = GalleryCoreApi::deleteEntityById($preferred->getId());
-		    if ($ret) {
-			return array($ret, null, null, null);
-		    }
-		} else {
-		    $ret = $preferred->save();
-		    if ($ret) {
-			GalleryCoreApi::releaseLocks($lockIds);
-			return array($ret, null, null, null);
-		    }
-		}
-
-		if (!empty($lockIds)) {
-		    $ret = GalleryCoreApi::releaseLocks($lockIds);
-		    if ($ret) {
-			return array($ret, null, null, null);
-		    }
-		}
-	    }
-
+	
 	    /* Set our status message */
 	    switch ($operation) {
 	    case 'rotate':
