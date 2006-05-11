@@ -100,6 +100,16 @@ class RewriteSimpleHelper {
     /**
      * @see RewriteSimpleHelper::parsePath
      */
+    function parsePage(&$url, &$params, &$entity) {
+	$page = isset($params['page']) ? $params['page'] : '';
+	$url = str_replace('%page%', $page, $url);
+	unset($params['page']);
+	return true;
+    }
+
+    /**
+     * @see RewriteSimpleHelper::parsePath
+     */
     function parseLanguage(&$url, &$params, &$entity) {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();

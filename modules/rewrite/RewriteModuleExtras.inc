@@ -217,7 +217,8 @@ class RewriteModuleExtras {
 	    /* GalleryCoreApi 7.0 and GalleryModule 3.0 */
 	case '1.1.2':
 	case '1.1.3':
-	    
+	case '1.1.4':
+
 	case 'end of upgrade path':
 	    break;
 
@@ -234,14 +235,14 @@ class RewriteModuleExtras {
      */
     function handleDeactivatePlugin($module, $pluginId) {
 	list ($ret, $activeRules) = $module->getParameter('activeRules');
-    	if ($ret) {
+	if ($ret) {
 	    return $ret;
 	}
 	$activeRules = unserialize($activeRules);
 
 	/* Don't update the rules if not necissary */
 	if (isset($activeRules[$pluginId])) {
-    	    GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
+	    GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
 	    list ($ret, $rewriteParser) = RewriteHelper::getRewriteParser();
 	    if ($ret) {
 		return $ret;
@@ -300,7 +301,7 @@ class RewriteModuleExtras {
 	if (!empty($history)) {
 	    $history = unserialize($history);
 	    list ($ret, $activeRules) = $module->getParameter('activeRules');
-    	    if ($ret) {
+	    if ($ret) {
 		return $ret;
 	    }
 	    $activeRules = unserialize($activeRules);

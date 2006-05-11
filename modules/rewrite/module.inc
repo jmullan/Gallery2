@@ -38,7 +38,7 @@ class RewriteModule extends GalleryModule {
 	$this->setName($gallery->i18n('URL Rewrite'));
 	$this->setDescription($gallery->i18n('Enables short URLs using Apache mod_rewrite, ' .
 	    'ISAPI Rewrite, or PathInfo.'));
-	$this->setVersion('1.1.4'); /* Update RewriteModuleExtras::upgrade also! */
+	$this->setVersion('1.1.5'); /* Update RewriteModuleExtras::upgrade also! */
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
 	$this->setRequiredCoreApi(array(7, 5));
@@ -62,7 +62,7 @@ class RewriteModule extends GalleryModule {
      * @see GalleryModule::uninstall
      */
     function uninstall() {
-    	GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
+	GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
 	list ($ret, $rewriteParser) = RewriteHelper::getRewriteParser();
 	if ($ret && !($ret->getErrorCode() & ERROR_MISSING_VALUE)) {
 	    return $ret;
@@ -87,7 +87,7 @@ class RewriteModule extends GalleryModule {
      * @see GalleryModule::registerEventListeners();
      */
     function registerEventListeners() {
-    	$listener = new RewriteModule();
+	$listener = new RewriteModule();
 	GalleryCoreApi::registerEventListener('Gallery::DeactivatePlugin', $listener, true);
 	GalleryCoreApi::registerEventListener('Gallery::ActivatePlugin', $listener, true);
 	GalleryCoreApi::registerEventListener('Gallery::UninstallPlugin', $listener, true);
@@ -97,7 +97,7 @@ class RewriteModule extends GalleryModule {
      * @see GalleryModule::needsConfiguration
      */
     function needsConfiguration() {
-    	GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
+	GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
 	list ($ret, $rewriteParser) = RewriteHelper::getRewriteParser();
 	if ($ret && !($ret->getErrorCode() & ERROR_MISSING_VALUE)) {
 	    return array($ret, null);
@@ -260,6 +260,10 @@ class RewriteModule extends GalleryModule {
 		    'pattern' => '([^?]+)',
 		    'help' => $this->translate('Path to an item (eg, /album/image.jpg.html)'),
 		    'function' => array('rewrite', 'RewriteSimpleHelper', 'parsePath')),
+		'page' => array(
+		    'pattern' => '([0-9]*)',
+		    'help' => $this->translate('Page number in an album'),
+		    'function' => array('rewrite', 'RewriteSimpleHelper', 'parsePage')),
 		'language' => array(
 		    'pattern' => '([a-z]{2}|[a-z]{2}_[A-Z]{2})',
 		    'help' => $this->translate('Current language (eg, en or de)'),
@@ -312,6 +316,19 @@ class RewriteModule extends GalleryModule {
 	    'restrict' => array('view' => 'core.DownloadItem'),
 	    'parser' => 'preGallery',
 	    'exemptReferer' => 1);
+
+	/* Rule 5: Send HTML for hotlinked items */
+	$rules[5] = array(
+	    'comment' => $this->translate('Send HTML for hotlinked items'),
+	    'pattern' => '.',
+	    'locked' => 1,
+	    'flags' => array(),
+	    'restrict' => array('view' => 'core.DownloadItem', 'itemId' => '([0-9]+)'),
+	    'queryString' => array('view' => 'rewrite.DownloadItem', 'itemId' => '%1'),
+	    'parser' => 'preGallery',
+	    'exemptReferer' => 1,
+	    'help' => $this->translate('Blocks use of images in other sites (HTML creates broken'
+				     . ' image), but allows linking to images.'));
 
 	return $rules;
     }
