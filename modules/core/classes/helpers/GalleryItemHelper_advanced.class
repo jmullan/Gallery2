@@ -712,7 +712,6 @@ class GalleryItemHelper_advanced {
     function deleteSortOrder($sortOrder) {
 	global $gallery;
 
-	/* Find all albums that have the new items sort order and remove it */
 	$query = '
         SELECT
           [GalleryAlbumItem::id]
@@ -734,8 +733,10 @@ class GalleryItemHelper_advanced {
 	    $ids[] = $result[0];
 	}
 
+	$storage =& $gallery->getStorage();
 	$batchSize = 100;
 	while (!empty($ids)) {
+	    $gallery->guaranteeTimeLimit(30);
 	    $currentIds = array_splice($ids, 0, $batchSize);
 	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($currentIds);
 	    if ($ret) {
@@ -760,6 +761,11 @@ class GalleryItemHelper_advanced {
 	    if ($ret) {
 		return $ret;
 	    }
+
+	    $ret = $storage->checkPoint();
+	    if ($ret) {
+		return $ret;
+	    }
 	}
 
 	list ($ret, $orderBy) =
@@ -767,6 +773,69 @@ class GalleryItemHelper_advanced {
 	if (preg_match("/\b$sortOrder$/", $orderBy)) {
 	    $ret = GalleryCoreApi::setPluginParameter(
 		'module', 'core', 'default.orderBy', 'orderWeight');
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+    }
+
+    /**
+     * Remove the given renderer from all items that are using it.
+     *
+     * @param string the renderer class name
+     * @return object GalleryStatus a status code
+     */
+    function deleteRenderer($rendererClassName) {
+	global $gallery;
+
+	$query = '
+        SELECT
+          [GalleryItem::id]
+        FROM
+          [GalleryItem]
+        WHERE
+          [GalleryItem::renderer] = ?
+        ';
+	list ($ret, $searchResults) = $gallery->search($query, array($rendererClassName));
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ids = array();
+	while ($result = $searchResults->nextResult()) {
+	    $ids[] = $result[0];
+	}
+
+	$storage =& $gallery->getStorage();
+	$batchSize = 100;
+	while (!empty($ids)) {
+	    $gallery->guaranteeTimeLimit(30);
+	    $currentIds = array_splice($ids, 0, $batchSize);
+	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($currentIds);
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    list ($ret, $items) = GalleryCoreApi::loadEntitiesById($currentIds);
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    foreach ($items as $item) {
+		$item->setRenderer(null);
+		$ret = $item->save();
+		if ($ret) {
+		    GalleryCoreApi::releaseLocks($lockId);
+		    return $ret;
+		}
+	    }
+
+	    $ret = GalleryCoreApi::releaseLocks($lockId);
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    $ret = $storage->checkPoint();
 	    if ($ret) {
 		return $ret;
 	    }

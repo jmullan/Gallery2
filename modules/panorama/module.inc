@@ -149,5 +149,16 @@ class PanoramaModule extends GalleryModule {
 	}
 	return array(null, $links);
     }
+
+    /**
+     * @see GalleryPlugin::uninstall
+     */
+    function uninstall() {
+	$ret = GalleryCoreApi::deleteRenderer('PanoramaRenderer');
+	if ($ret) {
+	    return $ret;
+	}
+	return parent::uninstall();
+    }
 }
 ?>
