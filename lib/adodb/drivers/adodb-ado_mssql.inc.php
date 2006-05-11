@@ -83,17 +83,6 @@ class  ADODB_ado_mssql extends ADODB_ado {
         $false = false;
 		return empty($arr) ? $false : $arr;
 	}
-	
-	} // end class 
-	
-	class  ADORecordSet_ado_mssql extends ADORecordSet_ado {        
-	
-	var $databaseType = 'ado_mssql';
-	
-	function ADORecordSet_ado_mssql($id,$mode=false)
-	{
-	        return $this->ADORecordSet_ado($id,$mode);
-	}
 
 	/* @G2 - begin code copied from adodb-mssql.inc.php */
 	var $_dropSeqSQL = "drop table %s";
@@ -136,5 +125,16 @@ class  ADODB_ado_mssql extends ADODB_ado {
 		//return $this->GetOne("SELECT CONVERT(varchar(255), NEWID()) AS 'Char'");
 	}
 	/* @G2 - end of code copied from adodb-mssql.inc.php */
+	
+	} // end class 
+	
+	class  ADORecordSet_ado_mssql extends ADORecordSet_ado {        
+	
+	var $databaseType = 'ado_mssql';
+	
+	function ADORecordSet_ado_mssql($id,$mode=false)
+	{
+	        return $this->ADORecordSet_ado($id,$mode);
+	}
 }
 ?>
