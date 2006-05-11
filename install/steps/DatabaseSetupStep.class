@@ -141,10 +141,18 @@ class DatabaseSetupStep extends InstallStep {
 
 		if (empty($templateData['errors'])) {
 		    $this->_captureStart();
-		    $result = $this->_db->NConnect($this->_config['hostname'],
-					    $this->_config['username'],
-					    $this->_config['password'],
-					    $this->_config['database']);
+		    if ($dbPlatformType != 'mssql') {
+			$result = $this->_db->NConnect($this->_config['hostname'],
+						       $this->_config['username'],
+						       $this->_config['password'],
+						       $this->_config['database']);
+		    } else {
+			$result = $this->_db->NConnect(
+			    'PROVIDER=MSDASQL;DRIVER={SQL Server};SERVER='
+				. $this->_config['hostname'] . ';DATABASE='
+				. $this->_config['database'],
+			    $this->_config['username'], $this->_config['password'], 'MSDASQL');
+		    }
 		    $this->_captureEnd();
 		    if ($result === false) {
 			$templateData['errors'][] =
