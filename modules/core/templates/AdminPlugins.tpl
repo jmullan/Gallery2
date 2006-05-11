@@ -17,18 +17,21 @@
       "img.src" : "{g->url href="modules/core/data/module-inactive.gif"}",
       "img.alt" : "{g->text text="Status: Inactive"}",
       "actions" : {ldelim} "activate": 1, "uninstall" : 1 {rdelim},
+      "callback": "copyVersionToInstalledVersion",
       "message" : {ldelim} "type" : "giSuccess", "text" : "{g->text text="__PLUGIN__ deactivated"}" {rdelim}
     {rdelim},
     "active" : {ldelim}
       "img.src" : "{g->url href="modules/core/data/module-active.gif"}",
       "img.alt" : "{g->text text="Status: Active"}",
       "actions" : {ldelim} "deactivate": 1, "uninstall" : 1  {rdelim},
+      "callback": "copyVersionToInstalledVersion",
       "message" : {ldelim} "type" : "giSuccess", "text" : "{g->text text="__PLUGIN__ activated"}" {rdelim}
     {rdelim},
     "uninstalled" : {ldelim}
       "img.src" : "{g->url href="modules/core/data/module-install.gif"}",
       "img.alt" : "{g->text text="Status: Not Installed"}",
       "actions" : {ldelim} "install": 1 {rdelim},
+      "callback": "eraseInstalledVersion",
       "message" : {ldelim} "type" : "giSuccess", "text" : "{g->text text="__PLUGIN__ uninstalled"}" {rdelim}
     {rdelim},
     "unupgraded" : {ldelim}
@@ -45,6 +48,7 @@
       "img.src" : "{g->url href="modules/core/data/module-inactive.gif"}",
       "img.alt" : "{g->text text="Status: Inactive (Configuration Required)"}",
       "actions" : {ldelim} "configure" : 1, "uninstall" : 1 {rdelim},
+      "callback": "copyVersionToInstalledVersion",
       "message" : {ldelim} "type" : "giWarning", "text" : "{g->text text="__PLUGIN__ needs configuration"}" {rdelim}
     {rdelim}
   {rdelim};
@@ -53,7 +57,7 @@
 {literal}
   var contexts = {"module": {}, "theme": {}};
   var allActions = ["install", "configure", "upgrade", "activate", "deactivate", "uninstall"];
-  function updatePluginState(pluginType, pluginId, state, noAlertMessage) {
+  function updatePluginState(pluginType, pluginId, state, visualChanges) {
     var pluginKey = pluginType + "-" + pluginId;
     icon = $("plugin-icon-" + pluginKey);
     icon.src = stateData[state]['img.src'];
@@ -73,9 +77,25 @@
       }
     }
 
-    if (!noAlertMessage && stateData[state]['message']) {
+    if (visualChanges && stateData[state]['message']) {
       addMessage(pluginType, pluginId, stateData[state]['message']['text'], stateData[state]['message']['type']);
+
+      if (stateData[state]['callback']) {
+	callback = stateData[state]['callback'] + '("' + pluginType + '", "' + pluginId + '")';
+	eval(callback);
+      }
     }
+  }
+
+  function copyVersionToInstalledVersion(pluginType, pluginId) {
+    versionEl = $("plugin-" + pluginType + "-" + pluginId + "-version");
+    installedVersionEl = $("plugin-" + pluginType + "-" + pluginId + "-installedVersion");
+    installedVersionEl.innerHTML = versionEl.innerHTML;
+  }
+
+  function eraseInstalledVersion(pluginType, pluginId) {
+    installedVersionEl = $("plugin-" + pluginType + "-" + pluginId + "-installedVersion");
+    installedVersionEl.innerHTML = '';
   }
 
   function setPluginBusyStatus(pluginType, pluginId, makeBusy) {
@@ -105,7 +125,7 @@
 	for (var stateChangePluginType in result['states']) {
           for (var stateChangePluginId in result['states'][stateChangePluginType]) {
             updatePluginState(stateChangePluginType, stateChangePluginId,
-	                      result['states'][stateChangePluginType][stateChangePluginId], false);
+	                      result['states'][stateChangePluginType][stateChangePluginId], true);
 	  }
         }
       } else if (result['status'] == 'redirect') {
@@ -126,7 +146,7 @@
   }
 
   var STATUS_BOX_ID = "gbPluginStatusUpdates";
-  addMessage = function(pluginType, pluginId, messageText, messageType) {
+  function addMessage(pluginType, pluginId, messageText, messageType) {
     var pluginStatus = document.createElement("div");
     var detailsId = "plugin-status-details-" + pluginType + "-" + pluginId;
     if ($(detailsId)) {
@@ -152,7 +172,7 @@
     setTimeout("removeMessage('" + pluginStatus.id + "')", 3000);
   }
 
-  removeMessage = function(pluginStatusId) {
+  function removeMessage(pluginStatusId) {
     var containerEl = $(STATUS_BOX_ID);
     var statusMessage = $(pluginStatusId);
     if (statusMessage != null) {
@@ -164,7 +184,7 @@
     }
   }
 
-  updateStatusPosition = function() {
+  function updateStatusPosition() {
     var containerEl = $(STATUS_BOX_ID);
     containerEl.style.top = document.getElementsByTagName("html")[0].scrollTop + "px";
   }
@@ -244,11 +264,11 @@
 	  {$plugin.name}
 	</td>
 
-	<td align="center">
+	<td id="plugin-{$plugin.type}-{$plugin.id}-version" align="center">
 	  {$plugin.version}
 	</td>
 
-	<td align="center">
+	<td id="plugin-{$plugin.type}-{$plugin.id}-installedVersion" align="center">
 	  {$plugin.installedVersion}
 	</td>
 
@@ -276,38 +296,38 @@
           {if ($plugin.type == 'module' && $plugin.id == 'core') || $plugin.state == 'incompatible' || ($plugin.type == 'theme' && $plugin.id == $AdminPlugins.defaultTheme)}
 	    &nbsp;
 	  {else}
-            <span id="action-install-{$plugin.type}-{$plugin.id}">
+            <span id="action-install-{$plugin.type}-{$plugin.id}" style="display: none">
               <a style="cursor: pointer" onclick="performPluginAction('{$plugin.type}', '{$plugin.id}', '{g->url arg1="view=core.PluginCallback" arg2="pluginId=`$plugin.id`" arg3="pluginType=`$plugin.type`" arg4="command=install"}')">
                 {g->text text="install"}
               </a>
             </span>
-            <span id="action-upgrade-{$plugin.type}-{$plugin.id}">
+            <span id="action-upgrade-{$plugin.type}-{$plugin.id}" style="display: none">
               <a style="cursor: pointer" onclick="performPluginAction('{$plugin.type}', '{$plugin.id}', '{g->url arg1="view=core.PluginCallback" arg2="pluginId=`$plugin.id`" arg3="pluginType=`$plugin.type`" arg4="command=upgrade"}')">
                 {g->text text="upgrade"}
               </a>
             </span>
-            <span id="action-configure-{$plugin.type}-{$plugin.id}">
+            <span id="action-configure-{$plugin.type}-{$plugin.id}" style="display: none">
               <a style="cursor: pointer" onclick="performPluginAction('{$plugin.type}', '{$plugin.id}', '{g->url arg1="view=core.PluginCallback" arg2="pluginId=`$plugin.id`" arg3="pluginType=`$plugin.type`" arg4="command=configure"}')">
                 {g->text text="configure"}
               </a> |
             </span>
-            <span id="action-activate-{$plugin.type}-{$plugin.id}">
+            <span id="action-activate-{$plugin.type}-{$plugin.id}" style="display: none">
               <a style="cursor: pointer" onclick="performPluginAction('{$plugin.type}', '{$plugin.id}', '{g->url arg1="view=core.PluginCallback" arg2="pluginId=`$plugin.id`" arg3="pluginType=`$plugin.type`" arg4="command=activate"}')">
                 {g->text text="activate"}
               </a> |
             </span>
-            <span id="action-deactivate-{$plugin.type}-{$plugin.id}">
+            <span id="action-deactivate-{$plugin.type}-{$plugin.id}" style="display: none">
               <a style="cursor: pointer" onclick="performPluginAction('{$plugin.type}', '{$plugin.id}', '{g->url arg1="view=core.PluginCallback" arg2="pluginId=`$plugin.id`" arg3="pluginType=`$plugin.type`" arg4="command=deactivate"}')">
                 {g->text text="deactivate"}
               </a> |
             </span>
-            <span id="action-uninstall-{$plugin.type}-{$plugin.id}">
+            <span id="action-uninstall-{$plugin.type}-{$plugin.id}" style="display: none">
               <a style="cursor: pointer" onclick="performPluginAction('{$plugin.type}', '{$plugin.id}', '{g->url arg1="view=core.PluginCallback" arg2="pluginId=`$plugin.id`" arg3="pluginType=`$plugin.type`" arg4="command=uninstall"}')">
                 {g->text text="uninstall"}
               </a>
             </span>
 	  {/if}
-          <script type="text/javascript"> updatePluginState('{$plugin.type}', '{$plugin.id}', '{$plugin.state}', true); </script>
+          <script type="text/javascript"> updatePluginState('{$plugin.type}', '{$plugin.id}', '{$plugin.state}', false); </script>
 	</td>
       </tr>
     {/foreach}
