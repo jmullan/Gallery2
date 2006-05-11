@@ -1116,13 +1116,24 @@ class ConfirmImportController extends GalleryController {
 		    if ($importComments && isset($importAlbumItem->comments) &&
 			    count($importAlbumItem->comments) > 0) {
 			foreach ($importAlbumItem->comments as $importCommentId => $importComment) {
+			    /* Default the comment owner to the guest user. */
+			    $commenterId = $guestUserId;
+			    /* Try to set the correct comment owner. */
 			    if (strcmp($importComment->UID, 'everybody')) {
-				$validCommentUid = Gallery1DataParser::isValidUid(
-					$albumsPath, $album['owner']);
+			    	/* It is not the guest user. Get the corresponding G2 userId */
+			    	$validCommentUid = Gallery1DataParser::isValidUid(
+			    		$albumsPath, $importComment->UID);
+			    	$g1CommenterId = $importComment->UID;
+			    	if (!$validCommentUid){	
+			    	    /* Fallback to the album owner. */
+				    $validCommentUid = Gallery1DataParser::isValidUid(
+				            $albumsPath, $album['owner']);
+				    $g1CommenterId = $album['owner'];
+			    	}
 				if ($validCommentUid){
 				    list ($ret, $commentG1User) =
 					Gallery1DataParser::getUserFieldsByUid(
-						$albumsPath, $album['owner']);
+						$albumsPath, $g1CommenterId);
 				    if ($ret) {
 					GalleryCoreApi::releaseLocks($importLockIds);
 					return $ret;
@@ -1135,15 +1146,11 @@ class ConfirmImportController extends GalleryController {
 					if (!($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 					    GalleryCoreApi::releaseLocks($importLockIds);
 					    return $ret;
-					} else {
-					    $commenterId = $guestUserId;
 					}
 				    } else {
-					$commenterId = $commentG2User->getId();
+				        $commenterId = $commentG2User->getId();
 				    }
 				}
-			    } else {
-				$commenterId = $guestUserId;
 			    }
 
 			    /* Add the comment */
@@ -1169,6 +1176,11 @@ class ConfirmImportController extends GalleryController {
 			    $comment->setHost(empty($importComment->IPNumber) ?
 				    'unknown' : $importComment->IPNumber);
 			    if ($commenterId == $guestUserId) {
+			    	/* 
+			    	 * We do not have a name field for comments in G2 yet. 
+			    	 * We just copy the commenter name from G1 into the comment 
+			    	 * subject field of G2.
+			    	 */
 				$comment->setSubject(
 					GalleryCoreApi::convertToUtf8($importComment->name,
 					    $sourceEncoding));

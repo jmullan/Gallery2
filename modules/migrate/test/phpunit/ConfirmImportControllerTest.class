@@ -86,6 +86,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
+	$this->guestUserId = (int)$this->guestUserId;
 
 	$userName = 'phpunitfoo001';
 	/* Go ahead and create the user instance */
@@ -243,21 +244,23 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core.ProgressBar'),
 				  'status' => array(),
 				  'error' => array()),
-			    $results);
+			    $results,
+			    'Progress bar results');
 
-	$this->assertEquals(1, $mockAdapter->getCallbackCount());
+	$this->assertEquals(1, $mockAdapter->getCallbackCount(), 'Callback count');
 	$ret = $mockAdapter->runCallbacks();
 	if ($ret) {
 	    return array($ret, null);
 	}
 
 	if (is_array($expectedProgressBarDump)) {
-	    $this->assertEquals($expectedProgressBarDump, $mockAdapter->getProgressBarDump());
+	    $this->assertEquals($expectedProgressBarDump, $mockAdapter->getProgressBarDump(),
+	    	'expected progress bar dump');
 	} else {
 	    $pattern = '/^' . $expectedProgressBarDump . '$/';
 	    $dump = join(' ', $mockAdapter->getProgressBarDump());
 	    $this->assert(preg_match($pattern, $dump),
-			  "Dump [$dump] did not match pattern [$pattern]");
+			  "Progress Bar Dump [$dump] did not match pattern [$pattern]");
 	}
 
 	$session =& $gallery->getSession();
@@ -371,6 +374,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 			    $results);
     }
 
+    /* Import an album with comments and a user. */
     function testImportAlbumSuccessful() {
 	$slash = $this->_slash;
 	GalleryUtilities::putRequestVariable('albumsPath',
@@ -383,6 +387,8 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[set][title]', 'caption');
 	GalleryUtilities::putRequestVariable('form[set][summary]', 'blank');
 	GalleryUtilities::putRequestVariable('form[set][description]', 'filename');
+	/* The "phpunit_foobar" user (comment owner). */
+	GalleryUtilities::putRequestVariable('form[migrateUser][1057837154_228147420]', 1);
 
 	list ($ret, $test) = GalleryCoreApi::newFactoryInstance('CustomFieldInterface_1_0');
 	if ($ret) {
@@ -399,7 +405,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	}
 
 	list ($ret, $status) = $this->_runBackgroundTask(
-	    '1 reset [\d \.]* reset ' .
+	    '0 1 reset [\d \.]* reset ' .
 	    'complete:view=core.SiteAdmin,subView=migrate.ImportResults,statusId=STATUSID');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -409,7 +415,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('album03', 'album02'),
 			    array_keys($status['albumImportSuccess']));
 	$this->assertEquals(array(), $status['userImportFailure']);
-	$this->assertEquals(array(), $status['userImportSuccess']);
+	$this->assertEquals(array('phpunit_foobar' => 1), $status['userImportSuccess']);
 	$this->assertEquals(array(), $status['albumImportFailure']);
 	$testAlbumId = $status['albumImportSuccess']['album03'];
 
@@ -740,10 +746,10 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	    if ($ret) {
 		return $this->failWithStatus($ret);
 	    }
-	    $this->assertEquals(1, count($comments), 'number of comments');
+	    $this->assertEquals(2, count($comments), 'number of comments');
 	    if (!empty($comments)) {
 		$this->assertEquals(array('209.98.212.219',
-					  "Voil\xc3\xa0 du texte",
+					  "",
 					  "contenant des caract\xc3\xa8res accentu\xc3\xa9s.",
 					  1088916185
 					  ),
@@ -753,6 +759,32 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 					  $comments[0]->getDate()
 					 )
 				    );
+		/* Get the username of the commenter */
+	    	list ($ret, $commenterUser) = 
+	    		GalleryCoreApi::loadEntitiesById($comments[0]->getCommenterId());
+		if ($ret) {
+		    return $this->failWithStatus($ret);
+		}
+		$this->assertEquals('phpunit_foobar', $commenterUser->getUserName(), 
+			'commenter name');
+			
+		/* 
+		 * The second comment was posted by a guest. We copy the commenter name from 
+		 * the G1 comment object into the subject field of the G2 comment in this case.
+		 */
+		 $this->assertEquals(array('209.98.212.218',
+					  "Voil\xc3\xa0 du texte",
+					  "foo bar baz.",
+					  1088916186
+					  ),
+				    array($comments[1]->getHost(),
+					  $comments[1]->getSubject(),
+					  $comments[1]->getComment(),
+					  $comments[1]->getDate()
+					 )
+				    );
+		$this->assertEquals($this->guestUserId, $comments[1]->getCommenterId(), 
+			'comment 2 owner id');
 	    }
 	}
 	/*
@@ -1218,7 +1250,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assertEquals($this->guestUserId +0,
+	$this->assertEquals($this->guestUserId,
 			    $testItem->getownerId(),
 			    'item 3');
 	list($ret, $testItem) = GalleryCoreApi::loadEntitiesById($ids[4]);
@@ -1232,7 +1264,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assertEquals($this->guestUserId +0,
+	$this->assertEquals($this->guestUserId,
 			    $testItem->getownerId(),
 			    'item 5');
 	list($ret, $testItem) = GalleryCoreApi::loadEntitiesById($ids[6]);
