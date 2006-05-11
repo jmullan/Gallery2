@@ -1699,6 +1699,8 @@ class ItemTest extends GalleryTestCase {
 
 	$this->assert(!empty($thumbTable[$newItem->getId()]), 'missing thumbnail');
 	$operation = $thumbTable[$newItem->getId()]->getDerivativeOperations();
+	$this->assert(($operation == 'thumbnail|[0]' ||
+		       $operation == 'thumbnail|[1]'), 'Wrong operation');
 	$this->assertEquals('thumbnail|[1]', $operation, 'Wrong operation');
     }
 
