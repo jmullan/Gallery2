@@ -267,7 +267,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	GalleryUtilities::putRequestVariable('form[action][resize]', 1);
 	GalleryUtilities::putRequestVariable('form[resize][width]', 200);
 	GalleryUtilities::putRequestVariable('form[resize][height]', 'scooby doo');
-
+	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item->getSerialNumber());
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest($this->_item, $this->_derivative[0]);
@@ -304,6 +304,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
     function testRotateCounterClockwise() {
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][rotate][counterClockwise]', 1);
+	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item->getSerialNumber());
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest($this->_item, $this->_derivative[0]);
@@ -326,6 +327,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
     function testRotateFlip() {
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][rotate][flip]', 1);
+	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item->getSerialNumber());
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest($this->_item, $this->_derivative[0]);
@@ -368,6 +370,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][rotate][flip]', 1);
+	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item->getSerialNumber());
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest($this->_item, $this->_derivative[0]);
@@ -394,6 +397,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
     function testRevertToOriginal() {
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][revertToOriginal]', 1);
+	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item->getSerialNumber());
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest($this->_item, $this->_derivative[0]);
@@ -450,6 +454,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][revertToOriginal]', 1);
+	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item->getSerialNumber());
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest($this->_item, $this->_derivative[0]);

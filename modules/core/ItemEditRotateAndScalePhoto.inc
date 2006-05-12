@@ -17,7 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 /**
  * @version $Revision$ $Date$
  * @package GalleryCore
@@ -38,8 +37,6 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
      * @see ItemEditPlugin::handleRequest
      */
     function handleRequest($form, &$item, &$preferred) {
-	global $gallery;
-
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
 	    return array($ret, null, null, null);
@@ -131,26 +128,20 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 		$status = $module->translate('Reverted rotate and scale changes successfully');
 	    }
 	}
-	
-	/* Force us to preserve original if we're a link */
+
 	$preserveOriginal = isset($form['preserveOriginal']);
-	if (!$preserveOriginal && ($isLinked || $isLinkedTo)) {
-	    $preserveOriginal = true;
-	}
-	
 	$serialNumber = $form['serialNumber'];
 
 	/*
 	 * If we have a command, then apply it to the correct object.
 	 */
 	if (!empty($operation)) {
-	    $ret = GalleryCoreApi::applyToolkitOperation($operation, $args, $preserveOriginal, 
-								$item, $preferred, $serialNumber);
-	
+	    $ret = GalleryCoreApi::applyToolkitOperation($operation, $args, $preserveOriginal,
+							 $item, $preferred, $serialNumber);
 	    if ($ret) {
 		return array($ret, null, null, null);
 	    }
-	
+
 	    /* Set our status message */
 	    switch ($operation) {
 	    case 'rotate':
@@ -170,8 +161,6 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
      * @see ItemEditPlugin::loadTemplate
      */
     function loadTemplate(&$template, &$form, $item, $thumbnail) {
-	global $gallery;
-
 	$ItemEditRotateAndScalePhoto = array();
 
 	list ($ret, $ItemEditRotateAndScalePhoto['isAdmin']) =

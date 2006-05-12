@@ -1150,8 +1150,8 @@ class GalleryCoreApi {
      * @return object GalleryStatus a status code
      * @static
      */
-    function applyToolkitOperation($operation, $args, $preserveOriginal, $item, $preferred=null, 
-								    $serialNumber=null) {
+    function applyToolkitOperation($operation, $args, $preserveOriginal,
+				   &$item, $preferred=null, $serialNumber=null) {
 	GalleryCoreApi::requireOnce(
 	    'modules/core/classes/helpers/GalleryDerivativeHelper_advanced.class');
 	return GalleryDerivativeHelper_advanced::applyToolkitOperation($operation,

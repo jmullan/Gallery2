@@ -197,11 +197,11 @@ class GalleryDerivativeHelper_advanced {
      * @return object GalleryStatus a status code
      * @static
      */
-    function applyToolkitOperation($operation, $args, $preserveOriginal, &$item,
-						$preferred=null, $serialNumber=null) {
+    function applyToolkitOperation($operation, $args, $preserveOriginal,
+				   &$item, $preferred=null, $serialNumber=null) {
 	if ($item->isLinked()) {
-		$isLinked = true;
-		$isLinkedTo = false;
+	    $isLinked = true;
+	    $isLinkedTo = false;
 	} else {
 	    list ($ret, $linkedIds) = GalleryCoreApi::fetchEntitiesLinkedTo($item->getId());
 	    if ($ret) {
@@ -211,9 +211,12 @@ class GalleryDerivativeHelper_advanced {
 	    $isLinkedTo = !empty($linkedIds);
 	}
 
-	/* If we don't have a preferred and we're preserving, then create one */
-	$lockIds = array();
+	/* Force us to preserve original if we're a link */
+	if (!$preserveOriginal && ($isLinked || $isLinkedTo)) {
+	    $preserveOriginal = true;
+	}
 
+	$lockIds = array();
 	if (empty($preferred) && !$preserveOriginal) {
 	    /*
 	     * We have no preferred photo, and we're not preserving the
@@ -247,7 +250,7 @@ class GalleryDerivativeHelper_advanced {
 		return $ret;
 	    }
 	    $item->setMimeType($outputMimeType);
-	
+
 	    /* Get the item to rescan its data object */
 	    $ret = $item->rescan();
 	    if ($ret) {
@@ -271,7 +274,7 @@ class GalleryDerivativeHelper_advanced {
 		if (isset($serialNumber)) {
 		    $item->setSerialNumber($serialNumber);
 		}
-		
+
 		$ret = $item->save();
 		if ($ret) {
 		    GalleryCoreApi::releaseLocks($lockId);
@@ -292,7 +295,7 @@ class GalleryDerivativeHelper_advanced {
 	    /* If we have no preferred, then create one */
 	    if (empty($preferred)) {
 		list ($ret, $preferred) = GalleryCoreApi::newFactoryInstanceByHint(
-		'GalleryDerivative', $item->getEntityType());
+			'GalleryDerivative', $item->getEntityType());
 		if ($ret) {
 		    return $ret;
 		}
@@ -349,7 +352,7 @@ class GalleryDerivativeHelper_advanced {
 	     */
 	    if ($preferred->hasNoOperations()) {
 		$ret = GalleryCoreApi::remapSourceIds(
-		$preferred->getId(), $preferred->getDerivativeSourceId());
+			$preferred->getId(), $preferred->getDerivativeSourceId());
 		if ($ret) {
 		    return $ret;
 		}
@@ -376,7 +379,7 @@ class GalleryDerivativeHelper_advanced {
 
 	return null;
     }
-    
+
     /**
      * Find all derivatives attached to one source and switch them to another one
      *
