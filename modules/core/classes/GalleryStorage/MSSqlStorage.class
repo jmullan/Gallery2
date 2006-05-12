@@ -92,11 +92,11 @@ class MSSqlStorage extends GalleryStorage {
 	    break;
 
 	case 'RAND':
-	    $sql = sprintf('RANDOM(%s)', empty($args) ? '' : $args[0]);
+	    $sql = sprintf('RAND(%s)', empty($args) ? '' : $args[0]);
 	    break;
 
 	case 'LIMIT':
-	    $sql = $args[1] . ' TOP ' . $args[0];
+	    $sql = preg_replace('/^(\s*SELECT)(\s)/i', '$1 TOP ' . $args[0] . '$2', $args[1]);
 	    break;
 
 	case 'CASE':

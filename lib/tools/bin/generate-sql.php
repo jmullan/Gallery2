@@ -1195,9 +1195,9 @@ class MSSqlGenerator extends BaseGenerator {
 		'STRING-MEDIUM' => 'NVARCHAR(128)',
 		'STRING-LARGE' => 'NVARCHAR(255)',
 		'TEXT-SMALL' => 'NVARCHAR(4000)',
-		'TEXT-' => 'NVARCHAR(4000)',
-		'TEXT-MEDIUM' => 'NVARCHAR(4000)',
-		'TEXT-LARGE' => 'NVARCHAR(4000)',
+		'TEXT-' => 'NVARCHAR(MAX)',
+		'TEXT-MEDIUM' => 'NVARCHAR(MAX)',
+		'TEXT-LARGE' => 'NVARCHAR(MAX)',
 		'BOOLEAN-' => 'BIT',
 		'BOOLEAN-MEDIUM' => 'BIT',
 		'TIMESTAMP-' => 'datetime'));
