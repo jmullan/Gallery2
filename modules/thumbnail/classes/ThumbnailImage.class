@@ -317,6 +317,13 @@ class ThumbnailImage extends GalleryChildEntity {
     }
 
     /**
+     * So ThumbnailImage is displayable with {g->image}
+     */
+    function getRenderer() {
+	return null;
+    }
+
+    /**
      * @see GalleryEntity::getClassName()
      */
     function getClassName() {

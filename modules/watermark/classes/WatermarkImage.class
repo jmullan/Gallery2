@@ -304,6 +304,8 @@ class WatermarkImage extends GalleryEntity {
 	return null;
     }
 
+    function save($postEvent=true) { return parent::save($postEvent, 0); }
+
     /**
      * Delete this GalleryEntity
      *
@@ -396,6 +398,13 @@ class WatermarkImage extends GalleryEntity {
 	default:
 	    return null;
 	}
+    }
+
+    /**
+     * So WatermarkImage is displayable with {g->image}
+     */
+    function getRenderer() {
+	return null;
     }
 
     /**
