@@ -473,6 +473,8 @@ class ItemAttributesTest extends GalleryTestCase {
     }
 
     function testFetchParentSequence() {
+	global $gallery;
+
 	list($ret, $album) = $this->_createRandomAlbum($this->_childItems[1]->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -497,6 +499,15 @@ class ItemAttributesTest extends GalleryTestCase {
 				  $album->getId()),
 			    $parentSequence,
 			    'item parent sequence');
+
+	/* Set virtual root */
+	$gallery->setConfig('breadcrumbRootId', $this->_childItems[1]->getId());
+
+	list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($item->getId());
+	$this->assertEquals(array($this->_childItems[1]->getId(),
+				  $album->getId()),
+			    $parentSequence,
+			    'virtual root parent sequence');
     }
 
     function testFetchItemizedDescendentCounts() {

@@ -159,8 +159,7 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 
     function testNotForAnonymous() {
 	global $gallery;
-	list ($ret, $anonymousUserId) = GalleryCoreApi::getPluginParameter(
-	    'module', 'core', 'id.anonymousUser');
+	list ($ret, $anonymousUserId) = GalleryCoreApi::getAnonymousUserId();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -169,6 +168,14 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	$gallery->setActiveUser($anonymousUser);
+
+	$this->handleRequest(ERROR_PERMISSION_DENIED);
+    }
+
+    function testNotForAlternateAnonymous() {
+	global $gallery;
+	$gallery->setConfig('anonymousUserId', $this->_userWithAlbum->getId());
+	GalleryUtilities::putRequestVariable('userId', $this->_userWithAlbum->getId());
 
 	$this->handleRequest(ERROR_PERMISSION_DENIED);
     }

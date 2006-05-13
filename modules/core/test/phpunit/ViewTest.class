@@ -72,6 +72,8 @@ class ViewTest extends GalleryTestCase {
     }
 
     function testGetItem() {
+	global $gallery;
+
 	list ($ret, $view) = GalleryView::loadView('core.ShowItemError');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -113,6 +115,16 @@ class ViewTest extends GalleryTestCase {
 	}
 	$this->assert($wasSpecified, 'ShowItem specified');
 	$this->assertEquals($this->_getRootId(), $item->getId(), 'ShowItem root album by default');
+
+	/* Override default album */
+	$gallery->setConfig('defaultAlbumId', $album->getId());
+	GalleryUtilities::removeRequestVariable('itemId');
+
+	list ($ret, $item) = $view->_getItem();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals($album->getId(), $item->getId(), 'Alternate default album');
     }
 }
 
