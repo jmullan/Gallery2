@@ -302,6 +302,34 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 			    $results);
     }
 
+    function testValidationAlternateGuest() {
+	$ret = $this->_markPluginParametersForCleanup('module', 'comment');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'comment', 'validation.level', 'HIGH');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->_controller->_pluginInstances = array(new AddCommentTestValidation());
+
+	global $gallery;
+	$gallery->setConfig('anonymousUserId', $gallery->getActiveUserId());
+
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	GalleryUtilities::putRequestVariable('form[action][add]', 1);
+	GalleryUtilities::putRequestVariable('form[subject]', 'test');
+	GalleryUtilities::putRequestVariable('form[comment]', 'test');
+
+	/* Perform the request and verify validation plugin got error */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'comment.AddComment'),
+				  'status' => array(),
+				  'error' => array('form[error][AddCommentTestValidation]')),
+			    $results);
+    }
+
     function testValidationPluginOff() {
 	$ret = $this->_markPluginParametersForCleanup('module', 'comment');
 	if ($ret) {

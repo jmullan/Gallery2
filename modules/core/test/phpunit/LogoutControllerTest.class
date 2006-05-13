@@ -39,15 +39,19 @@ class LogoutControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	parent::setUp();
 
-	/* Bend the rules */
+	list ($ret, $this->_guestId) = GalleryCoreApi::getAnonymousUserId();
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
+
 	$this->_saveSession = $gallery->_session;
 	$gallery->_session = new LogoutTestSession();
     }
 
     function tearDown() {
-	global $gallery;
-
 	/* Restore our session */
+	global $gallery;
 	$gallery->_session = $this->_saveSession;
 
 	parent::tearDown();
@@ -61,7 +65,21 @@ class LogoutControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
+	$this->assertEquals(1, $gallery->_session->getResetCallCount(), 'reset');
+	$this->assertEquals((int)$this->_guestId, $gallery->_session->getUserId(), 'userId');
+    }
+
+    function testLogoutAlternateGuest() {
+	global $gallery;
+	$gallery->setConfig('anonymousUserId', $userId = $gallery->getActiveUserId());
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.ShowItem'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
 	$this->assertEquals(1, $gallery->_session->getResetCallCount());
+	$this->assertEquals($userId, $gallery->_session->getUserId(), 'userId');
     }
 }
 

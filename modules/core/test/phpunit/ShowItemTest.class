@@ -118,6 +118,26 @@ class ShowItemTest extends GalleryTestCase {
 				      'return' => true)), $result);
     }
 
+    function testAlternateGuestNoPermission() {
+	global $gallery;
+	$gallery->setConfig('anonymousUserId', $gallery->getActiveUserId());
+
+	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	list ($ret, $result, $theme) = $this->_view->doLoadTemplate($this->_template);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(
+	    array('redirect' => array('view' => 'core.UserAdmin', 'subView' => 'core.UserLogin',
+				      'return' => true)), $result);
+    }
+
     function testUserNoPermission() {
 	/* Verify registered user is redirected to root album if no core.view permission */
 	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
@@ -134,6 +154,46 @@ class ShowItemTest extends GalleryTestCase {
 	$this->assertEquals(
 	    array('redirect' => array('view' => 'core.ShowItem', 'itemId' => $this->_getRootId())),
 	    $result);
+    }
+
+    function testNoPermissionAlternateRoot() {
+	global $gallery;
+	$gallery->setConfig('defaultAlbumId', 123);
+
+	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	list ($ret, $result, $theme) = $this->_view->doLoadTemplate($this->_template);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(
+	    array('redirect' => array('view' => 'core.ShowItem', 'itemId' => 123)),
+	    $result);
+    }
+
+    function testUserNoRootPermission() {
+	global $gallery;
+	$gallery->setConfig('defaultAlbumId', $this->_item->getId());
+
+	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	list ($ret, $result, $theme) = $this->_view->doLoadTemplate($this->_template);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(
+	    array('redirect' => array('view' => 'core.UserAdmin', 'subView' => 'core.UserLogin',
+				      'return' => true)), $result);
     }
 
     function testAlbumSourcePermission() {

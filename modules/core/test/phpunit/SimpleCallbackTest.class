@@ -109,6 +109,18 @@ class SimpleCallbackTest extends GalleryTestCase {
 	$this->assertEquals("", $results);
     }
 
+    function testLookupUsernameAlternateGuestUser() {
+	global $gallery;
+	$this->_createUser();
+	$this->_createUser();
+	$gallery->setConfig('anonymousUserId', $gallery->getActiveUserId());
+
+	GalleryUtilities::putRequestVariable('command', 'lookupUsername');
+	GalleryUtilities::putRequestVariable('prefix', $this->_tag);
+	$results = $this->_runCallback();
+	$this->assertEquals("", $results);
+    }
+
     function testLookupUsernameWithEntity() {
 	/* We expect user/group names in db to be entitized.. search for < should match &lt; */
 	$search = $this->_tag . '<t';

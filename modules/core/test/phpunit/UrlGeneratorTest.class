@@ -1498,6 +1498,35 @@ class UrlGeneratorTest extends GalleryTestCase {
 	
 	$gallery->_session = $backup;
     }
+
+    function testOmitDefaults() {
+	global $gallery;
+	$view = GALLERY_DEFAULT_VIEW;
+	list ($ret, $rootId) = GalleryCoreApi::getDefaultAlbumId();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Omit view parameter for default view */
+	$url = $this->_urlGenerator->generateUrl(
+		array('view' => $view, 'itemId' => 123),
+		array('forceSessionId' => false));
+	$this->assertEquals('phpunit_test.php?g2_itemId=123', $url);
+
+	/* Omit itemId parameter for default album with default view */
+	$url = $this->_urlGenerator->generateUrl(
+		array('view' => $view, 'itemId' => $rootId),
+		array('forceSessionId' => false));
+	$this->assertEquals('phpunit_test.php', $url);
+
+	$gallery->setConfig('defaultAlbumId', 123);
+	unset($this->_urlGenerator->_rootItemId);
+
+	$url = $this->_urlGenerator->generateUrl(
+		array('view' => $view, 'itemId' => 123),
+		array('forceSessionId' => false));
+	$this->assertEquals('phpunit_test.php', $url, 'alternate default album');
+    }
 }
 
 class UrlGeneratorTestPlatform extends GalleryPlatform {

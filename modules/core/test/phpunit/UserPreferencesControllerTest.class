@@ -331,7 +331,19 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals('test@email.com', $this->_user->getEmail());
 	$this->assertEquals('te', $this->_user->getLanguage());
     }
-    
+
+    function testGuestPreferences() {
+	global $gallery;
+	$gallery->setConfig('anonymousUserId', $this->_user->getId());
+
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[fullName]', 'full name');
+	GalleryUtilities::putRequestVariable('form[email]', 'email@test.me');
+	GalleryUtilities::putRequestVariable('form[currentPassword]', 'TestPassword');
+
+	$this->handleRequest(ERROR_PERMISSION_DENIED);
+    }
+
     function _addUserToAdminGroup() {
 	/* Make ourselves an admin */
 	list ($ret, $adminGroupId) =
