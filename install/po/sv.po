@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Installer 2.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-01-15 16:15+0100\n"
-"PO-Revision-Date: 2006-03-13 16:50+0100\n"
+"PO-Revision-Date: 2006-05-10 19:40+0100\n"
 "Last-Translator: Anders Lindquist <andersl@saaf.se>\n"
 "Language-Team: Swedish <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -94,9 +94,8 @@ msgstr "Databas Uppsättning"
 msgid "You must have the MySQL PHP module installed"
 msgstr "Du måste ha MySQL PHP modulen installerad"
 
-#, fuzzy
 msgid "You must have the MySQL Improved PHP module installed"
-msgstr "Du måste ha MySQL PHP modulen installerad"
+msgstr "Du måste ha den Förbättrade MySQL PHP modulen installerad"
 
 msgid "You must have the ibm_db2 PHP module installed"
 msgstr "Du måste ha ibm_db2 PHP modulen installerad"
@@ -107,9 +106,8 @@ msgstr "Du måste ha PostgreSQL PHP modulen installerad"
 msgid "You must have the Oracle OCI8 PHP module installed"
 msgstr "Du måste ha Oracle OCI8 PHP modulen installerad"
 
-#, fuzzy
 msgid "You must have the Component Object Model(COM) PHP module installed"
-msgstr "Du måste ha Oracle OCI8 PHP modulen installerad"
+msgstr "Du måste ha <i>Component Object Model(COM)</i> PHP modulen installerad"
 
 #, c-format
 msgid "You must specify a column prefix (we recommend %s)"
@@ -202,13 +200,11 @@ msgstr ""
 "Kunde inte ladda G2 API. Radera Gallery databasens tabeller och filerna i fillagerkatalogen "
 "manuellt."
 
-#, fuzzy
 msgid "MySQL (v3.23.34a and newer)"
-msgstr "MySQL med Transaktioner (v3.23.34a och nyare)"
+msgstr "MySQL (v3.23.34a och nyare)"
 
-#, fuzzy
 msgid "MySQL (versions before v3.23.34a)"
-msgstr "MySQL (alla versioner)"
+msgstr "MySQL (versioner före v3.23.34a)"
 
 msgid "PostgreSQL v7.x and newer"
 msgstr "PostgreSQL v7.x och nyare"
@@ -220,7 +216,7 @@ msgid "IBM DB2 (v8.2 and newer)"
 msgstr "IBM DB2 (v8.2 och nyare)"
 
 msgid "MSSQL (Experimental!)"
-msgstr ""
+msgstr "MSSQL (Experimentell!)"
 
 msgid "Unknown DB type or no known tables information."
 msgstr "Okänd DB typ eller okänd tabellinformation."
@@ -287,8 +283,9 @@ msgstr "Kan ej utföra databastransaktionen"
 msgid "Core module is only partially installed."
 msgstr "Kärnmodulen är bara delvis installerad."
 
-msgid "Install More Modules"
-msgstr "Installera Fler Moduler"
+#, fuzzy
+msgid "Install Plugins"
+msgstr "Installations Steg"
 
 msgid "Unable to initialize our Gallery session"
 msgstr "Kan ej initiera Gallerysessionen"
@@ -329,17 +326,16 @@ msgstr "Kontroll av Systemet"
 msgid "Performing system checks"
 msgstr "Utför kontroll av Systemet"
 
-#, fuzzy
 msgid "PHP version >= 4.3.0 or >= 5.0.4"
-msgstr "PHP version >= 4.1.0 or >= 5.0.4"
+msgstr "PHP version >= 4.3.0 or >= 5.0.4"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error: Gallery 2 requires PHP version 4.3.0 or newer or 5.0.4 or newer. You have PHP version "
 "%s installed. Contact your webserver administrator to request an upgrade, available at the %"
 "sPHP website%s."
 msgstr ""
-"Fel: Gallery 2 kräver PHP version 4.1.0 eller nyare alternativt 5.0.4 eller nyare. Du har "
+"Fel: Gallery 2 kräver PHP version 4.3.0 eller nyare alternativt 5.0.4 eller nyare. Du har "
 "PHP version %s installerad. Kontakta din webbadministratör och begär en upgradering, "
 "tillgänglig hos %sPHP webbsite%s."
 
@@ -862,9 +858,6 @@ msgstr ""
 "installeraren och addera några av extra modulerna så du får de funktioner du vill att din "
 "Gallery installation skall ha."
 
-msgid "Install Other Modules"
-msgstr "Installera Andra Moduler"
-
 msgid ""
 "The following modules can be automatically installed and activated for you.  You should "
 "install at least one of the graphics toolkits otherwise Gallery can't make thumbnails out of "
@@ -950,27 +943,25 @@ msgstr "Gallery: <strong>dinna bilder</strong> på <strong>din webbsida</strong>
 msgid "Missing files (%d)"
 msgstr "Saknade filer (%d)"
 
-#, fuzzy
 msgid ""
 "Note: You're running Gallery from SVN, so recently removed files may appear here.  It might "
 "be safe to ignore these."
 msgstr ""
-"OBS: du kör Gallery från CVS, så nyligen avlägsnade filer kan återfinnas här. Det är ingen "
+"OBS: du kör Gallery från SVN, så nyligen avlägsnade filer kan återfinnas här. Det är ingen "
 "fara att ta bort dem."
 
 #, c-format
 msgid "Modified files (%d)"
 msgstr "Modifierade filer (%d)"
 
-#, fuzzy
 msgid ""
 "Note: You're running Gallery from SVN, so some modified files are to be expected.  You can "
 "probably ignore these, but to be safe you should make sure that you do 'svn update' before "
 "continuing."
 msgstr ""
-"OBS: du kör Gallery från CVS, så modifierade filer kan förväntas dyka upp. Du kan troligen "
-"ignorera dem, men för att vara säker skall du kontrollera att du gör 'cvs update -Pd' innan "
-"du fortsätter."
+"OBS: du kör Gallery från SVN, så modifierade filer kan förväntas dyka upp. Du kan troligen "
+"ignorera dem, men för att vara säker skall du kontrollera att du gör 'svn update' innan du "
+"fortsätter."
 
 #, c-format
 msgid "Old files (%d)"
@@ -1312,9 +1303,8 @@ msgstr "Utför"
 msgid "Begin Installation&raquo;"
 msgstr "Börja Installationen&raquo;"
 
-#, fuzzy
-#~ msgid "You must have the MSSQL PHP module installed"
-#~ msgstr "Du måste ha MySQL PHP modulen installerad"
+#~ msgid "Install More Modules"
+#~ msgstr "Installera Fler Moduler"
 
-#~ msgid "PostgreSQL v6.x (not well tested)"
-#~ msgstr "PostgreSQL v6.x (inte så vältestad)"
+#~ msgid "Install Other Modules"
+#~ msgstr "Installera Andra Moduler"

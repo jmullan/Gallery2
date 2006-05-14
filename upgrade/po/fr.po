@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Upgrader 2.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-07-06 23:48+0200\n"
-"PO-Revision-Date: 2006-02-25 00:00+0100\n"
+"PO-Revision-Date: 2006-05-07 00:00+0100\n"
 "Last-Translator: Arnaud MOURONVAL <ArnaudMouronval@yahoo.com>\n"
 "Language-Team: French <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -57,17 +57,16 @@ msgstr "Terminer la mise à jour"
 msgid "System Checks"
 msgstr "Vérifications du système"
 
-#, fuzzy
 msgid "PHP version >= 4.3.0 or >= 5.0.4"
-msgstr "Version de PHP >= 4.1.0 ou >= 5.0.4"
+msgstr "Version de PHP >= 4.3.0 ou >= 5.0.4"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error: Gallery 2 requires PHP version 4.3.0 or newer or 5.0.4 or newer. You have PHP version "
 "%s installed. Contact your webserver administrator to request an upgrade, available at the %"
 "sPHP website%s."
 msgstr ""
-"Erreur&nbsp;: Gallery 2 nécessite PHP en version 4.1.0 ou ultérieure, ou 5.0.4 ou "
+"Erreur&nbsp;: Gallery 2 nécessite PHP en version 4.3.0 ou ultérieure, ou 5.0.4 ou "
 "ultérieure. La version de PHP installée est %s. Veuillez contacter votre administrateur "
 "système pour obtenir une mise à jour disponible sur le %ssite de PHP%s."
 
@@ -299,10 +298,8 @@ msgstr "Manifest manquant ou inaccessible."
 msgid "Upgrade Core"
 msgstr "Mise à jour du noyau"
 
-msgid "Unable to verify plugins"
-msgstr "Impossible de vérifier les plugins"
-
-msgid "Upgrade Modules"
+#, fuzzy
+msgid "Upgrade Plugins"
 msgstr "Mise à jour des modules"
 
 msgid "Unable to initialize Gallery session"
@@ -340,11 +337,27 @@ msgstr "Impossible d'obtenir la liste des modules"
 msgid "Unable to get the theme list"
 msgstr "Impossible d'obtenir la liste des thèmes"
 
+#, fuzzy, c-format
+msgid "Unable to query the %s module"
+msgstr "Impossible de mettre à jour le module %s"
+
 msgid "Other"
 msgstr "Autre"
 
+#, fuzzy, c-format
+msgid "Unable to query the %s theme"
+msgstr "Impossible de mettre à jour le thème %s"
+
 msgid "Themes"
 msgstr "Thèmes"
+
+#, fuzzy, c-format
+msgid "Unable to deactivate the %s theme"
+msgstr "Impossible de charger le thème %s"
+
+#, fuzzy, c-format
+msgid "Unable to deactivate the %s module"
+msgstr "Impossible de charger le module %s"
 
 msgid "Welcome"
 msgstr "Bienvenue"
@@ -605,30 +618,6 @@ msgstr ""
 "les fichiers de code de Gallery 2 par ceux de la version actuellement installée ou d'une "
 "version plus récente."
 
-msgid "the Gallery website"
-msgstr "le site de Gallery"
-
-#, c-format
-msgid ""
-"Your upgrade cannot begin because some of your active modules/themes are incompatible or "
-"missing.  You must either locate more recent versions of these modules or themes, or revert "
-"to your original version of Gallery.  No changes have been made so it's safe to revert.  If "
-"you have many incompatible modules listed below, it's possible that you downloaded a smaller "
-"distribution of Gallery than what you originally installed.  You can download a larger "
-"distribution from %s."
-msgstr ""
-"La mise à jour ne peut pas commencer car certains de vos thèmes et modules actifs ne sont "
-"pas compatibles ou absents. Vous devez soit mettre à jour ces modules et thèmes, soit "
-"revenir à une installation originale de Gallery. Aucune modification n'a été apportée, il "
-"est donc tout à fait possible de revenir en arrière. Si vous avez de nombreux modules "
-"incompatibles listés ci-dessous, il est probable que vous ayez téléchargé une distribution "
-"de Gallery plus restreinte que celle que vous utilisiez jusqu'à présent. Pour télécharger "
-"une distribution plus complète de Gallery, veuillez vous rendre sur %s."
-
-#, c-format
-msgid "Download replacement modules from %s"
-msgstr "Télécharger les modules de remplacement pour %s"
-
 msgid ""
 "Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  "
 "If you fail to make a backup and something goes wrong, there is a strong possibility that we "
@@ -683,9 +672,6 @@ msgstr ""
 msgid "Your Gallery Core Module is up to date!"
 msgstr "Le noyau de Gallery est à jour&nbsp;!"
 
-msgid "Upgrade Other Modules"
-msgstr "Mise à jour des autres modules"
-
 msgid ""
 "The following modules can be automatically upgraded for you.  If you choose not to upgrade "
 "them now, you may experience problems with your Gallery.   You can always upgrade or "
@@ -698,18 +684,14 @@ msgstr ""
 "section d'administration de Gallery, ou revenir plus tard sur cette page. Ainsi, aucune "
 "décision n'est définitive."
 
-msgid "Missing Code"
-msgstr "Code manquant"
+msgid "Deactivated Plugins"
+msgstr ""
 
 msgid ""
-"The code for some plugins that were previously active can no longer be found. You must "
-"restore code for these plugins before this upgrade can continue. Code for the plugins must "
-"be the same version or newer than what was installed before."
+"The following plugins were active, but they are missing or incompatible with your current "
+"version of Gallery.  They have been deactivated.  Install the latest version of these "
+"plugins to reactivate them."
 msgstr ""
-"Le code de certains modules qui étaient actifs auparavant ne peut plus être trouvé. Vous "
-"devez restaurer le code de ces modules avant que cette mise à jour puisse continuer. Le code "
-"des modules doit être dans la même version ou dans une version plus récente de celle qui "
-"était installée précédemment."
 
 msgid "Module"
 msgstr "Module"
@@ -728,6 +710,9 @@ msgstr "Nouvelle version"
 
 msgid "Description"
 msgstr "Description"
+
+msgid "Incompatible with this version of Gallery"
+msgstr ""
 
 msgid "(un)check all"
 msgstr "(dé)cocher tous"
@@ -775,3 +760,44 @@ msgstr "Choix de la langue&nbsp;:"
 
 msgid "Go"
 msgstr "Go"
+
+#~ msgid "Unable to verify plugins"
+#~ msgstr "Impossible de vérifier les plugins"
+
+#~ msgid "the Gallery website"
+#~ msgstr "le site de Gallery"
+
+#~ msgid ""
+#~ "Your upgrade cannot begin because some of your active modules/themes are incompatible or "
+#~ "missing.  You must either locate more recent versions of these modules or themes, or "
+#~ "revert to your original version of Gallery.  No changes have been made so it's safe to "
+#~ "revert.  If you have many incompatible modules listed below, it's possible that you "
+#~ "downloaded a smaller distribution of Gallery than what you originally installed.  You can "
+#~ "download a larger distribution from %s."
+#~ msgstr ""
+#~ "La mise à jour ne peut pas commencer car certains de vos thèmes et modules actifs ne sont "
+#~ "pas compatibles ou absents. Vous devez soit mettre à jour ces modules et thèmes, soit "
+#~ "revenir à une installation originale de Gallery. Aucune modification n'a été apportée, il "
+#~ "est donc tout à fait possible de revenir en arrière. Si vous avez de nombreux modules "
+#~ "incompatibles listés ci-dessous, il est probable que vous ayez téléchargé une "
+#~ "distribution de Gallery plus restreinte que celle que vous utilisiez jusqu'à présent. "
+#~ "Pour télécharger une distribution plus complète de Gallery, veuillez vous rendre sur %s."
+
+#~ msgid "Download replacement modules from %s"
+#~ msgstr "Télécharger les modules de remplacement pour %s"
+
+#~ msgid "Upgrade Other Modules"
+#~ msgstr "Mise à jour des autres modules"
+
+#~ msgid "Missing Code"
+#~ msgstr "Code manquant"
+
+#~ msgid ""
+#~ "The code for some plugins that were previously active can no longer be found. You must "
+#~ "restore code for these plugins before this upgrade can continue. Code for the plugins "
+#~ "must be the same version or newer than what was installed before."
+#~ msgstr ""
+#~ "Le code de certains modules qui étaient actifs auparavant ne peut plus être trouvé. Vous "
+#~ "devez restaurer le code de ces modules avant que cette mise à jour puisse continuer. Le "
+#~ "code des modules doit être dans la même version ou dans une version plus récente de celle "
+#~ "qui était installée précédemment."

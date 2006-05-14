@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Upgrader 2.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-01-22 11:57+0100\n"
-"PO-Revision-Date: 2006-04-29 16:40+0200\n"
+"PO-Revision-Date: 2006-05-10 19:40+0200\n"
 "Last-Translator: Anders Lindquist <andersl@saaf.se>\n"
 "Language-Team: Swedish <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -289,10 +289,8 @@ msgstr "Manifest saknas eller är oåtkommlig."
 msgid "Upgrade Core"
 msgstr "Uppgradera Kärnan"
 
-msgid "Unable to verify plugins"
-msgstr "Kan ej verifiera pluginerna"
-
-msgid "Upgrade Modules"
+#, fuzzy
+msgid "Upgrade Plugins"
 msgstr "Uppgradera Moduler"
 
 msgid "Unable to initialize Gallery session"
@@ -330,11 +328,27 @@ msgstr "Kan ej hämta modul listan"
 msgid "Unable to get the theme list"
 msgstr "Kan ej hämta tema listan"
 
+#, fuzzy, c-format
+msgid "Unable to query the %s module"
+msgstr "Kan ej uppgrader %s modulen"
+
 msgid "Other"
 msgstr "Annat"
 
+#, fuzzy, c-format
+msgid "Unable to query the %s theme"
+msgstr "Kan ej upprader %s temat"
+
 msgid "Themes"
 msgstr "Teman"
+
+#, fuzzy, c-format
+msgid "Unable to deactivate the %s theme"
+msgstr "Kan ej ladda %s temat"
+
+#, fuzzy, c-format
+msgid "Unable to deactivate the %s module"
+msgstr "Kan ej ladda %s modulen"
 
 msgid "Welcome"
 msgstr "Välkommen"
@@ -443,27 +457,24 @@ msgstr "Gallery: <strong>Dinna bilder</strong> på <strong>din webbsite</strong>
 msgid "Missing files (%d)"
 msgstr "Saknade filer (%d)"
 
-#, fuzzy
 msgid ""
 "Note: You're running Gallery from SVN, so recently removed files may appear here.  It might "
 "be safe to ignore these."
 msgstr ""
-"OBS: Du kör Gallery från CVS, så nyligen avlägsnade filer kan ha återuppstått här. Du kan "
+"OBS: Du kör Gallery från SVN, så nyligen avlägsnade filer kan ha återuppstått här. Du kan "
 "lungt ignorera dessa."
 
 #, c-format
 msgid "Modified files (%d)"
 msgstr "Ändrade filer (%d)"
 
-#, fuzzy
 msgid ""
 "Note: You're running Gallery from SVN, so some modified files are to be expected.  You can "
 "probably ignore these, but to be safe you should make sure that you do 'svn update' before "
 "continuing."
 msgstr ""
-"OBS: Du kör Gallery från CVS, så vissa ändrade filer kan man förvänta sig. Du kan troligen "
-"ignorera dessa, men för säkerhetsskull så bör du göra <b>cvs update -Pd</b> innan du "
-"fortsätter."
+"OBS: Du kör Gallery från SVN, så vissa ändrade filer kan man förvänta sig. Du kan troligen "
+"ignorera dessa, men för säkerhetsskull så bör du göra <b>svn update</b> innan du fortsätter."
 
 #, c-format
 msgid "Old files (%d)"
@@ -586,30 +597,6 @@ msgstr ""
 "nergradera G2. Var snäll och ersätt gallery2 filerna med filer från den version som "
 "förnärvarande är installerad eller nyare filer."
 
-msgid "the Gallery website"
-msgstr "Gallery:s webbsite"
-
-#, c-format
-msgid ""
-"Your upgrade cannot begin because some of your active modules/themes are incompatible or "
-"missing.  You must either locate more recent versions of these modules or themes, or revert "
-"to your original version of Gallery.  No changes have been made so it's safe to revert.  If "
-"you have many incompatible modules listed below, it's possible that you downloaded a smaller "
-"distribution of Gallery than what you originally installed.  You can download a larger "
-"distribution from %s."
-msgstr ""
-"Din uppgradering kan inte starta eftersom vissa av dinna aktiva moduler/teman inte är "
-"kompatibla eller saknas. Du måste antingen lokalisera mer aktuella versioner av dessa "
-"moduler eller teman eller återgå till din ursprungliga version av Gallery. Inga ändringar "
-"har gjorts än så det är säkert att återgå till den gamla versionen. Om du har många "
-"inkompatibla moduler listade här nedan så är det möjligt att du har laddat ner en mindre "
-"distribution av Gallery än den du ursprungligen installerade. Du kan ladda ner en större "
-"distribution från %s."
-
-#, c-format
-msgid "Download replacement modules from %s"
-msgstr "Ladda ner ersättnings moduler från %s"
-
 msgid ""
 "Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  "
 "If you fail to make a backup and something goes wrong, there is a strong possibility that we "
@@ -662,9 +649,6 @@ msgstr ""
 msgid "Your Gallery Core Module is up to date!"
 msgstr "Din Gallery KärnModul är up to date!"
 
-msgid "Upgrade Other Modules"
-msgstr "Uppgrader Andra Moduler"
-
 msgid ""
 "The following modules can be automatically upgraded for you.  If you choose not to upgrade "
 "them now, you may experience problems with your Gallery.   You can always upgrade or "
@@ -676,18 +660,14 @@ msgstr ""
 "dem på Site Administratörs sidan, eller återvända till denna sida senare, så vilket beslut "
 "du än gör så är det inte permanent."
 
-msgid "Missing Code"
-msgstr "Saknad Kod"
+msgid "Deactivated Plugins"
+msgstr ""
 
 msgid ""
-"The code for some plugins that were previously active can no longer be found. You must "
-"restore code for these plugins before this upgrade can continue. Code for the plugins must "
-"be the same version or newer than what was installed before."
+"The following plugins were active, but they are missing or incompatible with your current "
+"version of Gallery.  They have been deactivated.  Install the latest version of these "
+"plugins to reactivate them."
 msgstr ""
-"Koden till vissa plugginer som tidigare var aktiverade kan inte längre hittas. Du måste "
-"återställa koden till dessa plugginner innan den här uppgraderingen kan fortsätta. Koden "
-"till plugginnerna måste vara av samma version eller nyare än det som var installerat "
-"tidigare."
 
 msgid "Module"
 msgstr "Modul"
@@ -706,6 +686,9 @@ msgstr "Ny"
 
 msgid "Description"
 msgstr "Beskrivning"
+
+msgid "Incompatible with this version of Gallery"
+msgstr ""
 
 msgid "(un)check all"
 msgstr "(av)markera alla"
@@ -752,3 +735,44 @@ msgstr "Välj Språk:"
 
 msgid "Go"
 msgstr "Gå"
+
+#~ msgid "Unable to verify plugins"
+#~ msgstr "Kan ej verifiera pluginerna"
+
+#~ msgid "the Gallery website"
+#~ msgstr "Gallery:s webbsite"
+
+#~ msgid ""
+#~ "Your upgrade cannot begin because some of your active modules/themes are incompatible or "
+#~ "missing.  You must either locate more recent versions of these modules or themes, or "
+#~ "revert to your original version of Gallery.  No changes have been made so it's safe to "
+#~ "revert.  If you have many incompatible modules listed below, it's possible that you "
+#~ "downloaded a smaller distribution of Gallery than what you originally installed.  You can "
+#~ "download a larger distribution from %s."
+#~ msgstr ""
+#~ "Din uppgradering kan inte starta eftersom vissa av dinna aktiva moduler/teman inte är "
+#~ "kompatibla eller saknas. Du måste antingen lokalisera mer aktuella versioner av dessa "
+#~ "moduler eller teman eller återgå till din ursprungliga version av Gallery. Inga ändringar "
+#~ "har gjorts än så det är säkert att återgå till den gamla versionen. Om du har många "
+#~ "inkompatibla moduler listade här nedan så är det möjligt att du har laddat ner en mindre "
+#~ "distribution av Gallery än den du ursprungligen installerade. Du kan ladda ner en större "
+#~ "distribution från %s."
+
+#~ msgid "Download replacement modules from %s"
+#~ msgstr "Ladda ner ersättnings moduler från %s"
+
+#~ msgid "Upgrade Other Modules"
+#~ msgstr "Uppgrader Andra Moduler"
+
+#~ msgid "Missing Code"
+#~ msgstr "Saknad Kod"
+
+#~ msgid ""
+#~ "The code for some plugins that were previously active can no longer be found. You must "
+#~ "restore code for these plugins before this upgrade can continue. Code for the plugins "
+#~ "must be the same version or newer than what was installed before."
+#~ msgstr ""
+#~ "Koden till vissa plugginer som tidigare var aktiverade kan inte längre hittas. Du måste "
+#~ "återställa koden till dessa plugginner innan den här uppgraderingen kan fortsätta. Koden "
+#~ "till plugginnerna måste vara av samma version eller nyare än det som var installerat "
+#~ "tidigare."
