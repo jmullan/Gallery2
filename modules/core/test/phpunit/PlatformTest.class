@@ -367,17 +367,18 @@ class PlatformTest extends GalleryTestCase {
 	$this->_platform->clearstatcache();
 	$expected = GalleryUtilities::isA($this->_platform, 'WinNtPlatform') ? '777' : '734';
 	$expected2 = GalleryUtilities::isA($this->_platform, 'WinNtPlatform') ? '777' : '652';
+	$expected3 = GalleryUtilities::isA($this->_platform, 'WinNtPlatform') ? '666' : '652';
 
 	$stat = $this->_platform->stat($this->_destFile);
 	$this->assertEquals($expected, decoct($stat[2] & 0777), 'perm0');
 	$stat = $this->_platform->stat($this->_destFile . '/1');
 	$this->assertEquals($expected, decoct($stat[2] & 0777), 'perm1');
 	$stat = $this->_platform->stat($this->_destFile . '/1/2');
-	$this->assertEquals($expected2, decoct($stat[2] & 0777), 'perm2');
+	$this->assertEquals($expected3, decoct($stat[2] & 0777), 'perm2');
 	$stat = $this->_platform->stat($this->_destFile . '/1/3');
 	$this->assertEquals($expected, decoct($stat[2] & 0777), 'perm3');
 	$stat = $this->_platform->stat($this->_destFile . '/1/3/4');
-	$this->assertEquals($expected2, decoct($stat[2] & 0777), 'perm4');
+	$this->assertEquals($expected3, decoct($stat[2] & 0777), 'perm4');
 	$stat = $this->_platform->stat($this->_destFile . '/1/5');
 	$this->assertEquals($expected, decoct($stat[2] & 0777), 'perm5');
 
@@ -431,17 +432,18 @@ class PlatformTest extends GalleryTestCase {
 	$this->assert($this->_platform->recursiveChmod($this->_destFile, -1, 0640), 'set perms');
 	$this->_platform->clearstatcache();
 	$expected = GalleryUtilities::isA($this->_platform, 'WinNtPlatform') ? '777' : '640';
+	$expected2 = GalleryUtilities::isA($this->_platform, 'WinNtPlatform') ? '666' : '640';
 
 	$stat = $this->_platform->stat($this->_destFile);
 	$this->assertEquals($dirStat, decoct($stat[2]), 'dir0 should be unchanged');
 	$stat = $this->_platform->stat($this->_destFile . '/1');
 	$this->assertEquals($dirStat, decoct($stat[2]), 'dir1 should be unchanged');
 	$stat = $this->_platform->stat($this->_destFile . '/1/2');
-	$this->assertEquals($expected, decoct($stat[2] & 0777), 'perm2');
+	$this->assertEquals($expected2, decoct($stat[2] & 0777), 'perm2');
 	$stat = $this->_platform->stat($this->_destFile . '/1/3');
 	$this->assertEquals($dirStat, decoct($stat[2]), 'dir3 should be unchanged');
 	$stat = $this->_platform->stat($this->_destFile . '/1/3/4');
-	$this->assertEquals($expected, decoct($stat[2] & 0777), 'perm4');
+	$this->assertEquals($expected2, decoct($stat[2] & 0777), 'perm4');
 	$stat = $this->_platform->stat($this->_destFile . '/1/5');
 	$this->assertEquals($dirStat, decoct($stat[2]), 'dir5 should be unchanged');
 
