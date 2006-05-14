@@ -60,7 +60,7 @@ class PhpDocAuditTest extends CodeAuditTestCase {
     function checkFile($fileName, $buffer) {
 	if (preg_match('{(?:modules|themes)[\\/]([^\\/]*)?}', $fileName, $matches)) {
 	    $plugin = $matches[1];
-	    if (preg_match_all('/@package (.*)/', $buffer, $matches)) {
+	    if (preg_match_all('/@package (.*[^\s])/', $buffer, $matches)) {
 		foreach ($matches[1] as $package) {
 		    $this->_packageMap[$plugin][$package][] = $fileName;
 		}
