@@ -77,8 +77,7 @@ class ConfigureMultirootView extends GalleryView {
 
 	if ($form['formName'] != 'ConfigureMultiroot') {
 	    $form['formName'] = 'ConfigureMultiroot';
-	    $form['viewUri'] = '';
-	    $form['guestUser'] = '';
+	    $form['viewUri'] = $form['viewRootId'] = $form['guestUser'] = '';
 	}
 
 	$multiroot = array();
