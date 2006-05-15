@@ -45,7 +45,7 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
-	
+
 	/* Set up our environment */
 	foreach (array('parserId' => 'adminrewritemock',
 		       'shortUrls' => serialize(array()),
@@ -156,6 +156,8 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	    'parsePath');
 	$expected['core.ShowItem']['onLoad'] = array('rewrite', 'RewriteSimpleHelper',
 	    'loadItemIdFromPath');
+	$expected['core.ShowItem']['functions']['page'] = array('rewrite',
+	    'RewriteSimpleHelper', 'parsePage');
 	$expected['core.ShowItem']['functions']['language'] = array('rewrite',
 	    'RewriteSimpleHelper', 'parseLanguage');
 	$expected['core.DownloadItem']['pattern'] = 'ud/%itemId%-%serialNumber%/%fileName%';
