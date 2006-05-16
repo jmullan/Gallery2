@@ -1964,6 +1964,16 @@ class CoreModuleExtras {
 		}
 	    }
 
+	case '1.1.4':
+	    /* Add mpeg-4 video mime type */
+	    list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime('mp4');
+	    if (!$ret && $mimeType == 'application/unknown') {
+		$ret = GalleryCoreApi::addMimeType('mp4', 'video/mp4', false);
+		if ($ret) {
+		    return $ret;
+		}
+	    }
+
 
 	case 'end of upgrade path':
 	    /*
@@ -2219,6 +2229,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	case '1.1.1':
 	case '1.1.2':
 	case '1.1.3':
+	case '1.1.4':
 
 	case 'end of upgrade path':
 	    /*

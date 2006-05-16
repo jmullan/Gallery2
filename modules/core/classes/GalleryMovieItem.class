@@ -96,6 +96,7 @@ class GalleryMovieItem extends GalleryDataItem {
 	static $mimeList = array(
 	    'video/quicktime',
 	    'video/mpeg',
+	    'video/mp4',
 	    'video/x-msvideo',
 	    'video/x-ms-wmv',
 	    'video/x-ms-asf',
@@ -257,6 +258,7 @@ class GalleryMovieItem extends GalleryDataItem {
 		$fallback);
 
 	    case 'video/mpeg':
+	    case 'video/mp4':
 	    case 'video/x-msvideo':
 	    case 'video/x-ms-wmv':
 		$classId = 'CLSID:05589FA1-C356-11CE-BF01-00AA0055595A';
