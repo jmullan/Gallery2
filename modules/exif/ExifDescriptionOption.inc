@@ -80,7 +80,6 @@ class ExifDescriptionOption extends ItemAddOption {
 	    }
 
 	    for ($i = 0; $i < count($currentItems); $i++) {
-		$warnings[] = array();
 		$itemId = $currentItems[$i]->getId();
 
 		list ($ret, $exifData) =

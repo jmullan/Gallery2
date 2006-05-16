@@ -73,7 +73,7 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	
-	$this->_noWarnings = array(array());
+	$this->_noWarnings = array();
 	$this->_noErrors = array();
     }
 
@@ -108,8 +108,6 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	    if ($ret) {
 		return $this->failWithStatus($ret);
 	    }
-
-	    $this->_noWarnings[] = array();
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption', 
@@ -163,8 +161,6 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	    if ($ret) {
 		return $this->failWithStatus($ret);
 	    }
-
-	    $this->_noWarnings[] = array();
 	}  
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption', '0');

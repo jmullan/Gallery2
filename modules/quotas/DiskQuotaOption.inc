@@ -60,18 +60,18 @@ class DiskQuotaOption extends ItemAddOption {
         /* if user has a quota */
 	if ($quotaExists) {
 	    $excludedIds = array();
-	    for ($j = 0; $j < count($items); $j++) {
-		$excludedIds[] = $items[$j]->getId();
+	    foreach ($items as $item) {
+		$excludedIds[] = $item->getId();
 	    }
 	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'quotas');
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
-	    for ($i = 0; $i < count($items); $i++) {
+	    foreach ($items as $i => $item) {
 		$warnings[$i] = array();
 
 		/* we should come here only if we are adding a data item, not sub-album */
-		$albumId = $items[$i]->getParentId();
+		$albumId = $item->getParentId();
 
 		/* calculate the item ids of the newly added items */
 		array_shift($excludedIds);
@@ -99,7 +99,7 @@ class DiskQuotaOption extends ItemAddOption {
 			      'arg2' => $userDiskQuotaHumanReadableUnit));
 
 		    $gallery->addShutdownAction(
-			array('GalleryCoreApi', 'deleteEntityById'), array($items[$i]->getId()));
+			array('GalleryCoreApi', 'deleteEntityById'), array($item->getId()));
 		} else {
 		    list ($ret, $userDiskQuotaHumanReadable, $userDiskQuotaHumanReadableUnit) = 
 			GalleryQuotasHelper::humanReadableFromKilobytes($userDiskQuota);

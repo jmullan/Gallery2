@@ -53,10 +53,9 @@ class CreateThumbnailOption extends ItemAddOption {
      * @see ItemAddOption::handleRequestAfterAdd
      */
     function handleRequestAfterAdd($form, $items) {
-	$errors = array();
+	$errors = $warnings = $itemIds = array();
 	foreach ($items as $item) {
 	    $itemIds[] = $item->getId();
-	    $warnings[] = array();
 	}
 	if (empty($form['CreateThumbnailOption']['createThumbnail'])) {
 	    return array(null, $errors, $warnings);

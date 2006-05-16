@@ -108,6 +108,10 @@ class ItemAddController extends GalleryController {
 	    $addedItems = array();
 	    for ($i = 0; $i < count($status['addedFiles']); $i++) {
 		$file =& $status['addedFiles'][$i];
+		if (empty($file['id'])) {
+		    /* we couldn't add this file for whatever reason. move on */
+		    continue;
+		}
 		list ($ret, $addedItem) = GalleryCoreApi::loadEntitiesById($file['id']);
 		if ($ret) {
 		    GalleryCoreApi::releaseLocks($lockId);
@@ -139,7 +143,7 @@ class ItemAddController extends GalleryController {
 		    $status['addedFiles'] = array_merge($status['addedFiles'], $addedFiles);
 		} else {
 		    /* This is not an archive, add it to our array of item objects */
-		    $addedItems[] = $addedItem;
+		    $addedItems[$i] = $addedItem;
 		}
 	    }
 
@@ -153,9 +157,9 @@ class ItemAddController extends GalleryController {
 		}
 		$error = array_merge($error, $optionErrors);
 		/* for each item, put the items warnings into our status array */
-		for ($j = 0; $j < count($optionWarnings); $j++) {
+		foreach ($optionWarnings as $j => $messages) {
 		    $status['addedFiles'][$j]['warnings'] =
-			array_merge($status['addedFiles'][$j]['warnings'], $optionWarnings[$j]);
+			array_merge($status['addedFiles'][$j]['warnings'], $messages);
 		}
 	    }
 

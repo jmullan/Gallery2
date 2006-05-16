@@ -45,10 +45,9 @@ class FlashVideoOption extends ItemAddOption {
     function handleRequestAfterAdd($form, $items) {
 	global $gallery;
 	$storage =& $gallery->getStorage();
-	$errors = $warnings = $flvItems = array();
+	$errors = $flvItems = array();
 
 	foreach ($items as $item) {
-	    $warnings[] = array();
 	    if (GalleryUtilities::isA($item, 'GalleryMovieItem')
 		    && $item->getMimeType() == 'video/x-flv') {
 		$flvItems[] = $item;
@@ -85,7 +84,7 @@ class FlashVideoOption extends ItemAddOption {
 	    }
 	}
 
-	return array(null, $errors, $warnings);
+	return array(null, $errors, array());
     }
 }
 ?>

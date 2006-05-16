@@ -79,7 +79,6 @@ class Getid3DescriptionOption extends ItemAddOption {
 	    }
 
 	    for ($i = 0; $i < count($currentItems); $i++) {
-	        $warnings[] = array();
 	        if ($currentItems[$i]->getMimeType() == 'audio/mpeg') {
 	            $itemId = $currentItems[$i]->getId();
 

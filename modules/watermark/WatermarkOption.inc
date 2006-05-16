@@ -81,11 +81,9 @@ class WatermarkOption extends ItemAddOption {
      */
     function handleRequestAfterAdd($form, $items) {
 	$errors = array();
-	$warnings = array();
-	for ($i = 0; $i < count($items); $i++) {
-	    $warnings[$i] = array();
+	foreach ($items as $i => $item) {
 	    if (!empty($form['WatermarkOption']['watermarkId']) &&
-		GalleryUtilities::isA($items[$i], 'GalleryPhotoItem')) {
+		GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
 		list ($ret, $watermark) =
 		    GalleryCoreApi::loadEntitiesById($form['WatermarkOption']['watermarkId']);
 		if ($ret) {
@@ -95,7 +93,7 @@ class WatermarkOption extends ItemAddOption {
 		    array(DERIVATIVE_TYPE_IMAGE_THUMBNAIL => $watermark->getApplyToThumbnail(),
 			  DERIVATIVE_TYPE_IMAGE_RESIZE => $watermark->getApplyToResizes(),
 			  DERIVATIVE_TYPE_IMAGE_PREFERRED => $watermark->getApplyToPreferred());
-		$ret = WatermarkHelper::watermarkItem($watermark, $items[$i],
+		$ret = WatermarkHelper::watermarkItem($watermark, $item,
 						      $watermark->getXPercentage(),
 						      $watermark->getYPercentage(),
 						      $watermarkArray);
@@ -104,7 +102,7 @@ class WatermarkOption extends ItemAddOption {
 		}
 	    }
 	}
-	return array(null, $errors, $warnings);
+	return array(null, $errors, array());
     }
 }
 ?>

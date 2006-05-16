@@ -10,12 +10,22 @@
 </div>
 {else}
 
+{if !empty($form.error.upload)}
+<div class="gbBlock giError"><h2>
+  {g->text text="There was a problem processing your request, see below for details."}
+  </h2>
+  <div class="giWarning">
+  {foreach from=$ItemAddFromBrowser.status item=statusEntry}
+    {$statusEntry.warnings.0}<br/>
+  {/foreach}
+  </div>
+</div>
+{/if}
+
 <div class="gbBlock">
   <p class="giDescription">
     {g->text text="Upload files directly from your computer."}
     {g->text text="Enter the full path to the file and an optional caption in the boxes below."}
-    <input type="hidden"
-     name="{g->formVar var="form[uploadBoxCount]"}" value="{$form.uploadBoxCount}" />
   </p>
 
   <p class="giDescription">
@@ -26,9 +36,11 @@
     {/if}
   </p>
 
-  {section name="uploadBoxes" loop=$form.uploadBoxCount}
+  {assign var="UPLOAD_BOX_COUNT" value = "20"}
+  {assign var="VISIBLE_BOX_COUNT" value = "4"}
+  {section name="uploadBoxes" loop=$UPLOAD_BOX_COUNT}
   {assign var=iteration value=$smarty.section.uploadBoxes.iteration}
-  <div{if $iteration > $form.visibleBoxCount} id="fileDiv_{$iteration}" style="display:none"{/if}>
+  <div id="fileDiv_{$iteration}" {if $iteration > $VISIBLE_BOX_COUNT} style="display:none"{/if}>
     <h4> {g->text text="File"} </h4>
     <input type="file" size="60" name="{g->formVar var="form[$iteration]"}"/>
 
@@ -36,21 +48,20 @@
     <textarea rows="2" cols="60" name="{g->formVar var="form[caption][$iteration]"}"></textarea>
   </div>
   {/section}
-
-  {if $form.uploadBoxCount > $form.visibleBoxCount}
-    <script type="text/javascript">
-      // <![CDATA[
-      document.write('<a id="addOne" href="javascript:addOne()">{g->text text="More.."}</a>');
-      var fileIndex = {$form.visibleBoxCount};
-      {literal}
-      function addOne() {
-	var link = document.getElementById('addOne');
-	link.blur();
-	document.getElementById('fileDiv_' + ++fileIndex).style.display = 'block';
-	if (fileIndex >= {/literal}{$form.uploadBoxCount}{literal}) {
-	  link.style.display = 'none';
+  {if $UPLOAD_BOX_COUNT > $VISIBLE_BOX_COUNT}
+  <script type="text/javascript">
+	// <![CDATA[
+	document.write('<a id="addOne" href="javascript:addOne()">{g->text text="More.."}</a>');
+	var fileIndex = {$VISIBLE_BOX_COUNT};
+	{literal}
+	function addOne() {
+		var link = document.getElementById('addOne');
+		link.blur();
+		document.getElementById('fileDiv_' + ++fileIndex).style.display = 'block';
+		if (fileIndex >= {/literal}{$UPLOAD_BOX_COUNT}{literal}) {
+			link.style.display = 'none';
+		}
 	}
-      }
       // ]]>
     {/literal}</script>
   {/if}

@@ -106,7 +106,7 @@ class WatermarkOptionTest extends ItemAddOptionTestCase {
 	}
 	$this->_markForCleanup($this->_watermark);
 
-	$this->_noWarnings = array(array());
+	$this->_noWarnings = array();
 	$this->_noErrors = array();
     }
 
@@ -166,8 +166,6 @@ class WatermarkOptionTest extends ItemAddOptionTestCase {
 	    if ($ret) {
 	    	return $this->failWithStatus($ret);
 	    }
-
-	    $this->_noWarnings[] = array();
     	}
 
 	$form['WatermarkOption']['watermarkId'] = $this->_watermark->getId();
@@ -228,8 +226,6 @@ class WatermarkOptionTest extends ItemAddOptionTestCase {
 	    if ($ret) {
 	    	return $this->failWithStatus($ret);
 	    }
-
-	    $this->_noWarnings[] = array();
     	}
 
 	$form['WatermarkOption']['watermarkId'] = '';
@@ -279,8 +275,6 @@ class WatermarkOptionTest extends ItemAddOptionTestCase {
 	    if ($ret) {
 	    	return $this->failWithStatus($ret);
 	    }
-
-	    $this->_noWarnings[] = array();
     	}
 	$form['WatermarkOption']['watermarkId'] = $this->_watermark->getId();
 	$result = $this->_handleRequestAfterAdd($form, $this->_items);

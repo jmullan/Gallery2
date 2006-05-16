@@ -54,7 +54,6 @@ class MovieThumbnailOption extends ItemAddOption {
     function handleRequestAfterAdd($form, $items) {
 	$errors = $warnings = $movieIds = $thumbIds = array();
 	foreach ($items as $item) {
-	    $warnings[] = array();
 	    if (GalleryUtilities::isA($item, 'GalleryMovieItem')) {
 		$movieIds[] = $item->getId();
 	    }

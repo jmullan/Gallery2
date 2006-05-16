@@ -51,6 +51,7 @@ class ItemAddConfirmationView extends GalleryView {
 	 * it down so that the template doesn't have to know.
 	 */
 	$status = $template->getVariable('status');
+	$uploaded = 0;
 	if (!empty($status['addedFiles'])) {
 	    $count = sizeof($status['addedFiles']);
 	    for ($i = 0; $i < $count; $i++) {
@@ -58,19 +59,19 @@ class ItemAddConfirmationView extends GalleryView {
 		    GalleryCoreApi::loadEntitiesById($status['addedFiles'][$i]['id']);
 		if (!$ret) {
 		    $status['addedFiles'][$i]['exists'] = true;
-		} else if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+		    $uploaded++;
+		} else if ($ret->getErrorCode() & (ERROR_MISSING_OBJECT | ERROR_BAD_PARAMETER)) {
 		    $status['addedFiles'][$i]['exists'] = false;
 		} else {
 		    return array($ret, null);
 		}
 	    }
 	} else {
-	    $count = 0;
 	    $status['addedFiles'] = array();
 	}
 
 	$ItemAddConfirmation = array();
-	$ItemAddConfirmation['count'] = $count;
+	$ItemAddConfirmation['count'] = $uploaded;
 	$ItemAddConfirmation['status'] = $status;
 
 	$template->setVariable('ItemAddConfirmation', $ItemAddConfirmation);

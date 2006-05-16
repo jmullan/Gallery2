@@ -81,7 +81,7 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->_noWarnings = array(array());
+	$this->_noWarnings = array();
 	$this->_noErrors = array();
     }
 
@@ -133,8 +133,6 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 	    if ($ret) {
 		return $this->failWithStatus($ret);
 	    }
-
-	    $this->_noWarnings[] = $this->_noWarnings[$j-1];
 	}
 
 	$form['CreateThumbnailOption']['createThumbnail'] = 1;
@@ -168,7 +166,6 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 	    if ($ret) {
 		return $this->failWithStatus($ret);
 	    }
-	    $this->_noWarnings[] = $this->_noWarnings[$j-1];
 	}
 	$form['CreateThumbnailOption']['createThumbnail'] = 1;
 	list ($errors, $warnings) = $this->_handleRequestAfterAdd($form, $this->_items);

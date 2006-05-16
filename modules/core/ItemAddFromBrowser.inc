@@ -40,10 +40,15 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 
 	$status = array();
 	$error = array();
+	$uploaded = false;
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret) {
+	    return array($ret, null, null);
+	}
 	if (isset($form['action']['addFromBrowser'])) {
 
 	    /* Upload any new files */
-	    for ($i = 1; $i <= $form['uploadBoxCount']; $i++) {
+	    for ($i = 1; $i <= count($form['name']); $i++) {
 		$newItem = null;
 
 		/* Placeholder for later */
@@ -113,7 +118,51 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 		    $status['addedFiles'][] = array('fileName' => $file['name'],
 						    'id' => $newItem->getId(),
 						    'warnings' => array());
+		    $uploaded = true;
+		} else if (!empty($form['name'][$i])) {
+		    $error[] = 'form[error][upload][' . $i . ']';
+		    if (empty($form['error'])) {
+			$form['error'][$i] = -1;
+		    }
+		    switch($form['error'][$i]) {
+		    case UPLOAD_ERR_INI_SIZE:
+			$warning = $module->translate(array(
+			    'text' => 'Input file %s exceeds maximum permitted file size',
+			    'arg1' => $form['name'][$i]));
+			break;
+			
+		    case UPLOAD_ERR_FORM_SIZE:
+			$warning = $module->translate(array(
+			    'text' => 'Input file %s exceeds file size specified in the form',
+			    'arg1' => $form['name'][$i]));
+			break;
+			
+		    case UPLOAD_ERR_PARTIAL:
+			$warning = $module->translate(array(
+			    'text' => 'Input file %s was only partially uploaded',
+			    'arg1' => $form['name'][$i]));
+			break;
+			
+		    default:
+			$warning = $module->translate(array(
+			    'text' => 'Input file %s was not uploaded. Error %d',
+			    'arg1' => $form['name'][$i],
+			    'arg2' => $form['error'][$i]));
+		    }
+		    $status['addedFiles'][] = array('fileName' => $form['name'][$i],
+						    'id' => null,
+						    'warnings' => array($warning));
 		}
+	    }
+	    if ($uploaded || empty($status)) {
+		/* 
+		 * Some files were uploaded successfully (or not even attempted)
+		 * Go to confirmation page, even if there were errors in uploads
+		 */
+		$error = array();
+	    } else {
+		GalleryUtilities::putRequestVariable('ItemAddFromBrowserStatus', 
+						     $status['addedFiles']);
 	    }
 	}
 
@@ -133,7 +182,8 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 	$maxFileSize = ini_get('upload_max_filesize');
 	if (preg_match("/(\d+)M/", $maxFileSize, $matches)) {
 	    $maxFileSize = $matches[1] * 1024 * 1024;
-	}
+	}	
+	$status = GalleryUtilities::getRequestVariables('ItemAddFromBrowserStatus');
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
@@ -155,9 +205,6 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 	}
 
 	if ($form['formName'] != 'ItemAddFromBrowser') {
-	    /* First time around, load the form with item data */
-	    $form['uploadBoxCount'] = 20;
-	    $form['visibleBoxCount'] = 4;
 	    $form['set'] = array('title' => 'filename', 'summary' => 1, 'description' => 1);
 	    $form['formName'] = 'ItemAddFromBrowser';
 	}
@@ -170,7 +217,8 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 	    array('totalUploadSize' => $totalUploadSize,
 		  'maxFileSize' => $maxFileSize,
 		  'uploadsPermitted' => $fileUploadsBool,
-		  'titleList' => $titleList));
+		  'titleList' => $titleList,
+		  'status' => $status));
 
 	/* Set the ItemAdmin form's encoding type specially since we're uploading binary files */
 	if ($template->hasVariable('ItemAdmin')) {
