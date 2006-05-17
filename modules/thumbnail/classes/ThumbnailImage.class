@@ -222,6 +222,13 @@ class ThumbnailImage extends GalleryChildEntity {
     }
 
     /**
+     * @see GalleryEntity::save()
+     */
+    function save($postEvent=true) {
+	return parent::save($postEvent, 0);
+    }
+
+    /**
      * Delete this GalleryEntity
      *
      * @access public

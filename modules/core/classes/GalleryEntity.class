@@ -274,7 +274,7 @@ class GalleryEntity extends GalleryPersistent {
      * @param integer (optional) ACL id to assign for new entity (used by subclasses)
      * @return object GalleryStatus a status code
      */
-    function save($postEvent=true, $setAclId=0) {
+    function save($postEvent=true, $setAclId=null) {
 	global $gallery;
 
 	/*
@@ -286,9 +286,8 @@ class GalleryEntity extends GalleryPersistent {
 	    return GalleryCoreApi::error(ERROR_LOCK_REQUIRED);
 	}
 
-	if ($this->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
-	    $ret = GalleryCoreApi::addMapEntry(
-		'GalleryAccessSubscriberMap',
+	if (isset($setAclId) && $this->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
+	    $ret = GalleryCoreApi::addMapEntry('GalleryAccessSubscriberMap',
 		array('itemId' => $this->getId(), 'accessListId' => $setAclId));
 	    if ($ret) {
 		return $ret;

@@ -1911,6 +1911,7 @@ class CoreModuleExtras {
 	     * Switch PanoramaPhotoItem and PanoramaDerivativeImage entities back to their
 	     * base classes and set the items to use the PanoramaRenderer instead.
 	     */
+	    $gallery->guaranteeTimeLimit(60);
 	    $query = '
 	      SELECT
 		[GalleryEntity::id], [GalleryEntity::entityType]
@@ -1925,16 +1926,22 @@ class CoreModuleExtras {
 	    }
 	    $photos = $derivatives = array();
 	    while ($result = $searchResults->nextResult()) {
-		$gallery->guaranteeTimeLimit(30);
 		if ($result[1] == 'PanoramaPhotoItem') {
 		    $photos[] = $result[0];
 		} else {
 		    $derivatives[] = $result[0];
 		}
 	    }
+	    $total = count($photos) + count($derivatives);
 
 	    /* Switch PanoramaPhotoItems back to GalleryPhotoItems */
-	    while ($photos) {
+	    for ($i = 0; $photos; $i += count($ids)) {
+		$gallery->guaranteeTimeLimit(30);
+		$ret = $statusMonitor->renderStatusMessage(
+			$module->translate('Updating panorama items'), '', $i / $total);
+		if ($ret) {
+		    return $ret;
+		}
 		$ids = array_splice($photos, 0, 500);
 		$markers = GalleryUtilities::makeMarkers($ids);
 		$query = "UPDATE [GalleryItem] SET [::renderer] = 'PanoramaRenderer' " .
@@ -1954,11 +1961,25 @@ class CoreModuleExtras {
 
 	    /* Switch PanoramaDerivativeImage back to GalleryDerivativeImage */
 	    while ($derivatives) {
+		$gallery->guaranteeTimeLimit(30);
+		$ret = $statusMonitor->renderStatusMessage(
+			$module->translate('Updating panorama items'), '', $i / $total);
+		if ($ret) {
+		    return $ret;
+		}
 		$ids = array_splice($derivatives, 0, 500);
 		$markers = GalleryUtilities::makeMarkers($ids);
 		$query = "UPDATE [GalleryEntity] SET [::entityType] = 'GalleryDerivativeImage' " .
 		    "WHERE [GalleryEntity::id] IN ($markers)";
 		$ret = $storage->execute($query, $ids);
+		if ($ret) {
+		    return $ret;
+		}
+		$i += count($ids);
+	    }
+	    if ($total) {
+		$ret = $statusMonitor->renderStatusMessage(
+			$module->translate('Updating panorama items'), '', 1);
 		if ($ret) {
 		    return $ret;
 		}
@@ -1975,6 +1996,54 @@ class CoreModuleExtras {
 	    }
 
 	case '1.1.5':
+	case '1.1.6':
+	    /* Remove useless rows in AccessSubscriberMap */
+	    $gallery->guaranteeTimeLimit(60);
+	    $query = '
+	      SELECT
+		[GalleryAccessSubscriberMap::itemId]
+	      FROM
+		[GalleryAccessSubscriberMap], [GalleryEntity]
+	      WHERE
+		[GalleryAccessSubscriberMap::accessListId] = 0
+	      AND
+		[GalleryAccessSubscriberMap::itemId] = [GalleryEntity::id]
+	      AND
+		[GalleryEntity::entityType] IN (?,?,?,?)
+	    ';
+	    list ($ret, $searchResults) = $gallery->search($query,
+		array('GalleryDerivativeImage', 'GalleryUser', 'GalleryGroup', 'GalleryComment'));
+	    if ($ret) {
+		return $ret;
+	    }
+	    $itemIds = array();
+	    while ($result = $searchResults->nextResult()) {
+		$itemIds[] = (int)$result[0];
+	    }
+	    $total = count($itemIds);
+	    $query = 'DELETE FROM [GalleryAccessSubscriberMap] WHERE [::itemId] IN (';
+
+	    for ($i = 0; $itemIds; $i += count($ids)) {
+		$gallery->guaranteeTimeLimit(30);
+		$ret = $statusMonitor->renderStatusMessage(
+		    $module->translate('Optimizing AccessSubscriberMap table'), '', $i / $total);
+		if ($ret) {
+		    return $ret;
+		}
+		$ids = array_splice($itemIds, 0, 500);
+		$markers = GalleryUtilities::makeMarkers($ids);
+		$ret = $storage->execute($query . $markers . ')', $ids);
+		if ($ret) {
+		    return $ret;
+		}
+	    }
+	    if ($total) {
+		$ret = $statusMonitor->renderStatusMessage(
+			$module->translate('Optimizing AccessSubscriberMap table'), '', 1);
+		if ($ret) {
+		    return $ret;
+		}
+	    }
 
 
 	case 'end of upgrade path':
@@ -2233,6 +2302,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	case '1.1.3':
 	case '1.1.4':
 	case '1.1.5':
+	case '1.1.6':
 
 	case 'end of upgrade path':
 	    /*
