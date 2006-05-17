@@ -68,21 +68,38 @@ class ItemTest extends GalleryTestCase {
 	}
 	$this->_markToolkitForCleanup('ItemTestToolkit');
 
-	/* Register a jpeg thumbnail in case there are no other toolkits active */
+	/* Register jpeg thumbnail/gif scale in case there are no other toolkits active */
 	$ret = GalleryCoreApi::registerToolkitOperation(
 	    'ItemTestToolkit', array('test/image', 'image/jpeg'), 'thumbnail',
 	    array(array('type' => 'int', 'description' => 'foo'),
 		  array('type' => 'int', 'description' => 'foo')),
-	    'itemtest-description');
+	    'itemtest-description', '', 7);
 	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::registerToolkitOperation(
+	    'ItemTestToolkit', array('image/gif'), 'scale',
+	    array(array('type' => 'int', 'description' => 'foo'),
+		  array('type' => 'int', 'description' => 'foo')),
+	    'itemtest-description', '', 7);
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::registerToolkitProperty(
+	    'ItemTestToolkit', array('image/gif'), 'dimensions', 'int,int', 'Get the dimensions');
+	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 
 	/* Register a conversion operation that we can perform on our mock data items */
 	$ret = GalleryCoreApi::registerToolkitOperation(
-	    'ItemTestToolkit', array('test/movie'), 'convert-to-image/jpeg',
-	    array(), 'itemtest-description', 'image/jpeg');
+	    'ItemTestToolkit', array('test/movie', 'image/x-portable-pixmap'),
+	    'convert-to-image/jpeg', array(), 'itemtest-description', 'image/jpeg', 7);
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 
@@ -91,12 +108,14 @@ class ItemTest extends GalleryTestCase {
 	    $path, 'coreTest', array('test/movie'));
 	$this->_markFactoryModuleForCleanup('coreTest');
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GalleryRenderer', 'ItemTestRenderer', 'ItemTestRenderer', $path, 'coreTest', null);
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
     }
@@ -1411,7 +1430,6 @@ class ItemTest extends GalleryTestCase {
     }
 
     function testAddNonViewableImage() {
-	/* TODO: update test so it doesn't depend on an active toolkit to convert ppm to jpeg */
 	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->_album->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -1745,6 +1763,8 @@ class ItemTestToolkit extends GalleryToolkit {
 		$results = array(12345);
 	    }
 	    return array(null, $results);
+	} else if ($propertyName == 'dimensions' && $mimeType == 'image/gif') {
+	    return array(null, array(62, 75));
 	}
 	/* We'll reach this point in testSymlinkTwice, but we want to return an error */
 	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
