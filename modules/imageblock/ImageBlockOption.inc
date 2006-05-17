@@ -23,6 +23,8 @@
  * @author Jay Rossiter <cryptographite@users.sf.net>
  */
 
+GalleryCoreApi::requireOnce('modules/imageblock/classes/ImageBlockHelper.class');
+
 /**
  * @package ImageBlock
  * @subpackage UserInterface
@@ -33,28 +35,11 @@ class ImageBlockOption extends ItemEditOption {
      * @see ItemEditOption::handleRequestAfterEdit
      */
     function handleRequestAfterEdit($form, &$item, &$preferred) {
-	$error = array();
-	$warning = array();
-
-	GalleryCoreApi::requireOnce('modules/imageblock/classes/ImageBlockHelper.class');
-
-	if (empty($form['ImageBlockOption']['setDisabled']) ||
-		$form['ImageBlockOption']['setDisabled'] == 'off') {
-	    $setDisabled = false;
-	} else {
-	    $setDisabled = true;
-	}
-
-	/*
-	 *  We default to 'on' in the template, but checking empty() isn't valid
-	 *  because 'off' doesn't necessarily send a value.
-	 */
-	if (isset($form['ImageBlockOption']['setRecursive']) &&
-		$form['ImageBlockOption']['setRecursive'] == 'on') {
-	    $setRecursive = true;
-	} else {
-	    $setRecursive = false;
-	}
+	$error = $warning = array();
+	$setDisabled = isset($form['ImageBlockOption']['setDisabled'])
+	    && $form['ImageBlockOption']['setDisabled'] != 'off';
+	$setRecursive = isset($form['ImageBlockOption']['setRecursive'])
+	    && $form['ImageBlockOption']['setRecursive'] != 'off';
 
 	list ($ret, $currentlyDisabled) = ImageBlockHelper::getDisabledFlag($item->getId());
 	if ($ret) {
@@ -75,7 +60,6 @@ class ImageBlockOption extends ItemEditOption {
      * @see ItemEditOption::loadTemplate
      */
     function loadTemplate(&$template, &$form, $item, $thumbnail) {
-	GalleryCoreApi::requireOnce('modules/imageblock/classes/ImageBlockHelper.class');
 	list($ret, $form['ImageBlockOption']['setDisabled']) =
 	    ImageBlockHelper::getDisabledFlag($item->getId());
 	if ($ret) {
@@ -98,8 +82,16 @@ class ImageBlockOption extends ItemEditOption {
      * @see ItemEditOption::requiresProgressBar()
      */
     function requiresProgressBar($form) {
-	return (isset($form['ImageBlockOption']['setRecursive'])
-		&& $form['ImageBlockOption']['setRecursive'] != 'off');
+	$itemId = GalleryUtilities::getRequestVariables('itemId');
+	list ($ret, $currentlyDisabled) = ImageBlockHelper::getDisabledFlag($itemId);
+	if ($ret) {
+	    return false;
+	}
+	$setDisabled = isset($form['ImageBlockOption']['setDisabled'])
+	    && $form['ImageBlockOption']['setDisabled'] != 'off';
+	$setRecursive = isset($form['ImageBlockOption']['setRecursive'])
+	    && $form['ImageBlockOption']['setRecursive'] != 'off';
+	return ($setRecursive && $setDisabled != $currentlyDisabled);
     }
 }
 ?>
