@@ -1974,6 +1974,8 @@ class CoreModuleExtras {
 		}
 	    }
 
+	case '1.1.5':
+
 
 	case 'end of upgrade path':
 	    /*
@@ -2230,6 +2232,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	case '1.1.2':
 	case '1.1.3':
 	case '1.1.4':
+	case '1.1.5':
 
 	case 'end of upgrade path':
 	    /*
@@ -2653,7 +2656,8 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	$regs[] = array('GalleryEntity', 'GalleryAnimationItem', 'class', null);
 	$regs[] = array('GalleryEntity', 'GalleryPhotoItem', 'class', null);
 	$regs[] = array('GalleryEntity', 'GalleryUnknownItem', 'class', null);
-	$regs[] = array('GalleryItem', 'GalleryPhotoItem', 'class', array('image/*'));
+	$regs[] = array('GalleryItem', 'GalleryPhotoItem', 'class',
+			array('image/*', 'application/photoshop'));
 	$regs[] = array('GalleryItem', 'GalleryMovieItem', 'class', array('video/*'));
 	$regs[] = array('GalleryItem', 'GalleryAnimationItem', 'class',
 			array('application/x-director', 'application/x-shockwave-flash'));

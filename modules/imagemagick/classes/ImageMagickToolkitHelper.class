@@ -323,7 +323,7 @@ class ImageMagickToolkitHelper {
 	    return array($ret, null);
 	}
 	if ($cmykSupport) {
-	    foreach (array('image/jpeg', 'image/tiff') as $mimeType) {
+	    foreach (array('image/jpeg', 'image/tiff', 'application/photoshop') as $mimeType) {
 		if (isset($mimeTypes[$mimeType])) {
 		    $mimeTypes[$mimeType . '-cmyk'] = 1;
 		}

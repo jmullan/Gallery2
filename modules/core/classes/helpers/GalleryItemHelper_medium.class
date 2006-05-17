@@ -314,12 +314,12 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	    return $ret;
 	}
 
-	if (!$isViewable && !strncmp($mimeType, 'image/', 6)) {
-	    if (GalleryUtilities::isA($source, 'GalleryDerivative')) {
-		$operations = $source->getDerivativeOperations();
-	    } else {
-		$operations = '';
-	    }
+	if (GalleryUtilities::isA($source, 'GalleryDerivative')) {
+	    $operations = $source->getDerivativeOperations();
+	} else if (GalleryUtilities::isA($source, 'GalleryPhotoItem')) {
+	    $operations = '';
+	}
+	if (!$isViewable && isset($operations)) {
 	    list ($ret, $newOperations, $outputMimeType) =
 		GalleryCoreApi::makeSupportedViewableOperationSequence(
 		    $mimeType, $operations, false);
@@ -340,7 +340,6 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		    if ($ret) {
 			return $ret;
 		    }
-
 		    if (!isset($preferred)) {
 			return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
 		    }

@@ -267,6 +267,7 @@ $imEnvironment[] = array(
 		'image/tga',
 		'image/jpeg-cmyk',
 		'image/tiff-cmyk',
+		'application/photoshop-cmyk',
 	),
 	'binaries' => array(
 		'animate',
@@ -373,6 +374,7 @@ $imEnvironment[] = array(
 		'image/tga',
 		'image/jpeg-cmyk',
 		'image/tiff-cmyk',
+		'application/photoshop-cmyk',
 	),
 	'binaries' => array(
 		'animate',
