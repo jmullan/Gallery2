@@ -68,8 +68,6 @@ class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
     }
 
     function tearDown() {
-	parent::tearDown();
-
 	foreach (array('AdminMaintenanceControllerTestTaskFail',
 		       'AdminMaintenanceControllerTestTaskSuccess',
 		       'AdminMaintenanceControllerTestTaskProgressBar') as $taskId) {
@@ -80,6 +78,8 @@ class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
 		$this->failWithStatus($ret);
 	    }
 	}
+
+	parent::tearDown();
     }
 
     function testRunTaskSuccess() {
