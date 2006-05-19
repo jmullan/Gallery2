@@ -15,9 +15,7 @@
 {/if}
 
 <div class="gbBlock">
-  <p class="giDescription">
-    {g->text text="Some text here...?"}
-  </p>
+  <h3> {g->text text="Enable"} </h3>
 
   <table class="gbDataTable"><tr>
     <td> {g->text text="Add From Web"} </td>
