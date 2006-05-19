@@ -127,6 +127,7 @@ class FlashVideoModule extends GalleryModule {
 	if ($ret) {
 	    return array($ret, null);
 	}
+	return array(null, $redirect);
     }
 
     /**
